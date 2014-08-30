@@ -33,12 +33,13 @@ static AudioStreamBasicDescription req_format;
 static int state = OUTPUT_STATE_STOPPED;
 
 static OSStatus
+ca_fmtchanged (AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput, AudioDevicePropertyID inPropertyID, void *inClientData);
+
+static OSStatus
 ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const AudioBufferList * inInputData, const AudioTimeStamp * inInputTime, AudioBufferList * outOutputData, const AudioTimeStamp * inOutputTime, void * inClientData);
 
 static int
 ca_apply_format (void) {
-#if 0
-//    fprintf (stderr, "setformat request: %d %d %d\n", (int)req_format.mSampleRate, (int)req_format.mChannelsPerFrame, (int)req_format.mBitsPerChannel);
     UInt32 sz;
     if (req_format.mSampleRate > 0) {
         sz = sizeof (req_format);
@@ -48,30 +49,6 @@ ca_apply_format (void) {
             }
         }
     }
-
-    // FIXME: super-hack to wait until changes take effect (will fix as soon as I find out how)
-    usleep(10000);
-    
-    AudioStreamBasicDescription device_format;
-    sz = sizeof (device_format);
-    if (AudioDeviceGetProperty (device_id, 0, 0, kAudioDevicePropertyStreamFormat, &sz, &device_format)) {
-        return -1;
-    }
-    
-    if (device_format.mFormatID != kAudioFormatLinearPCM) {
-        return -1;
-    }
-//    fprintf (stderr, "setformat response: %d %d %d\n", (int)device_format.mSampleRate, (int)device_format.mChannelsPerFrame, (int)device_format.mBitsPerChannel);
-    
-    plugin.fmt.bps = device_format.mBitsPerChannel;
-    plugin.fmt.channels = device_format.mChannelsPerFrame;
-    plugin.fmt.is_float = 1;
-    plugin.fmt.samplerate = device_format.mSampleRate;
-    plugin.fmt.channelmask = 0;
-    for (int i = 0; i < plugin.fmt.channels; i++) {
-        plugin.fmt.channelmask |= (1<<i);
-    }
-#endif
 
     return 0;
 }
@@ -109,6 +86,12 @@ ca_init (void) {
     if (AudioDeviceAddIOProc (device_id, ca_buffer_callback, NULL)) {
         return -1;
     }
+    
+    if (AudioDeviceAddPropertyListener (device_id, 0, 0, kAudioDevicePropertyStreamFormat, ca_fmtchanged, NULL)) {
+        return -1;
+    }
+    
+    ca_fmtchanged(0, 0, 0, kAudioDevicePropertyStreamFormat, NULL);
 
     state = OUTPUT_STATE_STOPPED;
 
@@ -119,6 +102,7 @@ static int
 ca_free (void) {
     if (device_id) {
         AudioDeviceStop(device_id, ca_buffer_callback);
+        AudioDeviceRemovePropertyListener(device_id, 0, 0, kAudioDevicePropertyStreamFormat, ca_fmtchanged);
         AudioDeviceRemoveIOProc(device_id, ca_buffer_callback);
     }
     return 0;
@@ -194,8 +178,8 @@ ca_state (void) {
     return state;
 }
 
-OSStatus
-ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const AudioBufferList * inInputData, const AudioTimeStamp * inInputTime, AudioBufferList * outOutputData, const AudioTimeStamp * inOutputTime, void * inClientData) {
+static OSStatus
+ca_fmtchanged (AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput, AudioDevicePropertyID inPropertyID, void *inClientData) {
     
     AudioStreamBasicDescription device_format;
     UInt32 sz = sizeof (device_format);
@@ -209,11 +193,14 @@ ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const A
             plugin.fmt.channelmask |= (1<<i);
         }
     }
-
-    UInt32 bufsize = 0;
-    sz = sizeof (bufsize);
-    AudioDeviceGetProperty(device_id, 0, 0, kAudioDevicePropertyBufferFrameSize, &sz, &bufsize);
     
+    return 0;
+}
+                                        
+static OSStatus
+ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const AudioBufferList * inInputData, const AudioTimeStamp * inInputTime, AudioBufferList * outOutputData, const AudioTimeStamp * inOutputTime, void * inClientData) {
+
+    UInt32 sz;
     char *buffer = outOutputData->mBuffers[0].mData;
     sz = outOutputData->mBuffers[0].mDataByteSize;
 
