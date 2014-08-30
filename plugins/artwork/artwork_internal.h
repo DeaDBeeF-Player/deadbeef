@@ -27,6 +27,7 @@
 #include "../../deadbeef.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
+#define max(x,y) ((x)>(y)?(x):(y))
 
 extern DB_functions_t *deadbeef;
 extern DB_FILE *current_file;
