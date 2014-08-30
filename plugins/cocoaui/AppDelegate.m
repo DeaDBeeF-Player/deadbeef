@@ -92,23 +92,30 @@ NSInteger firstSelected = -1;
     g_appDelegate = self;
 }
 
+int prevSeekbar = -1;
+
 - (void)frameUpdate:(id)userData
 {
     float dur = -1;
+    float perc = 0;
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (trk) {
         dur = deadbeef->pl_get_item_duration (trk);
         if (dur >= 0) {
-            float perc = deadbeef->streamer_get_playpos () / dur * 100.f;
+            perc = deadbeef->streamer_get_playpos () / dur * 100.f;
             if (perc < 0) {
                 perc = 0;
             }
             else if (perc > 100) {
                 perc = 100;
             }
-            [self.seekBar setFloatValue:perc];
         }
         deadbeef->pl_item_unref (trk);
+    }
+    
+    if ((int)perc != prevSeekbar) {
+        prevSeekbar = perc;
+        [self.seekBar setFloatValue:perc];
     }
     
     BOOL st = YES;
