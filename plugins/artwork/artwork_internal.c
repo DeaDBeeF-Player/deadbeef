@@ -96,6 +96,7 @@ int copy_file (const char *in, const char *out)
     errno = 0;
     int err = 0;
     int bytes_read;
+    size_t file_bytes = 0;
     do {
         char buffer[BUFFER_SIZE];
         bytes_read = deadbeef->fread(buffer, 1, BUFFER_SIZE, fin);
@@ -107,13 +108,14 @@ int copy_file (const char *in, const char *out)
             trace("artwork: failed to write file %s: %s\n", tmp_out, strerror(errno));
             err = -1;
         }
+        file_bytes += bytes_read;
     } while (!err && bytes_read == BUFFER_SIZE);
 
     current_file = NULL;
     deadbeef->fclose(fin);
     fclose(fout);
 
-    if (!err) {
+    if (file_bytes > 0 && !err) {
         err = rename(tmp_out, out);
         if (err) {
             trace("artwork: failed to move %s to %s: %s\n", tmp_out, out, strerror(errno));
