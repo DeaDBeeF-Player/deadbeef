@@ -85,7 +85,7 @@ NSInteger firstSelected = -1;
     // initialize gui from settings
     [self configChanged];
     
-    NSTimer *updateTimer = [NSTimer timerWithTimeInterval:1.0f/15.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
+    NSTimer *updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
     [[NSRunLoop currentRunLoop] addTimer:updateTimer forMode:NSDefaultRunLoopMode];
 
     
@@ -113,7 +113,7 @@ int prevSeekbar = -1;
         deadbeef->pl_item_unref (trk);
     }
     
-    if ((int)perc != prevSeekbar) {
+    if (perc != prevSeekbar) {
         prevSeekbar = perc;
         [self.seekBar setFloatValue:perc];
     }
