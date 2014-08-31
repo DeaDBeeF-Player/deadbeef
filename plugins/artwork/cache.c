@@ -188,18 +188,6 @@ void cache_configchanged(void)
     }
 }
 
-void start_cache_cleaner(void)
-{
-    terminate = 0;
-    cache_expiry_seconds = deadbeef->conf_get_int("artwork.cache.period", 48) * 60 * 60;
-    files_mutex = deadbeef->mutex_create_nonrecursive();
-    thread_mutex = deadbeef->mutex_create_nonrecursive();
-    thread_cond = deadbeef->cond_create();
-    if (thread_mutex && thread_cond) {
-        tid = deadbeef->thread_start_low_priority(cache_cleaner_thread, NULL);
-    }
-}
-
 void stop_cache_cleaner(void)
 {
     if (tid) {
@@ -225,4 +213,24 @@ void stop_cache_cleaner(void)
         deadbeef->mutex_free(files_mutex);
         files_mutex = 0;
     }
+}
+
+int start_cache_cleaner(void)
+{
+
+    terminate = 0;
+    cache_expiry_seconds = deadbeef->conf_get_int("artwork.cache.period", 48) * 60 * 60;
+    files_mutex = deadbeef->mutex_create_nonrecursive();
+    thread_mutex = deadbeef->mutex_create_nonrecursive();
+    thread_cond = deadbeef->cond_create();
+    if (files_mutex && thread_mutex && thread_cond) {
+        tid = deadbeef->thread_start_low_priority(cache_cleaner_thread, NULL);
+    }
+
+    if (!tid) {
+        stop_cache_cleaner();
+        return -1;
+    }
+
+    return 0;
 }
