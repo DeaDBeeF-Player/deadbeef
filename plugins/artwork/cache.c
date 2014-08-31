@@ -43,8 +43,9 @@
 #define trace(...)
 
 static uintptr_t files_mutex;
-static uintptr_t files_cond;
 static intptr_t tid;
+static uintptr_t loop_mutex;
+static uintptr_t loop_cond;
 static int terminate;
 static int32_t cache_expiry_seconds;
 
@@ -78,7 +79,7 @@ filter_scaled_dirs (const struct dirent *f)
 void remove_cache_item(const char *entry_path, const char *subdir_path, const char *subdir_name, const char *entry_name)
 {
     /* Unlink the expired file, and the artist directory if it is empty */
-    deadbeef->mutex_lock(files_mutex);
+    cache_lock();
     unlink(entry_path);
     rmdir(subdir_path);
 
@@ -97,7 +98,7 @@ void remove_cache_item(const char *entry_path, const char *subdir_path, const ch
         free(scaled_dirs[i]);
     }
     free(scaled_dirs);
-    deadbeef->mutex_unlock(files_mutex);
+    cache_unlock();
 }
 
 static void
@@ -112,18 +113,16 @@ cache_cleaner_thread(void *none)
     make_cache_root_path(covers_path, PATH_MAX-7);
     strcat(covers_path, "covers/");
 
-    cache_lock();
+    deadbeef->mutex_lock(loop_mutex);
     while (!terminate) {
-        cache_unlock();
         time_t oldest_mtime = time(NULL);
 
         /* Loop through the artist directories */
         DIR *covers_dir = opendir(covers_path);
         struct dirent *covers_subdir;
-        while (covers_dir && (covers_subdir = readdir(covers_dir))) {
-            cache_lock();
+        while (!terminate && covers_dir && (covers_subdir = readdir(covers_dir))) {
             const int32_t cache_secs = cache_expiry_seconds;
-            cache_unlock();
+            deadbeef->mutex_unlock(loop_mutex);
             if (cache_secs > 0 && strcmp(covers_subdir->d_name, ".") && strcmp(covers_subdir->d_name, "..")) {
                 const time_t cache_expiry = time(NULL) - cache_secs;
 
@@ -153,37 +152,35 @@ cache_cleaner_thread(void *none)
                 closedir(subdir);
             }
             usleep(100000);
+            deadbeef->mutex_lock(loop_mutex);
         }
         closedir(covers_dir);
 
         /* Sleep until just after the oldest file expires */
-        cache_lock();
         if (cache_expiry_seconds > 0) {
             struct timespec wake_time = {
                 .tv_sec = time(NULL) + max(60, oldest_mtime - time(NULL) + cache_expiry_seconds),
                 .tv_nsec = 999999
             };
-            fprintf(stderr, "Sleeping for %d seconds (oldest file modified %d seconds ago)\n", oldest_mtime - time(NULL) + cache_expiry_seconds, time(NULL) - oldest_mtime);
-            pthread_cond_timedwait((pthread_cond_t *)files_cond, (pthread_mutex_t *)files_mutex, &wake_time);
+            pthread_cond_timedwait((pthread_cond_t *)loop_cond, (pthread_mutex_t *)loop_mutex, &wake_time);
         }
 
         /* Just go back to sleep if cache expiry is disabled */
-        while (cache_expiry_seconds <= 0) {
-            fprintf(stderr, "Sleeping forever\n");
-            pthread_cond_wait((pthread_cond_t *)files_cond, (pthread_mutex_t *)files_mutex);
+        while (cache_expiry_seconds <= 0 && !terminate) {
+            pthread_cond_wait((pthread_cond_t *)loop_cond, (pthread_mutex_t *)loop_mutex);
         }
     }
-    cache_unlock();
+    deadbeef->mutex_unlock(loop_mutex);
 }
 
 void cache_configchanged(void)
 {
-    int32_t new_cache_expiry_seconds = deadbeef->conf_get_int("artwork.cache.period", 48) * 60 * 60;
+    const int32_t new_cache_expiry_seconds = deadbeef->conf_get_int("artwork.cache.period", 48) * 60 * 60;
     if (new_cache_expiry_seconds != cache_expiry_seconds) {
-        cache_lock();
+        deadbeef->mutex_lock(loop_mutex);
         cache_expiry_seconds = new_cache_expiry_seconds;
-        deadbeef->cond_signal(files_cond);
-        cache_unlock();
+        deadbeef->cond_signal(loop_cond);
+        deadbeef->mutex_unlock(loop_mutex);
     }
 }
 
@@ -192,26 +189,34 @@ void start_cache_cleaner(void)
     terminate = 0;
     cache_expiry_seconds = deadbeef->conf_get_int("artwork.cache.period", 48) * 60 * 60;
     files_mutex = deadbeef->mutex_create_nonrecursive();
-    files_cond = deadbeef->cond_create ();
+    loop_mutex = deadbeef->mutex_create_nonrecursive();
+    loop_cond = deadbeef->cond_create();
     tid = deadbeef->thread_start_low_priority(cache_cleaner_thread, NULL);
 }
 
 void stop_cache_cleaner(void)
 {
-    if (tid && files_mutex && files_cond) {
-        cache_lock();
+    if (tid && loop_mutex && loop_cond) {
+        deadbeef->mutex_lock(loop_mutex);
         terminate = 1;
-        deadbeef->cond_signal(files_cond);
-        cache_unlock();
+        deadbeef->cond_signal(loop_cond);
+        deadbeef->mutex_unlock(loop_mutex);
         deadbeef->thread_join(tid);
         tid = 0;
     }
+
+    if (loop_mutex) {
+        deadbeef->mutex_free(loop_mutex);
+        loop_mutex = 0;
+    }
+
+    if (loop_cond) {
+        deadbeef->cond_free(loop_cond);
+        loop_cond = 0;
+    }
+
     if (files_mutex) {
         deadbeef->mutex_free(files_mutex);
         files_mutex = 0;
-    }
-    if (files_cond) {
-        deadbeef->cond_free(files_cond);
-        files_cond = 0;
     }
 }
