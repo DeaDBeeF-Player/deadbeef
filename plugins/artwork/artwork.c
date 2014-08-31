@@ -59,7 +59,6 @@
 #include "lastfm.h"
 #include "albumartorg.h"
 #include "wos.h"
-#include "escape.h"
 #include "cache.h"
 #include "artwork.h"
 
@@ -93,7 +92,7 @@ static int terminate;
 static int clear_queue;
 static intptr_t tid;
 static uintptr_t queue_mutex;
-static uintptr_t cond;
+static uintptr_t queue_cond;
 #ifdef USE_IMLIB2
     static uintptr_t imlib_mutex;
 #endif
@@ -999,8 +998,6 @@ params_match(const char *s1, const char *s2)
 static void
 query_add(const char *fname, const char *artist, const char *album, const int img_size, const artwork_callback callback, void *user_data)
 {
-    deadbeef->mutex_lock(queue_mutex);
-
     for (cover_query_t *q = queue; q; q = q->next) {
         if (params_match(artist, q->artist) && params_match(album, q->album) && q->size == img_size) {
             trace("artwork queue: already in queue - add to callbacks\n");
@@ -1015,15 +1012,10 @@ query_add(const char *fname, const char *artist, const char *album, const int im
                         last_callback = last_callback->next;
                     }
                     last_callback->next = extra_callback;
-                    deadbeef->mutex_unlock(queue_mutex);
                 }
                 else {
-                    deadbeef->mutex_unlock(queue_mutex);
                     callback(NULL, NULL, NULL, user_data);
                 }
-            }
-            else {
-                deadbeef->mutex_unlock(queue_mutex);
             }
             return;
         }
@@ -1048,7 +1040,6 @@ query_add(const char *fname, const char *artist, const char *album, const int im
     }
 
     if (!q) {
-        deadbeef->mutex_unlock(queue_mutex);
         if (callback) {
             callback(NULL, NULL, NULL, user_data);
         }
@@ -1062,9 +1053,7 @@ query_add(const char *fname, const char *artist, const char *album, const int im
         queue = q;
     }
     queue_tail = q;
-
-    deadbeef->cond_signal(cond);
-    deadbeef->mutex_unlock(queue_mutex);
+    deadbeef->cond_signal(queue_cond);
 }
 
 static char *filter_custom_mask = NULL;
@@ -1094,7 +1083,7 @@ static char *test_mask(char *mask, const char *filename_dir)
                 if (artwork_path) {
                     sprintf(artwork_path, "%s/%s", filename_dir, files[i]->d_name);
                     struct stat stat_struct;
-                    if (stat(artwork_path, &stat_struct) || !S_ISREG(stat_struct.st_mode)) {
+                    if (stat(artwork_path, &stat_struct) || !S_ISREG(stat_struct.st_mode) || stat_struct.st_size == 0) {
                         free(artwork_path);
                         artwork_path = NULL;
                     }
@@ -1389,7 +1378,7 @@ process_query(const cover_query_t *query)
                     if (image_data) {
                         const size_t sz = f->size - (image_data - f->data);
                         trace("will write id3v2 APIC (%d bytes) into %s\n", sz, cache_path);
-                        if (!write_file(cache_path, image_data, sz)) {
+                        if (sz > 0 && !write_file(cache_path, image_data, sz)) {
                             return 1;
                         }
                     }
@@ -1410,7 +1399,7 @@ process_query(const cover_query_t *query)
                     if (image_data) {
                         const size_t sz = f->size - (image_data - f->data);
                         trace("will write apev2 cover art (%d bytes) into %s\n", sz, cache_path);
-                        if (!write_file(cache_path, image_data, sz)) {
+                        if (sz > 0 && !write_file(cache_path, image_data, sz)) {
                             return 1;
                         }
                         break;
@@ -1427,7 +1416,7 @@ process_query(const cover_query_t *query)
             FLAC__Metadata_Chain *chain = FLAC__metadata_chain_new();
             if (chain) {
                 FLAC__StreamMetadata_Picture *pic = flac_extract_art(chain, query->fname);
-                if (pic) {
+                if (pic && pic->data_length > 0) {
                     trace("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
                     trace("will write flac cover art into %s\n", cache_path);
                     if (!write_file(cache_path, pic->data, pic->data_length)) {
@@ -1549,23 +1538,22 @@ static void
 query_complete(const char *fname, const char *artist, const char *album)
 {
     cover_query_t *query = queue;
-    cover_callback_t *callback = &query->callback;
-    do {
-        if (callback->cb) {
-            trace("artwork: making callback with data %s %s %s %p\n", fname, artist, album, callback->ud);
-            deadbeef->mutex_unlock(queue_mutex);
-            callback->cb(fname, artist, album, callback->ud);
-            deadbeef->mutex_lock(queue_mutex);
-        }
-        callback = callback->next;
-    } while (callback);
-
     queue = query->next;
     if (!queue) {
         queue_tail = NULL;
     }
 
+    deadbeef->mutex_unlock(queue_mutex);
+    cover_callback_t *callback = &query->callback;
+    do {
+        if (callback->cb) {
+            trace("artwork: making callback with data %s %s %s %p\n", fname, artist, album, callback->ud);
+            callback->cb(fname, artist, album, callback->ud);
+        }
+        callback = callback->next;
+    } while (callback);
     query_clear(query);
+    deadbeef->mutex_lock(queue_mutex);
 }
 
 static void
@@ -1579,12 +1567,11 @@ fetcher_thread (void *none)
     deadbeef->mutex_lock(queue_mutex);
     while (!terminate) {
         trace("artwork fetcher: waiting for signal ...\n");
-        pthread_cond_wait((pthread_cond_t *)cond, (pthread_mutex_t *)queue_mutex);
-        trace("artwork fetcher: cond signalled\n");
+        pthread_cond_wait((pthread_cond_t *)queue_cond, (pthread_mutex_t *)queue_mutex);
 
         /* Loop until queue is empty or external command received */
         while (!terminate && !clear_queue && queue) {
-            /* Drop the mutex while we do the artwork lookups */
+            trace("artwork fetcher: cond signalled, process queue\n");
             deadbeef->mutex_unlock(queue_mutex);
             const int cached_art = queue->size == -1 ? process_query(queue) : process_scaled_query(queue);
             deadbeef->mutex_lock(queue_mutex);
@@ -1605,10 +1592,12 @@ fetcher_thread (void *none)
                 query_complete(NULL, NULL, NULL);
             }
             clear_queue = 0;
+            deadbeef->cond_signal(queue_cond);
             trace("artwork fetcher: queue clear done\n");
         }
     }
     deadbeef->mutex_unlock(queue_mutex);
+    trace("artwork fetcher: terminate thread\n");
 }
 
 static const char *
@@ -1648,6 +1637,7 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
     }
 
     /* See if we need to make an unscaled image before we make a scaled one */
+    deadbeef->mutex_lock(queue_mutex);
     if (size != -1) {
         char unscaled_path[PATH_MAX];
         make_cache_path2(unscaled_path, sizeof(unscaled_path), fname, album, artist, -1);
@@ -1658,6 +1648,7 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
 
     /* Request to fetch the image */
     query_add(fname, artist, album, size, callback, user_data);
+    deadbeef->mutex_unlock(queue_mutex);
     return NULL;
 }
 #if 0
@@ -1691,29 +1682,20 @@ artwork_reset (int fast) {
     deadbeef->mutex_lock (queue_mutex);
     if (fast) {
         /* Assume the fetcher already has the first query, nuke the rest */
+        trace ("artwork: fast reset\n");
         while (queue && queue->next) {
             cover_query_t *query = queue->next;
             queue->next = queue->next->next;
             query_clear(query);
-//            for (size_t i = 0; i < queue->next->numcb; i++) {
-//                if (queue->next->callbacks[i].cb == sync_callback) {
-//                    sync_callback (NULL, NULL, NULL, queue->next->callbacks[i].ud);
-//                }
-//            }
         }
         queue_tail = queue;
-        deadbeef->mutex_unlock (queue_mutex);
     }
     else {
-        trace ("artwork: reset\n");
+        trace ("artwork: full reset\n");
         clear_queue = 1;
-        deadbeef->cond_signal (cond);
+        deadbeef->cond_signal(queue_cond);
         trace ("artwork: waiting for clear to complete ...\n");
-        while (clear_queue) {
-            deadbeef->mutex_unlock (queue_mutex);
-            usleep (100000);
-            deadbeef->mutex_lock (queue_mutex);
-        }
+        pthread_cond_wait((pthread_cond_t *)queue_cond, (pthread_mutex_t *)queue_mutex);
     }
     deadbeef->mutex_unlock (queue_mutex);
 }
@@ -1834,10 +1816,44 @@ artwork_get_actions(DB_playItem_t *it)
 }
 
 static int
+artwork_plugin_stop (void)
+{
+    if (tid) {
+        deadbeef->mutex_lock (queue_mutex);
+        clear_queue = 1;
+        terminate = 1;
+        deadbeef->cond_signal(queue_cond);
+        deadbeef->mutex_unlock(queue_mutex);
+        if (current_file) {
+            deadbeef->fabort (current_file);
+        }
+        deadbeef->thread_join (tid);
+        tid = 0;
+    }
+    if (queue_mutex) {
+        deadbeef->mutex_free(queue_mutex);
+        queue_mutex = 0;
+    }
+    if (queue_cond) {
+        deadbeef->cond_free(queue_cond);
+        queue_cond = 0;
+    }
+
+    stop_cache_cleaner();
+
+#ifdef USE_IMLIB2
+    if (imlib_mutex) {
+        deadbeef->mutex_free (imlib_mutex);
+        imlib_mutex = 0;
+    }
+#endif
+
+    return 0;
+}
+
+static int
 artwork_plugin_start (void)
 {
-    terminate = 0;
-
     deadbeef->conf_get_str ("gtkui.nocover_pixmap", "", default_cover, sizeof(default_cover));
     if (!default_cover[0]) {
         snprintf (default_cover, sizeof (default_cover), "%s/noartwork.png", deadbeef->get_pixmap_dir ());
@@ -1853,50 +1869,26 @@ artwork_plugin_start (void)
     artwork_reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);
     artwork_scaled_reset_time = deadbeef->conf_get_int64 ("artwork.scaled.cache_reset_time", 0);
 
-    queue_mutex = deadbeef->mutex_create_nonrecursive ();
 #ifdef USE_IMLIB2
     imlib_mutex = deadbeef->mutex_create_nonrecursive ();
+    if (!imlib_mutex) {
+        return -1;
+    }
     imlib_set_cache_size(0);
 #endif
-    cond = deadbeef->cond_create ();
-    tid = deadbeef->thread_start_low_priority (fetcher_thread, NULL);
+
+    terminate = 0;
+    queue_mutex = deadbeef->mutex_create_nonrecursive();
+    queue_cond = deadbeef->cond_create();
+    if (queue_mutex && queue_cond) {
+        tid = deadbeef->thread_start_low_priority(fetcher_thread, NULL);
+    }
+    if (!tid) {
+        artwork_plugin_stop();
+        return -1;
+    }
+
     start_cache_cleaner();
-
-    return 0;
-}
-
-static int
-artwork_plugin_stop (void)
-{
-    if (tid) {
-        deadbeef->mutex_lock (queue_mutex);
-        clear_queue = 1;
-        terminate = 1;
-        deadbeef->cond_signal (cond);
-        deadbeef->mutex_unlock(queue_mutex);
-        if (current_file) {
-            deadbeef->fabort (current_file);
-        }
-        deadbeef->thread_join (tid);
-        tid = 0;
-    }
-    if (queue_mutex) {
-        deadbeef->mutex_free (queue_mutex);
-        queue_mutex = 0;
-    }
-    if (cond) {
-        deadbeef->cond_free (cond);
-        cond = 0;
-    }
-
-    stop_cache_cleaner();
-
-#ifdef USE_IMLIB2
-    if (imlib_mutex) {
-        deadbeef->mutex_free (imlib_mutex);
-        imlib_mutex = 0;
-    }
-#endif
 
     return 0;
 }
