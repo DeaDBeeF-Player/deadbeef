@@ -59,7 +59,6 @@
 #include "lastfm.h"
 #include "albumartorg.h"
 #include "wos.h"
-#include "escape.h"
 #include "cache.h"
 #include "artwork.h"
 
@@ -999,8 +998,6 @@ params_match(const char *s1, const char *s2)
 static void
 query_add(const char *fname, const char *artist, const char *album, const int img_size, const artwork_callback callback, void *user_data)
 {
-    deadbeef->mutex_lock(queue_mutex);
-
     for (cover_query_t *q = queue; q; q = q->next) {
         if (params_match(artist, q->artist) && params_match(album, q->album) && q->size == img_size) {
             trace("artwork queue: already in queue - add to callbacks\n");
@@ -1015,15 +1012,10 @@ query_add(const char *fname, const char *artist, const char *album, const int im
                         last_callback = last_callback->next;
                     }
                     last_callback->next = extra_callback;
-                    deadbeef->mutex_unlock(queue_mutex);
                 }
                 else {
-                    deadbeef->mutex_unlock(queue_mutex);
                     callback(NULL, NULL, NULL, user_data);
                 }
-            }
-            else {
-                deadbeef->mutex_unlock(queue_mutex);
             }
             return;
         }
@@ -1048,7 +1040,6 @@ query_add(const char *fname, const char *artist, const char *album, const int im
     }
 
     if (!q) {
-        deadbeef->mutex_unlock(queue_mutex);
         if (callback) {
             callback(NULL, NULL, NULL, user_data);
         }
@@ -1062,9 +1053,7 @@ query_add(const char *fname, const char *artist, const char *album, const int im
         queue = q;
     }
     queue_tail = q;
-
     deadbeef->cond_signal(cond);
-    deadbeef->mutex_unlock(queue_mutex);
 }
 
 static char *filter_custom_mask = NULL;
@@ -1094,7 +1083,7 @@ static char *test_mask(char *mask, const char *filename_dir)
                 if (artwork_path) {
                     sprintf(artwork_path, "%s/%s", filename_dir, files[i]->d_name);
                     struct stat stat_struct;
-                    if (stat(artwork_path, &stat_struct) || !S_ISREG(stat_struct.st_mode)) {
+                    if (stat(artwork_path, &stat_struct) || !S_ISREG(stat_struct.st_mode) || stat_struct.st_size == 0) {
                         free(artwork_path);
                         artwork_path = NULL;
                     }
@@ -1389,7 +1378,7 @@ process_query(const cover_query_t *query)
                     if (image_data) {
                         const size_t sz = f->size - (image_data - f->data);
                         trace("will write id3v2 APIC (%d bytes) into %s\n", sz, cache_path);
-                        if (!write_file(cache_path, image_data, sz)) {
+                        if (sz > 0 && !write_file(cache_path, image_data, sz)) {
                             return 1;
                         }
                     }
@@ -1410,7 +1399,7 @@ process_query(const cover_query_t *query)
                     if (image_data) {
                         const size_t sz = f->size - (image_data - f->data);
                         trace("will write apev2 cover art (%d bytes) into %s\n", sz, cache_path);
-                        if (!write_file(cache_path, image_data, sz)) {
+                        if (sz > 0 && !write_file(cache_path, image_data, sz)) {
                             return 1;
                         }
                         break;
@@ -1427,7 +1416,7 @@ process_query(const cover_query_t *query)
             FLAC__Metadata_Chain *chain = FLAC__metadata_chain_new();
             if (chain) {
                 FLAC__StreamMetadata_Picture *pic = flac_extract_art(chain, query->fname);
-                if (pic) {
+                if (pic && pic->data_length > 0) {
                     trace("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
                     trace("will write flac cover art into %s\n", cache_path);
                     if (!write_file(cache_path, pic->data, pic->data_length)) {
@@ -1549,23 +1538,22 @@ static void
 query_complete(const char *fname, const char *artist, const char *album)
 {
     cover_query_t *query = queue;
-    cover_callback_t *callback = &query->callback;
-    do {
-        if (callback->cb) {
-            trace("artwork: making callback with data %s %s %s %p\n", fname, artist, album, callback->ud);
-            deadbeef->mutex_unlock(queue_mutex);
-            callback->cb(fname, artist, album, callback->ud);
-            deadbeef->mutex_lock(queue_mutex);
-        }
-        callback = callback->next;
-    } while (callback);
-
     queue = query->next;
     if (!queue) {
         queue_tail = NULL;
     }
 
+    deadbeef->mutex_unlock(queue_mutex);
+    cover_callback_t *callback = &query->callback;
+    do {
+        if (callback->cb) {
+            trace("artwork: making callback with data %s %s %s %p\n", fname, artist, album, callback->ud);
+            callback->cb(fname, artist, album, callback->ud);
+        }
+        callback = callback->next;
+    } while (callback);
     query_clear(query);
+    deadbeef->mutex_lock(queue_mutex);
 }
 
 static void
@@ -1584,7 +1572,6 @@ fetcher_thread (void *none)
 
         /* Loop until queue is empty or external command received */
         while (!terminate && !clear_queue && queue) {
-            /* Drop the mutex while we do the artwork lookups */
             deadbeef->mutex_unlock(queue_mutex);
             const int cached_art = queue->size == -1 ? process_query(queue) : process_scaled_query(queue);
             deadbeef->mutex_lock(queue_mutex);
@@ -1648,6 +1635,7 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
     }
 
     /* See if we need to make an unscaled image before we make a scaled one */
+    deadbeef->mutex_lock(queue_mutex);
     if (size != -1) {
         char unscaled_path[PATH_MAX];
         make_cache_path2(unscaled_path, sizeof(unscaled_path), fname, album, artist, -1);
@@ -1658,6 +1646,7 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
 
     /* Request to fetch the image */
     query_add(fname, artist, album, size, callback, user_data);
+    deadbeef->mutex_unlock(queue_mutex);
     return NULL;
 }
 #if 0
@@ -1702,7 +1691,6 @@ artwork_reset (int fast) {
 //            }
         }
         queue_tail = queue;
-        deadbeef->mutex_unlock (queue_mutex);
     }
     else {
         trace ("artwork: reset\n");
