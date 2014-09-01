@@ -82,4 +82,8 @@
 - (IBAction)selectionCropAction:(id)sender;
 - (IBAction)jumpToCurrentAction:(id)sender;
 
+// window menu
+- (IBAction)showMainWinAction:(id)sender;
+
+
 @end

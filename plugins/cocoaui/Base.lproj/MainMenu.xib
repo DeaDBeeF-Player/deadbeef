@@ -323,6 +323,38 @@ CA
                         </items>
                     </menu>
                 </menuItem>
+                <menuItem title="Window" id="FtX-jB-U5D">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Window" systemMenu="window" id="EZ1-LO-yby">
+                        <items>
+                            <menuItem title="Minimize" keyEquivalent="m" id="rwT-VY-bRy">
+                                <connections>
+                                    <action selector="performMiniaturize:" target="-1" id="v50-8R-5WH"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Zoom" id="zyH-GF-Uas">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="performZoom:" target="-1" id="8gW-Fn-6X5"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="hVT-1F-tsg"/>
+                            <menuItem title="Bring All to Front" id="WNx-gf-wmf">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="arrangeInFront:" target="-1" id="l1P-cZ-QBZ"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="UUV-zw-00t"/>
+                            <menuItem title="Main Window" state="on" id="my5-in-HKC">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showMainWinAction:" target="494" id="oym-O9-Z75"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
                 <menuItem title="Help" id="490">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Help" systemMenu="help" id="491">
@@ -337,7 +369,7 @@ CA
                 </menuItem>
             </items>
         </menu>
-        <window title="deadbeef" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="371">
+        <window title="DeaDBeeF" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" appearanceType="aqua" animationBehavior="default" id="371">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="507" height="203"/>
@@ -489,21 +521,10 @@ CA
                             </connections>
                         </slider>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="835C1534-A2E3-4D5F-990B-E628FC683343" label="Custom View" paletteLabel="Custom View" id="SfM-4z-XQP">
-                        <nil key="toolTip"/>
-                        <size key="minSize" width="92" height="21"/>
-                        <size key="maxSize" width="120" height="21"/>
-                        <slider key="view" verticalHuggingPriority="750" id="NJV-PL-kbm">
-                            <rect key="frame" x="0.0" y="14" width="92" height="21"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                            <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="7FG-IR-3tw"/>
-                        </slider>
-                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="3xP-pQ-d4L"/>
                     <toolbarItem reference="Jzq-HR-oPq"/>
-                    <toolbarItem reference="SfM-4z-XQP"/>
                 </defaultToolbarItems>
             </toolbar>
         </window>
@@ -529,7 +550,7 @@ CA
             </connections>
         </customObject>
         <customObject id="420" customClass="NSFontManager"/>
-        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="iIM-ne-GV9">
+        <window title="design mode test" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="iIM-ne-GV9">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="163" y="199" width="480" height="270"/>
