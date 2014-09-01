@@ -47,7 +47,6 @@
 {
     NSRect rc = controlView.bounds;
     [controlView setNeedsDisplayInRect:rc];
-
     
     int h = [backFiller size].height;
     int y = rc.origin.y + (int)rc.size.height/2 - (int)h/2;

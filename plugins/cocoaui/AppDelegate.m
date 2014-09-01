@@ -74,6 +74,9 @@ NSInteger firstSelected = -1;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    [self.window setReleasedWhenClosed:NO];
+    [self.window setExcludedFromWindowsMenu:YES];
+
     playImg = [NSImage imageNamed:@"btnplayTemplate.pdf"];
     pauseImg = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
     bufferingImg = [NSImage imageNamed:@"bufferingTemplate.pdf"];
@@ -87,9 +90,19 @@ NSInteger firstSelected = -1;
     
     NSTimer *updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
     [[NSRunLoop currentRunLoop] addTimer:updateTimer forMode:NSDefaultRunLoopMode];
-
     
     g_appDelegate = self;
+}
+
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag{
+    [self.window setIsVisible:YES];
+    return YES;
+}
+
+- (IBAction)showMainWinAction:(id)sender {
+    NSInteger st = [sender state];
+    [self.window setIsVisible:st!=NSOnState];
+    [sender setState:st==NSOnState?NSOffState:NSOnState];
 }
 
 int prevSeekbar = -1;
@@ -113,8 +126,9 @@ int prevSeekbar = -1;
         deadbeef->pl_item_unref (trk);
     }
     
-    if ((int)perc != prevSeekbar) {
-        prevSeekbar = perc;
+    int cmp =(int)(perc*4000);
+    if (cmp != prevSeekbar) {
+        prevSeekbar = cmp;
         [self.seekBar setFloatValue:perc];
     }
     
