@@ -242,12 +242,16 @@ get_pixbuf (const char *fname, int width, void (*callback)(void *user_data), voi
     for (int i = 0; i < CACHE_SIZE; i++) {
         if (cache[i].pixbuf && !strcmp (fname, cache[i].fname) && cache[i].width == width) {
             struct stat stat_buf;
-            if (!stat (fname, &stat_buf) && stat_buf.st_mtime == cache[i].file_time) {
+            if (!stat(fname, &stat_buf) && stat_buf.st_mtime == cache[i].file_time) {
                 gettimeofday (&cache[i].tm, NULL);
                 GdkPixbuf *pb = cache[i].pixbuf;
                 g_object_ref (pb);
                 deadbeef->mutex_unlock (mutex);
                 return pb;
+            }
+            else {
+                g_object_unref(cache[i].pixbuf);
+                cache[i].pixbuf = NULL;
             }
         }
     }
@@ -411,24 +415,4 @@ cover_get_default_pixbuf (void) {
 int
 gtkui_is_default_pixbuf (GdkPixbuf *pb) {
     return pb == pixbuf_default;
-}
-
-int
-gtkui_cover_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
-    switch (id) {
-    case DB_EV_PLAYLIST_REFRESH:
-        {
-            int64_t reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);
-            deadbeef->mutex_lock (mutex);
-            for (int i = 0; i < CACHE_SIZE; i++) {
-                if (cache[i].pixbuf && reset_time > cache[i].file_time) {
-                    g_object_unref (cache[i].pixbuf);
-                    cache[i].pixbuf = NULL;
-                }
-            }
-            deadbeef->mutex_unlock (mutex);
-        }
-        break;
-    }
-    return 0;
 }
