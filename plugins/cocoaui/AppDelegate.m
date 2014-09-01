@@ -113,7 +113,7 @@ int prevSeekbar = -1;
         deadbeef->pl_item_unref (trk);
     }
     
-    if (perc != prevSeekbar) {
+    if ((int)perc != prevSeekbar) {
         prevSeekbar = perc;
         [self.seekBar setFloatValue:perc];
     }
@@ -124,9 +124,6 @@ int prevSeekbar = -1;
     }
     if ([self.seekBar isEnabled] != st) {
         [self.seekBar setEnabled:st];
-        if (!st) {
-            [self.seekBar setImage:nil];
-        }
     }
 }
 

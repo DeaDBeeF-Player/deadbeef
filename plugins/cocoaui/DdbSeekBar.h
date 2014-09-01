@@ -10,11 +10,11 @@
 
 @interface DdbSeekBar : NSSliderCell
 
-@property NSImage *knobImg;
-
-@property NSGradient* gradBtmOuter;
-@property NSGradient* gradBtmInner;
-@property NSGradient* gradTopOuter;
-@property NSGradient* gradTopInner;
+@property NSImage *backCapLeft;
+@property NSImage *backCapRight;
+@property NSImage *backFiller;
+@property NSImage *frontCapLeft;
+@property NSImage *frontCapRight;
+@property NSImage *frontFiller;
 
 @end
