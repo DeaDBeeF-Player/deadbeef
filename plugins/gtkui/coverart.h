@@ -51,8 +51,5 @@ cover_get_default_pixbuf (void);
 int
 gtkui_is_default_pixbuf (GdkPixbuf *pb);
 
-int
-gtkui_cover_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
-
 #endif
 

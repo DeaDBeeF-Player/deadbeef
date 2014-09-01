@@ -791,7 +791,7 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     if (rootwidget) {
         send_messages_to_widgets (rootwidget, id, ctx, p1, p2);
     }
-    gtkui_cover_message (id, ctx, p1, p2);
+
     switch (id) {
     case DB_EV_ACTIVATED:
         g_idle_add (activate_cb, NULL);
