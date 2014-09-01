@@ -72,8 +72,6 @@ static uintptr_t tid;
 load_query_t *queue;
 load_query_t *tail;
 
-static int64_t artwork_reset_time;
-
 static void
 queue_add (const char *fname, int width, void (*callback) (void *user_data), void *user_data) {
     deadbeef->mutex_lock (mutex);
@@ -195,7 +193,7 @@ loading_thread (void *none) {
                 deadbeef->mutex_lock (mutex);
                 cache[cache_min].pixbuf = pixbuf;
                 cache[cache_min].fname = strdup (queue->fname);
-                cache[cache_min].file_time  = stat_buf.st_mtime;
+                cache[cache_min].file_time = stat_buf.st_mtime;
                 gettimeofday (&cache[cache_min].tm, NULL);
                 cache[cache_min].width = queue->width;
                 deadbeef->mutex_unlock (mutex);
@@ -242,8 +240,9 @@ get_pixbuf (const char *fname, int width, void (*callback)(void *user_data), voi
     // find in cache
     deadbeef->mutex_lock (mutex);
     for (int i = 0; i < CACHE_SIZE; i++) {
-        if (cache[i].pixbuf) {
-            if (!strcmp (fname, cache[i].fname) && cache[i].width == width) {
+        if (cache[i].pixbuf && !strcmp (fname, cache[i].fname) && cache[i].width == width) {
+            struct stat stat_buf;
+            if (!stat (fname, &stat_buf) && stat_buf.st_mtime == cache[i].file_time) {
                 gettimeofday (&cache[i].tm, NULL);
                 GdkPixbuf *pb = cache[i].pixbuf;
                 g_object_ref (pb);
@@ -419,18 +418,15 @@ gtkui_cover_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
     case DB_EV_PLAYLIST_REFRESH:
         {
-            int64_t reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);;
-            if (reset_time != artwork_reset_time) {
-                artwork_reset_time = reset_time;
-                deadbeef->mutex_lock (mutex);
-                for (int i = 0; i < CACHE_SIZE; i++) {
-                    if (cache[i].pixbuf) {
-                        g_object_unref (cache[i].pixbuf);
-                    }
+            int64_t reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);
+            deadbeef->mutex_lock (mutex);
+            for (int i = 0; i < CACHE_SIZE; i++) {
+                if (cache[i].pixbuf && reset_time > cache[i].file_time) {
+                    g_object_unref (cache[i].pixbuf);
+                    cache[i].pixbuf = NULL;
                 }
-                memset (cache, 0, sizeof (cache));
-                deadbeef->mutex_unlock (mutex);
             }
+            deadbeef->mutex_unlock (mutex);
         }
         break;
     }
