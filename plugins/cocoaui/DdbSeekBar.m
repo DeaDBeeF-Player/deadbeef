@@ -10,102 +10,79 @@
 
 @implementation DdbSeekBar
 
-@synthesize knobImg;
-@synthesize gradBtmOuter;
-@synthesize gradBtmInner;
-@synthesize gradTopOuter;
-@synthesize gradTopInner;
+@synthesize backCapLeft;
+@synthesize backCapRight;
+@synthesize backFiller;
+@synthesize frontCapLeft;
+@synthesize frontCapRight;
+@synthesize frontFiller;
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
     self = [super initWithCoder:decoder];
     if (self) {
-        knobImg = [NSImage imageNamed:@"knobTemplate.pdf"];
-        
-        NSColor *color = [NSColor selectedControlTextColor];
-        
-        gradBtmOuter = [[NSGradient alloc]
-                                 initWithColorsAndLocations:[color highlightWithLevel:0.4], (CGFloat)0.0,
-                                 [color highlightWithLevel:0.6], (CGFloat)0.5,
-                                 [color highlightWithLevel:0.7], (CGFloat)1.0,
-                                 nil];
-        
-        gradBtmInner = [[NSGradient alloc]
-                     initWithColorsAndLocations:[color highlightWithLevel:0.5], (CGFloat)0.0,
-                     [color highlightWithLevel:0.75], (CGFloat)0.5,
-                     [color highlightWithLevel:0.8], (CGFloat)1.0,
-                     nil];
-        
-        gradTopOuter = [[NSGradient alloc]
-                     initWithColorsAndLocations:[color highlightWithLevel:0.1], (CGFloat)0.0,
-                     [color highlightWithLevel:0.2], (CGFloat)0.5,
-                     [color highlightWithLevel:0.3], (CGFloat)1.0,
-                     nil];
+        backCapLeft = [NSImage imageNamed:@"sb_back_cap_left.tiff"];
+        backCapRight = [NSImage imageNamed:@"sb_back_cap_right.tiff"];
+        backFiller = [NSImage imageNamed:@"sb_back_filler.tiff"];
+        frontCapLeft = [NSImage imageNamed:@"sb_front_cap_left.tiff"];
+        frontCapRight = [NSImage imageNamed:@"sb_front_cap_right.tiff"];
+        frontFiller = [NSImage imageNamed:@"sb_front_filler.tiff"];
 
-        gradTopInner = [[NSGradient alloc]
-                     initWithColorsAndLocations:[color highlightWithLevel:0.2], (CGFloat)0.0,
-                     [color highlightWithLevel:0.45], (CGFloat)0.6,
-                     [color highlightWithLevel:0.5], (CGFloat)1.0,
-                     nil];
-        
-
+        [backCapLeft setFlipped:YES];
+        [backCapRight setFlipped:YES];
+        [backFiller setFlipped:YES];
+        [frontCapLeft setFlipped:YES];
+        [frontCapRight setFlipped:YES];
+        [frontFiller setFlipped:YES];
     }
     return self;
 }
 
-- (void)drawBarInside:(NSRect)aRect flipped:(BOOL)flipped
+- (NSRect)knobRectFlipped:(BOOL)flipped
 {
-    NSRect innerRect = aRect;
-    innerRect.size.width -= 2;
-    innerRect.origin.x += 1;
-
-    aRect.size.height += 2;
-    aRect.origin.y -= 1;
-    
-    // outer 1
-    NSBezierPath*    clipShape = [NSBezierPath bezierPath];
-    [clipShape appendBezierPathWithRoundedRect:aRect xRadius:3 yRadius:3];
-    
-    
-    [gradBtmOuter drawInBezierPath:clipShape angle:90];
-    
-    // inner 1
-
-    clipShape = [NSBezierPath bezierPath];
-    [clipShape appendBezierPathWithRoundedRect:innerRect xRadius:3 yRadius:3];
-    
-    [gradBtmInner drawInBezierPath:clipShape angle:90];
-
-    if ([self isEnabled]) {
-        innerRect.size.width *= [self floatValue] / ([self maxValue] - [self minValue]);
-        if (innerRect.size.width > 0) {
-            aRect.size.width = innerRect.size.width+2;
-            // outer 2
-            clipShape = [NSBezierPath bezierPath];
-            [clipShape appendBezierPathWithRoundedRect:aRect xRadius:3 yRadius:3];
-            
-            
-            [gradTopOuter drawInBezierPath:clipShape angle:90];
-
-            
-            // inner 2
-
-            clipShape = [NSBezierPath bezierPath];
-            [clipShape appendBezierPathWithRoundedRect:innerRect xRadius:3 yRadius:3];
-            
-            [gradTopInner drawInBezierPath:clipShape angle:90];
-        }
-    }
+    return NSMakeRect(0,0,1,1);
 }
 
--(void)drawKnob:(NSRect)knobRect
+- (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
-    /*if ([self isEnabled]) {
-        knobRect.origin.x += (knobRect.size.width-8)/2;
-        knobRect.origin.y += (knobRect.size.height-8)/2;
-        knobRect.size.width = knobRect.size.height = 8;
-        [knobImg drawInRect:knobRect];
-    }*/
+    NSRect rc = controlView.bounds;
+    [controlView setNeedsDisplayInRect:rc];
+
+    
+    int h = [backFiller size].height;
+    int y = rc.origin.y + (int)rc.size.height/2 - (int)h/2;
+    rc.origin.y = y;
+    rc.size.height = h;
+    
+    NSSize backCapLeftSize = [backCapLeft size];
+    NSSize backCapRightSize = [backCapRight size];
+    NSSize frontCapLeftSize = [frontCapLeft size];
+    NSSize frontCapRightSize = [frontCapRight size];
+    
+    if (![self isEnabled]) {
+        [backCapLeft drawAtPoint:rc.origin fromRect:NSMakeRect(0, 0, backCapLeftSize.width, backCapLeftSize.height) operation:NSCompositeSourceOver fraction:1];
+    }
+    else {
+        [frontCapLeft drawAtPoint:rc.origin fromRect:NSMakeRect(0, 0, frontCapLeftSize.width, frontCapLeftSize.height) operation:NSCompositeSourceOver fraction:1];
+    }
+    [backCapRight drawAtPoint:NSMakePoint(rc.origin.x+rc.size.width-backCapRightSize.width, rc.origin.y) fromRect:NSMakeRect(0, 0, backCapLeftSize.width, backCapLeftSize.height) operation:NSCompositeSourceOver fraction:1];
+
+    rc.origin.x += backCapLeftSize.width;
+    rc.size.width -= backCapLeftSize.width + backCapRightSize.width;
+    
+    NSGraphicsContext *gc = [NSGraphicsContext currentContext];
+    [gc saveGraphicsState];
+    [gc setPatternPhase:NSMakePoint(0,y)];
+    [[NSColor colorWithPatternImage:backFiller] set];
+    [NSBezierPath fillRect:rc];
+    [[NSColor colorWithPatternImage:frontFiller] set];
+    rc.size.width = (int)(rc.size.width * [self floatValue] / ([self maxValue] - [self minValue]));
+    [NSBezierPath fillRect:rc];
+    [gc restoreGraphicsState];
+    
+    if ([self isEnabled]) {
+        [frontCapRight drawAtPoint:NSMakePoint(rc.origin.x+rc.size.width, rc.origin.y) fromRect:NSMakeRect(0, 0, frontCapRightSize.width, frontCapRightSize.height) operation:NSCompositeSourceOver fraction:1];
+    }
 }
 
 @end
