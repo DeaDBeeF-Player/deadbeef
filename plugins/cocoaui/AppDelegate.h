@@ -30,6 +30,11 @@
 @property (assign) IBOutlet NSWindow *window;
 @property (unsafe_unretained) IBOutlet NSTableView *playlist;
 
+@property (unsafe_unretained) IBOutlet NSWindow *addFilesWindow;
+@property (unsafe_unretained) IBOutlet NSTextField *addFilesLabel;
+- (IBAction)addFilesCancel:(id)sender;
+
+
 // file menu
 - (IBAction)openFilesAction:(id)sender;
 - (IBAction)addFilesAction:(id)sender;

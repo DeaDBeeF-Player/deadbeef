@@ -23,6 +23,7 @@
 
 #import "AppDelegate.h"
 #include "../../deadbeef.h"
+#import "dispatch/dispatch.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -72,6 +73,36 @@ NSInteger firstSelected = -1;
     [self.stopAfterCurrentAlbum setState:deadbeef->conf_get_int ("playlist.stop_after_current_album", 0)?NSOnState:NSOffState];
 }
 
+static int fileadd_cancelled = 0;
+
+static void fileadd_begin (ddb_fileadd_data_t *data, void *user_data) {
+    fileadd_cancelled = 0;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [NSApp beginSheet:g_appDelegate.addFilesWindow modalForWindow:g_appDelegate.window modalDelegate:nil didEndSelector:nil contextInfo:nil];
+    });
+}
+
+static void fileadd_end (ddb_fileadd_data_t *data, void *user_data) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [g_appDelegate.addFilesWindow orderOut:g_appDelegate];
+        [NSApp endSheet:g_appDelegate.addFilesWindow];
+        [g_appDelegate.window makeKeyAndOrderFront:g_appDelegate];
+    });
+}
+
+static int file_added (ddb_fileadd_data_t *data, void *user_data) {
+    const char *uri = deadbeef->pl_find_meta (data->track, ":URI");
+    NSString *s = [NSString stringWithUTF8String:uri];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [g_appDelegate.addFilesLabel setStringValue:s];
+    });
+    return fileadd_cancelled ? -1 : 0;
+}
+
+- (IBAction)addFilesCancel:(id)sender {
+    fileadd_cancelled = 1;
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     [self.window setReleasedWhenClosed:NO];
@@ -90,6 +121,11 @@ NSInteger firstSelected = -1;
     
     NSTimer *updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
     [[NSRunLoop currentRunLoop] addTimer:updateTimer forMode:NSDefaultRunLoopMode];
+    
+    [self.addFilesWindow setParentWindow:self.window];
+    
+    deadbeef->listen_file_add_beginend (fileadd_begin, fileadd_end, NULL);
+    deadbeef->listen_file_added (file_added, NULL);
     
     g_appDelegate = self;
 }
@@ -143,7 +179,7 @@ int prevSeekbar = -1;
 
 - (void)playlistDoubleAction
 {
-    int row = [playlist clickedRow];
+    int row = (int)[playlist clickedRow];
     deadbeef->sendmessage(DB_EV_PLAY_NUM, 0, row, 0);
 }
 
@@ -332,18 +368,21 @@ int prevSeekbar = -1;
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         if (plt) {
             if (!deadbeef->plt_add_files_begin (plt, 0)) {
-                for( int i = 0; i < [files count]; i++ )
-                {
-                    NSString* fileName = [files objectAtIndex:i];
-                    deadbeef->plt_add_dir2 (0, plt, [fileName UTF8String], NULL, NULL);
-                }
-                deadbeef->plt_add_files_end (plt, 0);
-                deadbeef->plt_unref (plt);
+                dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+                dispatch_async(aQueue, ^{
+                    for( int i = 0; i < [files count]; i++ )
+                    {
+                        NSString* fileName = [files objectAtIndex:i];
+                        deadbeef->plt_add_dir2 (0, plt, [fileName UTF8String], NULL, NULL);
+                    }
+                    deadbeef->plt_add_files_end (plt, 0);
+                    deadbeef->plt_unref (plt);
+                    [playlist reloadData];
+                    deadbeef->pl_save_current();
+                });
             }
         }
     }
-    [playlist reloadData];
-    deadbeef->pl_save_current();
 }
 
 - (IBAction)clearAction:(id)sender {

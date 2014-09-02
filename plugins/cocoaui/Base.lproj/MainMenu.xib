@@ -530,6 +530,8 @@ CA
         </window>
         <customObject id="494" customClass="AppDelegate">
             <connections>
+                <outlet property="addFilesLabel" destination="2Lt-Ga-gLl" id="diN-Gj-Pc7"/>
+                <outlet property="addFilesWindow" destination="wus-lw-fPx" id="tlO-gc-zHU"/>
                 <outlet property="cursorFollowsPlayback" destination="Ra2-1K-rwd" id="i3v-jO-k4t"/>
                 <outlet property="invertSelectionAction" destination="tqs-ZB-dsG" id="w3N-0T-3BL"/>
                 <outlet property="loopAll" destination="bp3-Nw-TaR" id="t92-xv-gTj"/>
@@ -566,19 +568,49 @@ CA
                 </subviews>
             </view>
         </window>
-        <menu id="yGw-wQ-OCT">
-            <items>
-                <menuItem title="Item 1" id="c3P-vl-SpY">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                </menuItem>
-                <menuItem title="Item 2" id="YxQ-SG-HcM">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                </menuItem>
-                <menuItem title="Item 3" id="QlJ-58-566">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                </menuItem>
-            </items>
-        </menu>
+        <drawer trailingOffset="15" id="gBy-Xn-inR">
+            <size key="contentSize" width="100" height="100"/>
+            <size key="maxContentSize" width="10000" height="10000"/>
+        </drawer>
+        <drawer trailingOffset="15" id="6Hc-Xb-Mfk">
+            <size key="contentSize" width="100" height="100"/>
+            <size key="maxContentSize" width="10000" height="10000"/>
+        </drawer>
+        <window title="Adding files..." allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="wus-lw-fPx">
+            <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="163" y="199" width="368" height="91"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1028"/>
+            <view key="contentView" id="GfT-XR-m0S">
+                <rect key="frame" x="0.0" y="0.0" width="368" height="91"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="2Lt-Ga-gLl">
+                        <rect key="frame" x="20" y="49" width="328" height="22"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" id="tST-tJ-1r7">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" id="cbP-pI-9xZ">
+                        <rect key="frame" x="272" y="13" width="82" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ib5-Xr-kKC">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="addFilesCancel:" target="494" id="lEb-JU-FZI"/>
+                        </connections>
+                    </button>
+                </subviews>
+            </view>
+        </window>
     </objects>
     <resources>
         <image name="btnnextTemplate" width="75" height="75"/>
