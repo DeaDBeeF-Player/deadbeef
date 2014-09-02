@@ -38,6 +38,7 @@
 #if HAVE_SYS_SYSLIMITS_H
 #include <sys/syslimits.h>
 #endif
+#include <unistd.h>
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -204,14 +205,8 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     gme_mute_voices (info->emu, chip_voices^0xff);
     gme_start_track (info->emu, deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0));
 
-#ifdef GME_VERSION_055
     gme_info_t *inf;
     gme_track_info (info->emu, &inf, deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0));
-#else
-    track_info_t _inf;
-    gme_track_info (info->emu, &inf, deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0));
-    track_info_t *inf = &_inf;
-#endif
 
     _info->plugin = &plugin;
     _info->fmt.bps = 16;
