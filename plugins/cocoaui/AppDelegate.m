@@ -377,8 +377,10 @@ int prevSeekbar = -1;
                     }
                     deadbeef->plt_add_files_end (plt, 0);
                     deadbeef->plt_unref (plt);
-                    [playlist reloadData];
                     deadbeef->pl_save_current();
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [playlist reloadData];
+                    });
                 });
             }
         }
