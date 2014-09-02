@@ -71,7 +71,8 @@
     
     NSGraphicsContext *gc = [NSGraphicsContext currentContext];
     [gc saveGraphicsState];
-    [gc setPatternPhase:NSMakePoint(0,y)];
+    NSPoint convPt = [controlView convertPoint:NSMakePoint(0,y) toView:nil];
+    [gc setPatternPhase:convPt];
     [[NSColor colorWithPatternImage:backFiller] set];
     [NSBezierPath fillRect:rc];
     [[NSColor colorWithPatternImage:frontFiller] set];
