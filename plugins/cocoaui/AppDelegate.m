@@ -339,19 +339,23 @@ int prevSeekbar = -1;
         deadbeef->plt_clear(plt);
         if (plt) {
             if (!deadbeef->plt_add_files_begin (plt, 0)) {
-                for( int i = 0; i < [files count]; i++ )
-                {
-                    NSString* fileName = [files objectAtIndex:i];
-                    deadbeef->plt_add_file2 (0, plt, [fileName UTF8String], NULL, NULL);
-                }
-                deadbeef->plt_add_files_end (plt, 0);
-                deadbeef->plt_unref (plt);
+                dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+                dispatch_async(aQueue, ^{
+                    for( int i = 0; i < [files count]; i++ )
+                    {
+                        NSString* fileName = [files objectAtIndex:i];
+                        deadbeef->plt_add_file2 (0, plt, [fileName UTF8String], NULL, NULL);
+                    }
+                    deadbeef->plt_add_files_end (plt, 0);
+                    deadbeef->plt_unref (plt);
+                    deadbeef->pl_save_current();
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [playlist reloadData];
+                    });
+                });
             }
         }
     }
-    [playlist reloadData];
-    deadbeef->pl_save_current();
-    deadbeef->conf_save();
 }
 
 - (IBAction)addFilesAction:(id)sender {
