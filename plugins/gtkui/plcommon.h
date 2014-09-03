@@ -25,7 +25,7 @@
 extern char group_by_str[MAX_GROUP_BY_STR];
 
 void
-write_column_config (const char *name, int idx, const char *title, int width, int align_right, int id, const char *format);
+write_column_config (const char *name, int idx, const char *title, int width, int align_right, int id, int color_override, GdkColor color, const char *format);
 
 void
 rewrite_column_config (DdbListview *listview, const char *name);
