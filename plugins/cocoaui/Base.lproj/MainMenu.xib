@@ -380,14 +380,14 @@ CA
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="qvm-yi-IaA">
-                        <rect key="frame" x="-1" y="-1" width="509" height="205"/>
+                        <rect key="frame" x="-1" y="15" width="509" height="189"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="Zbw-2Z-q7N">
-                            <rect key="frame" x="1" y="17" width="507" height="187"/>
+                            <rect key="frame" x="1" y="17" width="507" height="171"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" autosaveColumns="NO" typeSelect="NO" headerView="Pxp-xE-pFF" id="0tA-Oo-Ry1">
-                                    <rect key="frame" x="0.0" y="0.0" width="507" height="187"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="507" height="171"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -472,6 +472,15 @@ CA
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
+                    <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="c3o-Wf-ryE">
+                        <rect key="frame" x="3" y="2" width="506" height="11"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                        <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="left" title="Label" usesSingleLineMode="YES" id="G7i-7M-TWC">
+                            <font key="font" metaFont="miniSystem"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
             </view>
             <toolbar key="toolbar" implicitIdentifier="62C339C6-B1F9-4A36-A1AE-8068D70C2A16" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="F5t-uK-C7M">
