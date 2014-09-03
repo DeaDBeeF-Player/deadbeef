@@ -182,6 +182,8 @@
 		2D2A14B719B6482600AD1EB7 /* Z80_Cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2A140B19B6482600AD1EB7 /* Z80_Cpu.h */; };
 		2D2A14BA19B6485200AD1EB7 /* gme.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */; };
 		2D2A14F119B64F2900AD1EB7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
+		2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */; };
+		2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */; };
 		2DA6F89C19A5332D002151EB /* escape.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA6F89B19A5332D002151EB /* escape.c */; };
 		2DB96A8419ABB48300E318A8 /* src.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB96A6A19ABB32E00E318A8 /* src.c */; };
 		2DB96A8519ABB48300E318A8 /* src.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A6B19ABB32E00E318A8 /* src.h */; };
@@ -676,6 +678,8 @@
 		2D2A140A19B6482600AD1EB7 /* Z80_Cpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Z80_Cpu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Z80_Cpu.cpp"; sourceTree = "<group>"; };
 		2D2A140B19B6482600AD1EB7 /* Z80_Cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Z80_Cpu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Z80_Cpu.h"; sourceTree = "<group>"; };
 		2D2A14F019B64F2900AD1EB7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbTabStrip.h; path = widgets/DdbTabStrip.h; sourceTree = "<group>"; };
+		2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbTabStrip.m; path = widgets/DdbTabStrip.m; sourceTree = "<group>"; };
 		2DA6F89B19A5332D002151EB /* escape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = escape.c; sourceTree = "<group>"; };
 		2DA6F89F19A53334002151EB /* escape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = escape.h; sourceTree = "<group>"; };
 		2DB96A6A19ABB32E00E318A8 /* src.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src.c; path = ../plugins/dsp_libsrc/src.c; sourceTree = "<group>"; };
@@ -1401,6 +1405,8 @@
 		2DE1D3DF19B11286009B5BC6 /* widgets */ = {
 			isa = PBXGroup;
 			children = (
+				2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */,
+				2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */,
 				2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */,
 				2DE1D3DC19B11283009B5BC6 /* DdbWidget.m */,
 				2DE1D3E019B114CD009B5BC6 /* DdbWidgetManager.h */,
@@ -1996,6 +2002,7 @@
 				2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */,
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
+				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2395,6 +2402,7 @@
 				4D1B4A921837EC49003E6066 /* md5.c in Sources */,
 				2DD9EF0719A5089F00189344 /* cocoautil.m in Sources */,
 				4D1B4F4D1837EC4A003E6066 /* ringbuf.c in Sources */,
+				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
 				4D1B4AA01837EC49003E6066 /* plmeta.c in Sources */,
 				2DA6F89C19A5332D002151EB /* escape.c in Sources */,
 				4D1B4F601837EC4A003E6066 /* threading_pthread.c in Sources */,
