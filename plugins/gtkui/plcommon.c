@@ -51,11 +51,11 @@ extern GdkPixbuf *buffering16_pixbuf;
 static int clicked_idx = -1;
 
 void
-write_column_config (const char *name, int idx, const char *title, int width, int align_right, int id, const char *format) {
+write_column_config (const char *name, int idx, const char *title, int width, int align_right, int id, int color_override, GdkColor color, const char *format) {
     char key[128];
-    char value[128];
+    char value[256];
     snprintf (key, sizeof (key), "%s.column.%02d", name, idx);
-    snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d", title, format ? format : "", id, width, align_right);
+    snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d %d %d %d %d", title, format ? format : "", id, width, align_right, color_override, color.red, color.green, color.blue);
     deadbeef->conf_set_str (key, value);
 }
 
@@ -72,8 +72,10 @@ rewrite_column_config (DdbListview *listview, const char *name) {
         int align_right;
         col_info_t *info;
         int minheight;
-        ddb_listview_column_get_info (listview, i, &title, &width, &align_right, &minheight, (void **)&info);
-        write_column_config (name, i, title, width, align_right, info->id, info->format);
+        int color_override;
+        GdkColor color;
+        ddb_listview_column_get_info (listview, i, &title, &width, &align_right, &minheight, &color_override, &color, (void **)&info);
+        write_column_config (name, i, title, width, align_right, info->id, color_override, color, info->format);
     }
 }
 
@@ -162,7 +164,9 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
     int calign_right;
     col_info_t *cinf;
     int minheight;
-    int res = ddb_listview_column_get_info (listview, column, &ctitle, &cwidth, &calign_right, &minheight, (void **)&cinf);
+    int color_override;
+    GdkColor fg_clr;
+    int res = ddb_listview_column_get_info (listview, column, &ctitle, &cwidth, &calign_right, &minheight, &color_override, &fg_clr, (void **)&cinf);
     if (res == -1) {
         return;
     }
@@ -324,7 +328,12 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                 color = &gtk_widget_get_style (theme_treeview)->text[GTK_STATE_SELECTED];
             }
             else {
-                color = &gtk_widget_get_style (theme_treeview)->text[GTK_STATE_NORMAL];
+                if (color_override) {
+                    color = &fg_clr;
+                }
+                else {
+                    color = &gtk_widget_get_style (theme_treeview)->text[GTK_STATE_NORMAL];
+                }
             }
         }
         else {
@@ -333,10 +342,20 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                 color = (gtkui_get_listview_selected_text_color (&clr), &clr);
             }
             else if (it && it == playing_track) {
-                color = (gtkui_get_listview_playing_text_color (&clr), &clr);
+                if (color_override) {
+                    color = &fg_clr;
+                }
+                else {
+                    color = (gtkui_get_listview_playing_text_color (&clr), &clr);
+                }
             }
             else {
-                color = (gtkui_get_listview_text_color (&clr), &clr);
+                if (color_override) {
+                    color = &fg_clr;
+                }
+                else {
+                    color = (gtkui_get_listview_text_color (&clr), &clr);
+                }
             }
         }
         float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
@@ -967,6 +986,8 @@ append_column_from_textdef (DdbListview *listview, const uint8_t *def) {
     char fmt[MAX_TOKEN];
     int width;
     int align;
+    int color_override;
+    GdkColor color;
 
     parser_init ();
 
@@ -999,6 +1020,30 @@ append_column_from_textdef (DdbListview *listview, const uint8_t *def) {
         return;
     }
     align = atoi (token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    color_override = atoi (token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    color.red = atoi (token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    color.green = atoi (token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    color.blue = atoi (token);
 
     col_info_t *inf = malloc (sizeof (col_info_t));
     memset (inf, 0, sizeof (col_info_t));
@@ -1038,7 +1083,7 @@ append_column_from_textdef (DdbListview *listview, const uint8_t *def) {
         inf->id = id;
         break;
     }
-    ddb_listview_column_append (listview, title, width, align, id == DB_COLUMN_ALBUM_ART ? width : 0, inf);
+    ddb_listview_column_append (listview, title, width, align, id == DB_COLUMN_ALBUM_ART ? width : 0, color_override, color, inf);
 }
 
 static void
@@ -1093,16 +1138,26 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     editcolumn_title_changed = 0;
+    GdkColor color;
+    gtkui_get_listview_text_color (&color);
+
     GtkWidget *dlg = create_editcolumndlg ();
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_title (GTK_WINDOW (dlg), _("Add column"));
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), 0);
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), 0);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "color_override")), 0);
+
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (dlg, "color")), &color);
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
     if (response == GTK_RESPONSE_OK) {
         const gchar *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
         const gchar *format = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "format")));
         int sel = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
+
+        int clr_override = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "color_override")));
+        GdkColor clr;
+        gtk_color_button_get_color (GTK_COLOR_BUTTON (lookup_widget (dlg, "color")), &clr);
 
         col_info_t *inf = malloc (sizeof (col_info_t));
         memset (inf, 0, sizeof (col_info_t));
@@ -1110,7 +1165,7 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
         init_column (inf, sel, format);
 
         int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
-        ddb_listview_column_insert (last_playlist, active_column, title, 100, align, inf->id == DB_COLUMN_ALBUM_ART ? 100 : 0, inf);
+        ddb_listview_column_insert (last_playlist, active_column, title, 100, align, inf->id == DB_COLUMN_ALBUM_ART ? 100 : 0, clr_override, clr, inf);
         ddb_listview_refresh (last_playlist, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL);
     }
     gtk_widget_destroy (dlg);
@@ -1132,7 +1187,9 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     int align_right;
     col_info_t *inf;
     int minheight;
-    int res = ddb_listview_column_get_info (last_playlist, active_column, &title, &width, &align_right, &minheight, (void **)&inf);
+    int color_override;
+    GdkColor color;
+    int res = ddb_listview_column_get_info (last_playlist, active_column, &title, &width, &align_right, &minheight, &color_override, &color, (void **)&inf);
     if (res == -1) {
         trace ("attempted to edit non-existing column\n");
         return;
@@ -1176,6 +1233,9 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     }
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), align_right);
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), title);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "color_override")), color_override);
+
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (dlg, "color")), &color);
     editcolumn_title_changed = 0;
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
     if (response == GTK_RESPONSE_OK) {
@@ -1184,8 +1244,12 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         int id = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
         int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
 
+        int clr_override = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "color_override")));
+        GdkColor clr;
+        gtk_color_button_get_color (GTK_COLOR_BUTTON (lookup_widget (dlg, "color")), &clr);
+
         init_column (inf, id, format);
-        ddb_listview_column_set_info (last_playlist, active_column, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? width : 0, inf);
+        ddb_listview_column_set_info (last_playlist, active_column, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? width : 0, clr_override, clr, inf);
 
         ddb_listview_refresh (last_playlist, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST);
     }
@@ -1311,6 +1375,7 @@ add_column_helper (DdbListview *listview, const char *title, int width, int id, 
     memset (inf, 0, sizeof (col_info_t));
     inf->id = id;
     inf->format = strdup (format);
-    ddb_listview_column_append (listview, title, width, align_right, id == DB_COLUMN_ALBUM_ART ? width : 0, inf);
+    GdkColor color = { 0, 0, 0, 0 };
+    ddb_listview_column_append (listview, title, width, align_right, id == DB_COLUMN_ALBUM_ART ? width : 0, 0, color, inf);
 }
 

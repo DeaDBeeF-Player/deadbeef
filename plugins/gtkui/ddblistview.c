@@ -62,6 +62,8 @@ struct _DdbListviewColumn {
     float fwidth; // only in autoresize mode
     int minheight;
     struct _DdbListviewColumn *next;
+    int color_override;
+    GdkColor color;
     void *user_data;
     unsigned align_right : 1;
     unsigned sort_order : 2; // 0=none, 1=asc, 2=desc
@@ -615,7 +617,9 @@ ddb_listview_is_album_art_column (DdbListview *listview, int x)
         int align_right;
         col_info_t *info;
         int minheight;
-        int res = ddb_listview_column_get_info (listview, i, &title, &width, &align_right, &minheight, (void **)&info);
+        int color_override;
+        GdkColor color;
+        int res = ddb_listview_column_get_info (listview, i, &title, &width, &align_right, &minheight, &color_override, &color, (void **)&info);
         if (res != -1 && x <= col_x + width && info->id == DB_COLUMN_ALBUM_ART) {
             return 1;
         }
@@ -633,7 +637,9 @@ ddb_listview_is_album_art_column_idx (DdbListview *listview, int cidx)
     int align_right;
     col_info_t *info;
     int minheight;
-    int res = ddb_listview_column_get_info (listview, cidx, &title, &width, &align_right, &minheight, (void **)&info);
+    int color_override;
+    GdkColor color;
+    int res = ddb_listview_column_get_info (listview, cidx, &title, &width, &align_right, &minheight, &color_override, &color, (void **)&info);
     if (res != -1 && info->id == DB_COLUMN_ALBUM_ART) {
         return 1;
     }
@@ -3027,12 +3033,14 @@ ddb_listview_is_scrolling (DdbListview *listview) {
 /////// column management code
 
 DdbListviewColumn * 
-ddb_listview_column_alloc (const char *title, int width, int align_right, int minheight, void *user_data) {
+ddb_listview_column_alloc (const char *title, int width, int align_right, int minheight, int color_override, GdkColor color, void *user_data) {
     DdbListviewColumn * c = malloc (sizeof (DdbListviewColumn));
     memset (c, 0, sizeof (DdbListviewColumn));
     c->title = strdup (title);
     c->width = width;
     c->align_right = align_right;
+    c->color_override = color_override;
+    c->color = color;
     c->minheight = minheight;
     c->user_data = user_data;
     return c;
@@ -3050,8 +3058,8 @@ ddb_listview_column_get_count (DdbListview *listview) {
 }
 
 void
-ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, int minheight, void *user_data) {
-    DdbListviewColumn* c = ddb_listview_column_alloc (title, width, align_right, minheight, user_data);
+ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, int minheight, int color_override, GdkColor color, void *user_data) {
+    DdbListviewColumn* c = ddb_listview_column_alloc (title, width, align_right, minheight, color_override, color, user_data);
     if (listview->col_autoresize) {
         c->fwidth = (float)c->width / listview->header_width;
     }
@@ -3073,8 +3081,8 @@ ddb_listview_column_append (DdbListview *listview, const char *title, int width,
 }
 
 void
-ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, int minheight, void *user_data) {
-    DdbListviewColumn *c = ddb_listview_column_alloc (title, width, align_right, minheight ,user_data);
+ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, int minheight, int color_override, GdkColor color, void *user_data) {
+    DdbListviewColumn *c = ddb_listview_column_alloc (title, width, align_right, minheight, color_override, color, user_data);
     if (listview->col_autoresize) {
         c->fwidth = (float)c->width / listview->header_width;
     }
@@ -3183,7 +3191,7 @@ ddb_listview_column_move (DdbListview *listview, DdbListviewColumn *which, int i
 }
 
 int
-ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, int *minheight, void **user_data) {
+ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, int *minheight, int *color_override, GdkColor *color, void **user_data) {
     DdbListviewColumn *c;
     int idx = 0;
     for (c = listview->columns; c; c = c->next, idx++) {
@@ -3192,6 +3200,8 @@ ddb_listview_column_get_info (DdbListview *listview, int col, const char **title
             *width = c->width;
             *align_right = c->align_right;
             *minheight = c->minheight;
+            *color_override = c->color_override;
+            *color = c->color;
             *user_data = c->user_data;
             return 0;
         }
@@ -3200,7 +3210,7 @@ ddb_listview_column_get_info (DdbListview *listview, int col, const char **title
 }
 
 int
-ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, int minheight, void *user_data) {
+ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, int minheight, int color_override, GdkColor color, void *user_data) {
     DdbListviewColumn *c;
     int idx = 0;
     for (c = listview->columns; c; c = c->next, idx++) {
@@ -3213,6 +3223,8 @@ ddb_listview_column_set_info (DdbListview *listview, int col, const char *title,
             }
             c->align_right = align_right;
             c->minheight = minheight;
+            c->color_override = color_override;
+            c->color = color;
             c->user_data = user_data;
             listview->binding->columns_changed (listview);
             return 0;
