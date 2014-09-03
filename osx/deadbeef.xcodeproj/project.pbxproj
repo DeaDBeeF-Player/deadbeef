@@ -403,13 +403,13 @@
 		4D44E70319B7539C00F780FC /* sampbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F819B7539C00F780FC /* sampbuf.c */; };
 		4D44E70419B7539C00F780FC /* silence.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F919B7539C00F780FC /* silence.c */; };
 		4D44E70519B7539C00F780FC /* stdfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6FA19B7539C00F780FC /* stdfile.c */; };
-		4D44E70819B753BA00F780FC /* dumb.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D44E66E19B7530A00F780FC /* dumb.dylib */; };
 		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
 		4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */; };
 		4DA72BE81838EAAB00A98C62 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BDC1838EAAB00A98C62 /* MainMenu.xib */; };
 		4DA72BEB1838EAAB00A98C62 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BE31838EAAB00A98C62 /* InfoPlist.strings */; };
 		4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BE51838EAAB00A98C62 /* Images.xcassets */; };
 		4DA72BED1838EAAB00A98C62 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BE61838EAAB00A98C62 /* main.m */; };
+		4DAF343F19B75FF500EE96ED /* ddb_dumb.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -858,7 +858,7 @@
 		4D32FA5019A64577000FFDE0 /* mpgmad.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = mpgmad.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D32FA5519A645CA000FFDE0 /* mpgmad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mpgmad.c; path = osx/../plugins/mpgmad/mpgmad.c; sourceTree = "<group>"; };
 		4D32FA6219A646C0000FFDE0 /* flac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = flac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		4D44E66E19B7530A00F780FC /* dumb.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dumb.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ddb_dumb.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D44E67219B7532700F780FC /* cdumb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cdumb.c; path = plugins/dumb/cdumb.c; sourceTree = "<group>"; };
 		4D44E67419B7533B00F780FC /* atexit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = atexit.c; path = "plugins/dumb/dumb-kode54/src/core/atexit.c"; sourceTree = "<group>"; };
 		4D44E67519B7533B00F780FC /* duhlen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = duhlen.c; path = "plugins/dumb/dumb-kode54/src/core/duhlen.c"; sourceTree = "<group>"; };
@@ -1439,7 +1439,7 @@
 				2DB96A8019ABB47C00E318A8 /* dsp_libsrc.dylib */,
 				2DB96A8A19ABB4C600E318A8 /* libsamplerate.a */,
 				2D2A135A19B647CF00AD1EB7 /* gme.dylib */,
-				4D44E66E19B7530A00F780FC /* dumb.dylib */,
+				4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2167,9 +2167,9 @@
 			productReference = 4D32FA6219A646C0000FFDE0 /* flac.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		4D44E66D19B7530A00F780FC /* dumb */ = {
+		4D44E66D19B7530A00F780FC /* ddb_dumb */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4D44E66F19B7530A00F780FC /* Build configuration list for PBXNativeTarget "dumb" */;
+			buildConfigurationList = 4D44E66F19B7530A00F780FC /* Build configuration list for PBXNativeTarget "ddb_dumb" */;
 			buildPhases = (
 				4D44E66A19B7530A00F780FC /* Sources */,
 				4D44E66B19B7530A00F780FC /* Frameworks */,
@@ -2179,9 +2179,9 @@
 			);
 			dependencies = (
 			);
-			name = dumb;
+			name = ddb_dumb;
 			productName = dumb;
-			productReference = 4D44E66E19B7530A00F780FC /* dumb.dylib */;
+			productReference = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -2215,7 +2215,7 @@
 				2DB96A7F19ABB47C00E318A8 /* dsp_libsrc */,
 				2DB96A8919ABB4C600E318A8 /* samplerate */,
 				2D2A135919B647CF00AD1EB7 /* gme */,
-				4D44E66D19B7530A00F780FC /* dumb */,
+				4D44E66D19B7530A00F780FC /* ddb_dumb */,
 			);
 		};
 /* End PBXProject section */
@@ -2225,7 +2225,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D44E70819B753BA00F780FC /* dumb.dylib in Resources */,
+				4DAF343F19B75FF500EE96ED /* ddb_dumb.dylib in Resources */,
 				2D2A14BA19B6485200AD1EB7 /* gme.dylib in Resources */,
 				2DBEE69619B4EB0900A60609 /* sb_front_cap_right.png in Resources */,
 				2DB96AA819ABB52200E318A8 /* dsp_libsrc.dylib in Resources */,
@@ -2620,7 +2620,7 @@
 		};
 		4D44E70719B753AD00F780FC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4D44E66D19B7530A00F780FC /* dumb */;
+			target = 4D44E66D19B7530A00F780FC /* ddb_dumb */;
 			targetProxy = 4D44E70619B753AD00F780FC /* PBXContainerItemProxy */;
 		};
 		4DB9654619A64D930076F4F3 /* PBXTargetDependency */ = {
@@ -3232,13 +3232,14 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4D44E66F19B7530A00F780FC /* Build configuration list for PBXNativeTarget "dumb" */ = {
+		4D44E66F19B7530A00F780FC /* Build configuration list for PBXNativeTarget "ddb_dumb" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4D44E67019B7530A00F780FC /* Debug */,
 				4D44E67119B7530A00F780FC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
