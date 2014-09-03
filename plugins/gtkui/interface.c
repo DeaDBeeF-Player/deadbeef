@@ -1286,6 +1286,9 @@ create_editcolumndlg (void)
   GtkWidget *hbox32;
   GtkWidget *label38;
   GtkWidget *align;
+  GtkWidget *hbox138;
+  GtkWidget *color_override;
+  GtkWidget *color;
   GtkWidget *dialog_action_area1;
   GtkWidget *cancelbutton1;
   GtkWidget *alignment9;
@@ -1392,6 +1395,18 @@ create_editcolumndlg (void)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (align), _("Left"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (align), _("Right"));
 
+  hbox138 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox138);
+  gtk_box_pack_start (GTK_BOX (vbox14), hbox138, TRUE, TRUE, 0);
+
+  color_override = gtk_check_button_new_with_mnemonic (_("Text color:"));
+  gtk_widget_show (color_override);
+  gtk_box_pack_start (GTK_BOX (hbox138), color_override, FALSE, FALSE, 0);
+
+  color = gtk_color_button_new ();
+  gtk_widget_show (color);
+  gtk_box_pack_start (GTK_BOX (hbox138), color, TRUE, TRUE, 0);
+
   dialog_action_area1 = gtk_dialog_get_action_area (GTK_DIALOG (editcolumndlg));
   gtk_widget_show (dialog_action_area1);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area1), GTK_BUTTONBOX_END);
@@ -1463,6 +1478,9 @@ create_editcolumndlg (void)
   GLADE_HOOKUP_OBJECT (editcolumndlg, hbox32, "hbox32");
   GLADE_HOOKUP_OBJECT (editcolumndlg, label38, "label38");
   GLADE_HOOKUP_OBJECT (editcolumndlg, align, "align");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, hbox138, "hbox138");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, color_override, "color_override");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, color, "color");
   GLADE_HOOKUP_OBJECT_NO_REF (editcolumndlg, dialog_action_area1, "dialog_action_area1");
   GLADE_HOOKUP_OBJECT (editcolumndlg, cancelbutton1, "cancelbutton1");
   GLADE_HOOKUP_OBJECT (editcolumndlg, alignment9, "alignment9");

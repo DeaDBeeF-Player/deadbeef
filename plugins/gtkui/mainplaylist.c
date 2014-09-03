@@ -246,7 +246,9 @@ main_column_size_changed (DdbListview *listview, int col) {
     int align_right;
     col_info_t *inf;
     int minheight;
-    int res = ddb_listview_column_get_info (listview, col, &title, &width, &align_right, &minheight, (void **)&inf);
+    int color_override;
+    GdkColor color;
+    int res = ddb_listview_column_get_info (listview, col, &title, &width, &align_right, &minheight, &color_override, &color, (void **)&inf);
     if (res == -1) {
         return;
     }
