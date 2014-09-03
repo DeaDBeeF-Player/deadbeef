@@ -1224,4 +1224,3 @@ on_auto_size_columns_toggled           (GtkToggleButton *togglebutton,
 {
     deadbeef->conf_set_int ("gtkui.autoresize_columns", gtk_toggle_button_get_active (togglebutton));
 }
-
