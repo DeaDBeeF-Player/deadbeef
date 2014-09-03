@@ -265,6 +265,7 @@ get_pixbuf (const char *fname, int width, void (*callback)(void *user_data), voi
 #endif
     deadbeef->mutex_unlock (mutex);
     queue_add (fname, width, callback, user_data);
+
     return NULL;
 }
 
@@ -276,7 +277,7 @@ queue_cover_callback (void (*callback)(void *user_data), void *user_data) {
 
 GdkPixbuf *
 get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, void (*callback) (void *user_data), void *user_data) {
-    if (!coverart_plugin) {
+    if (!tid) {
         return NULL;
     }
 
@@ -355,11 +356,6 @@ void
 cover_art_free (void) {
     trace ("terminating cover art loader...\n");
 
-    if (coverart_plugin) {
-        trace ("resetting artwork plugin...\n");
-        coverart_plugin->reset (0);
-    }
-    
     if (tid) {
         terminate = 1;
         trace ("sending terminate signal to art loader thread...\n");
@@ -367,9 +363,19 @@ cover_art_free (void) {
         deadbeef->thread_join (tid);
         tid = 0;
     }
-    while (queue) {
-        queue_pop ();
+
+    if (cond) {
+        deadbeef->cond_free (cond);
+        cond = 0;
     }
+    if (mutex) {
+        while (queue) {
+            queue_pop ();
+        }
+        deadbeef->mutex_free (mutex);
+        mutex = 0;
+    }
+
     for (int i = 0; i < CACHE_SIZE; i++) {
         if (cache[i].pixbuf) {
             g_object_unref (cache[i].pixbuf);
@@ -380,10 +386,13 @@ cover_art_free (void) {
         g_object_unref (pixbuf_default);
         pixbuf_default = NULL;
     }
-    deadbeef->cond_free (cond);
-    cond = 0;
-    deadbeef->mutex_free (mutex);
-    mutex = 0;
+
+    if (coverart_plugin) {
+        trace ("resetting artwork plugin...\n");
+        coverart_plugin->reset (0);
+    }
+
+    trace("Cover art objects all freed\n");
 }
 
 GdkPixbuf *
