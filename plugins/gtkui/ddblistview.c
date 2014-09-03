@@ -769,7 +769,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
         }
         listview->binding->ref (it);
         if (grp_y + listview->grouptitle_height >= y + listview->scrollpos && grp_y < y + h + listview->scrollpos) {
-            ddb_listview_list_render_row_background (listview, cr, NULL, idx & 1, 0, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
+            ddb_listview_list_render_row_background (listview, cr, NULL, 1, 0, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
             if (listview->binding->draw_group_title && listview->grouptitle_height > 0) {
                 listview->binding->draw_group_title (listview, cr, it, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
             }
@@ -791,7 +791,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
                 gdk_cairo_set_source_color (cr, &st->bg[GTK_STATE_NORMAL]);
                 cairo_rectangle (cr, -listview->hscrollpos, grp_row_y - listview->scrollpos, listview->totalwidth, listview->rowheight);
                 cairo_fill (cr);
-                ddb_listview_list_render_row_background (listview, cr, it, (idx + 1 + i) & 1, (abs_idx+i) == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_row_y - listview->scrollpos, listview->totalwidth, listview->rowheight);
+                ddb_listview_list_render_row_background (listview, cr, it, i & 1, (abs_idx+i) == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_row_y - listview->scrollpos, listview->totalwidth, listview->rowheight);
                 ddb_listview_list_render_row_foreground (listview, cr, it, grp->head, (idx + 1 + i) & 1, (idx+i) == listview->binding->cursor () ? 1 : 0, i * listview->rowheight, grp->height, grp->pinned, grp_next_y - listview->scrollpos, -listview->hscrollpos, grp_row_y - listview->scrollpos, listview->totalwidth, listview->rowheight);
             }
             DdbListviewIter next = listview->binding->next (it);
@@ -829,7 +829,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
         ddb_listview_list_render_album_art (listview, cr, it, grp->head, 0, grp->height, grp->pinned, grp_next_y - listview->scrollpos, -listview->hscrollpos, grp_y + listview->grouptitle_height - listview->scrollpos, listview->totalwidth, grp_height_total);
         // draw pinned group title
         if (grp->pinned == 1 && gtkui_groups_pinned && y <= 0) {
-            ddb_listview_list_render_row_background (listview, cr, NULL, group_idx & 1, 0, -listview->hscrollpos, y, listview->totalwidth, listview->grouptitle_height);
+            ddb_listview_list_render_row_background (listview, cr, NULL, 1, 0, -listview->hscrollpos, y, listview->totalwidth, listview->grouptitle_height);
             if (listview->binding->draw_group_title && listview->grouptitle_height > 0) {
                 listview->binding->draw_group_title (listview, cr, grp->head, -listview->hscrollpos, y - pushback, listview->totalwidth, listview->grouptitle_height);
             }
