@@ -241,7 +241,6 @@ update_songinfo (gpointer ctx) {
         strcpy (sb_text, sbtext_new);
 
         // form statusline
-        // FIXME: don't update if window is not visible
         GtkStatusbar *sb = GTK_STATUSBAR (lookup_widget (mainwin, "statusbar"));
         if (sb_context_id == -1) {
             sb_context_id = gtk_statusbar_get_context_id (sb, "msg");

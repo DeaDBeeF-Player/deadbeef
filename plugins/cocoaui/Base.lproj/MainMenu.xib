@@ -555,6 +555,7 @@ CA
                 <outlet property="playlist" destination="0tA-Oo-Ry1" id="I7i-ZF-zI5"/>
                 <outlet property="scrollFollowsPlayback" destination="xnA-bz-jxF" id="GX4-WF-zFx"/>
                 <outlet property="seekBar" destination="lhQ-zG-gJo" id="iDM-Mk-EzP"/>
+                <outlet property="statusBar" destination="c3o-Wf-ryE" id="lzk-MS-ADX"/>
                 <outlet property="stopAfterCurrent" destination="edx-c0-VoM" id="Rig-DR-mKE"/>
                 <outlet property="stopAfterCurrentAlbum" destination="6AV-SN-Cm9" id="wVK-jy-HK2"/>
                 <outlet property="window" destination="371" id="532"/>
