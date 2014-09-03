@@ -24,6 +24,7 @@
 #import "AppDelegate.h"
 #include "../../deadbeef.h"
 #import "dispatch/dispatch.h"
+#include <sys/time.h>
 
 extern DB_functions_t *deadbeef;
 
@@ -143,8 +144,106 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 
 int prevSeekbar = -1;
 
+// update status bar and window title
+static char sb_text[512];
+static char sbitrate[20] = "";
+static struct timeval last_br_update;
+
+#define _(x) x
+
+- (void)updateSonginfo {
+    DB_output_t *output = deadbeef->get_output ();
+    char sbtext_new[512] = "-";
+    
+    float pl_totaltime = deadbeef->pl_get_totaltime ();
+    int daystotal = (int)pl_totaltime / (3600*24);
+    int hourtotal = ((int)pl_totaltime / 3600) % 24;
+    int mintotal = ((int)pl_totaltime/60) % 60;
+    int sectotal = ((int)pl_totaltime) % 60;
+    
+    char totaltime_str[512] = "";
+    if (daystotal == 0) {
+        snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
+    }
+    else if (daystotal == 1) {
+        snprintf (totaltime_str, sizeof (totaltime_str), _("1 day %d:%02d:%02d"), hourtotal, mintotal, sectotal);
+    }
+    else {
+        snprintf (totaltime_str, sizeof (totaltime_str), _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
+    }
+    
+    DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
+    DB_fileinfo_t *c = deadbeef->streamer_get_current_fileinfo (); // FIXME: might crash streamer
+    
+    float duration = track ? deadbeef->pl_get_item_duration (track) : -1;
+    
+    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track || !c)) {
+        snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+    }
+    else {
+        float playpos = deadbeef->streamer_get_playpos ();
+        int minpos = playpos / 60;
+        int secpos = playpos - minpos * 60;
+        int mindur = duration / 60;
+        int secdur = duration - mindur * 60;
+        
+        const char *mode;
+        char temp[20];
+        if (c->fmt.channels <= 2) {
+            mode = c->fmt.channels == 1 ? _("Mono") : _("Stereo");
+        }
+        else {
+            snprintf (temp, sizeof (temp), "%dch Multichannel", c->fmt.channels);
+            mode = temp;
+        }
+        int samplerate = c->fmt.samplerate;
+        int bitspersample = c->fmt.bps;
+        //        codec_unlock ();
+        
+        char t[100];
+        if (duration >= 0) {
+            snprintf (t, sizeof (t), "%d:%02d", mindur, secdur);
+        }
+        else {
+            strcpy (t, "-:--");
+        }
+        
+        struct timeval tm;
+        gettimeofday (&tm, NULL);
+        if (tm.tv_sec - last_br_update.tv_sec + (tm.tv_usec - last_br_update.tv_usec) / 1000000.0 >= 0.3) {
+            memcpy (&last_br_update, &tm, sizeof (tm));
+            int bitrate = deadbeef->streamer_get_apx_bitrate ();
+            if (bitrate > 0) {
+                snprintf (sbitrate, sizeof (sbitrate), _("| %4d kbps "), bitrate);
+            }
+            else {
+                sbitrate[0] = 0;
+            }
+        }
+        const char *spaused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED ? _("Paused | ") : "";
+        char filetype[20];
+        if (!deadbeef->pl_get_meta (track, ":FILETYPE", filetype, sizeof (filetype))) {
+            strcpy (filetype, "-");
+        }
+        snprintf (sbtext_new, sizeof (sbtext_new), _("%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"), spaused, filetype, sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+    }
+    
+    if (strcmp (sbtext_new, sb_text)) {
+        strcpy (sb_text, sbtext_new);
+        [[self statusBar] setStringValue:[NSString stringWithUTF8String:sb_text]];
+    }
+    
+    if (track) {
+        deadbeef->pl_item_unref (track);
+    }
+}
+
+
 - (void)frameUpdate:(id)userData
 {
+    if (![[self window] isVisible]) {
+        return;
+    }
     float dur = -1;
     float perc = 0;
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
@@ -175,6 +274,8 @@ int prevSeekbar = -1;
     if ([self.seekBar isEnabled] != st) {
         [self.seekBar setEnabled:st];
     }
+    
+    [self updateSonginfo];    
 }
 
 - (void)playlistDoubleAction
