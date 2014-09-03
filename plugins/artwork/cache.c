@@ -127,6 +127,7 @@ cache_cleaner_thread(void *none)
             const int32_t cache_secs = cache_expiry_seconds;
             deadbeef->mutex_unlock(thread_mutex);
             if (cache_secs > 0 && path_ok(covers_path_length, covers_subdir->d_name)) {
+                trace("Analyse %s for expired files\n", covers_subdir->d_name);
                 const time_t cache_expiry = time(NULL) - cache_secs;
 
                 /* Loop through the image files in this artist directory */
@@ -161,7 +162,7 @@ cache_cleaner_thread(void *none)
         closedir(covers_dir);
 
         /* Sleep until just after the oldest file expires */
-        if (cache_expiry_seconds > 0) {
+        if (cache_expiry_seconds > 0 && !terminate) {
             struct timespec wake_time = {
                 .tv_sec = time(NULL) + max(60, oldest_mtime - time(NULL) + cache_expiry_seconds),
                 .tv_nsec = 999999
@@ -197,6 +198,7 @@ void stop_cache_cleaner(void)
         deadbeef->mutex_unlock(thread_mutex);
         deadbeef->thread_join(tid);
         tid = 0;
+        trace("Cache cleaner thread stopped\n");
     }
 
     if (thread_mutex) {
@@ -217,7 +219,6 @@ void stop_cache_cleaner(void)
 
 int start_cache_cleaner(void)
 {
-
     terminate = 0;
     cache_expiry_seconds = deadbeef->conf_get_int("artwork.cache.period", 48) * 60 * 60;
     files_mutex = deadbeef->mutex_create_nonrecursive();
@@ -225,6 +226,7 @@ int start_cache_cleaner(void)
     thread_cond = deadbeef->cond_create();
     if (files_mutex && thread_mutex && thread_cond) {
         tid = deadbeef->thread_start_low_priority(cache_cleaner_thread, NULL);
+        trace("Cache cleaner thread started\n");
     }
 
     if (!tid) {

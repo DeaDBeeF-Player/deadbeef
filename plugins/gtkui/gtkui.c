@@ -1082,7 +1082,6 @@ gtkui_thread (void *ctx) {
         g_source_remove (refresh_timeout);
         refresh_timeout = 0;
     }
-    cover_art_free ();
     eq_window_destroy ();
     trkproperties_destroy ();
     progress_destroy ();
@@ -1223,18 +1222,16 @@ quit_gtk_cb (gpointer nothing) {
     trkproperties_destroy ();
     search_destroy ();
     gtk_main_quit ();
+    trace ("gtkui_stop completed\n");
     return FALSE;
 }
 
 static int
 gtkui_stop (void) {
-    if (coverart_plugin) {
-        coverart_plugin->plugin.plugin.stop ();
-        coverart_plugin = NULL;
-    }
     trace ("quitting gtk\n");
+    /* Close coverart before g_idle_add() so that all redraws will finish before gtk_main_quit() */
+    cover_art_free();
     g_idle_add (quit_gtk_cb, NULL);
-    trace ("gtkui_stop completed\n");
     return 0;
 }
 
