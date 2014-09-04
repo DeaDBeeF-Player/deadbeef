@@ -17,6 +17,11 @@ extern DB_functions_t *deadbeef;
 @synthesize dragging;
 @synthesize prepare;
 @synthesize movepos;
+@synthesize tab_clicked;
+@synthesize scroll_direction;
+@synthesize dragpt;
+@synthesize prev_x;
+@synthesize tab_moved;
 
 static int text_left_padding = 4;
 static int text_right_padding = 0; // calculated from widget height
@@ -34,6 +39,7 @@ static int max_tab_size = 200;
     if (self) {
         // Initialization code here.
         dragging = -1;
+        tab_clicked = -1;
     }
     return self;
 }
@@ -255,7 +261,7 @@ plt_get_title_wrapper (int plt) {
                 }
                 if (w > 0) {
                     // ***** draw dragging tab here *****
-                    [[NSColor controlShadowColor] set];
+                    [[NSColor blueColor] set];
                     [NSBezierPath fillRect:NSMakeRect(x, 0, w, a.height)];
                     
                     NSString *tab_title = plt_get_title_wrapper (tab_selected);
@@ -274,5 +280,297 @@ plt_get_title_wrapper (int plt) {
 #endif
     }
 }
+
+-(int)tabUnderCursor:(int)x {
+    int hscroll = hscrollpos;
+    BOOL need_arrows = [self needArrows];
+    if (need_arrows) {
+        hscroll -= arrow_widget_width;
+    }
+    int idx;
+    int cnt = deadbeef->plt_get_count ();
+    int fw = tabs_left_margin - hscroll;
+    for (idx = 0; idx < cnt; idx++) {
+        NSString *title = plt_get_title_wrapper (idx);
+        NSSize ex = [title sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:nil]];
+        ex.width += text_left_padding + text_right_padding;
+        if (ex.width < min_tab_size) {
+            ex.width = min_tab_size;
+        }
+        else if (ex.width > max_tab_size) {
+            ex.width = max_tab_size;
+        }
+        fw += ex.width;
+        fw -= tab_overlap_size;
+        if (fw > x) {
+            return idx;
+        }
+    }
+    return -1;
+}
+
+-(void)scrollToTab:(int)tab {
+    [self scrollToTabInt:tab redraw:YES];
+}
+
+static void
+_playlist_set_curr (int playlist) {
+    deadbeef->plt_set_curr_idx (playlist);
+    deadbeef->conf_set_int ("playlist.current", playlist);
+}
+
+-(void)scrollLeft {
+    int tab = deadbeef->plt_get_curr_idx ();
+    if (tab > 0) {
+        tab--;
+        _playlist_set_curr (tab);
+    }
+    [self scrollToTab:tab];
+}
+
+-(void)scrollRight {
+    int tab = deadbeef->plt_get_curr_idx ();
+    if (tab < deadbeef->plt_get_count ()-1) {
+        tab++;
+        _playlist_set_curr (tab);
+    }
+    [self scrollToTab:tab];
+}
+
+#if 0
+- (BOOL)scrollCB {
+    if (scroll_direction < 0) {
+        [self scrollLeft];
+    }
+    else if (ts->scroll_direction > 0) {
+        [self scrollRigth];
+    }
+    else {
+        return NO;
+    }
+    return YES;
+}
+#endif
+
+-(void)scrollWheel:(NSEvent*)event {
+    NSLog(@"wheel %f %f", event.deltaX, event.deltaY);
+    
+    if (event.deltaY < 0 || event.deltaX < 0)
+    {
+        [self scrollLeft];
+    }
+    else if (event.deltaY > 0 || event.deltaX > 0)
+    {
+        [self scrollRight];
+    }
+}
+
+#define _(x) x
+
+static int
+_add_new_playlist (void) {
+    int cnt = deadbeef->plt_get_count ();
+    int i;
+    int idx = 0;
+    for (;;) {
+        char name[100];
+        if (!idx) {
+            strcpy (name, _("New Playlist"));
+        }
+        else {
+            snprintf (name, sizeof (name), _("New Playlist (%d)"), idx);
+        }
+        deadbeef->pl_lock ();
+        for (i = 0; i < cnt; i++) {
+            char t[100];
+            ddb_playlist_t *plt = deadbeef->plt_get_for_idx (i);
+            deadbeef->plt_get_title (plt, t, sizeof (t));
+            deadbeef->plt_unref (plt);
+            if (!strcasecmp (t, name)) {
+                break;
+            }
+        }
+        deadbeef->pl_unlock ();
+        if (i == cnt) {
+            return deadbeef->plt_add (cnt, name);
+        }
+        idx++;
+    }
+    return -1;
+}
+
+
+- (void)mouseDown:(NSEvent *)event {
+    tab_clicked = [self tabUnderCursor:[event locationInWindow].x];
+    if (event.type == NSLeftMouseDown) {
+        BOOL need_arrows = [self needArrows];
+        if (need_arrows) {
+            NSSize a = [self bounds].size;
+            if ([event locationInWindow].x < arrow_widget_width) {
+                [self scrollLeft];
+                scroll_direction = -1;
+                // start periodic upd
+//                scroll_timer = g_timeout_add (300, tabstrip_scroll_cb, ts);
+                return;
+            }
+            else if ([event locationInWindow].x >= a.width - arrow_widget_width) {
+                [self scrollRight];
+                scroll_direction = 1;
+            // start periodic upd
+//                    ts->scroll_timer = g_timeout_add (300, tabstrip_scroll_cb, ts);
+                return;
+            }
+        }
+    
+        if (tab_clicked != -1) {
+            _playlist_set_curr (tab_clicked);
+        }
+        else {
+            if (event.clickCount == 2) {
+                // new tab
+                int playlist = _add_new_playlist ();
+                if (playlist != -1) {
+                    _playlist_set_curr (playlist);
+                }
+                return;
+            }
+            return;
+        }
+        
+        // adjust scroll if clicked tab spans border
+        if (need_arrows) {
+            [self scrollToTab:tab_clicked];
+        }
+        
+        int hscroll = hscrollpos;
+        if (need_arrows) {
+            hscroll -= arrow_widget_width;
+        }
+        int x = -hscroll + tabs_left_margin;
+        int idx;
+        for (idx = 0; idx < tab_clicked; idx++) {
+            int width = [self getTabWith:idx];
+            x += width - tab_overlap_size;
+        }
+        dragpt = [event locationInWindow];
+        dragpt.x -= x;
+        prepare = 1;
+        dragging = tab_clicked;
+        prev_x = dragpt.x;
+        tab_moved = 0;
+    }
+}
+
+-(void)rightMouseDown:(NSEvent *)event {
+    tab_clicked = [self tabUnderCursor:[event locationInWindow].x];
+    if (event.type == NSRightMouseDown) {
+        // FIXME: right click menu
+    }
+}
+
+-(void)otherMouseDown:(NSEvent *)event {
+    tab_clicked = [self tabUnderCursor:[event locationInWindow].x];
+    if (event.type == NSOtherMouseDown) {
+        if (tab_clicked == -1) {
+            // new tab
+            int playlist = _add_new_playlist ();
+            if (playlist != -1) {
+                _playlist_set_curr (playlist);
+            }
+            return;
+        }
+        else if (deadbeef->conf_get_int ("cocoaui.mmb_delete_playlist", 1)) {
+            if (tab_clicked != -1) {
+                deadbeef->plt_remove (tab_clicked);
+                // force invalidation of playlist cache
+// FIXME: gtkui calls search_refresh here
+                int playlist = deadbeef->plt_get_curr_idx ();
+                deadbeef->conf_set_int ("playlist.current", playlist);
+            }
+        }
+    }
+}
+
+-(void)mouseUp:(NSEvent *)event
+{
+    if (event.type == NSLeftMouseUp) {
+        // FIXME: cancel repeating
+#if 0
+        if (scroll_timer > 0) {
+            scroll_direction = 0;
+            g_source_remove (scroll_timer);
+            scroll_timer = 0;
+        }
+#endif
+        if (prepare || dragging >= 0) {
+            dragging = -1;
+            prepare = 0;
+            [self setNeedsDisplay:YES];
+        }
+    }
+}
+
+- (void)viewDidEndLiveResize {
+    [self adjustHScroll];
+}
+
+- (void)mouseDragged:(NSEvent *)event {
+    if (([NSEvent pressedMouseButtons] & 1) && prepare) {
+        if (abs ([event locationInWindow].x - prev_x) > 3) {
+            prepare = 0;
+        }
+    }
+    if (!prepare && dragging >= 0) {
+        movepos = [event locationInWindow].x - dragpt.x;
+        
+        // find closest tab to the left
+        int idx;
+        int hscroll = hscrollpos;
+        BOOL need_arrows = [self needArrows];
+        if (need_arrows) {
+            hscroll -= arrow_widget_width;
+        }
+        int x = -hscroll + tabs_left_margin;
+        int inspos = -1;
+        int cnt = deadbeef->plt_get_count ();
+        for (idx = 0; idx < cnt; idx++) {
+            int width = [self getTabWith:idx];
+            if (idx != dragging && x <= movepos && x + width/2 - tab_overlap_size  > movepos) {
+                inspos = idx;
+                break;
+            }
+            x += width - tab_overlap_size;
+        }
+        if (inspos >= 0 && inspos != dragging) {
+            deadbeef->plt_move (dragging, inspos);
+            tab_moved = 1;
+            dragging = inspos;
+            deadbeef->conf_set_int ("playlist.current", dragging);
+        }
+        [self setNeedsDisplay:YES];
+    }
+}
+
+-(void)mouseMoved:(NSEvent *)event {
+    int tab = [self tabUnderCursor:[event locationInWindow].x];
+    if (tab >= 0) {
+        NSString *s = plt_get_title_wrapper (tab);
+        
+        NSSize sz = [s sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:nil]];
+        sz.width += text_left_padding + text_right_padding;
+        if (sz.width > max_tab_size) {
+            [self setToolTip:s];
+        }
+        else {
+            [self setToolTip:nil];
+        }
+    }
+    else {
+        [self setToolTip:nil];
+    }
+}
+
+// FIXME dnd motion must activate playlist
+// ...
 
 @end

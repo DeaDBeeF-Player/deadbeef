@@ -639,6 +639,7 @@ static struct timeval last_br_update;
     switch ([_id intValue]) {
         case DB_EV_PLAYLISTCHANGED:
         case DB_EV_PLAYLISTSWITCHED:
+            [[self tabStrip] setNeedsDisplay:YES];
             [self reloadPlaylistData];
             break;
         case DB_EV_TRACKFOCUSCURRENT:
