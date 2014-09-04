@@ -22,6 +22,7 @@
 */
 
 #import <Cocoa/Cocoa.h>
+#import "widgets/DdbTabStrip.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
@@ -29,6 +30,7 @@
 
 @property (assign) IBOutlet NSWindow *window;
 @property (unsafe_unretained) IBOutlet NSTableView *playlist;
+@property (unsafe_unretained) IBOutlet DdbTabStrip *tabStrip;
 
 
 @property (unsafe_unretained) IBOutlet NSWindow *addFilesWindow;

@@ -9,8 +9,15 @@
 #import "DdbWidget.h"
 
 @interface DdbTabStrip : DdbWidget
+
 @property int hscrollpos;
 @property int dragging;
 @property int prepare;
 @property int movepos;
+@property int tab_clicked;
+@property int scroll_direction;
+@property NSPoint dragpt;
+@property int prev_x;
+@property int tab_moved;
+
 @end
