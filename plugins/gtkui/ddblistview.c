@@ -757,9 +757,8 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
 
     int ii = 0;
     while (grp && grp_y < y + h + listview->scrollpos) {
-        int grp_height = listview->grouptitle_height + grp->num_items * listview->rowheight;
-        // render title
         DdbListviewIter it = grp->head;
+        int grp_height = listview->grouptitle_height + grp->num_items * listview->rowheight;
         int grp_height_total = grp->height;
         int group_idx = idx;
 
@@ -835,7 +834,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
                 listview->binding->draw_group_title (listview, cr, grp->head, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
             }
         }
-
 
         if (prev) {
             listview->binding->unref (prev);
