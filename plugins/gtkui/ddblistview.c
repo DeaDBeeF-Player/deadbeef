@@ -761,19 +761,12 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
         // render title
         DdbListviewIter it = grp->head;
         int grp_height_total = grp->height;
-        int pushback = 0;
         int group_idx = idx;
 
         if (grp_y >= y + h + listview->scrollpos) {
             break;
         }
         listview->binding->ref (it);
-        if (grp_y + listview->grouptitle_height >= y + listview->scrollpos && grp_y < y + h + listview->scrollpos) {
-            ddb_listview_list_render_row_background (listview, cr, NULL, 1, 0, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
-            if (listview->binding->draw_group_title && listview->grouptitle_height > 0) {
-                listview->binding->draw_group_title (listview, cr, it, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
-            }
-        }
 
         grp_next_y = grp_y + grp_height_total;
         for (int i = 0; i < grp->num_items; i++) {
@@ -781,9 +774,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
             int grp_row_y = grp_y + listview->grouptitle_height + i * listview->rowheight;
             if (grp_row_y >= y + h + listview->scrollpos) {
                 break;
-            }
-            if (grp->pinned == 1 && gtkui_groups_pinned && grp_next_y - listview->scrollpos <= listview->grouptitle_height) {
-                pushback = listview->grouptitle_height - (grp_next_y - listview->scrollpos);
             }
             if (grp_y + listview->grouptitle_height + (i+1) * listview->rowheight >= y + listview->scrollpos
                     && grp_row_y < y + h + listview->scrollpos) {
@@ -827,13 +817,25 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
 
         // draw album art
         ddb_listview_list_render_album_art (listview, cr, it, grp->head, 0, grp->height, grp->pinned, grp_next_y - listview->scrollpos, -listview->hscrollpos, grp_y + listview->grouptitle_height - listview->scrollpos, listview->totalwidth, grp_height_total);
-        // draw pinned group title
         if (grp->pinned == 1 && gtkui_groups_pinned && y <= 0) {
-            ddb_listview_list_render_row_background (listview, cr, NULL, 1, 0, -listview->hscrollpos, y, listview->totalwidth, listview->grouptitle_height);
+            // draw pinned group title
+            int pushback = 0;
+            if (grp_next_y - listview->scrollpos <= listview->grouptitle_height) {
+                pushback = listview->grouptitle_height - (grp_next_y - listview->scrollpos);
+            }
+            ddb_listview_list_render_row_background (listview, cr, NULL, 1, 0, -listview->hscrollpos, y - pushback, listview->totalwidth, listview->grouptitle_height);
             if (listview->binding->draw_group_title && listview->grouptitle_height > 0) {
                 listview->binding->draw_group_title (listview, cr, grp->head, -listview->hscrollpos, y - pushback, listview->totalwidth, listview->grouptitle_height);
             }
         }
+        else if (grp_y + listview->grouptitle_height >= y + listview->scrollpos && grp_y < y + h + listview->scrollpos) {
+            // draw normal group title
+            ddb_listview_list_render_row_background (listview, cr, NULL, 1, 0, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
+            if (listview->binding->draw_group_title && listview->grouptitle_height > 0) {
+                listview->binding->draw_group_title (listview, cr, grp->head, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
+            }
+        }
+
 
         if (prev) {
             listview->binding->unref (prev);
