@@ -986,8 +986,8 @@ append_column_from_textdef (DdbListview *listview, const uint8_t *def) {
     char fmt[MAX_TOKEN];
     int width;
     int align;
-    int color_override;
-    GdkColor color;
+    int color_override = 0;
+    GdkColor color = {0, 0, 0, 0};
 
     parser_init ();
 
@@ -1023,27 +1023,29 @@ append_column_from_textdef (DdbListview *listview, const uint8_t *def) {
 
     p = gettoken_warn_eof (p, token);
     if (!p) {
-        return;
+        goto parse_end;
     }
     color_override = atoi (token);
 
     p = gettoken_warn_eof (p, token);
     if (!p) {
-        return;
+        goto parse_end;
     }
     color.red = atoi (token);
 
     p = gettoken_warn_eof (p, token);
     if (!p) {
-        return;
+        goto parse_end;
     }
     color.green = atoi (token);
 
     p = gettoken_warn_eof (p, token);
     if (!p) {
-        return;
+        goto parse_end;
     }
     color.blue = atoi (token);
+
+parse_end: ;
 
     col_info_t *inf = malloc (sizeof (col_info_t));
     memset (inf, 0, sizeof (col_info_t));
