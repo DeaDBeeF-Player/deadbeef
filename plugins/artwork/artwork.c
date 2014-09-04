@@ -92,10 +92,6 @@ static int terminate;
 static intptr_t tid;
 static uintptr_t queue_mutex;
 static uintptr_t queue_cond;
-static uintptr_t clear_cond;
-#ifdef USE_IMLIB2
-    static uintptr_t imlib_mutex;
-#endif
 
 static int artwork_enable_embedded;
 static int artwork_enable_local;
@@ -855,9 +851,7 @@ scale_file (const char *in, const char *out, int img_size)
 
     cache_lock();
 #ifdef USE_IMLIB2
-    deadbeef->mutex_lock(imlib_mutex);
     const int imlib_err = imlib_resize(in, out, img_size);
-    deadbeef->mutex_unlock(imlib_mutex);
     cache_unlock();
     return imlib_err;
 #else
@@ -1600,7 +1594,7 @@ fetcher_thread (void *none)
         }
 
         /* Indicate back that the queue is empty */
-        deadbeef->cond_signal(clear_cond);
+        deadbeef->cond_signal(queue_cond);
     }
     deadbeef->mutex_unlock(queue_mutex);
     trace("artwork fetcher: terminate thread\n");
@@ -1694,7 +1688,9 @@ artwork_reset (int fast) {
     if (!fast) {
         deadbeef->cond_signal(queue_cond);
         trace("Waiting for empty queue notification ...\n");
-        pthread_cond_wait((pthread_cond_t *)clear_cond, (pthread_mutex_t *)queue_mutex);
+        do {
+            pthread_cond_wait((pthread_cond_t *)queue_cond, (pthread_mutex_t *)queue_mutex);
+        } while (queue);
     }
 
     deadbeef->mutex_unlock(queue_mutex);
@@ -1841,17 +1837,6 @@ artwork_plugin_stop (void)
         deadbeef->cond_free(queue_cond);
         queue_cond = 0;
     }
-    if (clear_cond) {
-        deadbeef->cond_free(clear_cond);
-        clear_cond = 0;
-    }
-
-#ifdef USE_IMLIB2
-    if (imlib_mutex) {
-        deadbeef->mutex_free(imlib_mutex);
-        imlib_mutex = 0;
-    }
-#endif
 
     return 0;
 }
@@ -1874,19 +1859,10 @@ artwork_plugin_start (void)
     artwork_reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);
     artwork_scaled_reset_time = deadbeef->conf_get_int64 ("artwork.scaled.cache_reset_time", 0);
 
-#ifdef USE_IMLIB2
-    imlib_mutex = deadbeef->mutex_create_nonrecursive ();
-    if (!imlib_mutex) {
-        return -1;
-    }
-    imlib_set_cache_size(0);
-#endif
-
     terminate = 0;
     queue_mutex = deadbeef->mutex_create_nonrecursive();
     queue_cond = deadbeef->cond_create();
-    clear_cond = deadbeef->cond_create();
-    if (queue_mutex && queue_cond && clear_cond) {
+    if (queue_mutex && queue_cond) {
         tid = deadbeef->thread_start_low_priority(fetcher_thread, NULL);
     }
     if (!tid) {
