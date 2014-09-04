@@ -20,4 +20,12 @@
 @property int prev_x;
 @property int tab_moved;
 
+@property NSImage *tabLeft;
+@property NSImage *tabFill;
+@property NSImage *tabRight;
+@property NSImage *tabUnselLeft;
+@property NSImage *tabUnselFill;
+@property NSImage *tabUnselRight;
+@property NSImage *tabBottomFill;
+
 @end

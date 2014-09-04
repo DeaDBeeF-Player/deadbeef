@@ -22,10 +22,17 @@ extern DB_functions_t *deadbeef;
 @synthesize dragpt;
 @synthesize prev_x;
 @synthesize tab_moved;
+@synthesize tabLeft;
+@synthesize tabFill;
+@synthesize tabRight;
+@synthesize tabUnselLeft;
+@synthesize tabUnselFill;
+@synthesize tabUnselRight;
+@synthesize tabBottomFill;
 
-static int text_left_padding = 4;
+static int text_left_padding = 15;
 static int text_right_padding = 0; // calculated from widget height
-static int text_vert_offset = -2;
+static int text_vert_offset = 5;
 static int tab_overlap_size = 0; // widget_height/2
 static int tabs_left_margin = 4;
 static int min_tab_size = 80;
@@ -40,6 +47,23 @@ static int max_tab_size = 200;
         // Initialization code here.
         dragging = -1;
         tab_clicked = -1;
+        
+        tabLeft = [NSImage imageNamed:@"tab_left"];
+        [tabLeft setFlipped:YES];
+        tabFill = [NSImage imageNamed:@"tab_fill"];
+        [tabFill setFlipped:YES];
+        tabRight = [NSImage imageNamed:@"tab_right"];
+        [tabRight setFlipped:YES];
+        
+        tabUnselLeft = [NSImage imageNamed:@"tab_unsel_left"];
+        [tabUnselLeft setFlipped:YES];
+        tabUnselFill = [NSImage imageNamed:@"tab_unsel_fill"];
+        [tabUnselFill setFlipped:YES];
+        tabUnselRight = [NSImage imageNamed:@"tab_unsel_right"];
+        [tabUnselRight setFlipped:YES];
+        
+        tabBottomFill = [NSImage imageNamed:@"tab_bottom_fill"];
+        [tabUnselRight setFlipped:YES];
     }
     return self;
 }
@@ -141,12 +165,51 @@ plt_get_title_wrapper (int plt) {
             deadbeef->conf_set_int ("cocoaui.tabscroll", hscrollpos);
         }
     }
+}
 
+- (void)drawTab:(int)idx area:(NSRect)area selected:(BOOL)sel {
+    NSImage *tleft = sel ? tabLeft : tabUnselLeft;
+    NSImage *tright = sel ? tabRight : tabUnselRight;
+    NSImage *tfill = sel ? tabFill : tabUnselFill;
+    
+    [tleft drawAtPoint:area.origin fromRect:NSMakeRect(0,0,[tleft size].width,[tleft size].height) operation:NSCompositeSourceOver fraction:1];
+    
+    NSGraphicsContext *gc = [NSGraphicsContext currentContext];
+    [gc saveGraphicsState];
+    [[NSColor colorWithPatternImage:tfill] set];
+    NSPoint convPt = [self convertPoint:NSMakePoint(0,0) toView:nil];
+    [gc setPatternPhase:convPt];
+    [NSBezierPath fillRect:NSMakeRect(area.origin.x + [tleft size].width, area.origin.y, area.size.width-[tleft size].width-[tright size].width, [tfill size].height)];
+    [gc restoreGraphicsState];
+    
+    [tright drawAtPoint:NSMakePoint(area.origin.x+area.size.width-[tleft size].width, area.origin.y) fromRect:NSMakeRect(0,0,[tabRight size].width,[tright size].height) operation:NSCompositeSourceOver fraction:1];
+
+    NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    [textStyle setAlignment:NSLeftTextAlignment];
+    [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
+    
+    NSDictionary *attrs = [NSDictionary dictionaryWithObjectsAndKeys
+                           : textStyle, NSParagraphStyleAttributeName
+                           , nil];
+    NSString *tab_title = plt_get_title_wrapper (idx);
+    
+    [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + text_vert_offset, area.size.width - (text_left_padding + text_right_padding - 1), area.size.height) withAttributes:attrs];
 }
 
 - (void)drawRect:(NSRect)dirtyRect
 {
     [super drawRect:dirtyRect];
+    [[NSColor windowBackgroundColor] set];
+    [NSBezierPath fillRect:[self bounds]];
+    
+    NSGraphicsContext *gc = [NSGraphicsContext currentContext];
+    [gc saveGraphicsState];
+    [[NSColor colorWithPatternImage:tabBottomFill] set];
+    int offs = [tabLeft size].height-2;
+    NSPoint convPt = [self convertPoint:NSMakePoint(0,offs) toView:nil];
+    [gc setPatternPhase:convPt];
+    [NSBezierPath fillRect:NSMakeRect(0, offs, [self bounds].size.width, [tabBottomFill size].height)];
+    [gc restoreGraphicsState];
 
     [self adjustHScroll];
 
@@ -203,26 +266,11 @@ plt_get_title_wrapper (int plt) {
     
     x = -hscroll + tabs_left_margin;
     
-    NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-    [textStyle setAlignment:NSLeftTextAlignment];
-    [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-    NSDictionary *attrs = [NSDictionary dictionaryWithObjectsAndKeys
-                           : textStyle, NSParagraphStyleAttributeName
-                           , nil];
-
     for (idx = 0; idx < cnt; idx++) {
         w = widths[idx];
         NSRect area = NSMakeRect(x, 0, w, a.height);
         if (idx != tab_selected) {
-            // ****************************
-            // ***** draw tab in area *****
-            // ****************************
-            
-            [[NSColor controlShadowColor] set];
-            [NSBezierPath fillRect:area];
-
-            NSString *tab_title = plt_get_title_wrapper (idx);
-            [tab_title drawInRect:NSMakeRect(x + text_left_padding, y + text_vert_offset, w - (text_left_padding + text_right_padding - 1), a.height) withAttributes:attrs];
+            [self drawTab:idx area:area selected:NO];
         }
         x += w - tab_overlap_size;
     }
@@ -239,13 +287,7 @@ plt_get_title_wrapper (int plt) {
     if (dragging < 0 || prepare || tab_selected != dragging) {
         idx = tab_selected;
         w = widths[tab_selected];
-        // **** draw selected tab here ***
-        [[NSColor redColor] set];
-        [NSBezierPath fillRect:NSMakeRect(x, 0, w, [self bounds].size.height)];
-        
-        NSString *tab_title = plt_get_title_wrapper (idx);
-        [tab_title drawInRect:NSMakeRect(x + text_left_padding, y + text_vert_offset, w - (text_left_padding + text_right_padding - 1), a.height) withAttributes:attrs];
-
+        [self drawTab:idx area:NSMakeRect(x, 0, w, [self bounds].size.height) selected:YES];
     }
     else {
         need_draw_moving = 1;
@@ -261,11 +303,7 @@ plt_get_title_wrapper (int plt) {
                 }
                 if (w > 0) {
                     // ***** draw dragging tab here *****
-                    [[NSColor blueColor] set];
-                    [NSBezierPath fillRect:NSMakeRect(x, 0, w, a.height)];
-                    
-                    NSString *tab_title = plt_get_title_wrapper (tab_selected);
-                    [tab_title drawInRect:NSMakeRect(x + text_left_padding, y + text_vert_offset, w - (text_left_padding + text_right_padding - 1), a.height) withAttributes:attrs];
+                    [self drawTab:tab_selected area:NSMakeRect(x, 0, w, a.height) selected:YES];
                 }
                 break;
             }
@@ -570,6 +608,9 @@ _add_new_playlist (void) {
     }
 }
 
+- (BOOL)isFlipped {
+    return YES;
+}
 // FIXME dnd motion must activate playlist
 // ...
 
