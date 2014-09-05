@@ -274,19 +274,25 @@ vfs_zip_scandir (const char *dir, struct dirent ***namelist, int (*selector) (co
         return -1;
     }
 
-    int n = zip_get_num_files (z);
-    *namelist = malloc (sizeof (void *) * n);
+    int num_files = 0;
+    const int n = zip_get_num_files(z);
+    *namelist = malloc(sizeof(void *) * n);
     for (int i = 0; i < n; i++) {
-        (*namelist)[i] = malloc (sizeof (struct dirent));
-        memset ((*namelist)[i], 0, sizeof (struct dirent));
-        const char *nm = zip_get_name (z, i, 0);
-        trace ("vfs_zip: %s\n", nm);
-        snprintf ((*namelist)[i]->d_name, sizeof ((*namelist)[i]->d_name), "%s", nm);
+        const char *nm = zip_get_name(z, i, 0);
+        struct dirent entry;
+        strncpy(entry.d_name, nm, sizeof(entry.d_name)-1);
+        entry.d_name[sizeof(entry.d_name)-1] = '\0';
+        if (!selector || selector && selector(&entry)) {
+            (*namelist)[num_files] = calloc(1, sizeof(struct dirent));
+            strcpy((*namelist)[num_files]->d_name, entry.d_name);
+            num_files++;
+            trace("vfs_zip: %s\n", nm);
+        }
     }
 
     zip_close (z);
     trace ("vfs_zip: scandir done\n");
-    return n;
+    return num_files;
 }
 
 int
