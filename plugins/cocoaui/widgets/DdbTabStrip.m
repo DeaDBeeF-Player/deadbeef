@@ -35,6 +35,7 @@ static int text_right_padding = 0; // calculated from widget height
 static int text_vert_offset = 5;
 static int tab_overlap_size = 0; // widget_height/2
 static int tabs_left_margin = 4;
+static int tab_vert_padding = 1;
 static int min_tab_size = 80;
 static int max_tab_size = 200;
 #define arrow_sz 10
@@ -177,7 +178,7 @@ plt_get_title_wrapper (int plt) {
     NSGraphicsContext *gc = [NSGraphicsContext currentContext];
     [gc saveGraphicsState];
     [[NSColor colorWithPatternImage:tfill] set];
-    NSPoint convPt = [self convertPoint:NSMakePoint(0,0) toView:nil];
+    NSPoint convPt = [self convertPoint:NSMakePoint(0, area.origin.y) toView:nil];
     [gc setPatternPhase:convPt];
     [NSBezierPath fillRect:NSMakeRect(area.origin.x + [tleft size].width, area.origin.y, area.size.width-[tleft size].width-[tright size].width, [tfill size].height)];
     [gc restoreGraphicsState];
@@ -260,7 +261,7 @@ plt_get_title_wrapper (int plt) {
     int c = tab_selected == -1 ? cnt : tab_selected;
     for (idx = 0; idx < c; idx++) {
         w = widths[idx];
-        NSRect area = NSMakeRect(x, 0, w, a.height);
+        NSRect area = NSMakeRect(x, tab_vert_padding, w, a.height);
         [self drawTab:idx area:area selected:NO];
         x += w - tab_overlap_size;
     }
@@ -273,7 +274,7 @@ plt_get_title_wrapper (int plt) {
         for (idx = cnt-1; idx > tab_selected; idx--) {
             w = widths[idx];
             x -= w - tab_overlap_size;
-            NSRect area = NSMakeRect(x, 0, w, a.height);
+            NSRect area = NSMakeRect(x, tab_vert_padding, w, a.height);
             [self drawTab:idx area:area selected:NO];
         }
     }
@@ -281,7 +282,7 @@ plt_get_title_wrapper (int plt) {
     NSGraphicsContext *gc = [NSGraphicsContext currentContext];
     [gc saveGraphicsState];
     [[NSColor colorWithPatternImage:tabBottomFill] set];
-    int offs = [tabLeft size].height-2;
+    int offs = [tabLeft size].height-3+tab_vert_padding;
     NSPoint convPt = [self convertPoint:NSMakePoint(0,offs) toView:nil];
     [gc setPatternPhase:convPt];
     [NSBezierPath fillRect:NSMakeRect(0, offs, [self bounds].size.width, [tabBottomFill size].height)];
@@ -298,7 +299,7 @@ plt_get_title_wrapper (int plt) {
     if (dragging < 0 || prepare || tab_selected != dragging) {
         idx = tab_selected;
         w = widths[tab_selected];
-        [self drawTab:idx area:NSMakeRect(x, 0, w, [self bounds].size.height) selected:YES];
+        [self drawTab:idx area:NSMakeRect(x, tab_vert_padding, w, [self bounds].size.height) selected:YES];
     }
     else {
         need_draw_moving = 1;
@@ -314,7 +315,7 @@ plt_get_title_wrapper (int plt) {
                 }
                 if (w > 0) {
                     // ***** draw dragging tab here *****
-                    [self drawTab:tab_selected area:NSMakeRect(x, 0, w, a.height) selected:YES];
+                    [self drawTab:tab_selected area:NSMakeRect(x, tab_vert_padding, w, a.height) selected:YES];
                 }
                 break;
             }
