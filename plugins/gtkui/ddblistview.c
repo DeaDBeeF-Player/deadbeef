@@ -65,7 +65,7 @@ struct _DdbListviewColumn {
     int color_override;
     GdkColor color;
     void *user_data;
-    unsigned align_right : 1;
+    unsigned align_right : 2; // 0=left, 1=right, 2=center
     unsigned sort_order : 2; // 0=none, 1=asc, 2=desc
 };
 typedef struct _DdbListviewColumn DdbListviewColumn;
