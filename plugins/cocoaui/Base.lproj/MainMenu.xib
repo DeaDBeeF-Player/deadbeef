@@ -380,14 +380,14 @@ CA
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="qvm-yi-IaA">
-                        <rect key="frame" x="-1" y="15" width="509" height="159"/>
+                        <rect key="frame" x="-1" y="15" width="509" height="164"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="Zbw-2Z-q7N">
-                            <rect key="frame" x="1" y="17" width="507" height="141"/>
+                            <rect key="frame" x="1" y="17" width="507" height="146"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" autosaveColumns="NO" typeSelect="NO" headerView="Pxp-xE-pFF" id="0tA-Oo-Ry1">
-                                    <rect key="frame" x="0.0" y="0.0" width="507" height="141"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="507" height="146"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -482,7 +482,7 @@ CA
                         </textFieldCell>
                     </textField>
                     <customView appearanceType="aqua" id="C0L-8h-WMC" customClass="DdbTabStrip">
-                        <rect key="frame" x="0.0" y="172" width="508" height="32"/>
+                        <rect key="frame" x="0.0" y="178" width="508" height="26"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     </customView>
                 </subviews>
