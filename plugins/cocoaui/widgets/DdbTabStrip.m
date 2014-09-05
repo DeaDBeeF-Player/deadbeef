@@ -256,13 +256,26 @@ plt_get_title_wrapper (int plt) {
     
     x = -hscroll + tabs_left_margin;
     
-    for (idx = 0; idx < cnt; idx++) {
+    // draw tabs on the left
+    int c = tab_selected == -1 ? cnt : tab_selected;
+    for (idx = 0; idx < c; idx++) {
         w = widths[idx];
         NSRect area = NSMakeRect(x, 0, w, a.height);
-        if (idx != tab_selected) {
+        [self drawTab:idx area:area selected:NO];
+        x += w - tab_overlap_size;
+    }
+    // draw tabs on the right
+    if (tab_selected != -1 && tab_selected != cnt-1) {
+        x = -hscroll + tabs_left_margin;
+        for (idx = 0; idx < cnt; idx++) {
+            x += widths[idx] - tab_overlap_size;
+        }
+        for (idx = cnt-1; idx > tab_selected; idx--) {
+            w = widths[idx];
+            x -= w - tab_overlap_size;
+            NSRect area = NSMakeRect(x, 0, w, a.height);
             [self drawTab:idx area:area selected:NO];
         }
-        x += w - tab_overlap_size;
     }
     
     NSGraphicsContext *gc = [NSGraphicsContext currentContext];
