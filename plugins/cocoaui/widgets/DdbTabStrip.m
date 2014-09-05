@@ -32,7 +32,7 @@ extern DB_functions_t *deadbeef;
 
 static int text_left_padding = 15;
 static int text_right_padding = 0; // calculated from widget height
-static int text_vert_offset = 5;
+static int text_vert_offset = 3;
 static int tab_overlap_size = 0; // widget_height/2
 static int tabs_left_margin = 4;
 static int tab_vert_padding = 1;
@@ -172,6 +172,10 @@ plt_get_title_wrapper (int plt) {
     NSImage *tleft = sel ? tabLeft : tabUnselLeft;
     NSImage *tright = sel ? tabRight : tabUnselRight;
     NSImage *tfill = sel ? tabFill : tabUnselFill;
+    
+    if (!sel) {
+        area.origin.y += 2;
+    }
     
     [tleft drawAtPoint:area.origin fromRect:NSMakeRect(0,0,[tleft size].width,[tleft size].height) operation:NSCompositeSourceOver fraction:1];
     
