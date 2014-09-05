@@ -2152,7 +2152,8 @@ Custom</property>
 		<widget class="GtkComboBox" id="align">
 		  <property name="visible">True</property>
 		  <property name="items" translatable="yes">Left
-Right</property>
+Right
+Center</property>
 		  <property name="add_tearoffs">False</property>
 		  <property name="focus_on_click">True</property>
 		</widget>

@@ -1394,6 +1394,7 @@ create_editcolumndlg (void)
   gtk_box_pack_start (GTK_BOX (hbox32), align, TRUE, TRUE, 0);
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (align), _("Left"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (align), _("Right"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (align), _("Center"));
 
   hbox138 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox138);
