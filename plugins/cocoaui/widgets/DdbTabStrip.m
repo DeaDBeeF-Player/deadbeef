@@ -202,15 +202,6 @@ plt_get_title_wrapper (int plt) {
     [[NSColor windowBackgroundColor] set];
     [NSBezierPath fillRect:[self bounds]];
     
-    NSGraphicsContext *gc = [NSGraphicsContext currentContext];
-    [gc saveGraphicsState];
-    [[NSColor colorWithPatternImage:tabBottomFill] set];
-    int offs = [tabLeft size].height-2;
-    NSPoint convPt = [self convertPoint:NSMakePoint(0,offs) toView:nil];
-    [gc setPatternPhase:convPt];
-    [NSBezierPath fillRect:NSMakeRect(0, offs, [self bounds].size.width, [tabBottomFill size].height)];
-    [gc restoreGraphicsState];
-
     [self adjustHScroll];
 
     int cnt = deadbeef->plt_get_count ();
@@ -246,7 +237,6 @@ plt_get_title_wrapper (int plt) {
         deadbeef->pl_item_unref (playing);
     }
     
-    int y = 4;
     h = a.height - 4;
     int need_draw_moving = 0;
     int idx;
@@ -275,7 +265,15 @@ plt_get_title_wrapper (int plt) {
         x += w - tab_overlap_size;
     }
     
-    // *** separator here ***
+    NSGraphicsContext *gc = [NSGraphicsContext currentContext];
+    [gc saveGraphicsState];
+    [[NSColor colorWithPatternImage:tabBottomFill] set];
+    int offs = [tabLeft size].height-2;
+    NSPoint convPt = [self convertPoint:NSMakePoint(0,offs) toView:nil];
+    [gc setPatternPhase:convPt];
+    [NSBezierPath fillRect:NSMakeRect(0, offs, [self bounds].size.width, [tabBottomFill size].height)];
+    [gc restoreGraphicsState];
+    
 
     // calc position for drawin selected tab
     x = -hscroll;
