@@ -356,7 +356,7 @@ main_playlist_init (GtkWidget *widget) {
         add_column_helper (listview, _("Artist / Album"), 150, -1, "%a - %b", 0);
         add_column_helper (listview, _("Track No"), 50, -1, "%n", 1);
         add_column_helper (listview, _("Title"), 150, -1, "%t", 0);
-        add_column_helper (listview, _("Duration"), 50, -1, "%l", 0);
+        add_column_helper (listview, _("Duration"), 50, -1, "%l", 1);
     }
     else {
         while (col) {
