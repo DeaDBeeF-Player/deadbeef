@@ -55,6 +55,27 @@ get_new_font_description_from_type (int type)
     return desc;
 }
 
+static int
+get_pango_alignment (int align)
+{
+    int alignment = 0;
+    switch (align) {
+        case 0:
+            alignment = PANGO_ALIGN_LEFT;
+            break;
+        case 1:
+            alignment = PANGO_ALIGN_RIGHT;
+            break;
+        case 2:
+            alignment = PANGO_ALIGN_CENTER;
+            break;
+        default:
+            alignment = PANGO_ALIGN_LEFT;
+            break;
+    }
+    return alignment;
+}
+
 void
 draw_begin (drawctx_t *ctx, cairo_t *cr) {
     ctx->drawable = cr;
@@ -172,7 +193,7 @@ void
 draw_text (drawctx_t *ctx, float x, float y, int width, int align, const char *text) {
     draw_init_font (ctx, 0, 0);
     pango_layout_set_width (ctx->pangolayout, width*PANGO_SCALE);
-    pango_layout_set_alignment (ctx->pangolayout, align ? PANGO_ALIGN_RIGHT : PANGO_ALIGN_LEFT);
+    pango_layout_set_alignment (ctx->pangolayout, get_pango_alignment (align));
     pango_layout_set_text (ctx->pangolayout, text, -1);
     cairo_move_to (ctx->drawable, x, y);
     pango_cairo_show_layout (ctx->drawable, ctx->pangolayout);
@@ -185,7 +206,7 @@ draw_text_custom (drawctx_t *ctx, float x, float y, int width, int align, int ty
         draw_init_font_style (ctx, bold, italic, type);
     }
     pango_layout_set_width (ctx->pangolayout, width*PANGO_SCALE);
-    pango_layout_set_alignment (ctx->pangolayout, align ? PANGO_ALIGN_RIGHT : PANGO_ALIGN_LEFT);
+    pango_layout_set_alignment (ctx->pangolayout, get_pango_alignment (align));
     pango_layout_set_text (ctx->pangolayout, text, -1);
     cairo_move_to (ctx->drawable, x, y);
     pango_cairo_show_layout (ctx->drawable, ctx->pangolayout);
@@ -195,7 +216,7 @@ void
 draw_text_with_colors (drawctx_t *ctx, float x, float y, int width, int align, const char *text) {
     draw_init_font (ctx, 0, 0);
     pango_layout_set_width (ctx->pangolayout, width*PANGO_SCALE);
-    pango_layout_set_alignment (ctx->pangolayout, align ? PANGO_ALIGN_RIGHT : PANGO_ALIGN_LEFT);
+    pango_layout_set_alignment (ctx->pangolayout, get_pango_alignment (align));
     pango_layout_set_text (ctx->pangolayout, text, -1);
 //    gdk_draw_layout_with_colors (ctx->drawable, gc, x, y, ctx->pangolayout, &clrfg, &clrbg);
     cairo_move_to (ctx->drawable, x, y);

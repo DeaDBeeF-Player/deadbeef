@@ -374,12 +374,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                 italic = gtkui_italic_current_track;
             }
         }
-        if (calign_right) {
-            draw_text_custom (&listview->listctx, x + 5, y + 3, cwidth-10, 1, DDB_LIST_FONT, bold, italic, text);
-        }
-        else {
-            draw_text_custom (&listview->listctx, x + 5, y + 3, cwidth-10, 0, DDB_LIST_FONT, bold, italic, text);
-        }
+        draw_text_custom (&listview->listctx, x + 5, y + 3, cwidth-10, calign_right, DDB_LIST_FONT, bold, italic, text);
     }
     if (playing_track) {
         deadbeef->pl_item_unref (playing_track);
