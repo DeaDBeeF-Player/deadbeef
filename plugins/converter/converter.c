@@ -6,12 +6,12 @@
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -185,7 +185,7 @@ encoder_preset_save (ddb_encoder_preset_t *p, int overwrite) {
         FILE *fp = fopen (path, "rb");
         if (fp) {
             fclose (fp);
-            return -2; 
+            return -2;
         }
     }
 
@@ -389,7 +389,7 @@ dsp_preset_save (ddb_dsp_preset_t *p, int overwrite) {
         FILE *fp = fopen (path, "rb");
         if (fp) {
             fclose (fp);
-            return -2; 
+            return -2;
         }
     }
 
@@ -1245,7 +1245,7 @@ static ddb_converter_t plugin = {
     .misc.plugin.id = "converter",
     .misc.plugin.descr = "Converts any supported formats to other formats.\n"
         "Requires separate GUI plugin, e.g. Converter GTK UI\n",
-    .misc.plugin.copyright = 
+    .misc.plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"

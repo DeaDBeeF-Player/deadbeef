@@ -251,7 +251,7 @@ static int it_s3m_read_pattern(IT_PATTERN *pattern, DUMBFILE *f, unsigned char *
 	/* Discard the length. */
 	/* read at most length bytes, in case of retarded crap */
 	length = dumbfile_igetw(f);
-	
+
 	if (maxlen)
 	{
 		maxlen -= 2;

@@ -368,7 +368,7 @@ static void close_dialog (GtkWidget * widget,
 static void show_filesel_dialog (GtkWidget * widget,
 				 gpointer data);
 static void on_filesel_response (GtkWidget * widget,
-				 gint response_id, 
+				 gint response_id,
 				 gpointer data);
 
 static void show_font_dialog (GtkWidget * widget,
@@ -1097,7 +1097,7 @@ void
 property_show_lang_specific_page	(GladeLanguageType language)
 {
   gint i;
-  
+
   property_language = language;
   if (win_property == NULL)
     return;
@@ -1372,7 +1372,7 @@ show_filesel_dialog (GtkWidget * widget, gpointer data)
 					     NULL);
       gtk_dialog_set_default_response (GTK_DIALOG (filesel),
 				       GTK_RESPONSE_OK);
- 
+
       g_signal_connect (filesel, "response",
 			GTK_SIGNAL_FUNC (on_filesel_response), NULL);
       g_signal_connect (filesel, "delete_event",
@@ -1608,7 +1608,7 @@ show_accelerators_dialog (GtkWidget * widget,
   if (GTK_IS_WINDOW (transient_parent))
     gtk_window_set_transient_for (GTK_WINDOW (accel_dialog),
 				  GTK_WINDOW (transient_parent));
-  
+
   gtk_widget_show (accel_dialog);
   if (GTK_WIDGET_REALIZED (accel_dialog))
     {
@@ -2720,7 +2720,7 @@ property_add (const gchar * property_name,
 
   if (glade_debug_properties)
     g_print ("Property: %s\n", property_name);
-  
+
 #if 0
   if (GTK_IS_OPTION_MENU (value))
     xpad = ypad = 0;
@@ -4245,7 +4245,7 @@ show_keys_dialog (GtkWidget * widget, gpointer value)
 {
   GladeKeysDialog *dialog;
   GtkWidget *transient_parent;
-  
+
   dialog = GLADE_KEYS_DIALOG (glade_keys_dialog_new ());
   gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_MOUSE);
   transient_parent = glade_util_get_toplevel (widget);
@@ -4880,7 +4880,7 @@ show_font_dialog (GtkWidget * widget, gpointer value)
 {
   gchar *current_xlfd_fontname;
   GtkWidget *transient_parent;
-  
+
   /* Create the dialog if it doesn't exist yet */
   if (!fontsel)
     {

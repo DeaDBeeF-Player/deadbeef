@@ -53,7 +53,7 @@ static DB_functions_t *deadbeef;
 #define READBUFFER 0x2800 // 10k is enough for single frame
 
 // vbrmethod constants
-#define XING_CBR  1 
+#define XING_CBR  1
 #define XING_ABR  2
 #define XING_VBR1 3
 #define XING_VBR2 4
@@ -285,7 +285,7 @@ retry_sync:
         hdr |= sync;
 
         // parse header
-        
+
         // sync bits
         int usync = hdr & 0xffe00000;
         if (usync != 0xffe00000) {
@@ -1224,7 +1224,7 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
             trace ("seeking is possible!\n");
             // get length excluding id3v2
             int64_t l = deadbeef->fgetlength (info->buffer.file) - info->buffer.startoffset - info->buffer.endoffset;
-            
+
             int r;
 
             // seek to beginning of the frame
@@ -1327,7 +1327,7 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         trace ("mpgmad: skipping %d bytes (tag)\n", skip);
         deadbeef->fseek(buffer.file, skip, SEEK_SET);
     }
-    // calc approx. mp3 duration 
+    // calc approx. mp3 duration
     int res = cmp3_scan_stream (&buffer, 0);
     if (res < 0) {
         trace ("mpgmad: cmp3_scan_stream returned error\n");
@@ -1458,7 +1458,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "stdmpg",
     .plugin.name = "MPEG decoder",
     .plugin.descr = "MPEG v1/2 layer1/2/3 decoder based on libmad",
-    .plugin.copyright = 
+    .plugin.copyright =
         "MPEG decoder plugin based on libmad\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"

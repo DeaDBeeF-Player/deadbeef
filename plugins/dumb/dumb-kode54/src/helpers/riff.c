@@ -58,7 +58,7 @@ struct riff * riff_parse( unsigned char * ptr, unsigned size, unsigned proper )
 		}
 		++stream->chunk_count;
 	}
-	
+
 	if ( stream_size )
 	{
 		riff_free( stream );

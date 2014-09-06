@@ -113,7 +113,7 @@ static int alloc_table(VLC *vlc, int size, int use_static)
     return index;
 }
 
-/* 
+/*
 static av_always_inline uint32_t bitswap_32(uint32_t x) {
     return av_reverse[x&0xFF]<<24
          | av_reverse[(x>>8)&0xFF]<<16
@@ -272,7 +272,7 @@ static int build_table(VLC *vlc, int table_nb_bits, int nb_codes,
    codecs use it, there's a LUT based bit reverse function for this commented
    out above (bitswap_32) and an inline asm version in libtremor/codebook.c
    if we ever want this */
-   
+
 static VLCcode buf[1336+1]; /* worst case is wma, which has one table with 1336 entries */
 
 int init_vlc_sparse(VLC *vlc, int nb_bits, int nb_codes,

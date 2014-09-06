@@ -1,5 +1,5 @@
 /*
- * Fixed Point IMDCT 
+ * Fixed Point IMDCT
  * Copyright (c) 2002 The FFmpeg Project.
  * Copyright (c) 2010 Dave Hooper, Mohamed Tarek, Michael Giacomelli
  *
@@ -62,11 +62,11 @@ void ff_imdct_half(unsigned int nbits, fixed32 *output, const fixed32 *input)
     /* pre rotation */
     in1 = input;
     in2 = input + n2 - 1;
-    
+
     /* revtab comes from the fft; revtab table is sized for N=4096 size fft = 2^12.
        The fft is size N/4 so s->nbits-2, so our shift needs to be (12-(nbits-2)) */
     const int revtab_shift = (14- nbits);
-    
+
     /* bitreverse reorder the input and rotate;   result here is in OUTPUT ... */
     /* (note that when using the current split radix, the bitreverse ordering is
         complex, meaning that this reordering cannot easily be done in-place) */
@@ -74,10 +74,10 @@ void ff_imdct_half(unsigned int nbits, fixed32 *output, const fixed32 *input)
        the 'classic' pre/post rotate with an alternative one that enables
        us to use fewer distinct twiddle factors.
        http://www.eurasip.org/Proceedings/Eusipco/Eusipco2006/papers/1568980508.pdf
-       
+
        For prerotation, the factors are just sin,cos(2PI*i/N)
        For postrotation, the factors are sin,cos(2PI*(i+1/4)/N)
-       
+
        Therefore, prerotation can immediately reuse the same twiddles as fft
        (for postrotation it's still a bit complex, we reuse the fft trig tables
         where we can, or a special table for N=2048, or interpolate between
@@ -132,7 +132,7 @@ void ff_imdct_half(unsigned int nbits, fixed32 *output, const fixed32 *input)
                       "lsl.l #3, %%d3\n\t"
                       "lea (%%d3, %[z]), %%a1\n\t"
                       "movem.l %%d4-%%d5, (%%a1)\n\t"
-                          
+
                       "lea (%[step]*4, %[T]), %[T]\n\t"
 
                       "1:\n\t"
@@ -207,7 +207,7 @@ void ff_imdct_half(unsigned int nbits, fixed32 *output, const fixed32 *input)
                       "lsl.l #3, %%d3\n\t"
                       "lea (%%d3, %[z]), %%a1\n\t"
                       "movem.l %%d4-%%d5, (%%a1)\n\t"
-                          
+
                       "lea (%[step]*4, %[T]), %[T]\n\t"
 
                       "1:\n\t"
@@ -255,7 +255,7 @@ void ff_imdct_half(unsigned int nbits, fixed32 *output, const fixed32 *input)
                 newstep = step>>1;
             }
             else
-            {   
+            {
                 T = sincos_lookup1;
                 newstep = 2;
             }
@@ -273,7 +273,7 @@ void ff_imdct_half(unsigned int nbits, fixed32 *output, const fixed32 *input)
                               "0:\n\t"
                               "msac.l %%d1, %%d2, (%[T])+, %%a3, %%acc0\n\t"
                               "mac.l  %%d0, %%d3, (%[T])+, %%a4, %%acc0\n\t"
-                              
+
                               "msac.l %%d1, %%d3, -(%[z2]), %%d1, %%acc1\n\t"
                               "msac.l %%d0, %%d2, -(%[z2]), %%d0, %%acc1\n\t"
 
@@ -347,7 +347,7 @@ void ff_imdct_half(unsigned int nbits, fixed32 *output, const fixed32 *input)
                 z1+=2;
                 z2-=2;
             }
-#endif 
+#endif
             break;
         }
 
@@ -361,7 +361,7 @@ void ff_imdct_half(unsigned int nbits, fixed32 *output, const fixed32 *input)
             fixed32 * z2 = (fixed32 *)(&z[n4-1]);
 
             t0 = T[0]>>1; t1=T[1]>>1;
-        
+
             while(z1<z2)
             {
                 fixed32 r0,i0,r1,i1;
@@ -380,10 +380,10 @@ void ff_imdct_half(unsigned int nbits, fixed32 *output, const fixed32 *input)
                 z2-=2;
                 V+=2;
             }
-            
+
             break;
         }
-        
+
         case 13: /* n = 8192 */
         {
             /* weight linear interpolation between sincos_lookup0 and sincos_lookup1
@@ -395,7 +395,7 @@ void ff_imdct_half(unsigned int nbits, fixed32 *output, const fixed32 *input)
             fixed32 * z2 = (fixed32 *)(&z[n4-1]);
 
             t0 = T[0]; t1=T[1];
-        
+
             while(z1<z2)
             {
                 fixed32 r0,i0,r1,i1;
@@ -413,7 +413,7 @@ void ff_imdct_half(unsigned int nbits, fixed32 *output, const fixed32 *input)
                 z1+=2;
                 z2-=2;
                 T+=2;
-                
+
                 t0 = T[0]; t1 = T[1];
                 v0 += (q0 = (t0-v0)>>1);
                 v1 += (q1 = (t1-v1)>>1);
@@ -429,11 +429,11 @@ void ff_imdct_half(unsigned int nbits, fixed32 *output, const fixed32 *input)
                 z2-=2;
                 V+=2;
             }
-               
+
             break;
         }
     }
-} 
+}
 
 /**
  * Compute inverse MDCT of size N = 2^nbits
@@ -475,7 +475,7 @@ void ff_imdct_calc(unsigned int nbits, fixed32 *output, const fixed32 *input)
     const int n = (1<<nbits);
     const int n2 = (n>>1);
     const int n4 = (n>>2);
-    
+
     /* tell imdct_half to put the output in [N/2..3N/4-1] i.e. output+n2 */
     ff_imdct_half(nbits,output+n2,input);
 
@@ -489,7 +489,7 @@ void ff_imdct_calc(unsigned int nbits, fixed32 *output, const fixed32 *input)
     while(out_r<out_r2)
     {
 #if defined CPU_COLDFIRE
-        asm volatile( 
+        asm volatile(
             "movem.l (%[in_r]), %%d0-%%d7\n\t"
             "movem.l %%d0-%%d7, (%[out_r2])\n\t"
             "neg.l %%d7\n\t"
@@ -599,7 +599,7 @@ void ff_imdct_calc(unsigned int nbits, fixed32 *output, const fixed32 *input)
     const int n = (1<<nbits);
     const int n2 = (n>>1);
     const int n4 = (n>>2);
-    
+
     ff_imdct_half(nbits,output+n2,input);
 
     fixed32 * in_r, * in_r2, * out_r, * out_r2;
@@ -609,7 +609,7 @@ void ff_imdct_calc(unsigned int nbits, fixed32 *output, const fixed32 *input)
     in_r  = output+n2+n4;
     while(out_r<out_r2)
     {
-        asm volatile( 
+        asm volatile(
             "ldmdb %[in_r]!, {r0-r7}\n\t"
             "stmdb %[out_r2]!, {r0-r7}\n\t"
             "rsb r8,r0,#0\n\t"

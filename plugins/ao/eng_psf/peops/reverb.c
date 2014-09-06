@@ -113,7 +113,7 @@ static INLINE void MixREVERBLeftRight(spu_state_t *spu, s32 *oleft, s32 *oright,
      if(spu->spuCtrl&0x80)                                  // -> reverb on? oki
       {
        int ACC0,ACC1,FB_A0,FB_A1,FB_B0,FB_B1;
-       s32 INPUT_SAMPLE_L=0;                         
+       s32 INPUT_SAMPLE_L=0;
        s32 INPUT_SAMPLE_R=0;
 
        for(x=0;x<8;x++)
@@ -140,7 +140,7 @@ static INLINE void MixREVERBLeftRight(spu_state_t *spu, s32 *oleft, s32 *oright,
        s_buffer1(spu, spu->rvb.IIR_DEST_A1, IIR_A1);
        s_buffer1(spu, spu->rvb.IIR_DEST_B0, IIR_B0);
        s_buffer1(spu, spu->rvb.IIR_DEST_B1, IIR_B1);
- 
+
        ACC0 = ((g_buffer(spu, spu->rvb.ACC_SRC_A0) * spu->rvb.ACC_COEF_A)>>15) +
               ((g_buffer(spu, spu->rvb.ACC_SRC_B0) * spu->rvb.ACC_COEF_B)>>15) +
               ((g_buffer(spu, spu->rvb.ACC_SRC_C0) * spu->rvb.ACC_COEF_C)>>15) +
@@ -157,10 +157,10 @@ static INLINE void MixREVERBLeftRight(spu_state_t *spu, s32 *oleft, s32 *oright,
 
        s_buffer(spu, spu->rvb.MIX_DEST_A0, ACC0 - ((FB_A0 * spu->rvb.FB_ALPHA)>>15));
        s_buffer(spu, spu->rvb.MIX_DEST_A1, ACC1 - ((FB_A1 * spu->rvb.FB_ALPHA)>>15));
-       
+
        s_buffer(spu, spu->rvb.MIX_DEST_B0, ((spu->rvb.FB_ALPHA * ACC0)>>15) - ((FB_A0 * (int)(spu->rvb.FB_ALPHA^0xFFFF8000))>>15) - ((FB_B0 * spu->rvb.FB_X)>>15));
        s_buffer(spu, spu->rvb.MIX_DEST_B1, ((spu->rvb.FB_ALPHA * ACC1)>>15) - ((FB_A1 * (int)(spu->rvb.FB_ALPHA^0xFFFF8000))>>15) - ((FB_B1 * spu->rvb.FB_X)>>15));
- 
+
        spu->rvb.iRVBLeft  = (g_buffer(spu, spu->rvb.MIX_DEST_A0)+g_buffer(spu, spu->rvb.MIX_DEST_B0))/3;
        spu->rvb.iRVBRight = (g_buffer(spu, spu->rvb.MIX_DEST_A1)+g_buffer(spu, spu->rvb.MIX_DEST_B1))/3;
 

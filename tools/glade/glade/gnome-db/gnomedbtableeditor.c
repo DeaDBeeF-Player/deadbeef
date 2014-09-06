@@ -129,7 +129,7 @@ gb_gnome_db_table_editor_init ()
   gb_widget_init_struct(&gbwidget);
 
   /* Fill in the pixmap struct & tooltip */
-   gbwidget.pixmap_struct =gnome_db_table_editor_xpm; 
+   gbwidget.pixmap_struct =gnome_db_table_editor_xpm;
   gbwidget.tooltip = _("Table Editor "); /* Please FIXME*/
 
   /* Fill in any functions that this GbWidget has */

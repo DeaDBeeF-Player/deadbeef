@@ -109,7 +109,7 @@ gb_gnome_pixmap_entry_get_properties (GtkWidget *widget, GbWidgetGetArgData * da
   gb_widget_output_bool (data, Preview,
 			 GPOINTER_TO_INT (gtk_object_get_data (GTK_OBJECT (widget), Preview)));
   g_object_get (G_OBJECT (widget), "use_filechooser", &use_filechooser,
-		NULL); 
+		NULL);
   gb_widget_output_bool (data, FileChooser, use_filechooser);
 }
 
@@ -241,7 +241,7 @@ gb_gnome_pixmap_entry_write_source (GtkWidget * widget,
 		"  gnome_file_entry_set_modal (GNOME_FILE_ENTRY (%s), TRUE);\n",
 		data->wname);
 
-  g_object_get (G_OBJECT (widget), "use_filechooser", &use_filechooser, NULL); 
+  g_object_get (G_OBJECT (widget), "use_filechooser", &use_filechooser, NULL);
   if (use_filechooser)
     source_add (data,
 		"  g_object_set (G_OBJECT (%s), \"use_filechooser\", TRUE, NULL);\n",

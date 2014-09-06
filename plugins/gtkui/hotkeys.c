@@ -762,12 +762,12 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
             event->hardware_keycode, event->state,
             0, &accel_key, NULL, NULL, &consumed_modifiers);
 
-    if (accel_key == GDK_ISO_Left_Tab) 
+    if (accel_key == GDK_ISO_Left_Tab)
         accel_key = GDK_Tab;
 
     accel_mods = event->state & gtk_accelerator_get_default_mod_mask ();
 
-    /* Filter consumed modifiers 
+    /* Filter consumed modifiers
     */
     accel_mods &= ~(consumed_modifiers&~GDK_SHIFT_MASK);
 

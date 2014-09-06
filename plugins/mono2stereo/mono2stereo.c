@@ -148,7 +148,7 @@ static DB_dsp_t plugin = {
     .plugin.id = "m2s",
     .plugin.name = "Mono to stereo",
     .plugin.descr = "Mono to stereo converter DSP",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Mono to stereo converter DSP plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"

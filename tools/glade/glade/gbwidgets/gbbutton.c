@@ -576,7 +576,7 @@ gb_button_normal_set_properties	(GtkWidget * widget,
   if (apply_label)
     gtk_label_set_text_with_mnemonic (GTK_LABEL (label_widget),
 				      label ? label : "");
-						   
+
   if (apply_icon && icon_widget && icon_name)
     {
       gchar *old_icon_name;
@@ -1102,7 +1102,7 @@ gb_button_gnome_set_properties	(GtkWidget * widget,
   if (apply_label)
     gtk_label_set_text_with_mnemonic (GTK_LABEL (label_widget),
 				      label ? label : "");
-						   
+
   if (apply_icon && icon_widget && icon_name)
     {
       gchar *old_icon_name;

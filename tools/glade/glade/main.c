@@ -176,7 +176,7 @@ main (int argc, char *argv[])
     /* Gnome sets the locale and parses rc files automatically. */
    program = gnome_program_init ("glade-2", VERSION,
 				 LIBGNOMEUI_MODULE,
-				 argc, argv, 
+				 argc, argv,
 				 GNOME_PARAM_POPT_TABLE, options,
 				 GNOME_PARAM_APP_DATADIR, GLADE_DATADIR,
 				 NULL);
@@ -186,14 +186,14 @@ main (int argc, char *argv[])
    if (icon)
 	   gnome_window_icon_set_default_from_file (icon);
    g_free (icon);
-				     
+
    g_object_get (G_OBJECT (program),
 		 GNOME_PARAM_POPT_CONTEXT, &pctx,
 		 NULL);
 
    /* Set up session management*/
-   GladeClient = gnome_master_client ();		 
-			 
+   GladeClient = gnome_master_client ();
+
    g_signal_connect (GladeClient, "save_yourself",
 		     G_CALLBACK (session_save_yourself_cb), (gpointer)argv[0]);
    g_signal_connect (GladeClient, "die", G_CALLBACK (session_die_cb), NULL);
@@ -598,7 +598,7 @@ session_save_yourself_cb (GnomeClient *client, gint phase,
 
   return TRUE;
 }
- 
+
 
 static void
 session_die_cb (GnomeClient *client, gpointer client_data)

@@ -311,7 +311,7 @@ static DB_vfs_t plugin = {
     .plugin.id = "vfs_zip",
     .plugin.name = "ZIP vfs",
     .plugin.descr = "play files directly from zip files",
-    .plugin.copyright = 
+    .plugin.copyright =
         "ZIP VFS plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"

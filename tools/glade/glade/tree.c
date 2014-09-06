@@ -35,7 +35,7 @@
 #include "utils.h"
 #include "glade_project_window.h"
 
-/* This key is used to store a pointer from each widget to its corresponding 
+/* This key is used to store a pointer from each widget to its corresponding
    node in the widget tree. */
 #define GLADE_TREE_NODE_KEY "GLADE_TREE_NODE_KEY"
 

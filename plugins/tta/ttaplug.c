@@ -339,7 +339,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "tta",
     .plugin.name = "tta decoder",
     .plugin.descr = "tta decoder based on TTA Hardware Players Library Version 1.2",
-    .plugin.copyright = 
+    .plugin.copyright =
         "TTA plugin for DeaDBeeF\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"

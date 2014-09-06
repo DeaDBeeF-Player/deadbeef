@@ -333,7 +333,7 @@ glade_project_open	(const gchar   *xml_filename,
   tree_freeze ();
 
   status = load_project_file (project);
-  
+
   tree_thaw ();
 
   if (!status)
@@ -537,7 +537,7 @@ glade_project_write_ada95_source (GladeProject *project)
 #ifdef _WIN32
   chdir(project->directory);
 #endif
-  
+
   command_buffer = g_strdup_printf ("gate %s", project->xml_filename);
   status = system (command_buffer);
   g_free (command_buffer);
@@ -560,7 +560,7 @@ glade_project_write_perl_source (GladeProject *project)
 {
   gchar *command_buffer;
   gint status;
- 
+
   command_buffer = g_strdup_printf ("glade2perl %s", project->xml_filename);
   status = system (command_buffer);
   g_free (command_buffer);
@@ -1461,7 +1461,7 @@ glade_project_load_option (GladeOptionsParseState *state)
       g_free (project->support_header_file);
       project->support_header_file = glade_util_copy_string (option_value);
     }
-  
+
   else if (!strcmp (option_name, "output_translatable_strings"))
     {
       project->output_translatable_strings = load_parse_bool (NULL, option_value);
@@ -1725,7 +1725,7 @@ glade_project_save_options (GladeProject *project,
   if (!project->output_main_file)
     save_bool_option (buffer, indent, "output_main_file", project->output_main_file);
   if (!project->output_support_files)
-    save_bool_option (buffer, indent, "output_support_files", project->output_support_files); 
+    save_bool_option (buffer, indent, "output_support_files", project->output_support_files);
   if (!project->output_build_files)
     save_bool_option (buffer, indent, "output_build_files", project->output_build_files);
   if (!project->backup_source_files)

@@ -408,7 +408,7 @@ int main(int argc, const char *argv[])
 	for (;;) {
 		int write_size;
 		int l;
-		
+
 		if (depth != 32) {
 			l = duh_render(sr, depth, unsign, volume, delta, bufsize, &buffer);
 			if (depth == 16) {

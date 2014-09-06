@@ -1689,9 +1689,9 @@ streamer_thread (void *ctx) {
 
             if (playing_track != streaming_track) {
                 trace ("streamer already switched to next track\n");
-                
+
                 // restart playing from new position
-                
+
                 mutex_lock (decodemutex);
                 if(fileinfo) {
                     fileinfo->plugin->free (fileinfo);
@@ -2174,7 +2174,7 @@ streamer_init (void) {
     pl_set_order (conf_get_int ("playback.order", 0));
 
     streamer_dsp_init ();
-    
+
     replaygain_set (conf_get_int ("replaygain_mode", 0), conf_get_int ("replaygain_scale", 1), conf_get_float ("replaygain_preamp", 0), conf_get_float ("global_preamp", 0));
 
     ctmap_init_mutex ();

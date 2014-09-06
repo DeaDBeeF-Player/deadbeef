@@ -322,7 +322,7 @@ set_entry_text (GtkEntry *entry,
     text = "";
 
   editable = GTK_EDITABLE (entry);
-  
+
   g_signal_handlers_block_by_func (editable, on_entry_changed, NULL);
   gtk_editable_delete_text (GTK_EDITABLE(entry), 0, -1);
   g_signal_handlers_unblock_by_func (editable, on_entry_changed, NULL);
@@ -1332,7 +1332,7 @@ on_entry_changed (GtkWidget * entry,
       item_text = item->label;
     }
   else if (entry == menued->name_entry)
-    {    
+    {
       item_text = item->name;
     }
   else if (entry == menued->handler_entry)
@@ -1922,7 +1922,7 @@ on_add_child_button_clicked (GtkWidget * button,
 
 
 /**************************************************************************
- * 
+ *
  **************************************************************************/
 
 static void
@@ -2015,7 +2015,7 @@ on_icon_button_clicked (GtkWidget * widget,
 						     NULL);
       gtk_dialog_set_default_response (GTK_DIALOG (menued->filesel),
 				       GTK_RESPONSE_OK);
- 
+
       g_signal_connect (menued->filesel, "response",
 			GTK_SIGNAL_FUNC (on_icon_filesel_response), menued);
       g_signal_connect (menued->filesel, "delete_event",
@@ -2025,7 +2025,7 @@ on_icon_button_clicked (GtkWidget * widget,
   icon = (gchar*) gtk_entry_get_text (GTK_ENTRY (GTK_COMBO (menued->icon_widget)->entry));
   if (icon && *icon)
     glade_util_set_file_selection_filename (menued->filesel, icon);
-  
+
   gtk_window_present (GTK_WINDOW (menued->filesel));
 }
 
@@ -3417,7 +3417,7 @@ set_submenu (GladeMenuEditor *menued,
       if (GTK_IS_CHECK_MENU_ITEM (menuitem)
 	  && GTK_CHECK_MENU_ITEM (menuitem)->active)
 	item->active = TRUE;
-	
+
       /* Find 'activate' handler in widget data. */
       tmp_list = item->wdata->signals;
       while (tmp_list)

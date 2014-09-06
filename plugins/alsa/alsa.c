@@ -636,7 +636,7 @@ palsa_thread (void *context) {
         }
         char buf[period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels];
         int bytes_to_write = 0;
-        
+
         /* find out how much space is available for playback data */
         snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
 
@@ -821,7 +821,7 @@ static DB_output_t plugin = {
     .plugin.id = "alsa",
     .plugin.name = "ALSA output plugin",
     .plugin.descr = "plays sound through linux standard alsa library",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"

@@ -594,7 +594,7 @@ static void ts_loop (void)
 static void es_loop (void)
 {
     int size;
-		
+
     do {
 	size = fread (buffer, 1, BUFFER_SIZE, in_file);
 	dca_decode_data (buffer, buffer + size);

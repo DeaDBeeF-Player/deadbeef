@@ -67,11 +67,11 @@ gb_gnome_date_edit_new (GbWidgetNewData *data)
 static void
 gb_gnome_date_edit_create_properties (GtkWidget * widget, GbWidgetCreateArgData * data)
 {
-  property_add_bool (ShowTime, _("Show Time:"), 
+  property_add_bool (ShowTime, _("Show Time:"),
                      _("If the time is shown as well as the date"));
-  property_add_bool (Use24Format, _("24 Hour Format:"), 
+  property_add_bool (Use24Format, _("24 Hour Format:"),
                      _("If the time is shown in 24-hour format"));
-  property_add_bool (WeekStartMonday, _("Monday First:"), 
+  property_add_bool (WeekStartMonday, _("Monday First:"),
                      _("If the week should start on Monday"));
   property_add_int_range (LowerHour, _("Lower Hour:"),
 			  _("The lowest hour to show in the popup"),
@@ -267,7 +267,7 @@ gb_gnome_date_edit_write_source (GtkWidget * widget, GbWidgetWriteSourceData * d
 		NULL);
 
   if (lower_hour != 7 || upper_hour != 19)
-      
+
     {
       source_add (data, "  gnome_date_edit_set_popup_range (GNOME_DATE_EDIT (%s), %i, %i);\n",
 		  data->wname,

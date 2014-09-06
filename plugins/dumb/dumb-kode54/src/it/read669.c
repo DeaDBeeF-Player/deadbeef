@@ -224,7 +224,7 @@ static int it_669_read_sample_data(IT_SAMPLE *sample, DUMBFILE *f)
 	if (sample->length)
 	{
 		i = dumbfile_getnc(sample->data, sample->length, f);
-		
+
 		if (i < sample->length) {
 			//return -1;
 			// ficking truncated files

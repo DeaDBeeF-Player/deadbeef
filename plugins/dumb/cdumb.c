@@ -168,7 +168,7 @@ cdumb_seek (DB_fileinfo_t *_info, float time) {
     if (time < _info->readpos) {
         if (cdumb_startrenderer (_info) < 0) {
             return -1;
-        }       
+        }
     }
     else {
         time -= _info->readpos;
@@ -904,7 +904,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "stddumb",
     .plugin.name = "DUMB module player",
     .plugin.descr = "module player based on DUMB library",
-    .plugin.copyright = 
+    .plugin.copyright =
         "DUMB Plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"

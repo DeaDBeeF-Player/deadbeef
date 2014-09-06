@@ -33,9 +33,9 @@
 // so we get the inlined version of fft16 (which is measurably faster)
 #undef CONFIG_SMALL
 #else
-#undef CONFIG_SMALL 
+#undef CONFIG_SMALL
 #endif
- 
+
 #include "fft.h"
 #include <string.h>
 #include <stdlib.h>
@@ -85,7 +85,7 @@ static void ff_fft_permute_c(FFTContext *s, FFTComplex *z)
     FFTComplex tmp;
     //const uint16_t *revtab = s->revtab;
     np = 1 << s->nbits;
-    
+
     const int revtab_shift = (12 - s->nbits);
 
     /* reverse */
@@ -154,48 +154,48 @@ static void ff_fft_permute_c(FFTContext *s, FFTComplex *z)
   a1 = z[k+N/4]
   a2 = z[k+2N/4]
   a3 = z[k+3N/4]
-  
+
   result:
   y[k]      = z[k]+w(z[k+2N/4])+w'(z[k+3N/4])
   y[k+N/4]  = z[k+N/4]-iw(z[k+2N/4])+iw'(z[k+3N/4])
   y[k+2N/4] = z[k]-w(z[k+2N/4])-w'(z[k+3N/4])
   y[k+3N/4] = z[k+N/4]+iw(z[k+2N/4])-iw'(z[k+3N/4])
-  
+
   i.e.
-  
+
   a0        = a0 +  (w.a2 + w'.a3)
   a1        = a1 - i(w.a2 - w'.a3)
   a2        = a0 -  (w.a2 + w'.a3)
   a3        = a1 + i(w.a2 - w'.a3)
-  
+
   note re(w') = re(w) and im(w') = -im(w)
-  
+
   so therefore
-  
+
   re(a0)   = re(a0) + re(w.a2) + re(w.a3)
   im(a0)   = im(a0) + im(w.a2) - im(w.a3) etc
 
-  and remember also that  
+  and remember also that
   Re([s+it][u+iv]) = su-tv
   Im([s+it][u+iv]) = sv+tu
-  
+
   so
   Re(w'.(s+it)) = Re(w').s - Im(w').t = Re(w).s + Im(w).t
   Im(w'.(s+it)) = Re(w').t + Im(w').s = Re(w).t - Im(w).s
 
   For inverse dft we take the complex conjugate of all twiddle factors.
-  Hence 
-  
+  Hence
+
   a0        = a0 +  (w'.a2 + w.a3)
   a1        = a1 - i(w'.a2 - w.a3)
   a2        = a0 -  (w'.a2 + w.a3)
   a3        = a1 + i(w'.a2 - w.a3)
-  
+
   Define t1 = Re(w'.a2)  =  Re(w)*Re(a2) + Im(w)*Im(a2)
          t2 = Im(w'.a2)  =  Re(w)*Im(a2) - Im(w)*Re(a2)
          t5 = Re(w.a3)   =  Re(w)*Re(a3) - Im(w)*Im(a3)
          t6 = Im(w.a3)   =  Re(w)*Im(a3) + Im(w)*Re(a3)
-         
+
   Then we just output:
   a0.re = a0.re + ( t1 + t5 )
   a0.im = a0.im + ( t2 + t6 )
@@ -205,8 +205,8 @@ static void ff_fft_permute_c(FFTContext *s, FFTComplex *z)
   a2.im = a0.im - ( t1 + t5 )
   a3.re = a1.re - ( t2 - t6 )   // since we multiply by +i and i(+i) = -1
   a3.im = a1.im + ( t1 - t5 )   // since we multiply by +i and 1(+i) = i
-    
-    
+
+
 */
 
 #ifndef FFT_FFMPEG_INCL_OPTIMISED_TRANSFORM
@@ -364,7 +364,7 @@ static inline void fft8(FFTComplex *z)
 {
     fft4(z);
     FFTSample t1,t2,t3,t4,t7,t8;
-    
+
     BF(t1, z[5].re, z[4].re, -z[5].re);
     BF(t2, z[5].im, z[4].im, -z[5].im);
     BF(t3, z[7].re, z[6].re, -z[7].re);
@@ -449,7 +449,7 @@ int main (void)
     for (n = 0; n < FFT_SIZE; n++)
     {
         t = (2 * M_PI * n)/N;
-        /*z[n].re =  1.1      + sin(      t) +                
+        /*z[n].re =  1.1      + sin(      t) +
                    0.5      * sin(2.0 * t) +
                   (1.0/3.0) * sin(3.0 * t) +
                    0.25     * sin(4.0 * t) +
@@ -470,7 +470,7 @@ int main (void)
 //exec_time = (((double)end-(double)start)/CLOCKS_PER_SEC);
     for(j = 0; j < FFT_SIZE; j++)
     {
-        printf("%8.4f\n", sqrt(pow(fixtof32(z[j].re),2)+ pow(fixtof32(z[j].im), 2)));   
+        printf("%8.4f\n", sqrt(pow(fixtof32(z[j].re),2)+ pow(fixtof32(z[j].im), 2)));
         //getchar();
     }
     printf("muls = %d, adds = %d\n", muls, adds);

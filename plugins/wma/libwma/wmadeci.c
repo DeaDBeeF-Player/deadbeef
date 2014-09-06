@@ -46,7 +46,7 @@ static fixed32 stat4[ 128] IBSS_ATTR_WMA_XL_IRAM MEM_ALIGN_ATTR;
 
 /*VLC lookup tables*/
 static uint16_t *runtabarray[2];
-static uint16_t *levtabarray[2];         
+static uint16_t *levtabarray[2];
 
 static uint16_t runtab_big[1336]   MEM_ALIGN_ATTR;
 static uint16_t runtab_small[1072] MEM_ALIGN_ATTR;
@@ -84,8 +84,8 @@ static VLC_TYPE vlcbuf4[VLCBUF4SIZE][2] MEM_ALIGN_ATTR;
      int block_len, bsize, n;
 
      /* left part */
-     
-     /* previous block was larger, so we'll use the size of the current 
+
+     /* previous block was larger, so we'll use the size of the current
       * block to set the window size*/
      if (s->block_len_bits <= s->prev_block_len_bits) {
          block_len = s->block_len;
@@ -203,7 +203,7 @@ static inline av_const int av_log2_c(unsigned int v)
 
 int wma_decode_init(WMADecodeContext* s, asf_waveformatex_t *wfx)
 {
-    
+
     int i, flags2;
     fixed32 *window;
     uint8_t *extradata;
@@ -483,7 +483,7 @@ int wma_decode_init(WMADecodeContext* s, asf_waveformatex_t *wfx)
         }
     }
 
-    /* ffmpeg uses malloc to only allocate as many window sizes as needed.  
+    /* ffmpeg uses malloc to only allocate as many window sizes as needed.
     *  However, we're really only interested in the worst case memory usage.
     *  In the worst case you can have 5 window sizes, 128 doubling up 2048
     *  Smaller windows are handled differently.
@@ -503,14 +503,14 @@ int wma_decode_init(WMADecodeContext* s, asf_waveformatex_t *wfx)
         fixed32 alpha;
         n = 1 << (s->frame_len_bits - i);
         window = temp[i];
-         
+
          /* this calculates 0.5/(2*n) */
-        alpha = (1<<15)>>(s->frame_len_bits - i+1);  
+        alpha = (1<<15)>>(s->frame_len_bits - i+1);
         for(j=0;j<n;++j)
         {
             fixed32 j2 = itofix32(j) + 0x8000;
             /*alpha between 0 and pi/2*/
-            window[j] = fsincos(fixmul32(j2,alpha)<<16, 0); 
+            window[j] = fsincos(fixmul32(j2,alpha)<<16, 0);
         }
         s->windows[i] = window;
 
@@ -528,7 +528,7 @@ int wma_decode_init(WMADecodeContext* s, asf_waveformatex_t *wfx)
             so halve the values if needed*/
             if(noisetable_exp[0] == 0x0a) {
                 for (i=0;i<NOISE_TAB_SIZE;++i)
-                    noisetable_exp[i] >>= 1;  
+                    noisetable_exp[i] >>= 1;
             }
             s->noise_table = noisetable_exp;
         }
@@ -536,7 +536,7 @@ int wma_decode_init(WMADecodeContext* s, asf_waveformatex_t *wfx)
         {
             s->noise_mult = 0xa3d;
             /*check that we haven't already doubled this table*/
-            if(noisetable_exp[0] == 0x5) { 
+            if(noisetable_exp[0] == 0x5) {
                 for (i=0;i<NOISE_TAB_SIZE;++i)
                     noisetable_exp[i] <<= 1;
             }
@@ -1116,9 +1116,9 @@ static int wma_decode_block(WMADecodeContext *s)
 
 
             if (s->use_noise_coding)
-            {   
+            {
                 /*This case is only used for low bitrates (typically less then 32kbps)*/
-                
+
                 /*TODO:  mult should be converted to 32 bit to speed up noise coding*/
 
                 mult = fixdiv64(pow_table[total_gain+20],Fixed32To64(s->max_exponent[ch]));
@@ -1276,7 +1276,7 @@ static int wma_decode_block(WMADecodeContext *s)
     }
 
     for(ch = 0; ch < s->nb_channels; ++ch)
-    { 
+    {
         /* BLOCK_MAX_SIZE is 2048 (samples) and MAX_CHANNELS is 2. */
         static uint32_t scratch_buf[BLOCK_MAX_SIZE * MAX_CHANNELS] IBSS_ATTR MEM_ALIGN_ATTR;
         if (s->channel_coded[ch])
@@ -1341,7 +1341,7 @@ static int wma_decode_frame(WMADecodeContext *s)
             break;
         }
     }
-    
+
     return 0;
 }
 
@@ -1392,12 +1392,12 @@ int wma_decode_superframe_frame(WMADecodeContext* s,
     int pos, len, ch;
     uint8_t *q;
     int done = 0;
-    
+
     for(ch = 0; ch < s->nb_channels; ch++)
-        memmove(&(s->frame_out[ch][0]), 
+        memmove(&(s->frame_out[ch][0]),
                 &(s->frame_out[ch][s->frame_len]),
                 s->frame_len * sizeof(fixed32));
-    
+
     if ((s->use_bit_reservoir) && (s->current_frame == 0))
     {
         if (s->last_superframe_len > 0)

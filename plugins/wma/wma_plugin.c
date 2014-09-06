@@ -441,7 +441,7 @@ wmaplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     deadbeef->plt_set_item_duration (plt, it, totalsamples / (float)wfx.rate);
     deadbeef->pl_append_meta (it, ":FILETYPE", "WMA");
-    
+
     it->startsample = 0;
     it->endsample = totalsamples-1;
 
@@ -485,7 +485,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "wma",
     .plugin.name = "WMA player",
     .plugin.descr = "plays WMA files",
-    .plugin.copyright = 
+    .plugin.copyright =
         "WMA plugin for deadbeef\n"
         "Copyright (C) 2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "WMA and ASF libraries (C) RockBox & FFMPEG developers\n"

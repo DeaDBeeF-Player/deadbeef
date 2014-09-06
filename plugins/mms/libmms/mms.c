@@ -1,18 +1,18 @@
 /*
  * Copyright (C) 2002-2004 the xine project
- * 
+ *
  * This file is part of LibMMS, an MMS protocol handling library.
- * 
+ *
  * xine is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the ree Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * xine is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
@@ -62,8 +62,8 @@ extern DB_functions_t *deadbeef;
 #include "uri.h"
 #include "mms-common.h"
 
-/* 
- * mms specific types 
+/*
+ * mms specific types
  */
 
 #define MMST_PORT 1755
@@ -103,7 +103,7 @@ struct mms_packet_header_s {
 struct mms_s {
 
   int           s;
-  
+
   /* url parsing */
   GURI         *guri;
   char         *url;
@@ -118,16 +118,16 @@ struct mms_s {
   char          scmd[CMD_HEADER_LEN + CMD_BODY_LEN];
   char         *scmd_body; /* pointer to &scmd[CMD_HEADER_LEN] */
   int           scmd_len; /* num bytes written in header */
-  
+
   char          str[1024]; /* scratch buffer to built strings */
-  
+
   /* receive buffer */
   uint8_t       buf[BUF_SIZE];
   int           buf_size;
   int           buf_read;
   off_t         buf_packet_seq_offset; /* packet sequence offset residing in
                                           buf */
-  
+
   uint8_t       asf_header[ASF_HEADER_LEN];
   uint32_t      asf_header_len;
   uint32_t      asf_header_read;
@@ -144,7 +144,7 @@ struct mms_s {
   uint64_t      asf_num_packets;
   char          guid[37];
   int           bandwidth;
-  
+
   int           has_audio;
   int           has_video;
   int           live_flag;
@@ -198,7 +198,7 @@ static off_t fallback_io_read(void *data, int socket, char *buf, off_t num, int 
             continue;
           default:
             /* if already read something, return it, we will fail next time */
-            return len ? len : ret; 
+            return len ? len : ret;
       }
     }
     len += ret;
@@ -213,10 +213,10 @@ static off_t fallback_io_write(void *data, int socket, char *buf, off_t num)
 
 static int fallback_io_tcp_connect(void *data, const char *host, int port, int *need_abort)
 {
-  
+
   struct hostent *h;
   int i, s;
-  
+
 #ifdef USE_GETHOSTBYNAME
   h = gethostbyname(host);
   if (h == NULL) {
@@ -250,7 +250,7 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port, int *
   }
 #endif
 
-  s = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);  
+  s = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
   if (s == -1) {
     lprintf("mms: failed to create socket: %s\n", strerror(errno));
     return -1;
@@ -265,7 +265,7 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port, int *
   for (i = 0; h_addr_list[i]; i++) {
     struct in_addr ia;
     struct sockaddr_in sin;
- 
+
     memcpy (&ia, h_addr_list[i], 4);
     sin.sin_family = AF_INET;
     sin.sin_addr   = ia;
@@ -281,7 +281,7 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port, int *
     }
     memcpy (&sin, rp->ai_addr, l);
 #endif
-    
+
     time_t t = time (NULL);
     int error = 0;
     while (!need_abort || !(*need_abort)) {
@@ -313,7 +313,7 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port, int *
     if (error) {
         continue;
     }
-    
+
 #ifndef USE_GETHOSTBYNAME
     if (res) {
         freeaddrinfo(res);
@@ -359,7 +359,7 @@ static mms_io_t default_io =   {
 #define io_write(io, args...) ((io) ? (io)->write(io->write_data , ## args) : default_io.write(NULL , ## args))
 #define io_select(io, args...) ((io) ? (io)->select(io->select_data , ## args) : default_io.select(NULL , ## args))
 #define io_connect(io, args...) ((io) ? (io)->connect(io->connect_data , ## args) : default_io.connect(NULL , ## args))
-  
+
 const mms_io_t* mms_get_default_io_impl()
 {
   return &default_io;
@@ -440,25 +440,25 @@ static void mms_buffer_put_32 (mms_buffer_t *mms_buffer, uint32_t value) {
 static int get_guid (unsigned char *buffer, int offset) {
   int i;
   GUID g;
-  
+
   g.Data1 = LE_32(buffer + offset);
   g.Data2 = LE_16(buffer + offset + 4);
   g.Data3 = LE_16(buffer + offset + 6);
   for(i = 0; i < 8; i++) {
     g.Data4[i] = buffer[offset + 8 + i];
   }
-  
+
   for (i = 1; i < GUID_END; i++) {
     if (!memcmp(&g, &guids[i].guid, sizeof(GUID))) {
       lprintf("mms: GUID: %s\n", guids[i].name);
       return i;
     }
   }
-  
+
   lprintf("mms: unknown GUID: 0x%x, 0x%x, 0x%x, "
            "{ 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx }\n",
            g.Data1, g.Data2, g.Data3,
-           g.Data4[0], g.Data4[1], g.Data4[2], g.Data4[3], 
+           g.Data4[0], g.Data4[1], g.Data4[2], g.Data4[3],
            g.Data4[4], g.Data4[5], g.Data4[6], g.Data4[7]);
 
   return GUID_ERROR;
@@ -493,18 +493,18 @@ static void print_command (char *data, int len) {
 
   for (i = (CMD_HEADER_LEN + CMD_PREFIX_LEN); i < (CMD_HEADER_LEN + CMD_PREFIX_LEN + len); i += 1) {
     unsigned char c = data[i];
-    
+
     if ((c >= 32) && (c < 128))
       lprintf ("%c", c);
     else
       lprintf (" %02x ", c);
-    
+
   }
   if (len > CMD_HEADER_LEN)
     lprintf ("\n");
   lprintf ("----------------------------------------------\n");
 #endif
-}  
+}
 
 
 
@@ -532,7 +532,7 @@ static int send_command (mms_io_t *io, mms_t *this, int command,
   mms_buffer_put_32 (&command_buffer, len8 + 2);
   mms_buffer_put_32 (&command_buffer, 0x00030000 | command); /* dir | command */
   /* end of the 40 byte command header */
-  
+
   mms_buffer_put_32 (&command_buffer, prefix1);
   mms_buffer_put_32 (&command_buffer, prefix2);
 
@@ -609,7 +609,7 @@ static int get_packet_header (mms_io_t *io, mms_t *this, mms_packet_header_t *he
     len = io_read(io,  this->s, this->buf + 8, 4, this->need_abort);
     if (len != 4)
       goto error;
-    
+
     header->packet_len = LE_32(this->buf + 8) + 4;
     if (header->packet_len > BUF_SIZE - 12) {
         lprintf("mms: get_packet_header error cmd packet length > bufsize\n");
@@ -628,9 +628,9 @@ static int get_packet_header (mms_io_t *io, mms_t *this, mms_packet_header_t *he
       packet_type = MMS_PACKET_ASF_PACKET;
     }
   }
-  
+
   return packet_type;
-  
+
 error:
   lprintf("mms: error reading packet header\n");
   return MMS_PACKET_ERR;
@@ -642,7 +642,7 @@ static int get_packet_command (mms_io_t *io, mms_t *this, uint32_t packet_len) {
 
   int  command = 0;
   size_t len;
-  
+
   len = io_read(io,  this->s, this->buf + 12, packet_len, this->need_abort) ;
   //this->buf_packet_seq_offset = -1; // already set in get_packet_header
   if (len != packet_len) {
@@ -651,18 +651,18 @@ static int get_packet_command (mms_io_t *io, mms_t *this, uint32_t packet_len) {
   }
 
   print_command (this->buf, len);
-  
+
   /* check protocol type ("MMS ") */
   if (LE_32(this->buf + 12) != 0x20534D4D) {
     lprintf("mms: unknown protocol type: %c%c%c%c (0x%08X)\n",
             this->buf[12], this->buf[13], this->buf[14], this->buf[15],
-            LE_32(this->buf + 12));  
+            LE_32(this->buf + 12));
     return 0;
   }
 
   command = LE_32 (this->buf + 36) & 0xFFFF;
   lprintf("mms: received command = %02x, len: %d\n", command, packet_len);
-    
+
   return command;
 }
 
@@ -695,7 +695,7 @@ static int get_answer (mms_io_t *io, mms_t *this) {
       lprintf("mms: unexpected asf packet\n");
       break;
   }
-  
+
   return command;
 }
 
@@ -704,7 +704,7 @@ static int get_asf_header (mms_io_t *io, mms_t *this) {
 
   off_t len;
   int stop = 0;
-  
+
   this->asf_header_read = 0;
   this->asf_header_len = 0;
 
@@ -733,7 +733,7 @@ static int get_asf_header (mms_io_t *io, mms_t *this) {
       case MMS_PACKET_ASF_HEADER:
       case MMS_PACKET_ASF_PACKET:
         if (header.packet_len + this->asf_header_len > ASF_HEADER_LEN) {
-            lprintf("mms: asf packet too large: %d\n", 
+            lprintf("mms: asf packet too large: %d\n",
                     header.packet_len + this->asf_header_len);
             return 0;
         }
@@ -774,7 +774,7 @@ static void interp_stream_properties(mms_t *this, int i)
       type = ASF_STREAM_TYPE_VIDEO;
       this->has_video = 1;
       break;
-  
+
     case GUID_ASF_COMMAND_MEDIA:
       type = ASF_STREAM_TYPE_CONTROL;
       break;
@@ -809,10 +809,10 @@ static void interp_asf_header (mms_t *this) {
   /*
    * parse header
    */
-   
+
   i = 30;
   while ((i + 24) <= this->asf_header_len) {
-    
+
     int guid;
     uint64_t length;
 
@@ -822,7 +822,7 @@ static void interp_asf_header (mms_t *this) {
     if ((i + length) > this->asf_header_len) return;
 
     switch (guid) {
-    
+
       case GUID_ASF_FILE_PROPERTIES:
 
         this->asf_packet_len = LE_32(this->asf_header + i + 92);
@@ -859,7 +859,7 @@ static void interp_asf_header (mms_t *this) {
             if (stream_index < this->num_stream_ids) {
               this->streams[stream_index].bitrate = LE_32(this->asf_header + i + 24 + 4 + j * 6);
               this->streams[stream_index].bitrate_pos = i + 24 + 4 + j * 6;
-              lprintf("mms: stream id %d, bitrate %d\n", stream_id, 
+              lprintf("mms: stream id %d, bitrate %d\n", stream_id,
                       this->streams[stream_index].bitrate);
             } else
               lprintf ("mms: unknown stream id %d in bitrate properties\n",
@@ -867,7 +867,7 @@ static void interp_asf_header (mms_t *this) {
           }
         }
         break;
-    
+
       case GUID_ASF_HEADER_EXTENSION:
         {
           if ((24 + 18 + 4) > length)
@@ -970,8 +970,8 @@ static int mmst_valid_proto (char *proto) {
 static int mms_tcp_connect(mms_io_t *io, mms_t *this) {
   if (!this->port) this->port = MMST_PORT;
 
-  /* 
-   * try to connect 
+  /*
+   * try to connect
    */
   lprintf("mms: trying to connect to %s on port %d\n", this->host, this->port);
   this->s = io_connect(io,  this->host, this->port, this->need_abort);
@@ -1036,7 +1036,7 @@ int static mms_choose_best_streams(mms_io_t *io, mms_t *this) {
         break;
     }
   }
-  
+
   /* choose a video stream adapted to the user bandwidth */
   bandwitdh_left = this->bandwidth - max_arate;
   if (bandwitdh_left < 0) {
@@ -1057,7 +1057,7 @@ int static mms_choose_best_streams(mms_io_t *io, mms_t *this) {
       default:
         break;
     }
-  }  
+  }
 
   /* choose the lower bitrate of */
   if (video_stream == -1 && this->has_video) {
@@ -1075,7 +1075,7 @@ int static mms_choose_best_streams(mms_io_t *io, mms_t *this) {
       }
     }
   }
-    
+
   lprintf("mms: selected streams: audio %d, video %d\n", audio_stream, video_stream);
   memset (this->scmd_body, 0, 40);
   for (i = 1; i < this->num_stream_ids; i++) {
@@ -1091,7 +1091,7 @@ int static mms_choose_best_streams(mms_io_t *io, mms_t *this) {
       lprintf("mms: disabling stream %d\n", this->streams[i].stream_id);
       this->scmd_body [ (i - 1) * 6 + 6 ] = 0x02;
       this->scmd_body [ (i - 1) * 6 + 7 ] = 0x00;
-      
+
       /* forces the asf demuxer to not choose this stream */
       if (this->streams[i].bitrate_pos) {
         if (this->streams[i].bitrate_pos+3 < ASF_HEADER_LEN) {
@@ -1107,8 +1107,8 @@ int static mms_choose_best_streams(mms_io_t *io, mms_t *this) {
   }
 
   lprintf("mms: send command 0x33\n");
-  if (!send_command (io, this, 0x33, this->num_stream_ids, 
-                     0xFFFF | this->streams[0].stream_id << 16, 
+  if (!send_command (io, this, 0x33, this->num_stream_ids,
+                     0xFFFF | this->streams[0].stream_id << 16,
                      this->num_stream_ids * 6 + 2)) {
     lprintf("mms: mms_choose_best_streams failed\n");
     return 0;
@@ -1139,7 +1139,7 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
   int     res;
   uint32_t openid;
   mms_buffer_t command_buffer;
-  
+
   if (!url)
     return NULL;
 
@@ -1171,7 +1171,7 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
     lprintf("mms: invalid url\n");
     goto fail;
   }
-  
+
   /* MMS wants unescaped (so not percent coded) strings */
   gnet_uri_unescape(this->guri);
 
@@ -1189,11 +1189,11 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
     lprintf("mms: unsupported protocol: %s\n", this->proto);
     goto fail;
   }
-  
+
   if (mms_tcp_connect(io, this)) {
     goto fail;
   }
-  
+
   /*
    * let the negotiations begin...
    */
@@ -1215,7 +1215,7 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
     lprintf("mms: failed to send command 0x01\n");
     goto fail;
   }
-  
+
   if ((res = get_answer (io, this)) != 0x01) {
     lprintf("mms: unexpected response: %02x (0x01)\n", res);
     goto fail;
@@ -1268,7 +1268,7 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
   /* command 0x5 */
   {
     mms_buffer_t command_buffer;
-    
+
     lprintf("mms: send command 0x05\n");
     mms_buffer_init(&command_buffer, this->scmd_body);
     mms_buffer_put_32 (&command_buffer, 0x00000000); /* ?? */
@@ -1284,14 +1284,14 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
       goto fail;
     }
   }
-  
+
   switch (res = get_answer (io, this)) {
     case 0x06:
       {
         int xx, yy;
         /* no authentication required */
         openid = LE_32(this->buf + 48);
-      
+
         /* Warning: sdp is not right here */
         xx = this->buf[62];
         yy = this->buf[63];
@@ -1337,7 +1337,7 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
       goto fail;
     }
   }
-  
+
   if ((res = get_answer (io, this)) != 0x11) {
     lprintf("mms: unexpected response: %02x (0x11)\n", res);
     goto fail;
@@ -1370,7 +1370,7 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
     mms_buffer_t command_buffer;
     mms_buffer_init(&command_buffer, this->scmd_body);
     mms_buffer_put_32 (&command_buffer, 0x00000000);                  /* 64 byte float timestamp */
-    mms_buffer_put_32 (&command_buffer, 0x00000000);                  
+    mms_buffer_put_32 (&command_buffer, 0x00000000);
     mms_buffer_put_32 (&command_buffer, 0xFFFFFFFF);                  /* ?? */
     mms_buffer_put_32 (&command_buffer, 0xFFFFFFFF);                  /* first packet sequence */
     mms_buffer_put_8  (&command_buffer, 0xFF);                        /* max stream time limit (3 bytes) */
@@ -1385,7 +1385,7 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
   }
 
   lprintf("mms: connect: passed\n");
- 
+
   return this;
 
 fail:
@@ -1405,16 +1405,16 @@ fail:
 static int get_media_packet (mms_io_t *io, mms_t *this) {
   mms_packet_header_t header;
   off_t len;
-  
+
   switch (get_packet_header (io, this, &header)) {
     case MMS_PACKET_ERR:
       return 0;
-    
+
     case MMS_PACKET_COMMAND:
       {
         int command;
         command = get_packet_command (io, this, header.packet_len);
-      
+
         switch (command) {
           case 0:
             return 0;
@@ -1431,10 +1431,10 @@ static int get_media_packet (mms_io_t *io, mms_t *this) {
                 this->eos = 1;
                 return 0;
               }
-              
+
             }
             break;
-  
+
           case 0x20:
             {
               lprintf("mms: new stream.\n");
@@ -1458,7 +1458,7 @@ static int get_media_packet (mms_io_t *io, mms_t *this) {
                 mms_buffer_t command_buffer;
                 mms_buffer_init(&command_buffer, this->scmd_body);
                 mms_buffer_put_32 (&command_buffer, 0x00000000);                  /* 64 byte float timestamp */
-                mms_buffer_put_32 (&command_buffer, 0x00000000);                  
+                mms_buffer_put_32 (&command_buffer, 0x00000000);
                 mms_buffer_put_32 (&command_buffer, 0xFFFFFFFF);                  /* ?? */
                 mms_buffer_put_32 (&command_buffer, 0xFFFFFFFF);                  /* first packet sequence */
                 mms_buffer_put_8  (&command_buffer, 0xFF);                        /* max stream time limit (3 bytes) */
@@ -1472,7 +1472,7 @@ static int get_media_packet (mms_io_t *io, mms_t *this) {
                 }
               }
               this->current_pos = 0;
-              
+
               /* I don't know if this ever happens with none live (and thus
                  seekable streams), but I do know that if it happens all bets
                  with regards to seeking are off */
@@ -1488,10 +1488,10 @@ static int get_media_packet (mms_io_t *io, mms_t *this) {
               }
             }
             break;
-          
+
           case 0x05:
             break;
-  
+
           default:
             lprintf("mms: unexpected mms command %02x\n", command);
         }
@@ -1516,12 +1516,12 @@ static int get_media_packet (mms_io_t *io, mms_t *this) {
           this->need_discont = 0;
           this->start_packet_seq = header.packet_seq;
         }
-        
+
         if (header.packet_len > this->asf_packet_len) {
           lprintf("mms: invalid asf packet len: %d bytes\n", header.packet_len);
           return 0;
         }
-    
+
         /* simulate a seek */
         this->current_pos = (off_t)this->asf_header_len +
           ((off_t)header.packet_seq - this->start_packet_seq) * (off_t)this->asf_packet_len;
@@ -1627,7 +1627,7 @@ static int mms_request_data_packet (mms_io_t *io, mms_t *this,
     mms_buffer_t command_buffer;
     //mms_buffer_init(&command_buffer, this->scmd_body);
     //mms_buffer_put_32 (&command_buffer, 0x00000000);                  /* 64 byte float timestamp */
-    //mms_buffer_put_32 (&command_buffer, 0x00000000);                  
+    //mms_buffer_put_32 (&command_buffer, 0x00000000);
     memcpy(this->scmd_body, &time_sec, 8);
     mms_buffer_init(&command_buffer, this->scmd_body+8);
     mms_buffer_put_32 (&command_buffer, 0xFFFFFFFF);                  /* ?? */
@@ -1749,10 +1749,10 @@ off_t mms_seek (mms_io_t *io, mms_t *this, off_t offset, int origin) {
   off_t dest;
   off_t dest_packet_seq;
   //off_t buf_packet_seq_offset;
-  
+
   if (!this->seekable)
     return this->current_pos;
-  
+
   switch (origin) {
     case SEEK_SET:
       dest = offset;

@@ -7,7 +7,7 @@
 int main() {
   char *respath = malloc(PATH_MAX);
   unsigned char c = (unsigned char)"c";
-  
+
   printf("foo\n");
   printf("%d\n", isalpha(c));
   realpath("/some/path", respath);

@@ -2,9 +2,9 @@
 	wildmidi.c
 
  	Midi Player using the WildMidi Midi Processing Library
- 
+
  	Copyright (C)2001-2004 Chris Ison
- 
+
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation; either version 2 of the License, or
@@ -21,7 +21,7 @@
 
 	Email: cisos@bigpond.net.au
 		 wildcode@users.sourceforge.net
- 
+
  	$Id: wildmidi.c,v 1.21 2004/01/28 05:45:09 wildcode Exp $
 */
 
@@ -77,7 +77,7 @@ struct _midi_test {
  * offset 18-21 (0x12-0x15) - track size
  * offset 25 (0x1A) = bank number
  * offset 28 (0x1D) = patch number
- */ 
+ */
 unsigned char midi_test_c_scale[] = {
 	0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, // 0x00
 	0x00, 0x00, 0x00, 0x01, 0x00, 0x06, 0x4d, 0x54, // 0x08
@@ -229,7 +229,7 @@ open_wav_output ( void ) {
 		wav_hdr[30] = (bytes_per_sec >> 16) & 0xFF;
 		wav_hdr[31] = (bytes_per_sec >> 24) & 0xFF;
 	}
-	
+
 	if (write(audio_fd, &wav_hdr, 44) < 0) {
 		printf("ERROR: Writing Header %s\n", strerror(errno));
 		shutdown_output();
@@ -282,9 +282,9 @@ close_wav_output ( void ) {
 #if (defined _WIN32) || (defined __CYGWIN__)
 
 HWAVEOUT hWaveOut;
-WAVEHDR header; 
+WAVEHDR header;
 unsigned long int mm_buffer_count;
-static CRITICAL_SECTION waveCriticalSection; 
+static CRITICAL_SECTION waveCriticalSection;
 
 int write_mm_output (char * output_data, int output_size);
 void close_mm_output ( void );
@@ -298,21 +298,21 @@ unsigned long int mm_current_block = 0;
 
 static void CALLBACK mmOutProc( HWAVEOUT hWaveOut, UINT uMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2 ) {
 	int* freeBlockCounter = (int*)dwInstance;
-	if(uMsg != WOM_DONE) 
-		return; 
+	if(uMsg != WOM_DONE)
+		return;
 	EnterCriticalSection(&waveCriticalSection);
 	 (*freeBlockCounter)++;
-	LeaveCriticalSection(&waveCriticalSection); 
-} 
+	LeaveCriticalSection(&waveCriticalSection);
+}
 
 
 int
 open_mm_output ( void ) {
-	WAVEFORMATEX wfx; 
+	WAVEFORMATEX wfx;
 	char *mm_buffer;
 	int i;
 
-	InitializeCriticalSection(&waveCriticalSection); 
+	InitializeCriticalSection(&waveCriticalSection);
 
 	if((mm_buffer = HeapAlloc( GetProcessHeap(), HEAP_ZERO_MEMORY, ((MM_BLOCK_SIZE + sizeof(WAVEHDR)) * MM_BLOCK_COUNT))) == NULL)  {
 		printf("Memory allocation error\n");
@@ -322,32 +322,32 @@ open_mm_output ( void ) {
 	mm_blocks = (WAVEHDR*)mm_buffer;
 	mm_buffer += sizeof(WAVEHDR) * MM_BLOCK_COUNT;
 
-	for(i = 0; i < MM_BLOCK_COUNT; i++) { 
+	for(i = 0; i < MM_BLOCK_COUNT; i++) {
 		mm_blocks[i].dwBufferLength = MM_BLOCK_SIZE;
 		mm_blocks[i].lpData = mm_buffer;
 		mm_buffer += MM_BLOCK_SIZE;
-	} 
+	}
 
 	wfx.nSamplesPerSec = rate;
-	wfx.wBitsPerSample = 16; 
-	wfx.nChannels = 2; 
+	wfx.wBitsPerSample = 16;
+	wfx.nChannels = 2;
 	wfx.cbSize = 0;
 	wfx.wFormatTag = WAVE_FORMAT_PCM;
 	wfx.nBlockAlign = (wfx.wBitsPerSample >> 3) * wfx.nChannels;
 	wfx.nAvgBytesPerSec = wfx.nBlockAlign * wfx.nSamplesPerSec;
 
-	if(waveOutOpen( &hWaveOut, WAVE_MAPPER, &wfx, (DWORD_PTR)mmOutProc, (DWORD_PTR)&mm_free_blocks, CALLBACK_FUNCTION ) != MMSYSERR_NOERROR) { 
+	if(waveOutOpen( &hWaveOut, WAVE_MAPPER, &wfx, (DWORD_PTR)mmOutProc, (DWORD_PTR)&mm_free_blocks, CALLBACK_FUNCTION ) != MMSYSERR_NOERROR) {
 		printf("unable to open WAVE_MAPPER device\n");
 		return -1;
-	 } 
-	 
-	
+	 }
+
+
 	send_output = write_mm_output;
 	close_output = close_mm_output;
 	return 0;
 }
 
-int 
+int
 write_mm_output (char * output_data, int output_size) {
 	WAVEHDR* current;
 	int free_size = 0;
@@ -355,7 +355,7 @@ write_mm_output (char * output_data, int output_size) {
 	current = &mm_blocks[mm_current_block];
 
 	while (output_size) {
-		if(current->dwFlags & WHDR_PREPARED) 
+		if(current->dwFlags & WHDR_PREPARED)
 			waveOutUnprepareHeader(hWaveOut, current, sizeof(WAVEHDR));
 		free_size = MM_BLOCK_SIZE - current->dwUser;
 		if (free_size > output_size)
@@ -420,20 +420,20 @@ open_alsa_output(void) {
 	int alsa_buffer_time, bits_per_sample;
 	unsigned int alsa_period_time;
 	snd_pcm_uframes_t alsa_buffer_size;
-	
+
 	if (!pcmname)
 		pcmname = "default";
-		
+
 	if ((err = snd_pcm_open (&pcm, pcmname, SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
 		printf("Error: audio open error: %s\n", snd_strerror (-err));
 		return -1;
-	} 
-	
+	}
+
 	snd_pcm_hw_params_alloca (&hw);
-	
+
 	if ((err = snd_pcm_hw_params_any(pcm, hw)) < 0) {
 		printf("ERROR: No configuration available for playback: %s\n", snd_strerror(-err));
-		
+
 		return -1;
 	}
 
@@ -441,13 +441,13 @@ open_alsa_output(void) {
 		printf("Cannot set mmap'ed mode: %s.\n", snd_strerror(-err));
 		return -1;
 	}
-	
+
 	if (snd_pcm_hw_params_set_format (pcm, hw, SND_PCM_FORMAT_S16) < 0) {
 		printf("ALSA does not support 16bit signed audio for your soundcard\n");
 		close_alsa_output();
 		return -1;
 	}
-	
+
 	if (snd_pcm_hw_params_set_channels (pcm, hw, 2) < 0) {
 		printf("ALSA does not support stereo for your soundcard\n");
 		close_alsa_output();
@@ -462,10 +462,10 @@ open_alsa_output(void) {
 		close_alsa_output();
 		return -1;
 	}
-	
+
 	alsa_buffer_time = 500000;
 	alsa_period_time = 50000;
-#ifdef ALSA_NEW	
+#ifdef ALSA_NEW
 	if ((err = snd_pcm_hw_params_set_buffer_time_near(pcm, hw, &alsa_buffer_time, 0)) < 0)
 #else
 	if ((err = snd_pcm_hw_params_set_buffer_time_near(pcm, hw, alsa_buffer_time, 0)) < 0)
@@ -484,7 +484,7 @@ open_alsa_output(void) {
 		printf("Set period time failed: %s.\n", snd_strerror(-err));
 		return -1;
 	}
-				
+
 	if (snd_pcm_hw_params(pcm, hw) < 0)
 	{
 		printf("Unable to install hw params\n");
@@ -501,7 +501,7 @@ open_alsa_output(void) {
 		return -1;
 	}
 #ifdef ALSA_NEW
-	if ((err = snd_pcm_hw_params_get_period_size(hw, &alsa_period_size, 0)) < 0)	
+	if ((err = snd_pcm_hw_params_get_period_size(hw, &alsa_period_size, 0)) < 0)
 #else
 	alsa_buffer_size = err;
 	if ((err = snd_pcm_hw_params_get_period_size(hw, 0)) < 0)
@@ -512,7 +512,7 @@ open_alsa_output(void) {
 	}
 #ifndef ALSA_NEW
 	alsa_period_size = err;
-#endif	
+#endif
 	snd_pcm_sw_params_alloca(&sw);
 	snd_pcm_sw_params_current(pcm, sw);
 	if (snd_pcm_sw_params(pcm, sw) < 0)
@@ -520,7 +520,7 @@ open_alsa_output(void) {
 		printf("Unable to install sw params\n");
 		return -1;
 	}
-	
+
 	bits_per_sample = snd_pcm_format_physical_width(SND_PCM_FORMAT_S16);
 	bps = (rate * bits_per_sample * 2) / 8000;
 
@@ -533,19 +533,19 @@ open_alsa_output(void) {
 	areas[1].addr = buffer;
         areas[1].first = bits_per_sample;
         areas[1].step = 2 * bits_per_sample;
-	
+
 	send_output = write_alsa_output;
 	close_output = close_alsa_output;
-	return 0;			
+	return 0;
 }
 
-int 
+int
 write_alsa_output (char * output_data, int output_size) {
 	int cnt = 0, err;
 	snd_pcm_uframes_t offset, frames;
 	snd_pcm_sframes_t avail;
 	const snd_pcm_channel_area_t *chan_areas = areas;
-	
+
 	while (output_size > 0) {
 		avail = snd_pcm_avail_update(pcm);
 		if (avail == -EPIPE) {
@@ -577,7 +577,7 @@ write_alsa_output (char * output_data, int output_size) {
 		}
 		if (err != frames)
 			printf("snd_pcm_mmap_commit returned %d, expected %d\n", err, (int)frames);
-		
+
 		output_size -= cnt;
 		output_data += cnt;
 		if (alsa_first_time) {
@@ -588,7 +588,7 @@ write_alsa_output (char * output_data, int output_size) {
 	return 0;
 }
 
-void 
+void
 close_alsa_output ( void ) {
 	snd_pcm_close (pcm);
 	free(areas);
@@ -623,7 +623,7 @@ open_oss_output( void ) {
 		pcmname = "/dev/dsp";
 	if ((audio_fd = open(pcmname, omode)) < 0) {
 		printf("ERROR: Unable to open /dev/dsp (%s)\n",strerror(errno));
-		return -1;		
+		return -1;
 	}
 	if (ioctl (audio_fd, SNDCTL_DSP_RESET, 0) < 0) {
 		printf("ERROR: Unable to reset /dev/dsp\n");
@@ -646,7 +646,7 @@ open_oss_output( void ) {
 		return -1;
 	}
 	max_buffer = (info.fragstotal * info.fragsize + sz - 1) & ~(sz - 1);
-	
+
 	rc = AFMT_S16_LE;
 	if (ioctl (audio_fd, SNDCTL_DSP_SETFMT, &rc) < 0 ) {
 		printf("Can't set 16bit\n");
@@ -660,20 +660,20 @@ open_oss_output( void ) {
 		shutdown_output();
 		return -1;
 	}
-		
+
 	if (ioctl (audio_fd, SNDCTL_DSP_SPEED, &rate) < 0) {
 		printf("ERROR: /dev/dsp does not support %iHz output\n",rate);
 		shutdown_output();
 		return -1;
 	}
-			
+
 	buffer = (unsigned char *) mmap(NULL, max_buffer, mmmode, mmflags, audio_fd, 0);
 	if (buffer == MAP_FAILED) {
 		printf("couldn't mmap %s\n",strerror(errno));
 		shutdown_output();
 		return -1;
 	}
-	
+
 	tmp = 0;
 	if (ioctl (audio_fd, SNDCTL_DSP_SETTRIGGER, &tmp) < 0) {
 		printf("Couldn't toggle\n");
@@ -681,7 +681,7 @@ open_oss_output( void ) {
 		shutdown_output();
 		return -1;
 	}
-	
+
 	tmp = PCM_ENABLE_OUTPUT;
 	if (ioctl (audio_fd, SNDCTL_DSP_SETTRIGGER, &tmp) < 0) {
 		printf("Couldn't toggle\n");
@@ -830,7 +830,7 @@ main (int argc, char **argv) {
 #ifndef _WIN32
 	int my_tty;
 	struct termios _tty;
-	tcflag_t _res_oflg = _tty.c_oflag; 
+	tcflag_t _res_oflg = _tty.c_oflag;
 	tcflag_t _res_lflg = _tty.c_lflag;
 
 #define raw() (_tty.c_lflag &= ~(ICANON | ICRNL | ISIG), \
@@ -895,12 +895,12 @@ main (int argc, char **argv) {
 				return 0;
 		}
 	}
-	
+
 	if (!config_file) {
 		config_file = malloc(sizeof(TIMIDITY_CFG)+1);
 		strncpy (config_file, TIMIDITY_CFG, sizeof(TIMIDITY_CFG));
 		config_file[sizeof(TIMIDITY_CFG)] = '\0';
-	}	
+	}
 	if ((optind < argc) || (test_midi)) {
 		printf("Initializing Sound System\n");
 
@@ -936,7 +936,7 @@ main (int argc, char **argv) {
 			WildMidi_Shutdown();
 			return 0;
 		}
-#ifndef _WIN32		
+#ifndef _WIN32
 		my_tty = fileno(stdin);
 		if (isatty(my_tty)) {
 			savetty();
@@ -944,7 +944,7 @@ main (int argc, char **argv) {
 			fcntl(0, F_SETFL, FNONBLOCK);
 		}
 #endif
-		
+
 		while ((optind < argc) || (test_midi)) {
 			if (!test_midi) {
 				char * real_file = strrchr(argv[optind], '/');
@@ -999,10 +999,10 @@ main (int argc, char **argv) {
 				if (_kbhit()) {
 					ch = _getch();
 					putch(ch);
-				}				
+				}
 #else
 				if (read(my_tty, &ch, 1) != 1)
-					ch = 0; 
+					ch = 0;
 #endif
 				if (ch) {
 					switch (ch) {
@@ -1012,17 +1012,17 @@ main (int argc, char **argv) {
 							break;
 #ifdef EXPERIMENT_626
 						case 'r':
-							WildMidi_SetOption(midi_ptr, WM_MO_REVERB, ((mixer_options & WM_MO_REVERB) ^ WM_MO_REVERB));	
-							mixer_options ^= WM_MO_REVERB;	
+							WildMidi_SetOption(midi_ptr, WM_MO_REVERB, ((mixer_options & WM_MO_REVERB) ^ WM_MO_REVERB));
+							mixer_options ^= WM_MO_REVERB;
 							break;
 #endif
 						case 'e':
-							WildMidi_SetOption(midi_ptr, WM_MO_EXPENSIVE_INTERPOLATION, ((mixer_options & WM_MO_EXPENSIVE_INTERPOLATION) ^ WM_MO_EXPENSIVE_INTERPOLATION));	
-							mixer_options ^= WM_MO_EXPENSIVE_INTERPOLATION;	
+							WildMidi_SetOption(midi_ptr, WM_MO_EXPENSIVE_INTERPOLATION, ((mixer_options & WM_MO_EXPENSIVE_INTERPOLATION) ^ WM_MO_EXPENSIVE_INTERPOLATION));
+							mixer_options ^= WM_MO_EXPENSIVE_INTERPOLATION;
 							break;
 						case 'n':
 							goto NEXTMIDI;
-						case 'q':	
+						case 'q':
 							printf("\n");
 							WildMidi_Close(midi_ptr);
 							WildMidi_Shutdown();
@@ -1034,7 +1034,7 @@ main (int argc, char **argv) {
 #endif
 							printf("\r\n");
 							exit (0);
-						case '-':	
+						case '-':
 							if (master_volume > 0) {
 								master_volume--;
 								WildMidi_MasterVolume(master_volume);
@@ -1078,8 +1078,8 @@ main (int argc, char **argv) {
 					modes[3] = '\0';
 				}
 				fprintf(stderr, "\r");
-				fprintf(stderr, "\t [Approx %2lum %2lus Total] [%s] [%3i] [%2lum %2lus Processed] [%2lu%%] %c  ", 
-					apr_mins, apr_secs, modes, master_volume, 
+				fprintf(stderr, "\t [Approx %2lum %2lus Total] [%s] [%3i] [%2lum %2lus Processed] [%2lu%%] %c  ",
+					apr_mins, apr_secs, modes, master_volume,
 					pro_mins, pro_secs, perc_play, spinner[spinpoint++%4]);
 
 				if (output_result == 0)
@@ -1087,7 +1087,7 @@ main (int argc, char **argv) {
 				send_output (output_buffer, output_result);
 			}
 NEXTMIDI:
-			fprintf(stderr, "\n\r");	
+			fprintf(stderr, "\n\r");
 			if (WildMidi_Close(midi_ptr) == -1) {
 				printf ("oops\n");
 			}
@@ -1115,7 +1115,7 @@ NEXTMIDI:
 		do_syntax();
 		return 0;
 	}
-			
+
 	if (output_buffer != NULL)
 		free(output_buffer);
 	printf("\r");

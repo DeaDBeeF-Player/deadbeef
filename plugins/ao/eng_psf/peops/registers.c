@@ -16,11 +16,11 @@
  *                                                                         *
  ***************************************************************************/
 
-/* ChangeLog 
+/* ChangeLog
 
  February 8, 2004	-	xodnizel
  - Fixed setting of reverb volume.  Just typecast val("u16") to s16.
-   Also adjusted the normal channel volume to be one less than what it was before when the 
+   Also adjusted the normal channel volume to be one less than what it was before when the
    "phase invert" bit is set.  I'm assuming it's just in two's complement.
 
  2003/02/09 - kode54
@@ -73,19 +73,19 @@ void SPUwriteRegister(mips_cpu_context *cpu, u32 reg, u16 val)
    switch(r&0x0f)
     {
      //------------------------------------------------// r volume
-     case 0:                                           
+     case 0:
        SetVolumeLR(cpu->spu, 0,(u8)ch,val);
        break;
      //------------------------------------------------// l volume
-     case 2:                                           
+     case 2:
        SetVolumeLR(cpu->spu, 1,(u8)ch,val);
        break;
      //------------------------------------------------// pitch
-     case 4:                                           
+     case 4:
        SetPitch(cpu->spu, ch,val);
        break;
      //------------------------------------------------// start
-     case 6:      
+     case 6:
        cpu->spu->s_chan[ch].pStart=cpu->spu->spuMemC+((u32) val<<3);
        break;
      //------------------------------------------------// level with pre-calcs
@@ -93,7 +93,7 @@ void SPUwriteRegister(mips_cpu_context *cpu, u32 reg, u16 val)
        {
         const u32 lval=val; // DEBUG CHECK
         //---------------------------------------------//
-        cpu->spu->s_chan[ch].ADSRX.AttackModeExp=(lval&0x8000)?1:0; 
+        cpu->spu->s_chan[ch].ADSRX.AttackModeExp=(lval&0x8000)?1:0;
         cpu->spu->s_chan[ch].ADSRX.AttackRate=(lval>>8) & 0x007f;
         cpu->spu->s_chan[ch].ADSRX.DecayRate=(lval>>4) & 0x000f;
         cpu->spu->s_chan[ch].ADSRX.SustainLevel=lval & 0x000f;
@@ -167,7 +167,7 @@ void SPUwriteRegister(mips_cpu_context *cpu, u32 reg, u16 val)
       cpu->spu->pSpuIrq=cpu->spu->spuMemC+((u32) val<<3);
       break;
     //-------------------------------------------------//
-    /* Volume settings appear to be at least 15-bit unsigned in this case.  
+    /* Volume settings appear to be at least 15-bit unsigned in this case.
        Definitely NOT 15-bit signed.  Probably 16-bit signed, so s16 type cast.
        Check out "Chrono Cross:  Shadow's End Forest"
     */
@@ -310,7 +310,7 @@ u16 SPUreadRegister(mips_cpu_context *cpu, u32 reg)
        const int ch=(r>>4)-0xc0;
        if(cpu->spu->s_chan[ch].bNew) return 1;                   // we are started, but not processed? return 1
        if(cpu->spu->s_chan[ch].ADSRX.lVolume &&                  // same here... we haven't decoded one sample yet, so no envelope yet. return 1 as well
-          !cpu->spu->s_chan[ch].ADSRX.EnvelopeVol)                   
+          !cpu->spu->s_chan[ch].ADSRX.EnvelopeVol)
         return 1;
        return (u16)(cpu->spu->s_chan[ch].ADSRX.EnvelopeVol>>16);
       }
@@ -331,7 +331,7 @@ u16 SPUreadRegister(mips_cpu_context *cpu, u32 reg)
 
     case H_SPUstat:
      return cpu->spu->spuStat;
-        
+
     case H_SPUaddr:
      return (u16)(cpu->spu->spuAddr>>3);
 
@@ -351,12 +351,12 @@ u16 SPUreadRegister(mips_cpu_context *cpu, u32 reg)
 
     //case H_SPUIsOn2:
     // return IsSoundOn(16,24);
- 
+
   }
 
  return cpu->spu->regArea[(r-0xc00)>>1];
 }
- 
+
 ////////////////////////////////////////////////////////////////////////
 // SOUND ON register write
 ////////////////////////////////////////////////////////////////////////
@@ -387,7 +387,7 @@ static void SoundOff(spu_state_t *spu, int start,int end,u16 val)    // SOUND OF
    if(val&1)                                           // && cpu->spu->s_chan[i].bOn)  mmm...
     {
      spu->s_chan[ch].bStop=1;
-    }                                                  
+    }
   }
 }
 
@@ -403,7 +403,7 @@ static void FModOn(spu_state_t *spu, int start,int end,u16 val)      // FMOD ON 
   {
    if(val&1)                                           // -> fmod on/off
     {
-     if(ch>0) 
+     if(ch>0)
       {
        spu->s_chan[ch].bFMod=1;                             // --> sound channel
        spu->s_chan[ch-1].bFMod=2;                           // --> freq channel
@@ -430,7 +430,7 @@ static void NoiseOn(spu_state_t *spu, int start,int end,u16 val)     // NOISE ON
     {
      spu->s_chan[ch].bNoise=1;
     }
-   else 
+   else
     {
      spu->s_chan[ch].bNoise=0;
     }

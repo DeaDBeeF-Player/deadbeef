@@ -1013,7 +1013,7 @@ ddb_listview_vscroll_value_changed            (GtkRange        *widget,
         ps->binding->vscroll_changed (newscroll);
     }
     if (ps->block_redraw_on_scroll) {
-        ps->scrollpos = newscroll; 
+        ps->scrollpos = newscroll;
         return;
     }
     if (newscroll != ps->scrollpos) {
@@ -2023,7 +2023,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
 void
 ddb_listview_list_set_hscroll (DdbListview *ps, int newscroll) {
     if (ps->block_redraw_on_scroll) {
-        ps->hscrollpos = newscroll; 
+        ps->hscrollpos = newscroll;
         return;
     }
 //    if (newscroll != ps->hscrollpos)
@@ -2250,7 +2250,7 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
     // FIXME
 //    ddb_listview_draw_dnd_marker (ps, cr);
 #endif
-    
+
     if (y < 10) {
         ps->scroll_pointer_y = y;
         ps->scroll_mode = 1;
@@ -2359,7 +2359,7 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr) {
                 cairo_move_to (cr, xx+w - 2, 2);
                 cairo_line_to (cr, xx+w - 2, h-4);
                 cairo_stroke (cr);
-                
+
                 gtkui_get_tabstrip_light_color (&clr);
                 cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f);
 
@@ -3032,7 +3032,7 @@ ddb_listview_is_scrolling (DdbListview *listview) {
 
 /////// column management code
 
-DdbListviewColumn * 
+DdbListviewColumn *
 ddb_listview_column_alloc (const char *title, int width, int align_right, int minheight, int color_override, GdkColor color, void *user_data) {
     DdbListviewColumn * c = malloc (sizeof (DdbListviewColumn));
     memset (c, 0, sizeof (DdbListviewColumn));

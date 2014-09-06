@@ -408,8 +408,8 @@ void put_backslash(char *filename)
 /* file_exists:
  *  Checks whether a file matching the given name and attributes exists,
  *  returning non zero if it does. The file attribute may contain any of
- *  the FA_* constants from dir.h. If aret is not null, it will be set 
- *  to the attributes of the matching file. If an error occurs the system 
+ *  the FA_* constants from dir.h. If aret is not null, it will be set
+ *  to the attributes of the matching file. If an error occurs the system
  *  error code will be stored in errno.
  */
 int file_exists(char *filename, int attrib, int *aret)
@@ -481,7 +481,7 @@ int delete_file(char *filename)
    if (!_al_file_isok(filename))
       return errno;
 
-   unlink(filename);   
+   unlink(filename);
 
    return errno;
 }
@@ -497,7 +497,7 @@ int delete_file(char *filename)
  *  can use this for whatever you like). If an error occurs an error code
  *  will be stored in errno, and callback() can cause for_each_file() to
  *  abort by setting errno itself. Returns the number of successful calls
- *  made to callback(). The file attribute may contain any of the FA_* 
+ *  made to callback(). The file attribute may contain any of the FA_*
  *  flags from dir.h.
  */
 int for_each_file(char *name, int attrib, void (*callback)(char *filename, int attrib, int param), int param)
@@ -616,11 +616,11 @@ static int clone_password(PACKFILE *f)
  *       data does not need to be decompressed.
  *
  *  Instead of these flags, one of the constants F_READ, F_WRITE,
- *  F_READ_PACKED, F_WRITE_PACKED or F_WRITE_NOPACK may be used as the second 
+ *  F_READ_PACKED, F_WRITE_PACKED or F_WRITE_NOPACK may be used as the second
  *  argument to fopen().
  *
  *  On success, fopen() returns a pointer to a file structure, and on error
- *  it returns NULL and stores an error code in errno. An attempt to read a 
+ *  it returns NULL and stores an error code in errno. An attempt to read a
  *  normal file in packed mode will cause errno to be set to EDOM.
  */
 PACKFILE *pack_fopen(const char *filename, char *mode)
@@ -679,7 +679,7 @@ PACKFILE *pack_fopen(const char *filename, char *mode)
 	 f->todo = 4;
 
 	 for (c=0; c < N - F; c++)
-	    dat->text_buf[c] = 0; 
+	    dat->text_buf[c] = 0;
 
 	 dat->state = 0;
 
@@ -713,7 +713,7 @@ PACKFILE *pack_fopen(const char *filename, char *mode)
 	    pack_mputl(encrypt_id(F_NOPACK_MAGIC, TRUE), f);
       }
    }
-   else { 
+   else {
       if (f->flags & PACKFILE_FLAG_PACK) {
 	 /* read a packed file */
 	 UNPACK_DATA *dat = malloc(sizeof(UNPACK_DATA));
@@ -764,7 +764,7 @@ PACKFILE *pack_fopen(const char *filename, char *mode)
 
 	 if (header == encrypt_id(F_PACK_MAGIC, TRUE)) {
 	    for (c=0; c < N - F; c++)
-	       dat->text_buf[c] = 0; 
+	       dat->text_buf[c] = 0;
 	    dat->state = 0;
 	    f->todo = LONG_MAX;
 	    f->pack_data = (char *)dat;
@@ -857,12 +857,12 @@ int pack_fclose(PACKFILE *f)
 
 
 
-/* pack_fopen_chunk: 
+/* pack_fopen_chunk:
  *  Opens a sub-chunk of the specified file, for reading or writing depending
  *  on the type of the file. The returned file pointer describes the sub
  *  chunk, and replaces the original file, which will no longer be valid.
  *  When writing to a chunk file, data is sent to the original file, but
- *  is prefixed with two length counts (32 bit, big-endian). For uncompressed 
+ *  is prefixed with two length counts (32 bit, big-endian). For uncompressed
  *  chunks these will both be set to the length of the data in the chunk.
  *  For compressed chunks, created by setting the pack flag, the first will
  *  contain the raw size of the chunk, and the second will be the negative
@@ -883,7 +883,7 @@ PACKFILE *pack_fopen_chunk(PACKFILE *f, int pack)
 
    if (f->flags & PACKFILE_FLAG_WRITE) {
 
-      /* write a sub-chunk */ 
+      /* write a sub-chunk */
       name = tmpnam(NULL);
       chunk = pack_fopen(name, (pack ? F_WRITE_PACKED : F_WRITE_NOPACK));
 
@@ -943,7 +943,7 @@ PACKFILE *pack_fopen_chunk(PACKFILE *f, int pack)
 	 }
 
 	 for (c=0; c < N - F; c++)
-	    dat->text_buf[c] = 0; 
+	    dat->text_buf[c] = 0;
 
 	 dat->state = 0;
 	 _packfile_datasize = -_packfile_datasize;
@@ -966,7 +966,7 @@ PACKFILE *pack_fopen_chunk(PACKFILE *f, int pack)
 /* pack_fclose_chunk:
  *  Call after reading or writing a sub-chunk. This closes the chunk file,
  *  and returns a pointer to the original file structure (the one you
- *  passed to pack_fopen_chunk()), to allow you to read or write data 
+ *  passed to pack_fopen_chunk()), to allow you to read or write data
  *  after the chunk.
  */
 PACKFILE *pack_fclose_chunk(PACKFILE *f)
@@ -1033,7 +1033,7 @@ PACKFILE *pack_fclose_chunk(PACKFILE *f)
 
 
 /* pack_fseek:
- *  Like the stdio fseek() function, but only supports forward seeks 
+ *  Like the stdio fseek() function, but only supports forward seeks
  *  relative to the current file position.
  */
 int pack_fseek(PACKFILE *f, int offset)
@@ -1241,8 +1241,8 @@ long pack_mputl(long l, PACKFILE *f)
 
 
 /* pack_fread:
- *  Reads n bytes from f and stores them at memory location p. Returns the 
- *  number of items read, which will be less than n if EOF is reached or an 
+ *  Reads n bytes from f and stores them at memory location p. Returns the
+ *  number of items read, which will be less than n if EOF is reached or an
  *  error occurs. Error codes are stored in errno.
  */
 long pack_fread(void *p, long n, PACKFILE *f)
@@ -1269,8 +1269,8 @@ long pack_fread(void *p, long n, PACKFILE *f)
 
 
 /* pack_fwrite:
- *  Writes n bytes to the file f from memory location p. Returns the number 
- *  of items written, which will be less than n if an error occurs. Error 
+ *  Writes n bytes to the file f from memory location p. Returns the number
+ *  of items written, which will be less than n if an error occurs. Error
  *  codes are stored in errno.
  */
 long pack_fwrite(void *p, long n, PACKFILE *f)
@@ -1311,7 +1311,7 @@ static void pack_ungetc (int ch, PACKFILE *f)
  *  Reads a line from a text file, storing it at location p. Stops when a
  *  linefeed is encountered, or max characters have been read. Returns a
  *  pointer to where it stored the text, or NULL on error. The end of line
- *  is handled by detecting optional '\r' characters optionally followed 
+ *  is handled by detecting optional '\r' characters optionally followed
  *  by '\n' characters. This supports CR-LF (DOS/Windows), LF (Unix), and
  *  CR (Mac) formats.
  */
@@ -1425,7 +1425,7 @@ static int refill_buffer(PACKFILE *f)
       }
       else {
 	 f->buf_size = pack_fread(f->buf, MIN(F_BUF_SIZE, f->todo), f->parent);
-      } 
+      }
       if (f->parent->flags & PACKFILE_FLAG_EOF)
 	 f->todo = 0;
       if (f->parent->flags & PACKFILE_FLAG_ERROR)
@@ -1557,10 +1557,10 @@ static int flush_buffer(PACKFILE *f, int last)
  ***************************************************
 
    This compression algorithm is based on the ideas of Lempel and Ziv,
-   with the modifications suggested by Storer and Szymanski. The algorithm 
-   is based on the use of a ring buffer, which initially contains zeros. 
-   We read several characters from the file into the buffer, and then 
-   search the buffer for the longest string that matches the characters 
+   with the modifications suggested by Storer and Szymanski. The algorithm
+   is based on the use of a ring buffer, which initially contains zeros.
+   We read several characters from the file into the buffer, and then
+   search the buffer for the longest string that matches the characters
    just read, and output the length and position of the match in the buffer.
 
    With a buffer size of 4096 bytes, the position can be encoded in 12
@@ -1586,11 +1586,11 @@ static int flush_buffer(PACKFILE *f, int last)
 
 
 /* pack_inittree:
- *  For i = 0 to N-1, rson[i] and lson[i] will be the right and left 
- *  children of node i. These nodes need not be initialized. Also, dad[i] 
- *  is the parent of node i. These are initialized to N, which stands for 
- *  'not used.' For i = 0 to 255, rson[N+i+1] is the root of the tree for 
- *  strings that begin with character i. These are initialized to N. Note 
+ *  For i = 0 to N-1, rson[i] and lson[i] will be the right and left
+ *  children of node i. These nodes need not be initialized. Also, dad[i]
+ *  is the parent of node i. These are initialized to N, which stands for
+ *  'not used.' For i = 0 to 255, rson[N+i+1] is the root of the tree for
+ *  strings that begin with character i. These are initialized to N. Note
  *  there are 256 trees.
  */
 static void pack_inittree(PACK_DATA *dat)
@@ -1607,12 +1607,12 @@ static void pack_inittree(PACK_DATA *dat)
 
 
 /* pack_insertnode:
- *  Inserts a string of length F, text_buf[r..r+F-1], into one of the trees 
- *  (text_buf[r]'th tree) and returns the longest-match position and length 
- *  via match_position and match_length. If match_length = F, then removes 
- *  the old node in favor of the new one, because the old one will be 
- *  deleted sooner. Note r plays double role, as tree node and position in 
- *  the buffer. 
+ *  Inserts a string of length F, text_buf[r..r+F-1], into one of the trees
+ *  (text_buf[r]'th tree) and returns the longest-match position and length
+ *  via match_position and match_length. If match_length = F, then removes
+ *  the old node in favor of the new one, because the old one will be
+ *  deleted sooner. Note r plays double role, as tree node and position in
+ *  the buffer.
  */
 static void pack_insertnode(int r, PACK_DATA *dat)
 {
@@ -1714,7 +1714,7 @@ static void pack_deletenode(int p, PACK_DATA *dat)
 
 
 /* pack_write:
- *  Called by flush_buffer(). Packs size bytes from buf, using the pack 
+ *  Called by flush_buffer(). Packs size bytes from buf, using the pack
  *  information contained in dat. Returns 0 on success.
  */
 static int pack_write(PACKFILE *file, PACK_DATA *dat, int size, unsigned char *buf, int last)
@@ -1756,7 +1756,7 @@ static int pack_write(PACKFILE *file, PACK_DATA *dat, int size, unsigned char *b
 	 }
       }
       pos1:
-	 ; 
+	 ;
    }
 
    if (len == 0)
@@ -1839,7 +1839,7 @@ static int pack_write(PACKFILE *file, PACK_DATA *dat, int size, unsigned char *b
 	 s = (s+1) & (N-1);               /* buffer may not be empty */
 	 r = (r+1) & (N-1);
 	 if (--len)
-	    pack_insertnode(r,dat); 
+	    pack_insertnode(r,dat);
       }
 
    } while (len > 0);   /* until length of string to be processed is zero */
@@ -1929,7 +1929,7 @@ static int pack_read(PACKFILE *file, UNPACK_DATA *dat, int s, unsigned char *buf
 	    goto getout;
 	 }
 	 pos1:
-	    ; 
+	    ;
       }
       else {
 	 if ((i = pack_getc(file)) == EOF)
@@ -1948,7 +1948,7 @@ static int pack_read(PACKFILE *file, UNPACK_DATA *dat, int s, unsigned char *buf
 	       goto getout;
 	    }
 	    pos2:
-	       ; 
+	       ;
 	 }
       }
    }

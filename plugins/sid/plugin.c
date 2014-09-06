@@ -37,7 +37,7 @@ DB_decoder_t sid_plugin = {
     .plugin.name = "SID player",
     .plugin.id = "sidplay2",
     .plugin.descr = "SID player based on libsidplay2",
-    .plugin.copyright = 
+    .plugin.copyright =
         "SID plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"

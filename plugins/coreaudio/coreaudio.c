@@ -67,7 +67,7 @@ ca_init (void) {
     if (AudioDeviceGetProperty (device_id, 1, 0, kAudioDevicePropertyDeviceName, &sz, device_name)) {
            return -1;
     }
-    
+
     sz = sizeof (default_format);
     if (AudioDeviceGetProperty (device_id, 0, 0, kAudioDevicePropertyStreamFormat, &sz, &default_format)) {
         return -1;
@@ -86,11 +86,11 @@ ca_init (void) {
     if (AudioDeviceAddIOProc (device_id, ca_buffer_callback, NULL)) {
         return -1;
     }
-    
+
     if (AudioDeviceAddPropertyListener (device_id, 0, 0, kAudioDevicePropertyStreamFormat, ca_fmtchanged, NULL)) {
         return -1;
     }
-    
+
     ca_fmtchanged(0, 0, 0, kAudioDevicePropertyStreamFormat, NULL);
 
     state = OUTPUT_STATE_STOPPED;
@@ -119,11 +119,11 @@ ca_setformat (ddb_waveformat_t *fmt) {
     req_format.mBytesPerFrame = (fmt->bps >> 3) * fmt->channels;
     req_format.mChannelsPerFrame = fmt->channels;
     req_format.mBitsPerChannel = fmt->bps;
-    
+
     if (device_id) {
         ca_apply_format ();
     }
-    
+
     return 0;
 }
 
@@ -180,7 +180,7 @@ ca_state (void) {
 
 static OSStatus
 ca_fmtchanged (AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput, AudioDevicePropertyID inPropertyID, void *inClientData) {
-    
+
     AudioStreamBasicDescription device_format;
     UInt32 sz = sizeof (device_format);
     if (!AudioDeviceGetProperty (device_id, 0, 0, kAudioDevicePropertyStreamFormat, &sz, &device_format)) {
@@ -193,10 +193,10 @@ ca_fmtchanged (AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput, AudioD
             plugin.fmt.channelmask |= (1<<i);
         }
     }
-    
+
     return 0;
 }
-                                        
+
 static OSStatus
 ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const AudioBufferList * inInputData, const AudioTimeStamp * inInputTime, AudioBufferList * outOutputData, const AudioTimeStamp * inOutputTime, void * inClientData) {
 

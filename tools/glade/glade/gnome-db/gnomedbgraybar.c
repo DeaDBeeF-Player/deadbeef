@@ -79,7 +79,7 @@ static void
 gb_gnome_db_gray_bar_set_properties (GtkWidget * widget, GbWidgetSetArgData * data)
 {
   const gchar *text;
-                                                                                                         
+
   text = gb_widget_input_string (data, Text);
   if (data->apply)
     gnome_db_gray_bar_set_text (GNOME_DB_GRAY_BAR (widget), text);

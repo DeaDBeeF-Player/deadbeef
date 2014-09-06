@@ -83,7 +83,7 @@ control_create (GbWidgetNewData * data, char *obj_id, Bonobo_UIContainer uic)
   g_return_val_if_fail (obj_id != NULL, NULL);
 
   widget = bonobo_widget_new_control (obj_id, uic);
-  
+
   g_return_val_if_fail (widget != NULL, NULL);
   cf = bonobo_widget_get_control_frame (BONOBO_WIDGET (widget));
 
@@ -191,7 +191,7 @@ do_query (void)
   Bonobo_ServerInfo *serverinfo;
   const char *desc;
   GtkTreeIter iter;
-  
+
   store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
 
   CORBA_exception_init (&ev);
@@ -203,29 +203,29 @@ do_query (void)
     return store;
   }
   CORBA_exception_free (&ev);
-  
+
 #if 0
   g_print ("got %d servers.\n", servers ? servers->_length : 0);
 #endif
 
-  for (i = 0; i < servers->_length; i++) {    
+  for (i = 0; i < servers->_length; i++) {
     serverinfo = &servers->_buffer[i];
-    
+
     desc = bonobo_server_info_prop_lookup (serverinfo, "description", NULL);
     if (!desc)
       desc = bonobo_server_info_prop_lookup (serverinfo, "name", NULL);
     if (!desc)
       desc = serverinfo->iid;
-    
+
     gtk_list_store_append (store, &iter);
     gtk_list_store_set (store, &iter,
-			COL_OBJID, serverinfo->iid, 
+			COL_OBJID, serverinfo->iid,
 			COL_DESC, desc,
 			-1);
   }
-  
+
   CORBA_free (servers);
-  
+
   return store;
 }
 
@@ -256,7 +256,7 @@ show_control_dialog (GbWidgetNewData *data)
   g_signal_connect (dialog, "destroy",
 		    G_CALLBACK (on_control_dialog_destroy), data);
 
-  label = gtk_label_new (_("Select a Bonobo Control"));  
+  label = gtk_label_new (_("Select a Bonobo Control"));
   gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
 
   scroll = g_object_new (GTK_TYPE_SCROLLED_WINDOW,
@@ -281,7 +281,7 @@ show_control_dialog (GbWidgetNewData *data)
   g_object_unref (store);
 
   ren = gtk_cell_renderer_text_new ();
-  
+
 #if 0
   gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (list),
 					       -1, _("OAFIID"), ren,
@@ -329,7 +329,7 @@ gb_bonobo_control_init ()
 	/* Initialise the GTK type */
 	volatile GtkType type;
 	type = BONOBO_TYPE_WIDGET;
-	
+
 	gb_widget_init_struct (&gbwidget);
 
 	gbwidget.pixmap_struct = gnome_control_xpm;
@@ -427,7 +427,7 @@ gb_bonobo_control_get_properties (GtkWidget * widget, GbWidgetGetArgData * data)
 
   /* We save the moniker in the XML, though we don't show it in the property
      editor. */
-  if (data->action == GB_SAVING) 
+  if (data->action == GB_SAVING)
     {
       save_string (data, Moniker, moniker);
     }
@@ -738,7 +738,7 @@ control_get_gb_widget (const char *obj_id)
       /* Fill in the pixmap struct & tooltip */
       gbwidget->pixmap_struct = gnome_control_xpm;
       gbwidget->tooltip       = NULL;
-	
+
       /* Fill in any functions that this Gbwidget has */
       gbwidget->gb_widget_new = NULL;
       gbwidget->gb_widget_create_properties = gb_bonobo_control_create_properties;
@@ -751,7 +751,7 @@ control_get_gb_widget (const char *obj_id)
 #endif
       gb_widget_register_gbwidget (obj_id, gbwidget);
     }
-	
+
   return gbwidget;
 }
 

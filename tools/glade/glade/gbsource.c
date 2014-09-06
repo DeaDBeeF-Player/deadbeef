@@ -151,7 +151,7 @@ gb_widget_write_source (GtkWidget * widget,
 	  if (child_name == NULL)
 	    {
 	      gchar *wname, *parent_name;
-	  
+
 	      wname = "empty_notebook_page";
 	      /* Make sure the dummy widget is declared. */
 	      source_ensure_decl (data, "  GtkWidget *empty_notebook_page;\n");
@@ -732,7 +732,7 @@ gb_widget_write_signal_handler_source (GtkWidget *widget,
 		sprintf (pos, "%s%s%i,\n", is_pointer ? "*" : " ", arg_name,
 			 *arg_num);
 	      pos += strlen (pos);
-	  
+
 	      if (arg_num)
 		{
 		  if (*arg_num == 0)

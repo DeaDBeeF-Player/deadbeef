@@ -1,6 +1,6 @@
 /*
     xa65 - 6502 cross assembler and utility suite
-    reloc65 - relocates 'o65' files 
+    reloc65 - relocates 'o65' files
     Copyright (C) 1997 André Fachat (a.fachat@physik.tu-chemnitz.de)
 
     This program is free software; you can redistribute it and/or modify
@@ -78,7 +78,7 @@ int reloc65(unsigned char** buf, int* fsize, int addr)
 	}
 
 	hlen = BUF+read_options(file.buf+BUF);
-		  
+
 	file.tbase = file.buf[ 9]*256+file.buf[ 8];
 	file.tlen  = file.buf[11]*256+file.buf[10];
 	file.tdiff = tflag? tbase - file.tbase : 0;

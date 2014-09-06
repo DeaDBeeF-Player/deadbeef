@@ -87,7 +87,7 @@ void AICADSP_Step(struct _AICADSP *DSP)
 	for(step=0;step</*128*/DSP->LastStep;++step)
 	{
 		UINT16 *IPtr=DSP->MPRO+step*8;
-				
+
 //      if(IPtr[0]==0 && IPtr[1]==0 && IPtr[2]==0 && IPtr[3]==0)
 //          break;
 
@@ -120,7 +120,7 @@ void AICADSP_Step(struct _AICADSP *DSP)
 		UINT32 MASA=(IPtr[6]>>9)&0x3f;	//???
 		UINT32 ADREB=(IPtr[6]>>8)&0x1;
 		UINT32 NXADR=(IPtr[6]>>7)&0x1;
-		
+
 		INT64 v;
 
 		//operations are done at 24 bit precision

@@ -271,7 +271,7 @@ glade_project_view_select_component (GladeProjectView *project_view,
     {
       editor_select_widget_control (component);
     }
-  
+
   /* Show the properties of the component. */
   gb_widget_show_properties (component);
 

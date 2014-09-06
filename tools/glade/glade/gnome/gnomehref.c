@@ -161,7 +161,7 @@ gb_gnome_href_write_source (GtkWidget * widget, GbWidgetWriteSourceData * data)
 		    "url", &url,
 		    "text", &label_text,
 		    NULL);
- 
+
       glade_util_get_translation_properties (widget, HRefURL, &translatable,
 					     &comments, &context);
       source_add_translator_comments (data, translatable, comments);

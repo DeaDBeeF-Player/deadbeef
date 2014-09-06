@@ -289,7 +289,7 @@ gb_gnome_about_set_properties (GtkWidget * widget, GbWidgetSetArgData * data)
   if (data->action == GB_APPLYING)
     g_free (copyright);
 
-  comments = gb_widget_input_text (data, Comments);  
+  comments = gb_widget_input_text (data, Comments);
   if (data->apply)
     {
       g_object_set (object, "comments", comments, NULL);

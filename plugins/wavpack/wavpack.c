@@ -438,7 +438,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "wv",
     .plugin.name = "WavPack decoder",
     .plugin.descr = "WavPack (.wv, .iso.wv) player",
-    .plugin.copyright = 
+    .plugin.copyright =
         "WavPack plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2011, Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "Copyright (C) 2010-2011, David Bryant <david@wavpack.com>\n"

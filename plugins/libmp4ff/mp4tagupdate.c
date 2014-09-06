@@ -9,7 +9,7 @@ static uint32_t fix_byte_order_32(uint32_t src)
     uint32_t result;
     uint32_t a, b, c, d;
     int8_t data[4];
-    
+
     memcpy(data,&src,sizeof(src));
     a = (uint8_t)data[0];
     b = (uint8_t)data[1];
@@ -25,7 +25,7 @@ static uint16_t fix_byte_order_16(uint16_t src)
     uint16_t result;
     uint16_t a, b;
     int8_t data[2];
-    
+
     memcpy(data,&src,sizeof(src));
     a = (uint8_t)data[0];
     b = (uint8_t)data[1];
@@ -54,7 +54,7 @@ unsigned membuffer_write(membuffer * buf,const void * ptr,unsigned bytes)
 		{
 			buf->allocated <<= 1;
 		} while(dest_size > buf->allocated);
-		
+
 		{
 			void * newptr = realloc(buf->data,buf->allocated);
 			if (newptr==0)
@@ -77,7 +77,7 @@ unsigned membuffer_write(membuffer * buf,const void * ptr,unsigned bytes)
 
 unsigned membuffer_write_int32(membuffer * buf,uint32_t data)
 {
-	uint8_t temp[4] = {(uint8_t)(data>>24),(uint8_t)(data>>16),(uint8_t)(data>>8),(uint8_t)data};	
+	uint8_t temp[4] = {(uint8_t)(data>>24),(uint8_t)(data>>16),(uint8_t)(data>>8),(uint8_t)data};
 	return membuffer_write_data(buf,temp,4);
 }
 
@@ -136,19 +136,19 @@ unsigned membuffer_transfer_from_file(membuffer * buf,mp4ff_t * src,unsigned byt
 {
 	unsigned oldsize;
 	void * bufptr;
-	
+
 	oldsize = membuffer_get_size(buf);
 	if (membuffer_write_data(buf,0,bytes) != bytes) return 0;
 
 	bufptr = membuffer_get_ptr(buf);
 	if (bufptr==0) return 0;
-	
+
 	if ((unsigned)mp4ff_read_data(src,(char*)bufptr + oldsize,bytes)!=bytes)
 	{
 		membuffer_set_error(buf);
 		return 0;
 	}
-	
+
 	return bytes;
 }
 
@@ -179,12 +179,12 @@ void * membuffer_detach(membuffer * buf)
 	if (buf->error) return 0;
 
 	ret = realloc(buf->data,buf->written);
-	
+
 	if (ret == 0) free(buf->data);
 
 	buf->data = 0;
 	buf->error = 1;
-	
+
 	return ret;
 }
 
@@ -207,10 +207,10 @@ typedef struct
 typedef struct
 {
 	const char * atom;
-	const char * name;	
+	const char * name;
 } stdmeta_entry;
 
-static stdmeta_entry stdmetas[] = 
+static stdmeta_entry stdmetas[] =
 {
 	{"\xA9" "nam","title"},
 	{"\xA9" "ART","artist"},
@@ -370,7 +370,7 @@ static uint32_t create_ilst(const mp4ff_metadata_t * data,void ** out_buffer,uin
 				membuffer_write_int16_tag(buf,"gnre",(uint16_t)index);
 		}
 	}
-	
+
 	for(metaptr = 0; metaptr < data->count; metaptr++)
 	{
 		if (!mask[metaptr])
@@ -413,18 +413,18 @@ static uint32_t find_atom(mp4ff_t * f,uint64_t base,uint32_t size,const char * n
 		uint32_t atom_size;
 
 		mp4ff_set_position(f,atom_offset);
-		
+
 		if (remaining < 8) break;
 		atom_size = mp4ff_read_int32(f);
 		if (atom_size > remaining || atom_size < 8) break;
 		mp4ff_read_data(f,atom_name,4);
-		
+
 		if (!memcmp(atom_name,name,4))
 		{
 			mp4ff_set_position(f,atom_offset);
 			return 1;
 		}
-		
+
 		remaining -= atom_size;
 		atom_offset += atom_size;
 	}
@@ -458,7 +458,7 @@ static uint32_t find_atom_v2(mp4ff_t * f,uint64_t base,uint32_t size,const char 
 		mp4ff_set_position(f,first_base);
 		return 1;
 	}
-	else return 0;	
+	else return 0;
 }
 
 static uint32_t create_meta(const mp4ff_metadata_t * data,void ** out_buffer,uint32_t * out_size)
@@ -508,33 +508,33 @@ static uint32_t modify_moov(mp4ff_t * f,const mp4ff_metadata_t * data,void ** ou
 
 	uint64_t udta_offset,meta_offset,ilst_offset;
 	uint32_t udta_size,  meta_size,  ilst_size;
-	
+
 	uint32_t new_ilst_size;
 	void * new_ilst_buffer;
-	
+
 	uint8_t * p_out;
 	int32_t size_delta;
-	
-	
+
+
 	if (!find_atom_v2(f,total_base,total_size,"udta",0,"meta"))
 	{
 		membuffer * buf;
 		void * new_udta_buffer;
 		uint32_t new_udta_size;
 		if (!create_udta(data,&new_udta_buffer,&new_udta_size)) return 0;
-		
+
 		buf = membuffer_create();
 		mp4ff_set_position(f,total_base);
 		membuffer_transfer_from_file(buf,f,total_size);
-		
+
 		membuffer_write_atom(buf,"udta",new_udta_size,new_udta_buffer);
 
 		free(new_udta_buffer);
-	
+
 		*out_size = membuffer_get_size(buf);
 		*out_buffer = membuffer_detach(buf);
 		membuffer_free(buf);
-		return 1;		
+		return 1;
 	}
 	else
 	{
@@ -546,22 +546,22 @@ static uint32_t modify_moov(mp4ff_t * f,const mp4ff_metadata_t * data,void ** ou
 			void * new_meta_buffer;
 			uint32_t new_meta_size;
 			if (!create_meta(data,&new_meta_buffer,&new_meta_size)) return 0;
-			
+
 			buf = membuffer_create();
 			mp4ff_set_position(f,total_base);
 			membuffer_transfer_from_file(buf,f,(uint32_t)(udta_offset - total_base));
-			
+
 			membuffer_write_int32(buf,udta_size + 8 + new_meta_size);
 			membuffer_write_atom_name(buf,"udta");
 			membuffer_transfer_from_file(buf,f,udta_size);
-						
+
 			membuffer_write_atom(buf,"meta",new_meta_size,new_meta_buffer);
 			free(new_meta_buffer);
-		
+
 			*out_size = membuffer_get_size(buf);
 			*out_buffer = membuffer_detach(buf);
 			membuffer_free(buf);
-			return 1;		
+			return 1;
 		}
 		meta_offset = mp4ff_position(f);
 		meta_size = mp4ff_read_int32(f);
@@ -570,7 +570,7 @@ static uint32_t modify_moov(mp4ff_t * f,const mp4ff_metadata_t * data,void ** ou
 		ilst_size = mp4ff_read_int32(f);
 
 		if (!create_ilst(data,&new_ilst_buffer,&new_ilst_size)) return 0;
-		
+
 		size_delta = new_ilst_size - (ilst_size - 8);
 
 		*out_size = total_size + size_delta;
@@ -582,7 +582,7 @@ static uint32_t modify_moov(mp4ff_t * f,const mp4ff_metadata_t * data,void ** ou
 		}
 
 		p_out = (uint8_t*)*out_buffer;
-		
+
 		mp4ff_set_position(f,total_base);
 		mp4ff_read_data(f,p_out,(uint32_t)(udta_offset - total_base )); p_out += (uint32_t)(udta_offset - total_base );
 		*(uint32_t*)p_out = fix_byte_order_32(mp4ff_read_int32(f) + size_delta); p_out += 4;
@@ -634,7 +634,7 @@ int32_t mp4ff_meta_update(mp4ff_callback_t *f,const mp4ff_metadata_t * data)
         /* rename old moov to free */
         mp4ff_set_position(ff, ff->moov_offset + 4);
         mp4ff_write_data(ff, free_data, 4);
-	
+
         mp4ff_set_position(ff, ff->file_size);
 		mp4ff_write_int32(ff,new_moov_size + 8);
 		mp4ff_write_data(ff,"moov",4);

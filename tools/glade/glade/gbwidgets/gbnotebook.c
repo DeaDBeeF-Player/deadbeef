@@ -393,8 +393,8 @@ gb_notebook_set_properties (GtkWidget * widget, GbWidgetSetArgData * data)
       else
 	gtk_notebook_popup_disable (GTK_NOTEBOOK (widget));
     }
-  
-  /* Don't adjust the size of a notebook if loading a project 
+
+  /* Don't adjust the size of a notebook if loading a project
    * as it is handled by other routines. */
   if (data->action != GB_LOADING)
     {
@@ -491,7 +491,7 @@ gb_notebook_insert_prev (GtkWidget *menuitem, GtkNotebook *notebook)
 {
   gint current_page;
   GtkWidget *new_label;
-	
+
   current_page = gtk_notebook_get_current_page (notebook);
 
   new_label = gb_notebook_new_tab_label ();
@@ -509,7 +509,7 @@ gb_notebook_delete_page (GtkWidget *menuitem, GtkNotebook *notebook)
   gb_notebook_update_num_pages (notebook);
 }
 
- 
+
 /* This updates the number of pages property, if the notebook's properties are
    currently shown. */
 static void
@@ -552,13 +552,13 @@ gb_notebook_create_popup_menu (GtkWidget * widget, GbWidgetCreateMenuData * data
   gtk_container_add (GTK_CONTAINER (data->menu), menuitem);
   gtk_signal_connect (GTK_OBJECT (menuitem), "activate",
 	    GTK_SIGNAL_FUNC (gb_notebook_next_page), GTK_NOTEBOOK (widget));
-  
+
   menuitem = gtk_menu_item_new_with_label (_("Delete Page"));
   gtk_widget_show (menuitem);
   gtk_container_add (GTK_CONTAINER (data->menu), menuitem);
   gtk_signal_connect (GTK_OBJECT (menuitem), "activate",
 	    GTK_SIGNAL_FUNC (gb_notebook_delete_page), GTK_NOTEBOOK (widget));
-  
+
   menuitem = gtk_menu_item_new_with_label (_("Switch Next"));
   gtk_widget_show (menuitem);
   if (current_page == num_pages - 1)
@@ -566,7 +566,7 @@ gb_notebook_create_popup_menu (GtkWidget * widget, GbWidgetCreateMenuData * data
   gtk_container_add (GTK_CONTAINER (data->menu), menuitem);
   gtk_signal_connect (GTK_OBJECT (menuitem), "activate",
 	    GTK_SIGNAL_FUNC (gb_notebook_switch_next), GTK_NOTEBOOK (widget));
-  
+
   menuitem = gtk_menu_item_new_with_label (_("Switch Previous"));
   gtk_widget_show (menuitem);
   if (current_page == 0)
@@ -574,7 +574,7 @@ gb_notebook_create_popup_menu (GtkWidget * widget, GbWidgetCreateMenuData * data
   gtk_container_add (GTK_CONTAINER (data->menu), menuitem);
   gtk_signal_connect (GTK_OBJECT (menuitem), "activate",
 	    GTK_SIGNAL_FUNC (gb_notebook_switch_prev), GTK_NOTEBOOK (widget));
-  
+
   menuitem = gtk_menu_item_new_with_label (_("Insert Page After"));
   gtk_widget_show (menuitem);
   /*  if (current_page == num_pages - 1)
@@ -582,7 +582,7 @@ gb_notebook_create_popup_menu (GtkWidget * widget, GbWidgetCreateMenuData * data
   gtk_container_add (GTK_CONTAINER (data->menu), menuitem);
   gtk_signal_connect (GTK_OBJECT (menuitem), "activate",
 	    GTK_SIGNAL_FUNC (gb_notebook_insert_next), GTK_NOTEBOOK (widget));
-  
+
   menuitem = gtk_menu_item_new_with_label (_("Insert Page Before"));
   gtk_widget_show (menuitem);
   /*if (current_page == 0)

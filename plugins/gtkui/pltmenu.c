@@ -177,9 +177,9 @@ add_tab_actions (GtkWidget *menu) {
             while (*prev && *prev == '/') {
                 prev++;
             }
-            
+
             GtkWidget *popup = NULL;
-            
+
             for (;;) {
                 const char *slash = strchr (prev, '/');
                 if (slash && *(slash-1) != '\\') {

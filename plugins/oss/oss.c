@@ -289,7 +289,7 @@ oss_thread (void *context) {
         }
 
         int res = 0;
-        
+
         int sample_size = plugin.fmt.channels * (plugin.fmt.bps / 8);
         int bs = BLOCKSIZE;
         int mod = bs % sample_size;
@@ -376,7 +376,7 @@ static DB_output_t plugin = {
     .plugin.id = "oss",
     .plugin.name = "OSS output plugin",
     .plugin.descr = "plays sound via OSS API",
-    .plugin.copyright = 
+    .plugin.copyright =
         "OSS output plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko and contributors\n"
         "\n"

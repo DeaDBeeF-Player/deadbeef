@@ -137,8 +137,8 @@ void stop_duh(DUH_PLAYER *dp)
 }
 
 
-int play(char *fn) 
-{ 
+int play(char *fn)
+{
 	static int priority_table[] = {
 		THREAD_PRIORITY_NORMAL, THREAD_PRIORITY_ABOVE_NORMAL, THREAD_PRIORITY_HIGHEST
 	};
@@ -232,7 +232,7 @@ int play(char *fn)
 	thread_handle = (HANDLE) CreateThread(NULL,0,DecodeThread,&killDecodeThread,0,&thread_id);
 	SetThreadPriority(thread_handle, thread_priority);
 
-	return 0; 
+	return 0;
 }
 
 

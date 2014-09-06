@@ -87,32 +87,32 @@ int corlett_decode(uint8 *input, uint32 input_len, uint8 **output, uint64 *size,
 	uint32 res_area, comp_crc,  actual_crc;
 	uint8 *decomp_dat, *tag_dec;
 	uLongf decomp_length, comp_length;
-	
+
 	// 32-bit pointer to data
 	buf = (uint32 *)input;
-	
+
 	// Check we have a PSF format file.
 	if ((input[0] != 'P') || (input[1] != 'S') || (input[2] != 'F'))
 	{
 		return AO_FAIL;
 	}
-	
+
 	// Get our values
 	res_area = LE32(buf[1]);
 	comp_length = LE32(buf[2]);
 	comp_crc = LE32(buf[3]);
-		
+
 	if (comp_length > 0)
 	{
 		// Check length
 		if (input_len < comp_length + 16)
 			return AO_FAIL;
-	
+
 		// Check CRC is correct
 		actual_crc = crc32(0, (unsigned char *)&buf[4+(res_area/4)], comp_length);
 		if (actual_crc != comp_crc)
 			return AO_FAIL;
-	
+
 		// Decompress data if any
 		decomp_dat = malloc(DECOMP_MAX_SIZE);
 		decomp_length = DECOMP_MAX_SIZE;
@@ -150,23 +150,23 @@ int corlett_decode(uint8 *input, uint32 input_len, uint8 **output, uint64 *size,
 	// set reserved section pointer
 	(*c)->res_section = &buf[4];
 	(*c)->res_size = res_area;
-	
+
 	// Return it
 	*output = decomp_dat;
 	*size = decomp_length;
-		
+
 	// Next check for tags
 	input_len -= (comp_length + 16 + res_area);
 	if (input_len < 5)
 		return AO_SUCCESS;
-		
+
 //	printf("\n\nNew corlett: input len %d\n", input_len);
-	
+
 	tag_dec = input + (comp_length + res_area + 16);
 	if ((tag_dec[0] == '[') && (tag_dec[1] == 'T') && (tag_dec[2] == 'A') && (tag_dec[3] == 'G') && (tag_dec[4] == ']'))
 	{
 		int tag, l, num_tags, data;
-		
+
 		// Tags found!
 		tag_dec += 5;
 		input_len -= 5;
@@ -204,15 +204,15 @@ int corlett_decode(uint8 *input, uint32 input_len, uint8 **output, uint64 *size,
 					(*c)->tag_name[num_tags][l++] = *tag_dec;
 				}
 			}
-			
+
 			tag_dec++;
 			input_len--;
 		}
-		
-		
+
+
 		// Now, process that tag array into what we expect
 		for (num_tags = 0; num_tags < MAX_UNKNOWN_TAGS; num_tags++)
-		{			
+		{
 			// See if tag belongs in one of the special fields we have
 			if (!strcasecmp((*c)->tag_name[num_tags], "_lib"))
 			{
@@ -318,7 +318,7 @@ int corlett_decode(uint8 *input, uint32 input_len, uint8 **output, uint64 *size,
 			}
 		}
 	}
-	
+
 	// Bingo
 	return AO_SUCCESS;
 }
@@ -341,11 +341,11 @@ uint32 psfTimeToMS(char *str)
 		}
 		else if (s[x]==':')
 		{
-			if(c==0) 
+			if(c==0)
 			{
 				acc+=atoi(s+x+1)*10;
 			}
-			else if(c==1) 
+			else if(c==1)
 			{
 				acc+=atoi(s+x+(x?1:0))*10*60;
 			}
@@ -356,14 +356,14 @@ uint32 psfTimeToMS(char *str)
 		else if (x==0)
 		{
 			if(c==0)
-			{ 
+			{
 				acc+=atoi(s+x)*10;
 			}
-			else if(c==1) 
+			else if(c==1)
 			{
 				acc+=atoi(s+x)*10*60;
 			}
-			else if(c==2) 
+			else if(c==2)
 			{
 				acc+=atoi(s+x)*10*60*60;
 			}

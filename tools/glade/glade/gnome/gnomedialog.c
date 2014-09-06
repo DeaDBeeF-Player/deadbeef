@@ -82,8 +82,8 @@ gb_gnome_dialog_new (GbWidgetNewData *data)
     {
       /* When creating a new dialog, we add a few standard buttons, which
 	 the user can change/delete easily. */
-      new_widget = gnome_dialog_new (NULL, 
-				     GTK_STOCK_CANCEL, 
+      new_widget = gnome_dialog_new (NULL,
+				     GTK_STOCK_CANCEL,
 				     GTK_STOCK_OK,
 				     NULL);
 

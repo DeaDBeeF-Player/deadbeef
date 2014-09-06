@@ -271,7 +271,7 @@ int search_get_idx (DdbListviewIter it) {
     DB_playItem_t *c = deadbeef->pl_get_first (PL_SEARCH);
     int idx = 0;
     while (c && c != it) {
-        DB_playItem_t *next = deadbeef->pl_get_next (c, PL_SEARCH); 
+        DB_playItem_t *next = deadbeef->pl_get_next (c, PL_SEARCH);
         deadbeef->pl_item_unref (c);
         c = next;
         idx++;

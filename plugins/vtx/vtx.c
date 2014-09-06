@@ -64,7 +64,7 @@ vtx_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     // prepare to decode the track
     // return -1 on failure
     vtx_info_t *info = (vtx_info_t *)_info;
-    
+
     size_t sz = 0;
     char *buf = NULL;
 
@@ -315,7 +315,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "vtx",
     .plugin.name = "VTX player",
     .plugin.descr = "AY8910/12 chip emulator and vtx file player",
-    .plugin.copyright = 
+    .plugin.copyright =
         "VTX plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"

@@ -147,7 +147,7 @@ gb_gnome_druid_page_standard_get_properties (GtkWidget *widget,
       || gtk_object_get_data (GTK_OBJECT (widget), ContentsBackgroundColor))
     gb_widget_output_color (data, ContentsBackgroundColor,
 			    &page->contents_background);
-			  
+
   gb_widget_output_pixmap_filename (data, LogoImage,
 				    gtk_object_get_data (GTK_OBJECT (widget),
 							 LogoImage));
@@ -171,7 +171,7 @@ gb_gnome_druid_page_standard_set_properties (GtkWidget * widget,
   gchar *string, *old_filename;
   GdkColor *color;
   GdkPixbuf *image;
-	
+
   page = GNOME_DRUID_PAGE_STANDARD (widget);
 
   string = gb_widget_input_string (data, Title);

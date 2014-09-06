@@ -5,7 +5,7 @@
     copyright            : (C) 2002 by Pete Bernert
     email                : BlackDove@addcom.de
  ***************************************************************************/
-                       
+
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -15,7 +15,7 @@
  *   additional informations.                                              *
  *                                                                         *
  ***************************************************************************/
-                           
+
 //*************************************************************************//
 // History of changes:
 //
@@ -104,7 +104,7 @@
 #include "../peops2/regs.h"
 #include "../peops2/dma.h"
 #include "../peops2/spu.h"
- 
+
 ////////////////////////////////////////////////////////////////////////
 // globals
 ////////////////////////////////////////////////////////////////////////
@@ -124,7 +124,7 @@ const int f[5][2] = {   {    0,  0  },
 
 // dirty inline func includes
 
-#include "reverb2.c"        
+#include "reverb2.c"
 #include "adsr2.c"
 
 ////////////////////////////////////////////////////////////////////////
@@ -162,12 +162,12 @@ const int f[5][2] = {   {    0,  0  },
 //
 //  - and next delta significant (at least twice) bigger:
 //            /
-//         __- 
-//         
+//         __-
+//
 //  - and next delta is nearly same:
 //           /
 //          /
-//     
+//
 
 
 static INLINE void InterpolateUp(spu2_state_t *spu, int ch)
@@ -187,7 +187,7 @@ static INLINE void InterpolateUp(spu2_state_t *spu, int ch)
      if(id2<(id1<<1))
       spu->s_chan[ch].SB[28]=(id1*spu->s_chan[ch].sinc)/0x10000L;
      else
-      spu->s_chan[ch].SB[28]=(id1*spu->s_chan[ch].sinc)/0x20000L; 
+      spu->s_chan[ch].SB[28]=(id1*spu->s_chan[ch].sinc)/0x20000L;
     }
    else                                                // curr delta negative
     {
@@ -197,7 +197,7 @@ static INLINE void InterpolateUp(spu2_state_t *spu, int ch)
      if(id2>(id1<<1))
       spu->s_chan[ch].SB[28]=(id1*spu->s_chan[ch].sinc)/0x10000L;
      else
-      spu->s_chan[ch].SB[28]=(id1*spu->s_chan[ch].sinc)/0x20000L; 
+      spu->s_chan[ch].SB[28]=(id1*spu->s_chan[ch].sinc)/0x20000L;
     }
   }
  else
@@ -250,16 +250,16 @@ static INLINE void StartSound(spu2_state_t *spu, int ch)
  spu->dwEndChannel2[ch/24]&=~(1<<(ch%24));                  // clear end channel bit
 
  StartADSR(spu, ch);
- StartREVERB(spu, ch);      
-                          
+ StartREVERB(spu, ch);
+
  spu->s_chan[ch].pCurr=spu->s_chan[ch].pStart;                   // set sample start
-                         
+
  spu->s_chan[ch].s_1=0;                                     // init mixing vars
  spu->s_chan[ch].s_2=0;
  spu->s_chan[ch].iSBPos=28;
 
  spu->s_chan[ch].bNew=0;                                    // init channel flags
- spu->s_chan[ch].bStop=0;                                   
+ spu->s_chan[ch].bStop=0;
  spu->s_chan[ch].bOn=1;
 
  spu->s_chan[ch].SB[29]=0;                                  // init our interpolation helpers
@@ -340,12 +340,12 @@ static void *MAINThread(mips_cpu_context *cpu, int samp2run)
 
      if(iUseTimer) return 0;                           // linux no-thread mode? bye
 
-     if(dwNewChannel2[0] || dwNewChannel2[1]) 
+     if(dwNewChannel2[0] || dwNewChannel2[1])
       iSecureStart=1;                                  // if a new channel kicks in (or, of course, sound buffer runs low), we will leave the loop
     }
 #endif
 
-   //--------------------------------------------------// continue from irq handling in timer mode? 
+   //--------------------------------------------------// continue from irq handling in timer mode?
 
    if(spu->lastch>=0)                                       // will be -1 if no continue is pending
     {
@@ -354,7 +354,7 @@ static void *MAINThread(mips_cpu_context *cpu, int samp2run)
     }
 
    //--------------------------------------------------//
-   //- main channel loop                              -// 
+   //- main channel loop                              -//
    //--------------------------------------------------//
     {
      for(ch=0;ch<MAXCHAN;ch++)                         // loop em all... we will collect 1 ms of sound of each playing channel
@@ -398,9 +398,9 @@ static void *MAINThread(mips_cpu_context *cpu, int samp2run)
              predict_nr >>= 4;
              flags=(int)*start;start++;
 
-             // -------------------------------------- // 
+             // -------------------------------------- //
 
-             for (nSample=0;nSample<28;start++)      
+             for (nSample=0;nSample<28;start++)
               {
                d=(int)*start;
                s=((d&0xf)<<12);
@@ -414,12 +414,12 @@ static void *MAINThread(mips_cpu_context *cpu, int samp2run)
                spu->s_chan[ch].SB[nSample++]=fa;
 
                if(s&0x8000) s|=0xffff0000;
-               fa=(s>>shift_factor);              
+               fa=(s>>shift_factor);
                fa=fa + ((s_1 * f[predict_nr][0])>>6) + ((s_2 * f[predict_nr][1])>>6);
                s_2=s_1;s_1=fa;
 
                spu->s_chan[ch].SB[nSample++]=fa;
-              }     
+              }
 
              //////////////////////////////////////////// irq check
 
@@ -427,7 +427,7 @@ static void *MAINThread(mips_cpu_context *cpu, int samp2run)
               {
                if((spu->pSpuIrq[ch/24] >  start-16 &&       // irq address reached?
                    spu->pSpuIrq[ch/24] <= start) ||
-                  ((flags&1) &&                        // special: irq on looping addr, when stop/loop flag is set 
+                  ((flags&1) &&                        // special: irq on looping addr, when stop/loop flag is set
                    (spu->pSpuIrq[ch/24] >  spu->s_chan[ch].pLoop-16 &&
                     spu->pSpuIrq[ch/24] <= spu->s_chan[ch].pLoop)))
                 {
@@ -439,7 +439,7 @@ static void *MAINThread(mips_cpu_context *cpu, int samp2run)
                    if(ch<24) InterruptDMA4(cpu);            // -> let's see what is happening if we call our irqs instead ;)
                    else      InterruptDMA7(cpu);
                   }
-                  
+
                  if(spu->iSPUIRQWait)                       // -> option: wait after irq for main emu
                   {
                    spu->iSpuAsyncWait=1;
@@ -447,7 +447,7 @@ static void *MAINThread(mips_cpu_context *cpu, int samp2run)
                   }
                 }
               }
-      
+
              //////////////////////////////////////////// flag handler
 
              if((flags&4) && (!spu->s_chan[ch].bIgnoreLoop))
@@ -456,9 +456,9 @@ static void *MAINThread(mips_cpu_context *cpu, int samp2run)
              if(flags&1)                               // 1: stop/loop
               {
                spu->dwEndChannel2[ch/24]|=(1<<(ch%24));
-              
+
                // We play this block out first...
-               //if(!(flags&2)|| spu->s_chan[ch].pLoop==NULL)   
+               //if(!(flags&2)|| spu->s_chan[ch].pLoop==NULL)
                                                        // 1+2: do loop... otherwise: stop
                if(flags!=3 || spu->s_chan[ch].pLoop==NULL)  // PETE: if we don't check exactly for 3, loop hang ups will happen (DQ4, for example)
                 {                                      // and checking if pLoop is set avoids crashes, yeah
@@ -472,7 +472,7 @@ static void *MAINThread(mips_cpu_context *cpu, int samp2run)
 
              spu->s_chan[ch].pCurr=start;                   // store values for next cycle
              spu->s_chan[ch].s_1=s_1;
-             spu->s_chan[ch].s_2=s_2;      
+             spu->s_chan[ch].s_2=s_2;
 
              ////////////////////////////////////////////
 
@@ -480,7 +480,7 @@ static void *MAINThread(mips_cpu_context *cpu, int samp2run)
               {
                bIRQReturn=0;
                 {
-                 spu->lastch=ch; 
+                 spu->lastch=ch;
 //                 lastns=ns;	// changemeback
 
                  return 0;
@@ -499,20 +499,20 @@ GOON: ;
 //           else                                        // else adjust
             {
              if(fa>32767L)  fa=32767L;
-             if(fa<-32767L) fa=-32767L;              
+             if(fa<-32767L) fa=-32767L;
             }
 
            if(spu->iUseInterpolation>=2)                    // gauss/cubic interpolation
             {
              gpos = spu->s_chan[ch].SB[28];
-             gval0 = fa;          
+             gval0 = fa;
              gpos = (gpos+1) & 3;
              spu->s_chan[ch].SB[28] = gpos;
             }
            else
            if(spu->iUseInterpolation==1)                    // simple interpolation
             {
-             spu->s_chan[ch].SB[28] = 0;                    
+             spu->s_chan[ch].SB[28] = 0;
              spu->s_chan[ch].SB[29] = spu->s_chan[ch].SB[30];    // -> helpers for simple linear interpolation: delay real val for two slots, and calc the two deltas, for a 'look at the future behaviour'
              spu->s_chan[ch].SB[30] = spu->s_chan[ch].SB[31];
              spu->s_chan[ch].SB[31] = fa;
@@ -541,17 +541,17 @@ GOON: ;
            // mmm... depending on the noise freq we allow bigger/smaller changes to the previous val
            fa=spu->s_chan[ch].iOldNoise+((fa-spu->s_chan[ch].iOldNoise)/((0x001f-((spu->spuCtrl2[ch/24]&0x3f00)>>9))+1));
            if(fa>32767L)  fa=32767L;
-           if(fa<-32767L) fa=-32767L;              
+           if(fa<-32767L) fa=-32767L;
            spu->s_chan[ch].iOldNoise=fa;
 
            if(spu->iUseInterpolation<2)                     // no gauss/cubic interpolation?
             spu->s_chan[ch].SB[29] = fa;                    // -> store noise val in "current sample" slot
           }                                            //----------------------------------------
-         else                                          // NO NOISE (NORMAL SAMPLE DATA) HERE 
+         else                                          // NO NOISE (NORMAL SAMPLE DATA) HERE
           {//------------------------------------------//
            if(spu->iUseInterpolation==3)                    // cubic interpolation
             {
-             long xd;  
+             long xd;
              xd = ((spu->s_chan[ch].spos) >> 1)+1;
              gpos = spu->s_chan[ch].SB[28];
 
@@ -610,7 +610,7 @@ GOON: ;
 
            if(NP>0x3fff) NP=0x3fff;
            if(NP<0x1)    NP=0x1;
-           
+
 	   intr = (double)48000.0f / (double)44100.0f * (double)NP;
            NP = (UINT32)intr;
 
@@ -626,13 +626,13 @@ GOON: ;
 // mmmm... set up freq decoding positions?
 //           spu->s_chan[ch+1].iSBPos=28;
 //           spu->s_chan[ch+1].spos=0x10000L;
-          }                    
-         else                   
-          {                                          
+          }
+         else
+          {
            //////////////////////////////////////////////
            // ok, left/right sound volume (psx volume goes from 0 ... 0x3fff)
 
-           if(spu->s_chan[ch].iMute) 
+           if(spu->s_chan[ch].iMute)
             spu->s_chan[ch].sval=0;                         // debug mute
            else
             {
@@ -641,23 +641,23 @@ GOON: ;
              if(spu->s_chan[ch].bVolumeR)
               spu->SSumR[0]+=(spu->s_chan[ch].sval*spu->s_chan[ch].iRightVolume)/0x4000L;
             }
-        
+
            //////////////////////////////////////////////
-           // now let us store sound data for reverb    
-                                                          
+           // now let us store sound data for reverb
+
            if(spu->s_chan[ch].bRVBActive) StoreREVERB(spu, ch,0);
           }
 
          ////////////////////////////////////////////////
          // ok, go on until 1 ms data of this channel is collected
-                                                       
-         spu->s_chan[ch].spos += spu->s_chan[ch].sinc;             
-                                                              
-        }        
-ENDX:   ;                                                      
+
+         spu->s_chan[ch].spos += spu->s_chan[ch].sinc;
+
+        }
+ENDX:   ;
       }
-    }                                                         
-   
+    }
+
   //---------------------------------------------------//
   //- here we have another 1 ms of sound data
   //---------------------------------------------------//
@@ -669,7 +669,7 @@ ENDX:   ;
     spu->SSumL[0]+=MixREVERBLeft(spu, 0,1);
     spu->SSumR[0]+=MixREVERBRight(spu, 0);
     spu->SSumR[0]+=MixREVERBRight(spu, 1);
-                                              
+
     d=spu->SSumL[0]/voldiv;spu->SSumL[0]=0;
     d2=spu->SSumR[0]/voldiv;spu->SSumR[0]=0;
 
@@ -682,7 +682,7 @@ ENDX:   ;
 	if(spu->decaybegin!=~0) // Is anyone REALLY going to be playing a song
 		      // for 13 hours?
     	{
-		if(spu->sampcount>=spu->decayend) 
+		if(spu->sampcount>=spu->decayend)
 		{
 //		       	ao_song_done = 1;
 		        return(0);
@@ -700,13 +700,13 @@ ENDX:   ;
 
     InitREVERB(spu);
 
-  //////////////////////////////////////////////////////                   
+  //////////////////////////////////////////////////////
   // feed the sound
   // wanna have around 1/60 sec (16.666 ms) updates
 	if ((((unsigned char *)spu->pS)-((unsigned char *)spu->pSpuBuffer)) == (735*4))
 	{
 	    	cpu->spu_callback((u8*)spu->pSpuBuffer,(u8*)spu->pS-(u8*)spu->pSpuBuffer, cpu->spu_callback_data);
-	        spu->pS=(short *)spu->pSpuBuffer;					  
+	        spu->pS=(short *)spu->pSpuBuffer;
 	}
  }
 
@@ -747,7 +747,7 @@ EXPORT_GCC void CALLBACK SPU2async(mips_cpu_context *cpu, unsigned long cycle)
 // SPUINIT: this func will be called first by the main emu
 ////////////////////////////////////////////////////////////////////////
 
-              
+
 EXPORT_GCC long CALLBACK SPU2init(mips_cpu_context *cpu, void (*callback)(unsigned char *, long, void *), void *data)
 {
     cpu->spu2 = malloc (sizeof (spu2_state_t));
@@ -796,7 +796,7 @@ static void SetupTimer(mips_cpu_context *cpu)
  spu->pS=(short *)spu->pSpuBuffer;                               // setup soundbuffer pointer
 
  spu->bEndThread=0;                                         // init thread vars
- spu->bThreadEnded=0; 
+ spu->bThreadEnded=0;
  spu->bSpuInit=1;                                           // flag: we are inited
 }
 
@@ -817,7 +817,7 @@ static void RemoveTimer(mips_cpu_context *cpu)
 ////////////////////////////////////////////////////////////////////////
 
 static void SetupStreams(mips_cpu_context *cpu)
-{ 
+{
     spu2_state_t *spu = cpu->spu2;
  int i;
 
@@ -836,7 +836,7 @@ static void SetupStreams(mips_cpu_context *cpu)
 
  for(i=0;i<MAXCHAN;i++)                                // loop sound channels
   {
-// we don't use mutex sync... not needed, would only 
+// we don't use mutex sync... not needed, would only
 // slow us down:
 //   spu->s_chan[i].hMutex=CreateMutex(NULL,FALSE,NULL);
    spu->s_chan[i].ADSRX.SustainLevel = 1024;                // -> init sustain
@@ -853,7 +853,7 @@ static void SetupStreams(mips_cpu_context *cpu)
 ////////////////////////////////////////////////////////////////////////
 
 static void RemoveStreams(mips_cpu_context *cpu)
-{ 
+{
     spu2_state_t *spu = cpu->spu2;
  free(spu->pSpuBuffer);                                     // free mixing buffer
  spu->pSpuBuffer=NULL;
@@ -868,7 +868,7 @@ static void RemoveStreams(mips_cpu_context *cpu)
   {
    WaitForSingleObject(spu->s_chan[i].hMutex,2000);
    ReleaseMutex(spu->s_chan[i].hMutex);
-   if(spu->s_chan[i].hMutex)    
+   if(spu->s_chan[i].hMutex)
     {CloseHandle(spu->s_chan[i].hMutex);spu->s_chan[i].hMutex=0;}
   }
 */
@@ -878,8 +878,8 @@ static void RemoveStreams(mips_cpu_context *cpu)
 ////////////////////////////////////////////////////////////////////////
 // SPUOPEN: called by main emu after init
 ////////////////////////////////////////////////////////////////////////
-   
-EXPORT_GCC long CALLBACK SPU2open(mips_cpu_context *cpu, void *pDsp)                          
+
+EXPORT_GCC long CALLBACK SPU2open(mips_cpu_context *cpu, void *pDsp)
 {
     spu2_state_t *spu = cpu->spu2;
  if(spu->bSPUIsOpen) return 0;                              // security for some stupid main emus
@@ -888,7 +888,7 @@ EXPORT_GCC long CALLBACK SPU2open(mips_cpu_context *cpu, void *pDsp)
  spu->iVolume=3;
  spu->bEndThread=0;
  spu->bThreadEnded=0;
- spu->spuMemC=(unsigned char *)spu->spuMem;      
+ spu->spuMemC=(unsigned char *)spu->spuMem;
  memset((void *)spu->s_chan,0,(MAXCHAN+1)*sizeof(SPUCHAN));
  spu->pSpuIrq[0]=0;
  spu->pSpuIrq[1]=0;
@@ -897,21 +897,21 @@ EXPORT_GCC long CALLBACK SPU2open(mips_cpu_context *cpu, void *pDsp)
  spu->dwNewChannel2[1]=0;
  spu->dwEndChannel2[0]=0;
  spu->dwEndChannel2[1]=0;
- spu->spuCtrl2[0]=0;              
- spu->spuCtrl2[1]=0;              
+ spu->spuCtrl2[0]=0;
+ spu->spuCtrl2[1]=0;
  spu->spuStat2[0]=0;
  spu->spuStat2[1]=0;
- spu->spuIrq2[0]=0;             
- spu->spuIrq2[1]=0;             
- spu->spuAddr2[0]=0xffffffff;   
- spu->spuAddr2[1]=0xffffffff;   
+ spu->spuIrq2[0]=0;
+ spu->spuIrq2[1]=0;
+ spu->spuAddr2[0]=0xffffffff;
+ spu->spuAddr2[1]=0xffffffff;
  spu->spuRvbAddr2[0]=0;
  spu->spuRvbAddr2[1]=0;
  spu->spuRvbAEnd2[0]=0;
  spu->spuRvbAEnd2[1]=0;
- 
+
 // ReadConfig();                                         // read user stuff
- 
+
 // SetupSound();                                         // setup midas (before init!)
 
  SetupStreams(cpu);                                       // prepare streaming
@@ -920,7 +920,7 @@ EXPORT_GCC long CALLBACK SPU2open(mips_cpu_context *cpu, void *pDsp)
 
  spu->bSPUIsOpen=1;
 
- return 0;        
+ return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -963,7 +963,7 @@ EXPORT_GCC long CALLBACK SPU2test(void)
 
 ////////////////////////////////////////////////////////////////////////
 // SETUP CALLBACKS
-// this functions will be called once, 
+// this functions will be called once,
 // passes a callback that should be called on SPU-IRQ/cdda volume change
 ////////////////////////////////////////////////////////////////////////
 

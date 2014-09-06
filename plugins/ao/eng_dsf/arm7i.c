@@ -48,7 +48,7 @@
 
   //--------------------------------------------------------------------------
   // private functions
-	   
+
   /** Condition EQ. */
 static int R_WEQ (struct sARM7 *cpu);
   /** Condition NE. */
@@ -526,7 +526,7 @@ void R_G00x (struct sARM7 *cpu)
 	{
 		ARM7_SetCPSR(cpu->Rx[ARM7_CPSR] | ARM7_CPSR_T);
 	}
-       
+
 	cpu->Rx[ARM7_PC] = Rn & ~1;
   #endif
   }
@@ -544,7 +544,7 @@ void R_G00x (struct sARM7 *cpu)
   {
 //    logerror("G00x / Multiply long\n");
   }
-  // 6 constant bits	 
+  // 6 constant bits
   else if ((cpu->kod & 0x0e400090) == 0x00400090)
     R_HSDT (cpu);
   // 2 constant bits

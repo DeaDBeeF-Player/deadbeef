@@ -42,15 +42,15 @@ static DB_vfs_t plugin;
 
 const uint32_t mms_bandwidths[]={14400,19200,28800,33600,34430,57600,
     115200,262200,393216,524300,1544000,10485800};
-		
-		
+
+
 const char * mms_bandwidth_strs[]={"14.4 Kbps (Modem)", "19.2 Kbps (Modem)",
     "28.8 Kbps (Modem)", "33.6 Kbps (Modem)",
     "34.4 Kbps (Modem)", "57.6 Kbps (Modem)",
     "115.2 Kbps (ISDN)", "262.2 Kbps (Cable/DSL)",
     "393.2 Kbps (Cable/DSL)","524.3 Kbps (Cable/DSL)",
     "1.5 Mbps (T1)", "10.5 Mbps (LAN)", NULL};
-		
+
 
 
 static DB_FILE *
@@ -177,7 +177,7 @@ static DB_vfs_t plugin = {
     .plugin.type = DB_PLUGIN_VFS,
     .plugin.name = "mms vfs",
     .plugin.descr = "MMS streaming plugin based on libmms",
-    .plugin.copyright = 
+    .plugin.copyright =
         "MMS transport VFS plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"

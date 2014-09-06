@@ -100,7 +100,7 @@ save_project_file (GladeProject *project)
 {
   gchar *old_locale, *saved_locale;
   GladeError *error;
-     
+
   old_locale = setlocale (LC_NUMERIC, NULL);
   saved_locale = g_strdup (old_locale);
   setlocale (LC_NUMERIC, "C");

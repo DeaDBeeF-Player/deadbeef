@@ -40,7 +40,7 @@ mmsx_t *mmsx_connect(mms_io_t *io, void *data, const char *url, int bandwidth, i
 {
   mmsx_t *mmsx = calloc(1, sizeof(mmsx_t));
   char *try_mms_first = getenv("LIBMMS_TRY_MMS_FIRST");
-  
+
   if (!mmsx)
     return mmsx;
 

@@ -342,7 +342,7 @@ static int EG_Update(struct _SLOT *slot)
 			slot->EG.volume+=slot->EG.AR;
 			if(slot->EG.volume>=(0x3ff<<EG_SHIFT))
 			{
-				if (!LPSLNK(slot)) 
+				if (!LPSLNK(slot))
 				{
 					slot->EG.state=DECAY1;
 					if(slot->EG.D1R>=(1024<<EG_SHIFT)) //Skip DECAY1, go directly to DECAY2
@@ -479,7 +479,7 @@ static void SCSP_Init(struct _SCSP *SCSP, const struct SCSPinterface *intf)
 		fcent=(double) 44100.0*pow(2.0,fcent/1200.0);
 		FNS_Table[i]=(float) (1<<SHIFT) *fcent;
 	}
-	
+
 	for(i=0;i<0x400;++i)
 	{
 		float envDB=((float)(3*(i-0x3ff)))/32.0;
@@ -681,7 +681,7 @@ static void SCSP_UpdateReg(struct _SCSP *SCSP, int reg)
 		case 0x22:	//SCIRE
 		case 0x23:
 
-			if(SCSP->Master)		   
+			if(SCSP->Master)
 			{
 				SCSP->udata.data[0x20/2]&=~SCSP->udata.data[0x22/2];
 				ResetInterrupts(SCSP);
@@ -893,7 +893,7 @@ static INLINE INT32 SCSP_UpdateSlot(struct _SCSP *SCSP, struct _SLOT *slot)
 		smp<<=0xA; // associate cycle with 1024
 		smp>>=0x1A-MDL(slot); // ex. for MDL=0xF, sample range corresponds to +/- 64 pi (32=2^5 cycles) so shift by 11 (16-5 == 0x1A-0xF)
 		if(!PCM8B(slot)) smp<<=1;
-		
+
 		addr1+=smp; addr2+=smp;
 	}
 
@@ -928,16 +928,16 @@ static INLINE INT32 SCSP_UpdateSlot(struct _SCSP *SCSP, struct _SLOT *slot)
 	else
 		slot->cur_addr+=step;
 	slot->nxt_addr=slot->cur_addr+(1<<SHIFT);
-	
+
 	addr1=slot->cur_addr>>SHIFT;
 	addr2=slot->nxt_addr>>SHIFT;
-	
+
 	if(addr1>=LSA(slot) && !(slot->Backwards))
 	{
 		if(LPSLNK(slot) && slot->EG.state==ATTACK)
 			slot->EG.state = DECAY1;
 	}
-	
+
 	for (addr_select=0;addr_select<2;addr_select++)
 	{
 		INT32 rem_addr;
@@ -973,7 +973,7 @@ static INLINE INT32 SCSP_UpdateSlot(struct _SCSP *SCSP, struct _SLOT *slot)
 		case 3: //ping-pong
 			if(*addr[addr_select]>=LEA(slot)) //reached end, reverse till start
 			{
-				rem_addr = *slot_addr[addr_select] - (LEA(slot)<<SHIFT); 
+				rem_addr = *slot_addr[addr_select] - (LEA(slot)<<SHIFT);
 				*slot_addr[addr_select]=(LEA(slot)<<SHIFT) - rem_addr;
 				slot->Backwards=1;
 			}
@@ -1003,7 +1003,7 @@ static INLINE INT32 SCSP_UpdateSlot(struct _SCSP *SCSP, struct _SLOT *slot)
 		unsigned short Enc=((TL(slot))<<0x0)|(0x7<<0xd);
 		*SCSP->RBUFDST=(sample*SCSP->LPANTABLE[Enc])>>(SHIFT+1);
 	}
-		
+
 	return sample;
 }
 
@@ -1044,7 +1044,7 @@ static void SCSP_DoMasterSamples(struct _SCSP *SCSP, int nsamples)
 					smpr+=(sample*SCSP->RPANTABLE[Enc])>>SHIFT;
 				}
 			}
-			
+
 #if FM_DELAY
 			SCSP->RINGBUF[(SCSP->BUFPTR+64-(FM_DELAY-1))&63] = SCSP->DELAYBUF[(SCSP->DELAYPTR+FM_DELAY-(FM_DELAY-1))%FM_DELAY];
 #endif
@@ -1260,14 +1260,14 @@ WRITE16_HANDLER( SCSP_0_w )
 
 WRITE16_HANDLER( SCSP_MidiIn )
 {
-	struct _SCSP *SCSP = param; 
+	struct _SCSP *SCSP = param;
 	SCSP->MidiStack[SCSP->MidiW++]=data;
 	SCSP->MidiW &= 15;
 }
 
 READ16_HANDLER( SCSP_MidiOutR )
 {
-	struct _SCSP *SCSP = param; 
+	struct _SCSP *SCSP = param;
 	unsigned char val;
 
 	val=SCSP->MidiStack[SCSP->MidiR++];

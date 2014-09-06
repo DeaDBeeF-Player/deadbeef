@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * Authors:
- *   Mark McLoughlin <mark@skynet.ie> 
+ *   Mark McLoughlin <mark@skynet.ie>
  */
 
 #include "../gb.h"
@@ -37,7 +37,7 @@ gb_expander_new (GbWidgetNewData *data)
   if (data->action != GB_LOADING)
     {
       GtkWidget *label;
-      
+
       gtk_container_add (GTK_CONTAINER (expander), editor_new_placeholder ());
       label = gb_widget_new ("GtkLabel", NULL);
       gtk_expander_set_label_widget (GTK_EXPANDER (expander), label);
@@ -99,7 +99,7 @@ gb_expander_create_popup_menu (GtkWidget              *widget,
 			       GbWidgetCreateMenuData *data)
 {
   GtkWidget *menuitem;
-  
+
   if (!gtk_expander_get_label_widget (GTK_EXPANDER (widget)))
     {
       menuitem = gtk_menu_item_new_with_label (_("Add Label Widget"));
@@ -116,7 +116,7 @@ gb_expander_add_child (GtkWidget          *widget,
 		       GbWidgetSetArgData *data)
 {
   gboolean is_label_item = FALSE;
-  
+
   if (data->child_info)
     {
       int j;
@@ -168,7 +168,7 @@ gb_expander_write_source (GtkWidget               *widget,
     }
 
   gb_widget_write_standard_source (widget, data);
-  
+
   if (gtk_expander_get_expanded (GTK_EXPANDER (widget)))
     {
       source_add (data,

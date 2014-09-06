@@ -58,7 +58,7 @@ EXPORT_GCC void CALLBACK SPU2readDMA4Mem(mips_cpu_context *cpu, u32 usPSXMem,int
   }
 
  spu->spuAddr2[0]+=0x20; //?????
- 
+
 
  spu->iSpuAsyncWait=0;
 
@@ -115,7 +115,7 @@ EXPORT_GCC void CALLBACK SPU2writeDMA4Mem(mips_cpu_context *cpu, u32 usPSXMem,in
    spu->spuAddr2[0]++;                                      // inc spu addr
    if(spu->spuAddr2[0]>0xfffff) spu->spuAddr2[0]=0;              // wrap
   }
- 
+
  spu->iSpuAsyncWait=0;
 
  // got from J.F. and Kanodin... is it needed?
@@ -134,7 +134,7 @@ EXPORT_GCC void CALLBACK SPU2writeDMA7Mem(mips_cpu_context *cpu, u32 usPSXMem,in
    spu->spuAddr2[1]++;                                      // inc spu addr
    if(spu->spuAddr2[1]>0xfffff) spu->spuAddr2[1]=0;              // wrap
   }
- 
+
  spu->iSpuAsyncWait=0;
 
  // got from J.F. and Kanodin... is it needed?
@@ -145,7 +145,7 @@ EXPORT_GCC void CALLBACK SPU2writeDMA7Mem(mips_cpu_context *cpu, u32 usPSXMem,in
 // INTERRUPTS
 ////////////////////////////////////////////////////////////////////////
 
-void InterruptDMA4(mips_cpu_context *cpu) 
+void InterruptDMA4(mips_cpu_context *cpu)
 {
     spu2_state_t *spu = cpu->spu2;
 // taken from linuzappz NULL spu2
@@ -157,13 +157,13 @@ void InterruptDMA4(mips_cpu_context *cpu)
  spu->regArea[(PS2_C0_ADMAS)>>1]=0;
  spu->spuStat2[0]|=0x80;
 }
-                       
-EXPORT_GCC void CALLBACK SPU2interruptDMA4(mips_cpu_context *cpu) 
+
+EXPORT_GCC void CALLBACK SPU2interruptDMA4(mips_cpu_context *cpu)
 {
  InterruptDMA4(cpu);
 }
 
-void InterruptDMA7(mips_cpu_context *cpu) 
+void InterruptDMA7(mips_cpu_context *cpu)
 {
     spu2_state_t *spu = cpu->spu2;
 // taken from linuzappz NULL spu2
@@ -176,7 +176,7 @@ void InterruptDMA7(mips_cpu_context *cpu)
  spu->spuStat2[1]|=0x80;
 }
 
-EXPORT_GCC void CALLBACK SPU2interruptDMA7(mips_cpu_context *cpu) 
+EXPORT_GCC void CALLBACK SPU2interruptDMA7(mips_cpu_context *cpu)
 {
  InterruptDMA7(cpu);
 }

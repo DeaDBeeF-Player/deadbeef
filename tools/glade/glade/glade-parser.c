@@ -1169,7 +1169,7 @@ glade_parser_parse_file(const gchar *file, const gchar *domain)
     old_substitute_entities = xmlSubstituteEntitiesDefault(1);
     result = xmlSAXUserParseFile(&glade_parser, &state, file);
     xmlSubstituteEntitiesDefault(old_substitute_entities);
-    
+
     if (result < 0) {
 	g_warning("document not well formed!");
 	if (state.interface)
@@ -1243,7 +1243,7 @@ dump_widget(xmlNode *parent, GladeWidgetInfo *info, gint indent)
     xmlAddChild(parent, widget);
     xmlNodeAddContent(widget, "\n");
 
-    for (i = 0; i < info->n_properties; i++) { 
+    for (i = 0; i < info->n_properties; i++) {
 	xmlNode *node;
 
 	for (j = 0; j < indent + 1; j++)
@@ -1326,7 +1326,7 @@ dump_widget(xmlNode *parent, GladeWidgetInfo *info, gint indent)
 	xmlNodeAddContent(widget, "\n");
 	xmlNodeAddContent(child, "\n");
 
-	for (k = 0; k < childinfo->n_properties; k++) { 
+	for (k = 0; k < childinfo->n_properties; k++) {
 	    xmlNode *node;
 
 	    for (j = 0; j < indent + 2; j++)
@@ -1392,7 +1392,7 @@ glade_interface_dump(GladeInterface *interface, const gchar *filename)
     }
 
     /* output */
-    
+
     xmlSaveFileEnc(filename, doc, "UTF-8");
     xmlFreeDoc(doc);
 }

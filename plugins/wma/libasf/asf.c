@@ -62,7 +62,7 @@ static unsigned short get_short_le(void* buf)
         (((bits) != 0x03) ? ((bits) != 0x02) ? ((bits) != 0x01) ? \
          0 : *(data) : get_short_le(data) : get_long_le(data))
 
-int asf_read_packet(uint8_t** audiobuf, int* audiobufsize, int* packetlength, 
+int asf_read_packet(uint8_t** audiobuf, int* audiobufsize, int* packetlength,
                     asf_waveformatex_t* wfx, DB_FILE *fp)
 {
     uint8_t *audiobuf_mem = *audiobuf;

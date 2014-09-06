@@ -137,7 +137,7 @@ gb_gnome_file_entry_get_properties (GtkWidget *widget, GbWidgetGetArgData * data
   g_object_get (G_OBJECT (widget),
 		"use_filechooser", &use_filechooser,
 		"filechooser_action", &action,
-		NULL); 
+		NULL);
   gb_widget_output_bool (data, FileChooser, use_filechooser);
 
   for (i = 0; i < sizeof (GbActionValues) / sizeof (GbActionValues[0]); i++)
@@ -280,7 +280,7 @@ gb_gnome_file_entry_write_source (GtkWidget * widget,
     source_add (data,
 		"  gnome_file_entry_set_directory_entry (GNOME_FILE_ENTRY (%s), TRUE);\n",
 		data->wname);
-  
+
   if (gnome_file_entry_get_modal (GNOME_FILE_ENTRY (widget)))
     source_add (data,
 		"  gnome_file_entry_set_modal (GNOME_FILE_ENTRY (%s), TRUE);\n",
@@ -289,7 +289,7 @@ gb_gnome_file_entry_write_source (GtkWidget * widget,
   g_object_get (G_OBJECT (widget),
 		"use_filechooser", &use_filechooser,
 		"filechooser_action", &action,
-		NULL); 
+		NULL);
 
   if (use_filechooser)
     {

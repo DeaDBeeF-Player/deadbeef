@@ -71,7 +71,7 @@ static INLINE void StartADSR(spu_state_t *spu, int ch)                          
 ////////////////////////////////////////////////////////////////////////
 
 static INLINE int MixADSR(spu_state_t *spu, int ch)                             // MIX ADSR
-{    
+{
  static const int sexytable[8]=
 	{0,4,6,8,9,10,11,12};
 
@@ -86,7 +86,7 @@ static INLINE int MixADSR(spu_state_t *spu, int ch)                             
      spu->s_chan[ch].ADSRX.EnvelopeVol-=RateTable[(4*(spu->s_chan[ch].ADSRX.ReleaseRate^0x1F))-0x0C + 32];
     }
 
-   if(spu->s_chan[ch].ADSRX.EnvelopeVol<0) 
+   if(spu->s_chan[ch].ADSRX.EnvelopeVol<0)
     {
      spu->s_chan[ch].ADSRX.EnvelopeVol=0;
      spu->s_chan[ch].bOn=0;
@@ -102,7 +102,7 @@ static INLINE int MixADSR(spu_state_t *spu, int ch)                             
     {
      if(spu->s_chan[ch].ADSRX.AttackModeExp)
       {
-       if(spu->s_chan[ch].ADSRX.EnvelopeVol<0x60000000) 
+       if(spu->s_chan[ch].ADSRX.EnvelopeVol<0x60000000)
         spu->s_chan[ch].ADSRX.EnvelopeVol+=RateTable[(spu->s_chan[ch].ADSRX.AttackRate^0x7F)-0x10 + 32];
        else
         spu->s_chan[ch].ADSRX.EnvelopeVol+=RateTable[(spu->s_chan[ch].ADSRX.AttackRate^0x7F)-0x18 + 32];
@@ -112,7 +112,7 @@ static INLINE int MixADSR(spu_state_t *spu, int ch)                             
        spu->s_chan[ch].ADSRX.EnvelopeVol+=RateTable[(spu->s_chan[ch].ADSRX.AttackRate^0x7F)-0x10 + 32];
       }
 
-     if(spu->s_chan[ch].ADSRX.EnvelopeVol<0) 
+     if(spu->s_chan[ch].ADSRX.EnvelopeVol<0)
       {
        spu->s_chan[ch].ADSRX.EnvelopeVol=0x7FFFFFFF;
        spu->s_chan[ch].ADSRX.State=1;
@@ -142,7 +142,7 @@ static INLINE int MixADSR(spu_state_t *spu, int ch)                             
       {
        if(spu->s_chan[ch].ADSRX.SustainModeExp)
         {
-         if(spu->s_chan[ch].ADSRX.EnvelopeVol<0x60000000) 
+         if(spu->s_chan[ch].ADSRX.EnvelopeVol<0x60000000)
           spu->s_chan[ch].ADSRX.EnvelopeVol+=RateTable[(spu->s_chan[ch].ADSRX.SustainRate^0x7F)-0x10 + 32];
          else
           spu->s_chan[ch].ADSRX.EnvelopeVol+=RateTable[(spu->s_chan[ch].ADSRX.SustainRate^0x7F)-0x18 + 32];
@@ -152,7 +152,7 @@ static INLINE int MixADSR(spu_state_t *spu, int ch)                             
          spu->s_chan[ch].ADSRX.EnvelopeVol+=RateTable[(spu->s_chan[ch].ADSRX.SustainRate^0x7F)-0x10 + 32];
         }
 
-       if(spu->s_chan[ch].ADSRX.EnvelopeVol<0) 
+       if(spu->s_chan[ch].ADSRX.EnvelopeVol<0)
         {
          spu->s_chan[ch].ADSRX.EnvelopeVol=0x7FFFFFFF;
         }
@@ -164,7 +164,7 @@ static INLINE int MixADSR(spu_state_t *spu, int ch)                             
        else
         spu->s_chan[ch].ADSRX.EnvelopeVol-=RateTable[((spu->s_chan[ch].ADSRX.SustainRate^0x7F))-0x0F + 32];
 
-       if(spu->s_chan[ch].ADSRX.EnvelopeVol<0) 
+       if(spu->s_chan[ch].ADSRX.EnvelopeVol<0)
         {
          spu->s_chan[ch].ADSRX.EnvelopeVol=0;
         }
@@ -185,7 +185,7 @@ PSX SPU Envelope Timings
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 First, here is an extract from doomed's SPU doc, which explains the basics
-of the SPU "volume envelope": 
+of the SPU "volume envelope":
 
 *** doomed doc extract start ***
 
@@ -259,7 +259,7 @@ ADSRvol           Returns the current envelope volume when
                   read.
 -- James' Note: return range: 0 -> 32767
 
-*** doomed doc extract end *** 
+*** doomed doc extract end ***
 
 By using a small PSX proggie to visualise the envelope as it was played,
 the following results for envelope timing were obtained:
@@ -315,7 +315,7 @@ the following results for envelope timing were obtained:
    Substituting, we get: k = 0.00146
 
    Further info on logarithmic nature:
-   frames to decay to sustain level 3  =  3 * frames to decay to 
+   frames to decay to sustain level 3  =  3 * frames to decay to
    sustain level 9
 
    Also no. of frames to 25% volume = roughly 1.85 * no. of frames to
@@ -377,7 +377,7 @@ the following results for envelope timing were obtained:
    ------------------------------------
 
 
-Other notes:   
+Other notes:
 
 Log stuff not figured out. You may get some clues from the "Decay rate"
 stuff above. For emu purposes it may not be important - use linear
@@ -415,7 +415,7 @@ every one millisecond
      lT=spu->s_chan[ch].ADSR.lTime-                         // -> how much time is past?
         spu->s_chan[ch].ADSR.ReleaseStartTime;
      l1=spu->s_chan[ch].ADSR.ReleaseTime;
-                                                       
+
      if(lT<l1)                                         // -> we still have to release
       {
        v=v-((v*lT)/l1);                                // --> calc new volume
@@ -428,12 +428,12 @@ every one millisecond
      v=0;spu->s_chan[ch].bOn=0;spu->s_chan[ch].ADSR.ReleaseVol=0;spu->s_chan[ch].bNoise=0;
     }
   }
- else                                               
+ else
   {//--------------------------------------------------// not in release phase:
    v=1024;
    lT=spu->s_chan[ch].ADSR.lTime;
    l1=spu->s_chan[ch].ADSR.AttackTime;
-                                                       
+
    if(lT<l1)                                           // attack
     {                                                  // no exp mode used (yet)
 //     if(spu->s_chan[ch].ADSR.AttackModeExp)
@@ -479,13 +479,13 @@ every one millisecond
     }
   }
 
- //----------------------------------------------------// 
+ //----------------------------------------------------//
  // ok, done for this channel, so increase time
 
- spu->s_chan[ch].ADSR.lTime+=1;                             // 1 = 1.020408f ms;      
+ spu->s_chan[ch].ADSR.lTime+=1;                             // 1 = 1.020408f ms;
 
  if(v>1024)     v=1024;                                // adjust volume
- if(v<0)        v=0;                                  
+ if(v<0)        v=0;
  spu->s_chan[ch].ADSR.lVolume=v;                            // store act volume
 
  return v;                                             // return the volume factor

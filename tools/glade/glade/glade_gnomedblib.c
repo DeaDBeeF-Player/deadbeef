@@ -46,7 +46,7 @@ GbWidget *gb_gnome_db_table_editor_init ();
 static GladeWidgetInitData gnome_db[] = {
         { "GnomeDbLoginDialog", gb_gnome_db_logindlg_init },
 	{ "GnomeDbLogin",       gb_gnome_db_login_init },
-        { "GnomeDbErrorDialog", gb_gnome_db_errordlg_init }, 
+        { "GnomeDbErrorDialog", gb_gnome_db_errordlg_init },
         { "GnomeDbError",       gb_gnome_db_error_init },
 
         { "GnomeDbDsnConfig",   gb_gnome_db_dsnconfig_init },
@@ -68,7 +68,7 @@ static GladeWidgetInitData gnome_db[] = {
 	/* These may be added back at some point. */
         /*{ "GnomeDbIconList",    gb_gnome_db_iconlist_init },*/
 
-	{ NULL, NULL }  
+	{ NULL, NULL }
 };
 
 

@@ -251,7 +251,7 @@ gb_image_get_properties (GtkWidget * widget, GbWidgetGetArgData * data)
 
   gb_widget_output_named_icon (data, IconName, icon_name);
 
-  /* The icon size only applies to stock icons or named icons. 
+  /* The icon size only applies to stock icons or named icons.
      The pixel size only applies to named icons. */
   if (data->action == GB_SHOWING)
     {
