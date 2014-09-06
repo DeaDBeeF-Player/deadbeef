@@ -70,8 +70,8 @@ void *dsf_start(const char *path, uint8 *buffer, uint32 length)
 			uint64 tmp_length;
 			char libpath[PATH_MAX];
             ao_getlibpath (path, s->c->lib, libpath, sizeof (libpath));
-	
-			#if DEBUG_LOADER	
+
+			#if DEBUG_LOADER
 			printf("Loading library: %s\n", libpath);
 			#endif
 			if (ao_get_lib(libpath, &lib_raw_file, &tmp_length) != AO_SUCCESS)
@@ -80,14 +80,14 @@ void *dsf_start(const char *path, uint8 *buffer, uint32 length)
 				return NULL;
 			}
 			lib_raw_length = tmp_length;
-		
+
 			if (corlett_decode(lib_raw_file, lib_raw_length, &lib_decoded, &lib_len, &lib) != AO_SUCCESS)
 			{
 				free(lib_raw_file);
                 dsf_stop (s);
 				return NULL;
 			}
-				
+
 			// Free up raw file
 			free(lib_raw_file);
 
@@ -106,7 +106,7 @@ void *dsf_start(const char *path, uint8 *buffer, uint32 length)
 	memcpy(&s->cpu->dc_ram[offset], file+4, file_len-4);
 
 	free(file);
-	
+
 	// Finally, set psfby/ssfby tag
 	strcpy(s->psfby, "n/a");
 	if (s->c)
@@ -185,7 +185,7 @@ int32 dsf_gen(void *handle, int16 *buffer, uint32 samples)
 		stereo[0] = &output[opos];
 		stereo[1] = &output2[opos];
 		AICA_Update(s->cpu->AICA, NULL, NULL, stereo, 1);
-		opos++;		
+		opos++;
 	}
 
 	for (i = 0; i < samples; i++)
@@ -247,7 +247,7 @@ int32 dsf_command(void *handle, int32 command, int32 parameter)
             dc_hw_init (s->cpu);
             s->total_samples = 0;
 			return AO_SUCCESS;
-		
+
 	}
 	return AO_FAIL;
 }
@@ -257,13 +257,13 @@ int32 dsf_fill_info(void *handle, ao_display_info *info)
     dsf_synth_t *s = handle;
 	if (s->c == NULL)
 		return AO_FAIL;
-		
+
 	strcpy(info->title[1], "Name: ");
 	sprintf(info->info[1], "%s", s->c->inf_title);
 
 	strcpy(info->title[2], "Game: ");
 	sprintf(info->info[2], "%s", s->c->inf_game);
-	
+
 	strcpy(info->title[3], "Artist: ");
 	sprintf(info->info[3], "%s", s->c->inf_artist);
 

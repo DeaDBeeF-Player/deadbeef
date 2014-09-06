@@ -46,10 +46,10 @@ void AICALFO_Init(void)
 		if(i<128)
 			p=i;
 		else
-			p=i-256;    
+			p=i-256;
 		ALFO_SAW[i]=a;
 		PLFO_SAW[i]=p;
-	
+
 		//Square
 		if(i<128)
 		{
@@ -63,7 +63,7 @@ void AICALFO_Init(void)
 		}
 		ALFO_SQR[i]=a;
 		PLFO_SQR[i]=p;
-	
+
 		//Tri
 		if(i<128)
 			a=255-(i*2);
@@ -79,7 +79,7 @@ void AICALFO_Init(void)
 			p=i*2-511;
 		ALFO_TRI[i]=a;
 		PLFO_TRI[i]=p;
-	
+
 		//noise
 		//a=lfo_noise[i];
 		a=rand()&0xff;
@@ -107,10 +107,10 @@ static signed int INLINE AICAPLFO_Step(struct _LFO *LFO)
 {
 	int p;
 
-    LFO->phase+=LFO->phase_step;    
-#if LFO_SHIFT!=8    
+    LFO->phase+=LFO->phase_step;
+#if LFO_SHIFT!=8
     LFO->phase&=(1<<(LFO_SHIFT+8))-1;
-#endif    
+#endif
     p=LFO->table[LFO->phase>>LFO_SHIFT];
 	p=LFO->scale[p+128];
 	return p<<(SHIFT-LFO_SHIFT);
@@ -119,10 +119,10 @@ static signed int INLINE AICAPLFO_Step(struct _LFO *LFO)
 static signed int INLINE AICAALFO_Step(struct _LFO *LFO)
 {
 	int p;
-    LFO->phase+=LFO->phase_step;    
-#if LFO_SHIFT!=8    
+    LFO->phase+=LFO->phase_step;
+#if LFO_SHIFT!=8
     LFO->phase&=(1<<(LFO_SHIFT+8))-1;
-#endif    
+#endif
     p=LFO->table[LFO->phase>>LFO_SHIFT];
 	p=LFO->scale[p];
 	return p<<(SHIFT-LFO_SHIFT);

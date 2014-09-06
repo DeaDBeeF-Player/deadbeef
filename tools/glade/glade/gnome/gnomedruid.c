@@ -110,7 +110,7 @@ show_druid_dialog (GbWidgetNewData * data)
   gtk_widget_set_usize (spinbutton, 50, -1);
   gtk_widget_grab_focus (spinbutton);
   gtk_widget_show (spinbutton);
-	
+
   gtk_widget_show (dialog);
   gtk_grab_add (dialog);
 }
@@ -121,7 +121,7 @@ on_druid_dialog_ok (GtkWidget * widget, GbWidgetNewData * data)
 {
   GtkWidget *new_widget, *spinbutton, *window, *page;
   gint pages, i;
-	
+
   window = gtk_widget_get_toplevel (widget);
 
   /* Only call callback if placeholder/fixed widget is still there */
@@ -248,10 +248,10 @@ gb_gnome_druid_create_popup_menu (GtkWidget * widget,
 
   /* 'Add Start Page' is added if the druid has no pages or the first one
      is not a start page. */
-  if (!children || 
-      !(GNOME_IS_DRUID_PAGE_EDGE (children->data) && 
+  if (!children ||
+      !(GNOME_IS_DRUID_PAGE_EDGE (children->data) &&
 	GNOME_DRUID_PAGE_EDGE (children->data)->position == GNOME_EDGE_START))
-    { 
+    {
       menuitem = gtk_menu_item_new_with_label (_("Add Start Page"));
       gtk_widget_show (menuitem);
       gtk_menu_append (GTK_MENU (data->menu), menuitem);
@@ -263,10 +263,10 @@ gb_gnome_druid_create_popup_menu (GtkWidget * widget,
   /* 'Add Finish Page' is added if the druid has no pages or the last one
      is not a finish page. */
   elem = g_list_last (children);
-  if (!elem || 
-      !(GNOME_IS_DRUID_PAGE_EDGE (elem->data) && 
+  if (!elem ||
+      !(GNOME_IS_DRUID_PAGE_EDGE (elem->data) &&
 	GNOME_DRUID_PAGE_EDGE (elem->data)->position == GNOME_EDGE_FINISH))
-    { 
+    {
       menuitem = gtk_menu_item_new_with_label (_("Add Finish Page"));
       gtk_widget_show (menuitem);
       gtk_menu_append (GTK_MENU (data->menu), menuitem);
@@ -279,9 +279,9 @@ gb_gnome_druid_create_popup_menu (GtkWidget * widget,
 
   /* 'Insert Page Before' is added if the current page is not the start page.
    */
-  if (!(GNOME_IS_DRUID_PAGE_EDGE (data->child) && 
+  if (!(GNOME_IS_DRUID_PAGE_EDGE (data->child) &&
 	GNOME_DRUID_PAGE_EDGE (data->child)->position == GNOME_EDGE_START))
-    { 
+    {
       menuitem = gtk_menu_item_new_with_label (_("Insert Page Before"));
       gtk_widget_show (menuitem);
       gtk_menu_append (GTK_MENU (data->menu), menuitem);
@@ -294,7 +294,7 @@ gb_gnome_druid_create_popup_menu (GtkWidget * widget,
    */
   if (!(GNOME_IS_DRUID_PAGE_EDGE (data->child) &&
 	GNOME_DRUID_PAGE_EDGE (data->child)->position == GNOME_EDGE_FINISH))
-    { 
+    {
       menuitem = gtk_menu_item_new_with_label (_("Insert Page After"));
       gtk_widget_show (menuitem);
       gtk_menu_append (GTK_MENU (data->menu), menuitem);

@@ -416,7 +416,7 @@ void *ayemu_gen_sound(ayemu_ay_t *ay, void *buff, size_t sound_bufsize)
   snd_numcount = sound_bufsize / (ay->sndfmt.channels * (ay->sndfmt.bpc >> 3));
   while (snd_numcount-- > 0) {
     mix_l = mix_r = 0;
-		
+
     for (m = 0 ; m < ay->ChipTacts_per_outcount ; m++) {
       if (++ay->cnt_a >= ay->regs.tone_a) {
 	ay->cnt_a = 0;
@@ -430,15 +430,15 @@ void *ayemu_gen_sound(ayemu_ay_t *ay, void *buff, size_t sound_bufsize)
 	ay->cnt_c = 0;
 	ay->bit_c = ! ay->bit_c;
       }
-			
+
       /* GenNoise (c) Hacker KAY & Sergey Bulba */
       if (++ay->cnt_n >= (ay->regs.noise * 2)) {
 	ay->cnt_n = 0;
 	ay->Cur_Seed = (ay->Cur_Seed * 2 + 1) ^ \
-	  (((ay->Cur_Seed >> 16) ^ (ay->Cur_Seed >> 13)) & 1); 
+	  (((ay->Cur_Seed >> 16) ^ (ay->Cur_Seed >> 13)) & 1);
 	ay->bit_n = ((ay->Cur_Seed >> 16) & 1);
       }
-			
+
       if (++ay->cnt_e >= ay->regs.env_freq) {
 	ay->cnt_e = 0;
 	if (++ay->env_pos > 127)
@@ -452,23 +452,23 @@ void *ayemu_gen_sound(ayemu_ay_t *ay, void *buff, size_t sound_bufsize)
 	mix_l += ay->vols[0][tmpvol];
 	mix_r += ay->vols[1][tmpvol];
       }
-			
+
       if ((ay->bit_b | !ay->regs.R7_tone_b) & (ay->bit_n | !ay->regs.R7_noise_b)) {
 	tmpvol =(ay->regs.env_b)? ENVVOL :  ay->regs.vol_b * 2 + 1;
 	mix_l += ay->vols[2][tmpvol];
 	mix_r += ay->vols[3][tmpvol];
       }
-			
+
       if ((ay->bit_c | !ay->regs.R7_tone_c) & (ay->bit_n | !ay->regs.R7_noise_c)) {
 	tmpvol = (ay->regs.env_c)? ENVVOL : ay->regs.vol_c * 2 + 1;
 	mix_l += ay->vols[4][tmpvol];
 	mix_r += ay->vols[5][tmpvol];
-      }			
+      }
     } /* end for (m=0; ...) */
-		
+
     mix_l /= ay->Amp_Global;
     mix_r /= ay->Amp_Global;
-		
+
     if (ay->sndfmt.bpc == 8) {
       mix_l = (mix_l >> 8) | 128; /* 8 bit sound */
       mix_r = (mix_r >> 8) | 128;

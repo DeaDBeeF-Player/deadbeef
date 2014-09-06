@@ -259,7 +259,7 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
         if (info->current_frame == info->demux_res.num_sample_byte_sizes) {
             break; // end of file
         }
-        
+
         uint32_t sample_duration;
         uint32_t sample_byte_size;
 
@@ -619,7 +619,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "alac",
     .plugin.name = "ALAC player",
     .plugin.descr = "plays alac files from MP4 and M4A files",
-    .plugin.copyright = 
+    .plugin.copyright =
         "ALAC plugin for deadbeef\n"
         "Copyright (C) 2012-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "Uses the reverse engineered ALAC decoder (C) 2005 David Hammerton\n"

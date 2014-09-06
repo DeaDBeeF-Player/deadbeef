@@ -65,7 +65,7 @@ static const gchar *GbModeSymbols[] =
   "GTK_SELECTION_MULTIPLE"
 };
 
-static gint gb_gnome_icon_list_expose (GtkWidget      *widget, 
+static gint gb_gnome_icon_list_expose (GtkWidget      *widget,
 				       GdkEventExpose *event,
 				       gpointer	  data);
 static void gb_gnome_icon_list_adjustment_changed (GtkAdjustment *adjustment,
@@ -131,7 +131,7 @@ gb_gnome_icon_list_new (GbWidgetNewData *data)
 /* If data is not NULL, then we are creating the widget, so the step increments
    are set to a decent initial value. */
 static gint
-gb_gnome_icon_list_expose (GtkWidget      *widget, 
+gb_gnome_icon_list_expose (GtkWidget      *widget,
 			   GdkEventExpose *event,
 			   gpointer	  data)
 {

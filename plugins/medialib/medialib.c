@@ -227,7 +227,7 @@ static ddb_medialib_plugin_t plugin = {
     .plugin.plugin.id = "medialib",
     .plugin.plugin.name = "Media Library",
     .plugin.plugin.descr = "Scans disk for music files and manages them as database",
-    .plugin.plugin.copyright = 
+    .plugin.plugin.copyright =
         "Media Library plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"

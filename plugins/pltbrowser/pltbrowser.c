@@ -302,7 +302,7 @@ static DB_misc_t plugin = {
     .plugin.name = "Playlist browser GTK2",
 #endif
     .plugin.descr = "Use View -> Design Mode to add playlist browser into main window",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Playlist browser widget plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"

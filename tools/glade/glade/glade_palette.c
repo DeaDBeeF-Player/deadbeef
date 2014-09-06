@@ -170,7 +170,7 @@ glade_palette_init (GladePalette * palette)
   gtk_widget_show (hbox);
 
   relief_style = GTK_RELIEF_NONE;
-  
+
   palette->selector = gtk_radio_button_new (NULL);
   gtk_button_set_relief (GTK_BUTTON (palette->selector), relief_style);
 
@@ -242,7 +242,7 @@ glade_palette_add_widget (GladePalette *palette,
   GtkWidget *button;
   GtkWidget *pixmap;
   GtkReliefStyle relief_style;
-  
+
   g_return_if_fail (palette != NULL);
   g_return_if_fail (GLADE_IS_PALETTE (palette));
   g_return_if_fail (gdkpixmap != NULL);

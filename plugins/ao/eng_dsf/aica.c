@@ -75,7 +75,7 @@
 #define DIPAN(slot)		((slot->udata.data[0x24/2]>>0x0)&0x001F)
 
 #define EFSDL(slot)		((AICA->EFSPAN[slot*4]>>8)&0x000f)
-#define EFPAN(slot)		((AICA->EFSPAN[slot*4]>>0)&0x001f) 
+#define EFPAN(slot)		((AICA->EFSPAN[slot*4]>>0)&0x001f)
 
 //Envelope times in ms
 static const double ARTimes[64]={100000/*infinity*/,100000/*infinity*/,8100.0,6900.0,6000.0,4800.0,4000.0,3400.0,3000.0,2400.0,2000.0,1700.0,1500.0,
@@ -327,7 +327,7 @@ static int EG_Update(struct _SLOT *slot)
 			slot->EG.volume+=slot->EG.AR;
 			if(slot->EG.volume>=(0x3ff<<EG_SHIFT))
 			{
-				if (!LPSLNK(slot)) 
+				if (!LPSLNK(slot))
 				{
 					slot->EG.state=DECAY1;
 					if(slot->EG.D1R>=(1024<<EG_SHIFT)) //Skip DECAY1, go directly to DECAY2
@@ -477,7 +477,7 @@ static void AICA_StopSlot(struct _SLOT *slot,int keyoff)
 		slot->active=0;
 	}
 	slot->udata.data[0]&=~0x4000;
-	
+
 }
 
 #define log_base_2(n) (log((float) n)/log((float) 2))
@@ -737,7 +737,7 @@ static void AICA_UpdateReg(struct _AICA *AICA, int reg)
 		case 0xa4:	//SCIRE
 		case 0xa5:
 
-			if(AICA->Master)		   
+			if(AICA->Master)
 			{
 				AICA->udata.data[0xa0/2] &= ~AICA->udata.data[0xa4/2];
 				ResetInterrupts(AICA);
@@ -805,7 +805,7 @@ static void AICA_UpdateRegR(struct _AICA *AICA, int reg)
 				//int MSLC = (AICA->udata.data[0xc/2]>>8) & 0x3f;	// which slot are we monitoring?
 			}
 			break;
-			
+
 		case 0x14:	// CA (slot address)
 		case 0x15:
 			{
@@ -974,7 +974,7 @@ static INLINE INT32 AICA_UpdateSlot(struct _AICA *AICA, struct _SLOT *slot)
 		step>>=SHIFT;
 	}
 
-	if(PCMS(slot) == 0) 
+	if(PCMS(slot) == 0)
 	{
 		addr1=(slot->cur_addr>>(SHIFT-1))&0x7ffffe;
 		addr2=(slot->nxt_addr>>(SHIFT-1))&0x7ffffe;
@@ -1006,7 +1006,7 @@ static INLINE INT32 AICA_UpdateSlot(struct _AICA *AICA, struct _SLOT *slot)
 
 		if (base)
 		{
-			cur_sample = slot->cur_sample; // may already contains current decoded sample 
+			cur_sample = slot->cur_sample; // may already contains current decoded sample
 
 			// seek to the interpolation sample
 			while (curstep < steps_to_go)
@@ -1035,7 +1035,7 @@ static INLINE INT32 AICA_UpdateSlot(struct _AICA *AICA, struct _SLOT *slot)
 	}
 	fpart = slot->cur_addr & ((1<<SHIFT)-1);
 	sample=cur_sample*((1<<SHIFT)-fpart)+nxt_sample*fpart;
-	sample>>=SHIFT;	
+	sample>>=SHIFT;
 
 	slot->prv_addr=slot->cur_addr;
 	slot->cur_addr+=step;
@@ -1072,7 +1072,7 @@ static INLINE INT32 AICA_UpdateSlot(struct _AICA *AICA, struct _SLOT *slot)
 				rem_addr = slot->cur_addr - (LEA(slot)<<SHIFT);
 				slot->cur_addr = (LSA(slot)<<SHIFT) + rem_addr;
 			}
-				
+
 			if(PCMS(slot)>=2)
 			{
 				// restore the state @ LSA - the sampler will naturally walk to (LSA + remainder)
@@ -1099,8 +1099,8 @@ static INLINE INT32 AICA_UpdateSlot(struct _AICA *AICA, struct _SLOT *slot)
 		sample=(sample*EG_Update(slot))>>SHIFT;
 	else
 		sample=(sample*EG_TABLE[EG_Update(slot)>>(SHIFT-10)])>>SHIFT;
-		
-	if(slot->mslc) 
+
+	if(slot->mslc)
 	{
 		AICA->udata.data[0x14/2] = addr1;
 		if (!(AFSEL(AICA)))
@@ -1160,7 +1160,7 @@ static void AICA_DoMasterSamples(struct _AICA *AICA, int nsamples)
 					smpr+=(sample*AICA->RPANTABLE[Enc])>>SHIFT;
 				}
 			}
-			
+
 			AICA->BUFPTR&=63;
 		}
 

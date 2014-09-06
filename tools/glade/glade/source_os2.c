@@ -44,7 +44,7 @@ static void source_write_makefile_simple (gchar *makefilename)
 
   if (glade_util_file_exists (makefilename))
     return;
-  
+
   fp = glade_util_fopen (makefilename, "wt");
   if (fp == NULL)
     return;
@@ -60,7 +60,7 @@ static void source_write_makefile_simple (gchar *makefilename)
 #endif
   fprintf (fp,"DIRS=-DPACKAGE_DATA_DIR=\\\".\\\" -DPACKAGE_SOURCE_DIR=\\\".\\\"\n");
   fprintf (fp,"OBJS=main.o support.o interface.o callbacks.o\n");
-  fprintf (fp,"CFLAGS=-Zmtd -D__ST_MT_ERRNO__ -I. -I$(X11ROOT)/XFree86/include");  
+  fprintf (fp,"CFLAGS=-Zmtd -D__ST_MT_ERRNO__ -I. -I$(X11ROOT)/XFree86/include");
   fprintf (fp," $(DIRS)");
 #ifdef USE_GNOME
   fprintf (fp," $(PACK)");
@@ -84,7 +84,7 @@ static void source_write_makefile_simple (gchar *makefilename)
 static void source_write_os2_def_file (gchar *filename)
 {
   FILE *fp;
-  
+
   if (glade_util_file_exists (filename))
     return;
 

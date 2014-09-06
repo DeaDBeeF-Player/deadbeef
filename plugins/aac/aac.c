@@ -6,12 +6,12 @@
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -251,7 +251,7 @@ mp4_track_get_info(mp4ff_t *mp4, int track, float *duration, int *samplerate, in
     *samplerate = srate;
     *channels = ch;
     samples = (int64_t)mp4ff_num_samples(mp4, track);
-    
+
     NeAACDecClose (dec);
     dec = NULL;
 
@@ -651,7 +651,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 trace ("aac: finished with the last mp4sample\n");
                 break;
             }
-            
+
             unsigned char *buffer = NULL;
             int buffer_size = 0;
             int rc = mp4ff_read_sample (info->mp4, info->mp4track, info->mp4sample, &buffer, &buffer_size);
@@ -1078,9 +1078,9 @@ aac_insert_with_chapters (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem
         deadbeef->pl_item_unref (it);
     }
     deadbeef->pl_item_ref (after);
-    
+
     DB_playItem_t *first = deadbeef->pl_get_next (ins, PL_MAIN);
-    
+
     if (!first) {
         first = deadbeef->plt_get_first (plt, PL_MAIN);
     }
@@ -1324,7 +1324,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "aac",
     .plugin.name = "AAC player",
     .plugin.descr = "plays aac files, supports raw aac files, as well as mp4 container",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "Uses modified libmp4ff (C) 2003-2005 M. Bakker, Nero AG, http://www.nero.com\n"

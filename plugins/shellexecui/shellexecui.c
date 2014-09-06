@@ -2,17 +2,17 @@
     ShellExec GUI plugin for DeaDBeeF Player
     Copyright (C) 2012 Azeem Arshad <kr00r4n@gmail.com>
     Copyright (C) 2013-2014 Alexey Yakovenko
-    
+
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -326,7 +326,7 @@ init_treeview() {
 
     // Create the tree view data model and fill it with values
     GtkListStore *liststore;
-    liststore = gtk_list_store_new(COL_COUNT, 
+    liststore = gtk_list_store_new(COL_COUNT,
                                    G_TYPE_STRING,
                                    //G_TYPE_BOOLEAN,
                                    G_TYPE_POINTER);
@@ -420,7 +420,7 @@ static DB_misc_t plugin = {
     .plugin.name = "Shellexec GTK2 UI",
 #endif
     .plugin.descr = "A GTK UI for the Shellexec plugin",
-    .plugin.copyright = 
+    .plugin.copyright =
         "ShellExec GUI plugin for DeaDBeeF Player\n"
         "Copyright (C) 2012 Azeem Arshad <kr00r4n@gmail.com>\n"
         "Copyright (C) 2013-2014 Alexey Yakovenko\n"

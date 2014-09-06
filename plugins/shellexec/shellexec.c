@@ -23,7 +23,7 @@
     Configuration scheme:
 
     shellexec.NN shcmd:title:name:flags
-    
+
     @shcmd is the command executed by the shell
         formating directives are allowed, see
         format_shell_command function
@@ -73,7 +73,7 @@ trim (char* s)
         return "";
     }
     char *h, *t;
-    
+
     for (h = s; *h == ' ' || *h == '\t'; h++);
     for (t = s + strlen (s)-1; *t == ' ' || *t == '\t'; t--);
     *(t+1) = 0;
@@ -460,7 +460,7 @@ static Shx_plugin_t plugin = {
     "EXAMPLE: shellexec.00 notify-send \"%a - %t\":Show selected track:notify:single\n"
     "this would show the name of selected track in notification popup"
     ,
-    .misc.plugin.copyright = 
+    .misc.plugin.copyright =
         "Shellexec plugin for DeaDBeeF\n"
         "Copyright (C) 2010-2014 Deadbeef team\n"
         "Original developer Viktor Semykin <thesame.ml@gmail.com>\n"

@@ -455,7 +455,7 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                     }
 
                     fileprop = 1;
-                    
+
                     /* Get the number of logical packets - uint64_t at offset 32
                      * (Big endian byte order) */
                     SKIP_BYTES(fd, 32);
@@ -700,22 +700,22 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                         } else if (!strcmp("WM/Picture", utf8buf)) {
                             uint32_t datalength, strlength;
                             /* Expected is either "01 00 xx xx 03 yy yy yy yy" or
-                             * "03 yy yy yy yy". xx is the size of the WM/Picture 
-                             * container in bytes. yy equals the raw data length of 
+                             * "03 yy yy yy yy". xx is the size of the WM/Picture
+                             * container in bytes. yy equals the raw data length of
                              * the embedded image. */
                             SKIP_BYTES(fd, -4);
                             deadbeef->fread(&type, 1, 1, fd);
                             if (type == 1) {
                                 SKIP_BYTES(fd, 3);
                                 deadbeef->fread(&type, 1, 1, fd);
-                                /* In case the parsing will fail in the next step we 
+                                /* In case the parsing will fail in the next step we
                                  * might at least be able to skip the whole section. */
                                 datalength = length - 1;
                             }
                             if (type == 3) {
                                 /* Read the raw data length of the embedded image. */
                                 read_uint32le(fd, &datalength);
-                            
+
                                 /* Reset utf8 buffer */
                                 utf8 = utf8buf;
                                 utf8length = 512;
@@ -744,7 +744,7 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                                     id3->has_embedded_albumart = true;
                                 }
                             }
-                            
+
                             SKIP_BYTES(fd, datalength);
 #endif
                         } else {

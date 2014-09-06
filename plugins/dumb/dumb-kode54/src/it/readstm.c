@@ -266,7 +266,7 @@ static DUMB_IT_SIGDATA *it_stm_load_sigdata(DUMBFILE *f /*, int * version*/)
 	sigdata->n_patterns = dumbfile_getc(f);
 	sigdata->global_volume = dumbfile_getc(f) << 1;
 	if ( sigdata->global_volume > 128 ) sigdata->global_volume = 128;
-	
+
 	dumbfile_skip(f, 13);
 
 	if ( dumbfile_error(f) || sigdata->n_patterns < 1 || sigdata->n_patterns > 99 ) {

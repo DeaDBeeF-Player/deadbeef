@@ -36,16 +36,16 @@
 #define trace(fmt,...)
 extern DB_functions_t *deadbeef;
 
-static struct 
-{ 
-	uint32 sig; 
-	char *name; 
+static struct
+{
+	uint32 sig;
+	char *name;
 	void * (*start)(const char *path, uint8 *, uint32); // returns handle
-	int32 (*gen)(void *handle, int16 *, uint32); 
-	int32 (*stop)(void *handle); 
-	int32 (*command)(void *handle, int32, int32); 
-	uint32 rate; 
-	int32 (*fillinfo)(void *handle, ao_display_info *); 
+	int32 (*gen)(void *handle, int16 *, uint32);
+	int32 (*stop)(void *handle);
+	int32 (*command)(void *handle, int32, int32);
+	uint32 rate;
+	int32 (*fillinfo)(void *handle, ao_display_info *);
 } types[] = {
 	{ 0x50534641, "Capcom QSound (.qsf)", qsf_start, qsf_gen, qsf_stop, qsf_command, 60, qsf_fill_info },
 	{ 0x50534611, "Sega Saturn (.ssf)", ssf_start, ssf_gen, ssf_stop, ssf_command, 60, ssf_fill_info },
@@ -115,7 +115,7 @@ int main(int argv, char *argc[])
 	{
 		printf("Error: must specify a filename!\n");
 		return -1;
-	}	
+	}
 
 	file = fopen(argc[1], "rb");
 
@@ -179,7 +179,7 @@ int main(int argv, char *argc[])
 		printf("ERROR: Engine rejected file!\n");
 		return -1;
 	}
-	
+
 #if 0
 	m1sdr_Init(44100);
 	m1sdr_SetCallback(do_frame);
@@ -190,7 +190,7 @@ int main(int argv, char *argc[])
 	while (1)
 	{
 		m1sdr_TimeCheck();
-	}		
+	}
 #endif
 	free(buffer);
 

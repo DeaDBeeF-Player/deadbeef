@@ -69,7 +69,7 @@ glade_debug_init ()
   if (glade_debug_flags & GLADE_DEBUG_WARNINGS)
     {
       GLogLevelFlags fatal_mask;
-	      
+
       fatal_mask = g_log_set_always_fatal (G_LOG_FATAL_MASK);
       fatal_mask |= G_LOG_LEVEL_WARNING | G_LOG_LEVEL_CRITICAL;
       g_log_set_always_fatal (fatal_mask);

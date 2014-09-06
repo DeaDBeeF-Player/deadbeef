@@ -145,8 +145,8 @@ static const char* mmsh_RangeRequest =
 
 
 
-/* 
- * mmsh specific types 
+/*
+ * mmsh specific types
  */
 
 
@@ -172,9 +172,9 @@ struct mmsh_s {
   char          str[SCRATCH_SIZE]; /* scratch buffer to built strings */
 
   int           stream_type;  /* seekable or broadcast */
-  
+
   /* receive buffer */
-  
+
   /* chunk */
   uint16_t      chunk_type;
   uint16_t      chunk_length;
@@ -235,7 +235,7 @@ static off_t fallback_io_read(void *data, int socket, char *buf, off_t num, int 
             continue;
           default:
             /* if already read something, return it, we will fail next time */
-            return len ? len : ret; 
+            return len ? len : ret;
       }
     }
     len += ret;
@@ -250,17 +250,17 @@ static off_t fallback_io_write(void *data, int socket, char *buf, off_t num)
 
 static int fallback_io_tcp_connect(void *data, const char *host, int port, int *need_abort)
 {
-  
+
   struct hostent *h;
   int i, s;
-  
+
   h = gethostbyname(host);
   if (h == NULL) {
     lprintf("mmsh: unable to resolve host: %s\n", host);
     return -1;
   }
 
-  s = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);  
+  s = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
   if (s == -1) {
     lprintf("mmsh: failed to create socket: %s\n", strerror(errno));
     return -1;
@@ -274,16 +274,16 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port, int *
   for (i = 0; h->h_addr_list[i]; i++) {
     struct in_addr ia;
     struct sockaddr_in sin;
- 
+
     memcpy (&ia, h->h_addr_list[i], 4);
     sin.sin_family = AF_INET;
     sin.sin_addr   = ia;
     sin.sin_port   = htons(port);
-    
+
     if (connect(s, (struct sockaddr *)&sin, sizeof(sin)) ==-1 && errno != EINPROGRESS) {
       continue;
     }
-    
+
     return s;
   }
   close(s);
@@ -319,18 +319,18 @@ static mms_io_t default_io =   {
 #define io_write(io, args...) ((io) ? (io)->write(io->write_data , ## args) : default_io.write(NULL , ## args))
 #define io_select(io, args...) ((io) ? (io)->select(io->select_data , ## args) : default_io.select(NULL , ## args))
 #define io_connect(io, args...) ((io) ? (io)->connect(io->connect_data , ## args) : default_io.connect(NULL , ## args))
-  
+
 static int get_guid (unsigned char *buffer, int offset) {
   int i;
   GUID g;
-  
+
   g.Data1 = LE_32(buffer + offset);
   g.Data2 = LE_16(buffer + offset + 4);
   g.Data3 = LE_16(buffer + offset + 6);
   for(i = 0; i < 8; i++) {
     g.Data4[i] = buffer[offset + 8 + i];
   }
-  
+
   for (i = 1; i < GUID_END; i++) {
     if (!memcmp(&g, &guids[i].guid, sizeof(GUID))) {
       lprintf("mmsh: GUID: %s\n", guids[i].name);
@@ -341,7 +341,7 @@ static int get_guid (unsigned char *buffer, int offset) {
   lprintf("mmsh: unknown GUID: 0x%x, 0x%x, 0x%x, "
           "{ 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx }\n",
           g.Data1, g.Data2, g.Data3,
-          g.Data4[0], g.Data4[1], g.Data4[2], g.Data4[3], 
+          g.Data4[0], g.Data4[1], g.Data4[2], g.Data4[3],
           g.Data4[4], g.Data4[5], g.Data4[6], g.Data4[7]);
   return GUID_ERROR;
 }
@@ -360,7 +360,7 @@ static int send_command (mms_io_t *io, mmsh_t *this, char *cmd)  {
 }
 
 static int get_answer (mms_io_t *io, mmsh_t *this) {
- 
+
   int done, len, linenum;
   char *features;
 
@@ -378,14 +378,14 @@ static int get_answer (mms_io_t *io, mmsh_t *this) {
 
       this->buf[len] = '\0';
       len--;
-      
+
       if ((len >= 0) && (this->buf[len] == '\015')) {
         this->buf[len] = '\0';
         len--;
       }
 
       linenum++;
-      
+
       lprintf("mmsh: answer: >%s<\n", this->buf);
 
       if (linenum == 1) {
@@ -413,7 +413,7 @@ static int get_answer (mms_io_t *io, mmsh_t *this) {
           lprintf ("mmsh: Location redirection not implemented.\n");
           return 0;
         }
-        
+
         if (!strncasecmp(this->buf, "Pragma:", 7)) {
           features = strstr(this->buf + 7, "features=");
           if (features) {
@@ -431,7 +431,7 @@ static int get_answer (mms_io_t *io, mmsh_t *this) {
           }
         }
       }
-      
+
       if (len == -1) {
         done = 1;
       } else {
@@ -490,7 +490,7 @@ static int get_chunk_header (mms_io_t *io, mmsh_t *this) {
       return ERROR;
     }
   }
-  
+
   if (this->chunk_type == CHUNK_TYPE_DATA || this->chunk_type == CHUNK_TYPE_END)
     this->chunk_seq_number = LE_32 (&ext_header[0]);
 
@@ -705,7 +705,7 @@ static void interp_header (mms_io_t *io, mmsh_t *this) {
             if (stream_index < this->num_stream_ids) {
               this->streams[stream_index].bitrate = LE_32(this->asf_header + i + 24 + 4 + j * 6);
               this->streams[stream_index].bitrate_pos = i + 24 + 4 + j * 6;
-              lprintf ("mmsh: stream id %d, bitrate %d\n", stream_id, 
+              lprintf ("mmsh: stream id %d, bitrate %d\n", stream_id,
                        this->streams[stream_index].bitrate);
             } else
               lprintf ("mmsh: unknown stream id %d in bitrate properties\n",
@@ -816,9 +816,9 @@ static int mmsh_valid_proto (char *proto) {
  */
 static int mmsh_tcp_connect(mms_io_t *io, mmsh_t *this) {
   if (!this->connect_port) this->connect_port = MMSH_PORT;
-  
-  /* 
-   * try to connect 
+
+  /*
+   * try to connect
    */
   lprintf("mmsh: try to connect to %s on port %d \n", this->connect_host, this->connect_port);
 
@@ -844,7 +844,7 @@ static int mmsh_connect_int (mms_io_t *io, mmsh_t *this, off_t seek, uint32_t ti
   int    bandwitdh_left;
   char   stream_selection[10 * ASF_MAX_NUM_STREAMS]; /* 10 chars per stream */
   int    offset;
-  
+
   /* Close exisiting connection (if any) and connect */
   if (this->s != -1)
     close(this->s);
@@ -860,7 +860,7 @@ static int mmsh_connect_int (mms_io_t *io, mmsh_t *this, off_t seek, uint32_t ti
 
   /* first request */
   lprintf("mmsh: first http request\n");
-  
+
   snprintf (this->str, SCRATCH_SIZE, mmsh_FirstRequest, this->uri,
             this->http_host, this->http_port, this->http_request_number++);
 
@@ -870,16 +870,16 @@ static int mmsh_connect_int (mms_io_t *io, mmsh_t *this, off_t seek, uint32_t ti
   if (!get_answer (io, this))
     goto fail;
 
-  /* Don't check for != SUCCESS as EOS is normal here too */    
+  /* Don't check for != SUCCESS as EOS is normal here too */
   if (get_header(io, this) == ERROR)
     goto fail;
 
   interp_header(io, this);
   if (!this->packet_length || !this->num_stream_ids)
     goto fail;
-  
+
   close(this->s);
-  
+
   /* choose the best quality for the audio stream */
   /* i've never seen more than one audio stream */
   for (i = 0; i < this->num_stream_ids; i++) {
@@ -915,14 +915,14 @@ static int mmsh_connect_int (mms_io_t *io, mmsh_t *this, off_t seek, uint32_t ti
       default:
         break;
     }
-  }  
+  }
 
   /* choose the stream with the lower bitrate */
   if ((video_stream == -1) && this->has_video) {
     for (i = 0; i < this->num_stream_ids; i++) {
     switch (this->streams[i].stream_type) {
         case ASF_STREAM_TYPE_VIDEO:
-          if ((video_stream == -1) || 
+          if ((video_stream == -1) ||
               (this->streams[i].bitrate < min_vrate) ||
               (!min_vrate)) {
             video_stream = this->streams[i].stream_id;
@@ -936,7 +936,7 @@ static int mmsh_connect_int (mms_io_t *io, mmsh_t *this, off_t seek, uint32_t ti
   }
 
   lprintf("mmsh: audio stream %d, video stream %d\n", audio_stream, video_stream);
-  
+
   /* second request */
   lprintf("mmsh: second http request\n");
 
@@ -978,10 +978,10 @@ static int mmsh_connect_int (mms_io_t *io, mmsh_t *this, off_t seek, uint32_t ti
                 this->num_stream_ids, stream_selection);
       break;
   }
-  
+
   if (!send_command (io, this, this->str))
     goto fail;
-  
+
   if (!get_answer (io, this))
     goto fail;
 
@@ -991,7 +991,7 @@ static int mmsh_connect_int (mms_io_t *io, mmsh_t *this, off_t seek, uint32_t ti
   interp_header(io, this);
   if (!this->packet_length || !this->num_stream_ids)
     goto fail;
-  
+
   for (i = 0; i < this->num_stream_ids; i++) {
     if ((this->streams[i].stream_id != audio_stream) &&
         (this->streams[i].stream_id != video_stream)) {
@@ -1206,7 +1206,7 @@ static int get_media_packet (mms_io_t *io, mmsh_t *this) {
 
         /* What todo with: current_pos ??
            Also our chunk_seq_numbers might restart from 0!
-           If this happens with a seekable stream (does it ever?) 
+           If this happens with a seekable stream (does it ever?)
            and we get a seek request after this were fscked! */
         this->seekable = 0;
 
@@ -1220,7 +1220,7 @@ static int get_media_packet (mms_io_t *io, mmsh_t *this) {
     }
 
     len = io_read (io, this->s, this->buf, this->chunk_length, this->need_abort);
-      
+
     if (len == this->chunk_length) {
       /* explicit padding with 0 */
       if (this->chunk_length > this->packet_length) {
@@ -1328,10 +1328,10 @@ off_t mmsh_seek (mms_io_t *io, mmsh_t *this, off_t offset, int origin) {
   off_t dest_packet_seq;
   uint32_t orig_asf_header_len = this->asf_header_len;
   uint32_t orig_asf_packet_len = this->packet_length;
-  
+
   if (!this->seekable)
     return this->current_pos;
-  
+
   switch (origin) {
     case SEEK_SET:
       dest = offset;
@@ -1392,7 +1392,7 @@ off_t mmsh_seek (mms_io_t *io, mmsh_t *this, off_t offset, int origin) {
       // Do not seek beyond the last packet.
       return this->current_pos;
     }
-    
+
     lprintf("mmsh: seek to %d, packet: %d\n", (int)dest, (int)dest_packet_seq);
     if (!mmsh_connect_int(io, this, (dest_packet_seq+1) * this->packet_length, 0)) {
       /* Oops no more connection let our caller know things are fscked up */
@@ -1466,7 +1466,7 @@ int mmsh_time_seek (mms_io_t *io, mmsh_t *this, double time_sec) {
   this->buf_read = 0;
   this->current_pos = this->asf_header_len + this->chunk_seq_number *
     this->packet_length;
-  
+
   lprintf("mmsh, current_pos after time_seek:%d\n", (int)this->current_pos);
 
   return 1;

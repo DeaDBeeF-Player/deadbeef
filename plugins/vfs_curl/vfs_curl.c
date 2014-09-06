@@ -472,7 +472,7 @@ parse_header (const uint8_t *p, const uint8_t *e, uint8_t *key, int keysize, uin
     while (v < e && *v != 0x0d && *v != 0x0a) {
         v++;
     }
-    
+
     // copy value
     sz = v-p;
     sz = min (valuesize, sz);
@@ -534,7 +534,7 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
         else if (!strcasecmp (key, "icy-metaint")) {
             //printf ("icy-metaint: %d\n", atoi (value));
             fp->icy_metaint = atoi (value);
-            fp->wait_meta = fp->icy_metaint; 
+            fp->wait_meta = fp->icy_metaint;
         }
     }
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -1145,7 +1145,7 @@ static DB_vfs_t plugin = {
     .plugin.id = "vfs_curl",
     .plugin.name = "cURL vfs",
     .plugin.descr = "http and ftp streaming module using libcurl, with ICY protocol support",
-    .plugin.copyright = 
+    .plugin.copyright =
         "CURL VFS plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"

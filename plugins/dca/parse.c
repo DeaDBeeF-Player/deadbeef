@@ -786,7 +786,7 @@ static int dca_subsubframe (dca_state_t * state)
      */
 
     /* Select quantization step size table */
-    if (state->bit_rate == 0x1f) 
+    if (state->bit_rate == 0x1f)
         quant_step_table = lossless_quant_d;
     else
         quant_step_table = lossy_quant_d;
@@ -804,11 +804,11 @@ static int dca_subsubframe (dca_state_t * state)
             double rscale;
 
             /*
-             * Determine quantization index code book and its type 
+             * Determine quantization index code book and its type
              */
 
             /* Select quantization index code book */
-            int sel = state->quant_index_huffman[k][abits]; 
+            int sel = state->quant_index_huffman[k][abits];
 
             /* Determine its type */
             int q_type = 1; /* (Assume Huffman type by default) */
@@ -822,7 +822,7 @@ static int dca_subsubframe (dca_state_t * state)
             if (abits == 0) q_type = 0; /* No bits allocated */
 
             /*
-             * Extract bits from the bit stream 
+             * Extract bits from the bit stream
              */
             switch (q_type)
             {
@@ -959,7 +959,7 @@ static int dca_subsubframe (dca_state_t * state)
 
             for (m=0; m<8; m++)
             {
-                subband_samples[k][l][m] = 
+                subband_samples[k][l][m] =
                     high_freq_vq[state->high_freq_vq[k][l]][subsubframe*8+m]
                         * (double)state->scale_factor[k][l][0] / 16.0;
             }
@@ -1114,7 +1114,7 @@ int dca_block (dca_state_t * state)
 /* Very compact version of the block code decoder that does not use table
  * look-up but is slightly slower */
 int decode_blockcode( int code, int levels, int *values )
-{ 
+{
     int i;
     int offset = (levels - 1) >> 1;
 

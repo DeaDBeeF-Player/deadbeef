@@ -6,12 +6,12 @@
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -258,7 +258,7 @@ aoplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     dec = NULL;
 
 	free (buffer);
-	
+
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     const char *ext = fname + strlen (fname);
     while (*ext != '.' && ext > fname) {
@@ -360,7 +360,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "psf",
     .plugin.name = "PSF player using Audio Overload SDK",
     .plugin.descr = "plays psf, psf2, spu, ssf, dsf, qsf file formats",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "Uses modified aosdk-1.4.8 - library for playing .PSF (Sony PlayStation), .SPU (Sony PlayStation), .PSF2 (Sony PlayStation 2), .SSF (Sega Saturn), .DSF (Sega Dreamcast), and .QSF (Capcom QSound) audio file formats,\n"

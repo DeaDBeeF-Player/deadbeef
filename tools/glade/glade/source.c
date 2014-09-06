@@ -152,7 +152,7 @@ source_write (GladeProject *project)
 {
   gchar *old_locale, *saved_locale;
   GladeError *error;
-     
+
   old_locale = setlocale (LC_NUMERIC, NULL);
   saved_locale = g_strdup (old_locale);
   setlocale (LC_NUMERIC, "C");
@@ -465,7 +465,7 @@ source_write_component (GtkWidget * component,
   GbWidgetWriteSourceData * data;
   FILE *interface_h_fp, *interface_c_fp;
   FILE *callback_h_fp, *callback_c_fp;
-  
+
   /* Get the data out of the callback data struct. */
   data = source_data->write_source_data;
   interface_h_fp = source_data->interface_h_fp;
@@ -596,11 +596,11 @@ source_write_component (GtkWidget * component,
   if (data->need_accel_group)
     {
       if (GTK_IS_MENU (data->component))
-	fprintf (interface_c_fp, 
+	fprintf (interface_c_fp,
 		 "  gtk_menu_set_accel_group (GTK_MENU (%s), accel_group);\n\n",
 		 data->component_name);
       else
-	fprintf (interface_c_fp, 
+	fprintf (interface_c_fp,
 		 "  gtk_window_add_accel_group (GTK_WINDOW (%s), accel_group);\n\n",
 		 data->component_name);
     }
@@ -883,7 +883,7 @@ source_write_main_c (GbWidgetWriteSourceData * data)
 	       "                      GNOME_PARAM_APP_DATADIR, PACKAGE_DATA_DIR,\n"
 	       "                      NULL);\n");
     }
-  else 
+  else
     {
       fprintf (fp,
 	       "  gtk_set_locale ();\n"
@@ -1806,7 +1806,7 @@ source_write_po_files (GbWidgetWriteSourceData * data)
     fprintf (fp, "%s%s%s\n", prefix, separator, "main.c");
 
   /* Add the interface.c & callbacks.c files. */
-  fprintf (fp, 
+  fprintf (fp,
 	   "%s%s%s\n"
 	   "%s%s%s\n",
 	   prefix, separator, g_basename (data->interface_c_filename),
@@ -2038,7 +2038,7 @@ source_write_support_files (GbWidgetWriteSourceData * data)
   source_write_no_editing_warning (fp);
   source_write_preamble (data->project_name, fp);
   source_write_include_files (fp);
- 
+
   if (glade_project_get_gnome_support (data->project))
     fprintf (fp, "#include <gnome.h>\n\n");
   else

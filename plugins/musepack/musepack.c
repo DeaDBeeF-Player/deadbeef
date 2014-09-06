@@ -544,7 +544,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "musepack",
     .plugin.name = "MusePack decoder",
     .plugin.descr = "Musepack decoder using libmppdec",
-    .plugin.copyright = 
+    .plugin.copyright =
         "MusePack decoder plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "Uses Musepack SV8 libs (r435), (C) 2005-2009, The Musepack Development Team\n"

@@ -51,7 +51,7 @@ int _dumb_it_fix_invalid_orders(DUMB_IT_SIGDATA *sigdata)
 		IT_PATTERN *new_pattern = realloc(sigdata->pattern, sizeof(*sigdata->pattern) * (sigdata->n_patterns + 1));
 		if (!new_pattern)
 			return -1;
-		
+
 		new_pattern[sigdata->n_patterns].n_rows = 64;
 		new_pattern[sigdata->n_patterns].n_entries = 0;
 		new_pattern[sigdata->n_patterns].entry = NULL;

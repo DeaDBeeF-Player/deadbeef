@@ -114,7 +114,7 @@ static char*
 trim (char* s)
 {
     char *h, *t;
-    
+
     for (h = s; *h == ' ' || *h == '\t'; h++);
     for (t = s + strlen (s); *t == ' ' || *t == '\t'; t--);
     * (t+1) = 0;
@@ -1181,7 +1181,7 @@ static DB_hotkeys_plugin_t plugin = {
         "    * adaptation to new deadbeef 0.6 plugin API\n"
         "    * added local hotkeys support\n"
     ,
-    .misc.plugin.copyright = 
+    .misc.plugin.copyright =
         "Copyright (C) 2012-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
         "\n"

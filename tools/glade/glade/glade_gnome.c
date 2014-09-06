@@ -457,7 +457,7 @@ glade_gnome_write_menu_item_source (GtkMenuItem * widget,
       gchar *pixmap_type, *pixmap_info, *pixmap_filename;
       gchar accel_key_buffer[128];
       gboolean free_pixmap_info;
-      
+
       label = glade_util_get_label_text (GTK_BIN (widget)->child);
       tooltip = data->widget_data->tooltip ? g_strdup (source_make_static_string (data->widget_data->tooltip, data->use_gettext)) : NULL;
 
@@ -531,7 +531,7 @@ glade_gnome_write_menu_item_source (GtkMenuItem * widget,
 			     child_uiinfo_name,
 			     pixmap_type, pixmap_info,
 			     accel_key_buffer, accel_mods);
-	  
+
 	}
       else
 	{

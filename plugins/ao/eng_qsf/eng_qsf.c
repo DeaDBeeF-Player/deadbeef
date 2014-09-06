@@ -87,7 +87,7 @@ typedef struct {
     int32 samples_to_next_tick;
 } qsf_synth_t;
 
-static struct QSound_interface qsintf = 
+static struct QSound_interface qsintf =
 {
 	QSOUND_CLOCK,
 	NULL
@@ -133,13 +133,13 @@ static void qsf_walktags(qsf_synth_t *s, uint8 *buffer, uint8 *end)
 
 	while (cbuf < end)
 	{
-		#if DEBUG_LOADER				
+		#if DEBUG_LOADER
 		printf("cbuf: %08x end: %08x\n", (uint32)cbuf, (uint32)end);
 		#endif
 		offset = cbuf[3] | cbuf[4]<<8 | cbuf[5]<<16 | cbuf[6]<<24;
 		length = cbuf[7] | cbuf[8]<<8 | cbuf[9]<<16 | cbuf[10]<<24;
 
-		#if DEBUG_LOADER				
+		#if DEBUG_LOADER
 		printf("Tag: %c%c%c @ %08x, length %08x\n", cbuf[0], cbuf[1], cbuf[2], offset, length);
 		#endif
 
@@ -205,11 +205,11 @@ void *qsf_start(const char *path, uint8 *buffer, uint32 length)
 	if (s->c->lib[0] != 0)
 	{
 		uint64 tmp_length;
-	
+
         char libpath[PATH_MAX];
         ao_getlibpath (path, s->c->lib, libpath, sizeof (libpath));
 
-#if DEBUG_LOADER	
+#if DEBUG_LOADER
         printf("Loading library: %s\n", libpath);
 #endif
         if (ao_get_lib(libpath, &lib_raw_file, &tmp_length) != AO_SUCCESS)
@@ -219,7 +219,7 @@ void *qsf_start(const char *path, uint8 *buffer, uint32 length)
             return NULL;
 		}
 		lib_raw_length = tmp_length;
-		
+
 		if (corlett_decode(lib_raw_file, lib_raw_length, &lib_decoded, &lib_len, &lib) != AO_SUCCESS)
 		{
 			free(lib_raw_file);
@@ -227,13 +227,13 @@ void *qsf_start(const char *path, uint8 *buffer, uint32 length)
             qsf_stop (s);
             return NULL;
 		}
-				
+
 		// Free up raw file
 		free(lib_raw_file);
 
 		// use the contents
 		qsf_walktags(s, lib_decoded, lib_decoded+lib_len);
-		
+
 		// Dispose the corlett structure for the lib - we don't use it
 		free(lib);
 		if (lib_decoded) {
@@ -292,7 +292,7 @@ static void timer_tick(qsf_synth_t *s)
 }
 
 int32 qsf_gen(qsf_synth_t *s, int16 *buffer, uint32 samples)
-{	
+{
 	int16 output[44100/30], output2[44100/30];
 	int16 *stereo[2];
 	int16 *outp = buffer;
@@ -390,7 +390,7 @@ int32 qsf_command(void *handle, int32 command, int32 parameter)
             s->qs = qsound_sh_start(&qsintf);
             s->samples_to_next_tick = samples_per_tick;
 			return AO_SUCCESS;
-		
+
 	}
 	return AO_FAIL;
 }
@@ -400,13 +400,13 @@ int32 qsf_fill_info(void *handle, ao_display_info *info)
     qsf_synth_t *s = handle;
 	if (s->c == NULL)
 		return AO_FAIL;
-		
+
 	strcpy(info->title[1], "Name: ");
 	sprintf(info->info[1], "%s", s->c->inf_title);
 
 	strcpy(info->title[2], "Game: ");
 	sprintf(info->info[2], "%s", s->c->inf_game);
-	
+
 	strcpy(info->title[3], "Artist: ");
 	sprintf(info->info[3], "%s", s->c->inf_artist);
 
@@ -477,7 +477,7 @@ void qsf_memory_write(qsf_synth_t *s, uint16 addr, uint8 byte)
 {
 	if (addr >= 0xc000 && addr <= 0xcfff)
 	{
-		
+
 		s->RAM[addr-0xc000] = byte;
 		return;
 	}

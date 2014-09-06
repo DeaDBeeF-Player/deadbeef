@@ -11,7 +11,7 @@
  *      tutorial by Tony Gale <gale@gtk.org> and Ian Main <imain@gtk.org> )
  *  - added dynamic popup menus which change depending on whether the animation
  *      is active or not
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -149,12 +149,12 @@ gb_progress_bar_create_properties (GtkWidget * widget, GbWidgetCreateArgData * d
 
 #if 0
   /* ShowText is implicit now, if the Text property is set to anything. */
-  property_add_bool (ShowText, _("Show Text:"), 
+  property_add_bool (ShowText, _("Show Text:"),
                      _("If the text should be shown in the progress bar"));
 
   /* ActivityMode is deprecated and implicit now. The app just calls
      gtk_progress_bar_pulse() and it automatically goes into activity mode. */
-  property_add_bool (ActivityMode, _("Activity Mode:"), 
+  property_add_bool (ActivityMode, _("Activity Mode:"),
                      _("If the progress bar should act like the front of Kit's car"));
 
   /* The GtkProgress interface is deprecated now, and GtkProgressBar doesn't
@@ -167,7 +167,7 @@ gb_progress_bar_create_properties (GtkWidget * widget, GbWidgetCreateArgData * d
 			    0, 1, 0.01, 0.1, 0.01, 2);
 #endif
 }
- 
+
 
 
 
@@ -187,7 +187,7 @@ gb_progress_bar_get_properties(GtkWidget *widget, GbWidgetGetArgData * data)
       if (GbOrientationValues[i] == GTK_PROGRESS_BAR (widget)->orientation)
 	gb_widget_output_choice (data, Orientation, i, GbOrientationSymbols[i]);
     }
-  
+
     gb_widget_output_float (data, Fraction, gtk_progress_bar_get_fraction (GTK_PROGRESS_BAR (widget)));
     gb_widget_output_float (data, PulseStep, gtk_progress_bar_get_pulse_step (GTK_PROGRESS_BAR (widget)));
     gb_widget_output_translatable_string (data, Text, gtk_progress_bar_get_text (GTK_PROGRESS_BAR (widget)));
@@ -227,7 +227,7 @@ gb_progress_bar_set_properties(GtkWidget * widget, GbWidgetSetArgData * data)
 #endif
   gchar *orientation, *text, *ellipsize_mode;
   gint i;
- 
+
   orientation = gb_widget_input_choice (data, Orientation);
   if (data->apply)
     {
@@ -325,7 +325,7 @@ gb_progress_bar_write_source (GtkWidget * widget, GbWidgetWriteSourceData * data
         {
           if (GbOrientationValues[i] == GTK_PROGRESS_BAR (widget)->orientation)
             source_add (data,
-		    "  gtk_progress_bar_set_orientation (GTK_PROGRESS_BAR (%s), %s);\n", 
+		    "  gtk_progress_bar_set_orientation (GTK_PROGRESS_BAR (%s), %s);\n",
                         data->wname, GbOrientationSymbols[i]);
         }
     }
@@ -333,13 +333,13 @@ gb_progress_bar_write_source (GtkWidget * widget, GbWidgetWriteSourceData * data
   fraction = gtk_progress_bar_get_fraction (GTK_PROGRESS_BAR (widget));
   if (fraction >= GLADE_EPSILON)
     source_add (data,
-	"  gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (%s), %g);\n", 
+	"  gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (%s), %g);\n",
 		data->wname, fraction);
 
   pulse_step = gtk_progress_bar_get_pulse_step (GTK_PROGRESS_BAR (widget));
   if (fabs (pulse_step - 0.1) >= GLADE_EPSILON)
     source_add (data,
-	"  gtk_progress_bar_set_pulse_step (GTK_PROGRESS_BAR (%s), %g);\n", 
+	"  gtk_progress_bar_set_pulse_step (GTK_PROGRESS_BAR (%s), %g);\n",
 		data->wname, pulse_step);
 
   text = gtk_progress_bar_get_text (GTK_PROGRESS_BAR (widget));

@@ -84,7 +84,7 @@ void *spu_start(const char *path, uint8 *buffer, uint32 length)
 	// upload the SPU RAM image
 	SPUinjectRAMImage(s->mips_cpu, (unsigned short *)&buffer[0]);
 
-	// apply the register image	
+	// apply the register image
 	for (i = 0; i < 512; i += 2)
 	{
 		reg = buffer[0x80000+i] | buffer[0x80000+i+1]<<8;
@@ -115,8 +115,8 @@ void *spu_start(const char *path, uint8 *buffer, uint32 length)
 
 	if (!s->old_fmt)
 	{
-		s->end_tick = buffer[0x80200] | buffer[0x80201]<<8 | buffer[0x80202]<<16 | buffer[0x80203]<<24; 
-		s->cur_tick = buffer[0x80204] | buffer[0x80205]<<8 | buffer[0x80206]<<16 | buffer[0x80207]<<24; 
+		s->end_tick = buffer[0x80200] | buffer[0x80201]<<8 | buffer[0x80202]<<16 | buffer[0x80203]<<24;
+		s->cur_tick = buffer[0x80204] | buffer[0x80205]<<8 | buffer[0x80206]<<16 | buffer[0x80207]<<24;
 		s->next_tick = s->cur_tick;
 	}
 
@@ -170,39 +170,39 @@ static void spu_tick(spu_synth_t *s)
 
 						SPUwriteRegister(s->mips_cpu, reg, rdata);
 
-						s->next_tick = s->song_ptr[6] | s->song_ptr[7]<<8 | s->song_ptr[8]<<16 | s->song_ptr[9]<<24; 
+						s->next_tick = s->song_ptr[6] | s->song_ptr[7]<<8 | s->song_ptr[8]<<16 | s->song_ptr[9]<<24;
 						s->song_ptr += 10;
 						break;
 
 					case 1:	// read register
 				 		reg = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24;
 						SPUreadRegister(s->mips_cpu, reg);
-						s->next_tick = s->song_ptr[4] | s->song_ptr[5]<<8 | s->song_ptr[6]<<16 | s->song_ptr[7]<<24; 
+						s->next_tick = s->song_ptr[4] | s->song_ptr[5]<<8 | s->song_ptr[6]<<16 | s->song_ptr[7]<<24;
 						s->song_ptr += 8;
 						break;
 
 					case 2: // dma write
-						size = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24; 
+						size = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24;
 						s->song_ptr += (4 + size);
-						s->next_tick = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24; 
+						s->next_tick = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24;
 						s->song_ptr += 4;
 						break;
 
 					case 3: // dma read
-						s->next_tick = s->song_ptr[4] | s->song_ptr[5]<<8 | s->song_ptr[6]<<16 | s->song_ptr[7]<<24; 
+						s->next_tick = s->song_ptr[4] | s->song_ptr[5]<<8 | s->song_ptr[6]<<16 | s->song_ptr[7]<<24;
 						s->song_ptr += 8;
 						break;
 
 					case 4: // xa play
 						s->song_ptr += (32 + 16384);
-						s->next_tick = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24; 
+						s->next_tick = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24;
 						s->song_ptr += 4;
 						break;
 
 					case 5: // cdda play
-						size = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24; 
+						size = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24;
 						s->song_ptr += (4 + size);
-						s->next_tick = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24; 
+						s->next_tick = s->song_ptr[0] | s->song_ptr[1]<<8 | s->song_ptr[2]<<16 | s->song_ptr[3]<<24;
 						s->song_ptr += 4;
 						break;
 
@@ -285,7 +285,7 @@ int32 spu_command(void *handle, int32 command, int32 parameter)
 			return 0;
 		}
 		break;
-		
+
 		case COMMAND_HAS_PREV:
 		case COMMAND_HAS_NEXT:
 		case COMMAND_PREV:
@@ -295,7 +295,7 @@ int32 spu_command(void *handle, int32 command, int32 parameter)
 			return AO_FAIL;
 		}
 		break;
-		
+
 		case COMMAND_RESTART:
 		{
             printf ("eng_spu restart\n");
@@ -303,7 +303,7 @@ int32 spu_command(void *handle, int32 command, int32 parameter)
             int i;
             uint16 reg;
 
-            // apply the register image	
+            // apply the register image
             for (i = 0; i < 512; i += 2)
             {
                 reg = buffer[0x80000+i] | buffer[0x80000+i+1]<<8;
@@ -313,8 +313,8 @@ int32 spu_command(void *handle, int32 command, int32 parameter)
 
             if (!s->old_fmt)
             {
-                s->end_tick = buffer[0x80200] | buffer[0x80201]<<8 | buffer[0x80202]<<16 | buffer[0x80203]<<24; 
-                s->cur_tick = buffer[0x80204] | buffer[0x80205]<<8 | buffer[0x80206]<<16 | buffer[0x80207]<<24; 
+                s->end_tick = buffer[0x80200] | buffer[0x80201]<<8 | buffer[0x80202]<<16 | buffer[0x80203]<<24;
+                s->cur_tick = buffer[0x80204] | buffer[0x80205]<<8 | buffer[0x80206]<<16 | buffer[0x80207]<<24;
                 s->next_tick = s->cur_tick;
             }
 
@@ -323,14 +323,14 @@ int32 spu_command(void *handle, int32 command, int32 parameter)
 			return AO_SUCCESS;
 		}
 		break;
-		
+
 #if VERBOSE
 		default:
 			printf("Unknown command executed!\n");
 			break;
-#endif		
+#endif
 	}
-	
+
 	return AO_FAIL;
 }
 

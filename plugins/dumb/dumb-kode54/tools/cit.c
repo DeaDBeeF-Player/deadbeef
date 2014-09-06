@@ -144,7 +144,7 @@ typedef struct MODULE_SAMPLE {
 
 typedef struct MODULE_NOTE {
 	char Mask;
-	char Channel; //if -1, then end of row.    
+	char Channel; //if -1, then end of row.
     unsigned char Note;
     char Instrument;
     unsigned char VolPan;
@@ -396,7 +396,7 @@ typedef unsigned int dword;
 int	detect_it(char *f) {
 	int	sig;
 	PACKFILE *fn = pack_fopen(f, F_READ);
-	
+
 	if (fn == NULL)
 		return FALSE;
 
@@ -463,12 +463,12 @@ int	get_module_size(MODULE	*j)	{
 	a =	sizeof(MODULE) + j->NumOrders;
 	b =	j->NumInstruments * sizeof(MODULE_INSTRUMENT);
 	c =	j->NumSamples * sizeof(MODULE_SAMPLE);
-	
+
 	for	(i=0; i<j->NumSamples; i++)
 		d += j->Sample[i].SampleLength * (j->Sample[i].Flag	& 2	? sizeof(short)	: 1) * (j->Sample[i].Flag &	4 ?	2: 1);
-		
+
 	e =	4 +	sizeof(MODULE_PATTERN) * j->NumPatterns;
-	
+
 	for	(i=0; i<j->NumPatterns;	i++)
 		e += j->Pattern[i].NumNotes	* sizeof(MODULE_NOTE);
 	#ifdef DEBUG_IT_SIZE
@@ -502,12 +502,12 @@ int	readblock(PACKFILE *f) {
 	sourcebuf =	(dword*)malloc(size+4);
 	if (!sourcebuf)
 		return 0;
-		
+
 	c =	pack_fread(sourcebuf, size,	f);
 	if (c <	1) {
 		free(sourcebuf);
 		sourcebuf =	NULL;
-		return 0;		 
+		return 0;
 	}
 	sourcepos =	sourcebuf;
 	rembits	= 32;
@@ -517,7 +517,7 @@ int	readblock(PACKFILE *f) {
 void freeblock() {
 	if (sourcebuf)
 		free(sourcebuf);
-	sourcebuf =	NULL;	 
+	sourcebuf =	NULL;
 }
 
 dword readbits(char	b) {
@@ -562,7 +562,7 @@ void decompress8(PACKFILE *f, void *data, int len, int tver) {
 			//Read a value:
 			val	= readbits(bitwidth);
 			//Check for bit width change:
-			
+
 			if (bitwidth < 7) {	//Method 1:
 				if (val	== (1 << (bitwidth - 1))) {
 					val	= readbits(3) +	1;
@@ -600,7 +600,7 @@ void decompress8(PACKFILE *f, void *data, int len, int tver) {
 			}
 			else
 				v =	(char)val;
-				
+
 			//And integrate the sample value
 			//(It always has to end with integration doesn't it ? ;-)
 			d1 += v;
@@ -642,7 +642,7 @@ void decompress16(PACKFILE *f, void	*data, int len,	int	tver) {
 		while (blockpos	< blocklen)	{
 			val	= readbits(bitwidth);
 			//Check for bit width change:
-			
+
 			if (bitwidth < 7) {	//Method 1:
 				if (val	== (1 << (bitwidth - 1))) {
 					val	= readbits(4) +	1;
@@ -680,7 +680,7 @@ void decompress16(PACKFILE *f, void	*data, int len,	int	tver) {
 			}
 			else
 				v =	(short)val;
-				
+
 			//And integrate the sample value
 			//(It always has to end with integration doesn't it ? ;-)
 			d1 += v;
@@ -939,7 +939,7 @@ MODULE *load_it_sample(char *file, long offset, MODULE *j, int i)
 	int k;
 	SAMPLE *sam;
 	void *dat;
-	
+
 	PACKFILE *f = pack_fopen(file, F_READ);
 	if (!f) {
 		#ifdef DEBUG_SAMPLES
@@ -984,7 +984,7 @@ MODULE *load_it_sample(char *file, long offset, MODULE *j, int i)
 	#endif
 
 	sam_samptr = pack_igetl(f);
-		
+
 	j->Sample[i].VibratoSpeed =	pack_getc(f);
 	j->Sample[i].VibratoDepth =	pack_getc(f);
 	j->Sample[i].VibratoRate = pack_getc(f);
@@ -1002,7 +1002,7 @@ MODULE *load_it_sample(char *file, long offset, MODULE *j, int i)
 	}
 
 	if (j->Sample[i].Flag & SAMPLE_HASSAMPLE) {
-		
+
 		f =	pack_fopen(file, F_READ);
 		pack_fseek(f, sam_samptr);
 
@@ -1042,14 +1042,14 @@ MODULE *load_it_sample(char *file, long offset, MODULE *j, int i)
 		} else {
 			pack_fread(sam->data, len, f);
 		}
-		
+
 		if (j->Sample[i].Flag &	SAMPLE_USELOOP)	{
 			sam->loop_start	= j->Sample[i].LoopBegin;
 			sam->loop_end =	j->Sample[i].LoopEnd;
 		}
 
 		j->Sample[i].Sample	= sam;
-		
+
 		dat = sam->data;
 
 		if (convert & 1) {
@@ -1092,7 +1092,7 @@ MODULE *load_pattern(char *file, long offset, MODULE *j, int i)
 				  cvol[64],
 				  ccom[64],
 				  ccomval[64];
-	
+
 	int numnotes = 0, len, pos = 0, mask = 0, chn = 0;
 
 	PACKFILE *f;
@@ -1149,7 +1149,7 @@ MODULE *load_pattern(char *file, long offset, MODULE *j, int i)
 			cmask[chn] = mask;
 		} else
 			mask = cmask[chn];
-				
+
 		if (mask)
 			numnotes++;
 		if (mask & 1)
@@ -1165,7 +1165,7 @@ MODULE *load_pattern(char *file, long offset, MODULE *j, int i)
 	j->Pattern[i].NumNotes = numnotes;
 	j->Pattern[i].Note = malloc(numnotes * sizeof(MODULE_NOTE));
 	memset(j->Pattern[i].Note, 0, numnotes * sizeof(MODULE_NOTE));
-		
+
 	pos	= 0;
 	memset(cmask, 0, 64);
 	mask = 0;
@@ -1200,7 +1200,7 @@ MODULE *load_pattern(char *file, long offset, MODULE *j, int i)
 		#ifdef DEBUG_PATTERNS
 		fprintf(stderr, "Channel: %i Mask: %i ",	chn, mask);
 		#endif
-				
+
 		if (mask)
 			j->Pattern[i].Note[numnotes].Channel = chn;
 
@@ -1311,12 +1311,12 @@ MODULE *load_it(char *file) {
 	int tver, tver2, flag;
 	long *insoffs = NULL, *samoffs = NULL, *patoffs = NULL;
     int i;
-	
+
 	if (!j)
 		return NULL;
 
 	f = pack_fopen(file, F_READ);
-	
+
 	if (!f)
 		return NULL;
 
@@ -1327,7 +1327,7 @@ MODULE *load_it(char *file) {
 
  	/* Skip song name and pattern row highlight info */
 	pack_fseek(f, 28);
-	
+
 	j->NumOrders = pack_igetw(f);
 	j->NumInstruments = pack_igetw(f);
 	j->NumSamples = pack_igetw(f);
@@ -1336,7 +1336,7 @@ MODULE *load_it(char *file) {
 	#ifdef DEBUG_HEADER
 	fprintf(stderr, "Loading IT: %i Orders, %i Instruments, %i Samples, %i Patterns\n", j->NumOrders, j->NumInstruments, j->NumSamples, j->NumPatterns);
 	#endif
-	
+
 	tver = pack_igetw(f);
 	j->Version = tver2 = pack_igetw(f);
 
@@ -2926,7 +2926,7 @@ int main(int argc, char *argv[])
 		usage();
 
 	allegro_init();
-	
+
 	/* Make the output file name if it wasn't specified */
 	if (argc == 2) {
 		int size = sizeof(char) * (ustrsizez(argv[1]) + 32);
@@ -2959,7 +2959,7 @@ int main(int argc, char *argv[])
 		allegro_message("Unable to save %s!\n", outmod);
 		return 1;
 	}
-	
+
 	if (argc == 2 && outmod)
 		free(outmod);
 

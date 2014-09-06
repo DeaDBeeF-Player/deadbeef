@@ -366,28 +366,28 @@ static GnomeUIInfo MainMenu[] =
 static GnomeUIInfo ToolBar[] =
 {
   {
-    GNOME_APP_UI_ITEM, N_("New"), N_("New Project"), 
+    GNOME_APP_UI_ITEM, N_("New"), N_("New Project"),
     glade_project_window_new_project, NULL, NULL,
     GNOME_APP_PIXMAP_STOCK, GNOME_STOCK_PIXMAP_NEW, 0, 0, NULL
   },
   {
-    GNOME_APP_UI_ITEM, N_("Open"), N_("Open Project"), 
+    GNOME_APP_UI_ITEM, N_("Open"), N_("Open Project"),
     glade_project_window_on_open_project, NULL, NULL,
     GNOME_APP_PIXMAP_STOCK, GNOME_STOCK_PIXMAP_OPEN, 0, 0, NULL
   },
   {
-    GNOME_APP_UI_ITEM, N_("Save"), N_("Save Project"), 
+    GNOME_APP_UI_ITEM, N_("Save"), N_("Save Project"),
     glade_project_window_save_project, NULL, NULL,
     GNOME_APP_PIXMAP_STOCK, GNOME_STOCK_PIXMAP_SAVE, 0, 0, NULL
   },
   GNOMEUIINFO_SEPARATOR,
   {
-    GNOME_APP_UI_ITEM, N_("Options"), N_("Project Options"), 
+    GNOME_APP_UI_ITEM, N_("Options"), N_("Project Options"),
     glade_project_window_on_edit_options, NULL, NULL,
     GNOME_APP_PIXMAP_STOCK, GTK_STOCK_PROPERTIES, 0, 0, NULL
   },
   {
-    GNOME_APP_UI_ITEM, N_("Build"), N_("Build the Source Code"), 
+    GNOME_APP_UI_ITEM, N_("Build"), N_("Build the Source Code"),
     glade_project_window_write_source, NULL, NULL,
     GNOME_APP_PIXMAP_STOCK, GTK_STOCK_CONVERT, 0, 0, NULL
   },
@@ -529,7 +529,7 @@ static int nmenu_items = sizeof (menu_items) / sizeof (menu_items[0]);
 #endif
 
 static void
-add_stock_menu_item	(GtkMenu *menu, gchar *stock_id, gchar *label, 
+add_stock_menu_item	(GtkMenu *menu, gchar *stock_id, gchar *label,
 			 GtkSignalFunc callback, GtkAccelGroup *accel_group,
 			 GtkTooltips *tooltips, gchar *tip)
 {
@@ -630,20 +630,20 @@ glade_project_window_new (void)
   menu = gtk_menu_new ();
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), menu);
 
-  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_NEW, _("_New"), 
+  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_NEW, _("_New"),
 		       GTK_SIGNAL_FUNC (glade_project_window_new_project),
 		       accel_group, tooltips, _("Create a new project"));
 
-  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_OPEN, NULL, 
+  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_OPEN, NULL,
 		       GTK_SIGNAL_FUNC (glade_project_window_on_open_project),
 		       accel_group, tooltips,  _("Open an existing project"));
 
-  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_SAVE, NULL, 
+  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_SAVE, NULL,
 		       GTK_SIGNAL_FUNC (glade_project_window_save_project),
 		       accel_group, tooltips,  _("Save project"));
 
   /*
-  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_SAVE_AS, NULL, 
+  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_SAVE_AS, NULL,
 		       GTK_SIGNAL_FUNC (glade_project_window_save_project_as),
 		       accel_group, tooltips,  _("Save project to a new file"));
   */
@@ -683,7 +683,7 @@ glade_project_window_new (void)
   gtk_container_add (GTK_CONTAINER (menu), menuitem);
   gtk_widget_show (menuitem);
 
-  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_QUIT, NULL, 
+  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_QUIT, NULL,
 		       GTK_SIGNAL_FUNC (glade_project_window_quit),
 		       accel_group, tooltips,  _("Quit Glade"));
 
@@ -696,22 +696,22 @@ glade_project_window_new (void)
   menu = gtk_menu_new ();
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), menu);
 
-  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_CUT, NULL, 
+  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_CUT, NULL,
 		       GTK_SIGNAL_FUNC (glade_project_window_cut),
 		       accel_group, tooltips,
 		       _("Cut the selected widget to the clipboard"));
 
-  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_COPY, NULL, 
+  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_COPY, NULL,
 		       GTK_SIGNAL_FUNC (glade_project_window_copy),
 		       accel_group, tooltips,
 		       _("Copy the selected widget to the clipboard"));
 
-  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_PASTE, NULL, 
+  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_PASTE, NULL,
 		       GTK_SIGNAL_FUNC (glade_project_window_paste),
 		       accel_group, tooltips,
 		       _("Paste the widget from the clipboard over the selected widget"));
 
-  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_DELETE, NULL, 
+  add_stock_menu_item (GTK_MENU (menu), GTK_STOCK_DELETE, NULL,
 		       GTK_SIGNAL_FUNC (glade_project_window_delete),
 		       accel_group, tooltips,
 		       _("Delete the selected widget"));
@@ -883,7 +883,7 @@ glade_project_window_new (void)
 			    GTK_SIGNAL_FUNC (glade_project_window_save_project),
 			    NULL, -1);
   gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
-  
+
   icon_size = gtk_toolbar_get_icon_size (GTK_TOOLBAR (toolbar));
   image = gtk_image_new_from_stock (GTK_STOCK_PROPERTIES, icon_size);
   gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "",
@@ -1385,7 +1385,7 @@ glade_project_window_edit_options (GladeProjectWindow *project_window,
       if (GTK_IS_WINDOW (project_window->window))
 	gtk_window_set_transient_for (GTK_WINDOW (options),
 				      GTK_WINDOW (project_window->window));
-      				      
+
       gtk_widget_show (options);
     }
   else
@@ -1486,7 +1486,7 @@ glade_project_window_save_project_as (GladeProjectWindow *project_window)
 					 NULL);
   gtk_dialog_set_default_response (GTK_DIALOG (filesel), GTK_RESPONSE_OK);
   gtk_window_set_position (GTK_WINDOW (filesel), GTK_WIN_POS_MOUSE);
- 
+
   g_signal_connect (options->filesel, "response",
 		    GTK_SIGNAL_FUNC (glade_project_window_save_as_callback),
 		    project_window);
@@ -1990,7 +1990,7 @@ glade_project_window_about (GtkWidget *widget,
 			       author, documenter, NULL, pixbuf);
       if (pixbuf)
 	gdk_pixbuf_unref (pixbuf);
-			   
+
       /* set the widget pointer to NULL when the widget is destroyed */
       g_signal_connect (G_OBJECT (about), "destroy",
 			G_CALLBACK (gtk_widget_destroyed),
@@ -2015,11 +2015,11 @@ glade_project_window_about (GtkWidget *widget,
       char *filename, *text;
 
       transient_parent = GTK_WINDOW (glade_util_get_toplevel (widget));
-      about = gtk_dialog_new_with_buttons (_("About Glade"), 
+      about = gtk_dialog_new_with_buttons (_("About Glade"),
 					   transient_parent,
-					   0, 
-					   GTK_STOCK_OK, 
-					   GTK_RESPONSE_OK, 
+					   0,
+					   GTK_STOCK_OK,
+					   GTK_RESPONSE_OK,
 					   NULL);
       gtk_window_set_resizable (GTK_WINDOW (about), FALSE);
       g_signal_connect (G_OBJECT (about), "response",
@@ -2032,7 +2032,7 @@ glade_project_window_about (GtkWidget *widget,
 
       vbox = gtk_vbox_new (FALSE, 0);
       gtk_container_set_border_width (GTK_CONTAINER (vbox), 8);
-      gtk_box_pack_start (GTK_BOX (GTK_DIALOG (about)->vbox), 
+      gtk_box_pack_start (GTK_BOX (GTK_DIALOG (about)->vbox),
 			  vbox, TRUE, TRUE, 0);
 
       filename = g_strdup_printf ("%s/pixmaps/glade-2.png", GLADE_DATADIR);

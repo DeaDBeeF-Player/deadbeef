@@ -123,7 +123,7 @@ gb_gnome_druid_page_edge_get_properties (GtkWidget *widget,
 					 GbWidgetGetArgData * data)
 {
   GnomeDruidPageEdge *page;
-	
+
   page = GNOME_DRUID_PAGE_EDGE (widget);
 
   if (data->action == GB_SAVING)
@@ -187,7 +187,7 @@ gb_gnome_druid_page_edge_set_properties (GtkWidget * widget,
   gchar *string, *old_filename;
   GdkColor *color;
   GdkPixbuf *pb;
-	
+
   page = GNOME_DRUID_PAGE_EDGE (widget);
 
   string = gb_widget_input_string (data, Title);

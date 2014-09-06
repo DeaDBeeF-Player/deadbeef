@@ -6,7 +6,7 @@
  * This is the actual decoder.
  *
  * http://crazney.net/programs/itunes/alac.html
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -73,7 +73,7 @@ struct alac_file
 
     int32_t *outputsamples_buffer_a;
     int32_t *outputsamples_buffer_b;
-	
+
 	int32_t *uncompressed_bytes_buffer_a;
 	int32_t *uncompressed_bytes_buffer_b;
 
@@ -103,7 +103,7 @@ static void allocate_buffers(alac_file *alac)
 
     alac->outputsamples_buffer_a = malloc(alac->setinfo_max_samples_per_frame * 4);
     alac->outputsamples_buffer_b = malloc(alac->setinfo_max_samples_per_frame * 4);
-	
+
 	alac->uncompressed_bytes_buffer_a = malloc(alac->setinfo_max_samples_per_frame * 4);
 	alac->uncompressed_bytes_buffer_b = malloc(alac->setinfo_max_samples_per_frame * 4);
 }
@@ -353,23 +353,23 @@ int32_t entropy_decode_value(alac_file* alac,
 							 int rice_kmodifier_mask)
 {
 	int32_t x = 0; // decoded value
-	
+
 	// read x, number of 1s before 0 represent the rice value.
 	while (x <= RICE_THRESHOLD && readbit(alac))
 	{
 		x++;
 	}
-	
+
 	if (x > RICE_THRESHOLD)
 	{
 		// read the number from the bit stream (raw value)
 		int32_t value;
-		
+
 		value = readbits(alac, readSampleSize);
-		
+
 		// mask value
 		value &= (((uint32_t)0xffffffff) >> (32 - readSampleSize));
-		
+
 		x = value;
 	}
 	else
@@ -377,17 +377,17 @@ int32_t entropy_decode_value(alac_file* alac,
 		if (k != 1)
 		{
 			int extraBits = readbits(alac, k);
-			
+
 			// x = x * (2^k - 1)
 			x *= (((1 << k) - 1) & rice_kmodifier_mask);
-			
+
 			if (extraBits > 1)
 				x += extraBits - 1;
 			else
 				unreadbits(alac, 1);
 		}
 	}
-	
+
 	return x;
 }
 
@@ -403,59 +403,59 @@ void entropy_rice_decode(alac_file* alac,
 	int				outputCount;
 	int				history = rice_initialhistory;
 	int				signModifier = 0;
-	
+
 	for (outputCount = 0; outputCount < outputSize; outputCount++)
 	{
 		int32_t		decodedValue;
 		int32_t		finalValue;
 		int32_t		k;
-		
+
 		k = 31 - rice_kmodifier - count_leading_zeros((history >> 9) + 3);
-		
+
 		if (k < 0) k += rice_kmodifier;
 		else k = rice_kmodifier;
-		
+
 		// note: don't use rice_kmodifier_mask here (set mask to 0xFFFFFFFF)
 		decodedValue = entropy_decode_value(alac, readSampleSize, k, 0xFFFFFFFF);
-		
+
 		decodedValue += signModifier;
 		finalValue = (decodedValue + 1) / 2; // inc by 1 and shift out sign bit
 		if (decodedValue & 1) // the sign is stored in the low bit
 			finalValue *= -1;
-		
+
 		outputBuffer[outputCount] = finalValue;
-		
+
 		signModifier = 0;
-		
+
 		// update history
 		history += (decodedValue * rice_historymult)
 				- ((history * rice_historymult) >> 9);
-		
+
 		if (decodedValue > 0xFFFF)
 			history = 0xFFFF;
-		
+
 		// special case, for compressed blocks of 0
 		if ((history < 128) && (outputCount + 1 < outputSize))
 		{
 			int32_t		blockSize;
-			
+
 			signModifier = 1;
-			
+
 			k = count_leading_zeros(history) + ((history + 16) / 64) - 24;
-			
+
 			// note: blockSize is always 16bit
 			blockSize = entropy_decode_value(alac, 16, k, rice_kmodifier_mask);
-			
+
 			// got blockSize 0s
 			if (blockSize > 0)
 			{
 				memset(&outputBuffer[outputCount + 1], 0, blockSize * sizeof(*outputBuffer));
 				outputCount += blockSize;
 			}
-			
+
 			if (blockSize > 0xFFFF)
 				signModifier = 0;
-			
+
 			history = 0;
 		}
 	}
@@ -677,7 +677,7 @@ void deinterlace_24(int32_t *buffer_a, int32_t *buffer_b,
 {
 	int i;
     if (numsamples <= 0) return;
-	
+
     /* weighted interlacing */
     if (interlacing_leftweight)
     {
@@ -686,63 +686,63 @@ void deinterlace_24(int32_t *buffer_a, int32_t *buffer_b,
             int32_t difference, midright;
             int32_t left;
             int32_t right;
-			
+
             midright = buffer_a[i];
             difference = buffer_b[i];
-			
+
             right = midright - ((difference * interlacing_leftweight) >> interlacing_shift);
             left = right + difference;
-			
+
 			if (uncompressed_bytes)
 			{
 				uint32_t mask = ~(0xFFFFFFFF << (uncompressed_bytes * 8));
 				left <<= (uncompressed_bytes * 8);
 				right <<= (uncompressed_bytes * 8);
-				
+
 				left |= uncompressed_bytes_buffer_a[i] & mask;
 				right |= uncompressed_bytes_buffer_b[i] & mask;
 			}
-			
+
 			((uint8_t*)buffer_out)[i * numchannels * 3] = (left) & 0xFF;
 			((uint8_t*)buffer_out)[i * numchannels * 3 + 1] = (left >> 8) & 0xFF;
 			((uint8_t*)buffer_out)[i * numchannels * 3 + 2] = (left >> 16) & 0xFF;
-			
+
 			((uint8_t*)buffer_out)[i * numchannels * 3 + 3] = (right) & 0xFF;
 			((uint8_t*)buffer_out)[i * numchannels * 3 + 4] = (right >> 8) & 0xFF;
 			((uint8_t*)buffer_out)[i * numchannels * 3 + 5] = (right >> 16) & 0xFF;
         }
-		
+
         return;
     }
-	
+
     /* otherwise basic interlacing took place */
     for (i = 0; i < numsamples; i++)
     {
         int32_t left, right;
-		
+
         left = buffer_a[i];
         right = buffer_b[i];
-		
+
 		if (uncompressed_bytes)
 		{
 			uint32_t mask = ~(0xFFFFFFFF << (uncompressed_bytes * 8));
 			left <<= (uncompressed_bytes * 8);
 			right <<= (uncompressed_bytes * 8);
-			
+
 			left |= uncompressed_bytes_buffer_a[i] & mask;
 			right |= uncompressed_bytes_buffer_b[i] & mask;
 		}
-		
+
 		((uint8_t*)buffer_out)[i * numchannels * 3] = (left) & 0xFF;
 		((uint8_t*)buffer_out)[i * numchannels * 3 + 1] = (left >> 8) & 0xFF;
 		((uint8_t*)buffer_out)[i * numchannels * 3 + 2] = (left >> 16) & 0xFF;
-		
+
 		((uint8_t*)buffer_out)[i * numchannels * 3 + 3] = (right) & 0xFF;
 		((uint8_t*)buffer_out)[i * numchannels * 3 + 4] = (right >> 8) & 0xFF;
 		((uint8_t*)buffer_out)[i * numchannels * 3 + 5] = (right >> 16) & 0xFF;
-		
+
     }
-	
+
 }
 
 void decode_frame(alac_file *alac,
@@ -913,7 +913,7 @@ void decode_frame(alac_file *alac,
 			for (i = 0; i < outputsamples; i++)
 			{
 				int32_t sample = alac->outputsamples_buffer_a[i];
-				
+
 				if (uncompressed_bytes)
 				{
 					uint32_t mask;
@@ -921,7 +921,7 @@ void decode_frame(alac_file *alac,
 					mask = ~(0xFFFFFFFF << (uncompressed_bytes * 8));
 					sample |= alac->uncompressed_bytes_buffer_a[i] & mask;
 				}
-				
+
 				((uint8_t*)outbuffer)[i * alac->numchannels * 3] = (sample) & 0xFF;
 				((uint8_t*)outbuffer)[i * alac->numchannels * 3 + 1] = (sample >> 8) & 0xFF;
 				((uint8_t*)outbuffer)[i * alac->numchannels * 3 + 2] = (sample >> 16) & 0xFF;
@@ -1112,7 +1112,7 @@ void decode_frame(alac_file *alac,
                     audiobits_b = audiobits_b << (alac->setinfo_sample_size - 16);
                     audiobits_b |= readbits(alac, alac->setinfo_sample_size - 16);
 					audiobits_b = SignExtend24(audiobits_b);
-					
+
                     alac->outputsamples_buffer_a[i] = audiobits_a;
                     alac->outputsamples_buffer_b[i] = audiobits_b;
                 }
@@ -1146,7 +1146,7 @@ void decode_frame(alac_file *alac,
                            alac->numchannels,
                            outputsamples,
                            interlacing_shift,
-                           interlacing_leftweight);			
+                           interlacing_leftweight);
 			break;
 		}
         case 20:

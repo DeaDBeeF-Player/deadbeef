@@ -8,12 +8,12 @@
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -1634,7 +1634,7 @@ ape_decode_frame(DB_fileinfo_t *_info, void *data, int *data_size)
             }
         }
     }
-    
+
     s->samplestoskip -= skip;
     s->samples -= blockstodecode;
 
@@ -1685,7 +1685,7 @@ ffap_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     deadbeef->pl_add_meta (it, ":FILETYPE", "APE");
     deadbeef->plt_set_item_duration (plt, it, duration);
- 
+
     /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
     int v1err = deadbeef->junk_id3v1_read (it, fp);
     if (v1err >= 0) {
@@ -1926,7 +1926,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "ffap",
     .plugin.name = "Monkey's Audio (APE) decoder",
     .plugin.descr = "APE player based on code from libavc and rockbox",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "based on apedec from FFMpeg Copyright (c) 2007 Benjamin Zores <ben@geexbox.org>\n"

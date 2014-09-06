@@ -289,7 +289,7 @@ editor_init ()
 					       GTK_TYPE_WIDGET);
    g_signal_add_emission_hook (button_press_signal_id, 0,
 			       button_press_event_hook, NULL, NULL);
-   
+
    button_release_signal_id = gtk_signal_lookup ("button_release_event",
 						 GTK_TYPE_WIDGET);
    g_signal_add_emission_hook (button_release_signal_id, 0,
@@ -1218,12 +1218,12 @@ editor_on_button_press (GtkWidget * signal_widget,
       else
         {
          static gboolean already_shown = FALSE;
-         if (already_shown) 
+         if (already_shown)
            {
              /* Beep if user does mistake of invalid positioning from second
               * time.
               */
-             gdk_beep ();	
+             gdk_beep ();
            }
          else
            {
@@ -1595,7 +1595,7 @@ editor_select_widget_control (GtkWidget * widget)
   editor_refresh_widget_selection (widget);
   return TRUE;
 }
- 
+
 /* FIXME: handle widget-tree better now it has extended selection */
 GList *
 editor_get_selection ()
@@ -2325,7 +2325,7 @@ add_mouse_signals_recursive (GtkWidget *widget, gpointer data)
       else
 	{
 	  GdkEventMask event_mask;
-	  
+
 	  /* FIXME: Here we set the event mask for the main window of a widget,
 	     but widgets can have more than one window. How do we get all the
 	     windows of a widget? */
@@ -2774,7 +2774,7 @@ editor_idle_handler (GdkWindow *expose_win)
 		  {
 		    sel_alloc_x = 0;
 		    sel_alloc_y = 0;
-		  }		    
+		  }
 
 		/* We only draw the nodes if the window that got the expose
 		   event is in the same toplevel as the selected widget. */
@@ -3213,7 +3213,7 @@ delete_placeholder (GtkWidget * placeholder)
     }
 
   /* SPECIAL CODE: Don't allow placeholder in BonoboDock to be deleted. */
-#ifdef USE_GNOME	  
+#ifdef USE_GNOME
   if (BONOBO_IS_DOCK (parent))
     return;
 #endif

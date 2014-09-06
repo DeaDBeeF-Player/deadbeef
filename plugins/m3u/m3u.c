@@ -478,7 +478,7 @@ m3uplug_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int 
         tried_pls = 1;
         ret = load_pls (plt, after, fname, pabort, cb, user_data);
     }
-    
+
     if (!ret) {
         ret = load_m3u (plt, after, fname, pabort, cb, user_data);
     }
@@ -625,7 +625,7 @@ DB_playlist_t plugin = {
     .plugin.id = "m3u",
     .plugin.name = "M3U and PLS support",
     .plugin.descr = "Importing and exporting M3U and PLS formats\nRecognizes .pls, .m3u and .m3u8 file types\n\nNOTE: only utf8 file names are currently supported",
-    .plugin.copyright = 
+    .plugin.copyright =
         "M3U and PLS playlist plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"

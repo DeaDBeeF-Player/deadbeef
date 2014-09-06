@@ -339,7 +339,7 @@ static DUMB_IT_SIGDATA *it_mtm_load_sigdata(DUMBFILE *f, int * version)
 					sigdata->song_message[m++] = 10;
 				}
 			}
-			
+
 			sigdata->song_message[m] = 0;
 		}
 

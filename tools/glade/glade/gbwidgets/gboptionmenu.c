@@ -81,9 +81,9 @@ set_menu (GladeMenuEditor *menued, GtkOptionMenu *option)
 
   g_return_if_fail (GLADE_IS_MENU_EDITOR (menued));
   g_return_if_fail (GTK_IS_OPTION_MENU (option));
-  
+
   history = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (option), History));
-  gtk_option_menu_set_menu (option, GTK_WIDGET (menued->menu));	
+  gtk_option_menu_set_menu (option, GTK_WIDGET (menued->menu));
   gtk_option_menu_set_history (option, history);
 }
 
@@ -96,11 +96,11 @@ gb_menu_bar_on_edit_menu (GtkWidget *button,
   option = property_get_widget ();
   g_return_if_fail (GTK_IS_OPTION_MENU (option));
 
-  /* 
+  /*
    * we need to remove the menu from the option menu otherwise there
    * will be a separator where the selected menu is
    */
-  g_object_set_data (G_OBJECT (option), 
+  g_object_set_data (G_OBJECT (option),
 		     History,
 		     GINT_TO_POINTER (gtk_option_menu_get_history (GTK_OPTION_MENU (option))));
   menu = gtk_option_menu_get_menu (GTK_OPTION_MENU (option));
@@ -156,7 +156,7 @@ static void
 gb_option_menu_get_properties (GtkWidget * widget, GbWidgetGetArgData * data)
 {
   if (data->action == GB_SAVING)
-    gb_widget_output_int (data, History, 
+    gb_widget_output_int (data, History,
 			  gtk_option_menu_get_history (GTK_OPTION_MENU (widget)));
 }
 

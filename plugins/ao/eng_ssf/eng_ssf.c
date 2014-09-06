@@ -113,16 +113,16 @@ void *ssf_start(const char *path, uint8 *buffer, uint32 length)
 	#endif
 
 	// Get the library file, if any
-	for (i=0; i<9; i++) 
+	for (i=0; i<9; i++)
 	{
 		libfile = i ? s->c->libaux[i-1] : s->c->lib;
 		if (libfile[0] != 0)
 		{
 			uint64 tmp_length;
-	
+
             char libpath[PATH_MAX];
             ao_getlibpath (path, s->c->lib, libpath, sizeof (libpath));
-			#if DEBUG_LOADER	
+			#if DEBUG_LOADER
 			printf("Loading library: %s\n", c->lib);
 			#endif
 			if (ao_get_lib(libfile, &lib_raw_file, &tmp_length) != AO_SUCCESS)
@@ -131,14 +131,14 @@ void *ssf_start(const char *path, uint8 *buffer, uint32 length)
                 return NULL;
 			}
 			lib_raw_length = tmp_length;
-		
+
 			if (corlett_decode(lib_raw_file, lib_raw_length, &lib_decoded, &lib_len, &lib) != AO_SUCCESS)
 			{
 				free(lib_raw_file);
                 ssf_stop (s);
                 return NULL;
 			}
-				
+
 			// Free up raw file
 			free(lib_raw_file);
 
@@ -169,7 +169,7 @@ void *ssf_start(const char *path, uint8 *buffer, uint32 length)
 	memcpy(&s->cpu->sat_ram[offset], file+4, file_len-4);
 
 	free(file);
-	
+
 	// Finally, set psfby tag
 	strcpy(s->psfby, "n/a");
 	if (s->c)
@@ -233,7 +233,7 @@ void *ssf_start(const char *path, uint8 *buffer, uint32 length)
 }
 
 int32 ssf_gen(void *handle, int16 *buffer, uint32 samples)
-{	
+{
     ssf_synth_t *s = handle;
 	int i;
 	int16 output[samples], output2[samples];
@@ -308,7 +308,7 @@ int32 ssf_command(void *handle, int32 command, int32 parameter)
             sat_hw_init (s->cpu);
             s->total_samples = 0;
 			return AO_SUCCESS;
-		
+
 	}
 	return AO_FAIL;
 }
@@ -318,13 +318,13 @@ int32 ssf_fill_info(void *handle, ao_display_info *info)
     ssf_synth_t *s = handle;
 	if (s->c == NULL)
 		return AO_FAIL;
-		
+
 	strcpy(info->title[1], "Name: ");
 	sprintf(info->info[1], "%s", s->c->inf_title);
 
 	strcpy(info->title[2], "Game: ");
 	sprintf(info->info[2], "%s", s->c->inf_game);
-	
+
 	strcpy(info->title[3], "Artist: ");
 	sprintf(info->info[3], "%s", s->c->inf_artist);
 

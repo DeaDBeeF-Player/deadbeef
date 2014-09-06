@@ -55,9 +55,9 @@ static GtkWidget*
 gb_calendar_new (GbWidgetNewData *data)
 {
   GtkWidget *new_widget = NULL;
-  
+
   new_widget = gtk_calendar_new();
-  
+
   return new_widget;
 }
 
@@ -70,15 +70,15 @@ gb_calendar_new (GbWidgetNewData *data)
 static void
 gb_calendar_create_properties (GtkWidget * widget, GbWidgetCreateArgData * data)
 {
-  property_add_bool (ShowHeading, _("Heading:"), 
+  property_add_bool (ShowHeading, _("Heading:"),
                      _("If the month and year should be shown at the top"));
-  property_add_bool (ShowDayNames, _("Day Names:"), 
+  property_add_bool (ShowDayNames, _("Day Names:"),
                      _("If the day names should be shown"));
-  property_add_bool (NoMonthChange, _("Fixed Month:"), 
+  property_add_bool (NoMonthChange, _("Fixed Month:"),
                      _("If the month and year shouldn't be changeable"));
-  property_add_bool (ShowWeekNumbers, _("Week Numbers:"), 
+  property_add_bool (ShowWeekNumbers, _("Week Numbers:"),
                      _("If the number of the week should be shown"));
-  property_add_bool (WeekStartMonday, _("Monday First:"), 
+  property_add_bool (WeekStartMonday, _("Monday First:"),
                      _("If the week should start on Monday"));
 }
 
@@ -179,7 +179,7 @@ gb_calendar_set_properties (GtkWidget * widget, GbWidgetSetArgData * data)
   static void
   gb_calendar_create_popup_menu (GtkWidget * widget, GbWidgetCreateMenuData * data)
   {
-  
+
   }
 */
 
@@ -270,7 +270,7 @@ gb_calendar_init ()
   gbwidget.gb_widget_new		= gb_calendar_new;
   gbwidget.gb_widget_create_properties	= gb_calendar_create_properties;
   gbwidget.gb_widget_get_properties	= gb_calendar_get_properties;
-  gbwidget.gb_widget_set_properties	= gb_calendar_set_properties; 
+  gbwidget.gb_widget_set_properties	= gb_calendar_set_properties;
   /* gbwidget.gb_widget_create_popup_menu  = gb_calendar_create_popup_menu; */
   gbwidget.gb_widget_write_source	= gb_calendar_write_source;
 

@@ -25,7 +25,7 @@
   Alexey Yakovenko waker@users.sourceforge.net
 */
 
-/* 
+/*
     based on Basic UTF-8 manipulation routines
     by Jeff Bezanson
     placed in the public domain Fall 2005

@@ -640,7 +640,7 @@ action_show_track_properties_handler (DB_plugin_action_t *act, int ctx) {
 
 gboolean
 action_find_handler_cb (void *data) {
-    search_start ();       
+    search_start ();
     return FALSE;
 }
 
@@ -741,7 +741,7 @@ action_load_playlist_handler_cb (void *data) {
     gtk_file_filter_set_name (flt, _("Other files (*)"));
     gtk_file_filter_add_pattern (flt, "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-    
+
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
     // store folder
     gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
@@ -904,10 +904,10 @@ gboolean
 action_sort_custom_handler_cb (void *data) {
     GtkWidget *dlg = create_sortbydlg ();
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-    
+
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (dlg, "sortorder"));
     GtkEntry *entry = GTK_ENTRY (lookup_widget (dlg, "sortfmt"));
-    
+
     gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("gtkui.sortby_order", 0));
     deadbeef->conf_lock ();
     gtk_entry_set_text (entry, deadbeef->conf_get_str_fast ("gtkui.sortby_fmt", ""));

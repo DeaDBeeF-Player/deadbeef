@@ -35,7 +35,7 @@ static int read_registry(char const *name, unsigned long type, void *ptr, unsign
 	if (registry == INVALID_HANDLE_VALUE ||
 		RegQueryValueEx(registry, name, 0, &reg_type, ptr, &size) != ERROR_SUCCESS
 		|| reg_type != type)
-		
+
 		return -1;
 
 	return 0;
@@ -46,7 +46,7 @@ static int write_registry(char const *name, unsigned long type, void *ptr, unsig
 {
 	if (registry == INVALID_HANDLE_VALUE
 		|| RegSetValueEx(registry, name, 0, type, ptr, size) != ERROR_SUCCESS)
-		
+
 		return -1;
 
 	return 0;
@@ -87,7 +87,7 @@ static INT_PTR CALLBACK config_dialog(HWND dialog, UINT message,
 	case WM_INITDIALOG:
 
 		/* Ok, now we need to set up the dialog's controls
-		 * to match the current config 
+		 * to match the current config
 		 */
 
 		/* Channels */
@@ -281,7 +281,7 @@ void config_init(void) {
 	if (RegCreateKeyEx(HKEY_CURRENT_USER, REGISTRY_KEY, 0, "",
 		REG_OPTION_NON_VOLATILE, KEY_READ | KEY_WRITE, 0,
 		&registry, 0) != ERROR_SUCCESS)
-		
+
 		registry = INVALID_HANDLE_VALUE;
 
 	LOAD_REG_INT("Stereo",         config_stereo,     CHANNEL_STEREO);
@@ -325,7 +325,7 @@ void config_quit(void) {
 
 /* About box, yay! */
 void about(HWND hwndParent) {
-	MessageBox(hwndParent, "DUH! Winamp Plugin\n Version " VERSION " (x86)\n", 
+	MessageBox(hwndParent, "DUH! Winamp Plugin\n Version " VERSION " (x86)\n",
 		"About:", MB_OK | MB_ICONINFORMATION);
 }
 

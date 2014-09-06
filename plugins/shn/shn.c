@@ -1815,7 +1815,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "shn",
     .plugin.name = "Shorten player",
     .plugin.descr = "decodes shn files",
-    .plugin.copyright = 
+    .plugin.copyright =
         "SHN (Shorten) plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"

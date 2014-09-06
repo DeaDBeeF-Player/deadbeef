@@ -202,7 +202,7 @@ DB_decoder_t wmidi_plugin = {
     .plugin.version_minor = 0,
     .plugin.name = "WildMidi player",
     .plugin.descr = "MIDI player based on WildMidi library\n\nRequires freepats package to be installed\nSee http://freepats.zenvoid.org/\nMake sure to set correct freepats.cfg path in plugin settings.",
-    .plugin.copyright = 
+    .plugin.copyright =
         "WildMidi plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"

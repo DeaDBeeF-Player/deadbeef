@@ -62,7 +62,7 @@ DB_decoder_t adplug_plugin = {
     .plugin.id = "adplug",
     .plugin.name = "Adplug player",
     .plugin.descr = "Adplug player (ADLIB OPL2/OPL3 emulator)",
-    .plugin.copyright = 
+    .plugin.copyright =
     "ADPLUG DeaDBeeF Player Plugin\n"
     "Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>\n"
     "\n"

@@ -171,7 +171,7 @@ int
 cda_read (DB_fileinfo_t *_info, char *bytes, int size) {
     cdda_info_t *info = (cdda_info_t *)_info;
     int extrasize = 0;
-    
+
     if (info->tail_len > 0)
     {
         if (info->tail_len >= size)
@@ -192,7 +192,7 @@ cda_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
     int sectors_to_read = size / SECTORSIZE + 1;
     int end = 0;
-    
+
     if (info->current_sector + sectors_to_read > info->first_sector + info->sector_count) // reached end of track
     {
         end = 1;
@@ -378,7 +378,7 @@ cddb_thread (void *items_i)
     trace ("disc_title=%s, disk_artist=%s\n", disc_title, artist);
     cddb_track_t *track;
     int i;
-    
+
     // FIXME: playlist must be locked before doing that
     int trk = 1;
     for (i = 0, track = cddb_disc_get_track_first (disc); items[i]; trk++, ++i, track = cddb_disc_get_track_next (disc))
@@ -676,7 +676,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "cda",
     .plugin.name = "Audio CD player",
     .plugin.descr = "Audio CD plugin using libcdio and libcddb",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
         "\n"

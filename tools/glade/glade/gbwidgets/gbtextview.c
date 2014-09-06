@@ -122,7 +122,7 @@ gb_text_view_create_properties (GtkWidget * widget, GbWidgetCreateArgData * data
 			   _("If tab characters can be entered"));
 
 	property_add_text (Text, _("Text:"), _("The text to display"), 5);
-	
+
 	property_add_choice (Justification, _("Justification:"),
 			     _("The justification of the text"),
 			     GbJustifyChoices);
@@ -167,7 +167,7 @@ gb_text_view_get_properties (GtkWidget *widget, GbWidgetGetArgData * data)
 	gint pixels_above, pixels_below, pixels_inside;
 	gint left_margin, right_margin, indent;
 	char *text;
-	
+
 	g_object_get (widget,
 		      "editable",           &editable,
 		      "overwrite",	    &overwrite,

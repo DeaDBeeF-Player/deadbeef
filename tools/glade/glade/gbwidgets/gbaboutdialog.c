@@ -260,13 +260,13 @@ gb_about_dialog_set_properties (GtkWidget * widget, GbWidgetSetArgData * data)
   if (data->action == GB_APPLYING)
     g_free (copyright);
 
-  comments = gb_widget_input_text (data, Comments);  
+  comments = gb_widget_input_text (data, Comments);
   if (data->apply)
     gtk_about_dialog_set_comments (GTK_ABOUT_DIALOG (widget), comments);
   if (data->action == GB_APPLYING)
     g_free (comments);
 
-  license = gb_widget_input_text (data, License);  
+  license = gb_widget_input_text (data, License);
   if (data->apply)
     gtk_about_dialog_set_license (GTK_ABOUT_DIALOG (widget), license);
   if (data->action == GB_APPLYING)
@@ -277,12 +277,12 @@ gb_about_dialog_set_properties (GtkWidget * widget, GbWidgetSetArgData * data)
     gtk_about_dialog_set_wrap_license (GTK_ABOUT_DIALOG (widget), wrap_license);
 
 
-  website = gb_widget_input_string (data, Website);  
+  website = gb_widget_input_string (data, Website);
   if (data->apply)
     g_object_set_data_full (G_OBJECT (widget), Website, g_strdup (website),
 			    website ? g_free : NULL);
 
-  website_label = gb_widget_input_string (data, WebsiteLabel);  
+  website_label = gb_widget_input_string (data, WebsiteLabel);
   if (data->apply)
     g_object_set_data_full (G_OBJECT (widget), WebsiteLabel,
 			    g_strdup (website_label),
@@ -516,7 +516,7 @@ gb_about_dialog_write_source (GtkWidget * widget, GbWidgetWriteSourceData * data
   if (output_creators_array (widget, data, "artists", Artists))
     source_add (data,
 		"  gtk_about_dialog_set_artists (GTK_ABOUT_DIALOG (%s), artists);\n", data->wname);
-  
+
 
   /* If translators is set, then we use that specific string.
      If it is not set, then if gettext support is enabled we output code

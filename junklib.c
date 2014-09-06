@@ -1925,7 +1925,7 @@ junk_id3v2_add_txxx_frame (DB_id3v2_tag_t *tag, const char *key, const char *val
     memcpy (buffer, key, keylen);
     buffer[keylen] = 0;
     memcpy (buffer+keylen+1, value, valuelen);
-    
+
     uint8_t out[2048];
     int encoding = 0;
 
@@ -2101,7 +2101,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
         uint8_t flags[2];
         // 1st byte (status flags) is the same, but shifted by 1 bit to the left
         flags[0] = f24->flags[0] << 1;
-        
+
         // 2nd byte (format flags) is quite different
         // 2.4 format is %0h00kmnp (6:grouping, 3:compression, 2:encryption, 1:unsync, 0:datalen)
         // 2.3 format is %ijk00000 (7:compression, 6:encryption, 5:grouping)
@@ -2293,7 +2293,7 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
         // 1st byte (status flags) is the same, but shifted by 1 bit to the
         // right
         flags[0] = f23->flags[0] >> 1;
-        
+
         // 2nd byte (format flags) is quite different
         // 2.4 format is %0h00kmnp (6:grouping, 3:compression, 2:encryption, 1:unsync, 0:datalen)
         // 2.3 format is %ijk00000 (7:compression, 6:encryption, 5:grouping)
@@ -2482,7 +2482,7 @@ junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24) {
         // 1st byte (status flags) is the same, but shifted by 1 bit to the
         // right
         flags[0] = f22->flags[0] >> 1;
-        
+
         // 2nd byte (format flags) is quite different
         // 2.4 format is %0h00kmnp (grouping, compression, encryption, unsync)
         // 2.3 format is %ijk00000 (compression, encryption, grouping)
@@ -2735,7 +2735,7 @@ junk_id3v2_convert_apev2_to_24 (DB_apev2_tag_t *ape, DB_id3v2_tag_t *tag24) {
         "Comment", "EAN/UPC", "ISBN", "Catalog", "LC", "Publicationright", "Record Location", "Related", "Abstract", "Bibliography", NULL
     };
 
-    // FIXME: additional frames: File->WOAF 
+    // FIXME: additional frames: File->WOAF
     // converted to COMM: Comment, EAN/UPC, ISBN, Catalog, LC, Publicationright, Record Location, Related, Abstract, Bibliography
     // "Debut album" is discarded
     // "Index" is discarded
@@ -3635,7 +3635,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
     uint8_t *readptr = tag;
     int crcpresent = 0;
     trace ("version: 2.%d.%d, unsync: %d, extheader: %d, experimental: %d\n", version_major, version_minor, unsync, extheader, expindicator);
-    
+
     if (extheader) {
         uint32_t sz = (readptr[3] << 0) | (readptr[2] << 7) | (readptr[1] << 14) | (readptr[0] << 21);
         if (size < sz) {

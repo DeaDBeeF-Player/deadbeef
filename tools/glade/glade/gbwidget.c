@@ -214,7 +214,7 @@ gb_widget_init_widget_lib (GladePaletteSectionData *sections)
           gwid = &palsec->widgets[j];
           j++;
           if (!gwid->name)
-            break;  
+            break;
           init_func = gwid->init_func;
           gbwidget = (*init_func) ();
 	  gb_widget_register_gbwidget (gwid->name, gbwidget);
@@ -837,7 +837,7 @@ gb_widget_show_properties (GtkWidget * widget)
 	      child_packing_page = gb_widget_create_child_properties (widget->parent);
 	      parent_gbwidget->child_properties_page_number = child_packing_page;
 	    }
-      
+
 	  if (child_packing_page == GB_PROPERTIES_NOT_NEEDED)
 	    property_hide_child_packing_page ();
 	  else
@@ -1862,13 +1862,13 @@ add_standard_bottom_menu_items (GtkWidget * widget, GbWidgetCreateMenuData * dat
       gtk_signal_connect (GTK_OBJECT (menuitem), "activate",
 			  GTK_SIGNAL_FUNC (editor_on_cut_activate), widget);
     }
- 
+
   menuitem = gtk_menu_item_new_with_label (_("Copy"));
   gtk_widget_show (menuitem);
   gtk_container_add (GTK_CONTAINER (data->menu), menuitem);
   gtk_signal_connect (GTK_OBJECT (menuitem), "activate",
 		      GTK_SIGNAL_FUNC (editor_on_copy_activate), widget);
- 
+
   /* Only show the 'Paste' item if the widget can be deleted. */
   if (can_delete)
     {
@@ -1880,7 +1880,7 @@ add_standard_bottom_menu_items (GtkWidget * widget, GbWidgetCreateMenuData * dat
       gtk_signal_connect (GTK_OBJECT (menuitem), "activate",
 			  GTK_SIGNAL_FUNC (editor_on_paste_activate), widget);
     }
- 
+
   /* Only show the 'Delete' item if the widget can be deleted. */
   if (can_delete)
     {
@@ -2146,7 +2146,7 @@ gb_widget_load (GtkWidget * widget, GbWidgetSetArgData * data, GtkWidget * paren
       data->widget_data = wdata;
       if (widget->parent && !gb_widget_lookup (widget->parent))
 	{
-	  MSG1 ("Unusual widget here of type '%s'", 
+	  MSG1 ("Unusual widget here of type '%s'",
 		G_OBJECT_TYPE_NAME (widget->parent));
 	}
 
@@ -2670,7 +2670,7 @@ get_position_properties (GtkWidget * widget,
   else if (widget->parent && (GTK_IS_FIXED (widget->parent)
 			      || GTK_IS_LAYOUT (widget->parent)))
     {
-      /* Widgets in fixed or layout containers. Note that for widgets in a 
+      /* Widgets in fixed or layout containers. Note that for widgets in a
        layout the allocation is relative to the window origin and changes as
        the layout is scrolled, so don't output that as the x & y coords. */
       gb_widget_output_int (data, GbWidth, wdata->width);
@@ -2806,7 +2806,7 @@ gb_widget_replace_child (GtkWidget * widget,
     {
       child_name = NULL;
     }
-	  
+
   /* Copy the old child name across. */
   gb_widget_set_child_name (new_child, child_name);
 
@@ -4123,7 +4123,7 @@ gb_widget_input_enum (GbWidgetSetArgData        *data,
   int i;
   char *s;
 
-  if (data->action == GB_LOADING) 
+  if (data->action == GB_LOADING)
     {
       s = load_string (data, property);
       if (data->apply && s)

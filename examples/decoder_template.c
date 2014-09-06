@@ -84,7 +84,7 @@ example_read (DB_fileinfo_t *_info, char *bytes, int size) {
 static int
 example_seek_sample (DB_fileinfo_t *_info, int sample) {
     example_info_t *info = (example_info_t *)_info;
-    
+
     info->currentsample = sample + info->startsample;
     _info->readpos = (float)sample / _info->fmt.samplerate;
     return 0;

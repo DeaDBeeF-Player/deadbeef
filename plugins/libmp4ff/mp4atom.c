@@ -1,19 +1,19 @@
 /*
 ** FAAD2 - Freeware Advanced Audio (AAC) Decoder including SBR decoding
 ** Copyright (C) 2003-2005 M. Bakker, Nero AG, http://www.nero.com
-**  
+**
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
 ** (at your option) any later version.
-** 
+**
 ** This program is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
 ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ** GNU General Public License for more details.
-** 
+**
 ** You should have received a copy of the GNU General Public License
-** along with this program; if not, write to the Free Software 
+** along with this program; if not, write to the Free Software
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 **
 ** Any non-GPL usage of this software or parts of this software is strictly
@@ -895,7 +895,7 @@ int mp4ff_track_create_chunks_index(mp4ff_t *f, mp4ff_track_t *trk)
     trace ("\033[0;35mchunk_sample_first[%d]=%d\033[37;0m\n", 0, trk->chunk_sample_first[0]);
     for (int i = 1; i < trk->i_chunk_count; i++)
     {
-        trk->chunk_sample_first[i] = 
+        trk->chunk_sample_first[i] =
             trk->chunk_sample_first[i-1] +
             trk->stsc_samples_per_chunk[i-1];
         trace ("\033[0;35mchunk_sample_first[%d]=%d\033[37;0m\n", i, trk->chunk_sample_first[i]);

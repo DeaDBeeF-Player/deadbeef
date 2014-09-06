@@ -6,12 +6,12 @@
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -779,7 +779,7 @@ edit_encoder_preset (char *title, GtkWidget *toplevel) {
         }
         break;
     }
-    
+
     gtk_widget_destroy (dlg);
     return r;
 }
@@ -1381,7 +1381,7 @@ on_dsp_preset_add                     (GtkButton       *button,
 {
 
     current_ctx->current_dsp_preset = converter_plugin->dsp_preset_alloc ();
-    
+
     GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
 
     if (GTK_RESPONSE_OK == edit_dsp_preset (_("New DSP Preset"), toplevel, NULL)) {
@@ -1625,7 +1625,7 @@ DB_misc_t plugin = {
         "· select some tracks in playlist\n"
         "· right click\n"
         "· select «Convert»\n",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"

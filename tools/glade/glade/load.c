@@ -92,7 +92,7 @@ real_load_project_file (GladeProject *project, gboolean found_options)
   data.interface = glade_parser_parse_file (data.filename, NULL);
   if (!data.interface)
     return FALSE;
-    
+
   /* If we didn't find a project options file (.gladep), try to guess whether
      it is a GNOME or GTK+ project from the <requires> tags. */
   if (!found_options)
@@ -143,7 +143,7 @@ real_load_project_file (GladeProject *project, gboolean found_options)
   glade_project_foreach_component (data.project,
 				   (GtkCallback) load_ensure_widgets_named,
 				   data.project);
-  
+
   g_hash_table_destroy (data.all_widgets);
 
   return TRUE;
@@ -166,7 +166,7 @@ load_get_value_full (GbWidgetSetArgData * data,
 
   if (!data->widget_info)
     return NULL;
-    
+
   tag_name = property_name;
   while (*tag_name && (*tag_name != ':' || *(tag_name + 1) != ':'))
      tag_name++;

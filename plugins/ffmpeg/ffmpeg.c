@@ -6,12 +6,12 @@
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -480,7 +480,7 @@ ffmpeg_seek_sample (DB_fileinfo_t *_info, int sample) {
         trace ("ffmpeg: seek error\n");
         return -1;
     }
-    
+
     // update readpos
     info->currentsample = sample;
     _info->readpos = (float)(sample - info->startsample) / _info->fmt.samplerate;
@@ -706,7 +706,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     // add metainfo
     ffmpeg_read_metadata_internal (it, fctx);
-    
+
     int64_t fsize = -1;
 
     DB_FILE *fp = deadbeef->fopen (fname);
@@ -990,7 +990,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "ffmpeg",
     .plugin.name = "FFMPEG audio player",
     .plugin.descr = "decodes audio formats using FFMPEG libavcodec",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"

@@ -257,7 +257,7 @@ on_Font_activate                       (GtkMenuItem     *menuitem,
       gtk_object_set_data (GTK_OBJECT (fontsel), MainWindowKey, main_window);
 
       /* Make sure the dialog doesn't disappear behind the main window. */
-      gtk_window_set_transient_for (GTK_WINDOW (fontsel), 
+      gtk_window_set_transient_for (GTK_WINDOW (fontsel),
 				    GTK_WINDOW (main_window));
     }
   gtk_widget_show (fontsel);
@@ -408,7 +408,7 @@ on_About_activate                      (GtkMenuItem     *menuitem,
 {
   static GtkWidget *about = NULL;
 
-  if (about == NULL) 
+  if (about == NULL)
     {
       GtkWidget *main_window;
 
@@ -421,7 +421,7 @@ on_About_activate                      (GtkMenuItem     *menuitem,
 
       main_window = lookup_widget (GTK_WIDGET (menuitem), "main_window");
       /* Make sure the dialog doesn't disappear behind the main window. */
-      gtk_window_set_transient_for (GTK_WINDOW (about), 
+      gtk_window_set_transient_for (GTK_WINDOW (about),
 				    GTK_WINDOW (main_window));
       /* Do not allow user to resize the dialog */
       gtk_window_set_resizable (GTK_WINDOW (about), FALSE);
@@ -517,7 +517,7 @@ open_file (GtkWidget *main_window)
     {
       open_filesel = create_open_file_selection ();
       /* Make sure the dialog doesn't disappear behind the main window. */
-      gtk_window_set_transient_for (GTK_WINDOW (open_filesel), 
+      gtk_window_set_transient_for (GTK_WINDOW (open_filesel),
 				    GTK_WINDOW (main_window));
     }
 
@@ -538,7 +538,7 @@ save_as (GtkWidget *main_window)
     {
       save_filesel = create_save_file_selection ();
       /* Make sure the dialog doesn't disappear behind the main window. */
-      gtk_window_set_transient_for (GTK_WINDOW (save_filesel), 
+      gtk_window_set_transient_for (GTK_WINDOW (save_filesel),
 				    GTK_WINDOW (main_window));
     }
 

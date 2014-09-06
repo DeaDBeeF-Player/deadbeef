@@ -131,7 +131,7 @@ set_accessible_description (GtkWidget *widget, const gchar *desc)
   if (desc)
     atk_object_set_description (atk_widget, desc);
 }
- 
+
 
 static void
 glade_project_options_init (GladeProjectOptions * options)
@@ -591,8 +591,8 @@ glade_project_options_init (GladeProjectOptions * options)
   gtk_box_pack_start (GTK_BOX (hbox), options->main_header_entry,
 		      TRUE, TRUE, 0);
 
-  set_accessible_description (options->main_source_entry, _("Source file for interface creation functions")); 
-  set_accessible_description (options->main_header_entry, _("Header file for interface creation functions")); 
+  set_accessible_description (options->main_source_entry, _("Source file for interface creation functions"));
+  set_accessible_description (options->main_header_entry, _("Header file for interface creation functions"));
 
   /* Handler source file. */
   frame = gtk_frame_new (_("Signal Handler & Callback Functions:"));
@@ -684,7 +684,7 @@ glade_project_options_init (GladeProjectOptions * options)
 		      TRUE, TRUE, 0);
 
   set_accessible_description (options->support_source_entry, _("Source file for support functions"));
-  set_accessible_description (options->support_header_entry, _("Header file for support functions")); 
+  set_accessible_description (options->support_header_entry, _("Header file for support functions"));
 
   /*
    * libglade Options Page.
@@ -1207,7 +1207,7 @@ glade_project_options_show_file_selection (GtkWidget *widget,
 						      NULL);
       gtk_dialog_set_default_response (GTK_DIALOG (options->filesel),
 				       GTK_RESPONSE_OK);
- 
+
       g_signal_connect (options->filesel, "response",
 			GTK_SIGNAL_FUNC (on_filesel_response), options);
       g_signal_connect (options->filesel, "delete_event",

@@ -1,14 +1,14 @@
 /*
   s_opl.c -- YM2413/Y8950/YM3526/YM3812 emulator by Mamiya, 2001.
 
-  References: 
+  References:
     fmopl.c        -- 1999,2000 written by Tatsuyuki Satoh (MAME development).
     fmopl.c(fixed) -- 2000 modified by mamiya (NEZplug development).
     fmgen.cpp      -- 1999-2001 written by cisc.
     emu2413.c      -- a YM2413 emulator : written by Mitsutaka Okazaki 2001
-    fmpac.ill      -- 2000 created by sama. 
-    fmpac.ill      -- 2000 created by NARUTO. 
-    fmpac.ill      -- 2001 created by Okazaki. 
+    fmpac.ill      -- 2000 created by sama.
+    fmpac.ill      -- 2000 created by NARUTO.
+    fmpac.ill      -- 2001 created by Okazaki.
     YM2413 application manual
 */
 
@@ -218,7 +218,7 @@ inline static void EgStep( OPLSOUND* sndp, OPL_OP* opp )
 	{
 	default:
 		NEVER_REACH
-	
+
 	case EG_MODE_ATTACK:
 		opp->eg.phase = sndp->common.ar_table [opp->eg.phasear >> (AR_SHIFT + AR_BITS - ARTBL_BITS)] >> (ARTBL_SHIFT -  EG_SHIFT);
 		opp->eg.phasear += opp->eg.spd [EG_MODE_ATTACK];
@@ -228,7 +228,7 @@ inline static void EgStep( OPLSOUND* sndp, OPL_OP* opp )
 			opp->eg.phase = 0;
 		}
 		break;
-	
+
 	case EG_MODE_DECAY:
 		opp->eg.phase += opp->eg.spd [EG_MODE_DECAY];
 		if ( opp->eg.phase >= opp->eg.dr_phasemax )
@@ -237,14 +237,14 @@ inline static void EgStep( OPLSOUND* sndp, OPL_OP* opp )
 			opp->eg.mode = (opp->flag & FLAG_EGT) ? EG_MODE_SUSHOLD : EG_MODE_SUSTINE;
 		}
 		break;
-	
+
 	case EG_MODE_SUSTINE:
 	case EG_MODE_RELEASE:
 		opp->eg.phase += opp->eg.spd [opp->eg.mode];
 		if ( opp->eg.phase >= EG_PHASEMAX )
 			SetOpOff(opp);
 		break;
-	
+
 	case EG_MODE_SUSHOLD:
 	case EG_MODE_OFF:
 		break;
@@ -419,7 +419,7 @@ static int sndsynth( OPLSOUND* sndp )
 		Uint32 i, rch;
 		for ( i = 0; i < LFO_UNIT_NUM; i++ )
 			LfoStep(&sndp->lfo [i]);
-		
+
 		rch = sndp->common.rmode ? 7 : 9;
 		for ( i = 0; i < rch; i++ )
 		{
@@ -916,7 +916,7 @@ __inline static void oplwritereg( OPLSOUND* sndp, Uint32 a, Uint32 v )
 	{
 	default:
 		NEVER_REACH
-	
+
 	case 0:
 		switch ( a & 0x1F )
 		{
@@ -932,7 +932,7 @@ __inline static void oplwritereg( OPLSOUND* sndp, Uint32 a, Uint32 v )
 				}
 			}
 			break;
-		
+
 		case 0x08:
 			/* CSM mode */
 		case 0x07:  case 0x09:  case 0x0A:  case 0x0B:  case 0x0C:
@@ -942,7 +942,7 @@ __inline static void oplwritereg( OPLSOUND* sndp, Uint32 a, Uint32 v )
 			break;
 		}
 		break;
-	
+
 	case 1: OPLSETOP(oplsetopmul); break;
 	case 2: OPLSETOP(oplsetopkstl); break;
 	case 3: OPLSETOP(oplsetopardr); break;
@@ -956,7 +956,7 @@ __inline static void oplwritereg( OPLSOUND* sndp, Uint32 a, Uint32 v )
 		else if ( (a & 0xF) < 9 )
 			oplsetchfreqh(sndp, &sndp->ch [a & 0xF], v);
 		break;
-	
+
 	case 6:
 		if ( (a & 0x1F) < 9) oplsetchfbcon(sndp, &sndp->ch [a & 0xF], v);
 		break;
@@ -991,23 +991,23 @@ __inline static void opllwritereg( OPLSOUND* sndp, Uint32 a, Uint32 v )
 	case 0:
 		sndp->regs [OPLL_INST_WORK + (a & 7)] = v;
 		break;
-	
+
 	case 1:
 		if ( a == 0xE) opllsetrc(sndp, v & 0x3F);
 		break;
-	
+
 	case 2:
 	case 3:
 		a &= 0xF;
 		if ( a < 9) opllsetchfreql(sndp, &sndp->ch [a], v);
 		break;
-	
+
 	case 4:
 	case 5:
 		a &= 0xF;
 		if ( a < 9) opllsetchfreqh(sndp, &sndp->ch [a], v);
 		break;
-	
+
 	case 6:
 	case 7:
 		a &= 0xF;
@@ -1089,13 +1089,13 @@ static void sndreset( OPLSOUND* sndp, Uint32 clock, Uint32 freq )
 	}
 	sndp->common.tll2logtbl = sndp->opltbl->tll2log_table;
 	sndp->common.sintablemask = (1 << SINTBL_BITS) - 1;
-	
+
 	for ( i = 0; i < 9; i++ )
 		chreset(sndp, &sndp->ch [i], clock, freq);
-	
+
 	if ( sndp->deltatpcm )
 		sndp->deltatpcm->reset(sndp->deltatpcm->ctx, clock, freq);
-	
+
 	if ( sndp->opl_type & OPL_TYPE_OPL )
 	{
 		XMEMSET(&sndp->regs, 0, 0x100);
@@ -1222,11 +1222,11 @@ KMIF_SOUND_DEVICE* OPLSoundAlloc(Uint32 opl_type )
 		case OPL_TYPE_MSXMUSIC:
 			opllsetinst(sndp, 0, romtone [0], 16 * 19);
 			break;
-		
+
 		case OPL_TYPE_SMSFMUNIT:
 			opllsetinst(sndp, 0, romtone [1], 16 * 19);
 			break;
-		
+
 		case OPL_TYPE_VRC7:
 			opllsetinst(sndp, 0, romtone [2], 16 * 19);
 			break;

@@ -291,18 +291,18 @@ gint glade_util_check_key_is_esc (GtkWidget *widget,
 				  gpointer data)
 {
   g_return_val_if_fail (GTK_IS_WINDOW (widget), FALSE);
-  
+
   if (event->keyval == GDK_Escape)
     {
       GladeEscAction action = GPOINTER_TO_INT (data);
-  
+
       if (action == GladeEscCloses)
         {
   	glade_util_close_window (widget);
   	return TRUE;
         }
       else if (action == GladeEscDestroys)
-        { 
+        {
   	gtk_widget_destroy (widget);
   	return TRUE;
         }
@@ -315,7 +315,7 @@ gint glade_util_check_key_is_esc (GtkWidget *widget,
 
 /* This returns a new entry ready to insert in a dialog.
    The entry is set up so that <Return> will invoke the default action. The
-   returned widget must be added to a container in the dialog. */ 
+   returned widget must be added to a container in the dialog. */
 extern GtkWidget *
 glade_util_entry_new (GtkObject *dialog)
 {
@@ -325,10 +325,10 @@ glade_util_entry_new (GtkObject *dialog)
 
   entry = gtk_entry_new ();
   g_return_val_if_fail (entry != NULL, NULL);
-  
+
   /* Make <Return> in entry field invoke dialog default */
   gtk_signal_connect_object (GTK_OBJECT (entry), "activate",
-			     GTK_SIGNAL_FUNC (gtk_window_activate_default), 
+			     GTK_SIGNAL_FUNC (gtk_window_activate_default),
 			     GTK_OBJECT (dialog));
 
   return entry;
@@ -338,7 +338,7 @@ glade_util_entry_new (GtkObject *dialog)
 /* This returns a new spinbutton ready to insert in a dialog.
    A pointer to the spin button is added as object data to the dialog. The
    spinbutton is set up so that <Return> will invoke the default action. The
-   returned widget must be added to a container in the dialog. */ 
+   returned widget must be added to a container in the dialog. */
 GtkWidget *
 glade_util_spin_button_new (GtkObject *dialog,
 			    const gchar *key,
@@ -355,17 +355,17 @@ glade_util_spin_button_new (GtkObject *dialog,
 				    digits);
   g_return_val_if_fail (spinbutton != NULL, NULL);
   gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (spinbutton), TRUE);
-  
+
   /* save pointer to entry so we can find it easily in the OK handler */
   gtk_object_set_data (GTK_OBJECT (dialog), key, spinbutton);
   /* Make <Return> in entry field invoke dialog default */
   gtk_signal_connect_object (GTK_OBJECT (spinbutton), "activate",
-			     GTK_SIGNAL_FUNC (gtk_window_activate_default), 
+			     GTK_SIGNAL_FUNC (gtk_window_activate_default),
 			     GTK_OBJECT (dialog));
 
   return spinbutton;
 }
-			    
+
 /* This returns the index of the given gint with the given array of gints.
    If the value is not found it outputs a warning and returns -1.
    This function is intended to be used for finding the index when using
@@ -810,7 +810,7 @@ glade_util_find_fixed_accelerator_target (GtkWidget *parent, GtkWidget *child)
 
       children = children->next;
     }
-    
+
   return glade_util_find_focus_child (best_target);
 }
 
@@ -1333,7 +1333,7 @@ glade_util_make_absolute_path (const gchar *dir, const gchar *file)
   if (dir_pos > root_pos)
     dir_pos++;
   len = dir_pos + 1 + (strlen (file) - file_pos) + 1;
-  path = g_malloc (len); 
+  path = g_malloc (len);
   strncpy (path, dir, dir_pos);
   path[dir_pos] = G_DIR_SEPARATOR;
   strcpy (path + dir_pos + 1, file + file_pos);
@@ -1530,22 +1530,22 @@ glade_util_dirname (const gchar	   *file_name)
 {
   register gchar *base;
   register guint len;
-  
+
   g_return_val_if_fail (file_name != NULL, NULL);
-  
+
   base = strrchr (file_name, G_DIR_SEPARATOR);
   if (!base)
     return g_strdup ("." G_DIR_SEPARATOR_S);
   while (base > file_name && *base == G_DIR_SEPARATOR)
     base--;
   len = (guint) 1 + base - file_name;
-  
+
   base = g_new (gchar, len + 2);
   g_memmove (base, file_name, len);
   if (len > 1)
     base[len++] = G_DIR_SEPARATOR;
   base[len] = 0;
-  
+
   return base;
 }
 
@@ -1707,7 +1707,7 @@ glade_util_set_timezone		(const gchar	*tz)
   strcpy (new_tz + 3, tz);
 
   /* Add the new TZ to the environment. */
-  putenv (new_tz); 
+  putenv (new_tz);
   tzset ();
 
   /* Free any previous TZ environment string we have used. */
@@ -2001,7 +2001,7 @@ glade_util_flags_from_string (GType type, const char *string)
 	gboolean eos;
 
 	eos = flagstr [i] == '\0';
-	
+
 	if (eos || flagstr [i] == '|') {
 	    GFlagsValue *fv;
 	    const char  *flag;
@@ -2051,7 +2051,7 @@ glade_util_flags_from_string (GType type, const char *string)
 		break;
 	}
     }
-    
+
     g_free (flagstr);
 
     g_type_class_unref(fclass);
@@ -2086,7 +2086,7 @@ glade_util_string_from_flags (GType type, guint flags)
     if (flags_class->n_values)
       {
 	GFlagsValue *fval;
-      
+
 	for (fval = flags_class->values; fval->value_name; fval++)
 	  {
 	    /* We have to be careful as some flags include 0 values, e.g.
@@ -2148,7 +2148,7 @@ glade_util_set_file_selection_filename (GtkWidget *filesel,
 					const gchar *filename_utf8)
 {
   gchar *on_disk_filename;
-  
+
   on_disk_filename = g_filename_from_utf8 (filename_utf8, -1, NULL, NULL,
 					   NULL);
 
@@ -2165,7 +2165,7 @@ glade_util_get_file_selection_filename (GtkWidget *filesel)
 {
   const gchar *on_disk_filename;
   gchar *filename;
-  
+
   on_disk_filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (filesel));
   filename = g_filename_to_utf8 (on_disk_filename, -1, NULL, NULL, NULL);
   return filename;

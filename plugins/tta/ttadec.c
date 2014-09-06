@@ -117,7 +117,7 @@ const unsigned int crc32_table[256] = {
 	0xbad03605, 0xcdd70693, 0x54de5729, 0x23d967bf,
 	0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
 	0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
-}; 
+};
 
 const unsigned int bit_mask[] = {
 	0x00000000, 0x00000001, 0x00000003, 0x00000007,
@@ -153,7 +153,7 @@ static int skip_id3_tag (tta_info *info);
 #define UPDATE_CRC32(x, crc) crc = \
 	(((crc>>8) & 0x00FFFFFF) ^ crc32_table[(crc^x) & 0xFF])
 
-static unsigned int 
+static unsigned int
 crc32 (unsigned char *buffer, unsigned int len) {
 	unsigned int i;
 	unsigned int crc = 0xFFFFFFFF;
@@ -225,7 +225,7 @@ static int done_buffer_read(tta_info *info) {
 	memcpy(&crc32, info->bitpos, 4);
 	crc32 = ENDSWAP_INT32(crc32);
 	info->bitpos += sizeof(int);
-    
+
 	if (crc32 != info->frame_crc32) return -1;
 
 	info->bit_cache = info->bit_count = 0;
@@ -497,7 +497,7 @@ int get_samples (tta_info *info, byte *buffer) {
 		} else value = unary;
 
 		switch (depth) {
-		case 1: 
+		case 1:
 			rice->sum1 += value - (rice->sum1 >> 4);
 			if (rice->k1 > 0 && rice->sum1 < shift_16[rice->k1])
 				rice->k1--;

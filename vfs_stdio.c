@@ -118,7 +118,7 @@ stdio_seek (DB_FILE *stream, int64_t offset, int whence) {
         return -1;
     }
 //    printf ("lseek res: %lld (%lld, %d, prev=%lld)\n", res, offset, whence,  ((STDIO_FILE*)stream)->offs);
-    ((STDIO_FILE*)stream)->offs = res; 
+    ((STDIO_FILE*)stream)->offs = res;
 #endif
     return 0;
 }
@@ -179,7 +179,7 @@ static DB_vfs_t plugin = {
     .plugin.name = "stdio vfs",
     .plugin.id = "vfs_stdio",
     .plugin.descr = "Standard IO plugin\nUsed for reading normal local files\nIt is statically linked, so you can't delete it.",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
