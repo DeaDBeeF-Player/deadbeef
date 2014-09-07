@@ -66,9 +66,6 @@
 static ddb_gtkui_t plugin;
 DB_functions_t *deadbeef;
 
-// cover art loading plugin
-DB_artwork_plugin_t *coverart_plugin = NULL;
-
 // main widgets
 GtkWidget *mainwin;
 GtkWidget *searchwin;
@@ -880,16 +877,6 @@ gtkui_connect_cb (void *none) {
         }
     }
 
-    // cover_art
-    DB_plugin_t **plugins = deadbeef->plug_get_list ();
-    for (int i = 0; plugins[i]; i++) {
-        DB_plugin_t *p = plugins[i];
-        if (p->id && !strcmp (p->id, "artwork") && p->version_major == 1 && p->version_minor >= 2) {
-            trace ("gtkui: found cover-art loader plugin\n");
-            coverart_plugin = (DB_artwork_plugin_t *)p;
-            break;
-        }
-    }
     add_mainmenu_actions ();
     ddb_event_t *e = deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
     deadbeef->event_send(e, 0, 0);
@@ -1082,6 +1069,7 @@ gtkui_thread (void *ctx) {
         g_source_remove (refresh_timeout);
         refresh_timeout = 0;
     }
+    cover_art_free ();
     eq_window_destroy ();
     trkproperties_destroy ();
     progress_destroy ();
@@ -1209,8 +1197,6 @@ gtkui_connect (void) {
 static int
 gtkui_disconnect (void) {
     supereq_plugin = NULL;
-    coverart_plugin = NULL;
-
     return 0;
 }
 
@@ -1229,8 +1215,7 @@ quit_gtk_cb (gpointer nothing) {
 static int
 gtkui_stop (void) {
     trace ("quitting gtk\n");
-    /* Close coverart before g_idle_add() so that all redraws will finish before gtk_main_quit() */
-    cover_art_free();
+    cover_art_disconnect();
     g_idle_add (quit_gtk_cb, NULL);
     return 0;
 }
