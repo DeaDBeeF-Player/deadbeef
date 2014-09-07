@@ -167,11 +167,13 @@ cache_cleaner_thread(void *none)
                 .tv_sec = time(NULL) + max(60, oldest_mtime - time(NULL) + cache_expiry_seconds),
                 .tv_nsec = 999999
             };
+            trace("Cache cleaner sleeping for %d seconds\n", max(60, oldest_mtime - time(NULL) + cache_expiry_seconds));
             pthread_cond_timedwait((pthread_cond_t *)thread_cond, (pthread_mutex_t *)thread_mutex, &wake_time);
         }
 
         /* Just go back to sleep if cache expiry is disabled */
         while (cache_expiry_seconds <= 0 && !terminate) {
+            trace("Cache cleaner sleeping forever\n");
             pthread_cond_wait((pthread_cond_t *)thread_cond, (pthread_mutex_t *)thread_mutex);
         }
     }
