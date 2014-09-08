@@ -61,12 +61,6 @@
 #include "cache.h"
 #include "artwork.h"
 
-// FNM_CASEFOLD is not defined on solaris. On other platforms it is.
-// It should be safe to define it as FNM_INGORECASE if it isn't defined.
-#ifndef FNM_CASEFOLD
-#define FNM_CASEFOLD FNM_IGNORECASE
-#endif
-
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
 
@@ -1066,6 +1060,11 @@ static char *filter_custom_mask = NULL;
 static int
 filter_custom (const struct dirent *f)
 {
+// FNM_CASEFOLD is not defined on solaris. On other platforms it is.
+// It should be safe to define it as FNM_INGORECASE if it isn't defined.
+#ifndef FNM_CASEFOLD
+#define FNM_CASEFOLD FNM_IGNORECASE
+#endif
     return !fnmatch(filter_custom_mask, f->d_name, FNM_CASEFOLD);
 }
 
