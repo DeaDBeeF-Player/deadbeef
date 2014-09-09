@@ -33,8 +33,7 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
 
-extern DB_artwork_plugin_t *coverart_plugin;
-
+static DB_artwork_plugin_t *artwork_plugin;
 
 GdkPixbuf *pixbuf_default;
 
@@ -265,6 +264,7 @@ get_pixbuf (const char *fname, int width, void (*callback)(void *user_data), voi
 #endif
     deadbeef->mutex_unlock (mutex);
     queue_add (fname, width, callback, user_data);
+
     return NULL;
 }
 
@@ -276,13 +276,13 @@ queue_cover_callback (void (*callback)(void *user_data), void *user_data) {
 
 GdkPixbuf *
 get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, void (*callback) (void *user_data), void *user_data) {
-    if (!coverart_plugin) {
+    if (!artwork_plugin) {
         return NULL;
     }
 
     if (width == -1) {
         char path[2048];
-        coverart_plugin->make_cache_path2 (path, sizeof (path), fname, album, artist, -1);
+        artwork_plugin->make_cache_path2 (path, sizeof (path), fname, album, artist, -1);
         deadbeef->mutex_lock (mutex);
         int i_largest = -1;
         int size_largest = -1;
@@ -312,7 +312,7 @@ get_cover_art_callb (const char *fname, const char *artist, const char *album, i
     dt->width = width;
     dt->callback = callback;
     dt->user_data = user_data;
-    char *image_fname = coverart_plugin->get_album_art (fname, artist, album, -1, cover_avail_callback, dt);
+    char *image_fname = artwork_plugin->get_album_art (fname, artist, album, -1, cover_avail_callback, dt);
     if (image_fname) {
         GdkPixbuf *pb = get_pixbuf (image_fname, width, callback, user_data);
         free (image_fname);
@@ -338,8 +338,9 @@ coverart_reset_queue (void) {
         tail = queue;
     }
     deadbeef->mutex_unlock (mutex);
-    if (coverart_plugin) {
-        coverart_plugin->reset (1);
+
+    if (artwork_plugin) {
+        artwork_plugin->reset (1);
     }
 }
 
@@ -348,52 +349,74 @@ cover_art_init (void) {
     terminate = 0;
     mutex = deadbeef->mutex_create_nonrecursive ();
     cond = deadbeef->cond_create ();
-    tid = deadbeef->thread_start_low_priority (loading_thread, NULL);
+    if (mutex && cond) {
+        tid = deadbeef->thread_start_low_priority (loading_thread, NULL);
+    }
+
+    if (tid) {
+        const DB_plugin_t *plugin = deadbeef->plug_get_for_id("artwork");
+        if (PLUG_TEST_COMPAT(plugin, 1, 2)) {
+            artwork_plugin = (DB_artwork_plugin_t *)plugin;
+        }
+    }
+}
+
+void
+cover_art_disconnect (void) {
+    if (artwork_plugin) {
+        const DB_artwork_plugin_t *plugin = artwork_plugin;
+        artwork_plugin = NULL;
+        trace("resetting artwork plugin...\n");
+        plugin->reset(0);
+    }
 }
 
 void
 cover_art_free (void) {
     trace ("terminating cover art loader...\n");
 
-    if (coverart_plugin) {
-        trace ("resetting artwork plugin...\n");
-        coverart_plugin->reset (0);
-    }
-    
     if (tid) {
         terminate = 1;
-        trace ("sending terminate signal to art loader thread...\n");
-        deadbeef->cond_signal (cond);
-        deadbeef->thread_join (tid);
+        trace("sending terminate signal to art loader thread...\n");
+        deadbeef->cond_signal(cond);
+        deadbeef->thread_join(tid);
         tid = 0;
     }
-    while (queue) {
-        queue_pop ();
+
+    if (cond) {
+        deadbeef->cond_free(cond);
+        cond = 0;
     }
+    if (mutex) {
+        while (queue) {
+            queue_pop();
+        }
+        deadbeef->mutex_free(mutex);
+        mutex = 0;
+    }
+
     for (int i = 0; i < CACHE_SIZE; i++) {
         if (cache[i].pixbuf) {
-            g_object_unref (cache[i].pixbuf);
+            g_object_unref(cache[i].pixbuf);
         }
     }
-    memset (cache, 0, sizeof (cache));
+    memset(cache, 0, sizeof(cache));
     if (pixbuf_default) {
-        g_object_unref (pixbuf_default);
+        g_object_unref(pixbuf_default);
         pixbuf_default = NULL;
     }
-    deadbeef->cond_free (cond);
-    cond = 0;
-    deadbeef->mutex_free (mutex);
-    mutex = 0;
+
+    trace("Cover art objects all freed\n");
 }
 
 GdkPixbuf *
 cover_get_default_pixbuf (void) {
-    if (!coverart_plugin) {
+    if (!artwork_plugin) {
         return NULL;
     }
     if (!pixbuf_default) {
         GError *error = NULL;
-        const char *defpath = coverart_plugin->get_default_cover ();
+        const char *defpath = artwork_plugin->get_default_cover ();
         pixbuf_default = gdk_pixbuf_new_from_file (defpath, &error);
         if (!pixbuf_default) {
             fprintf (stderr, "default cover: gdk_pixbuf_new_from_file %s failed, error: %s\n", defpath, error->message);

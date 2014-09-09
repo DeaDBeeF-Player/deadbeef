@@ -38,6 +38,9 @@ void
 cover_art_init (void);
 
 void
+cover_art_disconnect (void);
+
+void
 cover_art_free (void);
 
 // simply inserts callback point into queue
