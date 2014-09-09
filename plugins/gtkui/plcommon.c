@@ -173,10 +173,11 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
     if (cinf->id == DB_COLUMN_ALBUM_ART) {
         if (theming) {
 #if GTK_CHECK_VERSION(3,0,0)
+            cairo_save (cr);
             cairo_rectangle (cr, x, y, width, MAX (height,minheight));
             cairo_clip (cr);
             gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, theme_treeview, "cell_even_ruled", x-1, y, width+2, MAX (height,minheight));
-            cairo_reset_clip (cr);
+            cairo_restore (cr);
 #else
             GdkRectangle clip = {
                 .x = x,
