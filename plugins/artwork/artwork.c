@@ -1307,39 +1307,48 @@ flac_io_close (FLAC__IOHandle handle) {
     return 0;
 }
 
-static FLAC__StreamMetadata_Picture *
-flac_extract_art(FLAC__Metadata_Chain *chain, const char *filename)
-{
-    DB_FILE *file = deadbeef->fopen (filename);
-    if (!file) {
-        trace ("artwork: failed to open %s\n", filename);
-        return NULL;
+static FLAC__IOCallbacks flac_iocb = {
+    .read = flac_io_read,
+    .write = NULL,
+    .seek = flac_io_seek,
+    .tell = flac_io_tell,
+    .eof = NULL,
+    .close = NULL
+};
+
+static int
+flac_extract_art(const char *filename, const char *outname) {
+    int err = -1;
+    DB_FILE *file = NULL;
+    FLAC__Metadata_Iterator *iterator = NULL;
+
+    FLAC__Metadata_Chain *chain = FLAC__metadata_chain_new();
+    if (!chain) {
+        return -1;
     }
 
-    FLAC__IOCallbacks iocb = {
-        .read = flac_io_read,
-        .write = NULL,
-        .seek = flac_io_seek,
-        .tell = flac_io_tell,
-        .eof = NULL,
-        .close = NULL
-    };
-    int res = FLAC__metadata_chain_read_with_callbacks(chain, (FLAC__IOHandle)file, iocb);
+    file = deadbeef->fopen (filename);
+    if (!file) {
+        trace ("artwork: failed to open %s\n", filename);
+        goto error;
+    }
+
+    int res = FLAC__metadata_chain_read_with_callbacks(chain, (FLAC__IOHandle)file, flac_iocb);
 #if USE_OGG
     if (!res && FLAC__metadata_chain_status(chain) == FLAC__METADATA_SIMPLE_ITERATOR_STATUS_NOT_A_FLAC_FILE) {
-        res = FLAC__metadata_chain_read_ogg_with_callbacks(chain, (FLAC__IOHandle)file, iocb);
+        res = FLAC__metadata_chain_read_ogg_with_callbacks(chain, (FLAC__IOHandle)file, flac_iocb);
     }
 #endif
     deadbeef->fclose (file);
     if (!res) {
         trace ("artwork: failed to read metadata from flac: %s\n", filename);
-        return NULL;
+        goto error;
     }
 
     FLAC__StreamMetadata *picture = 0;
-    FLAC__Metadata_Iterator *iterator = FLAC__metadata_iterator_new();
+    iterator = FLAC__metadata_iterator_new();
     if (!iterator) {
-        return NULL;
+        goto error;
     }
     FLAC__metadata_iterator_init(iterator, chain);
     do {
@@ -1348,15 +1357,85 @@ flac_extract_art(FLAC__Metadata_Chain *chain, const char *filename)
             picture = block;
         }
     } while(FLAC__metadata_iterator_next(iterator) && 0 == picture);
-    FLAC__metadata_iterator_delete(iterator);
+
     if (!picture) {
         trace ("%s doesn't have an embedded cover\n", filename);
-        return NULL;
+        goto error;
     }
 
-    return &picture->data.picture;
+    
+    FLAC__StreamMetadata_Picture *pic = &picture->data.picture;
+    if (pic && pic->data_length > 0) {
+        trace("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
+        trace("will write flac cover art into %s\n", outname);
+        if (!write_file(outname, pic->data, pic->data_length)) {
+            err = 0;
+        }
+    }
+error:
+    if (chain) {
+        FLAC__metadata_chain_delete(chain);
+    }
+    if (iterator) {
+        FLAC__metadata_iterator_delete(iterator);
+    }
+    return err;
 }
 #endif
+
+static int
+id3_extract_art (const char *fname, const char *outname) {
+    int err = -1;
+
+    DB_id3v2_tag_t id3v2_tag;
+    memset(&id3v2_tag, 0, sizeof(id3v2_tag));
+    DB_FILE *id3v2_fp = deadbeef->fopen(fname);
+    if (id3v2_fp && !deadbeef->junk_id3v2_read_full(NULL, &id3v2_tag, id3v2_fp)) {
+        const int minor_version = id3v2_tag.version[0];
+        for (DB_id3v2_frame_t *f = id3v2_tag.frames; f; f = f->next) {
+            const uint8_t *image_data = id3v2_artwork(f, minor_version);
+            if (image_data) {
+                const size_t sz = f->size - (image_data - f->data);
+                trace("will write id3v2 APIC (%d bytes) into %s\n", sz, outname);
+                if (sz > 0 && !write_file(outname, image_data, sz)) {
+                    err = 0;
+                }
+            }
+        }
+    }
+    deadbeef->junk_id3v2_free(&id3v2_tag);
+    if (id3v2_fp) {
+        deadbeef->fclose(id3v2_fp);
+    }
+    return err;
+}
+
+static int
+apev2_extract_art (const char *fname, const char *outname) {
+    int err = -1;
+    DB_apev2_tag_t apev2_tag;
+    memset(&apev2_tag, 0, sizeof(apev2_tag));
+    DB_FILE *apev2_fp = deadbeef->fopen(fname);
+    if (apev2_fp && !deadbeef->junk_apev2_read_full(NULL, &apev2_tag, apev2_fp)) {
+        for (DB_apev2_frame_t *f = apev2_tag.frames; f; f = f->next) {
+            const uint8_t *image_data = apev2_artwork(f);
+            if (image_data) {
+                const size_t sz = f->size - (image_data - f->data);
+                trace("will write apev2 cover art (%d bytes) into %s\n", sz, outname);
+                if (sz > 0 && !write_file(outname, image_data, sz)) {
+                    err = 0;
+                }
+                break;
+            }
+        }
+
+    }
+    deadbeef->junk_apev2_free(&apev2_tag);
+    if (apev2_fp) {
+        deadbeef->fclose(apev2_fp);
+    }
+    return err;
+}
 
 static int
 process_scaled_query(const cover_query_t *query)
@@ -1400,66 +1479,25 @@ process_query(const cover_query_t *query)
         if (!flood_control) {
             looked_for_pic = 1;
 
+#ifdef USE_METAFLAC
+            // try to load embedded from flac metadata
+            trace("trying to load artwork from Flac tag for %s\n", query->fname);
+            if (!flac_extract_art(query->fname, cache_path)) {
+                return 1;
+            }
+#endif
+
             // try to load embedded from id3v2
             trace("trying to load artwork from id3v2 tag for %s\n", query->fname);
-            DB_id3v2_tag_t id3v2_tag;
-            memset(&id3v2_tag, 0, sizeof(id3v2_tag));
-            DB_FILE *id3v2_fp = deadbeef->fopen(query->fname);
-            if (id3v2_fp && !deadbeef->junk_id3v2_read_full(NULL, &id3v2_tag, id3v2_fp)) {
-                const int minor_version = id3v2_tag.version[0];
-                for (DB_id3v2_frame_t *f = id3v2_tag.frames; f; f = f->next) {
-                    const uint8_t *image_data = id3v2_artwork(f, minor_version);
-                    if (image_data) {
-                        const size_t sz = f->size - (image_data - f->data);
-                        trace("will write id3v2 APIC (%d bytes) into %s\n", sz, cache_path);
-                        if (sz > 0 && !write_file(cache_path, image_data, sz)) {
-                            return 1;
-                        }
-                    }
-                }
-
-                deadbeef->junk_id3v2_free(&id3v2_tag);
-                deadbeef->fclose(id3v2_fp);
+            if (!id3_extract_art (query->fname, cache_path)) {
+                return 1;
             }
 
             // try to load embedded from apev2
             trace("trying to load artwork from apev2 tag for %s\n", query->fname);
-            DB_apev2_tag_t apev2_tag;
-            memset(&apev2_tag, 0, sizeof(apev2_tag));
-            DB_FILE *apev2_fp = deadbeef->fopen(query->fname);
-            if (apev2_fp && !deadbeef->junk_apev2_read_full(NULL, &apev2_tag, apev2_fp)) {
-                for (DB_apev2_frame_t *f = apev2_tag.frames; f; f = f->next) {
-                    const uint8_t *image_data = apev2_artwork(f);
-                    if (image_data) {
-                        const size_t sz = f->size - (image_data - f->data);
-                        trace("will write apev2 cover art (%d bytes) into %s\n", sz, cache_path);
-                        if (sz > 0 && !write_file(cache_path, image_data, sz)) {
-                            return 1;
-                        }
-                        break;
-                    }
-                }
-
-                deadbeef->junk_apev2_free(&apev2_tag);
-                deadbeef->fclose(apev2_fp);
+            if (!apev2_extract_art (query->fname, cache_path)) {
+                return 1;
             }
-
-#ifdef USE_METAFLAC
-            // try to load embedded from flac metadata
-            trace("trying to load artwork from Flac tag for %s\n", query->fname);
-            FLAC__Metadata_Chain *chain = FLAC__metadata_chain_new();
-            if (chain) {
-                FLAC__StreamMetadata_Picture *pic = flac_extract_art(chain, query->fname);
-                if (pic && pic->data_length > 0) {
-                    trace("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
-                    trace("will write flac cover art into %s\n", cache_path);
-                    if (!write_file(cache_path, pic->data, pic->data_length)) {
-                        return 1;
-                    }
-                }
-                FLAC__metadata_chain_delete(chain);
-            }
-#endif
         }
     }
 
