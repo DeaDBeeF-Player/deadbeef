@@ -325,7 +325,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                 strcpy (text, "►");
             }
             else {
-                strcpy (text, "⋯⋯⋯");
+                strcpy (text, "⋯");
             }
         }
         else {

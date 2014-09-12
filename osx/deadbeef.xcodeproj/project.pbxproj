@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D0A002719C390E9006F7462 /* tf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A002519C390E9006F7462 /* tf.c */; };
+		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
 		2D2A135F19B6480E00AD1EB7 /* cgme.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2A135E19B6480E00AD1EB7 /* cgme.c */; };
 		2D2A140C19B6482600AD1EB7 /* Ay_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2A136019B6482600AD1EB7 /* Ay_Apu.cpp */; };
 		2D2A140D19B6482600AD1EB7 /* Ay_Apu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2A136119B6482600AD1EB7 /* Ay_Apu.h */; };
@@ -517,6 +519,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2D0A002519C390E9006F7462 /* tf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tf.c; sourceTree = "<group>"; };
+		2D0A002619C390E9006F7462 /* tf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tf.h; sourceTree = "<group>"; };
 		2D2A135A19B647CF00AD1EB7 /* gme.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = gme.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D2A135E19B6480E00AD1EB7 /* cgme.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cgme.c; path = plugins/gme/cgme.c; sourceTree = "<group>"; };
 		2D2A136019B6482600AD1EB7 /* Ay_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ay_Apu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ay_Apu.cpp"; sourceTree = "<group>"; };
@@ -1528,6 +1532,8 @@
 		4D1B3EB31837EC44003E6066 /* deadbeef */ = {
 			isa = PBXGroup;
 			children = (
+				2D0A002519C390E9006F7462 /* tf.c */,
+				2D0A002619C390E9006F7462 /* tf.h */,
 				2DA6F89F19A53334002151EB /* escape.h */,
 				2DA6F89B19A5332D002151EB /* escape.c */,
 				2DD9EF0419A5089F00189344 /* cocoautil.h */,
@@ -2052,6 +2058,7 @@
 				2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */,
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
+				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2484,6 +2491,7 @@
 				4D1B4F5F1837EC4A003E6066 /* streamer.c in Sources */,
 				4D1B4F4C1837EC4A003E6066 /* replaygain.c in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
+				2D0A002719C390E9006F7462 /* tf.c in Sources */,
 				4D1B515B1837F4E9003E6066 /* nullout.c in Sources */,
 				4D1B4AA11837EC49003E6066 /* pltmeta.c in Sources */,
 				4D1B4A171837EC49003E6066 /* dsppreset.c in Sources */,
