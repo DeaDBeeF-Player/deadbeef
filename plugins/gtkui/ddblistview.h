@@ -22,7 +22,7 @@
 #include <sys/time.h>
 #include <stdint.h>
 #include "drawing.h"
-#include "deadbeef/deadbeef.h"
+#include "../../deadbeef/deadbeef.h"
 
 // drag and drop targets
 enum {
