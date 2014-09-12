@@ -127,7 +127,9 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     
     deadbeef->listen_file_add_beginend (fileadd_begin, fileadd_end, NULL);
     deadbeef->listen_file_added (file_added, NULL);
-    
+
+    [self initColumns];
+
     g_appDelegate = self;
 }
 
@@ -356,8 +358,48 @@ static struct timeval last_br_update;
     return cnt;
 }
 
+typedef struct {
+    int _id; // predefined col type
+    char *format;
+    char *bytecode;
+    int bytecode_len;
+} col_info_t;
+
+static col_info_t columns[MAX_COLUMNS];
+static int ncolumns;
+
+void
+init_column (int i, int _id, const char *format) {
+    columns[i]._id = _id;
+    columns[i].format = strdup (format);
+    if (format) {
+        char *bytecode;
+        int res = deadbeef->tf_compile (format, &bytecode);
+        if (res >= 0) {
+            columns[i].bytecode = bytecode;
+            columns[i].bytecode_len = res;
+        }
+    }
+}
+
+- (void)initColumns {
+    init_column(ncolumns++, DB_COLUMN_PLAYING, "%playstatus%");
+    init_column(ncolumns++, -1, "%artist% - %album%");
+    init_column(ncolumns++, -1, "%track%");
+    init_column(ncolumns++, -1, "%title%");
+    init_column(ncolumns++, -1, "%length%");
+}
+
+- (void)tfRedraw:(id)userInfo
+{
+    [self.playlist reloadData];
+    [self.tfRedrawTimer invalidate];
+    self.tfRedrawTimer = nil;
+}
+
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex
 {
+    id ret = nil;
     DB_playItem_t *it = NULL;
     
     if (prevIdx != -1) {
@@ -383,49 +425,85 @@ static struct timeval last_br_update;
     prev = it;
     prevIdx = rowIndex;
 
-    if ([[aTableColumn identifier] isEqualToString:@"playing"]) {
-        DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
+    if ([[aTableColumn identifier] isEqualToString:@"playing"] && it == playing_track) {
         NSImage *img = NULL;
-        if (it == playing_track) {
-            int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
-            int buffering = !deadbeef->streamer_ok_to_read (-1);
-            if (paused) {
-                img = pauseImg;
-            }
-            else if (!buffering) {
-                img = playImg;
-            }
-            else {
-                img = bufferingImg;
-            }
+        int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+        int buffering = !deadbeef->streamer_ok_to_read (-1);
+        if (paused) {
+            img = pauseImg;
         }
-        if (playing_track) {
-            deadbeef->pl_item_unref (playing_track);
+        else if (!buffering) {
+            img = playImg;
         }
-        return img;
+        else {
+            img = bufferingImg;
+        }
+        ret = img;
     }
-    else if ([[aTableColumn identifier] isEqualToString:@"albumartist"]) {
-        char buf[1024];
-        deadbeef->pl_format_title (it, rowIndex, buf, sizeof (buf), -1, "%a - %b");
-        return [NSString stringWithUTF8String:buf];
+    else {
+        int cidx = -1;
+        // FIXME: nstableview can't render alternating text/image in one column
+        /*if ([[aTableColumn identifier] isEqualToString:@"playing"]) {
+            cidx = 0;
+        }
+        else*/
+        if ([[aTableColumn identifier] isEqualToString:@"albumartist"]) {
+            cidx = 1;
+        }
+        else if ([[aTableColumn identifier] isEqualToString:@"trknum"]) {
+            cidx = 2;
+        }
+        else if ([[aTableColumn identifier] isEqualToString:@"title"]) {
+            cidx = 3;
+        }
+        else if ([[aTableColumn identifier] isEqualToString:@"duration"]) {
+            cidx = 4;
+        }
+
+        if (cidx != -1) {
+            ddb_tf_context_t ctx = {
+                ._size = sizeof (ddb_tf_context_t),
+                .it = it,
+                .plt = deadbeef->plt_get_curr (),
+                .idx = -1,
+                .id = columns[cidx]._id
+            };
+            char text[1024] = "";
+            deadbeef->tf_eval (&ctx, columns[cidx].bytecode, columns[cidx].bytecode_len, text, sizeof (text));
+            if (ctx.update > 0 && !self.tfRedrawTimer) {
+                if (ctx.idx >= 0) {
+                    self.tf_redraw_track_idx = ctx.idx;
+                }
+                else {
+                    self.tf_redraw_track_idx = deadbeef->plt_get_item_idx (ctx.plt, it, PL_MAIN);
+                }
+                self.tfRedrawTimer = [NSTimer timerWithTimeInterval:ctx.update*0.001f target:self selector:@selector(tfRedraw:) userInfo:nil repeats:YES];
+                [[NSRunLoop currentRunLoop] addTimer:self.tfRedrawTimer forMode:NSDefaultRunLoopMode];
+                self.tf_redraw_track = it;
+                deadbeef->pl_item_ref (it);
+            }
+            if (ctx.plt) {
+                deadbeef->plt_unref (ctx.plt);
+                ctx.plt = NULL;
+            }
+            char *lb = strchr (text, '\r');
+            if (lb) {
+                *lb = 0;
+            }
+            lb = strchr (text, '\n');
+            if (lb) {
+                *lb = 0;
+            }
+            ret = [NSString stringWithUTF8String:text];
+        }
     }
-    else if ([[aTableColumn identifier] isEqualToString:@"trknum"]) {
-        char buf[1024];
-        deadbeef->pl_format_title (it, rowIndex, buf, sizeof (buf), -1, "%n");
-        return [NSString stringWithUTF8String:buf];
+
+    if (playing_track) {
+        deadbeef->pl_item_unref (playing_track);
     }
-    else if ([[aTableColumn identifier] isEqualToString:@"title"]) {
-        char buf[1024];
-        deadbeef->pl_format_title (it, rowIndex, buf, sizeof (buf), -1, "%t");
-        return [NSString stringWithUTF8String:buf];
-    }
-    else if ([[aTableColumn identifier] isEqualToString:@"duration"]) {
-        char buf[1024];
-        deadbeef->pl_format_title (it, rowIndex, buf, sizeof (buf), -1, "%l");
-        return [NSString stringWithUTF8String:buf];
-    }
-    
-    return @"Hello";
+
+    return ret;
 }
 
 - (IBAction)openFilesAction:(id)sender {

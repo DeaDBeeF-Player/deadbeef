@@ -93,7 +93,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 7
+#define DB_API_VERSION_MINOR 8
 
 #define DDB_DEPRECATED(x)
 
