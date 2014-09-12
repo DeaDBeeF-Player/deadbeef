@@ -329,6 +329,7 @@ ddb_listview_init(DdbListview *listview)
     listview->columns = NULL;
     listview->lock_columns = 1;
     listview->groups = NULL;
+    listview->plt = NULL;
 
     listview->block_redraw_on_scroll = 0;
     listview->calculated_grouptitle_height = DEFAULT_GROUP_TITLE_HEIGHT;
@@ -3206,6 +3207,10 @@ ddb_listview_free_groups (DdbListview *listview) {
         free (listview->groups);
         listview->groups = next;
     }
+    if (listview->plt) {
+        deadbeef->plt_unref (listview->plt);
+        listview->plt = NULL;
+    }
 }
 
 void
@@ -3214,6 +3219,9 @@ ddb_listview_build_groups (DdbListview *listview) {
     int old_height = listview->fullheight;
     listview->groups_build_idx = listview->binding->modification_idx ();
     ddb_listview_free_groups (listview);
+
+    listview->plt = deadbeef->plt_get_curr ();
+
     listview->fullheight = 0;
 
     DdbListviewGroup *grp = NULL;
@@ -3240,9 +3248,6 @@ ddb_listview_build_groups (DdbListview *listview) {
             grp->num_items = listview->binding->count ();
             listview->grouptitle_height = 0;
             grp->height = listview->grouptitle_height + grp->num_items * listview->rowheight;
-//            if (grp->height < min_height) {
-//                grp->height = min_height;
-//            }
             listview->fullheight = grp->height;
             listview->fullheight += listview->grouptitle_height;
             deadbeef->pl_unlock ();
