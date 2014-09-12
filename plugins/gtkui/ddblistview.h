@@ -22,6 +22,7 @@
 #include <sys/time.h>
 #include <stdint.h>
 #include "drawing.h"
+#include "deadbeef/deadbeef.h"
 
 // drag and drop targets
 enum {
@@ -164,6 +165,7 @@ struct _DdbListview {
     struct _DdbListviewColumn *columns;
     gboolean lock_columns;
 
+    ddb_playlist_t *plt; // current playlist (refcounted), must be unreffed with the group
     struct _DdbListviewGroup *groups;
     int groups_build_idx; // must be the same as playlist modification idx
     int fullheight;
