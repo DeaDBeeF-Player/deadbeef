@@ -894,7 +894,7 @@ plug_load_all (void) {
         }
         load_plugin_dir (plugdir, 1);
     }
-    printf ("load gui plugin\n");
+    trace ("load gui plugin\n");
     load_gui_plugin (plugins_dirs);
 #endif
 
