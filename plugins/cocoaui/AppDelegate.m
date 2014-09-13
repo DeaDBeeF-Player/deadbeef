@@ -511,9 +511,9 @@ init_column (int i, int _id, const char *format) {
     [openDlg setCanChooseFiles:YES];
     [openDlg setAllowsMultipleSelection:YES];
     [openDlg setCanChooseDirectories:NO];
-    if ( [openDlg runModalForDirectory:nil file:nil] == NSOKButton )
+    if ( [openDlg runModal] == NSOKButton )
     {
-        NSArray* files = [openDlg filenames];
+        NSArray* files = [openDlg URLs];
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         deadbeef->plt_clear(plt);
         if (plt) {
@@ -522,8 +522,10 @@ init_column (int i, int _id, const char *format) {
                 dispatch_async(aQueue, ^{
                     for( int i = 0; i < [files count]; i++ )
                     {
-                        NSString* fileName = [files objectAtIndex:i];
-                        deadbeef->plt_add_file2 (0, plt, [fileName UTF8String], NULL, NULL);
+                        NSString* fileName = [[files objectAtIndex:i] path];
+                        if (fileName) {
+                            deadbeef->plt_add_file2 (0, plt, [fileName UTF8String], NULL, NULL);
+                        }
                     }
                     deadbeef->plt_add_files_end (plt, 0);
                     deadbeef->plt_unref (plt);
@@ -545,9 +547,9 @@ init_column (int i, int _id, const char *format) {
     [openDlg setCanChooseFiles:NO];
     [openDlg setAllowsMultipleSelection:YES];
     [openDlg setCanChooseDirectories:YES];
-    if ( [openDlg runModalForDirectory:nil file:nil] == NSOKButton )
+    if ( [openDlg runModal] == NSOKButton )
     {
-        NSArray* files = [openDlg filenames];
+        NSArray* files = [openDlg URLs];
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         if (plt) {
             if (!deadbeef->plt_add_files_begin (plt, 0)) {
@@ -555,8 +557,10 @@ init_column (int i, int _id, const char *format) {
                 dispatch_async(aQueue, ^{
                     for( int i = 0; i < [files count]; i++ )
                     {
-                        NSString* fileName = [files objectAtIndex:i];
-                        deadbeef->plt_add_dir2 (0, plt, [fileName UTF8String], NULL, NULL);
+                        NSString *fileName = [[files objectAtIndex:i] path];
+                        if (fileName) {
+                            deadbeef->plt_add_dir2 (0, plt, [fileName UTF8String], NULL, NULL);
+                        }
                     }
                     deadbeef->plt_add_files_end (plt, 0);
                     deadbeef->plt_unref (plt);
