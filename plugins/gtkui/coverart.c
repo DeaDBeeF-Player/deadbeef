@@ -355,7 +355,7 @@ cover_art_init (void) {
 
     if (tid) {
         const DB_plugin_t *plugin = deadbeef->plug_get_for_id("artwork");
-        if (PLUG_TEST_COMPAT(plugin, 1, 2)) {
+        if (plugin && PLUG_TEST_COMPAT(plugin, 1, 2)) {
             artwork_plugin = (DB_artwork_plugin_t *)plugin;
         }
     }
