@@ -72,10 +72,6 @@ GtkWidget *searchwin;
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
 
-// playlist theming
-GtkWidget *theme_treeview;
-GtkWidget *theme_button;
-
 static int gtkui_accept_messages = 0;
 
 static gint refresh_timeout = 0;
@@ -113,19 +109,6 @@ int gtkui_unicode_playstate = 0;
 int gtkui_disable_seekbar_overlay = 0;
 
 #define TRAY_ICON "deadbeef_tray_icon"
-
-// that must be called before gtk_init
-void
-gtkpl_init (void) {
-    theme_treeview = gtk_tree_view_new ();
-    gtk_widget_show (theme_treeview);
-    gtk_widget_set_can_focus (theme_treeview, FALSE);
-    GtkWidget *vbox1 = lookup_widget (mainwin, "vbox1");
-    gtk_box_pack_start (GTK_BOX (vbox1), theme_treeview, FALSE, FALSE, 0);
-    gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (theme_treeview), TRUE);
-
-    theme_button = mainwin;//lookup_widget (mainwin, "stopbtn");
-}
 
 void
 gtkpl_free (DdbListview *pl) {
@@ -996,7 +979,7 @@ gtkui_thread (void *ctx) {
     gtk_widget_set_events (GTK_WIDGET (mainwin), gtk_widget_get_events (GTK_WIDGET (mainwin)) | GDK_SCROLL_MASK);
 #endif
 
-    gtkpl_init ();
+    pl_common_init();
 
     GtkIconTheme *theme = gtk_icon_theme_get_default();
     if (gtk_icon_theme_has_icon(theme, "deadbeef")) {
@@ -1090,11 +1073,8 @@ gtkui_thread (void *ctx) {
     trkproperties_destroy ();
     progress_destroy ();
     gtkui_hide_status_icon ();
+    pl_common_free();
 //    draw_free ();
-    if (theme_treeview) {
-        gtk_widget_destroy (theme_treeview);
-        theme_treeview = NULL;
-    }
     if (mainwin) {
         gtk_widget_destroy (mainwin);
         mainwin = NULL;
