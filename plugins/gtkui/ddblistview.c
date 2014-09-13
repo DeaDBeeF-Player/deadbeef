@@ -804,7 +804,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
         idx += grp->num_items + 1;
         abs_idx += grp->num_items;
 
-        DdbListviewIter prev = listview->binding->prev (it);
         int filler = grp_height_total - (grp_height);
         if (filler > 0) {
             int theming = !gtkui_override_listview_colors ();
@@ -846,9 +845,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
             }
         }
 
-        if (prev) {
-            listview->binding->unref (prev);
-        }
         if (it) {
             listview->binding->unref (it);
         }
