@@ -75,7 +75,7 @@ search_destroy (void) {
     searchwin = NULL;
 }
 
-void
+static void
 search_process (const char *text) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->plt_search_process (plt, text);
@@ -283,23 +283,18 @@ int search_get_idx (DdbListviewIter it) {
     return idx;
 }
 
-int
+static int
 search_is_selected (DdbListviewIter it) {
     return deadbeef->pl_is_selected ((DB_playItem_t *)it);
 }
 
-void
+static void
 search_select (DdbListviewIter it, int sel) {
     deadbeef->pl_set_selected ((DB_playItem_t *)it, sel);
     deadbeef->sendmessage (DB_EV_SELCHANGED, 0, deadbeef->plt_get_curr_idx (), PL_SEARCH);
 }
 
-int
-search_get_group (DdbListviewIter it, char *str, int size) {
-    return -1;
-}
-
-void
+static void
 search_col_sort (int col, int sort_order, void *user_data) {
     col_info_t *c = (col_info_t*)user_data;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -309,14 +304,14 @@ search_col_sort (int col, int sort_order, void *user_data) {
 
 static int lock_column_config = 0;
 
-void
+static void
 search_columns_changed (DdbListview *listview) {
     if (!lock_column_config) {
         rewrite_column_config (listview, "search");
     }
 }
 
-void
+static void
 search_column_size_changed (DdbListview *listview, int col) {
     const char *title;
     int width;
@@ -331,7 +326,8 @@ search_column_size_changed (DdbListview *listview, int col) {
     }
 }
 
-void search_col_free_user_data (void *data) {
+static void
+search_col_free_user_data (void *data) {
     if (data) {
         col_info_t *inf = data;
         if (inf->format) {
@@ -341,22 +337,24 @@ void search_col_free_user_data (void *data) {
     }
 }
 
-void search_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx) {
+static void
+search_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx) {
     deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, deadbeef->pl_get_idx_of ((DB_playItem_t *)iter), 0);
 }
 
-void search_selection_changed (DdbListview *ps, DdbListviewIter it, int idx) {
+static void
+search_selection_changed (DdbListview *ps, DdbListviewIter it, int idx) {
     deadbeef->sendmessage (DB_EV_SELCHANGED, (uintptr_t)ps, -1, -1);
 }
 
-void
+static void
 search_delete_selected (void) {
     deadbeef->pl_delete_selected ();
     main_refresh ();
     search_refresh ();
 }
 
-void
+static void
 search_header_context_menu (DdbListview *ps, int column) {
     GtkWidget *menu = create_headermenu (0);
     set_last_playlist_cm (ps); // playlist ptr for context menu
@@ -364,7 +362,7 @@ search_header_context_menu (DdbListview *ps, int column) {
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
 }
 
-DdbListviewBinding search_binding = {
+static DdbListviewBinding search_binding = {
     // rows
     .count = search_get_count,
     .sel_count = search_get_sel_count,
@@ -383,13 +381,13 @@ DdbListviewBinding search_binding = {
     .is_selected = search_is_selected,
     .select = search_select,
 
-    .get_group = search_get_group,
+    .get_group = pl_common_get_group,
 
     .drag_n_drop = NULL,
     .external_drag_n_drop = NULL,
 
     .draw_column_data = draw_column_data,
-    .draw_group_title = NULL,
+    .draw_group_title = pl_common_draw_group_title,
 
     // columns
     .col_sort = search_col_sort,
