@@ -356,7 +356,7 @@ search_delete_selected (void) {
 
 static void
 search_header_context_menu (DdbListview *ps, int column) {
-    GtkWidget *menu = create_headermenu (0);
+    GtkWidget *menu = create_headermenu (1);
     set_last_playlist_cm (ps); // playlist ptr for context menu
     set_active_column_cm (column);
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
