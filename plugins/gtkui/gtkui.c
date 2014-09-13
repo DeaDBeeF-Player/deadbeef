@@ -949,12 +949,9 @@ gtkui_thread (void *ctx) {
 
     // let's start some gtk
     g_thread_init (NULL);
-#ifndef __FreeBSD__
-    // this call makes gtk_main hang on freebsd for unknown reason
-    // however, if we don't have this call, deadbeef will crash randomly on
-    // gentoo linux
     gdk_threads_init ();
-#endif
+    gdk_threads_enter ();
+
     gtk_init (&argc, (char ***)&argv);
 
     // register widget types
@@ -1078,6 +1075,7 @@ gtkui_thread (void *ctx) {
     gtkui_is_retina = is_retina (mainwin);
 #endif
     gtk_main ();
+
     deadbeef->unlisten_file_added (fileadded_listener_id);
     deadbeef->unlisten_file_add_beginend (fileadd_beginend_listener_id);
 
@@ -1105,6 +1103,7 @@ gtkui_thread (void *ctx) {
         gtk_widget_destroy (searchwin);
         searchwin = NULL;
     }
+    gdk_threads_leave ();
     return 0;
 }
 
