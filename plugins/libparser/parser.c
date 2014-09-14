@@ -113,7 +113,7 @@ const char *
 gettoken_warn_eof (const char *p, char *tok) {
     p = gettoken (p, tok);
     if (!p) {
-        fprintf (stderr, "parser: unexpected eof at line %d", parser_line);
+        fprintf (stderr, "parser: unexpected eof at line %d\n", parser_line);
     }
     return p;
 }
@@ -122,7 +122,7 @@ const char *
 gettoken_err_eof (const char *p, char *tok) {
     p = gettoken (p, tok);
     if (!p) {
-        fprintf (stderr, "parser: unexpected eof at line %d", parser_line);
+        fprintf (stderr, "parser: unexpected eof at line %d\n", parser_line);
         exit (-1);
     }
     return p;

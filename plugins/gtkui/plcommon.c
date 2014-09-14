@@ -41,14 +41,54 @@
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
 
-char group_by_str[MAX_GROUP_BY_STR];
+#define MAX_GROUP_BY_STR 100
+static char group_by_str[MAX_GROUP_BY_STR];
 
-extern GtkWidget *theme_treeview;
-extern GdkPixbuf *play16_pixbuf;
-extern GdkPixbuf *pause16_pixbuf;
-extern GdkPixbuf *buffering16_pixbuf;
+// playlist theming
+GtkWidget *theme_button;
+GtkWidget *theme_treeview;
+static GdkPixbuf *play16_pixbuf;
+static GdkPixbuf *pause16_pixbuf;
+static GdkPixbuf *buffering16_pixbuf;
 
 static int clicked_idx = -1;
+
+void
+pl_common_init(void)
+{
+    play16_pixbuf = create_pixbuf("play_16.png");
+    pause16_pixbuf = create_pixbuf("pause_16.png");
+    buffering16_pixbuf = create_pixbuf("buffering_16.png");
+
+    deadbeef->conf_lock ();
+    strncpy (group_by_str, deadbeef->conf_get_str_fast ("playlist.group_by", ""), sizeof (group_by_str));
+    deadbeef->conf_unlock ();
+    group_by_str[sizeof (group_by_str)-1] = 0;
+
+    gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups", 0);
+
+    theme_treeview = gtk_tree_view_new ();
+    gtk_widget_show (theme_treeview);
+    gtk_widget_set_can_focus (theme_treeview, FALSE);
+    GtkWidget *vbox1 = lookup_widget (mainwin, "vbox1");
+    gtk_box_pack_start (GTK_BOX (vbox1), theme_treeview, FALSE, FALSE, 0);
+    gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (theme_treeview), TRUE);
+
+    theme_button = mainwin;//lookup_widget (mainwin, "stopbtn");
+}
+
+void
+pl_common_free (void)
+{
+    if (theme_treeview) {
+        gtk_widget_destroy (theme_treeview);
+        theme_treeview = NULL;
+    }
+
+    g_object_unref(play16_pixbuf);
+    g_object_unref(pause16_pixbuf);
+    g_object_unref(buffering16_pixbuf);
+}
 
 void
 write_column_config (const char *name, int idx, const char *title, int width, int align_right, int id, int color_override, GdkColor color, const char *format) {
@@ -382,7 +422,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
     }
 }
 
-void
+static void
 main_add_to_playback_queue_activate     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
@@ -1375,5 +1415,54 @@ add_column_helper (DdbListview *listview, const char *title, int width, int id, 
     inf->format = strdup (format);
     GdkColor color = { 0, 0, 0, 0 };
     ddb_listview_column_append (listview, title, width, align_right, id == DB_COLUMN_ALBUM_ART ? width : 0, 0, color, inf);
+}
+
+int
+pl_common_get_group (DdbListviewIter it, char *str, int size) {
+    if (!group_by_str || !group_by_str[0]) {
+        return -1;
+    }
+    deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, size, -1, group_by_str);
+    char *lb = strchr (str, '\r');
+    if (lb) {
+        *lb = 0;
+    }
+    lb = strchr (str, '\n');
+    if (lb) {
+        *lb = 0;
+    }
+    return 0;
+}
+
+void
+pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height) {
+    if (group_by_str && group_by_str[0]) {
+        char str[1024];
+        deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, sizeof (str), -1, group_by_str);
+        char *lb = strchr (str, '\r');
+        if (lb) {
+            *lb = 0;
+        }
+        lb = strchr (str, '\n');
+        if (lb) {
+            *lb = 0;
+        }
+        int theming = !gtkui_override_listview_colors ();
+        if (theming) {
+            GdkColor *clr = &gtk_widget_get_style(theme_treeview)->fg[GTK_STATE_NORMAL];
+            float rgb[] = {clr->red/65535.f, clr->green/65535.f, clr->blue/65535.f};
+            draw_set_fg_color (&listview->grpctx, rgb);
+        }
+        else {
+            GdkColor clr;
+            gtkui_get_listview_group_text_color (&clr);
+            float rgb[] = {clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f};
+            draw_set_fg_color (&listview->grpctx, rgb);
+        }
+        int ew, eh;
+        draw_get_text_extents (&listview->grpctx, str, -1, &ew, &eh);
+        draw_text_custom (&listview->grpctx, x + 5, y + height/2 - draw_get_listview_rowheight (&listview->grpctx)/2 + 3, ew+5, 0, DDB_GROUP_FONT, 0, 0, str);
+        draw_line (&listview->grpctx, x + 5 + ew + 3, y+height/2, x + width, y+height/2);
+    }
 }
 
