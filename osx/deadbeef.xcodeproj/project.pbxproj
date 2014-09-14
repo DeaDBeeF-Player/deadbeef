@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		2D0A002719C390E9006F7462 /* tf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A002519C390E9006F7462 /* tf.c */; };
 		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
+		2D0B1C8419C5B9FC00CED0B5 /* PlaylistDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0B1C8219C5B9FC00CED0B5 /* PlaylistDelegate.h */; };
+		2D0B1C8519C5B9FC00CED0B5 /* PlaylistDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0B1C8319C5B9FC00CED0B5 /* PlaylistDelegate.m */; };
 		2D2A135F19B6480E00AD1EB7 /* cgme.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2A135E19B6480E00AD1EB7 /* cgme.c */; };
 		2D2A140C19B6482600AD1EB7 /* Ay_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2A136019B6482600AD1EB7 /* Ay_Apu.cpp */; };
 		2D2A140D19B6482600AD1EB7 /* Ay_Apu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2A136119B6482600AD1EB7 /* Ay_Apu.h */; };
@@ -253,6 +255,8 @@
 		2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3E419B11539009B5BC6 /* DdbPlaceholderWidget.h */; };
 		2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3E519B11539009B5BC6 /* DdbPlaceholderWidget.m */; };
 		2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */; };
+		2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEF494219C4DB4100B718C1 /* DdbListview.h */; };
+		2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF494319C4DB4100B718C1 /* DdbListview.m */; };
 		4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A071837EC49003E6066 /* conf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ECE1837EC44003E6066 /* conf.c */; };
@@ -521,6 +525,8 @@
 /* Begin PBXFileReference section */
 		2D0A002519C390E9006F7462 /* tf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tf.c; sourceTree = "<group>"; };
 		2D0A002619C390E9006F7462 /* tf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tf.h; sourceTree = "<group>"; };
+		2D0B1C8219C5B9FC00CED0B5 /* PlaylistDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaylistDelegate.h; sourceTree = "<group>"; };
+		2D0B1C8319C5B9FC00CED0B5 /* PlaylistDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaylistDelegate.m; sourceTree = "<group>"; };
 		2D2A135A19B647CF00AD1EB7 /* gme.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = gme.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D2A135E19B6480E00AD1EB7 /* cgme.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cgme.c; path = plugins/gme/cgme.c; sourceTree = "<group>"; };
 		2D2A136019B6482600AD1EB7 /* Ay_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ay_Apu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ay_Apu.cpp"; sourceTree = "<group>"; };
@@ -767,6 +773,8 @@
 		2DE1D3E419B11539009B5BC6 /* DdbPlaceholderWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbPlaceholderWidget.h; path = widgets/DdbPlaceholderWidget.h; sourceTree = "<group>"; };
 		2DE1D3E519B11539009B5BC6 /* DdbPlaceholderWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbPlaceholderWidget.m; path = widgets/DdbPlaceholderWidget.m; sourceTree = "<group>"; };
 		2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = bufferingTemplate.pdf; path = images/bufferingTemplate.pdf; sourceTree = "<group>"; };
+		2DEF494219C4DB4100B718C1 /* DdbListview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbListview.h; sourceTree = "<group>"; };
+		2DEF494319C4DB4100B718C1 /* DdbListview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbListview.m; sourceTree = "<group>"; };
 		4D011FFC19AB9589005499B4 /* coreaudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = coreaudio.c; sourceTree = "<group>"; };
 		4D1B3E7A18379829003E6066 /* deadbeef.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deadbeef.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D1B3E7D18379829003E6066 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -1061,6 +1069,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2D0B1C8619C5CF4A00CED0B5 /* Supporting files */ = {
+			isa = PBXGroup;
+			children = (
+				4DA72BE61838EAAB00A98C62 /* main.m */,
+				4DA72BDE1838EAAB00A98C62 /* deadbeef-Info.plist */,
+				4DA72BDF1838EAAB00A98C62 /* deadbeef-Prefix.pch */,
+				4DA72BE01838EAAB00A98C62 /* en.lproj */,
+				4DA72BE51838EAAB00A98C62 /* Images.xcassets */,
+			);
+			name = "Supporting files";
+			sourceTree = "<group>";
+		};
 		2D2A135519B647BB00AD1EB7 /* gme */ = {
 			isa = PBXGroup;
 			children = (
@@ -1857,15 +1877,15 @@
 			isa = PBXGroup;
 			children = (
 				2DE1D3DF19B11286009B5BC6 /* widgets */,
-				4D2362B218395D0300C9E818 /* images */,
 				4DA72BD91838EAAB00A98C62 /* AppDelegate.h */,
 				4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */,
+				2DEF494219C4DB4100B718C1 /* DdbListview.h */,
+				2DEF494319C4DB4100B718C1 /* DdbListview.m */,
+				2D0B1C8219C5B9FC00CED0B5 /* PlaylistDelegate.h */,
+				2D0B1C8319C5B9FC00CED0B5 /* PlaylistDelegate.m */,
 				4DA72BDC1838EAAB00A98C62 /* MainMenu.xib */,
-				4DA72BDE1838EAAB00A98C62 /* deadbeef-Info.plist */,
-				4DA72BDF1838EAAB00A98C62 /* deadbeef-Prefix.pch */,
-				4DA72BE01838EAAB00A98C62 /* en.lproj */,
-				4DA72BE51838EAAB00A98C62 /* Images.xcassets */,
-				4DA72BE61838EAAB00A98C62 /* main.m */,
+				4D2362B218395D0300C9E818 /* images */,
+				2D0B1C8619C5CF4A00CED0B5 /* Supporting files */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -2055,9 +2075,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
+				2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */,
 				2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */,
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
+				2D0B1C8419C5B9FC00CED0B5 /* PlaylistDelegate.h in Headers */,
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 			);
@@ -2469,6 +2491,7 @@
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
 				4D1B4F021837EC4A003E6066 /* plugins.c in Sources */,
 				4D1B4A9F1837EC49003E6066 /* playlist.c in Sources */,
+				2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */,
 				4D1B4A931837EC49003E6066 /* messagepump.c in Sources */,
 				4D1B4A921837EC49003E6066 /* md5.c in Sources */,
 				2DD9EF0719A5089F00189344 /* cocoautil.m in Sources */,
@@ -2487,6 +2510,7 @@
 				4D1B4A0F1837EC49003E6066 /* ConvertUTF.c in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
+				2D0B1C8519C5B9FC00CED0B5 /* PlaylistDelegate.m in Sources */,
 				2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */,
 				4D1B4F5F1837EC4A003E6066 /* streamer.c in Sources */,
 				4D1B4F4C1837EC4A003E6066 /* replaygain.c in Sources */,

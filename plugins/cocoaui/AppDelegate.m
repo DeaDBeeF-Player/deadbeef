@@ -25,6 +25,7 @@
 #include "../../deadbeef.h"
 #import "dispatch/dispatch.h"
 #include <sys/time.h>
+#import "PlaylistDelegate.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -129,6 +130,10 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     deadbeef->listen_file_added (file_added, NULL);
 
     [self initColumns];
+
+    PlaylistDelegate *del = [[PlaylistDelegate alloc] init];
+    [self.ddbListview setDelegate:(id<DdbListviewDelegate>)del];
+    [self.ddbListview setNeedsDisplay:YES];
 
     g_appDelegate = self;
 }

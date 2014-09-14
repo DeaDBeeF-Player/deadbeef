@@ -22,7 +22,8 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#import "widgets/DdbTabStrip.h"
+#import "DdbTabStrip.h"
+#import "DdbListview.h"
 #include "deadbeef.h"
 
 #define MAX_COLUMNS 20
@@ -38,6 +39,7 @@
 @property (assign) IBOutlet NSWindow *window;
 @property (unsafe_unretained) IBOutlet NSTableView *playlist;
 @property (unsafe_unretained) IBOutlet DdbTabStrip *tabStrip;
+@property (unsafe_unretained) IBOutlet DdbListview *ddbListview;
 
 
 @property (unsafe_unretained) IBOutlet NSWindow *addFilesWindow;
