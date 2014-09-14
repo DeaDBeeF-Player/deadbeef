@@ -32,6 +32,7 @@
 #include "drawing.h"
 #include "gtkui.h"
 #include "support.h"
+#include "callbacks.h"
 #include "actionhandlers.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
