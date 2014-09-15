@@ -20,6 +20,7 @@
 #include <sys/time.h>
 #include <string.h>
 #include <stdlib.h>
+#include <pthread.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <assert.h>
@@ -63,7 +64,7 @@ typedef struct load_query_s {
 } load_query_t;
 
 static cached_pixbuf_t cache[CACHE_SIZE];
-static int terminate = 0;
+static int terminate;
 static uintptr_t mutex;
 static uintptr_t cond;
 static uintptr_t tid;
@@ -72,7 +73,7 @@ load_query_t *tail;
 
 static void
 queue_add (const char *fname, int width, void (*callback) (void *user_data), void *user_data) {
-    deadbeef->mutex_lock (mutex);
+    trace("coverart: queue_add %s\n", fname);
     load_query_t *q;
     if (fname) {
         for (q = queue; q; q = q->next) {
@@ -103,13 +104,11 @@ queue_add (const char *fname, int width, void (*callback) (void *user_data), voi
     else {
         queue = tail = q;
     }
-    deadbeef->mutex_unlock (mutex);
     deadbeef->cond_signal (cond);
 }
 
 static void
 queue_pop (void) {
-    deadbeef->mutex_lock (mutex);
     load_query_t *next = queue->next;
     if (queue->fname) {
         free (queue->fname);
@@ -119,7 +118,6 @@ queue_pop (void) {
     if (!queue) {
         tail = NULL;
     }
-    deadbeef->mutex_unlock (mutex);
 }
 
 void
@@ -127,86 +125,70 @@ loading_thread (void *none) {
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-gtkui-artwork", 0, 0, 0, 0);
 #endif
-    for (;;) {
-        trace ("covercache: waiting for signal\n");
-        deadbeef->cond_wait (cond, mutex);
-        trace ("covercache: signal received (terminate=%d, queue=%p)\n", terminate, queue);
-        deadbeef->mutex_unlock (mutex);
+    deadbeef->mutex_lock(mutex);
+    while (!terminate) {
+        trace("covercache: waiting for signal...\n");
+        pthread_cond_wait((pthread_cond_t *)cond, (pthread_mutex_t *)mutex);
+        trace("covercache: signal received (terminate=%d, queue=%p)\n", terminate, queue);
         while (!terminate && queue) {
-            int cache_min = 0;
-            deadbeef->mutex_lock (mutex);
-            for (int i = 0; i < CACHE_SIZE; i++) {
-                if (!cache[i].pixbuf) {
-                    cache_min = i;
-                    break;
-                }
-                if (cache[cache_min].pixbuf && cache[i].pixbuf) {
-                    if (cache[cache_min].tm.tv_sec > cache[i].tm.tv_sec) {
-                        cache_min = i;
-                    }
-                }
-            }
-            if (cache_min != -1) {
-                if (cache[cache_min].pixbuf) {
-                    g_object_unref (cache[cache_min].pixbuf);
-                    cache[cache_min].pixbuf = NULL;
-                }
-                if (cache[cache_min].fname) {
-                    free (cache[cache_min].fname);
-                    cache[cache_min].fname = NULL;
-                }
-            }
-            deadbeef->mutex_unlock (mutex);
-            if (!queue->fname) {
-                for (int i = 0; i < queue->numcb; i++) {
-                    if (queue->callbacks[i].cb) {
-                        queue->callbacks[i].cb (queue->callbacks[i].ud);
-                    }
-                }
-                queue_pop ();
-                continue;
-            }
-
-            if (cache_min == -1) {
-                trace ("coverart pixbuf cache overflow, waiting...\n");
-                usleep (500000);
-                continue;
-            }
+            deadbeef->mutex_unlock(mutex);
             GdkPixbuf *pixbuf = NULL;
-            GError *error = NULL;
             struct stat stat_buf;
-            if (!stat (queue->fname, &stat_buf)) {
-                pixbuf = gdk_pixbuf_new_from_file_at_scale (queue->fname, queue->width, queue->width, TRUE, &error);
+            if (!stat(queue->fname, &stat_buf)) {
+                GError *error = NULL;
+                pixbuf = gdk_pixbuf_new_from_file_at_scale(queue->fname, queue->width, queue->width, TRUE, &error);
                 if (error) {
                     //fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", queue->fname, queue->width, error ? error->message : "n/a");
-                    g_error_free (error);
-                    error = NULL;
+                    g_error_free(error);
                 }
             }
             if (!pixbuf) {
                 pixbuf = cover_get_default_pixbuf();
             }
-            if (cache_min != -1) {
-                deadbeef->mutex_lock (mutex);
-                cache[cache_min].pixbuf = pixbuf;
-                cache[cache_min].fname = strdup (queue->fname);
-                cache[cache_min].file_time = stat_buf.st_mtime;
-                gettimeofday (&cache[cache_min].tm, NULL);
-                cache[cache_min].width = queue->width;
-                deadbeef->mutex_unlock (mutex);
-            }
+            trace("covercache: loaded pixbuf %s\n", queue->fname);
 
-            for (int i = 0; i < queue->numcb; i++) {
+            deadbeef->mutex_lock(mutex);
+            size_t cache_idx = 0;
+            while (cache[cache_idx].pixbuf && cache_idx++ < CACHE_SIZE);
+            if (cache_idx == CACHE_SIZE) {
+                cache_idx = 0;
+                struct timeval min_time = cache[0].tm;
+                for (size_t i = 1; i < CACHE_SIZE; i++) {
+                    if (cache[i].tm.tv_sec < min_time.tv_sec ||
+                        cache[i].tm.tv_sec == min_time.tv_sec && cache[i].tm.tv_usec < min_time.tv_usec) {
+                        cache_idx = i;
+                        min_time = cache[i].tm;
+                    }
+                }
+                g_object_unref(cache[cache_idx].pixbuf);
+                free(cache[cache_idx].fname);
+            }
+fprintf(stderr, "cache_idx=%d (%s)\n", cache_idx, queue->fname);
+//            if (cache_idx == -1) {
+//                trace ("coverart pixbuf cache overflow, waiting...\n");
+//                usleep (500000);
+//                deadbeef->mutex_lock(mutex);
+//                continue;
+//            }
+
+            cache[cache_idx].pixbuf = pixbuf;
+            cache[cache_idx].fname = strdup (queue->fname);
+            cache[cache_idx].file_time = stat_buf.st_mtime;
+            gettimeofday (&cache[cache_idx].tm, NULL);
+            cache[cache_idx].width = queue->width;
+
+            for (size_t i = 0; i < queue->numcb; i++) {
                 if (queue->callbacks[i].cb) {
+                    deadbeef->mutex_unlock(mutex);
+                    trace("covercache: send callback for %s\n", queue->fname);
                     queue->callbacks[i].cb (queue->callbacks[i].ud);
+                    deadbeef->mutex_lock(mutex);
                 }
             }
             queue_pop ();
         }
-        if (terminate) {
-            break;
-        }
     }
+    deadbeef->mutex_unlock(mutex);
 }
 
 typedef struct {
@@ -260,15 +242,19 @@ get_pixbuf (const char *fname, int width, void (*callback)(void *user_data), voi
         }
     }
 #endif
-    deadbeef->mutex_unlock (mutex);
     queue_add (fname, width, callback, user_data);
+    deadbeef->mutex_unlock (mutex);
 
     return NULL;
 }
 
 void
 queue_cover_callback (void (*callback)(void *user_data), void *user_data) {
-    queue_add (NULL, -1, callback, user_data);
+    deadbeef->mutex_lock (mutex);
+    if (!queue->fname && callback) {
+        callback(user_data);
+    }
+    deadbeef->mutex_unlock (mutex);
 }
 
 
@@ -374,11 +360,17 @@ cover_art_free (void) {
     trace ("terminating cover art loader...\n");
 
     if (tid) {
+        deadbeef->mutex_lock(mutex);
         terminate = 1;
         trace("sending terminate signal to art loader thread...\n");
         deadbeef->cond_signal(cond);
+        deadbeef->mutex_unlock(mutex);
         deadbeef->thread_join(tid);
         tid = 0;
+    }
+
+    while (queue) {
+        queue_pop();
     }
 
     if (cond) {
@@ -386,9 +378,6 @@ cover_art_free (void) {
         cond = 0;
     }
     if (mutex) {
-        while (queue) {
-            queue_pop();
-        }
         deadbeef->mutex_free(mutex);
         mutex = 0;
     }
