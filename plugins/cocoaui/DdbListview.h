@@ -12,6 +12,8 @@ typedef intptr_t DdbListviewRow_t;
 typedef intptr_t DdbListviewCol_t;
 
 @protocol DdbListviewDelegate
+- (void)lock;
+- (void)unlock;
 - (int)columnCount;
 - (int)rowCount;
 - (int)cursor;
@@ -57,6 +59,8 @@ typedef struct DdbListviewGroup_s {
     int _fullheight;
     BOOL _areaselect;
     int _areaselect_y;
+    int _area_selection_start;
+    int _area_selection_end;
     int _shift_sel_anchor;
     BOOL _dragwait;
 }

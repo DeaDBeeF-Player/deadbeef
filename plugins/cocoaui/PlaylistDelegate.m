@@ -7,7 +7,7 @@
 //
 
 #import "PlaylistDelegate.h"
-#include "DdbListview.h"
+#import "DdbListview.h"
 #include "../../deadbeef.h"
 
 extern DB_functions_t *deadbeef;
@@ -103,6 +103,14 @@ extern DB_functions_t *deadbeef;
     }];
 }
 
+- (void)lock {
+    deadbeef->pl_lock ();
+}
+
+- (void)unlock {
+    deadbeef->pl_unlock ();
+}
+
 - (int)columnCount {
     return ncolumns;
 }
@@ -160,7 +168,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (DdbListviewRow_t)rowForIndex:(int)idx {
-    return deadbeef->pl_get_for_idx_and_iter (idx, PL_MAIN);
+    return (DdbListviewRow_t)deadbeef->pl_get_for_idx_and_iter (idx, PL_MAIN);
 }
 
 - (void)refRow:(DdbListviewRow_t)row {
@@ -208,13 +216,25 @@ extern DB_functions_t *deadbeef;
         .id = columns[col]._id
     };
 
+    NSColor *textColor;
+
+    if (deadbeef->pl_is_selected((DB_playItem_t *)row)) {
+        [[NSColor alternateSelectedControlColor] set];
+        [NSBezierPath fillRect:rect];
+        textColor = [NSColor alternateSelectedControlTextColor];
+    }
+    else {
+        textColor = [NSColor controlTextColor];
+    }
+
+
     if (columns[col].bytecode) {
         char text[1024] = "";
         deadbeef->tf_eval (&ctx, columns[col].bytecode, columns[col].bytecode_len, text, sizeof (text));
 
         NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
 
-        CGFloat fontsize = [NSFont systemFontSize];
+        CGFloat fontsize = [NSFont systemFontSizeForControlSize:rect.size.height];
 
         NSFont *textFont = [NSFont controlContentFontOfSize:fontsize];
 
@@ -222,7 +242,7 @@ extern DB_functions_t *deadbeef;
         [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
         NSDictionary *textAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:textFont, NSFontAttributeName
                                              , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                             , [NSColor controlTextColor], NSForegroundColorAttributeName
+                                             , textColor, NSForegroundColorAttributeName
                                              , textStyle, NSParagraphStyleAttributeName
                                              , nil];
 
