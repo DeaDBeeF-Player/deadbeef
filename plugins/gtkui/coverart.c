@@ -35,9 +35,8 @@
 
 static DB_artwork_plugin_t *artwork_plugin;
 
-GdkPixbuf *pixbuf_default;
+static GdkPixbuf *pixbuf_default;
 
-#define MAX_ID 256
 #define CACHE_SIZE 20
 
 typedef struct {
@@ -185,8 +184,7 @@ loading_thread (void *none) {
                 }
             }
             if (!pixbuf) {
-                pixbuf = pixbuf_default;
-                g_object_ref (pixbuf);
+                pixbuf = cover_get_default_pixbuf();
             }
             if (cache_min != -1) {
                 deadbeef->mutex_lock (mutex);
