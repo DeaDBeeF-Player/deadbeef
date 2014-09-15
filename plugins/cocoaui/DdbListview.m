@@ -8,7 +8,7 @@
 
 #import "DdbListview.h"
 
-int rowheight = 17;
+int rowheight = 18;
 
 @interface DdbListHeaderView : NSView {
     DdbListview *listview;
@@ -77,7 +77,9 @@ int rowheight = 17;
     int idx = 0;
     int abs_idx = 0;
 
-    // FIXME: this should be called in pl_lock
+    id<DdbListviewDelegate> delegate = listview.delegate;
+
+    [delegate lock];
 
     [listview groupCheck];
 
@@ -200,6 +202,7 @@ int rowheight = 17;
         int hh = dirtyRect.origin.y + dirtyRect.size.height - grp_y;
         //cairo_rectangle (cr, x, grp_y - listview->scrollpos, w, hh);
     }
+    [delegate unlock];
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
@@ -244,15 +247,19 @@ int rowheight = 17;
 
     id<DdbListviewDelegate> delegate = listview.delegate;
 
-    int cnt = [delegate rowCount];
-    if (!cnt)
+    [delegate lock];
+
+    if (![delegate rowCount]) {
+        [delegate unlock];
         return;
+    }
 
     DdbListviewGroup_t *grp;
     int grp_index;
     int sel;
     NSPoint convPt = [self convertPoint:[event locationInWindow] toView:nil];
     if (-1 == [listview pickPoint:convPt.y group:&grp groupIndex:&grp_index index:&sel]) {
+        [delegate unlock];
         return;
     }
 
@@ -262,6 +269,7 @@ int rowheight = 17;
         if (sel != -1 && cursor != -1) {
             [delegate activate:cursor];
         }
+        [delegate unlock];
         return;
     }
 
@@ -284,6 +292,7 @@ int rowheight = 17;
     if (0 == (event.modifierFlags & (NSCommandKeyMask|NSShiftKeyMask))) {
         [listview clickSelection:convPt grp:grp grp_index:grp_index sel:sel dnd:YES button:1];
     }
+    [delegate unlock];
 }
 
 - (void)mouseUp:(NSEvent *)event
@@ -363,6 +372,7 @@ int rowheight = 17;
 
 // must be called from within pl_lock
 - (void)initGroups {
+    [delegate lock];
     int old_height = _fullheight;
     groups_build_idx = [delegate modificationIdx];
 
@@ -401,6 +411,7 @@ int rowheight = 17;
                 frame.size.height = _fullheight;
                 contentView.frame = frame;
             }
+            [delegate unlock];
             return;
         }
 
@@ -441,6 +452,7 @@ int rowheight = 17;
         frame.size.height = _fullheight;
         contentView.frame = frame;
     }
+    [delegate unlock];
 }
 
 - (void)groupCheck {
@@ -617,8 +629,35 @@ int rowheight = 17;
     }
 }
 
-- (void)selectSingle:(int)idx {
-    // FIXME
+- (void)selectSingle:(int)sel {
+    [delegate lock];
+
+    DdbListviewRow_t sel_it = [delegate rowForIndex:sel];
+    if (sel_it == [delegate invalidRow]) {
+        [delegate unlock];
+        return;
+    }
+
+    DdbListviewRow_t it = [delegate firstRow]; // FIXME: search window needs to go over PL_MAIN here
+    while (it != [delegate invalidRow]) {
+        [delegate selectRow:it withState:it == sel_it];
+        DdbListviewRow_t next = [delegate nextRow:it];
+        [delegate unrefRow:it];
+        it = next;
+    }
+
+    [delegate unrefRow:sel_it];
+    [delegate unlock];
+
+//    FIXME: notify all widgets that data selection has changed
+//    was: ddb_listview_refresh (ps, DDB_REFRESH_LIST);
+
+    [delegate selectionChanged:[delegate invalidRow]]; // that means "selection changed a lot, redraw everything"
+
+    [self setNeedsDisplay:YES]; // FIXME: this should be triggered elsewhere, see above
+
+    _area_selection_start = sel;
+    _area_selection_end = sel;
 }
 
 @end
