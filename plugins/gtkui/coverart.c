@@ -6,12 +6,12 @@
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -68,35 +68,29 @@ static int terminate;
 static uintptr_t mutex;
 static uintptr_t cond;
 static uintptr_t tid;
-load_query_t *queue;
-load_query_t *tail;
+static load_query_t *queue;
+static load_query_t *tail;
 
 static void
-queue_add (const char *fname, int width, void (*callback) (void *user_data), void *user_data) {
-    trace("coverart: queue_add %s\n", fname);
-    load_query_t *q;
-    if (fname) {
-        for (q = queue; q; q = q->next) {
-            if (q->fname && !strcmp (q->fname, fname) && width == q->width) {
-                if (q->numcb < MAX_CALLBACKS && callback) {
-                    q->callbacks[q->numcb].cb = callback;
-                    q->callbacks[q->numcb].ud = user_data;
-                    q->numcb++;
-                }
-                deadbeef->mutex_unlock (mutex);
-                return;
-            }
+queue_add (char *fname, const int width, void (*callback)(void *), void *user_data)
+{
+    trace("coverart: queue_add %s @ %d pixels\n", fname, width);
+    load_query_t *q = malloc(sizeof(load_query_t));
+    if (!q) {
+        free(fname);
+        if (callback) {
+            callback(user_data);
         }
+        return;
     }
-    q = malloc (sizeof (load_query_t));
-    memset (q, 0, sizeof (load_query_t));
-    if (fname) {
-        q->fname = strdup (fname);
-    }
+
+    q->fname = fname;
     q->width = width;
-    q->callbacks[q->numcb].cb = callback;
-    q->callbacks[q->numcb].ud = user_data;
-    q->numcb++;
+    q->numcb = 1;
+    q->callbacks[0].cb = callback;
+    q->callbacks[0].ud = user_data;
+    q->next = NULL;
+
     if (tail) {
         tail->next = q;
         tail = q;
@@ -105,6 +99,24 @@ queue_add (const char *fname, int width, void (*callback) (void *user_data), voi
         queue = tail = q;
     }
     deadbeef->cond_signal (cond);
+}
+
+static void
+queue_add_load (const char *fname, const int width, void (*callback)(void *), void *user_data)
+{
+    for (load_query_t *q = queue; q; q = q->next) {
+        if (q->fname && !strcmp (q->fname, fname) && width == q->width) {
+            trace("coverart: %s already in queue, add to callbacks\n", fname);
+            if (q->numcb < MAX_CALLBACKS && callback) {
+                q->callbacks[q->numcb].cb = callback;
+                q->callbacks[q->numcb].ud = user_data;
+                q->numcb++;
+            }
+            return;
+        }
+    }
+
+    queue_add(strdup(fname), width, callback, user_data);
 }
 
 static void
@@ -120,50 +132,48 @@ queue_pop (void) {
     }
 }
 
-void
-loading_thread (void *none) {
-#ifdef __linux__
-    prctl (PR_SET_NAME, "deadbeef-gtkui-artwork", 0, 0, 0, 0);
-#endif
-    deadbeef->mutex_lock(mutex);
-    while (!terminate) {
-        trace("covercache: waiting for signal...\n");
-        pthread_cond_wait((pthread_cond_t *)cond, (pthread_mutex_t *)mutex);
-        trace("covercache: signal received (terminate=%d, queue=%p)\n", terminate, queue);
-        while (!terminate && queue) {
-            deadbeef->mutex_unlock(mutex);
-            GdkPixbuf *pixbuf = NULL;
-            struct stat stat_buf;
-            if (!stat(queue->fname, &stat_buf)) {
-                GError *error = NULL;
-                pixbuf = gdk_pixbuf_new_from_file_at_scale(queue->fname, queue->width, queue->width, TRUE, &error);
-                if (error) {
-                    //fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", queue->fname, queue->width, error ? error->message : "n/a");
-                    g_error_free(error);
-                }
-            }
-            if (!pixbuf) {
-                pixbuf = cover_get_default_pixbuf();
-            }
-            trace("covercache: loaded pixbuf %s\n", queue->fname);
+static void
+load_image(const load_query_t *query)
+{
+    char *fname_copy = strdup(query->fname);
+    if (!fname_copy) {
+        return;
+    }
 
-            deadbeef->mutex_lock(mutex);
-            size_t cache_idx = 0;
-            while (cache[cache_idx].pixbuf && cache_idx++ < CACHE_SIZE);
-            if (cache_idx == CACHE_SIZE) {
-                cache_idx = 0;
-                struct timeval min_time = cache[0].tm;
-                for (size_t i = 1; i < CACHE_SIZE; i++) {
-                    if (cache[i].tm.tv_sec < min_time.tv_sec ||
-                        cache[i].tm.tv_sec == min_time.tv_sec && cache[i].tm.tv_usec < min_time.tv_usec) {
-                        cache_idx = i;
-                        min_time = cache[i].tm;
-                    }
-                }
-                g_object_unref(cache[cache_idx].pixbuf);
-                free(cache[cache_idx].fname);
+    /* Create a new pixbuf from this file */
+    deadbeef->mutex_unlock(mutex);
+    GdkPixbuf *pixbuf = NULL;
+    struct stat stat_buf;
+    if (!stat(query->fname, &stat_buf)) {
+        GError *error = NULL;
+        pixbuf = gdk_pixbuf_new_from_file_at_scale(query->fname, query->width, query->width, TRUE, &error);
+        if (error) {
+            //fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", query->fname, query->width, error ? error->message : "n/a");
+            g_error_free(error);
+        }
+    }
+    if (!pixbuf) {
+        pixbuf = cover_get_default_pixbuf();
+    }
+    trace("covercache: loaded pixbuf %s\n", query->fname);
+    deadbeef->mutex_lock(mutex);
+
+    /* Look for a blank slot in the pixbuf cache, or for the oldest entry */
+    size_t cache_idx = 0;
+    while (cache[cache_idx].pixbuf && cache_idx++ < CACHE_SIZE);
+    if (cache_idx == CACHE_SIZE) {
+        cache_idx = 0;
+        struct timeval *min_time = &cache[0].tm;
+        for (size_t i = 1; i < CACHE_SIZE; i++) {
+            if (cache[i].tm.tv_sec < min_time->tv_sec || cache[i].tm.tv_sec == min_time->tv_sec && cache[i].tm.tv_usec < min_time->tv_usec) {
+                cache_idx = i;
+                min_time = &cache[i].tm;
             }
-fprintf(stderr, "cache_idx=%d (%s)\n", cache_idx, queue->fname);
+        }
+        g_object_unref(cache[cache_idx].pixbuf);
+        free(cache[cache_idx].fname);
+    }
+
 //            if (cache_idx == -1) {
 //                trace ("coverart pixbuf cache overflow, waiting...\n");
 //                usleep (500000);
@@ -171,23 +181,47 @@ fprintf(stderr, "cache_idx=%d (%s)\n", cache_idx, queue->fname);
 //                continue;
 //            }
 
-            cache[cache_idx].pixbuf = pixbuf;
-            cache[cache_idx].fname = strdup (queue->fname);
-            cache[cache_idx].file_time = stat_buf.st_mtime;
-            gettimeofday (&cache[cache_idx].tm, NULL);
-            cache[cache_idx].width = queue->width;
+    /* Set the pixbuf in the cache slot */
+    cache[cache_idx].pixbuf = pixbuf;
+    cache[cache_idx].fname = fname_copy;
+    cache[cache_idx].file_time = stat_buf.st_mtime;
+    gettimeofday(&cache[cache_idx].tm, NULL);
+    cache[cache_idx].width = query->width;
+}
 
-            for (size_t i = 0; i < queue->numcb; i++) {
-                if (queue->callbacks[i].cb) {
-                    deadbeef->mutex_unlock(mutex);
-                    trace("covercache: send callback for %s\n", queue->fname);
-                    queue->callbacks[i].cb (queue->callbacks[i].ud);
-                    deadbeef->mutex_lock(mutex);
-                }
-            }
-            queue_pop ();
+static void
+send_callbacks(const load_query_t *query)
+{
+    for (size_t i = 0; i < query->numcb; i++) {
+        if (query->callbacks[i].cb) {
+            trace("covercache: send callback for %s\n", query->fname);
+            query->callbacks[i].cb(query->callbacks[i].ud);
         }
     }
+}
+
+static void
+loading_thread (void *none) {
+#ifdef __linux__
+    prctl (PR_SET_NAME, "deadbeef-gtkui-artwork", 0, 0, 0, 0);
+#endif
+
+    deadbeef->mutex_lock(mutex);
+
+    while (!terminate) {
+        trace("covercache: waiting for signal...\n");
+        pthread_cond_wait((pthread_cond_t *)cond, (pthread_mutex_t *)mutex);
+        trace("covercache: signal received (terminate=%d, queue=%p)\n", terminate, queue);
+
+        while (!terminate && queue) {
+            if (queue->fname) {
+                load_image(queue);
+            }
+            send_callbacks(queue);
+            queue_pop();
+        }
+    }
+
     deadbeef->mutex_unlock(mutex);
 }
 
@@ -215,9 +249,7 @@ cover_avail_callback (const char *fname, const char *artist, const char *album, 
 
 static GdkPixbuf *
 get_pixbuf (const char *fname, int width, void (*callback)(void *user_data), void *user_data) {
-    int requested_width = width;
-    // find in cache
-    deadbeef->mutex_lock (mutex);
+    /* Look in the pixbuf cache */
     for (int i = 0; i < CACHE_SIZE; i++) {
         if (cache[i].pixbuf && !strcmp (fname, cache[i].fname) && cache[i].width == width) {
             struct stat stat_buf;
@@ -225,7 +257,6 @@ get_pixbuf (const char *fname, int width, void (*callback)(void *user_data), voi
                 gettimeofday (&cache[i].tm, NULL);
                 GdkPixbuf *pb = cache[i].pixbuf;
                 g_object_ref (pb);
-                deadbeef->mutex_unlock (mutex);
                 return pb;
             }
             else {
@@ -242,19 +273,19 @@ get_pixbuf (const char *fname, int width, void (*callback)(void *user_data), voi
         }
     }
 #endif
-    queue_add (fname, width, callback, user_data);
-    deadbeef->mutex_unlock (mutex);
 
+    /* Request to load this image into the pixbuf cache */
+    queue_add_load(fname, width, callback, user_data);
     return NULL;
 }
 
 void
 queue_cover_callback (void (*callback)(void *user_data), void *user_data) {
-    deadbeef->mutex_lock (mutex);
-    if (!queue->fname && callback) {
-        callback(user_data);
+    if (callback) {
+        deadbeef->mutex_lock (mutex);
+        queue_add(NULL, -1, callback, user_data);
+        deadbeef->mutex_unlock (mutex);
     }
-    deadbeef->mutex_unlock (mutex);
 }
 
 
@@ -298,7 +329,9 @@ get_cover_art_callb (const char *fname, const char *artist, const char *album, i
     dt->user_data = user_data;
     char *image_fname = artwork_plugin->get_album_art (fname, artist, album, -1, cover_avail_callback, dt);
     if (image_fname) {
+        deadbeef->mutex_lock(mutex);
         GdkPixbuf *pb = get_pixbuf (image_fname, width, callback, user_data);
+        deadbeef->mutex_unlock(mutex);
         free (image_fname);
         return pb;
     }
