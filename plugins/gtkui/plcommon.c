@@ -312,7 +312,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                     }
                     cairo_scale (cr, art_scale, art_scale);
                     gdk_cairo_set_source_pixbuf (cr, pixbuf, 0, 0);
-                    cairo_pattern_set_filter (cairo_get_source(cr), gtkui_is_default_pixbuf (pixbuf) ? CAIRO_FILTER_GAUSSIAN : CAIRO_FILTER_FAST);
+                    cairo_pattern_set_filter (cairo_get_source(cr), gtkui_is_default_pixbuf (pixbuf) ? CAIRO_FILTER_BEST : CAIRO_FILTER_FAST);
                     cairo_fill (cr);
                     cairo_restore (cr);
                 }
