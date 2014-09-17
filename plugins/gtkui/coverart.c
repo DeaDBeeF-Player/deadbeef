@@ -132,6 +132,25 @@ queue_pop (void) {
     }
 }
 
+static int
+cache_sort_order(const char *fname1, const char *fname2, const int width1, const int width2)
+{
+    const int cmp = strcmp(fname1, fname2);
+    return cmp ? cmp : width2 - width1;
+}
+
+static int
+cache_sort(const void *a, const void *b)
+{
+    const cached_pixbuf_t *x = (cached_pixbuf_t *)a;
+    const cached_pixbuf_t *y = (cached_pixbuf_t *)b;
+    if (x->pixbuf && y->pixbuf) {
+        return cache_sort_order(x->fname, y->fname, x->width, y->width);
+    }
+
+    return x->pixbuf ? -1 : y->pixbuf ? 1 : 0;
+}
+
 static void
 load_image(const load_query_t *query)
 {
@@ -145,12 +164,15 @@ load_image(const load_query_t *query)
     GdkPixbuf *pixbuf = NULL;
     struct stat stat_buf;
     if (!stat(query->fname, &stat_buf)) {
+        pixbuf = gdk_pixbuf_new_from_file_at_scale(query->fname, query->width, query->width, TRUE, NULL);
+#if 0
         GError *error = NULL;
         pixbuf = gdk_pixbuf_new_from_file_at_scale(query->fname, query->width, query->width, TRUE, &error);
         if (error) {
-            //fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", query->fname, query->width, error ? error->message : "n/a");
+            fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", query->fname, query->width, error ? error->message : "n/a");
             g_error_free(error);
         }
+#endif
     }
     if (!pixbuf) {
         pixbuf = cover_get_default_pixbuf();
@@ -158,13 +180,11 @@ load_image(const load_query_t *query)
     trace("covercache: loaded pixbuf %s\n", query->fname);
     deadbeef->mutex_lock(mutex);
 
-    /* Look for a blank slot in the pixbuf cache, or for the oldest entry */
-    size_t cache_idx = 0;
-    while (cache[cache_idx].pixbuf && cache_idx++ < CACHE_SIZE);
-    if (cache_idx == CACHE_SIZE) {
-        cache_idx = 0;
-        struct timeval *min_time = &cache[0].tm;
-        for (size_t i = 1; i < CACHE_SIZE; i++) {
+    /* See if the last slot is free, or look for the oldest entry */
+    size_t cache_idx = CACHE_SIZE - 1;
+    if (cache[cache_idx].pixbuf) {
+        struct timeval *min_time = &cache[cache_idx].tm;
+        for (size_t i = 0; i < CACHE_SIZE-1; i++) {
             if (cache[i].tm.tv_sec < min_time->tv_sec || cache[i].tm.tv_sec == min_time->tv_sec && cache[i].tm.tv_usec < min_time->tv_usec) {
                 cache_idx = i;
                 min_time = &cache[i].tm;
@@ -174,19 +194,13 @@ load_image(const load_query_t *query)
         free(cache[cache_idx].fname);
     }
 
-//            if (cache_idx == -1) {
-//                trace ("coverart pixbuf cache overflow, waiting...\n");
-//                usleep (500000);
-//                deadbeef->mutex_lock(mutex);
-//                continue;
-//            }
-
-    /* Set the pixbuf in the cache slot */
+    /* Set the pixbuf in the cache slot, sorted by fname and largest first */
     cache[cache_idx].pixbuf = pixbuf;
     cache[cache_idx].fname = fname_copy;
     cache[cache_idx].file_time = stat_buf.st_mtime;
     gettimeofday(&cache[cache_idx].tm, NULL);
     cache[cache_idx].width = query->width;
+    qsort(cache, CACHE_SIZE, sizeof(cached_pixbuf_t), cache_sort);
 }
 
 static void
@@ -250,19 +264,22 @@ cover_avail_callback (const char *fname, const char *artist, const char *album, 
 static GdkPixbuf *
 get_pixbuf (const char *fname, int width, void (*callback)(void *user_data), void *user_data) {
     /* Look in the pixbuf cache */
-    for (int i = 0; i < CACHE_SIZE; i++) {
-        if (cache[i].pixbuf && !strcmp (fname, cache[i].fname) && cache[i].width == width) {
-            struct stat stat_buf;
-            if (!stat(fname, &stat_buf) && stat_buf.st_mtime == cache[i].file_time) {
-                gettimeofday (&cache[i].tm, NULL);
-                GdkPixbuf *pb = cache[i].pixbuf;
-                g_object_ref (pb);
-                return pb;
-            }
-            else {
-                g_object_unref(cache[i].pixbuf);
-                cache[i].pixbuf = NULL;
-            }
+    size_t i = 0;
+    int cmp;
+    while (i < CACHE_SIZE && cache[i].pixbuf && (cmp = cache_sort_order(cache[i].fname, fname, cache[i].width, width)) < 0) {
+        i++;
+    }
+    if (!cmp) {
+        struct stat stat_buf;
+        if (!stat(fname, &stat_buf) && stat_buf.st_mtime == cache[i].file_time) {
+            gettimeofday (&cache[i].tm, NULL);
+            GdkPixbuf *pb = cache[i].pixbuf;
+            g_object_ref (pb);
+            return pb;
+        }
+        else {
+            g_object_unref(cache[i].pixbuf);
+            cache[i].pixbuf = NULL;
         }
     }
 #if 0
@@ -298,23 +315,15 @@ get_cover_art_callb (const char *fname, const char *artist, const char *album, i
     if (width == -1) {
         char path[2048];
         artwork_plugin->make_cache_path2 (path, sizeof (path), fname, album, artist, -1);
+        trace("coverart: get largest pixbuf matching %s\n", path);
         deadbeef->mutex_lock (mutex);
-        int i_largest = -1;
-        int size_largest = -1;
-        for (int i = 0; i < CACHE_SIZE; i++) {
-            if (!cache[i].pixbuf) {
-                continue;
-            }
-            if (!strcmp (cache[i].fname, path)) {
-                gettimeofday (&cache[i].tm, NULL);
-                if (cache[i].width > size_largest) {
-                    size_largest = cache[i].width;
-                    i_largest = i;
-                }
-            }
+        int cmp;
+        size_t i = 0;
+        while (i < CACHE_SIZE && cache[i].pixbuf && (cmp = strcmp(cache[i].fname, path)) < 0) {
+            i++;
         }
-        if (i_largest != -1) {
-            GdkPixbuf *pb = cache[i_largest].pixbuf;
+        if (!cmp) {
+            GdkPixbuf *pb = cache[i].pixbuf;
             g_object_ref (pb);
             deadbeef->mutex_unlock (mutex);
             return pb;
@@ -323,6 +332,7 @@ get_cover_art_callb (const char *fname, const char *artist, const char *album, i
         return NULL;
     }
 
+    trace("coverart: get_album_art for %s %s %s %d\n", fname, artist, album, width);
     cover_avail_info_t *dt = malloc (sizeof (cover_avail_info_t));
     dt->width = width;
     dt->callback = callback;
