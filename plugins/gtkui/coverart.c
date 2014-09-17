@@ -31,14 +31,12 @@
 #include "../artwork/artwork.h"
 #include "gtkui.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(...)
 
 static DB_artwork_plugin_t *artwork_plugin;
 
 static GdkPixbuf *pixbuf_default;
-
-#define CACHE_SIZE 20
 
 typedef struct {
     struct timeval tm;
@@ -63,7 +61,12 @@ typedef struct load_query_s {
     struct load_query_s *next;
 } load_query_t;
 
-static cached_pixbuf_t cache[CACHE_SIZE];
+#define MIN_CACHE_SIZE 1
+#define PL_CACHE_SIZE 20
+#define MAX_CACHE_SIZE 30
+static size_t cache_size = MIN_CACHE_SIZE;
+static cached_pixbuf_t cache[MAX_CACHE_SIZE];
+
 static int terminate;
 static uintptr_t mutex;
 static uintptr_t cond;
@@ -181,10 +184,10 @@ load_image(const load_query_t *query)
     deadbeef->mutex_lock(mutex);
 
     /* See if the last slot is free, or look for the oldest entry */
-    size_t cache_idx = CACHE_SIZE - 1;
+    size_t cache_idx = cache_size - 1;
     if (cache[cache_idx].pixbuf) {
         struct timeval *min_time = &cache[cache_idx].tm;
-        for (size_t i = 0; i < CACHE_SIZE-1; i++) {
+        for (size_t i = 0; i < cache_size-1; i++) {
             if (cache[i].tm.tv_sec < min_time->tv_sec || cache[i].tm.tv_sec == min_time->tv_sec && cache[i].tm.tv_usec < min_time->tv_usec) {
                 cache_idx = i;
                 min_time = &cache[i].tm;
@@ -194,13 +197,15 @@ load_image(const load_query_t *query)
         free(cache[cache_idx].fname);
     }
 
-    /* Set the pixbuf in the cache slot, sorted by fname and largest first */
+    /* Set the pixbuf in the cache slot */
     cache[cache_idx].pixbuf = pixbuf;
     cache[cache_idx].fname = fname_copy;
     cache[cache_idx].file_time = stat_buf.st_mtime;
     gettimeofday(&cache[cache_idx].tm, NULL);
     cache[cache_idx].width = query->width;
-    qsort(cache, CACHE_SIZE, sizeof(cached_pixbuf_t), cache_sort);
+
+    /* Sort the cache by fname, largest first, then empty slots at the end */
+    qsort(cache, cache_size, sizeof(cached_pixbuf_t), cache_sort);
 }
 
 static void
@@ -266,7 +271,7 @@ get_pixbuf (const char *fname, int width, void (*callback)(void *user_data), voi
     /* Look in the pixbuf cache */
     size_t i = 0;
     int cmp;
-    while (i < CACHE_SIZE && cache[i].pixbuf && (cmp = cache_sort_order(cache[i].fname, fname, cache[i].width, width)) < 0) {
+    while (i < cache_size && cache[i].pixbuf && (cmp = cache_sort_order(cache[i].fname, fname, cache[i].width, width)) < 0) {
         i++;
     }
     if (!cmp) {
@@ -284,7 +289,7 @@ get_pixbuf (const char *fname, int width, void (*callback)(void *user_data), voi
     }
 #if 0
     printf ("cache miss: %s/%d\n", fname, width);
-    for (int i = 0; i < CACHE_SIZE; i++) {
+    for (size_t i = 0; i < cache_size; i++) {
         if (cache[i].pixbuf) {
             printf ("    cache line %d: %s/%d\n", i, cache[i].fname, cache[i].width);
         }
@@ -313,13 +318,14 @@ get_cover_art_callb (const char *fname, const char *artist, const char *album, i
     }
 
     if (width == -1) {
+        /* Find the largest cached pixmap for this file */
         char path[2048];
         artwork_plugin->make_cache_path2 (path, sizeof (path), fname, album, artist, -1);
         trace("coverart: get largest pixbuf matching %s\n", path);
         deadbeef->mutex_lock (mutex);
         int cmp;
         size_t i = 0;
-        while (i < CACHE_SIZE && cache[i].pixbuf && (cmp = strcmp(cache[i].fname, path)) < 0) {
+        while (i < cache_size && cache[i].pixbuf && (cmp = strcmp(cache[i].fname, path)) < 0) {
             i++;
         }
         if (!cmp) {
@@ -332,6 +338,7 @@ get_cover_art_callb (const char *fname, const char *artist, const char *album, i
         return NULL;
     }
 
+    /* No cached pixmap, request it */
     trace("coverart: get_album_art for %s %s %s %d\n", fname, artist, album, width);
     cover_avail_info_t *dt = malloc (sizeof (cover_avail_info_t));
     dt->width = width;
@@ -389,6 +396,11 @@ cover_art_init (void) {
 }
 
 void
+cover_art_add_playlist (void) {
+    cache_size = cache_size == MIN_CACHE_SIZE ? PL_CACHE_SIZE : MAX_CACHE_SIZE;
+}
+
+void
 cover_art_disconnect (void) {
     if (artwork_plugin) {
         const DB_artwork_plugin_t *plugin = artwork_plugin;
@@ -425,7 +437,7 @@ cover_art_free (void) {
         mutex = 0;
     }
 
-    for (int i = 0; i < CACHE_SIZE; i++) {
+    for (size_t i = 0; i < MAX_CACHE_SIZE; i++) {
         if (cache[i].pixbuf) {
             g_object_unref(cache[i].pixbuf);
         }
