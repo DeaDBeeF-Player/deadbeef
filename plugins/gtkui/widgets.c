@@ -2376,7 +2376,7 @@ coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
             cairo_rectangle (cr, x, y, pw, ph);
             cairo_scale (cr, art_scale, art_scale);
             gdk_cairo_set_source_pixbuf (cr, pixbuf, x, y);
-            cairo_pattern_set_filter (cairo_get_source(cr), hq ? CAIRO_FILTER_GAUSSIAN : CAIRO_FILTER_FAST);
+            cairo_pattern_set_filter (cairo_get_source(cr), hq ? CAIRO_FILTER_BEST : CAIRO_FILTER_FAST);
             cairo_fill (cr);
             g_object_unref (pixbuf);
         }
