@@ -30,7 +30,6 @@
 #include "interface.h"
 #include "../libparser/parser.h"
 #include "actions.h"
-#include "search.h"
 #include "actionhandlers.h"
 #include "../../strdupa.h"
 
@@ -185,7 +184,7 @@ deferred_cover_load_cb (void *ctx) {
         if (!grp || grp_y >= a.height + lv->scrollpos) {
             last = 1;
         }
-        GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, lv->new_cover_size, NULL, NULL);
+        GdkPixbuf *pixbuf = get_cover_art_thumb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, lv->new_cover_size, NULL, NULL);
         if (last) {
             queue_cover_callback (redraw_playlist, lv);
         }
@@ -277,7 +276,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             h = min (height, art_h);
 
             int hq = 0;
-            GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, real_art_width == art_width ? art_width : -1, redraw_playlist_single, listview);
+            GdkPixbuf *pixbuf = get_cover_art_thumb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, real_art_width == art_width ? art_width : -1, redraw_playlist_single, listview);
             if (!pixbuf) {
                 pixbuf = cover_get_default_pixbuf ();
             }
@@ -1121,12 +1120,7 @@ parse_end: ;
         inf->id = id;
         break;
     }
-    int min_height = 0;
-    if (inf->id == DB_COLUMN_ALBUM_ART) {
-        min_height = width;
-        cover_art_add_playlist();
-    }
-    ddb_listview_column_append (listview, title, width, align, min_height, color_override, color, inf);
+    ddb_listview_column_append (listview, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? width : 0, color_override, color, inf);
 }
 
 static void
@@ -1208,12 +1202,7 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
         init_column (inf, sel, format);
 
         int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
-        int min_height = 0;
-        if (inf->id == DB_COLUMN_ALBUM_ART) {
-            min_height = 100;
-            cover_art_add_playlist();
-        }
-        ddb_listview_column_insert (last_playlist, active_column, title, 100, align, min_height, clr_override, clr, inf);
+        ddb_listview_column_insert (last_playlist, active_column, title, 100, align, inf->id == DB_COLUMN_ALBUM_ART ? 100 : 0, clr_override, clr, inf);
         ddb_listview_refresh (last_playlist, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL);
     }
     gtk_widget_destroy (dlg);
@@ -1424,12 +1413,7 @@ add_column_helper (DdbListview *listview, const char *title, int width, int id, 
     inf->id = id;
     inf->format = strdup (format);
     GdkColor color = { 0, 0, 0, 0 };
-    int min_height = 0;
-    if (inf->id == DB_COLUMN_ALBUM_ART) {
-        min_height = width;
-        cover_art_add_playlist();
-    }
-    ddb_listview_column_append (listview, title, width, align_right, min_height, 0, color, inf);
+    ddb_listview_column_append (listview, title, width, align_right, inf->id == DB_COLUMN_ALBUM_ART ? width : 0, 0, color, inf);
 }
 
 int
