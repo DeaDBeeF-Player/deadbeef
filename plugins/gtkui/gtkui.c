@@ -1571,7 +1571,7 @@ static const char settings_dlg[] =
 // define plugin interface
 static ddb_gtkui_t plugin = {
     .gui.plugin.api_vmajor = 1,
-    .gui.plugin.api_vminor = 5,
+    .gui.plugin.api_vminor = 6,
     .gui.plugin.version_major = DDB_GTKUI_API_VERSION_MAJOR,
     .gui.plugin.version_minor = DDB_GTKUI_API_VERSION_MINOR,
     .gui.plugin.type = DB_PLUGIN_GUI,
@@ -1623,6 +1623,8 @@ static ddb_gtkui_t plugin = {
     .w_replace = w_replace,
     .w_remove = w_remove,
     .create_pltmenu = gtkui_create_pltmenu,
-    .get_cover_art_pixbuf = get_cover_art_callb,
+    .get_cover_art_pixbuf = get_cover_art_callb, // deprecated
+    .get_cover_art_primary = get_cover_art_primary,
+    .get_cover_art_thumb = get_cover_art_thumb,
     .cover_get_default_pixbuf = cover_get_default_pixbuf,
 };
