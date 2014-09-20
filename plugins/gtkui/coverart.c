@@ -113,6 +113,12 @@ gtkui_is_default_pixbuf (GdkPixbuf *pb) {
     return pb == pixbuf_default;
 }
 
+static size_t
+cache_elements(const cached_pixbuf_t *cache)
+{
+    return cache == primary_cache ? PRIMARY_CACHE_SIZE : THUMB_CACHE_SIZE;
+}
+
 static cover_callback_t *
 add_callback(void (*cb)(void *ud), void *ud)
 {
@@ -226,6 +232,11 @@ cache_qsort(const void *a, const void *b)
 static void
 load_image(const load_query_t *query)
 {
+    struct stat stat_buf;
+    if (stat(query->fname, &stat_buf)) {
+        return;
+    }
+
     char *fname_copy = strdup(query->fname);
     if (!fname_copy) {
         return;
@@ -233,19 +244,15 @@ load_image(const load_query_t *query)
 
     /* Create a new pixbuf from this file */
     deadbeef->mutex_unlock(mutex);
-    GdkPixbuf *pixbuf = NULL;
-    struct stat stat_buf;
-    if (!stat(query->fname, &stat_buf)) {
-        pixbuf = gdk_pixbuf_new_from_file_at_scale(query->fname, query->width, query->width, TRUE, NULL);
+    GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_scale(query->fname, query->width, query->width, TRUE, NULL);
 #if 0
-        GError *error = NULL;
-        pixbuf = gdk_pixbuf_new_from_file_at_scale(query->fname, query->width, query->width, TRUE, &error);
-        if (error) {
-            fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", query->fname, query->width, error ? error->message : "n/a");
-            g_error_free(error);
-        }
-#endif
+    GError *error = NULL;
+    GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_scale(query->fname, query->width, query->width, TRUE, &error);
+    if (error) {
+        fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", query->fname, query->width, error ? error->message : "n/a");
+        g_error_free(error);
     }
+#endif
     if (!pixbuf) {
         trace("covercache: unable to create pixbuf from cached image file %s, use default\n", query->fname);
         pixbuf = cover_get_default_pixbuf();
@@ -255,7 +262,7 @@ load_image(const load_query_t *query)
 
     /* If the last slot is filled then evict the oldest entry */
     cached_pixbuf_t *cache = query->cache;
-    const size_t cache_size = cache == primary_cache ? PRIMARY_CACHE_SIZE : THUMB_CACHE_SIZE;
+    const size_t cache_size = cache_elements(cache);
     size_t cache_idx = cache_size - 1;
     if (cache[cache_idx].pixbuf) {
         struct timeval *min_time = &cache[cache_idx].tm;
@@ -311,7 +318,7 @@ loading_thread (void *none) {
 static GdkPixbuf *
 get_pixbuf (cached_pixbuf_t *cache, const char *fname, int width, void (*callback)(void *user_data), void *user_data) {
     /* Look in the pixbuf cache */
-    const size_t cache_size = cache == primary_cache ? PRIMARY_CACHE_SIZE : THUMB_CACHE_SIZE;
+    const size_t cache_size = cache_elements(cache);
     for (size_t i = 0; i < cache_size && cache[i].pixbuf; i++) {
         if (!cache_sort_order(cache[i].fname, fname, cache[i].width, width)) {
             struct stat stat_buf;
@@ -323,7 +330,7 @@ get_pixbuf (cached_pixbuf_t *cache, const char *fname, int width, void (*callbac
             g_object_unref(cache[i].pixbuf);
             cache[i].pixbuf = NULL;
             free(cache[i].fname);
-            i--;
+            qsort(cache, cache_size, sizeof(cached_pixbuf_t), cache_qsort);
         }
     }
 
@@ -354,7 +361,7 @@ static GdkPixbuf *
 best_cached_pixbuf(const cached_pixbuf_t *cache, const char *path)
 {
     /* Find the largest pixbuf in the cache for this file */
-    const size_t cache_size = cache == primary_cache ? PRIMARY_CACHE_SIZE : THUMB_CACHE_SIZE;
+    const size_t cache_size = cache_elements(cache);
     for (size_t i = 0; i < cache_size && cache[i].pixbuf; i++) {
         if (!strcmp(cache[i].fname, path)) {
             g_object_ref(cache[i].pixbuf);
