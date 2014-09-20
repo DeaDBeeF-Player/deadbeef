@@ -207,7 +207,7 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-- (void)drawCell:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect {
+- (void)drawCell:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused {
     ddb_tf_context_t ctx = {
         ._size = sizeof (ddb_tf_context_t),
         .it = (DB_playItem_t *)row,
@@ -219,9 +219,16 @@ extern DB_functions_t *deadbeef;
     NSColor *textColor;
 
     if (deadbeef->pl_is_selected((DB_playItem_t *)row)) {
-        [[NSColor alternateSelectedControlColor] set];
-        [NSBezierPath fillRect:rect];
-        textColor = [NSColor alternateSelectedControlTextColor];
+        if (focused) {
+            [[NSColor alternateSelectedControlColor] set];
+            [NSBezierPath fillRect:rect];
+            textColor = [NSColor alternateSelectedControlTextColor];
+        }
+        else {
+            [[NSColor selectedControlColor] set];
+            [NSBezierPath fillRect:rect];
+            textColor = [NSColor selectedControlTextColor];
+        }
     }
     else {
         textColor = [NSColor controlTextColor];

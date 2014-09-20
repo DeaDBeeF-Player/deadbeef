@@ -36,7 +36,7 @@ typedef intptr_t DdbListviewCol_t;
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row;
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect;
 - (void)drawRowBackground:(DdbListviewRow_t)row inRect:(NSRect)rect;
-- (void)drawCell:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect;
+- (void)drawCell:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused;
 - (int)modificationIdx;
 - (void)selectionChanged:(DdbListviewRow_t)row;
 - (BOOL)hasDND;
@@ -44,6 +44,7 @@ typedef intptr_t DdbListviewCol_t;
 
 typedef struct DdbListviewGroup_s {
     DdbListviewRow_t head;
+    int head_idx;
     int32_t height;
     int32_t min_height;
     int32_t num_items;
@@ -63,6 +64,9 @@ typedef struct DdbListviewGroup_s {
     int _area_selection_end;
     int _shift_sel_anchor;
     BOOL _dragwait;
+    int _scroll_direction;
+    int _scroll_pointer_y;
+    NSPoint _lastpos;
 }
 
 @property (readonly) NSView *headerView;
@@ -74,9 +78,13 @@ typedef struct DdbListviewGroup_s {
 - (int)pickPoint:(int)y group:(DdbListviewGroup_t **)group groupIndex:(int *)group_idx index:(int *)global_idx;
 - (void)drawRow:(int)idx;
 - (void)clickSelection:(NSPoint)pt grp:(DdbListviewGroup_t *)grp grp_index:(int)grp_index sel:(int)sel dnd:(BOOL)dnd button:(int)button;
+- (void)listMouseUp:(NSEvent *)event;
+- (void)listMouseDragged:(NSEvent *)event;
 
 @property (readonly) DdbListviewGroup_t *groups;
 @property (readonly) int grouptitle_height;
 @property (readonly) int groups_pinned;
 @property (readonly) int fullheight;
+@property (readwrite) NSPoint lastpos;
+@property (readwrite) int shift_sel_anchor;
 @end
