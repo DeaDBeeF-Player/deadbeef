@@ -195,12 +195,17 @@ typedef struct {
     // appears when right-clicked on playlist tab)
     GtkWidget* (*create_pltmenu) (int plt_idx);
 
-    // get_cover_art_pixbuf will return pixbuf, if available.
+    // return a cover art pixbuf, if available.
     // if not available, the requested cover will be loaded asyncronously.
     // the callback will be called when the requested cover is available,
     // in which case you will need to call the get_cover_art_pixbuf again from
     // the callback.
+    // get_cover_art_pixbuf is deprecated.
+    // in new code, use get_cover_art_primary to get the large single cover art image,
+    // and get_cover_art_thumb to get one of many smaller cover art images.
     GdkPixbuf *(*get_cover_art_pixbuf) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data);
+    GdkPixbuf *(*get_cover_art_primary) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data);
+    GdkPixbuf *(*get_cover_art_thumb) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data);
 
     // get_default_cover_pixbuf returns the default cover art image
     GdkPixbuf *(*cover_get_default_pixbuf) (void);

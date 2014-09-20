@@ -30,7 +30,6 @@
 #include "interface.h"
 #include "../libparser/parser.h"
 #include "actions.h"
-#include "search.h"
 #include "actionhandlers.h"
 #include "../../strdupa.h"
 
@@ -185,7 +184,7 @@ deferred_cover_load_cb (void *ctx) {
         if (!grp || grp_y >= a.height + lv->scrollpos) {
             last = 1;
         }
-        GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, lv->new_cover_size, NULL, NULL);
+        GdkPixbuf *pixbuf = get_cover_art_thumb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, lv->new_cover_size, NULL, NULL);
         if (last) {
             queue_cover_callback (redraw_playlist, lv);
         }
@@ -277,7 +276,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             h = min (height, art_h);
 
             int hq = 0;
-            GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, real_art_width == art_width ? art_width : -1, redraw_playlist_single, listview);
+            GdkPixbuf *pixbuf = get_cover_art_thumb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, real_art_width == art_width ? art_width : -1, redraw_playlist_single, listview);
             if (!pixbuf) {
                 pixbuf = cover_get_default_pixbuf ();
             }
@@ -312,7 +311,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                     }
                     cairo_scale (cr, art_scale, art_scale);
                     gdk_cairo_set_source_pixbuf (cr, pixbuf, 0, 0);
-                    cairo_pattern_set_filter (cairo_get_source(cr), gtkui_is_default_pixbuf (pixbuf) ? CAIRO_FILTER_GAUSSIAN : CAIRO_FILTER_FAST);
+                    cairo_pattern_set_filter (cairo_get_source(cr), gtkui_is_default_pixbuf (pixbuf) ? CAIRO_FILTER_BEST : CAIRO_FILTER_FAST);
                     cairo_fill (cr);
                     cairo_restore (cr);
                 }
@@ -1121,7 +1120,7 @@ parse_end: ;
         inf->id = id;
         break;
     }
-    ddb_listview_column_append (listview, title, width, align, id == DB_COLUMN_ALBUM_ART ? width : 0, color_override, color, inf);
+    ddb_listview_column_append (listview, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? width : 0, color_override, color, inf);
 }
 
 static void
@@ -1414,7 +1413,7 @@ add_column_helper (DdbListview *listview, const char *title, int width, int id, 
     inf->id = id;
     inf->format = strdup (format);
     GdkColor color = { 0, 0, 0, 0 };
-    ddb_listview_column_append (listview, title, width, align_right, id == DB_COLUMN_ALBUM_ART ? width : 0, 0, color, inf);
+    ddb_listview_column_append (listview, title, width, align_right, inf->id == DB_COLUMN_ALBUM_ART ? width : 0, 0, color, inf);
 }
 
 int
