@@ -2299,7 +2299,7 @@ deferred_cover_load_cb (void *ctx) {
     if (!album || !*album) {
         album = deadbeef->pl_find_meta (it, "title");
     }
-    GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)it), ":URI"), artist, album, w->new_cover_size, NULL, NULL);
+    GdkPixbuf *pixbuf = get_cover_art_primary (deadbeef->pl_find_meta (((DB_playItem_t *)it), ":URI"), artist, album, w->new_cover_size, NULL, NULL);
     deadbeef->pl_unlock ();
     deadbeef->pl_item_unref (it);
     queue_cover_callback (coverart_avail_callback, w);
@@ -2348,7 +2348,7 @@ coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         if (!album || !*album) {
             album = deadbeef->pl_find_meta (it, "title");
         }
-        GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta ((it), ":URI"), artist, album, real_size == size ? size : -1, coverart_avail_callback_single, user_data);
+        GdkPixbuf *pixbuf = get_cover_art_primary (deadbeef->pl_find_meta ((it), ":URI"), artist, album, real_size == size ? size : -1, coverart_avail_callback_single, user_data);
         deadbeef->pl_unlock ();
 
         int hq = 0;
@@ -2376,7 +2376,7 @@ coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
             cairo_rectangle (cr, x, y, pw, ph);
             cairo_scale (cr, art_scale, art_scale);
             gdk_cairo_set_source_pixbuf (cr, pixbuf, x, y);
-            cairo_pattern_set_filter (cairo_get_source(cr), hq ? CAIRO_FILTER_GAUSSIAN : CAIRO_FILTER_FAST);
+            cairo_pattern_set_filter (cairo_get_source(cr), hq ? CAIRO_FILTER_BEST : CAIRO_FILTER_FAST);
             cairo_fill (cr);
             g_object_unref (pixbuf);
         }
