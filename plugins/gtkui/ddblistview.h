@@ -150,7 +150,7 @@ struct _DdbListview {
     // selection
     int areaselect; // boolean, whether area selection is active (1), or not (0)
     int areaselect_y; // pixel-coordinate of anchor click relative to playlist origin
-    int dragwait;
+    int dragwait; // set to 1 when mouse was pressed down on already selected track, but not moved since (so we're waiting for dnd to begin)
     int drag_source_playlist;
     int shift_sel_anchor;
 

@@ -137,7 +137,7 @@ int rowheight = 18;
                 for (DdbListviewCol_t col = [listview.delegate firstColumn]; col != [listview.delegate invalidColumn]; col = [listview.delegate nextColumn:col]) {
                     int w = [listview.delegate columnWidth:col];
                     if (CGRectIntersectsRect(dirtyRect, NSMakeRect(x, grp_row_y, w, rowheight))) {
-                        [listview.delegate drawCell:it forColumn:col inRect:NSMakeRect(x, grp_row_y, w, rowheight)];
+                        [listview.delegate drawCell:it forColumn:col inRect:NSMakeRect(x, grp_row_y, w, rowheight) focused:[[self window] firstResponder] == self];
                     }
                     x += w;
                 }
@@ -242,6 +242,10 @@ int rowheight = 18;
     return YES;
 }
 
+- (BOOL)acceptsFirstResponder {
+    return YES;
+}
+
 - (void)mouseDown:(NSEvent *)event {
     [listview groupCheck];
 
@@ -258,6 +262,8 @@ int rowheight = 18;
     int grp_index;
     int sel;
     NSPoint convPt = [self convertPoint:[event locationInWindow] toView:nil];
+    listview.lastpos = convPt;
+
     if (-1 == [listview pickPoint:convPt.y group:&grp groupIndex:&grp_index index:&sel]) {
         [delegate unlock];
         return;
@@ -285,25 +291,91 @@ int rowheight = 18;
             [listview drawRow:sel];
             [delegate unrefRow:it];
         }
-// FIXME        listview.shift_sel_anchor = [delegate cursor];
+        listview.shift_sel_anchor = [delegate cursor];
     }
 
     // single selection
     if (0 == (event.modifierFlags & (NSCommandKeyMask|NSShiftKeyMask))) {
         [listview clickSelection:convPt grp:grp grp_index:grp_index sel:sel dnd:YES button:1];
     }
+    else if (event.modifierFlags & NSCommandKeyMask) {
+        // toggle selection
+        if (sel != -1) {
+            DdbListviewRow_t it = [delegate rowForIndex:sel];
+            if (it != [delegate invalidRow]) {
+                [delegate selectRow:it withState:![delegate rowSelected:it]];
+                [listview drawRow:sel];
+                [delegate selectionChanged:it];
+                [delegate unrefRow:it];
+            }
+        }
+    }
+    else if (event.modifierFlags & NSShiftKeyMask) {
+        // select range
+        int cursor = sel;
+        if (cursor == -1) {
+            // find group
+            DdbListviewGroup_t *g = listview.groups;
+            int idx = 0;
+            while (g) {
+                if (g == grp) {
+                    cursor = idx - 1;
+                    break;
+                }
+                idx += g->num_items;
+                g = g->next;
+            }
+        }
+#define min(x,y) ((x)<(y)?(x):(y))
+#define max(x,y) ((x)>(y)?(x):(y))
+        int start = min (prev, cursor);
+        int end = max (prev, cursor);
+        int idx = 0;
+        for (DdbListviewRow_t it = [delegate firstRow]; it != [delegate invalidRow]; idx++) {
+            if (idx >= start && idx <= end) {
+                if (![delegate rowSelected:it]) {
+                    [delegate selectRow:it withState:YES];
+                    [listview drawRow:idx];
+                    [delegate selectionChanged:it];
+                }
+            }
+            else {
+                if ([delegate rowSelected:it]) {
+                    [delegate selectRow:it withState:NO];
+                    [listview drawRow:idx];
+                    [delegate selectionChanged:it];
+                }
+            }
+            DdbListviewRow_t next = [delegate nextRow:it];
+            [delegate unrefRow:it];
+            it = next;
+        }
+    }
+    cursor = [delegate cursor];
+    if (cursor != -1 && sel == -1) {
+        [listview drawRow:cursor];
+    }
+    if (prev != -1 && prev != cursor) {
+        [listview drawRow:prev];
+    }
+
     [delegate unlock];
 }
 
 - (void)mouseUp:(NSEvent *)event
 {
+    [listview listMouseUp:event];
 }
 
 - (void)mouseDragged:(NSEvent *)event
 {
+    id<DdbListviewDelegate> delegate = [listview delegate];
+
     NSPoint dragLocation;
     dragLocation=[self convertPoint:[event locationInWindow]
                            fromView:nil];
+
+    [listview listMouseDragged:event];
 
     // support automatic scrolling during a drag
     // by calling NSView's autoscroll: method
@@ -393,6 +465,7 @@ int rowheight = 18;
 
     _grouptitle_height = rowheight;
 
+    int idx = 0;
     DdbListviewRow_t it = [delegate firstRow];
     while (it != [delegate invalidRow]) {
         curr = [delegate rowGroupStr:it];
@@ -401,6 +474,7 @@ int rowheight = 18;
             _groups = grp;
             memset (grp, 0, sizeof (DdbListviewGroup_t));
             grp->head = it;
+            grp->head_idx = idx;
             grp->num_items = [delegate rowCount];
             _grouptitle_height = 0;
             grp->height = _grouptitle_height + grp->num_items * rowheight;
@@ -431,6 +505,7 @@ int rowheight = 18;
             grp = newgroup;
             memset (grp, 0, sizeof (DdbListviewGroup_t));
             grp->head = it;
+            grp->head_idx = idx;
             [delegate refRow:it];
             grp->num_items = 0;
             grp->height = _grouptitle_height;
@@ -440,6 +515,7 @@ int rowheight = 18;
         DdbListviewRow_t next = [delegate nextRow:it];
         [delegate unrefRow:it];
         it = next;
+        idx++;
     }
     if (grp) {
         if (grp->height - _grouptitle_height < min_height) {
@@ -548,7 +624,7 @@ int rowheight = 18;
         return;
     }
 
-    if (rect.origin.y > [self bounds].origin.y + [self bounds].size.height) {
+    if (rect.origin.y > [contentView bounds].origin.y + [contentView bounds].size.height) {
         return;
     }
 
@@ -658,6 +734,204 @@ int rowheight = 18;
 
     _area_selection_start = sel;
     _area_selection_end = sel;
+}
+
+- (void)listMouseUp:(NSEvent *)event {
+    if (_dragwait) {
+        _dragwait = NO;
+        DdbListviewGroup_t *grp;
+        int grp_index;
+        int sel;
+        NSPoint convPt = [self convertPoint:[event locationInWindow] toView:nil];
+        if (![self pickPoint:convPt.y group:&grp groupIndex:&grp_index index:&sel]) {
+            [self selectSingle:sel];
+        }
+        else {
+            [delegate setCursor:-1];
+            DdbListviewRow_t it = [delegate firstRow];
+            int idx = 0;
+            while (it != [delegate invalidRow]) {
+                if ([delegate rowSelected:it]) {
+                    [delegate selectRow:it withState:NO];
+                    [self drawRow:idx];
+                    [delegate selectionChanged:it];
+                    DdbListviewRow_t next = [delegate nextRow:it];
+                    [delegate unrefRow:it];
+                    it = next;
+                }
+                idx++;
+            }
+        }
+    }
+    else if (_areaselect) {
+        _scroll_direction = 0;
+        _scroll_pointer_y = -1;
+        _areaselect = 0;
+    }
+}
+
+- (void)listMouseDragged:(NSEvent *)event {
+    [delegate lock];
+    NSPoint pt = [contentView convertPoint:[event locationInWindow] toView:nil];
+    if (_dragwait) {
+        if (abs (_lastpos.x - pt.x) > 3 || abs (_lastpos.y - pt.y) > 3) {
+            _dragwait = 0;
+            // begin dnd
+        }
+    }
+    else if (_areaselect) {
+        DdbListviewGroup_t *grp;
+        int grp_index;
+        int sel;
+        if ([self pickPoint:pt.y group:&grp groupIndex:&grp_index index:&sel] == -1) {
+            // past playlist bounds -> set to last track
+            sel = [delegate rowCount] - 1;
+        }
+        else if (sel == -1) {
+            if (grp_index == -1) {
+                if (_areaselect_y < pt.y) {
+                    // below anchor, take last track in prev group
+                    sel = grp->head_idx - 1;
+                }
+                else if (_areaselect_y > pt.y) {
+                    // above, select 1st track in group
+                    sel = grp->head_idx;
+                }
+                else {
+                    sel = _shift_sel_anchor;
+                }
+            }
+            else {
+                if (_areaselect_y < pt.y) {
+                    // below anchor, take last track in group
+                    sel = grp->head_idx + grp->num_items - 1;
+                }
+                else if (_areaselect_y > pt.y) {
+                    // above, select 1st track in next group
+                    if (grp->next) {
+                        sel = grp->next->head_idx;
+                    }
+                }
+                else {
+                    sel = _shift_sel_anchor;
+                }
+            }
+        }
+        int prev = [delegate cursor];
+        if (sel != -1) {
+            [delegate setCursor:sel];
+        }
+        {
+            // select range of items
+            int y = sel;
+            int idx = 0;
+            if (y == -1) {
+                // find group
+                [self groupCheck];
+                DdbListviewGroup_t *g = _groups;
+                while (g) {
+                    if (g == grp) {
+                        y = idx - 1;
+                        break;
+                    }
+                    idx += g->num_items;
+                    g = g->next;
+                }
+            }
+            int start = min (y, _shift_sel_anchor);
+            int end = max (y, _shift_sel_anchor);
+
+            int nchanged = 0;
+
+            // don't touch anything in process_start/end range
+            int process_start = min (start, _area_selection_start);
+            int process_end = max (end, _area_selection_end);
+#define NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW 10
+            idx=process_start;
+            DdbListviewRow_t it = [delegate rowForIndex:idx];
+            for (; it && idx <= process_end; idx++) {
+                int selected = [delegate rowSelected:it];
+                if (idx >= start && idx <= end) {
+                    if (!selected) {
+                        [delegate selectRow:it withState:YES];
+                        nchanged++;
+                        if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                            [self drawRow:idx];
+                            [delegate selectionChanged:it];
+                        }
+                    }
+                }
+                else if (selected) {
+                    [delegate selectRow:it withState:NO];
+                    nchanged++;
+                    if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                        [self drawRow:idx];
+                        [delegate selectionChanged:it];
+                    }
+                }
+                DdbListviewRow_t next = [delegate nextRow:it];
+                [delegate unrefRow:it];
+                it = next;
+            }
+            if (it != [delegate invalidRow]) {
+                [delegate unrefRow:it];
+            }
+            if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                [contentView setNeedsDisplay:YES];
+                [delegate selectionChanged:it]; // that means "selection changed a lot, redraw everything
+            }
+            _area_selection_start = start;
+            _area_selection_end = end;
+        }
+        if (sel != -1 && sel != prev) {
+            if (prev != -1) {
+                DdbListviewRow_t it = [delegate rowForIndex:prev];
+                if (it != [delegate invalidRow]) {
+                    [self drawRow:prev];
+                    [delegate unrefRow:it];
+                }
+            }
+            DdbListviewRow_t it = [delegate rowForIndex:sel];
+            if (it != [delegate invalidRow]) {
+                [self drawRow:sel];
+                [delegate unrefRow:it];
+            }
+        }
+#if 0
+        GtkAllocation a;
+        gtk_widget_get_allocation (ps->list, &a);
+
+        if (ey < 10) {
+            ps->scroll_mode = 0;
+            ps->scroll_pointer_y = ey;
+            // start scrolling up
+            if (!ps->scroll_active) {
+                ps->scroll_direction = -1;
+                ps->scroll_sleep_time = AUTOSCROLL_UPDATE_FREQ;
+                gettimeofday (&ps->tm_prevscroll, NULL);
+                g_idle_add (ddb_listview_list_scroll_cb, ps);
+            }
+        }
+        else if (ey > a.height-10) {
+            ps->scroll_mode = 0;
+            ps->scroll_pointer_y = ey;
+            // start scrolling down
+            if (!ps->scroll_active) {
+                ps->scroll_direction = 1;
+                ps->scroll_sleep_time = AUTOSCROLL_UPDATE_FREQ;
+                gettimeofday (&ps->tm_prevscroll, NULL);
+                g_idle_add (ddb_listview_list_scroll_cb, ps);
+            }
+        }
+        else {
+            ps->scroll_direction = 0;
+            ps->scroll_pointer_y = -1;
+        }
+#endif
+    }
+
+
+    [delegate unlock];
 }
 
 @end

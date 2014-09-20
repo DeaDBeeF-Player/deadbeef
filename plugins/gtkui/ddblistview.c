@@ -1694,7 +1694,6 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
         int cursor = sel;//ps->binding->cursor ();
         if (cursor == -1) {
             // find group
-            ddb_listview_groupcheck (ps);
             DdbListviewGroup *g = ps->groups;
             int idx = 0;
             while (g) {
@@ -1762,7 +1761,9 @@ ddb_listview_list_mouse1_released (DdbListview *ps, int state, int ex, int ey, d
                     ps->binding->select (it, 0);
                     ddb_listview_draw_row (ps, idx, it);
                     ps->binding->selection_changed (ps, it, idx);
-                    it = PL_NEXT (it);
+                    DdbListviewIter next = PL_NEXT(it);
+                    UNREF (it);
+                    it = next;
                 }
                 idx++;
             }
