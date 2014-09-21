@@ -72,6 +72,12 @@ typedef struct DdbListviewGroup_s {
 @property (readonly) NSView *headerView;
 @property (readonly) NSView *contentView;
 @property id<DdbListviewDelegate> delegate;
+@property (readonly) DdbListviewGroup_t *groups;
+@property (readonly) int grouptitle_height;
+@property (readonly) int groups_pinned;
+@property (readonly) int fullheight;
+@property (readwrite) NSPoint lastpos;
+@property (readwrite) int shift_sel_anchor;
 
 - (void)reloadData;
 - (void)groupCheck;
@@ -81,10 +87,4 @@ typedef struct DdbListviewGroup_s {
 - (void)listMouseUp:(NSEvent *)event;
 - (void)listMouseDragged:(NSEvent *)event;
 
-@property (readonly) DdbListviewGroup_t *groups;
-@property (readonly) int grouptitle_height;
-@property (readonly) int groups_pinned;
-@property (readonly) int fullheight;
-@property (readwrite) NSPoint lastpos;
-@property (readwrite) int shift_sel_anchor;
 @end

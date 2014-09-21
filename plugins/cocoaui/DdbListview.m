@@ -8,7 +8,7 @@
 
 #import "DdbListview.h"
 
-int rowheight = 18;
+int rowheight = 19;
 
 @interface DdbListHeaderView : NSView {
     DdbListview *listview;
@@ -137,7 +137,7 @@ int rowheight = 18;
                 for (DdbListviewCol_t col = [listview.delegate firstColumn]; col != [listview.delegate invalidColumn]; col = [listview.delegate nextColumn:col]) {
                     int w = [listview.delegate columnWidth:col];
                     if (CGRectIntersectsRect(dirtyRect, NSMakeRect(x, grp_row_y, w, rowheight))) {
-                        [listview.delegate drawCell:it forColumn:col inRect:NSMakeRect(x, grp_row_y, w, rowheight) focused:[[self window] firstResponder] == self];
+                        [listview.delegate drawCell:it forColumn:col inRect:NSMakeRect(x, grp_row_y, w, rowheight-1) focused:YES];
                     }
                     x += w;
                 }
@@ -239,10 +239,6 @@ int rowheight = 18;
 }
 
 - (BOOL)isFlipped {
-    return YES;
-}
-
-- (BOOL)acceptsFirstResponder {
     return YES;
 }
 
@@ -785,7 +781,12 @@ int rowheight = 18;
         int sel;
         if ([self pickPoint:pt.y group:&grp groupIndex:&grp_index index:&sel] == -1) {
             // past playlist bounds -> set to last track
-            sel = [delegate rowCount] - 1;
+            if (pt.y < 0) {
+                sel = 0;
+            }
+            else {
+                sel = [delegate rowCount] - 1;
+            }
         }
         else if (sel == -1) {
             if (grp_index == -1) {
@@ -897,41 +898,161 @@ int rowheight = 18;
                 [delegate unrefRow:it];
             }
         }
-#if 0
-        GtkAllocation a;
-        gtk_widget_get_allocation (ps->list, &a);
-
-        if (ey < 10) {
-            ps->scroll_mode = 0;
-            ps->scroll_pointer_y = ey;
-            // start scrolling up
-            if (!ps->scroll_active) {
-                ps->scroll_direction = -1;
-                ps->scroll_sleep_time = AUTOSCROLL_UPDATE_FREQ;
-                gettimeofday (&ps->tm_prevscroll, NULL);
-                g_idle_add (ddb_listview_list_scroll_cb, ps);
-            }
-        }
-        else if (ey > a.height-10) {
-            ps->scroll_mode = 0;
-            ps->scroll_pointer_y = ey;
-            // start scrolling down
-            if (!ps->scroll_active) {
-                ps->scroll_direction = 1;
-                ps->scroll_sleep_time = AUTOSCROLL_UPDATE_FREQ;
-                gettimeofday (&ps->tm_prevscroll, NULL);
-                g_idle_add (ddb_listview_list_scroll_cb, ps);
-            }
-        }
-        else {
-            ps->scroll_direction = 0;
-            ps->scroll_pointer_y = -1;
-        }
-#endif
     }
-
 
     [delegate unlock];
 }
+
+- (BOOL)acceptsFirstResponder {
+    return YES;
+}
+
+- (void)keyDown:(NSEvent *)theEvent {
+    if ([theEvent modifierFlags] & NSNumericPadKeyMask) {
+        NSString *theArrow = [theEvent charactersIgnoringModifiers];
+        unichar keyChar = 0;
+        if ( [theArrow length] == 0 )
+            return;            // reject dead keys
+        if ( [theArrow length] == 1 ) {
+
+            int prev = [delegate cursor];
+            int cursor = prev;
+
+            keyChar = [theArrow characterAtIndex:0];
+            switch (keyChar) {
+                case NSDownArrowFunctionKey:
+                    if (cursor < [delegate rowCount]-1) {
+                        cursor++;
+                    }
+                    break;
+                case NSUpArrowFunctionKey:
+                    if (cursor > 0) {
+                        cursor--;
+                    }
+                    else if (cursor < 0 && [delegate rowCount] > 0) {
+                            cursor = 0;
+                    }
+                    break;
+                default:
+                    [super keyDown:theEvent];
+                    return;
+            }
+
+            if ([theEvent modifierFlags] & NSShiftKeyMask) {
+                if (cursor != prev) {
+                    [delegate setCursor:cursor];
+                    [self setScrollForPos:[self getRowPos:cursor]];
+                    // select all between shift_sel_anchor and deadbeef->pl_get_cursor (ps->iterator)
+                    int start = min (cursor, _shift_sel_anchor);
+                    int end = max (cursor, _shift_sel_anchor);
+                    
+                    int nchanged = 0;
+                    int idx = 0;
+                    DdbListviewRow_t it;
+                    for (it = [delegate firstRow]; it != [delegate invalidRow]; idx++) {
+                        if (idx >= start && idx <= end) {
+                            [delegate selectRow:it withState:YES];
+                            if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                                [self drawRow:idx];
+                                [delegate selectionChanged:it];
+                            }
+                        }
+                        else if ([delegate rowSelected:it]) {
+                            [delegate selectRow:it withState:NO];
+                            if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                                [self drawRow:idx];
+                                [delegate selectionChanged:it];
+                            }
+                        }
+                        DdbListviewRow_t next = [delegate nextRow:it];
+                        [delegate unrefRow:it];
+                        it = next;
+                    }
+                    if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                        [self setNeedsDisplay:YES]; // FIXME: notify other instances
+//                        ps->binding->selection_changed (ps, it, -1); // that means "selection changed a lot, redraw everything"
+                    }
+                }
+            }
+            else if (prev != cursor) {
+                _shift_sel_anchor = cursor;
+                [self setCursor:cursor];
+            }
+        }
+    }
+}
+
+- (void)setCursor:(int)cursor {
+    int prev = [delegate cursor];
+    DdbListviewRow_t prev_it = [delegate rowForIndex:prev];
+    [delegate setCursor:cursor];
+
+    BOOL prev_selected = NO;
+
+    if (prev_it != [delegate invalidRow]) {
+        prev_selected = [delegate rowSelected:prev_it];
+    }
+
+    [self selectSingle:cursor];
+
+    if (prev_it != [delegate invalidRow]) {
+        if (!prev_selected) {
+            [self drawRow:prev];
+        }
+
+        [delegate unrefRow:prev_it];
+    }
+
+    BOOL noscroll = NO; // FIXME
+    if (!noscroll) {
+        [self setScrollForPos:[self getRowPos:cursor]];
+    }
+}
+
+- (void)setScrollForPos:(int)pos {
+    NSScrollView *sv = [contentView enclosingScrollView];
+    NSRect vis = [sv documentVisibleRect];
+    int scrollpos = vis.origin.y;
+    int cursor_scroll = pos;
+    int newscroll = scrollpos;
+
+    if (!_groups_pinned && cursor_scroll < scrollpos) {
+        newscroll = cursor_scroll;
+    }
+    else if (_groups_pinned && cursor_scroll < scrollpos + _grouptitle_height) {
+        newscroll = cursor_scroll - _grouptitle_height;
+    }
+    else if (cursor_scroll + rowheight >= scrollpos + vis.size.height) {
+        newscroll = cursor_scroll + rowheight - vis.size.height + 1;
+        if (newscroll < 0) {
+            newscroll = 0;
+        }
+    }
+    if (scrollpos != newscroll) {
+        [contentView scrollPoint:NSMakePoint(vis.origin.x, newscroll)];
+    }
+
+}
+
+- (int)getRowPos:(int)row_idx {
+    int y = 0;
+    int idx = 0;
+    [delegate lock];
+    [self groupCheck];
+    DdbListviewGroup_t *grp = _groups;
+    while (grp) {
+        if (idx + grp->num_items > row_idx) {
+            int i = y + _grouptitle_height + (row_idx - idx) * rowheight;
+            [delegate unlock];
+            return i;
+        }
+        y += grp->height;
+        idx += grp->num_items;
+        grp = grp->next;
+    }
+    [delegate unlock];
+    return y;
+}
+
 
 @end

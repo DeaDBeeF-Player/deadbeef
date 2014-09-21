@@ -2875,7 +2875,6 @@ ddb_listview_set_cursor_cb (gpointer data) {
     }
 
     if (!sc->noscroll) {
-        DdbListviewIter it;
         DdbListview *ps = sc->pl;
 
         int cursor_scroll = ddb_listview_get_row_pos (sc->pl, sc->cursor);
