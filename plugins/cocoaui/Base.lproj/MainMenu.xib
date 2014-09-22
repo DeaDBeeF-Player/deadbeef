@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6246" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6246"/>
+        <deployment defaultVersion="1060" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -400,7 +400,7 @@ CA
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" autosaveColumns="NO" typeSelect="NO" headerView="Pxp-xE-pFF" id="0tA-Oo-Ry1">
-                                    <rect key="frame" x="0.0" y="0.0" width="497" height="19"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="507" height="144"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -547,6 +547,7 @@ CA
                 <outlet property="addFilesWindow" destination="wus-lw-fPx" id="tlO-gc-zHU"/>
                 <outlet property="cursorFollowsPlayback" destination="Ra2-1K-rwd" id="i3v-jO-k4t"/>
                 <outlet property="ddbListview" destination="Bau-HS-x8G" id="HFU-us-I2l"/>
+                <outlet property="dockTileView" destination="h87-hn-tWh" id="h87-62-sdr"/>
                 <outlet property="invertSelectionAction" destination="tqs-ZB-dsG" id="w3N-0T-3BL"/>
                 <outlet property="loopAll" destination="bp3-Nw-TaR" id="t92-xv-gTj"/>
                 <outlet property="loopNone" destination="pGf-UH-jjg" id="fd0-Uw-O2Y"/>
@@ -583,7 +584,6 @@ CA
                     </customView>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="161" y="242"/>
         </window>
         <drawer trailingOffset="15" id="gBy-Xn-inR">
             <size key="contentSize" width="100" height="100"/>
@@ -628,8 +628,14 @@ Gw
                 </subviews>
             </view>
         </window>
+        <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="h87-hn-tWh">
+            <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="oCk-eR-mPP"/>
+        </imageView>
     </objects>
     <resources>
+        <image name="NSApplicationIcon" width="128" height="128"/>
         <image name="btnnextTemplate" width="75" height="75"/>
         <image name="btnpauseTemplate" width="75" height="75"/>
         <image name="btnplayTemplate" width="75" height="75"/>
