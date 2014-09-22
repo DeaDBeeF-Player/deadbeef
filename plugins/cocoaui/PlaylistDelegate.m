@@ -154,11 +154,32 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)setColumnWidth:(int)width forColumn:(DdbListviewCol_t)col {
-
+    columns[col].size = width;
 }
 
 - (int)columnMinHeight:(DdbListviewCol_t)col {
     return columns[col]._id == DB_COLUMN_ALBUM_ART;
+}
+
+- (void)moveColumn:(DdbListviewCol_t)col to:(DdbListviewCol_t)to {
+    plt_col_info_t tmp;
+
+    while (col < to) {
+        memcpy (&tmp, &columns[col], sizeof (plt_col_info_t));
+        memmove (&columns[col], &columns[col+1], sizeof (plt_col_info_t));
+        memcpy (&columns[col+1], &tmp, sizeof (plt_col_info_t));
+        col++;
+    }
+    while (col > to) {
+        memcpy (&tmp, &columns[col], sizeof (plt_col_info_t));
+        memmove (&columns[col], &columns[col-1], sizeof (plt_col_info_t));
+        memcpy (&columns[col-1], &tmp, sizeof (plt_col_info_t));
+        col--;
+    }
+}
+
+- (void)columnsChanged {
+    // TODO: serialize
 }
 
 - (DdbListviewRow_t)firstRow {
@@ -239,6 +260,10 @@ extern DB_functions_t *deadbeef;
     }
     else {
         textColor = [NSColor controlTextColor];
+    }
+
+    if (col == [self invalidColumn]) {
+        return;
     }
 
     DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
