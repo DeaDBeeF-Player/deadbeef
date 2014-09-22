@@ -908,7 +908,7 @@ int rowheight = 19;
 }
 
 - (void)keyDown:(NSEvent *)theEvent {
-    if ([theEvent modifierFlags] & NSNumericPadKeyMask) {
+    if ([theEvent modifierFlags] & NSNumericPadKeyMask, 1) {
         NSString *theArrow = [theEvent charactersIgnoringModifiers];
         unichar keyChar = 0;
         if ( [theArrow length] == 0 )
@@ -933,6 +933,18 @@ int rowheight = 19;
                             cursor = 0;
                     }
                     break;
+                case NSPageDownFunctionKey: {
+                    NSScrollView *sv = [contentView enclosingScrollView];
+                    NSRect vis = [sv documentVisibleRect];
+                    [contentView scrollPoint:NSMakePoint(vis.origin.x, vis.origin.y + vis.size.height - rowheight)];
+                    break;
+                }
+                case NSPageUpFunctionKey: {
+                    NSScrollView *sv = [contentView enclosingScrollView];
+                    NSRect vis = [sv documentVisibleRect];
+                    [contentView scrollPoint:NSMakePoint(vis.origin.x, vis.origin.y - vis.size.height + rowheight)];
+                    break;
+                }
                 default:
                     [super keyDown:theEvent];
                     return;
