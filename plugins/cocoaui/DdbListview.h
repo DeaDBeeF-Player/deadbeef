@@ -52,7 +52,7 @@ typedef struct DdbListviewGroup_s {
     struct DdbListviewGroup_s *next;
 } DdbListviewGroup_t;
 
-@interface DdbListview : NSView {
+@interface DdbListview : DdbWidget {
     DdbListviewGroup_t *_groups;
     int _grouptitle_height;
     int _groups_pinned;
@@ -86,5 +86,7 @@ typedef struct DdbListviewGroup_s {
 - (void)clickSelection:(NSPoint)pt grp:(DdbListviewGroup_t *)grp grp_index:(int)grp_index sel:(int)sel dnd:(BOOL)dnd button:(int)button;
 - (void)listMouseUp:(NSEvent *)event;
 - (void)listMouseDragged:(NSEvent *)event;
-
+- (void)setCursor:(int)cursor noscroll:(BOOL)noscroll;
+- (void)scrollToRowWithIndex:(int)idx;
+- (void)setVScroll:(int)scroll;
 @end

@@ -23,6 +23,9 @@ typedef struct {
 @interface PlaylistDelegate : NSObject {
     plt_col_info_t columns[PLT_MAX_COLUMNS];
     int ncolumns;
+    NSImage *playTpl;
+    NSImage *pauseTpl;
+    NSImage *bufTpl;
 }
 
 - (PlaylistDelegate *)init;

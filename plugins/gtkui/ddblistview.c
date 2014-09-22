@@ -3027,7 +3027,7 @@ ddb_listview_scroll_to (DdbListview *listview, int pos) {
     pos = ddb_listview_get_row_pos (listview, pos);
     GtkAllocation a;
     gtk_widget_get_allocation (listview->list, &a);
-    if (pos < listview->scrollpos || pos >= listview->scrollpos + a.height) {
+    if (pos < listview->scrollpos || pos + listview->rowheight >= listview->scrollpos + a.height) {
         gtk_range_set_value (GTK_RANGE (listview->scrollbar), pos - a.height/2);
     }
 }

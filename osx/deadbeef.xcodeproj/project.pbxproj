@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06B39B19D056BC0041BE86 /* DdbPlaylistWidget.h */; };
+		2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */; };
 		2D0A002719C390E9006F7462 /* tf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A002519C390E9006F7462 /* tf.c */; };
 		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
 		2D0B1C8419C5B9FC00CED0B5 /* PlaylistDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0B1C8219C5B9FC00CED0B5 /* PlaylistDelegate.h */; };
@@ -523,6 +525,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2D06B39B19D056BC0041BE86 /* DdbPlaylistWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbPlaylistWidget.h; path = widgets/DdbPlaylistWidget.h; sourceTree = "<group>"; };
+		2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbPlaylistWidget.m; path = widgets/DdbPlaylistWidget.m; sourceTree = "<group>"; };
 		2D0A002519C390E9006F7462 /* tf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tf.c; sourceTree = "<group>"; };
 		2D0A002619C390E9006F7462 /* tf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tf.h; sourceTree = "<group>"; };
 		2D0B1C8219C5B9FC00CED0B5 /* PlaylistDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaylistDelegate.h; sourceTree = "<group>"; };
@@ -1488,6 +1492,8 @@
 				2DE1D3E519B11539009B5BC6 /* DdbPlaceholderWidget.m */,
 				2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */,
 				2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */,
+				2D06B39B19D056BC0041BE86 /* DdbPlaylistWidget.h */,
+				2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */,
 			);
 			name = widgets;
 			sourceTree = "<group>";
@@ -2082,6 +2088,7 @@
 				2D0B1C8419C5B9FC00CED0B5 /* PlaylistDelegate.h in Headers */,
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
+				2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2515,6 +2522,7 @@
 				4D1B4F5F1837EC4A003E6066 /* streamer.c in Sources */,
 				4D1B4F4C1837EC4A003E6066 /* replaygain.c in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
+				2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */,
 				2D0A002719C390E9006F7462 /* tf.c in Sources */,
 				4D1B515B1837F4E9003E6066 /* nullout.c in Sources */,
 				4D1B4AA11837EC49003E6066 /* pltmeta.c in Sources */,
