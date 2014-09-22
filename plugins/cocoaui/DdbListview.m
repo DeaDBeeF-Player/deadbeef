@@ -12,13 +12,22 @@ int rowheight = 19;
 
 @interface DdbListHeaderView : NSView {
     DdbListview *listview;
+    int _orig_col_width;
+    int _drag_col_pos;
+    int _drag_delta;
+    DdbListviewCol_t _dragging;
+    DdbListviewCol_t _sizing;
+    NSPoint _dragPt;
 }
 - (void)setListView:(DdbListview *)lv;
 @end
 
 @implementation DdbListHeaderView
 - (DdbListHeaderView *)initWithFrame:(NSRect)rect {
-    return [super initWithFrame:rect];
+    self = [super initWithFrame:rect];
+    _dragging = -1;
+    _sizing = -1;
+    return self;
 }
 
 - (void)setListView:(DdbListview *)lv {
@@ -27,6 +36,8 @@ int rowheight = 19;
 
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
+
+    [self updateCursorRects];
 
     NSScrollView *sv = [listview.contentView enclosingScrollView];
     NSRect rc = [sv documentVisibleRect];
@@ -45,14 +56,145 @@ int rowheight = 19;
 
     [gr drawInRect:NSMakeRect(rect.origin.x, rect.origin.y,rect.size.width,rect.size.height-1) angle:270];
 
-    int x = -rc.origin.x;
     id <DdbListviewDelegate> delegate = [listview delegate];
+
+    int x = -rc.origin.x;
     for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
-        if (CGRectIntersectsRect(dirtyRect, NSMakeRect(x, 0, w, [self frame].size.height))) {
-            [delegate drawColumnHeader:col inRect:NSMakeRect(x, 0, w, [self frame].size.height)];
+
+        if (_dragging != col) {
+            if (CGRectIntersectsRect(dirtyRect, NSMakeRect(x, 0, w, [self frame].size.height))) {
+                [delegate drawColumnHeader:col inRect:NSMakeRect(x, 0, w, [self frame].size.height)];
+            }
         }
         x += w;
+    }
+
+    x = -rc.origin.x;
+    for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
+        int w = [delegate columnWidth:col];
+
+        int cx = x;
+        if (_dragging == col) {
+            cx = _drag_col_pos + _drag_delta;
+            NSRect colRect = NSMakeRect(cx, 0, w, [self frame].size.height-1);
+            if (CGRectIntersectsRect(dirtyRect, colRect)) {
+                [gr drawInRect:colRect angle:90];
+                [delegate drawColumnHeader:col inRect:colRect];
+            }
+        }
+        x += w;
+    }
+
+}
+
+- (void)updateCursorRects {
+    [self resetCursorRects];
+
+    NSScrollView *sv = [listview.contentView enclosingScrollView];
+    NSRect rc = [sv documentVisibleRect];
+
+    int x = -rc.origin.x;
+    id <DdbListviewDelegate> delegate = [listview delegate];
+
+    for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
+        int w = [delegate columnWidth:col];
+
+        x += w;
+
+        [self addCursorRect:NSMakeRect(x-3, 0, 6, [self bounds].size.height) cursor:[NSCursor resizeLeftRightCursor]];
+
+    }
+}
+
+- (void)mouseDown:(NSEvent *)theEvent {
+    NSScrollView *sv = [listview.contentView enclosingScrollView];
+    NSRect rc = [sv documentVisibleRect];
+
+    NSPoint convPt = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+
+    int x = -rc.origin.x;
+    id <DdbListviewDelegate> delegate = [listview delegate];
+
+    _dragging = [delegate invalidColumn];
+    _sizing = [delegate invalidColumn];
+
+    for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
+        int w = [delegate columnWidth:col];
+
+        if (CGRectContainsPoint(NSMakeRect(x+3, 0, w-6, [self bounds].size.height), convPt)) {
+            _drag_delta = 0;
+            _dragging = col;
+            _dragPt = convPt;
+            _drag_col_pos = x;
+            [listview setNeedsDisplay:YES];
+            break;
+        }
+
+        x += w;
+
+        if (CGRectContainsPoint (NSMakeRect(x-3, 0, 6, [self bounds].size.height), convPt)) {
+            _sizing = col;
+            _dragPt = convPt;
+            _orig_col_width = [delegate columnWidth:col];
+            break;
+        }
+    }
+}
+
+- (void)mouseUp:(NSEvent *)theEvent {
+    id <DdbListviewDelegate> delegate = [listview delegate];
+    if (_dragging != [delegate invalidColumn] || _sizing != [delegate invalidColumn]) {
+        [delegate columnsChanged];
+        _dragging = [delegate invalidColumn];
+        _sizing = [delegate invalidColumn];
+        [listview setNeedsDisplay:YES];
+    }
+}
+
+- (void)mouseDragged:(NSEvent *)theEvent {
+    NSPoint convPt = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+
+    id <DdbListviewDelegate> delegate = [listview delegate];
+    if (_sizing != [delegate invalidColumn]) {
+        int dx = convPt.x - _dragPt.x;
+
+        int w = _orig_col_width + dx;
+        if (w < 10) {
+            w = 10;
+        }
+        if ([delegate columnWidth:_sizing] != w) {
+            [delegate setColumnWidth:w forColumn:_sizing];
+            [listview setNeedsDisplay:YES];
+        }
+    }
+    else if (_dragging != [delegate invalidColumn]) {
+        _drag_delta = convPt.x - _dragPt.x;
+
+        NSScrollView *sv = [listview.contentView enclosingScrollView];
+        NSRect rc = [sv documentVisibleRect];
+
+        int x = -rc.origin.x;
+
+        DdbListviewCol_t inspos = [delegate invalidColumn];
+        int x1 = -1, x2 = -1;
+        for (DdbListviewCol_t cc = [delegate firstColumn]; cc != [delegate invalidColumn]; cc = [delegate nextColumn:cc]) {
+            if (x < convPt.x && x + [delegate columnWidth:_dragging] > convPt.x) {
+                inspos = cc;
+                x1 = x;
+            }
+            else if (cc == _dragging) {
+                x2 = x;
+            }
+            x += [delegate columnWidth:cc];
+        }
+
+        if (inspos != [delegate invalidColumn] && inspos != _dragging) {
+            [delegate moveColumn:_dragging to:inspos];
+            _dragging = inspos;
+            [listview reloadData];
+        }
+        [listview setNeedsDisplay:YES];
     }
 }
 @end
@@ -140,6 +282,10 @@ int rowheight = 19;
                         [listview.delegate drawCell:it forColumn:col inRect:NSMakeRect(x, grp_row_y, w, rowheight-1) focused:YES];
                     }
                     x += w;
+                }
+
+                if (x < dirtyRect.size.width) {
+                    [listview.delegate drawCell:it forColumn:[delegate invalidColumn] inRect:NSMakeRect(x, grp_row_y, dirtyRect.size.width-x, rowheight-1) focused:YES];
                 }
             }
             DdbListviewRow_t next = [listview.delegate nextRow:it];
@@ -521,7 +667,7 @@ int rowheight = 19;
     }
     if (old_height != _fullheight) {
         NSRect frame = [contentView frame];
-        frame.size.height = _fullheight;
+        frame.size.height = _fullheight > 0 ? _fullheight : 1;
         contentView.frame = frame;
     }
     [delegate unlock];

@@ -25,6 +25,8 @@ typedef intptr_t DdbListviewCol_t;
 - (int)columnWidth:(DdbListviewCol_t)col;
 - (void)setColumnWidth:(int)width forColumn:(DdbListviewCol_t)col;
 - (int)columnMinHeight:(DdbListviewCol_t)col;
+- (void)moveColumn:(DdbListviewCol_t)col to:(DdbListviewCol_t)to;
+- (void)columnsChanged;
 - (DdbListviewRow_t)firstRow;
 - (DdbListviewRow_t)nextRow:(DdbListviewRow_t)row;
 - (DdbListviewRow_t)invalidRow;
