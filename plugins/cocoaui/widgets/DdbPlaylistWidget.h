@@ -7,7 +7,9 @@
 //
 
 #import "DdbWidget.h"
+#import "DdbListview.h"
 
-@interface DdbPlaylistWidgetView : DdbWidget
-
+@interface DdbPlaylistWidget : DdbWidget {
+    DdbListview *_listview;
+}
 @end

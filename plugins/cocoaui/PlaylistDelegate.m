@@ -32,6 +32,12 @@ extern DB_functions_t *deadbeef;
         else {
             [self loadColumns:json];
         }
+        playTpl = [NSImage imageNamed:@"btnplayTemplate.pdf"];
+        [playTpl setFlipped:YES];
+        pauseTpl = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
+        [pauseTpl setFlipped:YES];
+        bufTpl = [NSImage imageNamed:@"bufferingTemplate.pdf"];
+        [bufTpl setFlipped:YES];
     }
 
     return self;
@@ -218,7 +224,8 @@ extern DB_functions_t *deadbeef;
 
     NSColor *textColor;
 
-    if (deadbeef->pl_is_selected((DB_playItem_t *)row)) {
+    int sel = deadbeef->pl_is_selected((DB_playItem_t *)row);
+    if (sel) {
         if (focused) {
             [[NSColor alternateSelectedControlColor] set];
             [NSBezierPath fillRect:rect];
@@ -234,6 +241,47 @@ extern DB_functions_t *deadbeef;
         textColor = [NSColor controlTextColor];
     }
 
+    DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
+
+    if (columns[col]._id == DB_COLUMN_PLAYING && playing_track && (DB_playItem_t *)row == playing_track) {
+        NSImage *img = NULL;
+        int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+        int buffering = !deadbeef->streamer_ok_to_read (-1);
+        if (paused) {
+            img = pauseTpl;
+        }
+        else if (!buffering) {
+            img = playTpl;
+        }
+        else {
+            img = bufTpl;
+        }
+
+        NSColor *imgColor = sel ? [NSColor alternateSelectedControlTextColor] : [NSColor controlTextColor];
+
+        CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
+        CGContextSaveGState(c);
+
+        NSRect maskRect = rect;
+        if (maskRect.size.width > maskRect.size.height) {
+            maskRect.size.width = maskRect.size.height;
+        }
+        else {
+            maskRect.size.height = maskRect.size.width;
+        }
+        maskRect.origin = NSMakePoint(rect.origin.x + rect.size.width/2 - maskRect.size.width/2, rect.origin.y + rect.size.height/2 - maskRect.size.height/2);
+
+        CGImageRef maskImage = [img CGImageForProposedRect:&maskRect context:[NSGraphicsContext currentContext] hints:nil];
+
+        CGContextClipToMask(c, NSRectToCGRect(maskRect), maskImage);
+        [imgColor set];
+        [NSBezierPath fillRect:maskRect];
+        CGContextRestoreGState(c);
+    }
+
+    if (playing_track) {
+        deadbeef->pl_item_unref (playing_track);
+    }
 
     if (columns[col].bytecode) {
         char text[1024] = "";

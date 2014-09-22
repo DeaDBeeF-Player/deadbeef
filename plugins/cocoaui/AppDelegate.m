@@ -22,10 +22,11 @@
 */
 
 #import "AppDelegate.h"
-#include "../../deadbeef.h"
 #import "dispatch/dispatch.h"
+#import "DdbWidgetManager.h"
+
+#include "../../deadbeef.h"
 #include <sys/time.h>
-#import "PlaylistDelegate.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -130,10 +131,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     deadbeef->listen_file_added (file_added, NULL);
 
     [self initColumns];
-
-    PlaylistDelegate *del = [[PlaylistDelegate alloc] init];
-    [self.ddbListview setDelegate:(id<DdbListviewDelegate>)del];
-    [self.ddbListview setNeedsDisplay:YES];
 
     g_appDelegate = self;
     [[NSApp dockTile] setContentView: self.dockTileView];
@@ -771,6 +768,8 @@ init_column (int i, int _id, const char *format) {
 
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2
 {
+    [[DdbWidgetManager defaultWidgetManager] widgetMessage:_id ctx:ctx p1:p1 p2:p2];
+    
     if (_id == DB_EV_PAUSED || _id == DB_EV_PLAYLIST_REFRESH || _id == DB_EV_PLAYLISTCHANGED || _id == DB_EV_PLAYLISTSWITCHED || _id == DB_EV_TRACKFOCUSCURRENT || _id == DB_EV_SONGCHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(handleSimpleMessage:) withObject:[[NSNumber alloc] initWithInt:_id] waitUntilDone:NO];
     }

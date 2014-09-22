@@ -976,13 +976,13 @@ int rowheight = 19;
             }
             else if (prev != cursor) {
                 _shift_sel_anchor = cursor;
-                [self setCursor:cursor];
+                [self setCursor:cursor noscroll:NO];
             }
         }
     }
 }
 
-- (void)setCursor:(int)cursor {
+- (void)setCursor:(int)cursor noscroll:(BOOL)noscroll {
     int prev = [delegate cursor];
     DdbListviewRow_t prev_it = [delegate rowForIndex:prev];
     [delegate setCursor:cursor];
@@ -1003,7 +1003,6 @@ int rowheight = 19;
         [delegate unrefRow:prev_it];
     }
 
-    BOOL noscroll = NO; // FIXME
     if (!noscroll) {
         [self setScrollForPos:[self getRowPos:cursor]];
     }
@@ -1054,5 +1053,19 @@ int rowheight = 19;
     return y;
 }
 
+- (void)scrollToRowWithIndex:(int)idx {
+    int pos = [self getRowPos:idx];
+    NSScrollView *sv = [contentView enclosingScrollView];
+    NSRect vis = [sv documentVisibleRect];
 
+    if (pos < vis.origin.y || pos + rowheight >= vis.origin.y + vis.size.height) {
+        [contentView scrollPoint:NSMakePoint(vis.origin.x, pos - vis.size.height/2)];
+    }
+}
+
+- (void)setVScroll:(int)scroll {
+    NSScrollView *sv = [contentView enclosingScrollView];
+    NSRect vis = [sv documentVisibleRect];
+    [contentView scrollPoint:NSMakePoint(vis.origin.x, scroll)];
+}
 @end
