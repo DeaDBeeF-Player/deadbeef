@@ -136,6 +136,9 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [self.ddbListview setNeedsDisplay:YES];
 
     g_appDelegate = self;
+    [[NSApp dockTile] setContentView: self.dockTileView];
+//    [[NSApp dockTile] setBadgeLabel:@"Hello"];
+    [[NSApp dockTile] display];
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag{
