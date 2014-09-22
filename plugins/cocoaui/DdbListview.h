@@ -52,7 +52,7 @@ typedef struct DdbListviewGroup_s {
     struct DdbListviewGroup_s *next;
 } DdbListviewGroup_t;
 
-@interface DdbListview : DdbWidget {
+@interface DdbListview : NSView {
     DdbListviewGroup_t *_groups;
     int _grouptitle_height;
     int _groups_pinned;
