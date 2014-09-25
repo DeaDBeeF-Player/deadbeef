@@ -144,6 +144,9 @@ ca_play (void) {
 
 static int
 ca_stop (void) {
+    if (!device_id) {
+        return 0;
+    }
     if (AudioDeviceStop (device_id, ca_buffer_callback)) {
         return -1;
     }

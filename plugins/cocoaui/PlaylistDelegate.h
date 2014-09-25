@@ -26,6 +26,9 @@ typedef struct {
     NSImage *playTpl;
     NSImage *pauseTpl;
     NSImage *bufTpl;
+    NSDictionary *_colTextAttrsDictionary;
+    NSDictionary *_cellTextAttrsDictionary;
+    NSDictionary *_cellSelectedTextAttrsDictionary;
 }
 
 - (PlaylistDelegate *)init;
