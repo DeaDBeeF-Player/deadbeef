@@ -182,7 +182,7 @@ plt_get_title_wrapper (int plt) {
     NSGraphicsContext *gc = [NSGraphicsContext currentContext];
     [gc saveGraphicsState];
     [[NSColor colorWithPatternImage:tfill] set];
-    NSPoint convPt = [self convertPoint:NSMakePoint(0, area.origin.y) toView:nil];
+    NSPoint convPt = [self convertPoint:NSMakePoint(0, area.origin.y) fromView:nil];
     [gc setPatternPhase:convPt];
     [NSBezierPath fillRect:NSMakeRect(area.origin.x + [tleft size].width, area.origin.y, area.size.width-[tleft size].width-[tright size].width, [tfill size].height)];
     [gc restoreGraphicsState];
@@ -287,7 +287,7 @@ plt_get_title_wrapper (int plt) {
     [gc saveGraphicsState];
     [[NSColor colorWithPatternImage:tabBottomFill] set];
     int offs = [tabLeft size].height-3+tab_vert_padding;
-    NSPoint convPt = [self convertPoint:NSMakePoint(0,offs) toView:nil];
+    NSPoint convPt = [self convertPoint:NSMakePoint(0,offs) fromView:nil];
     [gc setPatternPhase:convPt];
     [NSBezierPath fillRect:NSMakeRect(0, offs, [self bounds].size.width, [tabBottomFill size].height)];
     [gc restoreGraphicsState];
@@ -455,7 +455,7 @@ _add_new_playlist (void) {
 
 
 - (void)mouseDown:(NSEvent *)event {
-    NSPoint coord = [self convertPoint:[event locationInWindow] toView:nil];
+    NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
     tab_clicked = [self tabUnderCursor:coord.x];
     if (event.type == NSLeftMouseDown) {
         BOOL need_arrows = [self needArrows];
@@ -507,7 +507,7 @@ _add_new_playlist (void) {
             int width = [self getTabWith:idx];
             x += width - tab_overlap_size;
         }
-        dragpt = [self convertPoint:[event locationInWindow] toView:nil];
+        dragpt = [self convertPoint:[event locationInWindow] fromView:nil];
         dragpt.x -= x;
         prepare = 1;
         dragging = tab_clicked;
@@ -517,7 +517,7 @@ _add_new_playlist (void) {
 }
 
 -(void)rightMouseDown:(NSEvent *)event {
-    NSPoint coord = [self convertPoint:[event locationInWindow] toView:nil];
+    NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
     tab_clicked = [self tabUnderCursor:coord.x];
     if (event.type == NSRightMouseDown) {
         // FIXME: right click menu
@@ -525,7 +525,7 @@ _add_new_playlist (void) {
 }
 
 -(void)otherMouseDown:(NSEvent *)event {
-    NSPoint coord = [self convertPoint:[event locationInWindow] toView:nil];
+    NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
     tab_clicked = [self tabUnderCursor:coord.x];
     if (event.type == NSOtherMouseDown) {
         if (tab_clicked == -1) {
@@ -572,7 +572,7 @@ _add_new_playlist (void) {
 }
 
 - (void)mouseDragged:(NSEvent *)event {
-    NSPoint coord = [self convertPoint:[event locationInWindow] toView:nil];
+    NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
     if (([NSEvent pressedMouseButtons] & 1) && prepare) {
         if (abs (coord.x - prev_x) > 3) {
             prepare = 0;
@@ -611,7 +611,7 @@ _add_new_playlist (void) {
 }
 
 -(void)mouseMoved:(NSEvent *)event {
-    NSPoint coord = [self convertPoint:[event locationInWindow] toView:nil];
+    NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
     int tab = [self tabUnderCursor:coord.x];
     if (tab >= 0) {
         NSString *s = plt_get_title_wrapper (tab);

@@ -40,7 +40,6 @@
 
 @property (unsafe_unretained) IBOutlet NSTableView *playlist;
 @property (unsafe_unretained) IBOutlet DdbTabStrip *tabStrip;
-@property (unsafe_unretained) IBOutlet DdbListview *ddbListview;
 @property (unsafe_unretained) IBOutlet NSImageView *dockTileView;
 
 

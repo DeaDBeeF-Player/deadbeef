@@ -38,7 +38,38 @@ extern DB_functions_t *deadbeef;
         [pauseTpl setFlipped:YES];
         bufTpl = [NSImage imageNamed:@"bufferingTemplate.pdf"];
         [bufTpl setFlipped:YES];
-    }
+
+
+        NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+
+        [textStyle setAlignment:NSLeftTextAlignment];
+        [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
+
+        _colTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont smallSystemFontSize]], NSFontAttributeName
+                                             , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
+                                             , [NSColor controlTextColor], NSForegroundColorAttributeName
+                                             , textStyle, NSParagraphStyleAttributeName
+                                             , nil];
+
+        [textStyle setAlignment:NSLeftTextAlignment];
+        [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
+
+
+        int rowheight = 18;
+
+        _cellTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+                                             , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
+                                             , [NSColor controlTextColor], NSForegroundColorAttributeName
+                                             , textStyle, NSParagraphStyleAttributeName
+                                             , nil];
+        
+        _cellSelectedTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+                                    , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
+                                    , [NSColor alternateSelectedControlTextColor], NSForegroundColorAttributeName
+                                    , textStyle, NSParagraphStyleAttributeName
+                                    , nil];
+
+}
 
     return self;
 }
@@ -210,21 +241,7 @@ extern DB_functions_t *deadbeef;
     [[NSColor colorWithCalibratedWhite:0.3f alpha:0.3f] set];
     [NSBezierPath fillRect:NSMakeRect(rect.origin.x + rect.size.width - 1, rect.origin.y+3,1,rect.size.height-6)];
 
-    NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-
-    CGFloat fontsize = [NSFont smallSystemFontSize];
-
-    NSFont *textFont = [NSFont controlContentFontOfSize:fontsize];
-
-    [textStyle setAlignment:NSLeftTextAlignment];
-    [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-    NSDictionary *textAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:textFont, NSFontAttributeName
-                                         , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                         , [NSColor controlTextColor], NSForegroundColorAttributeName
-                                         , textStyle, NSParagraphStyleAttributeName
-                                         , nil];
-
-    [[NSString stringWithUTF8String:columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y+1, rect.size.width-6, rect.size.height-2) withAttributes:textAttrsDictionary];
+    [[NSString stringWithUTF8String:columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y+1, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
 }
 
 - (void)drawRowBackground:(DdbListviewRow_t)row inRect:(NSRect)rect {
@@ -243,23 +260,16 @@ extern DB_functions_t *deadbeef;
         .id = columns[col]._id
     };
 
-    NSColor *textColor;
-
     int sel = deadbeef->pl_is_selected((DB_playItem_t *)row);
     if (sel) {
         if (focused) {
             [[NSColor alternateSelectedControlColor] set];
             [NSBezierPath fillRect:rect];
-            textColor = [NSColor alternateSelectedControlTextColor];
         }
         else {
             [[NSColor selectedControlColor] set];
             [NSBezierPath fillRect:rect];
-            textColor = [NSColor selectedControlTextColor];
         }
-    }
-    else {
-        textColor = [NSColor controlTextColor];
     }
 
     if (col == [self invalidColumn]) {
@@ -312,21 +322,7 @@ extern DB_functions_t *deadbeef;
         char text[1024] = "";
         deadbeef->tf_eval (&ctx, columns[col].bytecode, columns[col].bytecode_len, text, sizeof (text));
 
-        NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-
-        CGFloat fontsize = [NSFont systemFontSizeForControlSize:rect.size.height];
-
-        NSFont *textFont = [NSFont controlContentFontOfSize:fontsize];
-
-        [textStyle setAlignment:NSLeftTextAlignment];
-        [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-        NSDictionary *textAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:textFont, NSFontAttributeName
-                                             , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                             , textColor, NSForegroundColorAttributeName
-                                             , textStyle, NSParagraphStyleAttributeName
-                                             , nil];
-
-        [[NSString stringWithUTF8String:text] drawInRect:rect withAttributes:textAttrsDictionary];
+        [[NSString stringWithUTF8String:text] drawInRect:rect withAttributes:sel?_cellSelectedTextAttrsDictionary:_cellTextAttrsDictionary];
     }
 }
 

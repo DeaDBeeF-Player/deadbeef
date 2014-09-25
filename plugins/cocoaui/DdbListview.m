@@ -37,7 +37,7 @@ int rowheight = 19;
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
 
-    [self updateCursorRects];
+//    [self updateCursorRects];
 
     NSScrollView *sv = [listview.contentView enclosingScrollView];
     NSRect rc = [sv documentVisibleRect];
@@ -403,7 +403,7 @@ int rowheight = 19;
     DdbListviewGroup_t *grp;
     int grp_index;
     int sel;
-    NSPoint convPt = [self convertPoint:[event locationInWindow] toView:nil];
+    NSPoint convPt = [self convertPoint:[event locationInWindow] fromView:nil];
     listview.lastpos = convPt;
 
     if (-1 == [listview pickPoint:convPt.y group:&grp groupIndex:&grp_index index:&sel]) {
@@ -511,8 +511,6 @@ int rowheight = 19;
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    id<DdbListviewDelegate> delegate = [listview delegate];
-
     NSPoint dragLocation;
     dragLocation=[self convertPoint:[event locationInWindow]
                            fromView:nil];
@@ -674,9 +672,9 @@ int rowheight = 19;
 }
 
 - (void)groupCheck {
-//    if ([delegate modificationIdx] != groups_build_idx) {
+    if ([delegate modificationIdx] != groups_build_idx) {
         [self initGroups];
-//    }
+    }
 }
 
 - (void)reloadData {
@@ -867,12 +865,7 @@ int rowheight = 19;
     [delegate unrefRow:sel_it];
     [delegate unlock];
 
-//    FIXME: notify all widgets that data selection has changed
-//    was: ddb_listview_refresh (ps, DDB_REFRESH_LIST);
-
-    [delegate selectionChanged:[delegate invalidRow]]; // that means "selection changed a lot, redraw everything"
-
-    [self setNeedsDisplay:YES]; // FIXME: this should be triggered elsewhere, see above
+    [delegate selectionChanged:[delegate invalidRow]];
 
     _area_selection_start = sel;
     _area_selection_end = sel;
@@ -884,7 +877,7 @@ int rowheight = 19;
         DdbListviewGroup_t *grp;
         int grp_index;
         int sel;
-        NSPoint convPt = [self convertPoint:[event locationInWindow] toView:nil];
+        NSPoint convPt = [self convertPoint:[event locationInWindow] fromView:nil];
         if (![self pickPoint:convPt.y group:&grp groupIndex:&grp_index index:&sel]) {
             [self selectSingle:sel];
         }
@@ -914,7 +907,7 @@ int rowheight = 19;
 
 - (void)listMouseDragged:(NSEvent *)event {
     [delegate lock];
-    NSPoint pt = [contentView convertPoint:[event locationInWindow] toView:nil];
+    NSPoint pt = [contentView convertPoint:[event locationInWindow] fromView:nil];
     if (_dragwait) {
         if (abs (_lastpos.x - pt.x) > 3 || abs (_lastpos.y - pt.y) > 3) {
             _dragwait = 0;
@@ -1054,7 +1047,8 @@ int rowheight = 19;
 }
 
 - (void)keyDown:(NSEvent *)theEvent {
-    if ([theEvent modifierFlags] & NSNumericPadKeyMask, 1) {
+    //if ([theEvent modifierFlags] & NSNumericPadKeyMask) {
+    {
         NSString *theArrow = [theEvent charactersIgnoringModifiers];
         unichar keyChar = 0;
         if ( [theArrow length] == 0 )
@@ -1127,8 +1121,7 @@ int rowheight = 19;
                         it = next;
                     }
                     if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
-                        [self setNeedsDisplay:YES]; // FIXME: notify other instances
-//                        ps->binding->selection_changed (ps, it, -1); // that means "selection changed a lot, redraw everything"
+                        [delegate selectionChanged:[delegate invalidRow]];
                     }
                 }
             }
