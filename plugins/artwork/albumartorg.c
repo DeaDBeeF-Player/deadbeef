@@ -34,7 +34,7 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
 
-#define AAO_URL "http://www.albumart.org/index.php?searchkey=%s+%s&itempage=1&newsearch=1&searchindex=Music"
+#define AAO_URL "http://www.albumart.org/index.php?searchk=%s+%s&itempage=1&newsearch=1&searchindex=Music"
 int fetch_from_albumart_org (const char *artist, const char *album, const char *dest)
 {
     char *artist_url = uri_escape (artist ? artist : "", 0);
