@@ -8,6 +8,7 @@
 
 #import "DdbListview.h"
 
+int headerheight = 17;
 int rowheight = 19;
 
 @interface DdbListHeaderView : NSView {
@@ -45,6 +46,7 @@ int rowheight = 19;
     NSRect rect = [self bounds];
     [[NSColor lightGrayColor] set];
     [NSBezierPath fillRect:NSMakeRect(rect.origin.x, rect.origin.y+rect.size.height-1,rect.size.width,1)];
+    [NSBezierPath fillRect:NSMakeRect(rect.origin.x, 0,rect.size.width,1)];
 
     NSGradient *gr = [[NSGradient alloc] initWithColorsAndLocations:
                       [NSColor whiteColor], 0.f,
@@ -54,7 +56,7 @@ int rowheight = 19;
                       [NSColor colorWithCalibratedWhite:0.9f alpha:1.f], 0.90f,
                       [NSColor whiteColor], 1.f, nil];
 
-    [gr drawInRect:NSMakeRect(rect.origin.x, rect.origin.y,rect.size.width,rect.size.height-1) angle:270];
+    [gr drawInRect:NSMakeRect(rect.origin.x, rect.origin.y+1,rect.size.width,rect.size.height-2) angle:270];
 
     id <DdbListviewDelegate> delegate = [listview delegate];
 
@@ -77,7 +79,7 @@ int rowheight = 19;
         int cx = x;
         if (_dragging == col) {
             cx = _drag_col_pos + _drag_delta;
-            NSRect colRect = NSMakeRect(cx, 0, w, [self frame].size.height-1);
+            NSRect colRect = NSMakeRect(cx, 1, w, [self frame].size.height-2);
             if (CGRectIntersectsRect(dirtyRect, colRect)) {
                 [gr drawInRect:colRect angle:90];
                 [delegate drawColumnHeader:col inRect:colRect];
@@ -146,6 +148,7 @@ int rowheight = 19;
     id <DdbListviewDelegate> delegate = [listview delegate];
     if (_dragging != [delegate invalidColumn] || _sizing != [delegate invalidColumn]) {
         [delegate columnsChanged];
+        [listview updateContentFrame];
         _dragging = [delegate invalidColumn];
         _sizing = [delegate invalidColumn];
         [listview setNeedsDisplay:YES];
@@ -357,18 +360,10 @@ int rowheight = 19;
     // we always need to draw the list in the entire visible area,
     // so we get the full size from scrollview, and patch the clip rect
     [NSGraphicsContext saveGraphicsState];
-/*    NSScrollView *sv = [self enclosingScrollView];
-    dirtyRect = [sv documentVisibleRect];
-
-    NSBezierPath* clipPath = [NSBezierPath bezierPath];
-    [clipPath appendBezierPathWithRect:dirtyRect];
-    [clipPath setClip];*/
-
-//    [[NSColor yellowColor] set];
-//    [NSBezierPath fillRect:dirtyRect];
 
     [self drawListView:dirtyRect];
 
+    // draw rows below the real list
     if ([listview fullheight] < dirtyRect.origin.y + dirtyRect.size.height) {
         int y = [listview fullheight];
         int ii = [listview.delegate rowCount]+1;
@@ -536,31 +531,43 @@ int rowheight = 19;
     self = [super initWithFrame:rect];
     if (self) {
         groups_build_idx = -1;
-        DdbListHeaderView *thv = [[DdbListHeaderView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, 16)];
+        DdbListHeaderView *thv = [[DdbListHeaderView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, headerheight)];
         [thv setAutoresizingMask:NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewMaxYMargin];
         [self addSubview:thv];
         [thv setListView:self];
         headerView = thv;
 
-        NSScrollView *sv = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 16, rect.size.width, rect.size.height-17)];
+        NSScrollView *sv = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, headerheight, rect.size.width, rect.size.height-headerheight)];
+        [self addSubview:sv];
+
+        NSSize size = [sv contentSize];
+        NSRect lcvrect = NSMakeRect(0, 0, size.width, size.height-16);
+        DdbListContentView *lcv = [[DdbListContentView alloc] initWithFrame:lcvrect];
+        [lcv setAutoresizingMask:NSViewWidthSizable];
+        [lcv setListView:self];
+        contentView = lcv;
+
+        [sv setDocumentView:lcv];
+
         [sv setHasVerticalScroller:YES];
         [sv setHasHorizontalScroller:YES];
         [sv setAutohidesScrollers:YES];
-        [sv setBorderType:NSBezelBorder];
         [sv setAutoresizingMask:NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewHeightSizable|NSViewMaxYMargin];
-        [self addSubview:sv];
-
-        DdbListContentView *lcv = [[DdbListContentView alloc] initWithFrame:rect];
-        [sv setDocumentView:lcv];
-        [lcv setListView:self];
-        contentView = lcv;
 
         NSView *synchronizedContentView = [sv contentView];
         [synchronizedContentView setPostsBoundsChangedNotifications:YES];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scrollChanged:) name:NSViewBoundsDidChangeNotification object:synchronizedContentView];
 
+        [sv addObserver:self forKeyPath:@"frameSize" options:0 context:NULL];
+
     }
     return self;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([keyPath isEqualToString:@"frameSize"]) {
+        [self updateContentFrame];
+    }
 }
 
 -(void)scrollChanged:(id)contentView {
@@ -582,27 +589,50 @@ int rowheight = 19;
     }
 }
 
+- (void)updateContentFrame {
+    _fullwidth = 0;
+    for (DdbListviewCol_t c = [delegate firstColumn]; c != [delegate invalidColumn]; c = [delegate nextColumn:c]) {
+        _fullwidth += [delegate columnWidth:c];
+    }
+
+    NSScrollView *sv = [contentView enclosingScrollView];
+    NSSize size = [sv contentSize];
+    NSRect frame = [contentView frame];
+    if (_fullwidth > size.width) {
+        frame.size.width = _fullwidth;
+    }
+    else {
+        frame.size.width = size.width;
+    }
+    if (_fullheight > size.height) {
+        frame.size.height = _fullheight;
+    }
+    else {
+        frame.size.height = size.height;
+    }
+    [contentView setFrame:frame];
+}
+
 // must be called from within pl_lock
 - (void)initGroups {
     [delegate lock];
-    int old_height = _fullheight;
     groups_build_idx = [delegate modificationIdx];
 
     [self freeGroups];
 
+    _fullwidth = 0;
     _fullheight = 0;
     DdbListviewGroup_t *grp = NULL;
 
     NSString *str;
     NSString *curr;
 
-    int fullwidth = 0;
     int min_height= 0;
     for (DdbListviewCol_t c = [delegate firstColumn]; c != [delegate invalidColumn]; c = [delegate nextColumn:c]) {
         if ([delegate columnMinHeight:c] && [delegate columnWidth:c] > min_height) {
             min_height = [delegate columnWidth:c];
         }
-        fullwidth += [delegate columnWidth:c];
+        _fullwidth += [delegate columnWidth:c];
     }
 
     _grouptitle_height = rowheight;
@@ -622,12 +652,8 @@ int rowheight = 19;
             grp->height = _grouptitle_height + grp->num_items * rowheight;
             _fullheight = grp->height;
             _fullheight += _grouptitle_height;
-            if (old_height != _fullheight || [contentView frame].size.width != fullwidth) {
-                NSRect frame = [contentView frame];
-                frame.size.width = fullwidth;
-                frame.size.height = _fullheight;
-                contentView.frame = frame;
-            }
+
+            [self updateContentFrame];
             [delegate unlock];
             return;
         }
@@ -666,12 +692,12 @@ int rowheight = 19;
         }
         _fullheight += grp->height;
     }
-    if (old_height != _fullheight || [contentView frame].size.width != fullwidth) {
+/*    if (old_height != _fullheight || [contentView frame].size.width != fullwidth) {
         NSRect frame = [contentView frame];
         frame.size.width = fullwidth;
         frame.size.height = _fullheight > 0 ? _fullheight : 1;
         contentView.frame = frame;
-    }
+    }*/
     [delegate unlock];
 }
 
@@ -772,6 +798,11 @@ int rowheight = 19;
         return;
     }
 
+    NSScrollView *sv = [contentView enclosingScrollView];
+    NSRect vis = [sv documentVisibleRect];
+    rect.origin.x = vis.origin.x;
+    rect.size.width = vis.size.width;
+
     [contentView setNeedsDisplayInRect:rect];
 }
 
@@ -858,12 +889,18 @@ int rowheight = 19;
         return;
     }
 
+    int idx = 0;
     DdbListviewRow_t it = [delegate firstRow]; // FIXME: search window needs to go over PL_MAIN here
     while (it != [delegate invalidRow]) {
+        BOOL sel = [delegate rowSelected:it];
         [delegate selectRow:it withState:it == sel_it];
+        if (sel != (it == sel)) {
+            [self drawRow:idx];
+        }
         DdbListviewRow_t next = [delegate nextRow:it];
         [delegate unrefRow:it];
         it = next;
+        idx ++;
     }
 
     [delegate unrefRow:sel_it];
