@@ -251,14 +251,6 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)drawCell:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused {
-    ddb_tf_context_t ctx = {
-        ._size = sizeof (ddb_tf_context_t),
-        .it = (DB_playItem_t *)row,
-        .plt = deadbeef->plt_get_curr (),
-        .idx = -1,
-        .id = columns[col]._id
-    };
-
     int sel = deadbeef->pl_is_selected((DB_playItem_t *)row);
     if (sel) {
         if (focused) {
@@ -318,10 +310,55 @@ extern DB_functions_t *deadbeef;
     }
 
     if (columns[col].bytecode) {
+        ddb_tf_context_t ctx = {
+            ._size = sizeof (ddb_tf_context_t),
+            .it = (DB_playItem_t *)row,
+            .plt = deadbeef->plt_get_curr (),
+            .idx = -1,
+            .id = columns[col]._id
+        };
+        
         char text[1024] = "";
         deadbeef->tf_eval (&ctx, columns[col].bytecode, columns[col].bytecode_len, text, sizeof (text));
 
         [[NSString stringWithUTF8String:text] drawInRect:rect withAttributes:sel?_cellSelectedTextAttrsDictionary:_cellTextAttrsDictionary];
+
+        if (ctx.plt) {
+            deadbeef->plt_unref (ctx.plt);
+        }
+    }
+}
+
+const char *group_str = "%artist% - %year% - %album%";
+char *group_bytecode = NULL;
+int group_bytecode_size = 0;
+
+- (void)drawGroupTitle:(DdbListviewRow_t)row inRect:(NSRect)rect {
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .it = (DB_playItem_t *)row,
+        .plt = deadbeef->plt_get_curr (),
+        .idx = -1,
+        .id = -1
+    };
+
+    char text[1024] = "";
+    deadbeef->tf_eval (&ctx, group_bytecode, group_bytecode_size, text, sizeof (text));
+
+    NSString *title = [NSString stringWithUTF8String:text];
+
+    NSSize size = [title sizeWithAttributes:_cellTextAttrsDictionary];
+
+    NSRect strRect = rect;
+    strRect.origin.x += 5;
+    [title drawInRect:strRect withAttributes:_cellTextAttrsDictionary];
+
+    if (ctx.plt) {
+        deadbeef->plt_unref (ctx.plt);
+    }
+
+    if (size.width < rect.size.width - 15) {
+        [NSBezierPath fillRect:NSMakeRect(size.width + 10, rect.origin.y + rect.size.height/2, rect.size.width - size.width - 15, 1)];
     }
 }
 
@@ -334,8 +371,29 @@ extern DB_functions_t *deadbeef;
 }
 
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row {
-    // FIXME: this should return the tf output for the current row with current grouping
-    return nil;
+    if (!group_bytecode) {
+        group_bytecode_size = deadbeef->tf_compile (group_str, &group_bytecode);
+    }
+
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .it = (DB_playItem_t *)row,
+        .plt = deadbeef->plt_get_curr(),
+        .idx = -1,
+        .id = -1
+    };
+    char buf[1024];
+    NSString *ret = @"";
+    if (deadbeef->tf_eval (&ctx, group_bytecode, group_bytecode_size, buf, sizeof (buf)) > 0) {
+        ret = [NSString stringWithUTF8String:buf];
+        if (!ret) {
+            ret = @"";
+        }
+    }
+    if (ctx.plt) {
+        deadbeef->plt_unref (ctx.plt);
+    }
+    return ret;
 }
 
 - (int)modificationIdx {

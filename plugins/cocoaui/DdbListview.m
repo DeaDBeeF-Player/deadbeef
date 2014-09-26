@@ -319,12 +319,13 @@ int rowheight = 19;
             //ddb_listview_list_render_row_background (listview, cr, NULL, 1, 0, -
               //                                                    listview->hscrollpos, y - pushback, listview->totalwidth, listview->grouptitle_height);
             if ([listview grouptitle_height] > 0) {
-                //listview->binding->draw_group_title (listview, cr, grp->head, -listview->hscrollpos, y - pushback, listview->totalwidth, listview->grouptitle_height);
+                [delegate drawGroupTitle:grp->head inRect:NSMakeRect(0, dirtyRect.origin.y - pushback, [self frame].size.width, rowheight-1)];
             }
         }
         else if (grp_y + [listview grouptitle_height] >= dirtyRect.origin.y && grp_y < dirtyRect.origin.y + dirtyRect.size.height) {
             //ddb_listview_list_render_row_background (listview, cr, NULL, 1, 0, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
             if ([listview grouptitle_height] > 0) {
+                [delegate drawGroupTitle:grp->head inRect:NSMakeRect(0, grp_y, [self frame].size.width, rowheight-1)];
                 //listview->binding->draw_group_title (listview, cr, grp->head, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
             }
         }
@@ -553,6 +554,7 @@ int rowheight = 19;
         [sv setHasHorizontalScroller:YES];
         [sv setAutohidesScrollers:YES];
         [sv setAutoresizingMask:NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewHeightSizable|NSViewMaxYMargin];
+        [sv.contentView setCopiesOnScroll:NO];
 
         NSView *synchronizedContentView = [sv contentView];
         [synchronizedContentView setPostsBoundsChangedNotifications:YES];
@@ -692,12 +694,7 @@ int rowheight = 19;
         }
         _fullheight += grp->height;
     }
-/*    if (old_height != _fullheight || [contentView frame].size.width != fullwidth) {
-        NSRect frame = [contentView frame];
-        frame.size.width = fullwidth;
-        frame.size.height = _fullheight > 0 ? _fullheight : 1;
-        contentView.frame = frame;
-    }*/
+    [self updateContentFrame];
     [delegate unlock];
 }
 
