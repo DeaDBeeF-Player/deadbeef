@@ -356,13 +356,13 @@ int rowheight = 19;
 
     // we always need to draw the list in the entire visible area,
     // so we get the full size from scrollview, and patch the clip rect
-    NSScrollView *sv = [self enclosingScrollView];
+    [NSGraphicsContext saveGraphicsState];
+/*    NSScrollView *sv = [self enclosingScrollView];
     dirtyRect = [sv documentVisibleRect];
 
-    [NSGraphicsContext saveGraphicsState];
     NSBezierPath* clipPath = [NSBezierPath bezierPath];
     [clipPath appendBezierPathWithRect:dirtyRect];
-    [clipPath setClip];
+    [clipPath setClip];*/
 
 //    [[NSColor yellowColor] set];
 //    [NSBezierPath fillRect:dirtyRect];
@@ -596,11 +596,13 @@ int rowheight = 19;
     NSString *str;
     NSString *curr;
 
+    int fullwidth = 0;
     int min_height= 0;
     for (DdbListviewCol_t c = [delegate firstColumn]; c != [delegate invalidColumn]; c = [delegate nextColumn:c]) {
         if ([delegate columnMinHeight:c] && [delegate columnWidth:c] > min_height) {
             min_height = [delegate columnWidth:c];
         }
+        fullwidth += [delegate columnWidth:c];
     }
 
     _grouptitle_height = rowheight;
@@ -620,8 +622,9 @@ int rowheight = 19;
             grp->height = _grouptitle_height + grp->num_items * rowheight;
             _fullheight = grp->height;
             _fullheight += _grouptitle_height;
-            if (old_height != _fullheight) {
+            if (old_height != _fullheight || [contentView frame].size.width != fullwidth) {
                 NSRect frame = [contentView frame];
+                frame.size.width = fullwidth;
                 frame.size.height = _fullheight;
                 contentView.frame = frame;
             }
@@ -663,8 +666,9 @@ int rowheight = 19;
         }
         _fullheight += grp->height;
     }
-    if (old_height != _fullheight) {
+    if (old_height != _fullheight || [contentView frame].size.width != fullwidth) {
         NSRect frame = [contentView frame];
+        frame.size.width = fullwidth;
         frame.size.height = _fullheight > 0 ? _fullheight : 1;
         contentView.frame = frame;
     }

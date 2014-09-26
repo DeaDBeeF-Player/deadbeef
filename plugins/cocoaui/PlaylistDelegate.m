@@ -211,6 +211,11 @@ extern DB_functions_t *deadbeef;
 
 - (void)columnsChanged {
     // TODO: serialize
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified(plt);
+        deadbeef->plt_unref (plt);
+    }
 }
 
 - (DdbListviewRow_t)firstRow {
