@@ -14,7 +14,7 @@ extern DB_functions_t *deadbeef;
 
 @implementation PlaylistDelegate
 
-#define DEFAULT_COLUMNS "[{\"title\":\"Playing\", \"id\":\"1\", \"format\":\"%playstatus%\", \"size\":\"50\"}, {\"title\":\"Artist - Album\", \"format\":\"%artist% - %album%\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track%\", \"size\":\"50\"}, {\"title\":\"Track Title\", \"format\":\"%title%\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
+#define DEFAULT_COLUMNS "[{\"title\":\"Playing\", \"id\":\"1\", \"format\":\"%playstatus%\", \"size\":\"50\"}, {\"title\":\"Artist - Album\", \"format\":\"%artist%\[ - %album%\]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track%\", \"size\":\"50\"}, {\"title\":\"Track Title\", \"format\":\"%title%\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
 
 - (PlaylistDelegate *)init {
     self = [super init];
@@ -329,7 +329,7 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-const char *group_str = "%artist% - %year% - %album%";
+const char *group_str = "%artist%[ - %year%][ - %album%]";
 char *group_bytecode = NULL;
 int group_bytecode_size = 0;
 

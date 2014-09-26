@@ -326,7 +326,6 @@ int rowheight = 19;
             //ddb_listview_list_render_row_background (listview, cr, NULL, 1, 0, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
             if ([listview grouptitle_height] > 0) {
                 [delegate drawGroupTitle:grp->head inRect:NSMakeRect(0, grp_y, [self frame].size.width, rowheight-1)];
-                //listview->binding->draw_group_title (listview, cr, grp->head, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
             }
         }
 
