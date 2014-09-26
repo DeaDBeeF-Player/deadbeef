@@ -275,11 +275,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             int h = cwidth - group_y;
             h = min (height, art_h);
 
-            int hq = 0;
             GdkPixbuf *pixbuf = get_cover_art_thumb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, real_art_width == art_width ? art_width : -1, redraw_playlist_single, listview);
-            if (!pixbuf) {
-                pixbuf = cover_get_default_pixbuf ();
-            }
             if (pixbuf) {
                 art_width = gdk_pixbuf_get_width (pixbuf);
                 float art_scale = (float)real_art_width / art_width;
