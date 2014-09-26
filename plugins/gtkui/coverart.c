@@ -407,7 +407,7 @@ get_cover_art_int(cached_pixbuf_t *cache, const char *fname, const char *artist,
         free(image_fname);
         return pb;
     }
-    return NULL;
+    return cover_get_default_pixbuf();
 }
 
 // Deprecated
