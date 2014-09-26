@@ -164,11 +164,11 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
             outlen++;
         }
         else {
-            *code++;
+            code++;
             size--;
             trace ("special: %d\n", (int)(*code));
             if (*code == 1) {
-                *code++;
+                code++;
                 size--;
                 trace ("exec func: %d (%s)\n", *code, tf_funcs[*code].name);
                 tf_func_ptr_t func = tf_funcs[*code].func;
@@ -337,7 +337,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                             t = dur - t;
                         }
                         if (t >= 0) {
-                            int len;
+                            int len = 0;
                             if (tmp_a || tmp_c) {
                                 int hr = t/3600;
                                 int mn = (t-hr*3600)/60;
@@ -373,7 +373,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         int mn = (t-hr*3600)/60;
                         int sc = tmp_a ? roundf(t-hr*3600-mn*60) : floor(t-hr*3600-mn*60);
                         int ms = !tmp_b ? roundf ((t-hr*3600-mn*60-sc) * 1000.f) : 0;
-                        int len;
+                        int len = 0;
                         if (tmp_a) {
                             if (hr) {
                                 len = snprintf (out, outlen, "%2d:%02d:%02d", hr, mn, sc);
@@ -414,7 +414,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 }
                 // TODO: length_samples: problem is that in deadbeef this is
                 // only guaranteed to be precise after init (mp3), and is not
-                // stores in the metadata
+                // stored in the metadata
 
                 else if ((tmp_a = !strcmp (name, "is_playing")) || (tmp_b = !strcmp (name, "is_paused"))) {
                     playItem_t *playing = streamer_get_playing_track ();
@@ -440,11 +440,14 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     val = pl_find_meta_raw (it, name);
                 }
                 if (!skip_out && val) {
-                    int len = strlen (val);
+                    int len = (int)strlen (val);
                     memcpy (out, val, len);
                     out[len] = 0;
                     out += len;
                     outlen -= len;
+                }
+                else {
+                    *out = 0;
                 }
                 pl_unlock ();
                 if (!skip_out && !val && fail_on_undef) {
@@ -476,7 +479,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
             }
         }
     }
-    return out-init_out;
+    return (int)(out-init_out);
 }
 
 int
@@ -504,7 +507,7 @@ tf_compile_func (tf_compiler_t *c) {
 
     int i;
     for (i = 0; tf_funcs[i].name; i++) {
-        int l = strlen (tf_funcs[i].name);
+        int l = (int)strlen (tf_funcs[i].name);
         if (c->i - name_start == l && !memcmp (tf_funcs[i].name, name_start, l)) {
             *(c->o++) = i;
             break;
@@ -529,7 +532,6 @@ tf_compile_func (tf_compiler_t *c) {
     char *argstart = c->o;
 
     //parse comma separated args until )
-    char *prev_arg;
     while (*(c->i)) {
         if (*(c->i) == '\\') {
             c->i++;
@@ -539,7 +541,7 @@ tf_compile_func (tf_compiler_t *c) {
         }
         else if (*(c->i) == ',' || *(c->i) == ')') {
             // next arg
-            int len = c->o - argstart;
+            int len = (int)(c->o - argstart);
             trace ("end of arg in func %s, len: %d\n", func_name, len);
             trace ("parsed arg: %s\n", start+(*start)+1);
             if (*(c->i) != ')' || len) {
@@ -595,7 +597,7 @@ tf_compile_field (tf_compiler_t *c) {
     }
     c->i++;
 
-    int32_t len = c->o - plen - 1;
+    int32_t len = (int32_t)(c->o - plen - 1);
     if (len > 0xff) {
         trace ("field name to big: %d\n", len);
         return -1;
@@ -641,7 +643,7 @@ tf_compile_ifdef (tf_compiler_t *c) {
     }
     c->i++;
 
-    int32_t len = c->o - plen - 4;
+    int32_t len = (int32_t)(c->o - plen - 4);
     memcpy (plen, &len, 4);
 
     char value[len+1];
@@ -703,7 +705,7 @@ tf_compile (const char *script, char **out) {
 
     *out = malloc (c.o - code);
     memcpy (*out, code, c.o - code);
-    return c.o - code;
+    return (int)(c.o - code);
 }
 
 void
