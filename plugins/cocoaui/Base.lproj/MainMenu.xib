@@ -393,7 +393,7 @@ CA
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     </customView>
                     <customView id="nCn-Uw-qn9" customClass="DdbPlaylistWidget">
-                        <rect key="frame" x="0.0" y="12" width="507" height="165"/>
+                        <rect key="frame" x="0.0" y="14" width="507" height="163"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     </customView>
                 </subviews>
@@ -480,7 +480,7 @@ CA
             </connections>
         </customObject>
         <customObject id="420" customClass="NSFontManager"/>
-        <window title="design mode test" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" animationBehavior="default" id="iIM-ne-GV9">
+        <window title="design mode test" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="iIM-ne-GV9">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="163" y="199" width="507" height="160"/>
