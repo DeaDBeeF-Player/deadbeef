@@ -59,6 +59,7 @@ typedef struct DdbListviewGroup_s {
     int _grouptitle_height;
     int _groups_pinned;
     int groups_build_idx;
+    int _fullwidth;
     int _fullheight;
     BOOL _areaselect;
     int _areaselect_y;
@@ -91,4 +92,5 @@ typedef struct DdbListviewGroup_s {
 - (void)setCursor:(int)cursor noscroll:(BOOL)noscroll;
 - (void)scrollToRowWithIndex:(int)idx;
 - (void)setVScroll:(int)scroll;
+- (void)updateContentFrame;
 @end
