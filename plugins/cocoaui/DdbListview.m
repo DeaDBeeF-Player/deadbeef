@@ -904,7 +904,7 @@ int grouptitleheight = 22;
     while (it != [delegate invalidRow]) {
         BOOL sel = [delegate rowSelected:it];
         [delegate selectRow:it withState:it == sel_it];
-        if (sel != (it == sel)) {
+        if (sel != (it == sel_it)) {
             [self drawRow:idx];
         }
         DdbListviewRow_t next = [delegate nextRow:it];
