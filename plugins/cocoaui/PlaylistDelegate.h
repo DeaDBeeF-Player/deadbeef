@@ -29,6 +29,7 @@ typedef struct {
     NSDictionary *_colTextAttrsDictionary;
     NSDictionary *_cellTextAttrsDictionary;
     NSDictionary *_cellSelectedTextAttrsDictionary;
+    NSDictionary *_groupTextAttrsDictionary;
 }
 
 - (PlaylistDelegate *)init;

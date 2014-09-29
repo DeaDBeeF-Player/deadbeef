@@ -58,7 +58,7 @@ typedef struct DdbListviewGroup_s {
 @interface DdbListview : NSView {
     DdbListviewGroup_t *_groups;
     int _grouptitle_height;
-    int _groups_pinned;
+    BOOL _groups_pinned;
     int groups_build_idx;
     int _fullwidth;
     int _fullheight;
@@ -78,7 +78,7 @@ typedef struct DdbListviewGroup_s {
 @property id<DdbListviewDelegate> delegate;
 @property (readonly) DdbListviewGroup_t *groups;
 @property (readonly) int grouptitle_height;
-@property (readonly) int groups_pinned;
+@property (readonly) BOOL groups_pinned;
 @property (readonly) int fullheight;
 @property (readwrite) NSPoint lastpos;
 @property (readwrite) int shift_sel_anchor;
