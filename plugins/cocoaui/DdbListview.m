@@ -219,6 +219,16 @@ int grouptitleheight = 22;
     listview = lv;
 }
 
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender {
+    NSLog(@"[%@ %@]", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
+
+    NSPasteboard *pboard = [sender draggingPasteboard];
+
+    if ([[pboard types] containsObject:NSStringPboardType]) {
+    }
+    return NSDragOperationCopy;
+}
+
 - (void)drawListView:(NSRect)dirtyRect {
     int idx = 0;
     int abs_idx = 0;
@@ -344,7 +354,6 @@ int grouptitleheight = 22;
             }
         }
         else if (grp_y + [listview grouptitle_height] >= dirtyRect.origin.y && grp_y < dirtyRect.origin.y + dirtyRect.size.height) {
-            //ddb_listview_list_render_row_background (listview, cr, NULL, 1, 0, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
             if ([listview grouptitle_height] > 0) {
                 NSRect groupRect = NSMakeRect(0, grp_y, [self frame].size.width, [listview grouptitle_height]);
                 NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:0];
@@ -376,10 +385,6 @@ int grouptitleheight = 22;
         [delegate unrefRow:cursor_it];
     }
 
-    if (grp_y < dirtyRect.origin.y + dirtyRect.size.height) {
-        int hh = dirtyRect.origin.y + dirtyRect.size.height - grp_y;
-        //cairo_rectangle (cr, x, grp_y - listview->scrollpos, w, hh);
-    }
     [delegate unlock];
 }
 
@@ -591,9 +596,13 @@ int grouptitleheight = 22;
 
         [sv addObserver:self forKeyPath:@"frameSize" options:0 context:NULL];
 
+        [contentView registerForDraggedTypes:[NSArray arrayWithObjects:NSStringPboardType, nil]];
+
     }
     return self;
 }
+
+
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:@"frameSize"]) {
@@ -975,13 +984,36 @@ int grouptitleheight = 22;
     }
 }
 
+// NSDraggingSource protocol
+- (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context {
+    switch(context) {
+        case NSDraggingContextWithinApplication:
+            return NSDragOperationCopy | NSDragOperationMove | NSDragOperationDelete;
+    }
+    return NSDragOperationNone;
+}
+
 - (void)listMouseDragged:(NSEvent *)event {
     [delegate lock];
     NSPoint pt = [contentView convertPoint:[event locationInWindow] fromView:nil];
     if (_dragwait) {
         if (abs (_lastpos.x - pt.x) > 3 || abs (_lastpos.y - pt.y) > 3) {
-            _dragwait = 0;
             // begin dnd
+            NSPasteboard *pboard;
+
+            pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+            [pboard declareTypes:[NSArray arrayWithObject:NSStringPboardType]  owner:self];
+            [pboard setData:[@"Hello" dataUsingEncoding:NSASCIIStringEncoding] forType:NSStringPboardType];
+
+            NSImage *img = [NSImage imageNamed:NSImageNameMultipleDocuments];
+
+            NSPoint dpt = pt;
+            dpt.x -= [img size].width/2;
+            dpt.y += [img size].height;
+
+            [self dragImage:img at:dpt offset:NSMakeSize(0.0, 0.0) event:event pasteboard:pboard source:self slideBack:YES];
+            _dragwait = NO;
+
         }
     }
     else if (_areaselect) {
