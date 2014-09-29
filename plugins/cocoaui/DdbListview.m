@@ -238,6 +238,12 @@ int grouptitleheight = 22;
     int grp_next_y = 0;
     DdbListviewGroup_t *pinned_grp = NULL;
 
+    int cursor = [delegate cursor];
+    DdbListviewRow_t cursor_it = [delegate invalidRow];
+    if (cursor != [delegate invalidRow]) {
+        cursor_it = [delegate rowForIndex:cursor];
+    }
+
     while (grp && grp_y + grp->height < dirtyRect.origin.y) {
         if (grp_y < vis.origin.y && grp_y + grp->height >= vis.origin.y) {
             pinned_grp = grp;
@@ -294,6 +300,15 @@ int grouptitleheight = 22;
                 if (x < dirtyRect.size.width) {
                     [listview.delegate drawCell:it forColumn:[delegate invalidColumn] inRect:NSMakeRect(x, grp_row_y, dirtyRect.size.width-x, rowheight-1) focused:YES];
                 }
+            }
+            if (it == cursor_it) {
+                [[NSGraphicsContext currentContext] saveGraphicsState];
+                [NSBezierPath setDefaultLineWidth:2.f];
+                [[NSColor textColor] set];
+                NSRect rect = NSMakeRect(dirtyRect.origin.x, grp_row_y, dirtyRect.size.width, rowheight-1);
+                [NSBezierPath clipRect:rect];
+                [NSBezierPath strokeRect:rect];
+                [[NSGraphicsContext currentContext] restoreGraphicsState];
             }
             DdbListviewRow_t next = [listview.delegate nextRow:it];
             [listview.delegate unrefRow:it];
@@ -355,6 +370,10 @@ int grouptitleheight = 22;
                 grp->pinned = 0;
             }
         }
+    }
+
+    if (cursor_it != [delegate invalidRow]) {
+        [delegate unrefRow:cursor_it];
     }
 
     if (grp_y < dirtyRect.origin.y + dirtyRect.size.height) {
@@ -1204,6 +1223,8 @@ int grouptitleheight = 22;
 
         [delegate unrefRow:prev_it];
     }
+
+    [self drawRow:cursor];
 
     if (!noscroll) {
         [self setScrollForPos:[self getRowPos:cursor]];
