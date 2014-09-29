@@ -421,7 +421,7 @@ int group_bytecode_size = 0;
 }
 
 - (BOOL)hasDND {
-    return NO;
+    return YES;
 }
 
 @end
