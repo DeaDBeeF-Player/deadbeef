@@ -10,6 +10,7 @@
 
 int headerheight = 17;
 int rowheight = 19;
+int grouptitleheight = 22;
 
 @interface DdbListHeaderView : NSView {
     DdbListview *listview;
@@ -230,12 +231,15 @@ int rowheight = 19;
 
     DdbListviewGroup_t *grp = [listview groups];
 
+    NSScrollView *sv = [self enclosingScrollView];
+    NSRect vis = [sv documentVisibleRect];
+
     int grp_y = 0;
     int grp_next_y = 0;
     DdbListviewGroup_t *pinned_grp = NULL;
 
     while (grp && grp_y + grp->height < dirtyRect.origin.y) {
-        if (grp_y < 0 && grp_y + grp->height >= 0) {
+        if (grp_y < vis.origin.y && grp_y + grp->height >= vis.origin.y) {
             pinned_grp = grp;
             grp->pinned = 1;
         }
@@ -245,7 +249,7 @@ int rowheight = 19;
         grp = grp->next;
     }
 
-    if (grp && !pinned_grp && grp_y < 0) {
+    if (grp && !pinned_grp && grp_y < vis.origin.y) {
         grp->pinned = 1;
         pinned_grp = grp;
     }
@@ -309,23 +313,29 @@ int rowheight = 19;
 
         //ddb_listview_list_render_album_art (listview, cr, it, grp->head, 0, grp->height, grp->pinned, grp_next_y - listview->scrollpos, -listview->hscrollpos, grp_y + listview->grouptitle_height - listview->scrollpos, listview->totalwidth, grp_height_total);
 
-        if (grp->pinned == 1 && [listview groups_pinned] && dirtyRect.origin.y <= 0) {
+        if (grp->pinned == 1 && [listview groups_pinned]/* && dirtyRect.origin.y <= 0*/) {
             // draw pinned group title
             int pushback = 0;
             if (grp_next_y <= [listview grouptitle_height]) {
                 pushback = [listview grouptitle_height] - grp_next_y;
             }
 
-            //ddb_listview_list_render_row_background (listview, cr, NULL, 1, 0, -
-              //                                                    listview->hscrollpos, y - pushback, listview->totalwidth, listview->grouptitle_height);
+            NSRect groupRect = NSMakeRect(0, vis.origin.y - pushback, [self frame].size.width, [listview grouptitle_height]);
+            NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:0];
+            [clr set];
+            [NSBezierPath fillRect:groupRect];
             if ([listview grouptitle_height] > 0) {
-                [delegate drawGroupTitle:grp->head inRect:NSMakeRect(0, dirtyRect.origin.y - pushback, [self frame].size.width, rowheight-1)];
+                [delegate drawGroupTitle:grp->head inRect:groupRect];
             }
         }
         else if (grp_y + [listview grouptitle_height] >= dirtyRect.origin.y && grp_y < dirtyRect.origin.y + dirtyRect.size.height) {
             //ddb_listview_list_render_row_background (listview, cr, NULL, 1, 0, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
             if ([listview grouptitle_height] > 0) {
-                [delegate drawGroupTitle:grp->head inRect:NSMakeRect(0, grp_y, [self frame].size.width, rowheight-1)];
+                NSRect groupRect = NSMakeRect(0, grp_y, [self frame].size.width, [listview grouptitle_height]);
+                NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:0];
+                [clr set];
+                [NSBezierPath fillRect:groupRect];
+                [delegate drawGroupTitle:grp->head inRect:groupRect];
             }
         }
 
@@ -530,6 +540,7 @@ int rowheight = 19;
 - (DdbListview *)initWithFrame:(NSRect)rect {
     self = [super initWithFrame:rect];
     if (self) {
+        _groups_pinned = YES;
         groups_build_idx = -1;
         DdbListHeaderView *thv = [[DdbListHeaderView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, headerheight)];
         [thv setAutoresizingMask:NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewMaxYMargin];
@@ -636,7 +647,7 @@ int rowheight = 19;
         _fullwidth += [delegate columnWidth:c];
     }
 
-    _grouptitle_height = rowheight;
+    _grouptitle_height = grouptitleheight;
 
     int idx = 0;
     DdbListviewRow_t it = [delegate firstRow];
@@ -810,6 +821,9 @@ int rowheight = 19;
     // clicked album art column?
     int album_art_column = 0; // FIXME
 
+    NSScrollView *sv = [contentView enclosingScrollView];
+    NSRect vis = [sv documentVisibleRect];
+
     if (sel == -1 && !album_art_column && (!grp || (pt.y > _grouptitle_height && grp_index >= grp->num_items))) {
         // clicked empty space, deselect everything
         DdbListviewRow_t it;
@@ -825,7 +839,7 @@ int rowheight = 19;
             it = next;
         }
     }
-    else if ((sel != -1 && grp && grp_index == -1) || (pt.y <= _grouptitle_height && _groups_pinned) || album_art_column) {
+    else if ((sel != -1 && grp && grp_index == -1) || (pt.y <= _grouptitle_height + vis.origin.y && _groups_pinned) || album_art_column) {
         // clicked group title, select group
         DdbListviewRow_t it;
         int idx = 0;

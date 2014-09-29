@@ -14,7 +14,7 @@ extern DB_functions_t *deadbeef;
 
 @implementation PlaylistDelegate
 
-#define DEFAULT_COLUMNS "[{\"title\":\"Playing\", \"id\":\"1\", \"format\":\"%playstatus%\", \"size\":\"50\"}, {\"title\":\"Artist - Album\", \"format\":\"%artist%\[ - %album%\]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track%\", \"size\":\"50\"}, {\"title\":\"Track Title\", \"format\":\"%title%\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
+#define DEFAULT_COLUMNS "[{\"title\":\"Playing\", \"id\":\"1\", \"format\":\"%playstatus%\", \"size\":\"50\"}, {\"title\":\"Artist - Album\", \"format\":\"%artist%[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track%\", \"size\":\"50\"}, {\"title\":\"Track Title\", \"format\":\"%title%\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
 
 - (PlaylistDelegate *)init {
     self = [super init];
@@ -57,7 +57,15 @@ extern DB_functions_t *deadbeef;
 
         int rowheight = 18;
 
-        _cellTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+        _groupTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+                                    , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
+                                    , [NSColor controlTextColor], NSForegroundColorAttributeName
+                                    , textStyle, NSParagraphStyleAttributeName
+                                    , nil];
+
+        _cellTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                            [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
                                              , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
                                              , [NSColor controlTextColor], NSForegroundColorAttributeName
                                              , textStyle, NSParagraphStyleAttributeName
@@ -347,11 +355,14 @@ int group_bytecode_size = 0;
 
     NSString *title = [NSString stringWithUTF8String:text];
 
-    NSSize size = [title sizeWithAttributes:_cellTextAttrsDictionary];
+    NSSize size = [title sizeWithAttributes:_groupTextAttrsDictionary];
+
 
     NSRect strRect = rect;
     strRect.origin.x += 5;
-    [title drawInRect:strRect withAttributes:_cellTextAttrsDictionary];
+    strRect.origin.y = strRect.origin.y + strRect.size.height / 2 - size.height / 2;
+    strRect.size.height = size.height;
+    [title drawInRect:strRect withAttributes:_groupTextAttrsDictionary];
 
     if (ctx.plt) {
         deadbeef->plt_unref (ctx.plt);
