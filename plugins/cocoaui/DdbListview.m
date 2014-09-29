@@ -253,7 +253,6 @@ int rowheight = 19;
         grp->pinned = 2;
     }
 
-    int ii = 0;
     while (grp && grp_y < dirtyRect.origin.y + dirtyRect.size.height) {
         DdbListviewRow_t it = grp->head;
         int grp_height = [listview grouptitle_height] + grp->num_items * rowheight;
@@ -265,6 +264,7 @@ int rowheight = 19;
         [listview.delegate refRow:it];
 
         grp_next_y = grp_y + grp_height_total;
+        int ii = 0;
         for (int i = 0; i < grp->num_items; i++) {
             ii++;
             int grp_row_y = grp_y + [listview grouptitle_height] + i * rowheight;
