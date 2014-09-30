@@ -263,7 +263,6 @@
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A071837EC49003E6066 /* conf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ECE1837EC44003E6066 /* conf.c */; };
 		4D1B4A0F1837EC49003E6066 /* ConvertUTF.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ED81837EC44003E6066 /* ConvertUTF.c */; };
-		4D1B4A101837EC49003E6066 /* readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4D1B3EDA1837EC44003E6066 /* readme.txt */; };
 		4D1B4A171837EC49003E6066 /* dsppreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3EE21837EC44003E6066 /* dsppreset.c */; };
 		4D1B4A1A1837EC49003E6066 /* fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3EE71837EC44003E6066 /* fft.c */; };
 		4D1B4A1B1837EC49003E6066 /* handler.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3EEA1837EC44003E6066 /* handler.c */; };
@@ -791,7 +790,6 @@
 		4D1B3ECF1837EC44003E6066 /* conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf.h; sourceTree = "<group>"; };
 		4D1B3ED81837EC44003E6066 /* ConvertUTF.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ConvertUTF.c; sourceTree = "<group>"; };
 		4D1B3ED91837EC44003E6066 /* ConvertUTF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConvertUTF.h; sourceTree = "<group>"; };
-		4D1B3EDA1837EC44003E6066 /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
 		4D1B3EDF1837EC44003E6066 /* deadbeef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = deadbeef.h; sourceTree = "<group>"; };
 		4D1B3EE21837EC44003E6066 /* dsppreset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsppreset.c; sourceTree = "<group>"; };
 		4D1B3EE31837EC44003E6066 /* dsppreset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsppreset.h; sourceTree = "<group>"; };
@@ -1289,10 +1287,12 @@
 		2DB96A7619ABB3E500E318A8 /* dsp_libsrc */ = {
 			isa = PBXGroup;
 			children = (
+				2DB96A8E19ABB4CB00E318A8 /* libsamplerate */,
 				2DB96A6A19ABB32E00E318A8 /* src.c */,
 				2DB96A6B19ABB32E00E318A8 /* src.h */,
 			);
 			name = dsp_libsrc;
+			path = osx;
 			sourceTree = "<group>";
 		};
 		2DB96A8E19ABB4CB00E318A8 /* libsamplerate */ = {
@@ -1501,11 +1501,7 @@
 		4D1B3E7118379829003E6066 = {
 			isa = PBXGroup;
 			children = (
-				2DB96A8E19ABB4CB00E318A8 /* libsamplerate */,
-				2DB96A7619ABB3E500E318A8 /* dsp_libsrc */,
 				2DCD78AD19A6658C00EA50FA /* icons */,
-				4D32FA3219A644A6000FFDE0 /* libmad-0.15.1b */,
-				4D32F9A219A63022000FFDE0 /* libFLAC */,
 				4D1B514C1837EF7C003E6066 /* plugins */,
 				4D1B3EB31837EC44003E6066 /* deadbeef */,
 				4D1B3E7C18379829003E6066 /* Frameworks */,
@@ -1623,7 +1619,6 @@
 			children = (
 				4D1B3ED81837EC44003E6066 /* ConvertUTF.c */,
 				4D1B3ED91837EC44003E6066 /* ConvertUTF.h */,
-				4D1B3EDA1837EC44003E6066 /* readme.txt */,
 			);
 			path = ConvertUTF;
 			sourceTree = "<group>";
@@ -1640,6 +1635,7 @@
 		4D1B514C1837EF7C003E6066 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				2DB96A7619ABB3E500E318A8 /* dsp_libsrc */,
 				4D44E66919B752F900F780FC /* dumb */,
 				2D2A135519B647BB00AD1EB7 /* gme */,
 				4D32FA5419A645BB000FFDE0 /* mpgmad */,
@@ -1701,6 +1697,7 @@
 		4D32F99619A62F03000FFDE0 /* flac */ = {
 			isa = PBXGroup;
 			children = (
+				4D32F9A219A63022000FFDE0 /* libFLAC */,
 				4D32F99719A62F2A000FFDE0 /* flac.c */,
 			);
 			name = flac;
@@ -1737,6 +1734,7 @@
 				4D32F9DD19A6310C000FFDE0 /* stream_encoder_asm.nasm */,
 			);
 			name = libFLAC;
+			path = osx;
 			sourceTree = "<group>";
 		};
 		4D32F9F219A63500000FFDE0 /* ffap */ = {
@@ -1779,12 +1777,13 @@
 				4D32FA3119A644A6000FFDE0 /* version.h */,
 			);
 			name = "libmad-0.15.1b";
-			path = "deps/libmad-0.15.1b";
+			path = "osx/deps/libmad-0.15.1b";
 			sourceTree = "<group>";
 		};
 		4D32FA5419A645BB000FFDE0 /* mpgmad */ = {
 			isa = PBXGroup;
 			children = (
+				4D32FA3219A644A6000FFDE0 /* libmad-0.15.1b */,
 				4D32FA5519A645CA000FFDE0 /* mpgmad.c */,
 			);
 			name = mpgmad;
@@ -2333,7 +2332,6 @@
 				2DB10B8419B908630054A6AB /* tab_fill@2x.png in Resources */,
 				2DCD78DA19A665CA00EA50FA /* deadbeef.png in Resources */,
 				4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */,
-				4D1B4A101837EC49003E6066 /* readme.txt in Resources */,
 				2DCD78D819A665CA00EA50FA /* deadbeef.png in Resources */,
 				4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */,
 				2DBEE69519B4EB0900A60609 /* sb_front_cap_left@2x.png in Resources */,
