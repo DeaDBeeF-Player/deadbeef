@@ -48,6 +48,11 @@
 - (IBAction)addFilesCancel:(id)sender;
 @property (unsafe_unretained) IBOutlet NSTextField *statusBar;
 
+// playlist columns
+@property (unsafe_unretained) IBOutlet NSPanel *addColumnPanel;
+- (IBAction)addColumnClose:(id)sender;
+
+
 
 // file menu
 - (IBAction)openFilesAction:(id)sender;
@@ -104,5 +109,6 @@
 // window menu
 - (IBAction)showMainWinAction:(id)sender;
 
+- (void)addColumn;
 
 @end

@@ -27,6 +27,7 @@ typedef intptr_t DdbListviewCol_t;
 - (int)columnMinHeight:(DdbListviewCol_t)col;
 - (void)moveColumn:(DdbListviewCol_t)col to:(DdbListviewCol_t)to;
 - (void)columnsChanged;
+- (NSMenu *)getColumnMenu;
 - (DdbListviewRow_t)firstRow;
 - (DdbListviewRow_t)nextRow:(DdbListviewRow_t)row;
 - (DdbListviewRow_t)invalidRow;
@@ -56,6 +57,7 @@ typedef struct DdbListviewGroup_s {
 } DdbListviewGroup_t;
 
 @interface DdbListview : NSView {
+    id<DdbListviewDelegate> _delegate;
     DdbListviewGroup_t *_groups;
     int _grouptitle_height;
     BOOL _groups_pinned;
@@ -75,7 +77,6 @@ typedef struct DdbListviewGroup_s {
 
 @property (readonly) NSView *headerView;
 @property (readonly) NSView *contentView;
-@property id<DdbListviewDelegate> delegate;
 @property (readonly) DdbListviewGroup_t *groups;
 @property (readonly) int grouptitle_height;
 @property (readonly) BOOL groups_pinned;
@@ -83,6 +84,8 @@ typedef struct DdbListviewGroup_s {
 @property (readwrite) NSPoint lastpos;
 @property (readwrite) int shift_sel_anchor;
 
+- (id<DdbListviewDelegate>)delegate;
+- (void)setDelegate:(id<DdbListviewDelegate>)delegate;
 - (void)reloadData;
 - (void)groupCheck;
 - (int)pickPoint:(int)y group:(DdbListviewGroup_t **)group groupIndex:(int *)group_idx index:(int *)global_idx;

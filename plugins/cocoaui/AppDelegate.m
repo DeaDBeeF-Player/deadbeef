@@ -787,4 +787,39 @@ init_column (int i, int _id, const char *format) {
     return 0;
 }
 
+
+- (void)menuAddColumn:(id)sender {
+    [self addColumn];
+}
+
+- (void)menuEditColumn:(id)sender {
+
+}
+
+- (void)menuRemoveColumn:(id)sender {
+
+}
+
+- (void)menuTogglePinGroups:(id)sender {
+    
+}
+
+- (void)addColumn {
+        [NSApp beginSheet:self.addColumnPanel modalForWindow:self.window modalDelegate:self didEndSelector:@selector(didEndSheet:returnCode:contextInfo:) contextInfo:nil];
+
+}
+
+- (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
+{
+    [sheet orderOut:self];
+
+    if (returnCode == NSOKButton) {
+    }
+}
+
+
+- (IBAction)addColumnClose:(id)sender {
+    [NSApp endSheet:self.addColumnPanel returnCode:([sender tag] == 1) ? NSOKButton : NSCancelButton];
+}
+
 @end

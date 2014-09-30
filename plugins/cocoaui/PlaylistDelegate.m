@@ -113,6 +113,33 @@ extern DB_functions_t *deadbeef;
     }
 }
 
+- (NSMenu *)getColumnMenu {
+    NSMenu *menu = [[NSMenu alloc] initWithTitle:@"ColumnMenu"];
+    [menu setDelegate:(id<NSMenuDelegate>)self];
+    [menu setAutoenablesItems:NO];
+    [menu insertItemWithTitle:@"Add Column" action:@selector(menuAddColumn:) keyEquivalent:@"" atIndex:0];
+    [menu insertItemWithTitle:@"Edit Column" action:@selector(menuEditColumn:) keyEquivalent:@"" atIndex:1];
+    [menu insertItemWithTitle:@"Remove Column" action:@selector(menuRemoveColumn:) keyEquivalent:@"" atIndex:2];
+    [menu insertItemWithTitle:@"Pin Groups When Scrolling" action:@selector(menuTogglePinGroups:) keyEquivalent:@"" atIndex:3];
+
+    [menu insertItem:[NSMenuItem separatorItem] atIndex:4];
+
+    NSMenu *groupBy = [[NSMenu alloc] initWithTitle:@"Group By"];
+    [groupBy setDelegate:(id<NSMenuDelegate>)self];
+    [groupBy setAutoenablesItems:NO];
+
+    [groupBy insertItemWithTitle:@"None" action:@selector(menuGroupByNone) keyEquivalent:@"" atIndex:0];
+    [groupBy insertItemWithTitle:@"Artist/Date/Album" action:@selector(menuGroupByArtistDateAlbum) keyEquivalent:@"" atIndex:1];
+    [groupBy insertItemWithTitle:@"Artist" action:@selector(menuGroupByArtist) keyEquivalent:@"" atIndex:2];
+    [groupBy insertItemWithTitle:@"Custom" action:@selector(menuGroupByCustom) keyEquivalent:@"" atIndex:3];
+
+    NSMenuItem *groupByItem = [[NSMenuItem alloc] initWithTitle:@"Group By" action:nil keyEquivalent:@""];
+    [groupByItem setSubmenu:groupBy];
+    [menu insertItem:groupByItem atIndex:5];
+
+    return menu;
+}
+
 
 - (void)loadColumns:(NSArray *)cols {
     [self freeColumns];
