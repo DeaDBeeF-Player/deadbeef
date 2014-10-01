@@ -239,7 +239,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             cairo_fill (cr);
         }
         int real_art_width = width - ART_PADDING_HORZ * 2;
-        if (real_art_width > 0 && group_it) {
+        if (real_art_width > 7 && group_it) {
             const char *album = deadbeef->pl_find_meta (group_it, "album");
             const char *artist = deadbeef->pl_find_meta (group_it, "artist");
             if (!album || !*album) {
