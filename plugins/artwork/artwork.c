@@ -1363,7 +1363,7 @@ flac_extract_art(const char *filename, const char *outname) {
         goto error;
     }
 
-    
+
     FLAC__StreamMetadata_Picture *pic = &picture->data.picture;
     if (pic && pic->data_length > 0) {
         trace("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
@@ -1574,14 +1574,14 @@ process_query(const cover_query_t *query)
             }
         }
 
-        if (artwork_enable_lfm) {
+        if (artwork_enable_lfm && query->album && query->artist) {
             looked_for_pic = 1;
             if (!fetch_from_lastfm(query->artist, query->album, cache_path)) {
                 return 1;
             }
         }
 
-        if (artwork_enable_aao) {
+        if (artwork_enable_aao && (query->album || query->artist)) {
             looked_for_pic = 1;
             if (!fetch_from_albumart_org(query->artist, query->album, cache_path)) {
                 return 1;
