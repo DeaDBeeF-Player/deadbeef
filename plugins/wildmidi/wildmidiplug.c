@@ -164,6 +164,7 @@ wmidi_start (void) {
                 fclose (f);
                 break;
             }
+            *config = 0;
         }
         p = e;
     }
