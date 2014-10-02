@@ -1589,20 +1589,19 @@ process_query(const cover_query_t *query)
         }
 
         if ((artwork_enable_lfm || artwork_enable_aao) && query->album) {
-            /* Try stripping parenthesis off the end of the album name */
+            /* Try stripping parenthesised text off the end of the album name */
             const size_t plain_album_length = strcspn(query->album, "(");
             if (plain_album_length > 0 && plain_album_length < strlen(query->album)) {
-                char *plain_album = strdup(query->album);
-                if (plain_album) {
-                    plain_album[plain_album_length] = '\0';
-                    if (artwork_enable_lfm && !fetch_from_lastfm(query->artist, plain_album, cache_path)) {
-                        return 1;
-                    }
-                    if (artwork_enable_aao && !fetch_from_albumart_org(query->artist, plain_album, cache_path)) {
-                        return 1;
-                    }
-                    free(plain_album);
+                query->album[plain_album_length] = '\0';
+                if (artwork_enable_lfm && query->artist && !fetch_from_lastfm(query->artist, query->album, cache_path)) {
+                    query->album[plain_album_length] = '(';
+                    return 1;
                 }
+                if (artwork_enable_aao && !fetch_from_albumart_org(query->artist, query->album, cache_path)) {
+                    query->album[plain_album_length] = '(';
+                    return 1;
+                }
+                query->album[plain_album_length] = '(';
             }
         }
     }
