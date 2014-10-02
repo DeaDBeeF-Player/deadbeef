@@ -420,8 +420,8 @@ plug_volume_set_amp (float amp) {
 DB_plugin_t *g_plugins[MAX_PLUGINS+1];
 
 #define MAX_GUI_PLUGINS 10
-char *g_gui_names[MAX_GUI_PLUGINS+1];
-int g_num_gui_names;
+static char *g_gui_names[MAX_GUI_PLUGINS+1];
+static int g_num_gui_names;
 
 #define MAX_DECODER_PLUGINS 50
 DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
@@ -801,11 +801,14 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
                         if (e && !strcasecmp (e, ".fallback")) {
                             break;
                         }
-                        // add to list
-                        // FIXME check for gui plugins dupes
-                        g_gui_names[g_num_gui_names++] = strdup (nm);
-                        g_gui_names[g_num_gui_names] = NULL;
-                        trace ("added %s gui plugin\n", nm);
+                        // add to list of unique names
+                        size_t i;
+                        for (i = 0; g_gui_names[i] && strcmp(g_gui_names[i], nm); i++);
+                        if (!g_gui_names[i]) {
+                            g_gui_names[i] = strdup (nm);
+                            g_gui_names[++g_num_gui_names] = NULL;
+                            trace ("added %s gui plugin\n", nm);
+                        }
                     }
                     break;
                 }
