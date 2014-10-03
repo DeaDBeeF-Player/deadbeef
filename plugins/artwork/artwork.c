@@ -56,6 +56,7 @@
 #include "../../deadbeef.h"
 #include "artwork_internal.h"
 #include "lastfm.h"
+#include "musicbrainz.h"
 #include "albumartorg.h"
 #include "wos.h"
 #include "cache.h"
@@ -96,6 +97,7 @@ static int artwork_enable_embedded;
 static int artwork_enable_local;
 #ifdef USE_VFS_CURL
     static int artwork_enable_lfm;
+    static int artwork_enable_mb;
     static int artwork_enable_aao;
     static int artwork_enable_wos;
 #endif
@@ -1573,16 +1575,23 @@ process_query(const cover_query_t *query)
             }
         }
 
-        if (artwork_enable_lfm && query->album && query->artist) {
+        if (artwork_enable_lfm) {
             looked_for_pic = 1;
-            if (!fetch_from_lastfm(query->artist, query->album, cache_path)) {
+            if (query->album && query->artist && !fetch_from_lastfm(query->artist, query->album, cache_path)) {
                 return 1;
             }
         }
 
-        if (artwork_enable_aao && (query->album || query->artist)) {
+        if (artwork_enable_mb) {
             looked_for_pic = 1;
-            if (!fetch_from_albumart_org(query->artist, query->album, cache_path)) {
+            if (query->album && query->artist && !fetch_from_musicbrainz(query->artist, query->album, cache_path)) {
+                return 1;
+            }
+        }
+
+        if (artwork_enable_aao) {
+            looked_for_pic = 1;
+            if ((query->album || query->artist) && !fetch_from_albumart_org(query->artist, query->album, cache_path)) {
                 return 1;
             }
         }
@@ -1801,12 +1810,13 @@ static void
 artwork_configchanged (void) {
     cache_configchanged();
 
-    int new_artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
-    int new_artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
+    const int new_artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
+    const int new_artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
 #ifdef USE_VFS_CURL
-    int new_artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
-    int new_artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
-    int new_artwork_enable_wos = deadbeef->conf_get_int ("artwork.enable_wos", 0);
+    const int new_artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
+    const int new_artwork_enable_mb = deadbeef->conf_get_int ("artwork.enable_musicbrainz", 0);
+    const int new_artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
+    const int new_artwork_enable_wos = deadbeef->conf_get_int ("artwork.enable_wos", 0);
 #endif
 
     char new_artwork_filemask[MAX_FILEMASK_LENGTH];
@@ -1820,6 +1830,7 @@ artwork_configchanged (void) {
             || new_artwork_enable_local != artwork_enable_local
 #ifdef USE_VFS_CURL
             || new_artwork_enable_lfm != artwork_enable_lfm
+            || new_artwork_enable_mb != artwork_enable_mb
             || new_artwork_enable_aao != artwork_enable_aao
             || new_artwork_enable_wos != artwork_enable_wos
 #endif
@@ -1829,6 +1840,7 @@ artwork_configchanged (void) {
         artwork_enable_local = new_artwork_enable_local;
 #ifdef USE_VFS_CURL
         artwork_enable_lfm = new_artwork_enable_lfm;
+        artwork_enable_mb = new_artwork_enable_mb;
         artwork_enable_aao = new_artwork_enable_aao;
         artwork_enable_wos = new_artwork_enable_wos;
 #endif
@@ -1953,6 +1965,7 @@ artwork_plugin_start (void)
     artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
 #ifdef USE_VFS_CURL
     artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
+    artwork_enable_mb = deadbeef->conf_get_int ("artwork.enable_musicbrainz", 0);
     artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
     artwork_enable_wos = deadbeef->conf_get_int ("artwork.enable_wos", 0);
 #endif
@@ -1986,9 +1999,10 @@ static const char settings_dlg[] =
     "property \"Fetch from local folder\" checkbox artwork.enable_localfolder 1;\n"
     "property \"Local cover file mask\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
 #ifdef USE_VFS_CURL
-    "property \"Fetch from last.fm\" checkbox artwork.enable_lastfm 0;\n"
-    "property \"Fetch from albumart.org\" checkbox artwork.enable_albumartorg 0;\n"
-    "property \"Fetch from worldofspectrum.org (AY only)\" checkbox artwork.enable_wos 0;\n"
+    "property \"Fetch from Last.fm\" checkbox artwork.enable_lastfm 0;\n"
+    "property \"Fetch from MusicBrainz\" checkbox artwork.enable_musicbrainz 0;\n"
+    "property \"Fetch from Albumart.org\" checkbox artwork.enable_albumartorg 0;\n"
+    "property \"Fetch from World of Spectrum (AY only)\" checkbox artwork.enable_wos 0;\n"
 #endif
     "property \"Scale artwork towards longer side\" checkbox artwork.scale_towards_longer 1;\n"
 ;
