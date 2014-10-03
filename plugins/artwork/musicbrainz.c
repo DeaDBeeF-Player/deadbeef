@@ -67,12 +67,13 @@ int fetch_from_musicbrainz (const char *artist, const char *album, const char *d
     const int id_size = deadbeef->fread(buffer, 1, sizeof(buffer), fp);
     current_file = NULL;
     deadbeef->fclose (fp);
-
-    char *mbid = NULL;
-    if (id_size > 0) {
-        buffer[id_size] = '\0';
-        mbid = strstr(buffer, MB_ID_STRING);
+    if (id_size <= 0) {
+        trace("fetch_from_musicbrainz: failed to read (%d)\n", id_size);
+        return -1;
     }
+
+    buffer[id_size] = '\0';
+    char *mbid = strstr(buffer, MB_ID_STRING);
     if (!mbid || mbid+strlen(MB_ID_STRING)+36 > buffer+id_size) {
         trace("fetch_from_musicbrainz: release ID not found in response (%d bytes)\n", id_size);
         return -1;
@@ -98,12 +99,13 @@ int fetch_from_musicbrainz (const char *artist, const char *album, const char *d
     const int art_size = deadbeef->fread(buffer, 1, sizeof(buffer), fp);
     current_file = NULL;
     deadbeef->fclose (fp);
-
-    char *image_url = NULL;
-    if (art_size > 0) {
-        buffer[art_size] = '\0';
-        image_url = strstr(buffer, MB_ART_STRING);
+    if (art_size <= 0) {
+        trace("fetch_from_musicbrainz: failed to read (%d)\n", art_size);
+        return -1;
     }
+
+    buffer[art_size] = '\0';
+    char *image_url = strstr(buffer, MB_ART_STRING);
     if (!image_url) {
         trace("fetch_from_musicbrainz: large thumb not found in response (%d bytes)\n", art_size);
         return -1;

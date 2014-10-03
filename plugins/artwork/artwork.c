@@ -34,6 +34,7 @@
 #include <unistd.h>
 #include <fnmatch.h>
 #include <pthread.h>
+#include <errno.h>
 #include <sys/stat.h>
 #ifdef __linux__
     #include <sys/prctl.h>
@@ -1573,26 +1574,44 @@ process_query(const cover_query_t *query)
             if (!fetch_from_wos(query->album, cache_path)) {
                 return 1;
             }
+            if (errno == ECONNABORTED) {
+                return 0;
+            }
         }
 
         if (artwork_enable_lfm) {
             looked_for_pic = 1;
-            if (query->album && query->artist && !fetch_from_lastfm(query->artist, query->album, cache_path)) {
-                return 1;
+            if (query->album && query->artist) {
+                if (!fetch_from_lastfm(query->artist, query->album, cache_path)) {
+                    return 1;
+                }
+                if (errno == ECONNABORTED) {
+                    return 0;
+                }
             }
         }
 
         if (artwork_enable_mb) {
             looked_for_pic = 1;
-            if (query->album && query->artist && !fetch_from_musicbrainz(query->artist, query->album, cache_path)) {
-                return 1;
+            if (query->album && query->artist) {
+                if (!fetch_from_musicbrainz(query->artist, query->album, cache_path)) {
+                    return 1;
+                }
+                if (errno == ECONNABORTED) {
+                    return 0;
+                }
             }
         }
 
         if (artwork_enable_aao) {
             looked_for_pic = 1;
-            if ((query->album || query->artist) && !fetch_from_albumart_org(query->artist, query->album, cache_path)) {
-                return 1;
+            if (query->album || query->artist) {
+                if (!fetch_from_albumart_org(query->artist, query->album, cache_path)) {
+                    return 1;
+                }
+                if (errno == ECONNABORTED) {
+                    return 0;
+                }
             }
         }
 
@@ -1601,13 +1620,25 @@ process_query(const cover_query_t *query)
             char *parenthesis = strchr(query->album, '(');
             if (parenthesis) {
                 *parenthesis = '\0';
-                if (artwork_enable_lfm && query->artist && !fetch_from_lastfm(query->artist, query->album, cache_path)) {
-                    *parenthesis = '(';
-                    return 1;
+                if (artwork_enable_lfm && query->artist) {
+                    if (!fetch_from_lastfm(query->artist, query->album, cache_path)) {
+                        *parenthesis = '(';
+                        return 1;
+                    }
+                    if (errno == ECONNABORTED) {
+                        *parenthesis = '(';
+                        return 0;
+                    }
                 }
-                if (artwork_enable_aao && !fetch_from_albumart_org(query->artist, query->album, cache_path)) {
-                    *parenthesis = '(';
-                    return 1;
+                if (artwork_enable_aao) {
+                    if (!fetch_from_albumart_org(query->artist, query->album, cache_path)) {
+                        *parenthesis = '(';
+                        return 1;
+                    }
+                    if (errno == ECONNABORTED) {
+                        *parenthesis = '(';
+                        return 0;
+                    }
                 }
                 *parenthesis = '(';
             }
@@ -1771,32 +1802,6 @@ get_album_art(const char *fname, const char *artist, const char *album, int size
     deadbeef->mutex_unlock(queue_mutex);
     return NULL;
 }
-#if 0
-static void
-sync_callback (const char *fname, const char *artist, const char *album, void *user_data) {
-    mutex_cond_t *mc = (mutex_cond_t *)user_data;
-    deadbeef->mutex_lock (mc->mutex);
-    deadbeef->cond_signal (mc->cond);
-    deadbeef->mutex_unlock (mc->mutex);
-}
-
-static char *
-get_album_art_sync (const char *fname, const char *artist, const char *album, int size) {
-    mutex_cond_t mc;
-    mc.mutex = deadbeef->mutex_create ();
-    mc.cond = deadbeef->cond_create ();
-    deadbeef->mutex_lock (mc.mutex);
-    char *image_fname = get_album_art (fname, artist, album, size, sync_callback, &mc);
-    while (!image_fname) {
-        deadbeef->cond_wait (mc.cond, mc.mutex);
-        image_fname = get_album_art (fname, artist, album, size, sync_callback, &mc);
-    }
-    deadbeef->mutex_unlock (mc.mutex);
-    deadbeef->mutex_free (mc.mutex);
-    deadbeef->cond_free (mc.cond);
-    return image_fname;
-}
-#endif
 
 static void
 artwork_reset (int fast) {
