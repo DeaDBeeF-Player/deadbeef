@@ -11,8 +11,6 @@
 		2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */; };
 		2D0A002719C390E9006F7462 /* tf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A002519C390E9006F7462 /* tf.c */; };
 		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
-		2D0B1C8419C5B9FC00CED0B5 /* PlaylistDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0B1C8219C5B9FC00CED0B5 /* PlaylistDelegate.h */; };
-		2D0B1C8519C5B9FC00CED0B5 /* PlaylistDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0B1C8319C5B9FC00CED0B5 /* PlaylistDelegate.m */; };
 		2D2A135F19B6480E00AD1EB7 /* cgme.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2A135E19B6480E00AD1EB7 /* cgme.c */; };
 		2D2A140C19B6482600AD1EB7 /* Ay_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2A136019B6482600AD1EB7 /* Ay_Apu.cpp */; };
 		2D2A140D19B6482600AD1EB7 /* Ay_Apu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2A136119B6482600AD1EB7 /* Ay_Apu.h */; };
@@ -190,6 +188,9 @@
 		2D2A14F119B64F2900AD1EB7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */; };
 		2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */; };
+		2D72047319DF1E96000989C6 /* Playlist.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D72047219DF1E96000989C6 /* Playlist.xib */; };
+		2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */; };
+		2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */; };
 		2DA6F89C19A5332D002151EB /* escape.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA6F89B19A5332D002151EB /* escape.c */; };
 		2DB10B8119B908630054A6AB /* tab_bottom_fill.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6919B9085A0054A6AB /* tab_bottom_fill.png */; };
 		2DB10B8219B908630054A6AB /* tab_bottom_fill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6A19B9085A0054A6AB /* tab_bottom_fill@2x.png */; };
@@ -528,8 +529,6 @@
 		2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbPlaylistWidget.m; path = widgets/DdbPlaylistWidget.m; sourceTree = "<group>"; };
 		2D0A002519C390E9006F7462 /* tf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tf.c; sourceTree = "<group>"; };
 		2D0A002619C390E9006F7462 /* tf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tf.h; sourceTree = "<group>"; };
-		2D0B1C8219C5B9FC00CED0B5 /* PlaylistDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaylistDelegate.h; sourceTree = "<group>"; };
-		2D0B1C8319C5B9FC00CED0B5 /* PlaylistDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaylistDelegate.m; sourceTree = "<group>"; };
 		2D2A135A19B647CF00AD1EB7 /* gme.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = gme.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D2A135E19B6480E00AD1EB7 /* cgme.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cgme.c; path = plugins/gme/cgme.c; sourceTree = "<group>"; };
 		2D2A136019B6482600AD1EB7 /* Ay_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ay_Apu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ay_Apu.cpp"; sourceTree = "<group>"; };
@@ -707,6 +706,9 @@
 		2D2A14F019B64F2900AD1EB7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbTabStrip.h; path = widgets/DdbTabStrip.h; sourceTree = "<group>"; };
 		2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbTabStrip.m; path = widgets/DdbTabStrip.m; sourceTree = "<group>"; };
+		2D72047219DF1E96000989C6 /* Playlist.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Playlist.xib; sourceTree = "<group>"; };
+		2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbPlaylistViewController.h; sourceTree = "<group>"; };
+		2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbPlaylistViewController.m; sourceTree = "<group>"; };
 		2DA6F89B19A5332D002151EB /* escape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = escape.c; sourceTree = "<group>"; };
 		2DA6F89F19A53334002151EB /* escape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = escape.h; sourceTree = "<group>"; };
 		2DB10B6919B9085A0054A6AB /* tab_bottom_fill.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_bottom_fill.png; path = images/tabs/tab_bottom_fill.png; sourceTree = "<group>"; };
@@ -1886,9 +1888,10 @@
 				4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */,
 				2DEF494219C4DB4100B718C1 /* DdbListview.h */,
 				2DEF494319C4DB4100B718C1 /* DdbListview.m */,
-				2D0B1C8219C5B9FC00CED0B5 /* PlaylistDelegate.h */,
-				2D0B1C8319C5B9FC00CED0B5 /* PlaylistDelegate.m */,
+				2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */,
+				2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */,
 				4DA72BDC1838EAAB00A98C62 /* MainMenu.xib */,
+				2D72047219DF1E96000989C6 /* Playlist.xib */,
 				4D2362B218395D0300C9E818 /* images */,
 				2D0B1C8619C5CF4A00CED0B5 /* Supporting files */,
 			);
@@ -2084,9 +2087,9 @@
 				2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */,
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
-				2D0B1C8419C5B9FC00CED0B5 /* PlaylistDelegate.h in Headers */,
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
+				2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */,
 				2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2369,6 +2372,7 @@
 				4DA72BEB1838EAAB00A98C62 /* InfoPlist.strings in Resources */,
 				2DCD78D519A665CA00EA50FA /* deadbeef.png in Resources */,
 				2DB10B8219B908630054A6AB /* tab_bottom_fill@2x.png in Resources */,
+				2D72047319DF1E96000989C6 /* Playlist.xib in Resources */,
 				2DBEE69819B4EB0900A60609 /* sb_front_filler.png in Resources */,
 				2DB10B8C19B908630054A6AB /* tab_unsel_right@2x.png in Resources */,
 				2DB10B9019B90BE90054A6AB /* tab_right@2x.png in Resources */,
@@ -2515,7 +2519,6 @@
 				4D1B4A0F1837EC49003E6066 /* ConvertUTF.c in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
-				2D0B1C8519C5B9FC00CED0B5 /* PlaylistDelegate.m in Sources */,
 				2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */,
 				4D1B4F5F1837EC4A003E6066 /* streamer.c in Sources */,
 				4D1B4F4C1837EC4A003E6066 /* replaygain.c in Sources */,
@@ -2524,6 +2527,7 @@
 				2D0A002719C390E9006F7462 /* tf.c in Sources */,
 				4D1B515B1837F4E9003E6066 /* nullout.c in Sources */,
 				4D1B4AA11837EC49003E6066 /* pltmeta.c in Sources */,
+				2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */,
 				4D1B4A171837EC49003E6066 /* dsppreset.c in Sources */,
 				4D1B4A1A1837EC49003E6066 /* fft.c in Sources */,
 				4D1B514A1837EC4B003E6066 /* volume.c in Sources */,

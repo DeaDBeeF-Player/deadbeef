@@ -1,23 +1,62 @@
 //
-//  PlaylistDelegate.m
+//  DdbPlaylistViewController.m
 //  deadbeef
 //
-//  Created by waker on 14/09/14.
+//  Created by waker on 03/10/14.
 //  Copyright (c) 2014 Alexey Yakovenko. All rights reserved.
 //
 
-#import "PlaylistDelegate.h"
+#import "DdbPlaylistViewController.h"
+#import "DdbPlaylistWidget.h"
 #import "DdbListview.h"
 #include "../../deadbeef.h"
 
 extern DB_functions_t *deadbeef;
+@interface DdbPlaylistViewController ()
 
-@implementation PlaylistDelegate
+@end
+
+@implementation DdbPlaylistViewController
+
+
+- (void)menuAddColumn:(id)sender {
+    [self addColumn];
+}
+
+- (void)menuEditColumn:(id)sender {
+
+}
+
+- (void)menuRemoveColumn:(id)sender {
+
+}
+
+- (void)menuTogglePinGroups:(id)sender {
+
+}
+
+- (void)addColumn {
+    [NSApp beginSheet:self.addColumnPanel modalForWindow:[[self view] window]  modalDelegate:self didEndSelector:@selector(didEndSheet:returnCode:contextInfo:) contextInfo:nil];
+
+}
+
+- (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
+{
+    [sheet orderOut:self];
+
+    if (returnCode == NSOKButton) {
+    }
+}
+
+
+- (IBAction)addColumnClose:(id)sender {
+    [NSApp endSheet:self.addColumnPanel returnCode:([sender tag] == 1) ? NSOKButton : NSCancelButton];
+}
 
 #define DEFAULT_COLUMNS "[{\"title\":\"Playing\", \"id\":\"1\", \"format\":\"%playstatus%\", \"size\":\"50\"}, {\"title\":\"Artist - Album\", \"format\":\"%artist%[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track%\", \"size\":\"50\"}, {\"title\":\"Track Title\", \"format\":\"%title%\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
 
-- (PlaylistDelegate *)init {
-    self = [super init];
+- (DdbPlaylistViewController *)init {
+    self = [super initWithNibName:@"Playlist" bundle:nil];
 
     if (self) {
         NSString *cols = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.columns", DEFAULT_COLUMNS)];
@@ -46,10 +85,10 @@ extern DB_functions_t *deadbeef;
         [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
 
         _colTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont smallSystemFontSize]], NSFontAttributeName
-                                             , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                             , [NSColor controlTextColor], NSForegroundColorAttributeName
-                                             , textStyle, NSParagraphStyleAttributeName
-                                             , nil];
+                                   , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
+                                   , [NSColor controlTextColor], NSForegroundColorAttributeName
+                                   , textStyle, NSParagraphStyleAttributeName
+                                   , nil];
 
         [textStyle setAlignment:NSLeftTextAlignment];
         [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
@@ -58,27 +97,29 @@ extern DB_functions_t *deadbeef;
         int rowheight = 18;
 
         _groupTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+                                     [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+                                     , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
+                                     , [NSColor controlTextColor], NSForegroundColorAttributeName
+                                     , textStyle, NSParagraphStyleAttributeName
+                                     , nil];
+
+        _cellTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
                                     , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
                                     , [NSColor controlTextColor], NSForegroundColorAttributeName
                                     , textStyle, NSParagraphStyleAttributeName
                                     , nil];
 
-        _cellTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                            [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
-                                             , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                             , [NSColor controlTextColor], NSForegroundColorAttributeName
-                                             , textStyle, NSParagraphStyleAttributeName
-                                             , nil];
-        
         _cellSelectedTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
-                                    , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                    , [NSColor alternateSelectedControlTextColor], NSForegroundColorAttributeName
-                                    , textStyle, NSParagraphStyleAttributeName
-                                    , nil];
+                                            , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
+                                            , [NSColor alternateSelectedControlTextColor], NSForegroundColorAttributeName
+                                            , textStyle, NSParagraphStyleAttributeName
+                                            , nil];
 
-}
+    }
 
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+    [view setDelegate:(id<DdbListviewDelegate>)self];
     return self;
 }
 
@@ -117,10 +158,10 @@ extern DB_functions_t *deadbeef;
     NSMenu *menu = [[NSMenu alloc] initWithTitle:@"ColumnMenu"];
     [menu setDelegate:(id<NSMenuDelegate>)self];
     [menu setAutoenablesItems:NO];
-    [menu insertItemWithTitle:@"Add Column" action:@selector(menuAddColumn:) keyEquivalent:@"" atIndex:0];
-    [menu insertItemWithTitle:@"Edit Column" action:@selector(menuEditColumn:) keyEquivalent:@"" atIndex:1];
-    [menu insertItemWithTitle:@"Remove Column" action:@selector(menuRemoveColumn:) keyEquivalent:@"" atIndex:2];
-    [menu insertItemWithTitle:@"Pin Groups When Scrolling" action:@selector(menuTogglePinGroups:) keyEquivalent:@"" atIndex:3];
+    [[menu insertItemWithTitle:@"Add Column" action:@selector(menuAddColumn:) keyEquivalent:@"" atIndex:0] setTarget:self];
+    [[menu insertItemWithTitle:@"Edit Column" action:@selector(menuEditColumn:) keyEquivalent:@"" atIndex:1] setTarget:self];
+    [[menu insertItemWithTitle:@"Remove Column" action:@selector(menuRemoveColumn:) keyEquivalent:@"" atIndex:2] setTarget:self];
+    [[menu insertItemWithTitle:@"Pin Groups When Scrolling" action:@selector(menuTogglePinGroups:) keyEquivalent:@"" atIndex:3] setTarget:self];
 
     [menu insertItem:[NSMenuItem separatorItem] atIndex:4];
 
@@ -128,9 +169,9 @@ extern DB_functions_t *deadbeef;
     [groupBy setDelegate:(id<NSMenuDelegate>)self];
     [groupBy setAutoenablesItems:NO];
 
-    [groupBy insertItemWithTitle:@"None" action:@selector(menuGroupByNone) keyEquivalent:@"" atIndex:0];
-    [groupBy insertItemWithTitle:@"Artist/Date/Album" action:@selector(menuGroupByArtistDateAlbum) keyEquivalent:@"" atIndex:1];
-    [groupBy insertItemWithTitle:@"Artist" action:@selector(menuGroupByArtist) keyEquivalent:@"" atIndex:2];
+    [[groupBy insertItemWithTitle:@"None" action:@selector(menuGroupByNone) keyEquivalent:@"" atIndex:0] setTarget:self];
+    [[groupBy insertItemWithTitle:@"Artist/Date/Album" action:@selector(menuGroupByArtistDateAlbum) keyEquivalent:@"" atIndex:1] setTarget:self];
+    [[groupBy insertItemWithTitle:@"Artist" action:@selector(menuGroupByArtist) keyEquivalent:@"" atIndex:2] setTarget:self];
     [groupBy insertItemWithTitle:@"Custom" action:@selector(menuGroupByCustom) keyEquivalent:@"" atIndex:3];
 
     NSMenuItem *groupByItem = [[NSMenuItem alloc] initWithTitle:@"Group By" action:nil keyEquivalent:@""];
@@ -352,7 +393,7 @@ extern DB_functions_t *deadbeef;
             .idx = -1,
             .id = columns[col]._id
         };
-        
+
         char text[1024] = "";
         deadbeef->tf_eval (&ctx, columns[col].bytecode, columns[col].bytecode_len, text, sizeof (text));
 
