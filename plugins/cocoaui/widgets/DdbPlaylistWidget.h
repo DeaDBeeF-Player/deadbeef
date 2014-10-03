@@ -10,6 +10,8 @@
 #import "DdbListview.h"
 
 @interface DdbPlaylistWidget : DdbWidget {
-    DdbListview *_listview;
+    id<DdbListviewDelegate> _delegate;
 }
+@property (readwrite) DdbListview *listview;
+- (void)setDelegate:(id<DdbListviewDelegate>)delegate;
 @end

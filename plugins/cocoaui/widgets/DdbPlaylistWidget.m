@@ -7,7 +7,6 @@
 //
 
 #import "DdbPlaylistWidget.h"
-#import "PlaylistDelegate.h"
 #include "../../../deadbeef.h"
 
 extern DB_functions_t *deadbeef;
@@ -23,14 +22,17 @@ extern DB_functions_t *deadbeef;
         listFrame.origin.x = 0;
         listFrame.origin.y = 0;
         _listview = [[DdbListview alloc] initWithFrame:listFrame];
-        PlaylistDelegate *del = [[PlaylistDelegate alloc] init];
-        [_listview setDelegate:(id<DdbListviewDelegate>)del];
         [_listview setNeedsDisplay:YES];
         [_listview setAutoresizingMask:NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewMinYMargin|NSViewHeightSizable|NSViewMaxYMargin];
         [self addSubview:_listview];
         
     }
     return self;
+}
+
+- (void)setDelegate:(id<DdbListviewDelegate>)delegate {
+    _delegate = delegate;
+    [_listview setDelegate:(id<DdbListviewDelegate>)delegate];
 }
 
 - (void)drawRect:(NSRect)dirtyRect

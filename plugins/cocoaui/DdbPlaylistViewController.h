@@ -1,12 +1,12 @@
 //
-//  PlaylistDelegate.h
+//  DdbPlaylistViewController.h
 //  deadbeef
 //
-//  Created by waker on 14/09/14.
+//  Created by waker on 03/10/14.
 //  Copyright (c) 2014 Alexey Yakovenko. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
 #define PLT_MAX_COLUMNS 100
 
@@ -19,8 +19,7 @@ typedef struct {
     int bytecode_len;
 } plt_col_info_t;
 
-// implementation of DdbListviewDelegate
-@interface PlaylistDelegate : NSObject {
+@interface DdbPlaylistViewController : NSViewController {
     plt_col_info_t columns[PLT_MAX_COLUMNS];
     int ncolumns;
     NSImage *playTpl;
@@ -32,6 +31,8 @@ typedef struct {
     NSDictionary *_groupTextAttrsDictionary;
 }
 
-- (PlaylistDelegate *)init;
+// playlist columns
+@property (unsafe_unretained) IBOutlet NSPanel *addColumnPanel;
+- (IBAction)addColumnClose:(id)sender;
 
 @end
