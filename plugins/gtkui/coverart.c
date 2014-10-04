@@ -396,7 +396,7 @@ get_pixbuf (cache_type_t cache_type, const char *fname, int width) {
     for (size_t i = 0; i < cache_size && cache[i].pixbuf; i++) {
         if (!cache_sort_order(cache[i].fname, fname, cache[i].width, width)) {
             struct stat stat_buf;
-            if (!stat(fname, &stat_buf) && stat_buf.st_mtime == cache[i].file_time) {
+            if (stat(fname, &stat_buf) || stat_buf.st_mtime == cache[i].file_time) {
                 gettimeofday(&cache[i].tm, NULL);
                 return cache[i].pixbuf;
             }
