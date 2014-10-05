@@ -1,6 +1,6 @@
 /*
     Album Art plugin for DeaDBeeF
-    Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>
+    Copyright (C) 2014 Ian Nartowicz <deadbeef@nartowicz.co.uk>
     Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This software is provided 'as-is', without any express or implied
