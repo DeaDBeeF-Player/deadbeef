@@ -1780,9 +1780,6 @@ get_album_art(const char *fname, const char *artist, const char *album, int size
     make_cache_path2(cache_path, sizeof(cache_path), fname, album, artist, size);
     const char *p = size == -1 ? find_image(cache_path) : find_scaled_image(cache_path);
     if (p) {
-        if (callback) {
-            callback(NULL, NULL, NULL, user_data);
-        }
         trace("Found cached image %s\n", cache_path);
         return strdup(p);
     }

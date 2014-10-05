@@ -512,15 +512,23 @@ get_cover_art_int(cache_type_t cache_type, const char *fname, const char *artist
     trace("coverart: get_album_art for %s %s %s %d\n", fname, artist, album, width);
     cover_avail_info_t *dt = cover_avail_info(cache_type, strdup(cache_path), width, callback, user_data);
     char *image_fname = artwork_plugin->get_album_art(fname, artist, album, -1, cover_avail_callback, dt);
+    if (image_fname) {
+        /* There will be no callback */
+        free(dt->cache_path);
+        free(dt);
+    }
+
     deadbeef->mutex_lock(mutex);
     GdkPixbuf *pb = get_pixbuf(cache_type, cache_path, width);
     if (pb) {
+        /* We already have the proper pixbuf in memory */
         g_object_ref(pb);
         if (image_fname) {
             free(image_fname);
         }
     }
     else if (image_fname) {
+        /* Got a cached file, need to load a pixbuf into memory */
         queue_add_load(cache_type, image_fname, width, callback, user_data);
     }
     deadbeef->mutex_unlock(mutex);
@@ -531,19 +539,19 @@ get_cover_art_int(cache_type_t cache_type, const char *fname, const char *artist
 GdkPixbuf *
 get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, void (*callback) (void *), void *user_data)
 {
-    get_cover_art_int(CACHE_TYPE_THUMB, fname, artist, album, width, callback, user_data);
+    return get_cover_art_int(CACHE_TYPE_THUMB, fname, artist, album, width, callback, user_data);
 }
 
 GdkPixbuf *
 get_cover_art_primary (const char *fname, const char *artist, const char *album, int width, void (*callback) (void *), void *user_data)
 {
-    get_cover_art_int(CACHE_TYPE_PRIMARY, fname, artist, album, width, callback, user_data);
+    return get_cover_art_int(CACHE_TYPE_PRIMARY, fname, artist, album, width, callback, user_data);
 }
 
 GdkPixbuf *
 get_cover_art_thumb (const char *fname, const char *artist, const char *album, int width, void (*callback) (void *), void *user_data)
 {
-    get_cover_art_int(CACHE_TYPE_THUMB, fname, artist, album, width, callback, user_data);
+    return get_cover_art_int(CACHE_TYPE_THUMB, fname, artist, album, width, callback, user_data);
 }
 
 void
