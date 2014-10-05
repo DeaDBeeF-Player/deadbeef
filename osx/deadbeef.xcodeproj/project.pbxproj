@@ -11,6 +11,88 @@
 		2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */; };
 		2D0A002719C390E9006F7462 /* tf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A002519C390E9006F7462 /* tf.c */; };
 		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
+		2D22F70719E13838009C631E /* c64cia.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F60D19E13762009C631E /* c64cia.h */; };
+		2D22F70819E13838009C631E /* c64vic.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F60E19E13762009C631E /* c64vic.h */; };
+		2D22F70919E13838009C631E /* c64xsid.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F60F19E13762009C631E /* c64xsid.h */; };
+		2D22F70A19E13838009C631E /* mos656x.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F61019E13762009C631E /* mos656x.h */; };
+		2D22F70B19E13838009C631E /* mos656x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F61119E13762009C631E /* mos656x.cpp */; };
+		2D22F70C19E13838009C631E /* conf6510.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F61219E13762009C631E /* conf6510.h */; };
+		2D22F70D19E13838009C631E /* mos6510.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F61319E13762009C631E /* mos6510.h */; };
+		2D22F70E19E13838009C631E /* opcodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F61419E13762009C631E /* opcodes.h */; };
+		2D22F70F19E13838009C631E /* mos6510.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F61519E13762009C631E /* mos6510.cpp */; };
+		2D22F71019E13838009C631E /* mos6526.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F61619E13762009C631E /* mos6526.h */; };
+		2D22F71119E13838009C631E /* mos6526.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F61719E13762009C631E /* mos6526.cpp */; };
+		2D22F71219E13838009C631E /* sid6526.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F61819E13762009C631E /* sid6526.h */; };
+		2D22F71319E13838009C631E /* sid6526.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F61919E13762009C631E /* sid6526.cpp */; };
+		2D22F71419E13838009C631E /* PP20_Defs.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F61A19E13762009C631E /* PP20_Defs.h */; };
+		2D22F71519E13838009C631E /* PP20.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F61B19E13762009C631E /* PP20.h */; };
+		2D22F71619E13838009C631E /* SidTuneCfg.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F61C19E13762009C631E /* SidTuneCfg.h */; };
+		2D22F71719E13838009C631E /* SidTuneTools.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F61D19E13762009C631E /* SidTuneTools.h */; };
+		2D22F71819E13838009C631E /* IconInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F61E19E13762009C631E /* IconInfo.cpp */; };
+		2D22F71919E13838009C631E /* InfoFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F61F19E13762009C631E /* InfoFile.cpp */; };
+		2D22F71A19E13838009C631E /* MUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F62019E13762009C631E /* MUS.cpp */; };
+		2D22F71B19E13838009C631E /* PP20.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F62119E13762009C631E /* PP20.cpp */; };
+		2D22F71C19E13838009C631E /* PSID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F62219E13762009C631E /* PSID.cpp */; };
+		2D22F71D19E13838009C631E /* SidTune.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F62319E13762009C631E /* SidTune.cpp */; };
+		2D22F71E19E13838009C631E /* SidTuneTools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F62419E13762009C631E /* SidTuneTools.cpp */; };
+		2D22F71F19E13838009C631E /* xsid.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F62519E13762009C631E /* xsid.h */; };
+		2D22F72019E13838009C631E /* xsid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F62619E13762009C631E /* xsid.cpp */; };
+		2D22F72119E13838009C631E /* nullsid.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5FB19E13737009C631E /* nullsid.h */; };
+		2D22F72219E13838009C631E /* player.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5FC19E13737009C631E /* player.h */; };
+		2D22F72319E13838009C631E /* reloc65.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5FD19E13737009C631E /* reloc65.c */; };
+		2D22F72419E13838009C631E /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5FE19E13737009C631E /* config.cpp */; };
+		2D22F72519E13838009C631E /* event.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5FF19E13737009C631E /* event.cpp */; };
+		2D22F72619E13838009C631E /* mixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F60019E13737009C631E /* mixer.cpp */; };
+		2D22F72719E13838009C631E /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F60119E13737009C631E /* player.cpp */; };
+		2D22F72819E13838009C631E /* psiddrv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F60219E13737009C631E /* psiddrv.cpp */; };
+		2D22F72919E13838009C631E /* sidplay2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F60319E13737009C631E /* sidplay2.cpp */; };
+		2D22F72A19E13838009C631E /* Buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5DF19E136FA009C631E /* Buffer.h */; };
+		2D22F72B19E13838009C631E /* c64env.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5E019E136FA009C631E /* c64env.h */; };
+		2D22F72C19E13838009C631E /* component.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5E119E136FA009C631E /* component.h */; };
+		2D22F72D19E13838009C631E /* event.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5E219E136FA009C631E /* event.h */; };
+		2D22F72E19E13838009C631E /* sid2types.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5E319E136FA009C631E /* sid2types.h */; };
+		2D22F72F19E13838009C631E /* sidbuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5E419E136FA009C631E /* sidbuilder.h */; };
+		2D22F73019E13838009C631E /* sidconfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5E519E136FA009C631E /* sidconfig.h */; };
+		2D22F73119E13838009C631E /* sidendian.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5E619E136FA009C631E /* sidendian.h */; };
+		2D22F73219E13838009C631E /* sidint.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5E719E136FA009C631E /* sidint.h */; };
+		2D22F73319E13838009C631E /* sidplay2.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5E819E136FA009C631E /* sidplay2.h */; };
+		2D22F73419E13838009C631E /* SidTune.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5E919E136FA009C631E /* SidTune.h */; };
+		2D22F73519E13838009C631E /* sidtypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5EA19E136FA009C631E /* sidtypes.h */; };
+		2D22F73619E13838009C631E /* sidusage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5EB19E136FA009C631E /* sidusage.h */; };
+		2D22F73719E13838009C631E /* SmartPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5EC19E136FA009C631E /* SmartPtr.h */; };
+		2D22F73819E13838009C631E /* envelope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5AD19E136D1009C631E /* envelope.h */; };
+		2D22F73919E13838009C631E /* extfilt.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5AE19E136D1009C631E /* extfilt.h */; };
+		2D22F73A19E13838009C631E /* filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5AF19E136D1009C631E /* filter.h */; };
+		2D22F73B19E13838009C631E /* pot.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5B019E136D1009C631E /* pot.h */; };
+		2D22F73C19E13838009C631E /* sid.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5B119E136D1009C631E /* sid.h */; };
+		2D22F73D19E13838009C631E /* siddefs.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5B219E136D1009C631E /* siddefs.h */; };
+		2D22F73E19E13838009C631E /* spline.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5B319E136D1009C631E /* spline.h */; };
+		2D22F73F19E13838009C631E /* voice.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5B419E136D1009C631E /* voice.h */; };
+		2D22F74019E13838009C631E /* wave.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F5B519E136D1009C631E /* wave.h */; };
+		2D22F74119E13838009C631E /* envelope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5B619E136D1009C631E /* envelope.cpp */; };
+		2D22F74219E13838009C631E /* extfilt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5B719E136D1009C631E /* extfilt.cpp */; };
+		2D22F74319E13838009C631E /* filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5B819E136D1009C631E /* filter.cpp */; };
+		2D22F74419E13838009C631E /* pot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5B919E136D1009C631E /* pot.cpp */; };
+		2D22F74519E13838009C631E /* sid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5BA19E136D1009C631E /* sid.cpp */; };
+		2D22F74619E13838009C631E /* version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5BB19E136D1009C631E /* version.cpp */; };
+		2D22F74719E13838009C631E /* voice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5BC19E136D1009C631E /* voice.cpp */; };
+		2D22F74819E13838009C631E /* wave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5BD19E136D1009C631E /* wave.cpp */; };
+		2D22F74919E13838009C631E /* wave6581__ST.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5BE19E136D1009C631E /* wave6581__ST.cpp */; };
+		2D22F74A19E13838009C631E /* wave6581_P_T.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5BF19E136D1009C631E /* wave6581_P_T.cpp */; };
+		2D22F74B19E13838009C631E /* wave6581_PS_.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5C019E136D1009C631E /* wave6581_PS_.cpp */; };
+		2D22F74C19E13838009C631E /* wave6581_PST.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5C119E136D1009C631E /* wave6581_PST.cpp */; };
+		2D22F74D19E13838009C631E /* wave8580__ST.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5C219E136D1009C631E /* wave8580__ST.cpp */; };
+		2D22F74E19E13838009C631E /* wave8580_P_T.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5C319E136D1009C631E /* wave8580_P_T.cpp */; };
+		2D22F74F19E13838009C631E /* wave8580_PS_.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5C419E136D1009C631E /* wave8580_PS_.cpp */; };
+		2D22F75019E13838009C631E /* wave8580_PST.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F5C519E136D1009C631E /* wave8580_PST.cpp */; };
+		2D22F75919E13850009C631E /* csid.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F6F719E137A6009C631E /* csid.h */; };
+		2D22F75A19E13850009C631E /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F6F819E137A6009C631E /* plugin.c */; };
+		2D22F75B19E13850009C631E /* csid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F6F919E137A6009C631E /* csid.cpp */; };
+		2D22F75E19E138B3009C631E /* sid.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D22F75519E1384B009C631E /* sid.dylib */; };
+		2D22F76119E13AD7009C631E /* liblibsidplay2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D22F70319E1382C009C631E /* liblibsidplay2.a */; };
+		2D22F76519E13DB2009C631E /* resid-builder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F76219E13DB2009C631E /* resid-builder.cpp */; };
+		2D22F76619E13DB2009C631E /* resid-emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F76319E13DB2009C631E /* resid-emu.h */; };
+		2D22F76719E13DB2009C631E /* resid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F76419E13DB2009C631E /* resid.cpp */; };
 		2D2A135F19B6480E00AD1EB7 /* cgme.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2A135E19B6480E00AD1EB7 /* cgme.c */; };
 		2D2A140C19B6482600AD1EB7 /* Ay_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2A136019B6482600AD1EB7 /* Ay_Apu.cpp */; };
 		2D2A140D19B6482600AD1EB7 /* Ay_Apu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2A136119B6482600AD1EB7 /* Ay_Apu.h */; };
@@ -459,6 +541,20 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		2D22F75C19E1385A009C631E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D22F75419E1384B009C631E;
+			remoteInfo = sid;
+		};
+		2D22F75F19E13AD0009C631E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D22F70219E1382C009C631E;
+			remoteInfo = libsidplay2;
+		};
 		2D2A14B819B6484100AD1EB7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -529,6 +625,88 @@
 		2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbPlaylistWidget.m; path = widgets/DdbPlaylistWidget.m; sourceTree = "<group>"; };
 		2D0A002519C390E9006F7462 /* tf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tf.c; sourceTree = "<group>"; };
 		2D0A002619C390E9006F7462 /* tf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tf.h; sourceTree = "<group>"; };
+		2D22F5AD19E136D1009C631E /* envelope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = envelope.h; path = "plugins/sid/sidplay-libs/resid/envelope.h"; sourceTree = "<group>"; };
+		2D22F5AE19E136D1009C631E /* extfilt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = extfilt.h; path = "plugins/sid/sidplay-libs/resid/extfilt.h"; sourceTree = "<group>"; };
+		2D22F5AF19E136D1009C631E /* filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = filter.h; path = "plugins/sid/sidplay-libs/resid/filter.h"; sourceTree = "<group>"; };
+		2D22F5B019E136D1009C631E /* pot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pot.h; path = "plugins/sid/sidplay-libs/resid/pot.h"; sourceTree = "<group>"; };
+		2D22F5B119E136D1009C631E /* sid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sid.h; path = "plugins/sid/sidplay-libs/resid/sid.h"; sourceTree = "<group>"; };
+		2D22F5B219E136D1009C631E /* siddefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = siddefs.h; path = "plugins/sid/sidplay-libs/resid/siddefs.h"; sourceTree = "<group>"; };
+		2D22F5B319E136D1009C631E /* spline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = spline.h; path = "plugins/sid/sidplay-libs/resid/spline.h"; sourceTree = "<group>"; };
+		2D22F5B419E136D1009C631E /* voice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = voice.h; path = "plugins/sid/sidplay-libs/resid/voice.h"; sourceTree = "<group>"; };
+		2D22F5B519E136D1009C631E /* wave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wave.h; path = "plugins/sid/sidplay-libs/resid/wave.h"; sourceTree = "<group>"; };
+		2D22F5B619E136D1009C631E /* envelope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = envelope.cpp; path = "plugins/sid/sidplay-libs/resid/envelope.cpp"; sourceTree = "<group>"; };
+		2D22F5B719E136D1009C631E /* extfilt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = extfilt.cpp; path = "plugins/sid/sidplay-libs/resid/extfilt.cpp"; sourceTree = "<group>"; };
+		2D22F5B819E136D1009C631E /* filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = filter.cpp; path = "plugins/sid/sidplay-libs/resid/filter.cpp"; sourceTree = "<group>"; };
+		2D22F5B919E136D1009C631E /* pot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pot.cpp; path = "plugins/sid/sidplay-libs/resid/pot.cpp"; sourceTree = "<group>"; };
+		2D22F5BA19E136D1009C631E /* sid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sid.cpp; path = "plugins/sid/sidplay-libs/resid/sid.cpp"; sourceTree = "<group>"; };
+		2D22F5BB19E136D1009C631E /* version.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = version.cpp; path = "plugins/sid/sidplay-libs/resid/version.cpp"; sourceTree = "<group>"; };
+		2D22F5BC19E136D1009C631E /* voice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = voice.cpp; path = "plugins/sid/sidplay-libs/resid/voice.cpp"; sourceTree = "<group>"; };
+		2D22F5BD19E136D1009C631E /* wave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wave.cpp; path = "plugins/sid/sidplay-libs/resid/wave.cpp"; sourceTree = "<group>"; };
+		2D22F5BE19E136D1009C631E /* wave6581__ST.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wave6581__ST.cpp; path = "plugins/sid/sidplay-libs/resid/wave6581__ST.cpp"; sourceTree = "<group>"; };
+		2D22F5BF19E136D1009C631E /* wave6581_P_T.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wave6581_P_T.cpp; path = "plugins/sid/sidplay-libs/resid/wave6581_P_T.cpp"; sourceTree = "<group>"; };
+		2D22F5C019E136D1009C631E /* wave6581_PS_.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wave6581_PS_.cpp; path = "plugins/sid/sidplay-libs/resid/wave6581_PS_.cpp"; sourceTree = "<group>"; };
+		2D22F5C119E136D1009C631E /* wave6581_PST.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wave6581_PST.cpp; path = "plugins/sid/sidplay-libs/resid/wave6581_PST.cpp"; sourceTree = "<group>"; };
+		2D22F5C219E136D1009C631E /* wave8580__ST.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wave8580__ST.cpp; path = "plugins/sid/sidplay-libs/resid/wave8580__ST.cpp"; sourceTree = "<group>"; };
+		2D22F5C319E136D1009C631E /* wave8580_P_T.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wave8580_P_T.cpp; path = "plugins/sid/sidplay-libs/resid/wave8580_P_T.cpp"; sourceTree = "<group>"; };
+		2D22F5C419E136D1009C631E /* wave8580_PS_.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wave8580_PS_.cpp; path = "plugins/sid/sidplay-libs/resid/wave8580_PS_.cpp"; sourceTree = "<group>"; };
+		2D22F5C519E136D1009C631E /* wave8580_PST.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wave8580_PST.cpp; path = "plugins/sid/sidplay-libs/resid/wave8580_PST.cpp"; sourceTree = "<group>"; };
+		2D22F5DF19E136FA009C631E /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Buffer.h; path = "plugins/sid/sidplay-libs/libsidplay/include/sidplay/Buffer.h"; sourceTree = "<group>"; };
+		2D22F5E019E136FA009C631E /* c64env.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = c64env.h; path = "plugins/sid/sidplay-libs/libsidplay/include/sidplay/c64env.h"; sourceTree = "<group>"; };
+		2D22F5E119E136FA009C631E /* component.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = component.h; path = "plugins/sid/sidplay-libs/libsidplay/include/sidplay/component.h"; sourceTree = "<group>"; };
+		2D22F5E219E136FA009C631E /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = event.h; path = "plugins/sid/sidplay-libs/libsidplay/include/sidplay/event.h"; sourceTree = "<group>"; };
+		2D22F5E319E136FA009C631E /* sid2types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sid2types.h; path = "plugins/sid/sidplay-libs/libsidplay/include/sidplay/sid2types.h"; sourceTree = "<group>"; };
+		2D22F5E419E136FA009C631E /* sidbuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sidbuilder.h; path = "plugins/sid/sidplay-libs/libsidplay/include/sidplay/sidbuilder.h"; sourceTree = "<group>"; };
+		2D22F5E519E136FA009C631E /* sidconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sidconfig.h; path = "plugins/sid/sidplay-libs/libsidplay/include/sidplay/sidconfig.h"; sourceTree = "<group>"; };
+		2D22F5E619E136FA009C631E /* sidendian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sidendian.h; path = "plugins/sid/sidplay-libs/libsidplay/include/sidplay/sidendian.h"; sourceTree = "<group>"; };
+		2D22F5E719E136FA009C631E /* sidint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sidint.h; path = "plugins/sid/sidplay-libs/libsidplay/include/sidplay/sidint.h"; sourceTree = "<group>"; };
+		2D22F5E819E136FA009C631E /* sidplay2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sidplay2.h; path = "plugins/sid/sidplay-libs/libsidplay/include/sidplay/sidplay2.h"; sourceTree = "<group>"; };
+		2D22F5E919E136FA009C631E /* SidTune.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SidTune.h; path = "plugins/sid/sidplay-libs/libsidplay/include/sidplay/SidTune.h"; sourceTree = "<group>"; };
+		2D22F5EA19E136FA009C631E /* sidtypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sidtypes.h; path = "plugins/sid/sidplay-libs/libsidplay/include/sidplay/sidtypes.h"; sourceTree = "<group>"; };
+		2D22F5EB19E136FA009C631E /* sidusage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sidusage.h; path = "plugins/sid/sidplay-libs/libsidplay/include/sidplay/sidusage.h"; sourceTree = "<group>"; };
+		2D22F5EC19E136FA009C631E /* SmartPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmartPtr.h; path = "plugins/sid/sidplay-libs/libsidplay/include/sidplay/SmartPtr.h"; sourceTree = "<group>"; };
+		2D22F5FB19E13737009C631E /* nullsid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nullsid.h; path = "plugins/sid/sidplay-libs/libsidplay/src/nullsid.h"; sourceTree = "<group>"; };
+		2D22F5FC19E13737009C631E /* player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = player.h; path = "plugins/sid/sidplay-libs/libsidplay/src/player.h"; sourceTree = "<group>"; };
+		2D22F5FD19E13737009C631E /* reloc65.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = reloc65.c; path = "plugins/sid/sidplay-libs/libsidplay/src/reloc65.c"; sourceTree = "<group>"; };
+		2D22F5FE19E13737009C631E /* config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = config.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/config.cpp"; sourceTree = "<group>"; };
+		2D22F5FF19E13737009C631E /* event.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = event.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/event.cpp"; sourceTree = "<group>"; };
+		2D22F60019E13737009C631E /* mixer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mixer.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/mixer.cpp"; sourceTree = "<group>"; };
+		2D22F60119E13737009C631E /* player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = player.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/player.cpp"; sourceTree = "<group>"; };
+		2D22F60219E13737009C631E /* psiddrv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = psiddrv.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/psiddrv.cpp"; sourceTree = "<group>"; };
+		2D22F60319E13737009C631E /* sidplay2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sidplay2.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/sidplay2.cpp"; sourceTree = "<group>"; };
+		2D22F60D19E13762009C631E /* c64cia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = c64cia.h; path = "plugins/sid/sidplay-libs/libsidplay/src/c64/c64cia.h"; sourceTree = "<group>"; };
+		2D22F60E19E13762009C631E /* c64vic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = c64vic.h; path = "plugins/sid/sidplay-libs/libsidplay/src/c64/c64vic.h"; sourceTree = "<group>"; };
+		2D22F60F19E13762009C631E /* c64xsid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = c64xsid.h; path = "plugins/sid/sidplay-libs/libsidplay/src/c64/c64xsid.h"; sourceTree = "<group>"; };
+		2D22F61019E13762009C631E /* mos656x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mos656x.h; path = "plugins/sid/sidplay-libs/libsidplay/src/mos656x/mos656x.h"; sourceTree = "<group>"; };
+		2D22F61119E13762009C631E /* mos656x.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mos656x.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/mos656x/mos656x.cpp"; sourceTree = "<group>"; };
+		2D22F61219E13762009C631E /* conf6510.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = conf6510.h; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/conf6510.h"; sourceTree = "<group>"; };
+		2D22F61319E13762009C631E /* mos6510.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mos6510.h; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/mos6510.h"; sourceTree = "<group>"; };
+		2D22F61419E13762009C631E /* opcodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = opcodes.h; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/opcodes.h"; sourceTree = "<group>"; };
+		2D22F61519E13762009C631E /* mos6510.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mos6510.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/mos6510.cpp"; sourceTree = "<group>"; };
+		2D22F61619E13762009C631E /* mos6526.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mos6526.h; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6526/mos6526.h"; sourceTree = "<group>"; };
+		2D22F61719E13762009C631E /* mos6526.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mos6526.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6526/mos6526.cpp"; sourceTree = "<group>"; };
+		2D22F61819E13762009C631E /* sid6526.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sid6526.h; path = "plugins/sid/sidplay-libs/libsidplay/src/sid6526/sid6526.h"; sourceTree = "<group>"; };
+		2D22F61919E13762009C631E /* sid6526.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sid6526.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/sid6526/sid6526.cpp"; sourceTree = "<group>"; };
+		2D22F61A19E13762009C631E /* PP20_Defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PP20_Defs.h; path = "plugins/sid/sidplay-libs/libsidplay/src/sidtune/PP20_Defs.h"; sourceTree = "<group>"; };
+		2D22F61B19E13762009C631E /* PP20.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PP20.h; path = "plugins/sid/sidplay-libs/libsidplay/src/sidtune/PP20.h"; sourceTree = "<group>"; };
+		2D22F61C19E13762009C631E /* SidTuneCfg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SidTuneCfg.h; path = "plugins/sid/sidplay-libs/libsidplay/src/sidtune/SidTuneCfg.h"; sourceTree = "<group>"; };
+		2D22F61D19E13762009C631E /* SidTuneTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SidTuneTools.h; path = "plugins/sid/sidplay-libs/libsidplay/src/sidtune/SidTuneTools.h"; sourceTree = "<group>"; };
+		2D22F61E19E13762009C631E /* IconInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IconInfo.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/sidtune/IconInfo.cpp"; sourceTree = "<group>"; };
+		2D22F61F19E13762009C631E /* InfoFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InfoFile.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/sidtune/InfoFile.cpp"; sourceTree = "<group>"; };
+		2D22F62019E13762009C631E /* MUS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MUS.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/sidtune/MUS.cpp"; sourceTree = "<group>"; };
+		2D22F62119E13762009C631E /* PP20.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PP20.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/sidtune/PP20.cpp"; sourceTree = "<group>"; };
+		2D22F62219E13762009C631E /* PSID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PSID.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/sidtune/PSID.cpp"; sourceTree = "<group>"; };
+		2D22F62319E13762009C631E /* SidTune.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SidTune.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/sidtune/SidTune.cpp"; sourceTree = "<group>"; };
+		2D22F62419E13762009C631E /* SidTuneTools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SidTuneTools.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/sidtune/SidTuneTools.cpp"; sourceTree = "<group>"; };
+		2D22F62519E13762009C631E /* xsid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xsid.h; path = "plugins/sid/sidplay-libs/libsidplay/src/xsid/xsid.h"; sourceTree = "<group>"; };
+		2D22F62619E13762009C631E /* xsid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xsid.cpp; path = "plugins/sid/sidplay-libs/libsidplay/src/xsid/xsid.cpp"; sourceTree = "<group>"; };
+		2D22F6F719E137A6009C631E /* csid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = csid.h; path = plugins/sid/csid.h; sourceTree = "<group>"; };
+		2D22F6F819E137A6009C631E /* plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = plugin.c; path = plugins/sid/plugin.c; sourceTree = "<group>"; };
+		2D22F6F919E137A6009C631E /* csid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = csid.cpp; path = plugins/sid/csid.cpp; sourceTree = "<group>"; };
+		2D22F70319E1382C009C631E /* liblibsidplay2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibsidplay2.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D22F75519E1384B009C631E /* sid.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = sid.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D22F76219E13DB2009C631E /* resid-builder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "resid-builder.cpp"; path = "plugins/sid/sidplay-libs/builders/resid-builder/src/resid-builder.cpp"; sourceTree = "<group>"; };
+		2D22F76319E13DB2009C631E /* resid-emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "resid-emu.h"; path = "plugins/sid/sidplay-libs/builders/resid-builder/src/resid-emu.h"; sourceTree = "<group>"; };
+		2D22F76419E13DB2009C631E /* resid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = resid.cpp; path = "plugins/sid/sidplay-libs/builders/resid-builder/src/resid.cpp"; sourceTree = "<group>"; };
 		2D2A135A19B647CF00AD1EB7 /* gme.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = gme.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D2A135E19B6480E00AD1EB7 /* cgme.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cgme.c; path = plugins/gme/cgme.c; sourceTree = "<group>"; };
 		2D2A136019B6482600AD1EB7 /* Ay_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ay_Apu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ay_Apu.cpp"; sourceTree = "<group>"; };
@@ -993,6 +1171,21 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		2D22F70019E1382C009C631E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D22F75219E1384B009C631E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D22F76119E13AD7009C631E /* liblibsidplay2.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D2A135719B647CF00AD1EB7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1083,6 +1276,101 @@
 				4DA72BE51838EAAB00A98C62 /* Images.xcassets */,
 			);
 			name = "Supporting files";
+			sourceTree = "<group>";
+		};
+		2D22F5AB19E13621009C631E /* sid */ = {
+			isa = PBXGroup;
+			children = (
+				2D22F6F719E137A6009C631E /* csid.h */,
+				2D22F6F819E137A6009C631E /* plugin.c */,
+				2D22F6F919E137A6009C631E /* csid.cpp */,
+				2D22F5AC19E1362D009C631E /* libsidplay2 */,
+			);
+			name = sid;
+			sourceTree = "<group>";
+		};
+		2D22F5AC19E1362D009C631E /* libsidplay2 */ = {
+			isa = PBXGroup;
+			children = (
+				2D22F76219E13DB2009C631E /* resid-builder.cpp */,
+				2D22F76319E13DB2009C631E /* resid-emu.h */,
+				2D22F76419E13DB2009C631E /* resid.cpp */,
+				2D22F60D19E13762009C631E /* c64cia.h */,
+				2D22F60E19E13762009C631E /* c64vic.h */,
+				2D22F60F19E13762009C631E /* c64xsid.h */,
+				2D22F61019E13762009C631E /* mos656x.h */,
+				2D22F61119E13762009C631E /* mos656x.cpp */,
+				2D22F61219E13762009C631E /* conf6510.h */,
+				2D22F61319E13762009C631E /* mos6510.h */,
+				2D22F61419E13762009C631E /* opcodes.h */,
+				2D22F61519E13762009C631E /* mos6510.cpp */,
+				2D22F61619E13762009C631E /* mos6526.h */,
+				2D22F61719E13762009C631E /* mos6526.cpp */,
+				2D22F61819E13762009C631E /* sid6526.h */,
+				2D22F61919E13762009C631E /* sid6526.cpp */,
+				2D22F61A19E13762009C631E /* PP20_Defs.h */,
+				2D22F61B19E13762009C631E /* PP20.h */,
+				2D22F61C19E13762009C631E /* SidTuneCfg.h */,
+				2D22F61D19E13762009C631E /* SidTuneTools.h */,
+				2D22F61E19E13762009C631E /* IconInfo.cpp */,
+				2D22F61F19E13762009C631E /* InfoFile.cpp */,
+				2D22F62019E13762009C631E /* MUS.cpp */,
+				2D22F62119E13762009C631E /* PP20.cpp */,
+				2D22F62219E13762009C631E /* PSID.cpp */,
+				2D22F62319E13762009C631E /* SidTune.cpp */,
+				2D22F62419E13762009C631E /* SidTuneTools.cpp */,
+				2D22F62519E13762009C631E /* xsid.h */,
+				2D22F62619E13762009C631E /* xsid.cpp */,
+				2D22F5FB19E13737009C631E /* nullsid.h */,
+				2D22F5FC19E13737009C631E /* player.h */,
+				2D22F5FD19E13737009C631E /* reloc65.c */,
+				2D22F5FE19E13737009C631E /* config.cpp */,
+				2D22F5FF19E13737009C631E /* event.cpp */,
+				2D22F60019E13737009C631E /* mixer.cpp */,
+				2D22F60119E13737009C631E /* player.cpp */,
+				2D22F60219E13737009C631E /* psiddrv.cpp */,
+				2D22F60319E13737009C631E /* sidplay2.cpp */,
+				2D22F5DF19E136FA009C631E /* Buffer.h */,
+				2D22F5E019E136FA009C631E /* c64env.h */,
+				2D22F5E119E136FA009C631E /* component.h */,
+				2D22F5E219E136FA009C631E /* event.h */,
+				2D22F5E319E136FA009C631E /* sid2types.h */,
+				2D22F5E419E136FA009C631E /* sidbuilder.h */,
+				2D22F5E519E136FA009C631E /* sidconfig.h */,
+				2D22F5E619E136FA009C631E /* sidendian.h */,
+				2D22F5E719E136FA009C631E /* sidint.h */,
+				2D22F5E819E136FA009C631E /* sidplay2.h */,
+				2D22F5E919E136FA009C631E /* SidTune.h */,
+				2D22F5EA19E136FA009C631E /* sidtypes.h */,
+				2D22F5EB19E136FA009C631E /* sidusage.h */,
+				2D22F5EC19E136FA009C631E /* SmartPtr.h */,
+				2D22F5AD19E136D1009C631E /* envelope.h */,
+				2D22F5AE19E136D1009C631E /* extfilt.h */,
+				2D22F5AF19E136D1009C631E /* filter.h */,
+				2D22F5B019E136D1009C631E /* pot.h */,
+				2D22F5B119E136D1009C631E /* sid.h */,
+				2D22F5B219E136D1009C631E /* siddefs.h */,
+				2D22F5B319E136D1009C631E /* spline.h */,
+				2D22F5B419E136D1009C631E /* voice.h */,
+				2D22F5B519E136D1009C631E /* wave.h */,
+				2D22F5B619E136D1009C631E /* envelope.cpp */,
+				2D22F5B719E136D1009C631E /* extfilt.cpp */,
+				2D22F5B819E136D1009C631E /* filter.cpp */,
+				2D22F5B919E136D1009C631E /* pot.cpp */,
+				2D22F5BA19E136D1009C631E /* sid.cpp */,
+				2D22F5BB19E136D1009C631E /* version.cpp */,
+				2D22F5BC19E136D1009C631E /* voice.cpp */,
+				2D22F5BD19E136D1009C631E /* wave.cpp */,
+				2D22F5BE19E136D1009C631E /* wave6581__ST.cpp */,
+				2D22F5BF19E136D1009C631E /* wave6581_P_T.cpp */,
+				2D22F5C019E136D1009C631E /* wave6581_PS_.cpp */,
+				2D22F5C119E136D1009C631E /* wave6581_PST.cpp */,
+				2D22F5C219E136D1009C631E /* wave8580__ST.cpp */,
+				2D22F5C319E136D1009C631E /* wave8580_P_T.cpp */,
+				2D22F5C419E136D1009C631E /* wave8580_PS_.cpp */,
+				2D22F5C519E136D1009C631E /* wave8580_PST.cpp */,
+			);
+			name = libsidplay2;
 			sourceTree = "<group>";
 		};
 		2D2A135519B647BB00AD1EB7 /* gme */ = {
@@ -1525,6 +1813,8 @@
 				2DB96A8A19ABB4C600E318A8 /* libsamplerate.a */,
 				2D2A135A19B647CF00AD1EB7 /* gme.dylib */,
 				4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */,
+				2D22F70319E1382C009C631E /* liblibsidplay2.a */,
+				2D22F75519E1384B009C631E /* sid.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1637,6 +1927,7 @@
 		4D1B514C1837EF7C003E6066 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				2D22F5AB19E13621009C631E /* sid */,
 				2DB96A7619ABB3E500E318A8 /* dsp_libsrc */,
 				4D44E66919B752F900F780FC /* dumb */,
 				2D2A135519B647BB00AD1EB7 /* gme */,
@@ -1902,6 +2193,61 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		2D22F70119E1382C009C631E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D22F73119E13838009C631E /* sidendian.h in Headers */,
+				2D22F73E19E13838009C631E /* spline.h in Headers */,
+				2D22F73D19E13838009C631E /* siddefs.h in Headers */,
+				2D22F70E19E13838009C631E /* opcodes.h in Headers */,
+				2D22F71219E13838009C631E /* sid6526.h in Headers */,
+				2D22F72A19E13838009C631E /* Buffer.h in Headers */,
+				2D22F72F19E13838009C631E /* sidbuilder.h in Headers */,
+				2D22F71419E13838009C631E /* PP20_Defs.h in Headers */,
+				2D22F73319E13838009C631E /* sidplay2.h in Headers */,
+				2D22F73719E13838009C631E /* SmartPtr.h in Headers */,
+				2D22F71019E13838009C631E /* mos6526.h in Headers */,
+				2D22F73419E13838009C631E /* SidTune.h in Headers */,
+				2D22F71F19E13838009C631E /* xsid.h in Headers */,
+				2D22F70719E13838009C631E /* c64cia.h in Headers */,
+				2D22F73B19E13838009C631E /* pot.h in Headers */,
+				2D22F73C19E13838009C631E /* sid.h in Headers */,
+				2D22F72E19E13838009C631E /* sid2types.h in Headers */,
+				2D22F72119E13838009C631E /* nullsid.h in Headers */,
+				2D22F70819E13838009C631E /* c64vic.h in Headers */,
+				2D22F73619E13838009C631E /* sidusage.h in Headers */,
+				2D22F76619E13DB2009C631E /* resid-emu.h in Headers */,
+				2D22F71719E13838009C631E /* SidTuneTools.h in Headers */,
+				2D22F73A19E13838009C631E /* filter.h in Headers */,
+				2D22F73019E13838009C631E /* sidconfig.h in Headers */,
+				2D22F71619E13838009C631E /* SidTuneCfg.h in Headers */,
+				2D22F73819E13838009C631E /* envelope.h in Headers */,
+				2D22F73519E13838009C631E /* sidtypes.h in Headers */,
+				2D22F74019E13838009C631E /* wave.h in Headers */,
+				2D22F72C19E13838009C631E /* component.h in Headers */,
+				2D22F70D19E13838009C631E /* mos6510.h in Headers */,
+				2D22F72219E13838009C631E /* player.h in Headers */,
+				2D22F70919E13838009C631E /* c64xsid.h in Headers */,
+				2D22F71519E13838009C631E /* PP20.h in Headers */,
+				2D22F70A19E13838009C631E /* mos656x.h in Headers */,
+				2D22F72B19E13838009C631E /* c64env.h in Headers */,
+				2D22F70C19E13838009C631E /* conf6510.h in Headers */,
+				2D22F73219E13838009C631E /* sidint.h in Headers */,
+				2D22F73F19E13838009C631E /* voice.h in Headers */,
+				2D22F72D19E13838009C631E /* event.h in Headers */,
+				2D22F73919E13838009C631E /* extfilt.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D22F75319E1384B009C631E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D22F75919E13850009C631E /* csid.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D2A135819B647CF00AD1EB7 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -2097,6 +2443,41 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		2D22F70219E1382C009C631E /* libsidplay2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D22F70419E1382C009C631E /* Build configuration list for PBXNativeTarget "libsidplay2" */;
+			buildPhases = (
+				2D22F6FF19E1382C009C631E /* Sources */,
+				2D22F70019E1382C009C631E /* Frameworks */,
+				2D22F70119E1382C009C631E /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libsidplay2;
+			productName = libsidplay2;
+			productReference = 2D22F70319E1382C009C631E /* liblibsidplay2.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		2D22F75419E1384B009C631E /* sid */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D22F75619E1384B009C631E /* Build configuration list for PBXNativeTarget "sid" */;
+			buildPhases = (
+				2D22F75119E1384B009C631E /* Sources */,
+				2D22F75219E1384B009C631E /* Frameworks */,
+				2D22F75319E1384B009C631E /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2D22F76019E13AD0009C631E /* PBXTargetDependency */,
+			);
+			name = sid;
+			productName = sid;
+			productReference = 2D22F75519E1384B009C631E /* sid.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2D2A135919B647CF00AD1EB7 /* gme */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D2A135B19B647CF00AD1EB7 /* Build configuration list for PBXNativeTarget "gme" */;
@@ -2161,6 +2542,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D22F75D19E1385A009C631E /* PBXTargetDependency */,
 				4D44E70719B753AD00F780FC /* PBXTargetDependency */,
 				2D2A14B919B6484100AD1EB7 /* PBXTargetDependency */,
 				2DB96AA719ABB51300E318A8 /* PBXTargetDependency */,
@@ -2287,6 +2669,14 @@
 			attributes = {
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Alexey Yakovenko";
+				TargetAttributes = {
+					2D22F70219E1382C009C631E = {
+						CreatedOnToolsVersion = 6.0.1;
+					};
+					2D22F75419E1384B009C631E = {
+						CreatedOnToolsVersion = 6.0.1;
+					};
+				};
 			};
 			buildConfigurationList = 4D1B3E7518379829003E6066 /* Build configuration list for PBXProject "deadbeef" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -2311,6 +2701,8 @@
 				2DB96A8919ABB4C600E318A8 /* samplerate */,
 				2D2A135919B647CF00AD1EB7 /* gme */,
 				4D44E66D19B7530A00F780FC /* ddb_dumb */,
+				2D22F70219E1382C009C631E /* libsidplay2 */,
+				2D22F75419E1384B009C631E /* sid */,
 			);
 		};
 /* End PBXProject section */
@@ -2320,6 +2712,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D22F75E19E138B3009C631E /* sid.dylib in Resources */,
 				2DB10B8919B908630054A6AB /* tab_unsel_left.png in Resources */,
 				4DAF343F19B75FF500EE96ED /* ddb_dumb.dylib in Resources */,
 				2D2A14BA19B6485200AD1EB7 /* gme.dylib in Resources */,
@@ -2383,6 +2776,59 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		2D22F6FF19E1382C009C631E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D22F74719E13838009C631E /* voice.cpp in Sources */,
+				2D22F74519E13838009C631E /* sid.cpp in Sources */,
+				2D22F74819E13838009C631E /* wave.cpp in Sources */,
+				2D22F71C19E13838009C631E /* PSID.cpp in Sources */,
+				2D22F72719E13838009C631E /* player.cpp in Sources */,
+				2D22F74919E13838009C631E /* wave6581__ST.cpp in Sources */,
+				2D22F70B19E13838009C631E /* mos656x.cpp in Sources */,
+				2D22F72319E13838009C631E /* reloc65.c in Sources */,
+				2D22F71119E13838009C631E /* mos6526.cpp in Sources */,
+				2D22F74619E13838009C631E /* version.cpp in Sources */,
+				2D22F72519E13838009C631E /* event.cpp in Sources */,
+				2D22F71E19E13838009C631E /* SidTuneTools.cpp in Sources */,
+				2D22F70F19E13838009C631E /* mos6510.cpp in Sources */,
+				2D22F72819E13838009C631E /* psiddrv.cpp in Sources */,
+				2D22F74D19E13838009C631E /* wave8580__ST.cpp in Sources */,
+				2D22F74E19E13838009C631E /* wave8580_P_T.cpp in Sources */,
+				2D22F74A19E13838009C631E /* wave6581_P_T.cpp in Sources */,
+				2D22F74B19E13838009C631E /* wave6581_PS_.cpp in Sources */,
+				2D22F75019E13838009C631E /* wave8580_PST.cpp in Sources */,
+				2D22F72019E13838009C631E /* xsid.cpp in Sources */,
+				2D22F74219E13838009C631E /* extfilt.cpp in Sources */,
+				2D22F76519E13DB2009C631E /* resid-builder.cpp in Sources */,
+				2D22F71B19E13838009C631E /* PP20.cpp in Sources */,
+				2D22F71A19E13838009C631E /* MUS.cpp in Sources */,
+				2D22F74319E13838009C631E /* filter.cpp in Sources */,
+				2D22F72419E13838009C631E /* config.cpp in Sources */,
+				2D22F74F19E13838009C631E /* wave8580_PS_.cpp in Sources */,
+				2D22F71919E13838009C631E /* InfoFile.cpp in Sources */,
+				2D22F71819E13838009C631E /* IconInfo.cpp in Sources */,
+				2D22F74419E13838009C631E /* pot.cpp in Sources */,
+				2D22F71D19E13838009C631E /* SidTune.cpp in Sources */,
+				2D22F76719E13DB2009C631E /* resid.cpp in Sources */,
+				2D22F71319E13838009C631E /* sid6526.cpp in Sources */,
+				2D22F72919E13838009C631E /* sidplay2.cpp in Sources */,
+				2D22F72619E13838009C631E /* mixer.cpp in Sources */,
+				2D22F74C19E13838009C631E /* wave6581_PST.cpp in Sources */,
+				2D22F74119E13838009C631E /* envelope.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D22F75119E1384B009C631E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D22F75B19E13850009C631E /* csid.cpp in Sources */,
+				2D22F75A19E13850009C631E /* plugin.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D2A135619B647CF00AD1EB7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2697,6 +3143,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		2D22F75D19E1385A009C631E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D22F75419E1384B009C631E /* sid */;
+			targetProxy = 2D22F75C19E1385A009C631E /* PBXContainerItemProxy */;
+		};
+		2D22F76019E13AD0009C631E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D22F70219E1382C009C631E /* libsidplay2 */;
+			targetProxy = 2D22F75F19E13AD0009C631E /* PBXContainerItemProxy */;
+		};
 		2D2A14B919B6484100AD1EB7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D2A135919B647CF00AD1EB7 /* gme */;
@@ -2765,6 +3221,116 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		2D22F70519E1382C009C631E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"VERSION=\"deadbeef\"",
+					"PACKAGE=\"libsidplay2\"",
+					"HAVE_STRCASECMP=1",
+					"HAVE_STRNCASECMP=1",
+					"HAVE_UNIX=1",
+					"HAVE_LOCAL_RESID=1",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)",
+					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/libsidplay/include\"",
+					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include/sidplay/builders\"",
+					"\"$(SRCROOT)/../plugins/sid/sidplay-libs\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		2D22F70619E1382C009C631E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"VERSION=\"deadbeef\"",
+					"PACKAGE=\"libsidplay2\"",
+					"HAVE_STRCASECMP=1",
+					"HAVE_STRNCASECMP=1",
+					"HAVE_UNIX=1",
+					"HAVE_LOCAL_RESID=1",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)",
+					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/libsidplay/include\"",
+					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include/sidplay/builders\"",
+					"\"$(SRCROOT)/../plugins/sid/sidplay-libs\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		2D22F75719E1384B009C631E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/libsidplay/include\"",
+					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include\"",
+					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include/sidplay/builders\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		2D22F75819E1384B009C631E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/libsidplay/include\"",
+					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include\"",
+					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include/sidplay/builders\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		2D2A135C19B647CF00AD1EB7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3256,6 +3822,22 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2D22F70419E1382C009C631E /* Build configuration list for PBXNativeTarget "libsidplay2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D22F70519E1382C009C631E /* Debug */,
+				2D22F70619E1382C009C631E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		2D22F75619E1384B009C631E /* Build configuration list for PBXNativeTarget "sid" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D22F75719E1384B009C631E /* Debug */,
+				2D22F75819E1384B009C631E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		2D2A135B19B647CF00AD1EB7 /* Build configuration list for PBXNativeTarget "gme" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
