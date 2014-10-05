@@ -609,7 +609,7 @@ init_column (int i, int _id, const char *format) {
     if (firstSelected != -1) {
         [playlist selectRowIndexes:[[NSIndexSet alloc] initWithIndex:firstSelected] byExtendingSelection:NO];
     }
-    [self tableView:playlist selectionIndexesForProposedSelection: firstSelected==-1?[NSIndexSet alloc]:[[NSIndexSet alloc] initWithIndex:firstSelected]];
+    [self tableView:playlist selectionIndexesForProposedSelection: firstSelected==-1?[[NSIndexSet alloc] init]:[[NSIndexSet alloc] initWithIndex:firstSelected]];
 }
 
 - (void)reloadPlaylistData {
