@@ -3,7 +3,9 @@
 #ifndef SIDTUNECFG_H
 #define SIDTUNECFG_H
 
+#ifdef HAVE_CONFIG_H
 #include "../../config.h"
+#endif
 
 /* Define to add PSID2NG support */
 #define SIDTUNE_PSID2NG
