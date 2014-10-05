@@ -250,7 +250,7 @@ int grouptitleheight = 22;
 
     int cursor = [delegate cursor];
     DdbListviewRow_t cursor_it = [delegate invalidRow];
-    if (cursor != [delegate invalidRow]) {
+    if (cursor != -1) {
         cursor_it = [delegate rowForIndex:cursor];
     }
 
@@ -955,7 +955,7 @@ int grouptitleheight = 22;
         DdbListviewGroup_t *grp;
         int grp_index;
         int sel;
-        NSPoint convPt = [self convertPoint:[event locationInWindow] fromView:nil];
+        NSPoint convPt = [contentView convertPoint:[event locationInWindow] fromView:nil];
         if (![self pickPoint:convPt.y group:&grp groupIndex:&grp_index index:&sel]) {
             [self selectSingle:sel];
         }

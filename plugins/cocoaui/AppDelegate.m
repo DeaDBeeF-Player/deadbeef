@@ -115,7 +115,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     DdbPlaylistViewController *vc = [[DdbPlaylistViewController alloc] init];
     NSView *view = [vc view];
 
-    [view setFrame:NSMakeRect(0, [self.statusBar frame].size.height, [[self.window contentView] frame].size.width, [self.tabStrip frame].origin.y - [self.statusBar frame].size.height)];
+    [view setFrame:NSMakeRect(0, [self.statusBar frame].size.height+2, [[self.window contentView] frame].size.width, [self.tabStrip frame].origin.y - [self.statusBar frame].size.height - 1)];
     [view setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
 
     [[self.window contentView] addSubview:view];
