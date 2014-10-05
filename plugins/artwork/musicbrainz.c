@@ -34,11 +34,15 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
 
-#define MB_ID_URL "http://musicbrainz.org/ws/2/release/?query=artist:%%22%s%%22%%20AND%%20release:%%22%s%%22"
-#define MB_ID_STRING "<release id=\""
+#define MB_ID_LENGTH 36
+#define MB_BUFFER_LENGTH 4096
 
-#define MB_ART_URL "http://coverartarchive.org/release/%s"
+#define MB_ID_URL "http://musicbrainz.org/ws/2/release-group/?query=artist:%%22%s%%22%%20AND%%20release:%%22%s%%22"
+#define MB_ID_STRING "<release-group id=\""
+
+#define MB_ART_URL "http://coverartarchive.org/release-group/%s/"
 #define MB_ART_STRING "\"large\":\""
+
 
 int fetch_from_musicbrainz (const char *artist, const char *album, const char *dest)
 {
@@ -63,7 +67,7 @@ int fetch_from_musicbrainz (const char *artist, const char *album, const char *d
     }
 
     current_file = fp;
-    char buffer[1000];
+    char buffer[MB_BUFFER_LENGTH];
     const int id_size = deadbeef->fread(buffer, 1, sizeof(buffer), fp);
     current_file = NULL;
     deadbeef->fclose (fp);
@@ -74,22 +78,18 @@ int fetch_from_musicbrainz (const char *artist, const char *album, const char *d
 
     buffer[id_size] = '\0';
     char *mbid = strstr(buffer, MB_ID_STRING);
-    if (!mbid || mbid+strlen(MB_ID_STRING)+36 > buffer+id_size) {
-        trace("fetch_from_musicbrainz: release ID not found in response (%d bytes)\n", id_size);
+    if (!mbid || mbid+strlen(MB_ID_STRING)+MB_ID_LENGTH > buffer+id_size) {
+        trace("fetch_from_musicbrainz: release-group ID not found in response (%d bytes)\n", id_size);
         return -1;
     }
 
     mbid += strlen(MB_ID_STRING);
-    *(mbid + 36) = '\0';
-    char *art_url = malloc(sizeof(MB_ART_URL) + strlen(mbid) + 1);
-    if (!art_url) {
-        return -1;
-    }
+    *(mbid + MB_ID_LENGTH) = '\0';
 
+    char art_url[sizeof(MB_ART_URL) + MB_ID_LENGTH + 1];
     sprintf(art_url, MB_ART_URL, mbid);
     trace("fetch_from_musicbrainz: art %s\n", art_url);
     fp = deadbeef->fopen(art_url);
-    free(art_url);
     if (!fp) {
         trace("fetch_from_musicbrainz: failed to open url\n");
         return -1;
