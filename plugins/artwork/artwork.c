@@ -1466,10 +1466,24 @@ process_query(const cover_query_t *query)
     trace("artwork: query cover for %s %s to %s\n", query->album, query->artist, cache_path);
 
     struct stat placeholder_stat;
-    int flood_control = !stat(cache_path, &placeholder_stat) && placeholder_stat.st_size == 0 && placeholder_stat.st_mtime + 60*10 > time(NULL);
-    int looked_for_pic = 0;
+    const int file_exists = !stat(cache_path, &placeholder_stat);
+    if (!artwork_enable_embedded &&
+        !artwork_enable_local &&
+#ifdef USE_VFS_CURL
+        !artwork_enable_lfm &&
+        !artwork_enable_mb &&
+        !artwork_enable_aao &&
+        !artwork_enable_wos &&
+#endif
+        !file_exists) {
+        /* No lookups, just make sure we have a placeholder */
+        write_file(cache_path, NULL, 0);
+        return 0;
+    }
 
-    if (deadbeef->is_local_file(query->fname) && artwork_enable_embedded) {
+    int looked_for_pic = 0;
+    int flood_control = file_exists && placeholder_stat.st_size == 0 && placeholder_stat.st_mtime + 60*10 > time(NULL);
+    if (artwork_enable_embedded) {
         if (flood_control) {
             /* Override flood control if the track file has changed */
             struct stat fname_stat;
