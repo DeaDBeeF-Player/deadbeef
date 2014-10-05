@@ -3837,6 +3837,9 @@ w_volumebar_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.message = w_volumebar_message;
     w->volumebar = ddb_volumebar_new ();
+#if GTK_CHECK_VERSION(3,0,0)
+    gtk_widget_set_events (GTK_WIDGET (w->base.widget), gtk_widget_get_events (GTK_WIDGET (w->base.widget)) | GDK_SCROLL_MASK);
+#endif
     ddb_volumebar_init_signals (DDB_VOLUMEBAR (w->volumebar), w->base.widget);
     gtk_widget_show (w->volumebar);
     gtk_widget_set_size_request (w->base.widget, 70, -1);
