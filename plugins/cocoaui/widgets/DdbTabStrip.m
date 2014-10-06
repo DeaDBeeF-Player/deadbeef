@@ -589,15 +589,21 @@ _add_new_playlist (void) {
             hscroll -= arrow_widget_width;
         }
         int x = -hscroll + tabs_left_margin;
-        int inspos = 0;
+        int inspos = -1;
         int cnt = deadbeef->plt_get_count ();
+        int dw = [self getTabWith:dragging] - tab_overlap_size;
         for (idx = 0; idx < cnt; idx++) {
-            if (x >= movepos) {
+            int width = [self getTabWith:idx] - tab_overlap_size;
+
+            if (idx < dragging && movepos <= x + width/2) {
+                inspos = idx;
                 break;
             }
-            int width = [self getTabWith:idx];
-            inspos = idx;
-            x += width - tab_overlap_size;
+            else if (idx > dragging && movepos > x + width/2 - dw) {
+                inspos = idx;
+            }
+
+            x += width;
         }
 
         if (inspos >= 0 && inspos != dragging) {

@@ -181,16 +181,21 @@ int grouptitleheight = 22;
         int x = -rc.origin.x;
 
         DdbListviewCol_t inspos = [delegate invalidColumn];
-        int x1 = -1, x2 = -1;
+
+        // FIXME: DdbListviewCol_t is not always index -- account for this
+        int cx = _drag_col_pos + _drag_delta;
         for (DdbListviewCol_t cc = [delegate firstColumn]; cc != [delegate invalidColumn]; cc = [delegate nextColumn:cc]) {
-            if (x < convPt.x && x + [delegate columnWidth:_dragging] > convPt.x) {
+            int cw = [delegate columnWidth:cc];
+
+            if (cc < _dragging && cx <= x + cw/2) {
                 inspos = cc;
-                x1 = x;
+                break;
             }
-            else if (cc == _dragging) {
-                x2 = x;
+            else if (cc > _dragging && cx > x + cw/2 - [delegate columnWidth:_dragging]) {
+                inspos = cc;
             }
-            x += [delegate columnWidth:cc];
+
+            x += cw;
         }
 
         if (inspos != [delegate invalidColumn] && inspos != _dragging) {
