@@ -439,10 +439,10 @@ CA
                         <nil key="toolTip"/>
                         <size key="minSize" width="100" height="21"/>
                         <size key="maxSize" width="100000000" height="26"/>
-                        <slider key="view" verticalHuggingPriority="750" horizontalCompressionResistancePriority="641" id="lhQ-zG-gJo">
+                        <slider key="view" verticalHuggingPriority="750" horizontalCompressionResistancePriority="641" id="lhQ-zG-gJo" customClass="DdbSeekBar">
                             <rect key="frame" x="0.0" y="14" width="308" height="21"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                            <sliderCell key="cell" alignment="left" maxValue="100" tickMarkPosition="above" sliderType="linear" id="rDd-Sa-3Uw" customClass="DdbSeekBar"/>
+                            <sliderCell key="cell" alignment="left" maxValue="100" tickMarkPosition="above" sliderType="linear" id="rDd-Sa-3Uw" customClass="DdbSeekBarCell"/>
                             <connections>
                                 <action selector="seekBarAction:" target="494" id="vQQ-Pl-agd"/>
                             </connections>
