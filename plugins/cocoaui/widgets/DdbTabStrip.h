@@ -8,24 +8,23 @@
 
 #import "DdbWidget.h"
 
-@interface DdbTabStrip : DdbWidget
+@interface DdbTabStrip : DdbWidget {
+    int _hscrollpos;
+    int _dragging;
+    int _prepare;
+    int _movepos;
+    int _tab_clicked;
+    int _scroll_direction;
+    NSPoint _dragpt;
+    int _prev_x;
+    int _tab_moved;
 
-@property int hscrollpos;
-@property int dragging;
-@property int prepare;
-@property int movepos;
-@property int tab_clicked;
-@property int scroll_direction;
-@property NSPoint dragpt;
-@property int prev_x;
-@property int tab_moved;
-
-@property NSImage *tabLeft;
-@property NSImage *tabFill;
-@property NSImage *tabRight;
-@property NSImage *tabUnselLeft;
-@property NSImage *tabUnselFill;
-@property NSImage *tabUnselRight;
-@property NSImage *tabBottomFill;
-
+    NSImage *_tabLeft;
+    NSImage *_tabFill;
+    NSImage *_tabRight;
+    NSImage *_tabUnselLeft;
+    NSImage *_tabUnselFill;
+    NSImage *_tabUnselRight;
+    NSImage *_tabBottomFill;
+}
 @end
