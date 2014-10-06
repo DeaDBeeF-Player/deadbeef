@@ -11,13 +11,12 @@
 @interface DdbSeekBar : NSSlider
 @end
 
-@interface DdbSeekBarCell : NSSliderCell
-
-@property NSImage *backCapLeft;
-@property NSImage *backCapRight;
-@property NSImage *backFiller;
-@property NSImage *frontCapLeft;
-@property NSImage *frontCapRight;
-@property NSImage *frontFiller;
-
+@interface DdbSeekBarCell : NSSliderCell {
+    NSImage *_backCapLeft;
+    NSImage *_backCapRight;
+    NSImage *_backFiller;
+    NSImage *_frontCapLeft;
+    NSImage *_frontCapRight;
+    NSImage *_frontFiller;
+}
 @end
