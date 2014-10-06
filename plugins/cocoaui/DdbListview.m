@@ -748,6 +748,7 @@ int grouptitleheight = 22;
 
 - (void)reloadData {
     [self initGroups];
+    [self setNeedsDisplay:YES];
 }
 
 - (int)pickPoint:(int)y group:(DdbListviewGroup_t **)group groupIndex:(int *)group_idx index:(int *)global_idx {

@@ -598,12 +598,14 @@ init_column (int i, int _id, const char *format) {
 - (IBAction)clearAction:(id)sender {
     deadbeef->pl_clear();
     deadbeef->pl_save_current();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
     [playlist reloadData];
 }
 
 - (IBAction)removeSelectionAction:(id)sender {
     deadbeef->pl_delete_selected ();
     deadbeef->pl_save_current();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
     [playlist reloadData];
     [playlist deselectAll:self];
     if (firstSelected != -1) {
