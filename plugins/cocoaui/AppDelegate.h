@@ -103,6 +103,4 @@
 // window menu
 - (IBAction)showMainWinAction:(id)sender;
 
-- (void)addColumn;
-
 @end
