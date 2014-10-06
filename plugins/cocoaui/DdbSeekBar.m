@@ -10,6 +10,14 @@
 
 @implementation DdbSeekBar
 
+-(void)setNeedsDisplayInRect:(NSRect)invalidRect{
+    [super setNeedsDisplayInRect:[self bounds]];
+}
+
+@end
+
+@implementation DdbSeekBarCell
+
 @synthesize backCapLeft;
 @synthesize backCapRight;
 @synthesize backFiller;
@@ -38,13 +46,14 @@
     return self;
 }
 
-- (NSRect)knobRectFlipped:(BOOL)flipped
-{
-    return NSMakeRect(0,0,1,1);
-}
+//- (NSRect)knobRectFlipped:(BOOL)flipped
+//{
+//    return NSMakeRect(0,0,1,1);
+//}
 
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
+    _trackRect = cellFrame;
     NSRect rc = controlView.bounds;
     [controlView setNeedsDisplayInRect:rc];
     
@@ -76,7 +85,7 @@
     [[NSColor colorWithPatternImage:backFiller] set];
     [NSBezierPath fillRect:rc];
     [[NSColor colorWithPatternImage:frontFiller] set];
-    rc.size.width = (int)(rc.size.width * [self floatValue] / ([self maxValue] - [self minValue]));
+    rc.size.width = (int)(rc.size.width * _value / ([self maxValue] - [self minValue]));
     [NSBezierPath fillRect:rc];
     [gc restoreGraphicsState];
     
