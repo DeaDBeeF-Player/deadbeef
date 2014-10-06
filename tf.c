@@ -51,6 +51,8 @@
 #include "gettext.h"
 #include "plugins.h"
 
+#define min(x,y) ((x)<(y)?(x):(y))
+
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
@@ -266,6 +268,33 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                             out += len;
                             outlen -= len;
                             skip_out = 1;
+                            val = NULL;
+                        }
+                    }
+                }
+                else if (!strcmp (name, "title")) {
+                    val = pl_find_meta_raw (it, "title");
+                    if (val && !(*val)) {
+                        val = NULL;
+                    }
+                    if (!val) {
+                        val = pl_find_meta_raw (it, ":URI");
+                        if (val) {
+                            const char *start = strrchr (val, '/');
+                            if (start) {
+                                start++;
+                            }
+                            else {
+                                start = val;
+                            }
+                            const char *end = strrchr (start, '.');
+                            if (end) {
+                                int n = (int)(end-start);
+                                n = min ((int)(end-start), outlen-1);
+                                strncpy (out, start, n);
+                                outlen -= n;
+                                out += n;
+                            }
                             val = NULL;
                         }
                     }
