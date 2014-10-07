@@ -63,7 +63,7 @@ extern DB_functions_t *deadbeef;
         NSData *data = [cols dataUsingEncoding:NSUTF8StringEncoding];
 
         NSError *err = nil;
-        id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
+        NSArray *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
 
         if (!json) {
             NSLog (@"error parsing column config, error: %@\n", [err localizedDescription]);
@@ -71,12 +71,12 @@ extern DB_functions_t *deadbeef;
         else {
             [self loadColumns:json];
         }
-        playTpl = [NSImage imageNamed:@"btnplayTemplate.pdf"];
-        [playTpl setFlipped:YES];
-        pauseTpl = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
-        [pauseTpl setFlipped:YES];
-        bufTpl = [NSImage imageNamed:@"bufferingTemplate.pdf"];
-        [bufTpl setFlipped:YES];
+        _playTpl = [NSImage imageNamed:@"btnplayTemplate.pdf"];
+        [_playTpl setFlipped:YES];
+        _pauseTpl = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
+        [_pauseTpl setFlipped:YES];
+        _bufTpl = [NSImage imageNamed:@"bufferingTemplate.pdf"];
+        [_bufTpl setFlipped:YES];
 
 
         NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
@@ -124,32 +124,32 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)freeColumns {
-    for (int i = 0; i < ncolumns; i++) {
-        if (columns[i].title) {
-            free (columns[i].title);
+    for (int i = 0; i < _ncolumns; i++) {
+        if (_columns[i].title) {
+            free (_columns[i].title);
         }
-        if (columns[i].format) {
-            free (columns[i].format);
+        if (_columns[i].format) {
+            free (_columns[i].format);
         }
-        if (columns[i].bytecode) {
-            deadbeef->tf_free (columns[i].bytecode);
+        if (_columns[i].bytecode) {
+            deadbeef->tf_free (_columns[i].bytecode);
         }
     }
-    memset (columns, 0, sizeof (columns));
-    ncolumns = 0;
+    memset (_columns, 0, sizeof (_columns));
+    _ncolumns = 0;
 }
 
 - (void)initColumn:(int)idx withTitle:(const char *)title withId:(int)_id withSize:(int)size withFormat:(const char *)format {
-    columns[idx]._id = _id;
-    columns[idx].title = strdup (title);
-    columns[idx].format = strdup (format);
-    columns[idx].size = size;
+    _columns[idx]._id = _id;
+    _columns[idx].title = strdup (title);
+    _columns[idx].format = format ? strdup (format) : NULL;
+    _columns[idx].size = size;
     if (format) {
         char *bytecode;
         int res = deadbeef->tf_compile (format, &bytecode);
         if (res >= 0) {
-            columns[idx].bytecode = bytecode;
-            columns[idx].bytecode_len = res;
+            _columns[idx].bytecode = bytecode;
+            _columns[idx].bytecode_len = res;
         }
     }
 }
@@ -211,8 +211,8 @@ extern DB_functions_t *deadbeef;
             size = (int)[size_s integerValue];
         }
 
-        [self initColumn:ncolumns withTitle:title withId:_id withSize:size withFormat:fmt];
-        ncolumns++;
+        [self initColumn:_ncolumns withTitle:title withId:_id withSize:size withFormat:fmt];
+        _ncolumns++;
     }];
 }
 
@@ -225,7 +225,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (int)columnCount {
-    return ncolumns;
+    return _ncolumns;
 }
 
 - (int)rowCount {
@@ -257,35 +257,52 @@ extern DB_functions_t *deadbeef;
 }
 
 - (int)columnWidth:(DdbListviewCol_t)col {
-    return columns[col].size;
+    return _columns[col].size;
 }
 
 - (void)setColumnWidth:(int)width forColumn:(DdbListviewCol_t)col {
-    columns[col].size = width;
+    _columns[col].size = width;
 }
 
 - (int)columnMinHeight:(DdbListviewCol_t)col {
-    return columns[col]._id == DB_COLUMN_ALBUM_ART;
+    return _columns[col]._id == DB_COLUMN_ALBUM_ART;
 }
 
 - (void)moveColumn:(DdbListviewCol_t)col to:(DdbListviewCol_t)to {
     plt_col_info_t tmp;
 
     while (col < to) {
-        memcpy (&tmp, &columns[col], sizeof (plt_col_info_t));
-        memmove (&columns[col], &columns[col+1], sizeof (plt_col_info_t));
-        memcpy (&columns[col+1], &tmp, sizeof (plt_col_info_t));
+        memcpy (&tmp, &_columns[col], sizeof (plt_col_info_t));
+        memmove (&_columns[col], &_columns[col+1], sizeof (plt_col_info_t));
+        memcpy (&_columns[col+1], &tmp, sizeof (plt_col_info_t));
         col++;
     }
     while (col > to) {
-        memcpy (&tmp, &columns[col], sizeof (plt_col_info_t));
-        memmove (&columns[col], &columns[col-1], sizeof (plt_col_info_t));
-        memcpy (&columns[col-1], &tmp, sizeof (plt_col_info_t));
+        memcpy (&tmp, &_columns[col], sizeof (plt_col_info_t));
+        memmove (&_columns[col], &_columns[col-1], sizeof (plt_col_info_t));
+        memcpy (&_columns[col-1], &tmp, sizeof (plt_col_info_t));
         col--;
     }
 }
 
 - (void)columnsChanged {
+    NSMutableArray *columns = [[NSMutableArray alloc] initWithCapacity:_ncolumns];
+    for (int i = 0; i < _ncolumns; i++) {
+        NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
+                              [NSString stringWithUTF8String:_columns[i].title], @"title"
+                              , [NSString stringWithFormat:@"%d", _columns[i]._id], @"id"
+                              , [NSString stringWithUTF8String:_columns[i].format], @"format"
+                              , [NSString stringWithFormat:@"%d", _columns[i].size], @"size"
+                              , nil];
+        [columns addObject:dict];
+    }
+
+    NSError *err = nil;
+    NSData *dt = [NSJSONSerialization dataWithJSONObject:columns options:0 error:&err];
+
+    NSString *json = [[NSString alloc] initWithData:dt encoding:NSUTF8StringEncoding];
+    deadbeef->conf_set_str ("cocoaui.columns", [json UTF8String]);
+    deadbeef->conf_save ();
 }
 
 - (DdbListviewRow_t)firstRow {
@@ -316,7 +333,7 @@ extern DB_functions_t *deadbeef;
     [[NSColor colorWithCalibratedWhite:0.3f alpha:0.3f] set];
     [NSBezierPath fillRect:NSMakeRect(rect.origin.x + rect.size.width - 1, rect.origin.y+3,1,rect.size.height-6)];
 
-    [[NSString stringWithUTF8String:columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y+1, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
+    [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y+1, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
 }
 
 - (void)drawRowBackground:(DdbListviewRow_t)row inRect:(NSRect)rect {
@@ -345,18 +362,18 @@ extern DB_functions_t *deadbeef;
 
     DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
 
-    if (columns[col]._id == DB_COLUMN_PLAYING && playing_track && (DB_playItem_t *)row == playing_track) {
+    if (_columns[col]._id == DB_COLUMN_PLAYING && playing_track && (DB_playItem_t *)row == playing_track) {
         NSImage *img = NULL;
         int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
         if (paused) {
-            img = pauseTpl;
+            img = _pauseTpl;
         }
         else if (!buffering) {
-            img = playTpl;
+            img = _playTpl;
         }
         else {
-            img = bufTpl;
+            img = _bufTpl;
         }
 
         NSColor *imgColor = sel ? [NSColor alternateSelectedControlTextColor] : [NSColor controlTextColor];
@@ -385,17 +402,17 @@ extern DB_functions_t *deadbeef;
         deadbeef->pl_item_unref (playing_track);
     }
 
-    if (columns[col].bytecode) {
+    if (_columns[col].bytecode) {
         ddb_tf_context_t ctx = {
             ._size = sizeof (ddb_tf_context_t),
             .it = (DB_playItem_t *)row,
             .plt = deadbeef->plt_get_curr (),
             .idx = -1,
-            .id = columns[col]._id
+            .id = _columns[col]._id
         };
 
         char text[1024] = "";
-        deadbeef->tf_eval (&ctx, columns[col].bytecode, columns[col].bytecode_len, text, sizeof (text));
+        deadbeef->tf_eval (&ctx, _columns[col].bytecode, _columns[col].bytecode_len, text, sizeof (text));
 
         [[NSString stringWithUTF8String:text] drawInRect:rect withAttributes:sel?_cellSelectedTextAttrsDictionary:_cellTextAttrsDictionary];
 
