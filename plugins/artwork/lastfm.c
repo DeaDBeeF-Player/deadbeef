@@ -40,8 +40,12 @@
 #define IMAGE_END_TAG "</image>"
 int fetch_from_lastfm (const char *artist, const char *album, const char *dest)
 {
-    char *artist_url = uri_escape(artist ? artist : "", 0);
-    char *album_url = uri_escape(album ? album : "", 0);
+    if (!artist || !album) {
+        return -1;
+    }
+
+    char *artist_url = uri_escape(artist, 0);
+    char *album_url = uri_escape(album, 0);
     char *url = malloc(strlen(artist_url) + strlen(album_url) + sizeof(LFM_URL API_KEY) + 1);
     if (url) {
         sprintf(url, LFM_URL, API_KEY, artist_url, album_url);
