@@ -168,8 +168,19 @@ int grouptitleheight = 22;
             w = 10;
         }
         if ([delegate columnWidth:_sizing] != w) {
+            NSScrollView *sv = [listview.contentView enclosingScrollView];
+            NSRect rc = [sv documentVisibleRect];
+
+            int scroll = -rc.origin.x;
+
             [delegate setColumnWidth:w forColumn:_sizing];
+            [delegate columnsChanged];
+            [listview updateContentFrame];
             [listview setNeedsDisplay:YES];
+
+            rc = [sv documentVisibleRect];
+            scroll += rc.origin.x;
+            _dragPt.x -= scroll;
         }
     }
     else if (_dragging != [delegate invalidColumn]) {
@@ -203,7 +214,9 @@ int grouptitleheight = 22;
             _dragging = inspos;
             [listview reloadData];
         }
-        [listview setNeedsDisplay:YES];
+        else {
+            [self setNeedsDisplay:YES];
+        }
     }
 }
 @end
