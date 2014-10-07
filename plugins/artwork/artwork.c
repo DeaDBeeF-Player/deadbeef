@@ -1440,6 +1440,39 @@ apev2_extract_art (const char *fname, const char *outname) {
 }
 
 static int
+web_lookups(const char *artist, const char *album, const char *cache_path)
+{
+    if (artwork_enable_lfm) {
+        if (!fetch_from_lastfm(artist, album, cache_path)) {
+            return 1;
+        }
+        if (errno == ECONNABORTED) {
+            return 0;
+        }
+    }
+
+    if (artwork_enable_mb) {
+        if (!fetch_from_musicbrainz(artist, album, cache_path)) {
+            return 1;
+        }
+        if (errno == ECONNABORTED) {
+            return 0;
+        }
+    }
+
+    if (artwork_enable_aao) {
+        if (!fetch_from_albumart_org(artist, album, cache_path)) {
+            return 1;
+        }
+        if (errno == ECONNABORTED) {
+            return 0;
+        }
+    }
+
+    return -1;
+}
+
+static int
 process_scaled_query(const cover_query_t *query)
 {
     char unscaled_path[PATH_MAX];
@@ -1458,6 +1491,66 @@ process_scaled_query(const cover_query_t *query)
     return 0;
 }
 
+static char *
+vfs_path(const char *fname)
+{
+    if (fname[0] == '/' || strstr(fname, "file://") == fname) {
+        return NULL;
+    }
+
+    char *p = strstr(fname, "://");
+    if (p) {
+        p += 3;
+        char *q = strrchr(p, ':');
+        if (q) {
+            *q = '\0';
+        }
+    }
+    return p;
+}
+
+static DB_vfs_t *
+scandir_plug(const char *vfs_fname)
+{
+    DB_vfs_t **vfsplugs = deadbeef->plug_get_vfs_list();
+    for (size_t i = 0; vfsplugs[i]; i++) {
+        if (vfsplugs[i]->is_container && vfsplugs[i]->is_container(vfs_fname) && vfsplugs[i]->scandir) {
+            return vfsplugs[i];
+        }
+    }
+
+    return NULL;
+}
+
+static int
+path_more_recent(const char *fname, const time_t placeholder_mtime)
+{
+    struct stat stat_buf;
+    return !stat(fname, &stat_buf) && stat_buf.st_mtime > placeholder_mtime;
+}
+
+static int
+recheck_missing_artwork(char *fname, const time_t placeholder_mtime)
+{
+    /* Check if local files could have new associated artwork */
+    if (deadbeef->is_local_file(fname)) {
+        char *vfs_fname = vfs_path(fname);
+        char *real_fname = vfs_fname ? vfs_fname : fname;
+
+        /* Recheck artwork if file (track or VFS container) was modified since the last check */
+        if (path_more_recent(real_fname, placeholder_mtime)) {
+            return 1;
+        }
+
+        /* Recheck local artwork if the directory contents have changed */
+        if (artwork_enable_local && path_more_recent(dirname(real_fname), placeholder_mtime)) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 static int
 process_query(const cover_query_t *query)
 {
@@ -1465,115 +1558,58 @@ process_query(const cover_query_t *query)
     make_cache_path2(cache_path, sizeof(cache_path), query->fname, query->album, query->artist, -1);
     trace("artwork: query cover for %s %s to %s\n", query->album, query->artist, cache_path);
 
+    /* Flood control, don't retry missing artwork for an hour unless something changes */
     struct stat placeholder_stat;
-    const int file_exists = !stat(cache_path, &placeholder_stat);
-    if (!artwork_enable_embedded &&
-        !artwork_enable_local &&
-#ifdef USE_VFS_CURL
-        !artwork_enable_lfm &&
-        !artwork_enable_mb &&
-        !artwork_enable_aao &&
-        !artwork_enable_wos &&
-#endif
-        !file_exists) {
-        /* No lookups, just make sure we have a placeholder */
-        write_file(cache_path, NULL, 0);
-        return 0;
-    }
-
-    int looked_for_pic = 0;
-    int flood_control = file_exists && placeholder_stat.st_size == 0 && placeholder_stat.st_mtime + 60*10 > time(NULL);
-    if (artwork_enable_embedded) {
-        if (flood_control) {
-            /* Override flood control if the track file has changed */
-            struct stat fname_stat;
-            if (!stat(query->fname, &fname_stat) && fname_stat.st_mtime > placeholder_stat.st_mtime) {
-                flood_control = 0;
-            }
-        }
-
-        if (!flood_control) {
-            looked_for_pic = 1;
-
-#ifdef USE_METAFLAC
-            // try to load embedded from flac metadata
-            trace("trying to load artwork from Flac tag for %s\n", query->fname);
-            if (!flac_extract_art(query->fname, cache_path)) {
-                return 1;
-            }
-#endif
-
-            // try to load embedded from id3v2
-            trace("trying to load artwork from id3v2 tag for %s\n", query->fname);
-            if (!id3_extract_art (query->fname, cache_path)) {
-                return 1;
-            }
-
-            // try to load embedded from apev2
-            trace("trying to load artwork from apev2 tag for %s\n", query->fname);
-            if (!apev2_extract_art (query->fname, cache_path)) {
-                return 1;
-            }
-        }
-    }
-
-    if (artwork_enable_local) {
+    if (!stat(cache_path, &placeholder_stat) && placeholder_stat.st_mtime + 60*60 > time(NULL)) {
         char *fname_copy = strdup(query->fname);
         if (fname_copy) {
-            /* Find the directory for whatever sort of URL is provided */
-            char *filename_dir = NULL;
-            if (fname_copy[0] != '/' && strstr(fname_copy, "file://") != fname_copy) {
-                char *p = strstr(fname_copy, "://");
-                if (p) {
-                    p += 3;
-                    char *q = strrchr(p, ':');
-                    if (q) {
-                        *q = '\0';
-                    }
-
-                    DB_vfs_t **vfsplugs = deadbeef->plug_get_vfs_list();
-                    for (size_t i = 0; vfsplugs[i]; i++) {
-                        if (vfsplugs[i]->is_container && vfsplugs[i]->is_container(p) && vfsplugs[i]->scandir) {
-                            if (flood_control) {
-                                struct stat stat_buf;
-                                if (!stat(p, &stat_buf) && stat_buf.st_mtime > placeholder_stat.st_mtime) {
-                                    flood_control = 0;
-                                }
-                            }
-
-                            if (!flood_control) {
-                                /* Searching in VFS container */
-                                looked_for_pic = 1;
-                                if (!local_image_file(cache_path, p, fname_copy, vfsplugs[i])) {
-                                    free(fname_copy);
-                                    return 1;
-                                }
-                            }
-                        }
-                    }
-
-                    filename_dir = dirname(p);
-                }
+            const int recheck = recheck_missing_artwork(fname_copy, placeholder_stat.st_mtime);
+            free(fname_copy);
+            if (!recheck) {
+                return 0;
             }
-            if (!filename_dir) {
-                filename_dir = dirname(fname_copy);
-            }
+        }
+    }
 
-            if (flood_control) {
-                /* Override flood control if the directory contents have changed */
-                struct stat dir_stat;
-                if (!stat(filename_dir, &dir_stat) && dir_stat.st_mtime > placeholder_stat.st_mtime) {
-                    flood_control = 0;
-                }
-            }
+    if (artwork_enable_embedded && deadbeef->is_local_file(query->fname)) {
+#ifdef USE_METAFLAC
+        // try to load embedded from flac metadata
+        trace("trying to load artwork from Flac tag for %s\n", query->fname);
+        if (!flac_extract_art(query->fname, cache_path)) {
+            return 1;
+        }
+#endif
 
-            if (!flood_control) {
-                /* Searching in track directory */
-                looked_for_pic = 1;
-                if (!local_image_file(cache_path, filename_dir, NULL, NULL)) {
+        // try to load embedded from id3v2
+        trace("trying to load artwork from id3v2 tag for %s\n", query->fname);
+        if (!id3_extract_art (query->fname, cache_path)) {
+            return 1;
+        }
+
+        // try to load embedded from apev2
+        trace("trying to load artwork from apev2 tag for %s\n", query->fname);
+        if (!apev2_extract_art (query->fname, cache_path)) {
+            return 1;
+        }
+    }
+
+    if (artwork_enable_local && deadbeef->is_local_file(query->fname)) {
+        char *fname_copy = strdup(query->fname);
+        if (fname_copy) {
+            char *vfs_fname = vfs_path(fname_copy);
+            if (vfs_fname) {
+                /* Search inside scannable VFS containers */
+                DB_vfs_t *plugin = scandir_plug(vfs_fname);
+                if (plugin && !local_image_file(cache_path, vfs_fname, fname_copy, plugin)) {
                     free(fname_copy);
                     return 1;
                 }
+            }
+
+            /* Search in file directory */
+            if (!local_image_file(cache_path, dirname(vfs_fname ? vfs_fname : fname_copy), NULL, NULL)) {
+                free(fname_copy);
+                return 1;
             }
 
             free(fname_copy);
@@ -1581,89 +1617,38 @@ process_query(const cover_query_t *query)
     }
 
 #ifdef USE_VFS_CURL
-    if (!flood_control) {
-        /* Web lookups */
-        if (artwork_enable_wos && strlen(query->fname) > 3 && !strcasecmp(query->fname+strlen(query->fname)-3, ".ay")) {
-            looked_for_pic = 1;
-            if (!fetch_from_wos(query->album, cache_path)) {
-                return 1;
-            }
-            if (errno == ECONNABORTED) {
-                return 0;
-            }
+    /* Web lookups */
+    if (artwork_enable_wos && strlen(query->fname) > 3 && !strcasecmp(query->fname+strlen(query->fname)-3, ".ay")) {
+        if (!fetch_from_wos(query->album, cache_path)) {
+            return 1;
         }
-
-        if (artwork_enable_lfm) {
-            looked_for_pic = 1;
-            if (query->album && query->artist) {
-                if (!fetch_from_lastfm(query->artist, query->album, cache_path)) {
-                    return 1;
-                }
-                if (errno == ECONNABORTED) {
-                    return 0;
-                }
-            }
+        if (errno == ECONNABORTED) {
+            return 0;
         }
+    }
 
-        if (artwork_enable_mb) {
-            looked_for_pic = 1;
-            if (query->album && query->artist) {
-                if (!fetch_from_musicbrainz(query->artist, query->album, cache_path)) {
-                    return 1;
-                }
-                if (errno == ECONNABORTED) {
-                    return 0;
-                }
-            }
-        }
+    const int res = web_lookups(query->artist, query->album, cache_path);
+    if (res >= 0) {
+        return res;
+    }
 
-        if (artwork_enable_aao) {
-            looked_for_pic = 1;
-            if (query->album || query->artist) {
-                if (!fetch_from_albumart_org(query->artist, query->album, cache_path)) {
-                    return 1;
-                }
-                if (errno == ECONNABORTED) {
-                    return 0;
-                }
-            }
-        }
-
-        if ((artwork_enable_lfm || artwork_enable_aao) && query->album) {
-            /* Try stripping parenthesised text off the end of the album name */
-            char *parenthesis = strchr(query->album, '(');
-            if (parenthesis) {
-                *parenthesis = '\0';
-                if (artwork_enable_lfm && query->artist) {
-                    if (!fetch_from_lastfm(query->artist, query->album, cache_path)) {
-                        *parenthesis = '(';
-                        return 1;
-                    }
-                    if (errno == ECONNABORTED) {
-                        *parenthesis = '(';
-                        return 0;
-                    }
-                }
-                if (artwork_enable_aao) {
-                    if (!fetch_from_albumart_org(query->artist, query->album, cache_path)) {
-                        *parenthesis = '(';
-                        return 1;
-                    }
-                    if (errno == ECONNABORTED) {
-                        *parenthesis = '(';
-                        return 0;
-                    }
-                }
-                *parenthesis = '(';
+    if (query->album) {
+        /* Try stripping parenthesised text off the end of the album name */
+        char *p = strpbrk(query->album, "([");
+        if (p) {
+            char parenthesis = *p;
+            *p = '\0';
+            const int res = web_lookups(query->artist, query->album, cache_path);
+            *p = '(';
+            if (res >= 0) {
+                return res;
             }
         }
     }
 #endif
 
-    if (looked_for_pic) {
-        /* Touch placeholder */
-        write_file(cache_path, NULL, 0);
-    }
+    /* Touch placeholder */
+    write_file(cache_path, NULL, 0);
 
     return 0;
 }
@@ -1698,6 +1683,7 @@ queue_clear(void)
         send_query_callbacks(queue->callback, NULL, NULL, NULL);
         queue->callback = NULL;
         queue_tail = queue;
+        if (queue) fprintf(stderr, "%s\n", queue->fname);
 
         /* Remove everything else completely */
         while (queue->next) {
@@ -1949,7 +1935,11 @@ artwork_plugin_stop (void)
         deadbeef->cond_signal(queue_cond);
         deadbeef->mutex_unlock(queue_mutex);
         if (current_file) {
+            fprintf(stderr, "Aborting ...\n");
+            sleep(5);
+            fprintf(stderr, "Aborting ... ...\n");
             deadbeef->fabort(current_file);
+            fprintf(stderr, "Aborted\n");
         }
         deadbeef->thread_join(tid);
         tid = 0;

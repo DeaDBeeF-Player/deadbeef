@@ -37,6 +37,10 @@
 #define AAO_URL "http://www.albumart.org/index.php?searchk=%s+%s&itempage=1&newsearch=1&searchindex=Music"
 int fetch_from_albumart_org (const char *artist, const char *album, const char *dest)
 {
+    if (!artist && !album) {
+        return -1;
+    }
+
     char *artist_url = uri_escape (artist ? artist : "", 0);
     char *album_url = uri_escape (album ? album : "", 0);
     char *url = malloc(sizeof(AAO_URL) + strlen(artist_url) + strlen(album_url) + 1);
