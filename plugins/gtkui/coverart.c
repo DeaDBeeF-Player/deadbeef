@@ -427,20 +427,25 @@ cover_avail_callback(const char *fname, const char *artist, const char *album, v
         trace("cover_avail_callback: add to queue %s, %s\n", fname, dt->cache_path);
         queue_add_load(dt->cache_type, dt->cache_path, dt->width, dt->callback, dt->user_data);
     }
+    else if (get_pixbuf(dt->cache_type, dt->cache_path, dt->width)) {
+        /* Pixbuf (usually the default) already cached */
+        trace("cover_avail_callback: default pixbuf already in cache, do nothing for %s\n", dt->cache_path);
+        free(dt->cache_path);
+    }
     else {
+        /* Put the default pixbuf in the cache because no artwork was found */
         struct stat stat_buf;
-        if (get_pixbuf(dt->cache_type, dt->cache_path, dt->width) ||
-            stat(dt->cache_path, &stat_buf) || !S_ISREG(stat_buf.st_mode) || stat_buf.st_size > 0) {
-            trace("cover_avail_callback: do nothing for %s\n", dt->cache_path);
-            free(dt->cache_path);
-        }
-        else {
-            /* Put the default pixbuf in the cache because no artwork was found */
+        if (!stat(dt->cache_path, &stat_buf)) {
             trace("cover_avail_callback: cache default pixbuf for %s\n", dt->cache_path);
             cache_add(dt->cache_type, cover_get_default_pixbuf(), dt->cache_path, stat_buf.st_mtime, -1);
-            if (dt->callback) {
-                dt->callback(dt->user_data);
-            }
+        }
+        else {
+            /* Image file unexpectedly missing or not empty (unlucky timing on cache expiry, reset, etc) */
+            trace("cover_avail_callback: file gone, do nothing for %s\n", dt->cache_path);
+            free(dt->cache_path);
+        }
+        if (dt->callback) {
+            dt->callback(dt->user_data);
         }
     }
     deadbeef->mutex_unlock(mutex);
