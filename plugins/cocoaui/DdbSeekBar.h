@@ -12,9 +12,11 @@
 @end
 
 @interface DdbSeekBarCell : NSSliderCell {
+#if 0
     NSImage *_backCapLeft;
     NSImage *_backCapRight;
     NSImage *_backFiller;
+#endif
     NSImage *_frontCapLeft;
     NSImage *_frontCapRight;
     NSImage *_frontFiller;
