@@ -174,7 +174,6 @@ int grouptitleheight = 22;
             int scroll = -rc.origin.x;
 
             [delegate setColumnWidth:w forColumn:_sizing];
-            [delegate columnsChanged];
             [listview updateContentFrame];
             [listview setNeedsDisplay:YES];
 

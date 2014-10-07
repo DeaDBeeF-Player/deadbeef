@@ -20,11 +20,11 @@ typedef struct {
 } plt_col_info_t;
 
 @interface DdbPlaylistViewController : NSViewController {
-    plt_col_info_t columns[PLT_MAX_COLUMNS];
-    int ncolumns;
-    NSImage *playTpl;
-    NSImage *pauseTpl;
-    NSImage *bufTpl;
+    plt_col_info_t _columns[PLT_MAX_COLUMNS];
+    int _ncolumns;
+    NSImage *_playTpl;
+    NSImage *_pauseTpl;
+    NSImage *_bufTpl;
     NSDictionary *_colTextAttrsDictionary;
     NSDictionary *_cellTextAttrsDictionary;
     NSDictionary *_cellSelectedTextAttrsDictionary;
