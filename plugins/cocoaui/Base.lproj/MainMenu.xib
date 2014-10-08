@@ -372,7 +372,7 @@ CA
                 <menuItem title="View" id="295">
                     <menu key="submenu" title="View" id="296">
                         <items>
-                            <menuItem title="Show Status Bar" id="297">
+                            <menuItem title="Show Toolbar" id="297">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="toggleToolbarShown:" target="-1" id="366"/>

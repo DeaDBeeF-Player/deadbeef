@@ -36,6 +36,7 @@ typedef intptr_t DdbListviewCol_t;
 - (void)unrefRow:(DdbListviewRow_t)row;
 - (void)selectRow:(DdbListviewRow_t)row withState:(BOOL)state;
 - (BOOL)rowSelected:(DdbListviewRow_t)row;
+- (void)deselectAll;
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row;
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect;
 - (void)drawRowBackground:(DdbListviewRow_t)row inRect:(NSRect)rect;

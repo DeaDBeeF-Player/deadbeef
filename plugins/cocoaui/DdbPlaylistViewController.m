@@ -466,6 +466,20 @@ int group_bytecode_size = 0;
     return deadbeef->pl_is_selected ((DB_playItem_t *)row);
 }
 
+- (void)deselectAll {
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->pl_set_selected (it, 0);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    deadbeef->pl_unlock ();
+}
+
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row {
     if (!group_bytecode) {
         group_bytecode_size = deadbeef->tf_compile (group_str, &group_bytecode);
