@@ -35,13 +35,6 @@ extern DB_functions_t *deadbeef;
     [_listview setDelegate:(id<DdbListviewDelegate>)delegate];
 }
 
-- (void)drawRect:(NSRect)dirtyRect
-{
-    [super drawRect:dirtyRect];
-    
-    // Drawing code here.
-}
-
 - (void)songChanged:(DB_playItem_t*)from to:(DB_playItem_t*)to {
     int to_idx = -1;
     if (to) {

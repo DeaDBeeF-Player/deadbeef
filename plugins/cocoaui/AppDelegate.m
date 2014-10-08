@@ -25,6 +25,7 @@
 #import "dispatch/dispatch.h"
 #import "DdbWidgetManager.h"
 #import "DdbPlaylistViewController.h"
+#import "DdbSearchViewController.h"
 
 #include "../../deadbeef.h"
 #include <sys/time.h>
@@ -109,6 +110,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 
 - (void)awakeFromNib {
     [self createPlaylistView];
+    [self initSearchWindow];
 }
 
 - (void)createPlaylistView {
@@ -121,9 +123,20 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [[self.window contentView] addSubview:view];
 }
 
+- (void)initSearchWindow {
+    DdbSearchViewController *vc = [[DdbSearchViewController alloc] init];
+    NSView *view = [vc view];
+
+    NSRect frame = [[_searchWindow contentView] frame];
+
+    [view setFrame:frame];
+    [view setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+
+    [[_searchWindow contentView] addSubview:view];
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    [self createPlaylistView];
     [self.window setReleasedWhenClosed:NO];
     [self.window setExcludedFromWindowsMenu:YES];
 
@@ -837,5 +850,9 @@ init_column (int i, int _id, const char *format) {
     return 0;
 }
 
+- (void)performFindPanelAction:(id)sender {
+    [_searchWindow setIsVisible:YES];
+    [_searchWindow makeKeyWindow];
+}
 
 @end

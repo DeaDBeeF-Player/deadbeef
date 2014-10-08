@@ -655,6 +655,7 @@ CA
                 <outlet property="playAction" destination="gS1-dR-hWd" id="eWA-1e-KVs"/>
                 <outlet property="playlist" destination="3uJ-sF-9Sx" id="kaH-4L-fRm"/>
                 <outlet property="scrollFollowsPlayback" destination="xnA-bz-jxF" id="GX4-WF-zFx"/>
+                <outlet property="searchWindow" destination="IE5-07-QJn" id="60g-EX-Mnb"/>
                 <outlet property="seekBar" destination="lhQ-zG-gJo" id="iDM-Mk-EzP"/>
                 <outlet property="statusBar" destination="c3o-Wf-ryE" id="lzk-MS-ADX"/>
                 <outlet property="stopAfterCurrent" destination="edx-c0-VoM" id="Rig-DR-mKE"/>
@@ -817,6 +818,16 @@ Gw
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="oCk-eR-mPP"/>
         </imageView>
+        <window title="Find" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IE5-07-QJn" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="504" y="370" width="413" height="182"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <view key="contentView" id="1ru-b5-gkC">
+                <rect key="frame" x="0.0" y="0.0" width="413" height="182"/>
+                <autoresizingMask key="autoresizingMask"/>
+            </view>
+        </window>
     </objects>
     <resources>
         <image name="NSApplicationIcon" width="128" height="128"/>

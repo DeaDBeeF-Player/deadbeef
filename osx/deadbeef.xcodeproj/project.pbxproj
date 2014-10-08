@@ -273,6 +273,11 @@
 		2D72047319DF1E96000989C6 /* Playlist.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D72047219DF1E96000989C6 /* Playlist.xib */; };
 		2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */; };
 		2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */; };
+		2D828E5419E5679800EE874F /* Search.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D828E5319E5679800EE874F /* Search.xib */; };
+		2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D828E5519E567C800EE874F /* DdbSearchWidget.h */; };
+		2D828E5819E567C800EE874F /* DdbSearchWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D828E5619E567C800EE874F /* DdbSearchWidget.m */; };
+		2D828E5B19E56B4D00EE874F /* DdbSearchViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D828E5919E56B4D00EE874F /* DdbSearchViewController.h */; };
+		2D828E5C19E56B4D00EE874F /* DdbSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D828E5A19E56B4D00EE874F /* DdbSearchViewController.m */; };
 		2DA6F89C19A5332D002151EB /* escape.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA6F89B19A5332D002151EB /* escape.c */; };
 		2DB10B8119B908630054A6AB /* tab_bottom_fill.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6919B9085A0054A6AB /* tab_bottom_fill.png */; };
 		2DB10B8219B908630054A6AB /* tab_bottom_fill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6A19B9085A0054A6AB /* tab_bottom_fill@2x.png */; };
@@ -887,6 +892,11 @@
 		2D72047219DF1E96000989C6 /* Playlist.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Playlist.xib; sourceTree = "<group>"; };
 		2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbPlaylistViewController.h; sourceTree = "<group>"; };
 		2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbPlaylistViewController.m; sourceTree = "<group>"; };
+		2D828E5319E5679800EE874F /* Search.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Search.xib; sourceTree = "<group>"; };
+		2D828E5519E567C800EE874F /* DdbSearchWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbSearchWidget.h; path = widgets/DdbSearchWidget.h; sourceTree = "<group>"; };
+		2D828E5619E567C800EE874F /* DdbSearchWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbSearchWidget.m; path = widgets/DdbSearchWidget.m; sourceTree = "<group>"; };
+		2D828E5919E56B4D00EE874F /* DdbSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbSearchViewController.h; sourceTree = "<group>"; };
+		2D828E5A19E56B4D00EE874F /* DdbSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbSearchViewController.m; sourceTree = "<group>"; };
 		2DA6F89B19A5332D002151EB /* escape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = escape.c; sourceTree = "<group>"; };
 		2DA6F89F19A53334002151EB /* escape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = escape.h; sourceTree = "<group>"; };
 		2DB10B6919B9085A0054A6AB /* tab_bottom_fill.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_bottom_fill.png; path = images/tabs/tab_bottom_fill.png; sourceTree = "<group>"; };
@@ -1784,6 +1794,8 @@
 				2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */,
 				2D06B39B19D056BC0041BE86 /* DdbPlaylistWidget.h */,
 				2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */,
+				2D828E5519E567C800EE874F /* DdbSearchWidget.h */,
+				2D828E5619E567C800EE874F /* DdbSearchWidget.m */,
 			);
 			name = widgets;
 			sourceTree = "<group>";
@@ -2181,8 +2193,11 @@
 				2DEF494319C4DB4100B718C1 /* DdbListview.m */,
 				2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */,
 				2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */,
+				2D828E5919E56B4D00EE874F /* DdbSearchViewController.h */,
+				2D828E5A19E56B4D00EE874F /* DdbSearchViewController.m */,
 				4DA72BDC1838EAAB00A98C62 /* MainMenu.xib */,
 				2D72047219DF1E96000989C6 /* Playlist.xib */,
+				2D828E5319E5679800EE874F /* Search.xib */,
 				4D2362B218395D0300C9E818 /* images */,
 				2D0B1C8619C5CF4A00CED0B5 /* Supporting files */,
 			);
@@ -2435,8 +2450,10 @@
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
+				2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */,
 				2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */,
 				2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */,
+				2D828E5B19E56B4D00EE874F /* DdbSearchViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2713,6 +2730,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D22F75E19E138B3009C631E /* sid.dylib in Resources */,
+				2D828E5419E5679800EE874F /* Search.xib in Resources */,
 				2DB10B8919B908630054A6AB /* tab_unsel_left.png in Resources */,
 				4DAF343F19B75FF500EE96ED /* ddb_dumb.dylib in Resources */,
 				2D2A14BA19B6485200AD1EB7 /* gme.dylib in Resources */,
@@ -2968,11 +2986,13 @@
 				2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */,
 				4D1B4F5F1837EC4A003E6066 /* streamer.c in Sources */,
 				4D1B4F4C1837EC4A003E6066 /* replaygain.c in Sources */,
+				2D828E5C19E56B4D00EE874F /* DdbSearchViewController.m in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
 				2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */,
 				2D0A002719C390E9006F7462 /* tf.c in Sources */,
 				4D1B515B1837F4E9003E6066 /* nullout.c in Sources */,
 				4D1B4AA11837EC49003E6066 /* pltmeta.c in Sources */,
+				2D828E5819E567C800EE874F /* DdbSearchWidget.m in Sources */,
 				2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */,
 				4D1B4A171837EC49003E6066 /* dsppreset.c in Sources */,
 				4D1B4A1A1837EC49003E6066 /* fft.c in Sources */,
@@ -3829,6 +3849,7 @@
 				2D22F70619E1382C009C631E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2D22F75619E1384B009C631E /* Build configuration list for PBXNativeTarget "sid" */ = {
 			isa = XCConfigurationList;
@@ -3837,6 +3858,7 @@
 				2D22F75819E1384B009C631E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2D2A135B19B647CF00AD1EB7 /* Build configuration list for PBXNativeTarget "gme" */ = {
 			isa = XCConfigurationList;
