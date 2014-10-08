@@ -1349,4 +1349,5 @@ int grouptitleheight = 22;
     _delegate = delegate;
     [headerView setMenu:[delegate getColumnMenu]];
 }
+
 @end
