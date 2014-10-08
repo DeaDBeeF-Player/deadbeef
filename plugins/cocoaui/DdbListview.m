@@ -435,6 +435,8 @@ int grouptitleheight = 22;
 }
 
 - (void)mouseDown:(NSEvent *)event {
+    [[self window] makeFirstResponder:listview];
+
     [listview groupCheck];
 
     id<DdbListviewDelegate> delegate = listview.delegate;

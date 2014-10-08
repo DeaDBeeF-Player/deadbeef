@@ -24,11 +24,14 @@
 #import <Cocoa/Cocoa.h>
 #import "DdbTabStrip.h"
 #import "DdbListview.h"
+#import "DdbSearchViewController.h"
 #include "deadbeef.h"
 
 #define MAX_COLUMNS 20
 
-@interface AppDelegate : NSObject <NSApplicationDelegate>
+@interface AppDelegate : NSObject <NSApplicationDelegate> {
+    DdbSearchViewController *_searchViewController;
+}
 
 @property id tfRedrawTimer;
 @property int tf_redraw_track_idx;

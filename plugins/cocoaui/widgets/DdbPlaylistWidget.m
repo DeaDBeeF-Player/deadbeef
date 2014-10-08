@@ -189,7 +189,7 @@ extern DB_functions_t *deadbeef;
             break;
         case DB_EV_CONFIGCHANGED: {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_listview setNeedsDisplay:YES];
+                [_listview reloadData];
             });
         }
             break;
