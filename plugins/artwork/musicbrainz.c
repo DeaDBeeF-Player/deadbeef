@@ -27,7 +27,6 @@
 #endif
 #include <stdlib.h>
 #include <string.h>
-#include "../../deadbeef.h"
 #include "artwork_internal.h"
 #include "escape.h"
 
@@ -56,7 +55,7 @@ int fetch_from_musicbrainz (const char *artist, const char *album, const char *d
         return -1;
     }
 
-    char *id_url = malloc(sizeof(MB_ID_URL) + strlen(artist_url) + strlen(album_url) + 1);
+    char *id_url = malloc(sizeof(MB_ID_URL) + strlen(artist_url) + strlen(album_url));
     if (id_url) {
         sprintf(id_url, MB_ID_URL, artist_url, album_url);
     }
@@ -67,59 +66,38 @@ int fetch_from_musicbrainz (const char *artist, const char *album, const char *d
     }
 
     trace("fetch_from_musicbrainz: search for release group MBID %s\n", id_url);
-    DB_FILE *fp = deadbeef->fopen(id_url);
-    free(id_url);
-    if (!fp) {
-        trace("fetch_from_musicbrainz: failed to open url\n");
-        return -1;
-    }
-
-    current_file = fp;
-    char buffer[MB_BUFFER_LENGTH];
-    const size_t id_size = deadbeef->fread(buffer, 1, sizeof(buffer), fp);
-    current_file = NULL;
-    deadbeef->fclose(fp);
+    char buffer[MB_BUFFER_LENGTH+1];
+    const size_t id_size = artwork_http_request(id_url, buffer, sizeof(buffer));
     if (!id_size) {
         trace("fetch_from_musicbrainz: failed to read (%d)\n", id_size);
         return -1;
     }
 
-    buffer[id_size] = '\0';
     char *mbid = strstr(buffer, MB_ID_STRING);
     if (!mbid || mbid+sizeof(MB_ID_STRING)+MB_ID_LENGTH > buffer+id_size) {
         trace("fetch_from_musicbrainz: release-group ID not found in response (%d bytes)\n", id_size);
         return -1;
     }
 
-    mbid += sizeof(MB_ID_STRING);
+    mbid += sizeof(MB_ID_STRING)-1;
     *(mbid + MB_ID_LENGTH) = '\0';
-
-    char art_url[sizeof(MB_ART_URL) + MB_ID_LENGTH + 1];
+    char art_url[sizeof(MB_ART_URL) + MB_ID_LENGTH];
     sprintf(art_url, MB_ART_URL, mbid);
-    trace("fetch_from_musicbrainz: get art list for the MBID %s\n", art_url);
-    fp = deadbeef->fopen(art_url);
-    if (!fp) {
-        trace("fetch_from_musicbrainz: failed to open url\n");
-        return -1;
-    }
 
-    current_file = fp;
-    const size_t art_size = deadbeef->fread(buffer, 1, sizeof(buffer), fp);
-    current_file = NULL;
-    deadbeef->fclose(fp);
+    trace("fetch_from_musicbrainz: get art list for the MBID %s\n", art_url);
+    const size_t art_size = artwork_http_request(art_url, buffer, sizeof(buffer));
     if (!art_size) {
         trace("fetch_from_musicbrainz: failed to read (%d)\n", art_size);
         return -1;
     }
 
-    buffer[art_size] = '\0';
     char *image_url = strstr(buffer, MB_ART_STRING);
     if (!image_url) {
         trace("fetch_from_musicbrainz: large thumb not found in response (%d bytes)\n", art_size);
         return -1;
     }
 
-    image_url += sizeof(MB_ART_STRING);
+    image_url += sizeof(MB_ART_STRING)-1;
     char *image_url_end = strchr(image_url, '"');
     if (image_url_end) {
         *image_url_end = '\0';

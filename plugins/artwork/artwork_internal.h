@@ -29,8 +29,8 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-extern DB_functions_t *deadbeef;
-extern DB_FILE *current_file;
+size_t artwork_http_request(const char *url, char *buffer, const size_t max_bytes);
+void artwork_abort_http_request(void);
 
 int ensure_dir(const char *path);
 int copy_file (const char *in, const char *out);

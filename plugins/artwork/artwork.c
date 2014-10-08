@@ -67,7 +67,6 @@
 #define trace(...)
 
 DB_functions_t *deadbeef;
-DB_FILE *current_file;
 
 static DB_artwork_plugin_t plugin;
 static char default_cover[PATH_MAX];
@@ -992,14 +991,15 @@ params_match(const char *s1, const char *s2)
 }
 
 static cover_callback_t *
-add_callback(artwork_callback cb, void *ud)
+new_query_callback(artwork_callback cb, void *ud)
 {
     if (!cb) {
         return NULL;
     }
 
     cover_callback_t *callback = malloc(sizeof(cover_callback_t));
-    if (!callback) {trace("callback alloc failed\n");
+    if (!callback) {
+        trace("artwork callback alloc failed\n");
         cb(NULL, NULL, NULL, ud);
         return NULL;
     }
@@ -1008,6 +1008,7 @@ add_callback(artwork_callback cb, void *ud)
     callback->ud = ud;
     callback->next = NULL;
     return callback;
+
 }
 
 static void
@@ -1020,7 +1021,7 @@ enqueue_query(const char *fname, const char *artist, const char *album, const in
             while (*last_callback) {
                 last_callback = &(*last_callback)->next;
             }
-            *last_callback = add_callback(cb, ud);
+            *last_callback = new_query_callback(cb, ud);
             return;
         }
     }
@@ -1033,9 +1034,9 @@ enqueue_query(const char *fname, const char *artist, const char *album, const in
         q->album = album ? strdup(album) : NULL;
         q->size = img_size;
         q->next = NULL;
-        q->callback = add_callback(cb, ud);
+        q->callback = new_query_callback(cb, ud);
 
-        if (!q->fname || artist && !q->artist || album && !q->album) {
+        if (fname && !q->fname || artist && !q->artist || album && !q->album) {
             clear_query(q);
             q = NULL;
         }
@@ -1554,6 +1555,10 @@ recheck_missing_artwork(char *fname, const time_t placeholder_mtime)
 static int
 process_query(const cover_query_t *query)
 {
+    if (!query->fname) {
+        return 0;
+    }
+
     char cache_path[PATH_MAX];
     make_cache_path2(cache_path, sizeof(cache_path), query->fname, query->album, query->artist, -1);
     trace("artwork: query cover for %s %s to %s\n", query->album, query->artist, cache_path);
@@ -1676,23 +1681,39 @@ dequeue_query(void)
 }
 
 static void
+cache_reset_callback(const char *fname, const char *artist, const char *album, void *user_data)
+{
+    /* Everything before now is obsolete */
+    cache_reset_time = scaled_cache_reset_time = time(NULL);
+    deadbeef->conf_set_int64 ("artwork.cache_reset_time", cache_reset_time);
+    deadbeef->conf_set_int64 ("artwork.scaled.cache_reset_time", scaled_cache_reset_time);
+
+    /* Work with file system resolution to one second */
+    while (time(NULL) == cache_reset_time) {
+        usleep(100000);
+    }
+}
+
+static void
 queue_clear(void)
 {
     if (queue) {
-        /* Let the first query finish in its own time, but deal with any callbacks now */
+        /* Leave the first query running, but deal with any callbacks now */
         send_query_callbacks(queue->callback, NULL, NULL, NULL);
         queue->callback = NULL;
         queue_tail = queue;
-        if (queue) fprintf(stderr, "%s\n", queue->fname);
 
         /* Remove everything else completely */
         while (queue->next) {
             cover_query_t *query = queue->next;
             queue->next = query->next;
-            send_query_callbacks(query->callback, NULL, NULL, NULL);
+            if (query->fname) {
+                send_query_callbacks(query->callback, NULL, NULL, NULL);
+            }
             clear_query(query);
         }
     }
+
 }
 
 static void
@@ -1707,13 +1728,13 @@ fetcher_thread (void *none)
     while (!terminate) {
         trace("artwork fetcher: waiting for signal ...\n");
         pthread_cond_wait((pthread_cond_t *)queue_cond, (pthread_mutex_t *)queue_mutex);
+        trace("artwork fetcher: cond signalled, process queue\n");
 
         /* Loop until queue is empty */
         while (queue) {
             deadbeef->mutex_unlock(queue_mutex);
 
             /* Process this query, hopefully writing a file into cache */
-            trace("artwork fetcher: cond signalled, process queue\n");
             const int cached_art = queue->size == -1 ? process_query(queue) : process_scaled_query(queue);
             deadbeef->mutex_lock(queue_mutex);
             cover_query_t *query = dequeue_query();
@@ -1741,7 +1762,7 @@ fetcher_thread (void *none)
 static const char *
 check_file_age(const char *path, const time_t mtime, const time_t reset_time)
 {
-    if (mtime < reset_time) {
+    if (mtime <= reset_time) {
         trace("artwork: deleting cached file %s after reset\n", path);
         unlink(path);
         return NULL;
@@ -1846,10 +1867,11 @@ artwork_configchanged (void) {
         artwork_enable_aao = new_artwork_enable_aao;
         artwork_enable_wos = new_artwork_enable_wos;
 #endif
-        cache_reset_time = scaled_cache_reset_time = time (NULL);
-        deadbeef->conf_set_int64 ("artwork.cache_reset_time", cache_reset_time);
-        deadbeef->conf_set_int64 ("artwork.scaled.cache_reset_time", scaled_cache_reset_time);
         strcpy (artwork_filemask, new_artwork_filemask);
+        deadbeef->mutex_lock(queue_mutex);
+        queue_clear();
+        enqueue_query(NULL, NULL, NULL, -1, cache_reset_callback, NULL);
+        deadbeef->mutex_unlock(queue_mutex);
         deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
     }
 
@@ -1933,14 +1955,13 @@ artwork_plugin_stop (void)
         queue_clear();
         terminate = 1;
         deadbeef->cond_signal(queue_cond);
-        deadbeef->mutex_unlock(queue_mutex);
-        if (current_file) {
-            fprintf(stderr, "Aborting ...\n");
-            sleep(5);
-            fprintf(stderr, "Aborting ... ...\n");
-            deadbeef->fabort(current_file);
-            fprintf(stderr, "Aborted\n");
+        while (queue) {
+            artwork_abort_http_request();
+            deadbeef->mutex_unlock(queue_mutex);
+            usleep(10000);
+            deadbeef->mutex_lock(queue_mutex);
         }
+        deadbeef->mutex_unlock(queue_mutex);
         deadbeef->thread_join(tid);
         tid = 0;
         trace("Fetcher thread stopped\n");
