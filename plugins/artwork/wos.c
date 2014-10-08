@@ -27,7 +27,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "../../deadbeef.h"
 #include "artwork_internal.h"
 #include "escape.h"
 
