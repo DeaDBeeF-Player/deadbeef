@@ -944,20 +944,8 @@ int grouptitleheight = 22;
         return;
     }
 
-    int idx = 0;
-    DdbListviewRow_t it = [_delegate firstRow]; // FIXME: search window needs to go over PL_MAIN here
-    while (it != [_delegate invalidRow]) {
-        BOOL sel = [_delegate rowSelected:it];
-        [_delegate selectRow:it withState:it == sel_it];
-        if (sel != (it == sel_it)) {
-            [self drawRow:idx];
-        }
-        DdbListviewRow_t next = [_delegate nextRow:it];
-        [_delegate unrefRow:it];
-        it = next;
-        idx ++;
-    }
-
+    [_delegate deselectAll];
+    [_delegate selectRow:sel_it withState:YES];
     [_delegate unrefRow:sel_it];
     [_delegate unlock];
 
