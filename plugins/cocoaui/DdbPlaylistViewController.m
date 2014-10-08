@@ -12,9 +12,6 @@
 #include "../../deadbeef.h"
 
 extern DB_functions_t *deadbeef;
-@interface DdbPlaylistViewController ()
-
-@end
 
 @implementation DdbPlaylistViewController
 
@@ -55,71 +52,86 @@ extern DB_functions_t *deadbeef;
 
 #define DEFAULT_COLUMNS "[{\"title\":\"Playing\", \"id\":\"1\", \"format\":\"%playstatus%\", \"size\":\"50\"}, {\"title\":\"Artist - Album\", \"format\":\"%artist%[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track%\", \"size\":\"50\"}, {\"title\":\"Track Title\", \"format\":\"%title%\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
 
+- (NSString *)getColumnConfig {
+    return [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.columns", DEFAULT_COLUMNS)];
+}
+
+- (void)writeColumnConfig:(NSString *)config {
+    deadbeef->conf_set_str ("cocoaui.columns", [config UTF8String]);
+}
+
+- (int)playlistIter {
+    return PL_MAIN;
+}
+
+- (void)initContent {
+    NSString *cols = [self getColumnConfig];
+    NSData *data = [cols dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSError *err = nil;
+    NSArray *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
+
+    if (!json) {
+        NSLog (@"error parsing column config, error: %@\n", [err localizedDescription]);
+    }
+    else {
+        [self loadColumns:json];
+    }
+    _playTpl = [NSImage imageNamed:@"btnplayTemplate.pdf"];
+    [_playTpl setFlipped:YES];
+    _pauseTpl = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
+    [_pauseTpl setFlipped:YES];
+    _bufTpl = [NSImage imageNamed:@"bufferingTemplate.pdf"];
+    [_bufTpl setFlipped:YES];
+
+
+    NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+
+    [textStyle setAlignment:NSLeftTextAlignment];
+    [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
+
+    _colTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont smallSystemFontSize]], NSFontAttributeName
+                               , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
+                               , [NSColor controlTextColor], NSForegroundColorAttributeName
+                               , textStyle, NSParagraphStyleAttributeName
+                               , nil];
+
+    [textStyle setAlignment:NSLeftTextAlignment];
+    [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
+
+
+    int rowheight = 18;
+
+    _groupTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                 [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+                                 , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
+                                 , [NSColor controlTextColor], NSForegroundColorAttributeName
+                                 , textStyle, NSParagraphStyleAttributeName
+                                 , nil];
+
+    _cellTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+                                , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
+                                , [NSColor controlTextColor], NSForegroundColorAttributeName
+                                , textStyle, NSParagraphStyleAttributeName
+                                , nil];
+
+    _cellSelectedTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+                                        , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
+                                        , [NSColor alternateSelectedControlTextColor], NSForegroundColorAttributeName
+                                        , textStyle, NSParagraphStyleAttributeName
+                                        , nil];
+
+}
+
 - (DdbPlaylistViewController *)init {
     self = [super initWithNibName:@"Playlist" bundle:nil];
 
     if (self) {
-        NSString *cols = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.columns", DEFAULT_COLUMNS)];
-        NSData *data = [cols dataUsingEncoding:NSUTF8StringEncoding];
-
-        NSError *err = nil;
-        NSArray *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
-
-        if (!json) {
-            NSLog (@"error parsing column config, error: %@\n", [err localizedDescription]);
-        }
-        else {
-            [self loadColumns:json];
-        }
-        _playTpl = [NSImage imageNamed:@"btnplayTemplate.pdf"];
-        [_playTpl setFlipped:YES];
-        _pauseTpl = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
-        [_pauseTpl setFlipped:YES];
-        _bufTpl = [NSImage imageNamed:@"bufferingTemplate.pdf"];
-        [_bufTpl setFlipped:YES];
-
-
-        NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-
-        [textStyle setAlignment:NSLeftTextAlignment];
-        [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-
-        _colTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont smallSystemFontSize]], NSFontAttributeName
-                                   , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                   , [NSColor controlTextColor], NSForegroundColorAttributeName
-                                   , textStyle, NSParagraphStyleAttributeName
-                                   , nil];
-
-        [textStyle setAlignment:NSLeftTextAlignment];
-        [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-
-
-        int rowheight = 18;
-
-        _groupTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
-                                     , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                     , [NSColor controlTextColor], NSForegroundColorAttributeName
-                                     , textStyle, NSParagraphStyleAttributeName
-                                     , nil];
-
-        _cellTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
-                                    , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                    , [NSColor controlTextColor], NSForegroundColorAttributeName
-                                    , textStyle, NSParagraphStyleAttributeName
-                                    , nil];
-
-        _cellSelectedTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
-                                            , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                            , [NSColor alternateSelectedControlTextColor], NSForegroundColorAttributeName
-                                            , textStyle, NSParagraphStyleAttributeName
-                                            , nil];
-
+        [self initContent];
+        id view = [self view];
+        [view setDelegate:(id<DdbListviewDelegate>)self];
     }
-
-    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
-    [view setDelegate:(id<DdbListviewDelegate>)self];
     return self;
 }
 
@@ -229,15 +241,15 @@ extern DB_functions_t *deadbeef;
 }
 
 - (int)rowCount {
-    return deadbeef->pl_getcount (PL_MAIN);
+    return deadbeef->pl_getcount ([self playlistIter]);
 }
 
 - (int)cursor {
-    return deadbeef->pl_get_cursor(PL_MAIN);
+    return deadbeef->pl_get_cursor([self playlistIter]);
 }
 
 - (void)setCursor:(int)cursor {
-    deadbeef->pl_set_cursor (PL_MAIN, cursor);
+    deadbeef->pl_set_cursor ([self playlistIter], cursor);
 }
 
 - (void)activate:(int)idx {
@@ -301,16 +313,16 @@ extern DB_functions_t *deadbeef;
     NSData *dt = [NSJSONSerialization dataWithJSONObject:columns options:0 error:&err];
 
     NSString *json = [[NSString alloc] initWithData:dt encoding:NSUTF8StringEncoding];
-    deadbeef->conf_set_str ("cocoaui.columns", [json UTF8String]);
+    [self writeColumnConfig:json];
     deadbeef->conf_save ();
 }
 
 - (DdbListviewRow_t)firstRow {
-    return (DdbListviewRow_t)deadbeef->pl_get_first(PL_MAIN);
+    return (DdbListviewRow_t)deadbeef->pl_get_first([self playlistIter]);
 }
 
 - (DdbListviewRow_t)nextRow:(DdbListviewRow_t)row {
-    return (DdbListviewRow_t)deadbeef->pl_get_next((DB_playItem_t *)row, PL_MAIN);
+    return (DdbListviewRow_t)deadbeef->pl_get_next((DB_playItem_t *)row, [self playlistIter]);
 }
 
 - (DdbListviewRow_t)invalidRow {
@@ -318,7 +330,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (DdbListviewRow_t)rowForIndex:(int)idx {
-    return (DdbListviewRow_t)deadbeef->pl_get_for_idx_and_iter (idx, PL_MAIN);
+    return (DdbListviewRow_t)deadbeef->pl_get_for_idx_and_iter (idx, [self playlistIter]);
 }
 
 - (void)refRow:(DdbListviewRow_t)row {
@@ -516,7 +528,7 @@ int group_bytecode_size = 0;
 }
 
 - (void)selectionChanged:(DdbListviewRow_t)row {
-    deadbeef->sendmessage (DB_EV_SELCHANGED, 0/*should be DdbListview ptr*/, deadbeef->plt_get_curr_idx (), PL_MAIN);
+    deadbeef->sendmessage (DB_EV_SELCHANGED, 0/*should be DdbListview ptr*/, deadbeef->plt_get_curr_idx (), [self playlistIter]);
 }
 
 - (BOOL)hasDND {

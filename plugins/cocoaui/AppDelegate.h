@@ -37,6 +37,7 @@
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
 @property (assign) IBOutlet NSWindow *window;
+@property (unsafe_unretained) IBOutlet NSPanel *searchWindow;
 
 @property (unsafe_unretained) IBOutlet NSTableView *playlist;
 @property (unsafe_unretained) IBOutlet DdbTabStrip *tabStrip;
@@ -55,7 +56,6 @@
 
 // edit menu
 - (IBAction)clearAction:(id)sender;
-- (IBAction)removeSelectionAction:(id)sender;
 
 // playback menu
 - (IBAction)previousAction:(id)sender;

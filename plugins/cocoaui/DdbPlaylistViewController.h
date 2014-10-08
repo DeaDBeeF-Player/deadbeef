@@ -31,6 +31,10 @@ typedef struct {
     NSDictionary *_groupTextAttrsDictionary;
 }
 
+- (const char *)defaultColumnConfig;
+- (void)initContent;
+- (int)playlistIter;
+
 // playlist columns
 @property (unsafe_unretained) IBOutlet NSPanel *addColumnPanel;
 - (IBAction)addColumnClose:(id)sender;
