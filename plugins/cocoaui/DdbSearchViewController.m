@@ -24,7 +24,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (int)playlistIter {
-    return PL_MAIN;
+    return PL_SEARCH;
 }
 
 - (void)awakeFromNib {
@@ -43,4 +43,23 @@ extern DB_functions_t *deadbeef;
     return NULL;
 }
 
+- (void)controlTextDidChange:(NSNotification *)notification {
+    NSTextField *textField = [notification object];
+    NSString *val = [textField stringValue];
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_search_process (plt, [val UTF8String]);
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+        deadbeef->plt_unref (plt);
+    }
+}
+
+- (void)reset {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_search_reset (plt);
+        deadbeef->plt_unref (plt);
+    }
+    [_entry setStringValue:@""];
+}
 @end

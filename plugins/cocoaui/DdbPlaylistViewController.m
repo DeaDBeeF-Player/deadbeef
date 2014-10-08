@@ -253,7 +253,14 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)activate:(int)idx {
-    deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, idx, 0);
+    DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (idx, [self playlistIter]);
+    if (it) {
+        int i = deadbeef->pl_get_idx_of (it);
+        if (i != -1) {
+            deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, i, 0);
+        }
+        deadbeef->pl_item_unref (it);
+    }
 }
 
 - (DdbListviewCol_t)firstColumn {

@@ -10,8 +10,7 @@
 #import "DdbListview.h"
 
 @interface DdbSearchWidget : DdbWidget {
-    DdbListview *_listview;
     id<DdbListviewDelegate> _delegate;
 }
-- (void)setDelegate:(id<DdbListviewDelegate>)delegate;
+@property (unsafe_unretained) IBOutlet DdbListview *listview;
 @end
