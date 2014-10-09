@@ -7,6 +7,7 @@
 //
 
 #import "DdbSearchViewController.h"
+#import "DdbSearchWidget.h"
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
@@ -28,7 +29,8 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)awakeFromNib {
-    [_listview setDelegate:(id<DdbListviewDelegate>)self];
+    DdbSearchWidget *view = (DdbSearchWidget *)[self view];
+    [view setDelegate:(id<DdbListviewDelegate>)self];
 }
 
 - (id)init {

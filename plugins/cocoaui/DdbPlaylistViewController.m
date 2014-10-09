@@ -542,4 +542,177 @@ int group_bytecode_size = 0;
     return YES;
 }
 
+- (void)songChanged:(DdbListview *)listview from:(DB_playItem_t*)from to:(DB_playItem_t*)to {
+    int to_idx = -1;
+    if (to) {
+        int cursor_follows_playback = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1);
+        int scroll_follows_playback = deadbeef->conf_get_int ("playlist.scroll.followplayback", 1);
+        int plt = deadbeef->streamer_get_current_playlist ();
+        if (plt != -1) {
+            if (plt != deadbeef->plt_get_curr_idx ()) {
+                ddb_playlist_t *p = deadbeef->plt_get_for_idx (plt);
+                if (p) {
+                    to_idx = deadbeef->plt_get_item_idx (p, to, PL_MAIN);
+                    if (cursor_follows_playback) {
+                        deadbeef->plt_deselect_all (p);
+                        deadbeef->pl_set_selected (to, 1);
+                        deadbeef->plt_set_cursor (p, PL_MAIN, to_idx);
+                    }
+                    deadbeef->plt_unref (p);
+                }
+                return;
+            }
+            to_idx = deadbeef->pl_get_idx_of (to);
+            if (to_idx != -1) {
+                if (cursor_follows_playback) {
+                    [listview setCursor:to_idx noscroll:YES];
+                }
+                if (scroll_follows_playback && plt == deadbeef->plt_get_curr_idx ()) {
+                    [listview scrollToRowWithIndex: to_idx];
+                }
+            }
+        }
+    }
+
+    if (from) {
+        int idx = deadbeef->pl_get_idx_of (from);
+        if (idx != -1) {
+            [listview drawRow:idx];
+        }
+    }
+    if (to && to_idx != -1) {
+        [listview drawRow:to_idx];
+    }
+}
+
+- (int)handleListviewMessage:(DdbListview *)listview id:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
+    switch (_id) {
+        case DB_EV_SONGCHANGED: {
+            if ([self playlistIter] != PL_MAIN) {
+                break;
+            }
+            ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
+            DB_playItem_t *from = ev->from;
+            DB_playItem_t *to = ev->to;
+            if (from)
+                deadbeef->pl_item_ref (from);
+            if (to)
+                deadbeef->pl_item_ref (to);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                DB_playItem_t *it;
+                int idx = 0;
+                deadbeef->pl_lock ();
+                for (it = deadbeef->pl_get_first (PL_MAIN); it; idx++) {
+                    if (deadbeef->pl_playqueue_test (it) != -1) {
+                        [listview drawRow:idx];
+                    }
+                    DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+                    deadbeef->pl_item_unref (it);
+                    it = next;
+                }
+                [self songChanged:listview from:from to:to];
+                if (from)
+                    deadbeef->pl_item_unref (from);
+                if (to)
+                    deadbeef->pl_item_unref (to);
+                deadbeef->pl_unlock ();
+            });
+        }
+            break;
+        case DB_EV_TRACKINFOCHANGED: {
+            ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
+            DB_playItem_t *track = ev->track;
+            if (track) {
+                deadbeef->pl_item_ref (track);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+                    if (plt) {
+                        int idx = deadbeef->plt_get_item_idx (plt, track, PL_MAIN);
+                        if (idx != -1) {
+                            [listview drawRow:deadbeef->pl_get_idx_of (track)];
+                        }
+                        deadbeef->plt_unref (plt);
+                    }
+                    deadbeef->pl_item_unref (track);
+                });
+            }
+        }
+            break;
+        case DB_EV_PAUSED: {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();
+                if (curr) {
+                    int idx = deadbeef->pl_get_idx_of (curr);
+                    [listview drawRow:idx];
+                    deadbeef->pl_item_unref (curr);
+                }
+            });
+        }
+            break;
+        case DB_EV_PLAYLISTCHANGED: {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [listview reloadData];
+            });
+        }
+            break;
+        case DB_EV_PLAYLISTSWITCHED: {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+                if (plt) {
+                    int cursor = deadbeef->plt_get_cursor (plt, PL_MAIN);
+                    int scroll = deadbeef->plt_get_scroll (plt);
+                    if (cursor != -1) {
+                        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
+                        if (it) {
+                            deadbeef->pl_set_selected (it, 1);
+                            deadbeef->pl_item_unref (it);
+                        }
+                    }
+                    deadbeef->plt_unref (plt);
+
+                    [listview reloadData];
+                    [listview setVScroll:scroll];
+                }
+            });
+        }
+            break;
+        case DB_EV_TRACKFOCUSCURRENT: {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                deadbeef->pl_lock ();
+                DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+                if (it) {
+                    ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
+                    if (plt) {
+                        deadbeef->plt_set_curr (plt);
+                        int idx = deadbeef->pl_get_idx_of (it);
+                        if (idx != -1) {
+                            [listview setCursor:idx noscroll:YES];
+                            [listview scrollToRowWithIndex:idx];
+                        }
+                        deadbeef->plt_unref (plt);
+                    }
+                    deadbeef->pl_item_unref (it);
+                }
+                deadbeef->pl_unlock ();
+            });
+        }
+            break;
+        case DB_EV_CONFIGCHANGED: {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [listview reloadData];
+            });
+        }
+            break;
+        case DB_EV_SELCHANGED: {
+            if (ctx != (uintptr_t)listview || p2 == PL_SEARCH) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [listview reloadData];
+                });
+            }
+        }
+            break;
+    }
+    return 0;
+}
+
 @end
