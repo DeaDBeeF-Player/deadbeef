@@ -984,10 +984,26 @@ clear_query(cover_query_t *query)
     free(query);
 }
 
-static int
-params_match(const char *s1, const char *s2)
+static void
+cache_reset_callback(const char *fname, const char *artist, const char *album, void *user_data)
 {
-    return s1 == s2 || s1 && s2 && !strcasecmp(s1, s2);
+    /* All scaled artwork is now (including this second) obsolete */
+    deadbeef->mutex_lock(queue_mutex);
+    scaled_cache_reset_time = time(NULL);
+    deadbeef->conf_set_int64("artwork.scaled.cache_reset_time", scaled_cache_reset_time);
+
+    if (user_data == &cache_reset_time) {
+        /* All artwork is now (including this second) obsolete */
+        cache_reset_time = scaled_cache_reset_time;
+        deadbeef->conf_set_int64("artwork.cache_reset_time", cache_reset_time);
+        deadbeef->sendmessage(DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+    }
+    deadbeef->mutex_unlock(queue_mutex);
+
+    /* Wait for a new second to start before proceeding */
+    while (time(NULL) == scaled_cache_reset_time) {
+        usleep(100000);
+    }
 }
 
 static cover_callback_t *
@@ -1008,7 +1024,12 @@ new_query_callback(artwork_callback cb, void *ud)
     callback->ud = ud;
     callback->next = NULL;
     return callback;
+}
 
+static int
+params_match(const char *s1, const char *s2)
+{
+    return s1 == s2 || s1 && s2 && !strcasecmp(s1, s2);
 }
 
 static void
@@ -1018,11 +1039,13 @@ enqueue_query(const char *fname, const char *artist, const char *album, const in
         if (params_match(artist, q->artist) && params_match(album, q->album) && q->size == img_size) {
             trace("artwork queue: %s %s %s %d already in queue - add to callbacks\n", fname, artist, album, img_size);
             cover_callback_t **last_callback = &q->callback;
-            while (*last_callback) {
+            while (*last_callback && (*last_callback)->cb != cache_reset_callback) {
                 last_callback = &(*last_callback)->next;
             }
-            *last_callback = new_query_callback(cb, ud);
-            return;
+            if (!*last_callback) {
+                *last_callback = new_query_callback(cb, ud);
+                return;
+            }
         }
     }
 
@@ -1681,39 +1704,18 @@ dequeue_query(void)
 }
 
 static void
-cache_reset_callback(const char *fname, const char *artist, const char *album, void *user_data)
-{
-    /* Everything before now is obsolete */
-    cache_reset_time = scaled_cache_reset_time = time(NULL);
-    deadbeef->conf_set_int64 ("artwork.cache_reset_time", cache_reset_time);
-    deadbeef->conf_set_int64 ("artwork.scaled.cache_reset_time", scaled_cache_reset_time);
-
-    /* Work with file system resolution to one second */
-    while (time(NULL) == cache_reset_time) {
-        usleep(100000);
-    }
-}
-
-static void
 queue_clear(void)
 {
+    /* Remove everything except the first query */
     if (queue) {
-        /* Leave the first query running, but deal with any callbacks now */
-        send_query_callbacks(queue->callback, NULL, NULL, NULL);
-        queue->callback = NULL;
-        queue_tail = queue;
-
-        /* Remove everything else completely */
         while (queue->next) {
             cover_query_t *query = queue->next;
             queue->next = query->next;
-            if (query->fname) {
-                send_query_callbacks(query->callback, NULL, NULL, NULL);
-            }
+            send_query_callbacks(query->callback, NULL, NULL, NULL);
             clear_query(query);
         }
+        queue_tail = queue;
     }
-
 }
 
 static void
@@ -1759,34 +1761,23 @@ fetcher_thread (void *none)
     trace("artwork fetcher: terminate thread\n");
 }
 
-static const char *
+static int
 check_file_age(const char *path, const time_t mtime, const time_t reset_time)
 {
     if (mtime <= reset_time) {
         trace("artwork: deleting cached file %s after reset\n", path);
         unlink(path);
-        return NULL;
+        return 0;
     }
 
-    return path;
+    return 1;
 }
 
 static const char *
-find_image(const char *path)
+find_image(const char *path, const time_t reset_time)
 {
     struct stat stat_buf;
-    if (stat(path, &stat_buf) || !S_ISREG(stat_buf.st_mode) || !check_file_age(path, stat_buf.st_mtime, cache_reset_time) || stat_buf.st_size == 0) {
-        return NULL;
-    }
-
-    return path;
-}
-
-static const char *
-find_scaled_image(const char *path)
-{
-    struct stat stat_buf;
-    if (stat(path, &stat_buf) || !S_ISREG(stat_buf.st_mode) || !check_file_age(path, stat_buf.st_mtime, scaled_cache_reset_time)) {
+    if (stat(path, &stat_buf) || !S_ISREG(stat_buf.st_mode) || !check_file_age(path, stat_buf.st_mtime, reset_time) || stat_buf.st_size == 0) {
         return NULL;
     }
 
@@ -1799,7 +1790,10 @@ get_album_art(const char *fname, const char *artist, const char *album, int size
     /* Check if the image is already cached */
     char cache_path[PATH_MAX];
     make_cache_path2(cache_path, sizeof(cache_path), fname, album, artist, size);
-    const char *p = size == -1 ? find_image(cache_path) : find_scaled_image(cache_path);
+    deadbeef->mutex_lock(queue_mutex);
+    const time_t reset_time = size == -1 ? cache_reset_time : scaled_cache_reset_time;
+    deadbeef->mutex_unlock(queue_mutex);
+    const char *p = find_image(cache_path, reset_time);
     if (p) {
         trace("Found cached image %s\n", cache_path);
         return strdup(p);
@@ -1810,7 +1804,7 @@ get_album_art(const char *fname, const char *artist, const char *album, int size
     if (size != -1) {
         char unscaled_path[PATH_MAX];
         make_cache_path2(unscaled_path, sizeof(unscaled_path), fname, album, artist, -1);
-        if (!find_image(unscaled_path)) {
+        if (!find_image(unscaled_path, cache_reset_time)) {
             enqueue_query(fname, artist, album, -1, NULL, NULL);
         }
     }
@@ -1823,64 +1817,104 @@ get_album_art(const char *fname, const char *artist, const char *album, int size
 
 static void
 artwork_reset (int fast) {
-    trace ("artwork: reset queue%s\n", fast ? " fast" : "");
+    trace ("artwork:%s reset queue\n", fast ? " fast" : "");
     deadbeef->mutex_lock(queue_mutex);
     queue_clear();
+    if (!fast && queue && queue->callback) {
+        cover_callback_t *callback_chain = queue->callback;
+        queue->callback = NULL;
+        send_query_callbacks(callback_chain, NULL, NULL, NULL);
+    }
     deadbeef->mutex_unlock(queue_mutex);
 }
 
 static void
-artwork_configchanged (void) {
-    cache_configchanged();
-
-    const int new_artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
-    const int new_artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
-#ifdef USE_VFS_CURL
-    const int new_artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
-    const int new_artwork_enable_mb = deadbeef->conf_get_int ("artwork.enable_musicbrainz", 0);
-    const int new_artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
-    const int new_artwork_enable_wos = deadbeef->conf_get_int ("artwork.enable_wos", 0);
-#endif
-
-    char new_artwork_filemask[MAX_FILEMASK_LENGTH];
-    deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK, new_artwork_filemask, MAX_FILEMASK_LENGTH);
-    if (!*new_artwork_filemask) {
-        strcpy(new_artwork_filemask, DEFAULT_FILEMASK);
+get_fetcher_preferences(void)
+{
+    artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
+    artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
+    deadbeef->conf_get_str("artwork.filemask", DEFAULT_FILEMASK, artwork_filemask, MAX_FILEMASK_LENGTH);
+    if (!*artwork_filemask) {
+        strcpy(artwork_filemask, DEFAULT_FILEMASK);
         deadbeef->conf_set_str("artwork.filemask", DEFAULT_FILEMASK);
     }
+#ifdef USE_VFS_CURL
+    artwork_enable_lfm = deadbeef->conf_get_int("artwork.enable_lastfm", 0);
+    artwork_enable_mb = deadbeef->conf_get_int("artwork.enable_musicbrainz", 0);
+    artwork_enable_aao = deadbeef->conf_get_int("artwork.enable_albumartorg", 0);
+    artwork_enable_wos = deadbeef->conf_get_int("artwork.enable_wos", 0);
+#endif
+    scale_towards_longer = deadbeef->conf_get_int ("artwork.scale_towards_longer", 1);
+}
 
-    if (new_artwork_enable_embedded != artwork_enable_embedded
-            || new_artwork_enable_local != artwork_enable_local
-#ifdef USE_VFS_CURL
-            || new_artwork_enable_lfm != artwork_enable_lfm
-            || new_artwork_enable_mb != artwork_enable_mb
-            || new_artwork_enable_aao != artwork_enable_aao
-            || new_artwork_enable_wos != artwork_enable_wos
-#endif
-            || strcmp (new_artwork_filemask, artwork_filemask)) {
-        trace ("artwork config changed, invalidating cache...\n");
-        artwork_enable_embedded = new_artwork_enable_embedded;
-        artwork_enable_local = new_artwork_enable_local;
-#ifdef USE_VFS_CURL
-        artwork_enable_lfm = new_artwork_enable_lfm;
-        artwork_enable_mb = new_artwork_enable_mb;
-        artwork_enable_aao = new_artwork_enable_aao;
-        artwork_enable_wos = new_artwork_enable_wos;
-#endif
-        strcpy (artwork_filemask, new_artwork_filemask);
-        deadbeef->mutex_lock(queue_mutex);
-        queue_clear();
-        enqueue_query(NULL, NULL, NULL, -1, cache_reset_callback, NULL);
-        deadbeef->mutex_unlock(queue_mutex);
-        deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+static void
+insert_cache_reset(void *user_data)
+{
+    /* No point jumpiung through hoops if the reset time is already now */
+    if (scaled_cache_reset_time == time(NULL)) {
+        return;
     }
 
-    int new_scale_towards_longer = deadbeef->conf_get_int ("artwork.scale_towards_longer", 1);
-    if (new_scale_towards_longer != scale_towards_longer) {
-        trace ("artwork config changed, invalidating scaled cache...\n");
-        scale_towards_longer = new_scale_towards_longer;
-        scaled_cache_reset_time = time (NULL);
-        deadbeef->conf_set_int64 ("artwork.scaled.cache_reset_time", scaled_cache_reset_time);
+    /* Submit a dummy query to set the cache reset time in a callback */
+    if (!queue) {
+        enqueue_query(NULL, NULL, NULL, -1, cache_reset_callback, user_data);
+        return;
+    }
+
+    cover_callback_t **last_callback = &queue->callback;
+    while (*last_callback) {
+        if ((*last_callback)->cb == cache_reset_callback) {
+            /* Set an existing callback to do the right resets */
+            if ((*last_callback)->ud == &scaled_cache_reset_time && user_data == &cache_reset_time) {
+                (*last_callback)->ud = user_data;
+            }
+            return;
+        }
+        last_callback = &(*last_callback)->next;
+    }
+
+    /* Add a new callback at the end of the chain */
+    *last_callback = new_query_callback(cache_reset_callback, user_data);
+}
+
+static void
+artwork_configchanged (void)
+{
+    cache_configchanged();
+
+    const int old_artwork_enable_embedded = artwork_enable_embedded;
+    const int old_artwork_enable_local = artwork_enable_local;
+    char old_artwork_filemask[MAX_FILEMASK_LENGTH];
+    strcpy(old_artwork_filemask, artwork_filemask);
+#ifdef USE_VFS_CURL
+    const int old_artwork_enable_lfm = artwork_enable_lfm;
+    const int old_artwork_enable_mb = artwork_enable_mb;
+    const int old_artwork_enable_aao = artwork_enable_aao;
+    const int old_artwork_enable_wos = artwork_enable_wos;
+#endif
+    const int old_scale_towards_longer = scale_towards_longer;
+    get_fetcher_preferences();
+
+    if (old_artwork_enable_embedded != artwork_enable_embedded ||
+        old_artwork_enable_local != artwork_enable_local ||
+#ifdef USE_VFS_CURL
+        old_artwork_enable_lfm != artwork_enable_lfm ||
+        old_artwork_enable_mb != artwork_enable_mb ||
+        old_artwork_enable_aao != artwork_enable_aao ||
+        old_artwork_enable_wos != artwork_enable_wos ||
+#endif
+        strcmp(old_artwork_filemask, artwork_filemask)) {
+        trace("artwork config changed, invalidating cache...\n");
+        deadbeef->mutex_lock(queue_mutex);
+        insert_cache_reset(&cache_reset_time);
+        artwork_abort_http_request();
+        deadbeef->mutex_unlock(queue_mutex);
+    }
+    else if (old_scale_towards_longer != scale_towards_longer) {
+        trace("artwork config changed, invalidating scaled cache...\n");
+        deadbeef->mutex_lock(queue_mutex);
+        insert_cache_reset(&scaled_cache_reset_time);
+        deadbeef->mutex_unlock(queue_mutex);
     }
 }
 
@@ -1987,16 +2021,7 @@ artwork_plugin_start (void)
     if (!default_cover[0]) {
         snprintf (default_cover, sizeof (default_cover), "%s/noartwork.png", deadbeef->get_pixmap_dir ());
     }
-    deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK, artwork_filemask, MAX_FILEMASK_LENGTH);
-    artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
-    artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
-#ifdef USE_VFS_CURL
-    artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
-    artwork_enable_mb = deadbeef->conf_get_int ("artwork.enable_musicbrainz", 0);
-    artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
-    artwork_enable_wos = deadbeef->conf_get_int ("artwork.enable_wos", 0);
-#endif
-    scale_towards_longer = deadbeef->conf_get_int ("artwork.scale_towards_longer", 1);
+    get_fetcher_preferences();
     cache_reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);
     scaled_cache_reset_time = deadbeef->conf_get_int64 ("artwork.scaled.cache_reset_time", 0);
 
