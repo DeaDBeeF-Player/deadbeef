@@ -537,7 +537,7 @@ init_column (int i, int _id, const char *format) {
     return ret;
 }
 
-- (IBAction)openFilesAction:(id)sender {
+- (void)openFiles:(BOOL)clear play:(BOOL)play {
     NSOpenPanel* openDlg = [NSOpenPanel openPanel];
     [openDlg setCanChooseFiles:YES];
     [openDlg setAllowsMultipleSelection:YES];
@@ -546,7 +546,10 @@ init_column (int i, int _id, const char *format) {
     {
         NSArray* files = [openDlg URLs];
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-        deadbeef->plt_clear(plt);
+        if (clear) {
+            deadbeef->plt_clear(plt);
+            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+        }
         if (plt) {
             if (!deadbeef->plt_add_files_begin (plt, 0)) {
                 dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
@@ -561,16 +564,22 @@ init_column (int i, int _id, const char *format) {
                     deadbeef->plt_add_files_end (plt, 0);
                     deadbeef->plt_unref (plt);
                     deadbeef->pl_save_current();
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [_playlist reloadData];
-                    });
+                    if (play) {
+                        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+                        deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
+                    }
                 });
             }
         }
     }
 }
 
+- (IBAction)openFilesAction:(id)sender {
+    [self openFiles:YES play:YES];
+}
+
 - (IBAction)addFilesAction:(id)sender {
+    [self openFiles:NO play:NO];
 }
 
 - (IBAction)addFoldersAction:(id)sender {
@@ -596,9 +605,7 @@ init_column (int i, int _id, const char *format) {
                     deadbeef->plt_add_files_end (plt, 0);
                     deadbeef->plt_unref (plt);
                     deadbeef->pl_save_current();
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [_playlist reloadData];
-                    });
+                    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
                 });
             }
         }
