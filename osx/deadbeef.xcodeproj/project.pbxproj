@@ -417,6 +417,8 @@
 		2DBEE69719B4EB0900A60609 /* sb_front_cap_right@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68B19B4EB0900A60609 /* sb_front_cap_right@2x.png */; };
 		2DBEE69819B4EB0900A60609 /* sb_front_filler.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68C19B4EB0900A60609 /* sb_front_filler.png */; };
 		2DBEE69919B4EB0900A60609 /* sb_front_filler@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68D19B4EB0900A60609 /* sb_front_filler@2x.png */; };
+		2DCB281A19E86183008E9DF6 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
+		2DCB281D19E86194008E9DF6 /* m3u.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DCB281419E86162008E9DF6 /* m3u.dylib */; };
 		2DCD78D419A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78B919A665CA00EA50FA /* deadbeef.png */; };
 		2DCD78D519A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78BB19A665CA00EA50FA /* deadbeef.png */; };
 		2DCD78D619A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78BD19A665CA00EA50FA /* deadbeef.png */; };
@@ -691,6 +693,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2DB96A8919ABB4C600E318A8;
 			remoteInfo = samplerate;
+		};
+		2DCB281B19E8618D008E9DF6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DCB281319E86162008E9DF6;
+			remoteInfo = m3u;
 		};
 		4D32F9FB19A63628000FFDE0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1149,6 +1158,8 @@
 		2DBEE68B19B4EB0900A60609 /* sb_front_cap_right@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sb_front_cap_right@2x.png"; path = "images/seekbar/sb_front_cap_right@2x.png"; sourceTree = "<group>"; };
 		2DBEE68C19B4EB0900A60609 /* sb_front_filler.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sb_front_filler.png; path = images/seekbar/sb_front_filler.png; sourceTree = "<group>"; };
 		2DBEE68D19B4EB0900A60609 /* sb_front_filler@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sb_front_filler@2x.png"; path = "images/seekbar/sb_front_filler@2x.png"; sourceTree = "<group>"; };
+		2DCB281419E86162008E9DF6 /* m3u.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = m3u.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DCB281919E86183008E9DF6 /* m3u.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = m3u.c; path = plugins/m3u/m3u.c; sourceTree = "<group>"; };
 		2DCD78B919A665CA00EA50FA /* deadbeef.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deadbeef.png; sourceTree = "<group>"; };
 		2DCD78BB19A665CA00EA50FA /* deadbeef.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deadbeef.png; sourceTree = "<group>"; };
 		2DCD78BD19A665CA00EA50FA /* deadbeef.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deadbeef.png; sourceTree = "<group>"; };
@@ -1437,6 +1448,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2DB96A8719ABB4C600E318A8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DCB281119E86162008E9DF6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1974,6 +1992,14 @@
 			name = seekbar;
 			sourceTree = "<group>";
 		};
+		2DCB281819E8616E008E9DF6 /* m3u */ = {
+			isa = PBXGroup;
+			children = (
+				2DCB281919E86183008E9DF6 /* m3u.c */,
+			);
+			name = m3u;
+			sourceTree = "<group>";
+		};
 		2DCD78AD19A6658C00EA50FA /* icons */ = {
 			isa = PBXGroup;
 			children = (
@@ -2171,6 +2197,7 @@
 				2D22F75519E1384B009C631E /* sid.dylib */,
 				2DA2499E19E71FEB00E34920 /* libcurl.a */,
 				2DA24B4B19E724C200E34920 /* vfs_curl.dylib */,
+				2DCB281419E86162008E9DF6 /* m3u.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2284,6 +2311,7 @@
 		4D1B514C1837EF7C003E6066 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				2DCB281819E8616E008E9DF6 /* m3u */,
 				2DA24B4F19E724C800E34920 /* vfs_curl */,
 				2DA249A219E71FF100E34920 /* curl */,
 				2D22F5AB19E13621009C631E /* sid */,
@@ -2746,6 +2774,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DCB281219E86162008E9DF6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4D32F9A519A63094000FFDE0 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -2945,6 +2980,23 @@
 			productReference = 2DB96A8A19ABB4C600E318A8 /* libsamplerate.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		2DCB281319E86162008E9DF6 /* m3u */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DCB281719E86162008E9DF6 /* Build configuration list for PBXNativeTarget "m3u" */;
+			buildPhases = (
+				2DCB281019E86162008E9DF6 /* Sources */,
+				2DCB281119E86162008E9DF6 /* Frameworks */,
+				2DCB281219E86162008E9DF6 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = m3u;
+			productName = m3u;
+			productReference = 2DCB281419E86162008E9DF6 /* m3u.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		4D1B3E7918379829003E6066 /* deadbeef */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4D1B3EAB18379829003E6066 /* Build configuration list for PBXNativeTarget "deadbeef" */;
@@ -2957,6 +3009,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DCB281C19E8618D008E9DF6 /* PBXTargetDependency */,
 				2DA24BA219E72A0000E34920 /* PBXTargetDependency */,
 				2D22F75D19E1385A009C631E /* PBXTargetDependency */,
 				4D44E70719B753AD00F780FC /* PBXTargetDependency */,
@@ -3098,6 +3151,9 @@
 					2DA24B4A19E724C200E34920 = {
 						CreatedOnToolsVersion = 6.0.1;
 					};
+					2DCB281319E86162008E9DF6 = {
+						CreatedOnToolsVersion = 6.0.1;
+					};
 				};
 			};
 			buildConfigurationList = 4D1B3E7518379829003E6066 /* Build configuration list for PBXProject "deadbeef" */;
@@ -3127,6 +3183,7 @@
 				2D22F75419E1384B009C631E /* sid */,
 				2DA2499D19E71FEA00E34920 /* curl */,
 				2DA24B4A19E724C200E34920 /* vfs_curl */,
+				2DCB281319E86162008E9DF6 /* m3u */,
 			);
 		};
 /* End PBXProject section */
@@ -3136,6 +3193,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DCB281D19E86194008E9DF6 /* m3u.dylib in Resources */,
 				2DA24BA319E72A2500E34920 /* vfs_curl.dylib in Resources */,
 				2D22F75E19E138B3009C631E /* sid.dylib in Resources */,
 				2D828E5419E5679800EE874F /* Search.xib in Resources */,
@@ -3470,6 +3528,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DCB281019E86162008E9DF6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DCB281A19E86183008E9DF6 /* m3u.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4D1B3E7618379829003E6066 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3712,6 +3778,11 @@
 			isa = PBXTargetDependency;
 			target = 2DB96A8919ABB4C600E318A8 /* samplerate */;
 			targetProxy = 2DB96AA919ABB52A00E318A8 /* PBXContainerItemProxy */;
+		};
+		2DCB281C19E8618D008E9DF6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DCB281319E86162008E9DF6 /* m3u */;
+			targetProxy = 2DCB281B19E8618D008E9DF6 /* PBXContainerItemProxy */;
 		};
 		4D32F9FC19A63628000FFDE0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4049,6 +4120,40 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		2DCB281519E86162008E9DF6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_SYS_SYSLIMITS_H;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		2DCB281619E86162008E9DF6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_SYS_SYSLIMITS_H;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -4467,6 +4572,7 @@
 				2DA249A019E71FEB00E34920 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2DA24B4C19E724C200E34920 /* Build configuration list for PBXNativeTarget "vfs_curl" */ = {
 			isa = XCConfigurationList;
@@ -4475,6 +4581,7 @@
 				2DA24B4E19E724C200E34920 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2DB96A8119ABB47C00E318A8 /* Build configuration list for PBXNativeTarget "dsp_libsrc" */ = {
 			isa = XCConfigurationList;
@@ -4493,6 +4600,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		2DCB281719E86162008E9DF6 /* Build configuration list for PBXNativeTarget "m3u" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DCB281519E86162008E9DF6 /* Debug */,
+				2DCB281619E86162008E9DF6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		4D1B3E7518379829003E6066 /* Build configuration list for PBXProject "deadbeef" */ = {
 			isa = XCConfigurationList;
