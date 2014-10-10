@@ -607,6 +607,39 @@ init_column (int i, int _id, const char *format) {
     }
 }
 
+- (IBAction)addLocationAction:(id)sender {
+    [_addLocationTextField setStringValue:@""];
+    [NSApp beginSheet:_addLocationPanel modalForWindow:_window modalDelegate:nil didEndSelector:nil contextInfo:nil];
+}
+
+- (IBAction)addLocationOKAction:(id)sender {
+    NSString *text = [_addLocationTextField stringValue];
+
+    [_addLocationPanel orderOut:self];
+    [NSApp endSheet:_addLocationPanel];
+
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (!deadbeef->plt_add_files_begin (plt, 0)) {
+        dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        dispatch_async(aQueue, ^{
+            DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
+            deadbeef->plt_insert_file2 (0, plt, tail, [text UTF8String], NULL, NULL, NULL);
+            if (tail) {
+                deadbeef->pl_item_unref (tail);
+            }
+            deadbeef->plt_add_files_end (plt, 0);
+            if (plt) {
+                deadbeef->plt_unref (plt);
+            }
+        });
+    }
+}
+
+- (IBAction)addLocationCancelAction:(id)sender {
+    [_addLocationPanel orderOut:self];
+    [NSApp endSheet:_addLocationPanel];
+}
+
 - (IBAction)clearAction:(id)sender {
     deadbeef->pl_clear();
     deadbeef->pl_save_current();

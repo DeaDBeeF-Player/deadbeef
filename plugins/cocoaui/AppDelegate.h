@@ -56,6 +56,12 @@
 - (IBAction)openFilesAction:(id)sender;
 - (IBAction)addFilesAction:(id)sender;
 - (IBAction)addFoldersAction:(id)sender;
+- (IBAction)addLocationAction:(id)sender;
+@property (unsafe_unretained) IBOutlet NSPanel *addLocationPanel;
+- (IBAction)addLocationOKAction:(id)sender;
+- (IBAction)addLocationCancelAction:(id)sender;
+@property (unsafe_unretained) IBOutlet NSTextField *addLocationTextField;
+
 
 // edit menu
 - (IBAction)clearAction:(id)sender;
