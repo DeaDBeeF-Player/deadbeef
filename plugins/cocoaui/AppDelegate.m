@@ -33,8 +33,6 @@ extern DB_functions_t *deadbeef;
 
 @implementation AppDelegate
 
-@synthesize playlist;
-
 DB_playItem_t *prev = NULL;
 int prevIdx = -1;
 NSImage *playImg;
@@ -46,10 +44,10 @@ NSInteger firstSelected = -1;
 - (void)configChanged
 {
     id order_items[] = {
-        self.orderLinear,
-        self.orderShuffle,
-        self.orderRandom,
-        self.orderShuffleAlbums,
+        _orderLinear,
+        _orderShuffle,
+        _orderRandom,
+        _orderShuffleAlbums,
         nil
     };
     
@@ -59,9 +57,9 @@ NSInteger firstSelected = -1;
     }
     
     id loop_items[] = {
-        self.loopAll,
-        self.loopNone,
-        self.loopSingle,
+        _loopAll,
+        _loopNone,
+        _loopSingle,
         nil
     };
     
@@ -70,11 +68,11 @@ NSInteger firstSelected = -1;
         [loop_items[i] setState:i==loop?NSOnState:NSOffState];
     }
     
-    [self.scrollFollowsPlayback setState:deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)?NSOnState:NSOffState];
-    [self.cursorFollowsPlayback setState:deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)?NSOnState:NSOffState];
+    [_scrollFollowsPlayback setState:deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)?NSOnState:NSOffState];
+    [_cursorFollowsPlayback setState:deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)?NSOnState:NSOffState];
     
-    [self.stopAfterCurrent setState:deadbeef->conf_get_int ("playlist.stop_after_current", 0)?NSOnState:NSOffState];
-    [self.stopAfterCurrentAlbum setState:deadbeef->conf_get_int ("playlist.stop_after_current_album", 0)?NSOnState:NSOffState];
+    [_stopAfterCurrent setState:deadbeef->conf_get_int ("playlist.stop_after_current", 0)?NSOnState:NSOffState];
+    [_stopAfterCurrentAlbum setState:deadbeef->conf_get_int ("playlist.stop_after_current_album", 0)?NSOnState:NSOffState];
 }
 
 static int fileadd_cancelled = 0;
@@ -116,10 +114,10 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     DdbPlaylistViewController *vc = [[DdbPlaylistViewController alloc] init];
     NSView *view = [vc view];
 
-    [view setFrame:NSMakeRect(0, [self.statusBar frame].size.height+2, [[self.window contentView] frame].size.width, [self.tabStrip frame].origin.y - [self.statusBar frame].size.height - 1)];
+    [view setFrame:NSMakeRect(0, [_statusBar frame].size.height+2, [[_window contentView] frame].size.width, [_tabStrip frame].origin.y - [_statusBar frame].size.height - 1)];
     [view setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
 
-    [[self.window contentView] addSubview:view];
+    [[_window contentView] addSubview:view];
 }
 
 - (void)initSearchWindow {
@@ -136,16 +134,16 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    [self.window setReleasedWhenClosed:NO];
-    [self.window setExcludedFromWindowsMenu:YES];
+    [_window setReleasedWhenClosed:NO];
+    [_window setExcludedFromWindowsMenu:YES];
 
     playImg = [NSImage imageNamed:@"btnplayTemplate.pdf"];
     pauseImg = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
     bufferingImg = [NSImage imageNamed:@"bufferingTemplate.pdf"];
 
-    [playlist setDelegate:(id<NSTableViewDelegate>)self];
-    [playlist setDataSource:(id<NSTableViewDataSource>)self];
-    [playlist setDoubleAction:@selector(playlistDoubleAction)];
+    [_playlist setDelegate:(id<NSTableViewDelegate>)self];
+    [_playlist setDataSource:(id<NSTableViewDataSource>)self];
+    [_playlist setDoubleAction:@selector(playlistDoubleAction)];
     
     // initialize gui from settings
     [self configChanged];
@@ -153,7 +151,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     NSTimer *updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
     [[NSRunLoop currentRunLoop] addTimer:updateTimer forMode:NSDefaultRunLoopMode];
     
-    [self.addFilesWindow setParentWindow:self.window];
+    [_addFilesWindow setParentWindow:_window];
     
     deadbeef->listen_file_add_beginend (fileadd_begin, fileadd_end, NULL);
     deadbeef->listen_file_added (file_added, NULL);
@@ -161,19 +159,19 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [self initColumns];
 
     g_appDelegate = self;
-    [[NSApp dockTile] setContentView: self.dockTileView];
+    [[NSApp dockTile] setContentView: _dockTileView];
 //    [[NSApp dockTile] setBadgeLabel:@"Hello"];
     [[NSApp dockTile] display];
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag{
-    [self.window setIsVisible:YES];
+    [_window setIsVisible:YES];
     return YES;
 }
 
 - (IBAction)showMainWinAction:(id)sender {
     NSInteger st = [sender state];
-    [self.window setIsVisible:st!=NSOnState];
+    [_window setIsVisible:st!=NSOnState];
     [sender setState:st==NSOnState?NSOffState:NSOnState];
 }
 
@@ -299,15 +297,15 @@ static struct timeval last_br_update;
     int cmp =(int)(perc*4000);
     if (cmp != prevSeekbar) {
         prevSeekbar = cmp;
-        [self.seekBar setFloatValue:perc];
+        [_seekBar setFloatValue:perc];
     }
     
     BOOL st = YES;
     if (!trk || dur < 0) {
         st = NO;
     }
-    if ([self.seekBar isEnabled] != st) {
-        [self.seekBar setEnabled:st];
+    if ([_seekBar isEnabled] != st) {
+        [_seekBar setEnabled:st];
     }
     
     [self updateSonginfo];    
@@ -315,7 +313,7 @@ static struct timeval last_br_update;
 
 - (void)playlistDoubleAction
 {
-    int row = (int)[playlist clickedRow];
+    int row = (int)[_playlist clickedRow];
     deadbeef->sendmessage(DB_EV_PLAY_NUM, 0, row, 0);
 }
 
@@ -425,9 +423,9 @@ init_column (int i, int _id, const char *format) {
 
 - (void)tfRedraw:(id)userInfo
 {
-    [self.playlist reloadData];
-    [self.tfRedrawTimer invalidate];
-    self.tfRedrawTimer = nil;
+    [_playlist reloadData];
+    [_tfRedrawTimer invalidate];
+    _tfRedrawTimer = nil;
 }
 
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex
@@ -504,16 +502,16 @@ init_column (int i, int _id, const char *format) {
             };
             char text[1024] = "";
             deadbeef->tf_eval (&ctx, columns[cidx].bytecode, columns[cidx].bytecode_len, text, sizeof (text));
-            if (ctx.update > 0 && !self.tfRedrawTimer) {
+            if (ctx.update > 0 && !_tfRedrawTimer) {
                 if (ctx.idx >= 0) {
-                    self.tf_redraw_track_idx = ctx.idx;
+                    _tf_redraw_track_idx = ctx.idx;
                 }
                 else {
-                    self.tf_redraw_track_idx = deadbeef->plt_get_item_idx (ctx.plt, it, PL_MAIN);
+                    _tf_redraw_track_idx = deadbeef->plt_get_item_idx (ctx.plt, it, PL_MAIN);
                 }
-                self.tfRedrawTimer = [NSTimer timerWithTimeInterval:ctx.update*0.001f target:self selector:@selector(tfRedraw:) userInfo:nil repeats:YES];
-                [[NSRunLoop currentRunLoop] addTimer:self.tfRedrawTimer forMode:NSDefaultRunLoopMode];
-                self.tf_redraw_track = it;
+                _tfRedrawTimer = [NSTimer timerWithTimeInterval:ctx.update*0.001f target:self selector:@selector(tfRedraw:) userInfo:nil repeats:YES];
+                [[NSRunLoop currentRunLoop] addTimer:_tfRedrawTimer forMode:NSDefaultRunLoopMode];
+                _tf_redraw_track = it;
                 deadbeef->pl_item_ref (it);
             }
             if (ctx.plt) {
@@ -564,7 +562,7 @@ init_column (int i, int _id, const char *format) {
                     deadbeef->plt_unref (plt);
                     deadbeef->pl_save_current();
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        [playlist reloadData];
+                        [_playlist reloadData];
                     });
                 });
             }
@@ -599,7 +597,7 @@ init_column (int i, int _id, const char *format) {
                     deadbeef->plt_unref (plt);
                     deadbeef->pl_save_current();
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        [playlist reloadData];
+                        [_playlist reloadData];
                     });
                 });
             }
@@ -644,23 +642,23 @@ init_column (int i, int _id, const char *format) {
     deadbeef->pl_clear();
     deadbeef->pl_save_current();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-    [playlist reloadData];
+    [_playlist reloadData];
 }
 
 - (IBAction)delete:(id)sender {
     deadbeef->pl_delete_selected ();
     deadbeef->pl_save_current();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-    [playlist reloadData];
-    [playlist deselectAll:self];
+    [_playlist reloadData];
+    [_playlist deselectAll:self];
     if (firstSelected != -1) {
-        [playlist selectRowIndexes:[[NSIndexSet alloc] initWithIndex:firstSelected] byExtendingSelection:NO];
+        [_playlist selectRowIndexes:[[NSIndexSet alloc] initWithIndex:firstSelected] byExtendingSelection:NO];
     }
-    [self tableView:playlist selectionIndexesForProposedSelection: firstSelected==-1?[[NSIndexSet alloc] init]:[[NSIndexSet alloc] initWithIndex:firstSelected]];
+    [self tableView:_playlist selectionIndexesForProposedSelection: firstSelected==-1?[[NSIndexSet alloc] init]:[[NSIndexSet alloc] initWithIndex:firstSelected]];
 }
 
 - (void)reloadPlaylistData {
-    [playlist reloadData];
+    [_playlist reloadData];
 }
 
 - (IBAction)orderLinearAction:(id)sender {
@@ -712,7 +710,7 @@ init_column (int i, int _id, const char *format) {
             deadbeef->plt_set_curr (plt);
             int idx = deadbeef->pl_get_idx_of (it);
             if (idx != -1) {
-                [playlist scrollRowToVisible:idx];
+                [_playlist scrollRowToVisible:idx];
             }
             deadbeef->plt_unref (plt);
         }
@@ -834,7 +832,7 @@ init_column (int i, int _id, const char *format) {
                 deadbeef->pl_item_unref (it);
             }
             if (idx) {
-                [playlist reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:idx]
+                [_playlist reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:idx]
                                     columnIndexes:[NSIndexSet indexSetWithIndex:0]];
             }
             break;
@@ -846,10 +844,10 @@ init_column (int i, int _id, const char *format) {
             }
             if (idx != -1) {
                 if (deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)) {
-                    [playlist scrollRowToVisible:idx];
+                    [_playlist scrollRowToVisible:idx];
                 }
                 if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)) {
-                    [playlist selectRowIndexes:[NSIndexSet indexSetWithIndex:idx] byExtendingSelection:NO];
+                    [_playlist selectRowIndexes:[NSIndexSet indexSetWithIndex:idx] byExtendingSelection:NO];
                 }
             }
             break;
@@ -857,7 +855,7 @@ init_column (int i, int _id, const char *format) {
 }
 
 - (void)trackInfoChanged:(NSNumber *)trk {
-        [playlist reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:[trk intValue]]
+        [_playlist reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:[trk intValue]]
                          columnIndexes:[NSIndexSet indexSetWithIndex:0]];
 }
 
