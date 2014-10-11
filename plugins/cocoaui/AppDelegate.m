@@ -25,6 +25,7 @@
 #import "dispatch/dispatch.h"
 #import "DdbWidgetManager.h"
 #import "DdbPlaylistViewController.h"
+#import "DdbShared.h"
 
 #include "../../deadbeef.h"
 #include <sys/time.h>
@@ -893,4 +894,43 @@ init_column (int i, int _id, const char *format) {
     [_searchViewController reset];
 }
 
+- (IBAction)newPlaylistAction:(id)sender {
+    int playlist = cocoaui_add_new_playlist ();
+    if (playlist != -1) {
+        cocoaui_playlist_set_curr (playlist);
+    }
+}
+
+- (IBAction)loadPlaylistAction:(id)sender {
+    NSOpenPanel* openDlg = [NSOpenPanel openPanel];
+    [openDlg setCanChooseFiles:YES];
+    [openDlg setAllowsMultipleSelection:YES];
+    [openDlg setCanChooseDirectories:NO];
+    if ([openDlg runModal] == NSOKButton)
+    {
+        NSArray* files = [openDlg URLs];
+        if ([files count] < 1) {
+            return;
+        }
+        NSString *fname = [[files firstObject] path];
+        dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        dispatch_async(aQueue, ^{
+            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            if (plt) {
+                if (!deadbeef->plt_add_files_begin (plt, 0)) {
+                    deadbeef->plt_clear (plt);
+                    int abort = 0;
+                    deadbeef->plt_load2 (0, plt, NULL, [fname UTF8String], &abort, NULL, NULL);
+                    deadbeef->plt_save_config (plt);
+                    deadbeef->plt_add_files_end (plt, 0);
+                }
+                deadbeef->plt_unref (plt);
+            }
+            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+        });
+    }
+}
+
+- (IBAction)savePlaylistAction:(id)sender {
+}
 @end

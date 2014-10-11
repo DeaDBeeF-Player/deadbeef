@@ -61,6 +61,10 @@
 - (IBAction)addLocationCancelAction:(id)sender;
 @property (unsafe_unretained) IBOutlet NSTextField *addLocationTextField;
 
+- (IBAction)newPlaylistAction:(id)sender;
+- (IBAction)loadPlaylistAction:(id)sender;
+- (IBAction)savePlaylistAction:(id)sender;
+
 
 // edit menu
 - (IBAction)clearAction:(id)sender;
