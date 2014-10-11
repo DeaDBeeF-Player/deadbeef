@@ -7,6 +7,7 @@
 //
 
 #import "DdbTabStrip.h"
+#import "DdbShared.h"
 #include "../../../deadbeef.h"
 
 extern DB_functions_t *deadbeef;
@@ -350,17 +351,11 @@ plt_get_title_wrapper (int plt) {
     [self scrollToTabInt:tab redraw:YES];
 }
 
-static void
-_playlist_set_curr (int playlist) {
-    deadbeef->plt_set_curr_idx (playlist);
-    deadbeef->conf_set_int ("playlist.current", playlist);
-}
-
 -(void)scrollLeft {
     int tab = deadbeef->plt_get_curr_idx ();
     if (tab > 0) {
         tab--;
-        _playlist_set_curr (tab);
+        cocoaui_playlist_set_curr (tab);
     }
     [self scrollToTab:tab];
 }
@@ -369,7 +364,7 @@ _playlist_set_curr (int playlist) {
     int tab = deadbeef->plt_get_curr_idx ();
     if (tab < deadbeef->plt_get_count ()-1) {
         tab++;
-        _playlist_set_curr (tab);
+        cocoaui_playlist_set_curr (tab);
     }
     [self scrollToTab:tab];
 }
@@ -402,41 +397,6 @@ _playlist_set_curr (int playlist) {
     }
 }
 
-#define _(x) x
-
-static int
-_add_new_playlist (void) {
-    int cnt = deadbeef->plt_get_count ();
-    int i;
-    int idx = 0;
-    for (;;) {
-        char name[100];
-        if (!idx) {
-            strcpy (name, _("New Playlist"));
-        }
-        else {
-            snprintf (name, sizeof (name), _("New Playlist (%d)"), idx);
-        }
-        deadbeef->pl_lock ();
-        for (i = 0; i < cnt; i++) {
-            char t[100];
-            ddb_playlist_t *plt = deadbeef->plt_get_for_idx (i);
-            deadbeef->plt_get_title (plt, t, sizeof (t));
-            deadbeef->plt_unref (plt);
-            if (!strcasecmp (t, name)) {
-                break;
-            }
-        }
-        deadbeef->pl_unlock ();
-        if (i == cnt) {
-            return deadbeef->plt_add (cnt, name);
-        }
-        idx++;
-    }
-    return -1;
-}
-
-
 - (void)mouseDown:(NSEvent *)event {
     NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
     _tab_clicked = [self tabUnderCursor:coord.x];
@@ -461,14 +421,14 @@ _add_new_playlist (void) {
         }
     
         if (_tab_clicked != -1) {
-            _playlist_set_curr (_tab_clicked);
+            cocoaui_playlist_set_curr (_tab_clicked);
         }
         else {
             if (event.clickCount == 2) {
                 // new tab
-                int playlist = _add_new_playlist ();
+                int playlist = cocoaui_add_new_playlist ();
                 if (playlist != -1) {
-                    _playlist_set_curr (playlist);
+                    cocoaui_playlist_set_curr (playlist);
                 }
                 return;
             }
@@ -513,9 +473,9 @@ _add_new_playlist (void) {
     if (event.type == NSOtherMouseDown) {
         if (_tab_clicked == -1) {
             // new tab
-            int playlist = _add_new_playlist ();
+            int playlist = cocoaui_add_new_playlist ();
             if (playlist != -1) {
-                _playlist_set_curr (playlist);
+                cocoaui_playlist_set_curr (playlist);
             }
             return;
         }

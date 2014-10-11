@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D061F7919E9685000CE6C29 /* DdbShared.m */; };
 		2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06B39B19D056BC0041BE86 /* DdbPlaylistWidget.h */; };
 		2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */; };
 		2D0A002719C390E9006F7462 /* tf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A002519C390E9006F7462 /* tf.c */; };
@@ -746,6 +747,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2D061F7919E9685000CE6C29 /* DdbShared.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbShared.m; sourceTree = "<group>"; };
+		2D061F7B19E9685E00CE6C29 /* DdbShared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbShared.h; sourceTree = "<group>"; };
 		2D06B39B19D056BC0041BE86 /* DdbPlaylistWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbPlaylistWidget.h; path = widgets/DdbPlaylistWidget.h; sourceTree = "<group>"; };
 		2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbPlaylistWidget.m; path = widgets/DdbPlaylistWidget.m; sourceTree = "<group>"; };
 		2D0A002519C390E9006F7462 /* tf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tf.c; sourceTree = "<group>"; };
@@ -2575,6 +2578,8 @@
 				2D828E5319E5679800EE874F /* Search.xib */,
 				4D2362B218395D0300C9E818 /* images */,
 				2D0B1C8619C5CF4A00CED0B5 /* Supporting files */,
+				2D061F7919E9685000CE6C29 /* DdbShared.m */,
+				2D061F7B19E9685E00CE6C29 /* DdbShared.h */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -3573,6 +3578,7 @@
 				2D0A002719C390E9006F7462 /* tf.c in Sources */,
 				4D1B515B1837F4E9003E6066 /* nullout.c in Sources */,
 				4D1B4AA11837EC49003E6066 /* pltmeta.c in Sources */,
+				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
 				2D828E5819E567C800EE874F /* DdbSearchWidget.m in Sources */,
 				2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */,
 				4D1B4A171837EC49003E6066 /* dsppreset.c in Sources */,
@@ -4608,6 +4614,7 @@
 				2DCB281619E86162008E9DF6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4D1B3E7518379829003E6066 /* Build configuration list for PBXProject "deadbeef" */ = {
 			isa = XCConfigurationList;
