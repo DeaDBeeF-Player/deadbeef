@@ -106,7 +106,6 @@
 - (IBAction)deselectAllAction:(id)sender;
 - (IBAction)invertSelectionAction:(id)sender;
 - (IBAction)selectionCropAction:(id)sender;
-- (IBAction)jumpToCurrentAction:(id)sender;
 
 // window menu
 - (IBAction)showMainWinAction:(id)sender;
