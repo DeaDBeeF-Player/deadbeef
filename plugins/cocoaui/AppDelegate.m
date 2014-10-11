@@ -703,7 +703,7 @@ init_column (int i, int _id, const char *format) {
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-- (IBAction)jumpToCurrentAction:(id)sender {
+- (IBAction)centerSelectionInVisibleArea:(id)sender {
     deadbeef->sendmessage (DB_EV_TRACKFOCUSCURRENT, 0, 0, 0);
 }
 
