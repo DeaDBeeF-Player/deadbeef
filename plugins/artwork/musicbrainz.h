@@ -1,6 +1,6 @@
 /*
     Album Art plugin for DeaDBeeF
-    Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>
+    Copyright (C) 2014 Ian Nartowicz <deadbeef@nartowicz.co.uk>
     Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This software is provided 'as-is', without any express or implied
@@ -21,19 +21,11 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
-#ifndef __ARTWORK_INTERNAL_H
-#define __ARTWORK_INTERNAL_H
 
-#include "../../deadbeef.h"
+#ifndef __MUSICBRAINZ_H
+#define __MUSICBRAINZ_H
 
-#define min(x,y) ((x)<(y)?(x):(y))
-#define max(x,y) ((x)>(y)?(x):(y))
+int
+fetch_from_musicbrainz (const char *artist, const char *album, const char *dest);
 
-size_t artwork_http_request(const char *url, char *buffer, const size_t max_bytes);
-void artwork_abort_http_request(void);
-
-int ensure_dir(const char *path);
-int copy_file (const char *in, const char *out);
-int write_file(const char *out, const char *data, const size_t data_length);
-
-#endif /*__ARTWORK_INTERNAL_H*/
+#endif

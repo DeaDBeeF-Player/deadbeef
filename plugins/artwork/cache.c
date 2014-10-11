@@ -28,7 +28,6 @@
 #include <string.h>
 #include <time.h>
 #include <libgen.h>
-#include <errno.h>
 #include <dirent.h>
 #include <unistd.h>
 #include <pthread.h>
@@ -38,6 +37,8 @@
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
+
+extern DB_functions_t *deadbeef;
 
 static uintptr_t files_mutex;
 static intptr_t tid;

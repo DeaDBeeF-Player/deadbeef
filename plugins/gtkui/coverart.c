@@ -227,19 +227,13 @@ cache_elements(cache_type_t cache_type)
 }
 
 static int
-cache_sort_order(const char *fname1, const char *fname2, const int width1, const int width2)
-{
-    const int cmp = strcmp(fname1, fname2);
-    return cmp ? cmp : width2 - width1;
-}
-
-static int
 cache_qsort(const void *a, const void *b)
 {
     const cached_pixbuf_t *x = (cached_pixbuf_t *)a;
     const cached_pixbuf_t *y = (cached_pixbuf_t *)b;
     if (x->pixbuf && y->pixbuf) {
-        return cache_sort_order(x->fname, y->fname, x->width, y->width);
+        const int cmp = strcmp(x->fname, y->fname);
+        return cmp ? cmp : y->width - x->width;
     }
 
     return x->pixbuf ? -1 : y->pixbuf ? 1 : 0;
@@ -340,24 +334,26 @@ load_image(load_query_t *query)
     }
 
     /* Create a new pixbuf from this file */
-    GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_scale(query->fname, query->width, -1, TRUE, NULL);
+    int width = query->width;
+    GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_scale(query->fname, width, -1, TRUE, NULL);
 #if 0
     GError *error = NULL;
-    GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_scale(query->fname, query->width, query->width, TRUE, &error);
+    GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_scale(query->fname, width, -1, TRUE, &error);
     if (error) {
-        fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", query->fname, query->width, error ? error->message : "n/a");
+        fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", query->fname, width, error ? error->message : "n/a");
         g_error_free(error);
     }
 #endif
     if (!pixbuf) {
         trace("covercache: unable to create pixbuf from cached image file %s, use default\n", query->fname);
         pixbuf = cover_get_default_pixbuf();
+        width = -1;
     }
     trace("covercache: loaded pixbuf from %s\n", query->fname);
 
     /* Cache the pixbuf */
     deadbeef->mutex_lock(mutex);
-    cache_add(query->cache_type, pixbuf, query->fname, stat_buf.st_mtime, query->width);
+    cache_add(query->cache_type, pixbuf, query->fname, stat_buf.st_mtime, width);
     query->fname = NULL;
 }
 
@@ -394,9 +390,9 @@ get_pixbuf (cache_type_t cache_type, const char *fname, int width) {
     cached_pixbuf_t *cache = cache_location(cache_type);
     const size_t cache_size = cache_elements(cache_type);
     for (size_t i = 0; i < cache_size && cache[i].pixbuf; i++) {
-        if (!cache_sort_order(cache[i].fname, fname, cache[i].width, width)) {
+        if (!strcmp(cache[i].fname, fname) && (cache[i].width == -1 || cache[i].width == width)) {
             struct stat stat_buf;
-            if (!stat(fname, &stat_buf) && stat_buf.st_mtime == cache[i].file_time) {
+            if (stat(fname, &stat_buf) || stat_buf.st_mtime == cache[i].file_time) {
                 gettimeofday(&cache[i].tm, NULL);
                 return cache[i].pixbuf;
             }
@@ -431,20 +427,25 @@ cover_avail_callback(const char *fname, const char *artist, const char *album, v
         trace("cover_avail_callback: add to queue %s, %s\n", fname, dt->cache_path);
         queue_add_load(dt->cache_type, dt->cache_path, dt->width, dt->callback, dt->user_data);
     }
+    else if (get_pixbuf(dt->cache_type, dt->cache_path, dt->width)) {
+        /* Pixbuf (usually the default) already cached */
+        trace("cover_avail_callback: default pixbuf already in cache, do nothing for %s\n", dt->cache_path);
+        free(dt->cache_path);
+    }
     else {
+        /* Put the default pixbuf in the cache because no artwork was found */
         struct stat stat_buf;
-        if (get_pixbuf(dt->cache_type, dt->cache_path, dt->width) ||
-            stat(dt->cache_path, &stat_buf) || !S_ISREG(stat_buf.st_mode) || stat_buf.st_size > 0) {
-            trace("cover_avail_callback: do nothing for %s\n", dt->cache_path);
-            free(dt->cache_path);
+        if (!stat(dt->cache_path, &stat_buf)) {
+            trace("cover_avail_callback: cache default pixbuf for %s\n", dt->cache_path);
+            cache_add(dt->cache_type, cover_get_default_pixbuf(), dt->cache_path, stat_buf.st_mtime, -1);
         }
         else {
-            /* Put the default pixbuf in the cache because no artwork was found */
-            trace("cover_avail_callback: cache default pixbuf for %s\n", dt->cache_path);
-            cache_add(dt->cache_type, cover_get_default_pixbuf(), dt->cache_path, stat_buf.st_mtime, dt->width);
-            if (dt->callback) {
-                dt->callback(dt->user_data);
-            }
+            /* Image file unexpectedly missing or not empty (unlucky timing on cache expiry, reset, etc) */
+            trace("cover_avail_callback: file gone, do nothing for %s\n", dt->cache_path);
+            free(dt->cache_path);
+        }
+        if (dt->callback) {
+            dt->callback(dt->user_data);
         }
     }
     deadbeef->mutex_unlock(mutex);
@@ -512,15 +513,23 @@ get_cover_art_int(cache_type_t cache_type, const char *fname, const char *artist
     trace("coverart: get_album_art for %s %s %s %d\n", fname, artist, album, width);
     cover_avail_info_t *dt = cover_avail_info(cache_type, strdup(cache_path), width, callback, user_data);
     char *image_fname = artwork_plugin->get_album_art(fname, artist, album, -1, cover_avail_callback, dt);
+    if (image_fname) {
+        /* There will be no callback */
+        free(dt->cache_path);
+        free(dt);
+    }
+
     deadbeef->mutex_lock(mutex);
     GdkPixbuf *pb = get_pixbuf(cache_type, cache_path, width);
     if (pb) {
+        /* We already have the proper pixbuf in memory */
         g_object_ref(pb);
         if (image_fname) {
             free(image_fname);
         }
     }
     else if (image_fname) {
+        /* Got a cached file, need to load a pixbuf into memory */
         queue_add_load(cache_type, image_fname, width, callback, user_data);
     }
     deadbeef->mutex_unlock(mutex);
@@ -531,19 +540,19 @@ get_cover_art_int(cache_type_t cache_type, const char *fname, const char *artist
 GdkPixbuf *
 get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, void (*callback) (void *), void *user_data)
 {
-    get_cover_art_int(CACHE_TYPE_THUMB, fname, artist, album, width, callback, user_data);
+    return get_cover_art_int(CACHE_TYPE_THUMB, fname, artist, album, width, callback, user_data);
 }
 
 GdkPixbuf *
 get_cover_art_primary (const char *fname, const char *artist, const char *album, int width, void (*callback) (void *), void *user_data)
 {
-    get_cover_art_int(CACHE_TYPE_PRIMARY, fname, artist, album, width, callback, user_data);
+    return get_cover_art_int(CACHE_TYPE_PRIMARY, fname, artist, album, width, callback, user_data);
 }
 
 GdkPixbuf *
 get_cover_art_thumb (const char *fname, const char *artist, const char *album, int width, void (*callback) (void *), void *user_data)
 {
-    get_cover_art_int(CACHE_TYPE_THUMB, fname, artist, album, width, callback, user_data);
+    return get_cover_art_int(CACHE_TYPE_THUMB, fname, artist, album, width, callback, user_data);
 }
 
 void
