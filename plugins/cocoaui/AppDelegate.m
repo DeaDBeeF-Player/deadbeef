@@ -932,5 +932,45 @@ init_column (int i, int _id, const char *format) {
 }
 
 - (IBAction)savePlaylistAction:(id)sender {
+    NSSavePanel *panel = [NSSavePanel savePanel];
+    [panel setTitle:@"Save Playlist"];
+    [panel setCanCreateDirectories:YES];
+    [panel setExtensionHidden:NO];
+
+    NSString *message = @"Supported file types: .dbpl";
+
+    NSMutableArray *types = [[NSMutableArray alloc] init];
+    [types addObject:@"dbpl"];
+
+    DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
+    for (int i = 0; plug[i]; i++) {
+        if (plug[i]->extensions && plug[i]->load) {
+            const char **exts = plug[i]->extensions;
+            if (exts && plug[i]->save) {
+                for (int e = 0; exts[e]; e++) {
+                    NSString *ext = [NSString stringWithUTF8String:exts[e]];
+                    [types addObject:ext];
+
+                    message = [message stringByAppendingString:@", "];
+                    message = [message stringByAppendingPathExtension:ext];
+                }
+            }
+        }
+    }
+
+    [panel setMessage:message];
+    [panel setAllowedFileTypes:types];
+    [panel setAllowsOtherFileTypes:NO];
+
+    if ([panel runModal] == NSOKButton) {
+        NSString *fname = [[panel URL] path];
+        if (fname) {
+            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            if (plt) {
+                deadbeef->plt_save (plt, NULL, NULL, [fname UTF8String], NULL, NULL, NULL);
+                deadbeef->plt_unref (plt);
+            }
+        }
+    }
 }
 @end
