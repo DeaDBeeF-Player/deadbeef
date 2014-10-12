@@ -594,6 +594,18 @@ ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
     return 0;
 }
 
+static void
+print_error(const char *filename, int err)
+{
+    char errbuf[128];
+    const char *errbuf_ptr = errbuf;
+
+    if (av_strerror(err, errbuf, sizeof(errbuf)) < 0)
+        errbuf_ptr = strerror(AVUNERROR(err));
+    fprintf (stderr, "%s: %s\n", filename, errbuf_ptr);
+}
+
+
 static DB_playItem_t *
 ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("ffmpeg_insert %s\n", fname);
@@ -631,7 +643,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 #else
     if ((ret = av_open_input_file(&fctx, uri, NULL, 0, NULL)) < 0) {
 #endif
-        trace ("fctx is %p, ret %d/%s", fctx, ret, strerror(-ret));
+        print_error (uri, ret);
         return NULL;
     }
 
