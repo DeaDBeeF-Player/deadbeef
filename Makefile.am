@@ -40,7 +40,7 @@ deadbeef_SOURCES =\
 	fft.c fft.h\
 	handler.c handler.h\
 	strdupa.h\
-	escape.c escape.h
+	escape.c escape.h\
 	tf.c tf.h
 	
 #	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
