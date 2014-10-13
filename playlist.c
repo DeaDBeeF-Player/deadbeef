@@ -165,6 +165,9 @@ pl_get_order (void) {
 
 int
 pl_init (void) {
+    if (playlist) {
+        return 0; // avoid double init
+    }
     playlist = &dummy_playlist;
 #if !DISABLE_LOCKING
     mutex = mutex_create ();
@@ -1290,6 +1293,7 @@ plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int nums
     return plt_insert_cue_from_buffer (plt, after, origin, buf, sz, numsamples, samplerate);
 }
 
+// FIXME: this is not thread-safe
 static int follow_symlinks = 0;
 static int ignore_archives = 0;
 

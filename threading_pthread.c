@@ -59,7 +59,7 @@ thread_start (void (*fn)(void *ctx), void *ctx) {
 
 intptr_t
 thread_start_low_priority (void (*fn)(void *ctx), void *ctx) {
-#ifdef __linux__
+#ifdef __linux__ && !defined(ANDROID)
     pthread_t tid;
     pthread_attr_t attr;
     int s = pthread_attr_init (&attr);
