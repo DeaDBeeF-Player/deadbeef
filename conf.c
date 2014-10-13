@@ -84,7 +84,13 @@ conf_load (void) {
     FILE *fp = fopen (str, "rt");
     if (!fp) {
         fprintf (stderr, "failed to load config file\n");
-        return -1;
+        fp = fopen (str, "w+b");
+        if (!fp) {
+            return -1;
+        }
+        fprintf (stderr, "created an empty config\n");
+        fclose (fp);
+        return 0;
     }
     conf_lock ();
     int line = 0;

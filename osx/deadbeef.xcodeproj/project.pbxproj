@@ -4247,6 +4247,7 @@
 				GCC_PREFIX_HEADER = "../plugins/cocoaui/deadbeef-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"HAVE_COCOAUI=1",
+					"HAVE_COREAUDIO=1",
 					"PORTABLE=1",
 					"STATICLINK=1",
 					"PREFIX=\\\"donotuse\\\"",
@@ -4279,6 +4280,7 @@
 				GCC_PREFIX_HEADER = "../plugins/cocoaui/deadbeef-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"HAVE_COCOAUI=1",
+					"HAVE_COREAUDIO=1",
 					"PORTABLE=1",
 					"STATICLINK=1",
 					"PREFIX=\\\"donotuse\\\"",

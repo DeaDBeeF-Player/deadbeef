@@ -363,7 +363,7 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             const char *ret = gme_track_info (emu, &inf, i);
 #else
             track_info_t _inf;
-            const char *ret = gme_track_info (emu, &inf, i);
+            const char *ret = gme_track_info (emu, &_inf, i);
             track_info_t *inf = &_inf;
 #endif
             if (!ret) {

@@ -2430,7 +2430,7 @@ streamer_read_async (char *bytes, int size) {
 
 #ifdef ANDROID
             // downsample
-            if (fileinfo->fmt.samplerate != output->fmt.samplerate) {
+            if (fileinfo->fmt.samplerate > output->fmt.samplerate) {
                 if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 2 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
                     // clip to multiple of 2 samples
                     int outsamplesize = output->fmt.channels * (output->fmt.bps>>3) * 2;

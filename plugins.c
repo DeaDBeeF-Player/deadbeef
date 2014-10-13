@@ -62,7 +62,7 @@
 
 //#define DISABLE_VERSIONCHECK 1
 
-#ifdef HAVE_COCOAUI
+#if defined(HAVE_COCOAUI) || defined(OSX_APPBUNDLE)
 #define PLUGINEXT ".dylib"
 #else
 #define PLUGINEXT ".so"
@@ -189,7 +189,6 @@ static DB_functions_t deadbeef_api = {
     .pl_set_item_replaygain = (void (*)(DB_playItem_t *it, int idx, float value))pl_set_item_replaygain,
     .pl_get_item_replaygain = (float (*)(DB_playItem_t *it, int idx))pl_get_item_replaygain,
     .plt_get_totaltime = (float (*) (ddb_playlist_t *plt))plt_get_totaltime,
-    .plt_get_item_idx = (int (*) (ddb_playlist_t *playlist, DB_playItem_t *it, int iter))plt_get_item_idx,
     .plt_get_item_for_idx = (DB_playItem_t * (*) (ddb_playlist_t *playlist, int idx, int iter))plt_get_item_for_idx,
     .pl_get_totaltime = pl_get_totaltime,
     .pl_getcount = pl_getcount,
@@ -660,7 +659,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
     DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name+3);
 #endif
     if (!plug_load) {
-        trace ("dlsym error: %s\n", dlerror ());
+        trace ("dlsym error: %s (%s)\n", dlerror (), d_name + 3);
         dlclose (handle);
         return -1;
     }
@@ -735,7 +734,7 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
     }
     else
     {
-        trace ("plug_load_all: scandir found %d files\n", n);
+        trace ("load_plugin_dir %s: scandir found %d files\n", plugdir, n);
         int i;
         for (i = 0; i < n; i++)
         {
