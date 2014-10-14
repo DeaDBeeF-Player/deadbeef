@@ -330,7 +330,8 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     conf = info->sidplay->config ();
     conf.frequency = samplerate;
     conf.precision = bps;
-    conf.playback = info->tune->isStereo () ? sid2_stereo : sid2_mono;
+
+    conf.playback = deadbeef->conf_get_int ("sid.mono", 0) ? sid2_mono : sid2_stereo;
     conf.sidEmulation = info->resid;
     conf.optimisation = 0;
     info->sidplay->config (conf);
