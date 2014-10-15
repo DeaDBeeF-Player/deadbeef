@@ -332,7 +332,7 @@ resolve_disc (CdIo_t *cdio, cddb_disc_t* disc, char *disc_list)
     disc_list[0] = '\0';
     for (int i = 0; i < matches; i++)
     {
-        if (cddb_read(conn, query_disc))
+        if (cddb_read(conn, query_disc) && discs_read < MAX_CDDB_DISCS)
         {
             discs_read++;
             char temp_string[CDDB_CATEGORY_SIZE + CDDB_DISCID_SIZE + 1];
@@ -399,7 +399,7 @@ write_metadata(DB_playItem_t *item, const cddb_disc_t *disc, const char *num_tra
                const int track_index, const char *artist, const char *disc_title, const char *genre, const unsigned int year)
 {
     cddb_track_t *track = cddb_disc_get_track(disc, track_index);
-    trace("track %d, artist=%s, album=%s, title=%s\n", track, artist, disc_title, cddb_track_get_title(track));
+    trace("track %d, artist=%s, album=%s, title=%s\n", track_index, artist, disc_title, cddb_track_get_title(track));
 
     deadbeef->pl_delete_all_meta(item);
     deadbeef->pl_add_meta(item, "album", disc_title);
@@ -454,7 +454,7 @@ cddb_thread (void *params_void)
     snprintf(num_tracks, sizeof(num_tracks), "%02d", track_count);
 
     // FIXME: playlist must be locked before doing that
-    for (int i = 0; items[i]; i++)
+    for (int i = 0; items[i] && i < 1; i++)
     {
         // FIXME: problem will happen here if item(s) were deleted from playlist, and new items were added in their places
         // possible solutions: catch EV_TRACKDELETED and mark item(s) in every thread as NULL
@@ -462,7 +462,7 @@ cddb_thread (void *params_void)
         write_metadata(items[i], disc, num_tracks, i, artist, disc_title, genre, year);
     }
     cddb_disc_destroy (disc);
-    cleanup_thread_params (params);
+//    cleanup_thread_params (params);
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt)
     {
