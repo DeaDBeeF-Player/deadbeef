@@ -535,7 +535,8 @@ int group_bytecode_size = 0;
 }
 
 - (void)selectionChanged:(DdbListviewRow_t)row {
-    deadbeef->sendmessage (DB_EV_SELCHANGED, 0/*should be DdbListview ptr*/, deadbeef->plt_get_curr_idx (), [self playlistIter]);
+    DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)[self view];
+    deadbeef->sendmessage (DB_EV_SELCHANGED, (uintptr_t)[pltWidget listview], deadbeef->plt_get_curr_idx (), [self playlistIter]);
 }
 
 - (BOOL)hasDND {
@@ -704,7 +705,7 @@ int group_bytecode_size = 0;
         }
             break;
         case DB_EV_SELCHANGED: {
-            if (ctx != (uintptr_t)listview || p2 == PL_SEARCH) {
+            if (ctx != (uintptr_t)listview) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [listview reloadData];
                 });
