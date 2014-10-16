@@ -59,7 +59,6 @@ DB_decoder_t sid_plugin = {
     .plugin.start = csid_start,
     .plugin.stop = csid_stop,
     .plugin.configdialog = settings_dlg,
-    .plugin.id = "stdsid",
     .plugin.message = sid_message,
     .open = csid_open,
     .init = csid_init,
