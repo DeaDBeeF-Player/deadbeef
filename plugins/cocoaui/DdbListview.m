@@ -924,6 +924,7 @@ int grouptitleheight = 22;
         {
             // reset selection, and set it to single item
             [self selectSingle:sel];
+            [contentView setNeedsDisplay:YES];
             if (dnd) {
                 _areaselect = 1;
                 _areaselect_y = pt.y;
@@ -966,6 +967,7 @@ int grouptitleheight = 22;
         NSPoint convPt = [contentView convertPoint:[event locationInWindow] fromView:nil];
         if (![self pickPoint:convPt.y group:&grp groupIndex:&grp_index index:&sel]) {
             [self selectSingle:sel];
+            [contentView setNeedsDisplay:YES];
         }
         else {
             [_delegate setCursor:-1];
