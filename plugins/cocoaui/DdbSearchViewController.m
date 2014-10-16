@@ -56,6 +56,11 @@ extern DB_functions_t *deadbeef;
     }
 }
 
+- (void)selectionChanged:(DdbListviewRow_t)row {
+    DdbSearchWidget *pltWidget = (DdbSearchWidget *)[self view];
+    deadbeef->sendmessage (DB_EV_SELCHANGED, (uintptr_t)[pltWidget listview], deadbeef->plt_get_curr_idx (), [self playlistIter]);
+}
+
 - (void)reset {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {

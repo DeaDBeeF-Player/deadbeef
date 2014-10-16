@@ -14,4 +14,5 @@
     DdbListview *_listview;
 }
 - (void)setDelegate:(id<DdbListviewDelegate>)delegate;
+@property (readonly) DdbListview *listview;
 @end

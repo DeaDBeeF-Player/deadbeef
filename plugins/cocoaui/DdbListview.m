@@ -1243,34 +1243,21 @@ int grouptitleheight = 22;
 }
 
 - (void)setCursor:(int)cursor noscroll:(BOOL)noscroll {
-    int prev = [_delegate cursor];
-    DdbListviewRow_t prev_it = [_delegate rowForIndex:prev];
     [_delegate setCursor:cursor];
-
-    BOOL prev_selected = NO;
-
-    if (prev_it != [_delegate invalidRow]) {
-        prev_selected = [_delegate rowSelected:prev_it];
-    }
-
     [self selectSingle:cursor];
 
-    if (prev_it != [_delegate invalidRow]) {
-        if (!prev_selected) {
-            [self drawRow:prev];
-        }
-
-        [_delegate unrefRow:prev_it];
-    }
-
-    [self drawRow:cursor];
-
+    BOOL need_redraw = YES;
     if (!noscroll) {
-        [self setScrollForPos:[self getRowPos:cursor]];
+        if ([self setScrollForPos:[self getRowPos:cursor]]) {
+            need_redraw = NO;
+        }
+    }
+    if (need_redraw) {
+        [contentView setNeedsDisplay:YES];
     }
 }
 
-- (void)setScrollForPos:(int)pos {
+- (BOOL)setScrollForPos:(int)pos {
     NSScrollView *sv = [contentView enclosingScrollView];
     NSRect vis = [sv documentVisibleRect];
     int scrollpos = vis.origin.y;
@@ -1291,8 +1278,9 @@ int grouptitleheight = 22;
     }
     if (scrollpos != newscroll) {
         [contentView scrollPoint:NSMakePoint(vis.origin.x, newscroll)];
+        return YES;
     }
-
+    return NO;
 }
 
 - (int)getRowPos:(int)row_idx {
