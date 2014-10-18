@@ -1268,7 +1268,7 @@ m3u_error:
 
         trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), dec->plugin.id);
         mutex_lock (decodemutex);
-        new_fileinfo = dec_open (dec, 0, it);
+        new_fileinfo = dec_open (dec, DDB_DECODER_HINT_STREAMER, it);
         if (new_fileinfo->file) {
             new_fileinfo_file = new_fileinfo->file;
         }
@@ -1722,7 +1722,7 @@ streamer_thread (void *ctx) {
                 }
                 pl_unlock ();
                 if (dec) {
-                    fileinfo = dec_open (dec, 0, streaming_track);
+                    fileinfo = dec_open (dec, DDB_DECODER_HINT_STREAMER, streaming_track);
                     mutex_unlock (decodemutex);
                     if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) != 0) {
                         mutex_lock (decodemutex);
