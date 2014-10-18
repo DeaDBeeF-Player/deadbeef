@@ -63,6 +63,7 @@ typedef struct {
     int cur_bit_stream;
     float next_update;
     DB_playItem_t *it;
+    int is_streamer;
     const DB_playItem_t *new_track;
     uint8_t *channel_map;
 } ogg_info_t;
@@ -234,19 +235,43 @@ cvorbis_seek_sample (DB_fileinfo_t *_info, int sample) {
     return 0;
 }
 
+static ogg_info_t *
+cvorbis_open_int (uint32_t hints) {
+    ogg_info_t *info = calloc(1, sizeof(ogg_info_t));
+    if (info) {
+        info->info.plugin = &plugin;
+#if FIXED_POINT
+        info->info.fmt.bps = 16;
+#else
+        info->info.fmt.is_float = 1;
+        info->info.fmt.bps = 32;
+#endif
+        info->is_streamer = hints & DDB_DECODER_HINT_STREAMER;
+    }
+    return info;
+}
+
 static DB_fileinfo_t *
 cvorbis_open (uint32_t hints) {
-    DB_fileinfo_t *_info = calloc(1, sizeof(ogg_info_t));
-    if (_info) {
-        _info->plugin = &plugin;
-#if FIXED_POINT
-        _info->fmt.bps = 16;
-#else
-        _info->fmt.is_float = 1;
-        _info->fmt.bps = 32;
-#endif
+    return (DB_fileinfo_t *)cvorbis_open_int(hints);
+}
+
+static DB_fileinfo_t *
+cvorbis_open2 (uint32_t hints, DB_playItem_t *it) {
+    ogg_info_t *info = cvorbis_open_int(hints);
+    if (!info) {
+        return NULL;
     }
-    return _info;
+
+    deadbeef->pl_lock();
+    info->info.file = deadbeef->fopen(deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock();
+    if (!info->info.file) {
+        trace("cvorbis_open2 failed to open file %s\n", deadbeef->pl_find_meta(it, ":URI"));
+        return NULL;
+    }
+
+    return &info->info;
 }
 
 static int
@@ -257,13 +282,16 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     deadbeef->pl_item_ref (it);
     deadbeef->pl_replace_meta (it, "!FILETYPE", "OggVorbis");
 
-    deadbeef->pl_lock ();
-    info->info.file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
-    deadbeef->pl_unlock ();
     if (!info->info.file) {
-        trace ("ogg: failed to open file %s\n", deadbeef->pl_find_meta (it, ":URI"));
-        return -1;
+        deadbeef->pl_lock ();
+        info->info.file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+        deadbeef->pl_unlock ();
+        if (!info->info.file) {
+            trace ("cvorbis_init failed to open file %s\n", deadbeef->pl_find_meta (it, ":URI"));
+            return -1;
+        }
     }
+
     if (info->info.file->vfs->is_streaming () && deadbeef->fgetlength (info->info.file) == -1) {
         ov_callbacks ovcb = {
             .read_func = cvorbis_fread,
@@ -495,7 +523,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
 #endif
 
     _info->readpos = (float)(ov_pcm_tell(&info->vorbis_file) - info->it->startsample) / _info->fmt.samplerate;
-    if (_info->readpos > info->next_update) {
+    if (info->is_streamer && _info->readpos > info->next_update) {
         const int rate = ov_bitrate_instant(&info->vorbis_file) / 1000;
         if (rate > 0) {
             deadbeef->streamer_set_bitrate(rate);
@@ -814,7 +842,7 @@ static const char * exts[] = { "ogg", "ogx", "oga", NULL };
 // define plugin interface
 static DB_decoder_t plugin = {
     .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    .plugin.api_vminor = 7,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
@@ -882,6 +910,7 @@ static DB_decoder_t plugin = {
     .plugin.start = vorbis_start,
     .plugin.stop = vorbis_stop,
     .open = cvorbis_open,
+    .open2 = cvorbis_open2,
     .init = cvorbis_init,
     .free = cvorbis_free,
     .read = cvorbis_read,
