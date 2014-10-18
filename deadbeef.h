@@ -1211,6 +1211,7 @@ typedef struct DB_fileinfo_s {
 
 enum {
     DDB_DECODER_HINT_16BIT = 0x1, // that flag means streamer prefers 16 bit streams for performance reasons
+    DDB_DECODER_HINT_STREAMER = 0x2, // means this decode is for the streamer
 };
 
 // decoder plugin
