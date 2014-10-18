@@ -363,24 +363,26 @@ insert_single_track (CdIo_t* cdio, ddb_playlist_t *plt, DB_playItem_t *after, co
         return NULL;
     }
 
-    int sector_count = cdio_get_track_sec_count (cdio, track_nr);
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (tmp, plugin.plugin.id);
-    deadbeef->pl_add_meta (it, ":FILETYPE", "cdda");
-    deadbeef->plt_set_item_duration (plt, it, (float)sector_count / 75.0);
+    if (it)
+    {
+        deadbeef->pl_add_meta (it, ":FILETYPE", "cdda");
 
-    snprintf (tmp, sizeof (tmp), "CD Track %02d", track_nr);
-    deadbeef->pl_add_meta (it, "title", tmp);
-    snprintf (tmp, sizeof (tmp), "%02d", track_nr);
-    deadbeef->pl_add_meta (it, "track", tmp);
+        const float sector_count = cdio_get_track_sec_count (cdio, track_nr);
+        deadbeef->plt_set_item_duration (plt, it, sector_count / 75);
 
-    char discid_string[10];
-    sprintf(discid_string, "%08x", discid);
-    deadbeef->pl_add_meta (it, CDDB_DISCID_TAG, discid_string);
+        snprintf (tmp, sizeof (tmp), "CD Track %02d", track_nr);
+        deadbeef->pl_add_meta (it, "title", tmp);
 
-    after = deadbeef->plt_insert_item (plt, after, it);
+        char discid_string[10];
+        sprintf(discid_string, "%08x", discid);
+        deadbeef->pl_add_meta (it, CDDB_DISCID_TAG, discid_string);
 
-    return after;
+        it = deadbeef->plt_insert_item (plt, after, it);
+    }
+
+    return it;
 }
 
 static void
@@ -399,7 +401,7 @@ write_metadata(DB_playItem_t *item, const cddb_disc_t *disc, const char *num_tra
                const int track_index, const char *artist, const char *disc_title, const char *genre, const unsigned int year)
 {
     cddb_track_t *track = cddb_disc_get_track(disc, track_index);
-    trace("track %d, artist=%s, album=%s, title=%s\n", track_index, artist, disc_title, cddb_track_get_title(track));
+    trace("track %d, title=%s\n", track_index, cddb_track_get_title(track));
 
     deadbeef->pl_delete_all_meta(item);
     deadbeef->pl_add_meta(item, "album", disc_title);
@@ -448,21 +450,18 @@ cddb_thread (void *params_void)
     const char *artist = cddb_disc_get_artist (disc);
     const char *genre = cddb_disc_get_genre (disc);
     const unsigned int year = cddb_disc_get_year (disc);
-    trace ("disc_title=%s, disk_artist=%s\n", disc_title, artist);
+    trace ("disc_title=%s, artist=%s, genre=%s, year=%d\n", disc_title, artist, genre, year);
     int track_count = cddb_disc_get_track_count(disc);
     char num_tracks[5];
     snprintf(num_tracks, sizeof(num_tracks), "%02d", track_count);
 
-    // FIXME: playlist must be locked before doing that
-    for (int i = 0; items[i] && i < 1; i++)
+    for (int i = 0; items[i]; i++)
     {
-        // FIXME: problem will happen here if item(s) were deleted from playlist, and new items were added in their places
-        // possible solutions: catch EV_TRACKDELETED and mark item(s) in every thread as NULL
         deadbeef->pl_add_meta (items[i], CDDB_IDS_TAG, disc_list);
         write_metadata(items[i], disc, num_tracks, i, artist, disc_title, genre, year);
     }
     cddb_disc_destroy (disc);
-//    cleanup_thread_params (params);
+    cleanup_thread_params (params);
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt)
     {
