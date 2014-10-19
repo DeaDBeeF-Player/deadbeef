@@ -19,7 +19,7 @@
 /* screwed/maintained by Alexey Yakovenko <waker@users.sourceforge.net> */
 
 #ifdef HAVE_CONFIG_H
-#  include "../../config.h"
+    #include "../../config.h"
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,12 +27,16 @@
 #include <assert.h>
 #include <sys/types.h>
 #if HAVE_SYS_CDEFS_H
-#include <sys/cdefs.h>
+    #include <sys/cdefs.h>
 #endif
 #if HAVE_SYS_SYSLIMITS_H
-#include <sys/syslimits.h>
+    #include <sys/syslimits.h>
 #endif
 
+#if USE_PARANOIA
+    #include <cdio/paranoia.h>
+    #include <cdio/cdda.h>
+#endif
 #include <cdio/cdio.h>
 #include <cdio/cdtext.h>
 #include <cddb/cddb.h>
@@ -50,7 +54,6 @@
 
 #define SECTORSIZE CDIO_CD_FRAMESIZE_RAW //2352
 #define SAMPLESIZE 4 //bytes
-#define BUFSIZE (CDIO_CD_FRAMESIZE_RAW * 2)
 
 #define CDDB_CATEGORY_SIZE 12
 #define CDDB_DISCID_SIZE 10
@@ -65,13 +68,17 @@ static DB_functions_t *deadbeef;
 
 typedef struct {
     DB_fileinfo_t info;
-    CdIo_t* cdio;
+    uint32_t hints;
+    CdIo_t *cdio;
+#if USE_PARANOIA
+    cdrom_paranoia_t *paranoia;
+#endif
     lsn_t first_sector;
-    unsigned int sector_count;
-    uint8_t tail [SECTORSIZE];
-    unsigned int tail_len;
-    int current_sector;
-    unsigned int current_sample;
+    lsn_t current_sector;
+    lsn_t last_sector;
+    uint8_t buffer[SECTORSIZE];
+    uint8_t *tail;
+    size_t tail_length;
 } cdda_info_t;
 
 struct cddb_thread_params
@@ -121,36 +128,51 @@ calc_discid(CdIo_t *cdio)
 }
 
 static DB_fileinfo_t *
-cda_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (cdda_info_t));
-    memset (_info, 0, sizeof (cdda_info_t));
-    return _info;
+cda_open (uint32_t hints)
+{
+    cdda_info_t *info = calloc(1, sizeof (cdda_info_t));
+    if (info)
+    {
+        info->hints = hints;
+        info->tail = info->buffer;
+        info->tail_length = 0;
+        info->info.plugin = &plugin;
+        info->info.fmt.bps = 16;
+        info->info.fmt.channels = 2;
+        info->info.fmt.samplerate = 44100;
+        info->info.fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT;
+        info->info.readpos = 0;
+    }
+    return &info->info;
 }
 
 static int
-cda_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
+cda_init (DB_fileinfo_t *_info, DB_playItem_t *it)
+{
     cdda_info_t *info = (cdda_info_t *)_info;
-
-    trace ("cdda: init %s\n", deadbeef->pl_find_meta (it, ":URI"));
-
     char location[PATH_MAX];
-    deadbeef->pl_get_meta (it, ":URI", location, sizeof (location));
+    deadbeef->pl_get_meta(it, ":URI", location, sizeof(location));
+    trace ("cdda: init %s\n", location);
 
-    char *nr = strchr (location, '#');
-    if (nr) {
-        *nr = 0; nr++;
-    }
-    else {
-        trace ("cdda: bad name: %s\n", deadbeef->pl_find_meta (it, ":URI"));
+    char *nr = strchr(location, '#');
+    if (!nr) {
+        trace ("cdda: bad name: %s\n", location);
         return -1;
     }
-    int track_nr = atoi (nr);
-    char *fname = (*location) ? location : NULL; //NULL if empty string; means physical CD drive
+    *nr = '\0';
 
-    info->cdio = cdio_open (fname, DRIVER_UNKNOWN);
+    const char *fname = (*location) ? location : NULL; //NULL if empty string; means physical CD drive
+    info->cdio = cdio_open(fname, DRIVER_UNKNOWN);
     if  (!info->cdio)
     {
         trace ("cdda: Could not open CD\n");
+        return -1;
+    }
+
+    const int track_nr = atoi(nr+1);
+    if (cdio_get_track_format(info->cdio, track_nr) != TRACK_FORMAT_AUDIO)
+    {
+        trace ("cdda: Not an audio track (%d)\n", track_nr);
         return -1;
     }
 
@@ -169,86 +191,102 @@ cda_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-
-    if (TRACK_FORMAT_AUDIO != cdio_get_track_format (info->cdio, track_nr))
-    {
-        trace ("cdda: Not an audio track (%d)\n", track_nr);
-        return -1;
-    }
-
-    int channels = cdio_get_track_channels (info->cdio, track_nr);
-    trace ("cdio nchannels: %d\n", channels);
-
-    _info->plugin = &plugin;
-    _info->fmt.bps = 16;
-    _info->fmt.channels = 2;
-    _info->fmt.samplerate = 44100;
-    _info->fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT;
-    _info->readpos = 0;
-
-    info->first_sector = cdio_get_track_lsn (info->cdio, track_nr);
-    info->sector_count = cdio_get_track_sec_count (info->cdio, track_nr);
+    trace("cdio nchannels (should always be 2 for an audio track): %d\n", cdio_get_track_channels (info->cdio, track_nr));
+    info->first_sector = cdio_get_track_lsn(info->cdio, track_nr);
     info->current_sector = info->first_sector;
-    info->tail_len = 0;
-    info->current_sample = 0;
+    info->last_sector = info->first_sector + cdio_get_track_sec_count(info->cdio, track_nr) - 1;
+    cdio_set_speed(info->cdio, info->hints&DDB_DECODER_HINT_NEED_BITRATE ? 4 : -1);
+#if USE_PARANOIA
+    cdrom_drive_t *cdrom = cdio_cddap_identify_cdio(info->cdio, CDDA_MESSAGE_FORGETIT, NULL);
+    cdio_cddap_open(cdrom);
+    info->paranoia = cdio_paranoia_init(cdrom);
+    const int no_paranoia = info->hints&DDB_DECODER_HINT_NEED_BITRATE || !deadbeef->conf_get_int("cdda.paranoia", 1);
+    paranoia_modeset(info->paranoia, no_paranoia ? PARANOIA_MODE_DISABLE : PARANOIA_MODE_FULL^PARANOIA_MODE_NEVERSKIP);
+    paranoia_seek(info->paranoia, info->first_sector, SEEK_SET);
+#endif
     return 0;
 }
 
+#if USE_PARANOIA
+static void
+paranoia_callback(long bytes, paranoia_cb_mode_t mode)
+{
+    if (mode > 1 && mode != 9)
+        fprintf(stderr, "%ld %d\n", bytes, mode);
+}
+#endif
+
+static const char *
+read_sector(cdda_info_t *info)
+{
+#if USE_PARANOIA
+    const int16_t *p_readbuf = cdio_paranoia_read(info->paranoia, NULL);
+    if (p_readbuf)
+    {
+        info->current_sector++;
+        return (char *)p_readbuf;
+    }
+#else
+    if (!cdio_read_audio_sector(info->cdio, info->buffer, info->current_sector))
+    {
+        info->current_sector++;
+        return info->buffer;
+    }
+#endif
+    return NULL;
+}
+
 static int
-cda_read (DB_fileinfo_t *_info, char *bytes, int size) {
+cda_read (DB_fileinfo_t *_info, char *bytes, int size)
+{
     cdda_info_t *info = (cdda_info_t *)_info;
-    int extrasize = 0;
+    char *fill = bytes;
+    const char *high_water = bytes + size;
 
-    if (info->tail_len > 0)
+    if (info->tail_length >= size)
     {
-        if (info->tail_len >= size)
+        memcpy(fill, info->tail, size);
+        info->tail += size;
+        fill += size;
+        info->tail_length -= size;
+    }
+    else if (info->tail_length > 0)
+    {
+        memcpy(fill, info->tail, info->tail_length);
+        fill += info->tail_length;
+        info->tail_length = 0;
+    }
+
+    while (fill < high_water && info->current_sector <= info->last_sector)
+    {
+        const char *p_readbuf = read_sector(info);
+        if (!p_readbuf)
         {
-//            trace ("Easy case\n");
-            memcpy (bytes, info->tail, size);
-            info->tail_len -= size;
-            memmove (info->tail, info->tail+size, info->tail_len);
-            return size;
+            trace("cda_read: read_sector failed\n");
+            return -1;
         }
-//        trace ("Prepending with tail of %d bytes\n", tail_len);
-        extrasize = info->tail_len;
-        memcpy (bytes, info->tail, info->tail_len);
-        bytes += info->tail_len;
-        size -= info->tail_len;
-        info->tail_len = 0;
+
+        if (fill+SECTORSIZE <= high_water)
+        {
+            memcpy(fill, p_readbuf, SECTORSIZE);
+            fill += SECTORSIZE;
+        }
+        else
+        {
+            const size_t bytes_left = high_water - fill;
+            memcpy(fill, p_readbuf, bytes_left);
+            fill += bytes_left;
+            info->tail_length = SECTORSIZE - bytes_left;
+            info->tail = info->buffer + bytes_left;
+#if USE_PARANOIA
+            memcpy(info->tail, p_readbuf+bytes_left, info->tail_length);
+#endif
+        }
     }
 
-    int sectors_to_read = size / SECTORSIZE + 1;
-    int end = 0;
-
-    if (info->current_sector + sectors_to_read > info->first_sector + info->sector_count) // reached end of track
-    {
-        end = 1;
-        sectors_to_read = info->first_sector + info->sector_count - info->current_sector;
-//        trace ("cdda: reached end of track\n");
-    }
-
-    int bufsize = sectors_to_read * SECTORSIZE;
-
-    info->tail_len = end ? 0 : bufsize - size;
-
-    char *buf = alloca (bufsize);
-
-    driver_return_code_t ret = cdio_read_audio_sectors (info->cdio, buf, info->current_sector, sectors_to_read);
-    if (ret != DRIVER_OP_SUCCESS)
-        return 0;
-    info->current_sector += sectors_to_read;
-
-    int retsize = end ? bufsize : size;
-
-    memcpy (bytes, buf, retsize);
-    if (!end)
-        memcpy (info->tail, buf+retsize, info->tail_len);
-
-    retsize += extrasize;
-//    trace ("requested: %d; tail_len: %d; size: %d; sectors_to_read: %d; return: %d\n", initsize, tail_len, size, sectors_to_read, retsize);
-    info->current_sample += retsize / SAMPLESIZE;
-    _info->readpos = (float)info->current_sample / _info->fmt.samplerate;
-    return retsize;
+//    trace ("requested: %d, return: %d\n", size, fill-bytes);
+    _info->readpos = (float)info->current_sector * SECTORSIZE / SAMPLESIZE / _info->fmt.samplerate;
+    return fill - bytes;
 }
 
 static void
@@ -259,6 +297,11 @@ cda_free (DB_fileinfo_t *_info)
         if (info->cdio) {
             cdio_destroy (info->cdio);
         }
+#if USE_PARANOIA
+        if (info->paranoia) {
+            cdio_paranoia_free(info->paranoia);
+        }
+#endif
         free (_info);
     }
 }
@@ -266,18 +309,26 @@ cda_free (DB_fileinfo_t *_info)
 static int
 cda_seek_sample (DB_fileinfo_t *_info, int sample)
 {
+    trace("cda_seek_sample %d\n", sample);
     cdda_info_t *info = (cdda_info_t *)_info;
-    int sector = sample / (SECTORSIZE / SAMPLESIZE) + info->first_sector;
-    int offset = (sample % (SECTORSIZE / SAMPLESIZE)) * SAMPLESIZE; //in bytes
-    char buf [SECTORSIZE];
+    const int sector = sample * SAMPLESIZE / SECTORSIZE + info->first_sector;
+    const int offset = sample * SAMPLESIZE % SECTORSIZE;
 
-    driver_return_code_t ret = cdio_read_audio_sector (info->cdio, buf, sector);
-    if (ret != DRIVER_OP_SUCCESS)
-        return -1;
-    memcpy (info->tail, buf + offset, SECTORSIZE - offset);
+#if USE_PARANOIA
+    paranoia_seek(info->paranoia, sector, SEEK_SET);
+#endif
     info->current_sector = sector;
-    info->current_sample = sample;
-    _info->readpos = (float)info->current_sample / _info->fmt.samplerate;
+    const char *p_readbuf = read_sector(info);
+    if (!p_readbuf)
+        return -1;
+
+    info->tail = info->buffer + offset;
+    info->tail_length = SECTORSIZE - offset;
+#if USE_PARANOIA
+    memcpy(info->tail, p_readbuf+offset, info->tail_length);
+#endif
+    _info->readpos = (float)sample / _info->fmt.samplerate;
+
     return 0;
 }
 
@@ -913,6 +964,9 @@ static const char settings_dlg[] =
     "property \"CDDB port number (e.g. '888')\" entry cdda.freedb.port 888;\n"
     "property \"Prefer CDDB protocol over HTTP\" checkbox cdda.protocol 1;\n"
     "property \"Enable NRG image support\" checkbox cdda.enable_nrg 0;"
+#if USE_PARANOIA
+    "property \"Use cdparanoia error correction when ripping\" checkbox cdda.paranoia 0;"
+#endif
 ;
 
 // define plugin interface
