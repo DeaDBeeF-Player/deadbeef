@@ -200,7 +200,7 @@ cda_init (DB_fileinfo_t *_info, DB_playItem_t *it)
     cdrom_drive_t *cdrom = cdio_cddap_identify_cdio(info->cdio, CDDA_MESSAGE_FORGETIT, NULL);
     cdio_cddap_open(cdrom);
     info->paranoia = cdio_paranoia_init(cdrom);
-    const int no_paranoia = info->hints&DDB_DECODER_HINT_NEED_BITRATE || !deadbeef->conf_get_int("cdda.paranoia", 1);
+    const int no_paranoia = info->hints&DDB_DECODER_HINT_NEED_BITRATE || !deadbeef->conf_get_int("cdda.paranoia", 0);
     paranoia_modeset(info->paranoia, no_paranoia ? PARANOIA_MODE_DISABLE : PARANOIA_MODE_FULL^PARANOIA_MODE_NEVERSKIP);
     paranoia_seek(info->paranoia, info->first_sector, SEEK_SET);
 #endif
