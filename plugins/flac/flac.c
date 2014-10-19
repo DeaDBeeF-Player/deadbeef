@@ -71,7 +71,7 @@ typedef struct {
     int64_t totalsamples;
     int flac_critical_error;
     int init_stop_decoding;
-    int is_streamer;
+    int set_bitrate;
     DB_FILE *file;
 
     // used only on insert
@@ -226,7 +226,7 @@ static flac_info_t *
 cflac_open_int (uint32_t hints) {
     flac_info_t *info = calloc(1, sizeof(flac_info_t));
     if (info && hints&DDB_DECODER_HINT_NEED_BITRATE) {
-        info->is_streamer = 1;
+        info->set_bitrate = 1;
     }
     return info;
 }
@@ -396,7 +396,7 @@ cflac_free (DB_fileinfo_t *_info) {
 static int
 cflac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     flac_info_t *info = (flac_info_t *)_info;
-    if (info->is_streamer && info->bitrate != deadbeef->streamer_get_apx_bitrate()) {
+    if (info->set_bitrate && info->bitrate != deadbeef->streamer_get_apx_bitrate()) {
         deadbeef->streamer_set_bitrate (info->bitrate);
     }
 
