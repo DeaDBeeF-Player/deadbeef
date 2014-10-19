@@ -1212,7 +1212,7 @@ typedef struct DB_fileinfo_s {
 enum {
     DDB_DECODER_HINT_16BIT = 0x1, // that flag means streamer prefers 16 bit streams for performance reasons
 #if (DDB_API_LEVEL >= 8)
-    // When this hint is set, the decoder is expected to provide a bitrate for display in the status bar
+    // When this hint is set, the decoder is expected to update streamer bitrate using streamer_set_bitrate call from plugin.read function
     DDB_DECODER_HINT_NEED_BITRATE = 0x2,
 #endif
 };

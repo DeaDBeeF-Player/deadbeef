@@ -63,7 +63,7 @@ typedef struct {
     int cur_bit_stream;
     float next_update;
     DB_playItem_t *it;
-    int is_streamer;
+    int set_bitrate;
     const DB_playItem_t *new_track;
     uint8_t *channel_map;
 } ogg_info_t;
@@ -246,7 +246,7 @@ cvorbis_open_int (uint32_t hints) {
         info->info.fmt.is_float = 1;
         info->info.fmt.bps = 32;
 #endif
-        info->is_streamer = hints & DDB_DECODER_HINT_NEED_BITRATE;
+        info->set_bitrate = hints & DDB_DECODER_HINT_NEED_BITRATE;
     }
     return info;
 }
@@ -522,7 +522,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
 #endif
 
     _info->readpos = (float)(ov_pcm_tell(&info->vorbis_file) - info->it->startsample) / _info->fmt.samplerate;
-    if (info->is_streamer && _info->readpos > info->next_update) {
+    if (info->set_bitrate && _info->readpos > info->next_update) {
         const int rate = ov_bitrate_instant(&info->vorbis_file) / 1000;
         if (rate > 0) {
             deadbeef->streamer_set_bitrate(rate);
