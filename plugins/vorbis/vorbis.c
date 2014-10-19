@@ -246,7 +246,7 @@ cvorbis_open_int (uint32_t hints) {
         info->info.fmt.is_float = 1;
         info->info.fmt.bps = 32;
 #endif
-        info->is_streamer = hints & DDB_DECODER_HINT_STREAMER;
+        info->is_streamer = hints & DDB_DECODER_HINT_NEED_BITRATE;
     }
     return info;
 }
@@ -265,11 +265,10 @@ cvorbis_open2 (uint32_t hints, DB_playItem_t *it) {
 
     deadbeef->pl_lock();
     info->info.file = deadbeef->fopen(deadbeef->pl_find_meta (it, ":URI"));
-    deadbeef->pl_unlock();
     if (!info->info.file) {
         trace("cvorbis_open2 failed to open file %s\n", deadbeef->pl_find_meta(it, ":URI"));
-        return NULL;
     }
+    deadbeef->pl_unlock();
 
     return &info->info;
 }

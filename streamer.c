@@ -1268,7 +1268,7 @@ m3u_error:
 
         trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), dec->plugin.id);
         mutex_lock (decodemutex);
-        new_fileinfo = dec_open (dec, DDB_DECODER_HINT_STREAMER, it);
+        new_fileinfo = dec_open (dec, DDB_DECODER_HINT_NEED_BITRATE, it);
         if (new_fileinfo->file) {
             new_fileinfo_file = new_fileinfo->file;
         }
@@ -1689,9 +1689,9 @@ streamer_thread (void *ctx) {
 
             if (playing_track != streaming_track) {
                 trace ("streamer already switched to next track\n");
-                
+
                 // restart playing from new position
-                
+
                 mutex_lock (decodemutex);
                 if(fileinfo) {
                     fileinfo->plugin->free (fileinfo);
@@ -1722,7 +1722,7 @@ streamer_thread (void *ctx) {
                 }
                 pl_unlock ();
                 if (dec) {
-                    fileinfo = dec_open (dec, DDB_DECODER_HINT_STREAMER, streaming_track);
+                    fileinfo = dec_open (dec, DDB_DECODER_HINT_NEED_BITRATE, streaming_track);
                     mutex_unlock (decodemutex);
                     if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) != 0) {
                         mutex_lock (decodemutex);
@@ -2174,7 +2174,7 @@ streamer_init (void) {
     pl_set_order (conf_get_int ("playback.order", 0));
 
     streamer_dsp_init ();
-    
+
     replaygain_set (conf_get_int ("replaygain_mode", 0), conf_get_int ("replaygain_scale", 1), conf_get_float ("replaygain_preamp", 0), conf_get_float ("global_preamp", 0));
 
     ctmap_init_mutex ();

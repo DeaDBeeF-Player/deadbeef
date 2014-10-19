@@ -225,7 +225,7 @@ cflac_init_error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecode
 static flac_info_t *
 cflac_open_int (uint32_t hints) {
     flac_info_t *info = calloc(1, sizeof(flac_info_t));
-    if (info && hints&DDB_DECODER_HINT_STREAMER) {
+    if (info && hints&DDB_DECODER_HINT_NEED_BITRATE) {
         info->is_streamer = 1;
     }
     return info;
@@ -245,11 +245,10 @@ cflac_open2 (uint32_t hints, DB_playItem_t *it) {
 
     deadbeef->pl_lock();
     info->file = deadbeef->fopen(deadbeef->pl_find_meta(it, ":URI"));
-    deadbeef->pl_unlock();
     if (!info->file) {
-        trace("cflac_open2 failed to open file\n");
-        return NULL;
+        trace("cflac_open2 failed to open file %s\n", deadbeef->pl_find_meta(it, ":URI"));
     }
+    deadbeef->pl_unlock();
 
     return (DB_fileinfo_t *)info;
 }
@@ -264,7 +263,7 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
         deadbeef->pl_unlock ();
         if (!info->file) {
-            trace ("cflac_init failed to open file\n");
+            trace ("cflac_init failed to open file %s\n", deadbeef->pl_find_meta(it, ":URI"));
             return -1;
         }
     }
