@@ -643,94 +643,119 @@ insert_disc (ddb_playlist_t *plt, DB_playItem_t *after, const char *path, const 
 
     p->cdio = cdio;
     const track_t tracks = single_track ? 1 : cdio_get_num_tracks(cdio);
-    p->items = malloc((tracks+1) * sizeof(*p->items));
+    p->items = calloc(tracks+1, sizeof(*p->items));
     if (!p->items)
     {
         cleanup_thread_params(p);
         return NULL;
     }
 
+    DB_playItem_t *inserted = NULL;
     const track_t first_track = single_track ? single_track : cdio_get_first_track_num(cdio);
     for (track_t i = 0; i < tracks; i++)
     {
         if (cdio_get_track_format(cdio, first_track+i) == TRACK_FORMAT_AUDIO)
         {
-            trace("inserting track %d\n", first_track+i);
-            after = insert_track(cdio, plt, after, path, first_track+i, discid);
-            p->items[i] = after;
+            trace("inserting track %d from %s\n", first_track+i, path);
+            inserted = insert_track(cdio, plt, after, path, first_track+i, discid);
+            p->items[i] = inserted;
+            after = inserted;
         }
     }
-    p->items[tracks] = NULL;
     p->single_track = single_track;
 
-    const int got_cdtext = read_disc_cdtext(p, first_track, tracks);
-    const int prefer_cdtext = deadbeef->conf_get_int("cdda.prefer_cdtext", DEFAULT_PREFER_CDTEXT);
-    const int enable_cddb = deadbeef->conf_get_int("cdda.freedb.enable", DEFAULT_USE_CDDB);
-    intptr_t tid = 0;
-    if ((!got_cdtext || !prefer_cdtext) && enable_cddb)
+    if (p->items[0])
     {
-        trace("cdda: querying freedb...\n");
-        tid = deadbeef->thread_start(cddb_thread, p);
-        if (tid)
-            deadbeef->thread_detach(tid);
-    }
-    if (!tid)
-    {
-        cleanup_thread_params(p);
+        const int got_cdtext = read_disc_cdtext(p, first_track, tracks);
+        const int prefer_cdtext = deadbeef->conf_get_int("cdda.prefer_cdtext", DEFAULT_PREFER_CDTEXT);
+        const int enable_cddb = deadbeef->conf_get_int("cdda.freedb.enable", DEFAULT_USE_CDDB);
+        intptr_t tid = 0;
+        if ((!got_cdtext || !prefer_cdtext) && enable_cddb)
+        {
+            trace("cdda: querying freedb...\n");
+            tid = deadbeef->thread_start(cddb_thread, p);
+            if (tid)
+                deadbeef->thread_detach(tid);
+        }
+        if (!tid)
+        {
+            cleanup_thread_params(p);
+        }
     }
 
-    return after;
+    return inserted;
 }
 
 static DB_playItem_t *
 cda_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *path)
 {
     trace ("CDA insert: %s\n", path);
-    CdIo_t* cdio = NULL;
     cdio_close_tray (NULL, NULL);
 
+    /* Deal with any NRG files and get them out of the way */
     const char *ext = strrchr(path, '.');
     if (ext && !strcasecmp(ext, ".nrg"))
     {
         if (!deadbeef->conf_get_int("cdda.enable_nrg", 0))
         {
-            trace ("cda: NRG found but disabled in preferences\n");
+            trace("cda: NRG found but disabled in preferences\n");
             return NULL;
         }
-        cdio = cdio_open(path, DRIVER_NRG);
+        CdIo_t* cdio = cdio_open(path, DRIVER_NRG);
         if (!cdio) {
-            trace ("not an NRG image, or file not found (%s)\n", path);
+            trace("not an NRG image, or file not found (%s)\n", path);
             return NULL;
         }
         return insert_disc(plt, after, path, 0, cdio);
     }
 
-    const char *sep = strrchr(path, '/');
-    if (!sep)
+    /* Get a list of all devices containing CD audio */
+    char **device_list = cdio_get_devices_with_cap(NULL, CDIO_FS_AUDIO, false);
+    if (!device_list)
     {
-        cdio = cdio_open(NULL, DRIVER_UNKNOWN);
-    }
-    else
-    {
-        const size_t device_length = sep - path;
-        char device[device_length+1];
-        strncpy(device, path, device_length);
-        device[device_length] = '\0';
-        cdio = cdio_open(device, DRIVER_UNKNOWN);
-        if (!cdio)
-        {
-            cdio = cdio_open(path, DRIVER_UNKNOWN);
-        }
-    }
-    if (!cdio) {
-        trace ("no audio CD, or file not found (%s)\n", path);
+        trace("cda: no audio drives found\n");
         return NULL;
     }
 
-    const char *fname = sep ? sep + 1 : path;
-    char *track_end;
-    const unsigned long track_nr = strtoul(fname, &track_end, 10);
-    return insert_disc(plt, after, "", strcmp(track_end, ".cda") || track_nr > 99 ? 0 : track_nr, cdio);
+    /* Match the device name for the requested insert (invalid devices may crash cdio) */
+    const char *sep = strrchr(path, '/');
+    char *drive_device = NULL;
+    if (sep)
+    {
+        char real_path[PATH_MAX];
+        const char *real_sep = realpath(path, real_path) ? strrchr(real_path, '/') : NULL;
+        const size_t real_device_length = real_sep ? real_sep-real_path : 0;
+        const size_t device_length = sep - path;
+        for (size_t i = 0; device_list[i] && !drive_device; i++)
+        {
+            if (!strncmp(device_list[i], path, device_length) || real_device_length && !strncmp(device_list[i], real_path, real_device_length))
+            {
+                drive_device = device_list[i];
+            }
+        }
+    }
+    else
+    {
+        drive_device = device_list[0];
+    }
+
+    /* Open the device and insert the requested track(s) */
+    DB_playItem_t * inserted = NULL;
+    if (drive_device)
+    {
+        trace("cda: try to open device %s\n", drive_device);
+        CdIo_t* cdio = cdio_open(drive_device, DRIVER_UNKNOWN);
+        if (cdio)
+        {
+            const char *fname = sep ? sep + 1 : path;
+            char *track_end;
+            const unsigned long track_nr = strtoul(fname, &track_end, 10);
+            inserted = insert_disc(plt, after, drive_device, strcmp(track_end, ".cda") || track_nr > 99 ? 0 : track_nr, cdio);
+        }
+    }
+
+    cdio_free_device_list(device_list);
+    return inserted;
 }
 
 static int
@@ -843,54 +868,50 @@ cda_action_add_cd (DB_plugin_action_t *act, int ctx)
     }
 
     char *drive_device = NULL;
-    if (device_list[0])
+    if (device_list[0] && device_list[1])
     {
-        if (!device_list[1])
+        size_t device_count;
+        size_t device_combo_length = sizeof("property \"CD drive to load\" select[%u] cdda.drive_device 0");
+        for (device_count = 0; device_list[device_count]; device_count++)
         {
-            drive_device = device_list[0];
+            device_combo_length += strlen(device_list[device_count]) + 1;
         }
-        else
+
+        char *layout = malloc(device_combo_length);
+        if (layout)
         {
-            char *pattern = "property \"CD drive to load\" select[%u] cdda.drive_device 0";
-            size_t device_combo_length = strlen(pattern) + 1;
-            size_t device_count;
-            for (device_count = 0; device_list[device_count]; device_count++)
+            sprintf(layout, "property \"CD drive to load\" select[%u] cdda.drive_device 0", device_count);
+            for (char **device = device_list; *device; device++)
             {
-                device_combo_length += strlen(device_list[device_count]) + 1;
+                strcat(layout, " ");
+                strcat(layout, *device);
             }
+            strcat(layout, ";");
 
-            char *layout = malloc(device_combo_length);
-            if (layout)
+            ddb_dialog_t conf = {
+                .title = "Audio CD Drive",
+                .layout = layout,
+                .set_param = set_param,
+                .get_param = get_param,
+                .parent = NULL
+            };
+
+            struct DB_plugin_s **plugin_list;
+            for (plugin_list = deadbeef->plug_get_list(); *plugin_list && (*plugin_list)->type != DB_PLUGIN_GUI; plugin_list++);
+            if (*plugin_list)
             {
-                sprintf(layout, pattern, device_count);
-                for (char **device = device_list; *device; device++)
+                DB_gui_t *gui_plugin = (DB_gui_t *)*plugin_list;
+                if (gui_plugin->run_dialog(&conf, 1<<ddb_button_ok|1<<ddb_button_cancel, NULL, NULL) == ddb_button_ok)
                 {
-                    strcat(layout, " ");
-                    strcat(layout, *device);
+                    drive_device = device_list[dialog_combo_index];
                 }
-                strcat(layout, ";");
-
-                ddb_dialog_t conf = {
-                    .title = "Audio CD Drive",
-                    .layout = layout,
-                    .set_param = set_param,
-                    .get_param = get_param,
-                    .parent = NULL
-                };
-
-                struct DB_plugin_s **plugin_list;
-                for (plugin_list = deadbeef->plug_get_list(); *plugin_list && (*plugin_list)->type != DB_PLUGIN_GUI; plugin_list++);
-                if (*plugin_list)
-                {
-                    DB_gui_t *gui_plugin = (DB_gui_t *)*plugin_list;
-                    if (gui_plugin->run_dialog(&conf, 1<<ddb_button_ok|1<<ddb_button_cancel, NULL, NULL) == ddb_button_ok)
-                    {
-                        drive_device = device_list[dialog_combo_index];
-                    }
-                }
-                free(layout);
             }
+            free(layout);
         }
+    }
+    else if (device_list[0])
+    {
+        drive_device = device_list[0];
     }
 
     if (drive_device)
