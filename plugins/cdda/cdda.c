@@ -34,8 +34,8 @@
 #endif
 
 #if USE_PARANOIA
-    #include <cdio/paranoia.h>
-    #include <cdio/cdda.h>
+    #include <cdda_interface.h>
+    #include <cdda_paranoia.h>
 #endif
 #include <cdio/cdio.h>
 #include <cdio/cd_types.h>
@@ -74,7 +74,8 @@ typedef struct {
     uint32_t hints;
     CdIo_t *cdio;
 #if USE_PARANOIA
-    cdrom_paranoia_t *paranoia;
+    cdrom_paranoia *paranoia;
+    cdrom_drive *cdrom;
 #endif
     lsn_t first_sector;
     lsn_t current_sector;
@@ -86,7 +87,6 @@ typedef struct {
 
 struct cddb_thread_params
 {
-    track_t single_track;
     DB_playItem_t **items;
     CdIo_t *cdio;
 };
@@ -149,26 +149,27 @@ static int
 cda_init (DB_fileinfo_t *_info, DB_playItem_t *it)
 {
     cdda_info_t *info = (cdda_info_t *)_info;
-    char location[PATH_MAX];
+    char location[PATH_MAX] = "";
     deadbeef->pl_get_meta(it, ":URI", location, sizeof(location));
     trace ("cdda: init %s\n", location);
 
     char *nr = strchr(location, '#');
-    if (!nr) {
+    if (!nr || nr == location) {
         trace ("cdda: bad name: %s\n", location);
         return -1;
     }
     *nr = '\0';
 
-    const char *fname = (*location) ? location : NULL; //NULL if empty string; means physical CD drive
-    info->cdio = cdio_open(fname, DRIVER_UNKNOWN);
+    info->cdio = cdio_open(location, DRIVER_UNKNOWN);
     if  (!info->cdio)
     {
         trace ("cdda: Could not open CD\n");
         return -1;
     }
 
-    cdio_set_speed(info->cdio, info->hints&DDB_DECODER_HINT_NEED_BITRATE ? 4 : -1);
+    const int need_bitrate = info->hints & DDB_DECODER_HINT_NEED_BITRATE;
+    cdio_set_speed(info->cdio, need_bitrate ? 4 : -1);
+
     const int track_nr = atoi(nr+1);
     if (cdio_get_track_format(info->cdio, track_nr) != TRACK_FORMAT_AUDIO)
     {
@@ -196,19 +197,32 @@ cda_init (DB_fileinfo_t *_info, DB_playItem_t *it)
     info->current_sector = info->first_sector;
     info->last_sector = info->first_sector + cdio_get_track_sec_count(info->cdio, track_nr) - 1;
 #if USE_PARANOIA
-    cdrom_drive_t *cdrom = cdio_cddap_identify_cdio(info->cdio, CDDA_MESSAGE_FORGETIT, NULL);
-    cdio_cddap_open(cdrom);
-    info->paranoia = cdio_paranoia_init(cdrom);
-    const int no_paranoia = info->hints&DDB_DECODER_HINT_NEED_BITRATE || !deadbeef->conf_get_int("cdda.paranoia", 0);
-    paranoia_modeset(info->paranoia, no_paranoia ? PARANOIA_MODE_DISABLE : PARANOIA_MODE_FULL^PARANOIA_MODE_NEVERSKIP);
-    paranoia_seek(info->paranoia, info->first_sector, SEEK_SET);
+    if (cdio_get_driver_id(info->cdio) != DRIVER_NRG)
+    {
+        info->cdrom = cdda_identify(location, CDDA_MESSAGE_FORGETIT, NULL);
+        if (info->cdrom)
+        {
+            cdda_open(info->cdrom);
+            info->paranoia = paranoia_init(info->cdrom);
+        }
+        if (!info->paranoia)
+        {
+            trace ("cdda: cannot re-open %s for paranoia\n", location);
+            return -1;
+        }
+        const int no_paranoia = need_bitrate || !deadbeef->conf_get_int("cdda.paranoia", 0);
+        if (no_paranoia)
+            paranoia_cachemodel_size(info->paranoia, 100);
+        paranoia_modeset(info->paranoia, no_paranoia ? PARANOIA_MODE_DISABLE : PARANOIA_MODE_FULL^PARANOIA_MODE_NEVERSKIP);
+        paranoia_seek(info->paranoia, info->first_sector, SEEK_SET);
+    }
 #endif
     return 0;
 }
 
 #if USE_PARANOIA
 static void
-paranoia_callback(long bytes, paranoia_cb_mode_t mode)
+paranoia_callback(long bytes, int mode)
 {
     if (mode > 1 && mode != 9)
         fprintf(stderr, "%ld %d\n", bytes, mode);
@@ -219,19 +233,23 @@ static const char *
 read_sector(cdda_info_t *info)
 {
 #if USE_PARANOIA
-    const int16_t *p_readbuf = cdio_paranoia_read(info->paranoia, NULL);
-    if (p_readbuf)
+    if (info->paranoia)
     {
-        info->current_sector++;
-        return (char *)p_readbuf;
+        const int16_t *p_readbuf = paranoia_read(info->paranoia, NULL);
+        if (p_readbuf)
+        {
+            info->current_sector++;
+            return (char *)p_readbuf;
+        }
     }
-#else
+    else
+#endif
     if (!cdio_read_audio_sector(info->cdio, info->buffer, info->current_sector))
     {
         info->current_sector++;
         return info->buffer;
     }
-#endif
+
     return NULL;
 }
 
@@ -278,12 +296,13 @@ cda_read (DB_fileinfo_t *_info, char *bytes, int size)
             info->tail_length = SECTORSIZE - bytes_left;
             info->tail = info->buffer + bytes_left;
 #if USE_PARANOIA
-            memcpy(info->tail, p_readbuf+bytes_left, info->tail_length);
+            if (info->paranoia)
+                memcpy(info->tail, p_readbuf+bytes_left, info->tail_length);
 #endif
         }
     }
 
-//    trace ("requested: %d, return: %d\n", size, fill-bytes);
+    trace ("requested: %d, return: %d\n", size, fill-bytes);
     _info->readpos = (float)info->current_sector * SECTORSIZE / SAMPLESIZE / _info->fmt.samplerate;
     return fill - bytes;
 }
@@ -298,10 +317,11 @@ cda_free (DB_fileinfo_t *_info)
         }
 #if USE_PARANOIA
         if (info->paranoia) {
-            cdio_paranoia_free(info->paranoia);
+            paranoia_free(info->paranoia);
+            cdda_close(info->cdrom);
         }
 #endif
-        free (_info);
+        free (info);
     }
 }
 
@@ -314,7 +334,8 @@ cda_seek_sample (DB_fileinfo_t *_info, int sample)
     const int offset = sample * SAMPLESIZE % SECTORSIZE;
 
 #if USE_PARANOIA
-    paranoia_seek(info->paranoia, sector, SEEK_SET);
+    if (info->paranoia)
+        paranoia_seek(info->paranoia, sector, SEEK_SET);
 #endif
     info->current_sector = sector;
     const char *p_readbuf = read_sector(info);
@@ -324,7 +345,8 @@ cda_seek_sample (DB_fileinfo_t *_info, int sample)
     info->tail = info->buffer + offset;
     info->tail_length = SECTORSIZE - offset;
 #if USE_PARANOIA
-    memcpy(info->tail, p_readbuf+offset, info->tail_length);
+    if (info->paranoia)
+        memcpy(info->tail, p_readbuf+offset, info->tail_length);
 #endif
     _info->readpos = (float)sample / _info->fmt.samplerate;
 
@@ -413,8 +435,10 @@ cleanup_thread_params (struct cddb_thread_params *params)
 
 static void
 write_metadata(DB_playItem_t *item, const cddb_disc_t *disc, const char *num_tracks,
-               const int track_nr, const char *artist, const char *disc_title, const char *genre, const unsigned int year)
+               const char *artist, const char *disc_title, const char *genre, const unsigned int year)
 {
+    const int track_nr = deadbeef->pl_find_meta_int(item, "track", 0);
+
     cddb_track_t *track = cddb_disc_get_track(disc, track_nr-1);
     trace("track %d, title=%s\n", track_nr, cddb_track_get_title(track));
 
@@ -424,10 +448,10 @@ write_metadata(DB_playItem_t *item, const cddb_disc_t *disc, const char *num_tra
     if (year) {
         deadbeef->pl_set_meta_int(item, "year", year);
     }
+    char meta[4];
+    sprintf(meta, "%02d", track_nr);
+    deadbeef->pl_add_meta(item, "track", meta);
     deadbeef->pl_add_meta(item, "numtracks", num_tracks);
-    char tmp[4];
-    sprintf(tmp, "%02d", track_nr);
-    deadbeef->pl_add_meta(item, "track", tmp);
     deadbeef->pl_add_meta(item, "artist", artist);
     deadbeef->pl_add_meta(item, "title", cddb_track_get_title(track));
 
@@ -473,7 +497,7 @@ cddb_thread (void *params_void)
     for (int i = 0; items[i]; i++)
     {
         deadbeef->pl_add_meta (items[i], CDDB_IDS_TAG, disc_list);
-        write_metadata(items[i], disc, num_tracks, params->single_track ? params->single_track : i+1, artist, disc_title, genre, year);
+        write_metadata(items[i], disc, num_tracks, artist, disc_title, genre, year);
     }
     cddb_disc_destroy (disc);
     cleanup_thread_params (params);
@@ -613,6 +637,10 @@ insert_track (CdIo_t* cdio, ddb_playlist_t *plt, DB_playItem_t *after, const cha
         sprintf(title, "CD Track %02d", track_nr);
         deadbeef->pl_add_meta(it, "title", title);
 
+        char track[4];
+        sprintf(track, "%02d", track_nr);
+        deadbeef->pl_add_meta(it, "track", track);
+
         char discid_string[10];
         sprintf(discid_string, "%08x", discid);
         deadbeef->pl_add_meta(it, CDDB_DISCID_TAG, discid_string);
@@ -652,35 +680,36 @@ insert_disc (ddb_playlist_t *plt, DB_playItem_t *after, const char *path, const 
 
     DB_playItem_t *inserted = NULL;
     const track_t first_track = single_track ? single_track : cdio_get_first_track_num(cdio);
+    track_t item_count = 0;
     for (track_t i = 0; i < tracks; i++)
     {
         if (cdio_get_track_format(cdio, first_track+i) == TRACK_FORMAT_AUDIO)
         {
             trace("inserting track %d from %s\n", first_track+i, path);
             inserted = insert_track(cdio, plt, after, path, first_track+i, discid);
-            p->items[i] = inserted;
+            p->items[item_count++] = inserted;
             after = inserted;
         }
     }
-    p->single_track = single_track;
 
-    if (p->items[0])
+    intptr_t tid = 0;
+    if (item_count)
     {
         const int got_cdtext = read_disc_cdtext(p, first_track, tracks);
         const int prefer_cdtext = deadbeef->conf_get_int("cdda.prefer_cdtext", DEFAULT_PREFER_CDTEXT);
         const int enable_cddb = deadbeef->conf_get_int("cdda.freedb.enable", DEFAULT_USE_CDDB);
-        intptr_t tid = 0;
-        if ((!got_cdtext || !prefer_cdtext) && enable_cddb)
+        if (!(got_cdtext && prefer_cdtext) && enable_cddb)
         {
             trace("cdda: querying freedb...\n");
             tid = deadbeef->thread_start(cddb_thread, p);
             if (tid)
                 deadbeef->thread_detach(tid);
         }
-        if (!tid)
-        {
-            cleanup_thread_params(p);
-        }
+    }
+
+    if (!tid)
+    {
+        cleanup_thread_params(p);
     }
 
     return inserted;
@@ -747,9 +776,8 @@ cda_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *path)
         CdIo_t* cdio = cdio_open(drive_device, DRIVER_UNKNOWN);
         if (cdio)
         {
-            const char *fname = sep ? sep + 1 : path;
             char *track_end;
-            const unsigned long track_nr = strtoul(fname, &track_end, 10);
+            const unsigned long track_nr = strtoul(sep ? sep + 1 : path, &track_end, 10);
             inserted = insert_disc(plt, after, drive_device, strcmp(track_end, ".cda") || track_nr > 99 ? 0 : track_nr, cdio);
         }
     }
@@ -812,8 +840,7 @@ cda_action_disc_n (const size_t disc_num)
     {
         if (deadbeef->pl_is_selected(it))
         {
-            const int track = deadbeef->pl_find_meta_int(it, "track", 0);
-            write_metadata(it, disc, num_tracks, track, artist, disc_title, genre, year);
+            write_metadata(it, disc, num_tracks, artist, disc_title, genre, year);
         }
         deadbeef->pl_item_unref(it);
         it = deadbeef->pl_get_next(it, PL_MAIN);
@@ -860,8 +887,9 @@ get_param (const char *key, char *value, int len, const char *def)
 static int
 cda_action_add_cd (DB_plugin_action_t *act, int ctx)
 {
+    /* Get all devices containg CD audio media */
     cdio_close_tray(NULL, NULL);
-    char** device_list = cdio_get_devices_with_cap(NULL, CDIO_FS_AUDIO, false);
+    char **device_list = cdio_get_devices_with_cap(NULL, CDIO_FS_AUDIO, false);
     if (!device_list)
     {
         return 0;
@@ -870,6 +898,7 @@ cda_action_add_cd (DB_plugin_action_t *act, int ctx)
     char *drive_device = NULL;
     if (device_list[0] && device_list[1])
     {
+        /* Multiple devices, ask the user to pick one */
         size_t device_count;
         size_t device_combo_length = sizeof("property \"CD drive to load\" select[%u] cdda.drive_device 0");
         for (device_count = 0; device_list[device_count]; device_count++)
@@ -914,6 +943,7 @@ cda_action_add_cd (DB_plugin_action_t *act, int ctx)
         drive_device = device_list[0];
     }
 
+    /* If the user picked a device or there is only one, then add all the tracks */
     if (drive_device)
     {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
