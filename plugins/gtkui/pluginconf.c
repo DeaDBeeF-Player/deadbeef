@@ -298,7 +298,7 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
             }
             pack[ncurr] = n;
 
-            int vert = 0;
+            int vert = !strncmp (type, "vbox[", 5);
             int hmg = FALSE;
             int fill = FALSE;
             int expand = FALSE;
@@ -335,8 +335,8 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
                 }
             }
 
-            widgets[ncurr] = vert ? gtk_vbox_new (TRUE, spacing) : gtk_hbox_new (TRUE, spacing);
-            gtk_widget_set_size_request (widgets[ncurr], -1, height);
+            widgets[ncurr] = vert ? gtk_vbox_new (hmg, spacing) : gtk_hbox_new (hmg, spacing);
+            gtk_widget_set_size_request (widgets[ncurr], vert ? height : -1, vert ? -1 : height);
             gtk_widget_show (widgets[ncurr]);
             gtk_box_pack_start (GTK_BOX(widgets[ncurr-1]), widgets[ncurr], fill, expand, border);
             continue;
