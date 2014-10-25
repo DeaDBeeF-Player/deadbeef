@@ -210,6 +210,19 @@ ddb_button_from_gtk_response (int response) {
     return -1;
 }
 
+static int
+backout_pack_level(int ncurr, int *pack)
+{
+    if (ncurr > 0) {
+        pack[ncurr]--;
+        if (pack[ncurr] < 0) {
+            ncurr--;
+            ncurr = backout_pack_level(ncurr, pack);
+        }
+    }
+    return ncurr;
+}
+
 int
 gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, int (*callback)(int button, void *ctx), void *ctx) {
     if (!parentwin) {
@@ -277,12 +290,7 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
             break;
         }
 
-        if (ncurr > 0) {
-            pack[ncurr]--;
-            if (pack[ncurr] < 0) {
-                ncurr--;
-            }
-        }
+        ncurr = backout_pack_level(ncurr, pack);
 
         char type[MAX_TOKEN];
         script = gettoken_warn_eof (script, type);
