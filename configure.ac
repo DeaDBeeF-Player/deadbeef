@@ -465,12 +465,12 @@ AS_IF([test "${enable_cdda}" != "no"], [
         AC_CHECK_LIB([cddb], [main], [HAVE_CDDB=yes])
         AS_IF([test "${HAVE_CDIO}" = "yes" -a "${HAVE_CDDB}" = "yes"], [
             HAVE_CDDAPLUGIN=yes
-            AC_CHECK_LIB([cdio_cdda], [main], [HAVE_CDIO_CDDA=yes])
-            AC_CHECK_LIB([cdio_paranoia], [main], [HAVE_CDIO_PARANOIA=yes])
-            AS_IF([test "${enable_cdda_paranoia}" != "no" -a "${HAVE_CDIO_CDDA}" = "yes" -a "${HAVE_CDIO_PARANOIA}" = "yes"], [
+            AC_CHECK_LIB([cdda_interface], [main], [HAVE_CDDA_INTERFACE=yes])
+            AC_CHECK_LIB([cdda_paranoia], [main], [HAVE_CDDA_PARANOIA=yes])
+            AS_IF([test "${enable_cdda_paranoia}" != "no" -a "${HAVE_CDDA_INTERFACE}" = "yes" -a "${HAVE_CDDA_PARANOIA}" = "yes"], [
 	        CDDA_CFLAGS="-DUSE_PARANOIA"
 	        AC_SUBST(CDDA_CFLAGS)
-                CDDA_LIBS="-lcdio -lcdio_cdda -lcdio_paranoia -lcddb"
+                CDDA_LIBS="-lcdio -lcdda_interface -lcdda_paranoia -lcddb"
             ] , [
                 CDDA_LIBS="-lcdio -lcddb"
             ])
