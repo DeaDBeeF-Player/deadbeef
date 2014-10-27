@@ -2354,11 +2354,11 @@ coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     deadbeef->pl_unlock ();
 
     if (pixbuf) {
-        const int pw = gdk_pixbuf_get_width(pixbuf);
-        const int ph = gdk_pixbuf_get_height(pixbuf);
-        const float scale = min((float)a.width/ pw, (float)a.height/ph);
-        const int x = max((a.width - scale*pw)/2, 0);
-        const int y = max((a.height - scale*ph)/2, 0);
+        const float pw = gdk_pixbuf_get_width(pixbuf);
+        const float ph = gdk_pixbuf_get_height(pixbuf);
+        const float scale = min(a.width/pw, a.height/ph);
+        const float x = max((a.width - scale*pw)/2, 0);
+        const float y = max((a.height - scale*ph)/2, 0);
         cairo_rectangle(cr, x, y, a.width, a.height);
         cairo_scale(cr, scale, scale);
         gdk_cairo_set_source_pixbuf(cr, pixbuf, x/scale, y/scale);
