@@ -51,6 +51,7 @@ typedef enum {
 static size_t thumb_cache_size;
 static cached_pixbuf_t primary_cache[PRIMARY_CACHE_SIZE];
 static cached_pixbuf_t *thumb_cache;
+static GdkPixbuf *pixbuf_default;
 static size_t thrash_count;
 
 typedef struct cover_callback_s {
@@ -82,28 +83,27 @@ typedef struct {
     void *user_data;
 } cover_avail_info_t;
 
-static GdkPixbuf *
-default_pixbuf(void)
+GdkPixbuf *
+cover_get_default_pixbuf(void)
 {
-    static GdkPixbuf *pixbuf_default;
-
     if (!artwork_plugin) {
         return NULL;
     }
 
     /* get_default_cover=NULL means it was reset and we call again to get the new value */
     if (!artwork_plugin->get_default_cover() && pixbuf_default) {
+        g_object_unref(pixbuf_default);
         pixbuf_default = NULL;
     }
 
     /* Load the default cover image into a pixbuf */
     if (!pixbuf_default) {
         const char *defpath = artwork_plugin->get_default_cover();
-        if (defpath && defpath[0]) {
-            pixbuf_default = gdk_pixbuf_new_from_file(defpath, NULL);
+        if (defpath && defpath[0]) {fprintf(stderr, "defpath is %s\n", defpath);
+            pixbuf_default = gdk_pixbuf_new_from_file(defpath, NULL);fprintf(stderr, "defpath was %s\n", defpath);
 #if 0
             GError *error = NULL;
-            pixbuf_default = gdk_pixbuf_new_from_file (defpath, &error);
+            pixbuf_default = gdk_pixbuf_new_from_file(defpath, &error);
             if (!pixbuf_default) {
                 fprintf (stderr, "default cover: gdk_pixbuf_new_from_file %s failed, error: %s\n", defpath, error->message);
             }
@@ -121,19 +121,13 @@ default_pixbuf(void)
         }
     }
 
-    return pixbuf_default;
-}
-
-GdkPixbuf *
-cover_get_default_pixbuf (void) {
-    GdkPixbuf *pixbuf_default = default_pixbuf();
     g_object_ref(pixbuf_default);
     return pixbuf_default;
 }
 
 int
 gtkui_is_default_pixbuf (GdkPixbuf *pb) {
-    return pb == default_pixbuf();
+    return pb == pixbuf_default;
 }
 
 static cover_callback_t *
@@ -668,6 +662,11 @@ cover_art_free (void) {
     clear_pixbuf_cache(thumb_cache, thumb_cache_size);
     free(thumb_cache);
     thumb_cache_size = 0;
+
+    if (pixbuf_default) {
+        g_object_unref(pixbuf_default);
+        pixbuf_default = NULL;
+    }
 
     trace("coverart: objects all freed\n");
 }
