@@ -67,9 +67,10 @@
 #define trace(...)
 
 DB_functions_t *deadbeef;
-
 static DB_artwork_plugin_t plugin;
-static char default_cover[PATH_MAX];
+
+#define NOARTWORK_IMAGE "noartwork.png"
+static char *default_cover;
 
 typedef struct cover_callback_s {
     artwork_callback cb;
@@ -102,6 +103,9 @@ static int artwork_enable_local;
     static int artwork_enable_wos;
 #endif
 static int scale_towards_longer;
+static int missing_artwork;
+static char *nocover_path;
+
 static time_t cache_reset_time;
 static time_t scaled_cache_reset_time;
 
@@ -965,8 +969,32 @@ make_cache_path (char *path, int size, const char *album, const char *artist, in
 }
 
 static const char *
-get_default_cover (void) {
-    return default_cover;
+get_default_cover (void)
+{
+    if (default_cover) {
+        /* Just give back the current path */
+        return default_cover;
+    }
+
+    if (missing_artwork == 1) {
+        /* 1 is the Deadbeef default image */
+        const char *pixmap_dir = deadbeef->get_pixmap_dir();
+        default_cover = malloc(strlen(pixmap_dir) + 1 + sizeof(NOARTWORK_IMAGE));
+        if (default_cover) {
+            sprintf(default_cover, "%s/%s", pixmap_dir, NOARTWORK_IMAGE);
+        }
+    }
+    else if (missing_artwork == 2 && nocover_path[0]) {
+        /* 2 is a custom image in nocover_path */
+        default_cover = strdup(nocover_path);
+    }
+    if (!default_cover) {
+        /* Everything else, including errors, is an empty image */
+        default_cover = "";
+    }
+
+    /* We have a new path, tell the caller */
+    return NULL;
 }
 
 static void
@@ -1027,7 +1055,7 @@ new_query_callback(artwork_callback cb, void *ud)
 }
 
 static int
-params_match(const char *s1, const char *s2)
+strings_match(const char *s1, const char *s2)
 {
     return s1 == s2 || s1 && s2 && !strcasecmp(s1, s2);
 }
@@ -1036,7 +1064,7 @@ static void
 enqueue_query(const char *fname, const char *artist, const char *album, const int img_size, const artwork_callback cb, void *ud)
 {
     for (cover_query_t *q = queue; q; q = q->next) {
-        if (params_match(artist, q->artist) && params_match(album, q->album) && q->size == img_size) {
+        if (strings_match(artist, q->artist) && strings_match(album, q->album) && q->size == img_size) {
             trace("artwork queue: %s %s %s %d already in queue - add to callbacks\n", fname, artist, album, img_size);
             cover_callback_t **last_callback = &q->callback;
             while (*last_callback && (*last_callback)->cb != cache_reset_callback) {
@@ -1831,8 +1859,8 @@ artwork_reset (int fast) {
 static void
 get_fetcher_preferences(void)
 {
-    artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
-    artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
+    artwork_enable_embedded = deadbeef->conf_get_int("artwork.enable_embedded", 1);
+    artwork_enable_local = deadbeef->conf_get_int("artwork.enable_localfolder", 1);
     deadbeef->conf_get_str("artwork.filemask", DEFAULT_FILEMASK, artwork_filemask, MAX_FILEMASK_LENGTH);
     if (!*artwork_filemask) {
         strcpy(artwork_filemask, DEFAULT_FILEMASK);
@@ -1844,7 +1872,14 @@ get_fetcher_preferences(void)
     artwork_enable_aao = deadbeef->conf_get_int("artwork.enable_albumartorg", 0);
     artwork_enable_wos = deadbeef->conf_get_int("artwork.enable_wos", 0);
 #endif
-    scale_towards_longer = deadbeef->conf_get_int ("artwork.scale_towards_longer", 1);
+    scale_towards_longer = deadbeef->conf_get_int("artwork.scale_towards_longer", 1);
+    missing_artwork = deadbeef->conf_get_int("artwork.missing_artwork", 1);
+    if (missing_artwork == 2) {
+        deadbeef->conf_lock();
+        const char *new_nocover_path = deadbeef->conf_get_str_fast("artwork.nocover_path", NULL);
+        nocover_path = new_nocover_path ? strdup(new_nocover_path) : NULL;
+        deadbeef->conf_unlock();
+    }
 }
 
 static void
@@ -1892,18 +1927,33 @@ artwork_configchanged (void)
     const int old_artwork_enable_aao = artwork_enable_aao;
     const int old_artwork_enable_wos = artwork_enable_wos;
 #endif
+    const int old_missing_artwork = missing_artwork;
+    char *old_nocover_path = nocover_path;
     const int old_scale_towards_longer = scale_towards_longer;
+    const char *old_default_cover = default_cover;
+
     get_fetcher_preferences();
+
+    if (old_missing_artwork != missing_artwork || missing_artwork == 2 && !strings_match(old_nocover_path, nocover_path)) {
+        if (default_cover && default_cover[0]) {
+            free(default_cover);
+        }
+        default_cover = NULL;
+    }
+    if (missing_artwork == 2 && old_nocover_path) {
+        free(old_nocover_path);
+    }
 
     if (old_artwork_enable_embedded != artwork_enable_embedded ||
         old_artwork_enable_local != artwork_enable_local ||
+        strcmp(old_artwork_filemask, artwork_filemask) ||
 #ifdef USE_VFS_CURL
         old_artwork_enable_lfm != artwork_enable_lfm ||
         old_artwork_enable_mb != artwork_enable_mb ||
         old_artwork_enable_aao != artwork_enable_aao ||
         old_artwork_enable_wos != artwork_enable_wos ||
 #endif
-        strcmp(old_artwork_filemask, artwork_filemask)) {
+        old_default_cover && !default_cover) {
         trace("artwork config changed, invalidating cache...\n");
         deadbeef->mutex_lock(queue_mutex);
         insert_cache_reset(&cache_reset_time);
@@ -2017,10 +2067,6 @@ artwork_plugin_stop (void)
 static int
 artwork_plugin_start (void)
 {
-    deadbeef->conf_get_str ("gtkui.nocover_pixmap", "", default_cover, sizeof(default_cover));
-    if (!default_cover[0]) {
-        snprintf (default_cover, sizeof (default_cover), "%s/noartwork.png", deadbeef->get_pixmap_dir ());
-    }
     get_fetcher_preferences();
     cache_reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);
     scaled_cache_reset_time = deadbeef->conf_get_int64 ("artwork.scaled.cache_reset_time", 0);
@@ -2046,16 +2092,24 @@ artwork_plugin_start (void)
 }
 
 static const char settings_dlg[] =
-    "property \"Cache update period (hr)\" entry artwork.cache.period 48;\n"
+    "property box hbox[1] border=8 height=-1;\n"
+    "property \"Cache update period (in hours, 0=never)\" entry artwork.cache.period 48;\n"
     "property \"Fetch from embedded tags\" checkbox artwork.enable_embedded 1;\n"
+    "property box hbox[2] spacing=0 height=-1;\n"
     "property \"Fetch from local folder\" checkbox artwork.enable_localfolder 1;\n"
-    "property \"Local cover file mask\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
+    "property box vbox[1] expand fill height=-1;\n"
+    "property \" -\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
 #ifdef USE_VFS_CURL
+    "property box hbox[3] spacing=16 height=-1;\n"
     "property \"Fetch from Last.fm\" checkbox artwork.enable_lastfm 0;\n"
     "property \"Fetch from MusicBrainz\" checkbox artwork.enable_musicbrainz 0;\n"
     "property \"Fetch from Albumart.org\" checkbox artwork.enable_albumartorg 0;\n"
-    "property \"Fetch from World of Spectrum (AY only)\" checkbox artwork.enable_wos 0;\n"
+    "property \"Fetch from World of Spectrum (AY files only)\" checkbox artwork.enable_wos 0;\n"
 #endif
+    "property box vbox[2] spacing=4 border=8;\n"
+    "property box hbox[1] height=-1;"
+    "property \"When no artwork is found\" select[3] artwork.missing_artwork 1 \"leave blank\" \"use DeaDBeeF default cover\" \"display custom image\";"
+    "property \"Custom image path\" file artwork.nocover_path \"\";\n"
     "property \"Scale artwork towards longer side\" checkbox artwork.scale_towards_longer 1;\n"
 ;
 
