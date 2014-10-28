@@ -2314,10 +2314,8 @@ static gboolean
 coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
-    int width = a.width;
-    int height = a.height;
 
-    int real_size = min (width, height);
+    int real_size = min(a.width, a.height);
     if (real_size < 8) {
         return TRUE;
     }
@@ -2344,8 +2342,6 @@ coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
             }
         }
     }
-    int size = w->cover_size;
-    float scale = (float)real_size / size;
 
     deadbeef->pl_lock ();
     const char *album = deadbeef->pl_find_meta (it, "album");
@@ -2353,31 +2349,22 @@ coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     if (!album || !*album) {
         album = deadbeef->pl_find_meta (it, "title");
     }
-    GdkPixbuf *pixbuf = get_cover_art_primary (deadbeef->pl_find_meta ((it), ":URI"), artist, album, real_size == size ? size : -1, coverart_avail_callback_single, user_data);
+    const int size = w->cover_size == real_size ? w->cover_size : -1;
+    GdkPixbuf *pixbuf = get_cover_art_primary(deadbeef->pl_find_meta(it, ":URI"), artist, album, size, coverart_avail_callback_single, user_data);
     deadbeef->pl_unlock ();
 
     if (pixbuf) {
-        size = gdk_pixbuf_get_width (pixbuf);
-        float art_scale = (float)real_size / size;
-        int pw = real_size;
-        if (gdk_pixbuf_get_width (pixbuf) < gdk_pixbuf_get_height (pixbuf)) {
-            art_scale *= (float)gdk_pixbuf_get_width (pixbuf) / gdk_pixbuf_get_height (pixbuf);
-        }
-        int ph = pw;
-        int x = 0;
-        int y = 0;
-        if (gdk_pixbuf_get_width (pixbuf) > gdk_pixbuf_get_height (pixbuf)) {
-            y = (a.height - gdk_pixbuf_get_height (pixbuf)) / 2;
-        }
-        else if (gdk_pixbuf_get_width (pixbuf) < gdk_pixbuf_get_height (pixbuf)) {
-            x = (a.width - gdk_pixbuf_get_width (pixbuf)) / 2;
-        }
-        cairo_rectangle (cr, x, y, pw, ph);
-        cairo_scale (cr, art_scale, art_scale);
-        gdk_cairo_set_source_pixbuf (cr, pixbuf, x, y);
-        cairo_pattern_set_filter (cairo_get_source(cr), gtkui_is_default_pixbuf(pixbuf) ? CAIRO_FILTER_BEST : CAIRO_FILTER_FAST);
-        cairo_fill (cr);
-        g_object_unref (pixbuf);
+        const float pw = gdk_pixbuf_get_width(pixbuf);
+        const float ph = gdk_pixbuf_get_height(pixbuf);
+        const float scale = min(a.width/pw, a.height/ph);
+        const float x = max((a.width - scale*pw)/2, 0);
+        const float y = max((a.height - scale*ph)/2, 0);
+        cairo_rectangle(cr, x, y, a.width, a.height);
+        cairo_scale(cr, scale, scale);
+        gdk_cairo_set_source_pixbuf(cr, pixbuf, x/scale, y/scale);
+        cairo_pattern_set_filter(cairo_get_source(cr), gtkui_is_default_pixbuf(pixbuf) ? CAIRO_FILTER_BEST : CAIRO_FILTER_FAST);
+        cairo_fill(cr);
+        g_object_unref(pixbuf);
     }
 
     deadbeef->pl_item_unref (it);

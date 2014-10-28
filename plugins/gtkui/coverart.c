@@ -23,7 +23,6 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <assert.h>
 #ifdef __linux__
 #include <sys/prctl.h>
 #endif
@@ -85,32 +84,44 @@ typedef struct {
 } cover_avail_info_t;
 
 GdkPixbuf *
-cover_get_default_pixbuf (void) {
+cover_get_default_pixbuf(void)
+{
     if (!artwork_plugin) {
         return NULL;
     }
 
-    if (!pixbuf_default) {
-        const char *defpath = artwork_plugin->get_default_cover ();
-        pixbuf_default = gdk_pixbuf_new_from_file (defpath, NULL);
-#if 0
-        GError *error = NULL;
-        pixbuf_default = gdk_pixbuf_new_from_file (defpath, &error);
-        if (!pixbuf_default) {
-            fprintf (stderr, "default cover: gdk_pixbuf_new_from_file %s failed, error: %s\n", defpath, error->message);
-        }
-        if (error) {
-            g_error_free (error);
-            error = NULL;
-        }
-#endif
-        if (!pixbuf_default) {
-            pixbuf_default = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 2, 2);
-        }
-        assert(pixbuf_default);
+    /* get_default_cover=NULL means it was reset and we call again to get the new value */
+    if (!artwork_plugin->get_default_cover() && pixbuf_default) {
+        g_object_unref(pixbuf_default);
+        pixbuf_default = NULL;
     }
 
-    g_object_ref (pixbuf_default);
+    /* Load the default cover image into a pixbuf */
+    if (!pixbuf_default) {
+        const char *defpath = artwork_plugin->get_default_cover();
+        if (defpath && defpath[0]) {fprintf(stderr, "defpath is %s\n", defpath);
+            pixbuf_default = gdk_pixbuf_new_from_file(defpath, NULL);fprintf(stderr, "defpath was %s\n", defpath);
+#if 0
+            GError *error = NULL;
+            pixbuf_default = gdk_pixbuf_new_from_file(defpath, &error);
+            if (!pixbuf_default) {
+                fprintf (stderr, "default cover: gdk_pixbuf_new_from_file %s failed, error: %s\n", defpath, error->message);
+            }
+            if (error) {
+                g_error_free (error);
+                error = NULL;
+            }
+#endif
+        }
+
+        /* If we have a blank path or an error, just create a transparent pixbuf */
+        if (!pixbuf_default) {
+            pixbuf_default = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 2, 2);
+            gdk_pixbuf_fill(pixbuf_default, 0x00000000);
+        }
+    }
+
+    g_object_ref(pixbuf_default);
     return pixbuf_default;
 }
 
@@ -390,12 +401,15 @@ get_pixbuf (cache_type_t cache_type, const char *fname, int width) {
     cached_pixbuf_t *cache = cache_location(cache_type);
     const size_t cache_size = cache_elements(cache_type);
     for (size_t i = 0; i < cache_size && cache[i].pixbuf; i++) {
+        /* Look for a cached pixbuf that matches the filename and size required */
         if (!strcmp(cache[i].fname, fname) && (cache[i].width == -1 || cache[i].width == width)) {
             struct stat stat_buf;
+            /* Keep the pixbuf for now if the disk file is missing */
             if (stat(fname, &stat_buf) || stat_buf.st_mtime == cache[i].file_time) {
                 gettimeofday(&cache[i].tm, NULL);
                 return cache[i].pixbuf;
             }
+            /* Discard the poxbuf if the disk file modification time doesn't match */
             evict_pixbuf(cache+i);
             qsort(cache, cache_size, sizeof(cached_pixbuf_t), cache_qsort);
         }
@@ -429,7 +443,7 @@ cover_avail_callback(const char *fname, const char *artist, const char *album, v
     }
     else if (get_pixbuf(dt->cache_type, dt->cache_path, dt->width)) {
         /* Pixbuf (usually the default) already cached */
-        trace("cover_avail_callback: default pixbuf already in cache, do nothing for %s\n", dt->cache_path);
+        trace("cover_avail_callback: pixbuf already in cache, do nothing for %s\n", dt->cache_path);
         free(dt->cache_path);
     }
     else {
@@ -648,6 +662,7 @@ cover_art_free (void) {
     clear_pixbuf_cache(thumb_cache, thumb_cache_size);
     free(thumb_cache);
     thumb_cache_size = 0;
+
     if (pixbuf_default) {
         g_object_unref(pixbuf_default);
         pixbuf_default = NULL;
