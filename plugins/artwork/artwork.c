@@ -998,6 +998,15 @@ get_default_cover (void)
 }
 
 static void
+clear_default_cover(void)
+{
+    if (default_cover && default_cover[0]) {
+        free(default_cover);
+    }
+    default_cover = NULL;
+}
+
+static void
 clear_query(cover_query_t *query)
 {
     if (query->fname) {
@@ -1935,13 +1944,10 @@ artwork_configchanged (void)
     get_fetcher_preferences();
 
     if (old_missing_artwork != missing_artwork || missing_artwork == 2 && !strings_match(old_nocover_path, nocover_path)) {
-        if (default_cover && default_cover[0]) {
-            free(default_cover);
+        clear_default_cover();
+        if (old_nocover_path) {
+            free(old_nocover_path);
         }
-        default_cover = NULL;
-    }
-    if (missing_artwork == 2 && old_nocover_path) {
-        free(old_nocover_path);
     }
 
     if (old_artwork_enable_embedded != artwork_enable_embedded ||
@@ -2007,9 +2013,12 @@ invalidate_playitem_cache(DB_plugin_action_t *action, const int ctx)
         deadbeef->pl_item_unref(it);
         it = deadbeef->pl_get_next(it, PL_MAIN);
     }
-
     deadbeef->plt_unref(plt);
+
+    clear_default_cover();
+
     deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+
     return 0;
 }
 
@@ -2057,6 +2066,11 @@ artwork_plugin_stop (void)
     if (queue_cond) {
         deadbeef->cond_free(queue_cond);
         queue_cond = 0;
+    }
+
+    clear_default_cover();
+    if (nocover_path) {
+        free(nocover_path);
     }
 
     stop_cache_cleaner();
