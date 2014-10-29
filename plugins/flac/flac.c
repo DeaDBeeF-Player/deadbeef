@@ -40,9 +40,7 @@
 #include <math.h>
 #include <FLAC/stream_decoder.h>
 #include <FLAC/metadata.h>
-#if HAVE_SYS_SYSLIMITS_H
-#include <sys/syslimits.h>
-#endif
+#include <limits.h>
 #include "../../deadbeef.h"
 #include "../artwork/artwork.h"
 #include "../liboggedit/oggedit.h"
