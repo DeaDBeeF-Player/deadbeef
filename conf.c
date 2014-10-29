@@ -36,9 +36,6 @@
 #if HAVE_SYS_CDEFS_H
 #include <sys/cdefs.h>
 #endif
-#if HAVE_SYS_SYSLIMITS_H
-#include <sys/syslimits.h>
-#endif
 #include "conf.h"
 #include "threading.h"
 
