@@ -110,8 +110,7 @@ static time_t cache_reset_time;
 static time_t scaled_cache_reset_time;
 
 #define DEFAULT_FILEMASK "*cover*.jpg;*front*.jpg;*folder*.jpg;*cover*.png;*front*.png;*folder*.png"
-#define MAX_FILEMASK_LENGTH 200
-static char artwork_filemask[MAX_FILEMASK_LENGTH];
+static char *artwork_filemask;
 
 static float
 scale_dimensions(const int scaled_size, const int width, const int height, unsigned int *scaled_width, unsigned int *scaled_height)
@@ -984,7 +983,7 @@ get_default_cover (void)
             sprintf(default_cover, "%s/%s", pixmap_dir, NOARTWORK_IMAGE);
         }
     }
-    else if (missing_artwork == 2 && nocover_path[0]) {
+    else if (missing_artwork == 2 && nocover_path && nocover_path[0]) {
         /* 2 is a custom image in nocover_path */
         default_cover = strdup(nocover_path);
     }
@@ -1197,8 +1196,12 @@ scan_local_path(char *mask, const char *cache_path, const char *local_path, cons
 static int
 local_image_file(const char *cache_path, const char *local_path, const char *uri, DB_vfs_t *vfsplug)
 {
+    if (!artwork_filemask) {
+        return -1;
+    }
+
     trace("scanning %s for artwork\n", local_path);
-    char filemask[MAX_FILEMASK_LENGTH];
+    char filemask[strlen(artwork_filemask)+1];
     strcpy(filemask, artwork_filemask);
     const char *filemask_end = filemask + strlen(filemask);
     char *p;
@@ -1870,10 +1873,17 @@ get_fetcher_preferences(void)
 {
     artwork_enable_embedded = deadbeef->conf_get_int("artwork.enable_embedded", 1);
     artwork_enable_local = deadbeef->conf_get_int("artwork.enable_localfolder", 1);
-    deadbeef->conf_get_str("artwork.filemask", DEFAULT_FILEMASK, artwork_filemask, MAX_FILEMASK_LENGTH);
-    if (!*artwork_filemask) {
-        strcpy(artwork_filemask, DEFAULT_FILEMASK);
-        deadbeef->conf_set_str("artwork.filemask", DEFAULT_FILEMASK);
+    if (artwork_enable_local) {
+        deadbeef->conf_lock();
+        const char *new_artwork_filemask = deadbeef->conf_get_str_fast("artwork.filemask", NULL);
+        if (!new_artwork_filemask || !new_artwork_filemask[0]) {
+            new_artwork_filemask = DEFAULT_FILEMASK;
+            deadbeef->conf_set_str("artwork.filemask", new_artwork_filemask);
+        }
+        if (!strings_match(artwork_filemask, new_artwork_filemask)) {
+            artwork_filemask = strdup(new_artwork_filemask);
+        }
+        deadbeef->conf_unlock();
     }
 #ifdef USE_VFS_CURL
     artwork_enable_lfm = deadbeef->conf_get_int("artwork.enable_lastfm", 0);
@@ -1886,7 +1896,9 @@ get_fetcher_preferences(void)
     if (missing_artwork == 2) {
         deadbeef->conf_lock();
         const char *new_nocover_path = deadbeef->conf_get_str_fast("artwork.nocover_path", NULL);
-        nocover_path = new_nocover_path ? strdup(new_nocover_path) : NULL;
+        if (!strings_match(new_nocover_path, nocover_path)) {
+            nocover_path = new_nocover_path ? strdup(new_nocover_path) : NULL;
+        }
         deadbeef->conf_unlock();
     }
 }
@@ -1894,7 +1906,7 @@ get_fetcher_preferences(void)
 static void
 insert_cache_reset(void *user_data)
 {
-    /* No point jumpiung through hoops if the reset time is already now */
+    /* No point jumping through hoops if the reset time is already now */
     if (scaled_cache_reset_time == time(NULL)) {
         return;
     }
@@ -1928,8 +1940,7 @@ artwork_configchanged (void)
 
     const int old_artwork_enable_embedded = artwork_enable_embedded;
     const int old_artwork_enable_local = artwork_enable_local;
-    char old_artwork_filemask[MAX_FILEMASK_LENGTH];
-    strcpy(old_artwork_filemask, artwork_filemask);
+    char *old_artwork_filemask = artwork_filemask;
 #ifdef USE_VFS_CURL
     const int old_artwork_enable_lfm = artwork_enable_lfm;
     const int old_artwork_enable_mb = artwork_enable_mb;
@@ -1943,16 +1954,17 @@ artwork_configchanged (void)
 
     get_fetcher_preferences();
 
-    if (old_missing_artwork != missing_artwork || missing_artwork == 2 && !strings_match(old_nocover_path, nocover_path)) {
+    if (old_nocover_path != nocover_path) {
         clear_default_cover();
-        if (old_nocover_path) {
-            free(old_nocover_path);
-        }
+        free(old_nocover_path);
+    }
+    else if (old_missing_artwork != missing_artwork) {
+        clear_default_cover();
     }
 
     if (old_artwork_enable_embedded != artwork_enable_embedded ||
         old_artwork_enable_local != artwork_enable_local ||
-        strcmp(old_artwork_filemask, artwork_filemask) ||
+        old_artwork_filemask != artwork_filemask ||
 #ifdef USE_VFS_CURL
         old_artwork_enable_lfm != artwork_enable_lfm ||
         old_artwork_enable_mb != artwork_enable_mb ||
@@ -1961,6 +1973,9 @@ artwork_configchanged (void)
 #endif
         old_default_cover && !default_cover) {
         trace("artwork config changed, invalidating cache...\n");
+        if (old_artwork_filemask != artwork_filemask) {
+            free(old_artwork_filemask);
+        }
         deadbeef->mutex_lock(queue_mutex);
         insert_cache_reset(&cache_reset_time);
         artwork_abort_http_request();
@@ -2068,6 +2083,9 @@ artwork_plugin_stop (void)
         queue_cond = 0;
     }
 
+    if (artwork_filemask) {
+        free(artwork_filemask);
+    }
     clear_default_cover();
     if (nocover_path) {
         free(nocover_path);
@@ -2136,7 +2154,7 @@ static DB_artwork_plugin_t plugin = {
     .plugin.plugin.type = DB_PLUGIN_MISC,
     .plugin.plugin.id = "artwork",
     .plugin.plugin.name = "Album Artwork",
-    .plugin.plugin.descr = "Loads album artwork either from local directories or from internet",
+    .plugin.plugin.descr = "Loads album artwork from embedded tags, local directories, or internet services",
     .plugin.plugin.copyright =
         "Album Art plugin for DeaDBeeF\n"
         "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
