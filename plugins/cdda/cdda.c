@@ -19,21 +19,25 @@
 /* screwed/maintained by Alexey Yakovenko <waker@users.sourceforge.net> */
 
 #ifdef HAVE_CONFIG_H
-#  include "../../config.h"
+    #include "../../config.h"
 #endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 #include <sys/types.h>
 #if HAVE_SYS_CDEFS_H
-#include <sys/cdefs.h>
+    #include <sys/cdefs.h>
 #endif
 #if HAVE_SYS_SYSLIMITS_H
-#include <sys/syslimits.h>
+    #include <sys/syslimits.h>
 #endif
 
+#if USE_PARANOIA
+    #include <cdda_interface.h>
+    #include <cdda_paranoia.h>
+#endif
 #include <cdio/cdio.h>
+#include <cdio/cd_types.h>
 #include <cdio/cdtext.h>
 #include <cddb/cddb.h>
 
@@ -41,6 +45,8 @@
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)
+
+#define CDDA_ALL_TRACKS "all.cda"
 
 #define DEFAULT_SERVER "freedb.org"
 #define DEFAULT_PORT 888
@@ -50,178 +56,265 @@
 
 #define SECTORSIZE CDIO_CD_FRAMESIZE_RAW //2352
 #define SAMPLESIZE 4 //bytes
-#define BUFSIZE (CDIO_CD_FRAMESIZE_RAW * 2)
+
+#define CDDB_CATEGORY_SIZE 12
+#define CDDB_DISCID_SIZE 10
+#define MAX_CDDB_DISCS 10
+#define MAX_CDDB_MENU 80
+
+#define CDDB_DISCID_TAG ":CDDB_DISCID"
+#define CDDB_IDS_TAG ":CDDB IDs"
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
 typedef struct {
     DB_fileinfo_t info;
-    CdIo_t* cdio;
+    uint32_t hints;
+    CdIo_t *cdio;
+#if USE_PARANOIA
+    cdrom_paranoia *paranoia;
+    cdrom_drive *cdrom;
+#endif
     lsn_t first_sector;
-    unsigned int sector_count;
-    uint8_t tail [SECTORSIZE];
-    unsigned int tail_len;
-    int current_sector;
-    unsigned int current_sample;
+    lsn_t current_sector;
+    lsn_t last_sector;
+    uint8_t buffer[SECTORSIZE];
+    uint8_t *tail;
+    size_t tail_length;
 } cdda_info_t;
 
 struct cddb_thread_params
 {
-    DB_playItem_t *items[100];
-    CdIo_t *cdio;
+    DB_playItem_t **items;
+    cddb_disc_t *disc;
 };
 
-static inline int
-min (int a, int b) {
-    return a < b ? a : b;
+static cddb_disc_t *
+create_disc(CdIo_t *cdio)
+{
+    cddb_disc_t *disc = cddb_disc_new();
+    if (disc)
+    {
+        const lba_t leadout_lba = cdio_get_track_lba(cdio, CDIO_CDROM_LEADOUT_TRACK);
+        cddb_disc_set_length(disc, leadout_lba / CDIO_CD_FRAMES_PER_SEC);
+        const track_t first_track = cdio_get_first_track_num(cdio);
+        const track_t num_tracks = cdio_get_num_tracks(cdio);
+        if (leadout_lba == CDIO_INVALID_LBA || first_track == CDIO_INVALID_TRACK || num_tracks == CDIO_INVALID_TRACK)
+        {
+            trace("cda: create_disc failed, invalid CD disc format\n");
+            cddb_disc_destroy(disc);
+            return NULL;
+        }
+
+        const track_t last_track = first_track + num_tracks;
+        for (track_t i = first_track; i < last_track; i++)
+        {
+            cddb_track_t *track = cddb_track_new();
+            if (!track)
+            {
+                cddb_disc_destroy(disc);
+                return NULL;
+            }
+            const lba_t offset = cdio_get_track_lba(cdio, i);
+            cddb_track_set_frame_offset(track, offset);
+            cddb_disc_add_track(disc, track);
+        }
+        cddb_disc_calc_discid(disc);
+    }
+
+    return disc;
 }
 
 static DB_fileinfo_t *
-cda_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (cdda_info_t));
-    memset (_info, 0, sizeof (cdda_info_t));
-    return _info;
+cda_open (uint32_t hints)
+{
+    cdda_info_t *info = calloc(1, sizeof (cdda_info_t));
+    if (info)
+    {
+        info->hints = hints;
+        info->tail = info->buffer;
+        info->tail_length = 0;
+        info->info.plugin = &plugin;
+        info->info.fmt.bps = 16;
+        info->info.fmt.channels = 2;
+        info->info.fmt.samplerate = 44100;
+        info->info.fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT;
+        info->info.readpos = 0;
+    }
+    return &info->info;
 }
 
 static int
-cda_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
+cda_init (DB_fileinfo_t *_info, DB_playItem_t *it)
+{
     cdda_info_t *info = (cdda_info_t *)_info;
+    char location[PATH_MAX] = "";
+    deadbeef->pl_get_meta(it, ":URI", location, sizeof(location));
+    trace ("cdda: init %s\n", location);
 
-    trace ("cdda: init %s\n", deadbeef->pl_find_meta (it, ":URI"));
-
-    char location[PATH_MAX];
-    deadbeef->pl_get_meta (it, ":URI", location, sizeof (location));
-
-    char *nr = strchr (location, '#');
-    if (nr) {
-        *nr = 0; nr++;
-    }
-    else {
-        trace ("cdda: bad name: %s\n", deadbeef->pl_find_meta (it, ":URI"));
+    char *nr = strchr(location, '#');
+    if (!nr || nr == location) {
+        trace ("cdda: bad name: %s\n", location);
         return -1;
     }
-    int track_nr = atoi (nr);
-    char *fname = (*location) ? location : NULL; //NULL if empty string; means pysical CD drive
+    *nr = '\0';
 
-    info->cdio = cdio_open (fname, DRIVER_UNKNOWN);
+    info->cdio = cdio_open(location, DRIVER_UNKNOWN);
     if  (!info->cdio)
     {
         trace ("cdda: Could not open CD\n");
         return -1;
     }
 
-    track_t first_track = cdio_get_first_track_num (info->cdio);
-    if (first_track == 0xff) {
-        trace ("cdda: no medium found\n");
-        return -1;
-    }
-    track_t tracks = cdio_get_num_tracks (info->cdio);
-    track_t i;
-    cddb_track_t *track;
+    const int need_bitrate = info->hints & DDB_DECODER_HINT_NEED_BITRATE;
+    const int drive_speed = deadbeef->conf_get_int("cdda.drive_speed", 2);
+    cdio_set_speed(info->cdio, need_bitrate && drive_speed < 5 ? 1<<drive_speed : -1);
 
-    cddb_disc_t *disc = cddb_disc_new();
-
-    cddb_disc_set_length (disc, cdio_get_track_lba (info->cdio, CDIO_CDROM_LEADOUT_TRACK) / CDIO_CD_FRAMES_PER_SEC);
-
-    for (i = 0; i < tracks; i++)
+    cddb_disc_t *disc = create_disc(info->cdio);
+    if (!disc)
     {
-        lsn_t offset = cdio_get_track_lba (info->cdio, i+first_track);
-        track = cddb_track_new();
-        cddb_track_set_frame_offset (track, offset);
-        cddb_disc_add_track (disc, track);
-    }
-    cddb_disc_calc_discid (disc);
-    int discid = cddb_disc_get_discid (disc);
-
-    int trk_discid = deadbeef->pl_find_meta_int (it, ":CDIO_DISCID", 0);
-    if (trk_discid != discid) {
-        cddb_disc_destroy (disc);
-        trace ("cdda: the track belongs to another disc, skipped\n");
         return -1;
     }
-    cddb_disc_destroy (disc);
 
+    const unsigned long discid = cddb_disc_get_discid(disc);
+    cddb_disc_destroy(disc);
 
-    if (TRACK_FORMAT_AUDIO != cdio_get_track_format (info->cdio, track_nr))
+    deadbeef->pl_lock();
+    const char *discid_hex = deadbeef->pl_find_meta(it, CDDB_DISCID_TAG);
+    const unsigned long trk_discid = discid_hex ? strtoul(discid_hex, NULL, 16) : 0;
+    deadbeef->pl_unlock();
+    if (trk_discid != discid) {
+        trace ("cdda: the track belongs to another disc (%x vs %x), skipped\n", trk_discid, discid);
+        return -1;
+    }
+
+    const int track_nr = atoi(nr+1);
+    if (cdio_get_track_format(info->cdio, track_nr) != TRACK_FORMAT_AUDIO)
     {
         trace ("cdda: Not an audio track (%d)\n", track_nr);
         return -1;
     }
 
-    int channels = cdio_get_track_channels (info->cdio, track_nr);
-    trace ("cdio nchannels: %d\n", channels);
-
-    _info->plugin = &plugin;
-    _info->fmt.bps = 16;
-    _info->fmt.channels = 2;
-    _info->fmt.samplerate = 44100;
-    _info->fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT;
-    _info->readpos = 0;
-
-    info->first_sector = cdio_get_track_lsn (info->cdio, track_nr);
-    info->sector_count = cdio_get_track_sec_count (info->cdio, track_nr);
+    info->first_sector = cdio_get_track_lsn(info->cdio, track_nr);
     info->current_sector = info->first_sector;
-    info->tail_len = 0;
-    info->current_sample = 0;
+    info->last_sector = info->first_sector + cdio_get_track_sec_count(info->cdio, track_nr) - 1;
+    trace("cdio nchannels (should always be 2 for an audio track): %d\n", cdio_get_track_channels (info->cdio, track_nr));
+    if (info->first_sector == CDIO_INVALID_LSN || info->last_sector <= info->first_sector)
+    {
+        trace ("cdda: invalid track\n");
+        return -1;
+    }
+
+#if USE_PARANOIA
+    if (cdio_get_driver_id(info->cdio) != DRIVER_NRG)
+    {
+        info->cdrom = cdda_identify(location, CDDA_MESSAGE_FORGETIT, NULL);
+        if (info->cdrom)
+        {
+            cdda_open(info->cdrom);
+            info->paranoia = paranoia_init(info->cdrom);
+        }
+        if (!info->paranoia)
+        {
+            trace ("cdda: cannot re-open %s for paranoia\n", location);
+            return -1;
+        }
+        const int no_paranoia = need_bitrate || !deadbeef->conf_get_int("cdda.paranoia", 0);
+        if (no_paranoia)
+            paranoia_cachemodel_size(info->paranoia, 100);
+        paranoia_modeset(info->paranoia, no_paranoia ? PARANOIA_MODE_DISABLE : PARANOIA_MODE_FULL^PARANOIA_MODE_NEVERSKIP);
+        paranoia_seek(info->paranoia, info->first_sector, SEEK_SET);
+    }
+#endif
     return 0;
 }
 
-int
-cda_read (DB_fileinfo_t *_info, char *bytes, int size) {
-    cdda_info_t *info = (cdda_info_t *)_info;
-    int extrasize = 0;
-    
-    if (info->tail_len > 0)
+#if USE_PARANOIA
+static void
+paranoia_callback(long bytes, int mode)
+{
+    if (mode > 1 && mode != 9)
+        fprintf(stderr, "%ld %d\n", bytes, mode);
+}
+#endif
+
+static const char *
+read_sector(cdda_info_t *info)
+{
+#if USE_PARANOIA
+    if (info->paranoia)
     {
-        if (info->tail_len >= size)
+        const int16_t *p_readbuf = paranoia_read(info->paranoia, NULL);
+        if (p_readbuf)
         {
-//            trace ("Easy case\n");
-            memcpy (bytes, info->tail, size);
-            info->tail_len -= size;
-            memmove (info->tail, info->tail+size, info->tail_len);
-            return size;
+            info->current_sector++;
+            return (char *)p_readbuf;
         }
-//        trace ("Prepending with tail of %d bytes\n", tail_len);
-        extrasize = info->tail_len;
-        memcpy (bytes, info->tail, info->tail_len);
-        bytes += info->tail_len;
-        size -= info->tail_len;
-        info->tail_len = 0;
     }
-
-    int sectors_to_read = size / SECTORSIZE + 1;
-    int end = 0;
-    
-    if (info->current_sector + sectors_to_read > info->first_sector + info->sector_count) // reached end of track
+    else
+#endif
+    if (!cdio_read_audio_sector(info->cdio, info->buffer, info->current_sector))
     {
-        end = 1;
-        sectors_to_read = info->first_sector + info->sector_count - info->current_sector;
-//        trace ("cdda: reached end of track\n");
+        info->current_sector++;
+        return info->buffer;
     }
 
-    int bufsize = sectors_to_read * SECTORSIZE;
+    return NULL;
+}
 
-    info->tail_len = end ? 0 : bufsize - size;
+static int
+cda_read (DB_fileinfo_t *_info, char *bytes, int size)
+{
+    cdda_info_t *info = (cdda_info_t *)_info;
+    char *fill = bytes;
+    const char *high_water = bytes + size;
 
-    char *buf = alloca (bufsize);
+    if (info->tail_length >= size)
+    {
+        memcpy(fill, info->tail, size);
+        info->tail += size;
+        fill += size;
+        info->tail_length -= size;
+    }
+    else if (info->tail_length > 0)
+    {
+        memcpy(fill, info->tail, info->tail_length);
+        fill += info->tail_length;
+        info->tail_length = 0;
+    }
 
-    driver_return_code_t ret = cdio_read_audio_sectors (info->cdio, buf, info->current_sector, sectors_to_read);
-    if (ret != DRIVER_OP_SUCCESS)
-        return 0;
-    info->current_sector += sectors_to_read;
+    while (fill < high_water && info->current_sector <= info->last_sector)
+    {
+        const char *p_readbuf = read_sector(info);
+        if (!p_readbuf)
+        {
+            trace("cda_read: read_sector failed\n");
+            return -1;
+        }
 
-    int retsize = end ? bufsize : size;
+        if (fill+SECTORSIZE <= high_water)
+        {
+            memcpy(fill, p_readbuf, SECTORSIZE);
+            fill += SECTORSIZE;
+        }
+        else
+        {
+            const size_t bytes_left = high_water - fill;
+            memcpy(fill, p_readbuf, bytes_left);
+            fill += bytes_left;
+            info->tail_length = SECTORSIZE - bytes_left;
+            info->tail = info->buffer + bytes_left;
+#if USE_PARANOIA
+            if (info->paranoia)
+                memcpy(info->tail, p_readbuf+bytes_left, info->tail_length);
+#endif
+        }
+    }
 
-    memcpy (bytes, buf, retsize);
-    if (!end)
-        memcpy (info->tail, buf+retsize, info->tail_len);
-
-    retsize += extrasize;
-//    trace ("requested: %d; tail_len: %d; size: %d; sectors_to_read: %d; return: %d\n", initsize, tail_len, size, sectors_to_read, retsize);
-    info->current_sample += retsize / SAMPLESIZE;
-    _info->readpos = (float)info->current_sample / _info->fmt.samplerate;
-    return retsize;
+//    trace ("requested: %d, return: %d\n", size, fill-bytes);
+    _info->readpos = (float)info->current_sector * SECTORSIZE / SAMPLESIZE / _info->fmt.samplerate;
+    return fill - bytes;
 }
 
 static void
@@ -232,25 +325,43 @@ cda_free (DB_fileinfo_t *_info)
         if (info->cdio) {
             cdio_destroy (info->cdio);
         }
-        free (_info);
+#if USE_PARANOIA
+        if (info->paranoia) {
+            paranoia_free(info->paranoia);
+        }
+        if (info->cdrom) {
+            cdda_close(info->cdrom);
+        }
+#endif
+        free (info);
     }
 }
 
 static int
 cda_seek_sample (DB_fileinfo_t *_info, int sample)
 {
+    trace("cda_seek_sample %d\n", sample);
     cdda_info_t *info = (cdda_info_t *)_info;
-    int sector = sample / (SECTORSIZE / SAMPLESIZE) + info->first_sector;
-    int offset = (sample % (SECTORSIZE / SAMPLESIZE)) * SAMPLESIZE; //in bytes
-    char buf [SECTORSIZE];
+    const int sector = sample * SAMPLESIZE / SECTORSIZE + info->first_sector;
+    const int offset = sample * SAMPLESIZE % SECTORSIZE;
 
-    driver_return_code_t ret = cdio_read_audio_sector (info->cdio, buf, sector);
-    if (ret != DRIVER_OP_SUCCESS)
-        return -1;
-    memcpy (info->tail, buf + offset, SECTORSIZE - offset);
+#if USE_PARANOIA
+    if (info->paranoia)
+        paranoia_seek(info->paranoia, sector, SEEK_SET);
+#endif
     info->current_sector = sector;
-    info->current_sample = sample;
-    _info->readpos = (float)info->current_sample / _info->fmt.samplerate;
+    const char *p_readbuf = read_sector(info);
+    if (!p_readbuf)
+        return -1;
+
+    info->tail = info->buffer + offset;
+    info->tail_length = SECTORSIZE - offset;
+#if USE_PARANOIA
+    if (info->paranoia)
+        memcpy(info->tail, p_readbuf+offset, info->tail_length);
+#endif
+    _info->readpos = (float)sample / _info->fmt.samplerate;
+
     return 0;
 }
 
@@ -260,151 +371,143 @@ cda_seek (DB_fileinfo_t *_info, float sec)
     return cda_seek_sample (_info, sec * _info->fmt.samplerate);
 }
 
-cddb_disc_t*
-resolve_disc (CdIo_t *cdio)
+static cddb_conn_t *
+new_cddb_connection(void)
 {
-    track_t first_track = cdio_get_first_track_num (cdio);
-    track_t tracks = cdio_get_num_tracks (cdio);
-    track_t i;
-    cddb_track_t *track;
-
-    cddb_disc_t *disc = cddb_disc_new();
-
-    cddb_disc_set_length (disc, cdio_get_track_lba (cdio, CDIO_CDROM_LEADOUT_TRACK) / CDIO_CD_FRAMES_PER_SEC);
-
-    for (i = 0; i < tracks; i++)
+    cddb_conn_t *conn = cddb_new();
+    if (conn)
     {
-        lsn_t offset = cdio_get_track_lba (cdio, i+first_track);
-        track = cddb_track_new();
-        cddb_track_set_frame_offset (track, offset);
-        cddb_disc_add_track (disc, track);
-    }
-    cddb_conn_t *conn = NULL;
-
-    conn = cddb_new();
-
-    deadbeef->conf_lock ();
-    cddb_set_server_name (conn, deadbeef->conf_get_str_fast ("cdda.freedb.host", DEFAULT_SERVER));
-    cddb_set_server_port (conn, deadbeef->conf_get_int ("cdda.freedb.port", DEFAULT_PORT));
-
-    if (!deadbeef->conf_get_int ("cdda.protocol", DEFAULT_PROTOCOL))
-    {
-        cddb_http_enable (conn);
-        if (deadbeef->conf_get_int ("network.proxy", 0))
+        deadbeef->conf_lock ();
+        cddb_set_server_name (conn, deadbeef->conf_get_str_fast ("cdda.freedb.host", DEFAULT_SERVER));
+        cddb_set_server_port (conn, deadbeef->conf_get_int ("cdda.freedb.port", DEFAULT_PORT));
+        if (!deadbeef->conf_get_int ("cdda.protocol", DEFAULT_PROTOCOL))
         {
-            cddb_set_server_port(conn, deadbeef->conf_get_int ("network.proxy.port", 8080));
-            cddb_set_server_name(conn, deadbeef->conf_get_str_fast ("network.proxy.address", ""));
+            cddb_http_enable (conn);
+            if (deadbeef->conf_get_int ("network.proxy", 0))
+            {
+                cddb_set_server_port(conn, deadbeef->conf_get_int ("network.proxy.port", 8080));
+                cddb_set_server_name(conn, deadbeef->conf_get_str_fast ("network.proxy.address", ""));
+            }
         }
+        deadbeef->conf_unlock ();
     }
-    deadbeef->conf_unlock ();
 
-    int matches = cddb_query (conn, disc);
-    if (matches == -1)
-    {
-        cddb_disc_destroy (disc);
-        cddb_destroy (conn);
-        return NULL;
-    }
-    cddb_read (conn, disc);
-    cddb_destroy (conn);
-    return disc;
+    return conn;
 }
 
-static DB_playItem_t *
-insert_single_track (CdIo_t* cdio, ddb_playlist_t *plt, DB_playItem_t *after, const char* file, int track_nr, int discid)
+static int
+resolve_disc (cddb_disc_t* disc, char *disc_list)
 {
-    char tmp[file ? strlen (file) + 20 : 20];
-    if (file)
-        snprintf (tmp, sizeof (tmp), "%s#%d.cda", file, track_nr);
-    else
-        snprintf (tmp, sizeof (tmp), "#%d.cda", track_nr);
+    trace("cda: resolve_disc\n");
 
-    if (TRACK_FORMAT_AUDIO != cdio_get_track_format (cdio, track_nr))
+    cddb_conn_t *conn = new_cddb_connection();
+    if (!conn)
     {
-        trace ("Not an audio track (%d)\n", track_nr);
-        return NULL;
+        return 0;
     }
 
-    int sector_count = cdio_get_track_sec_count (cdio, track_nr);
+    cddb_disc_t *temp_disc = cddb_disc_clone(disc);
+    cddb_disc_t *query_disc = disc;
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc_init (tmp, plugin.plugin.id);
-    deadbeef->pl_add_meta (it, ":FILETYPE", "cdda");
-    deadbeef->plt_set_item_duration (plt, it, (float)sector_count / 75.0);
+    cddb_cache_disable(conn);
+    const int matches = cddb_query(conn, query_disc);
 
-    snprintf (tmp, sizeof (tmp), "CD Track %02d", track_nr);
-    deadbeef->pl_add_meta (it, "title", tmp);
-    snprintf (tmp, sizeof (tmp), "%02d", track_nr);
-    deadbeef->pl_add_meta (it, "track", tmp);
+    cddb_cache_enable(conn);
+    size_t discs_read = 0;
+    disc_list[0] = '\0';
+    for (int i = 0; i < matches; i++)
+    {
+        if (cddb_read(conn, query_disc) && discs_read < MAX_CDDB_DISCS)
+        {
+            discs_read++;
+            char temp_string[CDDB_CATEGORY_SIZE + CDDB_DISCID_SIZE + 1];
+            sprintf(temp_string, ",%s/%08x", cddb_disc_get_category_str(query_disc), cddb_disc_get_discid(query_disc));
+            strcat(disc_list, temp_string);
+            query_disc = temp_disc;
+        }
+        cddb_query_next(conn, query_disc);
+    }
 
-    deadbeef->pl_set_meta_int (it, ":CDIO_DISCID", discid);
+    cddb_disc_destroy(temp_disc);
+    cddb_destroy(conn);
 
-    after = deadbeef->plt_insert_item (plt, after, it);
-
-    return after;
+    return discs_read;
 }
 
 static void
 cleanup_thread_params (struct cddb_thread_params *params)
 {
-    int i;
-    for (i = 0; params->items[i]; i++)
-        deadbeef->pl_item_unref (params->items[i]);
-    cdio_destroy (params->cdio);
-    free (params);
+    trace("cleanup_thread_params\n");
+    if (params->items) {
+        for (size_t i = 0; params->items[i]; i++)
+            deadbeef->pl_item_unref(params->items[i]);
+        free(params->items);
+    }
+    if (params->disc)
+        cddb_disc_destroy(params->disc);
+    free(params);
 }
 
+static void
+replace_meta(DB_playItem_t *it, const char *key, const char *value)
+{
+    if (value)
+        deadbeef->pl_replace_meta(it, key, value);
+    else
+        deadbeef->pl_delete_meta(it, key);
+}
 
 static void
-cddb_thread (void *items_i)
+write_metadata(DB_playItem_t *it, const cddb_disc_t *disc, const char *num_tracks)
 {
-    struct cddb_thread_params *params = (struct cddb_thread_params*)items_i;
-    DB_playItem_t **items = params->items;
+    const int track_nr = deadbeef->pl_find_meta_int(it, "track", 0);
+    cddb_track_t *track = cddb_disc_get_track(disc, track_nr-1);
 
-    trace ("calling resolve_disc\n");
-    cddb_disc_t* disc = resolve_disc (params->cdio);
-    if (!disc)
+    replace_meta(it, "artist", cddb_disc_get_artist(disc));
+    replace_meta(it, "title", cddb_track_get_title(track));
+    replace_meta(it, "album", cddb_disc_get_title(disc));
+    replace_meta(it, "genre", cddb_disc_get_genre(disc));
+    const unsigned int year = cddb_disc_get_year(disc);
+    year ? deadbeef->pl_set_meta_int(it, "year", year) : deadbeef->pl_delete_meta(it, "year");
+    replace_meta(it, "numtracks", num_tracks);
+
+    ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc(DB_EV_TRACKINFOCHANGED);
+    ev->track = it;
+    if (ev->track) {
+        deadbeef->pl_item_ref(ev->track);
+    }
+    deadbeef->event_send((ddb_event_t *)ev, 0, 0);
+}
+
+static void
+cddb_thread (void *params_void)
+{
+    struct cddb_thread_params *params = (struct cddb_thread_params *)params_void;
+
+    char disc_list[(CDDB_CATEGORY_SIZE + CDDB_DISCID_SIZE + 1) * MAX_CDDB_DISCS];
+    const int num_discs = resolve_disc(params->disc, disc_list);
+    if (num_discs <= 0)
     {
-        trace ("disc not resolved\n");
-        if (params->cdio) {
-            cdio_destroy (params->cdio);
-        }
-        free (params);
+        trace("disc not resolved\n");
+        cleanup_thread_params(params);
         return;
     }
-    trace ("disc resolved\n");
+    trace("disc resolved\n");
 
-    const char *disc_title = cddb_disc_get_title (disc);
-    const char *artist = cddb_disc_get_artist (disc);
-    trace ("disc_title=%s, disk_artist=%s\n", disc_title, artist);
-    cddb_track_t *track;
-    int i;
-    
-    // FIXME: playlist must be locked before doing that
-    int trk = 1;
-    for (i = 0, track = cddb_disc_get_track_first (disc); items[i]; trk++, ++i, track = cddb_disc_get_track_next (disc))
+    char num_tracks[4];
+    int track_count = cddb_disc_get_track_count(params->disc);
+    snprintf(num_tracks, sizeof(num_tracks), "%02d", track_count);
+    for (size_t i = 0; params->items[i]; i++)
     {
-        // FIXME: problem will happen here if item(s) were deleted from playlist, and new items were added in their places
-        // possible solutions: catch EV_TRACKDELETED and mark item(s) in every thread as NULL
-        trace ("track %d, artist=%s, album=%s, title=%s\n", i, artist, disc_title, cddb_track_get_title (track));
-
-        deadbeef->pl_delete_all_meta (items[i]);
-        deadbeef->pl_add_meta (items[i], "artist", artist);
-        deadbeef->pl_add_meta (items[i], "album", disc_title);
-        deadbeef->pl_add_meta (items[i], "title", cddb_track_get_title (track));
-        char tmp[5];
-        snprintf (tmp, sizeof (tmp), "%02d", trk);
-        deadbeef->pl_add_meta (items[i], "track", tmp);
-        ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
-        ev->track = items[i];
-        if (ev->track) {
-            deadbeef->pl_item_ref (ev->track);
-        }
-        deadbeef->event_send ((ddb_event_t *)ev, 0, 0);
+        deadbeef->pl_add_meta(params->items[i], CDDB_IDS_TAG, disc_list);
+        write_metadata(params->items[i], params->disc, num_tracks);
     }
-    cddb_disc_destroy (disc);
-    cleanup_thread_params (params);
+
+    cleanup_thread_params(params);
+
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (plt) {
+    if (plt)
+    {
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
     }
@@ -434,7 +537,6 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
 #else
         const char *text = cdtext_get_const (field_type, cdtext);
 #endif
-        const char *field = NULL;
         if (text)
         {
             switch (field_type)
@@ -451,12 +553,8 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
     }
 
     trace ("artist: %s; album: %s\n", artist, album);
-    if (artist) {
-        deadbeef->pl_replace_meta (item, "artist", artist);
-    }
-    if (album) {
-        deadbeef->pl_replace_meta (item, "album", album);
-    }
+    replace_meta(item, "artist", artist);
+    replace_meta(item, "album", album);
 
 #if CDIO_API_VERSION >= 6
     cdtext = cdio_get_cdtext (cdio);
@@ -495,152 +593,403 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
 #endif
             default: field = NULL;
         }
-        if (field && text)
+        if (field)
         {
-            trace ("%s: %s\n", field, text);
-            deadbeef->pl_replace_meta (item, field, text);
+            trace("%s: %s\n", field, text);
+            replace_meta(item, field, text);
         }
     }
 }
 
 static int
-read_disc_cdtext (struct cddb_thread_params *params)
+read_disc_cdtext (CdIo_t *cdio, DB_playItem_t **items, const track_t tracks)
 {
-    DB_playItem_t **items = params->items;
 #if CDIO_API_VERSION >= 6
-    cdtext_t *cdtext = cdio_get_cdtext (params->cdio);
+    cdtext_t *cdtext = cdio_get_cdtext(cdio);
 #else
-    cdtext_t *cdtext = cdio_get_cdtext (params->cdio, 0);
+    cdtext_t *cdtext = cdio_get_cdtext(cdio, 0);
 #endif
     if (!cdtext)
         return 0;
 
-    track_t first_track = cdio_get_first_track_num (params->cdio);
-    track_t tracks = cdio_get_num_tracks (params->cdio);
-    track_t i;
-    for (i = 0; i < tracks; i++)
-        read_track_cdtext (params->cdio, i + first_track, params->items[i]);
+    for (track_t i = 0; i < tracks; i++)
+        read_track_cdtext(cdio, deadbeef->pl_find_meta_int(items[i], "track", 0), items[i]);
 
     return 1;
 }
 
 static DB_playItem_t *
-cda_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
-    trace ("CDA insert: %s\n", fname);
-    CdIo_t* cdio = NULL;
-    int track_nr;
-    DB_playItem_t *res;
-
-    const char* shortname = strrchr (fname, '/');
-    if (shortname) {
-        shortname++;
-    }
-    else {
-        shortname = fname;
-    }
-    const char *ext = strrchr (shortname, '.') + 1;
-    int is_image = ext && (0 == strcmp (ext, "nrg"));
-    if (is_image && !deadbeef->conf_get_int ("cdda.enable_nrg", 0)) {
-        return NULL;
-    }
-
-    if (0 == strcmp (ext, "cda")) {
-        cdio = cdio_open (NULL, DRIVER_UNKNOWN);
-    }
-    else if (is_image) {
-        cdio = cdio_open (fname, DRIVER_NRG);
-    }
-
-    if (!cdio) {
-        trace ("not an audio disc/image, or file not found (%s)\n", fname);
-        return NULL;
-    }
-
-
-    // calculate discid
-    track_t first_track = cdio_get_first_track_num (cdio);
-    if (first_track == 0xff) {
-        trace ("cdda: no medium found\n");
-        cdio_destroy (cdio);
-        return NULL;
-    }
-    track_t tracks = cdio_get_num_tracks (cdio);
-    track_t i;
-    cddb_track_t *track;
-
-    cddb_disc_t *disc = cddb_disc_new();
-
-    cddb_disc_set_length (disc, cdio_get_track_lba (cdio, CDIO_CDROM_LEADOUT_TRACK) / CDIO_CD_FRAMES_PER_SEC);
-
-    for (i = 0; i < tracks; i++)
+insert_track (ddb_playlist_t *plt, DB_playItem_t *after, const char* path, const track_t track_nr, CdIo_t *cdio, const int discid)
+{
+    char fname[strlen(path) + 10];
+    sprintf(fname, "%s#%d.cda", path, track_nr);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init(fname, plugin.plugin.id);
+    if (it)
     {
-        lsn_t offset = cdio_get_track_lba (cdio, i+first_track);
-        track = cddb_track_new();
-        cddb_track_set_frame_offset (track, offset);
-        cddb_disc_add_track (disc, track);
+        deadbeef->pl_add_meta(it, ":FILETYPE", "cdda");
+
+        const float sector_count = cdio_get_track_sec_count(cdio, track_nr);
+        deadbeef->plt_set_item_duration(plt, it, sector_count / 75);
+
+        char title[12];
+        sprintf(title, "CD Track %02d", track_nr);
+        deadbeef->pl_add_meta(it, "title", title);
+
+        char track[4];
+        sprintf(track, "%02d", track_nr);
+        deadbeef->pl_add_meta(it, "track", track);
+
+        char discid_string[10];
+        sprintf(discid_string, "%08x", discid);
+        deadbeef->pl_add_meta(it, CDDB_DISCID_TAG, discid_string);
+
+        it = deadbeef->plt_insert_item(plt, after, it);
     }
-    cddb_disc_calc_discid (disc);
-    int discid = cddb_disc_get_discid (disc);
 
-    if (0 == strcasecmp (shortname, "all.cda") || is_image)
+    return it;
+}
+
+static DB_playItem_t *
+insert_disc (ddb_playlist_t *plt, DB_playItem_t *after, const char *path, const track_t single_track, CdIo_t* cdio)
+{
+    struct cddb_thread_params *p = calloc(1, sizeof(struct cddb_thread_params));
+    if (!p)
     {
-        track_t i;
-        res = after;
-        struct cddb_thread_params *p = malloc (sizeof (struct cddb_thread_params));
-        memset (p, 0, sizeof (struct cddb_thread_params));
-        p->cdio = cdio;
+        return NULL;
+    }
 
-        int enable_cddb = deadbeef->conf_get_int ("cdda.freedb.enable", DEFAULT_USE_CDDB);
+    p->disc = create_disc(cdio);
+    if (!p->disc)
+    {
+        cleanup_thread_params(p);
+        return NULL;
+    }
 
-        for (i = 0; i < tracks; i++)
+    const track_t tracks = single_track ? 1 : cddb_disc_get_track_count(p->disc);
+    p->items = calloc(tracks+1, sizeof(*p->items));
+    if (!p->items)
+    {
+        cleanup_thread_params(p);
+        return NULL;
+    }
+
+    const unsigned long discid = cddb_disc_get_discid(p->disc);
+    DB_playItem_t *inserted = NULL;
+    const track_t first_track = single_track ? single_track : cdio_get_first_track_num(cdio);
+    track_t item_count = 0;
+    for (track_t i = 0; i < tracks; i++)
+    {
+        if (cdio_get_track_format(cdio, first_track+i) == TRACK_FORMAT_AUDIO)
         {
-            trace ("inserting track %d\n", i);
-            res = insert_single_track (cdio, plt, res, is_image ? fname : NULL, i+first_track, discid);
-            if (res) {
-                p->items[i] = res;
+            trace("inserting track %d from %s\n", first_track+i, path);
+            inserted = insert_track(plt, after, path, first_track+i, cdio, discid);
+            p->items[item_count++] = inserted;
+            after = inserted;
+        }
+    }
+
+    intptr_t tid = 0;
+    if (item_count)
+    {
+        const int got_cdtext = read_disc_cdtext(cdio, p->items, tracks);
+        const int prefer_cdtext = deadbeef->conf_get_int("cdda.prefer_cdtext", DEFAULT_PREFER_CDTEXT);
+        const int enable_cddb = deadbeef->conf_get_int("cdda.freedb.enable", DEFAULT_USE_CDDB);
+        if (!(got_cdtext && prefer_cdtext) && enable_cddb)
+        {
+            trace("cdda: querying freedb...\n");
+            tid = deadbeef->thread_start(cddb_thread, p);
+            if (tid)
+                deadbeef->thread_detach(tid);
+        }
+    }
+
+    if (!tid)
+    {
+        cleanup_thread_params(p);
+    }
+
+    return inserted;
+}
+
+static DB_playItem_t *
+cda_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *path)
+{
+    trace("CDA insert: %s\n", path);
+    cdio_close_tray(NULL, NULL);
+
+    /* Deal with any NRG files and get them out of the way */
+    const char *ext = strrchr(path, '.');
+    if (ext && !strcasecmp(ext, ".nrg"))
+    {
+        if (!deadbeef->conf_get_int("cdda.enable_nrg", 0))
+        {
+            trace("cda: NRG found but disabled in preferences\n");
+            return NULL;
+        }
+        CdIo_t* cdio = cdio_open(path, DRIVER_NRG);
+        if (!cdio) {
+            trace("not an NRG image, or file not found (%s)\n", path);
+            return NULL;
+        }
+        DB_playItem_t *inserted = insert_disc(plt, after, path, 0, cdio);
+        cdio_destroy(cdio);
+        return inserted;
+    }
+
+    /* Get a list of all devices containing CD audio */
+    char **device_list = cdio_get_devices_with_cap(NULL, CDIO_FS_AUDIO, false);
+    if (!device_list)
+    {
+        trace("cda: no audio drives found\n");
+        return NULL;
+    }
+
+    /* Match the device name for the requested insert (invalid devices may crash cdio) */
+    const char *sep = strrchr(path, '/');
+    char *drive_device = NULL;
+    if (sep)
+    {
+        char real_path[PATH_MAX];
+        const char *real_sep = realpath(path, real_path) ? strrchr(real_path, '/') : NULL;
+        real_path[real_sep ? real_sep-real_path : 0] = '\0';
+        const size_t device_length = sep - path;
+        for (size_t i = 0; device_list[i] && !drive_device; i++)
+        {
+            if (!strncmp(device_list[i], path, device_length) || !strcmp(device_list[i], real_path))
+            {
+                drive_device = device_list[i];
             }
         }
-
-        int got_cdtext = read_disc_cdtext (p);
-        int prefer_cdtext = deadbeef->conf_get_int ("cdda.prefer_cdtext", DEFAULT_PREFER_CDTEXT);
-
-        if ((!got_cdtext || !prefer_cdtext) && enable_cddb)
-        {
-            trace ("cdda: querying freedb...\n");
-            intptr_t tid = deadbeef->thread_start (cddb_thread, p); //will destroy cdio
-            deadbeef->thread_detach (tid);
-        }
-        else
-            cleanup_thread_params (p);
     }
     else
     {
-        track_nr = atoi (shortname);
-        res = insert_single_track (cdio, plt, after, NULL, track_nr, discid);
-        if (res) {
-            read_track_cdtext (cdio, track_nr, res);
-            deadbeef->pl_item_unref (res);
-        }
-        cdio_destroy (cdio);
+        drive_device = device_list[0];
     }
-    cddb_disc_destroy (disc);
-    return res;
+
+    /* Open the device and insert the requested track(s) */
+    DB_playItem_t *inserted = NULL;
+    if (drive_device)
+    {
+        trace("cda: try to open device %s\n", drive_device);
+        CdIo_t* cdio = cdio_open(drive_device, DRIVER_UNKNOWN);
+        if (cdio)
+        {
+            char *track_end;
+            const unsigned long track_nr = strtoul(sep ? sep + 1 : path, &track_end, 10);
+            const track_t single_track = strcmp(track_end, ".cda") || track_nr > CDIO_CD_MAX_TRACKS ? 0 : track_nr;
+            inserted = insert_disc(plt, after, drive_device, single_track, cdio);
+            cdio_destroy(cdio);
+        }
+    }
+
+    cdio_free_device_list(device_list);
+
+    return inserted;
 }
 
+static int dialog_combo_index;
+
+static void
+set_param (const char *key, const char *value)
+{
+    dialog_combo_index = atoi(value);
+    if (dialog_combo_index < 0)
+        dialog_combo_index = 0;
+    return;
+}
+
+static void
+get_param (const char *key, char *value, int len, const char *def)
+{
+    strcpy(value, "0");
+    return;
+}
+
+#define DRIVE_COMBO_SCRIPT "property \"CD drive to load\" select[%u] cdda.drive_device 0"
 static int
 cda_action_add_cd (DB_plugin_action_t *act, int ctx)
 {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (plt) {
-        deadbeef->plt_add_files_begin (plt, 0);
-        deadbeef->plt_add_file2 (0, plt, "all.cda", NULL, NULL);
-        deadbeef->plt_add_files_end (plt, 0);
-        deadbeef->plt_modified (plt);
-        deadbeef->plt_unref (plt);
+    /* Get all devices containg CD audio media */
+    cdio_close_tray(NULL, NULL);
+    char **device_list = cdio_get_devices_with_cap(NULL, CDIO_FS_AUDIO, false);
+    if (!device_list)
+    {
+        return 0;
     }
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+
+    char *drive_device = NULL;
+    if (device_list[0] && device_list[1])
+    {
+        /* Multiple devices, ask the user to pick one */
+        size_t device_count;
+        size_t device_combo_length = sizeof(DRIVE_COMBO_SCRIPT);
+        for (device_count = 0; device_list[device_count]; device_count++)
+        {
+            device_combo_length += strlen(device_list[device_count]) + 1;
+        }
+
+        char *layout = malloc(device_combo_length);
+        if (layout)
+        {
+            sprintf(layout, DRIVE_COMBO_SCRIPT, device_count);
+            for (char **device = device_list; *device; device++)
+            {
+                strcat(layout, " ");
+                strcat(layout, *device);
+            }
+            strcat(layout, ";");
+
+            ddb_dialog_t conf = {
+                .title = "Audio CD Drive",
+                .layout = layout,
+                .set_param = set_param,
+                .get_param = get_param,
+                .parent = NULL
+            };
+
+            struct DB_plugin_s **plugin_list;
+            for (plugin_list = deadbeef->plug_get_list(); *plugin_list && (*plugin_list)->type != DB_PLUGIN_GUI; plugin_list++);
+            if (*plugin_list)
+            {
+                DB_gui_t *gui_plugin = (DB_gui_t *)*plugin_list;
+                if (gui_plugin->run_dialog(&conf, 1<<ddb_button_ok|1<<ddb_button_cancel, NULL, NULL) == ddb_button_ok)
+                {
+                    drive_device = device_list[dialog_combo_index];
+                }
+            }
+            free(layout);
+        }
+    }
+    else if (device_list[0])
+    {
+        drive_device = device_list[0];
+    }
+
+    /* If the user picked a device or there is only one, then add all the tracks */
+    if (drive_device)
+    {
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        if (plt)
+        {
+            char path[strlen(drive_device) + sizeof(CDDA_ALL_TRACKS) + 1];
+            sprintf(path, "%s/%s", drive_device, CDDA_ALL_TRACKS);
+            deadbeef->plt_add_files_begin(plt, 0);
+            deadbeef->plt_add_file2(0, plt, path, NULL, NULL);
+            deadbeef->plt_add_files_end(plt, 0);
+            deadbeef->plt_modified(plt);
+            deadbeef->plt_unref(plt);
+        }
+        deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    }
+
+    cdio_free_device_list(device_list);
+
     return 0;
 }
+
+static void
+set_disc_id(const char *disc_id, cddb_disc_t *disc)
+{
+    char category[CDDB_CATEGORY_SIZE];
+    unsigned long discid;
+    sscanf(disc_id, ",%[^/]/%8lx", category, &discid);
+    cddb_disc_set_category_str(disc, category);
+    cddb_disc_set_discid(disc, discid);
+}
+
+static int
+load_cddb_data (ddb_playlist_t *plt, cddb_disc_t *disc, const size_t disc_num)
+{
+    /* Find the first selected playitem */
+    DB_playItem_t *it = deadbeef->plt_get_first(plt, PL_MAIN);
+    while (it && !deadbeef->pl_is_selected(it))
+    {
+        deadbeef->pl_item_unref(it);
+        it = deadbeef->pl_get_next(it, PL_MAIN);
+    }
+
+    /* Find the category/discid for the chosen disc */
+    deadbeef->pl_lock();
+    const char *disc_list = deadbeef->pl_find_meta(it, CDDB_IDS_TAG);
+    char *p = (char *)disc_list;
+    size_t i = 0;
+    while (p && i++ < disc_num)
+    {
+        p = strchr(++p, ',');
+    }
+    if (p)
+    {
+        set_disc_id(p, disc);
+    }
+    deadbeef->pl_unlock();
+    trace("cda: load metadata from discid %s/%u\n", cddb_disc_get_category_str(disc), cddb_disc_get_discid(disc));
+
+    /* Read the cddb data for this disc */
+    cddb_conn_t *conn = new_cddb_connection();
+    if (!conn)
+    {
+        return -1;
+    }
+    const int read = cddb_read(conn, disc);
+    cddb_destroy(conn);
+    if (!read)
+    {
+        trace("cda: discid read failed\n");
+        return -1;
+    }
+
+    /* Apply the data to each selected playitem */
+    int track_count = cddb_disc_get_track_count(disc);
+    char num_tracks[4];
+    snprintf(num_tracks, sizeof(num_tracks), "%02d", track_count);
+    do
+    {
+        if (deadbeef->pl_is_selected(it))
+        {
+            write_metadata(it, disc, num_tracks);
+        }
+        deadbeef->pl_item_unref(it);
+        it = deadbeef->pl_get_next(it, PL_MAIN);
+    } while (it);
+
+    deadbeef->plt_modified(plt);
+    deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+
+    return 0;
+}
+
+static int
+action_disc_n (const size_t disc_num)
+{
+    int res = -1;
+    ddb_playlist_t *plt = deadbeef->plt_get_curr();
+    if (plt)
+    {
+        cddb_disc_t *disc = cddb_disc_new();
+        if (disc)
+        {
+            res = load_cddb_data(plt, disc, disc_num);
+            cddb_disc_destroy(disc);
+        }
+        deadbeef->plt_unref(plt);
+    }
+
+    return res;
+}
+
+static int cda_action_disc0(DB_plugin_action_t *act, int ctx) {return action_disc_n(0);}
+static int cda_action_disc1(DB_plugin_action_t *act, int ctx) {return action_disc_n(1);}
+static int cda_action_disc2(DB_plugin_action_t *act, int ctx) {return action_disc_n(2);}
+static int cda_action_disc3(DB_plugin_action_t *act, int ctx) {return action_disc_n(3);}
+static int cda_action_disc4(DB_plugin_action_t *act, int ctx) {return action_disc_n(4);}
+static int cda_action_disc5(DB_plugin_action_t *act, int ctx) {return action_disc_n(5);}
+static int cda_action_disc6(DB_plugin_action_t *act, int ctx) {return action_disc_n(6);}
+static int cda_action_disc7(DB_plugin_action_t *act, int ctx) {return action_disc_n(7);}
+static int cda_action_disc8(DB_plugin_action_t *act, int ctx) {return action_disc_n(8);}
+static int cda_action_disc9(DB_plugin_action_t *act, int ctx) {return action_disc_n(9);}
+
+static DB_plugin_action_t disc_actions[MAX_CDDB_DISCS];
+static char disc_action_titles[MAX_CDDB_DISCS][MAX_CDDB_MENU];
 
 static DB_plugin_action_t add_cd_action = {
     .name = "cd_add",
@@ -651,9 +1000,119 @@ static DB_plugin_action_t add_cd_action = {
 };
 
 static DB_plugin_action_t *
-cda_get_actions (DB_playItem_t *unused)
+cda_get_actions (DB_playItem_t *it)
 {
-    return &add_cd_action;
+    /* Main menu, File->Add Audio CD */
+    if (!it) {
+        return &add_cd_action;
+    }
+
+    /* Quick sanity check that the current playitem is a CD track with a CDDB IDs tag */
+    char disc_list[(CDDB_CATEGORY_SIZE + CDDB_DISCID_SIZE) * MAX_CDDB_DISCS + 1] = "";
+    deadbeef->pl_get_meta(it, CDDB_IDS_TAG, disc_list, sizeof(disc_list));
+    if (!*disc_list)
+    {
+        return NULL;
+    }
+
+    /* Make sure all selected playitems are from the same CD disc */
+    ddb_playlist_t *plt = deadbeef->plt_get_curr();
+    if (!plt)
+    {
+        return NULL;
+    }
+    DB_playItem_t *test_it = deadbeef->plt_get_first(plt, PL_MAIN);
+    while (test_it)
+    {
+        if (deadbeef->pl_is_selected(test_it))
+        {
+            deadbeef->pl_lock();
+            const char *it_disc_list = deadbeef->pl_find_meta(test_it, CDDB_IDS_TAG);
+            if (!it_disc_list || strcmp(disc_list, it_disc_list))
+            {
+                deadbeef->pl_item_unref(test_it);
+                deadbeef->plt_unref(plt);
+                deadbeef->pl_unlock();
+                return NULL;
+            }
+            deadbeef->pl_unlock();
+        }
+
+        deadbeef->pl_item_unref(test_it);
+        test_it = deadbeef->pl_get_next(test_it, PL_MAIN);
+    }
+    deadbeef->plt_unref(plt);
+
+    /* Make sure all the static menu items are initialised */
+    if (!disc_actions[0].name)
+    {
+        disc_actions[0].name = "disc_action0";
+        disc_actions[0].callback2 = cda_action_disc0;
+        disc_actions[1].name = "disc_action1";
+        disc_actions[1].callback2 = cda_action_disc1;
+        disc_actions[2].name = "disc_action2";
+        disc_actions[2].callback2 = cda_action_disc2;
+        disc_actions[3].name = "disc_action3";
+        disc_actions[3].callback2 = cda_action_disc3;
+        disc_actions[4].name = "disc_action4";
+        disc_actions[4].callback2 = cda_action_disc4;
+        disc_actions[5].name = "disc_action5";
+        disc_actions[5].callback2 = cda_action_disc5;
+        disc_actions[6].name = "disc_action6";
+        disc_actions[6].callback2 = cda_action_disc6;
+        disc_actions[7].name = "disc_action7";
+        disc_actions[7].callback2 = cda_action_disc7;
+        disc_actions[8].name = "disc_action8";
+        disc_actions[8].callback2 = cda_action_disc8;
+        disc_actions[9].name = "disc_action9";
+        disc_actions[9].callback2 = cda_action_disc9;
+        for (size_t i = 0; i < MAX_CDDB_DISCS; i++)
+        {
+            disc_actions[i].title = disc_action_titles[i];
+        }
+    }
+
+    /* Only query against the cache, everything has been read before and we need to be fast */
+    cddb_conn_t *conn = new_cddb_connection();
+    if (!conn)
+    {
+        return NULL;
+    }
+    cddb_cache_only(conn);
+    cddb_disc_t *disc = cddb_disc_new();
+    if (!disc)
+    {
+        cddb_destroy(conn);
+        return NULL;
+    }
+
+    /* Build a menu item for each possible cddb disc for this CD */
+    size_t i = 0;
+    char *p = disc_list;
+    do {
+        set_disc_id(p, disc);
+        if (cddb_read(conn, disc))
+        {
+            const char *title = cddb_disc_get_title(disc);
+            const unsigned int year_int = cddb_disc_get_year(disc);
+            char year[8] = "";
+            if (year_int && year_int <= 9999)
+            {
+                sprintf(year, "[%u] ", year_int);
+            }
+            snprintf(disc_action_titles[i], MAX_CDDB_MENU, "Load CDDB metadata/%s%s", year, title);
+            disc_actions[i].flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_ADD_MENU;
+            disc_actions[i].next = &disc_actions[i+1];
+            i++;
+        }
+        p = strchr(p+1, ',');
+    } while (p);
+    disc_actions[i-1].next = NULL;
+
+    cddb_disc_destroy(disc);
+    cddb_destroy(conn);
+
+    return disc_actions;
 }
 
 static const char *exts[] = { "cda", "nrg", NULL };
@@ -662,8 +1121,12 @@ static const char settings_dlg[] =
     "property \"Prefer CD-Text over CDDB\" checkbox cdda.prefer_cdtext 1;\n"
     "property \"CDDB url (e.g. 'freedb.org')\" entry cdda.freedb.host freedb.org;\n"
     "property \"CDDB port number (e.g. '888')\" entry cdda.freedb.port 888;\n"
-    "property \"Prefer CDDB protocol over HTTP\" checkbox cdda.protocol 1;\n"
+    "property \"Use CDDB protocol\" checkbox cdda.protocol 1;\n"
     "property \"Enable NRG image support\" checkbox cdda.enable_nrg 0;"
+    "property \"Drive speed for normal playback\" select[6] cdda.drive_speed 2 1x 2x 4x 8x 16x Max;"
+#if USE_PARANOIA
+    "property \"Use cdparanoia error correction when ripping\" checkbox cdda.paranoia 0;"
+#endif
 ;
 
 // define plugin interface
@@ -676,7 +1139,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "cda",
     .plugin.name = "Audio CD player",
     .plugin.descr = "Audio CD plugin using libcdio and libcddb",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
         "\n"

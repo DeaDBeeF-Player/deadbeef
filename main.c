@@ -51,7 +51,7 @@
 #include <sys/fcntl.h>
 #include <sys/errno.h>
 #include <signal.h>
-#ifdef __linux__
+#ifdef __GLIBC__
 #include <execinfo.h>
 #endif
 #include <unistd.h>
@@ -642,7 +642,7 @@ player_mainloop (void) {
     }
 }
 
-#ifdef __linux__
+#ifdef __GLIBC__
 void
 sigsegv_handler (int sig) {
     fprintf (stderr, "Segmentation Fault\n");
@@ -761,7 +761,7 @@ main (int argc, char *argv[]) {
     }
 #endif
 
-#ifdef __linux__
+#ifdef __GLIBC__
     signal (SIGSEGV, sigsegv_handler);
 #endif
     setlocale (LC_ALL, "");

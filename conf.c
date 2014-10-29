@@ -29,6 +29,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <inttypes.h>
 #include <errno.h>
 #include <unistd.h>

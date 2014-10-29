@@ -27,19 +27,22 @@
 #endif
 #include <stdlib.h>
 #include <string.h>
-#include "../../deadbeef.h"
 #include "artwork_internal.h"
 #include "escape.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
 
-#define AAO_URL "http://www.albumart.org/index.php?searchkey=%s+%s&itempage=1&newsearch=1&searchindex=Music"
+#define AAO_URL "http://www.albumart.org/index.php?searchk=%s+%s&itempage=1&newsearch=1&searchindex=Music"
 int fetch_from_albumart_org (const char *artist, const char *album, const char *dest)
 {
+    if (!artist && !album) {
+        return -1;
+    }
+
     char *artist_url = uri_escape (artist ? artist : "", 0);
     char *album_url = uri_escape (album ? album : "", 0);
-    char *url = malloc(sizeof(AAO_URL) + strlen(artist_url) + strlen(album_url) + 1);
+    char *url = malloc(sizeof(AAO_URL) + strlen(artist_url) + strlen(album_url));
     if (url) {
         sprintf (url, AAO_URL, artist_url, album_url);
     }
@@ -50,23 +53,9 @@ int fetch_from_albumart_org (const char *artist, const char *album, const char *
     }
 
     trace("fetch_from_albumart_org: %s\n", url);
-    DB_FILE *fp = deadbeef->fopen (url);
-    free(url);
-    if (!fp) {
-        trace ("fetch_from_albumart_org: failed to open %s\n", url);
-        return -1;
-    }
-    current_file = fp;
     char buffer[10000];
-    const int size = deadbeef->fread(buffer, 1, sizeof (buffer), fp);
-    char *img = NULL;
-    if (size > 0) {
-        buffer[size] = '\0';
-        img = strstr (buffer, "http://ecx.images-amazon.com/images/I/");
-    }
-    current_file = NULL;
-    deadbeef->fclose (fp);
-
+    const size_t size = artwork_http_request(url, buffer, sizeof(buffer));
+    char *img = strstr (buffer, "http://ecx.images-amazon.com/images/I/");
     if (!img) {
         trace ("fetch_from_albumart_org: image url not found in response from (%d bytes)\n", size);
         return -1;
