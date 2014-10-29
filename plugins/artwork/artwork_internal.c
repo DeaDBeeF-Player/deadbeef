@@ -38,6 +38,65 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
 
+extern DB_functions_t *deadbeef;
+
+static DB_FILE *http_request;
+static uintptr_t http_mutex;
+
+static DB_FILE *
+new_http_request(const char *url)
+{
+    errno = 0;
+
+    if (!http_mutex) {
+        http_mutex = deadbeef->mutex_create_nonrecursive();
+        if (!http_mutex) {
+            return NULL;
+        }
+    }
+
+    deadbeef->mutex_lock(http_mutex);
+    http_request = deadbeef->fopen(url);
+    deadbeef->mutex_unlock(http_mutex);
+    return http_request;
+}
+
+static void
+close_http_request(DB_FILE *request)
+{
+    deadbeef->mutex_lock(http_mutex);
+    deadbeef->fclose(request);
+    http_request = NULL;
+    deadbeef->mutex_unlock(http_mutex);
+}
+
+size_t artwork_http_request(const char *url, char *buffer, const size_t buffer_size)
+{
+    DB_FILE *request = new_http_request(url);
+    if (!request) {
+        return 0;
+    }
+
+    const size_t size = deadbeef->fread(buffer, 1, buffer_size-1, request);
+    buffer[size] = '\0';
+
+    close_http_request(request);
+
+    return size;
+}
+
+void artwork_abort_http_request(void)
+{
+    if (http_mutex) {
+        deadbeef->mutex_lock(http_mutex);
+        if (http_request) {
+            deadbeef->fabort(http_request);
+        }
+        http_request = NULL;
+        deadbeef->mutex_unlock(http_mutex);
+    }
+}
+
 static int
 check_dir(const char *path)
 {
@@ -85,21 +144,19 @@ int copy_file (const char *in, const char *out)
         return -1;
     }
 
-    DB_FILE *fin = deadbeef->fopen(in);
-    if (!fin) {
+    DB_FILE *request = new_http_request(in);
+    if (!request) {
         fclose(fout);
         trace("artwork: failed to open file %s for reading\n", in);
         return -1;
     }
-    current_file = fin;
 
-    errno = 0;
     int err = 0;
     int bytes_read;
     size_t file_bytes = 0;
     do {
         char buffer[BUFFER_SIZE];
-        bytes_read = deadbeef->fread(buffer, 1, BUFFER_SIZE, fin);
+        bytes_read = deadbeef->fread(buffer, 1, BUFFER_SIZE, request);
         if (bytes_read < 0 || errno) {
             trace("artwork: failed to read file %s: %s\n", tmp_out, strerror(errno));
             err = -1;
@@ -111,8 +168,7 @@ int copy_file (const char *in, const char *out)
         file_bytes += bytes_read;
     } while (!err && bytes_read == BUFFER_SIZE);
 
-    current_file = NULL;
-    deadbeef->fclose(fin);
+    close_http_request(request);
     fclose(fout);
 
     if (file_bytes > 0 && !err) {

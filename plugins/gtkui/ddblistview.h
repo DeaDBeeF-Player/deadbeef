@@ -310,6 +310,9 @@ ddb_listview_groupcheck (DdbListview *listview);
 int
 ddb_listview_is_album_art_column (DdbListview *listview, int x);
 
+int
+ddb_listview_is_album_art_column_idx (DdbListview *listview, int cidx);
+
 void
 ddb_listview_update_fonts (DdbListview *ps);
 

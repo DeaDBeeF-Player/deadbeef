@@ -751,8 +751,8 @@ http_thread_func (void *ctx) {
     }
     else {
         trace ("vfs_curl: thread ended normally\n");
+        fp->status = STATUS_FINISHED;
     }
-    fp->status = STATUS_FINISHED;
     deadbeef->mutex_unlock (fp->mutex);
 }
 
@@ -818,10 +818,10 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     }
 
     size_t sz = size * nmemb;
-    while ((fp->remaining > 0 || fp->status != STATUS_FINISHED) && sz > 0)
+    while ((fp->remaining > 0 || fp->status != STATUS_FINISHED && fp->status != STATUS_ABORTED) && sz > 0)
     {
         // wait until data is available
-        while ((fp->remaining == 0 || fp->skipbytes > 0) && fp->status != STATUS_FINISHED) {
+        while ((fp->remaining == 0 || fp->skipbytes > 0) && fp->status != STATUS_FINISHED && fp->status != STATUS_ABORTED) {
 //            trace ("vfs_curl: readwait, status: %d..\n", fp->status);
             deadbeef->mutex_lock (fp->mutex);
             if (fp->status == STATUS_READING) {
@@ -874,6 +874,10 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
             ptr += cp;
         }
         deadbeef->mutex_unlock (fp->mutex);
+    }
+    if (fp->status == STATUS_ABORTED) {
+        errno = ECONNABORTED;
+        return 0;
     }
 //    if (size * nmemb == 1) {
 //        trace ("%02x\n", (unsigned int)*((uint8_t*)ptr));

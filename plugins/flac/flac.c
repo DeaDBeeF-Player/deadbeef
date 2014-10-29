@@ -71,6 +71,7 @@ typedef struct {
     int64_t totalsamples;
     int flac_critical_error;
     int init_stop_decoding;
+    int set_bitrate;
     DB_FILE *file;
 
     // used only on insert
@@ -221,11 +222,35 @@ cflac_init_error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecode
     }
 }
 
+static flac_info_t *
+cflac_open_int (uint32_t hints) {
+    flac_info_t *info = calloc(1, sizeof(flac_info_t));
+    if (info && hints&DDB_DECODER_HINT_NEED_BITRATE) {
+        info->set_bitrate = 1;
+    }
+    return info;
+}
+
 static DB_fileinfo_t *
 cflac_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (flac_info_t));
-    memset (_info, 0, sizeof (flac_info_t));
-    return _info;
+    return (DB_fileinfo_t *)cflac_open_int(hints);
+}
+
+static DB_fileinfo_t *
+cflac_open2 (uint32_t hints, DB_playItem_t *it) {
+    flac_info_t *info = cflac_open_int(hints);
+    if (!info) {
+        return NULL;
+    }
+
+    deadbeef->pl_lock();
+    info->file = deadbeef->fopen(deadbeef->pl_find_meta(it, ":URI"));
+    if (!info->file) {
+        trace("cflac_open2 failed to open file %s\n", deadbeef->pl_find_meta(it, ":URI"));
+    }
+    deadbeef->pl_unlock();
+
+    return (DB_fileinfo_t *)info;
 }
 
 static int
@@ -233,27 +258,23 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     trace ("cflac_init %s\n", deadbeef->pl_find_meta (it, ":URI"));
     flac_info_t *info = (flac_info_t *)_info;
 
-    deadbeef->pl_lock ();
-    info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
-    deadbeef->pl_unlock ();
     if (!info->file) {
-        trace ("cflac_init failed to open file\n");
-        return -1;
-    }
-
-    info->flac_critical_error = 0;
-
-    const char *ext = NULL;
-
-    deadbeef->pl_lock ();
-    {
-        const char *uri = deadbeef->pl_find_meta (it, ":URI");
-        ext = strrchr (uri, '.');
-        if (ext) {
-            ext++;
+        deadbeef->pl_lock ();
+        info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+        deadbeef->pl_unlock ();
+        if (!info->file) {
+            trace ("cflac_init failed to open file %s\n", deadbeef->pl_find_meta(it, ":URI"));
+            return -1;
         }
     }
-    deadbeef->pl_unlock ();
+
+    deadbeef->pl_lock();
+    const char *uri = deadbeef->pl_find_meta(it, ":URI");
+    const char *ext = strrchr(uri, '.');
+    if (ext) {
+        ext++;
+    }
+    deadbeef->pl_unlock();
 
     int isogg = 0;
     int skip = 0;
@@ -375,9 +396,10 @@ cflac_free (DB_fileinfo_t *_info) {
 static int
 cflac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     flac_info_t *info = (flac_info_t *)_info;
-    if (info->bitrate != deadbeef->streamer_get_apx_bitrate()) {
+    if (info->set_bitrate && info->bitrate != deadbeef->streamer_get_apx_bitrate()) {
         deadbeef->streamer_set_bitrate (info->bitrate);
     }
+
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     if (info->endsample >= 0) {
         if (size / samplesize + info->currentsample > info->endsample) {
@@ -1157,7 +1179,7 @@ static const char *exts[] = { "flac", "oga", NULL };
 // define plugin interface
 static DB_decoder_t plugin = {
     .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    .plugin.api_vminor = 7,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
@@ -1198,6 +1220,7 @@ static DB_decoder_t plugin = {
     ,
     .plugin.website = "http://deadbeef.sf.net",
     .open = cflac_open,
+    .open2 = cflac_open2,
     .init = cflac_init,
     .free = cflac_free,
     .read = cflac_read,

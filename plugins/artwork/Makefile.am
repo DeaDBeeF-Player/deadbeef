@@ -9,7 +9,7 @@ endif
 
 if ARTWORK_USE_VFS_CURL
 artwork_net_cflags = -DUSE_VFS_CURL
-artwork_net_sources =  albumartorg.c albumartorg.h lastfm.c lastfm.h wos.c wos.h escape.c escape.h
+artwork_net_sources = musicbrainz.c musicbrainz.h albumartorg.c albumartorg.h lastfm.c lastfm.h wos.c wos.h escape.c escape.h
 endif
 
 artwork_la_SOURCES = artwork.c artwork.h cache.c cache.h artwork_internal.c artwork_internal.h $(artwork_net_sources)

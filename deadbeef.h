@@ -345,7 +345,7 @@ enum {
     DB_EV_PAUSE = 6, // pause playback
     DB_EV_PLAY_RANDOM = 7, // play random track
     DB_EV_TERMINATE = 8, // must be sent to player thread to terminate
-    DB_EV_PLAYLIST_REFRESH = 9, // save and redraw current playlist 
+    DB_EV_PLAYLIST_REFRESH = 9, // save and redraw current playlist
     DB_EV_REINIT_SOUND = 10, // reinitialize sound output with current output_plugin config value
     DB_EV_CONFIGCHANGED = 11, // one or more config options were changed
     DB_EV_TOGGLE_PAUSE = 12,
@@ -745,7 +745,7 @@ typedef struct {
 
     // get next track
     DB_playItem_t *(*pl_get_next) (DB_playItem_t *it, int iter);
-    
+
     // get previous track
     DB_playItem_t *(*pl_get_prev) (DB_playItem_t *it, int iter);
 
@@ -841,7 +841,7 @@ typedef struct {
     int (*junk_id3v2_convert_22_to_24) (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24);
     void (*junk_id3v2_free) (DB_id3v2_tag_t *tag);
     int (*junk_id3v2_write) (FILE *file, DB_id3v2_tag_t *tag);
-    DB_id3v2_frame_t *(*junk_id3v2_add_text_frame) (DB_id3v2_tag_t *tag, const char *frame_id, const char *value); 
+    DB_id3v2_frame_t *(*junk_id3v2_add_text_frame) (DB_id3v2_tag_t *tag, const char *frame_id, const char *value);
     int (*junk_id3v2_remove_frames) (DB_id3v2_tag_t *tag, const char *frame_id);
     int (*junk_apev2_read) (DB_playItem_t *it, DB_FILE *fp);
     int (*junk_apev2_read_mem) (DB_playItem_t *it, char *mem, int size);
@@ -1082,7 +1082,7 @@ typedef struct {
 // if (flags & DB_ACTION_COMMON)  -> main menu, or nowhere, or where GUI plugin wants
 //    basically, to put it into main menu, prefix the item title with the menu name
 //    e.g. title = "File/MyItem" --> this will add the item under File menu
-//    
+//
 // if (flags & PLAYLIST)  -> playlist (tab) context menu
 //
 // if (none of the above)  -> track context menu
@@ -1103,7 +1103,7 @@ enum {
     /* DEPRECATED in API 1.5, ignored in callback2 */
     /* Action can (and prefer) traverse multiple tracks by itself */
     DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3,
-    
+
     /* Action is inactive */
     DB_ACTION_DISABLED = 1 << 4,
 
@@ -1177,7 +1177,7 @@ typedef struct DB_plugin_s {
 
     // start is called to start plugin; can be NULL
     int (*start) (void);
-    
+
     // stop is called to deinit plugin; can be NULL
     int (*stop) (void);
 
@@ -1192,13 +1192,13 @@ typedef struct DB_plugin_s {
     // opposite of connect, will be called before stop, while all plugins are still
     // in "started" state
     int (*disconnect) (void);
-    
+
     // exec_cmdline may be called at any moment when user sends commandline to player
     // can be NULL if plugin doesn't support commandline processing
     // cmdline is 0-separated list of strings, guaranteed to have 0 at the end
     // cmdline_size is number of bytes pointed by cmdline
     int (*exec_cmdline) (const char *cmdline, int cmdline_size);
-    
+
     // @returns linked list of actions for the specified track
     // when it is NULL -- the plugin must return list of all actions
     DB_plugin_action_t* (*get_actions) (DB_playItem_t *it);
@@ -1244,7 +1244,7 @@ typedef struct DB_fileinfo_s {
     // these parameters should be set in decoder->open
     ddb_waveformat_t fmt;
 
-    // readpos should be updated to current decoder time (in seconds) 
+    // readpos should be updated to current decoder time (in seconds)
     float readpos;
 
     // this is the (optional) file handle, that can be used by streamer to
@@ -1254,6 +1254,10 @@ typedef struct DB_fileinfo_s {
 
 enum {
     DDB_DECODER_HINT_16BIT = 0x1, // that flag means streamer prefers 16 bit streams for performance reasons
+#if (DDB_API_LEVEL >= 8)
+    // When this hint is set, the decoder is expected to update streamer bitrate using streamer_set_bitrate call from plugin.read function
+    DDB_DECODER_HINT_NEED_BITRATE = 0x2,
+#endif
 };
 
 // decoder plugin
@@ -1282,7 +1286,7 @@ typedef struct DB_decoder_s {
     // 'insert' is called to insert new item to playlist
     // decoder is responsible to calculate duration, split it into subsongs, load cuesheet, etc
     // after==NULL means "prepend before 1st item in playlist"
-    DB_playItem_t * (*insert) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname); 
+    DB_playItem_t * (*insert) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname);
 
     int (*numvoices) (DB_fileinfo_t *info);
     void (*mutevoice) (DB_fileinfo_t *info, int voice, int mute);
@@ -1491,7 +1495,7 @@ typedef struct DB_playlist_s {
     int (*save) (ddb_playlist_t *plt, const char *fname, DB_playItem_t *first, DB_playItem_t *last);
 
     const char **extensions; // NULL-terminated list of supported file extensions, e.g. {"m3u", "pls", NULL}
-    
+
     // since 1.5
 #if (DDB_API_LEVEL >= 5)
     DB_playItem_t * (*load2) (int visibility, ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort);

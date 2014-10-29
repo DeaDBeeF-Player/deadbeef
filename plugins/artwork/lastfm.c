@@ -26,7 +26,6 @@
 #endif
 #include <string.h>
 #include <stdlib.h>
-#include "../../deadbeef.h"
 #include "artwork_internal.h"
 #include "escape.h"
 
@@ -40,9 +39,13 @@
 #define IMAGE_END_TAG "</image>"
 int fetch_from_lastfm (const char *artist, const char *album, const char *dest)
 {
-    char *artist_url = uri_escape(artist ? artist : "", 0);
-    char *album_url = uri_escape(album ? album : "", 0);
-    char *url = malloc(strlen(artist_url) + strlen(album_url) + sizeof(LFM_URL API_KEY) + 1);
+    if (!artist || !album) {
+        return -1;
+    }
+
+    char *artist_url = uri_escape(artist, 0);
+    char *album_url = uri_escape(album, 0);
+    char *url = malloc(strlen(artist_url) + strlen(album_url) + sizeof(LFM_URL API_KEY));
     if (url) {
         sprintf(url, LFM_URL, API_KEY, artist_url, album_url);
     }
@@ -53,31 +56,16 @@ int fetch_from_lastfm (const char *artist, const char *album, const char *dest)
     }
 
     trace("fetch_from_lastfm: query: %s\n", url);
-    DB_FILE *fp = deadbeef->fopen(url);
-    free(url);
-    if (!fp) {
-        trace("fetch_from_lastfm: failed to open %s\n", url);
-        return -1;
+    char buffer[1000];
+    const size_t size = artwork_http_request(url, buffer, sizeof(buffer));
+    char *img = strstr(buffer, MEGA_IMAGE_TAG);
+    if (img) {
+        img += sizeof(MEGA_IMAGE_TAG)-1;
     }
-    current_file = fp;
-
-    char buffer[1000] = "";
-    const int size = deadbeef->fread(buffer, 1, sizeof(buffer)-1, fp);
-    current_file = NULL;
-    deadbeef->fclose(fp);
-
-    char *img = NULL;
-    if (size > 0) {
-        buffer[size] = '\0';
-        img = strstr(buffer, MEGA_IMAGE_TAG);
+    else {
+        img = strstr(buffer, XL_IMAGE_TAG);
         if (img) {
-            img += sizeof(MEGA_IMAGE_TAG)-1;
-        }
-        else {
-            img = strstr(buffer, XL_IMAGE_TAG);
-            if (img) {
-                img += sizeof(XL_IMAGE_TAG)-1;
-            }
+            img += sizeof(XL_IMAGE_TAG)-1;
         }
     }
 //    trace("fetch_from_lastfm: scrobbler response:\n%s\n", buffer);
