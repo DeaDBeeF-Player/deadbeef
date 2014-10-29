@@ -28,9 +28,6 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <math.h> // for ceil
-#if HAVE_SYS_SYSLIMITS_H
-#include <sys/syslimits.h>
-#endif
 
 #include "../../deadbeef.h"
 
