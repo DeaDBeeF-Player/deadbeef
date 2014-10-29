@@ -35,9 +35,7 @@
 #if HAVE_SYS_CDEFS_H
 #include <sys/cdefs.h>
 #endif
-#if HAVE_SYS_SYSLIMITS_H
-#include <sys/syslimits.h>
-#endif
+#include <limits.h>
 #include <unistd.h>
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
