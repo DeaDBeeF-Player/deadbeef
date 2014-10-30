@@ -99,8 +99,8 @@ cover_get_default_pixbuf(void)
     /* Load the default cover image into a pixbuf */
     if (!pixbuf_default) {
         const char *defpath = artwork_plugin->get_default_cover();
-        if (defpath && defpath[0]) {fprintf(stderr, "defpath is %s\n", defpath);
-            pixbuf_default = gdk_pixbuf_new_from_file(defpath, NULL);fprintf(stderr, "defpath was %s\n", defpath);
+        if (defpath && defpath[0]) {
+            pixbuf_default = gdk_pixbuf_new_from_file(defpath, NULL);
 #if 0
             GError *error = NULL;
             pixbuf_default = gdk_pixbuf_new_from_file(defpath, &error);
