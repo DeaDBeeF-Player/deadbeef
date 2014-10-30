@@ -108,6 +108,7 @@ static char *nocover_path;
 
 static time_t cache_reset_time;
 static time_t scaled_cache_reset_time;
+static time_t default_reset_time;
 
 #define DEFAULT_FILEMASK "*cover*.jpg;*front*.jpg;*folder*.jpg;*cover*.png;*front*.png;*folder*.png"
 static char *artwork_filemask;
@@ -1817,7 +1818,18 @@ static const char *
 find_image(const char *path, const time_t reset_time)
 {
     struct stat stat_buf;
-    if (stat(path, &stat_buf) || !S_ISREG(stat_buf.st_mode) || !check_file_age(path, stat_buf.st_mtime, reset_time) || stat_buf.st_size == 0) {
+    if (stat(path, &stat_buf) || !S_ISREG(stat_buf.st_mode)) {
+        trace("artwork: %s not found or not regular file\n", path);
+        return NULL;
+    }
+
+    if (stat_buf.st_size == 0 && !check_file_age(path, stat_buf.st_mtime, default_reset_time)) {
+        trace("artwork: %s invalidated after default artwork reset\n", path);
+        return NULL;
+    }
+
+    if (!check_file_age(path, stat_buf.st_mtime, reset_time) || stat_buf.st_size == 0) {
+        trace("artwork: %s is a placeholder or was invalidated after cache reset\n", path);
         return NULL;
     }
 
@@ -1881,7 +1893,11 @@ get_fetcher_preferences(void)
             deadbeef->conf_set_str("artwork.filemask", new_artwork_filemask);
         }
         if (!strings_match(artwork_filemask, new_artwork_filemask)) {
+            char *old_artwork_filemask = artwork_filemask;
             artwork_filemask = strdup(new_artwork_filemask);
+            if (old_artwork_filemask) {
+                free(old_artwork_filemask);
+            }
         }
         deadbeef->conf_unlock();
     }
@@ -1897,7 +1913,11 @@ get_fetcher_preferences(void)
         deadbeef->conf_lock();
         const char *new_nocover_path = deadbeef->conf_get_str_fast("artwork.nocover_path", NULL);
         if (!strings_match(new_nocover_path, nocover_path)) {
+            char *old_nocover_path = nocover_path;
             nocover_path = new_nocover_path ? strdup(new_nocover_path) : NULL;
+            if (old_nocover_path) {
+                free(old_nocover_path);
+            }
         }
         deadbeef->conf_unlock();
     }
@@ -1940,7 +1960,7 @@ artwork_configchanged (void)
 
     const int old_artwork_enable_embedded = artwork_enable_embedded;
     const int old_artwork_enable_local = artwork_enable_local;
-    char *old_artwork_filemask = artwork_filemask;
+    const char *old_artwork_filemask = artwork_filemask;
 #ifdef USE_VFS_CURL
     const int old_artwork_enable_lfm = artwork_enable_lfm;
     const int old_artwork_enable_mb = artwork_enable_mb;
@@ -1948,34 +1968,28 @@ artwork_configchanged (void)
     const int old_artwork_enable_wos = artwork_enable_wos;
 #endif
     const int old_missing_artwork = missing_artwork;
-    char *old_nocover_path = nocover_path;
+    const char *old_nocover_path = nocover_path;
     const int old_scale_towards_longer = scale_towards_longer;
-    const char *old_default_cover = default_cover;
 
     get_fetcher_preferences();
 
-    if (old_nocover_path != nocover_path) {
+    if (old_missing_artwork != missing_artwork || old_nocover_path != nocover_path) {
+        trace("artwork config changed, invalidating default artwork...\n");
         clear_default_cover();
-        free(old_nocover_path);
-    }
-    else if (old_missing_artwork != missing_artwork) {
-        clear_default_cover();
+        default_reset_time = time(NULL);
+        deadbeef->sendmessage(DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
     }
 
     if (old_artwork_enable_embedded != artwork_enable_embedded ||
         old_artwork_enable_local != artwork_enable_local ||
-        old_artwork_filemask != artwork_filemask ||
 #ifdef USE_VFS_CURL
         old_artwork_enable_lfm != artwork_enable_lfm ||
         old_artwork_enable_mb != artwork_enable_mb ||
         old_artwork_enable_aao != artwork_enable_aao ||
         old_artwork_enable_wos != artwork_enable_wos ||
 #endif
-        old_default_cover && !default_cover) {
+        old_artwork_filemask != artwork_filemask) {
         trace("artwork config changed, invalidating cache...\n");
-        if (old_artwork_filemask != artwork_filemask) {
-            free(old_artwork_filemask);
-        }
         deadbeef->mutex_lock(queue_mutex);
         insert_cache_reset(&cache_reset_time);
         artwork_abort_http_request();
