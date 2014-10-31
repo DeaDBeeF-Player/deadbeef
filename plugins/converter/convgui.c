@@ -194,8 +194,6 @@ converter_worker (void *ctx) {
 
         converter_plugin->get_output_path (conv->convert_items[n], conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, root, conv->write_to_source_folder, outpath, sizeof (outpath));
 
-        int skip = 0;
-
         // need to unescape path before passing to stat
         char unesc_path[2000];
         char invalid[] = "$\"`\\";
@@ -211,11 +209,9 @@ converter_worker (void *ctx) {
 
         struct stat st;
         int res = stat(unesc_path, &st);
+        int skip = !res;
         if (res == 0) {
-            if (conv->overwrite_action > 1 || conv->overwrite_action < 0) {
-                conv->overwrite_action = 0;
-            }
-            if (conv->overwrite_action == 0) {
+            if (conv->overwrite_action == 1) {
                 // prompt if file exists
                 struct overwrite_prompt_ctx ctl;
                 ctl.mutex = deadbeef->mutex_create ();
@@ -228,13 +224,12 @@ converter_worker (void *ctx) {
                 deadbeef->mutex_free (ctl.mutex);
                 if (ctl.result) {
                     unlink (outpath);
-                }
-                else {
-                    skip = 1;
+                    skip = 0;
                 }
             }
-            else if (conv->overwrite_action == 1) {
+            else if (conv->overwrite_action == 2) {
                 unlink (outpath);
+                skip = 0;
             }
         }
 
