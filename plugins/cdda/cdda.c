@@ -18,19 +18,10 @@
 
 /* screwed/maintained by Alexey Yakovenko <waker@users.sourceforge.net> */
 
-#ifdef HAVE_CONFIG_H
-    #include "../../config.h"
-#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#if HAVE_SYS_CDEFS_H
-    #include <sys/cdefs.h>
-#endif
-#if HAVE_SYS_SYSLIMITS_H
-    #include <sys/syslimits.h>
-#endif
 
 #if USE_PARANOIA
     #include <cdda_interface.h>
@@ -129,14 +120,11 @@ cda_open (uint32_t hints)
     cdda_info_t *info = calloc(1, sizeof (cdda_info_t));
     if (info) {
         info->hints = hints;
-        info->tail = info->buffer;
-        info->tail_length = 0;
         info->info.plugin = &plugin;
         info->info.fmt.bps = 16;
         info->info.fmt.channels = 2;
         info->info.fmt.samplerate = 44100;
         info->info.fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT;
-        info->info.readpos = 0;
     }
     return (DB_fileinfo_t *)info;
 }
@@ -144,21 +132,27 @@ cda_open (uint32_t hints)
 static int
 cda_init (DB_fileinfo_t *_info, DB_playItem_t *it)
 {
-    cdda_info_t *info = (cdda_info_t *)_info;
-    char location[PATH_MAX] = "";
-    deadbeef->pl_get_meta(it, ":URI", location, sizeof(location));
-    trace ("cdda: init %s\n", location);
-
-    char *nr = strchr(location, '#');
-    if (!nr || nr == location) {
-        trace ("cdda: bad name: %s\n", location);
+    deadbeef->pl_lock();
+    const char *uri = deadbeef->pl_find_meta(it, ":URI");
+    const char *nr = uri ? strchr(uri, '#') : NULL;
+    if (!nr || nr == uri) {
+        deadbeef->pl_unlock();
+        trace ("cdda: bad name: %s\n", uri);
         return -1;
     }
-    *nr = '\0';
 
-    info->cdio = cdio_open(location, DRIVER_UNKNOWN);
+    trace ("cdda: init %s\n", uri);
+    const int track_nr = atoi(nr+1);
+    const size_t device_length = nr - uri;
+    char device[device_length+1];
+    strncpy(device, uri, device_length);
+    device[device_length] = '\0';
+    deadbeef->pl_unlock();
+
+    cdda_info_t *info = (cdda_info_t *)_info;
+    info->cdio = cdio_open(device, DRIVER_UNKNOWN);
     if  (!info->cdio) {
-        trace ("cdda: Could not open CD\n");
+        trace ("cdda: Could not open CD device\n");
         return -1;
     }
 
@@ -183,7 +177,6 @@ cda_init (DB_fileinfo_t *_info, DB_playItem_t *it)
         return -1;
     }
 
-    const int track_nr = atoi(nr+1);
     if (cdio_get_track_format(info->cdio, track_nr) != TRACK_FORMAT_AUDIO) {
         trace ("cdda: Not an audio track (%d)\n", track_nr);
         return -1;
@@ -200,13 +193,13 @@ cda_init (DB_fileinfo_t *_info, DB_playItem_t *it)
 
 #if USE_PARANOIA
     if (cdio_get_driver_id(info->cdio) != DRIVER_NRG) {
-        info->cdrom = cdda_identify(location, CDDA_MESSAGE_FORGETIT, NULL);
+        info->cdrom = cdda_identify(device, CDDA_MESSAGE_FORGETIT, NULL);
         if (info->cdrom) {
             cdda_open(info->cdrom);
             info->paranoia = paranoia_init(info->cdrom);
         }
         if (!info->paranoia) {
-            trace ("cdda: cannot re-open %s for paranoia\n", location);
+            trace ("cdda: cannot re-open %s for paranoia\n", device);
             return -1;
         }
         const int no_paranoia = need_bitrate || !deadbeef->conf_get_int("cdda.paranoia", 0);
@@ -236,14 +229,12 @@ read_sector(cdda_info_t *info)
     if (info->paranoia) {
         const int16_t *p_readbuf = paranoia_read(info->paranoia, NULL);
         if (p_readbuf) {
-            info->current_sector++;
             return (char *)p_readbuf;
         }
     }
     else
 #endif
     if (!cdio_read_audio_sector(info->cdio, info->buffer, info->current_sector)) {
-        info->current_sector++;
         return info->buffer;
     }
 
@@ -276,6 +267,7 @@ cda_read (DB_fileinfo_t *_info, char *bytes, int size)
             return -1;
         }
 
+        info->current_sector++;
         if (fill+SECTORSIZE <= high_water) {
             memcpy(fill, p_readbuf, SECTORSIZE);
             fill += SECTORSIZE;
@@ -285,12 +277,7 @@ cda_read (DB_fileinfo_t *_info, char *bytes, int size)
             memcpy(fill, p_readbuf, bytes_left);
             fill += bytes_left;
             info->tail_length = SECTORSIZE - bytes_left;
-            info->tail = info->buffer + bytes_left;
-#if USE_PARANOIA
-            if (info->paranoia) {
-                memcpy(info->tail, p_readbuf+bytes_left, info->tail_length);
-            }
-#endif
+            info->tail = (char *)p_readbuf + bytes_left;
         }
     }
 
@@ -338,13 +325,8 @@ cda_seek_sample (DB_fileinfo_t *_info, int sample)
         return -1;
     }
 
-    info->tail = info->buffer + offset;
+    info->tail = (char *)p_readbuf + offset;
     info->tail_length = SECTORSIZE - offset;
-#if USE_PARANOIA
-    if (info->paranoia) {
-        memcpy(info->tail, p_readbuf+offset, info->tail_length);
-    }
-#endif
     _info->readpos = (float)sample / _info->fmt.samplerate;
 
     return 0;
@@ -705,7 +687,8 @@ cda_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *path)
     }
 
     /* Get a list of all devices containing CD audio */
-    char **device_list = cdio_get_devices_with_cap(NULL, CDIO_FS_AUDIO, false);
+    driver_id_t driver_id;
+    char **device_list = cdio_get_devices_with_cap_ret(NULL, CDIO_FS_AUDIO, false, &driver_id);
     if (!device_list) {
         trace("cda: no audio drives found\n");
         return NULL;
@@ -715,14 +698,25 @@ cda_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *path)
     const char *sep = strrchr(path, '/');
     char *drive_device = NULL;
     if (sep) {
-        char real_path[PATH_MAX];
-        const char *real_sep = realpath(path, real_path) ? strrchr(real_path, '/') : NULL;
-        real_path[real_sep ? real_sep-real_path : 0] = '\0';
-        const size_t device_length = sep - path;
-        for (size_t i = 0; device_list[i] && !drive_device; i++) {
-            if (!strncmp(device_list[i], path, device_length) || !strcmp(device_list[i], real_path)) {
-                drive_device = device_list[i];
+        char *real_path = realpath(path, NULL);
+        if (!real_path) {
+            const size_t device_length = sep - path;
+            char device_path[device_length+1];
+            strncpy(device_path, path, device_length);
+            device_path[device_length] = '\0';
+            real_path = realpath(device_path, NULL);
+        }
+        if (real_path) {
+            for (size_t i = 0; device_list[i] && !drive_device; i++) {
+                char *real_device = realpath(device_list[i], NULL);
+                if (real_device) {
+                    if (!strcmp(real_device, real_path)) {
+                        drive_device = device_list[i];
+                    }
+                    free(real_device);
+                }
             }
+            free(real_path);
         }
     }
     else {
@@ -733,7 +727,7 @@ cda_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *path)
     DB_playItem_t *inserted = NULL;
     if (drive_device) {
         trace("cda: try to open device %s\n", drive_device);
-        CdIo_t* cdio = cdio_open(drive_device, DRIVER_UNKNOWN);
+        CdIo_t* cdio = cdio_open(drive_device, driver_id);
         if (cdio) {
             char *track_end;
             const unsigned long track_nr = strtoul(sep ? sep + 1 : path, &track_end, 10);
@@ -742,9 +736,7 @@ cda_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *path)
             cdio_destroy(cdio);
         }
     }
-
     cdio_free_device_list(device_list);
-
     return inserted;
 }
 
