@@ -1584,7 +1584,7 @@ convgui_connect (void) {
         fprintf (stderr, "convgui: converter plugin not found\n");
         return -1;
     }
-    if (!PLUG_TEST_COMPAT(&converter_plugin->misc.plugin, 1, 3)) {
+    if (!PLUG_TEST_COMPAT(&converter_plugin->misc.plugin, 1, 4)) {
         fprintf (stderr, "convgui: need converter>=1.3, but found %d.%d\n", converter_plugin->misc.plugin.version_major, converter_plugin->misc.plugin.version_minor);
         return -1;
     }

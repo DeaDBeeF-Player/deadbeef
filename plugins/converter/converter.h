@@ -22,6 +22,13 @@
 #include <stdint.h>
 #include "../../deadbeef.h"
 
+// changes in 1.3:
+//   readonly preset support
+// changes in 1.4:
+//   changed escaping rules
+//   now get_output_path returns unescaped path, and
+//   doesn't create folders
+
 enum {
     DDB_ENCODER_METHOD_PIPE = 0,
     DDB_ENCODER_METHOD_FILE = 1,
