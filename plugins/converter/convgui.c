@@ -194,21 +194,8 @@ converter_worker (void *ctx) {
 
         converter_plugin->get_output_path (conv->convert_items[n], conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, root, conv->write_to_source_folder, outpath, sizeof (outpath));
 
-        // need to unescape path before passing to stat
-        char unesc_path[2000];
-        char invalid[] = "$\"`\\";
-        const char *p = outpath;
-        char *o = unesc_path;
-        while (*p) {
-            if (*p == '\\') {
-                p++;
-            }
-            *o++ = *p++;
-        }
-        *o = 0;
-
         struct stat st;
-        int res = stat(unesc_path, &st);
+        int res = stat(outpath, &st);
         int skip = !res;
         if (res == 0) {
             if (conv->overwrite_action == 1) {
@@ -216,7 +203,7 @@ converter_worker (void *ctx) {
                 struct overwrite_prompt_ctx ctl;
                 ctl.mutex = deadbeef->mutex_create ();
                 ctl.cond = deadbeef->cond_create ();
-                ctl.fname = unesc_path;
+                ctl.fname = outpath;
                 ctl.result = 0;
                 gdk_threads_add_idle (overwrite_prompt_cb, &ctl);
                 deadbeef->cond_wait (ctl.cond, ctl.mutex);
