@@ -51,7 +51,7 @@
 #include <sys/fcntl.h>
 #include <sys/errno.h>
 #include <signal.h>
-#ifdef __linux__
+#ifdef __GLIBC__
 #include <execinfo.h>
 #endif
 #include <unistd.h>
@@ -65,6 +65,9 @@
 #include "plugins.h"
 #include "common.h"
 #include "junklib.h"
+#ifdef HAVE_COCOAUI
+#include "cocoautil.h"
+#endif
 
 #ifndef PREFIX
 #error PREFIX must be defined
@@ -86,7 +89,9 @@ char use_gui_plugin[100];
 
 static void
 print_help (void) {
+#ifdef ENABLE_NLS
 	bind_textdomain_codeset (PACKAGE, "");
+#endif
     fprintf (stdout, _("Usage: deadbeef [options] [--] [file(s)]\n"));
     fprintf (stdout, _("Options:\n"));
     fprintf (stdout, _("   --help  or  -h     Print help (this message) and exit\n"));
@@ -108,7 +113,9 @@ print_help (void) {
                 "                      copy[r]ight, [e]lapsed\n"));
     fprintf (stdout, _("                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
     fprintf (stdout, _("                      for more info, see %s\n"), "http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting");
+#ifdef ENABLE_NLS
 	bind_textdomain_codeset (PACKAGE, "UTF-8");
+#endif
 }
 
 // Parse command line an return a single buffer with all
@@ -180,7 +187,13 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
     const uint8_t *pend = cmdline + len;
     int queue = 0;
     while (parg < pend) {
-        if (!strcmp (parg, "--nowplaying")) {
+        char *parg_c = parg;
+        if (strlen (parg) >= 2 && parg[0] == '-' && parg[1] != '-') {
+            parg += strlen (parg);
+            parg++;
+            return 0; // running under osx debugger?
+        }
+        else if (!strcmp (parg, "--nowplaying")) {
             parg += strlen (parg);
             parg++;
             if (parg >= pend) {
@@ -629,7 +642,7 @@ player_mainloop (void) {
     }
 }
 
-#ifdef __linux__
+#ifdef __GLIBC__
 void
 sigsegv_handler (int sig) {
     fprintf (stderr, "Segmentation Fault\n");
@@ -748,7 +761,7 @@ main (int argc, char *argv[]) {
     }
 #endif
 
-#ifdef __linux__
+#ifdef __GLIBC__
     signal (SIGSEGV, sigsegv_handler);
 #endif
     setlocale (LC_ALL, "");
@@ -813,10 +826,19 @@ main (int argc, char *argv[]) {
             fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
             return -1;
         }
+#ifdef HAVE_COCOAUI
+        char respath[PATH_MAX];
+        cocoautil_get_resources_path (respath, sizeof (respath));
+        if (snprintf (dbplugindir, sizeof (dbplugindir), "%s", respath) > sizeof (dbplugindir)) {
+            fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+            return -1;
+        }
+#else
         if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/plugins", dbinstalldir) > sizeof (dbplugindir)) {
             fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
             return -1;
         }
+#endif
         if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/pixmaps", dbinstalldir) > sizeof (dbpixmapdir)) {
             fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
             return -1;

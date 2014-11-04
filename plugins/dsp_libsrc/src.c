@@ -43,6 +43,8 @@ typedef struct {
     SRC_STATE *src;
     SRC_DATA srcdata;
     int remaining; // number of input samples in SRC buffer
+    float *outbuf;
+    int outsize;
     __attribute__((__aligned__(16))) char in_fbuffer[sizeof(float)*SRC_BUFFER*SRC_MAX_CHANNELS];
     unsigned quality_changed : 1;
     unsigned need_reset : 1;
@@ -136,9 +138,16 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
 
     int numoutframes = 0;
     int outsize = nframes*24;
-    float outbuf[outsize*fmt->channels];
-    memset (outbuf, 0, sizeof (outbuf));
-    char *output = (char *)outbuf;
+    if (!src->outbuf || src->outsize != outsize) {
+        if (src->outbuf) {
+            free (src->outbuf);
+            src->outbuf = NULL;
+        }
+        src->outsize = outsize;
+        src->outbuf = malloc (src->outsize * fmt->channels * sizeof (float));
+    }
+    char *output = (char *)src->outbuf;
+    memset (output, 0, outsize * fmt->channels * sizeof (float));
     float *input = samples;
     int inputsize = nframes;
 
@@ -168,7 +177,7 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
         src->srcdata.input_frames = src->remaining;
         src->srcdata.output_frames = outsize;
         src->srcdata.end_of_input = 0;
-        trace ("src input: %d, ratio %f, buffersize: %d\n", src->srcdata.input_frames, src->srcdata.src_ratio, sizeof (outbuf));
+        trace ("src input: %d, ratio %f, buffersize: %d\n", src->srcdata.input_frames, src->srcdata.src_ratio, src->outsize * fmt->channels * sizeof (float));
         int src_err = src_process (src->src, &src->srcdata);
         trace ("src output: %d, used: %d\n", src->srcdata.output_frames_gen, src->srcdata.input_frames_used);
 
@@ -196,7 +205,7 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
         }
     } while (inputsize > 0 && outsize > 0);
 
-    memcpy (input, outbuf, numoutframes * fmt->channels * sizeof (float));
+    memcpy (input, src->outbuf, numoutframes * fmt->channels * sizeof (float));
     //static FILE *out = NULL;
     //if (!out) {
     //    out = fopen ("out.raw", "w+b");

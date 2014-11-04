@@ -558,7 +558,7 @@ tabstrip_adjust_hscroll (DdbTabStrip *ts) {
 }
 
 void
-set_tab_text_color (DdbTabStrip *ts, int idx, int selected) {
+set_tab_text_color (DdbTabStrip *ts, int idx, int selected, int playing) {
     if (idx == -1) {
         return;
     }
@@ -577,7 +577,20 @@ set_tab_text_color (DdbTabStrip *ts, int idx, int selected) {
     deadbeef->plt_unref (plt);
     if (fallback) {
         GdkColor color;
-        gtkui_get_tabstrip_text_color (&color);
+        if (gtkui_override_tabstrip_colors ()) {
+            if (idx == selected) {
+                gtkui_get_tabstrip_selected_text_color (&color);
+            }
+            else if (idx == playing) {
+                gtkui_get_tabstrip_playing_text_color (&color);
+            }
+            else {
+                gtkui_get_tabstrip_text_color (&color);
+            }
+        }
+        else {
+            gtkui_get_tabstrip_text_color (&color);
+        }
         float fg[3] = {(float)color.red/0xffff, (float)color.green/0xffff, (float)color.blue/0xffff};
         draw_set_fg_color (&ts->drawctx, fg);
     }
@@ -604,6 +617,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
     int cnt = deadbeef->plt_get_count ();
     int hscroll = ts->hscrollpos;
 
+    int theming = !gtkui_override_tabstrip_colors ();
     int need_arrows = tabstrip_need_arrows (ts);
     if (need_arrows) {
         hscroll -= arrow_widget_width;
@@ -621,6 +635,18 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
     if (tab_selected == -1) {
         return;
     }
+
+    int tab_playing = -1;
+    DB_playItem_t *playing = deadbeef->streamer_get_playing_track ();
+    if (playing) {
+        ddb_playlist_t *plt = deadbeef->pl_get_playlist (playing);
+        if (plt) {
+            tab_playing = deadbeef->plt_get_idx (plt);
+            deadbeef->plt_unref (plt);
+        }
+        deadbeef->pl_item_unref (playing);
+    }
+
 
 #if !GTK_CHECK_VERSION(3,0,0)
     GdkGC *gc = gdk_gc_new (backbuf);
@@ -684,8 +710,14 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
             char tab_title[1000];
             plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
 
-            set_tab_text_color (ts, idx, tab_selected);
-            draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding - 1), 0, tab_title);
+            set_tab_text_color (ts, idx, tab_selected, tab_playing);
+            int bold = 0;
+            int italic = 0;
+            if (!theming && idx == tab_playing) {
+                italic = gtkui_tabstrip_italic_playing;
+                bold = gtkui_tabstrip_embolden_playing;
+            }
+            draw_text_custom (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding - 1), 0, DDB_TABSTRIP_FONT, bold, italic, tab_title);
         }
         x += w - tab_overlap_size;
     }
@@ -726,8 +758,14 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 #endif
         char tab_title[1000];
         plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
-        set_tab_text_color (ts, idx, tab_selected);
-        draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding - 1), 0, tab_title);
+        set_tab_text_color (ts, idx, tab_selected, -1);
+        int bold = 0;
+        int italic = 0;
+        if (!theming) {
+            bold = gtkui_tabstrip_embolden_selected;
+            italic = gtkui_tabstrip_italic_selected;
+        }
+        draw_text_custom (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding - 1), 0, DDB_TABSTRIP_FONT, bold, italic, tab_title);
     }
     else {
         need_draw_moving = 1;
@@ -749,8 +787,14 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 #endif
                     char tab_title[1000];
                     plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
-                    set_tab_text_color (ts, idx, tab_selected);
-                    draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding - 1), 0, tab_title);
+                    set_tab_text_color (ts, idx, tab_selected, -1);
+                    int bold = 0;
+                    int italic = 0;
+                    if (!theming) {
+                        bold = gtkui_tabstrip_embolden_selected;
+                        italic = gtkui_tabstrip_italic_selected;
+                    }
+                    draw_text_custom (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding - 1), 0, DDB_TABSTRIP_FONT, bold, italic, tab_title);
                 }
                 break;
             }
@@ -996,7 +1040,7 @@ on_tabstrip_configure_event              (GtkWidget       *widget,
                                         GdkEventConfigure *event)
 {
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
-    draw_init_font (&ts->drawctx, gtk_widget_get_style (widget));
+    draw_init_font (&ts->drawctx, DDB_TABSTRIP_FONT, 1);
     tabstrip_adjust_hscroll (ts);
     int height = draw_get_listview_rowheight (&ts->drawctx) + 4;
     ts->calculated_height = height;
@@ -1008,9 +1052,26 @@ on_tabstrip_configure_event              (GtkWidget       *widget,
     return FALSE;
 }
 
+static void
+tabstrip_update_font (DdbTabStrip *ts, GtkWidget *widget)
+{
+    draw_init_font (&ts->drawctx, DDB_TABSTRIP_FONT, 1);
+    tabstrip_adjust_hscroll (ts);
+    int height = draw_get_listview_rowheight (&ts->drawctx) + 4;
+    ts->calculated_height = height;
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
+    if (height != a.height) {
+        gtk_widget_set_size_request (widget, -1, height);
+    }
+}
+
 gboolean
-on_tabstrip_draw (GtkWidget *widget, cairo_t *cr) {
-    tabstrip_render (DDB_TABSTRIP (widget), cr);
+on_tabstrip_draw (GtkWidget *widget, cairo_t *cr)
+{
+    DdbTabStrip *ts = DDB_TABSTRIP (widget);
+    tabstrip_update_font (ts, widget);
+    tabstrip_render (ts, cr);
     return FALSE;
 }
 
@@ -1018,6 +1079,9 @@ gboolean
 on_tabstrip_expose_event                 (GtkWidget       *widget,
                                         GdkEventExpose  *event)
 {
+    DdbTabStrip *ts = DDB_TABSTRIP (widget);
+    tabstrip_update_font (ts, widget);
+
     cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
     on_tabstrip_draw (widget, cr);
     cairo_destroy (cr);

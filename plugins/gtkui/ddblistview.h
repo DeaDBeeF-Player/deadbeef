@@ -22,6 +22,7 @@
 #include <sys/time.h>
 #include <stdint.h>
 #include "drawing.h"
+#include "../../deadbeef.h"
 
 // drag and drop targets
 enum {
@@ -164,6 +165,7 @@ struct _DdbListview {
     struct _DdbListviewColumn *columns;
     gboolean lock_columns;
 
+    ddb_playlist_t *plt; // current playlist (refcounted), must be unreffed with the group
     struct _DdbListviewGroup *groups;
     int groups_build_idx; // must be the same as playlist modification idx
     int fullheight;
@@ -180,6 +182,7 @@ struct _DdbListview {
 
     // drawing contexts
     drawctx_t listctx;
+    drawctx_t grpctx;
     drawctx_t hdrctx;
 
     // cover art size
@@ -221,15 +224,15 @@ ddb_listview_is_scrolling (DdbListview *listview);
 int
 ddb_listview_column_get_count (DdbListview *listview);
 void
-ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, int minheight, void *user_data);
+ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, int minheight, int color_override, GdkColor color, void *user_data);
 void
-ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, int minheight, void *user_data);
+ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, int minheight, int color_override, GdkColor color, void *user_data);
 void
 ddb_listview_column_remove (DdbListview *listview, int idx);
 int
-ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, int *minheight, void **user_data);
+ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, int *minheight, int *color_override, GdkColor *color, void **user_data);
 int
-ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, int minheight, void *user_data);
+ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, int minheight, int color_override, GdkColor color, void *user_data);
 
 void
 ddb_listview_show_header (DdbListview *listview, int show);
@@ -300,6 +303,15 @@ ddb_listview_groupcheck (DdbListview *listview);
 
 int
 ddb_listview_is_album_art_column (DdbListview *listview, int x);
+
+int
+ddb_listview_is_album_art_column_idx (DdbListview *listview, int cidx);
+
+void
+ddb_listview_update_fonts (DdbListview *ps);
+
+void
+ddb_listview_header_update_fonts (DdbListview *ps);
 
 G_END_DECLS
 

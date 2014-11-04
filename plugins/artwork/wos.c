@@ -24,23 +24,14 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <limits.h>
 #include <ctype.h>
-
-#include "artwork.h"
+#include "artwork_internal.h"
 #include "escape.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
-
-extern DB_functions_t *deadbeef;
-
-#define BASE_URL "http://www.worldofspectrum.org/showscreen.cgi?screen=screens/load"
-#define min(x,y) ((x)<(y)?(x):(y))
 
 void
 strcopy_escape (char *dst, int d_len, const char *src, int n) {
@@ -55,8 +46,8 @@ strcopy_escape (char *dst, int d_len, const char *src, int n) {
     *dst = 0;
 }
 
-int
-fetch_from_wos (const char *title, const char *dest)
+#define WOS_URL "http://www.worldofspectrum.org/showscreen.cgi?screen=screens/load/%c/gif/%s.gif"
+int fetch_from_wos (const char *title, const char *dest)
 {
     // extract game title from title
     char t[100];
@@ -67,60 +58,11 @@ fetch_from_wos (const char *title, const char *dest)
     else {
         strcopy_escape(t, sizeof (t), title, dash-title);
     }
-    char *sp;
-    while (sp = strchr(t, ' ')) {
-        *sp = '_';
-    }
-    char *title_url = uri_escape (t, 0);
-    char url [1024];
-    snprintf (url, sizeof (url), BASE_URL "/%c/gif/%s.gif", tolower (title_url[0]), title_url);
-    free (title_url);
-    trace ("WOS request: %s\n", url);
 
-    DB_FILE *fp = NULL;
-
-    fp = deadbeef->fopen (url);
-    if (!fp) {
-        trace ("fetch_from_wos: failed to open %s\n", url);
-        return -1;
-    }
-    current_file = fp;
-
-    char temp[PATH_MAX];
-    snprintf (temp, sizeof (temp), "%s.part", dest);
-    FILE *out = fopen (temp, "w+b");
-    if (!out) {
-        trace ("fetch_from_lastfm: failed to open %s for writing\n", temp);
-        deadbeef->fclose (fp);
-        current_file = NULL;
-        return -1;
-    }
-
-    char *writebuffer[4096];
-    int len;
-    int error = 0;
-    while ((len = deadbeef->fread (writebuffer, 1, sizeof (writebuffer), fp)) > 0) {
-        if (fwrite (writebuffer, 1, len, out) != len) {
-            trace ("fetch_from_lastfm: failed to write to %s\n", dest);
-            error = 1;
-            break;
-        }
-    }
-
-    fclose (out);
-    current_file = NULL;
-    deadbeef->fclose (fp);
-
-    if (error) {
-        unlink (temp);
-        return -1;
-    }
-
-    if (rename (temp, dest) != 0) {
-        unlink (temp);
-        unlink (dest);
-        return -1;
-    }
-
-    return 0;
+    char *title_url = uri_escape(t, 0);
+    char url[sizeof(WOS_URL) + strlen(title_url)];
+    sprintf(url, WOS_URL, tolower(title_url[0]), title_url);
+    free(title_url);
+    trace("WOS request: %s\n", url);
+    return copy_file(url, dest);
 }

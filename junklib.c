@@ -361,7 +361,7 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
         else if (!strcasecmp (cs_in, "cp1251")) {
             len = cp1251_to_utf8 (in, inlen, out, outlen);
         }
-        else if (!strcasecmp (cs_in, "iso8859-1")) {
+        else if (!strcasecmp (cs_in, "iso8859-1") || !strcasecmp (cs_in, "cp1252")) {
             len = iso8859_1_to_utf8 (in, inlen, out, outlen);
         }
         else if (!strcasecmp (cs_in, "UTF-16LE") || !strcasecmp (cs_in, "UCS-2LE")) {

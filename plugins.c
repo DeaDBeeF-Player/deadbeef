@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #ifndef __linux__
 #define _POSIX_C_SOURCE 1
 #endif
@@ -59,6 +60,12 @@
 //#define trace(fmt,...)
 
 //#define DISABLE_VERSIONCHECK 1
+
+#ifdef HAVE_COCOAUI
+#define PLUGINEXT ".dylib"
+#else
+#define PLUGINEXT ".so"
+#endif
 
 // deadbeef api
 static DB_functions_t deadbeef_api = {
@@ -413,8 +420,8 @@ plug_volume_set_amp (float amp) {
 DB_plugin_t *g_plugins[MAX_PLUGINS+1];
 
 #define MAX_GUI_PLUGINS 10
-char *g_gui_names[MAX_GUI_PLUGINS+1];
-int g_num_gui_names;
+static char *g_gui_names[MAX_GUI_PLUGINS+1];
+static int g_num_gui_names;
 
 #define MAX_DECODER_PLUGINS 50
 DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
@@ -626,10 +633,10 @@ load_plugin (const char *plugdir, char *d_name, int l) {
     void *handle = dlopen (fullname, RTLD_NOW);
     if (!handle) {
         trace ("dlopen error: %s\n", dlerror ());
-#ifdef ANDROID
+#if defined(ANDROID) || defined(HAVE_COCOAUI)
         return -1;
 #else
-        strcpy (fullname + strlen(fullname) - 3, ".fallback.so");
+        strcpy (fullname + strlen(fullname) - sizeof (PLUGINEXT)+1, ".fallback.so");
         trace ("trying %s...\n", fullname);
         handle = dlopen (fullname, RTLD_NOW);
         if (!handle) {
@@ -641,7 +648,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
         }
 #endif
     }
-    d_name[l-3] = 0;
+    d_name[l-sizeof (PLUGINEXT)+1] = 0;
     strcat (d_name, "_load");
 #ifndef ANDROID
     DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name);
@@ -654,7 +661,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
         return -1;
     }
     if (plug_init_plugin (plug_load, handle) < 0) {
-        d_name[l-3] = 0;
+        d_name[l-sizeof (PLUGINEXT)+1] = 0;
         dlclose (handle);
         return -1;
     }
@@ -663,6 +670,10 @@ load_plugin (const char *plugdir, char *d_name, int l) {
 
 static int
 load_gui_plugin (const char **plugdirs) {
+#if defined HAVE_COCOAUI
+    return 0;
+#endif
+
     char conf_gui_plug[100];
     conf_get_str ("gui_plugin", "GTK2", conf_gui_plug, sizeof (conf_gui_plug));
     char name[100];
@@ -673,7 +684,7 @@ load_gui_plugin (const char **plugdirs) {
         if (!strcmp (g_gui_names[i], conf_gui_plug)) {
             trace ("found selected GUI plugin: %s\n", g_gui_names[i]);
             for (int n = 0; plugdirs[n]; n++) {
-                snprintf (name, sizeof (name), "ddb_gui_%s.so", conf_gui_plug);
+                snprintf (name, sizeof (name), "ddb_gui_%s" PLUGINEXT, conf_gui_plug);
                 if (!load_plugin (plugdirs[n], name, strlen (name))) {
                     return 0;
                 }
@@ -686,7 +697,7 @@ load_gui_plugin (const char **plugdirs) {
     // try any plugin
     for (int i = 0; g_gui_names[i]; i++) {
         for (int n = 0; plugdirs[n]; n++) {
-            snprintf (name, sizeof (name), "ddb_gui_%s.so", g_gui_names[i]);
+            snprintf (name, sizeof (name), "ddb_gui_%s" PLUGINEXT, g_gui_names[i]);
             if (!load_plugin (plugdirs[n], name, strlen (name))) {
                 return 0;
             }
@@ -726,18 +737,19 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
         {
             // skip hidden files and fallback plugins
             while (namelist[i]->d_name[0] != '.'
-#ifndef ANDROID
+#if !defined(ANDROID) && !defined(HAVE_COCOAUI)
                     && !strstr (namelist[i]->d_name, ".fallback.")
-#else
+#elif !defined(ANDROID)
                     && !strstr (namelist[i]->d_name, "libdeadbeef")
 #endif
                   )
             {
-                int l = strlen (namelist[i]->d_name);
-                if (l < 3) {
+                size_t l = strlen (namelist[i]->d_name);
+                if (l < (sizeof(PLUGINEXT)-1)) {
                     break;
                 }
-                if (strcasecmp (&namelist[i]->d_name[l-3], ".so")) {
+                const char *e = PLUGINEXT;
+                if (strcasecmp (namelist[i]->d_name + l - sizeof(PLUGINEXT) + 1, PLUGINEXT)) {
                     break;
                 }
                 char d_name[256];
@@ -750,7 +762,7 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
                     while (*e && *e > 0x20) {
                         e++;
                     }
-                    if (l-3 == e-p) {
+                    if (l-sizeof (PLUGINEXT)+1 == e-p) {
                         if (!strncmp (p, d_name, e-p)) {
                             p = NULL;
                             break;
@@ -780,7 +792,7 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
                         if (!e) {
                             break;
                         }
-                        if (strcmp (e, ".so")) {
+                        if (strcmp (e, PLUGINEXT)) {
                             break;
                         }
                         *e = 0;
@@ -789,11 +801,14 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
                         if (e && !strcasecmp (e, ".fallback")) {
                             break;
                         }
-                        // add to list
-                        // FIXME check for gui plugins dupes
-                        g_gui_names[g_num_gui_names++] = strdup (nm);
-                        g_gui_names[g_num_gui_names] = NULL;
-                        trace ("added %s gui plugin\n", nm);
+                        // add to list of unique names
+                        size_t i;
+                        for (i = 0; g_gui_names[i] && strcmp(g_gui_names[i], nm); i++);
+                        if (!g_gui_names[i]) {
+                            g_gui_names[i] = strdup (nm);
+                            g_gui_names[++g_num_gui_names] = NULL;
+                            trace ("added %s gui plugin\n", nm);
+                        }
                     }
                     break;
                 }
@@ -822,6 +837,9 @@ plug_load_all (void) {
 
     const char *dirname = deadbeef->get_plugin_dir ();
 
+#ifdef HAVE_COCOAUI
+    const char *plugins_dirs[] = { dirname, NULL };
+#else
 #ifndef ANDROID
     char *xdg_local_home = getenv ("XDG_LOCAL_HOME");
     char xdg_plugin_dir[1024];
@@ -867,6 +885,7 @@ plug_load_all (void) {
 #else
     const char *plugins_dirs[] = { dirname, NULL };
 #endif
+#endif
 
     int k = 0;
 #ifndef ANDROID
@@ -878,7 +897,7 @@ plug_load_all (void) {
         }
         load_plugin_dir (plugdir, 1);
     }
-    printf ("load gui plugin\n");
+    trace ("load gui plugin\n");
     load_gui_plugin (plugins_dirs);
 #endif
 
@@ -1171,7 +1190,11 @@ plug_select_output (void) {
     return 0;
 #else
     char outplugname[100];
+#ifdef HAVE_COCOAUI
+    conf_get_str ("output_plugin", "core audio output plugin", outplugname, sizeof (outplugname));
+#else
     conf_get_str ("output_plugin", "ALSA output plugin", outplugname, sizeof (outplugname));
+#endif
     for (int i = 0; g_output_plugins[i]; i++) {
         DB_output_t *p = g_output_plugins[i];
         if (!strcmp (p->plugin.name, outplugname)) {
@@ -1213,7 +1236,11 @@ plug_reinit_sound (void) {
 
     if (plug_select_output () < 0) {
         char outplugname[100];
+#ifdef HAVE_COCOAUI
+        conf_get_str ("output_plugin", "core audio output plugin", outplugname, sizeof (outplugname));
+#else
         conf_get_str ("output_plugin", "ALSA output plugin", outplugname, sizeof (outplugname));
+#endif
         trace ("failed to select output plugin %s\nreverted to %s\n", outplugname, prev->plugin.name);
         output_plugin = prev;
     }

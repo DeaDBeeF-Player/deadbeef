@@ -66,18 +66,11 @@
 static ddb_gtkui_t plugin;
 DB_functions_t *deadbeef;
 
-// cover art loading plugin
-DB_artwork_plugin_t *coverart_plugin = NULL;
-
 // main widgets
 GtkWidget *mainwin;
 GtkWidget *searchwin;
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
-
-// playlist theming
-GtkWidget *theme_treeview;
-GtkWidget *theme_button;
 
 static int gtkui_accept_messages = 0;
 
@@ -95,6 +88,17 @@ void (*gtkui_original_pl_add_files_end) (void);
 
 // cached config variables
 int gtkui_embolden_current_track;
+int gtkui_embolden_tracks;
+int gtkui_embolden_selected_tracks;
+int gtkui_italic_selected_tracks;
+int gtkui_italic_tracks;
+int gtkui_italic_current_track;
+
+int gtkui_tabstrip_embolden_playing;
+int gtkui_tabstrip_italic_playing;
+int gtkui_tabstrip_embolden_selected;
+int gtkui_tabstrip_italic_selected;
+
 int gtkui_groups_pinned;
 
 #ifdef __APPLE__
@@ -105,19 +109,6 @@ int gtkui_unicode_playstate = 0;
 int gtkui_disable_seekbar_overlay = 0;
 
 #define TRAY_ICON "deadbeef_tray_icon"
-
-// that must be called before gtk_init
-void
-gtkpl_init (void) {
-    theme_treeview = gtk_tree_view_new ();
-    gtk_widget_show (theme_treeview);
-    gtk_widget_set_can_focus (theme_treeview, FALSE);
-    GtkWidget *vbox1 = lookup_widget (mainwin, "vbox1");
-    gtk_box_pack_start (GTK_BOX (vbox1), theme_treeview, FALSE, FALSE, 0);
-    gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (theme_treeview), TRUE);
-
-    theme_button = mainwin;//lookup_widget (mainwin, "stopbtn");
-}
 
 void
 gtkpl_free (DdbListview *pl) {
@@ -230,7 +221,6 @@ update_songinfo (gpointer ctx) {
         strcpy (sb_text, sbtext_new);
 
         // form statusline
-        // FIXME: don't update if window is not visible
         GtkStatusbar *sb = GTK_STATUSBAR (lookup_widget (mainwin, "statusbar"));
         if (sb_context_id == -1) {
             sb_context_id = gtk_statusbar_get_context_id (sb, "msg");
@@ -600,8 +590,16 @@ gtkui_on_configchanged (void *data) {
     int stop_after_album = deadbeef->conf_get_int ("playlist.stop_after_album", 0);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "stop_after_album")), stop_after_album ? TRUE : FALSE);
 
-    // embolden current track
     gtkui_embolden_current_track = deadbeef->conf_get_int ("gtkui.embolden_current_track", 0);
+    gtkui_embolden_tracks = deadbeef->conf_get_int ("gtkui.embolden_tracks", 0);
+    gtkui_embolden_selected_tracks = deadbeef->conf_get_int ("gtkui.embolden_selected_tracks", 0);
+    gtkui_italic_current_track = deadbeef->conf_get_int ("gtkui.italic_current_track", 0);
+    gtkui_italic_tracks = deadbeef->conf_get_int ("gtkui.italic_tracks", 0);
+    gtkui_italic_selected_tracks = deadbeef->conf_get_int ("gtkui.italic_selected_tracks", 0);
+    gtkui_tabstrip_embolden_playing = deadbeef->conf_get_int ("gtkui.tabstrip_embolden_playing", 0);
+    gtkui_tabstrip_italic_playing = deadbeef->conf_get_int ("gtkui.tabstrip_italic_playing", 0);
+    gtkui_tabstrip_embolden_selected = deadbeef->conf_get_int ("gtkui.tabstrip_embolden_selected", 0);
+    gtkui_tabstrip_italic_selected = deadbeef->conf_get_int ("gtkui.tabstrip_italic_selected", 0);
 
     // pin groups
     gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups", 0);
@@ -772,7 +770,7 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     if (rootwidget) {
         send_messages_to_widgets (rootwidget, id, ctx, p1, p2);
     }
-    gtkui_cover_message (id, ctx, p1, p2);
+
     switch (id) {
     case DB_EV_ACTIVATED:
         g_idle_add (activate_cb, NULL);
@@ -880,16 +878,6 @@ gtkui_connect_cb (void *none) {
         }
     }
 
-    // cover_art
-    DB_plugin_t **plugins = deadbeef->plug_get_list ();
-    for (int i = 0; plugins[i]; i++) {
-        DB_plugin_t *p = plugins[i];
-        if (p->id && !strcmp (p->id, "artwork") && p->version_major == 1 && p->version_minor >= 2) {
-            trace ("gtkui: found cover-art loader plugin\n");
-            coverart_plugin = (DB_artwork_plugin_t *)p;
-            break;
-        }
-    }
     add_mainmenu_actions ();
     ddb_event_t *e = deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
     deadbeef->event_send(e, 0, 0);
@@ -944,12 +932,9 @@ gtkui_thread (void *ctx) {
 
     // let's start some gtk
     g_thread_init (NULL);
-#ifndef __FreeBSD__
-    // this call makes gtk_main hang on freebsd for unknown reason
-    // however, if we don't have this call, deadbeef will crash randomly on
-    // gentoo linux
     gdk_threads_init ();
-#endif
+    gdk_threads_enter ();
+
     gtk_init (&argc, (char ***)&argv);
 
     // register widget types
@@ -994,7 +979,7 @@ gtkui_thread (void *ctx) {
     gtk_widget_set_events (GTK_WIDGET (mainwin), gtk_widget_get_events (GTK_WIDGET (mainwin)) | GDK_SCROLL_MASK);
 #endif
 
-    gtkpl_init ();
+    pl_common_init();
 
     GtkIconTheme *theme = gtk_icon_theme_get_default();
     if (gtk_icon_theme_has_icon(theme, "deadbeef")) {
@@ -1073,6 +1058,7 @@ gtkui_thread (void *ctx) {
     gtkui_is_retina = is_retina (mainwin);
 #endif
     gtk_main ();
+
     deadbeef->unlisten_file_added (fileadded_listener_id);
     deadbeef->unlisten_file_add_beginend (fileadd_beginend_listener_id);
 
@@ -1087,11 +1073,8 @@ gtkui_thread (void *ctx) {
     trkproperties_destroy ();
     progress_destroy ();
     gtkui_hide_status_icon ();
+    pl_common_free();
 //    draw_free ();
-    if (theme_treeview) {
-        gtk_widget_destroy (theme_treeview);
-        theme_treeview = NULL;
-    }
     if (mainwin) {
         gtk_widget_destroy (mainwin);
         mainwin = NULL;
@@ -1100,6 +1083,7 @@ gtkui_thread (void *ctx) {
         gtk_widget_destroy (searchwin);
         searchwin = NULL;
     }
+    gdk_threads_leave ();
     return 0;
 }
 
@@ -1210,8 +1194,6 @@ gtkui_connect (void) {
 static int
 gtkui_disconnect (void) {
     supereq_plugin = NULL;
-    coverart_plugin = NULL;
-
     return 0;
 }
 
@@ -1223,18 +1205,15 @@ quit_gtk_cb (gpointer nothing) {
     trkproperties_destroy ();
     search_destroy ();
     gtk_main_quit ();
+    trace ("gtkui_stop completed\n");
     return FALSE;
 }
 
 static int
 gtkui_stop (void) {
-    if (coverart_plugin) {
-        coverart_plugin->plugin.plugin.stop ();
-        coverart_plugin = NULL;
-    }
     trace ("quitting gtk\n");
+    cover_art_disconnect();
     g_idle_add (quit_gtk_cb, NULL);
-    trace ("gtkui_stop completed\n");
     return 0;
 }
 
@@ -1592,7 +1571,7 @@ static const char settings_dlg[] =
 // define plugin interface
 static ddb_gtkui_t plugin = {
     .gui.plugin.api_vmajor = 1,
-    .gui.plugin.api_vminor = 5,
+    .gui.plugin.api_vminor = 6,
     .gui.plugin.version_major = DDB_GTKUI_API_VERSION_MAJOR,
     .gui.plugin.version_minor = DDB_GTKUI_API_VERSION_MINOR,
     .gui.plugin.type = DB_PLUGIN_GUI,
@@ -1644,6 +1623,8 @@ static ddb_gtkui_t plugin = {
     .w_replace = w_replace,
     .w_remove = w_remove,
     .create_pltmenu = gtkui_create_pltmenu,
-    .get_cover_art_pixbuf = get_cover_art_callb,
+    .get_cover_art_pixbuf = get_cover_art_callb, // deprecated
+    .get_cover_art_primary = get_cover_art_primary,
+    .get_cover_art_thumb = get_cover_art_thumb,
     .cover_get_default_pixbuf = cover_get_default_pixbuf,
 };

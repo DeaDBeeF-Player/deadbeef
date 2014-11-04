@@ -1676,6 +1676,7 @@ static int
 w_tabstrip_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
     case DB_EV_PLAYLISTSWITCHED:
+    case DB_EV_TRACKINFOCHANGED:
         g_idle_add (tabstrip_refresh_cb, w);
         break;
     }
@@ -1708,6 +1709,9 @@ static gboolean
 tabbed_trackinfochanged_cb (gpointer p) {
     w_trackdata_t *d = p;
     w_playlist_t *tp = (w_playlist_t *)d->w;
+    if (!strcmp (tp->base.type, "tabbed_playlist")) {
+        ddb_tabstrip_refresh (((w_tabbed_playlist_t *)tp)->tabstrip);
+    }
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         int idx = deadbeef->plt_get_item_idx (plt, (DB_playItem_t *)d->trk, PL_MAIN);
@@ -1763,6 +1767,17 @@ paused_cb (gpointer data) {
         ddb_listview_draw_row (p->list, idx, (DdbListviewIter)curr);
         deadbeef->pl_item_unref (curr);
     }
+    return FALSE;
+}
+
+static gboolean
+config_changed_cb (gpointer data) {
+    DdbListview *p = DDB_LISTVIEW (data);
+    ddb_listview_update_fonts (p);
+    ddb_listview_header_update_fonts (p);
+    ddb_listview_lock_columns (p, 0);
+    ddb_listview_clear_sort (p);
+    ddb_listview_refresh (DDB_LISTVIEW (p), DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
     return FALSE;
 }
 
@@ -1929,6 +1944,9 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
     case DB_EV_TRACKFOCUSCURRENT:
         g_idle_add (trackfocus_cb, w);
         break;
+    case DB_EV_CONFIGCHANGED:
+        g_idle_add (config_changed_cb, tp->list);
+        break;
     case DB_EV_SELCHANGED:
         if (ctx != (uintptr_t)tp->list || p2 == PL_SEARCH) {
             g_idle_add (refresh_cb, tp->list);
@@ -1981,6 +1999,9 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         break;
     case DB_EV_TRACKFOCUSCURRENT:
         g_idle_add (trackfocus_cb, w);
+        break;
+    case DB_EV_CONFIGCHANGED:
+        g_idle_add (config_changed_cb, p->list);
         break;
     case DB_EV_SELCHANGED:
         if (ctx != (uintptr_t)p->list || p2 == PL_SEARCH) {
@@ -2169,6 +2190,27 @@ w_selproperties_init (struct ddb_gtkui_widget_s *w) {
     fill_selproperties_cb (w);
 }
 
+static void
+on_selproperties_showheaders_toggled (GtkCheckMenuItem *checkmenuitem, gpointer          user_data) {
+    w_selproperties_t *w = user_data;
+    int showheaders = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem));
+    deadbeef->conf_set_int ("gtkui.selection_properties.show_headers", showheaders);
+    gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), showheaders);
+}
+
+static void
+w_selproperties_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    GtkWidget *item;
+    item = gtk_check_menu_item_new_with_mnemonic (_("Show Column Headers"));
+    gtk_widget_show (item);
+    int showheaders = deadbeef->conf_get_int ("gtkui.selection_properties.show_headers", 1);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), showheaders);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (on_selproperties_showheaders_toggled),
+            w);
+}
+
 ddb_gtkui_widget_t *
 w_selproperties_create (void) {
     w_selproperties_t *w = malloc (sizeof (w_selproperties_t));
@@ -2177,6 +2219,7 @@ w_selproperties_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.init = w_selproperties_init;
     w->base.message = selproperties_message;
+    w->base.initmenu = w_selproperties_initmenu;
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
@@ -2205,6 +2248,10 @@ w_selproperties_create (void) {
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col1);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col2);
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);
+
+    int showheaders = deadbeef->conf_get_int ("gtkui.selection_properties.show_headers", 1);
+    gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), showheaders);
+
     w_override_signals (w->base.widget, w);
 
     return (ddb_gtkui_widget_t *)w;
@@ -2252,7 +2299,7 @@ deferred_cover_load_cb (void *ctx) {
     if (!album || !*album) {
         album = deadbeef->pl_find_meta (it, "title");
     }
-    GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)it), ":URI"), artist, album, w->new_cover_size, NULL, NULL);
+    GdkPixbuf *pixbuf = get_cover_art_primary (deadbeef->pl_find_meta (((DB_playItem_t *)it), ":URI"), artist, album, w->new_cover_size, NULL, NULL);
     deadbeef->pl_unlock ();
     deadbeef->pl_item_unref (it);
     queue_cover_callback (coverart_avail_callback, w);
@@ -2265,76 +2312,63 @@ deferred_cover_load_cb (void *ctx) {
 
 static gboolean
 coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
-    int width = a.width;
-    int height = a.height;
+
+    int real_size = min(a.width, a.height);
+    if (real_size < 8) {
+        return TRUE;
+    }
+
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (!it) {
+        return TRUE;
+    }
 
     w_coverart_t *w = user_data;
-    int real_size = min (width, height);
-
-    if (real_size > 0 && it) {
-        if (w->new_cover_size != real_size) {
-            w->new_cover_size = real_size;
-            if (w->cover_refresh_timeout_id) {
-                g_source_remove (w->cover_refresh_timeout_id);
-                w->cover_refresh_timeout_id = 0;
-            }
-            if (w->cover_size == -1) {
-                w->cover_size = real_size;
-                g_idle_add (deferred_cover_load_cb, w);
-            }
-            else {
-                if (!w->cover_refresh_timeout_id) {
-                    w->cover_refresh_timeout_id = g_timeout_add (1000, deferred_cover_load_cb, w);
-                }
+    if (w->new_cover_size != real_size) {
+        w->new_cover_size = real_size;
+        if (w->cover_refresh_timeout_id) {
+            g_source_remove (w->cover_refresh_timeout_id);
+            w->cover_refresh_timeout_id = 0;
+        }
+        if (w->cover_size == -1) {
+            w->cover_size = real_size;
+            g_idle_add (deferred_cover_load_cb, w);
+        }
+        else {
+            if (!w->cover_refresh_timeout_id) {
+                w->cover_refresh_timeout_id = g_timeout_add (1000, deferred_cover_load_cb, w);
             }
         }
-        int size = w->cover_size;
-
-        float scale = (float)real_size / size;
-
-        deadbeef->pl_lock ();
-        const char *album = deadbeef->pl_find_meta (it, "album");
-        const char *artist = deadbeef->pl_find_meta (it, "artist");
-        if (!album || !*album) {
-            album = deadbeef->pl_find_meta (it, "title");
-        }
-        GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta ((it), ":URI"), artist, album, real_size == size ? size : -1, coverart_avail_callback_single, user_data);
-        deadbeef->pl_unlock ();
-
-        int hq = 0;
-        if (!pixbuf) {
-            pixbuf = cover_get_default_pixbuf ();
-            hq = 1;
-        }
-
-        if (pixbuf) {
-            size = gdk_pixbuf_get_width (pixbuf);
-            float art_scale = (float)real_size / size;
-            int pw = real_size;
-            if (gdk_pixbuf_get_width (pixbuf) < gdk_pixbuf_get_height (pixbuf)) {
-                art_scale *= (float)gdk_pixbuf_get_width (pixbuf) / gdk_pixbuf_get_height (pixbuf);
-            }
-            int ph = pw;
-            int x = 0;
-            int y = 0;
-            if (gdk_pixbuf_get_width (pixbuf) > gdk_pixbuf_get_height (pixbuf)) {
-                y = (a.height - gdk_pixbuf_get_height (pixbuf)) / 2;
-            }
-            else if (gdk_pixbuf_get_width (pixbuf) < gdk_pixbuf_get_height (pixbuf)) {
-                x = (a.width - gdk_pixbuf_get_width (pixbuf)) / 2;
-            }
-            cairo_rectangle (cr, x, y, pw, ph);
-            cairo_scale (cr, art_scale, art_scale);
-            gdk_cairo_set_source_pixbuf (cr, pixbuf, x, y);
-            cairo_pattern_set_filter (cairo_get_source(cr), hq ? CAIRO_FILTER_GAUSSIAN : CAIRO_FILTER_FAST);
-            cairo_fill (cr);
-            g_object_unref (pixbuf);
-        }
-        deadbeef->pl_item_unref (it);
     }
+
+    deadbeef->pl_lock ();
+    const char *album = deadbeef->pl_find_meta (it, "album");
+    const char *artist = deadbeef->pl_find_meta (it, "artist");
+    if (!album || !*album) {
+        album = deadbeef->pl_find_meta (it, "title");
+    }
+    const int size = w->cover_size == real_size ? w->cover_size : -1;
+    GdkPixbuf *pixbuf = get_cover_art_primary(deadbeef->pl_find_meta(it, ":URI"), artist, album, size, coverart_avail_callback_single, user_data);
+    deadbeef->pl_unlock ();
+
+    if (pixbuf) {
+        const float pw = gdk_pixbuf_get_width(pixbuf);
+        const float ph = gdk_pixbuf_get_height(pixbuf);
+        const float scale = min(a.width/pw, a.height/ph);
+        const float x = max((a.width - scale*pw)/2, 0);
+        const float y = max((a.height - scale*ph)/2, 0);
+        cairo_rectangle(cr, x, y, a.width, a.height);
+        cairo_scale(cr, scale, scale);
+        gdk_cairo_set_source_pixbuf(cr, pixbuf, x/scale, y/scale);
+        cairo_pattern_set_filter(cairo_get_source(cr), gtkui_is_default_pixbuf(pixbuf) ? CAIRO_FILTER_BEST : CAIRO_FILTER_FAST);
+        cairo_fill(cr);
+        g_object_unref(pixbuf);
+    }
+
+    deadbeef->pl_item_unref (it);
+
     return TRUE;
 }
 
@@ -3838,6 +3872,9 @@ w_volumebar_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.message = w_volumebar_message;
     w->volumebar = ddb_volumebar_new ();
+#if GTK_CHECK_VERSION(3,0,0)
+    gtk_widget_set_events (GTK_WIDGET (w->base.widget), gtk_widget_get_events (GTK_WIDGET (w->base.widget)) | GDK_SCROLL_MASK);
+#endif
     ddb_volumebar_init_signals (DDB_VOLUMEBAR (w->volumebar), w->base.widget);
     gtk_widget_show (w->volumebar);
     gtk_widget_set_size_request (w->base.widget, 70, -1);

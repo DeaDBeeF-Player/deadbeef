@@ -31,9 +31,7 @@
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
 #endif
-#if HAVE_SYS_SYSLIMITS_H
-#include <sys/syslimits.h>
-#endif
+#include <limits.h>
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
