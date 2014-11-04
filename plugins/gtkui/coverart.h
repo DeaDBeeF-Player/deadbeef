@@ -27,15 +27,22 @@
 //
 // if the image is not available immediately -- callback will be called later
 //
-// if cover art loader plugin is not available -- NULL will be returned
+// if  artwork plugin is not available -- NULL will be returned and no callbacks made
 GdkPixbuf *
-get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, void (*cover_avail_callback) (void *user_data), void *user_data);
+get_cover_art_callb (const const char *fname, const char *artist, const char *album, int width, void (*cover_avail_callback) (void *user_data), void *user_data);
+GdkPixbuf *
+get_cover_art_primary (const const char *fname, const char *artist, const char *album, int width, void (*cover_avail_callback) (void *user_data), void *user_data);
+GdkPixbuf *
+get_cover_art_thumb (const const char *fname, const char *artist, const char *album, int width, void (*cover_avail_callback) (void *user_data), void *user_data);
 
 void
 coverart_reset_queue (void);
 
 void
 cover_art_init (void);
+
+void
+cover_art_disconnect (void);
 
 void
 cover_art_free (void);
@@ -50,9 +57,6 @@ cover_get_default_pixbuf (void);
 
 int
 gtkui_is_default_pixbuf (GdkPixbuf *pb);
-
-int
-gtkui_cover_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 
 #endif
 

@@ -27,99 +27,47 @@
 #endif
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <limits.h>
-#include "artwork.h"
+#include "artwork_internal.h"
 #include "escape.h"
-
-extern DB_functions_t *deadbeef;
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
 
-int
-fetch_from_albumart_org (const char *artist, const char *album, const char *dest)
+#define AAO_URL "http://www.albumart.org/index.php?searchk=%s+%s&itempage=1&newsearch=1&searchindex=Music"
+int fetch_from_albumart_org (const char *artist, const char *album, const char *dest)
 {
-    char url [1024];
-    char *artist_url = uri_escape (artist, 0);
-    char *album_url = uri_escape (album, 0);
-    snprintf (url, sizeof (url), "http://www.albumart.org/index.php?searchkey=%s+%s&itempage=1&newsearch=1&searchindex=Music", artist_url, album_url);
+    if (!artist && !album) {
+        return -1;
+    }
+
+    char *artist_url = uri_escape (artist ? artist : "", 0);
+    char *album_url = uri_escape (album ? album : "", 0);
+    char *url = malloc(sizeof(AAO_URL) + strlen(artist_url) + strlen(album_url));
+    if (url) {
+        sprintf (url, AAO_URL, artist_url, album_url);
+    }
     free (artist_url);
     free (album_url);
-
-    DB_FILE *fp = deadbeef->fopen (url);
-    if (!fp) {
-        trace ("fetch_from_albumart_org: failed to open %s\n", url);
+    if (!url) {
         return -1;
     }
-    current_file = fp;
-    const char searchstr[] = "http://ecx.images-amazon.com/images/I/";
+
+    trace("fetch_from_albumart_org: %s\n", url);
     char buffer[10000];
-    memset (buffer, 0, sizeof (buffer));
-    char *img = NULL;
-    int size = deadbeef->fread (buffer, 1, sizeof (buffer), fp);
-    if (size > 0) {
-        img = strstr (buffer, searchstr);
-    }
-    current_file = NULL;
-    deadbeef->fclose (fp);
-
+    const size_t size = artwork_http_request(url, buffer, sizeof(buffer));
+    char *img = strstr (buffer, "http://ecx.images-amazon.com/images/I/");
     if (!img) {
-        trace ("fetch_from_albumart_org: image url not found in response from %s (%d bytes)\n", url, size);
+        trace ("fetch_from_albumart_org: image url not found in response from (%d bytes)\n", size);
         return -1;
     }
 
-    char *end = strstr (img, "._SL160_");
+    char *end = strstr (img, "._SL160_.jpg");
     if (!end || end == img)
     {
-        trace ("fetch_from_albumart_org: bad xml from %s\n", url);
+        trace ("fetch_from_albumart_org: bad xml\n");
         return -1;
     }
+
     strcpy (end, ".jpg");
-
-    fp = deadbeef->fopen (img);
-    if (!fp) {
-        trace ("fetch_from_albumart_org: failed to open %s\n", img);
-        return -1;
-    }
-    current_file = fp;
-
-    char temp[PATH_MAX];
-    snprintf (temp, sizeof (temp), "%s.part", dest);
-    FILE *out = fopen (temp, "w+b");
-    if (!out) {
-        trace ("fetch_from_albumart_org: failed to open %s for writing\n", temp);
-        current_file = NULL;
-        deadbeef->fclose (fp);
-        return -1;
-    }
-
-    char *writebuffer[4096];
-    int len;
-    int error = 0;
-    while ((len = deadbeef->fread (writebuffer, 1, sizeof (writebuffer), fp)) > 0) {
-        if (fwrite (writebuffer, 1, len, out) != len) {
-            trace ("fetch_from_albumart_org: failed to write to %s\n", dest);
-            error = 1;
-            break;
-        }
-    }
-
-    fclose (out);
-    current_file = NULL;
-    deadbeef->fclose (fp);
-
-    if (error) {
-        unlink (temp);
-        return -1;
-    }
-
-    if (rename (temp, dest) != 0) {
-        unlink (temp);
-        unlink (dest);
-        return -1;
-    }
-
-    return 0;
+    return copy_file(img, dest);
 }
-

@@ -39,14 +39,6 @@
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
-GdkPixbuf *play16_pixbuf;
-GdkPixbuf *pause16_pixbuf;
-GdkPixbuf *buffering16_pixbuf;
-
-
-// HACK!!
-extern GtkWidget *theme_treeview;
-
 static int
 main_get_count (void) {
     return deadbeef->pl_getcount (PL_MAIN);
@@ -164,36 +156,6 @@ void main_selection_changed (DdbListview *ps, DdbListviewIter it, int idx) {
     deadbeef->sendmessage (DB_EV_SELCHANGED, (uintptr_t)ps, deadbeef->plt_get_curr_idx (), PL_MAIN);
 }
 
-void main_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height) {
-    if (group_by_str && group_by_str[0]) {
-        char str[1024];
-        deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, sizeof (str), -1, group_by_str);
-        char *lb = strchr (str, '\r');
-        if (lb) {
-            *lb = 0;
-        }
-        lb = strchr (str, '\n');
-        if (lb) {
-            *lb = 0;
-        }
-        int theming = !gtkui_override_listview_colors ();
-        if (theming) {
-            GdkColor *clr = &gtk_widget_get_style(theme_treeview)->fg[GTK_STATE_NORMAL];
-            float rgb[] = {clr->red/65535.f, clr->green/65535.f, clr->blue/65535.f};
-            draw_set_fg_color (&listview->listctx, rgb);
-        }
-        else {
-            GdkColor clr;
-            gtkui_get_listview_text_color (&clr);
-            float rgb[] = {clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f};
-            draw_set_fg_color (&listview->listctx, rgb);
-        }
-        int ew, eh;
-        draw_get_text_extents (&listview->listctx, str, -1, &ew, &eh);
-        draw_text (&listview->listctx, x + 5, y + height/2 - draw_get_listview_rowheight (&listview->listctx)/2 + 3, ew+5, 0, str);
-        draw_line (&listview->listctx, x + 5 + ew + 3, y+height/2, x + width, y+height/2);
-    }
-}
 void
 main_delete_selected (void) {
     deadbeef->pl_delete_selected ();
@@ -212,23 +174,6 @@ main_is_selected (DdbListviewIter it) {
     return deadbeef->pl_is_selected ((DB_playItem_t *)it);
 }
 
-int
-main_get_group (DdbListviewIter it, char *str, int size) {
-    if (!group_by_str || !group_by_str[0]) {
-        return -1;
-    }
-    deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, size, -1, group_by_str);
-    char *lb = strchr (str, '\r');
-    if (lb) {
-        *lb = 0;
-    }
-    lb = strchr (str, '\n');
-    if (lb) {
-        *lb = 0;
-    }
-    return 0;
-}
-
 static int lock_column_config = 0;
 
 void
@@ -240,16 +185,7 @@ main_columns_changed (DdbListview *listview) {
 
 void
 main_column_size_changed (DdbListview *listview, int col) {
-    const char *title;
-    int width;
-    int align_right;
-    col_info_t *inf;
-    int minheight;
-    int res = ddb_listview_column_get_info (listview, col, &title, &width, &align_right, &minheight, (void **)&inf);
-    if (res == -1) {
-        return;
-    }
-    if (inf->id == DB_COLUMN_ALBUM_ART) {
+    if (ddb_listview_is_album_art_column_idx(listview, col)) {
         if (listview->scrollpos > 0) {
             int pos = ddb_listview_get_row_pos (listview, listview->ref_point);
             gtk_range_set_value (GTK_RANGE (listview->scrollbar), pos - listview->ref_point_offset);
@@ -310,13 +246,13 @@ DdbListviewBinding main_binding = {
     .is_selected = main_is_selected,
     .select = main_select,
 
-    .get_group = main_get_group,
+    .get_group = pl_common_get_group,
 
     .drag_n_drop = main_drag_n_drop,
     .external_drag_n_drop = main_external_drag_n_drop,
 
     .draw_column_data = draw_column_data,
-    .draw_group_title = main_draw_group_title,
+    .draw_group_title = pl_common_draw_group_title,
 
     // columns
     .col_sort = main_col_sort,
@@ -336,10 +272,6 @@ DdbListviewBinding main_binding = {
 
 void
 main_playlist_init (GtkWidget *widget) {
-    play16_pixbuf = create_pixbuf ("play_16.png");
-    pause16_pixbuf = create_pixbuf ("pause_16.png");
-    buffering16_pixbuf = create_pixbuf ("buffering_16.png");
-
     // make listview widget and bind it to data
     DdbListview *listview = DDB_LISTVIEW(widget);
     main_binding.ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
@@ -353,7 +285,7 @@ main_playlist_init (GtkWidget *widget) {
         add_column_helper (listview, _("Artist / Album"), 150, -1, "%a - %b", 0);
         add_column_helper (listview, _("Track No"), 50, -1, "%n", 1);
         add_column_helper (listview, _("Title"), 150, -1, "%t", 0);
-        add_column_helper (listview, _("Duration"), 50, -1, "%l", 0);
+        add_column_helper (listview, _("Duration"), 50, -1, "%l", 1);
     }
     else {
         while (col) {
@@ -373,19 +305,6 @@ main_playlist_init (GtkWidget *widget) {
         g_object_set_property (G_OBJECT (pl->list), "has-tooltip", &value);
         g_signal_connect (G_OBJECT (pl->list), "query-tooltip", G_CALLBACK (playlist_tooltip_handler), NULL);
     }
-    deadbeef->conf_lock ();
-    strncpy (group_by_str, deadbeef->conf_get_str_fast ("playlist.group_by", ""), sizeof (group_by_str));
-    deadbeef->conf_unlock ();
-    group_by_str[sizeof (group_by_str)-1] = 0;
-
-    gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups", 0);
-}
-
-void
-main_playlist_free (void) {
-    g_object_unref (play16_pixbuf);
-    g_object_unref (pause16_pixbuf);
-    g_object_unref (buffering16_pixbuf);
 }
 
 void

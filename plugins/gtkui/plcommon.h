@@ -21,11 +21,8 @@
 
 #include "ddblistview.h"
 
-#define MAX_GROUP_BY_STR 100
-extern char group_by_str[MAX_GROUP_BY_STR];
-
 void
-write_column_config (const char *name, int idx, const char *title, int width, int align_right, int id, const char *format);
+write_column_config (const char *name, int idx, const char *title, int width, int align_right, int id, int color_override, GdkColor color, const char *format);
 
 void
 rewrite_column_config (DdbListview *listview, const char *name);
@@ -49,5 +46,17 @@ set_last_playlist_cm (DdbListview *pl);
 
 void
 set_active_column_cm (int col);
+
+void
+pl_common_init(void);
+
+void
+pl_common_free (void);
+
+int
+pl_common_get_group (DdbListviewIter it, char *str, int size);
+
+void
+pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height);
 
 #endif // __PLCOLUMNS_H

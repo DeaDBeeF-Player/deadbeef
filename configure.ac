@@ -101,6 +101,7 @@ AC_ARG_ENABLE(flac,     [AS_HELP_STRING([--disable-flac    ], [disable FLAC play
 AC_ARG_ENABLE(sndfile,  [AS_HELP_STRING([--disable-sndfile ], [disable libsndfile plugin for PCM wave files (default: enabled)])], [enable_sndfile=$enableval], [enable_sndfile=yes])
 AC_ARG_ENABLE(wavpack,  [AS_HELP_STRING([--disable-wavpack ], [disable wavpack plugin (default: enabled)])], [enable_wavpack=$enableval], [enable_wavpack=yes])
 AC_ARG_ENABLE(cdda,     [AS_HELP_STRING([--disable-cdda    ], [disable CD-Audio plugin (default: enabled)])], [enable_cdda=$enableval], [enable_cdda=yes])
+AC_ARG_ENABLE(cdda-paranoia,     [AS_HELP_STRING([--disable-cdda-paranoia    ], [disable CD-Audio error correction during ripping (default: enabled)])], [enable_cdda_paranoia=$enableval], [enable_cdda_paranoia=yes])
 AC_ARG_ENABLE(gme,      [AS_HELP_STRING([--disable-gme     ], [disable Game Music Emu plugin for NSF, AY, etc (default: enabled)])], [enable_gme=$enableval], [enable_gme=yes])
 AC_ARG_ENABLE(notify,   [AS_HELP_STRING([--disable-notify  ], [disable notification-daemon support plugin (default: enabled)])], [enable_notify=$enableval], [enable_notify=yes])
 AC_ARG_ENABLE(shellexec, [AS_HELP_STRING([--disable-shellexec], [disable shell commands plugin (default: enabled)])], [enable_shellexec=$enableval], [enable_shellexec=yes])
@@ -464,7 +465,15 @@ AS_IF([test "${enable_cdda}" != "no"], [
         AC_CHECK_LIB([cddb], [main], [HAVE_CDDB=yes])
         AS_IF([test "${HAVE_CDIO}" = "yes" -a "${HAVE_CDDB}" = "yes"], [
             HAVE_CDDAPLUGIN=yes
-            CDDA_LIBS="-lcdio -lcddb"
+            AC_CHECK_LIB([cdda_interface], [main], [HAVE_CDDA_INTERFACE=yes])
+            AC_CHECK_LIB([cdda_paranoia], [main], [HAVE_CDDA_PARANOIA=yes])
+            AS_IF([test "${enable_cdda_paranoia}" != "no" -a "${HAVE_CDDA_INTERFACE}" = "yes" -a "${HAVE_CDDA_PARANOIA}" = "yes"], [
+	        CDDA_CFLAGS="-DUSE_PARANOIA"
+	        AC_SUBST(CDDA_CFLAGS)
+                CDDA_LIBS="-lcdio -lcdda_interface -lcdda_paranoia -lcddb"
+            ] , [
+                CDDA_LIBS="-lcdio -lcddb"
+            ])
             AC_SUBST(CDDA_LIBS)
         ])
     ])
@@ -758,6 +767,7 @@ AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_WAVPACK, test "x$HAVE_WAVPACKPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_SNDFILE, test "x$HAVE_SNDFILEPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_CDDA, test "x$HAVE_CDDAPLUGIN" = "xyes")
+AM_CONDITIONAL(USE_CDPARANOIA, test "x$HAVE_CDDAPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_GTK2, test "x$HAVE_GTK2" = "xyes")
 AM_CONDITIONAL(HAVE_GTK3, test "x$HAVE_GTK3" = "xyes")
 AM_CONDITIONAL(HAVE_ALSA, test "x$HAVE_ALSAPLUGIN" = "xyes")

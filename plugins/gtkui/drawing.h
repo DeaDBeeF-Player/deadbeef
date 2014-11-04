@@ -34,6 +34,14 @@ typedef struct {
 
 // abstract api for drawing primitives
 
+enum {
+    DDB_LIST_FONT = 0,
+    DDB_GROUP_FONT = 1,
+    DDB_TABSTRIP_FONT = 2,
+    DDB_COLUMN_FONT = 3,
+};
+
+
 void
 drawctx_init (drawctx_t *ctx);
 
@@ -59,16 +67,19 @@ float
 draw_get_font_size (drawctx_t *ctx);
 
 void
-draw_init_font (drawctx_t *ctx, GtkStyle *style);
+draw_init_font (drawctx_t *ctx, int type, int reset);
 
 void
-draw_init_font_bold (drawctx_t *ctx);
+draw_init_font_style (drawctx_t *ctx, int bold, int italic, int type);
 
 void
 draw_init_font_normal (drawctx_t *ctx);
 
 void
 draw_text (drawctx_t *ctx, float x, float y, int width, int align, const char *text);
+
+void
+draw_text_custom (drawctx_t *ctx, float x, float y, int width, int align, int type, int bold, int italic, const char *text);
 
 void
 draw_text_with_colors (drawctx_t *ctx, float x, float y, int width, int align, const char *text);
@@ -101,6 +112,12 @@ void
 gtkui_get_tabstrip_text_color (GdkColor *clr);
 
 void
+gtkui_get_tabstrip_playing_text_color (GdkColor *clr);
+
+void
+gtkui_get_tabstrip_selected_text_color (GdkColor *clr);
+
+void
 gtkui_get_listview_even_row_color (GdkColor *clr);
 
 void
@@ -116,7 +133,28 @@ void
 gtkui_get_listview_selected_text_color (GdkColor *clr);
 
 void
+gtkui_get_listview_playing_text_color (GdkColor *clr);
+
+void
+gtkui_get_listview_playing_row_color (GdkColor *clr);
+
+void
+gtkui_get_listview_group_text_color (GdkColor *clr);
+
+void
+gtkui_get_listview_column_text_color (GdkColor *clr);
+
+void
 gtkui_get_listview_cursor_color (GdkColor *clr);
+
+const char*
+gtkui_get_listview_text_font ();
+
+const char *
+gtkui_get_listview_group_text_font ();
+
+const char *
+gtkui_get_listview_column_text_font ();
 
 void
 gtkui_init_theme_colors (void);
@@ -129,5 +167,8 @@ gtkui_override_bar_colors (void);
 
 int
 gtkui_override_tabstrip_colors (void);
+
+const char *
+gtkui_get_tabstrip_text_font  ();
 
 #endif // __DRAWING_H

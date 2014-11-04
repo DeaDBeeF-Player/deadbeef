@@ -744,6 +744,42 @@ action_seek_1p_backward_cb (struct DB_plugin_action_s *action, int ctx) {
 }
 
 int
+action_seek_1s_forward_cb (struct DB_plugin_action_s *action, int ctx) {
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (it) {
+        float dur = deadbeef->pl_get_item_duration (it);
+        if (dur > 0) {
+            float pos = deadbeef->streamer_get_playpos ();
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (pos + 1.f) * 1000, 0);
+        }
+        deadbeef->pl_item_unref (it);
+    }
+    deadbeef->pl_unlock ();
+    return 0;
+}
+
+int
+action_seek_1s_backward_cb (struct DB_plugin_action_s *action, int ctx) {
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (it) {
+        float dur = deadbeef->pl_get_item_duration (it);
+        if (dur > 0) {
+            float pos = deadbeef->streamer_get_playpos ();
+            pos = (pos - 1.f) * 1000;
+            if (pos < 0) {
+                pos = 0;
+            }
+            deadbeef->sendmessage (DB_EV_SEEK, 0, pos, 0);
+        }
+        deadbeef->pl_item_unref (it);
+    }
+    deadbeef->pl_unlock ();
+    return 0;
+}
+
+int
 action_volume_up_cb (struct DB_plugin_action_s *action, int ctx) {
     deadbeef->volume_set_db (deadbeef->volume_get_db () + 2);
     return 0;
@@ -1094,12 +1130,28 @@ static DB_plugin_action_t action_play_random = {
     .next = &action_play_pause
 };
 
+static DB_plugin_action_t action_seek_1s_forward = {
+    .title = "Playback/Seek 1s Forward",
+    .name = "seek_1s_fwd",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_seek_1s_forward_cb,
+    .next = &action_play_random
+};
+
+static DB_plugin_action_t action_seek_1s_backward = {
+    .title = "Playback/Seek 1s Backward",
+    .name = "seek_1s_back",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_seek_1s_backward_cb,
+    .next = &action_seek_1s_forward
+};
+
 static DB_plugin_action_t action_seek_1p_forward = {
     .title = "Playback/Seek 1% Forward",
     .name = "seek_1p_fwd",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_seek_1p_forward_cb,
-    .next = &action_play_random
+    .next = &action_seek_1s_backward
 };
 
 static DB_plugin_action_t action_seek_1p_backward = {

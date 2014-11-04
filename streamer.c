@@ -807,6 +807,7 @@ streamer_move_to_nextsong (int r) {
         streamer_abort_files ();
     }
     handler_push (handler, STR_EV_NEXT, 0, r, 0);
+    return 0;
 }
 
 int
@@ -815,6 +816,7 @@ streamer_move_to_prevsong (int r) {
         streamer_abort_files ();
     }
     handler_push (handler, STR_EV_PREV, 0, r, 0);
+    return 0;
 }
 
 int
@@ -823,6 +825,7 @@ streamer_move_to_randomsong (int r) {
         streamer_abort_files ();
     }
     handler_push (handler, STR_EV_RAND, 0, r, 0);
+    return 0;
 }
 
 // playlist must call that whenever item was removed
@@ -1265,7 +1268,7 @@ m3u_error:
 
         trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), dec->plugin.id);
         mutex_lock (decodemutex);
-        new_fileinfo = dec_open (dec, 0, it);
+        new_fileinfo = dec_open (dec, DDB_DECODER_HINT_NEED_BITRATE, it);
         if (new_fileinfo->file) {
             new_fileinfo_file = new_fileinfo->file;
         }
@@ -1686,9 +1689,9 @@ streamer_thread (void *ctx) {
 
             if (playing_track != streaming_track) {
                 trace ("streamer already switched to next track\n");
-                
+
                 // restart playing from new position
-                
+
                 mutex_lock (decodemutex);
                 if(fileinfo) {
                     fileinfo->plugin->free (fileinfo);
@@ -1719,7 +1722,7 @@ streamer_thread (void *ctx) {
                 }
                 pl_unlock ();
                 if (dec) {
-                    fileinfo = dec_open (dec, 0, streaming_track);
+                    fileinfo = dec_open (dec, DDB_DECODER_HINT_NEED_BITRATE, streaming_track);
                     mutex_unlock (decodemutex);
                     if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) != 0) {
                         mutex_lock (decodemutex);
@@ -2171,7 +2174,7 @@ streamer_init (void) {
     pl_set_order (conf_get_int ("playback.order", 0));
 
     streamer_dsp_init ();
-    
+
     replaygain_set (conf_get_int ("replaygain_mode", 0), conf_get_int ("replaygain_scale", 1), conf_get_float ("replaygain_preamp", 0), conf_get_float ("global_preamp", 0));
 
     ctmap_init_mutex ();
@@ -2387,7 +2390,7 @@ streamer_read_async (char *bytes, int size) {
                 outfmt.samplerate = dspfmt.samplerate;
                 outfmt.channelmask = dspfmt.channelmask;
                 outfmt.is_bigendian = fileinfo->fmt.is_bigendian;
-                if (memcmp (&output_format, &outfmt, sizeof (ddb_waveformat_t)) && bytes_until_next_song <= 0) {
+                if (bytes_until_next_song <= 0 && memcmp (&output_format, &outfmt, sizeof (ddb_waveformat_t))) {
                     memcpy (&output_format, &outfmt, sizeof (ddb_waveformat_t));
                     streamer_set_output_format ();
                 }
@@ -2634,47 +2637,59 @@ streamer_read (char *bytes, int size) {
         if (output->fmt.bps == 16) {
             mult *= 1000;
             int16_t ivolume = volume_get_amp () * mult;
-            for (int i = 0; i < bytesread/2; i++) {
-                int16_t sample = *((int16_t*)stream);
-                *((int16_t*)stream) = (int16_t)(((int32_t)sample) * ivolume / 1000);
-                stream += 2;
+            if (ivolume != 1000) {
+                int half = bytesread/2;
+                for (int i = 0; i < half; i++) {
+                    int16_t sample = *((int16_t*)stream);
+                    *((int16_t*)stream) = (int16_t)(((int32_t)sample) * ivolume / 1000);
+                    stream += 2;
+                }
             }
         }
         else if (output->fmt.bps == 8) {
             mult *= 255;
             int16_t ivolume = volume_get_amp () * mult;
-            for (int i = 0; i < bytesread; i++) {
-                *stream = (int8_t)(((int32_t)(*stream)) * ivolume / 1000);
-                stream++;
+            if (ivolume != 255) {
+                for (int i = 0; i < bytesread; i++) {
+                    *stream = (int8_t)(((int32_t)(*stream)) * ivolume / 1000);
+                    stream++;
+                }
             }
         }
         else if (output->fmt.bps == 24) {
             mult *= 1000;
             int16_t ivolume = volume_get_amp () * mult;
-            for (int i = 0; i < bytesread/3; i++) {
-                int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1]<<8) | (stream[2]<<16);
-                int32_t newsample = (int64_t)sample * ivolume / 1000;
-                stream[0] = (newsample&0x0000ff);
-                stream[1] = (newsample&0x00ff00)>>8;
-                stream[2] = (newsample&0xff0000)>>16;
-                stream += 3;
+            if (ivolume != 1000) {
+                int third = bytesread/3;
+                for (int i = 0; i < third; i++) {
+                    int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1]<<8) | (stream[2]<<16);
+                    int32_t newsample = (int64_t)sample * ivolume / 1000;
+                    stream[0] = (newsample&0x0000ff);
+                    stream[1] = (newsample&0x00ff00)>>8;
+                    stream[2] = (newsample&0xff0000)>>16;
+                    stream += 3;
+                }
             }
         }
         else if (output->fmt.bps == 32 && !output->fmt.is_float) {
             mult *= 1000;
             int16_t ivolume = volume_get_amp () * mult;
-            for (int i = 0; i < bytesread/4; i++) {
-                int32_t sample = *((int32_t*)stream);
-                int32_t newsample = (int64_t)sample * ivolume / 1000;
-                *((int32_t*)stream) = newsample;
-                stream += 4;
+            if (ivolume != 1000) {
+                for (int i = 0; i < bytesread/4; i++) {
+                    int32_t sample = *((int32_t*)stream);
+                    int32_t newsample = (int64_t)sample * ivolume / 1000;
+                    *((int32_t*)stream) = newsample;
+                    stream += 4;
+                }
             }
         }
         else if (output->fmt.bps == 32 && output->fmt.is_float) {
             float fvolume = volume_get_amp () * (1-audio_is_mute ());
-            for (int i = 0; i < bytesread/4; i++) {
-                *((float*)stream) = (*((float*)stream)) * fvolume;
-                stream += 4;
+            if (fvolume != 1.f) {
+                for (int i = 0; i < bytesread/4; i++) {
+                    *((float*)stream) = (*((float*)stream)) * fvolume;
+                    stream += 4;
+                }
             }
         }
     }
@@ -2740,7 +2755,7 @@ streamer_play_current_track_real (void) {
     playlist_t *plt = plt_get_curr ();
     DB_output_t *output = plug_get_output ();
     if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
-        if (is_remote_stream (playing_track)) {
+        if (is_remote_stream (playing_track) && pl_get_item_duration (playing_track) < 0) {
             streamer_reset (1);
             streamer_set_current (NULL);
             streamer_set_current (playing_track);
