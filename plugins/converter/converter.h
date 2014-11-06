@@ -6,12 +6,12 @@
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -21,6 +21,8 @@
 
 #include <stdint.h>
 #include "../../deadbeef.h"
+
+#define MAX_ENCODER_COMMAND 2000
 
 // changes in 1.3:
 //   readonly preset support
@@ -32,14 +34,6 @@
 enum {
     DDB_ENCODER_METHOD_PIPE = 0,
     DDB_ENCODER_METHOD_FILE = 1,
-};
-
-enum {
-    DDB_ENCODER_FMT_8BIT = 0x1,
-    DDB_ENCODER_FMT_16BIT = 0x2,
-    DDB_ENCODER_FMT_24BIT = 0x4,
-    DDB_ENCODER_FMT_32BIT = 0x8,
-    DDB_ENCODER_FMT_32BITFLOAT = 0x10,
 };
 
 typedef struct ddb_preset_s {
