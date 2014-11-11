@@ -53,6 +53,7 @@
 
 // file menu
 - (IBAction)openFilesAction:(id)sender;
+- (IBAction)performCloseTabAction:(id)sender;
 - (IBAction)addFilesAction:(id)sender;
 - (IBAction)addFoldersAction:(id)sender;
 - (IBAction)addLocationAction:(id)sender;

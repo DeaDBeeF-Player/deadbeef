@@ -888,7 +888,14 @@ init_column (int i, int _id, const char *format) {
     return 0;
 }
 
-- (void)performFindPanelAction:(id)sender {
+- (IBAction)performCloseTabAction:(id)sender {
+    int idx = deadbeef->plt_get_curr_idx ();
+    if (idx != -1) {
+        deadbeef->plt_remove (idx);
+    }
+}
+
+- (IBAction)performFindPanelAction:(id)sender {
     [_searchWindow setIsVisible:YES];
     [_searchWindow makeKeyWindow];
     [_searchViewController reset];

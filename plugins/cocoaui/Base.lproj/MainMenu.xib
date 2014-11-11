@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6245"/>
+        <deployment defaultVersion="1060" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -73,6 +74,18 @@
                             <menuItem isSeparatorItem="YES" id="79">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
+                            <menuItem title="Close Window" keyEquivalent="w" id="cSb-fY-AiV">
+                                <connections>
+                                    <action selector="performClose:" target="-1" id="8AJ-nW-Ax3"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Close Tab" keyEquivalent="w" id="8BL-5K-yi7">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="performCloseTabAction:" target="-1" id="jjs-3b-S5Z"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="chP-N6-lak"/>
                             <menuItem title="Add File(s)" id="72">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -682,7 +695,7 @@ CA
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" autosaveColumns="NO" typeSelect="NO" headerView="fLF-Vm-Rkq" id="3uJ-sF-9Sx">
-                                    <rect key="frame" x="0.0" y="0.0" width="497" height="19"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="507" height="144"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -873,7 +886,6 @@ Gw
                     </button>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="147" y="605.5"/>
         </window>
     </objects>
     <resources>
