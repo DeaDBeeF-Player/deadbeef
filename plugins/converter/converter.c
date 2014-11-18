@@ -935,9 +935,9 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
             int bs = 2000 * samplesize;
             // expected buffer size after worst-case dsp
             int dspsize = bs/samplesize*sizeof(float)*8*48;
-            char *buffer = malloc (dspsize);
+            buffer = malloc (dspsize);
             // account for up to float32 7.1 resampled to 48x ratio
-            char *dspbuffer = malloc (dspsize);
+            dspbuffer = malloc (dspsize);
             int eof = 0;
             for (;;) {
                 if (eof) {
