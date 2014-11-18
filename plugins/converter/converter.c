@@ -507,6 +507,8 @@ load_encoder_presets (void) {
                         if (!p) {
                             // NOTE: we don't delete duplicate presets in $HOME
                             // for compat with <=0.6.1
+                            encoder_preset_free (p);
+                            p = NULL;
                             continue;
                         }
                     }
@@ -519,9 +521,12 @@ load_encoder_presets (void) {
                     }
                 }
             }
+        }
+        for (i = 0; i < n; i++) {
             free (namelist[i]);
         }
         free (namelist);
+        namelist = NULL;
     }
     return 0;
 }
