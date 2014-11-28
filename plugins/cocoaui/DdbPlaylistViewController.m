@@ -712,6 +712,38 @@ int group_bytecode_size = 0;
             }
         }
             break;
+        case DB_EV_FOCUS_SELECTION: {
+            if ([self playlistIter] != p1) {
+                break;
+            }
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                deadbeef->pl_lock ();
+                ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+                if (plt) {
+                    DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+                    while (it) {
+                        if (deadbeef->pl_is_selected (it)) {
+                            break;
+                        }
+                        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+                        deadbeef->pl_item_unref (it);
+                        it = next;
+                    }
+                    if (it) {
+                        int idx = deadbeef->pl_get_idx_of (it);
+                        if (idx != -1) {
+                            [listview setCursor:idx noscroll:YES];
+                            [listview scrollToRowWithIndex:idx];
+                        }
+                        deadbeef->pl_item_unref (it);
+                    }
+
+                    deadbeef->plt_unref (plt);
+                }
+                deadbeef->pl_unlock ();
+            });
+        }
     }
     return 0;
 }

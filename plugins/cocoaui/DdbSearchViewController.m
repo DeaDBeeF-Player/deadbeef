@@ -53,12 +53,15 @@ extern DB_functions_t *deadbeef;
         deadbeef->plt_search_process (plt, [val UTF8String]);
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
         deadbeef->plt_unref (plt);
+        DdbSearchWidget *pltWidget = (DdbSearchWidget *)[self view];
+        deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, (uintptr_t)[pltWidget listview], PL_MAIN, 0);
     }
 }
 
 - (void)selectionChanged:(DdbListviewRow_t)row {
     DdbSearchWidget *pltWidget = (DdbSearchWidget *)[self view];
     deadbeef->sendmessage (DB_EV_SELCHANGED, (uintptr_t)[pltWidget listview], deadbeef->plt_get_curr_idx (), [self playlistIter]);
+    deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, (uintptr_t)[pltWidget listview], PL_MAIN, 0);
 }
 
 - (void)reset {
