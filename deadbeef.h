@@ -376,6 +376,10 @@ enum {
     DB_EV_PLUGINSLOADED = 23, // after all plugins have been loaded and connected
 #endif
 
+#if (DDB_API_LEVEL >= 8)
+    DB_EV_FOCUS_SELECTION, // tell playlist viewer to focus on selection
+#endif
+
     // -----------------
     // structured events
 
