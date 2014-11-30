@@ -1900,6 +1900,36 @@ trackfocus_cb (gpointer p) {
     return FALSE;
 }
 
+static gboolean
+selectionfocus_cb (gpointer p) {
+    w_playlist_t *tp = p;
+    deadbeef->pl_lock ();
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+        while (it) {
+            if (deadbeef->pl_is_selected (it)) {
+                break;
+            }
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+        if (it) {
+            int idx = deadbeef->pl_get_idx_of (it);
+            if (idx != -1) {
+                deadbeef->plt_set_cursor (p, PL_MAIN, idx);
+                ddb_listview_scroll_to (tp->list, idx);
+            }
+            deadbeef->pl_item_unref (it);
+        }
+
+        deadbeef->plt_unref (plt);
+    }
+    deadbeef->pl_unlock ();
+
+    return FALSE;
+}
 static int
 w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     w_playlist_t *tp = (w_playlist_t *)w;
@@ -1943,6 +1973,9 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
         break;
     case DB_EV_TRACKFOCUSCURRENT:
         g_idle_add (trackfocus_cb, w);
+        break;
+    case DB_EV_FOCUS_SELECTION:
+        g_idle_add (selectionfocus_cb, w);
         break;
     case DB_EV_CONFIGCHANGED:
         g_idle_add (config_changed_cb, tp->list);
@@ -1999,6 +2032,9 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         break;
     case DB_EV_TRACKFOCUSCURRENT:
         g_idle_add (trackfocus_cb, w);
+        break;
+    case DB_EV_FOCUS_SELECTION:
+        g_idle_add (selectionfocus_cb, w);
         break;
     case DB_EV_CONFIGCHANGED:
         g_idle_add (config_changed_cb, p->list);
