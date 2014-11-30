@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#undef HAVE_ICI
 #if HAVE_ICONV
   #define LIBICONV_PLUG
   #include <iconv.h>
@@ -781,7 +782,7 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
             enc = "cp1251";
         }
         else {
-            enc = "iso8859-1";
+            enc = "cp1252";
         }
     }
     else if (encoding != 1 && !(version == 4 && encoding == 3)){
@@ -1762,7 +1763,7 @@ junk_id3v2_add_text_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char
         encoding = 3;
     }
     else {
-        outlen = junk_iconv (value, inlen, out, sizeof (out), UTF8_STR, "ISO-8859-1");
+        outlen = junk_iconv (value, inlen, out, sizeof (out), UTF8_STR, "cp1252");
         if (outlen == -1) {
             outlen = junk_iconv (value, inlen, out+2, sizeof (out) - 2, UTF8_STR, "UCS-2LE");
             if (outlen <= 0) {
@@ -1775,7 +1776,7 @@ junk_id3v2_add_text_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char
             encoding = 1;
         }
         else {
-            trace ("successfully converted to iso8859-1 (size=%d)\n", (int)outlen);
+            trace ("successfully converted to cp1252 (size=%d)\n", (int)outlen);
         }
     }
 
@@ -1828,11 +1829,11 @@ junk_id3v2_add_comment_frame (DB_id3v2_tag_t *tag, const char *lang, const char 
         l = sizeof (input);
     }
     else {
-        l = junk_iconv (input, sizeof (input), buffer, sizeof (buffer), UTF8_STR, "iso8859-1");
+        l = junk_iconv (input, sizeof (input), buffer, sizeof (buffer), UTF8_STR, "cp1252");
         if (l <= 0) {
             l = junk_iconv (input, sizeof (input), buffer+2, sizeof (buffer) - 2, UTF8_STR, "UCS-2LE");
             if (l <= 0) {
-                trace ("failed to encode to ucs2 or iso8859-1\n");
+                trace ("failed to encode to ucs2 or cp1252\n");
                 return NULL;
             }
             else {
@@ -1953,7 +1954,7 @@ junk_id3v2_add_txxx_frame (DB_id3v2_tag_t *tag, const char *key, const char *val
             encoding = 1;
         }
         else {
-            trace ("successfully converted to iso8859-1 (size=%d)\n", res);
+            trace ("successfully converted to cp1252 (size=%d)\n", res);
         }
     }
 
