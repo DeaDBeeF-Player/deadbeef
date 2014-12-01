@@ -706,6 +706,49 @@ plug_get_gui (void) {
     return NULL;
 }
 
+void
+main_cleanup_and_quit (void) {
+    // terminate server and wait for completion
+    if (server_tid) {
+        server_terminate = 1;
+        thread_join (server_tid);
+        server_tid = 0;
+    }
+
+    // save config
+    pl_save_all ();
+    conf_save ();
+
+    // delete legacy session file
+    {
+        char sessfile[1024]; // $HOME/.config/deadbeef/session
+        if (snprintf (sessfile, sizeof (sessfile), "%s/deadbeef/session", confdir) < sizeof (sessfile)) {
+            unlink (sessfile);
+        }
+    }
+
+    // stop receiving messages from outside
+    server_close ();
+
+    // plugins might still hold references to playitems,
+    // and query configuration in background
+    // so unload everything 1st before final cleanup
+    plug_disconnect_all ();
+    plug_unload_all ();
+
+    // at this point we can simply do exit(0), but let's clean up for debugging
+    pl_free (); // may access conf_*
+    conf_free ();
+
+    fprintf (stderr, "messagepump_free\n");
+    messagepump_free ();
+    fprintf (stderr, "plug_cleanup\n");
+    plug_cleanup ();
+
+    fprintf (stderr, "hej-hej!\n");
+    exit(0);
+}
+
 static void
 mainloop_thread (void *ctx) {
     // this runs until DB_EV_TERMINATE is sent (blocks right here)
@@ -716,6 +759,9 @@ mainloop_thread (void *ctx) {
     if (gui) {
         gui->stop ();
     }
+#if HAVE_COCOAUI
+    main_cleanup_and_quit();
+#endif
     return;
 }
 
@@ -1023,49 +1069,11 @@ main (int argc, char *argv[]) {
     if (gui) {
         gui->start ();
     }
-
+    
     fprintf (stderr, "gui plugin has quit; waiting for mainloop thread to finish\n");
     thread_join (mainloop_tid);
 
-    // terminate server and wait for completion
-    if (server_tid) {
-        server_terminate = 1;
-        thread_join (server_tid);
-        server_tid = 0;
-    }
-
-    // save config
-    pl_save_all ();
-    conf_save ();
-
-    // delete legacy session file
-    {
-        char sessfile[1024]; // $HOME/.config/deadbeef/session
-        if (snprintf (sessfile, sizeof (sessfile), "%s/deadbeef/session", confdir) < sizeof (sessfile)) {
-            unlink (sessfile);
-        }
-    }
-
-    // stop receiving messages from outside
-    server_close ();
-
-    // plugins might still hold references to playitems,
-    // and query configuration in background
-    // so unload everything 1st before final cleanup
-    plug_disconnect_all ();
-    plug_unload_all ();
-
-    // at this point we can simply do exit(0), but let's clean up for debugging
-    pl_free (); // may access conf_*
-    conf_free ();
-
-    fprintf (stderr, "messagepump_free\n");
-    messagepump_free ();
-    fprintf (stderr, "plug_cleanup\n");
-    plug_cleanup ();
-
-    fprintf (stderr, "hej-hej!\n");
-
+    main_cleanup_and_quit ();
     return 0;
 }
 

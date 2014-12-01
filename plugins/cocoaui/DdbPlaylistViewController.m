@@ -500,6 +500,7 @@ int group_bytecode_size = 0;
 }
 
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row {
+    return nil;
     if (!group_bytecode) {
         group_bytecode_size = deadbeef->tf_compile (group_str, &group_bytecode);
     }
