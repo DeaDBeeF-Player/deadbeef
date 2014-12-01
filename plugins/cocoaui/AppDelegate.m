@@ -32,6 +32,7 @@
 
 extern DB_functions_t *deadbeef;
 
+extern BOOL g_CanQuit;
 @implementation AppDelegate
 
 DB_playItem_t *prev = NULL;
@@ -134,9 +135,24 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
+    if (g_CanQuit) {
+        return NSTerminateNow;
+    }
+    // stop gui
+    if (_updateTimer) {
+        [_updateTimer invalidate];
+        _updateTimer = nil;
+    }
+    if (_tfRedrawTimer) {
+        [_tfRedrawTimer invalidate];
+        _tfRedrawTimer = nil;
+    }
+
+    [_window close];
+    [_searchWindow close];
 
     deadbeef->sendmessage(DB_EV_TERMINATE, 0, 0, 0);
-    return NSTerminateCancel;
+    return NSTerminateLater;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -155,8 +171,8 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     // initialize gui from settings
     [self configChanged];
     
-    NSTimer *updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
-    [[NSRunLoop currentRunLoop] addTimer:updateTimer forMode:NSDefaultRunLoopMode];
+    _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
+    [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSDefaultRunLoopMode];
     
     [_addFilesWindow setParentWindow:_window];
     

@@ -27,6 +27,8 @@
 
 DB_functions_t *deadbeef;
 
+BOOL g_CanQuit = NO;
+
 int cocoaui_start(void) {
     char *argv[1];
     argv[0] = "FIXME";
@@ -34,6 +36,8 @@ int cocoaui_start(void) {
 }
 
 int cocoaui_stop(void) {
+    g_CanQuit = YES;
+    [NSApp terminate:g_appDelegate];
     return 0;
 }
 

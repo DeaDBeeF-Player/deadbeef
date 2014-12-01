@@ -661,6 +661,7 @@ CA
                 <outlet property="loopAll" destination="bp3-Nw-TaR" id="t92-xv-gTj"/>
                 <outlet property="loopNone" destination="pGf-UH-jjg" id="fd0-Uw-O2Y"/>
                 <outlet property="loopSingle" destination="V06-6E-L7R" id="hQ5-IG-2Gh"/>
+                <outlet property="mainMenu" destination="29" id="MgP-BD-1rr"/>
                 <outlet property="nextAction" destination="kPQ-iT-aPC" id="8zu-Ip-zdC"/>
                 <outlet property="orderLinear" destination="utp-dm-oO6" id="xEe-Sa-V93"/>
                 <outlet property="orderRandom" destination="1U2-JB-RUf" id="KxR-mg-sUu"/>

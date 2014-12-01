@@ -1107,6 +1107,11 @@ plug_unload_all (void) {
         if (p->plugin->stop) {
             trace ("stopping %s...\n", p->plugin->name);
             fflush (stderr);
+#if HAVE_COCOAUI
+            if (p->plugin->type == DB_PLUGIN_GUI) {
+                continue;
+            }
+#endif
             p->plugin->stop ();
         }
     }
