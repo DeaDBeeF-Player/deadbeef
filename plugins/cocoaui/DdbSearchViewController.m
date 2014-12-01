@@ -42,7 +42,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row {
-    return NULL;
+    return nil;
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification {

@@ -133,6 +133,12 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [[_searchWindow contentView] addSubview:view];
 }
 
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
+
+    deadbeef->sendmessage(DB_EV_TERMINATE, 0, 0, 0);
+    return NSTerminateCancel;
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     [_window setReleasedWhenClosed:NO];
