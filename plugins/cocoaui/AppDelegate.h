@@ -34,9 +34,12 @@
     id _tfRedrawTimer;
     int _tf_redraw_track_idx;
     DB_playItem_t *_tf_redraw_track;
+    NSTimer *_updateTimer;
 }
 
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
+
+@property (unsafe_unretained) IBOutlet NSMenu *mainMenu;
 
 @property (assign) IBOutlet NSWindow *window;
 @property (unsafe_unretained) IBOutlet NSPanel *searchWindow;
@@ -116,3 +119,5 @@
 - (IBAction)showMainWinAction:(id)sender;
 
 @end
+
+extern AppDelegate *g_appDelegate;

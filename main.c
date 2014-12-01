@@ -746,7 +746,6 @@ main_cleanup_and_quit (void) {
     plug_cleanup ();
 
     fprintf (stderr, "hej-hej!\n");
-    exit(0);
 }
 
 static void
@@ -756,11 +755,11 @@ mainloop_thread (void *ctx) {
 
     // tell the gui thread to finish
     DB_plugin_t *gui = plug_get_gui ();
+#if HAVE_COCOAUI
+    main_cleanup_and_quit();
     if (gui) {
         gui->stop ();
     }
-#if HAVE_COCOAUI
-    main_cleanup_and_quit();
 #endif
     return;
 }
