@@ -157,6 +157,8 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    [[_window windowController] setShouldCascadeWindows:NO];
+    [[_searchWindow windowController] setShouldCascadeWindows:NO];
     [_window setReleasedWhenClosed:NO];
     [_window setExcludedFromWindowsMenu:YES];
 
