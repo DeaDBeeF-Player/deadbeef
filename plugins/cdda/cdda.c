@@ -282,7 +282,7 @@ cda_read (DB_fileinfo_t *_info, char *bytes, int size)
     }
 
 //    trace ("requested: %d, return: %d\n", size, fill-bytes);
-    _info->readpos = (float)info->current_sector * SECTORSIZE / SAMPLESIZE / _info->fmt.samplerate;
+    _info->readpos = (float)(info->current_sector-info->first_sector) * SECTORSIZE / SAMPLESIZE / _info->fmt.samplerate;
     return fill - bytes;
 }
 
