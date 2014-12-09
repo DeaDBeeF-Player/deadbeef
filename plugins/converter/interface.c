@@ -228,6 +228,7 @@ create_converterdlg (void)
   overwrite_action = gtk_combo_box_text_new ();
   gtk_widget_show (overwrite_action);
   gtk_box_pack_start (GTK_BOX (hbox99), overwrite_action, TRUE, TRUE, 0);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (overwrite_action), _("Skip"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (overwrite_action), _("Prompt"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (overwrite_action), _("Overwrite"));
 

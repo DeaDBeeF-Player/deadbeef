@@ -194,33 +194,16 @@ converter_worker (void *ctx) {
 
         converter_plugin->get_output_path (conv->convert_items[n], conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, root, conv->write_to_source_folder, outpath, sizeof (outpath));
 
-        int skip = 0;
-
-        // need to unescape path before passing to stat
-        char unesc_path[2000];
-        char invalid[] = "$\"`\\";
-        const char *p = outpath;
-        char *o = unesc_path;
-        while (*p) {
-            if (*p == '\\') {
-                p++;
-            }
-            *o++ = *p++;
-        }
-        *o = 0;
-
         struct stat st;
-        int res = stat(unesc_path, &st);
+        int res = stat(outpath, &st);
+        int skip = !res;
         if (res == 0) {
-            if (conv->overwrite_action > 1 || conv->overwrite_action < 0) {
-                conv->overwrite_action = 0;
-            }
-            if (conv->overwrite_action == 0) {
+            if (conv->overwrite_action == 1) {
                 // prompt if file exists
                 struct overwrite_prompt_ctx ctl;
                 ctl.mutex = deadbeef->mutex_create ();
                 ctl.cond = deadbeef->cond_create ();
-                ctl.fname = unesc_path;
+                ctl.fname = outpath;
                 ctl.result = 0;
                 gdk_threads_add_idle (overwrite_prompt_cb, &ctl);
                 deadbeef->cond_wait (ctl.cond, ctl.mutex);
@@ -228,13 +211,12 @@ converter_worker (void *ctx) {
                 deadbeef->mutex_free (ctl.mutex);
                 if (ctl.result) {
                     unlink (outpath);
-                }
-                else {
-                    skip = 1;
+                    skip = 0;
                 }
             }
-            else if (conv->overwrite_action == 1) {
+            else if (conv->overwrite_action == 2) {
                 unlink (outpath);
+                skip = 0;
             }
         }
 
@@ -1602,7 +1584,7 @@ convgui_connect (void) {
         fprintf (stderr, "convgui: converter plugin not found\n");
         return -1;
     }
-    if (!PLUG_TEST_COMPAT(&converter_plugin->misc.plugin, 1, 3)) {
+    if (!PLUG_TEST_COMPAT(&converter_plugin->misc.plugin, 1, 4)) {
         fprintf (stderr, "convgui: need converter>=1.3, but found %d.%d\n", converter_plugin->misc.plugin.version_major, converter_plugin->misc.plugin.version_minor);
         return -1;
     }

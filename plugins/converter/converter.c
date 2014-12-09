@@ -44,8 +44,8 @@
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 static ddb_converter_t plugin;
 static DB_functions_t *deadbeef;
@@ -507,6 +507,8 @@ load_encoder_presets (void) {
                         if (!p) {
                             // NOTE: we don't delete duplicate presets in $HOME
                             // for compat with <=0.6.1
+                            encoder_preset_free (p);
+                            p = NULL;
                             continue;
                         }
                     }
@@ -519,9 +521,12 @@ load_encoder_presets (void) {
                     }
                 }
             }
+        }
+        for (i = 0; i < n; i++) {
             free (namelist[i]);
         }
         free (namelist);
+        namelist = NULL;
     }
     return 0;
 }
@@ -646,20 +651,12 @@ dsp_preset_replace (ddb_dsp_preset_t *from, ddb_dsp_preset_t *to) {
     to->next = from->next;
 }
 
-
 static void
-get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
-{
-    int idx = deadbeef->pl_get_idx_of (it);
-    char temp[PATH_MAX];
-    char fmt[strlen(field)+3];
-    snprintf (fmt, sizeof (fmt), "%%/%s", field);
-    deadbeef->pl_format_title (it, idx, temp, sizeof (temp), -1, fmt);
-
+escape_filepath (const char *path, char *out, int sz) {
     // escape special chars
     char invalid[] = "$\"`\\";
     char *p = out;
-    char *t = temp;
+    const char *t = path;
     int n = sz;
     while (*t && n > 1) {
         if (strchr (invalid, *t)) {
@@ -675,6 +672,19 @@ get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
         t++;
     }
     *p = 0;
+}
+
+static void
+get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
+{
+    int idx = deadbeef->pl_get_idx_of (it);
+    char temp[PATH_MAX];
+    char fmt[strlen(field)+3];
+    snprintf (fmt, sizeof (fmt), "%%/%s", field);
+    deadbeef->pl_format_title (it, idx, temp, sizeof (temp), -1, fmt);
+
+    strncpy (out, temp, sz);
+    out[sz-1] = 0;
     trace ("field '%s' expanded to '%s'\n", field, out);
 }
 
@@ -718,23 +728,9 @@ get_output_path (DB_playItem_t *it, const char *outfolder_user, const char *outf
     char path[pathl];
     char *pattern = strdupa (outfile);
 
-    // escape special chars
-    char invalid[] = "$\"`\\";
-    char *p = path;
-    const char *t = outfolder;
-    while (*t && pathl > 1) {
-        if (strchr (invalid, *t)) {
-            *p++ = '\\';
-            pathl--;
-        }
-        *p++ = *t;
-        pathl--;
-        t++;
-    }
-    *p = 0;
-    snprintf (out, sz, "%s/", path);
+    snprintf (out, sz, "%s/", outfolder);
 
-    // split path and create directories
+    // split path, and expand each path component using get_output_field
     char *field = pattern;
     char *s = pattern;
     while (*s) {
@@ -744,7 +740,6 @@ get_output_path (DB_playItem_t *it, const char *outfolder_user, const char *outf
 
             l = strlen (out);
             snprintf (out+l, sz-l, "%s/", fname);
-            mkdir (out, 0755);
 
             field = s+1;
         }
@@ -855,6 +850,9 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
             char enc[2000];
             memset (enc, 0, sizeof (enc));
 
+            char escaped_out[PATH_MAX];
+            escape_filepath (out, escaped_out, sizeof (escaped_out));
+
             // formatting: %o = outfile, %i = infile
             char *e = encoder_preset->encoder;
             char *o = enc;
@@ -867,7 +865,7 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
                 }
                 if (e[0] == '%' && e[1]) {
                     if (e[1] == 'o') {
-                        int l = snprintf (o, len, "\"%s\"", out);
+                        int l = snprintf (o, len, "\"%s\"", escaped_out);
                         o += l;
                         len -= l;
                     }
@@ -896,6 +894,7 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
 
             if (!encoder_preset->encoder[0]) {
                 // write to wave file
+                trace ("opening %s\n", out);
                 temp_file = open (out, O_LARGEFILE | O_WRONLY | O_CREAT | O_TRUNC, wrmode);
                 if (temp_file == -1) {
                     fprintf (stderr, "converter: failed to open output wave file %s\n", out);
@@ -941,9 +940,9 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
             int bs = 2000 * samplesize;
             // expected buffer size after worst-case dsp
             int dspsize = bs/samplesize*sizeof(float)*8*48;
-            char *buffer = malloc (dspsize);
+            buffer = malloc (dspsize);
             // account for up to float32 7.1 resampled to 48x ratio
-            char *dspbuffer = malloc (dspsize);
+            dspbuffer = malloc (dspsize);
             int eof = 0;
             for (;;) {
                 if (eof) {
@@ -1124,17 +1123,6 @@ error:
     if (encoder_preset->tag_id3v2 || encoder_preset->tag_id3v1 || encoder_preset->tag_apev2 || encoder_preset->tag_flac || encoder_preset->tag_oggvorbis) {
         out_it = deadbeef->pl_item_alloc ();
         deadbeef->pl_item_copy (out_it, it);
-        char unesc_path[2000];
-        char invalid[] = "$\"`\\";
-        const char *p = out;
-        char *o = unesc_path;
-        while (*p) {
-            if (*p == '\\') {
-                p++;
-            }
-            *o++ = *p++;
-        }
-        *o = 0;
         deadbeef->pl_set_item_flags (out_it, 0);
         DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (out_it);
         while (m) {
@@ -1144,7 +1132,7 @@ error:
             }
             m = next;
         }
-        deadbeef->pl_replace_meta (out_it, ":URI", unesc_path);
+        deadbeef->pl_replace_meta (out_it, ":URI", out);
     }
 
     uint32_t tagflags = 0;
@@ -1240,7 +1228,7 @@ static ddb_converter_t plugin = {
     .misc.plugin.api_vmajor = 1,
     .misc.plugin.api_vminor = 0,
     .misc.plugin.version_major = 1,
-    .misc.plugin.version_minor = 3,
+    .misc.plugin.version_minor = 4,
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.name = "Converter",
     .misc.plugin.id = "converter",
