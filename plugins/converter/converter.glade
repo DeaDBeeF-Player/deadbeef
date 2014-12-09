@@ -621,7 +621,8 @@ Leave the field empty for default (%a - %t).</property>
 	      <child>
 		<widget class="GtkComboBox" id="overwrite_action">
 		  <property name="visible">True</property>
-		  <property name="items" translatable="yes">Prompt
+		  <property name="items" translatable="yes">Skip
+Prompt
 Overwrite</property>
 		  <property name="add_tearoffs">False</property>
 		  <property name="focus_on_click">True</property>

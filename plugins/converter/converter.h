@@ -22,6 +22,13 @@
 #include <stdint.h>
 #include "../../deadbeef.h"
 
+// changes in 1.3:
+//   readonly preset support
+// changes in 1.4:
+//   changed escaping rules
+//   now get_output_path returns unescaped path, and
+//   doesn't create folders
+
 enum {
     DDB_ENCODER_METHOD_PIPE = 0,
     DDB_ENCODER_METHOD_FILE = 1,
@@ -176,6 +183,25 @@ typedef struct {
             ddb_dsp_preset_t *dsp_preset, // dsp preset to use
             int *abort // *abort will be checked regularly, conversion will be interrupted if it's non-zero
     );
+
+    // The 'get_output_path' function should be used to get the fully
+    // qualified output file path, to be passed to 'convert' function.
+    // It is commonly used by converter GUI.
+    // Parameters:
+    //  it: the track
+    //  outfolder: the folder to write the file to (usually specified in GUI)
+    //  outfile: the filename pattern, which may include additional folder
+    //           structure, and title formatting; without extension.
+    //           examples: "%a - %t", "subfolder/%t"
+    //  encoder_preset: an existing encoder preset.
+    //  preserve_folder_structure: set to 1 to recreate the existing folder
+    //                             structure, when converting multiple files
+    //  root_folder: common root path of all the tracks being converted in 1 go.
+    //  write_to_source_folder: set to 1 to write output to the same folders
+    //                          where input files are located.
+    //  out: the buffer for the output file path,
+    //       which will come out not escaped, will include the file extension.
+    //  sz: size of the out buffer.
     void
     (*get_output_path) (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz);
 } ddb_converter_t;
