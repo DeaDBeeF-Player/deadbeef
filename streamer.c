@@ -1014,6 +1014,14 @@ streamer_set_current (playItem_t *it) {
     if (dec) {
         strncpy (decoder_id, dec, sizeof (decoder_id));
     }
+
+    if (!decoder_id[0]) {
+        // some decoders set filetype override,
+        // but the override is invalid when decoder is not set.
+        // reset to default here, so that tracks become playable after failures
+        pl_delete_meta(it, "!FILETYPE");
+    }
+
     const char *ft = pl_find_meta (it, ":FILETYPE");
     if (ft) {
         strncpy (filetype, ft, sizeof (filetype));
