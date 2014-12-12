@@ -73,12 +73,23 @@ void        glade_set_atk_action_description (AtkAction       *action,
                                               const gchar     *action_name,
                                               const gchar     *description);
 
+#if GTK_CHECK_VERSION(3,2,0)
+#define gtk_vbox_new(homogeneous,spacing) g_object_new(GTK_TYPE_VBOX,"spacing",spacing,"homogeneous",homogeneous?TRUE:FALSE,NULL)
+#define gtk_hbox_new(homogeneous,spacing) g_object_new(GTK_TYPE_HBOX,"spacing",spacing,"homogeneous",homogeneous?TRUE:FALSE,NULL)
+#endif
+
 #if GTK_CHECK_VERSION(3,0,0)
+#define gtk_widget_size_request(widget, requisition) gtk_widget_get_preferred_size(widget, requisition, NULL)
+#endif
+
+#if !GTK_CHECK_VERSION(3,0,0)
+gboolean
+gtk_tree_model_iter_previous(GtkTreeModel *tree_model, GtkTreeIter *iter);
+#endif
+
+#if GTK_CHECK_VERSION(2,24,0)
 GtkWidget *
 gtk_combo_box_entry_new_text(void);
-
-void
-gtk_dialog_set_has_separator (GtkDialog *dlg, gboolean has);
 #endif
 
 #if !GTK_CHECK_VERSION(2,20,0)
@@ -117,6 +128,8 @@ gchar *gtk_combo_box_text_get_active_text  (GtkComboBoxText *combo_box);
 #endif
 
 #if !GTK_CHECK_VERSION(2,18,0)
+gboolean gtk_widget_get_visible(GtkWidget *widget);
+void gtk_widget_set_visible(GtkWidget *widget, gboolean visible);
 #define gtk_widget_set_has_window(widget, has_window) \
   if (has_window) GTK_WIDGET_UNSET_FLAGS (widget, GTK_NO_WINDOW); \
   else GTK_WIDGET_SET_FLAGS (widget, GTK_NO_WINDOW);
