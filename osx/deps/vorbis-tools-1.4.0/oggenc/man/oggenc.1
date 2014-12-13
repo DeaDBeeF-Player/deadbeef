@@ -1,0 +1,423 @@
+.\" Process this file with
+.\" groff -man -Tascii oggenc.1
+.\"
+.TH oggenc 1 "2008 October 05" "Xiph.Org Foundation" "Vorbis Tools"
+
+.SH NAME
+oggenc \- encode audio into the Ogg Vorbis format
+
+.SH SYNOPSIS
+.B oggenc
+[
+.B -hrQ
+]
+[
+.B -B
+.I raw input sample size
+]
+[
+.B -C
+.I raw input number of channels
+]
+[
+.B -R
+.I raw input samplerate
+]
+[
+.B -b
+.I nominal bitrate
+]
+[
+.B -m
+.I minimum bitrate
+]
+[
+.B -M
+.I maximum bitrate
+]
+[
+.B -q
+.I quality
+]
+[
+.B --resample 
+.I frequency
+]
+[
+.B --downmix 
+]
+[
+.B -s
+.I serial
+]
+[
+.B -o
+.I output_file
+]
+[
+.B -n
+.I pattern
+]
+[
+.B -c
+.I extra_comment
+]
+[
+.B -a
+.I artist
+]
+[
+.B -t
+.I title
+]
+[
+.B -l
+.I album
+]
+[
+.B -G
+.I genre
+]
+[
+.B -L
+.I lyrics file
+]
+[
+.B -Y
+.I language-string
+]
+.I input_files \fR...
+
+.SH DESCRIPTION
+.B oggenc
+reads audio data in either raw, Wave, or AIFF format and encodes it into an
+Ogg Vorbis stream.
+.B oggenc
+may also read audio data from FLAC and Ogg FLAC files depending upon compile-time options.  If the input file "-" is specified, audio data is
+read from
+.I stdin
+and the Vorbis stream is written to
+.I stdout
+unless the
+.B -o
+option is used to redirect the output.  By default, disk files are
+output to Ogg Vorbis files of the same name, with the extension
+changed to ".ogg" or ".oga".  This naming convention can be overridden
+by the
+.B -o
+option (in the case of one file) or the
+.B -n
+option (in the case of several files). Finally, if none of these
+are available, the output filename will be the input filename with the
+extension (that part after the final dot) replaced with ogg, so file.wav
+will become file.ogg.
+.br
+Optionally, lyrics may be embedded in the Ogg file, if Kate support was compiled in.
+.br
+Note that some old players mail fail to play streams with more than a single Vorbis stream
+(the so called "Vorbis I" simple profile).
+
+.SH OPTIONS
+.IP "-h, --help"
+Show command help.
+.IP "-V, --version"
+Show the version number.
+.IP "-r, --raw"
+Assume input data is raw little-endian audio data with no
+header information. If other options are not specified, defaults to 44.1kHz
+stereo 16 bit. See next three options for how to change this.
+.IP "-B n, --raw-bits=n"
+Sets raw mode input sample size in bits. Default is 16.
+.IP "-C n, --raw-chan=n"
+Sets raw mode input number of channels. Default is 2.
+.IP "-R n, --raw-rate=n"
+Sets raw mode input samplerate. Default is 44100.
+.IP "--raw-endianness n
+Sets raw mode endianness to big endian (1) or little endian (0). Default is
+little endian.
+.IP "--utf8 \ \ \ \ \ \ \ "
+Informs oggenc that the Vorbis Comments are already encoded as UTF-8.
+Useful in situations where the shell is using some other encoding.
+.IP "-k, --skeleton"
+Add a Skeleton bitstream.  Important if the output Ogg is intended to carry
+multiplexed or chained streams.  Output file uses .oga as file extension.
+.IP "--ignorelength"
+Support for Wave files over 4 GB and stdin data streams.
+.IP "-Q, --quiet"
+Quiet mode.  No messages are displayed.
+.IP "-b n, --bitrate=n"
+Sets target bitrate to n (in kb/s). The encoder will attempt to encode at approximately this bitrate. By default, this remains a VBR encoding. See the --managed option to force a managed bitrate encoding at the selected bitrate.
+.IP "-m n, --min-bitrate=n"
+Sets minimum bitrate to n (in kb/s). Enables bitrate management mode (see --managed).
+.IP "-M n, --max-bitrate=n"
+Sets maximum bitrate to n (in kb/s). Enables bitrate management mode (see --managed).
+.IP "--managed"
+Set bitrate management mode. This turns off the normal VBR encoding, but allows
+hard or soft bitrate constraints to be enforced by the encoder. This mode is
+much slower, and may also be lower quality. It is primarily useful for creating
+files for streaming.
+.IP "-q n, --quality=n"
+Sets encoding quality to n, between -1 (very low) and 10 (very high). This is the default mode of operation, with a default quality level of 3. Fractional quality levels such as 2.5 are permitted. Using this option allows the encoder to select an appropriate bitrate based on your desired quality level.
+.IP "--resample n"
+Resample input to the given sample rate (in Hz) before encoding. Primarily
+useful for downsampling for lower-bitrate encoding.
+.IP "--downmix"
+Downmix input from stereo to mono (has no effect on non-stereo streams). Useful
+for lower-bitrate encoding.
+.IP "--advanced-encode-option optionname=value"
+Sets an advanced option. See the Advanced Options section for details.
+.IP "-s, --serial"
+Forces a specific serial number in the output stream. This is primarily useful for testing.
+.IP "--discard-comments"
+Prevents comments in FLAC and Ogg FLAC files from being copied to the
+output Ogg Vorbis file.
+.IP "-o output_file, --output=output_file"
+Write the Ogg Vorbis stream to
+.I output_file
+(only valid if a single input file is specified).
+
+.IP "-n pattern, --names=pattern"
+Produce filenames as this string, with %g, %a, %l, %n, %t, %d replaced by
+genre, artist, album, track number, title, and date, respectively (see below
+for specifying these). Also, %% gives a literal %.
+.IP "-X, --name-remove=s"
+Remove the specified characters from parameters to the -n format string. This is useful to ensure legal filenames are generated.
+.IP "-P, --name-replace=s"
+Replace characters removed by --name-remove with the characters specified. If this string is shorter than the --name-remove list, or is not specified, the extra characters are just removed. The default settings for this option, and the -X option above, are platform specific (and chosen to ensure legal filenames are generated for each platform).
+
+.IP "-c comment, --comment comment"
+Add the string
+.I comment
+as an extra comment.  This may be used multiple times, and all
+instances will be added to each of the input files specified. The argument
+should be in the form "tag=value".
+
+.IP "-a artist, --artist artist"
+Set the artist comment field in the comments to
+.I artist.
+
+.IP "-G genre, --genre genre"
+Set the genre comment field in the comments to
+.I genre.
+
+.IP "-d date, --date date"
+Sets the date comment field to the given value. This should be the date of recording.
+
+.IP "-N n, --tracknum n"
+Sets the track number comment field to the given value.
+
+.IP "-t title, --title title"
+Set the track title comment field to
+.I title.
+
+.IP "-l album, --album album"
+Set the album comment field to
+.I album.
+
+.IP "-L filename, --lyrics filename"
+Loads lyrics from
+.I filename
+and encodes them into a Kate stream multiplexed with the Vorbis stream.
+Lyrics may be in LRC or SRT format, and should be encoded in UTF-8 or
+plain ASCII. Other encodings may be converted using tools such as iconv
+or recode. Alternatively, the same system as for comments will be used
+for conversion between encodings.
+So called "enhanced LRC" files are supported, and a simple karaoke style
+change will be saved with the lyrics. For more complex karaoke setups,
+.B kateenc(1)
+should be used instead.
+When embedding lyrics, the default output file extention is ".oga".
+Note that adding lyrics to a stream will automatically enable Skeleton
+(see the \fB-k\fR option for more information about Skeleton).
+
+.IP "-Y language-string, --lyrics-language language-string"
+Sets the language for the corresponding lyrics file to
+.I language-string.
+This should be an ISO 639-1 language code (eg, "en"), or a RFC 3066 language tag
+(eg, "en_US"),
+.B not
+a free form language name. Players will typically recognize this standard tag
+and display the language name in your own language.
+Note that the maximum length of this tag is 15 characters.
+.PP
+
+Note that the \fB-a\fR, \fB-t\fR, \fB-l\fR, \fB-L\fR, and \fB-Y\fR  options
+can be given multiple times.  They will be applied, one to each file, in the
+order given.  If there are fewer album, title, or artist comments given than
+there are input files,
+.B oggenc
+will reuse the final one for the remaining files, and issue a warning
+in the case of repeated titles.
+
+.SH "ADVANCED ENCODER OPTIONS"
+
+Oggenc allows you to set a number of advanced encoder options using the
+.B --advanced-encode-option
+option. These are intended for very advanced users only, and should be
+approached with caution. They may significantly degrade audio quality
+if misused. Not all these options are currently documented.
+
+.IP "lowpass_frequency=N"
+Set the lowpass frequency to N kHz.
+
+.IP "impulse_noisetune=N"
+Set a noise floor bias N (range from -15. to 0.) for impulse blocks.
+A negative bias instructs the encoder to pay special attention to the
+crispness of transients in the encoded audio.  The tradeoff for better
+transient response is a higher bitrate.
+
+.IP "bitrate_hard_max=N"
+Set the allowed bitrate maximum for the encoded file to N kilobits per 
+second.  This bitrate may be exceeded only when there is spare bits
+in the bit reservoir; if the bit reservoir is exhausted, frames will
+be held under this value.  This setting must be used with --managed 
+to have any effect.
+
+.IP "bitrate_hard_min=N"
+Set the allowed bitrate minimum for the encoded file to N kilobits per
+second.  This bitrate may be underrun only when the bit reservoir is
+not full; if the bit reservoir is full, frames will be held over this
+value; if it impossible to add bits constructively, the frame will be
+padded with zeroes.  This setting must be used with --managed to have
+any effect.
+
+.IP "bit_reservoir_bits=N"
+Set the total size of the bit reservoir to N bits; the default size of
+the reservoir is equal to the nominal number of bits coded in one
+second (eg, a nominal 128kbps file will have a bit reservoir of 128000
+bits by default).  This option must be used with --managed to have any
+effect and affects only minimum and maximum bitrate management.
+Average bitrate encoding with no hard bitrate boundaries does not use
+a bit reservoir.
+
+.IP "bit_reservoir_bias=N"
+Set the behavior bias of the bit reservoir (range: 0. to 1.).  When
+set closer to 0, the bitrate manager attempts to hoard bits for future
+use in sudden bitrate increases (biasing toward better transient
+reproduction).  When set closer to 1, the bitrate manager neglects
+transients in favor using bits for homogenous passages.  In the
+middle, the manager uses a balanced approach.  The default setting is \.2, 
+thus biasing slightly toward transient reproduction.
+
+.IP "bitrate_average=N"
+Set the average bitrate for the file to N kilobits per second.  When used
+without hard minimum or maximum limits, this option selects
+reservoirless Average Bit Rate encoding, where the encoder attempts to
+perfectly track a desired bitrate, but imposes no strict momentary
+fluctuation limits.  When used along with a minimum or maximum limit,
+the average bitrate still sets the average overall bitrate of the
+file, but will work within the bounds set by the bit reservoir.  When
+the min, max and average bitrates are identical, oggenc produces
+Constant Bit Rate Vorbis data.
+
+.IP "bitrate_average_damping=N"
+Set the reaction time for the average bitrate tracker to N seconds.
+This number represents the fastest reaction the bitrate tracker is
+allowed to make to hold the bitrate to the selected average.  The
+faster the reaction time, the less momentary fluctuation in the
+bitrate but (generally) the lower quality the audio output.  The
+slower the reaction time, the larger the ABR fluctuations, but
+(generally) the better the audio.  When used along with min or max
+bitrate limits, this option directly affects how deep and how quickly
+the encoder will dip into its bit reservoir; the higher the number,
+the more demand on the bit reservoir.
+
+The setting must be greater than zero and the useful range is
+approximately \.05 to 10.  The default is \.75 seconds.
+
+.IP "disable_coupling"
+Disable use of channel coupling for multichannel encoding.  At present,
+the encoder will normally use channel coupling to further increase
+compression with stereo and 5.1 inputs. This option forces the encoder
+to encode each channel fully independently using neither lossy nor
+lossless coupling. 
+
+.SH EXAMPLES
+
+Simplest version. Produces output as somefile.ogg:
+.RS
+oggenc somefile.wav
+.RE
+.PP
+
+Specifying an output filename:
+.RS
+oggenc somefile.wav -o out.ogg
+.RE
+.PP
+
+Specifying a high-quality encoding averaging 256 kbps (but still VBR):
+.RS
+oggenc infile.wav -b 256 -o out.ogg
+.RE
+.PP
+
+Specifying a maximum and average bitrate, and enforcing these:
+.RS
+oggenc infile.wav --managed -b 128 -M 160 -o out.ogg
+.RE
+.PP
+
+Specifying quality rather than bitrate (to a very high quality mode):
+.RS
+oggenc infile.wav -q 6 -o out.ogg
+.RE
+.PP
+
+Downsampling and downmixing to 11 kHz mono before encoding:
+.RS
+oggenc --resample 11025 --downmix infile.wav -q 1 -o out.ogg
+.RE
+.PP
+
+Adding some info about the track:
+.RS
+oggenc somefile.wav -t "The track title" -a "artist who performed this" -l
+"name of album" -c
+"OTHERFIELD=contents of some other field not explicitly supported"
+.RE
+.PP
+
+Adding embedded lyrics:
+.RS
+oggenc somefile.wav --lyrics lyrics.lrc --lyrics-language en -o out.oga
+.RE
+.PP
+
+This encodes the three files, each with the
+same artist/album tag, but with different title tags on each one. The
+string given as an argument to -n is used to generate filenames, as shown
+in the section above. This example gives filenames
+like "The Tea Party - Touch.ogg":
+.RS
+oggenc -b 192 -a "The Tea Party" -l "Triptych" -t "Touch" track01.wav -t
+"Underground" track02.wav -t "Great Big Lie" track03.wav -n "%a - %t.ogg"
+.RE
+.PP
+
+Encoding from stdin, to stdout (you can also use the various tagging
+options, like -t, -a, -l, etc.):
+.RS
+oggenc -
+.RE
+.PP
+
+.SH AUTHORS
+
+.TP
+Program Author:
+.br
+Michael Smith <msmith@xiph.org>
+
+.TP
+Manpage Author:
+.br
+Stan Seibert <indigo@aztec.asu.edu>
+
+.SH BUGS
+Reading type 3 Wave files (floating point samples) probably doesn't work other than on Intel (or other 32 bit, little endian machines).
+
+.SH "SEE ALSO"
+
+.PP
+\fBvorbiscomment\fR(1), \fBogg123\fR(1), \fBoggdec\fR(1), \fBflac\fR(1), \fBspeexenc\fR(1), \fBffmpeg2theora\fR(1), \fBkateenc\fR(1)

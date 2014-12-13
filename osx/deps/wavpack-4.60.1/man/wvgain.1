@@ -1,0 +1,89 @@
+.\"     Title: wvgain
+.\"    Author: Sebastian Dröge <slomo@debian.org>
+.\" Generator: DocBook XSL Stylesheets v1.73.2 <http://docbook.sf.net/>
+.\"      Date: 2009-10-17
+.\"    Manual: 
+.\"    Source: 
+.\"
+.TH "WVGAIN" "1" "2009\-10\-17" "" ""
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+wvgain - adds ReplayGain information to wavpack files
+.SH "SYNOPSIS"
+.HP 7
+\fBwvgain\fR [\fB\fI\-options\fR\fR] \fB\fIINFILE\fR\fR...
+.SH "DESCRIPTION"
+.PP
+
+\fBwvgain\fR
+perceptually analyzes WavPack audio files for volume, calculates ReplayGain information based on this, and adds the appropriate APEv2 tag fields\. ReplayGain\-enabled players will use this information to produce the same perceived loudness on all tracks\. Both individual track and whole album ReplayGain information can be calculated\.
+.SH "OPTIONS"
+.PP
+.PP
+\fB\-a\fR
+.RS 4
+album mode (all files scanned are considered an album)
+.RE
+.PP
+\fB\-c\fR
+.RS 4
+clean ReplayGain values from all files
+.RE
+.PP
+\fB\-d\fR
+.RS 4
+display calculated values only (no files are modified)
+.RE
+.PP
+\fB\-i\fR
+.RS 4
+ignore \.wvc file (forces hybrid lossy)
+.RE
+.PP
+\fB\-n\fR
+.RS 4
+new files only (skip files with track info, or album info if album mode specified)
+.RE
+.PP
+\fB\-s\fR
+.RS 4
+show stored values only (no analysis)
+.RE
+.PP
+\fB\-q\fR
+.RS 4
+quiet (keep console output to a minimum)
+.RE
+.SH "SEE ALSO"
+.PP
+\fBwavpack\fR(1),
+\fBwvunpack\fR(1)
+.PP
+Please visit www\.wavpack\.com for more information
+.SH "COPYRIGHT"
+.PP
+This manual page was written by Sebastian Dröge
+<slomo@debian\.org>
+and David Bryant
+<david@wavpack\.com>\. Permission is granted to copy, distribute and/or modify this document under the terms of the
+BSD
+License\.
+.SH "AUTHORS"
+.PP
+\fBSebastian Dröge\fR <\&slomo@debian\.org\&>
+.sp -1n
+.IP "" 4
+Author.
+.PP
+\fBDavid Bryant\fR <\&david@wavpack\.com\&>
+.sp -1n
+.IP "" 4
+Author.
+.SH "COPYRIGHT"
+Copyright \(co 2005 Sebastian Dröge
+.br
+Copyright \(co 2009 David Bryant
+.br

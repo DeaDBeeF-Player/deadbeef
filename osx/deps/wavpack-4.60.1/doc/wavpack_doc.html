@@ -1,0 +1,1092 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
+  <meta http-equiv="Expires" content="Sat, 13 Mar 1982 09:10:27 GMT"/>
+      	<style type="text/css">
+		body {
+	background: #ffffff;
+	color: #000000;
+	font-family: "Verdana", sans-serif;
+	font-size: 9pt;
+	text-align: center;
+}
+
+.container {
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 760px;
+	margin-left: auto; 
+	margin-right: auto;
+}
+
+a {
+	text-decoration: underline;
+	color: #000000;
+}
+
+a:hover {
+	color: #8394b2;
+}
+
+.pageTitle, .pageMenu, .boxHeader, .boxContent {
+	padding: 2px;
+}
+
+.pageTitle, .pageMenu, .box, .boxHeader, .filesHeader {
+	border: 1px solid;
+}
+
+.pageTitle, .pageMenu, .box, .boxContent {
+	margin: 2px;
+}
+
+.pageTitle, .pageMenu, .box {
+	border-color: #072a66;
+}
+
+.pageHeader, .subHeader, .boxHeader, .filesHeader {
+	font-weight: bold;
+}
+
+.pageMenu, .boxHeader {
+	background: #bcd0ed;
+}
+
+.boxHeader, .filesHeader {
+	color: #5176b5;
+	border-color: #ffffff;
+}
+
+.pageTitle {
+	background: #618ece;
+	color: #ffffff;
+}
+
+.pageHeader {
+	font-size: 14pt;
+}
+
+.pageSubHeader {
+	font-size: 12pt;
+}
+
+.box {
+	background: #eef2f7;
+	border-color: #072a66;
+}
+
+.boxHeader {
+	letter-spacing: 2px;
+	word-spacing: 2px;
+}
+
+.boxContent {
+	text-align: justify;
+}
+
+.filesBox {
+	width: 100%;
+}
+
+.filesHeader {
+	border-color: #bcd0ed;
+	text-align: center;
+}
+
+.hidden, .hidden a {
+	color: #c0c0c0;
+}
+		</style>
+   		<title>WavPack User Documentation</title>
+	</head>
+	<body>
+		<div class="container">
+			<div class="pageTitle">
+				<div class="pageHeader">Using WavPack Version 4.60</div>
+			</div>
+			<div class="pageMenu">
+				<a href="index.html">Home</a> - 
+				<a href="#linux">Linux</a> -
+				<a href="#wavpack">WavPack options</a> - 
+				<a href="#wvunpack">WvUnpack options</a> - 
+				<a href="#wvgain">WvGain options</a> - 
+				<a href="#usage">Usage Guide</a> - 
+				<a href="#noncd">Non-CD</a> - 
+				<a href="#plugins">Plugins</a>
+			</div>
+			<br/>
+			<div class="box" id="Intro">
+				<div class="boxContent">
+					WavPack consists of two complementary executable programs, WavPack and WvUnpack. These 
+					programs allow you to compress (and restore) audio files in the Microsoft .wav format. 
+					The audio files must be uncompressed PCM (not ADPCM, for example), but other than that 
+					there are few restrictions. The files may be any resolution from 8 to 32 bits; they may be 
+					mono, stereo, or multichannel; they may even be IEEE floating point data. The programs 
+					are full 32-bit executables and therefore must only be used under Windows (for real DOS 
+					applications it is possible to use the old WavPack 3.4 instead, but more recent versions
+     of WavPack have been built for DOS by the author of Mpxplay and are available
+     <a href="http://www.freewebtown.com/mpxplay/">here</a>). For version 4.31 an additional
+				 utility called WvGain was added to apply ReplayGain information to WavPack files. The
+     programs are initiated from the MS-DOS command line prompt with the following syntax:
+				<p>
+					<b>Usage:</b>
+					<br/>
+					<b><tt>WAVPACK [-options] [@]infile[.wav]|- [[@]outfile[.wv]|outpath|-]</tt></b>
+					<br/>
+					<b><tt>WVUNPACK [-options] [@]infile[.wv]|- [[@]outfile[.wav]|outpath|-]</tt></b>
+					<br/>
+     <b><tt>WVGAIN [-options] [@]infile[.wv] [...]</tt></b>
+					</p>
+				<p>
+					The filename extensions will be defaulted if not provided and the input filename may 
+					contain wildcards for doing batch operations. Specifying the output filename is 
+					optional, and if more than one input file is specified (with wildcards) then the
+					only acceptable output specification is an output path. If the input filename
+					begins with a '@' then the file is assumed to contain a list of newline separated 
+					filenames to be processed in batch mode (the output file may also be done this way 
+					although it may contain only a single line). The Windows frontend uses this 
+					mechanism for passing filenames, although it could be used for other purposes. Either 
+					filename can be replaced with "-" to allow use of stdin or stdout, although because 
+					the hybrid lossless mode uses two files it is not compatible with pipes.
+				</p>
+				<p>
+					Both programs will warn before overwriting any file (unless the -y switch is 
+					specified). The programs will also (unless the -q switch is specified) display 
+					progress in percentage complete and when finished with each file will give the 
+					compression ratio (or bitrate for lossy files), whether the compression was lossy 
+					or lossless, and the processing time. They will also display the progress percentage
+					for the whole batch of files on the title bar which is useful when they are being 
+					run minimized. If a batch of files is run then both programs will indicate when 
+					complete whether any errors occurred and how many files were processed.
+				</p>
+				<p>
+					The compressed file format (.wv) contains all original header information and the 
+					compressed audio data for one .wav file. The file can be used by WvUnpack to restore 
+					the original file, or the .wv file can be played directly by a player that supports 
+					WavPack files natively like Foobar2000 or VUPlayer, or a player that can play WavPack
+     files using a plugin like Winamp, dBpowerAMP, or Apollo. Also, there are plugins
+     available to read and write WavPack files with Adobe Audition (and CoolEdit) and Nero
+     Burning ROM.
+				</p>
+				<p>
+				 A debugging mode is provided for the programs which is enabled by simply appending
+				 "_debug" to the the name of the executable (for example, wavpack.exe becomes
+     wavpack_debug.exe). The debugging versions work exactly like the normal versions except
+				 that they report more detailed information about their operation. For instance, they
+     will list their command-line arguments and wavpack.exe will display detailed
+				 information about the files it compresses (including how the audio data is interpreted).
+				 Also, all information displayed on the console (including any errors encountered) is
+				 dumped to a text file called "wavpack.log" (under Application Data). This is very handy
+				 for debugging in situations where the command-line window terminates before an error
+				 message can be read (or doesn't get displayed at all). It is not recommended that these
+				 debug version be used all the time because the log file will grow indefinitely.
+				</p>
+				</div>
+			</div>
+
+			<br/>
+			<div class="box" id="linux">
+				<div class="boxHeader">Linux</div>
+				<div class="boxContent">
+					<p>This documentation was written specifically for the Windows command-line version of
+      WavPack, however the version for Linux (and Unix) is essentially the same. There are
+      some Windows-specific commands missing from the Linux version like the -e switch to
+      create a Windows executable and the -l switch to run at low priority. The "debug" mode
+      described above does not create a log file, but it does provide the extra information.
+     </p>
+     <p>
+      The most significant change is in the specification of the output filename or directory,
+      which in the Linux case must be preceded with the -o switch. This was done to allow
+      multiple input files to be specified, which is handy by itself but is especially useful
+      in the default case where the shell is performing wildcard expansion.
+					</p>
+				</div>
+			</div>
+			
+			<br/>
+			<div class="box" id="wavpack">
+				<div class="boxHeader">WavPack Options</div>
+				<div class="boxContent">
+				<p>
+					<b><tt>-a = Adobe Audition (CoolEdit) mode for 32-bit floats</tt></b>
+				</p>
+				<p>
+					The WAVEFORMATEXTENSIBLE structure is used (if present) to determine the format 
+					details. However, there are some programs that use their own non-standard format 
+					extensions. The most popular of these is Adobe's Audition (previously Syntrillium's 
+					CoolEdit) which created two new 32-bit floating point formats. An option has been 
+					added to WavPack (-a) to force the "adobe" interpretation of these floating point 
+					formats. If you are compressing integer files do NOT use this option.
+				</p>
+				<p>
+					<b><tt>-bn = enable hybrid compression, n = 2.0 to 23.9 bits/sample, or</tt></b>
+					<br/>
+					<b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n = 24-9600 kbits/second (kbps)</tt></b>
+				</p>
+				<p>
+					The default operation of WavPack is pure lossless, which means that the .wv file 
+					contains all the information that was in the original .wav file. The hybrid mode 
+					allows the user to specify a target bitrate for the output file, either in kilobits 
+					per second (kbps) or bits per sample. If the track can be losslessly compressed without 
+					exceeding the specified bitrate, then it will be and WavPack will report the compression
+					as lossless. If lossless compression would exceed the specified bitrate, then WavPack 
+					will begin carefully discarding the least significant portion of the audio information 
+					to stay within the limit. Every effort is made to keep this inaudible, including the 
+					use of joint stereo, dynamic bit allocation and noise shaping. WavPack will report this 
+					as "lossy" compression. Although the option accepts bitrates as low as 24 kbps, the 
+					actual value that WavPack can achieve is usually much higher than that. For example,
+					with CD-audio sampled at 44.1k the lower limit is about 196 kbps.
+				</p>
+
+				<p>
+     <b><tt>--blocksize=n = specify block size in samples (n = 128 - 131072)</tt></b>
+				</p>
+				<p>
+     WavPack normally determines the optimum number of samples to place into each
+     WavPack block, however this option allows it to be directly specified. The most likely
+     use for this option would be to improve the handling of audio files that have a
+     variable number of redundant MSBs. For example, the output of the lossyWAV program or
+     the output of a software HDCD decoder. This option is also often combined with the
+     <b>--merge-blocks</b> option (which also reduces the minimum allowed block size to 16 samples).
+				</p>
+
+				<p>
+					<b><tt>-c = create correction file (.wvc) for hybrid mode (=lossless)</tt></b>
+				</p>
+				<p>
+					If the -c option is specified (in addition to the -b option), then WavPack will 
+					generate an additional file that will contain the information that was discarded 
+					to generate the lossy .wv file. This file will have the same name as the .wv file 
+					but will have the extension .wvc (the 'c' is for "correction"). When WvUnpack is 
+					used to restore the .wav file, it will attempt to find the .wvc file in the same 
+					directory as the .wv file. If it is found then the decompression will be lossless
+					and will be reported as such, otherwise lossy decompression will be reported 
+					(assuming that any information was actually discarded during the original compression).
+					If -c is specified but no actual information is discarded, the correction file will 
+					be deleted. The extra overhead involved with having these two files instead of a 
+					single pure lossless file is usually less than 1% of the original .WAV file and can 
+					be as low as 0.25% at high bitrates. Note that CRCs are stored for both the lossy 
+					and lossless versions, so error detection works correctly whether the .wvc file is 
+					used or not.
+				</p>
+
+				<p>
+					<b><tt>-cc = maximum hybrid compression (hurts lossy quality &amp; decode speed)</tt></b>
+				</p>
+				<p>
+					Normally, when the -c option is used to create a correction file in the hybrid mode, 
+					WavPack attempts to optimize for the quality of the lossy file and lets the combined 
+					lossless compression of the two files fall where it may. This option tells WavPack 
+					to optimize for the overall compression ratio instead, even if this means some 
+					possible degradation of lossy quality (for example, dynamic noise shaping is not
+     used in this mode). This can also have an effect on lossless decompression speed
+     (however it does <b>not</b> affect lossy decoding). Keep in mind the effect of
+     this option is not too significant either way.
+				</p>
+
+				<p>
+     <b><tt>--channel-order=&lt;list&gt; = specify non-standard channel ordering</tt></b>
+				</p>
+				<p>
+     For multichannel audio WAV files there is a Microsoft required WAVEFORMATEXTENSIBLE header to
+     indicate which speakers are represented and those speakers must be in the standard Microsoft
+     order (which is also specified by USB). However, some programs skip generating the WAVEFORMATEXTENSIBLE
+     header and even write the channels in the wrong order. For files without the WAVEFORMATEXTENSIBLE
+     header, WavPack assumes Microsoft channel order and further assumes that all speakers (up to the
+     number of channels) are present. If that is not the case, then this option allows the user to
+     specify the exact channels present (and their order) from this list (which is in Microsoft order):
+     FL,FR,FC,LFE,BL,BR,LC,FRC,BC,SL,SR,TC,TFL,TFC,TFR,TBL,TBC,TBR.
+    </p>
+				<p>
+     If not all of the channels in the file have speaker definitions, then it is possible to simply
+     terminate the speaker list with "..." (e.g. FL,FR,...) to indicate that all following channels are
+     unassigned. Specifying "..." alone indicates that all channels are unassigned.
+    </p>
+    <p>
+     This option may just be used to specify <i>which</i> channels are present, even if they
+     are in standard Microsoft order (e.g. standard quad is FL,FR,BL,BR). In this case the
+     option just controls the channel "mask" and performs no reordering. But if the option
+     does result in reordering, then this is done <i>before</i> encoding, so if the
+     resulting WavPack file is subsequently unpacked it will <b>not</b> recreate the
+     identical WAV file (because the channels will now be in the correct order). If you want
+     the unpacked file to be identical to the original simply do not use this option (although
+     this means that the resulting WavPack file will not have the correct channel information
+     and so won't play correctly in multichannel software, and also means that the compression
+     might not be as good because the "wrong" channels will be paired in stereo).
+    </p>
+    <p>
+     If this option is used then it might be a good idea to add the <b>-r</b> option also to generate a
+     valid WAVEFORMATEXTENSIBLE header with the correct channel information. In fact, one could even
+     pipe the output of WavPack directly to WvUnpack for the sole purpose of reordering WAV files
+     and adding the correct WAV headers!
+    </p>
+				<p>
+					<b><tt>-d = delete source file if successful (use with caution!)</tt></b>
+				</p>
+				<p>
+					Self explanatory.
+				</p>
+				<p>
+					<b><tt>-e = create self-extracting executable (needs wvselfx.exe)</tt></b>
+				</p>
+				<p>
+					WavPack can be used to create self-extracting archives (Windows only) with a .exe 
+					extension. In this way it is possible to distribute compressed audio without having 
+					the recipient install any other programs (or have any dlls) to unpack the archives. 
+					When the .exe file is run (directly or by double-clicking) it extracts the original 
+					.wav file into the same directory. If it can't (because the file exists or it is 
+					run on a read-only device) then it displays a standard Windows "Extract to" dialog 
+					box and allows the user to specify the destination. The self-extracting feature can 
+					be used with WavPack's hybrid modes as well as pure lossless. If a .wvc file (with 
+					the correct name) is present in the same directory as the executable, then a lossless 
+					extraction is automatically performed. It is possible to turn the .exe file back 
+					into a valid WavPack by simply changing the extension back to .wv (although the 
+					extra 33k unpacking header will still be there).
+				</p>
+				<p>
+     As of version 4.40, the self-extraction module will also check for a CUESHEET
+     field in the APEv2 tag and if it is present then the text in the CUESHEET field
+     will be extracted into an appropriately named .cue file. Note that the cuesheet
+     is not automatically modified to point to the correct .wav file; this must be
+     handled either when the cuesheet is embedded or (if the .exe file is renamed) by
+     the user after extraction.
+				</p>
+				<p>
+					To convert an existing WavPack 4.x file into a self-extracting executable use the 
+					DOS copy command to prepend the self-extracting stub (wvselfx.exe) to the .wv file:
+				</p>
+					<blockquote>
+						<tt>C:\music_files>copy /b wvselfx.exe+music.wv music.exe</tt>
+					</blockquote>
+				<p>
+					<b><tt>-f = fast mode (fast, but some compromise in compression ratio)</tt></b>
+				</p>
+				<p>
+					The "fast" mode should be used when compression (or decompression) speed is more 
+					important than compression ratio (or, in lossy mode, audio quality).
+				</p>
+				<p>
+					<b><tt>-h = high quality (better compression in all modes, but slower)</tt></b>
+				</p>
+				<p>
+					The "high" mode should be used when compression ratio (or, in lossy mode, audio 
+					quality) is more important than compression (or decompression) speed. This option 
+					slows both by about a factor of about 1.5.
+				</p>
+				<p>
+					<b><tt>-hh = very high quality (best compression in all modes, but slowest)</tt></b>
+				</p>
+				<p>
+					The "very high" mode should be used when compression ratio (or, in lossy mode, audio 
+					quality) is much more important than compression (or decompression) speed. This option 
+					slows both by about a factor of about 2, and is <b>not recommended for use on
+     portable devices</b> because of the high CPU load required for decoding.
+				</p>
+				<p>
+					<b><tt>--help = extended help display</tt></b>
+				</p>
+				<p>
+					Self explanatory.
+				</p>
+				<p>
+					<b><tt>-i = ignore length in wav header (no pipe output allowed)</tt></b>
+				</p>
+				<p>
+					Some programs that pipe data to encoders do not always give the correct length in
+					the wav headers that they provide (foobar's clienc and CDex are examples). In these
+					cases use this option to force WavPack to ignore the header and accept the actual
+					length. Because WavPack must seek to the beginning of the file to write the correct
+					length, this option cannot be used with piped output.
+				</p>
+				<p>
+					<b><tt>-jn = joint-stereo override (0 = left/right, 1 = mid/side)</tt></b>
+				</p>
+				<p>
+					WavPack normally defaults to joint stereo (sometimes called mid/side) in which 
+					the left and right channels are combined to form an alternate representation 
+					(essentially L+R and L-R) that compresses better in lossless mode and improves 
+					quality in lossy mode. This option allows this feature to be forced either on or 
+					off.
+				</p>
+				<p>
+					<b><tt>-l = run at low priority (for smoother multitasking)</tt></b>
+				</p>
+				<p>
+					This option can be used (in Windows only) to force WavPack to run at a low priority 
+     and is handy for doing large WavPack batch conversions in the background.
+				</p>
+				<p>
+					<b><tt>-m = compute &amp; store MD5 signature of raw audio data</tt></b>
+				</p>
+				<p>
+					Calculate and display the MD5 checksum of the uncompressed audio data and store 
+					it in the compressed file. These sums are commonly used in file trading communities 
+					to compare versions of tracks, and as such the sums generated by WavPack match those 
+					of FLAC, OptimFROG, Shntool, and get_id3(). They can also be used by WvUnpack during
+					decompression to verify the data integrity of lossless files.
+				</p>
+
+				<p>
+					<b><tt>--merge-blocks = merge consecutive blocks of equal redundancy</tt></b>
+				</p>
+				<p>
+     This option is only valid when generating lossless files and is only used with the
+     <b>--blocksize</b> option. WavPack will always scan each block of audio data before
+     compressing to determine the actual number of valid bits that need to be stored because,
+     for various reasons, this is not always the same as the number of bits present. In some
+     situations there can be many redundant bits, as for example in the output of the
+     lossyWAV program or the output of software HDCD decoders. In these cases it may be
+     advantagous to use a specific block size (or simply a small block size), but WavPack
+     does not work very well with very small block sizes because of its relatively large
+     block header.
+    </p>
+    <p>
+     The <b>--merge-blocks</b> option takes care of this situation by allowing WavPack to
+     merge consecutive blocks with the same number of bits to remove. For example, if a
+     blocksize of 512 is specified, and 10 512-sample blocks in a row all have exactly
+     the same number of redundant bits, then these 10 blocks will be combined in to a
+     single block of 5120 samples (which is much more efficient for WavPack). When the
+     <b>--merge-blocks</b> option is specified the minimum block size that <b>--blocksize</b>
+     will accept is reduced from 128 to 16 samples.
+    </p>
+
+				<p>
+					<b><tt>-n = calculate average and peak quantization noise (hybrid only)</tt></b>
+				</p>
+				<p>
+					This causes WavPack to calculate the average and peak quantization noise generated 
+					in the lossy version of the hybrid mode, both referenced in decibels below full 
+					scale. While it is impossible to use this as a guide to determine the audibility 
+					of the noise, it is useful for comparing the various compression options and for 
+					comparing WavPack's lossy performance to other programs. Note that this option does
+					not currently produce meaningfull results for floating point or multichannel files.
+				</p>
+
+    <p>
+     <b><tt>--no-utf8-convert = don't recode passed tags to UTF-8, assume they are UTF-8 already</tt></b>
+    </p>
+    <p>
+     The text fields of APEv2 tags are encoded in the UTF-8 varient of Unicode, so when
+     tag information is passed in on the command-line (which is normally multibyte encoded in
+     WavPack's case) they are converted to UTF-8 before being stored. If your system is
+     already passing the strings in UTF-8, use this option to prevent double conversion.
+    </p>
+
+    <p>
+     <b><tt>--optimize-mono = optimization for stereo files that are really mono</tt></b>
+    </p>
+    <p>
+     Use this option on stereo files that may actually be mono (i.e. old recordings) to
+     increase the compression ratio by up to 6%. Note that on stereo recordings that are
+     <i>almost</i> mono (as many supposedly mono recordings are) this will not improve
+     compression. This option does not significantly slow encoding, however the resulting
+     files are not compatible with older WavPack decoders (before version 4.3).
+    </p>
+
+				<p>
+					<b><tt>-p = practical float storage (also 32-bit ints, not lossless)</tt></b>
+				</p>
+				<p>
+					This option reduces the storage of some floating-point data files by up to about 
+					10% by eliminating some information that has virtually no effect on the audio data. 
+					While this does technically make the compression lossy, it retains all the 
+					advantages of floating point data (>600 dB of dynamic range, no clipping, and 25 
+					bits of resolution). This also affects large integer compression by limiting the 
+					resolution to 24 bits.
+				</p>
+
+				<p>
+					<b><tt>--pair-unassigned-chans = encode unassigned channels into stereo pairs</tt></b>
+				</p>
+				<p>
+     WavPack encodes all channels of multichannel files into stereo or mono streams. So, if
+     two channels are related (like FL and FR) then these are encoded into one stream
+     (which improves compression performance) whereas unrelated channels (like LFE) are
+     encoded by themselves into mono streams. Unassigned channels (those not associated
+     with any defined speaker) are normally encoded in mono streams for safety, however
+     this option can be used to specify that they should be paired into stereo streams.
+     This might improve compression in cases where all of the channels were very similar,
+     or when it is known that the channels are, in fact, stereo pairs.
+				</p>
+
+				<p>
+					<b><tt>-q = quiet (keep console output to a minimum)</tt></b>
+				</p>
+				<p>
+					Self explanatory.
+				</p>
+				<p>
+					<b><tt>-r = generate new RIFF wav header (removing extra chunk info)</tt></b>
+				</p>
+				<p>
+				 WavPack normally saves all the RIFF header information contained in the wav file
+				 (including any chunks after the audio data). This is done so that WvUnpack.exe can
+				 restore the original wav files exactly. The -r option causes WavPack to discard the
+				 header contained in the source file (and any extra chunks) and generate a fresh wav
+				 header. Obviously the source wav header is still used to determine the format and
+				 size of the file (i.e. this is not a "raw" mode). Note that for multichannel files
+				 a WAVEFORMATEXTENSIBLE header is generated whether the source file had one or not.
+				 Also note that this option cannot be used with certain floating-point wav files
+				 generated by CoolEdit or Audition because they are not properly normalized.
+				</p>
+
+				<p>
+					<b><tt>--raw-pcm = input data is raw pcm (44100 Hz, 16-bit, 2-ch)</tt></b>
+				</p>
+				<p>
+     Specifies that the source file (or stdin) contains raw PCM data with no header.
+     and conforms to standard CD quality. Note that the data must match the format of WAV file
+     audio (i.e., little endian and signed). 
+				</p>
+    <p>
+     Note that WavPack files created in this
+     way will still normally decode to WAV files (with headers) when unpacked. To avoid
+     this, use the "-r" option with the WvUnpack program to force raw unpacking.
+				</p>
+				<p>
+					<b><tt>--raw-pcm=sr,bps,ch = input data is raw pcm with specified format</tt></b>
+				</p>
+				<p>
+     Specifies that the source file (or stdin) contains raw PCM data with no header
+     and the specified sampling rate, bit-depth, and number of channels. Parameters
+     matching the default (44100,16,2) can be omitted. The valid range of bit-depths
+     is from 1 to 32, with 32f specifying 32-bit floating point data. The number of channels
+     may be from 1 to 256. Note that the data must still match the format of WAV file
+     audio (i.e., little endian and signed, except for 8-bit data which is unsigned).
+    </p>
+				<p>
+     Note that WavPack files created in this
+     way will still normally decode to WAV files (with headers) when unpacked. To avoid
+     this, use the "-r" option with the WvUnpack program to force raw unpacking.
+				</p>
+
+				<p>
+					<b><tt>-sn = noise shaping override (hybrid only, n = -1.0 to 1.0, 0 = off)</tt></b>
+				</p>
+				<p>
+					WavPack uses first-order noise shaping to improve the perceived quality of lossy 
+					files and to improve the hybrid lossless compression ratio. Normally WavPack will 
+					choose the noise shaping most appropriate for the application (based on the source
+     sampling rate and whether the -cc option is specified), but this option allows the
+     user to override the default with a fixed value. The parameter range is +/- 1.0, where 
+					positive values shift the noise higher in frequency and negative values shift the 
+					noise lower in frequency. Values very close to -1.0 are clipped to prevent problems
+					associated with very high gain near DC and the value zero results in no noise shaping
+     at all (i.e., white noise). This option should not be used with the <b>--use-dns</b>
+     option which enables dynamic noise shaping.
+				</p>
+				<p>
+					<b><tt>-t = copy input file's time stamp to output file(s)</tt></b>
+				</p>
+				<p>
+					Self explanatory.
+				</p>
+				<p>
+					<b><tt>--use-dns = force use of dynamic noise shaping (hybrid only)</tt></b>
+				</p>
+				<p>
+     For version 4.50, dynamic noise shaping was added to the WavPack hybrid mode. This feature
+     causes the noise shaping to continuously adjust to the spectral characteristics of the source
+     signal and results in significantly improved subjective quality on samples that previously caused
+     difficulty with WavPack's lossy mode (particularly material with loud high-frequency transients).
+     This feature is used by default except for high sampling rates (>= 64 kHz) or when the -cc option
+     is specified (because it can adversely effect compression ratio), however the <b>--use-dns</b> option
+     allows the user to force the use of dynamic noise shaping even when it would not normally be used.
+     This option should not be specified with the <b>-s</b> option which overrides the default with fixed
+     noise shaping.
+				</p>
+				<p>
+					<b><tt>-w "Field=Value" = write specified metadata to APEv2 tag</tt></b>
+				</p>
+				<p>
+					Write specified information to APEv2 tag appended to WavPack file(s). May be used
+					multiple times for multiple fields. APEv2 tags are the preferred tag format for
+					WavPack files and are read by all the standard WavPack playback plugins. If the
+					specified value begins with a '@', then the value is assumed to be a
+					filename which is used to obtain the item's actual value. This is handy for
+					including the CUESHEET field for use with images files + cuesheets and foobar2000.
+				 The filename may contain wildcards if it matches exactly one file. Also, if the
+				 file cannot be found in the current directory then the source and destination
+				 directories (if specifed) are also checked.
+				</p>
+				<p>
+					<b><tt>--write-binary-tag "Field=@file.ext" = write specified binary metadata to APEv2 tag</tt></b>
+				</p>
+				<p>
+					Write specified binary file to APEv2 tag appended to WavPack file(s). This is most
+     commonly used to embed album cover art into WavPack files (with the field name
+     <b>"Cover Art (Front)"</b>), but could be used for anything desired. A file must be
+     specified (the data cannot come from the command-line) and it may contain wildcards
+     if it matches exactly one file. Also, if the file cannot be found in the current directory
+     then the source and destination directories (if specifed) are also checked.
+				</p>
+				<p>
+					<b><tt>-x[n] = extra encode processing (optional n = 1-6, 1 = default)</tt></b>
+				</p>
+				<p>
+					Like pre-4.0 versions of WavPack (and many other compressors), WavPack 4.60 normally 
+					works "symmetrically" in that encoding and decoding operate at about the same rate
+					(regardless of the mode used). However, WavPack has an option to work
+					"asymmetrically", so that extra processing can be done during encoding to
+					provide better compression, but with NO corresponding cost to decoding performance!
+				</p>
+				<p>
+					This is enabled with the -x option and provides an average improvement in CD music 
+					compression of about 1% in "fast" mode, about 0.5% in the normal mode, and still less in 
+					the higher modes. Because the standard compression parameters are optimized for 
+					"normal" CD music audio, this option works best with "non-standard" audio 
+					(synthesized sounds, non-standard sampling rates, etc.) where it can often achieve 
+					enormous gains. The default level (n=1) provides a decent improvement with little
+     cost in encoding speed and is recommended for all but the most time critical encoding.
+     Higher levels provide some marginal improvement with an increasing cost of encoding
+     speed. The highest levels (n = 4-6) are extremely slow but can provide significant
+     improvement in special situations (i.e. synthesized sounds).
+				</p>
+				<p>
+					<b><tt>-y = yes to all warnings (use with caution!)</tt></b>
+				</p>
+				<p>
+					Self explanatory.
+				</p>
+				</div>
+			</div>
+
+			<br/>
+			<div class="box" id="wvunpack">
+				<div class="boxHeader">WvUnpack Options</div>
+				<div class="boxContent">
+				<p>
+     <b><tt>-b  = blindly decode all stream blocks &amp; ignore length info</tt></b>
+				</p>
+				<p>
+				 This option uses the "streaming" mode of the WavPack decoder. Normally this
+     doesn't make any difference except that the percentage complete
+				 display does not work. However, it causes the decoder to ignore all information
+				 contained in the WavPack blocks concerned with duration and location and blindly
+				 unpacks every valid WavPack block it encounters, and will do so indefinitely
+				 until it receives an EOF. This may be of some use to recover corrupted or partial
+     WavPack files, or it could be used to decode a sequence of WavPack files that had been
+				 concatenated. If this is used to write a .wav file to stdout then note that the
+     resulting .wav file will not indicate the correct length because it can't back up
+     to fix it once it knows the actual length.
+				</p>
+				<p>
+     <b><tt>-c  = extract cuesheet only to stdout (no audio decode)</tt></b>
+				</p>
+				<p>
+					If the specified WavPack file contains an APEv2 tag, and that tag contains a CUESHEET
+     field, then only dump that text to stdout without decoding any audio. If no
+     cuesheet is found then an error is generated. This is equivalent to "-x cuesheet".
+				</p>
+				<p>
+     <b><tt>-cc = extract cuesheet file (.cue) in addition to audio file</tt></b>
+				</p>
+				<p>
+					If the specified WavPack file contains an APEv2 tag, and that tag contains a CUESHEET
+     field, then that text will be extracted into an appropriately named .cue file
+     located in the same folder as the .wav file. Note that the cuesheet
+     is not automatically modified to point to the correct .wav file; this must be
+     handled either when the cuesheet is embedded or (if the .wv file is renamed) by
+     the user after extraction. This option has no effect if there's no cuesheet and
+     is equivalent to "-xx cuesheet=%a.cue".
+				</p>
+				<p>
+					<b><tt>-d = delete source file if successful (use with caution!)</tt></b>
+				</p>
+				<p>
+					Self explanatory.
+				</p>
+				<p>
+					<b><tt>--help = this help display</tt></b>
+				</p>
+				<p>
+					Self explanatory.
+				</p>
+				<p>
+					<b><tt>-i = ignore .wvc file (forces hybrid lossy decompression)</tt></b>
+				</p>
+				<p>
+					This option forces WvUnpack to <i>not</i> look for a corresponding correction file when 
+					unpacking hybrid mode files. This could be used to compare the effects of the hybrid 
+					lossy mode or in the case that the .wvc had become corrupt and was preventing 
+					decompression (although this is unlikely).
+				</p>
+				<p>
+					<b><tt>-l = run at low priority (for smoother multitasking)</tt></b>
+				</p>
+				<p>
+					This option can be used (in Windows only) to force WavPack to run at a low priority 
+     and is handy for doing large unpack or verification batch conversions in the background.
+				</p>
+				<p>
+					<b><tt>-m = calculate and display MD5 signature; verify if lossless</tt></b>
+				</p>
+				<p>
+					Enables the calculation and display of the MD5 checksum on the uncompressed audio 
+					data. If an MD5 sum for the original audio data is stored in the WavPack file then 
+					this will be displayed also. For lossless operation these numbers should match (and 
+					WvUnpack will verify that they match). For lossy operation these numbers should not 
+					match.
+				</p>
+    <p>
+     <b><tt>--no-utf8-convert = leave tag items in UTF-8 on extract or display</tt></b>
+    </p>
+    <p>
+     The text fields of APEv2 tags are encoded in the UTF-8 varient of Unicode, so when
+     tag information is displayed or extracted, it is converted to local multibyte encoding
+     before being displayed or written to files. If your system already expects UTF-8, use this
+     option to prevent the conversion.
+    </p>
+				<p>
+					<b><tt>-q = quiet (keep console output to a minimum)</tt></b>
+				</p>
+				<p>
+					Self explanatory.
+				</p>
+				<p>
+					<b><tt>-r = force raw audio decode (results in .raw extension)</tt></b>
+				</p>
+				<p>
+					This option causes WvUnpack to strip off the standard wav file header (and any 
+					trailer) and only output the uncompressed audio data. If a file is created then it 
+					will be given the .raw extension instead of the standard .wav extension. Note that
+     the raw data still conforms to standard WAV audio data (i.e., little-endian and signed,
+     except for 8-bit data which is unsigned).
+				</p>
+				<p>
+					<b><tt>-s = display summary information only to stdout (no decode)</tt></b>
+				</p>
+				<p>
+					This option causes WvUnpack to simply display general information about the 
+					specified WavPack files including source information, encoder version and options 
+					and original MD5 checksum. This information can be directed into a file with the 
+					"&gt;" operator. No file decoding or verification can occur with this option.
+				</p>
+				<p>
+					<b><tt>-ss = display super summary (including tags) to stdout (no decode)</tt></b>
+				</p>
+				<p>
+					This option is similar to -s except that information from any valid tag found
+				 (either APEv2 or ID3v1) is also listed. For binary or multi-line text items, only
+     the size of the tag data is displayed, but you can use the -x command to view this
+     data (or redirect it to a file).
+				</p>
+
+				<p>
+     <b><tt>--skip=[sample|hh:mm:ss.ss] = start decoding at specified sample/time</tt></b>
+				</p>
+				<p>
+     Specifies an alternate start position for decoding, as either an integer sample index
+     or as a time in hours, minutes, and seconds (with fraction). The WavPack file must be seekable
+     (i.e. not a pipe). This option can be used with the --until option to decode a
+     specific region of a track.
+				</p>
+
+				<p>
+					<b><tt>-t = copy input file's time stamp to output file(s)</tt></b>
+				</p>
+				<p>
+					Self explanatory.
+				</p>
+
+				<p>
+     <b><tt>--until=[+|-][sample|hh:mm:ss.ss] = stop decoding at specified sample/time</tt></b>
+				</p>
+				<p>
+     Specifies an alternate stop position for decoding, as either an integer sample index
+     or as a time in hours, minutes, and seconds (with fraction). If a plus ('+') or minus ('-')
+     sign is inserted before the specified sample (or time) then it becomes a relative amount,
+     either from the position specified by a --start option (if plus) or from the end of the
+     file (if minus).
+				</p>
+
+				<p>
+					<b><tt>-v = verify source data only (no output file created)</tt></b>
+				</p>
+				<p>
+					This option allows the user to verify the integrity of WavPack files (including 
+					any correction file). Note that this option not only verfies that a WavPack file 
+					has not been corrupted since creation, but it also verfies that the audio data 
+					is being unpacked exactly as intended (even in the lossy mode). Therefore, it can 
+					also detect algorithm errors, incompatible implementations of the encoder or 
+					decoder, and even faulty processor hardware.
+				</p>
+				<p>
+     <b><tt>-w  = regenerate .wav header (ignore RIFF data in file)</tt></b>
+				</p>
+				<p>
+					WavPack files normally have a copy of the RIFF headers (and trailers) that were
+     contained in the original .wav file, and these are normally restored when the files
+     are unpacked. Beginning with version 4.40, these headers are automatically
+     regenerated at decode time if a WavPack file is missing them. This option allows
+     the .wav header to be regenerated even if the WavPack file contains a valid header.
+				</p>
+				<p>
+     <b><tt>-x "Field" = extract specified tag field only to stdout (no audio decode)</tt></b>
+				</p>
+				<p>
+					If the specified WavPack file contains a tag, and that tag contains the specified
+     field, then only dump that field to stdout without decoding any audio. If the tag field
+     is not found then an error is generated. Of course, the data may be redirected to a file
+     or pipe. Only one field may be specified, and -c can be used as a shortcut to extract
+     the CUESHEET field. 
+				</p>
+				<p>
+     <b><tt>-xx "field[=file]" = extract specified tag field to file (with audio decode)</tt></b>
+				</p>
+				<p>
+					If the specified WavPack file contains a tag, and that tag contains the specified 
+     field, then that field will be extracted into an appropriately named file
+     located in the same folder as the target .wav file. The name of the file will be
+     the name of the tag field with a .txt extension for text items or, in the case of
+     binary items, the name comes from the tag itself (although the convention is for this
+     to be the tag field name with the extension from the original source file).
+    </p>
+    <p>
+     If the automatically generated name is not acceptable, then a new name can be specified,
+     and this new name specification may contain the following replacement codes:
+				</p>
+				<p>
+					&nbsp;&nbsp;%a = audio output filename<br/>
+					&nbsp;&nbsp;%t = tag field name (note: comes from data for binary tags)<br/>
+					&nbsp;&nbsp;%e = extension from binary tag source file, or 'txt' for text tag<br/>
+				</p>
+				<p>
+					<b><tt>-y = yes to overwrite warning (use with caution!)</tt></b>
+				</p>
+				<p>
+					Self explanatory.
+				</p>
+				</div>
+			</div>
+
+			<br/>
+			<div class="box" id="wvgain">
+				<div class="boxHeader">WvGain Options</div>
+				<div class="boxContent">
+				<p>
+					<b><tt>-a = album mode (all files scanned are considered an album)</tt></b>
+				</p>
+				<p>
+					The default mode for WvGain is to operate in <i>track</i> mode where each WavPack
+				 file is independently analyzed for perceived volume (and peak level). This option
+				 causes WvGain to additionally operate in <i>album</i> mode where all the specified
+				 files are analyzed together as an "album" so that a set of composite values are
+				 also generated. Note that when this mode is specified, WvGain must wait until the
+				 end of scanning before making another pass through all the files to append the
+				 calculated values.
+				</p>
+				<p>
+					<b><tt>-c = clean ReplayGain values from all files (no analysis)</tt></b>
+				</p>
+				<p>
+					This option does not perform any analysis but simply removes all ReplayGain values
+				 from the specified files. 
+				</p>
+				<p>
+					<b><tt>-d = display calculated values only (no files are modified)</tt></b>
+				</p>
+				<p>
+					This option causes WvGain to do the specified analysis (with or with the -a switch
+				 for <i>album</i> mode) and display the calculated values, but no values are actually
+				 written to the files.
+				</p>
+				<p>
+					<b><tt>-i = ignore .wvc file (forces hybrid lossy decompression)</tt></b>
+				</p>
+				<p>
+					This option forces WvGain to not look for a corresponding correction file when 
+					analyzing hybrid lossless mode files. This is probably a good idea in most cases
+     because it's faster and the lossy versions tend to have slightly higher peak
+     amplitudes than the lossless versions (although the overall levels will be
+     almost identical).
+				</p>
+				<p>
+					<b><tt>-l = run at low priority (for smoother multitasking)</tt></b>
+				</p>
+				<p>
+					This option can be used (in Windows only) to force WvGain to run at a low priority 
+     and is handy for doing large batch operations in the background.
+				</p>
+				<p>
+					<b><tt>-n = new files only</tt></b>
+				</p>
+				<p>
+					This option instructs WvGain to check the tags of the files first to make sure that they
+     don't already have ReplayGain information. Files that already have ReplayGain information
+     are skipped; in "album" mode a file encountered with ReplayGain information will abort the
+     whole operation. 
+				</p>
+				<p>
+					<b><tt>-q = quiet (keep console output to a minimum)</tt></b>
+				</p>
+				<p>
+					Self explanatory.
+				</p>
+				<p>
+					<b><tt>-s = show stored values only (no analysis)</tt></b>
+				</p>
+				<p>
+					This option does not perform any analysis but simply displays (to stdout) any
+				 ReplayGain values stored in the specified WavPack files.
+				</p>
+				</div>
+			</div>
+
+			<br/>
+			<div class="box" id="usage">
+				<div class="boxHeader">Usage Guide</div>
+				<div class="boxContent">
+				<p>
+					The options of WavPack can be a little confusing at first, so here's a little 
+					tutorial on what to try first if you're not sure. First of all, if you are only 
+					interested in lossless compression, try the default operation with no options. This 
+					will give a decent compression ratio at a very good speed for both packing and 
+					unpacking. Also, it is usually recommended to add the -x switch because it can
+     provide a decent improvement in compression with only a minor cost in encoding
+     time (about 2x) and <i>no</i> cost in decoding speed.
+    </p>
+				<p>
+     If speed is less of an issue try the "high" mode (-h), this will increase both 
+					the packing and unpacking time by about 50% (although still not nearly as slow as many 
+					other lossless compressors) while improving the compression ratio somewhat. If speed 
+					is paramount use the "fast" (-f) option. This gives the fastest packing and unpacking 
+					speed possible with WavPack, while still providing a very reasonable compression 
+					ratio. Again, the -x switch works well with these two modes.
+				</p>
+				<p>
+					If decoding speed is important, but the time to encode is not (because it happens 
+					only once), try using numeric parameters with the -x mode (valid values are 2-6).
+     This will slow the encoding way down (depending on the level) but still have no
+     effect on decoding speed. In some music files, this option can actually bump the
+     compression ratio a whole mode (i.e. the "fast" mode can match the default mode,
+     etc.). For the best lossless compression WavPack can offer, use -hhx6 (but be
+     prepared to make yourself a sandwich!).
+				</p>
+				<p>
+					If you want to try the hybrid mode, all the above applies but you also have to 
+					choose a bitrate. The quality of WavPack's lossy mode cannot match the conventional 
+					lossy codecs like MP3 and WMA at similar bitrates, and in fact it won't even 
+					operate at the most common bitrate of 128 kbps (with CD audio, at least). The 
+					lowest bitrate that I recommend for WavPack lossy is 256 kbps which can provide 
+					transparent reproduction for most non-critical listening situations and is roughly
+					equivalent to LAME MP3 encoding somewhere between 160 kbps and 192 kbps (CBR). Above
+     256 kbps the quality of WavPack's lossy mode 
+					increases rapidly, with added quantization noise (which is the only artifact) 
+					dropping by about 1 dB for every 15 kbps. At 320 kbps the quality is difficult 
+					for even critical listeners to distinguish from the original, and at 384 kbps 
+					WavPack becomes essentially transparent.
+				</p>
+				<p>
+					The various modes and options that apply to lossless mode also apply to hybrid mode. 
+					However the "extra" mode (-x) deserves a special mention. Most of the time, the 
+					"extra" mode makes only modest improvements because WavPack has already been finely 
+					tuned for ordinary music. However, sometimes there is an instrument or sound 
+					situation that does not compress well with the standard settings and the "extra" 
+					mode can make a significant improvement. In lossless mode this would slightly improve 
+					the overall compression ratio and would probably go unnoticed. However, in lossy 
+					mode that difficult section might trigger clearly audible noise to be added, and 
+					in this case the "extra" mode would save the day by greatly reducing the noise in 
+					the exact spot where it might have been audible.
+				</p>
+				<p>
+					Here is a chart of recommended settings for the various useful bitrates:
+				</p>
+				<pre>
+	 Bitrate     High quality   Faster Encode   Faster Decode 
+ 	 -------     ------------   -------------   ------------- 
+ 	 256 kbps    -hb256x3       -hb256x         -b256x3
+ 	 320 kbps    -hb320x3       -hb320x         -b320x3
+ 	 384 kbps    -b384x3        -hb384x         -fb384x3
+				</pre>
+				</div>
+			</div>
+
+			<br/>
+			<div class="box" id="noncd">
+				<div class="boxHeader">Non-CD</div>
+				<div class="boxContent">
+    <p>
+     In addition to regular CD audio data, WavPack hybrid mode is also well suited to other
+     sampling rates, bitdepths, and channel configurations. For generating bitrates lower
+     than the minimum of 196 kbps that applies to CD audio, it is necessary to resample the
+     audio to lower sampling rates and/or convert to mono using an external program. Note that
+     conventional lossy codecs accomplish the same thing by lowpass filtering the source when
+     used for low bitrates.
+    </p>
+    <p>
+     For high-resolution audio (e.g., 24-bit/96-kHz) WavPack hybrid makes a particularly logical
+     choice. The reasoning here is that standard lossless encoding achieves relatively poor compression
+     on this type of material because the additional 8 bits are essentially noise and cannot be
+     further compressed. In addition, conventional lossy codecs like MP3 or AAC are based on
+     psychoacoustic models of hearing that presume CD audio quality (16-bit/44-kHz) to be
+     "perfect", and therefore discard everything outside of that range.
+    </p>
+    <p>
+     When used at around 1024 kbps, WavPack hybrid preserves the full bandwidth and dynamic
+     range of 24/96 sources. It accomplishes this by moving most of the quantization noise up
+     above the audible audio band using first-order noise shaping in much the same way that DSD
+     does. In fact, at normally loud listening levels, the added quantization noise remains
+     completely inaudble, <i>even without the masking effect of the material itself!</i> While
+     1024 kbps may seem high at first, keep in mind that this is right in the range of some
+     losslessly compressed CD-quality music, and is approximately 1/3 of the bitrate required to
+     losslessly compress the same 24/96 material! 
+    </p> 
+    <p>
+     WavPack also handles multichannel audio like 5.1 and 7.1 channel configurations, and these
+     can be stored in lossless and hybrid modes (including hybrid lossless). With all the
+     combinations of sampling rates and numbers of channels it might become confusing to
+     determine a desirable bitrate. This is an ideal application of the alternate form of the
+     <b>-b</b> option which accepts a number of bits per sample rather than kilobits per second.
+     When using this form a reasonable starting point of experimentation is 4 bits per sample
+     (-b4). Except for extreme cases this will produce transparent results (it is equivalent to
+     about 350 kbps for CD audio). Note that the compression algorithms are identical when using
+     this form; it is simply an alternate way of specifying the bitrate.
+    </p>
+    <p>
+     Representative samples ranging from 24 kbps to 1024 kbps are found in the "hybrid_bitrates"
+     directory of the WavPack Test Suite which is currently hosted
+     <a href="http://www.rarewares.org/wavpack/test_suite.zip">here</a>, but which can always
+     be found on the WavPack website.
+    </p>
+				</div>
+			</div>
+
+			<br/>
+			<div class="box" id="plugins">
+				<div class="boxHeader">Plugins</div>
+				<div class="boxContent">
+					<p>The documentation for the various WavPack plugins is provided as readme.txt 
+					files included with those plugins.</p>
+				</div>
+			</div>
+			
+			<br/>
+			<div class="box" id="disclaimer">
+				<div class="boxContent">
+					<p>
+						WavPack and its associated utilities are free programs; feel free to give them 
+						to anyone who may find them useful. There is no warrantee provided and you agree 
+						to use them completely at your own risk. Be sure to visit <a 
+						href="http://www.wavpack.com">www.wavpack.com</a> for the latest version of WavPack.
+					</p>
+				</div>
+			</div>
+			<br/>
+			<center>
+				<a href="index.html">home</a><br/><br/>
+				<a href="http://validator.w3.org/check?uri=referer" target="_blank">XHTML 1.0</a><br/>
+				<a href="http://jigsaw.w3.org/css-validator/check/referer" target="_blank">CSS 2.1</a><br/>
+			</center><br/>
+			<div class="hidden">Website design by <a href="mailto:ariakis@comcast.net">Ariakis</a></div>
+		</div>
+	</body>
+</html>

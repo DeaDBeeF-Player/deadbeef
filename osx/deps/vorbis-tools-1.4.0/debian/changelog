@@ -1,0 +1,356 @@
+vorbis-tools (1.2.0-4) unstable; urgency=medium
+
+  * Add upstream_r14957-ogg123_stop_decode_on_closed_buffer.diff.
+    closes: #478991.
+  * Add upstream_r14982-ogg123_man_page_http_only.diff to clarify that
+    -b option is for HTTP streams only.  closes: #288687.
+
+ -- Clint Adams <schizo@debian.org>  Sat, 31 May 2008 10:23:45 -0400
+
+vorbis-tools (1.2.0-3) unstable; urgency=medium
+
+  * Drop for_upstream-mention_alsa09_in_ogg123.1.diff. closes: #482347.
+
+ -- Clint Adams <schizo@debian.org>  Thu, 22 May 2008 19:39:03 -0400
+
+vorbis-tools (1.2.0-2) unstable; urgency=medium
+
+  [ Adeodato Simó ]
+  * Install upstream CHANGES file as changelog.gz. Thanks Bastian Kleineidam.
+    (Closes: #470133)
+
+  [ Clint Adams ]
+  * Add upstream_r14728-speex_format_validation.diff. closes: #480059.
+  * Loosen libflac-dev build dependency to (>> 1.1.4) to facilitate
+    backports.
+
+ -- Clint Adams <schizo@debian.org>  Tue, 20 May 2008 10:49:09 -0400
+
+vorbis-tools (1.2.0-1) unstable; urgency=low
+
+  * New upstream release.
+    - Drop upstream_r9696-play_from_pipe.diff (merged)
+    - Drop upstream_r9935-dont_clobber_file_on_error.diff (merged)
+    - Drop upstream_r10080-fix_non-ascii_comments.diff (merged)
+    - Drop for_upstream-oggenc_inputfile_vs_input.wav.diff (merged)
+    - Drop for_upstream-mention_option_-R_in_vorbiscomment.1.diff (merged)
+    - Update for_upstream-manpage_typos.diff (some hunks merged)
+    - Drop for_upstream-encodage_vs_codage_in_fr.po.diff (merged)
+    - Update no_debian_subdir.diff
+    - Update no_fast-math.diff
+    - Drop upstream_r10091-ogg123_return_error.diff (merged)
+    - Drop upstream_r12189-ogg123_2hr_intermittentnoise.diff (merged)
+    - Drop upstream_r12201-ogg123_crlf_in_playlists.diff (merged)
+    - Drop upstream_r12202-ogg123_curlopt_mute.diff (merged)
+    - Drop upstream_r11665_r12199_plus_autoconf.diff (merged)
+  * Bump to Standards-Version 3.7.3.
+  * Rename control header to Vcs-Bzr.
+
+ -- Clint Adams <schizo@debian.org>  Sat, 08 Mar 2008 09:00:42 -0500
+
+vorbis-tools (1.1.1-15) unstable; urgency=low
+
+  * Update vorbistagedit to 0.5 to cope with bash users.
+    closes: #421319.
+
+ -- Clint Adams <schizo@debian.org>  Mon, 22 Oct 2007 11:27:35 -0400
+
+vorbis-tools (1.1.1-14) unstable; urgency=low
+
+  * Update long description to mention that ogg123 can play FLAC
+    files.  closes: #434827.
+
+ -- Clint Adams <schizo@debian.org>  Fri, 27 Jul 2007 00:58:03 -0400
+
+vorbis-tools (1.1.1-13) unstable; urgency=low
+
+  * Update for the FLAC 1.1.4 transition:
+    + grab patch from upstream to cope with libOggFLAC having been merged into
+      libFLAC.
+    + build-depend on libflac-dev (>= 1.1.4-1), keeping liboggflac-dev as a
+      second alternative.
+    (Closes: #426674)
+
+  * Remove irrelevant blurb about "written for Debian because the original
+    program does not have a manual page" from vorbistagedit.1.
+
+  * Add XS-VCS-Bzr header in debian/control.
+
+ -- Adeodato Simó <dato@net.com.org.es>  Wed, 06 Jun 2007 19:01:31 +0200
+
+vorbis-tools (1.1.1-12) unstable; urgency=high
+
+  * Switch build dependency from "libcurl3-gnutls-dev" to
+    "libcurl4-gnutls-dev".  closes: #423654.
+  * Add upstream_r12202-ogg123_curlopt_mute.diff to handle
+    CURLOPT_MUTE being dropped in curl4.
+
+ -- Clint Adams <schizo@debian.org>  Sun, 13 May 2007 19:12:26 -0400
+
+vorbis-tools (1.1.1-11) unstable; urgency=low
+
+  * Add upstream_r12201-ogg123_crlf_in_playlists.diff to handle
+    CR/LF endings in playlists.  closes: #173676.
+
+ -- Clint Adams <schizo@debian.org>  Sat, 20 Jan 2007 10:44:53 -0500
+
+vorbis-tools (1.1.1-10) unstable; urgency=low
+
+  * Add upstream_r12189-ogg123_2hr_intermittentnoise.diff to fix
+    "ogg123 output corrupted after some time of playback".
+    closes: #298719.
+
+ -- Clint Adams <schizo@debian.org>  Thu, 18 Jan 2007 15:23:29 -0500
+
+vorbis-tools (1.1.1-9) unstable; urgency=low
+
+  * Update vorbistagedit to upstream version 0.4.
+
+ -- Clint Adams <schizo@debian.org>  Thu, 18 Jan 2007 12:29:42 -0500
+
+vorbis-tools (1.1.1-8) unstable; urgency=low
+
+  * Update vorbistagedit to upstream version 0.3, fixing bashisms.
+    closes: #381705.
+  * Add man page for vorbistagedit from François Wendling.
+    closes: #399116.
+
+ -- Clint Adams <schizo@debian.org>  Thu, 18 Jan 2007 12:08:59 -0500
+
+vorbis-tools (1.1.1-7) unstable; urgency=medium
+
+  * Add for_upstream-ogg123_flac_divbyzero.diff to fix SIGFPE when
+    playing certain corrupt .flac files.  Submitted upstream as
+    xiph.org Trac ticket #1119.  closes: #407022.
+  * Bump Standards-Version to 3.7.2.
+
+ -- Clint Adams <schizo@debian.org>  Wed, 17 Jan 2007 11:24:37 -0500
+
+vorbis-tools (1.1.1-6) unstable; urgency=low
+
+  * Include vorbistagedit script from martin f. krafft to edit vorbis tags in
+    an editor.  (Closes: #357421)
+
+  * Build with LFS, without touching configure.ac this time, as adviced by the
+    submitter. Submit however debian/patches/for_upstream-largefile_support.diff
+    to upstream, together with dean gaudet's include_config_h_everywhere.patch.
+    (Closes: #364527)
+
+  * Fix typos in manpages spotted by A Costa.  (Closes: #353184, #353185)
+
+ -- Adeodato Simó <dato@net.com.org.es>  Thu, 13 Jul 2006 21:25:09 +0200
+
+vorbis-tools (1.1.1-5) unstable; urgency=low
+
+  * Fix additional oggenc man page typos with patch from A Costa.
+    closes: #353186.
+  * Fix ogg123 returning 0 on corrupted file.  closes: #193349.
+    [File: upstream_r10091-ogg123_return_error.diff]
+
+ -- Clint Adams <schizo@debian.org>  Sun, 26 Mar 2006 20:11:50 -0500
+
+vorbis-tools (1.1.1-4) unstable; urgency=low
+
+  * Build with LFS.  closes: #359068.
+
+ -- Clint Adams <schizo@debian.org>  Sun, 26 Mar 2006 19:43:40 -0500
+
+vorbis-tools (1.1.1-3) unstable; urgency=low
+
+  * Switch patch management to quilt.
+
+ -- Adeodato Simó <dato@net.com.org.es>  Mon, 16 Jan 2006 22:49:20 +0100
+
+vorbis-tools (1.1.1-2) unstable; urgency=medium
+
+  * Switch maintenance to the Debian Xiph.org Maintainers (alioth/pkg-xiph).
+
+  * Fix display of non-ASCII characters in comments, broken in 1.1.1 release.
+    (Closes: #344195, #344917)
+    [File: upstream_r10080_fix_non-ascii_comments.diff]
+
+  * Patch configure not to use -ffast-math, which is reportedly broken on
+    alpha. While we're at it, do not use -O20 (!) either.
+    [File: no_fast-math.diff]
+
+  * Add debian/watch file.
+
+ -- Adeodato Simó <dato@net.com.org.es>  Tue, 27 Dec 2005 23:08:25 +0100
+
+vorbis-tools (1.1.1-1) unstable; urgency=low
+
+  * New upstream release packaged (closes: #339846).
+
+  * Pull patch from upstream to prevent vorbiscomment from clobbering files
+    when an error happens. (Closes: #287170)
+    [File: upstream_r9935-dont_clobber_file_on_error.diff]
+
+  * Add myself as an uploader, as agreed with Christopher in the past;
+    note it in debian/copyright.
+
+  * Update debian/control:
+
+    + drop unnecessary build-dependencies on bison and devscripts.
+    + build-depend on libcurl3-gnutls-dev instead of libcurl3-dev | libcurl-dev
+      (vorbis-tools is GPL'ed, no SSL exception).
+    + drop version restriction on all build-dependencies, since they'd be all
+      satisfied with stable.
+
+  * Overhaul debian/rules.
+
+  * Make use of debian/patches, putting in separate files the patches applied
+    in previous NMUs (deactivated some of them because they no longer apply
+    and/or are incomplete, until I figure out what to do with them; reopens:
+    #272037, #264365).
+
+  * Update download URL in debian/copyright.
+
+  * Bumped Standards-Version to 3.6.2 (no changes required).
+
+ -- Adeodato Simó <dato@net.com.org.es>  Wed, 07 Dec 2005 06:21:02 +0100
+
+vorbis-tools (1.0.1-1.5) unstable; urgency=low
+
+  * Non-maintainer upload during BSP.
+
+  * Make package installable again by rebuilding against new FLAC libraries.
+    (Closes: #325955)
+
+  * As requested by upstream, include patch to fix playing from a pipe.
+    (Closes: #237187)
+
+    [Patch in debian/patches/play-from-pipe.diff, but present in the .diff.gz
+     because debian/rules does not apply debian/patches/*.]
+
+ -- Adeodato Simó <asp16@alu.ua.es>  Sun, 04 Sep 2005 05:41:42 +0200
+
+vorbis-tools (1.0.1-1.4) unstable; urgency=low
+
+  * Authorized NMU.
+
+  * Restore speex support (closes: #306809). This had been lost in the
+    previous upload due to speex 1.1 having moved its include files from
+    /usr/include to /usr/include/speex.
+
+    + debian/rules: add -I/usr/include/speex to CFLAGS (and export it too).
+
+ -- Adeodato Simó <asp16@alu.ua.es>  Sat, 04 Jun 2005 02:13:03 +0200
+
+vorbis-tools (1.0.1-1.3) unstable; urgency=low
+
+  * Authorized NMU.
+  * Modified alsa to mention alsa09 (although the device might be nowadays
+    alsa, back, since alsa1.0 has been already released). (Closes: #258286)
+  * Modified the manpage/help message for vorbiscomment to make it a bit more
+    userfiendly: Closes: #252531.
+  * Added oggdec to the long description field, so that it triggers apt-cache
+    searches: Closes: #274894.
+  * Typos in manpages: Closes: #302150.
+  * Escaped dashes in manpage: Closes: #264365.
+  * Quiet option is actually with -Q, not -q (Closes: #211289) Reported
+    upstream but patched for Debian.
+  * Change input.wav with inputfile, since we accept flac-formated files:
+    Closes: #262509.
+  * Translation bits:
+    * Updated translation hu.po: Closes: #272037.
+    * French translation correction: Encodage -> Codage (Closes: #248431).
+    * debian/rules: remove .gmo's to avoid clash with uploaded tarball.
+
+ -- Jesus Climent <jesus.climent@hispalinux.es>  Sun, 10 Apr 2005 09:22:24 +0000
+
+vorbis-tools (1.0.1-1.2) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * [debian/control] Versioned build dependency on liboggflac-dev so as to
+    guarantee the binary packages no longer depend on libflac4 and are thus
+    installable again in sid. (Closes: #289291, #289313)
+
+ -- J.H.M. Dassen (Ray) <jdassen@debian.org>  Sun,  9 Jan 2005 12:20:44 +0100
+
+vorbis-tools (1.0.1-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Switched to libcurl3-dev (closes: #260207).
+
+ -- Domenico Andreoli <cavok@debian.org>  Wed, 22 Dec 2004 18:57:26 +0100
+
+vorbis-tools (1.0.1-1) unstable; urgency=low
+
+  * New upstream.
+  * Include ogg123rc-example. (Closes: #187204)
+  * Add application/ogg to vorbis-tools.mime. (Closes: #204883)
+
+ -- Christopher L Cheney <ccheney@debian.org>  Wed, 10 Dec 2003 22:00:00 -0600
+
+vorbis-tools (1.0.0-2) unstable; urgency=low
+
+  * Rebuild against new libvorbis0a package.
+  * GNU config automated update: config.sub (20020621 to 20030103),
+    config.guess (20020529 to 20030110)
+
+ -- Christopher L Cheney <ccheney@debian.org>  Sat,  8 Mar 2003 13:30:00 -0600
+
+vorbis-tools (1.0.0-1) unstable; urgency=low
+
+  * New upstream.
+    (Closes:  #88450, #109241, #111565, #127184, #127688, #127730, #127734,
+    #127999, #130021, #136663, #136664, #140909, #146271, #146314)
+
+ -- Christopher L Cheney <ccheney@debian.org>  Fri, 19 Jul 2002 09:00:00 -0500
+
+vorbis-tools (1.0rc3-1) unstable; urgency=low
+
+  * New upstream. (Closes: #90852, #103707, #104366, #107898, #108803,
+    #113855, #114730, #115859, #117091)
+  * added autotools target (config.* updater) to rules
+
+ -- Christopher L Cheney <ccheney@debian.org>  Mon, 24 Dec 2001 11:00:00 -0600
+
+vorbis-tools (1.0rc2-1) unstable; urgency=low
+
+  * New upstream. (Closes: #98059, #99050)
+  * Build with empty diff.gz to fix bug. (Closes: #104473)
+
+ -- Christopher L Cheney <ccheney@debian.org>  Mon, 13 Aug 2001 00:00:00 -0500
+
+vorbis-tools (1.0rc1-1) unstable; urgency=low
+
+  * New upstream. (Closes: #87697, #87907, #98937)
+  * Fixed versioned depends. (Closes: #88561, #89772)
+  * Changed clean method to distclean. (Closes: #96775)
+  * Updated description. (Closes: #88573)
+  * debian dir is maintained in upstream cvs. (Closes: #96773)
+  * Updated manpage for upstream. (Closes: #90873, #92229)
+  * Applied patch for randomize ogg123 for upstream (Closes: #84336, #98945)
+  * # appears to just work in ogg123rc so it must be fixed (Closes: #87398)
+
+ -- Christopher L Cheney <ccheney@debian.org>  Sun, 17 Jun 2001 20:00:00 -0500
+
+vorbis-tools (1.0beta4-1) unstable; urgency=low
+
+  * New upstream.
+  * Fix for multi open /dev/dsp (closes: #81146)
+  * devfs bug fixed (closes: #81621)
+
+ -- Christopher L Cheney <ccheney@debian.org>  Mon, 26 Feb 2001 08:00:00 -0600
+
+vorbis-tools (1.0beta3-3) unstable; urgency=low
+
+  * Fixed Build-Depends version dependencies.
+  * Updated to Standards-Version to 3.5.1.0
+
+ -- Christopher L Cheney <ccheney@debian.org>  Sat, 17 Feb 2001 18:18:38 -0600
+
+vorbis-tools (1.0beta3-2) unstable; urgency=low
+
+  * Use abcde (closes: #70032)
+  * Fixed (closes: #72381)
+  * Corrected README.Debian (closes: #78803)
+
+ -- Christopher L Cheney <ccheney@debian.org>  Sat,  3 Feb 2001 13:38:34 -0600
+
+vorbis-tools (1.0beta3-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Christopher L Cheney <ccheney@debian.org>  Tue, 31 Oct 2000 16:38:42 -0600

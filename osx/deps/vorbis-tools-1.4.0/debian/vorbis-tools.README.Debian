@@ -1,0 +1,6 @@
+vorbis-tools for Debian
+-----------------------
+
+Copy examples/ogg123rc-example to /etc/ogg123rc or ~/.ogg123rc
+
+ -- Christopher L Cheney <ccheney@debian.org>, Tue, 31 Oct 2000 16:38:42 -0600

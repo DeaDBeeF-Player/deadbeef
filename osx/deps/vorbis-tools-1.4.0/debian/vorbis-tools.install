@@ -1,0 +1,14 @@
+debian/tmp/usr/bin/ogg123
+debian/tmp/usr/bin/oggdec
+debian/tmp/usr/bin/oggenc
+debian/tmp/usr/bin/ogginfo
+debian/tmp/usr/bin/vcut
+debian/tmp/usr/bin/vorbiscomment
+debian/tmp/usr/share/locale/da/LC_MESSAGES/vorbis-tools.mo
+debian/tmp/usr/share/locale/es/LC_MESSAGES/vorbis-tools.mo
+debian/tmp/usr/share/locale/fr/LC_MESSAGES/vorbis-tools.mo
+debian/tmp/usr/share/locale/hr/LC_MESSAGES/vorbis-tools.mo
+debian/tmp/usr/share/locale/hu/LC_MESSAGES/vorbis-tools.mo
+debian/tmp/usr/share/locale/nl/LC_MESSAGES/vorbis-tools.mo
+debian/tmp/usr/share/locale/ru/LC_MESSAGES/vorbis-tools.mo
+debian/tmp/usr/share/locale/sv/LC_MESSAGES/vorbis-tools.mo

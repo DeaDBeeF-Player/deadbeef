@@ -1,0 +1,427 @@
+.\" Process this file with
+.\" groff -man -Tascii ogg123.1
+.\"
+.TH ogg123 1 "2010 March 24" "Xiph.Org Foundation" "Vorbis Tools"
+
+.SH NAME
+ogg123 \- plays Ogg Vorbis files
+
+.SH SYNOPSIS
+.B ogg123 
+[
+.B -vqrzZVh
+] [
+.B -k
+.I seconds 
+] [
+.B -x
+.I nth
+] [
+.B -y
+.I ntimes
+] [
+.B -b
+.I buffer_size 
+] [
+.B -d
+.I driver 
+[
+.B -o
+.I option:value
+] 
+[
+.B -f
+.I filename
+] ]
+.I file
+.B ...
+|
+.I directory
+.B ...
+|
+.I URL
+.B ...
+
+.SH DESCRIPTION
+.B ogg123
+reads Ogg Vorbis audio files and decodes them to the devices specified
+on the command line.  By default,
+.B ogg123
+writes to the standard sound device, but output can be sent to any
+number of devices.  Files can be read from the file system, or URLs
+can be streamed via HTTP.  If a directory is given, all of the files in
+it or its subdirectories will be played.
+
+.SH OPTIONS
+.IP "--audio-buffer n"
+Use an output audio buffer of approximately 'n' kilobytes.
+.IP "-@ playlist, --list playlist"
+Play all of the files named in the file 'playlist'.  The playlist should have
+one filename, directory name, or URL per line.  Blank lines are permitted.
+Directories will be treated in the same way as on the command line.
+.IP "-b n, --buffer n"
+Use an input buffer of approximately 'n' kilobytes.  HTTP-only option.
+.IP "-p n, --prebuffer n"
+Prebuffer 'n' percent of the input buffer.  Playback won't begin until
+this prebuffer is complete.  HTTP-only option.
+.IP "-d device, --device device"
+Specify output device.  See
+.B DEVICES
+section for a list of devices.  Any number of devices may be specified.
+.IP "-f filename, --file filename"
+Specify output file for file devices.  The filename "-" writes to standard
+out.  If the file already exists,
+.B ogg123
+will overwrite it.
+.IP "-h, --help"
+Show command help.
+.IP "-k n, --skip n"
+Skip the first 'n' seconds.  'n' may also be in minutes:seconds or 
+hours:minutes:seconds form.
+.IP "-K n, --end n"
+Stops playing 'n' seconds from the start of the stream.  'n' may also have the
+same format as used in the
+.I --skip
+option.
+.IP "-o option[:value], --device-option option[:value]"
+Sets the option
+.I option
+to 
+.I value
+for the preceding device.  See
+.B DEVICES
+for a list of valid options for each device.
+.IP "-q, --quiet"
+Quiet mode.  No messages are displayed.
+.IP "-V, --version"
+Display version information.
+.IP "-v, --verbose"
+Increase verbosity.
+.IP "-x n, --nth"
+Play every 'n'th decoded block.  Has the effect of playing audio at 'n' times
+faster than normal speed.
+.IP "-y n, --ntimes"
+Repeat every played block 'n' times.  Has the effect of playing audio 'n'
+times slower than normal speed.  May be with -x for interesting fractional
+speeds.
+.IP "-r, --repeat"
+Repeat playlist indefinitely.
+.IP "-z, --shuffle"
+Play files in pseudo-random order.
+.IP "-Z, --random"
+Play files in pseudo-random order forever.
+
+.SH DEVICES
+
+.B ogg123
+supports a variety of audio output devices through libao.  Only those
+devices supported by the target platform will be available.  The
+.B -f
+option may only be used with devices that write to files.
+
+Options supported by all devices:
+.RS
+.IP debug
+Turn on debugging output [if any] for a chosen driver.
+.IP matrix:value
+Force a specific output channel ordering for a given device.  
+.I value
+is a comma 
+seperated list of AO style channel names, eg, L,R,C,LFE,BL,BR,SL,SR.
+.IP verbose
+Turn on verbose output for a chosen driver. the -v option will also set the 
+driver verbose option.
+.IP quiet
+Force chosen driver to be completely silent.  Even errors will not produce any 
+output. -q will also set the driver quiet option.
+.RE
+
+.B
+.IP aixs
+AIX live output driver. Options:
+.RS
+.IP dev:value
+Set AIX output device to
+.I value
+.RE
+
+.B
+.IP alsa
+Advanced Linux Sound Architecture live output driver. Options:
+.RS
+.IP buffer_time:value
+Override the default hardware buffer size (in milliseconds).
+.IP dev:value
+ALSA device label to use. Examples include "hw:0" for the first soundcard 
+and "hw:1" for the second.  The alsa driver normally chooses one of 
+"surround71", 
+"surround51", 
+"surround40" or 
+"default" 
+automatically depending on number of output channels.  For more information,
+see http://alsa.opensrc.org/ALSA+device+labels
+.IP period_time:value
+Override the default hardware period size (in microseconds).
+.IP period_time:value
+Override the default hardware period size (in microseconds).
+.IP use_mmap:value
+.I value
+is set to "yes" or "no" to override the compiled-in default to use or not use 
+mmap device access.  In the past, some buggy alsa drivers have behaved better when
+not using mmap access at the penalty of slightly higher CPU usage.
+.RE
+
+.B
+.IP arts
+aRts Sound Daemon live output driver. Options:
+.RS
+.IP multi:value
+.I value
+is set to "yes" or "no" to allow opening the aRts playback device for multiply
+concurrent playback.  Although the driver works properly in multi mode, it is 
+known to occasionally crash the aRts server itself.  Default behavior is "no".
+.RE
+
+.B
+.IP au
+Sun audio file output.  Writes the audio samples in AU format.  The AU
+format supports writing to unseekable files like standard out.  In
+such circumstances, the AU header will specify the sample format, but
+not the length of the recording.
+
+.B
+.IP esd
+Enlightened Sound Daemon live output. Options:
+.RS
+.IP host:value
+.I value
+specifies the hostname where esd is running.  This can include a port number
+after a colon, as in "whizbang.com:555".  (Default = localhost)
+.RE
+
+.B
+.IP irix
+IRIX live output audio driver.
+
+.B
+.IP macosx
+MacOS X 'AUHAL' live output driver.  This driver supports MacOS X
+10.5 and later (10.4 and earlier uses an earlier, incompatable
+interface). Options:
+.RS
+.IP buffer_time:value
+Set the hardware buffer size to the equivalent of
+.I value
+milliseconds.
+.RE
+
+.B
+.IP nas
+Network Audio Server live output driver. Options:
+.RS
+.IP buf_size:value
+Set size of audio buffer on server in bytes.
+.IP host:value
+Set location of NAS server; See nas(1) for format. 
+.RE
+
+.B
+.IP null
+Null driver.  All audio data is discarded.  (Note: Audio data is not
+written to 
+.B /dev/null
+!)  You could use this driver to test raw decoding speed without
+output overhead. 
+
+.B
+.IP oss
+Open Sound System driver for Linux and FreeBSD, versions 2, 3 and 4. Options:
+.RS
+.IP dsp:value
+DSP device for soundcard.  Defaults to  
+.B /dev/dsp.
+.RE
+
+.B
+.IP pulse
+Pulseaudio live audio sound driver. Options:
+.RS
+.IP server:value
+Specifies location of remote or alternate Pulseaudio server.
+.IP sink:value
+Specifies a non-default Pulseaudio sink for audio stream.
+.RE
+
+.B
+.IP raw
+Raw file output.  Writes raw audio samples to a file. Options:
+.RS
+.IP byteorder:value
+Chooses big endian ("big"), little endian ("little"), or native ("native") byte order.  
+Default is native order.
+.RE
+
+.B
+.IP roar
+Roar Audio Daemon live output driver. Options:
+.RS
+.IP host:value
+Specifies location of remote Roar server to use.
+.RE
+
+.B
+.IP sndio
+OpenBSD SNDIO live output driver. Options:
+.RS
+.IP dev:value
+Specifies audio device to use for playback.
+.RE
+
+.B
+.IP sun
+Sun Audio live output driver for NetBSD, OpenBSD, and Solaris. Options:
+.RS
+.IP dev:value
+Audio device for soundcard.  Defaults to  
+.B /dev/audio.
+.RE
+
+
+.B
+.IP wav
+WAV file output.  Writes the sound data to disk in uncompressed form.
+If multiple files are played, all of them will be concatenated into
+the same WAV file.  WAV files cannot be written to unseekable files,
+such as standard out.  Use the AU format instead.
+
+.B
+.IP wmm
+Windows MultiMedia live output driver for Win98 and later. Options:
+.RS
+.IP dev:value
+Selects audio device to use for playback by device name.
+.IP id:value
+Selects audio device to use for playback by device id (card number).
+.RE
+
+.SH EXAMPLES
+
+The
+.B ogg123
+command line is fairly flexible, perhaps confusingly so.  Here are
+some sample command lines and an explanation of what they do.
+.PP
+
+Play on the default soundcard:
+.RS
+.B ogg123 test.ogg
+.RE
+.PP
+
+Play all of the files in the directory ~/music and its subdirectories.
+.RS
+.B ogg123 ~/music
+.RE
+.PP
+
+Play a file using the OSS driver:
+.RS
+.B ogg123 -d oss test.ogg
+.RE
+.PP
+
+Pass the "dsp" option to the OSS driver: 
+.RS
+.B ogg123 -d oss -o dsp:/dev/mydsp 
+.RE
+.PP
+
+Use the ESD driver
+.RS
+.B ogg123 -d esd test.ogg
+.RE
+.PP
+
+Use the WAV driver with the output file, "test.wav":
+.RS
+.B ogg123 -d wav -f test.wav test.ogg
+.RE
+.PP
+
+Listen to a file while you write it to a WAV file:
+.RS
+.B ogg123 -d oss -d wav -f test.wav test.ogg
+.RE
+.PP
+
+Note that options apply to the device declared to the left:
+.RS
+.B ogg123 -d oss -o dsp:/dev/mydsp -d raw -f test2.raw -o byteorder:big test.ogg
+.RE
+.PP
+
+Stress test your harddrive:
+.RS
+.B ogg123 -d oss -d wav -f 1.wav -d wav -f 2.wav -d wav -f 3.wav -d wav -f 4.wav -d wav -f 5.wav  test.ogg
+.RE
+.PP
+
+Create an echo effect with esd and a slow computer:
+.RS
+.B ogg123 -d esd -d esd test.ogg
+.RE
+.PP
+
+.SH INTERRUPT
+You can abort
+.B ogg123
+at any time by pressing Ctrl-C.  If you are playing multiple
+files, this will stop the current file and begin playing the
+next one.  If you want to abort playing immediately instead
+of skipping to the next file, press Ctrl-C within the first
+second of the playback of a new file.
+.P
+Note that the result of pressing Ctrl-C might not be audible
+immediately, due to audio data buffering in the audio device.
+This delay is system dependent, but it is usually not more
+than one or two seconds.
+
+.SH FILES
+
+.TP
+/etc/libao.conf
+Can be used to set the default output device for all libao programs.
+
+.TP
+~/.libao
+Per-user config file to override the system wide output device settings.
+.PP
+
+.SH BUGS
+
+Piped WAV files may cause strange behavior in other programs.  This is
+because WAV files store the data length in the header.  However, the
+output driver does not know the length when it writes the header, and
+there is no value that means "length unknown".  Use the raw or au
+output driver if you need to use ogg123 in a pipe.
+
+.SH AUTHORS
+
+.TP
+Program Authors:
+.br
+Kenneth Arnold <kcarnold-xiph@arnoldnet.net>
+.br
+Stan Seibert <volsung@xiph.org>
+.br
+
+.TP
+Manpage Author:
+.br
+Stan Seibert <volsung@xiph.org>
+
+.SH "SEE ALSO"
+
+.PP
+\fBlibao.conf\fR(5), \fBoggenc\fR(1), \fBvorbiscomment\fR(1), \fBogginfo\fR(1)
+

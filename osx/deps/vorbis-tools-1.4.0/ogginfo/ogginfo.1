@@ -1,0 +1,60 @@
+.\" Process this file with
+.\" groff -man -Tascii ogginfo.1
+.\"
+.TH ogginfo 1 "July 10, 2002" "Xiph.Org Foundation" "Vorbis Tools"
+
+.SH NAME
+ogginfo \- gives information about Ogg files, and does extensive validity checking
+
+.SH SYNOPSIS
+.B ogginfo
+[
+.B -q
+] [
+.B -v
+] [
+.B -h
+]
+.I file1.ogg
+.B ...
+.I fileN.ogg
+
+.SH DESCRIPTION
+.B ogginfo
+reads one or more Ogg files and prints information about stream contents 
+(including chained and/or multiplexed streams) to standard output. It will 
+detect (but not correct) a wide range of common defects, with many 
+additional checks specifically for Ogg Vorbis streams.
+
+For all stream types
+.B ogginfo
+will print the filename being processed, the stream serial numbers, and various
+common error conditions.
+
+For
+.B Vorbis
+streams, information including the version used for encoding, the sample rate
+and number of channels, the bitrate and playback length, and the contents of
+the comment header are printed.
+
+Similarly, for
+.B Theora
+streams, basic information about the video is provided, including frame rate, aspect ratio, bitrate, length, and the comment header.
+
+.SH OPTIONS
+.IP -h
+Show a help and usage message.
+.IP -q
+Quiet mode. This may be specified multiple times. Doing so once will remove
+the detailed informative messages, twice will remove warnings as well.
+.IP -v
+Verbose mode. At the current time, this does not do anything.
+
+.SH AUTHORS
+.br
+Michael Smith <msmith@xiph.org>
+
+.SH "SEE ALSO"
+
+.PP
+\fBvorbiscomment\fR(1), \fBogg123\fR(1), \fBoggdec\fR(1), \fBoggenc\fR(1)

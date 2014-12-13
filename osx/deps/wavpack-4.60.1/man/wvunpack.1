@@ -1,0 +1,196 @@
+.\"     Title: wvunpack
+.\"    Author: Sebastian Dröge <slomo@debian.org>
+.\" Generator: DocBook XSL Stylesheets v1.73.2 <http://docbook.sf.net/>
+.\"      Date: 2009-10-17
+.\"    Manual: 
+.\"    Source: 
+.\"
+.TH "WVUNPACK" "1" "2009\-10\-17" "" ""
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+wvunpack - decodes wavpack encoded files
+.SH "SYNOPSIS"
+.HP 9
+\fBwvunpack\fR [\fB\fI\-options\fR\fR] \fB\fIINFILE\fR\fR... [\fB\-o\ \fR\fB\fIOUTFILE\fR\fR]
+.SH "DESCRIPTION"
+.PP
+
+\fBwvunpack\fR
+decodes WavPack files back to their uncompressed wav or raw form using the options provided\. Unless overridden with the
+\fB\-o\fR
+switch, the resulting filename will be
+\fIsource\-name\.wav\fR
+(or
+\fIsource\-name\.raw\fR
+when
+\fB\-r\fR
+used)\. Multiple WavPack input files may be specified resulting in multiple output files, and in that case
+\fB\-o\fR
+may be used to specify an alternate target directory\.
+\fIStdin\fR
+and
+\fIstdout\fR
+may be specified with
+\(lq\-\(rq\. WavPack files are generally created with the
+\fBwavpack\fR
+program\.
+.SH "OPTIONS"
+.PP
+.PP
+\fB\-b\fR
+.RS 4
+blindly decode all stream blocks and ignore length info
+.RE
+.PP
+\fB\-c\fR
+.RS 4
+do not decode audio but instead just extract cuesheet stored in APEv2 tag to
+\fIstdout\fR
+(equivalent to
+\fB\-x \fR\fB\(lqcuesheet\(rq\fR)
+.RE
+.PP
+\fB\-cc\fR
+.RS 4
+extract cuesheet stored in APEv2 tag to
+\fIsource\-name\.cue\fR
+file in same directory as decoded audio file (equivalent to
+\fB\-xx \fR\fB\(lqcuesheet=%a\.cue\(rq\fR)
+.RE
+.PP
+\fB\-d\fR
+.RS 4
+delete source file if successful (use with caution!)
+.RE
+.PP
+\fB\-\-help\fR
+.RS 4
+display extended help
+.RE
+.PP
+\fB\-i\fR
+.RS 4
+ignore \.wvc file (forces hybrid lossy decompression)
+.RE
+.PP
+\fB\-m\fR
+.RS 4
+calculate and display MD5 signature; verify if lossless
+.RE
+.PP
+\fB\-\-no\-utf8\-convert\fR
+.RS 4
+leave extracted text tags in UTF\-8 encoding during extraction or display
+.RE
+.PP
+\fB\-q\fR
+.RS 4
+quiet (keep console output to a minimum)
+.RE
+.PP
+\fB\-r\fR
+.RS 4
+force raw audio decode by skipping RIFF headers & trailers, results in
+\fIsource\-name\.raw\fR
+.RE
+.PP
+\fB\-s\fR
+.RS 4
+do not decode audio but simply display summary information about WavPack file to
+\fIstdout\fR
+.RE
+.PP
+\fB\-ss\fR
+.RS 4
+do not decode audio but simply display summary and tag information about WavPack file to
+\fIstdout\fR
+.RE
+.PP
+\fB \-\-skip=[\fR\fB\fIsample\fR\fR\fB|\fR\fB\fIhh\fR\fR\fB:\fR\fB\fImm\fR\fR\fB:\fR\fB\fIss\.ss\fR\fR\fB] \fR
+.RS 4
+start decoding at specified sample or time index
+.RE
+.PP
+\fB\-t\fR
+.RS 4
+copy input file\'s time stamp to output file(s)
+.RE
+.PP
+\fB \-\-until=[+|\-][\fR\fB\fIsample\fR\fR\fB|\fR\fB\fIhh\fR\fR\fB:\fR\fB\fImm\fR\fR\fB:\fR\fB\fIss\.ss\fR\fR\fB] \fR
+.RS 4
+stop decoding at specified sample or time index, specifying a
+\fB+\fR
+causes sample/time to be relative to
+\fB\-\-skip\fR
+point, specifying a
+\fB\-\fR
+causes sample/time to be relative to
+EOF
+.RE
+.PP
+\fB\-v\fR
+.RS 4
+verify source data only (no output file created)
+.RE
+.PP
+\fB\-w\fR
+.RS 4
+regenerate fresh wav header (ingore RIFF data stored in WavPack file)
+.RE
+.PP
+\fB\-x \fR\fB\(lq\fIField\fR\(rq\fR
+.RS 4
+do not decode audio but instead just extract the specified tag field to
+\fIstdout\fR
+.RE
+.PP
+\fB\-xx \fR\fB\(lq\fIField\fR[=\fIfile\fR]\(rq\fR
+.RS 4
+extract the specified tag field to named file in same directory as decoded audio file; optional filename specification may contain
+\fB%a\fR
+which is replaced with the audio file base name,
+\fB%t\fR
+replaced with the tag field name (note: comes from data for binary tags) and
+\fB%e\fR
+replaced with the extension from the binary tag source file (or
+\(lqtxt\(rq
+for text tag)\.
+.RE
+.PP
+\fB\-y\fR
+.RS 4
+yes to overwrite warning (use with caution!)
+.RE
+.SH "SEE ALSO"
+.PP
+\fBwavpack\fR(1),
+\fBwvgain\fR(1)
+.PP
+Please visit www\.wavpack\.com for more information
+.SH "COPYRIGHT"
+.PP
+This manual page was written by Sebastian Dröge
+<slomo@debian\.org>
+and David Bryant
+<david@wavpack\.com>\. Permission is granted to copy, distribute and/or modify this document under the terms of the
+BSD
+License\.
+.SH "AUTHORS"
+.PP
+\fBSebastian Dröge\fR <\&slomo@debian\.org\&>
+.sp -1n
+.IP "" 4
+Author.
+.PP
+\fBDavid Bryant\fR <\&david@wavpack\.com\&>
+.sp -1n
+.IP "" 4
+Author.
+.SH "COPYRIGHT"
+Copyright \(co 2005 Sebastian Dröge
+.br
+Copyright \(co 2009 David Bryant
+.br

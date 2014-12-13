@@ -1,0 +1,120 @@
+.TH "oggdec" "1" "2008 September 9" "Xiph.Org Foundation" "Vorbis Tools"
+
+.SH "NAME"
+oggdec - simple decoder, Ogg Vorbis file to PCM audio file (Wave or RAW).
+
+.SH "SYNOPSIS"
+.B oggdec
+[
+.B -Qhv
+] [
+.B -b bits_per_sample
+] [
+.B -e endianness
+] [
+.B -R
+] [
+.B -s signedness
+] [
+.B -o outputfile
+] 
+.B file ...
+
+.SH "DESCRIPTION"
+
+.B oggdec
+decodes Ogg Vorbis files into PCM-encoded ("uncompressed") audio files, either Wave or RAW format.
+
+For each input file, 
+.B oggdec
+writes to a filename based on the input filename, but with the extension changed to ".wav" or ".raw" as appropriate.
+
+If the input file is specified as
+.B "-"
+, then 
+.B oggdec
+will read from stdin, and write to stdout unless an output filename is specified. Likewise, an output filename of
+.B -
+will cause output to be to stdout.
+
+Writing Wave format to stdout is a bad idea.  Wave requires a seekable medium for the header to be rewritten after all the data is written out; stdout is not seekable.
+
+.SH "OPTIONS"
+.IP "-Q, --quiet"
+Suppresses program output.
+.IP "-h, --help"
+Print help message.
+.IP "-V, --version"
+Display version information.
+.IP "-b n, --bits=n"
+Bits per sample.  Valid values are 8 or 16.
+.IP "-e n, --endian=n"
+Set endianness for 16-bit output.  0 (default) is little-endian (Intel byte order).  1 is big-endian (sane byte order).
+.IP "-R, --raw"
+Output in raw format.  If not specified, writes Wave file (RIFF headers).
+.IP "-s n, --sign=n"
+Set signedness for output.  0 for unsigned, 1 (default) for signed.
+.IP "-o filename, --output=filename"
+Write output to specified filename.  This option is only valid if one input [file] is specified, or if raw mode is used.
+
+.SH "EXAMPLES"
+Decode a file 
+.B enabler.ogg
+to 
+.B enabler.wav
+ as little-endian unsigned 16-bit (default options):
+.RS
+oggdec enabler.ogg
+.RE
+
+Decode a file 
+.B enabler.ogg
+to 
+.B enabler.raw
+as headerless little-endian unsigned 16-bit:
+.RS
+oggdec --raw=1 enabler.ogg
+.RE
+
+Decode 
+.B enabler.ogg
+to 
+.B enabler.crazymonkey
+as unsigned 8-bit:
+.RS
+oggdec -b 8 -s 0 -o enabler.crazymonkey enabler.ogg
+.RE
+
+Decode 
+.B enabler.ogg
+to 
+.B enabler.raw
+as big-endian signed 16-bit (any of the following):
+.RS
+oggdec -R -e 1 -b 16 enabler.ogg
+.RE
+.RS
+oggdec -R -e 1 -b 16 -o enabler.raw - < enabler.ogg
+.RE
+.RS
+oggdec -R -e 1 -b 16 - < enabler.ogg > enabler.raw
+.RE
+
+Mass decoding (foo.ogg to foo.wav, bar.ogg to bar.wav, quux.ogg to quux.wav, etc.):
+.RS
+oggdec *.ogg
+.RE
+
+.SH "AUTHORS"
+.SS "Program Authors"
+Michael Smith <msmith@xiph.org>
+.SS "Manpage Authors"
+
+.br
+
+Frederick Lee <phaethon@linux.ucla.edu>, assisted by a few million monkeys armed with keyboards in irc://irc.openprojects.net/#vorbis
+
+.SH "SEE ALSO"
+
+.PP
+\fBogg123\fR(1), \fBoggenc\fR(1), \fBvorbiscomment\fR(1), \fBflac\fR(1), \fBspeexdec\fR(1)

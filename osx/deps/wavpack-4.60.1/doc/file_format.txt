@@ -1,0 +1,242 @@
+////////////////////////////////////////////////////////////////////////////
+//                           **** WAVPACK ****                            //
+//                  Hybrid Lossless Wavefile Compressor                   //
+//              Copyright (c) 1998 - 2006 Conifer Software.               //
+//                          All Rights Reserved.                          //
+//      Distributed under the BSD Software License (see license.txt)      //
+////////////////////////////////////////////////////////////////////////////
+
+                   WavPack 4.0 File / Block Format
+                   -------------------------------
+
+                          December 9, 2006
+                            David Bryant
+
+                       updated: April 29, 2007
+                       updated: Sept 26, 2009
+
+1.0 INTRODUCTION
+
+A WavPack 4.0 file consists of a series of WavPack audio blocks. It may also
+contain tags and other information, but these must be outside the blocks
+(either before, in-between, or after) and are ignored for the purpose of
+unpacking audio data. The WavPack blocks are easy to identify by their unique
+header data, and by looking in the header it is very easy to determine the total
+size of the block (both in physical bytes and compressed samples) and the audio
+format stored. There are no specialized seek tables.
+
+The blocks are completely independent in that they can be decoded to mono or
+stereo audio all by themselves. The blocks may contain any number of samples
+(well, up to 131072), either stereo or mono. Obviously, putting more samples
+in each block is more efficient because of reduced header overhead, but they are
+reasonably efficient down to even a thousand samples. I have set the max size to
+1 MB for the whole block, but this is arbitrary. The blocks may be lossless or
+lossy. Currently the hybrid/lossy modes are basically CBR, but I am planning a
+quality based VBR version also, and all the provisions exist for this in the
+format.
+
+For multichannel audio, the data is divided into some number of stereo and mono
+streams and multiplexed into separate blocks which repeat in sequence. A flag
+in the header indicates whether the block is the first or the last in the
+sequence (for simple mono or stereo files both of these would always be set).
+The speaker assignments are in standard Microsoft order and the channel_mask is
+transmitted in a separate piece of metadata. Channels that naturally belong
+together (i.e. left and right pairs) are put into stereo blocks and other
+channels are put into mono block. So, for example, a standard 5.1 audio stream
+would have a channel_mask of 0x3F and be organized into 4 blocks in sequence:
+
+    1. stereo block (front left + front right) (INITIAL_BLOCK)
+    2. mono block (front center)
+    3. mono block (low frequency effects)
+    4. stereo block (back left + back right) (FINAL_BLOCK)
+
+Correction files (.wvc) have an identical structure to the main file (.wv) and
+there is a one-to-one correspondence between main file blocks that contain audio
+and their correction file match (blocks that do not contain audio do not exist
+in the correction file). The only difference in the headers of main blocks and
+correction blocks is the size and the CRC value, although it is easy (if a
+little ugly) to tell the blocks apart by looking at the metadata ids.
+
+The format is designed with hardware decoding in mind, and so it is possible to
+decode regular stereo (or mono) WavPack files without buffering an entire block,
+which allows the memory requirements to be reduced to only a few kilobytes if
+desired. This is not true of multichannel files, and this also restricts
+playback of high-resolution files to 24 bits of precision (although neither of
+these would be associated with low-cost playback equipment).
+
+2.0 BLOCK HEADER
+
+Here is the 32-byte little-endian header at the front of every WavPack block:
+
+typedef struct {
+    char ckID [4];              // "wvpk"
+    uint32_t ckSize;            // size of entire block (minus 8, of course)
+    uint16_t version;           // 0x402 to 0x410 are currently valid for decode
+    uchar track_no;             // track number (0 if not used, like now)
+    uchar index_no;             // track sub-index (0 if not used, like now)
+    uint32_t total_samples;     // total samples for entire file, but this is
+                                // only valid if block_index == 0 and a value of
+                                // -1 indicates unknown length
+    uint32_t block_index;       // index of first sample in block relative to
+                                // beginning of file (normally this would start
+                                // at 0 for the first block)
+    uint32_t block_samples;     // number of samples in this block (0 = no audio)
+    uint32_t flags;             // various flags for id and decoding
+    uint32_t crc;               // crc for actual decoded data
+} WavpackHeader;
+
+Note that in this context the meaning of "samples" refers to a complete
+sample for all channels (sometimes called a "frame"). Therefore, in a stereo
+or multichannel file the actual number of numeric samples is this value
+multiplied by the number of channels. This effectively limits the size of an
+on-disk WavPack file to (2^32)-2 samples, although this should not be a big
+restriction for most applications (that is over 24 hours at 44.1 kHz, no
+matter how many channels).
+
+There is no limit to the size of the WavPack file itself, although the
+library currently cannot seek in WavPack files over 4 gig. Also, the .wav
+format itself has a 4 gig limit, so this limits the size of the source and
+destination files (although this is planned to be resolved with the W64
+and RIFF64 file formats).
+
+Normally, the first block of a WavPack file that contains audio samples
+(blocks may contains only metadata) would have "block_index" == 0 and
+"total_samples" would be equal to the total number of samples in the
+file. However, there are some possible exceptions to this rule. For example,
+a file may be created such that its total length is unknown (i.e. with
+pipes) and in this case total_samples == -1. For these files, the WavPack
+decoder will attempt to seek to the end of the file to determine the actual
+length, and if this is impossible then the length is simply unknown.
+
+Another case is where a WavPack file is created by cutting a portion out of a
+longer WavPack file (or from a WavPack stream). Since this file would start
+with a block that didn't have "block_index" == 0, the length would be unknown
+until a seek to end was performed. In fact, an on-disk file would still be
+perfectly playable and seekable as long as there were less than (2^32)-2 total
+samples (the "block_index" could even wrap).
+
+It is also possible to have streamed WavPack data. In this case both the
+"block_index" and "total_samples" fields are ignored for every block and the
+decoder simply decodes every block encountered indefinitely.
+
+The "flags" field contains information for decoding the block along with some
+general information including sample size and format, hybrid/lossless,
+mono/stereo and sampling rate (if one of 15 standard rates). Here are the
+(little-endian) bit assignments:
+
+    bits 1,0:   // 00 = 1 byte / sample (1-8 bits / sample)
+                // 01 = 2 bytes / sample (1-16 bits / sample)
+                // 10 = 3 bytes / sample (1-24 bits / sample)
+                // 11 = 4 bytes / sample (1-32 bits / sample)
+    bit 2:      // 0 = stereo output; 1 = mono output
+    bit 3:      // 0 = lossless mode; 1 = hybrid mode
+    bit 4:      // 0 = true stereo; 1 = joint stereo (mid/side)
+    bit 5:      // 0 = independent channels; 1 = cross-channel decorrelation
+    bit 6:      // 0 = flat noise spectrum in hybrid; 1 = hybrid noise shaping
+    bit 7:      // 0 = integer data; 1 = floating point data
+    bit 8:      // 1 = extended size integers (> 24-bit) or shifted integers
+    bit 9:      // 0 = hybrid mode parameters control noise level
+                // 1 = hybrid mode parameters control bitrate
+    bit 10:     // 1 = hybrid noise balanced between channels
+    bit 11:     // 1 = initial block in sequence (for multichannel)
+    bit 12:     // 1 = final block in sequence (for multichannel)
+    bits 17-13: // amount of data left-shift after decode (0-31 places)
+    bits 22-18: // maximum magnitude of decoded data
+                //  (number of bits integers require minus 1)
+    bits 26-23: // sampling rate (1111 = unknown/custom)
+    bits 27-28: // reserved (but decoders should ignore if set)
+    bit 29:     // 1 = use IIR for negative hybrid noise shaping
+    bit 30:     // 1 = false stereo (data is mono but output is stereo)
+    bit 31:     // reserved (decoders should refuse to decode if set)
+
+
+3.0 METADATA SUB-BLOCKS
+
+Following the 32-byte header to the end of the block are a series of "metadata"
+sub-blocks. These may from 2 bytes long to the size of the entire block and are
+extremely easy to parse (even without knowing what they mean). These mostly
+contain extra information needed to decode the audio, but may also contain user
+information that is not required for decoding and that could be used in the
+future without breaking existing decoders. The final sub-block is usually the
+compressed audio bitstream itself, although this is not a strict rule.
+
+The format of the metadata is:
+
+    uchar id;                   // mask  meaning
+                                // ----  -------
+                                // 0x1f  metadata function
+                                // 0x20  decoder need not understand metadata
+                                // 0x40  actual data byte length is 1 less
+                                // 0x80  large block (> 255 words)
+
+    uchar word_size;            // small block: data size in words (padded)
+          or...
+    uchar word_size [3];        // large block: data size in words (padded,
+                                    little-endian)
+
+    uint16_t data [word_size];  // data, padded to an even # of bytes
+
+The currently assigned metadata ids are:
+
+    ID_DUMMY            0x0     // could be used to pad WavPack blocks
+    ID_DECORR_TERMS     0x2     // decorrelation terms & deltas (fixed)
+    ID_DECORR_WEIGHTS   0x3     // initial decorrelation weights
+    ID_DECORR_SAMPLES   0x4     // decorrelation sample history
+    ID_ENTROPY_VARS     0x5     // initial entropy variables
+    ID_HYBRID_PROFILE   0x6     // entropy variables specific to hybrid mode
+    ID_SHAPING_WEIGHTS  0x7     // info needed for hybrid lossless (wvc) mode
+    ID_FLOAT_INFO       0x8     // specific info for floating point decode
+    ID_INT32_INFO       0x9     // specific info for decoding integers > 24
+                                // bits, or data requiring shift after decode
+    ID_WV_BITSTREAM     0xa     // normal compressed audio bitstream (wv file)
+    ID_WVC_BITSTREAM    0xb     // correction file bitstream (wvc file)
+    ID_WVX_BITSTREAM    0xc     // special extended bitstream for floating
+                                // point data or integers > 24 bit (can be
+                                // in either wv or wvc file, depending...)
+    ID_CHANNEL_INFO     0xd     // contains channel count and channel_mask
+
+    ID_RIFF_HEADER      0x21    // RIFF header for .wav files (before audio)
+    ID_RIFF_TRAILER     0x22    // RIFF trailer for .wav files (after audio)
+    ID_CONFIG_BLOCK     0x25    // some encoding details for info purposes
+    ID_MD5_CHECKSUM     0x26    // 16-byte MD5 sum of raw audio data
+    ID_SAMPLE_RATE      0x27    // non-standard sampling rate info
+
+Note: unlisted ids are reserved.
+
+The RIFF header and trailer are optional for most playback purposes, however
+older decoders (< 4.40) will not decode to .wav files unless at least the
+ID_RIFF_HEADER is present. In the future these could be used to encode other
+uncompressed audio formats (like AIFF).
+
+4.0 METADATA TAGS
+
+These tags are not to be confused with the metadata sub-blocks described above
+but are specialized tags for storing user data on many formats of audio files.
+The tags recommended for use with WavPack files (and the ones that the WavPack
+supplied plugins and programs will work with) are ID3v1 and APEv2. The ID3v1
+tags are somewhat primitive and limited, but are supported for legacy purposes.
+The more recommended tagging format is APEv2 because of its rich functionality
+and broad software support (it is also used on Monkey's Audio and Musepack
+files). Both the APEv2 tags and/or ID3v1 tags must come at the end of the
+WavPack file, with the ID3v1 coming last if both are present.
+
+For the APEv2 tags, the following field names are officially supported and
+recommended by WavPack (although there are no restrictions on what field names
+may be used):
+
+    Artist
+    Title
+    Album
+    Track
+    Year
+    Genre
+    Comment
+    Cuesheet (note: may include replay gain info as remarks)
+    Replaygain_Track_Gain
+    Replaygain_Track_Peak
+    Replaygain_Album_Gain
+    Replaygain_Album_Peak
+    Cover Art (Front)
+    Cover Art (Back)
+    Log
+

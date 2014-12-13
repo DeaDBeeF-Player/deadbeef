@@ -1,0 +1,30 @@
+.\" Process this file with
+.\" groff -man -Tascii vcut.1
+.\"
+.TH VCUT 1 "2003 September 1" "Xiph.Org Foundation" "Vorbis Tools"
+
+.SH NAME
+vcut \- cuts Ogg Vorbis files
+
+.SH SYNOPSIS
+.B vcut
+.I infile.ogg
+.I outfile1.ogg
+.I outfile2.ogg
+.I [ cutpoint | +cutpoint]
+
+.SH DESCRIPTION
+.B vcut
+reads an Ogg Vorbis audio file and splits it at the given cutpoint, which is a
+sample number.  If the cutpoint is prefixed with '+', the cutpoint is an
+integer number of seconds.
+
+.SH AUTHORS
+
+.TP
+Program Author:
+Michael Smith <msmith@xiph.org>
+
+.TP
+Manpage Author:
+Christoper L Cheney <ccheney@debian.org>

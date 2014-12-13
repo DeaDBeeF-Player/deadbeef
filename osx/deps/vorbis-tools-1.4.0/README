@@ -1,0 +1,102 @@
+WHAT'S HERE:
+
+This source distribution includes the vorbis-tools and nothing else.
+The audio codec libraries for use with Ogg bitstreams are contained in
+other modules: vorbis, speex and flac.
+
+
+DIRECTORIES:
+
+debian/		debian packaging stuff
+include/	header files shared between the tools
+intl/		GNU gettext library from gettext-0.10.40 (for i18n support)
+ogg123/		an ogg vorbis command line audio player
+oggenc/		the ogg vorbis encoder
+oggdec/		a simple, portable command line decoder (to wav and raw)
+ogginfo/	provides information (tags, bitrate, length, etc.) about
+		an ogg vorbis file
+po/		translations for non-English languages
+share/		code shared between the tools
+vcut/		cuts an ogg vorbis file into two parts at a particular point
+vorbiscomment/	edits the comments in an ogg vorbis file
+win32/		Win32 build stuff
+
+
+DEPENDENCIES:
+
+All of the tools require libogg and libvorbis to be installed (along
+with the header files).  Additionally, ogg123 requires libao, libcurl,
+and a POSIX-compatible thread library.  Ogg123 can optionally compiled
+to use libFLAC, and libspeex.  Oggenc can be optionally compiled with
+libFLAC, and libkate.  The libraries libogg, libvorbis, and libao are
+all available at
+  http://www.vorbis.com/download.psp
+
+The libcurl library is packaged with most Linux distributions.  The
+source code can also be downloaded from:
+  http://curl.haxx.se/libcurl/
+
+FLAC is available at:
+  http://flac.sourceforge.net
+
+Speex is available at:
+  http://www.speex.org/
+
+libkate is available at:
+  http://libkate.googlecode.com/
+
+
+CONTACT:
+
+The Ogg Vorbis homepage is located at 'http://www.vorbis.com'. Up to
+date technical documents, contact information, source code and
+pre-built utilities may be found there.
+
+Developer information is available from http://www.xiph.org/. Check
+there for bug reporting information, mailing lists and other resources.
+
+
+BUILDING FROM SUBVERSION (see the file HACKING for details):
+
+./autogen.sh
+make 
+
+and as root if desired :
+
+make install
+
+This will install the tools into /usr/local/bin and manpages into
+/usr/local/man.
+
+
+BUILDING FROM TARBALL DISTRIBUTIONS:
+
+./configure
+make
+
+and as root if desired :
+
+make install
+
+BUILDING RPMS:
+
+RPMs may be built by:
+
+after autogen.sh or configure
+
+make dist
+rpm -ta vorbis-tools-<version>.tar.gz
+
+
+KNOWN BUGS:
+
+#1321
+  First noticed in non-English versions of the application, ogg123 has a major
+  bug when it comes to status messages in the shell: any output bigger than
+  the console's width will break and start spamming that message infinitely
+  until the console is resized.
+
+  Different attempts to fix this bug have ended up causing bigger problems,
+  leading to the conclusion that it simply can't be fixed without a large
+  re-write of the application, which will not happen any time soon.  If you
+  come across this issue, please augment your terminal window size.

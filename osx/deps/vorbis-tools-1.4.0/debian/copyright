@@ -1,0 +1,24 @@
+This package was debianized by Christopher L Cheney <ccheney@debian.org> on
+Tue, 31 Oct 2000 16:38:42 -0600.
+
+Adeodato Simó <dato@net.com.org.es> stepped as a co-maintainer on
+Sat, 19 Nov 2005 12:04:38 +0100.
+
+It was downloaded from http://www.xiph.org/downloads/:
+
+    URL:<http://downloads.xiph.org/releases/vorbis/vorbis-tools-1.1.1.tar.gz>
+
+Upstream Authors: Kenneth Arnold <ogg123@arnoldnet.net>
+                  Segher Boessenkool <segher@xiph.org>
+		  Stan Seibert <volsung@xiph.org>
+                  Michael Smith <msmith@xiph.org>
+
+Copyright:
+
+THE Ogg Vorbis SOURCE CODE IS (C) COPYRIGHT 1994-2000 by Monty
+<monty@xiph.org> and The XIPHOPHORUS Company http://www.xiph.org/
+
+You are free to distribute this software under the terms of the
+GNU General Public License.  On Debian systems, the complete text
+of the GNU General Public License can be found in
+/usr/share/common-licenses/GPL file.

@@ -1,0 +1,14 @@
+Source: vorbis-tools
+Section: sound
+Priority: optional
+Maintainer: Christopher L Cheney <ccheney@debian.org>
+Build-Depends: autotools-dev, bison, debhelper (>> 4.0.18), devscripts, libcurl-dev, libao-dev (>> 0.8.4), libogg-dev (>> 1.1.0), liboggflac-dev, libspeex-dev, libvorbis-dev (>> 1.0.1)
+Standards-Version: 3.6.1.0
+
+Package: vorbis-tools
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Several Ogg Vorbis Tools
+ vorbis-tools contains oggenc (an encoder), ogg123 (a playback tool),
+ ogginfo (displays ogg information), vcut (ogg file splitter), and
+ vorbiscomment (ogg comment editor)

@@ -1,0 +1,2 @@
+application/ogg; ogg123 %s; description="Ogg Application"; priority=5
+audio/ogg; ogg123 %s; description="Ogg Audio"; priority=5

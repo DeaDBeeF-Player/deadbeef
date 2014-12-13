@@ -1,0 +1,16 @@
+# Copy this to ~/.ogg123rc and edit as necessary. These are all the
+# default options except for default device, which is a reasonable
+# default for many people. To see a full list of available options,
+# type:
+#
+# $ ogg123 -c
+
+default_device=oss
+shuffle=n
+verbose=1
+outbuffer=0
+outprebuffer=0
+inbuffer=10000
+inprebuffer=10
+#save_stream=
+delay=1
