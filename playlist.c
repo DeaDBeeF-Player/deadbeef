@@ -882,10 +882,14 @@ pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out, const char *charset
     }
 
     // recode
-    int l = strlen (str);
+    size_t l = strlen (str);
+    if (l == 0) {
+        return;
+    }
+
     char recbuf[l*10];
-    int res = junk_recode (str, l, recbuf, sizeof (recbuf)-1, charset);
-    if (res > 0) {
+    int res = junk_recode (str, (int)l, recbuf, (int)(sizeof (recbuf)-1), charset);
+    if (res >= 0) {
         strcpy (str, recbuf);
     }
     else
