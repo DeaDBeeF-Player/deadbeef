@@ -481,6 +481,7 @@
 		2DA24BA019E7254F00E34920 /* vtls.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA24B8819E7254F00E34920 /* vtls.h */; };
 		2DA24BA319E72A2500E34920 /* vfs_curl.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */; };
 		2DA6F89C19A5332D002151EB /* escape.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA6F89B19A5332D002151EB /* escape.c */; };
+		2DACBB241A40CEB100CCF401 /* mp3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; };
 		2DB10B8119B908630054A6AB /* tab_bottom_fill.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6919B9085A0054A6AB /* tab_bottom_fill.png */; };
 		2DB10B8219B908630054A6AB /* tab_bottom_fill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6A19B9085A0054A6AB /* tab_bottom_fill@2x.png */; };
 		2DB10B8319B908630054A6AB /* tab_fill.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6B19B9085A0054A6AB /* tab_fill.png */; };
@@ -3752,6 +3753,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DACBB241A40CEB100CCF401 /* mp3.dylib in Resources */,
 				2D5D214C1A403428001D5A79 /* lastfm.dylib in Resources */,
 				2D9177421A0E89C8004BC222 /* alac.dylib in Resources */,
 				2DCB281D19E86194008E9DF6 /* m3u.dylib in Resources */,
@@ -5272,12 +5274,14 @@
 				CLANG_ENABLE_MODULES = YES;
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
+					USE_LIBMAD,
+					USE_LIBMPG123,
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/deps/libmad-0.15.1b\"",
+					"\"$(SRCROOT)/deps/mpg123-1.21.0/src/libmpg123\"",
+					"\"$(SRCROOT)/mpg123\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
@@ -5290,9 +5294,15 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					USE_LIBMAD,
+					USE_LIBMPG123,
+				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/deps/libmad-0.15.1b\"",
+					"\"$(SRCROOT)/deps/mpg123-1.21.0/src/libmpg123\"",
+					"\"$(SRCROOT)/mpg123\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;

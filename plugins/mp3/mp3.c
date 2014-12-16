@@ -24,7 +24,12 @@
 
 #include <string.h>
 #include <stdio.h>
+#ifdef USE_LIBMAD
 #include <mad.h>
+#endif
+#ifdef USE_LIBMPG123
+#include <mpg123.h>
+#endif
 #include <assert.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -34,6 +39,12 @@
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
+
+#ifdef USE_LIBMAD
+static int conf_use_mad = 1;
+#else
+static int conf_use_mad = 0;
+#endif
 
 //#define WRITE_DUMP 1
 
@@ -122,11 +133,20 @@ typedef struct {
 typedef struct {
     DB_fileinfo_t info;
     buffer_t buffer;
-    struct mad_stream stream;
-    struct mad_frame frame;
-    struct mad_synth synth;
+    union {
+#ifdef USE_LIBMAD
+        struct {
+            struct mad_stream mad_stream;
+            struct mad_frame mad_frame;
+            struct mad_synth mad_synth;
+        };
+#endif
+#ifdef USE_LIBMPG123
+        struct {
+        };
+#endif
+    };
 } mp3_info_t;
-
 
 static uint32_t
 extract_i32 (unsigned char *buf)
@@ -888,14 +908,16 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     trace ("mp3 format: bps:%d sr:%d channels:%d\n", _info->fmt.bps, _info->fmt.samplerate, _info->fmt.channels);
 
-	mad_stream_init(&info->stream);
-	mad_stream_options (&info->stream, MAD_OPTION_IGNORECRC);
-	mad_frame_init(&info->frame);
-	mad_synth_init(&info->synth);
-
+#ifdef USE_LIBMAD
+	mad_stream_init(&info->mad_stream);
+	mad_stream_options (&info->mad_stream, MAD_OPTION_IGNORECRC);
+	mad_frame_init(&info->mad_frame);
+	mad_synth_init(&info->mad_synth);
+#endif
     return 0;
 }
 
+#ifdef USE_LIBMAD
 /****************************************************************************
  * Converts a sample from libmad's fixed point number format to a signed	*
  * short (16 bits).															*
@@ -940,6 +962,7 @@ MadFixedToFloat (mad_fixed_t Fixed) {
 }
 
 #define MadErrorString(x) mad_stream_errorstr(x)
+#endif
 
 static inline void
 cmp3_skip (mp3_info_t *info) {
@@ -1002,15 +1025,16 @@ cmp3_decode_requested_int16 (mp3_info_t *info) {
         return;
     }
     // copy synthesized samples into readbuffer
-    int idx = info->synth.pcm.length-info->buffer.decode_remaining;
+    int idx = info->mad_synth.pcm.length-info->buffer.decode_remaining;
 
+#ifdef USE_LIBMAD
     // stereo
-    if (MAD_NCHANNELS(&info->frame.header) == 2 && info->info.fmt.channels == 2) {
+    if (MAD_NCHANNELS(&info->mad_frame.header) == 2 && info->info.fmt.channels == 2) {
         while (info->buffer.decode_remaining > 0 && info->buffer.readsize > 0) {
-            *((int16_t*)info->buffer.out) = MadFixedToSshort (info->synth.pcm.samples[0][idx]);
+            *((int16_t*)info->buffer.out) = MadFixedToSshort (info->mad_synth.pcm.samples[0][idx]);
             info->buffer.readsize -= 2;
             info->buffer.out += 2;
-            *((int16_t*)info->buffer.out) = MadFixedToSshort (info->synth.pcm.samples[1][idx]);
+            *((int16_t*)info->buffer.out) = MadFixedToSshort (info->mad_synth.pcm.samples[1][idx]);
             info->buffer.readsize -= 2;
             info->buffer.out += 2;
             info->buffer.decode_remaining--;
@@ -1018,9 +1042,9 @@ cmp3_decode_requested_int16 (mp3_info_t *info) {
         }
     }
     // mono
-    else if (MAD_NCHANNELS(&info->frame.header) == 1 && info->info.fmt.channels == 1){
+    else if (MAD_NCHANNELS(&info->mad_frame.header) == 1 && info->info.fmt.channels == 1){
         while (info->buffer.decode_remaining > 0 && info->buffer.readsize > 0) {
-            *((int16_t*)info->buffer.out) = MadFixedToSshort (info->synth.pcm.samples[0][idx]);
+            *((int16_t*)info->buffer.out) = MadFixedToSshort (info->mad_synth.pcm.samples[0][idx]);
             info->buffer.readsize -= 2;
             info->buffer.out += 2;
             info->buffer.decode_remaining--;
@@ -1028,9 +1052,9 @@ cmp3_decode_requested_int16 (mp3_info_t *info) {
         }
     }
     // workaround for bad mp3s that have both mono and stereo frames
-    else if (MAD_NCHANNELS(&info->frame.header) == 1 && info->info.fmt.channels == 2) {
+    else if (MAD_NCHANNELS(&info->mad_frame.header) == 1 && info->info.fmt.channels == 2) {
         while (info->buffer.decode_remaining > 0 && info->buffer.readsize > 0) {
-            int16_t sample = MadFixedToSshort (info->synth.pcm.samples[0][idx]);
+            int16_t sample = MadFixedToSshort (info->mad_synth.pcm.samples[0][idx]);
             *((int16_t*)info->buffer.out) = sample;
             info->buffer.readsize -= 2;
             info->buffer.out += 2;
@@ -1041,9 +1065,9 @@ cmp3_decode_requested_int16 (mp3_info_t *info) {
             idx++;
         }
     }
-    else if (MAD_NCHANNELS(&info->frame.header) == 2 && info->info.fmt.channels == 1) {
+    else if (MAD_NCHANNELS(&info->mad_frame.header) == 2 && info->info.fmt.channels == 1) {
         while (info->buffer.decode_remaining > 0 && info->buffer.readsize > 0) {
-            int16_t sample = MadFixedToSshort (info->synth.pcm.samples[0][idx]);
+            int16_t sample = MadFixedToSshort (info->mad_synth.pcm.samples[0][idx]);
             *((int16_t*)info->buffer.out) = sample;
             info->buffer.readsize -= 2;
             info->buffer.out += 2;
@@ -1051,23 +1075,25 @@ cmp3_decode_requested_int16 (mp3_info_t *info) {
             idx++;
         }
     }
+#endif
     assert (info->buffer.readsize >= 0);
 }
 
+#ifdef USE_LIBMAD
 static int
 cmp3_stream_frame (mp3_info_t *info) {
     int eof = 0;
-    while (!eof && (info->stream.buffer == NULL || info->buffer.decode_remaining <= 0)) {
+    while (!eof && (info->mad_stream.buffer == NULL || info->buffer.decode_remaining <= 0)) {
         // read more MPEG data if needed
-        if(info->stream.buffer==NULL || info->stream.error==MAD_ERROR_BUFLEN) {
+        if(info->mad_stream.buffer==NULL || info->mad_stream.error==MAD_ERROR_BUFLEN) {
             // copy part of last frame to beginning
-            if (info->stream.next_frame && info->stream.bufend <= info->stream.next_frame) {
+            if (info->mad_stream.next_frame && info->mad_stream.bufend <= info->mad_stream.next_frame) {
                 eof = 1;
                 break;
             }
-            if (info->stream.next_frame != NULL) {
-                info->buffer.remaining = info->stream.bufend - info->stream.next_frame;
-                memmove (info->buffer.input, info->stream.next_frame, info->buffer.remaining);
+            if (info->mad_stream.next_frame != NULL) {
+                info->buffer.remaining = info->mad_stream.bufend - info->mad_stream.next_frame;
+                memmove (info->buffer.input, info->mad_stream.next_frame, info->buffer.remaining);
             }
             int size = READBUFFER - info->buffer.remaining;
             int bytesread = 0;
@@ -1085,8 +1111,8 @@ cmp3_stream_frame (mp3_info_t *info) {
                 bytes += bytesread;
             }
             bytesread += info->buffer.remaining;
-            mad_stream_buffer(&info->stream,info->buffer.input,bytesread);
-            if (info->stream.buffer==NULL) {
+            mad_stream_buffer(&info->mad_stream,info->buffer.input,bytesread);
+            if (info->mad_stream.buffer==NULL) {
                 // check sync bits
                 if (bytes[0] != 0xff || (bytes[1]&(3<<5)) != (3<<5)) {
                     trace ("mp3: read didn't start at frame boundary!\ncmp3_scan_stream is broken\n");
@@ -1096,14 +1122,14 @@ cmp3_stream_frame (mp3_info_t *info) {
                 }
             }
         }
-        info->stream.error=0;
+        info->mad_stream.error=0;
 
         // decode next frame
-        if(mad_frame_decode(&info->frame,&info->stream))
+        if(mad_frame_decode(&info->mad_frame, &info->mad_stream))
         {
-            if(MAD_RECOVERABLE(info->stream.error))
+            if(MAD_RECOVERABLE(info->mad_stream.error))
             {
-                if(info->stream.error!=MAD_ERROR_LOSTSYNC) {
+                if(info->mad_stream.error!=MAD_ERROR_LOSTSYNC) {
 //                    printf ("mp3: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
                 }
                 if (info->buffer.lead_in_frames > 0) {
@@ -1112,7 +1138,7 @@ cmp3_stream_frame (mp3_info_t *info) {
                 continue;
             }
             else {
-                if(info->stream.error==MAD_ERROR_BUFLEN) {
+                if(info->mad_stream.error==MAD_ERROR_BUFLEN) {
 //                    printf ("mp3: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
                     continue;
                 }
@@ -1123,23 +1149,24 @@ cmp3_stream_frame (mp3_info_t *info) {
                 }
             }
         }
-        mad_synth_frame(&info->synth,&info->frame);
+        mad_synth_frame(&info->mad_synth,&info->mad_frame);
         if (info->buffer.lead_in_frames > 0) {
             info->buffer.lead_in_frames--;
             info->buffer.decode_remaining = 0;
             continue;
         }
 
-        info->info.fmt.samplerate = info->frame.header.samplerate;
+        info->info.fmt.samplerate = info->mad_frame.header.samplerate;
 
         // synthesize single frame
-        info->buffer.decode_remaining = info->synth.pcm.length;
-        deadbeef->streamer_set_bitrate (info->frame.header.bitrate/1000);
+        info->buffer.decode_remaining = info->mad_synth.pcm.length;
+        deadbeef->streamer_set_bitrate (info->mad_frame.header.bitrate/1000);
         break;
     }
 
     return eof;
 }
+#endif
 
 static int
 cmp3_decode_int16 (mp3_info_t *info) {
@@ -1167,9 +1194,11 @@ cmp3_free (DB_fileinfo_t *_info) {
         deadbeef->fclose (info->buffer.file);
         info->buffer.file = NULL;
         info->info.file = NULL;
-        mad_synth_finish (&info->synth);
-        mad_frame_finish (&info->frame);
-        mad_stream_finish (&info->stream);
+#ifdef USE_LIBMAD
+        mad_synth_finish (&info->mad_synth);
+        mad_frame_finish (&info->mad_frame);
+        mad_stream_finish (&info->mad_stream);
+#endif
     }
     free (info);
 }
@@ -1240,17 +1269,18 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
                 info->buffer.currentsample = sample;
                 _info->readpos = (float)(info->buffer.currentsample - info->buffer.startsample) / info->buffer.samplerate;
 
+#ifdef USE_LIBMAD
                 // reset mad
-                mad_synth_finish (&info->synth);
-                mad_frame_finish (&info->frame);
-                mad_stream_finish (&info->stream);
+                mad_synth_finish (&info->mad_synth);
+                mad_frame_finish (&info->mad_frame);
+                mad_stream_finish (&info->mad_stream);
                 info->buffer.remaining = 0;
                 info->buffer.decode_remaining = 0;
-                mad_stream_init(&info->stream);
-                mad_stream_options (&info->stream, MAD_OPTION_IGNORECRC);
-                mad_frame_init(&info->frame);
-                mad_synth_init(&info->synth);
-
+                mad_stream_init(&info->mad_stream);
+                mad_stream_options (&info->mad_stream, MAD_OPTION_IGNORECRC);
+                mad_frame_init(&info->mad_frame);
+                mad_synth_init(&info->mad_synth);
+#endif
                 return 0;
             }
             trace ("seek failed!\n");
@@ -1268,16 +1298,20 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
     }
     // restart file, and load until we hit required pos
     deadbeef->fseek (info->buffer.file, info->buffer.startoffset, SEEK_SET);
-    mad_synth_finish (&info->synth);
-    mad_frame_finish (&info->frame);
-    mad_stream_finish (&info->stream);
+
     info->buffer.remaining = 0;
     info->buffer.readsize = 0;
     info->buffer.decode_remaining = 0;
-	mad_stream_init(&info->stream);
-	mad_stream_options (&info->stream, MAD_OPTION_IGNORECRC);
-	mad_frame_init(&info->frame);
-	mad_synth_init(&info->synth);
+
+#ifdef USE_LIBMAD
+    mad_synth_finish (&info->mad_synth);
+    mad_frame_finish (&info->mad_frame);
+    mad_stream_finish (&info->mad_stream);
+	mad_stream_init(&info->mad_stream);
+	mad_stream_options (&info->mad_stream, MAD_OPTION_IGNORECRC);
+	mad_frame_init(&info->mad_frame);
+	mad_synth_init(&info->mad_synth);
+#endif
 
 //    struct timeval tm1;
 //    gettimeofday (&tm1, NULL);
@@ -1446,6 +1480,9 @@ static const char *exts[] = {
 
 static const char settings_dlg[] =
     "property \"Disable gapless playback (faster scanning)\" checkbox mp3.disable_gapless 0;\n"
+#if defined(USE_LIBMAD) && defined(USE_LIBMPG123)
+    "property \"Use libmad (otherwise libmpg123 will be used)\" checkbox mp3.mad 1;\n"
+#endif
 ;
 
 // define plugin interface
@@ -1457,7 +1494,7 @@ static DB_decoder_t plugin = {
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "stdmpg",
     .plugin.name = "MPEG decoder",
-    .plugin.descr = "MPEG v1/2 layer1/2/3 decoder based on libmad",
+    .plugin.descr = "MPEG v1/2 layer1/2/3 decoder",
     .plugin.copyright = 
         "MPEG decoder plugin based on libmad\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko\n"
