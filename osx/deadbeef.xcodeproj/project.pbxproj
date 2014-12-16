@@ -638,9 +638,8 @@
 		4D32FA4919A644A6000FFDE0 /* timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D32FA2F19A644A6000FFDE0 /* timer.h */; };
 		4D32FA4A19A644A6000FFDE0 /* version.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32FA3019A644A6000FFDE0 /* version.c */; };
 		4D32FA4B19A644A6000FFDE0 /* version.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D32FA3119A644A6000FFDE0 /* version.h */; };
-		4D32FA5619A645CA000FFDE0 /* mpgmad.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32FA5519A645CA000FFDE0 /* mpgmad.c */; };
+		4D32FA5619A645CA000FFDE0 /* mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32FA5519A645CA000FFDE0 /* mp3.c */; };
 		4D32FA5919A645E9000FFDE0 /* libmad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D32FA1519A6448A000FFDE0 /* libmad.a */; };
-		4D32FA5A19A6464E000FFDE0 /* mpgmad.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mpgmad.dylib */; };
 		4D32FA6619A646C8000FFDE0 /* flac.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F99719A62F2A000FFDE0 /* flac.c */; };
 		4D32FA6A19A64794000FFDE0 /* libflaclib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.a */; };
 		4D32FA6B19A647B5000FFDE0 /* flac.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA6219A646C0000FFDE0 /* flac.dylib */; };
@@ -860,7 +859,7 @@
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 4D32FA4F19A64577000FFDE0;
-			remoteInfo = mpgmad;
+			remoteInfo = mp3;
 		};
 		4D32FA6719A64768000FFDE0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1551,8 +1550,8 @@
 		4D32FA2F19A644A6000FFDE0 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
 		4D32FA3019A644A6000FFDE0 /* version.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = version.c; sourceTree = "<group>"; };
 		4D32FA3119A644A6000FFDE0 /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
-		4D32FA5019A64577000FFDE0 /* mpgmad.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = mpgmad.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		4D32FA5519A645CA000FFDE0 /* mpgmad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mpgmad.c; path = osx/../plugins/mpgmad/mpgmad.c; sourceTree = "<group>"; };
+		4D32FA5019A64577000FFDE0 /* mp3.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = mp3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D32FA5519A645CA000FFDE0 /* mp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp3.c; path = plugins/mp3/mp3.c; sourceTree = "<group>"; };
 		4D32FA6219A646C0000FFDE0 /* flac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = flac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ddb_dumb.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D44E67219B7532700F780FC /* cdumb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cdumb.c; path = plugins/dumb/cdumb.c; sourceTree = "<group>"; };
@@ -2579,7 +2578,7 @@
 				4D32F9A719A63094000FFDE0 /* libflaclib.a */,
 				4D32F9EA19A63441000FFDE0 /* ffap.dylib */,
 				4D32FA1519A6448A000FFDE0 /* libmad.a */,
-				4D32FA5019A64577000FFDE0 /* mpgmad.dylib */,
+				4D32FA5019A64577000FFDE0 /* mp3.dylib */,
 				4D32FA6219A646C0000FFDE0 /* flac.dylib */,
 				2DB96A8019ABB47C00E318A8 /* dsp_libsrc.dylib */,
 				2DB96A8A19ABB4C600E318A8 /* libsamplerate.a */,
@@ -2718,7 +2717,7 @@
 				2DB96A7619ABB3E500E318A8 /* dsp_libsrc */,
 				4D44E66919B752F900F780FC /* dumb */,
 				2D2A135519B647BB00AD1EB7 /* gme */,
-				4D32FA5419A645BB000FFDE0 /* mpgmad */,
+				4D32FA5419A645BB000FFDE0 /* mp3 */,
 				4D32F9F219A63500000FFDE0 /* ffap */,
 				4D32F99619A62F03000FFDE0 /* flac */,
 				4DEE38461838E6450022D2B7 /* cocoaui */,
@@ -2860,14 +2859,14 @@
 			path = "osx/deps/libmad-0.15.1b";
 			sourceTree = "<group>";
 		};
-		4D32FA5419A645BB000FFDE0 /* mpgmad */ = {
+		4D32FA5419A645BB000FFDE0 /* mp3 */ = {
 			isa = PBXGroup;
 			children = (
 				2D917E7C1A40470800C3EB44 /* libmpg123 */,
 				4D32FA3219A644A6000FFDE0 /* libmad-0.15.1b */,
-				4D32FA5519A645CA000FFDE0 /* mpgmad.c */,
+				4D32FA5519A645CA000FFDE0 /* mp3.c */,
 			);
-			name = mpgmad;
+			name = mp3;
 			sourceTree = "<group>";
 		};
 		4D44E66919B752F900F780FC /* dumb */ = {
@@ -3623,9 +3622,9 @@
 			productReference = 4D32FA1519A6448A000FFDE0 /* libmad.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		4D32FA4F19A64577000FFDE0 /* mpgmad */ = {
+		4D32FA4F19A64577000FFDE0 /* mp3 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4D32FA5119A64577000FFDE0 /* Build configuration list for PBXNativeTarget "mpgmad" */;
+			buildConfigurationList = 4D32FA5119A64577000FFDE0 /* Build configuration list for PBXNativeTarget "mp3" */;
 			buildPhases = (
 				4D32FA4C19A64577000FFDE0 /* Sources */,
 				4D32FA4D19A64577000FFDE0 /* Frameworks */,
@@ -3637,9 +3636,9 @@
 				2D565B981A40C0F300CE1F5D /* PBXTargetDependency */,
 				4D32FA5819A645E1000FFDE0 /* PBXTargetDependency */,
 			);
-			name = mpgmad;
-			productName = mpgmad;
-			productReference = 4D32FA5019A64577000FFDE0 /* mpgmad.dylib */;
+			name = mp3;
+			productName = mp3;
+			productReference = 4D32FA5019A64577000FFDE0 /* mp3.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		4D32FA6119A646C0000FFDE0 /* flac */ = {
@@ -3729,7 +3728,7 @@
 				4D32F9A619A63094000FFDE0 /* flaclib */,
 				4D32F9E919A63441000FFDE0 /* ffap */,
 				4D32FA1419A6448A000FFDE0 /* mad */,
-				4D32FA4F19A64577000FFDE0 /* mpgmad */,
+				4D32FA4F19A64577000FFDE0 /* mp3 */,
 				4D32FA6119A646C0000FFDE0 /* flac */,
 				2DB96A7F19ABB47C00E318A8 /* dsp_libsrc */,
 				2DB96A8919ABB4C600E318A8 /* samplerate */,
@@ -3768,7 +3767,6 @@
 				2DB10B8B19B908630054A6AB /* tab_unsel_right.png in Resources */,
 				4D32FA6B19A647B5000FFDE0 /* flac.dylib in Resources */,
 				2DB10B8319B908630054A6AB /* tab_fill.png in Resources */,
-				4D32FA5A19A6464E000FFDE0 /* mpgmad.dylib in Resources */,
 				2DCD78E119A665CA00EA50FA /* deadbeef.png in Resources */,
 				4D32FA0019A63644000FFDE0 /* ffap.dylib in Resources */,
 				2DB10B8419B908630054A6AB /* tab_fill@2x.png in Resources */,
@@ -4295,7 +4293,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D32FA5619A645CA000FFDE0 /* mpgmad.c in Sources */,
+				4D32FA5619A645CA000FFDE0 /* mp3.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4468,7 +4466,7 @@
 		};
 		4D32FA5C19A64676000FFDE0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4D32FA4F19A64577000FFDE0 /* mpgmad */;
+			target = 4D32FA4F19A64577000FFDE0 /* mp3 */;
 			targetProxy = 4D32FA5B19A64676000FFDE0 /* PBXContainerItemProxy */;
 		};
 		4D32FA6819A64768000FFDE0 /* PBXTargetDependency */ = {
@@ -4773,6 +4771,7 @@
 					HAVE_STRERROR,
 					HAVE_CONFIG_H,
 					TARGET_OS_MAC,
+					ASMALIGN_BALIGN,
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
@@ -4805,6 +4804,7 @@
 					HAVE_STRERROR,
 					HAVE_CONFIG_H,
 					TARGET_OS_MAC,
+					ASMALIGN_BALIGN,
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
@@ -5527,7 +5527,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4D32FA5119A64577000FFDE0 /* Build configuration list for PBXNativeTarget "mpgmad" */ = {
+		4D32FA5119A64577000FFDE0 /* Build configuration list for PBXNativeTarget "mp3" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4D32FA5219A64577000FFDE0 /* Debug */,
