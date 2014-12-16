@@ -269,6 +269,9 @@
 		2D2A14B719B6482600AD1EB7 /* Z80_Cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2A140B19B6482600AD1EB7 /* Z80_Cpu.h */; };
 		2D2A14BA19B6485200AD1EB7 /* gme.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */; };
 		2D2A14F119B64F2900AD1EB7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
+		2D5D21461A4033FF001D5A79 /* lastfm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D21451A4033FF001D5A79 /* lastfm.c */; };
+		2D5D21491A403412001D5A79 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA2499E19E71FEB00E34920 /* libcurl.a */; };
+		2D5D214C1A403428001D5A79 /* lastfm.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D21401A4033B0001D5A79 /* lastfm.dylib */; };
 		2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */; };
 		2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */; };
 		2D72047319DF1E96000989C6 /* Playlist.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D72047219DF1E96000989C6 /* Playlist.xib */; };
@@ -694,6 +697,20 @@
 			remoteGlobalIDString = 2D2A135919B647CF00AD1EB7;
 			remoteInfo = gme;
 		};
+		2D5D21471A40340C001D5A79 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DA2499D19E71FEA00E34920;
+			remoteInfo = curl;
+		};
+		2D5D214A1A40341D001D5A79 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D5D213F1A4033B0001D5A79;
+			remoteInfo = lastfm;
+		};
 		2D9177401A0E89B8004BC222 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -1051,6 +1068,8 @@
 		2D2A140A19B6482600AD1EB7 /* Z80_Cpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Z80_Cpu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Z80_Cpu.cpp"; sourceTree = "<group>"; };
 		2D2A140B19B6482600AD1EB7 /* Z80_Cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Z80_Cpu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Z80_Cpu.h"; sourceTree = "<group>"; };
 		2D2A14F019B64F2900AD1EB7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		2D5D21401A4033B0001D5A79 /* lastfm.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = lastfm.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D5D21451A4033FF001D5A79 /* lastfm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lastfm.c; path = plugins/lastfm/lastfm.c; sourceTree = "<group>"; };
 		2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbTabStrip.h; path = widgets/DdbTabStrip.h; sourceTree = "<group>"; };
 		2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbTabStrip.m; path = widgets/DdbTabStrip.m; sourceTree = "<group>"; };
 		2D72047219DF1E96000989C6 /* Playlist.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Playlist.xib; sourceTree = "<group>"; };
@@ -1489,6 +1508,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2D5D213D1A4033B0001D5A79 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D5D21491A403412001D5A79 /* libcurl.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D91773A1A0E8966004BC222 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1883,6 +1910,14 @@
 				2D2A135E19B6480E00AD1EB7 /* cgme.c */,
 			);
 			name = gme;
+			sourceTree = "<group>";
+		};
+		2D5D21441A4033D3001D5A79 /* lastfm */ = {
+			isa = PBXGroup;
+			children = (
+				2D5D21451A4033FF001D5A79 /* lastfm.c */,
+			);
+			name = lastfm;
 			sourceTree = "<group>";
 		};
 		2D91772E1A0E892F004BC222 /* alac */ = {
@@ -2312,6 +2347,7 @@
 				2DCB281419E86162008E9DF6 /* m3u.dylib */,
 				2D91773F1A0E8966004BC222 /* alac.dylib */,
 				2D91774B1A0E8A10004BC222 /* libmp4ff.a */,
+				2D5D21401A4033B0001D5A79 /* lastfm.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2426,6 +2462,7 @@
 		4D1B514C1837EF7C003E6066 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				2D5D21441A4033D3001D5A79 /* lastfm */,
 				2D91774F1A0E8A1F004BC222 /* mp4ff */,
 				2D91772E1A0E892F004BC222 /* alac */,
 				2DCB281819E8616E008E9DF6 /* m3u */,
@@ -2855,6 +2892,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2D5D213E1A4033B0001D5A79 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D91773B1A0E8966004BC222 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -3051,6 +3095,24 @@
 			productReference = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		2D5D213F1A4033B0001D5A79 /* lastfm */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D5D21431A4033B0001D5A79 /* Build configuration list for PBXNativeTarget "lastfm" */;
+			buildPhases = (
+				2D5D213C1A4033B0001D5A79 /* Sources */,
+				2D5D213D1A4033B0001D5A79 /* Frameworks */,
+				2D5D213E1A4033B0001D5A79 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2D5D21481A40340C001D5A79 /* PBXTargetDependency */,
+			);
+			name = lastfm;
+			productName = lastfm;
+			productReference = 2D5D21401A4033B0001D5A79 /* lastfm.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2D9177371A0E8966004BC222 /* alac */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D91773C1A0E8966004BC222 /* Build configuration list for PBXNativeTarget "alac" */;
@@ -3185,6 +3247,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D5D214B1A40341D001D5A79 /* PBXTargetDependency */,
 				2D9177411A0E89B8004BC222 /* PBXTargetDependency */,
 				2DCB281C19E8618D008E9DF6 /* PBXTargetDependency */,
 				2DA24BA219E72A0000E34920 /* PBXTargetDependency */,
@@ -3322,6 +3385,9 @@
 					2D22F75419E1384B009C631E = {
 						CreatedOnToolsVersion = 6.0.1;
 					};
+					2D5D213F1A4033B0001D5A79 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
 					2D91774A1A0E8A10004BC222 = {
 						CreatedOnToolsVersion = 6.1;
 					};
@@ -3366,6 +3432,7 @@
 				2DCB281319E86162008E9DF6 /* m3u */,
 				2D9177371A0E8966004BC222 /* alac */,
 				2D91774A1A0E8A10004BC222 /* mp4ff */,
+				2D5D213F1A4033B0001D5A79 /* lastfm */,
 			);
 		};
 /* End PBXProject section */
@@ -3375,6 +3442,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D5D214C1A403428001D5A79 /* lastfm.dylib in Resources */,
 				2D9177421A0E89C8004BC222 /* alac.dylib in Resources */,
 				2DCB281D19E86194008E9DF6 /* m3u.dylib in Resources */,
 				2DA24BA319E72A2500E34920 /* vfs_curl.dylib in Resources */,
@@ -3582,6 +3650,14 @@
 				2D2A14A519B6482600AD1EB7 /* Track_Filter.cpp in Sources */,
 				2D2A14A919B6482600AD1EB7 /* Vgm_Core.cpp in Sources */,
 				2D2A14AD19B6482600AD1EB7 /* Ym2413_Emu.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D5D213C1A4033B0001D5A79 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D5D21461A4033FF001D5A79 /* lastfm.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3974,6 +4050,16 @@
 			target = 2D2A135919B647CF00AD1EB7 /* gme */;
 			targetProxy = 2D2A14B819B6484100AD1EB7 /* PBXContainerItemProxy */;
 		};
+		2D5D21481A40340C001D5A79 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DA2499D19E71FEA00E34920 /* curl */;
+			targetProxy = 2D5D21471A40340C001D5A79 /* PBXContainerItemProxy */;
+		};
+		2D5D214B1A40341D001D5A79 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D5D213F1A4033B0001D5A79 /* lastfm */;
+			targetProxy = 2D5D214A1A40341D001D5A79 /* PBXContainerItemProxy */;
+		};
 		2D9177411A0E89B8004BC222 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D9177371A0E8966004BC222 /* alac */;
@@ -4208,6 +4294,38 @@
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		2D5D21411A4033B0001D5A79 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		2D5D21421A4033B0001D5A79 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -4858,6 +4976,14 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		2D5D21431A4033B0001D5A79 /* Build configuration list for PBXNativeTarget "lastfm" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D5D21411A4033B0001D5A79 /* Debug */,
+				2D5D21421A4033B0001D5A79 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		2D91773C1A0E8966004BC222 /* Build configuration list for PBXNativeTarget "alac" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -4874,6 +5000,7 @@
 				2D91774E1A0E8A10004BC222 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2DA249A119E71FEB00E34920 /* Build configuration list for PBXNativeTarget "curl" */ = {
 			isa = XCConfigurationList;
