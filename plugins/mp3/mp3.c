@@ -125,7 +125,7 @@ typedef struct {
     struct mad_stream stream;
     struct mad_frame frame;
     struct mad_synth synth;
-} mpgmad_info_t;
+} mp3_info_t;
 
 
 static uint32_t
@@ -362,12 +362,12 @@ retry_sync:
         // check if channel/bitrate combination is valid for layer2
         if (layer == 2) {
             if ((bitrate <= 56 || bitrate == 80) && nchannels != 1) {
-                trace ("mpgmad: bad frame %d: layer %d, channels %d, bitrate %d\n", nframe, layer, nchannels, bitrate);
+                trace ("mp3: bad frame %d: layer %d, channels %d, bitrate %d\n", nframe, layer, nchannels, bitrate);
                 lastframe_valid = 0;
                 continue; // bad frame
             }
             if (bitrate >= 224 && nchannels == 1) {
-                trace ("mpgmad: bad frame %d: layer %d, channels %d, bitrate %d\n", nframe, layer, nchannels, bitrate);
+                trace ("mp3: bad frame %d: layer %d, channels %d, bitrate %d\n", nframe, layer, nchannels, bitrate);
                 lastframe_valid = 0;
                 continue; // bad frame
             }
@@ -697,7 +697,7 @@ end_scan:
 
 int
 cmp3_seek_stream (DB_fileinfo_t *_info, int sample) {
-    mpgmad_info_t *info = (mpgmad_info_t *)_info;
+    mp3_info_t *info = (mp3_info_t *)_info;
     if (sample == 0) {
         _info->readpos = 0;
         info->buffer.currentsample = 0;
@@ -719,9 +719,9 @@ cmp3_seek_stream (DB_fileinfo_t *_info, int sample) {
 
 static DB_fileinfo_t *
 cmp3_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (mpgmad_info_t));
-    mpgmad_info_t *info = (mpgmad_info_t *)_info;
-    memset (info, 0, sizeof (mpgmad_info_t));
+    DB_fileinfo_t *_info = malloc (sizeof (mp3_info_t));
+    mp3_info_t *info = (mp3_info_t *)_info;
+    memset (info, 0, sizeof (mp3_info_t));
     return _info;
 }
 
@@ -793,7 +793,7 @@ cmp3_set_extra_properties (buffer_t *buffer, int fake) {
 
 static int
 cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
-    mpgmad_info_t *info = (mpgmad_info_t *)_info;
+    mp3_info_t *info = (mp3_info_t *)_info;
     _info->plugin = &plugin;
     memset (&info->buffer, 0, sizeof (info->buffer));
     deadbeef->pl_lock ();
@@ -809,12 +809,12 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (!info->buffer.file->vfs->is_streaming ()) {
         int skip = deadbeef->junk_get_leading_size (info->buffer.file);
         if (skip > 0) {
-            trace ("mpgmad: skipping %d(%xH) bytes of junk\n", skip, skip);
+            trace ("mp3: skipping %d(%xH) bytes of junk\n", skip, skip);
             deadbeef->fseek (info->buffer.file, skip, SEEK_SET);
         }
         int res = cmp3_scan_stream (&info->buffer, deadbeef->conf_get_int ("mp3.disable_gapless", 0) ? 0 : -1);
         if (res < 0) {
-            trace ("mpgmad: cmp3_init: initial cmp3_scan_stream failed\n");
+            trace ("mp3: cmp3_init: initial cmp3_scan_stream failed\n");
             return -1;
         }
         info->buffer.delay += 529;
@@ -836,7 +836,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             info->buffer.startsample = info->buffer.delay;
             info->buffer.endsample = info->buffer.totalsamples-info->buffer.padding-1;
             trace ("mp3 totalsamples: %d (%d, %d, %d | %d %d)\n", info->buffer.endsample-info->buffer.startsample+1, info->buffer.totalsamples, info->buffer.delay, info->buffer.padding, info->buffer.startsample, info->buffer.endsample);
-            trace ("mpgmad: seeking to %d(%xH) start offset\n", info->buffer.startoffset, info->buffer.startoffset);
+            trace ("mp3: seeking to %d(%xH) start offset\n", info->buffer.startoffset, info->buffer.startoffset);
             deadbeef->fseek (info->buffer.file, info->buffer.startoffset, SEEK_SET);
         }
         plugin.seek_sample (_info, 0);
@@ -847,7 +847,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         deadbeef->pl_add_meta (it, "title", NULL);
         int res = cmp3_scan_stream (&info->buffer, 0);
         if (res < 0) {
-            trace ("mpgmad: cmp3_init: initial cmp3_scan_stream failed\n");
+            trace ("mp3: cmp3_init: initial cmp3_scan_stream failed\n");
             return -1;
         }
         deadbeef->fseek (info->buffer.file, 0, SEEK_SET);
@@ -942,7 +942,7 @@ MadFixedToFloat (mad_fixed_t Fixed) {
 #define MadErrorString(x) mad_stream_errorstr(x)
 
 static inline void
-cmp3_skip (mpgmad_info_t *info) {
+cmp3_skip (mp3_info_t *info) {
     if (info->buffer.skipsamples > 0) {
         int skip = min (info->buffer.skipsamples, info->buffer.decode_remaining);
 //        printf ("skip %d / %d\n", skip, info->buffer.skipsamples);
@@ -996,7 +996,7 @@ dump_buffer (buffer_t *buffer) {
 
 // decoded requested number of samples to int16 format
 static void
-cmp3_decode_requested_int16 (mpgmad_info_t *info) {
+cmp3_decode_requested_int16 (mp3_info_t *info) {
     cmp3_skip (info);
     if (info->buffer.skipsamples > 0) {
         return;
@@ -1055,7 +1055,7 @@ cmp3_decode_requested_int16 (mpgmad_info_t *info) {
 }
 
 static int
-cmp3_stream_frame (mpgmad_info_t *info) {
+cmp3_stream_frame (mp3_info_t *info) {
     int eof = 0;
     while (!eof && (info->stream.buffer == NULL || info->buffer.decode_remaining <= 0)) {
         // read more MPEG data if needed
@@ -1089,10 +1089,10 @@ cmp3_stream_frame (mpgmad_info_t *info) {
             if (info->stream.buffer==NULL) {
                 // check sync bits
                 if (bytes[0] != 0xff || (bytes[1]&(3<<5)) != (3<<5)) {
-                    trace ("mpgmad: read didn't start at frame boundary!\ncmp3_scan_stream is broken\n");
+                    trace ("mp3: read didn't start at frame boundary!\ncmp3_scan_stream is broken\n");
                 }
                 else {
-                    trace ("mpgmad: streambuffer=NULL\n");
+                    trace ("mp3: streambuffer=NULL\n");
                 }
             }
         }
@@ -1104,7 +1104,7 @@ cmp3_stream_frame (mpgmad_info_t *info) {
             if(MAD_RECOVERABLE(info->stream.error))
             {
                 if(info->stream.error!=MAD_ERROR_LOSTSYNC) {
-//                    printf ("mpgmad: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
+//                    printf ("mp3: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
                 }
                 if (info->buffer.lead_in_frames > 0) {
                     info->buffer.lead_in_frames--;
@@ -1113,12 +1113,12 @@ cmp3_stream_frame (mpgmad_info_t *info) {
             }
             else {
                 if(info->stream.error==MAD_ERROR_BUFLEN) {
-//                    printf ("mpgmad: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
+//                    printf ("mp3: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
                     continue;
                 }
                 else
                 {
-//                    printf ("mpgmad: unrecoverable frame level error (%s).\n", MadErrorString(&info->stream));
+//                    printf ("mp3: unrecoverable frame level error (%s).\n", MadErrorString(&info->stream));
                     return -1; // fatal error
                 }
             }
@@ -1142,7 +1142,7 @@ cmp3_stream_frame (mpgmad_info_t *info) {
 }
 
 static int
-cmp3_decode_int16 (mpgmad_info_t *info) {
+cmp3_decode_int16 (mp3_info_t *info) {
     int eof = 0;
     while (!eof) {
         eof = cmp3_stream_frame (info);
@@ -1159,7 +1159,7 @@ cmp3_decode_int16 (mpgmad_info_t *info) {
 
 static void
 cmp3_free (DB_fileinfo_t *_info) {
-    mpgmad_info_t *info = (mpgmad_info_t *)_info;
+    mp3_info_t *info = (mp3_info_t *)_info;
     if (info->buffer.it) {
         deadbeef->pl_item_unref (info->buffer.it);
     }
@@ -1182,7 +1182,7 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
     }
 #endif
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
-    mpgmad_info_t *info = (mpgmad_info_t *)_info;
+    mp3_info_t *info = (mp3_info_t *)_info;
     if (info->buffer.duration >= 0 && !info->buffer.file->vfs->is_streaming ()) {
         int curr = info->buffer.currentsample;
         //printf ("curr: %d -> end %d, padding: %d\n", curr, info->buffer.endsample, info->buffer.padding);
@@ -1213,7 +1213,7 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
 static int
 cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
-    mpgmad_info_t *info = (mpgmad_info_t *)_info;
+    mp3_info_t *info = (mp3_info_t *)_info;
     if (!info->buffer.file) {
         return -1;
     }
@@ -1297,7 +1297,7 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
 
 static int
 cmp3_seek (DB_fileinfo_t *_info, float time) {
-    mpgmad_info_t *info = (mpgmad_info_t *)_info;
+    mp3_info_t *info = (mp3_info_t *)_info;
     int sample = time * info->buffer.samplerate;
     return cmp3_seek_sample (_info, sample);
 }
@@ -1324,13 +1324,13 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     buffer.file = fp;
     int skip = deadbeef->junk_get_leading_size (buffer.file);
     if (skip > 0) {
-        trace ("mpgmad: skipping %d bytes (tag)\n", skip);
+        trace ("mp3: skipping %d bytes (tag)\n", skip);
         deadbeef->fseek(buffer.file, skip, SEEK_SET);
     }
     // calc approx. mp3 duration 
     int res = cmp3_scan_stream (&buffer, 0);
     if (res < 0) {
-        trace ("mpgmad: cmp3_scan_stream returned error\n");
+        trace ("mp3: cmp3_scan_stream returned error\n");
         deadbeef->fclose (fp);
         return NULL;
     }
@@ -1495,7 +1495,7 @@ static DB_decoder_t plugin = {
 };
 
 DB_plugin_t *
-mpgmad_load (DB_functions_t *api) {
+mp3_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }
