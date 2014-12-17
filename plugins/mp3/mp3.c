@@ -1,5 +1,5 @@
 /*
-    MPEG decoder plugin based on libmad
+    MPEG decoder plugin for DeaDBeeF Player
     Copyright (C) 2009-2014 Alexey Yakovenko
 
     This software is provided 'as-is', without any express or implied
@@ -21,29 +21,27 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-
 #include <string.h>
 #include <stdio.h>
-#ifdef USE_LIBMAD
-#include <mad.h>
-#endif
-#ifdef USE_LIBMPG123
-#include <mpg123.h>
-#endif
 #include <assert.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <unistd.h>
 #include <sys/time.h>
 #include "../../deadbeef.h"
+#include "mp3.h"
+#ifdef USE_LIBMAD
+#include "mp3_mad.h"
+#endif
+#ifdef USE_LIBMPG123
+#include <mpg123.h>
+#endif
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-#ifdef USE_LIBMAD
+#if defined(USE_LIBMAD) && defined(USE_LIBMPG123)
 static int conf_use_mad = 1;
-#else
-static int conf_use_mad = 0;
 #endif
 
 //#define WRITE_DUMP 1
@@ -59,94 +57,7 @@ FILE *out;
 #define unlikely(x)     __builtin_expect((x),0)
 
 static DB_decoder_t plugin;
-static DB_functions_t *deadbeef;
-
-#define READBUFFER 0x2800 // 10k is enough for single frame
-
-// vbrmethod constants
-#define XING_CBR  1 
-#define XING_ABR  2
-#define XING_VBR1 3
-#define XING_VBR2 4
-#define XING_VBR3 5
-#define XING_VBR4 6
-#define XING_CBR2 8
-#define XING_ABR2 9
-#define DETECTED_VBR 100
-
-// xing header flags
-#define FRAMES_FLAG     0x0001
-#define BYTES_FLAG      0x0002
-#define TOC_FLAG        0x0004
-#define VBR_SCALE_FLAG  0x0008
-
-typedef struct {
-    DB_FILE *file;
-    DB_playItem_t *it;
-
-    // input buffer, for MPEG data
-    char input[READBUFFER];
-    int remaining;
-
-    // output buffer, supplied by player
-    int readsize;
-    int decode_remaining; // number of decoded samples of current mpeg frame
-    char *out;
-
-    // information, filled by cmp3_scan_stream
-    int version;
-    int layer;
-    int bitrate;
-    int samplerate;
-    int packetlength;
-    int bitspersample;
-    int channels;
-    float duration;
-
-    // currentsample and totalsamples are in the entire file scope (delay/padding inclusive)
-    int currentsample;
-    int totalsamples;
-
-    int skipsamples;
-
-    int64_t startoffset; // in bytes (id3v2, xing/lame)
-    int64_t endoffset; // in bytes (apev2, id3v1)
-
-    // startsample and endsample exclude delay/padding
-    int startsample;
-    int endsample;
-
-    // number of samples to skip at the start/end of file
-    int delay;
-    int padding;
-
-    float avg_packetlength;
-    int avg_samplerate;
-    int avg_samples_per_frame;
-    int nframes;
-    int last_comment_update;
-    int vbr;
-    int have_xing_header;
-    int lead_in_frames;
-} buffer_t;
-
-typedef struct {
-    DB_fileinfo_t info;
-    buffer_t buffer;
-    union {
-#ifdef USE_LIBMAD
-        struct {
-            struct mad_stream mad_stream;
-            struct mad_frame mad_frame;
-            struct mad_synth mad_synth;
-        };
-#endif
-#ifdef USE_LIBMPG123
-        struct {
-        };
-#endif
-    };
-} mp3_info_t;
+DB_functions_t *deadbeef;
 
 static uint32_t
 extract_i32 (unsigned char *buf)
@@ -814,6 +725,21 @@ cmp3_set_extra_properties (buffer_t *buffer, int fake) {
 static int
 cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     mp3_info_t *info = (mp3_info_t *)_info;
+#if defined(USE_LIBMAD) && defined(USE_LIBMPG123)
+    if (conf_use_mad) {
+        info->dec = &mad_api;
+    }
+    else {
+        info->dec = &mpg123_api;
+    }
+#else
+#if defined(USE_LIBMAD)
+    info->dec = &mad_api;
+#else
+    info->dec = &mpg123_api;
+#endif
+#endif
+
     _info->plugin = &plugin;
     memset (&info->buffer, 0, sizeof (info->buffer));
     deadbeef->pl_lock ();
@@ -908,61 +834,9 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     trace ("mp3 format: bps:%d sr:%d channels:%d\n", _info->fmt.bps, _info->fmt.samplerate, _info->fmt.channels);
 
-#ifdef USE_LIBMAD
-	mad_stream_init(&info->mad_stream);
-	mad_stream_options (&info->mad_stream, MAD_OPTION_IGNORECRC);
-	mad_frame_init(&info->mad_frame);
-	mad_synth_init(&info->mad_synth);
-#endif
+    info->dec->init (info);
     return 0;
 }
-
-#ifdef USE_LIBMAD
-/****************************************************************************
- * Converts a sample from libmad's fixed point number format to a signed	*
- * short (16 bits).															*
- ****************************************************************************/
-static inline int16_t
-MadFixedToSshort(mad_fixed_t Fixed)
-{
-	/* A fixed point number is formed of the following bit pattern:
-	 *
-	 * SWWWFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-	 * MSB                          LSB
-	 * S ==> Sign (0 is positive, 1 is negative)
-	 * W ==> Whole part bits
-	 * F ==> Fractional part bits
-	 *
-	 * This pattern contains MAD_F_FRACBITS fractional bits, one
-	 * should alway use this macro when working on the bits of a fixed
-	 * point number. It is not guaranteed to be constant over the
-	 * different platforms supported by libmad.
-	 *
-	 * The signed short value is formed, after clipping, by the least
-	 * significant whole part bit, followed by the 15 most significant
-	 * fractional part bits. Warning: this is a quick and dirty way to
-	 * compute the 16-bit number, madplay includes much better
-	 * algorithms.
-	 */
-
-	/* Clipping */
-	if(Fixed>=MAD_F_ONE)
-		return(32767);
-	if(Fixed<=-MAD_F_ONE)
-		return(-32768);
-
-	/* Conversion. */
-	Fixed=Fixed>>(MAD_F_FRACBITS-15);
-	return((signed short)Fixed);
-}
-
-static inline float
-MadFixedToFloat (mad_fixed_t Fixed) {
-    return (float)((Fixed) / (float)(1L << MAD_F_FRACBITS));
-}
-
-#define MadErrorString(x) mad_stream_errorstr(x)
-#endif
 
 static inline void
 cmp3_skip (mp3_info_t *info) {
@@ -1024,149 +898,15 @@ cmp3_decode_requested_int16 (mp3_info_t *info) {
     if (info->buffer.skipsamples > 0) {
         return;
     }
-    // copy synthesized samples into readbuffer
-    int idx = info->mad_synth.pcm.length-info->buffer.decode_remaining;
+    info->dec->decode (info);
 
-#ifdef USE_LIBMAD
-    // stereo
-    if (MAD_NCHANNELS(&info->mad_frame.header) == 2 && info->info.fmt.channels == 2) {
-        while (info->buffer.decode_remaining > 0 && info->buffer.readsize > 0) {
-            *((int16_t*)info->buffer.out) = MadFixedToSshort (info->mad_synth.pcm.samples[0][idx]);
-            info->buffer.readsize -= 2;
-            info->buffer.out += 2;
-            *((int16_t*)info->buffer.out) = MadFixedToSshort (info->mad_synth.pcm.samples[1][idx]);
-            info->buffer.readsize -= 2;
-            info->buffer.out += 2;
-            info->buffer.decode_remaining--;
-            idx++;
-        }
-    }
-    // mono
-    else if (MAD_NCHANNELS(&info->mad_frame.header) == 1 && info->info.fmt.channels == 1){
-        while (info->buffer.decode_remaining > 0 && info->buffer.readsize > 0) {
-            *((int16_t*)info->buffer.out) = MadFixedToSshort (info->mad_synth.pcm.samples[0][idx]);
-            info->buffer.readsize -= 2;
-            info->buffer.out += 2;
-            info->buffer.decode_remaining--;
-            idx++;
-        }
-    }
-    // workaround for bad mp3s that have both mono and stereo frames
-    else if (MAD_NCHANNELS(&info->mad_frame.header) == 1 && info->info.fmt.channels == 2) {
-        while (info->buffer.decode_remaining > 0 && info->buffer.readsize > 0) {
-            int16_t sample = MadFixedToSshort (info->mad_synth.pcm.samples[0][idx]);
-            *((int16_t*)info->buffer.out) = sample;
-            info->buffer.readsize -= 2;
-            info->buffer.out += 2;
-            *((int16_t*)info->buffer.out) = sample;
-            info->buffer.readsize -= 2;
-            info->buffer.out += 2;
-            info->buffer.decode_remaining--;
-            idx++;
-        }
-    }
-    else if (MAD_NCHANNELS(&info->mad_frame.header) == 2 && info->info.fmt.channels == 1) {
-        while (info->buffer.decode_remaining > 0 && info->buffer.readsize > 0) {
-            int16_t sample = MadFixedToSshort (info->mad_synth.pcm.samples[0][idx]);
-            *((int16_t*)info->buffer.out) = sample;
-            info->buffer.readsize -= 2;
-            info->buffer.out += 2;
-            info->buffer.decode_remaining--;
-            idx++;
-        }
-    }
-#endif
     assert (info->buffer.readsize >= 0);
 }
 
-#ifdef USE_LIBMAD
 static int
 cmp3_stream_frame (mp3_info_t *info) {
-    int eof = 0;
-    while (!eof && (info->mad_stream.buffer == NULL || info->buffer.decode_remaining <= 0)) {
-        // read more MPEG data if needed
-        if(info->mad_stream.buffer==NULL || info->mad_stream.error==MAD_ERROR_BUFLEN) {
-            // copy part of last frame to beginning
-            if (info->mad_stream.next_frame && info->mad_stream.bufend <= info->mad_stream.next_frame) {
-                eof = 1;
-                break;
-            }
-            if (info->mad_stream.next_frame != NULL) {
-                info->buffer.remaining = info->mad_stream.bufend - info->mad_stream.next_frame;
-                memmove (info->buffer.input, info->mad_stream.next_frame, info->buffer.remaining);
-            }
-            int size = READBUFFER - info->buffer.remaining;
-            int bytesread = 0;
-            uint8_t *bytes = info->buffer.input + info->buffer.remaining;
-            bytesread = deadbeef->fread (bytes, 1, size, info->buffer.file);
-            if (!bytesread) {
-                // add guard
-                eof = 1;
-                memset (bytes, 0, 8);
-                bytesread = 8;
-            }
-            if (bytesread < size) {
-                // end of file
-                size -= bytesread;
-                bytes += bytesread;
-            }
-            bytesread += info->buffer.remaining;
-            mad_stream_buffer(&info->mad_stream,info->buffer.input,bytesread);
-            if (info->mad_stream.buffer==NULL) {
-                // check sync bits
-                if (bytes[0] != 0xff || (bytes[1]&(3<<5)) != (3<<5)) {
-                    trace ("mp3: read didn't start at frame boundary!\ncmp3_scan_stream is broken\n");
-                }
-                else {
-                    trace ("mp3: streambuffer=NULL\n");
-                }
-            }
-        }
-        info->mad_stream.error=0;
-
-        // decode next frame
-        if(mad_frame_decode(&info->mad_frame, &info->mad_stream))
-        {
-            if(MAD_RECOVERABLE(info->mad_stream.error))
-            {
-                if(info->mad_stream.error!=MAD_ERROR_LOSTSYNC) {
-//                    printf ("mp3: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
-                }
-                if (info->buffer.lead_in_frames > 0) {
-                    info->buffer.lead_in_frames--;
-                }
-                continue;
-            }
-            else {
-                if(info->mad_stream.error==MAD_ERROR_BUFLEN) {
-//                    printf ("mp3: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
-                    continue;
-                }
-                else
-                {
-//                    printf ("mp3: unrecoverable frame level error (%s).\n", MadErrorString(&info->stream));
-                    return -1; // fatal error
-                }
-            }
-        }
-        mad_synth_frame(&info->mad_synth,&info->mad_frame);
-        if (info->buffer.lead_in_frames > 0) {
-            info->buffer.lead_in_frames--;
-            info->buffer.decode_remaining = 0;
-            continue;
-        }
-
-        info->info.fmt.samplerate = info->mad_frame.header.samplerate;
-
-        // synthesize single frame
-        info->buffer.decode_remaining = info->mad_synth.pcm.length;
-        deadbeef->streamer_set_bitrate (info->mad_frame.header.bitrate/1000);
-        break;
-    }
-
-    return eof;
+    return info->dec->stream_frame (info);
 }
-#endif
 
 static int
 cmp3_decode_int16 (mp3_info_t *info) {
@@ -1194,11 +934,7 @@ cmp3_free (DB_fileinfo_t *_info) {
         deadbeef->fclose (info->buffer.file);
         info->buffer.file = NULL;
         info->info.file = NULL;
-#ifdef USE_LIBMAD
-        mad_synth_finish (&info->mad_synth);
-        mad_frame_finish (&info->mad_frame);
-        mad_stream_finish (&info->mad_stream);
-#endif
+        info->dec->free (info);
     }
     free (info);
 }
@@ -1269,18 +1005,10 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
                 info->buffer.currentsample = sample;
                 _info->readpos = (float)(info->buffer.currentsample - info->buffer.startsample) / info->buffer.samplerate;
 
-#ifdef USE_LIBMAD
-                // reset mad
-                mad_synth_finish (&info->mad_synth);
-                mad_frame_finish (&info->mad_frame);
-                mad_stream_finish (&info->mad_stream);
+                info->dec->free (info);
                 info->buffer.remaining = 0;
                 info->buffer.decode_remaining = 0;
-                mad_stream_init(&info->mad_stream);
-                mad_stream_options (&info->mad_stream, MAD_OPTION_IGNORECRC);
-                mad_frame_init(&info->mad_frame);
-                mad_synth_init(&info->mad_synth);
-#endif
+                info->dec->init (info);
                 return 0;
             }
             trace ("seek failed!\n");
@@ -1303,15 +1031,8 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
     info->buffer.readsize = 0;
     info->buffer.decode_remaining = 0;
 
-#ifdef USE_LIBMAD
-    mad_synth_finish (&info->mad_synth);
-    mad_frame_finish (&info->mad_frame);
-    mad_stream_finish (&info->mad_stream);
-	mad_stream_init(&info->mad_stream);
-	mad_stream_options (&info->mad_stream, MAD_OPTION_IGNORECRC);
-	mad_frame_init(&info->mad_frame);
-	mad_synth_init(&info->mad_synth);
-#endif
+    info->dec->free (info);
+    info->dec->init (info);
 
 //    struct timeval tm1;
 //    gettimeofday (&tm1, NULL);
@@ -1496,7 +1217,7 @@ static DB_decoder_t plugin = {
     .plugin.name = "MPEG decoder",
     .plugin.descr = "MPEG v1/2 layer1/2/3 decoder",
     .plugin.copyright = 
-        "MPEG decoder plugin based on libmad\n"
+        "MPEG decoder plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
