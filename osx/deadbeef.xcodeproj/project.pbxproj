@@ -348,6 +348,8 @@
 		2D5D214C1A403428001D5A79 /* lastfm.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D21401A4033B0001D5A79 /* lastfm.dylib */; };
 		2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */; };
 		2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */; };
+		2D6EC2A61A42068F00DD1C72 /* mp3_mad.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6EC2A41A42068F00DD1C72 /* mp3_mad.h */; };
+		2D6EC2A81A42092800DD1C72 /* mp3_mad.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6EC2A31A42068F00DD1C72 /* mp3_mad.c */; };
 		2D72047319DF1E96000989C6 /* Playlist.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D72047219DF1E96000989C6 /* Playlist.xib */; };
 		2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */; };
 		2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */; };
@@ -1227,6 +1229,9 @@
 		2D5D21451A4033FF001D5A79 /* lastfm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lastfm.c; path = plugins/lastfm/lastfm.c; sourceTree = "<group>"; };
 		2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbTabStrip.h; path = widgets/DdbTabStrip.h; sourceTree = "<group>"; };
 		2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbTabStrip.m; path = widgets/DdbTabStrip.m; sourceTree = "<group>"; };
+		2D6EC2A31A42068F00DD1C72 /* mp3_mad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp3_mad.c; path = plugins/mp3/mp3_mad.c; sourceTree = "<group>"; };
+		2D6EC2A41A42068F00DD1C72 /* mp3_mad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp3_mad.h; path = plugins/mp3/mp3_mad.h; sourceTree = "<group>"; };
+		2D6EC2A71A42076B00DD1C72 /* mp3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mp3.h; path = plugins/mp3/mp3.h; sourceTree = "<group>"; };
 		2D72047219DF1E96000989C6 /* Playlist.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Playlist.xib; sourceTree = "<group>"; };
 		2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbPlaylistViewController.h; sourceTree = "<group>"; };
 		2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbPlaylistViewController.m; sourceTree = "<group>"; };
@@ -2866,6 +2871,9 @@
 				2D917E7C1A40470800C3EB44 /* libmpg123 */,
 				4D32FA3219A644A6000FFDE0 /* libmad-0.15.1b */,
 				4D32FA5519A645CA000FFDE0 /* mp3.c */,
+				2D6EC2A71A42076B00DD1C72 /* mp3.h */,
+				2D6EC2A31A42068F00DD1C72 /* mp3_mad.c */,
+				2D6EC2A41A42068F00DD1C72 /* mp3_mad.h */,
 			);
 			name = mp3;
 			sourceTree = "<group>";
@@ -3311,6 +3319,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D6EC2A61A42068F00DD1C72 /* mp3_mad.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
 				2D9177591A0E8A3D004BC222 /* mp4ff_int_types.h in Headers */,
@@ -4296,6 +4305,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D32FA5619A645CA000FFDE0 /* mp3.c in Sources */,
+				2D6EC2A81A42092800DD1C72 /* mp3_mad.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5275,7 +5285,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					USE_LIBMAD,
-					USE_LIBMPG123,
+					USE_LIBMPG123_,
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
@@ -5296,7 +5306,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					USE_LIBMAD,
-					USE_LIBMPG123,
+					USE_LIBMPG123_,
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
