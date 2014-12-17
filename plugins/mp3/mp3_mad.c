@@ -21,6 +21,7 @@
  3. This notice may not be removed or altered from any source distribution.
  */
 
+#include <string.h>
 #include "mp3_mad.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }

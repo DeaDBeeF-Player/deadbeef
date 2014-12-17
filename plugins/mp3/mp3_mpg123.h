@@ -21,11 +21,11 @@
  3. This notice may not be removed or altered from any source distribution.
  */
 
-#ifndef __deadbeef__mp3_mad__
-#define __deadbeef__mp3_mad__
+#ifndef __deadbeef__mp3_mpg123__
+#define __deadbeef__mp3_mpg123__
 
 #include "mp3.h"
 
-extern mp3_decoder_api_t mad_api;
+extern mp3_decoder_api_t mpg123_api;
 
-#endif /* defined(__deadbeef__mp3_mad__) */
+#endif /* defined(__deadbeef__mp3_mpg123__) */
