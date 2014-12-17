@@ -28,6 +28,9 @@
 #ifdef USE_LIBMAD
 #include <mad.h>
 #endif
+#ifdef USE_LIBMPG123
+#include <mpg123.h>
+#endif
 
 extern DB_functions_t *deadbeef;
 
@@ -104,6 +107,7 @@ typedef struct {
 
 typedef struct {
     DB_fileinfo_t info;
+    // input buffer, for MPEG data
     buffer_t buffer;
     union {
 #ifdef USE_LIBMAD
@@ -115,6 +119,9 @@ typedef struct {
 #endif
 #ifdef USE_LIBMPG123
         struct {
+            mpg123_handle *mpg123_handle;
+            int mpg123_status;
+            unsigned char *mpg123_audio;
         };
 #endif
     };
@@ -123,9 +130,17 @@ typedef struct {
 } mp3_info_t;
 
 typedef struct mp3_decoder_api_s {
+    // initialize the decoder, get ready to receive/decode packets
     void (*init)(mp3_info_t *info);
+
+    // free the decoder
     void (*free)(mp3_info_t *info);
+
+    // read samples from decoder, convert into output format, and write into output buffer
     void (*decode)(mp3_info_t *info);
+
+    // read and synthesize single frame, skip lead_in_frames count if needed
+    // return 1 if eof
     int (*stream_frame)(mp3_info_t *info);
 } mp3_decoder_api_t;
 
