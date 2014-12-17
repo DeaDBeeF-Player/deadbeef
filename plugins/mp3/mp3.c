@@ -34,14 +34,14 @@
 #include "mp3_mad.h"
 #endif
 #ifdef USE_LIBMPG123
-#include <mpg123.h>
+#include "mp3_mpg123.h"
 #endif
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
 #if defined(USE_LIBMAD) && defined(USE_LIBMPG123)
-static int conf_use_mad = 1;
+static int conf_use_mad = 0;
 #endif
 
 //#define WRITE_DUMP 1
@@ -914,7 +914,6 @@ cmp3_decode_int16 (mp3_info_t *info) {
     while (!eof) {
         eof = cmp3_stream_frame (info);
         if (info->buffer.decode_remaining > 0) {
-            int readsize = info->buffer.readsize;
             cmp3_decode_requested_int16 (info);
             if (info->buffer.readsize == 0) {
                 return 0;
