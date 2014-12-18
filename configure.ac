@@ -91,6 +91,8 @@ AC_ARG_ENABLE(artwork-network,  [AS_HELP_STRING([--disable-artwork-network ], [d
 AC_ARG_ENABLE(supereq,  [AS_HELP_STRING([--disable-supereq ], [disable SuperEQ DSP plugin (default: enabled)])], [enable_supereq=$enableval], [enable_supereq=yes])
 AC_ARG_ENABLE(sid,      [AS_HELP_STRING([--disable-sid     ], [disable commodore64 SID music player plugin (default: enabled)])], [enable_sid=$enableval], [enable_sid=yes])
 AC_ARG_ENABLE(mp3,      [AS_HELP_STRING([--disable-mp3     ], [disable mp3 plugin (default: enabled)])], [enable_mp3=$enableval], [enable_mp3=yes])
+AC_ARG_ENABLE(libmad,   [AS_HELP_STRING([--disable-libmad     ], [disable libmad support in mp3 plugin (default: auto)])], [enable_libmad=$enableval], [enable_libmad=yes])
+AC_ARG_ENABLE(libmpg123,[AS_HELP_STRING([--disable-libmpg123     ], [disable libmpg123 support in mp3 plugin (default: auto)])], [enable_libmpg123=$enableval], [enable_libmpg123=yes])
 AC_ARG_ENABLE(ffap,     [AS_HELP_STRING([--disable-ffap    ], [disable Monkey's Audio plugin (default: enabled)])], [enable_ffap=$enableval], [enable_ffap=yes])
 AC_ARG_ENABLE(vtx,      [AS_HELP_STRING([--disable-vtx     ], [disable libayemy VTX ZX-Spectrum music player plugin (default: enabled)])], [enable_vtx=$enableval], [enable_vtx=yes])
 AC_ARG_ENABLE(adplug,   [AS_HELP_STRING([--disable-adplug  ], [disable adplug plugin (default: enabled)])], [enable_adplug=$enableval], [enable_adplug=yes])
@@ -341,11 +343,24 @@ AS_IF([test "${enable_mp3}" != "no"], [
         AC_SUBST(MAD_CFLAGS)
         AC_SUBST(MAD_LIBS)
     ], [
-        AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=yes])
+        AS_IF([test "${enable_libmad}" != "no"], [
+            AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=yes])
+        ])
+        AS_IF([test "${enable_libmpg123}" != "no"], [
+            AC_CHECK_LIB([mpg123], [main], [HAVE_LIBMPG123=yes])
+        ])
+        HAVE_MP3=yes
         AS_IF([test "${HAVE_LIBMAD}" = "yes"], [
-            HAVE_MP3=yes
             MAD_LIBS="-lmad"
             AC_SUBST(MAD_LIBS)
+        ])
+        AS_IF([test "${HAVE_LIBMPG123}" = "yes"], [
+            MPG123_LIBS="-lmpg123"
+            AC_SUBST(MPG123_LIBS)
+        ])
+        AS_IF([test "${HAVE_LIBMAD}" != "yes" -a test "${HAVE_LIBMPG123}" != "yes"], [
+            echo "MP3 plugin is disabled: can't find either libmad of libmpg123"
+            HAVE_MP3=no
         ])
     ])
 ])
@@ -786,6 +801,8 @@ AM_CONDITIONAL(HAVE_LASTFM, test "x$HAVE_LASTFM" = "xyes")
 AM_CONDITIONAL(HAVE_VFS_CURL, test "x$HAVE_VFS_CURL" = "xyes")
 AM_CONDITIONAL(HAVE_HOTKEYS, test "x$HAVE_HOTKEYS" = "xyes")
 AM_CONDITIONAL(HAVE_MP3, test "x$HAVE_MP3" = "xyes")
+AM_CONDITIONAL(HAVE_LIBMAD, test "x$HAVE_LIBMAD" = "xyes")
+AM_CONDITIONAL(HAVE_LIBMPG123, test "x$HAVE_LIBMAD" = "xyes")
 AM_CONDITIONAL(HAVE_OSS, test "x$HAVE_OSS" = "xyes")
 AM_CONDITIONAL(HAVE_SUPEREQ, test "x$HAVE_SUPEREQ" = "xyes")
 AM_CONDITIONAL(HAVE_NOTIFY, test "x$HAVE_NOTIFY" = "xyes")
