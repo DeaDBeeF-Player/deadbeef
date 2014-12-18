@@ -11,7 +11,7 @@ intl/Makefile
 icons/Makefile
 pixmaps/Makefile
 Makefile.in
-config.h
+/config.h
 config.h.in
 config.status
 config.sub
