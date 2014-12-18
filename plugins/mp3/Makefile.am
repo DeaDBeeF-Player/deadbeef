@@ -3,16 +3,18 @@ mp3dir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = mp3.la
 
 if HAVE_LIBMAD
-LIBMAD_SOURCES = mp3_mad.c mp3_mad.h
+SOURCES_LIBMAD = mp3_mad.c mp3_mad.h
+USE_LIBMAD = -DUSE_LIBMAD=1
 endif
 
 if HAVE_LIBMPG123
-LIBMPG123_SOURCES = mp3_mpg123.c mp3_mpg123.h
+SOURCES_LIBMPG123 = mp3_mpg123.c mp3_mpg123.h
+USE_LIBMPG123 = -DUSE_LIBMPG123=1
 endif
 
-mpgmad_la_SOURCES = mp3.c mp3.h $(LIBMAD_SOURCES) $(LIBMPG123_SOURCES)
-mpgmad_la_LDFLAGS = -module -avoid-version
+mp3_la_SOURCES = mp3.c mp3.h $(SOURCES_LIBMAD) $(SOURCES_LIBMPG123)
+mp3_la_LDFLAGS = -module -avoid-version
 
-mpgmad_la_LIBADD = $(LDADD) $(MAD_LIBS) $(MPG123_LIBS)
-AM_CFLAGS = $(CFLAGS) $(MAD_CFLAGS) $(MPG123_CFLAGS) -std=c99 -fPIC
+mp3_la_LIBADD = $(LDADD) $(MAD_LIBS) $(MPG123_LIBS)
+AM_CFLAGS = $(CFLAGS) $(MAD_CFLAGS) $(USE_LIBMAD) $(MPG123_CFLAGS) $(USE_LIBMPG123) -std=c99 -fPIC
 endif
