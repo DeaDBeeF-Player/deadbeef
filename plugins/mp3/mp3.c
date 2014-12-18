@@ -40,10 +40,6 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-#if defined(USE_LIBMAD) && defined(USE_LIBMPG123)
-static int conf_use_mad = 0;
-#endif
-
 //#define WRITE_DUMP 1
 
 #if WRITE_DUMP
@@ -726,11 +722,17 @@ static int
 cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     mp3_info_t *info = (mp3_info_t *)_info;
 #if defined(USE_LIBMAD) && defined(USE_LIBMPG123)
-    if (conf_use_mad) {
-        info->dec = &mad_api;
-    }
-    else {
+    int backend = deadbeef->conf_get_int ("mp3.backend", 0);
+    switch (backend) {
+    case 0:
         info->dec = &mpg123_api;
+        break;
+    case 1:
+        info->dec = &mad_api;
+        break;
+    default:
+        info->dec = &mpg123_api;
+        break;
     }
 #else
 #if defined(USE_LIBMAD)
@@ -1201,7 +1203,7 @@ static const char *exts[] = {
 static const char settings_dlg[] =
     "property \"Disable gapless playback (faster scanning)\" checkbox mp3.disable_gapless 0;\n"
 #if defined(USE_LIBMAD) && defined(USE_LIBMPG123)
-    "property \"Use libmad (otherwise libmpg123 will be used)\" checkbox mp3.mad 1;\n"
+    "property \"Backend\" select[2] mp3.backend 0 mpg123 mad;\n"
 #endif
 ;
 
@@ -1213,8 +1215,17 @@ static DB_decoder_t plugin = {
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "stdmpg",
-    .plugin.name = "MPEG decoder",
-    .plugin.descr = "MPEG v1/2 layer1/2/3 decoder",
+    .plugin.name = "MP3 player",
+    .plugin.descr = "MPEG v1/2 layer1/2/3 decoder\n\n"
+#if defined(USE_LIBMPG123) && defined(USE_LIBMAD)
+    "Can use libmad and libmpg123 backends.\n"
+    "Changing the backend will take effect when the next track starts.\n"
+#elif defined(USE_LIBMAD)
+    "Using libmad backend.\n"
+#elif defined(USE_LIBMPG123)
+    "Using libmpg123 backend.\n"
+#endif
+    ,
     .plugin.copyright = 
         "MPEG decoder plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko\n"
