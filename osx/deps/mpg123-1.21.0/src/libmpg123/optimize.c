@@ -151,7 +151,7 @@ enum optcla decclass(const enum optdec type)
 		|| type == neon
 		|| type == neon64
 		|| type == avx
-	) ? mmxsse : optcla_normal;
+	) ? mmxsse : normal;
 }
 
 static int find_synth(func_synth synth,  const func_synth synths[r_limit][f_limit])

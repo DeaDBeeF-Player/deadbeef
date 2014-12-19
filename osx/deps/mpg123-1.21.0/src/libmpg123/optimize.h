@@ -163,7 +163,7 @@ static const char* decname[] =
 };
 #endif
 
-enum optcla { nocla=0, optcla_normal, mmxsse };
+enum optcla { nocla=0, normal, mmxsse };
 
 /*  - Set up the table of synth functions for current decoder choice. */
 int frame_cpu_opt(mpg123_handle *fr, const char* cpu);
