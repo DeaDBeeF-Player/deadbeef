@@ -1246,7 +1246,11 @@ int grouptitleheight = 22;
 
 - (void)setCursor:(int)cursor noscroll:(BOOL)noscroll {
     [_delegate setCursor:cursor];
-    [self selectSingle:cursor];
+
+    DdbListviewRow_t row = [_delegate rowForIndex:cursor];
+    if (![_delegate rowSelected:row]) {
+        [self selectSingle:cursor];
+    }
 
     BOOL need_redraw = YES;
     if (!noscroll) {
