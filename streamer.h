@@ -39,6 +39,9 @@ enum {
     STR_EV_RAND, // streamer_move_to_randomsong
     STR_EV_SEEK, // streamer_set_seek; p1: float pos
     STR_EV_SET_CURR_PLT, // streamer_set_current_playlist
+    STR_EV_DSP_RELOAD, // reload dsp settings
+    STR_EV_SET_DSP_CHAIN, // set new dsp chain
+    STR_EV_ORDER_CHANGED, // tell the streamer that playback order has changed, p1=old, p2=new
 };
 
 int
