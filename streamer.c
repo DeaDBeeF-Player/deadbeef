@@ -109,7 +109,7 @@ static char streambuffer[STREAM_BUFFER_SIZE];
 
 static int bytes_until_next_song = 0;
 static uintptr_t mutex;
-static uintptr_t decodemutex;
+static uintptr_t currtrack_mutex;
 static uintptr_t wdl_mutex; // wavedata listener
 
 static int nextsong = -1;
@@ -987,13 +987,13 @@ streamer_set_current (playItem_t *it) {
     }
 
     trace ("streamer_set_current %p, buns=%d\n", it, bytes_until_next_song);
-    mutex_lock (decodemutex);
+    mutex_lock (currtrack_mutex);
     if (streaming_track) {
         pl_item_unref (streaming_track);
         streaming_track = NULL;
     }
 
-    mutex_unlock (decodemutex);
+    mutex_unlock (currtrack_mutex);
 
     int paused_stream = 0;
     if (it && nextsong_pstate == 2) {
@@ -1438,7 +1438,7 @@ streamer_start_new_song (void) {
         trace ("track #%d is not in playlist; stopping playback\n", sng);
         output->stop ();
 
-        mutex_lock (decodemutex);
+        mutex_lock (currtrack_mutex);
         if (playing_track) {
             pl_item_unref (playing_track);
             playing_track = NULL;
@@ -1447,7 +1447,7 @@ streamer_start_new_song (void) {
             pl_item_unref (streaming_track);
             streaming_track = NULL;
         }
-        mutex_unlock (decodemutex);
+        mutex_unlock (currtrack_mutex);
 
         send_trackchanged (NULL, NULL);
         return;
@@ -1707,7 +1707,7 @@ streamer_thread (void *ctx) {
 
                 // restart playing from new position
 
-                mutex_lock (decodemutex);
+                mutex_lock (currtrack_mutex);
                 if(fileinfo) {
                     fileinfo->plugin->free (fileinfo);
                     fileinfo = NULL;
@@ -1720,7 +1720,7 @@ streamer_thread (void *ctx) {
                     pl_item_ref (streaming_track);
                     streamer_set_replaygain (streaming_track);
                 }
-                mutex_unlock (decodemutex);
+                mutex_unlock (currtrack_mutex);
 
                 bytes_until_next_song = -1;
                 streamer_buffering = 1;
@@ -1913,7 +1913,7 @@ streamer_thread (void *ctx) {
         fileinfo = NULL;
         fileinfo_file = NULL;
     }
-    mutex_lock (decodemutex);
+    mutex_lock (currtrack_mutex);
     if (streaming_track) {
         pl_item_unref (streaming_track);
         streaming_track = NULL;
@@ -1922,7 +1922,7 @@ streamer_thread (void *ctx) {
         pl_item_unref (playing_track);
         playing_track = NULL;
     }
-    mutex_unlock (decodemutex);
+    mutex_unlock (currtrack_mutex);
 }
 
 void
@@ -2174,7 +2174,7 @@ streamer_init (void) {
     out = fopen ("out.raw", "w+b");
 #endif
     mutex = mutex_create ();
-    decodemutex = mutex_create ();
+    currtrack_mutex = mutex_create ();
     wdl_mutex = mutex_create ();
 
     ringbuf_init (&streamer_ringbuf, streambuffer, STREAM_BUFFER_SIZE);
@@ -2225,8 +2225,8 @@ streamer_free (void) {
     ctmap_free ();
     ctmap_free_mutex ();
 
-    mutex_free (decodemutex);
-    decodemutex = 0;
+    mutex_free (currtrack_mutex);
+    currtrack_mutex = 0;
     mutex_free (mutex);
     mutex = 0;
     mutex_free (wdl_mutex);
