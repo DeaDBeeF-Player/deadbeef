@@ -251,7 +251,7 @@ st_get_param (ddb_dsp_context_t *ctx, int p, char *val, int sz) {
 
 static const char settings_dlg[] =
     "property \"Tempo Change (%)\" spinbtn[-200,200,1] 0 0;\n"
-    "property \"Pitch Change (semi-tones)\" spinbtn[-24,24,1] 1 0;\n"
+    "property \"Pitch Change (semi-tones)\" spinbtn[-24,24,0.0000001] 1 0;\n"
     "property \"Playback Rate Change (%)\" spinbtn[-200,200,1] 2 0;\n"
     "property \"Absolute Samplerate (overrides Rate Change if nonzero)\" spinbtn[0,192000,1] 8 0;\n"
     "property \"Use AA Filter\" checkbox 3 0;\n"
