@@ -686,7 +686,7 @@ int group_bytecode_size = 0;
                     ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
                     if (plt) {
                         deadbeef->plt_set_curr (plt);
-                        int idx = deadbeef->pl_get_idx_of (it);
+                        int idx = deadbeef->pl_get_idx_of_iter (it, [self playlistIter]);
                         if (idx != -1) {
                             [listview setCursor:idx noscroll:YES];
                             [listview scrollToRowWithIndex:idx];
