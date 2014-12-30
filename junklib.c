@@ -591,7 +591,7 @@ static const char *junk_genretbl[] = {
     "Native American",
     "Cabaret",
     "New Wave",
-    "Psychadelic",
+    "Psychedelic",
     "Rave",
     "Showtunes",
     "Trailer",
@@ -1058,6 +1058,10 @@ junk_id3v1_write2 (int fd, playItem_t *it, const char *enc) {
                 break;
             }
         }
+        // workaround for the id3v1 std spelling error
+        if (genreid == 0xff && !strcasecmp (meta, "Psychadelic")) {
+            genreid = 67;
+        }
     }
 
     pl_unlock ();
@@ -1157,6 +1161,10 @@ junk_id3v1_write (FILE *fp, playItem_t *it, const char *enc) {
                 genreid = i;
                 break;
             }
+        }
+        // workaround for the id3v1 std spelling error
+        if (genreid == 0xff && !strcasecmp (meta, "Psychadelic")) {
+            genreid = 67;
         }
     }
 
