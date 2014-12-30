@@ -16,6 +16,8 @@ X-PulseAudio-Properties=media.role=music
 
 X-Ayatana-Desktop-Shortcuts=Play;Pause;Stop;Next;Prev
 
+Keywords=Sound;Music;Audio;Player;Musicplayer;MP3
+
 [Play Shortcut Group]
 Name=Play
 Exec=deadbeef --play
