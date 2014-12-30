@@ -40,14 +40,20 @@ create_converterdlg (void)
   GtkWidget *image469;
   GtkWidget *frame10;
   GtkWidget *vbox35;
-  GtkWidget *table5;
   GtkWidget *path_label;
-  GtkWidget *hbox67;
-  GtkWidget *label103;
-  GtkWidget *hbox68;
-  GtkWidget *output_folder;
-  GtkWidget *converter_output_browse;
+  GtkWidget *hseparator2;
+  GtkWidget *vbox49;
+  GtkWidget *base_folder_label_header;
+  GtkWidget *hbox142;
+  GtkWidget *hbox143;
+  GtkWidget *base_folder_label_single;
+  GtkWidget *vbox48;
   GtkWidget *use_source_folder;
+  GSList *use_source_folder_group = NULL;
+  GtkWidget *hbox139;
+  GtkWidget *base_folder;
+  GtkWidget *output_folder;
+  GtkWidget *output_browse;
   GtkWidget *hbox130;
   GtkWidget *label122;
   GtkWidget *hbox100;
@@ -111,7 +117,6 @@ create_converterdlg (void)
   edit_encoder_presets = gtk_button_new ();
   gtk_widget_show (edit_encoder_presets);
   gtk_box_pack_start (GTK_BOX (hbox90), edit_encoder_presets, FALSE, FALSE, 0);
-  gtk_widget_set_tooltip_text (edit_encoder_presets, _("Edit encoder presets"));
 
   image469 = gtk_image_new_from_stock ("gtk-edit", GTK_ICON_SIZE_BUTTON);
   gtk_widget_show (image469);
@@ -127,44 +132,64 @@ create_converterdlg (void)
   gtk_container_add (GTK_CONTAINER (frame10), vbox35);
   gtk_container_set_border_width (GTK_CONTAINER (vbox35), 8);
 
-  table5 = gtk_table_new (2, 1, FALSE);
-  gtk_widget_show (table5);
-  gtk_box_pack_start (GTK_BOX (vbox35), table5, TRUE, TRUE, 0);
-  gtk_table_set_row_spacings (GTK_TABLE (table5), 6);
-
   path_label = gtk_label_new ("");
   gtk_widget_show (path_label);
-  gtk_table_attach (GTK_TABLE (table5), path_label, 0, 1, 0, 1,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
+  gtk_box_pack_start (GTK_BOX (vbox35), path_label, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (path_label), 0, 0.5);
   gtk_label_set_ellipsize (GTK_LABEL (path_label), PANGO_ELLIPSIZE_MIDDLE);
 
-  hbox67 = gtk_hbox_new (FALSE, 6);
-  gtk_widget_show (hbox67);
-  gtk_box_pack_start (GTK_BOX (vbox35), hbox67, FALSE, FALSE, 0);
+  hseparator2 = gtk_hseparator_new ();
+  gtk_widget_show (hseparator2);
+  gtk_box_pack_start (GTK_BOX (vbox35), hseparator2, TRUE, TRUE, 0);
 
-  label103 = gtk_label_new (_("Base folder:"));
-  gtk_widget_show (label103);
-  gtk_box_pack_start (GTK_BOX (hbox67), label103, FALSE, FALSE, 0);
+  vbox49 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox49);
+  gtk_box_pack_start (GTK_BOX (vbox35), vbox49, TRUE, TRUE, 0);
 
-  hbox68 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox68);
-  gtk_box_pack_start (GTK_BOX (hbox67), hbox68, TRUE, TRUE, 0);
+  base_folder_label_header = gtk_label_new (_("Base folder"));
+  gtk_box_pack_start (GTK_BOX (vbox49), base_folder_label_header, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (base_folder_label_header), 0, 0.5);
+
+  hbox142 = gtk_hbox_new (FALSE, 6);
+  gtk_widget_show (hbox142);
+  gtk_box_pack_start (GTK_BOX (vbox49), hbox142, TRUE, TRUE, 0);
+
+  hbox143 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox143);
+  gtk_box_pack_start (GTK_BOX (hbox142), hbox143, FALSE, FALSE, 0);
+
+  base_folder_label_single = gtk_label_new (_("Base folder:"));
+  gtk_box_pack_start (GTK_BOX (hbox143), base_folder_label_single, FALSE, FALSE, 0);
+
+  vbox48 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox48);
+  gtk_box_pack_start (GTK_BOX (hbox142), vbox48, TRUE, TRUE, 0);
+
+  use_source_folder = gtk_radio_button_new_with_mnemonic (NULL, _("Use source folder"));
+  gtk_box_pack_start (GTK_BOX (vbox48), use_source_folder, FALSE, FALSE, 0);
+  gtk_radio_button_set_group (GTK_RADIO_BUTTON (use_source_folder), use_source_folder_group);
+  use_source_folder_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (use_source_folder));
+
+  hbox139 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox139);
+  gtk_box_pack_start (GTK_BOX (vbox48), hbox139, TRUE, TRUE, 0);
+
+  base_folder = gtk_radio_button_new_with_mnemonic (NULL, "");
+  gtk_box_pack_start (GTK_BOX (hbox139), base_folder, FALSE, FALSE, 0);
+  gtk_button_set_focus_on_click (GTK_BUTTON (base_folder), FALSE);
+  gtk_radio_button_set_group (GTK_RADIO_BUTTON (base_folder), use_source_folder_group);
+  use_source_folder_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (base_folder));
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (base_folder), TRUE);
 
   output_folder = gtk_entry_new ();
   gtk_widget_show (output_folder);
-  gtk_box_pack_start (GTK_BOX (hbox68), output_folder, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox139), output_folder, TRUE, TRUE, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (output_folder), 9679);
   gtk_entry_set_activates_default (GTK_ENTRY (output_folder), TRUE);
 
-  converter_output_browse = gtk_button_new_with_mnemonic ("...");
-  gtk_widget_show (converter_output_browse);
-  gtk_box_pack_start (GTK_BOX (hbox68), converter_output_browse, FALSE, FALSE, 0);
-  gtk_widget_set_tooltip_text (converter_output_browse, _("%a album\n%b album\n%t track title\n%g genre\n%n track #\nClick for full details"));
-
-  use_source_folder = gtk_check_button_new_with_mnemonic (_("Use source folder as base"));
-  gtk_box_pack_start (GTK_BOX (vbox35), use_source_folder, FALSE, FALSE, 0);
+  output_browse = gtk_button_new_with_mnemonic ("...");
+  gtk_widget_show (output_browse);
+  gtk_box_pack_start (GTK_BOX (hbox139), output_browse, FALSE, FALSE, 0);
 
   hbox130 = gtk_hbox_new (FALSE, 6);
   gtk_widget_show (hbox130);
@@ -237,7 +262,6 @@ create_converterdlg (void)
   edit_dsp_presets = gtk_button_new ();
   gtk_widget_show (edit_dsp_presets);
   gtk_box_pack_start (GTK_BOX (hbox91), edit_dsp_presets, FALSE, FALSE, 0);
-  gtk_widget_set_tooltip_text (edit_dsp_presets, _("Edit DSP presets"));
 
   image470 = gtk_image_new_from_stock ("gtk-edit", GTK_ICON_SIZE_BUTTON);
   gtk_widget_show (image470);
@@ -271,7 +295,7 @@ create_converterdlg (void)
   gtk_widget_show (hbox88);
   gtk_box_pack_start (GTK_BOX (vbox26), hbox88, FALSE, FALSE, 0);
 
-  label116 = gtk_label_new (_("Number of threads:"));
+  label116 = gtk_label_new (_("Allow threads:"));
   gtk_widget_show (label116);
   gtk_box_pack_start (GTK_BOX (hbox88), label116, FALSE, FALSE, 0);
 
@@ -306,14 +330,19 @@ create_converterdlg (void)
   GLADE_HOOKUP_OBJECT (converterdlg, image469, "image469");
   GLADE_HOOKUP_OBJECT (converterdlg, frame10, "frame10");
   GLADE_HOOKUP_OBJECT (converterdlg, vbox35, "vbox35");
-  GLADE_HOOKUP_OBJECT (converterdlg, table5, "table5");
   GLADE_HOOKUP_OBJECT (converterdlg, path_label, "path_label");
-  GLADE_HOOKUP_OBJECT (converterdlg, hbox67, "hbox67");
-  GLADE_HOOKUP_OBJECT (converterdlg, label103, "label103");
-  GLADE_HOOKUP_OBJECT (converterdlg, hbox68, "hbox68");
-  GLADE_HOOKUP_OBJECT (converterdlg, output_folder, "output_folder");
-  GLADE_HOOKUP_OBJECT (converterdlg, converter_output_browse, "converter_output_browse");
+  GLADE_HOOKUP_OBJECT (converterdlg, hseparator2, "hseparator2");
+  GLADE_HOOKUP_OBJECT (converterdlg, vbox49, "vbox49");
+  GLADE_HOOKUP_OBJECT (converterdlg, base_folder_label_header, "base_folder_label_header");
+  GLADE_HOOKUP_OBJECT (converterdlg, hbox142, "hbox142");
+  GLADE_HOOKUP_OBJECT (converterdlg, hbox143, "hbox143");
+  GLADE_HOOKUP_OBJECT (converterdlg, base_folder_label_single, "base_folder_label_single");
+  GLADE_HOOKUP_OBJECT (converterdlg, vbox48, "vbox48");
   GLADE_HOOKUP_OBJECT (converterdlg, use_source_folder, "use_source_folder");
+  GLADE_HOOKUP_OBJECT (converterdlg, hbox139, "hbox139");
+  GLADE_HOOKUP_OBJECT (converterdlg, base_folder, "base_folder");
+  GLADE_HOOKUP_OBJECT (converterdlg, output_folder, "output_folder");
+  GLADE_HOOKUP_OBJECT (converterdlg, output_browse, "output_browse");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox130, "hbox130");
   GLADE_HOOKUP_OBJECT (converterdlg, label122, "label122");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox100, "hbox100");
@@ -359,27 +388,26 @@ create_encpreset_editor (void)
   GtkWidget *hbox127;
   GtkWidget *builtin_label;
   GtkWidget *encpreset_default;
+  GtkWidget *vbox50;
   GtkWidget *hbox72;
   GtkWidget *label106;
   GtkWidget *hbox131;
   GtkWidget *encoder_cmd;
   GtkWidget *hbox109;
-  GtkWidget *hbox112;
   GtkWidget *label120;
+  GtkWidget *alignment24;
   GtkWidget *extension;
-  GtkWidget *temporary_file;
-  GtkWidget *hbox126;
   GtkWidget *hbox106;
   GtkWidget *frame9;
   GtkWidget *alignment21;
   GtkWidget *table2;
+  GtkWidget *apev2;
   GtkWidget *id3v1;
-  GtkWidget *flac;
+  GtkWidget *oggvorbis;
   GtkWidget *hbox104;
   GtkWidget *id3v2;
   GtkWidget *id3v2_version;
-  GtkWidget *apev2;
-  GtkWidget *oggvorbis;
+  GtkWidget *flac;
   GtkWidget *label125;
   GtkWidget *dialog_action_area6;
   GtkWidget *encpreset_close;
@@ -389,6 +417,7 @@ create_encpreset_editor (void)
 
   encpreset_editor = gtk_dialog_new ();
   gtk_window_set_title (GTK_WINDOW (encpreset_editor), _("Edit Encoder Preset"));
+  gtk_window_set_position (GTK_WINDOW (encpreset_editor), GTK_WIN_POS_MOUSE);
   gtk_window_set_modal (GTK_WINDOW (encpreset_editor), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (encpreset_editor), GDK_WINDOW_TYPE_HINT_DIALOG);
 
@@ -424,9 +453,13 @@ create_encpreset_editor (void)
   gtk_box_pack_start (GTK_BOX (hbox127), encpreset_default, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_text (encpreset_default, _("Set all fields to the defaults for this built-in preset"));
 
+  vbox50 = gtk_vbox_new (FALSE, 6);
+  gtk_widget_show (vbox50);
+  gtk_box_pack_start (GTK_BOX (vbox27), vbox50, FALSE, FALSE, 0);
+
   hbox72 = gtk_hbox_new (FALSE, 6);
   gtk_widget_show (hbox72);
-  gtk_box_pack_start (GTK_BOX (vbox27), hbox72, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox50), hbox72, TRUE, TRUE, 0);
 
   label106 = gtk_label_new (_("Command:"));
   gtk_widget_show (label106);
@@ -439,37 +472,28 @@ create_encpreset_editor (void)
   encoder_cmd = gtk_entry_new ();
   gtk_widget_show (encoder_cmd);
   gtk_box_pack_start (GTK_BOX (hbox131), encoder_cmd, TRUE, TRUE, 0);
-  gtk_widget_set_tooltip_text (encoder_cmd, _("Leave blank to output RIFF WAV"));
   gtk_entry_set_invisible_char (GTK_ENTRY (encoder_cmd), 9679);
   gtk_entry_set_activates_default (GTK_ENTRY (encoder_cmd), TRUE);
+  gtk_entry_set_width_chars (GTK_ENTRY (encoder_cmd), 44);
 
-  hbox109 = gtk_hbox_new (FALSE, 16);
+  hbox109 = gtk_hbox_new (FALSE, 6);
   gtk_widget_show (hbox109);
-  gtk_box_pack_start (GTK_BOX (vbox27), hbox109, FALSE, FALSE, 0);
-
-  hbox112 = gtk_hbox_new (FALSE, 6);
-  gtk_widget_show (hbox112);
-  gtk_box_pack_start (GTK_BOX (hbox109), hbox112, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox50), hbox109, TRUE, TRUE, 0);
 
   label120 = gtk_label_new (_("Output file extension:"));
   gtk_widget_show (label120);
-  gtk_box_pack_start (GTK_BOX (hbox112), label120, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox109), label120, FALSE, FALSE, 0);
+
+  alignment24 = gtk_alignment_new (0, 1, 0.2, 1);
+  gtk_widget_show (alignment24);
+  gtk_box_pack_start (GTK_BOX (hbox109), alignment24, TRUE, TRUE, 0);
 
   extension = gtk_entry_new ();
   gtk_widget_show (extension);
-  gtk_box_pack_start (GTK_BOX (hbox112), extension, TRUE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (alignment24), extension);
   gtk_entry_set_invisible_char (GTK_ENTRY (extension), 9679);
   gtk_entry_set_activates_default (GTK_ENTRY (extension), TRUE);
-  gtk_entry_set_width_chars (GTK_ENTRY (extension), 8);
-
-  temporary_file = gtk_check_button_new_with_mnemonic (_("Use temporary file"));
-  gtk_widget_show (temporary_file);
-  gtk_box_pack_end (GTK_BOX (hbox109), temporary_file, FALSE, FALSE, 0);
-  gtk_widget_set_tooltip_text (temporary_file, _("Will create a temporary WAV file, then call the encoder\n(use if the encoder cannot accept raw WAV on stdin)"));
-
-  hbox126 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox126);
-  gtk_box_pack_end (GTK_BOX (hbox109), hbox126, TRUE, FALSE, 0);
+  gtk_entry_set_width_chars (GTK_ENTRY (extension), 0);
 
   hbox106 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox106);
@@ -487,27 +511,32 @@ create_encpreset_editor (void)
   table2 = gtk_table_new (2, 3, FALSE);
   gtk_widget_show (table2);
   gtk_container_add (GTK_CONTAINER (alignment21), table2);
-  gtk_container_set_border_width (GTK_CONTAINER (table2), 8);
-  gtk_table_set_row_spacings (GTK_TABLE (table2), 6);
+  gtk_container_set_border_width (GTK_CONTAINER (table2), 6);
   gtk_table_set_col_spacings (GTK_TABLE (table2), 30);
 
-  id3v1 = gtk_check_button_new_with_mnemonic (_("ID3v1"));
-  gtk_widget_show (id3v1);
-  gtk_table_attach (GTK_TABLE (table2), id3v1, 0, 1, 0, 1,
+  apev2 = gtk_check_button_new_with_mnemonic (_("APEv2"));
+  gtk_widget_show (apev2);
+  gtk_table_attach (GTK_TABLE (table2), apev2, 2, 3, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
-  flac = gtk_check_button_new_with_mnemonic (_("FLAC"));
-  gtk_widget_show (flac);
-  gtk_table_attach (GTK_TABLE (table2), flac, 0, 1, 1, 2,
+  id3v1 = gtk_check_button_new_with_mnemonic (_("ID3v1"));
+  gtk_widget_show (id3v1);
+  gtk_table_attach (GTK_TABLE (table2), id3v1, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  oggvorbis = gtk_check_button_new_with_mnemonic (_("Vorbis comment"));
+  gtk_widget_show (oggvorbis);
+  gtk_table_attach (GTK_TABLE (table2), oggvorbis, 1, 3, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
   hbox104 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox104);
-  gtk_table_attach (GTK_TABLE (table2), hbox104, 1, 2, 0, 1,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_table_attach (GTK_TABLE (table2), hbox104, 0, 1, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
 
   id3v2 = gtk_check_button_new_with_mnemonic (_("ID3v2"));
   gtk_widget_show (id3v2);
@@ -519,15 +548,9 @@ create_encpreset_editor (void)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id3v2_version), ".3");
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id3v2_version), ".4");
 
-  apev2 = gtk_check_button_new_with_mnemonic (_("APEv2"));
-  gtk_widget_show (apev2);
-  gtk_table_attach (GTK_TABLE (table2), apev2, 2, 3, 0, 1,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-
-  oggvorbis = gtk_check_button_new_with_mnemonic (_("Vorbis comment"));
-  gtk_widget_show (oggvorbis);
-  gtk_table_attach (GTK_TABLE (table2), oggvorbis, 1, 3, 1, 2,
+  flac = gtk_check_button_new_with_mnemonic (_("FLAC"));
+  gtk_widget_show (flac);
+  gtk_table_attach (GTK_TABLE (table2), flac, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
@@ -552,6 +575,7 @@ create_encpreset_editor (void)
   encpreset_new = gtk_button_new_with_mnemonic (_("Save _new"));
   gtk_widget_show (encpreset_new);
   gtk_dialog_add_action_widget (GTK_DIALOG (encpreset_editor), encpreset_new, GTK_RESPONSE_APPLY);
+  gtk_widget_set_can_default(encpreset_new, TRUE);
   gtk_widget_set_tooltip_text (encpreset_new, _("Create a new preset with these details"));
 
   encpreset_save = gtk_button_new_from_stock ("gtk-save");
@@ -570,27 +594,26 @@ create_encpreset_editor (void)
   GLADE_HOOKUP_OBJECT (encpreset_editor, hbox127, "hbox127");
   GLADE_HOOKUP_OBJECT (encpreset_editor, builtin_label, "builtin_label");
   GLADE_HOOKUP_OBJECT (encpreset_editor, encpreset_default, "encpreset_default");
+  GLADE_HOOKUP_OBJECT (encpreset_editor, vbox50, "vbox50");
   GLADE_HOOKUP_OBJECT (encpreset_editor, hbox72, "hbox72");
   GLADE_HOOKUP_OBJECT (encpreset_editor, label106, "label106");
   GLADE_HOOKUP_OBJECT (encpreset_editor, hbox131, "hbox131");
   GLADE_HOOKUP_OBJECT (encpreset_editor, encoder_cmd, "encoder_cmd");
   GLADE_HOOKUP_OBJECT (encpreset_editor, hbox109, "hbox109");
-  GLADE_HOOKUP_OBJECT (encpreset_editor, hbox112, "hbox112");
   GLADE_HOOKUP_OBJECT (encpreset_editor, label120, "label120");
+  GLADE_HOOKUP_OBJECT (encpreset_editor, alignment24, "alignment24");
   GLADE_HOOKUP_OBJECT (encpreset_editor, extension, "extension");
-  GLADE_HOOKUP_OBJECT (encpreset_editor, temporary_file, "temporary_file");
-  GLADE_HOOKUP_OBJECT (encpreset_editor, hbox126, "hbox126");
   GLADE_HOOKUP_OBJECT (encpreset_editor, hbox106, "hbox106");
   GLADE_HOOKUP_OBJECT (encpreset_editor, frame9, "frame9");
   GLADE_HOOKUP_OBJECT (encpreset_editor, alignment21, "alignment21");
   GLADE_HOOKUP_OBJECT (encpreset_editor, table2, "table2");
+  GLADE_HOOKUP_OBJECT (encpreset_editor, apev2, "apev2");
   GLADE_HOOKUP_OBJECT (encpreset_editor, id3v1, "id3v1");
-  GLADE_HOOKUP_OBJECT (encpreset_editor, flac, "flac");
+  GLADE_HOOKUP_OBJECT (encpreset_editor, oggvorbis, "oggvorbis");
   GLADE_HOOKUP_OBJECT (encpreset_editor, hbox104, "hbox104");
   GLADE_HOOKUP_OBJECT (encpreset_editor, id3v2, "id3v2");
   GLADE_HOOKUP_OBJECT (encpreset_editor, id3v2_version, "id3v2_version");
-  GLADE_HOOKUP_OBJECT (encpreset_editor, apev2, "apev2");
-  GLADE_HOOKUP_OBJECT (encpreset_editor, oggvorbis, "oggvorbis");
+  GLADE_HOOKUP_OBJECT (encpreset_editor, flac, "flac");
   GLADE_HOOKUP_OBJECT (encpreset_editor, label125, "label125");
   GLADE_HOOKUP_OBJECT_NO_REF (encpreset_editor, dialog_action_area6, "dialog_action_area6");
   GLADE_HOOKUP_OBJECT (encpreset_editor, encpreset_close, "encpreset_close");
@@ -599,7 +622,6 @@ create_encpreset_editor (void)
   GLADE_HOOKUP_OBJECT (encpreset_editor, encpreset_save, "encpreset_save");
 
   gtk_widget_grab_focus (encpreset_save);
-  gtk_widget_grab_default (encpreset_save);
   return encpreset_editor;
 }
 
@@ -636,6 +658,7 @@ create_dsppreset_editor (void)
 
   dsppreset_editor = gtk_dialog_new ();
   gtk_window_set_title (GTK_WINDOW (dsppreset_editor), _("DSP Preset Editor"));
+  gtk_window_set_position (GTK_WINDOW (dsppreset_editor), GTK_WIN_POS_MOUSE);
   gtk_window_set_modal (GTK_WINDOW (dsppreset_editor), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (dsppreset_editor), GDK_WINDOW_TYPE_HINT_DIALOG);
 
@@ -668,7 +691,7 @@ create_dsppreset_editor (void)
   gtk_container_add (GTK_CONTAINER (frame15), vbox40);
   gtk_container_set_border_width (GTK_CONTAINER (vbox40), 8);
 
-  hbox124 = gtk_hbox_new (TRUE, 6);
+  hbox124 = gtk_hbox_new (TRUE, 8);
   gtk_widget_show (hbox124);
   gtk_box_pack_start (GTK_BOX (vbox40), hbox124, FALSE, FALSE, 0);
 
@@ -706,7 +729,7 @@ create_dsppreset_editor (void)
   scrolledwindow11 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow11);
   gtk_box_pack_start (GTK_BOX (hbox122), scrolledwindow11, TRUE, TRUE, 0);
-  gtk_widget_set_size_request (scrolledwindow11, 380, 80);
+  gtk_widget_set_size_request (scrolledwindow11, 350, 80);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow11), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow11), GTK_SHADOW_IN);
 
@@ -752,6 +775,7 @@ create_dsppreset_editor (void)
   dsppreset_new = gtk_button_new_with_mnemonic (_("Save _new"));
   gtk_widget_show (dsppreset_new);
   gtk_dialog_add_action_widget (GTK_DIALOG (dsppreset_editor), dsppreset_new, GTK_RESPONSE_APPLY);
+  gtk_widget_set_can_default(dsppreset_new, TRUE);
   gtk_widget_set_tooltip_text (dsppreset_new, _("Create a new preset with these details"));
 
   dsppreset_save = gtk_button_new_from_stock ("gtk-save");
@@ -790,7 +814,6 @@ create_dsppreset_editor (void)
   GLADE_HOOKUP_OBJECT (dsppreset_editor, dsppreset_save, "dsppreset_save");
 
   gtk_widget_grab_focus (dsppreset_save);
-  gtk_widget_grab_default (dsppreset_save);
   return dsppreset_editor;
 }
 

@@ -1,6 +1,7 @@
 /*
     DeaDBeeF - The Ultimate Music Player
     Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2014 Ian Nartowicz <deadbeef@nartowicz.co.uk>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -116,9 +117,9 @@ preset_path(const char *dir, const char *subdir, const char *title)
 }
 
 static ddb_encoder_preset_t *
-encoder_preset_alloc (void)
+encoder_preset_alloc(void)
 {
-    return (ddb_encoder_preset_t *)calloc(1, sizeof(struct encoder_preset_link));
+    return calloc(1, sizeof(struct encoder_preset_link));
 }
 
 static void
@@ -136,14 +137,14 @@ encoder_preset_free_strings(ddb_encoder_preset_t *p)
 }
 
 static void
-encoder_preset_free (ddb_encoder_preset_t *p)
+encoder_preset_free(ddb_encoder_preset_t *p)
 {
     encoder_preset_free_strings(p);
     free(p);
 }
 
 static ddb_encoder_preset_t *
-encoder_preset_copy (ddb_encoder_preset_t *to, ddb_encoder_preset_t *from)
+encoder_preset_copy(ddb_encoder_preset_t *to, ddb_encoder_preset_t *from)
 {
     char *p_title = strdup(from->title);
     char *p_extension = strdup(from->extension);
@@ -173,7 +174,7 @@ encoder_preset_copy (ddb_encoder_preset_t *to, ddb_encoder_preset_t *from)
 }
 
 static ddb_encoder_preset_t *
-encoder_preset_duplicate (ddb_encoder_preset_t *old)
+encoder_preset_duplicate(ddb_encoder_preset_t *old)
 {
     ddb_encoder_preset_t *new = encoder_preset_alloc();
     if (!new) {
@@ -200,7 +201,7 @@ encoder_preset_get(const char *title)
 }
 
 static ddb_encoder_preset_t *
-encoder_preset_get_for_idx (int idx)
+encoder_preset_get_for_idx(int idx)
 {
     for (struct encoder_preset_link *l = encoder_presets; l; l = l->next) {
         if (!idx--) {
@@ -230,13 +231,13 @@ encoder_preset_get_idx(const char *title)
 }
 
 static char *
-encoder_preset_path (const char *title)
+encoder_preset_path(const char *title)
 {
     return preset_path(deadbeef->get_config_dir(), "presets/encoders", title);
 }
 
 static char *
-encoder_preset_builtin_path (const char *title)
+encoder_preset_builtin_path(const char *title)
 {
     char title_copy[strlen(title)+1];
     strcpy(title_copy, title);
@@ -248,7 +249,7 @@ encoder_preset_builtin_path (const char *title)
 }
 
 static struct encoder_preset_link *
-encoder_preset_create (const char *fname)
+encoder_preset_create(const char *fname)
 {
     FILE *fp = fopen(fname, "rt");
     if (!fp) {
@@ -343,7 +344,7 @@ encoder_preset_delete(ddb_encoder_preset_t *p)
 }
 
 static ddb_encoder_preset_t *
-encoder_preset_save (ddb_encoder_preset_t *p)
+encoder_preset_save(ddb_encoder_preset_t *p)
 {
     if (!p->title || !p->title[0]) {
         trace(stderr, "encoder_preset_save: empty title\n");
@@ -408,7 +409,7 @@ encoder_preset_save (ddb_encoder_preset_t *p)
 }
 
 static void
-encoder_preset_remove (ddb_encoder_preset_t *p)
+encoder_preset_remove(ddb_encoder_preset_t *p)
 {
     encoder_preset_delete(p);
 
@@ -428,7 +429,7 @@ encoder_preset_remove (ddb_encoder_preset_t *p)
 }
 
 static int
-dirent_alphasort (const struct dirent **a, const struct dirent **b)
+dirent_alphasort(const struct dirent **a, const struct dirent **b)
 {
     const char *a_name = (*a)->d_name;
     const char *b_name = (*b)->d_name;
@@ -442,7 +443,7 @@ dirent_alphasort (const struct dirent **a, const struct dirent **b)
 }
 
 static int
-scandir_preset_filter (const struct dirent *ent)
+scandir_preset_filter(const struct dirent *ent)
 {
     char *ext = strrchr(ent->d_name, '.');
     if (ext && !strcasecmp(ext, ".txt")) {
@@ -493,24 +494,24 @@ load_encoder_preset_dir(const char *path, const int builtin)
     free(namelist);
 }
 
-static int
-load_encoder_presets (void)
+static void
+load_encoder_presets(void)
 {
-    char syspath[sizeof("/convpresets/") + strlen(deadbeef->get_plugin_dir())];
-    strcpy(syspath, deadbeef->get_plugin_dir());
+    const char *plugindir = deadbeef->get_plugin_dir();
+    char syspath[sizeof("/convpresets/") + strlen(plugindir)];
+    strcpy(syspath, plugindir);
     strcat(syspath, "/convpresets/");
     load_encoder_preset_dir(syspath, DDB_PRESET_BUILTIN);
 
-    char path[sizeof("/presets/encoders/") + strlen(deadbeef->get_config_dir())];
-    strcpy(path, deadbeef->get_config_dir());
+    const char *configdir = deadbeef->get_config_dir();
+    char path[sizeof("/presets/encoders/") + strlen(configdir)];
+    strcpy(path, configdir);
     strcat(path, "/presets/encoders/");
     load_encoder_preset_dir(path, DDB_PRESET_CUSTOM);
-
-    return 0;
 }
 
 static void
-free_encoder_presets (void)
+free_encoder_presets(void)
 {
     struct encoder_preset_link *l = encoder_presets;
     while (l) {
@@ -542,25 +543,31 @@ dsp_plugin_duplicate(ddb_dsp_context_t *old)
 }
 
 static ddb_dsp_preset_t *
-dsp_preset_alloc (void)
+dsp_preset_alloc(void)
 {
-    return (ddb_dsp_preset_t *)calloc(1, sizeof(struct dsp_preset_link));
+    return calloc(1, sizeof(struct dsp_preset_link));
 }
 
 static void
-dsp_preset_free (ddb_dsp_preset_t *p)
+dsp_preset_clear(ddb_dsp_preset_t *p)
+{
+   if (p->title) {
+        free(p->title);
+    }
+    deadbeef->dsp_preset_free(p->chain);
+}
+
+static void
+dsp_preset_free(ddb_dsp_preset_t *p)
 {
     if (p) {
-        if (p->title) {
-            free(p->title);
-        }
-        deadbeef->dsp_preset_free(p->chain);
+        dsp_preset_clear(p);
         free(p);
     }
 }
 
 static ddb_dsp_preset_t *
-dsp_preset_copy (ddb_dsp_preset_t *to, ddb_dsp_preset_t *from)
+dsp_preset_copy(ddb_dsp_preset_t *to, ddb_dsp_preset_t *from)
 {
     char *p_title = strdup(from->title);
     if (!p_title) {
@@ -588,7 +595,7 @@ dsp_preset_copy (ddb_dsp_preset_t *to, ddb_dsp_preset_t *from)
 }
 
 static ddb_dsp_preset_t *
-dsp_preset_duplicate (ddb_dsp_preset_t *old)
+dsp_preset_duplicate(ddb_dsp_preset_t *old)
 {
     ddb_dsp_preset_t *new = dsp_preset_alloc();
     if (!new) {
@@ -635,7 +642,7 @@ dsp_preset_get_next(const ddb_dsp_preset_t *p)
 }
 
 static ddb_dsp_preset_t *
-dsp_preset_get_for_idx (int idx)
+dsp_preset_get_for_idx(int idx)
 {
     for (struct dsp_preset_link *l = dsp_presets; l; l = l->next) {
         if (!idx--) {
@@ -646,13 +653,13 @@ dsp_preset_get_for_idx (int idx)
 }
 
 static char *
-dsp_preset_path (const char *title)
+dsp_preset_path(const char *title)
 {
     return preset_path(deadbeef->get_config_dir(), "presets/dsp", title);
 }
 
 static ddb_dsp_preset_t *
-dsp_preset_load (const char *fname)
+dsp_preset_load(const char *fname)
 {
     ddb_dsp_preset_t *p = dsp_preset_alloc();
     if (!p) {
@@ -683,7 +690,7 @@ dsp_preset_load (const char *fname)
 }
 
 static ddb_dsp_preset_t *
-dsp_preset_save (ddb_dsp_preset_t *p)
+dsp_preset_save(ddb_dsp_preset_t *p)
 {
     if (!p->title || !p->title[0]) {
         trace(stderr, "dsp_preset_save: empty title\n");
@@ -703,8 +710,10 @@ dsp_preset_save (ddb_dsp_preset_t *p)
 
     ddb_dsp_preset_t *old = dsp_preset_get(p->title);
     if (old) {
-        dsp_preset_copy(old, p);
-        dsp_preset_free(p);
+        dsp_preset_clear(old);
+        old->title = p->title;
+        old->chain = p->chain;
+        free(p);
         return old;
     }
     else {
@@ -727,8 +736,8 @@ dsp_preset_save (ddb_dsp_preset_t *p)
     }
 }
 
-static int
-load_dsp_presets (void)
+static void
+load_dsp_presets(void)
 {
     struct dsp_preset_link *tail = NULL;
     char path[sizeof("/presets/dsp/") + strlen(deadbeef->get_config_dir())];
@@ -749,11 +758,10 @@ load_dsp_presets (void)
         free(namelist[i]);
     }
     free (namelist);
-    return 0;
 }
 
 static void
-free_dsp_presets (void)
+free_dsp_presets(void)
 {
     struct dsp_preset_link *l = dsp_presets;
     while (l) {
@@ -765,7 +773,7 @@ free_dsp_presets (void)
 }
 
 static void
-dsp_preset_remove (ddb_dsp_preset_t *p)
+dsp_preset_remove(ddb_dsp_preset_t *p)
 {
     char *path = dsp_preset_path(p->title);
     if (path) {
@@ -789,7 +797,7 @@ dsp_preset_remove (ddb_dsp_preset_t *p)
 }
 
 static void
-get_output_path (DB_playItem_t *it, const ddb_encoder_preset_t *encoder_preset, const char *rootfolder, const char *outfolder_user, const char *outfile, const int use_source_folder, char *out, int sz)
+get_output_path(DB_playItem_t *it, const ddb_encoder_preset_t *encoder_preset, const char *rootfolder, const char *outfolder_user, const char *outfile, const int use_source_folder, char *out, int sz)
 {
     trace("get_output_path: %s %s %s\n", outfolder_user, outfile, rootfolder);
 
@@ -869,7 +877,7 @@ get_root_folder(DB_playItem_t **items)
 }
 
 static char *
-escape_filepath (const char *path, char *escaped_path)
+escape_filepath(const char *path, char *escaped_path)
 {
     char *out = escaped_path;
     *out++ = '"';
@@ -952,8 +960,8 @@ encoder_temp_path(void)
 }
 
 static int
-convert_file (DB_playItem_t *it, const ddb_encoder_preset_t *encoder_preset, const char *out, const ddb_dsp_preset_t *dsp_preset, const int output_bps, const int output_is_float,
-              enum ddb_convert_api *api, char **message, void (* convert_callback)(const time_t, const time_t, const float, void *), void *user_data)
+convert_file(DB_playItem_t *it, const ddb_encoder_preset_t *encoder_preset, const char *out, const ddb_dsp_preset_t *dsp_preset, const int output_bps, const int output_is_float,
+             enum ddb_convert_api *api, char **message, void (* convert_callback)(const time_t, const time_t, const float, void *), void *user_data)
 {
     void *read_buffer = NULL;
     void *write_buffer = NULL;
@@ -1033,17 +1041,17 @@ convert_file (DB_playItem_t *it, const ddb_encoder_preset_t *encoder_preset, con
         dsp_chain = dsp_plugin_duplicate(dsp_preset->chain);
         const size_t dspsize = CONVERT_SAMPLES * ceil((double)384000 / fileinfo->fmt.samplerate) * 8 * 32 / 8;
         write_buffer = malloc(dspsize);
-        dsp_buffer = malloc(dspsize);
+        dsp_buffer = malloc(dspsize);fprintf(stderr, "readsize=%d, dspsize=%d\n", readsize, dspsize);
         if (!dsp_buffer) {
             goto error;
         }
     }
     else if (fileinfo->fmt.bps != outfmt.bps || fileinfo->fmt.is_float != outfmt.is_float) {
         const size_t writesize = CONVERT_SAMPLES * outfmt.channels * outfmt.bps / 8;
-        write_buffer = malloc(writesize);
+        write_buffer = malloc(writesize);fprintf(stderr, "readsize=%d, writesize=%d\n", readsize, writesize);
     }
     else {
-        write_buffer = read_buffer;
+        write_buffer = read_buffer;fprintf(stderr, "readsize=%d\n", readsize);
     }
     if (!write_buffer) {
         goto error;
@@ -1221,7 +1229,7 @@ error:
 }
 
 static void
-convert_tags (DB_playItem_t *it, const ddb_encoder_preset_t *encoder_preset, const char *out, char **message)
+convert_tags(DB_playItem_t *it, const ddb_encoder_preset_t *encoder_preset, const char *out, char **message)
 {
     if (!(encoder_preset->tag_id3v2 || encoder_preset->tag_id3v1 || encoder_preset->tag_apev2 || encoder_preset->tag_flac || encoder_preset->tag_oggvorbis)) {
         trace("converter: no tag type selected\n");
@@ -1315,7 +1323,7 @@ convert_tags (DB_playItem_t *it, const ddb_encoder_preset_t *encoder_preset, con
 }
 
 static int
-convert (DB_playItem_t *it, const ddb_encoder_preset_t *encoder_preset, const char *out, const ddb_dsp_preset_t *dsp_preset, const int output_bps, const int output_is_float,
+convert(DB_playItem_t *it, const ddb_encoder_preset_t *encoder_preset, const char *out, const ddb_dsp_preset_t *dsp_preset, const int output_bps, const int output_is_float,
          enum ddb_convert_api *api, char **message, void (* convert_callback)(const time_t, const time_t, const float, void *), void *user_data)
 {
 #ifndef __STDC_IEC_559__
@@ -1374,8 +1382,10 @@ static ddb_converter_t plugin =
     .misc.plugin.id = "converter",
     .misc.plugin.descr = "Converts any supported formats to other formats.\n"
         "Requires separate GUI plugin, e.g. Converter GTK UI\n",
+        "Requires external encoder programs except for WAV\n",
     .misc.plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2014 Ian Nartowicz <deadbeef@nartowicz.co.uk>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"
@@ -1420,7 +1430,8 @@ static ddb_converter_t plugin =
 };
 
 DB_plugin_t *
-converter_load (DB_functions_t *api) {
+converter_load(DB_functions_t *api)
+{
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }

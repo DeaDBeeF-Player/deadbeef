@@ -1,6 +1,7 @@
 /*
     DeaDBeeF - The Ultimate Music Player
     Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2014 Ian Nartowicz <deadbeef@nartowicz.co.uk>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -150,7 +151,7 @@ typedef struct {
                         const char *rootfolder, // common path root of all the tracks being converted (if preserve_folder_structure is set)
                         const char *outfolder, // the root folder to write the converted files to
                         const char *outfile, // pattern defining a file path (excluding extension) to be appended to outfolder
-                        const int use_source_folder, // use the folder containing thre track instead of outfolder
+                        const int use_source_folder, // use the folder containing the track instead of outfolder
                         char *out, // buffer for the final path, includes file extension, not escaped
                         int sz); // number of bytes available in the out buffer
 

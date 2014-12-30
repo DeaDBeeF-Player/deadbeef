@@ -1,6 +1,7 @@
 /*
     DeaDBeeF - The Ultimate Music Player
     Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2014 Ian Nartowicz <deadbeef@nartowicz.co.uk>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -29,11 +30,16 @@ DB_functions_t *deadbeef;
 ddb_gtkui_t *gtkui_plugin;
 ddb_converter_t *converter_plugin;
 
+enum overwrite_action {
+    OVERWRITE_ACTION_SKIP = 0,
+    OVERWRITE_ACTION_PROMPT,
+    OVERWRITE_ACTION_OVERWRITE
+};
+
 enum convert_columns {
     LIST_STORE_ICON = 0,
     LIST_STORE_NAME,
     LIST_STORE_PERCENT,
-    LIST_STORE_MESSAGE,
     LIST_STORE_COLUMNS
 };
 
@@ -47,7 +53,7 @@ enum convert_status {
 
 struct converter_ctx {
     ddb_encoder_preset_t *encoder_preset;
-    int overwrite_action;
+    enum overwrite_action overwrite_action;
     ddb_dsp_preset_t *dsp_preset;
     int output_bps;
     int output_is_float;
@@ -61,65 +67,86 @@ struct converter_ctx {
         char *outpath;
         unsigned elapsed;
         float readpos;
+        const char *message;
     } *items;
 };
+
+static uintptr_t deferred_load_mutex;
+
+static void
+save_alert_dialog(GtkWindow *win, const char *save_type)
+{
+    GtkWidget *dlg = gtk_message_dialog_new(win, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Failed to save %s"), save_type);
+    gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dlg), _("Check preset folder permissions or free up some disk space, then save again"));
+    gtk_dialog_run(GTK_DIALOG(dlg));
+    gtk_widget_destroy(dlg);
+}
+
+static gboolean
+confirm_delete_dialog(GtkWindow *win, const char *delete_type, const char *title)
+{
+    GtkWidget *dlg = gtk_message_dialog_new(win, 0, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL, _("You are about to permanently delete this %s"), delete_type);
+    gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dlg), title);
+    gtk_widget_grab_focus(gtk_dialog_add_button(GTK_DIALOG(dlg), _("_Delete"), GTK_RESPONSE_YES));
+    const int res = gtk_dialog_run(GTK_DIALOG(dlg));
+    gtk_widget_destroy(dlg);
+    return res == GTK_RESPONSE_YES;
+}
 
 struct overwrite_info {
     GtkWidget *progress;
     const char *path;
+    int all_prompts;
     uintptr_t mutex;
     uintptr_t cond;
     int result;
 };
 
-static void
-alert_dialog(GtkWindow *win, const char *msg, const char *secondary_text)
-{
-    GtkWidget *dlg = gtk_message_dialog_new(win, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, msg);
-    gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dlg), secondary_text);
-    gtk_dialog_run(GTK_DIALOG(dlg));
-    gtk_widget_destroy(dlg);
-}
-
-static int
-confirm_dialog(GtkWindow *win, const char *prompt, const char *secondary_text, const char *button_name)
-{
-    GtkWidget *dlg = gtk_message_dialog_new(win, 0, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL, prompt);
-    gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dlg), secondary_text);
-    GtkWidget *button = gtk_dialog_add_button(GTK_DIALOG(dlg), button_name, GTK_RESPONSE_YES);
-    gtk_widget_grab_focus(button);
-    const int res = gtk_dialog_run(GTK_DIALOG(dlg));
-    gtk_widget_destroy(dlg);
-    return res;
-}
-
 static gboolean
 overwrite_prompt_cb(void *ctx)
 {
     struct overwrite_info *info = ctx;
-    info->result = confirm_dialog(GTK_WINDOW(info->progress), _("The file already exists and will be overwritten"), info->path, _("_Overwrite"));
+    GtkWidget *dlg = gtk_message_dialog_new(GTK_WINDOW(info->progress), 0, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE, _("The file already exists and will be overwritten"));
+    gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dlg), info->path);
+    gtk_dialog_add_button(GTK_DIALOG(dlg), _("_Skip"), GTK_RESPONSE_NO);
+    if (info->all_prompts) {
+        gtk_dialog_add_button(GTK_DIALOG(dlg), _("Skip al_l"), GTK_RESPONSE_REJECT);
+    }
+    gtk_widget_grab_focus(gtk_dialog_add_button(GTK_DIALOG(dlg), _("_Overwrite"), GTK_RESPONSE_YES));
+    if (info->all_prompts) {
+        gtk_widget_grab_focus(gtk_dialog_add_button(GTK_DIALOG(dlg), _("Overwrite _all"), GTK_RESPONSE_ACCEPT));
+    }
+    info->result = gtk_dialog_run(GTK_DIALOG(dlg));
+    gtk_widget_destroy(dlg);
     deadbeef->cond_signal(info->cond);
     return FALSE;
 }
 
-static int
-overwrite_dialog(GtkWidget *progress, const char *overwrite_path)
+static gboolean
+overwrite_dialog(struct converter_ctx *conv, struct converter_ctx_item *item)
 {
     struct overwrite_info info;
     info.result = GTK_RESPONSE_CANCEL;
-    info.progress = progress;
     info.mutex = deadbeef->mutex_create();
     if (info.mutex) {
         info.cond = deadbeef->cond_create();
         if (info.cond) {
-            info.path = overwrite_path;
+            info.progress = conv->progress;
+            info.path = item->outpath;
+            info.all_prompts = !!conv->items[1].item;
             gdk_threads_add_idle(overwrite_prompt_cb, &info);
             deadbeef->cond_wait(info.cond, info.mutex);
             deadbeef->cond_free(info.cond);
         }
         deadbeef->mutex_free(info.mutex);
+        if (info.result == GTK_RESPONSE_REJECT) {
+            conv->overwrite_action = OVERWRITE_ACTION_SKIP;
+        }
+        else if (info.result == GTK_RESPONSE_ACCEPT) {
+            conv->overwrite_action = OVERWRITE_ACTION_OVERWRITE;
+        }
     }
-    return info.result;
+    return info.result == GTK_RESPONSE_YES || info.result == GTK_RESPONSE_ACCEPT;
 }
 
 const char *
@@ -235,7 +262,7 @@ update_timing(GtkWidget *dlg, const unsigned elapsed, const float readpos)
     sprintf(elapsed_str, "%02d:%02d", elapsed/60, elapsed%60);
 
     if (readpos < 0) {
-        const char *progress_pattern = _("%s (using temporary file)");
+        const char *progress_pattern = _("Convert time: %s (using temporary file)");
         char progress_label[strlen(progress_pattern) + strlen(elapsed_str)];
         sprintf(progress_label, progress_pattern, elapsed_str);
         gtk_label_set_text(GTK_LABEL(lookup_widget(dlg, "message")), progress_label);
@@ -244,10 +271,10 @@ update_timing(GtkWidget *dlg, const unsigned elapsed, const float readpos)
         const unsigned readpos_int = readpos;
         char track_str[sizeof("%02u:%02u:%02u") + (size_t)log10(readpos/3600)];
         sprintf(track_str, readpos_int < 3600 ? "%02u:%02u" : "%3$02u:%02u:%02u", readpos_int/60%60, readpos_int%60, readpos_int/3600);
-        const float speed = readpos/elapsed;
+        const float speed = readpos / elapsed;
         char speed_str[sizeof("%.1fx") + (size_t)log10(speed)];
         sprintf(speed_str, speed < 100 ? " (%.1fx)" : " (%.0fx)", speed);
-        const char *progress_pattern = _("Elapsed time: %s, track time: %s%s");
+        const char *progress_pattern = _("Convert time: %s, track time: %s%s");
         char progress_label[strlen(progress_pattern) + strlen(elapsed_str) + strlen(track_str) + strlen(speed_str)];
         sprintf(progress_label, progress_pattern, elapsed_str, track_str, elapsed ? speed_str : "");
         gtk_label_set_text(GTK_LABEL(lookup_widget(dlg, "message")), progress_label);
@@ -336,47 +363,39 @@ update_detail(struct converter_ctx_item *items, GtkTreeView *list)
         gtk_label_set_text(GTK_LABEL(lookup_widget(dlg, "tracks")), tracks_label);
     }
 
-    GtkTreeModel *mdl = gtk_tree_view_get_model(list);
-    GtkTreeIter iter;
-    if (gtk_tree_selection_get_selected(gtk_tree_view_get_selection(list), &mdl, &iter)) {
-        GtkTreePath *selected_path = gtk_tree_model_get_path(mdl, &iter);
+    GtkTreeSelection *selection = gtk_tree_view_get_selection(list);
+    if (gtk_tree_selection_count_selected_rows(selection)) {
         for (struct converter_ctx_item *test_item = items; test_item->item; test_item++) {
             GtkTreePath *item_path = gtk_tree_row_reference_get_path(test_item->row);
-            if (!gtk_tree_path_compare(item_path, selected_path)) {
+            if (gtk_tree_selection_path_is_selected(selection, item_path)) {
                 item = test_item;
             }
             gtk_tree_path_free(item_path);
         }
-        gtk_tree_path_free(selected_path);
     }
-    GtkTreePath *path = gtk_tree_row_reference_get_path(item->row);
-    gtk_tree_model_get_iter(mdl, &iter, path);
-    gtk_tree_path_free(path);
 
     GtkTreePath *start_path;
     GtkTreePath *end_path;
     if (gtk_tree_view_get_visible_range(list, &start_path, &end_path)) {
-        GtkTreePath *path = gtk_tree_model_get_path(mdl, &iter);
+        GtkTreePath *path = gtk_tree_row_reference_get_path(item->row);
         if (gtk_tree_path_compare(path, start_path) <= 0 || gtk_tree_path_compare(path, end_path) >= 0) {
             gtk_tree_view_scroll_to_cell(list, path, NULL, TRUE, 1.0, 1.0);
         }
+        gtk_tree_path_free(path);
         gtk_tree_path_free(start_path);
         gtk_tree_path_free(end_path);
     }
 
-    char *message;
-    gtk_tree_model_get(mdl, &iter, LIST_STORE_MESSAGE, &message, -1);
     gtk_label_set_text(GTK_LABEL(lookup_widget(dlg, "status")), status_description(item->status));
     gtk_label_set_text(GTK_LABEL(lookup_widget(dlg, "remaining")), NULL);
-    gtk_label_set_text(GTK_LABEL(lookup_widget(dlg, "message")), message);
+    gtk_label_set_text(GTK_LABEL(lookup_widget(dlg, "message")), item->message);
     deadbeef->pl_lock();
     gtk_label_set_text(GTK_LABEL(lookup_widget(dlg, "from")), deadbeef->pl_find_meta(item->item, ":URI"));
     deadbeef->pl_unlock();
     gtk_label_set_text(GTK_LABEL(lookup_widget(dlg, "to")), item->outpath);
-    g_free(message);
     g_object_set_data(G_OBJECT(list), "current-item", item);
 
-    if (item->status == LIST_STATUS_CONVERTING || item->status == LIST_STATUS_CONVERTED && !message) {
+    if (item->status == LIST_STATUS_CONVERTING || item->status == LIST_STATUS_CONVERTED && !item->message) {
         if (item->status == LIST_STATUS_CONVERTING) {
             update_remaining(dlg, item->elapsed, item->readpos, deadbeef->pl_get_item_duration(item->item));
         }
@@ -389,7 +408,6 @@ struct update_status_ctx {
     GtkTreeRowReference *row;
     enum convert_status status;
     guint percent;
-    const gchar *message;
 };
 
 static gboolean
@@ -403,7 +421,7 @@ update_status_cb(gpointer ctx)
     gtk_tree_model_get_iter(mdl, &iter, path);
     gtk_tree_path_free(path);
 
-    gtk_list_store_set(GTK_LIST_STORE(mdl), &iter, LIST_STORE_ICON, status_icon(update->status), LIST_STORE_PERCENT, update->percent, LIST_STORE_MESSAGE, update->message, -1);
+    gtk_list_store_set(GTK_LIST_STORE(mdl), &iter, LIST_STORE_ICON, status_icon(update->status), LIST_STORE_PERCENT, update->percent, -1);
     update_detail(update->items, g_object_get_data(G_OBJECT(mdl), "list"));
     free(ctx);
     return FALSE;
@@ -413,13 +431,13 @@ static void
 set_status(struct converter_ctx_item *items, struct converter_ctx_item *item, const enum convert_status status, const guint percent, const char *message)
 {
     item->status = status;
+    item->message = message;
     struct update_status_ctx *ctx = malloc(sizeof(struct update_status_ctx));
     if (ctx) {
         ctx->items = items;
         ctx->row = item->row;
         ctx->status = status;
         ctx->percent = percent;
-        ctx->message = message;
         gdk_threads_add_idle(update_status_cb, ctx);
     }
 }
@@ -488,7 +506,7 @@ convert_item(struct converter_ctx *conv, struct converter_ctx_item *item)
             return;
         }
 
-        if (conv->overwrite_action == 0 || conv->overwrite_action == 1 && overwrite_dialog(conv->progress, item->outpath) != GTK_RESPONSE_YES) {
+        if (conv->overwrite_action == OVERWRITE_ACTION_SKIP || conv->overwrite_action == OVERWRITE_ACTION_PROMPT && !overwrite_dialog(conv, item)) {
             set_status(conv->items, item, LIST_STATUS_SKIPPED, 100, _("File already exists"));
             return;
         }
@@ -542,7 +560,7 @@ converter_process(GtkWidget *dlg, DB_playItem_t **items)
     while (items[items_size++]);
     conv->items = calloc(1, sizeof(struct converter_ctx_item) * (items_size));
     const int encoder_idx = gtk_combo_box_get_active(GTK_COMBO_BOX(lookup_widget(dlg, "encoder")));
-    ddb_encoder_preset_t *encoder_preset = encoder_idx == -1 ? NULL : converter_plugin->encoder_preset_get_for_idx(encoder_idx);
+    ddb_encoder_preset_t *encoder_preset = converter_plugin->encoder_preset_get_for_idx(encoder_idx);
     if (encoder_preset) {
         conv->encoder_preset = converter_plugin->encoder_preset_duplicate(encoder_preset);
     }
@@ -600,13 +618,9 @@ converter_process(GtkWidget *dlg, DB_playItem_t **items)
     gtk_tree_view_append_column(list, progress_col);
     g_object_set(G_OBJECT(progress_cell), "text-xalign", 0.0);
 
-    GtkListStore *mdl = gtk_list_store_new(LIST_STORE_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
-    g_object_set_data(G_OBJECT(mdl), "list", list);
-    gtk_tree_view_set_model(list, GTK_TREE_MODEL(mdl));
-    g_object_unref(mdl);
-
     const int use_source_folder = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(dlg, "use_source_folder")));
     char *rootfolder = get_root_folder(dlg, items);
+    GtkListStore *mdl = gtk_list_store_new(LIST_STORE_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_STRING);
     deadbeef->conf_lock();
     const char *outfolder = get_output_folder();
     const char *outfile = get_output_pattern();
@@ -627,6 +641,9 @@ converter_process(GtkWidget *dlg, DB_playItem_t **items)
         conv->items[i].status = LIST_STATUS_WAITING;
     }
     deadbeef->conf_unlock();
+    g_object_set_data(G_OBJECT(mdl), "list", list);
+    gtk_tree_view_set_model(list, GTK_TREE_MODEL(mdl));
+    g_object_unref(mdl);
     free(rootfolder);
 
     g_signal_connect(gtk_tree_view_get_selection(list), "changed", G_CALLBACK(on_selection_changed), conv->items);
@@ -656,7 +673,6 @@ init_encoder_dlg_from_preset(ddb_encoder_preset_t *preset, GtkWidget *title_comb
     gtk_entry_set_text(GTK_ENTRY(lookup_widget(title_combo, "extension")), preset->extension);
     gtk_entry_set_text(GTK_ENTRY(lookup_widget(title_combo, "encoder_cmd")), preset->encoder);
 
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lookup_widget(title_combo, "temporary_file")), preset->method);
     gtk_combo_box_set_active(GTK_COMBO_BOX(lookup_widget(title_combo, "id3v2_version")), preset->id3v2_version);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lookup_widget(title_combo, "id3v1")), preset->tag_id3v1);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lookup_widget(title_combo, "id3v2")), preset->tag_id3v2);
@@ -681,13 +697,21 @@ on_default_clicked(GtkButton *button, ddb_encoder_preset_t **preset)
 }
 
 static void
-on_encoder_default_field_changed(GtkWidget *widget, GtkWidget *default_button)
+set_default_button(GtkWidget *button)
 {
-    gtk_widget_set_sensitive(default_button, gtk_widget_get_visible(gtk_widget_get_parent(default_button)));
+    gtk_widget_set_sensitive(button, gtk_widget_get_visible(gtk_widget_get_parent(button)));
 }
 
 static void
-on_entry_changed(GtkWidget *widget, ddb_encoder_preset_t **preset)
+on_encoder_cmd_changed(GtkEntry *encoder_cmd, GtkWidget *default_button)
+{
+    const int pipe = !strstr(gtk_entry_get_text(encoder_cmd), "%i");
+    const char *tooltip = pipe ? _("Data will be piped to this encoder command on stdin") : _("A temporary file will be passed to this encoder command");
+    gtk_widget_set_tooltip_text(GTK_WIDGET(encoder_cmd), tooltip);
+}
+
+static void
+on_encoder_title_changed(GtkWidget *widget, ddb_encoder_preset_t **preset)
 {
     GtkWidget *title_combo = lookup_widget(widget, "title");
     const char *encoder_title = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(title_combo));
@@ -695,13 +719,17 @@ on_entry_changed(GtkWidget *widget, ddb_encoder_preset_t **preset)
     ddb_encoder_preset_t *new = preset_idx == -1 ? converter_plugin->encoder_preset_get(encoder_title) : converter_plugin->encoder_preset_get_for_idx(preset_idx);
     if (widget == title_combo && preset_idx != -1) {
         *preset = new;
-        init_encoder_dlg_from_preset(converter_plugin->encoder_preset_get_for_idx(preset_idx), title_combo);
+        init_encoder_dlg_from_preset(new, title_combo);
     }
 
     const char *extension = gtk_entry_get_text(GTK_ENTRY(lookup_widget(widget, "extension")));
 
-    gtk_widget_set_sensitive(lookup_widget(widget, "encpreset_save"), *encoder_title && *extension && (new == *preset || !new && !(*preset)->builtin));
-    gtk_widget_set_sensitive(lookup_widget(widget, "encpreset_new"), *encoder_title && *extension && !new);
+    GtkWidget *save_button = lookup_widget(widget, "encpreset_save");
+    GtkWidget *new_button = lookup_widget(widget, "encpreset_new");
+    const int allow_save = *encoder_title && *extension && (new == *preset || !new && !(*preset)->builtin);
+    gtk_widget_set_sensitive(save_button, allow_save);
+    gtk_widget_set_sensitive(new_button, *encoder_title && *extension && !new);
+    gtk_widget_grab_default(allow_save ? save_button : new_button);
     gtk_widget_set_sensitive(lookup_widget(widget, "encpreset_delete"), *preset && !(*preset)->builtin);
 }
 
@@ -749,7 +777,7 @@ save_encoder_preset(GtkWidget *dlg)
     p->title = strdup(gtk_entry_get_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(lookup_widget(dlg, "title"))))));
     p->extension = strdup(gtk_entry_get_text(GTK_ENTRY(lookup_widget(dlg, "extension"))));
     p->encoder = strdup(gtk_entry_get_text(GTK_ENTRY(lookup_widget(dlg, "encoder_cmd"))));
-    p->method = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(dlg, "temporary_file"))) ? DDB_ENCODER_METHOD_FILE : DDB_ENCODER_METHOD_PIPE;
+    p->method = strstr(p->encoder, "%i") ? DDB_ENCODER_METHOD_FILE : DDB_ENCODER_METHOD_PIPE;
     p->id3v2_version = gtk_combo_box_get_active(GTK_COMBO_BOX(lookup_widget(dlg, "id3v2_version")));
     p->tag_id3v2 = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(dlg, "id3v2")));
     p->tag_id3v1 = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(dlg, "id3v1")));
@@ -759,13 +787,13 @@ save_encoder_preset(GtkWidget *dlg)
 
     ddb_encoder_preset_t *saved = converter_plugin->encoder_preset_save(p);
     if (!saved) {
-        alert_dialog(GTK_WINDOW(gtkui_plugin->get_mainwin()), _("Failed to save encoder preset"), _("Check preset folder permissions or free up some disk space, then save again"));
+        save_alert_dialog(GTK_WINDOW(gtkui_plugin->get_mainwin()), _("encoder preset"));
     }
 
     return saved;
 }
 
-static int
+static gint
 edit_encoder_preset(GtkWidget *dlg, ddb_encoder_preset_t **preset_ptr)
 {
     ddb_encoder_preset_t *orig = *preset_ptr;
@@ -774,8 +802,7 @@ edit_encoder_preset(GtkWidget *dlg, ddb_encoder_preset_t **preset_ptr)
         switch (res) {
             case GTK_RESPONSE_REJECT: {
                 ddb_encoder_preset_t *preset = *preset_ptr;
-                const int remove_res = confirm_dialog(GTK_WINDOW(dlg), _("You are about to permanently delete this encoder preset"), preset->title, _("_Delete"));
-                if (remove_res == GTK_RESPONSE_YES) {
+                if (confirm_delete_dialog(GTK_WINDOW(dlg), _("encoder preset"), preset->title)) {
                     converter_plugin->encoder_preset_remove(preset);
                     deadbeef->conf_remove_items("converter.encoder_title");
                     return GTK_RESPONSE_OK;
@@ -819,15 +846,16 @@ on_edit_encoder_presets_clicked(GtkWidget *button, GtkComboBox *encoder)
     gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(gtk_widget_get_toplevel(button)));
 
     GtkWidget *encoder_cmd = lookup_widget(dlg, "encoder_cmd");
+    g_signal_connect(encoder_cmd, "changed", G_CALLBACK(on_encoder_cmd_changed), NULL);
     GtkWidget *help_link = gtk_link_button_new_with_label("http://github.com/Alexey-Yakovenko/deadbeef/wiki/Encoder-Command-Line", _("Help"));
-    gtk_widget_set_tooltip_text(help_link, _("%o substitutes full output path\n%i substitutes temporary file\nClick for more help"));
+    gtk_widget_set_tooltip_text(help_link, _("Leave blank to output RIFF WAV\n%o = full output path\n%i = temporary file (use if encoder can't handle raw WAV)\nClick for more help"));
     gtk_widget_show(help_link);
     gtk_box_pack_start(GTK_BOX(gtk_widget_get_parent(encoder_cmd)), help_link, FALSE, FALSE, 0);
     gtk_widget_set_can_default(help_link, FALSE);
     gtk_button_set_focus_on_click(GTK_BUTTON(help_link), FALSE);
 
     GtkComboBox *title_combo = GTK_COMBO_BOX(lookup_widget(dlg, "title"));
-    g_signal_connect(title_combo, "changed", G_CALLBACK(on_entry_changed), &preset);
+    g_signal_connect(title_combo, "changed", G_CALLBACK(on_encoder_title_changed), &preset);
     GtkEntry *title_entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(title_combo)));
     gtk_entry_set_activates_default(title_entry, TRUE);
     gtk_entry_set_max_length(GTK_ENTRY(title_entry), NAME_MAX-4);
@@ -836,13 +864,12 @@ on_edit_encoder_presets_clicked(GtkWidget *button, GtkComboBox *encoder)
     GtkWidget *default_button = lookup_widget(dlg, "encpreset_default");
     GtkWidget *extension = lookup_widget(dlg, "extension");
     gtk_entry_set_max_length(GTK_ENTRY(extension), NAME_MAX-2);
-    g_signal_connect(extension, "changed", G_CALLBACK(on_entry_changed), &preset);
-    g_signal_connect(encoder_cmd, "changed", G_CALLBACK(on_encoder_default_field_changed), default_button);
-    g_signal_connect(extension, "changed", G_CALLBACK(on_encoder_default_field_changed), default_button);
-    g_signal_connect(lookup_widget(dlg, "temporary_file"), "toggled", G_CALLBACK(on_encoder_default_field_changed), default_button);
+    g_signal_connect(extension, "changed", G_CALLBACK(on_encoder_title_changed), &preset);
+    g_signal_connect_swapped(encoder_cmd, "changed", G_CALLBACK(set_default_button), default_button);
+    g_signal_connect_swapped(extension, "changed", G_CALLBACK(set_default_button), default_button);
     g_signal_connect(default_button, "clicked", G_CALLBACK(on_default_clicked), &preset);
 
-    const int res = edit_encoder_preset(dlg, &preset);
+    const gint res = edit_encoder_preset(dlg, &preset);
     if (res == GTK_RESPONSE_OK) {
         fill_encoder_presets(encoder);
     }
@@ -941,13 +968,13 @@ on_dsp_remove_plugin_clicked(GtkWidget *button, GtkTreeView *list)
 static ddb_dsp_context_t *current_dsp_context = NULL;
 
 static void
-dsp_ctx_set_param (const char *key, const char *value)
+dsp_ctx_set_param(const char *key, const char *value)
 {
     current_dsp_context->plugin->set_param(current_dsp_context, atoi(key), value);
 }
 
 static void
-dsp_ctx_get_param (const char *key, char *value, int len, const char *def)
+dsp_ctx_get_param(const char *key, char *value, int len, const char *def)
 {
     *value = '\0';
     strncat(value, def, len);
@@ -1051,8 +1078,12 @@ on_dsp_title_changed(GtkWidget *widget, ddb_dsp_preset_t **preset)
         init_dsp_dlg_from_preset(new, title_combo);
     }
 
-    gtk_widget_set_sensitive(lookup_widget(widget, "dsppreset_save"), *dsp_title && (new == *preset || !new));
-    gtk_widget_set_sensitive(lookup_widget(widget, "dsppreset_new"), *dsp_title && !new);
+    GtkWidget *save_button = lookup_widget(widget, "dsppreset_save");
+    GtkWidget *new_button = lookup_widget(widget, "dsppreset_new");
+    const int allow_save = *preset && *dsp_title && (new == *preset || !new);
+    gtk_widget_set_sensitive(save_button, allow_save);
+    gtk_widget_set_sensitive(new_button, *dsp_title && !new);
+    gtk_widget_grab_default(allow_save ? save_button : new_button);
 }
 
 static int
@@ -1100,13 +1131,13 @@ save_dsp_preset(GtkWidget *dlg)
 
     ddb_dsp_preset_t *saved = converter_plugin->dsp_preset_save(p);
     if (!saved) {
-        alert_dialog(GTK_WINDOW(gtkui_plugin->get_mainwin()), _("Failed to save DSP preset"), _("Check preset folder permissions or free up some disk space"));
+        save_alert_dialog(GTK_WINDOW(gtkui_plugin->get_mainwin()), _("DSP preset"));
     }
 
     return saved;
 }
 
-static int
+static gint
 edit_dsp_preset(GtkWidget *dlg, ddb_dsp_preset_t *preset)
 {
     ddb_dsp_preset_t *orig = preset;
@@ -1114,8 +1145,7 @@ edit_dsp_preset(GtkWidget *dlg, ddb_dsp_preset_t *preset)
         const int res = gtk_dialog_run(GTK_DIALOG(dlg));
         switch (res) {
             case GTK_RESPONSE_REJECT: {
-                const int remove_res = confirm_dialog(GTK_WINDOW(dlg), _("You are about to permanently delete this DSP preset"), preset->title, _("_Delete"));
-                if (remove_res == GTK_RESPONSE_YES) {
+                if (confirm_delete_dialog(GTK_WINDOW(dlg), _("DSP preset"), preset->title)) {
                     converter_plugin->dsp_preset_remove(preset);
                     clear_dsp_plugin_chain_list(GTK_TREE_VIEW(lookup_widget(dlg, "plugins")));
                     deadbeef->conf_remove_items("converter.dsp_title");
@@ -1215,7 +1245,7 @@ on_edit_dsp_presets_clicked(GtkWidget *button, GtkComboBox *dsp)
     GtkWidget *dlg = create_dsp_preset_dlg(&preset);
     gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(gtk_widget_get_toplevel(button)));
 
-    const int res = edit_dsp_preset(dlg, preset);
+    const gint res = edit_dsp_preset(dlg, preset);
     if (res == GTK_RESPONSE_OK) {
         fill_dsp_presets(dsp);
     }
@@ -1228,20 +1258,20 @@ static void
 set_output_path_label(GtkWidget *widget, DB_playItem_t **items)
 {
     char outpath[PATH_MAX] = "";
-    deadbeef->conf_lock();
-    const char *encoder_title = deadbeef->conf_get_str_fast("converter.encoder_title", NULL);
-    ddb_encoder_preset_t *preset = encoder_title ? converter_plugin->encoder_preset_get(encoder_title) : NULL;
-    if (preset) {
-        const char *out_folder = get_output_folder();
-        const char *output_file = get_output_pattern();
-        char *root_folder = get_root_folder(widget, items);
-        const int use_source_folder = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(widget, "use_source_folder")));
-        converter_plugin->get_output_path(items[0], preset, root_folder, out_folder, output_file, use_source_folder, outpath, sizeof(outpath));
-        if (root_folder) {
-            free(root_folder);
+    const int idx = gtk_combo_box_get_active(GTK_COMBO_BOX(lookup_widget(widget, "encoder")));
+    if (idx != -1) {
+        ddb_encoder_preset_t *encoder_preset = converter_plugin->encoder_preset_get_for_idx(idx);
+        if (encoder_preset) {
+            const char *out_folder = get_output_folder();
+            const char *output_file = get_output_pattern();
+            char *root_folder = get_root_folder(widget, items);
+            const int use_source_folder = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(widget, "use_source_folder")));
+            converter_plugin->get_output_path(items[0], encoder_preset, root_folder, out_folder, output_file, use_source_folder, outpath, sizeof(outpath));
+            if (root_folder) {
+                free(root_folder);
+            }
         }
     }
-    deadbeef->conf_unlock();
     gtk_label_set_text(GTK_LABEL(lookup_widget(widget, "path_label")), outpath);
 }
 
@@ -1294,8 +1324,6 @@ on_use_source_folder_toggled(GtkToggleButton *togglebutton, DB_playItem_t **item
 {
     const int active = gtk_toggle_button_get_active(togglebutton);
     deadbeef->conf_set_int("converter.use_source_folder", active);
-    gtk_widget_set_sensitive(lookup_widget(GTK_WIDGET(togglebutton), "output_folder"), !active);
-    gtk_widget_set_sensitive(lookup_widget(GTK_WIDGET(togglebutton), "converter_output_browse"), !active);
     gtk_widget_set_sensitive(lookup_widget(GTK_WIDGET(togglebutton), "preserve_folders"), !active);
     set_output_path_label(GTK_WIDGET(togglebutton), items);
 }
@@ -1321,10 +1349,13 @@ on_encoder_changed(GtkComboBox *combobox, DB_playItem_t **items)
 {
     const int idx = gtk_combo_box_get_active(combobox);
     gtk_widget_set_sensitive(lookup_widget(GTK_WIDGET(combobox), "converter_convert"), idx != -1);
-    ddb_encoder_preset_t *preset = idx == -1 ? NULL : converter_plugin->encoder_preset_get_for_idx(idx);
-    if (preset) {
-        deadbeef->conf_set_str("converter.encoder_title", preset->title);
-        set_output_path_label(GTK_WIDGET(combobox), items);
+    if (idx != -1) {
+        ddb_encoder_preset_t *preset = converter_plugin->encoder_preset_get_for_idx(idx);
+        if (preset) {
+            deadbeef->conf_set_str("converter.encoder_title", preset->title);
+            gtk_widget_set_tooltip_text(GTK_WIDGET(combobox), preset->encoder);
+            set_output_path_label(GTK_WIDGET(combobox), items);
+        }
     }
 }
 
@@ -1356,8 +1387,8 @@ on_dsp_preset_changed(GtkComboBox *combobox, gpointer apply_dsp)
 {
     const int idx = gtk_combo_box_get_active(combobox);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(apply_dsp), idx != -1 && deadbeef->conf_get_int("converter.apply_dsp", 0));
-    gtk_widget_set_sensitive(GTK_WIDGET(apply_dsp), idx != -1);
     ddb_dsp_preset_t *preset = idx == -1 ? NULL : converter_plugin->dsp_preset_get_for_idx(idx);
+    gtk_widget_set_sensitive(GTK_WIDGET(apply_dsp), preset != NULL);
     if (preset) {
         deadbeef->conf_set_str("converter.dsp_title", preset->title);
     }
@@ -1377,7 +1408,7 @@ on_converter_output_format_changed(GtkComboBox *combobox, gpointer user_data)
     deadbeef->conf_set_int("converter.output_format", gtk_combo_box_get_active(combobox));
 }
 
-static int
+static gboolean
 can_use_source_folder(DB_playItem_t **items)
 {
     for (DB_playItem_t **item = items; *item; item++) {
@@ -1386,24 +1417,32 @@ can_use_source_folder(DB_playItem_t **items)
         const int can_use_source_folder = uri[0] == '/' && strncmp(uri, "/dev", 4) || !strncmp(uri, "file:///", 8);
         deadbeef->pl_unlock();
         if (!can_use_source_folder) {
-            return 0;
+            return FALSE;
         }
     }
-    return 1;
+    return TRUE;
 }
 
 static gboolean
-converter_show_cb (void *data)
+converter_show_cb(void *data)
 {
+    deadbeef->mutex_lock(deferred_load_mutex);
+    deadbeef->mutex_unlock(deferred_load_mutex);
+
     DB_playItem_t **items = (DB_playItem_t **)data;
     GtkWidget *dlg = create_converterdlg();
     gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(gtkui_plugin->get_mainwin()));
 
     if (can_use_source_folder(items)) {
         GtkWidget *use_source_folder_widget = lookup_widget(dlg, "use_source_folder");
-        gtk_widget_set_visible(use_source_folder_widget, TRUE);
+        gtk_widget_show(lookup_widget(dlg, "base_folder_label_header"));
+        gtk_widget_show(use_source_folder_widget);
+        gtk_widget_show(lookup_widget(dlg, "base_folder"));
         g_signal_connect(use_source_folder_widget, "toggled", G_CALLBACK(on_use_source_folder_toggled), items);
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(use_source_folder_widget), deadbeef->conf_get_int("converter.use_source_folder", 0));
+    }
+    else {
+        gtk_widget_show(lookup_widget(dlg, "base_folder_label_single"));
     }
 
     if (items[1]) {
@@ -1421,7 +1460,7 @@ converter_show_cb (void *data)
     deadbeef->conf_unlock();
     g_signal_connect(output_folder_widget, "changed", G_CALLBACK(on_output_folder_changed), items);
     g_signal_connect(output_file_widget, "changed", G_CALLBACK(on_output_file_changed), items);
-    g_signal_connect(lookup_widget(dlg, "converter_output_browse"), "clicked", G_CALLBACK(on_converter_output_browse_clicked), dlg);
+    g_signal_connect(lookup_widget(dlg, "output_browse"), "clicked", G_CALLBACK(on_converter_output_browse_clicked), dlg);
 
     GtkWidget *help_link = gtk_link_button_new_with_label("http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting", _("Help"));
     gtk_widget_set_tooltip_text(help_link, _("%a = artist name\n%b = album title\n%t = track title\n%g = genre\n%n = track #\nClick for full list"));
@@ -1453,6 +1492,7 @@ converter_show_cb (void *data)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(force_format), deadbeef->conf_get_int("converter.force_format", 0));
 
     gtk_widget_show(dlg);
+
     GtkWidget *encoder_widget = lookup_widget(dlg, "encoder");
     g_signal_connect(encoder_widget, "changed", G_CALLBACK(on_encoder_changed), items);
     fill_encoder_presets(GTK_COMBO_BOX(encoder_widget));
@@ -1472,25 +1512,24 @@ converter_show_cb (void *data)
 }
 
 static int
-converter_show (DB_plugin_action_t *act, int ctx)
+converter_show(DB_plugin_action_t *act, int ctx)
 {
-    GList *list = gtk_window_list_toplevels();
-    while (list) {
-        GtkWindow *w = GTK_WINDOW(list->data);
-        if (gtk_window_get_window_type(w) == GTK_WINDOW_TOPLEVEL && gtk_widget_get_visible(GTK_WIDGET(w))) {
-            const char *title = gtk_window_get_title(w);
+    GList *window_list = gtk_window_list_toplevels();
+    for (GList *list_entry = window_list; list_entry; list_entry = list_entry->next) {
+        GtkWindow *window = GTK_WINDOW(list_entry->data);
+        if (gtk_window_get_window_type(window) == GTK_WINDOW_TOPLEVEL && gtk_widget_get_visible(GTK_WIDGET(window))) {
+            const char *title = gtk_window_get_title(window);
             if (title && !strcmp(title, "Converter")) {
-                gtk_window_present(w);
-                g_list_free(list);
+                gtk_window_present(window);
+                g_list_free(window_list);
                 return 0;
             }
         }
-        list = list->next;
     }
-    g_list_free(list);
+    g_list_free(window_list);
 
     DB_playItem_t **items = NULL;
-    deadbeef->pl_lock ();
+    deadbeef->pl_lock();
     switch (ctx) {
         case DDB_ACTION_CTX_MAIN:
         case DDB_ACTION_CTX_SELECTION:
@@ -1500,18 +1539,16 @@ converter_show (DB_plugin_action_t *act, int ctx)
                 const int count = deadbeef->plt_getselcount(plt);
                 items = malloc(sizeof(DB_playItem_t *) * (count + 1));
                 if (items) {
-                    items[count] = NULL;
-                    DB_playItem_t *it = deadbeef->pl_get_first(PL_MAIN);
                     DB_playItem_t **item = items;
-                    while (it) {
+                    for (DB_playItem_t *it = deadbeef->pl_get_first(PL_MAIN); it; it = deadbeef->pl_get_next(it, PL_MAIN)) {
                         if (deadbeef->pl_is_selected(it)) {
-                            deadbeef->pl_item_ref(it);
                             *item++ = it;
                         }
-                        DB_playItem_t *next = deadbeef->pl_get_next(it, PL_MAIN);
-                        deadbeef->pl_item_unref(it);
-                        it = next;
+                        else {
+                            deadbeef->pl_item_unref(it);
+                        }
                     }
+                    *item = NULL;
                 }
                 deadbeef->plt_unref(plt);
             }
@@ -1524,13 +1561,11 @@ converter_show (DB_plugin_action_t *act, int ctx)
                 const int count = deadbeef->plt_get_item_count(plt, PL_MAIN);
                 items = malloc(sizeof(DB_playItem_t *) * (count + 1));
                 if (items) {
-                    items[count] = NULL;
-                    DB_playItem_t *it = deadbeef->pl_get_first(PL_MAIN);
                     DB_playItem_t **item = items;
-                    while (it) {
+                    for (DB_playItem_t *it = deadbeef->pl_get_first(PL_MAIN); it; it = deadbeef->pl_get_next(it, PL_MAIN)) {
                         *item++ = it;
-                        it = deadbeef->pl_get_next(it, PL_MAIN);
                     }
+                    *item = NULL;
                 }
                 deadbeef->plt_unref(plt);
             }
@@ -1538,7 +1573,7 @@ converter_show (DB_plugin_action_t *act, int ctx)
         }
         case DDB_ACTION_CTX_NOWPLAYING:
         {
-            DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+            DB_playItem_t *it = deadbeef->streamer_get_playing_track();
             if (it) {
                 items = malloc(sizeof(DB_playItem_t *) * 2);
                 if (items) {
@@ -1559,55 +1594,65 @@ converter_show (DB_plugin_action_t *act, int ctx)
     return 0;
 }
 
-static DB_plugin_action_t convert_action =
-{
-    .title = "Convert",
-    .name = "convert",
-    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK | DB_ACTION_ADD_MENU | DB_ACTION_DISABLED,
-    .callback2 = converter_show,
-    .next = NULL
-};
-
 static DB_plugin_action_t *
-convgui_get_actions (DB_playItem_t *it)
+convgui_get_actions(DB_playItem_t *it)
 {
+    static DB_plugin_action_t convert_action = {
+        .title = "Convert",
+        .name = "convert",
+        .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK | DB_ACTION_ADD_MENU,
+        .callback2 = converter_show,
+        .next = NULL
+    };
     return &convert_action;
 }
 
-static int
+static void
 deferred_connect(void *ctx)
 {
+    deadbeef->mutex_lock(deferred_load_mutex);
     converter_plugin->load();
-    convert_action.flags &= ~DB_ACTION_DISABLED;
-    return FALSE;
+    deadbeef->mutex_unlock(deferred_load_mutex);
 }
 
 static int
-convgui_connect (void)
+convgui_connect(void)
 {
     gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id(DDB_GTKUI_PLUGIN_ID);
-    converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id("converter");
     if (!gtkui_plugin) {
-        fprintf(stderr, "convgui: gtkui plugin not found\n");
+        fprintf(stderr, "convgui: corresponding gtkui plugin not found\n");
         return -1;
     }
-    if (!converter_plugin) {
-        fprintf(stderr, "convgui: converter plugin not found\n");
+
+    converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id("converter");
+    if (!converter_plugin || !PLUG_TEST_COMPAT(&converter_plugin->misc.plugin, 2, 0)) {
+        fprintf(stderr, "convgui: converter plugin (>= 2.0) not found\n");
         return -1;
     }
-    if (!PLUG_TEST_COMPAT(&converter_plugin->misc.plugin, 2, 0)) {
-        fprintf(stderr, "convgui: need converter>=2.0, but found %d.%d\n", converter_plugin->misc.plugin.version_major, converter_plugin->misc.plugin.version_minor);
+
+    deferred_load_mutex = deadbeef->mutex_create();
+    if (!deferred_load_mutex) {
         return -1;
     }
-    gdk_threads_add_idle(deferred_connect, converter_plugin);
+
+    intptr_t tid = deadbeef->thread_start_low_priority(deferred_connect, NULL);
+    if (!tid) {
+        return -1;
+    }
+    deadbeef->thread_detach(tid);
+
     return 0;
 }
 
 static int
-convgui_disconnect (void)
+convgui_disconnect(void)
 {
-    if (converter_plugin)
+    if (converter_plugin) {
         converter_plugin->unload();
+    }
+    if (deferred_load_mutex) {
+        deadbeef->mutex_free(deferred_load_mutex);
+    }
     return 0;
 }
 
@@ -1624,11 +1669,12 @@ DB_misc_t plugin = {
 #endif
     .plugin.descr = "GTK User interface for the Converter plugin\n"
         "Usage:\n"
-        "· select some tracks in playlist\n"
-        "· right click\n"
-        "· select «Convert»\n",
+        "· select some tracks in playlist, right click, and select «Convert»\n"
+        "· right click on playlist tab, select «Convert»\n"
+        "· or assign a hotkey, including for the playing track\n",
     .plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2014 Ian Nartowicz <deadbeef@nartowicz.co.uk>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"
@@ -1652,10 +1698,11 @@ DB_misc_t plugin = {
 
 DB_plugin_t *
 #if GTK_CHECK_VERSION(3,0,0)
-converter_gtk3_load (DB_functions_t *api) {
+converter_gtk3_load(DB_functions_t *api)
 #else
-converter_gtk2_load (DB_functions_t *api) {
+converter_gtk2_load(DB_functions_t *api)
 #endif
+{
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }
