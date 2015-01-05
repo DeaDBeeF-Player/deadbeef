@@ -98,7 +98,7 @@ stdio_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
 #ifdef USE_STDIO
     return fread (ptr, size, nmemb, ((STDIO_FILE*)stream)->stream);
 #else
-    int res = read (((STDIO_FILE*)stream)->stream, ptr, size*nmemb);
+    size_t res = read (((STDIO_FILE*)stream)->stream, ptr, size*nmemb);
     if (res == -1) {
         return 0;
     }
