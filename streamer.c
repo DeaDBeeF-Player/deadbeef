@@ -51,6 +51,7 @@
 #include "handler.h"
 #include "plugins/libparser/parser.h"
 #include "strdupa.h"
+#include "playqueue.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -369,16 +370,6 @@ str_get_for_idx (int idx) {
     return it;
 }
 
-static void
-send_trackinfochanged (playItem_t *track) {
-    ddb_event_track_t *ev = (ddb_event_track_t *)messagepump_event_alloc (DB_EV_TRACKINFOCHANGED);
-    ev->track = DB_PLAYITEM (track);
-    if (track) {
-        pl_item_ref (track);
-    }
-    messagepump_push_event ((ddb_event_t*)ev, 0, 0);
-}
-
 static int
 stop_after_album_check (playItem_t *cur, playItem_t *next) {
     if (!stop_after_album) {
@@ -449,16 +440,16 @@ streamer_move_to_nextsong_real (int reason) {
 
     playItem_t *curr = playlist_track;
 
-    while (pl_playqueue_getcount ()) {
-        trace ("pl_playqueue_getnext\n");
-        playItem_t *it = pl_playqueue_getnext ();
+    while (playqueue_getcount ()) {
+        trace ("playqueue_getnext\n");
+        playItem_t *it = playqueue_getnext ();
         if (it) {
             if (stop_after_album_check(curr, it)) {
                 pl_unlock ();
                 return -1;
             }
 
-            pl_playqueue_pop ();
+            playqueue_pop ();
             int r = str_get_idx_of (it);
             if (r >= 0) {
                 pl_item_unref (it);
@@ -674,7 +665,7 @@ streamer_move_to_prevsong_real (int r) {
     }
 
     playlist_t *plt = streamer_playlist;
-    pl_playqueue_clear ();
+    playqueue_clear ();
     if (!plt->head[PL_MAIN]) {
         pl_unlock ();
         streamer_set_nextsong_real (-2, 1);
@@ -2778,10 +2769,10 @@ streamer_play_current_track_real (void) {
         output->stop ();
         // get next song in queue
         int idx = -1;
-        playItem_t *next = pl_playqueue_getnext ();
+        playItem_t *next = playqueue_getnext ();
         if (next) {
             idx = str_get_idx_of (next);
-            pl_playqueue_pop ();
+            playqueue_pop ();
             pl_item_unref (next);
         }
         else {
