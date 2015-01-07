@@ -31,9 +31,6 @@
 
 @interface AppDelegate : NSObject <NSApplicationDelegate> {
     DdbSearchViewController *_searchViewController;
-    id _tfRedrawTimer;
-    int _tf_redraw_track_idx;
-    DB_playItem_t *_tf_redraw_track;
     NSTimer *_updateTimer;
 }
 
@@ -44,7 +41,6 @@
 @property (assign) IBOutlet NSWindow *window;
 @property (unsafe_unretained) IBOutlet NSPanel *searchWindow;
 
-@property (unsafe_unretained) IBOutlet NSTableView *playlist;
 @property (unsafe_unretained) IBOutlet DdbTabStrip *tabStrip;
 @property (unsafe_unretained) IBOutlet NSImageView *dockTileView;
 
