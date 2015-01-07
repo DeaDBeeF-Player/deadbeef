@@ -293,7 +293,7 @@ adjust_cache(struct timeval *oldest)
             memset(&new_thumb_cache[thumb_cache_size], '\0', sizeof(cached_pixbuf_t) * thumb_cache_size);
             thumb_cache_size *= 2;
             thumb_cache = new_thumb_cache;
-            fprintf(stderr, "coverart: pixbuf cache size increased to %d\n", thumb_cache_size);
+            fprintf(stderr, "coverart: pixbuf cache size increased to %d\n", (int)thumb_cache_size);
             return 1;
         }
     }
