@@ -143,10 +143,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
         [_updateTimer invalidate];
         _updateTimer = nil;
     }
-    if (_tfRedrawTimer) {
-        [_tfRedrawTimer invalidate];
-        _tfRedrawTimer = nil;
-    }
 
     [_window close];
     [_searchWindow close];
@@ -166,10 +162,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     pauseImg = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
     bufferingImg = [NSImage imageNamed:@"bufferingTemplate.pdf"];
 
-    [_playlist setDelegate:(id<NSTableViewDelegate>)self];
-    [_playlist setDataSource:(id<NSTableViewDataSource>)self];
-    [_playlist setDoubleAction:@selector(playlistDoubleAction)];
-    
     // initialize gui from settings
     [self configChanged];
     
@@ -336,13 +328,6 @@ static struct timeval last_br_update;
     [self updateSonginfo];    
 }
 
-- (void)playlistDoubleAction
-{
-    int row = (int)[_playlist clickedRow];
-    deadbeef->sendmessage(DB_EV_PLAY_NUM, 0, row, 0);
-}
-
-
 - (IBAction)tbClicked:(id)sender {
     NSInteger selectedSegment = [sender selectedSegment];
     
@@ -444,122 +429,6 @@ init_column (int i, int _id, const char *format) {
     init_column(ncolumns++, -1, "%track%");
     init_column(ncolumns++, -1, "%title%");
     init_column(ncolumns++, -1, "%length%");
-}
-
-- (void)tfRedraw:(id)userInfo
-{
-    [_playlist reloadData];
-    [_tfRedrawTimer invalidate];
-    _tfRedrawTimer = nil;
-}
-
-- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex
-{
-    id ret = nil;
-    DB_playItem_t *it = NULL;
-    
-    if (prevIdx != -1) {
-        if (prevIdx == rowIndex) {
-            it = prev;
-            deadbeef->pl_item_ref (it);
-        }
-        else if (prevIdx == rowIndex - 1) {
-            it = deadbeef->pl_get_next (prev, PL_MAIN);
-        }
-        else if (prevIdx == rowIndex + 1) {
-            it = deadbeef->pl_get_prev (prev, PL_MAIN);
-        }
-    
-    }
-    if (!it) {
-        it = deadbeef->pl_get_for_idx (rowIndex);
-    }
-    
-    if (prev) {
-        deadbeef->pl_item_unref (prev);
-    }
-    prev = it;
-    prevIdx = rowIndex;
-
-    DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
-    if ([[aTableColumn identifier] isEqualToString:@"playing"] && it == playing_track) {
-        NSImage *img = NULL;
-        int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
-        int buffering = !deadbeef->streamer_ok_to_read (-1);
-        if (paused) {
-            img = pauseImg;
-        }
-        else if (!buffering) {
-            img = playImg;
-        }
-        else {
-            img = bufferingImg;
-        }
-        ret = img;
-    }
-    else {
-        int cidx = -1;
-        // FIXME: nstableview can't render alternating text/image in one column
-        /*if ([[aTableColumn identifier] isEqualToString:@"playing"]) {
-            cidx = 0;
-        }
-        else*/
-        if ([[aTableColumn identifier] isEqualToString:@"albumartist"]) {
-            cidx = 1;
-        }
-        else if ([[aTableColumn identifier] isEqualToString:@"trknum"]) {
-            cidx = 2;
-        }
-        else if ([[aTableColumn identifier] isEqualToString:@"title"]) {
-            cidx = 3;
-        }
-        else if ([[aTableColumn identifier] isEqualToString:@"duration"]) {
-            cidx = 4;
-        }
-
-        if (cidx != -1) {
-            ddb_tf_context_t ctx = {
-                ._size = sizeof (ddb_tf_context_t),
-                .it = it,
-                .plt = deadbeef->plt_get_curr (),
-                .idx = -1,
-                .id = columns[cidx]._id
-            };
-            char text[1024] = "";
-            deadbeef->tf_eval (&ctx, columns[cidx].bytecode, columns[cidx].bytecode_len, text, sizeof (text));
-            if (ctx.update > 0 && !_tfRedrawTimer) {
-                if (ctx.idx >= 0) {
-                    _tf_redraw_track_idx = ctx.idx;
-                }
-                else {
-                    _tf_redraw_track_idx = deadbeef->plt_get_item_idx (ctx.plt, it, PL_MAIN);
-                }
-                _tfRedrawTimer = [NSTimer timerWithTimeInterval:ctx.update*0.001f target:self selector:@selector(tfRedraw:) userInfo:nil repeats:YES];
-                [[NSRunLoop currentRunLoop] addTimer:_tfRedrawTimer forMode:NSDefaultRunLoopMode];
-                _tf_redraw_track = it;
-                deadbeef->pl_item_ref (it);
-            }
-            if (ctx.plt) {
-                deadbeef->plt_unref (ctx.plt);
-                ctx.plt = NULL;
-            }
-            char *lb = strchr (text, '\r');
-            if (lb) {
-                *lb = 0;
-            }
-            lb = strchr (text, '\n');
-            if (lb) {
-                *lb = 0;
-            }
-            ret = [NSString stringWithUTF8String:text];
-        }
-    }
-
-    if (playing_track) {
-        deadbeef->pl_item_unref (playing_track);
-    }
-
-    return ret;
 }
 
 - (void)openFiles:(BOOL)clear play:(BOOL)play {
@@ -674,23 +543,12 @@ init_column (int i, int _id, const char *format) {
     deadbeef->pl_clear();
     deadbeef->pl_save_current();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-    [_playlist reloadData];
 }
 
 - (IBAction)delete:(id)sender {
     deadbeef->pl_delete_selected ();
     deadbeef->pl_save_current();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-    [_playlist reloadData];
-    [_playlist deselectAll:self];
-    if (firstSelected != -1) {
-        [_playlist selectRowIndexes:[[NSIndexSet alloc] initWithIndex:firstSelected] byExtendingSelection:NO];
-    }
-    [self tableView:_playlist selectionIndexesForProposedSelection: firstSelected==-1?[[NSIndexSet alloc] init]:[[NSIndexSet alloc] initWithIndex:firstSelected]];
-}
-
-- (void)reloadPlaylistData {
-    [_playlist reloadData];
 }
 
 - (IBAction)orderLinearAction:(id)sender {
@@ -730,25 +588,6 @@ init_column (int i, int _id, const char *format) {
 
 - (IBAction)centerSelectionInVisibleArea:(id)sender {
     deadbeef->sendmessage (DB_EV_TRACKFOCUSCURRENT, 0, 0, 0);
-}
-
-- (void)focusCurrent
-{
-    deadbeef->pl_lock ();
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-    if (it) {
-        ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
-        if (plt) {
-            deadbeef->plt_set_curr (plt);
-            int idx = deadbeef->pl_get_idx_of (it);
-            if (idx != -1) {
-                [_playlist scrollRowToVisible:idx];
-            }
-            deadbeef->plt_unref (plt);
-        }
-        deadbeef->pl_item_unref (it);
-    }
-    deadbeef->pl_unlock ();
 }
 
 - (IBAction)seekBarAction:(id)sender {
@@ -846,49 +685,12 @@ init_column (int i, int _id, const char *format) {
 }
 
 - (void)handleSimpleMessage:(NSNumber *)_id {
-    int idx = -1;
-    DB_playItem_t *it = NULL;
     switch ([_id intValue]) {
         case DB_EV_PLAYLISTCHANGED:
         case DB_EV_PLAYLISTSWITCHED:
             [[self tabStrip] setNeedsDisplay:YES];
-            [self reloadPlaylistData];
-            break;
-        case DB_EV_TRACKFOCUSCURRENT:
-            [self focusCurrent];
-            break;
-        case DB_EV_PAUSED:
-            it = deadbeef->streamer_get_playing_track ();
-            if (it) {
-                idx = deadbeef->pl_get_idx_of (it);
-                deadbeef->pl_item_unref (it);
-            }
-            if (idx) {
-                [_playlist reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:idx]
-                                    columnIndexes:[NSIndexSet indexSetWithIndex:0]];
-            }
-            break;
-        case DB_EV_SONGCHANGED:
-            it = deadbeef->streamer_get_playing_track ();
-            if (it) {
-                idx = deadbeef->pl_get_idx_of (it);
-                deadbeef->pl_item_unref (it);
-            }
-            if (idx != -1) {
-                if (deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)) {
-                    [_playlist scrollRowToVisible:idx];
-                }
-                if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)) {
-                    [_playlist selectRowIndexes:[NSIndexSet indexSetWithIndex:idx] byExtendingSelection:NO];
-                }
-            }
             break;
     }
-}
-
-- (void)trackInfoChanged:(NSNumber *)trk {
-        [_playlist reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:[trk intValue]]
-                         columnIndexes:[NSIndexSet indexSetWithIndex:0]];
 }
 
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2
@@ -897,13 +699,6 @@ init_column (int i, int _id, const char *format) {
     
     if (_id == DB_EV_PAUSED || _id == DB_EV_PLAYLIST_REFRESH || _id == DB_EV_PLAYLISTCHANGED || _id == DB_EV_PLAYLISTSWITCHED || _id == DB_EV_TRACKFOCUSCURRENT || _id == DB_EV_SONGCHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(handleSimpleMessage:) withObject:[[NSNumber alloc] initWithInt:_id] waitUntilDone:NO];
-    }
-    else if (_id == DB_EV_TRACKINFOCHANGED) {
-        ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
-        int idx = deadbeef->pl_get_idx_of_iter (ev->track, PL_MAIN);
-        if (idx != -1) {
-            [g_appDelegate performSelectorOnMainThread:@selector(trackInfoChanged:) withObject:[[NSNumber alloc] initWithInt:idx] waitUntilDone:NO];
-        }
     }
     else if (_id == DB_EV_CONFIGCHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(configChanged) withObject:nil waitUntilDone:NO];
