@@ -573,7 +573,7 @@ player_mainloop (void) {
                     {
                         save_resume_state ();
 
-                        pl_playqueue_clear ();
+                        playqueue_clear ();
 
                         // stop streaming and playback before unloading plugins
                         DB_output_t *output = plug_get_output ();
@@ -587,7 +587,7 @@ player_mainloop (void) {
                     streamer_play_current_track ();
                     break;
                 case DB_EV_PLAY_NUM:
-                    pl_playqueue_clear ();
+                    playqueue_clear ();
                     streamer_set_nextsong (p1, 4);
                     break;
                 case DB_EV_STOP:
