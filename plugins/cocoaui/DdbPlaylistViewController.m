@@ -605,7 +605,7 @@ int group_bytecode_size = 0;
                 int idx = 0;
                 deadbeef->pl_lock ();
                 for (it = deadbeef->pl_get_first (PL_MAIN); it; idx++) {
-                    if (deadbeef->pl_playqueue_test (it) != -1) {
+                    if (deadbeef->playqueue_test (it) != -1) {
                         [listview drawRow:idx];
                     }
                     DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
