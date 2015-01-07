@@ -362,7 +362,12 @@ enum {
     DB_EV_TOGGLE_PAUSE = 12,
     DB_EV_ACTIVATED = 13, // will be fired every time player is activated
     DB_EV_PAUSED = 14, // player was paused or unpaused
-    DB_EV_PLAYLISTCHANGED = 15, // playlist contents were changed
+
+    DB_EV_PLAYLISTCHANGED = 15, // playlist contents were changed (e.g. metadata in any track)
+    // DB_EV_PLAYLISTCHANGED NOTE: it's usually sent on LARGE changes,
+    // when multiple tracks are affected, while for single tracks
+    // the DB_EV_TRACKINFOCHANGED is preferred
+
     DB_EV_VOLUMECHANGED = 16, // volume was changed
     DB_EV_OUTPUTCHANGED = 17, // sound output plugin changed
     DB_EV_PLAYLISTSWITCHED = 18, // playlist switch occured
@@ -378,6 +383,7 @@ enum {
 
 #if (DDB_API_LEVEL >= 8)
     DB_EV_FOCUS_SELECTION, // tell playlist viewer to focus on selection
+    DB_EV_PLAYQUEUE_CHANGED, // sent on any change to playqueue
 #endif
 
     // -----------------
@@ -387,7 +393,11 @@ enum {
     DB_EV_SONGCHANGED = 1000, // current song changed from one to another, ctx=ddb_event_trackchange_t
     DB_EV_SONGSTARTED = 1001, // song started playing, ctx=ddb_event_track_t
     DB_EV_SONGFINISHED = 1002, // song finished playing, ctx=ddb_event_track_t
-    DB_EV_TRACKINFOCHANGED = 1004, // trackinfo was changed (included medatata and playback status), ctx=ddb_event_track_t
+
+    DB_EV_TRACKINFOCHANGED = 1004, // trackinfo was changed (included medatata, playback status, playqueue state, etc), ctx=ddb_event_track_t
+    // DB_EV_TRACKINFOCHANGED NOTE: when multiple tracks change, DB_EV_PLAYLISTCHANGED may be sent instead,
+    // for speed reasons, so always handle both events.
+
     DB_EV_SEEKED = 1005, // seek happened, ctx=ddb_event_playpos_t
 
     // since 1.5
@@ -832,12 +842,12 @@ typedef struct {
     void (*pl_set_item_replaygain) (DB_playItem_t *it, int idx, float value);
     float (*pl_get_item_replaygain) (DB_playItem_t *it, int idx);
 
-    // playqueue support
-    int (*pl_playqueue_push) (DB_playItem_t *it);
-    void (*pl_playqueue_clear) (void);
-    void (*pl_playqueue_pop) (void);
-    void (*pl_playqueue_remove) (DB_playItem_t *it);
-    int (*pl_playqueue_test) (DB_playItem_t *it);
+    // playqueue support (obsolete since API 1.8)
+    int (*pl_playqueue_push) (DB_playItem_t *it) DEPRECATED_18;
+    void (*pl_playqueue_clear) (void) DEPRECATED_18;
+    void (*pl_playqueue_pop) (void) DEPRECATED_18;
+    void (*pl_playqueue_remove) (DB_playItem_t *it) DEPRECATED_18;
+    int (*pl_playqueue_test) (DB_playItem_t *it) DEPRECATED_18;
 
     // volume control
     void (*volume_set_db) (float dB);
@@ -1092,6 +1102,17 @@ typedef struct {
     // outlen: the size of out buffer
     // returns -1 on fail, output size on success
     int (*tf_eval) (ddb_tf_context_t *ctx, char *code, int codelen, char *out, int outlen);
+
+    // new playqueue APIs
+    int (*playqueue_push) (DB_playItem_t *it);
+    void (*playqueue_pop) (void);
+    void (*playqueue_remove) (DB_playItem_t *it);
+    void (*playqueue_clear) (void);
+    int (*playqueue_test) (DB_playItem_t *it);
+    int (*playqueue_get_count) (void);
+    DB_playItem_t *(*playqueue_get_item) (int n);
+    int (*playqueue_remove_nth) (int n);
+    void (*playqueue_insert_at) (int n, DB_playItem_t *it);
 #endif
 } DB_functions_t;
 
