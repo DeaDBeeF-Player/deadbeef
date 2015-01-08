@@ -179,7 +179,7 @@ playqueue_insert_at (int n, playItem_t *it) {
         pl_unlock ();
         return;
     }
-    memmove (playqueue+n+1, playqueue+n, playqueue_count - n);
+    memmove (playqueue+n+1, playqueue+n, (playqueue_count - n) * sizeof (playItem_t *));
     playqueue[n] = it;
     pl_item_ref (it);
     playqueue_count++;
