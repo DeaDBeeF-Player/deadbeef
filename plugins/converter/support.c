@@ -24,10 +24,16 @@ lookup_widget                          (GtkWidget       *widget,
 
   for (;;)
     {
-      if (GTK_IS_MENU (widget))
-        parent = gtk_menu_get_attach_widget (GTK_MENU (widget));
-      else
+      if (GTK_IS_MENU(widget)) {
+        found_widget = (GtkWidget*)g_object_get_data(G_OBJECT(widget), widget_name);
+        if (found_widget)
+          return found_widget;
+        parent = gtk_menu_get_attach_widget(GTK_MENU(widget));
+      }
+      else {
         parent = gtk_widget_get_parent (widget);
+      }
+
       if (!parent)
         parent = (GtkWidget*) g_object_get_data (G_OBJECT (widget), "GladeParentKey");
       if (parent == NULL)
@@ -35,10 +41,10 @@ lookup_widget                          (GtkWidget       *widget,
       widget = parent;
     }
 
-  found_widget = (GtkWidget*) g_object_get_data (G_OBJECT (widget),
-                                                 widget_name);
+  found_widget = (GtkWidget*)g_object_get_data(G_OBJECT(widget), widget_name);
   if (!found_widget)
-    g_warning ("Widget not found: %s", widget_name);
+    g_warning("Widget not found: %s", widget_name);
+
   return found_widget;
 }
 
@@ -142,14 +148,20 @@ glade_set_atk_action_description       (AtkAction       *action,
     }
 }
 
-#if GTK_CHECK_VERSION(3,0,0)
-GtkWidget *
-gtk_combo_box_entry_new_text(void) {
-    return gtk_combo_box_text_new_with_entry ();
-}
+#if !GTK_CHECK_VERSION(3,0,0)
+gboolean
+gtk_tree_model_iter_previous(GtkTreeModel *tree_model, GtkTreeIter *iter)
+{
+    GtkTreePath *path = gtk_tree_model_get_path(tree_model, iter);
+    if (!path)
+        return FALSE;
 
-void
-gtk_dialog_set_has_separator (GtkDialog *dlg, gboolean has) {
+    gboolean retval = gtk_tree_path_prev(path) && gtk_tree_model_get_iter(tree_model, iter, path);
+    gtk_tree_path_free(path);
+    if (retval == FALSE)
+        iter->stamp = 0;
+
+    return retval;
 }
 #endif
 
@@ -164,15 +176,19 @@ gdk_drag_context_list_targets (GdkDragContext *context) {
 }
 #endif
 
-#if !GTK_CHECK_VERSION(2,24,0)
-#define GTK_COMBO_BOX_TEXT GTK_COMBO_BOX
+#if GTK_CHECK_VERSION(2,24,0)
+GtkWidget *
+gtk_combo_box_entry_new_text(void) {
+    return gtk_combo_box_text_new_with_entry ();
+}
+#else
 GtkWidget *
 gtk_combo_box_text_new () {
     return gtk_combo_box_new_text ();
 }
 
 GtkWidget *
-gtk_combo_box_text_new_with_entry   (void) {
+gtk_combo_box_text_new_with_entry (void) {
     return gtk_combo_box_entry_new ();
 }
 
@@ -191,13 +207,31 @@ gtk_combo_box_text_prepend_text (GtkComboBoxText *combo_box, const gchar *text) 
     gtk_combo_box_prepend_text (combo_box, text);
 }
 gchar *
-gtk_combo_box_text_get_active_text  (GtkComboBoxText *combo_box) {
+gtk_combo_box_text_get_active_text (GtkComboBoxText *combo_box) {
     return gtk_combo_box_get_active_text (combo_box);
 }
-
 #endif
 
 #if !GTK_CHECK_VERSION(2,18,0)
+gboolean
+gtk_widget_get_visible (GtkWidget *widget) {
+    gboolean visible;
+    g_object_get(widget, "visible", &visible, NULL);
+    return visible;
+}
+
+void
+gtk_widget_set_visible (GtkWidget *widget, gboolean visible) {
+    if (gtk_widget_test_visible(widget) != visible) {
+        if (visible) {
+            gtk_widget_show(widget);
+        }
+        else {
+            gtk_widget_hide(widget);
+        }
+    }
+}
+
 void
 gtk_widget_set_allocation (GtkWidget *widget, const GtkAllocation *allocation) {
     widget->allocation.x = (allocation)->x;

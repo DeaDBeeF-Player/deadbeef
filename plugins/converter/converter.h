@@ -1,17 +1,18 @@
 /*
     DeaDBeeF - The Ultimate Music Player
     Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2014 Ian Nartowicz <deadbeef@nartowicz.co.uk>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -19,40 +20,29 @@
 #ifndef __CONVERTER_H
 #define __CONVERTER_H
 
-#include <stdint.h>
 #include "../../deadbeef.h"
-
-// changes in 1.3:
-//   readonly preset support
-// changes in 1.4:
-//   changed escaping rules
-//   now get_output_path returns unescaped path, and
-//   doesn't create folders
 
 enum {
     DDB_ENCODER_METHOD_PIPE = 0,
-    DDB_ENCODER_METHOD_FILE = 1,
+    DDB_ENCODER_METHOD_FILE = 1
 };
 
 enum {
-    DDB_ENCODER_FMT_8BIT = 0x1,
-    DDB_ENCODER_FMT_16BIT = 0x2,
-    DDB_ENCODER_FMT_24BIT = 0x4,
-    DDB_ENCODER_FMT_32BIT = 0x8,
-    DDB_ENCODER_FMT_32BITFLOAT = 0x10,
+    DDB_PRESET_CUSTOM = 0,
+    DDB_PRESET_BUILTIN,
+    DDB_PRESET_MODIFIED
 };
 
-typedef struct ddb_preset_s {
-    char *title;
-    struct ddb_preset_s *next;
-} ddb_preset_t;
+enum ddb_convert_api {
+    DDB_CONVERT_API_CONTINUE = 0,
+    DDB_CONVERT_API_ABORT
+};
 
-typedef struct ddb_encoder_preset_s {
+typedef struct {
     char *title;
-    struct ddb_encoder_preset_s *next;
-    char *ext;
+    char *extension;
     char *encoder;
-    int method; // pipe or file
+    int method;
     int tag_id3v2;
     int tag_id3v1;
     int tag_apev2;
@@ -60,14 +50,11 @@ typedef struct ddb_encoder_preset_s {
     int tag_oggvorbis;
     int tag_mp3xing;
     int id3v2_version;
-
-    // added in converter-1.3
-    int readonly; // this means the preset cannot be edited
+    int builtin;
 } ddb_encoder_preset_t;
 
 typedef struct ddb_dsp_preset_s {
     char *title;
-    struct ddb_dsp_preset_s *next;
     ddb_dsp_context_t *chain;
 } ddb_dsp_preset_t;
 
@@ -85,33 +72,35 @@ typedef struct {
     (*encoder_preset_free) (ddb_encoder_preset_t *p);
 
     ddb_encoder_preset_t *
-    (*encoder_preset_load) (const char *fname);
-
-    // @return -1 on path/write error, -2 if file already exists
-    int
-    (*encoder_preset_save) (ddb_encoder_preset_t *p, int overwrite);
-
-    void
-    (*encoder_preset_copy) (ddb_encoder_preset_t *to, ddb_encoder_preset_t *from);
+    (*encoder_preset_duplicate) (ddb_encoder_preset_t *old);
 
     ddb_encoder_preset_t *
-    (*encoder_preset_get_list) (void);
+    (*encoder_preset_get) (const char *title);
 
     ddb_encoder_preset_t *
     (*encoder_preset_get_for_idx) (int idx);
 
-    void
-    (*encoder_preset_append) (ddb_encoder_preset_t *p);
+    ddb_encoder_preset_t *
+    (*encoder_preset_get_next) (const ddb_encoder_preset_t *);
+
+    int
+    (*encoder_preset_get_idx) (const char *title);
+
+    ddb_encoder_preset_t *
+    (*encoder_preset_load_builtin) (const char *title);
+
+    ddb_encoder_preset_t *
+    (*encoder_preset_save) (ddb_encoder_preset_t *p);
 
     void
     (*encoder_preset_remove) (ddb_encoder_preset_t *p);
 
-    void
-    (*encoder_preset_replace) (ddb_encoder_preset_t *from, ddb_encoder_preset_t *to);
-
     /////////////////////////////
     // dsp preset management
     /////////////////////////////
+
+    ddb_dsp_context_t *
+    (*dsp_plugin_duplicate) (ddb_dsp_context_t *old);
 
     ddb_dsp_preset_t *
     (*dsp_preset_alloc) (void);
@@ -120,90 +109,60 @@ typedef struct {
     (*dsp_preset_free) (ddb_dsp_preset_t *p);
 
     ddb_dsp_preset_t *
-    (*dsp_preset_load) (const char *fname);
-
-    // @return -1 on path/write error, -2 if file already exists
-    int
-    (*dsp_preset_save) (ddb_dsp_preset_t *p, int overwrite);
-
-    void
-    (*dsp_preset_copy) (ddb_dsp_preset_t *to, ddb_dsp_preset_t *from);
+    (*dsp_preset_duplicate) (ddb_dsp_preset_t *old);
 
     ddb_dsp_preset_t *
-    (*dsp_preset_get_list) (void);
+    (*dsp_preset_get) (const char *title);
 
     ddb_dsp_preset_t *
     (*dsp_preset_get_for_idx) (int idx);
 
-    void
-    (*dsp_preset_append) (ddb_dsp_preset_t *p);
+    ddb_dsp_preset_t *
+    (*dsp_preset_get_next) (const ddb_dsp_preset_t *);
+
+    int
+    (*dsp_preset_get_idx) (const char *title);
+
+    ddb_dsp_preset_t *
+    (*dsp_preset_save) (ddb_dsp_preset_t *p);
 
     void
     (*dsp_preset_remove) (ddb_dsp_preset_t *p);
-
-    void
-    (*dsp_preset_replace) (ddb_dsp_preset_t *from, ddb_dsp_preset_t *to);
 
     /////////////////////////////
     // converter
     /////////////////////////////
 
+    int // 0 = success, -1 = error, 1 = aborted
+    (*convert) (DB_playItem_t *it, // track to be converted
+                const ddb_encoder_preset_t *encoder_preset, // preset defining how to encode the converted file
+                const char *outpath, // final path to write the file (should normally be obtained using get_output_path)
+                const ddb_dsp_preset_t *dsp_preset, // preset defining DSP operations to be performed, may be null or empty
+                const int output_bps, // stream should be pre-converted to this resolution, -1 means no pre-convert
+                const int output_is_float, // stream should be pre-converted to float (output_bps should always be 32)
+                enum ddb_convert_api *api, // will be checked regularly during conversion
+                char **message, // message reported back after an error
+                void (* convert_callback)(const time_t, const time_t, const float, void *), // callback to update progress
+                void *user_data); // opaque pointer for the callback
 
-    // this function is deprecated, please don't use directly
     void
-    (*get_output_path_1_0) (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, char *out, int sz);
+    (*get_output_path) (DB_playItem_t *it, // the track playitem
+                        const ddb_encoder_preset_t *encoder_preset, // preset defining the extension
+                        const char *rootfolder, // common path root of all the tracks being converted (if preserve_folder_structure is set)
+                        const char *outfolder, // the root folder to write the converted files to
+                        const char *outfile, // pattern defining a file path (excluding extension) to be appended to outfolder
+                        const int use_source_folder, // use the folder containing the track instead of outfolder
+                        char *out, // buffer for the final path, includes file extension, not escaped
+                        int sz); // number of bytes available in the out buffer
 
-    // this function is deprecated, please don't use directly
-    int
-    (*convert_1_0) (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort);
+    char * // the common root path of all the playitems passed in
+    (*get_root_folder) (DB_playItem_t **items);
 
-    /////////////////////////////
-    // new APIs for converter-1.1
-    /////////////////////////////
-
-    int
-    (*load_encoder_presets) (void);
-    int
-    (*load_dsp_presets) (void);
     void
-    (*free_encoder_presets) (void);
-    void
-    (*free_dsp_presets) (void);
+    (*load) (void);
 
-    /////////////////////////////
-    // new APIs for converter-1.2
-    /////////////////////////////
-    int
-    (*convert) (
-            DB_playItem_t *it, // track to be converted
-            const char *outpath, // final path to write the file (should normally be obtained using get_output_path)
-            int output_bps, // stream should be pre-converted to this resolution
-            int output_is_float, // stream should be converted to float
-            ddb_encoder_preset_t *encoder_preset, // encoder preset to use
-            ddb_dsp_preset_t *dsp_preset, // dsp preset to use
-            int *abort // *abort will be checked regularly, conversion will be interrupted if it's non-zero
-    );
-
-    // The 'get_output_path' function should be used to get the fully
-    // qualified output file path, to be passed to 'convert' function.
-    // It is commonly used by converter GUI.
-    // Parameters:
-    //  it: the track
-    //  outfolder: the folder to write the file to (usually specified in GUI)
-    //  outfile: the filename pattern, which may include additional folder
-    //           structure, and title formatting; without extension.
-    //           examples: "%a - %t", "subfolder/%t"
-    //  encoder_preset: an existing encoder preset.
-    //  preserve_folder_structure: set to 1 to recreate the existing folder
-    //                             structure, when converting multiple files
-    //  root_folder: common root path of all the tracks being converted in 1 go.
-    //  write_to_source_folder: set to 1 to write output to the same folders
-    //                          where input files are located.
-    //  out: the buffer for the output file path,
-    //       which will come out not escaped, will include the file extension.
-    //  sz: size of the out buffer.
     void
-    (*get_output_path) (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz);
+    (*unload) (void);
 } ddb_converter_t;
 
 #endif
