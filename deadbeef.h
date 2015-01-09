@@ -112,9 +112,20 @@ extern "C" {
 #endif
 #endif
 
-
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 8)
+#define DEPRECATED_18 DDB_DEPRECATED("since deadbeef API 1.8")
+#else
+#define DEPRECATED_18
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 7)
+#define DEPRECATED_17 DDB_DEPRECATED("since deadbeef API 1.7")
+#else
+#define DEPRECATED_17
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 6)
@@ -364,6 +375,10 @@ enum {
     DB_EV_PLUGINSLOADED = 23, // after all plugins have been loaded and connected
 #endif
 
+#if (DDB_API_LEVEL >= 8)
+    DB_EV_FOCUS_SELECTION, // tell playlist viewer to focus on selection
+#endif
+
     // -----------------
     // structured events
 
@@ -376,8 +391,10 @@ enum {
 
     // since 1.5
 #if (DDB_API_LEVEL >= 5)
+    // NOTE: this is not a structured event, but too late to fix, needs to stay here for backwards compat
     DB_EV_TRACKFOCUSCURRENT = 1006, // user wants to highlight/find the current playing track
 #endif
+
     DB_EV_MAX
 };
 

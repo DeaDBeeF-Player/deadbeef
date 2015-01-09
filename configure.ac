@@ -3,8 +3,8 @@ AC_INIT([deadbeef], [devel])
 
 AC_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-ustar])
-dnl AM_SILENT_RULES([yes])
+AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-ustar silent-rules])
+AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE()
 
 AC_USE_SYSTEM_EXTENSIONS
