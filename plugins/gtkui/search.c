@@ -103,6 +103,7 @@ search_refresh (void) {
         search_process (text);
         GtkWidget *pl = lookup_widget (searchwin, "searchlist");
         ddb_listview_refresh (DDB_LISTVIEW (pl), DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_LIST_CHANGED);
+        deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, (uintptr_t)pl, PL_MAIN, 0);
     }
 }
 
@@ -345,6 +346,7 @@ search_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx)
 static void
 search_selection_changed (DdbListview *ps, DdbListviewIter it, int idx) {
     deadbeef->sendmessage (DB_EV_SELCHANGED, (uintptr_t)ps, -1, -1);
+    deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, (uintptr_t)ps, PL_MAIN, 0);
 }
 
 static void

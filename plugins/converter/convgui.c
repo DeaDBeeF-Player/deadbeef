@@ -28,7 +28,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <sys/stat.h>
 #include <dirent.h>
 #include <unistd.h>
 #include "converter.h"
@@ -117,7 +116,7 @@ destroy_progress_cb (gpointer ctx) {
 }
 
 struct overwrite_prompt_ctx {
-    char *fname;
+    const char *fname;
     uintptr_t mutex;
     uintptr_t cond;
     int result;
@@ -137,6 +136,20 @@ overwrite_prompt_cb (void *ctx) {
     ctl->result = response == GTK_RESPONSE_YES ? 1 : 0;
     deadbeef->cond_signal (ctl->cond);
     return FALSE;
+}
+
+static int
+overwrite_prompt (const char *outpath) {
+    struct overwrite_prompt_ctx ctl;
+    ctl.mutex = deadbeef->mutex_create ();
+    ctl.cond = deadbeef->cond_create ();
+    ctl.fname = outpath;
+    ctl.result = 0;
+    gdk_threads_add_idle (overwrite_prompt_cb, &ctl);
+    deadbeef->cond_wait (ctl.cond, ctl.mutex);
+    deadbeef->cond_free (ctl.cond);
+    deadbeef->mutex_free (ctl.mutex);
+    return ctl.result;
 }
 
 static void
@@ -178,7 +191,6 @@ converter_worker (void *ctx) {
             }
             deadbeef->pl_unlock ();
         }
-        fprintf (stderr, "common root path: %s\n", root);
     }
 
     for (int n = 0; n < conv->convert_items_count; n++) {
@@ -191,30 +203,22 @@ converter_worker (void *ctx) {
         g_idle_add (update_progress_cb, info);
 
         char outpath[2000];
-
         converter_plugin->get_output_path (conv->convert_items[n], conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, root, conv->write_to_source_folder, outpath, sizeof (outpath));
 
-        struct stat st;
-        int res = stat(outpath, &st);
-        int skip = !res;
-        if (res == 0) {
-            if (conv->overwrite_action == 1) {
-                // prompt if file exists
-                struct overwrite_prompt_ctx ctl;
-                ctl.mutex = deadbeef->mutex_create ();
-                ctl.cond = deadbeef->cond_create ();
-                ctl.fname = outpath;
-                ctl.result = 0;
-                gdk_threads_add_idle (overwrite_prompt_cb, &ctl);
-                deadbeef->cond_wait (ctl.cond, ctl.mutex);
-                deadbeef->cond_free (ctl.cond);
-                deadbeef->mutex_free (ctl.mutex);
-                if (ctl.result) {
-                    unlink (outpath);
-                    skip = 0;
-                }
+        int skip = 0;
+        char *real_out = realpath(outpath, NULL);
+        if (real_out) {
+            skip = 1;
+            deadbeef->pl_lock();
+            char *real_in = realpath(deadbeef->pl_find_meta(conv->convert_items[n], ":URI"), NULL);
+            deadbeef->pl_unlock();
+            const int paths_match = real_in && !strcmp(real_in, real_out);
+            free(real_in);
+            free(real_out);
+            if (paths_match) {
+                fprintf (stderr, "converter: destination file is the same as source file, skipping\n");
             }
-            else if (conv->overwrite_action == 2) {
+            else if (conv->overwrite_action == 2 || conv->overwrite_action == 1 && overwrite_prompt(outpath)) {
                 unlink (outpath);
                 skip = 0;
             }
