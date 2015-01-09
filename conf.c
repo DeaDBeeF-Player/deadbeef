@@ -38,6 +38,7 @@
 #endif
 #include "conf.h"
 #include "threading.h"
+#include "common.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -76,19 +77,51 @@ conf_free (void) {
 
 int
 conf_load (void) {
-    extern char dbconfdir[1024]; // $HOME/.config/deadbeef
-    char str[1024];
-    snprintf (str, 1024, "%s/config", dbconfdir);
-    FILE *fp = fopen (str, "rt");
+    size_t l = strlen (dbconfdir);
+    const char configfile[] = "/config";
+    char fname[l + sizeof(configfile)];
+    memcpy (fname, dbconfdir, l);
+    memcpy (fname + l, configfile, sizeof (configfile));
+    FILE *fp = fopen (fname, "rt");
     if (!fp) {
         fprintf (stderr, "failed to load config file\n");
-        return -1;
+        fp = fopen (fname, "w+b");
+        if (!fp) {
+            return -1;
+        }
+        fprintf (stderr, "created an empty config\n");
+        fclose (fp);
+        return 0;
     }
     conf_lock ();
     int line = 0;
-    while (fgets (str, 1024, fp) != NULL) {
+
+    fseek (fp, 0, SEEK_END);
+    l = ftell (fp);
+    rewind (fp);
+
+    uint8_t *buffer = malloc (l+1);
+    if (l != fread (buffer, 1, l, fp)) {
+        free (buffer);
+        fprintf (stderr, "failed to read entire config file to memory\n");
+        return -1;
+    }
+    buffer[l] = 0;
+    fclose (fp);
+    fp = NULL;
+
+    uint8_t *str = buffer;
+
+    while (*str) {
         line++;
+        uint8_t *estr = str;
+        while (*estr >= 0x20) {
+            estr++;
+        }
+        *estr = 0;
+
         if (str[0] == '#' || str[0] <= 0x20) {
+            str = estr+1;
             continue;
         }
         uint8_t *p = (uint8_t *)str;
@@ -97,6 +130,7 @@ conf_load (void) {
         }
         if (!*p) {
             fprintf (stderr, "error in config file line %d\n", line);
+            str = estr+1;
             continue;
         }
         *p = 0;
@@ -105,24 +139,24 @@ conf_load (void) {
         while (*p && *p <= 0x20) {
             p++;
         }
-        char *value = p;
+        uint8_t *value = p;
         // remove trailing trash
         while (*p && *p >= 0x20) {
             p++;
         }
         *p = 0;
         // new items are appended, to preserve order
-        conf_set_str (str, value);
+        conf_set_str ((const char *)str, (const char *)value);
+        str = estr+1;
     }
-    fclose (fp);
     changed = 0;
+    free (buffer);
     conf_unlock ();
     return 0;
 }
 
 int
 conf_save (void) {
-    extern char dbconfdir[1024]; // $HOME/.config/deadbeef
     char tempfile[PATH_MAX];
     char str[PATH_MAX];
     FILE *fp;
@@ -190,7 +224,7 @@ conf_get_str (const char *key, const char *def, char *buffer, int buffer_size) {
     conf_lock ();
     const char *out = conf_get_str_fast (key, def);
     if (out) {
-        int n = strlen (out)+1;
+        size_t n = strlen (out)+1;
         n = min (n, buffer_size);
         memcpy (buffer, out, n);
         buffer[buffer_size-1] = 0;
@@ -227,7 +261,7 @@ conf_get_int64 (const char *key, int64_t def) {
 
 DB_conf_item_t *
 conf_find (const char *group, DB_conf_item_t *prev) {
-    int l = strlen (group);
+    size_t l = strlen (group);
     for (DB_conf_item_t *it = prev ? prev->next : conf_items; it; it = it->next) {
         if (!strncasecmp (group, it->key, l)) {
             return it;
@@ -312,7 +346,7 @@ conf_setchanged (int c) {
 
 void
 conf_remove_items (const char *key) {
-    int l = strlen (key);
+    size_t l = strlen (key);
     conf_lock ();
     DB_conf_item_t *prev = NULL;
     DB_conf_item_t *it;
