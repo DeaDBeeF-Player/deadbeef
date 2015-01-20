@@ -61,7 +61,7 @@ static DB_artwork_plugin_t *coverart_plugin = NULL;
 typedef struct {
     DB_fileinfo_t info;
     FLAC__StreamDecoder *decoder;
-    char *buffer; // this buffer always has float samples
+    char *buffer;
     int remaining; // bytes remaining in buffer from last read
     int64_t startsample;
     int64_t endsample;
@@ -111,7 +111,7 @@ FLAC__StreamDecoderTellStatus flac_tell_cb (const FLAC__StreamDecoder *decoder, 
     return FLAC__STREAM_DECODER_TELL_STATUS_OK;
 }
 
-FLAC__StreamDecoderLengthStatus flac_lenght_cb (const FLAC__StreamDecoder *decoder, FLAC__uint64 *stream_length, void *client_data) {
+FLAC__StreamDecoderLengthStatus flac_length_cb (const FLAC__StreamDecoder *decoder, FLAC__uint64 *stream_length, void *client_data) {
     flac_info_t *info = (flac_info_t *)client_data;
     size_t pos = deadbeef->ftell (info->file);
     deadbeef->fseek (info->file, 0, SEEK_END);
@@ -126,63 +126,41 @@ FLAC__bool flac_eof_cb (const FLAC__StreamDecoder *decoder, void *client_data) {
 
 static FLAC__StreamDecoderWriteStatus
 cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const inputbuffer[], void *client_data) {
-    flac_info_t *info = (flac_info_t *)client_data;
-    DB_fileinfo_t *_info = &info->info;
     if (frame->header.blocksize == 0) {
         return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
     }
-    int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
-    int bufsize = BUFFERSIZE - info->remaining;
-    int bufsamples = bufsize / samplesize;
-    int nsamples = min (bufsamples, frame->header.blocksize);
-    char *bufptr = &info->buffer[info->remaining];
 
-    int readbytes = frame->header.blocksize * samplesize;
-
-    if (_info->fmt.bps == 32) {
-        for (int i = 0; i <  nsamples; i++) {
-            for (int c = 0; c < _info->fmt.channels; c++) {
-                int32_t sample = inputbuffer[c][i];
-                *((int32_t*)bufptr) = sample;
-                bufptr += 4;
-                info->remaining += 4;
-            }
-        }
-    }
-    else if (_info->fmt.bps == 24) {
-        for (int i = 0; i <  nsamples; i++) {
-            for (int c = 0; c < _info->fmt.channels; c++) {
-                int32_t sample = inputbuffer[c][i];
-                *bufptr++ = sample&0xff;
-                *bufptr++ = (sample&0xff00)>>8;
-                *bufptr++ = (sample&0xff0000)>>16;
-                info->remaining += 3;
-            }
-        }
-    }
-    else if (_info->fmt.bps == 16) {
-        for (int i = 0; i <  nsamples; i++) {
-            for (int c = 0; c < _info->fmt.channels; c++) {
-                int32_t sample = inputbuffer[c][i];
-                *bufptr++ = sample&0xff;
-                *bufptr++ = (sample&0xff00)>>8;
-                info->remaining += 2;
-            }
-        }
-    }
-    else if (_info->fmt.bps == 8) {
-        for (int i = 0; i <  nsamples; i++) {
-            for (int c = 0; c < _info->fmt.channels; c++) {
-                int32_t sample = inputbuffer[c][i];
-                *bufptr++ = sample&0xff;
-                info->remaining += 1;
-            }
-        }
-    }
-    if (readbytes > bufsize) {
+    flac_info_t *info = (flac_info_t *)client_data;
+    DB_fileinfo_t *_info = &info->info;
+    const int channels = _info->fmt.channels;
+    const int samplesize = channels * _info->fmt.bps / 8;
+    const int bufsize = BUFFERSIZE - info->remaining;
+    if (frame->header.blocksize * samplesize > bufsize) {
         trace ("flac: buffer overflow, distortion will occur\n");
     //    return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
     }
+
+    const unsigned real_bps = FLAC__stream_decoder_get_bits_per_sample(decoder);
+    const unsigned shift = (8 - real_bps % 8) % 8;
+    const int nsamples = min(bufsize / samplesize, frame->header.blocksize);
+    char *bufptr = info->buffer + info->remaining;
+    for (int s = 0; s < nsamples; s++) {
+        for (int c = 0; c < channels; c++) {
+            const FLAC__int32 sample = inputbuffer[c][s] << shift;
+            *bufptr++ = sample & 0xff;
+            if (real_bps > 8) {
+                *bufptr++ = sample>>8 & 0xff;
+                if (real_bps > 16) {
+                    *bufptr++ = sample>>16 & 0xff;
+                    if (real_bps > 24) {
+                        *bufptr++ = sample>>24 & 0xff;
+                    }
+                }
+            }
+        }
+    }
+    info->remaining = bufptr - info->buffer;
+
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
@@ -193,7 +171,9 @@ cflac_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMe
     info->totalsamples = metadata->data.stream_info.total_samples;
     _info->fmt.samplerate = metadata->data.stream_info.sample_rate;
     _info->fmt.channels = metadata->data.stream_info.channels;
-    _info->fmt.bps = metadata->data.stream_info.bits_per_sample;
+    const unsigned bps = metadata->data.stream_info.bits_per_sample;
+    const unsigned odd_bps = bps % 8;
+    _info->fmt.bps = odd_bps ? bps + 8 - odd_bps : bps;
     for (int i = 0; i < _info->fmt.channels; i++) {
         _info->fmt.channelmask |= 1 << i;
     }
@@ -308,10 +288,10 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     FLAC__stream_decoder_set_md5_checking (info->decoder, 0);
     if (isogg) {
-        status = FLAC__stream_decoder_init_ogg_stream (info->decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_lenght_cb, flac_eof_cb, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, info);
+        status = FLAC__stream_decoder_init_ogg_stream (info->decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_length_cb, flac_eof_cb, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, info);
     }
     else {
-        status = FLAC__stream_decoder_init_stream (info->decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_lenght_cb, flac_eof_cb, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, info);
+        status = FLAC__stream_decoder_init_stream (info->decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_length_cb, flac_eof_cb, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, info);
     }
     if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
         trace ("cflac_init bad decoder status\n");
@@ -794,10 +774,10 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
     deadbeef->fseek (info.file, -4, SEEK_CUR);
     if (isogg) {
-        status = FLAC__stream_decoder_init_ogg_stream (decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_lenght_cb, flac_eof_cb, cflac_init_write_callback, cflac_init_metadata_callback, cflac_init_error_callback, &info);
+        status = FLAC__stream_decoder_init_ogg_stream (decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_length_cb, flac_eof_cb, cflac_init_write_callback, cflac_init_metadata_callback, cflac_init_error_callback, &info);
     }
     else {
-        status = FLAC__stream_decoder_init_stream (decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_lenght_cb, flac_eof_cb, cflac_init_write_callback, cflac_init_metadata_callback, cflac_init_error_callback, &info);
+        status = FLAC__stream_decoder_init_stream (decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_length_cb, flac_eof_cb, cflac_init_write_callback, cflac_init_metadata_callback, cflac_init_error_callback, &info);
     }
     if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK || info.init_stop_decoding) {
         trace ("flac: FLAC__stream_decoder_init_stream [2] failed\n");
