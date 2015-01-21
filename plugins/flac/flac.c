@@ -126,62 +126,99 @@ static FLAC__StreamDecoderWriteStatus
 cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const inputbuffer[], void *client_data) {
     flac_info_t *info = (flac_info_t *)client_data;
     DB_fileinfo_t *_info = &info->info;
+
     if (frame->header.blocksize == 0) {
+        trace ("flac: blocksize=0 is invalid, aborted.\n");
         return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
     }
-    int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
+
+    int channels = _info->fmt.channels;
+    int samplesize = channels * _info->fmt.bps / 8;
     int bufsize = BUFFERSIZE - info->remaining;
     int bufsamples = bufsize / samplesize;
     int nsamples = min (bufsamples, frame->header.blocksize);
-    char *bufptr = &info->buffer[info->remaining];
+
+    char *bufptr = info->buffer + info->remaining;
 
     int readbytes = frame->header.blocksize * samplesize;
 
-    if (_info->fmt.bps == 32) {
+    unsigned bps = FLAC__stream_decoder_get_bits_per_sample(decoder);
+
+    if (bps == 16) {
         for (int i = 0; i <  nsamples; i++) {
-            for (int c = 0; c < _info->fmt.channels; c++) {
+            for (int c = 0; c < channels; c++) {
                 int32_t sample = inputbuffer[c][i];
-                *((int32_t*)bufptr) = sample;
-                bufptr += 4;
-                info->remaining += 4;
+                *bufptr++ = sample&0xff;
+                *bufptr++ = (sample&0xff00)>>8;
             }
         }
     }
-    else if (_info->fmt.bps == 24) {
+    else if (bps == 24) {
         for (int i = 0; i <  nsamples; i++) {
-            for (int c = 0; c < _info->fmt.channels; c++) {
+            for (int c = 0; c < channels; c++) {
                 int32_t sample = inputbuffer[c][i];
                 *bufptr++ = sample&0xff;
                 *bufptr++ = (sample&0xff00)>>8;
                 *bufptr++ = (sample&0xff0000)>>16;
-                info->remaining += 3;
             }
         }
     }
-    else if (_info->fmt.bps == 16) {
+    else if (bps == 32) {
         for (int i = 0; i <  nsamples; i++) {
-            for (int c = 0; c < _info->fmt.channels; c++) {
+            for (int c = 0; c < channels; c++) {
+                int32_t sample = inputbuffer[c][i];
+                *((int32_t*)bufptr) = sample;
+                bufptr += 4;
+            }
+        }
+    }
+    else if (bps == 8) {
+        for (int i = 0; i <  nsamples; i++) {
+            for (int c = 0; c < channels; c++) {
                 int32_t sample = inputbuffer[c][i];
                 *bufptr++ = sample&0xff;
-                *bufptr++ = (sample&0xff00)>>8;
-                info->remaining += 2;
             }
         }
     }
-    else if (_info->fmt.bps == 8) {
-        for (int i = 0; i <  nsamples; i++) {
-            for (int c = 0; c < _info->fmt.channels; c++) {
-                int32_t sample = inputbuffer[c][i];
-                *bufptr++ = sample&0xff;
-                info->remaining += 1;
-            }
-        }
+    else if (bps & 7) {
+        // support for non-byte-aligned bps
+        unsigned shift = _info->fmt.bps - bps;
+        bps = _info->fmt.bps;
+        int nsamples = min(bufsize / samplesize, frame->header.blocksize);
+        for (int s = 0; s < nsamples; s++) {
+            for (int c = 0; c < channels; c++) {
+                FLAC__int32 sample = inputbuffer[c][s] << shift;
+                *bufptr++ = sample & 0xff;
+                if (bps > 8) {
+                    *bufptr++ = (sample>>8) & 0xff;
+                    if (bps > 16) {
+                        *bufptr++ = (sample>>16) & 0xff;
+                        if (bps > 24) {
+                            *bufptr++ = (sample>>24) & 0xff;
+                        }
+                    }
+                 }
+             }
+         }
     }
+    else {
+        trace ("flac: unsupported bits per sample: %d\n", bps);
+        return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
+    }
+
+    info->remaining = (int)(bufptr - info->buffer);
+
     if (readbytes > bufsize) {
         trace ("flac: buffer overflow, distortion will occur\n");
     //    return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
     }
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
+}
+
+inline static int
+fix_bps (int bps) {
+    int mod = bps & 7;
+    return bps - mod + (mod ? 8 : 0);
 }
 
 static void
@@ -191,7 +228,7 @@ cflac_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMe
     info->totalsamples = metadata->data.stream_info.total_samples;
     _info->fmt.samplerate = metadata->data.stream_info.sample_rate;
     _info->fmt.channels = metadata->data.stream_info.channels;
-    _info->fmt.bps = metadata->data.stream_info.bits_per_sample;
+    _info->fmt.bps = fix_bps (metadata->data.stream_info.bits_per_sample);
     for (int i = 0; i < _info->fmt.channels; i++) {
         _info->fmt.channelmask |= 1 << i;
     }
@@ -604,7 +641,7 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
         trace ("flac: samplerate=%d, channels=%d, totalsamples=%d\n", metadata->data.stream_info.sample_rate, metadata->data.stream_info.channels, metadata->data.stream_info.total_samples);
         _info->fmt.samplerate = metadata->data.stream_info.sample_rate;
         _info->fmt.channels = metadata->data.stream_info.channels;
-        _info->fmt.bps = metadata->data.stream_info.bits_per_sample;
+        _info->fmt.bps = fix_bps (metadata->data.stream_info.bits_per_sample);
         info->totalsamples = metadata->data.stream_info.total_samples;
         if (metadata->data.stream_info.total_samples > 0) {
             deadbeef->plt_set_item_duration (info->plt, it, metadata->data.stream_info.total_samples / (float)metadata->data.stream_info.sample_rate);
