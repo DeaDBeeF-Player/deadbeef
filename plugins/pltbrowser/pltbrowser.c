@@ -137,6 +137,38 @@ w_pltbrowser_init (struct ddb_gtkui_widget_s *w) {
     fill_pltbrowser_cb (w);
 }
 
+static gboolean
+on_pltbrowser_drag_motion_event          (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        guint            time,
+                                        gpointer user_data)
+{
+    w_pltbrowser_t *w = user_data;
+    GtkTreePath *path = NULL;
+    GdkWindow *window = gtk_tree_view_get_bin_window (GTK_TREE_VIEW (widget));
+
+    int bin_x = 0;
+    int bin_y = 0;
+    gdk_window_get_position (window, &bin_x, &bin_y);
+
+    gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(widget), x - bin_x, y - bin_y, &path, NULL, NULL, NULL);
+    if (!path) {
+        return FALSE;
+    }
+
+    int *indices = gtk_tree_path_get_indices (path);
+    if (indices) {
+        if (indices[0] >= 0) {
+            deadbeef->plt_set_curr_idx (indices[0]);
+            w->last_selected = indices[0];
+        }
+        g_free (indices);
+    }
+    return FALSE;
+}
+
 gboolean
 on_pltbrowser_button_press_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
@@ -259,6 +291,9 @@ w_pltbrowser_create (void) {
             w);
     g_signal_connect ((gpointer) w->tree, "row_activated",
             G_CALLBACK (on_pltbrowser_row_activated),
+            w);
+    g_signal_connect ((gpointer) w->tree, "drag_motion",
+            G_CALLBACK (on_pltbrowser_drag_motion_event),
             w);
 
     gtkui_plugin->w_override_signals (w->base.widget, w);
