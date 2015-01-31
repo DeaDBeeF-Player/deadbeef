@@ -3,7 +3,7 @@
  */
 
 GtkWidget* create_converterdlg (void);
-GtkWidget* create_convpreset_editor (void);
+GtkWidget* create_encpreset_editor (void);
 GtkWidget* create_dsppreset_editor (void);
-GtkWidget* create_select_dsp_plugin (void);
-GtkWidget* create_preset_list (void);
+GtkWidget* create_context_menu (void);
+GtkWidget* create_progressdlg (void);
