@@ -42,6 +42,46 @@ typedef struct {
     gulong ri_id;
 } w_pltbrowser_t;
 
+// copied from gktui.c
+static void
+playlist_set_curr (int playlist) {
+    deadbeef->plt_set_curr_idx (playlist);
+    deadbeef->conf_set_int ("playlist.current", playlist);
+}
+
+// copied from gtkui.c
+static int
+add_new_playlist (void) {
+    int cnt = deadbeef->plt_get_count ();
+    int i;
+    int idx = 0;
+    for (;;) {
+        char name[100];
+        if (!idx) {
+            strcpy (name, _("New Playlist"));
+        }
+        else {
+            snprintf (name, sizeof (name), _("New Playlist (%d)"), idx);
+        }
+        deadbeef->pl_lock ();
+        for (i = 0; i < cnt; i++) {
+            char t[100];
+            ddb_playlist_t *plt = deadbeef->plt_get_for_idx (i);
+            deadbeef->plt_get_title (plt, t, sizeof (t));
+            deadbeef->plt_unref (plt);
+            if (!strcasecmp (t, name)) {
+                break;
+            }
+        }
+        deadbeef->pl_unlock ();
+        if (i == cnt) {
+            return deadbeef->plt_add (cnt, name);
+        }
+        idx++;
+    }
+    return -1;
+}
+
 static void
 on_pltbrowser_row_inserted (GtkTreeModel *tree_model, GtkTreePath *path, GtkTreeIter *iter, gpointer user_data) {
     w_pltbrowser_t *plt = user_data;
@@ -131,6 +171,29 @@ pltbrowser_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
     return 0;
 }
 
+// x, y must be relative to GtkTreeView's bin_window (see GtkTreeView documentation)
+static int
+get_treeview_row_at_pos (GtkTreeView *widget, int x, int y)
+{
+    GtkTreePath *path = NULL;
+    gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(widget), x, y, &path, NULL, NULL, NULL);
+
+    int row = -1;
+    if (!path) {
+        // (probably) clicked empty area
+        return row;
+    }
+    else {
+        int *indices = gtk_tree_path_get_indices (path);
+        if (indices) {
+            if (indices[0] >= 0) {
+                row = indices[0];
+            }
+            g_free (indices);
+        }
+    }
+    return row;
+}
 
 static void
 w_pltbrowser_init (struct ddb_gtkui_widget_s *w) {
@@ -146,25 +209,16 @@ on_pltbrowser_drag_motion_event          (GtkWidget       *widget,
                                         gpointer user_data)
 {
     w_pltbrowser_t *w = user_data;
-    GtkTreePath *path = NULL;
     GdkWindow *window = gtk_tree_view_get_bin_window (GTK_TREE_VIEW (widget));
 
     int bin_x = 0;
     int bin_y = 0;
     gdk_window_get_position (window, &bin_x, &bin_y);
 
-    gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(widget), x - bin_x, y - bin_y, &path, NULL, NULL, NULL);
-    if (!path) {
-        return FALSE;
-    }
-
-    int *indices = gtk_tree_path_get_indices (path);
-    if (indices) {
-        if (indices[0] >= 0) {
-            deadbeef->plt_set_curr_idx (indices[0]);
-            w->last_selected = indices[0];
-        }
-        g_free (indices);
+    int row = get_treeview_row_at_pos (GTK_TREE_VIEW (widget), x - bin_x, y - bin_y);
+    if (row >= 0) {
+        deadbeef->plt_set_curr_idx (row);
+        w->last_selected = row;
     }
     return FALSE;
 }
@@ -177,8 +231,41 @@ on_pltbrowser_button_press_event         (GtkWidget       *widget,
     if (gtkui_plugin->w_get_design_mode ()) {
         return FALSE;
     }
-    if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
-        return on_pltbrowser_popup_menu (widget, user_data);
+    if (event->type == GDK_BUTTON_PRESS) {
+        if (event->button == 3) {
+            return on_pltbrowser_popup_menu (widget, user_data);
+        }
+        else if (event->button == 2) {
+            int row_clicked = get_treeview_row_at_pos (GTK_TREE_VIEW (widget), event->x, event->y);
+            if (row_clicked == -1) {
+                // new tab
+                int playlist = add_new_playlist ();
+                if (playlist != -1) {
+                    playlist_set_curr (playlist);
+                }
+                return TRUE;
+            }
+            else if (deadbeef->conf_get_int ("gtkui.pltbrowser.mmb_delete_playlist", 0)) {
+                if (row_clicked != -1) {
+                    deadbeef->plt_remove (row_clicked);
+                    int playlist = deadbeef->plt_get_curr_idx ();
+                    deadbeef->conf_set_int ("playlist.current", playlist);
+                }
+            }
+        }
+    }
+    else if (event->type == GDK_2BUTTON_PRESS) {
+        if (event->button == 1) {
+            int row_clicked = get_treeview_row_at_pos (GTK_TREE_VIEW (widget), event->x, event->y);
+            if (row_clicked == -1) {
+                // new tab
+                int playlist = add_new_playlist ();
+                if (playlist != -1) {
+                    playlist_set_curr (playlist);
+                }
+                return TRUE;
+            }
+        }
     }
     return FALSE;
 }
@@ -320,6 +407,10 @@ pltbrowser_disconnect (void) {
     return 0;
 }
 
+static const char pltbrowser_settings_dlg[] =
+    "property \"Close playlists with middle mouse button\" checkbox gtkui.pltbrowser.mmb_delete_playlist 0;\n"
+;
+
 static DB_misc_t plugin = {
     .plugin.api_vmajor = 1,
     .plugin.api_vminor = 5,
@@ -362,6 +453,7 @@ static DB_misc_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.connect = pltbrowser_connect,
     .plugin.disconnect = pltbrowser_disconnect,
+    .plugin.configdialog = pltbrowser_settings_dlg,
 };
 
 DB_plugin_t *
