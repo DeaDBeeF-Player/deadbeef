@@ -516,7 +516,7 @@ retry_sync:
             if (sample == 0) {
                 if (buffer->file->vfs->is_streaming ()) {
                     // only suitable for cbr files, used if streaming
-                    int64_t sz = deadbeef->fgetlength (buffer->file);
+                    int64_t sz = deadbeef->fgetlength (buffer->file) - buffer->startoffset;
                     if (sz > 0) {
                         sz -= buffer->startoffset + buffer->endoffset;
                         if (sz < 0) {
@@ -796,6 +796,11 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     else {
         deadbeef->fset_track (info->buffer.file, it);
         deadbeef->pl_add_meta (it, "title", NULL);
+        int skip = deadbeef->junk_get_leading_size (info->buffer.file);
+        if (skip > 0) {
+            trace ("mp3: skipping %d(%xH) bytes of junk\n", skip, skip);
+            deadbeef->fseek (info->buffer.file, skip, SEEK_SET);
+        }
         int res = cmp3_scan_stream (&info->buffer, 0);
         if (res < 0) {
             trace ("mp3: cmp3_init: initial cmp3_scan_stream failed\n");
