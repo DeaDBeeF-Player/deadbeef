@@ -136,17 +136,28 @@ fill_pltbrowser_cb (gpointer data) {
     gtk_list_store_clear (store);
     int n = deadbeef->plt_get_count ();
     int curr = deadbeef->plt_get_curr_idx ();
+    int plt_playing = -1;
+    if (deadbeef->conf_get_int ("gtkui.pltbrowser.highlight_curr_plt", 0)) {
+        plt_playing = deadbeef->streamer_get_current_playlist ();
+    }
 
     for (int i = 0; i < n; i++) {
         ddb_playlist_t *plt = deadbeef->plt_get_for_idx (i);
         GtkTreeIter iter;
         gtk_list_store_append (store, &iter);
-        char buf[1000];
-        char buf2[100];
-        deadbeef->plt_get_title (plt, buf, sizeof (buf));
+        char title[1000];
+        char title_temp[1000];
+        char num_items_str[100];
+        deadbeef->plt_get_title (plt, title_temp, sizeof (title_temp));
+        if (plt_playing == i) {
+            snprintf (title, sizeof (title), "%s%s", title_temp, " (playing)");
+        }
+        else {
+            snprintf (title, sizeof (title), "%s", title_temp);
+        }
         int num_items = deadbeef->plt_get_item_count (plt, PL_MAIN);
-        snprintf (buf2, sizeof (buf2), "%d", num_items);
-        gtk_list_store_set (store, &iter, 0, buf, 1, buf2, -1);
+        snprintf (num_items_str, sizeof (num_items_str), "%d", num_items);
+        gtk_list_store_set (store, &iter, 0, title, 1, num_items_str, -1);
     }
     if (curr != -1) {
         GtkTreePath *path = gtk_tree_path_new_from_indices (curr, -1);
@@ -163,6 +174,32 @@ fill_pltbrowser_cb (gpointer data) {
 static int
 pltbrowser_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
+    case DB_EV_SONGCHANGED:
+        {
+            int highlight_curr_plt = deadbeef->conf_get_int ("gtkui.pltbrowser.highlight_curr_plt", 0);
+            // only fill when playlist changed
+            if (highlight_curr_plt) {
+                ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
+                if (ev->from && ev->to) {
+                    ddb_playlist_t *plt_from = deadbeef->pl_get_playlist (ev->from);
+                    ddb_playlist_t *plt_to = deadbeef->pl_get_playlist (ev->to);
+                    if (plt_from != plt_to) {
+                        g_idle_add (fill_pltbrowser_cb, w);
+                    }
+                    if (plt_from) {
+                        deadbeef->plt_unref (plt_from);
+                    }
+                    if (plt_to) {
+                        deadbeef->plt_unref (plt_to);
+                    }
+                }
+                else if (!ev->from) {
+                    g_idle_add (fill_pltbrowser_cb, w);
+                }
+            }
+        }
+        break;
+    case DB_EV_CONFIGCHANGED:
     case DB_EV_PLAYLISTSWITCHED:
     case DB_EV_PLAYLISTCHANGED:
         g_idle_add (fill_pltbrowser_cb, w);
@@ -360,6 +397,8 @@ w_pltbrowser_create (void) {
 
     GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Name"), rend1, "text", 0, NULL);
     GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Items"), rend2, "text", 1, NULL);
+    gtk_tree_view_column_set_sizing (col1, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+    gtk_tree_view_column_set_sizing (col2, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col1);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col2);
 
@@ -409,6 +448,7 @@ pltbrowser_disconnect (void) {
 
 static const char pltbrowser_settings_dlg[] =
     "property \"Close playlists with middle mouse button\" checkbox gtkui.pltbrowser.mmb_delete_playlist 0;\n"
+    "property \"Highlight current playlist\" checkbox gtkui.pltbrowser.highlight_curr_plt 0;\n"
 ;
 
 static DB_misc_t plugin = {
