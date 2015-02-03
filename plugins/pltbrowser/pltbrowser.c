@@ -37,6 +37,8 @@ static ddb_gtkui_t *gtkui_plugin;
 typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *tree;
+    GtkTreeViewColumn *col_items;
+    GtkTreeViewColumn *col_duration;
     int last_selected;
     gulong cc_id;
     gulong ri_id;
@@ -157,7 +159,22 @@ fill_pltbrowser_cb (gpointer data) {
         }
         int num_items = deadbeef->plt_get_item_count (plt, PL_MAIN);
         snprintf (num_items_str, sizeof (num_items_str), "%d", num_items);
-        gtk_list_store_set (store, &iter, 0, title, 1, num_items_str, -1);
+
+        float pl_totaltime = deadbeef->plt_get_totaltime (plt);
+        int daystotal = (int)pl_totaltime / (3600*24);
+        int hourtotal = ((int)pl_totaltime / 3600) % 24;
+        int mintotal = ((int)pl_totaltime/60) % 60;
+        int sectotal = ((int)pl_totaltime) % 60;
+
+        char totaltime_str[512] = "";
+        if (daystotal == 0) {
+            snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
+        }
+        else {
+            snprintf (totaltime_str, sizeof (totaltime_str), _("%dd %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
+        }
+
+        gtk_list_store_set (store, &iter, 0, title, 1, num_items_str, 2, totaltime_str, -1);
     }
     if (curr != -1) {
         GtkTreePath *path = gtk_tree_path_new_from_indices (curr, -1);
@@ -235,6 +252,95 @@ get_treeview_row_at_pos (GtkTreeView *widget, int x, int y)
 static void
 w_pltbrowser_init (struct ddb_gtkui_widget_s *w) {
     fill_pltbrowser_cb (w);
+}
+
+static GtkTreeViewColumn *
+add_treeview_column (w_pltbrowser_t *w, GtkTreeView *tree, int pos, int expand, int align_right, const char *title);
+
+static void
+on_popup_header_items_clicked (GtkCheckMenuItem *checkmenuitem, gpointer user_data)
+{
+    w_pltbrowser_t *w = user_data;
+    int active = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem));
+    deadbeef->conf_set_int ("gtkui.pltbrowser.show_items_column", active);
+    if (active) {
+        gtk_tree_view_column_set_visible (GTK_TREE_VIEW_COLUMN (w->col_items), 1);
+    }
+    else if (w->col_items) {
+        gtk_tree_view_column_set_visible (GTK_TREE_VIEW_COLUMN (w->col_items), 0);
+    }
+}
+
+static void
+on_popup_header_duration_clicked (GtkCheckMenuItem *checkmenuitem, gpointer user_data)
+{
+    w_pltbrowser_t *w = user_data;
+    int active = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem));
+    deadbeef->conf_set_int ("gtkui.pltbrowser.show_duration_column", active);
+    if (active) {
+        gtk_tree_view_column_set_visible (GTK_TREE_VIEW_COLUMN (w->col_duration), 1);
+    }
+    else if (w->col_duration) {
+        gtk_tree_view_column_set_visible (GTK_TREE_VIEW_COLUMN (w->col_duration), 0);
+    }
+}
+
+static gboolean
+on_pltbrowser_header_popup_menu (gpointer user_data)
+{
+    w_pltbrowser_t *w = user_data;
+    GtkWidget *popup = gtk_menu_new ();
+    GtkWidget *items = gtk_check_menu_item_new_with_mnemonic ("Items");
+    GtkWidget *duration = gtk_check_menu_item_new_with_mnemonic ("Duration");
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (items), deadbeef->conf_get_int ("gtkui.pltbrowser.show_items_column", 0));
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (duration), deadbeef->conf_get_int ("gtkui.pltbrowser.show_duration_column", 0));
+    gtk_container_add (GTK_CONTAINER (popup), items);
+    gtk_container_add (GTK_CONTAINER (popup), duration);
+    gtk_widget_show (popup);
+    gtk_widget_show (items);
+    gtk_widget_show (duration);
+    g_signal_connect_after ((gpointer) items, "toggled", G_CALLBACK (on_popup_header_items_clicked), w);
+    g_signal_connect_after ((gpointer) duration, "toggled", G_CALLBACK (on_popup_header_duration_clicked), w);
+    gtk_menu_popup (GTK_MENU (popup), NULL, NULL, NULL, w, 0, gtk_get_current_event_time ());
+    return TRUE;
+}
+
+static gboolean
+on_pltbrowser_header_clicked (GtkWidget       *widget,
+                              GdkEventButton  *event,
+                              gpointer         user_data)
+{
+    w_pltbrowser_t *w = user_data;
+    if (gtkui_plugin->w_get_design_mode ()) {
+        return FALSE;
+    }
+    if (event->type == GDK_BUTTON_PRESS) {
+        if (event->button == 3) {
+            return on_pltbrowser_header_popup_menu (w);
+        }
+    }
+    return FALSE;
+}
+
+static GtkTreeViewColumn *
+add_treeview_column (w_pltbrowser_t *w, GtkTreeView *tree, int pos, int expand, int align_right, const char *title)
+{
+    GtkCellRenderer *rend = gtk_cell_renderer_text_new ();
+    GtkTreeViewColumn *col = gtk_tree_view_column_new_with_attributes (title, rend, "text", pos, NULL);
+    if (align_right) {
+        gtk_cell_renderer_set_alignment (GTK_CELL_RENDERER (rend), 1.0, 0.0);
+    }
+    gtk_tree_view_column_set_sizing (col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+    gtk_tree_view_column_set_expand (col, expand);
+    gtk_tree_view_insert_column (GTK_TREE_VIEW (tree), col, pos);
+    GtkWidget *label = gtk_label_new (title);
+    gtk_tree_view_column_set_widget (col, label);
+    gtk_widget_show (label);
+    GtkWidget *col_button = gtk_widget_get_ancestor(label, GTK_TYPE_BUTTON);
+    g_signal_connect (col_button, "button-press-event",
+            G_CALLBACK (on_pltbrowser_header_clicked),
+            w);
+    return col;
 }
 
 static gboolean
@@ -385,29 +491,30 @@ w_pltbrowser_create (void) {
 
     gtk_container_add (GTK_CONTAINER (scroll), w->tree);
 
-    GtkListStore *store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+    GtkListStore *store = gtk_list_store_new (3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
 
     w->ri_id = g_signal_connect ((gpointer) store, "row_inserted", G_CALLBACK (on_pltbrowser_row_inserted), w);
 
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
+    GtkTreeViewColumn *col1 = add_treeview_column (w, GTK_TREE_VIEW (w->tree), 0, 1, 0, _("Name"));
 
-    GtkCellRenderer *rend1 = gtk_cell_renderer_text_new ();
-    GtkCellRenderer *rend2 = gtk_cell_renderer_text_new ();
+    int show_item_column = deadbeef->conf_get_int ("gtkui.pltbrowser.show_items_column", 0);
+    w->col_items = add_treeview_column (w, GTK_TREE_VIEW (w->tree), 1, 0, 1, _("Items"));
+    if (!show_item_column) {
+        gtk_tree_view_column_set_visible (w->col_items, 0);
+    }
 
-    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Name"), rend1, "text", 0, NULL);
-    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Items"), rend2, "text", 1, NULL);
-    gtk_tree_view_column_set_sizing (col1, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-    gtk_tree_view_column_set_sizing (col2, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-    gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col1);
-    gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col2);
+    w->col_duration = add_treeview_column (w, GTK_TREE_VIEW (w->tree), 2, 0, 1, _("Duration"));
+    int show_duration_column = deadbeef->conf_get_int ("gtkui.pltbrowser.show_duration_column", 0);
+    if (!show_duration_column) {
+        gtk_tree_view_column_set_visible (w->col_duration, 0);
+    }
 
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);
 
     int showheaders = deadbeef->conf_get_int ("gtkui.pltbrowser.show_headers", 1);
     gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), showheaders);
-
-    gtk_cell_renderer_set_alignment (GTK_CELL_RENDERER (rend2), 1.0, 0.0);
 
     w->cc_id = g_signal_connect ((gpointer) w->tree, "cursor_changed",
             G_CALLBACK (on_pltbrowser_cursor_changed),
