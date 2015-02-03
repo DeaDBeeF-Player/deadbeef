@@ -389,23 +389,28 @@ retry_sync:
         // try to read xing/info tag (only on initial scans)
         if (sample <= 0 && !buffer->have_xing_header)
         {
-            if (!buffer->file->vfs->is_streaming ()) {
+            //if (!buffer->file->vfs->is_streaming ())
+            {
                 //            trace ("trying to read xing header at pos %d\n", framepos);
-                if (ver == 1) {
-                    deadbeef->fseek (buffer->file, 32/*-2-2*prot*/, SEEK_CUR);
-                }
-                else if (ver == 2) {
-                    // in mpeg2 streams, sideinfo is 17 bytes
-                    deadbeef->fseek (buffer->file, 17/*-2-prot*2*/, SEEK_CUR);
-                }
                 const char xing[] = "Xing";
                 const char info[] = "Info";
                 char magic[4];
+
+                // ignore mpeg version, and try both 17 and 32 byte offset
+                deadbeef->fseek (buffer->file, 17, SEEK_CUR);
+
                 if (deadbeef->fread (magic, 1, 4, buffer->file) != 4) {
                     trace ("cmp3_scan_stream: EOF while checking for Xing header\n");
                     return -1; // EOF
                 }
 
+                if (strncmp (xing, magic, 4) && strncmp (info, magic, 4)) {
+                    deadbeef->fseek (buffer->file, 11, SEEK_CUR);
+                    if (deadbeef->fread (magic, 1, 4, buffer->file) != 4) {
+                        trace ("cmp3_scan_stream: EOF while checking for Xing header\n");
+                        return -1; // EOF
+                    }
+                }
                 //            trace ("xing magic: %c%c%c%c\n", magic[0], magic[1], magic[2], magic[3]);
 
                 if (!strncmp (xing, magic, 4) || !strncmp (info, magic, 4)) {
@@ -509,6 +514,11 @@ retry_sync:
                         deadbeef->fseek (buffer->file, buffer->startoffset, SEEK_SET);
                         if (fsize >= 0) {
                             buffer->bitrate = (int)((fsize - buffer->startoffset - buffer->endoffset) / buffer->samplerate * 1000);
+                        }
+
+                        if (sample == 0) {
+                            deadbeef->fseek (buffer->file, buffer->startoffset, SEEK_SET);
+                            return 0;
                         }
                     }
                 }
