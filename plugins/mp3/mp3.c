@@ -72,6 +72,8 @@ extract_i32 (unsigned char *buf)
     return x;
 }
 
+// useful for parsing lame header, but unused right now
+#if 0
 static inline uint32_t
 extract_i32_le (unsigned char *buf)
 {
@@ -115,6 +117,7 @@ extract_f32 (unsigned char *buf) {
     *x |= buf[3];
     return f;
 }
+#endif
 
 // sample=-1: scan entire stream, calculate precise duration
 // sample=0: read headers/tags, calculate approximate duration
@@ -125,7 +128,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     trace ("cmp3_scan_stream %d (offs: %lld)\n", sample, deadbeef->ftell (buffer->file));
 
 // {{{ prepare for scan - seek, reset averages, etc
-    int initpos = deadbeef->ftell (buffer->file);
+    int64_t initpos = deadbeef->ftell (buffer->file);
     trace ("initpos: %d\n", initpos);
     int packetlength = 0;
     int nframe = 0;
@@ -505,7 +508,7 @@ retry_sync:
                         buffer->startoffset = framepos+packetlength;
                         deadbeef->fseek (buffer->file, buffer->startoffset, SEEK_SET);
                         if (fsize >= 0) {
-                            buffer->bitrate = (fsize - buffer->startoffset - buffer->endoffset)/ buffer->samplerate * 1000;
+                            buffer->bitrate = (int)((fsize - buffer->startoffset - buffer->endoffset) / buffer->samplerate * 1000);
                         }
                     }
                 }
@@ -513,7 +516,7 @@ retry_sync:
             if (sample == 0) {
                 if (buffer->file->vfs->is_streaming ()) {
                     // only suitable for cbr files, used if streaming
-                    int sz = deadbeef->fgetlength (buffer->file);
+                    int64_t sz = deadbeef->fgetlength (buffer->file);
                     if (sz > 0) {
                         sz -= buffer->startoffset + buffer->endoffset;
                         if (sz < 0) {
@@ -533,7 +536,7 @@ retry_sync:
                         trace ("cmp3_scan_stream: unable to determine duration");
                         return 0;
                     }
-                    buffer->nframes = sz / packetlength;
+                    buffer->nframes = (int)(sz / packetlength);
                     buffer->avg_packetlength = packetlength;
                     buffer->avg_samplerate = samplerate;
                     buffer->avg_samples_per_frame = samples_per_frame;
@@ -578,7 +581,7 @@ retry_sync:
             // seeking to particular sample, interrupt if reached
             if (sample > 0 && scansamples + samples_per_frame >= sample) {
                 deadbeef->fseek (buffer->file, lead_in_frame_pos, SEEK_SET);
-                buffer->lead_in_frames = nframe-lead_in_frame_no;
+                buffer->lead_in_frames = (int)(nframe-lead_in_frame_no);
                 buffer->currentsample = sample;
                 buffer->skipsamples = sample - scansamples;
                 trace ("scan: cursample=%d, frame: %d, skipsamples: %d, filepos: %llX, lead-in frames: %d\n", buffer->currentsample, nframe, buffer->skipsamples, deadbeef->ftell (buffer->file), buffer->lead_in_frames);
@@ -988,20 +991,15 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
     if (info->buffer.file->vfs->is_streaming ()) {
         if (info->buffer.totalsamples > 0 && info->buffer.avg_samples_per_frame > 0 && info->buffer.avg_packetlength > 0) { // that means seekable remote stream, like podcast
             trace ("seeking is possible!\n");
-            // get length excluding id3v2
-            int64_t l = deadbeef->fgetlength (info->buffer.file) - info->buffer.startoffset - info->buffer.endoffset;
-            
+
             int r;
 
             // seek to beginning of the frame
             int64_t frm = sample / info->buffer.avg_samples_per_frame;
             r = deadbeef->fseek (info->buffer.file, frm * info->buffer.avg_packetlength + info->buffer.startoffset, SEEK_SET);
 
-//            l = l * sample / buffer.totalsamples;
-//            r = deadbeef->fseek (buffer.file, l, SEEK_SET);
-
             if (!r) {
-                info->buffer.skipsamples = sample - frm * info->buffer.avg_samples_per_frame;
+                info->buffer.skipsamples = (int)(sample - frm * info->buffer.avg_samples_per_frame);
 
                 info->buffer.currentsample = sample;
                 _info->readpos = (float)(info->buffer.currentsample - info->buffer.startsample) / info->buffer.samplerate;
@@ -1114,7 +1112,7 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     {
         const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
         if (cuesheet) {
-            DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), buffer.totalsamples-buffer.delay-buffer.padding, buffer.samplerate);
+            DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (const uint8_t *)cuesheet, (int)strlen (cuesheet), buffer.totalsamples-buffer.delay-buffer.padding, buffer.samplerate);
             if (last) {
                 deadbeef->pl_item_unref (it);
                 deadbeef->pl_item_unref (last);
