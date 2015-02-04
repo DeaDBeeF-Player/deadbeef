@@ -139,6 +139,13 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     int valid_frames = 0;
     int prev_bitrate = -1;
     buffer->samplerate = 0;
+
+    if (sample <= 0) { // rescanning the stream, reset the xing header flag
+        buffer->have_xing_header = 0;
+    }
+    // this flag is used to make sure we only check the 1st frame for xing info
+    int checked_xing_header = buffer->have_xing_header;
+
     int64_t fsize = deadbeef->fgetlength (buffer->file);
 
     if (sample <= 0) {
@@ -387,8 +394,9 @@ retry_sync:
 
 // {{{ detect/load xing frame, only on 1st pass
         // try to read xing/info tag (only on initial scans)
-        if (sample <= 0 && !buffer->have_xing_header)
+        if (sample <= 0 && !buffer->have_xing_header && !checked_xing_header)
         {
+            checked_xing_header = 1;
             //if (!buffer->file->vfs->is_streaming ())
             {
                 //            trace ("trying to read xing header at pos %d\n", framepos);
@@ -555,10 +563,9 @@ retry_sync:
                     trace ("totalsamples: %d, samplesperframe: %d, fsize=%lld\n", buffer->totalsamples, samples_per_frame, fsize);
 //                    trace ("bitrate=%d, layer=%d, packetlength=%d, fsize=%d, nframes=%d, samples_per_frame=%d, samplerate=%d, duration=%f, totalsamples=%d\n", bitrate, layer, packetlength, sz, nframe, samples_per_frame, samplerate, buffer->duration, buffer->totalsamples);
 
-                    if (sample == 0) {
-                        deadbeef->fseek (buffer->file, framepos, SEEK_SET);
-                        return 0;
-                    }
+                    deadbeef->fseek (buffer->file, framepos, SEEK_SET);
+
+                    return 0;
                 }
                 else {
                     deadbeef->fseek (buffer->file, framepos, SEEK_SET);
