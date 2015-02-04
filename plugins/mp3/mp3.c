@@ -119,6 +119,130 @@ extract_f32 (unsigned char *buf) {
 }
 #endif
 
+static int
+mp3_check_xing_header (buffer_t *buffer, int packetlength, int sample, int samples_per_frame, int samplerate, int64_t framepos, int64_t fsize) {
+    const char xing[] = "Xing";
+    const char info[] = "Info";
+    char magic[4];
+
+    // ignore mpeg version, and try both 17 and 32 byte offsets
+    deadbeef->fseek (buffer->file, 17, SEEK_CUR);
+
+    if (deadbeef->fread (magic, 1, 4, buffer->file) != 4) {
+        trace ("cmp3_scan_stream: EOF while checking for Xing header\n");
+        return -1; // EOF
+    }
+
+    if (strncmp (xing, magic, 4) && strncmp (info, magic, 4)) {
+        deadbeef->fseek (buffer->file, 11, SEEK_CUR);
+        if (deadbeef->fread (magic, 1, 4, buffer->file) != 4) {
+            trace ("cmp3_scan_stream: EOF while checking for Xing header\n");
+            return -1; // EOF
+        }
+    }
+
+    if (!strncmp (xing, magic, 4) || !strncmp (info, magic, 4)) {
+        trace ("xing/info frame found\n");
+        buffer->startoffset += packetlength;
+        // read flags
+        uint32_t flags;
+        uint8_t buf[4];
+        if (deadbeef->fread (buf, 1, 4, buffer->file) != 4) {
+            trace ("cmp3_scan_stream: EOF while parsing Xing header\n");
+            return -1; // EOF
+        }
+        flags = extract_i32 (buf);
+        if (flags & FRAMES_FLAG) {
+            // read number of frames
+            if (deadbeef->fread (buf, 1, 4, buffer->file) != 4) {
+                trace ("cmp3_scan_stream: EOF while parsing Xing header\n");
+                return -1; // EOF
+            }
+            uint32_t nframes = extract_i32 (buf);
+            if (sample == 0) {
+                buffer->duration = (((uint64_t)nframes * (uint64_t)samples_per_frame) - buffer->delay - buffer->padding)/ (float)samplerate;
+            }
+            trace ("xing totalsamples: %d, nframes: %d, samples_per_frame: %d\n", nframes*samples_per_frame, nframes, samples_per_frame);
+            if (nframes <= 0 || samples_per_frame <= 0) {
+                trace ("bad xing header\n");
+                return -1;
+            }
+            buffer->totalsamples = nframes * samples_per_frame;
+            buffer->samplerate = samplerate;
+        }
+        if (flags & BYTES_FLAG) {
+            deadbeef->fseek (buffer->file, 4, SEEK_CUR);
+        }
+        if (flags & TOC_FLAG) {
+            deadbeef->fseek (buffer->file, 100, SEEK_CUR);
+        }
+        if (flags & VBR_SCALE_FLAG) {
+            deadbeef->fseek (buffer->file, 4, SEEK_CUR);
+        }
+        // lame header
+        if (deadbeef->fread (buf, 1, 4, buffer->file) != 4) {
+            trace ("cmp3_scan_stream: EOF while reading LAME header\n");
+            return -1; // EOF
+        }
+
+        deadbeef->fseek (buffer->file, 5, SEEK_CUR);
+        uint8_t rev = 0;
+        if (deadbeef->fread (&rev, 1, 1, buffer->file) != 1) {
+            trace ("cmp3_scan_stream: EOF while reading info tag revision / vbr method\n");
+        }
+        switch (rev & 0x0f) {
+        case XING_ABR ... XING_VBR4:
+        case XING_ABR2:
+            buffer->vbr = rev & 0x0f;
+            break;
+        default:
+            buffer->vbr = DETECTED_VBR;
+            break;
+        }
+        if (!memcmp (buf, "LAME", 4)) {
+            trace ("lame header found\n");
+
+            // FIXME: that can be optimized with a single read
+            uint8_t lpf;
+            deadbeef->fread (&lpf, 1, 1, buffer->file);
+            //3 floats: replay gain
+            deadbeef->fread (buf, 1, 4, buffer->file);
+            // float rg_peaksignalamp = extract_f32 (buf);
+            deadbeef->fread (buf, 1, 2, buffer->file);
+            // uint16_t rg_radio = extract_i16 (buf);
+
+            deadbeef->fread (buf, 1, 2, buffer->file);
+            // uint16_t rg_audiophile = extract_i16 (buf);
+
+            // skip
+            deadbeef->fseek (buffer->file, 2, SEEK_CUR);
+            deadbeef->fread (buf, 1, 3, buffer->file);
+
+            buffer->delay = (((uint32_t)buf[0]) << 4) | ((((uint32_t)buf[1]) & 0xf0)>>4);
+            buffer->padding = ((((uint32_t)buf[1])&0x0f)<<8) | ((uint32_t)buf[2]);
+            // skip
+            deadbeef->fseek (buffer->file, 1, SEEK_CUR);
+            // mp3gain
+            uint8_t mp3gain;
+            deadbeef->fread (&mp3gain, 1, 1, buffer->file);
+            // skip
+            deadbeef->fseek (buffer->file, 2, SEEK_CUR);
+            // musiclen
+            deadbeef->fread (buf, 1, 4, buffer->file);
+            trace ("lame totalsamples: %d\n", buffer->totalsamples);
+        }
+        if (flags&FRAMES_FLAG) {
+            buffer->have_xing_header = 1;
+            buffer->startoffset = framepos+packetlength;
+            if (fsize >= 0) {
+                buffer->bitrate = (int)((fsize - buffer->startoffset - buffer->endoffset) / buffer->samplerate * 1000);
+            }
+        }
+    }
+
+    return 0;
+}
+
 // sample=-1: scan entire stream, calculate precise duration
 // sample=0: read headers/tags, calculate approximate duration
 // sample>0: seek to the frame with the sample, update skipsamples
@@ -397,143 +521,25 @@ retry_sync:
         if (sample <= 0 && !buffer->have_xing_header && !checked_xing_header)
         {
             checked_xing_header = 1;
-            //if (!buffer->file->vfs->is_streaming ())
-            {
-                //            trace ("trying to read xing header at pos %d\n", framepos);
-                const char xing[] = "Xing";
-                const char info[] = "Info";
-                char magic[4];
+            mp3_check_xing_header (buffer, packetlength, sample, samples_per_frame, samplerate, framepos, fsize);
 
-                // ignore mpeg version, and try both 17 and 32 byte offset
-                deadbeef->fseek (buffer->file, 17, SEEK_CUR);
-
-                if (deadbeef->fread (magic, 1, 4, buffer->file) != 4) {
-                    trace ("cmp3_scan_stream: EOF while checking for Xing header\n");
-                    return -1; // EOF
+            if (buffer->have_xing_header) {
+                // trust the xing header -- even if requested to scan for precise duration
+                if (sample <= 0) {
+                    // parameters have been discovered from xing header, no need to continue
+                    deadbeef->fseek (buffer->file, buffer->startoffset, SEEK_SET);
+                    return 0;
                 }
-
-                if (strncmp (xing, magic, 4) && strncmp (info, magic, 4)) {
-                    deadbeef->fseek (buffer->file, 11, SEEK_CUR);
-                    if (deadbeef->fread (magic, 1, 4, buffer->file) != 4) {
-                        trace ("cmp3_scan_stream: EOF while checking for Xing header\n");
-                        return -1; // EOF
-                    }
-                }
-                //            trace ("xing magic: %c%c%c%c\n", magic[0], magic[1], magic[2], magic[3]);
-
-                if (!strncmp (xing, magic, 4) || !strncmp (info, magic, 4)) {
-                    trace ("xing/info frame found\n");
-                    buffer->startoffset += packetlength;
-                    // read flags
-                    uint32_t flags;
-                    uint8_t buf[4];
-                    if (deadbeef->fread (buf, 1, 4, buffer->file) != 4) {
-                        trace ("cmp3_scan_stream: EOF while parsing Xing header\n");
-                        return -1; // EOF
-                    }
-                    flags = extract_i32 (buf);
-                    if (flags & FRAMES_FLAG) {
-                        // read number of frames
-                        if (deadbeef->fread (buf, 1, 4, buffer->file) != 4) {
-                            trace ("cmp3_scan_stream: EOF while parsing Xing header\n");
-                            return -1; // EOF
-                        }
-                        uint32_t nframes = extract_i32 (buf);
-                        if (sample == 0) {
-                            buffer->duration = (((uint64_t)nframes * (uint64_t)samples_per_frame) - buffer->delay - buffer->padding)/ (float)samplerate;
-                        }
-                        trace ("xing totalsamples: %d, nframes: %d, samples_per_frame: %d\n", nframes*samples_per_frame, nframes, samples_per_frame);
-                        if (nframes <= 0 || samples_per_frame <= 0) {
-                            trace ("bad xing header\n");
-                            continue;
-                        }
-                        buffer->totalsamples = nframes * samples_per_frame;
-                        buffer->samplerate = samplerate;
-                    }
-                    if (flags & BYTES_FLAG) {
-                        deadbeef->fseek (buffer->file, 4, SEEK_CUR);
-                    }
-                    if (flags & TOC_FLAG) {
-                        deadbeef->fseek (buffer->file, 100, SEEK_CUR);
-                    }
-                    if (flags & VBR_SCALE_FLAG) {
-                        deadbeef->fseek (buffer->file, 4, SEEK_CUR);
-                    }
-                    // lame header
-                    if (deadbeef->fread (buf, 1, 4, buffer->file) != 4) {
-                        trace ("cmp3_scan_stream: EOF while reading LAME header\n");
-                        return -1; // EOF
-                    }
-                    //                trace ("tell=%x, %c%c%c%c\n", deadbeef->ftell(buffer->file), buf[0], buf[1], buf[2], buf[3]);
-
-                    deadbeef->fseek (buffer->file, 5, SEEK_CUR);
-                    uint8_t rev = 0;
-                    if (deadbeef->fread (&rev, 1, 1, buffer->file) != 1) {
-                        trace ("cmp3_scan_stream: EOF while reading info tag revision / vbr method\n");
-                    }
-                    switch (rev & 0x0f) {
-                    case XING_ABR ... XING_VBR4:
-                    case XING_ABR2:
-                        buffer->vbr = rev & 0x0f;
-                        break;
-                    default:
-                        buffer->vbr = DETECTED_VBR;
-                        break;
-                    }
-                    if (!memcmp (buf, "LAME", 4)) {
-                        trace ("lame header found\n");
-
-                        // FIXME: that can be optimized by single read
-                        uint8_t lpf;
-                        deadbeef->fread (&lpf, 1, 1, buffer->file);
-                        //3 floats: replay gain
-                        deadbeef->fread (buf, 1, 4, buffer->file);
-                        // float rg_peaksignalamp = extract_f32 (buf);
-                        deadbeef->fread (buf, 1, 2, buffer->file);
-                        // uint16_t rg_radio = extract_i16 (buf);
-
-                        deadbeef->fread (buf, 1, 2, buffer->file);
-                        // uint16_t rg_audiophile = extract_i16 (buf);
-
-                        // skip
-                        deadbeef->fseek (buffer->file, 2, SEEK_CUR);
-                        deadbeef->fread (buf, 1, 3, buffer->file);
-                        buffer->delay = (((uint32_t)buf[0]) << 4) | ((((uint32_t)buf[1]) & 0xf0)>>4);
-                        buffer->padding = ((((uint32_t)buf[1])&0x0f)<<8) | ((uint32_t)buf[2]);
-                        // skip
-                        deadbeef->fseek (buffer->file, 1, SEEK_CUR);
-                        // mp3gain
-                        uint8_t mp3gain;
-                        deadbeef->fread (&mp3gain, 1, 1, buffer->file);
-                        // skip
-                        deadbeef->fseek (buffer->file, 2, SEEK_CUR);
-                        // musiclen
-                        deadbeef->fread (buf, 1, 4, buffer->file);
-                        //                    uint32_t musiclen = extract_i32 (buf);
-
-                        //trace ("lpf: %d, peaksignalamp: %f, radiogain: %d, audiophile: %d, delay: %d, padding: %d, mp3gain: %d, musiclen: %d\n", lpf, rg_peaksignalamp, rg_radio, rg_audiophile, delay, padding, mp3gain, musiclen);
-                        // skip crc
-                        //deadbeef->fseek (buffer->file, 4, SEEK_CUR);
-                        trace ("lame totalsamples: %d\n", buffer->totalsamples);
-                    }
-                    if (sample <= 0 && (flags&FRAMES_FLAG)) {
-                        buffer->have_xing_header = 1;
-                        buffer->startoffset = framepos+packetlength;
-                        deadbeef->fseek (buffer->file, buffer->startoffset, SEEK_SET);
-                        if (fsize >= 0) {
-                            buffer->bitrate = (int)((fsize - buffer->startoffset - buffer->endoffset) / buffer->samplerate * 1000);
-                        }
-
-                        if (sample == 0) {
-                            deadbeef->fseek (buffer->file, buffer->startoffset, SEEK_SET);
-                            return 0;
-                        }
-                    }
+                else {
+                    // skip to the next frame
+                    deadbeef->fseek (buffer->file, framepos+packetlength, SEEK_SET);
+                    continue;
                 }
             }
+
             if (sample == 0) {
                 if (buffer->file->vfs->is_streaming ()) {
-                    // only suitable for cbr files, used if streaming
+                    // guess duration from filesize
                     int64_t sz = deadbeef->fgetlength (buffer->file) - buffer->startoffset;
                     if (sz > 0) {
                         sz -= buffer->startoffset + buffer->endoffset;
@@ -561,7 +567,7 @@ retry_sync:
                     buffer->duration = (((uint64_t)buffer->nframes * (uint64_t)samples_per_frame) - buffer->delay - buffer->padding)/ (float)samplerate;
                     buffer->totalsamples = buffer->nframes * samples_per_frame;
                     trace ("totalsamples: %d, samplesperframe: %d, fsize=%lld\n", buffer->totalsamples, samples_per_frame, fsize);
-//                    trace ("bitrate=%d, layer=%d, packetlength=%d, fsize=%d, nframes=%d, samples_per_frame=%d, samplerate=%d, duration=%f, totalsamples=%d\n", bitrate, layer, packetlength, sz, nframe, samples_per_frame, samplerate, buffer->duration, buffer->totalsamples);
+        //                    trace ("bitrate=%d, layer=%d, packetlength=%d, fsize=%d, nframes=%d, samples_per_frame=%d, samplerate=%d, duration=%f, totalsamples=%d\n", bitrate, layer, packetlength, sz, nframe, samples_per_frame, samplerate, buffer->duration, buffer->totalsamples);
 
                     deadbeef->fseek (buffer->file, framepos, SEEK_SET);
 
@@ -573,7 +579,6 @@ retry_sync:
             }
             else {
                 deadbeef->fseek (buffer->file, framepos+packetlength, SEEK_SET);
-                buffer->have_xing_header = 1;
             }
         }
 // }}}
