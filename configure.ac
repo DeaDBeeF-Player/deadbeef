@@ -338,6 +338,7 @@ dnl mpg3 plugin
 AS_IF([test "${enable_mp3}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_MP3=yes
+        HAVE_LIBMAD=yes
         MAD_CFLAGS="-I../../$LIB/include"
         MAD_LIBS="../../$LIB/lib/libmad.a"
         AC_SUBST(MAD_CFLAGS)
