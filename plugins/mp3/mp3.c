@@ -159,7 +159,7 @@ mp3_check_xing_header (buffer_t *buffer, int packetlength, int sample, int sampl
                 return -1; // EOF
             }
             uint32_t nframes = extract_i32 (buf);
-            if (sample == 0) {
+            if (sample <= 0) {
                 buffer->duration = (((uint64_t)nframes * (uint64_t)samples_per_frame) - buffer->delay - buffer->padding)/ (float)samplerate;
             }
             trace ("xing totalsamples: %d, nframes: %d, samples_per_frame: %d\n", nframes*samples_per_frame, nframes, samples_per_frame);
