@@ -36,7 +36,7 @@ for i in converter pltbrowser shellexecui ; do
     fi
 done
 
-for i in nullout cdda flac alsa mpgmad hotkeys vtx \
+for i in nullout cdda flac alsa mp3 hotkeys vtx \
 	 ffap ffmpeg wavpack vorbis oss vfs_curl \
 	 lastfm sid adplug sndfile artwork alac \
 	 supereq gme dumb notify musepack wildmidi \
