@@ -47,7 +47,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/lastfm.so\
     $PLUGDIR/m3u.so\
     $PLUGDIR/mms.so\
-    $PLUGDIR/mpgmad.so\
+    $PLUGDIR/mp3.so\
     $PLUGDIR/musepack.so\
     $PLUGDIR/notify.so\
     $PLUGDIR/nullout.so\
