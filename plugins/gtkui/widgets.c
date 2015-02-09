@@ -126,6 +126,7 @@ typedef struct {
 typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *tree;
+    guint refresh_timeout;
 } w_selproperties_t;
 
 typedef struct {
@@ -2169,6 +2170,10 @@ gboolean
 fill_selproperties_cb (gpointer data) {
     w_selproperties_t *w = data;
     DB_playItem_t **tracks = NULL;
+    if (w->refresh_timeout) {
+        g_source_remove (w->refresh_timeout);
+        w->refresh_timeout = 0;
+    }
     int numtracks = 0;
     deadbeef->pl_lock ();
     int nsel = deadbeef->pl_getselcount ();
@@ -2210,11 +2215,16 @@ fill_selproperties_cb (gpointer data) {
 
 static int
 selproperties_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    w_selproperties_t *selprop_w = w;
     switch (id) {
     case DB_EV_PLAYLISTCHANGED:
     case DB_EV_SELCHANGED:
         {
-            g_idle_add (fill_selproperties_cb, w);
+            if (selprop_w->refresh_timeout) {
+                g_source_remove (selprop_w->refresh_timeout);
+                selprop_w->refresh_timeout = 0;
+            }
+            selprop_w->refresh_timeout = g_timeout_add (100, fill_selproperties_cb, w);
         }
         break;
     }
@@ -2222,8 +2232,10 @@ selproperties_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32
 }
 
 static void
-w_selproperties_init (struct ddb_gtkui_widget_s *w) {
-    fill_selproperties_cb (w);
+w_selproperties_init (struct ddb_gtkui_widget_s *widget) {
+    w_selproperties_t *w = widget;
+    w->refresh_timeout = 0;
+    fill_selproperties_cb (widget);
 }
 
 static void
