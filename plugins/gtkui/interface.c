@@ -4693,7 +4693,7 @@ create_setcustomtitledlg (void)
   gtk_text_view_set_pixels_below_lines (GTK_TEXT_VIEW (textview2), 8);
   gtk_text_view_set_left_margin (GTK_TEXT_VIEW (textview2), 8);
   gtk_text_view_set_right_margin (GTK_TEXT_VIEW (textview2), 8);
-  gtk_text_buffer_set_text (gtk_text_view_get_buffer (GTK_TEXT_VIEW (textview2)), _("This dialog allows to set custom title for any track. This is most useful for radio stations. An option to set the custom title is also present in the \"Add Location\" dialog. The title itself is visible in columns displaying the \"Artist\" metadata field. It should look like \"[custom] artist\" if the Artist field is present, or just \"custom\" otherwise."), -1);
+  gtk_text_buffer_set_text (gtk_text_view_get_buffer (GTK_TEXT_VIEW (textview2)), _("This dialog allows setting custom title for any track. This is most useful for radio stations. An option to set the custom title is also present in the \"Add Location\" dialog. The title itself is visible in columns displaying the \"Artist\" metadata field. It should look like \"[custom] artist\" if the Artist field is present, or just \"custom\" otherwise."), -1);
 
   hbox123 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox123);
