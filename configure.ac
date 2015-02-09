@@ -3,8 +3,8 @@ AC_INIT([deadbeef], [devel])
 
 AC_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-ustar])
-dnl AM_SILENT_RULES([yes])
+AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-ustar silent-rules])
+AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE()
 
 AC_USE_SYSTEM_EXTENSIONS
@@ -338,6 +338,7 @@ dnl mpg3 plugin
 AS_IF([test "${enable_mp3}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_MP3=yes
+        HAVE_LIBMAD=yes
         MAD_CFLAGS="-I../../$LIB/include"
         MAD_LIBS="../../$LIB/lib/libmad.a"
         AC_SUBST(MAD_CFLAGS)

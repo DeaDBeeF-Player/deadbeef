@@ -157,7 +157,6 @@ conf_load (void) {
 
 int
 conf_save (void) {
-    extern char dbconfdir[1024]; // $HOME/.config/deadbeef
     char tempfile[PATH_MAX];
     char str[PATH_MAX];
     FILE *fp;
