@@ -400,15 +400,13 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
         draw_init_font (&listview->listctx, DDB_LIST_FONT, 0);
         int bold = 0;
         int italic = 0;
-        if (!theming) {
-            if (deadbeef->pl_is_selected (it)) {
-                bold = gtkui_embolden_selected_tracks;
-                italic = gtkui_italic_selected_tracks;
-            }
-            if (it == playing_track) {
-                bold = gtkui_embolden_current_track;
-                italic = gtkui_italic_current_track;
-            }
+        if (deadbeef->pl_is_selected (it)) {
+            bold = gtkui_embolden_selected_tracks;
+            italic = gtkui_italic_selected_tracks;
+        }
+        if (it == playing_track) {
+            bold = gtkui_embolden_current_track;
+            italic = gtkui_italic_current_track;
         }
         draw_text_custom (&listview->listctx, x + 5, y + 3, cwidth-10, calign_right, DDB_LIST_FONT, bold, italic, text);
     }
