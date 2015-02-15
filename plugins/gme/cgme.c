@@ -156,7 +156,6 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     deadbeef->pl_lock ();
     {
         const char *fname = deadbeef->pl_find_meta (it, ":URI");
-        const char *ext = strrchr (fname, '.');
         char *buffer;
         int sz;
         if (!read_gzfile (fname, &buffer, &sz)) {
@@ -313,7 +312,7 @@ cgme_add_meta (DB_playItem_t *it, const char *key, const char *value) {
 
 static DB_playItem_t *
 cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
-    Music_Emu *emu;
+    Music_Emu *emu = NULL;
     trace ("gme_open_file %s\n", fname);
 
     gme_err_t res = "gme uninitialized";

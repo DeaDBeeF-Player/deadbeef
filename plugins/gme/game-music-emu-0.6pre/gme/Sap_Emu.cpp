@@ -237,16 +237,17 @@ static blargg_err_t parse_info( byte const in [], int size, Sap_Emu::info_t* out
 	return blargg_ok;
 }
 
-static void copy_sap_fields( Sap_Emu::info_t const& in, track_info_t* out )
+static void copy_sap_fields( Sap_Emu::info_t const& in, track_info_t* out, int trk )
 {
 	Gme_File::copy_field_( out->game,      in.name );
 	Gme_File::copy_field_( out->author,    in.author );
 	Gme_File::copy_field_( out->copyright, in.copyright );
+	out->length = in.track_times[trk];
 }
 
 blargg_err_t Sap_Emu::track_info_( track_info_t* out, int track ) const
 {
-	copy_sap_fields( info_, out );
+	copy_sap_fields( info_, out, track );
 	
 	if ( track < max_tracks )
 	{
@@ -281,9 +282,9 @@ struct Sap_File : Gme_Info_
 		return blargg_ok;
 	}
 	
-	blargg_err_t track_info_( track_info_t* out, int ) const
+	blargg_err_t track_info_( track_info_t* out, int trk ) const
 	{
-		copy_sap_fields( info, out );
+		copy_sap_fields( info, out, trk );
 		return blargg_ok;
 	}
 };
