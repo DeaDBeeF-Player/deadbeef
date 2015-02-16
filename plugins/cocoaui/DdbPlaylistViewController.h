@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "DdbListview.h"
+#import "TrackPropertiesWindowController.h"
 
 #define PLT_MAX_COLUMNS 100
 
@@ -30,6 +31,7 @@ typedef struct {
     NSDictionary *_cellTextAttrsDictionary;
     NSDictionary *_cellSelectedTextAttrsDictionary;
     NSDictionary *_groupTextAttrsDictionary;
+    TrackPropertiesWindowController *_trkProperties;
 }
 
 - (const char *)defaultColumnConfig;
