@@ -85,10 +85,6 @@ static const char *hc_props[] = {
     [_propertiesTableView reloadData];
 }
 
-- (void)initWithData:(int)iter {
-    _iter = iter;
-}
-
 - (void)buildTrackListForCtx:(int)ctx {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (!plt) {
@@ -377,16 +373,25 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     [self buildTrackListForCtx:DDB_ACTION_CTX_SELECTION];
 
+    NSString *fname;
+
     if (_numtracks == 1) {
         deadbeef->pl_lock ();
-        [_filename setStringValue:[NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (_tracks[0], ":URI")]];
+        fname = [NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (_tracks[0], ":URI")];
+
         deadbeef->pl_unlock ();
     }
     else {
-        [_filename setStringValue:@"[Multiple values]"];
+        fname = @"[Multiple values]";
     }
 
     [self fillMetadata];
+
+    if (_filename) {
+        [_filename setStringValue:fname];
+        [_metadataTableView reloadData];
+        [_propertiesTableView reloadData];
+    }
 }
 
 // NSTableView delegate

@@ -750,12 +750,12 @@ int group_bytecode_size = 0;
 }
 
 - (void)trackProperties {
-    if (_trkProperties) {
-        _trkProperties = nil;
+    if (!_trkProperties) {
+        _trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
     }
-    _trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
-    [_trkProperties initWithData:[self playlistIter]];
+    [_trkProperties fill];
     [_trkProperties showWindow:self];
+    
 }
 
 @end
