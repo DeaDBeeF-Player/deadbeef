@@ -79,8 +79,10 @@ static const char *hc_props[] = {
     _store = [[NSMutableArray alloc] init];
     _propstore = [[NSMutableArray alloc] init];
     [self fill];
-    [_metadataTableView setDelegate:(id<NSTableViewDelegate>)self];
-    [_propertiesTableView setDelegate:(id<NSTableViewDelegate>)self];
+    [_metadataTableView setDataSource:(id<NSTableViewDataSource>)self];
+    [_propertiesTableView setDataSource:(id<NSTableViewDataSource>)self];
+    [_metadataTableView reloadData];
+    [_propertiesTableView reloadData];
 }
 
 - (void)initWithData:(int)iter {
@@ -90,9 +92,9 @@ static const char *hc_props[] = {
 - (void)buildTrackListForCtx:(int)ctx {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (!plt) {
-        deadbeef->pl_unlock ();
         return;
     }
+    deadbeef->pl_lock ();
 
     int num = 0;
     if (ctx == DDB_ACTION_CTX_SELECTION) {
@@ -385,6 +387,44 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 
     [self fillMetadata];
+}
+
+// NSTableView delegate
+- (NSMutableArray *)storeForTableView:(NSTableView *)aTableView {
+    if (aTableView == _metadataTableView) {
+        return _store;
+    }
+    else if (aTableView == _propertiesTableView) {
+        return _propstore;
+    }
+
+    return nil;
+}
+
+- (int)numberOfRowsInTableView:(NSTableView *)aTableView
+{
+    NSMutableArray *store = [self storeForTableView:aTableView];
+    if (!store) {
+        return 0;
+    }
+
+    return (int)[store count];
+}
+
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex {
+    NSMutableArray *store = [self storeForTableView:aTableView];
+    if (!store) {
+        return nil;
+    }
+
+    if ([[aTableColumn identifier] isEqualToString:@"name"]) {
+        NSString *title = [store objectAtIndex:rowIndex][@"title"];
+        return title;
+    }
+    else if ([[aTableColumn identifier] isEqualToString:@"value"]) {
+        return [store objectAtIndex:rowIndex][@"value"];
+    }
+    return nil;
 }
 
 @end
