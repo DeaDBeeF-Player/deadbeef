@@ -317,7 +317,6 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     gme_err_t res = "gme uninitialized";
 
-    const char *ext = strrchr (fname, '.');
     char *buffer;
     int sz;
     if (!read_gzfile (fname, &buffer, &sz)) {
