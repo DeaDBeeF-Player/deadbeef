@@ -393,12 +393,6 @@ static struct timeval last_br_update;
 }
 
 // playlist datasource
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView
-{
-    int cnt = deadbeef->pl_getcount(PL_MAIN);
-    return cnt;
-}
-
 typedef struct {
     int _id; // predefined col type
     char *format;
