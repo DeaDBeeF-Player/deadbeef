@@ -434,6 +434,18 @@ int grouptitleheight = 22;
     return YES;
 }
 
+- (void)trackProperties {
+    id<DdbListviewDelegate> delegate = listview.delegate;
+    [delegate trackProperties];
+}
+
+- (void)rightMouseDown:(NSEvent *)theEvent {
+    [self mouseDown:theEvent];
+    NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
+    [theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0];
+    [NSMenu popUpContextMenu:theMenu withEvent:theEvent forView:self];
+}
+
 - (void)mouseDown:(NSEvent *)event {
     [[self window] makeFirstResponder:listview];
 

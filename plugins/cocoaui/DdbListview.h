@@ -45,6 +45,7 @@ typedef intptr_t DdbListviewCol_t;
 - (int)modificationIdx;
 - (void)selectionChanged:(DdbListviewRow_t)row;
 - (BOOL)hasDND;
+- (void)trackProperties;
 @end
 
 typedef struct DdbListviewGroup_s {
