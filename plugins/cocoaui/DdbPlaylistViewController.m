@@ -749,4 +749,13 @@ int group_bytecode_size = 0;
     return 0;
 }
 
+- (void)trackProperties {
+    if (_trkProperties) {
+        _trkProperties = nil;
+    }
+    _trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
+    [_trkProperties initWithData:PL_MAIN];
+    [_trkProperties showWindow:self];
+}
+
 @end

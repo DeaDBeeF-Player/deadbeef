@@ -497,6 +497,8 @@
 		2DA24BA319E72A2500E34920 /* vfs_curl.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */; };
 		2DA6F89C19A5332D002151EB /* escape.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA6F89B19A5332D002151EB /* escape.c */; };
 		2DACBB241A40CEB100CCF401 /* mp3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; };
+		2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */; };
+		2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */; };
 		2DB10B8119B908630054A6AB /* tab_bottom_fill.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6919B9085A0054A6AB /* tab_bottom_fill.png */; };
 		2DB10B8219B908630054A6AB /* tab_bottom_fill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6A19B9085A0054A6AB /* tab_bottom_fill@2x.png */; };
 		2DB10B8319B908630054A6AB /* tab_fill.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6B19B9085A0054A6AB /* tab_fill.png */; };
@@ -538,6 +540,7 @@
 		2DBEE69719B4EB0900A60609 /* sb_front_cap_right@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68B19B4EB0900A60609 /* sb_front_cap_right@2x.png */; };
 		2DBEE69819B4EB0900A60609 /* sb_front_filler.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68C19B4EB0900A60609 /* sb_front_filler.png */; };
 		2DBEE69919B4EB0900A60609 /* sb_front_filler@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68D19B4EB0900A60609 /* sb_front_filler@2x.png */; };
+		2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC80A8E1A9222F800C9397F /* TrackProperties.xib */; };
 		2DCB281A19E86183008E9DF6 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
 		2DCB281D19E86194008E9DF6 /* m3u.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DCB281419E86162008E9DF6 /* m3u.dylib */; };
 		2DCD78D419A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78B919A665CA00EA50FA /* deadbeef.png */; };
@@ -1387,6 +1390,8 @@
 		2DA24B8819E7254F00E34920 /* vtls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vtls.h; sourceTree = "<group>"; };
 		2DA6F89B19A5332D002151EB /* escape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = escape.c; sourceTree = "<group>"; };
 		2DA6F89F19A53334002151EB /* escape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = escape.h; sourceTree = "<group>"; };
+		2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesWindowController.h; sourceTree = "<group>"; };
+		2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrackPropertiesWindowController.m; sourceTree = "<group>"; };
 		2DB10B6919B9085A0054A6AB /* tab_bottom_fill.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_bottom_fill.png; path = images/tabs/tab_bottom_fill.png; sourceTree = "<group>"; };
 		2DB10B6A19B9085A0054A6AB /* tab_bottom_fill@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "tab_bottom_fill@2x.png"; path = "images/tabs/tab_bottom_fill@2x.png"; sourceTree = "<group>"; };
 		2DB10B6B19B9085A0054A6AB /* tab_fill.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_fill.png; path = images/tabs/tab_fill.png; sourceTree = "<group>"; };
@@ -1428,6 +1433,7 @@
 		2DBEE68B19B4EB0900A60609 /* sb_front_cap_right@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sb_front_cap_right@2x.png"; path = "images/seekbar/sb_front_cap_right@2x.png"; sourceTree = "<group>"; };
 		2DBEE68C19B4EB0900A60609 /* sb_front_filler.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sb_front_filler.png; path = images/seekbar/sb_front_filler.png; sourceTree = "<group>"; };
 		2DBEE68D19B4EB0900A60609 /* sb_front_filler@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sb_front_filler@2x.png"; path = "images/seekbar/sb_front_filler@2x.png"; sourceTree = "<group>"; };
+		2DC80A8E1A9222F800C9397F /* TrackProperties.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
 		2DCB281419E86162008E9DF6 /* m3u.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = m3u.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DCB281919E86183008E9DF6 /* m3u.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = m3u.c; path = plugins/m3u/m3u.c; sourceTree = "<group>"; };
 		2DCD78B919A665CA00EA50FA /* deadbeef.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deadbeef.png; sourceTree = "<group>"; };
@@ -3016,9 +3022,12 @@
 				2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */,
 				2D828E5919E56B4D00EE874F /* DdbSearchViewController.h */,
 				2D828E5A19E56B4D00EE874F /* DdbSearchViewController.m */,
+				2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */,
+				2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */,
 				4DA72BDC1838EAAB00A98C62 /* MainMenu.xib */,
 				2D72047219DF1E96000989C6 /* Playlist.xib */,
 				2D828E5319E5679800EE874F /* Search.xib */,
+				2DC80A8E1A9222F800C9397F /* TrackProperties.xib */,
 				4D2362B218395D0300C9E818 /* images */,
 				2D0B1C8619C5CF4A00CED0B5 /* Supporting files */,
 				2D061F7919E9685000CE6C29 /* DdbShared.m */,
@@ -3370,6 +3379,7 @@
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
+				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
 				2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */,
 				2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */,
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
@@ -3841,6 +3851,7 @@
 				2DCD78D919A665CA00EA50FA /* deadbeef.png in Resources */,
 				2DB10B8819B908630054A6AB /* tab_unsel_fill@2x.png in Resources */,
 				2DB10B8A19B908630054A6AB /* tab_unsel_left@2x.png in Resources */,
+				2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */,
 				2DBEE69319B4EB0900A60609 /* sb_back_filler@2x.png in Resources */,
 				4D2A6CA1183BC29400AC6BF5 /* btnnextTemplate.pdf in Resources */,
 				2DCD78DD19A665CA00EA50FA /* deadbeef.png in Resources */,
@@ -4249,6 +4260,7 @@
 				2DD9EF0719A5089F00189344 /* cocoautil.m in Sources */,
 				4D1B4F4D1837EC4A003E6066 /* ringbuf.c in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
+				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,
 				4D1B4AA01837EC49003E6066 /* plmeta.c in Sources */,
 				2DA6F89C19A5332D002151EB /* escape.c in Sources */,
 				4D1B4F601837EC4A003E6066 /* threading_pthread.c in Sources */,
