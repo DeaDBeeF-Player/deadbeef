@@ -7,6 +7,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TrackPropertiesWindowController">
             <connections>
+                <outlet property="filename" destination="T7p-Ko-9ax" id="thu-6G-jcP"/>
                 <outlet property="metadataTableView" destination="ndV-mW-oyz" id="CFE-IL-ZY9"/>
                 <outlet property="propertiesTableView" destination="O0b-dR-g42" id="3PK-SB-4Vy"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="TCX-nX-Vv0"/>
@@ -17,12 +18,21 @@
         <window title="Track Properties" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="480" height="270"/>
+            <rect key="contentRect" x="196" y="240" width="480" height="308"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
             <view key="contentView" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                <rect key="frame" x="0.0" y="-5" width="480" height="308"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
+                    <textField verticalHuggingPriority="750" id="T7p-Ko-9ax">
+                        <rect key="frame" x="20" y="266" width="440" height="22"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="eLX-MV-2w5">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                     <tabView initialItem="J6r-ui-FdQ" id="5SC-lF-gBt">
                         <rect key="frame" x="13" y="10" width="454" height="254"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -242,6 +252,7 @@
                     </tabView>
                 </subviews>
             </view>
+            <point key="canvasLocation" x="139" y="166"/>
         </window>
     </objects>
 </document>

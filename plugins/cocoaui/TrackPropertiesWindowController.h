@@ -11,9 +11,10 @@
 @interface TrackPropertiesWindowController : NSWindowController
 
 - (void)initWithData:(int)iter;
+- (void)fill;
 
 @property (unsafe_unretained) IBOutlet NSTableView *metadataTableView;
 @property (unsafe_unretained) IBOutlet NSTableView *propertiesTableView;
-
+@property (unsafe_unretained) IBOutlet NSTextField *filename;
 
 @end
