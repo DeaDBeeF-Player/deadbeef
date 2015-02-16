@@ -10,7 +10,6 @@
 
 @interface TrackPropertiesWindowController : NSWindowController
 
-- (void)initWithData:(int)iter;
 - (void)fill;
 
 @property (unsafe_unretained) IBOutlet NSTableView *metadataTableView;
