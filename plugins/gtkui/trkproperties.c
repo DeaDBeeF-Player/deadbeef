@@ -433,6 +433,7 @@ show_track_properties_dlg (int ctx) {
     }
     if (num <= 0) {
         deadbeef->pl_unlock ();
+        deadbeef->plt_unref (plt);
         return;
     }
 
@@ -440,6 +441,7 @@ show_track_properties_dlg (int ctx) {
     if (!tracks) {
         fprintf (stderr, "gtkui: failed to alloc %d bytes to store selected tracks\n", (int)(num * sizeof (void *)));
         deadbeef->pl_unlock ();
+        deadbeef->plt_unref (plt);
         return;
     }
 
@@ -449,6 +451,7 @@ show_track_properties_dlg (int ctx) {
             free (tracks);
             tracks = NULL;
             deadbeef->pl_unlock ();
+            deadbeef->plt_unref (plt);
             return;
         }
         tracks[0] = it;
@@ -470,6 +473,8 @@ show_track_properties_dlg (int ctx) {
     numtracks = num;
 
     deadbeef->pl_unlock ();
+    deadbeef->plt_unref (plt);
+    plt = NULL;
 
     GtkTreeView *tree;
     GtkTreeView *proptree;
