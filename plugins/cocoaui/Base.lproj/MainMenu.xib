@@ -782,6 +782,37 @@ Gw
                 </subviews>
             </view>
         </window>
+        <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="6Rb-6u-m6e">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="131" y="159" width="480" height="152"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <view key="contentView" id="kkD-On-PJU">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="152"/>
+                <autoresizingMask key="autoresizingMask"/>
+            </view>
+            <toolbar key="toolbar" implicitIdentifier="AE2F03B5-C725-441F-9238-4A4685409E1F" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="labelOnly" sizeMode="regular" id="Uuz-U1-EFe">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="3AB77CD1-2F67-424D-9A3B-71851BD2803B" label="Playback" paletteLabel="Playback" tag="-1" id="z9G-Ew-Ogs"/>
+                    <toolbarItem implicitItemIdentifier="75E57758-BBE5-4279-935F-752C4EA66F19" label="DSP" paletteLabel="DSP" tag="-1" id="Ml0-Uj-hrr"/>
+                    <toolbarItem implicitItemIdentifier="46FAA4BA-56B9-485A-9E34-49E7C3E6B82F" label="GUI/Misc" paletteLabel="GUI/Misc" tag="-1" id="aE1-cr-9ig"/>
+                    <toolbarItem implicitItemIdentifier="96A9B13A-F7A0-46B5-808C-C81A24A1A94E" label="Appearance" paletteLabel="Appearance" tag="-1" id="cuC-R2-ZKs"/>
+                    <toolbarItem implicitItemIdentifier="2116A5C0-2F18-48E0-AE6B-E9C22EB0AFC5" label="Network" paletteLabel="Network" tag="-1" id="tA5-3S-gmZ"/>
+                    <toolbarItem implicitItemIdentifier="DCF78717-5DEF-4574-99C2-D6D4F76C3FC3" label="Hotkeys" paletteLabel="Hotkeys" tag="-1" id="jIi-pH-X4i"/>
+                    <toolbarItem implicitItemIdentifier="B7A7111D-0590-491A-837D-81E36D82982F" label="Plugins" paletteLabel="Plugins" tag="-1" id="z3h-K4-Y52"/>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="z9G-Ew-Ogs"/>
+                    <toolbarItem reference="Ml0-Uj-hrr"/>
+                    <toolbarItem reference="aE1-cr-9ig"/>
+                    <toolbarItem reference="cuC-R2-ZKs"/>
+                    <toolbarItem reference="tA5-3S-gmZ"/>
+                    <toolbarItem reference="jIi-pH-X4i"/>
+                    <toolbarItem reference="z3h-K4-Y52"/>
+                </defaultToolbarItems>
+            </toolbar>
+            <point key="canvasLocation" x="181" y="207"/>
+        </window>
     </objects>
     <resources>
         <image name="NSApplicationIcon" width="128" height="128"/>
