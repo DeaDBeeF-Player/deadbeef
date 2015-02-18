@@ -25,6 +25,7 @@
 #import "DdbTabStrip.h"
 #import "DdbListview.h"
 #import "DdbSearchViewController.h"
+#import "PreferencesWindowController.h"
 #include "deadbeef.h"
 
 #define MAX_COLUMNS 20
@@ -32,6 +33,7 @@
 @interface AppDelegate : NSObject <NSApplicationDelegate> {
     DdbSearchViewController *_searchViewController;
     NSTimer *_updateTimer;
+    PreferencesWindowController *_prefWindow;
 }
 
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
@@ -43,7 +45,6 @@
 
 @property (unsafe_unretained) IBOutlet DdbTabStrip *tabStrip;
 @property (unsafe_unretained) IBOutlet NSImageView *dockTileView;
-
 
 @property (unsafe_unretained) IBOutlet NSWindow *addFilesWindow;
 @property (unsafe_unretained) IBOutlet NSTextField *addFilesLabel;
