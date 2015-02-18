@@ -66,12 +66,6 @@ static const char *hc_props[] = {
     [self freeTrackList];
 }
 
-- (id)initWithWindow:(NSWindow *)window
-{
-    self = [super initWithWindow:window];
-    return self;
-}
-
 - (void)windowDidLoad
 {
     [super windowDidLoad];
