@@ -17,7 +17,20 @@
 - (void)windowDidLoad {
     [super windowDidLoad];
 
+    [_toolbar setDelegate:(id<NSToolbarDelegate>)self];
+    [_toolbar setSelectedItemIdentifier:@"Playback"];
     [self switchToView:_playbackView];
+}
+
+- (NSArray *)toolbarSelectableItemIdentifiers: (NSToolbar *)toolbar;
+{
+    return [NSArray arrayWithObjects:@"Playback",
+            @"DSP",
+            @"GUI",
+            @"Appearance",
+            @"Network",
+            @"Plugins",
+            nil];
 }
 
 - (void)switchToView:(NSView *)view {
