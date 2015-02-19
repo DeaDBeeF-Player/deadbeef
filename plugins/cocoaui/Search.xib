@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment defaultVersion="1060" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6245"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="DdbSearchViewController">
@@ -18,10 +18,14 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField focusRingType="none" verticalHuggingPriority="750" id="3rB-1D-252">
-                    <rect key="frame" x="0.0" y="253" width="480" height="19"/>
+                <customView id="8dp-lq-al6" customClass="DdbListview">
+                    <rect key="frame" x="0.0" y="0.0" width="480" height="245"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES"/>
+                </customView>
+                <textField verticalHuggingPriority="750" id="3rB-1D-252">
+                    <rect key="frame" x="5" y="248" width="470" height="19"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" focusRingType="none" placeholderString="Enter the search terms here" drawsBackground="YES" usesSingleLineMode="YES" id="Sgv-Dm-48e">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Enter the search terms here" drawsBackground="YES" usesSingleLineMode="YES" id="Sgv-Dm-48e">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -30,10 +34,6 @@
                         <outlet property="delegate" destination="-2" id="feu-hl-i2J"/>
                     </connections>
                 </textField>
-                <customView id="8dp-lq-al6" customClass="DdbListview">
-                    <rect key="frame" x="0.0" y="0.0" width="480" height="254"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES"/>
-                </customView>
             </subviews>
             <connections>
                 <outlet property="listview" destination="8dp-lq-al6" id="FYY-Gi-wob"/>
