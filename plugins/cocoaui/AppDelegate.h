@@ -51,6 +51,9 @@
 - (IBAction)addFilesCancel:(id)sender;
 @property (unsafe_unretained) IBOutlet NSTextField *statusBar;
 
+- (IBAction)openPrefWindow:(id)sender;
+
+
 // file menu
 - (IBAction)openFilesAction:(id)sender;
 - (IBAction)performCloseTabAction:(id)sender;

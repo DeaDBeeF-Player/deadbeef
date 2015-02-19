@@ -158,9 +158,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [_window setReleasedWhenClosed:NO];
     [_window setExcludedFromWindowsMenu:YES];
 
-    _prefWindow = [[PreferencesWindowController alloc] initWithWindowNibName:@"Preferences"];
-    [_prefWindow showWindow:self];
-
     playImg = [NSImage imageNamed:@"btnplayTemplate.pdf"];
     pauseImg = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
     bufferingImg = [NSImage imageNamed:@"bufferingTemplate.pdf"];
@@ -796,4 +793,11 @@ init_column (int i, int _id, const char *format) {
         }
     }
 }
+- (IBAction)openPrefWindow:(id)sender {
+    if (!_prefWindow) {
+        _prefWindow = [[PreferencesWindowController alloc] initWithWindowNibName:@"Preferences"];
+    }
+    [_prefWindow showWindow:self];
+}
+
 @end
