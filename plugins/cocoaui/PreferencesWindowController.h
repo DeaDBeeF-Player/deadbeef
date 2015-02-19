@@ -15,6 +15,7 @@
 @property (strong) IBOutlet NSView *appearanceView;
 @property (strong) IBOutlet NSView *networkView;
 @property (strong) IBOutlet NSView *pluginsView;
+@property (unsafe_unretained) IBOutlet NSToolbar *toolbar;
 
 - (IBAction)playbackAction:(id)sender;
 - (IBAction)appearanceAction:(id)sender;
@@ -22,6 +23,5 @@
 - (IBAction)guiAction:(id)sender;
 - (IBAction)networkAction:(id)sender;
 - (IBAction)pluginsAction:(id)sender;
-
 
 @end

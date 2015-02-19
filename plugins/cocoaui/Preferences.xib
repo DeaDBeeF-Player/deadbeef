@@ -13,6 +13,7 @@
                 <outlet property="networkView" destination="JAw-ar-I3a" id="1is-US-XFb"/>
                 <outlet property="playbackView" destination="Zmc-ua-enY" id="oGy-nE-FiQ"/>
                 <outlet property="pluginsView" destination="ZNh-3b-s1L" id="ZWj-HZ-tLL"/>
+                <outlet property="toolbar" destination="b4X-86-Cex" id="1AX-xy-fdb"/>
                 <outlet property="window" destination="KeT-Jx-1Jt" id="tQF-UN-TAd"/>
             </connections>
         </customObject>
@@ -94,20 +95,6 @@
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <sliderCell key="cell" state="on" alignment="left" minValue="-12" maxValue="12" tickMarkPosition="below" numberOfTickMarks="25" sliderType="linear" id="snk-Zc-3bv"/>
                 </slider>
-                <comboBox verticalHuggingPriority="750" id="WVc-1K-yXp">
-                    <rect key="frame" x="141" y="215" width="327" height="26"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
-                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="fYH-gL-mBd">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        <objectValues>
-                            <string>Item 1</string>
-                            <string>Item 2</string>
-                            <string>Item 3</string>
-                        </objectValues>
-                    </comboBoxCell>
-                </comboBox>
                 <textField verticalHuggingPriority="750" id="ySk-s8-tM7">
                     <rect key="frame" x="243" y="118" width="222" height="22"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
@@ -166,6 +153,21 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <popUpButton verticalHuggingPriority="750" id="Hpk-X8-hJS">
+                    <rect key="frame" x="139" y="215" width="329" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="J4o-cP-T78">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="mUD-xT-CWG">
+                            <items>
+                                <menuItem title="Disabled" id="xiM-Sh-l8A"/>
+                                <menuItem title="Track" id="wEb-FJ-a2C"/>
+                                <menuItem title="Album" id="Tl5-By-f2a"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                </popUpButton>
             </subviews>
             <point key="canvasLocation" x="303.5" y="207"/>
         </customView>
@@ -400,18 +402,9 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Eg9-UN-hyh">
-                                        <rect key="frame" x="15" y="40" width="172" height="17"/>
+                                        <rect key="frame" x="15" y="38" width="172" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Titlebar text while playing:" id="z67-mO-2Ni">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Rs4-Ra-lZ4">
-                                        <rect key="frame" x="395" y="65" width="29" height="17"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="10" id="5Kk-EH-co4">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -420,19 +413,49 @@
                                     <slider verticalHuggingPriority="750" id="vtf-8S-vYr">
                                         <rect key="frame" x="279" y="59" width="112" height="25"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                        <sliderCell key="cell" state="on" alignment="left" minValue="1" maxValue="30" doubleValue="10" tickMarkPosition="below" numberOfTickMarks="30" allowsTickMarkValuesOnly="YES" sliderType="linear" id="wOj-Ur-8q7"/>
+                                        <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="1" maxValue="30" doubleValue="10" tickMarkPosition="below" numberOfTickMarks="30" allowsTickMarkValuesOnly="YES" sliderType="linear" id="wOj-Ur-8q7"/>
                                         <connections>
-                                            <action selector="takeIntValueFrom:" target="Rs4-Ra-lZ4" id="xG4-Ss-L23"/>
+                                            <binding destination="uyx-0e-ycO" name="value" keyPath="values.fps" id="qs6-0p-asR"/>
                                         </connections>
                                     </slider>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="3Ja-ME-qNM">
-                                        <rect key="frame" x="15" y="15" width="177" height="17"/>
+                                        <rect key="frame" x="15" y="13" width="177" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Titlebar text while stopped:" id="AcN-7j-3DA">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" id="pSK-4V-QiQ">
+                                        <rect key="frame" x="193" y="35" width="229" height="22"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="6KN-Vg-1d6">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" id="usM-X5-aNf">
+                                        <rect key="frame" x="198" y="10" width="224" height="22"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="PeB-76-5XW">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Rs4-Ra-lZ4">
+                                        <rect key="frame" x="395" y="65" width="29" height="17"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="10" id="5Kk-EH-co4">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <connections>
+                                            <binding destination="uyx-0e-ycO" name="value" keyPath="values.fps" id="BJ7-4H-3XM"/>
+                                        </connections>
                                     </textField>
                                 </subviews>
                             </view>
@@ -1048,20 +1071,6 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <comboBox verticalHuggingPriority="750" id="Elz-eI-tjI">
-                    <rect key="frame" x="161" y="134" width="307" height="26"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="Rpv-ob-yqd">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        <objectValues>
-                            <string>Item 1</string>
-                            <string>Item 2</string>
-                            <string>Item 3</string>
-                        </objectValues>
-                    </comboBoxCell>
-                </comboBox>
                 <textField verticalHuggingPriority="750" id="6Sy-4E-ddK">
                     <rect key="frame" x="161" y="111" width="304" height="22"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
@@ -1092,6 +1101,21 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <popUpButton verticalHuggingPriority="750" id="ouZ-vc-Cmz">
+                    <rect key="frame" x="159" y="134" width="309" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Qx3-21-VCp" id="NVB-js-uIT">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="8eb-Pz-ZQN">
+                            <items>
+                                <menuItem title="Item 1" state="on" id="Qx3-21-VCp"/>
+                                <menuItem title="Item 2" id="oE8-26-LtQ"/>
+                                <menuItem title="Item 3" id="Q6J-Kj-LX6"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                </popUpButton>
             </subviews>
             <point key="canvasLocation" x="303.5" y="1545"/>
         </customView>
@@ -1269,34 +1293,34 @@
                 <rect key="frame" x="0.0" y="0.0" width="485" height="172"/>
                 <autoresizingMask key="autoresizingMask"/>
             </view>
-            <toolbar key="toolbar" implicitIdentifier="AE2F03B5-C725-441F-9238-4A4685409E1F" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="labelOnly" sizeMode="regular" id="b4X-86-Cex">
+            <toolbar key="toolbar" implicitIdentifier="AE2F03B5-C725-441F-9238-4A4685409E1F" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconAndLabel" sizeMode="regular" id="b4X-86-Cex">
                 <allowedToolbarItems>
-                    <toolbarItem implicitItemIdentifier="75E57758-BBE5-4279-935F-752C4EA66F19" label="DSP" paletteLabel="DSP" tag="-1" id="7pd-zb-0Gw">
+                    <toolbarItem implicitItemIdentifier="75E57758-BBE5-4279-935F-752C4EA66F19" explicitItemIdentifier="DSP" label="DSP" paletteLabel="DSP" tag="-1" image="NSStatusAvailable" id="7pd-zb-0Gw">
                         <connections>
                             <action selector="dspAction:" target="-2" id="qWC-dG-UIf"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="46FAA4BA-56B9-485A-9E34-49E7C3E6B82F" label="GUI/Misc" paletteLabel="GUI/Misc" tag="-1" id="wT9-7a-ELU">
+                    <toolbarItem implicitItemIdentifier="46FAA4BA-56B9-485A-9E34-49E7C3E6B82F" explicitItemIdentifier="GUI" label="GUI/Misc" paletteLabel="GUI/Misc" tag="-1" image="NSPreferencesGeneral" id="wT9-7a-ELU">
                         <connections>
                             <action selector="guiAction:" target="-2" id="E54-wU-8Jr"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="96A9B13A-F7A0-46B5-808C-C81A24A1A94E" label="Appearance" paletteLabel="Appearance" tag="-1" id="uEs-n6-F9h">
+                    <toolbarItem implicitItemIdentifier="96A9B13A-F7A0-46B5-808C-C81A24A1A94E" explicitItemIdentifier="Appearance" label="Appearance" paletteLabel="Appearance" tag="-1" image="NSColorPanel" id="uEs-n6-F9h">
                         <connections>
                             <action selector="appearanceAction:" target="-2" id="WqC-hm-dvo"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="2116A5C0-2F18-48E0-AE6B-E9C22EB0AFC5" label="Network" paletteLabel="Network" tag="-1" id="m7u-Kv-WdW">
+                    <toolbarItem implicitItemIdentifier="2116A5C0-2F18-48E0-AE6B-E9C22EB0AFC5" explicitItemIdentifier="Network" label="Network" paletteLabel="Network" tag="-1" image="NSNetwork" id="m7u-Kv-WdW">
                         <connections>
                             <action selector="networkAction:" target="-2" id="cCh-Ss-9OS"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="B7A7111D-0590-491A-837D-81E36D82982F" label="Plugins" paletteLabel="Plugins" tag="-1" id="mxa-vX-uKR">
+                    <toolbarItem implicitItemIdentifier="B7A7111D-0590-491A-837D-81E36D82982F" explicitItemIdentifier="Plugins" label="Plugins" paletteLabel="Plugins" tag="-1" image="NSAdvanced" id="mxa-vX-uKR">
                         <connections>
                             <action selector="pluginsAction:" target="-2" id="1B0-xl-6qU"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="3AB77CD1-2F67-424D-9A3B-71851BD2803B" label="Playback" paletteLabel="Playback" tag="-1" id="SxW-Uj-tLS">
+                    <toolbarItem implicitItemIdentifier="3AB77CD1-2F67-424D-9A3B-71851BD2803B" explicitItemIdentifier="Playback" label="Playback" paletteLabel="Playback" tag="-1" image="btnplayTemplate" id="SxW-Uj-tLS">
                         <connections>
                             <action selector="playbackAction:" target="-2" id="0Mk-dD-GyA"/>
                         </connections>
@@ -1313,5 +1337,14 @@
             </toolbar>
             <point key="canvasLocation" x="303.5" y="-67"/>
         </window>
+        <userDefaultsController representsSharedInstance="YES" id="uyx-0e-ycO"/>
     </objects>
+    <resources>
+        <image name="NSAdvanced" width="32" height="32"/>
+        <image name="NSColorPanel" width="32" height="32"/>
+        <image name="NSNetwork" width="32" height="32"/>
+        <image name="NSPreferencesGeneral" width="32" height="32"/>
+        <image name="NSStatusAvailable" width="16" height="16"/>
+        <image name="btnplayTemplate" width="75" height="75"/>
+    </resources>
 </document>
