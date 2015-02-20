@@ -413,9 +413,9 @@
                                     <slider verticalHuggingPriority="750" id="vtf-8S-vYr">
                                         <rect key="frame" x="279" y="59" width="112" height="25"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                        <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="1" maxValue="30" doubleValue="10" tickMarkPosition="below" numberOfTickMarks="30" allowsTickMarkValuesOnly="YES" sliderType="linear" id="wOj-Ur-8q7"/>
+                                        <sliderCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="30" doubleValue="10" tickMarkPosition="below" numberOfTickMarks="30" allowsTickMarkValuesOnly="YES" sliderType="linear" id="wOj-Ur-8q7"/>
                                         <connections>
-                                            <binding destination="uyx-0e-ycO" name="value" keyPath="values.fps" id="qs6-0p-asR"/>
+                                            <action selector="takeIntegerValueFrom:" target="Rs4-Ra-lZ4" id="zUu-0p-eOb"/>
                                         </connections>
                                     </slider>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="3Ja-ME-qNM">
@@ -448,14 +448,11 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Rs4-Ra-lZ4">
                                         <rect key="frame" x="395" y="65" width="29" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="10" id="5Kk-EH-co4">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="10" placeholderString="" id="5Kk-EH-co4">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
-                                        <connections>
-                                            <binding destination="uyx-0e-ycO" name="value" keyPath="values.fps" id="BJ7-4H-3XM"/>
-                                        </connections>
                                     </textField>
                                 </subviews>
                             </view>
@@ -1337,7 +1334,6 @@
             </toolbar>
             <point key="canvasLocation" x="303.5" y="-67"/>
         </window>
-        <userDefaultsController representsSharedInstance="YES" id="uyx-0e-ycO"/>
     </objects>
     <resources>
         <image name="NSAdvanced" width="32" height="32"/>
