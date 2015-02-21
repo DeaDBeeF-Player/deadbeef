@@ -441,9 +441,6 @@ int grouptitleheight = 22;
 
 - (void)rightMouseDown:(NSEvent *)theEvent {
     [self mouseDown:theEvent];
-    NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
-    [theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0];
-    [NSMenu popUpContextMenu:theMenu withEvent:theEvent forView:self];
 }
 
 - (void)mouseDown:(NSEvent *)event {
@@ -473,7 +470,7 @@ int grouptitleheight = 22;
 
     int cursor = [delegate cursor];
 
-    if (event.clickCount == 2) {
+    if (event.clickCount == 2 && event.buttonNumber == 0) {
         if (sel != -1 && cursor != -1) {
             [delegate activate:cursor];
         }
@@ -497,10 +494,10 @@ int grouptitleheight = 22;
     }
 
     // single selection
-    if (0 == (event.modifierFlags & (NSCommandKeyMask|NSShiftKeyMask))) {
+    if (event.buttonNumber != 0 || !(event.modifierFlags & (NSCommandKeyMask|NSShiftKeyMask))) {
         [listview clickSelection:convPt grp:grp grp_index:grp_index sel:sel dnd:YES button:1];
     }
-    else if (event.modifierFlags & NSCommandKeyMask) {
+    else if (event.buttonNumber == 0 && (event.modifierFlags & NSCommandKeyMask)) {
         // toggle selection
         if (sel != -1) {
             DdbListviewRow_t it = [delegate rowForIndex:sel];
@@ -512,7 +509,7 @@ int grouptitleheight = 22;
             }
         }
     }
-    else if (event.modifierFlags & NSShiftKeyMask) {
+    else if (event.buttonNumber == 0 && (event.modifierFlags & NSShiftKeyMask)) {
         // select range
         int cursor = sel;
         if (cursor == -1) {
@@ -562,6 +559,14 @@ int grouptitleheight = 22;
     }
 
     [delegate unlock];
+
+
+    if (event.buttonNumber == 1
+        || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask))) {
+        NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
+        [theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0];
+        [NSMenu popUpContextMenu:theMenu withEvent:event forView:self];
+    }
 }
 
 - (void)mouseUp:(NSEvent *)event
