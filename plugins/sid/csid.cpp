@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <sys/stat.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -79,6 +80,8 @@ static int sldb_disable;
 static int chip_voices = 0xff;
 static int chip_voices_changed = 0;
 
+static int conf_hvsc_enable = 0;
+
 static void
 sldb_load()
 {
@@ -86,7 +89,6 @@ sldb_load()
         return;
     }
     trace ("sldb_load\n");
-    int conf_hvsc_enable = deadbeef->conf_get_int ("hvsc_enable", 0);
     if (sldb_loaded || !conf_hvsc_enable) {
         sldb_disable = 1;
         return;
@@ -427,9 +429,35 @@ convstr (const char* str, int sz, char *out, int out_sz) {
     return NULL;
 }
 
+static void
+find_hvsc_path_from_fname (const char *fname) {
+    if (conf_hvsc_enable && !sldb_loaded && !sldb_disable) {
+        char conf_hvsc_path[1000];
+        deadbeef->conf_get_str ("hvsc_path", "", conf_hvsc_path, sizeof (conf_hvsc_path));
+        if (!conf_hvsc_path[0]) {
+            strcpy (conf_hvsc_path, fname);
+            char *p;
+            while ((p = strrchr (conf_hvsc_path, '/'))) {
+                strcpy (p, "/DOCUMENTS/Songlengths.txt");
+                struct stat st;
+                int err = stat (conf_hvsc_path, &st);
+                if (!err && (st.st_mode & S_IFREG)) {
+                    deadbeef->conf_set_str ("hvsc_path", conf_hvsc_path);
+                    deadbeef->conf_save ();
+                    break;
+                }
+                *p = 0;
+            }
+        }
+    }
+}
+
 extern "C" DB_playItem_t *
 csid_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("inserting %s\n", fname);
+
+    find_hvsc_path_from_fname (fname);
+
     sldb_load ();
     SidTune *tune;
     trace ("new SidTune\n");
@@ -565,7 +593,7 @@ csid_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
 static int
 sid_configchanged (void) {
-    int conf_hvsc_enable = deadbeef->conf_get_int ("hvsc_enable", 0);
+    conf_hvsc_enable = deadbeef->conf_get_int ("hvsc_enable", 0);
     int disable = !conf_hvsc_enable;
     if (disable != sldb_disable) {
         sldb_disable = disable;
@@ -597,6 +625,7 @@ sid_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 
 int
 csid_start (void) {
+    sid_configchanged ();
     return 0;
 }
 
