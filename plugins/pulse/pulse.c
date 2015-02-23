@@ -43,6 +43,7 @@ DB_functions_t * deadbeef;
 
 #define CONFSTR_PULSE_SERVERADDR "pulse.serveraddr"
 #define CONFSTR_PULSE_BUFFERSIZE "pulse.buffersize"
+#define PULSE_DEFAULT_BUFFERSIZE 4096
 
 static intptr_t pulse_tid;
 static int pulse_terminate;
@@ -131,7 +132,7 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
     //attr->minreq = Playback only: minimum request.
     //attr->fragsize = Recording only: fragment size.
 
-    buffer_size = deadbeef->conf_get_int(CONFSTR_PULSE_BUFFERSIZE, 4096);
+    buffer_size = deadbeef->conf_get_int(CONFSTR_PULSE_BUFFERSIZE, PULSE_DEFAULT_BUFFERSIZE);
 
     // TODO: where list of all available devices? add this option to config too..
     char * dev = NULL;
@@ -352,7 +353,7 @@ DB_plugin_t * pulse_load(DB_functions_t *api)
 
 static const char settings_dlg[] =
     "property \"PulseAudio server\" entry " CONFSTR_PULSE_SERVERADDR " default;\n"
-    "property \"Preferred buffer size\" entry " CONFSTR_PULSE_BUFFERSIZE " 8192;\n";
+    "property \"Preferred buffer size\" entry " CONFSTR_PULSE_BUFFERSIZE " " #PULSE_DEFAULT_BUFFERSIZE ";\n";
 
 static DB_output_t plugin =
 {
