@@ -1,44 +1,64 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="13F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="DdbSearchViewController">
+        <customObject id="-2" userLabel="File's Owner" customClass="SearchWindowController">
             <connections>
-                <outlet property="entry" destination="3rB-1D-252" id="Th3-mU-3gT"/>
-                <outlet property="listview" destination="8dp-lq-al6" id="spS-od-QD7"/>
-                <outlet property="view" destination="c22-O7-iKe" id="Xu0-QF-H5i"/>
+                <outlet property="viewController" destination="W5J-RI-hQb" id="ltb-ZV-gmG"/>
+                <outlet property="window" destination="2Vb-pJ-0co" id="59q-9R-aLO"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView id="c22-O7-iKe" customClass="DdbSearchWidget">
-            <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <subviews>
-                <customView id="8dp-lq-al6" customClass="DdbListview">
-                    <rect key="frame" x="0.0" y="0.0" width="480" height="245"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES"/>
-                </customView>
-                <textField verticalHuggingPriority="750" id="3rB-1D-252">
-                    <rect key="frame" x="5" y="248" width="470" height="19"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Enter the search terms here" drawsBackground="YES" usesSingleLineMode="YES" id="Sgv-Dm-48e">
-                        <font key="font" metaFont="smallSystem"/>
-                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                    <connections>
-                        <outlet property="delegate" destination="-2" id="feu-hl-i2J"/>
-                    </connections>
-                </textField>
-            </subviews>
+        <window title="Find" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="searchwin" animationBehavior="default" id="2Vb-pJ-0co" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="504" y="370" width="480" height="272"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <value key="minSize" type="size" width="480" height="272"/>
+            <view key="contentView" id="mAA-dR-WF5">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <customView id="rV8-at-cOX" customClass="DdbSearchWidget">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <customView id="3rg-sN-E4j" customClass="DdbListview">
+                                <rect key="frame" x="0.0" y="0.0" width="480" height="245"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </customView>
+                            <textField verticalHuggingPriority="750" id="YUk-Qq-4iU">
+                                <rect key="frame" x="5" y="248" width="470" height="19"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Enter the search terms here" drawsBackground="YES" usesSingleLineMode="YES" id="dr1-ne-XQt">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <outlet property="delegate" destination="W5J-RI-hQb" id="ods-9y-HIJ"/>
+                                </connections>
+                            </textField>
+                        </subviews>
+                        <connections>
+                            <outlet property="listview" destination="3rg-sN-E4j" id="UEy-31-BuX"/>
+                            <outlet property="nextKeyView" destination="YUk-Qq-4iU" id="s0N-Ac-Emc"/>
+                        </connections>
+                    </customView>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="172" y="197"/>
+        </window>
+        <viewController id="W5J-RI-hQb" customClass="DdbSearchViewController">
             <connections>
-                <outlet property="listview" destination="8dp-lq-al6" id="FYY-Gi-wob"/>
-                <outlet property="nextKeyView" destination="3rB-1D-252" id="deX-hF-JOU"/>
+                <outlet property="entry" destination="YUk-Qq-4iU" id="ZC6-xm-pei"/>
+                <outlet property="listview" destination="3rg-sN-E4j" id="FM9-6l-vL5"/>
+                <outlet property="view" destination="rV8-at-cOX" id="Q5s-eO-3Za"/>
             </connections>
-        </customView>
+        </viewController>
     </objects>
 </document>
