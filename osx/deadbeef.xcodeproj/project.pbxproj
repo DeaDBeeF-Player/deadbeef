@@ -348,6 +348,8 @@
 		2D5D21461A4033FF001D5A79 /* lastfm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D21451A4033FF001D5A79 /* lastfm.c */; };
 		2D5D21491A403412001D5A79 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA2499E19E71FEB00E34920 /* libcurl.a */; };
 		2D5D214C1A403428001D5A79 /* lastfm.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D21401A4033B0001D5A79 /* lastfm.dylib */; };
+		2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D60108B1A9CDF06000136AF /* SearchWindowController.h */; };
+		2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D60108C1A9CDF06000136AF /* SearchWindowController.m */; };
 		2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */; };
 		2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */; };
 		2D6EC2AF1A42120100DD1C72 /* mp3.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6EC2A71A42076B00DD1C72 /* mp3.h */; };
@@ -1248,6 +1250,8 @@
 		2D565B951A40C05200CE1F5D /* mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpg123.h; path = osx/mpg123/mpg123.h; sourceTree = "<group>"; };
 		2D5D21401A4033B0001D5A79 /* lastfm.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = lastfm.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D5D21451A4033FF001D5A79 /* lastfm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lastfm.c; path = plugins/lastfm/lastfm.c; sourceTree = "<group>"; };
+		2D60108B1A9CDF06000136AF /* SearchWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchWindowController.h; sourceTree = "<group>"; };
+		2D60108C1A9CDF06000136AF /* SearchWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchWindowController.m; sourceTree = "<group>"; };
 		2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbTabStrip.h; path = widgets/DdbTabStrip.h; sourceTree = "<group>"; };
 		2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbTabStrip.m; path = widgets/DdbTabStrip.m; sourceTree = "<group>"; };
 		2D6EC2A31A42068F00DD1C72 /* mp3_mad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp3_mad.c; path = plugins/mp3/mp3_mad.c; sourceTree = "<group>"; };
@@ -3032,6 +3036,8 @@
 				2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */,
 				2DCF73B21A952F8900495740 /* PreferencesWindowController.h */,
 				2DCF73B31A952F8900495740 /* PreferencesWindowController.m */,
+				2D60108B1A9CDF06000136AF /* SearchWindowController.h */,
+				2D60108C1A9CDF06000136AF /* SearchWindowController.m */,
 				4DA72BDC1838EAAB00A98C62 /* MainMenu.xib */,
 				2D72047219DF1E96000989C6 /* Playlist.xib */,
 				2D828E5319E5679800EE874F /* Search.xib */,
@@ -3390,6 +3396,7 @@
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
 				2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */,
+				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
 				2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
@@ -4272,6 +4279,7 @@
 				4D1B4F4D1837EC4A003E6066 /* ringbuf.c in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
 				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,
+				2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */,
 				4D1B4AA01837EC49003E6066 /* plmeta.c in Sources */,
 				2DA6F89C19A5332D002151EB /* escape.c in Sources */,
 				4D1B4F601837EC4A003E6066 /* threading_pthread.c in Sources */,

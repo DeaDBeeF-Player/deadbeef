@@ -31,14 +31,7 @@ extern DB_functions_t *deadbeef;
 - (void)awakeFromNib {
     DdbSearchWidget *view = (DdbSearchWidget *)[self view];
     [view setDelegate:(id<DdbListviewDelegate>)self];
-}
-
-- (id)init {
-    self = [super initWithNibName:@"Search" bundle:nil];
-    if (self) {
-        [self initContent];
-    }
-    return self;
+    [self initContent];
 }
 
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row {
