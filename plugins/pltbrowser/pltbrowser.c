@@ -490,6 +490,30 @@ add_treeview_column (w_pltbrowser_t *w, GtkTreeView *tree, int pos, int expand, 
     return col;
 }
 
+static gboolean draw_row_active = FALSE;
+
+static gboolean
+on_pltbrowser_drag_begin_event          (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        guint            time,
+                                        gpointer user_data)
+{
+    draw_row_active = TRUE;
+}
+
+static gboolean
+on_pltbrowser_drag_end_event          (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        guint            time,
+                                        gpointer user_data)
+{
+    draw_row_active = FALSE;
+}
+
 static gboolean
 on_pltbrowser_drag_motion_event          (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
@@ -499,6 +523,9 @@ on_pltbrowser_drag_motion_event          (GtkWidget       *widget,
                                         gpointer user_data)
 {
     w_pltbrowser_t *w = user_data;
+    if (draw_row_active) {
+        return FALSE;
+    }
     GdkWindow *window = gtk_tree_view_get_bin_window (GTK_TREE_VIEW (widget));
 
     int bin_x = 0;
@@ -671,6 +698,12 @@ w_pltbrowser_create (void) {
             w);
     g_signal_connect ((gpointer) w->tree, "row_activated",
             G_CALLBACK (on_pltbrowser_row_activated),
+            w);
+    g_signal_connect ((gpointer) w->tree, "drag_begin",
+            G_CALLBACK (on_pltbrowser_drag_begin_event),
+            w);
+    g_signal_connect ((gpointer) w->tree, "drag_end",
+            G_CALLBACK (on_pltbrowser_drag_end_event),
             w);
     g_signal_connect ((gpointer) w->tree, "drag_motion",
             G_CALLBACK (on_pltbrowser_drag_motion_event),
