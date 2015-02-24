@@ -15,6 +15,5 @@
 @property (unsafe_unretained) IBOutlet NSTextField *entry;
 @property (unsafe_unretained) IBOutlet DdbListview *listview;
 
-- (id)init;
 - (void)reset;
 @end

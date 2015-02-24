@@ -11,6 +11,10 @@
 
 @implementation DdbWidget
 
+- (void)awakeFromNib {
+    [[DdbWidgetManager defaultWidgetManager] addWidget:self];
+}
+
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];

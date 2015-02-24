@@ -123,15 +123,8 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 }
 
 - (void)initSearchWindow {
-    _searchViewController = [[DdbSearchViewController alloc] init];
-    NSView *view = [_searchViewController view];
-
-    NSRect frame = [[_searchWindow contentView] frame];
-
-    [view setFrame:frame];
-    [view setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-
-    [[_searchWindow contentView] addSubview:view];
+    _searchWindow = [[SearchWindowController alloc] initWithWindowNibName:@"Search"];
+    [_searchWindow setShouldCascadeWindows:NO];
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
@@ -154,7 +147,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     [[_window windowController] setShouldCascadeWindows:NO];
-    [[_searchWindow windowController] setShouldCascadeWindows:NO];
     [_window setReleasedWhenClosed:NO];
     [_window setExcludedFromWindowsMenu:YES];
 
@@ -709,9 +701,9 @@ init_column (int i, int _id, const char *format) {
 }
 
 - (IBAction)performFindPanelAction:(id)sender {
-    [_searchWindow setIsVisible:YES];
-    [_searchWindow makeKeyWindow];
-    [_searchViewController reset];
+    [[_searchWindow window] setIsVisible:YES];
+    [[_searchWindow window] makeKeyWindow];
+    [_searchWindow reset];
 }
 
 - (IBAction)newPlaylistAction:(id)sender {
