@@ -793,7 +793,7 @@ w_pltbrowser_create (void) {
     w->cc_id = g_signal_connect ((gpointer) w->tree, "cursor_changed",
             G_CALLBACK (on_pltbrowser_cursor_changed),
             w);
-    g_signal_connect ((gpointer) w->tree, "button_press_event",
+    g_signal_connect ((gpointer) w->tree, "event_after",
             G_CALLBACK (on_pltbrowser_button_press_event),
             w);
     g_signal_connect ((gpointer) w->tree, "row_activated",
