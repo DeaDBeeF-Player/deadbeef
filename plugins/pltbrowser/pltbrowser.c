@@ -563,14 +563,14 @@ add_treeview_column (w_pltbrowser_t *w, GtkTreeView *tree, int pos, int expand, 
     GtkCellRenderer *rend = gtk_cell_renderer_text_new ();
     GtkTreeViewColumn *col = gtk_tree_view_column_new_with_attributes (title, rend, "text", pos, NULL);
     if (align_right) {
-        gtk_cell_renderer_set_alignment (GTK_CELL_RENDERER (rend), 1.0, 0.0);
+        g_object_set (rend, "xalign", 1.0, NULL);
     }
     if (pos == COL_NAME) {
-        g_object_set(rend, "editable", TRUE, NULL);
-        g_signal_connect(rend, "editing_started",
+        g_object_set (rend, "editable", TRUE, NULL);
+        g_signal_connect (rend, "editing_started",
                 G_CALLBACK (on_pltbrowser_cell_edititing_started),
                 w);
-        g_signal_connect(rend, "edited",
+        g_signal_connect (rend, "edited",
                 G_CALLBACK (on_pltbrowser_cell_edited),
                 w);
     }
