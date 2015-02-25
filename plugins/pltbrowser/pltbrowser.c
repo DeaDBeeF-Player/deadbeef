@@ -487,7 +487,7 @@ on_pltbrowser_key_press_event (GtkWidget *widget,
                                gpointer   user_data)
 {
     w_pltbrowser_t *w = user_data;
-    if (event->keyval == GDK_KEY_F2) {
+    if (event->keyval == GDK_F2) {
         // rename selected playlist
         GtkTreePath *path;
         GtkTreeViewColumn *col;
