@@ -11,6 +11,8 @@
 #import "DdbListview.h"
 #include "../../deadbeef.h"
 
+#define CELL_HPADDING 4
+
 extern DB_functions_t *deadbeef;
 
 @implementation DdbPlaylistViewController
@@ -432,6 +434,9 @@ extern DB_functions_t *deadbeef;
 
         char text[1024] = "";
         deadbeef->tf_eval (&ctx, _columns[col].bytecode, _columns[col].bytecode_len, text, sizeof (text));
+
+        rect.origin.x += CELL_HPADDING;
+        rect.size.width -= CELL_HPADDING;
 
         [[NSString stringWithUTF8String:text] drawInRect:rect withAttributes:sel?_cellSelectedTextAttrsDictionary:_cellTextAttrsDictionary];
 
