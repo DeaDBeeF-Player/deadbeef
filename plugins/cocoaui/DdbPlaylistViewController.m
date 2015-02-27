@@ -126,15 +126,10 @@ extern DB_functions_t *deadbeef;
 
 }
 
-- (DdbPlaylistViewController *)init {
-    self = [super initWithNibName:@"Playlist" bundle:nil];
-
-    if (self) {
-        [self initContent];
-        id view = [self view];
-        [view setDelegate:(id<DdbListviewDelegate>)self];
-    }
-    return self;
+- (void)awakeFromNib {
+    [self initContent];
+    id view = [self view];
+    [view setDelegate:(id<DdbListviewDelegate>)self];
 }
 
 - (void)freeColumns {
