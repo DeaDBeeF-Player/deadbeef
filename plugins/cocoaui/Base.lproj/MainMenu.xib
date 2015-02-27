@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="13F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
@@ -567,155 +567,27 @@ CA
                 </menuItem>
             </items>
         </menu>
-        <window title="DeaDBeeF" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" appearanceType="aqua" frameAutosaveName="mainwin" animationBehavior="default" id="371">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="335" y="390" width="507" height="203"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
-            <value key="minSize" type="size" width="500" height="200"/>
-            <view key="contentView" id="372">
-                <rect key="frame" x="0.0" y="0.0" width="507" height="203"/>
-                <autoresizingMask key="autoresizingMask"/>
-                <subviews>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="c3o-Wf-ryE">
-                        <rect key="frame" x="3" y="2" width="506" height="11"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                        <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="left" title="Label" usesSingleLineMode="YES" id="G7i-7M-TWC">
-                            <font key="font" metaFont="miniSystem"/>
-                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
-                    <customView appearanceType="aqua" id="C0L-8h-WMC" customClass="DdbTabStrip">
-                        <rect key="frame" x="0.0" y="177" width="508" height="26"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    </customView>
-                    <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" id="nns-CG-wFQ">
-                        <rect key="frame" x="0.0" y="10" width="507" height="5"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                        <font key="titleFont" metaFont="system"/>
-                    </box>
-                </subviews>
-            </view>
-            <toolbar key="toolbar" implicitIdentifier="62C339C6-B1F9-4A36-A1AE-8068D70C2A16" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="F5t-uK-C7M">
-                <allowedToolbarItems>
-                    <toolbarItem implicitItemIdentifier="53382C75-3C42-4C09-9641-E92D41EAA2BF" label="Custom View" paletteLabel="Custom View" id="3xP-pQ-d4L">
-                        <nil key="toolTip"/>
-                        <size key="minSize" width="130" height="25"/>
-                        <size key="maxSize" width="130" height="28"/>
-                        <segmentedControl key="view" verticalHuggingPriority="750" id="nHJ-0o-IqP">
-                            <rect key="frame" x="0.0" y="14" width="130" height="25"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <segmentedCell key="cell" borderStyle="border" alignment="left" style="texturedRounded" trackingMode="momentary" id="Txw-f5-br1">
-                                <font key="font" metaFont="system"/>
-                                <segments>
-                                    <segment image="btnprevTemplate" width="24">
-                                        <nil key="label"/>
-                                    </segment>
-                                    <segment image="btnplayTemplate" width="24" tag="1">
-                                        <nil key="label"/>
-                                    </segment>
-                                    <segment image="btnpauseTemplate" width="24">
-                                        <nil key="label"/>
-                                    </segment>
-                                    <segment image="btnstopTemplate" width="24">
-                                        <nil key="label"/>
-                                    </segment>
-                                    <segment image="btnnextTemplate" width="24">
-                                        <nil key="label"/>
-                                    </segment>
-                                </segments>
-                            </segmentedCell>
-                            <connections>
-                                <action selector="tbClicked:" target="494" id="915-IM-zVy"/>
-                            </connections>
-                        </segmentedControl>
-                    </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="3389B344-B503-47D8-9CF5-2D39F44EFD79" label="Custom View" paletteLabel="Custom View" id="Jzq-HR-oPq">
-                        <nil key="toolTip"/>
-                        <size key="minSize" width="100" height="21"/>
-                        <size key="maxSize" width="100000000" height="26"/>
-                        <slider key="view" verticalHuggingPriority="750" horizontalCompressionResistancePriority="641" id="lhQ-zG-gJo" customClass="DdbSeekBar">
-                            <rect key="frame" x="0.0" y="14" width="308" height="21"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                            <sliderCell key="cell" alignment="left" maxValue="100" tickMarkPosition="above" sliderType="linear" id="rDd-Sa-3Uw" customClass="DdbSeekBarCell"/>
-                            <connections>
-                                <action selector="seekBarAction:" target="494" id="vQQ-Pl-agd"/>
-                            </connections>
-                        </slider>
-                    </toolbarItem>
-                </allowedToolbarItems>
-                <defaultToolbarItems>
-                    <toolbarItem reference="3xP-pQ-d4L"/>
-                    <toolbarItem reference="Jzq-HR-oPq"/>
-                </defaultToolbarItems>
-            </toolbar>
-        </window>
         <customObject id="494" customClass="AppDelegate">
             <connections>
-                <outlet property="addFilesLabel" destination="2Lt-Ga-gLl" id="diN-Gj-Pc7"/>
-                <outlet property="addFilesWindow" destination="wus-lw-fPx" id="tlO-gc-zHU"/>
+                <outlet property="addFilesLabel" destination="541-M0-bI8" id="Fgz-nN-Sxj"/>
+                <outlet property="addFilesWindow" destination="h34-jZ-Lmi" id="EEi-Ka-YBd"/>
                 <outlet property="addLocationPanel" destination="0MP-Eo-f3S" id="4Ou-DS-hde"/>
                 <outlet property="addLocationTextField" destination="zwG-eG-LI0" id="yXn-aN-nz5"/>
                 <outlet property="cursorFollowsPlayback" destination="Ra2-1K-rwd" id="i3v-jO-k4t"/>
                 <outlet property="dockTileView" destination="h87-hn-tWh" id="h87-62-sdr"/>
-                <outlet property="invertSelectionAction" destination="tqs-ZB-dsG" id="w3N-0T-3BL"/>
                 <outlet property="loopAll" destination="bp3-Nw-TaR" id="t92-xv-gTj"/>
                 <outlet property="loopNone" destination="pGf-UH-jjg" id="fd0-Uw-O2Y"/>
                 <outlet property="loopSingle" destination="V06-6E-L7R" id="hQ5-IG-2Gh"/>
                 <outlet property="mainMenu" destination="29" id="MgP-BD-1rr"/>
-                <outlet property="nextAction" destination="kPQ-iT-aPC" id="8zu-Ip-zdC"/>
                 <outlet property="orderLinear" destination="utp-dm-oO6" id="xEe-Sa-V93"/>
                 <outlet property="orderRandom" destination="1U2-JB-RUf" id="KxR-mg-sUu"/>
                 <outlet property="orderShuffle" destination="15S-fQ-PaL" id="wGt-mg-WMg"/>
                 <outlet property="orderShuffleAlbums" destination="bea-Bv-Vnd" id="1sx-zb-fcn"/>
-                <outlet property="playAction" destination="gS1-dR-hWd" id="eWA-1e-KVs"/>
                 <outlet property="scrollFollowsPlayback" destination="xnA-bz-jxF" id="GX4-WF-zFx"/>
-                <outlet property="seekBar" destination="lhQ-zG-gJo" id="iDM-Mk-EzP"/>
-                <outlet property="statusBar" destination="c3o-Wf-ryE" id="lzk-MS-ADX"/>
                 <outlet property="stopAfterCurrent" destination="edx-c0-VoM" id="Rig-DR-mKE"/>
                 <outlet property="stopAfterCurrentAlbum" destination="6AV-SN-Cm9" id="wVK-jy-HK2"/>
-                <outlet property="tabStrip" destination="C0L-8h-WMC" id="QSp-Bb-h87"/>
-                <outlet property="window" destination="371" id="532"/>
             </connections>
         </customObject>
-        <window title="Adding files..." allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="wus-lw-fPx">
-            <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="163" y="199" width="368" height="32"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1028"/>
-            <view key="contentView" id="GfT-XR-m0S">
-                <rect key="frame" x="0.0" y="0.0" width="368" height="32"/>
-                <autoresizingMask key="autoresizingMask"/>
-                <subviews>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="2Lt-Ga-gLl">
-                        <rect key="frame" x="5" y="8" width="333" height="16"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" lineBreakMode="truncatingHead" allowsUndo="NO" sendsActionOnEndEditing="YES" borderStyle="bezel" usesSingleLineMode="YES" id="tST-tJ-1r7">
-                            <font key="font" metaFont="miniSystem"/>
-                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
-                    <button verticalHuggingPriority="750" id="cbP-pI-9xZ">
-                        <rect key="frame" x="341" y="6" width="21" height="19"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="NSStopProgressTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ib5-Xr-kKC">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                            <font key="font" metaFont="systemBold" size="12"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-Gw
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="addFilesCancel:" target="494" id="lEb-JU-FZI"/>
-                        </connections>
-                    </button>
-                </subviews>
-            </view>
-        </window>
         <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="h87-hn-tWh">
             <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -775,14 +647,44 @@ Gw
                 </subviews>
             </view>
         </window>
+        <window title="Adding files..." allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="h34-jZ-Lmi">
+            <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="163" y="199" width="368" height="32"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+            <view key="contentView" id="UsQ-WG-CU4">
+                <rect key="frame" x="0.0" y="0.0" width="368" height="32"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="541-M0-bI8">
+                        <rect key="frame" x="5" y="8" width="333" height="16"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" lineBreakMode="truncatingHead" allowsUndo="NO" sendsActionOnEndEditing="YES" borderStyle="bezel" usesSingleLineMode="YES" id="8PK-Uo-vxc">
+                            <font key="font" metaFont="miniSystem"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" id="h1r-wo-zgG">
+                        <rect key="frame" x="341" y="6" width="21" height="19"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="NSStopProgressTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7Az-8Q-v62">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                            <font key="font" metaFont="systemBold" size="12"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="addFilesCancel:" target="494" id="8z8-UH-Iww"/>
+                        </connections>
+                    </button>
+                </subviews>
+            </view>
+        </window>
     </objects>
     <resources>
         <image name="NSApplicationIcon" width="128" height="128"/>
         <image name="NSStopProgressTemplate" width="11" height="11"/>
-        <image name="btnnextTemplate" width="75" height="75"/>
-        <image name="btnpauseTemplate" width="75" height="75"/>
-        <image name="btnplayTemplate" width="75" height="75"/>
-        <image name="btnprevTemplate" width="75" height="75"/>
-        <image name="btnstopTemplate" width="75" height="75"/>
     </resources>
 </document>

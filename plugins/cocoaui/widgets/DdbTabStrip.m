@@ -5,7 +5,6 @@
 //  Created by waker on 03/09/14.
 //  Copyright (c) 2014 Alexey Yakovenko. All rights reserved.
 //
-
 #import "DdbTabStrip.h"
 #import "DdbShared.h"
 #include "../../../deadbeef.h"
@@ -584,5 +583,15 @@ plt_get_title_wrapper (int plt) {
 }
 // FIXME dnd motion must activate playlist
 // ...
+
+- (int)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
+    switch (_id) {
+        case DB_EV_PLAYLISTCHANGED:
+        case DB_EV_PLAYLISTSWITCHED:
+            [self setNeedsDisplay:YES];
+            break;
+    }
+    return 0;
+}
 
 @end

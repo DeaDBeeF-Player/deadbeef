@@ -43,6 +43,10 @@ NSImage *bufferingImg;
 AppDelegate *g_appDelegate;
 NSInteger firstSelected = -1;
 
+- (NSWindow *)mainWindow {
+    return [_mainWindow window];
+}
+
 - (void)configChanged
 {
     id order_items[] = {
@@ -82,7 +86,7 @@ static int fileadd_cancelled = 0;
 static void fileadd_begin (ddb_fileadd_data_t *data, void *user_data) {
     fileadd_cancelled = 0;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [NSApp beginSheet:g_appDelegate.addFilesWindow modalForWindow:g_appDelegate.window modalDelegate:nil didEndSelector:nil contextInfo:nil];
+        [NSApp beginSheet:g_appDelegate.addFilesWindow modalForWindow:[g_appDelegate mainWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
     });
 }
 
@@ -90,7 +94,7 @@ static void fileadd_end (ddb_fileadd_data_t *data, void *user_data) {
     dispatch_async(dispatch_get_main_queue(), ^{
         [g_appDelegate.addFilesWindow orderOut:g_appDelegate];
         [NSApp endSheet:g_appDelegate.addFilesWindow];
-        [g_appDelegate.window makeKeyAndOrderFront:g_appDelegate];
+        [g_appDelegate.mainWindow makeKeyAndOrderFront:g_appDelegate];
     });
 }
 
@@ -108,11 +112,18 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 }
 
 - (void)awakeFromNib {
-    [self createPlaylistView];
+    [self initMainWindow];
     [self initSearchWindow];
 }
 
-- (void)createPlaylistView {
+- (void)initMainWindow {
+    _mainWindow = [[MainWindowController alloc] initWithWindowNibName:@"MainWindow"];
+    [_mainWindow setShouldCascadeWindows:NO];
+    [[_mainWindow window] setReleasedWhenClosed:NO];
+    [[_mainWindow window]  setExcludedFromWindowsMenu:YES];
+    [[_mainWindow window] setIsVisible:YES];
+
+/*
     DdbPlaylistViewController *vc = [[DdbPlaylistViewController alloc] init];
     NSView *view = [vc view];
 
@@ -120,6 +131,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [view setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
 
     [[_window contentView] addSubview:view];
+    */
 }
 
 - (void)initSearchWindow {
@@ -131,13 +143,8 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     if (g_CanQuit) {
         return NSTerminateNow;
     }
-    // stop gui
-    if (_updateTimer) {
-        [_updateTimer invalidate];
-        _updateTimer = nil;
-    }
 
-    [_window close];
+    [_mainWindow close];
     [_searchWindow close];
 
     deadbeef->sendmessage(DB_EV_TERMINATE, 0, 0, 0);
@@ -146,21 +153,12 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    [[_window windowController] setShouldCascadeWindows:NO];
-    [_window setReleasedWhenClosed:NO];
-    [_window setExcludedFromWindowsMenu:YES];
-
     playImg = [NSImage imageNamed:@"btnplayTemplate.pdf"];
     pauseImg = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
     bufferingImg = [NSImage imageNamed:@"bufferingTemplate.pdf"];
 
     // initialize gui from settings
     [self configChanged];
-    
-    _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
-    [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSDefaultRunLoopMode];
-    
-    [_addFilesWindow setParentWindow:_window];
     
     deadbeef->listen_file_add_beginend (fileadd_begin, fileadd_end, NULL);
     deadbeef->listen_file_added (file_added, NULL);
@@ -174,174 +172,15 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag{
-    [_window setIsVisible:YES];
+    [[_mainWindow window] setIsVisible:YES];
     return YES;
 }
 
 - (IBAction)showMainWinAction:(id)sender {
     NSInteger st = [sender state];
-    [_window setIsVisible:st!=NSOnState];
+    [[_mainWindow window] setIsVisible:st!=NSOnState];
     [sender setState:st==NSOnState?NSOffState:NSOnState];
 }
-
-int prevSeekbar = -1;
-
-// update status bar and window title
-static char sb_text[512];
-static char sbitrate[20] = "";
-static struct timeval last_br_update;
-
-#define _(x) x
-
-- (void)updateSonginfo {
-    DB_output_t *output = deadbeef->get_output ();
-    char sbtext_new[512] = "-";
-    
-    float pl_totaltime = deadbeef->pl_get_totaltime ();
-    int daystotal = (int)pl_totaltime / (3600*24);
-    int hourtotal = ((int)pl_totaltime / 3600) % 24;
-    int mintotal = ((int)pl_totaltime/60) % 60;
-    int sectotal = ((int)pl_totaltime) % 60;
-    
-    char totaltime_str[512] = "";
-    if (daystotal == 0) {
-        snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
-    }
-    else if (daystotal == 1) {
-        snprintf (totaltime_str, sizeof (totaltime_str), _("1 day %d:%02d:%02d"), hourtotal, mintotal, sectotal);
-    }
-    else {
-        snprintf (totaltime_str, sizeof (totaltime_str), _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
-    }
-    
-    DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
-    DB_fileinfo_t *c = deadbeef->streamer_get_current_fileinfo (); // FIXME: might crash streamer
-    
-    float duration = track ? deadbeef->pl_get_item_duration (track) : -1;
-    
-    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track || !c)) {
-        snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
-    }
-    else {
-        float playpos = deadbeef->streamer_get_playpos ();
-        int minpos = playpos / 60;
-        int secpos = playpos - minpos * 60;
-        int mindur = duration / 60;
-        int secdur = duration - mindur * 60;
-        
-        const char *mode;
-        char temp[20];
-        if (c->fmt.channels <= 2) {
-            mode = c->fmt.channels == 1 ? _("Mono") : _("Stereo");
-        }
-        else {
-            snprintf (temp, sizeof (temp), "%dch Multichannel", c->fmt.channels);
-            mode = temp;
-        }
-        int samplerate = c->fmt.samplerate;
-        int bitspersample = c->fmt.bps;
-        //        codec_unlock ();
-        
-        char t[100];
-        if (duration >= 0) {
-            snprintf (t, sizeof (t), "%d:%02d", mindur, secdur);
-        }
-        else {
-            strcpy (t, "-:--");
-        }
-        
-        struct timeval tm;
-        gettimeofday (&tm, NULL);
-        if (tm.tv_sec - last_br_update.tv_sec + (tm.tv_usec - last_br_update.tv_usec) / 1000000.0 >= 0.3) {
-            memcpy (&last_br_update, &tm, sizeof (tm));
-            int bitrate = deadbeef->streamer_get_apx_bitrate ();
-            if (bitrate > 0) {
-                snprintf (sbitrate, sizeof (sbitrate), _("| %4d kbps "), bitrate);
-            }
-            else {
-                sbitrate[0] = 0;
-            }
-        }
-        const char *spaused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED ? _("Paused | ") : "";
-        char filetype[20];
-        if (!deadbeef->pl_get_meta (track, ":FILETYPE", filetype, sizeof (filetype))) {
-            strcpy (filetype, "-");
-        }
-        snprintf (sbtext_new, sizeof (sbtext_new), _("%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"), spaused, filetype, sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
-    }
-    
-    if (strcmp (sbtext_new, sb_text)) {
-        strcpy (sb_text, sbtext_new);
-        [[self statusBar] setStringValue:[NSString stringWithUTF8String:sb_text]];
-    }
-    
-    if (track) {
-        deadbeef->pl_item_unref (track);
-    }
-}
-
-
-- (void)frameUpdate:(id)userData
-{
-    if (![[self window] isVisible]) {
-        return;
-    }
-    float dur = -1;
-    float perc = 0;
-    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
-    if (trk) {
-        dur = deadbeef->pl_get_item_duration (trk);
-        if (dur >= 0) {
-            perc = deadbeef->streamer_get_playpos () / dur * 100.f;
-            if (perc < 0) {
-                perc = 0;
-            }
-            else if (perc > 100) {
-                perc = 100;
-            }
-        }
-        deadbeef->pl_item_unref (trk);
-    }
-    
-    int cmp =(int)(perc*4000);
-    if (cmp != prevSeekbar) {
-        prevSeekbar = cmp;
-        [_seekBar setFloatValue:perc];
-    }
-    
-    BOOL st = YES;
-    if (!trk || dur < 0) {
-        st = NO;
-    }
-    if ([_seekBar isEnabled] != st) {
-        [_seekBar setEnabled:st];
-    }
-    
-    [self updateSonginfo];    
-}
-
-- (IBAction)tbClicked:(id)sender {
-    NSInteger selectedSegment = [sender selectedSegment];
-    
-    switch (selectedSegment) {
-        case 0:
-            deadbeef->sendmessage(DB_EV_PREV, 0, 0, 0);
-            break;
-        case 1:
-            deadbeef->sendmessage(DB_EV_PLAY_CURRENT, 0, 0, 0);
-            break;
-        case 2:
-            deadbeef->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
-            break;
-        case 3:
-            deadbeef->sendmessage(DB_EV_STOP, 0, 0, 0);
-            break;
-        case 4:
-            deadbeef->sendmessage(DB_EV_NEXT, 0, 0, 0);
-            break;
-    }
-}
-
 
 // playlist delegate
 - (NSIndexSet *)tableView:(NSTableView *)tableView selectionIndexesForProposedSelection:(NSIndexSet *)proposedSelectionIndexes
@@ -494,7 +333,7 @@ init_column (int i, int _id, const char *format) {
 
 - (IBAction)addLocationAction:(id)sender {
     [_addLocationTextField setStringValue:@""];
-    [NSApp beginSheet:_addLocationPanel modalForWindow:_window modalDelegate:nil didEndSelector:nil contextInfo:nil];
+    [NSApp beginSheet:_addLocationPanel modalForWindow:[_mainWindow window] modalDelegate:nil didEndSelector:nil contextInfo:nil];
 }
 
 - (IBAction)addLocationOKAction:(id)sender {
@@ -574,19 +413,6 @@ init_column (int i, int _id, const char *format) {
 
 - (IBAction)centerSelectionInVisibleArea:(id)sender {
     deadbeef->sendmessage (DB_EV_TRACKFOCUSCURRENT, 0, 0, 0);
-}
-
-- (IBAction)seekBarAction:(id)sender {
-    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
-    if (trk) {
-        float dur = deadbeef->pl_get_item_duration (trk);
-        if (dur >= 0) {
-            float time = [(NSSlider*)sender floatValue] / 100.f;
-            time *= dur;
-            deadbeef->sendmessage (DB_EV_SEEK, 0, time * 1000, 0);
-        }
-        deadbeef->pl_item_unref (trk);
-    }
 }
 
 - (IBAction)previousAction:(id)sender {
@@ -670,23 +496,11 @@ init_column (int i, int _id, const char *format) {
 - (IBAction)selectionCropAction:(id)sender {
 }
 
-- (void)handleSimpleMessage:(NSNumber *)_id {
-    switch ([_id intValue]) {
-        case DB_EV_PLAYLISTCHANGED:
-        case DB_EV_PLAYLISTSWITCHED:
-            [[self tabStrip] setNeedsDisplay:YES];
-            break;
-    }
-}
-
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2
 {
     [[DdbWidgetManager defaultWidgetManager] widgetMessage:_id ctx:ctx p1:p1 p2:p2];
     
-    if (_id == DB_EV_PAUSED || _id == DB_EV_PLAYLIST_REFRESH || _id == DB_EV_PLAYLISTCHANGED || _id == DB_EV_PLAYLISTSWITCHED || _id == DB_EV_TRACKFOCUSCURRENT || _id == DB_EV_SONGCHANGED) {
-        [g_appDelegate performSelectorOnMainThread:@selector(handleSimpleMessage:) withObject:[[NSNumber alloc] initWithInt:_id] waitUntilDone:NO];
-    }
-    else if (_id == DB_EV_CONFIGCHANGED) {
+    if (_id == DB_EV_CONFIGCHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(configChanged) withObject:nil waitUntilDone:NO];
 
     }
