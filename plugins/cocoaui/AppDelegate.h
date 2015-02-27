@@ -22,8 +22,7 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#import "DdbTabStrip.h"
-#import "DdbListview.h"
+#include "MainWindowController.h"
 #import "SearchWindowController.h"
 #import "PreferencesWindowController.h"
 #include "deadbeef.h"
@@ -31,31 +30,30 @@
 #define MAX_COLUMNS 20
 
 @interface AppDelegate : NSObject <NSApplicationDelegate> {
-    NSTimer *_updateTimer;
+    MainWindowController *_mainWindow;
     PreferencesWindowController *_prefWindow;
     SearchWindowController *_searchWindow;
 }
+
+- (NSWindow *)mainWindow;
 
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
 @property (unsafe_unretained) IBOutlet NSMenu *mainMenu;
 
-@property (assign) IBOutlet NSWindow *window;
-
-@property (unsafe_unretained) IBOutlet DdbTabStrip *tabStrip;
-@property (unsafe_unretained) IBOutlet NSImageView *dockTileView;
-
 @property (unsafe_unretained) IBOutlet NSWindow *addFilesWindow;
 @property (unsafe_unretained) IBOutlet NSTextField *addFilesLabel;
 - (IBAction)addFilesCancel:(id)sender;
-@property (unsafe_unretained) IBOutlet NSTextField *statusBar;
+
+
+@property (unsafe_unretained) IBOutlet NSImageView *dockTileView;
+
+- (IBAction)performCloseTabAction:(id)sender;
 
 - (IBAction)openPrefWindow:(id)sender;
 
-
 // file menu
 - (IBAction)openFilesAction:(id)sender;
-- (IBAction)performCloseTabAction:(id)sender;
 - (IBAction)addFilesAction:(id)sender;
 - (IBAction)addFoldersAction:(id)sender;
 - (IBAction)addLocationAction:(id)sender;
@@ -94,9 +92,6 @@
 - (IBAction)loopNoneAction:(id)sender;
 - (IBAction)loopAllAction:(id)sender;
 - (IBAction)loopSingleAction:(id)sender;
-
-@property (unsafe_unretained) IBOutlet NSSlider *seekBar;
-- (IBAction)seekBarAction:(id)sender;
 
 @property (unsafe_unretained) IBOutlet NSMenuItem *cursorFollowsPlayback;
 - (IBAction)cursorFollowsPlaybackAction:(id)sender;
