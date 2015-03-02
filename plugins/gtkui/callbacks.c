@@ -571,7 +571,7 @@ on_invert_selection1_activate          (GtkMenuItem     *menuitem,
         it = next;
     }
     deadbeef->pl_unlock ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
 }
 
 
@@ -668,7 +668,7 @@ on_sort_by_title_activate              (GtkMenuItem     *menuitem,
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
 
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 
@@ -681,7 +681,7 @@ on_sort_by_track_nr_activate           (GtkMenuItem     *menuitem,
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
 
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 
@@ -694,7 +694,7 @@ on_sort_by_album_activate              (GtkMenuItem     *menuitem,
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
 
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 
@@ -707,7 +707,7 @@ on_sort_by_artist_activate             (GtkMenuItem     *menuitem,
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
 
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 
@@ -719,7 +719,7 @@ on_sort_by_date_activate               (GtkMenuItem     *menuitem,
     deadbeef->plt_sort (plt, PL_MAIN, -1, "%y", DDB_SORT_ASCENDING);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 
@@ -732,7 +732,7 @@ on_sort_by_random_activate               (GtkMenuItem     *menuitem,
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
 
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 
