@@ -48,7 +48,7 @@ playqueue_push (playItem_t *it) {
     playqueue[playqueue_count++] = it;
     pl_unlock ();
     send_trackinfochanged (it);
-    messagepump_push (DB_EV_PLAYQUEUE_CHANGED, 0, 0, 0);
+    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
     return 0;
 }
 
@@ -61,8 +61,7 @@ playqueue_clear (void) {
     }
     playqueue_count = 0;
     pl_unlock ();
-    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-    messagepump_push (DB_EV_PLAYQUEUE_CHANGED, 0, 0, 0);
+    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
 }
 
 void
@@ -74,7 +73,7 @@ playqueue_pop (void) {
     if (playqueue_count == 1) {
         playqueue_count = 0;
         send_trackinfochanged (playqueue[0]);
-        messagepump_push(DB_EV_PLAYQUEUE_CHANGED, 0, 0, 0);
+        messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
         pl_item_unref (playqueue[0]);
         pl_unlock ();
         return;
@@ -84,8 +83,7 @@ playqueue_pop (void) {
     playqueue_count--;
     pl_item_unref (it);
     pl_unlock ();
-    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-    messagepump_push (DB_EV_PLAYQUEUE_CHANGED, 0, 0, 0);
+    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
 }
 
 void
@@ -108,8 +106,7 @@ playqueue_remove (playItem_t *it) {
         }
     }
     pl_unlock ();
-    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-    messagepump_push (DB_EV_PLAYQUEUE_CHANGED, 0, 0, 0);
+    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
 }
 
 int
@@ -163,8 +160,7 @@ playqueue_remove_nth (int n) {
 
     pl_item_unref (it);
     pl_unlock ();
-    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-    messagepump_push (DB_EV_PLAYQUEUE_CHANGED, 0, 0, 0);
+    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
 }
 
 void
@@ -184,6 +180,5 @@ playqueue_insert_at (int n, playItem_t *it) {
     pl_item_ref (it);
     playqueue_count++;
     pl_unlock ();
-    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-    messagepump_push (DB_EV_PLAYQUEUE_CHANGED, 0, 0, 0);
+    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
 }

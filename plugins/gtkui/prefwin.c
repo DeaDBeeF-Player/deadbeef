@@ -691,7 +691,7 @@ on_tabstrip_text_font_set              (GtkFontButton   *fontbutton,
     gtkui_init_theme_colors ();
     playlist_refresh ();
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -728,7 +728,7 @@ on_override_listview_colors_toggled    (GtkToggleButton *togglebutton,
     gtkui_init_theme_colors ();
     prefwin_init_theme_colors ();
     playlist_refresh ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -739,7 +739,7 @@ on_listview_even_row_color_set         (GtkColorButton  *colorbutton,
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_even_row");
     playlist_refresh ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 void
@@ -748,7 +748,7 @@ on_listview_odd_row_color_set          (GtkColorButton  *colorbutton,
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_odd_row");
     playlist_refresh ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 void
@@ -757,7 +757,7 @@ on_listview_selected_row_color_set     (GtkColorButton  *colorbutton,
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_selection");
     playlist_refresh ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 void
@@ -766,7 +766,7 @@ on_listview_text_color_set             (GtkColorButton  *colorbutton,
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_text");
     playlist_refresh ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 
@@ -776,7 +776,7 @@ on_listview_selected_text_color_set    (GtkColorButton  *colorbutton,
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_selected_text");
     playlist_refresh ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 void
@@ -785,7 +785,7 @@ on_listview_cursor_color_set           (GtkColorButton  *colorbutton,
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_cursor");
     playlist_refresh ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 void
@@ -794,7 +794,7 @@ on_listview_playing_text_color_set     (GtkColorButton  *colorbutton,
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_playing_text");
     playlist_refresh ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 void
@@ -803,7 +803,7 @@ on_listview_group_text_color_set       (GtkColorButton  *colorbutton,
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_group_text");
     playlist_refresh ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -815,7 +815,7 @@ on_listview_group_text_font_set        (GtkFontButton   *fontbutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
     playlist_refresh ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -827,7 +827,7 @@ on_listview_text_font_set              (GtkFontButton   *fontbutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
     playlist_refresh ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -881,7 +881,7 @@ on_listview_column_text_color_set      (GtkColorButton  *colorbutton,
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_column_text");
     playlist_refresh ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 void
@@ -892,7 +892,7 @@ on_listview_column_text_font_set       (GtkFontButton   *fontbutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
     playlist_refresh ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 void

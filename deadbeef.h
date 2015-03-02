@@ -306,6 +306,20 @@ enum playback_mode_t {
     PLAYBACK_MODE_LOOP_SINGLE = 2, // loop single track
 };
 
+#if (DDB_API_LEVEL >= 8)
+// playlist change info, used in the DB_EV_PLAYLISTCHANGED p1 argument
+enum ddb_playlist_change_t {
+    DDB_PLAYLIST_CHANGE_CONTENT, // this is the most generic one, will work for the cases when p1 was omitted (0)
+    DDB_PLAYLIST_CHANGE_CREATED,
+    DDB_PLAYLIST_CHANGE_DELETED,
+    DDB_PLAYLIST_CHANGE_POSITION,
+    DDB_PLAYLIST_CHANGE_TITLE,
+    DDB_PLAYLIST_CHANGE_SELECTION,
+    DDB_PLAYLIST_CHANGE_SEARCHRESULT,
+    DDB_PLAYLIST_CHANGE_PLAYQUEUE,
+};
+#endif
+
 typedef struct {
     int event;
     int size;
@@ -356,7 +370,7 @@ enum {
     DB_EV_PAUSE = 6, // pause playback
     DB_EV_PLAY_RANDOM = 7, // play random track
     DB_EV_TERMINATE = 8, // must be sent to player thread to terminate
-    DB_EV_PLAYLIST_REFRESH = 9, // save and redraw current playlist
+    DB_EV_PLAYLIST_REFRESH = 9, // [DEPRECATED IN API LEVEL 8, use DB_EV_PLAYLISTCHANGED instead] save and redraw current playlist
     DB_EV_REINIT_SOUND = 10, // reinitialize sound output with current output_plugin config value
     DB_EV_CONFIGCHANGED = 11, // one or more config options were changed
     DB_EV_TOGGLE_PAUSE = 12,
@@ -367,6 +381,8 @@ enum {
     // DB_EV_PLAYLISTCHANGED NOTE: it's usually sent on LARGE changes,
     // when multiple tracks are affected, while for single tracks
     // the DB_EV_TRACKINFOCHANGED is preferred
+    // added in API level 8:
+    // p1 is one of ddb_playlist_change_t enum values, detailing what exactly has been changed.
 
     DB_EV_VOLUMECHANGED = 16, // volume was changed
     DB_EV_OUTPUTCHANGED = 17, // sound output plugin changed
@@ -382,8 +398,7 @@ enum {
 #endif
 
 #if (DDB_API_LEVEL >= 8)
-    DB_EV_FOCUS_SELECTION, // tell playlist viewer to focus on selection
-    DB_EV_PLAYQUEUE_CHANGED, // sent on any change to playqueue
+    DB_EV_FOCUS_SELECTION = 24, // tell playlist viewer to focus on selection
 #endif
 
     // -----------------

@@ -267,7 +267,7 @@ init_column (int i, int _id, const char *format) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         if (clear) {
             deadbeef->plt_clear(plt);
-            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
         }
         if (plt) {
             if (!deadbeef->plt_add_files_begin (plt, 0)) {
@@ -284,7 +284,7 @@ init_column (int i, int _id, const char *format) {
                     deadbeef->plt_unref (plt);
                     deadbeef->pl_save_current();
                     if (play) {
-                        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+                        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
                         deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
                     }
                 });
@@ -324,7 +324,7 @@ init_column (int i, int _id, const char *format) {
                     deadbeef->plt_add_files_end (plt, 0);
                     deadbeef->plt_unref (plt);
                     deadbeef->pl_save_current();
-                    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+                    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
                 });
             }
         }
@@ -367,13 +367,13 @@ init_column (int i, int _id, const char *format) {
 - (IBAction)clearAction:(id)sender {
     deadbeef->pl_clear();
     deadbeef->pl_save_current();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 - (IBAction)delete:(id)sender {
     deadbeef->pl_delete_selected ();
     deadbeef->pl_save_current();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 - (IBAction)orderLinearAction:(id)sender {
@@ -457,7 +457,7 @@ init_column (int i, int _id, const char *format) {
 
 - (void)selectAll:(id)sender {
     deadbeef->pl_select_all ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
 }
 
 - (IBAction)deselectAllAction:(id)sender {
@@ -472,7 +472,7 @@ init_column (int i, int _id, const char *format) {
         it = next;
     }
     deadbeef->pl_unlock ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
 }
 
 - (IBAction)invertSelectionAction:(id)sender {
@@ -490,7 +490,7 @@ init_column (int i, int _id, const char *format) {
         it = next;
     }
     deadbeef->pl_unlock ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
 }
 
 - (IBAction)selectionCropAction:(id)sender {
@@ -552,7 +552,7 @@ init_column (int i, int _id, const char *format) {
                 }
                 deadbeef->plt_unref (plt);
             }
-            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
         });
     }
 }

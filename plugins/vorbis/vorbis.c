@@ -186,7 +186,7 @@ update_vorbis_comments (DB_playItem_t *it, OggVorbis_File *vorbis_file, const in
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
     }
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 
     return 0;
 }
@@ -405,7 +405,7 @@ new_streaming_link(ogg_info_t *info, const int new_link)
     update_vorbis_comments(info->it, &info->vorbis_file, new_link);
     send_event(info->it, DB_EV_SONGSTARTED);
     send_event(info->it, DB_EV_TRACKINFOCHANGED);
-    deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     info->cur_bit_stream = new_link;
 
     vorbis_info *vi = ov_info (&info->vorbis_file, new_link);

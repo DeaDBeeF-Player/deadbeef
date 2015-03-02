@@ -329,7 +329,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         // add files
         if (!queue) {
             plt_clear (curr_plt);
-            messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+            messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
             plt_reset_cursor (curr_plt);
         }
         while (parg < pend) {
@@ -353,7 +353,8 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             parg += strlen (parg);
             parg++;
         }
-        messagepump_push (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+        pl_save_current ();
+        messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
         plt_add_files_end (curr_plt, 0);
         plt_unref (curr_plt);
         if (!queue) {
@@ -616,10 +617,6 @@ player_mainloop (void) {
                     break;
                 case DB_EV_PLAY_RANDOM:
                     streamer_move_to_randomsong (1);
-                    break;
-                case DB_EV_PLAYLIST_REFRESH:
-                    pl_save_current ();
-                    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
                     break;
                 case DB_EV_CONFIGCHANGED:
                     conf_save ();
