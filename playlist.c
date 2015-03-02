@@ -436,6 +436,7 @@ plt_add (int before, const char *title) {
         plt_save_n (before);
         conf_save ();
         messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
+        messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CREATED, 0);
     }
     return before;
 }
@@ -485,6 +486,7 @@ plt_remove (int plt) {
         conf_save ();
         plt_save_n (0);
         messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
+        messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_DELETED, 0);
         return;
     }
     if (i != plt) {
@@ -519,7 +521,8 @@ plt_remove (int plt) {
     conf_save ();
     if (!plt_loading) {
         messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
-    }
+        messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_DELETED, 0);
+   }
 }
 
 int
@@ -625,7 +628,9 @@ plt_set_title (playlist_t *p, const char *title) {
     UNLOCK;
     conf_save ();
     if (!plt_loading) {
-        messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
+// not sending DB_EV_PLAYLISTSWITCHED here may cause compatibility problem
+//        messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
+        messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_TITLE, 0);
     }
     return 0;
 }
@@ -4146,7 +4151,7 @@ plt_add_files_end (playlist_t *plt, int visibility) {
         plt_unref (addfiles_playlist);
     }
     addfiles_playlist = NULL;
-    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     plt->files_adding = 0;
     pl_unlock ();
     ddb_fileadd_data_t d;
