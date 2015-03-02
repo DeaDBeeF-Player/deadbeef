@@ -473,7 +473,7 @@ cddb_thread (void *params_void)
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
     }
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 static void
@@ -823,7 +823,7 @@ cda_action_add_cd (DB_plugin_action_t *act, int ctx)
             deadbeef->plt_modified(plt);
             deadbeef->plt_unref(plt);
         }
-        deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+        deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     }
 
     cdio_free_device_list(device_list);
@@ -890,7 +890,7 @@ load_cddb_data (ddb_playlist_t *plt, cddb_disc_t *disc, const size_t disc_num)
     } while (it);
 
     deadbeef->plt_modified(plt);
-    deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 
     return 0;
 }
