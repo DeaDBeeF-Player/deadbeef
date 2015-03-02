@@ -618,6 +618,10 @@ player_mainloop (void) {
                 case DB_EV_PLAY_RANDOM:
                     streamer_move_to_randomsong (1);
                     break;
+                case DB_EV_PLAYLIST_REFRESH:
+                    pl_save_current ();
+                    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+                    break;
                 case DB_EV_CONFIGCHANGED:
                     conf_save ();
                     streamer_configchanged ();
