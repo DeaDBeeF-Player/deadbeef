@@ -207,6 +207,19 @@ fill_pltbrowser_cb (gpointer data) {
     return FALSE;
 }
 
+static gboolean
+update_treeview_cursor (gpointer user_data)
+{
+    w_pltbrowser_t *w = user_data;
+    int curr = deadbeef->plt_get_curr_idx ();
+    if (curr != -1) {
+        GtkTreePath *path = gtk_tree_path_new_from_indices (curr, -1);
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (w->tree), path, NULL, FALSE);
+        gtk_tree_path_free (path);
+    }
+    return FALSE;
+}
+
 static int
 pltbrowser_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
@@ -235,8 +248,10 @@ pltbrowser_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
             }
         }
         break;
-    case DB_EV_CONFIGCHANGED:
     case DB_EV_PLAYLISTSWITCHED:
+        g_idle_add (update_treeview_cursor, w);
+        break;
+    case DB_EV_CONFIGCHANGED:
     case DB_EV_PLAYLISTCHANGED:
         g_idle_add (fill_pltbrowser_cb, w);
         break;
