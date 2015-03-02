@@ -225,8 +225,15 @@ pltbrowser_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         break;
     case DB_EV_CONFIGCHANGED:
     case DB_EV_PLAYLISTSWITCHED:
-    case DB_EV_PLAYLISTCHANGED:
         g_idle_add (fill_pltbrowser_cb, w);
+        break;
+    case DB_EV_PLAYLISTCHANGED:
+        if (p1 == DDB_PLAYLIST_CHANGE_TITLE
+            || p1 == DDB_PLAYLIST_CHANGE_POSITION
+            || p1 == DDB_PLAYLIST_CHANGE_DELETED
+            || p1 == DB_PLAYLIST_CHANGE_CREATED) {
+            g_idle_add (fill_pltbrowser_cb, w);
+        }
         break;
     }
     return 0;

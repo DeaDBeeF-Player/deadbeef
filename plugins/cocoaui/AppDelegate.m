@@ -437,7 +437,10 @@ static struct timeval last_br_update;
     {
         NSArray* files = [openDlg filenames];
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-        deadbeef->plt_clear(plt);
+        if (clear) {
+            deadbeef->plt_clear(plt);
+            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+        }
         if (plt) {
             if (!deadbeef->plt_add_files_begin (plt, 0)) {
                 dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
@@ -450,9 +453,10 @@ static struct timeval last_br_update;
                     deadbeef->plt_add_files_end (plt, 0);
                     deadbeef->plt_unref (plt);
                     deadbeef->pl_save_current();
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [playlist reloadData];
-                    });
+                    if (play) {
+                        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+                        deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
+                    }
                 });
             }
         }
@@ -483,9 +487,7 @@ static struct timeval last_br_update;
                     deadbeef->plt_add_files_end (plt, 0);
                     deadbeef->plt_unref (plt);
                     deadbeef->pl_save_current();
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [playlist reloadData];
-                    });
+                    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
                 });
             }
         }
@@ -495,22 +497,13 @@ static struct timeval last_br_update;
 - (IBAction)clearAction:(id)sender {
     deadbeef->pl_clear();
     deadbeef->pl_save_current();
-    [playlist reloadData];
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 - (IBAction)removeSelectionAction:(id)sender {
     deadbeef->pl_delete_selected ();
     deadbeef->pl_save_current();
-    [playlist reloadData];
-    [playlist deselectAll:self];
-    if (firstSelected != -1) {
-        [playlist selectRowIndexes:[[NSIndexSet alloc] initWithIndex:firstSelected] byExtendingSelection:NO];
-    }
-    [self tableView:playlist selectionIndexesForProposedSelection: firstSelected==-1?[NSIndexSet alloc]:[[NSIndexSet alloc] initWithIndex:firstSelected]];
-}
-
-- (void)reloadPlaylistData {
-    [playlist reloadData];
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 - (IBAction)orderLinearAction:(id)sender {
@@ -624,10 +617,42 @@ static struct timeval last_br_update;
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
+- (void)selectAll:(id)sender {
+    deadbeef->pl_select_all ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
+}
+
 - (IBAction)deselectAllAction:(id)sender {
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->pl_set_selected (it, 0);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    deadbeef->pl_unlock ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
 }
 
 - (IBAction)invertSelectionAction:(id)sender {
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->pl_set_selected (it, 0);
+        }
+        else {
+            deadbeef->pl_set_selected (it, 1);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    deadbeef->pl_unlock ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
 }
 
 - (IBAction)selectionCropAction:(id)sender {
@@ -670,7 +695,8 @@ static struct timeval last_br_update;
                     [playlist selectRowIndexes:[NSIndexSet indexSetWithIndex:idx] byExtendingSelection:NO];
                 }
             }
-            break;
+            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+        });
     }
 }
 

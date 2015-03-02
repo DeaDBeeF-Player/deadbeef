@@ -112,14 +112,14 @@ open_files_worker (void *data) {
     deadbeef->pl_save_current ();
     deadbeef->pl_set_cursor (PL_MAIN, 0);
     deadbeef->conf_save ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
 }
 
 void
 gtkui_open_files (struct _GSList *lst) {
     deadbeef->pl_clear ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 
     intptr_t tid = deadbeef->thread_start (open_files_worker, lst);
     deadbeef->thread_detach (tid);
@@ -171,12 +171,12 @@ static gboolean
 set_dnd_cursor_idle (gpointer data) {
     if (!data) {
         deadbeef->pl_set_cursor (PL_MAIN, -1);
-        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
         return FALSE;
     }
     int cursor = deadbeef->pl_get_idx_of (DB_PLAYITEM (data));
     deadbeef->pl_set_cursor (PL_MAIN, cursor);
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     return FALSE;
 }
 
