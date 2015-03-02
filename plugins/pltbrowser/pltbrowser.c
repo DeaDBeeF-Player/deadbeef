@@ -401,7 +401,7 @@ sort_playlists (int order, int (*qsort_cmp_func)(const void *, const void*))
     }
 
     free (array);
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
 }
 
 static void
@@ -473,6 +473,7 @@ on_pltbrowser_column_clicked (GtkTreeViewColumn     *col,
             sort_by_name (order);
             break;
     }
+    g_idle_add (fill_pltbrowser_cb, w);
     return FALSE;
 }
 
