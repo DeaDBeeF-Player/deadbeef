@@ -480,7 +480,6 @@ on_pltbrowser_column_clicked (GtkTreeViewColumn     *col,
             sort_by_name (order);
             break;
     }
-    g_idle_add (fill_pltbrowser_cb, w);
     return FALSE;
 }
 
