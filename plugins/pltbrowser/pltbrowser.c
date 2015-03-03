@@ -255,7 +255,8 @@ pltbrowser_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         g_idle_add (fill_pltbrowser_cb, w);
         break;
     case DB_EV_PLAYLISTCHANGED:
-        if (p1 == DDB_PLAYLIST_CHANGE_TITLE
+        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT
+            || p1 == DDB_PLAYLIST_CHANGE_TITLE
             || p1 == DDB_PLAYLIST_CHANGE_POSITION
             || p1 == DDB_PLAYLIST_CHANGE_DELETED
             || p1 == DDB_PLAYLIST_CHANGE_CREATED) {
