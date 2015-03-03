@@ -1052,7 +1052,7 @@ gtkui_thread (void *ctx) {
     gtkui_connect_cb (NULL);
 
     gtkui_accept_messages = 1;
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 
 #ifdef __APPLE__
     gtkui_is_retina = is_retina (mainwin);
