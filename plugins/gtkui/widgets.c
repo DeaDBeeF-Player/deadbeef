@@ -2236,19 +2236,30 @@ fill_selproperties_cb (gpointer data) {
     return FALSE;
 }
 
+static void
+selproperties_selection_changed (gpointer user_data)
+{
+    w_selproperties_t *selprop_w = user_data;
+    if (selprop_w->refresh_timeout) {
+        g_source_remove (selprop_w->refresh_timeout);
+        selprop_w->refresh_timeout = 0;
+    }
+    selprop_w->refresh_timeout = g_timeout_add (100, fill_selproperties_cb, user_data);
+}
+
 static int
 selproperties_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     w_selproperties_t *selprop_w = w;
     switch (id) {
     case DB_EV_PLAYLISTCHANGED:
-    case DB_EV_SELCHANGED:
-        {
-            if (selprop_w->refresh_timeout) {
-                g_source_remove (selprop_w->refresh_timeout);
-                selprop_w->refresh_timeout = 0;
-            }
-            selprop_w->refresh_timeout = g_timeout_add (100, fill_selproperties_cb, w);
+        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT
+            || p1 == DDB_PLAYLIST_CHANGE_SELECTION) {
+            selproperties_selection_changed (w);
         }
+        break;
+    case DB_EV_PLAYLISTSWITCHED:
+    case DB_EV_SELCHANGED:
+        selproperties_selection_changed (w);
         break;
     }
     return 0;
