@@ -7,6 +7,9 @@
 //
 
 #import "PreferencesWindowController.h"
+#include "deadbeef.h"
+
+extern DB_functions_t *deadbeef;
 
 @interface PreferencesWindowController ()
 
@@ -19,7 +22,15 @@
 
     [_toolbar setDelegate:(id<NSToolbarDelegate>)self];
     [_toolbar setSelectedItemIdentifier:@"Playback"];
+
+    [self setInitialValues];
+
     [self switchToView:_playbackView];
+}
+
+- (void)setInitialValues {
+    [_replaygain_mode selectItemAtIndex: deadbeef->conf_get_int ("replaygain_mode", 0)];
+    [_replaygain_scale setState: deadbeef->conf_get_int ("replaygain_scale", 1) ? NSOnState : NSOffState];
 }
 
 - (NSArray *)toolbarSelectableItemIdentifiers: (NSToolbar *)toolbar;
@@ -68,4 +79,34 @@
     [self switchToView:_pluginsView];
 }
 
+- (IBAction)dspAddAction:(id)sender {
+}
+
+- (IBAction)dspRemoveAction:(id)sender {
+}
+
+- (IBAction)dspConfigureAction:(id)sender {
+}
+
+- (IBAction)dspMoveUpAction:(id)sender {
+}
+
+- (IBAction)dspMoveDownAction:(id)sender {
+}
+
+- (IBAction)dspSaveAction:(id)sender {
+}
+
+- (IBAction)dspLoadAction:(id)sender {
+}
+- (IBAction)networkEditContentTypeMapping:(id)sender {
+}
+- (IBAction)pluginConfigure:(id)sender {
+}
+
+- (IBAction)pluginShowCopyright:(id)sender {
+}
+
+- (IBAction)pluginOpenWebsite:(id)sender {
+}
 @end
