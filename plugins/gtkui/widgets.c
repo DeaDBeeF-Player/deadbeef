@@ -1676,6 +1676,14 @@ tabstrip_refresh_cb (void *ctx) {
 static int
 w_tabstrip_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
+    case DB_EV_PLAYLISTCHANGED:
+        if (p1 == DDB_PLAYLIST_CHANGE_TITLE
+            || p1 == DDB_PLAYLIST_CHANGE_POSITION
+            || p1 == DDB_PLAYLIST_CHANGE_DELETED
+            || p1 == DDB_PLAYLIST_CHANGE_CREATED) {
+            g_idle_add (tabstrip_refresh_cb, w);
+        }
+        break;
     case DB_EV_PLAYLISTSWITCHED:
     case DB_EV_TRACKINFOCHANGED:
         g_idle_add (tabstrip_refresh_cb, w);
@@ -1788,6 +1796,15 @@ refresh_cb (gpointer data) {
     ddb_listview_lock_columns (p, 0);
     ddb_listview_clear_sort (p);
     ddb_listview_refresh (DDB_LISTVIEW (p), DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
+    return FALSE;
+}
+
+static gboolean
+playlistchanged_cb (gpointer p) {
+    w_playlist_t *tp = (w_playlist_t *)p;
+    if (!strcmp (tp->base.type, "tabbed_playlist")) {
+        ddb_tabstrip_refresh (((w_tabbed_playlist_t *)tp)->tabstrip);
+    }
     return FALSE;
 }
 
@@ -1968,6 +1985,12 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
         break;
     case DB_EV_PLAYLISTCHANGED:
         g_idle_add (refresh_cb, tp->list);
+        if (p1 == DDB_PLAYLIST_CHANGE_TITLE
+            || p1 == DDB_PLAYLIST_CHANGE_POSITION
+            || p1 == DDB_PLAYLIST_CHANGE_DELETED
+            || p1 == DDB_PLAYLIST_CHANGE_CREATED) {
+            g_idle_add (playlistchanged_cb, w);
+        }
         break;
     case DB_EV_PLAYLISTSWITCHED:
         g_idle_add (playlistswitch_cb, w);

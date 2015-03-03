@@ -500,7 +500,7 @@ on_clear1_activate                     (GtkMenuItem     *menuitem,
 {
     deadbeef->pl_clear ();
     deadbeef->pl_save_current ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 void
@@ -524,7 +524,7 @@ on_remove2_activate                    (GtkMenuItem     *menuitem,
 {
     int cursor = deadbeef->pl_delete_selected ();
     deadbeef->pl_save_current ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 static void
