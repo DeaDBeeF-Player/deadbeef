@@ -381,7 +381,7 @@ sort_playlists (int order, int (*qsort_cmp_func)(const void *, const void*))
     }
 
     free (array);
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_POSITION, 0);
 }
 
 static void
