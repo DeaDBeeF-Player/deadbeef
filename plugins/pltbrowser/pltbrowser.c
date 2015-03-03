@@ -91,6 +91,27 @@ add_new_playlist (void) {
     return -1;
 }
 
+static int
+get_treeview_cursor_pos (GtkTreeView *tree)
+{
+    if (!tree) {
+        return -1;
+    }
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (tree), &path, &col);
+    if (!path || !col) {
+        return -1;
+    }
+    int result = -1;
+    int *indices = gtk_tree_path_get_indices (path);
+    if (indices) {
+        result = indices[0];
+        g_free (indices);
+    }
+    return result;
+}
+
 static void
 on_pltbrowser_row_inserted (GtkTreeModel *tree_model, GtkTreePath *path, GtkTreeIter *iter, gpointer user_data) {
     w_pltbrowser_t *plt = user_data;
@@ -112,19 +133,10 @@ on_pltbrowser_row_inserted (GtkTreeModel *tree_model, GtkTreePath *path, GtkTree
 static void
 on_pltbrowser_cursor_changed (GtkTreeView *treeview, gpointer user_data) {
     w_pltbrowser_t *w = user_data;
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (treeview, &path, &col);
-    if (!path) {
-        return;
-    }
-    int *indices = gtk_tree_path_get_indices (path);
-    if (indices) {
-        if (indices[0] >= 0) {
-            deadbeef->plt_set_curr_idx (indices[0]);
-            w->last_selected = indices[0];
-        }
-        g_free (indices);
+    int cursor = get_treeview_cursor_pos (treeview);
+    if (cursor >= 0) {
+        deadbeef->plt_set_curr_idx (cursor);
+        w->last_selected = cursor;
     }
 }
 
@@ -195,6 +207,19 @@ fill_pltbrowser_cb (gpointer data) {
     return FALSE;
 }
 
+static gboolean
+update_treeview_cursor (gpointer user_data)
+{
+    w_pltbrowser_t *w = user_data;
+    int curr = deadbeef->plt_get_curr_idx ();
+    if (curr != -1) {
+        GtkTreePath *path = gtk_tree_path_new_from_indices (curr, -1);
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (w->tree), path, NULL, FALSE);
+        gtk_tree_path_free (path);
+    }
+    return FALSE;
+}
+
 static int
 pltbrowser_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
@@ -223,12 +248,15 @@ pltbrowser_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
             }
         }
         break;
-    case DB_EV_CONFIGCHANGED:
     case DB_EV_PLAYLISTSWITCHED:
+        g_idle_add (update_treeview_cursor, w);
+        break;
+    case DB_EV_CONFIGCHANGED:
         g_idle_add (fill_pltbrowser_cb, w);
         break;
     case DB_EV_PLAYLISTCHANGED:
-        if (p1 == DDB_PLAYLIST_CHANGE_TITLE
+        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT
+            || p1 == DDB_PLAYLIST_CHANGE_TITLE
             || p1 == DDB_PLAYLIST_CHANGE_POSITION
             || p1 == DDB_PLAYLIST_CHANGE_DELETED
             || p1 == DDB_PLAYLIST_CHANGE_CREATED) {
@@ -381,7 +409,7 @@ sort_playlists (int order, int (*qsort_cmp_func)(const void *, const void*))
     }
 
     free (array);
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_POSITION, 0);
 }
 
 static void
@@ -519,21 +547,12 @@ on_pltbrowser_cell_edititing_started (GtkCellRenderer *renderer,
     if (deadbeef->conf_get_int ("gtkui.pltbrowser.highlight_curr_plt", 0)
             && GTK_IS_ENTRY (editable)) {
         // we need to get rid of the "(playing)" string before editing the playlist name
-        GtkEntry *entry = GTK_ENTRY (editable);
-        GtkTreePath *path;
-        GtkTreeViewColumn *col;
-        gtk_tree_view_get_cursor (GTK_TREE_VIEW (w->tree), &path, &col);
-        if (!path || !col) {
-            return;
-        }
-        int *indices = gtk_tree_path_get_indices (path);
-        if (indices) {
-            if (indices[0] >= 0) {
-                char t[1000];
-                plt_get_title_wrapper (indices[0], t, sizeof (t));
-                gtk_entry_set_text (GTK_ENTRY (entry), t);
-            }
-            g_free (indices);
+        int row = get_treeview_cursor_pos (GTK_TREE_VIEW (w->tree));
+        if (row >= 0) {
+            GtkEntry *entry = GTK_ENTRY (editable);
+            char t[1000];
+            plt_get_title_wrapper (row, t, sizeof (t));
+            gtk_entry_set_text (GTK_ENTRY (entry), t);
         }
     }
 }
@@ -545,22 +564,13 @@ on_pltbrowser_cell_edited (GtkCellRendererText *cell,
                            gpointer             user_data)
 {
     w_pltbrowser_t *w = user_data;
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (GTK_TREE_VIEW (w->tree), &path, &col);
-    if (!path || !col) {
-        return;
-    }
-    int *indices = gtk_tree_path_get_indices (path);
-    if (indices) {
-        if (indices[0] >= 0) {
-            deadbeef->pl_lock ();
-            ddb_playlist_t *p = deadbeef->plt_get_for_idx (indices[0]);
-            deadbeef->plt_set_title (p, new_text);
-            deadbeef->plt_unref (p);
-            deadbeef->pl_unlock ();
-        }
-        g_free (indices);
+    int row = get_treeview_cursor_pos (GTK_TREE_VIEW (w->tree));
+    if (row >= 0) {
+        deadbeef->pl_lock ();
+        ddb_playlist_t *p = deadbeef->plt_get_for_idx (row);
+        deadbeef->plt_set_title (p, new_text);
+        deadbeef->plt_unref (p);
+        deadbeef->pl_unlock ();
     }
 }
 
@@ -696,26 +706,14 @@ on_pltbrowser_button_press_event         (GtkWidget       *widget,
 
 gboolean
 on_pltbrowser_popup_menu (GtkWidget *widget, gpointer user_data) {
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (GTK_TREE_VIEW(widget), &path, &col);
-    if (!path || !col) {
-        // reset
-        return FALSE;
+    int row = get_treeview_cursor_pos (GTK_TREE_VIEW (widget));
+    if (row >= 0) {
+        int plt_idx = row;
+        GtkWidget *menu = gtkui_plugin->create_pltmenu (plt_idx);
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+        return TRUE;
     }
-    int *indices = gtk_tree_path_get_indices (path);
-    int plt_idx;
-    if (indices) {
-        plt_idx = indices[0];
-        g_free (indices);
-    }
-    else {
-        return FALSE;
-    }
-
-    GtkWidget *menu = gtkui_plugin->create_pltmenu (plt_idx);
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
-    return TRUE;
+    return FALSE;
 }
 
 static void
