@@ -455,7 +455,7 @@ playlist_refresh (void) {
 }
 
 static gboolean
-playlistchanged_cb (gpointer none) {
+playlistcontentchanged_cb (gpointer none) {
     playlist_refresh ();
     return FALSE;
 }
@@ -794,7 +794,9 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 //        g_idle_add (paused_cb, NULL);
 //        break;
     case DB_EV_PLAYLISTCHANGED:
-        g_idle_add (playlistchanged_cb, NULL);
+        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT) {
+            g_idle_add (playlistcontentchanged_cb, NULL);
+        }
         break;
     case DB_EV_CONFIGCHANGED:
         g_idle_add (gtkui_on_configchanged, NULL);

@@ -92,7 +92,8 @@ on_searchentry_changed                 (GtkEditable     *editable,
                                         gpointer         user_data)
 {
     search_refresh ();
-    main_refresh ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SEARCHRESULT, 0);
 }
 
 void
