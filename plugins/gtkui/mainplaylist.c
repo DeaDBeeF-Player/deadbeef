@@ -309,6 +309,6 @@ main_playlist_init (GtkWidget *widget) {
 
 void
 main_refresh (void) {
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 

@@ -252,8 +252,15 @@ pltbrowser_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         g_idle_add (update_treeview_cursor, w);
         break;
     case DB_EV_CONFIGCHANGED:
-    case DB_EV_PLAYLISTCHANGED:
         g_idle_add (fill_pltbrowser_cb, w);
+        break;
+    case DB_EV_PLAYLISTCHANGED:
+        if (p1 == DDB_PLAYLIST_CHANGE_TITLE
+            || p1 == DDB_PLAYLIST_CHANGE_POSITION
+            || p1 == DDB_PLAYLIST_CHANGE_DELETED
+            || p1 == DDB_PLAYLIST_CHANGE_CREATED) {
+            g_idle_add (fill_pltbrowser_cb, w);
+        }
         break;
     }
     return 0;
@@ -401,7 +408,7 @@ sort_playlists (int order, int (*qsort_cmp_func)(const void *, const void*))
     }
 
     free (array);
-    deadbeef->sendmessage (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_POSITION, 0);
 }
 
 static void
