@@ -1532,6 +1532,13 @@ tab_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_
         GtkWidget *item;
         menu = gtk_menu_new ();
 
+        item = gtk_menu_item_new_with_mnemonic (_("Add new tab"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_add_tab_activate),
+                w);
+
         item = gtk_menu_item_new_with_mnemonic (_("Move tab left"));
         gtk_widget_show (item);
         gtk_container_add (GTK_CONTAINER (menu), item);
