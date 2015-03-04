@@ -28,6 +28,7 @@
 #include <limits.h>
 #include "../../deadbeef.h"
 #include "api68/api68.h"
+#include "api68/conf68.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 
@@ -38,7 +39,9 @@ static api68_t *sc68;
 
 typedef struct {
     DB_fileinfo_t info;
-    int currentsample;
+    uint64_t currentsample;
+    uint64_t totalsamples;
+    unsigned int start_ms;
 } in_sc68_info_t;
 
 static const char * exts[] = { "sndh", NULL };
@@ -63,6 +66,9 @@ static int
 in_sc68_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     in_sc68_info_t *info = (in_sc68_info_t *)_info;
 
+    api68_stop (sc68);
+    api68_close (sc68);
+
     // Load an sc68 file.
     deadbeef->pl_lock ();
     const char *fname = deadbeef->pl_find_meta (it, ":URI");
@@ -80,7 +86,18 @@ in_sc68_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
+    info->start_ms = ti.start_ms;
+
     int samplerate = deadbeef->conf_get_int ("c68.samplerate", 44100);
+    api68_config_set (sc68, SC68config_get_id ("sampling_rate"), samplerate);
+    api68_config_set (sc68, SC68config_get_id ("skip_time"), deadbeef->conf_get_int ("c68.skip_time", 4));
+
+    if (ti.time_ms > 0) {
+        info->totalsamples = ti.time_ms * samplerate / 1000;
+    }
+    else {
+        info->totalsamples = deadbeef->conf_get_float ("c68.songlength", 2) * 60 * samplerate;
+    }
 
     _info->plugin = &plugin;
     _info->fmt.bps = 16;
@@ -98,9 +115,6 @@ static void
 in_sc68_free (DB_fileinfo_t *_info) {
     in_sc68_info_t *info = (in_sc68_info_t *)_info;
     if (info) {
-        if (sc68) {
-            api68_stop (sc68);
-        }
         free (info);
     }
 }
@@ -112,6 +126,9 @@ in_sc68_free (DB_fileinfo_t *_info) {
 static int
 in_sc68_read (DB_fileinfo_t *_info, char *bytes, int size) {
     in_sc68_info_t *info = (in_sc68_info_t *)_info;
+    if (info->currentsample >= info->totalsamples) {
+        return 0;
+    }
     info->currentsample += size / (_info->fmt.channels * _info->fmt.bps/8);
     int res = api68_process(sc68, bytes, size>>2);
     if (res & API68_END) {
@@ -127,8 +144,12 @@ static int
 in_sc68_seek_sample (DB_fileinfo_t *_info, int sample) {
     in_sc68_info_t *info = (in_sc68_info_t *)_info;
 
-    info->currentsample = sample;
-    _info->readpos = (float)sample / _info->fmt.samplerate;
+    int seek_ms = sample * 1000 / _info->fmt.samplerate;
+    int ms = api68_seek (sc68, seek_ms + info->start_ms);
+    if (ms >= 0) {
+        info->currentsample = ms * _info->fmt.samplerate / 1000;
+        _info->readpos = (float)info->currentsample / _info->fmt.samplerate;
+    }
     return 0;
 }
 
@@ -157,6 +178,9 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
 #endif
 
+    api68_stop (sc68);
+    api68_close (sc68);
+
     // Load an sc68 file.
     if (api68_load_file(sc68, fname)) {
         return NULL;
@@ -168,6 +192,7 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     api68_music_info_t di;
     int err = api68_music_info (sc68, &di, 0, 0);
     if (err < 0) {
+        api68_close (sc68);
         return NULL;
     }
 
@@ -218,6 +243,7 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         deadbeef->pl_item_unref (it);
     }
 
+    api68_close (sc68);
     return after;
 }
 
@@ -256,6 +282,8 @@ in_sc68_stop (void) {
     // return 0 on success
     // return -1 on failure
     if (sc68) {
+        api68_stop (sc68);
+        api68_close (sc68);
         api68_shutdown (sc68);
     }
     return 0;
