@@ -44,7 +44,7 @@ typedef struct {
     unsigned int start_ms;
 } in_sc68_info_t;
 
-static const char * exts[] = { "sndh", NULL };
+static const char * exts[] = { "sndh", "snd", NULL };
 
 static void *
 intmalloc (unsigned int size) {
