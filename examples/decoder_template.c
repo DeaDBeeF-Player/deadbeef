@@ -210,6 +210,7 @@ static DB_decoder_t plugin = {
     .plugin.copyright = "copyright message - author(s), license, etc",
     .plugin.start = example_start,
     .plugin.stop = example_stop,
+    .open = example_open,
     .init = example_init,
     .free = example_free,
     .read = example_read,
