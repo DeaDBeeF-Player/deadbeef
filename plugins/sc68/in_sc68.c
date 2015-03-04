@@ -27,29 +27,21 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "../../deadbeef.h"
-#include "api68/api68.h"
-#include "api68/conf68.h"
+#include "sc68/sc68.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
-static api68_init_t init68;
-static api68_t *sc68;
+static sc68_t *sc68;
 
 typedef struct {
     DB_fileinfo_t info;
     uint64_t currentsample;
     uint64_t totalsamples;
-    unsigned int start_ms;
 } in_sc68_info_t;
 
 static const char * exts[] = { "sndh", "snd", NULL };
-
-static void *
-intmalloc (unsigned int size) {
-    return malloc (size);
-}
 
 // allocate codec control structure
 static DB_fileinfo_t *
@@ -66,13 +58,13 @@ static int
 in_sc68_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     in_sc68_info_t *info = (in_sc68_info_t *)_info;
 
-    api68_stop (sc68);
-    api68_close (sc68);
+    sc68_stop (sc68);
+    sc68_close (sc68);
 
     // Load an sc68 file.
     deadbeef->pl_lock ();
     const char *fname = deadbeef->pl_find_meta (it, ":URI");
-    int res = api68_load_file(sc68, fname);
+    int res = sc68_load_uri(sc68, fname);
     deadbeef->pl_unlock ();
 
     if (res) {
@@ -80,20 +72,19 @@ in_sc68_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     int tr = deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0);
-    api68_music_info_t ti;
-    res = api68_music_info (sc68, &ti, tr+1, 0);
+    sc68_music_info_t ti;
+    res = sc68_music_info (sc68, &ti, tr+1, 0);
     if (res < 0) {
         return -1;
     }
 
-    info->start_ms = ti.start_ms;
-
     int samplerate = deadbeef->conf_get_int ("c68.samplerate", 44100);
-    api68_config_set (sc68, SC68config_get_id ("sampling_rate"), samplerate);
+#if 0
+    sc68_config_set (sc68, SC68config_get_id ("sampling_rate"), samplerate);
     api68_config_set (sc68, SC68config_get_id ("skip_time"), deadbeef->conf_get_int ("c68.skip_time", 4));
-
-    if (ti.time_ms > 0) {
-        info->totalsamples = ti.time_ms * samplerate / 1000;
+#endif
+    if (ti.trk.time_ms > 0) {
+        info->totalsamples = ti.trk.time_ms * samplerate / 1000;
     }
     else {
         info->totalsamples = deadbeef->conf_get_float ("c68.songlength", 2) * 60 * samplerate;
@@ -106,7 +97,7 @@ in_sc68_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT;
     _info->readpos = 0;
 
-    api68_play(sc68, tr+1);
+    sc68_play (sc68, tr+1, ti.trk.time_ms == 0);
     return 0;
 }
 
@@ -130,11 +121,12 @@ in_sc68_read (DB_fileinfo_t *_info, char *bytes, int size) {
         return 0;
     }
     info->currentsample += size / (_info->fmt.channels * _info->fmt.bps/8);
-    int res = api68_process(sc68, bytes, size>>2);
-    if (res & API68_END) {
+    int n = size>>2;
+    int res = sc68_process(sc68, bytes, &n);
+    if (res & SC68_END) {
         return 0;
     }
-    return size;
+    return n<<2;
 }
 
 // seek to specified sample (frame)
@@ -143,13 +135,16 @@ in_sc68_read (DB_fileinfo_t *_info, char *bytes, int size) {
 static int
 in_sc68_seek_sample (DB_fileinfo_t *_info, int sample) {
     in_sc68_info_t *info = (in_sc68_info_t *)_info;
+    info->currentsample = sample;
 
+#if 0
     int seek_ms = sample * 1000 / _info->fmt.samplerate;
-    int ms = api68_seek (sc68, seek_ms + info->start_ms);
+    int ms = sc68_seek (sc68, seek_ms);
     if (ms >= 0) {
         info->currentsample = ms * _info->fmt.samplerate / 1000;
         _info->readpos = (float)info->currentsample / _info->fmt.samplerate;
     }
+#endif
     return 0;
 }
 
@@ -178,35 +173,35 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
 #endif
 
-    api68_stop (sc68);
-    api68_close (sc68);
+    sc68_stop (sc68);
+    sc68_close (sc68);
 
     // Load an sc68 file.
-    if (api68_load_file(sc68, fname)) {
+    if (sc68_load_uri(sc68, fname)) {
         return NULL;
     }
 
     // replace "in_sc68" with your file type (e.g. MP3, WAV, etc)
     const char *ft = "sc68";
 
-    api68_music_info_t di;
-    int err = api68_music_info (sc68, &di, 0, 0);
+    sc68_music_info_t di;
+    int err = sc68_music_info (sc68, &di, 0, 0);
     if (err < 0) {
-        api68_close (sc68);
+        sc68_close (sc68);
         return NULL;
     }
 
     int samplerate = deadbeef->conf_get_int ("c68.samplerate", 44100);
     for (int tr = 0; tr < di.tracks; tr++) {
-        api68_music_info_t ti;
-        int err = api68_music_info (sc68, &ti, tr+1, 0);
+        sc68_music_info_t ti;
+        int err = sc68_music_info (sc68, &ti, tr+1, 0);
         if (err < 0) {
             continue;
         }
 
         int totalsamples;
-        if (ti.time_ms > 0) {
-            totalsamples = ti.time_ms * samplerate / 1000;
+        if (ti.trk.time_ms > 0) {
+            totalsamples = ti.trk.time_ms * samplerate / 1000;
         }
         else {
             totalsamples = deadbeef->conf_get_float ("c68.songlength", 2) * 60 * samplerate;
@@ -226,11 +221,8 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             deadbeef->pl_add_meta (it, "title", ti.title);
         }
 
-        if (ti.author && ti.author[0]) {
-            deadbeef->pl_add_meta (it, "artist", ti.author);
-        }
-        if (ti.composer && ti.composer[0]) {
-            deadbeef->pl_add_meta (it, "composer", ti.composer);
+        if (ti.artist && ti.artist[0]) {
+            deadbeef->pl_add_meta (it, "artist", ti.artist);
         }
 
         if (di.tracks > 0) {
@@ -243,7 +235,7 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         deadbeef->pl_item_unref (it);
     }
 
-    api68_close (sc68);
+    sc68_close (sc68);
     return after;
 }
 
@@ -256,20 +248,16 @@ in_sc68_start (void) {
     // Clean up init structure (required).
 
     char datadir[PATH_MAX];
-    snprintf (datadir, sizeof (datadir), "%s/sc68data", deadbeef->get_plugin_dir ());
+    snprintf (datadir, sizeof (datadir), "%s/data68", deadbeef->get_plugin_dir ());
     setenv ("SC68_DATA", datadir, 1);
 
-    // Clean up init structure (required).
-    memset(&init68, 0, sizeof(init68));
-    // Set dynamic handler (required).
-    init68.alloc = intmalloc;
-    init68.free = free;
-    // Set debug message handler (optionnal).
-    init68.debug = (debugmsg68_t)vfprintf;
-    init68.debug_cookie = stderr;
-    sc68 = api68_init(&init68);
-    if (!sc68) {
-        api68_shutdown (sc68);
+    if (sc68_init(0)) {
+        sc68_shutdown ();
+        return -1;
+    }
+    if (sc68 = sc68_create(0), !sc68) {
+        sc68_destroy (sc68);
+        sc68_shutdown ();
         return -1;
     }
 
@@ -282,9 +270,10 @@ in_sc68_stop (void) {
     // return 0 on success
     // return -1 on failure
     if (sc68) {
-        api68_stop (sc68);
-        api68_close (sc68);
-        api68_shutdown (sc68);
+        sc68_stop (sc68);
+        sc68_close (sc68);
+        sc68_destroy (sc68);
+        sc68_shutdown ();
     }
     return 0;
 }
