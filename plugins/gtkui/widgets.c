@@ -121,6 +121,7 @@ typedef struct {
 typedef struct {
     ddb_gtkui_widget_t base;
     int clicked_page;
+    int active;
 } w_tabs_t;
 
 typedef struct {
@@ -1419,6 +1420,34 @@ w_hsplitter_create (void) {
 }
 
 ///// tabs widget
+const char *
+w_tabs_load (struct ddb_gtkui_widget_s *widget, const char *type, const char *s) {
+    w_tabs_t *w = widget;
+    if (strcmp (type, "tabs")) {
+        return NULL;
+    }
+    char key[MAX_TOKEN], val[MAX_TOKEN];
+    for (;;) {
+        get_keyvalue (s,key,val);
+
+        if (!strcmp (key, "active")) {
+            w->active = atoi (val);
+            gtk_notebook_set_current_page (GTK_NOTEBOOK (w->base.widget), w->active);
+        }
+    }
+
+    return s;
+}
+
+void
+w_tabs_save (struct ddb_gtkui_widget_s *widget, char *s, int sz) {
+    w_tabs_t *w = widget;
+    int active = gtk_notebook_get_current_page (GTK_NOTEBOOK (w->base.widget));
+    char spos[100];
+    snprintf (spos, sizeof (spos), " active=%d", active);
+    strncat (s, spos, sz);
+}
+
 static gboolean
 tab_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 
@@ -1489,6 +1518,7 @@ on_move_tab_left_activate (GtkMenuItem *menuitem, gpointer user_data) {
                 w->base.children = newchild;
             }
             GtkWidget *eventbox = gtk_event_box_new ();
+            gtk_event_box_set_visible_window (GTK_EVENT_BOX (eventbox), FALSE);
             GtkWidget *label = gtk_label_new (newchild->type);
             gtk_widget_show (eventbox);
             g_object_set_data (G_OBJECT (eventbox), "owner", w);
@@ -1576,6 +1606,7 @@ tab_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_
 void
 w_tabs_add (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
     GtkWidget *eventbox = gtk_event_box_new ();
+    gtk_event_box_set_visible_window (GTK_EVENT_BOX (eventbox), FALSE);
     GtkWidget *label = gtk_label_new (child->type);
     gtk_widget_show (eventbox);
     g_object_set_data (G_OBJECT (eventbox), "owner", cont);
@@ -1629,6 +1660,12 @@ w_tabs_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
             w);
 }
 
+void
+w_tabs_init (ddb_gtkui_widget_t *base) {
+    w_tabs_t *w = (w_tabs_t *)base;
+    gtk_notebook_set_current_page (GTK_NOTEBOOK (w->base.widget), w->active);
+}
+
 ddb_gtkui_widget_t *
 w_tabs_create (void) {
     w_tabs_t *w = malloc (sizeof (w_tabs_t));
@@ -1638,6 +1675,9 @@ w_tabs_create (void) {
     w->base.remove = w_container_remove;
     w->base.replace = w_tabs_replace;
     w->base.initmenu = w_tabs_initmenu;
+    w->base.save = w_tabs_save;
+    w->base.load = w_tabs_load;
+    w->base.init = w_tabs_init;
 
     ddb_gtkui_widget_t *ph1, *ph2, *ph3;
     ph1 = w_create ("placeholder");
