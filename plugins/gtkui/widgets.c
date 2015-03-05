@@ -1538,7 +1538,6 @@ on_rename_tab_activate (GtkMenuItem *menuitem, gpointer user_data) {
     e = lookup_widget (dlg, "title");
     int active = gtk_notebook_get_current_page (GTK_NOTEBOOK (w->base.widget));
     GtkWidget *child = gtk_notebook_get_nth_page (GTK_NOTEBOOK (w->base.widget), active);
-    //plt_get_title_wrapper (pltmenu_idx, t, sizeof (t));
     gtk_entry_set_text (GTK_ENTRY (e), gtk_notebook_get_tab_label_text (GTK_NOTEBOOK (w->base.widget), child));
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
     if (res == GTK_RESPONSE_OK) {
@@ -1645,6 +1644,13 @@ on_tab_popup_menu (GtkWidget *widget, gpointer user_data)
             G_CALLBACK (on_add_tab_activate),
             w);
 
+    item = gtk_menu_item_new_with_mnemonic (_("Rename tab"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate",
+            G_CALLBACK (on_rename_tab_activate),
+            w);
+
     item = gtk_menu_item_new_with_mnemonic (_("Move tab left"));
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
@@ -1665,14 +1671,6 @@ on_tab_popup_menu (GtkWidget *widget, gpointer user_data)
     g_signal_connect ((gpointer) item, "activate",
             G_CALLBACK (on_remove_tab_activate),
             w);
-
-    item = gtk_menu_item_new_with_mnemonic (_("Rename tab"));
-    gtk_widget_show (item);
-    gtk_container_add (GTK_CONTAINER (menu), item);
-    g_signal_connect ((gpointer) item, "activate",
-            G_CALLBACK (on_rename_tab_activate),
-            w);
-
 
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, w, 0, gtk_get_current_event_time());
     return TRUE;
