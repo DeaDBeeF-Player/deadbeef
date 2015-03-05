@@ -1564,7 +1564,6 @@ on_move_tab_left_activate (GtkMenuItem *menuitem, gpointer user_data) {
     if (w->clicked_page <= 0) {
         return;
     }
-
     // remove and save widget
     int i = 0;
     ddb_gtkui_widget_t *newchild = NULL;
@@ -1621,10 +1620,10 @@ static void
 on_move_tab_right_activate (GtkMenuItem *menuitem, gpointer user_data) {
     w_tabs_t *w = user_data;
 
-    int i = 0;
-    for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++);
-    if (w->clicked_page >= i)
+    int num_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (w->base.widget));
+    if (w->clicked_page == num_pages - 1) {
         return;
+    }
 
     gtk_notebook_set_current_page (GTK_NOTEBOOK (w->base.widget), ++w->clicked_page);
     on_move_tab_left_activate (menuitem, user_data);
