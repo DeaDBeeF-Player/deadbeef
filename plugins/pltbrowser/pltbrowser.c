@@ -44,6 +44,13 @@ typedef struct {
     gulong ri_id;
 } w_pltbrowser_t;
 
+enum
+{
+    COL_NAME,
+    COL_ITEMS,
+    COL_DURATION,
+};
+
 // copied from gktui.c
 static void
 playlist_set_curr (int playlist) {
@@ -84,6 +91,27 @@ add_new_playlist (void) {
     return -1;
 }
 
+static int
+get_treeview_cursor_pos (GtkTreeView *tree)
+{
+    if (!tree) {
+        return -1;
+    }
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (tree), &path, &col);
+    if (!path || !col) {
+        return -1;
+    }
+    int result = -1;
+    int *indices = gtk_tree_path_get_indices (path);
+    if (indices) {
+        result = indices[0];
+        g_free (indices);
+    }
+    return result;
+}
+
 static void
 on_pltbrowser_row_inserted (GtkTreeModel *tree_model, GtkTreePath *path, GtkTreeIter *iter, gpointer user_data) {
     w_pltbrowser_t *plt = user_data;
@@ -105,19 +133,10 @@ on_pltbrowser_row_inserted (GtkTreeModel *tree_model, GtkTreePath *path, GtkTree
 static void
 on_pltbrowser_cursor_changed (GtkTreeView *treeview, gpointer user_data) {
     w_pltbrowser_t *w = user_data;
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (treeview, &path, &col);
-    if (!path) {
-        return;
-    }
-    int *indices = gtk_tree_path_get_indices (path);
-    if (indices) {
-        if (indices[0] >= 0) {
-            deadbeef->plt_set_curr_idx (indices[0]);
-            w->last_selected = indices[0];
-        }
-        g_free (indices);
+    int cursor = get_treeview_cursor_pos (treeview);
+    if (cursor >= 0) {
+        deadbeef->plt_set_curr_idx (cursor);
+        w->last_selected = cursor;
     }
 }
 
@@ -174,7 +193,7 @@ fill_pltbrowser_cb (gpointer data) {
             snprintf (totaltime_str, sizeof (totaltime_str), _("%dd %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
         }
 
-        gtk_list_store_set (store, &iter, 0, title, 1, num_items_str, 2, totaltime_str, -1);
+        gtk_list_store_set (store, &iter, COL_NAME, title, COL_ITEMS, num_items_str, COL_DURATION, totaltime_str, -1);
     }
     if (curr != -1) {
         GtkTreePath *path = gtk_tree_path_new_from_indices (curr, -1);
@@ -185,6 +204,19 @@ fill_pltbrowser_cb (gpointer data) {
     w->ri_id = g_signal_connect ((gpointer)store, "row_inserted", G_CALLBACK (on_pltbrowser_row_inserted), w);
     w->cc_id = g_signal_connect ((gpointer)w->tree, "cursor_changed", G_CALLBACK (on_pltbrowser_cursor_changed), w);
     g_signal_connect ((gpointer) w->tree, "popup_menu", G_CALLBACK (on_pltbrowser_popup_menu), NULL);
+    return FALSE;
+}
+
+static gboolean
+update_treeview_cursor (gpointer user_data)
+{
+    w_pltbrowser_t *w = user_data;
+    int curr = deadbeef->plt_get_curr_idx ();
+    if (curr != -1) {
+        GtkTreePath *path = gtk_tree_path_new_from_indices (curr, -1);
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (w->tree), path, NULL, FALSE);
+        gtk_tree_path_free (path);
+    }
     return FALSE;
 }
 
@@ -216,15 +248,18 @@ pltbrowser_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
             }
         }
         break;
-    case DB_EV_CONFIGCHANGED:
     case DB_EV_PLAYLISTSWITCHED:
+        g_idle_add (update_treeview_cursor, w);
+        break;
+    case DB_EV_CONFIGCHANGED:
         g_idle_add (fill_pltbrowser_cb, w);
         break;
     case DB_EV_PLAYLISTCHANGED:
-        if (p1 == DDB_PLAYLIST_CHANGE_TITLE
+        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT
+            || p1 == DDB_PLAYLIST_CHANGE_TITLE
             || p1 == DDB_PLAYLIST_CHANGE_POSITION
             || p1 == DDB_PLAYLIST_CHANGE_DELETED
-            || p1 == DB_PLAYLIST_CHANGE_CREATED) {
+            || p1 == DDB_PLAYLIST_CHANGE_CREATED) {
             g_idle_add (fill_pltbrowser_cb, w);
         }
         break;
@@ -312,6 +347,143 @@ on_pltbrowser_header_popup_menu (gpointer user_data)
     return TRUE;
 }
 
+static int
+cmp_playlist_name_func (const void *a, const void *b) {
+    ddb_playlist_t *aa = *((ddb_playlist_t **)a);
+    ddb_playlist_t *bb = *((ddb_playlist_t **)b);
+    char title0[1000];
+    char title1[1000];
+    deadbeef->plt_get_title (aa, title0, sizeof (title0));
+    deadbeef->plt_get_title (bb, title1, sizeof (title1));
+    return strcasecmp (title0, title1);
+}
+
+static int
+cmp_playlist_items_func (const void *a, const void *b) {
+    ddb_playlist_t *aa = *((ddb_playlist_t **)a);
+    ddb_playlist_t *bb = *((ddb_playlist_t **)b);
+    int num_items0 = deadbeef->plt_get_item_count (aa, PL_MAIN);
+    int num_items1 = deadbeef->plt_get_item_count (bb, PL_MAIN);
+    return num_items0 - num_items1;
+}
+
+static int
+cmp_playlist_duration_func (const void *a, const void *b) {
+    ddb_playlist_t *aa = *((ddb_playlist_t **)a);
+    ddb_playlist_t *bb = *((ddb_playlist_t **)b);
+    float pl_totaltime0 = deadbeef->plt_get_totaltime (aa);
+    float pl_totaltime1 = deadbeef->plt_get_totaltime (bb);
+    if (pl_totaltime0 > pl_totaltime1) {
+        return 1;
+    }
+    else if (pl_totaltime0 == pl_totaltime1) {
+        return 0;
+    }
+    else {
+        return -1;
+    }
+}
+
+static void
+sort_playlists (int order, int (*qsort_cmp_func)(const void *, const void*))
+{
+    deadbeef->pl_lock ();
+    int plt_count = deadbeef->plt_get_count ();
+    ddb_playlist_t **array = malloc (plt_count * sizeof (ddb_playlist_t *));
+    int idx = 0;
+    for (ddb_playlist_t *plt = deadbeef->plt_get_for_idx (idx); plt; idx++, plt = deadbeef->plt_get_for_idx (idx)) {
+        array[idx] = plt;
+    }
+    qsort (array, plt_count, sizeof (ddb_playlist_t *), qsort_cmp_func);
+    deadbeef->pl_unlock ();
+
+    for (int i = 0; i < plt_count; i++) {
+        int idx = deadbeef->plt_get_idx (array[i]);
+        if (order == GTK_SORT_ASCENDING) {
+            deadbeef->plt_move (idx, i);
+        }
+        else {
+            deadbeef->plt_move (idx, plt_count - i - 1);
+        }
+        deadbeef->plt_unref (array[i]);
+    }
+
+    free (array);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_POSITION, 0);
+}
+
+static void
+sort_by_name (int order)
+{
+    sort_playlists (order, cmp_playlist_name_func);
+    return;
+}
+
+static void
+sort_by_items (int order)
+{
+    sort_playlists (order, cmp_playlist_items_func);
+    return;
+}
+
+static void
+sort_by_duration (int order)
+{
+    sort_playlists (order, cmp_playlist_duration_func);
+    return;
+}
+
+static gint
+get_col_number_from_tree_view_column (GtkTreeView *view, GtkTreeViewColumn *col)
+{
+    GList *cols = gtk_tree_view_get_columns(GTK_TREE_VIEW (view));
+    gint num = g_list_index(cols, (gpointer) col);
+    g_list_free(cols);
+    return num;
+}
+
+static gboolean
+on_pltbrowser_column_clicked (GtkTreeViewColumn     *col,
+                              gpointer         user_data)
+{
+    w_pltbrowser_t *w = user_data;
+    GtkWidget *view = gtk_tree_view_column_get_tree_view (GTK_TREE_VIEW_COLUMN (col));
+    int order = gtk_tree_view_column_get_sort_order (GTK_TREE_VIEW_COLUMN (col));
+
+    // remove sort indicator from every column
+    GList *list = gtk_tree_view_get_columns (GTK_TREE_VIEW (view));
+    GList *node = list;
+    GtkTreeViewColumn *column = node->data;
+    while (node) {
+        column = node->data;
+        gtk_tree_view_column_set_sort_indicator (GTK_TREE_VIEW_COLUMN (column), FALSE);
+        node = node->next;
+    }
+    g_list_free (list);
+
+    // add sort indicator to current column
+    gtk_tree_view_column_set_sort_indicator (GTK_TREE_VIEW_COLUMN (col), TRUE);
+    gtk_tree_view_column_set_sort_order (GTK_TREE_VIEW_COLUMN (col), !order);
+
+    // sort clicked column
+    int col_id = get_col_number_from_tree_view_column (GTK_TREE_VIEW (view), GTK_TREE_VIEW_COLUMN (col));
+    switch (col_id) {
+        case COL_NAME:
+            sort_by_name (order);
+            break;
+        case COL_ITEMS:
+            sort_by_items (order);
+            break;
+        case COL_DURATION:
+            sort_by_duration (order);
+            break;
+        default:
+            sort_by_name (order);
+            break;
+    }
+    return FALSE;
+}
+
 static gboolean
 on_pltbrowser_header_clicked (GtkWidget       *widget,
                               GdkEventButton  *event,
@@ -329,13 +501,95 @@ on_pltbrowser_header_clicked (GtkWidget       *widget,
     return FALSE;
 }
 
+static void
+plt_get_title_wrapper (int plt, char *buffer, int len) {
+    if (plt == -1) {
+        strcpy (buffer, "");
+        return;
+    }
+    ddb_playlist_t *p = deadbeef->plt_get_for_idx (plt);
+    deadbeef->plt_get_title (p, buffer, len);
+    deadbeef->plt_unref (p);
+    char *end;
+    if (!g_utf8_validate (buffer, -1, (const gchar **)&end)) {
+        *end = 0;
+    }
+}
+
+static gboolean
+on_pltbrowser_key_press_event (GtkWidget *widget,
+                               GdkEventKey  *event,
+                               gpointer   user_data)
+{
+    w_pltbrowser_t *w = user_data;
+    if (event->keyval == GDK_F2) {
+        // rename selected playlist
+        GtkTreePath *path;
+        GtkTreeViewColumn *col;
+        gtk_tree_view_get_cursor (GTK_TREE_VIEW (w->tree), &path, NULL);
+        col = gtk_tree_view_get_column (GTK_TREE_VIEW (w->tree), COL_NAME);
+        if (!path || !col) {
+            return FALSE;
+        }
+        // start editing
+        gtk_tree_view_set_cursor_on_cell (GTK_TREE_VIEW (w->tree), path, col, NULL, TRUE);
+    }
+    return FALSE;
+}
+
+static void
+on_pltbrowser_cell_edititing_started (GtkCellRenderer *renderer,
+                                      GtkCellEditable *editable,
+                                      gchar           *path,
+                                      gpointer         user_data)
+{
+    w_pltbrowser_t *w = user_data;
+    if (deadbeef->conf_get_int ("gtkui.pltbrowser.highlight_curr_plt", 0)
+            && GTK_IS_ENTRY (editable)) {
+        // we need to get rid of the "(playing)" string before editing the playlist name
+        int row = get_treeview_cursor_pos (GTK_TREE_VIEW (w->tree));
+        if (row >= 0) {
+            GtkEntry *entry = GTK_ENTRY (editable);
+            char t[1000];
+            plt_get_title_wrapper (row, t, sizeof (t));
+            gtk_entry_set_text (GTK_ENTRY (entry), t);
+        }
+    }
+}
+
+static void
+on_pltbrowser_cell_edited (GtkCellRendererText *cell,
+                           gchar               *path_string,
+                           gchar               *new_text,
+                           gpointer             user_data)
+{
+    w_pltbrowser_t *w = user_data;
+    int row = get_treeview_cursor_pos (GTK_TREE_VIEW (w->tree));
+    if (row >= 0) {
+        deadbeef->pl_lock ();
+        ddb_playlist_t *p = deadbeef->plt_get_for_idx (row);
+        deadbeef->plt_set_title (p, new_text);
+        deadbeef->plt_unref (p);
+        deadbeef->pl_unlock ();
+    }
+}
+
 static GtkTreeViewColumn *
 add_treeview_column (w_pltbrowser_t *w, GtkTreeView *tree, int pos, int expand, int align_right, const char *title)
 {
     GtkCellRenderer *rend = gtk_cell_renderer_text_new ();
     GtkTreeViewColumn *col = gtk_tree_view_column_new_with_attributes (title, rend, "text", pos, NULL);
     if (align_right) {
-        gtk_cell_renderer_set_alignment (GTK_CELL_RENDERER (rend), 1.0, 0.0);
+        g_object_set (rend, "xalign", 1.0, NULL);
+    }
+    if (pos == COL_NAME) {
+        g_object_set (rend, "editable", TRUE, NULL);
+        g_signal_connect (rend, "editing_started",
+                G_CALLBACK (on_pltbrowser_cell_edititing_started),
+                w);
+        g_signal_connect (rend, "edited",
+                G_CALLBACK (on_pltbrowser_cell_edited),
+                w);
     }
     gtk_tree_view_column_set_sizing (col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     gtk_tree_view_column_set_expand (col, expand);
@@ -347,7 +601,34 @@ add_treeview_column (w_pltbrowser_t *w, GtkTreeView *tree, int pos, int expand, 
     g_signal_connect (col_button, "button-press-event",
             G_CALLBACK (on_pltbrowser_header_clicked),
             w);
+    g_signal_connect (col, "clicked",
+            G_CALLBACK (on_pltbrowser_column_clicked),
+            w);
     return col;
+}
+
+static gboolean drag_row_active = FALSE;
+
+static gboolean
+on_pltbrowser_drag_begin_event          (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        guint            time,
+                                        gpointer user_data)
+{
+    drag_row_active = TRUE;
+}
+
+static gboolean
+on_pltbrowser_drag_end_event          (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        guint            time,
+                                        gpointer user_data)
+{
+    drag_row_active = FALSE;
 }
 
 static gboolean
@@ -359,6 +640,9 @@ on_pltbrowser_drag_motion_event          (GtkWidget       *widget,
                                         gpointer user_data)
 {
     w_pltbrowser_t *w = user_data;
+    if (drag_row_active) {
+        return FALSE;
+    }
     GdkWindow *window = gtk_tree_view_get_bin_window (GTK_TREE_VIEW (widget));
 
     int bin_x = 0;
@@ -422,26 +706,14 @@ on_pltbrowser_button_press_event         (GtkWidget       *widget,
 
 gboolean
 on_pltbrowser_popup_menu (GtkWidget *widget, gpointer user_data) {
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (GTK_TREE_VIEW(widget), &path, &col);
-    if (!path || !col) {
-        // reset
-        return FALSE;
+    int row = get_treeview_cursor_pos (GTK_TREE_VIEW (widget));
+    if (row >= 0) {
+        int plt_idx = row;
+        GtkWidget *menu = gtkui_plugin->create_pltmenu (plt_idx);
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+        return TRUE;
     }
-    int *indices = gtk_tree_path_get_indices (path);
-    int plt_idx;
-    if (indices) {
-        plt_idx = indices[0];
-        g_free (indices);
-    }
-    else {
-        return FALSE;
-    }
-
-    GtkWidget *menu = gtkui_plugin->create_pltmenu (plt_idx);
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
-    return TRUE;
+    return FALSE;
 }
 
 static void
@@ -504,15 +776,15 @@ w_pltbrowser_create (void) {
     w->ri_id = g_signal_connect ((gpointer) store, "row_inserted", G_CALLBACK (on_pltbrowser_row_inserted), w);
 
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
-    GtkTreeViewColumn *col1 = add_treeview_column (w, GTK_TREE_VIEW (w->tree), 0, 1, 0, _("Name"));
+    GtkTreeViewColumn *col1 = add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_NAME, 1, 0, _("Name"));
 
     int show_item_column = deadbeef->conf_get_int ("gtkui.pltbrowser.show_items_column", 0);
-    w->col_items = add_treeview_column (w, GTK_TREE_VIEW (w->tree), 1, 0, 1, _("Items"));
+    w->col_items = add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_ITEMS, 0, 1, _("Items"));
     if (!show_item_column) {
         gtk_tree_view_column_set_visible (w->col_items, 0);
     }
 
-    w->col_duration = add_treeview_column (w, GTK_TREE_VIEW (w->tree), 2, 0, 1, _("Duration"));
+    w->col_duration = add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_DURATION, 0, 1, _("Duration"));
     int show_duration_column = deadbeef->conf_get_int ("gtkui.pltbrowser.show_duration_column", 0);
     if (!show_duration_column) {
         gtk_tree_view_column_set_visible (w->col_duration, 0);
@@ -532,8 +804,17 @@ w_pltbrowser_create (void) {
     g_signal_connect ((gpointer) w->tree, "row_activated",
             G_CALLBACK (on_pltbrowser_row_activated),
             w);
+    g_signal_connect ((gpointer) w->tree, "drag_begin",
+            G_CALLBACK (on_pltbrowser_drag_begin_event),
+            w);
+    g_signal_connect ((gpointer) w->tree, "drag_end",
+            G_CALLBACK (on_pltbrowser_drag_end_event),
+            w);
     g_signal_connect ((gpointer) w->tree, "drag_motion",
             G_CALLBACK (on_pltbrowser_drag_motion_event),
+            w);
+    g_signal_connect ((gpointer) w->tree, "key_press_event",
+            G_CALLBACK (on_pltbrowser_key_press_event),
             w);
 
     gtkui_plugin->w_override_signals (w->base.widget, w);
