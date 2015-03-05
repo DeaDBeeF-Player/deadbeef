@@ -121,12 +121,16 @@ in_sc68_read (DB_fileinfo_t *_info, char *bytes, int size) {
         return 0;
     }
     info->currentsample += size / (_info->fmt.channels * _info->fmt.bps/8);
-    int n = size>>2;
-    int res = sc68_process(sc68, bytes, &n);
-    if (res & SC68_END) {
-        return 0;
+    int initsize = size;
+    while (size > 0) {
+        int n = size>>2;
+        int res = sc68_process(sc68, bytes, &n);
+        if (res & SC68_END) {
+            break;
+        }
+        size -= n<<2;
     }
-    return size;
+    return initsize-size;
 }
 
 // seek to specified sample (frame)
