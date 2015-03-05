@@ -571,6 +571,9 @@ get_cover_art_thumb (const char *fname, const char *artist, const char *album, i
 
 void
 coverart_reset_queue (void) {
+    if (!artwork_plugin) {
+        return;
+    }
     trace("coverart: reset queue\n");
     deadbeef->mutex_lock (mutex);
     if (queue) {
@@ -591,6 +594,13 @@ coverart_reset_queue (void) {
 
 void
 cover_art_init (void) {
+    const DB_plugin_t *plugin = deadbeef->plug_get_for_id("artwork");
+    if (plugin && PLUG_TEST_COMPAT(plugin, 1, 2)) {
+        artwork_plugin = (DB_artwork_plugin_t *)plugin;
+    }
+    if (!artwork_plugin) {
+        return;
+    }
     thumb_cache_size = 2;
     thumb_cache = calloc(2, sizeof(cached_pixbuf_t));
     if (!thumb_cache) {
@@ -602,13 +612,6 @@ cover_art_init (void) {
     cond = deadbeef->cond_create ();
     if (mutex && cond) {
         tid = deadbeef->thread_start_low_priority (loading_thread, NULL);
-    }
-
-    if (tid) {
-        const DB_plugin_t *plugin = deadbeef->plug_get_for_id("artwork");
-        if (plugin && PLUG_TEST_COMPAT(plugin, 1, 2)) {
-            artwork_plugin = (DB_artwork_plugin_t *)plugin;
-        }
     }
 }
 
