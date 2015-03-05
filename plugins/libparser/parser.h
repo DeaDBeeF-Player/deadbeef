@@ -47,4 +47,9 @@ gettoken_warn_eof (const char *p, char *tok);
 const char *
 gettoken_err_eof (const char *p, char *tok);
 
+// escape '"' and '\\' with '\\'
+// returns allocated buffer, must be freed by the caller
+char *
+parser_escape_string (const char *in);
+
 #endif
