@@ -237,7 +237,9 @@ AM_CONDITIONAL(OS_OSX, test "x$OS_OSX" = "xyes")
 
 AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
+        JANSSON_CFLAGS="-I../../$LIB/include"
         JANSSON_LIBS=-ljansson
+        AC_SUBST(JANSSON_CFLAGS)
         AC_SUBST(JANSSON_LIBS)
     ], [
         PKG_CHECK_MODULES(JANSSON, jansson)
