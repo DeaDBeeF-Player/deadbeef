@@ -68,6 +68,7 @@
 #ifdef HAVE_COCOAUI
 #include "cocoautil.h"
 #endif
+#include "playqueue.h"
 
 #ifndef PREFIX
 #error PREFIX must be defined
@@ -754,10 +755,10 @@ mainloop_thread (void *ctx) {
     DB_plugin_t *gui = plug_get_gui ();
 #if HAVE_COCOAUI
     main_cleanup_and_quit();
+#endif
     if (gui) {
         gui->stop ();
     }
-#endif
     return;
 }
 
