@@ -29,8 +29,8 @@ void draw_column_data (DdbListview *listview, cairo_t *drawable, DdbListviewIter
 void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx);
 
-void
-append_column_from_textdef (DdbListview *listview, const uint8_t *def);
+int
+load_column_config (DdbListview *listview, const char *key);
 
 void
 add_column_helper (DdbListview *listview, const char *title, int width, int id, const char *format, int align_right);
