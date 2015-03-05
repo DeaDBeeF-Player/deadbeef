@@ -21,10 +21,7 @@
 
 #include "ddblistview.h"
 
-void
-write_column_config (const char *name, int idx, const char *title, int width, int align_right, int id, int color_override, GdkColor color, const char *format);
-
-void
+int
 rewrite_column_config (DdbListview *listview, const char *name);
 
 void draw_column_data (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, DdbListviewIter group_it, int column, int group_y, int group_height, int group_pinned, int grp_next_y, int x, int y, int width, int height);
