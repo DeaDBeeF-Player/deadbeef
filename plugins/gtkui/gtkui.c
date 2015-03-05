@@ -455,7 +455,7 @@ playlist_refresh (void) {
 }
 
 static gboolean
-playlistchanged_cb (gpointer none) {
+playlistcontentchanged_cb (gpointer none) {
     playlist_refresh ();
     return FALSE;
 }
@@ -794,7 +794,9 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 //        g_idle_add (paused_cb, NULL);
 //        break;
     case DB_EV_PLAYLISTCHANGED:
-        g_idle_add (playlistchanged_cb, NULL);
+        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT) {
+            g_idle_add (playlistcontentchanged_cb, NULL);
+        }
         break;
     case DB_EV_CONFIGCHANGED:
         g_idle_add (gtkui_on_configchanged, NULL);
@@ -945,7 +947,7 @@ gtkui_thread (void *ctx) {
     w_reg_widget (_("Splitter (top and bottom)"), 0, w_vsplitter_create, "vsplitter", NULL);
     w_reg_widget (_("Splitter (left and right)"), 0, w_hsplitter_create, "hsplitter", NULL);
     w_reg_widget (NULL, 0, w_placeholder_create, "placeholder", NULL);
-//    w_reg_widget (_("Tabs"), 0, w_tabs_create, "tabs", NULL);
+    w_reg_widget (_("Tabs"), 0, w_tabs_create, "tabs", NULL);
     w_reg_widget (_("Playlist tabs"), 0, w_tabstrip_create, "tabstrip", NULL);
     w_reg_widget (_("Selection properties"), 0, w_selproperties_create, "selproperties", NULL);
     w_reg_widget (_("Album art display"), 0, w_coverart_create, "coverart", NULL);

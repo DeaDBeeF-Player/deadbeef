@@ -1133,6 +1133,7 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
             tab_moved = 1;
             ts->dragging = inspos;
             deadbeef->conf_set_int ("playlist.current", ts->dragging);
+            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_POSITION, 0);
         }
         gtk_widget_queue_draw (widget);
     }
