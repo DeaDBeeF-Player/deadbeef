@@ -1101,12 +1101,12 @@ load_column_config (DdbListview *listview, const char *key) {
         sformat = json_string_value (format);
         iwidth = atoi (json_string_value (width));
         if (json_is_string (color_override)) {
-            icolor_override = atoi (json_string_value (id));
+            icolor_override = atoi (json_string_value (color_override));
         }
         if (json_is_string (color)) {
             scolor = json_string_value (color);
             int r, g, b, a;
-            if (4 == sscanf (scolor, "%02x%02x%02x%02x", &a, &r, &g, &b)) {
+            if (4 == sscanf (scolor, "#%02x%02x%02x%02x", &a, &r, &g, &b)) {
                 gdkcolor.red = r<<8;
                 gdkcolor.green = g<<8;
                 gdkcolor.blue = b<<8;
