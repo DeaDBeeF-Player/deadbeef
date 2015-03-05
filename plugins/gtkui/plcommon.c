@@ -89,21 +89,14 @@ pl_common_free (void)
     g_object_unref(buffering16_pixbuf);
 }
 
-void
-write_column_config (const char *name, int idx, const char *title, int width, int align_right, int id, int color_override, GdkColor color, const char *format) {
-    char key[128];
-    char value[256];
-    snprintf (key, sizeof (key), "%s.column.%02d", name, idx);
-    snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d %d %d %d %d", title, format ? format : "", id, width, align_right, color_override, color.red, color.green, color.blue);
-    deadbeef->conf_set_str (key, value);
-}
+#define COL_CONF_BUFFER_SIZE 10000
 
-void
+int
 rewrite_column_config (DdbListview *listview, const char *name) {
-    return;
-    char key[128];
-    snprintf (key, sizeof (key), "%s.column.", name);
-    deadbeef->conf_remove_items (key);
+    char *buffer = malloc (COL_CONF_BUFFER_SIZE);
+    strcpy (buffer, "[");
+    char *p = buffer+1;
+    int n = COL_CONF_BUFFER_SIZE-3;
 
     int cnt = ddb_listview_column_get_count (listview);
     for (int i = 0; i < cnt; i++) {
@@ -115,8 +108,18 @@ rewrite_column_config (DdbListview *listview, const char *name) {
         int color_override;
         GdkColor color;
         ddb_listview_column_get_info (listview, i, &title, &width, &align_right, &minheight, &color_override, &color, (void **)&info);
-        write_column_config (name, i, title, width, align_right, info->id, color_override, color, info->format);
+
+        size_t written = snprintf (p, n, "{\"title\":\"%s\",\"id\":\"%d\",\"format\":\"%s\",\"size\":\"%d\",\"align_right\":\"%d\",\"minheight\":\"%d\"}%s", title, info->id, info->format, width, align_right, minheight, i < cnt-1 ? "," : "");
+        p += written;
+        n -= written;
+        if (n <= 0) {
+            fprintf (stderr, "Column configuration is too large, doesn't fit in the buffer. Won't be written.\n");
+            return -1;
+        }
     }
+    strcpy (p, "]");
+    deadbeef->conf_set_str (name, buffer);
+    return 0;
 }
 
 static gboolean

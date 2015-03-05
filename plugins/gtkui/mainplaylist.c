@@ -180,7 +180,7 @@ static int lock_column_config = 0;
 void
 main_columns_changed (DdbListview *listview) {
     if (!lock_column_config) {
-        rewrite_column_config (listview, "playlist");
+        rewrite_column_config (listview, "gtkui.columns.playlist");
     }
 }
 

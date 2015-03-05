@@ -309,7 +309,7 @@ static int lock_column_config = 0;
 static void
 search_columns_changed (DdbListview *listview) {
     if (!lock_column_config) {
-        rewrite_column_config (listview, "search");
+        rewrite_column_config (listview, "gtkui.columns.search");
     }
 }
 
