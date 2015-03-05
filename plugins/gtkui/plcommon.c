@@ -32,6 +32,7 @@
 #include "actions.h"
 #include "actionhandlers.h"
 #include "../../strdupa.h"
+#include <jansson.h>
 
 #define min(x,y) ((x)<(y)?(x):(y))
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -102,14 +103,14 @@ rewrite_column_config (DdbListview *listview, const char *name) {
     for (int i = 0; i < cnt; i++) {
         const char *title;
         int width;
-        int align_right;
+        int align;
         col_info_t *info;
         int minheight;
         int color_override;
         GdkColor color;
-        ddb_listview_column_get_info (listview, i, &title, &width, &align_right, &minheight, &color_override, &color, (void **)&info);
+        ddb_listview_column_get_info (listview, i, &title, &width, &align, &minheight, &color_override, &color, (void **)&info);
 
-        size_t written = snprintf (p, n, "{\"title\":\"%s\",\"id\":\"%d\",\"format\":\"%s\",\"size\":\"%d\",\"align_right\":\"%d\",\"minheight\":\"%d\"}%s", title, info->id, info->format, width, align_right, minheight, i < cnt-1 ? "," : "");
+        size_t written = snprintf (p, n, "{\"title\":\"%s\",\"id\":\"%d\",\"format\":\"%s\",\"size\":\"%d\",\"align\":\"%d\",\"color_override\":\"%d\",\"color\":\"#ff%02x%02x%02x\"}%s", title, info->id, info->format, width, align, color_override, color.red>>8, color.green>>8, color.blue>>8, i < cnt-1 ? "," : "");
         p += written;
         n -= written;
         if (n <= 0) {
@@ -1047,8 +1048,102 @@ set_active_column_cm (int col) {
     active_column = col;
 }
 
-void
-append_column_from_textdef (DdbListview *listview, const uint8_t *def) {
+int
+load_column_config (DdbListview *listview, const char *key) {
+    deadbeef->conf_lock ();
+    const char *json = deadbeef->conf_get_str_fast (key, NULL);
+    json_error_t error;
+    json_t *root = json_loads (json, 0, &error);
+    deadbeef->conf_unlock ();
+    if(!root) {
+        printf ("json parse error for config variable %s\n", key);
+        return -1;
+    }
+    if (!json_is_array (root))
+    {
+        goto error;
+    }
+    for (int i = 0; i < json_array_size(root); i++) {
+        json_t *title, *align, *id, *format, *width, *color_override, *color;
+        json_t *data = json_array_get (root, i);
+        if (!json_is_object (data)) {
+            goto error;
+        }
+        title = json_object_get (data, "title");
+        align = json_object_get (data, "align");
+        id = json_object_get (data, "id");
+        format = json_object_get (data, "format");
+        width = json_object_get (data, "size");
+        color_override = json_object_get (data, "color_override");
+        color = json_object_get (data, "color");
+        if (!json_is_string (title)
+                || !json_is_string (format)
+                || !json_is_string (id)
+                || !json_is_string (width)
+           ) {
+            goto error;
+        }
+        const char *stitle = NULL;
+        int ialign = -1;
+        int iid = -1;
+        const char *sformat = NULL;
+        int iwidth = 0;
+        int icolor_override = 0;
+        const char *scolor = NULL;
+        GdkColor gdkcolor;
+        stitle = json_string_value (title);
+        if (json_is_string (align)) {
+            ialign = atoi (json_string_value (align));
+        }
+        if (json_is_string (id)) {
+            iid = atoi (json_string_value (id));
+        }
+        sformat = json_string_value (format);
+        iwidth = atoi (json_string_value (width));
+        if (json_is_string (color_override)) {
+            icolor_override = atoi (json_string_value (id));
+        }
+        if (json_is_string (color)) {
+            scolor = json_string_value (color);
+            int r, g, b, a;
+            if (4 == sscanf (scolor, "%02x%02x%02x%02x", &a, &r, &g, &b)) {
+                gdkcolor.red = r<<8;
+                gdkcolor.green = g<<8;
+                gdkcolor.blue = b<<8;
+            }
+            else {
+                icolor_override = 0;
+            }
+        }
+
+        col_info_t *inf = malloc (sizeof (col_info_t));
+        memset (inf, 0, sizeof (col_info_t));
+        inf->id = iid;
+        inf->format = strdup (sformat);
+        char *bytecode;
+        int res = deadbeef->tf_compile (inf->format, &bytecode);
+        if (res >= 0) {
+            inf->bytecode = bytecode;
+            inf->bytecode_len = res;
+        }
+        ddb_listview_column_append (listview, stitle, iwidth, ialign, inf->id == DB_COLUMN_ALBUM_ART ? iwidth : 0, 0, gdkcolor, inf);
+
+        json_decref (title);
+        json_decref (align);
+        json_decref (id);
+        json_decref (format);
+        json_decref (width);
+        json_decref (color_override);
+        json_decref (color);
+        json_decref (data);
+    }
+    json_decref(root);
+    return 0;
+error:
+    fprintf (stderr, "%s config variable contains invalid data, ignored\n", key);
+    json_decref(root);
+    return -1;
+#if 0
     // syntax: "title" "format" id width alignright
     char token[MAX_TOKEN];
     const char *p = def;
@@ -1157,6 +1252,7 @@ parse_end: ;
         break;
     }
     ddb_listview_column_append (listview, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? width : 0, color_override, color, inf);
+#endif
 }
 
 static void
