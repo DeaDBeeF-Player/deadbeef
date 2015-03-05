@@ -66,6 +66,9 @@ gettoken_ext (const char *p, char *tok, const char *specialchars) {
             if (*c == '\n') {
                 parser_line++;
             }
+            if (*c == '\\' && *(c+1) == '"' || *(c+1) == '\\') {
+                c++;
+            }
             *tok++ = *c++;
             n--;
         }
@@ -126,5 +129,27 @@ gettoken_err_eof (const char *p, char *tok) {
         exit (-1);
     }
     return p;
+}
+
+char *
+parser_escape_string (const char *in) {
+    char *output;
+    size_t len = 0;
+    const char *p;
+    for (p = in; *p; p++, len++) {
+        if (*p == '"' || *p == '\\') {
+            len++;
+        }
+    }
+    output = malloc (len + 1);
+    char *out = output;
+    for (p = in; *p; p++) {
+        if (*p == '"' || *p == '\\') {
+            *out++ = '\\';
+        }
+        *out++ = *p;
+    }
+    *out = 0;
+    return output;
 }
 
