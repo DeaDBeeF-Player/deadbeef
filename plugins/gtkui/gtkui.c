@@ -947,7 +947,7 @@ gtkui_thread (void *ctx) {
     w_reg_widget (_("Splitter (top and bottom)"), 0, w_vsplitter_create, "vsplitter", NULL);
     w_reg_widget (_("Splitter (left and right)"), 0, w_hsplitter_create, "hsplitter", NULL);
     w_reg_widget (NULL, 0, w_placeholder_create, "placeholder", NULL);
-//    w_reg_widget (_("Tabs"), 0, w_tabs_create, "tabs", NULL);
+    w_reg_widget (_("Tabs"), 0, w_tabs_create, "tabs", NULL);
     w_reg_widget (_("Playlist tabs"), 0, w_tabstrip_create, "tabstrip", NULL);
     w_reg_widget (_("Selection properties"), 0, w_selproperties_create, "selproperties", NULL);
     w_reg_widget (_("Album art display"), 0, w_coverart_create, "coverart", NULL);
