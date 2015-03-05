@@ -234,6 +234,16 @@ dnl    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_L
 ])
 AM_CONDITIONAL(OS_OSX, test "x$OS_OSX" = "xyes")
 
+
+AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        JANSSON_LIBS=-ljansson
+        AC_SUBST(JANSSON_LIBS)
+    ], [
+        PKG_CHECK_MODULES(JANSSON, jansson)
+    ])
+])
+
 AS_IF([test "${enable_gtk2}" = "yes"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         GTK2_DEPS_CFLAGS="-I${GTK_ROOT_216}/include/gtk-2.0 -I${GTK_ROOT_216}/lib/gtk-2.0/include -I${GTK_ROOT_216}/include/atk-1.0 -I${GTK_ROOT_216}/include/cairo -I${GTK_ROOT_216}/include/pango-1.0 -I${GTK_ROOT_216}/include -I${GTK_ROOT_216}/include/glib-2.0 -I${GTK_ROOT_216}/lib/glib-2.0/include"
