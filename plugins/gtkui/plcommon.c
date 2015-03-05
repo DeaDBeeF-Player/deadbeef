@@ -1126,7 +1126,7 @@ load_column_config (DdbListview *listview, const char *key) {
             inf->bytecode = bytecode;
             inf->bytecode_len = res;
         }
-        ddb_listview_column_append (listview, stitle, iwidth, ialign, inf->id == DB_COLUMN_ALBUM_ART ? iwidth : 0, 0, gdkcolor, inf);
+        ddb_listview_column_append (listview, stitle, iwidth, ialign, inf->id == DB_COLUMN_ALBUM_ART ? iwidth : 0, icolor_override, gdkcolor, inf);
 
         json_decref (title);
         json_decref (align);
