@@ -28,6 +28,8 @@ most of them are optional, which means deadbeef will build and run without them,
 
     libsamplerate: for dsp_libsrc plugin (resampler)
     gtk+-2.0 >= 2.12 (+ gthread, + glib): GTK+ 2.0 user interface
+    gtk+-3.0 >= 3.00 (+ gthread, + glib): GTK+ 3.0 user interface
+    jansson: mandatory for both gtk2 and gtk3 UIs, used for column configuration loading
     alsa-lib: ALSA support
     libvorbis and libogg: for ogg vorbis plugin, and for ogg container metadata in other formats, such as OggFlac
     libcurl >= 7.10: for last.fm, vfs_curl (shoutcast/icecast), artwork plugins
