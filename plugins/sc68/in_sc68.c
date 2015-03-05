@@ -199,9 +199,9 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             continue;
         }
 
-        int totalsamples;
+        uint64_t totalsamples;
         if (ti.trk.time_ms > 0) {
-            totalsamples = ti.trk.time_ms * samplerate / 1000;
+            totalsamples = (uint64_t)ti.trk.time_ms * samplerate / 1000;
         }
         else {
             totalsamples = deadbeef->conf_get_float ("c68.songlength", 2) * 60 * samplerate;
