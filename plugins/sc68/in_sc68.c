@@ -126,7 +126,7 @@ in_sc68_read (DB_fileinfo_t *_info, char *bytes, int size) {
     if (res & SC68_END) {
         return 0;
     }
-    return n<<2;
+    return size;
 }
 
 // seek to specified sample (frame)
