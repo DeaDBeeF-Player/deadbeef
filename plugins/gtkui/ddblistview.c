@@ -530,6 +530,14 @@ ddb_listview_destroy(GObject *object)
       gdk_cursor_unref (listview->cursor_drag);
       listview->cursor_drag = NULL;
   }
+  if (listview->group_format) {
+      free (listview->group_format);
+      listview->group_format = NULL;
+  }
+  if (listview->group_title_bytecode) {
+      free (listview->group_title_bytecode);
+      listview->group_title_bytecode = NULL;
+  }
   if (listview->tf_redraw_timeout_id) {
       g_source_remove (listview->tf_redraw_timeout_id);
       listview->tf_redraw_timeout_id = 0;
@@ -3286,7 +3294,7 @@ ddb_listview_build_groups (DdbListview *listview) {
     listview->grouptitle_height = listview->calculated_grouptitle_height;
     DdbListviewIter it = listview->binding->head ();
     while (it) {
-        int res = listview->binding->get_group (it, curr, sizeof (curr));
+        int res = listview->binding->get_group (listview, it, curr, sizeof (curr));
         if (res == -1) {
             grp = malloc (sizeof (DdbListviewGroup));
             listview->groups = grp;

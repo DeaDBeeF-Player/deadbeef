@@ -304,6 +304,25 @@ search_col_sort (int col, int sort_order, void *user_data) {
     deadbeef->plt_unref (plt);
 }
 
+static void
+search_groups_changed (DdbListview *listview, const char *format) {
+    if (!format) {
+        return;
+    }
+    if (listview->group_format) {
+        free (listview->group_format);
+    }
+    if (listview->group_title_bytecode_len >= 0) {
+        listview->group_title_bytecode_len = -1;
+    }
+    if (listview->group_title_bytecode) {
+        free (listview->group_title_bytecode);
+    }
+    deadbeef->conf_set_str ("gtkui.search.group_by", format);
+    listview->group_format = strdup (format);
+    listview->group_title_bytecode_len = deadbeef->tf_compile (listview->group_format, &(listview->group_title_bytecode));
+}
+
 static int lock_column_config = 0;
 
 static void
@@ -385,6 +404,7 @@ static DdbListviewBinding search_binding = {
     .select = search_select,
 
     .get_group = pl_common_get_group,
+    .groups_changed = search_groups_changed,
 
     .drag_n_drop = NULL,
     .external_drag_n_drop = NULL,
@@ -424,4 +444,9 @@ search_playlist_init (GtkWidget *widget) {
         add_column_helper (listview, _("Duration"), 50, -1, "%length%", 0);
     }
     lock_column_config = 0;
+
+    deadbeef->conf_lock ();
+    listview->group_format = strdup (deadbeef->conf_get_str_fast ("gtkui.search.group_by", ""));
+    deadbeef->conf_unlock ();
+    listview->group_title_bytecode_len = deadbeef->tf_compile (listview->group_format, &(listview->group_title_bytecode));
 }
