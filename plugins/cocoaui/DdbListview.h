@@ -46,6 +46,7 @@ typedef intptr_t DdbListviewCol_t;
 - (void)selectionChanged:(DdbListviewRow_t)row;
 - (BOOL)hasDND;
 - (void)trackProperties;
+- (void)reloadMetadata;
 @end
 
 typedef struct DdbListviewGroup_s {

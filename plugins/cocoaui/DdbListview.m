@@ -439,6 +439,11 @@ int grouptitleheight = 22;
     [delegate trackProperties];
 }
 
+- (void)reloadMetadata {
+    id<DdbListviewDelegate> delegate = listview.delegate;
+    [delegate reloadMetadata];
+}
+
 - (void)rightMouseDown:(NSEvent *)theEvent {
     [self mouseDown:theEvent];
 }
@@ -565,6 +570,7 @@ int grouptitleheight = 22;
         || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask))) {
         NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
         [theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0];
+        [theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0];
         [NSMenu popUpContextMenu:theMenu withEvent:event forView:self];
     }
 }
