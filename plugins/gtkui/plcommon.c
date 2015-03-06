@@ -111,11 +111,13 @@ rewrite_column_config (DdbListview *listview, const char *name) {
         ddb_listview_column_get_info (listview, i, &title, &width, &align, &minheight, &color_override, &color, (void **)&info);
 
         char *esctitle = parser_escape_string (title);
-        char *escformat = parser_escape_string (info->format);
+        char *escformat = info->format ? parser_escape_string (info->format) : NULL;
 
-        size_t written = snprintf (p, n, "{\"title\":\"%s\",\"id\":\"%d\",\"format\":\"%s\",\"size\":\"%d\",\"align\":\"%d\",\"color_override\":\"%d\",\"color\":\"#ff%02x%02x%02x\"}%s", esctitle, info->id, escformat, width, align, color_override, color.red>>8, color.green>>8, color.blue>>8, i < cnt-1 ? "," : "");
+        size_t written = snprintf (p, n, "{\"title\":\"%s\",\"id\":\"%d\",\"format\":\"%s\",\"size\":\"%d\",\"align\":\"%d\",\"color_override\":\"%d\",\"color\":\"#ff%02x%02x%02x\"}%s", esctitle, info->id, escformat ? escformat : "", width, align, color_override, color.red>>8, color.green>>8, color.blue>>8, i < cnt-1 ? "," : "");
         free (esctitle);
-        free (escformat);
+        if (escformat) {
+            free (escformat);
+        }
         p += written;
         n -= written;
         if (n <= 0) {
@@ -1086,7 +1088,6 @@ load_column_config (DdbListview *listview, const char *key) {
         color_override = json_object_get (data, "color_override");
         color = json_object_get (data, "color");
         if (!json_is_string (title)
-                || !json_is_string (format)
                 || !json_is_string (id)
                 || !json_is_string (width)
            ) {
@@ -1107,7 +1108,12 @@ load_column_config (DdbListview *listview, const char *key) {
         if (json_is_string (id)) {
             iid = atoi (json_string_value (id));
         }
-        sformat = json_string_value (format);
+        if (json_is_string (format)) {
+            sformat = json_string_value (format);
+            if (!sformat[0]) {
+                sformat = NULL;
+            }
+        }
         iwidth = atoi (json_string_value (width));
         if (json_is_string (color_override)) {
             icolor_override = atoi (json_string_value (color_override));
@@ -1128,12 +1134,14 @@ load_column_config (DdbListview *listview, const char *key) {
         col_info_t *inf = malloc (sizeof (col_info_t));
         memset (inf, 0, sizeof (col_info_t));
         inf->id = iid;
-        inf->format = strdup (sformat);
-        char *bytecode;
-        int res = deadbeef->tf_compile (inf->format, &bytecode);
-        if (res >= 0) {
-            inf->bytecode = bytecode;
-            inf->bytecode_len = res;
+        if (sformat) {
+            inf->format = strdup (sformat);
+            char *bytecode;
+            int res = deadbeef->tf_compile (inf->format, &bytecode);
+            if (res >= 0) {
+                inf->bytecode = bytecode;
+                inf->bytecode_len = res;
+            }
         }
         ddb_listview_column_append (listview, stitle, iwidth, ialign, inf->id == DB_COLUMN_ALBUM_ART ? iwidth : 0, icolor_override, gdkcolor, inf);
 
