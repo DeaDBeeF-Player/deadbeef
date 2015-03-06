@@ -10,7 +10,7 @@ More info is [here](http://deadbeef.sf.net).
 
 [Download latest GNU/Linux i686 and x86_64 builds](https://drone.io/github.com/Alexey-Yakovenko/deadbeef/files)
 
-The OS X version is not production-ready yet, so I'm not making any official builds. Please use the inscructions below to make your own build, if you feel adventurous.
+The OS X version is not production-ready yet, so I'm not making any official builds. Please use the instructions below to make your own build, if you feel adventurous.
 
 ## Reporting bugs
 
