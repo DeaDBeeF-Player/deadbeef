@@ -1485,7 +1485,9 @@ w_tabs_save (struct ddb_gtkui_widget_s *widget, char *s, int sz) {
     for (int i = 0; i < num_pages; i++) {
         GtkWidget *child = gtk_notebook_get_nth_page (GTK_NOTEBOOK (w->base.widget), i);
         const char *text = gtk_notebook_get_tab_label_text (GTK_NOTEBOOK (w->base.widget), child);
-        n = snprintf (pp, ss, " tab%03d=\"%s\"", i, text);
+        char *esctext = parser_escape_string (text);
+        n = snprintf (pp, ss, " tab%03d=\"%s\"", i, esctext);
+        free (esctext);
         ss -= n;
         pp += n;
     }
