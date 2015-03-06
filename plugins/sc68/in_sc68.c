@@ -26,6 +26,7 @@
 #include <limits.h>
 #include "../../deadbeef.h"
 #include "sc68/sc68.h"
+#include "file68/sc68/file68_rsc.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 
@@ -43,7 +44,7 @@ typedef struct {
     uint64_t totalsamples;
 } in_sc68_info_t;
 
-static const char * exts[] = { "sndh", "snd", NULL };
+static const char * exts[] = { "sndh", "snd", "sc68", NULL };
 
 // allocate codec control structure
 static DB_fileinfo_t *
@@ -324,16 +325,16 @@ in_sc68_start (void) {
     // e.g. starting threads for background processing, subscribing to events, etc
     // return 0 on success
     // return -1 on failure
-    // Clean up init structure (required).
-
-    char datadir[PATH_MAX];
-    snprintf (datadir, sizeof (datadir), "%s/data68", deadbeef->get_plugin_dir ());
-    setenv ("SC68_DATA", datadir, 1);
 
     if (sc68_init(0)) {
         sc68_shutdown ();
         return -1;
     }
+
+    char datadir[PATH_MAX];
+    snprintf (datadir, sizeof (datadir), "%s/data68", deadbeef->get_plugin_dir ());
+    rsc68_set_share (datadir);
+
     return 0;
 }
 
