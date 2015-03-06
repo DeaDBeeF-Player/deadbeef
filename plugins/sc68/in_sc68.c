@@ -29,12 +29,16 @@
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 
+#define min(x,y) ((x)<(y)?(x):(y))
+
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
 typedef struct {
     DB_fileinfo_t info;
     sc68_t *sc68;
+    int trk;
+    int loop;
     uint64_t currentsample;
     uint64_t totalsamples;
 } in_sc68_info_t;
@@ -71,12 +75,13 @@ in_sc68_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-    int tr = deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0);
+    info->trk = deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0);
     sc68_music_info_t ti;
-    res = sc68_music_info (info->sc68, &ti, tr+1, 0);
+    res = sc68_music_info (info->sc68, &ti, info->trk+1, 0);
     if (res < 0) {
         return -1;
     }
+    info->loop = ti.trk.time_ms == 0;
 
     int samplerate = deadbeef->conf_get_int ("c68.samplerate", 44100);
 #if 0
@@ -97,7 +102,7 @@ in_sc68_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT;
     _info->readpos = 0;
 
-    sc68_play (info->sc68, tr+1, ti.trk.time_ms == 0);
+    sc68_play (info->sc68, info->trk+1, info->loop);
     return 0;
 }
 
@@ -142,16 +147,24 @@ in_sc68_read (DB_fileinfo_t *_info, char *bytes, int size) {
 static int
 in_sc68_seek_sample (DB_fileinfo_t *_info, int sample) {
     in_sc68_info_t *info = (in_sc68_info_t *)_info;
-    info->currentsample = sample;
 
-#if 0
-    int seek_ms = sample * 1000 / _info->fmt.samplerate;
-    int ms = sc68_seek (sc68, seek_ms);
-    if (ms >= 0) {
-        info->currentsample = ms * _info->fmt.samplerate / 1000;
-        _info->readpos = (float)info->currentsample / _info->fmt.samplerate;
+    if (sample < info->currentsample) {
+        sc68_stop (info->sc68);
+        sc68_play (info->sc68, info->trk+1, info->loop);
+        info->currentsample = 0;
     }
-#endif
+
+    char buffer[512*4];
+    while (info->currentsample < sample) {
+        int sz = (int)(sample - info->currentsample);
+        sz = min (sz, sizeof (buffer)>>2);
+        int res = sc68_process(info->sc68, buffer, &sz);
+        if (res & SC68_END) {
+            break;
+        }
+        info->currentsample += sz;
+    }
+    _info->readpos = (float)info->currentsample / _info->fmt.samplerate;
     return 0;
 }
 
