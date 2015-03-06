@@ -21,8 +21,6 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-// TODO: the sc68 emulator lib is not reentrant, needs fixing, otherwise playing + adding tracks at the same time would crash
-
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -33,10 +31,10 @@
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
-static sc68_t *sc68;
 
 typedef struct {
     DB_fileinfo_t info;
+    sc68_t *sc68;
     uint64_t currentsample;
     uint64_t totalsamples;
 } in_sc68_info_t;
@@ -58,13 +56,15 @@ static int
 in_sc68_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     in_sc68_info_t *info = (in_sc68_info_t *)_info;
 
-    sc68_stop (sc68);
-    sc68_close (sc68);
+    info->sc68 = sc68_create(0);
+    if (!info->sc68) {
+        return -1;
+    }
 
     // Load an sc68 file.
     deadbeef->pl_lock ();
     const char *fname = deadbeef->pl_find_meta (it, ":URI");
-    int res = sc68_load_uri(sc68, fname);
+    int res = sc68_load_uri(info->sc68, fname);
     deadbeef->pl_unlock ();
 
     if (res) {
@@ -73,15 +73,15 @@ in_sc68_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     int tr = deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0);
     sc68_music_info_t ti;
-    res = sc68_music_info (sc68, &ti, tr+1, 0);
+    res = sc68_music_info (info->sc68, &ti, tr+1, 0);
     if (res < 0) {
         return -1;
     }
 
     int samplerate = deadbeef->conf_get_int ("c68.samplerate", 44100);
 #if 0
-    sc68_config_set (sc68, SC68config_get_id ("sampling_rate"), samplerate);
-    api68_config_set (sc68, SC68config_get_id ("skip_time"), deadbeef->conf_get_int ("c68.skip_time", 4));
+    sc68_config_set (info->sc68, SC68config_get_id ("sampling_rate"), samplerate);
+    api68_config_set (info->sc68, SC68config_get_id ("skip_time"), deadbeef->conf_get_int ("c68.skip_time", 4));
 #endif
     if (ti.trk.time_ms > 0) {
         info->totalsamples = (uint64_t)ti.trk.time_ms * samplerate / 1000;
@@ -97,7 +97,7 @@ in_sc68_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT;
     _info->readpos = 0;
 
-    sc68_play (sc68, tr+1, ti.trk.time_ms == 0);
+    sc68_play (info->sc68, tr+1, ti.trk.time_ms == 0);
     return 0;
 }
 
@@ -106,6 +106,9 @@ static void
 in_sc68_free (DB_fileinfo_t *_info) {
     in_sc68_info_t *info = (in_sc68_info_t *)_info;
     if (info) {
+        if (info->sc68) {
+            sc68_destroy (info->sc68);
+        }
         free (info);
     }
 }
@@ -124,7 +127,7 @@ in_sc68_read (DB_fileinfo_t *_info, char *bytes, int size) {
     int initsize = size;
     while (size > 0) {
         int n = size>>2;
-        int res = sc68_process(sc68, bytes, &n);
+        int res = sc68_process(info->sc68, bytes, &n);
         if (res & SC68_END) {
             break;
         }
@@ -177,8 +180,10 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
 #endif
 
-    sc68_stop (sc68);
-    sc68_close (sc68);
+    sc68_t *sc68;
+    if (sc68 = sc68_create(0), !sc68) {
+        return NULL;
+    }
 
     // Load an sc68 file.
     if (sc68_load_uri(sc68, fname)) {
@@ -191,7 +196,7 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     sc68_music_info_t di;
     int err = sc68_music_info (sc68, &di, 0, 0);
     if (err < 0) {
-        sc68_close (sc68);
+        sc68_destroy (sc68);
         return NULL;
     }
 
@@ -239,7 +244,7 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         deadbeef->pl_item_unref (it);
     }
 
-    sc68_close (sc68);
+    sc68_destroy (sc68);
     return after;
 }
 
@@ -259,12 +264,6 @@ in_sc68_start (void) {
         sc68_shutdown ();
         return -1;
     }
-    if (sc68 = sc68_create(0), !sc68) {
-        sc68_destroy (sc68);
-        sc68_shutdown ();
-        return -1;
-    }
-
     return 0;
 }
 
@@ -273,12 +272,7 @@ in_sc68_stop (void) {
     // undo everything done in _start here
     // return 0 on success
     // return -1 on failure
-    if (sc68) {
-        sc68_stop (sc68);
-        sc68_close (sc68);
-        sc68_destroy (sc68);
-        sc68_shutdown ();
-    }
+    sc68_shutdown ();
     return 0;
 }
 
