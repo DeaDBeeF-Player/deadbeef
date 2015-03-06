@@ -176,6 +176,53 @@ in_sc68_seek (DB_fileinfo_t *_info, float time) {
     return in_sc68_seek_sample (_info, time * _info->fmt.samplerate);
 }
 
+static void
+in_c68_meta_from_music_info (DB_playItem_t *it, sc68_music_info_t *ti, int trk) {
+    deadbeef->pl_delete_all_meta (it);
+
+    const char *ft = "sc68";
+
+    deadbeef->pl_replace_meta (it, ":FILETYPE", ft);
+    // add metainfo
+    if (!ti->title || !ti->title[0]) {
+        // title is empty, this call will set track title to filename without extension
+        deadbeef->pl_add_meta (it, "title", NULL);
+    }
+    else {
+        deadbeef->pl_add_meta (it, "title", ti->title);
+    }
+
+    if (ti->artist && ti->artist[0]) {
+        deadbeef->pl_add_meta (it, "artist", ti->artist);
+    }
+
+    if (ti->album && ti->album[0]) {
+        deadbeef->pl_add_meta (it, "album", ti->album);
+    }
+
+    if (ti->genre && ti->genre[0]) {
+        deadbeef->pl_add_meta (it, "genre", ti->genre);
+    }
+
+    if (ti->year && ti->year[0]) {
+        deadbeef->pl_add_meta (it, "year", ti->year);
+    }
+
+    if (ti->format && ti->format[0]) {
+        deadbeef->pl_add_meta (it, "SC68_FORMAT", ti->format);
+    }
+
+    if (ti->ripper && ti->ripper[0]) {
+        deadbeef->pl_add_meta (it, "SC68_RIPPER", ti->ripper);
+    }
+
+    if (ti->converter && ti->converter[0]) {
+        deadbeef->pl_add_meta (it, "SC68_CONVERTER", ti->converter);
+    }
+
+    deadbeef->pl_set_meta_int (it, ":TRACKNUM", trk);
+}
+
 // read information from the track
 // load/process cuesheet if exists
 // insert track into playlist
@@ -203,9 +250,6 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         return NULL;
     }
 
-    // replace "in_sc68" with your file type (e.g. MP3, WAV, etc)
-    const char *ft = "sc68";
-
     sc68_music_info_t di;
     int err = sc68_music_info (sc68, &di, 0, 0);
     if (err < 0) {
@@ -231,26 +275,9 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
         DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
 
-        deadbeef->pl_replace_meta (it, ":FILETYPE", ft);
         deadbeef->plt_set_item_duration (plt, it, (float)totalsamples/samplerate);
 
-        // add metainfo
-        if (!ti.title || !ti.title[0]) {
-            // title is empty, this call will set track title to filename without extension
-            deadbeef->pl_add_meta (it, "title", NULL);
-        }
-        else {
-            deadbeef->pl_add_meta (it, "title", ti.title);
-        }
-
-        if (ti.artist && ti.artist[0]) {
-            deadbeef->pl_add_meta (it, "artist", ti.artist);
-        }
-
-        if (di.tracks > 0) {
-            deadbeef->pl_set_item_flags (it, deadbeef->pl_get_item_flags (it) | DDB_IS_SUBTRACK);
-        }
-        deadbeef->pl_set_meta_int (it, ":TRACKNUM", tr);
+        in_c68_meta_from_music_info (it, &ti, tr);
 
         // now the track is ready, insert into playlist
         after = deadbeef->plt_insert_item (plt, after, it);
@@ -259,6 +286,36 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     sc68_destroy (sc68);
     return after;
+}
+
+static int
+in_sc68_read_metadata (DB_playItem_t *it) {
+    sc68_t *sc68 = sc68_create(0);
+    if (!sc68) {
+        return -1;
+    }
+
+    // Load an sc68 file.
+    deadbeef->pl_lock ();
+    const char *fname = deadbeef->pl_find_meta (it, ":URI");
+    int res = sc68_load_uri (sc68, fname);
+    deadbeef->pl_unlock ();
+
+    if (res) {
+        return -1;
+    }
+
+    int trk = deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0);
+    sc68_music_info_t ti;
+    res = sc68_music_info (sc68, &ti, trk+1, 0);
+    if (res < 0) {
+        sc68_destroy (sc68);
+        return -1;
+    }
+
+    in_c68_meta_from_music_info (it, &ti, trk);
+
+    return 0;
 }
 
 static int
@@ -357,6 +414,7 @@ static DB_decoder_t plugin = {
     .read = in_sc68_read,
     .seek = in_sc68_seek,
     .seek_sample = in_sc68_seek_sample,
+    .read_metadata = in_sc68_read_metadata,
     .insert = in_sc68_insert,
     .exts = exts,
 };
