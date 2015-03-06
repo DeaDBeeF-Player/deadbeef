@@ -66,7 +66,7 @@ gettoken_ext (const char *p, char *tok, const char *specialchars) {
             if (*c == '\n') {
                 parser_line++;
             }
-            if (*c == '\\' && *(c+1) == '"' || *(c+1) == '\\') {
+            if (*c == '\\' && (*(c+1) == '"' || *(c+1) == '\\')) {
                 c++;
             }
             *tok++ = *c++;
