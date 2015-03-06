@@ -175,6 +175,25 @@ main_is_selected (DdbListviewIter it) {
     return deadbeef->pl_is_selected ((DB_playItem_t *)it);
 }
 
+void
+main_groups_changed (DdbListview *listview, const char* format) {
+    if (!format) {
+        return;
+    }
+    if (listview->group_format) {
+        free (listview->group_format);
+    }
+    if (listview->group_title_bytecode_len >= 0) {
+        listview->group_title_bytecode_len = -1;
+    }
+    if (listview->group_title_bytecode) {
+        free (listview->group_title_bytecode);
+    }
+    deadbeef->conf_set_str ("gtkui.playlist.group_by", format);
+    listview->group_format = strdup (format);
+    listview->group_title_bytecode_len = deadbeef->tf_compile (listview->group_format, &(listview->group_title_bytecode));
+}
+
 static int lock_column_config = 0;
 
 void
@@ -251,6 +270,7 @@ DdbListviewBinding main_binding = {
     .select = main_select,
 
     .get_group = pl_common_get_group,
+    .groups_changed = main_groups_changed,
 
     .drag_n_drop = main_drag_n_drop,
     .external_drag_n_drop = main_external_drag_n_drop,
@@ -291,6 +311,11 @@ main_playlist_init (GtkWidget *widget) {
         add_column_helper (listview, _("Duration"), 50, -1, "%length%", 0);
     }
     lock_column_config = 0;
+
+    deadbeef->conf_lock ();
+    listview->group_format = strdup (deadbeef->conf_get_str_fast ("gtkui.playlist.group_by", ""));
+    deadbeef->conf_unlock ();
+    listview->group_title_bytecode_len = deadbeef->tf_compile (listview->group_format, &(listview->group_title_bytecode));
 
     // FIXME: filepath should be in properties dialog, while tooltip should be
     // used to show text that doesn't fit in column width

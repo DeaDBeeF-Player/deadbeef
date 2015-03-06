@@ -41,9 +41,6 @@
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
 
-#define MAX_GROUP_BY_STR 100
-static char group_by_str[MAX_GROUP_BY_STR];
-
 // playlist theming
 GtkWidget *theme_button;
 GtkWidget *theme_treeview;
@@ -59,11 +56,6 @@ pl_common_init(void)
     play16_pixbuf = create_pixbuf("play_16.png");
     pause16_pixbuf = create_pixbuf("pause_16.png");
     buffering16_pixbuf = create_pixbuf("buffering_16.png");
-
-    deadbeef->conf_lock ();
-    strncpy (group_by_str, deadbeef->conf_get_str_fast ("playlist.group_by", ""), sizeof (group_by_str));
-    deadbeef->conf_unlock ();
-    group_by_str[sizeof (group_by_str)-1] = 0;
 
     gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups", 0);
 
@@ -956,12 +948,14 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL/*popup_menu_position_func*/, listview, 0, gtk_get_current_event_time());
 }
 
+static DdbListview *last_playlist;
+static int active_column;
+
 void
 on_group_by_none_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    strcpy (group_by_str, "");
-    deadbeef->conf_set_str ("playlist.group_by", group_by_str);
+    last_playlist->binding->groups_changed (last_playlist, "");
 
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
@@ -991,8 +985,7 @@ void
 on_group_by_artist_date_album_activate (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    strcpy (group_by_str, "%a - [%y] %b");
-    deadbeef->conf_set_str ("playlist.group_by", group_by_str);
+    last_playlist->binding->groups_changed (last_playlist, "%album artist% - [(%year%) ]%album%");
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         deadbeef->plt_modified (plt);
@@ -1005,8 +998,7 @@ void
 on_group_by_artist_activate            (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    strcpy (group_by_str, "%a");
-    deadbeef->conf_set_str ("playlist.group_by", group_by_str);
+    last_playlist->binding->groups_changed (last_playlist, "%artist%");
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         deadbeef->plt_modified (plt);
@@ -1023,15 +1015,18 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
 
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     GtkWidget *entry = lookup_widget (dlg, "format");
-    gtk_entry_set_text (GTK_ENTRY (entry), group_by_str);
+    if (last_playlist->group_format) {
+        gtk_entry_set_text (GTK_ENTRY (entry), last_playlist->group_format);
+    }
+    else {
+        gtk_entry_set_text (GTK_ENTRY (entry), "");
+    }
 //    gtk_window_set_title (GTK_WINDOW (dlg), "Group by");
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
 
     if (response == GTK_RESPONSE_OK) {
         const gchar *text = gtk_entry_get_text (GTK_ENTRY (entry));
-        strncpy (group_by_str, text, sizeof (group_by_str));
-        group_by_str[sizeof (group_by_str)-1] = 0;
-        deadbeef->conf_set_str ("playlist.group_by", group_by_str);
+        last_playlist->binding->groups_changed (last_playlist, text);
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         if (plt) {
             deadbeef->plt_modified (plt);
@@ -1041,9 +1036,6 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
     }
     gtk_widget_destroy (dlg);
 }
-
-static DdbListview *last_playlist;
-static int active_column;
 
 void
 set_last_playlist_cm (DdbListview *pl) {
@@ -1584,27 +1576,20 @@ add_column_helper (DdbListview *listview, const char *title, int width, int id, 
 }
 
 int
-pl_common_get_group (DdbListviewIter it, char *str, int size) {
-    if (!group_by_str || !group_by_str[0]) {
+pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int size) {
+    if (!listview->group_format || !listview->group_format[0]) {
         return -1;
     }
-    deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, size, -1, group_by_str);
-    char *lb = strchr (str, '\r');
-    if (lb) {
-        *lb = 0;
-    }
-    lb = strchr (str, '\n');
-    if (lb) {
-        *lb = 0;
-    }
-    return 0;
-}
+    if (listview->group_title_bytecode_len >= 0) {
+        ddb_tf_context_t ctx = {
+            ._size = sizeof (ddb_tf_context_t),
+            .it = it,
+            .plt = deadbeef->plt_get_curr (),
+            .idx = -1,
+            .id = -1
+        };
+        deadbeef->tf_eval (&ctx, listview->group_title_bytecode, listview->group_title_bytecode_len, str, size);
 
-void
-pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height) {
-    if (group_by_str && group_by_str[0]) {
-        char str[1024];
-        deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, sizeof (str), -1, group_by_str);
         char *lb = strchr (str, '\r');
         if (lb) {
             *lb = 0;
@@ -1613,6 +1598,34 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
         if (lb) {
             *lb = 0;
         }
+    }
+    return 0;
+}
+
+void
+pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height) {
+    if (listview->group_format && listview->group_format[0]) {
+        char str[1024];
+        if (listview->group_title_bytecode_len >= 0) {
+            ddb_tf_context_t ctx = {
+                ._size = sizeof (ddb_tf_context_t),
+                .it = it,
+                .plt = deadbeef->plt_get_curr (),
+                .idx = -1,
+                .id = -1
+            };
+            deadbeef->tf_eval (&ctx, listview->group_title_bytecode, listview->group_title_bytecode_len, str, sizeof (str));
+
+            char *lb = strchr (str, '\r');
+            if (lb) {
+                *lb = 0;
+            }
+            lb = strchr (str, '\n');
+            if (lb) {
+                *lb = 0;
+            }
+        }
+
         int theming = !gtkui_override_listview_colors ();
         if (theming) {
             GdkColor *clr = &gtk_widget_get_style(theme_treeview)->fg[GTK_STATE_NORMAL];
