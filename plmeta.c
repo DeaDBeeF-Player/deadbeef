@@ -64,7 +64,6 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
         m = m->next;
     }
     // add
-    char str[256];
     m = malloc (sizeof (DB_metaInfo_t));
     memset (m, 0, sizeof (DB_metaInfo_t));
     m->key = metacache_add_string (key);
@@ -107,7 +106,7 @@ pl_append_meta (playItem_t *it, const char *key, const char *value) {
     else {
         // check for duplicate data
         const char *str = old;
-        int len;
+        size_t len;
         while (str) {
             char *next = strchr (str, '\n');
 
@@ -126,7 +125,7 @@ pl_append_meta (playItem_t *it, const char *key, const char *value) {
 
             str = next;
         }
-        int sz = strlen (old) + newlen + 2;
+        size_t sz = strlen (old) + newlen + 2;
         char out[sz];
         snprintf (out, sz, "%s\n%s", old, value);
         pl_replace_meta (it, key, out);
