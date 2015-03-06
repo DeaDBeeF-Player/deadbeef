@@ -985,7 +985,7 @@ void
 on_group_by_artist_date_album_activate (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    last_playlist->binding->groups_changed (last_playlist, "%album artist% - [(%year%)] %album%");
+    last_playlist->binding->groups_changed (last_playlist, "%album artist% - [(%year%) ]%album%");
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         deadbeef->plt_modified (plt);
