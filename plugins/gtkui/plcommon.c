@@ -1058,6 +1058,10 @@ load_column_config (DdbListview *listview, const char *key) {
     deadbeef->conf_lock ();
     const char *json = deadbeef->conf_get_str_fast (key, NULL);
     json_error_t error;
+    if (!json) {
+        deadbeef->conf_unlock ();
+        return -1;
+    }
     json_t *root = json_loads (json, 0, &error);
     deadbeef->conf_unlock ();
     if(!root) {
