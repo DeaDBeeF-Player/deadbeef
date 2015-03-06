@@ -46,6 +46,7 @@
 #include <inttypes.h>
 #include <math.h>
 #include "streamer.h"
+#include "utf8.h"
 #include "playlist.h"
 #include "tf.h"
 #include "gettext.h"
@@ -99,6 +100,42 @@ tf_eval (ddb_tf_context_t *ctx, char *code, int codelen, char *out, int outlen) 
     return l;
 }
 
+// $left(text,n) returns the first n characters of text
+int
+tf_func_left (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 2) {
+        return -1;
+    }
+    char *arg = args;
+
+    // get number of characters
+    char num_chars_str[10];
+    arg += arglens[0];
+    int len = tf_eval_int (ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str), fail_on_undef);
+    if (len < 0) {
+        goto out;
+    }
+    int num_chars = atoi (num_chars_str);
+    if (num_chars <= 0 || num_chars > outlen) {
+        goto out;
+    }
+
+    // get text
+    char text[1000];
+    arg = args;
+    len = tf_eval_int (ctx, arg, arglens[0], text, sizeof (text), fail_on_undef);
+    if (len < 0) {
+        goto out;
+    }
+
+    int res = u8_strncpy (out, text, num_chars);
+    trace ("left: (%s,%d) -> (%s), res: %d\n", text, num_chars, out, res);
+    return res;
+out:
+    *out = 0;
+    return -1;
+}
+
 int
 tf_func_add (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
     int outval = 0;
@@ -149,6 +186,7 @@ tf_func_if (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *ou
 }
 
 tf_func_def tf_funcs[TF_MAX_FUNCS] = {
+    { "left", tf_func_left },
     { "add", tf_func_add },
     { "if", tf_func_if },
     { NULL, NULL }
