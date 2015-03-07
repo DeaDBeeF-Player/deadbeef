@@ -100,6 +100,75 @@ tf_eval (ddb_tf_context_t *ctx, char *code, int codelen, char *out, int outlen) 
     return l;
 }
 
+// $greater(a,b) returns true if a is greater than b, otherwise false
+int
+tf_func_greater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 2) {
+        return -1;
+    }
+    char *arg = args;
+
+    char a[10];
+    int len = tf_eval_int (ctx, arg, arglens[0], a, sizeof (a), fail_on_undef);
+    if (len < 0) {
+        goto out;
+    }
+    int aa = atoi (a);
+
+    arg += arglens[0];
+    char b[10];
+    len = tf_eval_int (ctx, arg, arglens[1], b, sizeof (b), fail_on_undef);
+    if (len < 0) {
+        goto out;
+    }
+    int bb = atoi (b);
+
+    trace ("greater: (%s,%s)\n", a, b);
+    if (aa > bb) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+out:
+    *out = 0;
+    return -1;
+}
+
+// $strcmp(s1,s2) compares s1 and s2, returns true if equal, otherwise false
+int
+tf_func_strcmp (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 2) {
+        return -1;
+    }
+    char *arg = args;
+
+    char s1[1000];
+    int len = tf_eval_int (ctx, arg, arglens[0], s1, sizeof (s1), fail_on_undef);
+    if (len < 0) {
+        goto out;
+    }
+
+    arg += arglens[0];
+    char s2[1000];
+    len = tf_eval_int (ctx, arg, arglens[1], s2, sizeof (s2), fail_on_undef);
+    if (len < 0) {
+        goto out;
+    }
+
+    int res = strcmp (s1, s2);
+    trace ("strcmp: (%s,%s), res: %d\n", s1, s2, res);
+    if (res == 0) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+out:
+    *out = 0;
+    return -1;
+}
+
 // $left(text,n) returns the first n characters of text
 int
 tf_func_left (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
@@ -186,6 +255,8 @@ tf_func_if (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *ou
 }
 
 tf_func_def tf_funcs[TF_MAX_FUNCS] = {
+    { "greater", tf_func_greater },
+    { "strcmp", tf_func_strcmp },
     { "left", tf_func_left },
     { "add", tf_func_add },
     { "if", tf_func_if },
