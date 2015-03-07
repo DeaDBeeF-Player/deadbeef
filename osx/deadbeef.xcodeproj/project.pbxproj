@@ -387,7 +387,6 @@
 		2D6500FE1AA7881B00E82A9E /* file68_vfs_z.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65FF241AA7881B00E82A9E /* file68_vfs_z.h */; };
 		2D6500FF1AA7881B00E82A9E /* file68_zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65FF251AA7881B00E82A9E /* file68_zip.h */; };
 		2D6501091AA7881B00E82A9E /* endian68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D65FF311AA7881B00E82A9E /* endian68.c */; };
-		2D65010A1AA7881B00E82A9E /* error68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D65FF321AA7881B00E82A9E /* error68.c */; };
 		2D65010B1AA7881B00E82A9E /* file68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D65FF331AA7881B00E82A9E /* file68.c */; };
 		2D65010C1AA7881B00E82A9E /* gzip68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D65FF341AA7881B00E82A9E /* gzip68.c */; };
 		2D65010D1AA7881B00E82A9E /* ice68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D65FF351AA7881B00E82A9E /* ice68.c */; };
@@ -700,6 +699,7 @@
 		2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */; };
 		2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */; };
 		2DD6D0A819AE6288009308A5 /* knobTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */; };
+		2DD801161AAB08D900D9CF54 /* ferror68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD801151AAB08D900D9CF54 /* ferror68.c */; };
 		2DD9EF0719A5089F00189344 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */; };
 		2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3DC19B11283009B5BC6 /* DdbWidget.m */; };
@@ -1434,7 +1434,6 @@
 		2D65FF241AA7881B00E82A9E /* file68_vfs_z.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = file68_vfs_z.h; sourceTree = "<group>"; };
 		2D65FF251AA7881B00E82A9E /* file68_zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = file68_zip.h; sourceTree = "<group>"; };
 		2D65FF311AA7881B00E82A9E /* endian68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = endian68.c; sourceTree = "<group>"; };
-		2D65FF321AA7881B00E82A9E /* error68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = error68.c; sourceTree = "<group>"; };
 		2D65FF331AA7881B00E82A9E /* file68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = file68.c; sourceTree = "<group>"; };
 		2D65FF341AA7881B00E82A9E /* gzip68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzip68.c; sourceTree = "<group>"; };
 		2D65FF351AA7881B00E82A9E /* ice68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ice68.c; sourceTree = "<group>"; };
@@ -1777,6 +1776,7 @@
 		2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbSeekBar.h; sourceTree = "<group>"; };
 		2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbSeekBar.m; sourceTree = "<group>"; };
 		2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = knobTemplate.pdf; path = images/knobTemplate.pdf; sourceTree = "<group>"; };
+		2DD801151AAB08D900D9CF54 /* ferror68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ferror68.c; sourceTree = "<group>"; };
 		2DD9EF0419A5089F00189344 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoautil.h; sourceTree = "<group>"; };
 		2DD9EF0519A5089F00189344 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoautil.m; sourceTree = "<group>"; };
 		2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbWidget.h; path = widgets/DdbWidget.h; sourceTree = "<group>"; };
@@ -2534,8 +2534,8 @@
 		2D65FF301AA7881B00E82A9E /* src */ = {
 			isa = PBXGroup;
 			children = (
+				2DD801151AAB08D900D9CF54 /* ferror68.c */,
 				2D65FF311AA7881B00E82A9E /* endian68.c */,
-				2D65FF321AA7881B00E82A9E /* error68.c */,
 				2D65FF331AA7881B00E82A9E /* file68.c */,
 				2D65FF341AA7881B00E82A9E /* gzip68.c */,
 				2D65FF351AA7881B00E82A9E /* ice68.c */,
@@ -4850,6 +4850,7 @@
 				2D65011E1AA7881B00E82A9E /* vfs68_mem.c in Sources */,
 				2D6501201AA7881B00E82A9E /* vfs68_z.c in Sources */,
 				2D6501181AA7881B00E82A9E /* uri68.c in Sources */,
+				2DD801161AAB08D900D9CF54 /* ferror68.c in Sources */,
 				2D65012C1AA7881B00E82A9E /* api68.c in Sources */,
 				2D65011F1AA7881B00E82A9E /* vfs68_null.c in Sources */,
 				2D6500011AA7881B00E82A9E /* desa68.c in Sources */,
@@ -4879,7 +4880,6 @@
 				2D65010C1AA7881B00E82A9E /* gzip68.c in Sources */,
 				2D35E3161AA7AC4B0077FBD1 /* tracksel.c in Sources */,
 				2D6501131AA7881B00E82A9E /* replay68.c in Sources */,
-				2D65010A1AA7881B00E82A9E /* error68.c in Sources */,
 				2D6501151AA7881B00E82A9E /* string68.c in Sources */,
 				2D65019A1AA7881B00E82A9E /* ym_io.c in Sources */,
 				2D6501511AA7881B00E82A9E /* inst68.c in Sources */,
