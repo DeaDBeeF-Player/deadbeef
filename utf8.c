@@ -238,6 +238,23 @@ uint32_t u8_nextchar(const char *s, int32_t *i)
     return ch;
 }
 
+/* copies num_chars characters from src to dest, return bytes written */
+int u8_strncpy (char *dest, const char* src, int num_chars)
+{
+    const char *s = src;
+    int32_t num_bytes = 0;
+    while (num_chars && *s) {
+        int32_t i = 0;
+        u8_nextchar (s, &i);
+        num_chars--;
+        num_bytes += i;
+        s += i;
+    }
+    strncpy (dest, src, s - src);
+    dest[s - src] = 0;
+    return num_bytes;
+}
+
 void u8_inc(const char *s, int32_t *i)
 {
     (void)(isutf(s[++(*i)]) || isutf(s[++(*i)]) ||

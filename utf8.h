@@ -58,6 +58,9 @@ int u8_charnum(char *s, int32_t offset);
 /* return next character, updating an index variable */
 uint32_t u8_nextchar(const char *s, int32_t *i);
 
+/* copies num_chars characters from src to dest, return bytes written */
+int u8_strncpy (char *dest, const char* src, int num_chars);
+
 /* move to next character */
 void u8_inc(const char *s, int32_t *i);
 
