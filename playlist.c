@@ -1008,7 +1008,7 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, const int starts
     pl_replace_meta (it, ":FILETYPE", ftype);
     if (performer[0]) {
         pl_add_meta (it, "artist", performer);
-        if (albumperformer[0]) {
+        if (albumperformer[0] && strcmp (albumperformer, performer)) {
             pl_add_meta (it, "album artist", albumperformer);
         }
     }
