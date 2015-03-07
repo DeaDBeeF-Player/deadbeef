@@ -84,10 +84,7 @@ in_sc68_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->loop = ti.trk.time_ms == 0;
 
     int samplerate = deadbeef->conf_get_int ("c68.samplerate", 44100);
-#if 0
-    sc68_config_set (info->sc68, SC68config_get_id ("sampling_rate"), samplerate);
-    api68_config_set (info->sc68, SC68config_get_id ("skip_time"), deadbeef->conf_get_int ("c68.skip_time", 4));
-#endif
+//    sc68_cntl (info->sc68, SC68_SET_OPT_STR, "sampling_rate", samplerate);
     if (ti.trk.time_ms > 0) {
         info->totalsamples = (uint64_t)ti.trk.time_ms * samplerate / 1000;
     }
