@@ -424,7 +424,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         }
                     }
                 }
-                else if (!strcmp (name, "disctotal")) {
+                else if (!strcmp (name, "totaldiscs")) {
                     val = pl_find_meta_raw (it, "disctotal");
                     if (!val) {
                         // try to extract disctotal from disc field
