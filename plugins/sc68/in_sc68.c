@@ -26,7 +26,6 @@
 #include <limits.h>
 #include "../../deadbeef.h"
 #include "sc68/sc68.h"
-#include "file68/sc68/file68_rsc.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 
@@ -333,7 +332,7 @@ in_sc68_start (void) {
 
     char datadir[PATH_MAX];
     snprintf (datadir, sizeof (datadir), "%s/data68", deadbeef->get_plugin_dir ());
-    rsc68_set_share (datadir);
+    sc68_cntl (0, SC68_SET_OPT_STR, "share-path", datadir);
 
     return 0;
 }
