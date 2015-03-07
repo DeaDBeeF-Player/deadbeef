@@ -410,6 +410,39 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 }
                 else if (!strcmp (name, "discnumber")) {
                     val = pl_find_meta_raw (it, "disc");
+                    // convert "disc/disctotal" -> "disc"
+                    if (val) {
+                        const char *end = strrchr (val, '/');
+                        if (end) {
+                            int n = (int)(end-val);
+                            n = min (n, outlen-1);
+                            strncpy (out, val, n);
+                            outlen -= n;
+                            out += n;
+                            skip_out = 1;
+                            val = NULL;
+                        }
+                    }
+                }
+                else if (!strcmp (name, "disctotal")) {
+                    val = pl_find_meta_raw (it, "disctotal");
+                    if (!val) {
+                        // try to extract disctotal from disc field
+                        val = pl_find_meta_raw (it, "disc");
+                        if (val) {
+                            const char *start = strrchr (val, '/');
+                            if (start) {
+                                start++;
+                                int n = strlen (start);
+                                n = min (n, outlen-1);
+                                strncpy (out, start, n);
+                                outlen -= n;
+                                out += n;
+                                skip_out = 1;
+                            }
+                            val = NULL;
+                        }
+                    }
                 }
                 else if (!strcmp (name, "track number")) {
                     val = pl_find_meta_raw (it, "track");
