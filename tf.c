@@ -284,7 +284,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
             trace ("free char: %c\n", *code);
             *out++ = *code++;
             size--;
-            outlen++;
+            outlen--;
         }
         else {
             code++;
