@@ -113,6 +113,9 @@ tf_func_greater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, cha
     if (len < 0) {
         goto out;
     }
+    else if (len == 0) {
+        return 0;
+    }
     int aa = atoi (a);
 
     arg += arglens[0];
@@ -120,6 +123,9 @@ tf_func_greater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, cha
     len = tf_eval_int (ctx, arg, arglens[1], b, sizeof (b), fail_on_undef);
     if (len < 0) {
         goto out;
+    }
+    else if (len == 0) {
+        return 0;
     }
     int bb = atoi (b);
 
@@ -148,12 +154,18 @@ tf_func_strcmp (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char
     if (len < 0) {
         goto out;
     }
+    else if (len == 0) {
+        return 0;
+    }
 
     arg += arglens[0];
     char s2[1000];
     len = tf_eval_int (ctx, arg, arglens[1], s2, sizeof (s2), fail_on_undef);
     if (len < 0) {
         goto out;
+    }
+    else if (len == 0) {
+        return 0;
     }
 
     int res = strcmp (s1, s2);
