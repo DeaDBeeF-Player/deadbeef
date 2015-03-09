@@ -392,6 +392,7 @@ csid_seek (DB_fileinfo_t *_info, float time) {
     if (t < _info->readpos) {
         // reinit
         info->sidplay->load (info->tune);
+        csid_mute_voices (info, chip_voices);
     }
     else {
         t -= _info->readpos;
