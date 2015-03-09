@@ -95,12 +95,18 @@
 - (IBAction)networkEditContentTypeMapping:(id)sender;
 
 // Plugins properties
-@property (unsafe_unretained) IBOutlet NSScrollView *pluginList;
-@property (unsafe_unretained) IBOutlet NSTextField *pluginVersion;
-@property (unsafe_unretained) IBOutlet NSScrollView *pluginDescription;
+@property (unsafe_unretained) IBOutlet NSTextField *pluginUnselectedText;
+@property (unsafe_unretained) IBOutlet NSTabView *pluginTabView;
 
-- (IBAction)pluginConfigure:(id)sender;
-- (IBAction)pluginShowCopyright:(id)sender;
+@property (unsafe_unretained) IBOutlet NSTableView *pluginList;
+@property (unsafe_unretained) IBOutlet NSTextField *pluginVersion;
+@property (unsafe_unretained) IBOutlet NSTextView *pluginDescription;
+@property (unsafe_unretained) IBOutlet NSTextView *pluginLicense;
+
+@property (unsafe_unretained) IBOutlet NSScrollView *pluginPropertiesScroller;
+@property (unsafe_unretained) IBOutlet NSView *pluginPropertiesView;
+
 - (IBAction)pluginOpenWebsite:(id)sender;
+- (IBAction)pluginConfResetDefaults:(id)sender;
 
 @end

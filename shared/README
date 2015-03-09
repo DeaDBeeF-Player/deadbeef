@@ -1,0 +1,5 @@
+This folder is supposed to have the code which can be shared across many plugins, but isn't exposed via API.
+
+Expected use is:
+    * 1st party plugins: reference directly
+    * 3rd party plugins: copy to your tree
