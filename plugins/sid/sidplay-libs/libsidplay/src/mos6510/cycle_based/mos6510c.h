@@ -85,7 +85,7 @@ private:
 #endif
 
 protected:
-	int_least8_t m_stealCycleDelta;
+    int m_stealCycleDelta;
     bool dodump;
     EventContext &eventContext;
    
@@ -298,7 +298,7 @@ inline void MOS6510::clock (void)
 {
     int_least8_t i = cycleCount++;
 
-#if 1
+#if 0
 	// C++ exception version
     try {
         (this->*procCycle[i]) ();
@@ -322,15 +322,19 @@ inline void MOS6510::clock (void)
     }
 #endif
 
-#if 0
-	m_stealCycleDelta = 0;
-	(this->*procCycle[i]) ();
-	if (m_stealCycleDelta != 0) {
-		cycleCount += m_stealCycleDelta;
-		m_blocked   = true;
-		eventContext.cancel (this);
-		m_stealCycleDelta = 0;
-	}
+#if 1
+    if (!rdy || !aec) {
+        m_stealCycleDelta = -1;
+    }
+    else {
+        (this->*procCycle[i]) ();
+    }
+    if (m_stealCycleDelta != 0) {
+        cycleCount += m_stealCycleDelta;
+        m_stealCycleDelta = 0;
+        m_blocked   = true;
+        eventContext.cancel (this);
+    }
 #endif
 }
 
