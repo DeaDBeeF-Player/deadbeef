@@ -76,6 +76,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
 
 int
 tf_eval (ddb_tf_context_t *ctx, char *code, int codelen, char *out, int outlen) {
+    memset (out, 0, outlen);
     int l = 0;
     switch (ctx->id) {
     case DB_COLUMN_FILENUMBER:
@@ -218,6 +219,7 @@ tf_func_add (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
             return -1;
         }
         outval += atoi (out);
+        memset (out, 0, len);
         arg += arglens[i];
     }
     int res = snprintf (out, outlen, "%d", outval);
