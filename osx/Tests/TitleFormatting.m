@@ -3,14 +3,13 @@
 #include "playlist.h"
 #include "tf.h"
 
-@interface TitleFormatting : XCTestCase
-
-@end
-
-@implementation TitleFormatting {
+@interface TitleFormatting : XCTestCase {
     playItem_t *it;
     ddb_tf_context_t ctx;
 }
+@end
+
+@implementation TitleFormatting
 
 - (void)setUp {
     [super setUp];
