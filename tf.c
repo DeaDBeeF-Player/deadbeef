@@ -114,6 +114,9 @@ tf_func_greater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, cha
     if (len < 0) {
         goto out;
     }
+    else if (len == 0) {
+        return 0;
+    }
     int aa = atoi (a);
 
     arg += arglens[0];
@@ -121,6 +124,9 @@ tf_func_greater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, cha
     len = tf_eval_int (ctx, arg, arglens[1], b, sizeof (b), fail_on_undef);
     if (len < 0) {
         goto out;
+    }
+    else if (len == 0) {
+        return 0;
     }
     int bb = atoi (b);
 
@@ -149,12 +155,18 @@ tf_func_strcmp (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char
     if (len < 0) {
         goto out;
     }
+    else if (len == 0) {
+        return 0;
+    }
 
     arg += arglens[0];
     char s2[1000];
     len = tf_eval_int (ctx, arg, arglens[1], s2, sizeof (s2), fail_on_undef);
     if (len < 0) {
         goto out;
+    }
+    else if (len == 0) {
+        return 0;
     }
 
     int res = strcmp (s1, s2);
@@ -412,6 +424,39 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 }
                 else if (!strcmp (name, "discnumber")) {
                     val = pl_find_meta_raw (it, "disc");
+                    // convert "disc/disctotal" -> "disc"
+                    if (val) {
+                        const char *end = strrchr (val, '/');
+                        if (end) {
+                            int n = (int)(end-val);
+                            n = min (n, outlen-1);
+                            strncpy (out, val, n);
+                            outlen -= n;
+                            out += n;
+                            skip_out = 1;
+                            val = NULL;
+                        }
+                    }
+                }
+                else if (!strcmp (name, "totaldiscs")) {
+                    val = pl_find_meta_raw (it, "disctotal");
+                    if (!val) {
+                        // try to extract disctotal from disc field
+                        val = pl_find_meta_raw (it, "disc");
+                        if (val) {
+                            const char *start = strrchr (val, '/');
+                            if (start) {
+                                start++;
+                                int n = strlen (start);
+                                n = min (n, outlen-1);
+                                strncpy (out, start, n);
+                                outlen -= n;
+                                out += n;
+                                skip_out = 1;
+                            }
+                            val = NULL;
+                        }
+                    }
                 }
                 else if (!strcmp (name, "track number")) {
                     val = pl_find_meta_raw (it, "track");
