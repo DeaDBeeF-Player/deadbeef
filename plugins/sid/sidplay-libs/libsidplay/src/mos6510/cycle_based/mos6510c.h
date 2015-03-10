@@ -76,11 +76,14 @@
 class MOS6510: public C64Environment, public Event
 {
 private:
-    jmp_buf jmp_env;
     // External signals
     bool aec; /* Address Controller, blocks all */
     bool rdy; /* Bus Access, blocks reads */
     bool m_blocked;
+#if 0
+	jmp_buf jmp_env;
+#endif
+	static int_least8_t m_stealCycleDelta;
 
 protected:
     bool dodump;
@@ -295,16 +298,18 @@ inline void MOS6510::clock (void)
 {
     int_least8_t i = cycleCount++;
 
-// C++ exception version
-//    try {
-//        (this->*procCycle[i]) ();
-//    } catch (int_least8_t delta) {
-//        cycleCount += delta;
-//        m_blocked   = true;
-//        eventContext.cancel (this);
-//    }
-
-    // longjmp version
+#if 0
+	// C++ exception version
+    try {
+        (this->*procCycle[i]) ();
+    } catch (int_least8_t delta) {
+        cycleCount += delta;
+        m_blocked   = true;
+        eventContext.cancel (this);
+    }
+#endif
+#if 0
+	// longjmp version
     int_least8_t delta = setjmp (jmp_env);
     if (delta == 0) {
         (this->*procCycle[i]) ();
@@ -314,6 +319,15 @@ inline void MOS6510::clock (void)
         m_blocked   = true;
         eventContext.cancel (this);
     }
+#endif
+
+	(this->*procCycle[i]) ();
+	if (m_stealCycleDelta != 0) {
+		cycleCount += m_stealCycleDelta;
+		m_blocked   = true;
+		eventContext.cancel (this);
+		m_stealCycleDelta = 0;
+	}
 }
 
 inline void MOS6510::event (void)
