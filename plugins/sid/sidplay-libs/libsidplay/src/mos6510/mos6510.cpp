@@ -52,8 +52,6 @@
 
 #include "mos6510.h"
 
-int_least8_t MOS6510::m_stealCycleDelta = 0;
-
 // Check to see what type of emulation is required
 #ifdef MOS6510_CYCLE_BASED
 #   include "cycle_based/mos6510c.i"
