@@ -79,6 +79,15 @@
     XCTAssert([@"- Disc: 18/20" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
 
+- (void)test_Add10And2_Gives12 {
+    char *bc;
+    int sz = tf_compile("$add(10,2)", &bc);
+    char buffer[200];
+    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"12" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
 - (void)test_SimpleExpr_Performance {
     char *bc;
     int sz = tf_compile("simple expr", &bc);
