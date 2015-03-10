@@ -242,8 +242,12 @@ void SID6510::FetchOpcode (void)
     // has to be handled.
     m_sleeping |= (endian_16hi8  (Register_StackPointer)   != SP_PAGE);
     m_sleeping |= (endian_32hi16 (Register_ProgramCounter) != 0);
-    if (!m_sleeping)
-        MOS6510::FetchOpcode ();
+	if (!m_sleeping) {
+		MOS6510::FetchOpcode ();
+		if (m_stealCycleDelta) {
+			return;
+		}
+	}
 
     if (m_framelock == false)
     {
