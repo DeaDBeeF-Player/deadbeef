@@ -1605,7 +1605,7 @@ pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int s
 void
 pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height) {
     if (listview->group_format && listview->group_format[0]) {
-        char str[1024];
+        char str[1024] = "";
         if (listview->group_title_bytecode_len >= 0) {
             ddb_tf_context_t ctx = {
                 ._size = sizeof (ddb_tf_context_t),
