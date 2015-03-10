@@ -169,7 +169,7 @@ const char _sidtune_CHRtab[256] =  // CHR$ conversion table (0x01 = no output)
 #define getFlagZ()    (Register_z_Flag == 0)
 #define getFlagC()    (Register_c_Flag != 0)
 
-#if 1
+#if 0
 // c++ exception version
 #define stealCycle() \
     interrupts.delay++; \
@@ -185,11 +185,12 @@ const char _sidtune_CHRtab[256] =  // CHR$ conversion table (0x01 = no output)
 #define ReturnIfCycleStolen()
 #endif
 
-#if 0
+#if 1
 // global variable version
 #define stealCycle() \
     interrupts.delay++; \
-    m_stealCycleDelta = (int_least8_t)-1;
+    m_stealCycleDelta = -1; \
+    return;
 
 #define ReturnIfCycleStolen()\
 	{ if (m_stealCycleDelta != 0) return; }

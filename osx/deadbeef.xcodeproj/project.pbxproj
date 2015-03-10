@@ -1794,6 +1794,10 @@
 		2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = bufferingTemplate.pdf; path = images/bufferingTemplate.pdf; sourceTree = "<group>"; };
 		2DEF494219C4DB4100B718C1 /* DdbListview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbListview.h; sourceTree = "<group>"; };
 		2DEF494319C4DB4100B718C1 /* DdbListview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbListview.m; sourceTree = "<group>"; };
+		2DFA31E81AAF351800792053 /* mos6510c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mos6510c.h; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/mos6510c.h"; sourceTree = "<group>"; };
+		2DFA31E91AAF351800792053 /* mos6510c.i */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c.preprocessed; name = mos6510c.i; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/mos6510c.i"; sourceTree = "<group>"; };
+		2DFA31EA1AAF351800792053 /* sid6510c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sid6510c.h; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/sid6510c.h"; sourceTree = "<group>"; };
+		2DFA31EB1AAF351800792053 /* sid6510c.i */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c.preprocessed; name = sid6510c.i; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/sid6510c.i"; sourceTree = "<group>"; };
 		4D011FFC19AB9589005499B4 /* coreaudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = coreaudio.c; sourceTree = "<group>"; };
 		4D1B3E7A18379829003E6066 /* deadbeef.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deadbeef.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D1B3E7D18379829003E6066 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -2189,6 +2193,10 @@
 		2D22F5AC19E1362D009C631E /* libsidplay2 */ = {
 			isa = PBXGroup;
 			children = (
+				2DFA31E81AAF351800792053 /* mos6510c.h */,
+				2DFA31E91AAF351800792053 /* mos6510c.i */,
+				2DFA31EA1AAF351800792053 /* sid6510c.h */,
+				2DFA31EB1AAF351800792053 /* sid6510c.i */,
 				2D22F76219E13DB2009C631E /* resid-builder.cpp */,
 				2D22F76319E13DB2009C631E /* resid-emu.h */,
 				2D22F76419E13DB2009C631E /* resid.cpp */,
