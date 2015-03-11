@@ -218,6 +218,32 @@ int grouptitleheight = 22;
         }
     }
 }
+
+- (DdbListviewCol_t)columnIndexForCoord:(NSPoint)theCoord {
+    id <DdbListviewDelegate> delegate = [listview delegate];
+    NSScrollView *sv = [listview.contentView enclosingScrollView];
+    NSRect rc = [sv documentVisibleRect];
+    NSPoint convPt = [self convertPoint:theCoord fromView:nil];
+
+    int x = -rc.origin.x;
+    DdbListviewCol_t col;
+    for (col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
+        int w = [delegate columnWidth:col];
+
+        if (CGRectContainsPoint(NSMakeRect(x, 0, w, [self bounds].size.height), convPt)) {
+            break;
+        }
+
+        x += w;
+    }
+    return col;
+}
+
+- (void)rightMouseDown:(NSEvent *)theEvent {
+    id <DdbListviewDelegate> delegate = [listview delegate];
+    DdbListviewCol_t col = [self columnIndexForCoord:[theEvent locationInWindow]];
+    [delegate contextMenuForColumn:col withEvent:theEvent forView:self];
+}
 @end
 
 @interface DdbListContentView : NSView {
@@ -1354,7 +1380,6 @@ int grouptitleheight = 22;
 
 - (void)setDelegate:(id<DdbListviewDelegate>)delegate {
     _delegate = delegate;
-    [headerView setMenu:[delegate getColumnMenu]];
 }
 
 @end
