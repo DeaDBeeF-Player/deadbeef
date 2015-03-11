@@ -384,15 +384,13 @@ plt_get_title_wrapper (int plt) {
 #endif
 
 -(void)scrollWheel:(NSEvent*)event {
-    NSLog(@"wheel %f %f", event.deltaX, event.deltaY);
-    
     if (event.deltaY < 0 || event.deltaX < 0)
     {
-        [self scrollLeft];
+        [self scrollRight];
     }
     else if (event.deltaY > 0 || event.deltaX > 0)
     {
-        [self scrollRight];
+        [self scrollLeft];
     }
 }
 
