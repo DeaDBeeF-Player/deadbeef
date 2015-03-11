@@ -14,9 +14,12 @@
 
 typedef struct {
     char *title;
-    int _id; // predefined col type
+    int type; // predefined col type
     char *format;
     int size;
+    int alignment;
+    int set_text_color;
+    uint8_t text_color[4];
     char *bytecode;
     int bytecode_len;
 } plt_col_info_t;
@@ -24,6 +27,7 @@ typedef struct {
 @interface DdbPlaylistViewController : NSViewController {
     plt_col_info_t _columns[PLT_MAX_COLUMNS];
     int _ncolumns;
+    int _menuColumn;
     NSImage *_playTpl;
     NSImage *_pauseTpl;
     NSImage *_bufTpl;
@@ -34,13 +38,25 @@ typedef struct {
     TrackPropertiesWindowController *_trkProperties;
 }
 
-- (const char *)defaultColumnConfig;
 - (void)initContent;
 - (int)playlistIter;
 
 // playlist columns
 @property (unsafe_unretained) IBOutlet NSPanel *addColumnPanel;
-- (IBAction)addColumnClose:(id)sender;
+- (IBAction)addColumnCancel:(id)sender;
+- (IBAction)addColumnOK:(id)sender;
+
+@property (unsafe_unretained) IBOutlet NSTextField *addColumnTitle;
+@property (unsafe_unretained) IBOutlet NSPopUpButton *addColumnType;
+@property (unsafe_unretained) IBOutlet NSTextField *addColumnFormat;
+@property (unsafe_unretained) IBOutlet NSPopUpButton *addColumnAlignment;
+@property (unsafe_unretained) IBOutlet NSButton *addColumnSetColor;
+@property (unsafe_unretained) IBOutlet NSColorWell *addColumnColor;
+- (IBAction)addColumnTypeChanged:(id)sender;
+- (IBAction)addColumnSetColorChanged:(id)sender;
+- (IBAction)addColumnTFHelp:(id)sender;
+
+
 - (int)handleListviewMessage:(DdbListview *)listview id:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
 @end
