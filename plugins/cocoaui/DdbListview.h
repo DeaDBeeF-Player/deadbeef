@@ -27,7 +27,7 @@ typedef intptr_t DdbListviewCol_t;
 - (int)columnMinHeight:(DdbListviewCol_t)col;
 - (void)moveColumn:(DdbListviewCol_t)col to:(DdbListviewCol_t)to;
 - (void)columnsChanged;
-- (NSMenu *)getColumnMenu;
+- (void)contextMenuForColumn:(DdbListviewCol_t)col withEvent:(NSEvent*)theEvent forView:(NSView *)view;
 - (DdbListviewRow_t)firstRow;
 - (DdbListviewRow_t)nextRow:(DdbListviewRow_t)row;
 - (DdbListviewRow_t)invalidRow;
