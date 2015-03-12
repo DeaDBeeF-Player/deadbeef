@@ -27,4 +27,6 @@
     NSImage *_tabUnselRight;
     NSImage *_tabBottomFill;
 }
+
+- (int)clickedTab;
 @end
