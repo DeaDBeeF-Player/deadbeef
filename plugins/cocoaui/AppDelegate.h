@@ -48,8 +48,6 @@
 
 @property (unsafe_unretained) IBOutlet NSImageView *dockTileView;
 
-- (IBAction)performCloseTabAction:(id)sender;
-
 - (IBAction)openPrefWindow:(id)sender;
 
 // file menu

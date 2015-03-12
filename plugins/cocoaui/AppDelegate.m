@@ -507,13 +507,6 @@ init_column (int i, int _id, const char *format) {
     return 0;
 }
 
-- (IBAction)performCloseTabAction:(id)sender {
-    int idx = deadbeef->plt_get_curr_idx ();
-    if (idx != -1) {
-        deadbeef->plt_remove (idx);
-    }
-}
-
 - (IBAction)performFindPanelAction:(id)sender {
     [[_searchWindow window] setIsVisible:YES];
     [[_searchWindow window] makeKeyWindow];

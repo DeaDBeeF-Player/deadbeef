@@ -204,5 +204,11 @@ static struct timeval last_br_update;
     }
 }
 
+- (IBAction)performCloseTabAction:(id)sender {
+    int idx = deadbeef->plt_get_curr_idx ();
+    if (idx != -1) {
+        deadbeef->plt_remove (idx);
+    }
+}
 
 @end
