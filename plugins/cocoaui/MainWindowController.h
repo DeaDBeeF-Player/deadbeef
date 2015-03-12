@@ -19,5 +19,10 @@
 - (IBAction)seekBarAction:(id)sender;
 
 - (IBAction)tbClicked:(id)sender;
+@property (strong) IBOutlet NSPanel *renamePlaylistWindow;
+@property (unsafe_unretained) IBOutlet NSTextField *renamePlaylistTitle;
+- (IBAction)renamePlaylistCancelAction:(id)sender;
+- (IBAction)renamePlaylistOKAction:(id)sender;
 
+- (IBAction)renamePlaylistAction:(id)sender;
 @end

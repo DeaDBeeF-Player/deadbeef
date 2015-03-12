@@ -456,11 +456,28 @@ plt_get_title_wrapper (int plt) {
     }
 }
 
--(void)rightMouseDown:(NSEvent *)event {
-    NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
+- (void)closePlaylist:(id)sender {
+
+}
+
+- (void)addNewPlaylist:(id)sender {
+}
+
+- (void)rightMouseDown:(NSEvent *)theEvent {
+    NSPoint coord = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     _tab_clicked = [self tabUnderCursor:coord.x];
-    if (event.type == NSRightMouseDown) {
-        // FIXME: right click menu
+    if (theEvent.type == NSRightMouseDown) {
+        NSMenu *menu = [[NSMenu alloc] initWithTitle:@"TabMenu"];
+        [menu setDelegate:(id<NSMenuDelegate>)self];
+        [menu setAutoenablesItems:NO];
+        [[menu insertItemWithTitle:@"Add New Playlist" action:@selector(addNewPlaylist:) keyEquivalent:@"" atIndex:0] setTarget:self];
+        if (_tab_clicked != -1) {
+            [[menu insertItemWithTitle:@"Close Playlist" action:@selector(closePlaylist:) keyEquivalent:@"" atIndex:0] setTarget:self];
+
+            // ignore the warning, the message is sent to 1st responder, which will ne the mainwincontroller in this case
+            [menu insertItemWithTitle:@"Rename Playlist" action:@selector(renamePlaylistAction:) keyEquivalent:@"" atIndex:0];
+        }
+        [NSMenu popUpContextMenu:menu withEvent:theEvent forView:self];
     }
 }
 
@@ -590,6 +607,10 @@ plt_get_title_wrapper (int plt) {
             break;
     }
     return 0;
+}
+
+- (int)clickedTab {
+    return _tab_clicked;
 }
 
 @end
