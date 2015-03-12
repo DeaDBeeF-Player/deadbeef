@@ -27,6 +27,7 @@
 }
 
 - (void)tearDown {
+    pl_item_unref (it);
     pl_free ();
 
     [super tearDown];
@@ -68,7 +69,7 @@
 }
 
 - (void)test_TotalDiscsGreaterThan1_ReturnsExpectedResult {
-    pl_add_meta (it, "totaldiscs", "20");
+    pl_add_meta (it, "disctotal", "20");
     pl_add_meta (it, "disc", "18");
 
     char *bc;
@@ -77,6 +78,41 @@
     tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert([@"- Disc: 18/20" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_AlbumArtistSameAsArtist_ReturnsBlankTrackArtist {
+    pl_add_meta (it, "artist", "Artist Name");
+    pl_add_meta (it, "album artist", "Artist Name");
+
+    char *bc;
+    int sz = tf_compile("%track artist%", &bc);
+    char buffer[200];
+    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_TrackArtistIsUndef_ReturnsBlankTrackArtist {
+    pl_add_meta (it, "album artist", "Artist Name");
+
+    char *bc;
+    int sz = tf_compile("%track artist%", &bc);
+    char buffer[200];
+    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_TrackArtistIsDefined_ReturnsTheTrackArtist {
+    pl_add_meta (it, "artist", "Track Artist Name");
+    pl_add_meta (it, "album artist", "Album Artist Name");
+
+    char *bc;
+    int sz = tf_compile("%track artist%", &bc);
+    char buffer[200];
+    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"Track Artist Name" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
 
 - (void)test_Add10And2_Gives12 {
