@@ -368,7 +368,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     if (!val) {
                         val = _("Unknown Artist");
                     }
-                    if (strcmp (val, aa)) {
+                    if (!strcmp (val, aa)) {
                         val = NULL;
                     }
                 }
