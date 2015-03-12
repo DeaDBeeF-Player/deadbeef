@@ -7,10 +7,40 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D01D7CE1AB2219C00BCD3C4 /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D93DC521AADFEEF003D2D8D /* pluginsettings.c */; };
+		2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ED81837EC44003E6066 /* ConvertUTF.c */; };
+		2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F871837EC44003E6066 /* md5.c */; };
+		2D01D7D11AB2219C00BCD3C4 /* playqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D713FFB1A5D7D5900EFF139 /* playqueue.c */; };
+		2D01D7D21AB2219C00BCD3C4 /* tf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A002519C390E9006F7462 /* tf.c */; };
+		2D01D7D31AB2219C00BCD3C4 /* escape.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA6F89B19A5332D002151EB /* escape.c */; };
+		2D01D7D41AB2219C00BCD3C4 /* conf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ECE1837EC44003E6066 /* conf.c */; };
+		2D01D7D51AB2219C00BCD3C4 /* dsppreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3EE21837EC44003E6066 /* dsppreset.c */; };
+		2D01D7D61AB2219C00BCD3C4 /* fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3EE71837EC44003E6066 /* fft.c */; };
+		2D01D7D71AB2219C00BCD3C4 /* handler.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3EEA1837EC44003E6066 /* handler.c */; };
+		2D01D7D81AB2219C00BCD3C4 /* junklib.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F5A1837EC44003E6066 /* junklib.c */; };
+		2D01D7D91AB2219C00BCD3C4 /* messagepump.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F891837EC44003E6066 /* messagepump.c */; };
+		2D01D7DA1AB2219C00BCD3C4 /* metacache.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F8B1837EC44003E6066 /* metacache.c */; };
+		2D01D7DB1AB2219C00BCD3C4 /* playlist.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F9A1837EC44003E6066 /* playlist.c */; };
+		2D01D7DC1AB2219C00BCD3C4 /* plmeta.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F9C1837EC44003E6066 /* plmeta.c */; };
+		2D01D7DD1AB2219C00BCD3C4 /* pltmeta.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F9D1837EC44003E6066 /* pltmeta.c */; };
+		2D01D7DF1AB2219C00BCD3C4 /* premix.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47871837EC47003E6066 /* premix.c */; };
+		2D01D7E01AB2219C00BCD3C4 /* replaygain.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47A21837EC48003E6066 /* replaygain.c */; };
+		2D01D7E11AB2219C00BCD3C4 /* ringbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47A41837EC48003E6066 /* ringbuf.c */; };
+		2D01D7E21AB2219C00BCD3C4 /* streamer.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47BB1837EC48003E6066 /* streamer.c */; };
+		2D01D7E31AB2219C00BCD3C4 /* threading_pthread.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47BE1837EC48003E6066 /* threading_pthread.c */; };
+		2D01D7E41AB2219C00BCD3C4 /* utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B49E81837EC49003E6066 /* utf8.c */; };
+		2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B49EA1837EC49003E6066 /* vfs.c */; };
+		2D01D7E61AB2219C00BCD3C4 /* vfs_stdio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B49EC1837EC49003E6066 /* vfs_stdio.c */; };
+		2D01D7E71AB2219C00BCD3C4 /* volume.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B49ED1837EC49003E6066 /* volume.c */; };
+		2D01D7EA1AB221B200BCD3C4 /* libddbcore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */; };
+		2D01D7ED1AB2222400BCD3C4 /* libddbcore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */; };
+		2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47481837EC47003E6066 /* plugins.c */; };
+		2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47481837EC47003E6066 /* plugins.c */; };
+		2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */; };
+		2D01D7F21AB223CC00BCD3C4 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
 		2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D061F7919E9685000CE6C29 /* DdbShared.m */; };
 		2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06B39B19D056BC0041BE86 /* DdbPlaylistWidget.h */; };
 		2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */; };
-		2D0A002719C390E9006F7462 /* tf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A002519C390E9006F7462 /* tf.c */; };
 		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
 		2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11E8AF1AA0E3DD00A67A20 /* MainWindowController.h */; };
 		2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */; };
@@ -497,7 +527,6 @@
 		2D6EC2C01A4218DF00DD1C72 /* synth_stereo_avx_accurate.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D6EC2BF1A4218DF00DD1C72 /* synth_stereo_avx_accurate.S */; };
 		2D6EC2C21A422E8200DD1C72 /* mp3_mad.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6EC2A31A42068F00DD1C72 /* mp3_mad.c */; };
 		2D6EC2C31A422E9100DD1C72 /* mp3_mad.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6EC2A41A42068F00DD1C72 /* mp3_mad.h */; };
-		2D713FFD1A5D7D5900EFF139 /* playqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D713FFB1A5D7D5900EFF139 /* playqueue.c */; };
 		2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D713FFC1A5D7D5900EFF139 /* playqueue.h */; };
 		2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */; };
 		2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */; };
@@ -533,7 +562,6 @@
 		2D9177691A0E8A3D004BC222 /* mp4util.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177581A0E8A3D004BC222 /* mp4util.c */; };
 		2D91776A1A0E8A3D004BC222 /* mp4util.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177581A0E8A3D004BC222 /* mp4util.c */; };
 		2D91776D1A0E8A4D004BC222 /* libmp4ff.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D91774B1A0E8A10004BC222 /* libmp4ff.a */; };
-		2D93DC551AADFEEF003D2D8D /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D93DC521AADFEEF003D2D8D /* pluginsettings.c */; };
 		2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D93DC531AADFEEF003D2D8D /* pluginsettings.h */; };
 		2D93DC571AADFEEF003D2D8D /* README in Resources */ = {isa = PBXBuildFile; fileRef = 2D93DC541AADFEEF003D2D8D /* README */; };
 		2DA0ACE91AA71516007EDD43 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
@@ -635,7 +663,6 @@
 		2DA24B9F19E7254F00E34920 /* vtls.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24B8719E7254F00E34920 /* vtls.c */; };
 		2DA24BA019E7254F00E34920 /* vtls.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA24B8819E7254F00E34920 /* vtls.h */; };
 		2DA24BA319E72A2500E34920 /* vfs_curl.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */; };
-		2DA6F89C19A5332D002151EB /* escape.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA6F89B19A5332D002151EB /* escape.c */; };
 		2DAA4C141AAF88FF00519559 /* TitleFormatting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA4C131AAF88FF00519559 /* TitleFormatting.m */; };
 		2DACBB241A40CEB100CCF401 /* mp3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; };
 		2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */; };
@@ -716,30 +743,7 @@
 		2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF494319C4DB4100B718C1 /* DdbListview.m */; };
 		4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
-		4D1B4A071837EC49003E6066 /* conf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ECE1837EC44003E6066 /* conf.c */; };
-		4D1B4A0F1837EC49003E6066 /* ConvertUTF.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ED81837EC44003E6066 /* ConvertUTF.c */; };
-		4D1B4A171837EC49003E6066 /* dsppreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3EE21837EC44003E6066 /* dsppreset.c */; };
-		4D1B4A1A1837EC49003E6066 /* fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3EE71837EC44003E6066 /* fft.c */; };
-		4D1B4A1B1837EC49003E6066 /* handler.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3EEA1837EC44003E6066 /* handler.c */; };
-		4D1B4A681837EC49003E6066 /* junklib.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F5A1837EC44003E6066 /* junklib.c */; };
 		4D1B4A8F1837EC49003E6066 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
-		4D1B4A921837EC49003E6066 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F871837EC44003E6066 /* md5.c */; };
-		4D1B4A931837EC49003E6066 /* messagepump.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F891837EC44003E6066 /* messagepump.c */; };
-		4D1B4A941837EC49003E6066 /* metacache.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F8B1837EC44003E6066 /* metacache.c */; };
-		4D1B4A9F1837EC49003E6066 /* playlist.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F9A1837EC44003E6066 /* playlist.c */; };
-		4D1B4AA01837EC49003E6066 /* plmeta.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F9C1837EC44003E6066 /* plmeta.c */; };
-		4D1B4AA11837EC49003E6066 /* pltmeta.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F9D1837EC44003E6066 /* pltmeta.c */; };
-		4D1B4F021837EC4A003E6066 /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47481837EC47003E6066 /* plugins.c */; };
-		4D1B4F3F1837EC4A003E6066 /* premix.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47871837EC47003E6066 /* premix.c */; };
-		4D1B4F4C1837EC4A003E6066 /* replaygain.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47A21837EC48003E6066 /* replaygain.c */; };
-		4D1B4F4D1837EC4A003E6066 /* ringbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47A41837EC48003E6066 /* ringbuf.c */; };
-		4D1B4F5F1837EC4A003E6066 /* streamer.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47BB1837EC48003E6066 /* streamer.c */; };
-		4D1B4F601837EC4A003E6066 /* threading_pthread.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47BE1837EC48003E6066 /* threading_pthread.c */; };
-		4D1B51471837EC4B003E6066 /* utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B49E81837EC49003E6066 /* utf8.c */; };
-		4D1B51481837EC4B003E6066 /* vfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B49EA1837EC49003E6066 /* vfs.c */; };
-		4D1B51491837EC4B003E6066 /* vfs_stdio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B49EC1837EC49003E6066 /* vfs_stdio.c */; };
-		4D1B514A1837EC4B003E6066 /* volume.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B49ED1837EC49003E6066 /* volume.c */; };
-		4D1B51541837EF9D003E6066 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
 		4D1B515B1837F4E9003E6066 /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
 		4D1B51681837F655003E6066 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51671837F655003E6066 /* AudioUnit.framework */; };
 		4D1B51691837F669003E6066 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51631837F60A003E6066 /* CoreAudio.framework */; };
@@ -912,6 +916,20 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		2D01D7E81AB221AA00BCD3C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D01D7C91AB2216900BCD3C4;
+			remoteInfo = ddbcore;
+		};
+		2D01D7EB1AB2221E00BCD3C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D01D7C91AB2216900BCD3C4;
+			remoteInfo = ddbcore;
+		};
 		2D22F75C19E1385A009C631E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -989,13 +1007,6 @@
 			remoteGlobalIDString = 2DA24B4A19E724C200E34920;
 			remoteInfo = vfs_curl;
 		};
-		2DAA4C0E1AAF88DE00519559 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4D1B3E7918379829003E6066;
-			remoteInfo = deadbeef;
-		};
 		2DB96AA619ABB51300E318A8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -1062,6 +1073,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libddbcore.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testbootstrap.c; sourceTree = "<group>"; };
 		2D061F7919E9685000CE6C29 /* DdbShared.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbShared.m; sourceTree = "<group>"; };
 		2D061F7B19E9685E00CE6C29 /* DdbShared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbShared.h; sourceTree = "<group>"; };
 		2D06B39B19D056BC0041BE86 /* DdbPlaylistWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbPlaylistWidget.h; path = widgets/DdbPlaylistWidget.h; sourceTree = "<group>"; };
@@ -2022,6 +2035,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		2D01D7C71AB2216900BCD3C4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D22F70019E1382C009C631E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2102,6 +2122,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D01D7ED1AB2222400BCD3C4 /* libddbcore.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2131,6 +2152,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D01D7EA1AB221B200BCD3C4 /* libddbcore.a in Frameworks */,
 				4D1B51691837F669003E6066 /* CoreAudio.framework in Frameworks */,
 				4D1B51681837F655003E6066 /* AudioUnit.framework in Frameworks */,
 				4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */,
@@ -3014,6 +3036,7 @@
 		2DAA4C0A1AAF88DE00519559 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */,
 				2DAA4C0B1AAF88DE00519559 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -3301,6 +3324,7 @@
 				2D917E781A4046FE00C3EB44 /* libmpg123.a */,
 				2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */,
 				2DAA4C081AAF88DE00519559 /* Tests.xctest */,
+				2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3712,6 +3736,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		2D01D7C81AB2216900BCD3C4 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D22F70119E1382C009C631E /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -4149,6 +4180,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		2D01D7C91AB2216900BCD3C4 /* ddbcore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D01D7CB1AB2216900BCD3C4 /* Build configuration list for PBXNativeTarget "ddbcore" */;
+			buildPhases = (
+				2D01D7C61AB2216900BCD3C4 /* Sources */,
+				2D01D7C71AB2216900BCD3C4 /* Frameworks */,
+				2D01D7C81AB2216900BCD3C4 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ddbcore;
+			productName = ddbcore;
+			productReference = 2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		2D22F70219E1382C009C631E /* libsidplay2 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D22F70419E1382C009C631E /* Build configuration list for PBXNativeTarget "libsidplay2" */;
@@ -4335,7 +4383,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				2DAA4C0F1AAF88DE00519559 /* PBXTargetDependency */,
+				2D01D7EC1AB2221E00BCD3C4 /* PBXTargetDependency */,
 			);
 			name = Tests;
 			productName = Tests;
@@ -4406,6 +4454,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D01D7E91AB221AA00BCD3C4 /* PBXTargetDependency */,
 				2DA0ACED1AA71E4B007EDD43 /* PBXTargetDependency */,
 				2D5D214B1A40341D001D5A79 /* PBXTargetDependency */,
 				2D9177411A0E89B8004BC222 /* PBXTargetDependency */,
@@ -4540,6 +4589,9 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Alexey Yakovenko";
 				TargetAttributes = {
+					2D01D7C91AB2216900BCD3C4 = {
+						CreatedOnToolsVersion = 6.2;
+					};
 					2D22F70219E1382C009C631E = {
 						CreatedOnToolsVersion = 6.0.1;
 					};
@@ -4566,7 +4618,6 @@
 					};
 					2DAA4C071AAF88DE00519559 = {
 						CreatedOnToolsVersion = 6.1.1;
-						TestTargetID = 4D1B3E7918379829003E6066;
 					};
 					2DCB281319E86162008E9DF6 = {
 						CreatedOnToolsVersion = 6.0.1;
@@ -4607,6 +4658,7 @@
 				2D917E771A4046FE00C3EB44 /* mpg123 */,
 				2DA0ABE01AA71055007EDD43 /* in_sc68 */,
 				2DAA4C071AAF88DE00519559 /* Tests */,
+				2D01D7C91AB2216900BCD3C4 /* ddbcore */,
 			);
 		};
 /* End PBXProject section */
@@ -4704,6 +4756,39 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		2D01D7C61AB2216900BCD3C4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D01D7F21AB223CC00BCD3C4 /* parser.c in Sources */,
+				2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */,
+				2D01D7DD1AB2219C00BCD3C4 /* pltmeta.c in Sources */,
+				2D01D7CE1AB2219C00BCD3C4 /* pluginsettings.c in Sources */,
+				2D01D7D71AB2219C00BCD3C4 /* handler.c in Sources */,
+				2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */,
+				2D01D7E41AB2219C00BCD3C4 /* utf8.c in Sources */,
+				2D01D7D11AB2219C00BCD3C4 /* playqueue.c in Sources */,
+				2D01D7DB1AB2219C00BCD3C4 /* playlist.c in Sources */,
+				2D01D7E21AB2219C00BCD3C4 /* streamer.c in Sources */,
+				2D01D7E71AB2219C00BCD3C4 /* volume.c in Sources */,
+				2D01D7E61AB2219C00BCD3C4 /* vfs_stdio.c in Sources */,
+				2D01D7D91AB2219C00BCD3C4 /* messagepump.c in Sources */,
+				2D01D7D81AB2219C00BCD3C4 /* junklib.c in Sources */,
+				2D01D7D31AB2219C00BCD3C4 /* escape.c in Sources */,
+				2D01D7DA1AB2219C00BCD3C4 /* metacache.c in Sources */,
+				2D01D7D41AB2219C00BCD3C4 /* conf.c in Sources */,
+				2D01D7D61AB2219C00BCD3C4 /* fft.c in Sources */,
+				2D01D7E31AB2219C00BCD3C4 /* threading_pthread.c in Sources */,
+				2D01D7DF1AB2219C00BCD3C4 /* premix.c in Sources */,
+				2D01D7DC1AB2219C00BCD3C4 /* plmeta.c in Sources */,
+				2D01D7D51AB2219C00BCD3C4 /* dsppreset.c in Sources */,
+				2D01D7E01AB2219C00BCD3C4 /* replaygain.c in Sources */,
+				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
+				2D01D7D21AB2219C00BCD3C4 /* tf.c in Sources */,
+				2D01D7E11AB2219C00BCD3C4 /* ringbuf.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D22F6FF19E1382C009C631E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5105,6 +5190,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */,
+				2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */,
 				2DAA4C141AAF88FF00519559 /* TitleFormatting.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5140,60 +5227,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D1B51541837EF9D003E6066 /* parser.c in Sources */,
-				4D1B4A681837EC49003E6066 /* junklib.c in Sources */,
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
-				4D1B4F021837EC4A003E6066 /* plugins.c in Sources */,
-				4D1B4A9F1837EC49003E6066 /* playlist.c in Sources */,
 				2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */,
-				4D1B4A931837EC49003E6066 /* messagepump.c in Sources */,
-				4D1B4A921837EC49003E6066 /* md5.c in Sources */,
 				2D9177671A0E8A3D004BC222 /* mp4tagupdate.c in Sources */,
 				2DD9EF0719A5089F00189344 /* cocoautil.m in Sources */,
-				4D1B4F4D1837EC4A003E6066 /* ringbuf.c in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
 				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,
 				2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */,
-				4D1B4AA01837EC49003E6066 /* plmeta.c in Sources */,
-				2DA6F89C19A5332D002151EB /* escape.c in Sources */,
-				4D1B4F601837EC4A003E6066 /* threading_pthread.c in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
-				4D1B4A941837EC49003E6066 /* metacache.c in Sources */,
 				2D9177611A0E8A3D004BC222 /* mp4ff.c in Sources */,
-				4D1B4F3F1837EC4A003E6066 /* premix.c in Sources */,
-				4D1B4A071837EC49003E6066 /* conf.c in Sources */,
 				2D9177631A0E8A3D004BC222 /* mp4meta.c in Sources */,
-				4D1B51471837EC4B003E6066 /* utf8.c in Sources */,
-				2D93DC551AADFEEF003D2D8D /* pluginsettings.c in Sources */,
 				2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */,
-				4D1B4A0F1837EC49003E6066 /* ConvertUTF.c in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
 				2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */,
 				2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */,
-				4D1B4F5F1837EC4A003E6066 /* streamer.c in Sources */,
-				4D1B4F4C1837EC4A003E6066 /* replaygain.c in Sources */,
 				2D828E5C19E56B4D00EE874F /* DdbSearchViewController.m in Sources */,
+				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
 				2D9177651A0E8A3D004BC222 /* mp4sample.c in Sources */,
 				2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */,
 				2D91775F1A0E8A3D004BC222 /* mp4atom.c in Sources */,
-				2D0A002719C390E9006F7462 /* tf.c in Sources */,
 				4D1B515B1837F4E9003E6066 /* nullout.c in Sources */,
-				4D1B4AA11837EC49003E6066 /* pltmeta.c in Sources */,
 				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
 				2D828E5819E567C800EE874F /* DdbSearchWidget.m in Sources */,
 				2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */,
 				2D9177691A0E8A3D004BC222 /* mp4util.c in Sources */,
 				2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */,
-				4D1B4A171837EC49003E6066 /* dsppreset.c in Sources */,
-				4D1B4A1A1837EC49003E6066 /* fft.c in Sources */,
-				2D713FFD1A5D7D5900EFF139 /* playqueue.c in Sources */,
-				4D1B514A1837EC4B003E6066 /* volume.c in Sources */,
-				4D1B51491837EC4B003E6066 /* vfs_stdio.c in Sources */,
-				4D1B51481837EC4B003E6066 /* vfs.c in Sources */,
-				4D1B4A1B1837EC49003E6066 /* handler.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5359,6 +5420,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		2D01D7E91AB221AA00BCD3C4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D01D7C91AB2216900BCD3C4 /* ddbcore */;
+			targetProxy = 2D01D7E81AB221AA00BCD3C4 /* PBXContainerItemProxy */;
+		};
+		2D01D7EC1AB2221E00BCD3C4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D01D7C91AB2216900BCD3C4 /* ddbcore */;
+			targetProxy = 2D01D7EB1AB2221E00BCD3C4 /* PBXContainerItemProxy */;
+		};
 		2D22F75D19E1385A009C631E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D22F75419E1384B009C631E /* sid */;
@@ -5413,11 +5484,6 @@
 			isa = PBXTargetDependency;
 			target = 2DA24B4A19E724C200E34920 /* vfs_curl */;
 			targetProxy = 2DA24BA119E72A0000E34920 /* PBXContainerItemProxy */;
-		};
-		2DAA4C0F1AAF88DE00519559 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4D1B3E7918379829003E6066 /* deadbeef */;
-			targetProxy = 2DAA4C0E1AAF88DE00519559 /* PBXContainerItemProxy */;
 		};
 		2DB96AA719ABB51300E318A8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -5487,6 +5553,53 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		2D01D7CC1AB2216900BCD3C4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"PORTABLE=1",
+					"STATICLINK=1",
+					"PREFIX=\\\"donotuse\\\"",
+					"LIBDIR=\\\"donotuse\\\"",
+					"DOCDIR=\\\"donotuse\\\"",
+					"VERSION=\\\"devel\\\"",
+					"HAVE_LOG2=1",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		2D01D7CD1AB2216900BCD3C4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"PORTABLE=1",
+					"STATICLINK=1",
+					"PREFIX=\\\"donotuse\\\"",
+					"LIBDIR=\\\"donotuse\\\"",
+					"DOCDIR=\\\"donotuse\\\"",
+					"VERSION=\\\"devel\\\"",
+					"HAVE_LOG2=1",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		2D22F70519E1382C009C631E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -5993,7 +6106,6 @@
 		2DAA4C111AAF88DF00519559 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -6012,14 +6124,12 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/deadbeef.app/Contents/MacOS/deadbeef";
 			};
 			name = Debug;
 		};
 		2DAA4C121AAF88DF00519559 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -6034,7 +6144,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/deadbeef.app/Contents/MacOS/deadbeef";
 			};
 			name = Release;
 		};
@@ -6222,8 +6331,6 @@
 					"DOCDIR=\\\"donotuse\\\"",
 					"VERSION=\\\"devel\\\"",
 					"HAVE_LOG2=1",
-					"PATH_MAX=1024",
-					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6255,8 +6362,6 @@
 					"DOCDIR=\\\"donotuse\\\"",
 					"VERSION=\\\"devel\\\"",
 					"HAVE_LOG2=1",
-					"PATH_MAX=1024",
-					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6521,6 +6626,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2D01D7CB1AB2216900BCD3C4 /* Build configuration list for PBXNativeTarget "ddbcore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D01D7CC1AB2216900BCD3C4 /* Debug */,
+				2D01D7CD1AB2216900BCD3C4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		2D22F70419E1382C009C631E /* Build configuration list for PBXNativeTarget "libsidplay2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -6618,6 +6731,7 @@
 				2DAA4C121AAF88DF00519559 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2DB96A8119ABB47C00E318A8 /* Build configuration list for PBXNativeTarget "dsp_libsrc" */ = {
 			isa = XCConfigurationList;
