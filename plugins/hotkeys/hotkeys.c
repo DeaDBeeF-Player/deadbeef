@@ -743,15 +743,19 @@ action_seek_1p_backward_cb (struct DB_plugin_action_s *action, int ctx) {
     return 0;
 }
 
-int
-action_seek_1s_forward_cb (struct DB_plugin_action_s *action, int ctx) {
+static int
+seek_sec (float sec) {
     deadbeef->pl_lock ();
     DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
     if (it) {
         float dur = deadbeef->pl_get_item_duration (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            deadbeef->sendmessage (DB_EV_SEEK, 0, (pos + 1.f) * 1000, 0);
+            pos += sec;
+            if (pos < 0) {
+                pos = 0;
+            }
+            deadbeef->sendmessage (DB_EV_SEEK, 0, pos * 1000, 0);
         }
         deadbeef->pl_item_unref (it);
     }
@@ -760,23 +764,23 @@ action_seek_1s_forward_cb (struct DB_plugin_action_s *action, int ctx) {
 }
 
 int
+action_seek_1s_forward_cb (struct DB_plugin_action_s *action, int ctx) {
+    return seek_sec (1.f);
+}
+
+int
 action_seek_1s_backward_cb (struct DB_plugin_action_s *action, int ctx) {
-    deadbeef->pl_lock ();
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-    if (it) {
-        float dur = deadbeef->pl_get_item_duration (it);
-        if (dur > 0) {
-            float pos = deadbeef->streamer_get_playpos ();
-            pos = (pos - 1.f) * 1000;
-            if (pos < 0) {
-                pos = 0;
-            }
-            deadbeef->sendmessage (DB_EV_SEEK, 0, pos, 0);
-        }
-        deadbeef->pl_item_unref (it);
-    }
-    deadbeef->pl_unlock ();
-    return 0;
+    return seek_sec (-1.f);
+}
+
+int
+action_seek_5s_forward_cb (struct DB_plugin_action_s *action, int ctx) {
+    return seek_sec (5.f);
+}
+
+int
+action_seek_5s_backward_cb (struct DB_plugin_action_s *action, int ctx) {
+    return seek_sec (-5.f);
 }
 
 int
@@ -1146,12 +1150,29 @@ static DB_plugin_action_t action_seek_1s_backward = {
     .next = &action_seek_1s_forward
 };
 
+static DB_plugin_action_t action_seek_5s_forward = {
+    .title = "Playback/Seek 5s Forward",
+    .name = "seek_5s_fwd",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_seek_5s_forward_cb,
+    .next = &action_seek_1s_backward
+};
+
+static DB_plugin_action_t action_seek_5s_backward = {
+    .title = "Playback/Seek 5s Backward",
+    .name = "seek_5s_back",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_seek_5s_backward_cb,
+    .next = &action_seek_5s_forward
+};
+
+
 static DB_plugin_action_t action_seek_1p_forward = {
     .title = "Playback/Seek 1% Forward",
     .name = "seek_1p_fwd",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_seek_1p_forward_cb,
-    .next = &action_seek_1s_backward
+    .next = &action_seek_5s_backward
 };
 
 static DB_plugin_action_t action_seek_1p_backward = {
