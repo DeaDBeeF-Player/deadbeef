@@ -7,6 +7,8 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="MainWindowController">
             <connections>
+                <outlet property="renamePlaylistTitle" destination="4P3-F1-I64" id="hi5-uA-cY0"/>
+                <outlet property="renamePlaylistWindow" destination="dIi-bq-ybp" id="NYy-p3-ckT"/>
                 <outlet property="seekBar" destination="YOu-WJ-uAl" id="GSw-8G-6FB"/>
                 <outlet property="statusBar" destination="Rek-dI-lyl" id="6Pu-H7-aOK"/>
                 <outlet property="tabStrip" destination="zrA-61-ahp" id="qi9-Gc-o4E"/>
@@ -142,7 +144,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField verticalHuggingPriority="750" id="Ecj-wq-LKu">
-                        <rect key="frame" x="60.000000428396888" y="152" width="198" height="22"/>
+                        <rect key="frame" x="60.000000678350112" y="152" width="198" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Column Title" drawsBackground="YES" id="Crt-Xg-RIJ">
                             <font key="font" metaFont="system"/>
@@ -198,7 +200,7 @@
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" id="Vrf-r2-7Et">
-                        <rect key="frame" x="77.000000540842137" y="102" width="149" height="22"/>
+                        <rect key="frame" x="77.000001206125845" y="102" width="149" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Title Formatting Script" drawsBackground="YES" id="bpt-CQ-NDH">
                             <font key="font" metaFont="system"/>
@@ -324,6 +326,65 @@ Gw
             <point key="canvasLocation" x="796" y="58.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="gN4-T3-2es"/>
+        <window title="Rename Playlist" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="dIi-bq-ybp" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="139" y="81" width="276" height="89"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <view key="contentView" id="QGf-bK-m9s">
+                <rect key="frame" x="0.0" y="7" width="276" height="89"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="8od-8e-tE3">
+                        <rect key="frame" x="18" y="52" width="106" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Rename Playlist:" id="gMX-14-wpw">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" id="4P3-F1-I64">
+                        <rect key="frame" x="130" y="49" width="126" height="22"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="1yr-xa-8wv">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" id="hJW-NC-H0r">
+                        <rect key="frame" x="203" y="13" width="59" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Uhx-54-b7y">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="renamePlaylistOKAction:" target="-2" id="Zwa-PF-ZJi"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" id="sfe-Nq-Txm">
+                        <rect key="frame" x="121" y="13" width="82" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4kl-xM-VR7">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="renamePlaylistCancelAction:" target="-2" id="JGw-hi-nRg"/>
+                        </connections>
+                    </button>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="486" y="279.5"/>
+        </window>
     </objects>
     <resources>
         <image name="btnnextTemplate" width="75" height="75"/>
