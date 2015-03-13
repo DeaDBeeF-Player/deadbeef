@@ -887,7 +887,6 @@
 		4D44E70519B7539C00F780FC /* stdfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6FA19B7539C00F780FC /* stdfile.c */; };
 		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
 		4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */; };
-		4DA72BEB1838EAAB00A98C62 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BE31838EAAB00A98C62 /* InfoPlist.strings */; };
 		4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BE51838EAAB00A98C62 /* Images.xcassets */; };
 		4DA72BED1838EAAB00A98C62 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BE61838EAAB00A98C62 /* main.m */; };
 		4DAF343F19B75FF500EE96ED /* ddb_dumb.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */; };
@@ -2029,7 +2028,6 @@
 		4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		4DA72BDE1838EAAB00A98C62 /* deadbeef-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "deadbeef-Info.plist"; sourceTree = "<group>"; };
 		4DA72BDF1838EAAB00A98C62 /* deadbeef-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "deadbeef-Prefix.pch"; sourceTree = "<group>"; };
-		4DA72BE41838EAAB00A98C62 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
 		4DA72BE51838EAAB00A98C62 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		4DA72BE61838EAAB00A98C62 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -2213,7 +2211,6 @@
 				4DA72BE61838EAAB00A98C62 /* main.m */,
 				4DA72BDE1838EAAB00A98C62 /* deadbeef-Info.plist */,
 				4DA72BDF1838EAAB00A98C62 /* deadbeef-Prefix.pch */,
-				4DA72BE01838EAAB00A98C62 /* en.lproj */,
 				4DA72BE51838EAAB00A98C62 /* Images.xcassets */,
 			);
 			name = "Supporting files";
@@ -3691,14 +3688,6 @@
 			name = dumb;
 			sourceTree = "<group>";
 		};
-		4DA72BE01838EAAB00A98C62 /* en.lproj */ = {
-			isa = PBXGroup;
-			children = (
-				4DA72BE31838EAAB00A98C62 /* InfoPlist.strings */,
-			);
-			path = en.lproj;
-			sourceTree = "<group>";
-		};
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
@@ -4743,7 +4732,6 @@
 				2DCD78DE19A665CA00EA50FA /* deadbeef.png in Resources */,
 				2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */,
 				2DBEE69019B4EB0900A60609 /* sb_back_cap_right.png in Resources */,
-				4DA72BEB1838EAAB00A98C62 /* InfoPlist.strings in Resources */,
 				2DCD78D519A665CA00EA50FA /* deadbeef.png in Resources */,
 				2DB10B8219B908630054A6AB /* tab_bottom_fill@2x.png in Resources */,
 				2DBEE69819B4EB0900A60609 /* sb_front_filler.png in Resources */,
@@ -5531,17 +5519,6 @@
 			targetProxy = 4DB9654519A64D930076F4F3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		4DA72BE31838EAAB00A98C62 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4DA72BE41838EAAB00A98C62 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		2D01D7CC1AB2216900BCD3C4 /* Debug */ = {
