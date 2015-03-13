@@ -12,10 +12,6 @@ More info is [here](http://deadbeef.sf.net).
 
 The OS X version is not production-ready yet, so I'm not making any official builds. Please use the instructions below to make your own build, if you feel adventurous.
 
-## Reporting bugs
-
-Please use [the bug tracker](http://code.google.com/p/ddb/issues/list)
-
 ## Compiling
 
 ### Linux, BSD and similar (GTK/*NIX version)
