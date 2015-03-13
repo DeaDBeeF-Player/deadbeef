@@ -470,8 +470,23 @@ int grouptitleheight = 22;
     [delegate reloadMetadata];
 }
 
+- (NSMenu *)menuForEvent:(NSEvent *)event {
+    if (event.buttonNumber == 1
+        || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask))) {
+        NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
+        [theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0];
+        [theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0];
+        return theMenu;
+    }
+    return nil;
+}
+
 - (void)rightMouseDown:(NSEvent *)theEvent {
+    if (![[self window] isKeyWindow]) {
+        return;
+    }
     [self mouseDown:theEvent];
+    [super rightMouseDown:theEvent];
 }
 
 - (void)mouseDown:(NSEvent *)event {
@@ -590,15 +605,6 @@ int grouptitleheight = 22;
     }
 
     [delegate unlock];
-
-
-    if (event.buttonNumber == 1
-        || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask))) {
-        NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
-        [theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0];
-        [theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0];
-        [NSMenu popUpContextMenu:theMenu withEvent:event forView:self];
-    }
 }
 
 - (void)mouseUp:(NSEvent *)event
