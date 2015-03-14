@@ -360,15 +360,12 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     for (int i = 0; !val && aa_fields[i]; i++) {
                         val = pl_find_meta_raw (it, aa_fields[i]);
                     }
-                    aa = val ? val : _("Unknown Artist");
+                    aa = val;
                     val = NULL;
                     for (int i = 0; !val && a_fields[i]; i++) {
                         val = pl_find_meta_raw (it, a_fields[i]);
                     }
-                    if (!val) {
-                        val = _("Unknown Artist");
-                    }
-                    if (!strcmp (val, aa)) {
+                    if (val && aa && !strcmp (val, aa)) {
                         val = NULL;
                     }
                 }
