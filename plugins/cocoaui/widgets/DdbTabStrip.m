@@ -457,10 +457,19 @@ plt_get_title_wrapper (int plt) {
 }
 
 - (void)closePlaylist:(id)sender {
-
+    if (_tab_clicked != -1) {
+        deadbeef->plt_remove (_tab_clicked);
+        int playlist = deadbeef->plt_get_curr_idx ();
+        deadbeef->conf_set_int ("playlist.current", playlist);
+        _tab_clicked = -1;
+    }
 }
 
 - (void)addNewPlaylist:(id)sender {
+    int playlist = cocoaui_add_new_playlist ();
+    if (playlist != -1) {
+        cocoaui_playlist_set_curr (playlist);
+    }
 }
 
 - (void)rightMouseDown:(NSEvent *)theEvent {
