@@ -58,8 +58,15 @@ wmidi_open (uint32_t hints) {
     return _info;
 }
 
+static int
+wmidi_init_conf (void);
+
 int
 wmidi_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
+    if (wmidi_init_conf () < 0) {
+        return NULL;
+    }
+
     wmidi_info_t *info = (wmidi_info_t *)_info;
 
     deadbeef->pl_lock ();
@@ -120,6 +127,10 @@ wmidi_seek (DB_fileinfo_t *_info, float time) {
 
 DB_playItem_t *
 wmidi_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
+    if (wmidi_init_conf () < 0) {
+        return NULL;
+    }
+
     DB_playItem_t *it = NULL;
 
     midi *m = WildMidi_Open (fname);
@@ -141,8 +152,13 @@ wmidi_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
 #define DEFAULT_TIMIDITY_CONFIG "/etc/timidity++/timidity-freepats.cfg:/etc/timidity/freepats.cfg:/etc/timidity/freepats/freepats.cfg"
 
-int
-wmidi_start (void) {
+extern int WM_Initialized;
+
+static int
+wmidi_init_conf (void) {
+    if (WM_Initialized) {
+        return 0;
+    }
     char config_files[1000];
     deadbeef->conf_get_str ("wildmidi.config", DEFAULT_TIMIDITY_CONFIG, config_files, sizeof (config_files));
     char config[1024] = "";
@@ -173,13 +189,21 @@ wmidi_start (void) {
     }
     else {
         fprintf (stderr, _("wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."));
+        return -1;
     }
     return 0;
 }
 
 int
+wmidi_start (void) {
+    return 0;
+}
+
+int
 wmidi_stop (void) {
-    WildMidi_Shutdown ();
+    if (WM_Initialized) {
+        WildMidi_Shutdown ();
+    }
     return 0;
 }
 
