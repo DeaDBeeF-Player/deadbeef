@@ -64,7 +64,7 @@ wmidi_init_conf (void);
 int
 wmidi_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (wmidi_init_conf () < 0) {
-        return NULL;
+        return -1;
     }
 
     wmidi_info_t *info = (wmidi_info_t *)_info;
