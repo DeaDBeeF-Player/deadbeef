@@ -4,7 +4,7 @@
 
   standard file vfs implementation
 
-  Copyright (C) 2009-2013 Alexey Yakovenko
+  Copyright (C) 2009-2015 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -42,6 +42,10 @@
 
 //#define USE_STDIO
 
+#ifndef USE_STDIO
+#define BUFSIZE 1024
+#endif
+
 static DB_functions_t *deadbeef;
 typedef struct {
     DB_vfs_t *vfs;
@@ -50,6 +54,11 @@ typedef struct {
 #else
     int stream;
     int64_t offs;
+    uint8_t buffer[BUFSIZE];
+    uint8_t *bufptr;
+    int bufremaining;
+    int have_size;
+    size_t size;
 #endif
 } STDIO_FILE;
 
@@ -72,11 +81,9 @@ stdio_open (const char *fname) {
     }
 #endif
     STDIO_FILE *fp = malloc (sizeof (STDIO_FILE));
+    memset (fp, 0, sizeof (STDIO_FILE));
     fp->vfs = &plugin;
     fp->stream = file;
-#ifndef USE_STDIO
-    fp->offs = 0;
-#endif
     return (DB_FILE*)fp;
 }
 
@@ -91,6 +98,20 @@ stdio_close (DB_FILE *stream) {
     free (stream);
 }
 
+static int
+fillbuffer (STDIO_FILE *f) {
+    assert (f->bufremaining >= 0);
+    if (f->bufremaining == 0) {
+        f->bufremaining = (int)read (f->stream, f->buffer, BUFSIZE);
+        if (f->bufremaining < 0) {
+            f->bufremaining = 0;
+            return -1;
+        }
+        f->bufptr = f->buffer;
+    }
+    return f->bufremaining;
+}
+
 static size_t
 stdio_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     assert (stream);
@@ -98,12 +119,25 @@ stdio_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
 #ifdef USE_STDIO
     return fread (ptr, size, nmemb, ((STDIO_FILE*)stream)->stream);
 #else
-    size_t res = read (((STDIO_FILE*)stream)->stream, ptr, size*nmemb);
-    if (res == -1) {
-        return 0;
+    STDIO_FILE *f = (STDIO_FILE*)stream;
+    size_t nb = size * nmemb;
+    while (nb > 0) {
+        if (fillbuffer (f) <= 0) {
+            break;
+        }
+        int r = f->bufremaining;
+        if (r > nb) {
+            r = (int)nb;
+        }
+        memcpy (ptr, f->bufptr, r);
+        f->bufremaining -= r;
+        f->bufptr += r;
+        ptr += r;
+        f->offs += r;
+        nb -= r;
     }
-    ((STDIO_FILE*)stream)->offs += res;
-    return res / size;
+    size_t ret = ((size * nmemb) - nb) / size;
+    return ret;
 #endif
 }
 
@@ -113,12 +147,18 @@ stdio_seek (DB_FILE *stream, int64_t offset, int whence) {
 #ifdef USE_STDIO
     return fseek (((STDIO_FILE *)stream)->stream, offset, whence);
 #else
+    // convert offset to absolute
+    if (whence == SEEK_CUR) {
+        whence = SEEK_SET;
+        offset = ((STDIO_FILE*)stream)->offs + offset;
+    }
     off64_t res = lseek64 (((STDIO_FILE *)stream)->stream, offset, whence);
     if (res == -1) {
         return -1;
     }
 //    printf ("lseek res: %lld (%lld, %d, prev=%lld)\n", res, offset, whence,  ((STDIO_FILE*)stream)->offs);
-    ((STDIO_FILE*)stream)->offs = res; 
+    ((STDIO_FILE*)stream)->offs = res;
+    ((STDIO_FILE*)stream)->bufremaining = 0;
 #endif
     return 0;
 }
@@ -154,9 +194,14 @@ stdio_getlength (DB_FILE *stream) {
     fseek (f->stream, offs, SEEK_SET);
     return l;
 #else
-    int64_t size = lseek64 (f->stream, 0, SEEK_END);
-    lseek64 (f->stream, f->offs, SEEK_SET);
-    return size;
+    if (!f->have_size) {
+        int64_t size = lseek64 (f->stream, 0, SEEK_END);
+        lseek64 (f->stream, f->offs, SEEK_SET);
+        f->bufremaining = 0;
+        f->have_size = 1;
+        f->size = size;
+    }
+    return f->size;
 #endif
 }
 
@@ -180,21 +225,27 @@ static DB_vfs_t plugin = {
     .plugin.id = "vfs_stdio",
     .plugin.descr = "Standard IO plugin\nUsed for reading normal local files\nIt is statically linked, so you can't delete it.",
     .plugin.copyright = 
-        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "standard file vfs implementation\n"
         "\n"
-        "This program is free software; you can redistribute it and/or\n"
-        "modify it under the terms of the GNU General Public License\n"
-        "as published by the Free Software Foundation; either version 2\n"
-        "of the License, or (at your option) any later version.\n"
+        "Copyright (C) 2009-2015 Alexey Yakovenko\n"
         "\n"
-        "This program is distributed in the hope that it will be useful,\n"
-        "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-        "GNU General Public License for more details.\n"
+        "This software is provided 'as-is', without any express or implied\n"
+        "warranty.  In no event will the authors be held liable for any damages\n"
+        "arising from the use of this software.\n"
         "\n"
-        "You should have received a copy of the GNU General Public License\n"
-        "along with this program; if not, write to the Free Software\n"
-        "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
+        "Permission is granted to anyone to use this software for any purpose,\n"
+        "including commercial applications, and to alter it and redistribute it\n"
+        "freely, subject to the following restrictions:\n"
+        "\n"
+        "1. The origin of this software must not be misrepresented; you must not\n"
+        " claim that you wrote the original software. If you use this software\n"
+        " in a product, an acknowledgment in the product documentation would be\n"
+        " appreciated but is not required.\n"
+        "2. Altered source versions must be plainly marked as such, and must not be\n"
+        " misrepresented as being the original software.\n"
+        "3. This notice may not be removed or altered from any source distribution.\n"
+        "\n"
+        "Alexey Yakovenko waker@users.sourceforge.net\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
     .open = stdio_open,
