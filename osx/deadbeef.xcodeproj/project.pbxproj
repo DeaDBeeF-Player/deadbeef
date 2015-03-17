@@ -742,6 +742,9 @@
 		2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */; };
 		2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEF494219C4DB4100B718C1 /* DdbListview.h */; };
 		2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF494319C4DB4100B718C1 /* DdbListview.m */; };
+		2DF9304F1AB817310030C0CA /* wildmidi_lib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF9304A1AB817310030C0CA /* wildmidi_lib.h */; };
+		2DF930511AB817310030C0CA /* wildmidi_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304D1AB817310030C0CA /* wildmidi_lib.c */; };
+		2DF930521AB817310030C0CA /* wildmidiplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304E1AB817310030C0CA /* wildmidiplug.c */; };
 		4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A8F1837EC49003E6066 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
@@ -1026,6 +1029,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2DCB281319E86162008E9DF6;
 			remoteInfo = m3u;
+		};
+		2DF930531AB8175D0030C0CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DF930431AB816DC0030C0CA;
+			remoteInfo = wildmidi;
 		};
 		4D32F9FB19A63628000FFDE0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1818,6 +1828,10 @@
 		2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = bufferingTemplate.pdf; path = images/bufferingTemplate.pdf; sourceTree = "<group>"; };
 		2DEF494219C4DB4100B718C1 /* DdbListview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbListview.h; sourceTree = "<group>"; };
 		2DEF494319C4DB4100B718C1 /* DdbListview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbListview.m; sourceTree = "<group>"; };
+		2DF930441AB816DC0030C0CA /* wildmidi.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wildmidi.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DF9304A1AB817310030C0CA /* wildmidi_lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wildmidi_lib.h; sourceTree = "<group>"; };
+		2DF9304D1AB817310030C0CA /* wildmidi_lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wildmidi_lib.c; sourceTree = "<group>"; };
+		2DF9304E1AB817310030C0CA /* wildmidiplug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wildmidiplug.c; path = plugins/wildmidi/wildmidiplug.c; sourceTree = "<group>"; };
 		2DFA31E81AAF351800792053 /* mos6510c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mos6510c.h; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/mos6510c.h"; sourceTree = "<group>"; };
 		2DFA31E91AAF351800792053 /* mos6510c.i */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c.preprocessed; name = mos6510c.i; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/mos6510c.i"; sourceTree = "<group>"; };
 		2DFA31EA1AAF351800792053 /* sid6510c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sid6510c.h; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/sid6510c.h"; sourceTree = "<group>"; };
@@ -2140,6 +2154,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2DCB281119E86162008E9DF6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DF930411AB816DC0030C0CA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3284,6 +3305,34 @@
 			name = widgets;
 			sourceTree = "<group>";
 		};
+		2DF930481AB817190030C0CA /* wildmidi */ = {
+			isa = PBXGroup;
+			children = (
+				2DF930491AB817310030C0CA /* include */,
+				2DF9304B1AB817310030C0CA /* src */,
+				2DF9304E1AB817310030C0CA /* wildmidiplug.c */,
+			);
+			name = wildmidi;
+			sourceTree = "<group>";
+		};
+		2DF930491AB817310030C0CA /* include */ = {
+			isa = PBXGroup;
+			children = (
+				2DF9304A1AB817310030C0CA /* wildmidi_lib.h */,
+			);
+			name = include;
+			path = plugins/wildmidi/include;
+			sourceTree = "<group>";
+		};
+		2DF9304B1AB817310030C0CA /* src */ = {
+			isa = PBXGroup;
+			children = (
+				2DF9304D1AB817310030C0CA /* wildmidi_lib.c */,
+			);
+			name = src;
+			path = plugins/wildmidi/src;
+			sourceTree = "<group>";
+		};
 		4D1B3E7118379829003E6066 = {
 			isa = PBXGroup;
 			children = (
@@ -3322,6 +3371,7 @@
 				2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */,
 				2DAA4C081AAF88DE00519559 /* Tests.xctest */,
 				2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */,
+				2DF930441AB816DC0030C0CA /* wildmidi.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3457,6 +3507,7 @@
 				4D1B515C1837F59F003E6066 /* coreaudio */,
 				4D1B51551837F4E9003E6066 /* nullout */,
 				4D1B514D1837EF9D003E6066 /* libparser */,
+				2DF930481AB817190030C0CA /* wildmidi */,
 			);
 			name = plugins;
 			path = ..;
@@ -4077,6 +4128,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DF930421AB816DC0030C0CA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DF9304F1AB817310030C0CA /* wildmidi_lib.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4D32F9A519A63094000FFDE0 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -4431,6 +4490,23 @@
 			productReference = 2DCB281419E86162008E9DF6 /* m3u.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		2DF930431AB816DC0030C0CA /* wildmidi */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DF930471AB816DC0030C0CA /* Build configuration list for PBXNativeTarget "wildmidi" */;
+			buildPhases = (
+				2DF930401AB816DC0030C0CA /* Sources */,
+				2DF930411AB816DC0030C0CA /* Frameworks */,
+				2DF930421AB816DC0030C0CA /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = wildmidi;
+			productName = wildmidi;
+			productReference = 2DF930441AB816DC0030C0CA /* wildmidi.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		4D1B3E7918379829003E6066 /* deadbeef */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4D1B3EAB18379829003E6066 /* Build configuration list for PBXNativeTarget "deadbeef" */;
@@ -4443,6 +4519,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DF930541AB8175D0030C0CA /* PBXTargetDependency */,
 				2D01D7E91AB221AA00BCD3C4 /* PBXTargetDependency */,
 				2DA0ACED1AA71E4B007EDD43 /* PBXTargetDependency */,
 				2D5D214B1A40341D001D5A79 /* PBXTargetDependency */,
@@ -4611,6 +4688,9 @@
 					2DCB281319E86162008E9DF6 = {
 						CreatedOnToolsVersion = 6.0.1;
 					};
+					2DF930431AB816DC0030C0CA = {
+						CreatedOnToolsVersion = 6.2;
+					};
 				};
 			};
 			buildConfigurationList = 4D1B3E7518379829003E6066 /* Build configuration list for PBXProject "deadbeef" */;
@@ -4648,6 +4728,7 @@
 				2DA0ABE01AA71055007EDD43 /* in_sc68 */,
 				2DAA4C071AAF88DE00519559 /* Tests */,
 				2D01D7C91AB2216900BCD3C4 /* ddbcore */,
+				2DF930431AB816DC0030C0CA /* wildmidi */,
 			);
 		};
 /* End PBXProject section */
@@ -5211,6 +5292,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DF930401AB816DC0030C0CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DF930511AB817310030C0CA /* wildmidi_lib.c in Sources */,
+				2DF930521AB817310030C0CA /* wildmidiplug.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4D1B3E7618379829003E6066 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5487,6 +5577,11 @@
 			isa = PBXTargetDependency;
 			target = 2DCB281319E86162008E9DF6 /* m3u */;
 			targetProxy = 2DCB281B19E8618D008E9DF6 /* PBXContainerItemProxy */;
+		};
+		2DF930541AB8175D0030C0CA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DF930431AB816DC0030C0CA /* wildmidi */;
+			targetProxy = 2DF930531AB8175D0030C0CA /* PBXContainerItemProxy */;
 		};
 		4D32F9FC19A63628000FFDE0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6208,6 +6303,47 @@
 			};
 			name = Release;
 		};
+		2DF930451AB816DC0030C0CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"TIMIDITY_CFG='\"\"'",
+					"WILDMIDILIB_VERSION='\"0.2.2\"'",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		2DF930461AB816DC0030C0CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"TIMIDITY_CFG='\"\"'",
+					"WILDMIDILIB_VERSION='\"0.2.2\"'",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		4D1B3EA918379829003E6066 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -6728,6 +6864,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		2DF930471AB816DC0030C0CA /* Build configuration list for PBXNativeTarget "wildmidi" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DF930451AB816DC0030C0CA /* Debug */,
+				2DF930461AB816DC0030C0CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		4D1B3E7518379829003E6066 /* Build configuration list for PBXProject "deadbeef" */ = {
 			isa = XCConfigurationList;
