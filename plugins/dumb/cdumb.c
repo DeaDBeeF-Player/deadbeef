@@ -852,7 +852,9 @@ dumb_vfs_skip (void *f, long n) {
 static int
 dumb_vfs_getc (void *f) {
     uint8_t c;
-    deadbeef->fread (&c, 1, 1, f);
+    if (1 != deadbeef->fread (&c, 1, 1, f)) {
+        return -1;
+    }
     return (int)c;
 }
 
