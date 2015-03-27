@@ -16,7 +16,10 @@ The OS X version is not production-ready yet, so I'm not making any official bui
 
 ### Linux, BSD and similar (GTK/*NIX version)
 
-See the INSTALL file
+* Install autoconf, automake, libtool, intltool, autopoint
+* Run ```./autogen.sh``` to bootstrap
+* Read the generated INSTALL file and ```./configure --help``` for instructions
+* See the README file for more information
 
 ### OS X (COCOA version)
 
