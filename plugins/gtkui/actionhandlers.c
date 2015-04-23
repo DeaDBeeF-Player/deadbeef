@@ -910,7 +910,7 @@ action_sort_custom_handler_cb (void *data) {
     
     gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("gtkui.sortby_order", 0));
     deadbeef->conf_lock ();
-    gtk_entry_set_text (entry, deadbeef->conf_get_str_fast ("gtkui.sortby_fmt", ""));
+    gtk_entry_set_text (entry, deadbeef->conf_get_str_fast ("gtkui.sortby_fmt_v2", ""));
     deadbeef->conf_unlock ();
 
     int r = gtk_dialog_run (GTK_DIALOG (dlg));
@@ -922,10 +922,10 @@ action_sort_custom_handler_cb (void *data) {
         const char *fmt = gtk_entry_get_text (entry);
 
         deadbeef->conf_set_int ("gtkui.sortby_order", order);
-        deadbeef->conf_set_str ("gtkui.sortby_fmt", fmt);
+        deadbeef->conf_set_str ("gtkui.sortby_fmt_v2", fmt);
 
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-        deadbeef->plt_sort (plt, PL_MAIN, -1, fmt, order == 0 ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
+        deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, fmt, order == 0 ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
         deadbeef->plt_save_config (plt);
         deadbeef->plt_unref (plt);
 
