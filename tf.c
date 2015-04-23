@@ -384,7 +384,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         }
                         else {
                             int len = snprintf (out, outlen, "%02d", atoi(val));
-                            out[len] = 0;
                             out += len;
                             outlen -= len;
                             skip_out = 1;
@@ -487,7 +486,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         else {
                             len = snprintf (out, outlen, "%lld B", bs);
                         }
-                        out[len] = 0;
                         out += len;
                         outlen -= len;
                         skip_out = 1;
@@ -503,6 +501,9 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         }
                         else if (ch == 2) {
                             val = _("stereo");
+                        }
+                        else {
+                            val = _("multichannel");
                         }
                     }
                 }
@@ -607,7 +608,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                             || (tmp_b && plug_get_output ()->state () == OUTPUT_STATE_PAUSED)
                             )) {
                         *out++ = '1';
-                        *out = 0;
                         outlen--;
                         skip_out = 1;
                         val = NULL;
@@ -624,12 +624,8 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 if (!skip_out && val) {
                     int len = (int)strlen (val);
                     memcpy (out, val, len);
-                    out[len] = 0;
                     out += len;
                     outlen -= len;
-                }
-                else {
-                    *out = 0;
                 }
                 pl_unlock ();
                 if (!skip_out && !val && fail_on_undef) {
@@ -652,9 +648,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     out += res;
                     outlen -= res;
                 }
-                else {
-                    *out = 0;
-                }
                 code += len;
                 size -= len;
             }
@@ -664,6 +657,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
             }
         }
     }
+    *out = 0;
     return (int)(out-init_out);
 }
 
