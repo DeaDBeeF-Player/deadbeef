@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="13F1077" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -203,24 +203,45 @@ CA
                                     <items>
                                         <menuItem title="Title" id="y2B-vx-leZ">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortPlaylistByTitle:" target="494" id="2ff-u0-Lja"/>
+                                            </connections>
                                         </menuItem>
                                         <menuItem title="Track Number" id="uiF-G6-a2B">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortPlaylistByTrackNumber:" target="494" id="QUQ-0q-avy"/>
+                                            </connections>
                                         </menuItem>
                                         <menuItem title="Album" id="OVB-8d-hD6">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortPlaylistByAlbum:" target="494" id="PdT-GJ-NhM"/>
+                                            </connections>
                                         </menuItem>
                                         <menuItem title="Artist" id="oyf-UR-vVM">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortPlaylistByArtist:" target="494" id="TIw-TR-NgH"/>
+                                            </connections>
                                         </menuItem>
                                         <menuItem title="Date" id="TWN-It-7Gl">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortPlaylistByDate:" target="494" id="7oV-lY-wxm"/>
+                                            </connections>
                                         </menuItem>
                                         <menuItem title="Random" id="lgY-0g-bDs">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortPlaylistRandom:" target="494" id="UMp-LD-NsR"/>
+                                            </connections>
                                         </menuItem>
                                         <menuItem title="Custom" id="K81-ol-nYm">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortPlaylistCustom:" target="494" id="v4y-xG-icc"/>
+                                            </connections>
                                         </menuItem>
                                     </items>
                                 </menu>

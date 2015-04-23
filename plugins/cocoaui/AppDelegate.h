@@ -68,6 +68,14 @@
 // edit menu
 - (IBAction)clearAction:(id)sender;
 
+- (IBAction)sortPlaylistByTitle:(id)sender;
+- (IBAction)sortPlaylistByTrackNumber:(id)sender;
+- (IBAction)sortPlaylistByAlbum:(id)sender;
+- (IBAction)sortPlaylistByArtist:(id)sender;
+- (IBAction)sortPlaylistByDate:(id)sender;
+- (IBAction)sortPlaylistRandom:(id)sender;
+- (IBAction)sortPlaylistCustom:(id)sender;
+
 // playback menu
 - (IBAction)previousAction:(id)sender;
 - (IBAction)playAction:(id)sender;

@@ -370,6 +370,58 @@ init_column (int i, int _id, const char *format) {
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
+- (IBAction)sortPlaylistByTitle:(id)sender {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%title%", DDB_SORT_ASCENDING);
+    deadbeef->plt_save_config (plt);
+    deadbeef->plt_unref (plt);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}
+
+- (IBAction)sortPlaylistByTrackNumber:(id)sender {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%tracknumber%", DDB_SORT_ASCENDING);
+    deadbeef->plt_save_config (plt);
+    deadbeef->plt_unref (plt);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}
+
+- (IBAction)sortPlaylistByAlbum:(id)sender {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%album%", DDB_SORT_ASCENDING);
+    deadbeef->plt_save_config (plt);
+    deadbeef->plt_unref (plt);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}
+
+- (IBAction)sortPlaylistByArtist:(id)sender {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%artist%", DDB_SORT_ASCENDING);
+    deadbeef->plt_save_config (plt);
+    deadbeef->plt_unref (plt);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}
+
+- (IBAction)sortPlaylistByDate:(id)sender {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%year%", DDB_SORT_ASCENDING);
+    deadbeef->plt_save_config (plt);
+    deadbeef->plt_unref (plt);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}
+
+- (IBAction)sortPlaylistRandom:(id)sender {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
+    deadbeef->plt_save_config (plt);
+    deadbeef->plt_unref (plt);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}
+
+- (IBAction)sortPlaylistCustom:(id)sender {
+    // TODO
+}
+
 - (IBAction)delete:(id)sender {
     deadbeef->pl_delete_selected ();
     deadbeef->pl_save_current();
