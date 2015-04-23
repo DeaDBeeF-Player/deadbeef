@@ -24,6 +24,7 @@
 #include <sys/time.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 #include "utf8.h"
 #include "sort.h"
 #include "tf.h"
