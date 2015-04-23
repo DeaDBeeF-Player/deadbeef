@@ -26,70 +26,33 @@
 #include <string.h>
 #include "utf8.h"
 #include "sort.h"
+#include "tf.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+static void
+plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, int order, int version);
+
 void plt_sort_v2 (playlist_t *plt, int iter, int id, const char *format, int order) {
-}
-
-
-void
-plt_sort_random (playlist_t *playlist, int iter) {
-    if (!playlist->head[iter] || !playlist->head[iter]->next[iter]) {
-        return;
-    }
-
-    pl_lock ();
-
-    const int playlist_count = playlist->count[iter];
-    playItem_t **array = malloc (playlist_count * sizeof (playItem_t *));
-    int idx = 0;
-    for (playItem_t *it = playlist->head[iter]; it; it = it->next[iter], idx++) {
-        array[idx] = it;
-    }
-
-    //randomize array
-    for (int swap_a = 0; swap_a < playlist_count - 1; swap_a++) {
-        //select random item above swap_a-1
-        const int swap_b = swap_a + (rand() / (float)RAND_MAX * (playlist_count - swap_a));
-
-        //swap a with b
-        playItem_t* const swap_temp = array[swap_a];
-        array[swap_a] = array[swap_b];
-        array[swap_b] = swap_temp;
-
-    }
-
-    playItem_t *prev = NULL;
-    playlist->head[iter] = 0;
-    for (idx = 0; idx < playlist->count[iter]; idx++) {
-        playItem_t *it = array[idx];
-        it->prev[iter] = prev;
-        it->next[iter] = NULL;
-        if (!prev) {
-            playlist->head[iter] = it;
-        }
-        else {
-            prev->next[iter] = it;
-        }
-        prev = it;
-    }
-    playlist->tail[iter] = array[playlist->count[iter]-1];
-
-    free (array);
-
-    plt_modified (playlist);
-
-    pl_unlock ();
+    plt_sort_internal (plt, iter, id, format, order, 1);
 }
 
 // sort for title formatting v1
+void
+plt_sort (playlist_t *playlist, int iter, int id, const char *format, int order) {
+    plt_sort_internal (playlist, iter, id, format, order, 0);
+}
+
 static int pl_sort_is_duration;
 static int pl_sort_is_track;
 static int pl_sort_ascending;
 static int pl_sort_id;
+static int pl_sort_version; // 0: use pl_sort_format, 1: use pl_sort_tf_bytecode
 static const char *pl_sort_format;
+static char *pl_sort_tf_bytecode;
+static int pl_sort_tf_bytecode_length;
+static ddb_tf_context_t pl_sort_tf_ctx;
 
 static int
 strcasecmp_numeric (const char *a, const char *b) {
@@ -146,8 +109,17 @@ pl_sort_compare_str (playItem_t *a, playItem_t *b) {
     else {
         char tmp1[1024];
         char tmp2[1024];
-        pl_format_title (a, -1, tmp1, sizeof (tmp1), pl_sort_id, pl_sort_format);
-        pl_format_title (b, -1, tmp2, sizeof (tmp2), pl_sort_id, pl_sort_format);
+        if (pl_sort_version == 0) {
+            pl_format_title (a, -1, tmp1, sizeof (tmp1), pl_sort_id, pl_sort_format);
+            pl_format_title (b, -1, tmp2, sizeof (tmp2), pl_sort_id, pl_sort_format);
+        }
+        else {
+            pl_sort_tf_ctx.id = pl_sort_id;
+            pl_sort_tf_ctx.it = (ddb_playItem_t *)a;
+            tf_eval(&pl_sort_tf_ctx, pl_sort_tf_bytecode, pl_sort_tf_bytecode_length, tmp1, sizeof(tmp1));
+            pl_sort_tf_ctx.it = (ddb_playItem_t *)b;
+            tf_eval(&pl_sort_tf_ctx, pl_sort_tf_bytecode, pl_sort_tf_bytecode_length, tmp2, sizeof(tmp2));
+        }
         int res = strcasecmp_numeric (tmp1, tmp2);
         if (!pl_sort_ascending) {
             res = -res;
@@ -164,7 +136,59 @@ qsort_cmp_func (const void *a, const void *b) {
 }
 
 void
-plt_sort (playlist_t *playlist, int iter, int id, const char *format, int order) {
+plt_sort_random (playlist_t *playlist, int iter) {
+    if (!playlist->head[iter] || !playlist->head[iter]->next[iter]) {
+        return;
+    }
+
+    pl_lock ();
+
+    const int playlist_count = playlist->count[iter];
+    playItem_t **array = malloc (playlist_count * sizeof (playItem_t *));
+    int idx = 0;
+    for (playItem_t *it = playlist->head[iter]; it; it = it->next[iter], idx++) {
+        array[idx] = it;
+    }
+
+    //randomize array
+    for (int swap_a = 0; swap_a < playlist_count - 1; swap_a++) {
+        //select random item above swap_a-1
+        const int swap_b = swap_a + (rand() / (float)RAND_MAX * (playlist_count - swap_a));
+
+        //swap a with b
+        playItem_t* const swap_temp = array[swap_a];
+        array[swap_a] = array[swap_b];
+        array[swap_b] = swap_temp;
+
+    }
+
+    playItem_t *prev = NULL;
+    playlist->head[iter] = 0;
+    for (idx = 0; idx < playlist->count[iter]; idx++) {
+        playItem_t *it = array[idx];
+        it->prev[iter] = prev;
+        it->next[iter] = NULL;
+        if (!prev) {
+            playlist->head[iter] = it;
+        }
+        else {
+            prev->next[iter] = it;
+        }
+        prev = it;
+    }
+    playlist->tail[iter] = array[playlist->count[iter]-1];
+
+    free (array);
+
+    plt_modified (playlist);
+
+    pl_unlock ();
+}
+
+// version 0: title formatting v1
+// version 1: title formatting v2
+void
+plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, int order, int version) {
     if (order == DDB_SORT_RANDOM) {
         plt_sort_random (playlist, iter);
         return;
@@ -180,7 +204,24 @@ plt_sort (playlist_t *playlist, int iter, int id, const char *format, int order)
     pl_sort_ascending = ascending;
     trace ("ascending: %d\n", ascending);
     pl_sort_id = id;
-    pl_sort_format = format;
+
+    pl_sort_version = version;
+    if (version == 0) {
+        pl_sort_format = format;
+        pl_sort_tf_bytecode = NULL;
+        pl_sort_tf_bytecode_length = -1;
+
+    }
+    else {
+        pl_sort_format = NULL;
+        pl_sort_tf_bytecode_length = tf_compile (format, &pl_sort_tf_bytecode);
+        pl_sort_tf_ctx._size = sizeof (pl_sort_tf_ctx);
+        pl_sort_tf_ctx.it = NULL;
+        pl_sort_tf_ctx.plt = (ddb_playlist_t *)playlist;
+        pl_sort_tf_ctx.idx = -1;
+        pl_sort_tf_ctx.id = id;
+    }
+
     if (format && id == -1 && !strcmp (format, "%l")) {
         pl_sort_is_duration = 1;
     }
