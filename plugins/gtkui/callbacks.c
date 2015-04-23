@@ -664,7 +664,7 @@ on_sort_by_title_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort (plt, PL_MAIN, -1, "%t", DDB_SORT_ASCENDING);
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%title%", DDB_SORT_ASCENDING);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
 
@@ -677,7 +677,7 @@ on_sort_by_track_nr_activate           (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort (plt, PL_MAIN, -1, "%n", DDB_SORT_ASCENDING);
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%tracknumber%", DDB_SORT_ASCENDING);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
 
@@ -690,7 +690,7 @@ on_sort_by_album_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort (plt, PL_MAIN, -1, "%b", DDB_SORT_ASCENDING);
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%album%", DDB_SORT_ASCENDING);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
 
@@ -703,7 +703,7 @@ on_sort_by_artist_activate             (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort (plt, PL_MAIN, -1, "%a", DDB_SORT_ASCENDING);
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%artist%", DDB_SORT_ASCENDING);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
 
@@ -716,7 +716,7 @@ on_sort_by_date_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort (plt, PL_MAIN, -1, "%y", DDB_SORT_ASCENDING);
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%year%", DDB_SORT_ASCENDING);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
@@ -728,7 +728,7 @@ on_sort_by_random_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
 
