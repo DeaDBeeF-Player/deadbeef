@@ -223,13 +223,19 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
         pl_sort_tf_ctx.id = id;
     }
 
-    if (format && id == -1 && !strcmp (format, "%l")) {
+    if (format && id == -1
+        && ((version == 0 && !strcmp (format, "%l"))
+            || (version == 1 && !strcmp (format, "%length%")))
+        ) {
         pl_sort_is_duration = 1;
     }
     else {
         pl_sort_is_duration = 0;
     }
-    if (format && id == -1 && !strcmp (format, "%n")) {
+    if (format && id == -1
+        && ((version == 0 && !strcmp (format, "%n"))
+            || (version == 1 && (!strcmp (format, "%track number%") || !strcmp (format, "%tracknumber%"))))
+        ) {
         pl_sort_is_track = 1;
     }
     else {
@@ -267,6 +273,17 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
     trace ("sort time: %f seconds\n", ms / 1000.f);
 
     plt_modified (playlist);
+
+    if (version == 0) {
+        pl_sort_format = NULL;
+    }
+
+    if (version == 1) {
+        tf_free (pl_sort_tf_bytecode);
+        pl_sort_tf_bytecode = NULL;
+        pl_sort_tf_bytecode_length = -1;
+        memset (&pl_sort_tf_ctx, 0, sizeof (pl_sort_tf_ctx));
+    }
 
     pl_unlock ();
 }
