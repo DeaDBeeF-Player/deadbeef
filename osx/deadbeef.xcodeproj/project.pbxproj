@@ -391,6 +391,8 @@
 		2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D60108C1A9CDF06000136AF /* SearchWindowController.m */; };
 		2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */; };
 		2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */; };
+		2D642EAF1AE9152E00FC1F7B /* sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D642EAD1AE9152E00FC1F7B /* sort.c */; };
+		2D642EB01AE9152E00FC1F7B /* sort.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D642EAE1AE9152E00FC1F7B /* sort.h */; };
 		2D6500011AA7881B00E82A9E /* desa68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D65FE1C1AA7881A00E82A9E /* desa68.c */; };
 		2D6500021AA7881B00E82A9E /* desa68.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65FE1D1AA7881A00E82A9E /* desa68.h */; };
 		2D6500E71AA7881B00E82A9E /* file68.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65FF0D1AA7881B00E82A9E /* file68.h */; };
@@ -1438,6 +1440,8 @@
 		2D60108C1A9CDF06000136AF /* SearchWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchWindowController.m; sourceTree = "<group>"; };
 		2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbTabStrip.h; path = widgets/DdbTabStrip.h; sourceTree = "<group>"; };
 		2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbTabStrip.m; path = widgets/DdbTabStrip.m; sourceTree = "<group>"; };
+		2D642EAD1AE9152E00FC1F7B /* sort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sort.c; sourceTree = "<group>"; };
+		2D642EAE1AE9152E00FC1F7B /* sort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sort.h; sourceTree = "<group>"; };
 		2D6501CD1AA78BAA00E82A9E /* file68_features.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = file68_features.h; sourceTree = "<group>"; };
 		2D6501D21AA7989D00E82A9E /* trap68.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trap68.h; sourceTree = "<group>"; };
 		2D6502281AA7A7FC00E82A9E /* data68 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = data68; sourceTree = "<group>"; };
@@ -3461,6 +3465,8 @@
 				4D1B49EC1837EC49003E6066 /* vfs_stdio.c */,
 				4D1B49ED1837EC49003E6066 /* volume.c */,
 				4D1B49EE1837EC49003E6066 /* volume.h */,
+				2D642EAD1AE9152E00FC1F7B /* sort.c */,
+				2D642EAE1AE9152E00FC1F7B /* sort.h */,
 			);
 			name = deadbeef;
 			path = ..;
@@ -4221,6 +4227,7 @@
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
 				2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* DdbSearchViewController.h in Headers */,
+				2D642EB01AE9152E00FC1F7B /* sort.h in Headers */,
 				2D91775D1A0E8A3D004BC222 /* mp4ffint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5333,6 +5340,7 @@
 				2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */,
 				2D9177691A0E8A3D004BC222 /* mp4util.c in Sources */,
 				2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */,
+				2D642EAF1AE9152E00FC1F7B /* sort.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6872,6 +6880,7 @@
 				2DF930461AB816DC0030C0CA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4D1B3E7518379829003E6066 /* Build configuration list for PBXProject "deadbeef" */ = {
 			isa = XCConfigurationList;
