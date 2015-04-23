@@ -57,6 +57,7 @@
 #include "metacache.h"
 #include "tf.h"
 #include "playqueue.h"
+#include "sort.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -379,6 +380,8 @@ static DB_functions_t deadbeef_api = {
     .tf_compile = tf_compile,
     .tf_free = tf_free,
     .tf_eval= tf_eval,
+
+    .plt_sort_v2 = (void (*) (ddb_playlist_t *plt, int iter, int id, const char *format, int order))plt_sort_v2,
 
     .playqueue_push = (int (*) (DB_playItem_t *))playqueue_push,
     .playqueue_clear = playqueue_clear,

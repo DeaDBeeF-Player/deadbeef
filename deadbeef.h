@@ -693,7 +693,9 @@ typedef struct {
     void (*plt_copy_items) (ddb_playlist_t *to, int iter, ddb_playlist_t * from, DB_playItem_t *before, uint32_t *indices, int cnt);
     void (*plt_search_reset) (ddb_playlist_t *plt);
     void (*plt_search_process) (ddb_playlist_t *plt, const char *text);
-    void (*plt_sort) (ddb_playlist_t *plt, int iter, int id, const char *format, int order);
+
+    // sort using the title formatting v1 (deprecated)
+    void (*plt_sort) (ddb_playlist_t *plt, int iter, int id, const char *format, int order) DEPRECATED_18;
 
     // add files and folders to current playlist
     int (*plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data) DEPRECATED_15;
@@ -1118,7 +1120,10 @@ typedef struct {
     // returns -1 on fail, output size on success
     int (*tf_eval) (ddb_tf_context_t *ctx, char *code, int codelen, char *out, int outlen);
 
-    // new playqueue APIs
+    // sort using title formatting v2
+    void (*plt_sort_v2) (ddb_playlist_t *plt, int iter, int id, const char *format, int order);
+
+    // playqueue APIs
     int (*playqueue_push) (DB_playItem_t *it);
     void (*playqueue_pop) (void);
     void (*playqueue_remove) (DB_playItem_t *it);
