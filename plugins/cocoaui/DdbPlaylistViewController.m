@@ -967,4 +967,11 @@ int group_bytecode_size = 0;
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
+- (void)sortColumn:(DdbListviewCol_t)column withOrder:(int)order {
+    plt_col_info_t *c = &_columns[(int)column];
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, c->type, c->format, order-1);
+    deadbeef->plt_unref (plt);
+}
+
 @end
