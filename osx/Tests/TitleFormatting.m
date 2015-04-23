@@ -124,6 +124,26 @@
     XCTAssert([@"12" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
 
+- (void)test_StrcmpChannelsMono_GivesMo {
+    char *bc;
+    int sz = tf_compile("$if($strcmp(%channels%,mono),mo,st)", &bc);
+    pl_replace_meta (it, ":CHANNELS", "1");
+    char buffer[200];
+    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"mo" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_StrcmpChannelsMono_GivesSt {
+    char *bc;
+    int sz = tf_compile("$if($strcmp(%channels%,mono),mo,st)", &bc);
+    pl_replace_meta (it, ":CHANNELS", "2");
+    char buffer[200];
+    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"st" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
 - (void)test_SimpleExpr_Performance {
     char *bc;
     int sz = tf_compile("simple expr", &bc);
