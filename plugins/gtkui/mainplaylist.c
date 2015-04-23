@@ -138,8 +138,7 @@ void
 main_col_sort (int col, int sort_order, void *user_data) {
     col_info_t *c = (col_info_t*)user_data;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    // FIXME: plt_sort is not compatible with new title formatting
-//    deadbeef->plt_sort (plt, PL_MAIN, c->id, c->format, sort_order-1);
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, c->id, c->format, sort_order-1);
     deadbeef->plt_unref (plt);
 }
 void main_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx) {
