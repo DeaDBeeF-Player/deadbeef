@@ -20,6 +20,8 @@ int grouptitleheight = 22;
     DdbListviewCol_t _dragging;
     DdbListviewCol_t _sizing;
     NSPoint _dragPt;
+    BOOL _prepare;
+    int _sortOrder;
 }
 - (void)setListView:(DdbListview *)lv;
 @end
@@ -121,6 +123,7 @@ int grouptitleheight = 22;
 
     _dragging = [delegate invalidColumn];
     _sizing = [delegate invalidColumn];
+    _prepare = YES;
 
     for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
@@ -147,17 +150,34 @@ int grouptitleheight = 22;
 
 - (void)mouseUp:(NSEvent *)theEvent {
     id <DdbListviewDelegate> delegate = [listview delegate];
-    if (_dragging != [delegate invalidColumn] || _sizing != [delegate invalidColumn]) {
-        [delegate columnsChanged];
-        [listview updateContentFrame];
-        _dragging = [delegate invalidColumn];
-        _sizing = [delegate invalidColumn];
+
+    if (_prepare) { // clicked
+        switch (_sortOrder) {
+        case 0:
+            _sortOrder = 1;
+            break;
+        case 1:
+            _sortOrder = 2;
+            break;
+        case 2:
+            _sortOrder = 1;
+            break;
+        }
+        [delegate sortColumn:_dragging withOrder:_sortOrder-1];
         [listview setNeedsDisplay:YES];
     }
+    else if (_dragging != [delegate invalidColumn] || _sizing != [delegate invalidColumn]) {
+        [delegate columnsChanged];
+        [listview updateContentFrame];
+        [listview setNeedsDisplay:YES];
+    }
+    _dragging = [delegate invalidColumn];
+    _sizing = [delegate invalidColumn];
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent {
     NSPoint convPt = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    _prepare = NO;
 
     id <DdbListviewDelegate> delegate = [listview delegate];
     if (_sizing != [delegate invalidColumn]) {
