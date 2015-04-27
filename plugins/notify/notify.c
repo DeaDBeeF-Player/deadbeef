@@ -117,6 +117,7 @@ esc_xml (const char *cmd, char *esc, int size) {
             dst += 4;
             src++;
         }
+#if 0 // &apos; is not supported by KDE
         else if (*src == '\'') {
             if (end - dst < 6) {
                 break;
@@ -125,6 +126,7 @@ esc_xml (const char *cmd, char *esc, int size) {
             dst += 6;
             src++;
         }
+#endif
         else if (*src == '"') {
             if (end - dst < 6) {
                 break;
