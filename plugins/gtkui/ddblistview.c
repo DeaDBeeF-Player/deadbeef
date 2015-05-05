@@ -2850,6 +2850,12 @@ ddb_listview_header_button_release_event         (GtkWidget       *widget,
             }
         }
         ps->binding->columns_changed (ps);
+        int size = 0;
+        DdbListviewColumn *c;
+        for (c = ps->columns; c; c = c->next) {
+            size += c->width;
+        }
+        ddb_listview_list_update_total_width (ps, size);
     }
     return FALSE;
 }
