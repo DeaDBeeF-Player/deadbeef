@@ -196,7 +196,7 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
     }
     int ascending = order == DDB_SORT_DESCENDING ? 0 : 1;
 
-    if (id == DB_COLUMN_FILENUMBER || !playlist->head[iter] || !playlist->head[iter]->next[iter]) {
+    if (format == NULL || id == DB_COLUMN_FILENUMBER || !playlist->head[iter] || !playlist->head[iter]->next[iter]) {
         return;
     }
     pl_lock ();
