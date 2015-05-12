@@ -102,7 +102,6 @@ typedef struct {
     void (*delete_selected) (void);
     void (*groups_changed) (DdbListview *listview, const char *format);
     void (*columns_changed) (DdbListview *listview);
-    void (*column_size_changed) (DdbListview *listview, int col);
     void (*col_sort) (int col, int sort_order, void *user_data);
     void (*col_free_user_data) (void *user_data);
     void (*vscroll_changed) (int pos);
