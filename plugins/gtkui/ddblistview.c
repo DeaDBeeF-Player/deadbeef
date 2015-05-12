@@ -2399,14 +2399,14 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr) {
                 }
                 float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                 draw_set_fg_color (&ps->hdrctx, fg);
-                int ww = w-10;
+                int ww = w-15;
                 if (sort) {
                     ww -= arrow_sz;
                     if (ww < 0) {
                         ww = 0;
                     }
                 }
-                draw_text_custom (&ps->hdrctx, xx + 5, 3, ww, 0, DDB_COLUMN_FONT, 0, 0, c->title);
+                draw_text_custom (&ps->hdrctx, xx + 5, 3, ww, c->align_right, DDB_COLUMN_FONT, 0, 0, c->title);
             }
             if (sort) {
                 int dir = sort == 1 ? GTK_ARROW_DOWN : GTK_ARROW_UP;
@@ -2459,7 +2459,7 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr) {
                     GdkColor *gdkfg = &gtk_widget_get_style (theme_button)->fg[GTK_STATE_SELECTED];
                     float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                     draw_set_fg_color (&ps->hdrctx, fg);
-                    draw_text_custom (&ps->hdrctx, x + 5, 3, c->width-10, 0, DDB_COLUMN_FONT, 0, 0, c->title);
+                    draw_text_custom (&ps->hdrctx, x + 5, 3, c->width-15, c->align_right, DDB_COLUMN_FONT, 0, 0, c->title);
                 }
                 break;
             }
