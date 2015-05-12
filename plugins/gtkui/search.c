@@ -333,21 +333,6 @@ search_columns_changed (DdbListview *listview) {
 }
 
 static void
-search_column_size_changed (DdbListview *listview, int col) {
-    const char *title;
-    int width;
-    int align_right;
-    col_info_t *inf;
-    int minheight;
-    int color_override;
-    GdkColor color;
-    int res = ddb_listview_column_get_info (listview, col, &title, &width, &align_right, &minheight, &color_override, &color, (void **)&inf);
-    if (res == -1) {
-        return;
-    }
-}
-
-static void
 search_col_free_user_data (void *data) {
     if (data) {
         col_info_t *inf = data;
@@ -415,7 +400,6 @@ static DdbListviewBinding search_binding = {
     // columns
     .col_sort = search_col_sort,
     .columns_changed = search_columns_changed,
-    .column_size_changed = search_column_size_changed,
     .col_free_user_data = search_col_free_user_data,
 
     // callbacks
