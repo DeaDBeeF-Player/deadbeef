@@ -167,10 +167,11 @@
 
     char *bc;
     int sz = tf_compile("%comment%", &bc);
-    char buffer[200];
-    XCTAssertNoThrow(tf_eval (&ctx, bc, sz, buffer, sizeof (buffer)), @"Crashed!");
+    char *buffer = malloc (200);
+    XCTAssertNoThrow(tf_eval (&ctx, bc, sz, buffer, 200), @"Crashed!");
     tf_free (bc);
     XCTAssert(!memcmp (buffer, "abcdef", 6), @"The actual output is: %s", buffer);
+    free (buffer);
 }
 
 @end

@@ -89,7 +89,8 @@ tf_eval (ddb_tf_context_t *ctx, char *code, int codelen, char *out, int outlen) 
         l = pl_format_item_queue ((playItem_t *)ctx->it, out, outlen);
         break;
     default:
-        l = tf_eval_int (ctx, code, codelen, out, outlen, 0);
+        // tf_eval_int expects outlen to not include the terminating zero
+        l = tf_eval_int (ctx, code, codelen, out, outlen-1, 0);
         break;
     }
 
@@ -284,9 +285,14 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
     while (size) {
         if (*code) {
             trace ("free char: %c\n", *code);
-            *out++ = *code++;
-            size--;
-            outlen--;
+            int len = u8_charcpy (out, code, outlen);
+            if (len == 0) {
+                break;
+            }
+            code += len;
+            size -= len;
+            out += len;
+            outlen -= len;
         }
         else {
             code++;
@@ -410,7 +416,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                             if (end) {
                                 int n = (int)(end-start);
                                 n = min ((int)(end-start), outlen-1);
-                                strncpy (out, start, n);
+                                n = u8_strnbcpy (out, start, n);
                                 outlen -= n;
                                 out += n;
                             }
@@ -426,7 +432,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         if (end) {
                             int n = (int)(end-val);
                             n = min (n, outlen-1);
-                            strncpy (out, val, n);
+                            n = u8_strnbcpy (out, val, n);
                             outlen -= n;
                             out += n;
                             skip_out = 1;
@@ -443,9 +449,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                             const char *start = strrchr (val, '/');
                             if (start) {
                                 start++;
-                                int n = strlen (start);
-                                n = min (n, outlen-1);
-                                strncpy (out, start, n);
+                                int n = u8_strnbcpy (out, start, outlen);
                                 outlen -= n;
                                 out += n;
                                 skip_out = 1;
@@ -622,10 +626,9 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     val = pl_find_meta_raw (it, name);
                 }
                 if (!skip_out && val) {
-                    int len = (int)strlen (val);
-                    memcpy (out, val, len);
-                    out += len;
-                    outlen -= len;
+                    int32_t l = u8_strnbcpy(out, val, outlen);
+                    out += l;
+                    outlen -= l;
                 }
                 pl_unlock ();
                 if (!skip_out && !val && fail_on_undef) {
