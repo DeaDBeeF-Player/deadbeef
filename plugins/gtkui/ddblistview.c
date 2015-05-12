@@ -2511,6 +2511,18 @@ ddb_listview_header_update_fonts (DdbListview *ps)
 }
 
 void
+ddb_listview_column_size_changed (DdbListview *listview, int col)
+{
+    if (ddb_listview_is_album_art_column_idx(listview, col)) {
+        ddb_listview_resize_groups (listview);
+        if (listview->scrollpos > 0) {
+            int pos = ddb_listview_get_row_pos (listview, listview->ref_point);
+            gtk_range_set_value (GTK_RANGE (listview->scrollbar), pos - listview->ref_point_offset);
+        }
+    }
+}
+
+void
 ddb_listview_update_scroll_ref_point (DdbListview *ps)
 {
     ddb_listview_groupcheck (ps);
@@ -2584,7 +2596,7 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
                     if (newwidth != c->width) {
                         c->width = newwidth;
                         changed = 1;
-                        ps->binding->column_size_changed (ps, i);
+                        ddb_listview_column_size_changed (ps, i);
                     }
                 }
                 if (changed) {
@@ -2701,17 +2713,14 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
         if (ps->col_autoresize) {
             c->fwidth = (float)c->width / ps->header_width;
         }
-        if (c->minheight) {
-            ddb_listview_resize_groups (ps);
-        }
         ps->block_redraw_on_scroll = 1;
-        ddb_listview_list_setup_vscroll (ps);
+        //ddb_listview_list_setup_vscroll (ps);
         ddb_listview_list_setup_hscroll (ps);
         ps->block_redraw_on_scroll = 0;
+        ddb_listview_column_size_changed (ps, ps->header_sizing);
+        ddb_listview_list_update_total_width (ps, size);
         gtk_widget_queue_draw (ps->header);
         gtk_widget_queue_draw (ps->list);
-        ps->binding->column_size_changed (ps, ps->header_sizing);
-        ddb_listview_list_update_total_width (ps, size);
     }
     else {
         int x = -ps->hscrollpos;
