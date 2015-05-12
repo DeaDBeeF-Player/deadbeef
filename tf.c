@@ -415,7 +415,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                             const char *end = strrchr (start, '.');
                             if (end) {
                                 int n = (int)(end-start);
-                                n = min ((int)(end-start), outlen-1);
+                                n = min ((int)(end-start), outlen);
                                 n = u8_strnbcpy (out, start, n);
                                 outlen -= n;
                                 out += n;
@@ -431,7 +431,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         const char *end = strrchr (val, '/');
                         if (end) {
                             int n = (int)(end-val);
-                            n = min (n, outlen-1);
+                            n = min (n, outlen);
                             n = u8_strnbcpy (out, val, n);
                             outlen -= n;
                             out += n;
