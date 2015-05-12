@@ -255,6 +255,34 @@ int u8_strncpy (char *dest, const char* src, int num_chars)
     return num_bytes;
 }
 
+int u8_strnbcpy (char *dest, const char* src, int num_bytes) {
+    int32_t prev_index = 0;
+    int32_t index = 0;
+    int32_t nb = num_bytes;
+    while (src[index] && num_bytes > 0) {
+        u8_inc (src, &index);
+        int32_t charlen = index - prev_index;
+        if (charlen > num_bytes) {
+            break;
+        }
+        memcpy (dest, &src[prev_index], charlen);
+        prev_index = index;
+        dest += charlen;
+        num_bytes -= charlen;
+    }
+    return nb - num_bytes;
+}
+
+int u8_charcpy (char *dest, const char *src, int num_bytes) {
+    int32_t index = 0;
+    u8_inc (src, &index);
+    if (index > num_bytes) {
+        return 0;
+    }
+    memcpy (dest, src, index);
+    return index;
+}
+
 void u8_inc(const char *s, int32_t *i)
 {
     (void)(isutf(s[++(*i)]) || isutf(s[++(*i)]) ||

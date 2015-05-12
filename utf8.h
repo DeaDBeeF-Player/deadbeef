@@ -61,6 +61,16 @@ uint32_t u8_nextchar(const char *s, int32_t *i);
 /* copies num_chars characters from src to dest, return bytes written */
 int u8_strncpy (char *dest, const char* src, int num_chars);
 
+/* copy num_bytes maximum bytes from src to dest, but always stop at the last possible utf8 character boundary;
+ return number of bytes copied
+ */
+int u8_strnbcpy (char *dest, const char* src, int num_bytes);
+
+/* copy single utf8 character of up to num_bytes bytes large, only if num_bytes is large enough;
+  return number of bytes copied
+ */
+int u8_charcpy (char *dest, const char *src, int num_bytes);
+
 /* move to next character */
 void u8_inc(const char *s, int32_t *i);
 
