@@ -202,22 +202,6 @@ main_columns_changed (DdbListview *listview) {
     }
 }
 
-void
-main_column_size_changed (DdbListview *listview, int col) {
-    if (ddb_listview_is_album_art_column_idx(listview, col)) {
-        if (listview->scrollpos > 0) {
-            int pos = ddb_listview_get_row_pos (listview, listview->ref_point);
-            gtk_range_set_value (GTK_RANGE (listview->scrollbar), pos - listview->ref_point_offset);
-        }
-        coverart_reset_queue ();
-        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-        if (plt) {
-            deadbeef->plt_modified (plt);
-            deadbeef->plt_unref (plt);
-        }
-    }
-}
-
 void main_col_free_user_data (void *data) {
     if (data) {
         col_info_t *inf = data;
@@ -280,7 +264,6 @@ DdbListviewBinding main_binding = {
     // columns
     .col_sort = main_col_sort,
     .columns_changed = main_columns_changed,
-    .column_size_changed = main_column_size_changed,
     .col_free_user_data = main_col_free_user_data,
 
     // callbacks
