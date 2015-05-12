@@ -2510,6 +2510,49 @@ ddb_listview_header_update_fonts (DdbListview *ps)
     }
 }
 
+void
+ddb_listview_update_scroll_ref_point (DdbListview *ps)
+{
+    ddb_listview_groupcheck (ps);
+    DdbListviewGroup *grp = ps->groups;
+    DdbListviewGroup *grp_next;
+
+    if (grp && ps->scrollpos > 0) {
+        int abs_idx = 0;
+        int grp_y = 0;
+
+        GtkAllocation a;
+        gtk_widget_get_allocation (ps->list, &a);
+        int cursor_pos = ddb_listview_get_row_pos (ps, ps->binding->cursor ());
+        ps->ref_point = 0;
+        ps->ref_point_offset = 0;
+
+        // find 1st group
+        while (grp && grp_y + grp->height < ps->scrollpos) {
+            grp_y += grp->height;
+            abs_idx += grp->num_items;
+            grp = grp->next;
+        }
+        // choose cursor_pos as anchor
+        if (ps->scrollpos < cursor_pos && cursor_pos < ps->scrollpos + a.height && cursor_pos < ps->fullheight) {
+            ps->ref_point = ps->binding->cursor ();
+            ps->ref_point_offset = cursor_pos - ps->scrollpos;
+        }
+        // choose first group as anchor
+        else if (ps->scrollpos < grp_y + ps-> grouptitle_height + (grp->num_items * ps->rowheight) && grp_y + ps-> grouptitle_height + (grp->num_items * ps->rowheight) < ps->scrollpos + a.height) {
+            ps->ref_point = abs_idx;
+            ps->ref_point_offset = (grp_y + ps->grouptitle_height) - ps->scrollpos;
+        }
+        // choose next group as anchor
+        else {
+            grp_y += grp->height;
+            abs_idx += grp->num_items;
+            ps->ref_point = abs_idx;
+            ps->ref_point_offset = (grp_y + ps->grouptitle_height) - ps->scrollpos;
+        }
+    }
+}
+
 gboolean
 ddb_listview_header_configure_event              (GtkWidget       *widget,
                                         GdkEventConfigure *event,
@@ -2526,6 +2569,7 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
         DdbListviewColumn *c;
         if (deadbeef->conf_get_int ("gtkui.autoresize_columns", 0)) {
             if (ps->header_width != totalwidth) {
+                ddb_listview_update_scroll_ref_point (ps);
                 if (!ps->col_autoresize) {
                     for (c = ps->columns; c; c = c->next) {
                         c->fwidth = (float)c->width / (float)totalwidth;
@@ -2715,45 +2759,8 @@ ddb_listview_header_button_press_event           (GtkWidget       *widget,
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
 //    ps->active_column = ddb_listview_header_get_column_for_coord (ps, event->x);
     if (TEST_LEFT_CLICK (event)) {
+        ddb_listview_update_scroll_ref_point (ps);
 
-        ddb_listview_groupcheck (ps);
-        DdbListviewGroup *grp = ps->groups;
-        DdbListviewGroup *grp_next;
-
-        if (grp && ps->scrollpos > 0) {
-            int abs_idx = 0;
-            int grp_y = 0;
-
-            GtkAllocation a;
-            gtk_widget_get_allocation (ps->list, &a);
-            int cursor_pos = ddb_listview_get_row_pos (ps, ps->binding->cursor ());
-            ps->ref_point = 0;
-            ps->ref_point_offset = 0;
-
-            // find 1st group
-            while (grp && grp_y + grp->height < ps->scrollpos) {
-                grp_y += grp->height;
-                abs_idx += grp->num_items;
-                grp = grp->next;
-            }
-            // choose cursor_pos as anchor
-            if (ps->scrollpos < cursor_pos && cursor_pos < ps->scrollpos + a.height && cursor_pos < ps->fullheight) {
-                ps->ref_point = ps->binding->cursor ();
-                ps->ref_point_offset = cursor_pos - ps->scrollpos;
-            }
-            // choose first group as anchor
-            else if (ps->scrollpos < grp_y + ps-> grouptitle_height + (grp->num_items * ps->rowheight) && grp_y + ps-> grouptitle_height + (grp->num_items * ps->rowheight) < ps->scrollpos + a.height) {
-                ps->ref_point = abs_idx;
-                ps->ref_point_offset = (grp_y + ps->grouptitle_height) - ps->scrollpos;
-            }
-            // choose next group as anchor
-            else {
-                grp_y += grp->height;
-                abs_idx += grp->num_items;
-                ps->ref_point = abs_idx;
-                ps->ref_point_offset = (grp_y + ps->grouptitle_height) - ps->scrollpos;
-            }
-        }
         // start sizing/dragging
         ps->header_dragging = -1;
         ps->header_sizing = -1;
