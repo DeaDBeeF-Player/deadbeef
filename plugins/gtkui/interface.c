@@ -31,6 +31,7 @@ create_mainwin (void)
 {
   GtkWidget *mainwin;
   GtkWidget *vbox1;
+  GtkWidget *eventbox;
   GtkWidget *menubar;
   GtkWidget *File;
   GtkWidget *File_menu;
@@ -123,6 +124,13 @@ create_mainwin (void)
   vbox1 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox1);
   gtk_container_add (GTK_CONTAINER (mainwin), vbox1);
+
+  // The only purpose of the eventbox is to grab keyboard focus after startup
+  // otherwise hotkeys with space and return won't work before clicking the playlist
+  eventbox = gtk_event_box_new ();
+  gtk_widget_set_can_focus (eventbox, TRUE);
+  gtk_widget_show (eventbox);
+  gtk_box_pack_start (GTK_BOX (vbox1), eventbox, FALSE, FALSE, 0);
 
   menubar = gtk_menu_bar_new ();
   gtk_widget_show (menubar);
@@ -479,6 +487,12 @@ create_mainwin (void)
   g_signal_connect ((gpointer) mainwin, "button_press_event",
                     G_CALLBACK (on_mainwin_button_press_event),
                     NULL);
+  g_signal_connect ((gpointer) eventbox, "key_press_event",
+                    G_CALLBACK (on_mainwin_key_press_event),
+                    NULL);
+  g_signal_connect ((gpointer) eventbox, "realize",
+                    G_CALLBACK (on_eventbox_realize),
+                    NULL);
   g_signal_connect ((gpointer) open, "activate",
                     G_CALLBACK (on_open_activate),
                     NULL);
@@ -615,6 +629,7 @@ create_mainwin (void)
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (mainwin, mainwin, "mainwin");
   GLADE_HOOKUP_OBJECT (mainwin, vbox1, "vbox1");
+  GLADE_HOOKUP_OBJECT (mainwin, eventbox, "eventbox");
   GLADE_HOOKUP_OBJECT (mainwin, menubar, "menubar");
   GLADE_HOOKUP_OBJECT (mainwin, File, "File");
   GLADE_HOOKUP_OBJECT (mainwin, File_menu, "File_menu");

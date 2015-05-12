@@ -697,6 +697,10 @@ on_mainwin_realize                     (GtkWidget       *widget,
                                         gpointer         user_data);
 
 void
+on_eventbox_realize                     (GtkWidget       *widget,
+                                        gpointer         user_data);
+
+void
 on_color_even_row_color_set            (GtkColorButton  *colorbutton,
                                         gpointer         user_data);
 

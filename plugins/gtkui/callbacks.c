@@ -519,13 +519,18 @@ create_volumebar_widget (gchar *widget_name, gchar *string1, gchar *string2,
     return ddb_volumebar_new ();
 }
 
-
-
 void
 on_mainwin_realize                     (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     gtkui_init_theme_colors ();
+}
+
+void
+on_eventbox_realize                     (GtkWidget       *widget,
+                                        gpointer         user_data)
+{
+    gtk_widget_grab_focus (widget);
 }
 
 void
