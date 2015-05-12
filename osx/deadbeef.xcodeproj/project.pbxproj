@@ -309,6 +309,7 @@
 		2D35E3151AA7AC4B0077FBD1 /* fileinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D35E3101AA7AC4B0077FBD1 /* fileinfo.c */; };
 		2D35E3161AA7AC4B0077FBD1 /* tracksel.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D35E3111AA7AC4B0077FBD1 /* tracksel.c */; };
 		2D3EBD9D1A9379BD00E5E255 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D3EBD9C1A9379BD00E5E255 /* Preferences.xib */; };
+		2D5121C61B01DEFD009F6410 /* sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D642EAD1AE9152E00FC1F7B /* sort.c */; };
 		2D51999C1A436FD100670717 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999A1A436FD100670717 /* config.h */; };
 		2D51999D1A436FD100670717 /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999B1A436FD100670717 /* mpg123.h */; };
 		2D565B0C1A40BCE200CE1F5D /* abi_align.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565A831A40BCE200CE1F5D /* abi_align.h */; };
@@ -391,7 +392,6 @@
 		2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D60108C1A9CDF06000136AF /* SearchWindowController.m */; };
 		2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */; };
 		2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */; };
-		2D642EAF1AE9152E00FC1F7B /* sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D642EAD1AE9152E00FC1F7B /* sort.c */; };
 		2D642EB01AE9152E00FC1F7B /* sort.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D642EAE1AE9152E00FC1F7B /* sort.h */; };
 		2D6500011AA7881B00E82A9E /* desa68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D65FE1C1AA7881A00E82A9E /* desa68.c */; };
 		2D6500021AA7881B00E82A9E /* desa68.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65FE1D1AA7881A00E82A9E /* desa68.h */; };
@@ -4845,6 +4845,7 @@
 				2D01D7E41AB2219C00BCD3C4 /* utf8.c in Sources */,
 				2D01D7D11AB2219C00BCD3C4 /* playqueue.c in Sources */,
 				2D01D7DB1AB2219C00BCD3C4 /* playlist.c in Sources */,
+				2D5121C61B01DEFD009F6410 /* sort.c in Sources */,
 				2D01D7E21AB2219C00BCD3C4 /* streamer.c in Sources */,
 				2D01D7E71AB2219C00BCD3C4 /* volume.c in Sources */,
 				2D01D7E61AB2219C00BCD3C4 /* vfs_stdio.c in Sources */,
@@ -5340,7 +5341,6 @@
 				2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */,
 				2D9177691A0E8A3D004BC222 /* mp4util.c in Sources */,
 				2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */,
-				2D642EAF1AE9152E00FC1F7B /* sort.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

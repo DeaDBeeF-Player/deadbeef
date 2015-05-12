@@ -156,4 +156,21 @@
     tf_free (bc);
 }
 
+- (void)test_LongCommentOverflowBuffer_DoesntCrash {
+    char longcomment[2048];
+    for (int i = 0; i < sizeof (longcomment) - 1; i++) {
+        longcomment[i] = (i % 33) + 'a';
+    }
+    longcomment[sizeof (longcomment)-1] = 0;
+
+    pl_add_meta (it, "comment", longcomment);
+
+    char *bc;
+    int sz = tf_compile("%comment%", &bc);
+    char buffer[200];
+    XCTAssertNoThrow(tf_eval (&ctx, bc, sz, buffer, sizeof (buffer)), @"Crashed!");
+    tf_free (bc);
+    XCTAssert(!memcmp (buffer, "abcdef", 6), @"The actual output is: %s", buffer);
+}
+
 @end
