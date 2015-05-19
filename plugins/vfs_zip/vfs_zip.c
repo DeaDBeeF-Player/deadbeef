@@ -54,7 +54,7 @@ typedef struct {
     int buffer_remaining;
     int buffer_pos;
 #endif
-} zip_file_t;
+} ddb_zip_file_t;
 
 static const char *scheme_names[] = { "zip://", NULL };
 
@@ -108,8 +108,8 @@ vfs_zip_open (const char *fname) {
         return NULL;
     }
 
-    zip_file_t *f = malloc (sizeof (zip_file_t));
-    memset (f, 0, sizeof (zip_file_t));
+    ddb_zip_file_t *f = malloc (sizeof (ddb_zip_file_t));
+    memset (f, 0, sizeof (ddb_zip_file_t));
     f->file.vfs = &plugin;
     f->z = z;
     f->zf = zf;
@@ -122,7 +122,7 @@ vfs_zip_open (const char *fname) {
 void
 vfs_zip_close (DB_FILE *f) {
     trace ("vfs_zip: close\n");
-    zip_file_t *zf = (zip_file_t *)f;
+    ddb_zip_file_t *zf = (ddb_zip_file_t *)f;
     if (zf->zf) {
         zip_fclose (zf->zf);
     }
@@ -134,7 +134,7 @@ vfs_zip_close (DB_FILE *f) {
 
 size_t
 vfs_zip_read (void *ptr, size_t size, size_t nmemb, DB_FILE *f) {
-    zip_file_t *zf = (zip_file_t *)f;
+    ddb_zip_file_t *zf = (ddb_zip_file_t *)f;
 //    printf ("read: %d\n", size*nmemb);
 
     size_t sz = size * nmemb;
@@ -167,7 +167,7 @@ vfs_zip_read (void *ptr, size_t size, size_t nmemb, DB_FILE *f) {
 
 int
 vfs_zip_seek (DB_FILE *f, int64_t offset, int whence) {
-    zip_file_t *zf = (zip_file_t *)f;
+    ddb_zip_file_t *zf = (ddb_zip_file_t *)f;
 //    printf ("seek: %lld (%d)\n", offset, whence);
 
     if (whence == SEEK_CUR) {
@@ -242,13 +242,13 @@ vfs_zip_seek (DB_FILE *f, int64_t offset, int whence) {
 
 int64_t
 vfs_zip_tell (DB_FILE *f) {
-    zip_file_t *zf = (zip_file_t *)f;
+    ddb_zip_file_t *zf = (ddb_zip_file_t *)f;
     return zf->offset;
 }
 
 void
 vfs_zip_rewind (DB_FILE *f) {
-    zip_file_t *zf = (zip_file_t *)f;
+    ddb_zip_file_t *zf = (ddb_zip_file_t *)f;
     zip_fclose (zf->zf);
     zf->zf = zip_fopen_index (zf->z, zf->index, 0);
     assert (zf->zf); // FIXME: better error handling?
@@ -260,7 +260,7 @@ vfs_zip_rewind (DB_FILE *f) {
 
 int64_t
 vfs_zip_getlength (DB_FILE *f) {
-    zip_file_t *zf = (zip_file_t *)f;
+    ddb_zip_file_t *zf = (ddb_zip_file_t *)f;
     return zf->size;
 }
 
