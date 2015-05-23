@@ -37,6 +37,27 @@ extern DB_functions_t *deadbeef;
     [self switchToView:_playbackView];
 }
 
+- (NSString *)cfgFormattedColorForName:(NSString *)colorName {
+    NSColorList *clist = [NSColorList colorListNamed:@"System"];
+    return [self cfgFormattedColor:[clist colorWithKey:colorName]];
+}
+
+- (NSString *)cfgFormattedColor:(NSColor *)color {
+    CGFloat r, g, b, a;
+    [[color colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed:&r green:&g blue:&b alpha:&a];
+    return [NSString stringWithFormat:@"#%02x%02x%02x%02x", (int)(r*255), (int)(g*255), (int)(b*255), (int)(a*255)];
+}
+
+- (NSColor *)getConfigColor:(NSString *)key withDefault:(NSString *)def {
+    char buf[10];
+    deadbeef->conf_get_str ([key UTF8String], [def UTF8String], buf, sizeof (buf));
+    int r, g, b, a;
+    if (4 != sscanf (buf, "#%02x%02x%02x%02x", &r, &g, &b, &a)) {
+        return [NSColor blackColor];
+    }
+    return [NSColor colorWithDeviceRed:r/255.f green:g/255.f blue:b/255.f alpha:a/255.f];
+}
+
 - (void)initPluginList {
     [_pluginList setDataSource:(id<NSTableViewDataSource>)self];
     [_pluginList setDelegate:(id<NSTableViewDelegate>)self];
@@ -75,21 +96,28 @@ extern DB_functions_t *deadbeef;
     // appearance for seekbar / volumebar
     [_override_bar_colors setState: deadbeef->conf_get_int ("cocoaui.override_bar_colors", 0) ? NSOnState : NSOffState];
 
-    NSColorList *clist = [NSColorList colorListNamed:@"System"];
-    [_color_bar_foreground setColor:[clist colorWithKey:@"controlTextColor"]];
-    [_color_bar_background setColor:[clist colorWithKey:@"controlShadowColor"]];
+    // make the config strings with defaults
+    NSString *cfg_textcolor = [self cfgFormattedColorForName:@"controlTextColor"];
+    NSString *cfg_shadowcolor = [self cfgFormattedColorForName:@"controlShadowColor"];
+    NSString *cfg_selectedtextcolor = [self cfgFormattedColorForName:@"alternateSelectedControlTextColor"];
+    NSString *cfg_evenrowcolor = [self cfgFormattedColor:[NSColor controlAlternatingRowBackgroundColors][0]];
+    NSString *cfg_oddrowcolor = [self cfgFormattedColor:[NSColor controlAlternatingRowBackgroundColors][1]];
+    NSString *cfg_selectedrowcolor = [self cfgFormattedColorForName:@"alternateSelectedControlColor"];
+
+    [_color_bar_foreground setColor:[self getConfigColor:@"cocoaui.color.bar_foreground" withDefault:cfg_textcolor]];
+    [_color_bar_background setColor:[self getConfigColor:@"cocoaui.color.bar_background" withDefault:cfg_shadowcolor]];
 
     // appearance for playlist
     [_override_playlist_colors setState: deadbeef->conf_get_int ("cocoaui.override_listview_colors", 0) ? NSOnState : NSOffState];
     
-    [_color_listview_text setColor: [clist colorWithKey:@"controlTextColor"]];
-    [_color_listview_playing_text setColor: [clist colorWithKey:@"controlTextColor"]];
-    [_color_listview_selected_text setColor: [clist colorWithKey:@"alternateSelectedControlTextColor"]];
-    [_color_listview_group_header_text setColor: [clist colorWithKey:@"controlTextColor"]];
-    [_color_listview_cursor setColor: [clist colorWithKey:@"controlTextColor"]];
-    [_color_listview_even_background setColor: [NSColor controlAlternatingRowBackgroundColors][0]];
-    [_color_listview_odd_background setColor: [NSColor controlAlternatingRowBackgroundColors][1]];
-    [_color_listview_selected_background setColor: [clist colorWithKey:@"alternateSelectedControlColor"]];
+    [_color_listview_text setColor: [self getConfigColor:@"cocoaui.color.listview_text" withDefault:cfg_textcolor]];
+    [_color_listview_playing_text setColor: [self getConfigColor:@"cocoaui.color.listview_playing_text" withDefault:cfg_textcolor]];
+    [_color_listview_selected_text setColor: [self getConfigColor:@"cocoaui.color.listview_selected_text" withDefault:cfg_selectedtextcolor]];
+    [_color_listview_group_header_text setColor: [self getConfigColor:@"cocoaui.color.listview_group_header_text" withDefault:cfg_textcolor]];
+    [_color_listview_cursor setColor: [self getConfigColor:@"cocoaui.color.cursor" withDefault:cfg_textcolor]];
+    [_color_listview_even_background setColor: [self getConfigColor:@"cocoaui.color.listview_even_background" withDefault:cfg_evenrowcolor]];
+    [_color_listview_odd_background setColor: [self getConfigColor:@"cocoaui.color.listview_odd_background" withDefault:cfg_oddrowcolor]];
+    [_color_listview_selected_background setColor: [self getConfigColor:@"cocoaui.color.listview_selected_background" withDefault:cfg_selectedrowcolor]];
 
     [_listview_bold_current_text setState: deadbeef->conf_get_int ("cocoaui.embolden_current_track", 0) ? NSOnState : NSOffState];
     [_listview_bold_selected_text setState: deadbeef->conf_get_int ("cocoaui.embolden_selected_tracks", 0) ? NSOnState : NSOffState];
