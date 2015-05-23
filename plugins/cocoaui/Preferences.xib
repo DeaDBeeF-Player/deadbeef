@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="13F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="13F1077" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowController">
@@ -963,7 +963,7 @@
                 <textField verticalHuggingPriority="750" id="wfu-s2-awP">
                     <rect key="frame" x="161" y="161" width="304" height="22"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="QNq-hn-LHC">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="QNq-hn-LHC">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1002,14 +1002,29 @@
                 <popUpButton verticalHuggingPriority="750" id="ouZ-vc-Cmz">
                     <rect key="frame" x="159" y="134" width="309" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Qx3-21-VCp" id="NVB-js-uIT">
+                    <popUpButtonCell key="cell" type="push" title="HTTP" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Qx3-21-VCp" id="NVB-js-uIT">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" id="8eb-Pz-ZQN">
                             <items>
-                                <menuItem title="Item 1" state="on" id="Qx3-21-VCp"/>
-                                <menuItem title="Item 2" id="oE8-26-LtQ"/>
-                                <menuItem title="Item 3" id="Q6J-Kj-LX6"/>
+                                <menuItem title="HTTP" state="on" id="Qx3-21-VCp">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                </menuItem>
+                                <menuItem title="HTTP_1_0" id="oE8-26-LtQ">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                </menuItem>
+                                <menuItem title="SOCKS4" id="Q6J-Kj-LX6">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                </menuItem>
+                                <menuItem title="SOCKS5" id="kb9-bf-TrE">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                </menuItem>
+                                <menuItem title="SOCKS4A" id="Ewp-Pl-7Tv">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                </menuItem>
+                                <menuItem title="SOCKS5_HOSTNAME" id="mtL-gS-vJj">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                </menuItem>
                             </items>
                         </menu>
                     </popUpButtonCell>
@@ -1037,6 +1052,7 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" id="qbg-7U-F0Y">
+                                                <rect key="frame" x="0.0" y="0.0" width="119" height="19"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <size key="intercellSpacing" width="3" height="2"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1105,10 +1121,10 @@
                                                                     <rect key="frame" x="0.0" y="0.0" width="223" height="250"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                                    <size key="minSize" width="398" height="229"/>
+                                                                    <size key="minSize" width="412.5" height="229"/>
                                                                     <size key="maxSize" width="463" height="10000000"/>
                                                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                                    <size key="minSize" width="398" height="229"/>
+                                                                    <size key="minSize" width="412.5" height="229"/>
                                                                     <size key="maxSize" width="463" height="10000000"/>
                                                                 </textView>
                                                             </subviews>
@@ -1157,11 +1173,11 @@
                                         </tabViewItem>
                                         <tabViewItem label="Configuration" identifier="2" id="7NW-mr-YRf">
                                             <view key="view" id="FEV-wx-iHK">
-                                                <rect key="frame" x="10" y="33" width="449" height="281"/>
+                                                <rect key="frame" x="10" y="33" width="448.5" height="281"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" id="uLs-nR-4bO">
-                                                        <rect key="frame" x="289" y="10" width="149" height="32"/>
+                                                        <rect key="frame" x="288.5" y="10" width="149" height="32"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                                         <buttonCell key="cell" type="push" title="Reset To Defaults" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nBi-x1-AbX">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1172,14 +1188,14 @@
                                                         </connections>
                                                     </button>
                                                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="vVM-pq-AlG">
-                                                        <rect key="frame" x="17" y="44" width="415" height="234"/>
+                                                        <rect key="frame" x="17" y="44" width="414.5" height="234"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="yWi-b8-BMc">
                                                             <rect key="frame" x="1" y="1" width="166" height="79"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <view id="Ar8-DC-mVF">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="415" height="234"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="663.5" height="389"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 </view>
                                                             </subviews>
@@ -1188,7 +1204,7 @@
                                                             <rect key="frame" x="1" y="80" width="166" height="15"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                         </scroller>
-                                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="9Js-7m-Yw5">
+                                                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="9Js-7m-Yw5">
                                                             <rect key="frame" x="167" y="1" width="15" height="79"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                         </scroller>
@@ -1209,13 +1225,13 @@
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textView importsGraphics="NO" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="sSN-gB-ile">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="223" height="133"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="223" height="259"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                                    <size key="minSize" width="398" height="259"/>
+                                                                    <size key="minSize" width="413" height="259"/>
                                                                     <size key="maxSize" width="463" height="10000000"/>
                                                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                                    <size key="minSize" width="398" height="259"/>
+                                                                    <size key="minSize" width="413" height="259"/>
                                                                     <size key="maxSize" width="463" height="10000000"/>
                                                                 </textView>
                                                             </subviews>

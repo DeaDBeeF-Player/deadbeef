@@ -44,8 +44,84 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)setInitialValues {
+    // playback
     [_replaygain_mode selectItemAtIndex: deadbeef->conf_get_int ("replaygain_mode", 0)];
     [_replaygain_scale setState: deadbeef->conf_get_int ("replaygain_scale", 1) ? NSOnState : NSOffState];
+    [_replaygain_preamp setIntValue:deadbeef->conf_get_int ("replaygain_preamp", 0)];
+    [_global_preamp setIntValue:deadbeef->conf_get_int ("global_preamp", 0)];
+    [_cli_add_to_specific_playlist setState: deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1) ? NSOnState : NSOffState];
+    [_cli_add_playlist_name setStringValue: [NSString stringWithUTF8String: deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default")]];
+    [_resume_last_session setState: deadbeef->conf_get_int ("resume_last_session", 0) ? NSOnState : NSOffState];
+    [_ignore_archives setState: deadbeef->conf_get_int ("ignore_archives", 1) ? NSOnState : NSOffState];
+    [_stop_after_current_reset setState: deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0) ? NSOnState : NSOffState];
+    [_stop_after_album_reset setState: deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0) ? NSOnState : NSOffState];
+
+    // dsp
+
+    // gui/misc -> player
+    [_enable_shift_jis_detection setState: deadbeef->conf_get_int ("junk.enable_shift_jis_detection", 0) ? NSOnState : NSOffState];
+    [_enable_cp1251_detection setState: deadbeef->conf_get_int ("junk.enable_cp1251_detection", 0) ? NSOnState : NSOffState];
+    [_enable_cp936_detection setState: deadbeef->conf_get_int ("junk.enable_cp936_detection", 0) ? NSOnState : NSOffState];
+    [_refresh_rate setIntValue: deadbeef->conf_get_int ("cocoaui.refresh_rate", 10)];
+    [_titlebar_playing setStringValue:[NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.titlebar_playing", "%artist% - %title% - DeaDBeeF-%version%")]];
+    [_titlebar_stopped setStringValue:[NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.titlebar_stopped", "DeaDBeeF-%version%")]];
+
+    // gui/misc -> playlist
+    [_mmb_delete_playlist setState: deadbeef->conf_get_int ("cocoaui.mmb_delete_playlist", 1) ? NSOnState : NSOffState];
+    [_hide_remove_from_disk setState: deadbeef->conf_get_int ("cocoaui.hide_remove_from_disk", 0) ? NSOnState : NSOffState];
+    [_name_playlist_from_folder setState: deadbeef->conf_get_int ("cocoaui.name_playlist_from_folder", 1) ? NSOnState : NSOffState];
+    [_autoresize_columns setState: deadbeef->conf_get_int ("cocoaui.autoresize_columns", 0) ? NSOnState : NSOffState];
+
+    // appearance for seekbar / volumebar
+    [_override_bar_colors setState: deadbeef->conf_get_int ("cocoaui.override_bar_colors", 0) ? NSOnState : NSOffState];
+
+    NSColorList *clist = [NSColorList colorListNamed:@"System"];
+    [_color_bar_foreground setColor:[clist colorWithKey:@"controlTextColor"]];
+    [_color_bar_background setColor:[clist colorWithKey:@"controlShadowColor"]];
+
+    // appearance for playlist
+    [_override_playlist_colors setState: deadbeef->conf_get_int ("cocoaui.override_listview_colors", 0) ? NSOnState : NSOffState];
+    
+    [_color_listview_text setColor: [clist colorWithKey:@"controlTextColor"]];
+    [_color_listview_playing_text setColor: [clist colorWithKey:@"controlTextColor"]];
+    [_color_listview_selected_text setColor: [clist colorWithKey:@"alternateSelectedControlTextColor"]];
+    [_color_listview_group_header_text setColor: [clist colorWithKey:@"controlTextColor"]];
+    [_color_listview_cursor setColor: [clist colorWithKey:@"controlTextColor"]];
+    [_color_listview_even_background setColor: [NSColor controlAlternatingRowBackgroundColors][0]];
+    [_color_listview_odd_background setColor: [NSColor controlAlternatingRowBackgroundColors][1]];
+    [_color_listview_selected_background setColor: [clist colorWithKey:@"alternateSelectedControlColor"]];
+
+    [_listview_bold_current_text setState: deadbeef->conf_get_int ("cocoaui.embolden_current_track", 0) ? NSOnState : NSOffState];
+    [_listview_bold_selected_text setState: deadbeef->conf_get_int ("cocoaui.embolden_selected_tracks", 0) ? NSOnState : NSOffState];
+    [_listview_italic_current_text setState: deadbeef->conf_get_int ("cocoaui.italic_current_track", 0) ? NSOnState : NSOffState];
+    [_listview_italic_selected_text setState: deadbeef->conf_get_int ("cocoaui.italic_selected_tracks", 0) ? NSOnState : NSOffState];
+
+    // network
+    [_network_proxy setState: deadbeef->conf_get_int ("network.proxy", 0) ? NSOnState : NSOffState];
+    [_network_proxy_address setStringValue:[NSString stringWithUTF8String: deadbeef->conf_get_str_fast ("network.proxy.address", "")]];
+    [_network_proxy_port setStringValue:[NSString stringWithUTF8String: deadbeef->conf_get_str_fast ("network.proxy.port", "8080")]];
+    const char *type = deadbeef->conf_get_str_fast ("network.proxy.type", "HTTP");
+    if (!strcasecmp (type, "HTTP")) {
+        [_network_proxy_type selectItemAtIndex:0];
+    }
+    else if (!strcasecmp (type, "HTTP_1_0")) {
+        [_network_proxy_type selectItemAtIndex:1];
+    }
+    else if (!strcasecmp (type, "SOCKS4")) {
+        [_network_proxy_type selectItemAtIndex:2];
+    }
+    else if (!strcasecmp (type, "SOCKS5")) {
+        [_network_proxy_type selectItemAtIndex:3];
+    }
+    else if (!strcasecmp (type, "SOCKS4A")) {
+        [_network_proxy_type selectItemAtIndex:4];
+    }
+    else if (!strcasecmp (type, "SOCKS5_HOSTNAME")) {
+        [_network_proxy_type selectItemAtIndex:5];
+    }
+    [_network_proxy_username setStringValue: [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.proxy.username", "")]];
+    [_network_proxy_password setStringValue: [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.proxy.password", "")]];
+    [_network_http_user_agent setStringValue: [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.http_user_agent", "")]];
 }
 
 - (NSArray *)toolbarSelectableItemIdentifiers: (NSToolbar *)toolbar;
