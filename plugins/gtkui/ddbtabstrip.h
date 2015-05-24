@@ -31,6 +31,9 @@ G_BEGIN_DECLS
 #define DDB_IS_TABSTRIP_CLASS(obj) (G_TYPE_CHECK_CLASS_TYPE ((obj), DDB_TYPE_TABSTRIP))
 #define DDB_TABSTRIP_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), DDB_TYPE_TABSTRIP, DdbTabStripClass))
 
+#define DDB_TABSTRIP_MIN_TAB_SIZE 80
+#define DDB_TABSTRIP_MAX_TAB_SIZE 200
+
 typedef struct _DdbTabStrip DdbTabStrip;
 typedef struct _DdbTabStripClass DdbTabStripClass;
 
