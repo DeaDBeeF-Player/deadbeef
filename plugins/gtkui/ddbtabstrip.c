@@ -318,8 +318,8 @@ static int text_right_padding = 0; // calculated from widget height
 static int text_vert_offset = -2;
 static int tab_overlap_size = 0; // widget_height/2
 static int tabs_left_margin = 4;
-static int min_tab_size = 80;
-static int max_tab_size = 200;
+static int min_tab_size = DDB_TABSTRIP_MIN_TAB_SIZE;
+static int max_tab_size = DDB_TABSTRIP_MAX_TAB_SIZE;
 
 static int tab_moved = 0;
 
