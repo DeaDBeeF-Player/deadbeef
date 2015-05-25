@@ -128,6 +128,9 @@
 		2D22F76519E13DB2009C631E /* resid-builder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F76219E13DB2009C631E /* resid-builder.cpp */; };
 		2D22F76619E13DB2009C631E /* resid-emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F76319E13DB2009C631E /* resid-emu.h */; };
 		2D22F76719E13DB2009C631E /* resid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F76419E13DB2009C631E /* resid.cpp */; };
+		2D2351211B138F1100A62936 /* converter.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D23511B1B138ECB00A62936 /* converter.dylib */; };
+		2D2351251B138F3200A62936 /* converter.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2351231B138F3200A62936 /* converter.c */; };
+		2D2351261B138F3200A62936 /* converter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2351241B138F3200A62936 /* converter.h */; };
 		2D2A135F19B6480E00AD1EB7 /* cgme.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2A135E19B6480E00AD1EB7 /* cgme.c */; };
 		2D2A140C19B6482600AD1EB7 /* Ay_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2A136019B6482600AD1EB7 /* Ay_Apu.cpp */; };
 		2D2A140D19B6482600AD1EB7 /* Ay_Apu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2A136119B6482600AD1EB7 /* Ay_Apu.h */; };
@@ -948,6 +951,13 @@
 			remoteGlobalIDString = 2D22F70219E1382C009C631E;
 			remoteInfo = libsidplay2;
 		};
+		2D23511F1B138EFC00A62936 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D23511A1B138ECB00A62936;
+			remoteInfo = converter;
+		};
 		2D2A14B819B6484100AD1EB7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -1178,6 +1188,9 @@
 		2D22F76219E13DB2009C631E /* resid-builder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "resid-builder.cpp"; path = "plugins/sid/sidplay-libs/builders/resid-builder/src/resid-builder.cpp"; sourceTree = "<group>"; };
 		2D22F76319E13DB2009C631E /* resid-emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "resid-emu.h"; path = "plugins/sid/sidplay-libs/builders/resid-builder/src/resid-emu.h"; sourceTree = "<group>"; };
 		2D22F76419E13DB2009C631E /* resid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = resid.cpp; path = "plugins/sid/sidplay-libs/builders/resid-builder/src/resid.cpp"; sourceTree = "<group>"; };
+		2D23511B1B138ECB00A62936 /* converter.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = converter.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D2351231B138F3200A62936 /* converter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = converter.c; path = plugins/converter/converter.c; sourceTree = "<group>"; };
+		2D2351241B138F3200A62936 /* converter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = converter.h; path = plugins/converter/converter.h; sourceTree = "<group>"; };
 		2D2A135A19B647CF00AD1EB7 /* gme.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = gme.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D2A135E19B6480E00AD1EB7 /* cgme.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cgme.c; path = plugins/gme/cgme.c; sourceTree = "<group>"; };
 		2D2A136019B6482600AD1EB7 /* Ay_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ay_Apu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ay_Apu.cpp"; sourceTree = "<group>"; };
@@ -2073,6 +2086,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2D2351181B138ECB00A62936 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D2A135719B647CF00AD1EB7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2338,6 +2358,15 @@
 				2D22F5C519E136D1009C631E /* wave8580_PST.cpp */,
 			);
 			name = libsidplay2;
+			sourceTree = "<group>";
+		};
+		2D2351221B138F1700A62936 /* converter */ = {
+			isa = PBXGroup;
+			children = (
+				2D2351231B138F3200A62936 /* converter.c */,
+				2D2351241B138F3200A62936 /* converter.h */,
+			);
+			name = converter;
 			sourceTree = "<group>";
 		};
 		2D2A135519B647BB00AD1EB7 /* gme */ = {
@@ -3376,6 +3405,7 @@
 				2DAA4C081AAF88DE00519559 /* Tests.xctest */,
 				2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */,
 				2DF930441AB816DC0030C0CA /* wildmidi.dylib */,
+				2D23511B1B138ECB00A62936 /* converter.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3495,6 +3525,7 @@
 		4D1B514C1837EF7C003E6066 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				2D2351221B138F1700A62936 /* converter */,
 				2D6501CC1AA7882900E82A9E /* sc68 */,
 				2D5D21441A4033D3001D5A79 /* lastfm */,
 				2D91774F1A0E8A1F004BC222 /* mp4ff */,
@@ -3841,6 +3872,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D22F75919E13850009C631E /* csid.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D2351191B138ECB00A62936 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D2351261B138F3200A62936 /* converter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4287,6 +4326,23 @@
 			productReference = 2D22F75519E1384B009C631E /* sid.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		2D23511A1B138ECB00A62936 /* converter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D23511E1B138ECB00A62936 /* Build configuration list for PBXNativeTarget "converter" */;
+			buildPhases = (
+				2D2351171B138ECB00A62936 /* Sources */,
+				2D2351181B138ECB00A62936 /* Frameworks */,
+				2D2351191B138ECB00A62936 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = converter;
+			productName = converter;
+			productReference = 2D23511B1B138ECB00A62936 /* converter.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2D2A135919B647CF00AD1EB7 /* gme */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D2A135B19B647CF00AD1EB7 /* Build configuration list for PBXNativeTarget "gme" */;
@@ -4526,6 +4582,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D2351201B138EFC00A62936 /* PBXTargetDependency */,
 				2DF930541AB8175D0030C0CA /* PBXTargetDependency */,
 				2D01D7E91AB221AA00BCD3C4 /* PBXTargetDependency */,
 				2DA0ACED1AA71E4B007EDD43 /* PBXTargetDependency */,
@@ -4671,6 +4728,9 @@
 					2D22F75419E1384B009C631E = {
 						CreatedOnToolsVersion = 6.0.1;
 					};
+					2D23511A1B138ECB00A62936 = {
+						CreatedOnToolsVersion = 6.3.1;
+					};
 					2D5D213F1A4033B0001D5A79 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
@@ -4736,6 +4796,7 @@
 				2DAA4C071AAF88DE00519559 /* Tests */,
 				2D01D7C91AB2216900BCD3C4 /* ddbcore */,
 				2DF930431AB816DC0030C0CA /* wildmidi */,
+				2D23511A1B138ECB00A62936 /* converter */,
 			);
 		};
 /* End PBXProject section */
@@ -4759,6 +4820,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D2351211B138F1100A62936 /* converter.dylib in Resources */,
 				2D65022A1AA7A86700E82A9E /* data68 in Resources */,
 				2DA0ACEE1AA71E7C007EDD43 /* in_sc68.dylib in Resources */,
 				2DACBB241A40CEB100CCF401 /* mp3.dylib in Resources */,
@@ -4916,6 +4978,14 @@
 			files = (
 				2D22F75B19E13850009C631E /* csid.cpp in Sources */,
 				2D22F75A19E13850009C631E /* plugin.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D2351171B138ECB00A62936 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D2351251B138F3200A62936 /* converter.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5526,6 +5596,11 @@
 			target = 2D22F70219E1382C009C631E /* libsidplay2 */;
 			targetProxy = 2D22F75F19E13AD0009C631E /* PBXContainerItemProxy */;
 		};
+		2D2351201B138EFC00A62936 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D23511A1B138ECB00A62936 /* converter */;
+			targetProxy = 2D23511F1B138EFC00A62936 /* PBXContainerItemProxy */;
+		};
 		2D2A14B919B6484100AD1EB7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D2A135919B647CF00AD1EB7 /* gme */;
@@ -5774,6 +5849,46 @@
 					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include/sidplay/builders\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		2D23511C1B138ECB00A62936 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		2D23511D1B138ECB00A62936 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -6764,6 +6879,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		2D23511E1B138ECB00A62936 /* Build configuration list for PBXNativeTarget "converter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D23511C1B138ECB00A62936 /* Debug */,
+				2D23511D1B138ECB00A62936 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		2D2A135B19B647CF00AD1EB7 /* Build configuration list for PBXNativeTarget "gme" */ = {
 			isa = XCConfigurationList;
