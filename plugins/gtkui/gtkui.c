@@ -389,6 +389,38 @@ gtkpl_songchanged_wrapper (DB_playItem_t *from, DB_playItem_t *to) {
     }
 }
 
+const char *gtkui_default_titlebar_playing = "%artist% - %title% - DeaDBeeF-%version%";
+const char *gtkui_default_titlebar_stopped = "DeaDBeeF-%version%";
+
+static char *titlebar_playing_bc;
+static int titlebar_playing_bc_size;
+static char *titlebar_stopped_bc;
+static int titlebar_stopped_bc_size;
+
+static void
+titlebar_tf_free (void) {
+    if (titlebar_playing_bc) {
+        deadbeef->tf_free (titlebar_playing_bc);
+        titlebar_playing_bc = NULL;
+    }
+
+    if (titlebar_stopped_bc) {
+        deadbeef->tf_free (titlebar_stopped_bc);
+        titlebar_stopped_bc = NULL;
+    }
+}
+
+static void
+titlebar_tf_init (void) {
+    titlebar_tf_free ();
+
+    char fmt[500];
+    deadbeef->conf_get_str ("gtkui.titlebar_playing_tf", gtkui_default_titlebar_playing, fmt, sizeof (fmt));
+    titlebar_playing_bc_size = deadbeef->tf_compile (fmt, &titlebar_playing_bc);
+    deadbeef->conf_get_str ("gtkui.titlebar_stopped_tf", gtkui_default_titlebar_stopped, fmt, sizeof (fmt));
+    titlebar_stopped_bc_size = deadbeef->tf_compile (fmt, &titlebar_stopped_bc);
+}
+
 void
 gtkui_set_titlebar (DB_playItem_t *it) {
     if (!it) {
@@ -397,15 +429,19 @@ gtkui_set_titlebar (DB_playItem_t *it) {
     else {
         deadbeef->pl_item_ref (it);
     }
-    char fmt[500];
-    char str[600];
-    if (it) {
-        deadbeef->conf_get_str ("gtkui.titlebar_playing", "%a - %t - DeaDBeeF-%V", fmt, sizeof (fmt));
+    char str[1024];
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .it = it,
+        .plt = deadbeef->plt_get_curr (),
+        .idx = -1,
+        .id = -1
+    };
+    deadbeef->tf_eval (&ctx, it ? titlebar_playing_bc : titlebar_stopped_bc, it ? titlebar_playing_bc_size : titlebar_stopped_bc_size, str, sizeof (str));
+    if (ctx.plt) {
+        deadbeef->plt_unref (ctx.plt);
+        ctx.plt = NULL;
     }
-    else {
-        deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V", fmt, sizeof (fmt));
-    }
-    deadbeef->pl_format_title (it, -1, str, sizeof (str), -1, fmt);
     gtk_window_set_title (GTK_WINDOW (mainwin), str);
     if (it) {
         deadbeef->pl_item_unref (it);
@@ -600,6 +636,9 @@ gtkui_on_configchanged (void *data) {
     gtkui_tabstrip_italic_playing = deadbeef->conf_get_int ("gtkui.tabstrip_italic_playing", 0);
     gtkui_tabstrip_embolden_selected = deadbeef->conf_get_int ("gtkui.tabstrip_embolden_selected", 0);
     gtkui_tabstrip_italic_selected = deadbeef->conf_get_int ("gtkui.tabstrip_italic_selected", 0);
+
+    // titlebar tf
+    titlebar_tf_init ();
 
     // pin groups
     gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups", 0);
@@ -1040,11 +1079,7 @@ gtkui_thread (void *ctx) {
 
     init_widget_layout ();
 
-    char fmt[500];
-    char str[600];
-    deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V", fmt, sizeof (fmt));
-    deadbeef->pl_format_title (NULL, -1, str, sizeof (str), -1, fmt);
-    gtk_window_set_title (GTK_WINDOW (mainwin), str);
+    gtkui_set_titlebar (NULL);
 
     fileadded_listener_id = deadbeef->listen_file_added (gtkui_add_file_info_cb, NULL);
     fileadd_beginend_listener_id = deadbeef->listen_file_add_beginend (gtkui_add_file_begin_cb, gtkui_add_file_end_cb, NULL);
@@ -1077,6 +1112,7 @@ gtkui_thread (void *ctx) {
     gtkui_hide_status_icon ();
     pl_common_free();
 //    draw_free ();
+    titlebar_tf_free ();
     if (mainwin) {
         gtk_widget_destroy (mainwin);
         mainwin = NULL;
