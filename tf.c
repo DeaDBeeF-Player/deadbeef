@@ -38,6 +38,9 @@
 //   len:int32, data
 // !0: plain text
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -619,6 +622,10 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     if (playing) {
                         pl_item_unref (playing);
                     }
+                }
+
+                else if (!strcmp (name, "version")) {
+                    val = VERSION;
                 }
 
                 // default case
