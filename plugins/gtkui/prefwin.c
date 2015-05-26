@@ -221,9 +221,8 @@ gtkui_run_preferences_dlg (void) {
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "reset_autostopalbum")), deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0));
 
     // titlebar text
-	// FIXME: use the new title formatting
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_playing")), deadbeef->conf_get_str_fast ("gtkui.titlebar_playing", "%a - %t - DeaDBeeF-%V"));
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_stopped")), deadbeef->conf_get_str_fast ("gtkui.titlebar_stopped", "DeaDBeeF-%V"));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_playing")), deadbeef->conf_get_str_fast ("gtkui.titlebar_playing_tf", gtkui_default_titlebar_playing));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_stopped")), deadbeef->conf_get_str_fast ("gtkui.titlebar_stopped_tf", gtkui_default_titlebar_stopped));
 
     // cli playlist
     int active = deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1);
@@ -1004,7 +1003,7 @@ void
 on_titlebar_format_playing_changed     (GtkEditable     *editable,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_str ("gtkui.titlebar_playing", gtk_entry_get_text (GTK_ENTRY (editable)));
+    deadbeef->conf_set_str ("gtkui.titlebar_playing_tf", gtk_entry_get_text (GTK_ENTRY (editable)));
     gtkui_set_titlebar (NULL);
 }
 
@@ -1013,7 +1012,7 @@ void
 on_titlebar_format_stopped_changed     (GtkEditable     *editable,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_str ("gtkui.titlebar_stopped", gtk_entry_get_text (GTK_ENTRY (editable)));
+    deadbeef->conf_set_str ("gtkui.titlebar_stopped_tf", gtk_entry_get_text (GTK_ENTRY (editable)));
     gtkui_set_titlebar (NULL);
 }
 

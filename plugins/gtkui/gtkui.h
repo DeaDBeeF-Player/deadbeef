@@ -19,10 +19,6 @@
 #ifndef __GTKUI_H
 #define __GTKUI_H
 
-#if HAVE_NOTIFY
-#define NOTIFY_DEFAULT_FORMAT "%a - %t"
-#endif
-
 #include <gtk/gtk.h>
 
 #ifdef HAVE_CONFIG_H
@@ -54,6 +50,9 @@ extern int gtkui_tabstrip_italic_playing;
 struct _GSList;
 
 extern int gtkui_groups_pinned;
+
+extern const char *gtkui_default_titlebar_playing;
+extern const char *gtkui_default_titlebar_stopped;
 
 // misc utility functions
 
