@@ -77,6 +77,12 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+#ifdef HAVE_COCOAUI
+#define SYS_CONFIG_DIR "Library/Preferences"
+#else
+#define SYS_CONFIG_DIR ".config"
+#endif
+
 // some common global variables
 char sys_install_path[PATH_MAX]; // see deadbeef->get_prefix
 char confdir[PATH_MAX]; // $HOME/.config
@@ -85,6 +91,7 @@ char dbinstalldir[PATH_MAX]; // see deadbeef->get_prefix
 char dbdocdir[PATH_MAX]; // see deadbeef->get_doc_dir
 char dbplugindir[PATH_MAX]; // see deadbeef->get_plugin_dir
 char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
+char dbcachedir[PATH_MAX];
 
 char use_gui_plugin[100];
 
@@ -836,6 +843,11 @@ main (int argc, char *argv[]) {
     }
 
     strcpy (dbconfdir, confdir);
+
+    if (snprintf (confdir, sizeof (confdir), "%s/cache", dbcachedir) > sizeof (confdir)) {
+        fprintf (stderr, "fatal: too long cache path %s\n", dbcachedir);
+        return -1;
+    }
 #else
     char *homedir = getenv ("HOME");
     if (!homedir) {
@@ -851,7 +863,7 @@ main (int argc, char *argv[]) {
         }
     }
     else {
-        if (snprintf (confdir, sizeof (confdir), "%s/.config", homedir) > sizeof (confdir)) {
+        if (snprintf (confdir, sizeof (confdir), "%s/" SYS_CONFIG_DIR, homedir) > sizeof (confdir)) {
             fprintf (stderr, "fatal: HOME value is too long: %s\n", homedir);
             return -1;
         }
@@ -861,6 +873,13 @@ main (int argc, char *argv[]) {
         return -1;
     }
     mkdir (confdir, 0755);
+
+    const char *xdg_cache = getenv("XDG_CACHE_HOME");
+    const char *cache_root = xdg_cache ? xdg_cache : getenv("HOME");
+    if (snprintf(dbcachedir, sizeof (dbcachedir), xdg_cache ? "%s/deadbeef/" : "%s/.cache/deadbeef/", cache_root) >= sizeof (dbcachedir)) {
+        fprintf (stderr, "fatal: too long cache path %s\n", dbcachedir);
+        return -1;
+    }
 #endif
 
 

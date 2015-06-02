@@ -450,6 +450,15 @@ enum ddb_sort_order_t {
 #endif
 };
 
+enum ddb_sys_directory_t {
+    DDB_SYS_DIR_CONFIG = 1,
+    DDB_SYS_DIR_PREFIX = 2,
+    DDB_SYS_DIR_DOC = 3,
+    DDB_SYS_DIR_PLUGIN = 4,
+    DDB_SYS_DIR_PIXMAP = 5,
+    DDB_SYS_DIR_CACHE = 6,
+};
+
 // typecasting macros
 #define DB_PLUGIN(x) ((DB_plugin_t *)(x))
 #define DB_CALLBACK(x) ((DB_callback_t)(x))
@@ -550,11 +559,11 @@ typedef struct {
     // system folders
     // normally functions will return standard folders derived from --prefix
     // portable version will return pathes specified in comments below
-    const char *(*get_config_dir) (void); // installdir/config | $XDG_CONFIG_HOME/.config/deadbeef
-    const char *(*get_prefix) (void); // installdir | PREFIX
-    const char *(*get_doc_dir) (void); // installdir/doc | DOCDIR
-    const char *(*get_plugin_dir) (void); // installdir/plugins | LIBDIR/deadbeef
-    const char *(*get_pixmap_dir) (void); // installdir/pixmaps | PREFIX "/share/deadbeef/pixmaps"
+    const char *(*get_config_dir) (void) DEPRECATED_18; // installdir/config | $XDG_CONFIG_HOME/.config/deadbeef
+    const char *(*get_prefix) (void) DEPRECATED_18; // installdir | PREFIX
+    const char *(*get_doc_dir) (void) DEPRECATED_18; // installdir/doc | DOCDIR
+    const char *(*get_plugin_dir) (void) DEPRECATED_18; // installdir/plugins | LIBDIR/deadbeef
+    const char *(*get_pixmap_dir) (void) DEPRECATED_18; // installdir/pixmaps | PREFIX "/share/deadbeef/pixmaps"
 
     // process control
     void (*quit) (void);
@@ -1133,6 +1142,9 @@ typedef struct {
     DB_playItem_t *(*playqueue_get_item) (int n);
     int (*playqueue_remove_nth) (int n);
     void (*playqueue_insert_at) (int n, DB_playItem_t *it);
+
+    // system directory API, returns path by id from ddb_sys_directory_t enum
+    const char *(*get_system_dir) (int dir_id);
 #endif
 } DB_functions_t;
 

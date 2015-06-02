@@ -43,6 +43,6 @@ extern char dbinstalldir[PATH_MAX]; // see deadbeef->get_prefix
 extern char dbdocdir[PATH_MAX]; // see deadbeef->get_doc_dir
 extern char dbplugindir[PATH_MAX]; // see deadbeef->get_plugin_dir
 extern char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
-
+extern char dbcachedir[PATH_MAX];
 
 #endif // __COMMON_H
