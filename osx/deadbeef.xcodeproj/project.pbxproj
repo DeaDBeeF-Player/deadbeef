@@ -131,6 +131,7 @@
 		2D2351211B138F1100A62936 /* converter.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D23511B1B138ECB00A62936 /* converter.dylib */; };
 		2D2351251B138F3200A62936 /* converter.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2351231B138F3200A62936 /* converter.c */; };
 		2D2351261B138F3200A62936 /* converter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2351241B138F3200A62936 /* converter.h */; };
+		2D2351281B13922400A62936 /* Converter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D2351271B13922400A62936 /* Converter.xib */; };
 		2D2A135F19B6480E00AD1EB7 /* cgme.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2A135E19B6480E00AD1EB7 /* cgme.c */; };
 		2D2A140C19B6482600AD1EB7 /* Ay_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2A136019B6482600AD1EB7 /* Ay_Apu.cpp */; };
 		2D2A140D19B6482600AD1EB7 /* Ay_Apu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2A136119B6482600AD1EB7 /* Ay_Apu.h */; };
@@ -1191,6 +1192,7 @@
 		2D23511B1B138ECB00A62936 /* converter.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = converter.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D2351231B138F3200A62936 /* converter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = converter.c; path = plugins/converter/converter.c; sourceTree = "<group>"; };
 		2D2351241B138F3200A62936 /* converter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = converter.h; path = plugins/converter/converter.h; sourceTree = "<group>"; };
+		2D2351271B13922400A62936 /* Converter.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Converter.xib; sourceTree = "<group>"; };
 		2D2A135A19B647CF00AD1EB7 /* gme.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = gme.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D2A135E19B6480E00AD1EB7 /* cgme.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cgme.c; path = plugins/gme/cgme.c; sourceTree = "<group>"; };
 		2D2A136019B6482600AD1EB7 /* Ay_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ay_Apu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ay_Apu.cpp"; sourceTree = "<group>"; };
@@ -3803,6 +3805,7 @@
 				2DC80A8E1A9222F800C9397F /* TrackProperties.xib */,
 				2D3EBD9C1A9379BD00E5E255 /* Preferences.xib */,
 				2D11E8B11AA0E3DD00A67A20 /* MainWindow.xib */,
+				2D2351271B13922400A62936 /* Converter.xib */,
 				4D2362B218395D0300C9E818 /* images */,
 				2D0B1C8619C5CF4A00CED0B5 /* Supporting files */,
 			);
@@ -4857,6 +4860,7 @@
 				2DBEE69919B4EB0900A60609 /* sb_front_filler@2x.png in Resources */,
 				2DBEE69119B4EB0900A60609 /* sb_back_cap_right@2x.png in Resources */,
 				2DCD78D419A665CA00EA50FA /* deadbeef.png in Resources */,
+				2D2351281B13922400A62936 /* Converter.xib in Resources */,
 				2DD6D0A819AE6288009308A5 /* knobTemplate.pdf in Resources */,
 				4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */,
 				2DCD78DC19A665CA00EA50FA /* deadbeef.png in Resources */,

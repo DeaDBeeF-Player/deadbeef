@@ -924,6 +924,10 @@ int group_bytecode_size = 0;
     return 0;
 }
 
+- (void)convertSelection {
+    
+}
+
 - (void)trackProperties {
     if (!_trkProperties) {
         _trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
