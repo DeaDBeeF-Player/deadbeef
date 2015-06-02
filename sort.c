@@ -52,7 +52,6 @@ static int pl_sort_id;
 static int pl_sort_version; // 0: use pl_sort_format, 1: use pl_sort_tf_bytecode
 static const char *pl_sort_format;
 static char *pl_sort_tf_bytecode;
-static int pl_sort_tf_bytecode_length;
 static ddb_tf_context_t pl_sort_tf_ctx;
 
 static int
@@ -117,9 +116,9 @@ pl_sort_compare_str (playItem_t *a, playItem_t *b) {
         else {
             pl_sort_tf_ctx.id = pl_sort_id;
             pl_sort_tf_ctx.it = (ddb_playItem_t *)a;
-            tf_eval(&pl_sort_tf_ctx, pl_sort_tf_bytecode, pl_sort_tf_bytecode_length, tmp1, sizeof(tmp1));
+            tf_eval(&pl_sort_tf_ctx, pl_sort_tf_bytecode, tmp1, sizeof(tmp1));
             pl_sort_tf_ctx.it = (ddb_playItem_t *)b;
-            tf_eval(&pl_sort_tf_ctx, pl_sort_tf_bytecode, pl_sort_tf_bytecode_length, tmp2, sizeof(tmp2));
+            tf_eval(&pl_sort_tf_ctx, pl_sort_tf_bytecode, tmp2, sizeof(tmp2));
         }
         int res = strcasecmp_numeric (tmp1, tmp2);
         if (!pl_sort_ascending) {
@@ -210,12 +209,10 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
     if (version == 0) {
         pl_sort_format = format;
         pl_sort_tf_bytecode = NULL;
-        pl_sort_tf_bytecode_length = -1;
-
     }
     else {
         pl_sort_format = NULL;
-        pl_sort_tf_bytecode_length = tf_compile (format, &pl_sort_tf_bytecode);
+        pl_sort_tf_bytecode = tf_compile (format);
         pl_sort_tf_ctx._size = sizeof (pl_sort_tf_ctx);
         pl_sort_tf_ctx.it = NULL;
         pl_sort_tf_ctx.plt = (ddb_playlist_t *)playlist;
@@ -281,7 +278,6 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
     if (version == 1) {
         tf_free (pl_sort_tf_bytecode);
         pl_sort_tf_bytecode = NULL;
-        pl_sort_tf_bytecode_length = -1;
         memset (&pl_sort_tf_ctx, 0, sizeof (pl_sort_tf_ctx));
     }
 

@@ -393,9 +393,7 @@ const char *gtkui_default_titlebar_playing = "%artist% - %title% - DeaDBeeF-%ver
 const char *gtkui_default_titlebar_stopped = "DeaDBeeF-%version%";
 
 static char *titlebar_playing_bc;
-static int titlebar_playing_bc_size;
 static char *titlebar_stopped_bc;
-static int titlebar_stopped_bc_size;
 
 static void
 titlebar_tf_free (void) {
@@ -416,9 +414,9 @@ titlebar_tf_init (void) {
 
     char fmt[500];
     deadbeef->conf_get_str ("gtkui.titlebar_playing_tf", gtkui_default_titlebar_playing, fmt, sizeof (fmt));
-    titlebar_playing_bc_size = deadbeef->tf_compile (fmt, &titlebar_playing_bc);
+    titlebar_playing_bc = deadbeef->tf_compile (fmt);
     deadbeef->conf_get_str ("gtkui.titlebar_stopped_tf", gtkui_default_titlebar_stopped, fmt, sizeof (fmt));
-    titlebar_stopped_bc_size = deadbeef->tf_compile (fmt, &titlebar_stopped_bc);
+    titlebar_stopped_bc = deadbeef->tf_compile (fmt);
 }
 
 void
@@ -437,7 +435,7 @@ gtkui_set_titlebar (DB_playItem_t *it) {
         .idx = -1,
         .id = -1
     };
-    deadbeef->tf_eval (&ctx, it ? titlebar_playing_bc : titlebar_stopped_bc, it ? titlebar_playing_bc_size : titlebar_stopped_bc_size, str, sizeof (str));
+    deadbeef->tf_eval (&ctx, it ? titlebar_playing_bc : titlebar_stopped_bc, str, sizeof (str));
     if (ctx.plt) {
         deadbeef->plt_unref (ctx.plt);
         ctx.plt = NULL;

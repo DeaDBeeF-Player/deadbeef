@@ -1112,10 +1112,8 @@ typedef struct {
 
     // compile the input title formatting string into bytecode
     // script: freeform string with title formatting special characters in it
-    // out_code: points to the buffer pointer, for storing the resulting bytecode,
-    //   which must be tf_free'd by the caller.
-    // returns the output bytecode size.
-    int (*tf_compile) (const char *script, char **out_code);
+    // returns the pointer to compiled bytecode, which must be tf_free'd by the caller.
+    char *(*tf_compile) (const char *script);
 
     // free the code returned by tf_compile
     void (*tf_free) (char *code);
@@ -1123,11 +1121,10 @@ typedef struct {
     // evaluate the titleformatting script in a given context
     // ctx: a pointer to ddb_tf_context_t structure initialized by the caller
     // code: the bytecode data created by tf_compile
-    // codelen: bytecode size returned by tf_compile
     // out: buffer allocated by the caller, must be big enough to fit the output string
     // outlen: the size of out buffer
     // returns -1 on fail, output size on success
-    int (*tf_eval) (ddb_tf_context_t *ctx, char *code, int codelen, char *out, int outlen);
+    int (*tf_eval) (ddb_tf_context_t *ctx, char *code, char *out, int outlen);
 
     // sort using title formatting v2
     void (*plt_sort_v2) (ddb_playlist_t *plt, int iter, int id, const char *format, int order);

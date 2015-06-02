@@ -43,7 +43,6 @@ typedef struct {
     int id; // predefined col type
     char *format;
     char *bytecode;
-    int bytecode_len;
 } col_info_t;
 
 typedef struct _DdbListview DdbListview;
@@ -196,7 +195,6 @@ struct _DdbListview {
     char *group_format;
     // tf bytecode for group title
     char *group_title_bytecode;
-    int group_title_bytecode_len;
 
     guint tf_redraw_timeout_id;
     int tf_redraw_track_idx;

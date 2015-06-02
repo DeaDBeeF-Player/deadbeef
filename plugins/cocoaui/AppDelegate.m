@@ -228,7 +228,6 @@ typedef struct {
     int _id; // predefined col type
     char *format;
     char *bytecode;
-    int bytecode_len;
 } col_info_t;
 
 static col_info_t columns[MAX_COLUMNS];
@@ -239,12 +238,7 @@ init_column (int i, int _id, const char *format) {
     columns[i]._id = _id;
     columns[i].format = strdup (format);
     if (format) {
-        char *bytecode;
-        int res = deadbeef->tf_compile (format, &bytecode);
-        if (res >= 0) {
-            columns[i].bytecode = bytecode;
-            columns[i].bytecode_len = res;
-        }
+        columns[i].bytecode = deadbeef->tf_compile (format);
     }
 }
 

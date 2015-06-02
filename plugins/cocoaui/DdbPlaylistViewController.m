@@ -287,12 +287,7 @@ extern DB_functions_t *deadbeef;
     _columns[idx].format = format ? strdup (format) : NULL;
     _columns[idx].size = size;
     if (format) {
-        char *bytecode;
-        int res = deadbeef->tf_compile (format, &bytecode);
-        if (res >= 0) {
-            _columns[idx].bytecode = bytecode;
-            _columns[idx].bytecode_len = res;
-        }
+        _columns[idx].bytecode = deadbeef->tf_compile (format);
     }
     _columns[idx].set_text_color = setColor;
     _columns[idx].text_color[0] = color[0];
@@ -603,7 +598,7 @@ extern DB_functions_t *deadbeef;
         };
 
         char text[1024] = "";
-        deadbeef->tf_eval (&ctx, _columns[col].bytecode, _columns[col].bytecode_len, text, sizeof (text));
+        deadbeef->tf_eval (&ctx, _columns[col].bytecode, text, sizeof (text));
 
         rect.origin.x += CELL_HPADDING;
         rect.size.width -= CELL_HPADDING;
@@ -616,9 +611,8 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-const char *group_str = "%artist%[ - %year%][ - %album%]";
-char *group_bytecode = NULL;
-int group_bytecode_size = 0;
+static const char *group_str = "%artist%[ - %year%][ - %album%]";
+static char *group_bytecode = NULL;
 
 - (void)drawGroupTitle:(DdbListviewRow_t)row inRect:(NSRect)rect {
     ddb_tf_context_t ctx = {
@@ -630,7 +624,7 @@ int group_bytecode_size = 0;
     };
 
     char text[1024] = "";
-    deadbeef->tf_eval (&ctx, group_bytecode, group_bytecode_size, text, sizeof (text));
+    deadbeef->tf_eval (&ctx, group_bytecode, text, sizeof (text));
 
     NSString *title = [NSString stringWithUTF8String:text];
 
@@ -677,7 +671,7 @@ int group_bytecode_size = 0;
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row {
     return nil;
     if (!group_bytecode) {
-        group_bytecode_size = deadbeef->tf_compile (group_str, &group_bytecode);
+        group_bytecode = deadbeef->tf_compile (group_str);
     }
 
     ddb_tf_context_t ctx = {
@@ -689,7 +683,7 @@ int group_bytecode_size = 0;
     };
     char buf[1024];
     NSString *ret = @"";
-    if (deadbeef->tf_eval (&ctx, group_bytecode, group_bytecode_size, buf, sizeof (buf)) > 0) {
+    if (deadbeef->tf_eval (&ctx, group_bytecode, buf, sizeof (buf)) > 0) {
         ret = [NSString stringWithUTF8String:buf];
         if (!ret) {
             ret = @"";
