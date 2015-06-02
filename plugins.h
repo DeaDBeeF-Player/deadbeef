@@ -100,6 +100,9 @@ plug_get_plugin_dir (void);
 const char *
 plug_get_pixmap_dir (void);
 
+const char *
+plug_get_system_dir (int dir_id);
+
 int
 plug_activate (DB_plugin_t *plug, int activate);
 

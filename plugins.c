@@ -392,6 +392,8 @@ static DB_functions_t deadbeef_api = {
     .playqueue_get_item = (DB_playItem_t *(*) (int n))playqueue_get_item,
     .playqueue_remove_nth = (int (*) (int n))playqueue_remove_nth,
     .playqueue_insert_at = (void (*) (int n, DB_playItem_t *it))playqueue_insert_at,
+
+    .get_system_dir = plug_get_system_dir,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -419,6 +421,25 @@ plug_get_plugin_dir (void) {
 const char *
 plug_get_pixmap_dir (void) {
     return dbpixmapdir;
+}
+
+const char *
+plug_get_system_dir (int dir_id) {
+    switch (dir_id) {
+    case DDB_SYS_DIR_CONFIG:
+        return dbconfdir;
+    case DDB_SYS_DIR_PREFIX:
+        return dbinstalldir;
+    case DDB_SYS_DIR_DOC:
+        return dbdocdir;
+    case DDB_SYS_DIR_PLUGIN:
+        return dbplugindir;
+    case DDB_SYS_DIR_PIXMAP:
+        return dbpixmapdir;
+    case DDB_SYS_DIR_CACHE:
+        return dbcachedir;
+    }
+    return NULL;
 }
 
 void
