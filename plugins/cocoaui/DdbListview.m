@@ -496,6 +496,9 @@ int grouptitleheight = 22;
         NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
         [theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0];
         [theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0];
+
+        // FIXME: should be added via plugin action
+        [theMenu insertItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@"" atIndex:0];
         return theMenu;
     }
     return nil;

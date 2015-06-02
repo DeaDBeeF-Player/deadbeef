@@ -130,7 +130,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField verticalHuggingPriority="750" id="Ecj-wq-LKu">
-                        <rect key="frame" x="60.000001237887155" y="152" width="198" height="22"/>
+                        <rect key="frame" x="60.000001237887162" y="152" width="198" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Column Title" drawsBackground="YES" id="Crt-Xg-RIJ">
                             <font key="font" metaFont="system"/>
