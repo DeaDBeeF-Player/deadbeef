@@ -1269,7 +1269,6 @@ init_column (col_info_t *inf, int id, const char *format) {
         deadbeef->tf_free (inf->bytecode);
         inf->bytecode = NULL;
     }
-    inf->bytecode_len = 0;
     inf->id = -1;
 
     switch (id) {
@@ -1565,7 +1564,7 @@ pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int s
     if (!listview->group_format || !listview->group_format[0]) {
         return -1;
     }
-    if (listview->group_title_bytecode_len >= 0) {
+    if (listview->group_title_bytecode) {
         ddb_tf_context_t ctx = {
             ._size = sizeof (ddb_tf_context_t),
             .it = it,
@@ -1591,7 +1590,7 @@ void
 pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height) {
     if (listview->group_format && listview->group_format[0]) {
         char str[1024] = "";
-        if (listview->group_title_bytecode_len >= 0) {
+        if (listview->group_title_bytecode) {
             ddb_tf_context_t ctx = {
                 ._size = sizeof (ddb_tf_context_t),
                 .it = it,
