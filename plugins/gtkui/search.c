@@ -312,9 +312,6 @@ search_groups_changed (DdbListview *listview, const char *format) {
     if (listview->group_format) {
         free (listview->group_format);
     }
-    if (listview->group_title_bytecode_len >= 0) {
-        listview->group_title_bytecode_len = -1;
-    }
     if (listview->group_title_bytecode) {
         free (listview->group_title_bytecode);
     }
