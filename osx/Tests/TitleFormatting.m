@@ -34,10 +34,9 @@
 }
 
 - (void)test_Literal_ReturnsLiteral {
-    char *bc;
-    int sz = tf_compile("hello world", &bc);
+    char *bc = tf_compile("hello world");
     char buffer[20];
-    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert([@"hello world" isEqualToString:[NSString stringWithUTF8String:buffer]]);
 }
@@ -47,10 +46,9 @@
     pl_add_meta (it, "year", "12345678");
     pl_add_meta (it, "album", "TheNameOfAlbum");
 
-    char *bc;
-    int sz = tf_compile("%album artist% - ($left(%year%,4)) %album%", &bc);
+    char *bc = tf_compile("%album artist% - ($left(%year%,4)) %album%");
     char buffer[200];
-    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert([@"TheAlbumArtist - (1234) TheNameOfAlbum" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
@@ -60,10 +58,9 @@
     pl_add_meta (it, "year", "12345678");
     pl_add_meta (it, "album", "Альбом");
 
-    char *bc;
-    int sz = tf_compile("%album artist% - ($left(%year%,4)) %album%", &bc);
+    char *bc = tf_compile("%album artist% - ($left(%year%,4)) %album%");
     char buffer[200];
-    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert([@"ИсполнительДанногоАльбома - (1234) Альбом" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
@@ -72,10 +69,9 @@
     pl_add_meta (it, "disctotal", "20");
     pl_add_meta (it, "disc", "18");
 
-    char *bc;
-    int sz = tf_compile("$if($greater(%totaldiscs%,1),- Disc: %discnumber%/%totaldiscs%)", &bc);
+    char *bc = tf_compile("$if($greater(%totaldiscs%,1),- Disc: %discnumber%/%totaldiscs%)");
     char buffer[200];
-    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert([@"- Disc: 18/20" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
@@ -84,10 +80,9 @@
     pl_add_meta (it, "artist", "Artist Name");
     pl_add_meta (it, "album artist", "Artist Name");
 
-    char *bc;
-    int sz = tf_compile("%track artist%", &bc);
+    char *bc = tf_compile("%track artist%");
     char buffer[200];
-    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert([@"" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
@@ -95,10 +90,9 @@
 - (void)test_TrackArtistIsUndef_ReturnsBlankTrackArtist {
     pl_add_meta (it, "album artist", "Artist Name");
 
-    char *bc;
-    int sz = tf_compile("%track artist%", &bc);
+    char *bc = tf_compile("%track artist%");
     char buffer[200];
-    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert([@"" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
@@ -107,50 +101,45 @@
     pl_add_meta (it, "artist", "Track Artist Name");
     pl_add_meta (it, "album artist", "Album Artist Name");
 
-    char *bc;
-    int sz = tf_compile("%track artist%", &bc);
+    char *bc = tf_compile("%track artist%");
     char buffer[200];
-    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert([@"Track Artist Name" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
 
 - (void)test_Add10And2_Gives12 {
-    char *bc;
-    int sz = tf_compile("$add(10,2)", &bc);
+    char *bc = tf_compile("$add(10,2)");
     char buffer[200];
-    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert([@"12" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
 
 - (void)test_StrcmpChannelsMono_GivesMo {
-    char *bc;
-    int sz = tf_compile("$if($strcmp(%channels%,mono),mo,st)", &bc);
+    char *bc = tf_compile("$if($strcmp(%channels%,mono),mo,st)");
     pl_replace_meta (it, ":CHANNELS", "1");
     char buffer[200];
-    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert([@"mo" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
 
 - (void)test_StrcmpChannelsMono_GivesSt {
-    char *bc;
-    int sz = tf_compile("$if($strcmp(%channels%,mono),mo,st)", &bc);
+    char *bc = tf_compile("$if($strcmp(%channels%,mono),mo,st)");
     pl_replace_meta (it, ":CHANNELS", "2");
     char buffer[200];
-    tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert([@"st" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
 
 - (void)test_SimpleExpr_Performance {
-    char *bc;
-    int sz = tf_compile("simple expr", &bc);
+    char *bc = tf_compile("simple expr");
 
     [self measureBlock:^{
         char buffer[20];
-        tf_eval (&ctx, bc, sz, buffer, sizeof (buffer));
+        tf_eval (&ctx, bc, buffer, sizeof (buffer));
     }];
     
     tf_free (bc);
@@ -165,10 +154,9 @@
 
     pl_add_meta (it, "comment", longcomment);
 
-    char *bc;
-    int sz = tf_compile("%comment%", &bc);
+    char *bc = tf_compile("%comment%");
     char *buffer = malloc (200);
-    XCTAssertNoThrow(tf_eval (&ctx, bc, sz, buffer, 200), @"Crashed!");
+    XCTAssertNoThrow(tf_eval (&ctx, bc, buffer, 200), @"Crashed!");
     tf_free (bc);
     XCTAssert(!memcmp (buffer, "abcdef", 6), @"The actual output is: %s", buffer);
     free (buffer);

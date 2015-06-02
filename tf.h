@@ -24,17 +24,22 @@
 #ifndef __TF_H
 #define __TF_H
 
-// returns the output bytecode size.
-// the resulting bytecode is stored in the *out_code.
-// must be free'd by the caller.
-int
-tf_compile (const char *script, char **out_code);
+// compile the input title formatting string into bytecode
+// script: freeform string with title formatting special characters in it
+// returns the pointer to compiled bytecode, which must be tf_free'd by the caller.
+char *
+tf_compile (const char *script);
 
 void
 tf_free (char *code);
 
-// returns -1 on fail, size on success
+// evaluate the titleformatting script in a given context
+// ctx: a pointer to ddb_tf_context_t structure initialized by the caller
+// code: the bytecode data created by tf_compile
+// out: buffer allocated by the caller, must be big enough to fit the output string
+// outlen: the size of out buffer
+// returns -1 on fail, output size on success
 int
-tf_eval (ddb_tf_context_t *ctx, char *code, int codelen, char *out, int outlen);
+tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen);
 
 #endif // __TF_H

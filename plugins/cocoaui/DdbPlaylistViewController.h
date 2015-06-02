@@ -21,7 +21,6 @@ typedef struct {
     int set_text_color;
     uint8_t text_color[4];
     char *bytecode;
-    int bytecode_len;
 } plt_col_info_t;
 
 @interface DdbPlaylistViewController : NSViewController {

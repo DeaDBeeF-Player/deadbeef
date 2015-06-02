@@ -374,7 +374,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                 .idx = -1,
                 .id = cinf->id
             };
-            deadbeef->tf_eval (&ctx, cinf->bytecode, cinf->bytecode_len, text, sizeof (text));
+            deadbeef->tf_eval (&ctx, cinf->bytecode, text, sizeof (text));
             if (ctx.update > 0 && !listview->tf_redraw_timeout_id) {
                 printf ("adding timeout\n");
                 if (ctx.idx >= 0) {
@@ -1128,12 +1128,7 @@ load_column_config (DdbListview *listview, const char *key) {
         inf->id = iid;
         if (sformat) {
             inf->format = strdup (sformat);
-            char *bytecode;
-            int res = deadbeef->tf_compile (inf->format, &bytecode);
-            if (res >= 0) {
-                inf->bytecode = bytecode;
-                inf->bytecode_len = res;
-            }
+            inf->bytecode = deadbeef->tf_compile (inf->format);
         }
         ddb_listview_column_append (listview, stitle, iwidth, ialign, inf->id == DB_COLUMN_ALBUM_ART ? iwidth : 0, icolor_override, gdkcolor, inf);
 
@@ -1312,12 +1307,7 @@ init_column (col_info_t *inf, int id, const char *format) {
         inf->format = strdup (format);
     }
     if (inf->format) {
-        char *bytecode;
-        int res = deadbeef->tf_compile (inf->format, &bytecode);
-        if (res >= 0) {
-            inf->bytecode = bytecode;
-            inf->bytecode_len = res;
-        }
+        inf->bytecode = deadbeef->tf_compile (inf->format);
     }
 }
 
@@ -1565,12 +1555,7 @@ add_column_helper (DdbListview *listview, const char *title, int width, int id, 
     memset (inf, 0, sizeof (col_info_t));
     inf->id = id;
     inf->format = strdup (format);
-    char *bytecode;
-    int res = deadbeef->tf_compile (inf->format, &bytecode);
-    if (res >= 0) {
-        inf->bytecode = bytecode;
-        inf->bytecode_len = res;
-    }
+    inf->bytecode = deadbeef->tf_compile (inf->format);
     GdkColor color = { 0, 0, 0, 0 };
     ddb_listview_column_append (listview, title, width, align_right, inf->id == DB_COLUMN_ALBUM_ART ? width : 0, 0, color, inf);
 }
@@ -1588,7 +1573,7 @@ pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int s
             .idx = -1,
             .id = -1
         };
-        deadbeef->tf_eval (&ctx, listview->group_title_bytecode, listview->group_title_bytecode_len, str, size);
+        deadbeef->tf_eval (&ctx, listview->group_title_bytecode, str, size);
 
         char *lb = strchr (str, '\r');
         if (lb) {
@@ -1614,7 +1599,7 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
                 .idx = -1,
                 .id = -1
             };
-            deadbeef->tf_eval (&ctx, listview->group_title_bytecode, listview->group_title_bytecode_len, str, sizeof (str));
+            deadbeef->tf_eval (&ctx, listview->group_title_bytecode, str, sizeof (str));
 
             char *lb = strchr (str, '\r');
             if (lb) {

@@ -182,15 +182,13 @@ main_groups_changed (DdbListview *listview, const char* format) {
     if (listview->group_format) {
         free (listview->group_format);
     }
-    if (listview->group_title_bytecode_len >= 0) {
-        listview->group_title_bytecode_len = -1;
-    }
     if (listview->group_title_bytecode) {
         free (listview->group_title_bytecode);
+        listview->group_title_bytecode = NULL;
     }
     deadbeef->conf_set_str ("gtkui.playlist.group_by", format);
     listview->group_format = strdup (format);
-    listview->group_title_bytecode_len = deadbeef->tf_compile (listview->group_format, &(listview->group_title_bytecode));
+    listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
 }
 
 static int lock_column_config = 0;
@@ -297,7 +295,7 @@ main_playlist_init (GtkWidget *widget) {
     deadbeef->conf_lock ();
     listview->group_format = strdup (deadbeef->conf_get_str_fast ("gtkui.playlist.group_by", ""));
     deadbeef->conf_unlock ();
-    listview->group_title_bytecode_len = deadbeef->tf_compile (listview->group_format, &(listview->group_title_bytecode));
+    listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
 
     // FIXME: filepath should be in properties dialog, while tooltip should be
     // used to show text that doesn't fit in column width

@@ -74,11 +74,17 @@ typedef struct {
     tf_func_ptr_t func;
 } tf_func_def;
 
-int
+static int
 tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen, int fail_on_undef);
 
 int
-tf_eval (ddb_tf_context_t *ctx, char *code, int codelen, char *out, int outlen) {
+tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
+    if (!code) {
+        *out = 0;
+        return 0;
+    }
+    int32_t codelen = *((int32_t *)code);
+    code += 4;
     memset (out, 0, outlen);
     int l = 0;
     switch (ctx->id) {
@@ -281,7 +287,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { NULL, NULL }
 };
 
-int
+static int
 tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen, int fail_on_undef) {
     playItem_t *it = (playItem_t *)ctx->it;
     char *init_out = out;
@@ -871,8 +877,8 @@ tf_compile_plain (tf_compiler_t *c) {
     return 0;
 }
 
-int
-tf_compile (const char *script, char **out) {
+char *
+tf_compile (const char *script) {
     tf_compiler_t c;
     memset (&c, 0, sizeof (c));
 
@@ -885,16 +891,17 @@ tf_compile (const char *script, char **out) {
 
     while (*(c.i)) {
         if (tf_compile_plain (&c)) {
-            return -1;
+            return NULL;
         }
     }
 
     trace ("output len: %d\n", (int)(c.o - code));
     trace ("%s\n", code);
 
-    *out = malloc (c.o - code);
-    memcpy (*out, code, c.o - code);
-    return (int)(c.o - code);
+    char *out = malloc (c.o - code + 4);
+    memcpy (out + 4, code, c.o - code);
+    *((int32_t *)out) = (int32_t)(c.o - code);
+    return out;
 }
 
 void
@@ -905,8 +912,7 @@ tf_free (char *code) {
 void
 tf_test (void) {
     int len;
-    char *code;
-    len = tf_compile ("$add(1,2,3) [hello] [%hello%]", &code);
+    char *code = tf_compile ("$add(1,2,3) [hello] [%hello%]");
     trace ("code (%d): %s\n", len, code);
 
     for (int i = 0; i < len; i++) {
@@ -924,6 +930,6 @@ tf_test (void) {
     ctx.idx = -1;
 
     char out[1000] = "";
-    int res = tf_eval (&ctx, code, len, out, sizeof (out));
+    int res = tf_eval (&ctx, code, out, sizeof (out));
     trace ("output (%d): %s\n", res, out);
 }

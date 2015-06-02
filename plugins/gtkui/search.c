@@ -320,7 +320,7 @@ search_groups_changed (DdbListview *listview, const char *format) {
     }
     deadbeef->conf_set_str ("gtkui.search.group_by", format);
     listview->group_format = strdup (format);
-    listview->group_title_bytecode_len = deadbeef->tf_compile (listview->group_format, &(listview->group_title_bytecode));
+    listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
 }
 
 static int lock_column_config = 0;
@@ -432,5 +432,5 @@ search_playlist_init (GtkWidget *widget) {
     deadbeef->conf_lock ();
     listview->group_format = strdup (deadbeef->conf_get_str_fast ("gtkui.search.group_by", ""));
     deadbeef->conf_unlock ();
-    listview->group_title_bytecode_len = deadbeef->tf_compile (listview->group_format, &(listview->group_title_bytecode));
+    listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
 }
