@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = glade po doc omf-install
+SUBDIRS = glade po omf-install
 
 Developmentdir = $(datadir)/applications
 Development_in_files = glade-2.desktop.in
