@@ -677,14 +677,21 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
 
 static DB_playItem_t *
 cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const FLAC__StreamMetadata_CueSheet *cuesheet, int totalsamples, int samplerate) {
+    static const char err_invalid_cuesheet[] = "The flac %s has invalid FLAC__METADATA_TYPE_CUESHEET block, which will get ignored. You should remove it using metaflac.\n";
     DB_playItem_t *ins = after;
 
     // first check if cuesheet is matching the data
     for (int i = 0; i < cuesheet->num_tracks; i++) {
-        if (cuesheet->tracks[i].offset >= totalsamples) {
-            fprintf (stderr, "The flac %s has invalid FLAC__METADATA_TYPE_CUESHEET block, which will get ignored. You should remove it using metaflac.\n", deadbeef->pl_find_meta_raw (origin, ":URI"));
+        if (cuesheet->tracks[i].offset > totalsamples) {
+            fprintf (stderr, err_invalid_cuesheet, deadbeef->pl_find_meta_raw (origin, ":URI"));
             return NULL;
         }
+    }
+
+    // use libflac to validate the cuesheet as well
+    if(!FLAC__format_cuesheet_is_legal (cuesheet, 1, NULL)) {
+        fprintf (stderr, err_invalid_cuesheet, deadbeef->pl_find_meta_raw (origin, ":URI"));
+        return NULL;
     }
 
     for (int i = 0; i < cuesheet->num_tracks-1; i++) {
