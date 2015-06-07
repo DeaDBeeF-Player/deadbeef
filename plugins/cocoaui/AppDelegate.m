@@ -79,6 +79,8 @@ NSInteger firstSelected = -1;
     
     [_stopAfterCurrent setState:deadbeef->conf_get_int ("playlist.stop_after_current", 0)?NSOnState:NSOffState];
     [_stopAfterCurrentAlbum setState:deadbeef->conf_get_int ("playlist.stop_after_current_album", 0)?NSOnState:NSOffState];
+
+    [_descendingSortMode setState:deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSOnState : NSOffState];
 }
 
 static int fileadd_cancelled = 0;
@@ -364,44 +366,32 @@ init_column (int i, int _id, const char *format) {
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
-- (IBAction)sortPlaylistByTitle:(id)sender {
+- (void)sortPlaylistByTF:(const char *)tf {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%title%", DDB_SORT_ASCENDING);
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, tf, [_descendingSortMode state] == NSOffState ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}
+
+- (IBAction)sortPlaylistByTitle:(id)sender {
+    [self sortPlaylistByTF:"%title%"];
 }
 
 - (IBAction)sortPlaylistByTrackNumber:(id)sender {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%tracknumber%", DDB_SORT_ASCENDING);
-    deadbeef->plt_save_config (plt);
-    deadbeef->plt_unref (plt);
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    [self sortPlaylistByTF:"%tracknumber%"];
 }
 
 - (IBAction)sortPlaylistByAlbum:(id)sender {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%album%", DDB_SORT_ASCENDING);
-    deadbeef->plt_save_config (plt);
-    deadbeef->plt_unref (plt);
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    [self sortPlaylistByTF:"%album%"];
 }
 
 - (IBAction)sortPlaylistByArtist:(id)sender {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%artist%", DDB_SORT_ASCENDING);
-    deadbeef->plt_save_config (plt);
-    deadbeef->plt_unref (plt);
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    [self sortPlaylistByTF:"%artist%"];
 }
 
 - (IBAction)sortPlaylistByDate:(id)sender {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%year%", DDB_SORT_ASCENDING);
-    deadbeef->plt_save_config (plt);
-    deadbeef->plt_unref (plt);
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    [self sortPlaylistByTF:"%year%"];
 }
 
 - (IBAction)sortPlaylistRandom:(id)sender {
@@ -413,7 +403,41 @@ init_column (int i, int _id, const char *format) {
 }
 
 - (IBAction)sortPlaylistCustom:(id)sender {
-    // TODO
+    deadbeef->pl_lock ();
+    [_customSortEntry setStringValue:[NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.custom_sort_tf", "")]];
+    deadbeef->pl_unlock ();
+    [_customSortDescending setState:deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSOnState : NSOffState];
+    [NSApp beginSheet:_customSortPanel modalForWindow:[self mainWindow] modalDelegate:self didEndSelector:@selector(didEndCustomSort:returnCode:contextInfo:) contextInfo:nil];
+
+}
+
+- (void)didEndCustomSort:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
+{
+    [sheet orderOut:self];
+    NSInteger state = [_customSortDescending state];
+    [_descendingSortMode setState: state];
+    deadbeef->conf_set_int ("cocoaui.sort_desc", state == NSOnState ? 1 : 0);
+    deadbeef->conf_set_str ("cocoaui.custom_sort_tf", [[_customSortEntry stringValue] UTF8String]);
+
+    if (returnCode == NSOKButton) {
+        [self sortPlaylistByTF:[[_customSortEntry stringValue] UTF8String]];
+    }
+    deadbeef->conf_save ();
+}
+
+- (IBAction)customSortOKAction:(id)sender {
+    [NSApp endSheet:_customSortPanel returnCode:NSOKButton];
+}
+
+- (IBAction)customSortCancelAction:(id)sender {
+    [NSApp endSheet:_customSortPanel returnCode:NSOKButton];
+}
+
+- (IBAction)toggleDescendingSortOrderAction:(id)sender {
+    int st = !deadbeef->conf_get_int ("cocoaui.sort_desc", 0);
+    deadbeef->conf_set_int ("cocoaui.sort_desc", st);
+    [_descendingSortMode setState:st ? NSOnState : NSOffState];
+    deadbeef->conf_save ();
 }
 
 - (IBAction)delete:(id)sender {
