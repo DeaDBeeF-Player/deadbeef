@@ -45,6 +45,16 @@
 @property (unsafe_unretained) IBOutlet NSTextField *addFilesLabel;
 - (IBAction)addFilesCancel:(id)sender;
 
+@property (unsafe_unretained) IBOutlet NSPanel *customSortPanel;
+@property (unsafe_unretained) IBOutlet NSTextField *customSortEntry;
+@property (unsafe_unretained) IBOutlet NSButton *customSortDescending;
+
+
+- (IBAction)customSortCancelAction:(id)sender;
+- (IBAction)customSortOKAction:(id)sender;
+
+- (IBAction)toggleDescendingSortOrderAction:(id)sender;
+@property (unsafe_unretained) IBOutlet NSMenuItem *descendingSortMode;
 
 @property (unsafe_unretained) IBOutlet NSImageView *dockTileView;
 

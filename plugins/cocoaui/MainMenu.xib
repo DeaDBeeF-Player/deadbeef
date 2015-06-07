@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="13F1077" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7702"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -201,6 +201,13 @@ CA
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Sort Current Playlist By" id="B91-2l-w44">
                                     <items>
+                                        <menuItem title="Descending" id="a0b-O2-r16">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleDescendingSortOrderAction:" target="494" id="ARq-VY-gaK"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="bHb-Dh-8Ac"/>
                                         <menuItem title="Title" id="y2B-vx-leZ">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
@@ -595,6 +602,10 @@ CA
                 <outlet property="addLocationPanel" destination="0MP-Eo-f3S" id="4Ou-DS-hde"/>
                 <outlet property="addLocationTextField" destination="zwG-eG-LI0" id="yXn-aN-nz5"/>
                 <outlet property="cursorFollowsPlayback" destination="Ra2-1K-rwd" id="i3v-jO-k4t"/>
+                <outlet property="customSortDescending" destination="pMH-oI-KJU" id="a3a-YO-ASX"/>
+                <outlet property="customSortEntry" destination="bJK-ZQ-GBB" id="ZRk-XY-0ex"/>
+                <outlet property="customSortPanel" destination="vHm-fI-UgZ" id="e7O-Nh-WwI"/>
+                <outlet property="descendingSortMode" destination="a0b-O2-r16" id="jve-MJ-Pfo"/>
                 <outlet property="dockTileView" destination="h87-hn-tWh" id="h87-62-sdr"/>
                 <outlet property="loopAll" destination="bp3-Nw-TaR" id="t92-xv-gTj"/>
                 <outlet property="loopNone" destination="pGf-UH-jjg" id="fd0-Uw-O2Y"/>
@@ -702,6 +713,74 @@ Gw
                     </button>
                 </subviews>
             </view>
+        </window>
+        <window title="Custom Sort" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="vHm-fI-UgZ" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="167" y="107" width="327" height="120"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+            <value key="minSize" type="size" width="327" height="120"/>
+            <view key="contentView" id="30A-nz-a9e">
+                <rect key="frame" x="0.0" y="-7" width="327" height="120"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="DKl-U3-cnQ">
+                        <rect key="frame" x="18" y="83" width="78" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Sort pattern" id="Trp-Nh-89s">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" id="bJK-ZQ-GBB">
+                        <rect key="frame" x="102" y="80" width="205" height="22"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="Ic1-Yv-SKM">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" id="2Zt-Lf-NtR">
+                        <rect key="frame" x="253" y="13" width="60" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0gX-N7-Ot0">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="customSortOKAction:" target="494" id="pcF-NI-944"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" id="jZV-Dq-peY">
+                        <rect key="frame" x="170" y="13" width="83" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="tAt-G9-DFa">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="customSortCancelAction:" target="494" id="zUG-c2-M07"/>
+                        </connections>
+                    </button>
+                    <button id="pMH-oI-KJU">
+                        <rect key="frame" x="18" y="56" width="175" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="check" title="Sort in descending order" bezelStyle="regularSquare" imagePosition="left" inset="2" id="zn9-Ne-LYu">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="236.5" y="268"/>
         </window>
     </objects>
     <resources>
