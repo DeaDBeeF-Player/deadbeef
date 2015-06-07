@@ -130,7 +130,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField verticalHuggingPriority="750" id="Ecj-wq-LKu">
-                        <rect key="frame" x="60.000001237887162" y="152" width="198" height="22"/>
+                        <rect key="frame" x="60.000001550591527" y="152" width="198" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Column Title" drawsBackground="YES" id="Crt-Xg-RIJ">
                             <font key="font" metaFont="system"/>
@@ -186,7 +186,7 @@
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" id="Vrf-r2-7Et">
-                        <rect key="frame" x="77" y="102" width="149" height="22"/>
+                        <rect key="frame" x="77.000000540842137" y="102" width="149" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Title Formatting Script" drawsBackground="YES" id="bpt-CQ-NDH">
                             <font key="font" metaFont="system"/>
@@ -296,8 +296,8 @@ Gw
                             </menu>
                         </popUpButtonCell>
                     </popUpButton>
-                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="h7j-6i-FaU">
-                        <rect key="frame" x="232" y="101" width="25" height="25"/>
+                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="h7j-6i-FaU" customClass="DdbTitleFormattingHelpButton">
+                        <rect key="frame" x="232" y="99" width="25" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="HTX-8C-V1U">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>

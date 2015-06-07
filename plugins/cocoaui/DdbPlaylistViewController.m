@@ -74,10 +74,6 @@ extern DB_functions_t *deadbeef;
     [_addColumnColor setEnabled:[sender state] == NSOnState];
 }
 
-- (IBAction)addColumnTFHelp:(id)sender {
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting-2.0"]];
-}
-
 - (void)menuRemoveColumn:(id)sender {
     if (_menuColumn >= 0) {
         [self removeColumnAtIndex:_menuColumn];

@@ -734,7 +734,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" id="bJK-ZQ-GBB">
-                        <rect key="frame" x="102" y="80" width="205" height="22"/>
+                        <rect key="frame" x="102" y="80" width="176" height="22"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="Ic1-Yv-SKM">
                             <font key="font" metaFont="system"/>
@@ -769,6 +769,14 @@ Gw
                         <connections>
                             <action selector="customSortCancelAction:" target="494" id="zUG-c2-M07"/>
                         </connections>
+                    </button>
+                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="I4q-4S-nPP" customClass="DdbTitleFormattingHelpButton">
+                        <rect key="frame" x="284" y="77" width="25" height="25"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2ga-wg-MHo">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
                     </button>
                     <button id="pMH-oI-KJU">
                         <rect key="frame" x="18" y="56" width="175" height="18"/>
