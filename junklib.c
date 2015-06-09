@@ -155,6 +155,23 @@ static const char *txx_mapping[] = {
     NULL
 };
 
+const char *ddb_internal_rg_keys[] = {
+    ":REPLAYGAIN_ALBUMGAIN",
+    ":REPLAYGAIN_ALBUMPEAK",
+    ":REPLAYGAIN_TRACKGAIN",
+    ":REPLAYGAIN_TRACKPEAK",
+    NULL
+};
+
+static const char *apev2_rg_names[] = {
+    "replaygain_album_gain",
+    "replaygain_album_peak",
+    "replaygain_track_gain",
+    "replaygain_track_peak",
+    NULL
+};
+
+
 static uint32_t
 extract_i32 (const uint8_t *buf)
 {
@@ -4382,8 +4399,8 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         }
 
         // add tracknumber/totaltracks
-        pl_lock ();
         {
+            pl_lock ();
             const char *track = pl_find_meta (it, "track");
             const char *totaltracks = pl_find_meta (it, "numtracks");
             if (track && totaltracks) {
@@ -4396,8 +4413,19 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                 junk_apev2_remove_frames (&apev2, "Track");
                 junk_apev2_add_text_frame (&apev2, "Track", track);
             }
+            pl_unlock ();
         }
-        pl_unlock ();
+        // remove and re-add replaygain apev2 frames
+        for (int n = 0; ddb_internal_rg_keys[n]; n++) {
+            junk_apev2_remove_frames (&apev2, apev2_rg_names[n]);
+            if (pl_find_meta (it, ddb_internal_rg_keys[0])) {
+                float value = pl_get_item_replaygain (it, n);
+                char s[100];
+                snprintf (s, sizeof (s), "%f", value);
+                junk_apev2_add_text_frame (&apev2, apev2_rg_names[n], s);
+
+            }
+        }
 
         // write tag
         if (junk_apev2_write2 (out, &apev2, 0, 1) != 0) {

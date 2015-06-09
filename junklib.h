@@ -29,6 +29,8 @@
 
 struct playItem_s;
 
+extern const char *ddb_internal_rg_keys[];
+
 int
 junk_id3v1_read (struct playItem_s *it, DB_FILE *fp);
 

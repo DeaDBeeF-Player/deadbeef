@@ -2738,13 +2738,6 @@ pl_get_item_duration (playItem_t *it) {
     return it->_duration;
 }
 
-static const char *rg_keys[] = {
-    ":REPLAYGAIN_ALBUMGAIN",
-    ":REPLAYGAIN_ALBUMPEAK",
-    ":REPLAYGAIN_TRACKGAIN",
-    ":REPLAYGAIN_TRACKPEAK"
-};
-
 void
 pl_set_item_replaygain (playItem_t *it, int idx, float value) {
     char s[100];
@@ -2760,7 +2753,7 @@ pl_set_item_replaygain (playItem_t *it, int idx, float value) {
     default:
         return;
     }
-    pl_replace_meta (it, rg_keys[idx], s);
+    pl_replace_meta (it, ddb_internal_rg_keys[idx], s);
 }
 
 float
@@ -2772,10 +2765,10 @@ pl_get_item_replaygain (playItem_t *it, int idx) {
     switch (idx) {
     case DDB_REPLAYGAIN_ALBUMGAIN:
     case DDB_REPLAYGAIN_TRACKGAIN:
-        return pl_find_meta_float (it, rg_keys[idx], 0);
+        return pl_find_meta_float (it, ddb_internal_rg_keys[idx], 0);
     case DDB_REPLAYGAIN_ALBUMPEAK:
     case DDB_REPLAYGAIN_TRACKPEAK:
-        return pl_find_meta_float (it, rg_keys[idx], 1);
+        return pl_find_meta_float (it, ddb_internal_rg_keys[idx], 1);
     }
     return 0;
 }
