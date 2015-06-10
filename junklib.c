@@ -275,8 +275,8 @@ cp1251_to_utf8(const uint8_t *in, int inlen, uint8_t *out, int outlen) {
     return (int)(out - out_start);
 }
 
-static int
-iso8859_1_to_utf8(const uint8_t *in, int inlen, uint8_t *out, int outlen){
+int
+junk_cp1252_to_utf8(const uint8_t *in, int inlen, uint8_t *out, int outlen) {
     int len = 0;
     while (inlen > 0 && outlen-len > 2) {
         uint8_t c=*in;
@@ -353,6 +353,38 @@ iso8859_1_to_utf8(const uint8_t *in, int inlen, uint8_t *out, int outlen){
     return len;
 }
 
+int
+junk_utf8_to_cp1252(const uint8_t *in, int inlen, uint8_t *out, int outlen) {
+    uint8_t *outptr = out;
+    const char *cp1252_charset[] = {"€", "", "‚", "ƒ", "„", "…", "†", "‡", "ˆ", "‰", "Š", "‹", "Œ", "", "Ž", "", "", "‘", "’", "“", "”", "•", "–", "—", "˜", "™", "š", "›", "œ", "", "ž", "Ÿ", " ", "¡", "¢", "£", "¤", "¥", "¦", "§", "¨", "©", "ª", "«", "¬", "­", "®", "¯", "°", "±", "²", "³", "´", "µ", "¶", "·", "¸", "¹", "º", "»", "¼", "½", "¾", "¿", "À", "Á", "Â", "Ã", "Ä", "Å", "Æ", "Ç", "È", "É", "Ê", "Ë", "Ì", "Í", "Î", "Ï", "Ð", "Ñ", "Ò", "Ó", "Ô", "Õ", "Ö", "×", "Ø", "Ù", "Ú", "Û", "Ü", "Ý", "Þ", "ß", "à", "á", "â", "ã", "ä", "å", "æ", "ç", "è", "é", "ê", "ë", "ì", "í", "î", "ï", "ð", "ñ", "ò", "ó", "ô", "õ", "ö", "÷", "ø", "ù", "ú", "û", "ü", "ý", "þ", "ÿ", NULL};
+    while (inlen && outlen > 0) {
+        if (*in < 0x80) {
+            *out++ = *in++;
+            outlen--;
+            inlen--;
+        }
+        else {
+            int idx = 0;
+            u8_inc((char *)in, &idx);
+            int i;
+            for (i = 0; cp1252_charset[i]; i++) {
+                if (strlen (cp1252_charset[i]) == idx && !memcmp (in, cp1252_charset[i], idx)) {
+                    *out++ = i + 0x80;
+                    outlen--;
+                    break;
+                }
+            }
+            if (!cp1252_charset[i]) {
+                return -1;
+            }
+            in += idx;
+            inlen -= idx;
+        }
+    }
+    *out = 0;
+    return (int)(out-outptr);
+}
+
 ConversionResult
 ConvertUTF16BEtoUTF8 (const UTF16** sourceStart, const UTF16* sourceEnd, UTF8** targetStart, UTF8* targetEnd, ConversionFlags flags) {
     // swap to make it little endian
@@ -411,7 +443,7 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
             len = cp1251_to_utf8 (in, inlen, out, outlen);
         }
         else if (!strcasecmp (cs_in, "iso8859-1") || !strcasecmp (cs_in, "cp1252")) {
-            len = iso8859_1_to_utf8 (in, inlen, out, outlen);
+            len = junk_cp1252_to_utf8 (in, inlen, out, outlen);
         }
         else if (!strcasecmp (cs_in, "UTF-16LE") || !strcasecmp (cs_in, "UCS-2LE")) {
             char *target = out;
@@ -508,17 +540,12 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
                 len = target - out;
             }
         }
-#if 0
         else if (!strcasecmp (cs_out, "cp1252") || !strcasecmp (cs_out, "iso8859-1")) {
-            char *target = out;
-            ConversionResult result = ConvertUTF8toCP1252 ((const UTF8**)&in, (const UTF8*)(in + inlen), (UTF16**)&target, (UTF16*)(out + outlen), strictConversion);
-            if (result == conversionOK) {
-                *target = 0;
-                *(target+1) = 0;
-                len = target - out;
+            int res = junk_utf8_to_cp1252((uint8_t *)in, inlen, (uint8_t *)out, outlen);
+            if (res >= 0) {
+                len = res;
             }
         }
-#endif
         else {
             fprintf (stderr, "invalid conversion request: %s -> %s\n", cs_in, cs_out);
         }

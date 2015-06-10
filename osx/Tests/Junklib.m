@@ -98,4 +98,20 @@
     XCTAssert(result == conversionOK && !memcmp (output, utf16be_reference, sizeof (utf16be_reference)), @"Pass");
 }
 
+- (void)testConvertUTF8toCP1252 {
+    int
+    junk_utf8_to_cp1252(const uint8_t *in, int inlen, uint8_t *out, int outlen);
+
+    const char input[] = "€ù‰•abcd";
+    size_t inlen = sizeof (input)-1;
+    char output[1024];
+    size_t outlen = sizeof (output);
+    memset (output, 0, outlen);
+
+    int res = junk_utf8_to_cp1252((const uint8_t *)input, (int)inlen, (uint8_t *)output, (int)outlen);
+
+    const char cp1252_reference[] = { 0x80, 0xf9, 0x89, 0x95, 0x61, 0x62, 0x63, 0x64 };
+    XCTAssert(res == sizeof (cp1252_reference) && !memcmp (output, cp1252_reference, sizeof (cp1252_reference)), @"Pass");
+}
+
 @end
