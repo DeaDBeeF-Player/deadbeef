@@ -52,6 +52,28 @@ static const char *hc_props[] = {
     NULL
 };
 
+@interface NullFormatter : NSFormatter
+@end
+
+@implementation NullFormatter
+
+- (NSString *)stringForObjectValue:(id)anObject {
+    return anObject;
+}
+
+- (NSString *)editingStringForObjectValue:(id)anObject {
+    return @"";
+}
+
+- (BOOL)getObjectValue:(out id *)anObject
+             forString:(NSString *)string
+      errorDescription:(out NSString **)error {
+    *anObject = string;
+    return YES;
+}
+@end
+
+
 @interface TrackPropertiesWindowController () {
     int _iter;
     DB_playItem_t **_tracks;
@@ -92,6 +114,7 @@ static const char *hc_props[] = {
     [self fill];
     [_metadataTableView setDataSource:(id<NSTableViewDataSource>)self];
     [_propertiesTableView setDataSource:(id<NSTableViewDataSource>)self];
+    [_metadataTableView setDelegate:(id<NSTableViewDelegate>)self];
     [_metadataTableView reloadData];
     [_propertiesTableView reloadData];
 }
@@ -427,6 +450,29 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 
     return (int)[store count];
+}
+
+// when editing the "multiple values" cells, turn them into ""
+// this, unfortunately, is not undoable, so as soon as the user starts editing -- no way back
+- (void)tableView:(NSTableView *)aTableView willDisplayCell:(id)aCell forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
+{
+    NSMutableArray *store = [self storeForTableView:aTableView];
+    if (!store) {
+        return;
+    }
+
+    if([[aTableColumn identifier] isEqualToString:@"value"]){
+
+        [aCell setFormatter:nil];
+
+        NSDictionary *dict = [store objectAtIndex:rowIndex];
+        if (rowIndex == [aTableView editedRow] && [[aTableView tableColumns] indexOfObject:aTableColumn] == [aTableView editedColumn]) {
+            NSNumber *n = dict[@"n"];
+            if (n && [n integerValue] != 0) {
+                [aCell setFormatter:[[NullFormatter alloc] init]];
+            }
+        }
+    }
 }
 
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex {
