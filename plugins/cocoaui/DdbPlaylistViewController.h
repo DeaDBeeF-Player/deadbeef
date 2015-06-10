@@ -53,8 +53,6 @@ typedef struct {
 @property (unsafe_unretained) IBOutlet NSColorWell *addColumnColor;
 - (IBAction)addColumnTypeChanged:(id)sender;
 - (IBAction)addColumnSetColorChanged:(id)sender;
-- (IBAction)addColumnTFHelp:(id)sender;
-
 
 - (int)handleListviewMessage:(DdbListview *)listview id:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
