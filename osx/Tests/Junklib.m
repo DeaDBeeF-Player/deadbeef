@@ -30,8 +30,8 @@
     extern ConversionResult
     ConvertUTF16BEtoUTF8 (const UTF16** sourceStart, const UTF16* sourceEnd, UTF8** targetStart, UTF8* targetEnd, ConversionFlags flags);
 
-    char input[] = {0x04, 0x10, 0x04, 0x11, 0x04, 0x12, 0x04, 0x13, 0x04, 0x14, 0x00, 0x61, 0x00, 0x62, 0x00, 0x63, 0x00, 0x64};
-    char *pInput = input;
+    const char input[] = {0x04, 0x10, 0x04, 0x11, 0x04, 0x12, 0x04, 0x13, 0x04, 0x14, 0x00, 0x61, 0x00, 0x62, 0x00, 0x63, 0x00, 0x64};
+    const char *pInput = input;
     size_t inlen = sizeof (input);
     char output[1024];
     size_t outlen = sizeof (output);
@@ -39,14 +39,14 @@
     char *pOut = output;
     ConversionResult result = ConvertUTF16BEtoUTF8 ((const UTF16**)&pInput, (const UTF16*)(input + inlen), (UTF8**)&pOut, (UTF8*)(output + outlen), strictConversion);
 
-    NSString *nsOutput = [NSString stringWithUTF8String:output];
-    
-    XCTAssert(result == conversionOK && [nsOutput isEqualTo:@"АБВГДabcd"], @"Pass");
+    *pOut = 0;
+
+    XCTAssert(result == conversionOK && !strcmp (output, "АБВГДabcd"), @"Pass");
 }
 
 - (void)testConvertUTF16toUTF8 {
-    char input[] = {0x10, 0x04, 0x11, 0x04, 0x12, 0x04, 0x13, 0x04, 0x14, 0x04, 0x61, 0x00, 0x62, 0x00, 0x63, 0x00, 0x64, 0x00};
-    char *pInput = input;
+    const char input[] = {0x10, 0x04, 0x11, 0x04, 0x12, 0x04, 0x13, 0x04, 0x14, 0x04, 0x61, 0x00, 0x62, 0x00, 0x63, 0x00, 0x64, 0x00};
+    const char *pInput = input;
     size_t inlen = sizeof (input);
     char output[1024];
     size_t outlen = sizeof (output);
@@ -55,9 +55,47 @@
     ConversionResult result = ConvertUTF16toUTF8 ((const UTF16**)&pInput, (const UTF16*)(input + inlen), (UTF8**)&pOut, (UTF8*)(output + outlen), strictConversion);
 
     *pOut = 0;
-    NSString *nsOutput = [NSString stringWithUTF8String:output];
 
-    XCTAssert(result == conversionOK && [nsOutput isEqualTo:@"АБВГДabcd"], @"Pass");
+    XCTAssert(result == conversionOK && !strcmp (output, "АБВГДabcd"), @"Pass");
+}
+
+- (void)testConvertUTF8toUTF16 {
+    extern ConversionResult
+    ConvertUTF8toUTF16BE (const UTF8** sourceStart, const UTF8* sourceEnd, UTF16** targetStart, UTF16* targetEnd, ConversionFlags flags);
+
+    const char input[] = "АБВГДabcd";
+    const char *pInput = input;
+    size_t inlen = sizeof (input);
+    char output[1024];
+    size_t outlen = sizeof (output);
+    memset (output, 0, outlen);
+    char *pOut = output;
+    ConversionResult result = ConvertUTF8toUTF16 ((const UTF8**)&pInput, (const UTF8*)(input + inlen), (UTF16**)&pOut, (UTF16*)(output + outlen), strictConversion);
+
+    *pOut = 0;
+
+    const char utf16be_reference[] = {0x10, 0x04, 0x11, 0x04, 0x12, 0x04, 0x13, 0x04, 0x14, 0x04, 0x61, 0x00, 0x62, 0x00, 0x63, 0x00, 0x64, 0x00};
+    XCTAssert(result == conversionOK && !memcmp (output, utf16be_reference, sizeof (utf16be_reference)), @"Pass");
+}
+
+
+- (void)testConvertUTF8toUTF16BE {
+    extern ConversionResult
+    ConvertUTF8toUTF16BE (const UTF8** sourceStart, const UTF8* sourceEnd, UTF16** targetStart, UTF16* targetEnd, ConversionFlags flags);
+
+    const char input[] = "АБВГДabcd";
+    const char *pInput = input;
+    size_t inlen = sizeof (input);
+    char output[1024];
+    size_t outlen = sizeof (output);
+    memset (output, 0, outlen);
+    char *pOut = output;
+    ConversionResult result = ConvertUTF8toUTF16BE ((const UTF8**)&pInput, (const UTF8*)(input + inlen), (UTF16**)&pOut, (UTF16*)(output + outlen), strictConversion);
+
+    *pOut = 0;
+
+    const char utf16be_reference[] = {0x04, 0x10, 0x04, 0x11, 0x04, 0x12, 0x04, 0x13, 0x04, 0x14, 0x00, 0x61, 0x00, 0x62, 0x00, 0x63, 0x00, 0x64};
+    XCTAssert(result == conversionOK && !memcmp (output, utf16be_reference, sizeof (utf16be_reference)), @"Pass");
 }
 
 @end
