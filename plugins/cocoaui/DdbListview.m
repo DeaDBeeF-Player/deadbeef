@@ -493,6 +493,10 @@ int grouptitleheight = 22;
 - (NSMenu *)menuForEvent:(NSEvent *)event {
     if (event.buttonNumber == 1
         || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask))) {
+        if (event.buttonNumber == 0) {
+            // ctrl+click blocks the mouseDown handler, do it now
+            [self mouseDown:event];
+        }
         NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
         [theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0];
         [theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0];
