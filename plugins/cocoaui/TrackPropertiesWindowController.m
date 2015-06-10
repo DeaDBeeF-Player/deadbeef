@@ -673,4 +673,18 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 }
 
+// FIXME: move to its own windowcontroller
+- (IBAction)configureTagWritingAction:(id)sender {
+    [NSApp beginSheet:_tagWriterSettingsPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndTagWriterSettings:returnCode:contextInfo:) contextInfo:nil];
+}
+
+
+- (void)didEndTagWriterSettings:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+    [_tagWriterSettingsPanel orderOut:self];
+}
+
+- (IBAction)tagWriterSettingsCloseAction:(id)sender {
+    [NSApp endSheet:_tagWriterSettingsPanel returnCode:NSOKButton];
+}
+
 @end

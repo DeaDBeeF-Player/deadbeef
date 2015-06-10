@@ -3799,6 +3799,8 @@
 				2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */,
 				2D828E5919E56B4D00EE874F /* DdbSearchViewController.h */,
 				2D828E5A19E56B4D00EE874F /* DdbSearchViewController.m */,
+				2D524C071B245AE00018C4FA /* DdbTitleFormattingHelpButton.h */,
+				2D524C081B245AE00018C4FA /* DdbTitleFormattingHelpButton.m */,
 				2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */,
 				2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */,
 				2DCF73B21A952F8900495740 /* PreferencesWindowController.h */,
@@ -3815,8 +3817,6 @@
 				2D2351271B13922400A62936 /* Converter.xib */,
 				4D2362B218395D0300C9E818 /* images */,
 				2D0B1C8619C5CF4A00CED0B5 /* Supporting files */,
-				2D524C071B245AE00018C4FA /* DdbTitleFormattingHelpButton.h */,
-				2D524C081B245AE00018C4FA /* DdbTitleFormattingHelpButton.m */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;

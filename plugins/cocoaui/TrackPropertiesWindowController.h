@@ -33,5 +33,8 @@
 - (IBAction)cancelWritingAction:(id)sender;
 @property (unsafe_unretained) IBOutlet NSTextField *currentTrackPath;
 @property (strong) IBOutlet NSPanel *progressPanel;
+- (IBAction)configureTagWritingAction:(id)sender;
+@property (strong) IBOutlet NSPanel *tagWriterSettingsPanel;
+- (IBAction)tagWriterSettingsCloseAction:(id)sender;
 
 @end
