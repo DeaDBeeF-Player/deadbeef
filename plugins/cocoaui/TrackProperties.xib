@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="13F1077" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TrackPropertiesWindowController">
             <connections>
+                <outlet property="currentTrackPath" destination="sXi-dN-WuM" id="zGD-YV-PWb"/>
                 <outlet property="filename" destination="z74-7V-xI3" id="CxU-qA-ghg"/>
                 <outlet property="metadataTableView" destination="3K9-jX-20s" id="Enf-SN-jU2"/>
+                <outlet property="progressPanel" destination="Go9-AM-N3h" id="NY4-4K-IcC"/>
                 <outlet property="propertiesTableView" destination="bz2-tU-emD" id="WHi-41-egZ"/>
                 <outlet property="window" destination="SOU-Vm-TZp" id="8G0-sd-Azp"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="trkproperties" animationBehavior="default" id="SOU-Vm-TZp" customClass="NSPanel">
+        <window title="Track Properties" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="trkproperties" animationBehavior="default" id="SOU-Vm-TZp" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="167" y="107" width="480" height="308"/>
+            <rect key="contentRect" x="167" y="107" width="480" height="339"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
             <view key="contentView" id="iZJ-f1-AAo">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="308"/>
+                <rect key="frame" x="0.0" y="6" width="480" height="339"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField verticalHuggingPriority="750" id="z74-7V-xI3">
-                        <rect key="frame" x="20" y="266" width="440" height="22"/>
+                        <rect key="frame" x="20" y="297" width="440" height="22"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="WA0-9S-EHs">
                             <font key="font" metaFont="system"/>
@@ -34,7 +36,7 @@
                         </textFieldCell>
                     </textField>
                     <tabView initialItem="lhD-Ti-6zn" id="WRA-LF-8XP">
-                        <rect key="frame" x="13" y="10" width="454" height="254"/>
+                        <rect key="frame" x="13" y="41" width="454" height="254"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
@@ -70,7 +72,7 @@
                                                                 </textFieldCell>
                                                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             </tableColumn>
-                                                            <tableColumn identifier="value" editable="NO" width="310" minWidth="40" maxWidth="1000" id="XCh-hN-2Rs">
+                                                            <tableColumn identifier="value" width="310" minWidth="40" maxWidth="1000" id="XCh-hN-2Rs">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Value">
                                                                     <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -172,9 +174,64 @@
                             </tabViewItem>
                         </tabViewItems>
                     </tabView>
+                    <button verticalHuggingPriority="750" id="f09-Mu-e9x">
+                        <rect key="frame" x="388" y="13" width="76" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="Apply" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PrG-Dk-zQ3">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="applyTrackPropertiesAction:" target="-2" id="lL2-Sm-Jxc"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" id="jxY-7Q-v5B">
+                        <rect key="frame" x="14" y="13" width="103" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="Configure" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zhY-lZ-dL9">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="681" y="166"/>
+            <point key="canvasLocation" x="681" y="166.5"/>
+        </window>
+        <window title="Writing Progress" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="Go9-AM-N3h" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="139" y="149" width="514" height="62"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <view key="contentView" id="N0k-tN-FWw">
+                <rect key="frame" x="0.0" y="5" width="514" height="62"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField verticalHuggingPriority="750" id="sXi-dN-WuM">
+                        <rect key="frame" x="20" y="20" width="427" height="22"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="3FT-hs-m6e">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" id="Ts3-9D-i7Q">
+                        <rect key="frame" x="460" y="21" width="29" height="19"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="NSStopProgressTemplate" imagePosition="only" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k3m-g1-J7D">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                            <font key="font" metaFont="systemBold" size="12"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancelWritingAction:" target="-2" id="W7y-Ey-oW1"/>
+                        </connections>
+                    </button>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="1248" y="28"/>
         </window>
     </objects>
+    <resources>
+        <image name="NSStopProgressTemplate" width="11" height="11"/>
+    </resources>
 </document>

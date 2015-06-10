@@ -29,5 +29,9 @@
 @property (unsafe_unretained) IBOutlet NSTableView *metadataTableView;
 @property (unsafe_unretained) IBOutlet NSTableView *propertiesTableView;
 @property (unsafe_unretained) IBOutlet NSTextField *filename;
+- (IBAction)applyTrackPropertiesAction:(id)sender;
+- (IBAction)cancelWritingAction:(id)sender;
+@property (unsafe_unretained) IBOutlet NSTextField *currentTrackPath;
+@property (strong) IBOutlet NSPanel *progressPanel;
 
 @end
