@@ -465,7 +465,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
         [aCell setFormatter:nil];
 
-        NSDictionary *dict = [store objectAtIndex:rowIndex];
+        NSDictionary *dict = store[rowIndex];
         if (rowIndex == [aTableView editedRow] && [[aTableView tableColumns] indexOfObject:aTableColumn] == [aTableView editedColumn]) {
             NSNumber *n = dict[@"n"];
             if (n && [n integerValue] != 0) {
@@ -482,11 +482,11 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 
     if ([[aTableColumn identifier] isEqualToString:@"name"]) {
-        NSString *title = [store objectAtIndex:rowIndex][@"title"];
+        NSString *title = store[rowIndex][@"title"];
         return title;
     }
     else if ([[aTableColumn identifier] isEqualToString:@"value"]) {
-        return [store objectAtIndex:rowIndex][@"value"];
+        return store[rowIndex][@"value"];
     }
     return nil;
 }
@@ -497,25 +497,24 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         return;
     }
 
-    NSMutableDictionary *dict = [store objectAtIndex:rowIndex];
-    if ([[dict objectForKey:@"value"] isNotEqualTo:anObject]) {
-        [dict setObject:anObject forKey:@"value"];
-        if ([dict objectForKey:@"n"])
-        {
-            [dict setObject:[NSNumber numberWithInt:0] forKey:@"n"];
+    NSMutableDictionary *dict = store[rowIndex];
+    if ([dict[@"value"] isNotEqualTo:anObject]) {
+        dict[@"value"] = anObject;
+        if (dict[@"n"]) {
+            dict[@"n"] = [NSNumber numberWithInt:0];
         }
         _modified = YES;
     }
 }
 
-- (void)setMetadataForSelectedTracks:(NSDictionary *)iter {
+- (void)setMetadataForSelectedTracks:(NSDictionary *)dict {
     // skip "multiple values"
-    NSString *n = [iter valueForKey:@"n"];
+    NSString *n = dict[@"n"];
     if (n && [n intValue] != 0)
         return;
 
-    const char *skey = [[iter valueForKey:@"key"] UTF8String];
-    const char *svalue = [[iter valueForKey:@"value"] UTF8String];
+    const char *skey = [dict[@"key"] UTF8String];
+    const char *svalue = [dict[@"value"] UTF8String];
 
     for (int i = 0; i < _numtracks; i++) {
         const char *oldvalue= deadbeef->pl_find_meta_raw (_tracks[i], skey);
@@ -605,15 +604,15 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         while (meta) {
             DB_metaInfo_t *next = meta->next;
             if (meta->key[0] != ':' && meta->key[0] != '!' && meta->key[0] != '_') {
-                NSDictionary *iter;
-                for (iter in store) {
-                    if (!strcasecmp ([[iter valueForKey:@"key"] UTF8String] , meta->key)) {
+                NSDictionary *dict;
+                for (dict in store) {
+                    if (!strcasecmp ([dict[@"key"] UTF8String] , meta->key)) {
                         // field found, don't delete
                         break;
                     }
                 }
 
-                if (!iter) {
+                if (!dict) {
                     // field not found, delete
                     deadbeef->pl_delete_metadata (_tracks[i], meta);
                 }
@@ -622,8 +621,8 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         }
     }
     // put all metainfo into track
-    for (NSDictionary *iter in store) {
-        [self setMetadataForSelectedTracks:iter];
+    for (NSDictionary *dict in store) {
+        [self setMetadataForSelectedTracks:dict];
     }
     deadbeef->pl_unlock ();
 
