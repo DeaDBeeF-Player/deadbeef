@@ -454,6 +454,10 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     NSMutableDictionary *dict = [store objectAtIndex:rowIndex];
     if ([[dict objectForKey:@"value"] isNotEqualTo:anObject]) {
         [dict setObject:anObject forKey:@"value"];
+        if ([dict objectForKey:@"n"])
+        {
+            [dict setObject:[NSNumber numberWithInt:0] forKey:@"n"];
+        }
         _modified = YES;
     }
 }
