@@ -353,6 +353,22 @@ iso8859_1_to_utf8(const uint8_t *in, int inlen, uint8_t *out, int outlen){
     return len;
 }
 
+ConversionResult
+ConvertUTF16BEtoUTF8 (const UTF16** sourceStart, const UTF16* sourceEnd, UTF8** targetStart, UTF8* targetEnd, ConversionFlags flags) {
+    // swap to make it little endian
+    size_t sourceLESize = (size_t)(sourceEnd - *sourceStart) * sizeof (UTF16);
+    UTF16 sourceLE[sourceLESize];
+    UTF16 *pLE = sourceLE;
+    for (const UTF16 *p = *sourceStart; p != sourceEnd; p++) {
+        *pLE++ = extract_i16((const uint8_t *)p);
+    }
+    const UTF16 *leStart = sourceLE;
+    ConversionResult res = ConvertUTF16toUTF8(&leStart, pLE, targetStart, targetEnd, flags);
+    *sourceStart += pLE - sourceLE;
+    return res;
+}
+
+
 int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, const char *in, int inlen) {
     int len = -1;
     *out = 0;
@@ -395,7 +411,6 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
             }
         }
         else if (!strcasecmp (cs_in, "UTF-16BE") || !strcasecmp (cs_in, "UCS-2BE")) {
-            assert (0);
             // convert to big endian
             char temp[inlen];
             for (int i = 0; i < inlen; i += 2) {
@@ -404,7 +419,7 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
             }
             char *target = out;
             char *src = temp;
-            ConversionResult result = ConvertUTF16toUTF8 ((const UTF16**)&src, (const UTF16*)(temp + inlen), (UTF8**)&target, (UTF8*)(out + outlen), strictConversion);
+            ConversionResult result = ConvertUTF16BEtoUTF8 ((const UTF16**)&src, (const UTF16*)(temp + inlen), (UTF8**)&target, (UTF8*)(out + outlen), strictConversion);
             if (result == conversionOK) {
                 *target = 0;
                 len = target - out;
@@ -473,21 +488,26 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
                 len = target - out;
             }
         }
+#if 0
         else if (!strcasecmp (cs_out, "UTF-16BE") || !strcasecmp (cs_out, "UCS-2BE")) {
-            assert (0);
-            char temp[outlen];
-            char *target = temp;
-            const char *src = in;
-            ConversionResult result = ConvertUTF16toUTF8 ((const UTF16**)&src, (const UTF16*)(src + inlen), (UTF8**)&target, (UTF8*)(target + outlen), strictConversion);
+            char *target = out;
+            ConversionResult result = ConvertUTF8toUTF16BE ((const UTF8**)&in, (const UTF8*)(in + inlen), (UTF16**)&target, (UTF16*)(out + outlen), strictConversion);
             if (result == conversionOK) {
-                len = target - temp;
-                // convert to big endian
-                for (int i = 0; i < len; i += 2) {
-                    out[i] = temp[i+1];
-                    out[i+1] = temp[i];
-                }
+                *target = 0;
+                *(target+1) = 0;
+                len = target - out;
             }
         }
+        else if (!strcasecmp (cs_out, "cp1252") || !strcasecmp (cs_out, "iso8859-1")) {
+            char *target = out;
+            ConversionResult result = ConvertUTF8toCP1252 ((const UTF8**)&in, (const UTF8*)(in + inlen), (UTF16**)&target, (UTF16*)(out + outlen), strictConversion);
+            if (result == conversionOK) {
+                *target = 0;
+                *(target+1) = 0;
+                len = target - out;
+            }
+        }
+#endif
         else {
             fprintf (stderr, "invalid conversion request: %s -> %s\n", cs_in, cs_out);
         }
