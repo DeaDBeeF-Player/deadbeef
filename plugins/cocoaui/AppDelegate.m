@@ -411,8 +411,7 @@ init_column (int i, int _id, const char *format) {
 
 }
 
-- (void)didEndCustomSort:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
+- (void)didEndCustomSort:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
     [sheet orderOut:self];
     NSInteger state = [_customSortDescending state];
     [_descendingSortMode setState: state];
