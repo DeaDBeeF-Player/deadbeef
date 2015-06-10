@@ -59,6 +59,8 @@ static const char *hc_props[] = {
     BOOL _modified;
     NSMutableArray *_store;
     NSMutableArray *_propstore;
+    BOOL _progress_aborted;
+    BOOL _close_after_writing;
 }
 
 @end
@@ -83,6 +85,7 @@ static const char *hc_props[] = {
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    [[self window] setDelegate:(id<NSWindowDelegate>)self];
 
     _store = [[NSMutableArray alloc] init];
     _propstore = [[NSMutableArray alloc] init];
@@ -281,7 +284,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     if (!is_prop) {
         if (n) {
-            [store addObject:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:val], @"value", [NSString stringWithUTF8String:key], @"key", [NSNumber numberWithInt: (n ? 1 : 0)], @"n", nil]];
+            [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:val], @"value", [NSString stringWithUTF8String:key], @"key", [NSNumber numberWithInt: (n ? 1 : 0)], @"n", nil]];
         }
         else {
             deadbeef->pl_lock ();
@@ -289,12 +292,12 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
             if (!val) {
                 val = "";
             }
-            [store addObject:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:val], @"value", [NSString stringWithUTF8String:key], @"key", [NSNumber numberWithInt: (n ? 1 : 0)], @"n", nil]];
+            [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:val], @"value", [NSString stringWithUTF8String:key], @"key", [NSNumber numberWithInt: (n ? 1 : 0)], @"n", nil]];
             deadbeef->pl_unlock ();
         }
     }
     else {
-        [store addObject:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:(n ? val : val + ml)], @"value", nil]];
+        [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:(n ? val : val + ml)], @"value", nil]];
     }
 }
 
@@ -377,6 +380,8 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (void)fill {
+    _close_after_writing = NO;
+
     [self freeTrackList];
 
     [self buildTrackListForCtx:DDB_ACTION_CTX_SELECTION];
@@ -438,6 +443,185 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         return [store objectAtIndex:rowIndex][@"value"];
     }
     return nil;
+}
+
+- (void)tableView:(NSTableView *)aTableView setObjectValue:(id)anObject forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
+    NSMutableArray *store = [self storeForTableView:aTableView];
+    if (!store) {
+        return;
+    }
+
+    NSMutableDictionary *dict = [store objectAtIndex:rowIndex];
+    if ([[dict objectForKey:@"value"] isNotEqualTo:anObject]) {
+        [dict setObject:anObject forKey:@"value"];
+        _modified = YES;
+    }
+}
+
+- (void)setMetadataForSelectedTracks:(NSDictionary *)iter {
+    // skip "multiple values"
+    NSString *n = [iter valueForKey:@"n"];
+    if (n && [n intValue] != 0)
+        return;
+
+    const char *skey = [[iter valueForKey:@"key"] UTF8String];
+    const char *svalue = [[iter valueForKey:@"value"] UTF8String];
+
+    for (int i = 0; i < _numtracks; i++) {
+        const char *oldvalue= deadbeef->pl_find_meta_raw (_tracks[i], skey);
+        if (oldvalue && strlen (oldvalue) > MAX_GUI_FIELD_LEN) {
+            fprintf (stderr, "trkproperties: value is too long, ignored\n");
+            continue;
+        }
+
+        if (*svalue) {
+            deadbeef->pl_replace_meta (_tracks[i], skey, svalue);
+        }
+        else {
+            deadbeef->pl_delete_meta (_tracks[i], skey);
+        }
+    }
+}
+
+- (void)writeMetaWorker {
+    for (int t = 0; t < _numtracks; t++) {
+        if (_progress_aborted) {
+            break;
+        }
+        DB_playItem_t *track = _tracks[t];
+        deadbeef->pl_lock ();
+        const char *dec = deadbeef->pl_find_meta_raw (track, ":DECODER");
+        char decoder_id[100];
+        if (dec) {
+            strncpy (decoder_id, dec, sizeof (decoder_id));
+        }
+        int match = track && dec;
+        deadbeef->pl_unlock ();
+        if (match) {
+            int is_subtrack = deadbeef->pl_get_item_flags (track) & DDB_IS_SUBTRACK;
+            if (is_subtrack) {
+                continue;
+            }
+            // update progress
+            deadbeef->pl_item_ref (track);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                deadbeef->pl_lock ();
+                NSString *path = [NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (track, ":URI")];
+                deadbeef->pl_unlock ();
+                [_currentTrackPath setStringValue:path];
+                deadbeef->pl_item_unref (track);
+            });
+            // find decoder
+            DB_decoder_t *dec = NULL;
+            DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
+            for (int i = 0; decoders[i]; i++) {
+                if (!strcmp (decoders[i]->plugin.id, decoder_id)) {
+                    dec = decoders[i];
+                    if (dec->write_metadata) {
+                        dec->write_metadata (track);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_progressPanel orderOut:self];
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        if (plt) {
+            deadbeef->plt_modified (plt);
+            deadbeef->plt_unref (plt);
+        }
+        _modified = NO;
+// FIXME: update playlist/search/...
+#if 0
+        main_refresh ();
+        search_refresh ();
+        show_track_properties_dlg (last_ctx);
+#endif
+        if (_close_after_writing) {
+            [[self window] close];
+        }
+    });
+}
+
+- (IBAction)applyTrackPropertiesAction:(id)sender {
+    deadbeef->pl_lock ();
+    NSMutableArray *store = [self storeForTableView:_metadataTableView];
+
+    // delete all metadata properties that are not in the listview
+    for (int i = 0; i < _numtracks; i++) {
+        DB_metaInfo_t *meta = deadbeef->pl_get_metadata_head (_tracks[i]);
+        while (meta) {
+            DB_metaInfo_t *next = meta->next;
+            if (meta->key[0] != ':' && meta->key[0] != '!' && meta->key[0] != '_') {
+                NSDictionary *iter;
+                for (iter in store) {
+                    if (!strcasecmp ([[iter valueForKey:@"key"] UTF8String] , meta->key)) {
+                        // field found, don't delete
+                        break;
+                    }
+                }
+
+                if (!iter) {
+                    // field not found, delete
+                    deadbeef->pl_delete_metadata (_tracks[i], meta);
+                }
+            }
+            meta = next;
+        }
+    }
+    // put all metainfo into track
+    for (NSDictionary *iter in store) {
+        [self setMetadataForSelectedTracks:iter];
+    }
+    deadbeef->pl_unlock ();
+
+    for (int i = 0; i < _numtracks; i++) {
+        ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
+        ev->track = _tracks[i];
+        deadbeef->pl_item_ref (ev->track);
+        deadbeef->event_send ((ddb_event_t*)ev, 0, 0);
+    }
+
+    _progress_aborted = NO;
+
+    [NSApp beginSheet:_progressPanel modalForWindow:[self window] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+
+    dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(aQueue, ^{
+        [self writeMetaWorker];
+    });
+}
+
+- (IBAction)cancelWritingAction:(id)sender {
+    _progress_aborted = YES;
+}
+
+- (BOOL)windowShouldClose:(id)sender {
+    if (_modified) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert addButtonWithTitle:@"Yes"];
+        [alert addButtonWithTitle:@"No"];
+        [alert addButtonWithTitle:@"Cancel"];
+        [alert setMessageText:@"Save changes?"];
+        [alert setAlertStyle:NSWarningAlertStyle];
+        [alert beginSheetModalForWindow:[self window] modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:nil];
+        return NO;
+    }
+    return YES;
+}
+
+- (void)alertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode
+        contextInfo:(void *)contextInfo {
+    if (returnCode == NSAlertFirstButtonReturn) {
+        _close_after_writing = YES;
+        [self applyTrackPropertiesAction:alert];
+    }
+    else if (returnCode == NSAlertSecondButtonReturn){
+        _modified = NO;
+        [[self window] close];
+    }
 }
 
 @end
