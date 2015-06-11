@@ -147,15 +147,6 @@ static const char *frame_mapping[] = {
     NULL
 };
 
-// replaygain key names in deadbeef internal metadata
-const char *ddb_internal_rg_keys[] = {
-    ":REPLAYGAIN_ALBUMGAIN",
-    ":REPLAYGAIN_ALBUMPEAK",
-    ":REPLAYGAIN_TRACKGAIN",
-    ":REPLAYGAIN_TRACKPEAK",
-    NULL
-};
-
 // replaygain key names in both id3v2.3+ TXX and APEv2
 static const char *tag_rg_names[] = {
     "replaygain_album_gain",
