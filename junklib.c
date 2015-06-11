@@ -147,14 +147,7 @@ static const char *frame_mapping[] = {
     NULL
 };
 
-static const char *txx_mapping[] = {
-    "replaygain_album_gain", NULL,
-    "replaygain_album_peak", NULL,
-    "replaygain_track_gain", NULL,
-    "replaygain_track_peak", NULL,
-    NULL
-};
-
+// replaygain key names in deadbeef internal metadata
 const char *ddb_internal_rg_keys[] = {
     ":REPLAYGAIN_ALBUMGAIN",
     ":REPLAYGAIN_ALBUMPEAK",
@@ -163,14 +156,14 @@ const char *ddb_internal_rg_keys[] = {
     NULL
 };
 
-static const char *apev2_rg_names[] = {
+// replaygain key names in both id3v2.3+ TXX and APEv2
+static const char *tag_rg_names[] = {
     "replaygain_album_gain",
     "replaygain_album_peak",
     "replaygain_track_gain",
     "replaygain_track_peak",
     NULL
 };
-
 
 static uint32_t
 extract_i32 (const uint8_t *buf)
@@ -3428,9 +3421,9 @@ junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int s
 /* Currently only supports tags wich set master volume and are labeled "track"
  * or "album". Also only supports peak value if stored as 16 bits. */
 static int junk_id3v2_load_rva2 (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
-    char *rva_desc = readptr;
+    uint8_t *rva_desc = readptr;
     unsigned rva_desc_len = 0;
-    const char *p = rva_desc;
+    const uint8_t *p = rva_desc;
     while (*p++ && rva_desc_len < synched_size) {
         rva_desc_len++;
     }
@@ -3459,12 +3452,20 @@ static int junk_id3v2_load_rva2 (int version_major, playItem_t *it, uint8_t *rea
     }
 
     if (!strcasecmp (rva_desc, "album")) {
-        pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, (float)volume_adjust / 512.0);
-        if(peak_val) pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, (float)peak_val / 32767.0); /* NOTE: this is a guess based on mp3gain 1.5.2 written tags */
+        if (!pl_find_meta (it, ddb_internal_rg_keys[DDB_REPLAYGAIN_ALBUMGAIN])) {
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, (float)volume_adjust / 512.0);
+        }
+        if (!pl_find_meta (it, ddb_internal_rg_keys[DDB_REPLAYGAIN_ALBUMPEAK]) && peak_val) {
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, (float)peak_val / 32767.0); /* NOTE: this is a guess based on mp3gain 1.5.2 written tags */
+        }
     }
     else if (!strcasecmp (rva_desc, "track")) {
-        pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, (float)volume_adjust / 512.0);
-        if(peak_val) pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, (float)peak_val / 32767.0);
+        if (!pl_find_meta (it, ddb_internal_rg_keys[DDB_REPLAYGAIN_TRACKGAIN])) {
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, (float)volume_adjust / 512.0);
+        }
+        if (!pl_find_meta (it, ddb_internal_rg_keys[DDB_REPLAYGAIN_TRACKPEAK]) && peak_val) {
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, (float)peak_val / 32767.0);
+        }
     }
 
     return 0;
@@ -4366,6 +4367,17 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         }
         pl_unlock ();
 
+        // remove and re-add replaygain id3v2 frames
+        for (int n = 0; ddb_internal_rg_keys[n]; n++) {
+            junk_id3v2_remove_frames (&id3v2, tag_rg_names[n]);
+            if (pl_find_meta (it, ddb_internal_rg_keys[0])) {
+                float value = pl_get_item_replaygain (it, n);
+                char s[100];
+                snprintf (s, sizeof (s), "%f", value);
+                junk_id3v2_add_txxx_frame (&id3v2, tag_rg_names[n], s);
+            }
+        }
+
         // write tag
         if (junk_id3v2_write2 (out, &id3v2) != 0) {
             trace ("cmp3_write_metadata: failed to write id3v2 tag to %s\n", pl_find_meta (it, ":URI"))
@@ -4473,15 +4485,15 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             }
             pl_unlock ();
         }
+
         // remove and re-add replaygain apev2 frames
         for (int n = 0; ddb_internal_rg_keys[n]; n++) {
-            junk_apev2_remove_frames (&apev2, apev2_rg_names[n]);
+            junk_apev2_remove_frames (&apev2, tag_rg_names[n]);
             if (pl_find_meta (it, ddb_internal_rg_keys[0])) {
                 float value = pl_get_item_replaygain (it, n);
                 char s[100];
                 snprintf (s, sizeof (s), "%f", value);
-                junk_apev2_add_text_frame (&apev2, apev2_rg_names[n], s);
-
+                junk_apev2_add_text_frame (&apev2, tag_rg_names[n], s);
             }
         }
 
