@@ -436,7 +436,7 @@ cflac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     if (info->endsample >= 0) {
         if (size / samplesize + info->currentsample > info->endsample) {
-            size = (info->endsample - info->currentsample + 1) * samplesize;
+            size = (int)(info->endsample - info->currentsample + 1) * samplesize;
             trace ("size truncated to %d bytes, cursample=%d, endsample=%d\n", size, info->currentsample, info->endsample);
             if (size <= 0) {
                 return 0;
@@ -593,7 +593,7 @@ static void
 cflac_add_metadata (DB_playItem_t *it, const char *s, int length) {
     int m;
     for (m = 0; metainfo[m]; m += 2) {
-        int l = strlen (metainfo[m]);
+        size_t l = strlen (metainfo[m]);
         if (length > l && !strncasecmp (metainfo[m], s, l) && s[l] == '=') {
             deadbeef->pl_append_meta (it, metainfo[m+1], s + l + 1);
             break;
@@ -1123,14 +1123,9 @@ cflac_write_metadata (DB_playItem_t *it) {
         for (int i = 0; i < vc_comments; i++) {
             const FLAC__StreamMetadata_VorbisComment_Entry *c = &vc->comments[i];
             if (c->length > 0) {
-                if (strncasecmp ((const char *)c->entry, "replaygain_album_gain=", 22)
-                && strncasecmp ((const char *)c->entry, "replaygain_album_peak=", 22)
-                && strncasecmp ((const char *)c->entry, "replaygain_track_gain=", 22)
-                && strncasecmp ((const char *)c->entry, "replaygain_track_peak=", 22)) {
-                    FLAC__metadata_object_vorbiscomment_delete_comment (data, i);
-                    vc_comments--;
-                    i--;
-                }
+                FLAC__metadata_object_vorbiscomment_delete_comment (data, i);
+                vc_comments--;
+                i--;
             }
         }
     }
@@ -1161,7 +1156,7 @@ cflac_write_metadata (DB_playItem_t *it) {
             if (val && *val) {
                 while (val) {
                     const char *next = strchr (val, '\n');
-                    int l;
+                    size_t l;
                     if (next) {
                         l = next - val;
                         next++;
@@ -1175,7 +1170,7 @@ cflac_write_metadata (DB_playItem_t *it) {
                         strncpy (s+n, val, l);
                         *(s+n+l) = 0;
                         FLAC__StreamMetadata_VorbisComment_Entry ent = {
-                            .length = strlen (s),
+                            .length = (FLAC__uint32)strlen (s),
                             .entry = (FLAC__byte*)s
                         };
                         FLAC__metadata_object_vorbiscomment_append_comment (data, ent, 1);
@@ -1185,6 +1180,28 @@ cflac_write_metadata (DB_playItem_t *it) {
             }
         }
         m = m->next;
+    }
+
+    static const char *tag_rg_names[] = {
+        "replaygain_album_gain",
+        "replaygain_album_peak",
+        "replaygain_track_gain",
+        "replaygain_track_peak",
+        NULL
+    };
+
+    // add replaygain values
+    for (int n = 0; ddb_internal_rg_keys[n]; n++) {
+        if (deadbeef->pl_find_meta (it, ddb_internal_rg_keys[0])) {
+            float value = deadbeef->pl_get_item_replaygain (it, n);
+            char s[100];
+            snprintf (s, sizeof (s), "%s=%f", tag_rg_names[n], value);
+            FLAC__StreamMetadata_VorbisComment_Entry ent = {
+                .length = (FLAC__uint32)strlen (s),
+                .entry = (FLAC__byte*)s
+            };
+            FLAC__metadata_object_vorbiscomment_append_comment (data, ent, 1);
+        }
     }
 
     deadbeef->pl_unlock ();
