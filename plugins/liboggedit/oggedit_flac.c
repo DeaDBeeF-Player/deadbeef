@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <limits.h>
 #include "oggedit_internal.h"
 
 #define PADTYPE 0x01
