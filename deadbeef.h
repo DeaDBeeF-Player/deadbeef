@@ -440,17 +440,6 @@ enum {
     DDB_REPLAYGAIN_TRACKPEAK,
 };
 
-// replaygain key names in deadbeef internal metadata
-#if (DDB_API_LEVEL >= 8)
-static const char *ddb_internal_rg_keys[] = {
-    ":REPLAYGAIN_ALBUMGAIN",
-    ":REPLAYGAIN_ALBUMPEAK",
-    ":REPLAYGAIN_TRACKGAIN",
-    ":REPLAYGAIN_TRACKPEAK",
-    NULL
-};
-#endif
-
 // sort order constants
 enum ddb_sort_order_t {
     DDB_SORT_DESCENDING,
