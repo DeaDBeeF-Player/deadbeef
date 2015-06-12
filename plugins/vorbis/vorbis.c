@@ -38,6 +38,7 @@
 #else
     #include <vorbis/vorbisfile.h>
 #endif
+#include "../../strdupa.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -51,7 +52,6 @@
 #define CVORBIS_ENDIANNESS 0
 #endif
 
-#define RG_REFERENCE_LOUDNESS -1
 #define DELIMITER "\n - \n"
 
 static DB_decoder_t plugin;
@@ -92,33 +92,13 @@ cvorbis_ftell (void *datasource) {
     return deadbeef->ftell (datasource);
 }
 
-static const char
-*gain_tag_name(const int tag_enum)
-{
-    switch(tag_enum) {
-        case DDB_REPLAYGAIN_ALBUMGAIN:
-            return "REPLAYGAIN_ALBUM_GAIN";
-        case DDB_REPLAYGAIN_ALBUMPEAK:
-            return "REPLAYGAIN_ALBUM_PEAK";
-        case DDB_REPLAYGAIN_TRACKGAIN:
-            return "REPLAYGAIN_TRACK_GAIN";
-        case DDB_REPLAYGAIN_TRACKPEAK:
-            return "REPLAYGAIN_TRACK_PEAK";
-        case RG_REFERENCE_LOUDNESS:
-            return "REPLAYGAIN_REFERENCE_LOUDNESS";
-        default:
-            return "";
-    }
-}
-
-static bool
-is_special_tag(const char *tag) {
-    return !strcasecmp(tag, gain_tag_name(DDB_REPLAYGAIN_ALBUMGAIN)) ||
-           !strcasecmp(tag, gain_tag_name(DDB_REPLAYGAIN_ALBUMPEAK)) ||
-           !strcasecmp(tag, gain_tag_name(DDB_REPLAYGAIN_TRACKGAIN)) ||
-           !strcasecmp(tag, gain_tag_name(DDB_REPLAYGAIN_TRACKPEAK)) ||
-           !strcasecmp(tag, gain_tag_name(RG_REFERENCE_LOUDNESS));
-}
+static const char *tag_rg_names[] = {
+    "REPLAYGAIN_ALBUM_GAIN",
+    "REPLAYGAIN_ALBUM_PEAK",
+    "REPLAYGAIN_TRACK_GAIN",
+    "REPLAYGAIN_TRACK_PEAK",
+    NULL
+};
 
 static bool
 add_meta(DB_playItem_t *it, const char *key, const char *value)
@@ -143,7 +123,7 @@ add_meta(DB_playItem_t *it, const char *key, const char *value)
 static bool
 replaygain_tag(DB_playItem_t *it, const int tag_enum, const char *tag, const char *value)
 {
-    if (strcasecmp(gain_tag_name(tag_enum), tag))
+    if (strcasecmp(tag_rg_names[tag_enum], tag))
         return false;
 
     deadbeef->pl_set_item_replaygain (it, tag_enum, atof(value));
@@ -168,11 +148,10 @@ update_vorbis_comments (DB_playItem_t *it, OggVorbis_File *vorbis_file, const in
                 !replaygain_tag(it, DDB_REPLAYGAIN_ALBUMPEAK, tag, value) &&
                 !replaygain_tag(it, DDB_REPLAYGAIN_TRACKGAIN, tag, value) &&
                 !replaygain_tag(it, DDB_REPLAYGAIN_TRACKPEAK, tag, value)) {
-                if (!strcasecmp(tag, gain_tag_name(RG_REFERENCE_LOUDNESS)))
-                    deadbeef->pl_replace_meta(it, ":REPLAYGAIN_REFERENCE_LOUDNESS", value);
-                else
                     add_meta(it, oggedit_map_tag(tag, "tag2meta"), value);
-                }
+            }
+        }
+        if (tag) {
             free(tag);
         }
     }
@@ -728,7 +707,7 @@ split_tag(vorbis_comment *tags, const char *key, const char *value)
 {
     if (key && value) {
         const char *p;
-        while (p = strstr(value, DELIMITER)) {
+        while ((p = strstr(value, DELIMITER))) {
             char v[p - value + 1];
             strncpy(v, value, p-value);
             v[p-value] = 0;
@@ -740,51 +719,31 @@ split_tag(vorbis_comment *tags, const char *key, const char *value)
     }
 }
 
-static void
-merge_gain_tag(DB_playItem_t *it, vorbis_comment *vc, vorbis_comment *tags, const int tag_enum, const char *pattern, const int min, const int max)
+static vorbis_comment *
+tags_list(DB_playItem_t *it, OggVorbis_File *vorbis_file)
 {
-    const char *key = gain_tag_name(tag_enum);
-
-    char *end;
-    const char *meta_value = deadbeef->pl_find_meta(it, key);
-    const float value = meta_value ? strtof(meta_value, &end) : 0;
-    if (meta_value && end != meta_value && value > min && value < max) {
-        char tag_value[10];
-        sprintf(tag_value, pattern, value);
-        vorbis_comment_add_tag(tags, key, tag_value);
-    }
-    else {
-        const char *tag_value = vorbis_comment_query(vc, key, 0);
-        if (tag_value)
-             vorbis_comment_add_tag(tags, key, tag_value);
-    }
-}
-
-static vorbis_comment
-*tags_list(DB_playItem_t *it, OggVorbis_File *vorbis_file)
-{
-    vorbis_comment *vc = ov_comment (vorbis_file, -1);
-    if (!vc)
-        return NULL;
-
-    vorbis_comment *tags = calloc(1, sizeof(vorbis_comment));
+    vorbis_comment *tags = calloc (1, sizeof (vorbis_comment));
     if (!tags)
         return NULL;
 
     deadbeef->pl_lock ();
-    merge_gain_tag(it, vc, tags, DDB_REPLAYGAIN_ALBUMGAIN, "%0.2f dB", -100, 100);
-    merge_gain_tag(it, vc, tags, DDB_REPLAYGAIN_ALBUMPEAK, "%0.8f", 0, 2);
-    merge_gain_tag(it, vc, tags, DDB_REPLAYGAIN_TRACKGAIN, "%0.2f dB", -100, 100);
-    merge_gain_tag(it, vc, tags, DDB_REPLAYGAIN_TRACKPEAK, "%0.8f", 0, 2);
-    merge_gain_tag(it, vc, tags, RG_REFERENCE_LOUDNESS, "%0.1f dB", 0, 128);
-    for (DB_metaInfo_t *m = deadbeef->pl_get_metadata_head(it); m; m = m->next) {
-        char *key = strdup(m->key);
-        if (key && key[0] != ':' && key[0] != '!' && !is_special_tag(key)) {
-            split_tag(tags, oggedit_map_tag(key, "meta2tag"), m->value);
-            free(key);
+    for (DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it); m; m = m->next) {
+        char *key = strdupa (m->key);
+        if (key && key[0] != ':' && key[0] != '!') {
+            split_tag (tags, oggedit_map_tag (key, "meta2tag"), m->value);
         }
     }
     deadbeef->pl_unlock ();
+
+    // add replaygain values
+    for (int n = 0; ddb_internal_rg_keys[n]; n++) {
+        if (deadbeef->pl_find_meta (it, ddb_internal_rg_keys[n])) {
+            float value = deadbeef->pl_get_item_replaygain (it, n);
+            char s[100];
+            snprintf (s, sizeof (s), "%f", value);
+            split_tag (tags, tag_rg_names[n], s);
+        }
+    }
 
     return tags;
 }
