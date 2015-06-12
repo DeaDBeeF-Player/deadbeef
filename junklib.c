@@ -156,6 +156,15 @@ static const char *tag_rg_names[] = {
     NULL
 };
 
+// replaygain key names in deadbeef internal metadata
+const char *ddb_internal_rg_keys[] = {
+    ":REPLAYGAIN_ALBUMGAIN",
+    ":REPLAYGAIN_ALBUMPEAK",
+    ":REPLAYGAIN_TRACKGAIN",
+    ":REPLAYGAIN_TRACKPEAK",
+    NULL
+};
+
 static uint32_t
 extract_i32 (const uint8_t *buf)
 {

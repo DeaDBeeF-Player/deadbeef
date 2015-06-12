@@ -1190,6 +1190,15 @@ cflac_write_metadata (DB_playItem_t *it) {
         NULL
     };
 
+    // replaygain key names in deadbeef internal metadata
+    static const char *ddb_internal_rg_keys[] = {
+        ":REPLAYGAIN_ALBUMGAIN",
+        ":REPLAYGAIN_ALBUMPEAK",
+        ":REPLAYGAIN_TRACKGAIN",
+        ":REPLAYGAIN_TRACKPEAK",
+        NULL
+    };
+
     // add replaygain values
     for (int n = 0; ddb_internal_rg_keys[n]; n++) {
         if (deadbeef->pl_find_meta (it, ddb_internal_rg_keys[n])) {

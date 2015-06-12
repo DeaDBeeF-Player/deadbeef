@@ -54,6 +54,23 @@
 
 #define DELIMITER "\n - \n"
 
+static const char *tag_rg_names[] = {
+    "REPLAYGAIN_ALBUM_GAIN",
+    "REPLAYGAIN_ALBUM_PEAK",
+    "REPLAYGAIN_TRACK_GAIN",
+    "REPLAYGAIN_TRACK_PEAK",
+    NULL
+};
+
+// replaygain key names in deadbeef internal metadata
+static const char *ddb_internal_rg_keys[] = {
+    ":REPLAYGAIN_ALBUMGAIN",
+    ":REPLAYGAIN_ALBUMPEAK",
+    ":REPLAYGAIN_TRACKGAIN",
+    ":REPLAYGAIN_TRACKPEAK",
+    NULL
+};
+
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
@@ -91,14 +108,6 @@ static long
 cvorbis_ftell (void *datasource) {
     return deadbeef->ftell (datasource);
 }
-
-static const char *tag_rg_names[] = {
-    "REPLAYGAIN_ALBUM_GAIN",
-    "REPLAYGAIN_ALBUM_PEAK",
-    "REPLAYGAIN_TRACK_GAIN",
-    "REPLAYGAIN_TRACK_PEAK",
-    NULL
-};
 
 static bool
 add_meta(DB_playItem_t *it, const char *key, const char *value)
