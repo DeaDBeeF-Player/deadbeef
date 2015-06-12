@@ -137,6 +137,7 @@ add_meta(DB_playItem_t *it, const char *key, const char *value)
         deadbeef->pl_add_meta(it, key, value);
         return true;
     }
+    return false;
 }
 
 static bool

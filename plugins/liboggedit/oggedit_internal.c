@@ -34,6 +34,7 @@
 #include <libgen.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <limits.h>
 #include "oggedit_internal.h"
 
 static char *cat_string(char *dest, const char *src, const char *sep)
