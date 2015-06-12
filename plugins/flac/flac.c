@@ -1192,7 +1192,7 @@ cflac_write_metadata (DB_playItem_t *it) {
 
     // add replaygain values
     for (int n = 0; ddb_internal_rg_keys[n]; n++) {
-        if (deadbeef->pl_find_meta (it, ddb_internal_rg_keys[0])) {
+        if (deadbeef->pl_find_meta (it, ddb_internal_rg_keys[n])) {
             float value = deadbeef->pl_get_item_replaygain (it, n);
             char s[100];
             snprintf (s, sizeof (s), "%s=%f", tag_rg_names[n], value);

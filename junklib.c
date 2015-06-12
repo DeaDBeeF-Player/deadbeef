@@ -4361,7 +4361,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         // remove and re-add replaygain id3v2 frames
         for (int n = 0; ddb_internal_rg_keys[n]; n++) {
             junk_id3v2_remove_frames (&id3v2, tag_rg_names[n]);
-            if (pl_find_meta (it, ddb_internal_rg_keys[0])) {
+            if (pl_find_meta (it, ddb_internal_rg_keys[n])) {
                 float value = pl_get_item_replaygain (it, n);
                 char s[100];
                 snprintf (s, sizeof (s), "%f", value);
