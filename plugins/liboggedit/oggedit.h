@@ -72,6 +72,9 @@
 
 /* oggedit_utils.c */
 uint8_t *oggedit_vorbis_channel_map(const int channel_count);
+
+// map deadbeef key to vorbiscomment key
+// NOTE: this function may modify the key value, e.g. when upper-casing
 const char *oggedit_map_tag(char *key, const char *in_or_out);
 
 /* oggedit_art.c */
