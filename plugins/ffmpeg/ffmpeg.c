@@ -53,7 +53,6 @@
 #endif
 
 #if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
-#define AVCODEC_MAX_AUDIO_FRAME_SIZE 192000
 #define av_find_stream_info(ctx) avformat_find_stream_info(ctx,NULL)
 #define avcodec_open(ctx,codec) avcodec_open2(ctx,codec,NULL)
 #define av_get_bits_per_sample_format(fmt) (av_get_bytes_per_sample(fmt)*8)
@@ -105,8 +104,9 @@ typedef struct {
     int left_in_packet;
     int have_packet;
 
-    char *buffer; // must be AVCODEC_MAX_AUDIO_FRAME_SIZE
+    char *buffer;
     int left_in_buffer;
+    int buffer_size;
 
     int startsample;
     int endsample;
@@ -121,6 +121,25 @@ ffmpeg_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (ffmpeg_info_t));
     memset (_info, 0, sizeof (ffmpeg_info_t));
     return _info;
+}
+
+// ensure that the buffer can contain entire frame of frame_size bytes per channel
+static int
+ensure_buffer (ffmpeg_info_t *info, int frame_size) {
+    if (!info->buffer || info->buffer_size < frame_size * info->ctx->channels) {
+        if (info->buffer) {
+            free (info->buffer);
+            info->buffer = NULL;
+        }
+        info->buffer_size = frame_size*info->ctx->channels;
+        info->left_in_buffer = 0;
+        int err = posix_memalign ((void **)&info->buffer, 16, info->buffer_size);
+        if (err) {
+            fprintf (stderr, "ffmpeg: failed to allocate %d bytes of buffer memory\n", info->buffer_size);
+            return -1;
+        }
+    }
+    return 0;
 }
 
 static int
@@ -222,12 +241,6 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     memset (&info->pkt, 0, sizeof (info->pkt));
     info->have_packet = 0;
-
-    int err = posix_memalign ((void **)&info->buffer, 16, AVCODEC_MAX_AUDIO_FRAME_SIZE);
-    if (err) {
-        fprintf (stderr, "ffmpeg: failed to allocate buffer memory\n");
-        return -1;
-    }
 
 #if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(53, 40, 0)
     info->frame = avcodec_alloc_frame();
@@ -341,7 +354,7 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
 
         while (info->left_in_packet > 0 && size > 0) {
-            int out_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+            int out_size = info->buffer_size;
             int len;
             //trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
 
@@ -349,6 +362,9 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
             int got_frame = 0;
             len = avcodec_decode_audio4(info->ctx, info->frame, &got_frame, &info->pkt);
             if (len > 0) {
+                if (ensure_buffer (info, info->frame->nb_samples * (_info->fmt.bps >> 3))) {
+                    return -1;
+                }
                 if (av_sample_fmt_is_planar(info->ctx->sample_fmt)) {
                     out_size = 0;
                     for (int c = 0; c < info->ctx->channels; c++) {
