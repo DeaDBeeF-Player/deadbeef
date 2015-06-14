@@ -2021,7 +2021,7 @@ junk_id3v2_add_txxx_frame (DB_id3v2_tag_t *tag, const char *key, const char *val
         memcpy (out + keylen + 1, value, valuelen);
     }
     else { // version 3
-        res = junk_iconv (buffer, len, out, sizeof (out), UTF8_STR, "ISO-8859-1");
+        res = junk_iconv (buffer, len, out, sizeof (out), UTF8_STR, "iso8859-1");
         if (res == -1) {
             res = junk_iconv (buffer, len, out+2, sizeof (out) - 2, UTF8_STR, "UCS-2LE");
             if (res == -1) {
