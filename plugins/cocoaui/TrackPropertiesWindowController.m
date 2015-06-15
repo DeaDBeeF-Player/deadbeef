@@ -675,6 +675,46 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
 // FIXME: move to its own windowcontroller
 - (IBAction)configureTagWritingAction:(id)sender {
+    // init values in the tag writer settings
+    // tag writer
+    int strip_id3v2 = deadbeef->conf_get_int ("mp3.strip_id3v2", 0);
+    int strip_id3v1 = deadbeef->conf_get_int ("mp3.strip_id3v1", 0);
+    int strip_apev2 = deadbeef->conf_get_int ("mp3.strip_apev2", 0);
+    int write_id3v2 = deadbeef->conf_get_int ("mp3.write_id3v2", 1);
+    int write_id3v1 = deadbeef->conf_get_int ("mp3.write_id3v1", 1);
+    int write_apev2 = deadbeef->conf_get_int ("mp3.write_apev2", 0);
+    int id3v2_version = deadbeef->conf_get_int ("mp3.id3v2_version", 3);
+    if (id3v2_version < 3 || id3v2_version > 4) {
+        id3v2_version = 3;
+    }
+    char id3v1_encoding[50];
+    deadbeef->conf_get_str ("mp3.id3v1_encoding", "iso8859-1", id3v1_encoding, sizeof (id3v1_encoding));
+    int ape_strip_id3v2 = deadbeef->conf_get_int ("ape.strip_id3v2", 0);
+    int ape_strip_apev2 = deadbeef->conf_get_int ("ape.strip_apev2", 0);
+    int ape_write_id3v2 = deadbeef->conf_get_int ("ape.write_id3v2", 0);
+    int ape_write_apev2 = deadbeef->conf_get_int ("ape.write_apev2", 1);
+    int wv_strip_apev2 = deadbeef->conf_get_int ("wv.strip_apev2", 0);
+    int wv_strip_id3v1 = deadbeef->conf_get_int ("wv.strip_id3v1", 0);
+    int wv_write_apev2 = deadbeef->conf_get_int ("wv.write_apev2", 1);
+    int wv_write_id3v1 = deadbeef->conf_get_int ("wv.write_id3v1", 0);
+
+    [_mp3WriteID3v2 setState:write_id3v2];
+    [_mp3WriteID3v1 setState:write_id3v1];
+    [_mp3WriteAPEv2 setState:write_apev2];
+    [_mp3StripID3v2 setState:strip_id3v2];
+    [_mp3StripID3v1 setState:strip_id3v1];
+    [_mp3StripAPEv2 setState:strip_apev2];
+    [_mp3ID3v2Version selectItemAtIndex:id3v2_version-3];
+    [_mp3ID3v1Charset setStringValue:[NSString stringWithUTF8String:id3v1_encoding]];
+    [_apeWriteID3v2 setState:ape_write_id3v2];
+    [_apeWriteAPEv2 setState:ape_write_apev2];
+    [_apeStripID3v2 setState:ape_strip_id3v2];
+    [_apeStripAPEv2 setState:ape_strip_apev2];
+    [_wvWriteAPEv2 setState:wv_write_apev2];
+    [_wvWriteID3v1 setState:wv_write_id3v1];
+    [_wvStripAPEv2 setState:wv_strip_apev2];
+    [_wvStripID3v1 setState:wv_strip_id3v1];
+
     [NSApp beginSheet:_tagWriterSettingsPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndTagWriterSettings:returnCode:contextInfo:) contextInfo:nil];
 }
 
@@ -685,6 +725,87 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
 - (IBAction)tagWriterSettingsCloseAction:(id)sender {
     [NSApp endSheet:_tagWriterSettingsPanel returnCode:NSOKButton];
+}
+
+- (IBAction)mp3WriteID3v2Action:(id)sender {
+    deadbeef->conf_set_int ("mp3.write_id3v2", [sender state]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)mp3WriteID3v1Action:(id)sender {
+    deadbeef->conf_set_int ("mp3.write_id3v1", [sender state]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)mp3WriteAPEv2Action:(id)sender {
+    deadbeef->conf_set_int ("mp3.write_apev2", [sender state]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)mp3StripID3v2Action:(id)sender {
+    deadbeef->conf_set_int ("mp3.strip_id3v2", [sender state]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)mp3StripID3v1Action:(id)sender {
+    deadbeef->conf_set_int ("mp3.strip_id3v1", [sender state]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)mp3StripAPEv2Action:(id)sender {
+    deadbeef->conf_set_int ("mp3.strip_apev2", [sender state]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)mp3ID3v2VersionChangeAction:(id)sender {
+    int ver = (int)[sender indexOfSelectedItem]+3;
+    deadbeef->conf_set_int ("mp3.id3v2_version", ver);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)mp3ID3v1CharsetChangeAction:(id)sender {
+    deadbeef->conf_set_str ("mp3.id3v1_encoding", [[sender stringValue] UTF8String]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)apeWriteID3v2Action:(id)sender {
+    deadbeef->conf_set_int ("ape.write_id3v2", [sender state]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)apeWriteAPEv2Action:(id)sender {
+    deadbeef->conf_set_int ("ape.write_apev2", [sender state]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)apeStripID3v2Action:(id)sender {
+    deadbeef->conf_set_int ("ape.strip_id3v2", [sender state]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)apeStripAPEv2Action:(id)sender {
+    deadbeef->conf_set_int ("ape.strip_apev2", [sender state]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)wvWriteAPEv2Action:(id)sender {
+    deadbeef->conf_set_int ("wv.write_apev2", [sender state]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)wvWriteID3v1Action:(id)sender {
+    deadbeef->conf_set_int ("wv.write_id3v1", [sender state]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)wvStripAPEv2Action:(id)sender {
+    deadbeef->conf_set_int ("wv.strip_apev2", [sender state]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)wvStripID3v1Action:(id)sender {
+    deadbeef->conf_set_int ("wv.strip_id3v1", [sender state]);
+    deadbeef->conf_save ();
 }
 
 @end
