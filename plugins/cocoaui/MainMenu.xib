@@ -606,6 +606,7 @@ CA
                 <outlet property="customSortEntry" destination="bJK-ZQ-GBB" id="ZRk-XY-0ex"/>
                 <outlet property="customSortPanel" destination="vHm-fI-UgZ" id="e7O-Nh-WwI"/>
                 <outlet property="descendingSortMode" destination="a0b-O2-r16" id="jve-MJ-Pfo"/>
+                <outlet property="dockMenu" destination="891-Kp-BFs" id="DTX-sh-Bko"/>
                 <outlet property="dockTileView" destination="h87-hn-tWh" id="h87-62-sdr"/>
                 <outlet property="loopAll" destination="bp3-Nw-TaR" id="t92-xv-gTj"/>
                 <outlet property="loopNone" destination="pGf-UH-jjg" id="fd0-Uw-O2Y"/>
@@ -615,7 +616,6 @@ CA
                 <outlet property="orderRandom" destination="1U2-JB-RUf" id="KxR-mg-sUu"/>
                 <outlet property="orderShuffle" destination="15S-fQ-PaL" id="wGt-mg-WMg"/>
                 <outlet property="orderShuffleAlbums" destination="bea-Bv-Vnd" id="1sx-zb-fcn"/>
-                <outlet property="playbackMenu" destination="YAz-yR-8od" id="mXQ-U8-uYa"/>
                 <outlet property="scrollFollowsPlayback" destination="xnA-bz-jxF" id="GX4-WF-zFx"/>
                 <outlet property="stopAfterCurrent" destination="edx-c0-VoM" id="Rig-DR-mKE"/>
                 <outlet property="stopAfterCurrentAlbum" destination="6AV-SN-Cm9" id="wVK-jy-HK2"/>
@@ -791,6 +791,41 @@ Gw
             </view>
             <point key="canvasLocation" x="236.5" y="268"/>
         </window>
+        <menu autoenablesItems="NO" id="891-Kp-BFs">
+            <items>
+                <menuItem title="Previous" keyEquivalent="z" id="iRg-Do-s9f">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="previousAction:" target="494" id="zQI-Yq-Q8C"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Play" keyEquivalent="x" id="CvP-2R-Zmf">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="playAction:" target="494" id="6xq-Rr-f9A"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Pause" keyEquivalent="c" id="uEX-vS-wnp">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="pauseAction:" target="494" id="gBq-0a-Hka"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Stop" keyEquivalent="v" id="Imn-tl-ggJ">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="stopAction:" target="494" id="8Jv-ZH-aPt"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Next" keyEquivalent="b" id="mf2-cp-1dq">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="nextAction:" target="494" id="6Am-SJ-8XI"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="38" y="412.5"/>
+        </menu>
     </objects>
     <resources>
         <image name="NSApplicationIcon" width="128" height="128"/>

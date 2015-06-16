@@ -33,6 +33,14 @@
     MainWindowController *_mainWindow;
     PreferencesWindowController *_prefWindow;
     SearchWindowController *_searchWindow;
+
+    NSMenuItem *_dockMenuNPHeading;
+    NSMenuItem *_dockMenuNPTitle;
+    NSMenuItem *_dockMenuNPArtistAlbum;
+    NSMenuItem *_dockMenuNPSeparator;
+
+    char *_titleScript;
+    char *_artistAlbumScript;
 }
 
 - (NSWindow *)mainWindow;
@@ -40,7 +48,7 @@
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
 @property (unsafe_unretained) IBOutlet NSMenu *mainMenu;
-@property (unsafe_unretained) IBOutlet NSMenu *playbackMenu;
+@property (unsafe_unretained) IBOutlet NSMenu *dockMenu;
 
 
 @property (unsafe_unretained) IBOutlet NSWindow *addFilesWindow;
