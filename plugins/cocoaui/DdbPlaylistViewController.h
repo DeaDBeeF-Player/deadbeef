@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "DdbListview.h"
 #import "TrackPropertiesWindowController.h"
+#import "ConverterWindowController.h"
 
 #define PLT_MAX_COLUMNS 100
 
@@ -35,6 +36,7 @@ typedef struct {
     NSDictionary *_cellSelectedTextAttrsDictionary;
     NSDictionary *_groupTextAttrsDictionary;
     TrackPropertiesWindowController *_trkProperties;
+    ConverterWindowController *_converter;
 }
 
 - (void)initContent;

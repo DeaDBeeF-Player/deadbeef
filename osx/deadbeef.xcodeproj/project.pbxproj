@@ -798,6 +798,8 @@
 		2DD6D0A819AE6288009308A5 /* knobTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */; };
 		2DD801161AAB08D900D9CF54 /* ferror68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD801151AAB08D900D9CF54 /* ferror68.c */; };
 		2DD9EF0719A5089F00189344 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
+		2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */; };
+		2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */; };
 		2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */; };
 		2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3DC19B11283009B5BC6 /* DdbWidget.m */; };
 		2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3E019B114CD009B5BC6 /* DdbWidgetManager.h */; };
@@ -1984,6 +1986,8 @@
 		2DD801151AAB08D900D9CF54 /* ferror68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ferror68.c; sourceTree = "<group>"; };
 		2DD9EF0419A5089F00189344 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoautil.h; sourceTree = "<group>"; };
 		2DD9EF0519A5089F00189344 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoautil.m; sourceTree = "<group>"; };
+		2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConverterWindowController.h; sourceTree = "<group>"; };
+		2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConverterWindowController.m; sourceTree = "<group>"; };
 		2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbWidget.h; path = widgets/DdbWidget.h; sourceTree = "<group>"; };
 		2DE1D3DC19B11283009B5BC6 /* DdbWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbWidget.m; path = widgets/DdbWidget.m; sourceTree = "<group>"; };
 		2DE1D3E019B114CD009B5BC6 /* DdbWidgetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbWidgetManager.h; path = widgets/DdbWidgetManager.h; sourceTree = "<group>"; };
@@ -4068,6 +4072,8 @@
 				2D60108C1A9CDF06000136AF /* SearchWindowController.m */,
 				2D11E8AF1AA0E3DD00A67A20 /* MainWindowController.h */,
 				2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */,
+				2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */,
+				2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */,
 				2D17F8451AB3391A00AF2853 /* MainMenu.xib */,
 				2D828E5319E5679800EE874F /* Search.xib */,
 				2DC80A8E1A9222F800C9397F /* TrackProperties.xib */,
@@ -4587,6 +4593,7 @@
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
 				2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* DdbSearchViewController.h in Headers */,
+				2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */,
 				2D642EB01AE9152E00FC1F7B /* sort.h in Headers */,
 				2D91775D1A0E8A3D004BC222 /* mp4ffint.h in Headers */,
 			);
@@ -5878,6 +5885,7 @@
 				2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */,
 				2D91775F1A0E8A3D004BC222 /* mp4atom.c in Sources */,
 				4D1B515B1837F4E9003E6066 /* nullout.c in Sources */,
+				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
 				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
 				2D828E5819E567C800EE874F /* DdbSearchWidget.m in Sources */,
 				2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */,
@@ -7598,6 +7606,7 @@
 				2D7C37EF1B2C40530029DE0A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2D7C37F51B2C40580029DE0A /* Build configuration list for PBXNativeTarget "vorbislib" */ = {
 			isa = XCConfigurationList;
@@ -7606,6 +7615,7 @@
 				2D7C37F71B2C40580029DE0A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2D88E9EE1B2AF6640072FD43 /* Build configuration list for PBXNativeTarget "vorbis" */ = {
 			isa = XCConfigurationList;
