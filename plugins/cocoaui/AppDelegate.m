@@ -168,6 +168,8 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [self initColumns];
 
     g_appDelegate = self;
+
+    [self updateDockNowPlaying];
     [[NSApp dockTile] setContentView: _dockTileView];
 //    [[NSApp dockTile] setBadgeLabel:@"Hello"];
     [[NSApp dockTile] display];
@@ -571,9 +573,72 @@ init_column (int i, int _id, const char *format) {
     
     if (_id == DB_EV_CONFIGCHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(configChanged) withObject:nil waitUntilDone:NO];
-
+    }
+    else if (_id == DB_EV_SONGSTARTED) {
+        [g_appDelegate performSelectorOnMainThread:@selector(updateDockNowPlaying) withObject:nil waitUntilDone:NO];
+    }
+    else if (_id == DB_EV_SONGFINISHED) {
+        [g_appDelegate performSelectorOnMainThread:@selector(clearDockNowPlaying) withObject:nil waitUntilDone:NO];
     }
     return 0;
+}
+
+- (void) clearDockNowPlaying {
+    if (_dockMenuNPHeading) {
+        [_dockMenu removeItem:_dockMenuNPHeading];
+        [_dockMenu removeItem:_dockMenuNPTitle];
+        [_dockMenu removeItem:_dockMenuNPArtistAlbum];
+        [_dockMenu removeItem:_dockMenuNPSeparator];
+        _dockMenuNPHeading = _dockMenuNPTitle = _dockMenuNPArtistAlbum = _dockMenuNPSeparator = nil;
+    }
+}
+
+- (void) updateDockNowPlaying {
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (!it) {
+        [self clearDockNowPlaying];
+        return;
+    }
+    if (_dockMenuNPHeading) {
+        [_dockMenu removeItem:_dockMenuNPTitle];
+        [_dockMenu removeItem:_dockMenuNPArtistAlbum];
+    }
+
+    if (!_dockMenuNPHeading) {
+        _dockMenuNPHeading = [[NSMenuItem alloc] initWithTitle:@"Now playing:" action:nil keyEquivalent:@""];
+        [_dockMenuNPHeading setEnabled:NO];
+        _dockMenuNPSeparator = [NSMenuItem separatorItem];
+        [_dockMenu insertItem:_dockMenuNPHeading atIndex:0];
+        [_dockMenu insertItem:_dockMenuNPSeparator atIndex:1];
+    }
+
+    if (!_titleScript) {
+        _titleScript = deadbeef->tf_compile ("   %title%");
+    }
+    if (!_artistAlbumScript) {
+        _artistAlbumScript = deadbeef->tf_compile ("   %artist%[ - %album%]");
+    }
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .it = it,
+        .plt = deadbeef->plt_get_curr (),
+        .idx = -1,
+        .id = -1
+    };
+
+    char title[1024] = "";
+    char artistAlbum[1024] = "";
+    deadbeef->tf_eval (&ctx, _titleScript, title, sizeof (title));
+    deadbeef->tf_eval (&ctx, _artistAlbumScript, artistAlbum, sizeof (artistAlbum));
+    if (ctx.plt) {
+        deadbeef->plt_unref (ctx.plt);
+    }
+    _dockMenuNPTitle = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:title] action:nil keyEquivalent:@""];
+    [_dockMenuNPTitle setEnabled:NO];
+    _dockMenuNPArtistAlbum = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:artistAlbum] action:nil keyEquivalent:@""];
+    [_dockMenuNPArtistAlbum setEnabled:NO];
+    [_dockMenu insertItem:_dockMenuNPTitle atIndex:1];
+    [_dockMenu insertItem:_dockMenuNPArtistAlbum atIndex:2];
 }
 
 - (IBAction)performFindPanelAction:(id)sender {
@@ -669,7 +734,7 @@ init_column (int i, int _id, const char *format) {
 }
 
 - (NSMenu *)applicationDockMenu:(NSApplication *)sender {
-    return _playbackMenu;
+    return _dockMenu;
 }
 
 @end
