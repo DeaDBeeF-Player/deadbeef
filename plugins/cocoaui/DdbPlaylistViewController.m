@@ -915,7 +915,10 @@ static char *group_bytecode = NULL;
 }
 
 - (void)convertSelection {
-    
+    if (!_converter) {
+        _converter = [[ConverterWindowController alloc] initWithWindowNibName:@"Converter"];
+    }
+    [_converter showWindow:self];
 }
 
 - (void)trackProperties {
