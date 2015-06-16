@@ -668,4 +668,8 @@ init_column (int i, int _id, const char *format) {
     [_prefWindow showWindow:self];
 }
 
+- (NSMenu *)applicationDockMenu:(NSApplication *)sender {
+    return _playbackMenu;
+}
+
 @end
