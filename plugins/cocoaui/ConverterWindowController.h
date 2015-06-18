@@ -21,6 +21,17 @@
 - (IBAction)okAction:(id)sender;
 - (IBAction)openOutputFolderAction:(id)sender;
 - (IBAction)editEncoderPresetsAction:(id)sender;
-@property (unsafe_unretained) IBOutlet NSButton *editDSPPresetsAction;
+- (IBAction)editDSPPresetsAction:(id)sender;
+
+@property (strong) IBOutlet NSPanel *encoderPresetsPanel;
+- (IBAction)closeEncoderPresetsAction:(id)sender;
+@property (unsafe_unretained) IBOutlet NSTableView *encoderPresetsTableView;
+
+
+
+
+@property (strong) IBOutlet NSPanel *dspPresetsPanel;
+- (IBAction)closeDSPPresetsAction:(id)sender;
+
 
 @end
