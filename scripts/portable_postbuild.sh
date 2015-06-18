@@ -83,7 +83,7 @@ done
 cp ./icons/32x32/deadbeef.png $OUTDIR/
 
 # converter presets
-cp -r plugins/converter/presets $OUTDIR/plugins/convpresets
+cp -r plugins/converter/convpresets $OUTDIR/plugins/
 
 # translations
 mkdir -p $OUTDIR/locale
