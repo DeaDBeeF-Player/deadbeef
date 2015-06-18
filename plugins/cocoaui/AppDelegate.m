@@ -165,8 +165,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     deadbeef->listen_file_add_beginend (fileadd_begin, fileadd_end, NULL);
     deadbeef->listen_file_added (file_added, NULL);
 
-    [self initColumns];
-
     g_appDelegate = self;
 
     [self updateDockNowPlaying];
@@ -225,33 +223,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
         deadbeef->plt_unref (plt);
     }
     return proposedSelectionIndexes;
-}
-
-// playlist datasource
-typedef struct {
-    int _id; // predefined col type
-    char *format;
-    char *bytecode;
-} col_info_t;
-
-static col_info_t columns[MAX_COLUMNS];
-static int ncolumns;
-
-void
-init_column (int i, int _id, const char *format) {
-    columns[i]._id = _id;
-    columns[i].format = strdup (format);
-    if (format) {
-        columns[i].bytecode = deadbeef->tf_compile (format);
-    }
-}
-
-- (void)initColumns {
-    init_column(ncolumns++, DB_COLUMN_PLAYING, "%playstatus%");
-    init_column(ncolumns++, -1, "%artist% - %album%");
-    init_column(ncolumns++, -1, "%track%");
-    init_column(ncolumns++, -1, "%title%");
-    init_column(ncolumns++, -1, "%length%");
 }
 
 - (void)openFiles:(BOOL)clear play:(BOOL)play {
