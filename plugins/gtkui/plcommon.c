@@ -1282,10 +1282,10 @@ init_column (col_info_t *inf, int id, const char *format) {
         inf->id = DB_COLUMN_ALBUM_ART;
         break;
     case 3:
-        inf->format = strdup ("%artist% - %album%");
+        inf->format = strdup ("$if(%artist%,%artist%,Unknown Artist)[ - %album%]");
         break;
     case 4:
-        inf->format = strdup ("%artist%");
+        inf->format = strdup ("$if(%artist%,%artist%,Unknown Artist)");
         break;
     case 5:
         inf->format = strdup ("%album%");
@@ -1300,7 +1300,7 @@ init_column (col_info_t *inf, int id, const char *format) {
         inf->format = strdup ("%track%");
         break;
     case 9:
-        inf->format = strdup ("$if(%album artist%,%album artist%,$if(%albumartist%,%albumartist%,$if(%band%,%band%,%artist)))");
+        inf->format = strdup ("$if(%album artist%,%album artist%,Unknown Artist)");
         break;
     default:
         inf->format = strdup (format);

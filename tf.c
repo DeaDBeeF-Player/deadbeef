@@ -358,16 +358,10 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     for (int i = 0; !val && aa_fields[i]; i++) {
                         val = pl_find_meta_raw (it, aa_fields[i]);
                     }
-                    if (!val) {
-                        val = _("Unknown Artist");
-                    }
                 }
                 else if (!strcmp (name, a_fields[0])) {
                     for (int i = 0; !val && a_fields[i]; i++) {
                         val = pl_find_meta_raw (it, a_fields[i]);
-                    }
-                    if (!val) {
-                        val = _("Unknown Artist");
                     }
                 }
                 else if (!strcmp (name, "track artist")) {

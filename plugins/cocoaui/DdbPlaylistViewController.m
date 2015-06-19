@@ -109,10 +109,10 @@ extern DB_functions_t *deadbeef;
         type = DB_COLUMN_ALBUM_ART;
         break;
     case 3: // artist - album
-        [_addColumnFormat setStringValue:@"%artist%[ - %album%]"];
+        [_addColumnFormat setStringValue:@"$if(%artist%,%artist%,Unknown Artist)[ - %album%]"];
         break;
     case 4: // artist
-        [_addColumnFormat setStringValue:@"%artist%"];
+        [_addColumnFormat setStringValue:@"$if(%artist%,%artist%,Unknown Artist)"];
         break;
     case 5: // album
         [_addColumnFormat setStringValue:@"%album%"];
@@ -127,7 +127,7 @@ extern DB_functions_t *deadbeef;
         [_addColumnFormat setStringValue:@"%track%"];
         break;
     case 9: // album artist
-        [_addColumnFormat setStringValue:@"%album artist%"];
+        [_addColumnFormat setStringValue:@"$if(%album artist%,%album artist%,Unknown Artist)"];
         break;
     }
 
