@@ -854,6 +854,36 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
 }
 
+static int grabbed_focus = 0;
+
+/*
+    grab focus for the first focusable children of widget or widget itself
+*/
+static void
+set_widget_focus (GtkWidget *widget)
+{
+    if (grabbed_focus) {
+        return;
+    }
+    if (gtk_widget_get_can_focus (GTK_WIDGET (widget))) {
+        gtk_widget_grab_focus (GTK_WIDGET (widget));
+        grabbed_focus = 1;
+        return;
+    }
+    if (GTK_IS_CONTAINER (widget)) {
+        GList* children = gtk_container_get_children (GTK_CONTAINER (widget));
+
+        for (GList *l = children; l != NULL; l = l->next) {
+            if (grabbed_focus) {
+                break;
+            }
+            set_widget_focus (GTK_WIDGET (l->data));
+        }
+
+        g_list_free (children);
+    }
+}
+
 static const char gtkui_def_layout[] = "vbox expand=\"0 1\" fill=\"1 1\" homogeneous=0 {hbox expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0 {playtb {} seekbar {} volumebar {} } tabbed_playlist hideheaders=0 {} } ";
 
 static void
@@ -1076,6 +1106,7 @@ gtkui_thread (void *ctx) {
     gtk_widget_show (mainwin);
 
     init_widget_layout ();
+    set_widget_focus (mainwin);
 
     gtkui_set_titlebar (NULL);
 
