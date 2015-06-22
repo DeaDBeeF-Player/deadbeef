@@ -1073,9 +1073,9 @@ gtkui_thread (void *ctx) {
 #endif
 #endif
 
-    gtk_widget_show (mainwin);
-
     init_widget_layout ();
+
+    gtk_widget_show (mainwin);
 
     gtkui_set_titlebar (NULL);
 
