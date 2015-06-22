@@ -897,12 +897,16 @@ on_encoder_preset_remove                     (GtkButton       *button,
     }
 }
 
+static GtkWidget *encpreset_dialog;
+
 static void
 on_encoder_preset_cursor_changed (GtkTreeView     *treeview,
                                         gpointer         user_data) {
-    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (treeview));
-    GtkWidget *edit = lookup_widget (toplevel, "edit");
-    GtkWidget *remove = lookup_widget (toplevel, "remove");
+    if (!encpreset_dialog) {
+        return;
+    }
+    GtkWidget *edit = lookup_widget (encpreset_dialog, "edit");
+    GtkWidget *remove = lookup_widget (encpreset_dialog, "remove");
 
     GtkTreePath *path;
     GtkTreeViewColumn *col;
@@ -962,6 +966,7 @@ on_edit_encoder_presets_clicked        (GtkButton       *button,
                                         gpointer         user_data)
 {
     GtkWidget *dlg = create_preset_list ();
+    encpreset_dialog = dlg;
     gtk_window_set_title (GTK_WINDOW (dlg), _("Encoders"));
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (current_ctx->converter));
     g_signal_connect ((gpointer)lookup_widget (dlg, "add"), "clicked", G_CALLBACK (on_encoder_preset_add), NULL);
@@ -988,6 +993,7 @@ on_edit_encoder_presets_clicked        (GtkButton       *button,
     on_encoder_preset_cursor_changed (GTK_TREE_VIEW (list), NULL);
     gtk_dialog_run (GTK_DIALOG (dlg));
     gtk_widget_destroy (dlg);
+    encpreset_dialog = NULL;
 }
 
 ///// dsp preset gui
