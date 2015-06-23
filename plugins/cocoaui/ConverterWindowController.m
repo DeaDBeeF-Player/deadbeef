@@ -19,12 +19,38 @@ extern DB_functions_t *deadbeef;
 
 @implementation ConverterWindowController
 
+- (NSString *)encoderPresetTitleForPreset:(ddb_encoder_preset_t *)thePreset {
+    NSString *title = [NSString stringWithUTF8String:thePreset->title];
+    if (thePreset->readonly) {
+        title = [@"[Built-in] " stringByAppendingString:title];
+    }
+    return title;
+}
+
+- (void)initializeWidgets {
+    [_encoderPreset removeAllItems];
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_list ();
+    while (p) {
+        [_encoderPreset addItemWithTitle:[self encoderPresetTitleForPreset:p]];
+        p = p->next;
+    }
+}
+
 - (void)windowDidLoad {
     [super windowDidLoad];
     
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     _converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id ("converter");
     [_encoderPresetsTableView setDataSource:(id<NSTableViewDataSource>)self];
+    [self initializeWidgets];
+}
+
+- (void)run {
+    if (_converter_plugin) {
+        [self initializeWidgets];
+    }
+    [self showWindow:self];
+    [[self window] makeKeyWindow];
 }
 
 - (int)numberOfRowsInTableView:(NSTableView *)aTableView
@@ -45,11 +71,7 @@ extern DB_functions_t *deadbeef;
         i++;
         p = p->next;
     }
-    NSString *title = [NSString stringWithUTF8String:p->title];
-    if (p->readonly) {
-        title = [@"[Built-in] " stringByAppendingString:title];
-    }
-    return title;
+    return [self encoderPresetTitleForPreset:p];
 }
 
 - (IBAction)cancelAction:(id)sender {

@@ -918,7 +918,7 @@ static char *group_bytecode = NULL;
     if (!_converter) {
         _converter = [[ConverterWindowController alloc] initWithWindowNibName:@"Converter"];
     }
-    [_converter showWindow:self];
+    [_converter run];
 }
 
 - (void)trackProperties {

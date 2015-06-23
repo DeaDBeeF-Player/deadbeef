@@ -27,11 +27,9 @@
 - (IBAction)closeEncoderPresetsAction:(id)sender;
 @property (unsafe_unretained) IBOutlet NSTableView *encoderPresetsTableView;
 
-
-
-
 @property (strong) IBOutlet NSPanel *dspPresetsPanel;
 - (IBAction)closeDSPPresetsAction:(id)sender;
 
+- (void)run;
 
 @end

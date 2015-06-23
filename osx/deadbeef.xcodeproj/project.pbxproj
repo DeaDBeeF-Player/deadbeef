@@ -312,6 +312,7 @@
 		2D35E3141AA7AC4B0077FBD1 /* dial68.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D35E30F1AA7AC4B0077FBD1 /* dial68.h */; };
 		2D35E3151AA7AC4B0077FBD1 /* fileinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D35E3101AA7AC4B0077FBD1 /* fileinfo.c */; };
 		2D35E3161AA7AC4B0077FBD1 /* tracksel.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D35E3111AA7AC4B0077FBD1 /* tracksel.c */; };
+		2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2D3E0E1B1B39AAC20007ECC3 /* btnBrowseTemplate.pdf */; };
 		2D3EBD9D1A9379BD00E5E255 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D3EBD9C1A9379BD00E5E255 /* Preferences.xib */; };
 		2D5121C61B01DEFD009F6410 /* sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D642EAD1AE9152E00FC1F7B /* sort.c */; };
 		2D51999C1A436FD100670717 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999A1A436FD100670717 /* config.h */; };
@@ -1463,6 +1464,7 @@
 		2D35E30F1AA7AC4B0077FBD1 /* dial68.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dial68.h; sourceTree = "<group>"; };
 		2D35E3101AA7AC4B0077FBD1 /* fileinfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fileinfo.c; sourceTree = "<group>"; };
 		2D35E3111AA7AC4B0077FBD1 /* tracksel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tracksel.c; sourceTree = "<group>"; };
+		2D3E0E1B1B39AAC20007ECC3 /* btnBrowseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnBrowseTemplate.pdf; path = images/btnBrowseTemplate.pdf; sourceTree = "<group>"; };
 		2D3EBD9C1A9379BD00E5E255 /* Preferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 		2D51999A1A436FD100670717 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = "osx/deps/mpg123-1.21.0/ports/Xcode/config.h"; sourceTree = "<group>"; };
 		2D51999B1A436FD100670717 /* mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpg123.h; path = "osx/deps/mpg123-1.21.0/ports/Xcode/mpg123.h"; sourceTree = "<group>"; };
@@ -3865,6 +3867,7 @@
 				4D2A6CA0183BC29400AC6BF5 /* btnstopTemplate.pdf */,
 				4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */,
 				2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */,
+				2D3E0E1B1B39AAC20007ECC3 /* btnBrowseTemplate.pdf */,
 			);
 			name = images;
 			sourceTree = "<group>";
@@ -5246,6 +5249,7 @@
 				2DACBB241A40CEB100CCF401 /* mp3.dylib in Resources */,
 				2D17F8461AB3391A00AF2853 /* MainMenu.xib in Resources */,
 				2D5D214C1A403428001D5A79 /* lastfm.dylib in Resources */,
+				2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */,
 				2D9177421A0E89C8004BC222 /* alac.dylib in Resources */,
 				2DCB281D19E86194008E9DF6 /* m3u.dylib in Resources */,
 				2D11E8B41AA0E3DD00A67A20 /* MainWindow.xib in Resources */,
