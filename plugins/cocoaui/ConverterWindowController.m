@@ -42,6 +42,7 @@ extern DB_functions_t *deadbeef;
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     _converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id ("converter");
     [_encoderPresetsTableView setDataSource:(id<NSTableViewDataSource>)self];
+    [_encoderPresetsTableView setDelegate:(id<NSTableViewDelegate>)self];
     [self initializeWidgets];
 }
 
@@ -52,6 +53,27 @@ extern DB_functions_t *deadbeef;
     [self showWindow:self];
     [[self window] makeKeyWindow];
 }
+
+
+- (IBAction)cancelAction:(id)sender {
+    [[self window] close];
+}
+
+- (IBAction)okAction:(id)sender {
+}
+
+- (IBAction)openOutputFolderAction:(id)sender {
+}
+
+// encoder presets sheet
+- (IBAction)editEncoderPresetsAction:(id)sender {
+    [NSApp beginSheet:_encoderPresetsPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndEncoderPresetList:returnCode:contextInfo:) contextInfo:nil];
+}
+
+- (void)didEndEncoderPresetList:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+    [_encoderPresetsPanel orderOut:self];
+}
+
 
 - (int)numberOfRowsInTableView:(NSTableView *)aTableView
 {
@@ -74,24 +96,67 @@ extern DB_functions_t *deadbeef;
     return [self encoderPresetTitleForPreset:p];
 }
 
-- (IBAction)cancelAction:(id)sender {
-    [[self window] close];
+- (BOOL)tableView:(NSTableView *)aTableView shouldEditTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx ((int)rowIndex);
+    return p && !p->readonly;
 }
 
-- (IBAction)okAction:(id)sender {
+- (NSString *)uniqueEncoderPresetTitle:(NSString *)title {
+    NSString *uniqueTitle = title;
+    int nr = 1;
+    for (;;) {
+        ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_list ();
+        while (p) {
+            if (!strcmp ([uniqueTitle UTF8String], p->title)) {
+                break;
+            }
+            p = p->next;
+        }
+        if (!p) {
+            return uniqueTitle;
+        }
+        uniqueTitle = [NSString stringWithFormat:@"%@ (%d)", title, nr];
+        nr++;
+    }
+    return nil;
 }
 
-- (IBAction)openOutputFolderAction:(id)sender {
+- (IBAction)addEncoderPresetAction:(id)sender {
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_alloc ();
+    NSString *title = [self uniqueEncoderPresetTitle:@"New preset"];
+    p->title = strdup ([title UTF8String]);
+    p->encoder = strdup ("");
+    p->ext = strdup ("");
+
+    int cnt = 0;
+    ddb_encoder_preset_t *pp = _converter_plugin->encoder_preset_get_list ();
+    while (pp) {
+        cnt++;
+        pp = pp->next;
+    }
+
+    _converter_plugin->encoder_preset_append (p);
+
+    [_encoderPresetsTableView reloadData];
+    [_encoderPresetsTableView editColumn:0 row:cnt withEvent:nil select:YES];
 }
 
-- (IBAction)editEncoderPresetsAction:(id)sender {
-    [NSApp beginSheet:_encoderPresetsPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndEncoderPresetList:returnCode:contextInfo:) contextInfo:nil];
+- (void)tableView:(NSTableView *)aTableView setObjectValue:(id)anObject forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx ((int)rowIndex);
+    if (p) {
+        if (p->title) {
+            free (p->title);
+        }
+        NSString *title = [self uniqueEncoderPresetTitle:anObject];
+        p->title = strdup ([title UTF8String]);
+    }
 }
 
-- (void)didEndEncoderPresetList:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    [_encoderPresetsPanel orderOut:self];
+- (IBAction)removeEncoderPresetAction:(id)sender {
 }
 
+
+// dsp presets sheet
 - (IBAction)editDSPPresetsAction:(id)sender {
     [NSApp beginSheet:_dspPresetsPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndDSPPresetList:returnCode:contextInfo:) contextInfo:nil];
 }
