@@ -490,6 +490,11 @@ int grouptitleheight = 22;
     [delegate reloadMetadata];
 }
 
+- (void)convertSelection {
+    id<DdbListviewDelegate> delegate = listview.delegate;
+    [delegate convertSelection];
+}
+
 - (NSMenu *)menuForEvent:(NSEvent *)event {
     if (event.buttonNumber == 1
         || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask))) {

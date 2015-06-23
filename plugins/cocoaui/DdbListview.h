@@ -47,6 +47,7 @@ typedef intptr_t DdbListviewCol_t;
 - (BOOL)hasDND;
 - (void)trackProperties;
 - (void)reloadMetadata;
+- (void)convertSelection;
 - (void)sortColumn:(DdbListviewCol_t)column withOrder:(int)order;
 @end
 
