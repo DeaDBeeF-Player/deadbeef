@@ -47,6 +47,7 @@
 #endif
 #include <limits.h>
 #include <errno.h>
+#include <math.h>
 #include "gettext.h"
 #include "playlist.h"
 #include "streamer.h"
@@ -2866,6 +2867,7 @@ pl_format_item_queue (playItem_t *it, char *s, int size) {
 void
 pl_format_time (float t, char *dur, int size) {
     if (t >= 0) {
+        t = roundf (t);
         int hourdur = t / (60 * 60);
         int mindur = (t - hourdur * 60 * 60) / 60;
         int secdur = t - hourdur*60*60 - mindur * 60;

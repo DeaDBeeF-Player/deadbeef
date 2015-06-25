@@ -558,11 +558,17 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 }
                 else if ((tmp_a = !strcmp (name, "length")) || (tmp_b = !strcmp (name, "length_ex"))) {
                     float t = pl_get_item_duration (it);
+                    if (tmp_a) {
+                        t = roundf (t);
+                    }
+                    else if (tmp_b) {
+                        t = roundf(t * 1000) / 1000.f;
+                    }
                     if (t >= 0) {
                         int hr = t/3600;
                         int mn = (t-hr*3600)/60;
-                        int sc = tmp_a ? roundf(t-hr*3600-mn*60) : floor(t-hr*3600-mn*60);
-                        int ms = !tmp_b ? roundf ((t-hr*3600-mn*60-sc) * 1000.f) : 0;
+                        int sc = tmp_a ? t-hr*3600-mn*60 : t-hr*3600-mn*60;
+                        int ms = tmp_b ? (t-hr*3600-mn*60-sc) * 1000.f : 0;
                         int len = 0;
                         if (tmp_a) {
                             if (hr) {
