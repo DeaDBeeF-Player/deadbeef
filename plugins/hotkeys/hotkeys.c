@@ -785,13 +785,13 @@ action_seek_5s_backward_cb (struct DB_plugin_action_s *action, int ctx) {
 
 int
 action_volume_up_cb (struct DB_plugin_action_s *action, int ctx) {
-    deadbeef->volume_set_db (deadbeef->volume_get_db () + 2);
+    deadbeef->volume_set_db (deadbeef->volume_get_db () + 1);
     return 0;
 }
 
 int
 action_volume_down_cb (struct DB_plugin_action_s *action, int ctx) {
-    deadbeef->volume_set_db (deadbeef->volume_get_db () - 2);
+    deadbeef->volume_set_db (deadbeef->volume_get_db () - 1);
     return 0;
 }
 
