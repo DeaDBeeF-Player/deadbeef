@@ -408,8 +408,8 @@ titlebar_tf_free (void) {
     }
 }
 
-static void
-titlebar_tf_init (void) {
+void
+gtkui_titlebar_tf_init (void) {
     titlebar_tf_free ();
 
     char fmt[500];
@@ -636,7 +636,7 @@ gtkui_on_configchanged (void *data) {
     gtkui_tabstrip_italic_selected = deadbeef->conf_get_int ("gtkui.tabstrip_italic_selected", 0);
 
     // titlebar tf
-    titlebar_tf_init ();
+    gtkui_titlebar_tf_init ();
 
     // pin groups
     gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups", 0);

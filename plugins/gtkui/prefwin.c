@@ -1004,6 +1004,7 @@ on_titlebar_format_playing_changed     (GtkEditable     *editable,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_str ("gtkui.titlebar_playing_tf", gtk_entry_get_text (GTK_ENTRY (editable)));
+    gtkui_titlebar_tf_init ();
     gtkui_set_titlebar (NULL);
 }
 
@@ -1013,6 +1014,7 @@ on_titlebar_format_stopped_changed     (GtkEditable     *editable,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_str ("gtkui.titlebar_stopped_tf", gtk_entry_get_text (GTK_ENTRY (editable)));
+    gtkui_titlebar_tf_init ();
     gtkui_set_titlebar (NULL);
 }
 
