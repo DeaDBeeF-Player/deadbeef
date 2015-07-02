@@ -44,6 +44,7 @@ typedef intptr_t DdbListviewCol_t;
 - (void)drawGroupTitle:(DdbListviewRow_t)row inRect:(NSRect)rect;
 - (int)modificationIdx;
 - (void)selectionChanged:(DdbListviewRow_t)row;
+- (int)selectedCount;
 - (BOOL)hasDND;
 - (void)trackProperties;
 - (void)reloadMetadata;
@@ -102,4 +103,5 @@ typedef struct DdbListviewGroup_s {
 - (void)scrollToRowWithIndex:(int)idx;
 - (void)setVScroll:(int)scroll;
 - (void)updateContentFrame;
+- (void)deselectAll;
 @end

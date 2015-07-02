@@ -705,6 +705,10 @@ static char *group_bytecode = NULL;
     deadbeef->sendmessage (DB_EV_SELCHANGED, (uintptr_t)[pltWidget listview], deadbeef->plt_get_curr_idx (), [self playlistIter]);
 }
 
+- (int)selectedCount {
+    return deadbeef->pl_getselcount();
+}
+
 - (BOOL)hasDND {
     return YES;
 }

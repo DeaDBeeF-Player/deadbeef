@@ -503,11 +503,16 @@ int grouptitleheight = 22;
             [self mouseDown:event];
         }
         NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
-        [theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0];
-        [theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0];
+        id<DdbListviewDelegate> delegate = listview.delegate;
+        BOOL enabled = [delegate selectedCount] != 0;
+
+        [[theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+
+        [[theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
 
         // FIXME: should be added via plugin action
-        [theMenu insertItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@"" atIndex:0];
+        [[theMenu insertItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+        [theMenu setAutoenablesItems:NO];
         return theMenu;
     }
     return nil;
@@ -542,6 +547,7 @@ int grouptitleheight = 22;
     listview.lastpos = convPt;
 
     if (-1 == [listview pickPoint:convPt.y group:&grp groupIndex:&grp_index index:&sel]) {
+        [listview deselectAll];
         [delegate unlock];
         return;
     }
@@ -947,6 +953,21 @@ int grouptitleheight = 22;
     [contentView setNeedsDisplayInRect:rect];
 }
 
+- (void)deselectAll {
+    DdbListviewRow_t it;
+    int idx = 0;
+    for (it = [_delegate firstRow]; it != [_delegate invalidRow]; idx++) {
+        if ([_delegate rowSelected:it]) {
+            [_delegate selectRow:it withState:NO];
+            [self drawRow:idx];
+            [_delegate selectionChanged:it];
+        }
+        DdbListviewRow_t next = [_delegate nextRow:it];
+        [_delegate unrefRow:it];
+        it = next;
+    }
+}
+
 - (void)clickSelection:(NSPoint)pt grp:(DdbListviewGroup_t *)grp grp_index:(int)grp_index sel:(int)sel dnd:(BOOL)dnd button:(int)button {
 
     _areaselect = 0;
@@ -960,18 +981,7 @@ int grouptitleheight = 22;
 
     if (sel == -1 && !album_art_column && (!grp || (pt.y > _grouptitle_height && grp_index >= grp->num_items))) {
         // clicked empty space, deselect everything
-        DdbListviewRow_t it;
-        int idx = 0;
-        for (it = [_delegate firstRow]; it != [_delegate invalidRow]; idx++) {
-            if ([_delegate rowSelected:it]) {
-                [_delegate selectRow:it withState:NO];
-                [self drawRow:idx];
-                [_delegate selectionChanged:it];
-            }
-            DdbListviewRow_t next = [_delegate nextRow:it];
-            [_delegate unrefRow:it];
-            it = next;
-        }
+        [self deselectAll];
     }
     else if ((sel != -1 && grp && grp_index == -1) || (pt.y <= _grouptitle_height + vis.origin.y && _groups_pinned) || album_art_column) {
         // clicked group title, select group

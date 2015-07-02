@@ -417,8 +417,11 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
         deadbeef->pl_unlock ();
     }
-    else {
+    else if (_numtracks != 0) {
         fname = @"[Multiple values]";
+    }
+    else {
+        fname = @"[Nothing selected]";
     }
 
     [self fillMetadata];
