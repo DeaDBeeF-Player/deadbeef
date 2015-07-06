@@ -66,7 +66,6 @@ typedef struct {
     GtkWidget *progress;
     GtkWidget *progress_entry;
     int cancelled;
-    char *progress_text;
 } converter_ctx_t;
 
 converter_ctx_t *current_ctx;
@@ -223,7 +222,7 @@ converter_worker (void *ctx) {
             if (paths_match) {
                 fprintf (stderr, "converter: destination file is the same as source file, skipping\n");
             }
-            else if (conv->overwrite_action == 2 || conv->overwrite_action == 1 && overwrite_prompt(outpath)) {
+            else if (conv->overwrite_action == 2 || (conv->overwrite_action == 1 && overwrite_prompt(outpath))) {
                 unlink (outpath);
                 skip = 0;
             }
@@ -244,7 +243,12 @@ converter_worker (void *ctx) {
     if (conv->convert_items) {
         free (conv->convert_items);
     }
-    free (conv->outfolder);
+    if (conv->outfolder) {
+        free (conv->outfolder);
+    }
+    if (conv->outfile) {
+        free (conv->outfile);
+    }
     converter_plugin->encoder_preset_free (conv->encoder_preset);
     converter_plugin->dsp_preset_free (conv->dsp_preset);
     free (conv);
