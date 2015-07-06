@@ -922,7 +922,7 @@ static char *group_bytecode = NULL;
     if (!_converter) {
         _converter = [[ConverterWindowController alloc] initWithWindowNibName:@"Converter"];
     }
-    [_converter run];
+    [_converter run:DDB_ACTION_CTX_SELECTION];
 }
 
 - (void)trackProperties {

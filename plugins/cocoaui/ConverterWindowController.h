@@ -23,6 +23,16 @@
 - (IBAction)editEncoderPresetsAction:(id)sender;
 - (IBAction)editDSPPresetsAction:(id)sender;
 
+- (IBAction)outputFolderChanged:(id)sender;
+- (IBAction)writeToSourceFolderChanged:(id)sender;
+- (IBAction)preserveFolderStructureChanged:(id)sender;
+- (IBAction)outputPathChanged:(id)sender;
+- (IBAction)encoderPresetChanged:(id)sender;
+- (IBAction)dspPresetChanged:(id)sender;
+- (IBAction)overwritePromptChanged:(id)sender;
+
+
+
 @property (strong) IBOutlet NSPanel *encoderPresetsPanel;
 - (IBAction)closeEncoderPresetsAction:(id)sender;
 @property (unsafe_unretained) IBOutlet NSTableView *encoderPresetsTableView;
@@ -33,6 +43,12 @@
 @property (strong) IBOutlet NSPanel *dspPresetsPanel;
 - (IBAction)closeDSPPresetsAction:(id)sender;
 
-- (void)run;
+@property (strong) IBOutlet NSPanel *progressPanel;
+@property (unsafe_unretained) IBOutlet NSTextField *progressText;
+@property (unsafe_unretained) IBOutlet NSProgressIndicator *progressBar;
+- (IBAction)progressCancelAction:(id)sender;
+
+// ctx is one of the DDB_ACTION_CTX_ constants
+- (void)run:(int)ctx;
 
 @end
