@@ -794,6 +794,21 @@ check_dir (const char *dir, mode_t mode)
     return 1;
 }
 
+static inline void
+write_int32_le (char *p, uint32_t value) {
+    p[0] = value & 0xff;
+    p[1] = (value >> 8) & 0xff;
+    p[2] = (value >> 16) & 0xff;
+    p[3] = (value >> 24) & 0xff;
+}
+
+static inline void
+write_int16_le (char *p, uint16_t value) {
+    p[0] = value & 0xff;
+    p[1] = (value >> 8) & 0xff;
+}
+
+
 int
 convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
     char *buffer = NULL;
@@ -1036,12 +1051,12 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
                     if (chunksize <= 0xffffffff) {
                         size32 = chunksize;
                     }
-                    memcpy (&wavehdr[4], &size32, 4);
-                    memcpy (&wavehdr[22], &outch, 2);
-                    memcpy (&wavehdr[24], &outsr, 4);
+                    write_int32_le (wavehdr+4, size32);
+                    write_int16_le (wavehdr+22, outch);
+                    write_int32_le (wavehdr+24, outsr);
                     uint16_t blockalign = outch * output_bps / 8;
-                    memcpy (&wavehdr[32], &blockalign, 2);
-                    memcpy (&wavehdr[34], &output_bps, 2);
+                    write_int16_le (wavehdr+32, blockalign);
+                    write_int16_le (wavehdr+34, output_bps);
 
                     size32 = 0xffffffff;
                     if (size <= 0xffffffff) {
