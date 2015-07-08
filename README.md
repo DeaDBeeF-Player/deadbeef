@@ -14,6 +14,8 @@ The OS X version is not production-ready yet, so I'm not making any official bui
 
 ## Compiling
 
+The following instructions assume that commands are executed in deadbeef repository folder.
+
 ### Linux, BSD and similar (GTK/*NIX version)
 
 * Install autoconf, automake, libtool, intltool, autopoint
@@ -23,6 +25,7 @@ The OS X version is not production-ready yet, so I'm not making any official bui
 
 ### OS X (COCOA version)
 
+* Fetch the dependencies: ```git submodule update --init```
 * Install XCode
 * Install [Yasm](http://rudix.org/packages/yasm.html)
 * Run ```xcodebuild -project osx/deadbeef.xcodeproj -target deadbeef -configuration Deployment```
