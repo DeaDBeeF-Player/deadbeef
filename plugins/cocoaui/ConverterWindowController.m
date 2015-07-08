@@ -527,7 +527,7 @@ extern DB_functions_t *deadbeef;
     [_overwritePromptCondition wait];
     [_overwritePromptCondition unlock];
     _overwritePromptCondition = nil;
-    return _overwritePromptResult == NSOKButton;
+    return _overwritePromptResult == NSAlertFirstButtonReturn;
 }
 
 - (void)alertDidEndOverwritePrompt:(NSAlert *)alert returnCode:(NSInteger)returnCode
