@@ -737,6 +737,10 @@
 		2D91776D1A0E8A4D004BC222 /* libmp4ff.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D91774B1A0E8A10004BC222 /* libmp4ff.a */; };
 		2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D93DC531AADFEEF003D2D8D /* pluginsettings.h */; };
 		2D93DC571AADFEEF003D2D8D /* README in Resources */ = {isa = PBXBuildFile; fileRef = 2D93DC541AADFEEF003D2D8D /* README */; };
+		2D989F931B5058550042F370 /* duktape.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D989F911B5058550042F370 /* duktape.c */; };
+		2D989F941B5058550042F370 /* duktape.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D989F921B5058550042F370 /* duktape.h */; };
+		2D989F981B5058BB0042F370 /* duktape_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D989F971B5058BB0042F370 /* duktape_plugin.c */; };
+		2D989F991B505A830042F370 /* duktape.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D989F8D1B50583C0042F370 /* duktape.dylib */; };
 		2DA0ACE91AA71516007EDD43 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2DA0ACEE1AA71E7C007EDD43 /* in_sc68.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */; };
 		2DA24AE119E7203A00E34920 /* asyn-ares.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A0F19E7203700E34920 /* asyn-ares.c */; };
@@ -1211,6 +1215,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D91774A1A0E8A10004BC222;
 			remoteInfo = mp4ff;
+		};
+		2D989F951B5058640042F370 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D989F8C1B50583C0042F370;
+			remoteInfo = duktape;
 		};
 		2DA0ACEC1AA71E4B007EDD43 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2042,6 +2053,10 @@
 		2D93DC521AADFEEF003D2D8D /* pluginsettings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pluginsettings.c; sourceTree = "<group>"; };
 		2D93DC531AADFEEF003D2D8D /* pluginsettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pluginsettings.h; sourceTree = "<group>"; };
 		2D93DC541AADFEEF003D2D8D /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		2D989F8D1B50583C0042F370 /* duktape.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = duktape.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D989F911B5058550042F370 /* duktape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = duktape.c; path = plugins/duktape/duktape.c; sourceTree = "<group>"; };
+		2D989F921B5058550042F370 /* duktape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = duktape.h; path = plugins/duktape/duktape.h; sourceTree = "<group>"; };
+		2D989F971B5058BB0042F370 /* duktape_plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = duktape_plugin.c; path = plugins/duktape/duktape_plugin.c; sourceTree = "<group>"; };
 		2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = in_sc68.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA0ACEA1AA7162C007EDD43 /* in_sc68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = in_sc68.c; path = plugins/sc68/in_sc68.c; sourceTree = "<group>"; };
 		2DA2499E19E71FEB00E34920 /* libcurl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcurl.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2553,6 +2568,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2D917E751A4046FE00C3EB44 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D989F8A1B50583C0042F370 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3586,6 +3608,16 @@
 			path = shared;
 			sourceTree = "<group>";
 		};
+		2D989F881B50582A0042F370 /* duktape */ = {
+			isa = PBXGroup;
+			children = (
+				2D989F911B5058550042F370 /* duktape.c */,
+				2D989F921B5058550042F370 /* duktape.h */,
+				2D989F971B5058BB0042F370 /* duktape_plugin.c */,
+			);
+			name = duktape;
+			sourceTree = "<group>";
+		};
 		2DA249A219E71FF100E34920 /* curl */ = {
 			isa = PBXGroup;
 			children = (
@@ -4043,6 +4075,7 @@
 				2D7C37F41B2C40580029DE0A /* libvorbislib.a */,
 				2D05A8291B4BE59D004C913D /* sndfile.dylib */,
 				2D05A8311B4BE5BC004C913D /* libsndfilelib.a */,
+				2D989F8D1B50583C0042F370 /* duktape.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4162,6 +4195,7 @@
 		4D1B514C1837EF7C003E6066 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				2D989F881B50582A0042F370 /* duktape */,
 				2D05A8351B4BE5C4004C913D /* sndfile */,
 				2D88E9FB1B2AF6C70072FD43 /* liboggedit */,
 				2D88E9E81B2AF5FE0072FD43 /* vorbis */,
@@ -4770,6 +4804,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2D989F8B1B50583C0042F370 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D989F941B5058550042F370 /* duktape.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DA0ABDF1AA71055007EDD43 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -5262,6 +5304,23 @@
 			productReference = 2D917E781A4046FE00C3EB44 /* libmpg123.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		2D989F8C1B50583C0042F370 /* duktape */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D989F8E1B50583C0042F370 /* Build configuration list for PBXNativeTarget "duktape" */;
+			buildPhases = (
+				2D989F891B50583C0042F370 /* Sources */,
+				2D989F8A1B50583C0042F370 /* Frameworks */,
+				2D989F8B1B50583C0042F370 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = duktape;
+			productName = duktape;
+			productReference = 2D989F8D1B50583C0042F370 /* duktape.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2DA0ABE01AA71055007EDD43 /* in_sc68 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2DA0ABE21AA71055007EDD43 /* Build configuration list for PBXNativeTarget "in_sc68" */;
@@ -5414,6 +5473,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D989F961B5058640042F370 /* PBXTargetDependency */,
 				2D05A8D81B4BE630004C913D /* PBXTargetDependency */,
 				2D2351201B138EFC00A62936 /* PBXTargetDependency */,
 				2DF930541AB8175D0030C0CA /* PBXTargetDependency */,
@@ -5592,6 +5652,9 @@
 					2D917E771A4046FE00C3EB44 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
+					2D989F8C1B50583C0042F370 = {
+						CreatedOnToolsVersion = 6.4;
+					};
 					2DA0ABE01AA71055007EDD43 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
@@ -5655,6 +5718,7 @@
 				2D7C37F31B2C40580029DE0A /* vorbislib */,
 				2D05A8281B4BE59D004C913D /* sndfile */,
 				2D05A8301B4BE5BC004C913D /* sndfilelib */,
+				2D989F8C1B50583C0042F370 /* duktape */,
 			);
 		};
 /* End PBXProject section */
@@ -5678,6 +5742,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D989F991B505A830042F370 /* duktape.dylib in Resources */,
 				2D05A8D91B4BE63D004C913D /* sndfile.dylib in Resources */,
 				2D88EA111B2AF77B0072FD43 /* vorbis.dylib in Resources */,
 				2D2351211B138F1100A62936 /* converter.dylib in Resources */,
@@ -6188,6 +6253,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2D989F891B50583C0042F370 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D989F931B5058550042F370 /* duktape.c in Sources */,
+				2D989F981B5058BB0042F370 /* duktape_plugin.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DA0ABDD1AA71055007EDD43 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6688,6 +6762,11 @@
 			isa = PBXTargetDependency;
 			target = 2D91774A1A0E8A10004BC222 /* mp4ff */;
 			targetProxy = 2D91776B1A0E8A47004BC222 /* PBXContainerItemProxy */;
+		};
+		2D989F961B5058640042F370 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D989F8C1B50583C0042F370 /* duktape */;
+			targetProxy = 2D989F951B5058640042F370 /* PBXContainerItemProxy */;
 		};
 		2DA0ACED1AA71E4B007EDD43 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -7567,6 +7646,46 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx10.10;
 				USER_HEADER_SEARCH_PATHS = "";
+			};
+			name = Release;
+		};
+		2D989F8F1B50583C0042F370 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		2D989F901B50583C0042F370 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -8467,6 +8586,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		2D989F8E1B50583C0042F370 /* Build configuration list for PBXNativeTarget "duktape" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D989F8F1B50583C0042F370 /* Debug */,
+				2D989F901B50583C0042F370 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		2DA0ABE21AA71055007EDD43 /* Build configuration list for PBXNativeTarget "in_sc68" */ = {
 			isa = XCConfigurationList;

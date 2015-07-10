@@ -786,7 +786,6 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
                 if (l < (sizeof(PLUGINEXT)-1)) {
                     break;
                 }
-                const char *e = PLUGINEXT;
                 if (strcasecmp (namelist[i]->d_name + l - sizeof(PLUGINEXT) + 1, PLUGINEXT)) {
                     break;
                 }
