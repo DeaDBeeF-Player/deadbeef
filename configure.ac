@@ -497,8 +497,9 @@ AS_IF([test "${enable_cdda}" != "no"], [
             AC_CHECK_LIB([cdda_interface], [main], [HAVE_CDDA_INTERFACE=yes])
             AC_CHECK_LIB([cdda_paranoia], [main], [HAVE_CDDA_PARANOIA=yes])
             AS_IF([test "${enable_cdda_paranoia}" != "no" -a "${HAVE_CDDA_INTERFACE}" = "yes" -a "${HAVE_CDDA_PARANOIA}" = "yes"], [
-	        CDDA_CFLAGS="-DUSE_PARANOIA"
-	        AC_SUBST(CDDA_CFLAGS)
+                CDDA_CFLAGS="-DUSE_PARANOIA"
+                AC_CHECK_HEADER([cdda/cdda_interface.h], [CDDA_CFLAGS="-DUSE_CDDA_SUBDIR $CDDA_CFLAGS"])
+                AC_SUBST(CDDA_CFLAGS)
                 CDDA_LIBS="-lcdio -lcdda_interface -lcdda_paranoia -lcddb"
             ] , [
                 CDDA_LIBS="-lcdio -lcddb"

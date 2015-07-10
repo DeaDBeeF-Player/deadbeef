@@ -24,8 +24,13 @@
 #include <sys/types.h>
 
 #if USE_PARANOIA
+#if USE_CDDA_SUBDIR
+    #include <cdda/cdda_interface.h>
+    #include <cdda/cdda_paranoia.h>
+#else
     #include <cdda_interface.h>
     #include <cdda_paranoia.h>
+#endif
 #endif
 #include <cdio/cdio.h>
 #include <cdio/cd_types.h>
