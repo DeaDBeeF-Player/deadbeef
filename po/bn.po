@@ -9,11 +9,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-05 19:54+0200\n"
+"POT-Creation-Date: 2015-07-15 09:06+0200\n"
 "PO-Revision-Date: 2014-07-31 18:10+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
-"Language-Team: Bengali (http://www.transifex.com/projects/p/deadbeef-player/"
-"language/bn/)\n"
+"Language-Team: Bengali (http://www.transifex.com/p/deadbeef-player/language/"
+"bn/)\n"
 "Language: bn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -87,44 +87,44 @@ msgstr "শূন্য প্রিম্প"
 msgid "Zero Bands"
 msgstr "শূন্য ব্যান্ড"
 
-#: ../plugins/gtkui/eq.c:392 ../plugins/converter/interface.c:805
-#: ../plugins/converter/converter.glade.h:50
+#: ../plugins/gtkui/eq.c:392 ../plugins/converter/interface.c:806
+#: ../plugins/converter/converter.glade.h:51
 msgid "Presets"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:167
+#: ../plugins/gtkui/gtkui.c:158
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "প্রথম দিন %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:170
+#: ../plugins/gtkui/gtkui.c:161
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d দিন %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:179
+#: ../plugins/gtkui/gtkui.c:170
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "বন্ধ | %d ট্র্যাকসমুহ | %s সর্বমোট যতটুকু সময় চালানো হয়েছে"
 
-#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3212
+#: ../plugins/gtkui/gtkui.c:182 ../playlist.c:3253
 msgid "Mono"
 msgstr "মোনো"
 
-#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3212
+#: ../plugins/gtkui/gtkui.c:182 ../playlist.c:3253
 msgid "Stereo"
 msgstr "স্টেরিও"
 
-#: ../plugins/gtkui/gtkui.c:215
+#: ../plugins/gtkui/gtkui.c:206
 #, c-format
 msgid "| %4d kbps "
 msgstr "| %4d kbps"
 
-#: ../plugins/gtkui/gtkui.c:221
+#: ../plugins/gtkui/gtkui.c:212
 msgid "Paused | "
 msgstr "বিরত | "
 
-#: ../plugins/gtkui/gtkui.c:226
+#: ../plugins/gtkui/gtkui.c:217
 #, c-format
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
@@ -132,103 +132,107 @@ msgstr ""
 "%s%s %s| %dHz | %d বিট | %s | %d:%02d / %s | %d ট্র্যাকসমূহ | %s যতটুকু সময় "
 "চালানো হয়েছে"
 
-#: ../plugins/gtkui/gtkui.c:696 ../plugins/gtkui/fileman.c:41
+#: ../plugins/gtkui/gtkui.c:731 ../plugins/gtkui/fileman.c:41
+#: ../plugins/pltbrowser/pltbrowser.c:72
 msgid "New Playlist"
 msgstr "নতুন প্লেলিস্ট"
 
-#: ../plugins/gtkui/gtkui.c:699
+#: ../plugins/gtkui/gtkui.c:734 ../plugins/pltbrowser/pltbrowser.c:75
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "নতুন প্লেলিস্ট (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:956
+#: ../plugins/gtkui/gtkui.c:980
 msgid "Playlist with tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:957 ../plugins/gtkui/interface.c:2042
-#: ../plugins/gtkui/deadbeef.glade.h:128
+#: ../plugins/gtkui/gtkui.c:981 ../plugins/gtkui/interface.c:2093
+#: ../plugins/gtkui/interface.c:2538 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:960
+#: ../plugins/gtkui/gtkui.c:984
 msgid "Splitter (top and bottom)"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:961
+#: ../plugins/gtkui/gtkui.c:985
 msgid "Splitter (left and right)"
 msgstr ""
 
-#. w_reg_widget (_("Tabs"), 0, w_tabs_create, "tabs", NULL);
-#: ../plugins/gtkui/gtkui.c:964
+#: ../plugins/gtkui/gtkui.c:987
+msgid "Tabs"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:988
 msgid "Playlist tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:965
+#: ../plugins/gtkui/gtkui.c:989
 msgid "Selection properties"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:966
+#: ../plugins/gtkui/gtkui.c:990
 msgid "Album art display"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:967
+#: ../plugins/gtkui/gtkui.c:991
 msgid "Scope"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:968
+#: ../plugins/gtkui/gtkui.c:992
 msgid "Spectrum"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:969
+#: ../plugins/gtkui/gtkui.c:993
 msgid "HBox"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:970
+#: ../plugins/gtkui/gtkui.c:994
 msgid "VBox"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:971 ../plugins/gtkui/widgets.c:3428
+#: ../plugins/gtkui/gtkui.c:995 ../plugins/gtkui/widgets.c:3734
 msgid "Button"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:972
+#: ../plugins/gtkui/gtkui.c:996
 msgid "Seekbar"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:973
+#: ../plugins/gtkui/gtkui.c:997
 msgid "Playback controls"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:974
+#: ../plugins/gtkui/gtkui.c:998
 msgid "Volume bar"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:975
+#: ../plugins/gtkui/gtkui.c:999
 msgid "Chiptune voices"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1150
+#: ../plugins/gtkui/gtkui.c:1170
 msgid "Failed while reading help file"
 msgstr "সহায়িকা ফাইল পড়তে ব্যর্থ হয়েছে"
 
-#: ../plugins/gtkui/gtkui.c:1160
+#: ../plugins/gtkui/gtkui.c:1180
 msgid "Failed to load help file"
 msgstr "সহায়িকা ফাইল লোড করতে ব্যর্থ হয়েছে"
 
-#: ../plugins/gtkui/gtkui.c:1171
+#: ../plugins/gtkui/gtkui.c:1191
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1173
+#: ../plugins/gtkui/gtkui.c:1193
 msgid "Do you still want to quit?"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1174 ../plugins/gtkui/prefwin.c:351
-#: ../plugins/gtkui/trkproperties.c:171 ../plugins/converter/convgui.c:891
-#: ../plugins/converter/convgui.c:1462 ../plugins/gtkui/actionhandlers.c:550
+#: ../plugins/gtkui/gtkui.c:1194 ../plugins/gtkui/prefwin.c:370
+#: ../plugins/gtkui/trkproperties.c:171 ../plugins/converter/convgui.c:886
+#: ../plugins/converter/convgui.c:1463 ../plugins/gtkui/actionhandlers.c:550
 msgid "Warning"
 msgstr "সতর্কবানী"
 
@@ -248,7 +252,7 @@ msgstr "ফাইল যোগ করুন"
 msgid "Add folder(s)"
 msgstr "ফোল্ডার যোগ করুন"
 
-#: ../plugins/gtkui/interface.c:167 ../plugins/gtkui/interface.c:3199
+#: ../plugins/gtkui/interface.c:167 ../plugins/gtkui/interface.c:3546
 #: ../plugins/gtkui/deadbeef.glade.h:5
 msgid "Add location"
 msgstr "অবস্থান যোগ করুন"
@@ -293,9 +297,9 @@ msgstr "বিপরীতমুখী নির্বাচন"
 msgid "Selection"
 msgstr "নির্বাচন"
 
-#: ../plugins/gtkui/interface.c:235 ../plugins/gtkui/plcommon.c:660
-#: ../plugins/gtkui/deadbeef.glade.h:16 ../plugins/converter/interface.c:629
-#: ../plugins/converter/converter.glade.h:46
+#: ../plugins/gtkui/interface.c:235 ../plugins/gtkui/plcommon.c:759
+#: ../plugins/gtkui/deadbeef.glade.h:16 ../plugins/converter/interface.c:630
+#: ../plugins/converter/converter.glade.h:47
 #: ../plugins/shellexecui/interface.c:66
 #: ../plugins/shellexecui/shellexec.glade.h:4
 msgid "Remove"
@@ -313,12 +317,12 @@ msgstr "খুঁজুন (_F)"
 msgid "Sort by"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/interface.c:1349
-#: ../plugins/gtkui/mainplaylist.c:355 ../plugins/gtkui/prefwin.c:327
-#: ../plugins/gtkui/search.c:421 ../plugins/gtkui/deadbeef.glade.h:20
-#: ../plugins/converter/convgui.c:984 ../plugins/converter/convgui.c:1538
-#: ../plugins/converter/interface.c:606
-#: ../plugins/converter/converter.glade.h:43
+#: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/interface.c:1352
+#: ../plugins/gtkui/mainplaylist.c:290 ../plugins/gtkui/prefwin.c:346
+#: ../plugins/gtkui/search.c:424 ../plugins/gtkui/deadbeef.glade.h:20
+#: ../plugins/converter/convgui.c:984 ../plugins/converter/convgui.c:1539
+#: ../plugins/converter/interface.c:607
+#: ../plugins/converter/converter.glade.h:44
 #: ../plugins/shellexecui/shellexecui.c:324
 msgid "Title"
 msgstr "শিরোনাম"
@@ -327,15 +331,15 @@ msgstr "শিরোনাম"
 msgid "Track number"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:266 ../plugins/gtkui/interface.c:1348
-#: ../plugins/gtkui/interface.c:1759 ../plugins/gtkui/deadbeef.glade.h:22
+#: ../plugins/gtkui/interface.c:266 ../plugins/gtkui/interface.c:1351
+#: ../plugins/gtkui/interface.c:1814 ../plugins/gtkui/deadbeef.glade.h:22
 #: ../translation/extra.c:73
 msgid "Album"
 msgstr "অ্যালবাম"
 
 #. Track properties dialog
-#: ../plugins/gtkui/interface.c:270 ../plugins/gtkui/interface.c:1347
-#: ../plugins/gtkui/plcommon.c:1254 ../plugins/gtkui/deadbeef.glade.h:23
+#: ../plugins/gtkui/interface.c:270 ../plugins/gtkui/interface.c:1350
+#: ../plugins/gtkui/plcommon.c:1506 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:69
 msgid "Artist"
 msgstr "শিল্পী"
@@ -350,12 +354,12 @@ msgstr ""
 msgid "Random"
 msgstr "এলোমেলো"
 
-#: ../plugins/gtkui/interface.c:282 ../plugins/gtkui/interface.c:1353
-#: ../plugins/gtkui/plcommon.c:1258 ../plugins/gtkui/deadbeef.glade.h:26
+#: ../plugins/gtkui/interface.c:282 ../plugins/gtkui/interface.c:1356
+#: ../plugins/gtkui/plcommon.c:1510 ../plugins/gtkui/deadbeef.glade.h:26
 msgid "Custom"
 msgstr "স্বনির্ধারিত"
 
-#: ../plugins/gtkui/interface.c:291 ../plugins/gtkui/interface.c:1684
+#: ../plugins/gtkui/interface.c:291 ../plugins/gtkui/interface.c:1739
 #: ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Preferences"
 msgstr "পছন্দসমূহ"
@@ -380,7 +384,7 @@ msgstr ""
 msgid "_Playback"
 msgstr "প্লেব্যাক (_P)"
 
-#: ../plugins/gtkui/interface.c:321 ../plugins/gtkui/interface.c:3495
+#: ../plugins/gtkui/interface.c:321 ../plugins/gtkui/interface.c:3842
 #: ../plugins/gtkui/deadbeef.glade.h:33
 msgid "Order"
 msgstr "ক্রম"
@@ -495,12 +499,12 @@ msgid "Quit"
 msgstr "প্রস্থান করুন"
 
 #: ../plugins/gtkui/interface.c:967 ../plugins/gtkui/deadbeef.glade.h:61
-#: ../plugins/converter/convgui.c:1567 ../plugins/converter/convgui.c:1575
+#: ../plugins/converter/convgui.c:1568 ../plugins/converter/convgui.c:1576
 #: ../plugins/gtkui/actionhandlers.c:476
 msgid "Help"
 msgstr "সহায়তা"
 
-#: ../plugins/gtkui/interface.c:1040 ../plugins/gtkui/plcommon.c:819
+#: ../plugins/gtkui/interface.c:1040 ../plugins/gtkui/plcommon.c:918
 #: ../plugins/gtkui/deadbeef.glade.h:62
 msgid "Track Properties"
 msgstr "ট্র্যাক বৈশিষ্ট্যাবলী"
@@ -530,374 +534,438 @@ msgstr "মেটাডাটা"
 msgid "Properties"
 msgstr "বৈশিষ্ট্যাবলী"
 
-#: ../plugins/gtkui/interface.c:1319 ../plugins/gtkui/interface.c:3096
-#: ../plugins/gtkui/deadbeef.glade.h:71 ../plugins/converter/interface.c:379
-#: ../plugins/converter/converter.glade.h:22
+#: ../plugins/gtkui/interface.c:1322 ../plugins/gtkui/interface.c:3443
+#: ../plugins/gtkui/deadbeef.glade.h:71 ../plugins/converter/interface.c:380
+#: ../plugins/converter/converter.glade.h:23
 #: ../plugins/shellexecui/interface.c:163
-#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/pltmenu.c:65
+#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1539
+#: ../plugins/gtkui/pltmenu.c:65
 msgid "Title:"
 msgstr "শিরোনাম:"
 
-#: ../plugins/gtkui/interface.c:1327 ../plugins/gtkui/deadbeef.glade.h:72
+#: ../plugins/gtkui/interface.c:1330 ../plugins/gtkui/deadbeef.glade.h:72
 msgid "Enter new column title here"
 msgstr "নতুন কলাম শিরোনাম দিন"
 
-#: ../plugins/gtkui/interface.c:1335 ../plugins/gtkui/deadbeef.glade.h:73
+#: ../plugins/gtkui/interface.c:1338 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Type:"
 msgstr "টাইপ করুন:"
 
-#: ../plugins/gtkui/interface.c:1343
+#: ../plugins/gtkui/interface.c:1346
 msgid "Item Index"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1344
+#: ../plugins/gtkui/interface.c:1347
 msgid "Playing"
 msgstr "চলছে"
 
-#: ../plugins/gtkui/interface.c:1345
+#: ../plugins/gtkui/interface.c:1348
 msgid "Album Art"
 msgstr "অ্যালবাম শিল্প"
 
-#: ../plugins/gtkui/interface.c:1346
+#: ../plugins/gtkui/interface.c:1349
 msgid "Artist - Album"
 msgstr "শিল্পী - অ্যালবাম"
 
-#: ../plugins/gtkui/interface.c:1350 ../plugins/gtkui/mainplaylist.c:356
-#: ../plugins/gtkui/search.c:422
+#: ../plugins/gtkui/interface.c:1353 ../plugins/gtkui/mainplaylist.c:291
+#: ../plugins/gtkui/search.c:425 ../plugins/pltbrowser/pltbrowser.c:897
 msgid "Duration"
 msgstr "স্থিতিকাল"
 
-#: ../plugins/gtkui/interface.c:1351 ../translation/extra.c:75
+#: ../plugins/gtkui/interface.c:1354 ../translation/extra.c:75
 msgid "Track Number"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1352 ../translation/extra.c:72
+#: ../plugins/gtkui/interface.c:1355 ../translation/extra.c:72
 msgid "Band / Album Artist"
 msgstr "ব্যান্ড / অ্যালবাম শিল্পী"
 
-#: ../plugins/gtkui/interface.c:1359 ../plugins/gtkui/interface.c:3347
+#: ../plugins/gtkui/interface.c:1362 ../plugins/gtkui/interface.c:3694
 #: ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Format:"
 msgstr "বিন্যাস:"
 
-#: ../plugins/gtkui/interface.c:1384 ../plugins/gtkui/deadbeef.glade.h:86
+#: ../plugins/gtkui/interface.c:1387 ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Alignment:"
 msgstr "প্রান্তিককরণ:"
 
-#: ../plugins/gtkui/interface.c:1392
+#: ../plugins/gtkui/interface.c:1395
 msgid "Left"
 msgstr "বাম"
 
-#: ../plugins/gtkui/interface.c:1393
+#: ../plugins/gtkui/interface.c:1396
 msgid "Right"
 msgstr "ডান"
 
-#: ../plugins/gtkui/interface.c:1416 ../plugins/gtkui/interface.c:3127
-#: ../plugins/gtkui/interface.c:3258 ../plugins/gtkui/interface.c:3388
+#: ../plugins/gtkui/interface.c:1397
+msgid "Center"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1403 ../plugins/gtkui/interface.c:4594
+#: ../plugins/gtkui/deadbeef.glade.h:90
+msgid "Text color:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1432 ../plugins/gtkui/interface.c:3474
+#: ../plugins/gtkui/interface.c:3605 ../plugins/gtkui/interface.c:3735
 #: ../plugins/gtkui/deadbeef.glade.h:69
 msgid "_Cancel"
 msgstr "বাতিল (_C)"
 
-#: ../plugins/gtkui/interface.c:1437 ../plugins/gtkui/interface.c:3148
-#: ../plugins/gtkui/interface.c:3279 ../plugins/gtkui/interface.c:3409
+#: ../plugins/gtkui/interface.c:1453 ../plugins/gtkui/interface.c:3495
+#: ../plugins/gtkui/interface.c:3626 ../plugins/gtkui/interface.c:3756
 #: ../plugins/gtkui/deadbeef.glade.h:70
 msgid "_OK"
 msgstr "ঠিক আছে (_O)"
 
-#: ../plugins/gtkui/interface.c:1705 ../plugins/gtkui/deadbeef.glade.h:89
+#: ../plugins/gtkui/interface.c:1760 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Output plugin:"
 msgstr "অাউটপুট প্লাগইন:"
 
-#: ../plugins/gtkui/interface.c:1718 ../plugins/gtkui/deadbeef.glade.h:90
+#: ../plugins/gtkui/interface.c:1773 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Output device:"
 msgstr "অাউটপুট ডিভাইস:"
 
-#: ../plugins/gtkui/interface.c:1727 ../plugins/gtkui/deadbeef.glade.h:91
+#: ../plugins/gtkui/interface.c:1782 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Always convert 8 bit audio to 16 bit"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1731 ../plugins/gtkui/deadbeef.glade.h:92
+#: ../plugins/gtkui/interface.c:1786 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Always convert 16 bit audio to 24 bit"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1735 ../plugins/gtkui/deadbeef.glade.h:93
+#: ../plugins/gtkui/interface.c:1790 ../plugins/gtkui/deadbeef.glade.h:95
 msgid "Sound"
 msgstr "শব্দ"
 
-#: ../plugins/gtkui/interface.c:1748 ../plugins/gtkui/deadbeef.glade.h:94
+#: ../plugins/gtkui/interface.c:1803 ../plugins/gtkui/deadbeef.glade.h:96
 msgid "Replaygain mode:"
 msgstr "পুনরায় চালানোর মোড:"
 
-#: ../plugins/gtkui/interface.c:1757
+#: ../plugins/gtkui/interface.c:1812
 msgid "Disable"
 msgstr "নিষ্ক্রিয়"
 
-#: ../plugins/gtkui/interface.c:1758
+#: ../plugins/gtkui/interface.c:1813
 msgid "Track"
 msgstr "ট্র্যাক"
 
-#: ../plugins/gtkui/interface.c:1761 ../plugins/gtkui/deadbeef.glade.h:98
+#: ../plugins/gtkui/interface.c:1816 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Replaygain peak scale"
 msgstr "পুনরায় চালনার সর্বোচ্চ মান"
 
-#: ../plugins/gtkui/interface.c:1776 ../plugins/gtkui/interface.c:1810
-#: ../plugins/gtkui/deadbeef.glade.h:99
+#: ../plugins/gtkui/interface.c:1831 ../plugins/gtkui/interface.c:1865
+#: ../plugins/gtkui/deadbeef.glade.h:101
 msgid "-12 dB"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1786 ../plugins/gtkui/interface.c:1820
-#: ../plugins/gtkui/deadbeef.glade.h:100
+#: ../plugins/gtkui/interface.c:1841 ../plugins/gtkui/interface.c:1875
+#: ../plugins/gtkui/deadbeef.glade.h:102
 msgid "+12 dB"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1790 ../plugins/gtkui/deadbeef.glade.h:101
+#: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Replaygain preamp:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1797 ../plugins/gtkui/deadbeef.glade.h:102
+#: ../plugins/gtkui/interface.c:1852 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Global preamp:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1828 ../plugins/gtkui/deadbeef.glade.h:103
+#: ../plugins/gtkui/interface.c:1883 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Add files from command line (or file manager) to this playlist:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1837 ../plugins/gtkui/deadbeef.glade.h:104
+#: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Resume previous session on startup"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1841 ../plugins/gtkui/deadbeef.glade.h:105
+#: ../plugins/gtkui/interface.c:1896 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Don't add from archives when adding folders"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:106
+#: ../plugins/gtkui/interface.c:1900 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "\"Stop after current track\" option will switch off after triggering"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
+#: ../plugins/gtkui/interface.c:1904 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "\"Stop after current album\" option will switch off after triggering"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
+#: ../plugins/gtkui/interface.c:1908 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Playback"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/interface.c:2588
-#: ../plugins/gtkui/deadbeef.glade.h:109 ../plugins/converter/interface.c:633
-#: ../plugins/converter/converter.glade.h:47
+#: ../plugins/gtkui/interface.c:1929 ../plugins/gtkui/interface.c:2851
+#: ../plugins/gtkui/deadbeef.glade.h:111 ../plugins/converter/interface.c:634
+#: ../plugins/converter/converter.glade.h:48
 msgid "Configure"
 msgstr "কনফিগার"
 
-#: ../plugins/gtkui/interface.c:1909 ../plugins/gtkui/deadbeef.glade.h:110
+#: ../plugins/gtkui/interface.c:1964 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "DSP Chain Preset"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1921 ../plugins/gtkui/deadbeef.glade.h:111
+#: ../plugins/gtkui/interface.c:1976 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "_Load"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1925 ../plugins/gtkui/deadbeef.glade.h:112
+#: ../plugins/gtkui/interface.c:1980 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "DSP"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1939 ../plugins/gtkui/deadbeef.glade.h:113
+#: ../plugins/gtkui/interface.c:1994 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Close minimizes to tray"
 msgstr "ট্রে ছোট করতে বন্ধ করুন"
 
-#: ../plugins/gtkui/interface.c:1943 ../plugins/gtkui/deadbeef.glade.h:114
+#: ../plugins/gtkui/interface.c:1998 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Hide system tray icon"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1947 ../plugins/gtkui/deadbeef.glade.h:115
+#: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1951 ../plugins/gtkui/deadbeef.glade.h:116
+#: ../plugins/gtkui/interface.c:2006 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Enable Russian CP1251 detection and recoding"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1955 ../plugins/gtkui/deadbeef.glade.h:117
+#: ../plugins/gtkui/interface.c:2010 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Enable Chinese CP936 detection and recoding"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1963 ../plugins/gtkui/deadbeef.glade.h:118
+#: ../plugins/gtkui/interface.c:2018 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Interface refresh rate (times per second):"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1977 ../plugins/gtkui/deadbeef.glade.h:119
+#: ../plugins/gtkui/interface.c:2032 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Titlebar text while playing:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1991 ../plugins/gtkui/deadbeef.glade.h:120
+#: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Titlebar text while stopped:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2005 ../plugins/gtkui/deadbeef.glade.h:121
+#: ../plugins/gtkui/interface.c:2060 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "GUI Plugin (changing requires restart):"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2013 ../plugins/gtkui/deadbeef.glade.h:122
+#: ../plugins/gtkui/interface.c:2068 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Player"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2022 ../plugins/gtkui/deadbeef.glade.h:123
+#: ../plugins/gtkui/interface.c:2077 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Close playlists with middle mouse button"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2026 ../plugins/gtkui/deadbeef.glade.h:124
-msgid "Draw playing track using bold font"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:125
+#: ../plugins/gtkui/interface.c:2081 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Hide \"Remove From Disk\" context menu item"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:126
+#: ../plugins/gtkui/interface.c:2085 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Auto-name playlists when adding a single folder"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2038 ../plugins/gtkui/deadbeef.glade.h:127
+#: ../plugins/gtkui/interface.c:2089 ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Auto-resize columns to fit the window"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:129
+#: ../plugins/gtkui/interface.c:2097 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "GUI/Misc"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2061 ../plugins/gtkui/interface.c:2105
-#: ../plugins/gtkui/deadbeef.glade.h:130
+#: ../plugins/gtkui/interface.c:2112 ../plugins/gtkui/interface.c:2156
+#: ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Override"
 msgstr "উপেক্ষা করা"
 
-#: ../plugins/gtkui/interface.c:2070 ../plugins/gtkui/deadbeef.glade.h:131
+#: ../plugins/gtkui/interface.c:2121 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Foreground"
 msgstr "পুরোভূমি"
 
-#: ../plugins/gtkui/interface.c:2077 ../plugins/gtkui/deadbeef.glade.h:132
+#: ../plugins/gtkui/interface.c:2128 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Background"
 msgstr "পটভূমি"
 
-#: ../plugins/gtkui/interface.c:2096 ../plugins/gtkui/deadbeef.glade.h:133
-msgid "Seekbar/Volumebar colors"
+#: ../plugins/gtkui/interface.c:2147 ../plugins/gtkui/deadbeef.glade.h:134
+#, fuzzy
+msgid "Seekbar/Volumebar"
 msgstr "সিকবার/ভলিউমবার এর রঙ"
 
-#: ../plugins/gtkui/interface.c:2114 ../plugins/gtkui/deadbeef.glade.h:134
-msgid "Middle"
-msgstr "মধ্যবর্তী"
-
-#: ../plugins/gtkui/interface.c:2121 ../plugins/gtkui/deadbeef.glade.h:135
-msgid "Light"
-msgstr "হালকা"
-
-#: ../plugins/gtkui/interface.c:2128 ../plugins/gtkui/deadbeef.glade.h:136
-msgid "Dark"
-msgstr "গাঢ়"
-
-#: ../plugins/gtkui/interface.c:2159 ../plugins/gtkui/deadbeef.glade.h:137
-msgid "Base"
+#: ../plugins/gtkui/interface.c:2172 ../plugins/gtkui/deadbeef.glade.h:135
+#, fuzzy
+msgid "Base:"
 msgstr "ভিত্তি"
 
-#: ../plugins/gtkui/interface.c:2166 ../plugins/gtkui/interface.c:2223
-#: ../plugins/gtkui/deadbeef.glade.h:138
-msgid "Text"
+#: ../plugins/gtkui/interface.c:2185 ../plugins/gtkui/deadbeef.glade.h:136
+#, fuzzy
+msgid "Dark:"
+msgstr "গাঢ়"
+
+#: ../plugins/gtkui/interface.c:2198 ../plugins/gtkui/deadbeef.glade.h:137
+#, fuzzy
+msgid "Light:"
+msgstr "হালকা"
+
+#: ../plugins/gtkui/interface.c:2211 ../plugins/gtkui/deadbeef.glade.h:138
+#, fuzzy
+msgid "Middle:"
+msgstr "মধ্যবর্তী"
+
+#: ../plugins/gtkui/interface.c:2218 ../plugins/gtkui/deadbeef.glade.h:139
+#, fuzzy
+msgid "Text:"
 msgstr "টেক্সট"
 
-#: ../plugins/gtkui/interface.c:2179 ../plugins/gtkui/deadbeef.glade.h:139
-msgid "Tab strip colors"
-msgstr "ট্যাবের অংশের রং"
-
-#: ../plugins/gtkui/interface.c:2188 ../plugins/gtkui/deadbeef.glade.h:140
-msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr "উপেক্ষা (GTK ট্রিভিউ থিমিং হারায়, কিন্তু পরিণত করার গতি বাড়ায়)"
-
-#: ../plugins/gtkui/interface.c:2197 ../plugins/gtkui/deadbeef.glade.h:141
-msgid "Even row"
-msgstr "জোড় সংখ্যক সারি"
-
-#: ../plugins/gtkui/interface.c:2204 ../plugins/gtkui/deadbeef.glade.h:142
-msgid "Odd row"
-msgstr "বিজোড় সংখ্যক সারি"
-
-#: ../plugins/gtkui/interface.c:2230 ../plugins/gtkui/deadbeef.glade.h:143
-msgid "Selected row"
-msgstr "নির্বাচিত সারি"
-
-#: ../plugins/gtkui/interface.c:2249 ../plugins/gtkui/deadbeef.glade.h:144
-msgid "Selected text"
-msgstr "নির্বাচিত টেক্সট"
-
-#: ../plugins/gtkui/interface.c:2262 ../plugins/gtkui/deadbeef.glade.h:145
-msgid "Cursor"
-msgstr "কারসার"
-
-#: ../plugins/gtkui/interface.c:2275 ../plugins/gtkui/deadbeef.glade.h:146
-msgid "Playlist colors"
-msgstr "প্লেলিস্টের রং"
-
-#: ../plugins/gtkui/interface.c:2279 ../plugins/gtkui/deadbeef.glade.h:147
-msgid "Colors"
+#: ../plugins/gtkui/interface.c:2243 ../plugins/gtkui/interface.c:2257
+#: ../plugins/gtkui/interface.c:2514 ../plugins/gtkui/interface.c:2520
+#: ../plugins/gtkui/deadbeef.glade.h:140
+msgid "Bold"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2288 ../plugins/gtkui/deadbeef.glade.h:148
+#: ../plugins/gtkui/interface.c:2247 ../plugins/gtkui/interface.c:2261
+#: ../plugins/gtkui/interface.c:2526 ../plugins/gtkui/interface.c:2532
+#: ../plugins/gtkui/deadbeef.glade.h:141
+msgid "Italic"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2271 ../plugins/gtkui/deadbeef.glade.h:142
+#, fuzzy
+msgid "Playing text:"
+msgstr "চলছে"
+
+#: ../plugins/gtkui/interface.c:2278 ../plugins/gtkui/deadbeef.glade.h:143
+#, fuzzy
+msgid "Selected text:"
+msgstr "নির্বাচিত টেক্সট"
+
+#: ../plugins/gtkui/interface.c:2291 ../plugins/gtkui/deadbeef.glade.h:144
+#, fuzzy
+msgid "Tab strip"
+msgstr "ট্যাবের অংশের রং"
+
+#: ../plugins/gtkui/interface.c:2325 ../plugins/gtkui/deadbeef.glade.h:145
+msgid "Normal track(s):"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2338 ../plugins/gtkui/interface.c:2500
+#: ../plugins/gtkui/deadbeef.glade.h:146
+#, fuzzy
+msgid "Playing track:"
+msgstr "চলছে"
+
+#: ../plugins/gtkui/interface.c:2351 ../plugins/gtkui/interface.c:2507
+#: ../plugins/gtkui/deadbeef.glade.h:147
+#, fuzzy
+msgid "Selected track(s):"
+msgstr "নির্বাচিত সারি"
+
+#: ../plugins/gtkui/interface.c:2364 ../plugins/gtkui/deadbeef.glade.h:148
+msgid "Columns:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2383 ../plugins/gtkui/deadbeef.glade.h:149
+msgid "Group header:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2408 ../plugins/gtkui/deadbeef.glade.h:150
+#, fuzzy
+msgid "<b>Foreground:</b>"
+msgstr "পুরোভূমি"
+
+#: ../plugins/gtkui/interface.c:2433 ../plugins/gtkui/deadbeef.glade.h:151
+#, fuzzy
+msgid "Even:"
+msgstr "জোড় সংখ্যক সারি"
+
+#: ../plugins/gtkui/interface.c:2440 ../plugins/gtkui/deadbeef.glade.h:152
+msgid "Odd:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2453 ../plugins/gtkui/deadbeef.glade.h:153
+#, fuzzy
+msgid "Selected:"
+msgstr "নির্বাচিত সারি"
+
+#: ../plugins/gtkui/interface.c:2466 ../plugins/gtkui/deadbeef.glade.h:154
+#, fuzzy
+msgid "Cursor:"
+msgstr "কারসার"
+
+#: ../plugins/gtkui/interface.c:2485 ../plugins/gtkui/deadbeef.glade.h:155
+#, fuzzy
+msgid "<b>Background:</b>"
+msgstr "পটভূমি"
+
+#: ../plugins/gtkui/interface.c:2490 ../plugins/gtkui/deadbeef.glade.h:156
+#, fuzzy
+msgid "Override (loses GTK treeview theming, but speeds up rendering)"
+msgstr "উপেক্ষা (GTK ট্রিভিউ থিমিং হারায়, কিন্তু পরিণত করার গতি বাড়ায়)"
+
+#: ../plugins/gtkui/interface.c:2542 ../plugins/gtkui/deadbeef.glade.h:157
+msgid "Appearance"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2551 ../plugins/gtkui/deadbeef.glade.h:158
 msgid "Enable Proxy Server"
 msgstr "প্রক্সি সার্ভার সক্রিয় করুন"
 
-#: ../plugins/gtkui/interface.c:2296 ../plugins/gtkui/deadbeef.glade.h:149
+#: ../plugins/gtkui/interface.c:2559 ../plugins/gtkui/deadbeef.glade.h:159
 msgid "Proxy Server Address:"
 msgstr "প্রক্সি সার্ভারের ঠিকানা:"
 
-#: ../plugins/gtkui/interface.c:2310 ../plugins/gtkui/deadbeef.glade.h:150
+#: ../plugins/gtkui/interface.c:2573 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "Proxy Server Port:"
 msgstr "প্রক্সি সার্ভারের পোর্ট:"
 
-#: ../plugins/gtkui/interface.c:2324 ../plugins/gtkui/deadbeef.glade.h:151
+#: ../plugins/gtkui/interface.c:2587 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Proxy Type:"
 msgstr "প্রক্সির ধরণ:"
 
-#: ../plugins/gtkui/interface.c:2343 ../plugins/gtkui/deadbeef.glade.h:152
+#: ../plugins/gtkui/interface.c:2606 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "Proxy Username:"
 msgstr "প্রক্সি ব্যবহারকাীর নাম:"
 
-#: ../plugins/gtkui/interface.c:2356 ../plugins/gtkui/deadbeef.glade.h:153
+#: ../plugins/gtkui/interface.c:2619 ../plugins/gtkui/deadbeef.glade.h:163
 msgid "Proxy Password:"
 msgstr "প্রক্সি পাসওয়ার্ড:"
 
-#: ../plugins/gtkui/interface.c:2374 ../plugins/gtkui/deadbeef.glade.h:154
+#: ../plugins/gtkui/interface.c:2637 ../plugins/gtkui/deadbeef.glade.h:164
 msgid "HTTP User Agent:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2387 ../plugins/gtkui/interface.c:4123
-#: ../plugins/gtkui/deadbeef.glade.h:155
+#: ../plugins/gtkui/interface.c:2650 ../plugins/gtkui/interface.c:4470
+#: ../plugins/gtkui/deadbeef.glade.h:165
 msgid "Edit Content-Type Mapping"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2391 ../plugins/gtkui/deadbeef.glade.h:156
+#: ../plugins/gtkui/interface.c:2654 ../plugins/gtkui/deadbeef.glade.h:166
 msgid "Network"
 msgstr "নেটওয়ার্ক"
 
-#: ../plugins/gtkui/interface.c:2404 ../plugins/gtkui/deadbeef.glade.h:157
+#: ../plugins/gtkui/interface.c:2667 ../plugins/gtkui/deadbeef.glade.h:167
 msgid "Assigned Hotkeys:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2439 ../plugins/gtkui/interface.c:4284
-#: ../plugins/gtkui/deadbeef.glade.h:158
+#: ../plugins/gtkui/interface.c:2702 ../plugins/gtkui/interface.c:4631
+#: ../plugins/gtkui/deadbeef.glade.h:168
 msgid "Action:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2444 ../plugins/gtkui/interface.c:2457
-#: ../plugins/gtkui/interface.c:4288 ../plugins/gtkui/deadbeef.glade.h:159
+#: ../plugins/gtkui/interface.c:2707 ../plugins/gtkui/interface.c:2720
+#: ../plugins/gtkui/interface.c:4635 ../plugins/gtkui/deadbeef.glade.h:169
 msgid "<Not set>"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2452 ../plugins/gtkui/deadbeef.glade.h:160
+#: ../plugins/gtkui/interface.c:2715 ../plugins/gtkui/deadbeef.glade.h:170
 msgid "Key combination:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2461 ../plugins/gtkui/deadbeef.glade.h:161
+#: ../plugins/gtkui/interface.c:2724 ../plugins/gtkui/deadbeef.glade.h:171
 msgid "Global hotkey"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:162
+#: ../plugins/gtkui/interface.c:2736 ../plugins/gtkui/deadbeef.glade.h:172
 msgid ""
 "Use the Apply button to save your changes,\n"
 "or the Revert button to undo your changes.\n"
@@ -905,128 +973,128 @@ msgid ""
 "if you don't press Apply."
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2510 ../plugins/gtkui/deadbeef.glade.h:166
+#: ../plugins/gtkui/interface.c:2773 ../plugins/gtkui/deadbeef.glade.h:176
 msgid "_Defaults"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2514 ../plugins/gtkui/deadbeef.glade.h:167
+#: ../plugins/gtkui/interface.c:2777 ../plugins/gtkui/deadbeef.glade.h:177
 msgid "Hotkeys"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2545 ../plugins/gtkui/deadbeef.glade.h:168
+#: ../plugins/gtkui/interface.c:2808 ../plugins/gtkui/deadbeef.glade.h:178
 msgid "Version: "
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2609 ../plugins/gtkui/deadbeef.glade.h:169
+#: ../plugins/gtkui/interface.c:2872 ../plugins/gtkui/deadbeef.glade.h:179
 #: ../translation/extra.c:82
 msgid "Copyright"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2619 ../plugins/gtkui/deadbeef.glade.h:170
+#: ../plugins/gtkui/interface.c:2882 ../plugins/gtkui/deadbeef.glade.h:180
 #: ../plugins/gtkui/ctmapping.c:131
 msgid "Plugins"
 msgstr "প্লাগইন"
 
-#: ../plugins/gtkui/interface.c:3214 ../plugins/gtkui/deadbeef.glade.h:171
+#: ../plugins/gtkui/interface.c:3561 ../plugins/gtkui/deadbeef.glade.h:181
 msgid "URL:"
 msgstr "URL:"
 
-#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4414
-#: ../plugins/gtkui/interface.c:4442 ../plugins/gtkui/plcommon.c:806
-#: ../plugins/gtkui/deadbeef.glade.h:172
+#: ../plugins/gtkui/interface.c:3575 ../plugins/gtkui/interface.c:4761
+#: ../plugins/gtkui/interface.c:4789 ../plugins/gtkui/plcommon.c:905
+#: ../plugins/gtkui/deadbeef.glade.h:182
 msgid "Set Custom Title"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3332 ../plugins/gtkui/deadbeef.glade.h:173
+#: ../plugins/gtkui/interface.c:3679 ../plugins/gtkui/deadbeef.glade.h:183
 msgid "Group By ..."
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3456 ../plugins/gtkui/deadbeef.glade.h:174
+#: ../plugins/gtkui/interface.c:3803 ../plugins/gtkui/deadbeef.glade.h:184
 msgid "Sort by ..."
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3472 ../plugins/gtkui/deadbeef.glade.h:175
+#: ../plugins/gtkui/interface.c:3819 ../plugins/gtkui/deadbeef.glade.h:185
 msgid "Format"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3502
+#: ../plugins/gtkui/interface.c:3849
 msgid "Ascending"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3503
+#: ../plugins/gtkui/interface.c:3850
 msgid "Descending"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3556 ../plugins/gtkui/deadbeef.glade.h:178
-#: ../plugins/converter/interface.c:734
-#: ../plugins/converter/converter.glade.h:48
+#: ../plugins/gtkui/interface.c:3903 ../plugins/gtkui/deadbeef.glade.h:188
+#: ../plugins/converter/interface.c:735
+#: ../plugins/converter/converter.glade.h:49
 msgid "Select DSP Plugin"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3572 ../plugins/gtkui/deadbeef.glade.h:179
-#: ../plugins/converter/convgui.c:1287 ../plugins/converter/interface.c:750
-#: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:49
+#: ../plugins/gtkui/interface.c:3919 ../plugins/gtkui/deadbeef.glade.h:189
+#: ../plugins/converter/convgui.c:1288 ../plugins/converter/interface.c:751
+#: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:50
 msgid "Plugin"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3657 ../plugins/gtkui/deadbeef.glade.h:180
+#: ../plugins/gtkui/interface.c:4004 ../plugins/gtkui/deadbeef.glade.h:190
 msgid "Tag Writer Settings"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3688 ../plugins/gtkui/deadbeef.glade.h:181
+#: ../plugins/gtkui/interface.c:4035 ../plugins/gtkui/deadbeef.glade.h:191
 msgid "Write ID3v2"
 msgstr "ID3v2 লিখুন"
 
-#: ../plugins/gtkui/interface.c:3692 ../plugins/gtkui/interface.c:3819
-#: ../plugins/gtkui/deadbeef.glade.h:182
+#: ../plugins/gtkui/interface.c:4039 ../plugins/gtkui/interface.c:4166
+#: ../plugins/gtkui/deadbeef.glade.h:192
 msgid "Write ID3v1"
 msgstr "ID3v1 লিখুন"
 
-#: ../plugins/gtkui/interface.c:3696 ../plugins/gtkui/interface.c:3775
-#: ../plugins/gtkui/interface.c:3815 ../plugins/gtkui/deadbeef.glade.h:183
+#: ../plugins/gtkui/interface.c:4043 ../plugins/gtkui/interface.c:4122
+#: ../plugins/gtkui/interface.c:4162 ../plugins/gtkui/deadbeef.glade.h:193
 msgid "Write APEv2"
 msgstr "APEv2 লিখুন"
 
-#: ../plugins/gtkui/interface.c:3704 ../plugins/gtkui/interface.c:3783
-#: ../plugins/gtkui/deadbeef.glade.h:184
+#: ../plugins/gtkui/interface.c:4051 ../plugins/gtkui/interface.c:4130
+#: ../plugins/gtkui/deadbeef.glade.h:194
 msgid "Strip ID3v2"
 msgstr "ID3v2 অংশ"
 
-#: ../plugins/gtkui/interface.c:3708 ../plugins/gtkui/interface.c:3831
-#: ../plugins/gtkui/deadbeef.glade.h:185
+#: ../plugins/gtkui/interface.c:4055 ../plugins/gtkui/interface.c:4178
+#: ../plugins/gtkui/deadbeef.glade.h:195
 msgid "Strip ID3v1"
 msgstr "ID3v1 অংশ"
 
-#: ../plugins/gtkui/interface.c:3712 ../plugins/gtkui/interface.c:3787
-#: ../plugins/gtkui/interface.c:3827 ../plugins/gtkui/deadbeef.glade.h:186
+#: ../plugins/gtkui/interface.c:4059 ../plugins/gtkui/interface.c:4134
+#: ../plugins/gtkui/interface.c:4174 ../plugins/gtkui/deadbeef.glade.h:196
 msgid "Strip APEv2"
 msgstr "APEv2 অংশ"
 
-#: ../plugins/gtkui/interface.c:3720 ../plugins/gtkui/deadbeef.glade.h:187
+#: ../plugins/gtkui/interface.c:4067 ../plugins/gtkui/deadbeef.glade.h:197
 msgid "ID3v2 version"
 msgstr "ID3v2 সংস্করণ"
 
-#: ../plugins/gtkui/interface.c:3727
+#: ../plugins/gtkui/interface.c:4074
 msgid "2.3 (Recommended)"
 msgstr "২.৩ (সুপারিশকৃত)"
 
-#: ../plugins/gtkui/interface.c:3728
+#: ../plugins/gtkui/interface.c:4075
 msgid "2.4"
 msgstr "২.৪"
 
-#: ../plugins/gtkui/interface.c:3734 ../plugins/gtkui/deadbeef.glade.h:190
+#: ../plugins/gtkui/interface.c:4081 ../plugins/gtkui/deadbeef.glade.h:200
 msgid "ID3v1 character encoding (default is iso8859-1)"
 msgstr "ID3v1 অক্ষর এনকোড করছে (iso8859-1 পূর্বনির্ধারিত)"
 
-#: ../plugins/gtkui/interface.c:3771 ../plugins/gtkui/deadbeef.glade.h:191
+#: ../plugins/gtkui/interface.c:4118 ../plugins/gtkui/deadbeef.glade.h:201
 msgid "Write ID3v2.4"
 msgstr "ID3v2.4 লিখুন"
 
-#: ../plugins/gtkui/interface.c:3973 ../plugins/gtkui/deadbeef.glade.h:192
+#: ../plugins/gtkui/interface.c:4320 ../plugins/gtkui/deadbeef.glade.h:202
 msgid "Content-Type Mapping"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3996 ../plugins/gtkui/deadbeef.glade.h:193
+#: ../plugins/gtkui/interface.c:4343 ../plugins/gtkui/deadbeef.glade.h:203
 msgid ""
 "This table defines the binding between network stream content types and "
 "DeaDBeeF decoder plugins. For example, mp3 files can have content type "
@@ -1034,100 +1102,96 @@ msgid ""
 "plugin, or \"ffmpeg\" plugin."
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4044 ../plugins/gtkui/deadbeef.glade.h:194
+#: ../plugins/gtkui/interface.c:4391 ../plugins/gtkui/deadbeef.glade.h:204
 msgid "Reset to defaults"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4139 ../plugins/gtkui/deadbeef.glade.h:195
+#: ../plugins/gtkui/interface.c:4486 ../plugins/gtkui/deadbeef.glade.h:205
 msgid "Content-Type:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4152 ../plugins/gtkui/deadbeef.glade.h:196
+#: ../plugins/gtkui/interface.c:4499 ../plugins/gtkui/deadbeef.glade.h:206
 msgid "Plugins:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4220 ../plugins/gtkui/deadbeef.glade.h:197
+#: ../plugins/gtkui/interface.c:4567 ../plugins/gtkui/deadbeef.glade.h:207
 msgid "Button properties"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4235 ../plugins/gtkui/deadbeef.glade.h:198
+#: ../plugins/gtkui/interface.c:4582 ../plugins/gtkui/deadbeef.glade.h:208
 msgid "Color:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4247 ../plugins/gtkui/deadbeef.glade.h:199
-msgid "Text color:"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:4259 ../plugins/gtkui/deadbeef.glade.h:200
+#: ../plugins/gtkui/interface.c:4606 ../plugins/gtkui/deadbeef.glade.h:209
 msgid "Icon:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4271 ../plugins/gtkui/deadbeef.glade.h:201
+#: ../plugins/gtkui/interface.c:4618 ../plugins/gtkui/deadbeef.glade.h:210
 msgid "Label:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4352 ../plugins/gtkui/deadbeef.glade.h:202
+#: ../plugins/gtkui/interface.c:4699 ../plugins/gtkui/deadbeef.glade.h:211
 msgid "Select action"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:203
+#: ../plugins/gtkui/interface.c:4783 ../plugins/gtkui/deadbeef.glade.h:212
 msgid ""
-"This dialog allows to set custom title for any track. This is most useful "
+"This dialog allows setting custom title for any track. This is most useful "
 "for radio stations. An option to set the custom title is also present in the "
 "\"Add Location\" dialog. The title itself is visible in columns displaying "
 "the \"Artist\" metadata field. It should look like \"[custom] artist\" if "
 "the Artist field is present, or just \"custom\" otherwise."
 msgstr ""
 
-#: ../plugins/gtkui/mainplaylist.c:353 ../plugins/gtkui/search.c:419
+#: ../plugins/gtkui/mainplaylist.c:288 ../plugins/gtkui/search.c:422
 msgid "Artist / Album"
 msgstr "শিল্পী / অ্যালবাম"
 
-#: ../plugins/gtkui/mainplaylist.c:354 ../plugins/gtkui/search.c:420
+#: ../plugins/gtkui/mainplaylist.c:289 ../plugins/gtkui/search.c:423
 msgid "Track No"
 msgstr "ট্র্যাক নং"
 
-#: ../plugins/gtkui/plcommon.c:637
+#: ../plugins/gtkui/plcommon.c:736
 msgid "Add To Playback Queue"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:642
+#: ../plugins/gtkui/plcommon.c:741
 msgid "Remove From Playback Queue"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:650
+#: ../plugins/gtkui/plcommon.c:749
 msgid "Reload Metadata"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:668
+#: ../plugins/gtkui/plcommon.c:767
 msgid "Remove From Disk"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1089 ../plugins/gtkui/plcommon.c:1216
+#: ../plugins/gtkui/plcommon.c:1325 ../plugins/gtkui/plcommon.c:1468
 msgid "Add column"
 msgstr "কলাম যোগ করুন"
 
-#: ../plugins/gtkui/plcommon.c:1119 ../plugins/gtkui/plcommon.c:1220
+#: ../plugins/gtkui/plcommon.c:1362 ../plugins/gtkui/plcommon.c:1472
 msgid "Edit column"
 msgstr "কলাম সম্পাদনা করুন"
 
-#: ../plugins/gtkui/plcommon.c:1224
+#: ../plugins/gtkui/plcommon.c:1476
 msgid "Remove column"
 msgstr "কলাম অপসারণ করুন"
 
-#: ../plugins/gtkui/plcommon.c:1234
+#: ../plugins/gtkui/plcommon.c:1486
 msgid "Pin groups when scrolling"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1239
+#: ../plugins/gtkui/plcommon.c:1491
 msgid "Group by"
 msgstr "যা অনুসারে গ্রুপ হবে"
 
-#: ../plugins/gtkui/plcommon.c:1246 ../plugins/gtkui/widgets.c:3524
+#: ../plugins/gtkui/plcommon.c:1498 ../plugins/gtkui/widgets.c:3830
 msgid "None"
 msgstr "কোনটি না"
 
-#: ../plugins/gtkui/plcommon.c:1250
+#: ../plugins/gtkui/plcommon.c:1502
 msgid "Artist/Date/Album"
 msgstr "শিল্পী/তারিখ/অ্যালবাম"
 
@@ -1135,7 +1199,7 @@ msgstr "শিল্পী/তারিখ/অ্যালবাম"
 msgid "Open file..."
 msgstr "ফাইল খুলুন..."
 
-#: ../plugins/gtkui/pluginconf.c:220
+#: ../plugins/gtkui/pluginconf.c:233
 #, c-format
 msgid "Configure %s"
 msgstr ""
@@ -1144,11 +1208,11 @@ msgstr ""
 msgid "Default Audio Device"
 msgstr "পূর্বনির্ধারিত অডিও ডিভাইস"
 
-#: ../plugins/gtkui/prefwin.c:348
+#: ../plugins/gtkui/prefwin.c:367
 msgid "You modified the hotkeys settings, but didn't save your changes."
 msgstr ""
 
-#: ../plugins/gtkui/prefwin.c:350
+#: ../plugins/gtkui/prefwin.c:369
 msgid "Are you sure you want to continue without saving?"
 msgstr ""
 
@@ -1173,135 +1237,135 @@ msgstr "সত্যিই উইন্ডোটি বন্ধ করতে �
 msgid "[Multiple values] "
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:490 ../plugins/gtkui/trkproperties.c:502
-#: ../plugins/gtkui/widgets.c:2200
+#: ../plugins/gtkui/trkproperties.c:495 ../plugins/gtkui/trkproperties.c:507
+#: ../plugins/gtkui/widgets.c:2515
 msgid "Key"
 msgstr "কী"
 
-#: ../plugins/gtkui/trkproperties.c:491 ../plugins/gtkui/trkproperties.c:503
-#: ../plugins/gtkui/widgets.c:2202
+#: ../plugins/gtkui/trkproperties.c:496 ../plugins/gtkui/trkproperties.c:508
+#: ../plugins/gtkui/widgets.c:2517
 msgid "Value"
 msgstr "মান"
 
-#: ../plugins/gtkui/trkproperties.c:522
+#: ../plugins/gtkui/trkproperties.c:527
 msgid "[Multiple values]"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:701
+#: ../plugins/gtkui/trkproperties.c:706
 msgid "Writing tags..."
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:730
+#: ../plugins/gtkui/trkproperties.c:735
 msgid "Field name"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:733
+#: ../plugins/gtkui/trkproperties.c:738
 msgid "Name:"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:745
+#: ../plugins/gtkui/trkproperties.c:750
 msgid "Field names must not start with : or _"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:746 ../plugins/gtkui/trkproperties.c:785
+#: ../plugins/gtkui/trkproperties.c:751 ../plugins/gtkui/trkproperties.c:790
 msgid "Cannot add field"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:784
+#: ../plugins/gtkui/trkproperties.c:789
 msgid "Field with such name already exists, please try different name."
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:847
+#: ../plugins/gtkui/trkproperties.c:852
 msgid "Add field"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:850
+#: ../plugins/gtkui/trkproperties.c:855
 msgid "Remove field"
 msgstr ""
 
-#: ../main.c:90
+#: ../main.c:103
 #, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
 msgstr ""
 
-#: ../main.c:91
+#: ../main.c:104
 #, c-format
 msgid "Options:\n"
 msgstr "অপশন:\n"
 
-#: ../main.c:92
+#: ../main.c:105
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
 msgstr "   --সহায়তা  অথবা -h     সহায়তা মুদ্রণ করুন (এই বার্তা) এবং প্রস্থান করুন\n"
 
-#: ../main.c:93
+#: ../main.c:106
 #, c-format
 msgid "   --quit             Quit player\n"
 msgstr "   --বন্ধ করুন             প্লেয়ার বন্ধ করুন\n"
 
-#: ../main.c:94
+#: ../main.c:107
 #, c-format
 msgid "   --version          Print version info and exit\n"
 msgstr "   --সংস্করণ          সংস্করণের তথ্য মুদ্রণ করে বন্ধ করুন\n"
 
-#: ../main.c:95
+#: ../main.c:108
 #, c-format
 msgid "   --play             Start playback\n"
 msgstr "   --চালান             প্লেব্যাক শুরু করুন\n"
 
-#: ../main.c:96
+#: ../main.c:109
 #, c-format
 msgid "   --stop             Stop playback\n"
 msgstr "   --বন্ধ করুন             প্লেব্যাক বন্ধ করুন\n"
 
-#: ../main.c:97
+#: ../main.c:110
 #, c-format
 msgid "   --pause            Pause playback\n"
 msgstr "   --বিরতি            প্লেব্যাক বিরত রাখুন\n"
 
-#: ../main.c:98
+#: ../main.c:111
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
 msgstr ""
 
-#: ../main.c:99
+#: ../main.c:112
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
 msgstr ""
 
-#: ../main.c:100
+#: ../main.c:113
 #, c-format
 msgid "   --next             Next song in playlist\n"
 msgstr "   --পরবর্তী             প্লেলিস্টে পরবর্তী গান\n"
 
-#: ../main.c:101
+#: ../main.c:114
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
 msgstr "   --পূর্ববর্তী             প্লেলিস্টে পূর্ববর্তী গান\n"
 
-#: ../main.c:102
+#: ../main.c:115
 #, c-format
 msgid "   --random           Random song in playlist\n"
 msgstr "   --এলোমেলো           প্লেলিস্টে এলোমেলো গান\n"
 
-#: ../main.c:103
+#: ../main.c:116
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
 msgstr "   --সারি            বিদ্যমান প্লেলিস্টে সবশেষে যোগ করা ফাইল\n"
 
-#: ../main.c:104
+#: ../main.c:117
 #, c-format
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
 msgstr ""
 
-#: ../main.c:105
+#: ../main.c:118
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
 msgstr "   --FMT এখন চলছে   স্ট্যান্ডআউটে বিন্যাসিত ট্র্যাক নাম মুদ্রণ করুন\n"
 
-#: ../main.c:106
+#: ../main.c:119
 #, c-format
 msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
@@ -1312,7 +1376,7 @@ msgstr ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 
-#: ../main.c:109
+#: ../main.c:122
 #, c-format
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
@@ -1321,20 +1385,20 @@ msgstr ""
 "                      e.g.: --এখন চলছে \"%%a - %%t\" মুদ্রণ হবে \"শিল্পী - "
 "শিরোনাম\"\n"
 
-#: ../main.c:110
+#: ../main.c:123
 #, c-format
 msgid "                      for more info, see %s\n"
 msgstr ""
 
-#: ../playlist.c:481 ../playlist.c:2557
+#: ../playlist.c:484 ../playlist.c:2599
 msgid "Default"
 msgstr "পূর্বনির্ধারিত"
 
-#: ../playlist.c:3981
+#: ../playlist.c:3715
 msgid "Yes"
 msgstr "হ্যাঁ"
 
-#: ../playlist.c:3981
+#: ../playlist.c:3715
 msgid "No"
 msgstr "না"
 
@@ -1354,14 +1418,16 @@ msgid ""
 msgstr ""
 
 #: ../plugins/gtkui/deadbeef.glade.h:87
+#, fuzzy
 msgid ""
 "Left\n"
-"Right"
+"Right\n"
+"Center"
 msgstr ""
 "বাম\n"
 "ডান"
 
-#: ../plugins/gtkui/deadbeef.glade.h:95
+#: ../plugins/gtkui/deadbeef.glade.h:97
 msgid ""
 "Disable\n"
 "Track\n"
@@ -1371,13 +1437,13 @@ msgstr ""
 "ট্র্যাক\n"
 "অ্যালবাম"
 
-#: ../plugins/gtkui/deadbeef.glade.h:176
+#: ../plugins/gtkui/deadbeef.glade.h:186
 msgid ""
 "Ascending\n"
 "Descending"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:188
+#: ../plugins/gtkui/deadbeef.glade.h:198
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
@@ -1385,7 +1451,7 @@ msgstr ""
 "২.৩ (সুপারিশকৃত)‌‌\n"
 "২.৪"
 
-#: ../plugins/wildmidi/wildmidiplug.c:174
+#: ../plugins/wildmidi/wildmidiplug.c:191
 #, c-format
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
@@ -1705,68 +1771,68 @@ msgstr ""
 msgid "Enable surround"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:84
+#: ../plugins/converter/convgui.c:87
 #, c-format
 msgid "[Built-in] %s"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:130
+#: ../plugins/converter/convgui.c:133
 msgid "The file already exists. Overwrite?"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:132
+#: ../plugins/converter/convgui.c:135
 msgid "Converter warning"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:300
+#: ../plugins/converter/convgui.c:295
 msgid "Please select encoder"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:302
+#: ../plugins/converter/convgui.c:297
 msgid "Converter error"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:326
+#: ../plugins/converter/convgui.c:321
 msgid "Converting..."
 msgstr ""
 
-#: ../plugins/converter/convgui.c:536
+#: ../plugins/converter/convgui.c:531
 msgid "Select folder..."
 msgstr ""
 
-#: ../plugins/converter/convgui.c:769
+#: ../plugins/converter/convgui.c:764
 msgid "Failed to save encoder preset"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1324
+#: ../plugins/converter/convgui.c:766 ../plugins/converter/convgui.c:1325
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1324
+#: ../plugins/converter/convgui.c:766 ../plugins/converter/convgui.c:1325
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr ""
 
-#: ../plugins/converter/convgui.c:772 ../plugins/converter/convgui.c:1325
+#: ../plugins/converter/convgui.c:767 ../plugins/converter/convgui.c:1326
 #: ../plugins/gtkui/ctmapping.c:202 ../plugins/gtkui/ctmapping.c:230
 #: ../plugins/gtkui/ctmapping.c:262
 msgid "Error"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:826 ../plugins/converter/convgui.c:960
+#: ../plugins/converter/convgui.c:821 ../plugins/converter/convgui.c:959
 msgid "Add new encoder"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:856
+#: ../plugins/converter/convgui.c:851
 msgid "Edit encoder"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:888 ../plugins/converter/convgui.c:1459
+#: ../plugins/converter/convgui.c:883 ../plugins/converter/convgui.c:1460
 msgid "Remove preset"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:890 ../plugins/converter/convgui.c:1461
+#: ../plugins/converter/convgui.c:885 ../plugins/converter/convgui.c:1462
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr ""
 
@@ -1774,23 +1840,23 @@ msgstr ""
 msgid "Encoders"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:1048 ../plugins/gtkui/dspconfig.c:186
+#: ../plugins/converter/convgui.c:1049 ../plugins/gtkui/dspconfig.c:186
 msgid "Add plugin to DSP chain"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:1323
+#: ../plugins/converter/convgui.c:1324
 msgid "Failed to save DSP preset"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:1387 ../plugins/converter/convgui.c:1425
+#: ../plugins/converter/convgui.c:1388 ../plugins/converter/convgui.c:1426
 msgid "New DSP Preset"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:1509
+#: ../plugins/converter/convgui.c:1510
 msgid "Edit DSP Preset"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:1529
+#: ../plugins/converter/convgui.c:1530
 msgid "DSP Presets"
 msgstr ""
 
@@ -1872,109 +1938,113 @@ msgid "When file exists:"
 msgstr ""
 
 #: ../plugins/converter/interface.c:231
-msgid "Prompt"
+msgid "Skip"
 msgstr ""
 
 #: ../plugins/converter/interface.c:232
+msgid "Prompt"
+msgstr ""
+
+#: ../plugins/converter/interface.c:233
 msgid "Overwrite"
 msgstr ""
 
-#: ../plugins/converter/interface.c:363
-#: ../plugins/converter/converter.glade.h:21
+#: ../plugins/converter/interface.c:364
+#: ../plugins/converter/converter.glade.h:22
 msgid "Edit Encoder Preset"
 msgstr ""
 
-#: ../plugins/converter/interface.c:386
-#: ../plugins/converter/converter.glade.h:23
+#: ../plugins/converter/interface.c:387
+#: ../plugins/converter/converter.glade.h:24
 msgid "Untitled Encoder"
 msgstr ""
 
-#: ../plugins/converter/interface.c:394
-#: ../plugins/converter/converter.glade.h:24
+#: ../plugins/converter/interface.c:395
+#: ../plugins/converter/converter.glade.h:25
 msgid "Output file extension:"
 msgstr ""
 
-#: ../plugins/converter/interface.c:401
-#: ../plugins/converter/converter.glade.h:25
+#: ../plugins/converter/interface.c:402
+#: ../plugins/converter/converter.glade.h:26
 msgid "E.g. mp3"
 msgstr ""
 
-#: ../plugins/converter/interface.c:409
-#: ../plugins/converter/converter.glade.h:26
+#: ../plugins/converter/interface.c:410
+#: ../plugins/converter/converter.glade.h:27
 msgid "Command line:"
 msgstr ""
 
-#: ../plugins/converter/interface.c:420
-#: ../plugins/converter/converter.glade.h:28
+#: ../plugins/converter/interface.c:421
+#: ../plugins/converter/converter.glade.h:29
 #, no-c-format
 msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
 msgstr ""
 
-#: ../plugins/converter/interface.c:430
-#: ../plugins/converter/converter.glade.h:31
+#: ../plugins/converter/interface.c:431
+#: ../plugins/converter/converter.glade.h:32
 #, no-c-format
 msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
 msgstr ""
 
-#: ../plugins/converter/interface.c:439
-#: ../plugins/converter/converter.glade.h:33
+#: ../plugins/converter/interface.c:440
+#: ../plugins/converter/converter.glade.h:34
 msgid "Method:"
 msgstr ""
 
-#: ../plugins/converter/interface.c:446
+#: ../plugins/converter/interface.c:447
 msgid "Pipe"
 msgstr ""
 
-#: ../plugins/converter/interface.c:447
+#: ../plugins/converter/interface.c:448
 msgid "Temporary file"
 msgstr ""
 
-#: ../plugins/converter/interface.c:464
-#: ../plugins/converter/converter.glade.h:36
+#: ../plugins/converter/interface.c:465
+#: ../plugins/converter/converter.glade.h:37
 msgid "APEv2"
 msgstr ""
 
-#: ../plugins/converter/interface.c:470
-#: ../plugins/converter/converter.glade.h:37
+#: ../plugins/converter/interface.c:471
+#: ../plugins/converter/converter.glade.h:38
 msgid "ID3v1"
 msgstr ""
 
-#: ../plugins/converter/interface.c:476
-#: ../plugins/converter/converter.glade.h:38
+#: ../plugins/converter/interface.c:477
+#: ../plugins/converter/converter.glade.h:39
 msgid "OggVorbis"
 msgstr ""
 
-#: ../plugins/converter/interface.c:482
-#: ../plugins/converter/converter.glade.h:39
+#: ../plugins/converter/interface.c:483
+#: ../plugins/converter/converter.glade.h:40
 msgid "FLAC"
 msgstr ""
 
-#: ../plugins/converter/interface.c:494
-#: ../plugins/converter/converter.glade.h:40
+#: ../plugins/converter/interface.c:495
+#: ../plugins/converter/converter.glade.h:41
 msgid "ID3v2"
 msgstr ""
 
-#: ../plugins/converter/interface.c:504
-#: ../plugins/converter/converter.glade.h:41
+#: ../plugins/converter/interface.c:505
+#: ../plugins/converter/converter.glade.h:42
 msgid "<b>Tag writer</b>"
 msgstr ""
 
-#: ../plugins/converter/interface.c:590
-#: ../plugins/converter/converter.glade.h:42
+#: ../plugins/converter/interface.c:591
+#: ../plugins/converter/converter.glade.h:43
 msgid "DSP Preset Editor"
 msgstr ""
 
-#: ../plugins/converter/interface.c:613
-#: ../plugins/converter/converter.glade.h:44
+#: ../plugins/converter/interface.c:614
+#: ../plugins/converter/converter.glade.h:45
 msgid "Untitled DSP Preset"
 msgstr ""
 
-#: ../plugins/converter/interface.c:625
-#: ../plugins/converter/converter.glade.h:45
+#: ../plugins/converter/interface.c:626
+#: ../plugins/converter/converter.glade.h:46
 #: ../plugins/shellexecui/interface.c:62
 #: ../plugins/shellexecui/shellexec.glade.h:3
 msgid "Add"
@@ -1998,11 +2068,12 @@ msgstr ""
 
 #: ../plugins/converter/converter.glade.h:19
 msgid ""
+"Skip\n"
 "Prompt\n"
 "Overwrite"
 msgstr ""
 
-#: ../plugins/converter/converter.glade.h:34
+#: ../plugins/converter/converter.glade.h:35
 msgid ""
 "Pipe\n"
 "Temporary file"
@@ -2121,7 +2192,7 @@ msgstr ""
 msgid "Add Command"
 msgstr ""
 
-#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:797
+#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:801
 msgid "Delete"
 msgstr ""
 
@@ -2227,88 +2298,89 @@ msgstr ""
 msgid "Nothing is selected."
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:444
+#: ../plugins/gtkui/widgets.c:448
 #, c-format
 msgid "Widget \"%s\" is not available"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:772
+#: ../plugins/gtkui/widgets.c:776
 msgid "Replace with..."
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:777
+#: ../plugins/gtkui/widgets.c:781
 msgid "Insert..."
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:804
+#: ../plugins/gtkui/widgets.c:808
 msgid "Cut"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:811
+#: ../plugins/gtkui/widgets.c:815
 msgid "Copy"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:818
+#: ../plugins/gtkui/widgets.c:822
 msgid "Paste"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:942
+#: ../plugins/gtkui/widgets.c:946
 msgid "Multiple widgets of this type are not supported"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1249
+#: ../plugins/gtkui/widgets.c:1253
 msgid "Lock movement"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1534
-msgid "Move tab left"
-msgstr ""
-
-#: ../plugins/gtkui/widgets.c:1541
-msgid "Move tab right"
-msgstr ""
-
-#: ../plugins/gtkui/widgets.c:1548
-msgid "Remove tab"
-msgstr ""
-
-#: ../plugins/gtkui/widgets.c:1555
+#: ../plugins/gtkui/widgets.c:1536 ../plugins/gtkui/widgets.c:1649
 msgid "Rename tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1616
+#: ../plugins/gtkui/widgets.c:1642 ../plugins/gtkui/widgets.c:1783
 msgid "Add new tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2036
+#: ../plugins/gtkui/widgets.c:1656
+msgid "Move tab left"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:1663
+msgid "Move tab right"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:1670
+msgid "Remove tab"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:2306 ../plugins/gtkui/widgets.c:2475
+#: ../plugins/pltbrowser/pltbrowser.c:839
 msgid "Show Column Headers"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3147
+#: ../plugins/gtkui/widgets.c:3453
 msgid "Expand the box by 1 item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3152
+#: ../plugins/gtkui/widgets.c:3458
 msgid "Shrink the box by 1 item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3157
+#: ../plugins/gtkui/widgets.c:3463
 msgid "Homogeneous"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3197
+#: ../plugins/gtkui/widgets.c:3503
 msgid "Expand"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3205
+#: ../plugins/gtkui/widgets.c:3511
 msgid "Fill"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3606
+#: ../plugins/gtkui/widgets.c:3912
 msgid "Configure button"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3870
+#: ../plugins/gtkui/widgets.c:4179
 msgid "Voices:"
 msgstr ""
 
@@ -2328,10 +2400,29 @@ msgstr ""
 msgid "Add New Playlist"
 msgstr ""
 
-#: ../plugins/pltbrowser/pltbrowser.c:213
+#: ../plugins/pltbrowser/pltbrowser.c:216
+#, fuzzy, c-format
+msgid "%dd %d:%02d:%02d"
+msgstr "%d দিন %d:%02d:%02d"
+
+#: ../plugins/pltbrowser/pltbrowser.c:883
 msgid "Name"
 msgstr ""
 
-#: ../plugins/pltbrowser/pltbrowser.c:238
+#: ../plugins/pltbrowser/pltbrowser.c:886
+msgid "♫"
+msgstr ""
+
+#: ../plugins/pltbrowser/pltbrowser.c:892
+msgid "Items"
+msgstr ""
+
+#: ../plugins/pltbrowser/pltbrowser.c:944
 msgid "Playlist browser"
 msgstr ""
+
+#~ msgid "Odd row"
+#~ msgstr "বিজোড় সংখ্যক সারি"
+
+#~ msgid "Playlist colors"
+#~ msgstr "প্লেলিস্টের রং"
