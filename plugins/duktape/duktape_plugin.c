@@ -24,9 +24,10 @@
 #include <stdio.h>
 #include "duktape.h"
 #include "../../deadbeef.h"
+#include "bindings.h"
 
 static DB_misc_t plugin;
-static DB_functions_t *deadbeef;
+DB_functions_t *deadbeef;
 
 typedef struct duktape_script_s {
     struct duktape_script_s *next;
@@ -76,6 +77,15 @@ duktape_start (void) {
     free (namelist);
     namelist = NULL;
 
+    // binding tests
+    for (duktape_script_t *s = duktape_scripts; s; s = s->next) {
+        duktape_bind_all (s->ctx);
+    }
+    return 0;
+}
+
+static int
+duktape_connect (void) {
     // run all scripts
     for (duktape_script_t *s = duktape_scripts; s; s = s->next) {
         duk_eval_file(s->ctx, s->path);
@@ -111,6 +121,7 @@ static DB_misc_t plugin = {
     .plugin.copyright = "",
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = duktape_start,
+    .plugin.connect = duktape_connect,
     .plugin.stop = duktape_stop,
 };
 

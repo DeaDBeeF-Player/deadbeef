@@ -498,6 +498,7 @@
 		2D565B911A40BCE200CE1F5D /* true.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565B0B1A40BCE200CE1F5D /* true.h */; };
 		2D565B961A40C05200CE1F5D /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565B951A40C05200CE1F5D /* mpg123.h */; };
 		2D565B9A1A40C15B00CE1F5D /* libmpg123.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D917E781A4046FE00C3EB44 /* libmpg123.a */; };
+		2D5C7A181B5801E000DD1EC0 /* bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5C7A171B5801E000DD1EC0 /* bindings.c */; };
 		2D5D21461A4033FF001D5A79 /* lastfm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D21451A4033FF001D5A79 /* lastfm.c */; };
 		2D5D21491A403412001D5A79 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA2499E19E71FEB00E34920 /* libcurl.a */; };
 		2D5D214C1A403428001D5A79 /* lastfm.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D21401A4033B0001D5A79 /* lastfm.dylib */; };
@@ -1780,6 +1781,8 @@
 		2D565B0A1A40BCE200CE1F5D /* testcpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testcpu.c; path = "osx/deps/mpg123-1.21.0/src/libmpg123/testcpu.c"; sourceTree = "<group>"; };
 		2D565B0B1A40BCE200CE1F5D /* true.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = true.h; path = "osx/deps/mpg123-1.21.0/src/libmpg123/true.h"; sourceTree = "<group>"; };
 		2D565B951A40C05200CE1F5D /* mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpg123.h; path = osx/mpg123/mpg123.h; sourceTree = "<group>"; };
+		2D5C7A171B5801E000DD1EC0 /* bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bindings.c; path = plugins/duktape/bindings.c; sourceTree = "<group>"; };
+		2D5C7A191B58029800DD1EC0 /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bindings.h; path = plugins/duktape/bindings.h; sourceTree = "<group>"; };
 		2D5D21401A4033B0001D5A79 /* lastfm.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = lastfm.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D5D21451A4033FF001D5A79 /* lastfm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lastfm.c; path = plugins/lastfm/lastfm.c; sourceTree = "<group>"; };
 		2D60108B1A9CDF06000136AF /* SearchWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchWindowController.h; sourceTree = "<group>"; };
@@ -3611,9 +3614,11 @@
 		2D989F881B50582A0042F370 /* duktape */ = {
 			isa = PBXGroup;
 			children = (
+				2D5C7A171B5801E000DD1EC0 /* bindings.c */,
 				2D989F911B5058550042F370 /* duktape.c */,
 				2D989F921B5058550042F370 /* duktape.h */,
 				2D989F971B5058BB0042F370 /* duktape_plugin.c */,
+				2D5C7A191B58029800DD1EC0 /* bindings.h */,
 			);
 			name = duktape;
 			sourceTree = "<group>";
@@ -6257,6 +6262,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D5C7A181B5801E000DD1EC0 /* bindings.c in Sources */,
 				2D989F931B5058550042F370 /* duktape.c in Sources */,
 				2D989F981B5058BB0042F370 /* duktape_plugin.c in Sources */,
 			);
@@ -8594,6 +8600,7 @@
 				2D989F901B50583C0042F370 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2DA0ABE21AA71055007EDD43 /* Build configuration list for PBXNativeTarget "in_sc68" */ = {
 			isa = XCConfigurationList;

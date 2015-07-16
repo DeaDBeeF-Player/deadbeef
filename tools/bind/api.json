@@ -1,0 +1,32 @@
+{
+    int_constants: {
+        API_VERSION_MAJOR: "DB_API_VERSION_MAJOR",
+        API_VERSION_MINOR: "DB_API_VERSION_MINOR",
+        API_LEVEL: "DDB_API_LEVEL",
+        PL_MAIN: "PL_MAIN",
+        PL_SEARCH: "PL_SEARCH",
+        IS_SUBTRACK: "DDB_IS_SUBTRACK",
+        IS_READONLY: "DDB_IS_READONLY",
+        HAS_EMBEDDED_CUESHEET: "DDB_HAS_EMBEDDED_CUESHEET",
+        TAG_ID3V1: "DDB_TAG_ID3V1",
+        TAG_ID3V22: "DDB_TAG_ID3V22",
+        TAG_ID3V23: "DDB_TAG_ID3V23",
+        TAG_ID3V24: "DDB_TAG_ID3V24",
+        TAG_APEV2: "DDB_TAG_APEV2",
+        TAG_VORBISCOMMENTS: "DDB_TAG_VORBISCOMMENTS",
+        TAG_CUESHEET: "DDB_TAG_CUESHEET",
+        TAG_ICY: "DDB_TAG_ICY",
+        TAG_ITUNES: "DDB_TAG_ITUNES",
+        TAG_MASK: "DDB_TAG_MASK",
+    },
+    string_constants: {
+        DEFAULT_CTMAPPING: "DDB_DEFAULT_CTMAPPING",
+    },
+    functions: {
+        plt_get_count: {
+            name: 'plt_get_count',
+            ret: 'int',
+            args: 'void',
+        },
+    },
+}
