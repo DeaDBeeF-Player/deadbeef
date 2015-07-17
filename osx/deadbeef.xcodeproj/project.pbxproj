@@ -709,6 +709,7 @@
 		2D88EA0B1B2AF6DD0072FD43 /* oggedit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D88EA031B2AF6DD0072FD43 /* oggedit.h */; };
 		2D88EA0E1B2AF71A0072FD43 /* liboggedit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.a */; };
 		2D88EA111B2AF77B0072FD43 /* vorbis.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D88E9ED1B2AF6640072FD43 /* vorbis.dylib */; };
+		2D8AEA2B1B591D2800E64D41 /* types.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D8AEA291B591C1800E64D41 /* types.c */; };
 		2D8E9C1819ED5C4400EE1408 /* curl_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8E9C1719ED5C4400EE1408 /* curl_config.h */; };
 		2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2D9177391A0E8966004BC222 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
@@ -2031,6 +2032,7 @@
 		2D88EA451B2AF8610072FD43 /* vorbisfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vorbisfile.c; path = "osx/deps/libvorbis-1.3.3/lib/vorbisfile.c"; sourceTree = "<group>"; };
 		2D88EA461B2AF8610072FD43 /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = window.c; path = "osx/deps/libvorbis-1.3.3/lib/window.c"; sourceTree = "<group>"; };
 		2D88EA471B2AF8610072FD43 /* window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = window.h; path = "osx/deps/libvorbis-1.3.3/lib/window.h"; sourceTree = "<group>"; };
+		2D8AEA291B591C1800E64D41 /* types.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = types.c; path = plugins/duktape/types.c; sourceTree = "<group>"; };
 		2D8E9C1719ED5C4400EE1408 /* curl_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = curl_config.h; path = osx/curl_config.h; sourceTree = "<group>"; };
 		2D8E9C1919ED5C8200EE1408 /* libpoll.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpoll.dylib; path = usr/lib/libpoll.dylib; sourceTree = SDKROOT; };
 		2D91772F1A0E895E004BC222 /* decomp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = decomp.h; path = plugins/alac/decomp.h; sourceTree = "<group>"; };
@@ -3619,6 +3621,7 @@
 				2D989F921B5058550042F370 /* duktape.h */,
 				2D989F971B5058BB0042F370 /* duktape_plugin.c */,
 				2D5C7A191B58029800DD1EC0 /* bindings.h */,
+				2D8AEA291B591C1800E64D41 /* types.c */,
 			);
 			name = duktape;
 			sourceTree = "<group>";
@@ -6263,6 +6266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D5C7A181B5801E000DD1EC0 /* bindings.c in Sources */,
+				2D8AEA2B1B591D2800E64D41 /* types.c in Sources */,
 				2D989F931B5058550042F370 /* duktape.c in Sources */,
 				2D989F981B5058BB0042F370 /* duktape_plugin.c in Sources */,
 			);

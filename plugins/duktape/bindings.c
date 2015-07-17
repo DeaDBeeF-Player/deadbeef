@@ -2,6 +2,8 @@
 #include "duktape.h"
 #include "../../deadbeef.h"
 
+#include "bindings.h"
+
 extern DB_functions_t *deadbeef;
 
 void bind_int_constants (duk_context *ctx) {
@@ -45,9 +47,83 @@ void bind_int_constants (duk_context *ctx) {
     duk_pop(ctx);
 }
 
-int js_impl_plt_get_count (duk_context *ctx) {
-    int val = deadbeef->plt_get_count ();
-    duk_push_number(ctx, val);
+int
+js_impl_plt_get_count (duk_context *ctx) {
+    int ret = deadbeef->plt_get_count ();
+    js_return_int_value (ctx, ret);
+    return 1;
+}
+
+int
+js_impl_playback_set_pos (duk_context *ctx) {
+    float arg0 = js_init_float_argument (ctx, 0);
+    deadbeef->playback_set_pos (arg0);
+    return 0;
+}
+
+int
+js_impl_streamer_get_apx_bitrate (duk_context *ctx) {
+    int ret = deadbeef->streamer_get_apx_bitrate ();
+    js_return_int_value (ctx, ret);
+    return 1;
+}
+
+int
+js_impl_streamer_set_bitrate (duk_context *ctx) {
+    int arg0 = js_init_int_argument (ctx, 0);
+    deadbeef->streamer_set_bitrate (arg0);
+    return 0;
+}
+
+int
+js_impl_streamer_get_playpos (duk_context *ctx) {
+    float ret = deadbeef->streamer_get_playpos ();
+    js_return_float_value (ctx, ret);
+    return 1;
+}
+
+int
+js_impl_streamer_reset (duk_context *ctx) {
+    int arg0 = js_init_int_argument (ctx, 0);
+    deadbeef->streamer_reset (arg0);
+    return 0;
+}
+
+int
+js_impl_streamer_ok_to_read (duk_context *ctx) {
+    int arg0 = js_init_int_argument (ctx, 0);
+    int ret = deadbeef->streamer_ok_to_read (arg0);
+    js_return_int_value (ctx, ret);
+    return 1;
+}
+
+int
+js_impl_streamer_read (duk_context *ctx) {
+    jscharbuffer arg0 = js_init_jscharbuffer_argument (ctx, 0);
+    int arg1 = js_init_int_argument (ctx, 1);
+    int ret = deadbeef->streamer_read (arg0, arg1);
+    js_return_int_value (ctx, ret);
+    return 1;
+}
+
+int
+js_impl_playback_get_pos (duk_context *ctx) {
+    float ret = deadbeef->playback_get_pos ();
+    js_return_float_value (ctx, ret);
+    return 1;
+}
+
+int
+js_impl_streamer_get_streaming_track (duk_context *ctx) {
+    DB_playItem_t* ret = deadbeef->streamer_get_playing_track ();
+    js_return_DB_playItem_t_ptr_value (ctx, ret);
+    return 1;
+}
+
+int
+js_impl_get_output (duk_context *ctx) {
+    DB_output_t* ret = deadbeef->get_output ();
+    js_return_DB_output_t_ptr_value (ctx, ret);
     return 1;
 }
 
@@ -55,6 +131,26 @@ void bind_functions (duk_context *ctx) {
     duk_push_global_object(ctx);
     duk_push_c_function(ctx, js_impl_plt_get_count, 0);
     duk_put_prop_string(ctx, -2, "plt_get_count");
+    duk_push_c_function(ctx, js_impl_playback_set_pos, 0);
+    duk_put_prop_string(ctx, -2, "playback_set_pos");
+    duk_push_c_function(ctx, js_impl_streamer_get_apx_bitrate, 0);
+    duk_put_prop_string(ctx, -2, "streamer_get_apx_bitrate");
+    duk_push_c_function(ctx, js_impl_streamer_set_bitrate, 0);
+    duk_put_prop_string(ctx, -2, "streamer_set_bitrate");
+    duk_push_c_function(ctx, js_impl_streamer_get_playpos, 0);
+    duk_put_prop_string(ctx, -2, "streamer_get_playpos");
+    duk_push_c_function(ctx, js_impl_streamer_reset, 0);
+    duk_put_prop_string(ctx, -2, "streamer_reset");
+    duk_push_c_function(ctx, js_impl_streamer_ok_to_read, 0);
+    duk_put_prop_string(ctx, -2, "streamer_ok_to_read");
+    duk_push_c_function(ctx, js_impl_streamer_read, 0);
+    duk_put_prop_string(ctx, -2, "streamer_read");
+    duk_push_c_function(ctx, js_impl_playback_get_pos, 0);
+    duk_put_prop_string(ctx, -2, "playback_get_pos");
+    duk_push_c_function(ctx, js_impl_streamer_get_streaming_track, 0);
+    duk_put_prop_string(ctx, -2, "streamer_get_streaming_track");
+    duk_push_c_function(ctx, js_impl_get_output, 0);
+    duk_put_prop_string(ctx, -2, "get_output");
     duk_pop(ctx);
 }
 

@@ -23,10 +23,77 @@
         DEFAULT_CTMAPPING: "DDB_DEFAULT_CTMAPPING",
     },
     functions: {
+        get_output: {
+            name: 'get_output',
+            ret: 'DB_output_t*',
+            args: 'void',
+        },
+
+        playback_get_pos: {
+            name: 'playback_get_pos',
+            ret: 'float',
+            args: 'void',
+        },
+
+        playback_set_pos: {
+            name: 'playback_set_pos',
+            ret: 'void',
+            args: ['float'],
+        },
+
         plt_get_count: {
             name: 'plt_get_count',
             ret: 'int',
             args: 'void',
         },
+
+		streamer_get_playing_track: {
+			name: 'streamer_get_playing_track',
+			ret: 'DB_playItem_t*',
+			args: 'void',
+		},
+
+		streamer_get_playing_track: {
+			name: 'streamer_get_streaming_track',
+			ret: 'DB_playItem_t*',
+			args: 'void',
+		},
+
+		streamer_get_playpos: {
+			name: 'streamer_get_playpos',
+			ret: 'float',
+			args: 'void',
+		},
+
+		streamer_ok_to_read: {
+			name: 'streamer_ok_to_read',
+			ret: 'int',
+			args: ['int'],
+		},
+
+		streamer_reset: {
+			name: 'streamer_reset',
+			ret: 'void',
+			args: ['int'],
+		},
+
+		streamer_read: {
+			name: 'streamer_read',
+			ret: 'int',
+			args: ['jscharbuffer', 'int'],
+		},
+
+		streamer_set_bitrate: {
+			name: 'streamer_set_bitrate',
+			ret: 'void',
+			args: ['int'],
+		},
+
+		streamer_get_apx_bitrate: {
+			name: 'streamer_get_apx_bitrate',
+			ret: 'int',
+			args: 'void',
+		},
+
     },
 }

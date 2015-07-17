@@ -90,6 +90,7 @@ duktape_connect (void) {
     for (duktape_script_t *s = duktape_scripts; s; s = s->next) {
         duk_eval_file(s->ctx, s->path);
     }
+
     return 0;
 }
 
@@ -109,6 +110,11 @@ duktape_stop (void) {
     return 0;
 }
 
+int
+duktape_message (uint32_t _id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    return 0;
+}
+
 static DB_misc_t plugin = {
     .plugin.api_vmajor = 1,
     .plugin.api_vminor = 8,
@@ -123,6 +129,7 @@ static DB_misc_t plugin = {
     .plugin.start = duktape_start,
     .plugin.connect = duktape_connect,
     .plugin.stop = duktape_stop,
+    .plugin.message = duktape_message,
 };
 
 DB_plugin_t *
