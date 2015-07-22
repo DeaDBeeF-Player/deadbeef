@@ -392,6 +392,7 @@ static DdbListviewBinding search_binding = {
     .external_drag_n_drop = NULL,
 
     .draw_column_data = draw_column_data,
+    .draw_album_art = draw_album_art,
     .draw_group_title = pl_common_draw_group_title,
 
     // columns

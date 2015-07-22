@@ -216,7 +216,8 @@ deferred_cover_load_cb (void *ctx) {
     return FALSE;
 }
 
-void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, DdbListviewIter group_it, int column, int group_y, int group_height, int group_pinned, int grp_next_y, int x, int y, int width, int height) {
+void
+draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewIter group_it, int column, int group_pinned, int grp_next_y, int x, int y, int width, int height) {
     const char *ctitle;
     int cwidth;
     int calign_right;
@@ -279,51 +280,45 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                     }
                 }
             }
-            int art_width = listview->cover_size;
-            int art_y = y; // dest y
+
+            // destination coordinates and sizes
+            int art_x = x + ART_PADDING_HORZ;
+            int art_y = y + ART_PADDING_VERT;
+            int art_w = listview->cover_size;
             int art_h = height;
-            int sy; // source y
-            if (group_y < ART_PADDING_VERT) {
-                art_y = y - group_y + ART_PADDING_VERT;
-                art_h = height - (art_y - y);
-                sy = group_y;
-            }
-            else {
-                sy = group_y - ART_PADDING_VERT;
-            }
-            int h = cwidth - group_y;
-            h = min (height, art_h);
 
-            GdkPixbuf *pixbuf = get_cover_art_thumb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, real_art_width == art_width ? art_width : -1, redraw_playlist_single, listview);
+            GdkPixbuf *pixbuf = get_cover_art_thumb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, real_art_width == art_w ? art_w : -1, redraw_playlist_single, listview);
             if (pixbuf) {
-                art_width = gdk_pixbuf_get_width (pixbuf);
-                float art_scale = (float)real_art_width / art_width;
-                int pw = real_art_width;
-                int ph = pw;
-                if (gdk_pixbuf_get_width (pixbuf) < gdk_pixbuf_get_height (pixbuf)) {
-                    art_scale *= (float)gdk_pixbuf_get_width (pixbuf) / gdk_pixbuf_get_height (pixbuf);
-                }
+                art_w = gdk_pixbuf_get_width (pixbuf);
+                art_h = gdk_pixbuf_get_height (pixbuf);
 
-                int draw_pinned = (y - listview->grouptitle_height < ph && group_pinned == 1 && gtkui_groups_pinned) ? 1 : 0;
-                if (art_y > -(ph + listview->grouptitle_height) || draw_pinned) {
+                int draw_pinned = (y - listview->grouptitle_height < real_art_width && group_pinned == 1 && gtkui_groups_pinned) ? 1 : 0;
+
+                if (art_y > -(real_art_width + listview->grouptitle_height) || draw_pinned) {
+                    float art_scale = real_art_width;
+                    if (art_w < art_h) {
+                        art_scale /= (float)art_h;
+                    }
+                    else {
+                        art_scale /= (float)art_w;
+                    }
+
+                    art_w *= art_scale;
+                    art_h *= art_scale;
+
                     cairo_save (cr);
                     if (draw_pinned) {
-                        int ph_real = gdk_pixbuf_get_height (pixbuf) * art_scale;
-                        if (grp_next_y <= ph_real + listview->grouptitle_height) {
-                            cairo_rectangle (cr, x + ART_PADDING_HORZ, grp_next_y - ph_real, pw, ph_real);
-                            cairo_translate (cr, (x + ART_PADDING_HORZ)-0, grp_next_y - ph_real);
+                        if (grp_next_y <= art_h + listview->grouptitle_height + ART_PADDING_VERT) {
+                            cairo_translate (cr, art_x, grp_next_y - art_h);
                         }
                         else {
-                            cairo_rectangle (cr, x + ART_PADDING_HORZ, listview->grouptitle_height, pw, ph_real);
-                            cairo_translate (cr, (x + ART_PADDING_HORZ)-0, listview->grouptitle_height);
+                            cairo_translate (cr, art_x, listview->grouptitle_height + ART_PADDING_VERT);
                         }
                     }
                     else {
-                        ph -= sy;
-                        ph = min (ph, h);
-                        cairo_rectangle (cr, x + ART_PADDING_HORZ, art_y, pw, ph);
-                        cairo_translate (cr, (x + ART_PADDING_HORZ)-0, art_y - sy);
+                        cairo_translate (cr, art_x, art_y);
                     }
+                    cairo_rectangle (cr, 0, 0, art_w, art_h);
                     cairo_scale (cr, art_scale, art_scale);
                     gdk_cairo_set_source_pixbuf (cr, pixbuf, 0, 0);
                     cairo_pattern_set_filter (cairo_get_source(cr), gtkui_is_default_pixbuf (pixbuf) ? CAIRO_FILTER_BEST : CAIRO_FILTER_FAST);
@@ -334,7 +329,29 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             }
         }
     }
-    else if (!gtkui_unicode_playstate && it && it == playing_track && cinf->id == DB_COLUMN_PLAYING) {
+    if (playing_track) {
+        deadbeef->pl_item_unref (playing_track);
+    }
+}
+
+void
+draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int column, int x, int y, int width, int height) {
+    const char *ctitle;
+    int cwidth;
+    int calign_right;
+    col_info_t *cinf;
+    int minheight;
+    int color_override;
+    GdkColor fg_clr;
+    int res = ddb_listview_column_get_info (listview, column, &ctitle, &cwidth, &calign_right, &minheight, &color_override, &fg_clr, (void **)&cinf);
+    if (res == -1) {
+        return;
+    }
+
+    DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
+    int theming = !gtkui_override_listview_colors ();
+
+    if (!gtkui_unicode_playstate && it && it == playing_track && cinf->id == DB_COLUMN_PLAYING) {
         int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
         GdkPixbuf *pixbuf;
