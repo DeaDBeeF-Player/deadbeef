@@ -1604,6 +1604,15 @@ on_move_tab_left_activate (GtkMenuItem *menuitem, gpointer user_data) {
             gtk_widget_show (newchild->widget);
 
             gtk_notebook_insert_page (GTK_NOTEBOOK (w->base.widget), newchild->widget, label, w->clicked_page-1);
+#if GTK_CHECK_VERSION(3,0,0)
+            gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
+            gtk_misc_set_padding (GTK_MISC (label), 0, 0);
+            gtk_container_child_set (GTK_CONTAINER (w->base.widget),
+                    newchild->widget,
+                    "tab-expand", TRUE,
+                    "tab-fill", TRUE,
+                    NULL);
+#endif
             gtk_notebook_set_current_page (GTK_NOTEBOOK (w->base.widget), w->clicked_page-1);
             w->clicked_page--;
             break;
@@ -1684,6 +1693,15 @@ w_tabs_add (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
     gtk_widget_show (label);
     gtk_widget_show (child->widget);
     gtk_notebook_append_page (GTK_NOTEBOOK (cont->widget), child->widget, label);
+#if GTK_CHECK_VERSION(3,0,0)
+    gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
+    gtk_misc_set_padding (GTK_MISC (label), 0, 0);
+    gtk_container_child_set (GTK_CONTAINER (cont->widget),
+                           child->widget,
+                           "tab-expand", TRUE,
+                           "tab-fill", TRUE,
+                           NULL);
+#endif
 }
 
 static void
@@ -1707,6 +1725,15 @@ w_tabs_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtkui_w
             gtk_widget_show (label);
             gtk_widget_show (newchild->widget);
             int pos = gtk_notebook_insert_page (GTK_NOTEBOOK (cont->widget), newchild->widget, label, ntab);
+#if GTK_CHECK_VERSION(3,0,0)
+            gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
+            gtk_misc_set_padding (GTK_MISC (label), 0, 0);
+            gtk_container_child_set (GTK_CONTAINER (cont->widget),
+                           newchild->widget,
+                           "tab-expand", TRUE,
+                           "tab-fill", TRUE,
+                           NULL);
+#endif
             gtk_notebook_set_current_page (GTK_NOTEBOOK (cont->widget), pos);
             break;
         }
@@ -1798,6 +1825,11 @@ w_tabs_init (ddb_gtkui_widget_t *base) {
             GtkWidget *child = gtk_notebook_get_nth_page (GTK_NOTEBOOK (w->base.widget), page);
             if (w->titles[page]) {
                 gtk_notebook_set_tab_label_text (GTK_NOTEBOOK (w->base.widget), child, w->titles[page]);
+#if GTK_CHECK_VERSION(3,0,0)
+                GtkLabel *label = gtk_notebook_get_tab_label (GTK_NOTEBOOK (w->base.widget), child);
+                gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
+                gtk_misc_set_padding (GTK_MISC (label), 0, 0);
+#endif
             }
             page++;
         }
