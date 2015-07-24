@@ -24,7 +24,11 @@
 int
 rewrite_column_config (DdbListview *listview, const char *name);
 
-void draw_column_data (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, DdbListviewIter group_it, int column, int group_y, int group_height, int group_pinned, int grp_next_y, int x, int y, int width, int height);
+void
+draw_album_art (DdbListview *listview, cairo_t *drawable, DdbListviewIter group_it, int column, int group_pinned, int grp_next_y, int x, int y, int width, int height);
+
+void
+draw_column_data (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int column, int x, int y, int width, int height);
 
 void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx);

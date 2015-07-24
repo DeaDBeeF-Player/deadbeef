@@ -257,6 +257,7 @@ DdbListviewBinding main_binding = {
     .external_drag_n_drop = main_external_drag_n_drop,
 
     .draw_column_data = draw_column_data,
+    .draw_album_art = draw_album_art,
     .draw_group_title = pl_common_draw_group_title,
 
     // columns
