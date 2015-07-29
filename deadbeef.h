@@ -1528,8 +1528,9 @@ typedef struct {
     void (*set_param) (const char *key, const char *value);
     void (*get_param) (const char *key, char *value, int len, const char *def);
 
-    // parent was added in 1.4 API
+#if (DDB_API_LEVEL >= 4)
     void *parent;
+#endif
 } ddb_dialog_t;
 
 enum {
