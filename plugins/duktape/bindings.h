@@ -26,6 +26,8 @@ js_return_ddb_dsp_context_t_ptr_value (duk_context *ctx, ddb_dsp_context_t *val)
 
 // argument type conversion
 typedef char *jscharbuffer;
+typedef const char *jsstring;
+typedef void *jsnull;
 
 jscharbuffer
 js_init_jscharbuffer_argument (duk_context *ctx, int idx);
@@ -38,5 +40,17 @@ js_init_float_argument (duk_context *ctx, int idx);
 
 ddb_dsp_context_t *
 js_init_ddb_dsp_context_t_ptr_argument (duk_context *ctx, int idx);
+
+ddb_playlist_t *
+js_init_ddb_playlist_t_ptr_argument (duk_context *ctx, int idx);
+
+DB_playItem_t *
+js_init_DB_playItem_t_ptr_argument (duk_context *ctx, int idx);
+
+const char *
+js_init_jsstring_argument (duk_context *ctx, int idx);
+
+jsnull
+js_init_jsnull_argument (duk_context *ctx, int idx);
 
 #endif

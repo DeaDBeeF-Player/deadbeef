@@ -24,111 +24,141 @@
     },
     functions: {
         get_output: {
-            name: 'get_output',
             ret: 'DB_output_t*',
-            args: 'void',
         },
 
         playback_get_pos: {
-            name: 'playback_get_pos',
             ret: 'float',
-            args: 'void',
         },
 
         playback_set_pos: {
-            name: 'playback_set_pos',
-            ret: 'void',
             args: ['float'],
         },
 
         plt_get_count: {
-            name: 'plt_get_count',
             ret: 'int',
-            args: 'void',
         },
 
 		streamer_get_playing_track: {
-			name: 'streamer_get_playing_track',
 			ret: 'DB_playItem_t*',
-			args: 'void',
 		},
 
 		streamer_get_playing_track: {
-			name: 'streamer_get_streaming_track',
 			ret: 'DB_playItem_t*',
-			args: 'void',
 		},
 
 		streamer_get_playpos: {
-			name: 'streamer_get_playpos',
 			ret: 'float',
-			args: 'void',
 		},
 
 		streamer_ok_to_read: {
-			name: 'streamer_ok_to_read',
 			ret: 'int',
 			args: ['int'],
 		},
 
 		streamer_reset: {
-			name: 'streamer_reset',
-			ret: 'void',
 			args: ['int'],
 		},
 
 		streamer_read: {
-			name: 'streamer_read',
 			ret: 'int',
 			args: ['jscharbuffer', 'int'],
 		},
 
 		streamer_set_bitrate: {
-			name: 'streamer_set_bitrate',
-			ret: 'void',
 			args: ['int'],
 		},
 
 		streamer_get_apx_bitrate: {
-			name: 'streamer_get_apx_bitrate',
 			ret: 'int',
-			args: 'void',
 		},
 
 		streamer_get_current_fileinfo: {
-		    name: 'streamer_get_current_fileinfo',
 		    ret: 'DB_fileinfo_t*',
-		    args: 'void',
 		},
 
 		streamer_get_current_playlist: {
-		    name: 'streamer_get_current_playlist',
 		    ret: 'int',
-		    args: 'void',
 		},
 
+        // TODO: needs dsp_chain_next
         streamer_get_dsp_chain: {
-            name: 'streamer_get_dsp_chain',
             ret: 'ddb_dsp_context_t*',
-            args: 'void',
         },
 
         streamer_set_dsp_chain: {
-            name: 'streamer_set_dsp_chain',
-            ret: 'void',
             args: ['ddb_dsp_context_t*'],
         },
 
         streamer_dsp_refresh: {
-            name: 'streamer_dsp_refresh',
-            ret: 'void',
-            args: 'void',
         },
 
         quit: {
-            name: 'quit',
-            ret: 'void',
-            args: 'void',
+        },
+
+        plt_ref: {
+            args: ['ddb_playlist_t*'],
+        },
+
+        plt_unref: {
+            args: ['ddb_playlist_t*'],
+        },
+
+        plt_get_count: {
+            ret: 'int',
+        },
+
+        // TODO: needs plt_get_next
+        plt_get_head: {
+            ret: 'DB_playItem_t*',
+            args: ['int'],
+        },
+
+        plt_get_sel_count: {
+            ret: 'int',
+            args: ['int'],
+        },
+
+        plt_add: {
+            ret: 'int',
+            args: ['int','jsstring'],
+        },
+
+        plt_remove: {
+            args: ['int'],
+        },
+
+        plt_clear: {
+            args: ['ddb_playlist_t*'],
+        },
+
+        pl_clear: {
+        },
+
+        plt_set_curr: {
+            args: ['ddb_playlist_t*'],
+        },
+
+        plt_set_curr_idx: {
+            args: ['int'],
+        },
+
+        plt_get_curr: {
+            ret: 'ddb_playlist_t*',
+        },
+
+        plt_get_curr_idx: {
+            ret: 'int',
+        },
+
+        plt_move: {
+            args: ['int', 'int'],
+        },
+
+        // TODO: callbacks instead of jsnull hack
+        plt_save: {
+            ret: 'int',
+            args: ['ddb_playlist_t*', 'DB_playItem_t*', 'DB_playItem_t*', 'jsstring', 'jsnull', 'jsnull', 'jsnull']
         },
 
     },

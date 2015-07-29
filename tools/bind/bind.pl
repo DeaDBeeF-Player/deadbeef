@@ -47,10 +47,16 @@ my $functions = $api->{functions};
 # function impls
 foreach my $c (keys %$functions) {
     my $f = $functions->{$c};
-	print "int\njs_impl_$f->{name} (duk_context *ctx) {\n";
+    if (!$f->{name}) {
+        $f->{name} = $c;
+    }
 	if (!$f->{ret}) {
 		$f->{ret} = 'void';
 	}
+	if (!$f->{args}) {
+		$f->{args} = 'void';
+	}
+	print "int\njs_impl_$f->{name} (duk_context *ctx) {\n";
 	if (ref ($f->{args}) eq 'ARRAY') {
 		my $idx = 0;
 		foreach my $type (@{$f->{args}}) {

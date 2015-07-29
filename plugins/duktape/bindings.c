@@ -7,48 +7,54 @@
 extern DB_functions_t *deadbeef;
 
 void bind_int_constants (duk_context *ctx, int obj_idx) {
-    duk_push_int(ctx, PL_MAIN);
-    duk_put_prop_string(ctx, obj_idx, "PL_MAIN");
-    duk_push_int(ctx, DB_API_VERSION_MINOR);
-    duk_put_prop_string(ctx, obj_idx, "API_VERSION_MINOR");
-    duk_push_int(ctx, DDB_IS_READONLY);
-    duk_put_prop_string(ctx, obj_idx, "IS_READONLY");
-    duk_push_int(ctx, DDB_HAS_EMBEDDED_CUESHEET);
-    duk_put_prop_string(ctx, obj_idx, "HAS_EMBEDDED_CUESHEET");
-    duk_push_int(ctx, DDB_IS_SUBTRACK);
-    duk_put_prop_string(ctx, obj_idx, "IS_SUBTRACK");
-    duk_push_int(ctx, DDB_TAG_ID3V1);
-    duk_put_prop_string(ctx, obj_idx, "TAG_ID3V1");
-    duk_push_int(ctx, DDB_TAG_ID3V23);
-    duk_put_prop_string(ctx, obj_idx, "TAG_ID3V23");
-    duk_push_int(ctx, DDB_API_LEVEL);
-    duk_put_prop_string(ctx, obj_idx, "API_LEVEL");
-    duk_push_int(ctx, DDB_TAG_ICY);
-    duk_put_prop_string(ctx, obj_idx, "TAG_ICY");
-    duk_push_int(ctx, DDB_TAG_ID3V22);
-    duk_put_prop_string(ctx, obj_idx, "TAG_ID3V22");
-    duk_push_int(ctx, DDB_TAG_MASK);
-    duk_put_prop_string(ctx, obj_idx, "TAG_MASK");
-    duk_push_int(ctx, DDB_TAG_APEV2);
-    duk_put_prop_string(ctx, obj_idx, "TAG_APEV2");
-    duk_push_int(ctx, DDB_TAG_CUESHEET);
-    duk_put_prop_string(ctx, obj_idx, "TAG_CUESHEET");
-    duk_push_int(ctx, PL_SEARCH);
-    duk_put_prop_string(ctx, obj_idx, "PL_SEARCH");
-    duk_push_int(ctx, DB_API_VERSION_MAJOR);
-    duk_put_prop_string(ctx, obj_idx, "API_VERSION_MAJOR");
     duk_push_int(ctx, DDB_TAG_VORBISCOMMENTS);
     duk_put_prop_string(ctx, obj_idx, "TAG_VORBISCOMMENTS");
+    duk_push_int(ctx, DDB_IS_READONLY);
+    duk_put_prop_string(ctx, obj_idx, "IS_READONLY");
+    duk_push_int(ctx, DDB_TAG_APEV2);
+    duk_put_prop_string(ctx, obj_idx, "TAG_APEV2");
+    duk_push_int(ctx, DDB_TAG_ID3V22);
+    duk_put_prop_string(ctx, obj_idx, "TAG_ID3V22");
+    duk_push_int(ctx, DB_API_VERSION_MAJOR);
+    duk_put_prop_string(ctx, obj_idx, "API_VERSION_MAJOR");
+    duk_push_int(ctx, DB_API_VERSION_MINOR);
+    duk_put_prop_string(ctx, obj_idx, "API_VERSION_MINOR");
+    duk_push_int(ctx, DDB_TAG_CUESHEET);
+    duk_put_prop_string(ctx, obj_idx, "TAG_CUESHEET");
+    duk_push_int(ctx, DDB_HAS_EMBEDDED_CUESHEET);
+    duk_put_prop_string(ctx, obj_idx, "HAS_EMBEDDED_CUESHEET");
+    duk_push_int(ctx, DDB_TAG_ID3V1);
+    duk_put_prop_string(ctx, obj_idx, "TAG_ID3V1");
+    duk_push_int(ctx, DDB_API_LEVEL);
+    duk_put_prop_string(ctx, obj_idx, "API_LEVEL");
+    duk_push_int(ctx, PL_MAIN);
+    duk_put_prop_string(ctx, obj_idx, "PL_MAIN");
+    duk_push_int(ctx, DDB_TAG_ID3V23);
+    duk_put_prop_string(ctx, obj_idx, "TAG_ID3V23");
     duk_push_int(ctx, DDB_TAG_ID3V24);
     duk_put_prop_string(ctx, obj_idx, "TAG_ID3V24");
+    duk_push_int(ctx, DDB_IS_SUBTRACK);
+    duk_put_prop_string(ctx, obj_idx, "IS_SUBTRACK");
+    duk_push_int(ctx, DDB_TAG_MASK);
+    duk_put_prop_string(ctx, obj_idx, "TAG_MASK");
+    duk_push_int(ctx, PL_SEARCH);
+    duk_put_prop_string(ctx, obj_idx, "PL_SEARCH");
     duk_push_int(ctx, DDB_TAG_ITUNES);
     duk_put_prop_string(ctx, obj_idx, "TAG_ITUNES");
+    duk_push_int(ctx, DDB_TAG_ICY);
+    duk_put_prop_string(ctx, obj_idx, "TAG_ICY");
 }
 
 int
-js_impl_streamer_get_current_fileinfo (duk_context *ctx) {
-    DB_fileinfo_t* ret = deadbeef->streamer_get_current_fileinfo ();
-    js_return_DB_fileinfo_t_ptr_value (ctx, ret);
+js_impl_streamer_dsp_refresh (duk_context *ctx) {
+    deadbeef->streamer_dsp_refresh ();
+    return 0;
+}
+
+int
+js_impl_streamer_get_apx_bitrate (duk_context *ctx) {
+    int ret = deadbeef->streamer_get_apx_bitrate ();
+    js_return_int_value (ctx, ret);
     return 1;
 }
 
@@ -60,23 +66,22 @@ js_impl_playback_set_pos (duk_context *ctx) {
 }
 
 int
-js_impl_streamer_dsp_refresh (duk_context *ctx) {
-    deadbeef->streamer_dsp_refresh ();
+js_impl_plt_clear (duk_context *ctx) {
+    ddb_playlist_t* arg0 = js_init_ddb_playlist_t_ptr_argument (ctx, 0);
+    deadbeef->plt_clear (arg0);
     return 0;
 }
 
 int
-js_impl_streamer_ok_to_read (duk_context *ctx) {
-    int arg0 = js_init_int_argument (ctx, 0);
-    int ret = deadbeef->streamer_ok_to_read (arg0);
-    js_return_int_value (ctx, ret);
-    return 1;
+js_impl_pl_clear (duk_context *ctx) {
+    deadbeef->pl_clear ();
+    return 0;
 }
 
 int
-js_impl_streamer_set_bitrate (duk_context *ctx) {
+js_impl_plt_set_curr_idx (duk_context *ctx) {
     int arg0 = js_init_int_argument (ctx, 0);
-    deadbeef->streamer_set_bitrate (arg0);
+    deadbeef->plt_set_curr_idx (arg0);
     return 0;
 }
 
@@ -88,10 +93,32 @@ js_impl_streamer_get_current_playlist (duk_context *ctx) {
 }
 
 int
-js_impl_streamer_set_dsp_chain (duk_context *ctx) {
-    ddb_dsp_context_t* arg0 = js_init_ddb_dsp_context_t_ptr_argument (ctx, 0);
-    deadbeef->streamer_set_dsp_chain (arg0);
+js_impl_plt_save (duk_context *ctx) {
+    ddb_playlist_t* arg0 = js_init_ddb_playlist_t_ptr_argument (ctx, 0);
+    DB_playItem_t* arg1 = js_init_DB_playItem_t_ptr_argument (ctx, 1);
+    DB_playItem_t* arg2 = js_init_DB_playItem_t_ptr_argument (ctx, 2);
+    jsstring arg3 = js_init_jsstring_argument (ctx, 3);
+    jsnull arg4 = js_init_jsnull_argument (ctx, 4);
+    jsnull arg5 = js_init_jsnull_argument (ctx, 5);
+    jsnull arg6 = js_init_jsnull_argument (ctx, 6);
+    int ret = deadbeef->plt_save (arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+    js_return_int_value (ctx, ret);
+    return 1;
+}
+
+int
+js_impl_plt_unref (duk_context *ctx) {
+    ddb_playlist_t* arg0 = js_init_ddb_playlist_t_ptr_argument (ctx, 0);
+    deadbeef->plt_unref (arg0);
     return 0;
+}
+
+int
+js_impl_plt_get_sel_count (duk_context *ctx) {
+    int arg0 = js_init_int_argument (ctx, 0);
+    int ret = deadbeef->plt_get_sel_count (arg0);
+    js_return_int_value (ctx, ret);
+    return 1;
 }
 
 int
@@ -102,17 +129,75 @@ js_impl_streamer_reset (duk_context *ctx) {
 }
 
 int
-js_impl_playback_get_pos (duk_context *ctx) {
-    float ret = deadbeef->playback_get_pos ();
+js_impl_streamer_get_playpos (duk_context *ctx) {
+    float ret = deadbeef->streamer_get_playpos ();
     js_return_float_value (ctx, ret);
     return 1;
 }
 
 int
-js_impl_plt_get_count (duk_context *ctx) {
-    int ret = deadbeef->plt_get_count ();
+js_impl_streamer_get_current_fileinfo (duk_context *ctx) {
+    DB_fileinfo_t* ret = deadbeef->streamer_get_current_fileinfo ();
+    js_return_DB_fileinfo_t_ptr_value (ctx, ret);
+    return 1;
+}
+
+int
+js_impl_streamer_get_playing_track (duk_context *ctx) {
+    DB_playItem_t* ret = deadbeef->streamer_get_playing_track ();
+    js_return_DB_playItem_t_ptr_value (ctx, ret);
+    return 1;
+}
+
+int
+js_impl_streamer_set_dsp_chain (duk_context *ctx) {
+    ddb_dsp_context_t* arg0 = js_init_ddb_dsp_context_t_ptr_argument (ctx, 0);
+    deadbeef->streamer_set_dsp_chain (arg0);
+    return 0;
+}
+
+int
+js_impl_plt_add (duk_context *ctx) {
+    int arg0 = js_init_int_argument (ctx, 0);
+    jsstring arg1 = js_init_jsstring_argument (ctx, 1);
+    int ret = deadbeef->plt_add (arg0, arg1);
     js_return_int_value (ctx, ret);
     return 1;
+}
+
+int
+js_impl_plt_get_curr_idx (duk_context *ctx) {
+    int ret = deadbeef->plt_get_curr_idx ();
+    js_return_int_value (ctx, ret);
+    return 1;
+}
+
+int
+js_impl_plt_get_curr (duk_context *ctx) {
+    ddb_playlist_t* ret = deadbeef->plt_get_curr ();
+    js_return_ddb_playlist_t_ptr_value (ctx, ret);
+    return 1;
+}
+
+int
+js_impl_streamer_get_dsp_chain (duk_context *ctx) {
+    ddb_dsp_context_t* ret = deadbeef->streamer_get_dsp_chain ();
+    js_return_ddb_dsp_context_t_ptr_value (ctx, ret);
+    return 1;
+}
+
+int
+js_impl_plt_remove (duk_context *ctx) {
+    int arg0 = js_init_int_argument (ctx, 0);
+    deadbeef->plt_remove (arg0);
+    return 0;
+}
+
+int
+js_impl_plt_set_curr (duk_context *ctx) {
+    ddb_playlist_t* arg0 = js_init_ddb_playlist_t_ptr_argument (ctx, 0);
+    deadbeef->plt_set_curr (arg0);
+    return 0;
 }
 
 int
@@ -123,24 +208,26 @@ js_impl_get_output (duk_context *ctx) {
 }
 
 int
-js_impl_streamer_get_apx_bitrate (duk_context *ctx) {
-    int ret = deadbeef->streamer_get_apx_bitrate ();
-    js_return_int_value (ctx, ret);
-    return 1;
+js_impl_plt_move (duk_context *ctx) {
+    int arg0 = js_init_int_argument (ctx, 0);
+    int arg1 = js_init_int_argument (ctx, 1);
+    deadbeef->plt_move (arg0, arg1);
+    return 0;
 }
 
 int
-js_impl_streamer_get_streaming_track (duk_context *ctx) {
-    DB_playItem_t* ret = deadbeef->streamer_get_playing_track ();
+js_impl_plt_get_head (duk_context *ctx) {
+    int arg0 = js_init_int_argument (ctx, 0);
+    DB_playItem_t* ret = deadbeef->plt_get_head (arg0);
     js_return_DB_playItem_t_ptr_value (ctx, ret);
     return 1;
 }
 
 int
-js_impl_streamer_get_playpos (duk_context *ctx) {
-    float ret = deadbeef->streamer_get_playpos ();
-    js_return_float_value (ctx, ret);
-    return 1;
+js_impl_plt_ref (duk_context *ctx) {
+    ddb_playlist_t* arg0 = js_init_ddb_playlist_t_ptr_argument (ctx, 0);
+    deadbeef->plt_ref (arg0);
+    return 0;
 }
 
 int
@@ -150,9 +237,9 @@ js_impl_quit (duk_context *ctx) {
 }
 
 int
-js_impl_streamer_get_dsp_chain (duk_context *ctx) {
-    ddb_dsp_context_t* ret = deadbeef->streamer_get_dsp_chain ();
-    js_return_ddb_dsp_context_t_ptr_value (ctx, ret);
+js_impl_playback_get_pos (duk_context *ctx) {
+    float ret = deadbeef->playback_get_pos ();
+    js_return_float_value (ctx, ret);
     return 1;
 }
 
@@ -165,41 +252,91 @@ js_impl_streamer_read (duk_context *ctx) {
     return 1;
 }
 
+int
+js_impl_streamer_ok_to_read (duk_context *ctx) {
+    int arg0 = js_init_int_argument (ctx, 0);
+    int ret = deadbeef->streamer_ok_to_read (arg0);
+    js_return_int_value (ctx, ret);
+    return 1;
+}
+
+int
+js_impl_plt_get_count (duk_context *ctx) {
+    int ret = deadbeef->plt_get_count ();
+    js_return_int_value (ctx, ret);
+    return 1;
+}
+
+int
+js_impl_streamer_set_bitrate (duk_context *ctx) {
+    int arg0 = js_init_int_argument (ctx, 0);
+    deadbeef->streamer_set_bitrate (arg0);
+    return 0;
+}
+
 void bind_functions (duk_context *ctx, int obj_idx) {
-    duk_push_c_function(ctx, js_impl_streamer_get_current_fileinfo, 0);
-    duk_put_prop_string(ctx, obj_idx, "streamer_get_current_fileinfo");
-    duk_push_c_function(ctx, js_impl_playback_set_pos, 1);
-    duk_put_prop_string(ctx, obj_idx, "playback_set_pos");
     duk_push_c_function(ctx, js_impl_streamer_dsp_refresh, 0);
     duk_put_prop_string(ctx, obj_idx, "streamer_dsp_refresh");
-    duk_push_c_function(ctx, js_impl_streamer_ok_to_read, 1);
-    duk_put_prop_string(ctx, obj_idx, "streamer_ok_to_read");
-    duk_push_c_function(ctx, js_impl_streamer_set_bitrate, 1);
-    duk_put_prop_string(ctx, obj_idx, "streamer_set_bitrate");
-    duk_push_c_function(ctx, js_impl_streamer_get_current_playlist, 0);
-    duk_put_prop_string(ctx, obj_idx, "streamer_get_current_playlist");
-    duk_push_c_function(ctx, js_impl_streamer_set_dsp_chain, 1);
-    duk_put_prop_string(ctx, obj_idx, "streamer_set_dsp_chain");
-    duk_push_c_function(ctx, js_impl_streamer_reset, 1);
-    duk_put_prop_string(ctx, obj_idx, "streamer_reset");
-    duk_push_c_function(ctx, js_impl_playback_get_pos, 0);
-    duk_put_prop_string(ctx, obj_idx, "playback_get_pos");
-    duk_push_c_function(ctx, js_impl_plt_get_count, 0);
-    duk_put_prop_string(ctx, obj_idx, "plt_get_count");
-    duk_push_c_function(ctx, js_impl_get_output, 0);
-    duk_put_prop_string(ctx, obj_idx, "get_output");
     duk_push_c_function(ctx, js_impl_streamer_get_apx_bitrate, 0);
     duk_put_prop_string(ctx, obj_idx, "streamer_get_apx_bitrate");
-    duk_push_c_function(ctx, js_impl_streamer_get_streaming_track, 0);
-    duk_put_prop_string(ctx, obj_idx, "streamer_get_streaming_track");
+    duk_push_c_function(ctx, js_impl_playback_set_pos, 1);
+    duk_put_prop_string(ctx, obj_idx, "playback_set_pos");
+    duk_push_c_function(ctx, js_impl_plt_clear, 1);
+    duk_put_prop_string(ctx, obj_idx, "plt_clear");
+    duk_push_c_function(ctx, js_impl_pl_clear, 0);
+    duk_put_prop_string(ctx, obj_idx, "pl_clear");
+    duk_push_c_function(ctx, js_impl_plt_set_curr_idx, 1);
+    duk_put_prop_string(ctx, obj_idx, "plt_set_curr_idx");
+    duk_push_c_function(ctx, js_impl_streamer_get_current_playlist, 0);
+    duk_put_prop_string(ctx, obj_idx, "streamer_get_current_playlist");
+    duk_push_c_function(ctx, js_impl_plt_save, 7);
+    duk_put_prop_string(ctx, obj_idx, "plt_save");
+    duk_push_c_function(ctx, js_impl_plt_unref, 1);
+    duk_put_prop_string(ctx, obj_idx, "plt_unref");
+    duk_push_c_function(ctx, js_impl_plt_get_sel_count, 1);
+    duk_put_prop_string(ctx, obj_idx, "plt_get_sel_count");
+    duk_push_c_function(ctx, js_impl_streamer_reset, 1);
+    duk_put_prop_string(ctx, obj_idx, "streamer_reset");
     duk_push_c_function(ctx, js_impl_streamer_get_playpos, 0);
     duk_put_prop_string(ctx, obj_idx, "streamer_get_playpos");
-    duk_push_c_function(ctx, js_impl_quit, 0);
-    duk_put_prop_string(ctx, obj_idx, "quit");
+    duk_push_c_function(ctx, js_impl_streamer_get_current_fileinfo, 0);
+    duk_put_prop_string(ctx, obj_idx, "streamer_get_current_fileinfo");
+    duk_push_c_function(ctx, js_impl_streamer_get_playing_track, 0);
+    duk_put_prop_string(ctx, obj_idx, "streamer_get_playing_track");
+    duk_push_c_function(ctx, js_impl_streamer_set_dsp_chain, 1);
+    duk_put_prop_string(ctx, obj_idx, "streamer_set_dsp_chain");
+    duk_push_c_function(ctx, js_impl_plt_add, 2);
+    duk_put_prop_string(ctx, obj_idx, "plt_add");
+    duk_push_c_function(ctx, js_impl_plt_get_curr_idx, 0);
+    duk_put_prop_string(ctx, obj_idx, "plt_get_curr_idx");
+    duk_push_c_function(ctx, js_impl_plt_get_curr, 0);
+    duk_put_prop_string(ctx, obj_idx, "plt_get_curr");
     duk_push_c_function(ctx, js_impl_streamer_get_dsp_chain, 0);
     duk_put_prop_string(ctx, obj_idx, "streamer_get_dsp_chain");
+    duk_push_c_function(ctx, js_impl_plt_remove, 1);
+    duk_put_prop_string(ctx, obj_idx, "plt_remove");
+    duk_push_c_function(ctx, js_impl_plt_set_curr, 1);
+    duk_put_prop_string(ctx, obj_idx, "plt_set_curr");
+    duk_push_c_function(ctx, js_impl_get_output, 0);
+    duk_put_prop_string(ctx, obj_idx, "get_output");
+    duk_push_c_function(ctx, js_impl_plt_move, 2);
+    duk_put_prop_string(ctx, obj_idx, "plt_move");
+    duk_push_c_function(ctx, js_impl_plt_get_head, 1);
+    duk_put_prop_string(ctx, obj_idx, "plt_get_head");
+    duk_push_c_function(ctx, js_impl_plt_ref, 1);
+    duk_put_prop_string(ctx, obj_idx, "plt_ref");
+    duk_push_c_function(ctx, js_impl_quit, 0);
+    duk_put_prop_string(ctx, obj_idx, "quit");
+    duk_push_c_function(ctx, js_impl_playback_get_pos, 0);
+    duk_put_prop_string(ctx, obj_idx, "playback_get_pos");
     duk_push_c_function(ctx, js_impl_streamer_read, 2);
     duk_put_prop_string(ctx, obj_idx, "streamer_read");
+    duk_push_c_function(ctx, js_impl_streamer_ok_to_read, 1);
+    duk_put_prop_string(ctx, obj_idx, "streamer_ok_to_read");
+    duk_push_c_function(ctx, js_impl_plt_get_count, 0);
+    duk_put_prop_string(ctx, obj_idx, "plt_get_count");
+    duk_push_c_function(ctx, js_impl_streamer_set_bitrate, 1);
+    duk_put_prop_string(ctx, obj_idx, "streamer_set_bitrate");
 }
 
 void duktape_bind_all (duk_context *ctx) {

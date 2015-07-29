@@ -118,6 +118,13 @@ js_return_ddb_dsp_context_t_ptr_value (duk_context *ctx, ddb_dsp_context_t *val)
     duk_put_prop_string(ctx, obj_idx, "_ptr");
 }
 
+void
+js_return_ddb_playlist_t_ptr_value (duk_context *ctx, ddb_playlist_t *val) {
+    duk_idx_t obj_idx;
+    obj_idx = duk_push_object (ctx);
+    duk_push_pointer (ctx, val);
+    duk_put_prop_string(ctx, obj_idx, "_ptr");
+}
 
 jscharbuffer
 js_init_jscharbuffer_argument (duk_context *ctx, int idx) {
@@ -145,4 +152,30 @@ js_init_ddb_dsp_context_t_ptr_argument (duk_context *ctx, int idx) {
     duk_get_prop_string (ctx, 0, "_ptr");
     void *ptr = duk_to_pointer (ctx, -1);
     return ptr;
+}
+
+ddb_playlist_t *
+js_init_ddb_playlist_t_ptr_argument (duk_context *ctx, int idx) {
+    duk_to_object (ctx, idx);
+    duk_get_prop_string (ctx, 0, "_ptr");
+    void *ptr = duk_to_pointer (ctx, -1);
+    return ptr;
+}
+
+DB_playItem_t *
+js_init_DB_playItem_t_ptr_argument (duk_context *ctx, int idx) {
+    duk_to_object (ctx, idx);
+    duk_get_prop_string (ctx, 0, "_ptr");
+    void *ptr = duk_to_pointer (ctx, -1);
+    return ptr;
+}
+
+const char *
+js_init_jsstring_argument (duk_context *ctx, int idx) {
+    return duk_to_string (ctx, idx);
+}
+
+jsnull
+js_init_jsnull_argument (duk_context *ctx, int idx) {
+    return NULL;
 }
