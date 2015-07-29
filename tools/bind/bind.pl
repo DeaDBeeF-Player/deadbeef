@@ -31,14 +31,12 @@ print "#include \"bindings.h\"\n\n";
 print "extern DB_functions_t *deadbeef;\n\n";
 
 # int constants
-print "void bind_int_constants (duk_context *ctx) {\n";
-print "    duk_push_global_object(ctx);\n";
+print "void bind_int_constants (duk_context *ctx, int obj_idx) {\n";
 my $int_constants = $api->{int_constants};
 foreach my $c (keys %$int_constants) {
     print "    duk_push_int(ctx, $int_constants->{$c});\n";
-    print "    duk_put_prop_string(ctx, -2, \"$c\");\n";
+    print "    duk_put_prop_string(ctx, obj_idx, \"$c\");\n";
 }
-print "    duk_pop(ctx);\n";
 print "}\n\n";
 
 my %ret_converters = (
@@ -100,8 +98,7 @@ foreach my $c (keys %$functions) {
 }
 
 # functions
-print "void bind_functions (duk_context *ctx) {\n";
-print "    duk_push_global_object(ctx);\n";
+print "void bind_functions (duk_context *ctx, int obj_idx) {\n";
 foreach my $c (keys %$functions) {
     my $f = $functions->{$c};
     my $argcnt = $f->{args};
@@ -113,13 +110,16 @@ foreach my $c (keys %$functions) {
         $argcnt = 0;
     }
     print "    duk_push_c_function(ctx, js_impl_$f->{name}, $argcnt);\n";
-    print "    duk_put_prop_string(ctx, -2, \"$f->{name}\");\n";
+    print "    duk_put_prop_string(ctx, obj_idx, \"$f->{name}\");\n";
 }
-print "    duk_pop(ctx);\n";
 print "}\n\n";
 
 # util
 print "void duktape_bind_all (duk_context *ctx) {\n";
-print "    bind_int_constants(ctx);\n";
-print "    bind_functions(ctx);\n";
+print "    duk_push_global_object (ctx);\n";
+print "    int obj_idx = duk_push_object (ctx);\n";
+print "    bind_int_constants(ctx, obj_idx);\n";
+print "    bind_functions(ctx, obj_idx);\n";
+print "    duk_put_prop_string(ctx, -2, \"deadbeef\");\n";
+print "    duk_pop(ctx);\n";
 print "}\n\n";

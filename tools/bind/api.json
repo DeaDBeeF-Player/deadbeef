@@ -123,7 +123,13 @@
             name: 'streamer_dsp_refresh',
             ret: 'void',
             args: 'void',
-        }
+        },
+
+        quit: {
+            name: 'quit',
+            ret: 'void',
+            args: 'void',
+        },
 
     },
 }
