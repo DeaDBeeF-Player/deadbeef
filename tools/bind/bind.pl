@@ -104,7 +104,15 @@ print "void bind_functions (duk_context *ctx) {\n";
 print "    duk_push_global_object(ctx);\n";
 foreach my $c (keys %$functions) {
     my $f = $functions->{$c};
-    print "    duk_push_c_function(ctx, js_impl_$f->{name}, 0);\n";
+    my $argcnt = $f->{args};
+
+	if (ref ($f->{args}) eq 'ARRAY') {
+        $argcnt = ~~@{$f->{args}};
+    }
+    else {
+        $argcnt = 0;
+    }
+    print "    duk_push_c_function(ctx, js_impl_$f->{name}, $argcnt);\n";
     print "    duk_put_prop_string(ctx, -2, \"$f->{name}\");\n";
 }
 print "    duk_pop(ctx);\n";

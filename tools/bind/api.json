@@ -95,5 +95,35 @@
 			args: 'void',
 		},
 
+		streamer_get_current_fileinfo: {
+		    name: 'streamer_get_current_fileinfo',
+		    ret: 'DB_fileinfo_t*',
+		    args: 'void',
+		},
+
+		streamer_get_current_playlist: {
+		    name: 'streamer_get_current_playlist',
+		    ret: 'int',
+		    args: 'void',
+		},
+
+        streamer_get_dsp_chain: {
+            name: 'streamer_get_dsp_chain',
+            ret: 'ddb_dsp_context_t*',
+            args: 'void',
+        },
+
+        streamer_set_dsp_chain: {
+            name: 'streamer_set_dsp_chain',
+            ret: 'void',
+            args: ['ddb_dsp_context_t*'],
+        },
+
+        streamer_dsp_refresh: {
+            name: 'streamer_dsp_refresh',
+            ret: 'void',
+            args: 'void',
+        }
+
     },
 }
