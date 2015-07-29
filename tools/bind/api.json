@@ -237,6 +237,88 @@
         plt_delete_all_meta: {
             args: ['ddb_playlist_t*'],
         },
-        
+
+        plt_insert_item: {
+            ret: 'DB_playItem_t*',
+            args: ['ddb_playlist_t*', 'DB_playItem_t*', 'DB_playItem_t*'],
+        },
+
+        plt_set_item_duration: {
+            args: ['ddb_playlist_t*', 'DB_playItem_t*', 'float'],
+        },
+
+        plt_remove_item: {
+            ret: 'int',
+            args: ['ddb_playlist_t*', 'DB_playItem_t*'],
+        },
+
+        plt_getselcount: {
+            ret: 'int',
+            args: ['ddb_playlist_t*'],
+        },
+
+        plt_get_totaltime: {
+            ret: 'float',
+            args: ['ddb_playlist_t*'],
+        },
+
+        plt_get_item_count: {
+            ret: 'int',
+            args: ['ddb_playlist_t*','int'],
+        },
+
+        plt_delete_selected: {
+            ret: 'int',
+            args: ['ddb_playlist_t*'],
+        },
+
+        plt_set_cursor: {
+            args: ['ddb_playlist_t*','int','int'],
+        },
+
+        plt_get_cursor: {
+            ret: 'int',
+            args: ['ddb_playlist_t*','int'],
+        },
+
+        plt_select_all: {
+            args: ['ddb_playlist_t*'],
+        },
+
+        plt_crop_selected: {
+            args: ['ddb_playlist_t*'],
+        },
+
+        plt_get_first: {
+            ret: 'DB_playItem_t*',
+            args: ['ddb_playlist_t*','int'],
+        },
+
+        plt_get_last: {
+            ret: 'DB_playItem_t*',
+            args: ['ddb_playlist_t*','int'],
+        },
+
+        plt_get_item_for_idx: {
+            ret: 'DB_playItem_t*',
+            args: ['ddb_playlist_t*','int','int'],
+        },
+
+//  FIXME: needs int array
+        //plt_move_items: {
+        //    args: ['ddb_playlist_t*','int','ddb_playlist_t*','DB_playItem_t*',int_array,'int],
+        //},
+
+        //plt_copy_items: {
+        //},
+
+        plt_search_reset: {
+            args: ['ddb_playlist_t*'],
+        },
+
+        plt_search_process: {
+            args: ['ddb_playlist_t*','jsstring'],
+        },
+
     },
 }
