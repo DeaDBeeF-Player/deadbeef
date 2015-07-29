@@ -161,5 +161,82 @@
             args: ['ddb_playlist_t*', 'DB_playItem_t*', 'DB_playItem_t*', 'jsstring', 'jsnull', 'jsnull', 'jsnull']
         },
 
+        plt_get_for_idx: {
+            ret: 'ddb_playlist_t*',
+            args: ['int'],
+        },
+
+        plt_get_title: {
+            ret: 'int',
+            args: ['ddb_playlist_t*', 'jscharbuffer', 'int'],
+        },
+
+        plt_set_title: {
+            ret: 'int',
+            args: ['ddb_playlist_t*', 'jsstring'],
+        },
+
+        plt_modified: {
+            args: ['ddb_playlist_t*'],
+        },
+
+        plt_get_modification_idx: {
+            ret: 'int',
+            args: ['ddb_playlist_t*'],
+        },
+
+        plt_get_item_idx: {
+            ret: 'int',
+            args: ['ddb_playlist_t*', 'DB_playItem_t*', 'int'],
+        },
+
+        plt_add_meta: {
+            args: ['ddb_playlist_t*', 'jsstring', 'jsstring'],
+        },
+
+        plt_replace_meta: {
+            args: ['ddb_playlist_t*', 'jsstring', 'jsstring'],
+        },
+
+        plt_append_meta: {
+            args: ['ddb_playlist_t*', 'jsstring', 'jsstring'],
+        },
+
+        plt_set_meta_int: {
+            args: ['ddb_playlist_t*', 'jsstring', 'int'],
+        },
+
+        plt_set_meta_float: {
+            args: ['ddb_playlist_t*', 'jsstring', 'float'],
+        },
+
+        plt_find_meta: {
+            ret: 'jsstring',
+            args: ['ddb_playlist_t*', 'jsstring'],
+        },
+
+        plt_get_metadata_head: {
+            ret: 'DB_metaInfo_t*',
+            args: ['ddb_playlist_t*'],
+        },
+
+        plt_delete_metadata: {
+            args: ['ddb_playlist_t*','DB_metaInfo_t*'],
+        },
+
+        plt_find_meta_int: {
+            ret: 'int',
+            args: ['ddb_playlist_t*', 'jsstring', 'int'],
+        },
+        
+        plt_find_meta_float: {
+            ret: 'float',
+            args: ['ddb_playlist_t*', 'jsstring', 'float'],
+        },
+
+        plt_delete_all_meta: {
+            args: ['ddb_playlist_t*'],
+        },
+        
     },
 }

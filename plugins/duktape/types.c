@@ -126,6 +126,19 @@ js_return_ddb_playlist_t_ptr_value (duk_context *ctx, ddb_playlist_t *val) {
     duk_put_prop_string(ctx, obj_idx, "_ptr");
 }
 
+void
+js_return_DB_metaInfo_t_ptr_value (duk_context *ctx, DB_metaInfo_t *val) {
+    duk_idx_t obj_idx;
+    obj_idx = duk_push_object (ctx);
+    duk_push_pointer (ctx, val);
+    duk_put_prop_string(ctx, obj_idx, "_ptr");
+}
+
+void
+js_return_jsstring_value (duk_context *ctx, const char *val) {
+    duk_push_string (ctx, val);
+}
+
 jscharbuffer
 js_init_jscharbuffer_argument (duk_context *ctx, int idx) {
     // assumes there's a buffer on stack
@@ -164,6 +177,14 @@ js_init_ddb_playlist_t_ptr_argument (duk_context *ctx, int idx) {
 
 DB_playItem_t *
 js_init_DB_playItem_t_ptr_argument (duk_context *ctx, int idx) {
+    duk_to_object (ctx, idx);
+    duk_get_prop_string (ctx, 0, "_ptr");
+    void *ptr = duk_to_pointer (ctx, -1);
+    return ptr;
+}
+
+DB_metaInfo_t *
+js_init_DB_metaInfo_t_ptr_argument (duk_context *ctx, int idx) {
     duk_to_object (ctx, idx);
     duk_get_prop_string (ctx, 0, "_ptr");
     void *ptr = duk_to_pointer (ctx, -1);
