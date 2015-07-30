@@ -53,68 +53,68 @@ foreach my $c (keys %$functions) {
         $f->{name} = $c;
     }
     next if $f->{custom};
-	if (!$f->{ret}) {
-		$f->{ret} = 'void';
-	}
-	if (!$f->{args}) {
-		$f->{args} = 'void';
-	}
-	print "int\njs_impl_$f->{name} (duk_context *ctx) {\n";
-	if (ref ($f->{args}) eq 'ARRAY') {
-	    my $realidx = 0;
-		my $idx = 0;
-		foreach my $type (@{$f->{args}}) {
-			my $convname = $type;
-			$convname =~ s/\*/_ptr/g;
-			$convname =~ s/[^A-Za-z0-9_]/_/g;
-			print "    $type arg$idx = js_init_" . $convname . "_argument (ctx, $idx);\n";
-			if ($type eq 'jscharbuffer') {
+    if (!$f->{ret}) {
+        $f->{ret} = 'void';
+    }
+    if (!$f->{args}) {
+        $f->{args} = 'void';
+    }
+    print "int\njs_impl_$f->{name} (duk_context *ctx) {\n";
+    if (ref ($f->{args}) eq 'ARRAY') {
+        my $realidx = 0;
+        my $idx = 0;
+        foreach my $type (@{$f->{args}}) {
+            my $convname = $type;
+            $convname =~ s/\*/_ptr/g;
+            $convname =~ s/[^A-Za-z0-9_]/_/g;
+            print "    $type arg$idx = js_init_" . $convname . "_argument (ctx, $idx);\n";
+            if ($type eq 'jscharbuffer') {
                 $idx++;
                 print "    int arg$idx = js_init_" . $convname . "_size_argument (ctx, $realidx);\n";
             }
             $realidx++;
-			$idx++;
-		}
-	}
+            $idx++;
+        }
+    }
 
-	if ($f->{ret} ne 'void') {
-		print "    $f->{ret} ret = ";
-	}
-	else {
-		print "    ";
-	}
+    if ($f->{ret} ne 'void') {
+        print "    $f->{ret} ret = ";
+    }
+    else {
+        print "    ";
+    }
 
-	print "deadbeef->$c (";
-	if (ref ($f->{args}) eq 'ARRAY') {
-		my $idx = 0;
-		foreach my $type (@{$f->{args}}) {
-			print ', ' if $idx;
-			print "arg$idx";
-			if ($type eq 'jscharbuffer') {
+    print "deadbeef->$c (";
+    if (ref ($f->{args}) eq 'ARRAY') {
+        my $idx = 0;
+        foreach my $type (@{$f->{args}}) {
+            print ', ' if $idx;
+            print "arg$idx";
+            if ($type eq 'jscharbuffer') {
                 $idx++;
                 print ', ' if $idx;
                 print "arg$idx";
             }
-			$idx++;
-		}
-	}
-	elsif ($f->{args} ne 'void') {
-		die "Invalid argument list: \n" . Dumper($f) . "\n";
-	}
-	print ");\n";
+            $idx++;
+        }
+    }
+    elsif ($f->{args} ne 'void') {
+        die "Invalid argument list: \n" . Dumper($f) . "\n";
+    }
+    print ");\n";
 
 
-	if ($f->{ret} eq 'void') {
-		print "    return 0;\n";
-	}
-	else {
-		my $convname = $f->{ret};
-		$convname =~ s/\*/_ptr/g;
-		$convname =~ s/[^A-Za-z0-9_]/_/g;
-		print '    js_return_' . $convname . "_value (ctx, ret);\n";
-		print "    return 1;\n";
-	}
-	print "}\n\n";
+    if ($f->{ret} eq 'void') {
+        print "    return 0;\n";
+    }
+    else {
+        my $convname = $f->{ret};
+        $convname =~ s/\*/_ptr/g;
+        $convname =~ s/[^A-Za-z0-9_]/_/g;
+        print '    js_return_' . $convname . "_value (ctx, ret);\n";
+        print "    return 1;\n";
+    }
+    print "}\n\n";
 }
 
 # functions
@@ -123,7 +123,7 @@ foreach my $c (keys %$functions) {
     my $f = $functions->{$c};
     my $argcnt = $f->{args};
 
-	if (ref ($f->{args}) eq 'ARRAY') {
+    if (ref ($f->{args}) eq 'ARRAY') {
         $argcnt = ~~@{$f->{args}};
     }
     else {

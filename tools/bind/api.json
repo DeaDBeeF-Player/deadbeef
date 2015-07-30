@@ -39,48 +39,48 @@
             ret: 'int',
         },
 
-		streamer_get_playing_track: {
-			ret: 'DB_playItem_t*',
-		},
+        streamer_get_playing_track: {
+            ret: 'DB_playItem_t*',
+        },
 
-		streamer_get_playing_track: {
-			ret: 'DB_playItem_t*',
-		},
+        streamer_get_playing_track: {
+            ret: 'DB_playItem_t*',
+        },
 
-		streamer_get_playpos: {
-			ret: 'float',
-		},
+        streamer_get_playpos: {
+            ret: 'float',
+        },
 
-		streamer_ok_to_read: {
-			ret: 'int',
-			args: ['int'],
-		},
+        streamer_ok_to_read: {
+            ret: 'int',
+            args: ['int'],
+        },
 
-		streamer_reset: {
-			args: ['int'],
-		},
+        streamer_reset: {
+            args: ['int'],
+        },
 
         // TODO: make a custom function returning buffer
-		//streamer_read: {
-		//	ret: 'int',
-		//	args: ['jscharbuffer'],
-		//},
+        //streamer_read: {
+        //    ret: 'int',
+        //    args: ['jscharbuffer'],
+        //},
 
-		streamer_set_bitrate: {
-			args: ['int'],
-		},
+        streamer_set_bitrate: {
+            args: ['int'],
+        },
 
-		streamer_get_apx_bitrate: {
-			ret: 'int',
-		},
+        streamer_get_apx_bitrate: {
+            ret: 'int',
+        },
 
-		streamer_get_current_fileinfo: {
-		    ret: 'DB_fileinfo_t*',
-		},
+        streamer_get_current_fileinfo: {
+            ret: 'DB_fileinfo_t*',
+        },
 
-		streamer_get_current_playlist: {
-		    ret: 'int',
-		},
+        streamer_get_current_playlist: {
+            ret: 'int',
+        },
 
         // TODO: needs dsp_chain_next
         streamer_get_dsp_chain: {
