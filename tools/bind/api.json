@@ -60,10 +60,11 @@
 			args: ['int'],
 		},
 
-		streamer_read: {
-			ret: 'int',
-			args: ['jscharbuffer', 'int'],
-		},
+        // TODO: make a custom function returning buffer
+		//streamer_read: {
+		//	ret: 'int',
+		//	args: ['jscharbuffer'],
+		//},
 
 		streamer_set_bitrate: {
 			args: ['int'],
@@ -167,8 +168,9 @@
         },
 
         plt_get_title: {
-            ret: 'int',
-            args: ['ddb_playlist_t*', 'jscharbuffer', 'int'],
+            custom: true,
+            ret: ['string'],
+            args: ['int'],
         },
 
         plt_set_title: {
@@ -304,7 +306,7 @@
             args: ['ddb_playlist_t*','int','int'],
         },
 
-//  FIXME: needs int array
+        //  FIXME: needs int array
         //plt_move_items: {
         //    args: ['ddb_playlist_t*','int','ddb_playlist_t*','DB_playItem_t*',int_array,'int],
         //},
@@ -319,6 +321,12 @@
         plt_search_process: {
             args: ['ddb_playlist_t*','jsstring'],
         },
+
+        // TODO: send string as buffer
+        //plt_insert_cue_from_buffer: {
+        //    ret: 'DB_playItem_t*',
+        //    args: ['ddb_playlist_t*','DB_playItem_t*','DB_playItem_t*','jscharbuffer','int','int'],
+        //},
 
     },
 }

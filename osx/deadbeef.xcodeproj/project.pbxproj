@@ -147,6 +147,8 @@
 		2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06B39B19D056BC0041BE86 /* DdbPlaylistWidget.h */; };
 		2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */; };
 		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
+		2D1055491B6ABFD600518D69 /* custombindings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1055471B6ABFD600518D69 /* custombindings.h */; };
+		2D10554A1B6ABFDC00518D69 /* custombindings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D1055461B6ABFD600518D69 /* custombindings.c */; };
 		2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11E8AF1AA0E3DD00A67A20 /* MainWindowController.h */; };
 		2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */; };
 		2D11E8B41AA0E3DD00A67A20 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D11E8B11AA0E3DD00A67A20 /* MainWindow.xib */; };
@@ -1433,6 +1435,9 @@
 		2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbPlaylistWidget.m; path = widgets/DdbPlaylistWidget.m; sourceTree = "<group>"; };
 		2D0A002519C390E9006F7462 /* tf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tf.c; sourceTree = "<group>"; };
 		2D0A002619C390E9006F7462 /* tf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tf.h; sourceTree = "<group>"; };
+		2D1055461B6ABFD600518D69 /* custombindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = custombindings.c; path = plugins/duktape/custombindings.c; sourceTree = "<group>"; };
+		2D1055471B6ABFD600518D69 /* custombindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = custombindings.h; path = plugins/duktape/custombindings.h; sourceTree = "<group>"; };
+		2D10554B1B6ABFF400518D69 /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = types.h; path = plugins/duktape/types.h; sourceTree = "<group>"; };
 		2D11E8AF1AA0E3DD00A67A20 /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
 		2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowController.m; sourceTree = "<group>"; };
 		2D11E8B11AA0E3DD00A67A20 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
@@ -3622,6 +3627,9 @@
 				2D989F971B5058BB0042F370 /* duktape_plugin.c */,
 				2D5C7A191B58029800DD1EC0 /* bindings.h */,
 				2D8AEA291B591C1800E64D41 /* types.c */,
+				2D1055461B6ABFD600518D69 /* custombindings.c */,
+				2D1055471B6ABFD600518D69 /* custombindings.h */,
+				2D10554B1B6ABFF400518D69 /* types.h */,
 			);
 			name = duktape;
 			sourceTree = "<group>";
@@ -5034,6 +5042,7 @@
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
+				2D1055491B6ABFD600518D69 /* custombindings.h in Headers */,
 				2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */,
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
 				2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */,
@@ -6269,6 +6278,7 @@
 				2D8AEA2B1B591D2800E64D41 /* types.c in Sources */,
 				2D989F931B5058550042F370 /* duktape.c in Sources */,
 				2D989F981B5058BB0042F370 /* duktape_plugin.c in Sources */,
+				2D10554A1B6ABFDC00518D69 /* custombindings.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

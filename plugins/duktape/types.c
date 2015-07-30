@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "duktape.h"
 #include "bindings.h"
+#include "types.h"
 
 void
 js_return_int_value (duk_context *ctx, int val) {
@@ -10,6 +11,11 @@ js_return_int_value (duk_context *ctx, int val) {
 void
 js_return_float_value (duk_context *ctx, float val) {
     duk_push_number(ctx, val);
+}
+
+void
+js_return_string_value (duk_context *ctx, const char *val) {
+    duk_push_string(ctx, val);
 }
 
 void
@@ -141,10 +147,18 @@ js_return_jsstring_value (duk_context *ctx, const char *val) {
 
 jscharbuffer
 js_init_jscharbuffer_argument (duk_context *ctx, int idx) {
-    // assumes there's a buffer on stack
+    // assumes there's a buffer on stack -- returns data ptr
     duk_size_t size;
-    void *buf = duk_to_buffer(ctx, idx, &size);
+    void *buf = duk_get_buffer(ctx, idx, &size);
     return (char *)buf;
+}
+
+int
+js_init_jscharbuffer_size_argument (duk_context *ctx, int idx) {
+    // assumes there's a buffer on stack -- returns size
+    duk_size_t size;
+    void *buf = duk_get_buffer(ctx, idx, &size);
+    return size;
 }
 
 int
