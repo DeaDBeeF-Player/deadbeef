@@ -11,6 +11,13 @@
 
 extern DB_functions_t *deadbeef;
 
+@interface DdbTabStrip () {
+    NSButton *_scrollLeftBtn;
+    NSButton *_scrollRightBtn;
+    BOOL _needArrows;
+}
+@end
+
 @implementation DdbTabStrip
 
 static int text_left_padding = 15;
@@ -21,8 +28,7 @@ static int tabs_left_margin = 4;
 static int tab_vert_padding = 1;
 static int min_tab_size = 80;
 static int max_tab_size = 200;
-#define arrow_sz 10
-#define arrow_widget_width (arrow_sz+4)
+#define arrow_widget_width ([self frame].size.height)
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -48,6 +54,30 @@ static int max_tab_size = 200;
         
         _tabBottomFill = [NSImage imageNamed:@"tab_bottom_fill"];
         [_tabUnselRight setFlipped:YES];
+
+        NSRect frame = [self frame];
+
+        _scrollLeftBtn = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, frame.size.height, frame.size.height-6)];
+        [_scrollLeftBtn setBordered:NO];
+        [_scrollLeftBtn setImage:[NSImage imageNamed:NSImageNameGoLeftTemplate]];
+        [_scrollLeftBtn setHidden:YES];
+        [_scrollLeftBtn setAutoresizingMask:~NSViewMinXMargin];
+        [_scrollLeftBtn setTarget:self];
+        [_scrollLeftBtn setAction:@selector(scrollLeft)];
+        [self addSubview:_scrollLeftBtn];
+
+        _scrollRightBtn = [[NSButton alloc] initWithFrame:NSMakeRect(frame.size.width-frame.size.height, 0, frame.size.height, frame.size.height-6)];
+        [_scrollRightBtn setBordered:NO];
+        [_scrollRightBtn setImage:[NSImage imageNamed:NSImageNameGoRightTemplate]];
+        [_scrollRightBtn setHidden:YES];
+        [_scrollRightBtn setAutoresizingMask:~NSViewMaxXMargin];
+        [_scrollRightBtn setTarget:self];
+        [_scrollRightBtn setAction:@selector(scrollRight)];
+        [self addSubview:_scrollRightBtn];
+
+        [self setAutoresizesSubviews:YES];
+        [self adjustHScroll];
+        [self recalculateNeedArrows];
     }
     return self;
 }
@@ -78,21 +108,32 @@ plt_get_title_wrapper (int plt) {
     return sz.width;
 }
 
-- (BOOL)needArrows {
+- (void)recalculateNeedArrows {
+    BOOL origValue = _needArrows;
+    _needArrows = NO;
     int cnt = deadbeef->plt_get_count ();
     int w = 0;
     NSRect a = [self bounds];
     for (int idx = 0; idx < cnt; idx++) {
         w += [self getTabWith:idx] - tab_overlap_size;
         if (w >= a.size.width) {
-            return YES;
+            _needArrows = YES;
+            break;
         }
     }
     w += tab_overlap_size + 3;
     if (w >= a.size.width) {
-        return YES;
+        _needArrows = YES;
     }
-    return NO;
+    if (origValue != _needArrows) {
+        [_scrollLeftBtn setHidden:!_needArrows];
+        [_scrollRightBtn setHidden:!_needArrows];
+        [self needsDisplay];
+    }
+}
+
+- (BOOL)needArrows {
+    return _needArrows;
 }
 
 - (void)scrollToTabInt:(int)tab redraw:(BOOL)redraw {
@@ -184,6 +225,11 @@ plt_get_title_wrapper (int plt) {
     [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + text_vert_offset, area.size.width - (text_left_padding + text_right_padding - 1), area.size.height) withAttributes:attrs];
 }
 
+- (void)clipTabArea {
+    NSRect rect = NSMakeRect([self frame].size.height, 0, [self frame].size.width - [self frame].size.height*2, [self frame].size.height);
+    [NSBezierPath clipRect:rect];
+}
+
 - (void)drawRect:(NSRect)dirtyRect
 {
     [super drawRect:dirtyRect];
@@ -191,6 +237,7 @@ plt_get_title_wrapper (int plt) {
     [NSBezierPath fillRect:[self bounds]];
     
     [self adjustHScroll];
+    [self recalculateNeedArrows];
 
     int cnt = deadbeef->plt_get_count ();
     int hscroll = _hscrollpos;
@@ -243,7 +290,12 @@ plt_get_title_wrapper (int plt) {
     }
     
     x = -hscroll + tabs_left_margin;
-    
+
+    if ([self needArrows]) {
+        [[NSGraphicsContext currentContext] saveGraphicsState];
+        [self clipTabArea];
+    }
+
     // draw tabs on the left
     int c = tab_selected == -1 ? cnt : tab_selected;
     for (idx = 0; idx < c; idx++) {
@@ -265,7 +317,10 @@ plt_get_title_wrapper (int plt) {
             [self drawTab:idx area:area selected:NO];
         }
     }
-    
+    if ([self needArrows]) {
+        [[NSGraphicsContext currentContext] restoreGraphicsState];
+    }
+
     NSGraphicsContext *gc = [NSGraphicsContext currentContext];
     [gc saveGraphicsState];
     [[NSColor colorWithPatternImage:_tabBottomFill] set];
@@ -275,6 +330,11 @@ plt_get_title_wrapper (int plt) {
     [NSBezierPath fillRect:NSMakeRect(0, offs, [self bounds].size.width, [_tabBottomFill size].height)];
     [gc restoreGraphicsState];
     
+
+    if ([self needArrows]) {
+        [[NSGraphicsContext currentContext] saveGraphicsState];
+        [self clipTabArea];
+    }
 
     // calc position for drawin selected tab
     x = -hscroll;
@@ -309,12 +369,8 @@ plt_get_title_wrapper (int plt) {
             x += w - tab_overlap_size;
         }
     }
-    if (need_arrows) {
-#if 0
-        int sz = a.height-3;
-        gtk_paint_arrow (widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_LEFT, TRUE, 2, sz/2-arrow_sz/2, arrow_sz, arrow_sz);
-        gtk_paint_arrow (widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_RIGHT, TRUE, widget->allocation.width-arrow_sz-2, 1+sz/2-arrow_sz/2, arrow_sz, arrow_sz);
-#endif
+    if ([self needArrows]) {
+        [[NSGraphicsContext currentContext] restoreGraphicsState];
     }
 }
 
@@ -368,21 +424,6 @@ plt_get_title_wrapper (int plt) {
     [self scrollToTab:tab];
 }
 
-#if 0
-- (BOOL)scrollCB {
-    if (scroll_direction < 0) {
-        [self scrollLeft];
-    }
-    else if (ts->scroll_direction > 0) {
-        [self scrollRigth];
-    }
-    else {
-        return NO;
-    }
-    return YES;
-}
-#endif
-
 -(void)scrollWheel:(NSEvent*)event {
     if (event.deltaY < 0 || event.deltaX < 0)
     {
@@ -398,21 +439,10 @@ plt_get_title_wrapper (int plt) {
     NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
     _tab_clicked = [self tabUnderCursor:coord.x];
     if (event.type == NSLeftMouseDown) {
-        BOOL need_arrows = [self needArrows];
-        if (need_arrows) {
+        if ([self needArrows]) {
             NSSize a = [self bounds].size;
-            if (coord.x < arrow_widget_width) {
-                [self scrollLeft];
-                _scroll_direction = -1;
-                // start periodic upd
-//                scroll_timer = g_timeout_add (300, tabstrip_scroll_cb, ts);
-                return;
-            }
-            else if (coord.x >= a.width - arrow_widget_width) {
-                [self scrollRight];
-                _scroll_direction = 1;
-            // start periodic upd
-//                    ts->scroll_timer = g_timeout_add (300, tabstrip_scroll_cb, ts);
+            if (coord.x < arrow_widget_width || coord.x >= a.width - arrow_widget_width) {
+                [super mouseDown:event];
                 return;
             }
         }
@@ -433,12 +463,12 @@ plt_get_title_wrapper (int plt) {
         }
         
         // adjust scroll if clicked tab spans border
-        if (need_arrows) {
+        if ([self needArrows]) {
             [self scrollToTab:_tab_clicked];
         }
         
         int hscroll = _hscrollpos;
-        if (need_arrows) {
+        if ([self needArrows]) {
             hscroll -= arrow_widget_width;
         }
         int x = -hscroll + tabs_left_margin;
@@ -517,14 +547,6 @@ plt_get_title_wrapper (int plt) {
 -(void)mouseUp:(NSEvent *)event
 {
     if (event.type == NSLeftMouseUp) {
-        // FIXME: cancel repeating
-#if 0
-        if (scroll_timer > 0) {
-            scroll_direction = 0;
-            g_source_remove (scroll_timer);
-            scroll_timer = 0;
-        }
-#endif
         if (_prepare || _dragging >= 0) {
             _dragging = -1;
             _prepare = 0;
