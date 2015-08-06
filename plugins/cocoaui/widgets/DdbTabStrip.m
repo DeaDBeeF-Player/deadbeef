@@ -23,7 +23,7 @@ extern DB_functions_t *deadbeef;
 static int text_left_padding = 15;
 static int text_right_padding = 0; // calculated from widget height
 static int text_vert_offset = 3;
-static int tab_overlap_size = 0; // widget_height/2
+static int tab_overlap_size = 0; // approximately widget_height/2
 static int tabs_left_margin = 4;
 static int tab_vert_padding = 1;
 static int min_tab_size = 80;
@@ -137,7 +137,7 @@ plt_get_title_wrapper (int plt) {
 }
 
 - (void)scrollToTabInt:(int)tab redraw:(BOOL)redraw {
-    int w = 0;
+    int w = tabs_left_margin;
     int cnt = deadbeef->plt_get_count ();
     NSSize a = [self bounds].size;
     int boundary = a.width - arrow_widget_width*2 + _hscrollpos;
@@ -155,7 +155,7 @@ plt_get_title_wrapper (int plt) {
                 }
             }
             else if (w + tab_w >= boundary) {
-                _hscrollpos += (w+tab_w) - boundary;
+                _hscrollpos += (w + tab_w) - boundary;
                 deadbeef->conf_set_int ("cocoaui.tabscroll", _hscrollpos);
                 if (redraw) {
                     [self setNeedsDisplay:YES];
