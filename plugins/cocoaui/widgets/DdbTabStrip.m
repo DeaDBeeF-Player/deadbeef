@@ -14,6 +14,7 @@ extern DB_functions_t *deadbeef;
 @interface DdbTabStrip () {
     NSButton *_scrollLeftBtn;
     NSButton *_scrollRightBtn;
+    NSButton *_closeTabBtn;
     BOOL _needArrows;
     int _hscrollpos;
     int _dragging;
@@ -24,6 +25,9 @@ extern DB_functions_t *deadbeef;
     NSPoint _dragpt;
     int _prev_x;
     int _tab_moved;
+    int _pointedTab;
+    NSTrackingArea *trackingArea;
+    NSPoint _lastMouseCoord;
 
     NSImage *_tabLeft;
     NSImage *_tabFill;
@@ -72,11 +76,10 @@ static int max_tab_size = 200;
         _tabBottomFill = [NSImage imageNamed:@"tab_bottom_fill"];
         [_tabUnselRight setFlipped:YES];
 
-        NSRect frame = [self frame];
-
         _scrollLeftBtn = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, frame.size.height, frame.size.height-6)];
         [_scrollLeftBtn setBordered:NO];
         [_scrollLeftBtn setImage:[NSImage imageNamed:NSImageNameGoLeftTemplate]];
+        [[_scrollLeftBtn cell] setImageScaling:NSImageScaleProportionallyDown];
         [_scrollLeftBtn setHidden:YES];
         [_scrollLeftBtn setAutoresizingMask:NSViewMaxXMargin];
         [_scrollLeftBtn setTarget:self];
@@ -86,13 +89,30 @@ static int max_tab_size = 200;
         _scrollRightBtn = [[NSButton alloc] initWithFrame:NSMakeRect(frame.size.width-frame.size.height, 0, frame.size.height, frame.size.height-6)];
         [_scrollRightBtn setBordered:NO];
         [_scrollRightBtn setImage:[NSImage imageNamed:NSImageNameGoRightTemplate]];
+        [[_scrollRightBtn cell] setImageScaling:NSImageScaleProportionallyDown];
         [_scrollRightBtn setHidden:YES];
         [_scrollRightBtn setAutoresizingMask:NSViewMinXMargin];
         [_scrollRightBtn setTarget:self];
         [_scrollRightBtn setAction:@selector(scrollRight)];
         [self addSubview:_scrollRightBtn];
 
+        _lastMouseCoord.x = -100000;
+        _pointedTab = -1;
+        _closeTabBtn = [[NSButton alloc] init];
+        [_closeTabBtn setBordered:NO];
+        [_closeTabBtn setImage:[NSImage imageNamed:NSImageNameStopProgressFreestandingTemplate]];
+        [[_closeTabBtn cell] setImageScaling:NSImageScaleProportionallyDown];
+        [_closeTabBtn setTarget:self];
+        [_closeTabBtn setAction:@selector(closePointedTab)];
+        [_closeTabBtn setHidden:YES];
+        [self addSubview:_closeTabBtn];
+
         [self setAutoresizesSubviews:YES];
+
+        // setup tracking area covering entire view, for managing the tab close buttons and tooltips
+
+        trackingArea = [[NSTrackingArea alloc] initWithRect:NSMakeRect(0,0,frame.size.width,frame.size.height) options:NSTrackingMouseMoved|NSTrackingMouseEnteredAndExited|NSTrackingActiveAlways owner:self userInfo:nil];
+        [self addTrackingArea:trackingArea];
 
         [self setScrollPos:deadbeef->conf_get_int ("cocoaui.tabscroll", 0)];
     }
@@ -231,6 +251,7 @@ plt_get_title_wrapper (int plt) {
             deadbeef->conf_set_int ("cocoaui.tabscroll", _hscrollpos);
         }
     }
+    [self mouseMovedHandler];
 }
 
 - (void)drawTab:(int)idx area:(NSRect)area selected:(BOOL)sel {
@@ -277,7 +298,7 @@ plt_get_title_wrapper (int plt) {
     int h = a.height;
 
     tab_overlap_size = (h-4)/2;
-    text_right_padding = h - 3;
+    text_right_padding = h - 3 + 5;
 }
 
 - (void)drawRect:(NSRect)dirtyRect
@@ -417,11 +438,36 @@ plt_get_title_wrapper (int plt) {
     }
 }
 
+-(NSRect)tabRectForIndex:(int)tab {
+    int width = 0;
+    int cnt = deadbeef->plt_get_count ();
+    for (int idx = 0; idx < cnt; idx++) {
+        NSString *title = plt_get_title_wrapper (idx);
+        NSSize sz = [title sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:nil]];
+        int w = sz.width;
+        w += text_left_padding + text_right_padding;
+        if (w < min_tab_size) {
+            w = min_tab_size;
+        }
+        else if (w > max_tab_size) {
+            w = max_tab_size;
+        }
+        if (idx == tab) {
+            return NSMakeRect(width - _hscrollpos + ([self needArrows] ? arrow_widget_width : 0), 0, w, [self frame].size.height);
+        }
+        width += w - tab_overlap_size;
+    }
+    return NSMakeRect(0, 0, 0, 0);
+}
+
 -(int)tabUnderCursor:(int)x {
     int hscroll = _hscrollpos;
     BOOL need_arrows = [self needArrows];
     if (need_arrows) {
         hscroll -= arrow_widget_width;
+    }
+    if (x < hscroll) {
+        return -1;
     }
     int idx;
     int cnt = deadbeef->plt_get_count ();
@@ -465,6 +511,31 @@ plt_get_title_wrapper (int plt) {
         cocoaui_playlist_set_curr (tab);
     }
     [self scrollToTab:tab];
+}
+
+-(void)updatePointedTab:(int)tab {
+    _pointedTab = tab;
+    if (_pointedTab < 0) {
+        [_closeTabBtn setHidden:YES];
+        return;
+    }
+    else {
+        NSRect tabRect = [self tabRectForIndex:_pointedTab];
+        tabRect.origin.x = tabRect.origin.x+tabRect.size.width-19;
+        tabRect.origin.y += 6;
+        tabRect.size.width = 12;
+        tabRect.size.height = 12;
+        [_closeTabBtn setFrame:tabRect];
+        [_closeTabBtn setHidden:NO];
+    }
+}
+
+-(void)closePointedTab {
+    if (_pointedTab != -1) {
+        _tab_clicked = _pointedTab;
+        _pointedTab = -1;
+        [self closePlaylist:self];
+    }
 }
 
 -(void)scrollWheel:(NSEvent*)event {
@@ -647,12 +718,11 @@ plt_get_title_wrapper (int plt) {
     }
 }
 
--(void)mouseMoved:(NSEvent *)event {
-    NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
-    int tab = [self tabUnderCursor:coord.x];
+-(void)mouseMovedHandler {
+    int tab = [self tabUnderCursor:_lastMouseCoord.x];
     if (tab >= 0) {
         NSString *s = plt_get_title_wrapper (tab);
-        
+
         NSSize sz = [s sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:nil]];
         sz.width += text_left_padding + text_right_padding;
         if (sz.width > max_tab_size) {
@@ -665,6 +735,17 @@ plt_get_title_wrapper (int plt) {
     else {
         [self setToolTip:nil];
     }
+    [self updatePointedTab:tab];
+}
+
+-(void)mouseMoved:(NSEvent *)event {
+    _lastMouseCoord = [self convertPoint:[event locationInWindow] fromView:nil];
+    [self mouseMovedHandler];
+}
+
+-(void)mouseExited:(NSEvent *)event {
+    _lastMouseCoord.x = -100000;
+    [_closeTabBtn setHidden:YES];
 }
 
 - (BOOL)isFlipped {
