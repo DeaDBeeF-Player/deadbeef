@@ -408,7 +408,6 @@ AS_IF([test "${enable_staticlink}" != "no"], [
 ], [
     AC_CHECK_LIB([ogg], [main], [HAVE_OGG=yes])
     AS_IF([test "$HAVE_OGG" = "yes"], [
-        HAVE_VORBISPLUGIN=yes
         OGG_LIBS="-logg"
         AC_SUBST(OGG_LIBS)
     ])
