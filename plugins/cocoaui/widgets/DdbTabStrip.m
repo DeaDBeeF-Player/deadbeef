@@ -26,7 +26,7 @@ extern DB_functions_t *deadbeef;
     int _prev_x;
     int _tab_moved;
     int _pointedTab;
-    NSTrackingArea *trackingArea;
+    NSTrackingArea *_trackingArea;
     NSPoint _lastMouseCoord;
 
     NSImage *_tabLeft;
@@ -109,10 +109,9 @@ static int max_tab_size = 200;
 
         [self setAutoresizesSubviews:YES];
 
-        // setup tracking area covering entire view, for managing the tab close buttons and tooltips
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleResizeNotification) name:NSViewFrameDidChangeNotification object:self];
 
-        trackingArea = [[NSTrackingArea alloc] initWithRect:NSMakeRect(0,0,frame.size.width,frame.size.height) options:NSTrackingMouseMoved|NSTrackingMouseEnteredAndExited|NSTrackingActiveAlways owner:self userInfo:nil];
-        [self addTrackingArea:trackingArea];
+        [self setupTrackingArea];
 
         [self setScrollPos:deadbeef->conf_get_int ("cocoaui.tabscroll", 0)];
     }
@@ -306,10 +305,6 @@ plt_get_title_wrapper (int plt) {
     [super drawRect:dirtyRect];
     [[NSColor windowBackgroundColor] set];
     [NSBezierPath fillRect:[self bounds]];
-
-    [self calculateTabDimensions];
-    [self recalculateNeedArrows];
-    [self adjustHScroll];
 
     int cnt = deadbeef->plt_get_count ();
     int hscroll = _hscrollpos;
@@ -669,8 +664,23 @@ plt_get_title_wrapper (int plt) {
     }
 }
 
-- (void)viewDidEndLiveResize {
+- (void)setupTrackingArea {
+    // setup tracking area covering entire view, for managing the tab close buttons and tooltips
+    if (_trackingArea) {
+        [self removeTrackingArea:_trackingArea];
+        _trackingArea = nil;
+    }
+
+    NSRect frame = [self frame];
+    _trackingArea = [[NSTrackingArea alloc] initWithRect:NSMakeRect(0,0,frame.size.width,frame.size.height) options:NSTrackingMouseMoved|NSTrackingMouseEnteredAndExited|NSTrackingActiveAlways owner:self userInfo:nil];
+    [self addTrackingArea:_trackingArea];
+}
+
+- (void)handleResizeNotification {
+    [self calculateTabDimensions];
+    [self recalculateNeedArrows];
     [self adjustHScroll];
+    [self setupTrackingArea];
 }
 
 - (void)mouseDragged:(NSEvent *)event {
