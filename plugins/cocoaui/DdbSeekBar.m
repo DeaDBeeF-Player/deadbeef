@@ -62,10 +62,6 @@
     rc.origin.y = y;
     rc.size.height = h;
 
-#if 0
-    NSSize backCapLeftSize = [_backCapLeft size];
-    NSSize backCapRightSize = [_backCapRight size];
-#endif
     NSSize frontCapLeftSize = [_frontCapLeft size];
     NSSize frontCapRightSize = [_frontCapRight size];
 
@@ -74,32 +70,30 @@
     [gc saveGraphicsState];
     [gc setPatternPhase:convPt];
 
-#if 0
-    NSRect innerRect = NSMakeRect (rc.origin.x + backCapLeftSize.width, rc.origin.y, rc.size.width - (backCapLeftSize.width + backCapRightSize.width), rc.size.height);
-
-    // background
-    if (![self isEnabled]) {
-        [_backCapLeft drawAtPoint:rc.origin fromRect:NSMakeRect(0, 0, backCapLeftSize.width, backCapLeftSize.height) operation:NSCompositeSourceOver fraction:1];
-    }
-    [_backCapRight drawAtPoint:NSMakePoint(rc.origin.x+rc.size.width-backCapRightSize.width, rc.origin.y) fromRect:NSMakeRect(0, 0, backCapLeftSize.width, backCapLeftSize.height) operation:NSCompositeSourceOver fraction:1];
-    [[NSColor colorWithPatternImage:_backFiller] set];
-    [NSBezierPath fillRect:innerRect];
-#endif
-
     // foreground
-    if ([self isEnabled]) {
-        [_frontCapLeft drawAtPoint:rc.origin fromRect:NSMakeRect(0, 0, frontCapLeftSize.width, frontCapLeftSize.height) operation:NSCompositeSourceOver fraction:1];
+
+    if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_9) {
+        if ([self isEnabled]) {
+            [_frontCapLeft drawAtPoint:rc.origin fromRect:NSMakeRect(0, 0, frontCapLeftSize.width, frontCapLeftSize.height) operation:NSCompositeSourceOver fraction:1];
+        }
+
+        rc.origin.x += frontCapLeftSize.width;
+        rc.size.width -= frontCapLeftSize.width + frontCapRightSize.width;
+
+        [[NSColor colorWithPatternImage:_frontFiller] set];
+        rc.size.width = (int)(rc.size.width * _value / ([self maxValue] - [self minValue]));
+        [NSBezierPath fillRect:rc];
+
+        if ([self isEnabled]) {
+            [_frontCapRight drawAtPoint:NSMakePoint(rc.origin.x+rc.size.width, rc.origin.y) fromRect:NSMakeRect(0, 0, frontCapRightSize.width, frontCapRightSize.height) operation:NSCompositeSourceOver fraction:1];
+        }
     }
-
-    rc.origin.x += frontCapLeftSize.width;
-    rc.size.width -= frontCapLeftSize.width + frontCapRightSize.width;
-    
-    [[NSColor colorWithPatternImage:_frontFiller] set];
-    rc.size.width = (int)(rc.size.width * _value / ([self maxValue] - [self minValue]));
-    [NSBezierPath fillRect:rc];
-
-    if ([self isEnabled]) {
-        [_frontCapRight drawAtPoint:NSMakePoint(rc.origin.x+rc.size.width, rc.origin.y) fromRect:NSMakeRect(0, 0, frontCapRightSize.width, frontCapRightSize.height) operation:NSCompositeSourceOver fraction:1];
+    else {
+        rc.size.width = (int)(rc.size.width * _value / ([self maxValue] - [self minValue]));
+        rc.size.height -= 2;
+        rc.origin.y += 1;
+        [[NSColor keyboardFocusIndicatorColor] set];
+        [NSBezierPath fillRect:rc];
     }
 
     [gc restoreGraphicsState];
