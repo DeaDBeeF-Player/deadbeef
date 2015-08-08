@@ -399,18 +399,20 @@ AS_IF([test "${enable_vorbis}" != "no"], [
 ])
 
 dnl libogg for oggedit
-AS_IF([test "${enable_staticlink}" != "no"], [
-    HAVE_OGG=yes
-    OGG_LIBS="-logg"
-    OGG_CFLAGS="-I../../$LIB/include"
-    AC_SUBST(OGG_LIBS)
-    AC_SUBST(OGG_CFLAGS)
-], [
-    AC_CHECK_LIB([ogg], [main], [HAVE_OGG=yes])
-    AS_IF([test "$HAVE_OGG" = "yes"], [
-        HAVE_VORBISPLUGIN=yes
+AS_IF([test "${enable_vorbis}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        HAVE_OGG=yes
         OGG_LIBS="-logg"
+        OGG_CFLAGS="-I../../$LIB/include"
         AC_SUBST(OGG_LIBS)
+        AC_SUBST(OGG_CFLAGS)
+    ], [
+        AC_CHECK_LIB([ogg], [main], [HAVE_OGG=yes])
+        AS_IF([test "$HAVE_OGG" = "yes"], [
+            HAVE_VORBISPLUGIN=yes
+            OGG_LIBS="-logg"
+            AC_SUBST(OGG_LIBS)
+        ])
     ])
 ])
 
