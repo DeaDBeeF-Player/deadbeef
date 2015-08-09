@@ -40,6 +40,3 @@ void duh_set_length(DUH *duh, long length)
 	if (duh)
 		duh->length = length;
 }
-
-
-

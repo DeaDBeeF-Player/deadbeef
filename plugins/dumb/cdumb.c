@@ -126,6 +126,15 @@ cdumb_startrenderer (DB_fileinfo_t *_info) {
     dumb_it_set_resampling_quality (itsr, q);
     dumb_it_set_xm_speed_zero_callback (itsr, &dumb_it_callback_terminate, NULL);
     dumb_it_set_global_volume_zero_callback (itsr, &dumb_it_callback_terminate, NULL);
+    
+    int rq = deadbeef->conf_get_int ("dumb.volume_ramping", 2);
+    if (rq < 0) {
+        rq = 0;
+    }
+    else if (rq > 2) {
+        rq = 2;
+    }
+    dumb_it_set_ramp_style(itsr, rq);
 
     dumb_it_sr_set_global_volume (itsr, deadbeef->conf_get_int ("dumb.globalvolume", 64));
     return 0;
@@ -179,23 +188,36 @@ cdumb_seek (DB_fileinfo_t *_info, float time) {
     return 0;
 }
 
+enum { MOD_EXT_COUNT = 6 };
+
 static const char * exts[]=
 {
-	"mod","mdz",
-	"s3m","s3z",
-	"stm","stz",
-	"it","itz",
-	"xm","xmz",
-	"ptm","ptz",
-	"mtm","mtz",
-	"669",
-	"psm",
-	"umx",
-	"am","j2b",
-	"dsm",
-	"amf",
-	NULL
+    "mod","mdz","stk","m15","fst","oct",
+    "s3m","s3z",
+    "stm","stz",
+    "it","itz",
+    "xm","xmz",
+    "ptm","ptz",
+    "mtm","mtz",
+    "669",
+    "psm",
+    "am","j2b",
+    "dsm",
+    "amf",
+    "okt","okta",
+    NULL
 };
+
+static int is_mod_ext(const char *ext)
+{
+    int i;
+    for (i = 0; exts[i] && i < MOD_EXT_COUNT; i++)
+    {
+        if (!strcasecmp(ext, exts[i]))
+            return 1;
+    }
+    return 0;
+}
 
 // derived from mod.cpp of foo_dumb source code
 static DUH * open_module(const char *fname, const char *ext, int *start_order, int *is_it, int *is_dos, const char** filetype)
@@ -368,13 +390,26 @@ static DUH * open_module(const char *fname, const char *ext, int *start_order, i
 		duh = dumb_read_asy_quick(f);
 		*filetype = "ASY";
 	}
+    else if ( size >= 3 &&
+             ptr[0] == 'A' && ptr[1] == 'M' &&
+             ptr[2] == 'F')
+    {
+        duh = dumb_read_amf_quick( f );
+        *filetype = "AMF";
+    }
+    else if ( size >= 8 &&
+             !memcmp( ptr, "OKTASONG", 8 ) )
+    {
+        duh = dumb_read_okt_quick( f );
+        *filetype = "OKT";
+    }
 
 	if (!duh)
 	{
         dumbfile_close(f);
         f = dumbfile_open (fname);
 		*is_dos = 0;
-		duh = dumb_read_mod_quick (f, (!strcasecmp (ext, exts[0]) || !strcasecmp (ext, exts[1])) ? 0 : 1);
+		duh = dumb_read_mod_quick (f, is_mod_ext(ext) ? 0 : 1);
 		*filetype = "MOD";
 	}
 
@@ -863,6 +898,16 @@ dumb_vfs_getnc (char *ptr, long n, void *f) {
     return deadbeef->fread (ptr, 1, n, f);
 }
 
+static int
+dumb_vfs_seek (void *f, long n) {
+    return deadbeef->fseek(f, n, SEEK_SET);
+}
+
+static long
+dumb_vfs_get_size (void *f) {
+    return deadbeef->fgetlength(f);
+}
+
 static void
 dumb_vfs_close (void *f) {
     deadbeef->fclose (f);
@@ -874,6 +919,8 @@ dumb_register_db_vfs (void) {
     dumb_vfs.skip = dumb_vfs_skip;
     dumb_vfs.getc = dumb_vfs_getc;
     dumb_vfs.getnc = dumb_vfs_getnc;
+    dumb_vfs.seek = dumb_vfs_seek;
+    dumb_vfs.get_size = dumb_vfs_get_size;
     dumb_vfs.close = dumb_vfs_close;
     register_dumbfile_system (&dumb_vfs);
 }
@@ -891,9 +938,10 @@ cgme_stop (void) {
 }
 
 static const char settings_dlg[] =
-    "property \"Resampling quality (0..2, higher is better)\" entry dumb.resampling_quality 2;\n"
+    "property \"Resampling quality (0..5, higher is better)\" entry dumb.resampling_quality 4;\n"
     "property \"8-bit output (default is 16)\" checkbox dumb.8bitoutput 0;\n"
     "property \"Internal DUMB volume (0..128)\" spinbtn[0,128,16] dumb.globalvolume 64;\n"
+    "property \"Volume ramping (0 is none, 1 is note on/off, 2 is always)\" entry dumb.volume_ramping 2;\n"
 ;
 
 // define plugin interface

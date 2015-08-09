@@ -8,22 +8,31 @@
  * /_______/ynamic    \____/niversal  /__\  /____\usic   /|  .  . ibliotheque
  *                                                      /  \
  *                                                     / .  \
- * readmod2.c - Function to read a good old-          / / \  \
- *              fashioned Amiga module from an       | <  /   \_
- *              open file and do an initial          |  \/ /\   /
- *              run-through.                          \_  /  > /
- *                                                      | \ / /
- * Split off from readmod.c by entheh.                  |  ' /
+ * loadany.c - Code to detect and read any of the     / / \  \
+ *             module formats supported by DUMB,     | <  /   \_
+ *             opening and closing the file for you. |  \/ /\   /
+ *                                                    \_  /  > /
+ * By Chris Moeller.                                    | \ / /
+ *                                                      |  ' /
  *                                                       \__/
  */
 
 #include "dumb.h"
+#include "internal/it.h"
 
 
 
-DUH *dumb_read_mod(DUMBFILE *f, int restrict_)
+DUH *dumb_load_any_quick(const char *filename, int restrict_, int subsong)
 {
-	DUH *duh = dumb_read_mod_quick(f, restrict_);
-	dumb_it_do_initial_runthrough(duh);
+	DUH *duh;
+	DUMBFILE *f = dumbfile_open(filename);
+
+	if (!f)
+		return NULL;
+
+    duh = dumb_read_any_quick(f, restrict_, subsong);
+
+	dumbfile_close(f);
+
 	return duh;
 }

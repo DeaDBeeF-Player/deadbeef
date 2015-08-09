@@ -69,6 +69,11 @@ void dumb_reset_resampler(DUMB_RESAMPLER *resampler, SRCTYPE *src, int src_chann
 	}
 	for (i = 0; i < src_channels*3; i++) resampler->X[i] = 0;
 	resampler->overshot = -1;
+        resampler->fir_resampler_ratio = 0;
+        resampler_clear(resampler->fir_resampler[0]);
+        resampler_clear(resampler->fir_resampler[1]);
+        resampler_set_quality(resampler->fir_resampler[0], resampler->quality);
+        resampler_set_quality(resampler->fir_resampler[1], resampler->quality);
 }
 
 
@@ -89,6 +94,9 @@ DUMB_RESAMPLER *dumb_start_resampler(SRCTYPE *src, int src_channels, long pos, l
 		if ((vol##d < 0 && vol##r <= vol##t) ||                    \
 			(vol##d > 0 && vol##r >= vol##t)) {                    \
 			pvol->volume = pvol->target;                           \
+            if ( pvol->declick_stage == 0 ||                       \
+                 pvol->declick_stage >= 3)                         \
+                 pvol->declick_stage++;                            \
 			pvol = NULL;                                           \
 			vol = MULSCV( vol##t, vol##m );                        \
 		} else {                                                   \
@@ -106,7 +114,7 @@ DUMB_RESAMPLER *dumb_start_resampler(SRCTYPE *src, int src_channels, long pos, l
 #define COPYSRC(dstarray, dstindex, srcarray, srcindex) (dstarray)[dstindex] = (srcarray)[srcindex]
 #define COPYSRC2(dstarray, dstindex, condition, srcarray, srcindex) (dstarray)[dstindex] = condition ? (srcarray)[srcindex] : 0
 #define MONO_DEST_VOLUME_PARAMETERS DUMB_VOLUME_RAMP_INFO * volume
-#define MONO_DEST_VOLUME_VARIABLES vol=0, volr=0, vold=0, volt=0, volm=0
+#define MONO_DEST_VOLUME_VARIABLES vol, volr, vold, volt, volm
 #define MONO_DEST_VOLUME_ZEROS 0
 #define SET_MONO_DEST_VOLUME_VARIABLES { \
 	if ( volume ) { \
@@ -118,43 +126,33 @@ DUMB_RESAMPLER *dumb_start_resampler(SRCTYPE *src, int src_channels, long pos, l
 		if ( volr == volt ) volume = NULL; \
 	} else { \
 		vol = 0; \
+		vold = 0; \
 		volt = 0; \
+		volm = 0; \
 	} \
 }
 #define RETURN_MONO_DEST_VOLUME_VARIABLES if ( volume ) volume->volume = (float)volr / 16777216.0f
 #define MONO_DEST_VOLUMES_ARE_ZERO (vol == 0 && volt == 0)
-#define MONO_DEST_MIX_ALIAS(op, upd, offset) { \
-	*dst++ op ALIAS(x[offset], vol); \
-	if ( upd ) UPDATE_VOLUME( volume, vol ); \
+#define POKE_FIR(offset) { \
+        resampler_write_sample( resampler->fir_resampler[0], FIR(x[offset]) ); \
 }
-#define STEREO_DEST_MIX_ALIAS(op, upd, offset) { \
-	int xm = x[offset]; \
-	*dst++ op ALIAS(xm, lvol); \
-	*dst++ op ALIAS(xm, rvol); \
-	if ( upd ) UPDATE_VOLUME( volume_left, lvol ); \
-	if ( upd ) UPDATE_VOLUME( volume_right, rvol ); \
+#define MONO_DEST_PEEK_FIR *dst = MULSC( resampler_get_sample( resampler->fir_resampler[0] ), vol )
+#define MONO_DEST_MIX_FIR { \
+        *dst++ += MULSC( resampler_get_sample( resampler->fir_resampler[0] ), vol ); \
+        UPDATE_VOLUME( volume, vol ); \
 }
-#define MONO_DEST_MIX_LINEAR(op, upd, o0, o1) { \
-	*dst++ op MULSC(LINEAR(x[o0], x[o1]), vol); \
-	if ( upd ) UPDATE_VOLUME( volume, vol ); \
+#define ADVANCE_FIR resampler_remove_sample( resampler->fir_resampler[0], 1 )
+#define STEREO_DEST_PEEK_FIR { \
+        int sample = resampler_get_sample( resampler->fir_resampler[0] ); \
+        *dst++ = MULSC( sample, lvol ); \
+        *dst++ = MULSC( sample, rvol ); \
 }
-#define STEREO_DEST_MIX_LINEAR(op, upd, o0, o1) { \
-	int xm = LINEAR(x[o0], x[o1]); \
-	*dst++ op MULSC(xm, lvol); \
-	*dst++ op MULSC(xm, rvol); \
-	if ( upd ) UPDATE_VOLUME( volume_left, lvol ); \
-	if ( upd ) UPDATE_VOLUME( volume_right, rvol ); \
-}
-#define MONO_DEST_MIX_CUBIC(op, upd, x0, x3, o0, o1, o2, o3) { \
-	*dst++ op CUBICVOL(CUBIC(x0[o0], x[o1], x[o2], x3[o3]), vol); \
-	if ( upd ) UPDATE_VOLUME( volume, vol ); \
-}
-#define STEREO_DEST_MIX_CUBIC(op, upd, x0, x3, o0, o1, o2, o3) { \
-	int xm = CUBIC(x0[o0], x[o1], x[o2], x3[o3]); \
-	*dst++ op CUBICVOL(xm, lvol); \
-	*dst++ op CUBICVOL(xm, rvol); \
-	if ( upd ) UPDATE_VOLUME( volume_left, lvol ); \
-	if ( upd ) UPDATE_VOLUME( volume_right, rvol ); \
+#define STEREO_DEST_MIX_FIR { \
+        int sample = resampler_get_sample( resampler->fir_resampler[0] ); \
+        *dst++ += MULSC( sample, lvol ); \
+        *dst++ += MULSC( sample, rvol ); \
+        UPDATE_VOLUME( volume_left, lvol ); \
+        UPDATE_VOLUME( volume_right, rvol ); \
 }
 #include "resamp2.inc"
 
@@ -177,7 +175,7 @@ DUMB_RESAMPLER *dumb_start_resampler(SRCTYPE *src, int src_channels, long pos, l
 }
 
 #define MONO_DEST_VOLUME_PARAMETERS DUMB_VOLUME_RAMP_INFO * volume_left, DUMB_VOLUME_RAMP_INFO * volume_right
-#define MONO_DEST_VOLUME_VARIABLES lvol=0, lvolr=0, lvold=0, lvolt=0, lvolm=0, rvol=0, rvolr=0, rvold=0, rvolt=0, rvolm=0
+#define MONO_DEST_VOLUME_VARIABLES lvol, lvolr, lvold, lvolt, lvolm, rvol, rvolr, rvold, rvolt, rvolm
 #define MONO_DEST_VOLUME_ZEROS 0, 0
 #define SET_MONO_DEST_VOLUME_VARIABLES { \
 	if ( volume_left ) { \
@@ -189,7 +187,9 @@ DUMB_RESAMPLER *dumb_start_resampler(SRCTYPE *src, int src_channels, long pos, l
 		if ( lvolr == lvolt ) volume_left = NULL; \
 	} else { \
 		lvol = 0; \
+		lvold = 0; \
 		lvolt = 0; \
+		lvolm = 0; \
 	} \
 	if ( volume_right ) { \
 		rvolr = (int)(volume_right->volume * 16777216.0); \
@@ -200,7 +200,9 @@ DUMB_RESAMPLER *dumb_start_resampler(SRCTYPE *src, int src_channels, long pos, l
 		if ( rvolr == rvolt ) volume_right = NULL; \
 	} else { \
 		rvol = 0; \
+		rvold = 0; \
 		rvolt = 0; \
+		rvolm = 0; \
 	} \
 }
 #define RETURN_MONO_DEST_VOLUME_VARIABLES { \
@@ -208,40 +210,33 @@ DUMB_RESAMPLER *dumb_start_resampler(SRCTYPE *src, int src_channels, long pos, l
 	if ( volume_right ) volume_right->volume = (float)rvolr / 16777216.0f; \
 }
 #define MONO_DEST_VOLUMES_ARE_ZERO (lvol == 0 && lvolt == 0 && rvol == 0 && rvolt == 0)
-#define MONO_DEST_MIX_ALIAS(op, upd, offset) { \
-	*dst++ op ALIAS(x[(offset)*2], lvol) + ALIAS(x[(offset)*2+1], rvol); \
-	if ( upd ) UPDATE_VOLUME( volume_left, lvol ); \
-	if ( upd ) UPDATE_VOLUME( volume_right, rvol ); \
+#define POKE_FIR(offset) { \
+        resampler_write_sample( resampler->fir_resampler[0], FIR(x[(offset)*2+0]) ); \
+        resampler_write_sample( resampler->fir_resampler[1], FIR(x[(offset)*2+1]) ); \
 }
-#define STEREO_DEST_MIX_ALIAS(op, upd, offset) { \
-	*dst++ op ALIAS(x[(offset)*2], lvol); \
-	*dst++ op ALIAS(x[(offset)*2+1], rvol); \
-	if ( upd ) UPDATE_VOLUME( volume_left, lvol ); \
-	if ( upd ) UPDATE_VOLUME( volume_right, rvol ); \
+#define MONO_DEST_PEEK_FIR { \
+        *dst = MULSC( resampler_get_sample( resampler->fir_resampler[0] ), lvol ) + \
+                MULSC( resampler_get_sample( resampler->fir_resampler[1] ), rvol ); \
 }
-#define MONO_DEST_MIX_LINEAR(op, upd, o0, o1) { \
-	*dst++ op MULSC(LINEAR(x[(o0)*2], x[(o1)*2]), lvol) + MULSC(LINEAR(x[(o0)*2+1], x[(o1)*2+1]), rvol); \
-	if ( upd ) UPDATE_VOLUME( volume_left, lvol ); \
-	if ( upd ) UPDATE_VOLUME( volume_right, rvol ); \
+#define MONO_DEST_MIX_FIR { \
+        *dst++ += MULSC( resampler_get_sample( resampler->fir_resampler[0] ), lvol ) + \
+                MULSC( resampler_get_sample( resampler->fir_resampler[1] ), rvol ); \
+        UPDATE_VOLUME( volume_left, lvol ); \
+        UPDATE_VOLUME( volume_right, rvol ); \
 }
-#define STEREO_DEST_MIX_LINEAR(op, upd, o0, o1) { \
-	*dst++ op MULSC(LINEAR(x[(o0)*2], x[(o1)*2]), lvol); \
-	*dst++ op MULSC(LINEAR(x[(o0)*2+1], x[(o1)*2+1]), rvol); \
-	if ( upd ) UPDATE_VOLUME( volume_left, lvol ); \
-	if ( upd ) UPDATE_VOLUME( volume_right, rvol ); \
+#define ADVANCE_FIR { \
+        resampler_remove_sample( resampler->fir_resampler[0], 1 ); \
+        resampler_remove_sample( resampler->fir_resampler[1], 1 ); \
 }
-#define MONO_DEST_MIX_CUBIC(op, upd, x0, x3, o0, o1, o2, o3) { \
-	*dst++ op \
-		CUBICVOL(CUBIC(x0[(o0)*2], x[(o1)*2], x[(o2)*2], x3[(o3)*2]), lvol) + \
-		CUBICVOL(CUBIC(x0[(o0)*2+1], x[(o1)*2+1], x[(o2)*2+1], x3[(o3)*2+1]), rvol); \
-	if ( upd ) UPDATE_VOLUME( volume_left, lvol ); \
-	if ( upd ) UPDATE_VOLUME( volume_right, rvol ); \
+#define STEREO_DEST_PEEK_FIR { \
+        *dst++ = MULSC( resampler_get_sample( resampler->fir_resampler[0] ), lvol ); \
+        *dst++ = MULSC( resampler_get_sample( resampler->fir_resampler[1] ), rvol ); \
 }
-#define STEREO_DEST_MIX_CUBIC(op, upd, x0, x3, o0, o1, o2, o3) { \
-	*dst++ op CUBICVOL(CUBIC(x0[(o0)*2], x[(o1)*2], x[(o2)*2], x3[(o3)*2]), lvol); \
-	*dst++ op CUBICVOL(CUBIC(x0[(o0)*2+1], x[(o1)*2+1], x[(o2)*2+1], x3[(o3)*2+1]), rvol); \
-	if ( upd ) UPDATE_VOLUME( volume_left, lvol ); \
-	if ( upd ) UPDATE_VOLUME( volume_right, rvol ); \
+#define STEREO_DEST_MIX_FIR { \
+        *dst++ += MULSC( resampler_get_sample( resampler->fir_resampler[0] ), lvol ); \
+        *dst++ += MULSC( resampler_get_sample( resampler->fir_resampler[1] ), rvol ); \
+        UPDATE_VOLUME( volume_left, lvol ); \
+        UPDATE_VOLUME( volume_right, rvol ); \
 }
 #include "resamp2.inc"
 
@@ -255,10 +250,7 @@ void dumb_end_resampler(DUMB_RESAMPLER *resampler)
 
 
 
-#undef CUBICVOL
-#undef CUBIC
-#undef LINEAR
-#undef ALIAS
+#undef FIR
 #undef SRCBITS
 #undef SRCTYPE
 #undef SUFFIX

@@ -40,3 +40,4 @@ DUH *dumb_load_it_quick(const char *filename)
 
 	return duh;
 }
+

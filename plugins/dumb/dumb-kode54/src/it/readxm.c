@@ -23,13 +23,13 @@
 
 #include "dumb.h"
 #include "internal/it.h"
+#include "internal/dumbfile.h"
 
 
 
 /** TODO:
 
  * XM_TREMOLO                        doesn't sound quite right...
- * XM_E_SET_FINETUNE                 done but not tested yet.
  * XM_SET_ENVELOPE_POSITION          todo.
 
  * VIBRATO conversion needs to be checked (sample/effect/volume). Plus check
@@ -109,10 +109,19 @@ typedef struct XM_INSTRUMENT_EXTRA
 	int vibrato_sweep; /* 0-0xFF */
 	int vibrato_depth; /* 0-0x0F */
 	int vibrato_speed; /* 0-0x3F */
+	int sample_header_size;
 }
 XM_INSTRUMENT_EXTRA;
 
 
+
+/* Trims off trailing white space, usually added by the tracker on file creation
+ */
+static void trim_whitespace(char *ptr, size_t size)
+{
+	char *p = ptr + size - 1;
+	while (p >= ptr && *p <= 0x20) *p-- = '\0';
+}
 
 /* Frees the original block if it can't resize it or if size is 0, and acts
  * as malloc if ptr is NULL.
@@ -213,7 +222,7 @@ static int it_xm_read_pattern(IT_PATTERN *pattern, DUMBFILE *f, int n_channels, 
 		return -1;
 	}
 
-	if (dumbfile_getnc(buffer, size, f) < size)
+    if (dumbfile_getnc((char *)buffer, size, f) < size)
 		return -1;
 
 	/* compute number of entries */
@@ -318,7 +327,7 @@ static int it_xm_read_pattern(IT_PATTERN *pattern, DUMBFILE *f, int n_channels, 
 
 static int it_xm_make_envelope(IT_ENVELOPE *envelope, const unsigned short *data, int y_offset)
 {
-	int i, pos;
+    int i, pos, val;
 
 	if (envelope->n_nodes > 12) {
 		/* XXX
@@ -335,12 +344,13 @@ static int it_xm_make_envelope(IT_ENVELOPE *envelope, const unsigned short *data
 	pos = 0;
 	for (i = 0; i < envelope->n_nodes; i++) {
 		envelope->node_t[i] = data[pos++];
-		if (data[pos] > 64) {
-			TRACE("XM error: out-of-range envelope node (node_y[%d]=%d)\n", i, data[pos]);
-			envelope->n_nodes = 0;
-			return -1;
+        val = data[pos++];
+        if (val > 64) {
+            TRACE("XM error: out-of-range envelope node (node_y[%d]=%d)\n", i, val);
+            /* FT2 seems to simply clip the value */
+            val = 64;
 		}
-		envelope->node_y[i] = (signed char)(data[pos++] + y_offset);
+        envelope->node_y[i] = (signed char)(val + y_offset);
 	}
 
 	return 0;
@@ -348,21 +358,164 @@ static int it_xm_make_envelope(IT_ENVELOPE *envelope, const unsigned short *data
 
 
 
+typedef struct LIMITED_XM LIMITED_XM;
+
+struct LIMITED_XM
+{
+	unsigned char *buffered;
+	long ptr, limit, allocated;
+	DUMBFILE *remaining;
+};
+
+static int limit_xm_resize(void *f, long n)
+{
+	DUMBFILE *df = f;
+	LIMITED_XM *lx = df->file;
+	if (lx->buffered || n) {
+		if (n > lx->allocated) {
+			unsigned char *buffered = realloc( lx->buffered, n );
+			if ( !buffered ) return -1;
+			lx->buffered = buffered;
+			memset( buffered + lx->allocated, 0, n - lx->allocated );
+			lx->allocated = n;
+		}
+        if ( dumbfile_getnc( (char *)lx->buffered, n, lx->remaining ) < n ) return -1;
+	} else if (!n) {
+		if ( lx->buffered ) free( lx->buffered );
+		lx->buffered = NULL;
+		lx->allocated = 0;
+	}
+	lx->limit = n;
+	lx->ptr = 0;
+	return 0;
+}
+
+static int limit_xm_skip_end(void *f, long n)
+{
+	DUMBFILE *df = f;
+	LIMITED_XM *lx = df->file;
+	return dumbfile_skip( lx->remaining, n );
+}
+
+static int limit_xm_skip(void *f, long n)
+{
+	LIMITED_XM *lx = f;
+	lx->ptr += n;
+	return 0;
+}
+
+
+
+static int limit_xm_getc(void *f)
+{
+	LIMITED_XM *lx = f;
+	if (lx->ptr >= lx->allocated) {
+		return 0;
+	}
+	return lx->buffered[lx->ptr++];
+}
+
+
+
+static long limit_xm_getnc(char *ptr, long n, void *f)
+{
+	LIMITED_XM *lx = f;
+	int left;
+	left = lx->allocated - lx->ptr;
+	if (n > left) {
+		if (left > 0) {
+			memcpy( ptr, lx->buffered + lx->ptr, left );
+			memset( ptr + left, 0, n - left );
+		} else {
+			memset( ptr, 0, n );
+		}
+	} else {
+		memcpy( ptr, lx->buffered + lx->ptr, n );
+	}
+	lx->ptr += n;
+	return n;
+}
+
+
+
+static void limit_xm_close(void *f)
+{
+	LIMITED_XM *lx = f;
+	if (lx->buffered) free(lx->buffered);
+	/* Do NOT close lx->remaining */
+	free(f);
+}
+
+
+/* These two can be stubs since this implementation doesn't use seeking */
+static int limit_xm_seek(void *f, long n)
+{
+    (void)f;
+    (void)n;
+    return 1;
+}
+
+
+
+static long limit_xm_get_size(void *f)
+{
+    (void)f;
+    return 0;
+}
+
+
+
+DUMBFILE_SYSTEM limit_xm_dfs = {
+	NULL,
+	&limit_xm_skip,
+	&limit_xm_getc,
+	&limit_xm_getnc,
+    &limit_xm_close,
+    &limit_xm_seek,
+    &limit_xm_get_size
+};
+
+static DUMBFILE *dumbfile_limit_xm(DUMBFILE *f)
+{
+	LIMITED_XM * lx = malloc(sizeof(*lx));
+	lx->remaining = f;
+	lx->buffered = NULL;
+	lx->ptr = 0;
+	lx->limit = 0;
+	lx->allocated = 0;
+	return dumbfile_open_ex( lx, &limit_xm_dfs );
+}
+
 static int it_xm_read_instrument(IT_INSTRUMENT *instrument, XM_INSTRUMENT_EXTRA *extra, DUMBFILE *f)
 {
 	unsigned long size, bytes_read;
 	unsigned short vol_points[24];
 	unsigned short pan_points[24];
 	int i, type;
+	const unsigned long max_size = 4 + 22 + 1 + 2 + 4 + 96 + 48 + 48 + 1 * 14 + 2 + 2;
+	unsigned long skip_end = 0;
 
 	/* Header size. Tends to be more than the actual size of the structure.
 	 * So unread bytes must be skipped before reading the first sample
 	 * header.
 	 */
+
+	if ( limit_xm_resize( f, 4 ) < 0 ) return -1;
+
 	size = dumbfile_igetl(f);
 
-	dumbfile_getnc(instrument->name, 22, f);
+	if ( size == 0 ) size = max_size;
+	else if ( size > max_size )
+	{
+		skip_end = size - max_size;
+		size = max_size;
+	}
+
+	if ( limit_xm_resize( f, size - 4 ) < 0 ) return -1;
+
+    dumbfile_getnc((char *)instrument->name, 22, f);
 	instrument->name[22] = 0;
+    trim_whitespace((char *)instrument->name, 22);
 	instrument->filename[0] = 0;
 	dumbfile_skip(f, 1);  /* Instrument type. Should be 0, but seems random. */
 	extra->n_samples = dumbfile_igetw(f);
@@ -374,12 +527,11 @@ static int it_xm_read_instrument(IT_INSTRUMENT *instrument, XM_INSTRUMENT_EXTRA 
 
 	if (extra->n_samples) {
 		/* sample header size */
-		dumbfile_skip(f, 4); // XXX can't be trusted, as there are trackers that write the wrong value here
 		/*i = dumbfile_igetl(f);
-		if (i && i != 0x28) { // XXX some crap with 0 here
-			TRACE("XM error: unexpected sample header size\n");
-			return -1;
-		}*/
+		if (!i || i > 0x28) i = 0x28;*/
+		dumbfile_skip(f, 4);
+		i = 0x28;
+		extra->sample_header_size = i;
 
 		/* sample map */
 		for (i = 0; i < 96; i++) {
@@ -465,7 +617,10 @@ static int it_xm_read_instrument(IT_INSTRUMENT *instrument, XM_INSTRUMENT_EXTRA 
 		for (i = 0; i < 96; i++)
 			instrument->map_sample[i] = 0;
 
-	if (dumbfile_skip(f, size - bytes_read))
+	if (size > bytes_read && dumbfile_skip(f, size - bytes_read))
+		return -1;
+
+	if (skip_end && limit_xm_skip_end(f, skip_end))
 		return -1;
 
 	instrument->new_note_action = NNA_NOTE_CUT;
@@ -518,8 +673,9 @@ static int it_xm_read_sample_header(IT_SAMPLE *sample, DUMBFILE *f)
 
 	reserved = dumbfile_getc(f);
 
-	dumbfile_getnc(sample->name, 22, f);
+    dumbfile_getnc((char *)sample->name, 22, f);
 	sample->name[22] = 0;
+    trim_whitespace((char *)sample->name, 22);
 
 	sample->filename[0] = 0;
 
@@ -679,16 +835,13 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 	if (!sigdata)
 		return NULL;
 
-	sigdata = malloc(sizeof(*sigdata));
-	if (!sigdata)
-		return NULL;
-
 	/* song name */
-	if (dumbfile_getnc(sigdata->name, 20, f) < 20) {
+    if (dumbfile_getnc((char *)sigdata->name, 20, f) < 20) {
 		free(sigdata);
 		return NULL;
 	}
 	sigdata->name[20] = 0;
+    trim_whitespace((char *)sigdata->name, 20);
 
 	if (dumbfile_getc(f) != 0x1A) {
 		TRACE("XM error: 0x1A not found\n");
@@ -744,6 +897,16 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 	if (sigdata->speed == 0) sigdata->speed = 6; // Should we? What about tempo?
 	sigdata->tempo            = dumbfile_igetw(f);
 
+    // FT2 always clips restart position against the song length
+    if (sigdata->restart_position > sigdata->n_orders)
+        sigdata->restart_position = sigdata->n_orders;
+    // And FT2 starts playback on order 0, regardless of length,
+    // and only checks if the next order is greater than or equal
+    // to this, not the current pattern. Work around this with
+    // DUMB's playback core by overriding a zero length with one.
+    if (sigdata->n_orders == 0)
+        sigdata->n_orders = 1;
+
 	/* sanity checks */
 	// XXX
 	i = header_size - 4 - 2 * 8; /* Maximum number of orders expected */
@@ -761,7 +924,7 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 		_dumb_it_unload_sigdata(sigdata);
 		return NULL;
 	}
-	dumbfile_getnc(sigdata->order, sigdata->n_orders, f);
+    dumbfile_getnc((char *)sigdata->order, sigdata->n_orders, f);
 	dumbfile_skip(f, i - sigdata->n_orders);
 
 	if (dumbfile_error(f)) {
@@ -829,16 +992,24 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 		for (i = 0; i < sigdata->n_instruments; i++) {
 			XM_INSTRUMENT_EXTRA extra;
 
-			if (it_xm_read_instrument(&sigdata->instrument[i], &extra, f) < 0) {
+			DUMBFILE * lf = dumbfile_limit_xm( f );
+			if ( !lf ) {
+				_dumb_it_unload_sigdata(sigdata);
+				return NULL;
+			}
+
+			if (it_xm_read_instrument(&sigdata->instrument[i], &extra, lf) < 0) {
 				// XXX
 				if ( ! i )
 				{
 					TRACE("XM error: instrument %d\n", i+1);
+					dumbfile_close( lf );
 					_dumb_it_unload_sigdata(sigdata);
 					return NULL;
 				}
 				else
 				{
+					dumbfile_close( lf );
 					sigdata->n_instruments = i;
 					break;
 				}
@@ -853,17 +1024,31 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 
 				sigdata->sample = safe_realloc(sigdata->sample, sizeof(*sigdata->sample)*(total_samples+extra.n_samples));
 				if (!sigdata->sample) {
+					dumbfile_close( lf );
 					_dumb_it_unload_sigdata(sigdata);
 					return NULL;
 				}
 				for (j = total_samples; j < total_samples+extra.n_samples; j++)
 					sigdata->sample[j].data = NULL;
 
+				if ( limit_xm_resize( lf, 0 ) < 0 ) {
+					dumbfile_close( lf );
+					_dumb_it_unload_sigdata( sigdata );
+					return NULL;
+				}
+
 				/* read instrument's samples */
 				for (j = 0; j < extra.n_samples; j++) {
 					IT_SAMPLE *sample = &sigdata->sample[total_samples+j];
-					int b = it_xm_read_sample_header(sample, f);
+					int b;
+					if ( limit_xm_resize( lf, extra.sample_header_size ) < 0 ) {
+						dumbfile_close( lf );
+						_dumb_it_unload_sigdata( sigdata );
+						return NULL;
+					}
+					b = it_xm_read_sample_header(sample, lf);
 					if (b < 0) {
+						dumbfile_close( lf );
 						_dumb_it_unload_sigdata(sigdata);
 						return NULL;
 					}
@@ -880,12 +1065,15 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 				}
 				for (j = 0; j < extra.n_samples; j++) {
 					if (it_xm_read_sample_data(&sigdata->sample[total_samples+j], roguebytes[j], f) != 0) {
+						dumbfile_close( lf );
 						_dumb_it_unload_sigdata(sigdata);
 						return NULL;
 					}
 				}
 				total_samples += extra.n_samples;
 			}
+
+			dumbfile_close( lf );
 		}
 
 		sigdata->n_samples = total_samples;
@@ -907,7 +1095,6 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 
 		sigdata->instrument = malloc(sigdata->n_instruments * sizeof(*sigdata->instrument));
 		if (!sigdata->instrument) {
-            free (roguebytes);
 			_dumb_it_unload_sigdata(sigdata);
 			return NULL;
 		}
@@ -918,14 +1105,20 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 		for (i = 0; i < sigdata->n_instruments; i++) {
 			XM_INSTRUMENT_EXTRA extra;
 
-			if (it_xm_read_instrument(&sigdata->instrument[i], &extra, f) < 0) {
-				TRACE("XM error: instrument %d\n", i+1);
+			DUMBFILE * lf = dumbfile_limit_xm( f );
+			if ( !lf ) {
 				free(roguebytes);
 				_dumb_it_unload_sigdata(sigdata);
 				return NULL;
 			}
-			for (j = total_samples; j < total_samples+extra.n_samples; j++)
-				sigdata->sample[j].data = NULL;
+
+			if (it_xm_read_instrument(&sigdata->instrument[i], &extra, lf) < 0) {
+				TRACE("XM error: instrument %d\n", i+1);
+				dumbfile_close(lf);
+				free(roguebytes);
+				_dumb_it_unload_sigdata(sigdata);
+				return NULL;
+			}
 
 			if (extra.n_samples) {
 				/* adjust instrument sample map (make indices absolute) */
@@ -934,6 +1127,7 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 
 				sigdata->sample = safe_realloc(sigdata->sample, sizeof(*sigdata->sample)*(total_samples+extra.n_samples));
 				if (!sigdata->sample) {
+					dumbfile_close( lf );
 					free(roguebytes);
 					_dumb_it_unload_sigdata(sigdata);
 					return NULL;
@@ -941,10 +1135,24 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 				for (j = total_samples; j < total_samples+extra.n_samples; j++)
 					sigdata->sample[j].data = NULL;
 
+				if ( limit_xm_resize( lf, 0 ) < 0 ) {
+					dumbfile_close( lf );
+					free( roguebytes );
+					_dumb_it_unload_sigdata( sigdata );
+					return NULL;
+				}
+
 				/* read instrument's samples */
 				for (j = 0; j < extra.n_samples; j++) {
 					IT_SAMPLE *sample = &sigdata->sample[total_samples+j];
-					int b = it_xm_read_sample_header(sample, f);
+					int b;
+					if ( limit_xm_resize( lf, extra.sample_header_size ) < 0 ) {
+							dumbfile_close( lf );
+							free( roguebytes );
+							_dumb_it_unload_sigdata( sigdata );
+							return NULL;
+					}
+					b = it_xm_read_sample_header(sample, lf);
 					if (b < 0) {
 						free(roguebytes);
 						_dumb_it_unload_sigdata(sigdata);
@@ -963,6 +1171,8 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 				}
 				total_samples += extra.n_samples;
 			}
+
+			dumbfile_close( lf );
 		}
 
 		sigdata->n_samples = total_samples;
@@ -1200,7 +1410,7 @@ DUH *dumb_read_xm_quick(DUMBFILE *f)
 		char version[16];
 		const char *tag[2][2];
 		tag[0][0] = "TITLE";
-		tag[0][1] = ((DUMB_IT_SIGDATA *)sigdata)->name;
+        tag[0][1] = (const char *)(((DUMB_IT_SIGDATA *)sigdata)->name);
 		tag[1][0] = "FORMAT";
 		version[0] = 'X';
 		version[1] = 'M';

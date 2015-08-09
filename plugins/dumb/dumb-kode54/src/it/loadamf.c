@@ -8,20 +8,35 @@
  * /_______/ynamic    \____/niversal  /__\  /____\usic   /|  .  . ibliotheque
  *                                                      /  \
  *                                                     / .  \
- * internal/aldumb.h - The internal header file       / / \  \
- *                     for DUMB with Allegro.        | <  /   \_
+ * loadamf.c - Code to read a DSMI AMF module file,   / / \  \
+ *             opening and closing it for you.       | <  /   \_
  *                                                   |  \/ /\   /
  *                                                    \_  /  > /
- *                                                      | \ / /
+ * By Chris Moeller.                                    | \ / /
  *                                                      |  ' /
  *                                                       \__/
  */
 
-#ifndef INTERNAL_ALDUMB_H
-#define INTERNAL_ALDUMB_H
+#include "dumb.h"
+#include "internal/it.h"
 
 
-void _dat_unload_duh(void *duh);
 
+/* dumb_load_amf_quick(): loads a AMF file into a DUH struct, returning a
+ * pointer to the DUH struct. When you have finished with it, you must
+ * pass the pointer to unload_duh() so that the memory can be freed.
+ */
+DUH *dumb_load_amf_quick(const char *filename)
+{
+	DUH *duh;
+	DUMBFILE *f = dumbfile_open(filename);
 
-#endif /* INTERNAL_DUMB_H */
+	if (!f)
+		return NULL;
+
+	duh = dumb_read_amf_quick(f);
+
+	dumbfile_close(f);
+
+	return duh;
+}

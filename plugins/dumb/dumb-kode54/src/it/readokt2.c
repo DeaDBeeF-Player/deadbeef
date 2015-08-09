@@ -8,12 +8,12 @@
  * /_______/ynamic    \____/niversal  /__\  /____\usic   /|  .  . ibliotheque
  *                                                      /  \
  *                                                     / .  \
- * readmod2.c - Function to read a good old-          / / \  \
- *              fashioned Amiga module from an       | <  /   \_
- *              open file and do an initial          |  \/ /\   /
- *              run-through.                          \_  /  > /
+ * readokt2.c - Function to read an Oktalyzer         / / \  \
+ *              module from an open file and do      | <  /   \_
+ *              an initial run-through.              |  \/ /\   /
+ *                                                    \_  /  > /
  *                                                      | \ / /
- * Split off from readmod.c by entheh.                  |  ' /
+ * By Chris Moeller.                                    |  ' /
  *                                                       \__/
  */
 
@@ -21,9 +21,9 @@
 
 
 
-DUH *dumb_read_mod(DUMBFILE *f, int restrict_)
+DUH *dumb_read_okt(DUMBFILE *f)
 {
-	DUH *duh = dumb_read_mod_quick(f, restrict_);
+	DUH *duh = dumb_read_okt_quick(f);
 	dumb_it_do_initial_runthrough(duh);
 	return duh;
 }

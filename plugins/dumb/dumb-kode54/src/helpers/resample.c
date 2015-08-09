@@ -45,6 +45,8 @@
 #include <math.h>
 #include "dumb.h"
 
+#include "internal/resampler.h"
+
 
 
 /* Compile with -DHEAVYDEBUG if you want to make sure the pick-up function is
@@ -70,10 +72,13 @@
  * specification doesn't override it. The following values are valid:
  *
  *  0 - DUMB_RQ_ALIASING - fastest
- *  1 - DUMB_RQ_LINEAR
- *  2 - DUMB_RQ_CUBIC    - nicest
+ *  1 - DUMB_RQ_BLEP     - nicer than aliasing, but slower
+ *  2 - DUMB_RQ_LINEAR
+ *  3 - DUMB_RQ_BLAM     - band-limited linear interpolation, nice but slower
+ *  4 - DUMB_RQ_CUBIC
+ *  5 - DUMB_RQ_FIR      - nicest
  *
- * Values outside the range 0-2 will behave the same as the nearest
+ * Values outside the range 0-4 will behave the same as the nearest
  * value within the range.
  */
 int dumb_resampling_quality = DUMB_RQ_CUBIC;
@@ -92,6 +97,7 @@ int dumb_resampling_quality = DUMB_RQ_CUBIC;
  * Clobbers the 'iterator' variable.
  * The loop is unrolled by four.
  */
+#if 0
 #define LOOP4(iterator, CONTENT) \
 { \
 	if ((iterator) & 2) { \
@@ -110,8 +116,15 @@ int dumb_resampling_quality = DUMB_RQ_CUBIC;
 		(iterator)--; \
 	} \
 }
-
-
+#else
+#define LOOP4(iterator, CONTENT) \
+{ \
+	while ( (iterator)-- ) \
+	{ \
+		CONTENT; \
+	} \
+}
+#endif
 
 #define PASTERAW(a, b) a ## b /* This does not expand macros in b ... */
 #define PASTE(a, b) PASTERAW(a, b) /* ... but b is expanded during this substitution. */
@@ -120,45 +133,14 @@ int dumb_resampling_quality = DUMB_RQ_CUBIC;
 
 
 
-/* Cubic resampler: look-up tables
- *
- * a = 1.5*x1 - 1.5*x2 + 0.5*x3 - 0.5*x0
- * b = 2*x2 + x0 - 2.5*x1 - 0.5*x3
- * c = 0.5*x2 - 0.5*x0
- * d = x1
- *
- * x = a*t*t*t + b*t*t + c*t + d
- *   = (-0.5*x0 + 1.5*x1 - 1.5*x2 + 0.5*x3) * t*t*t +
- *     (   1*x0 - 2.5*x1 + 2  *x2 - 0.5*x3) * t*t +
- *     (-0.5*x0          + 0.5*x2         ) * t +
- *     (            1*x1                  )
- *   = (-0.5*t*t*t + 1  *t*t - 0.5*t    ) * x0 +
- *     ( 1.5*t*t*t - 2.5*t*t         + 1) * x1 +
- *     (-1.5*t*t*t + 2  *t*t + 0.5*t    ) * x2 +
- *     ( 0.5*t*t*t - 0.5*t*t            ) * x3
- *   = A0(t) * x0 + A1(t) * x1 + A2(t) * x2 + A3(t) * x3
- *
- * A0, A1, A2 and A3 stay within the range [-1,1].
- * In the tables, they are scaled with 14 fractional bits.
- *
- * Turns out we don't need to store A2 and A3; they are symmetrical to A1 and A0.
- *
- * TODO: A0 and A3 stay very small indeed. Consider different scale/resolution?
- */
-
-static short cubicA0[1025], cubicA1[1025];
-
-/*static*/ void init_cubic(void)
+void _dumb_init_cubic(void)
 {
-	unsigned int t; /* 3*1024*1024*1024 is within range if it's unsigned */
 	static int done = 0;
 	if (done) return;
+
+	resampler_init();
+
 	done = 1;
-	for (t = 0; t < 1025; t++) {
-		/* int casts to pacify warnings about negating unsigned values */
-		cubicA0[t] = -(int)(  t*t*t >> 17) + (int)(  t*t >> 6) - (int)(t << 3);
-		cubicA1[t] =  (int)(3*t*t*t >> 17) - (int)(5*t*t >> 7)                 + (int)(1 << 14);
-	}
 }
 
 
@@ -176,22 +158,7 @@ static short cubicA0[1025], cubicA1[1025];
 
 #define SRCTYPE sample_t
 #define SRCBITS 24
-#define ALIAS(x, vol) MULSC(x, vol)
-#define LINEAR(x0, x1) (x0 + MULSC(x1 - x0, subpos))
-/*
-#define SET_CUBIC_COEFFICIENTS(x0, x1, x2, x3) { \
-	a = (3 * (x1 - x2) + (x3 - x0)) >> 1; \
-	b = ((x2 << 2) + (x0 << 1) - (5 * x1 + x3)) >> 1; \
-	c = (x2 - x0) >> 1; \
-}
-#define CUBIC(d) MULSC(MULSC(MULSC(MULSC(a, subpos) + b, subpos) + c, subpos) + d, vol)
-*/
-#define CUBIC(x0, x1, x2, x3) ( \
-	MULSC(x0, cubicA0[subpos >> 6] << 2) + \
-	MULSC(x1, cubicA1[subpos >> 6] << 2) + \
-	MULSC(x2, cubicA1[1 + (subpos >> 6 ^ 1023)] << 2) + \
-	MULSC(x3, cubicA0[1 + (subpos >> 6 ^ 1023)] << 2))
-#define CUBICVOL(x, vol) MULSC(x, vol)
+#define FIR(x) (x >> 8)
 #include "resample.inc"
 
 /* Undefine the simplified macros. */
@@ -212,44 +179,14 @@ static short cubicA0[1025], cubicA1[1025];
 #define SUFFIX _16
 #define SRCTYPE short
 #define SRCBITS 16
-#define ALIAS(x, vol) (x * vol >> 8)
-#define LINEAR(x0, x1) ((x0 << 8) + MULSC16(x1 - x0, subpos))
-/*
-#define SET_CUBIC_COEFFICIENTS(x0, x1, x2, x3) { \
-	a = (3 * (x1 - x2) + (x3 - x0)) << 7; \
-	b = ((x2 << 2) + (x0 << 1) - (5 * x1 + x3)) << 7; \
-	c = (x2 - x0) << 7; \
-}
-#define CUBIC(d) MULSC(MULSC(MULSC(MULSC(a, subpos) + b, subpos) + c, subpos) + (d << 8), vol)
-*/
-#define CUBIC(x0, x1, x2, x3) ( \
-	x0 * cubicA0[subpos >> 6] + \
-	x1 * cubicA1[subpos >> 6] + \
-	x2 * cubicA1[1 + (subpos >> 6 ^ 1023)] + \
-	x3 * cubicA0[1 + (subpos >> 6 ^ 1023)])
-#define CUBICVOL(x, vol) (int)((LONG_LONG)(x) * (vol << 10) >> 32)
+#define FIR(x) (x)
 #include "resample.inc"
 
 /* Create resamplers for 8-bit source samples. */
 #define SUFFIX _8
 #define SRCTYPE signed char
 #define SRCBITS 8
-#define ALIAS(x, vol) (x * vol)
-#define LINEAR(x0, x1) ((x0 << 16) + (x1 - x0) * subpos)
-/*
-#define SET_CUBIC_COEFFICIENTS(x0, x1, x2, x3) { \
-	a = 3 * (x1 - x2) + (x3 - x0); \
-	b = ((x2 << 2) + (x0 << 1) - (5 * x1 + x3)) << 15; \
-	c = (x2 - x0) << 15; \
-}
-#define CUBIC(d) MULSC(MULSC(MULSC((a * subpos >> 1) + b, subpos) + c, subpos) + (d << 16), vol)
-*/
-#define CUBIC(x0, x1, x2, x3) (( \
-	x0 * cubicA0[subpos >> 6] + \
-	x1 * cubicA1[subpos >> 6] + \
-	x2 * cubicA1[1 + (subpos >> 6 ^ 1023)] + \
-	x3 * cubicA0[1 + (subpos >> 6 ^ 1023)]) << 6)
-#define CUBICVOL(x, vol) (int)((LONG_LONG)(x) * (vol << 12) >> 32)
+#define FIR(x) (x << 8)
 #include "resample.inc"
 
 

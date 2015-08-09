@@ -21,10 +21,12 @@
 #include "internal/it.h"
 
 
+int dumb_it_default_panning_separation = 25;
+
 
 DUMB_IT_SIGDATA *duh_get_it_sigdata(DUH *duh)
 {
-	return duh_get_raw_sigdata(duh, 0, SIGTYPE_IT);
+	return duh_get_raw_sigdata(duh, -1, SIGTYPE_IT);
 }
 
 
@@ -245,5 +247,3 @@ int dumb_it_sr_get_channel_muted(DUMB_IT_SIGRENDERER *sr, int channel)
 {
 	return sr ? (sr->channel[channel].flags & IT_CHANNEL_MUTED) != 0 : 0;
 }
-
-

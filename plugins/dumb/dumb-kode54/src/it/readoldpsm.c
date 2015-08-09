@@ -33,19 +33,18 @@ static int psm_sample_compare(const void *e1, const void *e2)
 	return a - b;
 }
 
-static int it_old_psm_read_samples(IT_SAMPLE ** sample, DUMBFILE * f, int * num, const unsigned char * prebuffer, long data_pos, long data_size)
+static int it_old_psm_read_samples(IT_SAMPLE ** sample, DUMBFILE * f, int * num)
 {
-	int n, o, pos, count = *num, true_num, snum, offset, flags, finetune, delta;
+    int n, o, count = *num, true_num, snum, offset, flags, finetune, delta;
 
-	unsigned char * buffer, * sbuffer = 0;
+    unsigned char * buffer;
 	const unsigned char * sdata;
+    long sample_bytes;
 
 	buffer = malloc(count * 64);
 	if (!buffer) goto error;
 
-	if (dumbfile_getnc(buffer, count * 64, f) < count * 64) goto error_fb;
-
-	pos = dumbfile_pos(f);
+    if (dumbfile_getnc((char *)buffer, count * 64, f) < count * 64) goto error_fb;
 
 	true_num = 0;
 
@@ -94,7 +93,8 @@ static int it_old_psm_read_samples(IT_SAMPLE ** sample, DUMBFILE * f, int * num,
 		finetune = buffer[(n * 64) + 60];
 		s->default_volume = buffer[(n * 64) + 61];
 		s->C5_speed = buffer[(n * 64) + 62] | (buffer[(n * 64) + 63] << 8);
-		if (finetune < 16) {
+		if (finetune & 15) {
+			finetune &= 15;
 			if (finetune >= 8) finetune -= 16;
 			//s->C5_speed = (long)((double)s->C5_speed * pow(DUMB_PITCH_BASE, finetune*32));
 			s->finetune = finetune * 32;
@@ -127,22 +127,12 @@ static int it_old_psm_read_samples(IT_SAMPLE ** sample, DUMBFILE * f, int * num,
 		s->vibrato_waveform = IT_VIBRATO_SINE;
 		s->max_resampling_quality = -1;
 
-		s->data = malloc(s->length * ((flags & 4) ? 2 : 1));
+        sample_bytes = s->length * ((flags & 4) ? 2 : 1);
+        s->data = malloc(sample_bytes);
 		if (!s->data) goto error_fb;
 
-		if ((offset >= data_pos) &&
-			((offset + s->length * ((flags & 4) ? 2 : 1)) <= (data_pos + data_size))) {
-			sdata = prebuffer + offset - data_pos;
-		} else if (offset >= pos) {
-			if (dumbfile_skip(f, offset - pos)) goto error_fb;
-			pos = offset;
-			offset = s->length * ((flags & 4) ? 2 : 1);
-			sbuffer = malloc(offset);
-			if (!sbuffer) goto error_fb;
-			if (dumbfile_getnc(sbuffer, offset, f) < offset) goto error_fsb;
-			sdata = sbuffer;
-		} else
-			goto error_fb;
+        if (dumbfile_seek(f, offset, DFS_SEEK_SET) || dumbfile_getnc(s->data, sample_bytes, f) < sample_bytes) goto error_fb;
+        sdata = ( const unsigned char * ) s->data;
 
 		if (flags & 0x10) {
 			if (flags & 8) {
@@ -179,8 +169,8 @@ static int it_old_psm_read_samples(IT_SAMPLE ** sample, DUMBFILE * f, int * num,
 			} else {
 				if (flags & 4) {
 					for (o = 0; o < s->length; o++) {
-						delta += (short)(sdata[o * 2] | (sdata[(o * 2) + 1] << 8));
-						((short *)s->data)[o] = delta;
+						delta += (signed short)(sdata[o * 2] | (sdata[(o * 2) + 1] << 8));
+						((signed short *)s->data)[o] = delta;
 					}
 				} else {
 					for (o = 0; o < s->length; o++) {
@@ -190,26 +180,19 @@ static int it_old_psm_read_samples(IT_SAMPLE ** sample, DUMBFILE * f, int * num,
 				}
 			}
 		}
-
-		if (sbuffer) {
-			free(sbuffer);
-			sbuffer = 0;
-		}
 	}
 
 	free(buffer);
 
 	return 0;
 
-error_fsb:
-	if (sbuffer) free(sbuffer);
 error_fb:
 	free(buffer);
 error:
 	return -1;
 }
 
-static int it_old_psm_read_patterns(IT_PATTERN * pattern, DUMBFILE * f, int num, int size, int pchans, int sflags)
+static int it_old_psm_read_patterns(IT_PATTERN * pattern, DUMBFILE * f, int num, int size, int pchans)
 {
 	int n, offset, psize, rows, chans, row, flags, channel;
 
@@ -220,7 +203,7 @@ static int it_old_psm_read_patterns(IT_PATTERN * pattern, DUMBFILE * f, int num,
 	buffer = malloc(size);
 	if (!buffer) goto error;
 
-	if (dumbfile_getnc(buffer, size, f) < size) goto error_fb;
+    if (dumbfile_getnc((char *)buffer, size, f) < size) goto error_fb;
 
 	offset = 0;
 
@@ -289,12 +272,12 @@ static int it_old_psm_read_patterns(IT_PATTERN * pattern, DUMBFILE * f, int num,
 				if (channel >= chans)
 				{
 					//channel = 0;
-					goto error_fb;
+					//goto error_fb;
 				}
 				if (flags & 0x80) {
 					if ((*ptr < 60) && (channel < pchans)) {
 						entry->mask |= IT_ENTRY_NOTE;
-						entry->note = *ptr + 36;
+						entry->note = *ptr + 35;
 					}
 					ptr++;
 					if (*ptr) {
@@ -481,7 +464,7 @@ static int it_old_psm_read_patterns(IT_PATTERN * pattern, DUMBFILE * f, int num,
 			}
 		}
 
-		p->n_entries = entry - p->entry;
+		p->n_entries = (int)(entry - p->entry);
 		offset += psize;
 	}
 
@@ -510,15 +493,13 @@ PSM_COMPONENT;
 
 static int psm_component_compare(const void *e1, const void *e2)
 {
-	return ((const PSM_COMPONENT *)e1)->offset -
-	       ((const PSM_COMPONENT *)e2)->offset;
+	return (int)(((const PSM_COMPONENT *)e1)->offset -
+	             ((const PSM_COMPONENT *)e2)->offset);
 }
 
 static DUMB_IT_SIGDATA *it_old_psm_load_sigdata(DUMBFILE *f)
 {
 	DUMB_IT_SIGDATA *sigdata;
-
-	unsigned char * ptr = 0;
 
 	PSM_COMPONENT *component;
 	int n_components = 0;
@@ -530,7 +511,7 @@ static DUMB_IT_SIGDATA *it_old_psm_load_sigdata(DUMBFILE *f)
 	sigdata = malloc(sizeof(*sigdata));
 	if (!sigdata) goto error;
 
-	if (dumbfile_getnc(sigdata->name, 60, f) < 60 ||
+    if (dumbfile_getnc((char *)sigdata->name, 60, f) < 60 ||
 		sigdata->name[59] != 0x1A) goto error_sd;
 	sigdata->name[59] = 0;
 
@@ -609,7 +590,7 @@ static DUMB_IT_SIGDATA *it_old_psm_load_sigdata(DUMBFILE *f)
 
 	if (!n_components) goto error_fc;
 
-	total_pattern_size = dumbfile_igetl(f);
+	total_pattern_size = (int)dumbfile_igetl(f);
 	if (!total_pattern_size) goto error_fc;
 
 	qsort(component, n_components, sizeof(PSM_COMPONENT), &psm_component_compare);
@@ -617,43 +598,31 @@ static DUMB_IT_SIGDATA *it_old_psm_load_sigdata(DUMBFILE *f)
 	memset(sigdata->channel_volume, 64, DUMB_IT_N_CHANNELS);
 
 	for (n = 0; n < DUMB_IT_N_CHANNELS; n += 4) {
-		sigdata->channel_pan[n  ] = 16;
-		sigdata->channel_pan[n+1] = 48;
-		sigdata->channel_pan[n+2] = 48;
-		sigdata->channel_pan[n+3] = 16;
+		int sep = 32 * dumb_it_default_panning_separation / 100;
+		sigdata->channel_pan[n  ] = 32 - sep;
+		sigdata->channel_pan[n+1] = 32 + sep;
+		sigdata->channel_pan[n+2] = 32 + sep;
+		sigdata->channel_pan[n+3] = 32 - sep;
 	}
 
 	for (n = 0; n < n_components; n++)
 	{
 		int o;
-		long data_pos, data_size;
 
-		/* Whee, sample data may be before the sample headers */
-
-		data_pos = dumbfile_pos(f);
-		if (data_pos > component[n].offset) goto error_fc;
-
-		data_size = component[n].offset - data_pos;
-
-		if (data_size) {
-			ptr = malloc(data_size);
-			if (!ptr) goto error_fc;
-
-			if (dumbfile_getnc(ptr, data_size, f) < data_size) goto error_fp;
-		}
+        if ( dumbfile_seek(f, component[n].offset, DFS_SEEK_SET) ) goto error_fc;
 
 		switch (component[n].type) {
 
 			case PSM_COMPONENT_ORDERS:
-				if (dumbfile_getnc(sigdata->order, sigdata->n_orders, f) < sigdata->n_orders) goto error_fp;
+                if (dumbfile_getnc((char *)sigdata->order, sigdata->n_orders, f) < sigdata->n_orders) goto error_fc;
 				if (n_orders > sigdata->n_orders)
 					if (dumbfile_skip(f, n_orders - sigdata->n_orders))
-						goto error_fp;
-				if (dumbfile_igetw(f)) goto error_fp;
+                        goto error_fc;
+                if (dumbfile_igetw(f)) goto error_fc;
 				break;
 
 			case PSM_COMPONENT_PANPOS:
-				if (dumbfile_getnc(sigdata->channel_pan, sigdata->n_pchannels, f) < sigdata->n_pchannels) goto error_fp;
+                if (dumbfile_getnc((char *)sigdata->channel_pan, sigdata->n_pchannels, f) < sigdata->n_pchannels) goto error_fc;
 				for (o = 0; o < sigdata->n_pchannels; o++) {
 					sigdata->channel_pan[o] -= (sigdata->channel_pan[o] & 8) >> 3;
 					sigdata->channel_pan[o] = ((int)sigdata->channel_pan[o] << 5) / 7;
@@ -661,11 +630,11 @@ static DUMB_IT_SIGDATA *it_old_psm_load_sigdata(DUMBFILE *f)
 				break;
 
 			case PSM_COMPONENT_PATTERNS:
-				if (it_old_psm_read_patterns(sigdata->pattern, f, sigdata->n_patterns, total_pattern_size, sigdata->n_pchannels, flags)) goto error_fp;
+                if (it_old_psm_read_patterns(sigdata->pattern, f, sigdata->n_patterns, total_pattern_size, sigdata->n_pchannels)) goto error_fc;
 				break;
 
 			case PSM_COMPONENT_SAMPLE_HEADERS:
-				if (it_old_psm_read_samples(&sigdata->sample, f, &sigdata->n_samples, ptr, data_pos, data_size)) goto error_fp;
+                if (it_old_psm_read_samples(&sigdata->sample, f, &sigdata->n_samples)) goto error_fc;
 				break;
 
 			case PSM_COMPONENT_COMMENTS:
@@ -673,16 +642,11 @@ static DUMB_IT_SIGDATA *it_old_psm_load_sigdata(DUMBFILE *f)
 					o = dumbfile_igetw(f);
 					if (o > 0) {
 						sigdata->song_message = malloc(o + 1);
-						if (dumbfile_getnc(sigdata->song_message, o, f) < o) goto error_fp;
+                        if (dumbfile_getnc((char *)sigdata->song_message, o, f) < o) goto error_fc;
 						sigdata->song_message[o] = 0;
 					}
 				}
 				break;
-		}
-
-		if (ptr) {
-			free(ptr);
-			ptr = 0;
 		}
 	}
 
@@ -692,8 +656,6 @@ static DUMB_IT_SIGDATA *it_old_psm_load_sigdata(DUMBFILE *f)
 
 	return sigdata;
 
-error_fp:
-	if (ptr) free(ptr);
 error_fc:
 	free(component);
 error_usd:
@@ -719,7 +681,7 @@ DUH *dumb_read_old_psm_quick(DUMBFILE *f)
 	{
 		const char *tag[2][2];
 		tag[0][0] = "TITLE";
-		tag[0][1] = ((DUMB_IT_SIGDATA *)sigdata)->name;
+        tag[0][1] = (const char *)(((DUMB_IT_SIGDATA *)sigdata)->name);
 		tag[1][0] = "FORMAT";
 		tag[1][1] = "PSM (old)";
 		return make_duh(-1, 2, (const char *const (*)[2])tag, 1, &descptr, &sigdata);

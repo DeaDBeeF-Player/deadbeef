@@ -8,12 +8,12 @@
  * /_______/ynamic    \____/niversal  /__\  /____\usic   /|  .  . ibliotheque
  *                                                      /  \
  *                                                     / .  \
- * readmod2.c - Function to read a good old-          / / \  \
- *              fashioned Amiga module from an       | <  /   \_
- *              open file and do an initial          |  \/ /\   /
+ * readany2.c - Code to detect and read any of the    / / \  \
+ *              module formats supported by DUMB     | <  /   \_
+ *              from an open file and do an initial  |  \/ /\   /
  *              run-through.                          \_  /  > /
  *                                                      | \ / /
- * Split off from readmod.c by entheh.                  |  ' /
+ * by Chris Moeller.                                    |  ' /
  *                                                       \__/
  */
 
@@ -21,9 +21,9 @@
 
 
 
-DUH *dumb_read_mod(DUMBFILE *f, int restrict_)
+DUH *dumb_read_any(DUMBFILE *f, int restrict_, int subsong)
 {
-	DUH *duh = dumb_read_mod_quick(f, restrict_);
+    DUH *duh = dumb_read_any_quick(f, restrict_, subsong);
 	dumb_it_do_initial_runthrough(duh);
 	return duh;
 }

@@ -33,6 +33,7 @@
 #include <stddef.h>
 
 #include "barray.h"
+#include "tarray.h"
 
 
 /** TO DO: THINK ABOUT THE FOLLOWING:
@@ -54,9 +55,8 @@ sigdata->flags & IT_COMPATIBLE_GXX
  * handle ambiguities in the format specification. The correct code in each
  * case will be determined most likely by experimentation.
  */
-#define STEREO_SAMPLES_COUNT_AS_TWO
+//#define STEREO_SAMPLES_COUNT_AS_TWO
 #define INVALID_ORDERS_END_SONG
-#define INVALID_NOTES_CAUSE_NOTE_CUT
 #define SUSTAIN_LOOP_OVERRIDES_NORMAL_LOOP
 #define VOLUME_OUT_OF_RANGE_SETS_MAXIMUM
 
@@ -73,10 +73,9 @@ sigdata->flags & IT_COMPATIBLE_GXX
 #define IT_INSM_SIGNATURE       DUMB_ID('M', 'S', 'N', 'I')
 
 
-/* 1 minute per 4 rows, each row 6 ticks; this is divided by the tempo to get
- * the interval between ticks.
+/* This is divided by the tempo times 256 to get the interval between ticks.
  */
-#define TICK_TIME_DIVIDEND ((65536 * 60) / (4 * 6))
+#define TICK_TIME_DIVIDEND (65536 * 5 * 128)
 
 
 
@@ -209,7 +208,7 @@ struct IT_INSTRUMENT
 struct IT_SAMPLE
 {
 	unsigned char name[35];
-	unsigned char filename[14];
+	unsigned char filename[15];
 	unsigned char flags;
 	unsigned char global_volume;
 	unsigned char default_volume;
@@ -299,18 +298,19 @@ struct IT_SAMPLE
 #define IT_PTM_NOTE_SLIDE_UP          35
 #define IT_PTM_NOTE_SLIDE_DOWN_RETRIG 36
 #define IT_PTM_NOTE_SLIDE_UP_RETRIG   37
-#define IT_MIDI_MACRO            26 //see MIDI.TXT
 
-/* Some effects needed for XM compatibility */
-#define IT_XM_PORTAMENTO_DOWN       27
-#define IT_XM_PORTAMENTO_UP         28
-#define IT_XM_FINE_VOLSLIDE_DOWN    29
-#define IT_XM_FINE_VOLSLIDE_UP      30
-#define IT_XM_RETRIGGER_NOTE        31
-#define IT_XM_KEY_OFF               32
-#define IT_XM_SET_ENVELOPE_POSITION 33
+/* More effects needed for OKT compatibility */
+#define IT_OKT_NOTE_SLIDE_DOWN        38
+#define IT_OKT_NOTE_SLIDE_DOWN_ROW    39
+#define IT_OKT_NOTE_SLIDE_UP          40
+#define IT_OKT_NOTE_SLIDE_UP_ROW      41
+#define IT_OKT_ARPEGGIO_3             42
+#define IT_OKT_ARPEGGIO_4             43
+#define IT_OKT_ARPEGGIO_5             44
+#define IT_OKT_VOLUME_SLIDE_DOWN      45
+#define IT_OKT_VOLUME_SLIDE_UP        46
 
-#define IT_N_EFFECTS                  38
+#define IT_N_EFFECTS                  47
 
 /* These represent the top nibble of the command value. */
 #define IT_S_SET_FILTER              0 /* Greyed out in IT... */
@@ -409,6 +409,12 @@ struct IT_PATTERN
 
 #define IT_WAS_A_669      1024
 
+#define IT_WAS_AN_OKT     2048
+
+#define IT_WAS_AN_STM     4096
+
+#define IT_WAS_PROCESSED  8192 /* Will be set the first time a sigdata passes through a sigrenderer */
+
 #define IT_ORDER_END  255
 #define IT_ORDER_SKIP 254
 
@@ -462,6 +468,7 @@ struct IT_PLAYING_ENVELOPE
 #define IT_PLAYING_SUSTAINOFF 2
 #define IT_PLAYING_FADING     4
 #define IT_PLAYING_DEAD       8
+#define IT_PLAYING_REVERSE    16
 
 struct IT_PLAYING
 {
@@ -478,7 +485,6 @@ struct IT_PLAYING
 	unsigned char instnum;
 
 	unsigned char declick_stage;
-	float declick_volume;
 
 	float float_volume[2];
 	float ramp_volume[2];
@@ -594,7 +600,10 @@ struct IT_CHANNEL
 
 	unsigned char new_note_action;
 
-	int arpeggio;
+	unsigned char const* arpeggio_table;
+	signed char arpeggio_offsets[3];
+
+	int arpeggio_shift;
 	unsigned char retrig;
 	unsigned char xm_retrig;
 	int retrig_tick;
@@ -609,7 +618,7 @@ struct IT_CHANNEL
 	int portamento;
 	int toneporta;
 	int toneslide;
-	unsigned char toneslide_tick, last_toneslide_tick, ptm_toneslide, ptm_last_toneslide;
+	unsigned char toneslide_tick, last_toneslide_tick, ptm_toneslide, ptm_last_toneslide, okt_toneslide;
 	unsigned char destnote;
 	unsigned char toneslide_retrig;
 
@@ -650,6 +659,10 @@ struct IT_CHANNEL
 	unsigned char xm_lastEB;
 	unsigned char xm_lastX1;
 	unsigned char xm_lastX2;
+
+	unsigned char inv_loop_delay;
+	unsigned char inv_loop_speed;
+	int inv_loop_offset;
 
 	IT_PLAYING *playing;
 
@@ -709,13 +722,28 @@ struct DUMB_IT_SIGRENDERER
 #ifdef BIT_ARRAY_BULLSHIT
 	/* bit array, which rows are played, only checked by pattern break or loop commands */
 	void * played;
+
+	/*
+	   Loop indicator for internal processes, may also be useful for external processes 
+	   0 - Not looped
+	   1 - Looped
+	  -1 - Continued past loop
+	 */
+	int looped;
+
+	/*
+	   Kept until looped
+	*/
+	LONG_LONG time_played;
+
+	void * row_timekeeper;
 #endif
 
 	long gvz_time;
 	int gvz_sub_time;
 
-	int ramp_style;
-
+    int ramp_style;
+    
 	//int max_output;
 };
 
@@ -808,6 +836,7 @@ extern DUH_SIGTYPE_DESC _dumb_sigtype_it;
 #define XM_E_NOTE_CUT              0xC
 #define XM_E_NOTE_DELAY            0xD
 #define XM_E_PATTERN_DELAY         0xE
+#define XM_E_SET_MIDI_MACRO        0xF
 
 #define XM_X_EXTRAFINE_PORTA_UP    1
 #define XM_X_EXTRAFINE_PORTA_DOWN  2
@@ -886,7 +915,12 @@ void _dumb_it_ptm_convert_effect(int effect, int value, IT_ENTRY *entry);
 
 long _dumb_it_read_sample_data_adpcm4(IT_SAMPLE *sample, DUMBFILE *f);
 
-#define min(x,y) ((x)<(y)?(x):(y))
-#define max(x,y) ((x)>(y)?(x):(y))
+void _dumb_it_interleave_stereo_sample(IT_SAMPLE *sample);
+
+/* Calling either of these is optional */
+void _dumb_init_cubic();
+#ifdef _USE_SSE
+void _dumb_init_sse();
+#endif
 
 #endif /* INTERNAL_IT_H */

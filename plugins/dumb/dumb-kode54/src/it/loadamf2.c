@@ -8,22 +8,27 @@
  * /_______/ynamic    \____/niversal  /__\  /____\usic   /|  .  . ibliotheque
  *                                                      /  \
  *                                                     / .  \
- * readmod2.c - Function to read a good old-          / / \  \
- *              fashioned Amiga module from an       | <  /   \_
- *              open file and do an initial          |  \/ /\   /
- *              run-through.                          \_  /  > /
+ * loadamf2.c - Code to read a DSMI AMF module file,  / / \  \
+ *              opening and closing it for you, and  | <  /   \_
+ *              do an initial run-through.           |  \/ /\   /
+ *                                                    \_  /  > /
  *                                                      | \ / /
- * Split off from readmod.c by entheh.                  |  ' /
+ * By Chris Moeller.                                    |  ' /
  *                                                       \__/
  */
 
 #include "dumb.h"
+#include "internal/it.h"
 
 
 
-DUH *dumb_read_mod(DUMBFILE *f, int restrict_)
+/* dumb_load_amf(): loads a AMF file into a DUH struct, returning a pointer
+ * to the DUH struct. When you have finished with it, you must pass the
+ * pointer to unload_duh() so that the memory can be freed.
+ */
+DUH *dumb_load_amf(const char *filename)
 {
-	DUH *duh = dumb_read_mod_quick(f, restrict_);
+	DUH *duh = dumb_load_amf_quick(filename);
 	dumb_it_do_initial_runthrough(duh);
 	return duh;
 }
