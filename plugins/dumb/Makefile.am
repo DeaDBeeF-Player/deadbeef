@@ -59,6 +59,14 @@ dumb-kode54/src/it/loadmod.c\
 dumb-kode54/src/it/loadriff.c\
 dumb-kode54/src/it/readmtm.c\
 dumb-kode54/src/it/load669.c\
+dumb-kode54/src/it/readamf.c\
+dumb-kode54/src/it/readamf2.c\
+dumb-kode54/src/it/readany.c\
+dumb-kode54/src/it/readany2.c\
+dumb-kode54/src/it/loadamf.c\
+dumb-kode54/src/it/loadamf2.c\
+dumb-kode54/src/it/loadany.c\
+dumb-kode54/src/it/loadany2.c\
 dumb-kode54/src/core/rendduh.c\
 dumb-kode54/src/core/readduh.c\
 dumb-kode54/src/core/duhlen.c\
@@ -79,6 +87,8 @@ dumb-kode54/src/helpers/riff.c\
 dumb-kode54/src/helpers/memfile.c\
 dumb-kode54/src/helpers/sampbuf.c\
 dumb-kode54/src/helpers/barray.c\
+dumb-kode54/src/helpers/tarray.c\
+dumb-kode54/src/helpers/resampler.c\
 dumb-kode54/studio/include/guitop.h\
 dumb-kode54/studio/include/dumbgui.h\
 dumb-kode54/studio/include/options.h\
@@ -91,6 +101,8 @@ dumb-kode54/src/tools/it/modulus.h\
 dumb-kode54/include/internal/it.h\
 dumb-kode54/include/internal/dumb.h\
 dumb-kode54/include/internal/barray.h\
+dumb-kode54/include/internal/tarray.h\
+dumb-kode54/include/internal/resampler.h\
 dumb-kode54/include/internal/riff.h\
 dumb-kode54/include/internal/aldumb.h\
 dumb-kode54/include/dumb.h\
