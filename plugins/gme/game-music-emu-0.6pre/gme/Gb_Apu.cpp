@@ -1,4 +1,4 @@
-// Gb_Snd_Emu 0.1.4. http://www.slack.net/~ant/
+// Gb_Snd_Emu $vers. http://www.slack.net/~ant/
 
 #include "Gb_Apu.h"
 

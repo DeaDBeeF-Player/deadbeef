@@ -1,6 +1,6 @@
 // Common aspects of emulators which use Blip_Buffer for sound output
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef CLASSIC_EMU_H
 #define CLASSIC_EMU_H
 

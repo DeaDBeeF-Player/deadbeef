@@ -3,24 +3,16 @@
 #ifndef __YMDELTAT_H__
 #define __YMDELTAT_H__
 
-/* compiler dependence */
-#ifndef __OSDCOMM_H__
-#define __OSDCOMM_H__
-typedef unsigned char	UINT8;   /* unsigned  8bit */
-typedef unsigned short	UINT16;  /* unsigned 16bit */
-typedef unsigned int	UINT32;  /* unsigned 32bit */
-typedef signed char		INT8;    /* signed  8bit   */
-typedef signed short	INT16;   /* signed 16bit   */
-typedef signed int		INT32;   /* signed 32bit   */
-
-typedef INT32 stream_sample_t;
-
-#endif /* __OSDCOMM_H__ */
+#include "mamedef.h"
 
 #define YM_DELTAT_SHIFT    (16)
 
 #define YM_DELTAT_EMULATION_MODE_NORMAL	0
 #define YM_DELTAT_EMULATION_MODE_YM2610	1
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 typedef void (*STATUS_CHANGE_HANDLER)(void *chip, UINT8 status_bits);
@@ -94,5 +86,9 @@ void YM_DELTAT_ADPCM_CALC(YM_DELTAT *DELTAT);
 
 /*void YM_DELTAT_postload(YM_DELTAT *DELTAT,UINT8 *regs);
 void YM_DELTAT_savestate(const device_config *device,YM_DELTAT *DELTAT);*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __YMDELTAT_H__ */

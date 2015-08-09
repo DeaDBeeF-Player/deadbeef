@@ -1,6 +1,6 @@
 /* Loads and plays video game music files into sample buffer */
 
-/* Game_Music_Emu 0.6-pre */
+/* Game_Music_Emu $vers */
 #ifndef GME_H
 #define GME_H
 
@@ -44,7 +44,7 @@ void gme_delete( gme_t* );
 
 /* Sets time to start fading track out. Once fade ends track_ended() returns true.
 Fade time can be changed while track is playing. */
-void gme_set_fade( gme_t*, int start_msec );
+void gme_set_fade( gme_t*, int start_msec, int length_msec );
 
 /* True if a track has reached its end */
 gme_bool gme_track_ended( const gme_t* );
@@ -54,6 +54,9 @@ int gme_tell( const gme_t* );
 
 /* Seeks to new time in track. Seeking backwards or far forward can take a while. */
 gme_err_t gme_seek( gme_t*, int msec );
+
+/* Skips the specified number of samples. */
+gme_err_t gme_skip( gme_t*, int samples );
 
 
 /******** Informational ********/
@@ -78,6 +81,8 @@ Must be freed after use. */
 typedef struct gme_info_t gme_info_t;
 gme_err_t gme_track_info( const gme_t*, gme_info_t** out, int track );
 
+gme_err_t gme_set_track_info( gme_t*, const gme_info_t* in, int track );
+        
 /* Frees track information */
 void gme_free_info( gme_info_t* );
 
@@ -198,7 +203,7 @@ gme_bool gme_type_multitrack( gme_type_t );
 /******** Advanced file loading ********/
 
 /* Same as gme_open_file(), but uses file data already in memory. Makes copy of data. */
-gme_err_t gme_open_data( const char *path, void const* data, long size, gme_t** emu_out, int sample_rate );
+gme_err_t gme_open_data( void const* data, long size, gme_t** emu_out, int sample_rate );
 
 /* Determines likely game music type based on first four bytes of file. Returns
 string containing proper file suffix ("NSF", "SPC", etc.) or "" if file header
@@ -224,12 +229,16 @@ gme_err_t gme_load_data( gme_t*, void const* data, long size );
 
 /* Loads music file using custom data reader function that will be called to
 read file data. Most emulators load the entire file in one read call. */
-typedef gme_err_t (*gme_reader_t)( void* your_data, void* out, int count );
+typedef gme_err_t (*gme_reader_t)( void* your_data, void* out, long count );
 gme_err_t gme_load_custom( gme_t*, gme_reader_t, long file_size, void* your_data );
 
 /* Loads m3u playlist file from memory (must be done after loading music) */
 gme_err_t gme_load_m3u_data( gme_t*, void const* data, long size );
 
+        
+/******** Saving ********/
+typedef gme_err_t (*gme_writer_t)( void* your_data, void const* in, long count );
+gme_err_t gme_save( gme_t const*, gme_writer_t, void* your_data );
 
 /******** User data ********/
 

@@ -74,11 +74,15 @@ Revision History:
 #include "fmopl.h"
 #include "ymdeltat.h"
 
+#ifndef INLINE
 #define INLINE __inline
+#endif
 #ifndef NULL
 	#define NULL ((void *)0)
 #endif
+#ifndef logerror
 #define logerror (void)
+#endif
 
 #ifndef M_PI
 	#define M_PI 3.14159265358979323846
@@ -355,45 +359,45 @@ static const int slot_array[32]=
 static const UINT32 ksl_tab[8*16]=
 {
 	/* OCT 0 */
-	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
-	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
-	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
-	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
+	UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 0.000/DV),
+	UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 0.000/DV),
+	UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 0.000/DV),
+	UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 0.000/DV),
 	/* OCT 1 */
-	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
-	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
-	 0.000/DV, 0.750/DV, 1.125/DV, 1.500/DV,
-	 1.875/DV, 2.250/DV, 2.625/DV, 3.000/DV,
+	UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 0.000/DV),
+	UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 0.000/DV),
+	UINT32( 0.000/DV), UINT32( 0.750/DV), UINT32( 1.125/DV), UINT32( 1.500/DV),
+	UINT32( 1.875/DV), UINT32( 2.250/DV), UINT32( 2.625/DV), UINT32( 3.000/DV),
 	/* OCT 2 */
-	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
-	 0.000/DV, 1.125/DV, 1.875/DV, 2.625/DV,
-	 3.000/DV, 3.750/DV, 4.125/DV, 4.500/DV,
-	 4.875/DV, 5.250/DV, 5.625/DV, 6.000/DV,
+	UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 0.000/DV),
+	UINT32( 0.000/DV), UINT32( 1.125/DV), UINT32( 1.875/DV), UINT32( 2.625/DV),
+	UINT32( 3.000/DV), UINT32( 3.750/DV), UINT32( 4.125/DV), UINT32( 4.500/DV),
+	UINT32( 4.875/DV), UINT32( 5.250/DV), UINT32( 5.625/DV), UINT32( 6.000/DV),
 	/* OCT 3 */
-	 0.000/DV, 0.000/DV, 0.000/DV, 1.875/DV,
-	 3.000/DV, 4.125/DV, 4.875/DV, 5.625/DV,
-	 6.000/DV, 6.750/DV, 7.125/DV, 7.500/DV,
-	 7.875/DV, 8.250/DV, 8.625/DV, 9.000/DV,
+	UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 1.875/DV),
+	UINT32( 3.000/DV), UINT32( 4.125/DV), UINT32( 4.875/DV), UINT32( 5.625/DV),
+	UINT32( 6.000/DV), UINT32( 6.750/DV), UINT32( 7.125/DV), UINT32( 7.500/DV),
+	UINT32( 7.875/DV), UINT32( 8.250/DV), UINT32( 8.625/DV), UINT32( 9.000/DV),
 	/* OCT 4 */
-	 0.000/DV, 0.000/DV, 3.000/DV, 4.875/DV,
-	 6.000/DV, 7.125/DV, 7.875/DV, 8.625/DV,
-	 9.000/DV, 9.750/DV,10.125/DV,10.500/DV,
-	10.875/DV,11.250/DV,11.625/DV,12.000/DV,
+	UINT32( 0.000/DV), UINT32( 0.000/DV), UINT32( 3.000/DV), UINT32( 4.875/DV),
+	UINT32( 6.000/DV), UINT32( 7.125/DV), UINT32( 7.875/DV), UINT32( 8.625/DV),
+	UINT32( 9.000/DV), UINT32( 9.750/DV), UINT32(10.125/DV), UINT32(10.500/DV),
+	UINT32(10.875/DV), UINT32(11.250/DV), UINT32(11.625/DV), UINT32(12.000/DV),
 	/* OCT 5 */
-	 0.000/DV, 3.000/DV, 6.000/DV, 7.875/DV,
-	 9.000/DV,10.125/DV,10.875/DV,11.625/DV,
-	12.000/DV,12.750/DV,13.125/DV,13.500/DV,
-	13.875/DV,14.250/DV,14.625/DV,15.000/DV,
+	UINT32( 0.000/DV), UINT32( 3.000/DV), UINT32( 6.000/DV), UINT32( 7.875/DV),
+	UINT32( 9.000/DV), UINT32(10.125/DV), UINT32(10.875/DV), UINT32(11.625/DV),
+	UINT32(12.000/DV), UINT32(12.750/DV), UINT32(13.125/DV), UINT32(13.500/DV),
+	UINT32(13.875/DV), UINT32(14.250/DV), UINT32(14.625/DV), UINT32(15.000/DV),
 	/* OCT 6 */
-	 0.000/DV, 6.000/DV, 9.000/DV,10.875/DV,
-	12.000/DV,13.125/DV,13.875/DV,14.625/DV,
-	15.000/DV,15.750/DV,16.125/DV,16.500/DV,
-	16.875/DV,17.250/DV,17.625/DV,18.000/DV,
+	UINT32( 0.000/DV), UINT32( 6.000/DV), UINT32( 9.000/DV), UINT32(10.875/DV),
+	UINT32(12.000/DV), UINT32(13.125/DV), UINT32(13.875/DV), UINT32(14.625/DV),
+	UINT32(15.000/DV), UINT32(15.750/DV), UINT32(16.125/DV), UINT32(16.500/DV),
+	UINT32(16.875/DV), UINT32(17.250/DV), UINT32(17.625/DV), UINT32(18.000/DV),
 	/* OCT 7 */
-	 0.000/DV, 9.000/DV,12.000/DV,13.875/DV,
-	15.000/DV,16.125/DV,16.875/DV,17.625/DV,
-	18.000/DV,18.750/DV,19.125/DV,19.500/DV,
-	19.875/DV,20.250/DV,20.625/DV,21.000/DV
+	UINT32( 0.000/DV), UINT32( 9.000/DV), UINT32(12.000/DV), UINT32(13.875/DV),
+	UINT32(15.000/DV), UINT32(16.125/DV), UINT32(16.875/DV), UINT32(17.625/DV),
+	UINT32(18.000/DV), UINT32(18.750/DV), UINT32(19.125/DV), UINT32(19.500/DV),
+	UINT32(19.875/DV), UINT32(20.250/DV), UINT32(20.625/DV), UINT32(21.000/DV)
 };
 #undef DV
 
@@ -518,8 +522,8 @@ O( 0),O( 0),O( 0),O( 0),O( 0),O( 0),O( 0),O( 0),
 #define ML 2
 static const UINT8 mul_tab[16]= {
 /* 1/2, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,10,12,12,15,15 */
-   0.50*ML, 1.00*ML, 2.00*ML, 3.00*ML, 4.00*ML, 5.00*ML, 6.00*ML, 7.00*ML,
-   8.00*ML, 9.00*ML,10.00*ML,10.00*ML,12.00*ML,12.00*ML,15.00*ML,15.00*ML
+  UINT8( 0.50*ML),UINT8( 1.00*ML),UINT8( 2.00*ML),UINT8( 3.00*ML),UINT8( 4.00*ML),UINT8( 5.00*ML),UINT8( 6.00*ML),UINT8( 7.00*ML),
+  UINT8( 8.00*ML),UINT8( 9.00*ML),UINT8(10.00*ML),UINT8(10.00*ML),UINT8(12.00*ML),UINT8(12.00*ML),UINT8(15.00*ML),UINT8(15.00*ML)
 };
 #undef ML
 
@@ -1354,7 +1358,7 @@ INLINE void FM_KEYOFF(OPL_SLOT *SLOT, UINT32 key_clr)
 }
 
 /* update phase increment counter of operator (also update the EG rates if necessary) */
-static INLINE void CALC_FCSLOT(OPL_CH *CH,OPL_SLOT *SLOT)
+INLINE void CALC_FCSLOT(OPL_CH *CH,OPL_SLOT *SLOT)
 {
 	int ksr;
 
@@ -1454,7 +1458,7 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 {
 	OPL_CH *CH;
 	int slot;
-	int block_fnum;
+	UINT32 block_fnum;
 
 
 	/* adjust bus to 8 bits */
@@ -1493,8 +1497,8 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 			}
 			else
 			{	/* set IRQ mask ,timer enable*/
-				UINT8 st1 = v&1;
-				UINT8 st2 = (v>>1)&1;
+				/*UINT8 st1 = v&1;
+				UINT8 st2 = (v>>1)&1;*/
 
 				/* IRQRST,T1MSK,t2MSK,EOSMSK,BRMSK,x,ST2,ST1 */
 				OPL_STATUS_RESET(OPL, v & (0x78-0x08) );
@@ -1522,8 +1526,8 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 			{
 				if(OPL->keyboardhandler_w)
 					OPL->keyboardhandler_w(OPL->keyboard_param,v);
-				else
-					logerror("Y8950: write unmapped KEYBOARD port\n");
+				/*else
+					logerror("Y8950: write unmapped KEYBOARD port\n");*/
 			}
 			break;
 		case 0x07:	/* DELTA-T control 1 : START,REC,MEMDATA,REPT,SPOFF,x,x,RST */
@@ -1557,7 +1561,7 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 		case 0x15:		/* DAC data high 8 bits (F7,F6...F2) */
 		case 0x16:		/* DAC data low 2 bits (F1, F0 in bits 7,6) */
 		case 0x17:		/* DAC data shift (S2,S1,S0 in bits 2,1,0) */
-			logerror("FMOPL.C: DAC data register written, but not implemented reg=%02x val=%02x\n",r,v);
+			/*logerror("FMOPL.C: DAC data register written, but not implemented reg=%02x val=%02x\n",r,v);*/
 			break;
 
 		case 0x18:		/* I/O CTRL (Direction) */
@@ -1574,7 +1578,7 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 			break;
 #endif
 		default:
-			logerror("FMOPL.C: write to unknown register: %02x\n",r);
+			/*logerror("FMOPL.C: write to unknown register: %02x\n",r);*/
 			break;
 		}
 		break;
@@ -2091,8 +2095,8 @@ static unsigned char OPLRead(FM_OPL *OPL,int a)
 		{
 			if(OPL->keyboardhandler_r)
 				return OPL->keyboardhandler_r(OPL->keyboard_param);
-			else
-				logerror("Y8950: read unmapped KEYBOARD port\n");
+			/*else
+				logerror("Y8950: read unmapped KEYBOARD port\n");*/
 		}
 		return 0;
 
@@ -2112,14 +2116,14 @@ static unsigned char OPLRead(FM_OPL *OPL,int a)
 		{
 			if(OPL->porthandler_r)
 				return OPL->porthandler_r(OPL->port_param);
-			else
-				logerror("Y8950:read unmapped I/O port\n");
+			/*else
+				logerror("Y8950:read unmapped I/O port\n");*/
 		}
 		return 0;
 	case 0x1a: /* PCM-DATA    */
 		if(OPL->type&OPL_TYPE_ADPCM)
 		{
-			logerror("Y8950 A/D convertion is accessed but not implemented !\n");
+			/*logerror("Y8950 A/D convertion is accessed but not implemented !\n");*/
 			return 0x80; /* 2's complement PCM data - result from A/D convertion */
 		}
 		return 0;

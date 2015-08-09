@@ -1,6 +1,6 @@
 // Library configuration. Modify this file as necessary.
 
-// Game_Music_Emu 0.6-pre
+// $package
 #ifndef BLARGG_CONFIG_H
 #define BLARGG_CONFIG_H
 
@@ -23,6 +23,7 @@
 	gme_nsf_type,\
 	gme_nsfe_type,\
 	gme_sap_type,\
+    gme_sfm_type,\
 	gme_sgc_type,\
 	gme_spc_type,\
 	gme_vgm_type,\

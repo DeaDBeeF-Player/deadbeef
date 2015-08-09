@@ -1,6 +1,6 @@
 // Manages ROM data loaded from file in an efficient manner
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef ROM_DATA_H
 #define ROM_DATA_H
 

@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// $package. http://www.slack.net/~ant/
 
 #include "Ay_Apu.h"
 
@@ -95,6 +95,7 @@ Ay_Apu::Ay_Apu()
 		}
 	}
 	
+	type_ = Ay8910;
 	set_output( NULL );
 	volume( 1.0 );
 	reset();
@@ -105,13 +106,13 @@ void Ay_Apu::reset()
 	addr_       = 0;
 	last_time   = 0;
 	noise_delay = 0;
-	noise_lfsr  = 1;
-	
+    noise_lfsr  = 1;
+
 	for ( osc_t* osc = &oscs [osc_count]; osc != oscs; )
 	{
 		osc--;
 		osc->period   = period_factor;
-		osc->delay    = 0;
+        osc->delay    = 0;
 		osc->last_amp = 0;
 		osc->phase    = 0;
 	}
@@ -128,7 +129,8 @@ int Ay_Apu::read()
 		0xFF, 0x0F, 0xFF, 0x0F, 0xFF, 0x0F, 0x1F, 0x3F,
 		0x1F, 0x1F, 0x1F, 0xFF, 0xFF, 0x0F, 0x00, 0x00
 	};
-	return regs [addr_] & masks [addr_];
+	if (!(type_ & 0x10)) return regs [addr_] & masks [addr_];
+	else return regs [addr_];
 }
 
 void Ay_Apu::write_data_( int addr, int data )
@@ -184,18 +186,19 @@ void Ay_Apu::run_until( blip_time_t final_end_time )
 	unsigned const old_noise_lfsr = noise_lfsr;
 	
 	// envelope period
-	blip_time_t const env_period_factor = period_factor * 2; // verified
+    int env_step_scale = ((type_ & 0xF0) == 0x00) ? 1 : 0;
+	blip_time_t const env_period_factor = period_factor << env_step_scale; // verified
 	blip_time_t env_period = (regs [12] * 0x100 + regs [11]) * env_period_factor;
 	if ( !env_period )
 		env_period = env_period_factor; // same as period 1 on my AY chip
 	if ( !env_delay )
-		env_delay = env_period;
+        env_delay = env_period;
 	
 	// run each osc separately
 	for ( int index = 0; index < osc_count; index++ )
 	{
 		osc_t* const osc = &oscs [index];
-		int osc_mode = regs [7] >> index;
+        int osc_mode = regs [7] >> index;
 		
 		// output
 		Blip_Buffer* const osc_output = osc->output;
@@ -216,12 +219,14 @@ void Ay_Apu::run_until( blip_time_t final_end_time )
 		// envelope
 		blip_time_t start_time = last_time;
 		blip_time_t end_time   = final_end_time;
-		int const vol_mode = regs [0x08 + index];
-		int volume = amp_table [vol_mode & 0x0F] >> half_vol;
+        int const vol_mode = regs [0x08 + index];
+		int const vol_mode_mask = type_ == Ay8914 ? 0x30 : 0x10;
+		int volume = amp_table [vol_mode & 0x0F] >> (half_vol + env_step_scale);
 		int osc_env_pos = env_pos;
-		if ( vol_mode & 0x10 )
+		if ( vol_mode & vol_mode_mask )
 		{
-			volume = env_wave [osc_env_pos] >> half_vol;
+			volume = env_wave [osc_env_pos] >> (half_vol + env_step_scale);
+			if ( type_ == Ay8914 ) volume >>= 3 - ( ( vol_mode & vol_mode_mask ) >> 4 );
 			// use envelope only if it's a repeating wave or a ramp that hasn't finished
 			if ( !(regs [13] & 1) || osc_env_pos < -32 )
 			{
@@ -369,10 +374,11 @@ void Ay_Apu::run_until( blip_time_t final_end_time )
 			// next envelope step
 			if ( ++osc_env_pos >= 0 )
 				osc_env_pos -= 32;
-			volume = env_wave [osc_env_pos] >> half_vol;
+			volume = env_wave [osc_env_pos] >> (half_vol + env_step_scale);
+			if ( type_ == Ay8914 ) volume >>= 3 - ( ( vol_mode & vol_mode_mask ) >> 4 );
 			
 			start_time = end_time;
-			end_time += env_period;
+            end_time += env_period;
 			if ( end_time > final_end_time )
 				end_time = final_end_time;
 		}

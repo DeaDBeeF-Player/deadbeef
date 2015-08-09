@@ -1,6 +1,6 @@
 // Increases sampling rate using linear interpolation
 
-// Game_Music_Emu 0.6-pre
+// $package
 #ifndef UPSAMPLER_H
 #define UPSAMPLER_H
 

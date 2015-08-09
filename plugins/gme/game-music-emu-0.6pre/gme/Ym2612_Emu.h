@@ -1,10 +1,16 @@
 // YM2612 FM sound chip emulator
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef YM2612_EMU_H
 #define YM2612_EMU_H
 
+// Gens is buggy and inaccurate, but faster
+// #define USE_GENS
+#ifdef USE_GENS
 struct Ym2612_Impl;
+#else
+typedef void Ym2612_Impl;
+#endif
 
 class Ym2612_Emu  {
 	Ym2612_Impl* impl;

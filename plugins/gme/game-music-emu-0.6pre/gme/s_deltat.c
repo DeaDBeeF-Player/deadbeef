@@ -40,11 +40,11 @@ typedef struct {
 	Uint8 memshift;
 } YMDELTATPCMSOUND;
 
-const static Uint8 table_step[8] =
+static Uint8 const table_step[8] =
 {
 	  1,   3,   5,   7,   9,  11,  13,  15,
 };
-const static Uint8 table_scale[16] =
+static Uint8 const table_scale[16] =
 {
 	 57,  57,  57,  57,  77, 102, 128, 153,
 	 57,  57,  57,  57,  77, 102, 128, 153,

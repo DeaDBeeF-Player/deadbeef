@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Hes_Core.h"
 
@@ -97,7 +97,7 @@ void Hes_Core::recalc_timer_load()
 void Hes_Core::set_tempo( double t )
 {
 	play_period = (time_t) (period_60hz / t);
-	timer_base = (int) (1024 / t);
+    timer_base = (int) (1024 / t);
 	recalc_timer_load();
 }
 
@@ -197,13 +197,13 @@ void Hes_Core::write_mem_( addr_t addr, int data )
 		// Not a problem for other registers below because they don't write to
 		// Blip_Buffer.
 		time_t t = min( time, cpu.end_time() + 8 );
-		apu_.write_data( t, addr, data );
+        apu_.write_data( t, addr, data );
 		return;
 	}
 	if ( (unsigned) (addr - adpcm_.io_addr) < adpcm_.io_size )
 	{
 		time_t t = min( time, cpu.end_time() + 6 );
-		adpcm_.write_data( t, addr, data );
+        adpcm_.write_data( t, addr, data );
 		return;
 	}
 	
@@ -305,7 +305,7 @@ int Hes_Core::read_mem_( addr_t addr )
 	case 0x180B:
 	case 0x180C:
 	case 0x180D:
-		return adpcm_.read_data( time, addr );
+        return adpcm_.read_data( time, addr );
 		
 	#ifndef NDEBUG
 		case 0x1000: // I/O port
@@ -401,8 +401,8 @@ blargg_err_t Hes_Core::end_frame( time_t duration )
 	cpu.end_frame( duration );
 	::adjust_time( irq.timer, duration );
 	::adjust_time( irq.vdp,   duration );
-	apu_.end_frame( duration );
-	adpcm_.end_frame( duration );
+    apu_.end_frame( duration );
+    adpcm_.end_frame( duration );
 	
 	return blargg_ok;
 }

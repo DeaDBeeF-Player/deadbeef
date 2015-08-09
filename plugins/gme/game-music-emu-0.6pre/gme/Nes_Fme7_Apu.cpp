@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// $package. http://www.slack.net/~ant/
 
 #include "Nes_Fme7_Apu.h"
 

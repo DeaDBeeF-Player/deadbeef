@@ -1,6 +1,6 @@
 // Linear downsampler with pre-low-pass
 
-// Game_Music_Emu 0.6-pre
+// $package
 #ifndef DOWNSAMPLER_H
 #define DOWNSAMPLER_H
 

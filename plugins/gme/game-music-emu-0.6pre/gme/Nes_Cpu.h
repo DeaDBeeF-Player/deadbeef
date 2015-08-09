@@ -1,6 +1,6 @@
 // NES CPU emulator
 
-// Game_Music_Emu 0.6-pre
+// $package
 #ifndef NES_CPU_H
 #define NES_CPU_H
 

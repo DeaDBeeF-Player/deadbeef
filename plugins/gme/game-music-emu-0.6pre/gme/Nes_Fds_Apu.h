@@ -1,6 +1,6 @@
 // NES FDS sound chip emulator
 
-// Game_Music_Emu 0.6-pre
+// $package
 #ifndef NES_FDS_APU_H
 #define NES_FDS_APU_H
 

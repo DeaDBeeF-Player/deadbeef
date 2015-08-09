@@ -458,7 +458,7 @@ static void sndvolume( OPLSOUND* sndp, Int32 volume )
 	sndp->common.mastervolume = volume;
 }
 
-const static Uint8 op_table [0x20]=
+static Uint8 const op_table [0x20]=
 {
 	   0,   2,   4,   1,   3,   5,0xFF,0xFF,
 	   6,   8,  10,   7,   9,  11,0xFF,0xFF,
@@ -466,14 +466,14 @@ const static Uint8 op_table [0x20]=
 	0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
 };
 
-const static Uint8 mul_table [0x10]=
+static Uint8 const mul_table [0x10]=
 {
 	 1+0, 2+0, 4+0, 2+4, 8+0, 8+2, 8+4,16-2,
 	16+0,16+2,16+4,16+4,16+8,16+8,32-2,32-2,
 };
 
 #define DB2TLL(x) (x * 2 / 375 )
-const static Uint8 ksl_table [8] [16]=
+static Uint8 const ksl_table [8] [16]=
 {
 	{
 		DB2TLL(    0), DB2TLL(    0), DB2TLL(    0), DB2TLL(    0),
@@ -1116,7 +1116,7 @@ static void sndreset( OPLSOUND* sndp, Uint32 clock, Uint32 freq )
 	}
 	else
 	{
-		const static Uint8 fmbios_initdata [9] = "\x30\x10\x20\x20\xfb\xb2\xf3\xf3";
+		static Uint8 const fmbios_initdata [9] = "\x30\x10\x20\x20\xfb\xb2\xf3\xf3";
 		XMEMSET(&sndp->regs, 0, 0x40);
 		sndp->common.ar_table = sndp->opltbl->ar_tablelog;
 		sndp->common.wfe = 1;

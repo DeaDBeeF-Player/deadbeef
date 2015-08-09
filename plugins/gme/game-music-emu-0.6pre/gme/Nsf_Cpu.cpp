@@ -1,6 +1,6 @@
 // Normal CPU for NSF emulator
 
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// $package. http://www.slack.net/~ant/
 
 #include "Nsf_Impl.h"
 

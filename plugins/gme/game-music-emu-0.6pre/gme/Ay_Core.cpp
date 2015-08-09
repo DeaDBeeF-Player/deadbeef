@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Ay_Core.h"
 
@@ -23,7 +23,6 @@ inline void Ay_Core::disable_beeper()
 
 Ay_Core::Ay_Core()
 {
-	cpc_mode       = false;
 	beeper_output = NULL;
 	disable_beeper();
 }

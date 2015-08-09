@@ -1,7 +1,7 @@
 // Sets up common environment for Shay Green's libraries.
 // To change configuration options, modify blargg_config.h, not this file.
 
-// Game_Music_Emu 0.6-pre
+// $package
 #ifndef BLARGG_COMMON_H
 #define BLARGG_COMMON_H
 
@@ -12,7 +12,7 @@
 typedef const char* blargg_err_t; // 0 on success, otherwise error string
 
 // Success; no error
-int const blargg_ok = 0;
+blargg_err_t const blargg_ok = 0;
 
 // BLARGG_RESTRICT: equivalent to C99's restrict, where supported
 #if __GNUC__ >= 3 || _MSC_VER >= 1100

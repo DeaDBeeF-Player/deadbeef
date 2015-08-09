@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Kss_Emu.h"
 
@@ -82,6 +82,20 @@ static void copy_kss_fields( Kss_Core::header_t const& h, track_info_t* out )
 	Gme_File::copy_field_( out->system, system );
 }
 
+static void hash_kss_file( Kss_Core::header_t const& h, byte const* data, int data_size, Music_Emu::Hash_Function& out )
+{
+	out.hash_( &h.load_addr[0], sizeof(h.load_addr) );
+	out.hash_( &h.load_size[0], sizeof(h.load_size) );
+	out.hash_( &h.init_addr[0], sizeof(h.init_addr) );
+	out.hash_( &h.play_addr[0], sizeof(h.play_addr) );
+	out.hash_( &h.first_bank, sizeof(h.first_bank) );
+	out.hash_( &h.bank_mode, sizeof(h.bank_mode) );
+	out.hash_( &h.extra_header, sizeof(h.extra_header) );
+	out.hash_( &h.device_flags, sizeof(h.device_flags) );
+
+	out.hash_( data, data_size );
+}
+
 blargg_err_t Kss_Emu::track_info_( track_info_t* out, int ) const
 {
 	copy_kss_fields( header(), out );
@@ -102,26 +116,29 @@ static blargg_err_t check_kss_header( void const* header )
 
 struct Kss_File : Gme_Info_
 {
-	Kss_Emu::header_t header_;
+	Kss_Emu::header_t const* header_;
 
 	Kss_File() { set_type( gme_kss_type ); }
 
-	blargg_err_t load_( Data_Reader& in )
+	blargg_err_t load_mem_( byte const begin [], int size )
 	{
-		memset( &header_, 0, sizeof header_ );
-		blargg_err_t err = in.read( &header_, header_.size );
-		if ( err )
-			return (err == blargg_err_file_eof ? blargg_err_file_type : err);
+		header_ = ( Kss_Emu::header_t const* ) begin;
 
-		if ( header_.tag [3] == 'X' && header_.extra_header == 0x10 )
-			set_track_count( get_le16( header_.last_track ) + 1 );
+		if ( header_->tag [3] == 'X' && header_->extra_header == 0x10 )
+			set_track_count( get_le16( header_->last_track ) + 1 );
 
-		return check_kss_header( &header_ );
+		return check_kss_header( header_ );
 	}
 
 	blargg_err_t track_info_( track_info_t* out, int ) const
 	{
-		copy_kss_fields( header_, out );
+		copy_kss_fields( *header_, out );
+		return blargg_ok;
+	}
+
+	blargg_err_t hash_( Hash_Function& out ) const
+	{
+		hash_kss_file( *header_, file_begin() + Kss_Core::header_t::base_size, file_end() - file_begin() - Kss_Core::header_t::base_size, out );
 		return blargg_ok;
 	}
 };
@@ -466,5 +483,11 @@ blargg_err_t Kss_Emu::run_clocks( blip_time_t& duration, int )
 	FOR_EACH_APU( ACTION );
 	#undef ACTION
 
+	return blargg_ok;
+}
+
+blargg_err_t Kss_Emu::hash_( Hash_Function& out ) const
+{
+	hash_kss_file( header(), core.rom_().begin(), core.rom_().file_size(), out );
 	return blargg_ok;
 }

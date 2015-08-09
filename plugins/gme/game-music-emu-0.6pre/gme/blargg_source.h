@@ -3,7 +3,7 @@ lines. Sets up helpful macros and services used in my source code. Since this
 is only "active" in my source code, I don't have to worry about polluting the
 global namespace with unprefixed names. */
 
-// Game_Music_Emu 0.6-pre
+// $package
 #ifndef BLARGG_SOURCE_H
 #define BLARGG_SOURCE_H
 
@@ -11,6 +11,7 @@ global namespace with unprefixed names. */
 	#include "blargg_common.h"
 #endif
 #include "blargg_errors.h"
+#include "gme_custom_dprintf.h"
 
 #include <string.h> /* memcpy(), memset(), memmove() */
 #include <stddef.h> /* offsetof() */
@@ -39,6 +40,22 @@ void require( bool expr ); */
 /* Like printf() except output goes to debugging console/file.
 
 void dprintf( const char format [], ... ); */
+
+#ifdef CUSTOM_DPRINTF_FUNCTION
+
+static inline void dprintf( const char * fmt, ... )
+{
+	if (gme_custom_dprintf)
+	{
+		va_list vl;
+		va_start(vl, fmt);
+		gme_custom_dprintf(fmt, vl);
+		va_end(vl);
+	}
+}
+
+#else
+
 #ifdef NDEBUG
 static inline void blargg_dprintf_( const char [], ... ) { }
 #undef  dprintf
@@ -46,11 +63,33 @@ static inline void blargg_dprintf_( const char [], ... ) { }
 #else
 #include <stdarg.h>
 #include <stdio.h>
+#undef  dprintf
+#define dprintf (1) ? (void) 0 : blargg_dprintf_
+#ifndef _WIN32
+#include <stdio.h>
 static inline void blargg_dprintf_( const char * fmt, ... )
 {
+	char error[512];
+	va_list vl;
+	va_start(vl, fmt);
+	vsnprintf( error, 511, fmt, vl );
+	va_end(vl);
+	fputs( error, stderr );
 }
-#undef  dprintf
-#define dprintf blargg_dprintf_
+#else
+#include <windows.h>
+static inline void blargg_dprintf_( const char * fmt, ... )
+{
+	char error[512];
+	va_list vl;
+	va_start(vl, fmt);
+	vsnprintf_s( error, 511, 511, fmt, vl );
+	va_end(vl);
+	OutputDebugStringA( error );
+}
+#endif
+#endif
+
 #endif
 
 /* If expr is false, prints file and line number to debug console/log, then
@@ -91,6 +130,7 @@ BLARGG_DEF_MIN_MAX( int )
 BLARGG_DEF_MIN_MAX( unsigned )
 BLARGG_DEF_MIN_MAX( long )
 BLARGG_DEF_MIN_MAX( unsigned long )
+BLARGG_DEF_MIN_MAX( BOOST::uint64_t )
 BLARGG_DEF_MIN_MAX( float )
 BLARGG_DEF_MIN_MAX( double )
 

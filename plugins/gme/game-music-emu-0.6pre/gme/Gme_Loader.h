@@ -1,6 +1,6 @@
 // Common interface for loading file data from various sources
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef GME_LOADER_H
 #define GME_LOADER_H
 

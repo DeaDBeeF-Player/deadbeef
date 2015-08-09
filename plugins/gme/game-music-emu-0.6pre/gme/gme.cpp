@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Music_Emu.h"
 
@@ -35,6 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 	gme_nsf_type,\
 	gme_nsfe_type,\
 	gme_sap_type,\
+    gme_sfm_type,\
 	gme_sgc_type,\
 	gme_spc_type,\
 	gme_vgm_type,\
@@ -62,6 +63,7 @@ const char* gme_identify_header( void const* header )
 		case BLARGG_4CHAR('N','E','S','M'):  return "NSF";
 		case BLARGG_4CHAR('N','S','F','E'):  return "NSFE";
 		case BLARGG_4CHAR('S','A','P',0x0D): return "SAP";
+        case BLARGG_4CHAR('S','F','M','1'):  return "SFM";
 		case BLARGG_4CHAR('S','G','C',0x1A): return "SGC";
 		case BLARGG_4CHAR('S','N','E','S'):  return "SPC";
 		case BLARGG_4CHAR('V','g','m',' '):  return "VGM";
@@ -110,14 +112,14 @@ gme_err_t gme_identify_file( const char path [], gme_type_t* type_out )
 	return blargg_ok;   
 }
 
-gme_err_t gme_open_data( const char *path, void const* data, long size, Music_Emu** out, int sample_rate )
+gme_err_t gme_open_data( void const* data, long size, Music_Emu** out, int sample_rate )
 {
 	require( (data || !size) && out );
 	*out = NULL;
 	
 	gme_type_t file_type = 0;
 	if ( size >= 4 )
-		file_type = gme_identify_extension( path );
+		file_type = gme_identify_extension( gme_identify_header( data ) );
 	if ( !file_type )
 		return blargg_err_file_type;
 	
@@ -222,6 +224,8 @@ void gme_delete( Music_Emu* gme ) { delete gme; }
 
 gme_type_t gme_type( Music_Emu const* gme ) { return gme->type(); }
 
+const char* gme_type_system( gme_type_t_ const* type ) { return type->system; }
+
 const char* gme_warning( Music_Emu* gme ) { return gme->warning(); }
 
 int gme_track_count( Music_Emu const* gme ) { return gme->track_count(); }
@@ -299,6 +303,37 @@ gme_err_t gme_track_info( Music_Emu const* me, gme_info_t** out, int track )
 	return blargg_ok;
 }
 
+gme_err_t gme_set_track_info( Music_Emu * me, gme_info_t* in, int track )
+{
+	track_info_t* info = BLARGG_NEW track_info_t;
+	CHECK_ALLOC( info );
+	
+#define COPY(name) info->name = in->name;
+	
+	COPY( length );
+	COPY( intro_length );
+	COPY( loop_length );
+	
+#undef COPY
+#define COPY(name) if ( in->name ) strncpy( info->name, in->name, sizeof(info->name) - 1 ), info->name[sizeof(info->name)-1] = '\0'; else info->name[0] = '\0';
+    
+	COPY( system );
+	COPY( game );
+	COPY( song );
+	COPY( author );
+	COPY( copyright );
+	COPY( comment );
+	COPY( dumper );
+	
+#undef COPY
+	
+	blargg_err_t err = me->set_track_info( info, track );
+    
+    delete info;
+    
+    return err;
+}
+
 void gme_free_info( gme_info_t* info )
 {
 	delete STATIC_CAST(gme_info_t_*,info);
@@ -310,10 +345,11 @@ void      gme_set_user_cleanup(Music_Emu* gme, gme_user_cleanup_t func ){ gme->s
 
 gme_err_t gme_start_track    ( Music_Emu* gme, int index )              { return gme->start_track( index ); }
 gme_err_t gme_play           ( Music_Emu* gme, int n, short p [] )      { return gme->play( n, p ); }
-void      gme_set_fade       ( Music_Emu* gme, int start_msec )         { gme->set_fade( start_msec ); }
+void      gme_set_fade       ( Music_Emu* gme, int start_msec, int length_msec ) { gme->set_fade( start_msec, length_msec ); }
 gme_bool  gme_track_ended    ( Music_Emu const* gme )                   { return gme->track_ended(); }
 int       gme_tell           ( Music_Emu const* gme )                   { return gme->tell(); }
 gme_err_t gme_seek           ( Music_Emu* gme, int msec )               { return gme->seek( msec ); }
+gme_err_t gme_skip           ( Music_Emu* gme, int samples )            { return gme->skip( samples ); }
 int       gme_voice_count    ( Music_Emu const* gme )                   { return gme->voice_count(); }
 void      gme_ignore_silence ( Music_Emu* gme, gme_bool disable )       { gme->ignore_silence( disable != 0 ); }
 void      gme_set_tempo      ( Music_Emu* gme, double t )               { gme->set_tempo( t ); }
@@ -322,12 +358,13 @@ void      gme_mute_voices    ( Music_Emu* gme, int mask )               { gme->m
 void      gme_set_equalizer  ( Music_Emu* gme, gme_equalizer_t const* eq ) { gme->set_equalizer( *eq ); }
 void      gme_equalizer      ( Music_Emu const* gme, gme_equalizer_t* o )  { *o = gme->equalizer(); }
 const char* gme_voice_name   ( Music_Emu const* gme, int i )            { return gme->voice_name( i ); }
+gme_err_t gme_save           ( Music_Emu const* gme, gme_writer_t writer, void* your_data ) { return gme->save( writer, your_data ); }
 
 void gme_effects( Music_Emu const* gme, gme_effects_t* out )
 {
-	static gme_effects_t const zero = { 0 };
+	static gme_effects_t const zero = { 0, 0, 0,0,0,0,0,0, 0, 0, 0,0,0,0,0,0 };
 	*out = zero;
-	
+
 	#if !GME_DISABLE_EFFECTS
 	{
 		Simple_Effects_Buffer* b = STATIC_CAST(Simple_Effects_Buffer*,gme->effects_buffer_);

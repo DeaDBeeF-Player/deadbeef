@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Sap_Emu.h"
 
@@ -131,8 +131,8 @@ static int parse_time( byte const in [], byte const* end )
 static blargg_err_t parse_info( byte const in [], int size, Sap_Emu::info_t* out )
 {
 	out->track_count   = 1;
-	out->author	[0] = 0;
-	out->name	  [0] = 0;
+	out->author    [0] = 0;
+	out->name      [0] = 0;
 	out->copyright [0] = 0;
 	
 	for ( int i = 0; i < Sap_Emu::max_tracks; i++ )
@@ -237,16 +237,29 @@ static blargg_err_t parse_info( byte const in [], int size, Sap_Emu::info_t* out
 	return blargg_ok;
 }
 
-static void copy_sap_fields( Sap_Emu::info_t const& in, track_info_t* out, int index )
+static void copy_sap_fields( Sap_Emu::info_t const& in, track_info_t* out )
 {
-	Gme_File::copy_field_( out->game,	  in.name );
-	Gme_File::copy_field_( out->author,	in.author );
+	Gme_File::copy_field_( out->game,      in.name );
+	Gme_File::copy_field_( out->author,    in.author );
 	Gme_File::copy_field_( out->copyright, in.copyright );
+}
+
+static void hash_sap_file( Sap_Emu::info_t const& i, byte const* data, int data_size, Music_Emu::Hash_Function& out )
+{
+	unsigned char temp[4];
+	set_le32( &temp[0], i.init_addr ); out.hash_( &temp[0], sizeof(temp) );
+	set_le32( &temp[0], i.play_addr ); out.hash_( &temp[0], sizeof(temp) );
+	set_le32( &temp[0], i.music_addr ); out.hash_( &temp[0], sizeof(temp) );
+	set_le32( &temp[0], i.type ); out.hash_( &temp[0], sizeof(temp) );
+	set_le32( &temp[0], i.fastplay ); out.hash_( &temp[0], sizeof(temp) );
+	set_le32( &temp[0], i.stereo ); out.hash_( &temp[0], sizeof(temp) );
+	set_le32( &temp[0], i.track_count ); out.hash_( &temp[0], sizeof(temp) );
+	out.hash_( data, data_size );
 }
 
 blargg_err_t Sap_Emu::track_info_( track_info_t* out, int track ) const
 {
-	copy_sap_fields( info_, out, track );
+	copy_sap_fields( info_, out );
 	
 	if ( track < max_tracks )
 	{
@@ -256,13 +269,13 @@ blargg_err_t Sap_Emu::track_info_( track_info_t* out, int track ) const
 			if ( time > 0 )
 			{
 				out->loop_length = 0;
-				out->length = time;
 			}
 			else
 			{
-				out->loop_length = -time;
-				out->length = 0;
+				time = -time;
+				out->loop_length = time;
 			}
+			out->length = time;
 		}
 	}
 	return blargg_ok;
@@ -283,25 +296,32 @@ struct Sap_File : Gme_Info_
 	
 	blargg_err_t track_info_( track_info_t* out, int track ) const
 	{
-		copy_sap_fields( info, out, track );
-		if ( track < info.track_count )
+		copy_sap_fields( info, out );
+
+		if (track < Sap_Emu::max_tracks)
 		{
-			int time = info.track_times [track];
-			if ( time )
+			int time = info.track_times[track];
+			if (time)
 			{
-				if ( time > 0 )
+				if (time > 0)
 				{
 					out->loop_length = 0;
-					out->length = time;
 				}
 				else
 				{
 					time = -time;
 					out->loop_length = time;
-					out->length = 0;
 				}
+				out->length = time;
 			}
 		}
+
+		return blargg_ok;
+	}
+
+	blargg_err_t hash_( Hash_Function& out ) const
+	{
+		hash_sap_file( info, info.rom_data, file_end() - info.rom_data, out );
 		return blargg_ok;
 	}
 };
@@ -317,9 +337,9 @@ blargg_err_t Sap_Emu::load_mem_( byte const in [], int size )
 {
 	file_end = in + size;
 	
-	info_.warning	= NULL;
-	info_.type	   = 'B';
-	info_.stereo	 = false;
+	info_.warning    = NULL;
+	info_.type       = 'B';
+	info_.stereo     = false;
 	info_.init_addr  = -1;
 	info_.play_addr  = -1;
 	info_.music_addr = -1;
@@ -400,4 +420,10 @@ blargg_err_t Sap_Emu::start_track_( int track )
 blargg_err_t Sap_Emu::run_clocks( blip_time_t& duration, int )
 {
 	return core.end_frame( duration );
+}
+
+blargg_err_t Sap_Emu::hash_( Hash_Function& out ) const
+{
+	hash_sap_file( info(), info().rom_data, file_end - info().rom_data, out );
+	return blargg_ok;
 }

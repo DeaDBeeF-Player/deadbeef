@@ -1,6 +1,6 @@
 // Loads NSF file and emulates CPU and RAM, no sound chips
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef NSF_IMPL_H
 #define NSF_IMPL_H
 
@@ -90,6 +90,10 @@ public:
 	
 	// Time emulated to
 	time_t time() const             { return cpu.time(); }
+
+	void enable_w4011_(bool enable = true) { enable_w4011 = enable; }
+
+	Rom_Data const& rom_() const { return rom; }
 	
 protected:
 // Nsf_Core use
@@ -164,6 +168,7 @@ private:
 	time_t play_period;
 	int play_extra;
 	int play_delay;
+	bool enable_w4011;
 	Nes_Cpu::registers_t saved_state; // of interrupted init routine
 	
 	// Large objects after others

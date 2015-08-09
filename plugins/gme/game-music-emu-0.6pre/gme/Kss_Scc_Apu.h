@@ -1,6 +1,6 @@
 // Konami SCC sound chip emulator
 
-// Game_Music_Emu 0.6-pre
+// $package
 #ifndef KSS_SCC_APU_H
 #define KSS_SCC_APU_H
 

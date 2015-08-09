@@ -1,6 +1,6 @@
 // Atari XL/XE SAP core CPU and RAM emulator
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef SAP_CORE_H
 #define SAP_CORE_H
 

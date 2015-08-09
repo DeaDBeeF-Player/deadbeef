@@ -1,4 +1,4 @@
-// Nes_Snd_Emu 0.2.0-pre. http://www.slack.net/~ant/
+// Nes_Snd_Emu $vers. http://www.slack.net/~ant/
 
 #include "Nes_Apu.h"
 
@@ -101,6 +101,7 @@ void Nes_Apu::reset( bool pal_mode, int initial_dmc_dac )
 	last_dmc_time = 0;
 	osc_enables = 0;
 	irq_flag = false;
+	enable_w4011 = true;
 	earliest_irq_ = no_irq;
 	frame_delay = 1;
 	write_register( 0, 0x4017, 0x00 );
@@ -305,7 +306,8 @@ void Nes_Apu::write_register( blip_time_t time, int addr, int data )
 		if ( osc_index == 4 )
 		{
 			// handle DMC specially
-			dmc.write_register( reg, data );
+			if ( enable_w4011 || reg != 1 )
+				dmc.write_register( reg, data );
 		}
 		else if ( reg == 3 )
 		{

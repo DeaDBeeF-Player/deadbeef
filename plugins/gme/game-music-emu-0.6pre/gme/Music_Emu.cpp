@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Music_Emu.h"
 
@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 int const stereo = 2; // number of channels for stereo
 
-Music_Emu::equalizer_t const Music_Emu::tv_eq = { -8.0, 180 };
+Music_Emu::equalizer_t const Music_Emu::tv_eq = { -8.0, 180, 0,0,0,0,0,0,0,0 };
 
 void Music_Emu::clear_track_vars()
 {
@@ -40,6 +40,8 @@ Music_Emu::gme_t()
 	mute_mask_      = 0;
 	tempo_          = 1.0;
 	gain_           = 1.0;
+    
+    fade_set        = false;
 	
 	// defaults
 	tfilter = track_filter.setup();
@@ -152,7 +154,11 @@ blargg_err_t Music_Emu::seek( int msec )
 {
 	int time = msec_to_samples( msec );
 	if ( time < track_filter.sample_count() )
+    {
 		RETURN_ERR( start_track( current_track_ ) );
+        if ( fade_set )
+            set_fade( length_msec, fade_msec );
+    }
 	return skip( time - track_filter.sample_count() );
 }
 
@@ -211,6 +217,9 @@ blargg_err_t Music_Emu::start_track( int track )
 
 void Music_Emu::set_fade( int start_msec, int length_msec )
 {
+    fade_set = true;
+    this->length_msec = start_msec;
+    this->fade_msec = length_msec;
 	track_filter.set_fade( msec_to_samples( start_msec ),
 			length_msec * sample_rate() / (1000 / stereo) );
 }

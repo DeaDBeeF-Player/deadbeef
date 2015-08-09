@@ -1,6 +1,6 @@
 // Nintendo Game Boy CPU emulator
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef GB_CPU_H
 #define GB_CPU_H
 

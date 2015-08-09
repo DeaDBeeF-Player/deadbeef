@@ -1,6 +1,6 @@
 // Turbo Grafx 16 (PC Engine) ADPCM sound chip emulator
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef HES_APU_ADPCM_H
 #define HES_APU_ADPCM_H
 

@@ -1,6 +1,6 @@
 // Error strings and conversion functions
 
-// Game_Music_Emu 0.6-pre
+// $package
 #ifndef BLARGG_ERRORS_H
 #define BLARGG_ERRORS_H
 

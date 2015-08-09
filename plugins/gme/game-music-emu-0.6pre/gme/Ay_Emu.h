@@ -1,6 +1,6 @@
 // Sinclair Spectrum AY music file emulator
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef AY_EMU_H
 #define AY_EMU_H
 
@@ -37,6 +37,8 @@ public:
 		byte const* tracks;
 		byte const* end;    // end of file data
 	};
+
+	blargg_err_t hash_( Hash_Function& out ) const;
 	
 protected:
 	virtual blargg_err_t track_info_( track_info_t*, int track ) const;

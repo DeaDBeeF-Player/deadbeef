@@ -1,6 +1,6 @@
 // Nintendo Game Boy GBS music file emulator core
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef GBS_CORE_H
 #define GBS_CORE_H
 
@@ -40,6 +40,9 @@ public:
 	
 	// Sound chip
 	Gb_Apu& apu()                       { return apu_; }
+
+	// ROM data
+	Rom_Data const& rom_() const         { return rom; }
 	
 	// Adjusts music tempo, where 1.0 is normal. Can be changed while playing.
 	void set_tempo( double );

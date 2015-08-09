@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Nsf_Emu.h"
 
@@ -24,8 +24,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
 
-Nsf_Emu::equalizer_t const Nsf_Emu::nes_eq     = {  -1.0, 80 };
-Nsf_Emu::equalizer_t const Nsf_Emu::famicom_eq = { -15.0, 80 };
+Nsf_Emu::equalizer_t const Nsf_Emu::nes_eq     = {  -1.0, 80, 0,0,0,0,0,0,0,0 };
+Nsf_Emu::equalizer_t const Nsf_Emu::famicom_eq = { -15.0, 80, 0,0,0,0,0,0,0,0 };
 
 Nsf_Emu::Nsf_Emu()
 {
@@ -57,6 +57,24 @@ static void copy_nsf_fields( Nsf_Emu::header_t const& h, track_info_t* out )
 		Music_Emu::copy_field_( out->system, "Famicom" );
 }
 
+void hash_nsf_file( Nsf_Core::header_t const& h, unsigned char const* data, int data_size, Music_Emu::Hash_Function& out )
+{
+	out.hash_( &h.vers, sizeof(h.vers) );
+	out.hash_( &h.track_count, sizeof(h.track_count) );
+	out.hash_( &h.first_track, sizeof(h.first_track) );
+	out.hash_( &h.load_addr[0], sizeof(h.load_addr) );
+	out.hash_( &h.init_addr[0], sizeof(h.init_addr) );
+	out.hash_( &h.play_addr[0], sizeof(h.play_addr) );
+	out.hash_( &h.ntsc_speed[0], sizeof(h.ntsc_speed) );
+	out.hash_( &h.banks[0], sizeof(h.banks) );
+	out.hash_( &h.pal_speed[0], sizeof(h.pal_speed) );
+	out.hash_( &h.speed_flags, sizeof(h.speed_flags) );
+	out.hash_( &h.chip_flags, sizeof(h.chip_flags) );
+	out.hash_( &h.unused[0], sizeof(h.unused) );
+
+	out.hash_( data, data_size );
+}
+
 blargg_err_t Nsf_Emu::track_info_( track_info_t* out, int ) const
 {
 	copy_nsf_fields( header(), out );
@@ -72,33 +90,37 @@ static blargg_err_t check_nsf_header( Nsf_Emu::header_t const& h )
 
 struct Nsf_File : Gme_Info_
 {
-	Nsf_Emu::header_t h;
+	Nsf_Emu::header_t const* h;
 	
 	Nsf_File() { set_type( gme_nsf_type ); }
-	
-	blargg_err_t load_( Data_Reader& in )
+
+	blargg_err_t load_mem_( byte const begin [], int size )
 	{
-		blargg_err_t err = in.read( &h, h.size );
-		if ( err )
-			return (blargg_is_err_type( err, blargg_err_file_eof ) ? blargg_err_file_type : err);
-		
-		if ( h.vers != 1 )
+		h = ( Nsf_Emu::header_t const* ) begin;
+
+		if ( h->vers != 1 )
 			set_warning( "Unknown file version" );
 		
 		int unsupported_chips = ~Nsf_Core::chips_mask;
 		#if NSF_EMU_NO_VRC7
 			unsupported_chips |= Nsf_Emu::header_t::vrc7_mask;
 		#endif
-		if ( h.chip_flags & unsupported_chips )
+		if ( h->chip_flags & unsupported_chips )
 			set_warning( "Uses unsupported audio expansion hardware" );
 		
-		set_track_count( h.track_count );
-		return check_nsf_header( h );
+		set_track_count( h->track_count );
+		return check_nsf_header( *h );
 	}
 	
 	blargg_err_t track_info_( track_info_t* out, int ) const
 	{
-		copy_nsf_fields( h, out );
+		copy_nsf_fields( *h, out );
+		return blargg_ok;
+	}
+
+	blargg_err_t hash_( Hash_Function& out ) const
+	{
+		hash_nsf_file( *h, file_begin() + h->size, file_end() - file_begin() - h->size, out );
 		return blargg_ok;
 	}
 };
@@ -310,5 +332,11 @@ blargg_err_t Nsf_Emu::run_clocks( blip_time_t& duration, int )
 	const char* w = core_.warning();
 	if ( w )
 		set_warning( w );
+	return blargg_ok;
+}
+
+blargg_err_t Nsf_Emu::hash_( Hash_Function& out ) const
+{
+	hash_nsf_file( header(), core_.rom_().begin(), core_.rom_().file_size(), out );
 	return blargg_ok;
 }

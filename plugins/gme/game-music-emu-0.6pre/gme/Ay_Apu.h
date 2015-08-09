@@ -1,6 +1,6 @@
 // AY-3-8910 sound chip emulator
 
-// Game_Music_Emu 0.6-pre
+// $package
 #ifndef AY_APU_H
 #define AY_APU_H
 
@@ -10,6 +10,23 @@
 class Ay_Apu {
 public:
 // Basics
+	enum Ay_Apu_Type
+	{
+		Ay8910 = 0,
+		Ay8912,
+		Ay8913,
+		Ay8914,
+		Ym2149 = 0x10,
+		Ym3439,
+		Ymz284,
+		Ymz294,
+		Ym2203 = 0x20,
+		Ym2608,
+		Ym2610,
+		Ym2610b
+	};
+
+	void set_type( Ay_Apu_Type type ) { type_ = type; }
 
 	// Sets buffer to generate sound into, or 0 to mute.
 	void set_output( Blip_Buffer* );
@@ -65,7 +82,9 @@ private:
 		short        phase;
 		Blip_Buffer* output;
 	} oscs [osc_count];
-	
+
+	Ay_Apu_Type type_;
+
 	blip_time_t last_time;
 	byte        addr_;
 	byte        regs [reg_count];

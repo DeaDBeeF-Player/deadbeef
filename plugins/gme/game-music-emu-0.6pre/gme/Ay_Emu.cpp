@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Ay_Emu.h"
 
@@ -82,6 +82,45 @@ static void copy_ay_fields( Ay_Emu::file_t const& file, track_info_t* out, int t
 	Gme_File::copy_field_( out->comment, (char const*) get_data( file, file.header->comment, 1 ) );
 }
 
+static void hash_ay_file( Ay_Emu::file_t const& file, Gme_Info_::Hash_Function& out )
+{
+	out.hash_( &file.header->vers, sizeof(file.header->vers) );
+	out.hash_( &file.header->player, sizeof(file.header->player) );
+	out.hash_( &file.header->unused[0], sizeof(file.header->unused) );
+	out.hash_( &file.header->max_track, sizeof(file.header->max_track) );
+	out.hash_( &file.header->first_track, sizeof(file.header->first_track) );
+
+	for ( unsigned i = 0; i <= file.header->max_track; i++ )
+	{
+		byte const* track_info = get_data( file, file.tracks + i * 4 + 2, 14 );
+		if ( track_info )
+		{
+			out.hash_( track_info + 8, 2 );
+			byte const* points = get_data( file, track_info + 10, 6 );
+			if ( points ) out.hash_( points, 6 );
+
+			byte const* blocks = get_data( file, track_info + 12, 8 );
+			if ( blocks )
+			{
+				int addr = get_be16( blocks );
+
+				while ( addr )
+				{
+					out.hash_( blocks, 4 );
+
+					int len = get_be16( blocks + 2 );
+
+					byte const* block = get_data( file, blocks + 4, len );
+					if ( block ) out.hash_( block, len );
+
+					blocks += 6;
+					addr = get_be16( blocks );
+				}
+			}
+		}
+	}
+}
+
 blargg_err_t Ay_Emu::track_info_( track_info_t* out, int track ) const
 {
 	copy_ay_fields( file, out, track );
@@ -104,6 +143,12 @@ struct Ay_File : Gme_Info_
 	blargg_err_t track_info_( track_info_t* out, int track ) const
 	{
 		copy_ay_fields( file, out, track );
+		return blargg_ok;
+	}
+
+	blargg_err_t hash_( Hash_Function& out ) const
+	{
+		hash_ay_file( file, out );
 		return blargg_ok;
 	}
 };
@@ -223,9 +268,6 @@ blargg_err_t Ay_Emu::start_track_( int track )
 		}
 		check( len );
 		byte const* in = get_data( file, blocks, 0 ); blocks += 2;
-		if (!in) {
-            break;
-        }
 		if ( len > (unsigned) (file.end - in) )
 		{
 			set_warning( "File data missing" );
@@ -306,4 +348,10 @@ inline void Ay_Emu::enable_cpc()
 void Ay_Emu::enable_cpc_( void* data )
 {
 	STATIC_CAST(Ay_Emu*,data)->enable_cpc();
+}
+
+blargg_err_t Ay_Emu::hash_( Hash_Function& out ) const
+{
+	hash_ay_file( file, out );
+	return blargg_ok;
 }

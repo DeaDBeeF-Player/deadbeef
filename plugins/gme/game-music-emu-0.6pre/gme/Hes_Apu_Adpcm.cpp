@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Hes_Apu_Adpcm.h"
 
@@ -91,7 +91,7 @@ void Hes_Apu_Adpcm::run_until( blip_time_t end_time )
 					volume = 0xFF - ( 0xFF * fadecount / fadetimer );
 				}
 			}
-			next_timer += 7159.091;
+            next_timer += 7159.091;
 		}
 		int amp;
 		if ( state.ad_low_nibble )
@@ -122,7 +122,7 @@ void Hes_Apu_Adpcm::run_until( blip_time_t end_time )
 
 	if ( !state.playflag )
 	{
-		while ( next_timer <= end_time ) next_timer += 7159.091;
+        while ( next_timer <= end_time ) next_timer += 7159.091;
 		last_time = end_time;
 	}
 	
@@ -193,7 +193,7 @@ void Hes_Apu_Adpcm::write_data( blip_time_t time, int addr, int data )
 		}
 		break;
 	case 14:
-		state.freq = 7159091 / ( 32000 / ( 16 - ( data & 15 ) ) );
+        state.freq = 7159091 / ( 32000 / ( 16 - ( data & 15 ) ) );
 		break;
 	case 15:
 		switch ( data & 15 )

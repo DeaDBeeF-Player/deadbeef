@@ -1,6 +1,6 @@
 // Sega/Game Gear/Coleco SGC music file emulator
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef SGC_EMU_H
 #define SGC_EMU_H
 
@@ -14,6 +14,8 @@ public:
 	
 	// Header for currently loaded file
 	header_t const& header() const              { return core_.header(); }
+
+	blargg_err_t hash_( Hash_Function& ) const;
 	
 	// Sets 0x2000-byte Coleco BIOS. Necessary to play Coleco tracks.
 	static void set_coleco_bios( void const* p ){ Sgc_Core::set_coleco_bios( p ); }

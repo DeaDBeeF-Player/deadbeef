@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Hes_Emu.h"
 
@@ -58,14 +58,32 @@ static byte const* copy_field( byte const in [], char* out )
 	return in;
 }
 
-static void copy_hes_fields( byte const in [], track_info_t* out )
+static byte const* copy_hes_fields( byte const in [], track_info_t* out )
 {
-	if ( *in >= ' ' )
+	byte const* in_offset = in;
+	if ( *in_offset >= ' ' )
 	{
-		in = copy_field( in, out->game      );
-		in = copy_field( in, out->author    );
-		in = copy_field( in, out->copyright );
+		in_offset = copy_field( in_offset, out->game      );
+		in_offset = copy_field( in_offset, out->author    );
+		in_offset = copy_field( in_offset, out->copyright );
 	}
+	return in_offset ? in_offset : in;
+}
+
+static void hash_hes_file( Hes_Emu::header_t const& h, byte const* data, int data_size, Music_Emu::Hash_Function& out )
+{
+	out.hash_( &h.vers, sizeof(h.vers) );
+	out.hash_( &h.first_track, sizeof(h.first_track) );
+	out.hash_( &h.init_addr[0], sizeof(h.init_addr) );
+	out.hash_( &h.banks[0], sizeof(h.banks) );
+	out.hash_( &h.data_size[0], sizeof(h.data_size) );
+	out.hash_( &h.addr[0], sizeof(h.addr) );
+	out.hash_( &h.unused[0], sizeof(h.unused) );
+	out.hash_( data, Hes_Core::info_offset );
+
+    track_info_t temp; // GCC whines about passing a pointer to a temporary here
+    byte const* more_data = copy_hes_fields( data + Hes_Core::info_offset, &temp );
+	out.hash_( more_data, data_size - ( more_data - data ) );
 }
 
 blargg_err_t Hes_Emu::track_info_( track_info_t* out, int ) const
@@ -81,20 +99,18 @@ struct Hes_File : Gme_Info_
 	union header_t {
 		Hes_Core::header_t header;
 		byte data [fields_offset + 0x30 * 3];
-	} h;
+	} const* h;
 	
 	Hes_File()
 	{
 		set_type( gme_hes_type );
 	}
 	
-	blargg_err_t load_( Data_Reader& in )
+	blargg_err_t load_mem_( byte const begin [], int size )
 	{
-		blargg_err_t err = in.read( &h, sizeof h );
-		if ( err )
-			return (blargg_is_err_type( err, blargg_err_file_eof ) ? blargg_err_file_type : err);
+		h = ( header_t const* ) begin;
 		
-		if ( !h.header.valid_tag() )
+		if ( !h->header.valid_tag() )
 			return blargg_err_file_type;
 		
 		return blargg_ok;
@@ -102,7 +118,13 @@ struct Hes_File : Gme_Info_
 	
 	blargg_err_t track_info_( track_info_t* out, int ) const
 	{
-		copy_hes_fields( h.data + fields_offset, out );
+		copy_hes_fields( h->data + fields_offset, out );
+		return blargg_ok;
+	}
+
+	blargg_err_t hash_( Hash_Function& out ) const
+	{
+		hash_hes_file( h->header, file_begin() + h->header.size, file_end() - file_begin() - h->header.size, out );
 		return blargg_ok;
 	}
 };
@@ -130,12 +152,13 @@ blargg_err_t Hes_Emu::load_( Data_Reader& in )
 	core.apu().volume( gain() );
 	core.adpcm().volume( gain() );
 	
-	return setup_buffer( 7159091 );
+    return setup_buffer( 7159091 );
 }
 
 void Hes_Emu::update_eq( blip_eq_t const& eq )
 {
 	core.apu().treble_eq( eq );
+    core.adpcm().treble_eq( eq );
 }
 
 void Hes_Emu::set_voice( int i, Blip_Buffer* c, Blip_Buffer* l, Blip_Buffer* r )
@@ -160,4 +183,10 @@ blargg_err_t Hes_Emu::start_track_( int track )
 blargg_err_t Hes_Emu::run_clocks( blip_time_t& duration_, int )
 {
 	return core.end_frame( duration_ );
+}
+
+blargg_err_t Hes_Emu::hash_( Hash_Function& out ) const
+{
+	hash_hes_file( header(), core.data(), core.data_size(), out );
+	return blargg_ok;
 }

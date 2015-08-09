@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Sgc_Emu.h"
 
@@ -41,6 +41,27 @@ static void copy_sgc_fields( Sgc_Emu::header_t const& h, track_info_t* out )
 	GME_COPY_FIELD( h, out, copyright );
 }
 
+static void hash_sgc_file( Sgc_Emu::header_t const& h, byte const* data, int data_size, Music_Emu::Hash_Function& out )
+{
+	out.hash_( &h.vers, sizeof(h.vers) );
+	out.hash_( &h.rate, sizeof(h.rate) );
+	out.hash_( &h.reserved1[0], sizeof(h.reserved1) );
+	out.hash_( &h.load_addr[0], sizeof(h.load_addr) );
+	out.hash_( &h.init_addr[0], sizeof(h.init_addr) );
+	out.hash_( &h.play_addr[0], sizeof(h.play_addr) );
+	out.hash_( &h.stack_ptr[0], sizeof(h.stack_ptr) );
+	out.hash_( &h.reserved2[0], sizeof(h.reserved2) );
+	out.hash_( &h.rst_addrs[0], sizeof(h.rst_addrs) );
+	out.hash_( &h.mapping[0], sizeof(h.mapping) );
+	out.hash_( &h.first_song, sizeof(h.first_song) );
+	out.hash_( &h.song_count, sizeof(h.song_count) );
+	out.hash_( &h.first_effect, sizeof(h.first_effect) );
+	out.hash_( &h.last_effect, sizeof(h.last_effect) );
+	out.hash_( &h.system, sizeof(h.system) );
+	out.hash_( &h.reserved3[0], sizeof(h.reserved3) );
+	out.hash_( data, data_size );
+}
+
 blargg_err_t Sgc_Emu::track_info_( track_info_t* out, int ) const
 {
 	copy_sgc_fields( header(), out );
@@ -49,18 +70,16 @@ blargg_err_t Sgc_Emu::track_info_( track_info_t* out, int ) const
 
 struct Sgc_File : Gme_Info_
 {
-	Sgc_Emu::header_t h;
+	Sgc_Emu::header_t const* h;
 	
 	Sgc_File() { set_type( gme_sgc_type ); }
 	
-	blargg_err_t load_( Data_Reader& in )
+	blargg_err_t load_mem_( byte const begin [], int size )
 	{
-		blargg_err_t err = in.read( &h, h.size );
-		if ( err )
-			return (blargg_is_err_type( err, blargg_err_file_eof ) ? blargg_err_file_type : err);
+		h = ( Sgc_Emu::header_t const* ) begin;
 		
-		set_track_count( h.song_count );
-		if ( !h.valid_tag() )
+		set_track_count( h->song_count );
+		if ( !h->valid_tag() )
 			return blargg_err_file_type;
 		
 		return blargg_ok;
@@ -68,7 +87,13 @@ struct Sgc_File : Gme_Info_
 	
 	blargg_err_t track_info_( track_info_t* out, int ) const
 	{
-		copy_sgc_fields( h, out );
+		copy_sgc_fields( *h, out );
+		return blargg_ok;
+	}
+
+	blargg_err_t hash_( Hash_Function& out ) const
+	{
+		hash_sgc_file( *h, file_begin() + h->size, file_end() - file_begin() - h->size, out );
 		return blargg_ok;
 	}
 };
@@ -132,5 +157,11 @@ blargg_err_t Sgc_Emu::run_clocks( blip_time_t& duration, int )
 {
 	RETURN_ERR( core_.end_frame( duration ) );
 	set_warning( core_.warning() );
+	return blargg_ok;
+}
+
+blargg_err_t Sgc_Emu::hash_( Hash_Function& out ) const
+{
+	hash_sgc_file( header(), core_.rom_().begin(), core_.rom_().file_size(), out );
 	return blargg_ok;
 }

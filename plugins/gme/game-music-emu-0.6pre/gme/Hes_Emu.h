@@ -1,6 +1,6 @@
 // TurboGrafx-16/PC Engine HES music file emulator
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef HES_EMU_H
 #define HES_EMU_H
 
@@ -17,6 +17,8 @@ public:
 	
 	// Header for currently loaded file
 	header_t const& header() const { return core.header(); }
+
+	blargg_err_t hash_( Hash_Function& ) const;
 
 // Implementation
 public:

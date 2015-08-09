@@ -1,6 +1,6 @@
 // Private oscillators used by Gb_Apu
 
-// Gb_Snd_Emu 0.1.4
+// Gb_Snd_Emu $vers
 #ifndef GB_OSCS_H
 #define GB_OSCS_H
 
@@ -112,9 +112,8 @@ private:
 
 class Gb_Noise : public Gb_Env {
 public:
-	
 	int divider; // noise has more complex frequency divider setup
-	
+
 	void run( blip_time_t, blip_time_t );
 	void write_register( int frame_phase, int reg, int old_data, int data );
 	
@@ -124,6 +123,7 @@ public:
 		Gb_Env::reset();
 		delay = 4 * clk_mul; // TODO: remove?
 	}
+
 private:
 	enum { period2_mask = 0x1FFFF };
 	
@@ -135,7 +135,7 @@ private:
 class Gb_Wave : public Gb_Osc {
 public:
 	int sample_buf; // last wave RAM byte read (hardware has this as well)
-	
+
 	void write_register( int frame_phase, int reg, int old_data, int data );
 	void run( blip_time_t, blip_time_t );
 	
@@ -165,7 +165,7 @@ private:
 	int dac_enabled() const { return regs [0] & 0x80; }
 	
 	void corrupt_wave();
-	
+
 	BOOST::uint8_t* wave_bank() const { return &wave_ram [(~regs [0] & bank40_mask) >> 2 & agb_mask]; }
 	
 	// Wave index that would be accessed, or -1 if no access would occur

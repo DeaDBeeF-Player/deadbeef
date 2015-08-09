@@ -1,6 +1,6 @@
 // Loads NSF file and emulates CPU and sound chips
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef NSF_CORE_H
 #define NSF_CORE_H
 

@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Nsfe_Emu.h"
 
@@ -24,6 +24,7 @@ Nsfe_Info::~Nsfe_Info() { }
 
 inline void Nsfe_Info::unload()
 {
+	data.clear();
 	track_name_data.clear();
 	track_names.clear();
 	playlist.clear();
@@ -206,7 +207,8 @@ blargg_err_t Nsfe_Info::load( Data_Reader& in, Nsfe_Emu* nsf_emu )
 				phase = 2;
 				if ( !nsf_emu )
 				{
-					RETURN_ERR( in.skip( size ) );
+					RETURN_ERR( data.resize( size ) );
+					RETURN_ERR( in.read( data.begin(), size ) );
 				}
 				else
 				{
@@ -288,6 +290,12 @@ struct Nsfe_File : Gme_Info_
 	blargg_err_t track_info_( track_info_t* out, int track ) const
 	{
 		return info.track_info_( out, track );
+	}
+
+	blargg_err_t hash_( Hash_Function& out ) const
+	{
+		hash_nsf_file( info.info, info.data.begin(), info.data.end() - info.data.begin(), out );
+		return blargg_ok;
 	}
 };
 

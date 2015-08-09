@@ -50,7 +50,7 @@ void Sms_Fm_Apu::run_until( blip_time_t end_time )
 	blip_time_t time = next_time;
 	do
 	{
-		Ym2413_Emu::sample_t samples [2];
+		Ym2413_Emu::sample_t samples [2] = {0};
 		apu.run( 1, samples );
 		int amp = (samples [0] + samples [1]) >> 1;
 		

@@ -1,6 +1,6 @@
 // Common interface for track information
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef GME_FILE_H
 #define GME_FILE_H
 
@@ -135,6 +135,7 @@ extern const gme_type_t_
 	gme_nsf_type [1],
 	gme_nsfe_type [1],
 	gme_sap_type [1],
+    gme_sfm_type [1],
 	gme_sgc_type [1],
 	gme_spc_type [1],
 	gme_vgm_type [1],

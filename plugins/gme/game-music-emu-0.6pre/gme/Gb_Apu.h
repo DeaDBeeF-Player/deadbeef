@@ -1,6 +1,6 @@
 // Nintendo Game Boy sound hardware emulator with save state support
 
-// Gb_Snd_Emu 0.1.4
+// Gb_Snd_Emu $vers
 #ifndef GB_APU_H
 #define GB_APU_H
 

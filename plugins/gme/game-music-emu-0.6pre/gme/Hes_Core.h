@@ -1,6 +1,6 @@
 // TurboGrafx-16/PC Engine HES music file emulator core
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef HES_CORE_H
 #define HES_CORE_H
 
@@ -38,6 +38,7 @@ public:
 	
 	// Pointer to ROM data, for getting track information from
 	byte const* data() const            { return rom.begin(); }
+	int data_size() const               { return rom.file_size(); }
 	
 	// Adjusts rate play routine is called at, where 1.0 is normal.
 	// Can be changed while track is playing.

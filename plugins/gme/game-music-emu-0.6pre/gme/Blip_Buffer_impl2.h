@@ -1,6 +1,6 @@
 // Internal stuff here to keep public header uncluttered
 
-// Blip_Buffer 0.4.0
+// Blip_Buffer $vers
 #ifndef BLIP_BUFFER_IMPL2_H
 #define BLIP_BUFFER_IMPL2_H
 

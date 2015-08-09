@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.5.5. http://www.slack.net/~ant/
+// Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Ym2413_Emu.h"
 #include "ym2413.h"
@@ -10,7 +10,7 @@ Ym2413_Emu::~Ym2413_Emu()
 	if ( opll ) ym2413_shutdown( opll );
 }
 
-int Ym2413_Emu::set_rate( double sample_rate, double clock_rate )
+int Ym2413_Emu::set_rate( int sample_rate, int clock_rate )
 {
 	if ( opll )
 	{
@@ -32,8 +32,11 @@ void Ym2413_Emu::reset()
 	ym2413_set_mask( opll, 0 );
 }
 
+static stream_sample_t* DUMMYBUF[0x02] = {(stream_sample_t*)NULL, (stream_sample_t*)NULL};
+
 void Ym2413_Emu::write( int addr, int data )
 {
+	ym2413_update_one( opll, DUMMYBUF, 0 );
 	ym2413_write( opll, 0, addr );
 	ym2413_write( opll, 1, data );
 }
@@ -57,11 +60,16 @@ void Ym2413_Emu::run( int pair_count, sample_t* out )
 
 		for (int i = 0; i < todo; i++)
 		{
+			int output_l, output_r;
 			int output = bufMO [i];
 			output += bufRO [i];
-			if ( (short)output != output ) output = 0x7FFF ^ ( output >> 31 );
-			out [0] = output;
-			out [1] = output;
+			output *= 3;
+			output_l = output + out [0];
+			output_r = output + out [1];
+			if ( (short)output_l != output_l ) output_l = 0x7FFF ^ ( output_l >> 31 );
+			if ( (short)output_r != output_r ) output_r = 0x7FFF ^ ( output_r >> 31 );
+			out [0] = output_l;
+			out [1] = output_r;
 			out += 2;
 		}
 

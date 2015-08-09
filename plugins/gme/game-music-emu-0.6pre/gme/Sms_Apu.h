@@ -1,6 +1,6 @@
 // Sega Master System SN76489 PSG sound chip emulator
 
-// Sms_Snd_Emu 0.1.2
+// Sms_Snd_Emu $vers
 #ifndef SMS_APU_H
 #define SMS_APU_H
 

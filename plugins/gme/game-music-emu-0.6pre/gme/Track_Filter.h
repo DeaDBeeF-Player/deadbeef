@@ -1,7 +1,7 @@
 // Removes silence from beginning of track, fades end of track. Also looks ahead
 // for excessive silence, and if found, ends track.
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef TRACK_FILTER_H
 #define TRACK_FILTER_H
 

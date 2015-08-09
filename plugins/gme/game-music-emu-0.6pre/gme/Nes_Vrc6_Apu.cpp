@@ -1,4 +1,4 @@
-// Nes_Snd_Emu 0.2.0-pre. http://www.slack.net/~ant/
+// Nes_Snd_Emu $vers. http://www.slack.net/~ant/
 
 #include "Nes_Vrc6_Apu.h"
 

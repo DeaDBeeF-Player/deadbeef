@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// $package. http://www.slack.net/~ant/
 
 // Last validated with zexall 2009.12.05.
 // Doesn't implement the R register or immediate interrupt after EI.
@@ -16,7 +16,11 @@ correctly inside a macro. TIME() is always correct, and between FLUSH_TIME() and
 CACHE_TIME() the normal time changing functions can be used.
 - Macros "returning" void may use a {} statement block. */
 
-	// 0 <= addr <= 0xFFFF + 0x100
+    // 0 <= addr <= 0xFFFF + 0x100
+    // Optional; default uses whatever was set with map_mem()
+    int  READ_CODE( addr_t );
+
+    // 0 <= addr <= 0xFFFF + 0x100
 	// Optional; default uses whatever was set with map_mem()
 	int  READ_MEM(  addr_t );
 	void WRITE_MEM( addr_t, int data );
@@ -24,7 +28,7 @@ CACHE_TIME() the normal time changing functions can be used.
 	// 0 <= port <= 0xFFFF (apparently upper 8 bits are output by hardware)
 	void OUT_PORT( int port, int data );
 	int  IN_PORT   int port );
-	
+
 	// Reference to Z80_Cpu object used for emulation
 	#define CPU cpu
 	
@@ -42,7 +46,7 @@ CACHE_TIME() the normal time changing functions can be used.
 // Configuration (optional; commented behavior if defined)
 	
 	// Optimizes as if map_mem( 0, 0x10000, FLAT_MEM, FLAT_MEM ) is always in effect
-	#define FLAT_MEM my_mem_array
+    #define FLAT_MEM my_mem_array
 	
 	// If RST 7 ($FF) is encountered and PC = IDLE_ADDR, stops execution
 	#define IDLE_ADDR 0x1234
@@ -95,7 +99,9 @@ int const C01 = 0x01;
 
 // Memory
 #define RW_MEM( addr, rw )          RW_PAGE( addr, rw ) [RW_OFFSET( addr )]
-#define READ_CODE( addr )           RW_MEM( addr, read )
+#ifndef READ_CODE
+    #define READ_CODE( addr )       RW_MEM( addr, read )
+#endif
 
 #ifdef FLAT_MEM
 	#define RW_PAGE( addr, rw )     FLAT_MEM
@@ -191,24 +197,24 @@ loop:
 	check( (unsigned) ix < 0x10000 );
 	check( (unsigned) iy < 0x10000 );
 	
-	byte const* instr = RW_PAGE( pc, read );
+    byte const* instr = RW_PAGE( pc, read );
+
+    int opcode;
 	
-	int opcode;
-	
-	if ( RW_OFFSET( ~0 ) == ~0 )
-	{
-		opcode = instr [RW_OFFSET( pc )];
-		pc++;
-		instr += RW_OFFSET( pc );
-	}
-	else
-	{
-		instr += RW_OFFSET( pc );
-		opcode = *instr++;
-		pc++;
-	}
-	
-	static byte const clock_table [256 * 2] = {
+    if ( RW_OFFSET( ~0 ) == ~0 )
+    {
+        opcode = instr [RW_OFFSET( pc )];
+        pc++;
+        instr += RW_OFFSET( pc );
+    }
+    else
+    {
+        instr += RW_OFFSET( pc );
+        opcode = *instr++;
+        pc++;
+    }
+
+    static byte const clock_table [256 * 2] = {
 	//   0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
 		 4,10, 7, 6, 4, 4, 7, 4, 4,11, 7, 6, 4, 4, 7, 4, // 0
 		 8,10, 7, 6, 4, 4, 7, 4,12,11, 7, 6, 4, 4, 7, 4, // 1
@@ -261,7 +267,7 @@ loop:
 #define GET_ADDR()  GET_LE16( &INSTR( 0, pc ) )
 
 	int data;
-	data = INSTR( 0, pc );
+    data = INSTR( 0, pc );
 	
 	switch ( opcode )
 	{

@@ -240,6 +240,7 @@ void Opl_Apu::run_until( blip_time_t end_time )
 					case type_opl:      ym3526_update_one( opl, buffer, todo ); break;
 					case type_msxaudio: y8950_update_one( opl, buffer, todo ); break;
 					case type_opl2:     ym3812_update_one( opl, buffer, todo ); break;
+					default: break;
 					}
 
 					if ( output_ )

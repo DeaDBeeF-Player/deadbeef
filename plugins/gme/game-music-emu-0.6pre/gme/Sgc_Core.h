@@ -1,6 +1,6 @@
 // Sega/Game Gear/Coleco SGC music file emulator core
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef SGC_CORE_H
 #define SGC_CORE_H
 

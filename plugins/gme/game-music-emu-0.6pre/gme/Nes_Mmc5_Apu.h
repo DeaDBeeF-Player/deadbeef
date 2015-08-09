@@ -1,6 +1,6 @@
 // NES MMC5 sound chip emulator
 
-// Nes_Snd_Emu 0.2.0-pre
+// Nes_Snd_Emu $vers
 #ifndef NES_MMC5_APU_H
 #define NES_MMC5_APU_H
 

@@ -1,6 +1,6 @@
 // Sinclair Spectrum AY music emulator core
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef AY_CORE_H
 #define AY_CORE_H
 

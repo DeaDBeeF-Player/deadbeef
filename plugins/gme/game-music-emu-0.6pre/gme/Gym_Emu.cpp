@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Gym_Emu.h"
 
@@ -74,6 +74,13 @@ static void get_gym_info( Gym_Emu::header_t const& h, int length, track_info_t* 
 		GME_COPY_FIELD( h, out, comment );
 }
 
+static void hash_gym_file( Gym_Emu::header_t const& h, byte const* data, int data_size, Music_Emu::Hash_Function& out )
+{
+	out.hash_( &h.loop_start[0], sizeof(h.loop_start) );
+	out.hash_( &h.packed[0], sizeof(h.packed) );
+	out.hash_( data, data_size );
+}
+
 static int gym_track_length( byte const p [], byte const* end )
 {
 	int time = 0;
@@ -144,6 +151,16 @@ struct Gym_File : Gme_Info_
 	{
 		int length = gym_track_length( &file_begin() [data_offset], file_end() );
 		get_gym_info( *(Gym_Emu::header_t const*) file_begin(), length, out );
+		return blargg_ok;
+	}
+
+	blargg_err_t hash_( Hash_Function& out ) const
+	{
+		Gym_Emu::header_t const* h = ( Gym_Emu::header_t const* ) file_begin();
+		byte const* data = &file_begin() [data_offset];
+
+		hash_gym_file( *h, data, file_end() - data, out );
+
 		return blargg_ok;
 	}
 };
@@ -401,5 +418,11 @@ int Gym_Emu::play_frame_( void* p, blip_time_t a, int b, sample_t c [] )
 blargg_err_t Gym_Emu::play_( int count, sample_t out [] )
 {
 	resampler.dual_play( count, out, stereo_buf );
+	return blargg_ok;
+}
+
+blargg_err_t Gym_Emu::hash_( Hash_Function& out ) const
+{
+	hash_gym_file( header(), log_begin(), file_end() - log_begin(), out );
 	return blargg_ok;
 }

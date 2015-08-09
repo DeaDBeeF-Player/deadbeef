@@ -1,4 +1,4 @@
-// Sms_Snd_Emu 0.1.1. http://www.slack.net/~ant/
+// Sms_Snd_Emu $vers. http://www.slack.net/~ant/
 
 #include "Sms_Apu.h"
 

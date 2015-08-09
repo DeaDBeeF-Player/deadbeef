@@ -41,13 +41,15 @@ to do:
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include "mamedef.h"
 #include "ym2413.h"
 
+#ifndef INLINE
 #define INLINE static __inline
-#ifndef NULL
-	#define NULL ((void *)0)
 #endif
+#ifndef logerror
 #define logerror (void)
+#endif
 
 #ifndef M_PI
 	#define M_PI 3.14159265358979323846
@@ -670,7 +672,7 @@ INLINE void advance(YM2413 *chip)
 				{
 					op->volume += eg_inc[op->eg_sel_dr + ((chip->eg_cnt>>op->eg_sh_dr)&7)];
 
-					if ( op->volume >= op->sl )
+					if ( op->volume >= (INT32)(op->sl) )
 						op->state = EG_SUS;
 				}
 			break;
@@ -1573,7 +1575,7 @@ static void OPLLWriteReg(YM2413 *chip, int r, int v)
 				if ((chip->rhythm&0x20)==0)
 				/*rhythm off to on*/
 				{
-					logerror("YM2413: Rhythm mode enable\n");
+					/*logerror("YM2413: Rhythm mode enable\n");*/
 
 	/* Load instrument settings for channel seven(chan=6 since we're zero based). (Bass drum) */
 					chan = 6;
@@ -1635,7 +1637,7 @@ static void OPLLWriteReg(YM2413 *chip, int r, int v)
 				if ((chip->rhythm&0x20)==1)
 				/*rhythm on to off*/
 				{
-					logerror("YM2413: Rhythm mode disable\n");
+					/*logerror("YM2413: Rhythm mode disable\n");*/
 	/* Load instrument settings for channel seven(chan=6 since we're zero based).*/
 					chan = 6;
 					inst = &chip->inst_tab[chip->instvol_r[chan]>>4][0];
@@ -1679,7 +1681,7 @@ static void OPLLWriteReg(YM2413 *chip, int r, int v)
 	case 0x10:
 	case 0x20:
 	{
-		int block_fnum;
+		UINT32 block_fnum;
 
 		chan = r&0x0f;
 
@@ -1708,8 +1710,8 @@ static void OPLLWriteReg(YM2413 *chip, int r, int v)
 			}
 
 
-			if (CH->sus!=(v&0x20))
-				logerror("chan=%i sus=%2x\n",chan,v&0x20);
+			/*if (CH->sus!=(v&0x20))
+				logerror("chan=%i sus=%2x\n",chan,v&0x20);*/
 
 			CH->sus = v & 0x20;
 		}
@@ -2104,4 +2106,3 @@ void ym2413_set_mask(void *_chip, UINT32 mask)
 
 	chip->mask = mask;
 }
-

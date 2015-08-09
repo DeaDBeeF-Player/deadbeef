@@ -1,6 +1,6 @@
 // Common interface for resamplers
 
-// Game_Music_Emu 0.6-pre
+// $package
 #ifndef RESAMPLER_H
 #define RESAMPLER_H
 

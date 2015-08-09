@@ -1,6 +1,6 @@
 // Nintendo NES/Famicom NSFE music file emulator
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef NSFE_EMU_H
 #define NSFE_EMU_H
 
@@ -20,7 +20,9 @@ public:
 		char copyright [256];
 		char dumper    [256];
 	} info;
-	
+
+	blargg_vector<unsigned char> data;
+
 	void disable_playlist( bool = true );
 	
 	blargg_err_t track_info_( track_info_t* out, int track ) const;

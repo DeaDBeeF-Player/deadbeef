@@ -1,7 +1,7 @@
 // Sega Genesis/Mega Drive GYM music file emulator
 // Performs PCM timing recovery to improve sample quality.
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef GYM_EMU_H
 #define GYM_EMU_H
 
@@ -37,6 +37,8 @@ public:
 	// Disables running FM chips at higher than normal rate. Will result in slightly
 	// more aliasing of high notes.
 	void disable_oversampling( bool disable = true ) { disable_oversampling_ = disable; }
+
+	blargg_err_t hash_( Hash_Function& ) const;
 	
 // Implementation
 public:

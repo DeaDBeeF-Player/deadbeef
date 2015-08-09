@@ -1081,6 +1081,102 @@
 		83D1CCA11B77060C0063DA75 /* readany2.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CC951B77060C0063DA75 /* readany2.c */; };
 		83D1CCA21B77060C0063DA75 /* readokt.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CC961B77060C0063DA75 /* readokt.c */; };
 		83D1CCA31B77060C0063DA75 /* readokt2.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CC971B77060C0063DA75 /* readokt2.c */; };
+		83D1CCF61B7710650063DA75 /* adlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCA41B7710650063DA75 /* adlib.h */; };
+		83D1CCF71B7710650063DA75 /* Bml_Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCA51B7710650063DA75 /* Bml_Parser.cpp */; };
+		83D1CCF81B7710650063DA75 /* Bml_Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCA61B7710650063DA75 /* Bml_Parser.h */; };
+		83D1CCF91B7710650063DA75 /* C140_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCA71B7710650063DA75 /* C140_Emu.cpp */; };
+		83D1CCFA1B7710650063DA75 /* C140_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCA81B7710650063DA75 /* C140_Emu.h */; };
+		83D1CCFB1B7710650063DA75 /* c140.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCA91B7710650063DA75 /* c140.c */; };
+		83D1CCFC1B7710650063DA75 /* c140.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCAA1B7710650063DA75 /* c140.h */; };
+		83D1CCFD1B7710650063DA75 /* Chip_Resampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCAB1B7710650063DA75 /* Chip_Resampler.h */; };
+		83D1CCFE1B7710650063DA75 /* dac_control.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCAC1B7710650063DA75 /* dac_control.c */; };
+		83D1CCFF1B7710650063DA75 /* dac_control.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCAD1B7710650063DA75 /* dac_control.h */; };
+		83D1CD001B7710650063DA75 /* dbopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCAE1B7710650063DA75 /* dbopl.cpp */; };
+		83D1CD011B7710650063DA75 /* dbopl.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCAF1B7710650063DA75 /* dbopl.h */; };
+		83D1CD021B7710650063DA75 /* emuconfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCB01B7710650063DA75 /* emuconfig.h */; };
+		83D1CD031B7710650063DA75 /* fm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCB11B7710650063DA75 /* fm.c */; };
+		83D1CD041B7710650063DA75 /* fm.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCB21B7710650063DA75 /* fm.h */; };
+		83D1CD051B7710650063DA75 /* fm2612.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCB31B7710650063DA75 /* fm2612.c */; };
+		83D1CD071B7710650063DA75 /* gme_custom_dprintf.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCB51B7710650063DA75 /* gme_custom_dprintf.h */; };
+		83D1CD081B7710650063DA75 /* K051649_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCB61B7710650063DA75 /* K051649_Emu.cpp */; };
+		83D1CD091B7710650063DA75 /* K051649_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCB71B7710650063DA75 /* K051649_Emu.h */; };
+		83D1CD0A1B7710650063DA75 /* k051649.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCB81B7710650063DA75 /* k051649.c */; };
+		83D1CD0B1B7710650063DA75 /* k051649.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCB91B7710650063DA75 /* k051649.h */; };
+		83D1CD0C1B7710650063DA75 /* K053260_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCBA1B7710650063DA75 /* K053260_Emu.cpp */; };
+		83D1CD0D1B7710650063DA75 /* K053260_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCBB1B7710650063DA75 /* K053260_Emu.h */; };
+		83D1CD0E1B7710650063DA75 /* k053260.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCBC1B7710650063DA75 /* k053260.c */; };
+		83D1CD0F1B7710650063DA75 /* k053260.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCBD1B7710650063DA75 /* k053260.h */; };
+		83D1CD101B7710650063DA75 /* K054539_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCBE1B7710650063DA75 /* K054539_Emu.cpp */; };
+		83D1CD111B7710650063DA75 /* K054539_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCBF1B7710650063DA75 /* K054539_Emu.h */; };
+		83D1CD121B7710650063DA75 /* k054539.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCC01B7710650063DA75 /* k054539.c */; };
+		83D1CD131B7710650063DA75 /* k054539.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCC11B7710650063DA75 /* k054539.h */; };
+		83D1CD141B7710650063DA75 /* mamedef.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCC21B7710650063DA75 /* mamedef.h */; };
+		83D1CD151B7710650063DA75 /* mathdefs.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCC31B7710650063DA75 /* mathdefs.h */; };
+		83D1CD161B7710650063DA75 /* Okim6258_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCC41B7710650063DA75 /* Okim6258_Emu.cpp */; };
+		83D1CD171B7710650063DA75 /* Okim6258_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCC51B7710650063DA75 /* Okim6258_Emu.h */; };
+		83D1CD181B7710650063DA75 /* okim6258.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCC61B7710650063DA75 /* okim6258.c */; };
+		83D1CD191B7710650063DA75 /* okim6258.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCC71B7710650063DA75 /* okim6258.h */; };
+		83D1CD1A1B7710650063DA75 /* Okim6295_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCC81B7710650063DA75 /* Okim6295_Emu.cpp */; };
+		83D1CD1B1B7710650063DA75 /* Okim6295_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCC91B7710650063DA75 /* Okim6295_Emu.h */; };
+		83D1CD1C1B7710650063DA75 /* okim6295.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCCA1B7710650063DA75 /* okim6295.c */; };
+		83D1CD1D1B7710650063DA75 /* okim6295.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCCB1B7710650063DA75 /* okim6295.h */; };
+		83D1CD1E1B7710650063DA75 /* Pwm_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCCC1B7710650063DA75 /* Pwm_Emu.cpp */; };
+		83D1CD1F1B7710650063DA75 /* Pwm_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCCD1B7710650063DA75 /* Pwm_Emu.h */; };
+		83D1CD201B7710650063DA75 /* pwm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCCE1B7710650063DA75 /* pwm.c */; };
+		83D1CD211B7710650063DA75 /* pwm.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCCF1B7710650063DA75 /* pwm.h */; };
+		83D1CD221B7710650063DA75 /* qmix.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCD01B7710650063DA75 /* qmix.c */; };
+		83D1CD231B7710650063DA75 /* qmix.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCD11B7710650063DA75 /* qmix.h */; };
+		83D1CD241B7710650063DA75 /* Qsound_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCD21B7710650063DA75 /* Qsound_Apu.cpp */; };
+		83D1CD251B7710650063DA75 /* Qsound_Apu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCD31B7710650063DA75 /* Qsound_Apu.h */; };
+		83D1CD261B7710650063DA75 /* Rf5C68_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCD41B7710650063DA75 /* Rf5C68_Emu.cpp */; };
+		83D1CD271B7710650063DA75 /* Rf5C68_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCD51B7710650063DA75 /* Rf5C68_Emu.h */; };
+		83D1CD281B7710650063DA75 /* rf5c68.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCD61B7710650063DA75 /* rf5c68.c */; };
+		83D1CD291B7710650063DA75 /* rf5c68.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCD71B7710650063DA75 /* rf5c68.h */; };
+		83D1CD2A1B7710650063DA75 /* Rf5C164_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCD81B7710650063DA75 /* Rf5C164_Emu.cpp */; };
+		83D1CD2B1B7710650063DA75 /* Rf5C164_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCD91B7710650063DA75 /* Rf5C164_Emu.h */; };
+		83D1CD2C1B7710650063DA75 /* scd_pcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCDA1B7710650063DA75 /* scd_pcm.c */; };
+		83D1CD2D1B7710650063DA75 /* scd_pcm.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCDB1B7710650063DA75 /* scd_pcm.h */; };
+		83D1CD2E1B7710650063DA75 /* SegaPcm_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCDC1B7710650063DA75 /* SegaPcm_Emu.cpp */; };
+		83D1CD2F1B7710650063DA75 /* SegaPcm_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCDD1B7710650063DA75 /* SegaPcm_Emu.h */; };
+		83D1CD301B7710650063DA75 /* segapcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCDE1B7710650063DA75 /* segapcm.c */; };
+		83D1CD311B7710650063DA75 /* segapcm.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCDF1B7710650063DA75 /* segapcm.h */; };
+		83D1CD321B7710650063DA75 /* Spc_Sfm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCE01B7710650063DA75 /* Spc_Sfm.cpp */; };
+		83D1CD331B7710650063DA75 /* Spc_Sfm.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCE11B7710650063DA75 /* Spc_Sfm.h */; };
+		83D1CD341B7710650063DA75 /* Ym2151_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCE21B7710650063DA75 /* Ym2151_Emu.cpp */; };
+		83D1CD351B7710650063DA75 /* Ym2151_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCE31B7710650063DA75 /* Ym2151_Emu.h */; };
+		83D1CD361B7710650063DA75 /* ym2151.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCE41B7710650063DA75 /* ym2151.c */; };
+		83D1CD371B7710650063DA75 /* ym2151.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCE51B7710650063DA75 /* ym2151.h */; };
+		83D1CD381B7710650063DA75 /* Ym2203_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCE61B7710650063DA75 /* Ym2203_Emu.cpp */; };
+		83D1CD391B7710650063DA75 /* Ym2203_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCE71B7710650063DA75 /* Ym2203_Emu.h */; };
+		83D1CD3A1B7710650063DA75 /* Ym2608_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCE81B7710650063DA75 /* Ym2608_Emu.cpp */; };
+		83D1CD3B1B7710650063DA75 /* Ym2608_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCE91B7710650063DA75 /* Ym2608_Emu.h */; };
+		83D1CD3C1B7710650063DA75 /* Ym2610b_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCEA1B7710650063DA75 /* Ym2610b_Emu.cpp */; };
+		83D1CD3D1B7710650063DA75 /* Ym2610b_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCEB1B7710650063DA75 /* Ym2610b_Emu.h */; };
+		83D1CD3E1B7710650063DA75 /* Ym2612_Emu_Gens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCEC1B7710650063DA75 /* Ym2612_Emu_Gens.cpp */; };
+		83D1CD3F1B7710650063DA75 /* Ym2612_Emu_MAME.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCED1B7710650063DA75 /* Ym2612_Emu_MAME.cpp */; };
+		83D1CD401B7710650063DA75 /* Ym3812_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCEE1B7710650063DA75 /* Ym3812_Emu.cpp */; };
+		83D1CD411B7710650063DA75 /* Ym3812_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCEF1B7710650063DA75 /* Ym3812_Emu.h */; };
+		83D1CD421B7710650063DA75 /* Ymf262_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCF01B7710650063DA75 /* Ymf262_Emu.cpp */; };
+		83D1CD431B7710650063DA75 /* Ymf262_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCF11B7710650063DA75 /* Ymf262_Emu.h */; };
+		83D1CD441B7710650063DA75 /* Ymz280b_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCF21B7710650063DA75 /* Ymz280b_Emu.cpp */; };
+		83D1CD451B7710650063DA75 /* Ymz280b_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCF31B7710650063DA75 /* Ymz280b_Emu.h */; };
+		83D1CD461B7710650063DA75 /* ymz280b.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCF41B7710650063DA75 /* ymz280b.c */; };
+		83D1CD471B7710650063DA75 /* ymz280b.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCF51B7710650063DA75 /* ymz280b.h */; };
+		83D1CD571B77108E0063DA75 /* dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CD481B77108E0063DA75 /* dsp.cpp */; };
+		83D1CD581B77108E0063DA75 /* dsp.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CD491B77108E0063DA75 /* dsp.hpp */; };
+		83D1CD591B77108E0063DA75 /* SPC_DSP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CD4A1B77108E0063DA75 /* SPC_DSP.cpp */; };
+		83D1CD5A1B77108E0063DA75 /* SPC_DSP.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CD4B1B77108E0063DA75 /* SPC_DSP.h */; };
+		83D1CD5E1B77108E0063DA75 /* memory.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CD4F1B77108E0063DA75 /* memory.hpp */; };
+		83D1CD5F1B77108E0063DA75 /* registers.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CD501B77108E0063DA75 /* registers.hpp */; };
+		83D1CD601B77108E0063DA75 /* spc700.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CD511B77108E0063DA75 /* spc700.cpp */; };
+		83D1CD611B77108E0063DA75 /* spc700.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CD521B77108E0063DA75 /* spc700.hpp */; };
+		83D1CD621B77108E0063DA75 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CD531B77108E0063DA75 /* memory.cpp */; };
+		83D1CD631B77108E0063DA75 /* smp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CD541B77108E0063DA75 /* smp.cpp */; };
+		83D1CD641B77108E0063DA75 /* smp.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CD551B77108E0063DA75 /* smp.hpp */; };
+		83D1CD651B77108E0063DA75 /* timing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CD561B77108E0063DA75 /* timing.cpp */; };
+		83D1CD691B7711570063DA75 /* algorithms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CD661B7711570063DA75 /* algorithms.cpp */; };
+		83D1CD6A1B7711570063DA75 /* disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CD671B7711570063DA75 /* disassembler.cpp */; };
+		83D1CD6B1B7711570063DA75 /* instructions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CD681B7711570063DA75 /* instructions.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -2469,6 +2565,102 @@
 		83D1CC951B77060C0063DA75 /* readany2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = readany2.c; path = "plugins/dumb/dumb-kode54/src/it/readany2.c"; sourceTree = "<group>"; };
 		83D1CC961B77060C0063DA75 /* readokt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = readokt.c; path = "plugins/dumb/dumb-kode54/src/it/readokt.c"; sourceTree = "<group>"; };
 		83D1CC971B77060C0063DA75 /* readokt2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = readokt2.c; path = "plugins/dumb/dumb-kode54/src/it/readokt2.c"; sourceTree = "<group>"; };
+		83D1CCA41B7710650063DA75 /* adlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = adlib.h; path = "plugins/gme/game-music-emu-0.6pre/gme/adlib.h"; sourceTree = "<group>"; };
+		83D1CCA51B7710650063DA75 /* Bml_Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Bml_Parser.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Bml_Parser.cpp"; sourceTree = "<group>"; };
+		83D1CCA61B7710650063DA75 /* Bml_Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bml_Parser.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Bml_Parser.h"; sourceTree = "<group>"; };
+		83D1CCA71B7710650063DA75 /* C140_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = C140_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/C140_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCA81B7710650063DA75 /* C140_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = C140_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/C140_Emu.h"; sourceTree = "<group>"; };
+		83D1CCA91B7710650063DA75 /* c140.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = c140.c; path = "plugins/gme/game-music-emu-0.6pre/gme/c140.c"; sourceTree = "<group>"; };
+		83D1CCAA1B7710650063DA75 /* c140.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = c140.h; path = "plugins/gme/game-music-emu-0.6pre/gme/c140.h"; sourceTree = "<group>"; };
+		83D1CCAB1B7710650063DA75 /* Chip_Resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Chip_Resampler.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Chip_Resampler.h"; sourceTree = "<group>"; };
+		83D1CCAC1B7710650063DA75 /* dac_control.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dac_control.c; path = "plugins/gme/game-music-emu-0.6pre/gme/dac_control.c"; sourceTree = "<group>"; };
+		83D1CCAD1B7710650063DA75 /* dac_control.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dac_control.h; path = "plugins/gme/game-music-emu-0.6pre/gme/dac_control.h"; sourceTree = "<group>"; };
+		83D1CCAE1B7710650063DA75 /* dbopl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dbopl.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/dbopl.cpp"; sourceTree = "<group>"; };
+		83D1CCAF1B7710650063DA75 /* dbopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dbopl.h; path = "plugins/gme/game-music-emu-0.6pre/gme/dbopl.h"; sourceTree = "<group>"; };
+		83D1CCB01B7710650063DA75 /* emuconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = emuconfig.h; path = "plugins/gme/game-music-emu-0.6pre/gme/emuconfig.h"; sourceTree = "<group>"; };
+		83D1CCB11B7710650063DA75 /* fm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fm.c; path = "plugins/gme/game-music-emu-0.6pre/gme/fm.c"; sourceTree = "<group>"; };
+		83D1CCB21B7710650063DA75 /* fm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fm.h; path = "plugins/gme/game-music-emu-0.6pre/gme/fm.h"; sourceTree = "<group>"; };
+		83D1CCB31B7710650063DA75 /* fm2612.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fm2612.c; path = "plugins/gme/game-music-emu-0.6pre/gme/fm2612.c"; sourceTree = "<group>"; };
+		83D1CCB51B7710650063DA75 /* gme_custom_dprintf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gme_custom_dprintf.h; path = "plugins/gme/game-music-emu-0.6pre/gme/gme_custom_dprintf.h"; sourceTree = "<group>"; };
+		83D1CCB61B7710650063DA75 /* K051649_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = K051649_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/K051649_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCB71B7710650063DA75 /* K051649_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = K051649_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/K051649_Emu.h"; sourceTree = "<group>"; };
+		83D1CCB81B7710650063DA75 /* k051649.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = k051649.c; path = "plugins/gme/game-music-emu-0.6pre/gme/k051649.c"; sourceTree = "<group>"; };
+		83D1CCB91B7710650063DA75 /* k051649.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = k051649.h; path = "plugins/gme/game-music-emu-0.6pre/gme/k051649.h"; sourceTree = "<group>"; };
+		83D1CCBA1B7710650063DA75 /* K053260_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = K053260_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/K053260_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCBB1B7710650063DA75 /* K053260_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = K053260_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/K053260_Emu.h"; sourceTree = "<group>"; };
+		83D1CCBC1B7710650063DA75 /* k053260.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = k053260.c; path = "plugins/gme/game-music-emu-0.6pre/gme/k053260.c"; sourceTree = "<group>"; };
+		83D1CCBD1B7710650063DA75 /* k053260.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = k053260.h; path = "plugins/gme/game-music-emu-0.6pre/gme/k053260.h"; sourceTree = "<group>"; };
+		83D1CCBE1B7710650063DA75 /* K054539_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = K054539_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/K054539_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCBF1B7710650063DA75 /* K054539_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = K054539_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/K054539_Emu.h"; sourceTree = "<group>"; };
+		83D1CCC01B7710650063DA75 /* k054539.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = k054539.c; path = "plugins/gme/game-music-emu-0.6pre/gme/k054539.c"; sourceTree = "<group>"; };
+		83D1CCC11B7710650063DA75 /* k054539.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = k054539.h; path = "plugins/gme/game-music-emu-0.6pre/gme/k054539.h"; sourceTree = "<group>"; };
+		83D1CCC21B7710650063DA75 /* mamedef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mamedef.h; path = "plugins/gme/game-music-emu-0.6pre/gme/mamedef.h"; sourceTree = "<group>"; };
+		83D1CCC31B7710650063DA75 /* mathdefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mathdefs.h; path = "plugins/gme/game-music-emu-0.6pre/gme/mathdefs.h"; sourceTree = "<group>"; };
+		83D1CCC41B7710650063DA75 /* Okim6258_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Okim6258_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Okim6258_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCC51B7710650063DA75 /* Okim6258_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Okim6258_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Okim6258_Emu.h"; sourceTree = "<group>"; };
+		83D1CCC61B7710650063DA75 /* okim6258.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = okim6258.c; path = "plugins/gme/game-music-emu-0.6pre/gme/okim6258.c"; sourceTree = "<group>"; };
+		83D1CCC71B7710650063DA75 /* okim6258.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = okim6258.h; path = "plugins/gme/game-music-emu-0.6pre/gme/okim6258.h"; sourceTree = "<group>"; };
+		83D1CCC81B7710650063DA75 /* Okim6295_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Okim6295_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Okim6295_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCC91B7710650063DA75 /* Okim6295_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Okim6295_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Okim6295_Emu.h"; sourceTree = "<group>"; };
+		83D1CCCA1B7710650063DA75 /* okim6295.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = okim6295.c; path = "plugins/gme/game-music-emu-0.6pre/gme/okim6295.c"; sourceTree = "<group>"; };
+		83D1CCCB1B7710650063DA75 /* okim6295.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = okim6295.h; path = "plugins/gme/game-music-emu-0.6pre/gme/okim6295.h"; sourceTree = "<group>"; };
+		83D1CCCC1B7710650063DA75 /* Pwm_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Pwm_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Pwm_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCCD1B7710650063DA75 /* Pwm_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pwm_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Pwm_Emu.h"; sourceTree = "<group>"; };
+		83D1CCCE1B7710650063DA75 /* pwm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pwm.c; path = "plugins/gme/game-music-emu-0.6pre/gme/pwm.c"; sourceTree = "<group>"; };
+		83D1CCCF1B7710650063DA75 /* pwm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pwm.h; path = "plugins/gme/game-music-emu-0.6pre/gme/pwm.h"; sourceTree = "<group>"; };
+		83D1CCD01B7710650063DA75 /* qmix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = qmix.c; path = "plugins/gme/game-music-emu-0.6pre/gme/qmix.c"; sourceTree = "<group>"; };
+		83D1CCD11B7710650063DA75 /* qmix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = qmix.h; path = "plugins/gme/game-music-emu-0.6pre/gme/qmix.h"; sourceTree = "<group>"; };
+		83D1CCD21B7710650063DA75 /* Qsound_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Qsound_Apu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Qsound_Apu.cpp"; sourceTree = "<group>"; };
+		83D1CCD31B7710650063DA75 /* Qsound_Apu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Qsound_Apu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Qsound_Apu.h"; sourceTree = "<group>"; };
+		83D1CCD41B7710650063DA75 /* Rf5C68_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Rf5C68_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Rf5C68_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCD51B7710650063DA75 /* Rf5C68_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rf5C68_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Rf5C68_Emu.h"; sourceTree = "<group>"; };
+		83D1CCD61B7710650063DA75 /* rf5c68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = rf5c68.c; path = "plugins/gme/game-music-emu-0.6pre/gme/rf5c68.c"; sourceTree = "<group>"; };
+		83D1CCD71B7710650063DA75 /* rf5c68.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rf5c68.h; path = "plugins/gme/game-music-emu-0.6pre/gme/rf5c68.h"; sourceTree = "<group>"; };
+		83D1CCD81B7710650063DA75 /* Rf5C164_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Rf5C164_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Rf5C164_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCD91B7710650063DA75 /* Rf5C164_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rf5C164_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Rf5C164_Emu.h"; sourceTree = "<group>"; };
+		83D1CCDA1B7710650063DA75 /* scd_pcm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = scd_pcm.c; path = "plugins/gme/game-music-emu-0.6pre/gme/scd_pcm.c"; sourceTree = "<group>"; };
+		83D1CCDB1B7710650063DA75 /* scd_pcm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scd_pcm.h; path = "plugins/gme/game-music-emu-0.6pre/gme/scd_pcm.h"; sourceTree = "<group>"; };
+		83D1CCDC1B7710650063DA75 /* SegaPcm_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SegaPcm_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/SegaPcm_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCDD1B7710650063DA75 /* SegaPcm_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SegaPcm_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/SegaPcm_Emu.h"; sourceTree = "<group>"; };
+		83D1CCDE1B7710650063DA75 /* segapcm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = segapcm.c; path = "plugins/gme/game-music-emu-0.6pre/gme/segapcm.c"; sourceTree = "<group>"; };
+		83D1CCDF1B7710650063DA75 /* segapcm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = segapcm.h; path = "plugins/gme/game-music-emu-0.6pre/gme/segapcm.h"; sourceTree = "<group>"; };
+		83D1CCE01B7710650063DA75 /* Spc_Sfm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Spc_Sfm.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Spc_Sfm.cpp"; sourceTree = "<group>"; };
+		83D1CCE11B7710650063DA75 /* Spc_Sfm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Spc_Sfm.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Spc_Sfm.h"; sourceTree = "<group>"; };
+		83D1CCE21B7710650063DA75 /* Ym2151_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ym2151_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ym2151_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCE31B7710650063DA75 /* Ym2151_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ym2151_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Ym2151_Emu.h"; sourceTree = "<group>"; };
+		83D1CCE41B7710650063DA75 /* ym2151.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ym2151.c; path = "plugins/gme/game-music-emu-0.6pre/gme/ym2151.c"; sourceTree = "<group>"; };
+		83D1CCE51B7710650063DA75 /* ym2151.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ym2151.h; path = "plugins/gme/game-music-emu-0.6pre/gme/ym2151.h"; sourceTree = "<group>"; };
+		83D1CCE61B7710650063DA75 /* Ym2203_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ym2203_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ym2203_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCE71B7710650063DA75 /* Ym2203_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ym2203_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Ym2203_Emu.h"; sourceTree = "<group>"; };
+		83D1CCE81B7710650063DA75 /* Ym2608_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ym2608_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ym2608_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCE91B7710650063DA75 /* Ym2608_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ym2608_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Ym2608_Emu.h"; sourceTree = "<group>"; };
+		83D1CCEA1B7710650063DA75 /* Ym2610b_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ym2610b_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ym2610b_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCEB1B7710650063DA75 /* Ym2610b_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ym2610b_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Ym2610b_Emu.h"; sourceTree = "<group>"; };
+		83D1CCEC1B7710650063DA75 /* Ym2612_Emu_Gens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ym2612_Emu_Gens.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ym2612_Emu_Gens.cpp"; sourceTree = "<group>"; };
+		83D1CCED1B7710650063DA75 /* Ym2612_Emu_MAME.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ym2612_Emu_MAME.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ym2612_Emu_MAME.cpp"; sourceTree = "<group>"; };
+		83D1CCEE1B7710650063DA75 /* Ym3812_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ym3812_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ym3812_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCEF1B7710650063DA75 /* Ym3812_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ym3812_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Ym3812_Emu.h"; sourceTree = "<group>"; };
+		83D1CCF01B7710650063DA75 /* Ymf262_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ymf262_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ymf262_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCF11B7710650063DA75 /* Ymf262_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ymf262_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Ymf262_Emu.h"; sourceTree = "<group>"; };
+		83D1CCF21B7710650063DA75 /* Ymz280b_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ymz280b_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ymz280b_Emu.cpp"; sourceTree = "<group>"; };
+		83D1CCF31B7710650063DA75 /* Ymz280b_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ymz280b_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Ymz280b_Emu.h"; sourceTree = "<group>"; };
+		83D1CCF41B7710650063DA75 /* ymz280b.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ymz280b.c; path = "plugins/gme/game-music-emu-0.6pre/gme/ymz280b.c"; sourceTree = "<group>"; };
+		83D1CCF51B7710650063DA75 /* ymz280b.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ymz280b.h; path = "plugins/gme/game-music-emu-0.6pre/gme/ymz280b.h"; sourceTree = "<group>"; };
+		83D1CD481B77108E0063DA75 /* dsp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dsp.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/higan/dsp/dsp.cpp"; sourceTree = "<group>"; };
+		83D1CD491B77108E0063DA75 /* dsp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = dsp.hpp; path = "plugins/gme/game-music-emu-0.6pre/gme/higan/dsp/dsp.hpp"; sourceTree = "<group>"; };
+		83D1CD4A1B77108E0063DA75 /* SPC_DSP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SPC_DSP.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/higan/dsp/SPC_DSP.cpp"; sourceTree = "<group>"; };
+		83D1CD4B1B77108E0063DA75 /* SPC_DSP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SPC_DSP.h; path = "plugins/gme/game-music-emu-0.6pre/gme/higan/dsp/SPC_DSP.h"; sourceTree = "<group>"; };
+		83D1CD4F1B77108E0063DA75 /* memory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = memory.hpp; path = "plugins/gme/game-music-emu-0.6pre/gme/higan/processor/spc700/memory.hpp"; sourceTree = "<group>"; };
+		83D1CD501B77108E0063DA75 /* registers.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = registers.hpp; path = "plugins/gme/game-music-emu-0.6pre/gme/higan/processor/spc700/registers.hpp"; sourceTree = "<group>"; };
+		83D1CD511B77108E0063DA75 /* spc700.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = spc700.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/higan/processor/spc700/spc700.cpp"; sourceTree = "<group>"; };
+		83D1CD521B77108E0063DA75 /* spc700.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = spc700.hpp; path = "plugins/gme/game-music-emu-0.6pre/gme/higan/processor/spc700/spc700.hpp"; sourceTree = "<group>"; };
+		83D1CD531B77108E0063DA75 /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = memory.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/higan/smp/memory.cpp"; sourceTree = "<group>"; };
+		83D1CD541B77108E0063DA75 /* smp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = smp.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/higan/smp/smp.cpp"; sourceTree = "<group>"; };
+		83D1CD551B77108E0063DA75 /* smp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = smp.hpp; path = "plugins/gme/game-music-emu-0.6pre/gme/higan/smp/smp.hpp"; sourceTree = "<group>"; };
+		83D1CD561B77108E0063DA75 /* timing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = timing.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/higan/smp/timing.cpp"; sourceTree = "<group>"; };
+		83D1CD661B7711570063DA75 /* algorithms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = algorithms.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/higan/processor/spc700/algorithms.cpp"; sourceTree = "<group>"; };
+		83D1CD671B7711570063DA75 /* disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = disassembler.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/higan/processor/spc700/disassembler.cpp"; sourceTree = "<group>"; };
+		83D1CD681B7711570063DA75 /* instructions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = instructions.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/higan/processor/spc700/instructions.cpp"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2946,6 +3138,102 @@
 		2D2A135519B647BB00AD1EB7 /* gme */ = {
 			isa = PBXGroup;
 			children = (
+				83D1CD661B7711570063DA75 /* algorithms.cpp */,
+				83D1CD671B7711570063DA75 /* disassembler.cpp */,
+				83D1CD681B7711570063DA75 /* instructions.cpp */,
+				83D1CD481B77108E0063DA75 /* dsp.cpp */,
+				83D1CD491B77108E0063DA75 /* dsp.hpp */,
+				83D1CD4A1B77108E0063DA75 /* SPC_DSP.cpp */,
+				83D1CD4B1B77108E0063DA75 /* SPC_DSP.h */,
+				83D1CD4F1B77108E0063DA75 /* memory.hpp */,
+				83D1CD501B77108E0063DA75 /* registers.hpp */,
+				83D1CD511B77108E0063DA75 /* spc700.cpp */,
+				83D1CD521B77108E0063DA75 /* spc700.hpp */,
+				83D1CD531B77108E0063DA75 /* memory.cpp */,
+				83D1CD541B77108E0063DA75 /* smp.cpp */,
+				83D1CD551B77108E0063DA75 /* smp.hpp */,
+				83D1CD561B77108E0063DA75 /* timing.cpp */,
+				83D1CCA41B7710650063DA75 /* adlib.h */,
+				83D1CCA51B7710650063DA75 /* Bml_Parser.cpp */,
+				83D1CCA61B7710650063DA75 /* Bml_Parser.h */,
+				83D1CCA71B7710650063DA75 /* C140_Emu.cpp */,
+				83D1CCA81B7710650063DA75 /* C140_Emu.h */,
+				83D1CCA91B7710650063DA75 /* c140.c */,
+				83D1CCAA1B7710650063DA75 /* c140.h */,
+				83D1CCAB1B7710650063DA75 /* Chip_Resampler.h */,
+				83D1CCAC1B7710650063DA75 /* dac_control.c */,
+				83D1CCAD1B7710650063DA75 /* dac_control.h */,
+				83D1CCAE1B7710650063DA75 /* dbopl.cpp */,
+				83D1CCAF1B7710650063DA75 /* dbopl.h */,
+				83D1CCB01B7710650063DA75 /* emuconfig.h */,
+				83D1CCB11B7710650063DA75 /* fm.c */,
+				83D1CCB21B7710650063DA75 /* fm.h */,
+				83D1CCB31B7710650063DA75 /* fm2612.c */,
+				83D1CCB51B7710650063DA75 /* gme_custom_dprintf.h */,
+				83D1CCB61B7710650063DA75 /* K051649_Emu.cpp */,
+				83D1CCB71B7710650063DA75 /* K051649_Emu.h */,
+				83D1CCB81B7710650063DA75 /* k051649.c */,
+				83D1CCB91B7710650063DA75 /* k051649.h */,
+				83D1CCBA1B7710650063DA75 /* K053260_Emu.cpp */,
+				83D1CCBB1B7710650063DA75 /* K053260_Emu.h */,
+				83D1CCBC1B7710650063DA75 /* k053260.c */,
+				83D1CCBD1B7710650063DA75 /* k053260.h */,
+				83D1CCBE1B7710650063DA75 /* K054539_Emu.cpp */,
+				83D1CCBF1B7710650063DA75 /* K054539_Emu.h */,
+				83D1CCC01B7710650063DA75 /* k054539.c */,
+				83D1CCC11B7710650063DA75 /* k054539.h */,
+				83D1CCC21B7710650063DA75 /* mamedef.h */,
+				83D1CCC31B7710650063DA75 /* mathdefs.h */,
+				83D1CCC41B7710650063DA75 /* Okim6258_Emu.cpp */,
+				83D1CCC51B7710650063DA75 /* Okim6258_Emu.h */,
+				83D1CCC61B7710650063DA75 /* okim6258.c */,
+				83D1CCC71B7710650063DA75 /* okim6258.h */,
+				83D1CCC81B7710650063DA75 /* Okim6295_Emu.cpp */,
+				83D1CCC91B7710650063DA75 /* Okim6295_Emu.h */,
+				83D1CCCA1B7710650063DA75 /* okim6295.c */,
+				83D1CCCB1B7710650063DA75 /* okim6295.h */,
+				83D1CCCC1B7710650063DA75 /* Pwm_Emu.cpp */,
+				83D1CCCD1B7710650063DA75 /* Pwm_Emu.h */,
+				83D1CCCE1B7710650063DA75 /* pwm.c */,
+				83D1CCCF1B7710650063DA75 /* pwm.h */,
+				83D1CCD01B7710650063DA75 /* qmix.c */,
+				83D1CCD11B7710650063DA75 /* qmix.h */,
+				83D1CCD21B7710650063DA75 /* Qsound_Apu.cpp */,
+				83D1CCD31B7710650063DA75 /* Qsound_Apu.h */,
+				83D1CCD41B7710650063DA75 /* Rf5C68_Emu.cpp */,
+				83D1CCD51B7710650063DA75 /* Rf5C68_Emu.h */,
+				83D1CCD61B7710650063DA75 /* rf5c68.c */,
+				83D1CCD71B7710650063DA75 /* rf5c68.h */,
+				83D1CCD81B7710650063DA75 /* Rf5C164_Emu.cpp */,
+				83D1CCD91B7710650063DA75 /* Rf5C164_Emu.h */,
+				83D1CCDA1B7710650063DA75 /* scd_pcm.c */,
+				83D1CCDB1B7710650063DA75 /* scd_pcm.h */,
+				83D1CCDC1B7710650063DA75 /* SegaPcm_Emu.cpp */,
+				83D1CCDD1B7710650063DA75 /* SegaPcm_Emu.h */,
+				83D1CCDE1B7710650063DA75 /* segapcm.c */,
+				83D1CCDF1B7710650063DA75 /* segapcm.h */,
+				83D1CCE01B7710650063DA75 /* Spc_Sfm.cpp */,
+				83D1CCE11B7710650063DA75 /* Spc_Sfm.h */,
+				83D1CCE21B7710650063DA75 /* Ym2151_Emu.cpp */,
+				83D1CCE31B7710650063DA75 /* Ym2151_Emu.h */,
+				83D1CCE41B7710650063DA75 /* ym2151.c */,
+				83D1CCE51B7710650063DA75 /* ym2151.h */,
+				83D1CCE61B7710650063DA75 /* Ym2203_Emu.cpp */,
+				83D1CCE71B7710650063DA75 /* Ym2203_Emu.h */,
+				83D1CCE81B7710650063DA75 /* Ym2608_Emu.cpp */,
+				83D1CCE91B7710650063DA75 /* Ym2608_Emu.h */,
+				83D1CCEA1B7710650063DA75 /* Ym2610b_Emu.cpp */,
+				83D1CCEB1B7710650063DA75 /* Ym2610b_Emu.h */,
+				83D1CCEC1B7710650063DA75 /* Ym2612_Emu_Gens.cpp */,
+				83D1CCED1B7710650063DA75 /* Ym2612_Emu_MAME.cpp */,
+				83D1CCEE1B7710650063DA75 /* Ym3812_Emu.cpp */,
+				83D1CCEF1B7710650063DA75 /* Ym3812_Emu.h */,
+				83D1CCF01B7710650063DA75 /* Ymf262_Emu.cpp */,
+				83D1CCF11B7710650063DA75 /* Ymf262_Emu.h */,
+				83D1CCF21B7710650063DA75 /* Ymz280b_Emu.cpp */,
+				83D1CCF31B7710650063DA75 /* Ymz280b_Emu.h */,
+				83D1CCF41B7710650063DA75 /* ymz280b.c */,
+				83D1CCF51B7710650063DA75 /* ymz280b.h */,
 				2D2A136019B6482600AD1EB7 /* Ay_Apu.cpp */,
 				2D2A136119B6482600AD1EB7 /* Ay_Apu.h */,
 				2D2A136219B6482600AD1EB7 /* Ay_Core.cpp */,
@@ -4607,7 +4895,9 @@
 				2D2A146019B6482600AD1EB7 /* Nes_Apu.h in Headers */,
 				2D2A146A19B6482600AD1EB7 /* Nes_Namco_Apu.h in Headers */,
 				2D2A14B419B6482600AD1EB7 /* ymdeltat.h in Headers */,
+				83D1CD021B7710650063DA75 /* emuconfig.h in Headers */,
 				2D2A142219B6482600AD1EB7 /* divfix.h in Headers */,
+				83D1CD411B7710650063DA75 /* Ym3812_Emu.h in Headers */,
 				2D2A144B19B6482600AD1EB7 /* Hes_Cpu.h in Headers */,
 				2D2A141419B6482600AD1EB7 /* blargg_common.h in Headers */,
 				2D2A146119B6482600AD1EB7 /* Nes_Cpu_run.h in Headers */,
@@ -4617,36 +4907,59 @@
 				2D2A148819B6482600AD1EB7 /* s_opltbl.h in Headers */,
 				2D2A144619B6482600AD1EB7 /* Hes_Apu.h in Headers */,
 				2D2A14A419B6482600AD1EB7 /* Spc_Filter.h in Headers */,
+				83D1CD581B77108E0063DA75 /* dsp.hpp in Headers */,
+				83D1CD091B7710650063DA75 /* K051649_Emu.h in Headers */,
 				2D2A149C19B6482600AD1EB7 /* Snes_Spc.h in Headers */,
 				2D2A148419B6482600AD1EB7 /* s_logtbl.h in Headers */,
+				83D1CD2B1B7710650063DA75 /* Rf5C164_Emu.h in Headers */,
 				2D2A145A19B6482600AD1EB7 /* M3u_Playlist.h in Headers */,
 				2D2A141F19B6482600AD1EB7 /* Classic_Emu.h in Headers */,
 				2D2A144919B6482600AD1EB7 /* Hes_Cpu_run.h in Headers */,
+				83D1CD1F1B7710650063DA75 /* Pwm_Emu.h in Headers */,
+				83D1CD251B7710650063DA75 /* Qsound_Apu.h in Headers */,
 				2D2A145819B6482600AD1EB7 /* Kss_Scc_Apu.h in Headers */,
 				2D2A140F19B6482600AD1EB7 /* Ay_Core.h in Headers */,
 				2D2A142619B6482600AD1EB7 /* Dual_Resampler.h in Headers */,
+				83D1CD111B7710650063DA75 /* K054539_Emu.h in Headers */,
 				2D2A14B019B6482600AD1EB7 /* ym2413.h in Headers */,
 				2D2A148219B6482600AD1EB7 /* s_deltat.h in Headers */,
 				2D2A147C19B6482600AD1EB7 /* Opl_Apu.h in Headers */,
 				2D2A145C19B6482600AD1EB7 /* Multi_Buffer.h in Headers */,
+				83D1CD171B7710650063DA75 /* Okim6258_Emu.h in Headers */,
+				83D1CD391B7710650063DA75 /* Ym2203_Emu.h in Headers */,
+				83D1CD1B1B7710650063DA75 /* Okim6295_Emu.h in Headers */,
+				83D1CCFA1B7710650063DA75 /* C140_Emu.h in Headers */,
 				2D2A141919B6482600AD1EB7 /* blargg_source.h in Headers */,
+				83D1CD5E1B77108E0063DA75 /* memory.hpp in Headers */,
 				2D2A143119B6482600AD1EB7 /* Gb_Cpu_run.h in Headers */,
+				83D1CD271B7710650063DA75 /* Rf5C68_Emu.h in Headers */,
 				2D2A149E19B6482600AD1EB7 /* Spc_Cpu.h in Headers */,
 				2D2A147319B6482600AD1EB7 /* Nsf_Core.h in Headers */,
 				2D2A143E19B6482600AD1EB7 /* Gme_Loader.h in Headers */,
 				2D2A146519B6482600AD1EB7 /* Nes_Fds_Apu.h in Headers */,
 				2D2A142119B6482600AD1EB7 /* Data_Reader.h in Headers */,
+				83D1CD471B7710650063DA75 /* ymz280b.h in Headers */,
 				2D2A149819B6482600AD1EB7 /* Sms_Apu.h in Headers */,
+				83D1CD611B77108E0063DA75 /* spc700.hpp in Headers */,
+				83D1CD191B7710650063DA75 /* okim6258.h in Headers */,
 				2D2A147A19B6482600AD1EB7 /* Nsfe_Emu.h in Headers */,
 				2D2A143319B6482600AD1EB7 /* Gb_Cpu.h in Headers */,
 				2D2A149A19B6482600AD1EB7 /* Sms_Fm_Apu.h in Headers */,
+				83D1CD2D1B7710650063DA75 /* scd_pcm.h in Headers */,
+				83D1CD041B7710650063DA75 /* fm.h in Headers */,
+				83D1CCFC1B7710650063DA75 /* c140.h in Headers */,
 				2D2A142819B6482600AD1EB7 /* Effects_Buffer.h in Headers */,
 				2D2A146E19B6482600AD1EB7 /* Nes_Vrc6_Apu.h in Headers */,
+				83D1CD371B7710650063DA75 /* ym2151.h in Headers */,
 				2D2A14A619B6482600AD1EB7 /* Track_Filter.h in Headers */,
+				83D1CD011B7710650063DA75 /* dbopl.h in Headers */,
+				83D1CCFF1B7710650063DA75 /* dac_control.h in Headers */,
 				2D2A147019B6482600AD1EB7 /* Nes_Vrc7_Apu.h in Headers */,
 				2D2A14AC19B6482600AD1EB7 /* Vgm_Emu.h in Headers */,
+				83D1CD3B1B7710650063DA75 /* Ym2608_Emu.h in Headers */,
 				2D2A141219B6482600AD1EB7 /* Ay_Emu.h in Headers */,
 				2D2A144819B6482600AD1EB7 /* Hes_Core.h in Headers */,
+				83D1CD141B7710650063DA75 /* mamedef.h in Headers */,
 				2D2A142C19B6482600AD1EB7 /* Fir_Resampler.h in Headers */,
 				2D2A145E19B6482600AD1EB7 /* Music_Emu.h in Headers */,
 				2D2A148619B6482600AD1EB7 /* s_opl.h in Headers */,
@@ -4655,38 +4968,61 @@
 				2D2A14B519B6482600AD1EB7 /* Z80_Cpu_run.h in Headers */,
 				2D2A145119B6482600AD1EB7 /* kmsnddev.h in Headers */,
 				2D2A144019B6482600AD1EB7 /* gme.h in Headers */,
+				83D1CD071B7710650063DA75 /* gme_custom_dprintf.h in Headers */,
+				83D1CD641B77108E0063DA75 /* smp.hpp in Headers */,
 				2D2A146319B6482600AD1EB7 /* Nes_Cpu.h in Headers */,
 				2D2A14AA19B6482600AD1EB7 /* Vgm_Core.h in Headers */,
+				83D1CD331B7710650063DA75 /* Spc_Sfm.h in Headers */,
 				2D2A148019B6482600AD1EB7 /* Rom_Data.h in Headers */,
 				2D2A148F19B6482600AD1EB7 /* Sap_Emu.h in Headers */,
 				2D2A149119B6482600AD1EB7 /* Sgc_Core.h in Headers */,
 				2D2A144F19B6482600AD1EB7 /* i_fmunit.h in Headers */,
 				2D2A14AE19B6482600AD1EB7 /* Ym2413_Emu.h in Headers */,
+				83D1CD311B7710650063DA75 /* segapcm.h in Headers */,
+				83D1CD131B7710650063DA75 /* k054539.h in Headers */,
+				83D1CD431B7710650063DA75 /* Ymf262_Emu.h in Headers */,
+				83D1CCF61B7710650063DA75 /* adlib.h in Headers */,
 				2D2A143A19B6482600AD1EB7 /* Gbs_Emu.h in Headers */,
 				2D2A142419B6482600AD1EB7 /* Downsampler.h in Headers */,
 				2D2A141B19B6482600AD1EB7 /* Blip_Buffer_impl2.h in Headers */,
 				2D2A142A19B6482600AD1EB7 /* emu2413.h in Headers */,
 				2D2A144E19B6482600AD1EB7 /* i_fmpac.h in Headers */,
+				83D1CD451B7710650063DA75 /* Ymz280b_Emu.h in Headers */,
 				2D2A143C19B6482600AD1EB7 /* Gme_File.h in Headers */,
+				83D1CD211B7710650063DA75 /* pwm.h in Headers */,
+				83D1CD291B7710650063DA75 /* rf5c68.h in Headers */,
+				83D1CD1D1B7710650063DA75 /* okim6295.h in Headers */,
+				83D1CD0B1B7710650063DA75 /* k051649.h in Headers */,
 				2D2A144219B6482600AD1EB7 /* Gym_Emu.h in Headers */,
 				2D2A141A19B6482600AD1EB7 /* Blip_Buffer_impl.h in Headers */,
 				2D2A14A219B6482600AD1EB7 /* Spc_Emu.h in Headers */,
 				2D2A143719B6482600AD1EB7 /* Gbs_Core.h in Headers */,
 				2D2A14A019B6482600AD1EB7 /* Spc_Dsp.h in Headers */,
 				2D2A145619B6482600AD1EB7 /* Kss_Emu.h in Headers */,
+				83D1CCF81B7710650063DA75 /* Bml_Parser.h in Headers */,
 				2D2A143019B6482600AD1EB7 /* Gb_Apu.h in Headers */,
 				2D2A149619B6482600AD1EB7 /* Sgc_Impl.h in Headers */,
 				2D2A146719B6482600AD1EB7 /* Nes_Fme7_Apu.h in Headers */,
 				2D2A148A19B6482600AD1EB7 /* Sap_Apu.h in Headers */,
 				2D2A149419B6482600AD1EB7 /* Sgc_Emu.h in Headers */,
 				2D2A148C19B6482600AD1EB7 /* Sap_Core.h in Headers */,
+				83D1CD5A1B77108E0063DA75 /* SPC_DSP.h in Headers */,
+				83D1CD3D1B7710650063DA75 /* Ym2610b_Emu.h in Headers */,
+				83D1CD231B7710650063DA75 /* qmix.h in Headers */,
+				83D1CD151B7710650063DA75 /* mathdefs.h in Headers */,
+				83D1CD0F1B7710650063DA75 /* k053260.h in Headers */,
 				2D2A141619B6482600AD1EB7 /* blargg_endian.h in Headers */,
+				83D1CCFD1B7710650063DA75 /* Chip_Resampler.h in Headers */,
+				83D1CD0D1B7710650063DA75 /* K053260_Emu.h in Headers */,
 				2D2A141519B6482600AD1EB7 /* blargg_config.h in Headers */,
+				83D1CD2F1B7710650063DA75 /* SegaPcm_Emu.h in Headers */,
 				2D2A142E19B6482600AD1EB7 /* fmopl.h in Headers */,
 				2D2A145019B6482600AD1EB7 /* i_vrc7.h in Headers */,
+				83D1CD5F1B77108E0063DA75 /* registers.hpp in Headers */,
 				2D2A144D19B6482600AD1EB7 /* Hes_Emu.h in Headers */,
 				2D2A14B219B6482600AD1EB7 /* Ym2612_Emu.h in Headers */,
 				2D2A147619B6482600AD1EB7 /* Nsf_Emu.h in Headers */,
+				83D1CD351B7710650063DA75 /* Ym2151_Emu.h in Headers */,
 				2D2A146C19B6482600AD1EB7 /* Nes_Oscs.h in Headers */,
 				2D2A146819B6482600AD1EB7 /* Nes_Mmc5_Apu.h in Headers */,
 				2D2A143519B6482600AD1EB7 /* Gb_Oscs.h in Headers */,
@@ -5998,69 +6334,111 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83D1CD361B7710650063DA75 /* ym2151.c in Sources */,
+				83D1CCF71B7710650063DA75 /* Bml_Parser.cpp in Sources */,
 				2D2A141C19B6482600AD1EB7 /* Blip_Buffer.cpp in Sources */,
 				2D2A146219B6482600AD1EB7 /* Nes_Cpu.cpp in Sources */,
+				83D1CD281B7710650063DA75 /* rf5c68.c in Sources */,
+				83D1CD0C1B7710650063DA75 /* K053260_Emu.cpp in Sources */,
 				2D2A143819B6482600AD1EB7 /* Gbs_Cpu.cpp in Sources */,
 				2D2A148519B6482600AD1EB7 /* s_opl.c in Sources */,
 				2D2A146919B6482600AD1EB7 /* Nes_Namco_Apu.cpp in Sources */,
 				2D2A148D19B6482600AD1EB7 /* Sap_Cpu.cpp in Sources */,
+				83D1CD631B77108E0063DA75 /* smp.cpp in Sources */,
 				2D2A147F19B6482600AD1EB7 /* Rom_Data.cpp in Sources */,
+				83D1CD051B7710650063DA75 /* fm2612.c in Sources */,
+				83D1CD571B77108E0063DA75 /* dsp.cpp in Sources */,
 				2D2A143619B6482600AD1EB7 /* Gbs_Core.cpp in Sources */,
 				2D2A141019B6482600AD1EB7 /* Ay_Cpu.cpp in Sources */,
+				83D1CD001B7710650063DA75 /* dbopl.cpp in Sources */,
 				2D2A143419B6482600AD1EB7 /* Gb_Oscs.cpp in Sources */,
 				2D2A144519B6482600AD1EB7 /* Hes_Apu.cpp in Sources */,
+				83D1CD0A1B7710650063DA75 /* k051649.c in Sources */,
 				2D2A141119B6482600AD1EB7 /* Ay_Emu.cpp in Sources */,
 				2D2A144719B6482600AD1EB7 /* Hes_Core.cpp in Sources */,
+				83D1CD2C1B7710650063DA75 /* scd_pcm.c in Sources */,
 				2D2A144C19B6482600AD1EB7 /* Hes_Emu.cpp in Sources */,
 				2D2A143219B6482600AD1EB7 /* Gb_Cpu.cpp in Sources */,
 				2D2A142919B6482600AD1EB7 /* emu2413.cpp in Sources */,
 				2D2A147219B6482600AD1EB7 /* Nsf_Core.cpp in Sources */,
+				83D1CD181B7710650063DA75 /* okim6258.c in Sources */,
 				2D2A140C19B6482600AD1EB7 /* Ay_Apu.cpp in Sources */,
+				83D1CD691B7711570063DA75 /* algorithms.cpp in Sources */,
 				2D2A142019B6482600AD1EB7 /* Data_Reader.cpp in Sources */,
 				2D2A147B19B6482600AD1EB7 /* Opl_Apu.cpp in Sources */,
 				2D2A146F19B6482600AD1EB7 /* Nes_Vrc7_Apu.cpp in Sources */,
+				83D1CCFE1B7710650063DA75 /* dac_control.c in Sources */,
+				83D1CD1E1B7710650063DA75 /* Pwm_Emu.cpp in Sources */,
+				83D1CD2E1B7710650063DA75 /* SegaPcm_Emu.cpp in Sources */,
+				83D1CD031B7710650063DA75 /* fm.c in Sources */,
+				83D1CD381B7710650063DA75 /* Ym2203_Emu.cpp in Sources */,
 				2D2A142719B6482600AD1EB7 /* Effects_Buffer.cpp in Sources */,
+				83D1CD1A1B7710650063DA75 /* Okim6295_Emu.cpp in Sources */,
 				2D2A142B19B6482600AD1EB7 /* Fir_Resampler.cpp in Sources */,
 				2D2A148719B6482600AD1EB7 /* s_opltbl.c in Sources */,
+				83D1CD3E1B7710650063DA75 /* Ym2612_Emu_Gens.cpp in Sources */,
 				2D2A145B19B6482600AD1EB7 /* Multi_Buffer.cpp in Sources */,
 				2D2A145519B6482600AD1EB7 /* Kss_Emu.cpp in Sources */,
 				2D2A142D19B6482600AD1EB7 /* fmopl.cpp in Sources */,
 				2D2A144319B6482600AD1EB7 /* Hes_Apu_Adpcm.cpp in Sources */,
 				2D2A14AB19B6482600AD1EB7 /* Vgm_Emu.cpp in Sources */,
 				2D2A148319B6482600AD1EB7 /* s_logtbl.c in Sources */,
+				83D1CD441B7710650063DA75 /* Ymz280b_Emu.cpp in Sources */,
 				2D2A143B19B6482600AD1EB7 /* Gme_File.cpp in Sources */,
 				2D2A145919B6482600AD1EB7 /* M3u_Playlist.cpp in Sources */,
 				2D2A143F19B6482600AD1EB7 /* gme.cpp in Sources */,
 				2D2A14B619B6482600AD1EB7 /* Z80_Cpu.cpp in Sources */,
+				83D1CCFB1B7710650063DA75 /* c140.c in Sources */,
 				2D2A149219B6482600AD1EB7 /* Sgc_Cpu.cpp in Sources */,
+				83D1CD241B7710650063DA75 /* Qsound_Apu.cpp in Sources */,
 				2D2A149519B6482600AD1EB7 /* Sgc_Impl.cpp in Sources */,
 				2D2A147419B6482600AD1EB7 /* Nsf_Cpu.cpp in Sources */,
 				2D2A142F19B6482600AD1EB7 /* Gb_Apu.cpp in Sources */,
 				2D2A141719B6482600AD1EB7 /* blargg_errors.cpp in Sources */,
 				2D2A147D19B6482600AD1EB7 /* Resampler.cpp in Sources */,
+				83D1CD591B77108E0063DA75 /* SPC_DSP.cpp in Sources */,
 				2D2A149B19B6482600AD1EB7 /* Snes_Spc.cpp in Sources */,
 				2D2A147719B6482600AD1EB7 /* Nsf_Impl.cpp in Sources */,
+				83D1CD261B7710650063DA75 /* Rf5C68_Emu.cpp in Sources */,
 				2D2A141E19B6482600AD1EB7 /* Classic_Emu.cpp in Sources */,
 				2D2A145419B6482600AD1EB7 /* Kss_Cpu.cpp in Sources */,
 				2D2A148919B6482600AD1EB7 /* Sap_Apu.cpp in Sources */,
+				83D1CD6A1B7711570063DA75 /* disassembler.cpp in Sources */,
 				2D2A145719B6482600AD1EB7 /* Kss_Scc_Apu.cpp in Sources */,
 				2D2A145219B6482600AD1EB7 /* Kss_Core.cpp in Sources */,
+				83D1CD1C1B7710650063DA75 /* okim6295.c in Sources */,
 				2D2A144A19B6482600AD1EB7 /* Hes_Cpu.cpp in Sources */,
 				2D2A14A719B6482600AD1EB7 /* Upsampler.cpp in Sources */,
+				83D1CD461B7710650063DA75 /* ymz280b.c in Sources */,
 				2D2A146419B6482600AD1EB7 /* Nes_Fds_Apu.cpp in Sources */,
+				83D1CD3F1B7710650063DA75 /* Ym2612_Emu_MAME.cpp in Sources */,
 				2D2A143919B6482600AD1EB7 /* Gbs_Emu.cpp in Sources */,
+				83D1CD651B77108E0063DA75 /* timing.cpp in Sources */,
 				2D2A141319B6482600AD1EB7 /* blargg_common.cpp in Sources */,
 				2D2A146B19B6482600AD1EB7 /* Nes_Oscs.cpp in Sources */,
+				83D1CD201B7710650063DA75 /* pwm.c in Sources */,
 				2D2A149919B6482600AD1EB7 /* Sms_Fm_Apu.cpp in Sources */,
+				83D1CD321B7710650063DA75 /* Spc_Sfm.cpp in Sources */,
+				83D1CD121B7710650063DA75 /* k054539.c in Sources */,
+				83D1CD081B7710650063DA75 /* K051649_Emu.cpp in Sources */,
 				2D2A149719B6482600AD1EB7 /* Sms_Apu.cpp in Sources */,
 				2D2A14B119B6482600AD1EB7 /* Ym2612_Emu.cpp in Sources */,
+				83D1CD601B77108E0063DA75 /* spc700.cpp in Sources */,
 				2D2A135F19B6480E00AD1EB7 /* cgme.c in Sources */,
+				83D1CD0E1B7710650063DA75 /* k053260.c in Sources */,
 				2D2A14AF19B6482600AD1EB7 /* ym2413.c in Sources */,
+				83D1CD3C1B7710650063DA75 /* Ym2610b_Emu.cpp in Sources */,
+				83D1CD301B7710650063DA75 /* segapcm.c in Sources */,
+				83D1CD2A1B7710650063DA75 /* Rf5C164_Emu.cpp in Sources */,
+				83D1CD161B7710650063DA75 /* Okim6258_Emu.cpp in Sources */,
+				83D1CD341B7710650063DA75 /* Ym2151_Emu.cpp in Sources */,
 				2D2A147519B6482600AD1EB7 /* Nsf_Emu.cpp in Sources */,
+				83D1CD421B7710650063DA75 /* Ymf262_Emu.cpp in Sources */,
 				2D2A14A319B6482600AD1EB7 /* SPC_Filter.cpp in Sources */,
 				2D2A147919B6482600AD1EB7 /* Nsfe_Emu.cpp in Sources */,
 				2D2A148E19B6482600AD1EB7 /* Sap_Emu.cpp in Sources */,
 				2D2A14A119B6482600AD1EB7 /* Spc_Emu.cpp in Sources */,
+				83D1CD621B77108E0063DA75 /* memory.cpp in Sources */,
 				2D2A144119B6482600AD1EB7 /* Gym_Emu.cpp in Sources */,
 				2D2A145F19B6482600AD1EB7 /* Nes_Apu.cpp in Sources */,
 				2D2A142319B6482600AD1EB7 /* Downsampler.cpp in Sources */,
@@ -6068,17 +6446,23 @@
 				2D2A149019B6482600AD1EB7 /* Sgc_Core.cpp in Sources */,
 				2D2A149D19B6482600AD1EB7 /* Spc_Cpu.cpp in Sources */,
 				2D2A14B319B6482600AD1EB7 /* ymdeltat.cpp in Sources */,
+				83D1CD221B7710650063DA75 /* qmix.c in Sources */,
 				2D2A148B19B6482600AD1EB7 /* Sap_Core.cpp in Sources */,
 				2D2A140E19B6482600AD1EB7 /* Ay_Core.cpp in Sources */,
 				2D2A146619B6482600AD1EB7 /* Nes_Fme7_Apu.cpp in Sources */,
 				2D2A143D19B6482600AD1EB7 /* Gme_Loader.cpp in Sources */,
+				83D1CD401B7710650063DA75 /* Ym3812_Emu.cpp in Sources */,
 				2D2A149319B6482600AD1EB7 /* Sgc_Emu.cpp in Sources */,
 				2D2A142519B6482600AD1EB7 /* Dual_Resampler.cpp in Sources */,
 				2D2A145D19B6482600AD1EB7 /* Music_Emu.cpp in Sources */,
+				83D1CD101B7710650063DA75 /* K054539_Emu.cpp in Sources */,
 				2D2A146D19B6482600AD1EB7 /* Nes_Vrc6_Apu.cpp in Sources */,
+				83D1CCF91B7710650063DA75 /* C140_Emu.cpp in Sources */,
 				2D2A149F19B6482600AD1EB7 /* Spc_Dsp.cpp in Sources */,
 				2D2A14A519B6482600AD1EB7 /* Track_Filter.cpp in Sources */,
+				83D1CD3A1B7710650063DA75 /* Ym2608_Emu.cpp in Sources */,
 				2D2A14A919B6482600AD1EB7 /* Vgm_Core.cpp in Sources */,
+				83D1CD6B1B7711570063DA75 /* instructions.cpp in Sources */,
 				2D2A14AD19B6482600AD1EB7 /* Ym2413_Emu.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

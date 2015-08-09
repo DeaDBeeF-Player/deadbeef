@@ -1,6 +1,6 @@
 // NES 2A03 APU sound chip emulator
 
-// Nes_Snd_Emu 0.2.0-pre
+// Nes_Snd_Emu $vers
 #ifndef NES_APU_H
 #define NES_APU_H
 
@@ -110,6 +110,8 @@ public:
 
 	void enable_nonlinear_( double sq, double tnd );
 	static float tnd_total_() { return 196.015f; }
+
+	void enable_w4011_( bool enable = true ) { enable_w4011 = enable; }
 	
 private:
 	friend struct Nes_Dmc;
@@ -136,6 +138,7 @@ private:
 	int osc_enables;
 	int frame_mode;
 	bool irq_flag;
+	bool enable_w4011;
 	Nes_Square::Synth square_synth; // shared by squares
 	
 	void irq_changed();

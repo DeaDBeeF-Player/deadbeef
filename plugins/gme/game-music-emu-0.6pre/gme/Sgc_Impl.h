@@ -1,6 +1,6 @@
 // Sega/Game Gear/Coleco SGC music file emulator implementation internals
 
-// Game_Music_Emu 0.6-pre
+// Game_Music_Emu $vers
 #ifndef SGC_IMPL_H
 #define SGC_IMPL_H
 
@@ -45,6 +45,8 @@ public:
 	
 	// Header for currently loaded file
 	header_t const& header() const                  { return header_; }
+
+	Rom_Data const& rom_() const                    { return rom; }
 	
 	int clock_rate() const                          { return header_.rate ? 3546893 : 3579545; }
 	

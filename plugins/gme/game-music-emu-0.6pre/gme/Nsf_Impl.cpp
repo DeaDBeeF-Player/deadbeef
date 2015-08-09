@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
+// Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Nsf_Impl.h"
 
@@ -32,7 +32,7 @@ int Nsf_Impl::pcm_read( void* self, int addr )
 	return STATIC_CAST(Nsf_Impl*,self)->read_code( addr );
 }
 
-Nsf_Impl::Nsf_Impl() : rom( bank_size )
+Nsf_Impl::Nsf_Impl() : rom( bank_size ), enable_w4011( true )
 {
 	apu.dmc_reader( pcm_read, this );
 	assert( offsetof (header_t,unused [4]) == header_t::size );
@@ -206,6 +206,7 @@ blargg_err_t Nsf_Impl::start_track( int track )
 	#endif
 	
 	apu.reset( header().pal_only(), (speed_flags & 0x20) ? 0x3F : 0 );
+	apu.enable_w4011_( enable_w4011 );
 	apu.write_register( 0, 0x4015, 0x0F );
 	apu.write_register( 0, 0x4017, (speed_flags & 0x10) ? 0x80 : 0 );
 	
