@@ -18,12 +18,19 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/blargg_common.cpp\
 	$(gmeversion)/gme/blargg_errors.cpp\
 	$(gmeversion)/gme/Blip_Buffer.cpp\
+	$(gmeversion)/gme/Bml_Parser.cpp\
+	$(gmeversion)/gme/C140_Emu.cpp\
+	$(gmeversion)/gme/c140.c\
 	$(gmeversion)/gme/Classic_Emu.cpp\
+	$(gmeversion)/gme/dac_control.c\
+	$(gmeversion)/gme/dbopl.cpp\
 	$(gmeversion)/gme/Downsampler.cpp\
 	$(gmeversion)/gme/Dual_Resampler.cpp\
 	$(gmeversion)/gme/Effects_Buffer.cpp\
 	$(gmeversion)/gme/emu2413.cpp\
 	$(gmeversion)/gme/Fir_Resampler.cpp\
+	$(gmeversion)/gme/fm.c\
+	$(gmeversion)/gme/fm2612.c\
 	$(gmeversion)/gme/fmopl.cpp\
 	$(gmeversion)/gme/Gb_Apu.cpp\
 	$(gmeversion)/gme/Gb_Cpu.cpp\
@@ -40,6 +47,12 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Hes_Core.cpp\
 	$(gmeversion)/gme/Hes_Cpu.cpp\
 	$(gmeversion)/gme/Hes_Emu.cpp\
+	$(gmeversion)/gme/K051649_Emu.cpp\
+	$(gmeversion)/gme/k051649.c\
+	$(gmeversion)/gme/K053260_Emu.cpp\
+	$(gmeversion)/gme/k053260.c\
+	$(gmeversion)/gme/K054539_Emu.cpp\
+	$(gmeversion)/gme/k054539.c\
 	$(gmeversion)/gme/Kss_Core.cpp\
 	$(gmeversion)/gme/Kss_Cpu.cpp\
 	$(gmeversion)/gme/Kss_Emu.cpp\
@@ -60,13 +73,27 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Nsfe_Emu.cpp\
 	$(gmeversion)/gme/Nsf_Emu.cpp\
 	$(gmeversion)/gme/Nsf_Impl.cpp\
+	$(gmeversion)/gme/Okim6258_Emu.cpp\
+	$(gmeversion)/gme/okim6258.c\
+	$(gmeversion)/gme/Okim6295_Emu.cpp\
+	$(gmeversion)/gme/okim6295.c\
 	$(gmeversion)/gme/Opl_Apu.cpp\
+	$(gmeversion)/gme/Pwm_Emu.cpp\
+	$(gmeversion)/gme/pwm.c\
+	$(gmeversion)/gme/qmix.c\
+	$(gmeversion)/gme/Qsound_Apu.cpp\
 	$(gmeversion)/gme/Resampler.cpp\
+	$(gmeversion)/gme/Rf5C68_Emu.cpp\
+	$(gmeversion)/gme/rf5c68.c\
+	$(gmeversion)/gme/Rf5C164_Emu.cpp\
 	$(gmeversion)/gme/Rom_Data.cpp\
 	$(gmeversion)/gme/Sap_Apu.cpp\
 	$(gmeversion)/gme/Sap_Core.cpp\
 	$(gmeversion)/gme/Sap_Cpu.cpp\
 	$(gmeversion)/gme/Sap_Emu.cpp\
+	$(gmeversion)/gme/scd_pcm.c\
+	$(gmeversion)/gme/SegaPcm_Emu.cpp\
+	$(gmeversion)/gme/segapcm.c\
 	$(gmeversion)/gme/Sgc_Core.cpp\
 	$(gmeversion)/gme/Sgc_Cpu.cpp\
 	$(gmeversion)/gme/Sgc_Emu.cpp\
@@ -78,12 +105,22 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Spc_Dsp.cpp\
 	$(gmeversion)/gme/Spc_Emu.cpp\
 	$(gmeversion)/gme/SPC_Filter.cpp\
+	$(gmeversion)/gme/Spc_Sfm.cpp\
 	$(gmeversion)/gme/Track_Filter.cpp\
 	$(gmeversion)/gme/Upsampler.cpp\
 	$(gmeversion)/gme/Vgm_Core.cpp\
 	$(gmeversion)/gme/Vgm_Emu.cpp\
+	$(gmeversion)/gme/Ym2151_Emu.cpp\
+	$(gmeversion)/gme/ym2151.c\
+	$(gmeversion)/gme/Ym2203_Emu.cpp\
 	$(gmeversion)/gme/Ym2413_Emu.cpp\
+	$(gmeversion)/gme/Ym2608_Emu.cpp\
+	$(gmeversion)/gme/Ym2610b_Emu.cpp\
 	$(gmeversion)/gme/Ym2612_Emu.cpp\
+	$(gmeversion)/gme/Ym3812_Emu.cpp\
+	$(gmeversion)/gme/Ymf262_Emu.cpp\
+	$(gmeversion)/gme/Ymz280b_Emu.cpp\
+	$(gmeversion)/gme/ymz280b.c\
 	$(gmeversion)/gme/ymdeltat.cpp\
 	$(gmeversion)/gme/Z80_Cpu.cpp\
 	$(gmeversion)/gme/Data_Reader.cpp\
@@ -92,6 +129,13 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/s_opl.c\
 	$(gmeversion)/gme/s_opltbl.c\
 	$(gmeversion)/gme/ym2413.c\
+	$(gmeversion)/gme/higan/dsp/dsp.cpp\
+	$(gmeversion)/gme/higan/dsp/SPC_DSP.cpp\
+	$(gmeversion)/gme/higan/processor/spc700/algorithms.cpp\
+	$(gmeversion)/gme/higan/processor/spc700/instructions.cpp\
+	$(gmeversion)/gme/higan/processor/spc700/spc700.cpp\
+	$(gmeversion)/gme/higan/smp/smp.cpp\
+	$(gmeversion)/gme/adlib.h\
 	$(gmeversion)/gme/Ay_Apu.h\
 	$(gmeversion)/gme/Ay_Core.h\
 	$(gmeversion)/gme/Ay_Emu.h\
@@ -103,14 +147,22 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Blip_Buffer.h\
 	$(gmeversion)/gme/Blip_Buffer_impl2.h\
 	$(gmeversion)/gme/Blip_Buffer_impl.h\
+	$(gmeversion)/gme/Bml_Parser.h\
+	$(gmeversion)/gme/C140_Emu.h\
+	$(gmeversion)/gme/c140.h\
+	$(gmeversion)/gme/Chip_Resampler.h\
 	$(gmeversion)/gme/Classic_Emu.h\
+	$(gmeversion)/gme/dac_control.h\
+	$(gmeversion)/gme/dbopl.h\
 	$(gmeversion)/gme/divfix.h\
 	$(gmeversion)/gme/Data_Reader.h\
 	$(gmeversion)/gme/Downsampler.h\
 	$(gmeversion)/gme/Dual_Resampler.h\
 	$(gmeversion)/gme/Effects_Buffer.h\
 	$(gmeversion)/gme/emu2413.h\
+	$(gmeversion)/gme/emuconfig.h\
 	$(gmeversion)/gme/Fir_Resampler.h\
+	$(gmeversion)/gme/fm.h\
 	$(gmeversion)/gme/fmopl.h\
 	$(gmeversion)/gme/Gb_Apu.h\
 	$(gmeversion)/gme/Gb_Cpu.h\
@@ -131,11 +183,19 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/i_fmpac.h\
 	$(gmeversion)/gme/i_fmunit.h\
 	$(gmeversion)/gme/i_vrc7.h\
+	$(gmeversion)/gme/K051649_Emu.h\
+	$(gmeversion)/gme/k051649.h\
+	$(gmeversion)/gme/K053260_Emu.h\
+	$(gmeversion)/gme/k053260.h\
+	$(gmeversion)/gme/K054539_Emu.h\
+	$(gmeversion)/gme/k054539.h\
 	$(gmeversion)/gme/kmsnddev.h\
 	$(gmeversion)/gme/Kss_Core.h\
 	$(gmeversion)/gme/Kss_Emu.h\
 	$(gmeversion)/gme/Kss_Scc_Apu.h\
 	$(gmeversion)/gme/M3u_Playlist.h\
+	$(gmeversion)/gme/mamedef.h\
+	$(gmeversion)/gme/mathdefs.h\
 	$(gmeversion)/gme/Multi_Buffer.h\
 	$(gmeversion)/gme/Music_Emu.h\
 	$(gmeversion)/gme/Nes_Apu.h\
@@ -153,13 +213,27 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Nsfe_Emu.h\
 	$(gmeversion)/gme/Nsf_Emu.h\
 	$(gmeversion)/gme/Nsf_Impl.h\
+	$(gmeversion)/gme/Okim6258_Emu.h\
+	$(gmeversion)/gme/okim6258.h\
+	$(gmeversion)/gme/Okim6295_Emu.h\
+	$(gmeversion)/gme/okim6295.h\
 	$(gmeversion)/gme/Opl_Apu.h\
+	$(gmeversion)/gme/Pwm_Emu.h\
+	$(gmeversion)/gme/pwm.h\
+	$(gmeversion)/gme/qmix.h\
+	$(gmeversion)/gme/Qsound_Apu.h\
 	$(gmeversion)/gme/Resampler.h\
+	$(gmeversion)/gme/Rf5C68_Emu.h\
+	$(gmeversion)/gme/rf5c68.h\
+	$(gmeversion)/gme/Rf5C164_Emu.h\
 	$(gmeversion)/gme/Rom_Data.h\
 	$(gmeversion)/gme/Sap_Apu.h\
 	$(gmeversion)/gme/Sap_Core.h\
 	$(gmeversion)/gme/Sap_Emu.h\
+	$(gmeversion)/gme/scd_pcm.h\
 	$(gmeversion)/gme/s_deltat.h\
+	$(gmeversion)/gme/SegaPcm_Emu.h\
+	$(gmeversion)/gme/segapcm.h\
 	$(gmeversion)/gme/Sgc_Core.h\
 	$(gmeversion)/gme/Sgc_Emu.h\
 	$(gmeversion)/gme/Sgc_Impl.h\
@@ -173,16 +247,32 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Spc_Dsp.h\
 	$(gmeversion)/gme/Spc_Emu.h\
 	$(gmeversion)/gme/Spc_Filter.h\
+	$(gmeversion)/gme/Spc_Sfm.h\
 	$(gmeversion)/gme/Track_Filter.h\
 	$(gmeversion)/gme/Upsampler.h\
 	$(gmeversion)/gme/Vgm_Core.h\
 	$(gmeversion)/gme/Vgm_Emu.h\
+	$(gmeversion)/gme/Ym2151_Emu.h\
+	$(gmeversion)/gme/ym2151.h\
+	$(gmeversion)/gme/Ym2203_Emu.h\
 	$(gmeversion)/gme/Ym2413_Emu.h\
 	$(gmeversion)/gme/ym2413.h\
+	$(gmeversion)/gme/Ym2608_Emu.h\
+	$(gmeversion)/gme/Ym2610b_Emu.h\
 	$(gmeversion)/gme/Ym2612_Emu.h\
+	$(gmeversion)/gme/Ym3812_Emu.h\
 	$(gmeversion)/gme/ymdeltat.h\
+	$(gmeversion)/gme/Ymf262_Emu.h\
+	$(gmeversion)/gme/Ymz280b_Emu.h\
+	$(gmeversion)/gme/ymz280b.h\
 	$(gmeversion)/gme/Z80_Cpu.h\
-	$(gmeversion)/gme/Z80_Cpu_run.h
+	$(gmeversion)/gme/Z80_Cpu_run.h\
+	$(gmeversion)/gme/higan/dsp/dsp.hpp\
+	$(gmeversion)/gme/higan/dsp/SPC_DSP.h\
+	$(gmeversion)/gme/higan/processor/spc700/memory.hpp\
+	$(gmeversion)/gme/higan/processor/spc700/registers.hpp\
+	$(gmeversion)/gme/higan/processor/spc700/spc700.hpp\
+	$(gmeversion)/gme/higan/smp/smp.hpp
 
 gme_la_LDFLAGS = -module -avoid-version $(NOCPPLIB)
 gme_la_LIBADD = $(ZLIB_LIBS)
