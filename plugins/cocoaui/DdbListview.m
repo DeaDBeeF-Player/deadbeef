@@ -1075,10 +1075,10 @@ int grouptitleheight = 22;
                     [_delegate selectRow:it withState:NO];
                     [self drawRow:idx];
                     [_delegate selectionChanged:it];
-                    DdbListviewRow_t next = [_delegate nextRow:it];
-                    [_delegate unrefRow:it];
-                    it = next;
                 }
+                DdbListviewRow_t next = [_delegate nextRow:it];
+                [_delegate unrefRow:it];
+                it = next;
                 idx++;
             }
         }
