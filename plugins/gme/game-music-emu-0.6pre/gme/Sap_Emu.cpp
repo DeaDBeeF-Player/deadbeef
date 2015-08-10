@@ -237,7 +237,7 @@ static blargg_err_t parse_info( byte const in [], int size, Sap_Emu::info_t* out
 	return blargg_ok;
 }
 
-static void copy_sap_fields( Sap_Emu::info_t const& in, track_info_t* out )
+static void copy_sap_fields( Sap_Emu::info_t const& in, track_info_t* out, int index )
 {
 	Gme_File::copy_field_( out->game,      in.name );
 	Gme_File::copy_field_( out->author,    in.author );
@@ -259,7 +259,7 @@ static void hash_sap_file( Sap_Emu::info_t const& i, byte const* data, int data_
 
 blargg_err_t Sap_Emu::track_info_( track_info_t* out, int track ) const
 {
-	copy_sap_fields( info_, out );
+	copy_sap_fields( info_, out, track );
 	
 	if ( track < max_tracks )
 	{
@@ -269,13 +269,13 @@ blargg_err_t Sap_Emu::track_info_( track_info_t* out, int track ) const
 			if ( time > 0 )
 			{
 				out->loop_length = 0;
+				out->length = 0;
 			}
 			else
 			{
-				time = -time;
-				out->loop_length = time;
+				out->loop_length = -time;
+				out->length = 0;
 			}
-			out->length = time;
 		}
 	}
 	return blargg_ok;
@@ -296,23 +296,23 @@ struct Sap_File : Gme_Info_
 	
 	blargg_err_t track_info_( track_info_t* out, int track ) const
 	{
-		copy_sap_fields( info, out );
-
-		if (track < Sap_Emu::max_tracks)
+		copy_sap_fields( info, out, track );
+		if ( track < info.track_count )
 		{
-			int time = info.track_times[track];
-			if (time)
+			int time = info.track_times [track];
+			if ( time )
 			{
-				if (time > 0)
+				if ( time > 0 )
 				{
 					out->loop_length = 0;
+					out->length = time;
 				}
 				else
 				{
 					time = -time;
 					out->loop_length = time;
+					out->length = 0;
 				}
-				out->length = time;
 			}
 		}
 
