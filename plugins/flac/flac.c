@@ -586,6 +586,8 @@ static const char *metainfo[] = {
     "TOTALTRACKS", "numtracks",
     "TRACKTOTAL", "numtracks",
     "ALBUM ARTIST", "band",
+    "ORIGINALDATE","original_release_time",
+    "ORIGINALYEAR","original_release_year",
     NULL
 };
 

@@ -675,6 +675,32 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                             } else {
                                 SKIP_BYTES(fd, length);
                             }
+                        } else if (!strcmp("WM/OriginalReleaseYear", utf8buf)) {
+                            if (type == 0) {
+                                unsigned char *s = id3buf;
+                                asf_utf16LEdecode(fd, length, &id3buf, &id3buf_remaining);
+                                deadbeef->pl_append_meta (it, "original_release_year", s);
+                            } else if ((type >=2) && (type <= 5)) {
+                                int year = asf_intdecode(fd, type, length);
+                                char n[100];
+                                snprintf (n, sizeof (n), "%d", year);
+                                deadbeef->pl_append_meta (it, "original_release_year", n);
+                            } else {
+                                SKIP_BYTES(fd, length);
+                            }
+                        } else if (!strcmp("WM/OriginalReleaseTime", utf8buf)) {
+                            if (type == 0) {
+                                unsigned char *s = id3buf;
+                                asf_utf16LEdecode(fd, length, &id3buf, &id3buf_remaining);
+                                deadbeef->pl_append_meta (it, "original_release_time", s);
+                            } else if ((type >=2) && (type <= 5)) {
+                                int date = asf_intdecode(fd, type, length);
+                                char n[100];
+                                snprintf (n, sizeof (n), "%d", date);
+                                deadbeef->pl_append_meta (it, "original_release_time", n);
+                            } else {
+                                SKIP_BYTES(fd, length);
+                            }
                         } else if (!strncmp("replaygain_", utf8buf, 11)) {
                             char *s = utf8buf;
                             char *value = id3buf;

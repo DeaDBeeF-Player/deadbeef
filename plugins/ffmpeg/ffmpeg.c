@@ -530,6 +530,10 @@ static const char *map[] = {
     "copyright", "copyright",
     "tracktotal", "numtracks",
     "publisher", "publisher",
+    "originaldate","original_release_time",
+    "originalyear","original_release_year",
+    "WM/OriginalReleaseTime","original_release_time",
+    "WM/OriginalReleaseYear","original_release_year",
     NULL
 };
 
