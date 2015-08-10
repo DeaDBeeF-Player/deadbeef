@@ -85,6 +85,11 @@ cp ./icons/32x32/deadbeef.png $OUTDIR/
 # converter presets
 cp -r plugins/converter/convpresets $OUTDIR/plugins/
 
+# sc68data
+cp -r plugins/sc68/.libs/in_sc68.so $OUTDIR/plugins/
+mkdir -p  $OUTDIR/plugins/data68/Replay
+cp -r plugins/sc68/file68/data68/Replay/*.bin $OUTDIR/plugins/data68/Replay/
+
 # translations
 mkdir -p $OUTDIR/locale
 for i in po/*.gmo ; do
