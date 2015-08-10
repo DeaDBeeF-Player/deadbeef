@@ -461,7 +461,7 @@ plt_get_title_wrapper (int plt) {
     if (need_arrows) {
         hscroll -= arrow_widget_width;
     }
-    if (x < hscroll) {
+    if (need_arrows && (x < arrow_widget_width || x >= [self frame].size.width - arrow_widget_width)) {
         return -1;
     }
     int idx;
