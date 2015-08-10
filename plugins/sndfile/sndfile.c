@@ -178,10 +178,10 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
     _info->plugin = &plugin;
-    info->sf_format = inf.format&0x000f;
+    info->sf_format = inf.format&SF_FORMAT_SUBMASK;
     info->sf_need_endswap = sf_command (info->ctx, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0);
 
-    switch (inf.format&0x000f) {
+    switch (inf.format&SF_FORMAT_SUBMASK) {
     case SF_FORMAT_PCM_S8:
     case SF_FORMAT_PCM_U8:
         _info->fmt.bps = 8;
@@ -200,7 +200,7 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     default:
         info->read_as_short = 1;
         _info->fmt.bps = 16;
-        trace ("[sndfile] unidentified input format: 0x%X\n", inf.format&0x000f);
+        trace ("[sndfile] unidentified input format: 0x%X\n", inf.format&SF_FORMAT_SUBMASK);
         break;
     }
 
@@ -385,7 +385,13 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
 
     int bps = -1;
-    switch (inf.format&0x000f) {
+    switch (inf.format&SF_FORMAT_SUBMASK) {
+    case SF_FORMAT_IMA_ADPCM:
+    case SF_FORMAT_MS_ADPCM:
+        bps = 4;
+        break;
+    case SF_FORMAT_ALAW:
+    case SF_FORMAT_ULAW:
     case SF_FORMAT_PCM_S8:
     case SF_FORMAT_PCM_U8:
         bps = 8;
@@ -483,8 +489,8 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         "VORBIS",
     };
 
-    if (inf.format&0x000f <= SF_FORMAT_VORBIS) {
-        deadbeef->pl_add_meta (it, ":SF_FORMAT", subformats[inf.format&0x000f]);
+    if (inf.format&SF_FORMAT_SUBMASK <= SF_FORMAT_VORBIS) {
+        deadbeef->pl_add_meta (it, ":SF_FORMAT", subformats[inf.format&SF_FORMAT_SUBMASK]);
     }
 
     DB_playItem_t *cue_after = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
