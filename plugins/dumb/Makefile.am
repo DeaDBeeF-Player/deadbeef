@@ -5,7 +5,7 @@ EXTRA_DIST = $(dumbpath)/readme.txt $(dumbpath)/ChangeLog $(dumbpath)/licence.tx
 
 pkglib_LTLIBRARIES = ddb_dumb.la
 
-AM_CFLAGS = $(CFLAGS) -I$(dumbpath)/include -std=c99
+AM_CFLAGS = $(CFLAGS) -I$(dumbpath)/include -std=gnu99 -msse2
 ddb_dumb_la_LDFLAGS = -module -avoid-version -lm
 
 ddb_dumb_la_SOURCES =\
