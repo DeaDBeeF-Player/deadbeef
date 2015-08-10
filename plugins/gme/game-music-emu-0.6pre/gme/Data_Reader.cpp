@@ -161,7 +161,7 @@ Remaining_Reader::Remaining_Reader( void const* h, int size, Data_Reader* r ) :
 
 blargg_err_t Remaining_Reader::read_v( void* out, long count )
 {
-	long first = min( count, header_remain );
+	int64_t first = min( (int64_t)count, (int64_t)header_remain );
 	if ( first )
 	{
 		memcpy( out, header, first );
