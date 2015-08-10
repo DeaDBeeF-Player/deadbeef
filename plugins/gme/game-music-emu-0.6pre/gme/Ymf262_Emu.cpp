@@ -1,5 +1,9 @@
 // Game_Music_Emu $vers. http://www.slack.net/~ant/
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "Ymf262_Emu.h"
 
 #include <math.h>
