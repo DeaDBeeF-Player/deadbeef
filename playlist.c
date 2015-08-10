@@ -3100,6 +3100,15 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             else if (*fmt == 'y') {
                 meta = pl_find_meta_raw (it, "year");
             }
+            else if (*fmt == 'Y') {
+                meta = pl_find_meta_raw (it, "original_release_time");
+                if (!meta) {
+                    meta = pl_find_meta_raw (it, "original_release_year");
+                    if (!meta) {
+                        meta = pl_find_meta_raw (it, "year");
+                    }
+                }
+            }
             else if (*fmt == 'g') {
                 meta = pl_find_meta_raw (it, "genre");
             }
