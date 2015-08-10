@@ -457,6 +457,6 @@ blargg_err_t Spc_Emu::play_( int count, sample_t out [] )
 
 blargg_err_t Spc_Emu::hash_( Hash_Function& out ) const
 {
-    hash_spc_file( header(), file_begin() + header_t::size, blargg_min( (size_t) ( 0x10200 - header_t::size ), (size_t) ( file_end() - file_begin() - header_t::size ) ), out );
+    hash_spc_file( header(), file_begin() + header_t::size, blargg_min( (int) ( 0x10200 - header_t::size ), (int) ( file_end() - file_begin() - header_t::size ) ), out );
 	return blargg_ok;
 }
