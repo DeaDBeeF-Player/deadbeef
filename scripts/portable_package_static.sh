@@ -11,7 +11,7 @@ elif [[ "$ARCH" == "x86_64" ]]; then
     echo arch: $ARCH
 else
     echo unknown arch $ARCH
-    exit -1
+    exit 1
 fi
 
 # main distro
@@ -82,5 +82,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/in_sc68.so\
     $PLUGDIR/data68\
     $PIXMAPDIR\
-    $SRCDIR/locale
+    $SRCDIR/locale\
+    || exit 1
+
 cd ../..

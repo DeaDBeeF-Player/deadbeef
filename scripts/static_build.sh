@@ -25,11 +25,11 @@ elif [[ "$ARCH" == "x86_64" ]]; then
     export GTK_ROOT_212="$ORIGIN/$STATIC_DEPS/lib-x86-64/gtk-2.12.12";
 else
     echo unknown arch $ARCH
-    exit -1
+    exit 1
 fi
 
 cd tools/apbuild
-./apinit || exit -1
+./apinit || exit 1
 cd ../../
 
 export APBUILD_STATIC_LIBGCC=1
@@ -38,16 +38,16 @@ export CC=$AP/apgcc
 export CXX=$AP/apgcc
 export OBJC=$AP/apgcc
 
-./autogen.sh || exit -1
+./autogen.sh || exit 1
 
-./configure CFLAGS="$CFLAGS -O3 -D_FORTIFY_SOURCE=0" CXXFLAGS="$CXXFLAGS -O3 -D_FORTIFY_SOURCE=0" LDFLAGS="$LDFLAGS" $CONFIGURE_FLAGS --enable-staticlink --disable-artwork-imlib2 --prefix=/opt/deadbeef || exit -1
+./configure CFLAGS="$CFLAGS -O3 -D_FORTIFY_SOURCE=0" CXXFLAGS="$CXXFLAGS -O3 -D_FORTIFY_SOURCE=0" LDFLAGS="$LDFLAGS" $CONFIGURE_FLAGS --enable-staticlink --disable-artwork-imlib2 --prefix=/opt/deadbeef || exit 1
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
 sed -i 's/hardcode_into_libs=yes/hardcode_into_libs=no/g' libtool
 make clean
-make -j8 DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION || exit -1
-make DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION install || exit -1
+make -j8 DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION || exit 1
+make DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION install || exit 1
 
 echo "building pluginfo tool..."
 cd tools/pluginfo
-make || exit -1
+make || exit 1
 cd ../../
