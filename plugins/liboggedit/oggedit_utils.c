@@ -108,6 +108,8 @@ const char *oggedit_map_tag(char *key, const char *in_or_out)
 //        {.tag = "TOTALTRACKS",    .meta = "Totaltracks"},
 //        {.tag = "ENCODED_BY",     .meta = "Encoded_by"},
 //        {.tag = "ENCODER_OPTIONS",.meta = "Encoder_options"},
+        {.tag = "ORIGINALDATE",   .meta = "original_release_time"},
+        {.tag = "ORIGINALYEAR",   .meta = "original_release_year"},
         {.tag = NULL}
     };
 
