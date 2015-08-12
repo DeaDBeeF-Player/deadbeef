@@ -131,6 +131,7 @@ AC_ARG_ENABLE(wma, [AS_HELP_STRING([--enable-wma      ], [build WMA plugin (defa
 AC_ARG_ENABLE(pltbrowser, [AS_HELP_STRING([--enable-pltbrowser      ], [build playlist browser gui plugin (default: auto)])], [enable_pltbrowser=$enableval], [enable_pltbrowser=yes])
 AC_ARG_ENABLE(sc68, [AS_HELP_STRING([--enable-sc68     ], [build sc68 Atari ST and Amiga music player (default: auto)])], [enable_sc68=$enableval], [enable_sc68=yes])
 AC_ARG_ENABLE(abstract_socket, [AS_HELP_STRING([--enable-abstract-socket      ], [use abstract UNIX socket for IPC (default: disabled)])], [enable_abstract_socket=$enableval], [enable_abstract_socket=no])
+AC_ARG_ENABLE(statusnotifier, [AS_HELP_STRING([--enable-statusnotifier], [use libstatusnotifier for tray icon (default: disabled)])], [enable_statusnotifier=$enableval], [enable_statusnotifier=no])
 
 AS_IF([test "${enable_staticlink}" != "no"], [
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
@@ -210,6 +211,22 @@ AS_IF([test "${enable_staticlink}" != "no"], [
     AC_SUBST(ZIP_LIBS)
 ], [
     PKG_CHECK_MODULES(ZIP, libzip, HAVE_ZIP=yes, HAVE_ZIP=no)
+])
+
+AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes"], [
+    AS_IF([test "${enable_statusnotifier}" = "yes"], [
+        AS_IF([test "${enable_staticlink}" != "no"], [
+            HAVE_STATUSNOTIFIER=yes
+        ], [
+            PKG_CHECK_MODULES(STATUSNOTIFIER, statusnotifier, HAVE_STATUSNOTIFIER=yes, HAVE_STATUSNOTIFIER=no)
+        ])
+    ], [
+        HAVE_STATUSNOTIFIER=no
+    ])
+
+    AS_IF([test "${HAVE_STATUSNOTIFIER}" = "yes"], [
+        AC_DEFINE([USE_STATUSNOTIFIER], 1, [Using libstatusnotifier for tray icon])
+    ])
 ])
 
 AS_IF([test "${enable_gtk3}" = "yes"], [
