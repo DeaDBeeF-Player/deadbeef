@@ -209,6 +209,11 @@ typedef struct {
 
     // get_default_cover_pixbuf returns the default cover art image
     GdkPixbuf *(*cover_get_default_pixbuf) (void);
+
+    //Status icon plugin support functions
+    void (*mainwin_toggle_visible)(void);
+    void (*trayicon_do_scroll) (int amount);
+    void (*show_traymenu) (int x, int y);
 } ddb_gtkui_t;
 
 #endif

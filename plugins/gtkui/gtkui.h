@@ -93,6 +93,15 @@ enum {
     COLO_COUNT
 };
 
+//System tray icon functions
+typedef struct _statusicon_functions {
+    gboolean (*is_status_icon_allocated) (void);
+    void (*set_status_icon_visible) (gboolean visible);
+    void (*create_status_icon_from_file) (char *iconfile);
+    void (*create_status_icon_from_icon_name) (char * icon_name);
+    void (*set_status_icon_tooltip) (const char *title, const char *text);
+} statusicon_functions_t;
+
 void
 theme_set_cairo_source_rgb (cairo_t *cr, int col);
 
