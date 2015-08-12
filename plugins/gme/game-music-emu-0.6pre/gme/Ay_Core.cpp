@@ -23,6 +23,7 @@ inline void Ay_Core::disable_beeper()
 
 Ay_Core::Ay_Core()
 {
+	cpc_mode = false;
 	beeper_output = NULL;
 	disable_beeper();
 }
