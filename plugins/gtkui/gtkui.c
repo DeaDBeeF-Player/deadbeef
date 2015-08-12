@@ -30,6 +30,9 @@
 #ifdef __linux__
 #include <sys/prctl.h>
 #endif
+#ifdef USE_STATUSNOTIFIER
+#include <statusnotifier.h>
+#endif
 #include "../../gettext.h"
 #include "gtkui.h"
 #include "ddblistview.h"
@@ -69,6 +72,9 @@ DB_functions_t *deadbeef;
 // main widgets
 GtkWidget *mainwin;
 GtkWidget *searchwin;
+#ifdef USE_STATUSNOTIFIER
+StatusNotifier *notifier;
+#endif
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
 
@@ -236,30 +242,20 @@ update_songinfo (gpointer ctx) {
     return FALSE;
 }
 
+static gboolean gtkui_is_status_icon_allocated(void);
+void gtkui_set_status_icon_tooltip(const char *text);
+
 void
 set_tray_tooltip (const char *text) {
-    if (trayicon) {
-#if !GTK_CHECK_VERSION(2,16,0)
-        gtk_status_icon_set_tooltip (trayicon, text);
-#else
-        gtk_status_icon_set_tooltip_text (trayicon, text);
-#endif
+    if (gtkui_is_status_icon_allocated()) {
+        gtkui_set_status_icon_tooltip(text);
     }
 }
 
-gboolean
-on_trayicon_scroll_event               (GtkWidget       *widget,
-                                        GdkEventScroll  *event,
-                                        gpointer         user_data)
-{
+void trayicon_do_scroll (int amount) {
     float vol = deadbeef->volume_get_db ();
-    int sens = deadbeef->conf_get_int ("gtkui.tray_volume_sensitivity", 1);
-    if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
-        vol += sens;
-    }
-    else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
-        vol -= sens;
-    }
+    int sens = amount*deadbeef->conf_get_int ("gtkui.tray_volume_sensitivity", 1);
+    vol += sens;
     if (vol > 0) {
         vol = 0;
     }
@@ -278,6 +274,22 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
     }
     set_tray_tooltip (str);
 #endif
+}
+
+
+gboolean
+on_trayicon_scroll_event               (GtkWidget       *widget,
+                                        GdkEventScroll  *event,
+                                        gpointer         user_data)
+{
+    int amount = 0;
+    if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
+        amount = 1;
+    }
+    else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
+        amount = -1;
+    }
+    trayicon_do_scroll(amount);
 
     return FALSE;
 }
@@ -507,18 +519,208 @@ gtkui_on_frameupdate (gpointer data) {
     return TRUE;
 }
 
+//System tray: GTKStatusIcon functions
+
+static gboolean
+status_icon_is_status_icon_allocated(void) {
+    return trayicon != NULL ? TRUE : FALSE;
+}
+
+void status_icon_set_status_icon_visible(gboolean visible) {
+    g_object_set (trayicon, "visible", visible, NULL);
+}
+
+void status_icon_initialize_status_icon(void) {
+#if !GTK_CHECK_VERSION(2,14,0)
+    g_signal_connect ((gpointer)trayicon, "activate", G_CALLBACK (on_trayicon_activate), NULL);
+#else
+    printf ("connecting button tray signals\n");
+    g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
+    g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
+#endif
+    g_signal_connect ((gpointer)trayicon, "popup_menu", G_CALLBACK (on_trayicon_popup_menu), NULL);
+}
+
+void status_icon_create_status_icon_from_file(char *iconfile) {
+    trayicon = gtk_status_icon_new_from_file(iconfile);
+    status_icon_initialize_status_icon();
+}
+
+void status_icon_create_status_icon_from_icon_name(char * icon_name) {
+    trayicon = gtk_status_icon_new_from_icon_name(icon_name);
+    status_icon_initialize_status_icon();
+}
+
+void status_icon_set_status_icon_tooltip(const char *text) {
+#if !GTK_CHECK_VERSION(2,16,0)
+        gtk_status_icon_set_tooltip (trayicon, text);
+#else
+        gtk_status_icon_set_tooltip_text (trayicon, text);
+#endif
+}
+
+struct _statusicon_functions {
+    gboolean (*is_status_icon_allocated) (void);
+    void (*set_status_icon_visible) (gboolean visible);
+    void (*create_status_icon_from_file) (char *iconfile);
+    void (*create_status_icon_from_icon_name) (char * icon_name);
+    void (*set_status_icon_tooltip) (const char *text);
+};
+
+extern struct _statusicon_functions *statusicon_functions;
+
+static gboolean
+gtkui_is_status_icon_allocated(void) {
+    return statusicon_functions->is_status_icon_allocated();
+}
+
+void gtkui_set_status_icon_visible(gboolean visible) {
+    statusicon_functions->set_status_icon_visible(visible);
+}
+
+void gtkui_create_status_icon_from_file(char *iconfile) {
+    statusicon_functions->create_status_icon_from_file(iconfile);
+}
+
+void gtkui_create_status_icon_from_icon_name(char * icon_name) {
+    statusicon_functions->create_status_icon_from_icon_name(icon_name);
+}
+
+void gtkui_set_status_icon_tooltip(const char *text) {
+    statusicon_functions->set_status_icon_tooltip(text);
+}
+
+struct _statusicon_functions gtk_statusicon_functions = {
+        .is_status_icon_allocated = status_icon_is_status_icon_allocated,
+        .set_status_icon_visible = status_icon_set_status_icon_visible,
+        .create_status_icon_from_file = status_icon_create_status_icon_from_file,
+        .create_status_icon_from_icon_name = status_icon_create_status_icon_from_icon_name,
+        .set_status_icon_tooltip = status_icon_set_status_icon_tooltip
+};
+
+#ifndef USE_STATUSNOTIFIER
+struct _statusicon_functions *statusicon_functions = &gtk_statusicon_functions;
+#else
+static gboolean
+on_notifier_activate (StatusNotifier *sn, gint x, gint y, void *data)
+{
+    mainwin_toggle_visible ();
+    return FALSE;
+}
+
+static gboolean
+on_notifier_secondary_activate (StatusNotifier *sn, gint x, gint y, void *data)
+{
+    deadbeef->sendmessage (DB_EV_TOGGLE_PAUSE, 0, 0, 0);
+    return FALSE;
+}
+
+static void
+setup_fallback_gtk_status_icon(StatusNotifier *sn, char *str) {
+    statusicon_functions = &gtk_statusicon_functions;
+    char * icon_name = status_notifier_get_icon_name(sn, STATUS_NOTIFIER_ICON);
+    if (icon_name == NULL || strcmp(icon_name,str)) {
+        status_icon_create_status_icon_from_file(str);
+    }
+    else {
+        status_icon_create_status_icon_from_icon_name(str);
+    }
+    int hide_tray_icon = deadbeef->conf_get_int ("gtkui.hide_tray_icon", 0);
+    status_icon_set_status_icon_visible(hide_tray_icon ? FALSE : TRUE);
+}
+
+static void
+on_notifier_reg_failed (StatusNotifier *sn, GError *error, char *iconstr)
+{
+    printf ("Cannot create status notifier, falling back to GtkStatusIcon\n");
+    setup_fallback_gtk_status_icon(sn,iconstr);
+}
+
+static gboolean
+on_notifier_popup_menu (StatusNotifier *sn, gint x, gint y, void *data) {
+    gtk_menu_popup (GTK_MENU (traymenu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+    return FALSE;
+}
+
+static gboolean
+on_notifier_scroll(StatusNotifier *sn, gint delta, StatusNotifierScrollOrientation orientation, void *data) {
+    if (orientation==STATUS_NOTIFIER_SCROLL_ORIENTATION_HORIZONTAL)
+        delta=-delta;
+    delta = delta < 0 ? -1 : delta > 0 ? 1 : 0;
+    trayicon_do_scroll(delta);
+
+    return FALSE;
+}
+
+void notifier_initialize_status_icon(char * iconstr) {
+    printf ("connecting button tray signals\n");
+    g_signal_connect (notifier, "registration-failed", (GCallback) on_notifier_reg_failed, iconstr);
+    g_signal_connect (notifier, "context-menu", (GCallback) on_notifier_popup_menu, NULL);
+    g_signal_connect (notifier, "activate", (GCallback) on_notifier_activate, NULL);
+    g_signal_connect (notifier, "secondary-activate", (GCallback) on_notifier_secondary_activate, NULL);
+    g_signal_connect (notifier, "scroll", (GCallback) on_notifier_scroll, NULL);
+    status_notifier_register (notifier);
+}
+
+void notifier_create_status_icon_from_file(char * iconfile) {
+    GError *err;
+    GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (iconfile, &err);
+    notifier = status_notifier_new_from_pixbuf ("deadbeef-notifier",STATUS_NOTIFIER_CATEGORY_APPLICATION_STATUS,pixbuf);
+    status_notifier_set_from_pixbuf(notifier,STATUS_NOTIFIER_TOOLTIP_ICON,pixbuf);
+    notifier_initialize_status_icon(iconfile);
+}
+
+void notifier_create_status_icon_from_icon_name(char * icon_name) {
+    notifier = status_notifier_new_from_icon_name("deadbeef-notifier", STATUS_NOTIFIER_CATEGORY_APPLICATION_STATUS, icon_name);
+    status_notifier_set_from_icon_name(notifier,STATUS_NOTIFIER_TOOLTIP_ICON,icon_name);
+    notifier_initialize_status_icon(icon_name);
+}
+
+void notifier_set_status_icon_visible(gboolean visible) {
+    StatusNotifierStatus status =
+            (visible == FALSE) ? STATUS_NOTIFIER_STATUS_PASSIVE : STATUS_NOTIFIER_STATUS_ACTIVE;
+    status_notifier_set_status(notifier,status);
+}
+
+void notifier_set_status_icon_tooltip(const char *text) {
+    char *orig_title = status_notifier_get_tooltip_title(notifier);
+    if (orig_title == NULL) {
+        status_notifier_set_tooltip_title (notifier, text);
+        orig_title = text;
+    }
+    if (!g_strcmp0(orig_title,text)) {
+        text = NULL;
+    }
+    status_notifier_set_tooltip_body (notifier, text);
+}
+
+static gboolean
+notifier_is_status_icon_allocated(void) {
+    return notifier != NULL ? TRUE : FALSE;
+}
+
+struct _statusicon_functions status_notifier_functions = {
+        .is_status_icon_allocated = notifier_is_status_icon_allocated,
+        .set_status_icon_visible = notifier_set_status_icon_visible,
+        .create_status_icon_from_file = notifier_create_status_icon_from_file,
+        .create_status_icon_from_icon_name = notifier_create_status_icon_from_icon_name,
+        .set_status_icon_tooltip = notifier_set_status_icon_tooltip
+};
+struct _statusicon_functions *statusicon_functions = &status_notifier_functions;
+#endif
+
 static gboolean
 gtkui_update_status_icon (gpointer unused) {
     int hide_tray_icon = deadbeef->conf_get_int ("gtkui.hide_tray_icon", 0);
-    if (hide_tray_icon && !trayicon) {
+    if (hide_tray_icon && !gtkui_is_status_icon_allocated()) {
         return FALSE;
     }
-    if (trayicon) {
+    if (gtkui_is_status_icon_allocated()) {
         if (hide_tray_icon) {
-            g_object_set (trayicon, "visible", FALSE, NULL);
+            gtkui_set_status_icon_visible(FALSE);
         }
         else {
-            g_object_set (trayicon, "visible", TRUE, NULL);
+            gtkui_set_status_icon_visible(TRUE);
         }
         return FALSE;
     }
@@ -542,23 +744,12 @@ gtkui_update_status_icon (gpointer unused) {
     if (!gtk_icon_theme_has_icon(theme, icon_name)) {
         char iconpath[1024];
         snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_prefix ());
-        trayicon = gtk_status_icon_new_from_file(iconpath);
+        gtkui_create_status_icon_from_file(iconpath);
     }
     else {
-        trayicon = gtk_status_icon_new_from_icon_name(icon_name);
+        gtkui_create_status_icon_from_icon_name(icon_name);
     }
-    if (hide_tray_icon) {
-        g_object_set (trayicon, "visible", FALSE, NULL);
-    }
-
-#if !GTK_CHECK_VERSION(2,14,0)
-    g_signal_connect ((gpointer)trayicon, "activate", G_CALLBACK (on_trayicon_activate), NULL);
-#else
-    printf ("connecting button tray signals\n");
-    g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
-    g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
-#endif
-    g_signal_connect ((gpointer)trayicon, "popup_menu", G_CALLBACK (on_trayicon_popup_menu), NULL);
+    gtkui_set_status_icon_visible(hide_tray_icon ? FALSE : TRUE);
 
     gtkui_set_titlebar (NULL);
 
@@ -567,8 +758,8 @@ gtkui_update_status_icon (gpointer unused) {
 
 static void
 gtkui_hide_status_icon () {
-    if (trayicon) {
-        g_object_set (trayicon, "visible", FALSE, NULL);
+    if (gtkui_is_status_icon_allocated()) {
+        gtkui_set_status_icon_visible(FALSE);
     }
 }
 
