@@ -93,7 +93,9 @@ void Sap_Apu::reset( Sap_Apu_Impl* new_impl )
 		memset( &oscs [i], 0, offsetof (osc_t,output) );
 }
 
-inline void Sap_Apu::calc_periods()
+static byte fast_bits [Sap_Apu::osc_count] = { 1 << 6, 1 << 4, 1 << 5, 1 << 3 };
+
+void Sap_Apu::calc_periods()
 {
 	 // 15/64 kHz clock
 	int divider = 28;
@@ -106,7 +108,6 @@ inline void Sap_Apu::calc_periods()
 		
 		int const osc_reload = osc->regs [0]; // cache
 		int period = (osc_reload + 1) * divider;
-		static byte const fast_bits [osc_count] = { 1 << 6, 1 << 4, 1 << 5, 1 << 3 };
 		if ( this->control & fast_bits [i] )
 		{
 			period = osc_reload + 4;

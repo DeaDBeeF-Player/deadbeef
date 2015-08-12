@@ -299,6 +299,8 @@ static DUMB_IT_SIGRENDERER *dup_sigrenderer(DUMB_IT_SIGRENDERER *src, int n_chan
 		return NULL;
 	}
 
+	memset (dst, 0, sizeof (*dst));
+
 	dst->sigdata = src->sigdata;
 
 	dst->n_channels = n_channels;
@@ -5248,6 +5250,7 @@ static DUMB_IT_SIGRENDERER *init_sigrenderer(DUMB_IT_SIGDATA *sigdata, int n_cha
 		dumb_destroy_click_remover_array(n_channels, cr);
 		return NULL;
 	}
+	memset (sigrenderer, 0, sizeof (*sigrenderer));
 
 	sigrenderer->callbacks = callbacks;
 	sigrenderer->click_remover = cr;
