@@ -131,7 +131,7 @@ AC_ARG_ENABLE(wma, [AS_HELP_STRING([--enable-wma      ], [build WMA plugin (defa
 AC_ARG_ENABLE(pltbrowser, [AS_HELP_STRING([--enable-pltbrowser      ], [build playlist browser gui plugin (default: auto)])], [enable_pltbrowser=$enableval], [enable_pltbrowser=yes])
 AC_ARG_ENABLE(sc68, [AS_HELP_STRING([--enable-sc68     ], [build sc68 Atari ST and Amiga music player (default: auto)])], [enable_sc68=$enableval], [enable_sc68=yes])
 AC_ARG_ENABLE(abstract_socket, [AS_HELP_STRING([--enable-abstract-socket      ], [use abstract UNIX socket for IPC (default: disabled)])], [enable_abstract_socket=$enableval], [enable_abstract_socket=no])
-AC_ARG_ENABLE(statusnotifier, [AS_HELP_STRING([--enable-statusnotifier], [use libstatusnotifier for tray icon (default: disabled)])], [enable_statusnotifier=$enableval], [enable_statusnotifier=no])
+AC_ARG_ENABLE(statusnotifier, [AS_HELP_STRING([--enable-statusnotifier], [use libstatusnotifier for tray icon (yes, no, embedded. default: disabled)])], [enable_statusnotifier=$enableval], [enable_statusnotifier=no])
 
 AS_IF([test "${enable_staticlink}" != "no"], [
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
@@ -215,16 +215,23 @@ AS_IF([test "${enable_staticlink}" != "no"], [
 
 AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes"], [
     AS_IF([test "${enable_statusnotifier}" = "yes"], [
+        HAVE_STATUSNOTIFIER_EMBEDDED=no
         AS_IF([test "${enable_staticlink}" != "no"], [
             HAVE_STATUSNOTIFIER=yes
         ], [
             PKG_CHECK_MODULES(STATUSNOTIFIER, statusnotifier, HAVE_STATUSNOTIFIER=yes, HAVE_STATUSNOTIFIER=no)
         ])
     ], [
-        HAVE_STATUSNOTIFIER=no
+        AS_IF([test "${enable_statusnotifier}" = "embedded"], [
+            HAVE_STATUSNOTIFIER=yes
+            HAVE_STATUSNOTIFIER_EMBEDDED=yes
+        ], [
+            HAVE_STATUSNOTIFIER=no
+            HAVE_STATUSNOTIFIER_EMBEDDED=no
+        ])
     ])
 
-    AS_IF([test "${HAVE_STATUSNOTIFIER}" = "yes"], [
+    AS_IF([test "${HAVE_STATUSNOTIFIER}" != "no"], [
         AC_DEFINE([USE_STATUSNOTIFIER], 1, [Using libstatusnotifier for tray icon])
     ])
 ])
@@ -872,6 +879,8 @@ AM_CONDITIONAL(STATICLINK, test "x$STATICLINK" = "xyes")
 AM_CONDITIONAL(PORTABLE, test "x$PORTABLE" = "xyes")
 AM_CONDITIONAL(PORTABLE_FULL, test "x$PORTABLE_FULL" = "xyes")
 AM_CONDITIONAL(USE_ABSTRACT_SOCKET_NAME, test "x$USE_ABSTRACT_SOCKET_NAME" = "xyes")
+AM_CONDITIONAL(HAVE_STATUSNOTIFIER, test "x$HAVE_STATUSNOTIFIER" = "xyes")
+AM_CONDITIONAL(HAVE_STATUSNOTIFIER_EMBEDDED, test "x$HAVE_STATUSNOTIFIER_EMBEDDED" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
@@ -955,6 +964,18 @@ AC_DEFUN([PRINT_PLUGIN_INFO],
     ]
 )
 
+AC_DEFUN([PRINT_PLUGIN_INFO_EX],
+    [
+        if $3 ; then
+            echo "    $1: $4 - $2"
+	elif $5 ; then
+            echo "    $1: $6 - $2"
+        else
+            echo "    $1: no - $2"
+        fi
+    ]
+)
+
 PRINT_PLUGIN_INFO([stdio],[Standard IO plugin],[true])
 PRINT_PLUGIN_INFO([gme],[chiptune music player based on GME],[test "x$HAVE_GME" = "xyes"])
 PRINT_PLUGIN_INFO([nullout],[NULL output],[test "x$HAVE_NULLOUT" = "xyes"])
@@ -977,7 +998,9 @@ PRINT_PLUGIN_INFO([adplug],[adplug player (OPL2/OPL3 emulation)],[test "x$HAVE_A
 PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test "x$HAVE_VFS_CURL" = "xyes"])
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test "x$HAVE_CDDAPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([gtkui],[GTK2 user interface],[test "x$HAVE_GTK2" = "xyes"])
+PRINT_PLUGIN_INFO_EX([    libstatusnotifier],[use libstatusnotifier for tray icon (GTK2)],[test "x$HAVE_STATUSNOTIFIER_EMBEDDED" = "xyes"],[embedded],[test "x$HAVE_STATUSNOTIFIER" = "xyes"],[yes])
 PRINT_PLUGIN_INFO([gtkui3],[GTK3 user interface],[test "x$HAVE_GTK3" = "xyes"])
+PRINT_PLUGIN_INFO_EX([    libstatusnotifier],[use libstatusnotifier for tray icon (GTK3)],[test "x$HAVE_STATUSNOTIFIER_EMBEDDED" = "xyes"],[embedded],[test "x$HAVE_STATUSNOTIFIER" = "xyes"],[yes])
 PRINT_PLUGIN_INFO([hotkeys],[Local and global hotkeys support],[test "x$HAVE_HOTKEYS" = "xyes"])
 PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test "x$HAVE_FFMPEGPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test "x$HAVE_ARTWORK" = "xyes"])
