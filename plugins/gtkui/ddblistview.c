@@ -1308,10 +1308,10 @@ ddb_listview_list_setup_hscroll (DdbListview *ps) {
             ps->hscrollpos = max (0, n);
             gtk_range_set_value (GTK_RANGE (scroll), ps->hscrollpos);
         }
-        GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, size, 1, w, w);
-        gtk_range_set_adjustment (GTK_RANGE (scroll), adj);
         gtk_widget_show (scroll);
     }
+    GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, size, 1, w, w);
+    gtk_range_set_adjustment (GTK_RANGE (scroll), adj);
 }
 
 // returns -1 if row not found
