@@ -635,7 +635,7 @@ gtkui_update_status_icon (gpointer unused) {
     traymenu = create_traymenu ();
 
     char tmp[1000];
-    char *icon_name = tmp;
+    const char *icon_name = tmp;
     deadbeef->conf_get_str ("gtkui.custom_tray_icon", TRAY_ICON, tmp, sizeof (tmp));
     GtkIconTheme *theme = gtk_icon_theme_get_default();
 
