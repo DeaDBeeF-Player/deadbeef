@@ -213,7 +213,7 @@ typedef struct {
     //Status icon plugin support functions
     void (*mainwin_toggle_visible)(void);
     void (*trayicon_do_scroll) (int amount);
-    GtkWidget *(*get_traymenu)(void);
+    void (*show_traymenu) (int x, int y);
 } ddb_gtkui_t;
 
 #endif

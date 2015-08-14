@@ -28,6 +28,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "../../deadbeef.h"
+#include "../gtkui/gtkui_api.h"
 #include "ddb_statusnotifier.h"
 #include "statusnotifier.h"
 
@@ -51,26 +52,11 @@ int sn_plugin_stop(void) {
     return 0;
 }
 
-int sn_plugin_connect(void) {
-    trace("DDB_SN: plugin connect\n");
-    if (gtkui_plugin) {
-        return 0;
-    }
-    const DB_plugin_t *plugin = deadbeef->plug_get_for_id(DDB_GTKUI_PLUGIN_ID);
-    if (plugin) {
-        gtkui_plugin = (ddb_gtkui_t *) plugin;
-    }
+void sn_plugin_setup(statusicon_functions_t **functions, const DB_plugin_t *plugin) {
+    trace("DDB_SN: sn_plugin_setup()\n");
+    gtkui_plugin = (ddb_gtkui_t *) plugin;
     if (!gtkui_plugin) {
         trace("DDB_SN: failed to connect to gtkui plugin\n");
-        return -1;
-    }
-
-    return 0;
-}
-
-void sn_plugin_setup(statusicon_functions_t **functions) {
-    trace("DDB_SN: sn_plugin_setup()\n");
-    if (sn_plugin_connect()!=0) {
         return;
     }
 
@@ -112,8 +98,7 @@ on_notifier_reg_failed (StatusNotifierItem *sn, char *iconstr) {
 
 static void
 on_notifier_popup_menu (StatusNotifierItem *sn, int x, int y) {
-    GtkWidget *traymenu = gtkui_plugin->get_traymenu();
-    gtk_menu_popup (GTK_MENU (traymenu), NULL, NULL,NULL, NULL,0, gtk_get_current_event_time());
+    gtkui_plugin->show_traymenu(x,y);
 }
 
 static void
@@ -174,24 +159,15 @@ static statusicon_functions_t status_notifier_functions = {
         .set_status_icon_tooltip = notifier_set_status_icon_tooltip
 };
 
-#if GTK_CHECK_VERSION(3,0,0)
-#define SN_PLUGIN_NAME "KDE Status Notifier (GTK3 UI)"
-#define SN_PLUGIN_DESC "System tray icon support for KDE 5 (GTK3 UI)"
-#else
-#define SN_PLUGIN_NAME "KDE Status Notifier (GTK2 UI)"
-#define SN_PLUGIN_DESC "System tray icon support for KDE 5 (GTK2 UI)"
-#endif
-
-
 static DB_statusnotifier_plugin_t plugin = {
     .plugin.plugin.api_vmajor = 1,
     .plugin.plugin.api_vminor = 8,
     .plugin.plugin.version_major = 0,
     .plugin.plugin.version_minor = 1,
     .plugin.plugin.type = DB_PLUGIN_MISC,
-    .plugin.plugin.id = SN_PLUGIN_ID,
-    .plugin.plugin.name = SN_PLUGIN_NAME,
-    .plugin.plugin.descr = SN_PLUGIN_DESC,
+    .plugin.plugin.id = "statusnotifier",
+    .plugin.plugin.name = "KDE Status Notifier",
+    .plugin.plugin.descr = "System tray icon support for KDE 5",
     .plugin.plugin.copyright =
         "KDE StatusNotifier plugin for DeaDBeeF\n"
         "Copyright (C) 2015 Giulio Bernardi\n"
@@ -216,16 +192,11 @@ static DB_statusnotifier_plugin_t plugin = {
     ,
     .plugin.plugin.website = "http://deadbeef.sf.net",
     .plugin.plugin.stop = sn_plugin_stop,
-    .plugin.plugin.connect = sn_plugin_connect,
     .setup = sn_plugin_setup,
 };
 
 DB_plugin_t *
-#if GTK_CHECK_VERSION(3,0,0)
-statusnotifier_gtk3_load (DB_functions_t *api) {
-#else
-statusnotifier_gtk2_load (DB_functions_t *api) {
-#endif
+statusnotifier_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }

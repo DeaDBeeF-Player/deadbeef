@@ -793,8 +793,18 @@ AS_IF([test "${enable_sc68}" != "no"], [
 
 AS_IF([test "${enable_statusnotifier}" != "no"], [
     AS_IF([test "${HAVE_GTK2}" = "yes" -o "${HAVE_GTK3}" = "yes"], [
-        HAVE_STATUSNOTIFIER=yes
-        AC_DEFINE([USE_STATUSNOTIFIER], 1, [KDE status notifier plugin for tray icon])
+        AS_IF([test "${enable_staticlink}" != "no"], [
+            STATUSNOTIFIER_DEPS_CFLAGS="-I${GTK_ROOT_216}/include/gtk-2.0 -I${GTK_ROOT_216}/lib/gtk-2.0/include -I${GTK_ROOT_216}/include -I${GTK_ROOT_216}/include/glib-2.0 -I${GTK_ROOT_216}/lib/glib-2.0/include"
+            STATUSNOTIFIER_DEPS_LIBS="-L${GTK_ROOT_216}/lib -lgdk_pixbuf-2.0 -lglib-2.0 -lgio-2.0"
+            AC_SUBST(STATUSNOTIFIER_DEPS_CFLAGS)
+            AC_SUBST(STATUSNOTIFIER_DEPS_LIBS)
+            HAVE_STATUSNOTIFIER=yes
+        ], [
+            PKG_CHECK_MODULES(STATUSNOTIFIER_DEPS, glib-2.0 >= 2.26 gio-2.0 gdk-pixbuf-2.0, HAVE_STATUSNOTIFIER=yes, HAVE_STATUSNOTIFIER=no)
+        ])
+        AS_IF([test "${HAVE_STATUSNOTIFIER}" = "yes"], [
+            AC_DEFINE([USE_STATUSNOTIFIER], 1, [KDE status notifier plugin for tray icon])
+        ])
     ])
 ])
 

@@ -25,17 +25,10 @@
 
 #include "../../deadbeef.h"
 #include "../gtkui/gtkui.h"
-#include "../gtkui/gtkui_api.h"
-
-#if GTK_CHECK_VERSION(3,0,0)
-#define SN_PLUGIN_ID "statusnotifier_gtk3"
-#else
-#define SN_PLUGIN_ID "statusnotifier_gtk2"
-#endif
 
 typedef struct {
     DB_misc_t plugin;
-    void (*setup) (statusicon_functions_t** functions);
+    void (*setup) (statusicon_functions_t** functions, const DB_plugin_t *plugin);
 } DB_statusnotifier_plugin_t;
 
 #endif /*_DDB_STATUSNOTIFIER_H*/

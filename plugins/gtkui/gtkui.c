@@ -299,8 +299,8 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
     return FALSE;
 }
 
-GtkWidget *get_traymenu(void) {
-    return traymenu;
+void show_traymenu (int x, int y) {
+    gtk_menu_popup (GTK_MENU (traymenu), NULL, NULL,NULL, NULL,0, gtk_get_current_event_time());
 }
 
 void
@@ -605,14 +605,14 @@ statusicon_functions_t *statusicon_functions = &gtk_statusicon_functions;
 
 #ifdef USE_STATUSNOTIFIER
 static void statusnotifier_init() {
-    const DB_plugin_t *plugin = deadbeef->plug_get_for_id(SN_PLUGIN_ID);
-    if (plugin) {
-        notifier_plugin = (DB_statusnotifier_plugin_t *) plugin;
+    const DB_plugin_t *p = deadbeef->plug_get_for_id("statusnotifier");
+    if (p) {
+        notifier_plugin = (DB_statusnotifier_plugin_t *) p;
     }
     if (!notifier_plugin) {
         return;
     }
-    notifier_plugin->setup(&statusicon_functions);
+    notifier_plugin->setup(&statusicon_functions,(const DB_plugin_t *)&plugin);
 }
 #endif
 
@@ -1788,5 +1788,5 @@ static ddb_gtkui_t plugin = {
     .cover_get_default_pixbuf = cover_get_default_pixbuf,
     .mainwin_toggle_visible = mainwin_toggle_visible,
     .trayicon_do_scroll = trayicon_do_scroll,
-    .get_traymenu = get_traymenu,
+    .show_traymenu = show_traymenu,
 };
