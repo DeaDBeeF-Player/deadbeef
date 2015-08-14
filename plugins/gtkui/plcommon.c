@@ -1128,7 +1128,9 @@ load_column_config (DdbListview *listview, const char *key) {
                 sformat = NULL;
             }
         }
-        iwidth = atoi (json_string_value (width));
+        if (json_is_string (width)) {
+            iwidth = atoi (json_string_value (width));
+        }
         if (json_is_string (color_override)) {
             icolor_override = atoi (json_string_value (color_override));
         }
@@ -1153,15 +1155,6 @@ load_column_config (DdbListview *listview, const char *key) {
             inf->bytecode = deadbeef->tf_compile (inf->format);
         }
         ddb_listview_column_append (listview, stitle, iwidth, ialign, inf->id == DB_COLUMN_ALBUM_ART ? iwidth : 0, icolor_override, gdkcolor, inf);
-
-        json_decref (title);
-        json_decref (align);
-        json_decref (id);
-        json_decref (format);
-        json_decref (width);
-        json_decref (color_override);
-        json_decref (color);
-        json_decref (data);
     }
     json_decref(root);
     return 0;
