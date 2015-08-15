@@ -198,7 +198,7 @@ static void sn_seticondata(IconData **data, GdkPixbuf* pixbuf) {
     IconData *id = g_malloc(sizeof(IconData));
     id->w = gdk_pixbuf_get_width(pixbuf);
     id->h = gdk_pixbuf_get_height(pixbuf);
-    id->len = gdk_pixbuf_get_byte_length(pixbuf);
+    id->len = rowstride*id->h;
     if (rowstride > (id->w * 4))
         sn_get_pixel_rowstride(id, pixbuf, rowstride);
     else
@@ -546,8 +546,8 @@ static GVariant* icondata_to_variant(IconData* id) {
     GVariantBuilder *bld;
     bld = g_variant_builder_new(G_VARIANT_TYPE("a(iiay)"));
     if (id) {
-        GVariant *pixdata = g_variant_new_fixed_array(G_VARIANT_TYPE_BYTE,
-                id->pixdata, id->len, 1);
+        GVariant *pixdata = g_variant_new_from_data(G_VARIANT_TYPE("ay"),
+                id->pixdata, id->len, TRUE, NULL, NULL);
         g_variant_builder_add(bld, "(ii@ay)", id->w, id->h, pixdata);
     }
     ret = g_variant_new("a(iiay)", bld);
