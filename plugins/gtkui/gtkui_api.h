@@ -37,10 +37,14 @@
 // please visit the following page:
 // http://github.com/Alexey-Yakovenko/deadbeef/wiki/Porting-GUI-plugins-to-deadbeef-from-0.5.x-to-0.6.0
 
+#if defined(GTK_CHECK_VERSION)
 #if GTK_CHECK_VERSION(3,0,0)
 #define DDB_GTKUI_PLUGIN_ID "gtkui3_1"
 #else
 #define DDB_GTKUI_PLUGIN_ID "gtkui_1"
+#endif
+#else
+typedef void GtkWidget;
 #endif
 
 #define DDB_GTKUI_API_VERSION_MAJOR 2
@@ -215,5 +219,15 @@ typedef struct {
     void (*trayicon_do_scroll) (int amount);
     void (*show_traymenu) (int x, int y);
 } ddb_gtkui_t;
+
+// FIXME: ddb_gtkui prefix
+//System tray icon functions
+typedef struct _statusicon_functions {
+    gboolean (*is_status_icon_allocated) (void);
+    void (*set_status_icon_visible) (gboolean visible);
+    void (*create_status_icon_from_file) (char *iconfile);
+    void (*create_status_icon_from_icon_name) (char * icon_name);
+    void (*set_status_icon_tooltip) (const char *title, const char *text);
+} statusicon_functions_t;
 
 #endif

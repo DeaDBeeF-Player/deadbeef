@@ -36,9 +36,7 @@
 #ifdef __linux__
 #include <sys/prctl.h>
 #endif
-#ifdef USE_STATUSNOTIFIER
 #include "../statusnotifier/ddb_statusnotifier.h"
-#endif
 #include "../../gettext.h"
 #include "gtkui.h"
 #include "ddblistview.h"
@@ -78,9 +76,7 @@ DB_functions_t *deadbeef;
 // main widgets
 GtkWidget *mainwin;
 GtkWidget *searchwin;
-#ifdef USE_STATUSNOTIFIER
 DB_statusnotifier_plugin_t *notifier_plugin;
-#endif
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
 
@@ -603,18 +599,14 @@ struct _statusicon_functions gtk_statusicon_functions = {
 
 statusicon_functions_t *statusicon_functions = &gtk_statusicon_functions;
 
-#ifdef USE_STATUSNOTIFIER
-static void statusnotifier_init() {
-    const DB_plugin_t *p = deadbeef->plug_get_for_id("statusnotifier");
-    if (p) {
-        notifier_plugin = (DB_statusnotifier_plugin_t *) p;
-    }
+static void
+statusnotifier_init () {
+    notifier_plugin = (DB_statusnotifier_plugin_t *)deadbeef->plug_get_for_id("statusnotifier");
     if (!notifier_plugin) {
         return;
     }
     notifier_plugin->setup(&statusicon_functions,(const DB_plugin_t *)&plugin);
 }
-#endif
 
 static gboolean
 gtkui_update_status_icon (gpointer unused) {
@@ -1322,9 +1314,7 @@ gtkui_start (void) {
 
 static int
 gtkui_connect (void) {
-#ifdef USE_STATUSNOTIFIER
-    statusnotifier_init();
-#endif
+    statusnotifier_init ();
     return 0;
 }
 

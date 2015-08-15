@@ -24,10 +24,11 @@
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif
-#include <gtk/gtk.h>
 #include <string.h>
 #include <stdlib.h>
 #include "../../deadbeef.h"
+#include <glib.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 #include "../gtkui/gtkui_api.h"
 #include "ddb_statusnotifier.h"
 #include "statusnotifier.h"

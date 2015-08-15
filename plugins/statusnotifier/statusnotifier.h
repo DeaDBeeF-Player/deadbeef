@@ -24,7 +24,8 @@
 #ifndef STATUSNOTIFIER_H
 #define STATUSNOTIFIER_H
 
-#include <gtk/gtk.h>
+#include <glib.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 
 typedef enum {
 	ApplicationStatus,
