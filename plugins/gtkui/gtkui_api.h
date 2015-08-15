@@ -214,20 +214,23 @@ typedef struct {
     // get_default_cover_pixbuf returns the default cover art image
     GdkPixbuf *(*cover_get_default_pixbuf) (void);
 
-    //Status icon plugin support functions
-    void (*mainwin_toggle_visible)(void);
+    // Status icon plugin support functions
+    void (*mainwin_toggle_visible) (void);
     void (*trayicon_do_scroll) (int amount);
     void (*show_traymenu) (int x, int y);
+
+    // Tell GTKUI that the standard status icon must be hidden, because another
+    // plugin wants to make it in a different way
+    void (*override_builtin_statusicon) (int override);
 } ddb_gtkui_t;
 
-// FIXME: ddb_gtkui prefix
-//System tray icon functions
-typedef struct _statusicon_functions {
+// System tray icon functions
+typedef struct ddb_gtkui_statusicon_functions_s {
     gboolean (*is_status_icon_allocated) (void);
     void (*set_status_icon_visible) (gboolean visible);
-    void (*create_status_icon_from_file) (char *iconfile);
-    void (*create_status_icon_from_icon_name) (char * icon_name);
+    void (*create_status_icon_from_file) (const char *iconfile);
+    void (*create_status_icon_from_icon_name) (const char * icon_name);
     void (*set_status_icon_tooltip) (const char *title, const char *text);
-} statusicon_functions_t;
+} ddb_gtkui_statusicon_functions_t;
 
 #endif

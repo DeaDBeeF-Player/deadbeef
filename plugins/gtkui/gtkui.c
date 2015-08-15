@@ -77,6 +77,7 @@ DB_functions_t *deadbeef;
 GtkWidget *mainwin;
 GtkWidget *searchwin;
 DB_statusnotifier_plugin_t *notifier_plugin;
+int gtkui_override_statusicon = 0;
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
 
@@ -548,12 +549,12 @@ static void status_icon_initialize_status_icon(void) {
     g_signal_connect ((gpointer)trayicon, "popup_menu", G_CALLBACK (on_trayicon_popup_menu), NULL);
 }
 
-static void status_icon_create_status_icon_from_file(char *iconfile) {
+static void status_icon_create_status_icon_from_file (const char *iconfile) {
     trayicon = gtk_status_icon_new_from_file(iconfile);
     status_icon_initialize_status_icon();
 }
 
-static void status_icon_create_status_icon_from_icon_name(char * icon_name) {
+static void status_icon_create_status_icon_from_icon_name (const char * icon_name) {
     trayicon = gtk_status_icon_new_from_icon_name(icon_name);
     status_icon_initialize_status_icon();
 }
@@ -566,7 +567,7 @@ static void status_icon_set_status_icon_tooltip(const char *title, const char *t
 #endif
 }
 
-extern statusicon_functions_t *statusicon_functions;
+extern ddb_gtkui_statusicon_functions_t *statusicon_functions;
 
 static gboolean
 gtkui_is_status_icon_allocated(void) {
@@ -577,11 +578,11 @@ static void gtkui_set_status_icon_visible(gboolean visible) {
     statusicon_functions->set_status_icon_visible(visible);
 }
 
-static void gtkui_create_status_icon_from_file(char *iconfile) {
+static void gtkui_create_status_icon_from_file(const char *iconfile) {
     statusicon_functions->create_status_icon_from_file(iconfile);
 }
 
-static void gtkui_create_status_icon_from_icon_name(char * icon_name) {
+static void gtkui_create_status_icon_from_icon_name(const char * icon_name) {
     statusicon_functions->create_status_icon_from_icon_name(icon_name);
 }
 
@@ -589,28 +590,31 @@ static void gtkui_set_status_icon_tooltip(const char *title, const char *text) {
     statusicon_functions->set_status_icon_tooltip(title, text);
 }
 
-struct _statusicon_functions gtk_statusicon_functions = {
-        .is_status_icon_allocated = status_icon_is_status_icon_allocated,
-        .set_status_icon_visible = status_icon_set_status_icon_visible,
-        .create_status_icon_from_file = status_icon_create_status_icon_from_file,
-        .create_status_icon_from_icon_name = status_icon_create_status_icon_from_icon_name,
-        .set_status_icon_tooltip = status_icon_set_status_icon_tooltip
+ddb_gtkui_statusicon_functions_t gtk_statusicon_functions = {
+    .is_status_icon_allocated = status_icon_is_status_icon_allocated,
+    .set_status_icon_visible = status_icon_set_status_icon_visible,
+    .create_status_icon_from_file = status_icon_create_status_icon_from_file,
+    .create_status_icon_from_icon_name = status_icon_create_status_icon_from_icon_name,
+    .set_status_icon_tooltip = status_icon_set_status_icon_tooltip
 };
 
-statusicon_functions_t *statusicon_functions = &gtk_statusicon_functions;
+ddb_gtkui_statusicon_functions_t *statusicon_functions = &gtk_statusicon_functions;
 
 static void
 statusnotifier_init () {
-    notifier_plugin = (DB_statusnotifier_plugin_t *)deadbeef->plug_get_for_id("statusnotifier");
+    notifier_plugin = (DB_statusnotifier_plugin_t *)deadbeef->plug_get_for_id ("statusnotifier");
     if (!notifier_plugin) {
         return;
     }
-    notifier_plugin->setup(&statusicon_functions,(const DB_plugin_t *)&plugin);
+    notifier_plugin->setup (&statusicon_functions, (const DB_plugin_t *)&plugin);
 }
 
 static gboolean
 gtkui_update_status_icon (gpointer unused) {
     int hide_tray_icon = deadbeef->conf_get_int ("gtkui.hide_tray_icon", 0);
+    if (gtkui_override_statusicon) {
+        hide_tray_icon = 1;
+    }
     if (hide_tray_icon && !gtkui_is_status_icon_allocated()) {
         return FALSE;
     }
@@ -646,13 +650,19 @@ gtkui_update_status_icon (gpointer unused) {
         gtkui_create_status_icon_from_file(iconpath);
     }
     else {
-        gtkui_create_status_icon_from_icon_name(icon_name);
+        gtkui_create_status_icon_from_icon_name (icon_name);
     }
     gtkui_set_status_icon_visible(hide_tray_icon ? FALSE : TRUE);
 
     gtkui_set_titlebar (NULL);
 
     return FALSE;
+}
+
+static void
+override_builtin_statusicon (int override) {
+    gtkui_override_statusicon = override;
+    g_idle_add (gtkui_update_status_icon, NULL);
 }
 
 static void

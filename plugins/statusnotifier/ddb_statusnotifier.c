@@ -41,9 +41,10 @@ static DB_statusnotifier_plugin_t plugin;
 static ddb_gtkui_t *gtkui_plugin;
 
 static StatusNotifierItem *notifier;
-static statusicon_functions_t *gtk_statusicon_functions;
-static statusicon_functions_t status_notifier_functions;
-static statusicon_functions_t **statusicon_funcptr;
+static ddb_gtkui_statusicon_functions_t *gtk_statusicon_functions;
+static ddb_gtkui_statusicon_functions_t status_notifier_functions;
+static ddb_gtkui_statusicon_functions_t **statusicon_funcptr;
+static int sn_plugin_enabled = 1;
 
 int sn_plugin_stop(void) {
     trace("DDB_SN: plugin stop\n");
@@ -53,7 +54,14 @@ int sn_plugin_stop(void) {
     return 0;
 }
 
-void sn_plugin_setup(statusicon_functions_t **functions, const DB_plugin_t *plugin) {
+static void
+sn_plugin_setup (ddb_gtkui_statusicon_functions_t **functions, const DB_plugin_t *plugin) {
+    sn_plugin_enabled  = deadbeef->conf_get_int ("statusnotifier.enable", 1);
+    if (!sn_plugin_enabled) {
+        gtkui_plugin->override_builtin_statusicon (0);
+        return;
+    }
+    gtkui_plugin->override_builtin_statusicon (1);
     trace("DDB_SN: sn_plugin_setup()\n");
     gtkui_plugin = (ddb_gtkui_t *) plugin;
     if (!gtkui_plugin) {
@@ -110,7 +118,7 @@ on_notifier_scroll(StatusNotifierItem *sn, int delta, SN_SCROLLDIR orientation) 
     gtkui_plugin->trayicon_do_scroll(delta);
 }
 
-static void notifier_initialize_status_icon(char * iconstr) {
+static void notifier_initialize_status_icon(const char * iconstr) {
     trace ("DDB_SN: connecting button tray signals\n");
     sn_hook_on_registration_error(notifier,
             (cb_registration_error)on_notifier_reg_failed,
@@ -122,7 +130,7 @@ static void notifier_initialize_status_icon(char * iconstr) {
     sn_register_item(notifier);
 }
 
-static void notifier_create_status_icon_from_file(char * iconfile) {
+static void notifier_create_status_icon_from_file(const char * iconfile) {
     GError *err = NULL;
     GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (iconfile, &err);
     notifier = sn_create_with_icondata("deadbeef-notifier",ApplicationStatus,pixbuf);
@@ -130,7 +138,7 @@ static void notifier_create_status_icon_from_file(char * iconfile) {
     notifier_initialize_status_icon(iconfile);
 }
 
-static void notifier_create_status_icon_from_icon_name(char * icon_name) {
+static void notifier_create_status_icon_from_icon_name(const char * icon_name) {
     notifier = sn_create_with_iconname("deadbeef-notifier", ApplicationStatus, icon_name);
     sn_set_tooltip_iconname(notifier,icon_name);
     notifier_initialize_status_icon(icon_name);
@@ -152,13 +160,31 @@ notifier_is_status_icon_allocated(void) {
     return notifier != NULL ? TRUE : FALSE;
 }
 
-static statusicon_functions_t status_notifier_functions = {
+static ddb_gtkui_statusicon_functions_t status_notifier_functions = {
         .is_status_icon_allocated = notifier_is_status_icon_allocated,
         .set_status_icon_visible = notifier_set_status_icon_visible,
         .create_status_icon_from_file = notifier_create_status_icon_from_file,
         .create_status_icon_from_icon_name = notifier_create_status_icon_from_icon_name,
         .set_status_icon_tooltip = notifier_set_status_icon_tooltip
 };
+
+static int
+sn_plugin_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    int enabled;
+    switch (id) {
+    case DB_EV_CONFIGCHANGED:
+        enabled = deadbeef->conf_get_int ("statusnotifier.enable", 1);
+        if (sn_plugin_enabled != enabled) {
+            sn_plugin_enabled = enabled;
+        }
+        break;
+    }
+    return 0;
+}
+
+static const char settings_dlg[] =
+    "property \"Enable\" checkbox statusnotifier.enable 1;\n"
+;
 
 static DB_statusnotifier_plugin_t plugin = {
     .plugin.plugin.api_vmajor = 1,
@@ -193,6 +219,8 @@ static DB_statusnotifier_plugin_t plugin = {
     ,
     .plugin.plugin.website = "http://deadbeef.sf.net",
     .plugin.plugin.stop = sn_plugin_stop,
+    .plugin.plugin.configdialog = settings_dlg,
+    .plugin.plugin.message = sn_plugin_message,
     .setup = sn_plugin_setup,
 };
 

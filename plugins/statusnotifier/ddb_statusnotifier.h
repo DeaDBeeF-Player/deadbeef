@@ -28,7 +28,7 @@
 
 typedef struct {
     DB_misc_t plugin;
-    void (*setup) (statusicon_functions_t** functions, const DB_plugin_t *plugin);
+    void (*setup) (ddb_gtkui_statusicon_functions_t** functions, const DB_plugin_t *plugin);
 } DB_statusnotifier_plugin_t;
 
 #endif /*_DDB_STATUSNOTIFIER_H*/
