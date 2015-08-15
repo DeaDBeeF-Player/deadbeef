@@ -33,7 +33,7 @@
 #include "ddb_statusnotifier.h"
 #include "statusnotifier.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(...)
 
 DB_functions_t *deadbeef;
@@ -46,10 +46,11 @@ static ddb_gtkui_statusicon_functions_t status_notifier_functions;
 static ddb_gtkui_statusicon_functions_t **statusicon_funcptr;
 static int sn_plugin_enabled = 1;
 
-int sn_plugin_stop(void) {
-    trace("DDB_SN: plugin stop\n");
+static int
+sn_plugin_stop (void) {
+    trace ("DDB_SN: plugin stop\n");
     if (notifier)
-        sn_destroy(notifier);
+        sn_destroy (notifier);
     notifier = NULL;
     return 0;
 }
@@ -62,17 +63,17 @@ sn_plugin_setup (ddb_gtkui_statusicon_functions_t **functions, const DB_plugin_t
         return;
     }
     gtkui_plugin->override_builtin_statusicon (1);
-    trace("DDB_SN: sn_plugin_setup()\n");
+    trace ("DDB_SN: sn_plugin_setup ()\n");
     gtkui_plugin = (ddb_gtkui_t *) plugin;
     if (!gtkui_plugin) {
-        trace("DDB_SN: failed to connect to gtkui plugin\n");
+        trace ("DDB_SN: failed to connect to gtkui plugin\n");
         return;
     }
 
     gtk_statusicon_functions = *functions;
     statusicon_funcptr = functions;
     *functions = &status_notifier_functions;
-    trace("DDB_SN: status icon functions hooked\n");
+    trace ("DDB_SN: status icon functions hooked\n");
 }
 
 static void
@@ -86,77 +87,82 @@ on_notifier_secondary_activate (StatusNotifierItem *sn, int x, int y) {
 }
 
 static void
-setup_fallback_gtk_status_icon(StatusNotifierItem *sn, char *str) {
+setup_fallback_gtk_status_icon (StatusNotifierItem *sn, char *str) {
     *statusicon_funcptr = gtk_statusicon_functions;
-    const char * icon_name = sn_get_icon_name(sn);
-    if (icon_name == NULL || strcmp(icon_name,str)) {
-        gtk_statusicon_functions->create_status_icon_from_file(str);
+    const char * icon_name = sn_get_icon_name (sn);
+    if (icon_name == NULL || strcmp (icon_name,str)) {
+        gtk_statusicon_functions->create_status_icon_from_file (str);
     }
     else {
-        gtk_statusicon_functions->create_status_icon_from_icon_name(str);
+        gtk_statusicon_functions->create_status_icon_from_icon_name (str);
     }
     int hide_tray_icon = deadbeef->conf_get_int ("gtkui.hide_tray_icon", 0);
-    gtk_statusicon_functions->set_status_icon_visible(hide_tray_icon ? FALSE : TRUE);
+    gtk_statusicon_functions->set_status_icon_visible (hide_tray_icon ? FALSE : TRUE);
 }
 
 static void
 on_notifier_reg_failed (StatusNotifierItem *sn, char *iconstr) {
     fprintf (stderr,"Cannot create status notifier, falling back to GtkStatusIcon\n");
-    setup_fallback_gtk_status_icon(sn,iconstr);
+    setup_fallback_gtk_status_icon (sn,iconstr);
 }
 
 static void
 on_notifier_popup_menu (StatusNotifierItem *sn, int x, int y) {
-    gtkui_plugin->show_traymenu(x,y);
+    gtkui_plugin->show_traymenu (x,y);
 }
 
 static void
-on_notifier_scroll(StatusNotifierItem *sn, int delta, SN_SCROLLDIR orientation) {
+on_notifier_scroll (StatusNotifierItem *sn, int delta, SN_SCROLLDIR orientation) {
     if (orientation==Horizontal)
         delta=-delta;
     delta = delta < 0 ? -1 : delta > 0 ? 1 : 0;
-    gtkui_plugin->trayicon_do_scroll(delta);
+    gtkui_plugin->trayicon_do_scroll (delta);
 }
 
-static void notifier_initialize_status_icon(const char * iconstr) {
+static void
+notifier_initialize_status_icon (const char * iconstr) {
     trace ("DDB_SN: connecting button tray signals\n");
-    sn_hook_on_registration_error(notifier,
+    sn_hook_on_registration_error (notifier,
             (cb_registration_error)on_notifier_reg_failed,
-            g_strdup(iconstr),g_free);
-    sn_hook_on_context_menu(notifier,on_notifier_popup_menu);
-    sn_hook_on_activate(notifier,on_notifier_activate);
-    sn_hook_on_secondary_activate(notifier,on_notifier_secondary_activate);
-    sn_hook_on_scroll(notifier,on_notifier_scroll);
-    sn_register_item(notifier);
+            g_strdup (iconstr),g_free);
+    sn_hook_on_context_menu (notifier,on_notifier_popup_menu);
+    sn_hook_on_activate (notifier,on_notifier_activate);
+    sn_hook_on_secondary_activate (notifier,on_notifier_secondary_activate);
+    sn_hook_on_scroll (notifier,on_notifier_scroll);
+    sn_register_item (notifier);
 }
 
-static void notifier_create_status_icon_from_file(const char * iconfile) {
+static void
+notifier_create_status_icon_from_file (const char * iconfile) {
     GError *err = NULL;
     GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (iconfile, &err);
-    notifier = sn_create_with_icondata("deadbeef-notifier",ApplicationStatus,pixbuf);
-    sn_set_tooltip_icondata(notifier,pixbuf);
-    notifier_initialize_status_icon(iconfile);
+    notifier = sn_create_with_icondata ("deadbeef-notifier",ApplicationStatus,pixbuf);
+    sn_set_tooltip_icondata (notifier,pixbuf);
+    notifier_initialize_status_icon (iconfile);
 }
 
-static void notifier_create_status_icon_from_icon_name(const char * icon_name) {
-    notifier = sn_create_with_iconname("deadbeef-notifier", ApplicationStatus, icon_name);
-    sn_set_tooltip_iconname(notifier,icon_name);
-    notifier_initialize_status_icon(icon_name);
+static void
+notifier_create_status_icon_from_icon_name (const char * icon_name) {
+    notifier = sn_create_with_iconname ("deadbeef-notifier", ApplicationStatus, icon_name);
+    sn_set_tooltip_iconname (notifier,icon_name);
+    notifier_initialize_status_icon (icon_name);
 }
 
-static void notifier_set_status_icon_visible(gboolean visible) {
+static void
+notifier_set_status_icon_visible (gboolean visible) {
     SN_STATUS status =
             (visible == FALSE) ? Passive : Active;
-    sn_set_status(notifier,status);
+    sn_set_status (notifier,status);
 }
 
-static void notifier_set_status_icon_tooltip(const char *title, const char *text) {
+static void
+notifier_set_status_icon_tooltip (const char *title, const char *text) {
     sn_set_tooltip_title (notifier, title);
     sn_set_tooltip_text (notifier, text);
 }
 
 static gboolean
-notifier_is_status_icon_allocated(void) {
+notifier_is_status_icon_allocated (void) {
     return notifier != NULL ? TRUE : FALSE;
 }
 
