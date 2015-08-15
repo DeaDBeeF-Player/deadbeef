@@ -24,7 +24,7 @@
 #define _DDB_STATUSNOTIFIER_H
 
 #include "../../deadbeef.h"
-#include "../gtkui/gtkui.h"
+#include "../gtkui/gtkui_api.h"
 
 typedef struct {
     DB_misc_t plugin;
