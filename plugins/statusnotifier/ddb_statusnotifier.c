@@ -123,7 +123,7 @@ static void notifier_initialize_status_icon(char * iconstr) {
 }
 
 static void notifier_create_status_icon_from_file(char * iconfile) {
-    GError *err;
+    GError *err = NULL;
     GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (iconfile, &err);
     notifier = sn_create_with_icondata("deadbeef-notifier",ApplicationStatus,pixbuf);
     sn_set_tooltip_icondata(notifier,pixbuf);
