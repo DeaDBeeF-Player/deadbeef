@@ -131,7 +131,7 @@ AC_ARG_ENABLE(wma, [AS_HELP_STRING([--enable-wma      ], [build WMA plugin (defa
 AC_ARG_ENABLE(pltbrowser, [AS_HELP_STRING([--enable-pltbrowser      ], [build playlist browser gui plugin (default: auto)])], [enable_pltbrowser=$enableval], [enable_pltbrowser=yes])
 AC_ARG_ENABLE(sc68, [AS_HELP_STRING([--enable-sc68     ], [build sc68 Atari ST and Amiga music player (default: auto)])], [enable_sc68=$enableval], [enable_sc68=yes])
 AC_ARG_ENABLE(abstract_socket, [AS_HELP_STRING([--enable-abstract-socket      ], [use abstract UNIX socket for IPC (default: disabled)])], [enable_abstract_socket=$enableval], [enable_abstract_socket=no])
-AC_ARG_ENABLE(statusnotifier, [AS_HELP_STRING([--enable-statusnotifier], [KDE status notifier plugin for tray icon (default: disabled)])], [enable_statusnotifier=$enableval], [enable_statusnotifier=no])
+AC_ARG_ENABLE(statusnotifier, [AS_HELP_STRING([--enable-statusnotifier], [KDE status notifier plugin for tray icon (default: disabled)])], [enable_statusnotifier=$enableval], [enable_statusnotifier=yes])
 
 AS_IF([test "${enable_staticlink}" != "no"], [
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
@@ -792,19 +792,18 @@ AS_IF([test "${enable_sc68}" != "no"], [
 ])
 
 AS_IF([test "${enable_statusnotifier}" != "no"], [
-    AS_IF([test "${HAVE_GTK2}" = "yes" -o "${HAVE_GTK3}" = "yes"], [
-        AS_IF([test "${enable_staticlink}" != "no"], [
-            STATUSNOTIFIER_DEPS_CFLAGS="-I${GTK_ROOT_216}/include/gtk-2.0 -I${GTK_ROOT_216}/lib/gtk-2.0/include -I${GTK_ROOT_216}/include -I${GTK_ROOT_216}/include/glib-2.0 -I${GTK_ROOT_216}/lib/glib-2.0/include"
-            STATUSNOTIFIER_DEPS_LIBS="-L${GTK_ROOT_216}/lib -lgdk_pixbuf-2.0 -lglib-2.0 -lgio-2.0"
-            AC_SUBST(STATUSNOTIFIER_DEPS_CFLAGS)
-            AC_SUBST(STATUSNOTIFIER_DEPS_LIBS)
-            HAVE_STATUSNOTIFIER=yes
-        ], [
-            PKG_CHECK_MODULES(STATUSNOTIFIER_DEPS, glib-2.0 >= 2.26 gio-2.0 gdk-pixbuf-2.0, HAVE_STATUSNOTIFIER=yes, HAVE_STATUSNOTIFIER=no)
-        ])
-        AS_IF([test "${HAVE_STATUSNOTIFIER}" = "yes"], [
-            AC_DEFINE([USE_STATUSNOTIFIER], 1, [KDE status notifier plugin for tray icon])
-        ])
+    echo "Checking statusnotifier deps..."
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        echo "Static"
+        HAVE_STATUSNOTIFIER=yes
+        STATUSNOTIFIER_DEPS_CFLAGS="-I../../${LIB}/gtk-3.0.0/include/gio-unix-2.0/ -I../../${LIB}/gtk-3.0.0/include/gdk-pixbuf-2.0 -I../../${LIB}/gtk-3.0.0/include/glib-2.0 -I../../${LIB}/gtk-3.0.0/lib/glib-2.0/include"
+        STATUSNOTIFIER_DEPS_LIBS="-L${GTK_ROOT_300}/lib -lgio-2.0 -lgdk_pixbuf-2.0 -lgobject-2.0 -lglib-2.0"
+        AC_SUBST(STATUSNOTIFIER_DEPS_CFLAGS)
+        AC_SUBST(STATUSNOTIFIER_DEPS_LIBS)
+    ], [
+        echo "Dynamic"
+        PKG_CHECK_MODULES(STATUSNOTIFIER_DEPS, glib-2.0 >= 2.26 gio-2.0 gdk-pixbuf-2.0, HAVE_STATUSNOTIFIER=yes, HAVE_STATUSNOTIFIER=no)
+        echo "HAVE_STATUSNOTIFIER=$HAVE_STATUSNOTIFIER"
     ])
 ])
 
