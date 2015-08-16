@@ -912,7 +912,15 @@ main (int argc, char *argv[]) {
             fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
             return -1;
         }
-        if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/deadbeef", LIBDIR) > sizeof (dbplugindir)) {
+        char *env_plugin_dir = getenv ("DEADBEEF_PLUGIN_DIR");
+        if (env_plugin_dir) {
+            strncpy (dbplugindir, env_plugin_dir, sizeof(dbplugindir));
+            if (dbplugindir[sizeof(dbplugindir) - 1] != 0) {
+                fprintf (stderr, "fatal: too long plugin path %s\n", env_plugin_dir);
+                return -1;
+            }
+        }
+        else if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/deadbeef", LIBDIR) > sizeof (dbplugindir)) {
             fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
             return -1;
         }
