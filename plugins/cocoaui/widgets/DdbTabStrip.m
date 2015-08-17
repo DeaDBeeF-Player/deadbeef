@@ -439,6 +439,9 @@ plt_get_title_wrapper (int plt) {
                     // ***** draw dragging tab here *****
                     [self drawTab:tab_selected area:NSMakeRect(x, tab_vert_padding, w, [self bounds].size.height) selected:YES];
                 }
+                if ([self tabUnderCursor:_lastMouseCoord.x] == _dragging) {
+                    [self updatePointedTab:idx];
+                }
                 break;
             }
             x += w - tab_overlap_size;
@@ -532,7 +535,14 @@ plt_get_title_wrapper (int plt) {
     }
     else {
         NSRect tabRect = [self tabRectForIndex:_pointedTab];
-        tabRect.origin.x = tabRect.origin.x+tabRect.size.width-19;
+        int x;
+        if (tab == _dragging) {
+            x = _movepos - tabs_left_margin;
+        }
+        else {
+            x = tabRect.origin.x;
+        }
+        tabRect.origin.x = x+tabRect.size.width-19;
         tabRect.origin.y += 6;
         tabRect.size.width = 12;
         tabRect.size.height = 12;
@@ -603,12 +613,13 @@ plt_get_title_wrapper (int plt) {
             int width = [self getTabWith:idx];
             x += width - tab_overlap_size;
         }
-        _dragpt = [self convertPoint:[event locationInWindow] fromView:nil];
+        _dragpt = coord;
         _dragpt.x -= x;
         _prepare = 1;
         _dragging = _tab_clicked;
         _prev_x = _dragpt.x;
         _tab_moved = 0;
+        _movepos = coord.x - _dragpt.x;
     }
 }
 
@@ -671,8 +682,12 @@ plt_get_title_wrapper (int plt) {
 {
     if (event.type == NSLeftMouseUp) {
         if (_prepare || _dragging >= 0) {
+            int dragged = _dragging;
             _dragging = -1;
             _prepare = 0;
+            if (dragged != -1) {
+                [self updatePointedTab:dragged];
+            }
             [self setNeedsDisplay:YES];
         }
     }
