@@ -581,6 +581,7 @@ plt_get_title_wrapper (int plt) {
                 int playlist = cocoaui_add_new_playlist ();
                 if (playlist != -1) {
                     cocoaui_playlist_set_curr (playlist);
+                    [self scrollToTab:playlist];
                 }
                 return;
             }
@@ -616,6 +617,7 @@ plt_get_title_wrapper (int plt) {
         deadbeef->plt_remove (_tab_clicked);
         int playlist = deadbeef->plt_get_curr_idx ();
         deadbeef->conf_set_int ("playlist.current", playlist);
+        [self scrollToTab:playlist];
         _tab_clicked = -1;
     }
 }
@@ -659,11 +661,7 @@ plt_get_title_wrapper (int plt) {
         }
         else if (deadbeef->conf_get_int ("cocoaui.mmb_delete_playlist", 1)) {
             if (_tab_clicked != -1) {
-                deadbeef->plt_remove (_tab_clicked);
-                // force invalidation of playlist cache
-// FIXME: gtkui calls search_refresh here
-                int playlist = deadbeef->plt_get_curr_idx ();
-                deadbeef->conf_set_int ("playlist.current", playlist);
+                [self closePlaylist:self];
             }
         }
     }
@@ -702,7 +700,7 @@ plt_get_title_wrapper (int plt) {
 - (void)mouseDragged:(NSEvent *)event {
     NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
     if (([NSEvent pressedMouseButtons] & 1) && _prepare) {
-        if (abs (coord.x - _prev_x) > 3) {
+        if (fabs (coord.x - _prev_x) > 3) {
             _prepare = 0;
         }
     }
@@ -782,8 +780,9 @@ plt_get_title_wrapper (int plt) {
 
 - (int)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     switch (_id) {
-        case DB_EV_PLAYLISTCHANGED:
         case DB_EV_PLAYLISTSWITCHED:
+            [self performSelectorOnMainThread:@selector(handleResizeNotification) withObject:nil waitUntilDone:NO];
+        case DB_EV_PLAYLISTCHANGED:
             [self setNeedsDisplay:YES];
             break;
     }
