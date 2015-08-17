@@ -57,6 +57,7 @@ sn_plugin_stop (void) {
 
 static void
 sn_plugin_setup (ddb_gtkui_statusicon_functions_t **functions, const DB_plugin_t *plugin) {
+    gtkui_plugin = (ddb_gtkui_t *) plugin;
     sn_plugin_enabled  = deadbeef->conf_get_int ("statusnotifier.enable", 1);
     if (!sn_plugin_enabled) {
         gtkui_plugin->override_builtin_statusicon (0);
@@ -64,7 +65,6 @@ sn_plugin_setup (ddb_gtkui_statusicon_functions_t **functions, const DB_plugin_t
     }
     gtkui_plugin->override_builtin_statusicon (1);
     trace ("DDB_SN: sn_plugin_setup ()\n");
-    gtkui_plugin = (ddb_gtkui_t *) plugin;
     if (!gtkui_plugin) {
         trace ("DDB_SN: failed to connect to gtkui plugin\n");
         return;
