@@ -58,6 +58,7 @@ typedef void (*cb_destroy_regerr_data) (void *data);
 StatusNotifierItem *sn_create_with_iconname(const gchar *id, SN_CATEGORY category, const gchar *iconname);
 StatusNotifierItem *sn_create_with_icondata(const gchar *id, SN_CATEGORY category, GdkPixbuf *icondata);
 void sn_destroy (gpointer data);
+void sn_finalize();
 
 void sn_set_title(StatusNotifierItem *this, const gchar *title);
 void sn_set_status(StatusNotifierItem *this, SN_STATUS status);

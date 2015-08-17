@@ -347,11 +347,12 @@ static void
 on_name_lost(GDBusConnection *connection, const gchar *name, gpointer user_data);
 
 void sn_register_item(StatusNotifierItem *this) {
-    if (introspection_data)
-        g_dbus_node_info_ref(introspection_data);
-    else
+    if (!introspection_data)
         introspection_data = g_dbus_node_info_new_for_xml(introspection_xml,
                 NULL);
+    //if there is only 1 instance, refcount is 2: it is released only by explicit
+    //call to sn_finalize()
+    g_dbus_node_info_ref(introspection_data);
 
     g_assert(introspection_data != NULL);
 
@@ -440,6 +441,12 @@ void sn_destroy(gpointer data) {
     sn_seticondata(&this->tooltip.icondata, NULL);
     sn_setstr(&this->tooltip.title, NULL);
     sn_setstr(&this->tooltip.text, NULL);
+}
+
+void sn_finalize() {
+    if (introspection_data)
+        g_dbus_node_info_unref(introspection_data);
+    introspection_data = NULL;
 }
 
 void sn_hook_on_context_menu(StatusNotifierItem *this, cb_context_menu cb) {

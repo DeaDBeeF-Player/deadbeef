@@ -50,6 +50,7 @@ sn_plugin_stop (void) {
         sn_destroy (notifier);
     }
     notifier = NULL;
+    sn_finalize();
     return 0;
 }
 
