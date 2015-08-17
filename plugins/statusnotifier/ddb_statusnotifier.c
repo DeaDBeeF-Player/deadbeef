@@ -41,39 +41,48 @@ static DB_statusnotifier_plugin_t plugin;
 static ddb_gtkui_t *gtkui_plugin;
 
 static StatusNotifierItem *notifier;
-static ddb_gtkui_statusicon_functions_t *gtk_statusicon_functions;
-static ddb_gtkui_statusicon_functions_t status_notifier_functions;
-static ddb_gtkui_statusicon_functions_t **statusicon_funcptr;
 static int sn_plugin_enabled = 1;
 
 static int
 sn_plugin_stop (void) {
     trace ("DDB_SN: plugin stop\n");
-    if (notifier)
+    if (notifier) {
         sn_destroy (notifier);
+    }
     notifier = NULL;
     return 0;
 }
 
 static void
-sn_plugin_setup (ddb_gtkui_statusicon_functions_t **functions, const DB_plugin_t *plugin) {
-    gtkui_plugin = (ddb_gtkui_t *) plugin;
+notifier_create_status_icon_from_icon_name (const char * icon_name);
+
+static void
+sn_plugin_setup (void) {
+    if (!gtkui_plugin) {
+        gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id ("gtkui_1");
+        if (!gtkui_plugin) {
+            gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id ("gtkui3_1");
+        }
+    }
+    if (!gtkui_plugin) {
+        trace ("DDB_SN: failed to connect to gtkui plugin\n");
+        return;
+    }
     sn_plugin_enabled  = deadbeef->conf_get_int ("statusnotifier.enable", 1);
     if (!sn_plugin_enabled) {
+        if (notifier) {
+            sn_destroy (notifier);
+            notifier = NULL;
+        }
         gtkui_plugin->override_builtin_statusicon (0);
         return;
     }
     gtkui_plugin->override_builtin_statusicon (1);
     trace ("DDB_SN: sn_plugin_setup ()\n");
-    if (!gtkui_plugin) {
-        trace ("DDB_SN: failed to connect to gtkui plugin\n");
-        return;
-    }
 
-    gtk_statusicon_functions = *functions;
-    statusicon_funcptr = functions;
-    *functions = &status_notifier_functions;
-    trace ("DDB_SN: status icon functions hooked\n");
+    if (!notifier) {
+        notifier_create_status_icon_from_icon_name ("deadbeef");
+    }
 }
 
 static void
@@ -87,36 +96,37 @@ on_notifier_secondary_activate (StatusNotifierItem *sn, int x, int y) {
 }
 
 static void
-setup_fallback_gtk_status_icon (StatusNotifierItem *sn, char *str) {
-    *statusicon_funcptr = gtk_statusicon_functions;
-    const char * icon_name = sn_get_icon_name (sn);
-    if (icon_name == NULL || strcmp (icon_name,str)) {
-        gtk_statusicon_functions->create_status_icon_from_file (str);
-    }
-    else {
-        gtk_statusicon_functions->create_status_icon_from_icon_name (str);
-    }
-    int hide_tray_icon = deadbeef->conf_get_int ("gtkui.hide_tray_icon", 0);
-    gtk_statusicon_functions->set_status_icon_visible (hide_tray_icon ? FALSE : TRUE);
-}
-
-static void
 on_notifier_reg_failed (StatusNotifierItem *sn, char *iconstr) {
     fprintf (stderr,"Cannot create status notifier, falling back to GtkStatusIcon\n");
-    setup_fallback_gtk_status_icon (sn,iconstr);
+    gtkui_plugin->override_builtin_statusicon (0);
 }
 
 static void
 on_notifier_popup_menu (StatusNotifierItem *sn, int x, int y) {
-    gtkui_plugin->show_traymenu (x,y);
+    gtkui_plugin->show_traymenu ();
 }
 
 static void
 on_notifier_scroll (StatusNotifierItem *sn, int delta, SN_SCROLLDIR orientation) {
-    if (orientation==Horizontal)
-        delta=-delta;
-    delta = delta < 0 ? -1 : delta > 0 ? 1 : 0;
-    gtkui_plugin->trayicon_do_scroll (delta);
+    float vol = deadbeef->volume_get_db ();
+    int sens = deadbeef->conf_get_int ("gtkui.tray_volume_sensitivity", 1);
+    if (orientation == Horizontal) {
+        delta = -delta;
+    }
+    if (delta < 0) {
+        vol -= sens;
+    }
+    else if (delta > 0) {
+        vol += sens;
+    }
+
+    if (vol > 0) {
+        vol = 0;
+    }
+    else if (vol < deadbeef->volume_get_min_db ()) {
+        vol = deadbeef->volume_get_min_db ();
+    }
+    deadbeef->volume_set_db (vol);
 }
 
 static void
@@ -149,13 +159,6 @@ notifier_create_status_icon_from_icon_name (const char * icon_name) {
 }
 
 static void
-notifier_set_status_icon_visible (gboolean visible) {
-    SN_STATUS status =
-            (visible == FALSE) ? Passive : Active;
-    sn_set_status (notifier,status);
-}
-
-static void
 notifier_set_status_icon_tooltip (const char *title, const char *text) {
     sn_set_tooltip_title (notifier, title);
     sn_set_tooltip_text (notifier, text);
@@ -166,14 +169,6 @@ notifier_is_status_icon_allocated (void) {
     return notifier != NULL ? TRUE : FALSE;
 }
 
-static ddb_gtkui_statusicon_functions_t status_notifier_functions = {
-        .is_status_icon_allocated = notifier_is_status_icon_allocated,
-        .set_status_icon_visible = notifier_set_status_icon_visible,
-        .create_status_icon_from_file = notifier_create_status_icon_from_file,
-        .create_status_icon_from_icon_name = notifier_create_status_icon_from_icon_name,
-        .set_status_icon_tooltip = notifier_set_status_icon_tooltip
-};
-
 static int
 sn_plugin_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     int enabled;
@@ -182,8 +177,11 @@ sn_plugin_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         enabled = deadbeef->conf_get_int ("statusnotifier.enable", 1);
         if (sn_plugin_enabled != enabled) {
             sn_plugin_enabled = enabled;
-            sn_plugin_setup (&gtk_statusicon_functions, (DB_plugin_t *)gtkui_plugin);
+            sn_plugin_setup ();
         }
+        break;
+    case DB_EV_PLUGINSLOADED:
+        sn_plugin_setup ();
         break;
     }
     return 0;
@@ -228,7 +226,6 @@ static DB_statusnotifier_plugin_t plugin = {
     .plugin.plugin.stop = sn_plugin_stop,
     .plugin.plugin.configdialog = settings_dlg,
     .plugin.plugin.message = sn_plugin_message,
-    .setup = sn_plugin_setup,
 };
 
 DB_plugin_t *

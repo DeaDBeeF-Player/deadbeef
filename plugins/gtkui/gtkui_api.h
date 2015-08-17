@@ -216,21 +216,11 @@ typedef struct {
 
     // Status icon plugin support functions
     void (*mainwin_toggle_visible) (void);
-    void (*trayicon_do_scroll) (int amount);
-    void (*show_traymenu) (int x, int y);
+    void (*show_traymenu) (void);
 
     // Tell GTKUI that the standard status icon must be hidden, because another
     // plugin wants to make it in a different way
     void (*override_builtin_statusicon) (int override_);
 } ddb_gtkui_t;
-
-// System tray icon functions
-typedef struct ddb_gtkui_statusicon_functions_s {
-    gboolean (*is_status_icon_allocated) (void);
-    void (*set_status_icon_visible) (gboolean visible);
-    void (*create_status_icon_from_file) (const char *iconfile);
-    void (*create_status_icon_from_icon_name) (const char * icon_name);
-    void (*set_status_icon_tooltip) (const char *title, const char *text);
-} ddb_gtkui_statusicon_functions_t;
 
 #endif
