@@ -221,7 +221,7 @@ typedef struct {
 
     // Tell GTKUI that the standard status icon must be hidden, because another
     // plugin wants to make it in a different way
-    void (*override_builtin_statusicon) (int override);
+    void (*override_builtin_statusicon) (int override_);
 } ddb_gtkui_t;
 
 // System tray icon functions

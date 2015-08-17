@@ -1789,4 +1789,5 @@ static ddb_gtkui_t plugin = {
     .mainwin_toggle_visible = mainwin_toggle_visible,
     .trayicon_do_scroll = trayicon_do_scroll,
     .show_traymenu = show_traymenu,
+    .override_builtin_statusicon = override_builtin_statusicon,
 };
