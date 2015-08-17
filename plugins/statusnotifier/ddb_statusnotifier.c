@@ -182,6 +182,7 @@ sn_plugin_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         enabled = deadbeef->conf_get_int ("statusnotifier.enable", 1);
         if (sn_plugin_enabled != enabled) {
             sn_plugin_enabled = enabled;
+            sn_plugin_setup (&gtk_statusicon_functions, (DB_plugin_t *)gtkui_plugin);
         }
         break;
     }
