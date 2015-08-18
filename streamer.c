@@ -598,8 +598,9 @@ streamer_move_to_nextsong_real (int reason) {
         }
     }
     else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
+        DB_output_t *output = plug_get_output ();
         playItem_t *it = NULL;
-        if (!curr) {
+        if (!curr && output->state () == OUTPUT_STATE_STOPPED) {
             int cur = plt_get_cursor (streamer_playlist, PL_MAIN);
             if (cur != -1) {
                 curr = plt_get_item_for_idx (streamer_playlist, cur, PL_MAIN);
@@ -729,8 +730,9 @@ streamer_move_to_prevsong_real (int r) {
         }
     }
     else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
+        DB_output_t *output = plug_get_output ();
         playItem_t *it = NULL;
-        if (!playlist_track) {
+        if (!playlist_track && output->state () == OUTPUT_STATE_STOPPED) {
             int cur = plt_get_cursor (streamer_playlist, PL_MAIN);
             if (cur != -1) {
                 playlist_track = plt_get_item_for_idx (streamer_playlist, cur, PL_MAIN);
