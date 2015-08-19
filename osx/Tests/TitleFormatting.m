@@ -162,4 +162,18 @@
     free (buffer);
 }
 
+- (void)test_ParticularLongExpressionDoesntAllocateZeroBytes {
+    pl_replace_meta (it, "artist", "Frank Schätzing");
+    pl_replace_meta (it, "year", "1999");
+    pl_replace_meta (it, "album", "Tod und Teufel");
+    pl_replace_meta (it, "disc", "1");
+    pl_replace_meta (it, "disctotal", "4");
+    pl_replace_meta (it, ":FILETYPE", "FLAC");
+    char *bc = tf_compile("$if($strcmp(%genre%,Classical),%composer%,$if([%band%],%band%,%album artist%)) | ($left(%year%,4)) %album% $if($greater(%totaldiscs%,1),- Disc: %discnumber%/%totaldiscs%) - \\[%codec%\\]");
+    char *buffer = malloc (1000);
+    XCTAssertNoThrow(tf_eval (&ctx, bc, buffer, 1000), @"Crashed!");
+    tf_free (bc);
+    free (buffer);
+}
+
 @end

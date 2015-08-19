@@ -898,9 +898,11 @@ tf_compile (const char *script) {
     trace ("output len: %d\n", (int)(c.o - code));
     trace ("%s\n", code);
 
-    char *out = malloc (c.o - code + 4);
-    memcpy (out + 4, code, c.o - code);
-    *((int32_t *)out) = (int32_t)(c.o - code);
+    size_t size = c.o - code;
+    char *out = malloc (size + 8);
+    memcpy (out + 4, code, size);
+    memset (out + 4 + size, 0, 4); // FIXME: this is the padding for possible buffer overflow bug fix
+    *((int32_t *)out) = (int32_t)(size);
     return out;
 }
 
