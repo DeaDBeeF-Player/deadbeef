@@ -559,6 +559,33 @@ plt_get_title_wrapper (int plt) {
     }
 }
 
+- (BOOL)handleClickedTabCloseRect {
+    int hscroll = _hscrollpos;
+    if ([self needArrows]) {
+        hscroll -= arrow_widget_width;
+    }
+    int x = -hscroll + tabs_left_margin;
+    int idx;
+    for (idx = 0; idx < _tab_clicked; idx++) {
+        int width = [self getTabWith:idx];
+        x += width - tab_overlap_size;
+    }
+    int w = [self getTabWith:_tab_clicked];
+    NSRect area = NSMakeRect(x, tab_vert_padding, w, [self bounds].size.height);
+    NSRect atRect = NSMakeRect(area.origin.x + area.size.width - tab_overlap_size - 8, area.origin.y + 6, 8, 8 + 4);
+
+    if (!NSPointInRect(_lastMouseCoord, atRect)) {
+        return NO;
+    }
+
+    [self updatePointedTab:_tab_clicked];
+    atRect.size.height -= 4;
+    _closeTabButtonRect = atRect;
+    _closeTabCapture = YES;
+    [self setNeedsDisplayInRect:atRect];
+    return YES;
+}
+
 - (void)mouseDown:(NSEvent *)event {
     NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
     _lastMouseCoord = coord;
@@ -573,6 +600,9 @@ plt_get_title_wrapper (int plt) {
         }
     
         if (_tab_clicked != -1) {
+            if ([self handleClickedTabCloseRect]) {
+                return;
+            }
             cocoaui_playlist_set_curr (_tab_clicked);
         }
         else {
@@ -587,12 +617,12 @@ plt_get_title_wrapper (int plt) {
             }
             return;
         }
-        
+
         // adjust scroll if clicked tab spans border
         if ([self needArrows]) {
             [self scrollToTab:_tab_clicked];
         }
-        
+
         int hscroll = _hscrollpos;
         if ([self needArrows]) {
             hscroll -= arrow_widget_width;
@@ -604,26 +634,13 @@ plt_get_title_wrapper (int plt) {
             x += width - tab_overlap_size;
         }
 
-        int w = [self getTabWith:_tab_clicked];
-        NSRect area = NSMakeRect(x, tab_vert_padding, w, [self bounds].size.height);
-        NSRect atRect = NSMakeRect(area.origin.x + area.size.width - tab_overlap_size - 8, area.origin.y + 6, 8, 8 + 4);
-
-        if (NSPointInRect(_lastMouseCoord, atRect)) {
-            [self updatePointedTab:_tab_clicked];
-            _closeTabButtonRect = atRect;
-            _closeTabButtonRect.size.height -= 4;
-            _closeTabCapture = YES;
-            [self setNeedsDisplayInRect:_closeTabButtonRect];
-        }
-        else {
-            _dragpt = coord;
-            _dragpt.x -= x;
-            _prepare = 1;
-            _dragging = _tab_clicked;
-            _prev_x = _dragpt.x;
-            _tab_moved = 0;
-            _movepos = coord.x - _dragpt.x;
-        }
+        _dragpt = coord;
+        _dragpt.x -= x;
+        _prepare = 1;
+        _dragging = _tab_clicked;
+        _prev_x = _dragpt.x;
+        _tab_moved = 0;
+        _movepos = coord.x - _dragpt.x;
     }
 }
 
