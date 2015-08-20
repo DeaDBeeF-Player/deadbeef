@@ -116,7 +116,7 @@ static int max_tab_size = 200;
         [_scrollRightBtn setAction:@selector(scrollRight)];
         [self addSubview:_scrollRightBtn];
 
-        _closeTabBtnImage = [NSImage imageNamed:NSImageNameStopProgressTemplate];
+        _closeTabBtnImage = [NSImage imageNamed:@"tabCloseTemplate"];
 
         _lastMouseCoord.x = -100000;
         _pointedTab = -1;
