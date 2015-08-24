@@ -372,16 +372,10 @@ inline void Vgm_Emu::check_end()
 		set_track_ended();
 }
 
-inline void Vgm_Emu::check_warning()
-{
-	const char* w = core.warning();
-	if ( w )
-		set_warning( w );
-}
-
 blargg_err_t Vgm_Emu::play_( int count, sample_t out [] )
 {
     core.play_(count, out);
+    check_end();
     return blargg_ok;
 }
 

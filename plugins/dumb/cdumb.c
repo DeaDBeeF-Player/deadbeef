@@ -40,6 +40,7 @@ typedef struct {
     DB_fileinfo_t info;
     DUH *duh;
     DUH_SIGRENDERER *renderer;
+    int can_loop;
 } dumb_info_t;
 
 //#define DUMB_RQ_ALIASING
@@ -48,6 +49,13 @@ typedef struct {
 //#define DUMB_RQ_N_LEVELS
 extern int dumb_resampling_quality;
 extern int dumb_it_max_to_mix;
+
+static int conf_bps = 16;
+static int conf_samplerate = 44100;
+static int conf_resampling_quality = 4;
+static int conf_ramping_style = 2;
+static int conf_global_volume = 64;
+static int conf_play_forever = 0;
 
 static int
 cdumb_startrenderer (DB_fileinfo_t *_info);
@@ -58,7 +66,9 @@ open_module(const char *fname, const char *ext, int *start_order, int *is_it, in
 static DB_fileinfo_t *
 cdumb_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (dumb_info_t));
+    dumb_info_t *info = (dumb_info_t *)_info;
     memset (_info, 0, sizeof (dumb_info_t));
+    info->can_loop = hints & DDB_DECODER_HINT_CAN_LOOP;
     return _info;
 }
 
@@ -85,9 +95,9 @@ cdumb_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     dumb_it_do_initial_runthrough (info->duh);
 
     _info->plugin = &plugin;
-    _info->fmt.bps = deadbeef->conf_get_int ("dumb.8bitoutput", 0) ? 8 : 16;
+    _info->fmt.bps = conf_bps;
     _info->fmt.channels = 2;
-    _info->fmt.samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
+    _info->fmt.samplerate = conf_samplerate;
     _info->readpos = 0;
     _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
 
@@ -115,7 +125,7 @@ cdumb_startrenderer (DB_fileinfo_t *_info) {
     DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer (info->renderer);
     dumb_it_set_loop_callback (itsr, &dumb_it_callback_terminate, NULL);
 
-    int q = deadbeef->conf_get_int ("dumb.resampling_quality", 2);
+    int q = conf_resampling_quality;
     if (q < 0) {
         q = 0;
     }
@@ -127,7 +137,7 @@ cdumb_startrenderer (DB_fileinfo_t *_info) {
     dumb_it_set_xm_speed_zero_callback (itsr, &dumb_it_callback_terminate, NULL);
     dumb_it_set_global_volume_zero_callback (itsr, &dumb_it_callback_terminate, NULL);
     
-    int rq = deadbeef->conf_get_int ("dumb.volume_ramping", 2);
+    int rq = conf_ramping_style;
     if (rq < 0) {
         rq = 0;
     }
@@ -136,7 +146,7 @@ cdumb_startrenderer (DB_fileinfo_t *_info) {
     }
     dumb_it_set_ramp_style(itsr, rq);
 
-    dumb_it_sr_set_global_volume (itsr, deadbeef->conf_get_int ("dumb.globalvolume", 64));
+    dumb_it_sr_set_global_volume (itsr, conf_global_volume);
     return 0;
 }
 
@@ -158,12 +168,26 @@ cdumb_free (DB_fileinfo_t *_info) {
 }
 
 static int
+cdumb_it_callback_loop_forever(void *unused)
+{
+    (void)unused;
+    return 0;
+}
+
+static int
 cdumb_read (DB_fileinfo_t *_info, char *bytes, int size) {
     trace ("cdumb_read req %d\n", size);
     dumb_info_t *info = (dumb_info_t *)_info;
     int samplesize = (_info->fmt.bps >> 3) * _info->fmt.channels;
     int length = size / samplesize;
     long ret;
+
+    DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer (info->renderer);
+    if (conf_play_forever && info->can_loop)
+        dumb_it_set_loop_callback (itsr, &cdumb_it_callback_loop_forever, NULL);
+    else
+        dumb_it_set_loop_callback (itsr, &dumb_it_callback_terminate, NULL);
+
     ret = duh_render (info->renderer, _info->fmt.bps, 0, 1, 65536.f / _info->fmt.samplerate, length, bytes);
     _info->readpos += ret / (float)_info->fmt.samplerate;
     trace ("cdumb_read %d\n", ret*samplesize);
@@ -207,6 +231,21 @@ static const char * exts[]=
     "okt","okta",
     NULL
 };
+
+int
+cdumb_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_CONFIGCHANGED:
+        conf_bps = deadbeef->conf_get_int ("dumb.8bitoutput", 0) ? 8 : 16;
+        conf_samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
+        conf_resampling_quality = deadbeef->conf_get_int ("dumb.resampling_quality", 4);
+        conf_ramping_style = deadbeef->conf_get_int ("dumb.volume_ramping", 2);
+        conf_global_volume = deadbeef->conf_get_int ("dumb.globalvolume", 64);
+        conf_play_forever = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL) == PLAYBACK_MODE_LOOP_SINGLE;
+        break;
+    }
+    return 0;
+}
 
 static int is_mod_ext(const char *ext)
 {
@@ -926,13 +965,19 @@ dumb_register_db_vfs (void) {
 }
 
 int
-cgme_start (void) {
+cdumb_start (void) {
     dumb_register_db_vfs ();
+    conf_bps = deadbeef->conf_get_int ("dumb.8bitoutput", 0) ? 8 : 16;
+    conf_samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
+    conf_resampling_quality = deadbeef->conf_get_int ("dumb.resampling_quality", 4);
+    conf_ramping_style = deadbeef->conf_get_int ("dumb.volume_ramping", 2);
+    conf_global_volume = deadbeef->conf_get_int ("dumb.globalvolume", 64);
+    conf_play_forever = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL) == PLAYBACK_MODE_LOOP_SINGLE;
     return 0;
 }
 
 int
-cgme_stop (void) {
+cdumb_stop (void) {
     dumb_exit ();
     return 0;
 }
@@ -981,8 +1026,8 @@ static DB_decoder_t plugin = {
         "3. This notice may not be removed or altered from any source distribution.\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
-    .plugin.start = cgme_start,
-    .plugin.stop = cgme_stop,
+    .plugin.start = cdumb_start,
+    .plugin.stop = cdumb_stop,
     .plugin.configdialog = settings_dlg,
     .open = cdumb_open,
     .init = cdumb_init,
@@ -992,6 +1037,7 @@ static DB_decoder_t plugin = {
     .insert = cdumb_insert,
     .read_metadata = cdumb_read_metadata,
     .exts = exts,
+    .plugin.message = cdumb_message,
 };
 
 DB_plugin_t *

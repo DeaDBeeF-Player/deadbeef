@@ -1331,6 +1331,7 @@ enum {
     // "Loop Single" looping mode.
     DDB_DECODER_HINT_CAN_LOOP = 0x4,
 #endif
+    DDB_DECODER_HINT_CAN_LOOP = 0x4, // This hint may be set by normal playback, to indicate that indefinite looping is allowed
 };
 
 // decoder plugin

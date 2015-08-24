@@ -49,7 +49,6 @@ private:
 	Vgm_Core core;
 	
 	void check_end();
-	void check_warning();
 };
 
 #endif

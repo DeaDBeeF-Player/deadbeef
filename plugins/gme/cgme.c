@@ -50,18 +50,23 @@ static int conf_fadeout = 10;
 static int conf_loopcount = 2;
 static int chip_voices = 0xff;
 static int chip_voices_changed = 0;
+static int conf_play_forever = 0;
 
 typedef struct {
     DB_fileinfo_t info;
     Music_Emu *emu;
     int reallength;
     float duration; // of current song
+    int eof;
+    int can_loop;
 } gme_fileinfo_t;
 
 static DB_fileinfo_t *
 cgme_open (uint32_t hint) {
     DB_fileinfo_t *_info = malloc (sizeof (gme_fileinfo_t));
+    gme_fileinfo_t *info = (gme_fileinfo_t *)_info;
     memset (_info, 0, sizeof (gme_fileinfo_t));
+    info->can_loop = hint & DDB_DECODER_HINT_CAN_LOOP;
     return _info;
 }
 
@@ -106,7 +111,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
     deadbeef->fclose (fp);
 
     sz *= 2;
-    int readsize = sz;
+    int readsize = (int)sz;
     *buffer = malloc (sz);
     if (!(*buffer)) {
         return -1;
@@ -136,7 +141,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
             break;
         }
         else {
-            readsize = sz;
+            readsize = (int)sz;
             sz *= 2;
             *buffer = realloc (*buffer, sz);
         }
@@ -213,6 +218,7 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->duration = deadbeef->pl_get_item_duration (it);
     info->reallength = inf->length; 
     _info->readpos = 0;
+    info->eof = 0;
     return 0;
 }
 
@@ -228,8 +234,12 @@ cgme_free (DB_fileinfo_t *_info) {
 static int
 cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
     gme_fileinfo_t *info = (gme_fileinfo_t*)_info;
+    int playForever = conf_play_forever && info->can_loop;
     float t = (size/4) / (float)_info->fmt.samplerate;
-    if (_info->readpos + t >= info->duration) {
+    if (info->eof) {
+        return 0;
+    }
+    if (!playForever && _info->readpos + t >= info->duration) {
         t = info->duration - _info->readpos;
         if (t <= 0) {
             return 0;
@@ -243,31 +253,19 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
         chip_voices_changed = 0;
         gme_mute_voices (info->emu, chip_voices^0xff);
     }
+    
+    if (playForever)
+        gme_set_fade(info->emu, INT_MAX, 0);
+    else
+        gme_set_fade(info->emu, (int)(info->duration * 1000), conf_fadeout * 1000);
 
     if (gme_play (info->emu, size/2, (short*)bytes)) {
         return 0;
     }
-    if (conf_fadeout > 0 && info->duration >= conf_fadeout && info->reallength <= 0 && _info->readpos >= info->duration - conf_fadeout) {
-        float fade_amnt =  (info->duration - _info->readpos) / (float)conf_fadeout;
-        int nsamples = size/2;
-        float fade_incr = 1.f / (_info->fmt.samplerate * conf_fadeout) * 256;
-        const float ln10=2.3025850929940002f;
-        float fade = exp(ln10*(-(1.f-fade_amnt) * 3));
-
-        for (int i = 0; i < nsamples; i++) {
-            ((short*)bytes)[i] *= fade;
-            if (!(i & 0xff)) {
-                fade_amnt += fade_incr;
-                fade = exp(ln10*(-(1.f-fade_amnt) * 3));
-            }
-        }
-    }
 
     _info->readpos += t;
-    if (info->reallength == -1) {
-        if (gme_track_ended (info->emu)) {
-            return 0;
-        }
+    if (gme_track_ended (info->emu)) {
+        info->eof = 1;
     }
     return size;
 }
@@ -275,10 +273,11 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
 static int
 cgme_seek (DB_fileinfo_t *_info, float time) {
     gme_fileinfo_t *info = (gme_fileinfo_t*)_info;
-    if (gme_seek (info->emu, (long)(time * 1000))) {
+    if (gme_seek (info->emu, (int)(time * 1000))) {
         return -1;
     }
     _info->readpos = time;
+    info->eof = 0;
     return 0;
 }
 
@@ -459,6 +458,7 @@ static int
 cgme_start (void) {
     conf_fadeout = deadbeef->conf_get_int ("gme.fadeout", 10);
     conf_loopcount = deadbeef->conf_get_int ("gme.loopcount", 2);
+    conf_play_forever = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL) == PLAYBACK_MODE_LOOP_SINGLE;
     return 0;
 }
 
@@ -473,6 +473,7 @@ cgme_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     case DB_EV_CONFIGCHANGED:
         conf_fadeout = deadbeef->conf_get_int ("gme.fadeout", 10);
         conf_loopcount = deadbeef->conf_get_int ("gme.loopcount", 2);
+        conf_play_forever = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL) == PLAYBACK_MODE_LOOP_SINGLE;
         if (chip_voices != deadbeef->conf_get_int ("chip.voices", 0xff)) {
             chip_voices_changed = 1;
         }
