@@ -4,8 +4,6 @@
 #ifndef YM2413_EMU_H
 #define YM2413_EMU_H
 
-struct OPLL;
-
 class Ym2413_Emu  {
 	void* opll;
 public:

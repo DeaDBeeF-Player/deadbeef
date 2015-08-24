@@ -3,8 +3,7 @@ if HAVE_GME
 gmeversion=game-music-emu-0.6pre
 gmepath=@top_srcdir@/plugins/gme/$(gmeversion)
 
-EXTRA_DIST = $(gmepath)/changes.txt $(gmepath)/design.txt $(gmepath)/gme.txt $(gmepath)/license.txt $(gmepath)/readme.txt 
-
+EXTRA_DIST = $(gmepath)/changes.txt $(gmepath)/design.txt $(gmepath)/gme.txt $(gmepath)/license.txt $(gmepath)/readme.txt $(gmepath)/vgmplay/VGMPlay/chips/emu2413_NESpatches.txt $(gmepath)/vgmplay/VGMPlay/licenses/GPL.txt $(gmepath)/vgmplay/VGMPlay/licenses/List.txt $(gmepath)/vgmplay/VGMPlay/licenses/mame_license.txt $(gmepath)/vgmplay/VGMPlay/SourceReadme.txt $(gmepath)/vgmplay/VGMPlay/VGMPlay.txt $(gmepath)/vgmplay/VGMPlay/VGMPlay_Updates.txt $(gmepath)/vgmplay/VGMPlay/vgmspec171.txt
 gmedir = $(libdir)/$(PACKAGE)
 
 pkglib_LTLIBRARIES = gme.la
@@ -19,19 +18,11 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/blargg_errors.cpp\
 	$(gmeversion)/gme/Blip_Buffer.cpp\
 	$(gmeversion)/gme/Bml_Parser.cpp\
-	$(gmeversion)/gme/C140_Emu.cpp\
-	$(gmeversion)/gme/c140.c\
 	$(gmeversion)/gme/Classic_Emu.cpp\
-	$(gmeversion)/gme/dac_control.c\
-	$(gmeversion)/gme/dbopl.cpp\
 	$(gmeversion)/gme/Downsampler.cpp\
 	$(gmeversion)/gme/Dual_Resampler.cpp\
 	$(gmeversion)/gme/Effects_Buffer.cpp\
-	$(gmeversion)/gme/emu2413.cpp\
 	$(gmeversion)/gme/Fir_Resampler.cpp\
-	$(gmeversion)/gme/fm.c\
-	$(gmeversion)/gme/fm2612.c\
-	$(gmeversion)/gme/fmopl.cpp\
 	$(gmeversion)/gme/Gb_Apu.cpp\
 	$(gmeversion)/gme/Gb_Cpu.cpp\
 	$(gmeversion)/gme/Gb_Oscs.cpp\
@@ -47,12 +38,6 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Hes_Core.cpp\
 	$(gmeversion)/gme/Hes_Cpu.cpp\
 	$(gmeversion)/gme/Hes_Emu.cpp\
-	$(gmeversion)/gme/K051649_Emu.cpp\
-	$(gmeversion)/gme/k051649.c\
-	$(gmeversion)/gme/K053260_Emu.cpp\
-	$(gmeversion)/gme/k053260.c\
-	$(gmeversion)/gme/K054539_Emu.cpp\
-	$(gmeversion)/gme/k054539.c\
 	$(gmeversion)/gme/Kss_Core.cpp\
 	$(gmeversion)/gme/Kss_Cpu.cpp\
 	$(gmeversion)/gme/Kss_Emu.cpp\
@@ -73,27 +58,13 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Nsfe_Emu.cpp\
 	$(gmeversion)/gme/Nsf_Emu.cpp\
 	$(gmeversion)/gme/Nsf_Impl.cpp\
-	$(gmeversion)/gme/Okim6258_Emu.cpp\
-	$(gmeversion)/gme/okim6258.c\
-	$(gmeversion)/gme/Okim6295_Emu.cpp\
-	$(gmeversion)/gme/okim6295.c\
 	$(gmeversion)/gme/Opl_Apu.cpp\
-	$(gmeversion)/gme/Pwm_Emu.cpp\
-	$(gmeversion)/gme/pwm.c\
-	$(gmeversion)/gme/qmix.c\
-	$(gmeversion)/gme/Qsound_Apu.cpp\
 	$(gmeversion)/gme/Resampler.cpp\
-	$(gmeversion)/gme/Rf5C68_Emu.cpp\
-	$(gmeversion)/gme/rf5c68.c\
-	$(gmeversion)/gme/Rf5C164_Emu.cpp\
 	$(gmeversion)/gme/Rom_Data.cpp\
 	$(gmeversion)/gme/Sap_Apu.cpp\
 	$(gmeversion)/gme/Sap_Core.cpp\
 	$(gmeversion)/gme/Sap_Cpu.cpp\
 	$(gmeversion)/gme/Sap_Emu.cpp\
-	$(gmeversion)/gme/scd_pcm.c\
-	$(gmeversion)/gme/SegaPcm_Emu.cpp\
-	$(gmeversion)/gme/segapcm.c\
 	$(gmeversion)/gme/Sgc_Core.cpp\
 	$(gmeversion)/gme/Sgc_Cpu.cpp\
 	$(gmeversion)/gme/Sgc_Emu.cpp\
@@ -110,32 +81,84 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Upsampler.cpp\
 	$(gmeversion)/gme/Vgm_Core.cpp\
 	$(gmeversion)/gme/Vgm_Emu.cpp\
-	$(gmeversion)/gme/Ym2151_Emu.cpp\
-	$(gmeversion)/gme/ym2151.c\
-	$(gmeversion)/gme/Ym2203_Emu.cpp\
 	$(gmeversion)/gme/Ym2413_Emu.cpp\
-	$(gmeversion)/gme/Ym2608_Emu.cpp\
-	$(gmeversion)/gme/Ym2610b_Emu.cpp\
 	$(gmeversion)/gme/Ym2612_Emu.cpp\
-	$(gmeversion)/gme/Ym3812_Emu.cpp\
-	$(gmeversion)/gme/Ymf262_Emu.cpp\
-	$(gmeversion)/gme/Ymz280b_Emu.cpp\
-	$(gmeversion)/gme/ymz280b.c\
-	$(gmeversion)/gme/ymdeltat.cpp\
 	$(gmeversion)/gme/Z80_Cpu.cpp\
 	$(gmeversion)/gme/Data_Reader.cpp\
-	$(gmeversion)/gme/s_deltat.c\
-	$(gmeversion)/gme/s_logtbl.c\
-	$(gmeversion)/gme/s_opl.c\
-	$(gmeversion)/gme/s_opltbl.c\
-	$(gmeversion)/gme/ym2413.c\
 	$(gmeversion)/gme/higan/dsp/dsp.cpp\
 	$(gmeversion)/gme/higan/dsp/SPC_DSP.cpp\
 	$(gmeversion)/gme/higan/processor/spc700/algorithms.cpp\
 	$(gmeversion)/gme/higan/processor/spc700/instructions.cpp\
 	$(gmeversion)/gme/higan/processor/spc700/spc700.cpp\
 	$(gmeversion)/gme/higan/smp/smp.cpp\
-	$(gmeversion)/gme/adlib.h\
+	$(gmeversion)/vgmplay/VGMPlay/ChipMapper.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/2151intf.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/2203intf.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/2413intf.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/2608intf.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/2610intf.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/2612intf.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/262intf.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/3526intf.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/3812intf.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/8950intf.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/adlibemu_opl2.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/adlibemu_opl3.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ay8910.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ay_intf.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/c140.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/c352.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/c6280.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/c6280intf.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/dac_control.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/emu2149.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/emu2413.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/es5503.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/es5506.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/fm.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/fm2612.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/fmopl.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/gb.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/iremga20.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/k051649.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/k053260.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/k054539.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/multipcm.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/nes_apu.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/nes_intf.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/np_nes_apu.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/np_nes_dmc.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/np_nes_fds.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/okim6258.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/okim6295.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/Ootake_PSG.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/panning.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/pokey.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/pwm.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/qsound.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/rf5c68.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/saa1099.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/scd_pcm.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/scsp.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/scspdsp.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/segapcm.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/sn76489.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/sn76496.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/sn764intf.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/upd7759.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/vsu.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ws_audio.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/x1_010.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ym2151.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ym2413.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ym2612.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ymdeltat.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ymf262.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ymf271.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ymf278b.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ymz280b.c\
+	$(gmeversion)/vgmplay/VGMPlay/resampler.c\
+	$(gmeversion)/vgmplay/VGMPlay/VGMPlay.c\
 	$(gmeversion)/gme/Ay_Apu.h\
 	$(gmeversion)/gme/Ay_Core.h\
 	$(gmeversion)/gme/Ay_Emu.h\
@@ -148,22 +171,13 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Blip_Buffer_impl2.h\
 	$(gmeversion)/gme/Blip_Buffer_impl.h\
 	$(gmeversion)/gme/Bml_Parser.h\
-	$(gmeversion)/gme/C140_Emu.h\
-	$(gmeversion)/gme/c140.h\
 	$(gmeversion)/gme/Chip_Resampler.h\
 	$(gmeversion)/gme/Classic_Emu.h\
-	$(gmeversion)/gme/dac_control.h\
-	$(gmeversion)/gme/dbopl.h\
-	$(gmeversion)/gme/divfix.h\
 	$(gmeversion)/gme/Data_Reader.h\
 	$(gmeversion)/gme/Downsampler.h\
 	$(gmeversion)/gme/Dual_Resampler.h\
 	$(gmeversion)/gme/Effects_Buffer.h\
-	$(gmeversion)/gme/emu2413.h\
-	$(gmeversion)/gme/emuconfig.h\
 	$(gmeversion)/gme/Fir_Resampler.h\
-	$(gmeversion)/gme/fm.h\
-	$(gmeversion)/gme/fmopl.h\
 	$(gmeversion)/gme/Gb_Apu.h\
 	$(gmeversion)/gme/Gb_Cpu.h\
 	$(gmeversion)/gme/Gb_Cpu_run.h\
@@ -180,22 +194,10 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Hes_Cpu.h\
 	$(gmeversion)/gme/Hes_Cpu_run.h\
 	$(gmeversion)/gme/Hes_Emu.h\
-	$(gmeversion)/gme/i_fmpac.h\
-	$(gmeversion)/gme/i_fmunit.h\
-	$(gmeversion)/gme/i_vrc7.h\
-	$(gmeversion)/gme/K051649_Emu.h\
-	$(gmeversion)/gme/k051649.h\
-	$(gmeversion)/gme/K053260_Emu.h\
-	$(gmeversion)/gme/k053260.h\
-	$(gmeversion)/gme/K054539_Emu.h\
-	$(gmeversion)/gme/k054539.h\
-	$(gmeversion)/gme/kmsnddev.h\
 	$(gmeversion)/gme/Kss_Core.h\
 	$(gmeversion)/gme/Kss_Emu.h\
 	$(gmeversion)/gme/Kss_Scc_Apu.h\
 	$(gmeversion)/gme/M3u_Playlist.h\
-	$(gmeversion)/gme/mamedef.h\
-	$(gmeversion)/gme/mathdefs.h\
 	$(gmeversion)/gme/Multi_Buffer.h\
 	$(gmeversion)/gme/Music_Emu.h\
 	$(gmeversion)/gme/Nes_Apu.h\
@@ -206,43 +208,24 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Nes_Mmc5_Apu.h\
 	$(gmeversion)/gme/Nes_Namco_Apu.h\
 	$(gmeversion)/gme/Nes_Oscs.h\
-	$(gmeversion)/gme/nestypes.h\
 	$(gmeversion)/gme/Nes_Vrc6_Apu.h\
 	$(gmeversion)/gme/Nes_Vrc7_Apu.h\
 	$(gmeversion)/gme/Nsf_Core.h\
 	$(gmeversion)/gme/Nsfe_Emu.h\
 	$(gmeversion)/gme/Nsf_Emu.h\
 	$(gmeversion)/gme/Nsf_Impl.h\
-	$(gmeversion)/gme/Okim6258_Emu.h\
-	$(gmeversion)/gme/okim6258.h\
-	$(gmeversion)/gme/Okim6295_Emu.h\
-	$(gmeversion)/gme/okim6295.h\
 	$(gmeversion)/gme/Opl_Apu.h\
-	$(gmeversion)/gme/Pwm_Emu.h\
-	$(gmeversion)/gme/pwm.h\
-	$(gmeversion)/gme/qmix.h\
-	$(gmeversion)/gme/Qsound_Apu.h\
 	$(gmeversion)/gme/Resampler.h\
-	$(gmeversion)/gme/Rf5C68_Emu.h\
-	$(gmeversion)/gme/rf5c68.h\
-	$(gmeversion)/gme/Rf5C164_Emu.h\
 	$(gmeversion)/gme/Rom_Data.h\
 	$(gmeversion)/gme/Sap_Apu.h\
 	$(gmeversion)/gme/Sap_Core.h\
 	$(gmeversion)/gme/Sap_Emu.h\
-	$(gmeversion)/gme/scd_pcm.h\
-	$(gmeversion)/gme/s_deltat.h\
-	$(gmeversion)/gme/SegaPcm_Emu.h\
-	$(gmeversion)/gme/segapcm.h\
 	$(gmeversion)/gme/Sgc_Core.h\
 	$(gmeversion)/gme/Sgc_Emu.h\
 	$(gmeversion)/gme/Sgc_Impl.h\
-	$(gmeversion)/gme/s_logtbl.h\
 	$(gmeversion)/gme/Sms_Apu.h\
 	$(gmeversion)/gme/Sms_Fm_Apu.h\
 	$(gmeversion)/gme/Snes_Spc.h\
-	$(gmeversion)/gme/s_opl.h\
-	$(gmeversion)/gme/s_opltbl.h\
 	$(gmeversion)/gme/Spc_Cpu.h\
 	$(gmeversion)/gme/Spc_Dsp.h\
 	$(gmeversion)/gme/Spc_Emu.h\
@@ -252,19 +235,8 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Upsampler.h\
 	$(gmeversion)/gme/Vgm_Core.h\
 	$(gmeversion)/gme/Vgm_Emu.h\
-	$(gmeversion)/gme/Ym2151_Emu.h\
-	$(gmeversion)/gme/ym2151.h\
-	$(gmeversion)/gme/Ym2203_Emu.h\
 	$(gmeversion)/gme/Ym2413_Emu.h\
-	$(gmeversion)/gme/ym2413.h\
-	$(gmeversion)/gme/Ym2608_Emu.h\
-	$(gmeversion)/gme/Ym2610b_Emu.h\
 	$(gmeversion)/gme/Ym2612_Emu.h\
-	$(gmeversion)/gme/Ym3812_Emu.h\
-	$(gmeversion)/gme/ymdeltat.h\
-	$(gmeversion)/gme/Ymf262_Emu.h\
-	$(gmeversion)/gme/Ymz280b_Emu.h\
-	$(gmeversion)/gme/ymz280b.h\
 	$(gmeversion)/gme/Z80_Cpu.h\
 	$(gmeversion)/gme/Z80_Cpu_run.h\
 	$(gmeversion)/gme/higan/dsp/dsp.hpp\
@@ -272,7 +244,85 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/higan/processor/spc700/memory.hpp\
 	$(gmeversion)/gme/higan/processor/spc700/registers.hpp\
 	$(gmeversion)/gme/higan/processor/spc700/spc700.hpp\
-	$(gmeversion)/gme/higan/smp/smp.hpp
+	$(gmeversion)/gme/higan/smp/smp.hpp\
+	$(gmeversion)/vgmplay/VGMPlay/ChipMapper.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/2151intf.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/2203intf.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/2413intf.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/2413tone.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/2608intf.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/2610intf.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/2612intf.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/262intf.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/281btone.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/3526intf.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/3812intf.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/8950intf.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/adlibemu.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ay8910.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ay_intf.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/c140.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/c352.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/c6280.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/c6280intf.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ChipIncl.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/dac_control.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/emu2149.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/emu2413.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/emutypes.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/es5503.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/es5506.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/fm.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/fmopl.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/gb.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/iremga20.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/k051649.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/k053260.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/k054539.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/mamedef.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/multipcm.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/nes_apu.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/nes_defs.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/nes_intf.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/np_nes_apu.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/np_nes_dmc.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/np_nes_fds.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/okim6258.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/okim6295.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/Ootake_PSG.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/opl.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/panning.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/pokey.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/pwm.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/qsound.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/rf5c68.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/saa1099.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/scd_pcm.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/scsp.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/scspdsp.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/segapcm.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/sn76489.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/sn76496.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/sn764intf.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/upd7759.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/vrc7tone.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/vsu.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ws_audio.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ws_initialIo.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/x1_010.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ym2151.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ym2413.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ym2612.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ymdeltat.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ymf262.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ymf271.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ymf278b.h\
+	$(gmeversion)/vgmplay/VGMPlay/chips/ymz280b.h\
+	$(gmeversion)/vgmplay/VGMPlay/resampler.h\
+	$(gmeversion)/vgmplay/VGMPlay/stdbool.h\
+	$(gmeversion)/vgmplay/VGMPlay/VGMFile.h\
+	$(gmeversion)/vgmplay/VGMPlay/VGMPlay.h\
+	$(gmeversion)/vgmplay/VGMPlay/VGMPlay_Intf.h
 
 gme_la_LDFLAGS = -module -avoid-version $(NOCPPLIB)
 gme_la_LIBADD = $(ZLIB_LIBS)

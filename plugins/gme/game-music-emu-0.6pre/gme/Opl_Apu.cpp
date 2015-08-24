@@ -2,8 +2,16 @@
 
 #include "blargg_source.h"
 
-#include "ym2413.h"
-#include "fmopl.h"
+extern "C" {
+#include "../vgmplay/VGMPlay/chips/mamedef.h"
+#include "../vgmplay/VGMPlay/chips/emu2413.h"
+#include "../vgmplay/VGMPlay/chips/fmopl.h"
+}
+
+static unsigned char vrc7_inst[(16 + 3) * 8] =
+{
+#include "../vgmplay/VGMPlay/chips/vrc7tone.h"
+};
 
 Opl_Apu::Opl_Apu() { opl = 0; opl_memory = 0; }
 
@@ -20,26 +28,29 @@ blargg_err_t Opl_Apu::init( long clock, long rate, blip_time_t period, type_t ty
 	case type_opll:
 	case type_msxmusic:
 	case type_smsfmunit:
-		opl = ym2413_init( clock, rate, 0 );
+		opl = OPLL_new( (uint32_t) clock, (uint32_t) rate );
+        OPLL_SetChipMode( (OPLL *) opl, 0);
 		break;
 
 	case type_vrc7:
-		opl = ym2413_init( clock, rate, 1 );
+		opl = OPLL_new( (uint32_t) clock, (uint32_t) rate );
+        OPLL_SetChipMode((OPLL *) opl, 1 );
+        OPLL_setPatch((OPLL *) opl, vrc7_inst);
 		break;
 
 	case type_opl:
-		opl = ym3526_init( clock, rate );
+		opl = ym3526_init( (uint32_t) clock, (uint32_t) rate );
 		break;
 
 	case type_msxaudio:
 		//logfile = fopen("c:\\temp\\msxaudio.log", "wb");
-		opl = y8950_init( clock, rate );
+		opl = y8950_init( (uint32_t) clock, (uint32_t) rate );
 		opl_memory = malloc( 32768 );
 		y8950_set_delta_t_memory( opl, opl_memory, 32768 );
 		break;
 
 	case type_opl2:
-		opl = ym3812_init( clock, rate );
+		opl = ym3812_init( (uint32_t) clock, (uint32_t) rate );
 		break;
 	}
 	reset();
@@ -56,7 +67,7 @@ Opl_Apu::~Opl_Apu()
 		case type_msxmusic:
 		case type_smsfmunit:
 		case type_vrc7:
-			ym2413_shutdown( opl );
+			OPLL_delete( (OPLL *) opl );
 			break;
 
 		case type_opl:
@@ -88,7 +99,7 @@ void Opl_Apu::reset()
 	case type_msxmusic:
 	case type_smsfmunit:
 	case type_vrc7:
-		ym2413_reset_chip( opl );
+		OPLL_reset( (OPLL *) opl );
 		break;
 
 	case type_opl:
@@ -114,8 +125,8 @@ void Opl_Apu::write_data( blip_time_t time, int data )
 	case type_msxmusic:
 	case type_smsfmunit:
 	case type_vrc7:
-		ym2413_write( opl, 0, addr );
-		ym2413_write( opl, 1, data );
+		OPLL_writeIO( (OPLL *) opl, 0, addr );
+		OPLL_writeIO( (OPLL *) opl, 1, data );
 		break;
 
 	case type_opl:
@@ -149,7 +160,7 @@ int Opl_Apu::read( blip_time_t time, int port )
 	case type_msxmusic:
 	case type_smsfmunit:
 	case type_vrc7:
-		return ym2413_read( opl, port );
+        return port ? 0xFF : 0;
 
 	case type_opl:
 		return ym3526_read( opl, port );
@@ -192,15 +203,15 @@ void Opl_Apu::run_until( blip_time_t end_time )
 		case type_smsfmunit:
 		case type_vrc7:
 			{
-				SAMP bufMO[ 1024 ];
-				SAMP bufRO[ 1024 ];
-				SAMP * buffers[2] = { bufMO, bufRO };
+				e_int32 bufMO[ 1024 ];
+				e_int32 bufRO[ 1024 ];
+				e_int32 * buffers[2] = { bufMO, bufRO };
 
 				while ( count > 0 )
 				{
 					unsigned todo = count;
 					if ( todo > 1024 ) todo = 1024;
-					ym2413_update_one( opl, buffers, todo );
+					OPLL_calc_stereo( (OPLL *) opl, buffers, todo, -1 );
 
 					if ( output_ )
 					{
@@ -229,7 +240,9 @@ void Opl_Apu::run_until( blip_time_t end_time )
 		case type_msxaudio:
 		case type_opl2:
 			{
-				OPLSAMPLE buffer[ 1024 ];
+				OPLSAMPLE bufL[ 1024 ];
+                OPLSAMPLE bufR[ 1024 ];
+                OPLSAMPLE* buffers[2] = {bufL, bufR};
 
 				while ( count > 0 )
 				{
@@ -237,9 +250,9 @@ void Opl_Apu::run_until( blip_time_t end_time )
 					if ( todo > 1024 ) todo = 1024;
 					switch (type_)
 					{
-					case type_opl:      ym3526_update_one( opl, buffer, todo ); break;
-					case type_msxaudio: y8950_update_one( opl, buffer, todo ); break;
-					case type_opl2:     ym3812_update_one( opl, buffer, todo ); break;
+					case type_opl:      ym3526_update_one( opl, buffers, todo ); break;
+					case type_msxaudio: y8950_update_one( opl, buffers, todo ); break;
+					case type_opl2:     ym3812_update_one( opl, buffers, todo ); break;
 					default: break;
 					}
 
@@ -248,7 +261,7 @@ void Opl_Apu::run_until( blip_time_t end_time )
 						int last_amp = this->last_amp;
 						for ( unsigned i = 0; i < todo; i++ )
 						{
-							int amp = buffer [i];
+							int amp = bufL [i] + bufR [i];
 							int delta = amp - last_amp;
 							if ( delta )
 							{

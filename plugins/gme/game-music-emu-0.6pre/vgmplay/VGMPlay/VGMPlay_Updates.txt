@@ -1,0 +1,130 @@
+Update list since 0.4.0u3 (03.12.2012)
+- replaced some larger swich statements with function pointers (small speed up)
+- fixed Stereo flag in SN76496 OPL mapper
+- optimized playback routine (huge speed up, >20% for single-chip VGMs)
+- writing to a second chip if only the first one is defined doesn't cause crashes anymore
+- shortened the Chip Reset, Chip Mute and Chip Panning routines
+- added OKIM6295, OKIM6258 and UPD7759 to DAC Stream Control
+- slight improvements on OPL Hardware Playback
+- fixed bug where [VGMPlay Linux] was unable to show Unicode characters
+- added multiple paths for VGMPlay.ini and OPL4 ROM
+- [VGMPlay Linux] is now checking for "vgmplay.ini" as well as "VGMPlay.ini"
+- cleaned the code a bit
+- [VGMPlay] now frees its memory properly when quitting
+
+17.04.2013 and later:
+- improved skipping code for OPL hardware (to hopefully reduce noise after seeking)
+- made Makefile print short information instead of full gcc command lines
+- added possibility to override volume (+gain) of VGMs when using OPL hardware
+- [VGMPlay] made it use stderr for error messages
+- added optional debug output for DAC stream control (current data block, frequency)
+- fixed a bug with data blocks being re-read when restarting playback (wasted memory)
+- [VGMPlay] fixed bug when alternating between OPL hardware playback and emulation without restarting VGMPlay (e.g. via playlist with OPL and non-OPL VGMs)
+- fixed crash where the NES ROM could be written to invalid offsets
+- added alternative AY8910 core (EMU2149)
+- added NES DPCM address overflow behaviour, added alternative DPCM range (based on NSFPlay)
+- [VGMPlay] prevented it from writing too quickly to the OPL chip on fast computers
+
+15.06.2013 and later:
+- [VGMPlay] console title now changes to "Song (Game) - VGM Player" while playing
+- [VGMPlay] made it fall back to Japanese tags if English ones are empty
+- [VGMPlay] made Console title use Unicode (yes, that works - not like the in-Console text)
+- [in_vgm] made ANSI GetFileInfo function fall back to Japanese tags if English ones are not present
+- [in_vgm] fixed Unicode -> ANSI filename conversion bug (caused Unicode Tag function to fail with some non-ANSI filenames)
+- [in_vgm] fixed File Info Dialog falling back to tags of the other language (it isn't supposed to do that)
+- [VGMPlay] some Codepage fixes for Windows version, hopefully it now behaves correctly in all cases.
+  The Linux version should now be able to print non-ANSI Unicode characters in tags.
+- [VGMPlay Windows] now writes Unicode to the console (via WinAPI), so with the non-raster-fonts Japanese characters should work now. (although I only saw square boxes in WinXP, copying and pasting into Notepad worked at least)
+- [in_vgm] Fixed bug where "Chip Rate" == 0 didn't work and would get reset to 44100 when loading the plugin.
+- fixed bug where YM2612 Database Block caused DAC Stream Control to malfunction or crash (The MAME devs were right - realloc IS evil.)
+- [VGMPlay Linux] added support for libao
+
+09.09.2013 and later:
+- added WonderSwan support
+- added better SN-PSG name display
+- made it work on Big Endian machines (Thanks to nextvolume for sending me a patch that helped to find the critical spots)
+- cleaned code that loads VGMs a bit
+- shortened the Chip Stop routine
+- applied MAME fixes to YM2413/YMF262 (thread safe now), K051649 (added test register, changed sound generation code a bit), K054539 (replaced sound generation code, might improve reverb), YMZ280B (minor stuff), YMF271 (FM code replaced, sounds different now!)
+- added NES APU database block type
+- added NES APU to 0x68 command (RAM write from database) and fixed its dual chip support
+- ported NES APU/DMC emulator from NSFPlay 2.2
+- ported NES FDS emulator from NSFPlay 2.3
+- fixed MAME NES emulator reset
+- fixed MAME NES (and maybe others?) unmuting all channels when restarting a song or seeking back
+- added EMU2149 to YM2203, YM2608 and YM2610, fixes wrong AY-PSG tones in some VGMs (bug is still present with MAME's AY core)
+- [VGMPlay] modified makefile to make it easier to compile VGMPlay using MSYS/MinGW
+- [in_vgm] fixed crash when trying to mute channels after opening Winamp, but before any song was played
+- [in_vgm] added options from VGMPlay.ini to in_vgm.ini
+- [in_vgm] fixed track length display bug after changing the playback rate
+- [VGMPlay Linux] fixed warnings that are printed from ym2612.c
+- added VRC7 mode for YM2413 (reducing features and using separate instrument set)
+- [in_vgm] made OK button of File Dialog return another error code to Winamp to prevent a playlist bug
+
+Updates since 0.4.0u4 (02.11.2013)
+- added code for muting channels to K053260 (looks like I forgot that one) and K054539 (lost when applying MAME fixes)
+- made K054539 use a proper clock (with a fallback for older VGMs)
+- added a small hack that allows mid-song sample rate changes for the OKIM6258 chip (I'll make a proper implementation for 0.41)
+- [VGMPlay] fixed absolute paths in m3u files
+- [VGMPlay] fixed path handling, makes paths that contain / and \ work in both Windows and Unix, fixes m3u Windows paths under Unix
+- fixed pitch of YM2608 ADPCM Tom Tom and Rim Shot (reported by MaliceX)
+- fixed YM2612 Timer A (there are still tiny rounding errors though), this fixed the CSM mode
+- fixed probable YM2612 bug (CSM mode was able to prevent KeyOn/Off commands on channels other than FM3)
+- fixed noise calculation in MAME's AY8910 (applied latest MAME update)
+- fixed a few crashes related to corrupted VGM headers with invalid offsets and insane clock values (though not all)
+- [VGMPlay] MuteWTCh# now works in VGMPlay.ini
+- fixed clicks in YMF278B core (introduced when porting it from openMSX)
+- [VGMPlay] fixed length display when VGMs play slower/faster after using the PlaybackRate option
+- fixed bug where VGZs with additional 00s at the end won't play (because VGMPlay will read an unpacked size of 0 bytes)
+- changed Endianess of SCSP RAM data to Big Endian (as it should be)
+- applied MAME QSound fixes (key on register, chip initialization)
+- removed last A from AY-3-8910A and variants
+- added an option to force OKIM6258 into 12-bit mode (makes it louder sometimes, but an internal 12-bit calculation seems to be more correct)
+- VGMs using the OKIM6258 or OKIM6295 are now half as loud (affects global volume only, not chip-relative volume)
+- [VGMPlay] fixed crash that happened on Linux when trying to display a large Notes tag (thanks to vampi-the-frog for the report)
+- OKIM6258 lowers its output signal faster if there's no incoming data (reduces clicks)
+
+Updates since 0.4.0u5 (13.04.2014)
+- fixed panning in AdLibEmu with 4-op instruments (it used the bits from Channel+0 instead of Channel+3)
+- fixed panning in AdLibEmu for rhythm channels
+- [VGMPlay] fixed YM2608/YM2610 DeltaT-channel not being muteable via MuteMask_PCM
+- [VGMPlay] fixed muting of YM278B's FM drums
+- applied MAME YM2612 Timer fix (said to fix SFX in Streets of Rage 2, see MAME Testers 05049)
+- fixed C140 sub chip type and C140/System 21 banking (using current MAME code)
+- added code to handle "real" C140 clock
+- [VGMPlay] fixed "make install" (the share/vgmplay/ folder was created without "execute" rights for users)
+- improved OKIM6258 data cache (should reduce clicks a bit)
+- YMF278B: fixed OPL3 register writes and OPL3 chip clock
+- applied MAME K053260 DPCM decoding fix
+- applied MAME OPLx Key Scale Level fix
+- added 40h-byte-FIFO to UPD7759 chip when in Slave mode, based on how Sega Pico games work
+- fixed T6W28 muting (Noise channel muting was controlled by chip #2, affected in_vgm only)
+  Thanks to the developers of foo_input_vgm for noticing this bug.
+- added NMK112 banking to OKIM6295 emulation
+- added callback function for chip sample rate change
+  -> replaces OKIM6258 hack
+  -> fixes OPN SSG with MAME AY emulation
+  -> makes OKIM6295 clock changes work
+- added routines for wide-character file names (only used by in_vgm for now)
+- fixed RAM write range check for RF5C68 and RF5C164
+- made OKIM6258 FIFO queue larger, added RemoveDCOfs option
+- [VGMPlay] fixed tag display under Windows 95
+- fixed YM2151 internal sample clipping (works like YM2612 now, can reduce distortion)
+- fixed SegaPCM volume register bitmask [thanks ctr for finding the bug]
+- fix potential crash in MultiPCM chip when playing invalid instruments
+- fixed buggy frequency writes in K051649 by backporting some MAME changes
+- added VSU, SAA1099 support
+- fixed high beep in NSFPlay NES core with triangle at frequency 0 and OPT_TRI_NULL option
+- [VGMPlay] fixed YM2612 DAC not being muteable via MuteMask
+- added ES5503, ES5506, Seta X1-010, Namco C352, Irem GA20 support
+- [VGMPlay] fixed Loop Length (is now adjusted for changed playback rates)
+
+Updates since 0.4.0u6 (30.05.2015)
+- fixed SAA1099 muting (muting channel 1 or 4 prevented the envelope generator from running, thus muting 0-2 or 3-5 respectively)
+- made SAA1099 output bipolar
+- [VGMPlay] fix compiling under Linux (broken since Wide-Charcter file name support)
+- fixed ES5503 sample rate (divider was off by one)
+- applied fix from VOGONS that makes the SAA1099 core actually use the chip clock
+- fixed YMF278B's FM part being emulated at wrong sample rate
+- fixed Irem GA20 channel muting
+- fixed playing non-NMK banked OKIM6295 VGMs after NMK-banked ones

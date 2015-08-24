@@ -1,26 +1,31 @@
 // Game_Music_Emu $vers. http://www.slack.net/~ant/
 
 #include "Ym2413_Emu.h"
-#include "ym2413.h"
+
+extern "C" {
+#include "../vgmplay/VGMPlay/chips/emu2413.h"
+}
 
 Ym2413_Emu::Ym2413_Emu() { opll = 0; }
 
 Ym2413_Emu::~Ym2413_Emu()
 {
-	if ( opll ) ym2413_shutdown( opll );
+	if ( opll ) OPLL_delete( (OPLL *) opll );
 }
 
 int Ym2413_Emu::set_rate( int sample_rate, int clock_rate )
 {
 	if ( opll )
 	{
-		ym2413_shutdown( opll );
+        OPLL_delete( (OPLL *) opll );
 		opll = 0;
 	}
 	
-	opll = ym2413_init( clock_rate, sample_rate, 0 );
+	opll = OPLL_new( clock_rate, sample_rate );
 	if ( !opll )
 		return 1;
+    
+    OPLL_SetChipMode( (OPLL *) opll, 0 );
 	
 	reset();
 	return 0;
@@ -28,35 +33,32 @@ int Ym2413_Emu::set_rate( int sample_rate, int clock_rate )
 
 void Ym2413_Emu::reset()
 {
-	ym2413_reset_chip( opll );
-	ym2413_set_mask( opll, 0 );
+	OPLL_reset( (OPLL *) opll );
+	OPLL_SetMuteMask( (OPLL *) opll, 0 );
 }
-
-static stream_sample_t* DUMMYBUF[0x02] = {(stream_sample_t*)NULL, (stream_sample_t*)NULL};
 
 void Ym2413_Emu::write( int addr, int data )
 {
-	ym2413_update_one( opll, DUMMYBUF, 0 );
-	ym2413_write( opll, 0, addr );
-	ym2413_write( opll, 1, data );
+	OPLL_writeIO( (OPLL *) opll, 0, addr );
+	OPLL_writeIO( (OPLL *) opll, 1, data );
 }
 
 void Ym2413_Emu::mute_voices( int mask )
 {
-	ym2413_set_mask( opll, mask );
+	OPLL_SetMuteMask( (OPLL *) opll, mask );
 }
 
 void Ym2413_Emu::run( int pair_count, sample_t* out )
 {
-	SAMP bufMO[ 1024 ];
-	SAMP bufRO[ 1024 ];
-	SAMP * buffers[2] = { bufMO, bufRO };
+	e_int32 bufMO[ 1024 ];
+	e_int32 bufRO[ 1024 ];
+	e_int32 * buffers[2] = { bufMO, bufRO };
 
 	while (pair_count > 0)
 	{
 		int todo = pair_count;
 		if (todo > 1024) todo = 1024;
-		ym2413_update_one( opll, buffers, todo );
+		OPLL_calc_stereo( (OPLL *) opll, buffers, todo, -1 );
 
 		for (int i = 0; i < todo; i++)
 		{

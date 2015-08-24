@@ -1,0 +1,11 @@
+MAME - mame_license.txt
+DosBox - GPL.txt
+openMSX - GPL.txt
+Gens/GS - GPL.txt
+NSFPlay - [Google Code lists Apache License 2.0]
+Ootake - ?
+in_vgm - ?
+MEKA - ?
+zlib - see zlib.h
+in_wsr - ?
+vbjin/mednafen - GNU GPLv2

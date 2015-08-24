@@ -126,10 +126,12 @@ template<typename T> T max( T x, T y ) { return x > y ? x : y; } */
 	static inline type blargg_min( type x, type y ) { if ( y < x ) x = y; return x; }\
 	static inline type blargg_max( type x, type y ) { if ( x < y ) x = y; return x; }
 
-BLARGG_DEF_MIN_MAX( int32_t )
-BLARGG_DEF_MIN_MAX( int64_t )
-BLARGG_DEF_MIN_MAX( uint32_t )
-BLARGG_DEF_MIN_MAX( uint64_t )
+BLARGG_DEF_MIN_MAX( int )
+BLARGG_DEF_MIN_MAX( unsigned )
+BLARGG_DEF_MIN_MAX( long )
+BLARGG_DEF_MIN_MAX( unsigned long )
+BLARGG_DEF_MIN_MAX( BOOST::int64_t )
+BLARGG_DEF_MIN_MAX( BOOST::uint64_t )
 BLARGG_DEF_MIN_MAX( float )
 BLARGG_DEF_MIN_MAX( double )
 

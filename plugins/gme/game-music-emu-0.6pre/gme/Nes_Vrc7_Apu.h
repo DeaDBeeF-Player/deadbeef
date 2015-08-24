@@ -11,7 +11,7 @@ struct vrc7_snapshot_t;
 class Nes_Vrc7_Apu {
 public:
 	blargg_err_t init();
-	
+
 	// See Nes_Apu.h for reference
 	void reset();
 	void volume( double );
@@ -22,10 +22,10 @@ public:
 	void end_frame( blip_time_t );
 	void save_snapshot( vrc7_snapshot_t* ) const;
 	void load_snapshot( vrc7_snapshot_t const& );
-	
+
 	void write_reg( int reg );
 	void write_data( blip_time_t, int data );
-	
+
 public:
 	Nes_Vrc7_Apu();
 	~Nes_Vrc7_Apu();
@@ -43,6 +43,8 @@ private:
 	};
 
 	Vrc7_Osc oscs [osc_count];
+	BOOST::uint8_t kon;
+	BOOST::uint8_t inst [8];
 	void* opll;
 	int addr;
 	blip_time_t next_time;
@@ -50,9 +52,9 @@ private:
 		Blip_Buffer* output;
 		int last_amp;
 	} mono;
-	
+
 	Blip_Synth_Fast synth;
-	
+
 	void run_until( blip_time_t );
 	void output_changed();
 };
