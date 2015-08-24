@@ -77,7 +77,7 @@ arithmetic on smaller types. */
 #ifdef BLARGG_NAMESPACE
 	#define BLARGG_NAMESPACE_BEGIN namespace BLARGG_NAMESPACE {
 	#define BLARGG_NAMESPACE_END }
-	
+
 	BLARGG_NAMESPACE_BEGIN
 	BLARGG_NAMESPACE_END
 	using namespace BLARGG_NAMESPACE;
@@ -173,21 +173,21 @@ class blargg_vector : public blargg_vector_ {
 public:
 	blargg_vector()         { init(); }
 	~blargg_vector()        { clear(); }
-	
+
 	blargg_err_t resize( size_t n ) { return resize_( n, sizeof (T) ); }
-	
+
 	      T* begin()       { return static_cast<T*> (begin_); }
 	const T* begin() const { return static_cast<T*> (begin_); }
-	
+
 	      T* end()         { return static_cast<T*> (begin_) + size_; }
 	const T* end()   const { return static_cast<T*> (begin_) + size_; }
-	
+
 	T& operator [] ( size_t n )
 	{
 		assert( n < size_ );
 		return static_cast<T*> (begin_) [n];
 	}
-	
+
 	const T& operator [] ( size_t n ) const
 	{
 		assert( n < size_ );
@@ -218,6 +218,25 @@ BLARGG_DEPRECATED( typedef unsigned int blargg_ulong; )
 #if BLARGG_LEGACY
 	#define BOOST_STATIC_ASSERT BLARGG_STATIC_ASSERT
 #endif
+
+#ifdef _WIN32
+typedef wchar_t blargg_wchar_t;
+#elif defined(HAVE_STDINT_H)
+#include <stdint.h>
+typedef uint16_t blargg_wchar_t;
+#else
+typedef unsigned short blargg_wchar_t;
+#endif
+
+inline size_t blargg_wcslen( const blargg_wchar_t* str )
+{
+    size_t length = 0;
+    while ( *str++ ) length++;
+    return length;
+}
+
+char* blargg_to_utf8( const blargg_wchar_t* );
+blargg_wchar_t* blargg_to_wide( const char* );
 
 BLARGG_NAMESPACE_END
 

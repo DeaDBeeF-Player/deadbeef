@@ -261,9 +261,6 @@ private:
 };
 #endif
 
-char* blargg_to_utf8( const wchar_t* );
-wchar_t* blargg_to_wide( const char* );
-
 BLARGG_NAMESPACE_END
 
 #endif

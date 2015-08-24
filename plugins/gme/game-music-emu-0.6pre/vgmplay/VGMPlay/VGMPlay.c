@@ -32,7 +32,9 @@
 #include "stdbool.h"
 #include <math.h>	// for pow()
 
+#ifndef NO_ZLIB
 #include <zlib.h>
+#endif
 
 #include "resampler.h"
 
@@ -632,6 +634,7 @@ static UINT32 GetGZFileLength_Internal(FILE* hFile)
 	return FileSize;
 }
 
+#ifndef NO_ZLIB
 typedef struct vgm_file_gz
 {
 	VGM_FILE vf;
@@ -656,9 +659,13 @@ static UINT32 VGMF_gzgetsize(VGM_FILE* hFile)
 	VGM_FILE_gz* File = (VGM_FILE_gz *)hFile;
 	return File->Size;
 }
+#endif
 
 bool OpenVGMFile(void *_p, const char* FileName)
 {
+#ifdef NO_ZLIB
+	return false;
+#else
 	gzFile hFile;
 	UINT32 FileSize;
 	bool RetVal;
@@ -683,11 +690,15 @@ bool OpenVGMFile(void *_p, const char* FileName)
 
 	gzclose(hFile);
 	return RetVal;
+#endif
 }
 
 #ifndef NO_WCHAR_FILENAMES
 bool OpenVGMFileW(void *_p, const wchar_t* FileName)
 {
+#ifdef NO_ZLIB
+	return false;
+#else
 	gzFile hFile;
 	UINT32 FileSize;
 	bool RetVal;
@@ -725,6 +736,7 @@ bool OpenVGMFileW(void *_p, const wchar_t* FileName)
 
 	gzclose(hFile);
 	return RetVal;
+#endif
 }
 #endif
 
@@ -1185,6 +1197,9 @@ static wchar_t* ReadWStrFromFile(VGM_FILE* hFile, UINT32* FilePos, UINT32 EOFPos
 
 UINT32 GetVGMFileInfo(const char* FileName, VGM_HEADER* RetVGMHead, GD3_TAG* RetGD3Tag)
 {
+#ifdef NO_ZLIB
+	return 0;
+#else
 	gzFile hFile;
 	UINT32 FileSize;
 	UINT32 RetVal;
@@ -1207,11 +1222,15 @@ UINT32 GetVGMFileInfo(const char* FileName, VGM_HEADER* RetVGMHead, GD3_TAG* Ret
 
 	gzclose(hFile);
 	return RetVal;
+#endif
 }
 
 #ifndef NO_WCHAR_FILENAMES
 UINT32 GetVGMFileInfoW(const wchar_t* FileName, VGM_HEADER* RetVGMHead, GD3_TAG* RetGD3Tag)
 {
+#ifdef NO_ZLIB
+	return 0;
+#else
 	gzFile hFile;
 	UINT32 FileSize;
 	UINT32 RetVal;
@@ -1247,6 +1266,7 @@ UINT32 GetVGMFileInfoW(const wchar_t* FileName, VGM_HEADER* RetVGMHead, GD3_TAG*
 
 	gzclose(hFile);
 	return RetVal;
+#endif
 }
 #endif
 
@@ -5097,8 +5117,8 @@ UINT32 FillBuffer(void *_p, WAVE_16BS* Buffer, UINT32 BufferSize)
 		}
 
 		// ChipData << 9 [ChipVol] >> 5 << 8 [MstVol] >> 11  ->  9-5+8-11 = <<1
-		TempBuf.Left = ((TempBuf.Left >> 5) * CurMstVol) >> 11;
-		TempBuf.Right = ((TempBuf.Right >> 5) * CurMstVol) >> 11;
+		TempBuf.Left = (INT32)(((INT64)(TempBuf.Left >> 5) * CurMstVol) >> 11);
+		TempBuf.Right = (INT32)(((INT64)(TempBuf.Right >> 5) * CurMstVol) >> 11);
 		if (p->SurroundSound)
 			TempBuf.Right *= -1;
 		Buffer[CurSmpl].Left = Limit2Short(TempBuf.Left);

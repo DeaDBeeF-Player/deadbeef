@@ -231,6 +231,10 @@ void resampler_write_pair(void *_r, sample_t ls, sample_t rs)
 	}
 }
 
+#ifdef _MSC_VER
+#define restrict __restrict
+#endif
+
 static const sample_t * resampler_inner_loop( resampler *r, sample_t** out_,
 		sample_t const* out_end, sample_t const in [], int in_size )
 {
@@ -245,26 +249,26 @@ static const sample_t * resampler_inner_loop( resampler *r, sample_t** out_,
 		{
 			/* accumulate in extended precision*/
 			int pt = imp [0];
-			intermediate_t l = pt * in [0];
-			intermediate_t r = pt * in [1];
+			intermediate_t l = (intermediate_t)pt * (intermediate_t)(in [0]);
+			intermediate_t r = (intermediate_t)pt * (intermediate_t)(in [1]);
 			if ( out >= out_end )
 				break;
 			for ( int n = (adj_width - 2) / 2; n; --n )
 			{
 				pt = imp [1];
-				l += pt * in [2];
-				r += pt * in [3];
+				l += (intermediate_t)pt * (intermediate_t)(in [2]);
+				r += (intermediate_t)pt * (intermediate_t)(in [3]);
 
 				/* pre-increment more efficient on some RISC processors*/
 				imp += 2;
 				pt = imp [0];
-				r += pt * in [5];
+				r += (intermediate_t)pt * (intermediate_t)(in [5]);
 				in += 4;
-				l += pt * in [0];
+				l += (intermediate_t)pt * (intermediate_t)(in [0]);
 			}
 			pt = imp [1];
-			l += pt * in [2];
-			r += pt * in [3];
+			l += (intermediate_t)pt * (intermediate_t)(in [2]);
+			r += (intermediate_t)pt * (intermediate_t)(in [3]);
 
 			/* these two "samples" after the end of the impulse give the
 			 * proper offsets to the next input sample and next impulse */
@@ -282,6 +286,8 @@ static const sample_t * resampler_inner_loop( resampler *r, sample_t** out_,
 	}
 	return in;
 }
+
+#undef restrict
 
 static int resampler_wrapper( resampler *r, sample_t out [], int* out_size,
 		sample_t const in [], int in_size )

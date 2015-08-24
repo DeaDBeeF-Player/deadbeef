@@ -3,6 +3,7 @@
 #include "Data_Reader.h"
 
 #include "blargg_endian.h"
+#include "blargg_common.h"
 #include <stdio.h>
 #include <errno.h>
 
@@ -233,60 +234,6 @@ blargg_err_t Callback_File_Reader::seek_v( BOOST::uint64_t )
 #if BLARGG_UTF8_PATHS
 
 // Thanks to byuu for the idea for BLARGG_UTF8_PATHS and the implementations
-
-BLARGG_NAMESPACE_BEGIN
-
-// Converts wide-character path to UTF-8. Free result with free(). Only supported on Windows.
-char* blargg_to_utf8( const wchar_t* wpath )
-{
-	if ( wpath == NULL )
-		return NULL;
-	
-	int needed = WideCharToMultiByte( CP_UTF8, 0, wpath, -1, NULL, 0, NULL, NULL );
-	if ( needed <= 0 )
-		return NULL;
-	
-	char* path = (char*) malloc( needed );
-	if ( path == NULL )
-		return NULL;
-	
-	int actual = WideCharToMultiByte( CP_UTF8, 0, wpath, -1, path, needed, NULL, NULL );
-	if ( actual == 0 )
-	{
-		free( path );
-		return NULL;
-	}
-	
-	assert( actual == needed );
-	return path;
-}
-
-// Converts UTF-8 path to wide-character. Free result with free() Only supported on Windows.
-wchar_t* blargg_to_wide( const char* path )
-{
-	if ( path == NULL )
-		return NULL;
-	
-	int needed = MultiByteToWideChar( CP_UTF8, 0, path, -1, NULL, 0 );
-	if ( needed <= 0 )
-		return NULL;
-	
-	wchar_t* wpath = (wchar_t*) malloc( needed * sizeof *wpath );
-	if ( wpath == NULL )
-		return NULL;
-	
-	int actual = MultiByteToWideChar( CP_UTF8, 0, path, -1, wpath, needed );
-	if ( actual == 0 )
-	{
-		free( wpath );
-		return NULL;
-	}
-	
-	assert( actual == needed );
-	return wpath;
-}
-
-BLARGG_NAMESPACE_END
 
 static FILE* blargg_fopen( const char path [], const char mode [] )
 {

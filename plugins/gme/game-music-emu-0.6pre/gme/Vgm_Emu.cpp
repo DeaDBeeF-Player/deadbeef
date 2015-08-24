@@ -3,6 +3,7 @@
 #include "Vgm_Emu.h"
 
 #include "blargg_endian.h"
+#include "blargg_common.h"
 
 /* Copyright (C) 2003-2008 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -53,13 +54,15 @@ static byte const* skip_gd3_str( byte const in [], byte const* end )
 static byte const* get_gd3_str( byte const* in, byte const* end, char field [] )
 {
 	byte const* mid = skip_gd3_str( in, end );
-	int len = (mid - in) / 2 - 1;
+	int len = (int)((mid - in) / 2) - 1;
 	if ( len > 0 )
 	{
+        char * in_utf8 = blargg_to_utf8( (blargg_wchar_t *) in );
 		len = min( len, (int) Gme_File::max_field_ );
 		field [len] = 0;
 		for ( int i = 0; i < len; i++ )
-			field [i] = (in [i * 2 + 1] ? '?' : in [i * 2]); // TODO: convert to utf-8
+            field [i] = in_utf8 [i];
+        free(in_utf8);
 	}
 	return mid;
 }
