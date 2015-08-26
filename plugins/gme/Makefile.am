@@ -14,11 +14,10 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Ay_Core.cpp\
 	$(gmeversion)/gme/Ay_Cpu.cpp\
 	$(gmeversion)/gme/Ay_Emu.cpp\
-	$(gmeversion)/gme/blargg_common.cpp\
-	$(gmeversion)/gme/blargg_errors.cpp\
 	$(gmeversion)/gme/Blip_Buffer.cpp\
 	$(gmeversion)/gme/Bml_Parser.cpp\
 	$(gmeversion)/gme/Classic_Emu.cpp\
+	$(gmeversion)/gme/Data_Reader.cpp\
 	$(gmeversion)/gme/Downsampler.cpp\
 	$(gmeversion)/gme/Dual_Resampler.cpp\
 	$(gmeversion)/gme/Effects_Buffer.cpp\
@@ -29,12 +28,11 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Gbs_Core.cpp\
 	$(gmeversion)/gme/Gbs_Cpu.cpp\
 	$(gmeversion)/gme/Gbs_Emu.cpp\
-	$(gmeversion)/gme/gme.cpp\
 	$(gmeversion)/gme/Gme_File.cpp\
 	$(gmeversion)/gme/Gme_Loader.cpp\
 	$(gmeversion)/gme/Gym_Emu.cpp\
-	$(gmeversion)/gme/Hes_Apu_Adpcm.cpp\
 	$(gmeversion)/gme/Hes_Apu.cpp\
+	$(gmeversion)/gme/Hes_Apu_Adpcm.cpp\
 	$(gmeversion)/gme/Hes_Core.cpp\
 	$(gmeversion)/gme/Hes_Cpu.cpp\
 	$(gmeversion)/gme/Hes_Emu.cpp\
@@ -55,12 +53,13 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Nes_Vrc7_Apu.cpp\
 	$(gmeversion)/gme/Nsf_Core.cpp\
 	$(gmeversion)/gme/Nsf_Cpu.cpp\
-	$(gmeversion)/gme/Nsfe_Emu.cpp\
 	$(gmeversion)/gme/Nsf_Emu.cpp\
 	$(gmeversion)/gme/Nsf_Impl.cpp\
+	$(gmeversion)/gme/Nsfe_Emu.cpp\
 	$(gmeversion)/gme/Opl_Apu.cpp\
 	$(gmeversion)/gme/Resampler.cpp\
 	$(gmeversion)/gme/Rom_Data.cpp\
+	$(gmeversion)/gme/SPC_Filter.cpp\
 	$(gmeversion)/gme/Sap_Apu.cpp\
 	$(gmeversion)/gme/Sap_Core.cpp\
 	$(gmeversion)/gme/Sap_Cpu.cpp\
@@ -71,11 +70,7 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Sgc_Impl.cpp\
 	$(gmeversion)/gme/Sms_Apu.cpp\
 	$(gmeversion)/gme/Sms_Fm_Apu.cpp\
-	$(gmeversion)/gme/Snes_Spc.cpp\
-	$(gmeversion)/gme/Spc_Cpu.cpp\
-	$(gmeversion)/gme/Spc_Dsp.cpp\
 	$(gmeversion)/gme/Spc_Emu.cpp\
-	$(gmeversion)/gme/SPC_Filter.cpp\
 	$(gmeversion)/gme/Spc_Sfm.cpp\
 	$(gmeversion)/gme/Track_Filter.cpp\
 	$(gmeversion)/gme/Upsampler.cpp\
@@ -83,8 +78,12 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Vgm_Emu.cpp\
 	$(gmeversion)/gme/Ym2413_Emu.cpp\
 	$(gmeversion)/gme/Ym2612_Emu.cpp\
+	$(gmeversion)/gme/Ym2612_Emu_Gens.cpp\
+	$(gmeversion)/gme/Ym2612_Emu_MAME.cpp\
 	$(gmeversion)/gme/Z80_Cpu.cpp\
-	$(gmeversion)/gme/Data_Reader.cpp\
+	$(gmeversion)/gme/blargg_common.cpp\
+	$(gmeversion)/gme/blargg_errors.cpp\
+	$(gmeversion)/gme/gme.cpp\
 	$(gmeversion)/gme/higan/dsp/dsp.cpp\
 	$(gmeversion)/gme/higan/dsp/SPC_DSP.cpp\
 	$(gmeversion)/gme/higan/processor/spc700/algorithms.cpp\
@@ -162,16 +161,10 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Ay_Apu.h\
 	$(gmeversion)/gme/Ay_Core.h\
 	$(gmeversion)/gme/Ay_Emu.h\
-	$(gmeversion)/gme/blargg_common.h\
-	$(gmeversion)/gme/blargg_config.h\
-	$(gmeversion)/gme/blargg_endian.h\
-	$(gmeversion)/gme/blargg_errors.h\
-	$(gmeversion)/gme/blargg_source.h\
 	$(gmeversion)/gme/Blip_Buffer.h\
-	$(gmeversion)/gme/Blip_Buffer_impl2.h\
 	$(gmeversion)/gme/Blip_Buffer_impl.h\
+	$(gmeversion)/gme/Blip_Buffer_impl2.h\
 	$(gmeversion)/gme/Bml_Parser.h\
-	$(gmeversion)/gme/Chip_Resampler.h\
 	$(gmeversion)/gme/Classic_Emu.h\
 	$(gmeversion)/gme/Data_Reader.h\
 	$(gmeversion)/gme/Downsampler.h\
@@ -185,11 +178,10 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Gbs_Core.h\
 	$(gmeversion)/gme/Gbs_Emu.h\
 	$(gmeversion)/gme/Gme_File.h\
-	$(gmeversion)/gme/gme.h\
 	$(gmeversion)/gme/Gme_Loader.h\
 	$(gmeversion)/gme/Gym_Emu.h\
-	$(gmeversion)/gme/Hes_Apu_Adpcm.h\
 	$(gmeversion)/gme/Hes_Apu.h\
+	$(gmeversion)/gme/Hes_Apu_Adpcm.h\
 	$(gmeversion)/gme/Hes_Core.h\
 	$(gmeversion)/gme/Hes_Cpu.h\
 	$(gmeversion)/gme/Hes_Cpu_run.h\
@@ -211,9 +203,9 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Nes_Vrc6_Apu.h\
 	$(gmeversion)/gme/Nes_Vrc7_Apu.h\
 	$(gmeversion)/gme/Nsf_Core.h\
-	$(gmeversion)/gme/Nsfe_Emu.h\
 	$(gmeversion)/gme/Nsf_Emu.h\
 	$(gmeversion)/gme/Nsf_Impl.h\
+	$(gmeversion)/gme/Nsfe_Emu.h\
 	$(gmeversion)/gme/Opl_Apu.h\
 	$(gmeversion)/gme/Resampler.h\
 	$(gmeversion)/gme/Rom_Data.h\
@@ -225,9 +217,6 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Sgc_Impl.h\
 	$(gmeversion)/gme/Sms_Apu.h\
 	$(gmeversion)/gme/Sms_Fm_Apu.h\
-	$(gmeversion)/gme/Snes_Spc.h\
-	$(gmeversion)/gme/Spc_Cpu.h\
-	$(gmeversion)/gme/Spc_Dsp.h\
 	$(gmeversion)/gme/Spc_Emu.h\
 	$(gmeversion)/gme/Spc_Filter.h\
 	$(gmeversion)/gme/Spc_Sfm.h\
@@ -239,6 +228,14 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Ym2612_Emu.h\
 	$(gmeversion)/gme/Z80_Cpu.h\
 	$(gmeversion)/gme/Z80_Cpu_run.h\
+	$(gmeversion)/gme/adlib.h\
+	$(gmeversion)/gme/blargg_common.h\
+	$(gmeversion)/gme/blargg_config.h\
+	$(gmeversion)/gme/blargg_endian.h\
+	$(gmeversion)/gme/blargg_errors.h\
+	$(gmeversion)/gme/blargg_source.h\
+	$(gmeversion)/gme/gme.h\
+	$(gmeversion)/gme/gme_custom_dprintf.h\
 	$(gmeversion)/gme/higan/dsp/dsp.hpp\
 	$(gmeversion)/gme/higan/dsp/SPC_DSP.h\
 	$(gmeversion)/gme/higan/processor/spc700/memory.hpp\
