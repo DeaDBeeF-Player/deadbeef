@@ -268,6 +268,9 @@ blargg_err_t Ay_Emu::start_track_( int track )
 		}
 		check( len );
 		byte const* in = get_data( file, blocks, 0 ); blocks += 2;
+		if (!in) {
+			break;
+		}
 		if ( len > (unsigned) (file.end - in) )
 		{
 			set_warning( "File data missing" );
