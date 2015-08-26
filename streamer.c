@@ -64,6 +64,7 @@ FILE *out;
 #endif
 
 #define MAX_PLAYLIST_DOWNLOAD_SIZE 25000
+#define STREAMER_HINTS (DDB_DECODER_HINT_NEED_BITRATE|DDB_DECODER_HINT_CAN_LOOP)
 
 static int
 streamer_read_async (char *bytes, int size);
@@ -1269,7 +1270,7 @@ m3u_error:
         }
 
         trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), dec->plugin.id);
-        new_fileinfo = dec_open (dec, DDB_DECODER_HINT_NEED_BITRATE, it);
+        new_fileinfo = dec_open (dec, STREAMER_HINTS, it);
         if (new_fileinfo->file) {
             new_fileinfo_file = new_fileinfo->file;
         }
@@ -1733,7 +1734,7 @@ streamer_thread (void *ctx) {
                 }
                 pl_unlock ();
                 if (dec) {
-                    fileinfo = dec_open (dec, DDB_DECODER_HINT_NEED_BITRATE, streaming_track);
+                    fileinfo = dec_open (dec, STREAMER_HINTS, streaming_track);
                     if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) != 0) {
                         dec->free (fileinfo);
                         fileinfo = NULL;
