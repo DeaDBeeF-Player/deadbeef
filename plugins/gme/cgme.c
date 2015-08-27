@@ -255,7 +255,7 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
     }
     
     if (playForever)
-        gme_set_fade(info->emu, INT_MAX, 0);
+        gme_set_fade(info->emu, -1, 0);
     else
         gme_set_fade(info->emu, (int)(info->duration * 1000), conf_fadeout * 1000);
 

@@ -220,7 +220,7 @@ void Music_Emu::set_fade( int start_msec, int length_msec )
     fade_set = true;
     this->length_msec = start_msec;
     this->fade_msec = length_msec;
-	track_filter.set_fade( msec_to_samples( start_msec ),
+	track_filter.set_fade( start_msec < 0 ? Track_Filter::indefinite_count : msec_to_samples( start_msec ),
 			length_msec * sample_rate() / (1000 / stereo) );
 }
 
