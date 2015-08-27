@@ -32,6 +32,7 @@
 @property (unsafe_unretained) IBOutlet NSTextField *statusBar;
 @property (unsafe_unretained) IBOutlet NSSlider *seekBar;
 - (IBAction)seekBarAction:(id)sender;
+@property (unsafe_unretained) IBOutlet NSSegmentedControl *buttonBar;
 
 - (IBAction)tbClicked:(id)sender;
 @property (strong) IBOutlet NSPanel *renamePlaylistWindow;
