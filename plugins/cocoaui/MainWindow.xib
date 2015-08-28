@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="13F1112" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="MainWindowController">
@@ -18,18 +18,18 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" appearanceType="aqua" frameAutosaveName="mainwin" animationBehavior="default" id="zZI-9s-62b">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" texturedBackground="YES" unifiedTitleAndToolbar="YES"/>
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" appearanceType="aqua" frameAutosaveName="mainwin" animationBehavior="default" id="zZI-9s-62b" customClass="INAppStoreWindow">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="335" y="390" width="507" height="220"/>
+            <rect key="contentRect" x="335" y="390" width="507" height="202"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
             <value key="minSize" type="size" width="500" height="200"/>
             <view key="contentView" id="Ds9-lN-DIb">
-                <rect key="frame" x="0.0" y="-9" width="507" height="220"/>
+                <rect key="frame" x="0.0" y="9" width="507" height="202"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <segmentedControl verticalHuggingPriority="750" id="gCI-yh-htA">
-                        <rect key="frame" x="-2" y="205" width="130" height="24"/>
+                        <rect key="frame" x="-2" y="185" width="130" height="24"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="0aM-dr-PG8">
                             <font key="font" metaFont="system"/>
@@ -56,7 +56,7 @@
                         </connections>
                     </segmentedControl>
                     <slider verticalHuggingPriority="750" id="x8K-4m-cyS" customClass="DdbSeekBar">
-                        <rect key="frame" x="132" y="207" width="370" height="21"/>
+                        <rect key="frame" x="132" y="187" width="370" height="21"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="odM-LP-zjK" customClass="DdbSeekBarCell"/>
                         <connections>
@@ -73,7 +73,7 @@
                         </textFieldCell>
                     </textField>
                     <customView appearanceType="aqua" id="zrA-61-ahp" customClass="DdbTabStrip">
-                        <rect key="frame" x="0.0" y="177" width="508" height="26"/>
+                        <rect key="frame" x="0.0" y="175" width="508" height="26"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     </customView>
                     <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" id="ouj-13-WFq">
@@ -84,19 +84,12 @@
                         <font key="titleFont" metaFont="system"/>
                     </box>
                     <customView id="yp3-Vv-aHK" customClass="DdbPlaylistWidget">
-                        <rect key="frame" x="0.0" y="13" width="507" height="165"/>
+                        <rect key="frame" x="0.0" y="13" width="507" height="163"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     </customView>
-                    <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" id="CZO-0M-97q">
-                        <rect key="frame" x="0.0" y="201" width="507" height="5"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                        <font key="titleFont" metaFont="system"/>
-                    </box>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="385.5" y="66"/>
+            <point key="canvasLocation" x="385.5" y="56"/>
         </window>
         <viewController id="9vD-D4-Hkc" customClass="DdbPlaylistViewController">
             <connections>
@@ -297,7 +290,7 @@ Gw
                     </button>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="796" y="58.5"/>
+            <point key="canvasLocation" x="868" y="52.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="gN4-T3-2es"/>
         <window title="Rename Playlist" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="dIi-bq-ybp" customClass="NSPanel">

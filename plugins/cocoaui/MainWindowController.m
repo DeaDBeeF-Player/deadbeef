@@ -22,6 +22,7 @@
 */
 
 #import "MainWindowController.h"
+#import "INAppStoreWindow.h"
 #include "../../deadbeef.h"
 #include <sys/time.h>
 
@@ -47,6 +48,9 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)initCustomTitlebar {
+    INAppStoreWindow *aWindow = (INAppStoreWindow*)self.window;
+    aWindow.titleBarHeight = 44.0;
+
     NSView *themeFrame = [[self.window contentView] superview];
     NSRect c = [themeFrame frame];
 

@@ -852,6 +852,18 @@
 		2DBEE69719B4EB0900A60609 /* sb_front_cap_right@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68B19B4EB0900A60609 /* sb_front_cap_right@2x.png */; };
 		2DBEE69819B4EB0900A60609 /* sb_front_filler.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68C19B4EB0900A60609 /* sb_front_filler.png */; };
 		2DBEE69919B4EB0900A60609 /* sb_front_filler@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68D19B4EB0900A60609 /* sb_front_filler@2x.png */; };
+		2DC419921B905343007E3026 /* INAppStoreWindowSwizzling.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DC419871B905343007E3026 /* INAppStoreWindowSwizzling.c */; };
+		2DC419931B905343007E3026 /* INAppStoreWindowSwizzling.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC419881B905343007E3026 /* INAppStoreWindowSwizzling.h */; };
+		2DC419941B905343007E3026 /* INWindowBackgroundView+CoreUIRendering.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC419891B905343007E3026 /* INWindowBackgroundView+CoreUIRendering.h */; };
+		2DC419951B905343007E3026 /* INWindowBackgroundView+CoreUIRendering.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC4198A1B905343007E3026 /* INWindowBackgroundView+CoreUIRendering.m */; };
+		2DC419961B905343007E3026 /* NSDocument+INAppStoreWindowFixes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC4198B1B905343007E3026 /* NSDocument+INAppStoreWindowFixes.h */; };
+		2DC419971B905343007E3026 /* NSDocument+INAppStoreWindowFixes.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC4198C1B905343007E3026 /* NSDocument+INAppStoreWindowFixes.m */; };
+		2DC419981B905343007E3026 /* INAppStoreWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC4198D1B905343007E3026 /* INAppStoreWindow.h */; };
+		2DC419991B905343007E3026 /* INAppStoreWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC4198E1B905343007E3026 /* INAppStoreWindow.m */; };
+		2DC4199A1B905343007E3026 /* INAppStoreWindowCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC4198F1B905343007E3026 /* INAppStoreWindowCompatibility.h */; };
+		2DC4199B1B905343007E3026 /* INWindowButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC419901B905343007E3026 /* INWindowButton.h */; };
+		2DC4199C1B905343007E3026 /* INWindowButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC419911B905343007E3026 /* INWindowButton.m */; };
+		2DC4199E1B90540A007E3026 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DC4199D1B90540A007E3026 /* Carbon.framework */; };
 		2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC80A8E1A9222F800C9397F /* TrackProperties.xib */; };
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
 		2DCB281A19E86183008E9DF6 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
@@ -2315,6 +2327,18 @@
 		2DBEE68B19B4EB0900A60609 /* sb_front_cap_right@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sb_front_cap_right@2x.png"; path = "images/seekbar/sb_front_cap_right@2x.png"; sourceTree = "<group>"; };
 		2DBEE68C19B4EB0900A60609 /* sb_front_filler.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sb_front_filler.png; path = images/seekbar/sb_front_filler.png; sourceTree = "<group>"; };
 		2DBEE68D19B4EB0900A60609 /* sb_front_filler@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sb_front_filler@2x.png"; path = "images/seekbar/sb_front_filler@2x.png"; sourceTree = "<group>"; };
+		2DC419871B905343007E3026 /* INAppStoreWindowSwizzling.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = INAppStoreWindowSwizzling.c; sourceTree = "<group>"; };
+		2DC419881B905343007E3026 /* INAppStoreWindowSwizzling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = INAppStoreWindowSwizzling.h; sourceTree = "<group>"; };
+		2DC419891B905343007E3026 /* INWindowBackgroundView+CoreUIRendering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "INWindowBackgroundView+CoreUIRendering.h"; sourceTree = "<group>"; };
+		2DC4198A1B905343007E3026 /* INWindowBackgroundView+CoreUIRendering.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "INWindowBackgroundView+CoreUIRendering.m"; sourceTree = "<group>"; };
+		2DC4198B1B905343007E3026 /* NSDocument+INAppStoreWindowFixes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDocument+INAppStoreWindowFixes.h"; sourceTree = "<group>"; };
+		2DC4198C1B905343007E3026 /* NSDocument+INAppStoreWindowFixes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDocument+INAppStoreWindowFixes.m"; sourceTree = "<group>"; };
+		2DC4198D1B905343007E3026 /* INAppStoreWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = INAppStoreWindow.h; sourceTree = "<group>"; };
+		2DC4198E1B905343007E3026 /* INAppStoreWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = INAppStoreWindow.m; sourceTree = "<group>"; };
+		2DC4198F1B905343007E3026 /* INAppStoreWindowCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = INAppStoreWindowCompatibility.h; sourceTree = "<group>"; };
+		2DC419901B905343007E3026 /* INWindowButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = INWindowButton.h; sourceTree = "<group>"; };
+		2DC419911B905343007E3026 /* INWindowButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = INWindowButton.m; sourceTree = "<group>"; };
+		2DC4199D1B90540A007E3026 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		2DC80A8E1A9222F800C9397F /* TrackProperties.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
 		2DCB281419E86162008E9DF6 /* m3u.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = m3u.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DCB281919E86183008E9DF6 /* m3u.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = m3u.c; path = plugins/m3u/m3u.c; sourceTree = "<group>"; };
@@ -2933,6 +2957,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DC4199E1B90540A007E3026 /* Carbon.framework in Frameworks */,
 				2D01D7EA1AB221B200BCD3C4 /* libddbcore.a in Frameworks */,
 				4D1B51691837F669003E6066 /* CoreAudio.framework in Frameworks */,
 				4D1B51681837F655003E6066 /* AudioUnit.framework in Frameworks */,
@@ -4100,6 +4125,32 @@
 			name = seekbar;
 			sourceTree = "<group>";
 		};
+		2DC419851B905343007E3026 /* INAppStoreWindow */ = {
+			isa = PBXGroup;
+			children = (
+				2DC419861B905343007E3026 /* Extensions */,
+				2DC4198D1B905343007E3026 /* INAppStoreWindow.h */,
+				2DC4198E1B905343007E3026 /* INAppStoreWindow.m */,
+				2DC4198F1B905343007E3026 /* INAppStoreWindowCompatibility.h */,
+				2DC419901B905343007E3026 /* INWindowButton.h */,
+				2DC419911B905343007E3026 /* INWindowButton.m */,
+			);
+			path = INAppStoreWindow;
+			sourceTree = "<group>";
+		};
+		2DC419861B905343007E3026 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				2DC419871B905343007E3026 /* INAppStoreWindowSwizzling.c */,
+				2DC419881B905343007E3026 /* INAppStoreWindowSwizzling.h */,
+				2DC419891B905343007E3026 /* INWindowBackgroundView+CoreUIRendering.h */,
+				2DC4198A1B905343007E3026 /* INWindowBackgroundView+CoreUIRendering.m */,
+				2DC4198B1B905343007E3026 /* NSDocument+INAppStoreWindowFixes.h */,
+				2DC4198C1B905343007E3026 /* NSDocument+INAppStoreWindowFixes.m */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		2DCB281819E8616E008E9DF6 /* m3u */ = {
 			isa = PBXGroup;
 			children = (
@@ -4357,6 +4408,7 @@
 		4D1B3E7C18379829003E6066 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2DC4199D1B90540A007E3026 /* Carbon.framework */,
 				2D8E9C1919ED5C8200EE1408 /* libpoll.dylib */,
 				2DA24B5519E7252300E34920 /* libssl.dylib */,
 				2D2A14F019B64F2900AD1EB7 /* libz.dylib */,
@@ -4740,6 +4792,7 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
+				2DC419851B905343007E3026 /* INAppStoreWindow */,
 				2D061F7919E9685000CE6C29 /* DdbShared.m */,
 				2D061F7B19E9685E00CE6C29 /* DdbShared.h */,
 				2DE1D3DF19B11286009B5BC6 /* widgets */,
@@ -5531,7 +5584,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DC4199A1B905343007E3026 /* INAppStoreWindowCompatibility.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
+				2DC419931B905343007E3026 /* INAppStoreWindowSwizzling.h in Headers */,
 				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
 				2D9177591A0E8A3D004BC222 /* mp4ff_int_types.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */,
@@ -5539,15 +5594,19 @@
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
 				2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */,
 				2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */,
+				2DC419981B905343007E3026 /* INAppStoreWindow.h in Headers */,
 				2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */,
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
+				2DC419941B905343007E3026 /* INWindowBackgroundView+CoreUIRendering.h in Headers */,
+				2DC4199B1B905343007E3026 /* INWindowButton.h in Headers */,
 				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
 				2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */,
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
 				2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */,
+				2DC419961B905343007E3026 /* NSDocument+INAppStoreWindowFixes.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
 				2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */,
@@ -7050,7 +7109,9 @@
 				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,
 				2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */,
 				2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */,
+				2DC419951B905343007E3026 /* INWindowBackgroundView+CoreUIRendering.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
+				2DC4199C1B905343007E3026 /* INWindowButton.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
 				2D9177611A0E8A3D004BC222 /* mp4ff.c in Sources */,
 				2D9177631A0E8A3D004BC222 /* mp4meta.c in Sources */,
@@ -7058,11 +7119,14 @@
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
 				2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */,
+				2DC419921B905343007E3026 /* INAppStoreWindowSwizzling.c in Sources */,
 				2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* DdbSearchViewController.m in Sources */,
+				2DC419971B905343007E3026 /* NSDocument+INAppStoreWindowFixes.m in Sources */,
 				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
 				2D9177651A0E8A3D004BC222 /* mp4sample.c in Sources */,
+				2DC419991B905343007E3026 /* INAppStoreWindow.m in Sources */,
 				2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */,
 				2D91775F1A0E8A3D004BC222 /* mp4atom.c in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
