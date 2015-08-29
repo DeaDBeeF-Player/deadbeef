@@ -10,6 +10,7 @@ void decode_frame(alac_file *alac,
 void alac_set_info(alac_file *alac, char *inputbuffer);
 
 int alac_get_samplerate(alac_file *alac);
+int alac_get_bitspersample(alac_file *alac);
 void alac_file_free (alac_file *alac);
 
 

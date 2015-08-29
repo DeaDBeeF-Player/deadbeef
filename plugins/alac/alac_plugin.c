@@ -168,6 +168,7 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->alac = create_alac(info->demux_res.sample_size, info->demux_res.num_channels);
     alac_set_info(info->alac, info->demux_res.codecdata);
     info->demux_res.sample_rate = alac_get_samplerate (info->alac);
+    info->demux_res.sample_size = alac_get_bitspersample (info->alac);
 
     int totalsamples = alacplug_get_totalsamples (&info->demux_res);
     if (!info->file->vfs->is_streaming ()) {
@@ -510,6 +511,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     alac_file *alac = create_alac(demux_res.sample_size, demux_res.num_channels);
     alac_set_info(alac, demux_res.codecdata);
     demux_res.sample_rate = alac_get_samplerate (alac);
+    demux_res.sample_size = alac_get_bitspersample (alac);
     alac_file_free (alac);
 
     it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);

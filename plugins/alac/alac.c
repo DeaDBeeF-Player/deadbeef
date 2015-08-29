@@ -152,6 +152,9 @@ void alac_set_info(alac_file *alac, char *inputbuffer)
       _Swap32(alac->setinfo_8a_rate);
 
   ptr += 4;
+    
+  alac->samplesize = alac->setinfo_sample_size;
+  alac->bytespersample = (alac->setinfo_sample_size / 8) * alac->numchannels;
 
   allocate_buffers(alac);
 
@@ -160,6 +163,11 @@ void alac_set_info(alac_file *alac, char *inputbuffer)
 int
 alac_get_samplerate(alac_file *alac) {
     return alac->setinfo_8a_rate;
+}
+
+int
+alac_get_bitspersample(alac_file *alac) {
+    return alac->setinfo_sample_size;
 }
 
 /* stream reading */
@@ -759,7 +767,7 @@ void decode_frame(alac_file *alac,
     channels = readbits(alac, 3);
 
     *outputsize = outputsamples * alac->bytespersample;
-
+    
     switch(channels)
     {
     case 0: /* 1 channel */
