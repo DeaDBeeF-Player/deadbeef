@@ -272,7 +272,7 @@ extern DB_functions_t *deadbeef;
 
     deadbeef->conf_lock ();
     for (int i = 0; i < _settingsData.nprops; i++) {
-        int y = h - (unit_h + unit_spacing) * i - unit_h;
+        int y = h - (unit_h + unit_spacing) * i - unit_h - 4;
 
         int label_w = 0;
 
@@ -284,7 +284,7 @@ extern DB_functions_t *deadbeef;
             case PROP_SLIDER:
             case PROP_FILE:
             {
-                NSTextField *lbl = [[NSTextField alloc] initWithFrame:NSMakeRect(0, y, 500, unit_h)];
+                NSTextField *lbl = [[NSTextField alloc] initWithFrame:NSMakeRect(0, y-2, 500, unit_h)];
                 [lbl setStringValue:[NSString stringWithUTF8String:_settingsData.props[i].title]];
                 [lbl setBezeled:NO];
                 [lbl setDrawsBackground:NO];
@@ -307,7 +307,7 @@ extern DB_functions_t *deadbeef;
             case PROP_PASSWORD:
             case PROP_FILE:
             {
-                NSRect frame = NSMakeRect(label_w + label_padding, y, sz.width-label_w, unit_h);
+                NSRect frame = NSMakeRect(label_w + label_padding, y, sz.width-label_w - label_padding - 4, unit_h);
                 NSTextField *tf = _settingsData.props[i].type == PROP_PASSWORD ? [[NSSecureTextField alloc] initWithFrame:frame] : [[NSTextField alloc] initWithFrame:frame];
                 [tf setStringValue:[NSString stringWithUTF8String:deadbeef->conf_get_str_fast (_settingsData.props[i].key, _settingsData.props[i].def)]];
                 if (_settingsData.props[i].type == PROP_FILE) {
@@ -315,6 +315,15 @@ extern DB_functions_t *deadbeef;
                 }
                 [v addSubview:tf];
                 break;
+            }
+            case PROP_CHECKBOX:
+            {
+                NSRect frame = NSMakeRect(0, y, sz.width - 4, unit_h);
+                NSButton *checkbox = [[NSButton alloc] initWithFrame:frame];
+                [checkbox setButtonType:NSSwitchButton];
+                [checkbox setTitle:[NSString stringWithUTF8String:_settingsData.props[i].title]];
+                [checkbox setState:deadbeef->conf_get_int (_settingsData.props[i].key, atoi(_settingsData.props[i].def)) ? NSOnState : NSOffState];
+                [v addSubview:checkbox];
             }
         }
     }
