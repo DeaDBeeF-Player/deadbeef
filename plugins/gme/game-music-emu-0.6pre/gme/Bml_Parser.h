@@ -1,16 +1,15 @@
 #ifndef BML_PARSER_H
 #define BML_PARSER_H
 
-#include <vector>
-#include <string>
-#include <sstream>
+#include "blargg_common.h"
 
 class Bml_Node
 {
     char * name;
     char * value;
+    Bml_Node *next;
 
-    std::vector<Bml_Node> children;
+    blargg_vector<Bml_Node> children;
 
     static Bml_Node emptyNode;
 
@@ -47,15 +46,18 @@ public:
 
     void parseDocument(const char * document, size_t max_length = ~0UL);
 
-    const char * enumValue(std::string const& path) const;
+    const char * enumValue(const char *path) const;
     
-    void setValue(std::string const& path, long value);
-    void setValue(std::string const& path, const char * value);
+    void setValue(const char *path, long value);
+    void setValue(const char *path, const char * value);
 
-    void serialize(std::string & out) const;
-
+#if HAVE_SFM_METADATA
+    void serialize(const char *out) const;
+#endif
 private:
+#if HAVE_SFM_METADATA
     void serialize(std::ostringstream & out, Bml_Node const* node, unsigned int indent) const;
+#endif
 };
 
 #endif // BML_PARSER_H

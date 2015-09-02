@@ -868,6 +868,7 @@
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
 		2DCB281A19E86183008E9DF6 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
 		2DCB281D19E86194008E9DF6 /* m3u.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DCB281419E86162008E9DF6 /* m3u.dylib */; };
+		2DCD1CAD1B978EB900C670CB /* Bml_Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCA51B7710650063DA75 /* Bml_Parser.cpp */; };
 		2DCD78D419A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78B919A665CA00EA50FA /* deadbeef.png */; };
 		2DCD78D519A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78BB19A665CA00EA50FA /* deadbeef.png */; };
 		2DCD78D619A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78BD19A665CA00EA50FA /* deadbeef.png */; };
@@ -1212,7 +1213,6 @@
 		83D1CCA21B77060C0063DA75 /* readokt.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CC961B77060C0063DA75 /* readokt.c */; };
 		83D1CCA31B77060C0063DA75 /* readokt2.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CC971B77060C0063DA75 /* readokt2.c */; };
 		83D1CCF61B7710650063DA75 /* adlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCA41B7710650063DA75 /* adlib.h */; };
-		83D1CCF71B7710650063DA75 /* Bml_Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCA51B7710650063DA75 /* Bml_Parser.cpp */; };
 		83D1CCF81B7710650063DA75 /* Bml_Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCA61B7710650063DA75 /* Bml_Parser.h */; };
 		83D1CD071B7710650063DA75 /* gme_custom_dprintf.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCB51B7710650063DA75 /* gme_custom_dprintf.h */; };
 		83D1CD321B7710650063DA75 /* Spc_Sfm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCE01B7710650063DA75 /* Spc_Sfm.cpp */; };
@@ -6592,7 +6592,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8374A52F1B8946A800C6A572 /* vsu.c in Sources */,
-				83D1CCF71B7710650063DA75 /* Bml_Parser.cpp in Sources */,
 				2D2A141C19B6482600AD1EB7 /* Blip_Buffer.cpp in Sources */,
 				2D2A146219B6482600AD1EB7 /* Nes_Cpu.cpp in Sources */,
 				2D2A143819B6482600AD1EB7 /* Gbs_Cpu.cpp in Sources */,
@@ -6614,6 +6613,7 @@
 				2D2A143419B6482600AD1EB7 /* Gb_Oscs.cpp in Sources */,
 				2D2A144519B6482600AD1EB7 /* Hes_Apu.cpp in Sources */,
 				2D2A141119B6482600AD1EB7 /* Ay_Emu.cpp in Sources */,
+				2DCD1CAD1B978EB900C670CB /* Bml_Parser.cpp in Sources */,
 				8374A4E61B8946A800C6A572 /* nes_apu.c in Sources */,
 				2D2A144719B6482600AD1EB7 /* Hes_Core.cpp in Sources */,
 				2D2A144C19B6482600AD1EB7 /* Hes_Emu.cpp in Sources */,

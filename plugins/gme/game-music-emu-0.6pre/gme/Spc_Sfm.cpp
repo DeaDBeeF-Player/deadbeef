@@ -151,6 +151,7 @@ struct Sfm_File : Gme_Info_
     
     blargg_err_t save_( gme_writer_t writer, void* your_data ) const
     {
+#if HAVE_SFM_METADATA
 		std::string metadata_serialized;
 		metadata.serialize( metadata_serialized );
 		uint8_t meta_length[4];
@@ -159,6 +160,7 @@ struct Sfm_File : Gme_Info_
 		writer( your_data, meta_length, 4 );
 		writer( your_data, metadata_serialized.c_str(), metadata_serialized.length() );
 		writer( your_data, data.begin() + 4 + 4 + original_metadata_size, data.size() - (4 + 4 + original_metadata_size) );
+#endif
 		return blargg_ok;
     }
 };
@@ -283,16 +285,13 @@ blargg_err_t Sfm_Emu::start_track_( int track )
         }
     }
 
-    std::string name;
-    std::ostringstream oss;
-    
-    name = "smp:regs:";
-    smp.regs.pc = META_ENUM_INT(name + "pc", 0xffc0);
-    smp.regs.a = META_ENUM_INT(name + "a", 0x00);
-    smp.regs.x = META_ENUM_INT(name + "x", 0x00);
-    smp.regs.y = META_ENUM_INT(name + "y", 0x00);
-    smp.regs.s = META_ENUM_INT(name + "s", 0xef);
-    smp.regs.p = META_ENUM_INT(name + "psw", 0x02);
+#define NAME "smp:regs:"
+    smp.regs.pc = META_ENUM_INT(NAME "pc", 0xffc0);
+    smp.regs.a = META_ENUM_INT(NAME "a", 0x00);
+    smp.regs.x = META_ENUM_INT(NAME "x", 0x00);
+    smp.regs.y = META_ENUM_INT(NAME "y", 0x00);
+    smp.regs.s = META_ENUM_INT(NAME "s", 0xef);
+    smp.regs.p = META_ENUM_INT(NAME "psw", 0x02);
 
     value = metadata.enumValue("smp:ports");
     if (value)
@@ -310,21 +309,25 @@ blargg_err_t Sfm_Emu::start_track_( int track )
     for (int i = 0; i < 3; ++i)
     {
         SuperFamicom::SMP::Timer<192> &t = (i == 0 ? smp.timer0 : (i == 1 ? smp.timer1 : *(SuperFamicom::SMP::Timer<192>*)&smp.timer2));
-        oss.str("");
-        oss.clear();
-        oss << "smp:timer[" << i << "]:";
-        name = oss.str();
-        value = metadata.enumValue(name + "enable");
+
+        char name[50];
+        snprintf (name, sizeof (name), "smp:timer[%d]:", i);
+
+        char val[50];
+        snprintf (val, sizeof (val), "%senable", name);
+        value = metadata.enumValue(val);
         if (value)
         {
             t.enable = !!strtol(value, &end, 10);
         }
-        value = metadata.enumValue(name + "target");
+        snprintf (val, sizeof (val), "%starget", name);
+        value = metadata.enumValue(val);
         if (value)
         {
             t.target = strtol(value, &end, 10);
         }
-        value = metadata.enumValue(name + "stage");
+        snprintf (val, sizeof (val), "%sstage", name);
+        value = metadata.enumValue(val);
         if (value)
         {
             t.stage0_ticks = strtol(value, &end, 10);
@@ -338,7 +341,8 @@ blargg_err_t Sfm_Emu::start_track_( int track )
             value = end + 1;
             t.stage3_ticks = strtol(value, &end, 10);
         }
-        value = metadata.enumValue(name + "line");
+        snprintf (val, sizeof (val), "%sline", name);
+        value = metadata.enumValue(val);
         if (value)
         {
             t.current_line = !!strtol(value, &end, 10);
@@ -414,17 +418,19 @@ blargg_err_t Sfm_Emu::start_track_( int track )
 
     for (int i = 0; i < 8; ++i)
     {
-        oss.str("");
-        oss.clear();
-        oss << "dsp:voice[" << i << "]:";
-        name = oss.str();
+        char name[50];
+        snprintf (name, sizeof (name), "dsp:voice[%d]:", i);
         SuperFamicom::SPC_DSP::voice_t & voice = smp.dsp.spc_dsp.m.voices[i];
-        value = metadata.enumValue(name + "brrhistaddr");
+
+        char val[50];
+        snprintf (val, sizeof (val), "%sbrrhistaddr", name);
+        value = metadata.enumValue(val);
         if (value)
         {
             voice.buf_pos = strtol(value, &end, 10);
         }
-        value = metadata.enumValue(name + "brrhistdata");
+        snprintf (val, sizeof (val), "%sbrrhistdata", name);
+        value = metadata.enumValue(val);
         if (value)
         {
             for (int j = 0; j < SuperFamicom::SPC_DSP::brr_buf_size; ++j)
@@ -434,16 +440,26 @@ blargg_err_t Sfm_Emu::start_track_( int track )
                 value = end + 1;
             }
         }
-        voice.interp_pos = META_ENUM_INT(name + "interpaddr",0);
-        voice.brr_addr = META_ENUM_INT(name + "brraddr",0);
-        voice.brr_offset = META_ENUM_INT(name + "brroffset",0);
-        voice.vbit = META_ENUM_INT(name + "vbit",0);
-        voice.regs = &smp.dsp.spc_dsp.m.regs[META_ENUM_INT(name + "vidx",0)];
-        voice.kon_delay = META_ENUM_INT(name + "kondelay", 0);
-        voice.env_mode = (SuperFamicom::SPC_DSP::env_mode_t) META_ENUM_INT(name + "envmode", 0);
-        voice.env = META_ENUM_INT(name + "env", 0);
-        voice.t_envx_out = META_ENUM_INT(name + "envxout", 0);
-        voice.hidden_env = META_ENUM_INT(name + "envcache", 0);
+        snprintf (val, sizeof (val), "%sinterpaddr", name);
+        voice.interp_pos = META_ENUM_INT(val,0);
+        snprintf (val, sizeof (val), "%sbrraddr", name);
+        voice.brr_addr = META_ENUM_INT(val,0);
+        snprintf (val, sizeof (val), "%sbrroffset", name);
+        voice.brr_offset = META_ENUM_INT(val,0);
+        snprintf (val, sizeof (val), "%svbit", name);
+        voice.vbit = META_ENUM_INT(val,0);
+        snprintf (val, sizeof (val), "%svidx", name);
+        voice.regs = &smp.dsp.spc_dsp.m.regs[META_ENUM_INT(val,0)];
+        snprintf (val, sizeof (val), "%skondelay", name);
+        voice.kon_delay = META_ENUM_INT(val, 0);
+        snprintf (val, sizeof (val), "%senvmode", name);
+        voice.env_mode = (SuperFamicom::SPC_DSP::env_mode_t) META_ENUM_INT(val, 0);
+        snprintf (val, sizeof (val), "%senv", name);
+        voice.env = META_ENUM_INT(val, 0);
+        snprintf (val, sizeof (val), "%senvxout", name);
+        voice.t_envx_out = META_ENUM_INT(val, 0);
+        snprintf (val, sizeof (val), "%senvcache", name);
+        voice.hidden_env = META_ENUM_INT(val, 0);
     }
 
     filter.set_gain( (int) (gain() * Spc_Filter::gain_unit) );
@@ -454,13 +470,14 @@ blargg_err_t Sfm_Emu::start_track_( int track )
 
 void Sfm_Emu::create_updated_metadata( Bml_Parser &out ) const
 {
+#if HAVE_SFM_METADATA
     bool first;
     std::string name;
     std::ostringstream oss;
     
     metadata.serialize(name);
     
-    out.parseDocument(name.c_str());
+    out.parseDocument(name);
     
     out.setValue( "smp:test", (smp.status.clock_speed << 6) | (smp.status.timer_speed << 4) | (smp.status.timers_enable << 3) | (smp.status.ram_disable << 2) | (smp.status.ram_writable << 1) | (smp.status.timers_disable << 0) );
     out.setValue( "smp:iplrom", smp.status.iplrom_enable );
@@ -589,10 +606,12 @@ void Sfm_Emu::create_updated_metadata( Bml_Parser &out ) const
         out.setValue( name + "envxout", voice.t_envx_out );
         out.setValue( name + "envcache", voice.hidden_env );
     }
+#endif
 }
 
 blargg_err_t Sfm_Emu::save_( gme_writer_t writer, void* your_data ) const
 {
+#if HAVE_SFM_METADATA
     std::string meta_serialized;
     
     Bml_Parser metadata;
@@ -614,7 +633,7 @@ blargg_err_t Sfm_Emu::save_( gme_writer_t writer, void* your_data ) const
     
     if ( smp.get_sfm_queue_remain() )
         RETURN_ERR( writer( your_data, smp.get_sfm_queue(), smp.get_sfm_queue_remain() ) );
-    
+#endif
     return blargg_ok;
 }
 

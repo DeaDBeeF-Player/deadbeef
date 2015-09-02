@@ -108,9 +108,11 @@ void Bml_Node::setLine(const char *line, size_t max_length)
     name[last_letter - first_letter + 1] = '\0';
 }
 
+#define children_append(children, child) (children).resize((children).size()+1); (children)[(children).size()-1] = (child);
+
 Bml_Node& Bml_Node::addChild(const Bml_Node &child)
 {
-    children.push_back(child);
+    children_append (children, child);
     return *(children.end() - 1);
 }
 
@@ -164,7 +166,7 @@ Bml_Node & Bml_Node::walkToNode(const char *path, bool use_indexes)
         }
         if ( use_indexes )
         {
-            for ( std::vector<Bml_Node>::iterator it = node->children.begin(); it != node->children.end(); ++it )
+            for ( Bml_Node *it = node->children.begin(); it != node->children.end(); ++it )
             {
                 if ( array_index_start - path == strlen(it->name) &&
                     strncmp( it->name, path, array_index_start - path ) == 0 )
@@ -180,7 +182,7 @@ Bml_Node & Bml_Node::walkToNode(const char *path, bool use_indexes)
         }
         else
         {
-            for ( std::vector<Bml_Node>::iterator it = node->children.end(); it != node->children.begin(); )
+            for ( Bml_Node *it = node->children.end(); it != node->children.begin(); )
             {
                 --it;
                 if ( next_separator - path == strlen(it->name) &&
@@ -228,7 +230,7 @@ Bml_Node const& Bml_Node::walkToNode(const char *path) const
         {
             array_index_start = next_separator;
         }
-        for ( std::vector<Bml_Node>::const_iterator it = node->children.begin(), ite = node->children.end(); it != ite; ++it )
+        for ( const Bml_Node *it = node->children.begin(), *ite = node->children.end(); it != ite; ++it )
         {
             if ( array_index_start - path == strlen(it->name) &&
                  strncmp( it->name, path, array_index_start - path ) == 0 )
@@ -252,6 +254,7 @@ Bml_Node const& Bml_Node::walkToNode(const char *path) const
 
 void Bml_Parser::parseDocument( const char * source, size_t max_length )
 {
+#if HAVE_SFM_METADATA
     std::vector<size_t> indents;
     std::string last_name;
     std::string current_path;
@@ -309,25 +312,27 @@ void Bml_Parser::parseDocument( const char * source, size_t max_length )
         source = line_end;
         while ( *source && *source == '\n' ) source++;
     }
+#endif
 }
 
-const char * Bml_Parser::enumValue(std::string const& path) const
+const char * Bml_Parser::enumValue(const char *path) const
 {
-    return document.walkToNode(path.c_str()).getValue();
+    return document.walkToNode(path).getValue();
 }
 
-void Bml_Parser::setValue(std::string const& path, const char *value)
+void Bml_Parser::setValue(const char *path, const char *value)
 {
-    document.walkToNode(path.c_str(), true).setValue(value);
+    document.walkToNode(path, true).setValue(value);
 }
 
-void Bml_Parser::setValue(std::string const& path, long value)
+void Bml_Parser::setValue(const char *path, long value)
 {
-    std::ostringstream str;
-    str << value;
-    setValue( path, str.str().c_str() );
+    char str[15];
+    snprintf (str, sizeof (str), "%ld", value);
+    setValue( path, str );
 }
 
+#if HAVE_SFM_METADATA
 void Bml_Parser::serialize(std::string & out) const
 {
     std::ostringstream strOut;
@@ -355,3 +360,4 @@ void Bml_Parser::serialize(std::ostringstream & out, Bml_Node const* node, unsig
         if ( indent == 0 ) out << std::endl;
     }
 }
+#endif

@@ -2,9 +2,11 @@
 #define PROCESSOR_SPC700_HPP
 
 #include <stdint.h>
+#if HAVE_SPC_DISASSEMLER
 #include <string>
 #include <sstream>
 #include <iomanip>
+#endif
 #if 1
 #include <stdio.h>
 #endif
@@ -31,8 +33,10 @@ struct SPC700 {
   regs_t regs;
   word_t dp, sp, rd, wr, bit, ya;
   uint8_t opcode;
-    
+
+#if HAVE_SPC_DISASSEMLER
   std::string disassemble_opcode(uint16_t addr);
+#endif
 
 protected:
   uint8_t op_adc(uint8_t, uint8_t);

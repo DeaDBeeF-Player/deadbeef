@@ -28,7 +28,9 @@ public:
     enum { native_sample_rate = 32000 };
     
     // This will serialize the current state of the emulator into a new SFM file
+#if HAVE_SFM_METADATA
     blargg_err_t serialize( std::vector<uint8_t> & out );
+#endif
 
     // Disables annoying pseudo-surround effect some music uses
     void disable_surround( bool disable = true )    { smp.dsp.disable_surround( disable ); }

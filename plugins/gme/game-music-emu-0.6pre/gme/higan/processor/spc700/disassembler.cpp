@@ -1,5 +1,6 @@
 #ifdef SPC700_CPP
 
+#if HAVE_SPC_DISASSEMLER
 template<signed precision> std::string hex(uintmax_t value) {
   std::ostringstream s;
   s << std::hex << std::setw( precision ) << std::setfill( '0' ) << value;
@@ -311,5 +312,6 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
 
   return output;
 }
+#endif
 
 #endif
