@@ -5,8 +5,15 @@ EXTRA_DIST = $(dumbpath)/readme.txt $(dumbpath)/ChangeLog $(dumbpath)/licence.tx
 
 pkglib_LTLIBRARIES = ddb_dumb.la
 
-AM_CFLAGS = $(CFLAGS) -I$(dumbpath)/include -std=gnu99 -msse2
+ddb_dumb_la_CFLAGS = $(CFLAGS) -I$(dumbpath)/include -std=gnu99
 ddb_dumb_la_LDFLAGS = -module -avoid-version -lm
+if HAVE_SSE2
+noinst_LIBRARIES = libdumbsse2.a
+libdumbsse2_a_SOURCES = dumb-kode54/src/helpers/resampler_sse2.c
+libdumbsse2_a_CFLAGS = $(CFLAGS) -I$(dumbpath)/include -std=gnu99 -msse2 -fPIC
+ddb_dumb_la_LIBADD = libdumbsse2.a
+endif
+
 
 ddb_dumb_la_SOURCES =\
 dumb-kode54/src/it/readam.c\
