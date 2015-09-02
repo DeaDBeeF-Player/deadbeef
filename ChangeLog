@@ -1,3 +1,47 @@
+version 0.7.0
+	various ogg vorbis, converter improvements (Ian Nartowicz)
+	largely reworked artwork plugin with added cache cleaner and MusicBrainz backend (Ian Nartowicz)
+	playlist browser: renaming, sorting, appearance and other improvements (Christian Boxdörfer)
+	various selection properties improvements (Christian Boxdörfer)
+	added "Skip to ..." next/prev album/genre/composer actions (Christian Boxdörfer)
+	more appearance customization options in GTKUI (Christian Boxdörfer)
+	initial OS X support, with cocoaui, coreaudio and xcode project, only in GIT sources
+	added center-alignment option to playlist columns (Christian Boxdörfer)
+	added 1 and 5 second "Seek forward/backward" actions
+	fixed random gtkui crash when closing playlist via menu
+	new title formatting implementation, aiming to be compatible with fb2k, replacing the old one
+	added grouping to search window (Ian Nartowicz)
+	improved error handling in vfs_curl (Ian Nartowicz)
+	fixed volume control via mouse scroll when using GTK3
+	fixed unwanted restarting when unpausing streaming tracks of known length
+	sid: use stereo by default, with an option to force mono; fixed performance issues
+	cdda: improved cddb support, libcdparanoia, multiple CD drives, speed selection (Ian Nartowicz)
+	gtkui: added selection focus, such that the found tracks will be focused while using the search window
+	tags: use cp1252 instead of iso8859-1 everywhere
+	fixed resuming network streams after losing network connection
+	fixed cuesheet charset detection crash bug
+	renamed mpgmad plugin to be "mp3"
+	added libmpg123 support as a 2nd backend to mp3 plugin, as default
+	mp3: fixed xing header parsing, length calculation issues
+	favor album artist over artist in "stop after current album" mode
+	gme: fixed SAP file duration and improved looping handling
+	sid: automatic detection of HVSC SongLengths.txt from sid file pathes
+	gtkui: added Tabs widget in Design mode (Christian Boxdörfer)
+	added sc68 plugin for playing Atari ST music
+	added on-demand initialization to wild-midi, to speed up player init
+	flac: fixed legacy cuesheet handling
+	added writing updated replaygain info to all supported tag formats
+	fixed setting focus on the main window / playlist on startup
+	changed volume up/down actions to have a step of 1 sec instead of 2 sec
+	fixed bigendian support in the converter
+	updated DUMB and GME to the newest versions (kode54)
+	fixed handling of several formats in sndfile plugin (kode54)
+	added support for ORIGINAL_RELEASE_TIME and ORIGINAL_RELEASE_YEAR metadata fields (Giulio Bernardi)
+	added loading plugins from a $DEADBEEF_PLUGIN_DIR directory (Nikolay Amiantov)
+	fixed a bug which was skipping next track after deleting current track
+	DUMB and GME can now do their own proper infinite looping in "Loop single" mode (kode54)
+	alac: Fix bits per sample varying from what the MP4 container specifies (kode54)
+
 version 0.6.2
 	added "Stop playback after current album finished" (Aleksejs Popovs)
 	added ALAC, OPUS, OggFlac encoder presets (Ian Nartowicz)
