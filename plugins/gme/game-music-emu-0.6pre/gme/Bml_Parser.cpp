@@ -146,7 +146,7 @@ Bml_Node const& Bml_Node::getChild(size_t index) const
 
 Bml_Node & Bml_Node::walkToNode(const char *path, bool use_indexes)
 {
-    Bml_Node * next_node;
+    Bml_Node * next_node = NULL;
     Bml_Node * node = this;
     while ( *path )
     {
@@ -212,7 +212,7 @@ Bml_Node & Bml_Node::walkToNode(const char *path, bool use_indexes)
 
 Bml_Node const& Bml_Node::walkToNode(const char *path) const
 {
-    Bml_Node const* next_node;
+    Bml_Node const* next_node = NULL;
     Bml_Node const* node = this;
     while ( *path )
     {
@@ -254,10 +254,10 @@ Bml_Node const& Bml_Node::walkToNode(const char *path) const
 
 void Bml_Parser::parseDocument( const char * source, size_t max_length )
 {
-#if HAVE_SFM_METADATA
-    std::vector<size_t> indents;
-    std::string last_name;
-    std::string current_path;
+    size_t indents[100] = { 0 };
+    int num_indents = 0;
+    char last_name[1000] = "";
+    char current_path[1000] = "";
 
     document.clear();
 
@@ -274,7 +274,7 @@ void Bml_Parser::parseDocument( const char * source, size_t max_length )
         const char * line_end = strchr_limited( source, end, '\n' );
         if ( !line_end ) line_end = end;
 
-        if ( node.getName() ) last_name = node.getName();
+        if ( node.getName() ) strcpy (last_name, node.getName());
 
         node.setLine( source, line_end - source );
 
@@ -289,30 +289,27 @@ void Bml_Parser::parseDocument( const char * source, size_t max_length )
 
         if ( indent > last_indent )
         {
-            indents.push_back( last_indent );
+            indents[num_indents++] = last_indent;
             last_indent = indent;
-            if ( current_path.length() ) current_path += ":";
-            current_path += last_name;
+            if ( current_path[0] ) strcat (current_path, ":");
+            strcat (current_path, last_name);
         }
         else if ( indent < last_indent )
         {
-            while ( last_indent > indent && indents.size() )
+            while ( last_indent > indent && num_indents )
             {
-                last_indent = *(indents.end() - 1);
-                indents.pop_back();
-                size_t colon = current_path.find_last_of( ':' );
-                if ( colon != std::string::npos ) current_path.resize( colon );
-                else current_path.resize( 0 );
+                last_indent = indents[--num_indents];
+                const char *colon = strrchr (current_path, ':');
+                if ( !colon ) current_path[0] = 0;
             }
             last_indent = indent;
         }
 
-        document.walkToNode( current_path.c_str() ).addChild( node );
+        document.walkToNode( current_path ).addChild( node );
 
         source = line_end;
         while ( *source && *source == '\n' ) source++;
     }
-#endif
 }
 
 const char * Bml_Parser::enumValue(const char *path) const
@@ -332,23 +329,29 @@ void Bml_Parser::setValue(const char *path, long value)
     setValue( path, str );
 }
 
-#if HAVE_SFM_METADATA
-void Bml_Parser::serialize(std::string & out) const
+void Bml_Parser::serialize(char *buffer, int size) const
 {
-    std::ostringstream strOut;
-    serialize(strOut, &document, 0);
-    out = strOut.str();
+    serialize(buffer, size, &document, 0);
 }
 
-void Bml_Parser::serialize(std::ostringstream & out, Bml_Node const* node, unsigned int indent) const
+
+void Bml_Parser::serialize(char *buffer, int size, Bml_Node const* node, unsigned int indent) const
 {
-    for (unsigned i = 1; i < indent; ++i) out << "  ";
+    size_t l = 0;
+#define APPEND(x) l = strlen(x); if (l > size) return; strcat (buffer, x); buffer += l; size -= l;
+
+    for (unsigned i = 1; i < indent; ++i) {
+        APPEND("  ");
+    }
 
     if ( indent )
     {
-        out << node->getName();
-        if (node->getValue() && strlen(node->getValue())) out << ":" << node->getValue();
-        out << std::endl;
+        APPEND(node->getName());
+        if (node->getValue() && strlen(node->getValue())) {
+            APPEND(":");
+            APPEND(node->getValue());
+        }
+        APPEND("\n");
     }
 
     for (unsigned i = 0, j = node->getChildCount(); i < j; ++i)
@@ -356,8 +359,7 @@ void Bml_Parser::serialize(std::ostringstream & out, Bml_Node const* node, unsig
         Bml_Node const& child = node->getChild(i);
         if ( (!child.getValue() || !strlen(child.getValue())) && !child.getChildCount() )
             continue;
-        serialize( out, &child, indent + 1 );
-        if ( indent == 0 ) out << std::endl;
+        serialize( buffer, size, &child, indent + 1 );
+        if ( indent == 0 ) APPEND("\n");
     }
 }
-#endif

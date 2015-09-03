@@ -51,13 +51,9 @@ public:
     void setValue(const char *path, long value);
     void setValue(const char *path, const char * value);
 
-#if HAVE_SFM_METADATA
-    void serialize(const char *out) const;
-#endif
+    void serialize(char *out, int buffer_size) const;
 private:
-#if HAVE_SFM_METADATA
-    void serialize(std::ostringstream & out, Bml_Node const* node, unsigned int indent) const;
-#endif
+    void serialize(char *buffer, int buffer_size, Bml_Node const* node, unsigned int indent) const;
 };
 
 #endif // BML_PARSER_H
