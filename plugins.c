@@ -1234,7 +1234,7 @@ plug_select_output (void) {
 #else
     char outplugname[100];
 #ifdef HAVE_COCOAUI
-    conf_get_str ("output_plugin", "core audio output plugin", outplugname, sizeof (outplugname));
+    conf_get_str ("output_plugin", "CoreAudio", outplugname, sizeof (outplugname));
 #else
     conf_get_str ("output_plugin", "ALSA output plugin", outplugname, sizeof (outplugname));
 #endif
