@@ -295,9 +295,9 @@ blargg_err_t Sfm_Emu::start_track_( int track )
     value = metadata.enumValue("smp:ports");
     if (value)
     {
-        for (auto &n : smp.sfm_last)
+        for (int n = 0; n < sizeof (smp.sfm_last) / sizeof (smp.sfm_last[0]); n++)
         {
-            n = strtol(value, &end, 10);
+            smp.sfm_last[n] = strtol(value, &end, 10);
             if (*end == ',')
                 value = end + 1;
             else
@@ -484,13 +484,13 @@ void Sfm_Emu::create_updated_metadata( Bml_Parser &out ) const
     snprintf (stemp, sizeof (stemp), "%lu,%lu", (unsigned long)smp.status.ram00f8, (unsigned long)smp.status.ram00f9);
     out.setValue( "smp:ram", stemp );
     
-#define PREFIX "smp:regs:"
-    out.setValue( PREFIX "pc", smp.regs.pc );
-    out.setValue( PREFIX "a", smp.regs.a );
-    out.setValue( PREFIX "x", smp.regs.x );
-    out.setValue( PREFIX "y", smp.regs.y );
-    out.setValue( PREFIX "s", smp.regs.s );
-    out.setValue( PREFIX "psw", smp.regs.p );
+#define PREF "smp:regs:"
+    out.setValue( PREF "pc", smp.regs.pc );
+    out.setValue( PREF "a", smp.regs.a );
+    out.setValue( PREF "x", smp.regs.x );
+    out.setValue( PREF "y", smp.regs.y );
+    out.setValue( PREF "s", smp.regs.s );
+    out.setValue( PREF "psw", smp.regs.p );
 
     stemp[0] = 0;
     char *p = stemp;
