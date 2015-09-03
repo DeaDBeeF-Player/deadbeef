@@ -4,6 +4,7 @@
 
 ****************************************************************/
 
+#include <stdlib.h>
 #include "mamedef.h"
 //#include "sndintrf.h"
 //#include "streams.h"

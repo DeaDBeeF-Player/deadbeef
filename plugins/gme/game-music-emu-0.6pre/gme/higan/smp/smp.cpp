@@ -1,6 +1,6 @@
 #include "smp.hpp"
 
-#include <cstdlib>
+#include <string.h>
 
 #define SMP_CPP
 namespace SuperFamicom {
@@ -82,7 +82,7 @@ void SMP::reset() {
   regs.s = 0xef;
   regs.p = 0x02;
 
-  for(auto& n : apuram) n = rand();
+  for (int n = 0; n < sizeof (apuram); n++) apuram[n] = rand();
   apuram[0x00f4] = 0x00;
   apuram[0x00f5] = 0x00;
   apuram[0x00f6] = 0x00;
@@ -138,7 +138,7 @@ void SMP::reset() {
 }
 
 SMP::SMP() : dsp( *this ), timer0( *this ), timer1( *this ), timer2( *this ), clock( 0 ) {
-  for(auto& byte : iplrom) byte = 0;
+  memset (iplrom, 0, sizeof (iplrom));
   set_sfm_queue(0, 0, 0);
   set_tempo(1.0);
 }
