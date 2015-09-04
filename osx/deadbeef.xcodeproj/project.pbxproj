@@ -869,7 +869,6 @@
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
 		2DCB281A19E86183008E9DF6 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
 		2DCB281D19E86194008E9DF6 /* m3u.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DCB281419E86162008E9DF6 /* m3u.dylib */; };
-		2DCD1CAD1B978EB900C670CB /* Bml_Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCA51B7710650063DA75 /* Bml_Parser.cpp */; };
 		2DCD78D419A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78B919A665CA00EA50FA /* deadbeef.png */; };
 		2DCD78D519A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78BB19A665CA00EA50FA /* deadbeef.png */; };
 		2DCD78D619A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78BD19A665CA00EA50FA /* deadbeef.png */; };
@@ -900,6 +899,8 @@
 		2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3E419B11539009B5BC6 /* DdbPlaceholderWidget.h */; };
 		2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3E519B11539009B5BC6 /* DdbPlaceholderWidget.m */; };
 		2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */; };
+		2DEA2F941B99A15600A4C6EA /* Spc_Sfm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCE01B7710650063DA75 /* Spc_Sfm.cpp */; };
+		2DEA2F951B99A15800A4C6EA /* Bml_Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCA51B7710650063DA75 /* Bml_Parser.cpp */; };
 		2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEF494219C4DB4100B718C1 /* DdbListview.h */; };
 		2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF494319C4DB4100B718C1 /* DdbListview.m */; };
 		2DF622BB1B335FF100C70C7D /* convpresets in Resources */ = {isa = PBXBuildFile; fileRef = 2DF622B81B335DF400C70C7D /* convpresets */; };
@@ -1216,7 +1217,6 @@
 		83D1CCF61B7710650063DA75 /* adlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCA41B7710650063DA75 /* adlib.h */; };
 		83D1CCF81B7710650063DA75 /* Bml_Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCA61B7710650063DA75 /* Bml_Parser.h */; };
 		83D1CD071B7710650063DA75 /* gme_custom_dprintf.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCB51B7710650063DA75 /* gme_custom_dprintf.h */; };
-		83D1CD321B7710650063DA75 /* Spc_Sfm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCE01B7710650063DA75 /* Spc_Sfm.cpp */; };
 		83D1CD331B7710650063DA75 /* Spc_Sfm.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D1CCE11B7710650063DA75 /* Spc_Sfm.h */; };
 		83D1CD3E1B7710650063DA75 /* Ym2612_Emu_Gens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCEC1B7710650063DA75 /* Ym2612_Emu_Gens.cpp */; };
 		83D1CD3F1B7710650063DA75 /* Ym2612_Emu_MAME.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCED1B7710650063DA75 /* Ym2612_Emu_MAME.cpp */; };
@@ -6616,7 +6616,7 @@
 				2D2A143419B6482600AD1EB7 /* Gb_Oscs.cpp in Sources */,
 				2D2A144519B6482600AD1EB7 /* Hes_Apu.cpp in Sources */,
 				2D2A141119B6482600AD1EB7 /* Ay_Emu.cpp in Sources */,
-				2DCD1CAD1B978EB900C670CB /* Bml_Parser.cpp in Sources */,
+				2DEA2F951B99A15800A4C6EA /* Bml_Parser.cpp in Sources */,
 				8374A4E61B8946A800C6A572 /* nes_apu.c in Sources */,
 				2D2A144719B6482600AD1EB7 /* Hes_Core.cpp in Sources */,
 				2D2A144C19B6482600AD1EB7 /* Hes_Emu.cpp in Sources */,
@@ -6685,6 +6685,7 @@
 				8374A4B71B8946A800C6A572 /* c6280intf.c in Sources */,
 				8374A4F01B8946A800C6A572 /* np_nes_dmc.c in Sources */,
 				2D2A145219B6482600AD1EB7 /* Kss_Core.cpp in Sources */,
+				2DEA2F941B99A15600A4C6EA /* Spc_Sfm.cpp in Sources */,
 				2D2A144A19B6482600AD1EB7 /* Hes_Cpu.cpp in Sources */,
 				2D2A14A719B6482600AD1EB7 /* Upsampler.cpp in Sources */,
 				8374A4A61B8946A800C6A572 /* ay8910.c in Sources */,
@@ -6702,7 +6703,6 @@
 				2D2A149919B6482600AD1EB7 /* Sms_Fm_Apu.cpp in Sources */,
 				8374A4BB1B8946A800C6A572 /* dac_control.c in Sources */,
 				8374A50D1B8946A800C6A572 /* rf5c68.c in Sources */,
-				83D1CD321B7710650063DA75 /* Spc_Sfm.cpp in Sources */,
 				8374A4D61B8946A800C6A572 /* iremga20.c in Sources */,
 				8374A4AE1B8946A800C6A572 /* c140.c in Sources */,
 				2D2A149719B6482600AD1EB7 /* Sms_Apu.cpp in Sources */,
@@ -7923,6 +7923,7 @@
 					STDC,
 					STDC99,
 					HAVE_SYS_CDEFS_H,
+					"GME_HAVE_SFM=1",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
@@ -7951,6 +7952,7 @@
 					STDC,
 					STDC99,
 					HAVE_SYS_CDEFS_H,
+					"GME_HAVE_SFM=1",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (

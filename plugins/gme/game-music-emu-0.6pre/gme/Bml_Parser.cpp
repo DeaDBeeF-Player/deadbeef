@@ -108,11 +108,9 @@ void Bml_Node::setLine(const char *line, size_t max_length)
     name[last_letter - first_letter + 1] = '\0';
 }
 
-#define children_append(children, child) (children).resize((children).size()+1); (children)[(children).size()-1] = (child);
-
 Bml_Node& Bml_Node::addChild(const Bml_Node &child)
 {
-    children_append (children, child);
+    children.push_back(child);
     return *(children.end() - 1);
 }
 
@@ -166,7 +164,7 @@ Bml_Node & Bml_Node::walkToNode(const char *path, bool use_indexes)
         }
         if ( use_indexes )
         {
-            for ( Bml_Node *it = node->children.begin(); it != node->children.end(); ++it )
+            for ( std::vector<Bml_Node>::iterator it = node->children.begin(); it != node->children.end(); ++it )
             {
                 if ( array_index_start - path == strlen(it->name) &&
                     strncmp( it->name, path, array_index_start - path ) == 0 )
@@ -182,7 +180,7 @@ Bml_Node & Bml_Node::walkToNode(const char *path, bool use_indexes)
         }
         else
         {
-            for ( Bml_Node *it = node->children.end(); it != node->children.begin(); )
+            for ( std::vector<Bml_Node>::iterator it = node->children.end(); it != node->children.begin(); )
             {
                 --it;
                 if ( next_separator - path == strlen(it->name) &&
@@ -230,7 +228,7 @@ Bml_Node const& Bml_Node::walkToNode(const char *path) const
         {
             array_index_start = next_separator;
         }
-        for ( const Bml_Node *it = node->children.begin(), *ite = node->children.end(); it != ite; ++it )
+        for ( std::vector<Bml_Node>::const_iterator it = node->children.begin(); it != node->children.end(); ++it )
         {
             if ( array_index_start - path == strlen(it->name) &&
                  strncmp( it->name, path, array_index_start - path ) == 0 )
@@ -299,8 +297,9 @@ void Bml_Parser::parseDocument( const char * source, size_t max_length )
             while ( last_indent > indent && num_indents )
             {
                 last_indent = indents[--num_indents];
-                const char *colon = strrchr (current_path, ':');
-                if ( !colon ) current_path[0] = 0;
+                char *colon = strrchr (current_path, ':');
+                if (colon) *colon = 0;
+                else current_path[0] = 0;
             }
             last_indent = indent;
         }

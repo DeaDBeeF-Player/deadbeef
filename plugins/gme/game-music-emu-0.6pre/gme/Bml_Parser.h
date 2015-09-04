@@ -2,6 +2,7 @@
 #define BML_PARSER_H
 
 #include "blargg_common.h"
+#include <vector>
 
 class Bml_Node
 {
@@ -9,7 +10,7 @@ class Bml_Node
     char * value;
     Bml_Node *next;
 
-    blargg_vector<Bml_Node> children;
+    std::vector<Bml_Node> children;
 
     static Bml_Node emptyNode;
 
