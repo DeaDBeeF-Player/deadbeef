@@ -498,7 +498,7 @@ void Sfm_Emu::create_updated_metadata( Bml_Parser &out ) const
     for (int n = 0; n < sizeof (smp.sfm_last) / sizeof (smp.sfm_last[0]); n++)
     {
         if (!first) strcat (p++, ",");
-        p += snprintf (p, p-stemp, "%lu", (unsigned long)smp.sfm_last[n]);
+        p += snprintf (p, sizeof (stemp) - (p-stemp), "%lu", (unsigned long)smp.sfm_last[n]);
         first = false;
     }
     out.setValue("smp:ports", stemp);
@@ -525,7 +525,7 @@ void Sfm_Emu::create_updated_metadata( Bml_Parser &out ) const
     p = stemp;
     for (int i = 0; i < 8; ++i)
     {
-        p += snprintf (p, p-stemp, "%d,%d%s", smp.dsp.spc_dsp.m.echo_hist[i][0], smp.dsp.spc_dsp.m.echo_hist[i][1], ( i != 7 ) ? "," : "");
+        p += snprintf (p, sizeof(stemp) - (p-stemp), "%d,%d%s", smp.dsp.spc_dsp.m.echo_hist[i][0], smp.dsp.spc_dsp.m.echo_hist[i][1], ( i != 7 ) ? "," : "");
     }
     out.setValue( "dsp:echohistdata", stemp );
     
@@ -578,7 +578,7 @@ void Sfm_Emu::create_updated_metadata( Bml_Parser &out ) const
         char *p = val;
         for (int j = 0; j < SuperFamicom::SPC_DSP::brr_buf_size; ++j)
         {
-            p += snprintf (p, p-val, "%d%s", voice.buf[j], (j != SuperFamicom::SPC_DSP::brr_buf_size - 1) ? "," : "");
+            p += snprintf (p, sizeof (val) - (p-val), "%d%s", voice.buf[j], (j != SuperFamicom::SPC_DSP::brr_buf_size - 1) ? "," : "");
         }
         SET_VALUE_PKEY( "brrhistdata", val );
         SET_VALUE_PKEY( "interpaddr", voice.interp_pos );
