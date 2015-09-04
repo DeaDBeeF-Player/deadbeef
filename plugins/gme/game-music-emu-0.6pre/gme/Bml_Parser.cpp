@@ -1,3 +1,7 @@
+// BML parser/serializer/accessor which doesn't use STL
+// Developed for DeaDBeeF Player by Alexey Yakovenko
+// Permission is granted to use this source code under the same license, as the Game Music Emu
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -94,11 +98,9 @@ void Bml_Parser::parseDocument( const char * source, size_t max_length )
             strcat (path, name);
             if (colon) {
                 addNode (path, colon+1);
-                printf ("%s = %s\n", path, colon+1);
             }
             else {
                 addNode (path, NULL);
-                printf ("---- %s\n", path);
             }
         }
         p = e;
@@ -171,36 +173,30 @@ void Bml_Parser::setValue(const char *path, long value)
 
 void Bml_Parser::serialize(char *buffer, int size) const
 {
-//    serialize(buffer, size, &document, 0);
-}
-
-#if 0
-void Bml_Parser::serialize(char *buffer, int size, Bml_Node const* node, unsigned int indent) const
-{
     size_t l = 0;
 #define APPEND(x) l = strlen(x); if (l > size) return; strcat (buffer, x); buffer += l; size -= l;
-
-    for (unsigned i = 1; i < indent; ++i) {
-        APPEND("  ");
-    }
-
-    if ( indent )
-    {
-        APPEND(node->getName());
-        if (node->getValue() && strlen(node->getValue())) {
+    int first = 1;
+    for (Bml_Node *node = nodes; node; node = node->next) {
+        int indent = 0;
+        const char *p = node->key;
+        const char *colon = strchr (node->key, ':');
+        while (colon) {
+            indent++;
+            p = colon + 1;
+            colon = strchr (p, ':');
+        }
+        for (int i = 0; i < indent; i++) {
+            APPEND("  ");
+        }
+        if (!indent && !first) {
+            APPEND("\n");
+        }
+        APPEND(p);
+        if (node->value) {
             APPEND(":");
-            APPEND(node->getValue());
+            APPEND(node->value);
         }
         APPEND("\n");
-    }
-
-    for (unsigned i = 0, j = node->getChildCount(); i < j; ++i)
-    {
-        Bml_Node const& child = node->getChild(i);
-        if ( (!child.getValue() || !strlen(child.getValue())) && !child.getChildCount() )
-            continue;
-        serialize( buffer, size, &child, indent + 1 );
-        if ( indent == 0 ) APPEND("\n");
+        first = 0;
     }
 }
-#endif

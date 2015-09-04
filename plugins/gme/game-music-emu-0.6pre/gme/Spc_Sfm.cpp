@@ -5,6 +5,7 @@
 #include "blargg_endian.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 /* Copyright (C) 2004-2013 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -151,8 +152,8 @@ struct Sfm_File : Gme_Info_
     
     blargg_err_t save_( gme_writer_t writer, void* your_data ) const
     {
-		char metadata_serialized[2000];
-		metadata.serialize( metadata_serialized, sizeof (metadata_serialized) );
+		char *metadata_serialized = (char *)malloc (10000);
+		metadata.serialize( metadata_serialized, 10000 );
 		size_t length = strlen(metadata_serialized);
 		uint8_t meta_length[4];
 		set_le32( meta_length, (unsigned int) length );
@@ -160,6 +161,7 @@ struct Sfm_File : Gme_Info_
 		writer( your_data, meta_length, 4 );
 		writer( your_data, metadata_serialized, length );
 		writer( your_data, data.begin() + 4 + 4 + original_metadata_size, data.size() - (4 + 4 + original_metadata_size) );
+		free (metadata_serialized);
 		return blargg_ok;
     }
 };
@@ -596,11 +598,11 @@ void Sfm_Emu::create_updated_metadata( Bml_Parser &out ) const
 
 blargg_err_t Sfm_Emu::save_( gme_writer_t writer, void* your_data ) const
 {
-    char meta_serialized[1000];
+    char *meta_serialized = (char *)malloc (10000);
     
     Bml_Parser metadata;
     create_updated_metadata( metadata );
-    metadata.serialize( meta_serialized, sizeof (meta_serialized) );
+    metadata.serialize( meta_serialized, 10000 );
 
     RETURN_ERR( writer( your_data, "SFM1", 4 ) );
 
@@ -617,6 +619,8 @@ blargg_err_t Sfm_Emu::save_( gme_writer_t writer, void* your_data ) const
     
     if ( smp.get_sfm_queue_remain() )
         RETURN_ERR( writer( your_data, smp.get_sfm_queue(), smp.get_sfm_queue_remain() ) );
+
+    free (meta_serialized);
     return blargg_ok;
 }
 
