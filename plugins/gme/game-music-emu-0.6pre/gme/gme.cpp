@@ -35,6 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 	gme_nsf_type,\
 	gme_nsfe_type,\
 	gme_sap_type,\
+	gme_sfm_type,\
 	gme_sgc_type,\
 	gme_spc_type,\
 	gme_vgm_type,\
@@ -42,11 +43,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #endif
 
-static gme_type_t const gme_type_list_ [] = { GME_TYPE_LIST,
-#if GME_HAVE_SFM
-	gme_sfm_type,
-#endif
-    0 };
+static gme_type_t const gme_type_list_ [] = { GME_TYPE_LIST, 0 };
 
 gme_type_t const* gme_type_list()
 {

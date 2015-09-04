@@ -15,6 +15,7 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Ay_Cpu.cpp\
 	$(gmeversion)/gme/Ay_Emu.cpp\
 	$(gmeversion)/gme/Blip_Buffer.cpp\
+	$(gmeversion)/gme/Bml_Parser.cpp\
 	$(gmeversion)/gme/Classic_Emu.cpp\
 	$(gmeversion)/gme/Data_Reader.cpp\
 	$(gmeversion)/gme/Downsampler.cpp\
@@ -70,6 +71,7 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Sms_Apu.cpp\
 	$(gmeversion)/gme/Sms_Fm_Apu.cpp\
 	$(gmeversion)/gme/Spc_Emu.cpp\
+	$(gmeversion)/gme/Spc_Sfm.cpp\
 	$(gmeversion)/gme/Track_Filter.cpp\
 	$(gmeversion)/gme/Upsampler.cpp\
 	$(gmeversion)/gme/Vgm_Core.cpp\
@@ -162,6 +164,7 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Blip_Buffer.h\
 	$(gmeversion)/gme/Blip_Buffer_impl.h\
 	$(gmeversion)/gme/Blip_Buffer_impl2.h\
+	$(gmeversion)/gme/Bml_Parser.h\
 	$(gmeversion)/gme/Classic_Emu.h\
 	$(gmeversion)/gme/Data_Reader.h\
 	$(gmeversion)/gme/Downsampler.h\
@@ -216,6 +219,7 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Sms_Fm_Apu.h\
 	$(gmeversion)/gme/Spc_Emu.h\
 	$(gmeversion)/gme/Spc_Filter.h\
+	$(gmeversion)/gme/Spc_Sfm.h\
 	$(gmeversion)/gme/Track_Filter.h\
 	$(gmeversion)/gme/Upsampler.h\
 	$(gmeversion)/gme/Vgm_Core.h\
