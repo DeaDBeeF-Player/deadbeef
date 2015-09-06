@@ -1386,6 +1386,9 @@ static FLAC__IOCallbacks flac_iocb = {
 
 static int
 flac_extract_art(const char *filename, const char *outname) {
+    if (!strcasestr (filename, ".flac") && !strcasestr (filename, ".oga")) {
+        return -1;
+    }
     int err = -1;
     DB_FILE *file = NULL;
     FLAC__Metadata_Iterator *iterator = NULL;
