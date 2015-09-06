@@ -36,7 +36,7 @@ static const char * exts[] = { "psf", "psf2", "spu", "ssf", "qsf", "dsf", "minip
 typedef struct {
     DB_fileinfo_t info;
     int currentsample;
-    uint32 type;
+    int type;
     void *decoder;
     char *filebuffer;
     size_t filesize;
@@ -112,8 +112,10 @@ static void
 aoplug_free (DB_fileinfo_t *_info) {
     aoplug_info_t *info = (aoplug_info_t *)_info;
     if (info) {
-        if (info->filebuffer) {
+        if (info->type >= 0) {
             ao_stop (info->type, info->decoder);
+        }
+        if (info->filebuffer) {
             free (info->filebuffer);
             info->filebuffer = NULL;
         }
