@@ -357,6 +357,11 @@ AS_IF([test "${enable_mp3}" != "no"], [
         MAD_LIBS="../../$LIB/lib/libmad.a"
         AC_SUBST(MAD_CFLAGS)
         AC_SUBST(MAD_LIBS)
+        HAVE_LIBMPG123=yes
+        MPG123_CFLAGS="-I../../$LIB/include"
+        MPG123_LIBS="../../$LIB/lib/libmpg123.a"
+        AC_SUBST(MPG123_CFLAGS)
+        AC_SUBST(MPG123_LIBS)
     ], [
         AS_IF([test "${enable_libmad}" != "no"], [
             AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=yes])
