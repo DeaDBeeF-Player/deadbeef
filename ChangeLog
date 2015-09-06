@@ -1,7 +1,15 @@
 version 0.7.0
-	various ogg vorbis, converter improvements (Ian Nartowicz)
-	largely reworked artwork plugin with added cache cleaner and MusicBrainz backend (Ian Nartowicz)
-	playlist browser: renaming, sorting, appearance and other improvements (Christian Boxdörfer)
+	converter: fixed bug overwriting the source file with destination (Ian Nartowicz)
+	artwork: added cache cleaner, MusicBrainz backend,
+		configurable default picture, numerous bugfixes,
+		performance improvements, more customization options (Ian Nartowicz)
+	playlist browser: improved drag-n-drop,
+		double-click / middle-click on empty area to create new playlist,
+		middle-click on playlist to remove it,
+		highlight current playlist, configurable columns,
+		sort columns by clicking their headers,
+		inline-editing/renaming, including F2 shortcut,
+		performance optimizations (Christian Boxdörfer)
 	various selection properties improvements (Christian Boxdörfer)
 	added "Skip to ..." next/prev album/genre/composer actions (Christian Boxdörfer)
 	more appearance customization options in GTKUI (Christian Boxdörfer)
