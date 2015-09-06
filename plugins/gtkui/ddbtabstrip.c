@@ -106,8 +106,10 @@ ddb_tabstrip_realize (GtkWidget *widget) {
         gtk_widget_set_window(widget, gdk_window_new (gtk_widget_get_parent_window (widget), &attributes, attributes_mask));
         gdk_window_set_user_data (gtk_widget_get_window(widget), darea);
 
-        gtk_widget_set_style (widget, gtk_style_attach (gtk_widget_get_style (widget), gtk_widget_get_window(widget)));
-        gtk_style_set_background (gtk_widget_get_style (widget), gtk_widget_get_window(widget), GTK_STATE_NORMAL);
+        GtkStyle *style = gtk_widget_get_style (widget);
+        style = gtk_style_attach (style, gtk_widget_get_window(widget));
+        gtk_widget_set_style (widget, style);
+        gtk_style_set_background (style, gtk_widget_get_window(widget), GTK_STATE_NORMAL);
     }
 
     ddb_tabstrip_send_configure (DDB_TABSTRIP (widget));
@@ -726,16 +728,17 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         }
         x += w - tab_overlap_size;
     }
+    GtkStyle *style = gtk_widget_get_style (widget);
 #if !GTK_CHECK_VERSION(3,0,0)
-    gdk_draw_line (backbuf, widget->style->dark_gc[GTK_STATE_NORMAL], 0, widget->allocation.height-2, widget->allocation.width, widget->allocation.height-2);
-    gdk_draw_line (backbuf, widget->style->light_gc[GTK_STATE_NORMAL], 0, widget->allocation.height-1, widget->allocation.width, widget->allocation.height-1);
+    gdk_draw_line (backbuf, style->dark_gc[GTK_STATE_NORMAL], 0, widget->allocation.height-2, widget->allocation.width, widget->allocation.height-2);
+    gdk_draw_line (backbuf, style->light_gc[GTK_STATE_NORMAL], 0, widget->allocation.height-1, widget->allocation.width, widget->allocation.height-1);
 #else
-    GdkColor *pclr = &gtk_widget_get_style (widget)->dark[GTK_STATE_NORMAL];
+    GdkColor *pclr = &style->dark[GTK_STATE_NORMAL];
     cairo_set_source_rgb (cr, pclr->red/65535.f, pclr->green/65535.f, pclr->blue/65535.0);
     cairo_move_to (cr, 0, a.height-1);
     cairo_line_to (cr, a.width, a.height-1);
     cairo_stroke (cr);
-    pclr = &gtk_widget_get_style (widget)->light[GTK_STATE_NORMAL];
+    pclr = &style->light[GTK_STATE_NORMAL];
     cairo_set_source_rgb (cr, pclr->red/65535.f, pclr->green/65535.f, pclr->blue/65535.0);
     cairo_move_to (cr, 0, a.height);
     cairo_line_to (cr, a.width, a.height);
@@ -812,9 +815,9 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         GdkColor clr;
         gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_mid_color (&clr), &clr));
         gdk_draw_rectangle (backbuf, gc, TRUE, 0, 1, arrow_widget_width, sz);
-        gtk_paint_arrow (widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_LEFT, TRUE, 2, sz/2-arrow_sz/2, arrow_sz, arrow_sz);
+        gtk_paint_arrow (style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_LEFT, TRUE, 2, sz/2-arrow_sz/2, arrow_sz, arrow_sz);
         gdk_draw_rectangle (backbuf, gc, TRUE, widget->allocation.width-arrow_widget_width, 1, arrow_widget_width, sz);
-        gtk_paint_arrow (widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_RIGHT, TRUE, widget->allocation.width-arrow_sz-2, 1+sz/2-arrow_sz/2, arrow_sz, arrow_sz);
+        gtk_paint_arrow (style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_RIGHT, TRUE, widget->allocation.width-arrow_sz-2, 1+sz/2-arrow_sz/2, arrow_sz, arrow_sz);
     }
 #else
     if (need_arrows) {
@@ -824,17 +827,17 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         cairo_rectangle (cr, 0, 1, arrow_widget_width, sz);
         cairo_fill (cr);
 #if GTK_CHECK_VERSION(3,0,0)
-        gtk_paint_arrow (gtk_widget_get_style (widget), cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, widget, NULL, GTK_ARROW_LEFT, TRUE, 2, sz/2-arrow_sz/2, arrow_sz, arrow_sz);
+        gtk_paint_arrow (style, cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, widget, NULL, GTK_ARROW_LEFT, TRUE, 2, sz/2-arrow_sz/2, arrow_sz, arrow_sz);
 #else
-        gtk_paint_arrow (gtk_widget_get_style (widget), gtk_widget_get_window(widget), GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_LEFT, TRUE, 2, sz/2-arrow_sz/2, arrow_sz, arrow_sz);
+        gtk_paint_arrow (style, gtk_widget_get_window(widget), GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_LEFT, TRUE, 2, sz/2-arrow_sz/2, arrow_sz, arrow_sz);
 #endif
 
         cairo_rectangle (cr, a.width-arrow_widget_width, 1, arrow_widget_width, sz);
         cairo_fill (cr);
 #if GTK_CHECK_VERSION(3,0,0)
-        gtk_paint_arrow (gtk_widget_get_style (widget), cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, widget, NULL, GTK_ARROW_RIGHT, TRUE, a.width-arrow_sz-2, 1+sz/2-arrow_sz/2, arrow_sz, arrow_sz);
+        gtk_paint_arrow (style, cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, widget, NULL, GTK_ARROW_RIGHT, TRUE, a.width-arrow_sz-2, 1+sz/2-arrow_sz/2, arrow_sz, arrow_sz);
 #else
-        gtk_paint_arrow (gtk_widget_get_style (widget), gtk_widget_get_window(widget), GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_RIGHT, TRUE, a.width-arrow_sz-2, 1+sz/2-arrow_sz/2, arrow_sz, arrow_sz);
+        gtk_paint_arrow (style, gtk_widget_get_window(widget), GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_RIGHT, TRUE, a.width-arrow_sz-2, 1+sz/2-arrow_sz/2, arrow_sz, arrow_sz);
 #endif
     }
 #endif
