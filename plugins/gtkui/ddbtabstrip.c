@@ -103,13 +103,16 @@ ddb_tabstrip_realize (GtkWidget *widget) {
         attributes_mask |= GDK_WA_COLORMAP;
 #endif
 
-        gtk_widget_set_window(widget, gdk_window_new (gtk_widget_get_parent_window (widget), &attributes, attributes_mask));
+        GdkWindow *window = gdk_window_new (gtk_widget_get_parent_window (widget), &attributes, attributes_mask);
+        gtk_widget_set_window(widget, window);
         gdk_window_set_user_data (gtk_widget_get_window(widget), darea);
 
-        GtkStyle *style = gtk_widget_get_style (widget);
-        style = gtk_style_attach (style, gtk_widget_get_window(widget));
-        gtk_widget_set_style (widget, style);
-        gtk_style_set_background (style, gtk_widget_get_window(widget), GTK_STATE_NORMAL);
+#if !GTK_CHECK_VERSION(3,0,0)
+        widget->style = gtk_style_attach (widget->style, widget->window);
+        gtk_style_set_background (widget->style, widget->window, GTK_STATE_NORMAL);
+#else
+        gtk_style_context_set_background (gtk_widget_get_style_context (widget), window);
+#endif
     }
 
     ddb_tabstrip_send_configure (DDB_TABSTRIP (widget));
