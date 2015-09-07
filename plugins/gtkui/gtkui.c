@@ -395,8 +395,8 @@ gtkpl_songchanged_wrapper (DB_playItem_t *from, DB_playItem_t *to) {
     }
 }
 
-const char *gtkui_default_titlebar_playing = "%artist% - %title% - DeaDBeeF-%version%";
-const char *gtkui_default_titlebar_stopped = "DeaDBeeF-%version%";
+const char *gtkui_default_titlebar_playing = "%artist% - %title% - DeaDBeeF-%_deadbeef_version%";
+const char *gtkui_default_titlebar_stopped = "DeaDBeeF-%_deadbeef_version%";
 
 static char *titlebar_playing_bc;
 static char *titlebar_stopped_bc;

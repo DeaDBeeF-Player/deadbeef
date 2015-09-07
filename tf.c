@@ -630,7 +630,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     }
                 }
 
-                else if (!strcmp (name, "version")) {
+                else if (!strcmp (name, "_deadbeef_version")) {
                     val = VERSION;
                 }
 
