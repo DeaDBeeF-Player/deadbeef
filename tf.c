@@ -612,7 +612,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 // only guaranteed to be precise after init (mp3), and is not
                 // stored in the metadata
 
-                else if ((tmp_a = !strcmp (name, "is_playing")) || (tmp_b = !strcmp (name, "is_paused"))) {
+                else if ((tmp_a = !strcmp (name, "isplaying")) || (tmp_b = !strcmp (name, "ispaused"))) {
                     playItem_t *playing = streamer_get_playing_track ();
                     
                     if (playing && 
