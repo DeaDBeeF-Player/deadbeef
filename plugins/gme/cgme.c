@@ -286,7 +286,7 @@ cgme_add_meta (DB_playItem_t *it, const char *key, const char *value) {
     if (!value) {
         return;
     }
-    char len = strlen (value);
+    size_t len = strlen (value);
     char out[1024];
     // check for utf8 (hack)
     if (deadbeef->junk_iconv (value, len, out, sizeof (out), "utf-8", "utf-8") >= 0) {
