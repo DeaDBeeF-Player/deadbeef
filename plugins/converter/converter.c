@@ -877,6 +877,12 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
             char *e = encoder_preset->encoder;
             char *o = enc;
             *o = 0;
+
+#ifdef __APPLE__
+            strcpy (o, "/usr/local/bin/");
+            o += 15;
+#endif
+
             int len = sizeof (enc);
             while (e && *e) {
                 if (len <= 0) {
@@ -1148,7 +1154,9 @@ error:
         while (m) {
             DB_metaInfo_t *next = m->next;
             if (m->key[0] == ':' || m->key[0] == '!' || !strcasecmp (m->key, "cuesheet")) {
-                deadbeef->pl_delete_metadata (out_it, m);
+                if (strcasestr (m->key, "_REPLAYGAIN_")) {
+                    deadbeef->pl_delete_metadata (out_it, m);
+                }
             }
             m = next;
         }
