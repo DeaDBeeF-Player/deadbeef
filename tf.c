@@ -666,6 +666,27 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         val = NULL;
                     }
                 }
+                else if (!strcmp (name, "directoryname")) {
+                    val = pl_find_meta_raw (it, ":URI");
+                    if (val) {
+                        const char *end = strrchr (val, '/');
+                        if (end) {
+                            const char *start = end - 1;
+                            while (start >= val && *start != '/') {
+                                start--;
+                            }
+                            if (start && start != end) {
+                                start++;
+                                tf_append_out(&out, &outlen, start, (int)(end-start));
+                                skip_out = 1;
+                            }
+                        }
+                        val = NULL;
+                    }
+                }
+                else if (!strcmp (name, "path")) {
+                    val = pl_find_meta_raw (it, ":URI");
+                }
                 else if (!strcmp (name, "_deadbeef_version")) {
                     val = VERSION;
                 }
