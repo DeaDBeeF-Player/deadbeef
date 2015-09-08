@@ -77,6 +77,10 @@ typedef struct {
 static int
 tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen, int fail_on_undef);
 
+#define TF_EVAL_CHECK(res, ctx, arg, arg_len, out, outlen, fail_on_undef)\
+res = tf_eval_int (ctx, arg, arg_len, out, outlen, fail_on_undef);\
+if (res < 0) { *out = 0; return -1; }
+
 int
 tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
     if (!code) {
@@ -120,36 +124,17 @@ tf_func_greater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, cha
     char *arg = args;
 
     char a[10];
-    int len = tf_eval_int (ctx, arg, arglens[0], a, sizeof (a), fail_on_undef);
-    if (len < 0) {
-        goto out;
-    }
-    else if (len == 0) {
-        return 0;
-    }
+    int len;
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], a, sizeof (a), fail_on_undef);
+
     int aa = atoi (a);
 
     arg += arglens[0];
     char b[10];
-    len = tf_eval_int (ctx, arg, arglens[1], b, sizeof (b), fail_on_undef);
-    if (len < 0) {
-        goto out;
-    }
-    else if (len == 0) {
-        return 0;
-    }
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], b, sizeof (b), fail_on_undef);
     int bb = atoi (b);
 
-    trace ("greater: (%s,%s)\n", a, b);
-    if (aa > bb) {
-        return 1;
-    }
-    else {
-        return 0;
-    }
-out:
-    *out = 0;
-    return -1;
+    return aa > bb;
 }
 
 // $strcmp(s1,s2) compares s1 and s2, returns true if equal, otherwise false
@@ -161,35 +146,15 @@ tf_func_strcmp (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char
     char *arg = args;
 
     char s1[1000];
-    int len = tf_eval_int (ctx, arg, arglens[0], s1, sizeof (s1), fail_on_undef);
-    if (len < 0) {
-        goto out;
-    }
-    else if (len == 0) {
-        return 0;
-    }
+    int len;
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], s1, sizeof (s1), fail_on_undef);
 
     arg += arglens[0];
     char s2[1000];
-    len = tf_eval_int (ctx, arg, arglens[1], s2, sizeof (s2), fail_on_undef);
-    if (len < 0) {
-        goto out;
-    }
-    else if (len == 0) {
-        return 0;
-    }
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], s2, sizeof (s2), fail_on_undef);
 
     int res = strcmp (s1, s2);
-    trace ("strcmp: (%s,%s), res: %d\n", s1, s2, res);
-    if (res == 0) {
-        return 1;
-    }
-    else {
-        return 0;
-    }
-out:
-    *out = 0;
-    return -1;
+    return !res;
 }
 
 // $left(text,n) returns the first n characters of text
@@ -203,43 +168,31 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
     // get number of characters
     char num_chars_str[10];
     arg += arglens[0];
-    int len = tf_eval_int (ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str), fail_on_undef);
-    if (len < 0) {
-        goto out;
-    }
+    int len;
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str), fail_on_undef);
     int num_chars = atoi (num_chars_str);
     if (num_chars <= 0 || num_chars > outlen) {
-        goto out;
+        *out = 0;
+        return -1;
     }
 
     // get text
     char text[1000];
     arg = args;
-    len = tf_eval_int (ctx, arg, arglens[0], text, sizeof (text), fail_on_undef);
-    if (len < 0) {
-        goto out;
-    }
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], text, sizeof (text), fail_on_undef);
 
     int res = u8_strncpy (out, text, num_chars);
     trace ("left: (%s,%d) -> (%s), res: %d\n", text, num_chars, out, res);
     return res;
-out:
-    *out = 0;
-    return -1;
 }
 
 int
 tf_func_add (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
     int outval = 0;
     char *arg = args;
-    trace ("num args: %d\n", argc);
     for (int i = 0; i < argc; i++) {
-        trace ("add: eval arg %d (%s)\n", i, arg);
-        int len = tf_eval_int (ctx, arg, arglens[i], out, outlen, fail_on_undef);
-        if (len < 0) {
-            *out = 0;
-            return -1;
-        }
+        int len;
+        TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
         outval += atoi (out);
         memset (out, 0, len);
         arg += arglens[i];
@@ -255,24 +208,17 @@ tf_func_if (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *ou
         return -1;
     }
     char *arg = args;
-    int res = tf_eval_int (ctx, arg, arglens[0], out, outlen, fail_on_undef);
+    int res;
+    TF_EVAL_CHECK(res, ctx, arg, arglens[0], out, outlen, fail_on_undef);
     arg += arglens[0];
     if (res > 0) {
         trace ("condition true, eval then block\n");
-        res = tf_eval_int (ctx, arg, arglens[1], out, outlen, fail_on_undef);
-        if (res < 0) {
-            *out = 0;
-            return -1;
-        }
+        TF_EVAL_CHECK(res, ctx, arg, arglens[1], out, outlen, fail_on_undef);
     }
     else if (argc == 3) {
         trace ("condition false, eval else block\n");
         arg += arglens[1];
-        res = tf_eval_int (ctx, arg, arglens[2], out, outlen, fail_on_undef);
-        if (res < 0) {
-            *out = 0;
-            return -1;
-        }
+        TF_EVAL_CHECK(res, ctx, arg, arglens[2], out, outlen, fail_on_undef);
     }
 
     return res;
@@ -284,18 +230,15 @@ tf_func_if2 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
         return -1;
     }
     char *arg = args;
-    int res = tf_eval_int (ctx, arg, arglens[0], out, outlen, fail_on_undef);
+    int res;
+    TF_EVAL_CHECK(res, ctx, arg, arglens[0], out, outlen, fail_on_undef);
     arg += arglens[0];
     if (res > 0) {
         return res;
     }
     else {
         trace ("condition false, eval else block\n");
-        res = tf_eval_int (ctx, arg, arglens[1], out, outlen, fail_on_undef);
-        if (res < 0) {
-            *out = 0;
-            return -1;
-        }
+        TF_EVAL_CHECK(res, ctx, arg, arglens[1], out, outlen, fail_on_undef);
     }
 
     return res;
@@ -308,7 +251,8 @@ tf_func_if3 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
     }
     char *arg = args;
     for (int i = 0; i < argc; i++) {
-        int res = tf_eval_int (ctx, arg, arglens[i], out, outlen, fail_on_undef);
+        int res;
+        TF_EVAL_CHECK(res, ctx, arg, arglens[i], out, outlen, fail_on_undef);
         arg += arglens[i];
         if (res > 0 || i == argc-1) {
             return res;
@@ -325,20 +269,13 @@ tf_func_ifequal (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, cha
     }
 
     char *arg = args;
-    int len = tf_eval_int (ctx, arg, arglens[0], out, outlen, fail_on_undef);
-    if (len < 0) {
-        *out = 0;
-        return -1;
-    }
+    int len;
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
 
     int arg1 = atoi (out);
 
     arg += arglens[0];
-    len = tf_eval_int (ctx, arg, arglens[1], out, outlen, fail_on_undef);
-    if (len < 0) {
-        *out = 0;
-        return -1;
-    }
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], out, outlen, fail_on_undef);
 
     int arg2 = atoi (out);
 
@@ -350,11 +287,7 @@ tf_func_ifequal (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, cha
         idx = 3;
     }
 
-    len = tf_eval_int (ctx, arg, arglens[idx], out, outlen, fail_on_undef);
-    if (len < 0) {
-        *out = 0;
-        return -1;
-    }
+    TF_EVAL_CHECK(len, ctx, arg, arglens[idx], out, outlen, fail_on_undef);
     return len;
 }
 
@@ -365,20 +298,13 @@ tf_func_ifgreater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, c
     }
 
     char *arg = args;
-    int len = tf_eval_int (ctx, arg, arglens[0], out, outlen, fail_on_undef);
-    if (len < 0) {
-        *out = 0;
-        return -1;
-    }
+    int len;
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
 
     int arg1 = atoi (out);
 
     arg += arglens[0];
-    len = tf_eval_int (ctx, arg, arglens[1], out, outlen, fail_on_undef);
-    if (len < 0) {
-        *out = 0;
-        return -1;
-    }
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], out, outlen, fail_on_undef);
 
     int arg2 = atoi (out);
 
@@ -390,11 +316,7 @@ tf_func_ifgreater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, c
         idx = 3;
     }
 
-    len = tf_eval_int (ctx, arg, arglens[idx], out, outlen, fail_on_undef);
-    if (len < 0) {
-        *out = 0;
-        return -1;
-    }
+    TF_EVAL_CHECK(len, ctx, arg, arglens[idx], out, outlen, fail_on_undef);
     return len;
 }
 
@@ -921,16 +843,15 @@ tf_compile_func (tf_compiler_t *c) {
             int len = (int)(c->o - argstart);
             trace ("end of arg in func %s, len: %d\n", func_name, len);
             trace ("parsed arg: %s\n", start+(*start)+1);
-            if (*(c->i) != ')' || len) {
-                // expand arg lengths buffer by 1
-                memmove (start+(*start)+2, start+(*start)+1, c->o - start - (*start));
-                c->o++;
-                (*start)++; // num args++
-                // store arg length
-                start[(*start)] = len;
-                argstart = c->o;
-                trace ("numargs: %d\n", (int)(*start));
-            }
+
+            // expand arg lengths buffer by 1
+            memmove (start+(*start)+2, start+(*start)+1, c->o - start - (*start));
+            c->o++;
+            (*start)++; // num args++
+            // store arg length
+            start[(*start)] = len;
+            argstart = c->o;
+            trace ("numargs: %d\n", (int)(*start));
 
             if (*(c->i) == ')') {
                 break;
@@ -1093,6 +1014,7 @@ tf_free (char *code) {
     free (code);
 }
 
+#if 0
 void
 tf_test (void) {
     int len;
@@ -1117,3 +1039,4 @@ tf_test (void) {
     int res = tf_eval (&ctx, code, out, sizeof (out));
     trace ("output (%d): %s\n", res, out);
 }
+#endif

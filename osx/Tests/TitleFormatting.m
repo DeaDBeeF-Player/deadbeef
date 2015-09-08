@@ -247,4 +247,44 @@
     tf_free (bc);
     XCTAssert([@"else" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
+
+- (void)test_GreaterIsTrue_EvalsToTrue {
+    char *bc = tf_compile("$if($greater(2,1),istrue,isfalse)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"istrue" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_GreaterIsFalse_EvalsToFalse {
+    char *bc = tf_compile("$if($greater(1,2),istrue,isfalse)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"isfalse" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_GreaterIsFalseEmptyArguments_EvalsToFalse {
+    char *bc = tf_compile("$if($greater(,),istrue,isfalse)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"isfalse" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_StrCmpEmptyArguments_EvalsToTrue {
+    char *bc = tf_compile("$if($strcmp(,),istrue,isfalse)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"istrue" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_StrCmpSameArguments_EvalsToTrue {
+    char *bc = tf_compile("$if($strcmp(abc,abc),istrue,isfalse)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"istrue" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
 @end
