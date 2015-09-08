@@ -278,6 +278,46 @@ tf_func_if (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *ou
     return res;
 }
 
+int
+tf_func_if2 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 2) {
+        return -1;
+    }
+    char *arg = args;
+    int res = tf_eval_int (ctx, arg, arglens[0], out, outlen, fail_on_undef);
+    arg += arglens[0];
+    if (res > 0) {
+        return res;
+    }
+    else {
+        trace ("condition false, eval else block\n");
+        res = tf_eval_int (ctx, arg, arglens[1], out, outlen, fail_on_undef);
+        if (res < 0) {
+            *out = 0;
+            return -1;
+        }
+    }
+
+    return res;
+}
+
+int
+tf_func_if3 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 2) {
+        return -1;
+    }
+    char *arg = args;
+    for (int i = 0; i < argc; i++) {
+        int res = tf_eval_int (ctx, arg, arglens[i], out, outlen, fail_on_undef);
+        arg += arglens[i];
+        if (res > 0 || i == argc-1) {
+            return res;
+        }
+    }
+    *out = 0;
+    return -1;
+}
+
 static void
 tf_append_out (char **out, int *out_len, const char *in, int in_len) {
     in_len = min (in_len, *out_len);
@@ -292,6 +332,8 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "left", tf_func_left },
     { "add", tf_func_add },
     { "if", tf_func_if },
+    { "if2", tf_func_if2 },
+    { "if3", tf_func_if3 },
     { NULL, NULL }
 };
 

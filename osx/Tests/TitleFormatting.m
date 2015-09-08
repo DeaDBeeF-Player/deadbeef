@@ -176,4 +176,44 @@
     free (buffer);
 }
 
+- (void)test_If2FirstArgIsTrue_EvalToFirstArg {
+    char *bc = tf_compile("$if2(abc,def)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"abc" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_If2FirstArgIsFalse_EvalToSecondArg {
+    char *bc = tf_compile("$if2(,ghi)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"ghi" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_If3FirstArgIsTrue_EvalToFirstArg {
+    char *bc = tf_compile("$if3(abc,def)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"abc" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_If3AllButLastAreFalse_EvalToLastArg {
+    char *bc = tf_compile("$if3(,,,,,lastarg)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"lastarg" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_If3OneOfTheArgsBeforeLastIsTrue_EvalToFirstTrueArg {
+    char *bc = tf_compile("$if3(,,firstarg,,secondarg,lastarg)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"firstarg" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
 @end
