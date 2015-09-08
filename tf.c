@@ -383,6 +383,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "greater", tf_func_greater },
     { "strcmp", tf_func_strcmp },
     { "left", tf_func_left },
+    { "cut", tf_func_left },
     { "add", tf_func_add },
     { "if", tf_func_if },
     { "if2", tf_func_if2 },
