@@ -278,6 +278,15 @@ tf_func_if (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *ou
     return res;
 }
 
+static void
+tf_append_out (char **out, int *out_len, const char *in, int in_len) {
+    in_len = min (in_len, *out_len);
+    memcpy (*out, in, in_len);
+    (*out)[in_len] = 0;
+    *out_len -= in_len;
+    *out += in_len;
+}
+
 tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "greater", tf_func_greater },
     { "strcmp", tf_func_strcmp },
@@ -641,11 +650,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         }
                         const char *end = strrchr (start, '.');
                         if (end) {
-                            int n = (int)(end-start);
-                            n = min ((int)(end-start), outlen);
-                            strncpy (out, start, n);
-                            outlen -= n;
-                            out += n;
+                            tf_append_out(&out, &outlen, start, (int)(end-start));
                             skip_out = 1;
                         }
                         val = NULL;
@@ -656,12 +661,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     if (val) {
                         const char *start = strrchr (val, '/');
                         if (start) {
-                            start++;
-                            int n = strlen (start);
-                            n = min (n, outlen);
-                            strncpy (out, start, n);
-                            outlen -= n;
-                            out += n;
+                            tf_append_out (&out, &outlen, start+1, (int)strlen (start+1));
                             skip_out = 1;
                         }
                         val = NULL;
