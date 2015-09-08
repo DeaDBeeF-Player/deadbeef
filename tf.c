@@ -629,7 +629,44 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         pl_item_unref (playing);
                     }
                 }
-
+                else if (!strcmp (name, "filename")) {
+                    val = pl_find_meta_raw (it, ":URI");
+                    if (val) {
+                        const char *start = strrchr (val, '/');
+                        if (start) {
+                            start++;
+                        }
+                        else {
+                            start = val;
+                        }
+                        const char *end = strrchr (start, '.');
+                        if (end) {
+                            int n = (int)(end-start);
+                            n = min ((int)(end-start), outlen);
+                            strncpy (out, start, n);
+                            outlen -= n;
+                            out += n;
+                            skip_out = 1;
+                        }
+                        val = NULL;
+                    }
+                }
+                else if (!strcmp (name, "filename_ext")) {
+                    val = pl_find_meta_raw (it, ":URI");
+                    if (val) {
+                        const char *start = strrchr (val, '/');
+                        if (start) {
+                            start++;
+                            int n = strlen (start);
+                            n = min (n, outlen);
+                            strncpy (out, start, n);
+                            outlen -= n;
+                            out += n;
+                            skip_out = 1;
+                        }
+                        val = NULL;
+                    }
+                }
                 else if (!strcmp (name, "_deadbeef_version")) {
                     val = VERSION;
                 }
