@@ -860,6 +860,31 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         }
                     }
                 }
+                // indexes of track in queue
+                else if (!strcmp (name, "queue_indexes")) {
+                    if (it) {
+                        int idx = playqueue_test (it) + 1;
+                        if (idx >= 1) {
+                            int len = snprintf (out, outlen, "%d", idx);
+                            out += len;
+                            outlen -= len;
+                            int count = playqueue_getcount ();
+                            for (int i = idx; i < count; i++) {
+                                playItem_t *trk = playqueue_get_item (i);
+                                if (trk) {
+                                    if (it == trk) {
+                                        len = snprintf (out, outlen, ",%d", i + 1);
+                                        out += len;
+                                        outlen -= len;
+                                    }
+                                    pl_item_unref (trk);
+                                }
+                            }
+                            skip_out = 1;
+                            val = NULL;
+                        }
+                    }
+                }
                 // total amount of tracks in queue
                 else if (!strcmp (name, "queue_total")) {
                     int count = playqueue_getcount ();
