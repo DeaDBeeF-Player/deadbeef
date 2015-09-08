@@ -303,4 +303,44 @@
     tf_free (bc);
     XCTAssert([@"isfalse" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
+
+- (void)test_SelectMiddle_EvalsToSelectedValue {
+    char *bc = tf_compile("$select(3,10,20,30,40,50)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"30" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_SelectLeftmost_EvalsToSelectedValue {
+    char *bc = tf_compile("$select(1,10,20,30,40,50)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"10" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_SelectRightmost_EvalsToSelectedValue {
+    char *bc = tf_compile("$select(5,10,20,30,40,50)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"50" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_SelectOutOfBoundsLeft_EvalsToFalse {
+    char *bc = tf_compile("$select(0,10,20,30,40,50)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_SelectOutOfBoundsRight_EvalsToFalse {
+    char *bc = tf_compile("$select(6,10,20,30,40,50)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
 @end

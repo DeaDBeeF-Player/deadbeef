@@ -346,6 +346,30 @@ tf_func_iflonger (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, ch
     return len;
 }
 
+int
+tf_func_select (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 3) {
+        return -1;
+    }
+
+    char *arg = args;
+
+    int res;
+    TF_EVAL_CHECK(res, ctx, arg, arglens[0], out, outlen, fail_on_undef);
+
+    int n = atoi (out);
+    if (n < 1 || n >= argc) {
+        return 0;
+    }
+
+    arg += arglens[0];
+
+    for (int i = 1; i < n; i++) {
+        arg += arglens[i];
+    }
+    TF_EVAL_CHECK(res, ctx, arg, arglens[n], out, outlen, fail_on_undef);
+    return res;
+}
 
 static void
 tf_append_out (char **out, int *out_len, const char *in, int in_len) {
@@ -367,6 +391,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "ifequal", tf_func_ifequal },
     { "ifgreater", tf_func_ifgreater },
     { "iflonger", tf_func_iflonger },
+    { "select", tf_func_select },
     { NULL, NULL }
 };
 
