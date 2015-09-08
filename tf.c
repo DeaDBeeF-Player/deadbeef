@@ -635,6 +635,18 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 else if (!strcmp (name, "codec")) {
                     val = pl_find_meta_raw (it, ":FILETYPE");
                 }
+                else if (!strcmp (name, "replaygain_album_gain")) {
+                    val = pl_find_meta_raw (it, ":REPLAYGAIN_ALBUMGAIN");
+                }
+                else if (!strcmp (name, "replaygain_album_peak")) {
+                    val = pl_find_meta_raw (it, ":REPLAYGAIN_ALBUMPEAK");
+                }
+                else if (!strcmp (name, "replaygain_track_gain")) {
+                    val = pl_find_meta_raw (it, ":REPLAYGAIN_TRACKGAIN");
+                }
+                else if (!strcmp (name, "replaygain_track_peak")) {
+                    val = pl_find_meta_raw (it, ":REPLAYGAIN_TRACKPEAK");
+                }
                 else if ((tmp_a = !strcmp (name, "playback_time")) || (tmp_b = !strcmp (name, "playback_time_seconds")) || (tmp_c = !strcmp (name, "playback_time_remaining")) || (tmp_d = !strcmp (name, "playback_time_remaining_seconds"))) {
                     playItem_t *playing = streamer_get_playing_track ();
                     if (it && playing == it) {
