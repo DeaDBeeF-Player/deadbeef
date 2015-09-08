@@ -796,6 +796,23 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 else if (!strcmp (name, "path")) {
                     val = pl_find_meta_raw (it, ":URI");
                 }
+                // index of track in playlist (zero-padded)
+                else if (!strcmp (name, "list_index")) {
+                    if (it) {
+                        playlist_t *plt = pl_get_playlist (it);
+                        if (plt) {
+                            int total_tracks = plt_get_item_count (plt, PL_MAIN);
+                            int digits = log10 (abs (total_tracks)) + 1;
+                            int idx = pl_get_idx_of (it) + 1;
+                            int len = snprintf (out, outlen, "%0*d", digits, idx);
+                            out += len;
+                            outlen -= len;
+                            skip_out = 1;
+                            val = NULL;
+                            plt_unref (plt);
+                        }
+                    }
+                }
                 else if (!strcmp (name, "_deadbeef_version")) {
                     val = VERSION;
                 }
