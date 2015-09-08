@@ -281,8 +281,7 @@ tf_func_if (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *ou
 static void
 tf_append_out (char **out, int *out_len, const char *in, int in_len) {
     in_len = min (in_len, *out_len);
-    memcpy (*out, in, in_len);
-    (*out)[in_len] = 0;
+    in_len = u8_strnbcpy (*out, in, in_len);
     *out_len -= in_len;
     *out += in_len;
 }
