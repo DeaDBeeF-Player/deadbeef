@@ -848,6 +848,17 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         }
                     }
                 }
+                // total amount of tracks in queue
+                else if (!strcmp (name, "queue_total")) {
+                    int count = playqueue_getcount ();
+                    if (count >= 0) {
+                        int len = snprintf (out, outlen, "%d", count);
+                        out += len;
+                        outlen -= len;
+                        skip_out = 1;
+                        val = NULL;
+                    }
+                }
                 else if (!strcmp (name, "_deadbeef_version")) {
                     val = VERSION;
                 }
