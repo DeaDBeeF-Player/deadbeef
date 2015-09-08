@@ -813,6 +813,27 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         }
                     }
                 }
+                // total number of tracks in playlist
+                else if (!strcmp (name, "list_total")) {
+                    int total_tracks = -1;
+                    if (ctx->plt) {
+                        total_tracks = plt_get_item_count ((playlist_t *)ctx->plt, PL_MAIN);
+                    }
+                    else if (it) {
+                        playlist_t *plt = pl_get_playlist (it);
+                        if (plt) {
+                            total_tracks = plt_get_item_count (plt, PL_MAIN);
+                            plt_unref (plt);
+                        }
+                    }
+                    if (total_tracks >= 0) {
+                        int len = snprintf (out, outlen, "%d", total_tracks);
+                        out += len;
+                        outlen -= len;
+                        skip_out = 1;
+                        val = NULL;
+                    }
+                }
                 else if (!strcmp (name, "_deadbeef_version")) {
                     val = VERSION;
                 }
