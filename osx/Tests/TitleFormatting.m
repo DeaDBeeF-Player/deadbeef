@@ -216,4 +216,35 @@
     XCTAssert([@"firstarg" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
 
+- (void)test_IfEqualTrue_EvalsToThen {
+    char *bc = tf_compile("$ifequal(100,100,then,else)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"then" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_IfEqualFalse_EvalsToElse {
+    char *bc = tf_compile("$ifequal(100,200,then,else)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"else" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_IfGreaterTrue_EvalsToThen {
+    char *bc = tf_compile("$ifgreater(200,100,then,else)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"then" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_IfGreaterFalse_EvalsToElse {
+    char *bc = tf_compile("$ifgreater(100,200,then,else)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"else" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
 @end

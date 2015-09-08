@@ -318,6 +318,86 @@ tf_func_if3 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
     return -1;
 }
 
+int
+tf_func_ifequal (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 4) {
+        return -1;
+    }
+
+    char *arg = args;
+    int len = tf_eval_int (ctx, arg, arglens[0], out, outlen, fail_on_undef);
+    if (len < 0) {
+        *out = 0;
+        return -1;
+    }
+
+    int arg1 = atoi (out);
+
+    arg += arglens[0];
+    len = tf_eval_int (ctx, arg, arglens[1], out, outlen, fail_on_undef);
+    if (len < 0) {
+        *out = 0;
+        return -1;
+    }
+
+    int arg2 = atoi (out);
+
+    arg += arglens[1];
+
+    int idx = 2;
+    if (arg1 != arg2) {
+        arg += arglens[2];
+        idx = 3;
+    }
+
+    len = tf_eval_int (ctx, arg, arglens[idx], out, outlen, fail_on_undef);
+    if (len < 0) {
+        *out = 0;
+        return -1;
+    }
+    return len;
+}
+
+int
+tf_func_ifgreater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 4) {
+        return -1;
+    }
+
+    char *arg = args;
+    int len = tf_eval_int (ctx, arg, arglens[0], out, outlen, fail_on_undef);
+    if (len < 0) {
+        *out = 0;
+        return -1;
+    }
+
+    int arg1 = atoi (out);
+
+    arg += arglens[0];
+    len = tf_eval_int (ctx, arg, arglens[1], out, outlen, fail_on_undef);
+    if (len < 0) {
+        *out = 0;
+        return -1;
+    }
+
+    int arg2 = atoi (out);
+
+    arg += arglens[1];
+
+    int idx = 2;
+    if (arg1 <= arg2) {
+        arg += arglens[2];
+        idx = 3;
+    }
+
+    len = tf_eval_int (ctx, arg, arglens[idx], out, outlen, fail_on_undef);
+    if (len < 0) {
+        *out = 0;
+        return -1;
+    }
+    return len;
+}
+
 static void
 tf_append_out (char **out, int *out_len, const char *in, int in_len) {
     in_len = min (in_len, *out_len);
@@ -334,6 +414,9 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "if", tf_func_if },
     { "if2", tf_func_if2 },
     { "if3", tf_func_if3 },
+    { "if3", tf_func_if3 },
+    { "ifequal", tf_func_ifequal },
+    { "ifgreater", tf_func_ifgreater },
     { NULL, NULL }
 };
 
