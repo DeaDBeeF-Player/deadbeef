@@ -51,6 +51,7 @@
 #include "streamer.h"
 #include "utf8.h"
 #include "playlist.h"
+#include "playqueue.h"
 #include "tf.h"
 #include "gettext.h"
 #include "plugins.h"
@@ -832,6 +833,19 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         outlen -= len;
                         skip_out = 1;
                         val = NULL;
+                    }
+                }
+                // index of track in queue
+                else if (!strcmp (name, "queue_index")) {
+                    if (it) {
+                        int idx = playqueue_test (it) + 1;
+                        if (idx >= 1) {
+                            int len = snprintf (out, outlen, "%d", idx);
+                            out += len;
+                            outlen -= len;
+                            skip_out = 1;
+                            val = NULL;
+                        }
                     }
                 }
                 else if (!strcmp (name, "_deadbeef_version")) {
