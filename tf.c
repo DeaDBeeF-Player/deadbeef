@@ -264,7 +264,7 @@ tf_func_if3 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
 
 int
 tf_func_ifequal (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
-    if (argc < 4) {
+    if (argc != 4) {
         return -1;
     }
 
@@ -293,7 +293,7 @@ tf_func_ifequal (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, cha
 
 int
 tf_func_ifgreater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
-    if (argc < 4) {
+    if (argc != 4) {
         return -1;
     }
 
@@ -320,6 +320,33 @@ tf_func_ifgreater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, c
     return len;
 }
 
+int
+tf_func_iflonger (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 4) {
+        return -1;
+    }
+
+    char *arg = args;
+    int len;
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
+    int l1 = (int)strlen (out);
+
+    arg += arglens[0];
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], out, outlen, fail_on_undef);
+    int l2 = (int)strlen (out);
+
+    arg += arglens[1];
+    int idx = 2;
+    if (l1 <= l2) {
+        arg += arglens[2];
+        idx = 3;
+    }
+
+    TF_EVAL_CHECK(len, ctx, arg, arglens[idx], out, outlen, fail_on_undef);
+    return len;
+}
+
+
 static void
 tf_append_out (char **out, int *out_len, const char *in, int in_len) {
     in_len = min (in_len, *out_len);
@@ -339,6 +366,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "if3", tf_func_if3 },
     { "ifequal", tf_func_ifequal },
     { "ifgreater", tf_func_ifgreater },
+    { "iflonger", tf_func_iflonger },
     { NULL, NULL }
 };
 

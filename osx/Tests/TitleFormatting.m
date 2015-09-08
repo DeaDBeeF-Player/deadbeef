@@ -287,4 +287,20 @@
     tf_free (bc);
     XCTAssert([@"istrue" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
+
+- (void)test_IfLongerTrue_EvalsToTrue {
+    char *bc = tf_compile("$iflonger(abcd,ef,istrue,isfalse)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"istrue" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_IfLongerFalse_EvalsToFalse {
+    char *bc = tf_compile("$iflonger(ab,cdef,istrue,isfalse)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"isfalse" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
 @end
