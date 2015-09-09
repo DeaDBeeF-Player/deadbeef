@@ -91,12 +91,20 @@ tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
     code += 4;
     memset (out, 0, outlen);
     int l = 0;
-    switch (ctx->id) {
+
+    int id = -1;
+    if (ctx->flags & DDB_TF_CONTEXT_HAS_ID) {
+        id = ctx->id;
+    }
+    switch (id) {
     case DB_COLUMN_FILENUMBER:
-        if (ctx->idx == -1 && ctx->plt) {
-            ctx->idx = plt_get_item_idx ((playlist_t *)ctx->plt, (playItem_t *)ctx->it, PL_MAIN);
+        if (ctx->flags & DDB_TF_CONTEXT_HAS_INDEX) {
+            l = snprintf (out, sizeof (outlen), "%d", ctx->idx+1);
         }
-        l = snprintf (out, sizeof (outlen), "%d", ctx->idx+1);
+        else if (ctx->plt) {
+            int idx = plt_get_item_idx ((playlist_t *)ctx->plt, (playItem_t *)ctx->it, PL_MAIN);
+            l = snprintf (out, sizeof (outlen), "%d", idx+1);
+        }
         break;
     case DB_COLUMN_PLAYING:
         l = pl_format_item_queue ((playItem_t *)ctx->it, out, outlen);
@@ -1087,7 +1095,6 @@ tf_test (void) {
     ddb_tf_context_t ctx;
     memset (&ctx, 0, sizeof (ctx));
     ctx._size = sizeof (ctx);
-    ctx.idx = -1;
 
     char out[1000] = "";
     int res = tf_eval (&ctx, code, out, sizeof (out));

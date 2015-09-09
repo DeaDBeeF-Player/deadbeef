@@ -438,8 +438,6 @@ gtkui_set_titlebar (DB_playItem_t *it) {
         ._size = sizeof (ddb_tf_context_t),
         .it = it,
         .plt = deadbeef->plt_get_curr (),
-        .idx = -1,
-        .id = -1
     };
     deadbeef->tf_eval (&ctx, it ? titlebar_playing_bc : titlebar_stopped_bc, str, sizeof (str));
     if (ctx.plt) {

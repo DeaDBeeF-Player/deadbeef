@@ -2484,36 +2484,6 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
             }
         }
         plt_insert_item (plt, plt->tail[PL_MAIN], it);
-#if 0
-        char *code;
-        int len;
-        const char *script = "$if(%album artist%,true,false) $if(%noway%,true,false) $if(%title%,true,false) $if(%album artist%,%album artist%,$if(%band%,%band%,[%artist%]))";
-        printf ("compiling \"%s\"\n", script);
-        len = tf_compile (script, &code);
-        if (len >= 0) {
-            printf ("compile success (len %d)\n", len);
-            ddb_tf_context_t ctx;
-            memset (&ctx, 0, sizeof (ctx));
-            ctx._size = sizeof (ctx);
-            ctx.it = it;
-            ctx.plt = plt;
-            ctx.idx = 0;
-
-            char out[1000]="";
-            int res = tf_eval (&ctx, code, len, out, sizeof (out));
-            if (res > 0) {
-                printf ("eval success, output:\n%s\n", out);
-            }
-            else {
-                printf ("eval failed, err: %d\n", res);
-            }
-
-            tf_free (code);
-        }
-
-        exit (0);
-#endif
-
         if (last_added) {
             pl_item_unref (last_added);
         }

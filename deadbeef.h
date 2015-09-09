@@ -503,13 +503,25 @@ typedef struct ddb_fileadd_data_s {
 
 // since 1.8
 #if (DDB_API_LEVEL >= 8)
+enum {
+    DDB_TF_CONTEXT_HAS_INDEX = 1,
+    DDB_TF_CONTEXT_HAS_ID = 2,
+};
+
 // context for title formatting interpreter
 typedef struct {
     int _size; // must be set to sizeof(tf_context_t)
+    uint32_t flags; // DDB_TF_CONTEXT_ flags
     ddb_playItem_t *it; // track to get information from, or NULL
     ddb_playlist_t *plt; // playlist in which the track resides, or NULL
-    int idx; // index of the track in playlist the track belongs to, or -1
-    int id; // predefined column id
+
+    // index of the track in playlist the track belongs to
+    // if present, DDB_TF_CONTEXT_HAS_INDEX flag must be set
+    int idx;
+
+    // predefined column id, one of the DB_COLUMN_
+    // if present, DDB_TF_CONTEXT_HAS_ID flag must be set
+    int id;
 
     // update is a returned value
     // meaning:

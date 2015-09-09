@@ -593,8 +593,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
         ._size = sizeof (ddb_tf_context_t),
         .it = it,
         .plt = deadbeef->plt_get_curr (),
-        .idx = -1,
-        .id = -1
     };
 
     char title[1024] = "";

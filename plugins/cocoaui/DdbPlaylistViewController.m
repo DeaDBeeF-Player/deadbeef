@@ -604,8 +604,8 @@ extern DB_functions_t *deadbeef;
             ._size = sizeof (ddb_tf_context_t),
             .it = (DB_playItem_t *)row,
             .plt = deadbeef->plt_get_curr (),
-            .idx = -1,
-            .id = _columns[col].type
+            .id = _columns[col].type,
+            .flags = DDB_TF_CONTEXT_HAS_ID,
         };
 
         char text[1024] = "";
@@ -630,8 +630,6 @@ static char *group_bytecode = NULL;
         ._size = sizeof (ddb_tf_context_t),
         .it = (DB_playItem_t *)row,
         .plt = deadbeef->plt_get_curr (),
-        .idx = -1,
-        .id = -1
     };
 
     char text[1024] = "";
@@ -689,8 +687,6 @@ static char *group_bytecode = NULL;
         ._size = sizeof (ddb_tf_context_t),
         .it = (DB_playItem_t *)row,
         .plt = deadbeef->plt_get_curr(),
-        .idx = -1,
-        .id = -1
     };
     char buf[1024];
     NSString *ret = @"";

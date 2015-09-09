@@ -393,8 +393,8 @@ draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int co
                 ._size = sizeof (ddb_tf_context_t),
                 .it = it,
                 .plt = deadbeef->plt_get_curr (),
-                .idx = -1,
-                .id = cinf->id
+                .id = cinf->id,
+                .flags = DDB_TF_CONTEXT_HAS_ID,
             };
             deadbeef->tf_eval (&ctx, cinf->bytecode, text, sizeof (text));
             if (ctx.update > 0 && !listview->tf_redraw_timeout_id) {
@@ -1584,8 +1584,6 @@ pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int s
             ._size = sizeof (ddb_tf_context_t),
             .it = it,
             .plt = deadbeef->plt_get_curr (),
-            .idx = -1,
-            .id = -1
         };
         deadbeef->tf_eval (&ctx, listview->group_title_bytecode, str, size);
 
@@ -1610,8 +1608,6 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
                 ._size = sizeof (ddb_tf_context_t),
                 .it = it,
                 .plt = deadbeef->plt_get_curr (),
-                .idx = -1,
-                .id = -1
             };
             deadbeef->tf_eval (&ctx, listview->group_title_bytecode, str, sizeof (str));
 

@@ -22,8 +22,6 @@
     ctx._size = sizeof (ddb_tf_context_t);
     ctx.it = (DB_playItem_t *)it;
     ctx.plt = NULL;
-    ctx.idx = -1;
-    ctx.id = -1;
 }
 
 - (void)tearDown {
