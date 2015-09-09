@@ -848,14 +848,14 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
             }
             ddb_listview_list_render_row_background (listview, cr, NULL, 1, 0, -listview->hscrollpos, y - pushback, listview->totalwidth, listview->grouptitle_height);
             if (listview->binding->draw_group_title && listview->grouptitle_height > 0) {
-                listview->binding->draw_group_title (listview, cr, grp->head, -listview->hscrollpos, y - pushback, listview->totalwidth, listview->grouptitle_height);
+                listview->binding->draw_group_title (listview, cr, grp->head, PL_MAIN, -listview->hscrollpos, y - pushback, listview->totalwidth, listview->grouptitle_height);
             }
         }
         else if (grp_y + listview->grouptitle_height >= y + listview->scrollpos && grp_y < y + h + listview->scrollpos) {
             // draw normal group title
             ddb_listview_list_render_row_background (listview, cr, NULL, 1, 0, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
             if (listview->binding->draw_group_title && listview->grouptitle_height > 0) {
-                listview->binding->draw_group_title (listview, cr, grp->head, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
+                listview->binding->draw_group_title (listview, cr, grp->head, PL_MAIN, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
             }
         }
 
@@ -1474,7 +1474,7 @@ ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListvi
     for (c = ps->columns; c; c = c->next, cidx++) {
         int cw = c->width;
         if (!ddb_listview_is_album_art_column_idx (ps, cidx)) {
-            ps->binding->draw_column_data (ps, cr, it, cidx, x, y, cw, h);
+            ps->binding->draw_column_data (ps, cr, it, cidx, PL_MAIN, x, y, cw, h);
         }
         x += cw;
     }

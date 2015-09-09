@@ -814,9 +814,9 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     if (it) {
                         playlist_t *plt = pl_get_playlist (it);
                         if (plt) {
-                            int total_tracks = plt_get_item_count (plt, PL_MAIN);
+                            int total_tracks = plt_get_item_count (plt, ctx->iter);
                             int digits = log10 (abs (total_tracks)) + 1;
-                            int idx = pl_get_idx_of (it) + 1;
+                            int idx = pl_get_idx_of_iter (it, ctx->iter) + 1;
                             int len = snprintf (out, outlen, "%0*d", digits, idx);
                             out += len;
                             outlen -= len;
@@ -830,12 +830,12 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 else if (!strcmp (name, "list_total")) {
                     int total_tracks = -1;
                     if (ctx->plt) {
-                        total_tracks = plt_get_item_count ((playlist_t *)ctx->plt, PL_MAIN);
+                        total_tracks = plt_get_item_count ((playlist_t *)ctx->plt, ctx->iter);
                     }
                     else if (it) {
                         playlist_t *plt = pl_get_playlist (it);
                         if (plt) {
-                            total_tracks = plt_get_item_count (plt, PL_MAIN);
+                            total_tracks = plt_get_item_count (plt, ctx->iter);
                             plt_unref (plt);
                         }
                     }

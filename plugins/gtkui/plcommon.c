@@ -340,7 +340,7 @@ draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewIter group_it, in
 }
 
 void
-draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int column, int x, int y, int width, int height) {
+draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int column, int iter, int x, int y, int width, int height) {
     const char *ctitle;
     int cwidth;
     int calign_right;
@@ -393,6 +393,7 @@ draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int co
                 ._size = sizeof (ddb_tf_context_t),
                 .it = it,
                 .plt = deadbeef->plt_get_curr (),
+                .iter = iter,
                 .id = cinf->id,
                 .flags = DDB_TF_CONTEXT_HAS_ID,
             };
@@ -1600,7 +1601,7 @@ pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int s
 }
 
 void
-pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height) {
+pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height) {
     if (listview->group_format && listview->group_format[0]) {
         char str[1024] = "";
         if (listview->group_title_bytecode) {
@@ -1608,6 +1609,7 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
                 ._size = sizeof (ddb_tf_context_t),
                 .it = it,
                 .plt = deadbeef->plt_get_curr (),
+                .iter = iter
             };
             deadbeef->tf_eval (&ctx, listview->group_title_bytecode, str, sizeof (str));
 

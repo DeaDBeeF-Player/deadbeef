@@ -372,6 +372,18 @@ search_header_context_menu (DdbListview *ps, int column) {
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
 }
 
+static void
+search_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int column, int iter, int x, int y, int width, int height)
+{
+    draw_column_data (listview, cr, it, column, PL_SEARCH, x, y, width, height);
+}
+
+static void
+search_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height) 
+{
+    pl_common_draw_group_title (listview, drawable, it, PL_SEARCH, x, y, width, height);
+}
+
 static DdbListviewBinding search_binding = {
     // rows
     .count = search_get_count,
@@ -397,9 +409,9 @@ static DdbListviewBinding search_binding = {
     .drag_n_drop = NULL,
     .external_drag_n_drop = NULL,
 
-    .draw_column_data = draw_column_data,
+    .draw_column_data = search_draw_column_data,
     .draw_album_art = draw_album_art,
-    .draw_group_title = pl_common_draw_group_title,
+    .draw_group_title = search_draw_group_title,
 
     // columns
     .col_sort = search_col_sort,

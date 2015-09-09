@@ -33,7 +33,7 @@ void
 draw_album_art (DdbListview *listview, cairo_t *drawable, DdbListviewIter group_it, int column, int group_pinned, int grp_next_y, int x, int y, int width, int height);
 
 void
-draw_column_data (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int column, int x, int y, int width, int height);
+draw_column_data (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int column, int iter, int x, int y, int width, int height);
 
 void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx);
@@ -63,6 +63,6 @@ int
 pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int size);
 
 void
-pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height);
+pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height);
 
 #endif // __PLCOLUMNS_H

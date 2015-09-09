@@ -98,9 +98,9 @@ typedef struct {
     void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
 
     // callbacks
-    void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int x, int y, int width, int height);
+    void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int pl_iter, int x, int y, int width, int height);
     void (*draw_album_art) (DdbListview *listview, cairo_t *drawable, DdbListviewIter group_iter, int column, int group_pinned, int grp_next_y, int x, int y, int width, int height);
-    void (*draw_column_data) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int column, int x, int y, int width, int height);
+    void (*draw_column_data) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int column, int pl_iter, int x, int y, int width, int height);
     void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx);
     void (*header_context_menu) (DdbListview *listview, int col);
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);

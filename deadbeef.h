@@ -523,6 +523,8 @@ typedef struct {
     // if present, DDB_TF_CONTEXT_HAS_ID flag must be set
     int id;
 
+    int iter; // playlist iteration (PL_MAIN, PL_SEARCH)
+
     // update is a returned value
     // meaning:
     // 0: no automatic updates
