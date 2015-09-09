@@ -815,7 +815,12 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         playlist_t *plt = pl_get_playlist (it);
                         if (plt) {
                             int total_tracks = plt_get_item_count (plt, ctx->iter);
-                            int digits = log10 (abs (total_tracks)) + 1;
+                            int digits = 0;
+                            do {
+                                total_tracks /= 10;
+                                digits++;
+                            } while (total_tracks);
+
                             int idx = pl_get_idx_of_iter (it, ctx->iter) + 1;
                             int len = snprintf (out, outlen, "%0*d", digits, idx);
                             out += len;
