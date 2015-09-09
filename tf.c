@@ -821,7 +821,13 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                                 digits++;
                             } while (total_tracks);
 
-                            int idx = pl_get_idx_of_iter (it, ctx->iter) + 1;
+                            int idx = 0;
+                            if (ctx->flags & DDB_TF_CONTEXT_HAS_INDEX) {
+                                idx = ctx->idx + 1;
+                            }
+                            else {
+                                idx = pl_get_idx_of_iter (it, ctx->iter) + 1;
+                            }
                             int len = snprintf (out, outlen, "%0*d", digits, idx);
                             out += len;
                             outlen -= len;
