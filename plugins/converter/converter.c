@@ -1154,7 +1154,7 @@ error:
         while (m) {
             DB_metaInfo_t *next = m->next;
             if (m->key[0] == ':' || m->key[0] == '!' || !strcasecmp (m->key, "cuesheet")) {
-                if (strcasestr (m->key, "_REPLAYGAIN_")) {
+                if (strcasestr (m->key, ":REPLAYGAIN_")) {
                     deadbeef->pl_delete_metadata (out_it, m);
                 }
             }
