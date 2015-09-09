@@ -843,8 +843,8 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     if (ctx->plt) {
                         total_tracks = plt_get_item_count ((playlist_t *)ctx->plt, ctx->iter);
                     }
-                    else if (it) {
-                        playlist_t *plt = pl_get_playlist (it);
+                    else {
+                        playlist_t *plt = plt_get_curr ();
                         if (plt) {
                             total_tracks = plt_get_item_count (plt, ctx->iter);
                             plt_unref (plt);
