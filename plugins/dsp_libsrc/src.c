@@ -45,6 +45,7 @@ typedef struct {
     int remaining; // number of input samples in SRC buffer
     float *outbuf;
     int outsize;
+    int buffersize;
     __attribute__((__aligned__(16))) char in_fbuffer[sizeof(float)*SRC_BUFFER*SRC_MAX_CHANNELS];
     unsigned quality_changed : 1;
     unsigned need_reset : 1;
@@ -138,16 +139,18 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
 
     int numoutframes = 0;
     int outsize = nframes*24;
-    if (!src->outbuf || src->outsize != outsize) {
+    int buffersize = outsize * fmt->channels * sizeof (float);
+    if (!src->outbuf || src->outsize != outsize || src->buffersize != buffersize) {
         if (src->outbuf) {
             free (src->outbuf);
             src->outbuf = NULL;
         }
         src->outsize = outsize;
-        src->outbuf = malloc (src->outsize * fmt->channels * sizeof (float));
+        src->buffersize = buffersize;
+        src->outbuf = malloc (buffersize);
     }
     char *output = (char *)src->outbuf;
-    memset (output, 0, outsize * fmt->channels * sizeof (float));
+    memset (output, 0, buffersize);
     float *input = samples;
     int inputsize = nframes;
 
