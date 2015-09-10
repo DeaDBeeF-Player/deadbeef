@@ -44,7 +44,7 @@
     pl_add_meta (it, "year", "12345678");
     pl_add_meta (it, "album", "TheNameOfAlbum");
 
-    char *bc = tf_compile("%album artist% - ($left(%year%,4)) %album%");
+    char *bc = tf_compile("%album artist% - ($left($meta(year),4)) %album%");
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
@@ -56,7 +56,7 @@
     pl_add_meta (it, "year", "12345678");
     pl_add_meta (it, "album", "Альбом");
 
-    char *bc = tf_compile("%album artist% - ($left(%year%,4)) %album%");
+    char *bc = tf_compile("%album artist% - ($left($meta(year),4)) %album%");
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
@@ -152,7 +152,7 @@
 
     pl_add_meta (it, "comment", longcomment);
 
-    char *bc = tf_compile("%comment%");
+    char *bc = tf_compile("$meta(comment)");
     char *buffer = malloc (200);
     XCTAssertNoThrow(tf_eval (&ctx, bc, buffer, 200), @"Crashed!");
     tf_free (bc);
@@ -341,4 +341,14 @@
     tf_free (bc);
     XCTAssert([@"" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
+
+- (void)test_InvalidPercentExpression_WithNullTrack_NoCrash {
+    char *bc = tf_compile("deadbeef - %version%");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    XCTAssertNoThrow(tf_eval (&ctx, bc, buffer, 1000), @"Crashed!");
+    tf_free (bc);
+    free (buffer);
+}
+
 @end

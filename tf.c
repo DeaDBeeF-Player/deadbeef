@@ -388,6 +388,30 @@ tf_append_out (char **out, int *out_len, const char *in, int in_len) {
     *out += in_len;
 }
 
+int
+tf_func_meta (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1) {
+        return -1;
+    }
+
+    if (!ctx->it) {
+        return 0;
+    }
+
+    char *arg = args;
+    int len;
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
+
+    const char *meta = pl_find_meta_raw ((playItem_t *)ctx->it, out);
+    if (!meta) {
+        return 0;
+    }
+
+    int nb = (int)strlen (meta);
+    nb = min (nb, outlen);
+    return u8_strnbcpy(out, meta, nb);
+}
+
 tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "greater", tf_func_greater },
     { "strcmp", tf_func_strcmp },
@@ -402,6 +426,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "ifgreater", tf_func_ifgreater },
     { "iflonger", tf_func_iflonger },
     { "select", tf_func_select },
+    { "meta", tf_func_meta },
     { NULL, NULL }
 };
 
@@ -465,6 +490,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 const char *val = NULL;
                 const char *aa_fields[] = { "album artist", "albumartist", "artist", "composer", "performer", NULL };
                 const char *a_fields[] = { "artist", "album artist", "albumartist", "composer", "performer", NULL };
+                const char *alb_fields[] = { "album", "venue", NULL };
 
                 // set to 1 if special case handler successfully wrote the output
                 int skip_out = 0;
@@ -480,6 +506,11 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 else if (!strcmp (name, a_fields[0])) {
                     for (int i = 0; !val && a_fields[i]; i++) {
                         val = pl_find_meta_raw (it, a_fields[i]);
+                    }
+                }
+                else if (!strcmp (name, "album")) {
+                    for (int i = 0; !val && alb_fields[i]; i++) {
+                        val = pl_find_meta_raw (it, alb_fields[i]);
                     }
                 }
                 else if (!strcmp (name, "track artist")) {
@@ -912,9 +943,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 }
 
                 // default case
-                else {
-                    val = pl_find_meta_raw (it, name);
-                }
                 if (!skip_out && val) {
                     int32_t l = u8_strnbcpy(out, val, outlen);
                     out += l;
