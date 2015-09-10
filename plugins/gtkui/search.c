@@ -81,8 +81,10 @@ void
 search_destroy (void) {
     gtk_widget_destroy (searchwin);
     searchwin = NULL;
-    deadbeef->tf_free (window_title_bytecode);
-    window_title_bytecode = NULL;
+    if (window_title_bytecode) {
+        deadbeef->tf_free (window_title_bytecode);
+        window_title_bytecode = NULL;
+    }
 }
 
 static void
@@ -119,7 +121,6 @@ search_refresh (void) {
         char title[1024] = "";
         ddb_tf_context_t ctx = {
             ._size = sizeof (ddb_tf_context_t),
-            .it = NULL,
             .plt = deadbeef->plt_get_curr (),
             .iter = PL_SEARCH
         };
