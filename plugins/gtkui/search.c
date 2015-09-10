@@ -56,6 +56,8 @@ extern DB_functions_t *deadbeef; // defined in gtkui.c
 extern GtkWidget *searchwin;
 extern GtkWidget *mainwin;
 
+static char *window_title_bytecode = NULL;
+
 static gboolean
 unlock_search_columns_cb (void *ctx) {
     ddb_listview_lock_columns (DDB_LISTVIEW (lookup_widget (searchwin, "searchlist")), 0);
@@ -79,6 +81,8 @@ void
 search_destroy (void) {
     gtk_widget_destroy (searchwin);
     searchwin = NULL;
+    deadbeef->tf_free (window_title_bytecode);
+    window_title_bytecode = NULL;
 }
 
 static void
@@ -111,6 +115,16 @@ search_refresh (void) {
         GtkWidget *pl = lookup_widget (searchwin, "searchlist");
         ddb_listview_refresh (DDB_LISTVIEW (pl), DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_LIST_CHANGED);
         deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, (uintptr_t)pl, PL_MAIN, 0);
+
+        char title[1024] = "";
+        ddb_tf_context_t ctx = {
+            ._size = sizeof (ddb_tf_context_t),
+            .it = NULL,
+            .plt = deadbeef->plt_get_curr (),
+            .iter = PL_SEARCH
+        };
+        deadbeef->tf_eval (&ctx, window_title_bytecode, title, sizeof (title));
+        gtk_window_set_title (GTK_WINDOW (searchwin), title);
     }
 }
 
@@ -449,4 +463,5 @@ search_playlist_init (GtkWidget *widget) {
     listview->group_format = strdup (deadbeef->conf_get_str_fast ("gtkui.search.group_by", ""));
     deadbeef->conf_unlock ();
     listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
+    window_title_bytecode = deadbeef->tf_compile (_("Search [(%list_total% results)]"));
 }
