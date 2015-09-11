@@ -437,7 +437,7 @@ uint32 psx_hw_read(mips_cpu_context *cpu, offs_t offset, uint32 mem_mask)
 		return cpu->irq_mask;
 	}
 
-/*	if (offset == 0xbf801508)
+/*	if (offset == 0xbf801504)
 	{
 		return cpu->dma7_bcr;
 	}*/
@@ -481,7 +481,7 @@ static void ps2_dma4(mips_cpu_context *cpu, uint32 madr, uint32 bcr, uint32 chcr
 		#if DEBUG_HLE_IOP
 		printf("DMA4: RAM %08x to SPU2\n", madr);
 		#endif
-		bcr = (bcr>>16) * (bcr & 0xffff) * 4;
+		bcr = (bcr>>16) * (bcr & 0xffff) * 2;
 		SPU2writeDMA4Mem(cpu, madr&0x1fffff, bcr);
 	}
 	else
@@ -489,7 +489,7 @@ static void ps2_dma4(mips_cpu_context *cpu, uint32 madr, uint32 bcr, uint32 chcr
 		#if DEBUG_HLE_IOP
 		printf("DMA4: SPU2 to RAM %08x\n", madr);
 		#endif
-		bcr = (bcr>>16) * (bcr & 0xffff) * 4;
+		bcr = (bcr>>16) * (bcr & 0xffff) * 2;
 		SPU2readDMA4Mem(cpu, madr&0x1fffff, bcr);
 	}
 
@@ -503,7 +503,7 @@ static void ps2_dma7(mips_cpu_context *cpu, uint32 madr, uint32 bcr, uint32 chcr
 		#if DEBUG_HLE_IOP
 		printf("DMA7: RAM %08x to SPU2\n", madr);
 		#endif
-		bcr = (bcr>>16) * (bcr & 0xffff) * 4;
+		bcr = (bcr>>16) * (bcr & 0xffff) * 2;
 		SPU2writeDMA7Mem(cpu, madr&0x1fffff, bcr);
 	}
 	else
@@ -511,7 +511,7 @@ static void ps2_dma7(mips_cpu_context *cpu, uint32 madr, uint32 bcr, uint32 chcr
 		#if DEBUG_HLE_IOP
 		printf("DMA7: SPU2 to RAM %08x\n", madr);
 		#endif
-		bcr = (bcr>>16) * (bcr & 0xffff) * 4;
+		bcr = (bcr>>16) * (bcr & 0xffff) * 2;
 //		SPU2readDMA7Mem(madr&0x1fffff, bcr);
 	}
 
@@ -692,14 +692,14 @@ void psx_hw_write(mips_cpu_context *cpu, offs_t offset, uint32 data, uint32 mem_
 		cpu->dma7_madr = data;
 		return;
 	}
-	else if (offset == 0xbf801504)
+	else if (offset == 0xbf801508)
 	{
 		cpu->dma7_chcr = data;
 		ps2_dma7(cpu, cpu->dma7_madr, cpu->dma7_bcr, cpu->dma7_chcr);
 		return;
 	}
 							 
-	if (offset == 0xbf801508 || offset == 0xbf80150a)
+	if (offset == 0xbf801504 || offset == 0xbf801506)
 	{
 		cpu->dma7_bcr &= mem_mask;
 		cpu->dma7_bcr |= data;
