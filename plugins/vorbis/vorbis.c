@@ -484,7 +484,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
     int samples_read = 0;
     while (samples_read < samples_to_read && (ret > 0 || ret == OV_HOLE))
     {
-        float **pcm;
+        float **pcm = NULL;
         int new_link = -1;
         ret=ov_read_float(&info->vorbis_file, &pcm, samples_to_read-samples_read, &new_link);
 
@@ -494,7 +494,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
         else if (new_link != info->cur_bit_stream && !ov_seekable(&info->vorbis_file) && new_streaming_link(info, new_link)) {
             samples_read = samples_to_read;
         }
-        else {
+        else if (ret > 0) {
             float *ptr = (float *)buffer + samples_read*_info->fmt.channels;
             for (int channel = 0; channel < _info->fmt.channels; channel++, ptr++) {
                 const float *pcm_channel = pcm[info->channel_map ? info->channel_map[channel] : channel];
