@@ -162,6 +162,9 @@ fill_pltbrowser_rows (gpointer user_data)
 
     for (int i = 0; i < n; i++) {
         ddb_playlist_t *plt = deadbeef->plt_get_for_idx (i);
+        if (!plt) {
+            continue;
+        }
         GtkTreeIter iter;
         gtk_tree_model_iter_nth_child (gtk_tree_view_get_model (GTK_TREE_VIEW (w->tree)), &iter, NULL, i);
         GdkPixbuf *playing_pixbuf = NULL;
@@ -217,6 +220,7 @@ fill_pltbrowser_rows (gpointer user_data)
         }
 
         gtk_list_store_set (store, &iter, COL_PLAYING, playing_pixbuf, COL_NAME, title, COL_ITEMS, num_items_str, COL_DURATION, totaltime_str, -1);
+        deadbeef->plt_unref (plt);
     }
     deadbeef->pl_unlock ();
 }
