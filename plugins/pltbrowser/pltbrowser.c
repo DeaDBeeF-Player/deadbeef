@@ -162,64 +162,65 @@ fill_pltbrowser_rows (gpointer user_data)
 
     for (int i = 0; i < n; i++) {
         ddb_playlist_t *plt = deadbeef->plt_get_for_idx (i);
-        if (plt) {
-            GtkTreeIter iter;
-            gtk_tree_model_iter_nth_child (gtk_tree_view_get_model (GTK_TREE_VIEW (w->tree)), &iter, NULL, i);
-            GdkPixbuf *playing_pixbuf = NULL;
-            char title[1000];
-            char title_temp[1000];
-            char num_items_str[100];
-            deadbeef->plt_get_title (plt, title_temp, sizeof (title_temp));
-            if (plt_active == i && highlight_curr) {
+        if (!plt) {
+            continue;
+        }
+        GtkTreeIter iter;
+        gtk_tree_model_iter_nth_child (gtk_tree_view_get_model (GTK_TREE_VIEW (w->tree)), &iter, NULL, i);
+        GdkPixbuf *playing_pixbuf = NULL;
+        char title[1000];
+        char title_temp[1000];
+        char num_items_str[100];
+        deadbeef->plt_get_title (plt, title_temp, sizeof (title_temp));
+        if (plt_active == i && highlight_curr) {
+            if (output_state == OUTPUT_STATE_PAUSED) {
+                snprintf (title, sizeof (title), "%s%s", title_temp, " (paused)");
+            }
+            else if (output_state == OUTPUT_STATE_STOPPED) {
+                snprintf (title, sizeof (title), "%s%s", title_temp, " (stopped)");
+            }
+            else {
+                snprintf (title, sizeof (title), "%s%s", title_temp, " (playing)");
+            }
+        }
+        else {
+            snprintf (title, sizeof (title), "%s", title_temp);
+        }
+
+        if (plt_active == i) {
+            GtkIconTheme *icon_theme = gtk_icon_theme_get_default();
+            if (icon_theme) {
                 if (output_state == OUTPUT_STATE_PAUSED) {
-                    snprintf (title, sizeof (title), "%s%s", title_temp, " (paused)");
+                    playing_pixbuf = gtk_icon_theme_load_icon (icon_theme, "media-playback-pause", 16, 0, NULL);
                 }
                 else if (output_state == OUTPUT_STATE_STOPPED) {
-                    snprintf (title, sizeof (title), "%s%s", title_temp, " (stopped)");
+                    playing_pixbuf = gtk_icon_theme_load_icon (icon_theme, "media-playback-stop", 16, 0, NULL);
                 }
                 else {
-                    snprintf (title, sizeof (title), "%s%s", title_temp, " (playing)");
+                    playing_pixbuf = gtk_icon_theme_load_icon (icon_theme, "media-playback-start", 16, 0, NULL);
                 }
             }
-            else {
-                snprintf (title, sizeof (title), "%s", title_temp);
-            }
-
-            if (plt_active == i) {
-                GtkIconTheme *icon_theme = gtk_icon_theme_get_default();
-                if (icon_theme) {
-                    if (output_state == OUTPUT_STATE_PAUSED) {
-                        playing_pixbuf = gtk_icon_theme_load_icon (icon_theme, "media-playback-pause", 16, 0, NULL);
-                    }
-                    else if (output_state == OUTPUT_STATE_STOPPED) {
-                        playing_pixbuf = gtk_icon_theme_load_icon (icon_theme, "media-playback-stop", 16, 0, NULL);
-                    }
-                    else {
-                        playing_pixbuf = gtk_icon_theme_load_icon (icon_theme, "media-playback-start", 16, 0, NULL);
-                    }
-                }
-            }
-
-            int num_items = deadbeef->plt_get_item_count (plt, PL_MAIN);
-            snprintf (num_items_str, sizeof (num_items_str), "%d", num_items);
-
-            float pl_totaltime = deadbeef->plt_get_totaltime (plt);
-            int daystotal = (int)pl_totaltime / (3600*24);
-            int hourtotal = ((int)pl_totaltime / 3600) % 24;
-            int mintotal = ((int)pl_totaltime/60) % 60;
-            int sectotal = ((int)pl_totaltime) % 60;
-
-            char totaltime_str[512] = "";
-            if (daystotal == 0) {
-                snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
-            }
-            else {
-                snprintf (totaltime_str, sizeof (totaltime_str), _("%dd %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
-            }
-
-            gtk_list_store_set (store, &iter, COL_PLAYING, playing_pixbuf, COL_NAME, title, COL_ITEMS, num_items_str, COL_DURATION, totaltime_str, -1);
-            deadbeef->plt_unref (plt);
         }
+
+        int num_items = deadbeef->plt_get_item_count (plt, PL_MAIN);
+        snprintf (num_items_str, sizeof (num_items_str), "%d", num_items);
+
+        float pl_totaltime = deadbeef->plt_get_totaltime (plt);
+        int daystotal = (int)pl_totaltime / (3600*24);
+        int hourtotal = ((int)pl_totaltime / 3600) % 24;
+        int mintotal = ((int)pl_totaltime/60) % 60;
+        int sectotal = ((int)pl_totaltime) % 60;
+
+        char totaltime_str[512] = "";
+        if (daystotal == 0) {
+            snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
+        }
+        else {
+            snprintf (totaltime_str, sizeof (totaltime_str), _("%dd %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
+        }
+
+        gtk_list_store_set (store, &iter, COL_PLAYING, playing_pixbuf, COL_NAME, title, COL_ITEMS, num_items_str, COL_DURATION, totaltime_str, -1);
+        deadbeef->plt_unref (plt);
     }
     deadbeef->pl_unlock ();
 }
