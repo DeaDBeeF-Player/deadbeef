@@ -1313,7 +1313,7 @@ init_column (col_info_t *inf, int id, const char *format) {
         inf->format = strdup ("%length%");
         break;
     case 8:
-        inf->format = strdup ("%track%");
+        inf->format = strdup ("%track number%");
         break;
     case 9:
         inf->format = strdup ("$if(%album artist%,%album artist%,Unknown Artist)");
