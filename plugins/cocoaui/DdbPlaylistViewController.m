@@ -139,7 +139,7 @@ extern DB_functions_t *deadbeef;
         [_addColumnFormat setStringValue:@"%length%"];
         break;
     case 8: // track number
-        [_addColumnFormat setStringValue:@"%track%"];
+        [_addColumnFormat setStringValue:@"%track number%"];
         break;
     case 9: // album artist
         [_addColumnFormat setStringValue:@"$if(%album artist%,%album artist%,Unknown Artist)"];
@@ -183,7 +183,7 @@ extern DB_functions_t *deadbeef;
     [NSApp endSheet:self.addColumnPanel returnCode:NSOKButton];
 }
 
-#define DEFAULT_COLUMNS "[{\"title\":\"Playing\", \"id\":\"1\", \"format\":\"%playstatus%\", \"size\":\"50\"}, {\"title\":\"Artist - Album\", \"format\":\"%artist%[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track%\", \"size\":\"50\"}, {\"title\":\"Track Title\", \"format\":\"%title%\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
+#define DEFAULT_COLUMNS "[{\"title\":\"Playing\", \"id\":\"1\", \"format\":\"%playstatus%\", \"size\":\"50\"}, {\"title\":\"Artist - Album\", \"format\":\"%artist%[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track number%\", \"size\":\"50\"}, {\"title\":\"Track Title\", \"format\":\"%title%\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
 
 - (NSString *)getColumnConfig {
     return [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.columns", DEFAULT_COLUMNS)];
