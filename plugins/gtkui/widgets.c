@@ -1499,20 +1499,6 @@ w_tabs_save (struct ddb_gtkui_widget_s *widget, char *s, int sz) {
 }
 
 static void
-tabs_remove_tab (gpointer user_data, int tab)
-{
-    w_tabs_t *w = user_data;
-    int i = 0;
-    for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++) {
-        if (i == tab) {
-            w_remove ((ddb_gtkui_widget_t *)w, c);
-            w_destroy (c);
-            return;
-        }
-    }
-}
-
-static void
 tabs_add_tab (gpointer user_data)
 {
     w_tabs_t *w = user_data;
@@ -1526,6 +1512,25 @@ tabs_add_tab (gpointer user_data)
     w->clicked_page = i-1;
     gtk_notebook_set_current_page (GTK_NOTEBOOK (w->base.widget), w->clicked_page);
 
+}
+
+static void
+tabs_remove_tab (gpointer user_data, int tab)
+{
+    w_tabs_t *w = user_data;
+    int i = 0;
+    int num_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (w->base.widget));
+    for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++) {
+        if (i == tab) {
+            w_remove ((ddb_gtkui_widget_t *)w, c);
+            w_destroy (c);
+            if (num_pages == 1) {
+                // if last tab was deleted add a new placeholder tab
+                tabs_add_tab (w);
+            }
+            return;
+        }
+    }
 }
 
 static gboolean
