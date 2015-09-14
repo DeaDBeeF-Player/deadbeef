@@ -1499,20 +1499,6 @@ w_tabs_save (struct ddb_gtkui_widget_s *widget, char *s, int sz) {
 }
 
 static void
-tabs_remove_tab (gpointer user_data, int tab)
-{
-    w_tabs_t *w = user_data;
-    int i = 0;
-    for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++) {
-        if (i == tab) {
-            w_remove ((ddb_gtkui_widget_t *)w, c);
-            w_destroy (c);
-            return;
-        }
-    }
-}
-
-static void
 tabs_add_tab (gpointer user_data)
 {
     w_tabs_t *w = user_data;
@@ -1526,6 +1512,25 @@ tabs_add_tab (gpointer user_data)
     w->clicked_page = i-1;
     gtk_notebook_set_current_page (GTK_NOTEBOOK (w->base.widget), w->clicked_page);
 
+}
+
+static void
+tabs_remove_tab (gpointer user_data, int tab)
+{
+    w_tabs_t *w = user_data;
+    int i = 0;
+    int num_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (w->base.widget));
+    for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++) {
+        if (i == tab) {
+            w_remove ((ddb_gtkui_widget_t *)w, c);
+            w_destroy (c);
+            if (num_pages == 1) {
+                // if last tab was deleted add a new placeholder tab
+                tabs_add_tab (w);
+            }
+            return;
+        }
+    }
 }
 
 static gboolean
@@ -1745,6 +1750,35 @@ w_tabs_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtkui_w
 }
 
 static gboolean
+get_event_coordinates_in_widget (GtkWidget *widget,
+			GdkEventButton  *event,
+			gint      *x,
+			gint      *y)
+{
+    GdkWindow *window = event->window;
+    gdouble tx, ty;
+    tx = event->x;
+    ty = event->y;
+
+    while (window && window != gtk_widget_get_window (widget)) {
+        gint window_x, window_y;
+        gdk_window_get_position (window, &window_x, &window_y);
+        tx += window_x;
+        ty += window_y;
+        window = gdk_window_get_parent (window);
+    }
+
+    if (window) {
+        *x = tx;
+        *y = ty;
+        return TRUE;
+    }
+    else {
+        return FALSE;
+    }
+}
+
+static gboolean
 on_tabs_button_press_event (GtkWidget      *notebook,
                             GdkEventButton *event,
                             gpointer   user_data)
@@ -1757,11 +1791,11 @@ on_tabs_button_press_event (GtkWidget      *notebook,
     GtkAllocation  alloc;
     gboolean       close_tab;
 
-    /* get real window coordinates */
-    int x, y;
-    gdk_window_get_position (event->window, &x, &y);
-    x += event->x;
-    y += event->y;
+    int event_x, event_y;
+    if (!get_event_coordinates_in_widget (notebook, event, &event_x, &event_y)) {
+        // clicked outside the tabstrip (e.g. in one of its children)
+        return FALSE;
+    }
 
     /* lookup the clicked tab */
     while ((page = gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), page_num)) != NULL)
@@ -1769,8 +1803,8 @@ on_tabs_button_press_event (GtkWidget      *notebook,
         label_box = gtk_notebook_get_tab_label (GTK_NOTEBOOK (notebook), page);
         gtk_widget_get_allocation (label_box, &alloc);
 
-        if (x >= alloc.x && x < alloc.x + alloc.width
-                && y >= alloc.y && y < alloc.y + alloc.height)
+        if (event_x >= alloc.x && event_x < alloc.x + alloc.width
+                && event_y >= alloc.y && event_y < alloc.y + alloc.height)
             break;
 
         page_num++;
