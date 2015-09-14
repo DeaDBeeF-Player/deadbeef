@@ -1793,7 +1793,7 @@ on_tabs_button_press_event (GtkWidget      *notebook,
 
     int event_x, event_y;
     if (!get_event_coordinates_in_widget (notebook, event, &event_x, &event_y)) {
-        // clicked outside the tabstrip (e.g. in one of its childs)
+        // clicked outside the tabstrip (e.g. in one of its children)
         return FALSE;
     }
 
