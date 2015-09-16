@@ -28,11 +28,22 @@
 
 extern DB_functions_t *deadbeef;
 
+
+@interface DdbMainWindow : INAppStoreWindow
+@end
+
+@implementation DdbMainWindow
+- (CGFloat)_minimumTitlebarHeight {
+    return 44;
+}
+@end
+
 @interface MainWindowController () {
     NSTimer *_updateTimer;
 }
 
 @end
+
 @interface NSView (AppKitDetails)
 - (void)_addKnownSubview:(NSView *)subview;
 @end
@@ -48,9 +59,6 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)initCustomTitlebar {
-    INAppStoreWindow *aWindow = (INAppStoreWindow*)self.window;
-    aWindow.titleBarHeight = 44.0;
-
     NSView *themeFrame = [[self.window contentView] superview];
     NSRect c = [themeFrame frame];
 
