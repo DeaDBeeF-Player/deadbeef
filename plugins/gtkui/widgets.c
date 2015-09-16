@@ -1693,7 +1693,6 @@ on_tab_popup_menu (GtkWidget *widget, gpointer user_data)
             w);
 
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, w, 0, gtk_get_current_event_time());
-    return TRUE;
 }
 
 static void
