@@ -1442,7 +1442,7 @@ w_tabs_destroy (ddb_gtkui_widget_t *w) {
 
 const char *
 w_tabs_load (struct ddb_gtkui_widget_s *widget, const char *type, const char *s) {
-    w_tabs_t *w = widget;
+    w_tabs_t *w = (w_tabs_t *)widget;
     if (strcmp (type, "tabs")) {
         return NULL;
     }
@@ -1475,7 +1475,7 @@ w_tabs_load (struct ddb_gtkui_widget_s *widget, const char *type, const char *s)
 
 void
 w_tabs_save (struct ddb_gtkui_widget_s *widget, char *s, int sz) {
-    w_tabs_t *w = widget;
+    w_tabs_t *w = (w_tabs_t *)widget;
     int active = gtk_notebook_get_current_page (GTK_NOTEBOOK (w->base.widget));
     int num_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (w->base.widget));
     char spos[1000];
@@ -1693,7 +1693,6 @@ on_tab_popup_menu (GtkWidget *widget, gpointer user_data)
             w);
 
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, w, 0, gtk_get_current_event_time());
-    return TRUE;
 }
 
 static void
@@ -2508,7 +2507,7 @@ selproperties_selection_changed (gpointer user_data)
 
 static int
 selproperties_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
-    w_selproperties_t *selprop_w = w;
+    w_selproperties_t *selprop_w = (w_selproperties_t *)w;
     switch (id) {
     case DB_EV_PLAYLISTCHANGED:
         if (p1 == DDB_PLAYLIST_CHANGE_CONTENT
@@ -2526,7 +2525,7 @@ selproperties_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32
 
 static void
 w_selproperties_init (struct ddb_gtkui_widget_s *widget) {
-    w_selproperties_t *w = widget;
+    w_selproperties_t *w = (w_selproperties_t *)widget;
     w->refresh_timeout = 0;
     fill_selproperties_cb (widget);
 }
