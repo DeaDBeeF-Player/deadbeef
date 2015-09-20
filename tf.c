@@ -694,10 +694,10 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                                 int mn = (t-hr*3600)/60;
                                 int sc = t-hr*3600-mn*60;
                                 if (hr) {
-                                    len = snprintf (out, outlen, "%02d:%02d:%02d", hr, mn, sc);
+                                    len = snprintf (out, outlen, "%2d:%02d:%02d", hr, mn, sc);
                                 }
                                 else {
-                                    len = snprintf (out, outlen, "%02d:%02d", mn, sc);
+                                    len = snprintf (out, outlen, "%2d:%02d", mn, sc);
                                 }
                             }
                             else if (tmp_b || tmp_d) {
