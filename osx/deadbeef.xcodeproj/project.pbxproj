@@ -907,6 +907,23 @@
 		2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3E419B11539009B5BC6 /* DdbPlaceholderWidget.h */; };
 		2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3E519B11539009B5BC6 /* DdbPlaceholderWidget.m */; };
 		2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */; };
+		2DE92F421BAFFBA300F37154 /* bits.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE92F341BAFFBA300F37154 /* bits.c */; };
+		2DE92F431BAFFBA300F37154 /* extra1.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE92F351BAFFBA300F37154 /* extra1.c */; };
+		2DE92F441BAFFBA300F37154 /* extra2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE92F361BAFFBA300F37154 /* extra2.c */; };
+		2DE92F451BAFFBA300F37154 /* float.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE92F371BAFFBA300F37154 /* float.c */; };
+		2DE92F461BAFFBA300F37154 /* metadata.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE92F381BAFFBA300F37154 /* metadata.c */; };
+		2DE92F471BAFFBA300F37154 /* pack.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE92F391BAFFBA300F37154 /* pack.c */; };
+		2DE92F481BAFFBA300F37154 /* tags.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE92F3A1BAFFBA300F37154 /* tags.c */; };
+		2DE92F491BAFFBA300F37154 /* unpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE92F3B1BAFFBA300F37154 /* unpack.c */; };
+		2DE92F4A1BAFFBA300F37154 /* unpack3.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE92F3C1BAFFBA300F37154 /* unpack3.c */; };
+		2DE92F4B1BAFFBA300F37154 /* unpack3.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE92F3D1BAFFBA300F37154 /* unpack3.h */; };
+		2DE92F4C1BAFFBA300F37154 /* wavpack_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE92F3E1BAFFBA300F37154 /* wavpack_local.h */; };
+		2DE92F4D1BAFFBA300F37154 /* wavpack_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE92F3F1BAFFBA300F37154 /* wavpack_version.h */; };
+		2DE92F4E1BAFFBA300F37154 /* words.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE92F401BAFFBA300F37154 /* words.c */; };
+		2DE92F4F1BAFFBA300F37154 /* wputils.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE92F411BAFFBA300F37154 /* wputils.c */; };
+		2DE92F511BAFFBAC00F37154 /* wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE92F501BAFFBAC00F37154 /* wavpack.h */; };
+		2DE92F531BAFFBC700F37154 /* wavpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE92F521BAFFBC700F37154 /* wavpack.c */; };
+		2DE92F561BAFFBEE00F37154 /* wavpack.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */; };
 		2DEA2F941B99A15600A4C6EA /* Spc_Sfm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCE01B7710650063DA75 /* Spc_Sfm.cpp */; };
 		2DEA2F951B99A15800A4C6EA /* Bml_Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCA51B7710650063DA75 /* Bml_Parser.cpp */; };
 		2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEF494219C4DB4100B718C1 /* DdbListview.h */; };
@@ -1435,6 +1452,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2DCB281319E86162008E9DF6;
 			remoteInfo = m3u;
+		};
+		2DE92F541BAFFBE100F37154 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DE92F2E1BAFFB4F00F37154;
+			remoteInfo = wavpack;
 		};
 		2DF930531AB8175D0030C0CA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2399,6 +2423,23 @@
 		2DE1D3E419B11539009B5BC6 /* DdbPlaceholderWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbPlaceholderWidget.h; path = widgets/DdbPlaceholderWidget.h; sourceTree = "<group>"; };
 		2DE1D3E519B11539009B5BC6 /* DdbPlaceholderWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbPlaceholderWidget.m; path = widgets/DdbPlaceholderWidget.m; sourceTree = "<group>"; };
 		2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = bufferingTemplate.pdf; path = images/bufferingTemplate.pdf; sourceTree = "<group>"; };
+		2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wavpack.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DE92F341BAFFBA300F37154 /* bits.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bits.c; path = "osx/deps/wavpack-4.60.1/src/bits.c"; sourceTree = "<group>"; };
+		2DE92F351BAFFBA300F37154 /* extra1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = extra1.c; path = "osx/deps/wavpack-4.60.1/src/extra1.c"; sourceTree = "<group>"; };
+		2DE92F361BAFFBA300F37154 /* extra2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = extra2.c; path = "osx/deps/wavpack-4.60.1/src/extra2.c"; sourceTree = "<group>"; };
+		2DE92F371BAFFBA300F37154 /* float.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = float.c; path = "osx/deps/wavpack-4.60.1/src/float.c"; sourceTree = "<group>"; };
+		2DE92F381BAFFBA300F37154 /* metadata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = metadata.c; path = "osx/deps/wavpack-4.60.1/src/metadata.c"; sourceTree = "<group>"; };
+		2DE92F391BAFFBA300F37154 /* pack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pack.c; path = "osx/deps/wavpack-4.60.1/src/pack.c"; sourceTree = "<group>"; };
+		2DE92F3A1BAFFBA300F37154 /* tags.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tags.c; path = "osx/deps/wavpack-4.60.1/src/tags.c"; sourceTree = "<group>"; };
+		2DE92F3B1BAFFBA300F37154 /* unpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = unpack.c; path = "osx/deps/wavpack-4.60.1/src/unpack.c"; sourceTree = "<group>"; };
+		2DE92F3C1BAFFBA300F37154 /* unpack3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = unpack3.c; path = "osx/deps/wavpack-4.60.1/src/unpack3.c"; sourceTree = "<group>"; };
+		2DE92F3D1BAFFBA300F37154 /* unpack3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unpack3.h; path = "osx/deps/wavpack-4.60.1/src/unpack3.h"; sourceTree = "<group>"; };
+		2DE92F3E1BAFFBA300F37154 /* wavpack_local.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wavpack_local.h; path = "osx/deps/wavpack-4.60.1/src/wavpack_local.h"; sourceTree = "<group>"; };
+		2DE92F3F1BAFFBA300F37154 /* wavpack_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wavpack_version.h; path = "osx/deps/wavpack-4.60.1/src/wavpack_version.h"; sourceTree = "<group>"; };
+		2DE92F401BAFFBA300F37154 /* words.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = words.c; path = "osx/deps/wavpack-4.60.1/src/words.c"; sourceTree = "<group>"; };
+		2DE92F411BAFFBA300F37154 /* wputils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wputils.c; path = "osx/deps/wavpack-4.60.1/src/wputils.c"; sourceTree = "<group>"; };
+		2DE92F501BAFFBAC00F37154 /* wavpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wavpack.h; path = "osx/deps/wavpack-4.60.1/include/wavpack.h"; sourceTree = "<group>"; };
+		2DE92F521BAFFBC700F37154 /* wavpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wavpack.c; path = plugins/wavpack/wavpack.c; sourceTree = "<group>"; };
 		2DEF494219C4DB4100B718C1 /* DdbListview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbListview.h; sourceTree = "<group>"; };
 		2DEF494319C4DB4100B718C1 /* DdbListview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbListview.m; sourceTree = "<group>"; };
 		2DF622B81B335DF400C70C7D /* convpresets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = convpresets; path = plugins/converter/convpresets; sourceTree = "<group>"; };
@@ -2973,6 +3014,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2DCB281119E86162008E9DF6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DE92F2C1BAFFB4F00F37154 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -4388,6 +4436,29 @@
 			name = widgets;
 			sourceTree = "<group>";
 		};
+		2DE92F331BAFFB7700F37154 /* wavpack */ = {
+			isa = PBXGroup;
+			children = (
+				2DE92F341BAFFBA300F37154 /* bits.c */,
+				2DE92F351BAFFBA300F37154 /* extra1.c */,
+				2DE92F361BAFFBA300F37154 /* extra2.c */,
+				2DE92F371BAFFBA300F37154 /* float.c */,
+				2DE92F381BAFFBA300F37154 /* metadata.c */,
+				2DE92F391BAFFBA300F37154 /* pack.c */,
+				2DE92F3A1BAFFBA300F37154 /* tags.c */,
+				2DE92F3B1BAFFBA300F37154 /* unpack.c */,
+				2DE92F3C1BAFFBA300F37154 /* unpack3.c */,
+				2DE92F3D1BAFFBA300F37154 /* unpack3.h */,
+				2DE92F3E1BAFFBA300F37154 /* wavpack_local.h */,
+				2DE92F3F1BAFFBA300F37154 /* wavpack_version.h */,
+				2DE92F401BAFFBA300F37154 /* words.c */,
+				2DE92F411BAFFBA300F37154 /* wputils.c */,
+				2DE92F501BAFFBAC00F37154 /* wavpack.h */,
+				2DE92F521BAFFBC700F37154 /* wavpack.c */,
+			);
+			name = wavpack;
+			sourceTree = "<group>";
+		};
 		2DF930481AB817190030C0CA /* wildmidi */ = {
 			isa = PBXGroup;
 			children = (
@@ -4463,6 +4534,7 @@
 				2D05A8291B4BE59D004C913D /* sndfile.dylib */,
 				2D05A8311B4BE5BC004C913D /* libsndfilelib.a */,
 				2D11D3B91B9DC67100C7C731 /* vtx.dylib */,
+				2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4583,6 +4655,7 @@
 		4D1B514C1837EF7C003E6066 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				2DE92F331BAFFB7700F37154 /* wavpack */,
 				2D11D3B41B9DC66500C7C731 /* vtx */,
 				2D05A8351B4BE5C4004C913D /* sndfile */,
 				2D88E9FB1B2AF6C70072FD43 /* liboggedit */,
@@ -5580,6 +5653,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DE92F2D1BAFFB4F00F37154 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DE92F511BAFFBAC00F37154 /* wavpack.h in Headers */,
+				2DE92F4D1BAFFBA300F37154 /* wavpack_version.h in Headers */,
+				2DE92F4C1BAFFBA300F37154 /* wavpack_local.h in Headers */,
+				2DE92F4B1BAFFBA300F37154 /* unpack3.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DF930421AB816DC0030C0CA /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -6091,6 +6175,23 @@
 			productReference = 2DCB281419E86162008E9DF6 /* m3u.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		2DE92F2E1BAFFB4F00F37154 /* wavpack */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DE92F321BAFFB4F00F37154 /* Build configuration list for PBXNativeTarget "wavpack" */;
+			buildPhases = (
+				2DE92F2B1BAFFB4F00F37154 /* Sources */,
+				2DE92F2C1BAFFB4F00F37154 /* Frameworks */,
+				2DE92F2D1BAFFB4F00F37154 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = wavpack;
+			productName = wavpack;
+			productReference = 2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2DF930431AB816DC0030C0CA /* wildmidi */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2DF930471AB816DC0030C0CA /* Build configuration list for PBXNativeTarget "wildmidi" */;
@@ -6120,6 +6221,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DE92F551BAFFBE100F37154 /* PBXTargetDependency */,
 				2D11D3CC1B9DC6AA00C7C731 /* PBXTargetDependency */,
 				2D05A8D81B4BE630004C913D /* PBXTargetDependency */,
 				2D2351201B138EFC00A62936 /* PBXTargetDependency */,
@@ -6317,6 +6419,9 @@
 					2DCB281319E86162008E9DF6 = {
 						CreatedOnToolsVersion = 6.0.1;
 					};
+					2DE92F2E1BAFFB4F00F37154 = {
+						CreatedOnToolsVersion = 6.2;
+					};
 					2DF930431AB816DC0030C0CA = {
 						CreatedOnToolsVersion = 6.2;
 					};
@@ -6366,6 +6471,7 @@
 				2D05A8281B4BE59D004C913D /* sndfile */,
 				2D05A8301B4BE5BC004C913D /* sndfilelib */,
 				2D11D3B81B9DC67100C7C731 /* vtx */,
+				2DE92F2E1BAFFB4F00F37154 /* wavpack */,
 			);
 		};
 /* End PBXProject section */
@@ -6389,6 +6495,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DE92F561BAFFBEE00F37154 /* wavpack.dylib in Resources */,
 				2D11D3CD1B9DC6B500C7C731 /* vtx.dylib in Resources */,
 				2D05A8D91B4BE63D004C913D /* sndfile.dylib in Resources */,
 				2D88EA111B2AF77B0072FD43 /* vorbis.dylib in Resources */,
@@ -7191,6 +7298,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DE92F2B1BAFFB4F00F37154 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DE92F4F1BAFFBA300F37154 /* wputils.c in Sources */,
+				2DE92F461BAFFBA300F37154 /* metadata.c in Sources */,
+				2DE92F481BAFFBA300F37154 /* tags.c in Sources */,
+				2DE92F431BAFFBA300F37154 /* extra1.c in Sources */,
+				2DE92F491BAFFBA300F37154 /* unpack.c in Sources */,
+				2DE92F471BAFFBA300F37154 /* pack.c in Sources */,
+				2DE92F441BAFFBA300F37154 /* extra2.c in Sources */,
+				2DE92F4A1BAFFBA300F37154 /* unpack3.c in Sources */,
+				2DE92F4E1BAFFBA300F37154 /* words.c in Sources */,
+				2DE92F451BAFFBA300F37154 /* float.c in Sources */,
+				2DE92F421BAFFBA300F37154 /* bits.c in Sources */,
+				2DE92F531BAFFBC700F37154 /* wavpack.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DF930401AB816DC0030C0CA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7536,6 +7662,11 @@
 			isa = PBXTargetDependency;
 			target = 2DCB281319E86162008E9DF6 /* m3u */;
 			targetProxy = 2DCB281B19E8618D008E9DF6 /* PBXContainerItemProxy */;
+		};
+		2DE92F551BAFFBE100F37154 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DE92F2E1BAFFB4F00F37154 /* wavpack */;
+			targetProxy = 2DE92F541BAFFBE100F37154 /* PBXContainerItemProxy */;
 		};
 		2DF930541AB8175D0030C0CA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8777,6 +8908,45 @@
 			};
 			name = Release;
 		};
+		2DE92F301BAFFB4F00F37154 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2DE92F311BAFFB4F00F37154 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		2DF930451AB816DC0030C0CA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -9243,6 +9413,7 @@
 				2D11D3BC1B9DC67100C7C731 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2D22F70419E1382C009C631E /* Build configuration list for PBXNativeTarget "libsidplay2" */ = {
 			isa = XCConfigurationList;
@@ -9414,6 +9585,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		2DE92F321BAFFB4F00F37154 /* Build configuration list for PBXNativeTarget "wavpack" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DE92F301BAFFB4F00F37154 /* Debug */,
+				2DE92F311BAFFB4F00F37154 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		2DF930471AB816DC0030C0CA /* Build configuration list for PBXNativeTarget "wildmidi" */ = {
 			isa = XCConfigurationList;
