@@ -399,12 +399,11 @@ draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int co
             };
             deadbeef->tf_eval (&ctx, cinf->bytecode, text, sizeof (text));
             if (ctx.update > 0 && !listview->tf_redraw_timeout_id) {
-                printf ("adding timeout\n");
-                if (ctx.idx >= 0) {
+                if ((ctx.flags & DDB_TF_CONTEXT_HAS_INDEX) && ctx.iter == PL_MAIN) {
                     listview->tf_redraw_track_idx = ctx.idx;
                 }
                 else {
-                    listview->tf_redraw_track_idx = deadbeef->plt_get_item_idx (ctx.plt, it, PL_MAIN);
+                    listview->tf_redraw_track_idx = deadbeef->plt_get_item_idx (ctx.plt, it, ctx.iter);
                 }
                 listview->tf_redraw_timeout_id = g_timeout_add (ctx.update, tf_redraw_cb, listview);
                 listview->tf_redraw_track = it;
