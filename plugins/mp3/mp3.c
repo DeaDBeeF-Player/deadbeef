@@ -191,8 +191,7 @@ mp3_check_xing_header (buffer_t *buffer, int packetlength, int sample, int sampl
             trace ("cmp3_scan_stream: EOF while reading info tag revision / vbr method\n");
         }
         switch (rev & 0x0f) {
-        case XING_ABR ... XING_VBR4:
-        case XING_ABR2:
+        case XING_CBR ... XING_ABR2:
             buffer->vbr = rev & 0x0f;
             break;
         default:
@@ -203,6 +202,7 @@ mp3_check_xing_header (buffer_t *buffer, int packetlength, int sample, int sampl
             trace ("lame header found\n");
 
             // FIXME: that can be optimized with a single read
+            // FIXME: add error handling
             uint8_t lpf;
             deadbeef->fread (&lpf, 1, 1, buffer->file);
             //3 floats: replay gain
@@ -225,8 +225,10 @@ mp3_check_xing_header (buffer_t *buffer, int packetlength, int sample, int sampl
             // mp3gain
             uint8_t mp3gain;
             deadbeef->fread (&mp3gain, 1, 1, buffer->file);
-            // skip
-            deadbeef->fseek (buffer->file, 2, SEEK_CUR);
+            // lame preset nr
+            uint8_t lamepreset_bytes[2];
+            deadbeef->fread (lamepreset_bytes, 2, 1, buffer->file);
+            buffer->lamepreset = lamepreset_bytes[1] | (lamepreset_bytes[0] << 8);
             // musiclen
             deadbeef->fread (buf, 1, 4, buffer->file);
             trace ("lame totalsamples: %d\n", buffer->totalsamples);
@@ -700,40 +702,69 @@ cmp3_set_extra_properties (buffer_t *buffer, int fake) {
 
     // set codec profile (cbr or vbr) and mp3 vbr method (guessed, or from Xing/Info header)
 
+    char codec_profile[100];
+    snprintf (codec_profile, sizeof (codec_profile), "MP3 %s", (buffer->vbr == XING_CBR || buffer->vbr == XING_CBR2) ?  "CBR" : "VBR");
+    if (buffer->vbr != XING_CBR && buffer->vbr != XING_CBR2 && (buffer->lamepreset & 0x7ff)) {
+        const static struct {
+            int v;
+            const char *name;
+        } presets[] = {
+            { 8, "ABR_8" },
+            { 320, "ABR_320" },
+            { 410, "V9" },
+            { 420, "V8" },
+            { 430, "V7" },
+            { 440, "V6" },
+            { 450, "V5" },
+            { 460, "V4" },
+            { 470, "V3" },
+            { 480, "V2" },
+            { 490, "V1" },
+            { 500, "V0" },
+            { 1000, "R3MIX" },
+            { 1001, "STANDARD" },
+            { 1002, "EXTREME" },
+            { 1003, "INSANE" },
+            { 1004, "STANDARD_FAST" },
+            { 1005, "EXTREME_FAST" },
+            { 1006, "MEDIUM" },
+            { 1007, "MEDIUM_FAST" },
+            { 0, NULL },
+        };
+
+        for (int i = 0; presets[i].name; i++) {
+            if (presets[i].v == (buffer->lamepreset&0x7ff)) {
+                size_t l = strlen (codec_profile);
+                char *preset = codec_profile + l;
+                snprintf (preset, sizeof (codec_profile) - l, " %s", presets[i].name);
+                break;
+            }
+        }
+    }
+
+    deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", codec_profile);
+
     switch (buffer->vbr) {
     case XING_ABR:
-        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "VBR");
         deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "ABR");
         break;
     case XING_VBR1:
-        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "VBR");
         deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "full VBR method 1");
         break;
     case XING_VBR2:
-        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "VBR");
         deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "full VBR method 2");
         break;
     case XING_VBR3:
-        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "VBR");
         deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "full VBR method 3");
         break;
     case XING_VBR4:
-        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "VBR");
         deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "full VBR method 4");
         break;
-    case XING_CBR2:
-        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "CBR");
-        break;
     case XING_ABR2:
-        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "VBR");
         deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "ABR 2 pass");
         break;
     case DETECTED_VBR:
-        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "VBR");
         deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "unspecified");
-        break;
-    default:
-        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "CBR");
         break;
     }
     const char *versions[] = {"1", "2", "2.5"};
@@ -1173,6 +1204,7 @@ cmp3_read_metadata (DB_playItem_t *it) {
         return -1;
     }
     deadbeef->pl_delete_all_meta (it);
+    // FIXME: reload and apply the Xing header
     /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
     /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
     /*int v1err = */deadbeef->junk_id3v1_read (it, fp);

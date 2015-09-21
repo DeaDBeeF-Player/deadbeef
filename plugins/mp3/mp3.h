@@ -101,6 +101,7 @@ typedef struct {
     int nframes;
     int last_comment_update;
     int vbr;
+    uint16_t lamepreset;
     int have_xing_header;
     int lead_in_frames;
 } buffer_t;
