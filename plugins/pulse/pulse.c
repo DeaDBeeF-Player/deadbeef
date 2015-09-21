@@ -253,6 +253,7 @@ static int pulse_stop(void)
 {
     state = OUTPUT_STATE_STOPPED;
     deadbeef->streamer_reset(1);
+    pulse_free();
     return 0;
 }
 
@@ -263,8 +264,8 @@ static int pulse_pause(void)
         return -1;
     }
 
+    pulse_free();
     state = OUTPUT_STATE_PAUSED;
-
     return 0;
 }
 
@@ -272,6 +273,10 @@ static int pulse_unpause(void)
 {
     if (state == OUTPUT_STATE_PAUSED)
     {
+        if (pulse_init () < 0)
+        {
+            return -1;
+        }
         state = OUTPUT_STATE_PLAYING;
     }
 
