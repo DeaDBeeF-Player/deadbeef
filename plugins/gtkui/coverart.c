@@ -252,7 +252,15 @@ cache_qsort(const void *a, const void *b)
     const cached_pixbuf_t *y = (cached_pixbuf_t *)b;
     if (x->pixbuf && y->pixbuf) {
         const int cmp = strcmp(x->fname, y->fname);
-        return cmp ? cmp : y->width != x->width ? y->width - x->width : y->height - x->height;
+        if (cmp) {
+            return cmp;
+        }
+
+        if (y->width != x->width) {
+            return y->width - x->width;
+        }
+
+        return y->height - x->height;
     }
 
     return x->pixbuf ? -1 : y->pixbuf ? 1 : 0;
