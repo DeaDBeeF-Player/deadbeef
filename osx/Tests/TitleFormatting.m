@@ -175,11 +175,52 @@
 }
 
 - (void)test_If2FirstArgIsTrue_EvalToFirstArg {
-    char *bc = tf_compile("$if2(abc,def)");
+    pl_replace_meta (it, "title", "a title");
+    char *bc = tf_compile("$if2(%title%,def)");
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"abc" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert([@"a title" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_If2FirstArgIsMixedStringTrue_EvalToFirstArg {
+    pl_replace_meta (it, "title", "a title");
+    pl_replace_meta (it, "artist", "an artist");
+    char *bc = tf_compile("$if2(%title%%artist%,def)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"a titlean artist" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_If2FirstArgIsMissingField_EvalToLastArg {
+    pl_replace_meta (it, "title", "a title");
+    pl_replace_meta (it, "artist", "an artist");
+    char *bc = tf_compile("$if2(%garbage%,def)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"def" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_If2FirstArgIsMixedWithGarbageTrue_EvalToFirstArg {
+    pl_replace_meta (it, "title", "a title");
+    pl_replace_meta (it, "artist", "an artist");
+    char *bc = tf_compile("$if2(%garbage%xxx%title%,def)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"xxxa title" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+}
+
+- (void)test_If2FirstArgIsMixedWithGarbageTailTrue_EvalToFirstArg {
+    pl_replace_meta (it, "title", "a title");
+    pl_replace_meta (it, "artist", "an artist");
+    char *bc = tf_compile("$if2(%title%%garbage%xxx,def)");
+    char buffer[200];
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    XCTAssert([@"a titlexxx" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
 
 - (void)test_If2FirstArgIsFalse_EvalToSecondArg {
@@ -191,11 +232,12 @@
 }
 
 - (void)test_If3FirstArgIsTrue_EvalToFirstArg {
-    char *bc = tf_compile("$if3(abc,def)");
+    pl_replace_meta (it, "title", "a title");
+    char *bc = tf_compile("$if3(%title%,def)");
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"abc" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert([@"a title" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
 
 - (void)test_If3AllButLastAreFalse_EvalToLastArg {
@@ -211,7 +253,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"firstarg" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert([@"lastarg" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
 }
 
 - (void)test_IfEqualTrue_EvalsToThen {

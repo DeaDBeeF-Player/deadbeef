@@ -76,10 +76,10 @@ typedef struct {
 } tf_func_def;
 
 static int
-tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen, int fail_on_undef);
+tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen, int *bool_out, int fail_on_undef);
 
 #define TF_EVAL_CHECK(res, ctx, arg, arg_len, out, outlen, fail_on_undef)\
-res = tf_eval_int (ctx, arg, arg_len, out, outlen, fail_on_undef);\
+res = tf_eval_int (ctx, arg, arg_len, out, outlen, &bool_out, fail_on_undef);\
 if (res < 0) { *out = 0; return -1; }
 
 int
@@ -93,6 +93,7 @@ tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
     memset (out, 0, outlen);
     int l = 0;
 
+    int bool_out = 0;
     int id = -1;
     if (ctx->flags & DDB_TF_CONTEXT_HAS_ID) {
         id = ctx->id;
@@ -112,7 +113,7 @@ tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
         break;
     default:
         // tf_eval_int expects outlen to not include the terminating zero
-        l = tf_eval_int (ctx, code, codelen, out, outlen-1, 0);
+        l = tf_eval_int (ctx, code, codelen, out, outlen-1, &bool_out, 0);
         break;
     }
 
@@ -131,6 +132,8 @@ tf_func_greater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, cha
         return -1;
     }
     char *arg = args;
+
+    int bool_out = 0;
 
     char a[10];
     int len;
@@ -154,6 +157,8 @@ tf_func_strcmp (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char
     }
     char *arg = args;
 
+    int bool_out = 0;
+
     char s1[1000];
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], s1, sizeof (s1), fail_on_undef);
@@ -173,6 +178,8 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
         return -1;
     }
     char *arg = args;
+
+    int bool_out = 0;
 
     // get number of characters
     char num_chars_str[10];
@@ -197,6 +204,8 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
 
 int
 tf_func_add (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    int bool_out = 0;
+
     int outval = 0;
     char *arg = args;
     for (int i = 0; i < argc; i++) {
@@ -216,11 +225,13 @@ tf_func_if (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *ou
     if (argc < 2 || argc > 3) {
         return -1;
     }
+    int bool_out = 0;
+
     char *arg = args;
     int res;
     TF_EVAL_CHECK(res, ctx, arg, arglens[0], out, outlen, fail_on_undef);
     arg += arglens[0];
-    if (res > 0) {
+    if (res > 0 && bool_out) {
         trace ("condition true, eval then block\n");
         TF_EVAL_CHECK(res, ctx, arg, arglens[1], out, outlen, fail_on_undef);
     }
@@ -238,11 +249,13 @@ tf_func_if2 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
     if (argc != 2) {
         return -1;
     }
+    int bool_out = 0;
+
     char *arg = args;
     int res;
     TF_EVAL_CHECK(res, ctx, arg, arglens[0], out, outlen, fail_on_undef);
     arg += arglens[0];
-    if (res > 0) {
+    if (res > 0 && bool_out) {
         return res;
     }
     else {
@@ -258,12 +271,14 @@ tf_func_if3 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
     if (argc < 2) {
         return -1;
     }
+    int bool_out = 0;
+
     char *arg = args;
     for (int i = 0; i < argc; i++) {
         int res;
         TF_EVAL_CHECK(res, ctx, arg, arglens[i], out, outlen, fail_on_undef);
         arg += arglens[i];
-        if (res > 0 || i == argc-1) {
+        if ((res > 0 && bool_out) || i == argc-1) {
             return res;
         }
     }
@@ -276,6 +291,8 @@ tf_func_ifequal (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, cha
     if (argc != 4) {
         return -1;
     }
+
+    int bool_out = 0;
 
     char *arg = args;
     int len;
@@ -306,6 +323,8 @@ tf_func_ifgreater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, c
         return -1;
     }
 
+    int bool_out = 0;
+
     char *arg = args;
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
@@ -335,6 +354,8 @@ tf_func_iflonger (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, ch
         return -1;
     }
 
+    int bool_out = 0;
+
     char *arg = args;
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
@@ -362,6 +383,8 @@ tf_func_select (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char
     }
 
     char *arg = args;
+
+    int bool_out = 0;
 
     int res;
     TF_EVAL_CHECK(res, ctx, arg, arglens[0], out, outlen, fail_on_undef);
@@ -398,6 +421,8 @@ tf_func_meta (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
         return 0;
     }
 
+    int bool_out = 0;
+
     char *arg = args;
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
@@ -421,7 +446,6 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "if", tf_func_if },
     { "if2", tf_func_if2 },
     { "if3", tf_func_if3 },
-    { "if3", tf_func_if3 },
     { "ifequal", tf_func_ifequal },
     { "ifgreater", tf_func_ifgreater },
     { "iflonger", tf_func_iflonger },
@@ -431,9 +455,10 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
 };
 
 static int
-tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen, int fail_on_undef) {
+tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen, int *bool_out, int fail_on_undef) {
     playItem_t *it = (playItem_t *)ctx->it;
     char *init_out = out;
+    *bool_out = 0;
     while (size) {
         if (*code) {
             trace ("free char: %c\n", *code);
@@ -460,6 +485,9 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 int res = func (ctx, code[0], code+1, code+1+code[0], out, outlen, fail_on_undef);
                 if (res == -1) {
                     return -1;
+                }
+                if (res > 0) {
+                    *bool_out = res;
                 }
                 out += res;
                 outlen -= res;
@@ -942,6 +970,10 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     val = VERSION;
                 }
 
+                if (val) {
+                    *bool_out = 1;
+                }
+
                 // default case
                 if (!skip_out && val) {
                     int32_t l = u8_strnbcpy(out, val, outlen);
@@ -964,7 +996,8 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 code += 4;
                 size -= 4;
 
-                int res = tf_eval_int (ctx, code, len, out, outlen, 1);
+                int bool_out = 0;
+                int res = tf_eval_int (ctx, code, len, out, outlen, &bool_out, 1);
                 if (res > 0) {
                     out += res;
                     outlen -= res;
