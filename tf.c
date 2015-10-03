@@ -221,6 +221,29 @@ tf_func_add (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
 }
 
 int
+tf_func_div (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    int bool_out = 0;
+
+    float outval = 0;
+    char *arg = args;
+    for (int i = 0; i < argc; i++) {
+        int len;
+        TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
+        if (i == 0) {
+            outval = atof (out);
+        }
+        else {
+            outval /= atof (out);
+        }
+        memset (out, 0, len);
+        arg += arglens[i];
+    }
+    int res = snprintf (out, outlen, "%d", (int)round (outval));
+    trace ("and of add (%d), res: %d\n", outval, res);
+    return res;
+}
+
+int
 tf_func_if (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 2 || argc > 3) {
         return -1;
@@ -438,11 +461,7 @@ tf_func_meta (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
 }
 
 tf_func_def tf_funcs[TF_MAX_FUNCS] = {
-    { "greater", tf_func_greater },
-    { "strcmp", tf_func_strcmp },
-    { "left", tf_func_left },
-    { "cut", tf_func_left },
-    { "add", tf_func_add },
+    // Control flow
     { "if", tf_func_if },
     { "if2", tf_func_if2 },
     { "if3", tf_func_if3 },
@@ -450,6 +469,15 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "ifgreater", tf_func_ifgreater },
     { "iflonger", tf_func_iflonger },
     { "select", tf_func_select },
+    // Arithmetic
+    { "add", tf_func_add },
+    { "div", tf_func_div },
+    { "greater", tf_func_greater },
+    // String
+    { "cut", tf_func_left },
+    { "left", tf_func_left },
+    { "strcmp", tf_func_strcmp },
+    // Track info
     { "meta", tf_func_meta },
     { NULL, NULL }
 };
