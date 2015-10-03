@@ -403,4 +403,14 @@
     free (buffer);
 }
 
+- (void)test_Div4pt9by1pt9_Gives4 {
+    char *bc = tf_compile("$div(4.9,1.9)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    XCTAssertNoThrow(tf_eval (&ctx, bc, buffer, 1000), @"Crashed!");
+    tf_free (bc);
+    XCTAssert([@"4" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
 @end

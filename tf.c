@@ -230,10 +230,10 @@ tf_func_div (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
         int len;
         TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
         if (i == 0) {
-            outval = atof (out);
+            outval = atoi (out);
         }
         else {
-            outval /= atof (out);
+            outval /= atoi (out);
         }
         memset (out, 0, len);
         arg += arglens[i];
