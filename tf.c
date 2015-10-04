@@ -295,6 +295,62 @@ tf_func_min (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
 }
 
 int
+tf_func_mod (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    int bool_out = 0;
+
+    if (argc < 2) {
+        return -1;
+    }
+
+    int outval = 0;
+    char *arg = args;
+    for (int i = 0; i < argc; i++) {
+        int len;
+        TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
+        if (i == 0) {
+            outval = atoi (out);
+        }
+        else {
+            int divider = atoi (out);
+            if (divider == 0) {
+                out[0] = 0;
+                return -1;
+            }
+            outval %= divider;
+        }
+        arg += arglens[i];
+    }
+    int res = snprintf (out, outlen, "%d", outval);
+    return res;
+}
+
+int
+tf_func_mul (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    int bool_out = 0;
+
+    if (argc < 2) {
+        return -1;
+    }
+
+    int outval = 0;
+    char *arg = args;
+    for (int i = 0; i < argc; i++) {
+        int len;
+        TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
+        if (i == 0) {
+            outval = atoi (out);
+        }
+        else {
+            outval *= atoi (out);
+        }
+        arg += arglens[i];
+    }
+    int res = snprintf (out, outlen, "%d", outval);
+    return res;
+}
+
+
+int
 tf_func_if (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 2 || argc > 3) {
         return -1;
@@ -525,6 +581,8 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "greater", tf_func_greater },
     { "max", tf_func_max },
     { "min", tf_func_min },
+    { "mod", tf_func_mod },
+    { "mul", tf_func_mul },
     // String
     { "cut", tf_func_left },
     { "left", tf_func_left },

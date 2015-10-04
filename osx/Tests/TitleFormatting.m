@@ -483,4 +483,54 @@
     free (buffer);
 }
 
+- (void)test_ModOf3and2_Gives1 {
+    char *bc = tf_compile("$mod(3,2)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert([@"1" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_ModOf6and3_Gives0 {
+    char *bc = tf_compile("$mod(6,3)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert([@"0" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_ModOf16and18and9_Gives7 {
+    char *bc = tf_compile("$mod(16,18,9)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert([@"7" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_Mul2and5_Gives10 {
+    char *bc = tf_compile("$mul(2,5)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert([@"10" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_MulOf2and3and4_Gives24 {
+    char *bc = tf_compile("$mul(2,3,4)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert([@"24" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
 @end
