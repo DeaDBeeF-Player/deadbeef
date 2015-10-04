@@ -397,7 +397,7 @@
     char *bc = tf_compile("$div(5,2)");
     char *buffer = malloc (1000);
     ctx.it = NULL;
-    XCTAssertNoThrow(tf_eval (&ctx, bc, buffer, 1000), @"Crashed!");
+    tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
     XCTAssert([@"3" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
     free (buffer);
@@ -407,9 +407,79 @@
     char *bc = tf_compile("$div(4.9,1.9)");
     char *buffer = malloc (1000);
     ctx.it = NULL;
-    XCTAssertNoThrow(tf_eval (&ctx, bc, buffer, 1000), @"Crashed!");
+    tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
     XCTAssert([@"4" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_Div20by2by5_Gives2 {
+    char *bc = tf_compile("$div(20,2,5)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert([@"2" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_DivBy0_GivesEmpty {
+    char *bc = tf_compile("$div(5,0)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert([@"" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_Max0Arguments_GivesEmpty {
+    char *bc = tf_compile("$max()");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert([@"" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_MaxOf1and2_Gives2 {
+    char *bc = tf_compile("$max(1,2)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert([@"2" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_MaxOf30and50and20_Gives50 {
+    char *bc = tf_compile("$max(30,50,20)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert([@"50" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_MinOf1and2_Gives1 {
+    char *bc = tf_compile("$min(1,2)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert([@"1" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_MinOf30and50and20_Gives20 {
+    char *bc = tf_compile("$min(30,50,20)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert([@"20" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
     free (buffer);
 }
 

@@ -212,17 +212,19 @@ tf_func_add (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
         int len;
         TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
         outval += atoi (out);
-        memset (out, 0, len);
         arg += arglens[i];
     }
     int res = snprintf (out, outlen, "%d", outval);
-    trace ("and of add (%d), res: %d\n", outval, res);
     return res;
 }
 
 int
 tf_func_div (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
+
+    if (argc < 2) {
+        return -1;
+    }
 
     float outval = 0;
     char *arg = args;
@@ -233,13 +235,62 @@ tf_func_div (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
             outval = atoi (out);
         }
         else {
-            outval /= atoi (out);
+            int divider = atoi (out);
+            if (divider == 0) {
+                out[0] = 0;
+                return -1;
+            }
+            outval /= divider;
         }
-        memset (out, 0, len);
         arg += arglens[i];
     }
     int res = snprintf (out, outlen, "%d", (int)round (outval));
-    trace ("and of add (%d), res: %d\n", outval, res);
+    return res;
+}
+
+int
+tf_func_max (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    int bool_out = 0;
+
+    if (argc == 0) {
+        return -1;
+    }
+
+    int nmax = -1;
+    char *arg = args;
+    for (int i = 0; i < argc; i++) {
+        int len;
+        TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
+        int n = atoi (out);
+        if (n > nmax) {
+            nmax = n;
+        }
+        arg += arglens[i];
+    }
+    int res = snprintf (out, outlen, "%d", nmax);
+    return res;
+}
+
+int
+tf_func_min (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    int bool_out = 0;
+
+    if (argc == 0) {
+        return -1;
+    }
+
+    int nmin = 0x7fffffff;
+    char *arg = args;
+    for (int i = 0; i < argc; i++) {
+        int len;
+        TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
+        int n = atoi (out);
+        if (n < nmin) {
+            nmin = n;
+        }
+        arg += arglens[i];
+    }
+    int res = snprintf (out, outlen, "%d", nmin);
     return res;
 }
 
@@ -282,7 +333,6 @@ tf_func_if2 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
         return res;
     }
     else {
-        trace ("condition false, eval else block\n");
         TF_EVAL_CHECK(res, ctx, arg, arglens[1], out, outlen, fail_on_undef);
     }
 
@@ -473,6 +523,8 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "add", tf_func_add },
     { "div", tf_func_div },
     { "greater", tf_func_greater },
+    { "max", tf_func_max },
+    { "min", tf_func_min },
     // String
     { "cut", tf_func_left },
     { "left", tf_func_left },
@@ -489,7 +541,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
     *bool_out = 0;
     while (size) {
         if (*code) {
-            trace ("free char: %c\n", *code);
             int len = u8_charcpy (out, code, outlen);
             if (len == 0) {
                 break;
@@ -502,11 +553,9 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
         else {
             code++;
             size--;
-            trace ("special: %d\n", (int)(*code));
             if (*code == 1) {
                 code++;
                 size--;
-                trace ("exec func: %d (%s)\n", *code, tf_funcs[*code].name);
                 tf_func_ptr_t func = tf_funcs[*code].func;
                 code++;
                 size--;
@@ -524,7 +573,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 for (int i = 0; i < code[0]; i++) {
                     blocksize += code[1+i];
                 }
-                trace ("blocksize: %d\n", blocksize);
                 code += blocksize;
                 size -= blocksize;
             }
@@ -1034,7 +1082,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 size -= len;
             }
             else {
-                trace ("invalid special block: %d\n", (int)(*code));
                 return -1;
             }
         }
@@ -1048,7 +1095,6 @@ tf_compile_plain (tf_compiler_t *c);
 
 int
 tf_compile_func (tf_compiler_t *c) {
-    trace ("start func\n");
     c->i++;
 
     // function marker
@@ -1081,12 +1127,9 @@ tf_compile_func (tf_compiler_t *c) {
     char func_name[c->i - name_start + 1];
     memcpy (func_name, name_start, c->i-name_start);
     func_name[c->i-name_start] = 0;
-    trace ("func name: %s\n", func_name);
 
     c->i++;
 
-    trace ("reading args, starting with %c\n", (*c->i));
-    
     // remember ptr and start reading args
     char *start = c->o;
     *(c->o++) = 0; // num args
@@ -1103,8 +1146,11 @@ tf_compile_func (tf_compiler_t *c) {
         else if (*(c->i) == ',' || *(c->i) == ')') {
             // next arg
             int len = (int)(c->o - argstart);
-            trace ("end of arg in func %s, len: %d\n", func_name, len);
-            trace ("parsed arg: %s\n", start+(*start)+1);
+
+            // special case for empty argument list
+            if (len == 0 && *(c->i) == ')' && (*start) == 0) {
+                break;
+            }
 
             // expand arg lengths buffer by 1
             memmove (start+(*start)+2, start+(*start)+1, c->o - start - (*start));
@@ -1113,7 +1159,6 @@ tf_compile_func (tf_compiler_t *c) {
             // store arg length
             start[(*start)] = len;
             argstart = c->o;
-            trace ("numargs: %d\n", (int)(*start));
 
             if (*(c->i) == ')') {
                 break;
@@ -1129,14 +1174,11 @@ tf_compile_func (tf_compiler_t *c) {
     }
     c->i++;
 
-    trace ("$%s num_args: %d\n", func_name, (int)*start);
-
     return 0;
 }
 
 int
 tf_compile_field (tf_compiler_t *c) {
-    trace ("start field\n");
     c->i++;
     *(c->o++) = 0;
     *(c->o++) = 2;
@@ -1159,7 +1201,6 @@ tf_compile_field (tf_compiler_t *c) {
 
     int32_t len = (int32_t)(c->o - plen - 1);
     if (len > 0xff) {
-        trace ("field name to big: %d\n", len);
         return -1;
     }
     *plen = len;
@@ -1167,13 +1208,11 @@ tf_compile_field (tf_compiler_t *c) {
     char field[len+1];
     memcpy (field, fstart, len);
     field[len] = 0;
-    trace ("end field, len: %d, value: %s\n", len, field);
     return 0;
 }
 
 int
 tf_compile_ifdef (tf_compiler_t *c) {
-    trace ("start ifdef\n");
     c->i++;
     *(c->o++) = 0;
     *(c->o++) = 3;
@@ -1209,7 +1248,6 @@ tf_compile_ifdef (tf_compiler_t *c) {
     char value[len+1];
     memcpy (value, start, len);
     value[len] = 0;
-    trace ("end ifdef, len: %d, value: %s\n", len, value+3);
     return 0;
 }
 
@@ -1260,9 +1298,6 @@ tf_compile (const char *script) {
         }
     }
 
-    trace ("output len: %d\n", (int)(c.o - code));
-    trace ("%s\n", code);
-
     size_t size = c.o - code;
     char *out = malloc (size + 8);
     memcpy (out + 4, code, size);
@@ -1275,29 +1310,3 @@ void
 tf_free (char *code) {
     free (code);
 }
-
-#if 0
-void
-tf_test (void) {
-    int len;
-    char *code = tf_compile ("$add(1,2,3) [hello] [%hello%]");
-    trace ("code (%d): %s\n", len, code);
-
-    for (int i = 0; i < len; i++) {
-        trace ("%02x ", code[i]);
-    }
-    trace ("\n");
-    for (int i = 0; i < len; i++) {
-        trace ("%2c ", code[i] > 32 ? code[i] : 'x');
-    }
-    trace ("\n");
-
-    ddb_tf_context_t ctx;
-    memset (&ctx, 0, sizeof (ctx));
-    ctx._size = sizeof (ctx);
-
-    char out[1000] = "";
-    int res = tf_eval (&ctx, code, out, sizeof (out));
-    trace ("output (%d): %s\n", res, out);
-}
-#endif
