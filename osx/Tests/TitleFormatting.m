@@ -36,7 +36,7 @@
     char buffer[20];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"hello world" isEqualToString:[NSString stringWithUTF8String:buffer]]);
+    XCTAssert(!strcmp ("hello world", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_AlbumArtistDash4DigitYearSpaceAlbum_ReturnsCorrectResult {
@@ -48,7 +48,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"TheAlbumArtist - (1234) TheNameOfAlbum" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("TheAlbumArtist - (1234) TheNameOfAlbum", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_Unicode_AlbumArtistDash4DigitYearSpaceAlbum_ReturnsCorrectResult {
@@ -60,7 +60,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"ИсполнительДанногоАльбома - (1234) Альбом" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("ИсполнительДанногоАльбома - (1234) Альбом", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_TotalDiscsGreaterThan1_ReturnsExpectedResult {
@@ -71,7 +71,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"- Disc: 18/20" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("- Disc: 18/20", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_AlbumArtistSameAsArtist_ReturnsBlankTrackArtist {
@@ -82,7 +82,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!buffer[0], @"The actual output is: %s", buffer);
 }
 
 - (void)test_TrackArtistIsUndef_ReturnsBlankTrackArtist {
@@ -92,7 +92,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!buffer[0], @"The actual output is: %s", buffer);
 }
 
 - (void)test_TrackArtistIsDefined_ReturnsTheTrackArtist {
@@ -103,7 +103,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"Track Artist Name" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("Track Artist Name", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_Add10And2_Gives12 {
@@ -111,7 +111,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"12" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("12", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_StrcmpChannelsMono_GivesMo {
@@ -120,7 +120,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"mo" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("mo", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_StrcmpChannelsMono_GivesSt {
@@ -129,7 +129,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"st" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("st", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_SimpleExpr_Performance {
@@ -180,7 +180,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"a title" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("a title", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_If2FirstArgIsMixedStringTrue_EvalToFirstArg {
@@ -190,7 +190,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"a titlean artist" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("a titlean artist", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_If2FirstArgIsMissingField_EvalToLastArg {
@@ -200,7 +200,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"def" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("def", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_If2FirstArgIsMixedWithGarbageTrue_EvalToFirstArg {
@@ -210,7 +210,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"xxxa title" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("xxxa title", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_If2FirstArgIsMixedWithGarbageTailTrue_EvalToFirstArg {
@@ -220,7 +220,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"a titlexxx" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("a titlexxx", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_If2FirstArgIsFalse_EvalToSecondArg {
@@ -228,7 +228,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"ghi" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("ghi", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_If3FirstArgIsTrue_EvalToFirstArg {
@@ -237,7 +237,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"a title" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("a title", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_If3AllButLastAreFalse_EvalToLastArg {
@@ -245,7 +245,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"lastarg" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("lastarg", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_If3OneOfTheArgsBeforeLastIsTrue_EvalToFirstTrueArg {
@@ -253,7 +253,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"lastarg" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("lastarg", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_IfEqualTrue_EvalsToThen {
@@ -261,7 +261,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"then" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("then", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_IfEqualFalse_EvalsToElse {
@@ -269,7 +269,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"else" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("else", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_IfGreaterTrue_EvalsToThen {
@@ -277,7 +277,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"then" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("then", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_IfGreaterFalse_EvalsToElse {
@@ -285,7 +285,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"else" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("else", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_GreaterIsTrue_EvalsToTrue {
@@ -293,7 +293,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"istrue" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("istrue", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_GreaterIsFalse_EvalsToFalse {
@@ -301,7 +301,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"isfalse" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("isfalse", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_GreaterIsFalseEmptyArguments_EvalsToFalse {
@@ -309,7 +309,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"isfalse" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("isfalse", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_StrCmpEmptyArguments_EvalsToTrue {
@@ -317,7 +317,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"istrue" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("istrue", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_StrCmpSameArguments_EvalsToTrue {
@@ -325,7 +325,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"istrue" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("istrue", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_IfLongerTrue_EvalsToTrue {
@@ -333,7 +333,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"istrue" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("istrue", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_IfLongerFalse_EvalsToFalse {
@@ -341,7 +341,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"isfalse" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("isfalse", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_SelectMiddle_EvalsToSelectedValue {
@@ -349,7 +349,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"30" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("30", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_SelectLeftmost_EvalsToSelectedValue {
@@ -357,7 +357,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"10" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("10", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_SelectRightmost_EvalsToSelectedValue {
@@ -365,7 +365,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"50" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("50", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_SelectOutOfBoundsLeft_EvalsToFalse {
@@ -373,7 +373,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!buffer[0], @"The actual output is: %s", buffer);
 }
 
 - (void)test_SelectOutOfBoundsRight_EvalsToFalse {
@@ -381,7 +381,7 @@
     char buffer[200];
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
-    XCTAssert([@"" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!buffer[0], @"The actual output is: %s", buffer);
 }
 
 - (void)test_InvalidPercentExpression_WithNullTrack_NoCrash {
@@ -399,7 +399,7 @@
     ctx.it = NULL;
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert([@"3" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("3", buffer), @"The actual output is: %s", buffer);
     free (buffer);
 }
 
@@ -409,7 +409,7 @@
     ctx.it = NULL;
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert([@"4" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("4", buffer), @"The actual output is: %s", buffer);
     free (buffer);
 }
 
@@ -419,7 +419,7 @@
     ctx.it = NULL;
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert([@"2" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("2", buffer), @"The actual output is: %s", buffer);
     free (buffer);
 }
 
@@ -429,7 +429,7 @@
     ctx.it = NULL;
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert([@"" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!buffer[0], @"The actual output is: %s", buffer);
     free (buffer);
 }
 
@@ -439,7 +439,7 @@
     ctx.it = NULL;
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert([@"" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!buffer[0], @"The actual output is: %s", buffer);
     free (buffer);
 }
 
@@ -449,7 +449,7 @@
     ctx.it = NULL;
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert([@"2" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("2", buffer), @"The actual output is: %s", buffer);
     free (buffer);
 }
 
@@ -459,7 +459,7 @@
     ctx.it = NULL;
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert([@"50" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("50", buffer), @"The actual output is: %s", buffer);
     free (buffer);
 }
 
@@ -469,7 +469,7 @@
     ctx.it = NULL;
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert([@"1" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("1", buffer), @"The actual output is: %s", buffer);
     free (buffer);
 }
 
@@ -479,7 +479,7 @@
     ctx.it = NULL;
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert([@"20" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("20", buffer), @"The actual output is: %s", buffer);
     free (buffer);
 }
 
@@ -489,7 +489,7 @@
     ctx.it = NULL;
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert([@"1" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("1", buffer), @"The actual output is: %s", buffer);
     free (buffer);
 }
 
@@ -499,7 +499,7 @@
     ctx.it = NULL;
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert([@"0" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("0", buffer), @"The actual output is: %s", buffer);
     free (buffer);
 }
 
@@ -509,7 +509,7 @@
     ctx.it = NULL;
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert([@"7" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("7", buffer), @"The actual output is: %s", buffer);
     free (buffer);
 }
 
@@ -519,7 +519,7 @@
     ctx.it = NULL;
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert([@"10" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("10", buffer), @"The actual output is: %s", buffer);
     free (buffer);
 }
 
@@ -529,7 +529,133 @@
     ctx.it = NULL;
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert([@"24" isEqualToString:[NSString stringWithUTF8String:buffer]], @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp ("24", buffer), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_MulDiv2and10and4_Gives5 {
+    char *bc = tf_compile("$muldiv(2,10,4)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp ("5", buffer), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_MulDiv2and10and0_GivesEmpty {
+    char *bc = tf_compile("$muldiv(2,10,0)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!buffer[0], @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_MulDiv2and3and4_Gives2 {
+    char *bc = tf_compile("$muldiv(2,3,4)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp ("2", buffer), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_Rand_GivesANumber {
+    char *bc = tf_compile("$rand()");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    int num_digits = 0;
+    for (int i = 0; buffer[i]; i++) {
+        if (isdigit(buffer[i])) {
+            num_digits++;
+        }
+    }
+    XCTAssert(num_digits == strlen (buffer), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_RandWithArgs_GivesEmpty {
+    char *bc = tf_compile("$rand(1)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    int num_digits = 0;
+    for (int i = 0; buffer[i]; i++) {
+        if (isdigit(buffer[i])) {
+            num_digits++;
+        }
+    }
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_SubWithoutArgs_GivesEmpty {
+    char *bc = tf_compile("$sub()");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    int num_digits = 0;
+    for (int i = 0; buffer[i]; i++) {
+        if (isdigit(buffer[i])) {
+            num_digits++;
+        }
+    }
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_SubWith1Arg_GivesEmpty {
+    char *bc = tf_compile("$sub(2)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    int num_digits = 0;
+    for (int i = 0; buffer[i]; i++) {
+        if (isdigit(buffer[i])) {
+            num_digits++;
+        }
+    }
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_SubWith3and2_Gives1 {
+    char *bc = tf_compile("$sub(3,2)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    int num_digits = 0;
+    for (int i = 0; buffer[i]; i++) {
+        if (isdigit(buffer[i])) {
+            num_digits++;
+        }
+    }
+    XCTAssert(!strcmp (buffer, "1"), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_SubWith10and5and2_Gives3 {
+    char *bc = tf_compile("$sub(10,5,2)");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    int num_digits = 0;
+    for (int i = 0; buffer[i]; i++) {
+        if (isdigit(buffer[i])) {
+            num_digits++;
+        }
+    }
+    XCTAssert(!strcmp (buffer, "3"), @"The actual output is: %s", buffer);
     free (buffer);
 }
 
