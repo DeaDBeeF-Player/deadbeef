@@ -242,7 +242,9 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     memset (&info->pkt, 0, sizeof (info->pkt));
     info->have_packet = 0;
 
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(53, 40, 0)
+#if LIBAVCODEC_VERSION_INT > AV_VERSION_INT(55, 28, 0)
+    info->frame = av_frame_alloc();
+#elif LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(53, 40, 0)
     info->frame = avcodec_alloc_frame();
 #endif
 
@@ -286,7 +288,11 @@ ffmpeg_free (DB_fileinfo_t *_info) {
     trace ("ffmpeg: free\n");
     ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
     if (info) {
-#if LIBAVCODEC_VERSION_INT > AV_VERSION_INT(54, 59, 100)
+#if LIBAVCODEC_VERSION_INT > AV_VERSION_INT(55, 28, 0)
+        if (info->frame) {
+            av_frame_free(&info->frame);
+        }
+#elif LIBAVCODEC_VERSION_INT > AV_VERSION_INT(54, 59, 100)
         if (info->frame) {
             avcodec_free_frame(&info->frame);
         }
