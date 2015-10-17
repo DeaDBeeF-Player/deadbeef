@@ -106,6 +106,6 @@ sidplay-libs/libsidplay/src/poweron.bin
 sid_la_LDFLAGS = -module -avoid-version $(NOCPPLIB)
 
 AM_CFLAGS = $(CFLAGS) -std=c99 -I$(sidpath)/libsidplay/include -I$(sidpath)/builders/resid-builder/include -fPIC
-AM_CPPFLAGS = $(CXXFLAGS) -DHAVE_UNIX -I$(sidpath) -I$(sidpath)/unix -I$(sidpath)/libsidplay -I$(sidpath)/libsidplay/include -I$(sidpath)/libsidplay/include/sidplay -I$(sidpath)/libsidutils/include/sidplay/utils -I$(sidpath)/builders/resid-builder/include/sidplay/builders -I$(sidpath)/builders/resid-builder/include -DHAVE_STRCASECMP -DHAVE_STRNCASECMP -fno-exceptions -fno-rtti -fno-unwind-tables
+AM_CXXFLAGS = $(CXXFLAGS) -DHAVE_UNIX -I$(sidpath) -I$(sidpath)/unix -I$(sidpath)/libsidplay -I$(sidpath)/libsidplay/include -I$(sidpath)/libsidplay/include/sidplay -I$(sidpath)/libsidutils/include/sidplay/utils -I$(sidpath)/builders/resid-builder/include/sidplay/builders -I$(sidpath)/builders/resid-builder/include -DHAVE_STRCASECMP -DHAVE_STRNCASECMP -fno-exceptions -fno-rtti -fno-unwind-tables
 
 endif
