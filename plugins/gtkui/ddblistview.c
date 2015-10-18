@@ -1034,7 +1034,7 @@ ddb_listview_vscroll_value_changed            (GtkRange        *widget,
         ps->binding->vscroll_changed (newscroll);
     }
     if (ps->block_redraw_on_scroll) {
-        ps->scrollpos = newscroll; 
+        ps->scrollpos = newscroll;
         return;
     }
     if (newscroll != ps->scrollpos) {
@@ -2045,7 +2045,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
 void
 ddb_listview_list_set_hscroll (DdbListview *ps, int newscroll) {
     if (ps->block_redraw_on_scroll) {
-        ps->hscrollpos = newscroll; 
+        ps->hscrollpos = newscroll;
         return;
     }
 //    if (newscroll != ps->hscrollpos)
@@ -2272,7 +2272,7 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
     // FIXME
 //    ddb_listview_draw_dnd_marker (ps, cr);
 #endif
-    
+
     if (y < 10) {
         ps->scroll_pointer_y = y;
         ps->scroll_mode = 1;
@@ -2381,7 +2381,7 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr) {
                 cairo_move_to (cr, xx+w - 2, 2);
                 cairo_line_to (cr, xx+w - 2, h-4);
                 cairo_stroke (cr);
-                
+
                 gtkui_get_tabstrip_light_color (&clr);
                 cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f);
 
@@ -2663,39 +2663,21 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
     }
     if (!ps->header_prepare && ps->header_dragging >= 0) {
         gdk_window_set_cursor (gtk_widget_get_window (widget), ps->cursor_drag);
-        DdbListviewColumn *c;
-        int i;
-        for (i = 0, c = ps->columns; i < ps->header_dragging && c; c = c->next, i++);
-        ps->col_movepos = ev_x - ps->header_dragpt[0] + ps->hscrollpos;
-        // find closest column to the left
-        int inspos = -1;
-        DdbListviewColumn *cc;
-        int x = 0;
-        int idx = 0;
-        int x1 = -1, x2 = -1;
-        for (cc = ps->columns; cc; cc = cc->next, idx++) {
-            if (x < ps->col_movepos && x + c->width > ps->col_movepos) {
-                inspos = idx;
-                x1 = x;
+        DdbListviewColumn *c = ps->columns;
+        for (int i = 0; c && i < ps->header_dragging; c = c->next, i++);
+        const int left = ev_x - ps->header_dragpt[0] + ps->hscrollpos;
+        const int right = left + c->width;
+        DdbListviewColumn *cc = ps->columns;
+        for (int xx = 0, ii = 0; cc; xx += cc->width, cc = cc->next, ii++) {
+            if (ps->header_dragging > ii && left < xx + cc->width/2 || ps->header_dragging < ii && right > xx + cc->width/2) {
+                ddb_listview_column_move (ps, c, ii);
+                ps->header_dragging = ii;
+                gtk_widget_queue_draw (ps->list);
+                break;
             }
-            else if (idx == ps->header_dragging) {
-                x2 = x;
-            }
-            x += cc->width;
         }
-        if (inspos >= 0 && inspos != ps->header_dragging) {
-            ddb_listview_column_move (ps, c, inspos);
-//            ps->binding->col_move (c, inspos);
-            ps->header_dragging = inspos;
-//            colhdr_anim_swap (ps, c1, c2, x1, x2);
-            // force redraw of everything
-//            ddb_listview_list_setup_hscroll (ps);
-            gtk_widget_queue_draw (ps->list);
-        }
-        else {
-            // only redraw that if not animating
-            gtk_widget_queue_draw (ps->header);
-        }
+        ps->col_movepos = left;
+        gtk_widget_queue_draw (ps->header);
     }
     else if (ps->header_sizing >= 0) {
         ps->last_header_motion_ev = event->time;
@@ -3075,7 +3057,7 @@ ddb_listview_is_scrolling (DdbListview *listview) {
 
 /////// column management code
 
-DdbListviewColumn * 
+DdbListviewColumn *
 ddb_listview_column_alloc (const char *title, int width, int align_right, int minheight, int color_override, GdkColor color, void *user_data) {
     DdbListviewColumn * c = malloc (sizeof (DdbListviewColumn));
     memset (c, 0, sizeof (DdbListviewColumn));
