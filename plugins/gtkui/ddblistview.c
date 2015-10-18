@@ -77,6 +77,23 @@ struct _DdbListviewColumn {
 };
 typedef struct _DdbListviewColumn DdbListviewColumn;
 
+typedef enum {
+    PICK_ITEM,
+    PICK_GROUP_TITLE,
+    PICK_ALBUM_ART,
+    PICK_BELOW_ALBUM_ART,
+    PICK_EMPTY_SPACE,
+} area_type_t;
+
+static struct _DdbListviewPickContext {
+    int item_idx; // index of playitem in playlist
+    int grp_idx; // index of playitem within grp
+    area_type_t type;
+    int col_idx;
+    DdbListviewGroup *grp;
+};
+typedef struct _DdbListviewPickContext DdbListviewPickContext;
+
 static void ddb_listview_class_init(DdbListviewClass *klass);
 static void ddb_listview_init(DdbListview *listview);
 //static void ddb_listview_size_request(GtkWidget *widget, GtkRequisition *requisition);
@@ -694,33 +711,67 @@ ddb_listview_get_row_pos (DdbListview *listview, int row_idx) {
     return y;
 }
 
+static int
+ddb_listview_header_get_column_idx_for_coord (DdbListview *pl, int click_x) {
+    int x = -pl->hscrollpos;
+    DdbListviewColumn *c;
+    int idx = 0;
+    for (c = pl->columns; c; c = c->next, idx++) {
+        int w = c->width;
+        if (click_x >= x && click_x < x + w) {
+            return idx;
+        }
+        x += w;
+    }
+    return -1;
+}
+
 // input: absolute y coord in list (not in window)
 // returns -1 if nothing was hit, otherwise returns pointer to a group, and item idx
 // item idx may be set to -1 if group title was hit
 static int
-ddb_listview_list_pickpoint_y (DdbListview *listview, int y, DdbListviewGroup **group, int *group_idx, int *global_idx) {
+ddb_listview_list_pickpoint (DdbListview *listview, int x, int y, DdbListviewPickContext *pick_ctx) {
     int idx = 0;
     int grp_y = 0;
     int gidx = 0;
+    int ey = y;
     deadbeef->pl_lock ();
+    pick_ctx->col_idx = ddb_listview_header_get_column_idx_for_coord (listview, x);
+    int is_album_art_column = ddb_listview_is_album_art_column_idx (listview, pick_ctx->col_idx);
     ddb_listview_groupcheck (listview);
     DdbListviewGroup *grp = listview->groups;
     while (grp) {
         int h = grp->height;
         if (y >= grp_y && y < grp_y + h) {
-            *group = grp;
+            pick_ctx->grp = grp;
             y -= grp_y;
-            if (y < listview->grouptitle_height) {
-                *group_idx = -1;
-                *global_idx = idx;
+            if (y < listview->grouptitle_height || ((ey - listview->scrollpos) < listview->grouptitle_height && gtkui_groups_pinned)) {
+                // group title
+                pick_ctx->type = PICK_GROUP_TITLE;
+                pick_ctx->item_idx = idx;
+                pick_ctx->grp_idx = 0;
             }
             else if (y >= listview->grouptitle_height + grp->num_items * listview->rowheight) {
-                *group_idx = (y - listview->grouptitle_height) / listview->rowheight;
-                *global_idx = -1;
+                if (is_album_art_column) {
+                    // whitespace after album_art
+                    pick_ctx->type = PICK_BELOW_ALBUM_ART;
+                }
+                else {
+                    // whitespace after tracks
+                    pick_ctx->type = PICK_EMPTY_SPACE;
+                }
+                pick_ctx->item_idx = idx;
+                pick_ctx->grp_idx = 0;
+            }
+            else if (is_album_art_column) {
+                pick_ctx->type = PICK_ALBUM_ART;
+                pick_ctx->item_idx = idx;
+                pick_ctx->grp_idx = 0;
             }
             else {
-                *group_idx = (y - listview->grouptitle_height) / listview->rowheight;
-                *global_idx = idx + *group_idx;
+                pick_ctx->type = PICK_ITEM;
+                pick_ctx->grp_idx = (y - listview->grouptitle_height) / listview->rowheight;
+                pick_ctx->item_idx = idx + pick_ctx->grp_idx;
             }
             deadbeef->pl_unlock ();
             return 0;
@@ -1498,6 +1549,95 @@ ddb_listview_header_expose (DdbListview *ps, cairo_t *cr, int x, int y, int w, i
     ddb_listview_header_render (ps, cr);
 }
 
+// Deselect all items in the current list
+static void
+ddb_listview_deselect_all (DdbListview *listview)
+{
+    DdbListviewIter it;
+    int idx = 0;
+    for (it = listview->binding->head (); it; idx++) {
+        if (listview->binding->is_selected (it)) {
+            listview->binding->select (it, 0);
+            ddb_listview_draw_row (listview, idx, it);
+            listview->binding->selection_changed (listview, it, idx);
+        }
+        DdbListviewIter next = listview->binding->next (it);
+        listview->binding->unref (it);
+        it = next;
+    }
+    if (it) {
+        listview->binding->unref (it);
+    }
+}
+
+// (De)select a whole group
+// grp = group to be (de)selected
+// item_idx = index of first item in the group or -1
+// deselect: 0 = select group, 1 = deselect group
+static void
+ddb_listview_select_group (DdbListview *listview, DdbListviewGroup *grp, int first_item_idx, int deselect)
+{
+    if (grp == NULL) {
+        return;
+    }
+    DdbListviewIter it = grp->head;
+    listview->binding->ref (it);
+    if (first_item_idx == -1) {
+        first_item_idx = listview->binding->get_idx (it);
+    }
+    for (int group_idx = 0; it && group_idx < grp->num_items; group_idx++) {
+        if (deselect) {
+            listview->binding->select (it, 0);
+        }
+        else {
+            listview->binding->select (it, 1);
+        }
+        ddb_listview_draw_row (listview, first_item_idx + group_idx, it);
+        listview->binding->selection_changed (listview, it, first_item_idx + group_idx);
+        DdbListviewIter next = listview->binding->next (it);
+        listview->binding->unref (it);
+        it = next;
+    }
+    if (it) {
+        listview->binding->unref (it);
+    }
+}
+
+// Toggle selection of group
+// if at least one item of the group is selected, deselect the whole group
+// if no item of the group is selected, select all group items
+// grp: group to be toggled
+// item_idx: index of first item in the group or -1
+static void
+ddb_listview_toggle_group_selection (DdbListview *listview, DdbListviewGroup *grp, int item_idx)
+{
+    if (grp == NULL) {
+        return;
+    }
+    DdbListviewIter it = grp->head;
+    listview->binding->ref (it);
+    if (item_idx == -1) {
+        item_idx = listview->binding->get_idx (it);
+    }
+    int deselect = 0;
+    int group_idx = 0;
+    // check if at least one item is selected
+    for (group_idx = 0; it && group_idx < grp->num_items; group_idx++) {
+        if (listview->binding->is_selected (it)) {
+            deselect = 1;
+            break;
+        }
+        DdbListviewIter next = listview->binding->next (it);
+        listview->binding->unref (it);
+        it = next;
+    }
+    if (it) {
+        listview->binding->unref (it);
+    }
+
+    ddb_listview_select_group (listview, grp, item_idx, deselect);
+}
+
 void
 ddb_listview_select_single (DdbListview *ps, int sel) {
     int nchanged = 0;
@@ -1533,7 +1673,7 @@ ddb_listview_select_single (DdbListview *ps, int sel) {
 }
 
 void
-ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup *grp, int grp_index, int sel, int dnd, int button) {
+ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewPickContext *pick_ctx, int dnd, int button) {
     deadbeef->pl_lock ();
     ps->areaselect = 0;
     ddb_listview_groupcheck (ps);
@@ -1541,29 +1681,21 @@ ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup 
     // clicked album art column?
     int album_art_column = ddb_listview_is_album_art_column (ps, ex);
 
-    if (sel == -1 && !album_art_column && (!grp || (ey > ps->grouptitle_height && grp_index >= grp->num_items))) {
+    if (pick_ctx->type == PICK_EMPTY_SPACE) {
         // clicked empty space, deselect everything
-        DdbListviewIter it;
-        int idx = 0;
-        for (it = ps->binding->head (); it; idx++) {
-            if (ps->binding->is_selected (it)) {
-                ps->binding->select (it, 0);
-                ddb_listview_draw_row (ps, idx, it);
-                ps->binding->selection_changed (ps, it, idx);
-            }
-            DdbListviewIter next = ps->binding->next (it);
-            ps->binding->unref (it);
-            it = next;
-        }
+        ddb_listview_deselect_all (ps);
     }
-    else if ((sel != -1 && grp && grp_index == -1) || (ey <= ps->grouptitle_height && gtkui_groups_pinned) || album_art_column) {
-        // clicked group title, select group
+    else if (pick_ctx->item_idx != -1
+            && (pick_ctx->type == PICK_GROUP_TITLE
+                || pick_ctx->type == PICK_ALBUM_ART
+                || pick_ctx->type == PICK_BELOW_ALBUM_ART)) {
+        // clicked group title or album art column, select group
         DdbListviewIter it;
         int idx = 0;
         int cnt = -1;
         for (it = ps->binding->head (); it; idx++) {
-            if (it == grp->head) {
-                cnt = grp->num_items;
+            if (it == pick_ctx->grp->head) {
+                cnt = pick_ctx->grp->num_items;
             }
             if (cnt > 0) {
                 if (!ps->binding->is_selected (it)) {
@@ -1585,14 +1717,14 @@ ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup 
             it = next;
         }
     }
-    else {
+    else if (pick_ctx->item_idx != -1 && pick_ctx->type == PICK_ITEM) {
         // clicked specific item - select, or start drag-n-drop
-        DdbListviewIter it = ps->binding->get_for_idx (sel);
+        DdbListviewIter it = ps->binding->get_for_idx (pick_ctx->item_idx);
         if (!it || !ps->binding->is_selected (it)
                 || (!ps->binding->drag_n_drop && button == 1)) // HACK: don't reset selection by right click in search window
         {
             // reset selection, and set it to single item
-            ddb_listview_select_single (ps, sel);
+            ddb_listview_select_single (ps, pick_ctx->item_idx);
             if (dnd) {
                 ps->areaselect = 1;
                 ps->areaselect_y = ey + ps->scrollpos;
@@ -1638,21 +1770,23 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
     // remember mouse coords for doubleclick detection
     ps->lastpos[0] = ex;
     ps->lastpos[1] = ey;
-    // select item
-    DdbListviewGroup *grp;
-    int grp_index;
-    int sel;
-    if (ddb_listview_list_pickpoint_y (ps, ey + ps->scrollpos, &grp, &grp_index, &sel) == -1) {
+
+    // get item under cursor
+    DdbListviewPickContext pick_ctx;
+    if (ddb_listview_list_pickpoint (ps, ex, ey + ps->scrollpos, &pick_ctx) == -1) {
         deadbeef->pl_unlock ();
         return;
     }
+    int group_clicked = (pick_ctx.type == PICK_ALBUM_ART
+                        || pick_ctx.type == PICK_BELOW_ALBUM_ART
+                        || pick_ctx.type == PICK_GROUP_TITLE) ? 1 : 0;
 
     int cursor = ps->binding->cursor ();
     if (type == GDK_2BUTTON_PRESS
             && fabs(ps->lastpos[0] - ex) < 3
             && fabs(ps->lastpos[1] - ey) < 3) {
         // doubleclick - play this item
-        if (sel != -1 && cursor != -1) {
+        if (pick_ctx.item_idx != -1 && pick_ctx.type != PICK_EMPTY_SPACE && cursor != -1) {
             int idx = cursor;
             DdbListviewIter it = ps->binding->get_for_idx (idx);
             if (ps->binding->handle_doubleclick && it) {
@@ -1666,17 +1800,13 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
         }
     }
 
+    // set cursor
     int prev = cursor;
-    if (sel != -1) {
-        // pick 1st item in group in case album art column was clicked
-        if (ddb_listview_is_album_art_column (ps, ex) && grp_index != -1) {
-            sel -= grp_index;
-        }
-
-        ps->binding->set_cursor (sel);
-        DdbListviewIter it = ps->binding->get_for_idx (sel);
+    if (pick_ctx.type != PICK_EMPTY_SPACE && pick_ctx.item_idx != -1) {
+        ps->binding->set_cursor (pick_ctx.item_idx);
+        DdbListviewIter it = ps->binding->get_for_idx (pick_ctx.item_idx);
         if (it) {
-            ddb_listview_draw_row (ps, sel, it);
+            ddb_listview_draw_row (ps, pick_ctx.item_idx, it);
             UNREF (it);
         }
         ps->shift_sel_anchor = ps->binding->cursor ();
@@ -1689,61 +1819,68 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
 #endif
     if (!(state & (selmask|GDK_SHIFT_MASK)))
     {
-        ddb_listview_click_selection (ps, ex, ey, grp, grp_index, sel, 1, 1);
+        ddb_listview_click_selection (ps, ex, ey, &pick_ctx, 1, 1);
     }
     else if (state & selmask) {
         // toggle selection
-        if (sel != -1) {
-            DdbListviewIter it = ps->binding->get_for_idx (sel);
-            if (it) {
-                ps->binding->select (it, 1 - ps->binding->is_selected (it));
-                ddb_listview_draw_row (ps, sel, it);
-                ps->binding->selection_changed (ps, it, sel);
-                UNREF (it);
+        if (pick_ctx.type != PICK_EMPTY_SPACE && pick_ctx.item_idx != -1) {
+            if (group_clicked) {
+                // toggle group items
+                ddb_listview_toggle_group_selection (ps, pick_ctx.grp, pick_ctx.item_idx);
+            }
+            else if (pick_ctx.type == PICK_ITEM) {
+                // toggle single item
+                DdbListviewIter it = ps->binding->get_for_idx (pick_ctx.item_idx);
+                if (it) {
+                    ps->binding->select (it, 1 - ps->binding->is_selected (it));
+                    ddb_listview_draw_row (ps, pick_ctx.item_idx, it);
+                    ps->binding->selection_changed (ps, it, pick_ctx.item_idx);
+                    UNREF (it);
+                }
             }
         }
     }
     else if (state & GDK_SHIFT_MASK) {
-        // select range
-        int cursor = sel;//ps->binding->cursor ();
-        if (cursor == -1) {
-            // find group
-            DdbListviewGroup *g = ps->groups;
-            int idx = 0;
-            while (g) {
-                if (g == grp) {
-                    cursor = idx - 1;
-                    break;
-                }
-                idx += g->num_items;
-                g = g->next;
+        if (pick_ctx.type != PICK_EMPTY_SPACE) {
+            if (group_clicked) {
+                // deselect everything
+                ddb_listview_deselect_all (ps);
+                // select group
+                ddb_listview_select_group (ps, pick_ctx.grp, pick_ctx.item_idx, 0);
             }
-        }
-        int start = min (prev, cursor);
-        int end = max (prev, cursor);
-        int idx = 0;
-        for (DdbListviewIter it = ps->binding->head (); it; idx++) {
-            if (idx >= start && idx <= end) {
-                if (!ps->binding->is_selected (it)) {
-                    ps->binding->select (it, 1);
-                    ddb_listview_draw_row (ps, idx, it);
-                    ps->binding->selection_changed (ps, it, idx);
+            else if (pick_ctx.type == PICK_ITEM) {
+                // select range
+                int cursor = pick_ctx.item_idx;//ps->binding->cursor ();
+                if (cursor > prev && group_clicked) {
+                    cursor += pick_ctx.grp->num_items - 1;
+                }
+                int start = min (prev, cursor);
+                int end = max (prev, cursor);
+                int idx = 0;
+                for (DdbListviewIter it = ps->binding->head (); it; idx++) {
+                    if (idx >= start && idx <= end) {
+                        if (!ps->binding->is_selected (it)) {
+                            ps->binding->select (it, 1);
+                            ddb_listview_draw_row (ps, idx, it);
+                            ps->binding->selection_changed (ps, it, idx);
+                        }
+                    }
+                    else {
+                        if (ps->binding->is_selected (it)) {
+                            ps->binding->select (it, 0);
+                            ddb_listview_draw_row (ps, idx, it);
+                            ps->binding->selection_changed (ps, it, idx);
+                        }
+                    }
+                    DdbListviewIter next = PL_NEXT (it);
+                    UNREF (it);
+                    it = next;
                 }
             }
-            else {
-                if (ps->binding->is_selected (it)) {
-                    ps->binding->select (it, 0);
-                    ddb_listview_draw_row (ps, idx, it);
-                    ps->binding->selection_changed (ps, it, idx);
-                }
-            }
-            DdbListviewIter next = PL_NEXT (it);
-            UNREF (it);
-            it = next;
         }
     }
     cursor = ps->binding->cursor ();
-    if (cursor != -1 && sel == -1) {
+    if (cursor != -1 && pick_ctx.item_idx == -1) {
         DdbListviewIter it = ps->binding->get_for_idx (cursor);
         ddb_listview_draw_row (ps, cursor, it);
         UNREF (it);
@@ -1760,11 +1897,10 @@ void
 ddb_listview_list_mouse1_released (DdbListview *ps, int state, int ex, int ey, double time) {
     if (ps->dragwait) {
         ps->dragwait = 0;
-        DdbListviewGroup *grp;
-        int grp_index;
-        int sel;
-        if (!ddb_listview_list_pickpoint_y (ps, ey + ps->scrollpos, &grp, &grp_index, &sel)) {
-            ddb_listview_select_single (ps, sel);
+
+        DdbListviewPickContext pick_ctx;
+        if (!ddb_listview_list_pickpoint (ps, ex, ey + ps->scrollpos, &pick_ctx)) {
+            ddb_listview_select_single (ps, pick_ctx.item_idx);
         }
         else {
             ps->binding->set_cursor (-1);
@@ -1891,57 +2027,55 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
         }
     }
     else if (ps->areaselect) {
-        DdbListviewGroup *grp;
-        int grp_index;
-        int sel;
-        if (ddb_listview_list_pickpoint_y (ps, ey + ps->scrollpos, &grp, &grp_index, &sel) == -1) {
+        DdbListviewPickContext pick_ctx;
+        if (ddb_listview_list_pickpoint (ps, ex, ey + ps->scrollpos, &pick_ctx) == -1) {
             // past playlist bounds -> set to last track
-            sel = ps->binding->count () - 1;
+            pick_ctx.item_idx = ps->binding->count () - 1;
         }
-        else if (sel == -1) {
-            if (grp_index == -1) {
+        else if (pick_ctx.item_idx == -1) {
+            if (pick_ctx.grp_idx == -1) {
                 if (ps->areaselect_y < ey + ps->scrollpos) {
                     // below anchor, take last track in prev group
-                    sel = ps->binding->get_idx (grp->head) - 1;
+                    pick_ctx.item_idx = ps->binding->get_idx (pick_ctx.grp->head) - 1;
                 }
                 else if (ps->areaselect_y > ey + ps->scrollpos) {
                     // above, select 1st track in group
-                        sel = ps->binding->get_idx (grp->head);
+                        pick_ctx.item_idx = ps->binding->get_idx (pick_ctx.grp->head);
                 }
                 else {
-                    sel = ps->shift_sel_anchor;
+                    pick_ctx.item_idx = ps->shift_sel_anchor;
                 }
             }
             else {
                 if (ps->areaselect_y < ey + ps->scrollpos) {
                     // below anchor, take last track in group
-                    sel = ps->binding->get_idx (grp->head) + grp->num_items - 1;
+                    pick_ctx.item_idx = ps->binding->get_idx (pick_ctx.grp->head) + pick_ctx.grp->num_items - 1;
                 }
                 else if (ps->areaselect_y > ey + ps->scrollpos) {
                     // above, select 1st track in next group
-                    if (grp->next) {
-                        sel = ps->binding->get_idx (grp->next->head);
+                    if (pick_ctx.grp->next) {
+                        pick_ctx.item_idx = ps->binding->get_idx (pick_ctx.grp->next->head);
                     }
                 }
                 else {
-                    sel = ps->shift_sel_anchor;
+                    pick_ctx.item_idx = ps->shift_sel_anchor;
                 }
             }
         }
         int prev = ps->binding->cursor ();
-        if (sel != -1) {
-            ps->binding->set_cursor (sel);
+        if (pick_ctx.item_idx != -1) {
+            ps->binding->set_cursor (pick_ctx.item_idx);
         }
         {
             // select range of items
-            int y = sel;
+            int y = pick_ctx.item_idx;
             int idx = 0;
             if (y == -1) {
                 // find group
                 ddb_listview_groupcheck (ps);
                 DdbListviewGroup *g = ps->groups;
                 while (g) {
-                    if (g == grp) {
+                    if (g == pick_ctx.grp) {
                         y = idx - 1;
                         break;
                     }
@@ -1992,7 +2126,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
             ps->area_selection_start = start;
             ps->area_selection_end = end;
         }
-        if (sel != -1 && sel != prev) {
+        if (pick_ctx.item_idx != -1 && pick_ctx.item_idx != prev) {
             if (prev != -1) {
                 DdbListviewIter it = ps->binding->get_for_idx (prev);
                 if (it) {
@@ -2000,9 +2134,9 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
                     UNREF (it);
                 }
             }
-            DdbListviewIter it = ps->binding->get_for_idx (sel);
+            DdbListviewIter it = ps->binding->get_for_idx (pick_ctx.item_idx);
             if (it) {
-                ddb_listview_draw_row (ps, sel, it);
+                ddb_listview_draw_row (ps, pick_ctx.item_idx, it);
                 UNREF (it);
             }
         }
@@ -2213,29 +2347,27 @@ ddb_listview_dragdrop_get_row_from_coord (DdbListview *listview, int y) {
     if (y == -1) {
         return -1;
     }
-    DdbListviewGroup *grp;
-    int grp_index;
-    int sel;
-    if (ddb_listview_list_pickpoint_y (listview, y + listview->scrollpos, &grp, &grp_index, &sel) == -1) {
+    DdbListviewPickContext pick_ctx;
+    if (ddb_listview_list_pickpoint (listview, 0, y + listview->scrollpos, &pick_ctx) == -1) {
         return -1;
     }
     else {
-        if (sel == -1) {
-            if (grp_index == -1) {
-                sel = listview->binding->get_idx (grp->head);
+        if (pick_ctx.item_idx == -1) {
+            if (pick_ctx.grp_idx == -1) {
+                pick_ctx.item_idx = listview->binding->get_idx (pick_ctx.grp->head);
             }
             else {
-                sel = listview->binding->get_idx (grp->head) + grp->num_items;
+                pick_ctx.item_idx = listview->binding->get_idx (pick_ctx.grp->head) + pick_ctx.grp->num_items;
             }
         }
     }
-    if (sel != -1) {
-        int it_y = ddb_listview_get_row_pos (listview, sel) - listview->scrollpos;
+    if (pick_ctx.item_idx != -1) {
+        int it_y = ddb_listview_get_row_pos (listview, pick_ctx.item_idx) - listview->scrollpos;
         if (y > it_y + listview->rowheight/2 && y < it_y + listview->rowheight) {
-            sel++;
+            pick_ctx.item_idx++;
         }
     }
-    return sel;
+    return pick_ctx.item_idx;
 }
 
 void
@@ -2732,21 +2864,6 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
     return FALSE;
 }
 
-static int
-ddb_listview_header_get_column_idx_for_coord (DdbListview *pl, int click_x) {
-    int x = -pl->hscrollpos;
-    DdbListviewColumn *c;
-    int idx = 0;
-    for (c = pl->columns; c; c = c->next, idx++) {
-        int w = c->width;
-        if (click_x >= x && click_x < x + w) {
-            return idx;
-        }
-        x += w;
-    }
-    return -1;
-}
-
 gboolean
 ddb_listview_header_button_press_event           (GtkWidget       *widget,
                                         GdkEventButton  *event,
@@ -2955,28 +3072,26 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
     }
     else if (TEST_RIGHT_CLICK(event)) {
         // get item under cursor
-        DdbListviewGroup *grp;
-        int grp_index;
-        int sel;
         DdbListviewIter it = NULL;
         int prev = ps->binding->cursor ();
-        if (ddb_listview_list_pickpoint_y (ps, event->y + ps->scrollpos, &grp, &grp_index, &sel) != -1) {
-            if (sel != -1) {
-                ps->binding->set_cursor (sel);
+        DdbListviewPickContext pick_ctx;
+        if (ddb_listview_list_pickpoint (ps, event->x, event->y + ps->scrollpos, &pick_ctx) != -1) {
+            if (pick_ctx.item_idx != -1) {
+                ps->binding->set_cursor (pick_ctx.item_idx);
             }
-            ddb_listview_click_selection (ps, event->x, event->y, grp, grp_index, sel, 0, event->button);
-            if (sel == -1 && grp_index < grp->num_items) {
-                sel = ps->binding->get_idx (grp->head);
+            ddb_listview_click_selection (ps, event->x, event->y, &pick_ctx, 0, event->button);
+            if (pick_ctx.item_idx == -1 && pick_ctx.grp_idx < pick_ctx.grp->num_items) {
+                pick_ctx.item_idx = ps->binding->get_idx (pick_ctx.grp->head);
             }
-            if (sel != -1) {
-                it = ps->binding->get_for_idx (sel);
+            if (pick_ctx.item_idx != -1) {
+                it = ps->binding->get_for_idx (pick_ctx.item_idx);
             }
         }
         if (it) {
-            ps->binding->list_context_menu (ps, it, sel);
+            ps->binding->list_context_menu (ps, it, pick_ctx.item_idx);
         }
         int cursor = ps->binding->cursor ();
-        if (cursor != -1 && sel != -1) {
+        if (cursor != -1 && pick_ctx.item_idx != -1) {
             DdbListviewIter it = ps->binding->get_for_idx (cursor);
             ddb_listview_draw_row (ps, cursor, it);
             UNREF (it);
@@ -3027,15 +3142,13 @@ ddb_listview_set_binding (DdbListview *listview, DdbListviewBinding *binding) {
 
 DdbListviewIter
 ddb_listview_get_iter_from_coord (DdbListview *listview, int x, int y) {
-    DdbListviewGroup *grp;
-    int grp_index;
-    int sel;
     DdbListviewIter it = NULL;
-    if (ddb_listview_list_pickpoint_y (listview, y + listview->scrollpos, &grp, &grp_index, &sel) != -1) {
-        if (sel == -1) {
-            sel = listview->binding->get_idx (grp->head);
+    DdbListviewPickContext pick_ctx;
+    if (ddb_listview_list_pickpoint (listview, x, y + listview->scrollpos, &pick_ctx) != -1) {
+        if (pick_ctx.item_idx == -1) {
+            pick_ctx.item_idx = listview->binding->get_idx (pick_ctx.grp->head);
         }
-        it = listview->binding->get_for_idx (sel);
+        it = listview->binding->get_for_idx (pick_ctx.item_idx);
     }
     return it;
 }
