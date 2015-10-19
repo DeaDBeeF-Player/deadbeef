@@ -405,7 +405,7 @@ converter_show_cb (void *data) {
                 conv->convert_items_count = 1;
                 conv->convert_items = malloc (sizeof (DB_playItem_t *) * conv->convert_items_count);
                 if (conv->convert_items) {
-                    conv->convert_items[1] = it;
+                    conv->convert_items[0] = it;
                 }
             }
         }
