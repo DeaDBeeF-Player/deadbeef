@@ -124,9 +124,9 @@ ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListvi
 void
 ddb_listview_list_render_album_art (DdbListview *ps, cairo_t *cr, DdbListviewIter group_it, int group_pinned, int grp_next_y, int x, int y, int w, int h);
 void
-ddb_listview_list_track_dragdrop (DdbListview *ps, int y);
+ddb_listview_list_track_dragdrop (DdbListview *ps, int x, int y);
 int
-ddb_listview_dragdrop_get_row_from_coord (DdbListview *listview, int y);
+ddb_listview_dragdrop_get_row_from_coord (DdbListview *listview, int x, int y);
 void
 ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event, int x, int y);
 void
@@ -1112,7 +1112,7 @@ ddb_listview_list_drag_motion                (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     DdbListview *pl = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    ddb_listview_list_track_dragdrop (pl, y);
+    ddb_listview_list_track_dragdrop (pl, x, y);
     GList *targets = gdk_drag_context_list_targets (drag_context);
     int cnt = g_list_length (targets);
     int i;
@@ -1216,7 +1216,7 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         gtk_drag_finish (drag_context, TRUE, FALSE, time);
         return;
     }
-    int sel = ddb_listview_dragdrop_get_row_from_coord (ps, y);
+    int sel = ddb_listview_dragdrop_get_row_from_coord (ps, x, y);
     DdbListviewIter it = NULL;
     if (sel == -1) {
         if (ps->binding->count () != 0) {
@@ -1281,7 +1281,7 @@ ddb_listview_list_drag_leave                 (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     DdbListview *pl = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    ddb_listview_list_track_dragdrop (pl, -1);
+    ddb_listview_list_track_dragdrop (pl, -1, -1);
 }
 
 // debug function for gdk_draw_drawable
@@ -1992,7 +1992,7 @@ ddb_listview_list_scroll_cb (gpointer data) {
         ddb_listview_list_mousemove (ps, NULL, 0, ps->scroll_pointer_y);
     }
     else if (ps->scroll_mode == 1) {
-        ddb_listview_list_track_dragdrop (ps, ps->scroll_pointer_y);
+        ddb_listview_list_track_dragdrop (ps, 0, ps->scroll_pointer_y);
     }
     if (ps->scroll_direction < 0) {
         ps->scroll_direction -= (10 * dt);
@@ -2343,35 +2343,42 @@ ddb_listview_list_popup_menu (GtkWidget *widget, gpointer user_data) {
 }
 
 int
-ddb_listview_dragdrop_get_row_from_coord (DdbListview *listview, int y) {
+ddb_listview_dragdrop_get_row_from_coord (DdbListview *listview, int x, int y) {
     if (y == -1) {
         return -1;
     }
+    int row_idx = -1;
     DdbListviewPickContext pick_ctx;
-    if (ddb_listview_list_pickpoint (listview, 0, y + listview->scrollpos, &pick_ctx) == -1) {
+    if (ddb_listview_list_pickpoint (listview, x, y + listview->scrollpos, &pick_ctx) == -1) {
         return -1;
     }
     else {
         if (pick_ctx.item_idx == -1) {
             if (pick_ctx.grp_idx == -1) {
-                pick_ctx.item_idx = listview->binding->get_idx (pick_ctx.grp->head);
+                row_idx = listview->binding->get_idx (pick_ctx.grp->head);
             }
             else {
-                pick_ctx.item_idx = listview->binding->get_idx (pick_ctx.grp->head) + pick_ctx.grp->num_items;
+                row_idx = listview->binding->get_idx (pick_ctx.grp->head) + pick_ctx.grp->num_items;
             }
         }
     }
+
+    row_idx = pick_ctx.item_idx;
+    if (pick_ctx.type == PICK_EMPTY_SPACE) {
+        // set drop point to first item after empty space
+        row_idx += pick_ctx.grp->num_items;
+    }
     if (pick_ctx.item_idx != -1) {
-        int it_y = ddb_listview_get_row_pos (listview, pick_ctx.item_idx) - listview->scrollpos;
+        int it_y = ddb_listview_get_row_pos (listview, row_idx) - listview->scrollpos;
         if (y > it_y + listview->rowheight/2 && y < it_y + listview->rowheight) {
-            pick_ctx.item_idx++;
+            row_idx++;
         }
     }
-    return pick_ctx.item_idx;
+    return row_idx;
 }
 
 void
-ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
+ddb_listview_list_track_dragdrop (DdbListview *ps, int x, int y) {
     GtkWidget *widget = ps->list;
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
@@ -2386,7 +2393,7 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
         ps->scroll_direction = 0;
         return;
     }
-    int sel = ddb_listview_dragdrop_get_row_from_coord (ps, y);
+    int sel = ddb_listview_dragdrop_get_row_from_coord (ps, x, y);
     if (sel == -1) {
         if (ps->binding->count () == 0) {
             ps->drag_motion_y = 0;
