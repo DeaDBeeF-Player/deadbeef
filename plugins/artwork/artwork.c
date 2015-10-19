@@ -1510,6 +1510,7 @@ apev2_extract_art (const char *fname, const char *outname) {
 static int
 web_lookups(const char *artist, const char *album, const char *cache_path)
 {
+#if USE_VFS_CURL
     if (artwork_enable_lfm) {
         if (!fetch_from_lastfm(artist, album, cache_path)) {
             return 1;
@@ -1536,6 +1537,7 @@ web_lookups(const char *artist, const char *album, const char *cache_path)
             return 0;
         }
     }
+#endif
 
     return -1;
 }
