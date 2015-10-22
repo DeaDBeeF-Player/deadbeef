@@ -275,7 +275,11 @@ gtkui_run_preferences_dlg (void) {
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "tabstrip_selected_bold")), deadbeef->conf_get_int ("gtkui.tabstrip_embolden_selected", 0));
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "tabstrip_selected_italic")), deadbeef->conf_get_int ("gtkui.tabstrip_italic_selected", 0));
 
-    gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "tabstrip_text_font")), gtkui_get_tabstrip_text_font ());
+    // get default gtk font
+    GtkStyle *style = gtk_widget_get_style (mainwin);
+    const char *gtk_style_font = pango_font_description_to_string (style->font_desc);
+
+    gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "tabstrip_text_font")), deadbeef->conf_get_str_fast ("gtkui.font.tabstrip_text", gtk_style_font));
 
     // override listview colors
     override = deadbeef->conf_get_int ("gtkui.override_listview_colors", 0);
@@ -288,9 +292,9 @@ gtkui_run_preferences_dlg (void) {
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "listview_playing_text_bold")), deadbeef->conf_get_int ("gtkui.embolden_current_track", 0));
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "listview_playing_text_italic")), deadbeef->conf_get_int ("gtkui.italic_current_track", 0));
 
-    gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "listview_text_font")), gtkui_get_listview_text_font ());
-    gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "listview_group_text_font")), gtkui_get_listview_group_text_font ());
-    gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "listview_column_text_font")), gtkui_get_listview_column_text_font ());
+    gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "listview_text_font")), deadbeef->conf_get_str_fast ("gtkui.font.listview_text", gtk_style_font));
+    gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "listview_group_text_font")), deadbeef->conf_get_str_fast ("gtkui.font.listview_group_text", gtk_style_font));
+    gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "listview_column_text_font")), deadbeef->conf_get_str_fast ("gtkui.font.listview_column_text", gtk_style_font));
 
     // colors
     prefwin_init_theme_colors ();
