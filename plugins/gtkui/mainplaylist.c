@@ -88,7 +88,7 @@ int main_get_idx (DdbListviewIter it) {
     DB_playItem_t *c = deadbeef->pl_get_first (PL_MAIN);
     int idx = 0;
     while (c && c != it) {
-        DB_playItem_t *next = deadbeef->pl_get_next (c, PL_MAIN); 
+        DB_playItem_t *next = deadbeef->pl_get_next (c, PL_MAIN);
         deadbeef->pl_item_unref (c);
         c = next;
         idx++;
@@ -205,19 +205,6 @@ main_columns_changed (DdbListview *listview) {
     }
 }
 
-void main_col_free_user_data (void *data) {
-    if (data) {
-        col_info_t *inf = data;
-        if (inf->format) {
-            free (inf->format);
-        }
-        if (inf->bytecode) {
-            free (inf->bytecode);
-        }
-        free (data);
-    }
-}
-
 void
 main_vscroll_changed (int pos) {
     coverart_reset_queue ();
@@ -230,7 +217,7 @@ main_vscroll_changed (int pos) {
 
 void
 main_header_context_menu (DdbListview *ps, int column) {
-    GtkWidget *menu = create_headermenu (1);
+    GtkWidget *menu = create_headermenu (ps, 1);
     set_last_playlist_cm (ps); // playlist ptr for context menu
     set_active_column_cm (column);
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
@@ -266,9 +253,10 @@ DdbListviewBinding main_binding = {
     .draw_group_title = pl_common_draw_group_title,
 
     // columns
+    .is_album_art_column = is_album_art_column,
     .col_sort = main_col_sort,
     .columns_changed = main_columns_changed,
-    .col_free_user_data = main_col_free_user_data,
+    .col_free_user_data = pl_common_free_col_info,
 
     // callbacks
     .handle_doubleclick = main_handle_doubleclick,

@@ -294,7 +294,7 @@ int search_get_idx (DdbListviewIter it) {
     DB_playItem_t *c = deadbeef->pl_get_first (PL_SEARCH);
     int idx = 0;
     while (c && c != it) {
-        DB_playItem_t *next = deadbeef->pl_get_next (c, PL_SEARCH); 
+        DB_playItem_t *next = deadbeef->pl_get_next (c, PL_SEARCH);
         deadbeef->pl_item_unref (c);
         c = next;
         idx++;
@@ -351,17 +351,6 @@ search_columns_changed (DdbListview *listview) {
 }
 
 static void
-search_col_free_user_data (void *data) {
-    if (data) {
-        col_info_t *inf = data;
-        if (inf->format) {
-            free (inf->format);
-        }
-        free (data);
-    }
-}
-
-static void
 search_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx) {
     deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, deadbeef->pl_get_idx_of ((DB_playItem_t *)iter), 0);
 }
@@ -381,7 +370,7 @@ search_delete_selected (void) {
 
 static void
 search_header_context_menu (DdbListview *ps, int column) {
-    GtkWidget *menu = create_headermenu (1);
+    GtkWidget *menu = create_headermenu (ps, 1);
     set_last_playlist_cm (ps); // playlist ptr for context menu
     set_active_column_cm (column);
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
@@ -394,7 +383,7 @@ search_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it,
 }
 
 static void
-search_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height) 
+search_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height)
 {
     pl_common_draw_group_title (listview, drawable, it, PL_SEARCH, x, y, width, height);
 }
@@ -429,9 +418,10 @@ static DdbListviewBinding search_binding = {
     .draw_group_title = search_draw_group_title,
 
     // columns
+    .is_album_art_column = is_album_art_column,
     .col_sort = search_col_sort,
     .columns_changed = search_columns_changed,
-    .col_free_user_data = search_col_free_user_data,
+    .col_free_user_data = pl_common_free_col_info,
 
     // callbacks
     .handle_doubleclick = search_handle_doubleclick,
