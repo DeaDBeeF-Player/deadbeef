@@ -806,7 +806,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
 
         DdbListviewIter it = grp->head;
         listview->binding->ref(it);
-        for (int i = 0, yy = grp_y + listview->grouptitle_height; it && i < grp->num_items && yy < y + h; i++, yy += row_height) {
+        for (int i = 0, yy = grp_y + title_height; it && i < grp->num_items && yy < y + h; i++, yy += row_height) {
             if (yy + row_height >= y) {
 // GTK does this already, plus we are going to draw over every inch of it
 //                GtkStyle *st = gtk_widget_get_style (listview->list);
@@ -850,18 +850,14 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
         const int grp_next_y = grp_y + grp_height_total;
         ddb_listview_list_render_album_art(listview, cr, grp, grp_next_y, -scrollx, grp_y + title_height, x, x + w);
 
-        if (grp->pinned == 1 && gtkui_groups_pinned && y <= 0) {
+        if (grp->pinned == 1 && gtkui_groups_pinned && y <= title_height) {
             // draw pinned group title
-            int pushback = 0;
-            if (grp_next_y <= title_height) {
-                pushback = title_height - grp_next_y;
-            }
-            ddb_listview_list_render_row_background(listview, cr, NULL, 1, 0, -scrollx, y - pushback, total_width, title_height);
+            ddb_listview_list_render_row_background(listview, cr, NULL, 1, 0, -scrollx, 0, total_width, min(title_height, grp_next_y));
             if (listview->binding->draw_group_title && title_height > 0) {
-                listview->binding->draw_group_title(listview, cr, grp->head, PL_MAIN, -scrollx, y - pushback, total_width, title_height);
+                listview->binding->draw_group_title(listview, cr, grp->head, PL_MAIN, -scrollx, min(0, grp_next_y-title_height), total_width, title_height);
             }
         }
-        else if (grp_y + title_height >= y && grp_y < y + h) {
+        else if (y <= grp_y + title_height) {
             // draw normal group title
             ddb_listview_list_render_row_background(listview, cr, NULL, 1, 0, -scrollx, grp_y, total_width, title_height);
             if (listview->binding->draw_group_title && title_height > 0) {
