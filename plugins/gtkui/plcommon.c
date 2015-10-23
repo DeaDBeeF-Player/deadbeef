@@ -288,25 +288,6 @@ cover_draw_exact (DB_playItem_t *it, const int x, const int min_y, const int max
 
 void
 draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height) {
-    if (gtkui_override_listview_colors()) {
-        GdkColor clr;
-        gtkui_get_listview_even_row_color(&clr);
-        cairo_set_source_rgb(cr, clr.red/65535., clr.green/65535., clr.blue/65535.);
-        cairo_rectangle(cr, x, y, width, height);
-        cairo_fill(cr);
-    }
-    else {
-#if GTK_CHECK_VERSION(3,0,0)
-        GtkStyleContext *context = gtk_widget_get_style_context(listview->theme_treeview);
-        gtk_style_context_save(context);
-        gtk_style_context_add_region(context, GTK_STYLE_REGION_ROW, GTK_REGION_EVEN);
-        gtk_render_background(context, cr, x, y, width, height);
-        gtk_style_context_restore(context);
-#else
-        gtk_paint_flat_box(gtk_widget_get_style(listview->theme_treeview), gtk_widget_get_window(listview->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, listview->theme_treeview, "cell_even_ruled", x, y, width, height);
-#endif
-    }
-
     const int art_width = width - ART_PADDING_HORZ * 2;
     const int art_height = height - ART_PADDING_VERT * 2;
     if (art_width < 8 || art_height < 8 || !it) {

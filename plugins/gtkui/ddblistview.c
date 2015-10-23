@@ -1466,6 +1466,20 @@ ddb_listview_list_render_album_art (DdbListview *ps, cairo_t *cr, DdbListviewGro
     DdbListviewColumn *c;
     for (c = ps->columns; c; x += c->width, c = c->next) {
         if (ps->binding->is_album_art_column(c->user_data) && x + c->width > x1 && x < x2) {
+            if (gtkui_override_listview_colors()) {
+                GdkColor clr;
+                gtkui_get_listview_even_row_color(&clr);
+                cairo_set_source_rgb(cr, clr.red/65535., clr.green/65535., clr.blue/65535.);
+                cairo_rectangle(cr, x, y, c->width, grp->height);
+                cairo_fill(cr);
+            }
+            else {
+#if GTK_CHECK_VERSION(3,0,0)
+                render_row_background(ps, GTK_STATE_NORMAL, TRUE, cr, x, y, c->width, grp->height);
+#else
+                gtk_paint_flat_box(gtk_widget_get_style(ps->theme_treeview), gtk_widget_get_window(ps->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, ps->theme_treeview, "cell_even_ruled", x, y, c->width, grp->height);
+#endif
+            }
             ps->binding->draw_album_art(ps, cr, ps->grouptitle_height > 0 ? grp->head : NULL, c->user_data, grp->pinned, grp_next_y, x, y, c->width, grp->height);
         }
     }
@@ -2374,11 +2388,11 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr, const int x1, const in
 #if GTK_CHECK_VERSION(3,0,0)
                     GtkStyleContext *context = gtk_widget_get_style_context(ps->theme_treeview);
                     gtk_style_context_add_class(context, GTK_STYLE_CLASS_SEPARATOR);
-                    gtk_render_frame(context, cr, xx-2, 2, 2, h-4);
+                    gtk_render_line(context, cr, xx-3, 2, xx-3, h-4);
                     gtk_style_context_remove_class(context, GTK_STYLE_CLASS_SEPARATOR);
 //                    gtk_paint_vline (gtk_widget_get_style (ps->header), cr, GTK_STATE_NORMAL, ps->header, NULL, 2, h-4, xx - 3);
 #else
-                    gtk_paint_vline (ps->header->style, ps->header->window, GTK_STATE_NORMAL, NULL, ps->header, NULL, 2, h-4, xx-2);
+                    gtk_paint_vline (ps->header->style, ps->header->window, GTK_STATE_NORMAL, NULL, ps->header, NULL, 2, h-4, xx-3);
 #endif
                 }
             }
