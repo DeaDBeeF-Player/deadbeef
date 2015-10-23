@@ -307,7 +307,7 @@ adjust_cache(struct timeval *oldest)
     thrash_count = timeval_older(&now, oldest) ? thrash_count+1 : 0;
 
     /* Grab more space more quickly at small cache sizes */
-    if (1<<thrash_count > thumb_cache_size) {
+    if (thrash_count*2 >= thumb_cache_size) {
         cached_pixbuf_t *new_thumb_cache = realloc(thumb_cache, sizeof(cached_pixbuf_t) * thumb_cache_size * 2);
         if (new_thumb_cache) {
             memset(&new_thumb_cache[thumb_cache_size], '\0', sizeof(cached_pixbuf_t) * thumb_cache_size);
