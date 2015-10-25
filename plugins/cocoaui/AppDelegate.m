@@ -26,6 +26,9 @@
 #import "DdbWidgetManager.h"
 #import "DdbPlaylistViewController.h"
 #import "DdbShared.h"
+#include "conf.h"
+#include "streamer.h"
+#include "junklib.h"
 
 #include "../../deadbeef.h"
 #include <sys/time.h>
@@ -81,6 +84,10 @@ NSInteger firstSelected = -1;
     [_stopAfterCurrentAlbum setState:deadbeef->conf_get_int ("playlist.stop_after_current_album", 0)?NSOnState:NSOffState];
 
     [_descendingSortMode setState:deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSOnState : NSOffState];
+
+    conf_save ();
+    streamer_configchanged ();
+    junk_configchanged ();
 }
 
 static int fileadd_cancelled = 0;
