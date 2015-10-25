@@ -179,12 +179,10 @@ deferred_cover_load_cb (void *ctx) {
     // find 1st group
     DdbListviewGroup *grp = lv->groups;
     int idx = 0;
-    int abs_idx = 0;
     int grp_y = 0;
     while (grp && grp_y + grp->height < lv->scrollpos) {
         grp_y += grp->height;
         idx += grp->num_items + 1;
-        abs_idx += grp->num_items;
         grp = grp->next;
     }
     GtkAllocation a;
@@ -340,7 +338,7 @@ draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewIter group_it, in
 }
 
 void
-draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int column, int iter, int x, int y, int width, int height) {
+draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int column, int iter, int x, int y, int width, int height) {
     const char *ctitle;
     int cwidth;
     int calign_right;
@@ -395,7 +393,8 @@ draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int co
                 .plt = deadbeef->plt_get_curr (),
                 .iter = iter,
                 .id = cinf->id,
-                .flags = DDB_TF_CONTEXT_HAS_ID,
+                .idx = idx,
+                .flags = DDB_TF_CONTEXT_HAS_ID | DDB_TF_CONTEXT_HAS_INDEX,
             };
             deadbeef->tf_eval (&ctx, cinf->bytecode, text, sizeof (text));
             if (ctx.update > 0 && !listview->tf_redraw_timeout_id) {

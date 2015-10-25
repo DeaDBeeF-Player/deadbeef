@@ -103,7 +103,7 @@ ddb_listview_list_render (DdbListview *ps, cairo_t *cr, int x, int y, int w, int
 void
 ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h);
 void
-ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h);
+ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int idx, int even, int cursor, int x, int y, int w, int h);
 void
 ddb_listview_list_render_album_art (DdbListview *ps, cairo_t *cr, DdbListviewIter group_it, int group_pinned, int grp_next_y, int x, int y, int w, int h);
 void
@@ -807,7 +807,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
                 cairo_rectangle (cr, -listview->hscrollpos, grp_row_y - listview->scrollpos, listview->totalwidth, listview->rowheight);
                 cairo_fill (cr);
                 ddb_listview_list_render_row_background (listview, cr, it, i & 1, (abs_idx+i) == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_row_y - listview->scrollpos, listview->totalwidth, listview->rowheight);
-                ddb_listview_list_render_row_foreground (listview, cr, it, (idx + 1 + i) & 1, (idx+i) == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_row_y - listview->scrollpos, listview->totalwidth, listview->rowheight);
+                ddb_listview_list_render_row_foreground (listview, cr, it, abs_idx + i, (idx + 1 + i) & 1, (idx+i) == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_row_y - listview->scrollpos, listview->totalwidth, listview->rowheight);
             }
             DdbListviewIter next = listview->binding->next (it);
             listview->binding->unref (it);
@@ -1453,7 +1453,7 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
 }
 
 void
-ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h) {
+ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int idx, int even, int cursor, int x, int y, int w, int h) {
     int width, height;
     GtkAllocation a;
     gtk_widget_get_allocation (ps->list, &a);
@@ -1474,7 +1474,7 @@ ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListvi
     for (c = ps->columns; c; c = c->next, cidx++) {
         int cw = c->width;
         if (!ddb_listview_is_album_art_column_idx (ps, cidx)) {
-            ps->binding->draw_column_data (ps, cr, it, cidx, PL_MAIN, x, y, cw, h);
+            ps->binding->draw_column_data (ps, cr, it, idx, cidx, PL_MAIN, x, y, cw, h);
         }
         x += cw;
     }
