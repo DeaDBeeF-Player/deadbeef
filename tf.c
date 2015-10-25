@@ -649,9 +649,39 @@ tf_func_meta (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
         return 0;
     }
 
-    int nb = (int)strlen (meta);
-    nb = min (nb, outlen);
-    return u8_strnbcpy(out, meta, nb);
+    return u8_strnbcpy(out, meta, outlen);
+}
+
+const char *
+tf_get_channels_string_for_track (playItem_t *it) {
+    const char *val = pl_find_meta_raw (it, ":CHANNELS");
+    if (val) {
+        int ch = atoi (val);
+        if (ch == 1) {
+            val = _("mono");
+        }
+        else if (ch == 2) {
+            val = _("stereo");
+        }
+    }
+    else {
+        val = _("stereo");
+    }
+    return val;
+}
+
+int
+tf_func_channels (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 0) {
+        return -1;
+    }
+
+    if (!ctx->it) {
+        return 0;
+    }
+
+    const char *val = tf_get_channels_string_for_track ((playItem_t *)ctx->it);
+    return u8_strnbcpy(out, val, outlen);
 }
 
 tf_func_def tf_funcs[TF_MAX_FUNCS] = {
@@ -680,6 +710,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "strcmp", tf_func_strcmp },
     // Track info
     { "meta", tf_func_meta },
+    { "channels", tf_func_channels },
     { NULL, NULL }
 };
 
@@ -902,19 +933,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     }
                 }
                 else if (!strcmp (name, "channels")) {
-                    val = pl_find_meta_raw (it, ":CHANNELS");
-                    if (val) {
-                        int ch = atoi (val);
-                        if (ch == 1) {
-                            val = _("mono");
-                        }
-                        else if (ch == 2) {
-                            val = _("stereo");
-                        }
-                        else {
-                            val = _("multichannel");
-                        }
-                    }
+                    val = tf_get_channels_string_for_track (it);
                 }
                 else if (!strcmp (name, "codec")) {
                     val = pl_find_meta_raw (it, ":FILETYPE");

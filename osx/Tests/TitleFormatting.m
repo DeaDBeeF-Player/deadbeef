@@ -680,4 +680,33 @@
     free (buffer);
 }
 
+- (void)test_ChannelsFor3ChTrack_Gives3 {
+    pl_replace_meta (it, ":CHANNELS", "3");
+    char *bc = tf_compile("%channels%");
+    char *buffer = malloc (1000);
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "3"), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_ChannelsFuncForMonoTrack_GivesMono {
+    pl_replace_meta (it, ":CHANNELS", "1");
+    char *bc = tf_compile("$channels()");
+    char *buffer = malloc (1000);
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "mono"), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_ChannelsFuncForUnsetChannels_GivesStereo {
+    char *bc = tf_compile("$channels()");
+    char *buffer = malloc (1000);
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "stereo"), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
 @end
