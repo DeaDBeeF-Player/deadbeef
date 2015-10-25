@@ -380,13 +380,13 @@ int grouptitleheight = 22;
                 for (DdbListviewCol_t col = [listview.delegate firstColumn]; col != [listview.delegate invalidColumn]; col = [listview.delegate nextColumn:col]) {
                     int w = [listview.delegate columnWidth:col];
                     if (CGRectIntersectsRect(dirtyRect, NSMakeRect(x, grp_row_y, w, rowheight))) {
-                        [listview.delegate drawCell:it forColumn:col inRect:NSMakeRect(x, grp_row_y, w, rowheight-1) focused:YES];
+                        [listview.delegate drawCell:abs_idx forRow: it forColumn:col inRect:NSMakeRect(x, grp_row_y, w, rowheight-1) focused:YES];
                     }
                     x += w;
                 }
 
                 if (x < dirtyRect.size.width) {
-                    [listview.delegate drawCell:it forColumn:[delegate invalidColumn] inRect:NSMakeRect(x, grp_row_y, dirtyRect.size.width-x, rowheight-1) focused:YES];
+                    [listview.delegate drawCell:abs_idx forRow:it forColumn:[delegate invalidColumn] inRect:NSMakeRect(x, grp_row_y, dirtyRect.size.width-x, rowheight-1) focused:YES];
                 }
             }
             if (it == cursor_it) {
@@ -404,10 +404,10 @@ int grouptitleheight = 22;
             if (!it) {
                 break; // sanity check, in case groups were not rebuilt yet
             }
+            abs_idx++;
         }
 
         idx += grp->num_items + 1;
-        abs_idx += grp->num_items;
 
         int filler = grp_height_total - (grp_height);
         if (filler > 0) {

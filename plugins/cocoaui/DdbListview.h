@@ -55,7 +55,7 @@ typedef intptr_t DdbListviewCol_t;
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row;
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect;
 - (void)drawRowBackground:(DdbListviewRow_t)row inRect:(NSRect)rect;
-- (void)drawCell:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused;
+- (void)drawCell:(int)rowIdx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused;
 - (void)drawGroupTitle:(DdbListviewRow_t)row inRect:(NSRect)rect;
 - (int)modificationIdx;
 - (void)selectionChanged:(DdbListviewRow_t)row;
