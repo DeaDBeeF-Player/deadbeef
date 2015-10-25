@@ -60,7 +60,7 @@ struct _DdbListviewGroup {
     struct _DdbListviewGroup *next;
 };
 
-typedef int (*minheight_cb) (void *user_data, const int width);
+typedef int (*minheight_cb_t) (void *user_data, int width);
 typedef struct _DdbListviewGroup DdbListviewGroup;
 //typedef void * DdbListviewColIter;
 
@@ -205,7 +205,7 @@ struct _DdbListview {
 };
 
 struct _DdbListviewClass {
-  GtkTableClass parent_class;
+    GtkTableClass parent_class;
 };
 
 GType ddb_listview_get_type(void);
@@ -237,15 +237,15 @@ ddb_listview_is_scrolling (DdbListview *listview);
 int
 ddb_listview_column_get_count (DdbListview *listview);
 void
-ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, minheight_cb, int color_override, GdkColor color, void *user_data);
+ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);
 void
-ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, minheight_cb, int color_override, GdkColor color, void *user_data);
+ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);
 void
 ddb_listview_column_remove (DdbListview *listview, int idx);
 int
-ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, minheight_cb *, int *color_override, GdkColor *color, void **user_data);
+ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, minheight_cb_t *, int *color_override, GdkColor *color, void **user_data);
 int
-ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, minheight_cb, int color_override, GdkColor color, void *user_data);
+ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);
 
 void
 ddb_listview_show_header (DdbListview *listview, int show);

@@ -61,7 +61,7 @@ static GdkPixbuf *pixbuf_default;
 static size_t thrash_count;
 
 typedef struct cover_callback_s {
-    cover_avail_callback cb;
+    cover_avail_callback_t cb;
     void *ud;
     struct cover_callback_s *next;
 } cover_callback_t;
@@ -87,7 +87,7 @@ typedef struct {
     char *cache_path;
     int width;
     int height;
-    cover_avail_callback callback;
+    cover_avail_callback_t callback;
     void *user_data;
 } cover_avail_info_t;
 
@@ -139,7 +139,7 @@ gtkui_is_default_pixbuf (GdkPixbuf *pb) {
 }
 
 static cover_callback_t *
-add_callback(cover_avail_callback cb, void *ud)
+add_callback(cover_avail_callback_t cb, void *ud)
 {
     if (!cb) {
         return NULL;
@@ -171,7 +171,7 @@ process_query_callbacks(cover_callback_t *callback, const int send)
 }
 
 static void
-queue_add (cache_type_t cache_type, char *fname, const int width, const int height, cover_avail_callback cb, void *ud)
+queue_add (cache_type_t cache_type, char *fname, const int width, const int height, cover_avail_callback_t cb, void *ud)
 {
     trace("coverart: queue_add %s @ %ix%i pixels\n", fname, width, height);
     load_query_t *q = malloc(sizeof(load_query_t));
@@ -198,7 +198,7 @@ queue_add (cache_type_t cache_type, char *fname, const int width, const int heig
 }
 
 static void
-queue_add_load (cache_type_t cache_type, char *fname, const int width, const int height, cover_avail_callback cb, void *ud)
+queue_add_load (cache_type_t cache_type, char *fname, const int width, const int height, cover_avail_callback_t cb, void *ud)
 {
     for (load_query_t *q = queue; q; q = q->next) {
         if (q->fname && !strcmp (q->fname, fname) && width == q->width && height == q->height) {
@@ -446,7 +446,7 @@ get_pixbuf (cache_type_t cache_type, const char *fname, const int width, const i
 }
 
 void
-queue_cover_callback (cover_avail_callback callback, void *user_data) {
+queue_cover_callback (cover_avail_callback_t callback, void *user_data) {
     if (artwork_plugin && callback) {
         deadbeef->mutex_lock (mutex);
         queue_add(-1, NULL, -1, -1, callback, user_data);
@@ -512,7 +512,7 @@ best_cached_pixbuf(cache_type_t cache_type, const char *path)
 }
 
 static cover_avail_info_t *
-cover_avail_info(cache_type_t cache_type, char *cache_path, const int width, const int height, cover_avail_callback callback, void *user_data)
+cover_avail_info(cache_type_t cache_type, char *cache_path, const int width, const int height, cover_avail_callback_t callback, void *user_data)
 {
     if (cache_path) {
         cover_avail_info_t *dt = malloc(sizeof(cover_avail_info_t));
@@ -534,7 +534,7 @@ cover_avail_info(cache_type_t cache_type, char *cache_path, const int width, con
 }
 
 static GdkPixbuf *
-get_cover_art_int(cache_type_t cache_type, const char *fname, const char *artist, const char *album, int width, int height, cover_avail_callback callback, void *user_data)
+get_cover_art_int(cache_type_t cache_type, const char *fname, const char *artist, const char *album, int width, int height, cover_avail_callback_t callback, void *user_data)
 {
     if (!artwork_plugin) {
         return NULL;
@@ -581,31 +581,31 @@ get_cover_art_int(cache_type_t cache_type, const char *fname, const char *artist
 
 // Deprecated
 GdkPixbuf *
-get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, cover_avail_callback callback, void *user_data)
+get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, cover_avail_callback_t callback, void *user_data)
 {
     return get_cover_art_int(CACHE_TYPE_THUMB, fname, artist, album, width, -1, callback, user_data);
 }
 
 GdkPixbuf *
-get_cover_art_primary (const char *fname, const char *artist, const char *album, int width, cover_avail_callback callback, void *user_data)
+get_cover_art_primary (const char *fname, const char *artist, const char *album, int width, cover_avail_callback_t callback, void *user_data)
 {
     return get_cover_art_int(CACHE_TYPE_PRIMARY, fname, artist, album, width, -1, callback, user_data);
 }
 
 GdkPixbuf *
-get_cover_art_primary_by_size (const char *fname, const char *artist, const char *album, int width, int height, cover_avail_callback callback, void *user_data)
+get_cover_art_primary_by_size (const char *fname, const char *artist, const char *album, int width, int height, cover_avail_callback_t callback, void *user_data)
 {
     return get_cover_art_int(CACHE_TYPE_PRIMARY, fname, artist, album, width, height, callback, user_data);
 }
 
 GdkPixbuf *
-get_cover_art_thumb (const char *fname, const char *artist, const char *album, int width, cover_avail_callback callback, void *user_data)
+get_cover_art_thumb (const char *fname, const char *artist, const char *album, int width, cover_avail_callback_t callback, void *user_data)
 {
     return get_cover_art_int(CACHE_TYPE_THUMB, fname, artist, album, width, -1, callback, user_data);
 }
 
 GdkPixbuf *
-get_cover_art_thumb_by_size (const char *fname, const char *artist, const char *album, int width, int height, cover_avail_callback callback, void *user_data)
+get_cover_art_thumb_by_size (const char *fname, const char *artist, const char *album, int width, int height, cover_avail_callback_t callback, void *user_data)
 {
     return get_cover_art_int(CACHE_TYPE_THUMB, fname, artist, album, width, height, callback, user_data);
 }
