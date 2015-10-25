@@ -82,12 +82,21 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
 res = tf_eval_int (ctx, arg, arg_len, out, outlen, &bool_out, fail_on_undef);\
 if (res < 0) { *out = 0; return -1; }
 
+// empty track is used when ctx.it is null
+static playItem_t empty_track;
+
 int
 tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
     if (!code) {
         *out = 0;
         return 0;
     }
+    int null_it = 0;
+    if (!ctx->it) {
+        null_it = 1;
+        ctx->it = &empty_track;
+    }
+
     int32_t codelen = *((int32_t *)code);
     code += 4;
     memset (out, 0, outlen);
@@ -121,6 +130,9 @@ tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
         if (*out == '\n') {
             *out = ';';
         }
+    }
+    if (null_it) {
+        ctx->it = NULL;
     }
     return l;
 }
