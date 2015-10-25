@@ -385,11 +385,22 @@
 }
 
 - (void)test_InvalidPercentExpression_WithNullTrack_NoCrash {
-    char *bc = tf_compile("deadbeef - %version%");
+    char *bc = tf_compile("begin - %version% - end");
     char *buffer = malloc (1000);
     ctx.it = NULL;
-    XCTAssertNoThrow(tf_eval (&ctx, bc, buffer, 1000), @"Crashed!");
+    tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
+    XCTAssert(!strcmp ("begin -  - end", buffer), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_InvalidPercentExpression_WithNullTrackAccessingMetadata_NoCrash {
+    char *bc = tf_compile("begin - %title% - end");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp ("begin -  - end", buffer), @"The actual output is: %s", buffer);
     free (buffer);
 }
 
