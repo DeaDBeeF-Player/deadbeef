@@ -47,6 +47,8 @@
 #define DISABLE_CUSTOM_TITLE
 
 // playlist theming
+GtkWidget *theme_button;
+GtkWidget *theme_treeview;
 static GdkPixbuf *play16_pixbuf;
 static GdkPixbuf *pause16_pixbuf;
 static GdkPixbuf *buffering16_pixbuf;
@@ -59,6 +61,13 @@ pl_common_init(void)
     play16_pixbuf = create_pixbuf("play_16.png");
     pause16_pixbuf = create_pixbuf("pause_16.png");
     buffering16_pixbuf = create_pixbuf("buffering_16.png");
+
+    theme_treeview = gtk_tree_view_new();
+    gtk_widget_show(theme_treeview);
+    gtk_widget_set_can_focus(theme_treeview, FALSE);
+    gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(theme_treeview), TRUE);
+    gtk_box_pack_start(GTK_BOX(gtk_bin_get_child(GTK_BIN(mainwin))), theme_treeview, FALSE, FALSE, 0);
+    theme_button = mainwin;
 }
 
 void
@@ -174,7 +183,7 @@ tf_redraw_cb (gpointer user_data) {
 #define ART_PADDING_VERT 0
 
 static int
-min_group_height(void *user_data, const int width) {
+min_group_height(void *user_data, int width) {
     col_info_t *info = (col_info_t *)user_data;
     if (info->id == DB_COLUMN_ALBUM_ART) {
         return width - 2*ART_PADDING_HORZ + 2*ART_PADDING_VERT;
@@ -190,7 +199,7 @@ is_album_art_column (void *user_data) {
 }
 
 static GdkPixbuf *
-get_cover_art (DB_playItem_t *it, const int width, const int height, void (*callback)(void *), void *user_data) {
+get_cover_art (DB_playItem_t *it, int width, int height, void (*callback)(void *), void *user_data) {
     deadbeef->pl_lock();
     const char *uri = deadbeef->pl_find_meta(it, ":URI");
     const char *album = deadbeef->pl_find_meta(it, "album");
@@ -231,7 +240,7 @@ cover_load (void *user_data) {
 
     GtkAllocation a;
     gtk_widget_get_allocation(info->listview->list, &a);
-    const int end_pos = info->listview->scrollpos + a.height;
+    int end_pos = info->listview->scrollpos + a.height;
     while (group && group_y < end_pos) {
         GdkPixbuf *pixbuf = get_cover_art(group->head, info->new_cover_size, info->new_cover_size, NULL, NULL);
         if (pixbuf) {
@@ -247,10 +256,10 @@ cover_load (void *user_data) {
 }
 
 static void
-cover_draw_cairo (GdkPixbuf *pixbuf, const int x, const int min_y, const int max_y, const int width, const int height, cairo_t *cr, const int filter) {
-    const int pw = gdk_pixbuf_get_width(pixbuf);
-    const int ph = gdk_pixbuf_get_height(pixbuf);
-    const int real_y = min(min_y, max_y - ph);
+cover_draw_cairo (GdkPixbuf *pixbuf, int x, int min_y, int max_y, int width, int height, cairo_t *cr, int filter) {
+    int pw = gdk_pixbuf_get_width(pixbuf);
+    int ph = gdk_pixbuf_get_height(pixbuf);
+    int real_y = min(min_y, max_y - ph);
     cairo_save(cr);
     cairo_rectangle(cr, x, min_y, width, max_y - min_y);
     cairo_translate (cr, x, real_y);
@@ -266,7 +275,7 @@ cover_draw_cairo (GdkPixbuf *pixbuf, const int x, const int min_y, const int max
 }
 
 static void
-cover_draw_anything (DB_playItem_t *it, const int x, const int min_y, const int max_y, const int width, const int height, cairo_t *cr) {
+cover_draw_anything (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr) {
     GdkPixbuf *pixbuf = get_cover_art(it, -1, -1, NULL, NULL);
     if (pixbuf) {
         cover_draw_cairo(pixbuf, x, min_y, max_y, width, height, cr, CAIRO_FILTER_FAST);
@@ -275,7 +284,7 @@ cover_draw_anything (DB_playItem_t *it, const int x, const int min_y, const int 
 }
 
 static void
-cover_draw_exact (DB_playItem_t *it, const int x, const int min_y, const int max_y, const int width, const int height, cairo_t *cr, void *user_data) {
+cover_draw_exact (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr, void *user_data) {
     GdkPixbuf *pixbuf = get_cover_art(it, width, width, cover_invalidate, user_data);
     if (pixbuf) {
         cover_draw_cairo(pixbuf, x, min_y, max_y, width, height, cr, CAIRO_FILTER_BEST);
@@ -288,8 +297,8 @@ cover_draw_exact (DB_playItem_t *it, const int x, const int min_y, const int max
 
 void
 draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height) {
-    const int art_width = width - ART_PADDING_HORZ * 2;
-    const int art_height = height - ART_PADDING_VERT * 2;
+    int art_width = width - ART_PADDING_HORZ * 2;
+    int art_height = height - ART_PADDING_VERT * 2;
     if (art_width < 8 || art_height < 8 || !it) {
         return;
     }
@@ -300,8 +309,8 @@ draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *use
         info->cover_size = art_width;
     }
 
-    const int art_x = x + ART_PADDING_HORZ;
-    const int min_y = (pinned == 1 && gtkui_groups_pinned ? listview->grouptitle_height : y) + ART_PADDING_VERT;
+    int art_x = x + ART_PADDING_HORZ;
+    int min_y = (pinned == 1 && gtkui_groups_pinned ? listview->grouptitle_height : y) + ART_PADDING_VERT;
     if (info->cover_size == art_width) {
         cover_draw_exact(it, art_x, min_y, next_y, art_width, art_height, cr, info);
     }
@@ -400,14 +409,14 @@ draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int co
         GdkColor *color = NULL;
         if (theming) {
             if (deadbeef->pl_is_selected (it)) {
-                color = &gtk_widget_get_style (listview->theme_treeview)->text[GTK_STATE_SELECTED];
+                color = &gtk_widget_get_style (theme_treeview)->text[GTK_STATE_SELECTED];
             }
             else {
                 if (color_override) {
                     color = &fg_clr;
                 }
                 else {
-                    color = &gtk_widget_get_style (listview->theme_treeview)->text[GTK_STATE_NORMAL];
+                    color = &gtk_widget_get_style (theme_treeview)->text[GTK_STATE_NORMAL];
                 }
             }
         }
@@ -1599,7 +1608,7 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
 
         int theming = !gtkui_override_listview_colors ();
         if (theming) {
-            GdkColor *clr = &gtk_widget_get_style(listview->theme_treeview)->fg[GTK_STATE_NORMAL];
+            GdkColor *clr = &gtk_widget_get_style(theme_treeview)->fg[GTK_STATE_NORMAL];
             float rgb[] = {clr->red/65535., clr->green/65535., clr->blue/65535.};
             draw_set_fg_color (&listview->grpctx, rgb);
         }

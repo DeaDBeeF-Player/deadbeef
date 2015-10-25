@@ -127,9 +127,6 @@ struct _DdbListview {
     GtkWidget *header;
     GtkWidget *scrollbar;
     GtkWidget *hscrollbar;
-    GtkWidget *theme_treeview;
-    GtkWidget *theme_button;
-    GtkStyle *button_style;
 
     int totalwidth; // width of listview, including invisible (scrollable) part
     const char *title; // unique id, used for config writing, etc
