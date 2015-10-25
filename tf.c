@@ -449,7 +449,7 @@ tf_func_if (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *ou
     int res;
     TF_EVAL_CHECK(res, ctx, arg, arglens[0], out, outlen, fail_on_undef);
     arg += arglens[0];
-    if (res > 0 && bool_out) {
+    if (bool_out) {
         trace ("condition true, eval then block\n");
         TF_EVAL_CHECK(res, ctx, arg, arglens[1], out, outlen, fail_on_undef);
     }
@@ -473,7 +473,7 @@ tf_func_if2 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
     int res;
     TF_EVAL_CHECK(res, ctx, arg, arglens[0], out, outlen, fail_on_undef);
     arg += arglens[0];
-    if (res > 0 && bool_out) {
+    if (bool_out) {
         return res;
     }
     else {
@@ -495,7 +495,7 @@ tf_func_if3 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
         int res;
         TF_EVAL_CHECK(res, ctx, arg, arglens[i], out, outlen, fail_on_undef);
         arg += arglens[i];
-        if ((res > 0 && bool_out) || i == argc-1) {
+        if (bool_out || i == argc-1) {
             return res;
         }
     }
@@ -684,6 +684,74 @@ tf_func_channels (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, ch
     return u8_strnbcpy(out, val, outlen);
 }
 
+// Boolean
+int
+tf_func_and (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    int bool_out = 0;
+
+    char *arg = args;
+    for (int i = 0; i < argc; i++) {
+        int len;
+        TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
+        if (!bool_out) {
+            return 0;
+        }
+        arg += arglens[i];
+    }
+    *out = 0;
+    return 1;
+}
+
+int
+tf_func_or (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    int bool_out = 0;
+
+    char *arg = args;
+    for (int i = 0; i < argc; i++) {
+        int len;
+        TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
+        if (bool_out) {
+            return 1;
+        }
+        arg += arglens[i];
+    }
+    *out = 0;
+    return 0;
+}
+
+int
+tf_func_not (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1) {
+        return -1;
+    }
+    int bool_out = 0;
+
+    int len;
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+    return !bool_out;
+}
+
+int
+tf_func_xor (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    int bool_out = 0;
+    int result = 0;
+
+    char *arg = args;
+    for (int i = 0; i < argc; i++) {
+        int len;
+        TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
+        if (i == 0) {
+            result = bool_out;
+        }
+        else {
+            result ^= bool_out;
+        }
+        arg += arglens[i];
+    }
+    *out = 0;
+    return result;
+}
+
 tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     // Control flow
     { "if", tf_func_if },
@@ -704,6 +772,11 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "muldiv", tf_func_muldiv },
     { "rand", tf_func_rand },
     { "sub", tf_func_sub },
+    // Boolean
+    { "and", tf_func_and },
+    { "or", tf_func_or },
+    { "not", tf_func_not },
+    { "xor", tf_func_xor },
     // String
     { "cut", tf_func_left },
     { "left", tf_func_left },
@@ -744,8 +817,13 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     return -1;
                 }
                 if (res > 0) {
-                    *bool_out = res;
+                    *bool_out = 1;
+                    // hack for returning true + empty string result (e.g. tf_func_and)
+                    if (*out == 0) {
+                        res = 0;
+                    }
                 }
+
                 out += res;
                 outlen -= res;
 
