@@ -709,4 +709,118 @@
     free (buffer);
 }
 
+- (void)test_AndTrueArgs_ReturnsTrue {
+    pl_replace_meta (it, "artist", "artist");
+    pl_replace_meta (it, "album", "album");
+
+    char *bc = tf_compile("$if($and(%artist%,%album%),true,false)");
+    char *buffer = malloc (1000);
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "true"), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_AndTrueAndFalseArgs_ReturnsFalse {
+    pl_replace_meta (it, "artist", "artist");
+
+    char *bc = tf_compile("$if($and(%artist%,%album%),true,false)");
+    char *buffer = malloc (1000);
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "false"), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_AndFalseArgs_ReturnsFalse {
+    char *bc = tf_compile("$if($and(%artist%,%album%),true,false)");
+    char *buffer = malloc (1000);
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "false"), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_OrTrueAndFalseArgs_ReturnsTrue {
+    pl_replace_meta (it, "artist", "artist");
+
+    char *bc = tf_compile("$if($or(%artist%,%album%),true,false)");
+    char *buffer = malloc (1000);
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "true"), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_OrTrueArgs_ReturnsTrue {
+    pl_replace_meta (it, "artist", "artist");
+    pl_replace_meta (it, "album", "album");
+
+    char *bc = tf_compile("$if($or(%artist%,%album%),true,false)");
+    char *buffer = malloc (1000);
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "true"), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_OrFalseArgs_ReturnsFalse {
+    char *bc = tf_compile("$if($or(%artist%,%album%),true,false)");
+    char *buffer = malloc (1000);
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "false"), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_NotTrueArg_ReturnsFalse {
+    pl_replace_meta (it, "artist", "artist");
+    char *bc = tf_compile("$if($not(%artist%),true,false)");
+    char *buffer = malloc (1000);
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "false"), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_NotFalseArg_ReturnsTrue {
+    char *bc = tf_compile("$if($not(%artist%),true,false)");
+    char *buffer = malloc (1000);
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "true"), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_XorTrueAndTrue_ReturnsFalse {
+    pl_replace_meta (it, "artist", "artist");
+    pl_replace_meta (it, "album", "album");
+    char *bc = tf_compile("$if($xor(%artist%,%album%),true,false)");
+    char *buffer = malloc (1000);
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "false"), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_XorTrueAndFalse_ReturnsTrue {
+    pl_replace_meta (it, "artist", "artist");
+    char *bc = tf_compile("$if($xor(%artist%,%album%),true,false)");
+    char *buffer = malloc (1000);
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "true"), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
+- (void)test_XorFalseTrueFalse_ReturnsTrue {
+    pl_replace_meta (it, "artist", "artist");
+    char *bc = tf_compile("$if($xor(%album%,%artist%,%album%),true,false)");
+    char *buffer = malloc (1000);
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "true"), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
 @end
