@@ -411,8 +411,6 @@
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
     XCTAssert(!strcmp ("begin - 0 - end", buffer), @"The actual output is: %s", buffer);
-    tf_free (bc);
-    XCTAssert(!strcmp ("begin -  - end", buffer), @"The actual output is: %s", buffer);
     free (buffer);
 }
 
