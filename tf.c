@@ -84,6 +84,8 @@ if (res < 0) { *out = 0; return -1; }
 
 // empty track is used when ctx.it is null
 static playItem_t empty_track;
+// empty playlist is used when ctx.plt is null
+static playlist_t empty_playlist;
 
 int
 tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
@@ -91,10 +93,17 @@ tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
         *out = 0;
         return 0;
     }
+
     int null_it = 0;
     if (!ctx->it) {
         null_it = 1;
         ctx->it = &empty_track;
+    }
+
+    int null_plt = 0;
+    if (!ctx->plt) {
+        null_plt = 1;
+        ctx->plt = &empty_playlist;
     }
 
     int32_t codelen = *((int32_t *)code);
@@ -133,6 +142,9 @@ tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
     }
     if (null_it) {
         ctx->it = NULL;
+    }
+    if (null_plt) {
+        ctx->plt = NULL;
     }
     return l;
 }
@@ -1084,29 +1096,25 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 // index of track in playlist (zero-padded)
                 else if (!strcmp (name, "list_index")) {
                     if (it) {
-                        playlist_t *plt = pl_get_playlist (it);
-                        if (plt) {
-                            int total_tracks = plt_get_item_count (plt, ctx->iter);
-                            int digits = 0;
-                            do {
-                                total_tracks /= 10;
-                                digits++;
-                            } while (total_tracks);
+                        int total_tracks = plt_get_item_count (ctx->plt, ctx->iter);
+                        int digits = 0;
+                        do {
+                            total_tracks /= 10;
+                            digits++;
+                        } while (total_tracks);
 
-                            int idx = 0;
-                            if (ctx->flags & DDB_TF_CONTEXT_HAS_INDEX) {
-                                idx = ctx->idx + 1;
-                            }
-                            else {
-                                idx = pl_get_idx_of_iter (it, ctx->iter) + 1;
-                            }
-                            int len = snprintf (out, outlen, "%0*d", digits, idx);
-                            out += len;
-                            outlen -= len;
-                            skip_out = 1;
-                            val = NULL;
-                            plt_unref (plt);
+                        int idx = 0;
+                        if (ctx->flags & DDB_TF_CONTEXT_HAS_INDEX) {
+                            idx = ctx->idx + 1;
                         }
+                        else {
+                            idx = pl_get_idx_of_iter (it, ctx->iter) + 1;
+                        }
+                        int len = snprintf (out, outlen, "%0*d", digits, idx);
+                        out += len;
+                        outlen -= len;
+                        skip_out = 1;
+                        val = NULL;
                     }
                 }
                 // total number of tracks in playlist

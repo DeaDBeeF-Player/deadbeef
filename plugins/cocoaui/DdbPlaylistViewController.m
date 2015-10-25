@@ -540,7 +540,7 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-- (void)drawCell:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused {
+- (void)drawCell:(int)idx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused {
     int sel = deadbeef->pl_is_selected((DB_playItem_t *)row);
     if (sel) {
         if (focused) {
@@ -605,7 +605,8 @@ extern DB_functions_t *deadbeef;
             .it = (DB_playItem_t *)row,
             .plt = deadbeef->plt_get_curr (),
             .id = _columns[col].type,
-            .flags = DDB_TF_CONTEXT_HAS_ID,
+            .idx = idx,
+            .flags = DDB_TF_CONTEXT_HAS_ID|DDB_TF_CONTEXT_HAS_INDEX,
         };
 
         char text[1024] = "";

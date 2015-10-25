@@ -404,6 +404,16 @@
     free (buffer);
 }
 
+- (void)test_Index_WithNullPlaylist_NoCrash {
+    char *bc = tf_compile("begin - %list_index% - end");
+    char *buffer = malloc (1000);
+    ctx.it = NULL;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp ("begin - 0 - end", buffer), @"The actual output is: %s", buffer);
+    free (buffer);
+}
+
 - (void)test_Div5by2_Gives3 {
     char *bc = tf_compile("$div(5,2)");
     char *buffer = malloc (1000);
