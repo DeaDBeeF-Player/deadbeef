@@ -90,6 +90,8 @@ static int trace_bufferfill = 0;
 static int stop_after_current = 0;
 static int stop_after_album = 0;
 
+static int conf_streamer_nosleep = 0;
+
 static int streaming_terminate;
 
 // buffer up to 3 seconds at 44100Hz stereo
@@ -1897,7 +1899,7 @@ streamer_thread (void *ctx) {
 
         //printf ("sleep: %d, buffering: %d, buffer_starving: %d (%d/%d)\n", alloc_time, streamer_buffering, streamer_ringbuf.remaining < STREAM_BUFFER_SIZE / 2, streamer_ringbuf.remaining, STREAM_BUFFER_SIZE / 2);
 
-        if (alloc_time > 0) {
+        if (alloc_time > 0 && !conf_streamer_nosleep) {
             usleep (alloc_time * 1000);
         }
         else if (bytes_until_next_song > 0) {
@@ -2750,6 +2752,8 @@ streamer_configchanged (void) {
     if (strcmp (mapstr, conf_network_ctmapping)) {
         ctmap_init ();
     }
+
+    conf_streamer_nosleep = conf_get_int ("streamer.nosleep", 0);
 }
 
 static void
