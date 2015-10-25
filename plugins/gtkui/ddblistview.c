@@ -2327,7 +2327,7 @@ draw_header_fg(DdbListview *ps, cairo_t *cr, DdbListviewColumn *c, GdkColor *clr
 
     float fg[3] = {clr->red/65535., clr->green/65535., clr->blue/65535.};
     draw_set_fg_color(&ps->hdrctx, fg);
-    draw_text_custom(&ps->hdrctx, x+2, 3, text_width, 0, DDB_COLUMN_FONT, 0, 0, c->title);
+    draw_text_custom(&ps->hdrctx, x+5, 3, text_width, 0, DDB_COLUMN_FONT, 0, 0, c->title);
 }
 
 void
@@ -2412,24 +2412,25 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr, int x1, int x2) {
         }
 
         // Mark the position where the dragged column used to be with an indented/active/dark position
-        int w = c->width;
-        if (x < x2) {
+        int xx = x - 2; // Where the divider line is
+        int w = c->width + 2;
+        if (xx < x2) {
 #if GTK_CHECK_VERSION(3,0,0)
-            render_column_button(ps, GTK_STATE_FLAG_ACTIVE, cr, x-3, 0, w, h);
-//            gtk_paint_box (gtk_widget_get_style (ps->theme_button), cr, GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, ps->header, "button", x, 0, w, h);
+            render_column_button(ps, GTK_STATE_FLAG_ACTIVE, cr, xx, 0, w, h);
+//            gtk_paint_box (gtk_widget_get_style (ps->theme_button), cr, GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, ps->header, "button", xx, 0, w, h);
 #else
-            gtk_paint_box(gtk_widget_get_style(ps->theme_button), gtk_widget_get_window(ps->header), GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, NULL, ps->theme_button, "button", x-3, 0, w, h);
+            gtk_paint_box(gtk_widget_get_style(ps->theme_button), gtk_widget_get_window(ps->header), GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, NULL, ps->theme_button, "button", xx, 0, w, h);
 #endif
         }
 
         // Draw a highlighted/selected "button" wherever the dragged column is currently positioned
-        x = ps->col_movepos - ps->hscrollpos;
-        if (w > 0 && x < x2) {
+        xx = ps->col_movepos - ps->hscrollpos - 2;
+        if (w > 0 && xx < x2) {
 #if GTK_CHECK_VERSION(3,0,0)
-            render_column_button(ps, GTK_STATE_FLAG_SELECTED, cr, x-3, 0, w, h);
-//            gtk_paint_box (gtk_widget_get_style (ps->theme_button), cr, GTK_STATE_SELECTED, GTK_SHADOW_OUT, ps->header, "button", x, 0, w, h);
+            render_column_button(ps, GTK_STATE_FLAG_SELECTED, cr, xx, 0, w, h);
+//            gtk_paint_box (gtk_widget_get_style (ps->theme_button), cr, GTK_STATE_SELECTED, GTK_SHADOW_OUT, ps->header, "button", xx, 0, w, h);
 #else
-            gtk_paint_box(gtk_widget_get_style(ps->theme_button), gtk_widget_get_window(ps->header), GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, ps->theme_button, "button", x-3, 0, w, h);
+            gtk_paint_box(gtk_widget_get_style(ps->theme_button), gtk_widget_get_window(ps->header), GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, ps->theme_button, "button", xx, 0, w, h);
 #endif
 
             GdkColor gdkfg;
@@ -2439,7 +2440,7 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr, int x1, int x2) {
             else {
                 gdkfg = gtk_widget_get_style(ps->theme_button)->fg[GTK_STATE_SELECTED];
             }
-            draw_header_fg(ps, cr, c, &gdkfg, x, x+w, h);
+            draw_header_fg(ps, cr, c, &gdkfg, xx, xx+w, h);
         }
     }
 

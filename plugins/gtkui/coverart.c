@@ -158,7 +158,7 @@ add_callback(cover_avail_callback_t cb, void *ud)
 }
 
 static void
-process_query_callbacks(cover_callback_t *callback, const int send)
+process_query_callbacks(cover_callback_t *callback, int send)
 {
     if (callback) {
         if (send) {
@@ -171,7 +171,7 @@ process_query_callbacks(cover_callback_t *callback, const int send)
 }
 
 static void
-queue_add (cache_type_t cache_type, char *fname, const int width, const int height, cover_avail_callback_t cb, void *ud)
+queue_add (cache_type_t cache_type, char *fname, int width, int height, cover_avail_callback_t cb, void *ud)
 {
     trace("coverart: queue_add %s @ %ix%i pixels\n", fname, width, height);
     load_query_t *q = malloc(sizeof(load_query_t));
@@ -198,7 +198,7 @@ queue_add (cache_type_t cache_type, char *fname, const int width, const int heig
 }
 
 static void
-queue_add_load (cache_type_t cache_type, char *fname, const int width, const int height, cover_avail_callback_t cb, void *ud)
+queue_add_load (cache_type_t cache_type, char *fname, int width, int height, cover_avail_callback_t cb, void *ud)
 {
     for (load_query_t *q = queue; q; q = q->next) {
         if (q->fname && !strcmp (q->fname, fname) && width == q->width && height == q->height) {
@@ -322,7 +322,7 @@ adjust_cache(struct timeval *oldest)
 }
 
 static void
-cache_add(cache_type_t cache_type, GdkPixbuf *pixbuf, char *fname, const time_t file_time, const int width, const int height)
+cache_add(cache_type_t cache_type, GdkPixbuf *pixbuf, char *fname, const time_t file_time, int width, int height)
 {
     cached_pixbuf_t *cache = cache_location(cache_type);
     size_t cache_size = cache_elements(cache_type);
@@ -420,7 +420,7 @@ loading_thread (void *none) {
 }
 
 static GdkPixbuf *
-get_pixbuf (cache_type_t cache_type, const char *fname, const int width, const int height) {
+get_pixbuf (cache_type_t cache_type, const char *fname, int width, int height) {
     /* Look in the pixbuf cache */
     cached_pixbuf_t *cache = cache_location(cache_type);
     const size_t cache_size = cache_elements(cache_type);
@@ -512,7 +512,7 @@ best_cached_pixbuf(cache_type_t cache_type, const char *path)
 }
 
 static cover_avail_info_t *
-cover_avail_info(cache_type_t cache_type, char *cache_path, const int width, const int height, cover_avail_callback_t callback, void *user_data)
+cover_avail_info(cache_type_t cache_type, char *cache_path, int width, int height, cover_avail_callback_t callback, void *user_data)
 {
     if (cache_path) {
         cover_avail_info_t *dt = malloc(sizeof(cover_avail_info_t));
