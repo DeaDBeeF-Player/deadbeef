@@ -97,13 +97,13 @@ tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
     int null_it = 0;
     if (!ctx->it) {
         null_it = 1;
-        ctx->it = &empty_track;
+        ctx->it = (ddb_playItem_t *)&empty_track;
     }
 
     int null_plt = 0;
     if (!ctx->plt) {
         null_plt = 1;
-        ctx->plt = &empty_playlist;
+        ctx->plt = (ddb_playlist_t *)&empty_playlist;
     }
 
     int32_t codelen = *((int32_t *)code);
@@ -1096,7 +1096,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 // index of track in playlist (zero-padded)
                 else if (!strcmp (name, "list_index")) {
                     if (it) {
-                        int total_tracks = plt_get_item_count (ctx->plt, ctx->iter);
+                        int total_tracks = plt_get_item_count ((playlist_t *)ctx->plt, ctx->iter);
                         int digits = 0;
                         do {
                             total_tracks /= 10;

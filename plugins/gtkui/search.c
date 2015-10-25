@@ -388,9 +388,9 @@ search_header_context_menu (DdbListview *ps, int column) {
 }
 
 static void
-search_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int column, int iter, int x, int y, int width, int height)
+search_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int column, int iter, int x, int y, int width, int height)
 {
-    draw_column_data (listview, cr, it, column, PL_SEARCH, x, y, width, height);
+    draw_column_data (listview, cr, it, idx, column, PL_SEARCH, x, y, width, height);
 }
 
 static void
