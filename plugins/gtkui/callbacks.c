@@ -763,3 +763,17 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
 {
     gdk_threads_add_idle (action_preferences_handler_cb, NULL);
 }
+
+
+gboolean
+on_prefwin_key_press_event             (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data)
+{
+    if (gtkui_hotkey_grabbing) {
+        on_hotkeys_set_key_key_press_event (widget, event, user_data);
+        return TRUE;
+    }
+    return FALSE;
+}
+

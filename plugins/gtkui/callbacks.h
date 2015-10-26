@@ -1377,3 +1377,8 @@ on_listview_column_text_color_set      (GtkColorButton  *colorbutton,
 void
 on_listview_column_text_font_set       (GtkFontButton   *fontbutton,
                                         gpointer         user_data);
+
+gboolean
+on_prefwin_key_press_event             (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);

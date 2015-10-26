@@ -2902,6 +2902,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) prefwin, "realize",
                     G_CALLBACK (on_prefwin_realize),
                     NULL);
+  g_signal_connect ((gpointer) prefwin, "key_press_event",
+                    G_CALLBACK (on_prefwin_key_press_event),
+                    NULL);
   g_signal_connect ((gpointer) convert8to16, "toggled",
                     G_CALLBACK (on_convert8to16_toggled),
                     NULL);

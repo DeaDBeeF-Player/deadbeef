@@ -669,7 +669,7 @@ get_name_for_keycode (int keycode) {
 }
 
 
-static int grabbed = 0;
+int gtkui_hotkey_grabbing = 0;
 
 static void
 get_keycombo_string (guint accel_key, GdkModifierType accel_mods, char *new_value) {
@@ -731,11 +731,13 @@ get_keycombo_string (guint accel_key, GdkModifierType accel_mods, char *new_valu
     strcat (new_value, name);
 }
 
+static GtkWidget *hotkey_grabber_button;
 gboolean
 on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
+    widget = hotkey_grabber_button;
     GdkModifierType accel_mods = 0;
     guint accel_key;
     gchar *path;
@@ -746,7 +748,7 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
     GtkTreePath *curpath;
     GtkTreeIter iter;
 
-    if (!grabbed) {
+    if (!gtkui_hotkey_grabbing) {
         return FALSE;
     }
 
@@ -829,7 +831,7 @@ out:
     }
     gdk_display_keyboard_ungrab (display, GDK_CURRENT_TIME);
     gdk_display_pointer_ungrab (display, GDK_CURRENT_TIME);
-    grabbed = 0;
+    gtkui_hotkey_grabbing = 0;
     gtkui_hotkeys_changed = 1;
     return TRUE;
 }
@@ -837,10 +839,10 @@ out:
 static void
 hotkey_grab_focus (GtkWidget *widget) {
     GdkDisplay *display = gtk_widget_get_display (widget);
-    if (grabbed) {
+    if (gtkui_hotkey_grabbing) {
         return;
     }
-    grabbed = 0;
+    gtkui_hotkey_grabbing = 0;
     if (GDK_GRAB_SUCCESS != gdk_keyboard_grab (gtk_widget_get_window (widget), FALSE, GDK_CURRENT_TIME)) {
         return;
     }
@@ -854,7 +856,10 @@ hotkey_grab_focus (GtkWidget *widget) {
         return;
     }
     gtk_button_set_label (GTK_BUTTON (widget), _("New key combination..."));
-    grabbed = 1;
+    gtkui_hotkey_grabbing = 1;
+
+    // disable the window accelerators temporarily
+    hotkey_grabber_button = widget;
 }
 
 void
