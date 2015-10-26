@@ -168,6 +168,12 @@ plt_get_title_wrapper (int plt, char *buffer, int len);
 void
 gtkui_quit (void);
 
+extern int gtkui_hotkey_grabbing;
+gboolean
+on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);
+
 void
 gtkui_run_preferences_dlg (void);
 

@@ -2247,6 +2247,7 @@ Center</property>
   <signal name="configure_event" handler="on_prefwin_configure_event" last_modification_time="Thu, 10 Mar 2011 11:14:37 GMT"/>
   <signal name="window_state_event" handler="on_prefwin_window_state_event" last_modification_time="Thu, 10 Mar 2011 11:14:42 GMT"/>
   <signal name="realize" handler="on_prefwin_realize" last_modification_time="Thu, 10 Mar 2011 11:20:24 GMT"/>
+  <signal name="key_press_event" handler="on_prefwin_key_press_event" last_modification_time="Mon, 26 Oct 2015 13:11:35 GMT"/>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="dialog-vbox2">
