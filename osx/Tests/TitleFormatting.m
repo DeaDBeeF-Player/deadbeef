@@ -2,6 +2,7 @@
 #import <XCTest/XCTest.h>
 #include "playlist.h"
 #include "tf.h"
+#include "playqueue.h"
 
 @interface TitleFormatting : XCTestCase {
     playItem_t *it;
@@ -821,6 +822,17 @@
     tf_free (bc);
     XCTAssert(!strcmp (buffer, "true"), @"The actual output is: %s", buffer);
     free (buffer);
+}
+
+- (void)test_PlayingColumnWithEmptyFormat_GivesQueueIndexes {
+    char *buffer = malloc (1000);
+    playqueue_push (it);
+    ctx.id = DB_COLUMN_PLAYING;
+    ctx.flags |= DDB_TF_CONTEXT_HAS_ID;
+    tf_eval (&ctx, NULL, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "(1)"), @"The actual output is: %s", buffer);
+    free (buffer);
+    playqueue_pop ();
 }
 
 @end
