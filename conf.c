@@ -36,6 +36,7 @@
 #if HAVE_SYS_CDEFS_H
 #include <sys/cdefs.h>
 #endif
+#include <sys/stat.h>
 #include "conf.h"
 #include "threading.h"
 #include "common.h"
@@ -189,6 +190,9 @@ conf_save (void) {
     err = rename (tempfile, str);
     if (err != 0) {
         fprintf (stderr, "config rename %s -> %s failed: %s\n", tempfile, str, strerror (errno));
+    }
+    else {
+        chmod (str, 0600);
     }
     conf_unlock ();
     return 0;
