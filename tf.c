@@ -86,12 +86,13 @@ if (res < 0) { *out = 0; return -1; }
 static playItem_t empty_track;
 // empty playlist is used when ctx.plt is null
 static playlist_t empty_playlist;
+// empty code is used when "code" argumen is null
+static char empty_code[4] = {0};
 
 int
 tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
     if (!code) {
-        *out = 0;
-        return 0;
+        code = empty_code;
     }
 
     int null_it = 0;
@@ -116,6 +117,7 @@ tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
     if (ctx->flags & DDB_TF_CONTEXT_HAS_ID) {
         id = ctx->id;
     }
+
     switch (id) {
     case DB_COLUMN_FILENUMBER:
         if (ctx->flags & DDB_TF_CONTEXT_HAS_INDEX) {
