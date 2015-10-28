@@ -1121,10 +1121,13 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         val = NULL;
                     }
                 }
-                // TODO: length_samples: problem is that in deadbeef this is
-                // only guaranteed to be precise after init (mp3), and is not
-                // stored in the metadata
-
+                else if (!strcmp (name, "length_samples")) {
+                    int len = snprintf (out, outlen, "%d", ctx->it->endsample - ctx->it->startsample);
+                    out += len;
+                    outlen -= len;
+                    skip_out = 1;
+                    val = NULL;
+                }
                 else if ((tmp_a = !strcmp (name, "isplaying")) || (tmp_b = !strcmp (name, "ispaused"))) {
                     playItem_t *playing = streamer_get_playing_track ();
                     
