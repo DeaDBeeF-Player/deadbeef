@@ -36,6 +36,8 @@
 //   len:byte, data
 //  3: if_defined block
 //   len:int32, data
+//  4: pre-interpreted text
+//   len:int32, data
 // !0: plain text
 
 #ifdef HAVE_CONFIG_H
@@ -195,6 +197,55 @@ tf_func_strcmp (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char
 
     int res = strcmp (s1, s2);
     return !res;
+}
+
+int
+tf_func_abbr (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1 && argc != 2) {
+        return -1;
+    }
+
+    char *arg = args;
+
+    int bool_out = 0;
+
+    int len;
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
+
+    if (argc == 2) {
+        char num_chars_str[10];
+        arg += arglens[0];
+        int l;
+        TF_EVAL_CHECK(l, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str), fail_on_undef);
+        int num_chars = atoi (num_chars_str);
+        if (len <= num_chars) {
+            return len;
+        }
+    }
+
+    char *p = out;
+    char *pout = out;
+    const char skipchars[] = "() ";
+    while (*p) {
+        // skip whitespace/paren
+        while (*p && strchr (skipchars, *p)) {
+            p++;
+        }
+        if (!*p) {
+            break;
+        }
+
+        // take the first letter for abbrev
+        *pout++ = *p++;
+
+        // skip to the end of word
+        while (*p && !strchr (skipchars, *p)) {
+            p++;
+        }
+    }
+
+    *pout = 0;
+    return pout - out;
 }
 
 // $left(text,n) returns the first n characters of text
@@ -780,8 +831,9 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "not", tf_func_not },
     { "xor", tf_func_xor },
     // String
+    { "abbr", tf_func_abbr },
     { "cut", tf_func_left },
-    { "left", tf_func_left },
+    { "left", tf_func_left }, // alias of 'cut'
     { "strcmp", tf_func_strcmp },
     // Track info
     { "meta", tf_func_meta },
@@ -1328,6 +1380,19 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 code += len;
                 size -= len;
             }
+            else if (*code == 4) {
+                code++;
+                size--;
+                int32_t len;
+                memcpy (&len, code, 4);
+                code += 4;
+                size -= 4;
+                int32_t l = u8_strnbcpy(out, code, len);
+                out += l;
+                outlen -= l;
+                code += len;
+                size -= len;
+            }
             else {
                 return -1;
             }
@@ -1384,7 +1449,27 @@ tf_compile_func (tf_compiler_t *c) {
 
     //parse comma separated args until )
     while (*(c->i)) {
-        if (*(c->i) == '\\') {
+        if (c->o == argstart && *(c->i) == '\'') {
+            // pre-interpreted text marker'
+            c->i++;
+            *(c->o++) = 0;
+            *(c->o++) = 4;
+            int32_t len = 0;
+            int32_t *lenptr = (int32_t *)c->o;
+            c->o += sizeof (*lenptr);
+            while (*(c->i) && *(c->i) != '\'') {
+                *(c->o++) = *(c->i++);
+                len++;
+            }
+            if (*(c->i) != '\'') {
+                // no matching single quote
+                return -1;
+            }
+            c->i++;
+            memcpy (lenptr, &len, sizeof (len));
+            continue;
+        }
+        else if (*(c->i) == '\\') {
             c->i++;
             if (*(c->i) != 0) {
                 *(c->o++) = *(c->i++);
@@ -1404,7 +1489,7 @@ tf_compile_func (tf_compiler_t *c) {
             c->o++;
             (*start)++; // num args++
             // store arg length
-            start[(*start)] = len;
+            start[*start] = len;
             argstart = c->o;
 
             if (*(c->i) == ')') {
