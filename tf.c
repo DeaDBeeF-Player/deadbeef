@@ -225,7 +225,7 @@ tf_func_abbr (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
 
     char *p = out;
     char *pout = out;
-    const char skipchars[] = "() ";
+    const char skipchars[] = "() ,/\\|";
     while (*p) {
         // skip whitespace/paren
         while (*p && strchr (skipchars, *p)) {
@@ -236,16 +236,22 @@ tf_func_abbr (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
         }
 
         // take the first letter for abbrev
+        int is_bracket = *p == '[' || *p == ']';
         *pout++ = *p++;
 
         // skip to the end of word
         while (*p && !strchr (skipchars, *p)) {
-            p++;
+            if (!is_bracket) {
+                p++;
+            }
+            else {
+                *pout++ = *p++;
+            }
         }
     }
 
     *pout = 0;
-    return pout - out;
+    return (int)(pout - out);
 }
 
 // $left(text,n) returns the first n characters of text
