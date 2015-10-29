@@ -1696,6 +1696,11 @@ streamer_thread (void *ctx) {
             streamer_unlock ();
         }
 
+        if (formatchanged && bytes_until_next_song <= 0) {
+            streamer_set_output_format ();
+            formatchanged = 0;
+        }
+
         float seek = seekpos;
         if (seek >= 0 && pl_get_item_duration (playing_track) > 0) {
             playpos = seek;
