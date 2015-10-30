@@ -2378,7 +2378,10 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr, int x1, int x2) {
                 }
                 else {
 #if GTK_CHECK_VERSION(3,0,0)
-                    gtk_paint_vline (gtk_widget_get_style (ps->header), cr, GTK_STATE_NORMAL, ps->header, NULL, 2, h-4, xx-2);
+                    GtkStyleContext *context = gtk_widget_get_style_context(theme_treeview);
+                    gtk_style_context_add_class(context, "separator");
+                    gtk_render_line(context, cr, xx-3, 2, xx-3, h-4);
+                    gtk_style_context_remove_class(context, "separator");
 #else
                     gtk_paint_vline (ps->header->style, ps->header->window, GTK_STATE_NORMAL, NULL, ps->header, NULL, 2, h-4, xx-2);
 #endif
