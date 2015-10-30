@@ -123,11 +123,11 @@ tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
     switch (id) {
     case DB_COLUMN_FILENUMBER:
         if (ctx->flags & DDB_TF_CONTEXT_HAS_INDEX) {
-            l = snprintf (out, sizeof (outlen), "%d", ctx->idx+1);
+            l = snprintf (out, outlen, "%d", ctx->idx+1);
         }
         else if (ctx->plt) {
             int idx = plt_get_item_idx ((playlist_t *)ctx->plt, (playItem_t *)ctx->it, PL_MAIN);
-            l = snprintf (out, sizeof (outlen), "%d", idx+1);
+            l = snprintf (out, outlen, "%d", idx+1);
         }
         break;
     case DB_COLUMN_PLAYING:
@@ -225,7 +225,7 @@ tf_func_abbr (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
 
     char *p = out;
     char *pout = out;
-    const char skipchars[] = "() ";
+    const char skipchars[] = "() ,/\\|";
     while (*p) {
         // skip whitespace/paren
         while (*p && strchr (skipchars, *p)) {
@@ -236,16 +236,22 @@ tf_func_abbr (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
         }
 
         // take the first letter for abbrev
+        int is_bracket = *p == '[' || *p == ']';
         *pout++ = *p++;
 
         // skip to the end of word
         while (*p && !strchr (skipchars, *p)) {
-            p++;
+            if (!is_bracket) {
+                p++;
+            }
+            else {
+                *pout++ = *p++;
+            }
         }
     }
 
     *pout = 0;
-    return pout - out;
+    return (int)(pout - out);
 }
 
 // $left(text,n) returns the first n characters of text

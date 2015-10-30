@@ -728,7 +728,7 @@
     it->endsample = 300;
     char *bc = tf_compile("$abbr('This is a Long Title (12-inch version) [needs tags]')");
     tf_eval (&ctx, bc, buffer, 1000);
-    XCTAssert(!strcmp (buffer, "TiaLT1v[t"), @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp (buffer, "TiaLT1v[needst"), @"The actual output is: %s", buffer);
 }
 
 @end
