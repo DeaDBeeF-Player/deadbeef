@@ -123,11 +123,11 @@ tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
     switch (id) {
     case DB_COLUMN_FILENUMBER:
         if (ctx->flags & DDB_TF_CONTEXT_HAS_INDEX) {
-            l = snprintf (out, sizeof (outlen), "%d", ctx->idx+1);
+            l = snprintf (out, outlen, "%d", ctx->idx+1);
         }
         else if (ctx->plt) {
             int idx = plt_get_item_idx ((playlist_t *)ctx->plt, (playItem_t *)ctx->it, PL_MAIN);
-            l = snprintf (out, sizeof (outlen), "%d", idx+1);
+            l = snprintf (out, outlen, "%d", idx+1);
         }
         break;
     case DB_COLUMN_PLAYING:
