@@ -2760,12 +2760,10 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    int ev_x, ev_y;
-    GdkModifierType ev_state;
+    GdkModifierType ev_state = event->state;
+    gdouble ev_x = event->x;
+    gdouble ev_y = event->y;
 
-    ev_x = event->x;
-    ev_y = event->y;
-    ev_state = event->state;
 #if GTK_CHECK_VERSION(2,12,0)
     gdk_event_request_motions (event);
 #endif
@@ -2797,22 +2795,19 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
         ps->last_header_motion_ev = event->time;
         ps->prev_header_x = ev_x;
         gdk_window_set_cursor (gtk_widget_get_window (widget), ps->cursor_sz);
-        // get column start pos
-        int x = -ps->hscrollpos;
-        int i = 0;
-        int size = 0;
-        DdbListviewColumn *c;
-        for (c = ps->columns; c; c = c->next) {
-            size += c->width;
+        DdbListviewColumn *c = ps->columns;
+        for (int i = 0; i < ps->header_sizing; i++) {
+            c = c->next;
         }
-        for (c = ps->columns; c && i < ps->header_sizing; c = c->next, i++) {
-            x += c->width;
-        }
-
-        int newx = ev_x > x + MIN_COLUMN_WIDTH ? ev_x : x + MIN_COLUMN_WIDTH;
-        c->width = newx-x;
+        c->width = max(MIN_COLUMN_WIDTH, c->width + ev_x - ps->header_dragpt[0]);
+        ps->header_dragpt[0] = ev_x;
         if (ps->col_autoresize) {
             c->fwidth = (float)c->width / ps->header_width;
+        }
+
+        int size = 0;
+        for (DdbListviewColumn *cc = ps->columns; cc; cc = cc->next) {
+            size += cc->width;
         }
         ps->block_redraw_on_scroll = 1;
         //ddb_listview_list_setup_vscroll (ps);
