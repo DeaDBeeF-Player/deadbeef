@@ -829,7 +829,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
             if (!gtkui_override_listview_colors()) {
 #if GTK_CHECK_VERSION(3,0,0)
                 render_row_background(listview, GTK_STATE_FLAG_NORMAL, TRUE, cr, x, yy, w, filler);
-//                gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, theme_treeview, "cell_even_ruled", x, grp_y + grp_height, w, filler);
 #else
                 gtk_paint_flat_box(gtk_widget_get_style(theme_treeview), gtk_widget_get_window(listview->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, theme_treeview, "cell_even_ruled", x, yy, w, filler);
 #endif
@@ -871,7 +870,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
         if (!gtkui_override_listview_colors()) {
 #if GTK_CHECK_VERSION(3,0,0)
             render_row_background(listview, GTK_STATE_FLAG_NORMAL, TRUE, cr, x, grp_y, w, hh);
-//            gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, theme_treeview, "cell_even_ruled", x, grp_y, w, hh);
 #else
             gtk_paint_flat_box(gtk_widget_get_style(theme_treeview), gtk_widget_get_window(listview->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, theme_treeview, "cell_even_ruled", x, grp_y, w, hh);
 #endif
@@ -1403,12 +1401,8 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
         if (theming) {
 #if GTK_CHECK_VERSION(3,0,0)
             render_row_background(ps, GTK_STATE_FLAG_SELECTED, even, cr, x, y, w, h);
-//            gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), cr, GTK_STATE_SELECTED, GTK_SHADOW_NONE, theme_treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x-1, y-1, w+1, h+1);
 #else
             gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), ps->list->window, GTK_STATE_SELECTED, GTK_SHADOW_NONE, NULL, theme_treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
-            //            if (gtk_widget_has_focus (ps->list)) {
-            //                gtk_paint_focus (gtk_widget_get_style (theme_treeview), ps->list->window, GTK_STATE_SELECTED, NULL, theme_treeview, "treeview", x, y, w, h);
-            //            }
 #endif
         }
         else {
@@ -1692,7 +1686,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
     }
     else if (state & GDK_SHIFT_MASK) {
         // select range
-        int cursor = sel;//ps->binding->cursor ();
+        int cursor = sel;
         if (cursor == -1) {
             // find group
             DdbListviewGroup *g = ps->groups;
