@@ -580,7 +580,7 @@ w_draw_event (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     if (hidden && user_data == current_widget) {
         GtkAllocation allocation;
         gtk_widget_get_allocation (widget, &allocation);
-        cairo_set_source_rgb (cr, 0.17f, 0, 0.83f);
+        cairo_set_source_rgb (cr, 0.17, 0, 0.83);
 
         if (!gtk_widget_get_has_window (widget)) {
 #if GTK_CHECK_VERSION(3,0,0)
@@ -2624,23 +2624,33 @@ get_cover_art(const int width, const int height, void (*callback)(void *), void 
 
 static gboolean
 coverart_invalidate_cb (void *user_data) {
-    w_coverart_t *w = user_data;
-    gtk_widget_queue_draw(w->drawarea);
+    gtk_widget_queue_draw(user_data);
     return FALSE;
 }
 
-void
+static void
 coverart_invalidate (void *user_data) {
     g_idle_add(coverart_invalidate_cb, user_data);
+}
+
+static gboolean
+coverart_unref_cb (void *user_data) {
+    g_object_unref(user_data);
+    return FALSE;
+}
+
+static void
+coverart_unref (void *user_data) {
+    g_idle_add(coverart_unref_cb, user_data);
 }
 
 static gboolean
 coverart_load (void *user_data) {
     w_coverart_t *w = user_data;
     w->load_timeout_id = 0;
-    GdkPixbuf *pixbuf = get_cover_art(w->widget_width, w->widget_height, coverart_invalidate, user_data);
+    GdkPixbuf *pixbuf = get_cover_art(w->widget_width, w->widget_height, coverart_invalidate, w->drawarea);
     if (pixbuf) {
-        coverart_invalidate(user_data);
+        coverart_invalidate(w->drawarea);
         g_object_unref(pixbuf);
     }
     return FALSE;
@@ -2672,7 +2682,8 @@ coverart_draw_anything (GtkAllocation *a, cairo_t *cr) {
 
 static void
 coverart_draw_exact (GtkAllocation *a, cairo_t *cr, void *user_data) {
-    GdkPixbuf *pixbuf = get_cover_art(a->width, a->height, coverart_invalidate, user_data);
+    w_coverart_t *w = user_data;
+    GdkPixbuf *pixbuf = get_cover_art(a->width, a->height, coverart_invalidate, w->drawarea);
     if (pixbuf) {
         coverart_draw_cairo(pixbuf, a, cr, CAIRO_FILTER_BEST);
         g_object_unref(pixbuf);
@@ -2696,12 +2707,12 @@ coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     }
     else {
         coverart_draw_anything(&a, cr);
-        w->widget_height = a.height;
-        w->widget_width = a.width;
         if (w->load_timeout_id) {
             g_source_remove(w->load_timeout_id);
         }
-        w->load_timeout_id = g_timeout_add(1000, coverart_load, user_data);
+        w->load_timeout_id = g_timeout_add(w->widget_height == -1 ? 100 : 1000, coverart_load, user_data);
+        w->widget_height = a.height;
+        w->widget_width = a.width;
     }
 
     return TRUE;
@@ -2716,20 +2727,19 @@ coverart_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 }
 
 static int
-coverart_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+coverart_message (ddb_gtkui_widget_t *base, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    w_coverart_t *w = (w_coverart_t *)base;
     switch (id) {
     case DB_EV_PLAYLIST_REFRESH:
-        coverart_invalidate(w);
-        break;
     case DB_EV_SONGSTARTED:
-        coverart_invalidate(w);
+        coverart_invalidate(w->drawarea);
         break;
     case DB_EV_TRACKINFOCHANGED:
         {
             ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
             DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
             if (it == ev->track) {
-                coverart_invalidate(w);
+                coverart_invalidate(w->drawarea);
             }
             if (it) {
                 deadbeef->pl_item_unref (it);
@@ -2738,6 +2748,17 @@ coverart_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1
         break;
     }
     return 0;
+}
+
+static gboolean
+coverart_destroy_drawarea (GtkWidget *drawarea, gpointer user_data) {
+    w_coverart_t *w = (w_coverart_t *)user_data;
+    if (w->load_timeout_id) {
+        g_source_remove(w->load_timeout_id);
+    }
+    g_object_ref(drawarea);
+    queue_cover_callback(coverart_unref, drawarea);
+    return FALSE;
 }
 
 ddb_gtkui_widget_t *
@@ -2750,6 +2771,7 @@ w_coverart_create (void) {
     w->drawarea = gtk_drawing_area_new ();
     w->widget_height = -1;
     w->widget_width = -1;
+    w->load_timeout_id = 0;
     gtk_widget_show (w->drawarea);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
 #if !GTK_CHECK_VERSION(3,0,0)
@@ -2757,6 +2779,7 @@ w_coverart_create (void) {
 #else
     g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (coverart_draw), w);
 #endif
+    g_signal_connect ((gpointer) w->drawarea, "destroy", G_CALLBACK (coverart_destroy_drawarea), w);
     w_override_signals (w->base.widget, w);
     return (ddb_gtkui_widget_t *)w;
 }

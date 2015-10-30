@@ -62,29 +62,67 @@ pl_common_init(void)
     pause16_pixbuf = create_pixbuf("pause_16.png");
     buffering16_pixbuf = create_pixbuf("buffering_16.png");
 
-    gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups", 0);
-
-    theme_treeview = gtk_tree_view_new ();
-    gtk_widget_show (theme_treeview);
-    gtk_widget_set_can_focus (theme_treeview, FALSE);
-    GtkWidget *vbox1 = lookup_widget (mainwin, "vbox1");
-    gtk_box_pack_start (GTK_BOX (vbox1), theme_treeview, FALSE, FALSE, 0);
-    gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (theme_treeview), TRUE);
-
-    theme_button = mainwin;//lookup_widget (mainwin, "stopbtn");
+    theme_treeview = gtk_tree_view_new();
+    gtk_widget_show(theme_treeview);
+    gtk_widget_set_can_focus(theme_treeview, FALSE);
+    gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(theme_treeview), TRUE);
+    gtk_box_pack_start(GTK_BOX(gtk_bin_get_child(GTK_BIN(mainwin))), theme_treeview, FALSE, FALSE, 0);
+    theme_button = mainwin;
 }
 
 void
 pl_common_free (void)
 {
-    if (theme_treeview) {
-        gtk_widget_destroy (theme_treeview);
-        theme_treeview = NULL;
-    }
-
     g_object_unref(play16_pixbuf);
     g_object_unref(pause16_pixbuf);
     g_object_unref(buffering16_pixbuf);
+}
+
+static col_info_t *
+create_col_info (DdbListview *listview, int id) {
+    col_info_t *info = malloc(sizeof(col_info_t));
+    memset(info, '\0', sizeof(col_info_t));
+    info->id = id;
+    info->cover_size = -1;
+    info->new_cover_size = -1;
+    info->listview = listview;
+    return info;
+}
+
+static gboolean
+coverart_release_cb (void *user_data) {
+    col_info_t *info = user_data;
+    g_object_unref(info->listview->list);
+    free(user_data);
+    return FALSE;
+}
+
+static void
+coverart_release (void *user_data) {
+    g_idle_add(coverart_release_cb, user_data);
+}
+
+void
+pl_common_free_col_info (void *data) {
+    if (!data) {
+        return;
+    }
+
+    col_info_t *info = data;
+    if (info->format) {
+        free (info->format);
+    }
+    if (info->bytecode) {
+        free (info->bytecode);
+    }
+    if (is_album_art_column(info)) {
+        g_object_ref(info->listview->list);
+        queue_cover_callback(coverart_release, info);
+        if (info->cover_load_timeout_id) {
+            g_source_remove(info->cover_load_timeout_id);
+            info->cover_load_timeout_id = 0;
+        }
+    }
 }
 
 #define COL_CONF_BUFFER_SIZE 10000
@@ -102,10 +140,9 @@ rewrite_column_config (DdbListview *listview, const char *name) {
         int width;
         int align;
         col_info_t *info;
-        int minheight;
         int color_override;
         GdkColor color;
-        ddb_listview_column_get_info (listview, i, &title, &width, &align, &minheight, &color_override, &color, (void **)&info);
+        ddb_listview_column_get_info (listview, i, &title, &width, &align, NULL, &color_override, &color, (void **)&info);
 
         char *esctitle = parser_escape_string (title);
         char *escformat = info->format ? parser_escape_string (info->format) : NULL;
@@ -128,13 +165,6 @@ rewrite_column_config (DdbListview *listview, const char *name) {
 }
 
 static gboolean
-redraw_playlist_cb (gpointer user_data) {
-    DDB_LISTVIEW(user_data)->cover_size = DDB_LISTVIEW(user_data)->new_cover_size;
-    gtk_widget_queue_draw (GTK_WIDGET(user_data));
-    return FALSE;
-}
-
-static gboolean
 tf_redraw_cb (gpointer user_data) {
     DdbListview *lv = user_data;
 
@@ -149,191 +179,148 @@ tf_redraw_cb (gpointer user_data) {
     return FALSE;
 }
 
-static void
-redraw_playlist (void *user_data) {
-    g_idle_add (redraw_playlist_cb, user_data);
-}
-
-static gboolean
-redraw_playlist_single_cb (gpointer user_data) {
-    gtk_widget_queue_draw (GTK_WIDGET(user_data));
-    g_object_unref (GTK_WIDGET (user_data));
-    return FALSE;
-}
-
-static void
-redraw_playlist_single (void *user_data) {
-    g_object_ref (GTK_WIDGET (user_data));
-    g_idle_add (redraw_playlist_single_cb, user_data);
-}
-
 #define ART_PADDING_HORZ 8
 #define ART_PADDING_VERT 0
 
-static gboolean
-deferred_cover_load_cb (void *ctx) {
-    DdbListview *lv = ctx;
-    lv->cover_refresh_timeout_id = 0;
-    deadbeef->pl_lock ();
-    ddb_listview_groupcheck (lv);
-    // find 1st group
-    DdbListviewGroup *grp = lv->groups;
-    int idx = 0;
-    int grp_y = 0;
-    while (grp && grp_y + grp->height < lv->scrollpos) {
-        grp_y += grp->height;
-        idx += grp->num_items + 1;
-        grp = grp->next;
+static int
+min_group_height(void *user_data, int width) {
+    col_info_t *info = (col_info_t *)user_data;
+    if (info->id == DB_COLUMN_ALBUM_ART) {
+        return width - 2*ART_PADDING_HORZ + 2*ART_PADDING_VERT;
     }
+    return 0;
+}
+
+///// cover art display
+int
+is_album_art_column (void *user_data) {
+    col_info_t *info = (col_info_t *)user_data;
+    return info->id == DB_COLUMN_ALBUM_ART;
+}
+
+static GdkPixbuf *
+get_cover_art (DB_playItem_t *it, int width, int height, void (*callback)(void *), void *user_data) {
+    deadbeef->pl_lock();
+    const char *uri = deadbeef->pl_find_meta(it, ":URI");
+    const char *album = deadbeef->pl_find_meta(it, "album");
+    const char *artist = deadbeef->pl_find_meta(it, "artist");
+    if (!album || !*album) {
+        album = deadbeef->pl_find_meta(it, "title");
+    }
+    GdkPixbuf *pixbuf = get_cover_art_thumb_by_size(uri, artist, album, width, height, callback, user_data);
+    deadbeef->pl_unlock();
+    return pixbuf;
+}
+
+static gboolean
+cover_invalidate_cb (void *user_data) {
+    col_info_t *info = user_data;
+    info->cover_size = info->new_cover_size;
+    ddb_listview_invalidate_album_art_columns(info->listview);
+    return FALSE;
+}
+
+static void
+cover_invalidate (void *user_data) {
+    g_idle_add(cover_invalidate_cb, user_data);
+}
+
+static gboolean
+cover_load (void *user_data) {
+    col_info_t *info = user_data;
+    info->cover_load_timeout_id = 0;
+
+    ddb_listview_groupcheck(info->listview);
+    DdbListviewGroup *group = info->listview->groups;
+    int group_y = 0;
+    while (group && group_y + group->height < info->listview->scrollpos) {
+        group_y += group->height;
+        group = group->next;
+    }
+
     GtkAllocation a;
-    gtk_widget_get_allocation (GTK_WIDGET (lv), &a);
-    while (grp && grp_y < a.height + lv->scrollpos) {
-        // render title
-        DdbListviewIter group_it = grp->head;
-        int grpheight = grp->height;
-        if (grp_y >= a.height + lv->scrollpos) {
-            break;
-        }
-        const char *album = deadbeef->pl_find_meta (group_it, "album");
-        const char *artist = deadbeef->pl_find_meta (group_it, "artist");
-        if (!album || !*album) {
-            album = deadbeef->pl_find_meta (group_it, "title");
+    gtk_widget_get_allocation(info->listview->list, &a);
+    int end_pos = info->listview->scrollpos + a.height;
+    while (group && group_y < end_pos) {
+        GdkPixbuf *pixbuf = get_cover_art(group->head, info->new_cover_size, info->new_cover_size, NULL, NULL);
+        if (pixbuf) {
+            g_object_unref(pixbuf);
         }
 
-        grp_y += grpheight;
-        grp = grp->next;
-        int last = 0;
-        if (!grp || grp_y >= a.height + lv->scrollpos) {
-            last = 1;
-        }
-        GdkPixbuf *pixbuf = get_cover_art_thumb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, lv->new_cover_size, NULL, NULL);
-        if (last) {
-            queue_cover_callback (redraw_playlist, lv);
-        }
-        if (pixbuf) {
-            g_object_unref (pixbuf);
-        }
+        group_y += group->height;
+        group = group->next;
     }
-    deadbeef->pl_unlock ();
+    queue_cover_callback(cover_invalidate, info);
 
     return FALSE;
 }
 
+static void
+cover_draw_cairo (GdkPixbuf *pixbuf, int x, int min_y, int max_y, int width, int height, cairo_t *cr, int filter) {
+    int pw = gdk_pixbuf_get_width(pixbuf);
+    int ph = gdk_pixbuf_get_height(pixbuf);
+    int real_y = min(min_y, max_y - ph);
+    cairo_save(cr);
+    cairo_rectangle(cr, x, min_y, width, max_y - min_y);
+    cairo_translate (cr, x, real_y);
+    if (pw > width || ph > height || pw < width && ph < height) {
+        const double scale = min(width/(double)pw, height/(double)ph);
+        cairo_translate(cr, (width - width*scale)/2., min(min_y, max_y - ph*scale) - real_y);
+        cairo_scale(cr, scale, scale);
+        cairo_pattern_set_filter(cairo_get_source(cr), filter);
+    }
+    gdk_cairo_set_source_pixbuf(cr, pixbuf, (width - pw)/2., 0);
+    cairo_fill(cr);
+    cairo_restore(cr);
+}
+
+static void
+cover_draw_anything (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr) {
+    GdkPixbuf *pixbuf = get_cover_art(it, -1, -1, NULL, NULL);
+    if (pixbuf) {
+        cover_draw_cairo(pixbuf, x, min_y, max_y, width, height, cr, CAIRO_FILTER_FAST);
+        g_object_unref(pixbuf);
+    }
+}
+
+static void
+cover_draw_exact (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr, void *user_data) {
+    GdkPixbuf *pixbuf = get_cover_art(it, width, width, cover_invalidate, user_data);
+    if (pixbuf) {
+        cover_draw_cairo(pixbuf, x, min_y, max_y, width, height, cr, CAIRO_FILTER_BEST);
+        g_object_unref(pixbuf);
+    }
+    else {
+        cover_draw_anything(it, x, min_y, max_y, width, height, cr);
+    }
+}
+
 void
-draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewIter group_it, int column, int group_pinned, int grp_next_y, int x, int y, int width, int height) {
-    const char *ctitle;
-    int cwidth;
-    int calign_right;
-    col_info_t *cinf;
-    int minheight;
-    int color_override;
-    GdkColor fg_clr;
-    int res = ddb_listview_column_get_info (listview, column, &ctitle, &cwidth, &calign_right, &minheight, &color_override, &fg_clr, (void **)&cinf);
-    if (res == -1) {
+draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height) {
+    int art_width = width - ART_PADDING_HORZ * 2;
+    int art_height = height - ART_PADDING_VERT * 2;
+    if (art_width < 8 || art_height < 8 || !it) {
         return;
     }
 
-    DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
-    int theming = !gtkui_override_listview_colors ();
-
-    if (cinf->id == DB_COLUMN_ALBUM_ART) {
-        if (theming) {
-#if GTK_CHECK_VERSION(3,0,0)
-            cairo_save (cr);
-            cairo_rectangle (cr, x, y, width, MAX (height,minheight));
-            cairo_clip (cr);
-            gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, theme_treeview, "cell_even_ruled", x-1, y, width+2, MAX (height,minheight));
-            cairo_restore (cr);
-#else
-            GdkRectangle clip = {
-                .x = x,
-                .y = y,
-                .width = width,
-                .height = MAX (height,minheight),
-            };
-            gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), gtk_widget_get_window (listview->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, &clip, theme_treeview, "cell_even_ruled", x-1, y, width+2, height);
-#endif
-        }
-        else {
-            GdkColor clr;
-            gtkui_get_listview_even_row_color (&clr);
-            cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f);
-            cairo_rectangle (cr, x, y, width, height);
-            cairo_fill (cr);
-        }
-        int real_art_width = width - ART_PADDING_HORZ * 2;
-        if (real_art_width > 7 && group_it) {
-            const char *album = deadbeef->pl_find_meta (group_it, "album");
-            const char *artist = deadbeef->pl_find_meta (group_it, "artist");
-            if (!album || !*album) {
-                album = deadbeef->pl_find_meta (group_it, "title");
-            }
-            if (listview->new_cover_size != real_art_width) {
-                listview->new_cover_size = real_art_width;
-                if (listview->cover_refresh_timeout_id) {
-                    g_source_remove (listview->cover_refresh_timeout_id);
-                    listview->cover_refresh_timeout_id = 0;
-                }
-                if (listview->cover_size == -1) {
-                    listview->cover_size = real_art_width;
-                }
-                else {
-                    if (!listview->cover_refresh_timeout_id) {
-                        listview->cover_refresh_timeout_id = g_timeout_add (1000, deferred_cover_load_cb, listview);
-                    }
-                }
-            }
-
-            // destination coordinates and sizes
-            int art_x = x + ART_PADDING_HORZ;
-            int art_y = y + ART_PADDING_VERT;
-            int art_w = listview->cover_size;
-            int art_h = height;
-
-            GdkPixbuf *pixbuf = get_cover_art_thumb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, real_art_width == art_w ? art_w : -1, redraw_playlist_single, listview);
-            if (pixbuf) {
-                art_w = gdk_pixbuf_get_width (pixbuf);
-                art_h = gdk_pixbuf_get_height (pixbuf);
-
-                int draw_pinned = (y - listview->grouptitle_height < real_art_width && group_pinned == 1 && gtkui_groups_pinned) ? 1 : 0;
-
-                if (art_y > -(real_art_width + listview->grouptitle_height) || draw_pinned) {
-                    float art_scale = real_art_width;
-                    if (art_w < art_h) {
-                        art_scale /= (float)art_h;
-                    }
-                    else {
-                        art_scale /= (float)art_w;
-                    }
-
-                    art_w *= art_scale;
-                    art_h *= art_scale;
-
-                    cairo_save (cr);
-                    if (draw_pinned) {
-                        if (grp_next_y <= art_h + listview->grouptitle_height + ART_PADDING_VERT) {
-                            cairo_translate (cr, art_x, grp_next_y - art_h);
-                        }
-                        else {
-                            cairo_translate (cr, art_x, listview->grouptitle_height + ART_PADDING_VERT);
-                        }
-                    }
-                    else {
-                        cairo_translate (cr, art_x, art_y);
-                    }
-                    cairo_rectangle (cr, 0, 0, art_w, art_h);
-                    cairo_scale (cr, art_scale, art_scale);
-                    gdk_cairo_set_source_pixbuf (cr, pixbuf, 0, 0);
-                    cairo_pattern_set_filter (cairo_get_source(cr), gtkui_is_default_pixbuf (pixbuf) ? CAIRO_FILTER_BEST : CAIRO_FILTER_FAST);
-                    cairo_fill (cr);
-                    cairo_restore (cr);
-                }
-                g_object_unref (pixbuf);
-            }
-        }
+    col_info_t *info = user_data;
+    if (info->new_cover_size == -1) {
+        info->new_cover_size = art_width;
+        info->cover_size = art_width;
     }
-    if (playing_track) {
-        deadbeef->pl_item_unref (playing_track);
+
+    int art_x = x + ART_PADDING_HORZ;
+    int min_y = (pinned == 1 && gtkui_groups_pinned ? listview->grouptitle_height : y) + ART_PADDING_VERT;
+    if (info->cover_size == art_width) {
+        cover_draw_exact(it, art_x, min_y, next_y, art_width, art_height, cr, info);
+    }
+    else {
+        cover_draw_anything(it, art_x, min_y, next_y, art_width, art_height, cr);
+        if (info->cover_load_timeout_id) {
+            g_source_remove(info->cover_load_timeout_id);
+        }
+        info->cover_load_timeout_id = g_timeout_add(1000, cover_load, info);
+        info->new_cover_size = art_width;
     }
 }
 
@@ -343,10 +330,9 @@ draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int id
     int cwidth;
     int calign_right;
     col_info_t *cinf;
-    int minheight;
     int color_override;
     GdkColor fg_clr;
-    int res = ddb_listview_column_get_info (listview, column, &ctitle, &cwidth, &calign_right, &minheight, &color_override, &fg_clr, (void **)&cinf);
+    int res = ddb_listview_column_get_info (listview, column, &ctitle, &cwidth, &calign_right, NULL, &color_override, &fg_clr, (void **)&cinf);
     if (res == -1) {
         return;
     }
@@ -485,7 +471,7 @@ main_add_to_playback_queue_activate     (GtkMenuItem     *menuitem,
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
         if (deadbeef->pl_is_selected (it)) {
-            deadbeef->pl_playqueue_push (it);
+            deadbeef->playqueue_push (it);
         }
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         deadbeef->pl_item_unref (it);
@@ -502,7 +488,7 @@ main_remove_from_playback_queue_activate
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
         if (deadbeef->pl_is_selected (it)) {
-            deadbeef->pl_playqueue_remove (it);
+            deadbeef->playqueue_remove (it);
         }
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         deadbeef->pl_item_unref (it);
@@ -739,7 +725,7 @@ popup_menu_position_func (GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gp
 void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     clicked_idx = deadbeef->pl_get_idx_of (it);
-    int inqueue = deadbeef->pl_playqueue_test (it);
+    int inqueue = deadbeef->playqueue_test (it);
     GtkWidget *playlist_menu;
     GtkWidget *add_to_playback_queue1;
     GtkWidget *remove_from_playback_queue1;
@@ -1146,14 +1132,12 @@ load_column_config (DdbListview *listview, const char *key) {
             }
         }
 
-        col_info_t *inf = malloc (sizeof (col_info_t));
-        memset (inf, 0, sizeof (col_info_t));
-        inf->id = iid;
+        col_info_t *inf = create_col_info(listview, iid);
         if (sformat) {
             inf->format = strdup (sformat);
             inf->bytecode = deadbeef->tf_compile (inf->format);
         }
-        ddb_listview_column_append (listview, stitle, iwidth, ialign, inf->id == DB_COLUMN_ALBUM_ART ? iwidth : 0, icolor_override, gdkcolor, inf);
+        ddb_listview_column_append (listview, stitle, iwidth, ialign, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, icolor_override, gdkcolor, inf);
     }
     json_decref(root);
     return 0;
@@ -1231,8 +1215,7 @@ error:
 
 parse_end: ;
 
-    col_info_t *inf = malloc (sizeof (col_info_t));
-    memset (inf, 0, sizeof (col_info_t));
+    col_info_t *inf = create_col_info(listview, -1);
 
     enum {
         DB_COLUMN_ARTIST_ALBUM = 2,
@@ -1243,7 +1226,6 @@ parse_end: ;
         DB_COLUMN_TRACK = 7,
     };
 
-    inf->id = -1;
     // convert IDs from pre-0.4
     switch (id) {
     case DB_COLUMN_ARTIST_ALBUM:
@@ -1352,13 +1334,11 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
         GdkColor clr;
         gtk_color_button_get_color (GTK_COLOR_BUTTON (lookup_widget (dlg, "color")), &clr);
 
-        col_info_t *inf = malloc (sizeof (col_info_t));
-        memset (inf, 0, sizeof (col_info_t));
-
+        col_info_t *inf = create_col_info(user_data, 0);
         init_column (inf, sel, format);
 
         int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
-        ddb_listview_column_insert (last_playlist, active_column, title, 100, align, inf->id == DB_COLUMN_ALBUM_ART ? 100 : 0, clr_override, clr, inf);
+        ddb_listview_column_insert (last_playlist, active_column, title, 100, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, clr_override, clr, inf);
         ddb_listview_refresh (last_playlist, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL);
     }
     gtk_widget_destroy (dlg);
@@ -1379,10 +1359,9 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     int width;
     int align_right;
     col_info_t *inf;
-    int minheight;
     int color_override;
     GdkColor color;
-    int res = ddb_listview_column_get_info (last_playlist, active_column, &title, &width, &align_right, &minheight, &color_override, &color, (void **)&inf);
+    int res = ddb_listview_column_get_info (last_playlist, active_column, &title, &width, &align_right, NULL, &color_override, &color, (void **)&inf);
     if (res == -1) {
         trace ("attempted to edit non-existing column\n");
         return;
@@ -1391,25 +1370,25 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     int idx = 10;
     if (inf->id == -1) {
         if (inf->format) {
-            if (!strcmp (inf->format, "%a - %b")) {
+            if (!strcmp (inf->format, "%artist% - %album%")) {
                 idx = 3;
             }
-            else if (!strcmp (inf->format, "%a")) {
+            else if (!strcmp (inf->format, "%artist%")) {
                 idx = 4;
             }
-            else if (!strcmp (inf->format, "%b")) {
+            else if (!strcmp (inf->format, "%album%")) {
                 idx = 5;
             }
-            else if (!strcmp (inf->format, "%t")) {
+            else if (!strcmp (inf->format, "%title%")) {
                 idx = 6;
             }
-            else if (!strcmp (inf->format, "%l")) {
+            else if (!strcmp (inf->format, "%length%")) {
                 idx = 7;
             }
-            else if (!strcmp (inf->format, "%n")) {
+            else if (!strcmp (inf->format, "%track number%")) {
                 idx = 8;
             }
-            else if (!strcmp (inf->format, "%B")) {
+            else if (!strcmp (inf->format, "%album artist%")) {
                 idx = 9;
             }
         }
@@ -1442,7 +1421,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         gtk_color_button_get_color (GTK_COLOR_BUTTON (lookup_widget (dlg, "color")), &clr);
 
         init_column (inf, id, format);
-        ddb_listview_column_set_info (last_playlist, active_column, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? width : 0, clr_override, clr, inf);
+        ddb_listview_column_set_info (last_playlist, active_column, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, clr_override, clr, inf);
 
         ddb_listview_refresh (last_playlist, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST);
     }
@@ -1462,7 +1441,7 @@ on_remove_column_activate              (GtkMenuItem     *menuitem,
 }
 
 GtkWidget*
-create_headermenu (int groupby)
+create_headermenu (DdbListview *listview, int groupby)
 {
   GtkWidget *headermenu;
   GtkWidget *add_column;
@@ -1548,13 +1527,13 @@ create_headermenu (int groupby)
 
   g_signal_connect ((gpointer) add_column, "activate",
                     G_CALLBACK (on_add_column_activate),
-                    NULL);
+                    listview);
   g_signal_connect ((gpointer) edit_column, "activate",
                     G_CALLBACK (on_edit_column_activate),
-                    NULL);
+                    listview);
   g_signal_connect ((gpointer) remove_column, "activate",
                     G_CALLBACK (on_remove_column_activate),
-                    NULL);
+                    listview);
 
   return headermenu;
 }
@@ -1564,13 +1543,11 @@ add_column_helper (DdbListview *listview, const char *title, int width, int id, 
     if (!format) {
         format = "";
     }
-    col_info_t *inf = malloc (sizeof (col_info_t));
-    memset (inf, 0, sizeof (col_info_t));
-    inf->id = id;
+    col_info_t *inf = create_col_info(listview, id);
     inf->format = strdup (format);
     inf->bytecode = deadbeef->tf_compile (inf->format);
     GdkColor color = { 0, 0, 0, 0 };
-    ddb_listview_column_append (listview, title, width, align_right, inf->id == DB_COLUMN_ALBUM_ART ? width : 0, 0, color, inf);
+    ddb_listview_column_append (listview, title, width, align_right, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, 0, color, inf);
 }
 
 int
@@ -1633,13 +1610,13 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
         int theming = !gtkui_override_listview_colors ();
         if (theming) {
             GdkColor *clr = &gtk_widget_get_style(theme_treeview)->fg[GTK_STATE_NORMAL];
-            float rgb[] = {clr->red/65535.f, clr->green/65535.f, clr->blue/65535.f};
+            float rgb[] = {clr->red/65535., clr->green/65535., clr->blue/65535.};
             draw_set_fg_color (&listview->grpctx, rgb);
         }
         else {
             GdkColor clr;
             gtkui_get_listview_group_text_color (&clr);
-            float rgb[] = {clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f};
+            float rgb[] = {clr.red/65535., clr.green/65535., clr.blue/65535.};
             draw_set_fg_color (&listview->grpctx, rgb);
         }
         int ew, eh;

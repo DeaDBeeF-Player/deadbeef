@@ -27,20 +27,23 @@
 #include <gtk/gtk.h>
 #include "../../deadbeef.h"
 
-// this function puts request for cover art into queue, or returns default image
+// these functions put requests for cover art into queue, or return default image
 // of specific size
 //
 // if the image is not available immediately -- callback will be called later
 //
 // if  artwork plugin is not available -- NULL will be returned and no callbacks made
+typedef void (*cover_avail_callback_t) (void *user_data);
 GdkPixbuf *
-get_cover_art_callb (const const char *fname, const char *artist, const char *album, int width, void (*cover_avail_callback) (void *user_data), void *user_data);
+get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, cover_avail_callback_t, void *user_data);
 GdkPixbuf *
-get_cover_art_primary (const const char *fname, const char *artist, const char *album, int width, void (*cover_avail_callback) (void *user_data), void *user_data);
+get_cover_art_primary (const char *fname, const char *artist, const char *album, int width, cover_avail_callback_t, void *user_data);
 GdkPixbuf *
-get_cover_art_primary_by_size (const const char *fname, const char *artist, const char *album, int width, int height, void (*cover_avail_callback) (void *user_data), void *user_data);
+get_cover_art_primary_by_size (const char *fname, const char *artist, const char *album, int width, int height, cover_avail_callback_t, void *user_data);
 GdkPixbuf *
-get_cover_art_thumb (const const char *fname, const char *artist, const char *album, int width, void (*cover_avail_callback) (void *user_data), void *user_data);
+get_cover_art_thumb (const char *fname, const char *artist, const char *album, int width, cover_avail_callback_t, void *user_data);
+GdkPixbuf *
+get_cover_art_thumb_by_size (const char *fname, const char *artist, const char *album, int width, int height, cover_avail_callback_t, void *user_data);
 
 void
 coverart_reset_queue (void);

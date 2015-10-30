@@ -45,12 +45,6 @@ G_BEGIN_DECLS
 #define DDB_IS_LISTVIEW_CLASS(obj) (G_TYPE_CHECK_CLASS_TYPE ((obj), DDB_TYPE_LISTVIEW))
 #define DDB_LISTVIEW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), DDB_TYPE_LISTVIEW, DdbListviewClass))
 
-typedef struct {
-    int id; // predefined col type
-    char *format;
-    char *bytecode;
-} col_info_t;
-
 typedef struct _DdbListview DdbListview;
 typedef struct _DdbListviewClass DdbListviewClass;
 
@@ -66,6 +60,7 @@ struct _DdbListviewGroup {
     struct _DdbListviewGroup *next;
 };
 
+typedef int (*minheight_cb_t) (void *user_data, int width);
 typedef struct _DdbListviewGroup DdbListviewGroup;
 //typedef void * DdbListviewColIter;
 
@@ -93,23 +88,26 @@ typedef struct {
 
     int (*get_group) (DdbListview *listview, DdbListviewIter it, char *str, int size);
 
-    // drag-n-drop
     void (*drag_n_drop) (DdbListviewIter before, DdbPlaylistHandle playlist_from, uint32_t *indices, int length, int copy);
     void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
 
-    // callbacks
     void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int pl_iter, int x, int y, int width, int height);
-    void (*draw_album_art) (DdbListview *listview, cairo_t *drawable, DdbListviewIter group_iter, int column, int group_pinned, int grp_next_y, int x, int y, int width, int height);
+    void (*draw_album_art) (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
     void (*draw_column_data) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int idx, int column, int pl_iter, int x, int y, int width, int height);
+
+    // cols
+    int (*is_album_art_column) (void *user_data);
+    void (*columns_changed) (DdbListview *listview);
+    void (*col_sort) (int col, int sort_order, void *user_data);
+    void (*col_free_user_data) (void *user_data);
+
+    // callbacks
     void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx);
     void (*header_context_menu) (DdbListview *listview, int col);
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
     void (*selection_changed) (DdbListview *listview, DdbListviewIter it, int idx);
     void (*delete_selected) (void);
     void (*groups_changed) (DdbListview *listview, const char *format);
-    void (*columns_changed) (DdbListview *listview);
-    void (*col_sort) (int col, int sort_order, void *user_data);
-    void (*col_free_user_data) (void *user_data);
     void (*vscroll_changed) (int pos);
     void (*cursor_changed) (int pos);
     int (*modification_idx) (void);
@@ -193,11 +191,6 @@ struct _DdbListview {
     drawctx_t grpctx;
     drawctx_t hdrctx;
 
-    // cover art size
-    int cover_size;
-    int new_cover_size;
-    guint cover_refresh_timeout_id;
-
     // group format string that's supposed to get parsed by tf
     char *group_format;
     // tf bytecode for group title
@@ -209,7 +202,7 @@ struct _DdbListview {
 };
 
 struct _DdbListviewClass {
-  GtkTableClass parent_class;
+    GtkTableClass parent_class;
 };
 
 GType ddb_listview_get_type(void);
@@ -241,15 +234,15 @@ ddb_listview_is_scrolling (DdbListview *listview);
 int
 ddb_listview_column_get_count (DdbListview *listview);
 void
-ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, int minheight, int color_override, GdkColor color, void *user_data);
+ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);
 void
-ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, int minheight, int color_override, GdkColor color, void *user_data);
+ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);
 void
 ddb_listview_column_remove (DdbListview *listview, int idx);
 int
-ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, int *minheight, int *color_override, GdkColor *color, void **user_data);
+ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, minheight_cb_t *, int *color_override, GdkColor *color, void **user_data);
 int
-ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, int minheight, int color_override, GdkColor color, void *user_data);
+ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);
 
 void
 ddb_listview_show_header (DdbListview *listview, int show);
@@ -307,6 +300,9 @@ ddb_listview_list_drag_end                   (GtkWidget       *widget,
                                         gpointer         user_data);
 
 void
+ddb_listview_invalidate_album_art_columns (DdbListview *listview);
+
+void
 ddb_listview_clear_sort (DdbListview *listview);
 
 void
@@ -317,12 +313,6 @@ ddb_listview_get_row_pos (DdbListview *listview, int row_idx);
 
 void
 ddb_listview_groupcheck (DdbListview *listview);
-
-int
-ddb_listview_is_album_art_column (DdbListview *listview, int x);
-
-int
-ddb_listview_is_album_art_column_idx (DdbListview *listview, int cidx);
 
 void
 ddb_listview_update_fonts (DdbListview *ps);

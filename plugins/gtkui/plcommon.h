@@ -26,11 +26,24 @@
 
 #include "ddblistview.h"
 
+typedef struct {
+    int id;
+    char *format;
+    char *bytecode;
+    int cover_size;
+    int new_cover_size;
+    int cover_load_timeout_id;
+    DdbListview *listview;
+} col_info_t;
+
 int
 rewrite_column_config (DdbListview *listview, const char *name);
 
+int
+is_album_art_column (void *user_data);
+
 void
-draw_album_art (DdbListview *listview, cairo_t *drawable, DdbListviewIter group_it, int column, int group_pinned, int grp_next_y, int x, int y, int width, int height);
+draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
 
 void
 draw_column_data (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int idx, int column, int iter, int x, int y, int width, int height);
@@ -45,7 +58,7 @@ void
 add_column_helper (DdbListview *listview, const char *title, int width, int id, const char *format, int align_right);
 
 GtkWidget*
-create_headermenu (int groupby);
+create_headermenu (DdbListview *listview, int groupby);
 
 void
 set_last_playlist_cm (DdbListview *pl);
@@ -58,6 +71,9 @@ pl_common_init(void);
 
 void
 pl_common_free (void);
+
+void
+pl_common_free_col_info (void *data);
 
 int
 pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int size);
