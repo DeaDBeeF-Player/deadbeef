@@ -162,7 +162,6 @@ struct _DdbListview {
     int header_dragging;
     int header_sizing;
     int header_dragpt[2];
-    float last_header_motion_ev; //is it subject to remove?
     int prev_header_x;
     int header_prepare;
     int header_width; // previous width before resize
