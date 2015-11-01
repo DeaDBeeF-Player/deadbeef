@@ -1075,7 +1075,7 @@ ddb_listview_list_drag_motion                (GtkWidget       *widget,
 #if GTK_CHECK_VERSION(3,0,0)
         GdkDeviceManager *device_manager = gdk_display_get_device_manager (gdk_window_get_display (win));
         GdkDevice *pointer = gdk_device_manager_get_client_pointer (device_manager);
-        gdk_window_get_device_position (win, pointer, &x, &y, &mask);
+        gdk_window_get_device_position (win, pointer, NULL, NULL, &mask);
 #else
         gdk_window_get_pointer (win, NULL, NULL, &mask);
 #endif
@@ -2822,10 +2822,19 @@ static gboolean
 ddb_listview_header_enter (GtkWidget *widget, GdkEventCrossing *event, gpointer user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    if (!ps->header_prepare && ps->header_dragging == -1 && ps->header_sizing == -1) {
-        set_header_cursor(ps, event->x);
+    if (ps->header_prepare || ps->header_dragging != -1 || ps->header_sizing != -1) {
+        return FALSE;
     }
-    return FALSE;
+
+    int x = event->x;
+#if GTK_CHECK_VERSION(3,0,0)
+    if (event->send_event) {
+        GdkWindow *win = gtk_widget_get_window(widget);
+        GdkDeviceManager *device_manager = gdk_display_get_device_manager(gdk_window_get_display(win));
+        gdk_window_get_device_position(win, gdk_device_manager_get_client_pointer(device_manager), &x, NULL, NULL);
+    }
+#endif
+    set_header_cursor(ps, x);
 }
 
 struct set_cursor_t {
