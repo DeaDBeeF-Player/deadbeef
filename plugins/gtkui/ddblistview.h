@@ -145,6 +145,7 @@ struct _DdbListview {
 
     // scrolling
     int scroll_mode; // 0=select, 1=dragndrop
+    int scroll_pointer_x;
     int scroll_pointer_y;
     float scroll_direction;
     int scroll_active;
