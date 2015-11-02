@@ -57,6 +57,7 @@
 #include "tf.h"
 #include "gettext.h"
 #include "plugins.h"
+#include "junklib.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -252,6 +253,37 @@ tf_func_abbr (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
 
     *pout = 0;
     return (int)(pout - out);
+}
+
+int
+tf_func_ansi (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    int len;
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+    return len;
+}
+
+int
+tf_func_ascii (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    int len;
+    char temp_str[1000];
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str), fail_on_undef);
+
+    len = junk_iconv (temp_str, len, out, outlen, "utf-8", "ascii");
+
+    return len;
+
 }
 
 // $left(text,n) returns the first n characters of text
@@ -838,6 +870,8 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "xor", tf_func_xor },
     // String
     { "abbr", tf_func_abbr },
+    { "ansi", tf_func_ansi },
+    { "ascii", tf_func_ascii },
     { "cut", tf_func_left },
     { "left", tf_func_left }, // alias of 'cut'
     { "strcmp", tf_func_strcmp },

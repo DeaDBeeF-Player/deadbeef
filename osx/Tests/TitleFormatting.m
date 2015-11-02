@@ -731,4 +731,16 @@
     XCTAssert(!strcmp (buffer, "TiaLT1v[needst"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_AnsiTestString_ReturnsTheSameString {
+    char *bc = tf_compile("$ansi(ABCDабвг)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "ABCDабвг"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_AsciiTestString_ReturnsAsciiSameStringWithInvalidCharsStripped {
+    char *bc = tf_compile("$ascii(олдABCDабвг)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "ABCD"), @"The actual output is: %s", buffer);
+}
+
 @end
