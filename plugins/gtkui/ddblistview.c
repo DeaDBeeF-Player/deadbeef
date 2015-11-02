@@ -83,7 +83,7 @@ typedef enum {
     PICK_EMPTY_SPACE,
 } area_type_t;
 
-static struct _DdbListviewPickContext {
+struct _DdbListviewPickContext {
     int item_idx; // index of playitem in playlist
     int item_grp_idx; // index of first playitem in group in playlist
     int grp_idx; // index of playitem within grp
@@ -142,6 +142,9 @@ ddb_listview_get_row_pos (DdbListview *listview, int pos);
 ////// header functions ////
 void
 ddb_listview_header_render (DdbListview *ps, cairo_t *cr, int x1, int x2);
+
+static int
+ddb_listview_header_get_column_idx_for_coord (DdbListview *pl, int click_x);
 
 ////// column management functions ////
 void
@@ -705,21 +708,6 @@ ddb_listview_get_row_pos (DdbListview *listview, int row_idx) {
     }
     deadbeef->pl_unlock ();
     return y;
-}
-
-static int
-ddb_listview_header_get_column_idx_for_coord (DdbListview *pl, int click_x) {
-    int x = -pl->hscrollpos;
-    DdbListviewColumn *c;
-    int idx = 0;
-    for (c = pl->columns; c; c = c->next, idx++) {
-        int w = c->width;
-        if (click_x >= x && click_x < x + w) {
-            return idx;
-        }
-        x += w;
-    }
-    return -1;
 }
 
 // input: absolute y coord in list (not in window)
