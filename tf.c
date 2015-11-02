@@ -317,6 +317,7 @@ tf_func_caps (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
         int32_t size = 0;
         u8_nextchar (p, &size);
         size = u8_toupper ((const signed char *)p, size, temp);
+        // FIXME: size can differ for lower/upper case
         memcpy (p, temp, size);
         p += size;
 
@@ -329,6 +330,7 @@ tf_func_caps (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
                 size = 0;
                 u8_nextchar ((const char *)p, &size);
                 size = u8_tolower ((const signed char *)p, size, temp);
+                // FIXME: size can differ for lower/upper case
                 memcpy (p, temp, size);
                 p += size;
             }
