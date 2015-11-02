@@ -2231,14 +2231,14 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
             }
         }
         else {
-            gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_lower (adj));
+            gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_upper (adj));
         }
     }
     else if (keyval == GDK_Page_Up) {
         if (cursor > 0) {
             cursor -= 10;
             if (cursor < 0) {
-                gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_upper (adj));
+                gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_lower (adj));
                 cursor = 0;
             }
         }
@@ -2251,7 +2251,7 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
     }
     else if (keyval == GDK_End) {
         cursor = ps->binding->count () - 1;
-        gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_lower (adj));
+        gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_upper (adj));
     }
     else if (keyval == GDK_Home) {
         cursor = 0;
