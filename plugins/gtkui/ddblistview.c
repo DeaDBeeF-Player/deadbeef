@@ -48,6 +48,7 @@
 #define SCROLL_STEP 20
 #define AUTOSCROLL_UPDATE_FREQ 0.01f
 #define NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW 10
+#define MIN_COLUMN_WIDTH 16
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -128,11 +129,11 @@ int
 ddb_listview_dragdrop_get_row_from_coord (DdbListview *listview, int x, int y);
 void
 ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event, int x, int y);
-void
+static void
 ddb_listview_list_setup_vscroll (DdbListview *ps);
-void
+static void
 ddb_listview_list_setup_hscroll (DdbListview *ps);
-void
+static void
 ddb_listview_list_set_hscroll (DdbListview *ps, int newscroll);
 void
 ddb_listview_set_cursor (DdbListview *pl, int cursor);
@@ -295,22 +296,12 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data);
 
-gboolean
-ddb_listview_vscroll_event               (GtkWidget       *widget,
+static gboolean
+ddb_listview_scroll_event               (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data);
 
-gboolean
-ddb_listview_list_button_release_event       (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data);
-
-gboolean
-ddb_listview_motion_notify_event        (GtkWidget       *widget,
-                                        GdkEventMotion  *event,
-                                        gpointer         user_data);
-
-gboolean
+static gboolean
 ddb_listview_list_key_press_event (GtkWidget *widget, GdkEventKey *event, gpointer user_data);
 
 static void
@@ -494,7 +485,7 @@ ddb_listview_init(DdbListview *listview)
             G_CALLBACK (ddb_listview_list_popup_menu),
             NULL);
     g_signal_connect ((gpointer) listview->list, "scroll_event",
-            G_CALLBACK (ddb_listview_vscroll_event),
+            G_CALLBACK (ddb_listview_scroll_event),
             NULL);
 //    g_signal_connect ((gpointer) listview->list, "drag_begin",
 //            G_CALLBACK (on_list_drag_begin),
@@ -1047,44 +1038,49 @@ ddb_listview_list_expose_event               (GtkWidget       *widget,
 }
 #endif
 
-gboolean
-ddb_listview_vscroll_event               (GtkWidget       *widget,
+static void
+scroll_by (GtkWidget *scrollbar, gdouble delta)
+{
+    GtkRange *range = GTK_RANGE(scrollbar);
+    gdouble step = pow(gtk_adjustment_get_page_size(gtk_range_get_adjustment(range)), 2./3.);
+    gtk_range_set_value(range, max(0, gtk_range_get_value(range) + step * delta));
+}
+
+static gboolean
+ddb_listview_scroll_event               (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-
     GdkEventScroll *ev = (GdkEventScroll*)event;
 
-    GtkWidget *rangeh = ps->hscrollbar;
-    GtkWidget *rangev = ps->scrollbar;
-
-    gdouble deltah = SCROLL_STEP * 2;
-    gdouble deltav = SCROLL_STEP * 2;
-    gdouble scrollh = gtk_range_get_value (GTK_RANGE (rangeh));
-    gdouble scrollv = gtk_range_get_value (GTK_RANGE (rangev));
-    // pass event to scrollbar
-    if (ev->direction == GDK_SCROLL_UP) {
-        gtk_range_set_value (GTK_RANGE (rangev), scrollv - deltav);
-    }
-    else if (ev->direction == GDK_SCROLL_DOWN) {
-        gtk_range_set_value (GTK_RANGE (rangev), scrollv + deltav);
-    }
-    else if (ev->direction == GDK_SCROLL_LEFT) {
-        gtk_range_set_value (GTK_RANGE (rangeh), scrollh - deltah);
-    }
-    else if (ev->direction == GDK_SCROLL_RIGHT) {
-        gtk_range_set_value (GTK_RANGE (rangeh), scrollh + deltah);
-    }
+    switch(ev->direction) {
+        case GDK_SCROLL_UP:
+            scroll_by(ps->scrollbar, -1);
+            break;
+        case GDK_SCROLL_DOWN:
+            scroll_by(ps->scrollbar, 1);
+            break;
+        case GDK_SCROLL_LEFT:
+            scroll_by(ps->hscrollbar, -1);
+            break;
+        case GDK_SCROLL_RIGHT:
+            scroll_by(ps->hscrollbar, 1);
+            break;
 #if GTK_CHECK_VERSION(3,4,0)
-    else if (ev->direction == GDK_SCROLL_SMOOTH) {
-        gdouble x, y;
-        if (gdk_event_get_scroll_deltas(event, &x, &y)) {
-            gtk_range_set_value (GTK_RANGE (rangeh), scrollh + deltah * x);
-            gtk_range_set_value (GTK_RANGE (rangev), scrollv + deltav * y);
+        case GDK_SCROLL_SMOOTH:
+        {
+            gdouble x, y;
+            if (gdk_event_get_scroll_deltas(event, &x, &y)) {
+                scroll_by(ps->hscrollbar, x);
+                scroll_by(ps->scrollbar, y);
+            }
+            break;
         }
-    }
 #endif
+        default:
+            break;
+    }
 
     return FALSE;
 }
@@ -1329,59 +1325,50 @@ ddb_listview_get_hscroll_pos (DdbListview *listview) {
 
 #define MIN_COLUMN_WIDTH 16
 
-void
+static void
 ddb_listview_list_setup_vscroll (DdbListview *ps) {
     ddb_listview_groupcheck (ps);
-    GtkWidget *list = ps->list;
-    GtkWidget *scroll = ps->scrollbar;
-    int vheight = ps->fullheight;
     GtkAllocation a;
     gtk_widget_get_allocation (ps->list, &a);
     if (ps->fullheight <= a.height) {
-        gtk_widget_hide (scroll);
+        gtk_widget_hide (ps->scrollbar);
         ps->scrollpos = 0;
         gtk_widget_queue_draw (ps->list);
     }
     else {
-        gtk_widget_show (scroll);
-        if (ps->scrollpos >= vheight - a.height) {
-            ps->scrollpos = vheight - a.height;
-        }
+        GtkRange *range = GTK_RANGE(ps->scrollbar);
+        gdouble scrollpos = gtk_range_get_value(range);
+        gtk_range_set_adjustment(range, GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, ps->fullheight, SCROLL_STEP, a.height/2, a.height)));
+        gtk_range_set_value(range, scrollpos);
+        gtk_widget_show(ps->scrollbar);
+        ps->scrollpos = gtk_range_get_value(range);
     }
-    int h = a.height;
-    GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, vheight, SCROLL_STEP, h/2, h);
-    gtk_range_set_adjustment (GTK_RANGE (scroll), adj);
-    gtk_range_set_value (GTK_RANGE (scroll), ps->scrollpos);
 }
 
-void
+static void
 ddb_listview_list_setup_hscroll (DdbListview *ps) {
-    GtkWidget *list = ps->list;
-    GtkAllocation a;
-    gtk_widget_get_allocation (ps->list, &a);
-    int w = a.width;
     int size = 0;
-    DdbListviewColumn *c;
-    for (c = ps->columns; c; c = c->next) {
+    for (DdbListviewColumn *c = ps->columns; c; c = c->next) {
         size += c->width;
     }
     ddb_listview_list_update_total_width (ps, size);
-    GtkWidget *scroll = ps->hscrollbar;
-    if (w >= size) {
-        gtk_widget_hide (scroll);
+
+    GtkAllocation a;
+    gtk_widget_get_allocation (ps->list, &a);
+    if (a.width >= size) {
+        gtk_widget_hide (ps->hscrollbar);
         ps->hscrollpos = 0;
         gtk_widget_queue_draw (ps->list);
+        gtk_widget_queue_draw (ps->header);
     }
     else {
-        if (ps->hscrollpos >= size-w) {
-            int n = size-w-1;
-            ps->hscrollpos = max (0, n);
-            gtk_range_set_value (GTK_RANGE (scroll), ps->hscrollpos);
-        }
-        gtk_widget_show (scroll);
+        GtkRange *range = GTK_RANGE(ps->hscrollbar);
+        gdouble scrollpos = gtk_range_get_value(range);
+        gtk_range_set_adjustment(range, GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, size, SCROLL_STEP, a.width/2, a.width)));
+        gtk_range_set_value(range, scrollpos);
+        gtk_widget_show (ps->hscrollbar);
+        ps->hscrollpos = gtk_range_get_value(range);
     }
-    GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, size, 1, w, w);
-    gtk_range_set_adjustment (GTK_RANGE (scroll), adj);
 }
 
 // returns -1 if row not found
@@ -2204,7 +2191,7 @@ ddb_listview_list_set_hscroll (DdbListview *ps, int newscroll) {
     }
 }
 
-gboolean
+int
 ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
     int prev = ps->binding->cursor ();
     int cursor = prev;
@@ -2244,7 +2231,7 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
             }
         }
         else {
-            gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_upper (adj));
+            gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_lower (adj));
         }
     }
     else if (keyval == GDK_Page_Up) {
@@ -2264,7 +2251,7 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
     }
     else if (keyval == GDK_End) {
         cursor = ps->binding->count () - 1;
-        gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_upper (adj));
+        gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_lower (adj));
     }
     else if (keyval == GDK_Home) {
         cursor = 0;
@@ -3510,7 +3497,7 @@ ddb_listview_clear_sort (DdbListview *listview) {
     gtk_widget_queue_draw (listview->header);
 }
 
-gboolean
+static gboolean
 ddb_listview_list_key_press_event (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
     DdbListview *listview = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     if (!ddb_listview_handle_keypress (listview, event->keyval, event->state)) {
