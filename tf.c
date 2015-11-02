@@ -236,6 +236,7 @@ tf_func_abbr (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
             break;
         }
 
+        // FIXME: this is not utf8-capable
         // take the first letter for abbrev
         int is_bracket = *p == '[' || *p == ']';
         *pout++ = *p++;
@@ -283,8 +284,60 @@ tf_func_ascii (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char 
     len = junk_iconv (temp_str, len, out, outlen, "utf-8", "ascii");
 
     return len;
-
 }
+
+int
+tf_func_caps (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1) {
+        return -1;
+    }
+    char *arg = args;
+
+    int bool_out = 0;
+
+    int len;
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+
+    char *p = out;
+    const char skipchars[] = "() ,/\\|";
+    while (*p) {
+        // skip whitespace/paren
+        while (*p && strchr (skipchars, *p)) {
+            p++;
+        }
+        if (!*p) {
+            break;
+        }
+
+        int is_bracket = *p == '[' || *p == ']';
+
+        char temp[5];
+
+        // uppercase the first letter
+        int32_t size = 0;
+        u8_nextchar (p, &size);
+        size = u8_toupper ((const signed char *)p, size, temp);
+        memcpy (p, temp, size);
+        p += size;
+
+        // lowercase to the end of word
+        while (*p && !strchr (skipchars, *p)) {
+            if (is_bracket) {
+                p++;
+            }
+            else {
+                size = 0;
+                u8_nextchar ((const char *)p, &size);
+                size = u8_tolower ((const signed char *)p, size, temp);
+                memcpy (p, temp, size);
+                p += size;
+            }
+        }
+    }
+
+    return len;
+}
+
 
 // $left(text,n) returns the first n characters of text
 int
@@ -872,6 +925,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "abbr", tf_func_abbr },
     { "ansi", tf_func_ansi },
     { "ascii", tf_func_ascii },
+    { "caps", tf_func_caps },
     { "cut", tf_func_left },
     { "left", tf_func_left }, // alias of 'cut'
     { "strcmp", tf_func_strcmp },

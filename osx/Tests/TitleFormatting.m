@@ -743,4 +743,24 @@
     XCTAssert(!strcmp (buffer, "ABCD"), @"The actual output is: %s", buffer);
 }
 
+
+- (void)test_CapsTestAsciiString_ReturnsCapitalizeEachWordString {
+    char *bc = tf_compile("$caps(MY TEST STRING)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "My Test String"), @"The actual output is: %s", buffer);
+}
+
+
+- (void)test_CapsTestAsciiRandomizedString_ReturnsCapitalizeEachWordString {
+    char *bc = tf_compile("$caps(MY TesT STriNG)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "My Test String"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_CapsTestUnicodeRandomizedString_ReturnsCapitalizeEachWordString {
+    char *bc = tf_compile("$caps(AsciiAlbumName РуССкоЕНазВАние ΠΥΘΑΓΌΡΑΣ)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "Asciialbumname Русскоеназвание Πυθαγόρασ"), @"The actual output is: %s", buffer);
+}
+
 @end

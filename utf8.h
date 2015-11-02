@@ -127,6 +127,9 @@ int
 u8_tolower (const signed char *c, int l, char *out);
 
 int
+u8_toupper (const signed char *c, int l, char *out);
+
+int
 u8_strcasecmp (const char *a, const char *b);
 
 const char *
