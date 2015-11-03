@@ -457,7 +457,11 @@ draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int id
             bold = gtkui_embolden_current_track;
             italic = gtkui_italic_current_track;
         }
+        cairo_save(cr);
+        cairo_rectangle(cr, x+5, y, cwidth-10, height);
+        cairo_clip(cr);
         draw_text_custom (&listview->listctx, x + 5, y + 3, cwidth-10, calign_right, DDB_LIST_FONT, bold, italic, text);
+        cairo_restore(cr);
     }
     if (playing_track) {
         deadbeef->pl_item_unref (playing_track);
