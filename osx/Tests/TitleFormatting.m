@@ -763,4 +763,10 @@
     XCTAssert(!strcmp (buffer, "Asciialbumname Русскоеназвание Πυθαγόρασ"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_CapsTestUnicodeStringWithNonMatchinByteLengthsForLowerUpperCaseChars_ReturnsCapitalizeEachWordString {
+    char *bc = tf_compile("$caps(ɑBCD ɀHİJ)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "Ɑbcd Ɀhij"), @"The actual output is: %s", buffer);
+}
+
 @end

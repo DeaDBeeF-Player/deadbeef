@@ -299,6 +299,7 @@ tf_func_caps (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
     TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
 
     char *p = out;
+    char *end = p + len;
     const char skipchars[] = "() ,/\\|";
     while (*p) {
         // skip whitespace/paren
@@ -316,10 +317,15 @@ tf_func_caps (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
         // uppercase the first letter
         int32_t size = 0;
         u8_nextchar (p, &size);
-        size = u8_toupper ((const signed char *)p, size, temp);
-        // FIXME: size can differ for lower/upper case
-        memcpy (p, temp, size);
-        p += size;
+        int32_t uppersize = u8_toupper ((const signed char *)p, size, temp);
+        if (uppersize != size) {
+            memmove (p+uppersize, p+size, end-(p+size));
+            end += uppersize - size;
+            *end = 0;
+        }
+        memcpy (p, temp, uppersize);
+
+        p += uppersize;
 
         // lowercase to the end of word
         while (*p && !strchr (skipchars, *p)) {
@@ -329,15 +335,19 @@ tf_func_caps (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
             else {
                 size = 0;
                 u8_nextchar ((const char *)p, &size);
-                size = u8_tolower ((const signed char *)p, size, temp);
-                // FIXME: size can differ for lower/upper case
-                memcpy (p, temp, size);
-                p += size;
+                int32_t lowersize = u8_tolower ((const signed char *)p, size, temp);
+                if (lowersize != size) {
+                    memmove (p+lowersize, p+size, end-(p+size));
+                    end += lowersize - size;
+                    *end = 0;
+                }
+                memcpy (p, temp, lowersize);
+                p += lowersize;
             }
         }
     }
 
-    return len;
+    return (int)(end - out);
 }
 
 
