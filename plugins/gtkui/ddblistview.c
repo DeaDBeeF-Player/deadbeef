@@ -376,7 +376,6 @@ ddb_listview_init(DdbListview *listview)
     listview->scrollpos = -1;
     gtk_table_resize (GTK_TABLE (listview), 2, 2);
     listview->scrollbar = gtk_vscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 1, 1, 0, 0)));
-    gtk_widget_show (listview->scrollbar);
     gtk_table_attach (GTK_TABLE (listview), listview->scrollbar, 1, 2, 0, 1,
             (GtkAttachOptions) (GTK_FILL),
             (GtkAttachOptions) (GTK_FILL), 0, 0);
@@ -421,7 +420,6 @@ ddb_listview_init(DdbListview *listview)
     gtk_widget_set_events (listview->list, events);
 
     listview->hscrollbar = gtk_hscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 0, 0, 0, 0)));
-    gtk_widget_show (listview->hscrollbar);
     gtk_table_attach (GTK_TABLE (listview), listview->hscrollbar, 0, 1, 1, 2,
             (GtkAttachOptions) (GTK_FILL),
             (GtkAttachOptions) (GTK_FILL), 0, 0);
