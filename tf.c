@@ -298,7 +298,6 @@ tf_func_caps (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
     if (argc != 1) {
         return -1;
     }
-    char *arg = args;
 
     int bool_out = 0;
 
