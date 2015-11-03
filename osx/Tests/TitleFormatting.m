@@ -731,6 +731,14 @@
     XCTAssert(!strcmp (buffer, "TiaLT1v[needst"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_AbbrTestUnicodeString_ReturnsAbbreviatedString {
+    it->startsample = 100;
+    it->endsample = 300;
+    char *bc = tf_compile("$abbr('This ɀHİJ a русский Title (12-inch version) [needs tags]')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "TɀaрT1v[needst"), @"The actual output is: %s", buffer);
+}
+
 - (void)test_AnsiTestString_ReturnsTheSameString {
     char *bc = tf_compile("$ansi(ABCDабвг)");
     tf_eval (&ctx, bc, buffer, 1000);

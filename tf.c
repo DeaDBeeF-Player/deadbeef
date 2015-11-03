@@ -236,10 +236,13 @@ tf_func_abbr (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
             break;
         }
 
-        // FIXME: this is not utf8-capable
         // take the first letter for abbrev
         int is_bracket = *p == '[' || *p == ']';
-        *pout++ = *p++;
+        int32_t size = 0;
+        u8_nextchar(p, &size);
+        memmove (pout, p, size);
+        pout += size;
+        p += size;
 
         // skip to the end of word
         while (*p && !strchr (skipchars, *p)) {
@@ -247,7 +250,11 @@ tf_func_abbr (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
                 p++;
             }
             else {
-                *pout++ = *p++;
+                size = 0;
+                u8_nextchar(p, &size);
+                memmove (pout, p, size);
+                pout += size;
+                p += size;
             }
         }
     }
