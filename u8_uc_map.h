@@ -1,5 +1,5 @@
 /* C code produced by gperf version 3.0.3 */
-/* Command-line: gperf -c -t -H u8_uc_hash -N u8_uc_in_word_set u8_uc_map.txt  */
+/* Command-line: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/gperf -c -t -H u8_uc_hash -N u8_uc_in_word_set u8_uc_map.txt  */
 /* Computed positions: -k'1-2,$' */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
@@ -35,7 +35,7 @@ struct u8_uppercase_map_t {
     const char *upper;
 };
 
-#define TOTAL_KEYWORDS 1005
+#define TOTAL_KEYWORDS 1006
 #define MIN_WORD_LENGTH 1
 #define MAX_WORD_LENGTH 7
 #define MIN_HASH_VALUE 1
@@ -110,272 +110,272 @@ u8_uc_in_word_set (str, len)
 #line 31 "u8_uc_map.txt"
       {"z", "Z"},
       {""}, {""}, {""},
-#line 559 "u8_uc_map.txt"
+#line 560 "u8_uc_map.txt"
       {"\341\272\201", "Ẁ"},
       {""}, {""}, {""}, {""},
-#line 527 "u8_uc_map.txt"
+#line 528 "u8_uc_map.txt"
       {"\341\271\201", "Ṁ"},
 #line 30 "u8_uc_map.txt"
       {"y", "Y"},
       {""}, {""}, {""},
-#line 495 "u8_uc_map.txt"
+#line 496 "u8_uc_map.txt"
       {"\341\270\201", "Ḁ"},
       {""}, {""},
-#line 586 "u8_uc_map.txt"
+#line 587 "u8_uc_map.txt"
       {"\341\272\277", "Ế"},
       {""},
-#line 458 "u8_uc_map.txt"
+#line 459 "u8_uc_map.txt"
       {"\342\264\201", "Ⴁ"},
 #line 29 "u8_uc_map.txt"
       {"x", "X"},
       {""},
-#line 558 "u8_uc_map.txt"
+#line 559 "u8_uc_map.txt"
       {"\341\271\277", "Ṿ"},
       {""},
-#line 804 "u8_uc_map.txt"
+#line 805 "u8_uc_map.txt"
       {"\342\262\201", "Ⲁ"},
       {""}, {""},
-#line 526 "u8_uc_map.txt"
+#line 527 "u8_uc_map.txt"
       {"\341\270\277", "Ḿ"},
-#line 574 "u8_uc_map.txt"
+#line 575 "u8_uc_map.txt"
       {"\341\272\247", "Ầ"},
-#line 650 "u8_uc_map.txt"
+#line 651 "u8_uc_map.txt"
       {"\341\275\201", "Ὁ"},
 #line 28 "u8_uc_map.txt"
       {"w", "W"},
       {""},
-#line 757 "u8_uc_map.txt"
+#line 758 "u8_uc_map.txt"
       {"\342\260\277", "Ⰿ"},
-#line 546 "u8_uc_map.txt"
+#line 547 "u8_uc_map.txt"
       {"\341\271\247", "Ṧ"},
       {""},
-#line 566 "u8_uc_map.txt"
+#line 567 "u8_uc_map.txt"
       {"\341\272\217", "Ẏ"},
       {""},
-#line 835 "u8_uc_map.txt"
+#line 836 "u8_uc_map.txt"
       {"\342\262\277", "Ⲿ"},
-#line 514 "u8_uc_map.txt"
+#line 515 "u8_uc_map.txt"
       {"\341\270\247", "Ḧ"},
-#line 665 "u8_uc_map.txt"
+#line 666 "u8_uc_map.txt"
       {"\341\275\246", "Ὦ"},
-#line 534 "u8_uc_map.txt"
+#line 535 "u8_uc_map.txt"
       {"\341\271\217", "Ṏ"},
       {""}, {""}, {""},
-#line 561 "u8_uc_map.txt"
+#line 562 "u8_uc_map.txt"
       {"\341\272\205", "Ẅ"},
-#line 502 "u8_uc_map.txt"
+#line 503 "u8_uc_map.txt"
       {"\341\270\217", "Ḏ"},
       {""},
-#line 585 "u8_uc_map.txt"
+#line 586 "u8_uc_map.txt"
       {"\341\272\275", "Ẽ"},
-#line 823 "u8_uc_map.txt"
+#line 824 "u8_uc_map.txt"
       {"\342\262\247", "Ⲧ"},
-#line 529 "u8_uc_map.txt"
+#line 530 "u8_uc_map.txt"
       {"\341\271\205", "Ṅ"},
-#line 472 "u8_uc_map.txt"
+#line 473 "u8_uc_map.txt"
       {"\342\264\217", "Ⴏ"},
-#line 802 "u8_uc_map.txt"
+#line 803 "u8_uc_map.txt"
       {"\310\277", "Ȿ"},
-#line 557 "u8_uc_map.txt"
+#line 558 "u8_uc_map.txt"
       {"\341\271\275", "Ṽ"},
-#line 666 "u8_uc_map.txt"
+#line 667 "u8_uc_map.txt"
       {"\341\275\247", "Ὧ"},
-#line 497 "u8_uc_map.txt"
+#line 498 "u8_uc_map.txt"
       {"\341\270\205", "Ḅ"},
-#line 811 "u8_uc_map.txt"
+#line 812 "u8_uc_map.txt"
       {"\342\262\217", "Ⲏ"},
 #line 182 "u8_uc_map.txt"
       {"\307\277", "Ǿ"},
-#line 525 "u8_uc_map.txt"
+#line 526 "u8_uc_map.txt"
       {"\341\270\275", "Ḽ"},
-#line 580 "u8_uc_map.txt"
+#line 581 "u8_uc_map.txt"
       {"\341\272\263", "Ẳ"},
-#line 462 "u8_uc_map.txt"
+#line 463 "u8_uc_map.txt"
       {"\342\264\205", "Ⴅ"},
 #line 27 "u8_uc_map.txt"
       {"v", "V"},
 #line 120 "u8_uc_map.txt"
       {"\303\277", "Ÿ"},
-#line 755 "u8_uc_map.txt"
+#line 756 "u8_uc_map.txt"
       {"\342\260\275", "Ⰽ"},
-#line 552 "u8_uc_map.txt"
+#line 553 "u8_uc_map.txt"
       {"\341\271\263", "Ṳ"},
-#line 806 "u8_uc_map.txt"
+#line 807 "u8_uc_map.txt"
       {"\342\262\205", "Ⲅ"},
       {""}, {""},
-#line 834 "u8_uc_map.txt"
+#line 835 "u8_uc_map.txt"
       {"\342\262\275", "Ⲽ"},
-#line 520 "u8_uc_map.txt"
+#line 521 "u8_uc_map.txt"
       {"\341\270\263", "Ḳ"},
-#line 654 "u8_uc_map.txt"
+#line 655 "u8_uc_map.txt"
       {"\341\275\205", "Ὅ"},
 #line 26 "u8_uc_map.txt"
       {"u", "U"},
-#line 792 "u8_uc_map.txt"
+#line 793 "u8_uc_map.txt"
       {"\311\275", "Ɽ"},
-#line 713 "u8_uc_map.txt"
+#line 714 "u8_uc_map.txt"
       {"\341\275\275", "Ώ"},
-#line 745 "u8_uc_map.txt"
+#line 746 "u8_uc_map.txt"
       {"\342\260\263", "Ⰳ"},
-#line 538 "u8_uc_map.txt"
+#line 539 "u8_uc_map.txt"
       {"\341\271\227", "Ṗ"},
       {""},
 #line 246 "u8_uc_map.txt"
       {"\316\277", "Ο"},
-#line 583 "u8_uc_map.txt"
+#line 584 "u8_uc_map.txt"
       {"\341\272\271", "Ẹ"},
-#line 829 "u8_uc_map.txt"
+#line 830 "u8_uc_map.txt"
       {"\342\262\263", "Ⲳ"},
-#line 506 "u8_uc_map.txt"
+#line 507 "u8_uc_map.txt"
       {"\341\270\227", "Ḗ"},
 #line 130 "u8_uc_map.txt"
       {"\311\227", "Ɗ"},
 #line 181 "u8_uc_map.txt"
       {"\307\275", "Ǽ"},
-#line 555 "u8_uc_map.txt"
+#line 556 "u8_uc_map.txt"
       {"\341\271\271", "Ṹ"},
-#line 697 "u8_uc_map.txt"
+#line 698 "u8_uc_map.txt"
       {"\341\275\263", "Έ"},
-#line 480 "u8_uc_map.txt"
+#line 481 "u8_uc_map.txt"
       {"\342\264\227", "Ⴗ"},
 #line 194 "u8_uc_map.txt"
       {"\310\227", "Ȗ"},
 #line 60 "u8_uc_map.txt"
       {"\303\275", "Ý"},
-#line 523 "u8_uc_map.txt"
+#line 524 "u8_uc_map.txt"
       {"\341\270\271", "Ḹ"},
-#line 714 "u8_uc_map.txt"
+#line 715 "u8_uc_map.txt"
       {"\341\277\263", "ῼ"},
-#line 815 "u8_uc_map.txt"
+#line 816 "u8_uc_map.txt"
       {"\342\262\227", "Ⲗ"},
 #line 25 "u8_uc_map.txt"
       {"t", "T"},
 #line 179 "u8_uc_map.txt"
       {"\307\271", "Ǹ"},
-#line 751 "u8_uc_map.txt"
+#line 752 "u8_uc_map.txt"
       {"\342\260\271", "Ⰹ"},
       {""},
-#line 658 "u8_uc_map.txt"
+#line 659 "u8_uc_map.txt"
       {"\341\275\227", "Ὗ"},
       {""},
 #line 56 "u8_uc_map.txt"
       {"\303\271", "Ù"},
-#line 832 "u8_uc_map.txt"
+#line 833 "u8_uc_map.txt"
       {"\342\262\271", "Ⲹ"},
       {""}, {""},
 #line 24 "u8_uc_map.txt"
       {"s", "S"},
 #line 244 "u8_uc_map.txt"
       {"\316\275", "Ν"},
-#line 711 "u8_uc_map.txt"
+#line 712 "u8_uc_map.txt"
       {"\341\275\271", "Ό"},
       {""},
-#line 307 "u8_uc_map.txt"
+#line 308 "u8_uc_map.txt"
       {"\320\277", "П"},
       {""}, {""},
-#line 572 "u8_uc_map.txt"
+#line 573 "u8_uc_map.txt"
       {"\341\272\243", "Ả"},
       {""}, {""},
 #line 23 "u8_uc_map.txt"
       {"r", "R"},
 #line 240 "u8_uc_map.txt"
       {"\316\271", "Ι"},
-#line 544 "u8_uc_map.txt"
+#line 545 "u8_uc_map.txt"
       {"\341\271\243", "Ṣ"},
       {""}, {""}, {""}, {""},
-#line 512 "u8_uc_map.txt"
+#line 513 "u8_uc_map.txt"
       {"\341\270\243", "Ḣ"},
       {""}, {""},
 #line 22 "u8_uc_map.txt"
       {"q", "Q"},
       {""},
-#line 492 "u8_uc_map.txt"
+#line 493 "u8_uc_map.txt"
       {"\342\264\243", "Ⴣ"},
       {""}, {""}, {""},
-#line 449 "u8_uc_map.txt"
+#line 450 "u8_uc_map.txt"
       {"\325\277", "Տ"},
-#line 821 "u8_uc_map.txt"
+#line 822 "u8_uc_map.txt"
       {"\342\262\243", "Ⲣ"},
       {""},
-#line 305 "u8_uc_map.txt"
+#line 306 "u8_uc_map.txt"
       {"\320\275", "Н"},
 #line 21 "u8_uc_map.txt"
       {"p", "P"},
       {""},
-#line 662 "u8_uc_map.txt"
+#line 663 "u8_uc_map.txt"
       {"\341\275\243", "Ὣ"},
       {""}, {""},
-#line 836 "u8_uc_map.txt"
+#line 837 "u8_uc_map.txt"
       {"\342\263\201", "Ⳁ"},
       {""},
-#line 744 "u8_uc_map.txt"
+#line 745 "u8_uc_map.txt"
       {"\342\260\262", "Ⰲ"},
       {""},
-#line 301 "u8_uc_map.txt"
+#line 302 "u8_uc_map.txt"
       {"\320\271", "Й"},
 #line 20 "u8_uc_map.txt"
       {"o", "O"},
 #line 142 "u8_uc_map.txt"
       {"\311\262", "Ɲ"},
       {""}, {""}, {""}, {""}, {""},
-#line 696 "u8_uc_map.txt"
+#line 697 "u8_uc_map.txt"
       {"\341\275\262", "Ὲ"},
-#line 579 "u8_uc_map.txt"
+#line 580 "u8_uc_map.txt"
       {"\341\272\261", "Ằ"},
-#line 569 "u8_uc_map.txt"
+#line 570 "u8_uc_map.txt"
       {"\341\272\225", "Ẕ"},
 #line 19 "u8_uc_map.txt"
       {"n", "N"},
-#line 447 "u8_uc_map.txt"
+#line 448 "u8_uc_map.txt"
       {"\325\275", "Ս"},
-#line 581 "u8_uc_map.txt"
+#line 582 "u8_uc_map.txt"
       {"\341\272\265", "Ẵ"},
-#line 551 "u8_uc_map.txt"
+#line 552 "u8_uc_map.txt"
       {"\341\271\261", "Ṱ"},
-#line 537 "u8_uc_map.txt"
+#line 538 "u8_uc_map.txt"
       {"\341\271\225", "Ṕ"},
       {""},
 #line 50 "u8_uc_map.txt"
       {"\303\262", "Ò"},
-#line 553 "u8_uc_map.txt"
+#line 554 "u8_uc_map.txt"
       {"\341\271\265", "Ṵ"},
-#line 519 "u8_uc_map.txt"
+#line 520 "u8_uc_map.txt"
       {"\341\270\261", "Ḱ"},
-#line 505 "u8_uc_map.txt"
+#line 506 "u8_uc_map.txt"
       {"\341\270\225", "Ḕ"},
 #line 18 "u8_uc_map.txt"
       {"m", "M"},
-#line 443 "u8_uc_map.txt"
+#line 444 "u8_uc_map.txt"
       {"\325\271", "Չ"},
-#line 521 "u8_uc_map.txt"
+#line 522 "u8_uc_map.txt"
       {"\341\270\265", "Ḵ"},
-#line 743 "u8_uc_map.txt"
+#line 744 "u8_uc_map.txt"
       {"\342\260\261", "Ⰱ"},
-#line 478 "u8_uc_map.txt"
+#line 479 "u8_uc_map.txt"
       {"\342\264\225", "Ⴕ"},
       {""},
-#line 843 "u8_uc_map.txt"
+#line 844 "u8_uc_map.txt"
       {"\342\263\217", "Ⳏ"},
-#line 747 "u8_uc_map.txt"
+#line 748 "u8_uc_map.txt"
       {"\342\260\265", "Ⰵ"},
-#line 828 "u8_uc_map.txt"
+#line 829 "u8_uc_map.txt"
       {"\342\262\261", "Ⲱ"},
-#line 814 "u8_uc_map.txt"
+#line 815 "u8_uc_map.txt"
       {"\342\262\225", "Ⲕ"},
 #line 17 "u8_uc_map.txt"
       {"l", "L"},
 #line 233 "u8_uc_map.txt"
       {"\316\262", "Β"},
-#line 830 "u8_uc_map.txt"
+#line 831 "u8_uc_map.txt"
       {"\342\262\265", "Ⲵ"},
-#line 694 "u8_uc_map.txt"
+#line 695 "u8_uc_map.txt"
       {"\341\275\261", "Ά"},
-#line 657 "u8_uc_map.txt"
+#line 658 "u8_uc_map.txt"
       {"\341\275\225", "Ὕ"},
-#line 838 "u8_uc_map.txt"
+#line 839 "u8_uc_map.txt"
       {"\342\263\205", "Ⳅ"},
       {""},
-#line 699 "u8_uc_map.txt"
+#line 700 "u8_uc_map.txt"
       {"\341\275\265", "Ή"},
 #line 38 "u8_uc_map.txt"
       {"\303\246", "Æ"},
@@ -383,31 +383,31 @@ u8_uc_in_word_set (str, len)
 #line 16 "u8_uc_map.txt"
       {"k", "K"},
       {""},
-#line 791 "u8_uc_map.txt"
+#line 792 "u8_uc_map.txt"
       {"\341\265\275", "Ᵽ"},
       {""}, {""}, {""}, {""},
-#line 746 "u8_uc_map.txt"
+#line 747 "u8_uc_map.txt"
       {"\342\260\264", "Ⰴ"},
       {""}, {""},
 #line 15 "u8_uc_map.txt"
       {"j", "J"},
 #line 57 "u8_uc_map.txt"
       {"\303\272", "Ú"},
-#line 752 "u8_uc_map.txt"
+#line 753 "u8_uc_map.txt"
       {"\342\260\272", "Ⰺ"},
 #line 208 "u8_uc_map.txt"
       {"\310\263", "Ȳ"},
       {""}, {""}, {""},
-#line 698 "u8_uc_map.txt"
+#line 699 "u8_uc_map.txt"
       {"\341\275\264", "Ὴ"},
       {""},
-#line 294 "u8_uc_map.txt"
+#line 295 "u8_uc_map.txt"
       {"\320\262", "В"},
-#line 847 "u8_uc_map.txt"
+#line 848 "u8_uc_map.txt"
       {"\342\263\227", "Ⳗ"},
 #line 52 "u8_uc_map.txt"
       {"\303\264", "Ô"},
-#line 707 "u8_uc_map.txt"
+#line 708 "u8_uc_map.txt"
       {"\341\275\272", "Ὺ"},
 #line 51 "u8_uc_map.txt"
       {"\303\263", "Ó"},
@@ -418,386 +418,386 @@ u8_uc_in_word_set (str, len)
 #line 14 "u8_uc_map.txt"
       {"i", "I"},
       {""},
-#line 931 "u8_uc_map.txt"
+#line 932 "u8_uc_map.txt"
       {"\341\265\271", "Ᵹ"},
       {""}, {""},
 #line 73 "u8_uc_map.txt"
       {"\304\227", "Ė"},
 #line 235 "u8_uc_map.txt"
       {"\316\264", "Δ"},
-#line 573 "u8_uc_map.txt"
+#line 574 "u8_uc_map.txt"
       {"\341\272\245", "Ấ"},
 #line 234 "u8_uc_map.txt"
       {"\316\263", "Γ"},
       {""},
 #line 13 "u8_uc_map.txt"
       {"h", "H"},
-#line 436 "u8_uc_map.txt"
+#line 437 "u8_uc_map.txt"
       {"\325\262", "Ղ"},
-#line 545 "u8_uc_map.txt"
+#line 546 "u8_uc_map.txt"
       {"\341\271\245", "Ṥ"},
       {""}, {""}, {""},
 #line 137 "u8_uc_map.txt"
       {"\311\243", "Ɣ"},
-#line 513 "u8_uc_map.txt"
+#line 514 "u8_uc_map.txt"
       {"\341\270\245", "Ḥ"},
-#line 481 "u8_uc_map.txt"
+#line 482 "u8_uc_map.txt"
       {"\342\264\230", "Ⴘ"},
       {""},
 #line 12 "u8_uc_map.txt"
       {"g", "G"},
 #line 200 "u8_uc_map.txt"
       {"\310\243", "Ȣ"},
-#line 494 "u8_uc_map.txt"
+#line 495 "u8_uc_map.txt"
       {"\342\264\245", "Ⴥ"},
       {""},
-#line 302 "u8_uc_map.txt"
+#line 303 "u8_uc_map.txt"
       {"\320\272", "К"},
       {""},
 #line 169 "u8_uc_map.txt"
       {"\307\243", "Ǣ"},
-#line 822 "u8_uc_map.txt"
+#line 823 "u8_uc_map.txt"
       {"\342\262\245", "Ⲥ"},
-#line 853 "u8_uc_map.txt"
+#line 854 "u8_uc_map.txt"
       {"\342\263\243", "Ⳣ"},
       {""},
 #line 11 "u8_uc_map.txt"
       {"f", "F"},
 #line 35 "u8_uc_map.txt"
       {"\303\243", "Ã"},
-#line 664 "u8_uc_map.txt"
+#line 665 "u8_uc_map.txt"
       {"\341\275\245", "Ὥ"},
-#line 424 "u8_uc_map.txt"
+#line 425 "u8_uc_map.txt"
       {"\325\246", "Զ"},
-#line 296 "u8_uc_map.txt"
+#line 297 "u8_uc_map.txt"
       {"\320\264", "Д"},
       {""},
-#line 295 "u8_uc_map.txt"
+#line 296 "u8_uc_map.txt"
       {"\320\263", "Г"},
-#line 709 "u8_uc_map.txt"
+#line 710 "u8_uc_map.txt"
       {"\341\277\245", "Ῥ"},
 #line 164 "u8_uc_map.txt"
       {"\307\230", "Ǘ"},
-#line 493 "u8_uc_map.txt"
+#line 494 "u8_uc_map.txt"
       {"\342\264\244", "Ⴤ"},
 #line 10 "u8_uc_map.txt"
       {"e", "E"},
       {""},
-#line 576 "u8_uc_map.txt"
+#line 577 "u8_uc_map.txt"
       {"\341\272\253", "Ẫ"},
       {""},
-#line 587 "u8_uc_map.txt"
+#line 588 "u8_uc_map.txt"
       {"\341\273\201", "Ề"},
       {""},
-#line 444 "u8_uc_map.txt"
+#line 445 "u8_uc_map.txt"
       {"\325\272", "Պ"},
-#line 548 "u8_uc_map.txt"
+#line 549 "u8_uc_map.txt"
       {"\341\271\253", "Ṫ"},
       {""},
-#line 663 "u8_uc_map.txt"
+#line 664 "u8_uc_map.txt"
       {"\341\275\244", "Ὤ"},
 #line 9 "u8_uc_map.txt"
       {"d", "D"},
       {""},
-#line 516 "u8_uc_map.txt"
+#line 517 "u8_uc_map.txt"
       {"\341\270\253", "Ḫ"},
       {""},
-#line 562 "u8_uc_map.txt"
+#line 563 "u8_uc_map.txt"
       {"\341\272\207", "Ẇ"},
       {""},
-#line 438 "u8_uc_map.txt"
+#line 439 "u8_uc_map.txt"
       {"\325\264", "Մ"},
-#line 618 "u8_uc_map.txt"
+#line 619 "u8_uc_map.txt"
       {"\341\273\277", "Ỿ"},
-#line 437 "u8_uc_map.txt"
+#line 438 "u8_uc_map.txt"
       {"\325\263", "Ճ"},
-#line 530 "u8_uc_map.txt"
+#line 531 "u8_uc_map.txt"
       {"\341\271\207", "Ṇ"},
 #line 8 "u8_uc_map.txt"
       {"c", "C"},
       {""},
-#line 825 "u8_uc_map.txt"
+#line 826 "u8_uc_map.txt"
       {"\342\262\253", "Ⲫ"},
       {""},
-#line 498 "u8_uc_map.txt"
+#line 499 "u8_uc_map.txt"
       {"\341\270\207", "Ḇ"},
       {""}, {""},
-#line 754 "u8_uc_map.txt"
+#line 755 "u8_uc_map.txt"
       {"\342\260\274", "Ⰼ"},
-#line 606 "u8_uc_map.txt"
+#line 607 "u8_uc_map.txt"
       {"\341\273\247", "Ủ"},
-#line 464 "u8_uc_map.txt"
+#line 465 "u8_uc_map.txt"
       {"\342\264\207", "Ⴇ"},
-#line 846 "u8_uc_map.txt"
+#line 847 "u8_uc_map.txt"
       {"\342\263\225", "Ⳕ"},
       {""}, {""}, {""},
-#line 807 "u8_uc_map.txt"
+#line 808 "u8_uc_map.txt"
       {"\342\262\207", "Ⲇ"},
-#line 594 "u8_uc_map.txt"
+#line 595 "u8_uc_map.txt"
       {"\341\273\217", "Ỏ"},
 #line 143 "u8_uc_map.txt"
       {"\311\265", "Ɵ"},
-#line 712 "u8_uc_map.txt"
+#line 713 "u8_uc_map.txt"
       {"\341\275\274", "Ὼ"},
       {""}, {""},
 #line 7 "u8_uc_map.txt"
       {"b", "B"},
       {""}, {""}, {""},
-#line 589 "u8_uc_map.txt"
+#line 590 "u8_uc_map.txt"
       {"\341\273\205", "Ễ"},
       {""},
 #line 176 "u8_uc_map.txt"
       {"\307\265", "Ǵ"},
-#line 617 "u8_uc_map.txt"
+#line 618 "u8_uc_map.txt"
       {"\341\273\275", "Ỽ"},
       {""}, {""},
-#line 996 "u8_uc_map.txt"
+#line 997 "u8_uc_map.txt"
       {"\360\220\221\201", "𐐙"},
 #line 53 "u8_uc_map.txt"
       {"\303\265", "Õ"},
-#line 542 "u8_uc_map.txt"
+#line 543 "u8_uc_map.txt"
       {"\341\271\237", "Ṟ"},
       {""},
 #line 36 "u8_uc_map.txt"
       {"\303\244", "Ä"},
       {""},
-#line 421 "u8_uc_map.txt"
+#line 422 "u8_uc_map.txt"
       {"\325\243", "Գ"},
-#line 510 "u8_uc_map.txt"
+#line 511 "u8_uc_map.txt"
       {"\341\270\237", "Ḟ"},
-#line 612 "u8_uc_map.txt"
+#line 613 "u8_uc_map.txt"
       {"\341\273\263", "Ỳ"},
       {""},
 #line 6 "u8_uc_map.txt"
       {"a", "A"},
 #line 89 "u8_uc_map.txt"
       {"\304\272", "Ĺ"},
-#line 488 "u8_uc_map.txt"
+#line 489 "u8_uc_map.txt"
       {"\342\264\237", "Ⴟ"},
-#line 994 "u8_uc_map.txt"
+#line 995 "u8_uc_map.txt"
       {"\360\220\220\277", "𐐗"},
       {""}, {""},
 #line 236 "u8_uc_map.txt"
       {"\316\265", "Ε"},
-#line 819 "u8_uc_map.txt"
+#line 820 "u8_uc_map.txt"
       {"\342\262\237", "Ⲟ"},
       {""},
-#line 598 "u8_uc_map.txt"
+#line 599 "u8_uc_map.txt"
       {"\341\273\227", "Ỗ"},
       {""}, {""}, {""},
 #line 86 "u8_uc_map.txt"
       {"\304\263", "Ĳ"},
-#line 905 "u8_uc_map.txt"
+#line 906 "u8_uc_map.txt"
       {"\352\235\201", "Ꝁ"},
       {""}, {""},
-#line 615 "u8_uc_map.txt"
+#line 616 "u8_uc_map.txt"
       {"\341\273\271", "Ỹ"},
-#line 854 "u8_uc_map.txt"
+#line 855 "u8_uc_map.txt"
       {"\342\263\254", "Ⳬ"},
       {""}, {""},
-#line 1010 "u8_uc_map.txt"
+#line 1011 "u8_uc_map.txt"
       {"\360\220\221\217", "𐐧"},
       {""}, {""}, {""}, {""}, {""},
-#line 932 "u8_uc_map.txt"
+#line 933 "u8_uc_map.txt"
       {"\352\235\277", "Ꝿ"},
       {""}, {""},
-#line 1000 "u8_uc_map.txt"
+#line 1001 "u8_uc_map.txt"
       {"\360\220\221\205", "𐐝"},
       {""},
-#line 756 "u8_uc_map.txt"
+#line 757 "u8_uc_map.txt"
       {"\342\260\276", "Ⰾ"},
-#line 992 "u8_uc_map.txt"
+#line 993 "u8_uc_map.txt"
       {"\360\220\220\275", "𐐕"},
-#line 297 "u8_uc_map.txt"
+#line 298 "u8_uc_map.txt"
       {"\320\265", "Е"},
       {""}, {""}, {""},
-#line 924 "u8_uc_map.txt"
+#line 925 "u8_uc_map.txt"
       {"\352\235\247", "Ꝧ"},
       {""}, {""}, {""}, {""}, {""},
-#line 982 "u8_uc_map.txt"
+#line 983 "u8_uc_map.txt"
       {"\360\220\220\263", "𐐋"},
-#line 912 "u8_uc_map.txt"
+#line 913 "u8_uc_map.txt"
       {"\352\235\217", "Ꝏ"},
       {""},
-#line 604 "u8_uc_map.txt"
+#line 605 "u8_uc_map.txt"
       {"\341\273\243", "Ợ"},
       {""}, {""}, {""},
 #line 79 "u8_uc_map.txt"
       {"\304\243", "Ģ"},
-#line 584 "u8_uc_map.txt"
+#line 585 "u8_uc_map.txt"
       {"\341\272\273", "Ẻ"},
       {""},
-#line 907 "u8_uc_map.txt"
+#line 908 "u8_uc_map.txt"
       {"\352\235\205", "Ꝅ"},
       {""},
-#line 439 "u8_uc_map.txt"
+#line 440 "u8_uc_map.txt"
       {"\325\265", "Յ"},
-#line 556 "u8_uc_map.txt"
+#line 557 "u8_uc_map.txt"
       {"\341\271\273", "Ṻ"},
       {""},
-#line 422 "u8_uc_map.txt"
+#line 423 "u8_uc_map.txt"
       {"\325\244", "Դ"},
       {""}, {""},
-#line 524 "u8_uc_map.txt"
+#line 525 "u8_uc_map.txt"
       {"\341\270\273", "Ḻ"},
-#line 988 "u8_uc_map.txt"
+#line 989 "u8_uc_map.txt"
       {"\360\220\220\271", "𐐑"},
       {""}, {""}, {""},
-#line 753 "u8_uc_map.txt"
+#line 754 "u8_uc_map.txt"
       {"\342\260\273", "Ⰻ"},
       {""}, {""},
-#line 410 "u8_uc_map.txt"
+#line 411 "u8_uc_map.txt"
       {"\324\227", "Ԗ"},
       {""},
-#line 833 "u8_uc_map.txt"
+#line 834 "u8_uc_map.txt"
       {"\342\262\273", "Ⲻ"},
       {""}, {""},
 #line 193 "u8_uc_map.txt"
       {"\310\225", "Ȕ"},
-#line 938 "u8_uc_map.txt"
+#line 939 "u8_uc_map.txt"
       {"\311\245", "Ɥ"},
-#line 708 "u8_uc_map.txt"
+#line 709 "u8_uc_map.txt"
       {"\341\275\273", "Ύ"},
       {""},
-#line 916 "u8_uc_map.txt"
+#line 917 "u8_uc_map.txt"
       {"\352\235\227", "Ꝗ"},
       {""},
 #line 201 "u8_uc_map.txt"
       {"\310\245", "Ȥ"},
-#line 904 "u8_uc_map.txt"
+#line 905 "u8_uc_map.txt"
       {"\352\234\277", "Ꜿ"},
       {""},
-#line 738 "u8_uc_map.txt"
+#line 739 "u8_uc_map.txt"
       {"\342\223\246", "Ⓦ"},
-#line 839 "u8_uc_map.txt"
+#line 840 "u8_uc_map.txt"
       {"\342\263\207", "Ⳇ"},
 #line 170 "u8_uc_map.txt"
       {"\307\245", "Ǥ"},
-#line 491 "u8_uc_map.txt"
+#line 492 "u8_uc_map.txt"
       {"\342\264\242", "Ⴢ"},
-#line 611 "u8_uc_map.txt"
+#line 612 "u8_uc_map.txt"
       {"\341\273\261", "Ự"},
-#line 597 "u8_uc_map.txt"
+#line 598 "u8_uc_map.txt"
       {"\341\273\225", "Ổ"},
       {""},
 #line 37 "u8_uc_map.txt"
       {"\303\245", "Å"},
-#line 613 "u8_uc_map.txt"
+#line 614 "u8_uc_map.txt"
       {"\341\273\265", "Ỵ"},
-#line 893 "u8_uc_map.txt"
+#line 894 "u8_uc_map.txt"
       {"\352\234\247", "Ꜧ"},
       {""},
 #line 183 "u8_uc_map.txt"
       {"\310\201", "Ȁ"},
       {""},
-#line 661 "u8_uc_map.txt"
+#line 662 "u8_uc_map.txt"
       {"\341\275\242", "Ὢ"},
-#line 739 "u8_uc_map.txt"
+#line 740 "u8_uc_map.txt"
       {"\342\223\247", "Ⓧ"},
       {""}, {""}, {""}, {""}, {""},
-#line 473 "u8_uc_map.txt"
+#line 474 "u8_uc_map.txt"
       {"\342\264\220", "Ⴐ"},
       {""}, {""}, {""},
-#line 981 "u8_uc_map.txt"
+#line 982 "u8_uc_map.txt"
       {"\360\220\220\262", "𐐊"},
       {""}, {""},
 #line 87 "u8_uc_map.txt"
       {"\304\265", "Ĵ"},
-#line 903 "u8_uc_map.txt"
+#line 904 "u8_uc_map.txt"
       {"\352\234\275", "Ꜽ"},
       {""}, {""},
-#line 451 "u8_uc_map.txt"
+#line 452 "u8_uc_map.txt"
       {"\326\201", "Ց"},
-#line 790 "u8_uc_map.txt"
+#line 791 "u8_uc_map.txt"
       {"\311\253", "Ɫ"},
-#line 922 "u8_uc_map.txt"
+#line 923 "u8_uc_map.txt"
       {"\352\235\243", "Ꝣ"},
-#line 851 "u8_uc_map.txt"
+#line 852 "u8_uc_map.txt"
       {"\342\263\237", "Ⳟ"},
-#line 701 "u8_uc_map.txt"
+#line 702 "u8_uc_map.txt"
       {"\341\277\220", "Ῐ"},
       {""},
 #line 204 "u8_uc_map.txt"
       {"\310\253", "Ȫ"},
       {""},
-#line 898 "u8_uc_map.txt"
+#line 899 "u8_uc_map.txt"
       {"\352\234\263", "Ꜳ"},
       {""}, {""},
 #line 173 "u8_uc_map.txt"
       {"\307\253", "Ǫ"},
-#line 577 "u8_uc_map.txt"
+#line 578 "u8_uc_map.txt"
       {"\341\272\255", "Ậ"},
       {""}, {""}, {""},
 #line 43 "u8_uc_map.txt"
       {"\303\253", "Ë"},
-#line 549 "u8_uc_map.txt"
+#line 550 "u8_uc_map.txt"
       {"\341\271\255", "Ṭ"},
       {""},
-#line 980 "u8_uc_map.txt"
+#line 981 "u8_uc_map.txt"
       {"\360\220\220\261", "𐐉"},
       {""}, {""},
-#line 517 "u8_uc_map.txt"
+#line 518 "u8_uc_map.txt"
       {"\341\270\255", "Ḭ"},
-#line 984 "u8_uc_map.txt"
+#line 985 "u8_uc_map.txt"
       {"\360\220\220\265", "𐐍"},
-#line 723 "u8_uc_map.txt"
+#line 724 "u8_uc_map.txt"
       {"\342\223\227", "Ⓗ"},
       {""}, {""},
-#line 901 "u8_uc_map.txt"
+#line 902 "u8_uc_map.txt"
       {"\352\234\271", "Ꜹ"},
       {""}, {""},
 #line 103 "u8_uc_map.txt"
       {"\305\227", "Ŗ"},
       {""},
-#line 826 "u8_uc_map.txt"
+#line 827 "u8_uc_map.txt"
       {"\342\262\255", "Ⲭ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 423 "u8_uc_map.txt"
+#line 424 "u8_uc_map.txt"
       {"\325\245", "Ե"},
-#line 605 "u8_uc_map.txt"
+#line 606 "u8_uc_map.txt"
       {"\341\273\245", "Ụ"},
-#line 983 "u8_uc_map.txt"
+#line 984 "u8_uc_map.txt"
       {"\360\220\220\264", "𐐌"},
-#line 915 "u8_uc_map.txt"
+#line 916 "u8_uc_map.txt"
       {"\352\235\225", "Ꝕ"},
       {""}, {""}, {""},
-#line 989 "u8_uc_map.txt"
+#line 990 "u8_uc_map.txt"
       {"\360\220\220\272", "𐐒"},
       {""}, {""},
 #line 178 "u8_uc_map.txt"
       {"\306\277", "Ƿ"},
       {""}, {""},
-#line 477 "u8_uc_map.txt"
+#line 478 "u8_uc_map.txt"
       {"\342\264\224", "Ⴔ"},
       {""}, {""},
-#line 891 "u8_uc_map.txt"
+#line 892 "u8_uc_map.txt"
       {"\352\234\243", "Ꜣ"},
       {""},
-#line 620 "u8_uc_map.txt"
+#line 621 "u8_uc_map.txt"
       {"\341\274\201", "Ἁ"},
       {""}, {""},
-#line 735 "u8_uc_map.txt"
+#line 736 "u8_uc_map.txt"
       {"\342\223\243", "Ⓣ"},
       {""}, {""}, {""}, {""},
-#line 467 "u8_uc_map.txt"
+#line 468 "u8_uc_map.txt"
       {"\342\264\212", "Ⴊ"},
-#line 975 "u8_uc_map.txt"
+#line 976 "u8_uc_map.txt"
       {"\360\220\220\254", "𐐄"},
-#line 639 "u8_uc_map.txt"
+#line 640 "u8_uc_map.txt"
       {"\341\274\246", "Ἦ"},
       {""}, {""},
-#line 929 "u8_uc_map.txt"
+#line 930 "u8_uc_map.txt"
       {"\352\235\272", "Ꝺ"},
       {""}, {""}, {""},
 #line 158 "u8_uc_map.txt"
       {"\306\275", "Ƽ"},
-#line 608 "u8_uc_map.txt"
+#line 609 "u8_uc_map.txt"
       {"\341\273\253", "Ừ"},
       {""}, {""}, {""},
-#line 429 "u8_uc_map.txt"
+#line 430 "u8_uc_map.txt"
       {"\325\253", "Ի"},
       {""},
-#line 640 "u8_uc_map.txt"
+#line 641 "u8_uc_map.txt"
       {"\341\274\247", "Ἧ"},
       {""},
 #line 185 "u8_uc_map.txt"
@@ -805,178 +805,178 @@ u8_uc_in_word_set (str, len)
 #line 157 "u8_uc_map.txt"
       {"\306\271", "Ƹ"},
       {""}, {""},
-#line 590 "u8_uc_map.txt"
+#line 591 "u8_uc_map.txt"
       {"\341\273\207", "Ệ"},
 #line 72 "u8_uc_map.txt"
       {"\304\225", "Ĕ"},
       {""}, {""}, {""},
-#line 479 "u8_uc_map.txt"
+#line 480 "u8_uc_map.txt"
       {"\342\264\226", "Ⴖ"},
       {""},
 #line 80 "u8_uc_map.txt"
       {"\304\245", "Ĥ"},
       {""}, {""},
-#line 624 "u8_uc_map.txt"
+#line 625 "u8_uc_map.txt"
       {"\341\274\205", "Ἅ"},
       {""},
-#line 416 "u8_uc_map.txt"
+#line 417 "u8_uc_map.txt"
       {"\324\243", "Ԣ"},
-#line 899 "u8_uc_map.txt"
+#line 900 "u8_uc_map.txt"
       {"\352\234\265", "Ꜵ"},
       {""},
-#line 721 "u8_uc_map.txt"
+#line 722 "u8_uc_map.txt"
       {"\342\223\225", "Ⓕ"},
-#line 455 "u8_uc_map.txt"
+#line 456 "u8_uc_map.txt"
       {"\326\205", "Օ"},
       {""}, {""}, {""},
-#line 564 "u8_uc_map.txt"
+#line 565 "u8_uc_map.txt"
       {"\341\272\213", "Ẋ"},
 #line 62 "u8_uc_map.txt"
       {"\304\201", "Ā"},
       {""},
-#line 923 "u8_uc_map.txt"
+#line 924 "u8_uc_map.txt"
       {"\352\235\245", "Ꝥ"},
-#line 644 "u8_uc_map.txt"
+#line 645 "u8_uc_map.txt"
       {"\341\274\263", "Ἳ"},
-#line 532 "u8_uc_map.txt"
+#line 533 "u8_uc_map.txt"
       {"\341\271\213", "Ṋ"},
       {""}, {""},
 #line 34 "u8_uc_map.txt"
       {"\303\242", "Â"},
-#line 483 "u8_uc_map.txt"
+#line 484 "u8_uc_map.txt"
       {"\342\264\232", "Ⴚ"},
-#line 500 "u8_uc_map.txt"
+#line 501 "u8_uc_map.txt"
       {"\341\270\213", "Ḋ"},
       {""}, {""},
-#line 602 "u8_uc_map.txt"
+#line 603 "u8_uc_map.txt"
       {"\341\273\237", "Ở"},
-#line 974 "u8_uc_map.txt"
+#line 975 "u8_uc_map.txt"
       {"\360\220\220\253", "𐐃"},
-#line 468 "u8_uc_map.txt"
+#line 469 "u8_uc_map.txt"
       {"\342\264\213", "Ⴋ"},
       {""},
 #line 121 "u8_uc_map.txt"
       {"\305\272", "Ź"},
       {""}, {""},
-#line 809 "u8_uc_map.txt"
+#line 810 "u8_uc_map.txt"
       {"\342\262\213", "Ⲋ"},
       {""}, {""},
-#line 578 "u8_uc_map.txt"
+#line 579 "u8_uc_map.txt"
       {"\341\272\257", "Ắ"},
-#line 991 "u8_uc_map.txt"
+#line 992 "u8_uc_map.txt"
       {"\360\220\220\274", "𐐔"},
       {""},
-#line 1002 "u8_uc_map.txt"
+#line 1003 "u8_uc_map.txt"
       {"\360\220\221\207", "𐐟"},
 #line 83 "u8_uc_map.txt"
       {"\304\253", "Ī"},
-#line 550 "u8_uc_map.txt"
+#line 551 "u8_uc_map.txt"
       {"\341\271\257", "Ṯ"},
 #line 117 "u8_uc_map.txt"
       {"\305\263", "Ų"},
-#line 933 "u8_uc_map.txt"
+#line 934 "u8_uc_map.txt"
       {"\352\236\201", "Ꞁ"},
-#line 563 "u8_uc_map.txt"
+#line 564 "u8_uc_map.txt"
       {"\341\272\211", "Ẉ"},
       {""},
-#line 518 "u8_uc_map.txt"
+#line 519 "u8_uc_map.txt"
       {"\341\270\257", "Ḯ"},
 #line 127 "u8_uc_map.txt"
       {"\311\224", "Ɔ"},
       {""},
-#line 531 "u8_uc_map.txt"
+#line 532 "u8_uc_map.txt"
       {"\341\271\211", "Ṉ"},
 #line 44 "u8_uc_map.txt"
       {"\303\254", "Ì"},
-#line 926 "u8_uc_map.txt"
+#line 927 "u8_uc_map.txt"
       {"\352\235\253", "Ꝫ"},
       {""}, {""},
-#line 499 "u8_uc_map.txt"
+#line 500 "u8_uc_map.txt"
       {"\341\270\211", "Ḉ"},
       {""},
-#line 827 "u8_uc_map.txt"
+#line 828 "u8_uc_map.txt"
       {"\342\262\257", "Ⲯ"},
 #line 162 "u8_uc_map.txt"
       {"\307\224", "Ǔ"},
-#line 668 "u8_uc_map.txt"
+#line 669 "u8_uc_map.txt"
       {"\341\276\201", "ᾉ"},
-#line 466 "u8_uc_map.txt"
+#line 467 "u8_uc_map.txt"
       {"\342\264\211", "Ⴉ"},
       {""},
-#line 930 "u8_uc_map.txt"
+#line 931 "u8_uc_map.txt"
       {"\352\235\274", "Ꝼ"},
       {""},
-#line 908 "u8_uc_map.txt"
+#line 909 "u8_uc_map.txt"
       {"\352\235\207", "Ꝇ"},
-#line 808 "u8_uc_map.txt"
+#line 809 "u8_uc_map.txt"
       {"\342\262\211", "Ⲉ"},
 #line 225 "u8_uc_map.txt"
       {"\316\254", "Ά"},
-#line 636 "u8_uc_map.txt"
+#line 637 "u8_uc_map.txt"
       {"\341\274\243", "Ἣ"},
-#line 943 "u8_uc_map.txt"
+#line 944 "u8_uc_map.txt"
       {"\352\236\247", "Ꞧ"},
-#line 689 "u8_uc_map.txt"
+#line 690 "u8_uc_map.txt"
       {"\341\276\246", "ᾮ"},
       {""}, {""},
-#line 892 "u8_uc_map.txt"
+#line 893 "u8_uc_map.txt"
       {"\352\234\245", "Ꜥ"},
-#line 724 "u8_uc_map.txt"
+#line 725 "u8_uc_map.txt"
       {"\342\223\230", "Ⓘ"},
       {""}, {""}, {""},
-#line 737 "u8_uc_map.txt"
+#line 738 "u8_uc_map.txt"
       {"\342\223\245", "Ⓥ"},
       {""}, {""}, {""},
 #line 109 "u8_uc_map.txt"
       {"\305\243", "Ţ"},
-#line 643 "u8_uc_map.txt"
+#line 644 "u8_uc_map.txt"
       {"\341\274\262", "Ἲ"},
-#line 690 "u8_uc_map.txt"
+#line 691 "u8_uc_map.txt"
       {"\341\276\247", "ᾯ"},
-#line 935 "u8_uc_map.txt"
+#line 936 "u8_uc_map.txt"
       {"\352\236\205", "Ꞅ"},
       {""}, {""},
-#line 420 "u8_uc_map.txt"
+#line 421 "u8_uc_map.txt"
       {"\325\242", "Բ"},
-#line 459 "u8_uc_map.txt"
+#line 460 "u8_uc_map.txt"
       {"\342\264\202", "Ⴂ"},
       {""}, {""}, {""},
-#line 616 "u8_uc_map.txt"
+#line 617 "u8_uc_map.txt"
       {"\341\273\273", "Ỻ"},
       {""},
-#line 736 "u8_uc_map.txt"
+#line 737 "u8_uc_map.txt"
       {"\342\223\244", "Ⓤ"},
       {""},
 #line 154 "u8_uc_map.txt"
       {"\306\264", "Ƴ"},
-#line 920 "u8_uc_map.txt"
+#line 921 "u8_uc_map.txt"
       {"\352\235\237", "Ꝟ"},
-#line 651 "u8_uc_map.txt"
+#line 652 "u8_uc_map.txt"
       {"\341\275\202", "Ὂ"},
-#line 672 "u8_uc_map.txt"
+#line 673 "u8_uc_map.txt"
       {"\341\276\205", "ᾍ"},
       {""},
 #line 180 "u8_uc_map.txt"
       {"\307\273", "Ǻ"},
       {""},
-#line 993 "u8_uc_map.txt"
+#line 994 "u8_uc_map.txt"
       {"\360\220\220\276", "𐐖"},
       {""}, {""},
 #line 58 "u8_uc_map.txt"
       {"\303\273", "Û"},
-#line 895 "u8_uc_map.txt"
+#line 896 "u8_uc_map.txt"
       {"\352\234\253", "Ꜫ"},
-#line 642 "u8_uc_map.txt"
+#line 643 "u8_uc_map.txt"
       {"\341\274\261", "Ἱ"},
-#line 632 "u8_uc_map.txt"
+#line 633 "u8_uc_map.txt"
       {"\341\274\225", "Ἕ"},
       {""}, {""},
-#line 646 "u8_uc_map.txt"
+#line 647 "u8_uc_map.txt"
       {"\341\274\265", "Ἵ"},
-#line 695 "u8_uc_map.txt"
+#line 696 "u8_uc_map.txt"
       {"\341\276\263", "ᾼ"},
       {""}, {""},
-#line 430 "u8_uc_map.txt"
+#line 431 "u8_uc_map.txt"
       {"\325\254", "Լ"},
       {""}, {""}, {""},
 #line 64 "u8_uc_map.txt"
@@ -984,154 +984,154 @@ u8_uc_in_word_set (str, len)
 #line 242 "u8_uc_map.txt"
       {"\316\273", "Λ"},
       {""}, {""},
-#line 682 "u8_uc_map.txt"
+#line 683 "u8_uc_map.txt"
       {"\341\276\227", "ᾟ"},
       {""},
-#line 275 "u8_uc_map.txt"
+#line 276 "u8_uc_map.txt"
       {"\315\275", "Ͽ"},
-#line 471 "u8_uc_map.txt"
+#line 472 "u8_uc_map.txt"
       {"\342\264\216", "Ⴎ"},
       {""}, {""}, {""}, {""},
-#line 645 "u8_uc_map.txt"
+#line 646 "u8_uc_map.txt"
       {"\341\274\264", "Ἴ"},
       {""}, {""}, {""},
 #line 145 "u8_uc_map.txt"
       {"\306\243", "Ƣ"},
       {""},
-#line 990 "u8_uc_map.txt"
+#line 991 "u8_uc_map.txt"
       {"\360\220\220\273", "𐐓"},
       {""}, {""},
 #line 118 "u8_uc_map.txt"
       {"\305\265", "Ŵ"},
-#line 742 "u8_uc_map.txt"
+#line 743 "u8_uc_map.txt"
       {"\342\260\260", "Ⰰ"},
       {""}, {""},
-#line 841 "u8_uc_map.txt"
+#line 842 "u8_uc_map.txt"
       {"\342\263\213", "Ⳋ"},
       {""},
-#line 941 "u8_uc_map.txt"
+#line 942 "u8_uc_map.txt"
       {"\352\236\243", "Ꞣ"},
-#line 575 "u8_uc_map.txt"
+#line 576 "u8_uc_map.txt"
       {"\341\272\251", "Ẩ"},
-#line 303 "u8_uc_map.txt"
+#line 304 "u8_uc_map.txt"
       {"\320\273", "Л"},
       {""}, {""},
-#line 693 "u8_uc_map.txt"
+#line 694 "u8_uc_map.txt"
       {"\341\275\260", "Ὰ"},
-#line 547 "u8_uc_map.txt"
+#line 548 "u8_uc_map.txt"
       {"\341\271\251", "Ṩ"},
-#line 540 "u8_uc_map.txt"
+#line 541 "u8_uc_map.txt"
       {"\341\271\233", "Ṛ"},
       {""},
 #line 48 "u8_uc_map.txt"
       {"\303\260", "Ð"},
-#line 731 "u8_uc_map.txt"
+#line 732 "u8_uc_map.txt"
       {"\342\223\237", "Ⓟ"},
-#line 515 "u8_uc_map.txt"
+#line 516 "u8_uc_map.txt"
       {"\341\270\251", "Ḩ"},
-#line 508 "u8_uc_map.txt"
+#line 509 "u8_uc_map.txt"
       {"\341\270\233", "Ḛ"},
-#line 409 "u8_uc_map.txt"
+#line 410 "u8_uc_map.txt"
       {"\324\225", "Ԕ"},
       {""},
-#line 686 "u8_uc_map.txt"
+#line 687 "u8_uc_map.txt"
       {"\341\276\243", "ᾫ"},
       {""},
-#line 484 "u8_uc_map.txt"
+#line 485 "u8_uc_map.txt"
       {"\342\264\233", "Ⴛ"},
       {""},
-#line 417 "u8_uc_map.txt"
+#line 418 "u8_uc_map.txt"
       {"\324\245", "Ԥ"},
-#line 609 "u8_uc_map.txt"
+#line 610 "u8_uc_map.txt"
       {"\341\273\255", "Ử"},
-#line 824 "u8_uc_map.txt"
+#line 825 "u8_uc_map.txt"
       {"\342\262\251", "Ⲩ"},
-#line 817 "u8_uc_map.txt"
+#line 818 "u8_uc_map.txt"
       {"\342\262\233", "Ⲛ"},
       {""},
-#line 445 "u8_uc_map.txt"
+#line 446 "u8_uc_map.txt"
       {"\325\273", "Ջ"},
       {""},
-#line 798 "u8_uc_map.txt"
+#line 799 "u8_uc_map.txt"
       {"\311\220", "Ɐ"},
       {""}, {""},
-#line 840 "u8_uc_map.txt"
+#line 841 "u8_uc_map.txt"
       {"\342\263\211", "Ⳉ"},
-#line 638 "u8_uc_map.txt"
+#line 639 "u8_uc_map.txt"
       {"\341\274\245", "Ἥ"},
       {""}, {""},
-#line 399 "u8_uc_map.txt"
+#line 400 "u8_uc_map.txt"
       {"\324\201", "Ԁ"},
 #line 205 "u8_uc_map.txt"
       {"\310\255", "Ȭ"},
-#line 568 "u8_uc_map.txt"
+#line 569 "u8_uc_map.txt"
       {"\341\272\223", "Ẓ"},
 #line 160 "u8_uc_map.txt"
       {"\307\220", "Ǐ"},
       {""}, {""},
 #line 174 "u8_uc_map.txt"
       {"\307\255", "Ǭ"},
-#line 536 "u8_uc_map.txt"
+#line 537 "u8_uc_map.txt"
       {"\341\271\223", "Ṓ"},
       {""}, {""}, {""},
 #line 45 "u8_uc_map.txt"
       {"\303\255", "Í"},
-#line 504 "u8_uc_map.txt"
+#line 505 "u8_uc_map.txt"
       {"\341\270\223", "Ḓ"},
       {""},
-#line 637 "u8_uc_map.txt"
+#line 638 "u8_uc_map.txt"
       {"\341\274\244", "Ἤ"},
       {""}, {""},
-#line 476 "u8_uc_map.txt"
+#line 477 "u8_uc_map.txt"
       {"\342\264\223", "Ⴓ"},
 #line 129 "u8_uc_map.txt"
       {"\311\226", "Ɖ"},
-#line 292 "u8_uc_map.txt"
+#line 293 "u8_uc_map.txt"
       {"\320\260", "А"},
       {""}, {""},
-#line 813 "u8_uc_map.txt"
+#line 814 "u8_uc_map.txt"
       {"\342\262\223", "Ⲓ"},
-#line 692 "u8_uc_map.txt"
+#line 693 "u8_uc_map.txt"
       {"\341\276\261", "Ᾱ"},
-#line 680 "u8_uc_map.txt"
+#line 681 "u8_uc_map.txt"
       {"\341\276\225", "ᾝ"},
       {""},
 #line 226 "u8_uc_map.txt"
       {"\316\255", "Έ"},
-#line 656 "u8_uc_map.txt"
+#line 657 "u8_uc_map.txt"
       {"\341\275\223", "Ὓ"},
 #line 163 "u8_uc_map.txt"
       {"\307\226", "Ǖ"},
       {""}, {""}, {""}, {""},
-#line 976 "u8_uc_map.txt"
+#line 977 "u8_uc_map.txt"
       {"\360\220\220\255", "𐐅"},
       {""}, {""}, {""},
-#line 902 "u8_uc_map.txt"
+#line 903 "u8_uc_map.txt"
       {"\352\234\273", "Ꜻ"},
       {""}, {""}, {""},
-#line 434 "u8_uc_map.txt"
+#line 435 "u8_uc_map.txt"
       {"\325\260", "Հ"},
       {""},
-#line 465 "u8_uc_map.txt"
+#line 466 "u8_uc_map.txt"
       {"\342\264\210", "Ⴈ"},
-#line 626 "u8_uc_map.txt"
+#line 627 "u8_uc_map.txt"
       {"\341\274\207", "Ἇ"},
       {""},
 #line 210 "u8_uc_map.txt"
       {"\310\274", "Ȼ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 856 "u8_uc_map.txt"
+#line 857 "u8_uc_map.txt"
       {"\352\231\201", "Ꙁ"},
 #line 102 "u8_uc_map.txt"
       {"\305\225", "Ŕ"},
 #line 59 "u8_uc_map.txt"
       {"\303\274", "Ü"},
-#line 927 "u8_uc_map.txt"
+#line 928 "u8_uc_map.txt"
       {"\352\235\255", "Ꝭ"},
       {""}, {""}, {""},
 #line 110 "u8_uc_map.txt"
       {"\305\245", "Ť"},
-#line 734 "u8_uc_map.txt"
+#line 735 "u8_uc_map.txt"
       {"\342\223\242", "Ⓢ"},
 #line 223 "u8_uc_map.txt"
       {"\315\263", "Ͳ"},
@@ -1144,249 +1144,249 @@ u8_uc_in_word_set (str, len)
 #line 243 "u8_uc_map.txt"
       {"\316\274", "Μ"},
       {""},
-#line 1005 "u8_uc_map.txt"
+#line 1006 "u8_uc_map.txt"
       {"\360\220\221\212", "𐐢"},
       {""},
 #line 218 "u8_uc_map.txt"
       {"\311\211", "Ɉ"},
-#line 431 "u8_uc_map.txt"
+#line 432 "u8_uc_map.txt"
       {"\325\255", "Խ"},
-#line 942 "u8_uc_map.txt"
+#line 943 "u8_uc_map.txt"
       {"\352\236\245", "Ꞥ"},
-#line 875 "u8_uc_map.txt"
+#line 876 "u8_uc_map.txt"
       {"\352\231\247", "Ꙧ"},
-#line 716 "u8_uc_map.txt"
+#line 717 "u8_uc_map.txt"
       {"\342\223\220", "Ⓐ"},
 #line 187 "u8_uc_map.txt"
       {"\310\211", "Ȉ"},
       {""}, {""},
-#line 567 "u8_uc_map.txt"
+#line 568 "u8_uc_map.txt"
       {"\341\272\221", "Ẑ"},
-#line 592 "u8_uc_map.txt"
+#line 593 "u8_uc_map.txt"
       {"\341\273\213", "Ị"},
-#line 863 "u8_uc_map.txt"
+#line 864 "u8_uc_map.txt"
       {"\352\231\217", "Ꙏ"},
 #line 42 "u8_uc_map.txt"
       {"\303\252", "Ê"},
       {""},
-#line 535 "u8_uc_map.txt"
+#line 536 "u8_uc_map.txt"
       {"\341\271\221", "Ṑ"},
       {""}, {""}, {""},
-#line 688 "u8_uc_map.txt"
+#line 689 "u8_uc_map.txt"
       {"\341\276\245", "ᾭ"},
-#line 503 "u8_uc_map.txt"
+#line 504 "u8_uc_map.txt"
       {"\341\270\221", "Ḑ"},
-#line 858 "u8_uc_map.txt"
+#line 859 "u8_uc_map.txt"
       {"\352\231\205", "Ꙅ"},
-#line 879 "u8_uc_map.txt"
+#line 880 "u8_uc_map.txt"
       {"\352\232\201", "Ꚁ"},
       {""}, {""},
-#line 474 "u8_uc_map.txt"
+#line 475 "u8_uc_map.txt"
       {"\342\264\221", "Ⴑ"},
-#line 304 "u8_uc_map.txt"
+#line 305 "u8_uc_map.txt"
       {"\320\274", "М"},
-#line 849 "u8_uc_map.txt"
+#line 850 "u8_uc_map.txt"
       {"\342\263\233", "Ⳛ"},
 #line 113 "u8_uc_map.txt"
       {"\305\253", "Ū"},
       {""},
-#line 812 "u8_uc_map.txt"
+#line 813 "u8_uc_map.txt"
       {"\342\262\221", "Ⲑ"},
       {""},
-#line 401 "u8_uc_map.txt"
+#line 402 "u8_uc_map.txt"
       {"\324\205", "Ԅ"},
       {""},
-#line 610 "u8_uc_map.txt"
+#line 611 "u8_uc_map.txt"
       {"\341\273\257", "Ữ"},
-#line 655 "u8_uc_map.txt"
+#line 656 "u8_uc_map.txt"
       {"\341\275\221", "Ὑ"},
-#line 687 "u8_uc_map.txt"
+#line 688 "u8_uc_map.txt"
       {"\341\276\244", "ᾬ"},
 #line 177 "u8_uc_map.txt"
       {"\306\225", "Ƕ"},
-#line 339 "u8_uc_map.txt"
+#line 340 "u8_uc_map.txt"
       {"\321\277", "Ѿ"},
-#line 896 "u8_uc_map.txt"
+#line 897 "u8_uc_map.txt"
       {"\352\234\255", "Ꜭ"},
-#line 702 "u8_uc_map.txt"
+#line 703 "u8_uc_map.txt"
       {"\341\277\221", "Ῑ"},
       {""},
-#line 591 "u8_uc_map.txt"
+#line 592 "u8_uc_map.txt"
       {"\341\273\211", "Ỉ"},
 #line 146 "u8_uc_map.txt"
       {"\306\245", "Ƥ"},
-#line 571 "u8_uc_map.txt"
+#line 572 "u8_uc_map.txt"
       {"\341\272\241", "Ạ"},
       {""},
-#line 867 "u8_uc_map.txt"
+#line 868 "u8_uc_map.txt"
       {"\352\231\227", "Ꙗ"},
       {""},
-#line 446 "u8_uc_map.txt"
+#line 447 "u8_uc_map.txt"
       {"\325\274", "Ռ"},
-#line 543 "u8_uc_map.txt"
+#line 544 "u8_uc_map.txt"
       {"\341\271\241", "Ṡ"},
       {""},
-#line 936 "u8_uc_map.txt"
+#line 937 "u8_uc_map.txt"
       {"\352\236\207", "Ꞇ"},
       {""},
-#line 886 "u8_uc_map.txt"
+#line 887 "u8_uc_map.txt"
       {"\352\232\217", "Ꚏ"},
-#line 511 "u8_uc_map.txt"
+#line 512 "u8_uc_map.txt"
       {"\341\270\241", "Ḡ"},
-#line 489 "u8_uc_map.txt"
+#line 490 "u8_uc_map.txt"
       {"\342\264\240", "Ⴠ"},
       {""},
-#line 1006 "u8_uc_map.txt"
+#line 1007 "u8_uc_map.txt"
       {"\360\220\221\213", "𐐣"},
 #line 84 "u8_uc_map.txt"
       {"\304\255", "Ĭ"},
-#line 490 "u8_uc_map.txt"
+#line 491 "u8_uc_map.txt"
       {"\342\264\241", "Ⴡ"},
-#line 845 "u8_uc_map.txt"
+#line 846 "u8_uc_map.txt"
       {"\342\263\223", "Ⳓ"},
       {""},
-#line 881 "u8_uc_map.txt"
+#line 882 "u8_uc_map.txt"
       {"\352\232\205", "Ꚅ"},
-#line 338 "u8_uc_map.txt"
+#line 339 "u8_uc_map.txt"
       {"\321\275", "Ѽ"},
-#line 820 "u8_uc_map.txt"
+#line 821 "u8_uc_map.txt"
       {"\342\262\241", "Ⲡ"},
-#line 659 "u8_uc_map.txt"
+#line 660 "u8_uc_map.txt"
       {"\341\275\240", "Ὠ"},
-#line 674 "u8_uc_map.txt"
+#line 675 "u8_uc_map.txt"
       {"\341\276\207", "ᾏ"},
       {""}, {""},
-#line 660 "u8_uc_map.txt"
+#line 661 "u8_uc_map.txt"
       {"\341\275\241", "Ὡ"},
-#line 705 "u8_uc_map.txt"
-      {"\341\277\240", "Ῠ"},
-#line 720 "u8_uc_map.txt"
-      {"\342\223\224", "Ⓔ"},
-#line 283 "u8_uc_map.txt"
-      {"\321\227", "Ї"},
-#line 336 "u8_uc_map.txt"
-      {"\321\271", "Ѹ"},
 #line 706 "u8_uc_map.txt"
+      {"\341\277\240", "Ῠ"},
+#line 721 "u8_uc_map.txt"
+      {"\342\223\224", "Ⓔ"},
+#line 284 "u8_uc_map.txt"
+      {"\321\227", "Ї"},
+#line 337 "u8_uc_map.txt"
+      {"\321\271", "Ѹ"},
+#line 707 "u8_uc_map.txt"
       {"\341\277\241", "Ῡ"},
       {""}, {""}, {""},
-#line 428 "u8_uc_map.txt"
+#line 429 "u8_uc_map.txt"
       {"\325\252", "Ժ"},
       {""},
-#line 978 "u8_uc_map.txt"
+#line 979 "u8_uc_map.txt"
       {"\360\220\220\257", "𐐇"},
-#line 910 "u8_uc_map.txt"
+#line 911 "u8_uc_map.txt"
       {"\352\235\213", "Ꝋ"},
       {""}, {""},
-#line 873 "u8_uc_map.txt"
+#line 874 "u8_uc_map.txt"
       {"\352\231\243", "Ꙣ"},
       {""}, {""},
-#line 890 "u8_uc_map.txt"
+#line 891 "u8_uc_map.txt"
       {"\352\232\227", "Ꚗ"},
-#line 1004 "u8_uc_map.txt"
+#line 1005 "u8_uc_map.txt"
       {"\360\220\221\211", "𐐡"},
-#line 635 "u8_uc_map.txt"
+#line 636 "u8_uc_map.txt"
       {"\341\274\242", "Ἢ"},
       {""}, {""}, {""}, {""},
-#line 485 "u8_uc_map.txt"
+#line 486 "u8_uc_map.txt"
       {"\342\264\234", "Ⴜ"},
-#line 560 "u8_uc_map.txt"
+#line 561 "u8_uc_map.txt"
       {"\341\272\203", "Ẃ"},
       {""}, {""}, {""},
-#line 475 "u8_uc_map.txt"
+#line 476 "u8_uc_map.txt"
       {"\342\264\222", "Ⴒ"},
-#line 528 "u8_uc_map.txt"
+#line 529 "u8_uc_map.txt"
       {"\341\271\203", "Ṃ"},
       {""}, {""},
 #line 90 "u8_uc_map.txt"
       {"\304\274", "Ļ"},
-#line 928 "u8_uc_map.txt"
+#line 929 "u8_uc_map.txt"
       {"\352\235\257", "Ꝯ"},
-#line 496 "u8_uc_map.txt"
+#line 497 "u8_uc_map.txt"
       {"\341\270\203", "Ḃ"},
-#line 627 "u8_uc_map.txt"
+#line 628 "u8_uc_map.txt"
       {"\341\274\220", "Ἐ"},
       {""},
 #line 141 "u8_uc_map.txt"
       {"\311\257", "Ɯ"},
-#line 582 "u8_uc_map.txt"
+#line 583 "u8_uc_map.txt"
       {"\341\272\267", "Ặ"},
-#line 460 "u8_uc_map.txt"
+#line 461 "u8_uc_map.txt"
       {"\342\264\203", "Ⴃ"},
-#line 722 "u8_uc_map.txt"
+#line 723 "u8_uc_map.txt"
       {"\342\223\226", "Ⓖ"},
-#line 909 "u8_uc_map.txt"
+#line 910 "u8_uc_map.txt"
       {"\352\235\211", "Ꝉ"},
 #line 206 "u8_uc_map.txt"
       {"\310\257", "Ȯ"},
-#line 554 "u8_uc_map.txt"
+#line 555 "u8_uc_map.txt"
       {"\341\271\267", "Ṷ"},
-#line 805 "u8_uc_map.txt"
+#line 806 "u8_uc_map.txt"
       {"\342\262\203", "Ⲃ"},
-#line 997 "u8_uc_map.txt"
+#line 998 "u8_uc_map.txt"
       {"\360\220\221\202", "𐐚"},
       {""},
 #line 175 "u8_uc_map.txt"
       {"\307\257", "Ǯ"},
-#line 522 "u8_uc_map.txt"
+#line 523 "u8_uc_map.txt"
       {"\341\270\267", "Ḷ"},
-#line 652 "u8_uc_map.txt"
+#line 653 "u8_uc_map.txt"
       {"\341\275\203", "Ὃ"},
       {""}, {""},
 #line 47 "u8_uc_map.txt"
       {"\303\257", "Ï"},
-#line 749 "u8_uc_map.txt"
+#line 750 "u8_uc_map.txt"
       {"\342\260\267", "Ⰷ"},
-#line 700 "u8_uc_map.txt"
+#line 701 "u8_uc_map.txt"
       {"\341\277\203", "ῌ"},
-#line 866 "u8_uc_map.txt"
+#line 867 "u8_uc_map.txt"
       {"\352\231\225", "Ꙕ"},
 #line 65 "u8_uc_map.txt"
       {"\304\207", "Ć"},
       {""},
-#line 831 "u8_uc_map.txt"
+#line 832 "u8_uc_map.txt"
       {"\342\262\267", "Ⲷ"},
       {""}, {""}, {""}, {""},
-#line 704 "u8_uc_map.txt"
+#line 705 "u8_uc_map.txt"
       {"\341\275\267", "Ί"},
-#line 726 "u8_uc_map.txt"
+#line 727 "u8_uc_map.txt"
       {"\342\223\232", "Ⓚ"},
       {""},
 #line 66 "u8_uc_map.txt"
       {"\304\211", "Ĉ"},
 #line 228 "u8_uc_map.txt"
       {"\316\257", "Ί"},
-#line 539 "u8_uc_map.txt"
+#line 540 "u8_uc_map.txt"
       {"\341\271\231", "Ṙ"},
       {""},
-#line 844 "u8_uc_map.txt"
+#line 845 "u8_uc_map.txt"
       {"\342\263\221", "Ⳑ"},
       {""},
 #line 61 "u8_uc_map.txt"
       {"\303\276", "Þ"},
-#line 507 "u8_uc_map.txt"
+#line 508 "u8_uc_map.txt"
       {"\341\270\231", "Ḙ"},
-#line 607 "u8_uc_map.txt"
+#line 608 "u8_uc_map.txt"
       {"\341\273\251", "Ứ"},
-#line 600 "u8_uc_map.txt"
+#line 601 "u8_uc_map.txt"
       {"\341\273\233", "Ớ"},
       {""},
-#line 398 "u8_uc_map.txt"
+#line 399 "u8_uc_map.txt"
       {"\323\277", "Ӿ"},
-#line 482 "u8_uc_map.txt"
+#line 483 "u8_uc_map.txt"
       {"\342\264\231", "Ⴙ"},
-#line 971 "u8_uc_map.txt"
+#line 972 "u8_uc_map.txt"
       {"\360\220\220\250", "𐐀"},
       {""}, {""}, {""},
-#line 816 "u8_uc_map.txt"
+#line 817 "u8_uc_map.txt"
       {"\342\262\231", "Ⲙ"},
-#line 1009 "u8_uc_map.txt"
+#line 1010 "u8_uc_map.txt"
       {"\360\220\221\216", "𐐦"},
-#line 759 "u8_uc_map.txt"
+#line 760 "u8_uc_map.txt"
       {"\342\261\201", "Ⱁ"},
       {""},
 #line 245 "u8_uc_map.txt"
       {"\316\276", "Ξ"},
-#line 897 "u8_uc_map.txt"
+#line 898 "u8_uc_map.txt"
       {"\352\234\257", "Ꜯ"},
       {""}, {""},
 #line 126 "u8_uc_map.txt"
@@ -1394,183 +1394,183 @@ u8_uc_in_word_set (str, len)
       {""}, {""}, {""},
 #line 212 "u8_uc_map.txt"
       {"\342\261\246", "Ⱦ"},
-#line 889 "u8_uc_map.txt"
+#line 890 "u8_uc_map.txt"
       {"\352\232\225", "Ꚕ"},
       {""},
-#line 463 "u8_uc_map.txt"
+#line 464 "u8_uc_map.txt"
       {"\342\264\206", "Ⴆ"},
-#line 979 "u8_uc_map.txt"
+#line 980 "u8_uc_map.txt"
       {"\360\220\220\260", "𐐈"},
-#line 631 "u8_uc_map.txt"
+#line 632 "u8_uc_map.txt"
       {"\341\274\224", "Ἔ"},
       {""},
-#line 397 "u8_uc_map.txt"
+#line 398 "u8_uc_map.txt"
       {"\323\275", "Ӽ"},
       {""},
-#line 852 "u8_uc_map.txt"
+#line 853 "u8_uc_map.txt"
       {"\342\263\241", "Ⳡ"},
       {""}, {""}, {""},
-#line 596 "u8_uc_map.txt"
+#line 597 "u8_uc_map.txt"
       {"\341\273\223", "Ồ"},
-#line 333 "u8_uc_map.txt"
+#line 334 "u8_uc_map.txt"
       {"\321\263", "Ѳ"},
       {""},
-#line 378 "u8_uc_map.txt"
+#line 379 "u8_uc_map.txt"
       {"\323\227", "Ӗ"},
-#line 395 "u8_uc_map.txt"
+#line 396 "u8_uc_map.txt"
       {"\323\271", "Ӹ"},
-#line 685 "u8_uc_map.txt"
+#line 686 "u8_uc_map.txt"
       {"\341\276\242", "ᾪ"},
       {""},
-#line 306 "u8_uc_map.txt"
+#line 307 "u8_uc_map.txt"
       {"\320\276", "О"},
-#line 773 "u8_uc_map.txt"
+#line 774 "u8_uc_map.txt"
       {"\342\261\217", "Ⱏ"},
-#line 433 "u8_uc_map.txt"
+#line 434 "u8_uc_map.txt"
       {"\325\257", "Կ"},
-#line 748 "u8_uc_map.txt"
+#line 749 "u8_uc_map.txt"
       {"\342\260\266", "Ⰶ"},
       {""},
-#line 972 "u8_uc_map.txt"
+#line 973 "u8_uc_map.txt"
       {"\360\220\220\251", "𐐁"},
       {""}, {""},
-#line 874 "u8_uc_map.txt"
+#line 875 "u8_uc_map.txt"
       {"\352\231\245", "Ꙥ"},
       {""},
-#line 763 "u8_uc_map.txt"
+#line 764 "u8_uc_map.txt"
       {"\342\261\205", "Ⱅ"},
       {""}, {""},
-#line 703 "u8_uc_map.txt"
+#line 704 "u8_uc_map.txt"
       {"\341\275\266", "Ὶ"},
       {""},
-#line 675 "u8_uc_map.txt"
+#line 676 "u8_uc_map.txt"
       {"\341\276\220", "ᾘ"},
       {""}, {""},
 #line 202 "u8_uc_map.txt"
       {"\310\247", "Ȧ"},
       {""}, {""}, {""},
-#line 448 "u8_uc_map.txt"
+#line 449 "u8_uc_map.txt"
       {"\325\276", "Վ"},
 #line 171 "u8_uc_map.txt"
       {"\307\247", "Ǧ"},
-#line 800 "u8_uc_map.txt"
+#line 801 "u8_uc_map.txt"
       {"\342\261\263", "Ⱳ"},
       {""},
-#line 258 "u8_uc_map.txt"
+#line 259 "u8_uc_map.txt"
       {"\317\227", "Ϗ"},
-#line 367 "u8_uc_map.txt"
+#line 368 "u8_uc_map.txt"
       {"\322\277", "Ҿ"},
 #line 39 "u8_uc_map.txt"
       {"\303\247", "Ç"},
-#line 925 "u8_uc_map.txt"
+#line 926 "u8_uc_map.txt"
       {"\352\235\251", "Ꝩ"},
-#line 918 "u8_uc_map.txt"
+#line 919 "u8_uc_map.txt"
       {"\352\235\233", "Ꝛ"},
-#line 565 "u8_uc_map.txt"
+#line 566 "u8_uc_map.txt"
       {"\341\272\215", "Ẍ"},
-#line 325 "u8_uc_map.txt"
+#line 326 "u8_uc_map.txt"
       {"\321\243", "Ѣ"},
       {""},
-#line 973 "u8_uc_map.txt"
+#line 974 "u8_uc_map.txt"
       {"\360\220\220\252", "𐐂"},
-#line 781 "u8_uc_map.txt"
+#line 782 "u8_uc_map.txt"
       {"\342\261\227", "Ⱗ"},
-#line 533 "u8_uc_map.txt"
+#line 534 "u8_uc_map.txt"
       {"\341\271\215", "Ṍ"},
       {""},
-#line 469 "u8_uc_map.txt"
+#line 470 "u8_uc_map.txt"
       {"\342\264\214", "Ⴌ"},
       {""},
-#line 837 "u8_uc_map.txt"
+#line 838 "u8_uc_map.txt"
       {"\342\263\203", "Ⳃ"},
-#line 501 "u8_uc_map.txt"
+#line 502 "u8_uc_map.txt"
       {"\341\270\215", "Ḍ"},
       {""},
-#line 877 "u8_uc_map.txt"
+#line 878 "u8_uc_map.txt"
       {"\352\231\253", "Ꙫ"},
-#line 284 "u8_uc_map.txt"
+#line 285 "u8_uc_map.txt"
       {"\321\230", "Ј"},
 #line 46 "u8_uc_map.txt"
       {"\303\256", "Î"},
-#line 470 "u8_uc_map.txt"
+#line 471 "u8_uc_map.txt"
       {"\342\264\215", "Ⴍ"},
       {""},
-#line 740 "u8_uc_map.txt"
+#line 741 "u8_uc_map.txt"
       {"\342\223\250", "Ⓨ"},
-#line 541 "u8_uc_map.txt"
+#line 542 "u8_uc_map.txt"
       {"\341\271\235", "Ṝ"},
       {""},
-#line 810 "u8_uc_map.txt"
+#line 811 "u8_uc_map.txt"
       {"\342\262\215", "Ⲍ"},
-#line 366 "u8_uc_map.txt"
+#line 367 "u8_uc_map.txt"
       {"\322\275", "Ҽ"},
       {""},
-#line 509 "u8_uc_map.txt"
+#line 510 "u8_uc_map.txt"
       {"\341\270\235", "Ḝ"},
-#line 859 "u8_uc_map.txt"
+#line 860 "u8_uc_map.txt"
       {"\352\231\207", "Ꙇ"},
       {""},
 #line 85 "u8_uc_map.txt"
       {"\304\257", "Į"},
       {""},
-#line 486 "u8_uc_map.txt"
+#line 487 "u8_uc_map.txt"
       {"\342\264\235", "Ⴝ"},
 #line 227 "u8_uc_map.txt"
       {"\316\256", "Ή"},
-#line 347 "u8_uc_map.txt"
+#line 348 "u8_uc_map.txt"
       {"\322\227", "Җ"},
-#line 364 "u8_uc_map.txt"
+#line 365 "u8_uc_map.txt"
       {"\322\271", "Ҹ"},
-#line 914 "u8_uc_map.txt"
+#line 915 "u8_uc_map.txt"
       {"\352\235\223", "Ꝓ"},
-#line 818 "u8_uc_map.txt"
+#line 819 "u8_uc_map.txt"
       {"\342\262\235", "Ⲝ"},
-#line 1003 "u8_uc_map.txt"
+#line 1004 "u8_uc_map.txt"
       {"\360\220\221\210", "𐐠"},
 #line 215 "u8_uc_map.txt"
       {"\312\211", "Ʉ"},
       {""},
-#line 461 "u8_uc_map.txt"
+#line 462 "u8_uc_map.txt"
       {"\342\264\204", "Ⴄ"},
       {""}, {""}, {""}, {""},
-#line 750 "u8_uc_map.txt"
+#line 751 "u8_uc_map.txt"
       {"\342\260\270", "Ⰸ"},
-#line 595 "u8_uc_map.txt"
+#line 596 "u8_uc_map.txt"
       {"\341\273\221", "Ố"},
       {""}, {""},
 #line 91 "u8_uc_map.txt"
       {"\304\276", "Ľ"},
-#line 653 "u8_uc_map.txt"
+#line 654 "u8_uc_map.txt"
       {"\341\275\204", "Ὄ"},
-#line 848 "u8_uc_map.txt"
+#line 849 "u8_uc_map.txt"
       {"\342\263\231", "Ⳙ"},
-#line 679 "u8_uc_map.txt"
+#line 680 "u8_uc_map.txt"
       {"\341\276\224", "ᾜ"},
       {""},
 #line 55 "u8_uc_map.txt"
       {"\303\270", "Ø"},
-#line 710 "u8_uc_map.txt"
+#line 711 "u8_uc_map.txt"
       {"\341\275\270", "Ὸ"},
-#line 894 "u8_uc_map.txt"
+#line 895 "u8_uc_map.txt"
       {"\352\234\251", "Ꜩ"},
 #line 150 "u8_uc_map.txt"
       {"\312\210", "Ʈ"},
       {""},
-#line 271 "u8_uc_map.txt"
+#line 272 "u8_uc_map.txt"
       {"\317\262", "Ϲ"},
-#line 871 "u8_uc_map.txt"
+#line 872 "u8_uc_map.txt"
       {"\352\231\237", "Ꙟ"},
-#line 741 "u8_uc_map.txt"
+#line 742 "u8_uc_map.txt"
       {"\342\223\251", "Ⓩ"},
-#line 727 "u8_uc_map.txt"
+#line 728 "u8_uc_map.txt"
       {"\342\223\233", "Ⓛ"},
       {""},
-#line 334 "u8_uc_map.txt"
+#line 335 "u8_uc_map.txt"
       {"\321\265", "Ѵ"},
-#line 425 "u8_uc_map.txt"
+#line 426 "u8_uc_map.txt"
       {"\325\247", "Է"},
       {""}, {""},
-#line 882 "u8_uc_map.txt"
+#line 883 "u8_uc_map.txt"
       {"\352\232\207", "Ꚇ"},
 #line 239 "u8_uc_map.txt"
       {"\316\270", "Θ"},
@@ -1578,43 +1578,43 @@ u8_uc_in_word_set (str, len)
 #line 219 "u8_uc_map.txt"
       {"\311\213", "Ɋ"},
       {""}, {""}, {""},
-#line 392 "u8_uc_map.txt"
+#line 393 "u8_uc_map.txt"
       {"\323\263", "Ӳ"},
 #line 188 "u8_uc_map.txt"
       {"\310\213", "Ȋ"},
-#line 402 "u8_uc_map.txt"
+#line 403 "u8_uc_map.txt"
       {"\324\207", "Ԇ"},
       {""},
-#line 603 "u8_uc_map.txt"
+#line 604 "u8_uc_map.txt"
       {"\341\273\241", "Ỡ"},
       {""},
-#line 432 "u8_uc_map.txt"
+#line 433 "u8_uc_map.txt"
       {"\325\256", "Ծ"},
       {""},
 #line 114 "u8_uc_map.txt"
       {"\305\255", "Ŭ"},
-#line 797 "u8_uc_map.txt"
+#line 798 "u8_uc_map.txt"
       {"\311\261", "Ɱ"},
-#line 621 "u8_uc_map.txt"
+#line 622 "u8_uc_map.txt"
       {"\341\274\202", "Ἂ"},
-#line 779 "u8_uc_map.txt"
+#line 780 "u8_uc_map.txt"
       {"\342\261\225", "Ⱕ"},
-#line 403 "u8_uc_map.txt"
+#line 404 "u8_uc_map.txt"
       {"\324\211", "Ԉ"},
-#line 855 "u8_uc_map.txt"
+#line 856 "u8_uc_map.txt"
       {"\342\263\256", "Ⳮ"},
 #line 207 "u8_uc_map.txt"
       {"\310\261", "Ȱ"},
       {""},
-#line 681 "u8_uc_map.txt"
+#line 682 "u8_uc_map.txt"
       {"\341\276\226", "ᾞ"},
       {""},
 #line 124 "u8_uc_map.txt"
       {"\311\223", "Ɓ"},
-#line 719 "u8_uc_map.txt"
+#line 720 "u8_uc_map.txt"
       {"\342\223\223", "Ⓓ"},
       {""},
-#line 300 "u8_uc_map.txt"
+#line 301 "u8_uc_map.txt"
       {"\320\270", "И"},
       {""},
 #line 192 "u8_uc_map.txt"
@@ -1625,20 +1625,20 @@ u8_uc_in_word_set (str, len)
 #line 151 "u8_uc_map.txt"
       {"\306\260", "Ư"},
       {""}, {""},
-#line 715 "u8_uc_map.txt"
+#line 716 "u8_uc_map.txt"
       {"\342\205\216", "Ⅎ"},
       {""}, {""}, {""},
-#line 456 "u8_uc_map.txt"
+#line 457 "u8_uc_map.txt"
       {"\326\206", "Ֆ"},
       {""}, {""},
-#line 384 "u8_uc_map.txt"
+#line 385 "u8_uc_map.txt"
       {"\323\243", "Ӣ"},
 #line 232 "u8_uc_map.txt"
       {"\316\261", "Α"},
-#line 913 "u8_uc_map.txt"
+#line 914 "u8_uc_map.txt"
       {"\352\235\221", "Ꝑ"},
       {""}, {""},
-#line 442 "u8_uc_map.txt"
+#line 443 "u8_uc_map.txt"
       {"\325\270", "Ո"},
 #line 81 "u8_uc_map.txt"
       {"\304\247", "Ħ"},
@@ -1649,98 +1649,98 @@ u8_uc_in_word_set (str, len)
 #line 122 "u8_uc_map.txt"
       {"\305\274", "Ż"},
       {""},
-#line 588 "u8_uc_map.txt"
+#line 589 "u8_uc_map.txt"
       {"\341\273\203", "Ể"},
       {""}, {""},
-#line 842 "u8_uc_map.txt"
+#line 843 "u8_uc_map.txt"
       {"\342\263\215", "Ⳍ"},
-#line 795 "u8_uc_map.txt"
+#line 796 "u8_uc_map.txt"
       {"\342\261\254", "Ⱬ"},
       {""}, {""}, {""},
 #line 149 "u8_uc_map.txt"
       {"\306\255", "Ƭ"},
-#line 641 "u8_uc_map.txt"
+#line 642 "u8_uc_map.txt"
       {"\341\274\260", "Ἰ"},
-#line 361 "u8_uc_map.txt"
+#line 362 "u8_uc_map.txt"
       {"\322\263", "Ҳ"},
       {""},
-#line 293 "u8_uc_map.txt"
+#line 294 "u8_uc_map.txt"
       {"\320\261", "Б"},
-#line 263 "u8_uc_map.txt"
+#line 264 "u8_uc_map.txt"
       {"\317\243", "Ϣ"},
-#line 614 "u8_uc_map.txt"
+#line 615 "u8_uc_map.txt"
       {"\341\273\267", "Ỷ"},
       {""},
-#line 850 "u8_uc_map.txt"
+#line 851 "u8_uc_map.txt"
       {"\342\263\235", "Ⳝ"},
       {""}, {""},
-#line 921 "u8_uc_map.txt"
+#line 922 "u8_uc_map.txt"
       {"\352\235\241", "Ꝡ"},
-#line 782 "u8_uc_map.txt"
+#line 783 "u8_uc_map.txt"
       {"\342\261\230", "Ⱘ"},
       {""}, {""}, {""},
 #line 209 "u8_uc_map.txt"
       {"\342\261\245", "Ⱥ"},
-#line 945 "u8_uc_map.txt"
+#line 946 "u8_uc_map.txt"
       {" ,  \357\275\201"},
       {""},
-#line 281 "u8_uc_map.txt"
+#line 282 "u8_uc_map.txt"
       {"\321\225", "Ѕ"},
       {""}, {""}, {""}, {""}, {""},
-#line 326 "u8_uc_map.txt"
+#line 327 "u8_uc_map.txt"
       {"\321\245", "Ѥ"},
-#line 435 "u8_uc_map.txt"
+#line 436 "u8_uc_map.txt"
       {"\325\261", "Ձ"},
       {""}, {""}, {""}, {""},
-#line 599 "u8_uc_map.txt"
+#line 600 "u8_uc_map.txt"
       {"\341\273\231", "Ộ"},
       {""}, {""}, {""},
-#line 393 "u8_uc_map.txt"
+#line 394 "u8_uc_map.txt"
       {"\323\265", "Ӵ"},
       {""},
-#line 717 "u8_uc_map.txt"
+#line 718 "u8_uc_map.txt"
       {"\342\223\221", "Ⓑ"},
-#line 998 "u8_uc_map.txt"
+#line 999 "u8_uc_map.txt"
       {"\360\220\221\203", "𐐛"},
-#line 309 "u8_uc_map.txt"
+#line 310 "u8_uc_map.txt"
       {"\321\201", "С"},
-#line 353 "u8_uc_map.txt"
+#line 354 "u8_uc_map.txt"
       {"\322\243", "Ң"},
       {""},
-#line 669 "u8_uc_map.txt"
+#line 670 "u8_uc_map.txt"
       {"\341\276\202", "ᾊ"},
 #line 96 "u8_uc_map.txt"
       {"\305\210", "Ň"},
       {""}, {""}, {""}, {""},
-#line 959 "u8_uc_map.txt"
+#line 960 "u8_uc_map.txt"
       {" ,  \357\275\217"},
       {""}, {""}, {""},
-#line 986 "u8_uc_map.txt"
+#line 987 "u8_uc_map.txt"
       {"\360\220\220\267", "𐐏"},
       {""}, {""}, {""},
-#line 630 "u8_uc_map.txt"
+#line 631 "u8_uc_map.txt"
       {"\341\274\223", "Ἓ"},
-#line 949 "u8_uc_map.txt"
+#line 950 "u8_uc_map.txt"
       {" ,  \357\275\205"},
       {""}, {""},
-#line 273 "u8_uc_map.txt"
+#line 274 "u8_uc_map.txt"
       {"\315\273", "Ͻ"},
-#line 878 "u8_uc_map.txt"
+#line 879 "u8_uc_map.txt"
       {"\352\231\255", "Ꙭ"},
-#line 906 "u8_uc_map.txt"
+#line 907 "u8_uc_map.txt"
       {"\352\235\203", "Ꝃ"},
-#line 765 "u8_uc_map.txt"
+#line 766 "u8_uc_map.txt"
       {"\342\261\207", "Ⱇ"},
       {""},
-#line 329 "u8_uc_map.txt"
+#line 330 "u8_uc_map.txt"
       {"\321\253", "Ѫ"},
       {""},
-#line 732 "u8_uc_map.txt"
+#line 733 "u8_uc_map.txt"
       {"\342\223\240", "Ⓠ"},
 #line 67 "u8_uc_map.txt"
       {"\304\213", "Ċ"},
       {""}, {""},
-#line 733 "u8_uc_map.txt"
+#line 734 "u8_uc_map.txt"
       {"\342\223\241", "Ⓡ"},
       {""}, {""}, {""}, {""},
 #line 197 "u8_uc_map.txt"
@@ -1750,38 +1750,38 @@ u8_uc_in_word_set (str, len)
       {""}, {""}, {""},
 #line 132 "u8_uc_map.txt"
       {"\307\235", "Ǝ"},
-#line 967 "u8_uc_map.txt"
+#line 968 "u8_uc_map.txt"
       {" ,  \357\275\227"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""},
 #line 71 "u8_uc_map.txt"
       {"\304\223", "Ē"},
       {""}, {""}, {""}, {""}, {""},
-#line 691 "u8_uc_map.txt"
+#line 692 "u8_uc_map.txt"
       {"\341\276\260", "Ᾰ"},
-#line 1001 "u8_uc_map.txt"
+#line 1002 "u8_uc_map.txt"
       {"\360\220\221\206", "𐐞"},
 #line 128 "u8_uc_map.txt"
       {"\306\210", "Ƈ"},
       {""},
-#line 362 "u8_uc_map.txt"
+#line 363 "u8_uc_map.txt"
       {"\322\265", "Ҵ"},
-#line 917 "u8_uc_map.txt"
+#line 918 "u8_uc_map.txt"
       {"\352\235\231", "Ꝙ"},
-#line 944 "u8_uc_map.txt"
+#line 945 "u8_uc_map.txt"
       {"\352\236\251", "Ꞩ"},
       {""}, {""}, {""},
-#line 728 "u8_uc_map.txt"
+#line 729 "u8_uc_map.txt"
       {"\342\223\234", "Ⓜ"},
       {""}, {""}, {""}, {""},
-#line 718 "u8_uc_map.txt"
+#line 719 "u8_uc_map.txt"
       {"\342\223\222", "Ⓒ"},
       {""}, {""},
-#line 593 "u8_uc_map.txt"
+#line 594 "u8_uc_map.txt"
       {"\341\273\215", "Ọ"},
-#line 977 "u8_uc_map.txt"
+#line 978 "u8_uc_map.txt"
       {"\360\220\220\256", "𐐆"},
       {""},
-#line 985 "u8_uc_map.txt"
+#line 986 "u8_uc_map.txt"
       {"\360\220\220\266", "𐐎"},
 #line 198 "u8_uc_map.txt"
       {"\310\237", "Ȟ"},
@@ -1789,147 +1789,147 @@ u8_uc_in_word_set (str, len)
 #line 167 "u8_uc_map.txt"
       {"\307\237", "Ǟ"},
       {""}, {""}, {""},
-#line 601 "u8_uc_map.txt"
+#line 602 "u8_uc_map.txt"
       {"\341\273\235", "Ờ"},
-#line 570 "u8_uc_map.txt"
+#line 571 "u8_uc_map.txt"
       {"\303\237", "ẞ"},
-#line 377 "u8_uc_map.txt"
+#line 378 "u8_uc_map.txt"
       {"\323\225", "Ӕ"},
 #line 115 "u8_uc_map.txt"
       {"\305\257", "Ů"},
-#line 900 "u8_uc_map.txt"
+#line 901 "u8_uc_map.txt"
       {"\352\234\267", "Ꜷ"},
       {""}, {""}, {""},
-#line 385 "u8_uc_map.txt"
+#line 386 "u8_uc_map.txt"
       {"\323\245", "Ӥ"},
       {""},
-#line 628 "u8_uc_map.txt"
+#line 629 "u8_uc_map.txt"
       {"\341\274\221", "Ἑ"},
       {""}, {""}, {""}, {""}, {""}, {""},
-#line 313 "u8_uc_map.txt"
+#line 314 "u8_uc_map.txt"
       {"\321\205", "Х"},
       {""},
-#line 418 "u8_uc_map.txt"
+#line 419 "u8_uc_map.txt"
       {"\324\247", "Ԧ"},
       {""}, {""}, {""},
 #line 123 "u8_uc_map.txt"
       {"\305\276", "Ž"},
-#line 678 "u8_uc_map.txt"
+#line 679 "u8_uc_map.txt"
       {"\341\276\223", "ᾛ"},
-#line 1007 "u8_uc_map.txt"
+#line 1008 "u8_uc_map.txt"
       {"\360\220\221\214", "𐐤"},
       {""}, {""}, {""}, {""}, {""},
-#line 861 "u8_uc_map.txt"
+#line 862 "u8_uc_map.txt"
       {"\352\231\213", "Ꙋ"},
       {""},
-#line 1008 "u8_uc_map.txt"
+#line 1009 "u8_uc_map.txt"
       {"\360\220\221\215", "𐐥"},
-#line 725 "u8_uc_map.txt"
+#line 726 "u8_uc_map.txt"
       {"\342\223\231", "Ⓙ"},
-#line 965 "u8_uc_map.txt"
+#line 966 "u8_uc_map.txt"
       {" ,  \357\275\225"},
       {""}, {""},
-#line 264 "u8_uc_map.txt"
+#line 265 "u8_uc_map.txt"
       {"\317\245", "Ϥ"},
       {""},
-#line 633 "u8_uc_map.txt"
+#line 634 "u8_uc_map.txt"
       {"\341\274\240", "Ἠ"},
       {""}, {""}, {""},
-#line 634 "u8_uc_map.txt"
+#line 635 "u8_uc_map.txt"
       {"\341\274\241", "Ἡ"},
       {""}, {""}, {""},
-#line 388 "u8_uc_map.txt"
+#line 389 "u8_uc_map.txt"
       {"\323\253", "Ӫ"},
       {""}, {""}, {""},
 #line 248 "u8_uc_map.txt"
       {"\317\201", "Ρ"},
       {""}, {""},
-#line 999 "u8_uc_map.txt"
+#line 1000 "u8_uc_map.txt"
       {"\360\220\221\204", "𐐜"},
 #line 153 "u8_uc_map.txt"
       {"\312\213", "Ʋ"},
-#line 911 "u8_uc_map.txt"
+#line 912 "u8_uc_map.txt"
       {"\352\235\215", "Ꝍ"},
-#line 457 "u8_uc_map.txt"
+#line 458 "u8_uc_map.txt"
       {"\342\264\200", "Ⴀ"},
       {""},
-#line 987 "u8_uc_map.txt"
+#line 988 "u8_uc_map.txt"
       {"\360\220\220\270", "𐐐"},
       {""},
-#line 860 "u8_uc_map.txt"
+#line 861 "u8_uc_map.txt"
       {"\352\231\211", "Ꙉ"},
-#line 274 "u8_uc_map.txt"
+#line 275 "u8_uc_map.txt"
       {"\315\274", "Ͼ"},
       {""}, {""}, {""},
-#line 346 "u8_uc_map.txt"
+#line 347 "u8_uc_map.txt"
       {"\322\225", "Ҕ"},
-#line 649 "u8_uc_map.txt"
+#line 650 "u8_uc_map.txt"
       {"\341\275\200", "Ὀ"},
       {""},
-#line 919 "u8_uc_map.txt"
+#line 920 "u8_uc_map.txt"
       {"\352\235\235", "Ꝝ"},
-#line 774 "u8_uc_map.txt"
+#line 775 "u8_uc_map.txt"
       {"\342\261\220", "Ⱐ"},
-#line 884 "u8_uc_map.txt"
+#line 885 "u8_uc_map.txt"
       {"\352\232\213", "Ꚋ"},
-#line 354 "u8_uc_map.txt"
+#line 355 "u8_uc_map.txt"
       {"\322\245", "Ҥ"},
       {""},
-#line 803 "u8_uc_map.txt"
+#line 804 "u8_uc_map.txt"
       {"\311\200", "Ɀ"},
       {""}, {""},
-#line 267 "u8_uc_map.txt"
+#line 268 "u8_uc_map.txt"
       {"\317\253", "Ϫ"},
 #line 76 "u8_uc_map.txt"
       {"\304\235", "Ĝ"},
-#line 280 "u8_uc_map.txt"
+#line 281 "u8_uc_map.txt"
       {"\321\224", "Є"},
       {""}, {""},
 #line 54 "u8_uc_map.txt"
       {"\303\266", "Ö"},
-#line 629 "u8_uc_map.txt"
+#line 630 "u8_uc_map.txt"
       {"\341\274\222", "Ἒ"},
       {""}, {""},
-#line 340 "u8_uc_map.txt"
+#line 341 "u8_uc_map.txt"
       {"\322\201", "Ҁ"},
 #line 238 "u8_uc_map.txt"
       {"\316\267", "Η"},
       {""},
-#line 939 "u8_uc_map.txt"
+#line 940 "u8_uc_map.txt"
       {"\352\236\221", "Ꞑ"},
       {""}, {""}, {""},
 #line 111 "u8_uc_map.txt"
       {"\305\247", "Ŧ"},
-#line 622 "u8_uc_map.txt"
+#line 623 "u8_uc_map.txt"
       {"\341\274\203", "Ἃ"},
       {""}, {""},
 #line 237 "u8_uc_map.txt"
       {"\316\266", "Ζ"},
-#line 968 "u8_uc_map.txt"
+#line 969 "u8_uc_map.txt"
       {" ,  \357\275\230"},
-#line 450 "u8_uc_map.txt"
+#line 451 "u8_uc_map.txt"
       {"\326\200", "Ր"},
       {""}, {""},
-#line 883 "u8_uc_map.txt"
+#line 884 "u8_uc_map.txt"
       {"\352\232\211", "Ꚉ"},
       {""},
-#line 676 "u8_uc_map.txt"
+#line 677 "u8_uc_map.txt"
       {"\341\276\221", "ᾙ"},
-#line 404 "u8_uc_map.txt"
+#line 405 "u8_uc_map.txt"
       {"\324\213", "Ԋ"},
       {""}, {""},
-#line 648 "u8_uc_map.txt"
+#line 649 "u8_uc_map.txt"
       {"\341\274\267", "Ἷ"},
 #line 134 "u8_uc_map.txt"
       {"\311\233", "Ɛ"},
       {""}, {""},
-#line 357 "u8_uc_map.txt"
+#line 358 "u8_uc_map.txt"
       {"\322\253", "Ҫ"},
 #line 136 "u8_uc_map.txt"
       {"\311\240", "Ɠ"},
 #line 196 "u8_uc_map.txt"
       {"\310\233", "Ț"},
-#line 299 "u8_uc_map.txt"
+#line 300 "u8_uc_map.txt"
       {"\320\267", "З"},
       {""}, {""}, {""},
 #line 213 "u8_uc_map.txt"
@@ -1937,66 +1937,66 @@ u8_uc_in_word_set (str, len)
 #line 77 "u8_uc_map.txt"
       {"\304\237", "Ğ"},
       {""},
-#line 337 "u8_uc_map.txt"
+#line 338 "u8_uc_map.txt"
       {"\321\273", "Ѻ"},
-#line 940 "u8_uc_map.txt"
+#line 941 "u8_uc_map.txt"
       {"\352\236\241", "Ꞡ"},
       {""},
-#line 298 "u8_uc_map.txt"
+#line 299 "u8_uc_map.txt"
       {"\320\266", "Ж"},
       {""},
-#line 408 "u8_uc_map.txt"
+#line 409 "u8_uc_map.txt"
       {"\324\223", "Ԓ"},
 #line 32 "u8_uc_map.txt"
       {"\303\240", "À"},
-#line 729 "u8_uc_map.txt"
+#line 730 "u8_uc_map.txt"
       {"\342\223\235", "Ⓝ"},
       {""}, {""}, {""}, {""},
-#line 683 "u8_uc_map.txt"
+#line 684 "u8_uc_map.txt"
       {"\341\276\240", "ᾨ"},
-#line 778 "u8_uc_map.txt"
+#line 779 "u8_uc_map.txt"
       {"\342\261\224", "Ⱔ"},
       {""},
-#line 441 "u8_uc_map.txt"
+#line 442 "u8_uc_map.txt"
       {"\325\267", "Շ"},
-#line 684 "u8_uc_map.txt"
+#line 685 "u8_uc_map.txt"
       {"\341\276\241", "ᾩ"},
       {""}, {""}, {""}, {""}, {""},
-#line 452 "u8_uc_map.txt"
+#line 453 "u8_uc_map.txt"
       {"\326\202", "Ւ"},
       {""}, {""},
-#line 440 "u8_uc_map.txt"
+#line 441 "u8_uc_map.txt"
       {"\325\266", "Ն"},
-#line 768 "u8_uc_map.txt"
+#line 769 "u8_uc_map.txt"
       {"\342\261\212", "Ⱊ"},
-#line 951 "u8_uc_map.txt"
+#line 952 "u8_uc_map.txt"
       {" ,  \357\275\207"},
       {""}, {""}, {""},
-#line 625 "u8_uc_map.txt"
+#line 626 "u8_uc_map.txt"
       {"\341\274\206", "Ἆ"},
       {""}, {""},
-#line 251 "u8_uc_map.txt"
+#line 252 "u8_uc_map.txt"
       {"\317\205", "Υ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 876 "u8_uc_map.txt"
+#line 877 "u8_uc_map.txt"
       {"\352\231\251", "Ꙩ"},
-#line 869 "u8_uc_map.txt"
+#line 870 "u8_uc_map.txt"
       {"\352\231\233", "Ꙛ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 647 "u8_uc_map.txt"
+#line 648 "u8_uc_map.txt"
       {"\341\274\266", "Ἶ"},
-#line 934 "u8_uc_map.txt"
+#line 935 "u8_uc_map.txt"
       {"\352\236\203", "Ꞃ"},
-#line 780 "u8_uc_map.txt"
+#line 781 "u8_uc_map.txt"
       {"\342\261\226", "Ⱖ"},
       {""}, {""},
-#line 677 "u8_uc_map.txt"
+#line 678 "u8_uc_map.txt"
       {"\341\276\222", "ᾚ"},
       {""},
 #line 97 "u8_uc_map.txt"
       {"\305\213", "Ŋ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 670 "u8_uc_map.txt"
+#line 671 "u8_uc_map.txt"
       {"\341\276\203", "ᾋ"},
       {""}, {""},
 #line 88 "u8_uc_map.txt"
@@ -2006,20 +2006,20 @@ u8_uc_in_word_set (str, len)
 #line 95 "u8_uc_map.txt"
       {"\305\206", "Ņ"},
       {""}, {""}, {""},
-#line 865 "u8_uc_map.txt"
+#line 866 "u8_uc_map.txt"
       {"\352\231\223", "Ꙓ"},
-#line 784 "u8_uc_map.txt"
+#line 785 "u8_uc_map.txt"
       {"\342\261\232", "Ⱚ"},
       {""}, {""},
 #line 101 "u8_uc_map.txt"
       {"\305\223", "Œ"},
       {""},
-#line 276 "u8_uc_map.txt"
+#line 277 "u8_uc_map.txt"
       {"\321\220", "Ѐ"},
-#line 769 "u8_uc_map.txt"
+#line 770 "u8_uc_map.txt"
       {"\342\261\213", "Ⱋ"},
       {""},
-#line 330 "u8_uc_map.txt"
+#line 331 "u8_uc_map.txt"
       {"\321\255", "Ѭ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
 #line 168 "u8_uc_map.txt"
@@ -2028,103 +2028,103 @@ u8_uc_in_word_set (str, len)
 #line 33 "u8_uc_map.txt"
       {"\303\241", "Á"},
       {""}, {""}, {""}, {""}, {""}, {""},
-#line 282 "u8_uc_map.txt"
+#line 283 "u8_uc_map.txt"
       {"\321\226", "І"},
       {""}, {""},
-#line 396 "u8_uc_map.txt"
+#line 397 "u8_uc_map.txt"
       {"\323\273", "Ӻ"},
       {""}, {""}, {""},
-#line 767 "u8_uc_map.txt"
+#line 768 "u8_uc_map.txt"
       {"\342\261\211", "Ⱉ"},
       {""},
-#line 623 "u8_uc_map.txt"
+#line 624 "u8_uc_map.txt"
       {"\341\274\204", "Ἄ"},
-#line 888 "u8_uc_map.txt"
+#line 889 "u8_uc_map.txt"
       {"\352\232\223", "Ꚓ"},
       {""}, {""}, {""},
-#line 413 "u8_uc_map.txt"
+#line 414 "u8_uc_map.txt"
       {"\324\235", "Ԝ"},
 #line 75 "u8_uc_map.txt"
       {"\304\233", "Ě"},
       {""}, {""}, {""},
-#line 673 "u8_uc_map.txt"
+#line 674 "u8_uc_map.txt"
       {"\341\276\206", "ᾎ"},
       {""}, {""}, {""},
 #line 139 "u8_uc_map.txt"
       {"\311\250", "Ɨ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 272 "u8_uc_map.txt"
+#line 273 "u8_uc_map.txt"
       {"\317\273", "Ϻ"},
       {""},
-#line 760 "u8_uc_map.txt"
+#line 761 "u8_uc_map.txt"
       {"\342\261\202", "Ⱂ"},
       {""}, {""},
 #line 40 "u8_uc_map.txt"
       {"\303\250", "È"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 315 "u8_uc_map.txt"
+#line 316 "u8_uc_map.txt"
       {"\321\207", "Ч"},
 #line 133 "u8_uc_map.txt"
       {"\311\231", "Ə"},
       {""},
-#line 864 "u8_uc_map.txt"
+#line 865 "u8_uc_map.txt"
       {"\352\231\221", "Ꙑ"},
       {""}, {""},
 #line 195 "u8_uc_map.txt"
       {"\310\231", "Ș"},
       {""},
-#line 960 "u8_uc_map.txt"
+#line 961 "u8_uc_map.txt"
       {" ,  \357\275\220"},
-#line 414 "u8_uc_map.txt"
+#line 415 "u8_uc_map.txt"
       {"\324\237", "Ԟ"},
-#line 317 "u8_uc_map.txt"
+#line 318 "u8_uc_map.txt"
       {"\321\211", "Щ"},
-#line 419 "u8_uc_map.txt"
+#line 420 "u8_uc_map.txt"
       {"\325\241", "Ա"},
-#line 937 "u8_uc_map.txt"
+#line 938 "u8_uc_map.txt"
       {"\352\236\214", "Ꞌ"},
       {""}, {""}, {""},
-#line 487 "u8_uc_map.txt"
+#line 488 "u8_uc_map.txt"
       {"\342\264\236", "Ⴞ"},
       {""}, {""}, {""}, {""},
-#line 365 "u8_uc_map.txt"
+#line 366 "u8_uc_map.txt"
       {"\322\273", "Һ"},
-#line 793 "u8_uc_map.txt"
+#line 794 "u8_uc_map.txt"
       {"\342\261\250", "Ⱨ"},
       {""}, {""}, {""}, {""},
-#line 772 "u8_uc_map.txt"
+#line 773 "u8_uc_map.txt"
       {"\342\261\216", "Ⱎ"},
       {""},
-#line 316 "u8_uc_map.txt"
+#line 317 "u8_uc_map.txt"
       {"\321\210", "Ш"},
       {""}, {""}, {""},
 #line 221 "u8_uc_map.txt"
       {"\311\217", "Ɏ"},
       {""}, {""}, {""},
-#line 872 "u8_uc_map.txt"
+#line 873 "u8_uc_map.txt"
       {"\352\231\241", "Ꙡ"},
 #line 190 "u8_uc_map.txt"
       {"\310\217", "Ȏ"},
       {""}, {""},
-#line 389 "u8_uc_map.txt"
+#line 390 "u8_uc_map.txt"
       {"\323\255", "Ӭ"},
 #line 106 "u8_uc_map.txt"
       {"\305\235", "Ŝ"},
       {""},
-#line 887 "u8_uc_map.txt"
+#line 888 "u8_uc_map.txt"
       {"\352\232\221", "Ꚑ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""},
-#line 426 "u8_uc_map.txt"
+#line 427 "u8_uc_map.txt"
       {"\325\250", "Ը"},
-#line 671 "u8_uc_map.txt"
+#line 672 "u8_uc_map.txt"
       {"\341\276\204", "ᾌ"},
       {""}, {""}, {""}, {""},
-#line 995 "u8_uc_map.txt"
+#line 996 "u8_uc_map.txt"
       {"\360\220\221\200", "𐐘"},
-#line 796 "u8_uc_map.txt"
+#line 797 "u8_uc_map.txt"
       {"\311\221", "Ɑ"},
-#line 785 "u8_uc_map.txt"
+#line 786 "u8_uc_map.txt"
       {"\342\261\233", "Ⱛ"},
       {""},
 #line 78 "u8_uc_map.txt"
@@ -2133,74 +2133,74 @@ u8_uc_in_word_set (str, len)
 #line 191 "u8_uc_map.txt"
       {"\310\221", "Ȑ"},
       {""}, {""},
-#line 268 "u8_uc_map.txt"
+#line 269 "u8_uc_map.txt"
       {"\317\255", "Ϭ"},
       {""},
-#line 964 "u8_uc_map.txt"
+#line 965 "u8_uc_map.txt"
       {" ,  \357\275\224"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""},
 #line 107 "u8_uc_map.txt"
       {"\305\237", "Ş"},
       {""},
-#line 954 "u8_uc_map.txt"
+#line 955 "u8_uc_map.txt"
       {" ,  \357\275\212"},
       {""},
-#line 857 "u8_uc_map.txt"
+#line 858 "u8_uc_map.txt"
       {"\352\231\203", "Ꙃ"},
       {""}, {""}, {""},
-#line 794 "u8_uc_map.txt"
+#line 795 "u8_uc_map.txt"
       {"\342\261\252", "Ⱪ"},
 #line 211 "u8_uc_map.txt"
       {"\306\232", "Ƚ"},
       {""}, {""}, {""},
-#line 777 "u8_uc_map.txt"
+#line 778 "u8_uc_map.txt"
       {"\342\261\223", "Ⱓ"},
       {""}, {""}, {""},
 #line 152 "u8_uc_map.txt"
       {"\312\212", "Ʊ"},
       {""}, {""}, {""}, {""},
-#line 358 "u8_uc_map.txt"
+#line 359 "u8_uc_map.txt"
       {"\322\255", "Ҭ"},
       {""}, {""}, {""}, {""}, {""},
 #line 159 "u8_uc_map.txt"
       {"\307\216", "Ǎ"},
-#line 966 "u8_uc_map.txt"
+#line 967 "u8_uc_map.txt"
       {" ,  \357\275\226"},
       {""}, {""},
-#line 331 "u8_uc_map.txt"
+#line 332 "u8_uc_map.txt"
       {"\321\257", "Ѯ"},
 #line 222 "u8_uc_map.txt"
       {"\315\261", "Ͱ"},
       {""}, {""}, {""}, {""}, {""},
-#line 766 "u8_uc_map.txt"
+#line 767 "u8_uc_map.txt"
       {"\342\261\210", "Ⱈ"},
       {""}, {""}, {""},
-#line 868 "u8_uc_map.txt"
+#line 869 "u8_uc_map.txt"
       {"\352\231\231", "Ꙙ"},
       {""},
-#line 880 "u8_uc_map.txt"
+#line 881 "u8_uc_map.txt"
       {"\352\232\203", "Ꚃ"},
       {""}, {""}, {""},
-#line 412 "u8_uc_map.txt"
+#line 413 "u8_uc_map.txt"
       {"\324\233", "Ԛ"},
       {""}, {""},
 #line 74 "u8_uc_map.txt"
       {"\304\231", "Ę"},
-#line 970 "u8_uc_map.txt"
+#line 971 "u8_uc_map.txt"
       {" ,  \357\275\232"},
       {""},
-#line 371 "u8_uc_map.txt"
+#line 372 "u8_uc_map.txt"
       {"\323\210", "Ӈ"},
-#line 253 "u8_uc_map.txt"
+#line 254 "u8_uc_map.txt"
       {"\317\207", "Χ"},
-#line 799 "u8_uc_map.txt"
+#line 800 "u8_uc_map.txt"
       {"\311\222", "Ɒ"},
       {""},
-#line 955 "u8_uc_map.txt"
+#line 956 "u8_uc_map.txt"
       {" ,  \357\275\213"},
       {""}, {""}, {""}, {""}, {""}, {""},
-#line 255 "u8_uc_map.txt"
+#line 256 "u8_uc_map.txt"
       {"\317\211", "Ω"},
 #line 161 "u8_uc_map.txt"
       {"\307\222", "Ǒ"},
@@ -2219,15 +2219,15 @@ u8_uc_in_word_set (str, len)
       {"\303\251", "É"},
 #line 69 "u8_uc_map.txt"
       {"\304\217", "Ď"},
-#line 254 "u8_uc_map.txt"
+#line 255 "u8_uc_map.txt"
       {"\317\210", "Ψ"},
       {""}, {""}, {""},
 #line 92 "u8_uc_map.txt"
       {"\305\200", "Ŀ"},
-#line 953 "u8_uc_map.txt"
+#line 954 "u8_uc_map.txt"
       {" ,  \357\275\211"},
       {""}, {""}, {""},
-#line 775 "u8_uc_map.txt"
+#line 776 "u8_uc_map.txt"
       {"\342\261\221", "Ⱑ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
@@ -2236,23 +2236,23 @@ u8_uc_in_word_set (str, len)
 #line 70 "u8_uc_map.txt"
       {"\304\221", "Đ"},
       {""}, {""}, {""},
-#line 946 "u8_uc_map.txt"
+#line 947 "u8_uc_map.txt"
       {" ,  \357\275\202"},
       {""}, {""}, {""},
-#line 454 "u8_uc_map.txt"
+#line 455 "u8_uc_map.txt"
       {"\326\204", "Ք"},
-#line 327 "u8_uc_map.txt"
+#line 328 "u8_uc_map.txt"
       {"\321\247", "Ѧ"},
 #line 105 "u8_uc_map.txt"
       {"\305\233", "Ś"},
       {""},
-#line 862 "u8_uc_map.txt"
+#line 863 "u8_uc_map.txt"
       {"\352\231\215", "Ꙍ"},
       {""},
-#line 789 "u8_uc_map.txt"
+#line 790 "u8_uc_map.txt"
       {"\342\261\241", "Ⱡ"},
       {""}, {""}, {""}, {""},
-#line 453 "u8_uc_map.txt"
+#line 454 "u8_uc_map.txt"
       {"\326\203", "Փ"},
 #line 93 "u8_uc_map.txt"
       {"\305\202", "Ł"},
@@ -2260,37 +2260,37 @@ u8_uc_in_word_set (str, len)
 #line 155 "u8_uc_map.txt"
       {"\306\266", "Ƶ"},
       {""},
-#line 870 "u8_uc_map.txt"
+#line 871 "u8_uc_map.txt"
       {"\352\231\235", "Ꙝ"},
       {""}, {""},
-#line 390 "u8_uc_map.txt"
+#line 391 "u8_uc_map.txt"
       {"\323\257", "Ӯ"},
       {""},
 #line 214 "u8_uc_map.txt"
       {"\306\200", "Ƀ"},
       {""}, {""},
-#line 415 "u8_uc_map.txt"
+#line 416 "u8_uc_map.txt"
       {"\324\241", "Ԡ"},
-#line 427 "u8_uc_map.txt"
+#line 428 "u8_uc_map.txt"
       {"\325\251", "Թ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 958 "u8_uc_map.txt"
+#line 959 "u8_uc_map.txt"
       {" ,  \357\275\216"},
       {""}, {""}, {""}, {""},
-#line 619 "u8_uc_map.txt"
+#line 620 "u8_uc_map.txt"
       {"\341\274\200", "Ἀ"},
-#line 786 "u8_uc_map.txt"
+#line 787 "u8_uc_map.txt"
       {"\342\261\234", "Ⱜ"},
       {""}, {""}, {""},
-#line 885 "u8_uc_map.txt"
+#line 886 "u8_uc_map.txt"
       {"\352\232\215", "Ꚍ"},
-#line 776 "u8_uc_map.txt"
+#line 777 "u8_uc_map.txt"
       {"\342\261\222", "Ⱒ"},
       {""}, {""}, {""},
-#line 269 "u8_uc_map.txt"
+#line 270 "u8_uc_map.txt"
       {"\317\257", "Ϯ"},
       {""}, {""}, {""}, {""}, {""}, {""},
-#line 761 "u8_uc_map.txt"
+#line 762 "u8_uc_map.txt"
       {"\342\261\203", "Ⱃ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
@@ -2298,57 +2298,57 @@ u8_uc_in_word_set (str, len)
 #line 82 "u8_uc_map.txt"
       {"\304\251", "Ĩ"},
       {""}, {""}, {""},
-#line 359 "u8_uc_map.txt"
+#line 360 "u8_uc_map.txt"
       {"\322\257", "Ү"},
       {""}, {""},
-#line 319 "u8_uc_map.txt"
+#line 320 "u8_uc_map.txt"
       {"\321\213", "Ы"},
       {""}, {""}, {""}, {""}, {""}, {""},
-#line 411 "u8_uc_map.txt"
+#line 412 "u8_uc_map.txt"
       {"\324\231", "Ԙ"},
-#line 783 "u8_uc_map.txt"
+#line 784 "u8_uc_map.txt"
       {"\342\261\231", "Ⱙ"},
       {""}, {""}, {""},
 #line 108 "u8_uc_map.txt"
       {"\305\241", "Š"},
-#line 332 "u8_uc_map.txt"
+#line 333 "u8_uc_map.txt"
       {"\321\261", "Ѱ"},
-#line 314 "u8_uc_map.txt"
+#line 315 "u8_uc_map.txt"
       {"\321\206", "Ц"},
 #line 220 "u8_uc_map.txt"
       {"\311\215", "Ɍ"},
       {""},
-#line 963 "u8_uc_map.txt"
+#line 964 "u8_uc_map.txt"
       {" ,  \357\275\223"},
       {""}, {""},
 #line 189 "u8_uc_map.txt"
       {"\310\215", "Ȍ"},
       {""},
-#line 279 "u8_uc_map.txt"
+#line 280 "u8_uc_map.txt"
       {"\321\223", "Ѓ"},
-#line 386 "u8_uc_map.txt"
+#line 387 "u8_uc_map.txt"
       {"\323\247", "Ӧ"},
       {""}, {""}, {""}, {""},
-#line 764 "u8_uc_map.txt"
+#line 765 "u8_uc_map.txt"
       {"\342\261\206", "Ⱆ"},
       {""}, {""}, {""}, {""},
 #line 63 "u8_uc_map.txt"
       {"\304\203", "Ă"},
       {""}, {""}, {""}, {""}, {""},
-#line 406 "u8_uc_map.txt"
+#line 407 "u8_uc_map.txt"
       {"\324\217", "Ԏ"},
       {""}, {""},
-#line 288 "u8_uc_map.txt"
+#line 289 "u8_uc_map.txt"
       {"\321\234", "Ќ"},
-#line 952 "u8_uc_map.txt"
+#line 953 "u8_uc_map.txt"
       {" ,  \357\275\210"},
       {""}, {""}, {""},
-#line 667 "u8_uc_map.txt"
+#line 668 "u8_uc_map.txt"
       {"\341\276\200", "ᾈ"},
-#line 801 "u8_uc_map.txt"
+#line 802 "u8_uc_map.txt"
       {"\342\261\266", "Ⱶ"},
       {""}, {""}, {""}, {""},
-#line 265 "u8_uc_map.txt"
+#line 266 "u8_uc_map.txt"
       {"\317\247", "Ϧ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
 #line 224 "u8_uc_map.txt"
@@ -2357,7 +2357,7 @@ u8_uc_in_word_set (str, len)
 #line 144 "u8_uc_map.txt"
       {"\306\241", "Ơ"},
       {""},
-#line 407 "u8_uc_map.txt"
+#line 408 "u8_uc_map.txt"
       {"\324\221", "Ԑ"},
       {""}, {""}, {""}, {""},
 #line 216 "u8_uc_map.txt"
@@ -2365,52 +2365,52 @@ u8_uc_in_word_set (str, len)
       {""}, {""}, {""}, {""}, {""}, {""}, {""},
 #line 104 "u8_uc_map.txt"
       {"\305\231", "Ř"},
-#line 770 "u8_uc_map.txt"
+#line 771 "u8_uc_map.txt"
       {"\342\261\214", "Ⱌ"},
       {""}, {""}, {""},
-#line 730 "u8_uc_map.txt"
+#line 731 "u8_uc_map.txt"
       {"\342\223\236", "Ⓞ"},
-#line 355 "u8_uc_map.txt"
+#line 356 "u8_uc_map.txt"
       {"\322\247", "Ҧ"},
       {""}, {""},
-#line 771 "u8_uc_map.txt"
+#line 772 "u8_uc_map.txt"
       {"\342\261\215", "Ⱍ"},
       {""}, {""}, {""}, {""}, {""},
 #line 156 "u8_uc_map.txt"
       {"\312\222", "Ʒ"},
-#line 961 "u8_uc_map.txt"
+#line 962 "u8_uc_map.txt"
       {" ,  \357\275\221"},
       {""}, {""}, {""}, {""}, {""},
-#line 787 "u8_uc_map.txt"
+#line 788 "u8_uc_map.txt"
       {"\342\261\235", "Ⱝ"},
       {""}, {""},
-#line 270 "u8_uc_map.txt"
+#line 271 "u8_uc_map.txt"
       {"\317\270", "Ϸ"},
       {""}, {""}, {""}, {""},
 #line 147 "u8_uc_map.txt"
       {"\306\250", "Ƨ"},
-#line 762 "u8_uc_map.txt"
+#line 763 "u8_uc_map.txt"
       {"\342\261\204", "Ⱄ"},
 #line 99 "u8_uc_map.txt"
       {"\305\217", "Ŏ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 391 "u8_uc_map.txt"
+#line 392 "u8_uc_map.txt"
       {"\323\261", "Ӱ"},
-#line 370 "u8_uc_map.txt"
+#line 371 "u8_uc_map.txt"
       {"\323\206", "Ӆ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 376 "u8_uc_map.txt"
+#line 377 "u8_uc_map.txt"
       {"\323\223", "Ӓ"},
       {""},
-#line 286 "u8_uc_map.txt"
+#line 287 "u8_uc_map.txt"
       {"\321\232", "Њ"},
       {""}, {""},
 #line 140 "u8_uc_map.txt"
       {"\306\231", "Ƙ"},
-#line 289 "u8_uc_map.txt"
+#line 290 "u8_uc_map.txt"
       {"\321\235", "Ѝ"},
       {""},
-#line 257 "u8_uc_map.txt"
+#line 258 "u8_uc_map.txt"
       {"\317\213", "Ϋ"},
       {""}, {""}, {""},
 #line 100 "u8_uc_map.txt"
@@ -2422,46 +2422,46 @@ u8_uc_in_word_set (str, len)
 #line 68 "u8_uc_map.txt"
       {"\304\215", "Č"},
       {""}, {""}, {""},
-#line 252 "u8_uc_map.txt"
+#line 253 "u8_uc_map.txt"
       {"\317\206", "Φ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 962 "u8_uc_map.txt"
+#line 963 "u8_uc_map.txt"
       {" ,  \357\275\222"},
       {""}, {""},
-#line 341 "u8_uc_map.txt"
+#line 342 "u8_uc_map.txt"
       {"\322\213", "Ҋ"},
       {""}, {""}, {""}, {""},
-#line 291 "u8_uc_map.txt"
+#line 292 "u8_uc_map.txt"
       {"\321\237", "Џ"},
       {""}, {""},
-#line 947 "u8_uc_map.txt"
+#line 948 "u8_uc_map.txt"
       {" ,  \357\275\203"},
       {""}, {""}, {""}, {""},
-#line 360 "u8_uc_map.txt"
+#line 361 "u8_uc_map.txt"
       {"\322\261", "Ұ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 345 "u8_uc_map.txt"
+#line 346 "u8_uc_map.txt"
       {"\322\223", "Ғ"},
-#line 400 "u8_uc_map.txt"
+#line 401 "u8_uc_map.txt"
       {"\324\203", "Ԃ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""},
-#line 969 "u8_uc_map.txt"
+#line 970 "u8_uc_map.txt"
       {" ,  \357\275\231"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""},
 #line 112 "u8_uc_map.txt"
       {"\305\251", "Ũ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 950 "u8_uc_map.txt"
+#line 951 "u8_uc_map.txt"
       {" ,  \357\275\206"},
       {""}, {""}, {""}, {""}, {""},
-#line 381 "u8_uc_map.txt"
+#line 382 "u8_uc_map.txt"
       {"\323\235", "Ӝ"},
       {""}, {""}, {""},
-#line 335 "u8_uc_map.txt"
+#line 336 "u8_uc_map.txt"
       {"\321\267", "Ѷ"},
       {""},
 #line 131 "u8_uc_map.txt"
@@ -2470,50 +2470,50 @@ u8_uc_in_word_set (str, len)
 #line 94 "u8_uc_map.txt"
       {"\305\204", "Ń"},
       {""}, {""}, {""}, {""}, {""}, {""},
-#line 308 "u8_uc_map.txt"
+#line 309 "u8_uc_map.txt"
       {"\321\200", "Р"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""},
 #line 135 "u8_uc_map.txt"
       {"\306\222", "Ƒ"},
-#line 260 "u8_uc_map.txt"
+#line 261 "u8_uc_map.txt"
       {"\317\235", "Ϝ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""},
-#line 382 "u8_uc_map.txt"
+#line 383 "u8_uc_map.txt"
       {"\323\237", "Ӟ"},
       {""}, {""}, {""}, {""}, {""}, {""},
-#line 956 "u8_uc_map.txt"
+#line 957 "u8_uc_map.txt"
       {" ,  \357\275\214"},
       {""}, {""}, {""}, {""}, {""}, {""},
-#line 287 "u8_uc_map.txt"
+#line 288 "u8_uc_map.txt"
       {"\321\233", "Ћ"},
-#line 957 "u8_uc_map.txt"
+#line 958 "u8_uc_map.txt"
       {" ,  \357\275\215"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 350 "u8_uc_map.txt"
+#line 351 "u8_uc_map.txt"
       {"\322\235", "Ҝ"},
-#line 310 "u8_uc_map.txt"
+#line 311 "u8_uc_map.txt"
       {"\321\202", "Т"},
-#line 405 "u8_uc_map.txt"
+#line 406 "u8_uc_map.txt"
       {"\324\215", "Ԍ"},
       {""}, {""}, {""}, {""},
-#line 261 "u8_uc_map.txt"
+#line 262 "u8_uc_map.txt"
       {"\317\237", "Ϟ"},
       {""},
-#line 318 "u8_uc_map.txt"
+#line 319 "u8_uc_map.txt"
       {"\321\212", "Ъ"},
       {""}, {""}, {""}, {""},
-#line 948 "u8_uc_map.txt"
+#line 949 "u8_uc_map.txt"
       {" ,  \357\275\204"},
 #line 125 "u8_uc_map.txt"
       {"\306\203", "Ƃ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 351 "u8_uc_map.txt"
+#line 352 "u8_uc_map.txt"
       {"\322\237", "Ҟ"},
       {""}, {""}, {""}, {""}, {""}, {""},
-#line 394 "u8_uc_map.txt"
+#line 395 "u8_uc_map.txt"
       {"\323\267", "Ӷ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
@@ -2521,55 +2521,57 @@ u8_uc_in_word_set (str, len)
 #line 98 "u8_uc_map.txt"
       {"\305\215", "Ō"},
       {""}, {""}, {""}, {""}, {""}, {""},
-#line 758 "u8_uc_map.txt"
+#line 759 "u8_uc_map.txt"
       {"\342\261\200", "Ⱀ"},
       {""}, {""}, {""}, {""},
-#line 324 "u8_uc_map.txt"
+#line 325 "u8_uc_map.txt"
       {"\321\241", "Ѡ"},
       {""}, {""}, {""}, {""}, {""}, {""},
 #line 247 "u8_uc_map.txt"
       {"\317\200", "Π"},
       {""}, {""}, {""}, {""},
-#line 380 "u8_uc_map.txt"
+#line 381 "u8_uc_map.txt"
       {"\323\233", "Ӛ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 368 "u8_uc_map.txt"
+#line 369 "u8_uc_map.txt"
       {"\323\202", "Ӂ"},
       {""}, {""},
-#line 363 "u8_uc_map.txt"
+#line 364 "u8_uc_map.txt"
       {"\322\267", "Ҷ"},
       {""}, {""}, {""}, {""},
-#line 372 "u8_uc_map.txt"
+#line 373 "u8_uc_map.txt"
       {"\323\212", "Ӊ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""},
-#line 259 "u8_uc_map.txt"
+#line 260 "u8_uc_map.txt"
       {"\317\233", "Ϛ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-      {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 256 "u8_uc_map.txt"
+#line 250 "u8_uc_map.txt"
+      {"\317\202", "Σ"},
+      {""}, {""}, {""}, {""}, {""}, {""}, {""},
+#line 257 "u8_uc_map.txt"
       {"\317\212", "Ϊ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 285 "u8_uc_map.txt"
+#line 286 "u8_uc_map.txt"
       {"\321\231", "Љ"},
       {""}, {""}, {""}, {""}, {""}, {""},
-#line 349 "u8_uc_map.txt"
+#line 350 "u8_uc_map.txt"
       {"\322\233", "Қ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""},
-#line 323 "u8_uc_map.txt"
+#line 324 "u8_uc_map.txt"
       {"\321\217", "Я"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 383 "u8_uc_map.txt"
+#line 384 "u8_uc_map.txt"
       {"\323\241", "Ӡ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""},
-#line 277 "u8_uc_map.txt"
+#line 278 "u8_uc_map.txt"
       {"\321\221", "Ё"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 262 "u8_uc_map.txt"
+#line 263 "u8_uc_map.txt"
       {"\317\241", "Ϡ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
@@ -2578,56 +2580,56 @@ u8_uc_in_word_set (str, len)
 #line 199 "u8_uc_map.txt"
       {"\306\236", "Ƞ"},
       {""},
-#line 322 "u8_uc_map.txt"
+#line 323 "u8_uc_map.txt"
       {"\321\216", "Ю"},
       {""}, {""}, {""},
-#line 352 "u8_uc_map.txt"
+#line 353 "u8_uc_map.txt"
       {"\322\241", "Ҡ"},
       {""}, {""}, {""}, {""},
-#line 379 "u8_uc_map.txt"
+#line 380 "u8_uc_map.txt"
       {"\323\231", "Ә"},
       {""}, {""}, {""}, {""}, {""}, {""},
-#line 320 "u8_uc_map.txt"
+#line 321 "u8_uc_map.txt"
       {"\321\214", "Ь"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""},
-#line 278 "u8_uc_map.txt"
+#line 279 "u8_uc_map.txt"
       {"\321\222", "Ђ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""},
-#line 328 "u8_uc_map.txt"
+#line 329 "u8_uc_map.txt"
       {"\321\251", "Ѩ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 788 "u8_uc_map.txt"
+#line 789 "u8_uc_map.txt"
       {"\342\261\236", "Ⱞ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""},
-#line 375 "u8_uc_map.txt"
+#line 376 "u8_uc_map.txt"
       {"\323\221", "Ӑ"},
       {""}, {""},
-#line 348 "u8_uc_map.txt"
+#line 349 "u8_uc_map.txt"
       {"\322\231", "Ҙ"},
       {""}, {""}, {""}, {""},
-#line 312 "u8_uc_map.txt"
+#line 313 "u8_uc_map.txt"
       {"\321\204", "Ф"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""},
-#line 311 "u8_uc_map.txt"
+#line 312 "u8_uc_map.txt"
       {"\321\203", "У"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""},
-#line 343 "u8_uc_map.txt"
+#line 344 "u8_uc_map.txt"
       {"\322\217", "Ҏ"},
       {""}, {""}, {""},
-#line 374 "u8_uc_map.txt"
+#line 375 "u8_uc_map.txt"
       {"\323\216", "Ӎ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""},
-#line 373 "u8_uc_map.txt"
+#line 374 "u8_uc_map.txt"
       {"\323\214", "Ӌ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 344 "u8_uc_map.txt"
+#line 345 "u8_uc_map.txt"
       {"\322\221", "Ґ"},
       {""}, {""}, {""},
 #line 231 "u8_uc_map.txt"
@@ -2637,26 +2639,26 @@ u8_uc_in_word_set (str, len)
 #line 229 "u8_uc_map.txt"
       {"\317\214", "Ό"},
       {""}, {""}, {""},
-#line 387 "u8_uc_map.txt"
+#line 388 "u8_uc_map.txt"
       {"\323\251", "Ө"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""},
-#line 369 "u8_uc_map.txt"
+#line 370 "u8_uc_map.txt"
       {"\323\204", "Ӄ"},
-#line 266 "u8_uc_map.txt"
+#line 267 "u8_uc_map.txt"
       {"\317\251", "Ϩ"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 321 "u8_uc_map.txt"
+#line 322 "u8_uc_map.txt"
       {"\321\215", "Э"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""},
-#line 250 "u8_uc_map.txt"
+#line 251 "u8_uc_map.txt"
       {"\317\204", "Τ"},
       {""}, {""}, {""}, {""}, {""},
-#line 356 "u8_uc_map.txt"
+#line 357 "u8_uc_map.txt"
       {"\322\251", "Ҩ"},
       {""}, {""}, {""}, {""},
 #line 249 "u8_uc_map.txt"
@@ -2673,7 +2675,7 @@ u8_uc_in_word_set (str, len)
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""},
-#line 290 "u8_uc_map.txt"
+#line 291 "u8_uc_map.txt"
       {"\321\236", "Ў"},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""},
@@ -2683,7 +2685,7 @@ u8_uc_in_word_set (str, len)
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
       {""}, {""}, {""}, {""}, {""}, {""}, {""},
-#line 342 "u8_uc_map.txt"
+#line 343 "u8_uc_map.txt"
       {"\322\215", "Ҍ"}
     };
 
