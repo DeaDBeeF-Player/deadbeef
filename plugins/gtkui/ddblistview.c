@@ -81,6 +81,8 @@ typedef enum {
     PICK_GROUP_TITLE,
     PICK_ALBUM_ART,
     PICK_EMPTY_SPACE,
+    PICK_ABOVE_PLAYLIST,
+    PICK_BELOW_PLAYLIST,
 } area_type_t;
 
 struct _DdbListviewPickContext {
@@ -338,6 +340,7 @@ ddb_listview_init(DdbListview *listview)
     listview->ref_point_offset = -1;
 
     listview->scroll_mode = 0;
+    listview->scroll_pointer_x = -1;
     listview->scroll_pointer_y = -1;
     listview->scroll_direction = 0;
     listview->scroll_active = 0;
@@ -725,7 +728,7 @@ ddb_listview_list_pickpoint (DdbListview *listview, int x, int y, DdbListviewPic
 
     if (y < 0) {
         // area above playlist
-        pick_ctx->type = PICK_EMPTY_SPACE;
+        pick_ctx->type = PICK_ABOVE_PLAYLIST;
         pick_ctx->item_grp_idx = 0;
         pick_ctx->grp_idx = 0;
         // select first playlist item
@@ -735,13 +738,12 @@ ddb_listview_list_pickpoint (DdbListview *listview, int x, int y, DdbListviewPic
     }
     else if (y > listview->fullheight) {
         // area below playlist
-        pick_ctx->type = PICK_EMPTY_SPACE;
+        pick_ctx->type = PICK_BELOW_PLAYLIST;
         pick_ctx->item_grp_idx = -1;
         pick_ctx->grp_idx = -1;
         // select last playlist item
         pick_ctx->item_idx = listview->binding->count () - 1;
         pick_ctx->grp = NULL;
-
         return;
     }
 
@@ -1978,6 +1980,7 @@ ddb_listview_list_mouse1_released (DdbListview *ps, int state, int ex, int ey, d
     }
     else if (ps->areaselect) {
         ps->scroll_direction = 0;
+        ps->scroll_pointer_x = -1;
         ps->scroll_pointer_y = -1;
         ps->areaselect = 0;
         ps->areaselect_x = -1;
@@ -2048,10 +2051,10 @@ ddb_listview_list_scroll_cb (gpointer data) {
 //    trace ("scroll to %d speed %f\n", sc, ps->scroll_direction);
     gtk_range_set_value (GTK_RANGE (ps->scrollbar), sc);
     if (ps->scroll_mode == 0) {
-        ddb_listview_list_mousemove (ps, NULL, 0, ps->scroll_pointer_y);
+        ddb_listview_list_mousemove (ps, NULL, ps->scroll_pointer_x, ps->scroll_pointer_y);
     }
     else if (ps->scroll_mode == 1) {
-        ddb_listview_list_track_dragdrop (ps, 0, ps->scroll_pointer_y);
+        ddb_listview_list_track_dragdrop (ps, ps->scroll_pointer_x, ps->scroll_pointer_y);
     }
     if (ps->scroll_direction < 0) {
         ps->scroll_direction -= (10 * dt);
@@ -2157,6 +2160,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
 
             if (ey < 10) {
                 ps->scroll_mode = 0;
+                ps->scroll_pointer_x = ex;
                 ps->scroll_pointer_y = ey;
                 // start scrolling up
                 if (!ps->scroll_active) {
@@ -2168,6 +2172,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
             }
             else if (ey > a.height-10) {
                 ps->scroll_mode = 0;
+                ps->scroll_pointer_x = ex;
                 ps->scroll_pointer_y = ey;
                 // start scrolling down
                 if (!ps->scroll_active) {
@@ -2179,6 +2184,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
             }
             else {
                 ps->scroll_direction = 0;
+                ps->scroll_pointer_x = -1;
                 ps->scroll_pointer_y = -1;
             }
             // debug only
@@ -2336,25 +2342,18 @@ ddb_listview_dragdrop_get_row_from_coord (DdbListview *listview, int x, int y) {
     ddb_listview_list_pickpoint (listview, x, y + listview->scrollpos, &pick_ctx);
 
     row_idx = pick_ctx.item_idx;
-    if (pick_ctx.type == PICK_EMPTY_SPACE) {
-        // set drop point to first item after empty space
-        if (pick_ctx.grp) {
-            row_idx += pick_ctx.grp->num_items;
-        }
-        else {
-            row_idx += listview->binding->count ();
-        }
-    }
-    if (pick_ctx.item_idx != -1) {
+    if (row_idx != -1) {
         int it_y = ddb_listview_get_row_pos (listview, row_idx) - listview->scrollpos;
         if (y > it_y + listview->rowheight/2 && y < it_y + listview->rowheight) {
             row_idx++;
         }
+        if (pick_ctx.type == PICK_EMPTY_SPACE
+                || pick_ctx.type == PICK_BELOW_PLAYLIST) {
+            row_idx++;
+        }
+        return row_idx;
     }
-    if (pick_ctx.type == PICK_EMPTY_SPACE) {
-        row_idx++;
-    }
-    return row_idx;
+    return -1;
 }
 
 void
@@ -2393,6 +2392,7 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int x, int y) {
 #endif
 
     if (y < 10) {
+        ps->scroll_pointer_x = x;
         ps->scroll_pointer_y = y;
         ps->scroll_mode = 1;
         // start scrolling up
@@ -2405,6 +2405,7 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int x, int y) {
     }
     else if (y > a.height-10) {
         ps->scroll_mode = 1;
+        ps->scroll_pointer_x = x;
         ps->scroll_pointer_y = y;
         // start scrolling up
         if (!ps->scroll_active) {
@@ -2416,6 +2417,7 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int x, int y) {
     }
     else {
         ps->scroll_direction = 0;
+        ps->scroll_pointer_x = -1;
         ps->scroll_pointer_y = -1;
     }
 }
@@ -2428,6 +2430,7 @@ ddb_listview_list_drag_end                   (GtkWidget       *widget,
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     ps->scroll_direction = 0;
+    ps->scroll_pointer_x = -1;
     ps->scroll_pointer_y = -1;
 }
 
