@@ -2342,27 +2342,18 @@ ddb_listview_dragdrop_get_row_from_coord (DdbListview *listview, int x, int y) {
     ddb_listview_list_pickpoint (listview, x, y + listview->scrollpos, &pick_ctx);
 
     row_idx = pick_ctx.item_idx;
-    if (pick_ctx.type == PICK_EMPTY_SPACE
-            || pick_ctx.type == PICK_BELOW_PLAYLIST) {
-        // set drop point to first item after empty space
-        if (pick_ctx.grp) {
-            row_idx += pick_ctx.grp->num_items;
-        }
-        else {
-            row_idx += listview->binding->count ();
-        }
-    }
-    if (pick_ctx.item_idx != -1) {
+    if (row_idx != -1) {
         int it_y = ddb_listview_get_row_pos (listview, row_idx) - listview->scrollpos;
         if (y > it_y + listview->rowheight/2 && y < it_y + listview->rowheight) {
             row_idx++;
         }
+        if (pick_ctx.type == PICK_EMPTY_SPACE
+                || pick_ctx.type == PICK_BELOW_PLAYLIST) {
+            row_idx++;
+        }
+        return row_idx;
     }
-    if (pick_ctx.type == PICK_EMPTY_SPACE
-            || pick_ctx.type == PICK_BELOW_PLAYLIST) {
-        row_idx++;
-    }
-    return row_idx;
+    return -1;
 }
 
 void
