@@ -82,6 +82,8 @@ typedef enum {
     PICK_GROUP_TITLE,
     PICK_ALBUM_ART,
     PICK_EMPTY_SPACE,
+    PICK_ABOVE_PLAYLIST,
+    PICK_BELOW_PLAYLIST,
 } area_type_t;
 
 struct _DdbListviewPickContext {
@@ -329,6 +331,7 @@ ddb_listview_init(DdbListview *listview)
     listview->ref_point_offset = -1;
 
     listview->scroll_mode = 0;
+    listview->scroll_pointer_x = -1;
     listview->scroll_pointer_y = -1;
     listview->scroll_direction = 0;
     listview->scroll_active = 0;
@@ -713,7 +716,7 @@ ddb_listview_list_pickpoint (DdbListview *listview, int x, int y, DdbListviewPic
 
     if (y < 0) {
         // area above playlist
-        pick_ctx->type = PICK_EMPTY_SPACE;
+        pick_ctx->type = PICK_ABOVE_PLAYLIST;
         pick_ctx->item_grp_idx = 0;
         pick_ctx->grp_idx = 0;
         // select first playlist item
@@ -723,13 +726,12 @@ ddb_listview_list_pickpoint (DdbListview *listview, int x, int y, DdbListviewPic
     }
     else if (y > listview->fullheight) {
         // area below playlist
-        pick_ctx->type = PICK_EMPTY_SPACE;
+        pick_ctx->type = PICK_BELOW_PLAYLIST;
         pick_ctx->item_grp_idx = -1;
         pick_ctx->grp_idx = -1;
         // select last playlist item
         pick_ctx->item_idx = listview->binding->count () - 1;
         pick_ctx->grp = NULL;
-
         return;
     }
 
@@ -797,11 +799,12 @@ render_column_button (DdbListview *listview, cairo_t *cr, GtkStateFlags state, i
 {
     GtkStyleContext *context = gtk_widget_get_style_context(theme_button);
     gtk_style_context_save(context);
-    gtk_style_context_set_state(context, state);
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_BUTTON);
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_DEFAULT);
+    gtk_style_context_set_state(context, state);
 //    gtk_style_context_add_region(context, GTK_STYLE_REGION_COLUMN_HEADER, 0);
-    gtk_render_background(context, cr, x, y-2, w, h+4);
-    gtk_render_frame(context, cr, x, y-2, w, h+4);
+    gtk_render_background(context, cr, x, y, w, h);
+    gtk_render_frame(context, cr, x, y, w, h);
     GdkRGBA rgba;
     gtk_style_context_get_color(context, state, &rgba);
     if (clr) {
@@ -1900,6 +1903,7 @@ ddb_listview_list_mouse1_released (DdbListview *ps, int state, int ex, int ey, d
     }
     else if (ps->areaselect) {
         ps->scroll_direction = 0;
+        ps->scroll_pointer_x = -1;
         ps->scroll_pointer_y = -1;
         ps->areaselect = 0;
         ps->areaselect_x = -1;
@@ -1970,10 +1974,10 @@ ddb_listview_list_scroll_cb (gpointer data) {
 //    trace ("scroll to %d speed %f\n", sc, ps->scroll_direction);
     gtk_range_set_value (GTK_RANGE (ps->scrollbar), sc);
     if (ps->scroll_mode == 0) {
-        ddb_listview_list_mousemove (ps, NULL, 0, ps->scroll_pointer_y);
+        ddb_listview_list_mousemove (ps, NULL, ps->scroll_pointer_x, ps->scroll_pointer_y);
     }
     else if (ps->scroll_mode == 1) {
-        ddb_listview_list_track_dragdrop (ps, 0, ps->scroll_pointer_y);
+        ddb_listview_list_track_dragdrop (ps, ps->scroll_pointer_x, ps->scroll_pointer_y);
     }
     if (ps->scroll_direction < 0) {
         ps->scroll_direction -= (10 * dt);
@@ -2079,6 +2083,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
 
             if (ey < 10) {
                 ps->scroll_mode = 0;
+                ps->scroll_pointer_x = ex;
                 ps->scroll_pointer_y = ey;
                 // start scrolling up
                 if (!ps->scroll_active) {
@@ -2090,6 +2095,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
             }
             else if (ey > a.height-10) {
                 ps->scroll_mode = 0;
+                ps->scroll_pointer_x = ex;
                 ps->scroll_pointer_y = ey;
                 // start scrolling down
                 if (!ps->scroll_active) {
@@ -2101,6 +2107,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
             }
             else {
                 ps->scroll_direction = 0;
+                ps->scroll_pointer_x = -1;
                 ps->scroll_pointer_y = -1;
             }
             // debug only
@@ -2258,25 +2265,18 @@ ddb_listview_dragdrop_get_row_from_coord (DdbListview *listview, int x, int y) {
     ddb_listview_list_pickpoint (listview, x, y + listview->scrollpos, &pick_ctx);
 
     row_idx = pick_ctx.item_idx;
-    if (pick_ctx.type == PICK_EMPTY_SPACE) {
-        // set drop point to first item after empty space
-        if (pick_ctx.grp) {
-            row_idx += pick_ctx.grp->num_items;
-        }
-        else {
-            row_idx += listview->binding->count ();
-        }
-    }
-    if (pick_ctx.item_idx != -1) {
+    if (row_idx != -1) {
         int it_y = ddb_listview_get_row_pos (listview, row_idx) - listview->scrollpos;
         if (y > it_y + listview->rowheight/2 && y < it_y + listview->rowheight) {
             row_idx++;
         }
+        if (pick_ctx.type == PICK_EMPTY_SPACE
+                || pick_ctx.type == PICK_BELOW_PLAYLIST) {
+            row_idx++;
+        }
+        return row_idx;
     }
-    if (pick_ctx.type == PICK_EMPTY_SPACE) {
-        row_idx++;
-    }
-    return row_idx;
+    return -1;
 }
 
 void
@@ -2315,6 +2315,7 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int x, int y) {
 #endif
 
     if (y < 10) {
+        ps->scroll_pointer_x = x;
         ps->scroll_pointer_y = y;
         ps->scroll_mode = 1;
         // start scrolling up
@@ -2327,6 +2328,7 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int x, int y) {
     }
     else if (y > a.height-10) {
         ps->scroll_mode = 1;
+        ps->scroll_pointer_x = x;
         ps->scroll_pointer_y = y;
         // start scrolling up
         if (!ps->scroll_active) {
@@ -2338,6 +2340,7 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int x, int y) {
     }
     else {
         ps->scroll_direction = 0;
+        ps->scroll_pointer_x = -1;
         ps->scroll_pointer_y = -1;
     }
 }
@@ -2350,6 +2353,7 @@ ddb_listview_list_drag_end                   (GtkWidget       *widget,
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     ps->scroll_direction = 0;
+    ps->scroll_pointer_x = -1;
     ps->scroll_pointer_y = -1;
 }
 
@@ -2368,7 +2372,6 @@ draw_header_fg(DdbListview *ps, cairo_t *cr, DdbListviewColumn *c, GdkColor *clr
         int arrow_sz = 10;
         text_width -= arrow_sz;
 #if GTK_CHECK_VERSION(3,0,0)
-//                gtk_paint_arrow (gtk_widget_get_style (ps->header), cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, ps->header, NULL, dir, TRUE, xx-arrow_sz-5, h/2-arrow_sz/2, arrow_sz, arrow_sz);
         gtk_render_arrow(gtk_widget_get_style_context(theme_treeview), cr, c->sort_order*G_PI, xx-arrow_sz-5, h/2-arrow_sz/2, arrow_sz);
 #else
         int dir = c->sort_order == 1 ? GTK_ARROW_DOWN : GTK_ARROW_UP;
@@ -2397,23 +2400,23 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr, int x1, int x2) {
     // Paint the background for the whole header
     GdkColor gdkfg;
 #if !GTK_HEADERS
-        GdkColor clr;
-        gtkui_get_tabstrip_base_color(&clr);
-        cairo_set_source_rgb(cr, clr.red/65535., clr.green/65535., clr.blue/65535.);
-        cairo_rectangle(cr, 0, 0, a.width, h);
-        cairo_fill(cr);
-        gtkui_get_tabstrip_dark_color(&clr);
-        draw_cairo_line(cr, &clr, 0, h, a.width, h);
-        gtkui_get_listview_column_text_color(&gdkfg);
+    GdkColor clr;
+    gtkui_get_tabstrip_base_color(&clr);
+    cairo_set_source_rgb(cr, clr.red/65535., clr.green/65535., clr.blue/65535.);
+    cairo_rectangle(cr, 0, 0, a.width, h);
+    cairo_fill(cr);
+    gtkui_get_tabstrip_dark_color(&clr);
+    draw_cairo_line(cr, &clr, 0, h, a.width, h);
+    gtkui_get_listview_column_text_color(&gdkfg);
+    draw_cairo_line(cr, &gtk_widget_get_style(ps->header)->mid[GTK_STATE_NORMAL], 0, h, a.width, h);
 #else
 #if GTK_CHECK_VERSION(3,0,0)
-        render_column_button(ps, cr, GTK_STATE_FLAG_NORMAL, 0, 0, a.width, h, &gdkfg);
+    render_column_button(ps, cr, GTK_STATE_FLAG_NORMAL, 0, -1, a.width, h+2, &gdkfg);
 #else
-        gtk_paint_box(gtk_widget_get_style(theme_button), gtk_widget_get_window(ps->header), GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, theme_button, "button", -2, -2, a.width+4, h+4);
-        gdkfg = gtk_widget_get_style(theme_button)->fg[GTK_STATE_NORMAL];
+    gtk_paint_box(gtk_widget_get_style(theme_button), gtk_widget_get_window(ps->header), GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, theme_button, "button", -2, -2, a.width+4, h+4);
+    gdkfg = gtk_widget_get_style(theme_button)->fg[GTK_STATE_NORMAL];
+    draw_cairo_line(cr, &gtk_widget_get_style(ps->header)->mid[GTK_STATE_NORMAL], 0, h, a.width, h);
 #endif
-        draw_cairo_line(cr, &gtk_widget_get_style(ps->header)->mid[GTK_STATE_NORMAL], 0, h, a.width, h);
-    }
 #endif
     int x = -ps->hscrollpos;
     int idx = 0;
@@ -2475,7 +2478,7 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr, int x1, int x2) {
         xx = ps->col_movepos - ps->hscrollpos - 2;
         if (w > 0 && xx < x2) {
 #if GTK_CHECK_VERSION(3,0,0)
-            render_column_button(ps, cr, GTK_STATE_FLAG_PRELIGHT, xx, 0, w, h, &gdkfg);
+            render_column_button(ps, cr, GTK_STATE_FLAG_PRELIGHT | GTK_STATE_FLAG_FOCUSED, xx, 0, w, h, &gdkfg);
 #else
             gtk_paint_box(gtk_widget_get_style(theme_button), gtk_widget_get_window(ps->header), GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, theme_button, "button", xx, 0, w, h);
             gdkfg = gtk_widget_get_style(theme_button)->fg[GTK_STATE_SELECTED];

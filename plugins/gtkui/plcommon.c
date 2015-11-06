@@ -67,6 +67,11 @@ pl_common_init(void)
     gtk_widget_set_can_focus(theme_treeview, FALSE);
     gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(theme_treeview), TRUE);
     gtk_box_pack_start(GTK_BOX(gtk_bin_get_child(GTK_BIN(mainwin))), theme_treeview, FALSE, FALSE, 0);
+#if GTK_CHECK_VERSION(3,0,0)
+    GtkStyleContext *context = gtk_widget_get_style_context(theme_treeview);
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_CELL);
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_VIEW);
+#endif
     theme_button = mainwin;
 }
 
