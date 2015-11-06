@@ -789,4 +789,10 @@
     XCTAssert(!strcmp (buffer, "ПX音"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_Crc32Of123456789_Returns3421780262 {
+    char *bc = tf_compile("$crc32(123456789)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "3421780262"), @"The actual output is: %s", buffer);
+}
+
 @end
