@@ -371,6 +371,27 @@ tf_func_caps2 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char 
     return tf_caps_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 0);
 }
 
+int
+tf_func_char (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    int len;
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+
+    int n = atoi (out);
+    *out = 0;
+
+    if (outlen < 5) {
+        return -1;
+    }
+    len = u8_wc_toutf8 (out, n);
+    out[len] = 0;
+    return len;
+}
 
 // $left(text,n) returns the first n characters of text
 int
@@ -960,6 +981,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "ascii", tf_func_ascii },
     { "caps", tf_func_caps },
     { "caps2", tf_func_caps2 },
+    { "char", tf_func_char },
     { "cut", tf_func_left },
     { "left", tf_func_left }, // alias of 'cut'
     { "strcmp", tf_func_strcmp },

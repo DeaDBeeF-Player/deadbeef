@@ -158,7 +158,7 @@ int u8_toutf8(char *dest, int32_t sz, uint32_t *src, int32_t srcsz)
     return i;
 }
 
-int u8_wc_toutf8(char *dest, unsigned long ch)
+int u8_wc_toutf8(char *dest, uint32_t ch)
 {
     if (ch < 0x80) {
         dest[0] = (char)ch;

@@ -783,4 +783,10 @@
     XCTAssert(!strcmp (buffer, "ⱭBCD ⱿHİJ"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_Char1055And88And38899_ReturnsCorrespondingUTF8Chars {
+    char *bc = tf_compile("$char(1055)$char(88)$char(38899)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "ПX音"), @"The actual output is: %s", buffer);
+}
+
 @end
