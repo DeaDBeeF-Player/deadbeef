@@ -1326,7 +1326,9 @@ adjust_scrollbar (GtkWidget *scrollbar, int upper, int page_size) {
     GtkRange *range = GTK_RANGE(scrollbar);
     gdouble scrollpos = gtk_range_get_value(range);
     GtkAdjustment *adj = gtk_range_get_adjustment(range);
-    if (scrollpos > 0 && scrollpos >= gtk_adjustment_get_upper(adj) - gtk_adjustment_get_page_size(adj)) {
+    int old_page_size = gtk_adjustment_get_page_size(adj);
+    int old_upper = gtk_adjustment_get_upper(adj);
+    if (scrollpos > 0 && page_size != old_page_size && scrollpos >= old_upper - old_page_size) {
         scrollpos = upper - page_size;
     }
     gtk_range_set_adjustment(range, GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, upper, SCROLL_STEP, page_size/2, page_size)));
