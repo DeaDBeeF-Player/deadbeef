@@ -1321,7 +1321,19 @@ ddb_listview_get_hscroll_pos (DdbListview *listview) {
     return listview->hscrollpos;
 }
 
-#define MIN_COLUMN_WIDTH 16
+static int
+adjust_scrollbar (GtkWidget *scrollbar, int upper, int page_size) {
+    GtkRange *range = GTK_RANGE(scrollbar);
+    gdouble scrollpos = gtk_range_get_value(range);
+    GtkAdjustment *adj = gtk_range_get_adjustment(range);
+    if (scrollpos > 0 && scrollpos >= gtk_adjustment_get_upper(adj) - gtk_adjustment_get_page_size(adj)) {
+        scrollpos = upper - page_size;
+    }
+    gtk_range_set_adjustment(range, GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, upper, SCROLL_STEP, page_size/2, page_size)));
+    gtk_range_set_value(range, round(scrollpos));
+    gtk_widget_show(scrollbar);
+    return round(gtk_range_get_value(range));
+}
 
 static void
 ddb_listview_list_setup_vscroll (DdbListview *ps) {
@@ -1334,12 +1346,7 @@ ddb_listview_list_setup_vscroll (DdbListview *ps) {
         gtk_widget_queue_draw (ps->list);
     }
     else {
-        GtkRange *range = GTK_RANGE(ps->scrollbar);
-        gdouble scrollpos = gtk_range_get_value(range);
-        gtk_range_set_adjustment(range, GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, ps->fullheight, SCROLL_STEP, a.height/2, a.height)));
-        gtk_range_set_value(range, scrollpos);
-        gtk_widget_show(ps->scrollbar);
-        ps->scrollpos = gtk_range_get_value(range);
+        ps->scrollpos = adjust_scrollbar(ps->scrollbar, ps->fullheight, a.height);
     }
 }
 
@@ -1360,12 +1367,7 @@ ddb_listview_list_setup_hscroll (DdbListview *ps) {
         gtk_widget_queue_draw (ps->header);
     }
     else {
-        GtkRange *range = GTK_RANGE(ps->hscrollbar);
-        gdouble scrollpos = gtk_range_get_value(range);
-        gtk_range_set_adjustment(range, GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, size, SCROLL_STEP, a.width/2, a.width)));
-        gtk_range_set_value(range, scrollpos);
-        gtk_widget_show (ps->hscrollbar);
-        ps->hscrollpos = gtk_range_get_value(range);
+        ps->hscrollpos = adjust_scrollbar(ps->hscrollbar, size, a.width);
     }
 }
 
