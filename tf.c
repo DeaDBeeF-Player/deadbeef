@@ -140,11 +140,14 @@ tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
         break;
     }
 
+#if 0
+    // this breaks $crlf()
     for (; *out; out++) {
         if (*out == '\n') {
             *out = ';';
         }
     }
+#endif
     if (null_it) {
         ctx->it = NULL;
     }
@@ -459,6 +462,16 @@ tf_func_crc32 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char 
     crc ^= 0xffffffff;
 
     return snprintf (out, outlen, "%u", crc);
+}
+
+int
+tf_func_crlf (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 0 || outlen < 2) {
+        return -1;
+    }
+    out[0] = '\n';
+    out[1] = 0;
+    return 1;
 }
 
 // $left(text,n) returns the first n characters of text
@@ -1050,6 +1063,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "caps2", tf_func_caps2 },
     { "char", tf_func_char },
     { "crc32", tf_func_crc32 },
+    { "crlf", tf_func_crlf },
     { "cut", tf_func_left },
     { "left", tf_func_left }, // alias of 'cut'
     { "strcmp", tf_func_strcmp },

@@ -795,4 +795,10 @@
     XCTAssert(!strcmp (buffer, "3421780262"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_CrLf_InsertsLinebreak {
+    char *bc = tf_compile("$crlf()");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "\n"), @"The actual output is: %s", buffer);
+}
+
 @end
