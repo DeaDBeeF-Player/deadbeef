@@ -44,6 +44,7 @@
 #include "ctype.h"
 #include "utf8.h"
 #include "u8_lc_map.h"
+#include "u8_uc_map.h"
 
 static const uint32_t offsetsFromUTF8[6] = {
     0x00000000UL, 0x00003080UL, 0x000E2080UL,
@@ -157,7 +158,7 @@ int u8_toutf8(char *dest, int32_t sz, uint32_t *src, int32_t srcsz)
     return i;
 }
 
-int u8_wc_toutf8(char *dest, unsigned long ch)
+int u8_wc_toutf8(char *dest, uint32_t ch)
 {
     if (ch < 0x80) {
         dest[0] = (char)ch;
@@ -681,7 +682,7 @@ u8_tolower_slow (const char *input, int len, char *out) {
 int
 u8_tolower (const signed char *c, int l, char *out) {
     if (*c >= 65 && *c <= 90) {
-        *out = *c + 0x20;//tolower (*c);
+        *out = *c + 0x20;
         out[1] = 0;
         return 1;
     }
@@ -692,6 +693,41 @@ u8_tolower (const signed char *c, int l, char *out) {
     }
     else {
         int ll = u8_tolower_slow (c, l, out);
+        if (ll) {
+            return ll;
+        }
+        memcpy (out, c, l);
+        out[l] = 0;
+        return l;
+    }
+}
+
+int
+u8_toupper_slow (const char *input, int len, char *out) {
+    struct u8_uppercase_map_t *uc = u8_uc_in_word_set (input, len);
+    if (uc) {
+        int ll = strlen (uc->upper);
+        memcpy (out, uc->upper, ll);
+        out[ll] = 0;
+        return ll;
+    }
+    return 0;
+}
+
+int
+u8_toupper (const signed char *c, int l, char *out) {
+    if (*c >= 97 && *c <= 122) {
+        *out = *c - 0x20;
+        out[1] = 0;
+        return 1;
+    }
+    else if (*c > 0) {
+        *out = *c;
+        out[1] = 0;
+        return 1;
+    }
+    else {
+        int ll = u8_toupper_slow (c, l, out);
         if (ll) {
             return ll;
         }

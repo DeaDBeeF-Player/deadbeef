@@ -379,6 +379,26 @@ junk_utf8_to_cp1252(const uint8_t *in, int inlen, uint8_t *out, int outlen) {
     return (int)(out-outptr);
 }
 
+int
+junk_utf8_to_ascii(const uint8_t *in, int inlen, uint8_t *out, int outlen) {
+    uint8_t *outptr = out;
+    while (inlen && outlen > 0) {
+        if (*in < 0x80) {
+            *out++ = *in++;
+            outlen--;
+            inlen--;
+        }
+        else {
+            int idx = 0;
+            u8_inc((char *)in, &idx);
+            in += idx;
+            inlen -= idx;
+        }
+    }
+    *out = 0;
+    return (int)(out-outptr);
+}
+
 ConversionResult
 ConvertUTF16BEtoUTF8 (const UTF16** sourceStart, const UTF16* sourceEnd, UTF8** targetStart, UTF8* targetEnd, ConversionFlags flags) {
     // swap to make it little endian
@@ -536,6 +556,12 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
         }
         else if (!strcasecmp (cs_out, "cp1252") || !strcasecmp (cs_out, "iso8859-1")) {
             int res = junk_utf8_to_cp1252((uint8_t *)in, inlen, (uint8_t *)out, outlen);
+            if (res >= 0) {
+                len = res;
+            }
+        }
+        else if (!strcasecmp (cs_out, "ascii")) {
+            int res = junk_utf8_to_ascii((uint8_t *)in, inlen, (uint8_t *)out, outlen);
             if (res >= 0) {
                 len = res;
             }

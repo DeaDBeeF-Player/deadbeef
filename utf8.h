@@ -47,7 +47,7 @@ int u8_toucs(uint32_t *dest, int32_t sz, const char *src, int32_t srcsz);
 int u8_toutf8(char *dest, int32_t sz, uint32_t *src, int32_t srcsz);
 
 /* single character to UTF-8 */
-int u8_wc_toutf8(char *dest, unsigned long ch);
+int u8_wc_toutf8(char *dest, uint32_t ch);
 
 /* character number to byte offset */
 int u8_offset(char *str, int32_t charnum);
@@ -125,6 +125,9 @@ int u8_valid (const char  *str,
 
 int
 u8_tolower (const signed char *c, int l, char *out);
+
+int
+u8_toupper (const signed char *c, int l, char *out);
 
 int
 u8_strcasecmp (const char *a, const char *b);

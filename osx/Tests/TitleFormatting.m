@@ -731,4 +731,74 @@
     XCTAssert(!strcmp (buffer, "TiaLT1v[needst"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_AbbrTestUnicodeString_ReturnsAbbreviatedString {
+    it->startsample = 100;
+    it->endsample = 300;
+    char *bc = tf_compile("$abbr('This ɀHİJ a русский Title (12-inch version) [needs tags]')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "TɀaрT1v[needst"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_AnsiTestString_ReturnsTheSameString {
+    char *bc = tf_compile("$ansi(ABCDабвг)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "ABCDабвг"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_AsciiTestString_ReturnsAsciiSameStringWithInvalidCharsStripped {
+    char *bc = tf_compile("$ascii(олдABCDабвг)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "ABCD"), @"The actual output is: %s", buffer);
+}
+
+
+- (void)test_CapsTestAsciiString_ReturnsCapitalizeEachWordString {
+    char *bc = tf_compile("$caps(MY TEST STRING)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "My Test String"), @"The actual output is: %s", buffer);
+}
+
+
+- (void)test_CapsTestAsciiRandomizedString_ReturnsCapitalizeEachWordString {
+    char *bc = tf_compile("$caps(MY TesT STriNG)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "My Test String"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_CapsTestUnicodeRandomizedString_ReturnsCapitalizeEachWordString {
+    char *bc = tf_compile("$caps(AsciiAlbumName РуССкоЕНазВАние ΠΥΘΑΓΌΡΑΣ)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "Asciialbumname Русскоеназвание Πυθαγόρασ"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_CapsTestUnicodeStringWithNonMatchinByteLengthsForLowerUpperCaseChars_ReturnsCapitalizeEachWordString {
+    char *bc = tf_compile("$caps(ɑBCD ɀHİJ)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "Ɑbcd Ɀhij"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Caps2TestUnicodeRandomizedString_ReturnsCapitalizeEachWordString {
+    char *bc = tf_compile("$caps2(ɑBCD ɀHİJ)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "ⱭBCD ⱿHİJ"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Char1055And88And38899_ReturnsCorrespondingUTF8Chars {
+    char *bc = tf_compile("$char(1055)$char(88)$char(38899)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "ПX音"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Crc32Of123456789_Returns3421780262 {
+    char *bc = tf_compile("$crc32(123456789)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "3421780262"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_CrLf_InsertsLinebreak {
+    char *bc = tf_compile("$crlf()");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "\n"), @"The actual output is: %s", buffer);
+}
+
 @end
