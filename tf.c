@@ -294,7 +294,7 @@ tf_func_ascii (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char 
 }
 
 int
-tf_func_caps (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_caps_impl (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef, int do_lowercasing) {
     if (argc != 1) {
         return -1;
     }
@@ -341,19 +341,34 @@ tf_func_caps (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
             else {
                 size = 0;
                 u8_nextchar ((const char *)p, &size);
-                int32_t lowersize = u8_tolower ((const signed char *)p, size, temp);
-                if (lowersize != size) {
-                    memmove (p+lowersize, p+size, end-(p+size));
-                    end += lowersize - size;
-                    *end = 0;
+                if (do_lowercasing) {
+                    int32_t lowersize = u8_tolower ((const signed char *)p, size, temp);
+                    if (lowersize != size) {
+                        memmove (p+lowersize, p+size, end-(p+size));
+                        end += lowersize - size;
+                        *end = 0;
+                    }
+                    memcpy (p, temp, lowersize);
+                    p += lowersize;
                 }
-                memcpy (p, temp, lowersize);
-                p += lowersize;
+                else {
+                    p += size;
+                }
             }
         }
     }
 
     return (int)(end - out);
+}
+
+int
+tf_func_caps (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_caps_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 1);
+}
+
+int
+tf_func_caps2 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_caps_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 0);
 }
 
 
@@ -944,6 +959,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "ansi", tf_func_ansi },
     { "ascii", tf_func_ascii },
     { "caps", tf_func_caps },
+    { "caps2", tf_func_caps2 },
     { "cut", tf_func_left },
     { "left", tf_func_left }, // alias of 'cut'
     { "strcmp", tf_func_strcmp },

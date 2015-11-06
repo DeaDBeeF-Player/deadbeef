@@ -777,4 +777,10 @@
     XCTAssert(!strcmp (buffer, "Ɑbcd Ɀhij"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_Caps2TestUnicodeRandomizedString_ReturnsCapitalizeEachWordString {
+    char *bc = tf_compile("$caps2(ɑBCD ɀHİJ)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "ⱭBCD ⱿHİJ"), @"The actual output is: %s", buffer);
+}
+
 @end
