@@ -1890,24 +1890,37 @@ ddb_listview_list_mouse1_released (DdbListview *ps, int state, int ex, int ey, d
 #else
     int selmask = GDK_MOD2_MASK;
 #endif
-    if (!(state & (selmask|GDK_SHIFT_MASK)) && !ps->areaselect) {
-        DdbListviewPickContext pick_ctx;
-        ddb_listview_list_pickpoint (ps, ex, ey + ps->scrollpos, &pick_ctx);
-        if (pick_ctx.type == PICK_ITEM) {
-            ddb_listview_select_single (ps, pick_ctx.item_idx);
-        }
+
+    int select_single = 0;
+
+    if (!ps->binding->drag_n_drop) {
+        // playlist doesn't support drag and drop (e.g. search list)
+        // select single track
+        select_single = 1;
     }
 
     if (ps->dragwait) {
+        // reset dragdrop and select single track
         ps->dragwait = 0;
+        select_single = 1;
     }
-    else if (ps->areaselect) {
+
+    if (ps->areaselect) {
+        // reset areaselection ctx without clearing selection
         ps->scroll_direction = 0;
         ps->scroll_pointer_x = -1;
         ps->scroll_pointer_y = -1;
         ps->areaselect = 0;
         ps->areaselect_x = -1;
         ps->areaselect_y = -1;
+    }
+    else if (select_single && !(state & (selmask|GDK_SHIFT_MASK))) {
+        // clear selection and select single track
+        DdbListviewPickContext pick_ctx;
+        ddb_listview_list_pickpoint (ps, ex, ey + ps->scrollpos, &pick_ctx);
+        if (pick_ctx.type == PICK_ITEM) {
+            ddb_listview_select_single (ps, pick_ctx.item_idx);
+        }
     }
 }
 
