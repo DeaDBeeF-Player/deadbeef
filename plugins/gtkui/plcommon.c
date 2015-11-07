@@ -67,6 +67,11 @@ pl_common_init(void)
     gtk_widget_set_can_focus(theme_treeview, FALSE);
     gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(theme_treeview), TRUE);
     gtk_box_pack_start(GTK_BOX(gtk_bin_get_child(GTK_BIN(mainwin))), theme_treeview, FALSE, FALSE, 0);
+#if GTK_CHECK_VERSION(3,0,0)
+    GtkStyleContext *context = gtk_widget_get_style_context(theme_treeview);
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_CELL);
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_VIEW);
+#endif
     theme_button = mainwin;
 }
 
@@ -457,7 +462,11 @@ draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int id
             bold = gtkui_embolden_current_track;
             italic = gtkui_italic_current_track;
         }
+        cairo_save(cr);
+        cairo_rectangle(cr, x+5, y, cwidth-10, height);
+        cairo_clip(cr);
         draw_text_custom (&listview->listctx, x + 5, y + 3, cwidth-10, calign_right, DDB_LIST_FONT, bold, italic, text);
+        cairo_restore(cr);
     }
     if (playing_track) {
         deadbeef->pl_item_unref (playing_track);
