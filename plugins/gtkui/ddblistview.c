@@ -125,7 +125,7 @@ static void
 ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int idx, int x, int y, int w, int h, int x1, int x2);
 static void
 ddb_listview_list_render_album_art (DdbListview *ps, cairo_t *cr, DdbListviewGroup *grp, int grp_next_y, int y, int x1, int x2);
-void
+static void
 ddb_listview_list_track_dragdrop (DdbListview *ps, int x, int y);
 int
 ddb_listview_dragdrop_get_row_from_coord (DdbListview *listview, int x, int y);
@@ -2298,40 +2298,46 @@ ddb_listview_dragdrop_get_row_from_coord (DdbListview *listview, int x, int y) {
     return row_idx;
 }
 
-void
+static void
 ddb_listview_list_track_dragdrop (DdbListview *ps, int x, int y) {
-    GtkWidget *widget = ps->list;
+    int prev_drag_y = ps->drag_motion_y;
     GtkAllocation a;
-    gtk_widget_get_allocation (widget, &a);
-    if (ps->drag_motion_y != -1) {
-        // erase previous track
-        gtk_widget_queue_draw_area (ps->list, 0, ps->drag_motion_y-ps->scrollpos-3, a.width, 7);
+    gtk_widget_get_allocation (ps->list, &a);
 
-    }
     if (y == -1) {
         ps->drag_motion_y = -1;
         ps->scroll_active = 0;
         ps->scroll_direction = 0;
-        return;
-    }
-    int sel = ddb_listview_dragdrop_get_row_from_coord (ps, x, y);
-    if (sel == -1) {
-        if (ps->binding->count () == 0) {
-            ps->drag_motion_y = 0;
-        }
-        else {
-            // after last row
-            ps->drag_motion_y = ddb_listview_get_row_pos (ps, ps->binding->count ()-1) + ps->rowheight;
-        }
     }
     else {
-        ps->drag_motion_y = ddb_listview_get_row_pos (ps, sel);
+        int sel = ddb_listview_dragdrop_get_row_from_coord (ps, x, y);
+        if (sel == -1) {
+            if (ps->binding->count () == 0) {
+                ps->drag_motion_y = 0;
+            }
+            else {
+                // after last row
+                ps->drag_motion_y = ddb_listview_get_row_pos (ps, ps->binding->count ()-1) + ps->rowheight;
+            }
+        }
+        else {
+            ps->drag_motion_y = ddb_listview_get_row_pos (ps, sel);
+        }
+        if (ps->scrollpos > 0 && ps->drag_motion_y == ps->fullheight) {
+            ps->drag_motion_y -= 3;
+        }
     }
 
-#if !GTK_CHECK_VERSION(3,0,0)
-    // FIXME
-//    ddb_listview_draw_dnd_marker (ps, cr);
-#endif
+    if (prev_drag_y != ps->drag_motion_y) {
+        if (prev_drag_y != -1) {
+            // erase previous track
+            gtk_widget_queue_draw_area (ps->list, 0, prev_drag_y-ps->scrollpos-3, a.width, 7);
+        }
+        if (ps->drag_motion_y != -1) {
+            // new track
+            gtk_widget_queue_draw_area (ps->list, 0, ps->drag_motion_y-ps->scrollpos-3, a.width, 7);
+        }
+    }
 
     if (y < 10) {
         ps->scroll_pointer_x = x;
