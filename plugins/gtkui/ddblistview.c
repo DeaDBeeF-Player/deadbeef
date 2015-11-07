@@ -887,7 +887,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
         idx += grp->num_items;
         grp = grp->next;
     }
-    if (grp_y < 0 && grp_y + grp->height >= 0) {
+    if (grp && grp_y < 0 && grp_y + grp->height >= 0) {
         grp->pinned = 1;
         if (grp->next) {
             grp->next->pinned = 2;
