@@ -117,14 +117,14 @@ ddb_listview_free_groups (DdbListview *listview);
 //draw_drawable (GdkDrawable *window, GdkGC *gc, GdkDrawable *drawable, int x1, int y1, int x2, int y2, int w, int h);
 
 ////// list functions ////
-void
-ddb_listview_list_render (DdbListview *ps, cairo_t *cr, int x, int y, int w, int h);
 static void
-ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h);
+ddb_listview_list_render (DdbListview *ps, cairo_t *cr, GdkRectangle *clip);
 static void
-ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int idx, int x, int y, int w, int h, int x1, int x2);
+ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h, GdkRectangle *clip);
 static void
-ddb_listview_list_render_album_art (DdbListview *ps, cairo_t *cr, DdbListviewGroup *grp, int grp_next_y, int y, int x1, int x2);
+ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int idx, int y, int w, int h, int x1, int x2);
+static void
+ddb_listview_list_render_album_art (DdbListview *ps, cairo_t *cr, DdbListviewGroup *grp, int grp_next_y, int y, GdkRectangle *clip);
 static void
 ddb_listview_list_track_dragdrop (DdbListview *ps, int x, int y);
 int
@@ -793,6 +793,21 @@ ddb_listview_list_pickpoint (DdbListview *listview, int x, int y, DdbListviewPic
     return;
 }
 
+static void
+draw_cairo_rectangle (cairo_t *cr, GdkColor *color, int x, int y, int width, int height) {
+    cairo_set_source_rgb(cr, color->red/65535., color->green/65535., color->blue/65535.);
+    cairo_rectangle(cr, x, y, width, height);
+    cairo_fill(cr);
+}
+
+static void
+draw_cairo_line(cairo_t *cr, GdkColor *color, int x1, int y1, int x2, int y2) {
+    cairo_set_source_rgb (cr, color->red/65535., color->green/65535., color->blue/65535.);
+    cairo_move_to (cr, x1, y1);
+    cairo_line_to (cr, x2, y2);
+    cairo_stroke (cr);
+}
+
 #if GTK_CHECK_VERSION(3,0,0)
 static void
 render_column_button (DdbListview *listview, cairo_t *cr, GtkStateFlags state, int x, int y, int w, int h, GdkColor *clr)
@@ -805,9 +820,9 @@ render_column_button (DdbListview *listview, cairo_t *cr, GtkStateFlags state, i
 //    gtk_style_context_add_region(context, GTK_STYLE_REGION_COLUMN_HEADER, 0);
     gtk_render_background(context, cr, x, y, w, h);
     gtk_render_frame(context, cr, x, y, w, h);
-    GdkRGBA rgba;
-    gtk_style_context_get_color(context, state, &rgba);
     if (clr) {
+        GdkRGBA rgba;
+        gtk_style_context_get_color(context, state, &rgba);
         clr->red = round(rgba.red * 65535);
         clr->green = round(rgba.green * 65535);
         clr->blue = round(rgba.blue * 65535);
@@ -817,7 +832,7 @@ render_column_button (DdbListview *listview, cairo_t *cr, GtkStateFlags state, i
 #endif
 
 static void
-render_treeview_background (DdbListview *listview, cairo_t *cr, int selected, int even, int x, int y, int w, int h)
+render_treeview_background (DdbListview *listview, cairo_t *cr, int selected, int even, int x, int y, int w, int h, GdkRectangle *clip)
 {
     if (gtkui_override_listview_colors()) {
         GdkColor clr;
@@ -827,88 +842,80 @@ render_treeview_background (DdbListview *listview, cairo_t *cr, int selected, in
         else {
             even ? gtkui_get_listview_even_row_color(&clr) : gtkui_get_listview_odd_row_color(&clr);
         }
-        cairo_set_source_rgb(cr, clr.red/65535., clr.green/65535., clr.blue/65535.);
-        cairo_rectangle(cr, x, y, w, h);
-        cairo_fill(cr);
+        draw_cairo_rectangle(cr, &clr, x, y, w, h);
     }
     else {
 #if GTK_CHECK_VERSION(3,0,0)
         GtkStyleContext *context = gtk_widget_get_style_context(theme_treeview);
-        gtk_style_context_save(context);
-        gtk_style_context_add_class(context, GTK_STYLE_CLASS_CELL);
         gtk_style_context_set_state(context, selected ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_NORMAL);
         gtk_style_context_add_region(context, GTK_STYLE_REGION_ROW, even ? GTK_REGION_EVEN : GTK_REGION_ODD);
         gtk_render_background(context, cr, x, y, w, h);
-        gtk_style_context_restore(context);
+        gtk_style_context_remove_region(context, GTK_STYLE_REGION_ROW);
 #else
-        gtk_paint_flat_box(gtk_widget_get_style(theme_treeview), gtk_widget_get_window(listview->list), selected ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, theme_treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
+        gtk_paint_flat_box(gtk_widget_get_style(theme_treeview), gtk_widget_get_window(listview->list), selected ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, clip, listview->list, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
 #endif
     }
 }
 
-void
-ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int w, int h) {
+static void
+fill_list_background (DdbListview *listview, cairo_t *cr, int x, int y, int w, int h, GdkRectangle *clip)
+{
+    if (!gtkui_override_listview_colors()) {
+#if GTK_CHECK_VERSION(3,0,0)
+        gtk_render_background(gtk_widget_get_style_context(mainwin), cr, x, y, w, h);
+        gtk_render_background(gtk_widget_get_style_context(listview->list), cr, x, y, w, h);
+#else
+        gtk_paint_flat_box(gtk_widget_get_style(mainwin), gtk_widget_get_window(listview->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, clip, listview->list, NULL, x, y, w, h);
+        gtk_paint_flat_box(gtk_widget_get_style(listview->list), gtk_widget_get_window(listview->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, clip, listview->list, NULL, x, y, w, h);
+#endif
+    }
+    render_treeview_background(listview, cr, FALSE, TRUE, x, y, w, h, clip);
+}
+
+static void
+ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip) {
     if (listview->scrollpos == -1) {
         return; // too early
     }
-#if !GTK_CHECK_VERSION(3,0,0)
-// FIXME?
-    if (gtk_widget_get_style (theme_treeview)->depth == -1) {
-        return; // drawing was called too early
-    }
-#endif
     int scrollx = -listview->hscrollpos;
     int title_height = listview->grouptitle_height;
     int row_height = listview->rowheight;
     int total_width = listview->totalwidth;
+    int cursor_index = listview->binding->cursor();
 
-    cairo_set_line_width (cr, 1);
-    cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
     draw_begin (&listview->listctx, cr);
     draw_begin (&listview->grpctx, cr);
+    GtkAllocation a;
+    gtk_widget_get_allocation(listview->list, &a);
+    fill_list_background(listview, cr, scrollx, -listview->scrollpos, total_width, max(listview->fullheight, a.height), clip);
 
+    // find 1st group
     deadbeef->pl_lock ();
     ddb_listview_groupcheck (listview);
     for (DdbListviewGroup *grp_unpin = listview->groups; grp_unpin; grp_unpin = grp_unpin->next) {
         grp_unpin->pinned = 0;
     }
-    // find 1st group
     DdbListviewGroup *grp = listview->groups;
     int idx = 0;
     int grp_y = -listview->scrollpos;
-    while (grp && grp_y + grp->height < y) {
-        if (grp_y < 0 && grp_y + grp->height >= 0) {
-            grp->pinned = 1;
-            if (grp->next) {
-                grp->next->pinned = 2;
-            }
-        }
+    while (grp && grp_y + grp->height < clip->y) {
         grp_y += grp->height;
         idx += grp->num_items;
         grp = grp->next;
     }
     if (grp && grp_y < 0 && grp_y + grp->height >= 0) {
         grp->pinned = 1;
-        if (grp->next) {
-            grp->next->pinned = 2;
-        }
     }
 
-    while (grp && grp_y < y + h) {
+    while (grp && grp_y < clip->y + clip->height) {
         int grp_height = title_height + grp->num_items * row_height;
-        int grp_height_total = grp->height;
 
         DdbListviewIter it = grp->head;
         listview->binding->ref(it);
-        for (int i = 0, yy = grp_y + title_height; it && i < grp->num_items && yy < y + h; i++, yy += row_height) {
-            if (yy + row_height >= y) {
-                GtkStyle *st = gtk_widget_get_style (listview->list);
-                GdkColor *clr = &st->bg[GTK_STATE_NORMAL];
-                cairo_set_source_rgb (cr, clr->red/65535., clr->green/65535., clr->blue/65535.);
-                cairo_rectangle (cr, scrollx, yy, total_width, row_height);
-                cairo_fill (cr);
-                ddb_listview_list_render_row_background(listview, cr, it, i & 1, idx+i == listview->binding->cursor() ? 1 : 0, scrollx, yy, total_width, row_height);
-                ddb_listview_list_render_row_foreground(listview, cr, it, idx + i, scrollx, yy, total_width, row_height, x, x+w);
+        for (int i = 0, yy = grp_y + title_height; it && i < grp->num_items && yy < clip->y + clip->height; i++, yy += row_height) {
+            if (yy + row_height >= clip->y) {
+                ddb_listview_list_render_row_background(listview, cr, it, i & 1, idx+i == cursor_index, scrollx, yy, total_width, row_height, clip);
+                ddb_listview_list_render_row_foreground(listview, cr, it, idx+i, yy, total_width, row_height, clip->x, clip->x+clip->width);
             }
             DdbListviewIter next = listview->binding->next(it);
             listview->binding->unref(it);
@@ -917,38 +924,38 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
         if (it) {
             listview->binding->unref(it);
         }
-        idx += grp->num_items;
-
-        if (grp->height > grp_height) {
-            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y+grp_height, total_width, grp->height-grp_height);
-        }
+//        if (grp->height > grp_height) {
+//            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y+grp_height, total_width, grp->height-grp_height, clip);
+//        }
 
         // draw album art
-        int grp_next_y = grp_y + grp_height_total;
-        ddb_listview_list_render_album_art(listview, cr, grp, grp_next_y, grp_y + title_height, x, x + w);
+        int grp_next_y = grp_y + grp->height;
+        ddb_listview_list_render_album_art(listview, cr, grp, grp_next_y, grp_y + title_height, clip);
 
-        if (grp->pinned == 1 && gtkui_groups_pinned && y <= title_height) {
+        if (grp->pinned == 1 && gtkui_groups_pinned && clip->y <= title_height) {
             // draw pinned group title
-            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, 0, total_width, min(title_height, grp_next_y));
+            fill_list_background(listview, cr, scrollx, 0, total_width, min(title_height, grp_next_y), clip);
+//            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, 0, total_width, min(title_height, grp_next_y), clip);
             if (listview->binding->draw_group_title && title_height > 0) {
                 listview->binding->draw_group_title(listview, cr, grp->head, PL_MAIN, scrollx, min(0, grp_next_y-title_height), total_width, title_height);
             }
         }
-        else if (y <= grp_y + title_height) {
+        else if (clip->y <= grp_y + title_height) {
             // draw normal group title
-            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y, total_width, title_height);
+//            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y, total_width, title_height, clip);
             if (listview->binding->draw_group_title && title_height > 0) {
                 listview->binding->draw_group_title(listview, cr, grp->head, PL_MAIN, scrollx, grp_y, total_width, title_height);
             }
         }
 
-        grp_y += grp_height_total;
+        idx += grp->num_items;
+        grp_y += grp->height;
         grp = grp->next;
     }
 
-    if (grp_y < y + h) {
-        render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y, total_width, y+h-grp_y);
-    }
+//    if (grp_y < clip->y + clip->height) {
+//        render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y, total_width, clip->y+clip->height-grp_y, clip);
+//    }
 
     deadbeef->pl_unlock ();
     draw_end (&listview->listctx);
@@ -962,18 +969,13 @@ ddb_listview_draw_dnd_marker (DdbListview *ps, cairo_t *cr) {
     }
     int drag_motion_y = ps->drag_motion_y - ps->scrollpos;
 
-    GtkWidget *widget = ps->list;
     GtkAllocation a;
-    gtk_widget_get_allocation (widget, &a);
+    gtk_widget_get_allocation (ps->list, &a);
     GdkColor clr;
     gtkui_get_listview_cursor_color (&clr);
-    cairo_set_source_rgb (cr, clr.red/65535., clr.green/65535., clr.blue/65535.0);
-    cairo_rectangle (cr, 0, drag_motion_y-1, a.width, 3);
-    cairo_fill (cr);
-    cairo_rectangle (cr, 0, drag_motion_y-3, 3, 7);
-    cairo_fill (cr);
-    cairo_rectangle (cr, a.width-3, drag_motion_y-3, 3, 7);
-    cairo_fill (cr);
+    draw_cairo_rectangle(cr, &clr, 0, drag_motion_y-1, a.width, 3);
+    draw_cairo_rectangle(cr, &clr, 0, drag_motion_y-3, 3, 7);
+    draw_cairo_rectangle(cr, &clr, a.width-3, drag_motion_y-3, 3, 7);
 
 }
 
@@ -1002,36 +1004,59 @@ ddb_listview_update_fonts (DdbListview *ps)
     g_idle_add (ddb_listview_reconf_scrolling, ps);
 }
 
-#if GTK_CHECK_VERSION(3,0,0)
-static gboolean
-ddb_listview_list_draw               (GtkWidget       *widget,
-        cairo_t *cr,
-        gpointer         user_data)
+static void
+draw_list_rectangle (GtkWidget *widget, cairo_t *cr, GdkRectangle *clip)
 {
-    DdbListview *ps = DDB_LISTVIEW(g_object_get_data(G_OBJECT(widget), "owner"));
-    GdkRectangle clip;
-    gdk_cairo_get_clip_rectangle(cr, &clip);
-    ddb_listview_list_render(ps, cr, clip.x, clip.y, clip.width, clip.height);
-    if (ps->drag_motion_y >= 0 && ps->drag_motion_y-ps->scrollpos-3 < clip.y+clip.height && ps->drag_motion_y-ps->scrollpos+3 >= clip.y) {
+    cairo_rectangle(cr, clip->x, clip->y, clip->width, clip->height);
+    cairo_clip(cr);
+    cairo_set_line_width(cr, 1);
+    cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data(G_OBJECT (widget), "owner"));
+    ddb_listview_list_render(ps, cr, clip);
+    if (ps->drag_motion_y >= 0 && ps->drag_motion_y-ps->scrollpos-3 < clip->y+clip->height && ps->drag_motion_y-ps->scrollpos+3 >= clip->y) {
         ddb_listview_draw_dnd_marker(ps, cr);
     }
+}
+
+#if GTK_CHECK_VERSION(3,0,0)
+static gboolean
+ddb_listview_list_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data)
+{
+    cairo_rectangle_list_t *list = cairo_copy_clip_rectangle_list(cr);
+    for (int i = 0; i < list->num_rectangles; i++) {
+        cairo_save(cr);
+        GdkRectangle clip =
+        {
+            .x = floor(list->rectangles[i].x),
+            .y = floor(list->rectangles[i].y),
+            .width = ceil(list->rectangles[i].width),
+            .height = ceil(list->rectangles[i].height)
+        };
+        draw_list_rectangle(widget, cr, &clip);
+        cairo_restore(cr);
+    }
+    cairo_rectangle_list_destroy(list);
     return TRUE;
 }
 #else
 static gboolean
-ddb_listview_list_expose_event               (GtkWidget       *widget,
-        GdkEventExpose  *event,
-        gpointer         user_data)
+ddb_listview_list_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    widget = ps->list;
-
-    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
-    ddb_listview_list_render (ps, cr, event->area.x, event->area.y, event->area.width, event->area.height);
-    if (ps->drag_motion_y >= 0 && ps->drag_motion_y-ps->scrollpos-3 < event->area.y+event->area.height && ps->drag_motion_y-ps->scrollpos+3 >= event->area.y) {
-        ddb_listview_draw_dnd_marker (ps, cr);
+    // FIXME?
+    if (gtk_widget_get_style(theme_treeview)->depth == -1) {
+        return FALSE; // drawing was called too early
     }
-    cairo_destroy (cr);
+
+    GdkRectangle *rectangles;
+    int num_rectangles;
+    gdk_region_get_rectangles(event->region, &rectangles, &num_rectangles);
+    for (int i = 0; i < num_rectangles; i++) {
+        GdkRectangle *clip = &rectangles[i];
+        cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(widget));
+        draw_list_rectangle(widget, cr, clip);
+        cairo_destroy(cr);
+    }
+    g_free(rectangles);
     return TRUE;
 }
 #endif
@@ -1081,6 +1106,41 @@ ddb_listview_scroll_event               (GtkWidget       *widget,
     }
 
     return FALSE;
+}
+
+static void
+invalidate_album_art_cells (DdbListview *listview, int x1, int x2, int y, int h) {
+    int x = -listview->hscrollpos;
+    for (DdbListviewColumn *c = listview->columns; c && x < x2; x += c->width, c = c->next) {
+        if (x + c->width > x1 && listview->binding->is_album_art_column(c->user_data)) {
+            gtk_widget_queue_draw_area(listview->list, x, y, c->width, h);
+        }
+    }
+}
+
+static void
+invalidate_group (DdbListview *ps, int at_y)
+{
+    DdbListviewGroup *group = ps->groups;
+    if (!group) {
+        return;
+    }
+
+    int next_group_y = group->height;
+    while (group && next_group_y < at_y) {
+        group = group->next;
+        next_group_y += group->height;
+    }
+
+    if (group) {
+        GtkAllocation a;
+        gtk_widget_get_allocation(ps->list, &a);
+        int group_height = next_group_y - at_y;
+        gtk_widget_queue_draw_area(ps->list, 0, 0, a.width, min(ps->grouptitle_height, group_height));
+        if (group_height > ps->grouptitle_height) {
+            invalidate_album_art_cells(ps, 0, a.width, ps->grouptitle_height, group_height - ps->grouptitle_height);
+        }
+    }
 }
 
 void
@@ -1433,15 +1493,15 @@ ddb_listview_draw_row (DdbListview *listview, int row, DdbListviewIter it) {
 
 // coords passed are window-relative
 static void
-ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h) {
+ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h, GdkRectangle *clip) {
     // draw background even for selection -- for theme translucency
     int draw_selected = it && ps->binding->is_selected (it);
     int draw_normal = !gtkui_override_listview_colors() || !draw_selected;
-    if (draw_normal) {
-        render_treeview_background(ps, cr, FALSE, even, x, y, w, h);
+    if (draw_normal && !even) {
+        render_treeview_background(ps, cr, FALSE, even, x, y, w, h, clip);
     }
     if (draw_selected) {
-        render_treeview_background(ps, cr, TRUE, even, x, y, w, h);
+        render_treeview_background(ps, cr, TRUE, even, x, y, w, h, clip);
     }
 
     if (cursor && gtk_widget_has_focus (ps->list)) {
@@ -1455,10 +1515,10 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
 }
 
 static void
-ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int idx, int x, int y, int w, int h, int x1, int x2) {
-    DdbListviewColumn *c;
+ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int idx, int y, int w, int h, int x1, int x2) {
     int cidx = 0;
-    for (c = ps->columns; c && x < x2; x += c->width, c = c->next, cidx++) {
+    int x = -ps->hscrollpos;
+    for (DdbListviewColumn *c = ps->columns; c && x < x2; x += c->width, c = c->next, cidx++) {
         if (x + c->width > x1 && !ps->binding->is_album_art_column(c->user_data)) {
             ps->binding->draw_column_data (ps, cr, it, idx, cidx, PL_MAIN, x, y, c->width, h);
         }
@@ -1466,19 +1526,20 @@ ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListvi
 }
 
 static void
-ddb_listview_list_render_album_art (DdbListview *ps, cairo_t *cr, DdbListviewGroup *grp, int grp_next_y, int y, int x1, int x2) {
+ddb_listview_list_render_album_art (DdbListview *ps, cairo_t *cr, DdbListviewGroup *grp, int grp_next_y, int y, GdkRectangle *clip) {
     int x = -ps->hscrollpos;
-    for (DdbListviewColumn *c = ps->columns; c && x < x2; x += c->width, c = c->next) {
-        if (ps->binding->is_album_art_column(c->user_data) && x + c->width > x1) {
-            render_treeview_background(ps, cr, FALSE, TRUE, x, y, c->width, grp->height);
+    for (DdbListviewColumn *c = ps->columns; c && x < clip->x+clip->width; x += c->width, c = c->next) {
+        if (ps->binding->is_album_art_column(c->user_data) && x + c->width > clip->x) {
+            fill_list_background(ps, cr, x, y, c->width, grp->height-ps->grouptitle_height, clip);
+//            render_treeview_background(ps, cr, FALSE, TRUE, x, y, c->width, grp->height, clip);
             if (ps->grouptitle_height > 0) {
-                ps->binding->draw_album_art(ps, cr, grp->head, c->user_data, grp->pinned, grp_next_y, x, y, c->width, grp->height);
+                ps->binding->draw_album_art(ps, cr, grp->head, c->user_data, grp->pinned, grp_next_y, x, y, c->width, grp->height-ps->grouptitle_height);
             }
         }
     }
 }
 
-void
+static void
 ddb_listview_header_expose (DdbListview *ps, cairo_t *cr, int x, int y, int w, int h) {
     ddb_listview_header_render (ps, cr, x, x+w);
 }
@@ -2383,19 +2444,11 @@ ddb_listview_list_drag_end                   (GtkWidget       *widget,
 }
 
 static void
-draw_cairo_line(cairo_t *cr, GdkColor *color, int x1, int y1, int x2, int y2) {
-    cairo_set_source_rgb (cr, color->red/65535., color->green/65535., color->blue/65535.);
-    cairo_move_to (cr, x1, y1);
-    cairo_line_to (cr, x2, y2);
-    cairo_stroke (cr);
-}
-
-static void
 draw_header_fg(DdbListview *ps, cairo_t *cr, DdbListviewColumn *c, GdkColor *clr, int x, int xx, int h) {
-    int text_width = c->width - 10;
+    int text_width = xx - x - 10;
     if (c->sort_order) {
         int arrow_sz = 10;
-        text_width -= arrow_sz;
+        text_width = max(0, text_width - arrow_sz);
 #if GTK_CHECK_VERSION(3,0,0)
         gtk_render_arrow(gtk_widget_get_style_context(theme_treeview), cr, c->sort_order*G_PI, xx-arrow_sz-5, h/2-arrow_sz/2, arrow_sz);
 #else
@@ -2427,9 +2480,7 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr, int x1, int x2) {
 #if !GTK_HEADERS
     GdkColor clr;
     gtkui_get_tabstrip_base_color(&clr);
-    cairo_set_source_rgb(cr, clr.red/65535., clr.green/65535., clr.blue/65535.);
-    cairo_rectangle(cr, 0, 0, a.width, h);
-    cairo_fill(cr);
+    draw_cairo_rectangle(cr, &clr, 0, 0, a.width, h);
     gtkui_get_tabstrip_dark_color(&clr);
     draw_cairo_line(cr, &clr, 0, h, a.width, h);
     gtkui_get_listview_column_text_color(&gdkfg);
@@ -2438,7 +2489,7 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr, int x1, int x2) {
 #if GTK_CHECK_VERSION(3,0,0)
     render_column_button(ps, cr, GTK_STATE_FLAG_NORMAL, 0, -1, a.width, h+2, &gdkfg);
 #else
-    gtk_paint_box(gtk_widget_get_style(theme_button), gtk_widget_get_window(ps->header), GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, theme_button, "button", -2, -2, a.width+4, h+4);
+    gtk_paint_box(gtk_widget_get_style(theme_button), gtk_widget_get_window(ps->header), GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, ps->header, "button", -2, -2, a.width+4, h+4);
     gdkfg = gtk_widget_get_style(theme_button)->fg[GTK_STATE_NORMAL];
     draw_cairo_line(cr, &gtk_widget_get_style(ps->header)->mid[GTK_STATE_NORMAL], 0, h, a.width, h);
 #endif
@@ -2495,7 +2546,7 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr, int x1, int x2) {
 #if GTK_CHECK_VERSION(3,0,0)
             render_column_button(ps, cr, GTK_STATE_FLAG_ACTIVE, xx, 0, w, h, NULL);
 #else
-            gtk_paint_box(gtk_widget_get_style(theme_button), gtk_widget_get_window(ps->header), GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, NULL, theme_button, "button", xx, 0, w, h);
+            gtk_paint_box(gtk_widget_get_style(theme_button), gtk_widget_get_window(ps->header), GTK_STATE_ACTIVE, GTK_SHADOW_ETCHED_IN, NULL, ps->header, "button", xx, 0, w, h);
 #endif
         }
 
@@ -2505,7 +2556,7 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr, int x1, int x2) {
 #if GTK_CHECK_VERSION(3,0,0)
             render_column_button(ps, cr, GTK_STATE_FLAG_PRELIGHT | GTK_STATE_FLAG_FOCUSED, xx, 0, w, h, &gdkfg);
 #else
-            gtk_paint_box(gtk_widget_get_style(theme_button), gtk_widget_get_window(ps->header), GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, theme_button, "button", xx, 0, w, h);
+            gtk_paint_box(gtk_widget_get_style(theme_button), gtk_widget_get_window(ps->header), GTK_STATE_SELECTED, GTK_SHADOW_OUT, NULL, ps->header, "button", xx, 0, w, h);
             gdkfg = gtk_widget_get_style(theme_button)->fg[GTK_STATE_SELECTED];
 #endif
             if (gtkui_override_listview_colors()) {
@@ -2733,7 +2784,6 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
         gtk_widget_queue_draw (ps->header);
     }
     else if (ps->header_sizing >= 0) {
-        gdk_window_set_cursor (gtk_widget_get_window (widget), ps->cursor_sz);
         int x = -ps->hscrollpos;
         int i = 0;
         DdbListviewColumn *c;
@@ -3425,7 +3475,6 @@ ddb_listview_set_vscroll (DdbListview *listview, int scroll) {
     if (scroll == 0 && listview->scrollpos == -1) {
         listview->scrollpos = 0;
     }
-    GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (listview->scrollbar));
     gtk_range_set_value (GTK_RANGE (listview->scrollbar), scroll);
 }
 
