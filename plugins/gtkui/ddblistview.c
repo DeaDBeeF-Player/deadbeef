@@ -2273,23 +2273,29 @@ ddb_listview_dragdrop_get_row_from_coord (DdbListview *listview, int x, int y) {
     if (y == -1) {
         return -1;
     }
-    int row_idx = -1;
     DdbListviewPickContext pick_ctx;
     ddb_listview_list_pickpoint (listview, x, y + listview->scrollpos, &pick_ctx);
 
-    row_idx = pick_ctx.item_idx;
-    if (row_idx != -1) {
+    int row_idx = -1;
+    if (pick_ctx.type == PICK_ITEM || pick_ctx.type == PICK_ALBUM_ART) {
+        row_idx = pick_ctx.item_idx;
         int it_y = ddb_listview_get_row_pos (listview, row_idx) - listview->scrollpos;
-        if (y > it_y + listview->rowheight/2 && y < it_y + listview->rowheight) {
+        if (y > it_y + listview->rowheight/2) {
             row_idx++;
         }
-        if (pick_ctx.type == PICK_EMPTY_SPACE
-                || pick_ctx.type == PICK_BELOW_PLAYLIST) {
-            row_idx++;
-        }
-        return row_idx;
     }
-    return -1;
+    else if (pick_ctx.type == PICK_GROUP_TITLE) {
+        // select first item item group
+        row_idx = pick_ctx.item_grp_idx;
+    }
+    else if (pick_ctx.type == PICK_EMPTY_SPACE
+            || pick_ctx.type == PICK_BELOW_PLAYLIST) {
+        row_idx = pick_ctx.item_idx + 1;
+    }
+    else if (pick_ctx.type == PICK_ABOVE_PLAYLIST) {
+        row_idx = 0;
+    }
+    return row_idx;
 }
 
 void
