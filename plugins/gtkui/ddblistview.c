@@ -91,7 +91,6 @@ struct _DdbListviewPickContext {
     int item_grp_idx; // index of first playitem in group in playlist
     int grp_idx; // index of playitem within grp
     area_type_t type;
-    int col_idx;
     DdbListviewGroup *grp;
 };
 typedef struct _DdbListviewPickContext DdbListviewPickContext;
@@ -135,8 +134,6 @@ static void
 ddb_listview_list_setup_vscroll (DdbListview *ps);
 static void
 ddb_listview_list_setup_hscroll (DdbListview *ps);
-static void
-ddb_listview_list_set_hscroll (DdbListview *ps, int newscroll);
 void
 ddb_listview_set_cursor (DdbListview *pl, int cursor);
 int
@@ -157,10 +154,10 @@ ddb_listview_column_free (DdbListview *listview, DdbListviewColumn *c);
 
 
 // signal handlers
-void
+static void
 ddb_listview_vscroll_value_changed            (GtkRange        *widget,
                                         gpointer         user_data);
-void
+static void
 ddb_listview_hscroll_value_changed           (GtkRange        *widget,
                                         gpointer         user_data);
 
@@ -377,7 +374,7 @@ ddb_listview_init(DdbListview *listview)
 
     listview->scrollpos = -1;
     gtk_table_resize (GTK_TABLE (listview), 2, 2);
-    listview->scrollbar = gtk_vscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 1, 1, 0, 0)));
+    listview->scrollbar = gtk_vscrollbar_new (GTK_ADJUSTMENT (NULL));
     gtk_table_attach (GTK_TABLE (listview), listview->scrollbar, 1, 2, 0, 1,
             (GtkAttachOptions) (GTK_FILL),
             (GtkAttachOptions) (GTK_FILL), 0, 0);
@@ -421,7 +418,7 @@ ddb_listview_init(DdbListview *listview)
 #endif
     gtk_widget_set_events (listview->list, events);
 
-    listview->hscrollbar = gtk_hscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 0, 0, 0, 0)));
+    listview->hscrollbar = gtk_hscrollbar_new (GTK_ADJUSTMENT (NULL));
     gtk_table_attach (GTK_TABLE (listview), listview->hscrollbar, 0, 1, 1, 2,
             (GtkAttachOptions) (GTK_FILL),
             (GtkAttachOptions) (GTK_FILL), 0, 0);
@@ -438,6 +435,9 @@ ddb_listview_init(DdbListview *listview)
 
     g_signal_connect ((gpointer) listview->scrollbar, "value_changed",
             G_CALLBACK (ddb_listview_vscroll_value_changed),
+            NULL);
+    g_signal_connect ((gpointer) listview->hscrollbar, "value_changed",
+            G_CALLBACK (ddb_listview_hscroll_value_changed),
             NULL);
 #if !GTK_CHECK_VERSION(3,0,0)
     g_signal_connect ((gpointer) listview->header, "expose_event",
@@ -516,9 +516,6 @@ ddb_listview_init(DdbListview *listview)
             NULL);
     g_signal_connect ((gpointer) listview->list, "drag_data_received",
             G_CALLBACK (ddb_listview_list_drag_data_received),
-            NULL);
-    g_signal_connect ((gpointer) listview->hscrollbar, "value_changed",
-            G_CALLBACK (ddb_listview_hscroll_value_changed),
             NULL);
 
     g_signal_connect ((gpointer)listview->list, "key_press_event", G_CALLBACK (ddb_listview_list_key_press_event), NULL);
@@ -666,19 +663,6 @@ ddb_listview_is_album_art_column (DdbListview *listview, int x)
     return 0;
 }
 
-// returns 1 if column is album art column
-static int
-ddb_listview_is_album_art_column_idx (DdbListview *listview, int col)
-{
-    int idx = 0;
-    for (DdbListviewColumn *c = listview->columns; c && idx <= col; c = c->next, idx++) {
-        if (idx == col && listview->binding->is_album_art_column(c->user_data)) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
 // returns Y coordinate of an item by its index
 int
 ddb_listview_get_row_pos (DdbListview *listview, int row_idx) {
@@ -737,8 +721,7 @@ ddb_listview_list_pickpoint (DdbListview *listview, int x, int y, DdbListviewPic
 
     deadbeef->pl_lock ();
 
-    pick_ctx->col_idx = ddb_listview_header_get_column_idx_for_coord (listview, x);
-    const int is_album_art_column = ddb_listview_is_album_art_column_idx (listview, pick_ctx->col_idx);
+    const int is_album_art_column = ddb_listview_is_album_art_column (listview, x);
 
     ddb_listview_groupcheck (listview);
     DdbListviewGroup *grp = listview->groups;
@@ -852,7 +835,7 @@ render_treeview_background (DdbListview *listview, cairo_t *cr, int selected, in
         gtk_render_background(context, cr, x, y, w, h);
         gtk_style_context_remove_region(context, GTK_STYLE_REGION_ROW);
 #else
-        gtk_paint_flat_box(gtk_widget_get_style(theme_treeview), gtk_widget_get_window(listview->list), selected ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, clip, listview->list, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
+        gtk_paint_flat_box(gtk_widget_get_style(theme_treeview), gtk_widget_get_window(listview->list), selected ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, clip, theme_treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
 #endif
     }
 }
@@ -865,7 +848,7 @@ fill_list_background (DdbListview *listview, cairo_t *cr, int x, int y, int w, i
         gtk_render_background(gtk_widget_get_style_context(mainwin), cr, x, y, w, h);
         gtk_render_background(gtk_widget_get_style_context(listview->list), cr, x, y, w, h);
 #else
-        gtk_paint_flat_box(gtk_widget_get_style(mainwin), gtk_widget_get_window(listview->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, clip, listview->list, NULL, x, y, w, h);
+        gtk_paint_flat_box(gtk_widget_get_style(mainwin), gtk_widget_get_window(listview->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, clip, mainwin, NULL, x, y, w, h);
         gtk_paint_flat_box(gtk_widget_get_style(listview->list), gtk_widget_get_window(listview->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, clip, listview->list, NULL, x, y, w, h);
 #endif
     }
@@ -1127,48 +1110,48 @@ invalidate_group (DdbListview *ps, int at_y)
     }
 
     int next_group_y = group->height;
-    while (group && next_group_y < at_y) {
+    while (group->next && next_group_y < at_y) {
         group = group->next;
         next_group_y += group->height;
     }
 
-    if (group) {
-        GtkAllocation a;
-        gtk_widget_get_allocation(ps->list, &a);
-        int group_height = next_group_y - at_y;
-        gtk_widget_queue_draw_area(ps->list, 0, 0, a.width, min(ps->grouptitle_height, group_height));
-        if (group_height > ps->grouptitle_height) {
-            invalidate_album_art_cells(ps, 0, a.width, ps->grouptitle_height, group_height - ps->grouptitle_height);
-        }
+    GtkAllocation a;
+    gtk_widget_get_allocation(ps->list, &a);
+    int group_height = next_group_y - at_y;
+    gtk_widget_queue_draw_area(ps->list, 0, 0, a.width, min(ps->grouptitle_height, group_height));
+    if (group_height > ps->grouptitle_height) {
+        invalidate_album_art_cells(ps, 0, a.width, ps->grouptitle_height, group_height - ps->grouptitle_height);
     }
 }
 
-void
-ddb_listview_vscroll_value_changed            (GtkRange        *widget,
-                                        gpointer         user_data)
+static void
+ddb_listview_vscroll_value_changed (GtkRange *widget, gpointer user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     int newscroll = gtk_range_get_value (GTK_RANGE (widget));
     if (ps->binding->vscroll_changed) {
         ps->binding->vscroll_changed (newscroll);
     }
-    if (ps->block_redraw_on_scroll) {
-        ps->scrollpos = newscroll;
-        return;
+    if (!ps->block_redraw_on_scroll) {
+        if (gtkui_groups_pinned && ps->grouptitle_height > 0) {
+            invalidate_group(ps, max(ps->scrollpos, newscroll));
+        }
+        gdk_window_scroll(gtk_widget_get_window(ps->list), 0, ps->scrollpos - newscroll);
     }
-    if (newscroll != ps->scrollpos) {
-        ps->scrollpos = newscroll;
-        gtk_widget_queue_draw (ps->list);
-    }
+    ps->scrollpos = newscroll;
 }
 
-void
-ddb_listview_hscroll_value_changed           (GtkRange        *widget,
-                                        gpointer         user_data)
+static void
+ddb_listview_hscroll_value_changed (GtkRange *widget, gpointer user_data)
 {
-    DdbListview *pl = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     int newscroll = gtk_range_get_value (GTK_RANGE (widget));
-    ddb_listview_list_set_hscroll (pl, newscroll);
+    if (!ps->block_redraw_on_scroll) {
+        int diff = ps->hscrollpos - newscroll;
+        gdk_window_scroll(gtk_widget_get_window(ps->header), diff, 0);
+        gdk_window_scroll(gtk_widget_get_window(ps->list), diff, 0);
+    }
+    ps->hscrollpos = newscroll;
 }
 
 gboolean
@@ -1381,9 +1364,16 @@ ddb_listview_get_hscroll_pos (DdbListview *listview) {
     return listview->hscrollpos;
 }
 
-static int
+static void
 adjust_scrollbar (GtkWidget *scrollbar, int upper, int page_size) {
     GtkRange *range = GTK_RANGE(scrollbar);
+    if (page_size >= upper) {
+        gtk_range_set_value(range, 0);
+        gtk_range_set_adjustment(range, NULL);
+        gtk_widget_hide(scrollbar);
+        return;
+    }
+
     gdouble scrollpos = gtk_range_get_value(range);
     GtkAdjustment *adj = gtk_range_get_adjustment(range);
     int old_page_size = gtk_adjustment_get_page_size(adj);
@@ -1394,7 +1384,6 @@ adjust_scrollbar (GtkWidget *scrollbar, int upper, int page_size) {
     gtk_range_set_adjustment(range, GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, upper, SCROLL_STEP, page_size/2, page_size)));
     gtk_range_set_value(range, round(scrollpos));
     gtk_widget_show(scrollbar);
-    return round(gtk_range_get_value(range));
 }
 
 static void
@@ -1402,14 +1391,7 @@ ddb_listview_list_setup_vscroll (DdbListview *ps) {
     ddb_listview_groupcheck (ps);
     GtkAllocation a;
     gtk_widget_get_allocation (ps->list, &a);
-    if (ps->fullheight <= a.height) {
-        gtk_widget_hide (ps->scrollbar);
-        ps->scrollpos = 0;
-        gtk_widget_queue_draw (ps->list);
-    }
-    else {
-        ps->scrollpos = adjust_scrollbar(ps->scrollbar, ps->fullheight, a.height);
-    }
+    adjust_scrollbar(ps->scrollbar, ps->fullheight, a.height);
 }
 
 static void
@@ -1422,15 +1404,7 @@ ddb_listview_list_setup_hscroll (DdbListview *ps) {
 
     GtkAllocation a;
     gtk_widget_get_allocation (ps->list, &a);
-    if (a.width >= size) {
-        gtk_widget_hide (ps->hscrollbar);
-        ps->hscrollpos = 0;
-        gtk_widget_queue_draw (ps->list);
-        gtk_widget_queue_draw (ps->header);
-    }
-    else {
-        ps->hscrollpos = adjust_scrollbar(ps->hscrollbar, size, a.width);
-    }
+    adjust_scrollbar(ps->hscrollbar, size, a.width);
 }
 
 // returns -1 if row not found
@@ -2191,22 +2165,6 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
     deadbeef->pl_unlock ();
 }
 
-void
-ddb_listview_list_set_hscroll (DdbListview *ps, int newscroll) {
-    if (ps->block_redraw_on_scroll) {
-        ps->hscrollpos = newscroll;
-        return;
-    }
-//    if (newscroll != ps->hscrollpos)
-    // need to redraw because this might be window resize
-    {
-        ps->hscrollpos = newscroll;
-        GtkWidget *widget = ps->list;
-        gtk_widget_queue_draw (ps->header);
-        gtk_widget_queue_draw (ps->list);
-    }
-}
-
 int
 ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
     int prev = ps->binding->cursor ();
@@ -2607,14 +2565,12 @@ ddb_listview_header_update_fonts (DdbListview *ps)
 }
 
 void
-ddb_listview_column_size_changed (DdbListview *listview, int col)
+ddb_listview_column_size_changed (DdbListview *listview, DdbListviewColumn *c)
 {
-    if (ddb_listview_is_album_art_column_idx(listview, col)) {
-        ddb_listview_resize_groups (listview);
-        if (listview->scrollpos > 0) {
-            int pos = ddb_listview_get_row_pos (listview, listview->ref_point);
-            gtk_range_set_value (GTK_RANGE (listview->scrollbar), pos - listview->ref_point_offset);
-        }
+    if (listview->binding->is_album_art_column(c->user_data)) {
+        ddb_listview_resize_groups(listview);
+        int pos = ddb_listview_get_row_pos(listview, listview->ref_point);
+        gtk_range_set_value(GTK_RANGE(listview->scrollbar), pos - listview->ref_point_offset);
     }
 }
 
@@ -2625,7 +2581,7 @@ ddb_listview_update_scroll_ref_point (DdbListview *ps)
     DdbListviewGroup *grp = ps->groups;
     DdbListviewGroup *grp_next;
 
-    if (grp && ps->scrollpos > 0) {
+    if (grp) {
         int abs_idx = 0;
         int grp_y = 0;
 
@@ -2692,7 +2648,7 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
                     if (newwidth != c->width) {
                         c->width = newwidth;
                         changed = 1;
-                        ddb_listview_column_size_changed (ps, i);
+                        ddb_listview_column_size_changed (ps, c);
                     }
                 }
                 if (changed) {
@@ -2796,18 +2752,10 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
             c->fwidth = (float)c->width / ps->header_width;
         }
 
-        int size = 0;
-        for (DdbListviewColumn *cc = ps->columns; cc; cc = cc->next) {
-            size += cc->width;
-        }
-        ps->block_redraw_on_scroll = 1;
-        //ddb_listview_list_setup_vscroll (ps);
-        ddb_listview_list_setup_hscroll (ps);
-        ps->block_redraw_on_scroll = 0;
-        ddb_listview_column_size_changed (ps, ps->header_sizing);
-        ddb_listview_list_update_total_width (ps, size);
-        gtk_widget_queue_draw (ps->header);
-        gtk_widget_queue_draw (ps->list);
+        ddb_listview_column_size_changed(ps, c);
+        ddb_listview_list_setup_hscroll(ps);
+        gtk_widget_queue_draw(ps->header);
+        gtk_widget_queue_draw(ps->list);
     }
     else {
         set_header_cursor(ps, event->x);
@@ -3332,12 +3280,7 @@ void
 ddb_listview_invalidate_album_art_columns (DdbListview *listview) {
     GtkAllocation a;
     gtk_widget_get_allocation (listview->list, &a);
-    int x = -listview->hscrollpos;
-    for (DdbListviewColumn *c = listview->columns; c && x < a.width; x += c->width, c = c->next) {
-        if (x + c->width > 0 && listview->binding->is_album_art_column(c->user_data)) {
-            gtk_widget_queue_draw_area(listview->list, x, 0, c->width, a.height);
-        }
-    }
+    invalidate_album_art_cells(listview, 0, a.width, 0, a.height);
 }
 /////// end of column management code
 
@@ -3472,7 +3415,7 @@ ddb_listview_resize_groups (DdbListview *listview) {
 
 void
 ddb_listview_set_vscroll (DdbListview *listview, int scroll) {
-    if (scroll == 0 && listview->scrollpos == -1) {
+    if (listview->scrollpos == -1) {
         listview->scrollpos = 0;
     }
     gtk_range_set_value (GTK_RANGE (listview->scrollbar), scroll);
