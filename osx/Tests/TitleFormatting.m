@@ -848,4 +848,35 @@
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
+
+- (void)test_DirectoryOnFilePathLevel0_ReturnsDirectory {
+    char *bc = tf_compile("$directory(/directory/file.path,0)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "directory"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryOnFilePathLevel1_ReturnsDirectory2 {
+    char *bc = tf_compile("$directory(/directory3/directory2/directory/file.path,1)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "directory2"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryOnFilePathLevel2_ReturnsDirectory3 {
+    char *bc = tf_compile("$directory(/directory3/directory2/directory/file.path,2)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "directory3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryOnFilePathLevel3_ReturnsEmpty {
+    char *bc = tf_compile("$directory(/directory3/directory2/directory/file.path,3)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryOnFilePathLevel1MultipleSlashes_ReturnsDirectory2 {
+    char *bc = tf_compile("$directory(////directory3////directory2////directory////file.path,1)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "directory2"), @"The actual output is: %s", buffer);
+}
+
 @end
