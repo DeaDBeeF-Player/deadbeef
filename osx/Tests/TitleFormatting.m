@@ -801,4 +801,51 @@
     XCTAssert(!strcmp (buffer, "\n"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_DirectoryOnFilePath_ReturnsDirectory {
+    char *bc = tf_compile("$directory(/directory/file.path)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "directory"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryOnFilePathWithMultipleSlashes_ReturnsDirectory {
+    char *bc = tf_compile("$directory(/directory///file.path)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "directory"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryOnFilePathWithoutFrontSlash_ReturnsDirectory {
+    char *bc = tf_compile("$directory(directory/file.path)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "directory"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryOnFilePathWithMoreNestedness_ReturnsDirectory {
+    char *bc = tf_compile("$directory(/path/directory/file.path)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "directory"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryOnFilePathWithoutDirectory_ReturnsEmpty {
+    char *bc = tf_compile("$directory(file.path)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryOnFilePathAtRoot_ReturnsEmpty {
+    char *bc = tf_compile("$directory(/file.path)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryOnEmptyAtRoot_ReturnsEmpty {
+    char *bc = tf_compile("$directory(/)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryOnEmpty_ReturnsEmpty {
+    char *bc = tf_compile("$directory()");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
 @end
