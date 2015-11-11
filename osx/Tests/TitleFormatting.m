@@ -879,4 +879,28 @@
     XCTAssert(!strcmp (buffer, "directory2"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_MultiLine_LineBreaksIgnored {
+    char *bc = tf_compile("hello\nworld");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "helloworld"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_MultiLineWithComments_LineBreaksAndCommentedLinesIgnored {
+    char *bc = tf_compile("// this is a comment\nhello\nworld\n//another comment\nmore text");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "helloworldmore text"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_QuotedSpecialChars_TreatedLiterally {
+    char *bc = tf_compile("'blah$blah%blah[][]'");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "blah$blah%blah[][]"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_FunctionArgumentsOnMultipleLinesWithComments_LinebreaksAndCommentsIgnored {
+    char *bc = tf_compile("$add(1,\n2,\n3,//4,\n5)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "11"), @"The actual output is: %s", buffer);
+}
+
 @end
