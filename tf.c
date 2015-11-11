@@ -506,6 +506,78 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
 }
 
 int
+tf_func_directory (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 1 || argc > 2) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    int len;
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+
+    int levels = 1;
+    if (argc == 2) {
+        char temp[20];
+        args += arglens[0];
+        TF_EVAL_CHECK(len, ctx, args, arglens[1], temp, sizeof (temp), fail_on_undef);
+        levels = atoi (temp);
+        if (levels < 0) {
+            return -1;
+        }
+        levels++;
+    }
+
+    char *end = out + strlen (out) - 1;
+    char *start = end;
+
+    while (levels--) {
+        // get to the last delimiter
+        while (end >= out && *end != '/') {
+            end--;
+        }
+
+        if (end < out) {
+            *out = 0;
+            return -1;
+        }
+
+        // skip multiple delimiters
+        while (end >= out && *end == '/') {
+            end--;
+        }
+        end++;
+
+        if (end < out) {
+            *out = 0;
+            return -1;
+        }
+
+        // find another delimiter
+        start = end - 1;
+        while (start > out && *start != '/') {
+            start--;
+        }
+
+        if (*start == '/') {
+            start++;
+        }
+
+        if (levels) {
+            end = start;
+            while (end >= out && *end == '/') {
+                end--;
+            }
+        }
+    }
+
+    memmove (out, start, end-start);
+    out[end-start] = 0;
+    return (int)(end-start);
+}
+
+
+int
 tf_func_add (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
@@ -1066,6 +1138,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "crlf", tf_func_crlf },
     { "cut", tf_func_left },
     { "left", tf_func_left }, // alias of 'cut'
+    { "directory", tf_func_directory },
     { "strcmp", tf_func_strcmp },
     // Track info
     { "meta", tf_func_meta },
