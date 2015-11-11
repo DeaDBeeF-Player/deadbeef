@@ -1815,11 +1815,11 @@ streamer_thread (void *ctx) {
             blocksize = MAX_BLOCK_SIZE;
         }
 
+        blocksize &= ~3; // 4byte alignment is required
+
         if (bytes_in_one_second < blocksize) {
             bytes_in_one_second = blocksize;
         }
-
-        blocksize &= ~3; // 4byte alignment is required
 
         int alloc_time = 1000 / (bytes_in_one_second / blocksize);
 
