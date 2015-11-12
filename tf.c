@@ -517,6 +517,8 @@ tf_func_directory (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, c
     int len;
     TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
 
+    int path_len = len;
+
     int levels = 1;
     if (argc == 2) {
         char temp[20];
@@ -528,7 +530,7 @@ tf_func_directory (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, c
         }
     }
 
-    char *end = out + strlen (out) - 1;
+    char *end = out + path_len - 1;
     char *start = end;
 
     while (levels--) {
@@ -574,6 +576,34 @@ tf_func_directory (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, c
     memmove (out, start, end-start);
     out[end-start] = 0;
     return (int)(end-start);
+}
+
+int
+tf_func_directory_path (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 1 || argc > 2) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    int len;
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+
+    char *p = out + len - 1;
+
+    while (p >= out && *p != '/') {
+        p--;
+    }
+    while (p >= out && *p == '/') {
+        p--;
+    }
+    if (p < out) {
+        return -1;
+    }
+
+    p++;
+    *p = 0;
+    return (int)(p-out);
 }
 
 
@@ -1139,6 +1169,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "cut", tf_func_left },
     { "left", tf_func_left }, // alias of 'cut'
     { "directory", tf_func_directory },
+    { "directory_path", tf_func_directory_path },
     { "strcmp", tf_func_strcmp },
     // Track info
     { "meta", tf_func_meta },

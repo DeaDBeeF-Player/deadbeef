@@ -903,4 +903,16 @@
     XCTAssert(!strcmp (buffer, "11"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_DirectoryPathOnFilePath_ReturnsDirectoryPath {
+    char *bc = tf_compile("$directory_path('/a/b/c/d.mp3')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "/a/b/c"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryPathOnPathWithoutFile_ReturnsDirectoryPath {
+    char *bc = tf_compile("$directory_path('/a/b/c/d/')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "/a/b/c/d"), @"The actual output is: %s", buffer);
+}
+
 @end
