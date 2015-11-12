@@ -945,4 +945,28 @@
     XCTAssert(!strcmp (buffer, "ext"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_ExtOnFileExtWithMultiplePeriod_ReturnsExt {
+    char *bc = tf_compile("$ext('/a/b/c/d/file.iso.wv')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "iso.wv"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_FilenameOnFilePath_ReturnsFilename {
+    char *bc = tf_compile("$filename('/a/b/c/d/file.mp3')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "file.mp3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_FilenameOnFilePathWithoutFile_ReturnsEmpty {
+    char *bc = tf_compile("$filename('/a/b/c/d/')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_FilenameOnFilenameWithoutPath_ReturnsFilename {
+    char *bc = tf_compile("$filename('file.iso.wv')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "file.iso.wv"), @"The actual output is: %s", buffer);
+}
+
 @end
