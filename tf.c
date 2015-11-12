@@ -598,6 +598,7 @@ tf_func_directory_path (ddb_tf_context_t *ctx, int argc, char *arglens, char *ar
         p--;
     }
     if (p < out) {
+        *out = 0;
         return -1;
     }
 
@@ -606,6 +607,33 @@ tf_func_directory_path (ddb_tf_context_t *ctx, int argc, char *arglens, char *ar
     return (int)(p-out);
 }
 
+int
+tf_func_ext (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 1 || argc > 2) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    int len;
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+    
+    char *e = out + len;
+    char *p = e - 1;
+
+    while (p >= out && *p != '/' && *p != '.') {
+        p--;
+    }
+
+    if (p < out || *p != '.') {
+        *out = 0;
+        return -1;
+    }
+
+    p++;
+    memmove (out, p, e-p+1);
+    return (int)(e-p);
+}
 
 int
 tf_func_add (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
@@ -1170,6 +1198,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "left", tf_func_left }, // alias of 'cut'
     { "directory", tf_func_directory },
     { "directory_path", tf_func_directory_path },
+    { "ext", tf_func_ext },
     { "strcmp", tf_func_strcmp },
     // Track info
     { "meta", tf_func_meta },

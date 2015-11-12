@@ -915,4 +915,34 @@
     XCTAssert(!strcmp (buffer, "/a/b/c/d"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_ExtOnFilePath_ReturnsExt {
+    char *bc = tf_compile("$ext('/a/b/c/d/file.mp3')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "mp3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ExtOnFileWithoutExtPath_ReturnsEmpty {
+    char *bc = tf_compile("$ext('/a/b/c/d/file')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ExtOnFilePathWithoutFilename_ReturnsEmpty {
+    char *bc = tf_compile("$ext('/a/b/c/d/')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ExtOnFilePathEndingWithDot_ReturnsEmpty {
+    char *bc = tf_compile("$ext('/a/b/c/d/file.')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ExtOnFilePathDotFile_ReturnsExt {
+    char *bc = tf_compile("$ext('/a/b/c/d/.ext')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "ext"), @"The actual output is: %s", buffer);
+}
+
 @end
