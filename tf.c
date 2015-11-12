@@ -526,7 +526,6 @@ tf_func_directory (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, c
         if (levels < 0) {
             return -1;
         }
-        levels++;
     }
 
     char *end = out + strlen (out) - 1;
