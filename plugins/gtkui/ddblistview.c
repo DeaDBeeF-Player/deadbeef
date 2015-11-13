@@ -183,7 +183,7 @@ ddb_listview_header_expose_event                 (GtkWidget       *widget,
                                         gpointer         user_data);
 #endif
 
-gboolean
+static gboolean
 ddb_listview_header_configure_event              (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data);
@@ -210,7 +210,7 @@ ddb_listview_header_button_release_event         (GtkWidget       *widget,
 static gboolean
 ddb_listview_header_enter (GtkWidget *widget, GdkEventCrossing *event, gpointer user_data);
 
-gboolean
+static gboolean
 ddb_listview_list_configure_event            (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data);
@@ -357,7 +357,6 @@ ddb_listview_init(DdbListview *listview)
     listview->groups = NULL;
     listview->plt = NULL;
 
-    listview->block_redraw_on_scroll = 0;
     listview->calculated_grouptitle_height = DEFAULT_GROUP_TITLE_HEIGHT;
 
     listview->cursor_sz = NULL;
@@ -576,6 +575,10 @@ ddb_listview_destroy(GObject *object)
 
 void
 ddb_listview_refresh (DdbListview *listview, uint32_t flags) {
+    if (flags & DDB_REFRESH_FONTS) {
+        ddb_listview_update_fonts (listview);
+        ddb_listview_header_update_fonts (listview);
+    }
     if (flags & DDB_LIST_CHANGED) {
         ddb_listview_build_groups (listview);
     }
@@ -608,35 +611,18 @@ ddb_listview_list_realize                    (GtkWidget       *widget,
 //    gtk_drag_dest_set_track_motion (widget, TRUE);
 }
 
-static gboolean
-ddb_listview_reconf_scrolling (void *ps) {
-    ddb_listview_list_setup_vscroll (ps);
-    ddb_listview_list_setup_hscroll (ps);
-    return FALSE;
+static int
+total_columns_width (DdbListview *listview) {
+    int size = 0;
+    for (DdbListviewColumn *c = listview->columns; c; c = c->next) {
+        size += c->width;
+    }
+    return size;
 }
 
 static void
-ddb_listview_list_update_total_width (DdbListview *lv, int size) {
-    GtkAllocation a;
-    gtk_widget_get_allocation (GTK_WIDGET (lv->list), &a);
-    lv->totalwidth = size;
-    if (lv->totalwidth < a.width) {
-        lv->totalwidth = a.width;
-    }
-}
-
-gboolean
-ddb_listview_list_configure_event            (GtkWidget       *widget,
-        GdkEventConfigure *event,
-        gpointer         user_data)
-{
-    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-
-    draw_init_font (&ps->listctx, DDB_LIST_FONT, 1);
-    draw_init_font (&ps->grpctx, DDB_GROUP_FONT, 1);
-    ddb_listview_update_fonts (ps);
-
-    return FALSE;
+ddb_listview_list_update_total_width (DdbListview *listview, int columns_width, int width) {
+    listview->totalwidth = max(columns_width, width);
 }
 
 void
@@ -974,17 +960,6 @@ ddb_listview_update_fonts (DdbListview *ps)
         ps->calculated_grouptitle_height = grptitle_height;
         ddb_listview_build_groups (ps);
     }
-
-    GtkAllocation a;
-    gtk_widget_get_allocation (ps->list, &a);
-    int w = a.width;
-    int size = 0;
-    DdbListviewColumn *c;
-    for (c = ps->columns; c; c = c->next) {
-        size += c->width;
-    }
-    ddb_listview_list_update_total_width (ps, size);
-    g_idle_add (ddb_listview_reconf_scrolling, ps);
 }
 
 static void
@@ -1132,12 +1107,10 @@ ddb_listview_vscroll_value_changed (GtkRange *widget, gpointer user_data)
     if (ps->binding->vscroll_changed) {
         ps->binding->vscroll_changed (newscroll);
     }
-    if (!ps->block_redraw_on_scroll) {
-        if (gtkui_groups_pinned && ps->grouptitle_height > 0) {
-            invalidate_group(ps, max(ps->scrollpos, newscroll));
-        }
-        gdk_window_scroll(gtk_widget_get_window(ps->list), 0, ps->scrollpos - newscroll);
+    if (gtkui_groups_pinned && ps->grouptitle_height > 0) {
+        invalidate_group(ps, max(ps->scrollpos, newscroll));
     }
+    gdk_window_scroll(gtk_widget_get_window(ps->list), 0, ps->scrollpos - newscroll);
     ps->scrollpos = newscroll;
 }
 
@@ -1146,11 +1119,9 @@ ddb_listview_hscroll_value_changed (GtkRange *widget, gpointer user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     int newscroll = gtk_range_get_value (GTK_RANGE (widget));
-    if (!ps->block_redraw_on_scroll) {
-        int diff = ps->hscrollpos - newscroll;
-        gdk_window_scroll(gtk_widget_get_window(ps->header), diff, 0);
-        gdk_window_scroll(gtk_widget_get_window(ps->list), diff, 0);
-    }
+    int diff = ps->hscrollpos - newscroll;
+    gdk_window_scroll(gtk_widget_get_window(ps->header), diff, 0);
+    gdk_window_scroll(gtk_widget_get_window(ps->list), diff, 0);
     ps->hscrollpos = newscroll;
 }
 
@@ -1396,15 +1367,16 @@ ddb_listview_list_setup_vscroll (DdbListview *ps) {
 
 static void
 ddb_listview_list_setup_hscroll (DdbListview *ps) {
-    int size = 0;
-    for (DdbListviewColumn *c = ps->columns; c; c = c->next) {
-        size += c->width;
-    }
-    ddb_listview_list_update_total_width (ps, size);
+    int size = total_columns_width(ps);
+    ddb_listview_list_update_total_width(ps, size, ps->list_width);
+    adjust_scrollbar(ps->hscrollbar, size, ps->list_width);
+}
 
-    GtkAllocation a;
-    gtk_widget_get_allocation (ps->list, &a);
-    adjust_scrollbar(ps->hscrollbar, size, a.width);
+static gboolean
+ddb_listview_reconf_scrolling (void *ps) {
+    ddb_listview_list_setup_vscroll (ps);
+    ddb_listview_list_setup_hscroll (ps);
+    return FALSE;
 }
 
 // returns -1 if row not found
@@ -2617,13 +2589,32 @@ ddb_listview_update_scroll_ref_point (DdbListview *ps)
     }
 }
 
-gboolean
+static gboolean
+ddb_listview_list_configure_event            (GtkWidget       *widget,
+        GdkEventConfigure *event,
+        gpointer         user_data)
+{
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
+
+    int prev_width = ps->list_width;
+    if (event->width != prev_width || event->height != ps->list_height) {
+        ps->list_width = event->width;
+        ps->list_height = event->height;
+        g_idle_add(ddb_listview_reconf_scrolling, ps);
+    }
+    if (event->width != prev_width) {
+        ddb_listview_list_update_total_width(ps, total_columns_width(ps), event->width);
+    }
+
+    return FALSE;
+}
+
+static gboolean
 ddb_listview_header_configure_event              (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    ddb_listview_header_update_fonts (ps);
     GtkAllocation lva;
     gtk_widget_get_allocation (GTK_WIDGET (ps), &lva);
     int totalwidth = lva.width;
@@ -2829,13 +2820,11 @@ ddb_listview_header_button_release_event         (GtkWidget       *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     if (event->button == 1) {
+        GtkAllocation a;
+        gtk_widget_get_allocation(ps->header, &a);
         if (ps->header_sizing != -1) {
             ps->binding->columns_changed (ps);
-            int size = 0;
-            for (DdbListviewColumn *c = ps->columns; c; c = c->next) {
-                size += c->width;
-            }
-            ddb_listview_list_update_total_width (ps, size);
+            ddb_listview_list_update_total_width(ps, total_columns_width(ps), a.width);
         }
         else if (ps->header_dragging != -1) {
             if (ps->header_prepare) {
@@ -3392,7 +3381,6 @@ void
 ddb_listview_resize_groups (DdbListview *listview) {
     deadbeef->pl_lock ();
     int old_height = listview->fullheight;
-    int grp_height_old = 0;
     listview->fullheight = 0;
 
     int min_height = ddb_listview_min_group_height(listview->columns);
@@ -3400,7 +3388,6 @@ ddb_listview_resize_groups (DdbListview *listview) {
     while (grp) {
         grp->height = listview->grouptitle_height + grp->num_items * listview->rowheight;
         if (grp->height - listview->grouptitle_height < min_height) {
-            grp_height_old = grp->height;
             grp->height = min_height + listview->grouptitle_height;
         }
         listview->fullheight += grp->height;
@@ -3409,7 +3396,7 @@ ddb_listview_resize_groups (DdbListview *listview) {
 
     deadbeef->pl_unlock ();
     if (old_height != listview->fullheight) {
-        ddb_listview_refresh (listview, DDB_REFRESH_VSCROLL);
+        g_idle_add(ddb_listview_reconf_scrolling, listview);
     }
 }
 

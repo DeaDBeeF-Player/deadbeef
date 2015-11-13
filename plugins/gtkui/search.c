@@ -455,5 +455,6 @@ search_playlist_init (GtkWidget *widget) {
     deadbeef->conf_unlock ();
     listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
     window_title_bytecode = deadbeef->tf_compile (_("Search [(%list_total% results)]"));
+    ddb_listview_refresh (listview, DDB_REFRESH_FONTS);
     ddb_listview_set_vscroll (listview, 0);
 }

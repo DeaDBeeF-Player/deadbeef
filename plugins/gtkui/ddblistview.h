@@ -54,7 +54,6 @@ typedef void * DdbPlaylistHandle;
 struct _DdbListviewGroup {
     DdbListviewIter head;
     int32_t height;
-    int32_t min_height;
     int32_t num_items;
     int pinned;
     struct _DdbListviewGroup *next;
@@ -128,7 +127,10 @@ struct _DdbListview {
     GtkWidget *scrollbar;
     GtkWidget *hscrollbar;
 
-    int totalwidth; // width of listview, including invisible (scrollable) part
+    int list_width; // width if the list widget as of the last resize
+    int list_height; // heught of the list widget as of the last resize
+    int totalwidth; // width of listview, including any invisible (scrollable) part
+    int fullheight; // total height of all groups
     const char *title; // unique id, used for config writing, etc
     int lastpos[2]; // last mouse position (for list widget)
     // current state
@@ -175,8 +177,6 @@ struct _DdbListview {
     ddb_playlist_t *plt; // current playlist (refcounted), must be unreffed with the group
     struct _DdbListviewGroup *groups;
     int groups_build_idx; // must be the same as playlist modification idx
-    int fullheight;
-    int block_redraw_on_scroll;
     int grouptitle_height;
     int calculated_grouptitle_height;
 
@@ -254,6 +254,7 @@ enum {
     DDB_REFRESH_VSCROLL = 4,
     DDB_REFRESH_LIST    = 8,
     DDB_LIST_CHANGED    = 16,
+    DDB_REFRESH_FONTS   = 32,
 };
 
 void ddb_listview_refresh (DdbListview *listview, uint32_t flags);
