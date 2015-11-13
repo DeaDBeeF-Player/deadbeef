@@ -109,7 +109,7 @@
                         <slider key="view" verticalHuggingPriority="750" id="tGc-Yg-ZUl">
                             <rect key="frame" x="0.0" y="0.0" width="96" height="21"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                            <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="S3U-Vh-3xu"/>
+                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="S3U-Vh-3xu"/>
                             <connections>
                                 <action selector="volumeBarAction:" target="-2" id="ZOi-d2-5LP"/>
                             </connections>

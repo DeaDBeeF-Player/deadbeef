@@ -203,6 +203,18 @@ static struct timeval last_br_update;
 }
 
 - (IBAction)volumeBarAction:(id)sender {
+    float range = -deadbeef->volume_get_min_db ();
+    float volume = [(NSSlider*)sender floatValue] / 100.f * range - range;
+    if (volume < -range) {
+        volume = -range;
+    }
+    if (volume > 0) {
+        volume = 0;
+    }
+
+    deadbeef->volume_set_db (volume);
+    int db = volume;
+    [sender setToolTip:[NSString stringWithFormat:@"%s%ddB", db < 0 ? "" : "+", db]];
 }
 
 - (IBAction)tbClicked:(id)sender {
@@ -262,6 +274,12 @@ static struct timeval last_br_update;
 
 - (IBAction)renamePlaylistOKAction:(id)sender {
     [NSApp endSheet:self.renamePlaylistWindow returnCode:NSOKButton];
+}
+
+- (void)updateVolumeBar{
+    float range = -deadbeef->volume_get_min_db ();
+    int vol = (deadbeef->volume_get_db () + range) / range * 100;
+    [[self volumeBar] setFloatValue:vol];
 }
 
 @end
