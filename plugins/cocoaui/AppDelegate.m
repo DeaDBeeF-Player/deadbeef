@@ -50,6 +50,10 @@ NSInteger firstSelected = -1;
     return [_mainWindow window];
 }
 
+- (void)volumeChanged {
+    [_mainWindow updateVolumeBar];
+}
+
 - (void)configChanged
 {
     id order_items[] = {
@@ -88,6 +92,7 @@ NSInteger firstSelected = -1;
     conf_save ();
     streamer_configchanged ();
     junk_configchanged ();
+    [self volumeChanged];
 }
 
 static int fileadd_cancelled = 0;
@@ -557,6 +562,9 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     }
     else if (_id == DB_EV_SONGFINISHED) {
         [g_appDelegate performSelectorOnMainThread:@selector(clearDockNowPlaying) withObject:nil waitUntilDone:NO];
+    }
+    else if (_id == DB_EV_VOLUMECHANGED) {
+        [g_appDelegate performSelectorOnMainThread:@selector(volumeChanged) withObject:nil waitUntilDone:NO];
     }
     return 0;
 }

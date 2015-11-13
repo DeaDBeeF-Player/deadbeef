@@ -67,6 +67,7 @@
 typedef struct {
     const char *i;
     char *o;
+    int eol;
 } tf_compiler_t;
 
 typedef int (*tf_func_ptr_t)(ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef);
@@ -516,6 +517,8 @@ tf_func_directory (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, c
     int len;
     TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
 
+    int path_len = len;
+
     int levels = 1;
     if (argc == 2) {
         char temp[20];
@@ -525,10 +528,9 @@ tf_func_directory (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, c
         if (levels < 0) {
             return -1;
         }
-        levels++;
     }
 
-    char *end = out + strlen (out) - 1;
+    char *end = out + path_len - 1;
     char *start = end;
 
     while (levels--) {
@@ -576,6 +578,88 @@ tf_func_directory (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, c
     return (int)(end-start);
 }
 
+int
+tf_func_directory_path (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 1 || argc > 2) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    int len;
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+
+    char *p = out + len - 1;
+
+    while (p >= out && *p != '/') {
+        p--;
+    }
+    while (p >= out && *p == '/') {
+        p--;
+    }
+    if (p < out) {
+        *out = 0;
+        return -1;
+    }
+
+    p++;
+    *p = 0;
+    return (int)(p-out);
+}
+
+int
+tf_func_ext (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 1 || argc > 2) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    int len;
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+    
+    char *e = out + len;
+    char *c = e - 1;
+    char *p = NULL;
+
+    while (c >= out && *c != '/') {
+        if (*c == '.') {
+            p = c+1;
+        }
+        c--;
+    }
+
+    if (!p) {
+        *out = 0;
+        return 0;
+    }
+
+    memmove (out, p, e-p+1);
+    return (int)(e-p);
+}
+
+int
+tf_func_filename (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 1 || argc > 2) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    int len;
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+
+    char *e = out + len;
+    char *p = e - 1;
+    while (p >= out && *p != '/') {
+        p--;
+    }
+
+    p++;
+
+    memmove (out, p, e-p+1);
+    return (int)(e-p);
+}
 
 int
 tf_func_add (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
@@ -1139,6 +1223,9 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "cut", tf_func_left },
     { "left", tf_func_left }, // alias of 'cut'
     { "directory", tf_func_directory },
+    { "directory_path", tf_func_directory_path },
+    { "ext", tf_func_ext },
+    { "filename", tf_func_filename },
     { "strcmp", tf_func_strcmp },
     // Track info
     { "meta", tf_func_meta },
@@ -1754,33 +1841,7 @@ tf_compile_func (tf_compiler_t *c) {
 
     //parse comma separated args until )
     while (*(c->i)) {
-        if (c->o == argstart && *(c->i) == '\'') {
-            // pre-interpreted text marker'
-            c->i++;
-            *(c->o++) = 0;
-            *(c->o++) = 4;
-            int32_t len = 0;
-            int32_t *lenptr = (int32_t *)c->o;
-            c->o += sizeof (*lenptr);
-            while (*(c->i) && *(c->i) != '\'') {
-                *(c->o++) = *(c->i++);
-                len++;
-            }
-            if (*(c->i) != '\'') {
-                // no matching single quote
-                return -1;
-            }
-            c->i++;
-            memcpy (lenptr, &len, sizeof (len));
-            continue;
-        }
-        else if (*(c->i) == '\\') {
-            c->i++;
-            if (*(c->i) != 0) {
-                *(c->o++) = *(c->i++);
-            }
-        }
-        else if (*(c->i) == ',' || *(c->i) == ')') {
+        if (*(c->i) == ',' || *(c->i) == ')') {
             // next arg
             int len = (int)(c->o - argstart);
 
@@ -1890,26 +1951,51 @@ tf_compile_ifdef (tf_compiler_t *c) {
 
 int
 tf_compile_plain (tf_compiler_t *c) {
-    if (*(c->i) == '$') {
+    int eol = c->eol;
+    c->eol = 0;
+    char i = *(c->i);
+    if (i == '$') {
         if (tf_compile_func (c)) {
             return -1;
         }
     }
-    else if (*(c->i) == '[') {
+    else if (i == '[') {
         if (tf_compile_ifdef (c)) {
             return -1;
         }
     }
-    else if (*(c->i) == '%') {
+    else if (i == '%') {
         if (tf_compile_field (c)) {
             return -1;
         }
     }
+    // FIXME this is not fb2k spec
     else if (*(c->i) == '\\') {
         c->i++;
         if (*(c->i) != 0) {
             *(c->o++) = *(c->i++);
         }
+    }
+    else if (eol && i == '/' && c->i[1] == '/') {
+        // skip to end of line
+        while (c->i[0] && c->i[0] != '\n') {
+            c->i++;
+        }
+        c->eol = 1;
+    }
+    else if (i == '\'') {
+        // copy as plain text to next single-quote
+        c->i++;
+        while (c->i[0] && c->i[0] != '\'') {
+            *(c->o++) = *(c->i++);
+        }
+        if (c->i[0] == '\'') {
+            c->i++;
+        }
+    }
+    else if (i == '\n') {
+        c->i++;
+        c->eol = 1;
     }
     else {
         *(c->o++) = *(c->i++);
@@ -1928,6 +2014,8 @@ tf_compile (const char *script) {
     memset (code, 0, sizeof (code));
 
     c.o = code;
+
+    c.eol = 1;
 
     while (*(c.i)) {
         if (tf_compile_plain (&c)) {

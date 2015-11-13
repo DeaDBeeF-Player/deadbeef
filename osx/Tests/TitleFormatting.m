@@ -849,34 +849,124 @@
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
-- (void)test_DirectoryOnFilePathLevel0_ReturnsDirectory {
+- (void)test_DirectoryOnFilePathLevel0_ReturnsEmpty {
     char *bc = tf_compile("$directory(/directory/file.path,0)");
-    tf_eval (&ctx, bc, buffer, 1000);
-    XCTAssert(!strcmp (buffer, "directory"), @"The actual output is: %s", buffer);
-}
-
-- (void)test_DirectoryOnFilePathLevel1_ReturnsDirectory2 {
-    char *bc = tf_compile("$directory(/directory3/directory2/directory/file.path,1)");
-    tf_eval (&ctx, bc, buffer, 1000);
-    XCTAssert(!strcmp (buffer, "directory2"), @"The actual output is: %s", buffer);
-}
-
-- (void)test_DirectoryOnFilePathLevel2_ReturnsDirectory3 {
-    char *bc = tf_compile("$directory(/directory3/directory2/directory/file.path,2)");
-    tf_eval (&ctx, bc, buffer, 1000);
-    XCTAssert(!strcmp (buffer, "directory3"), @"The actual output is: %s", buffer);
-}
-
-- (void)test_DirectoryOnFilePathLevel3_ReturnsEmpty {
-    char *bc = tf_compile("$directory(/directory3/directory2/directory/file.path,3)");
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
-- (void)test_DirectoryOnFilePathLevel1MultipleSlashes_ReturnsDirectory2 {
-    char *bc = tf_compile("$directory(////directory3////directory2////directory////file.path,1)");
+- (void)test_DirectoryOnFilePathLevel1_ReturnsDirectory1 {
+    char *bc = tf_compile("$directory(/directory3/directory2/directory1/file.path,1)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "directory1"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryOnFilePathLevel2_ReturnsDirectory2 {
+    char *bc = tf_compile("$directory(/directory3/directory2/directory1/file.path,2)");
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, "directory2"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryOnFilePathLevel4_ReturnsEmpty {
+    char *bc = tf_compile("$directory(/directory3/directory2/directory/file.path,4)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryOnFilePathLevel2MultipleSlashes_ReturnsDirectory2 {
+    char *bc = tf_compile("$directory(////directory3////directory2////directory////file.path,2)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "directory2"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_MultiLine_LineBreaksIgnored {
+    char *bc = tf_compile("hello\nworld");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "helloworld"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_MultiLineWithComments_LineBreaksAndCommentedLinesIgnored {
+    char *bc = tf_compile("// this is a comment\nhello\nworld\n//another comment\nmore text");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "helloworldmore text"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_QuotedSpecialChars_TreatedLiterally {
+    char *bc = tf_compile("'blah$blah%blah[][]'");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "blah$blah%blah[][]"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_FunctionArgumentsOnMultipleLinesWithComments_LinebreaksAndCommentsIgnored {
+    char *bc = tf_compile("$add(1,\n2,\n3,//4,\n5)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "11"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryPathOnFilePath_ReturnsDirectoryPath {
+    char *bc = tf_compile("$directory_path('/a/b/c/d.mp3')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "/a/b/c"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DirectoryPathOnPathWithoutFile_ReturnsDirectoryPath {
+    char *bc = tf_compile("$directory_path('/a/b/c/d/')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "/a/b/c/d"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ExtOnFilePath_ReturnsExt {
+    char *bc = tf_compile("$ext('/a/b/c/d/file.mp3')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "mp3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ExtOnFileWithoutExtPath_ReturnsEmpty {
+    char *bc = tf_compile("$ext('/a/b/c/d/file')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ExtOnFilePathWithoutFilename_ReturnsEmpty {
+    char *bc = tf_compile("$ext('/a/b/c/d/')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ExtOnFilePathEndingWithDot_ReturnsEmpty {
+    char *bc = tf_compile("$ext('/a/b/c/d/file.')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ExtOnFilePathDotFile_ReturnsExt {
+    char *bc = tf_compile("$ext('/a/b/c/d/.ext')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "ext"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ExtOnFileExtWithMultiplePeriod_ReturnsExt {
+    char *bc = tf_compile("$ext('/a/b/c/d/file.iso.wv')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "iso.wv"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_FilenameOnFilePath_ReturnsFilename {
+    char *bc = tf_compile("$filename('/a/b/c/d/file.mp3')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "file.mp3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_FilenameOnFilePathWithoutFile_ReturnsEmpty {
+    char *bc = tf_compile("$filename('/a/b/c/d/')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_FilenameOnFilenameWithoutPath_ReturnsFilename {
+    char *bc = tf_compile("$filename('file.iso.wv')");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "file.iso.wv"), @"The actual output is: %s", buffer);
 }
 
 @end

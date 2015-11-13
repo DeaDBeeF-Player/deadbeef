@@ -22,26 +22,15 @@
 */
 
 #import "MainWindowController.h"
-#import "INAppStoreWindow.h"
 #include "../../deadbeef.h"
 #include <sys/time.h>
 
 extern DB_functions_t *deadbeef;
 
 
-@interface DdbMainWindow : INAppStoreWindow
-@end
-
-@implementation DdbMainWindow
-- (CGFloat)_minimumTitlebarHeight {
-    return 44;
-}
-@end
-
 @interface MainWindowController () {
     NSTimer *_updateTimer;
 }
-
 @end
 
 @interface NSView (AppKitDetails)
@@ -58,74 +47,8 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-- (void)initCustomTitlebar {
-    NSView *themeFrame = [[self.window contentView] superview];
-    NSRect c = [themeFrame frame];
-
-#if 0
-    NSButton *btnClose = [NSWindow standardWindowButton:NSWindowCloseButton forStyleMask:NSTitledWindowMask];
-    NSRect fr = [btnClose frame];
-    fr.origin.x = 10;
-    fr.origin.y = c.size.height - fr.size.height - 13;
-    [btnClose removeFromSuperview];
-    [btnClose setFrame:fr];
-    [btnClose setAutoresizingMask:NSViewMaxXMargin];
-    if ([themeFrame respondsToSelector:@selector(_addKnownSubview:)])
-        [themeFrame _addKnownSubview:btnClose];
-    else
-        [themeFrame addSubview:btnClose];
-
-    NSButton *btnMin = [self.window standardWindowButton:NSWindowMiniaturizeButton];
-    fr = [btnMin frame];
-    fr.origin.x = 30;
-    fr.origin.y = c.size.height - fr.size.height - 13;
-    [btnMin removeFromSuperview];
-    [btnMin setFrame:fr];
-    if ([themeFrame respondsToSelector:@selector(_addKnownSubview:)])
-        [themeFrame _addKnownSubview:btnMin];
-    else
-        [themeFrame addSubview:btnMin];
-
-    NSButton *btnZoom = [self.window standardWindowButton:NSWindowZoomButton];
-    fr = [btnZoom frame];
-    fr.origin.x = 50;
-    fr.origin.y = c.size.height - fr.size.height - 13;
-    [btnZoom removeFromSuperview];
-    [btnZoom setFrame:fr];
-    if ([themeFrame respondsToSelector:@selector(_addKnownSubview:)])
-        [themeFrame _addKnownSubview:btnZoom];
-    else
-        [themeFrame addSubview:btnZoom];
-#endif
-
-    NSRect fr = [[self.window standardWindowButton:NSWindowZoomButton] frame];
-
-    NSRect btnBarFrame = [_buttonBar frame];
-    btnBarFrame = NSMakeRect(fr.origin.x + fr.size.width + 10, c.size.height - btnBarFrame.size.height-10, btnBarFrame.size.width, btnBarFrame.size.height);
-    [_buttonBar removeFromSuperview];
-    [_buttonBar setFrame:btnBarFrame];
-
-    if ([themeFrame respondsToSelector:@selector(_addKnownSubview:)])
-        [themeFrame _addKnownSubview:_buttonBar];
-    else
-        [themeFrame addSubview:_buttonBar];
-
-    NSRect seekBarFrame = [_seekBar frame];
-    int x = btnBarFrame.origin.x + btnBarFrame.size.width + 10;
-    seekBarFrame = NSMakeRect(x, c.size.height - seekBarFrame.size.height-12, c.size.width - x - 10, seekBarFrame.size.height);
-    [_seekBar removeFromSuperview];
-    [_seekBar setFrame:seekBarFrame];
-
-    if ([themeFrame respondsToSelector:@selector(_addKnownSubview:)])
-        [themeFrame _addKnownSubview:_seekBar];
-    else
-        [themeFrame addSubview:_seekBar];
-}
-
 - (void)windowDidLoad {
     [super windowDidLoad];
-
-    [self initCustomTitlebar];
 
     _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
     [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSDefaultRunLoopMode];    
@@ -279,6 +202,21 @@ static struct timeval last_br_update;
     }
 }
 
+- (IBAction)volumeBarAction:(id)sender {
+    float range = -deadbeef->volume_get_min_db ();
+    float volume = [(NSSlider*)sender floatValue] / 100.f * range - range;
+    if (volume < -range) {
+        volume = -range;
+    }
+    if (volume > 0) {
+        volume = 0;
+    }
+
+    deadbeef->volume_set_db (volume);
+    int db = volume;
+    [sender setToolTip:[NSString stringWithFormat:@"%s%ddB", db < 0 ? "" : "+", db]];
+}
+
 - (IBAction)tbClicked:(id)sender {
     NSInteger selectedSegment = [sender selectedSegment];
     
@@ -336,6 +274,12 @@ static struct timeval last_br_update;
 
 - (IBAction)renamePlaylistOKAction:(id)sender {
     [NSApp endSheet:self.renamePlaylistWindow returnCode:NSOKButton];
+}
+
+- (void)updateVolumeBar{
+    float range = -deadbeef->volume_get_min_db ();
+    int vol = (deadbeef->volume_get_db () + range) / range * 100;
+    [[self volumeBar] setFloatValue:vol];
 }
 
 @end

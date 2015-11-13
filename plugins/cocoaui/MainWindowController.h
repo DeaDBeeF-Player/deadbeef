@@ -31,7 +31,9 @@
 @property (unsafe_unretained) IBOutlet DdbTabStrip *tabStrip;
 @property (unsafe_unretained) IBOutlet NSTextField *statusBar;
 @property (unsafe_unretained) IBOutlet NSSlider *seekBar;
+@property (unsafe_unretained) IBOutlet NSSlider *volumeBar;
 - (IBAction)seekBarAction:(id)sender;
+- (IBAction)volumeBarAction:(id)sender;
 @property (unsafe_unretained) IBOutlet NSSegmentedControl *buttonBar;
 
 - (IBAction)tbClicked:(id)sender;
@@ -41,4 +43,6 @@
 - (IBAction)renamePlaylistOKAction:(id)sender;
 
 - (IBAction)renamePlaylistAction:(id)sender;
+
+- (void)updateVolumeBar;
 @end
