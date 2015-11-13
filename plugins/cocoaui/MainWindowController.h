@@ -45,4 +45,6 @@
 - (IBAction)renamePlaylistAction:(id)sender;
 
 - (void)updateVolumeBar;
+- (void)updateTitleBarConfig;
+- (void)updateTitleBar;
 @end

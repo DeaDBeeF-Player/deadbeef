@@ -23,6 +23,9 @@
 
 #import <Cocoa/Cocoa.h>
 
+#define DEFAULT_TITLEBAR_PLAYING_VALUE "%artist% - %title% - DeaDBeeF-%_deadbeef_version%"
+#define DEFAULT_TITLEBAR_STOPPED_VALUE "DeaDBeeF-%_deadbeef_version%"
+
 @interface PreferencesWindowController : NSWindowController
 @property (strong) IBOutlet NSView *playbackView;
 @property (strong) IBOutlet NSView *dspView;

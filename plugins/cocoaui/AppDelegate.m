@@ -93,6 +93,9 @@ NSInteger firstSelected = -1;
     streamer_configchanged ();
     junk_configchanged ();
     [self volumeChanged];
+
+    [_mainWindow updateTitleBarConfig];
+    [_mainWindow updateTitleBar];
 }
 
 static int fileadd_cancelled = 0;
@@ -563,10 +566,17 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     else if (_id == DB_EV_SONGFINISHED) {
         [g_appDelegate performSelectorOnMainThread:@selector(clearDockNowPlaying) withObject:nil waitUntilDone:NO];
     }
+    else if (_id == DB_EV_SONGCHANGED || _id == DB_EV_TRACKINFOCHANGED || (_id == DB_EV_PLAYLISTCHANGED && p1 == DDB_PLAYLIST_CHANGE_CONTENT)) {
+        [g_appDelegate performSelectorOnMainThread:@selector(updateTitleBar) withObject:nil waitUntilDone:NO];
+    }
     else if (_id == DB_EV_VOLUMECHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(volumeChanged) withObject:nil waitUntilDone:NO];
     }
     return 0;
+}
+
+- (void)updateTitleBar {
+    [_mainWindow updateTitleBar];
 }
 
 - (void) clearDockNowPlaying {
