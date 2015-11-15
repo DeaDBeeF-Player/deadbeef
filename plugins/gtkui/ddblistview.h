@@ -168,8 +168,7 @@ struct _DdbListview {
     int header_dragpt[2];
     gdouble prev_header_x;
     int header_prepare;
-    int header_width; // previous width before resize
-    int col_autoresize;
+    float fwidth;
 
     struct _DdbListviewColumn *columns;
     gboolean lock_columns;

@@ -177,11 +177,6 @@ ddb_listview_header_expose_event                 (GtkWidget       *widget,
                                         gpointer         user_data);
 #endif
 
-static gboolean
-ddb_listview_header_configure_event              (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
-                                        gpointer         user_data);
-
 void
 ddb_listview_header_realize                      (GtkWidget       *widget,
                                         gpointer         user_data);
@@ -344,7 +339,7 @@ ddb_listview_init(DdbListview *listview)
     listview->header_dragpt[1] = 0;
     listview->prev_header_x = -1;
     listview->header_prepare = 0;
-    listview->header_width = -1;
+    listview->fwidth = -1;
 
     listview->columns = NULL;
     listview->lock_columns = 1;
@@ -441,9 +436,6 @@ ddb_listview_init(DdbListview *listview)
             G_CALLBACK (ddb_listview_header_draw),
             NULL);
 #endif
-    g_signal_connect ((gpointer) listview->header, "configure_event",
-            G_CALLBACK (ddb_listview_header_configure_event),
-            NULL);
     g_signal_connect ((gpointer) listview->header, "realize",
             G_CALLBACK (ddb_listview_header_realize),
             NULL);
@@ -640,7 +632,6 @@ ddb_listview_is_album_art_column (DdbListview *listview, int x)
 {
     int album_art_column = 0;
     int col_x = -listview->hscrollpos;
-    int cnt = ddb_listview_column_get_count (listview);
     for (DdbListviewColumn *c = listview->columns; c && col_x <= x; c = c->next) {
         if (x <= col_x + c->width && listview->binding->is_album_art_column(c->user_data)) {
             return 1;
@@ -1346,7 +1337,7 @@ ddb_listview_list_setup_vscroll (void *user_data) {
     GtkAllocation a;
     gtk_widget_get_allocation (ps->list, &a);
     adjust_scrollbar(ps->scrollbar, ps->fullheight, a.height);
-	return FALSE;
+    return FALSE;
 }
 
 static gboolean
@@ -1355,7 +1346,7 @@ ddb_listview_list_setup_hscroll (void *user_data) {
     int size = total_columns_width(ps);
     ddb_listview_list_update_total_width(ps, size, ps->list_width);
     adjust_scrollbar(ps->hscrollbar, size, ps->list_width);
-	return FALSE;
+    return FALSE;
 }
 
 static gboolean
@@ -2563,6 +2554,115 @@ ddb_listview_update_scroll_ref_point (DdbListview *ps)
     }
 }
 
+static void
+set_column_width (DdbListview *listview, DdbListviewColumn *c, float new_width) {
+    if (listview->fwidth != -1) {
+        listview->fwidth -= (float)c->width / listview->list_width;
+        c->fwidth = new_width / listview->list_width;
+        listview->fwidth += c->fwidth;
+    }
+    c->width = new_width;
+}
+
+static void
+set_fwidth (DdbListview *ps, float list_width)
+{
+    int total_width = 0;
+    for (DdbListviewColumn *c = ps->columns; c; c = c->next) {
+        c->fwidth = c->width / list_width;
+        total_width += c->width;
+    }
+    ps->fwidth = total_width / list_width;
+}
+
+static int
+groups_full_height (DdbListview *listview, DdbListviewColumn *c, int new_width) {
+    int min_height = c->minheight_cb(c->user_data, new_width);
+    int full_height = 0;
+    deadbeef->pl_lock();
+    for (DdbListviewGroup *grp = listview->groups; grp; grp = grp->next) {
+        full_height += listview->grouptitle_height + max(grp->num_items * listview->rowheight, min_height);
+    }
+    deadbeef->pl_unlock();
+    return full_height;
+}
+
+// Calculate if this width would cause auto-resize thrashing
+static int
+unsafe_group_height (DdbListview *listview, DdbListviewColumn *c, int new_width, int list_width, int list_height) {
+    if (!c->minheight_cb) {
+        return 0;
+    }
+
+    GtkAllocation a;
+    gtk_widget_get_allocation(listview->scrollbar, &a);
+    int scrollbar_width = a.width > 1 ? a.width : 16;
+    if (listview->fullheight > list_height) {
+        if (groups_full_height(listview, c, new_width) <= list_height) {
+            int width_wo_scrollbar = roundf((list_width + scrollbar_width) * c->fwidth);
+            if (groups_full_height(listview, c, width_wo_scrollbar) >= list_height) {
+                return 1;
+            }
+        }
+    }
+    else {
+        if (groups_full_height(listview, c, new_width) >= list_height) {
+            int width_w_scrollbar = roundf((list_width - scrollbar_width) * c->fwidth);
+            if (groups_full_height(listview, c, width_w_scrollbar) <= list_height) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+static void
+autoresize_columns (DdbListview *listview, int list_width, int list_height) {
+    int total_width;
+    int expected_width = roundf(list_width * listview->fwidth);
+    float working_width = list_width;
+    if (listview->fwidth > 1) {
+        do {
+            total_width = 0;
+            for (DdbListviewColumn *c = listview->columns; c; c = c->next) {
+                int new_width = max(MIN_COLUMN_WIDTH, roundf(working_width * c->fwidth));
+                if (unsafe_group_height(listview, c, new_width, list_width, list_height)) {
+                    new_width = c->width;
+                }
+                total_width += new_width;
+                if (new_width != c->width) {
+                    c->width = new_width;
+                    ddb_listview_column_size_changed(listview, c);
+                }
+            }
+            working_width++;
+        } while (total_width <= expected_width);
+    }
+    else {
+        do {
+            total_width = 0;
+            for (DdbListviewColumn *c = listview->columns; c; c = c->next) {
+                int new_width = roundf(working_width * c->fwidth);
+                if (new_width < MIN_COLUMN_WIDTH) {
+                    working_width -= MIN_COLUMN_WIDTH - new_width;
+                    new_width = MIN_COLUMN_WIDTH;
+                }
+                else if (unsafe_group_height(listview, c, new_width, list_width, list_height)) {
+                    new_width = c->width;
+                }
+                total_width += new_width;
+                if (new_width != c->width) {
+                    c->width = new_width;
+                    ddb_listview_column_size_changed(listview, c);
+                }
+            }
+            working_width--;
+        } while (total_width > expected_width && working_width > 0);
+    }
+    listview->binding->columns_changed(listview);
+    ddb_listview_list_update_total_width(listview, total_width, list_width);
+}
+
 static gboolean
 ddb_listview_list_configure_event            (GtkWidget       *widget,
         GdkEventConfigure *event,
@@ -2580,54 +2680,17 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
         ddb_listview_list_update_total_width(ps, total_columns_width(ps), event->width);
     }
 
-    return FALSE;
-}
-
-static gboolean
-ddb_listview_header_configure_event              (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
-                                        gpointer         user_data)
-{
-    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    GtkAllocation lva;
-    gtk_widget_get_allocation (GTK_WIDGET (ps), &lva);
-    int totalwidth = lva.width;
-
-    // col_autoresize flag indicates whether fwidth is valid
-    if (!ps->lock_columns) {
-        DdbListviewColumn *c;
-        if (deadbeef->conf_get_int ("gtkui.autoresize_columns", 0)) {
-            if (ps->header_width != totalwidth) {
-                ddb_listview_update_scroll_ref_point (ps);
-                if (!ps->col_autoresize) {
-                    for (c = ps->columns; c; c = c->next) {
-                        c->fwidth = (float)c->width / (float)totalwidth;
-                    }
-                    ps->col_autoresize = 1;
-                }
-                // use the fwidth
-                int changed = 0;
-                int i = 0;
-                for (c = ps->columns; c; c = c->next, i++) {
-                    int newwidth = totalwidth * c->fwidth;
-                    if (newwidth != c->width) {
-                        c->width = newwidth;
-                        changed = 1;
-                        ddb_listview_column_size_changed (ps, c);
-                    }
-                }
-                if (changed) {
-                    ps->binding->columns_changed (ps);
-                }
-            }
+    if (!ps->lock_columns && ps->scrollpos != -1) {
+        if (!deadbeef->conf_get_int("gtkui.autoresize_columns", 0) || ps->header_sizing != -1) {
+            set_fwidth(ps, event->width);
         }
-        else {
-            for (c = ps->columns; c; c = c->next) {
-                c->fwidth = (float)c->width / (float)totalwidth;
+        else if (event->width != prev_width) {
+            ddb_listview_update_scroll_ref_point(ps);
+            if (ps->fwidth == -1) {
+                set_fwidth(ps, gtk_widget_get_visible(ps->scrollbar) ? event->width : prev_width);
             }
-            ps->col_autoresize = 1;
+            autoresize_columns(ps, event->width, event->height);
         }
-        ps->header_width = totalwidth;
     }
 
     return FALSE;
@@ -2706,17 +2769,11 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
     }
     else if (ps->header_sizing >= 0) {
         int x = -ps->hscrollpos;
-        int i = 0;
-        DdbListviewColumn *c;
-        for (c = ps->columns; i < ps->header_sizing; c = c->next) {
+        DdbListviewColumn *c = ps->columns;
+        for (int i = 0; i < ps->header_sizing; i++, c = c->next) {
             x += c->width;
-            i++;
         }
-        c->width = max(MIN_COLUMN_WIDTH, event->x - ps->header_dragpt[0] - x);
-        if (ps->col_autoresize) {
-            c->fwidth = (float)c->width / ps->header_width;
-        }
-
+        set_column_width(ps, c, max(MIN_COLUMN_WIDTH, event->x - ps->header_dragpt[0] - x));
         ddb_listview_column_size_changed(ps, c);
         ddb_listview_list_setup_hscroll(ps);
         gtk_widget_queue_draw(ps->header);
@@ -3036,20 +3093,6 @@ ddb_listview_is_scrolling (DdbListview *listview) {
 
 /////// column management code
 
-DdbListviewColumn *
-ddb_listview_column_alloc (const char *title, int width, int align_right, minheight_cb_t minheight_cb, int color_override, GdkColor color, void *user_data) {
-    DdbListviewColumn * c = malloc (sizeof (DdbListviewColumn));
-    memset (c, 0, sizeof (DdbListviewColumn));
-    c->title = strdup (title);
-    c->width = width;
-    c->align_right = align_right;
-    c->color_override = color_override;
-    c->color = color;
-    c->minheight_cb = minheight_cb;
-    c->user_data = user_data;
-    return c;
-}
-
 int
 ddb_listview_column_get_count (DdbListview *listview) {
     int cnt = 0;
@@ -3061,35 +3104,28 @@ ddb_listview_column_get_count (DdbListview *listview) {
     return cnt;
 }
 
+static DdbListviewColumn *
+ddb_listview_column_alloc (const char *title, int align_right, minheight_cb_t minheight_cb, int color_override, GdkColor color, void *user_data) {
+    DdbListviewColumn * c = malloc (sizeof (DdbListviewColumn));
+    memset (c, 0, sizeof (DdbListviewColumn));
+    c->title = strdup (title);
+    c->align_right = align_right;
+    c->color_override = color_override;
+    c->color = color;
+    c->minheight_cb = minheight_cb;
+    c->user_data = user_data;
+    return c;
+}
+
 void
 ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, minheight_cb_t minheight_cb, int color_override, GdkColor color, void *user_data) {
-    DdbListviewColumn* c = ddb_listview_column_alloc (title, width, align_right, minheight_cb, color_override, color, user_data);
-    if (listview->col_autoresize) {
-        c->fwidth = (float)c->width / listview->header_width;
-    }
-    int idx = 0;
-    DdbListviewColumn * columns = listview->columns;
-    if (columns) {
-        idx++;
-        DdbListviewColumn * tail = listview->columns;
-        while (tail->next) {
-            tail = tail->next;
-            idx++;
-        }
-        tail->next = c;
-    }
-    else {
-        listview->columns = c;
-    }
-    listview->binding->columns_changed (listview);
+    ddb_listview_column_insert(listview, -1, title, width, align_right, minheight_cb, color_override, color, user_data);
 }
 
 void
 ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, minheight_cb_t minheight_cb, int color_override, GdkColor color, void *user_data) {
-    DdbListviewColumn *c = ddb_listview_column_alloc (title, width, align_right, minheight_cb, color_override, color, user_data);
-    if (listview->col_autoresize) {
-        c->fwidth = (float)c->width / listview->header_width;
-    }
+    DdbListviewColumn *c = ddb_listview_column_alloc (title, align_right, minheight_cb, color_override, color, user_data);
+    set_column_width(listview, c, c->width);
     if (listview->columns) {
         DdbListviewColumn * prev = NULL;
         DdbListviewColumn * next = listview->columns;
@@ -3113,6 +3149,7 @@ ddb_listview_column_insert (DdbListview *listview, int before, const char *title
     else {
         listview->columns = c;
     }
+    set_column_width(listview, c, width);
     listview->binding->columns_changed (listview);
 }
 
@@ -3125,35 +3162,31 @@ ddb_listview_column_free (DdbListview *listview, DdbListviewColumn * c) {
     free (c);
 }
 
+static void
+remove_column (DdbListview *listview, DdbListviewColumn *c, DdbListviewColumn **next) {
+    assert(c);
+    set_column_width(listview, c, 0);
+    *next = c->next;
+    ddb_listview_column_free(listview, c);
+    listview->binding->columns_changed(listview);
+    return;
+}
+
 void
 ddb_listview_column_remove (DdbListview *listview, int idx) {
-    DdbListviewColumn *c;
+    DdbListviewColumn *c = listview->columns;
     if (idx == 0) {
-        c = listview->columns;
-        assert (c);
-        listview->columns = c->next;
-        ddb_listview_column_free (listview, c);
-        listview->binding->columns_changed (listview);
+        remove_column(listview, c, &listview->columns);
         return;
     }
-    c = listview->columns;
-    int i = 0;
-    while (c) {
-        if (i+1 == idx) {
-            assert (c->next);
-            DdbListviewColumn *next = c->next->next;
-            ddb_listview_column_free (listview, c->next);
-            c->next = next;
-            listview->binding->columns_changed (listview);
+    for (int i = 1; c->next; c = c->next, i++) {
+        if (i == idx) {
+            remove_column(listview, c->next, &c->next);
             return;
         }
-        c = c->next;
-        i++;
     }
 
-    if (!c) {
-        trace ("ddblv: attempted to remove column that is not in list\n");
-    }
+    trace ("ddblv: attempted to remove column that is not in list\n");
 }
 
 void
@@ -3221,10 +3254,7 @@ ddb_listview_column_set_info (DdbListview *listview, int col, const char *title,
         if (idx == col) {
             free (c->title);
             c->title = strdup (title);
-            c->width = width;
-            if (listview->col_autoresize) {
-                c->fwidth = (float)c->width / listview->header_width;
-            }
+            set_column_width(listview, c, width);
             c->align_right = align_right;
             c->minheight_cb = minheight_cb;
             c->color_override = color_override;
@@ -3351,7 +3381,7 @@ ddb_listview_resize_groups (DdbListview *listview) {
 
     if (full_height != listview->fullheight) {
         listview->fullheight = full_height;
-        g_idle_add(ddb_listview_list_setup_vscroll, listview);
+        g_idle_add(ddb_listview_reconf_scrolling, listview);
     }
 }
 
