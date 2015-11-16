@@ -2358,7 +2358,6 @@ static void
 w_playlist_init (ddb_gtkui_widget_t *base) {
     w_playlist_t *w = (w_playlist_t *)base;
     ddb_listview_show_header (w->list, !w->hideheaders);
-    ddb_listview_refresh (w->list, DDB_REFRESH_FONTS);
     g_idle_add (playlistswitch_cb, w);
     g_idle_add (refresh_cb, w->list);
 }

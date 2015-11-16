@@ -594,7 +594,7 @@ ddb_listview_list_realize                    (GtkWidget       *widget,
     // setup drag-drop target
     gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
     gtk_drag_dest_add_uri_targets (widget);
-//    gtk_drag_dest_set_track_motion (widget, TRUE);
+    ddb_listview_update_fonts(DDB_LISTVIEW(g_object_get_data(G_OBJECT(widget), "owner")));
 }
 
 static int
@@ -2699,6 +2699,7 @@ ddb_listview_header_realize                      (GtkWidget       *widget,
     DdbListview *listview = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     listview->cursor_sz = gdk_cursor_new (GDK_SB_H_DOUBLE_ARROW);
     listview->cursor_drag = gdk_cursor_new (GDK_FLEUR);
+    ddb_listview_header_update_fonts (listview);
 }
 
 static void
@@ -2759,7 +2760,7 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
         for (int i = 0; i < ps->header_sizing; i++, c = c->next) {
             x += c->width;
         }
-        set_column_width(ps, c, max(MIN_COLUMN_WIDTH, event->x - ps->header_dragpt[0] - x));
+        set_column_width(ps, c, max(MIN_COLUMN_WIDTH, round(event->x) - ps->header_dragpt[0] - x));
         ddb_listview_column_size_changed(ps, c);
         ddb_listview_list_setup_hscroll(ps);
         gtk_widget_queue_draw(ps->header);
