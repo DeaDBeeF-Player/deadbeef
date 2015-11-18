@@ -116,7 +116,7 @@ static ogg_packet **metadata_block_packets(DB_FILE *in, ogg_sync_state *oy, cons
     return headers;
 }
 
-static long write_metadata_block_packets(FILE *out, const int serial, const char *vendor, const size_t num_tags, char **tags, size_t padding, ogg_packet **metadata)
+static long write_metadata_block_packets(FILE *out, const int64_t serial, const char *vendor, const size_t num_tags, char **tags, size_t padding, ogg_packet **metadata)
 {
     const size_t header_length = vc_size(vendor, num_tags, tags);
     if (header_length > (2<<24))
@@ -191,13 +191,16 @@ off_t oggedit_write_flac_metadata(DB_FILE *in, const char *fname, const off_t of
 
     /* Write pages until we reach the correct comment header */
     ogg_page og;
-    const int flac_serial = copy_up_to_codec(in, out, &oy, &og, *tempname ? 0 : offset, offset, FLACNAME);
+    int64_t flac_serial = copy_up_to_codec(in, out, &oy, &og, *tempname ? 0 : offset, offset, FLACNAME);
     if (flac_serial <= OGGEDIT_EOF) {
         res = flac_serial;
         goto cleanup;
     }
-    if ((res = copy_up_to_header(in, out, &oy, &og, flac_serial)) <= OGGEDIT_EOF)
+    flac_serial = copy_up_to_header(in, out, &oy, &og, flac_serial);
+    if (flac_serial <= OGGEDIT_EOF) {
+        res = flac_serial;
         goto cleanup;
+    }
     const long pageno = write_metadata_block_packets(out, flac_serial, vendor, num_tags, tags, padding, headers);
     if (pageno < OGGEDIT_EOF) {
         res = pageno;
@@ -206,8 +209,11 @@ off_t oggedit_write_flac_metadata(DB_FILE *in, const char *fname, const off_t of
 
     /* If we have tempfile, copy the remaining pages */
     if (*tempname) {
-        if ((res = copy_remaining_pages(in, out, &oy, flac_serial, pageno)) <= OGGEDIT_EOF)
+        flac_serial = copy_remaining_pages(in, out, &oy, flac_serial, pageno);
+        if (flac_serial <= OGGEDIT_EOF) {
+            res = flac_serial;
             goto cleanup;
+        }
         if (rename(tempname, fname)) {
             res = OGGEDIT_RENAME_FAILED;
             goto cleanup;
