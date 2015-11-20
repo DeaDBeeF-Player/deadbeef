@@ -2118,6 +2118,7 @@ songchanged_cb (gpointer p) {
                 if (p) {
                     to_idx = deadbeef->plt_get_item_idx (p, to, PL_MAIN);
                     if (cursor_follows_playback) {
+                        deadbeef->plt_deselect_all (p);
                         deadbeef->pl_set_selected (to, 1);
                         deadbeef->plt_set_cursor (p, PL_MAIN, to_idx);
                     }
