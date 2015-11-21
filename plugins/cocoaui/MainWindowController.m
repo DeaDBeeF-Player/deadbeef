@@ -22,6 +22,7 @@
 */
 
 #import "MainWindowController.h"
+#import "PreferencesWindowController.h"
 #include "../../deadbeef.h"
 #include <sys/time.h>
 
@@ -30,6 +31,8 @@ extern DB_functions_t *deadbeef;
 
 @interface MainWindowController () {
     NSTimer *_updateTimer;
+    char *_titlebar_playing_script;
+    char *_titlebar_stopped_script;
 }
 @end
 
@@ -45,6 +48,7 @@ extern DB_functions_t *deadbeef;
         [_updateTimer invalidate];
         _updateTimer = nil;
     }
+    [self freeTitleBarConfig];
 }
 
 - (void)windowDidLoad {
@@ -276,10 +280,55 @@ static struct timeval last_br_update;
     [NSApp endSheet:self.renamePlaylistWindow returnCode:NSOKButton];
 }
 
-- (void)updateVolumeBar{
+- (void)updateVolumeBar {
     float range = -deadbeef->volume_get_min_db ();
     int vol = (deadbeef->volume_get_db () + range) / range * 100;
     [[self volumeBar] setFloatValue:vol];
+}
+
+- (void)freeTitleBarConfig {
+    if (_titlebar_playing_script) {
+        deadbeef->tf_free (_titlebar_playing_script);
+        _titlebar_playing_script = NULL;
+    }
+
+    if (_titlebar_stopped_script) {
+        deadbeef->tf_free (_titlebar_stopped_script);
+        _titlebar_stopped_script = NULL;
+    }
+}
+
+- (void)updateTitleBarConfig {
+    [self freeTitleBarConfig];
+
+    char script[2000];
+
+    deadbeef->conf_get_str ("cocoaui.titlebar_playing", DEFAULT_TITLEBAR_PLAYING_VALUE, script, sizeof (script));
+    _titlebar_playing_script = deadbeef->tf_compile (script);
+
+    deadbeef->conf_get_str ("cocoaui.titlebar_stopped", DEFAULT_TITLEBAR_STOPPED_VALUE, script, sizeof (script));
+    _titlebar_stopped_script = deadbeef->tf_compile (script);
+}
+
+- (void)updateTitleBar {
+    if (!_titlebar_playing_script || !_titlebar_stopped_script) {
+        [self updateTitleBarConfig];
+    }
+
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .it = deadbeef->streamer_get_playing_track (),
+        .iter = PL_MAIN,
+    };
+
+    char buffer[200];
+    deadbeef->tf_eval (&ctx, ctx.it ? _titlebar_playing_script : _titlebar_stopped_script, buffer, sizeof (buffer));
+
+    if (ctx.it) {
+        deadbeef->pl_item_unref (ctx.it);
+    }
+
+    [[self window] setTitle:[NSString stringWithUTF8String:buffer]];
 }
 
 @end
