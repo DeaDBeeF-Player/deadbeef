@@ -1296,7 +1296,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 // compatible with fb2k syntax
                 pl_lock ();
                 const char *val = NULL;
-                const char *aa_fields[] = { "album artist", "albumartist", "artist", "composer", "performer", NULL };
+                const char *aa_fields[] = { "album artist", "albumartist", "BAND", "composer", "performer", "artist", NULL };
                 const char *a_fields[] = { "artist", "album artist", "albumartist", "composer", "performer", NULL };
                 const char *alb_fields[] = { "album", "venue", NULL };
 
