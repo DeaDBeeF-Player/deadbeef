@@ -598,7 +598,7 @@ ddb_listview_list_realize                    (GtkWidget       *widget,
         gpointer         user_data)
 {
     GtkTargetEntry entry = {
-        .target = "DDB_URI_LIST",
+        .target = TARGET_PLAYITEMS,
         .flags = GTK_TARGET_SAME_APP,
         .info = TARGET_SAMEWIDGET
     };
@@ -1285,7 +1285,7 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
     }
     gchar *ptr=(char*)gtk_selection_data_get_data (data);
     gint len = gtk_selection_data_get_length (data);
-    if (target_type == 0) { // uris
+    if (target_type == TARGET_URILIST) { // uris
         // this happens when dropped from file manager
         char *mem = malloc (len+1);
         memcpy (mem, ptr, len);
@@ -1296,7 +1296,7 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
             UNREF (it);
         }
     }
-    else if (target_type == 1 && gtk_selection_data_get_format(data) == 32) { // list of 32bit ints, DDB_URI_LIST target
+    else if (target_type == TARGET_SAMEWIDGET && gtk_selection_data_get_format(data) == 32) { // list of 32bit ints, DDB_URI_LIST target
         uint32_t *d= (uint32_t *)ptr;
         int plt = *d;
         d++;
@@ -2116,7 +2116,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
             ps->dragwait = 0;
             ps->drag_source_playlist = deadbeef->plt_get_curr_idx ();
             GtkTargetEntry entry = {
-                .target = "DDB_URI_LIST",
+                .target = TARGET_PLAYITEMS,
                 .flags = GTK_TARGET_SAME_WIDGET,
                 .info = TARGET_SAMEWIDGET
             };

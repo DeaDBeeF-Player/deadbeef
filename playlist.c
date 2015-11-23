@@ -3513,6 +3513,7 @@ plt_copy_items (playlist_t *to, int iter, playlist_t *from, playItem_t *before, 
         return;
     }
 
+    playItem_t *items[cnt];
     for (int i = 0; i < cnt; i++) {
         playItem_t *it = from->head[iter];
         int idx = 0;
@@ -3522,15 +3523,19 @@ plt_copy_items (playlist_t *to, int iter, playlist_t *from, playItem_t *before, 
         }
         if (!it) {
             trace ("pl_copy_items: warning: item %d not found in source plt_to\n", indices[i]);
-            continue;
         }
-        playItem_t *it_new = pl_item_alloc ();
-        pl_item_copy (it_new, it);
+        items[i] = it;
+    }
 
-        playItem_t *after = before ? before->prev[iter] : to->tail[iter];
-        pl_insert_item (after, it_new);
-        pl_item_unref (it_new);
+    for (int i = 0; i < cnt; i++) {
+        if (items[i]) {
+            playItem_t *it_new = pl_item_alloc ();
+            pl_item_copy (it_new, items[i]);
 
+            playItem_t *after = before ? before->prev[iter] : to->tail[iter];
+            pl_insert_item (after, it_new);
+            pl_item_unref (it_new);
+        }
     }
     pl_unlock ();
 }
