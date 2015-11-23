@@ -38,6 +38,7 @@ static const char *types[] = {
     "genre", "Genre",
     "composer", "Composer",
     "disc", "Disc Number",
+    "numdiscs", "Total Discs",
     "comment", "Comment",
     NULL
 };

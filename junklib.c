@@ -95,7 +95,7 @@ enum {
 static const char *frame_mapping[] = {
 // these tags will be displayed and edited uniformly for all tag types
     "artist", "TPE1", "TPE1", "TP1", "Artist",
-    "disc", "TPOS", "TPOS", "TPA", "Disc",
+    "disc", "TPOS", "TPOS", "TPA", "Disc", // NOTE: this is special case when writing id3v2
     "title", "TIT2", "TIT2", "TT2", "Title",
     "album", "TALB", "TALB", "TAL", "Album",
     "copyright", "TCOP", "TCOP", "TCO", "Copyright",
@@ -1415,6 +1415,19 @@ junk_add_track_meta (playItem_t *it, const char *track) {
         pl_add_meta (it, "numtracks", slash);
     }
     pl_add_meta (it, "track", track);
+    return 0;
+}
+
+int
+junk_add_disc_meta (playItem_t *it, const char *disc) {
+    char *slash = strchr (disc, '/');
+    if (slash) {
+        // split into track/number
+        *slash = 0;
+        slash++;
+        pl_add_meta (it, "numdiscs", slash);
+    }
+    pl_add_meta (it, "disc", disc);
     return 0;
 }
 
@@ -3929,6 +3942,9 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                                 if (!strcmp (frameid, "TRCK")) { // special case for track/totaltracks
                                     junk_add_track_meta (it, text);
                                 }
+                                if (!strcmp (frameid, "TPOS")) { // special case for disc/totaldiscs
+                                    junk_add_disc_meta (it, text);
+                                }
                                 else if (!strcmp (frameid, "TCON")) {
                                     junk_id3v2_add_genre (it, text);
                                 }
@@ -4048,10 +4064,13 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                             }
                             char *text = convstr_id3v2 (version_major, readptr[0], readptr+1, synched_size-1);
                             if (text && *text) {
-                                if (!strcmp (frameid, "TRCK")) { // special case for track/totaltracks
+                                if (!strcmp (frameid, "TRK")) { // special case for track/totaltracks
                                     junk_add_track_meta (it, text);
                                 }
-                                else if (!strcmp (frameid, "TCON")) {
+                                if (!strcmp (frameid, "TPA")) { // special case for disc/totaldiscs
+                                    junk_add_disc_meta (it, text);
+                                }
+                                else if (!strcmp (frameid, "TCO")) {
                                     junk_id3v2_add_genre (it, text);
                                 }
                                 else {
@@ -4366,7 +4385,10 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                         && meta->key[0] != ':'
                         && strcasecmp (meta->key, "comment")
                         && strcasecmp (meta->key, "track")
-                        && strcasecmp (meta->key, "numtracks")) {
+                        && strcasecmp (meta->key, "numtracks")
+                        && strcasecmp (meta->key, "disc")
+                        && strcasecmp (meta->key, "numdiscs")
+                   ) {
                     // add as txxx
                     trace ("adding unknown frame as TXX %s=%s\n", meta->key, meta->value);
                     junk_id3v2_remove_txxx_frame (&id3v2, meta->key);
@@ -4376,9 +4398,9 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             meta = meta->next;
         }
 
-        // add tracknumber/totaltracks
         pl_lock ();
         {
+            // add tracknumber/totaltracks
             const char *track = pl_find_meta (it, "track");
             const char *totaltracks = pl_find_meta (it, "numtracks");
             if (track && totaltracks) {
@@ -4390,6 +4412,19 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             else if (track) {
                 junk_id3v2_remove_frames (&id3v2, "TRCK");
                 junk_id3v2_add_text_frame (&id3v2, "TRCK", track);
+            }
+            // add discnumber/totaldiscs
+            const char *disc = pl_find_meta (it, "disc");
+            const char *totaldiscs = pl_find_meta (it, "numdiscs");
+            if (disc && totaldiscs) {
+                char s[100];
+                snprintf (s, sizeof (s), "%s/%s", disc, totaldiscs);
+                junk_id3v2_remove_frames (&id3v2, "TPOS");
+                junk_id3v2_add_text_frame (&id3v2, "TPOS", s);
+            }
+            else if (disc) {
+                junk_id3v2_remove_frames (&id3v2, "TPOS");
+                junk_id3v2_add_text_frame (&id3v2, "TPOS", disc);
             }
         }
         pl_unlock ();
@@ -4487,7 +4522,10 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                 if (!frame_mapping[i]
                         && meta->key[0] != ':'
                         && strcasecmp (meta->key, "track")
-                        && strcasecmp (meta->key, "numtracks")) {
+                        && strcasecmp (meta->key, "numtracks")
+                        && strcasecmp (meta->key, "disc")
+                        && strcasecmp (meta->key, "numdiscs")
+                   ) {
                     trace ("apev2 writing unknown field: %s=%s\n", meta->key, meta->value);
                     junk_apev2_add_text_frame (&apev2, meta->key, meta->value);
                 }
@@ -4495,9 +4533,9 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             meta = meta->next;
         }
 
-        // add tracknumber/totaltracks
         {
             pl_lock ();
+            // add tracknumber/totaltracks
             const char *track = pl_find_meta (it, "track");
             const char *totaltracks = pl_find_meta (it, "numtracks");
             if (track && totaltracks) {
@@ -4509,6 +4547,19 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             else if (track) {
                 junk_apev2_remove_frames (&apev2, "Track");
                 junk_apev2_add_text_frame (&apev2, "Track", track);
+            }
+            // add discnumber/totaldiscs
+            const char *disc = pl_find_meta (it, "disc");
+            const char *totaldiscs = pl_find_meta (it, "numdiscs");
+            if (disc && totaldiscs) {
+                char s[100];
+                snprintf (s, sizeof (s), "%s/%s", disc, totaldiscs);
+                junk_apev2_remove_frames (&apev2, "disc");
+                junk_apev2_add_text_frame (&apev2, "disc", s);
+            }
+            else if (disc) {
+                junk_apev2_remove_frames (&apev2, "disc");
+                junk_apev2_add_text_frame (&apev2, "disc", disc);
             }
             pl_unlock ();
         }
