@@ -63,7 +63,7 @@
 }
 
 - (void)test_TotalDiscsGreaterThan1_ReturnsExpectedResult {
-    pl_add_meta (it, "disctotal", "20");
+    pl_add_meta (it, "numdiscs", "20");
     pl_add_meta (it, "disc", "18");
 
     char *bc = tf_compile("$if($greater(%totaldiscs%,1),- Disc: %discnumber%/%totaldiscs%)");
