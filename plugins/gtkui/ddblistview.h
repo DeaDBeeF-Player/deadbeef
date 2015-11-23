@@ -31,6 +31,7 @@
 #include "../../deadbeef.h"
 
 // drag and drop targets
+#define TARGET_PLAYITEMS "DDB_PLAYITEM_LIST"
 enum {
     TARGET_URILIST,
     TARGET_SAMEWIDGET,

@@ -117,9 +117,9 @@ ddb_tabstrip_realize (GtkWidget *widget) {
 
     ddb_tabstrip_send_configure (DDB_TABSTRIP (widget));
     GtkTargetEntry entry = {
-        .target = "STRING",
+        .target = TARGET_PLAYITEMS,
         .flags = GTK_TARGET_SAME_APP,
-        TARGET_SAMEWIDGET
+        .info = TARGET_SAMEWIDGET
     };
     gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
     gtk_drag_dest_add_uri_targets (widget);
@@ -267,7 +267,7 @@ on_tabstrip_drag_data_received         (GtkWidget       *widget,
 {
     gchar *ptr=(char*)gtk_selection_data_get_data (data);
     int len = gtk_selection_data_get_length (data);
-    if (target_type == 0) { // uris
+    if (target_type == TARGET_URILIST) { // uris
         // this happens when dropped from file manager
         char *mem = malloc (len+1);
         memcpy (mem, ptr, len);
@@ -275,7 +275,7 @@ on_tabstrip_drag_data_received         (GtkWidget       *widget,
         // we don't pass control structure, but there's only one drag-drop view currently
         gtkui_receive_fm_drop (NULL, mem, len);
     }
-    else if (target_type == 1) {
+    else if (target_type == TARGET_SAMEWIDGET) {
         uint32_t *d= (uint32_t *)ptr;
         int plt = *d;
         d++;

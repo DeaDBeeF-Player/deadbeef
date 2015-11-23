@@ -115,7 +115,7 @@ static uintptr_t mutex;
 // used at startup to prevent crashes
 static playlist_t dummy_playlist = {
     .refc = 1
-}; 
+};
 
 static int pl_order = -1; // mirrors "playback.order" config variable
 
@@ -390,7 +390,7 @@ plt_add (int before, const char *title) {
             p_after = playlists_head;
         }
     }
-    
+
     if (p_before) {
         p_before->next = plt;
     }
@@ -1385,7 +1385,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
                     return NULL;
                 }
             }
-            
+
             playItem_t *it = pl_item_alloc_init (fname, NULL);
             pl_replace_meta (it, ":FILETYPE", "content");
             after = plt_insert_item (addfiles_playlist ? addfiles_playlist : playlist, after, it);
@@ -1812,9 +1812,9 @@ plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
     if (dur > 0) {
         playlist->totaltime += dur;
     }
-    
+
     plt_modified (playlist);
-    
+
     UNLOCK;
     return it;
 }
@@ -2384,7 +2384,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
                 ftype[ft] = 0;
                 pl_replace_meta (it, ":FILETYPE", ftype);
             }
-        
+
             float f;
 
             if (fread (&f, 1, 4, fp) != 4) {
@@ -2724,7 +2724,7 @@ pl_get_item_replaygain (playItem_t *it, int idx) {
     if (idx < 0 || idx > DDB_REPLAYGAIN_TRACKPEAK) {
         return 0;
     }
-    
+
     switch (idx) {
     case DDB_REPLAYGAIN_ALBUMGAIN:
     case DDB_REPLAYGAIN_TRACKGAIN:
@@ -3268,7 +3268,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     if (n < 1) {
                         fprintf (stderr, "pl_format_title_int: got unpredicted state while formatting escaped string. please report a bug.\n");
                         *ss = 0; // should never happen
-                        return -1; 
+                        return -1;
                     }
                     *s++ = '\'';
                     n--;
@@ -3500,30 +3500,34 @@ void
 plt_copy_items (playlist_t *to, int iter, playlist_t *from, playItem_t *before, uint32_t *indices, int cnt) {
     pl_lock ();
 
-    if (!from || !to) {
+    if (!from || !to || cnt == 0) {
         pl_unlock ();
         return;
     }
 
+    playItem_t **items = malloc (cnt * sizeof(playItem_t *));
     for (int i = 0; i < cnt; i++) {
         playItem_t *it = from->head[iter];
-        int idx = 0;
-        while (it && idx < indices[i]) {
+        for (int idx = 0; it && idx < indices[i]; idx++) {
             it = it->next[iter];
-            idx++;
         }
+        items[i] = it;
         if (!it) {
-            trace ("pl_copy_items: warning: item %d not found in source plt_to\n", indices[i]);
-            continue;
+            trace ("plt_copy_items: warning: item %d not found in source plt_to\n", indices[i]);
         }
-        playItem_t *it_new = pl_item_alloc ();
-        pl_item_copy (it_new, it);
-
-        playItem_t *after = before ? before->prev[iter] : to->tail[iter];
-        pl_insert_item (after, it_new);
-        pl_item_unref (it_new);
-
     }
+    playItem_t *after = before ? before->prev[iter] : to->tail[iter];
+    for (int i = 0; i < cnt; i++) {
+        if (items[i]) {
+            playItem_t *new_it = pl_item_alloc();
+            pl_item_copy (new_it, items[i]);
+            pl_insert_item (after, new_it);
+            pl_item_unref (new_it);
+            after = new_it;
+        }
+    }
+    free(items);
+
     pl_unlock ();
 }
 
