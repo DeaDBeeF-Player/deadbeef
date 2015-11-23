@@ -545,6 +545,19 @@ static const char *map[] = {
 };
 
 static int
+ff_add_disc_meta (DB_playItem_t *it, const char *disc) {
+    char *slash = strchr (disc, '/');
+    if (slash) {
+        // split into track/number
+        *slash = 0;
+        slash++;
+        pl_add_meta (it, "numdiscs", slash);
+    }
+    pl_add_meta (it, "disc", disc);
+    return 0;
+}
+
+static int
 ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
 #if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,43,0)
     if (!strlen (fctx->title)) {
@@ -574,8 +587,14 @@ ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
         do {
             tag = av_metadata_get (md, map[m], tag, AV_METADATA_DONT_STRDUP_KEY | AV_METADATA_DONT_STRDUP_VAL);
             if (tag) {
-                deadbeef->pl_append_meta (it, map[m+1], tag->value);
+                if (!strcmp (map[m+1], "disc")) {
+                    ff_add_disc_meta (it, tag->value);
+                }
+                else {
+                    deadbeef->pl_append_meta (it, map[m+1], tag->value);
+                }
             }
+
         } while (tag);
     }
 #else
@@ -607,7 +626,12 @@ ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
 
             for (m = 0; map[m]; m += 2) {
                 if (!strcasecmp (t->key, map[m])) {
-                    deadbeef->pl_append_meta (it, map[m+1], t->value);
+                    if (!strcmp (map[m+1], "disc")) {
+                        ff_add_disc_meta (it, t->value);
+                    }
+                    else {
+                        deadbeef->pl_append_meta (it, map[m+1], t->value);
+                    }
                     break;
                 }
             }
