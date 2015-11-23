@@ -597,6 +597,11 @@ void
 ddb_listview_list_realize                    (GtkWidget       *widget,
         gpointer         user_data)
 {
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
+    if (!ps->binding->drag_n_drop) {
+        // playlist doesn't support drag and drop (e.g. searchlist)
+        return;
+    }
     GtkTargetEntry entry = {
         .target = "DDB_URI_LIST",
         .flags = GTK_TARGET_SAME_APP,
