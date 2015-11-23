@@ -29,14 +29,16 @@ extern DB_functions_t *deadbeef;
 
 // full metadata
 static const char *types[] = {
-    "artist", "Artist",
+    "artist", "Artist Name",
     "title", "Track Title",
-    "album", "Album",
+    "album", "Album Title",
     "year", "Date",
-    "track", "Track Number",
-    "numtracks", "Total Tracks",
     "genre", "Genre",
     "composer", "Composer",
+//    "performer", "Performer", // FIXME: tag mapping for performer seems to be missing
+    "album artist", "Album Artist",
+    "track", "Track Number",
+    "numtracks", "Total Tracks",
     "disc", "Disc Number",
     "numdiscs", "Total Discs",
     "comment", "Comment",
