@@ -1303,10 +1303,14 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         int length = (len/4)-1;
         DdbListviewIter drop_before = it;
         // find last selected
-        while (drop_before && ps->binding->is_selected (drop_before)) {
-            DdbListviewIter next = PL_NEXT(drop_before);
-            UNREF (drop_before);
-            drop_before = next;
+        if (plt == deadbeef->plt_get_curr_idx ()) {
+            while (drop_before && ps->binding->is_selected (drop_before)) {
+                DdbListviewIter next = PL_NEXT(drop_before);
+                UNREF (drop_before);
+                drop_before = next;
+            }
+        }
+        while (plt == deadbeef->plt_get_curr_idx () && drop_before && ps->binding->is_selected (drop_before)) {
         }
         ddb_playlist_t *p = deadbeef->plt_get_for_idx (plt);
         if (p) {
