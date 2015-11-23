@@ -389,7 +389,7 @@ static void asf_utf16LEdecode(DB_FILE *fd,
 }
 
 static int
-asf_add_disc_meta (playItem_t *it, const char *disc) {
+asf_add_disc_meta (DB_playItem_t *it, const char *disc) {
     char *slash = strchr (disc, '/');
     if (slash) {
         // split into track/number
