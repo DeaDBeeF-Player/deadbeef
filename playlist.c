@@ -351,15 +351,7 @@ plt_get_sel_count (int plt) {
     playlist_t *p = playlists_head;
     for (int i = 0; p && i <= plt; i++, p = p->next) {
         if (i == plt) {
-            int cnt = 0;
-            LOCK;
-            for (playItem_t *it = p->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-                if (it->selected) {
-                    cnt++;
-                }
-            }
-            UNLOCK;
-            return cnt;
+            return plt_getselcount (p);
         }
     }
     return 0;
