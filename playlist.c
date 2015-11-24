@@ -3508,7 +3508,7 @@ void
 plt_copy_items (playlist_t *to, int iter, playlist_t *from, playItem_t *before, uint32_t *indices, int cnt) {
     pl_lock ();
 
-    if (!from || !to | cnt == 0) {
+    if (!from || !to || cnt == 0) {
         pl_unlock ();
         return;
     }
