@@ -734,7 +734,6 @@ popup_menu_position_func (GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gp
 void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     clicked_idx = deadbeef->pl_get_idx_of (it);
-    int inqueue = deadbeef->playqueue_test (it);
     GtkWidget *playlist_menu;
     GtkWidget *add_to_playback_queue1;
     GtkWidget *remove_from_playback_queue1;
@@ -755,7 +754,22 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     g_object_set_data (G_OBJECT (add_to_playback_queue1), "ps", listview);
 
     remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove From Playback Queue"));
-    if (inqueue == -1) {
+    if (listview->binding->sel_count () > 1) {
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        int pqlen = deadbeef->playqueue_get_count ();
+        int no_playqueue_items = 1;
+        for (int i = 0; i < pqlen && no_playqueue_items; i++) {
+            DB_playItem_t *pqitem = deadbeef->playqueue_get_item (i);
+            if (deadbeef->pl_get_playlist (pqitem) == plt && listview->binding->is_selected (pqitem)) {
+                no_playqueue_items = 0;
+            }
+            listview->binding->unref (pqitem);
+        }
+        if (no_playqueue_items) {
+            gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
+        }
+    }
+    else if (deadbeef->playqueue_test (it) == -1) {
         gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
     }
     gtk_widget_show (remove_from_playback_queue1);
