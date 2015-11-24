@@ -400,6 +400,9 @@
 		2D35E3161AA7AC4B0077FBD1 /* tracksel.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D35E3111AA7AC4B0077FBD1 /* tracksel.c */; };
 		2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2D3E0E1B1B39AAC20007ECC3 /* btnBrowseTemplate.pdf */; };
 		2D3EBD9D1A9379BD00E5E255 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D3EBD9C1A9379BD00E5E255 /* Preferences.xib */; };
+		2D4458DF1C04F1FF00230939 /* vfs_zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D4458DE1C04F1FF00230939 /* vfs_zip.c */; };
+		2D4459FB1C04F2F000230939 /* libzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4459E61C04F28800230939 /* libzip.framework */; };
+		2D4459FC1C04F30E00230939 /* vfs_zip.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D4458D91C04F1C000230939 /* vfs_zip.dylib */; };
 		2D5121C61B01DEFD009F6410 /* sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D642EAD1AE9152E00FC1F7B /* sort.c */; };
 		2D51999C1A436FD100670717 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999A1A436FD100670717 /* config.h */; };
 		2D51999D1A436FD100670717 /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999B1A436FD100670717 /* mpg123.h */; };
@@ -1338,6 +1341,90 @@
 			remoteGlobalIDString = 2D2A135919B647CF00AD1EB7;
 			remoteInfo = gme;
 		};
+		2D4459E31C04F28800230939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BDC71E015B182B200236D3C;
+			remoteInfo = libzip_iOS;
+		};
+		2D4459E51C04F28800230939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B01D68B15B2F3F1002D5007;
+			remoteInfo = libzip;
+		};
+		2D4459E71C04F28800230939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B01D6FD15B2F4B1002D5007;
+			remoteInfo = zipmerge;
+		};
+		2D4459E91C04F28800230939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B01D71315B2F4EB002D5007;
+			remoteInfo = zipcmp;
+		};
+		2D4459EB1C04F28800230939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BACD5C115BC2DC900920691;
+			remoteInfo = add_from_filep;
+		};
+		2D4459ED1C04F28800230939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BACD5D015BC2DF200920691;
+			remoteInfo = fopen_unchanged;
+		};
+		2D4459EF1C04F28800230939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BACD5DF15BC2F3700920691;
+			remoteInfo = fread;
+		};
+		2D4459F11C04F28800230939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BD6CB6C19E71CD100710654;
+			remoteInfo = hole;
+		};
+		2D4459F31C04F28800230939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BACD58915BC2CEA00920691;
+			remoteInfo = modify;
+		};
+		2D4459F51C04F28800230939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BACD65015BC301300920691;
+			remoteInfo = tryopen;
+		};
+		2D4459F71C04F2C400230939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D4458D81C04F1C000230939;
+			remoteInfo = vfs_zip;
+		};
+		2D4459F91C04F2D300230939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B01D68A15B2F3F1002D5007;
+			remoteInfo = libzip;
+		};
 		2D565B971A40C0F300CE1F5D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -1868,6 +1955,9 @@
 		2D35E3111AA7AC4B0077FBD1 /* tracksel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tracksel.c; sourceTree = "<group>"; };
 		2D3E0E1B1B39AAC20007ECC3 /* btnBrowseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnBrowseTemplate.pdf; path = images/btnBrowseTemplate.pdf; sourceTree = "<group>"; };
 		2D3EBD9C1A9379BD00E5E255 /* Preferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
+		2D4458D91C04F1C000230939 /* vfs_zip.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vfs_zip.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D4458DE1C04F1FF00230939 /* vfs_zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vfs_zip.c; path = plugins/vfs_zip/vfs_zip.c; sourceTree = "<group>"; };
+		2D4459D21C04F28800230939 /* libzip.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libzip.xcodeproj; path = "osx/deps/libzip-1.0.1/xcode/libzip.xcodeproj"; sourceTree = "<group>"; };
 		2D51999A1A436FD100670717 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = "osx/deps/mpg123-1.21.0/ports/Xcode/config.h"; sourceTree = "<group>"; };
 		2D51999B1A436FD100670717 /* mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpg123.h; path = "osx/deps/mpg123-1.21.0/ports/Xcode/mpg123.h"; sourceTree = "<group>"; };
 		2D524C071B245AE00018C4FA /* DdbTitleFormattingHelpButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbTitleFormattingHelpButton.h; sourceTree = "<group>"; };
@@ -2885,6 +2975,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2D4458D61C04F1C000230939 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D4459FB1C04F2F000230939 /* libzip.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D5D213D1A4033B0001D5A79 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3513,6 +3611,32 @@
 			);
 			name = dial68;
 			path = plugins/sc68/dial68;
+			sourceTree = "<group>";
+		};
+		2D4458DD1C04F1E400230939 /* vfs_zip */ = {
+			isa = PBXGroup;
+			children = (
+				2D4459D21C04F28800230939 /* libzip.xcodeproj */,
+				2D4458DE1C04F1FF00230939 /* vfs_zip.c */,
+			);
+			name = vfs_zip;
+			sourceTree = "<group>";
+		};
+		2D4459D31C04F28800230939 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2D4459E41C04F28800230939 /* libzip_iOS.framework */,
+				2D4459E61C04F28800230939 /* libzip.framework */,
+				2D4459E81C04F28800230939 /* zipmerge */,
+				2D4459EA1C04F28800230939 /* zipcmp */,
+				2D4459EC1C04F28800230939 /* add_from_filep */,
+				2D4459EE1C04F28800230939 /* fopen_unchanged */,
+				2D4459F01C04F28800230939 /* fread */,
+				2D4459F21C04F28800230939 /* hole */,
+				2D4459F41C04F28800230939 /* modify */,
+				2D4459F61C04F28800230939 /* tryopen */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		2D5D21441A4033D3001D5A79 /* lastfm */ = {
@@ -4487,6 +4611,7 @@
 				2D05A8311B4BE5BC004C913D /* libsndfilelib.a */,
 				2D11D3B91B9DC67100C7C731 /* vtx.dylib */,
 				2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */,
+				2D4458D91C04F1C000230939 /* vfs_zip.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4608,6 +4733,7 @@
 		4D1B514C1837EF7C003E6066 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				2D4458DD1C04F1E400230939 /* vfs_zip */,
 				2DE92F331BAFFB7700F37154 /* wavpack */,
 				2D11D3B41B9DC66500C7C731 /* vtx */,
 				2D05A8351B4BE5C4004C913D /* sndfile */,
@@ -5364,6 +5490,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2D4458D71C04F1C000230939 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D5D213E1A4033B0001D5A79 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -5858,6 +5991,24 @@
 			productReference = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		2D4458D81C04F1C000230939 /* vfs_zip */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D4458DC1C04F1C000230939 /* Build configuration list for PBXNativeTarget "vfs_zip" */;
+			buildPhases = (
+				2D4458D51C04F1C000230939 /* Sources */,
+				2D4458D61C04F1C000230939 /* Frameworks */,
+				2D4458D71C04F1C000230939 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2D4459FA1C04F2D300230939 /* PBXTargetDependency */,
+			);
+			name = vfs_zip;
+			productName = vfs_zip;
+			productReference = 2D4458D91C04F1C000230939 /* vfs_zip.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2D5D213F1A4033B0001D5A79 /* lastfm */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D5D21431A4033B0001D5A79 /* Build configuration list for PBXNativeTarget "lastfm" */;
@@ -6168,6 +6319,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D4459F81C04F2C400230939 /* PBXTargetDependency */,
 				2DE92F551BAFFBE100F37154 /* PBXTargetDependency */,
 				2D11D3CC1B9DC6AA00C7C731 /* PBXTargetDependency */,
 				2D05A8D81B4BE630004C913D /* PBXTargetDependency */,
@@ -6330,6 +6482,9 @@
 					2D23511A1B138ECB00A62936 = {
 						CreatedOnToolsVersion = 6.3.1;
 					};
+					2D4458D81C04F1C000230939 = {
+						CreatedOnToolsVersion = 7.1.1;
+					};
 					2D5D213F1A4033B0001D5A79 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
@@ -6385,6 +6540,12 @@
 			mainGroup = 4D1B3E7118379829003E6066;
 			productRefGroup = 4D1B3E7B18379829003E6066 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 2D4459D31C04F28800230939 /* Products */;
+					ProjectRef = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				4D1B3E7918379829003E6066 /* deadbeef */,
@@ -6419,9 +6580,83 @@
 				2D05A8301B4BE5BC004C913D /* sndfilelib */,
 				2D11D3B81B9DC67100C7C731 /* vtx */,
 				2DE92F2E1BAFFB4F00F37154 /* wavpack */,
+				2D4458D81C04F1C000230939 /* vfs_zip */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		2D4459E41C04F28800230939 /* libzip_iOS.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = libzip_iOS.framework;
+			remoteRef = 2D4459E31C04F28800230939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2D4459E61C04F28800230939 /* libzip.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = libzip.framework;
+			remoteRef = 2D4459E51C04F28800230939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2D4459E81C04F28800230939 /* zipmerge */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = zipmerge;
+			remoteRef = 2D4459E71C04F28800230939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2D4459EA1C04F28800230939 /* zipcmp */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = zipcmp;
+			remoteRef = 2D4459E91C04F28800230939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2D4459EC1C04F28800230939 /* add_from_filep */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = add_from_filep;
+			remoteRef = 2D4459EB1C04F28800230939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2D4459EE1C04F28800230939 /* fopen_unchanged */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = fopen_unchanged;
+			remoteRef = 2D4459ED1C04F28800230939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2D4459F01C04F28800230939 /* fread */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = fread;
+			remoteRef = 2D4459EF1C04F28800230939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2D4459F21C04F28800230939 /* hole */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = hole;
+			remoteRef = 2D4459F11C04F28800230939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2D4459F41C04F28800230939 /* modify */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = modify;
+			remoteRef = 2D4459F31C04F28800230939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2D4459F61C04F28800230939 /* tryopen */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = tryopen;
+			remoteRef = 2D4459F51C04F28800230939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		2DAA4C061AAF88DE00519559 /* Resources */ = {
@@ -6442,6 +6677,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D4459FC1C04F30E00230939 /* vfs_zip.dylib in Resources */,
 				2DE92F561BAFFBEE00F37154 /* wavpack.dylib in Resources */,
 				2D11D3CD1B9DC6B500C7C731 /* vtx.dylib in Resources */,
 				2D05A8D91B4BE63D004C913D /* sndfile.dylib in Resources */,
@@ -6890,6 +7126,14 @@
 				2D2A14A919B6482600AD1EB7 /* Vgm_Core.cpp in Sources */,
 				8374A5071B8946A800C6A572 /* pwm.c in Sources */,
 				83D1CD6B1B7711570063DA75 /* instructions.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D4458D51C04F1C000230939 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D4458DF1C04F1FF00230939 /* vfs_zip.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7530,6 +7774,16 @@
 			target = 2D2A135919B647CF00AD1EB7 /* gme */;
 			targetProxy = 2D2A14B819B6484100AD1EB7 /* PBXContainerItemProxy */;
 		};
+		2D4459F81C04F2C400230939 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D4458D81C04F1C000230939 /* vfs_zip */;
+			targetProxy = 2D4459F71C04F2C400230939 /* PBXContainerItemProxy */;
+		};
+		2D4459FA1C04F2D300230939 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libzip;
+			targetProxy = 2D4459F91C04F2D300230939 /* PBXContainerItemProxy */;
+		};
 		2D565B981A40C0F300CE1F5D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D917E771A4046FE00C3EB44 /* mpg123 */;
@@ -8169,6 +8423,63 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USE_HEADERMAP = NO;
+			};
+			name = Release;
+		};
+		2D4458DA1C04F1C000230939 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/deps/libzip-1.0.1/lib\"",
+					"\"$(SRCROOT)/deps/libzip-1.0.1/xcode\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2D4458DB1C04F1C000230939 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/deps/libzip-1.0.1/lib\"",
+					"\"$(SRCROOT)/deps/libzip-1.0.1/xcode\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -9392,6 +9703,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		2D4458DC1C04F1C000230939 /* Build configuration list for PBXNativeTarget "vfs_zip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D4458DA1C04F1C000230939 /* Debug */,
+				2D4458DB1C04F1C000230939 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		2D5D21431A4033B0001D5A79 /* Build configuration list for PBXNativeTarget "lastfm" */ = {
 			isa = XCConfigurationList;
