@@ -395,9 +395,9 @@ asf_add_disc_meta (DB_playItem_t *it, const char *disc) {
         // split into track/number
         *slash = 0;
         slash++;
-        pl_add_meta (it, "numdiscs", slash);
+        deadbeef->pl_add_meta (it, "numdiscs", slash);
     }
-    pl_add_meta (it, "disc", disc);
+    deadbeef->pl_add_meta (it, "disc", disc);
     return 0;
 }
 
