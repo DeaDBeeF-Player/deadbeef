@@ -1038,7 +1038,7 @@ gtkui_thread (void *ctx) {
     wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0);
 
     gtkui_on_configchanged (NULL);
-    gtkui_init_theme_colors ();
+//    gtkui_init_theme_colors (); too early, wait for mainwin realize
 
     // visibility of statusbar and headers
     GtkWidget *sb_mi = lookup_widget (mainwin, "view_status_bar");
@@ -1623,7 +1623,7 @@ static ddb_gtkui_t plugin = {
     .gui.plugin.name = "GTK2 user interface",
     .gui.plugin.descr = "User interface using GTK+ 2.x",
 #endif
-    .gui.plugin.copyright = 
+    .gui.plugin.copyright =
         "GTK+ user interface for DeaDBeeF Player.\n"
         "Copyright (C) 2009-2015 Alexey Yakovenko and other contributors\n"
         "\n"

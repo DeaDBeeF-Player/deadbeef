@@ -2044,11 +2044,9 @@ paused_cb (gpointer data) {
 static gboolean
 config_changed_cb (gpointer data) {
     DdbListview *p = DDB_LISTVIEW (data);
-    ddb_listview_update_fonts (p);
-    ddb_listview_header_update_fonts (p);
     ddb_listview_lock_columns (p, 0);
     ddb_listview_clear_sort (p);
-    ddb_listview_refresh (DDB_LISTVIEW (p), DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
+    ddb_listview_refresh (DDB_LISTVIEW (p), DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL | DDB_REFRESH_FONTS);
     return FALSE;
 }
 
@@ -2361,7 +2359,6 @@ static void
 w_playlist_init (ddb_gtkui_widget_t *base) {
     w_playlist_t *w = (w_playlist_t *)base;
     ddb_listview_show_header (w->list, !w->hideheaders);
-
     g_idle_add (playlistswitch_cb, w);
     g_idle_add (refresh_cb, w->list);
 }
