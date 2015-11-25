@@ -2406,10 +2406,19 @@ w_tabbed_playlist_create (void) {
     w->plt.list = (DdbListview *)list;
     gtk_widget_show (list);
 
+    GtkWidget *sepbox = gtk_vbox_new (FALSE, 0);
+    gtk_widget_show (sepbox);
+    gtk_container_set_border_width (GTK_CONTAINER (sepbox), 1);
+
+    GtkWidget *hsep  = gtk_hseparator_new ();
+    gtk_widget_show (hsep);
+    gtk_box_pack_start (GTK_BOX (sepbox), hsep, FALSE, TRUE, 0);
+
     gtk_box_pack_start (GTK_BOX (vbox), tabstrip, FALSE, TRUE, 0);
     gtk_widget_set_can_focus (tabstrip, FALSE);
     gtk_widget_set_can_default (tabstrip, FALSE);
 
+    gtk_box_pack_start (GTK_BOX (vbox), sepbox, FALSE, TRUE, 0);
     gtk_box_pack_start (GTK_BOX (vbox), list, TRUE, TRUE, 0);
 
     main_playlist_init (list);
