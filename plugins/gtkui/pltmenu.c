@@ -254,7 +254,7 @@ gtkui_create_pltmenu (int plt_idx) {
     GtkWidget *rename_playlist1;
     GtkWidget *remove_playlist1;
     GtkWidget *add_new_playlist1;
-    GtkWidget *separator11;
+    GtkWidget *separator1;
     GtkWidget *load_playlist1;
     GtkWidget *save_playlist1;
     GtkWidget *save_all_playlists1;
@@ -279,6 +279,11 @@ gtkui_create_pltmenu (int plt_idx) {
     add_new_playlist1 = gtk_menu_item_new_with_mnemonic (_("Add New Playlist"));
     gtk_widget_show (add_new_playlist1);
     gtk_container_add (GTK_CONTAINER (plmenu), add_new_playlist1);
+
+    separator1 = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator1);
+    gtk_container_add (GTK_CONTAINER (plmenu), separator1);
+    gtk_widget_set_sensitive (separator1, FALSE);
 
     g_signal_connect ((gpointer) rename_playlist1, "activate",
             G_CALLBACK (on_rename_playlist1_activate),
