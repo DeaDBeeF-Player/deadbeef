@@ -621,7 +621,7 @@ junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in,
 #endif
 }
 
-
+#define ID3V1_GENRE_COUNT (sizeof(junk_genretbl) / sizeof (char *) - 1)
 static const char *junk_genretbl[] = {
     "Blues",
     "Classic Rock",
@@ -1076,7 +1076,7 @@ junk_id3v1_read_int (playItem_t *it, char *buffer, const char **charset) {
         if (genreid == 0xff) {
             //genre = "None";
         }
-        else if (genreid <= 147) {
+        else if (genreid < ID3V1_GENRE_COUNT) {
             genre = junk_genretbl[genreid];
         }
     }
@@ -3722,7 +3722,7 @@ junk_id3v2_add_genre (playItem_t *it, char *genre) {
         int genre_id = atoi (genre);
         if (genre_id >= 0) {
             const char *genre_str = NULL;
-            if (genre_id <= 147) {
+            if (genre_id < ID3V1_GENRE_COUNT) {
                 genre_str = junk_genretbl[genre_id];
             }
             else if (genre_id == 0xff) {
