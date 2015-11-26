@@ -295,12 +295,6 @@ on_loop_disable_activate               (GtkMenuItem     *menuitem,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-void
-on_searchlist_realize                  (GtkWidget       *widget,
-                                        gpointer         user_data)
-{
-}
-
 gboolean
 on_mainwin_delete_event                (GtkWidget       *widget,
                                         GdkEvent        *event,

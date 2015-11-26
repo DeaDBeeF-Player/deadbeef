@@ -137,57 +137,6 @@ search_redraw (void) {
     }
 }
 
-///////// searchwin header handlers
-
-gboolean
-on_searchheader_button_press_event     (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
-
-  return FALSE;
-}
-
-
-gboolean
-on_searchheader_button_release_event   (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
-
-  return FALSE;
-}
-
-
-gboolean
-on_searchheader_configure_event        (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
-                                        gpointer         user_data)
-{
-    return FALSE;
-}
-
-
-gboolean
-on_searchheader_expose_event           (GtkWidget       *widget,
-                                        GdkEventExpose  *event,
-                                        gpointer         user_data)
-{
-
-  return FALSE;
-}
-
-
-gboolean
-on_searchheader_motion_notify_event    (GtkWidget       *widget,
-                                        GdkEventMotion  *event,
-                                        gpointer         user_data)
-{
-
-  return FALSE;
-}
-
-
 ///////// searchwin playlist navigation and rendering
 
 void

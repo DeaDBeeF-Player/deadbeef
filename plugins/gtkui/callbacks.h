@@ -163,31 +163,6 @@ on_searchentry_changed                 (GtkEditable     *editable,
                                         gpointer         user_data);
 
 gboolean
-on_searchheader_button_press_event     (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data);
-
-gboolean
-on_searchheader_button_release_event   (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data);
-
-gboolean
-on_searchheader_configure_event        (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
-                                        gpointer         user_data);
-
-gboolean
-on_searchheader_expose_event           (GtkWidget       *widget,
-                                        GdkEventExpose  *event,
-                                        gpointer         user_data);
-
-gboolean
-on_searchheader_motion_notify_event    (GtkWidget       *widget,
-                                        GdkEventMotion  *event,
-                                        gpointer         user_data);
-
-gboolean
 on_searchlist_button_press_event       (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data);

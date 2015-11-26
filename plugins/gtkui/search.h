@@ -26,9 +26,6 @@
 
 #include "ddblistview.h"
 
-extern struct playItem_s *search_current;
-extern int search_count;
-
 void
 search_start (void);
 
