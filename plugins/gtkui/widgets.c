@@ -1727,7 +1727,8 @@ on_tab_popup_menu (GtkWidget *widget, gpointer user_data)
 
 static void
 w_tabs_add (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
-    GtkWidget *label = gtk_label_new (child->type);
+    const char *title = w_get_title (child);
+    GtkWidget *label = gtk_label_new (title ? title : child->type);
     gtk_widget_show (label);
     gtk_widget_show (child->widget);
     gtk_notebook_append_page (GTK_NOTEBOOK (cont->widget), child->widget, label);
@@ -1759,7 +1760,8 @@ w_tabs_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtkui_w
             gtk_notebook_remove_page (GTK_NOTEBOOK(cont->widget), ntab);
             c->widget = NULL;
             w_destroy (c);
-            GtkWidget *label = gtk_label_new (newchild->type);
+            const char *title = w_get_title (newchild);
+            GtkWidget *label = gtk_label_new (title ? title : newchild->type);
             gtk_widget_show (label);
             gtk_widget_show (newchild->widget);
             int pos = gtk_notebook_insert_page (GTK_NOTEBOOK (cont->widget), newchild->widget, label, ntab);
