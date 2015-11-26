@@ -94,15 +94,6 @@ enum {
 };
 
 void
-theme_set_cairo_source_rgb (cairo_t *cr, int col);
-
-void
-theme_set_fg_color (int col);
-
-void
-theme_set_bg_color (int col);
-
-void
 playlist_refresh (void);
 
 void
