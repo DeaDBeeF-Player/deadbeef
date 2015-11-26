@@ -347,6 +347,17 @@ w_replace (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *from, ddb_gtkui_widget_t *
     }
 }
 
+static const char *
+w_get_title (ddb_gtkui_widget_t *w)
+{
+    for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
+        if (cr->type == w->type && cr->title) {
+            return cr->title;
+        }
+    }
+    return NULL;
+}
+
 // unknown widget wrapper
 typedef struct {
     ddb_gtkui_widget_t base;
@@ -780,6 +791,21 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
     GtkWidget *submenu;
     GtkWidget *item;
     menu = gtk_menu_new ();
+
+    const char *widget_title = w_get_title (current_widget);
+    if (widget_title) {
+        // Add title of widget at the top of the menu
+        item = gtk_menu_item_new_with_mnemonic (widget_title);
+        gtk_widget_show (item);
+        gtk_widget_set_sensitive (item, FALSE);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+
+        GtkWidget *separator = gtk_separator_menu_item_new ();
+        gtk_widget_show (separator);
+        gtk_container_add (GTK_CONTAINER (menu), separator);
+        gtk_widget_set_sensitive (separator, FALSE);
+    }
+
     if (strcmp (current_widget->type, "placeholder")) {
         item = gtk_menu_item_new_with_mnemonic (_("Replace with..."));
         gtk_widget_show (item);
@@ -1701,7 +1727,8 @@ on_tab_popup_menu (GtkWidget *widget, gpointer user_data)
 
 static void
 w_tabs_add (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
-    GtkWidget *label = gtk_label_new (child->type);
+    const char *title = w_get_title (child);
+    GtkWidget *label = gtk_label_new (title ? title : child->type);
     gtk_widget_show (label);
     gtk_widget_show (child->widget);
     gtk_notebook_append_page (GTK_NOTEBOOK (cont->widget), child->widget, label);
@@ -1733,7 +1760,8 @@ w_tabs_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtkui_w
             gtk_notebook_remove_page (GTK_NOTEBOOK(cont->widget), ntab);
             c->widget = NULL;
             w_destroy (c);
-            GtkWidget *label = gtk_label_new (newchild->type);
+            const char *title = w_get_title (newchild);
+            GtkWidget *label = gtk_label_new (title ? title : newchild->type);
             gtk_widget_show (label);
             gtk_widget_show (newchild->widget);
             int pos = gtk_notebook_insert_page (GTK_NOTEBOOK (cont->widget), newchild->widget, label, ntab);
