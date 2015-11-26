@@ -151,6 +151,30 @@ add_tab_actions (GtkWidget *menu) {
 
     int added_entries = 0;
 
+    int item_count = 0;
+    int playqueue_test = 0;
+
+    /* FIXME: since actions don't apply to the clicked playlist
+    but to the currently active playlist we have to use the current
+    one for now to determine if menu items should be sensitive or not */
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        item_count = deadbeef->plt_get_item_count (plt, PL_MAIN);
+
+        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+        while (it) {
+            if (deadbeef->playqueue_test (it) != -1) {
+                playqueue_test = 1;
+                deadbeef->pl_item_unref (it);
+                break;
+            }
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+        deadbeef->plt_unref (plt);
+    }
+
     int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
 
     for (i = 0; plugins[i]; i++)
@@ -172,14 +196,16 @@ add_tab_actions (GtkWidget *menu) {
                 continue;
             }
 
+            int sensitive = item_count ? 1 : 0;
+
             // create submenus (separated with '/')
             const char *prev = action->title;
             while (*prev && *prev == '/') {
                 prev++;
             }
-            
+
             GtkWidget *popup = NULL;
-            
+
             for (;;) {
                 const char *slash = strchr (prev, '/');
                 if (slash && *(slash-1) != '\\') {
@@ -204,6 +230,7 @@ add_tab_actions (GtkWidget *menu) {
                     popup = find_popup (prev_menu, name);
                     if (!popup) {
                         GtkWidget *item = gtk_image_menu_item_new_with_mnemonic (_(name));
+                        gtk_widget_set_sensitive (item, sensitive);
                         gtk_widget_show (item);
                         gtk_container_add (GTK_CONTAINER (prev_menu), item);
                         popup = gtk_menu_new ();
@@ -237,7 +264,15 @@ add_tab_actions (GtkWidget *menu) {
             }
             *t = 0;
 
+            if (action->name && !strcmp (action->name, "remove_from_playback_queue")) {
+                if (!playqueue_test) {
+                    // no playitem in queue, make menu item insenstive
+                    sensitive = 0;
+                }
+            }
+
             actionitem = gtk_menu_item_new_with_mnemonic (_(title));
+            gtk_widget_set_sensitive (actionitem, sensitive);
             gtk_widget_show (actionitem);
             gtk_container_add (popup ? GTK_CONTAINER (popup) : GTK_CONTAINER (menu), actionitem);
 
@@ -254,7 +289,7 @@ gtkui_create_pltmenu (int plt_idx) {
     GtkWidget *rename_playlist1;
     GtkWidget *remove_playlist1;
     GtkWidget *add_new_playlist1;
-    GtkWidget *separator11;
+    GtkWidget *separator1;
     GtkWidget *load_playlist1;
     GtkWidget *save_playlist1;
     GtkWidget *save_all_playlists1;
@@ -279,6 +314,11 @@ gtkui_create_pltmenu (int plt_idx) {
     add_new_playlist1 = gtk_menu_item_new_with_mnemonic (_("Add New Playlist"));
     gtk_widget_show (add_new_playlist1);
     gtk_container_add (GTK_CONTAINER (plmenu), add_new_playlist1);
+
+    separator1 = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator1);
+    gtk_container_add (GTK_CONTAINER (plmenu), separator1);
+    gtk_widget_set_sensitive (separator1, FALSE);
 
     g_signal_connect ((gpointer) rename_playlist1, "activate",
             G_CALLBACK (on_rename_playlist1_activate),
