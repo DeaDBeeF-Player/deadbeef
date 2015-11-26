@@ -141,6 +141,45 @@ unescape_forward_slash (const char *src, char *dst, int size) {
     *dst = 0;
 }
 
+static void
+set_scale (const char *scale_name, int value) {
+    GtkWidget *scale = lookup_widget (prefwin, scale_name);
+    GSignalMatchType mask = G_SIGNAL_MATCH_DETAIL | G_SIGNAL_MATCH_DATA;
+    GQuark detail = g_quark_from_static_string("value_changed");
+    g_signal_handlers_block_matched ((gpointer)scale, mask, detail, 0, NULL, NULL, NULL);
+    gtk_range_set_value (GTK_RANGE (scale), value);
+    g_signal_handlers_unblock_matched ((gpointer)scale, mask, detail, 0, NULL, NULL, NULL);
+}
+
+static void
+set_combobox (GtkComboBox *combo, int i) {
+    GSignalMatchType mask = G_SIGNAL_MATCH_DETAIL | G_SIGNAL_MATCH_DATA;
+    GQuark detail = g_quark_from_static_string("changed");
+    g_signal_handlers_block_matched ((gpointer)combo, mask, detail, 0, NULL, NULL, NULL);
+    gtk_combo_box_set_active (combo, i);
+    g_signal_handlers_unblock_matched ((gpointer)combo, mask, detail, 0, NULL, NULL, NULL);
+}
+
+static void
+set_toggle_button (const char *button_name, int value) {
+    GtkToggleButton *button = GTK_TOGGLE_BUTTON (lookup_widget (prefwin, button_name));
+    GSignalMatchType mask = G_SIGNAL_MATCH_DETAIL | G_SIGNAL_MATCH_DATA;
+    GQuark detail = g_quark_from_static_string("toggled");
+    g_signal_handlers_block_matched ((gpointer)button, mask, detail, 0, NULL, NULL, NULL);
+    gtk_toggle_button_set_active (button, value);
+    g_signal_handlers_unblock_matched ((gpointer)button, mask, detail, 0, NULL, NULL, NULL);
+}
+
+static void
+set_entry_text (const char *entry_name, const char *text) {
+    GtkEntry *entry = GTK_ENTRY (lookup_widget (prefwin, entry_name));
+    GSignalMatchType mask = G_SIGNAL_MATCH_DETAIL | G_SIGNAL_MATCH_DATA;
+    GQuark detail = g_quark_from_static_string("changed");
+    g_signal_handlers_block_matched ((gpointer)entry, mask, detail, 0, NULL, NULL, NULL);
+    gtk_entry_set_text (entry, text);
+    g_signal_handlers_unblock_matched ((gpointer)entry, mask, detail, 0, NULL, NULL, NULL);
+}
+
 void
 gtkui_run_preferences_dlg (void) {
     if (prefwin) {
@@ -177,53 +216,53 @@ gtkui_run_preferences_dlg (void) {
 
     // replaygain_mode
     combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_mode"));
-    gtk_combo_box_set_active (combobox, deadbeef->conf_get_int ("replaygain_mode", 0));
+    set_combobox (combobox, deadbeef->conf_get_int ("replaygain_mode", 0));
 
     // replaygain_scale
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_replaygain_scale")), deadbeef->conf_get_int ("replaygain_scale", 1));
+    set_toggle_button("pref_replaygain_scale", deadbeef->conf_get_int ("replaygain_scale", 1));
 
     // replaygain_preamp
-    gtk_range_set_value (GTK_RANGE (lookup_widget (w, "replaygain_preamp")), deadbeef->conf_get_int ("replaygain_preamp", 0));
+    set_scale("replaygain_preamp", deadbeef->conf_get_int ("replaygain_preamp", 0));
 
     // global_preamp
-    gtk_range_set_value (GTK_RANGE (lookup_widget (w, "global_preamp")), deadbeef->conf_get_int ("global_preamp", 0));
+    set_scale("global_preamp", deadbeef->conf_get_int ("global_preamp", 0));
 
     // 8_to_16
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "convert8to16")), deadbeef->conf_get_int ("streamer.8_to_16", 1));
+    set_toggle_button("convert8to16", deadbeef->conf_get_int ("streamer.8_to_16", 1));
 
     // 16_to_24
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "convert16to24")), deadbeef->conf_get_int ("streamer.16_to_24", 0));
+    set_toggle_button("convert16to24", deadbeef->conf_get_int ("streamer.16_to_24", 0));
 
     // dsp
     dsp_setup_init (prefwin);
 
     // close_send_to_tray
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_close_send_to_tray")), deadbeef->conf_get_int ("close_send_to_tray", 0));
+    set_toggle_button("pref_close_send_to_tray", deadbeef->conf_get_int ("close_send_to_tray", 0));
 
     // hide tray icon
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "hide_tray_icon")), deadbeef->conf_get_int ("gtkui.hide_tray_icon", 0));
+    set_toggle_button("hide_tray_icon", deadbeef->conf_get_int ("gtkui.hide_tray_icon", 0));
 
     // mmb_delete_playlist
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "mmb_delete_playlist")), deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 1));
+    set_toggle_button("mmb_delete_playlist", deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 1));
 
     // hide_delete_from_disk
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "hide_delete_from_disk")), deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0));
+    set_toggle_button("hide_delete_from_disk", deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0));
 
     // auto-rename playlist from folder name
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "auto_name_playlist_from_folder")), deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 1));
+    set_toggle_button("auto_name_playlist_from_folder", deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 1));
 
     // refresh rate
     int val = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
-    gtk_range_set_value (GTK_RANGE (lookup_widget (w, "gui_fps")), val);
+    set_scale("gui_fps", val);
 
     // add from archives
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "ignore_archives")), deadbeef->conf_get_int ("ignore_archives", 1));
+    set_toggle_button("ignore_archives", deadbeef->conf_get_int ("ignore_archives", 1));
 
     // reset autostop
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "reset_autostop")), deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0));
+    set_toggle_button("reset_autostop", deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0));
 
     // reset album autostop
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "reset_autostopalbum")), deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0));
+    set_toggle_button("reset_autostopalbum", deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0));
 
     // titlebar text
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_playing")), deadbeef->conf_get_str_fast ("gtkui.titlebar_playing_tf", gtkui_default_titlebar_playing));
@@ -231,24 +270,24 @@ gtkui_run_preferences_dlg (void) {
 
     // cli playlist
     int active = deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1);
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "cli_add_to_playlist")), active);
+    set_toggle_button("cli_add_to_playlist", active);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "cli_playlist_name"), active);
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (prefwin, "cli_playlist_name")), deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default"));
 
     // resume last session
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "resume_last_session")), deadbeef->conf_get_int ("resume_last_session", 0));
+    set_toggle_button("resume_last_session", deadbeef->conf_get_int ("resume_last_session", 0));
 
     // enable shift-jis recoding
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "enable_shift_jis_recoding")), deadbeef->conf_get_int ("junk.enable_shift_jis_detection", 0));
+    set_toggle_button("enable_shift_jis_recoding", deadbeef->conf_get_int ("junk.enable_shift_jis_detection", 0));
 
     // enable cp1251 recoding
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "enable_cp1251_recoding")), deadbeef->conf_get_int ("junk.enable_cp1251_detection", 1));
+    set_toggle_button("enable_cp1251_recoding", deadbeef->conf_get_int ("junk.enable_cp1251_detection", 1));
 
     // enable cp936 recoding
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "enable_cp936_recoding")), deadbeef->conf_get_int ("junk.enable_cp936_detection", 0));
+    set_toggle_button("enable_cp936_recoding", deadbeef->conf_get_int ("junk.enable_cp936_detection", 0));
 
     // enable auto-sizing of columns
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "auto_size_columns")), deadbeef->conf_get_int ("gtkui.autoresize_columns", 0));
+    set_toggle_button("auto_size_columns", deadbeef->conf_get_int ("gtkui.autoresize_columns", 0));
 
     // fill gui plugin list
     combobox = GTK_COMBO_BOX (lookup_widget (w, "gui_plugin"));
@@ -256,24 +295,24 @@ gtkui_run_preferences_dlg (void) {
     for (int i = 0; names[i]; i++) {
         gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), names[i]);
         if (!strcmp (names[i], deadbeef->conf_get_str_fast ("gui_plugin", "GTK2"))) {
-            gtk_combo_box_set_active (combobox, i);
+            set_combobox (combobox, i);
         }
     }
 
     // override bar colors
     int override = deadbeef->conf_get_int ("gtkui.override_bar_colors", 0);
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "override_bar_colors")), override);
+    set_toggle_button("override_bar_colors", override);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "bar_colors_group"), override);
 
     // override tabstrip colors
     override = deadbeef->conf_get_int ("gtkui.override_tabstrip_colors", 0);
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "override_tabstrip_colors")), override);
+    set_toggle_button("override_tabstrip_colors", override);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "tabstrip_colors_group"), override);
 
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "tabstrip_playing_bold")), deadbeef->conf_get_int ("gtkui.tabstrip_embolden_playing", 0));
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "tabstrip_playing_italic")), deadbeef->conf_get_int ("gtkui.tabstrip_italic_playing", 0));
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "tabstrip_selected_bold")), deadbeef->conf_get_int ("gtkui.tabstrip_embolden_selected", 0));
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "tabstrip_selected_italic")), deadbeef->conf_get_int ("gtkui.tabstrip_italic_selected", 0));
+    set_toggle_button("tabstrip_playing_bold", deadbeef->conf_get_int ("gtkui.tabstrip_embolden_playing", 0));
+    set_toggle_button("tabstrip_playing_italic", deadbeef->conf_get_int ("gtkui.tabstrip_italic_playing", 0));
+    set_toggle_button("tabstrip_selected_bold", deadbeef->conf_get_int ("gtkui.tabstrip_embolden_selected", 0));
+    set_toggle_button("tabstrip_selected_italic", deadbeef->conf_get_int ("gtkui.tabstrip_italic_selected", 0));
 
     // get default gtk font
     GtkStyle *style = gtk_widget_get_style (mainwin);
@@ -283,14 +322,14 @@ gtkui_run_preferences_dlg (void) {
 
     // override listview colors
     override = deadbeef->conf_get_int ("gtkui.override_listview_colors", 0);
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "override_listview_colors")), override);
+    set_toggle_button("override_listview_colors", override);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "listview_colors_group"), override);
 
     // embolden/italic listview text
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "listview_selected_text_bold")), deadbeef->conf_get_int ("gtkui.embolden_selected_tracks", 0));
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "listview_selected_text_italic")), deadbeef->conf_get_int ("gtkui.italic_selected_tracks", 0));
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "listview_playing_text_bold")), deadbeef->conf_get_int ("gtkui.embolden_current_track", 0));
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "listview_playing_text_italic")), deadbeef->conf_get_int ("gtkui.italic_current_track", 0));
+    set_toggle_button("listview_selected_text_bold", deadbeef->conf_get_int ("gtkui.embolden_selected_tracks", 0));
+    set_toggle_button("listview_selected_text_italic", deadbeef->conf_get_int ("gtkui.italic_selected_tracks", 0));
+    set_toggle_button("listview_playing_text_bold", deadbeef->conf_get_int ("gtkui.embolden_current_track", 0));
+    set_toggle_button("listview_playing_text_italic", deadbeef->conf_get_int ("gtkui.italic_current_track", 0));
 
     gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "listview_text_font")), deadbeef->conf_get_str_fast ("gtkui.font.listview_text", gtk_style_font));
     gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "listview_group_text_font")), deadbeef->conf_get_str_fast ("gtkui.font.listview_group_text", gtk_style_font));
@@ -300,35 +339,35 @@ gtkui_run_preferences_dlg (void) {
     prefwin_init_theme_colors ();
 
     // network
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_network_enableproxy")), deadbeef->conf_get_int ("network.proxy", 0));
+    set_toggle_button("pref_network_enableproxy", deadbeef->conf_get_int ("network.proxy", 0));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyaddress")), deadbeef->conf_get_str_fast ("network.proxy.address", ""));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyport")), deadbeef->conf_get_str_fast ("network.proxy.port", "8080"));
     combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_network_proxytype"));
     const char *type = deadbeef->conf_get_str_fast ("network.proxy.type", "HTTP");
     if (!strcasecmp (type, "HTTP")) {
-        gtk_combo_box_set_active (combobox, 0);
+        set_combobox (combobox, 0);
     }
     else if (!strcasecmp (type, "HTTP_1_0")) {
-        gtk_combo_box_set_active (combobox, 1);
+        set_combobox (combobox, 1);
     }
     else if (!strcasecmp (type, "SOCKS4")) {
-        gtk_combo_box_set_active (combobox, 2);
+        set_combobox (combobox, 2);
     }
     else if (!strcasecmp (type, "SOCKS5")) {
-        gtk_combo_box_set_active (combobox, 3);
+        set_combobox (combobox, 3);
     }
     else if (!strcasecmp (type, "SOCKS4A")) {
-        gtk_combo_box_set_active (combobox, 4);
+        set_combobox (combobox, 4);
     }
     else if (!strcasecmp (type, "SOCKS5_HOSTNAME")) {
-        gtk_combo_box_set_active (combobox, 5);
+        set_combobox (combobox, 5);
     }
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "proxyuser")), deadbeef->conf_get_str_fast ("network.proxy.username", ""));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "proxypassword")), deadbeef->conf_get_str_fast ("network.proxy.password", ""));
 
     char ua[100];
     deadbeef->conf_get_str ("network.http_user_agent", "deadbeef", ua, sizeof (ua));
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "useragent")), ua);
+    set_entry_text("useragent", ua);
 
     // list of plugins
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
