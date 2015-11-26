@@ -92,6 +92,7 @@ char dbdocdir[PATH_MAX]; // see deadbeef->get_doc_dir
 char dbplugindir[PATH_MAX]; // see deadbeef->get_plugin_dir
 char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
 char dbcachedir[PATH_MAX];
+char dbruntimedir[PATH_MAX]; // /run/user/<uid>/deadbeef
 
 char use_gui_plugin[100];
 
@@ -403,7 +404,7 @@ server_start (void) {
     int len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
 #else
     char *socketdirenv = getenv ("DDB_SOCKET_DIR");
-    snprintf (srv_local.sun_path, sizeof (srv_local.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
+    snprintf (srv_local.sun_path, sizeof (srv_local.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbruntimedir);
     if (unlink(srv_local.sun_path) < 0) {
         perror ("INFO: unlink socket");
     }
@@ -880,6 +881,19 @@ main (int argc, char *argv[]) {
         fprintf (stderr, "fatal: too long cache path %s\n", dbcachedir);
         return -1;
     }
+
+    const char *xdg_runtime = getenv("XDG_RUNTIME_DIR");
+    if (xdg_runtime)
+    {
+        if (snprintf(dbruntimedir, sizeof (dbruntimedir), "%s/deadbeef/", xdg_runtime) >= sizeof (dbruntimedir)) {
+            fprintf (stderr, "fatal: too long cache path %s\n", dbruntimedir);
+            return -1;
+        }
+        mkdir (dbruntimedir, 0755);
+    }
+    else {
+        strcpy (dbruntimedir, dbconfdir);
+    }
 #endif
 
 
@@ -977,7 +991,7 @@ main (int argc, char *argv[]) {
     len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
 #else
     char *socketdirenv = getenv ("DDB_SOCKET_DIR");
-    snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
+    snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbruntimedir);
     len = offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path);
 #endif
     if (connect(s, (struct sockaddr *)&remote, len) == 0) {
