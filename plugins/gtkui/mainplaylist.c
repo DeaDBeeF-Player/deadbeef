@@ -162,14 +162,6 @@ void main_selection_changed (DdbListview *ps, DdbListviewIter it, int idx) {
 }
 
 void
-main_delete_selected (void) {
-    deadbeef->pl_delete_selected ();
-    deadbeef->pl_save_current();
-    main_refresh ();
-    search_refresh ();
-}
-
-void
 main_select (DdbListviewIter it, int sel) {
     deadbeef->pl_set_selected ((DB_playItem_t *)it, sel);
 }
@@ -179,21 +171,9 @@ main_is_selected (DdbListviewIter it) {
     return deadbeef->pl_is_selected ((DB_playItem_t *)it);
 }
 
-void
-main_groups_changed (DdbListview *listview, const char* format) {
-    if (!format) {
-        return;
-    }
-    if (listview->group_format) {
-        free (listview->group_format);
-    }
-    if (listview->group_title_bytecode) {
-        free (listview->group_title_bytecode);
-        listview->group_title_bytecode = NULL;
-    }
+static void
+main_groups_changed (const char* format) {
     deadbeef->conf_set_str ("gtkui.playlist.group_by", format);
-    listview->group_format = strdup (format);
-    listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
 }
 
 static int lock_column_config = 0;
@@ -201,7 +181,7 @@ static int lock_column_config = 0;
 void
 main_columns_changed (DdbListview *listview) {
     if (!lock_column_config) {
-        rewrite_column_config (listview, "gtkui.columns.playlist");
+        pl_common_rewrite_column_config (listview, "gtkui.columns.playlist");
     }
 }
 
@@ -215,15 +195,19 @@ main_vscroll_changed (int pos) {
     }
 }
 
-void
-main_header_context_menu (DdbListview *ps, int column) {
-    GtkWidget *menu = create_headermenu (ps, 1);
-    set_last_playlist_cm (ps); // playlist ptr for context menu
-    set_active_column_cm (column);
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
+static void
+main_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int column, int x, int y, int width, int height)
+{
+    pl_common_draw_column_data (listview, cr, it, idx, column, PL_MAIN, x, y, width, height);
 }
 
-DdbListviewBinding main_binding = {
+static void
+main_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height)
+{
+    pl_common_draw_group_title (listview, drawable, it, PL_MAIN, x, y, width, height);
+}
+
+static DdbListviewBinding main_binding = {
     // rows
     .count = main_get_count,
     .sel_count = main_get_sel_count,
@@ -248,12 +232,12 @@ DdbListviewBinding main_binding = {
     .drag_n_drop = main_drag_n_drop,
     .external_drag_n_drop = main_external_drag_n_drop,
 
-    .draw_column_data = draw_column_data,
-    .draw_album_art = draw_album_art,
-    .draw_group_title = pl_common_draw_group_title,
+    .draw_column_data = main_draw_column_data,
+    .draw_album_art = pl_common_draw_album_art,
+    .draw_group_title = main_draw_group_title,
 
     // columns
-    .is_album_art_column = is_album_art_column,
+    .is_album_art_column = pl_common_is_album_art_column,
     .col_sort = main_col_sort,
     .columns_changed = main_columns_changed,
     .col_free_user_data = pl_common_free_col_info,
@@ -261,9 +245,9 @@ DdbListviewBinding main_binding = {
     // callbacks
     .handle_doubleclick = main_handle_doubleclick,
     .selection_changed = main_selection_changed,
-    .header_context_menu = main_header_context_menu,
-    .list_context_menu = list_context_menu,
-    .delete_selected = main_delete_selected,
+    .header_context_menu = pl_common_header_context_menu,
+    .list_context_menu = pl_common_list_context_menu,
+    .delete_selected = pl_common_delete_selected,
     .vscroll_changed = main_vscroll_changed,
     .modification_idx = gtkui_get_curr_playlist_mod,
 };
@@ -276,13 +260,13 @@ main_playlist_init (GtkWidget *widget) {
     main_binding.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
     ddb_listview_set_binding (listview, &main_binding);
     lock_column_config = 1;
-    if (load_column_config (listview, "gtkui.columns.playlist") < 0) {
+    if (pl_common_load_column_config (listview, "gtkui.columns.playlist") < 0) {
         // create default set of columns
-        add_column_helper (listview, "♫", 50, DB_COLUMN_PLAYING, "%playstatus%", 0);
-        add_column_helper (listview, _("Artist / Album"), 150, -1, "%artist% - %album%", 0);
-        add_column_helper (listview, _("Track No"), 50, -1, "%track number%", 1);
-        add_column_helper (listview, _("Title"), 150, -1, "%title%", 0);
-        add_column_helper (listview, _("Duration"), 50, -1, "%length%", 0);
+        pl_common_add_column_helper (listview, "♫", 50, DB_COLUMN_PLAYING, "%playstatus%", 0);
+        pl_common_add_column_helper (listview, _("Artist / Album"), 150, -1, "%artist% - %album%", 0);
+        pl_common_add_column_helper (listview, _("Track No"), 50, -1, "%track number%", 1);
+        pl_common_add_column_helper (listview, _("Title"), 150, -1, "%title%", 0);
+        pl_common_add_column_helper (listview, _("Duration"), 50, -1, "%length%", 0);
     }
     lock_column_config = 0;
 

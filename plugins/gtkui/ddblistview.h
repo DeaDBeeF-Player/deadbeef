@@ -92,9 +92,9 @@ typedef struct {
     void (*drag_n_drop) (DdbListviewIter before, DdbPlaylistHandle playlist_from, uint32_t *indices, int length, int copy);
     void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
 
-    void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int pl_iter, int x, int y, int width, int height);
+    void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int x, int y, int width, int height);
     void (*draw_album_art) (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
-    void (*draw_column_data) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int idx, int column, int pl_iter, int x, int y, int width, int height);
+    void (*draw_column_data) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int idx, int column, int x, int y, int width, int height);
 
     // cols
     int (*is_album_art_column) (void *user_data);
@@ -108,7 +108,7 @@ typedef struct {
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
     void (*selection_changed) (DdbListview *listview, DdbListviewIter it, int idx);
     void (*delete_selected) (void);
-    void (*groups_changed) (DdbListview *listview, const char *format);
+    void (*groups_changed) (const char *format);
     void (*vscroll_changed) (int pos);
     void (*cursor_changed) (int pos);
     int (*modification_idx) (void);

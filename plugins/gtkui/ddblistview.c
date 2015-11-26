@@ -916,14 +916,14 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
             fill_list_background(listview, cr, scrollx, 0, total_width, min(title_height, grp_next_y), clip);
 //            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, 0, total_width, min(title_height, grp_next_y), clip);
             if (listview->binding->draw_group_title && title_height > 0) {
-                listview->binding->draw_group_title(listview, cr, grp->head, PL_MAIN, scrollx, min(0, grp_next_y-title_height), total_width, title_height);
+                listview->binding->draw_group_title(listview, cr, grp->head, scrollx, min(0, grp_next_y-title_height), total_width, title_height);
             }
         }
         else if (clip->y <= grp_y + title_height) {
             // draw normal group title
 //            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y, total_width, title_height, clip);
             if (listview->binding->draw_group_title && title_height > 0) {
-                listview->binding->draw_group_title(listview, cr, grp->head, PL_MAIN, scrollx, grp_y, total_width, title_height);
+                listview->binding->draw_group_title(listview, cr, grp->head, scrollx, grp_y, total_width, title_height);
             }
         }
 
@@ -1494,7 +1494,7 @@ ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListvi
     int x = -ps->hscrollpos;
     for (DdbListviewColumn *c = ps->columns; c && x < x2; x += c->width, c = c->next, cidx++) {
         if (x + c->width > x1 && !ps->binding->is_album_art_column(c->user_data)) {
-            ps->binding->draw_column_data (ps, cr, it, idx, cidx, PL_MAIN, x, y, c->width, h);
+            ps->binding->draw_column_data (ps, cr, it, idx, cidx, x, y, c->width, h);
         }
     }
 }

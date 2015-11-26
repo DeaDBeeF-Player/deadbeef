@@ -37,34 +37,28 @@ typedef struct {
 } col_info_t;
 
 int
-rewrite_column_config (DdbListview *listview, const char *name);
+pl_common_rewrite_column_config (DdbListview *listview, const char *name);
 
 int
-is_album_art_column (void *user_data);
+pl_common_is_album_art_column (void *user_data);
 
 void
-draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
+pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
 
 void
-draw_column_data (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int idx, int column, int iter, int x, int y, int width, int height);
+pl_common_draw_column_data (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int idx, int column, int iter, int x, int y, int width, int height);
 
 void
-list_context_menu (DdbListview *listview, DdbListviewIter it, int idx);
+pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx);
 
 int
-load_column_config (DdbListview *listview, const char *key);
+pl_common_load_column_config (DdbListview *listview, const char *key);
 
 void
-add_column_helper (DdbListview *listview, const char *title, int width, int id, const char *format, int align_right);
-
-GtkWidget*
-create_headermenu (DdbListview *listview, int groupby);
+pl_common_add_column_helper (DdbListview *listview, const char *title, int width, int id, const char *format, int align_right);
 
 void
-set_last_playlist_cm (DdbListview *pl);
-
-void
-set_active_column_cm (int col);
+pl_common_header_context_menu (DdbListview *ps, int column);
 
 void
 pl_common_init(void);
@@ -80,5 +74,8 @@ pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int s
 
 void
 pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height);
+
+void
+pl_common_delete_selected (void);
 
 #endif // __PLCOLUMNS_H
