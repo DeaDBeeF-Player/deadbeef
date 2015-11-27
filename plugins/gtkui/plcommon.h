@@ -26,6 +26,14 @@
 
 #include "ddblistview.h"
 
+#define COLUMN_FORMAT_ARTISTALBUM "$if(%artist%,%artist%,Unknown Artist)[ - %album%]"
+#define COLUMN_FORMAT_ARTIST "$if(%artist%,%artist%,Unknown Artist)"
+#define COLUMN_FORMAT_ALBUM "%album%"
+#define COLUMN_FORMAT_TITLE "%title%"
+#define COLUMN_FORMAT_LENGTH "%length%"
+#define COLUMN_FORMAT_TRACKNUMBER "%track number%"
+#define COLUMN_FORMAT_BAND "$if(%album artist%,%album artist%,Unknown Artist)"
+
 typedef struct {
     int id;
     char *format;
