@@ -1314,25 +1314,25 @@ init_column (col_info_t *inf, int id, const char *format) {
         inf->id = DB_COLUMN_ALBUM_ART;
         break;
     case 3:
-        inf->format = strdup ("$if(%artist%,%artist%,Unknown Artist)[ - %album%]");
+        inf->format = strdup (COLUMN_FORMAT_ARTISTALBUM);
         break;
     case 4:
-        inf->format = strdup ("$if(%artist%,%artist%,Unknown Artist)");
+        inf->format = strdup (COLUMN_FORMAT_ARTIST);
         break;
     case 5:
-        inf->format = strdup ("%album%");
+        inf->format = strdup (COLUMN_FORMAT_ALBUM);
         break;
     case 6:
-        inf->format = strdup ("%title%");
+        inf->format = strdup (COLUMN_FORMAT_TITLE);
         break;
     case 7:
-        inf->format = strdup ("%length%");
+        inf->format = strdup (COLUMN_FORMAT_LENGTH);
         break;
     case 8:
-        inf->format = strdup ("%track number%");
+        inf->format = strdup (COLUMN_FORMAT_TRACKNUMBER);
         break;
     case 9:
-        inf->format = strdup ("$if(%album artist%,%album artist%,Unknown Artist)");
+        inf->format = strdup (COLUMN_FORMAT_BAND);
         break;
     default:
         inf->format = strdup (format);
@@ -1406,25 +1406,25 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     int idx = 10;
     if (inf->id == -1) {
         if (inf->format) {
-            if (!strcmp (inf->format, "%artist% - %album%")) {
+            if (!strcmp (inf->format, COLUMN_FORMAT_ARTISTALBUM)) {
                 idx = 3;
             }
-            else if (!strcmp (inf->format, "%artist%")) {
+            else if (!strcmp (inf->format, COLUMN_FORMAT_ARTIST)) {
                 idx = 4;
             }
-            else if (!strcmp (inf->format, "%album%")) {
+            else if (!strcmp (inf->format, COLUMN_FORMAT_ALBUM)) {
                 idx = 5;
             }
-            else if (!strcmp (inf->format, "%title%")) {
+            else if (!strcmp (inf->format, COLUMN_FORMAT_TITLE)) {
                 idx = 6;
             }
-            else if (!strcmp (inf->format, "%length%")) {
+            else if (!strcmp (inf->format, COLUMN_FORMAT_LENGTH)) {
                 idx = 7;
             }
-            else if (!strcmp (inf->format, "%track number%")) {
+            else if (!strcmp (inf->format, COLUMN_FORMAT_TRACKNUMBER)) {
                 idx = 8;
             }
-            else if (!strcmp (inf->format, "%album artist%")) {
+            else if (!strcmp (inf->format, COLUMN_FORMAT_BAND)) {
                 idx = 9;
             }
         }
