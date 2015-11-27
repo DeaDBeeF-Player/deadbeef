@@ -53,7 +53,6 @@ static pa_sample_spec ss;
 static ddb_waveformat_t requested_fmt;
 static int state;
 static uintptr_t mutex;
-static uintptr_t mutex_thread;
 
 static int buffer_size;
 
@@ -171,6 +170,7 @@ static int pulse_init(void)
     }
 
     if (0 != pulse_set_spec(&plugin.fmt)) {
+        deadbeef->mutex_unlock(mutex);
         return -1;
     }
 
@@ -313,9 +313,9 @@ static void pulse_thread(void *context)
         pulse_callback (buf, sizeof (buf));
         int error;
 
-        deadbeef->mutex_lock(mutex_thread);
+        deadbeef->mutex_lock(mutex);
         int res = pa_simple_write(s, buf, sizeof (buf), &error);
-        deadbeef->mutex_unlock(mutex_thread);
+        deadbeef->mutex_unlock(mutex);
 
         if (res < 0)
         {
@@ -345,7 +345,6 @@ static int pulse_plugin_start(void)
 {
     state = OUTPUT_STATE_STOPPED;
     mutex = deadbeef->mutex_create();
-    mutex_thread = deadbeef->mutex_create();
 
     return 0;
 }
@@ -353,7 +352,6 @@ static int pulse_plugin_start(void)
 static int pulse_plugin_stop(void)
 {
     deadbeef->mutex_free(mutex);
-    deadbeef->mutex_free(mutex_thread);
 
     return 0;
 }
