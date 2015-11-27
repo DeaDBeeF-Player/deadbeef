@@ -162,7 +162,7 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
 static int pulse_init(void)
 {
     trace ("pulse_init\n");
-    state = OUTPUT_STATE_STOPPED;
+    deadbeef->mutex_lock(mutex);
     pulse_terminate = 0;
 
     if (requested_fmt.samplerate != 0) {
@@ -170,10 +170,12 @@ static int pulse_init(void)
     }
 
     if (0 != pulse_set_spec(&plugin.fmt)) {
+        deadbeef->mutex_unlock(mutex);
         return -1;
     }
 
     pulse_tid = deadbeef->thread_start(pulse_thread, NULL);
+    deadbeef->mutex_unlock(mutex);
 
     return 0;
 }
@@ -190,17 +192,11 @@ static int pulse_setformat (ddb_waveformat_t *fmt)
     }
     trace ("pulse_setformat %dbit %s %dch %dHz channelmask=%X\n", fmt->bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
 
-    int prev_state = state;
-    pulse_stop ();
-    deadbeef->mutex_lock(mutex);
-    pulse_set_spec(fmt);
-    deadbeef->mutex_unlock(mutex);
-    trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
-
-    switch (prev_state) {
+    switch (state) {
     case OUTPUT_STATE_STOPPED:
-        return pulse_stop ();
+        return 0;
     case OUTPUT_STATE_PLAYING:
+        pulse_stop ();
         return pulse_play ();
     case OUTPUT_STATE_PAUSED:
         if (0 != pulse_play ()) {
@@ -218,6 +214,7 @@ static int pulse_free(void)
 {
     trace("pulse_free\n");
 
+    deadbeef->mutex_lock(mutex);
     if (pulse_tid)
     {
         pulse_terminate = 1;
@@ -231,29 +228,36 @@ static int pulse_free(void)
         pa_simple_free(s);
         s = NULL;
     }
+    deadbeef->mutex_unlock(mutex);
 
     return 0;
 }
 
 static int pulse_play(void)
 {
-    if (!pulse_tid)
+    enum output_state_t prev_state = state;
+    if (state != OUTPUT_STATE_PLAYING)
     {
+        state = OUTPUT_STATE_PLAYING;
         if (pulse_init () < 0)
         {
+            state = prev_state;
             return -1;
         }
     }
 
-    state = OUTPUT_STATE_PLAYING;
     return 0;
 }
 
 static int pulse_stop(void)
 {
-    state = OUTPUT_STATE_STOPPED;
-    deadbeef->streamer_reset(1);
-    pulse_free();
+    if (state != OUTPUT_STATE_STOPPED)
+    {
+        state = OUTPUT_STATE_STOPPED;
+        deadbeef->streamer_reset(1);
+        pulse_free();
+    }
+
     return 0;
 }
 
@@ -264,8 +268,8 @@ static int pulse_pause(void)
         return -1;
     }
 
-    pulse_free();
     state = OUTPUT_STATE_PAUSED;
+    pulse_free();
     return 0;
 }
 
@@ -273,11 +277,12 @@ static int pulse_unpause(void)
 {
     if (state == OUTPUT_STATE_PAUSED)
     {
+        state = OUTPUT_STATE_PLAYING;
         if (pulse_init () < 0)
         {
+            state = OUTPUT_STATE_PAUSED;
             return -1;
         }
-        state = OUTPUT_STATE_PLAYING;
     }
 
     return 0;
@@ -338,6 +343,7 @@ static int pulse_get_state(void)
 
 static int pulse_plugin_start(void)
 {
+    state = OUTPUT_STATE_STOPPED;
     mutex = deadbeef->mutex_create();
 
     return 0;
