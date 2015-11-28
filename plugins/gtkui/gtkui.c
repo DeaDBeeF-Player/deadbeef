@@ -354,7 +354,7 @@ redraw_queued_tracks (DdbListview *pl) {
     int idx = 0;
     deadbeef->pl_lock ();
     for (it = deadbeef->pl_get_first (PL_MAIN); it; idx++) {
-        if (deadbeef->pl_playqueue_test (it) != -1) {
+        if (deadbeef->playqueue_test (it) != -1) {
             ddb_listview_draw_row (pl, idx, (DdbListviewIter)it);
         }
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
@@ -545,7 +545,7 @@ gtkui_update_status_icon (gpointer unused) {
 
     if (!gtk_icon_theme_has_icon(theme, icon_name)) {
         char iconpath[1024];
-        snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_prefix ());
+        snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_system_dir(DDB_SYS_DIR_PREFIX));
         trayicon = gtk_status_icon_new_from_file(iconpath);
     }
     else {
@@ -971,7 +971,7 @@ gtkui_thread (void *ctx) {
     }
 
     gtk_disable_setlocale ();
-    add_pixmap_directory (deadbeef->get_pixmap_dir ());
+    add_pixmap_directory (deadbeef->get_system_dir(DDB_SYS_DIR_PIXMAP));
 
     // let's start some gtk
     g_thread_init (NULL);
@@ -1031,7 +1031,7 @@ gtkui_thread (void *ctx) {
     else {
         // try loading icon from $prefix/deadbeef.png (for static build)
         char iconpath[1024];
-        snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_prefix ());
+        snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_system_dir(DDB_SYS_DIR_PREFIX));
         gtk_window_set_icon_from_file (GTK_WINDOW (mainwin), iconpath, NULL);
     }
 
@@ -1062,8 +1062,8 @@ gtkui_thread (void *ctx) {
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
 
-    DdbListview *search_playlist = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
-    search_playlist_init (GTK_WIDGET (search_playlist));
+    GtkWidget *search_playlist = lookup_widget (searchwin, "searchlist");
+    search_playlist_init (search_playlist);
 
     progress_init ();
     cover_art_init ();
@@ -1623,7 +1623,7 @@ static ddb_gtkui_t plugin = {
     .gui.plugin.name = "GTK2 user interface",
     .gui.plugin.descr = "User interface using GTK+ 2.x",
 #endif
-    .gui.plugin.copyright = 
+    .gui.plugin.copyright =
         "GTK+ user interface for DeaDBeeF Player.\n"
         "Copyright (C) 2009-2015 Alexey Yakovenko and other contributors\n"
         "\n"
