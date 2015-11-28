@@ -126,12 +126,10 @@ int
 ddb_listview_dragdrop_get_row_from_coord (DdbListview *listview, int x, int y);
 void
 ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *event, int x, int y);
-static void
-ddb_listview_list_setup_vscroll (DdbListview *ps);
-static void
-ddb_listview_list_setup_hscroll (DdbListview *ps);
-void
-ddb_listview_set_cursor (DdbListview *pl, int cursor);
+static gboolean
+ddb_listview_list_setup_vscroll (void *user_data);
+static gboolean
+ddb_listview_list_setup_hscroll (void *user_data);
 int
 ddb_listview_get_row_pos (DdbListview *listview, int pos);
 
@@ -349,7 +347,6 @@ ddb_listview_init(DdbListview *listview)
     listview->groups = NULL;
     listview->plt = NULL;
 
-    listview->block_redraw_on_scroll = 0;
     listview->calculated_grouptitle_height = DEFAULT_GROUP_TITLE_HEIGHT;
 
     listview->cursor_sz = NULL;
@@ -952,13 +949,12 @@ ddb_listview_update_fonts (DdbListview *ps)
 }
 
 static void
-draw_list_rectangle (GtkWidget *widget, cairo_t *cr, GdkRectangle *clip)
+draw_list_rectangle (DdbListview *ps, cairo_t *cr, GdkRectangle *clip)
 {
     cairo_rectangle(cr, clip->x, clip->y, clip->width, clip->height);
     cairo_clip(cr);
     cairo_set_line_width(cr, 1);
     cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
-    DdbListview *ps = DDB_LISTVIEW (g_object_get_data(G_OBJECT (widget), "owner"));
     ddb_listview_list_render(ps, cr, clip);
     if (ps->drag_motion_y >= 0 && ps->drag_motion_y-ps->scrollpos-3 < clip->y+clip->height && ps->drag_motion_y-ps->scrollpos+3 >= clip->y) {
         ddb_listview_draw_dnd_marker(ps, cr);
@@ -966,9 +962,17 @@ draw_list_rectangle (GtkWidget *widget, cairo_t *cr, GdkRectangle *clip)
 }
 
 #if GTK_CHECK_VERSION(3,0,0)
+static int
+list_is_realized (DdbListview *listview) {
+    return gtk_widget_get_realized (GTK_WIDGET (listview));
+}
 static gboolean
 ddb_listview_list_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data(G_OBJECT (widget), "owner"));
+    if (!list_is_realized (ps)) {
+        return FALSE;
+    }
     cairo_rectangle_list_t *list = cairo_copy_clip_rectangle_list(cr);
     for (int i = 0; i < list->num_rectangles; i++) {
         cairo_save(cr);
@@ -979,18 +983,23 @@ ddb_listview_list_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data)
             .width = ceil(list->rectangles[i].width),
             .height = ceil(list->rectangles[i].height)
         };
-        draw_list_rectangle(widget, cr, &clip);
+        draw_list_rectangle(ps, cr, &clip);
         cairo_restore(cr);
     }
     cairo_rectangle_list_destroy(list);
     return TRUE;
 }
 #else
+static int
+list_is_realized (DdbListview *listview) {
+    return GTK_OBJECT_FLAGS(listview) & GTK_REALIZED && gtk_widget_get_style(theme_treeview)->depth != -1;
+}
 static gboolean
 ddb_listview_list_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 {
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data(G_OBJECT (widget), "owner"));
     // FIXME?
-    if (gtk_widget_get_style(theme_treeview)->depth == -1) {
+    if (!list_is_realized (ps)) {
         return FALSE; // drawing was called too early
     }
 
@@ -1000,7 +1009,7 @@ ddb_listview_list_expose_event (GtkWidget *widget, GdkEventExpose *event, gpoint
     for (int i = 0; i < num_rectangles; i++) {
         GdkRectangle *clip = &rectangles[i];
         cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(widget));
-        draw_list_rectangle(widget, cr, clip);
+        draw_list_rectangle(ps, cr, clip);
         cairo_destroy(cr);
     }
     g_free(rectangles);
@@ -1092,15 +1101,19 @@ static void
 ddb_listview_vscroll_value_changed (GtkRange *widget, gpointer user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    int newscroll = gtk_range_get_value (GTK_RANGE (widget));
+    int newscroll = round(gtk_range_get_value (GTK_RANGE (widget)));
+    if (newscroll == ps->scrollpos) {
+        return;
+    }
     if (ps->binding->vscroll_changed) {
         ps->binding->vscroll_changed (newscroll);
     }
-    if (!ps->block_redraw_on_scroll) {
-        if (gtkui_groups_pinned && ps->grouptitle_height > 0) {
-            invalidate_group(ps, max(ps->scrollpos, newscroll));
-        }
-        gdk_window_scroll(gtk_widget_get_window(ps->list), 0, ps->scrollpos - newscroll);
+    if (gtkui_groups_pinned && ps->grouptitle_height > 0) {
+        invalidate_group(ps, max(ps->scrollpos, newscroll));
+    }
+    GdkWindow *list_window = gtk_widget_get_window(ps->list);
+    if (list_window) {
+        gdk_window_scroll(list_window, 0, ps->scrollpos - newscroll);
     }
     ps->scrollpos = newscroll;
 }
@@ -1109,9 +1122,14 @@ static void
 ddb_listview_hscroll_value_changed (GtkRange *widget, gpointer user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    int newscroll = gtk_range_get_value (GTK_RANGE (widget));
-    if (!ps->block_redraw_on_scroll) {
-        int diff = ps->hscrollpos - newscroll;
+    int newscroll = round(gtk_range_get_value (GTK_RANGE (widget)));
+    if (newscroll == ps->scrollpos) {
+        return;
+    }
+
+    int diff = ps->hscrollpos - newscroll;
+    GdkWindow *list_window = gtk_widget_get_window(ps->list);
+    if (list_window) {
         gdk_window_scroll(gtk_widget_get_window(ps->header), diff, 0);
         gdk_window_scroll(gtk_widget_get_window(ps->list), diff, 0);
     }
@@ -1335,16 +1353,19 @@ adjust_scrollbar (GtkWidget *scrollbar, int upper, int page_size) {
     gtk_widget_show(scrollbar);
 }
 
-static void
-ddb_listview_list_setup_vscroll (DdbListview *ps) {
+static gboolean
+ddb_listview_list_setup_vscroll (void *user_data) {
+    DdbListview *ps = user_data;
     ddb_listview_groupcheck (ps);
     GtkAllocation a;
     gtk_widget_get_allocation (ps->list, &a);
     adjust_scrollbar(ps->scrollbar, ps->fullheight, a.height);
+    return FALSE;
 }
 
-static void
-ddb_listview_list_setup_hscroll (DdbListview *ps) {
+static gboolean
+ddb_listview_list_setup_hscroll (void *user_data) {
+    DdbListview *ps = user_data;
     int size = 0;
     for (DdbListviewColumn *c = ps->columns; c; c = c->next) {
         size += c->width;
@@ -1354,6 +1375,7 @@ ddb_listview_list_setup_hscroll (DdbListview *ps) {
     GtkAllocation a;
     gtk_widget_get_allocation (ps->list, &a);
     adjust_scrollbar(ps->hscrollbar, size, a.width);
+    return FALSE;
 }
 
 void
@@ -3263,7 +3285,7 @@ ddb_listview_build_groups (DdbListview *listview) {
     int height = build_groups(listview);
     if (height != listview->fullheight) {
         listview->fullheight = height;
-        ddb_listview_refresh (listview, DDB_REFRESH_VSCROLL);
+        g_idle_add(ddb_listview_list_setup_vscroll, listview);
     }
     deadbeef->pl_unlock();
 }
@@ -3280,16 +3302,26 @@ ddb_listview_resize_groups (DdbListview *listview) {
 
     if (full_height != listview->fullheight) {
         listview->fullheight = full_height;
-        ddb_listview_refresh (listview, DDB_REFRESH_VSCROLL);
+        g_idle_add_full(GTK_PRIORITY_RESIZE, ddb_listview_reconf_scrolling, listview, NULL);
     }
 }
 
-void
-ddb_listview_set_vscroll (DdbListview *listview, int scroll) {
+int
+ddb_listview_list_setup (DdbListview *listview, int scroll_to) {
+    if (!list_is_realized(listview)) {
+        return FALSE;
+    }
     if (listview->scrollpos == -1) {
         listview->scrollpos = 0;
     }
-    gtk_range_set_value (GTK_RANGE (listview->scrollbar), scroll);
+    deadbeef->pl_lock();
+    listview->fullheight = build_groups(listview);
+    deadbeef->pl_unlock();
+    GtkAllocation a;
+    gtk_widget_get_allocation(listview->list, &a);
+    adjust_scrollbar(listview->scrollbar, listview->fullheight, a.height);
+    gtk_range_set_value (GTK_RANGE (listview->scrollbar), scroll_to);
+    return TRUE;
 }
 
 void
