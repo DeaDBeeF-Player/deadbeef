@@ -177,7 +177,6 @@ struct _DdbListview {
     struct _DdbListviewGroup *groups;
     int groups_build_idx; // must be the same as playlist modification idx
     int fullheight;
-    int block_redraw_on_scroll;
     int grouptitle_height;
     int calculated_grouptitle_height;
 
@@ -229,8 +228,8 @@ void
 ddb_listview_set_cursor_noscroll (DdbListview *pl, int cursor);
 void
 ddb_listview_scroll_to (DdbListview *listview, int rowpos);
-void
-ddb_listview_set_vscroll (DdbListview *listview, int scroll);
+int
+ddb_listview_list_setup (DdbListview *listview, int scroll_to);
 int
 ddb_listview_is_scrolling (DdbListview *listview);
 int
