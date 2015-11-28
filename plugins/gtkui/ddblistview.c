@@ -97,10 +97,6 @@ typedef struct _DdbListviewPickContext DdbListviewPickContext;
 
 static void ddb_listview_class_init(DdbListviewClass *klass);
 static void ddb_listview_init(DdbListview *listview);
-//static void ddb_listview_size_request(GtkWidget *widget, GtkRequisition *requisition);
-//static void ddb_listview_size_allocate(GtkWidget *widget, GtkAllocation *allocation);
-//static void ddb_listview_realize(GtkWidget *widget);
-//static void ddb_listview_paint(GtkWidget *widget);
 static void ddb_listview_destroy(GObject *object);
 
 void
@@ -112,8 +108,10 @@ ddb_listview_resize_groups (DdbListview *listview);
 void
 ddb_listview_free_groups (DdbListview *listview);
 
-//static inline void
-//draw_drawable (GdkDrawable *window, GdkGC *gc, GdkDrawable *drawable, int x1, int y1, int x2, int y2, int w, int h);
+static void
+ddb_listview_update_fonts (DdbListview *ps);
+static void
+ddb_listview_header_update_fonts (DdbListview *ps);
 
 ////// list functions ////
 static void
@@ -183,13 +181,12 @@ ddb_listview_header_expose_event                 (GtkWidget       *widget,
                                         gpointer         user_data);
 #endif
 
-gboolean
-ddb_listview_header_configure_event              (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
+static void
+ddb_listview_header_realize                      (GtkWidget       *widget,
                                         gpointer         user_data);
 
-void
-ddb_listview_header_realize                      (GtkWidget       *widget,
+static void
+ddb_listview_list_realize                    (GtkWidget       *widget,
                                         gpointer         user_data);
 
 static gboolean
@@ -210,7 +207,7 @@ ddb_listview_header_button_release_event         (GtkWidget       *widget,
 static gboolean
 ddb_listview_header_enter (GtkWidget *widget, GdkEventCrossing *event, gpointer user_data);
 
-gboolean
+static gboolean
 ddb_listview_list_configure_event            (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data);
@@ -227,10 +224,6 @@ ddb_listview_list_expose_event               (GtkWidget       *widget,
                                         gpointer         user_data);
 
 #endif
-
-void
-ddb_listview_list_realize                    (GtkWidget       *widget,
-                                        gpointer         user_data);
 
 gboolean
 ddb_listview_list_button_press_event         (GtkWidget       *widget,
@@ -439,9 +432,6 @@ ddb_listview_init(DdbListview *listview)
             G_CALLBACK (ddb_listview_header_draw),
             NULL);
 #endif
-    g_signal_connect ((gpointer) listview->header, "configure_event",
-            G_CALLBACK (ddb_listview_header_configure_event),
-            NULL);
     g_signal_connect ((gpointer) listview->header, "realize",
             G_CALLBACK (ddb_listview_header_realize),
             NULL);
@@ -567,6 +557,10 @@ ddb_listview_destroy(GObject *object)
 
 void
 ddb_listview_refresh (DdbListview *listview, uint32_t flags) {
+    if (flags & DDB_REFRESH_CONFIG) {
+        ddb_listview_update_fonts (listview);
+        ddb_listview_header_update_fonts (listview);
+    }
     if (flags & DDB_LIST_CHANGED) {
         ddb_listview_build_groups (listview);
     }
@@ -584,31 +578,29 @@ ddb_listview_refresh (DdbListview *listview, uint32_t flags) {
     }
 }
 
-void
-ddb_listview_list_realize                    (GtkWidget       *widget,
-        gpointer         user_data)
-{
-    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    if (!ps->binding->drag_n_drop) {
-        // playlist doesn't support drag and drop (e.g. searchlist)
-        return;
-    }
-    GtkTargetEntry entry = {
-        .target = TARGET_PLAYITEMS,
-        .flags = GTK_TARGET_SAME_APP,
-        .info = TARGET_SAMEWIDGET
-    };
-    // setup drag-drop target
-    gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
-    gtk_drag_dest_add_uri_targets (widget);
-//    gtk_drag_dest_set_track_motion (widget, TRUE);
-}
-
 static gboolean
 ddb_listview_reconf_scrolling (void *ps) {
     ddb_listview_list_setup_vscroll (ps);
     ddb_listview_list_setup_hscroll (ps);
     return FALSE;
+}
+
+static void
+ddb_listview_list_realize                    (GtkWidget       *widget,
+        gpointer         user_data)
+{
+    DdbListview *listview = DDB_LISTVIEW(g_object_get_data(G_OBJECT(widget), "owner"));
+    if (listview->binding->drag_n_drop) {
+        GtkTargetEntry entry = {
+            .target = TARGET_PLAYITEMS,
+            .flags = GTK_TARGET_SAME_APP,
+            .info = TARGET_SAMEWIDGET
+        };
+        // setup drag-drop target
+        gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
+        gtk_drag_dest_add_uri_targets (widget);
+    }
+    ddb_listview_update_fonts(listview);
 }
 
 static void
@@ -619,20 +611,6 @@ ddb_listview_list_update_total_width (DdbListview *lv, int size) {
     if (lv->totalwidth < a.width) {
         lv->totalwidth = a.width;
     }
-}
-
-gboolean
-ddb_listview_list_configure_event            (GtkWidget       *widget,
-        GdkEventConfigure *event,
-        gpointer         user_data)
-{
-    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-
-    draw_init_font (&ps->listctx, DDB_LIST_FONT, 1);
-    draw_init_font (&ps->grpctx, DDB_GROUP_FONT, 1);
-    ddb_listview_update_fonts (ps);
-
-    return FALSE;
 }
 
 void
@@ -958,7 +936,7 @@ ddb_listview_draw_dnd_marker (DdbListview *ps, cairo_t *cr) {
 
 }
 
-void
+static void
 ddb_listview_update_fonts (DdbListview *ps)
 {
     draw_init_font (&ps->listctx, DDB_LIST_FONT, 1);
@@ -970,17 +948,6 @@ ddb_listview_update_fonts (DdbListview *ps)
         ps->calculated_grouptitle_height = grptitle_height;
         ddb_listview_build_groups (ps);
     }
-
-    GtkAllocation a;
-    gtk_widget_get_allocation (ps->list, &a);
-    int w = a.width;
-    int size = 0;
-    DdbListviewColumn *c;
-    for (c = ps->columns; c; c = c->next) {
-        size += c->width;
-    }
-    ddb_listview_list_update_total_width (ps, size);
-    g_idle_add (ddb_listview_reconf_scrolling, ps);
 }
 
 static void
@@ -1340,19 +1307,6 @@ ddb_listview_list_drag_leave                 (GtkWidget       *widget,
     DdbListview *pl = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     ddb_listview_list_track_dragdrop (pl, -1, -1);
 }
-
-// debug function for gdk_draw_drawable
-//static inline void
-//draw_drawable (GdkDrawable *window, GdkGC *gc, GdkDrawable *drawable, int x1, int y1, int x2, int y2, int w, int h) {
-//    gint width1, height1;
-//    gint width2, height2;
-//    gdk_drawable_get_size (window, &width1, &height1);
-//    gdk_drawable_get_size (drawable, &width2, &height2);
-////    assert (y1 >= 0 && y1 + h < height2);
-////    assert (y2 >= 0 && y2 + h < height1);
-////    printf ("dd: %p %p %p %d %d %d %d %d %d\n", window, gc, drawable, x1, y1, x2, y2, w, h);
-//    gdk_draw_drawable (window, gc, drawable, x1, y1, x2, y2, w, h);
-//}
 
 int
 ddb_listview_get_vscroll_pos (DdbListview *listview) {
@@ -2552,7 +2506,7 @@ ddb_listview_header_expose_event                 (GtkWidget       *widget,
 }
 #endif
 
-void
+static void
 ddb_listview_header_update_fonts (DdbListview *ps)
 {
     draw_init_font (&ps->hdrctx, DDB_COLUMN_FONT, 1);
@@ -2564,7 +2518,7 @@ ddb_listview_header_update_fonts (DdbListview *ps)
     }
 }
 
-void
+static void
 ddb_listview_column_size_changed (DdbListview *listview, DdbListviewColumn *c)
 {
     if (listview->binding->is_album_art_column(c->user_data)) {
@@ -2618,15 +2572,21 @@ ddb_listview_update_scroll_ref_point (DdbListview *ps)
 }
 
 gboolean
-ddb_listview_header_configure_event              (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
-                                        gpointer         user_data)
+ddb_listview_list_configure_event            (GtkWidget       *widget,
+        GdkEventConfigure *event,
+        gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    ddb_listview_header_update_fonts (ps);
+
+    draw_init_font (&ps->listctx, DDB_LIST_FONT, 1);
+    draw_init_font (&ps->grpctx, DDB_GROUP_FONT, 1);
+    ddb_listview_update_fonts (ps);
+
     GtkAllocation lva;
     gtk_widget_get_allocation (GTK_WIDGET (ps), &lva);
     int totalwidth = lva.width;
+    g_idle_add(ddb_listview_reconf_scrolling, ps);
+    ddb_listview_list_update_total_width(ps, event->width);
 
     // col_autoresize flag indicates whether fwidth is valid
     if (!ps->lock_columns) {
@@ -2677,7 +2637,7 @@ ddb_listview_lock_columns (DdbListview *lv, gboolean lock) {
 }
 
 
-void
+static void
 ddb_listview_header_realize                      (GtkWidget       *widget,
                                         gpointer         user_data)
 {
@@ -2685,6 +2645,7 @@ ddb_listview_header_realize                      (GtkWidget       *widget,
     DdbListview *listview = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     listview->cursor_sz = gdk_cursor_new (GDK_SB_H_DOUBLE_ARROW);
     listview->cursor_drag = gdk_cursor_new (GDK_FLEUR);
+    ddb_listview_header_update_fonts (listview);
 }
 
 static void

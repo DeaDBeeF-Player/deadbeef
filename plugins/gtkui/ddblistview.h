@@ -255,6 +255,7 @@ enum {
     DDB_REFRESH_VSCROLL = 4,
     DDB_REFRESH_LIST    = 8,
     DDB_LIST_CHANGED    = 16,
+    DDB_REFRESH_CONFIG  = 32,
 };
 
 
@@ -275,12 +276,6 @@ ddb_listview_get_row_pos (DdbListview *listview, int row_idx);
 
 void
 ddb_listview_groupcheck (DdbListview *listview);
-
-void
-ddb_listview_update_fonts (DdbListview *ps);
-
-void
-ddb_listview_header_update_fonts (DdbListview *ps);
 
 G_END_DECLS
 
