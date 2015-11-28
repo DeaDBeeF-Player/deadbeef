@@ -352,7 +352,7 @@ on_about1_activate                     (GtkMenuItem     *menuitem,
     char s[200];
     snprintf (s, sizeof (s), _("About DeaDBeeF %s"), VERSION);
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "about.txt");
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_system_dir(DDB_SYS_DIR_DOC), "about.txt");
     gtkui_show_info_window (fname, s, &aboutwindow);
 }
 
@@ -365,7 +365,7 @@ on_changelog1_activate                 (GtkMenuItem     *menuitem,
     char s[200];
     snprintf (s, sizeof (s), _("DeaDBeeF %s ChangeLog"), VERSION);
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "ChangeLog");
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_system_dir(DDB_SYS_DIR_DOC), "ChangeLog");
     gtkui_show_info_window (fname, s, &changelogwindow);
 }
 
@@ -376,7 +376,7 @@ on_gpl1_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "COPYING.GPLv2");
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_system_dir(DDB_SYS_DIR_DOC), "COPYING.GPLv2");
     gtkui_show_info_window (fname, "GNU GENERAL PUBLIC LICENSE Version 2", &gplwindow);
 }
 
@@ -387,7 +387,7 @@ on_lgpl1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "COPYING.LGPLv2.1");
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_system_dir(DDB_SYS_DIR_DOC), "COPYING.LGPLv2.1");
     gtkui_show_info_window (fname, "GNU LESSER GENERAL PUBLIC LICENSE Version 2.1", &lgplwindow);
 }
 
@@ -625,7 +625,7 @@ on_translators1_activate               (GtkMenuItem     *menuitem,
     char s[200];
     snprintf (s, sizeof (s), _("DeaDBeeF Translators"));
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "translators.txt");
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_system_dir(DDB_SYS_DIR_DOC), "translators.txt");
     gtkui_show_info_window (fname, s, &translatorswindow);
 }
 

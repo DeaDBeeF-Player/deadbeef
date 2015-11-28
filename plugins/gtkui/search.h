@@ -32,15 +32,11 @@ search_start (void);
 void
 search_destroy (void);
 
-// should be called whenever playlist was changed
 void
-search_refresh (void);
-
-void
-search_redraw (void);
+search_redraw (DB_playItem_t *it);
 
 int
-search_get_idx (DdbListviewIter it);
+search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 
 void
 search_playlist_init (GtkWidget *widget);

@@ -80,26 +80,6 @@ static DdbListviewIter main_prev (DdbListviewIter it) {
     return (DdbListviewIter)deadbeef->pl_get_prev(it, PL_MAIN);
 }
 
-static DdbListviewIter main_get_for_idx (int idx) {
-    return deadbeef->pl_get_for_idx_and_iter (idx, PL_MAIN);
-}
-
-int main_get_idx (DdbListviewIter it) {
-    DB_playItem_t *c = deadbeef->pl_get_first (PL_MAIN);
-    int idx = 0;
-    while (c && c != it) {
-        DB_playItem_t *next = deadbeef->pl_get_next (c, PL_MAIN);
-        deadbeef->pl_item_unref (c);
-        c = next;
-        idx++;
-    }
-    if (!c) {
-        return -1;
-    }
-    deadbeef->pl_item_unref (c);
-    return idx;
-}
-
 void
 main_drag_n_drop (DdbListviewIter before, DdbPlaylistHandle from_playlist, uint32_t *indices, int length, int copy) {
     deadbeef->pl_lock ();
@@ -122,7 +102,7 @@ void main_external_drag_n_drop (DdbListviewIter before, char *mem, int length) {
     gtkui_receive_fm_drop ((DB_playItem_t *)before, mem, length);
 }
 
-gboolean
+static gboolean
 playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer unused)
 {
     DdbListview *pl = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
@@ -139,36 +119,20 @@ playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_m
 
 // columns
 
-void
+static void
 main_col_sort (int col, int sort_order, void *user_data) {
     col_info_t *c = (col_info_t*)user_data;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->plt_sort_v2 (plt, PL_MAIN, c->id, c->format, sort_order-1);
     deadbeef->plt_unref (plt);
 }
-void main_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx) {
+static void main_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx) {
     deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, idx, 0);
 }
 
-void main_selection_changed (DdbListview *ps, DdbListviewIter it, int idx) {
-    DdbListview *search = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
-    if (idx == -1) {
-        ddb_listview_refresh (search, DDB_REFRESH_LIST);
-    }
-    else {
-        ddb_listview_draw_row (search, search_get_idx ((DB_playItem_t *)it), it);
-    }
+static void main_selection_changed (DdbListview *ps, DdbListviewIter it, int idx) {
+    search_redraw(it);
     deadbeef->sendmessage (DB_EV_SELCHANGED, (uintptr_t)ps, deadbeef->plt_get_curr_idx (), PL_MAIN);
-}
-
-void
-main_select (DdbListviewIter it, int sel) {
-    deadbeef->pl_set_selected ((DB_playItem_t *)it, sel);
-}
-
-int
-main_is_selected (DdbListviewIter it) {
-    return deadbeef->pl_is_selected ((DB_playItem_t *)it);
 }
 
 static void
@@ -178,14 +142,14 @@ main_groups_changed (const char* format) {
 
 static int lock_column_config = 0;
 
-void
+static void
 main_columns_changed (DdbListview *listview) {
     if (!lock_column_config) {
         pl_common_rewrite_column_config (listview, "gtkui.columns.playlist");
     }
 }
 
-void
+static void
 main_vscroll_changed (int pos) {
     coverart_reset_queue ();
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -220,12 +184,6 @@ static DdbListviewBinding main_binding = {
     .next = main_next,
     .prev = main_prev,
 
-    .get_for_idx = main_get_for_idx,
-    .get_idx = main_get_idx,
-
-    .is_selected = main_is_selected,
-    .select = main_select,
-
     .get_group = pl_common_get_group,
     .groups_changed = main_groups_changed,
 
@@ -258,6 +216,10 @@ main_playlist_init (GtkWidget *widget) {
     DdbListview *listview = DDB_LISTVIEW(widget);
     main_binding.ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
     main_binding.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
+    main_binding.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
+    main_binding.select = (void (*) (DdbListviewIter, int))deadbeef->pl_set_selected;
+    main_binding.get_for_idx = (DdbListviewIter)deadbeef->pl_get_for_idx;
+    main_binding.get_idx = (int (*) (DdbListviewIter))deadbeef->pl_get_idx_of;
     ddb_listview_set_binding (listview, &main_binding);
     lock_column_config = 1;
     if (pl_common_load_column_config (listview, "gtkui.columns.playlist") < 0) {
