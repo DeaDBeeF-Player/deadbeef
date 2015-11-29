@@ -2243,7 +2243,7 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
     w_playlist_t *tp = (w_playlist_t *)w;
     switch (id) {
     case DB_EV_SONGCHANGED:
-        g_idle_add (redraw_queued_tracks_cb, tp->list);
+    {
         ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
         struct fromto_t *ft = malloc (sizeof (struct fromto_t));
         ft->from = ev->from;
@@ -2257,6 +2257,7 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
         ft->w = w;
         g_idle_add (songchanged_cb, ft);
         break;
+    }
     case DB_EV_TRACKINFOCHANGED:
         {
             ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
@@ -2308,7 +2309,7 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
     w_playlist_t *p = (w_playlist_t *)w;
     switch (id) {
     case DB_EV_SONGCHANGED:
-        g_idle_add (redraw_queued_tracks_cb, p->list);
+    {
         ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
         struct fromto_t *ft = malloc (sizeof (struct fromto_t));
         ft->from = ev->from;
@@ -2322,6 +2323,7 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         ft->w = w;
         g_idle_add (songchanged_cb, ft);
         break;
+    }
     case DB_EV_TRACKINFOCHANGED:
         {
             ddb_event_track_t *ev = (ddb_event_track_t *)ctx;

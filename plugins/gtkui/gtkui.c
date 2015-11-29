@@ -38,7 +38,6 @@
 #endif
 #include "../../gettext.h"
 #include "gtkui.h"
-#include "ddblistview.h"
 #include "search.h"
 #include "progress.h"
 #include "interface.h"
@@ -349,33 +348,6 @@ activate_cb (gpointer nothing) {
 }
 
 void
-redraw_queued_tracks (DdbListview *pl) {
-    DB_playItem_t *it;
-    int idx = 0;
-    deadbeef->pl_lock ();
-    for (it = deadbeef->pl_get_first (PL_MAIN); it; idx++) {
-        if (deadbeef->playqueue_test (it) != -1) {
-            ddb_listview_draw_row (pl, idx, (DdbListviewIter)it);
-        }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
-    deadbeef->pl_unlock ();
-}
-
-gboolean
-redraw_queued_tracks_cb (gpointer plt) {
-    DdbListview *list = plt;
-    int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
-    if (!gtk_widget_get_visible (mainwin) || iconified) {
-        return FALSE;
-    }
-    redraw_queued_tracks (list);
-    return FALSE;
-}
-
-void
 gtkpl_songchanged_wrapper (DB_playItem_t *from, DB_playItem_t *to) {
     struct fromto_t *ft = malloc (sizeof (struct fromto_t));
     ft->from = from;
@@ -387,12 +359,6 @@ gtkpl_songchanged_wrapper (DB_playItem_t *from, DB_playItem_t *to) {
         deadbeef->pl_item_ref (to);
     }
     g_idle_add (update_win_title_idle, ft);
-    if (searchwin && gtk_widget_get_window (searchwin)) {
-        int iconified = gdk_window_get_state(gtk_widget_get_window (searchwin)) & GDK_WINDOW_STATE_ICONIFIED;
-        if (gtk_widget_get_visible (searchwin) && !iconified) {
-            g_idle_add (redraw_queued_tracks_cb, DDB_LISTVIEW (lookup_widget (searchwin, "searchlist")));
-        }
-    }
 }
 
 const char *gtkui_default_titlebar_playing = "%artist% - %title% - DeaDBeeF-%_deadbeef_version%";
@@ -451,23 +417,8 @@ gtkui_set_titlebar (DB_playItem_t *it) {
     set_tray_tooltip (str);
 }
 
-static void
-trackinfochanged_wrapper (DdbListview *playlist, DB_playItem_t *track, int iter) {
-    if (track) {
-        int idx = deadbeef->pl_get_idx_of_iter (track, iter);
-        if (idx != -1) {
-            ddb_listview_draw_row (playlist, idx, (DdbListviewIter)track);
-        }
-    }
-}
-
 void
 gtkui_trackinfochanged (DB_playItem_t *track) {
-    if (searchwin && gtk_widget_get_visible (searchwin)) {
-        GtkWidget *search = lookup_widget (searchwin, "searchlist");
-        trackinfochanged_wrapper (DDB_LISTVIEW (search), track, PL_SEARCH);
-    }
-
     DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();
     if (track == curr) {
         gtkui_set_titlebar (track);
@@ -486,21 +437,9 @@ trackinfochanged_cb (gpointer data) {
     return FALSE;
 }
 
-void
-playlist_refresh (void) {
-    search_refresh ();
-    trkproperties_fill_metadata ();
-}
-
 static gboolean
 playlistcontentchanged_cb (gpointer none) {
-    playlist_refresh ();
-    return FALSE;
-}
-
-static gboolean
-playlistswitch_cb (gpointer none) {
-    search_refresh ();
+    trkproperties_fill_metadata ();
     return FALSE;
 }
 
@@ -807,6 +746,7 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     if (!gtkui_accept_messages) {
         return -1;
     }
+    search_message(id, ctx, p1, p2);
     ddb_gtkui_widget_t *rootwidget = w_get_rootwidget ();
     if (rootwidget) {
         send_messages_to_widgets (rootwidget, id, ctx, p1, p2);
@@ -831,9 +771,6 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
             g_idle_add (trackinfochanged_cb, ev->track);
         }
         break;
-//    case DB_EV_PAUSED:
-//        g_idle_add (paused_cb, NULL);
-//        break;
     case DB_EV_PLAYLISTCHANGED:
         if (p1 == DDB_PLAYLIST_CHANGE_CONTENT) {
             g_idle_add (playlistcontentchanged_cb, NULL);
@@ -844,9 +781,6 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         break;
     case DB_EV_OUTPUTCHANGED:
         g_idle_add (outputchanged_cb, NULL);
-        break;
-    case DB_EV_PLAYLISTSWITCHED:
-        g_idle_add (playlistswitch_cb, NULL);
         break;
     case DB_EV_ACTIONSCHANGED:
         g_idle_add (add_mainmenu_actions_cb, NULL);
@@ -1038,7 +972,6 @@ gtkui_thread (void *ctx) {
     wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0);
 
     gtkui_on_configchanged (NULL);
-    gtkui_init_theme_colors ();
 
     // visibility of statusbar and headers
     GtkWidget *sb_mi = lookup_widget (mainwin, "view_status_bar");

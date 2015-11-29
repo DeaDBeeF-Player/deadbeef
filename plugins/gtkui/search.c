@@ -88,15 +88,16 @@ search_process (const char *text) {
     }
 }
 
-void
+static void
 search_refresh (void) {
-    if (searchwin && gtk_widget_get_visible (searchwin)) {
-        GtkEntry *entry = GTK_ENTRY (lookup_widget (searchwin, "searchentry"));
-        const gchar *text = gtk_entry_get_text (entry);
-        search_process (text);
-        GtkWidget *pl = lookup_widget (searchwin, "searchlist");
-        ddb_listview_refresh (DDB_LISTVIEW (pl), DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_LIST_CHANGED);
-        deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, (uintptr_t)pl, PL_MAIN, 0);
+    DdbListview *listview = playlist_visible();
+    if (listview) {
+        ddb_listview_clear_sort (listview);
+        GtkEntry *entry = GTK_ENTRY(lookup_widget(searchwin, "searchentry"));
+        const gchar *text = gtk_entry_get_text(entry);
+        search_process(text);
+        ddb_listview_refresh(listview, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
+        deadbeef->sendmessage(DB_EV_FOCUS_SELECTION, (uintptr_t)listview, PL_MAIN, 0);
 
         char title[1024] = "";
         ddb_tf_context_t ctx = {
@@ -123,7 +124,6 @@ search_start (void) {
     ddb_listview_refresh(listview, DDB_REFRESH_CONFIG);
     g_idle_add (unlock_search_columns_cb, NULL);
     search_refresh ();
-    main_refresh ();
 }
 
 void
@@ -134,6 +134,19 @@ search_destroy (void) {
         deadbeef->tf_free (window_title_bytecode);
         window_title_bytecode = NULL;
     }
+}
+
+static gboolean
+paused_cb (gpointer p) {
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track();
+    if (it) {
+        int idx = deadbeef->pl_get_idx_of_iter(it, PL_SEARCH);
+        if (idx != -1) {
+            ddb_listview_draw_row(DDB_LISTVIEW(p), idx, (DdbListviewIter)it);
+        }
+        deadbeef->pl_item_unref(it);
+    }
+    return FALSE;
 }
 
 static gboolean
@@ -163,6 +176,12 @@ header_redraw_cb (gpointer p) {
 }
 
 static gboolean
+configchanged_cb (gpointer p) {
+    ddb_listview_refresh (DDB_LISTVIEW(p), DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_CONFIG);
+    return FALSE;
+}
+
+static gboolean
 refresh_cb (gpointer p) {
     search_refresh();
     return FALSE;
@@ -182,6 +201,58 @@ search_redraw (DB_playItem_t *it) {
     }
 }
 
+int
+search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    DdbListview *listview = playlist_visible();
+    if (!listview) {
+        return 0;
+    }
+
+    switch (id) {
+        case DB_EV_SONGCHANGED:
+        {
+            ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
+            if (ev->from) {
+                deadbeef->pl_item_ref(ev->from);
+                g_idle_add(redraw_row_cb, ev->from);
+            }
+            if (ev->to) {
+                deadbeef->pl_item_ref(ev->to);
+                g_idle_add(redraw_row_cb, ev->to);
+            }
+            break;
+        }
+        case DB_EV_TRACKINFOCHANGED:
+            if (p1 != DDB_PLAYLIST_CHANGE_SELECTION || p2 != PL_SEARCH) {
+                ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
+                if (ev->track) {
+                    deadbeef->pl_item_ref (ev->track);
+                    g_idle_add(redraw_row_cb, ev->track);
+                }
+            }
+            break;
+        case DB_EV_PAUSED:
+            g_idle_add(paused_cb, listview);
+            break;
+        case DB_EV_PLAYLISTCHANGED:
+            if (p1 == DDB_PLAYLIST_CHANGE_SELECTION && p2 != PL_SEARCH || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
+                g_idle_add(list_redraw_cb, listview);
+            }
+            else if (p1 == DDB_PLAYLIST_CHANGE_CONTENT) {
+                g_idle_add(refresh_cb, NULL);
+            }
+            break;
+        case DB_EV_CONFIGCHANGED:
+            g_idle_add(configchanged_cb, listview);
+            break;
+        case DB_EV_PLAYLISTSWITCHED:
+            g_idle_add(refresh_cb, NULL);
+            break;
+        default:
+            break;
+    }
+    return 0;
+}
 ///////// searchwin playlist navigation and rendering
 
 void
@@ -323,8 +394,17 @@ search_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx)
 
 static void
 search_selection_changed (DdbListview *ps, DdbListviewIter it, int idx) {
-    deadbeef->sendmessage (DB_EV_SELCHANGED, (uintptr_t)ps, -1, -1);
-    deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, (uintptr_t)ps, PL_MAIN, 0);
+    deadbeef->sendmessage(DB_EV_SELCHANGED, (uintptr_t)ps, deadbeef->plt_get_curr_idx(), PL_SEARCH);
+    deadbeef->sendmessage(DB_EV_FOCUS_SELECTION, (uintptr_t)ps, PL_MAIN, 0);
+    if (it) {
+        ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc(DB_EV_TRACKINFOCHANGED);
+        ev->track = DB_PLAYITEM(it);
+        deadbeef->pl_item_ref(ev->track);
+        deadbeef->event_send((ddb_event_t *)ev, DDB_PLAYLIST_CHANGE_SELECTION, PL_SEARCH);
+    }
+    else {
+        deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, (uintptr_t)ps, DDB_PLAYLIST_CHANGE_SELECTION, PL_SEARCH);
+    }
 }
 
 static void

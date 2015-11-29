@@ -93,12 +93,6 @@ enum {
     COLO_COUNT
 };
 
-void
-playlist_refresh (void);
-
-void
-search_refresh (void);
-
 int
 gtkui_add_new_playlist (void);
 
@@ -137,9 +131,6 @@ gtkui_get_curr_playlist_mod (void);
 
 void
 gtkui_trackinfochanged (DB_playItem_t *it);
-
-gboolean
-redraw_queued_tracks_cb (gpointer plt);
 
 void
 mainwin_toggle_visible (void);
