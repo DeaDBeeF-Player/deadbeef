@@ -86,7 +86,11 @@ void remove_cache_item(const char *entry_path, const char *subdir_path, const ch
     make_cache_root_path(cache_root_path, PATH_MAX);
     struct dirent **scaled_dirs = NULL;
     const int scaled_dirs_count = scandir(cache_root_path, &scaled_dirs, filter_scaled_dirs, NULL);
-    for (size_t i = 0; i < scaled_dirs_count; i++) {
+    if (scaled_dirs_count < 0) {
+        cache_unlock ();
+        return;
+    }
+    for (int i = 0; i < scaled_dirs_count; i++) {
         char scaled_entry_path[PATH_MAX];
         if (snprintf(scaled_entry_path, PATH_MAX, "%s%s/%s/%s", cache_root_path, scaled_dirs[i]->d_name, subdir_name, entry_name) < PATH_MAX) {
             unlink(scaled_entry_path);
