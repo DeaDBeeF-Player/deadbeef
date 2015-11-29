@@ -46,6 +46,7 @@
 #include "ddbseekbar.h"
 #include "ddbvolumebar.h"
 #include "callbacks.h"
+#include "drawing.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -1975,6 +1976,12 @@ w_tabstrip_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         }
         break;
     case DB_EV_CONFIGCHANGED:
+        if (ctx) {
+            char *conf_str = (char *)ctx;
+            if (gtkui_tabstrip_override_conf(conf_str) || gtkui_tabstrip_colors_conf(conf_str) || gtkui_tabstrip_font_conf(conf_str)) {
+                g_idle_add (tabstrip_refresh_cb, w);
+            }
+        }
     case DB_EV_PLAYLISTSWITCHED:
     case DB_EV_TRACKINFOCHANGED:
         g_idle_add (tabstrip_refresh_cb, w);
@@ -2261,7 +2268,22 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         g_idle_add (selectionfocus_cb, w);
         break;
     case DB_EV_CONFIGCHANGED:
-        g_idle_add (playlist_config_changed_cb, p->list);
+        if (ctx) {
+            char *conf_str = (char *)ctx;
+            if (gtkui_listview_override_conf(conf_str) || gtkui_listview_font_conf(conf_str)) {
+                g_idle_add (playlist_config_changed_cb, p->list);
+            }
+            else if (gtkui_listview_colors_conf(conf_str)) {
+                g_idle_add (playlist_list_refresh_cb, p->list);
+                g_idle_add (playlist_header_refresh_cb, p->list);
+            }
+            else if (gtkui_listview_font_style_conf(conf_str) || !strcmp (conf_str, "playlist.pin.groups")) {
+                g_idle_add (playlist_list_refresh_cb, p->list);
+            }
+            else if (gtkui_tabstrip_override_conf(conf_str) || gtkui_tabstrip_colors_conf(conf_str)) {
+                g_idle_add (playlist_header_refresh_cb, p->list);
+            }
+        }
         break;
     }
     return 0;
@@ -2272,7 +2294,12 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
     fprintf(stderr, "message id = %d (p1=%d)\n", id, p1);
     switch (id) {
     case DB_EV_CONFIGCHANGED:
-        g_idle_add (playlist_tabstriprefresh_cb, w);
+        if (ctx) {
+            char *str = (char *)ctx;
+            if (gtkui_tabstrip_override_conf(str) || gtkui_tabstrip_colors_conf(str) || gtkui_tabstrip_font_conf(str) || gtkui_tabstrip_font_style_conf(str)) {
+                g_idle_add (playlist_tabstriprefresh_cb, w);
+            }
+        }
         break;
     case DB_EV_TRACKINFOCHANGED:
     case DB_EV_PLAYLISTSWITCHED:
@@ -2699,7 +2726,7 @@ coverart_message (ddb_gtkui_widget_t *base, uint32_t id, uintptr_t ctx, uint32_t
         coverart_invalidate(w->drawarea);
         break;
     case DB_EV_TRACKINFOCHANGED:
-        {
+        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT) {
             ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
             DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
             if (it == ev->track) {
@@ -4037,7 +4064,12 @@ w_seekbar_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p
     switch (id) {
     case DB_EV_CONFIGCHANGED:
         w_seekbar_init (w);
-        g_idle_add (redraw_seekbar_cb, w);
+        if (ctx) {
+            char *conf_str = (char *)ctx;
+            if (gtkui_bar_override_conf(conf_str) || gtkui_bar_colors_conf(conf_str)) {
+                g_idle_add (redraw_seekbar_cb, w);
+            }
+        }
         break;
     case DB_EV_SONGCHANGED:
         g_idle_add (redraw_seekbar_cb, w);
@@ -4180,6 +4212,13 @@ static int
 w_volumebar_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
     case DB_EV_CONFIGCHANGED:
+        if (ctx) {
+            char *conf_str = (char *)ctx;
+            if (gtkui_bar_override_conf(conf_str) || gtkui_bar_colors_conf(conf_str)) {
+                g_idle_add (redraw_volumebar_cb, w);
+            }
+        }
+        break;
     case DB_EV_VOLUMECHANGED:
         g_idle_add (redraw_volumebar_cb, w);
         break;

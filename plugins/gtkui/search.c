@@ -243,7 +243,22 @@ search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
             }
             break;
         case DB_EV_CONFIGCHANGED:
-            g_idle_add(configchanged_cb, listview);
+            if (ctx) {
+                char *conf_str = (char *)ctx;
+                if (gtkui_listview_override_conf(conf_str) || gtkui_listview_font_conf(conf_str)) {
+                    g_idle_add(configchanged_cb, listview);
+                }
+                else if (gtkui_listview_colors_conf(conf_str)) {
+                    g_idle_add (list_redraw_cb, listview);
+                    g_idle_add (header_redraw_cb, listview);
+                }
+                else if (gtkui_listview_font_style_conf(conf_str) || !strcmp (conf_str, "playlist.pin.groups")) {
+                    g_idle_add (list_redraw_cb, listview);
+                }
+                else if (gtkui_tabstrip_override_conf(conf_str) || gtkui_tabstrip_colors_conf(conf_str)) {
+                    g_idle_add (header_redraw_cb, listview);
+                }
+            }
             break;
         case DB_EV_PLAYLISTSWITCHED:
             g_idle_add(refresh_cb, NULL);

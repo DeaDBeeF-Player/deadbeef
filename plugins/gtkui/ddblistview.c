@@ -47,7 +47,7 @@
 #define DEFAULT_GROUP_TITLE_HEIGHT 30
 #define SCROLL_STEP 20
 #define AUTOSCROLL_UPDATE_FREQ 0.01f
-#define NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW 10
+#define NUM_ROWS_TO_NOTIFY_SINGLY 10
 #define MIN_COLUMN_WIDTH 16
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -1446,18 +1446,21 @@ ddb_listview_header_expose (DdbListview *ps, cairo_t *cr, int x, int y, int w, i
 static void
 ddb_listview_deselect_all (DdbListview *listview)
 {
+    int notify_singly = listview->binding->sel_count() <= NUM_ROWS_TO_NOTIFY_SINGLY;
     DdbListviewIter it;
     int idx = 0;
     for (it = listview->binding->head (); it; idx++) {
         if (listview->binding->is_selected (it)) {
             listview->binding->select (it, 0);
             ddb_listview_draw_row (listview, idx, it);
-            listview->binding->selection_changed (listview, it, idx);
+            if (notify_singly) {
+                listview->binding->selection_changed (listview, it, idx);
+            }
         }
         it = next_playitem(listview, it);
     }
-    if (it) {
-        listview->binding->unref (it);
+    if (!notify_singly) {
+        listview->binding->selection_changed(listview, NULL, -1);
     }
 }
 
@@ -1471,6 +1474,7 @@ ddb_listview_select_group (DdbListview *listview, DdbListviewGroup *grp, int fir
     if (grp == NULL) {
         return;
     }
+    int notify_singly = grp->num_items <= NUM_ROWS_TO_NOTIFY_SINGLY;
     DdbListviewIter it = grp->head;
     listview->binding->ref (it);
     if (first_item_idx == -1) {
@@ -1484,14 +1488,18 @@ ddb_listview_select_group (DdbListview *listview, DdbListviewGroup *grp, int fir
             listview->binding->select (it, 1);
         }
         ddb_listview_draw_row (listview, first_item_idx + group_idx, it);
-        listview->binding->selection_changed (listview, it, first_item_idx + group_idx);
+        if (notify_singly) {
+            listview->binding->selection_changed (listview, it, first_item_idx + group_idx);
+        }
         it = next_playitem(listview, it);
     }
     if (it) {
         listview->binding->unref (it);
     }
 
-    ddb_listview_refresh (listview, DDB_REFRESH_LIST);
+    if (!notify_singly) {
+        listview->binding->selection_changed(listview, NULL, -1);
+    }
 }
 
 // Toggle selection of group
@@ -1529,34 +1537,16 @@ ddb_listview_toggle_group_selection (DdbListview *listview, DdbListviewGroup *gr
 
 static void
 ddb_listview_select_single (DdbListview *ps, int sel) {
-    int nchanged = 0;
     deadbeef->pl_lock ();
-
+    ddb_listview_deselect_all(ps);
     DdbListviewIter sel_it = ps->binding->get_for_idx (sel);
-    if (!sel_it) {
-        deadbeef->pl_unlock ();
-        return;
+    if (sel_it) {
+        ps->binding->select (sel_it, 1);
+        ddb_listview_draw_row (ps, sel, sel_it);
+        ps->binding->selection_changed (ps, sel_it, sel);
+        ps->binding->unref(sel_it);
     }
-
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-    while (it) {
-        int selected = deadbeef->pl_is_selected (it);
-        if (selected) {
-            deadbeef->pl_set_selected (it, 0);
-        }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-        UNREF (it);
-        it = next;
-    }
-    UNREF (it);
-
-    ps->binding->select (sel_it, 1);
-
-    UNREF (sel_it);
     deadbeef->pl_unlock ();
-
-    ddb_listview_refresh (ps, DDB_REFRESH_LIST);
-    ps->binding->selection_changed (ps, NULL, -1); // that means "selection changed a lot, redraw everything"
 }
 
 static void
@@ -1585,28 +1575,27 @@ ddb_listview_select_range (DdbListview *ps, int start, int end)
     for (it = ps->binding->head (); it; idx++) {
         if (idx >= start && idx <= end) {
             if (!ps->binding->is_selected (it)) {
-                ps->binding->select (it, 1);
                 nchanged++;
-                if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
-                    ddb_listview_draw_row (ps, idx, it);
+                ps->binding->select (it, 1);
+                ddb_listview_draw_row (ps, idx, it);
+                if (nchanged <= NUM_ROWS_TO_NOTIFY_SINGLY) {
                     ps->binding->selection_changed (ps, it, idx);
                 }
             }
         }
         else {
             if (ps->binding->is_selected (it)) {
-                ps->binding->select (it, 0);
                 nchanged++;
-                if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
-                    ddb_listview_draw_row (ps, idx, it);
+                ps->binding->select (it, 0);
+                ddb_listview_draw_row (ps, idx, it);
+                if (nchanged <= NUM_ROWS_TO_NOTIFY_SINGLY) {
                     ps->binding->selection_changed (ps, it, idx);
                 }
             }
         }
         it = next_playitem(ps, it);
     }
-    if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
-        ddb_listview_refresh (ps, DDB_REFRESH_LIST);
+    if (nchanged > NUM_ROWS_TO_NOTIFY_SINGLY) {
         ps->binding->selection_changed (ps, NULL, -1);
     }
 }
@@ -2989,7 +2978,7 @@ ddb_listview_scroll_to (DdbListview *listview, int pos) {
 
 int
 ddb_listview_is_scrolling (DdbListview *listview) {
-    return listview->dragwait;
+    return listview->dragwait || listview->areaselect || listview->drag_motion_y != -1;
 }
 
 /////// column management code
