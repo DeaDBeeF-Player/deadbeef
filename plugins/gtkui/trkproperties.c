@@ -587,8 +587,6 @@ write_finished_cb (void *ctx) {
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
     }
-    main_refresh ();
-    search_refresh ();
     trkproperties_modified = 0;
     show_track_properties_dlg (last_ctx);
 
@@ -700,11 +698,16 @@ on_write_tags_clicked                  (GtkButton       *button,
     gtk_tree_model_foreach (model, set_metadata_cb, NULL);
     deadbeef->pl_unlock ();
 
-    for (int i = 0; i < numtracks; i++) {
-        ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
-        ev->track = tracks[i];
-        deadbeef->pl_item_ref (ev->track);
-        deadbeef->event_send ((ddb_event_t*)ev, 0, 0);
+    if (numtracks > 25) {
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    }
+    else {
+        for (int i = 0; i < numtracks; i++) {
+            ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
+            ev->track = tracks[i];
+            deadbeef->pl_item_ref (ev->track);
+            deadbeef->event_send ((ddb_event_t*)ev, 0, 0);
+        }
     }
 
     progress_aborted = 0;

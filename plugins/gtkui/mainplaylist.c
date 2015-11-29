@@ -248,9 +248,3 @@ main_playlist_init (GtkWidget *widget) {
         g_signal_connect (G_OBJECT (pl->list), "query-tooltip", G_CALLBACK (playlist_tooltip_handler), NULL);
     }
 }
-
-void
-main_refresh (void) {
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-}
-

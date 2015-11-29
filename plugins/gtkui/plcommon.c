@@ -30,7 +30,6 @@
 #include "coverart.h"
 #include "drawing.h"
 #include "trkproperties.h"
-#include "mainplaylist.h"
 #include "support.h"
 #include "interface.h"
 #include "../libparser/parser.h"
@@ -486,7 +485,6 @@ add_to_playback_queue_activate     (GtkMenuItem     *menuitem,
         deadbeef->pl_item_unref (it);
         it = next;
     }
-    deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
 }
 
 static void
@@ -503,7 +501,6 @@ remove_from_playback_queue_activate
         deadbeef->pl_item_unref (it);
         it = next;
     }
-    deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
 }
 
 static void
@@ -542,7 +539,7 @@ reload_metadata_activate
         deadbeef->pl_item_unref (it);
         it = next;
     }
-    deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 static void

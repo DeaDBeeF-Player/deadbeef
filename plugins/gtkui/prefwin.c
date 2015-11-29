@@ -42,13 +42,6 @@
 #include "wingeom.h"
 #include "hotkeys.h"
 
-#define GLADE_HOOKUP_OBJECT(component,widget,name) \
-  g_object_set_data_full (G_OBJECT (component), name, \
-    g_object_ref (G_OBJECT (widget)), (GDestroyNotify) g_object_unref)
-
-#define GLADE_HOOKUP_OBJECT_NO_REF(component,widget,name) \
-  g_object_set_data (G_OBJECT (component), name, widget)
-
 static GtkWidget *prefwin;
 
 static char alsa_device_names[100][64];
@@ -694,7 +687,6 @@ on_tabstrip_playing_bold_toggled       (GtkToggleButton *togglebutton,
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("gtkui.tabstrip_embolden_playing", active);
     gtkui_tabstrip_embolden_playing = active;
-    playlist_refresh ();
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -705,7 +697,6 @@ on_tabstrip_playing_italic_toggled     (GtkToggleButton *togglebutton,
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("gtkui.tabstrip_italic_playing", active);
     gtkui_tabstrip_italic_playing = active;
-    playlist_refresh ();
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -716,7 +707,6 @@ on_tabstrip_selected_bold_toggled      (GtkToggleButton *togglebutton,
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("gtkui.tabstrip_embolden_selected", active);
     gtkui_tabstrip_embolden_selected = active;
-    playlist_refresh ();
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -727,7 +717,6 @@ on_tabstrip_selected_italic_toggled    (GtkToggleButton *togglebutton,
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("gtkui.tabstrip_italic_selected", active);
     gtkui_tabstrip_italic_selected = active;
-    playlist_refresh ();
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -737,7 +726,6 @@ on_tabstrip_text_font_set              (GtkFontButton   *fontbutton,
 {
     deadbeef->conf_set_str ("gtkui.font.tabstrip_text", gtk_font_button_get_font_name (fontbutton));
     gtkui_init_theme_colors ();
-    playlist_refresh ();
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     gtk_widget_queue_draw (mainwin);
@@ -775,7 +763,6 @@ on_override_listview_colors_toggled    (GtkToggleButton *togglebutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
     prefwin_init_theme_colors ();
-    playlist_refresh ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     gtk_widget_queue_draw (mainwin);
 }
@@ -786,7 +773,6 @@ on_listview_even_row_color_set         (GtkColorButton  *colorbutton,
                                         gpointer         user_data)
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_even_row");
-    playlist_refresh ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
@@ -795,7 +781,6 @@ on_listview_odd_row_color_set          (GtkColorButton  *colorbutton,
                                         gpointer         user_data)
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_odd_row");
-    playlist_refresh ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
@@ -804,7 +789,6 @@ on_listview_selected_row_color_set     (GtkColorButton  *colorbutton,
                                         gpointer         user_data)
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_selection");
-    playlist_refresh ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
@@ -813,7 +797,6 @@ on_listview_text_color_set             (GtkColorButton  *colorbutton,
                                         gpointer         user_data)
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_text");
-    playlist_refresh ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
@@ -823,7 +806,6 @@ on_listview_selected_text_color_set    (GtkColorButton  *colorbutton,
                                         gpointer         user_data)
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_selected_text");
-    playlist_refresh ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
@@ -832,7 +814,6 @@ on_listview_cursor_color_set           (GtkColorButton  *colorbutton,
                                         gpointer         user_data)
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_cursor");
-    playlist_refresh ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
@@ -841,7 +822,6 @@ on_listview_playing_text_color_set     (GtkColorButton  *colorbutton,
                                         gpointer         user_data)
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_playing_text");
-    playlist_refresh ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
@@ -850,7 +830,6 @@ on_listview_group_text_color_set       (GtkColorButton  *colorbutton,
                                         gpointer         user_data)
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_group_text");
-    playlist_refresh ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     gtk_widget_queue_draw (mainwin);
 }
@@ -862,7 +841,6 @@ on_listview_group_text_font_set        (GtkFontButton   *fontbutton,
     deadbeef->conf_set_str ("gtkui.font.listview_group_text", gtk_font_button_get_font_name (fontbutton));
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
-    playlist_refresh ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     gtk_widget_queue_draw (mainwin);
 }
@@ -874,7 +852,6 @@ on_listview_text_font_set              (GtkFontButton   *fontbutton,
     deadbeef->conf_set_str ("gtkui.font.listview_text", gtk_font_button_get_font_name (fontbutton));
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
-    playlist_refresh ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     gtk_widget_queue_draw (mainwin);
 }
@@ -886,7 +863,6 @@ on_listview_playing_text_bold_toggled  (GtkToggleButton *togglebutton,
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("gtkui.embolden_current_track", active);
     gtkui_embolden_current_track = active;
-    playlist_refresh ();
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -897,7 +873,6 @@ on_listview_playing_text_italic_toggled (GtkToggleButton *togglebutton,
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("gtkui.italic_current_track", active);
     gtkui_italic_current_track = active;
-    playlist_refresh ();
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -908,7 +883,6 @@ on_listview_selected_text_bold_toggled (GtkToggleButton *togglebutton,
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("gtkui.embolden_selected_tracks", active);
     gtkui_embolden_selected_tracks = active;
-    playlist_refresh ();
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -919,7 +893,6 @@ on_listview_selected_text_italic_toggled (GtkToggleButton *togglebutton,
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("gtkui.italic_selected_tracks", active);
     gtkui_italic_selected_tracks = active;
-    playlist_refresh ();
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -928,7 +901,6 @@ on_listview_column_text_color_set      (GtkColorButton  *colorbutton,
                                         gpointer         user_data)
 {
     color_set_helper (colorbutton, user_data, "gtkui.color.listview_column_text");
-    playlist_refresh ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
@@ -939,7 +911,6 @@ on_listview_column_text_font_set       (GtkFontButton   *fontbutton,
     deadbeef->conf_set_str ("gtkui.font.listview_column_text", gtk_font_button_get_font_name (fontbutton));
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
-    playlist_refresh ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
