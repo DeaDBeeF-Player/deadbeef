@@ -95,6 +95,35 @@ draw_get_text_extents (drawctx_t *ctx, const char *text, int len, int *w, int *h
 int
 draw_get_listview_rowheight (drawctx_t *ctx);
 
+int
+gtkui_listview_override_conf (const char *conf_str);
+
+int
+gtkui_listview_font_conf (const char *conf_str);
+
+int
+gtkui_listview_font_style_conf (const char *conf_str);
+
+int
+gtkui_listview_colors_conf (const char *conf_str);
+
+int
+gtkui_tabstrip_override_conf (const char *conf_str);
+
+int
+gtkui_tabstrip_colors_conf (const char *conf_str);
+
+int
+gtkui_tabstrip_font_conf (const char *conf_str);
+
+int
+gtkui_tabstrip_font_style_conf (const char *conf_str);
+
+int
+gtkui_bar_override_conf (const char *conf_str);
+
+int
+gtkui_bar_colors_conf (const char *conf_str);
 void
 gtkui_get_bar_foreground_color (GdkColor *clr);
 
