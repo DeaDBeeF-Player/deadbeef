@@ -1673,3 +1673,16 @@ pl_common_delete_selected (void) {
     deadbeef->pl_save_current();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
+
+void
+pl_common_selection_changed (DdbListview *ps, int iter, DB_playItem_t *it) {
+    if (it) {
+        ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc(DB_EV_TRACKINFOCHANGED);
+        ev->track = it;
+        ps->binding->ref(ev->track);
+        deadbeef->event_send((ddb_event_t *)ev, DDB_PLAYLIST_CHANGE_SELECTION, iter);
+    }
+    else {
+        deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, (uintptr_t)ps, DDB_PLAYLIST_CHANGE_SELECTION, iter);
+    }
+}

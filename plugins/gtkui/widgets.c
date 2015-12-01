@@ -2063,7 +2063,7 @@ playlist_config_changed_cb (gpointer data) {
 }
 
 static gboolean
-playlist_reset_sort_cb (gpointer data) {
+playlist_sort_reset_cb (gpointer data) {
     ddb_listview_clear_sort (DDB_LISTVIEW(data));
     return FALSE;
 }
@@ -2083,7 +2083,6 @@ playlist_header_refresh_cb (gpointer data) {
 static gboolean
 playlist_setup_cb (gpointer data) {
     DdbListview *listview = DDB_LISTVIEW(data);
-    ddb_listview_lock_columns (listview, 0);
     ddb_listview_clear_sort (listview);
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
@@ -2092,6 +2091,7 @@ playlist_setup_cb (gpointer data) {
             deadbeef->plt_unref (plt);
             return TRUE;
         }
+
         int cursor = deadbeef->plt_get_cursor (plt, PL_MAIN);
         if (cursor != -1) {
             DB_playItem_t *it = deadbeef->pl_get_for_idx (cursor);
@@ -2207,56 +2207,58 @@ trackfocus_cb (gpointer data) {
 }
 
 static gboolean
-selectionfocus_cb (gpointer data) {
-    deadbeef->pl_lock ();
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (plt) {
-        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
-        while (it) {
-            if (deadbeef->pl_is_selected (it)) {
-                int idx = deadbeef->pl_get_idx_of (it);
-                if (idx != -1) {
-                    deadbeef->plt_set_cursor (data, PL_MAIN, idx);
-                    ddb_listview_scroll_to (((w_playlist_t *)data)->list, idx);
-                }
-                deadbeef->pl_item_unref (it);
-                break;
-            }
-            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-            deadbeef->pl_item_unref (it);
-            it = next;
-        }
-
-        deadbeef->plt_unref (plt);
+focus_selection_cb (gpointer data) {
+    w_trackdata_t *d = data;
+    int cursor = deadbeef->pl_get_idx_of (d->trk);
+    if (cursor != -1) {
+        deadbeef->pl_set_cursor (PL_MAIN, cursor);
+        ddb_listview_scroll_to (d->listview, cursor);
     }
-    deadbeef->pl_unlock ();
-
+    deadbeef->pl_item_unref (d->trk);
+    free (d);
     return FALSE;
 }
+
+static int
+playlist_sort_reset_needed (DdbListview *ps, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    return p1 == DDB_PLAYLIST_CHANGE_CONTENT || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE;
+}
+
+static int
+playlist_refresh_needed (DdbListview *ps, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    return p1 == DDB_PLAYLIST_CHANGE_CONTENT ||
+           p1 == DDB_PLAYLIST_CHANGE_SELECTION && (p2 != PL_MAIN || (DdbListview *)ctx != ps) ||
+           p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE;
+}
+
 static int
 w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     w_playlist_t *p = (w_playlist_t *)w;
     switch (id) {
+    case DB_EV_PAUSED:
+        g_idle_add (paused_cb, p->list);
+        break;
     case DB_EV_SONGCHANGED:
         g_idle_add (songchanged_cb, songchanged_fromto(p->list, (ddb_event_trackchange_t *)ctx));
         break;
     case DB_EV_TRACKINFOCHANGED:
-        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT) {
-            g_idle_add (playlist_reset_sort_cb, p->list);
+        if (playlist_sort_reset_needed (p->list, ctx, p1, p2)) {
+            g_idle_add (playlist_sort_reset_cb, p->list);
         }
-        ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
-        if (ev->track) {
-            g_idle_add (trackinfochanged_cb, playlist_trackdata(p->list, ev->track));
+        if (playlist_refresh_needed (p->list, ctx, p1, p2)) {
+            ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
+            if (ev->track) {
+                g_idle_add (trackinfochanged_cb, playlist_trackdata(p->list, ev->track));
+            }
         }
-        break;
-    case DB_EV_PAUSED:
-        g_idle_add (paused_cb, p->list);
         break;
     case DB_EV_PLAYLISTCHANGED:
-        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT) {
-            g_idle_add (playlist_reset_sort_cb, p->list);
+        if (playlist_sort_reset_needed (p->list, ctx, p1, p2)) {
+            g_idle_add (playlist_sort_reset_cb, p->list);
         }
-        g_idle_add (playlist_list_refresh_cb, p->list);
+        if (playlist_refresh_needed (p->list, ctx, p1, p2)) {
+            g_idle_add (playlist_list_refresh_cb, p->list);
+        }
         break;
     case DB_EV_PLAYLISTSWITCHED:
         g_idle_add (playlist_setup_cb, p->list);
@@ -2265,7 +2267,13 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         g_idle_add (trackfocus_cb, p->list);
         break;
     case DB_EV_FOCUS_SELECTION:
-        g_idle_add (selectionfocus_cb, w);
+        if (p1 != PL_MAIN) {
+            DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (p2, p1);
+            if (it) {
+                g_idle_add (focus_selection_cb, playlist_trackdata(p->list, it));
+                deadbeef->pl_item_unref (it);
+            }
+        }
         break;
     case DB_EV_CONFIGCHANGED:
         if (ctx) {
@@ -2291,7 +2299,6 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
 
 static int
 w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
-    fprintf(stderr, "message id = %d (p1=%d)\n", id, p1);
     switch (id) {
     case DB_EV_CONFIGCHANGED:
         if (ctx) {
@@ -2511,7 +2518,6 @@ selproperties_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32
         }
         break;
     case DB_EV_PLAYLISTSWITCHED:
-    case DB_EV_SELCHANGED:
         selproperties_selection_changed (w);
         break;
     }

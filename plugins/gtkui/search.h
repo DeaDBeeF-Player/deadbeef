@@ -32,9 +32,6 @@ search_start (void);
 void
 search_destroy (void);
 
-void
-search_redraw (DB_playItem_t *it);
-
 int
 search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 

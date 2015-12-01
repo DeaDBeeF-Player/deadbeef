@@ -73,7 +73,6 @@ DB_functions_t *deadbeef;
 
 // main widgets
 GtkWidget *mainwin;
-GtkWidget *searchwin;
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
 
@@ -992,12 +991,7 @@ gtkui_thread (void *ctx) {
         gtk_widget_hide (menu);
     }
 
-    searchwin = create_searchwin ();
-    gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
-
-    GtkWidget *search_playlist = lookup_widget (searchwin, "searchlist");
-    search_playlist_init (search_playlist);
-
+    search_playlist_init (mainwin);
     progress_init ();
     cover_art_init ();
 
@@ -1046,15 +1040,12 @@ gtkui_thread (void *ctx) {
     progress_destroy ();
     gtkui_hide_status_icon ();
     pl_common_free();
+    search_destroy ();
 //    draw_free ();
     titlebar_tf_free ();
     if (mainwin) {
         gtk_widget_destroy (mainwin);
         mainwin = NULL;
-    }
-    if (searchwin) {
-        gtk_widget_destroy (searchwin);
-        searchwin = NULL;
     }
     gdk_threads_leave ();
     return 0;

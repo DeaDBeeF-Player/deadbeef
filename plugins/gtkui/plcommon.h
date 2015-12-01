@@ -86,4 +86,7 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
 void
 pl_common_delete_selected (void);
 
+void
+pl_common_selection_changed (DdbListview *ps, int iter, DB_playItem_t *it);
+
 #endif // __PLCOLUMNS_H

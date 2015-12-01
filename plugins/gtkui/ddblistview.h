@@ -99,7 +99,7 @@ typedef struct {
     // cols
     int (*is_album_art_column) (void *user_data);
     void (*columns_changed) (DdbListview *listview);
-    void (*col_sort) (int col, int sort_order, void *user_data);
+    void (*col_sort) (int sort_order, void *user_data);
     void (*col_free_user_data) (void *user_data);
 
     // callbacks
@@ -244,6 +244,8 @@ int
 ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, minheight_cb_t *, int *color_override, GdkColor *color, void **user_data);
 int
 ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);
+void
+ddb_listview_col_sort (DdbListview *listview);
 
 void
 ddb_listview_show_header (DdbListview *listview, int show);
@@ -266,9 +268,6 @@ ddb_listview_invalidate_album_art_columns (DdbListview *listview);
 
 void
 ddb_listview_clear_sort (DdbListview *listview);
-
-void
-ddb_listview_lock_columns (DdbListview *lv, gboolean lock);
 
 int
 ddb_listview_get_row_pos (DdbListview *listview, int row_idx);
