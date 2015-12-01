@@ -52,16 +52,9 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-extern GtkWidget *searchwin;
-extern GtkWidget *mainwin;
-
+static GtkWidget *searchwin;
+static int refresh_source_id = 0;
 static char *window_title_bytecode = NULL;
-
-static gboolean
-unlock_search_columns_cb (void *ctx) {
-    ddb_listview_lock_columns (DDB_LISTVIEW (lookup_widget (searchwin, "searchlist")), 0);
-    return FALSE;
-}
 
 static DdbListview *
 playlist_visible () {
@@ -77,59 +70,66 @@ playlist_visible () {
 }
 
 static void
-search_process (const char *text) {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+search_process (DdbListview *listview, ddb_playlist_t *plt) {
+    GtkEntry *entry = GTK_ENTRY(lookup_widget(searchwin, "searchentry"));
+    ddb_listview_clear_sort (listview);
+    const gchar *text = gtk_entry_get_text(entry);
     deadbeef->plt_search_process (plt, text);
-    deadbeef->plt_unref (plt);
-
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SEARCHRESULT, 0);
     int row = deadbeef->pl_get_cursor (PL_SEARCH);
     if (row >= deadbeef->pl_getcount (PL_SEARCH)) {
         deadbeef->pl_set_cursor (PL_SEARCH, deadbeef->pl_getcount (PL_SEARCH) - 1);
     }
+    ddb_listview_refresh (listview, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
+
+    char title[1024] = "";
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .plt = deadbeef->plt_get_curr (),
+        .iter = PL_SEARCH
+    };
+    deadbeef->tf_eval (&ctx, window_title_bytecode, title, sizeof (title));
+    gtk_window_set_title (GTK_WINDOW (searchwin), title);
 }
 
-static void
-search_refresh (void) {
-    DdbListview *listview = playlist_visible();
-    if (listview) {
+static gboolean
+search_start_cb (gpointer p) {
+    GtkWidget *entry = lookup_widget (searchwin, "searchentry");
+    if (!playlist_visible ()) {
+        DdbListview *listview = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
         ddb_listview_clear_sort (listview);
-        GtkEntry *entry = GTK_ENTRY(lookup_widget(searchwin, "searchentry"));
-        const gchar *text = gtk_entry_get_text(entry);
-        search_process(text);
-        ddb_listview_refresh(listview, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
-        deadbeef->sendmessage(DB_EV_FOCUS_SELECTION, (uintptr_t)listview, PL_MAIN, 0);
-
-        char title[1024] = "";
-        ddb_tf_context_t ctx = {
-            ._size = sizeof (ddb_tf_context_t),
-            .plt = deadbeef->plt_get_curr (),
-            .iter = PL_SEARCH
-        };
-        deadbeef->tf_eval (&ctx, window_title_bytecode, title, sizeof (title));
-        gtk_window_set_title (GTK_WINDOW (searchwin), title);
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        if (plt) {
+            deadbeef->plt_search_reset (plt);
+            deadbeef->plt_deselect_all (plt);
+            deadbeef->plt_unref (plt);
+        }
+        wingeom_restore (searchwin, "searchwin", -1, -1, 450, 150, 0);
+        gtk_widget_show (searchwin);
+        gtk_entry_set_text (GTK_ENTRY (entry), "");
+        if (!ddb_listview_list_setup (listview, 0)) {
+            return TRUE;
+        }
+        ddb_listview_refresh (listview, DDB_REFRESH_CONFIG);
     }
+    gtk_widget_grab_focus (entry);
+    gtk_window_present (GTK_WINDOW (searchwin));
+    return FALSE;
 }
 
 void
 search_start (void) {
-    DdbListview *listview = DDB_LISTVIEW(lookup_widget(searchwin, "searchlist"));
-    ddb_listview_lock_columns(listview, 1);
-    wingeom_restore (searchwin, "searchwin", -1, -1, 450, 150, 0);
-    GtkWidget *entry = lookup_widget (searchwin, "searchentry");
-    gtk_entry_set_text(GTK_ENTRY(entry), "");
-    gtk_widget_grab_focus(entry);
-    gtk_widget_show (searchwin);
-    gtk_window_present (GTK_WINDOW (searchwin));
-    ddb_listview_list_setup (listview, 0);
-    ddb_listview_refresh(listview, DDB_REFRESH_CONFIG);
-    g_idle_add (unlock_search_columns_cb, NULL);
-    search_refresh ();
+    if (searchwin) {
+        g_idle_add (search_start_cb, NULL);
+    }
 }
 
 void
 search_destroy (void) {
-    gtk_widget_destroy (searchwin);
-    searchwin = NULL;
+    if (searchwin) {
+        gtk_widget_destroy (searchwin);
+        searchwin = NULL;
+    }
     if (window_title_bytecode) {
         deadbeef->tf_free (window_title_bytecode);
         window_title_bytecode = NULL;
@@ -176,6 +176,20 @@ header_redraw_cb (gpointer p) {
 }
 
 static gboolean
+focus_selection_cb (gpointer p) {
+    DdbListview *listview = playlist_visible();
+    if (listview) {
+        int cursor = deadbeef->pl_get_idx_of_iter (p, PL_SEARCH);
+        if (cursor != -1) {
+            deadbeef->pl_set_cursor (PL_SEARCH, cursor);
+            ddb_listview_scroll_to (listview, cursor);
+        }
+    }
+    deadbeef->pl_item_unref (p);
+    return FALSE;
+}
+
+static gboolean
 configchanged_cb (gpointer p) {
     ddb_listview_refresh (DDB_LISTVIEW(p), DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_CONFIG);
     return FALSE;
@@ -183,21 +197,22 @@ configchanged_cb (gpointer p) {
 
 static gboolean
 refresh_cb (gpointer p) {
-    search_refresh();
+    refresh_source_id = 0;
+    DdbListview *listview = playlist_visible();
+    if (listview) {
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        if (plt) {
+            search_process (listview, plt);
+            deadbeef->plt_unref (plt);
+        }
+    }
     return FALSE;
 }
 
-void
-search_redraw (DB_playItem_t *it) {
-    DdbListview *listview = playlist_visible();
-    if (listview) {
-        if (it) {
-            deadbeef->pl_item_ref(it);
-            g_idle_add(redraw_row_cb, it);
-        }
-        else {
-            g_idle_add(list_redraw_cb, listview);
-        }
+static void
+submit_refresh (void) {
+    if (refresh_source_id == 0) {
+        refresh_source_id = g_idle_add (refresh_cb, NULL);
     }
 }
 
@@ -209,6 +224,9 @@ search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     }
 
     switch (id) {
+        case DB_EV_PAUSED:
+            g_idle_add(paused_cb, listview);
+            break;
         case DB_EV_SONGCHANGED:
         {
             ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
@@ -223,23 +241,34 @@ search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
             break;
         }
         case DB_EV_TRACKINFOCHANGED:
-            if (p1 != DDB_PLAYLIST_CHANGE_SELECTION || p2 != PL_SEARCH) {
+            if (p1 == DDB_PLAYLIST_CHANGE_SELECTION && p2 != PL_SEARCH || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
                 ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
                 if (ev->track) {
                     deadbeef->pl_item_ref (ev->track);
                     g_idle_add(redraw_row_cb, ev->track);
                 }
             }
-            break;
-        case DB_EV_PAUSED:
-            g_idle_add(paused_cb, listview);
+            else if (p1 == DDB_PLAYLIST_CHANGE_CONTENT) {
+                submit_refresh();
+            }
             break;
         case DB_EV_PLAYLISTCHANGED:
             if (p1 == DDB_PLAYLIST_CHANGE_SELECTION && p2 != PL_SEARCH || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
                 g_idle_add(list_redraw_cb, listview);
             }
             else if (p1 == DDB_PLAYLIST_CHANGE_CONTENT) {
-                g_idle_add(refresh_cb, NULL);
+                submit_refresh();
+            }
+            break;
+        case DB_EV_PLAYLISTSWITCHED:
+                submit_refresh();
+            break;
+        case DB_EV_FOCUS_SELECTION:
+            if (p1 != PL_SEARCH) {
+                DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (p2, p1);
+                if (it) {
+                    g_idle_add (focus_selection_cb, it);
+                }
             }
             break;
         case DB_EV_CONFIGCHANGED:
@@ -260,23 +289,32 @@ search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
                 }
             }
             break;
-        case DB_EV_PLAYLISTSWITCHED:
-            g_idle_add(refresh_cb, NULL);
-            break;
-        default:
-            break;
     }
     return 0;
 }
+
 ///////// searchwin playlist navigation and rendering
 
 void
 on_searchentry_changed                 (GtkEditable     *editable,
                                         gpointer         user_data)
 {
-    search_refresh ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SEARCHRESULT, 0);
+    DdbListview *listview = playlist_visible();
+    if (listview) {
+        ddb_listview_clear_sort (listview);
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        if (plt) {
+            deadbeef->plt_deselect_all (plt);
+            search_process (listview, plt);
+            for (DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_SEARCH); it; it = deadbeef->pl_get_next (it, PL_SEARCH)) {
+                deadbeef->pl_set_selected (it, 1);
+                deadbeef->pl_item_unref (it);
+            }
+            deadbeef->plt_unref (plt);
+        }
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
+        deadbeef->sendmessage(DB_EV_FOCUS_SELECTION, 0, PL_SEARCH, 0);
+    }
 }
 
 void
@@ -299,13 +337,8 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
-    // that's for when user attempts to navigate list while entry has focus
     if (event->keyval == GDK_Escape) {
         gtk_widget_hide (searchwin);
-        return TRUE;
-    }
-    else if (event->keyval == GDK_Return) {
-        on_searchentry_activate (NULL, 0);
         return TRUE;
     }
     return FALSE;
@@ -353,7 +386,8 @@ static int search_get_cursor (void) {
 }
 
 static void search_set_cursor (int cursor) {
-    return deadbeef->pl_set_cursor (PL_SEARCH, cursor);
+    deadbeef->pl_set_cursor (PL_SEARCH, cursor);
+    deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, 0, PL_SEARCH, cursor);
 }
 
 static DdbListviewIter search_head (void) {
@@ -393,13 +427,13 @@ search_groups_changed (const char *format) {
     deadbeef->conf_set_str ("gtkui.search.group_by", format);
 }
 
-static int lock_column_config = 0;
+static void
+search_columns_changed_before_loaded (DdbListview *listview) {
+}
 
 static void
 search_columns_changed (DdbListview *listview) {
-    if (!lock_column_config) {
-        pl_common_rewrite_column_config (listview, "gtkui.columns.search");
-    }
+    pl_common_rewrite_column_config (listview, "gtkui.columns.search");
 }
 
 static void
@@ -409,17 +443,7 @@ search_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx)
 
 static void
 search_selection_changed (DdbListview *ps, DdbListviewIter it, int idx) {
-    deadbeef->sendmessage(DB_EV_SELCHANGED, (uintptr_t)ps, deadbeef->plt_get_curr_idx(), PL_SEARCH);
-    deadbeef->sendmessage(DB_EV_FOCUS_SELECTION, (uintptr_t)ps, PL_MAIN, 0);
-    if (it) {
-        ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc(DB_EV_TRACKINFOCHANGED);
-        ev->track = DB_PLAYITEM(it);
-        deadbeef->pl_item_ref(ev->track);
-        deadbeef->event_send((ddb_event_t *)ev, DDB_PLAYLIST_CHANGE_SELECTION, PL_SEARCH);
-    }
-    else {
-        deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, (uintptr_t)ps, DDB_PLAYLIST_CHANGE_SELECTION, PL_SEARCH);
-    }
+    pl_common_selection_changed (ps, PL_SEARCH, it);
 }
 
 static void
@@ -463,7 +487,7 @@ static DdbListviewBinding search_binding = {
     // columns
     .is_album_art_column = pl_common_is_album_art_column,
     .col_sort = search_col_sort,
-    .columns_changed = search_columns_changed,
+    .columns_changed = search_columns_changed_before_loaded,
     .col_free_user_data = pl_common_free_col_info,
 
     // callbacks
@@ -476,15 +500,17 @@ static DdbListviewBinding search_binding = {
 };
 
 void
-search_playlist_init (GtkWidget *widget) {
-    DdbListview *listview = DDB_LISTVIEW(widget);
-    g_signal_connect ((gpointer)listview->list, "key_press_event", G_CALLBACK (on_searchwin_key_press_event), listview);
+search_playlist_init (GtkWidget *mainwin) {
+    searchwin = create_searchwin ();
+    gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
+    DdbListview *listview = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
+
     search_binding.ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
     search_binding.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
     search_binding.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
     search_binding.select = (void (*) (DdbListviewIter, int))deadbeef->pl_set_selected;
     ddb_listview_set_binding (listview, &search_binding);
-    lock_column_config = 1;
+
     // create default set of columns
     if (pl_common_load_column_config (listview, "gtkui.columns.search") < 0) {
         pl_common_add_column_helper (listview, _("Artist / Album"), 150, -1, COLUMN_FORMAT_ARTISTALBUM, 0);
@@ -492,7 +518,7 @@ search_playlist_init (GtkWidget *widget) {
         pl_common_add_column_helper (listview, _("Title"), 150, -1, COLUMN_FORMAT_TITLE, 0);
         pl_common_add_column_helper (listview, _("Duration"), 50, -1, COLUMN_FORMAT_LENGTH, 0);
     }
-    lock_column_config = 0;
+    search_binding.columns_changed = search_columns_changed;
 
     deadbeef->conf_lock ();
     listview->group_format = strdup (deadbeef->conf_get_str_fast ("gtkui.search.group_by", ""));

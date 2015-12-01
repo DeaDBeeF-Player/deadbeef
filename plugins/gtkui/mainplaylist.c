@@ -61,7 +61,8 @@ main_get_cursor (void) {
 
 static void
 main_set_cursor (int cursor) {
-    return deadbeef->pl_set_cursor (PL_MAIN, cursor);
+    deadbeef->pl_set_cursor (PL_MAIN, cursor);
+    deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, 0, PL_MAIN, cursor);
 }
 
 static DdbListviewIter main_head (void) {
@@ -96,6 +97,7 @@ main_drag_n_drop (DdbListviewIter before, DdbPlaylistHandle from_playlist, uint3
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->pl_unlock ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 void main_external_drag_n_drop (DdbListviewIter before, char *mem, int length) {
@@ -126,13 +128,13 @@ main_col_sort (int col, int sort_order, void *user_data) {
     deadbeef->plt_sort_v2 (plt, PL_MAIN, c->id, c->format, sort_order-1);
     deadbeef->plt_unref (plt);
 }
+
 static void main_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx) {
     deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, idx, 0);
 }
 
 static void main_selection_changed (DdbListview *ps, DdbListviewIter it, int idx) {
-    search_redraw(it);
-    deadbeef->sendmessage (DB_EV_SELCHANGED, (uintptr_t)ps, deadbeef->plt_get_curr_idx (), PL_MAIN);
+    pl_common_selection_changed (ps, PL_MAIN, it);
 }
 
 static void
@@ -140,13 +142,13 @@ main_groups_changed (const char* format) {
     deadbeef->conf_set_str ("gtkui.playlist.group_by", format);
 }
 
-static int lock_column_config = 0;
+static void
+main_columns_changed_before_loaded (DdbListview *listview) {
+}
 
 static void
 main_columns_changed (DdbListview *listview) {
-    if (!lock_column_config) {
-        pl_common_rewrite_column_config (listview, "gtkui.columns.playlist");
-    }
+    pl_common_rewrite_column_config (listview, "gtkui.columns.playlist");
 }
 
 static void
@@ -197,7 +199,7 @@ static DdbListviewBinding main_binding = {
     // columns
     .is_album_art_column = pl_common_is_album_art_column,
     .col_sort = main_col_sort,
-    .columns_changed = main_columns_changed,
+    .columns_changed = main_columns_changed_before_loaded,
     .col_free_user_data = pl_common_free_col_info,
 
     // callbacks
@@ -221,7 +223,6 @@ main_playlist_init (GtkWidget *widget) {
     main_binding.get_for_idx = (DdbListviewIter)deadbeef->pl_get_for_idx;
     main_binding.get_idx = (int (*) (DdbListviewIter))deadbeef->pl_get_idx_of;
     ddb_listview_set_binding (listview, &main_binding);
-    lock_column_config = 1;
     if (pl_common_load_column_config (listview, "gtkui.columns.playlist") < 0) {
         // create default set of columns
         pl_common_add_column_helper (listview, "♫", 50, DB_COLUMN_PLAYING, "%playstatus%", 0);
@@ -230,7 +231,7 @@ main_playlist_init (GtkWidget *widget) {
         pl_common_add_column_helper (listview, _("Title"), 150, -1, COLUMN_FORMAT_TITLE, 0);
         pl_common_add_column_helper (listview, _("Duration"), 50, -1, COLUMN_FORMAT_LENGTH, 0);
     }
-    lock_column_config = 0;
+    main_binding.columns_changed = main_columns_changed;
 
     deadbeef->conf_lock ();
     listview->group_format = strdup (deadbeef->conf_get_str_fast ("gtkui.playlist.group_by", ""));

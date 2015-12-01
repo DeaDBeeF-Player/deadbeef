@@ -561,10 +561,10 @@ ddb_listview_refresh (DdbListview *listview, uint32_t flags) {
         gtk_widget_queue_draw (listview->list);
     }
     if (flags & DDB_REFRESH_VSCROLL) {
-        ddb_listview_list_setup_vscroll (listview);
+        g_idle_add_full(GTK_PRIORITY_RESIZE, ddb_listview_list_setup_vscroll, listview, NULL);
     }
     if (flags & DDB_REFRESH_HSCROLL) {
-        ddb_listview_list_setup_hscroll (listview);
+        g_idle_add_full(GTK_PRIORITY_RESIZE, ddb_listview_list_setup_hscroll, listview, NULL);
     }
     if (flags & DDB_REFRESH_COLUMNS) {
         gtk_widget_queue_draw (listview->header);
@@ -1123,7 +1123,7 @@ ddb_listview_hscroll_value_changed (GtkRange *widget, gpointer user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     int newscroll = round(gtk_range_get_value (GTK_RANGE (widget)));
-    if (newscroll == ps->scrollpos) {
+    if (newscroll == ps->hscrollpos) {
         return;
     }
 
@@ -1384,8 +1384,8 @@ ddb_listview_draw_row (DdbListview *listview, int row, DdbListviewIter it) {
     GtkAllocation a;
     gtk_widget_get_allocation (GTK_WIDGET (listview->list), &a);
     if (y + listview->rowheight > 0 && y <= a.height) {
-	    gtk_widget_queue_draw_area (listview->list, 0, y, a.width, listview->rowheight);
-	}
+        gtk_widget_queue_draw_area (listview->list, 0, y, a.width, listview->rowheight);
+    }
 }
 
 // coords passed are window-relative
@@ -2295,7 +2295,6 @@ ddb_listview_list_drag_end                   (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     ps->scroll_direction = 0;
     ps->scroll_pointer_x = -1;
     ps->scroll_pointer_y = -1;
@@ -2531,8 +2530,12 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
     GtkAllocation lva;
     gtk_widget_get_allocation (GTK_WIDGET (ps), &lva);
     int totalwidth = lva.width;
-    g_idle_add(ddb_listview_reconf_scrolling, ps);
-    ddb_listview_list_update_total_width(ps, event->width);
+    g_idle_add_full(GTK_PRIORITY_RESIZE, ddb_listview_reconf_scrolling, ps, NULL);
+    int size = 0;
+    for (DdbListviewColumn *c = ps->columns; c; c = c->next) {
+        size += c->width;
+    }
+    ddb_listview_list_update_total_width(ps, size);
 
     // col_autoresize flag indicates whether fwidth is valid
     if (!ps->lock_columns) {
@@ -2573,15 +2576,6 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
 
     return FALSE;
 }
-
-void
-ddb_listview_lock_columns (DdbListview *lv, gboolean lock) {
-    lv->lock_columns = lock;
-
-    // NOTE: at this point, it's still not guaranteed that the allocation contains
-    // the final size, so we don't calc initial autoresize state here
-}
-
 
 static void
 ddb_listview_header_realize                      (GtkWidget       *widget,
@@ -2660,7 +2654,7 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
         }
 
         ddb_listview_column_size_changed(ps, c);
-        ddb_listview_list_setup_hscroll(ps);
+        g_idle_add_full(GTK_PRIORITY_RESIZE, ddb_listview_list_setup_hscroll, ps, NULL);
         gtk_widget_queue_draw(ps->header);
         gtk_widget_queue_draw(ps->list);
     }
@@ -2729,6 +2723,15 @@ ddb_listview_header_button_press_event           (GtkWidget       *widget,
     return TRUE;
 }
 
+void
+ddb_listview_col_sort (DdbListview *listview) {
+    for (DdbListviewColumn *c = listview->columns; c; c = c->next) {
+        if (c->sort_order) {
+            listview->binding->col_sort(c->sort_order-1, c->user_data);
+        }
+    }
+}
+
 static gboolean
 ddb_listview_header_button_release_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
@@ -2771,14 +2774,15 @@ ddb_listview_header_button_release_event         (GtkWidget       *widget,
                         else {
                             c->sort_order = 2;
                         }
-                        ps->binding->col_sort(i, c->sort_order-1, c->user_data);
-                        ddb_listview_refresh(ps, DDB_REFRESH_LIST | DDB_REFRESH_COLUMNS);
+                        ps->binding->col_sort(c->sort_order-1, c->user_data);
+                        gtk_widget_queue_draw(ps->list);
+                        gtk_widget_queue_draw(ps->header);
                     }
                 }
             }
             else {
                 ps->header_dragging = -1;
-                ddb_listview_refresh (ps, DDB_REFRESH_LIST | DDB_REFRESH_COLUMNS | DDB_REFRESH_HSCROLL);
+                gtk_widget_queue_draw(ps->header);
             }
         }
         set_header_cursor(ps, event->x);
@@ -3274,7 +3278,7 @@ ddb_listview_build_groups (DdbListview *listview) {
     int height = build_groups(listview);
     if (height != listview->fullheight) {
         listview->fullheight = height;
-        g_idle_add(ddb_listview_list_setup_vscroll, listview);
+        g_idle_add_full(GTK_PRIORITY_RESIZE, ddb_listview_list_setup_vscroll, listview, NULL);
     }
     deadbeef->pl_unlock();
 }
@@ -3302,6 +3306,7 @@ ddb_listview_list_setup (DdbListview *listview, int scroll_to) {
     }
     if (listview->scrollpos == -1) {
         listview->scrollpos = 0;
+        listview->lock_columns = 0;
     }
     deadbeef->pl_lock();
     listview->fullheight = build_groups(listview);
