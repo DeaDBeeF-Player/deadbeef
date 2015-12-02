@@ -1322,16 +1322,6 @@ ddb_listview_list_drag_leave                 (GtkWidget       *widget,
     ddb_listview_list_track_dragdrop (pl, -1, -1);
 }
 
-int
-ddb_listview_get_vscroll_pos (DdbListview *listview) {
-    return listview->scrollpos;
-}
-
-int
-ddb_listview_get_hscroll_pos (DdbListview *listview) {
-    return listview->hscrollpos;
-}
-
 static void
 adjust_scrollbar (GtkWidget *scrollbar, int upper, int page_size) {
     GtkRange *range = GTK_RANGE(scrollbar);
@@ -2728,7 +2718,7 @@ void
 ddb_listview_col_sort (DdbListview *listview) {
     for (DdbListviewColumn *c = listview->columns; c; c = c->next) {
         if (c->sort_order) {
-            listview->binding->col_sort(c->sort_order-1, c->user_data);
+            listview->binding->col_sort(c->sort_order, c->user_data);
         }
     }
 }
@@ -2769,21 +2759,16 @@ ddb_listview_header_button_release_event         (GtkWidget       *widget,
                                 cc->sort_order = 0;
                             }
                         }
-                        if (!c->sort_order || c->sort_order == 2) {
-                            c->sort_order = 1;
-                        }
-                        else {
-                            c->sort_order = 2;
-                        }
-                        ps->binding->col_sort(c->sort_order-1, c->user_data);
-                        gtk_widget_queue_draw(ps->list);
-                        gtk_widget_queue_draw(ps->header);
+                        c->sort_order = (c->sort_order + 1) % 3;
+                        ps->binding->col_sort (c->sort_order, c->user_data);
+                        gtk_widget_queue_draw (ps->list);
+                        gtk_widget_queue_draw (ps->header);
                     }
                 }
             }
             else {
                 ps->header_dragging = -1;
-                gtk_widget_queue_draw(ps->header);
+                gtk_widget_queue_draw (ps->header);
             }
         }
         set_header_cursor(ps, event->x);

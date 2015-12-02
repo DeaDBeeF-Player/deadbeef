@@ -45,6 +45,16 @@
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
 
+typedef struct {
+    int id;
+    char *format;
+    char *bytecode;
+    int cover_size;
+    int new_cover_size;
+    int cover_load_timeout_id;
+    DdbListview *listview;
+} col_info_t;
+
 // playlist theming
 GtkWidget *theme_button;
 GtkWidget *theme_treeview;
@@ -472,16 +482,44 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
     }
 }
 
+static GtkWidget*
+find_popup (GtkWidget *widget)
+{
+    GtkWidget *parent = widget;
+    do {
+        widget = parent;
+        if (GTK_IS_MENU (widget))
+            parent = gtk_menu_get_attach_widget (GTK_MENU (widget));
+        else
+            parent = gtk_widget_get_parent (widget);
+        if (!parent)
+            parent = (GtkWidget*) g_object_get_data (G_OBJECT (widget), "GladeParentKey");
+    } while (parent);
+
+    return widget;
+}
+
+static DdbListview *
+get_context_menu_listview (GtkMenuItem *menuitem) {
+    return DDB_LISTVIEW (g_object_get_data (G_OBJECT (find_popup (GTK_WIDGET (menuitem))), "ps"));
+}
+
+static int
+get_context_menu_column (GtkMenuItem *menuitem) {
+    return GPOINTER_TO_INT (g_object_get_data (G_OBJECT (find_popup (GTK_WIDGET (menuitem))), "column"));
+}
+
 static void
 add_to_playback_queue_activate     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    DdbListview *listview = get_context_menu_listview (menuitem);
+    DB_playItem_t *it = listview->binding->head ();
     while (it) {
         if (deadbeef->pl_is_selected (it)) {
             deadbeef->playqueue_push (it);
         }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        DB_playItem_t *next = listview->binding->next (it);
         deadbeef->pl_item_unref (it);
         it = next;
     }
@@ -492,12 +530,13 @@ remove_from_playback_queue_activate
                                         (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    DdbListview *listview = get_context_menu_listview (menuitem);
+    DB_playItem_t *it = listview->binding->head ();
     while (it) {
         if (deadbeef->pl_is_selected (it)) {
             deadbeef->playqueue_remove (it);
         }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        DB_playItem_t *next = listview->binding->next (it);
         deadbeef->pl_item_unref (it);
         it = next;
     }
@@ -508,7 +547,8 @@ reload_metadata_activate
                                         (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    DdbListview *listview = get_context_menu_listview (menuitem);
+    DB_playItem_t *it = listview->binding->head ();
     while (it) {
         deadbeef->pl_lock ();
         char decoder_id[100];
@@ -535,7 +575,7 @@ reload_metadata_activate
                 }
             }
         }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        DB_playItem_t *next = listview->binding->next (it);
         deadbeef->pl_item_unref (it);
         it = next;
     }
@@ -573,7 +613,7 @@ on_crop1_activate                      (GtkMenuItem     *menuitem,
     action_crop_selected_handler (NULL, 0);
 }
 
-void
+static void
 on_remove2_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
@@ -672,30 +712,6 @@ actionitem_activate (GtkMenuItem     *menuitem,
     g_object_ref (widget), (GDestroyNotify) g_object_unref)
 
 
-static GtkWidget*
-find_popup                          (GtkWidget       *widget,
-                                        const gchar     *widget_name)
-{
-  GtkWidget *parent, *found_widget;
-
-  for (;;)
-    {
-      if (GTK_IS_MENU (widget))
-        parent = gtk_menu_get_attach_widget (GTK_MENU (widget));
-      else
-        parent = gtk_widget_get_parent (widget);
-      if (!parent)
-        parent = (GtkWidget*) g_object_get_data (G_OBJECT (widget), "GladeParentKey");
-      if (parent == NULL)
-        break;
-      widget = parent;
-    }
-
-  found_widget = (GtkWidget*) g_object_get_data (G_OBJECT (widget),
-                                                 widget_name);
-  return found_widget;
-}
-
 #if 0
 // experimental code to position the popup at the item
 static void
@@ -745,10 +761,11 @@ pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx)
 #endif
 
     playlist_menu = gtk_menu_new ();
+    g_object_set_data (G_OBJECT (playlist_menu), "ps", listview);
+
     add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Add To Playback Queue"));
     gtk_widget_show (add_to_playback_queue1);
     gtk_container_add (GTK_CONTAINER (playlist_menu), add_to_playback_queue1);
-    g_object_set_data (G_OBJECT (add_to_playback_queue1), "ps", listview);
 
     remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove From Playback Queue"));
     if (listview->binding->sel_count () > 1) {
@@ -771,12 +788,10 @@ pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx)
     }
     gtk_widget_show (remove_from_playback_queue1);
     gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_playback_queue1);
-    g_object_set_data (G_OBJECT (remove_from_playback_queue1), "ps", listview);
 
     reload_metadata = gtk_menu_item_new_with_mnemonic (_("Reload Metadata"));
     gtk_widget_show (reload_metadata);
     gtk_container_add (GTK_CONTAINER (playlist_menu), reload_metadata);
-    g_object_set_data (G_OBJECT (reload_metadata), "ps", listview);
 
     separator = gtk_separator_menu_item_new ();
     gtk_widget_show (separator);
@@ -786,7 +801,6 @@ pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx)
     remove2 = gtk_menu_item_new_with_mnemonic (_("Remove"));
     gtk_widget_show (remove2);
     gtk_container_add (GTK_CONTAINER (playlist_menu), remove2);
-    g_object_set_data (G_OBJECT (remove2), "ps", listview);
 
     int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
 
@@ -794,7 +808,6 @@ pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx)
         remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove From Disk"));
         gtk_widget_show (remove_from_disk);
         gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_disk);
-        g_object_set_data (G_OBJECT (remove_from_disk), "ps", listview);
     }
 
     separator = gtk_separator_menu_item_new ();
@@ -803,7 +816,7 @@ pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx)
     gtk_widget_set_sensitive (separator, FALSE);
 
     int selected_count = 0;
-    DB_playItem_t *pit = deadbeef->pl_get_first (PL_MAIN);
+    DB_playItem_t *pit = listview->binding->head ();
     DB_playItem_t *selected = NULL;
     while (pit) {
         if (deadbeef->pl_is_selected (pit))
@@ -812,7 +825,7 @@ pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx)
                 selected = pit;
             selected_count++;
         }
-        DB_playItem_t *next = deadbeef->pl_get_next (pit, PL_MAIN);
+        DB_playItem_t *next = listview->binding->next (pit);
         deadbeef->pl_item_unref (pit);
         pit = next;
     }
@@ -863,7 +876,7 @@ pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx)
                     // add popup
                     GtkWidget *prev_menu = popup ? popup : playlist_menu;
 
-                    popup = find_popup (prev_menu, name);
+                    popup = GTK_WIDGET (g_object_get_data (G_OBJECT (find_popup (prev_menu)), name));
                     if (!popup) {
                         GtkWidget *item = gtk_image_menu_item_new_with_mnemonic (_(name));
                         gtk_widget_show (item);
@@ -902,7 +915,6 @@ pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx)
             actionitem = gtk_menu_item_new_with_mnemonic (_(title));
             gtk_widget_show (actionitem);
             gtk_container_add (popup ? GTK_CONTAINER (popup) : GTK_CONTAINER (playlist_menu), actionitem);
-            g_object_set_data (G_OBJECT (actionitem), "ps", listview);
 
             g_signal_connect ((gpointer) actionitem, "activate",
                     G_CALLBACK (actionitem_activate),
@@ -945,7 +957,6 @@ pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx)
     properties1 = gtk_menu_item_new_with_mnemonic (_("Track Properties"));
     gtk_widget_show (properties1);
     gtk_container_add (GTK_CONTAINER (playlist_menu), properties1);
-    g_object_set_data (G_OBJECT (properties1), "ps", listview);
 
     g_signal_connect ((gpointer) add_to_playback_queue1, "activate",
             G_CALLBACK (add_to_playback_queue_activate),
@@ -975,9 +986,6 @@ pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx)
     gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL/*popup_menu_position_func*/, listview, 0, gtk_get_current_event_time());
 }
 
-static DdbListview *last_playlist;
-static int active_column;
-
 static void
 groups_changed (DdbListview *listview, const char *format)
 {
@@ -1006,7 +1014,7 @@ on_group_by_none_activate              (GtkMenuItem     *menuitem,
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
     }
-    groups_changed (last_playlist, "");
+    groups_changed (get_context_menu_listview (menuitem) , "");
 }
 
 static void
@@ -1033,7 +1041,7 @@ on_group_by_artist_date_album_activate (GtkMenuItem     *menuitem,
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
     }
-    groups_changed (last_playlist, "%album artist% - [(%year%) ]%album%");
+    groups_changed (get_context_menu_listview (menuitem), "%album artist% - [(%year%) ]%album%");
 }
 
 static void
@@ -1045,7 +1053,7 @@ on_group_by_artist_activate            (GtkMenuItem     *menuitem,
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
     }
-    groups_changed (last_playlist, "%artist%");
+    groups_changed (get_context_menu_listview (menuitem), "%artist%");
 }
 
 static void
@@ -1054,10 +1062,11 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
 {
     GtkWidget *dlg = create_groupbydlg ();
 
+    DdbListview *listview = get_context_menu_listview (menuitem);
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     GtkWidget *entry = lookup_widget (dlg, "format");
-    if (last_playlist->group_format) {
-        gtk_entry_set_text (GTK_ENTRY (entry), last_playlist->group_format);
+    if (listview->group_format) {
+        gtk_entry_set_text (GTK_ENTRY (entry), listview->group_format);
     }
     else {
         gtk_entry_set_text (GTK_ENTRY (entry), "");
@@ -1072,19 +1081,9 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
             deadbeef->plt_modified (plt);
             deadbeef->plt_unref (plt);
         }
-        groups_changed (last_playlist, text);
+        groups_changed (listview, text);
     }
     gtk_widget_destroy (dlg);
-}
-
-static void
-set_last_playlist_cm (DdbListview *pl) {
-    last_playlist = pl;
-}
-
-static void
-set_active_column_cm (int col) {
-    active_column = col;
 }
 
 int
@@ -1341,7 +1340,7 @@ init_column (col_info_t *inf, int id, const char *format) {
 
 int editcolumn_title_changed = 0;
 
-void
+static void
 on_add_column_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
@@ -1371,19 +1370,23 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
         init_column (inf, sel, format);
 
         int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
-        ddb_listview_column_insert (last_playlist, active_column, title, 100, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, clr_override, clr, inf);
-        ddb_listview_refresh (last_playlist, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL);
+        DdbListview *listview = get_context_menu_listview (menuitem);
+        int before = get_context_menu_column (menuitem);
+        ddb_listview_column_insert (listview, before, title, 100, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, clr_override, clr, inf);
+        ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL);
     }
     gtk_widget_destroy (dlg);
 }
 
-
-void
+static void
 on_edit_column_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    int active_column = get_context_menu_column (menuitem);
     if (active_column == -1)
         return;
+
+    DdbListview *listview = get_context_menu_listview (menuitem);
     GtkWidget *dlg = create_editcolumndlg ();
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_title (GTK_WINDOW (dlg), _("Edit column"));
@@ -1394,7 +1397,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     col_info_t *inf;
     int color_override;
     GdkColor color;
-    int res = ddb_listview_column_get_info (last_playlist, active_column, &title, &width, &align_right, NULL, &color_override, &color, (void **)&inf);
+    int res = ddb_listview_column_get_info (listview, active_column, &title, &width, &align_right, NULL, &color_override, &color, (void **)&inf);
     if (res == -1) {
         trace ("attempted to edit non-existing column\n");
         return;
@@ -1454,23 +1457,25 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         gtk_color_button_get_color (GTK_COLOR_BUTTON (lookup_widget (dlg, "color")), &clr);
 
         init_column (inf, id, format);
-        ddb_listview_column_set_info (last_playlist, active_column, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, clr_override, clr, inf);
+        ddb_listview_column_set_info (listview, active_column, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, clr_override, clr, inf);
 
-        ddb_listview_refresh (last_playlist, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST);
+        ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST);
     }
     gtk_widget_destroy (dlg);
 }
 
 
-void
+static void
 on_remove_column_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    int active_column = get_context_menu_column (menuitem);
     if (active_column == -1)
         return;
 
-    ddb_listview_column_remove (last_playlist, active_column);
-    ddb_listview_refresh (last_playlist, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL);
+    DdbListview *listview = get_context_menu_listview (menuitem);
+    ddb_listview_column_remove (listview, active_column);
+    ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL);
 }
 
 static GtkWidget*
@@ -1574,8 +1579,8 @@ create_headermenu (DdbListview *listview, int groupby)
 void
 pl_common_header_context_menu (DdbListview *ps, int column) {
     GtkWidget *menu = create_headermenu (ps, 1);
-    set_last_playlist_cm (ps); // playlist ptr for context menu
-    set_active_column_cm (column);
+    g_object_set_data (G_OBJECT (menu), "ps", ps);
+    g_object_set_data (G_OBJECT (menu), "column", GINT_TO_POINTER (column));
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
 }
 
@@ -1685,4 +1690,20 @@ pl_common_selection_changed (DdbListview *ps, int iter, DB_playItem_t *it) {
     else {
         deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, (uintptr_t)ps, DDB_PLAYLIST_CHANGE_SELECTION, iter);
     }
+}
+
+void
+pl_common_col_sort (int sort_order, int iter, void *user_data) {
+    col_info_t *c = (col_info_t*)user_data;
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_sort_v2 (plt, iter, c->id, c->format, sort_order == 2 ? DDB_SORT_DESCENDING : DDB_SORT_ASCENDING);
+    deadbeef->plt_unref (plt);
+}
+
+void
+pl_common_set_group_format (DdbListview *listview, char *format_conf) {
+    deadbeef->conf_lock ();
+    listview->group_format = strdup (deadbeef->conf_get_str_fast (format_conf, ""));
+    deadbeef->conf_unlock ();
+    listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
 }

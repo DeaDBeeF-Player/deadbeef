@@ -2064,7 +2064,7 @@ playlist_config_changed_cb (gpointer data) {
 
 static gboolean
 playlist_sort_reset_cb (gpointer data) {
-    ddb_listview_clear_sort (DDB_LISTVIEW(data));
+    ddb_listview_col_sort (DDB_LISTVIEW(data));
     return FALSE;
 }
 

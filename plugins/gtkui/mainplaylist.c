@@ -122,11 +122,10 @@ playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_m
 // columns
 
 static void
-main_col_sort (int col, int sort_order, void *user_data) {
-    col_info_t *c = (col_info_t*)user_data;
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort_v2 (plt, PL_MAIN, c->id, c->format, sort_order-1);
-    deadbeef->plt_unref (plt);
+main_col_sort (int sort_order, void *user_data) {
+    if (sort_order) {
+        pl_common_col_sort (sort_order, PL_MAIN, user_data);
+    }
 }
 
 static void main_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx) {
@@ -216,6 +215,7 @@ void
 main_playlist_init (GtkWidget *widget) {
     // make listview widget and bind it to data
     DdbListview *listview = DDB_LISTVIEW(widget);
+    pl_common_set_group_format (listview, "gtkui.playlist.group_by");
     main_binding.ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
     main_binding.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
     main_binding.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
@@ -223,8 +223,9 @@ main_playlist_init (GtkWidget *widget) {
     main_binding.get_for_idx = (DdbListviewIter)deadbeef->pl_get_for_idx;
     main_binding.get_idx = (int (*) (DdbListviewIter))deadbeef->pl_get_idx_of;
     ddb_listview_set_binding (listview, &main_binding);
+
+    // create default set of columns
     if (pl_common_load_column_config (listview, "gtkui.columns.playlist") < 0) {
-        // create default set of columns
         pl_common_add_column_helper (listview, "♫", 50, DB_COLUMN_PLAYING, "%playstatus%", 0);
         pl_common_add_column_helper (listview, _("Artist / Album"), 150, -1, COLUMN_FORMAT_ARTISTALBUM, 0);
         pl_common_add_column_helper (listview, _("Track No"), 50, -1, COLUMN_FORMAT_TRACKNUMBER, 1);
@@ -232,11 +233,6 @@ main_playlist_init (GtkWidget *widget) {
         pl_common_add_column_helper (listview, _("Duration"), 50, -1, COLUMN_FORMAT_LENGTH, 0);
     }
     main_binding.columns_changed = main_columns_changed;
-
-    deadbeef->conf_lock ();
-    listview->group_format = strdup (deadbeef->conf_get_str_fast ("gtkui.playlist.group_by", ""));
-    deadbeef->conf_unlock ();
-    listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
 
     // FIXME: filepath should be in properties dialog, while tooltip should be
     // used to show text that doesn't fit in column width

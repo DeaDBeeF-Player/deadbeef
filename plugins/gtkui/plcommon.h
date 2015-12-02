@@ -34,16 +34,6 @@
 #define COLUMN_FORMAT_TRACKNUMBER "%track number%"
 #define COLUMN_FORMAT_BAND "$if(%album artist%,%album artist%,Unknown Artist)"
 
-typedef struct {
-    int id;
-    char *format;
-    char *bytecode;
-    int cover_size;
-    int new_cover_size;
-    int cover_load_timeout_id;
-    DdbListview *listview;
-} col_info_t;
-
 int
 pl_common_rewrite_column_config (DdbListview *listview, const char *name);
 
@@ -88,5 +78,11 @@ pl_common_delete_selected (void);
 
 void
 pl_common_selection_changed (DdbListview *ps, int iter, DB_playItem_t *it);
+
+void
+pl_common_col_sort (int sort_order, int iter, void *user_data);
+
+void
+pl_common_set_group_format (DdbListview *listview, char *format_conf);
 
 #endif // __PLCOLUMNS_H
