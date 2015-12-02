@@ -214,10 +214,6 @@ void
 ddb_listview_set_binding (DdbListview *listview, DdbListviewBinding *binding);
 void
 ddb_listview_draw_row (DdbListview *listview, int idx, DdbListviewIter iter);
-int
-ddb_listview_get_vscroll_pos (DdbListview *listview);
-int
-ddb_listview_get_hscroll_pos (DdbListview *listview);
 DdbListviewIter
 ddb_listview_get_iter_from_coord (DdbListview *listview, int x, int y);
 int

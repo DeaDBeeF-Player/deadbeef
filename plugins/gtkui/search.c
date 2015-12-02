@@ -72,9 +72,9 @@ playlist_visible () {
 static void
 search_process (DdbListview *listview, ddb_playlist_t *plt) {
     GtkEntry *entry = GTK_ENTRY(lookup_widget(searchwin, "searchentry"));
-    ddb_listview_clear_sort (listview);
     const gchar *text = gtk_entry_get_text(entry);
     deadbeef->plt_search_process (plt, text);
+    ddb_listview_col_sort (listview);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SEARCHRESULT, 0);
     int row = deadbeef->pl_get_cursor (PL_SEARCH);
     if (row >= deadbeef->pl_getcount (PL_SEARCH)) {
@@ -301,7 +301,6 @@ on_searchentry_changed                 (GtkEditable     *editable,
 {
     DdbListview *listview = playlist_visible();
     if (listview) {
-        ddb_listview_clear_sort (listview);
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         if (plt) {
             deadbeef->plt_deselect_all (plt);
@@ -321,16 +320,9 @@ void
 on_searchentry_activate                (GtkEntry        *entry,
                                         gpointer         user_data)
 {
-    if (deadbeef->pl_getcount (PL_SEARCH) > 0) {
-        int row = deadbeef->pl_get_cursor (PL_SEARCH);
-        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (max (row, 0), PL_SEARCH);
-        if (it) {
-            deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, deadbeef->pl_get_idx_of (it), 0);
-            deadbeef->pl_item_unref (it);
-        }
-    }
+    // Never happens, intercepted and passed to hotkeys
+    return;
 }
-
 
 gboolean
 on_searchwin_key_press_event           (GtkWidget       *widget,
@@ -340,6 +332,9 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
     if (event->keyval == GDK_Escape) {
         gtk_widget_hide (searchwin);
         return TRUE;
+    }
+    if (event->keyval == GDK_Return || event->keyval == GDK_ISO_Enter || event->keyval == GDK_KP_Enter) {
+        return on_mainwin_key_press_event (widget, event, user_data);
     }
     return FALSE;
 }
@@ -415,11 +410,13 @@ static int search_get_idx (DdbListviewIter it) {
 }
 
 static void
-search_col_sort (int col, int sort_order, void *user_data) {
-    col_info_t *c = (col_info_t*)user_data;
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort_v2 (plt, PL_SEARCH, c->id, c->format, sort_order-1);
-    deadbeef->plt_unref (plt);
+search_col_sort (int sort_order, void *user_data) {
+    if (sort_order) {
+        pl_common_col_sort (sort_order, PL_SEARCH, user_data);
+    }
+    else {
+        submit_refresh ();
+    }
 }
 
 static void
@@ -520,9 +517,6 @@ search_playlist_init (GtkWidget *mainwin) {
     }
     search_binding.columns_changed = search_columns_changed;
 
-    deadbeef->conf_lock ();
-    listview->group_format = strdup (deadbeef->conf_get_str_fast ("gtkui.search.group_by", ""));
-    deadbeef->conf_unlock ();
-    listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
+    pl_common_set_group_format (listview, "gtkui.search.group_by");
     window_title_bytecode = deadbeef->tf_compile (_("Search [(%list_total% results)]"));
 }
