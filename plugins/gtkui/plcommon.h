@@ -74,9 +74,6 @@ void
 pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height);
 
 void
-pl_common_delete_selected (void);
-
-void
 pl_common_selection_changed (DdbListview *ps, int iter, DB_playItem_t *it);
 
 void
