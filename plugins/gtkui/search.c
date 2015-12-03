@@ -443,6 +443,18 @@ search_selection_changed (DdbListview *ps, DdbListviewIter it, int idx) {
     pl_common_selection_changed (ps, PL_SEARCH, it);
 }
 
+static void search_delete_selected (void) {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        for (DB_playItem_t *it = deadbeef->pl_get_first (PL_SEARCH); it; it = deadbeef->pl_get_next (it, PL_SEARCH)) {
+            if (deadbeef->pl_is_selected (it)) {
+                deadbeef->plt_remove_item (plt, it);
+            }
+        }
+        deadbeef->plt_unref (plt);
+    }
+}
+
 static void
 search_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int column, int x, int y, int width, int height)
 {
@@ -492,7 +504,7 @@ static DdbListviewBinding search_binding = {
     .selection_changed = search_selection_changed,
     .header_context_menu = pl_common_header_context_menu,
     .list_context_menu = pl_common_list_context_menu,
-    .delete_selected = pl_common_delete_selected,
+    .delete_selected = search_delete_selected,
     .modification_idx = gtkui_get_curr_playlist_mod,
 };
 

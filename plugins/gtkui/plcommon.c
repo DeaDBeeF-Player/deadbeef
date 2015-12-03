@@ -617,8 +617,8 @@ static void
 on_remove2_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    int cursor = deadbeef->pl_delete_selected ();
-    deadbeef->pl_save_current ();
+    get_context_menu_listview (menuitem)->binding->delete_selected ();
+    deadbeef->pl_save_current();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
@@ -1670,13 +1670,6 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
         draw_text_custom (&listview->grpctx, x + 5, y + height/2 - draw_get_listview_rowheight (&listview->grpctx)/2 + 3, ew+5, 0, DDB_GROUP_FONT, 0, 0, str);
         draw_line (&listview->grpctx, x + 5 + ew + 3, y+height/2, x + width, y+height/2);
     }
-}
-
-void
-pl_common_delete_selected (void) {
-    deadbeef->pl_delete_selected ();
-    deadbeef->pl_save_current();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 void
