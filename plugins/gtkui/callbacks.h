@@ -163,59 +163,6 @@ on_searchentry_changed                 (GtkEditable     *editable,
                                         gpointer         user_data);
 
 gboolean
-on_searchheader_button_press_event     (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data);
-
-gboolean
-on_searchheader_button_release_event   (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data);
-
-gboolean
-on_searchheader_configure_event        (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
-                                        gpointer         user_data);
-
-gboolean
-on_searchheader_expose_event           (GtkWidget       *widget,
-                                        GdkEventExpose  *event,
-                                        gpointer         user_data);
-
-gboolean
-on_searchheader_motion_notify_event    (GtkWidget       *widget,
-                                        GdkEventMotion  *event,
-                                        gpointer         user_data);
-
-gboolean
-on_searchlist_button_press_event       (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data);
-
-gboolean
-on_searchlist_configure_event          (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
-                                        gpointer         user_data);
-
-gboolean
-on_searchlist_expose_event             (GtkWidget       *widget,
-                                        GdkEventExpose  *event,
-                                        gpointer         user_data);
-
-gboolean
-on_searchlist_scroll_event             (GtkWidget       *widget,
-                                        GdkEvent        *event,
-                                        gpointer         user_data);
-
-void
-on_searchscroll_value_changed          (GtkRange        *range,
-                                        gpointer         user_data);
-
-void
-on_searchlist_realize                  (GtkWidget       *widget,
-                                        gpointer         user_data);
-
-gboolean
 on_header_button_press_event           (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data);
@@ -239,7 +186,6 @@ gboolean
 on_header_motion_notify_event          (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data);
-
 
 void
 on_playlist_load_activate              (GtkMenuItem     *menuitem,
@@ -333,24 +279,12 @@ on_select_all1_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
 void
-on_remove1_activate                    (GtkMenuItem     *menuitem,
-                                        gpointer         user_data);
-
-void
 on_find_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
 
 void
 on_help1_activate                      (GtkMenuItem     *menuitem,
-                                        gpointer         user_data);
-
-void
-on_playhscroll_value_changed           (GtkRange        *range,
-                                        gpointer         user_data);
-
-void
-on_searchhscroll_value_changed         (GtkRange        *range,
                                         gpointer         user_data);
 
 gboolean
@@ -436,10 +370,6 @@ on_title_activate                      (GtkMenuItem     *menuitem,
 
 void
 on_custom_activate                     (GtkMenuItem     *menuitem,
-                                        gpointer         user_data);
-
-void
-on_remove_column_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
 void
@@ -547,10 +477,6 @@ on_remove_from_playback_queue1_activate
                                         gpointer         user_data);
 
 void
-on_remove2_activate                    (GtkMenuItem     *menuitem,
-                                        gpointer         user_data);
-
-void
 on_properties1_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
@@ -584,14 +510,6 @@ on_searchwin_window_state_event        (GtkWidget       *widget,
 gboolean
 on_trackproperties_key_press_event     (GtkWidget       *widget,
                                         GdkEventKey     *event,
-                                        gpointer         user_data);
-
-void
-on_add_column_activate                 (GtkMenuItem     *menuitem,
-                                        gpointer         user_data);
-
-void
-on_edit_column_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
 gboolean
@@ -1276,11 +1194,6 @@ on_hotkeys_actions_clicked             (GtkButton       *button,
 
 void
 on_hotkeys_defaults_clicked            (GtkButton       *button,
-                                        gpointer         user_data);
-
-gboolean
-on_searchwin_key_press_event           (GtkWidget       *widget,
-                                        GdkEventKey     *event,
                                         gpointer         user_data);
 
 void

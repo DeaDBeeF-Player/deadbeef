@@ -34,7 +34,6 @@
 
 extern DB_functions_t *deadbeef;
 extern GtkWidget *mainwin;
-extern GtkWidget *searchwin;
 
 extern int gtkui_embolden_selected_tracks;
 extern int gtkui_embolden_tracks;
@@ -93,21 +92,6 @@ enum {
     COLO_COUNT
 };
 
-void
-theme_set_cairo_source_rgb (cairo_t *cr, int col);
-
-void
-theme_set_fg_color (int col);
-
-void
-theme_set_bg_color (int col);
-
-void
-playlist_refresh (void);
-
-void
-search_refresh (void);
-
 int
 gtkui_add_new_playlist (void);
 
@@ -143,12 +127,6 @@ gtkui_playlist_set_curr (int playlist);
 
 int
 gtkui_get_curr_playlist_mod (void);
-
-void
-gtkui_trackinfochanged (DB_playItem_t *it);
-
-gboolean
-redraw_queued_tracks_cb (gpointer plt);
 
 void
 mainwin_toggle_visible (void);

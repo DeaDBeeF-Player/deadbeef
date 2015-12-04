@@ -1027,7 +1027,6 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
             if (tab_clicked != -1) {
                 deadbeef->plt_remove (tab_clicked);
                 // force invalidation of playlist cache
-                search_refresh ();
                 int playlist = deadbeef->plt_get_curr_idx ();
                 deadbeef->conf_set_int ("playlist.current", playlist);
             }

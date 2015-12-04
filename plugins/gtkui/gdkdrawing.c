@@ -286,6 +286,56 @@ static int override_bar_colors = 0;
 static int override_tabstrip_colors = 0;
 
 int
+gtkui_listview_override_conf (const char *conf_str) {
+    return !strcmp(conf_str, "gtkui.override_listview_colors");
+}
+
+int
+gtkui_listview_font_conf (const char *conf_str) {
+    return !strncmp(conf_str, "gtkui.font.listview", strlen("gtkui.font.listview"));
+}
+
+int
+gtkui_listview_font_style_conf (const char *conf_str) {
+    return !strncmp(conf_str, "gtkui.italic", strlen("gtkui.italic")) || !strncmp(conf_str, "gtkui.embolden", strlen("gtkui.embolden"));
+}
+
+int
+gtkui_listview_colors_conf (const char *conf_str) {
+    return !strncmp(conf_str, "gtkui.color.listview", strlen("gtkui.color.listview"));
+}
+
+int
+gtkui_tabstrip_override_conf (const char *conf_str) {
+    return !strcmp(conf_str, "gtkui.override_tabstrip_colors");
+}
+
+int
+gtkui_tabstrip_font_conf (const char *conf_str) {
+    return !strncmp(conf_str, "gtkui.font.tabstrip", strlen("gtkui.font.tabstrip"));
+}
+
+int
+gtkui_tabstrip_font_style_conf (const char *conf_str) {
+    return !strncmp(conf_str, "gtkui.tabstrip_italic", strlen("gtkui.tabstrip_italic")) || !strncmp(conf_str, "gtkui.tabstrip_embolden", strlen("gtkui.tabstrip_embolden"));
+}
+
+int
+gtkui_tabstrip_colors_conf (const char *conf_str) {
+    return !strncmp(conf_str, "gtkui.color.tabstrip", strlen("gtkui.color.tabstrip"));
+}
+
+int
+gtkui_bar_override_conf (const char *conf_str) {
+    return !strcmp(conf_str, "gtkui.override_bar_colors");
+}
+
+int
+gtkui_bar_colors_conf (const char *conf_str) {
+    return !strncmp(conf_str, "gtkui.color.bar", strlen("gtkui.color.bar"));
+}
+
+int
 gtkui_override_listview_colors (void) {
     return override_listview_colors;
 }

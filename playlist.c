@@ -3536,7 +3536,6 @@ plt_search_reset (playlist_t *playlist) {
     LOCK;
     while (playlist->head[PL_SEARCH]) {
         playItem_t *next = playlist->head[PL_SEARCH]->next[PL_SEARCH];
-        playlist->head[PL_SEARCH]->selected = 0;
         playlist->head[PL_SEARCH]->next[PL_SEARCH] = NULL;
         playlist->head[PL_SEARCH]->prev[PL_SEARCH] = NULL;
         playlist->head[PL_SEARCH] = next;
@@ -3579,7 +3578,6 @@ plt_search_process (playlist_t *playlist, const char *text) {
     }
 
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-        it->selected = 0;
         if (*text) {
             DB_metaInfo_t *m = NULL;
             for (m = it->meta; m; m = m->next) {
@@ -3611,7 +3609,6 @@ plt_search_process (playlist_t *playlist, const char *text) {
                             else {
                                 playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
                             }
-                            it->selected = 1;
                             playlist->count[PL_SEARCH]++;
                             break;
                         }
@@ -3628,7 +3625,6 @@ plt_search_process (playlist_t *playlist, const char *text) {
                         else {
                             playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
                         }
-                        it->selected = 1;
                         playlist->count[PL_SEARCH]++;
                         *((char *)m->value-1) = cmpidx;
                         break;

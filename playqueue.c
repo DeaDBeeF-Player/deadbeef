@@ -37,6 +37,16 @@ static int playqueue_count = 0;
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
+static void
+playqueue_send_trackinfochanged (playItem_t *track) {
+    ddb_event_track_t *ev = (ddb_event_track_t *)messagepump_event_alloc (DB_EV_TRACKINFOCHANGED);
+    ev->track = DB_PLAYITEM (track);
+    if (track) {
+        pl_item_ref (track);
+    }
+    messagepump_push_event ((ddb_event_t*)ev, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
+}
+
 int
 playqueue_push (playItem_t *it) {
     if (playqueue_count == PLAYQUEUE_SIZE) {
@@ -47,8 +57,7 @@ playqueue_push (playItem_t *it) {
     pl_item_ref (it);
     playqueue[playqueue_count++] = it;
     pl_unlock ();
-    send_trackinfochanged (it);
-    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
+    playqueue_send_trackinfochanged (it);
     return 0;
 }
 
@@ -72,8 +81,7 @@ playqueue_pop (void) {
     pl_lock ();
     if (playqueue_count == 1) {
         playqueue_count = 0;
-        send_trackinfochanged (playqueue[0]);
-        messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
+        playqueue_send_trackinfochanged (playqueue[0]);
         pl_item_unref (playqueue[0]);
         pl_unlock ();
         return;
@@ -95,6 +103,10 @@ playqueue_remove (playItem_t *it) {
             if (playqueue[i] == it) {
                 if (i < playqueue_count-1) {
                     memmove (&playqueue[i], &playqueue[i+1], (playqueue_count-i) * sizeof (playItem_t*));
+                    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
+                }
+                else {
+                    playqueue_send_trackinfochanged (it);
                 }
                 pl_item_unref (it);
                 playqueue_count--;
@@ -106,7 +118,6 @@ playqueue_remove (playItem_t *it) {
         }
     }
     pl_unlock ();
-    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
 }
 
 int
