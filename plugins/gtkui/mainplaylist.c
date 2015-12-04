@@ -62,7 +62,7 @@ main_get_cursor (void) {
 static void
 main_set_cursor (int cursor) {
     deadbeef->pl_set_cursor (PL_MAIN, cursor);
-    deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, 0, PL_MAIN, cursor);
+    deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, 0, cursor, PL_MAIN);
 }
 
 static DdbListviewIter main_head (void) {

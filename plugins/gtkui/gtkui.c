@@ -124,14 +124,6 @@ gtkpl_free (DdbListview *pl) {
 #endif
 }
 
-struct fromto_t {
-    DB_playItem_t *from;
-    DB_playItem_t *to;
-};
-
-static gboolean
-update_win_title_idle (gpointer data);
-
 // update status bar and window title
 static int sb_context_id = -1;
 static char sb_text[512];
@@ -346,20 +338,6 @@ activate_cb (gpointer nothing) {
     return FALSE;
 }
 
-void
-gtkpl_songchanged_wrapper (DB_playItem_t *from, DB_playItem_t *to) {
-    struct fromto_t *ft = malloc (sizeof (struct fromto_t));
-    ft->from = from;
-    ft->to = to;
-    if (from) {
-        deadbeef->pl_item_ref (from);
-    }
-    if (to) {
-        deadbeef->pl_item_ref (to);
-    }
-    g_idle_add (update_win_title_idle, ft);
-}
-
 const char *gtkui_default_titlebar_playing = "%artist% - %title% - DeaDBeeF-%_deadbeef_version%";
 const char *gtkui_default_titlebar_stopped = "DeaDBeeF-%_deadbeef_version%";
 
@@ -416,22 +394,16 @@ gtkui_set_titlebar (DB_playItem_t *it) {
     set_tray_tooltip (str);
 }
 
-void
-gtkui_trackinfochanged (DB_playItem_t *track) {
+static gboolean
+trackinfochanged_cb (gpointer data) {
+    DB_playItem_t *track = data;
     DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();
     if (track == curr) {
         gtkui_set_titlebar (track);
     }
+    deadbeef->pl_item_unref (track);
     if (curr) {
         deadbeef->pl_item_unref (curr);
-    }
-}
-
-static gboolean
-trackinfochanged_cb (gpointer data) {
-    gtkui_trackinfochanged (data);
-    if (data) {
-        deadbeef->pl_item_unref ((DB_playItem_t *)data);
     }
     return FALSE;
 }
@@ -630,38 +602,6 @@ on_add_location_activate               (GtkMenuItem     *menuitem,
     gdk_threads_add_idle (action_add_location_handler_cb, NULL);
 }
 
-static gboolean
-update_win_title_idle (gpointer data) {
-    struct fromto_t *ft = (struct fromto_t *)data;
-    DB_playItem_t *from = ft->from;
-    DB_playItem_t *to = ft->to;
-    free (ft);
-
-    // update window title
-    if (from || to) {
-        if (to) {
-            DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-            if (it) { // it might have been deleted after event was sent
-                gtkui_set_titlebar (it);
-                deadbeef->pl_item_unref (it);
-            }
-            else {
-                gtkui_set_titlebar (NULL);
-            }
-        }
-        else {
-            gtkui_set_titlebar (NULL);
-        }
-    }
-    if (from) {
-        deadbeef->pl_item_unref (from);
-    }
-    if (to) {
-        deadbeef->pl_item_unref (to);
-    }
-    return FALSE;
-}
-
 int
 gtkui_add_new_playlist (void) {
     int cnt = deadbeef->plt_get_count ();
@@ -740,11 +680,80 @@ gtkui_pl_add_files_end (void);
 DB_playItem_t *
 gtkui_plt_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
+static gboolean
+set_title_cb (gpointer data) {
+    gtkui_set_titlebar (NULL);
+    return FALSE;
+}
+
+static int
+cursor_is_set (ddb_playlist_t *plt, DB_playItem_t *it, int idx) {
+    return deadbeef->pl_is_selected (it) && idx == deadbeef->plt_get_cursor (plt, PL_MAIN) && deadbeef->plt_getselcount (plt) == 1;
+}
+
+static int
+scroll_is_set (ddb_playlist_t *plt, int idx) {
+    return idx == deadbeef->plt_get_scroll (plt);
+}
+
+static gboolean
+songchanged_cb (gpointer data) {
+    DB_playItem_t *it = data;
+    ddb_playlist_t *to_plt = deadbeef->pl_get_playlist (it);
+    if (to_plt) {
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        if (plt) {
+            int idx = deadbeef->plt_get_item_idx (to_plt, it, PL_MAIN);
+            if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1) && (to_plt != plt || !cursor_is_set (plt, it, idx))) {
+                deadbeef->plt_deselect_all (to_plt);
+                deadbeef->pl_set_selected (it, 1);
+                if (plt == to_plt) {
+                    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+                }
+                deadbeef->plt_set_cursor (to_plt, PL_MAIN, idx);
+            }
+            if (deadbeef->conf_get_int ("playlist.scroll.followplayback", 1) && (to_plt != plt || !scroll_is_set (plt, idx))) {
+                deadbeef->plt_set_scroll (to_plt, -1);
+            }
+            deadbeef->plt_unref (plt);
+        }
+        deadbeef->plt_unref (to_plt);
+    }
+    deadbeef->pl_item_unref (it);
+
+    return FALSE;
+}
+
+static gboolean
+trackfocus_cb (gpointer data) {
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (it) {
+        ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
+        if (plt) {
+            deadbeef->plt_set_curr (plt);
+            int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
+            if (idx != -1 && (!scroll_is_set (plt, idx) || !cursor_is_set (plt, it, idx))) {
+                deadbeef->plt_deselect_all (plt);
+                deadbeef->pl_set_selected (it, 1);
+                deadbeef->plt_set_scroll (plt, idx);
+                deadbeef->plt_set_cursor (plt, PL_MAIN, idx);
+                deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+            }
+            deadbeef->plt_unref (plt);
+        }
+        deadbeef->pl_item_unref (it);
+    }
+    deadbeef->pl_unlock ();
+    return FALSE;
+}
+
 int
 gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     if (!gtkui_accept_messages) {
         return -1;
     }
+
     search_message(id, ctx, p1, p2);
     ddb_gtkui_widget_t *rootwidget = w_get_rootwidget ();
     if (rootwidget) {
@@ -756,9 +765,11 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         g_idle_add (activate_cb, NULL);
         break;
     case DB_EV_SONGCHANGED:
-        {
-            ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
-            gtkpl_songchanged_wrapper (ev->from, ev->to);
+        g_idle_add (set_title_cb, NULL);
+        ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
+        if (ev->to) {
+            deadbeef->pl_item_ref (ev->to);
+            g_idle_add (songchanged_cb, ev->to);
         }
         break;
     case DB_EV_TRACKINFOCHANGED:
@@ -766,8 +777,8 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
             ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
             if (ev->track) {
                 deadbeef->pl_item_ref (ev->track);
+                g_idle_add (trackinfochanged_cb, ev->track);
             }
-            g_idle_add (trackinfochanged_cb, ev->track);
         }
         break;
     case DB_EV_PLAYLISTCHANGED:
@@ -777,6 +788,9 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         break;
     case DB_EV_CONFIGCHANGED:
         g_idle_add (gtkui_on_configchanged, NULL);
+        break;
+    case DB_EV_TRACKFOCUSCURRENT:
+        g_idle_add (trackfocus_cb, NULL);
         break;
     case DB_EV_OUTPUTCHANGED:
         g_idle_add (outputchanged_cb, NULL);

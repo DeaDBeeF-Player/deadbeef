@@ -1267,6 +1267,7 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
     gchar *ptr=(char*)gtk_selection_data_get_data (data);
     gint len = gtk_selection_data_get_length (data);
     if (target_type == TARGET_URILIST) { // uris
+        ddb_listview_clear_sort (ps);
         // this happens when dropped from file manager
         char *mem = malloc (len+1);
         memcpy (mem, ptr, len);
@@ -1278,6 +1279,7 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         }
     }
     else if (target_type == TARGET_SAMEWIDGET && gtk_selection_data_get_format(data) == 32) { // list of 32bit ints, DDB_URI_LIST target
+        ddb_listview_clear_sort (ps);
         uint32_t *d= (uint32_t *)ptr;
         int plt = *d;
         d++;
@@ -1554,6 +1556,56 @@ ddb_listview_update_cursor (DdbListview *ps, int cursor)
         ddb_listview_draw_row (ps, prev, it);
         UNREF (it);
     }
+}
+
+void
+ddb_listview_set_cursor (DdbListview *listview, int cursor) {
+    ddb_listview_update_cursor (listview, cursor);
+    ddb_listview_select_single (listview, cursor);
+}
+
+struct set_cursor_t {
+    int cursor;
+    DdbListview *pl;
+};
+
+static gboolean
+set_cursor_and_scroll_cb (gpointer data) {
+    struct set_cursor_t *sc = (struct set_cursor_t *)data;
+    ddb_listview_set_cursor (sc->pl, sc->cursor);
+
+    int cursor_scroll = ddb_listview_get_row_pos (sc->pl, sc->cursor);
+    int newscroll = sc->pl->scrollpos;
+    GtkAllocation a;
+    gtk_widget_get_allocation (sc->pl->list, &a);
+    if (!gtkui_groups_pinned && cursor_scroll < sc->pl->scrollpos) {
+         newscroll = cursor_scroll;
+    }
+    else if (gtkui_groups_pinned && cursor_scroll < sc->pl->scrollpos + sc->pl->grouptitle_height) {
+        newscroll = cursor_scroll - sc->pl->grouptitle_height;
+    }
+    else if (cursor_scroll + sc->pl->rowheight >= sc->pl->scrollpos + a.height) {
+        newscroll = cursor_scroll + sc->pl->rowheight - a.height + 1;
+        if (newscroll < 0) {
+            newscroll = 0;
+        }
+    }
+    if (sc->pl->scrollpos != newscroll) {
+        GtkWidget *range = sc->pl->scrollbar;
+        gtk_range_set_value (GTK_RANGE (range), newscroll);
+    }
+
+    free (data);
+
+    return FALSE;
+}
+
+static void
+set_cursor_and_scroll (DdbListview *listview, int cursor) {
+    struct set_cursor_t *data = malloc (sizeof (struct set_cursor_t));
+    data->cursor = cursor;
+    data->pl = listview;
+    g_idle_add (set_cursor_and_scroll_cb, data);
 }
 
 static void
@@ -2158,7 +2210,7 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
     }
     else {
         ps->shift_sel_anchor = cursor;
-        ddb_listview_set_cursor (ps, cursor);
+        set_cursor_and_scroll (ps, cursor);
     }
     return TRUE;
 }
@@ -2798,86 +2850,6 @@ ddb_listview_header_enter (GtkWidget *widget, GdkEventCrossing *event, gpointer 
     set_header_cursor(ps, x);
 }
 
-struct set_cursor_t {
-    int cursor;
-    int prev;
-    DdbListview *pl;
-    int noscroll;
-};
-
-static gboolean
-ddb_listview_set_cursor_cb (gpointer data) {
-    struct set_cursor_t *sc = (struct set_cursor_t *)data;
-
-    DdbListviewIter prev_it = sc->pl->binding->get_for_idx (sc->prev);
-    sc->pl->binding->set_cursor (sc->cursor);
-    int prev_selected = 0;
-
-    if (prev_it) {
-        prev_selected = sc->pl->binding->is_selected (prev_it);
-    }
-
-    ddb_listview_select_single (sc->pl, sc->cursor);
-
-    if (prev_it && !prev_selected) {
-        ddb_listview_draw_row (sc->pl, sc->prev, prev_it);
-    }
-
-    if (prev_it) {
-        sc->pl->binding->unref (prev_it);
-    }
-
-    if (!sc->noscroll) {
-        DdbListview *ps = sc->pl;
-
-        int cursor_scroll = ddb_listview_get_row_pos (sc->pl, sc->cursor);
-        int newscroll = sc->pl->scrollpos;
-        GtkAllocation a;
-        gtk_widget_get_allocation (sc->pl->list, &a);
-        if (!gtkui_groups_pinned && cursor_scroll < sc->pl->scrollpos) {
-             newscroll = cursor_scroll;
-        }
-        else if (gtkui_groups_pinned && cursor_scroll < sc->pl->scrollpos + ps->grouptitle_height) {
-            newscroll = cursor_scroll - ps->grouptitle_height;
-        }
-        else if (cursor_scroll + sc->pl->rowheight >= sc->pl->scrollpos + a.height) {
-            newscroll = cursor_scroll + sc->pl->rowheight - a.height + 1;
-            if (newscroll < 0) {
-                newscroll = 0;
-            }
-        }
-        if (sc->pl->scrollpos != newscroll) {
-            GtkWidget *range = sc->pl->scrollbar;
-            gtk_range_set_value (GTK_RANGE (range), newscroll);
-        }
-
-        free (data);
-    }
-    return FALSE;
-}
-
-void
-ddb_listview_set_cursor (DdbListview *pl, int cursor) {
-    int prev = pl->binding->cursor ();
-    struct set_cursor_t *data = malloc (sizeof (struct set_cursor_t));
-    data->prev = prev;
-    data->cursor = cursor;
-    data->pl = pl;
-    data->noscroll = 0;
-    g_idle_add (ddb_listview_set_cursor_cb, data);
-}
-
-void
-ddb_listview_set_cursor_noscroll (DdbListview *pl, int cursor) {
-    int prev = pl->binding->cursor ();
-    struct set_cursor_t *data = malloc (sizeof (struct set_cursor_t));
-    data->prev = prev;
-    data->cursor = cursor;
-    data->pl = pl;
-    data->noscroll = 1;
-    g_idle_add (ddb_listview_set_cursor_cb, data);
-}
-
 gboolean
 ddb_listview_list_button_press_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
@@ -2963,6 +2935,21 @@ ddb_listview_scroll_to (DdbListview *listview, int pos) {
     if (pos < listview->scrollpos || pos + listview->rowheight >= listview->scrollpos + a.height) {
         gtk_range_set_value (GTK_RANGE (listview->scrollbar), pos - a.height/2);
     }
+}
+
+void
+ddb_listview_track_focus (DdbListview *listview, DdbListviewIter it) {
+    ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
+    if (plt) {
+        deadbeef->plt_set_curr (plt);
+        int cursor = listview->binding->get_idx (it);
+        if (cursor != -1) {
+            ddb_listview_scroll_to (listview, cursor);
+            ddb_listview_set_cursor (listview, cursor);
+        }
+        deadbeef->plt_unref (plt);
+    }
+    deadbeef->pl_item_unref (it);
 }
 
 int
