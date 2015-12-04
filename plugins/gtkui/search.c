@@ -97,6 +97,7 @@ search_start_cb (gpointer p) {
     GtkWidget *entry = lookup_widget (searchwin, "searchentry");
     if (!playlist_visible ()) {
         DdbListview *listview = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
+        refresh_source_id = 0;
         ddb_listview_clear_sort (listview);
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         if (plt) {
@@ -112,6 +113,7 @@ search_start_cb (gpointer p) {
         }
         ddb_listview_refresh (listview, DDB_REFRESH_CONFIG);
     }
+    gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
     gtk_widget_grab_focus (entry);
     gtk_window_present (GTK_WINDOW (searchwin));
     return FALSE;
@@ -190,6 +192,17 @@ focus_selection_cb (gpointer p) {
 }
 
 static gboolean
+trackfocus_cb (gpointer data) {
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (it) {
+        ddb_listview_track_focus (DDB_LISTVIEW (data), it);
+    }
+    deadbeef->pl_unlock ();
+    return FALSE;
+}
+
+static gboolean
 configchanged_cb (gpointer p) {
     ddb_listview_refresh (DDB_LISTVIEW(p), DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_CONFIG);
     return FALSE;
@@ -263,9 +276,12 @@ search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         case DB_EV_PLAYLISTSWITCHED:
                 submit_refresh();
             break;
+        case DB_EV_TRACKFOCUSCURRENT:
+            g_idle_add (trackfocus_cb, listview);
+            break;
         case DB_EV_FOCUS_SELECTION:
-            if (p1 != PL_SEARCH) {
-                DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (p2, p1);
+            if (p2 != PL_SEARCH) {
+                DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (p1, p2);
                 if (it) {
                     g_idle_add (focus_selection_cb, it);
                 }
@@ -312,7 +328,7 @@ on_searchentry_changed                 (GtkEditable     *editable,
             deadbeef->plt_unref (plt);
         }
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
-        deadbeef->sendmessage(DB_EV_FOCUS_SELECTION, 0, PL_SEARCH, 0);
+        deadbeef->sendmessage(DB_EV_FOCUS_SELECTION, 0, 0, PL_SEARCH);
     }
 }
 
@@ -382,7 +398,7 @@ static int search_get_cursor (void) {
 
 static void search_set_cursor (int cursor) {
     deadbeef->pl_set_cursor (PL_SEARCH, cursor);
-    deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, 0, PL_SEARCH, cursor);
+    deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, 0, cursor, PL_SEARCH);
 }
 
 static DdbListviewIter search_head (void) {
