@@ -22,6 +22,66 @@
 */
 
 #import "DdbListview.h"
+#include "../../deadbeef.h"
+
+extern DB_functions_t *deadbeef;
+
+static NSString *dndPasteboardType = @"DdbPlaylistItems";
+
+@interface DdbListviewLocalDragDropHolder : NSObject<NSPasteboardReading> {
+    ddb_playlist_t *_playlist;
+    DB_playItem_t **_items;
+    int _count;
+}
+- (DdbListviewLocalDragDropHolder *)initWithSelectedPlaylistItems:(ddb_playlist_t *)playlist;
+@end
+
+@implementation DdbListviewLocalDragDropHolder
+
++ (NSArray *)readableTypesForPasteboard:(NSPasteboard *)pasteboard {
+    return [NSArray arrayWithObjects:dndPasteboardType, nil];
+}
+
+- (void)dealloc {
+    if (_playlist) {
+        deadbeef->plt_unref (_playlist);
+        _playlist = NULL;
+    }
+    if (_items) {
+        for (int i = 0; i < _count; i++) {
+            deadbeef->pl_item_unref (_items[i]);
+        }
+        free (_items);
+    }
+}
+
+- (DdbListviewLocalDragDropHolder *)initWithSelectedPlaylistItems:(ddb_playlist_t *)playlist {
+    deadbeef->pl_lock ();
+    _playlist = playlist;
+    deadbeef->plt_ref (_playlist);
+
+    _count = deadbeef->plt_getselcount (_playlist);
+    if (_count) {
+        _items = malloc (sizeof (DB_playItem_t *) * _count);
+
+        int i = 0;
+        DB_playItem_t *it = deadbeef->plt_get_first (_playlist, PL_MAIN);
+        while (it) {
+            if (deadbeef->pl_is_selected (it)) {
+                deadbeef->pl_item_ref (it);
+                _items[i++] = it;
+                i++;
+            }
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+    }
+    deadbeef->pl_unlock ();
+    return self;
+}
+
+@end
 
 int headerheight = 17;
 int rowheight = 19;
@@ -722,7 +782,7 @@ int grouptitleheight = 22;
 
         [sv addObserver:self forKeyPath:@"frameSize" options:0 context:NULL];
 
-        [contentView registerForDraggedTypes:[NSArray arrayWithObjects:NSStringPboardType, nil]];
+        [contentView registerForDraggedTypes:[NSArray arrayWithObjects:dndPasteboardType, nil]];
 
     }
     return self;
@@ -1110,6 +1170,8 @@ int grouptitleheight = 22;
     switch(context) {
         case NSDraggingContextWithinApplication:
             return NSDragOperationCopy | NSDragOperationMove | NSDragOperationDelete;
+        case NSDraggingContextOutsideApplication:
+            return NSDragOperationNone; // FIXME
     }
     return NSDragOperationNone;
 }
@@ -1122,9 +1184,16 @@ int grouptitleheight = 22;
             // begin dnd
             NSPasteboard *pboard;
 
+            // Need playlist identifier and all playlist items when dragging internally,
+            // this is represented with the DdbListviewLocalDragDropHolder interface
+
             pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-            [pboard declareTypes:[NSArray arrayWithObject:NSStringPboardType]  owner:self];
-            [pboard setData:[@"Hello" dataUsingEncoding:NSASCIIStringEncoding] forType:NSStringPboardType];
+            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            DdbListviewLocalDragDropHolder *data = [[DdbListviewLocalDragDropHolder alloc] initWithSelectedPlaylistItems:plt];
+            deadbeef->plt_unref (plt);
+            [pboard declareTypes:[NSArray arrayWithObject:dndPasteboardType]  owner:self];
+            [pboard writeObjects:[NSArray arrayWithObject:data]];
+//            [pboard setData:[@"Hello" dataUsingEncoding:NSASCIIStringEncoding] forType:NSStringPboardType];
 
             NSImage *img = [NSImage imageNamed:NSImageNameMultipleDocuments];
 

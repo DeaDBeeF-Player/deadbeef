@@ -9711,6 +9711,7 @@
 				2D4458DB1C04F1C000230939 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2D5D21431A4033B0001D5A79 /* Build configuration list for PBXNativeTarget "lastfm" */ = {
 			isa = XCConfigurationList;
