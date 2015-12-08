@@ -239,6 +239,11 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
         pl_sort_is_track = 0;
     }
 
+    int cursor = plt_get_cursor (playlist, PL_MAIN);
+    playItem_t *track_under_cursor = NULL;
+    if (cursor != -1) {
+        track_under_cursor = plt_get_item_for_idx (playlist, cursor, PL_MAIN);
+    }
     playItem_t **array = malloc (playlist->count[iter] * sizeof (playItem_t *));
     int idx = 0;
     for (playItem_t *it = playlist->head[iter]; it; it = it->next[iter], idx++) {
@@ -263,6 +268,12 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
     playlist->tail[iter] = array[playlist->count[iter]-1];
 
     free (array);
+
+    if (track_under_cursor) {
+        cursor = plt_get_item_idx (playlist, track_under_cursor, PL_MAIN);
+        plt_set_cursor (playlist, PL_MAIN, cursor);
+        pl_item_unref (track_under_cursor);
+    }
 
     struct timeval tm2;
     gettimeofday (&tm2, NULL);
