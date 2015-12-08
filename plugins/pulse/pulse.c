@@ -222,7 +222,6 @@ static int pulse_free(void)
     }
 
     pulse_tid = 0;
-    state = OUTPUT_STATE_STOPPED;
     if (s)
     {
         pa_simple_free(s);
@@ -321,6 +320,7 @@ static void pulse_thread(void *context)
         {
             fprintf(stderr, "pulse: failed to write buffer\n");
             pulse_tid = 0;
+            state = OUTPUT_STATE_STOPPED;
             pulse_free ();
             break;
         }
