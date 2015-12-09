@@ -1814,7 +1814,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
                 && pick_ctx.item_idx != -1) {
             if (group_clicked) {
                 // toggle group items
-                ddb_listview_toggle_group_selection (ps, pick_ctx.grp, pick_ctx.item_idx);
+                ddb_listview_toggle_group_selection (ps, pick_ctx.grp, pick_ctx.item_grp_idx);
             }
             else if (pick_ctx.type == PICK_ITEM) {
                 // toggle single item

@@ -2186,18 +2186,6 @@ focus_selection_cb (gpointer data) {
 }
 
 static int
-playlist_sort_reset_needed (DdbListview *ps, uintptr_t ctx, uint32_t p1, uint32_t p2) {
-    return p1 == DDB_PLAYLIST_CHANGE_CONTENT || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE;
-}
-
-static int
-playlist_refresh_needed (DdbListview *ps, uintptr_t ctx, uint32_t p1, uint32_t p2) {
-    return p1 == DDB_PLAYLIST_CHANGE_CONTENT ||
-           p1 == DDB_PLAYLIST_CHANGE_SELECTION && (p2 != PL_MAIN || (DdbListview *)ctx != ps) ||
-           p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE;
-}
-
-static int
 w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     w_playlist_t *p = (w_playlist_t *)w;
     switch (id) {
@@ -2208,10 +2196,10 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         g_idle_add (songchanged_cb, songchanged_fromto(p->list, (ddb_event_trackchange_t *)ctx));
         break;
     case DB_EV_TRACKINFOCHANGED:
-        if (playlist_sort_reset_needed (p->list, ctx, p1, p2)) {
+        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
             g_idle_add (playlist_sort_reset_cb, p->list);
         }
-        if (playlist_refresh_needed (p->list, ctx, p1, p2)) {
+        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT || p1 == DDB_PLAYLIST_CHANGE_SELECTION && p2 != PL_MAIN || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
             ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
             if (ev->track) {
                 g_idle_add (trackinfochanged_cb, playlist_trackdata(p->list, ev->track));
@@ -2219,10 +2207,12 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         }
         break;
     case DB_EV_PLAYLISTCHANGED:
-        if (playlist_sort_reset_needed (p->list, ctx, p1, p2)) {
+        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
             g_idle_add (playlist_sort_reset_cb, p->list);
         }
-        if (playlist_refresh_needed (p->list, ctx, p1, p2)) {
+        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT ||
+            p1 == DDB_PLAYLIST_CHANGE_SELECTION && (p2 != PL_MAIN || (DdbListview *)ctx != p->list) ||
+            p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
             g_idle_add (playlist_list_refresh_cb, p->list);
         }
         break;
