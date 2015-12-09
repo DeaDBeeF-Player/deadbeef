@@ -289,8 +289,11 @@ cover_draw_cairo (GdkPixbuf *pixbuf, int x, int min_y, int max_y, int width, int
 }
 
 static void
-cover_draw_anything (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr) {
+cover_draw_anything (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr, void *user_data) {
     GdkPixbuf *pixbuf = get_cover_art(it, -1, -1, NULL, NULL);
+    if (!pixbuf) {
+        pixbuf = get_cover_art(it, width, width, cover_invalidate, user_data);
+    }
     if (pixbuf) {
         cover_draw_cairo(pixbuf, x, min_y, max_y, width, height, cr, CAIRO_FILTER_FAST);
         g_object_unref(pixbuf);
@@ -300,12 +303,12 @@ cover_draw_anything (DB_playItem_t *it, int x, int min_y, int max_y, int width, 
 static void
 cover_draw_exact (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr, void *user_data) {
     GdkPixbuf *pixbuf = get_cover_art(it, width, width, cover_invalidate, user_data);
+    if (!pixbuf) {
+        pixbuf = get_cover_art(it, -1, -1, NULL, NULL);
+    }
     if (pixbuf) {
         cover_draw_cairo(pixbuf, x, min_y, max_y, width, height, cr, CAIRO_FILTER_BEST);
         g_object_unref(pixbuf);
-    }
-    else {
-        cover_draw_anything(it, x, min_y, max_y, width, height, cr);
     }
 }
 
@@ -318,22 +321,18 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it,
     }
 
     col_info_t *info = user_data;
-    if (info->new_cover_size == -1) {
-        info->new_cover_size = art_width;
-        info->cover_size = art_width;
-    }
 
     int art_x = x + ART_PADDING_HORZ;
     int min_y = (pinned == 1 && gtkui_groups_pinned ? listview->grouptitle_height : y) + ART_PADDING_VERT;
     if (info->cover_size == art_width) {
-        cover_draw_exact(it, art_x, min_y, next_y, art_width, art_height, cr, info);
+        cover_draw_exact(it, art_x, min_y, next_y, art_width, art_height, cr, user_data);
     }
     else {
-        cover_draw_anything(it, art_x, min_y, next_y, art_width, art_height, cr);
+        cover_draw_anything(it, art_x, min_y, next_y, art_width, art_height, cr, user_data);
         if (info->cover_load_timeout_id) {
             g_source_remove(info->cover_load_timeout_id);
         }
-        info->cover_load_timeout_id = g_timeout_add(1000, cover_load, info);
+        info->cover_load_timeout_id = g_timeout_add(1000, cover_load, user_data);
         info->new_cover_size = art_width;
     }
 }
