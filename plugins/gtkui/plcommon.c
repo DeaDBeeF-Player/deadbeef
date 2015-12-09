@@ -1480,99 +1480,99 @@ on_remove_column_activate              (GtkMenuItem     *menuitem,
 static GtkWidget*
 create_headermenu (DdbListview *listview, int groupby)
 {
-  GtkWidget *headermenu;
-  GtkWidget *add_column;
-  GtkWidget *edit_column;
-  GtkWidget *remove_column;
-  GtkWidget *separator;
-  GtkWidget *group_by;
-  GtkWidget *pin_groups;
-  GtkWidget *group_by_menu;
-  GtkWidget *none;
-  GtkWidget *artist_date_album;
-  GtkWidget *artist;
-  GtkWidget *custom;
+    GtkWidget *headermenu;
+    GtkWidget *add_column;
+    GtkWidget *edit_column;
+    GtkWidget *remove_column;
+    GtkWidget *separator;
+    GtkWidget *group_by;
+    GtkWidget *pin_groups;
+    GtkWidget *group_by_menu;
+    GtkWidget *none;
+    GtkWidget *artist_date_album;
+    GtkWidget *artist;
+    GtkWidget *custom;
 
-  headermenu = gtk_menu_new ();
+    headermenu = gtk_menu_new ();
 
-  add_column = gtk_menu_item_new_with_mnemonic (_("Add column"));
-  gtk_widget_show (add_column);
-  gtk_container_add (GTK_CONTAINER (headermenu), add_column);
+    add_column = gtk_menu_item_new_with_mnemonic (_("Add column"));
+    gtk_widget_show (add_column);
+    gtk_container_add (GTK_CONTAINER (headermenu), add_column);
 
-  edit_column = gtk_menu_item_new_with_mnemonic (_("Edit column"));
-  gtk_widget_show (edit_column);
-  gtk_container_add (GTK_CONTAINER (headermenu), edit_column);
+    edit_column = gtk_menu_item_new_with_mnemonic (_("Edit column"));
+    gtk_widget_show (edit_column);
+    gtk_container_add (GTK_CONTAINER (headermenu), edit_column);
 
-  remove_column = gtk_menu_item_new_with_mnemonic (_("Remove column"));
-  gtk_widget_show (remove_column);
-  gtk_container_add (GTK_CONTAINER (headermenu), remove_column);
+    remove_column = gtk_menu_item_new_with_mnemonic (_("Remove column"));
+    gtk_widget_show (remove_column);
+    gtk_container_add (GTK_CONTAINER (headermenu), remove_column);
 
-  if (groupby) {
-      separator = gtk_separator_menu_item_new ();
-      gtk_widget_show (separator);
-      gtk_container_add (GTK_CONTAINER (headermenu), separator);
-      gtk_widget_set_sensitive (separator, FALSE);
+    if (groupby) {
+        separator = gtk_separator_menu_item_new ();
+        gtk_widget_show (separator);
+        gtk_container_add (GTK_CONTAINER (headermenu), separator);
+        gtk_widget_set_sensitive (separator, FALSE);
 
-      pin_groups = gtk_check_menu_item_new_with_mnemonic(_("Pin groups when scrolling"));
-      gtk_widget_show (pin_groups);
-      gtk_container_add (GTK_CONTAINER (headermenu), pin_groups);
-      gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (pin_groups), (gboolean)deadbeef->conf_get_int("playlist.pin.groups",0));
+        pin_groups = gtk_check_menu_item_new_with_mnemonic(_("Pin groups when scrolling"));
+        gtk_widget_show (pin_groups);
+        gtk_container_add (GTK_CONTAINER (headermenu), pin_groups);
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (pin_groups), (gboolean)deadbeef->conf_get_int("playlist.pin.groups",0));
 
-      group_by = gtk_menu_item_new_with_mnemonic (_("Group by"));
-      gtk_widget_show (group_by);
-      gtk_container_add (GTK_CONTAINER (headermenu), group_by);
+        group_by = gtk_menu_item_new_with_mnemonic (_("Group by"));
+        gtk_widget_show (group_by);
+        gtk_container_add (GTK_CONTAINER (headermenu), group_by);
 
-      group_by_menu = gtk_menu_new ();
-      gtk_menu_item_set_submenu (GTK_MENU_ITEM (group_by), group_by_menu);
+        group_by_menu = gtk_menu_new ();
+        gtk_menu_item_set_submenu (GTK_MENU_ITEM (group_by), group_by_menu);
 
-      none = gtk_menu_item_new_with_mnemonic (_("None"));
-      gtk_widget_show (none);
-      gtk_container_add (GTK_CONTAINER (group_by_menu), none);
+        none = gtk_menu_item_new_with_mnemonic (_("None"));
+        gtk_widget_show (none);
+        gtk_container_add (GTK_CONTAINER (group_by_menu), none);
 
-      artist_date_album = gtk_menu_item_new_with_mnemonic (_("Artist/Date/Album"));
-      gtk_widget_show (artist_date_album);
-      gtk_container_add (GTK_CONTAINER (group_by_menu), artist_date_album);
+        artist_date_album = gtk_menu_item_new_with_mnemonic (_("Artist/Date/Album"));
+        gtk_widget_show (artist_date_album);
+        gtk_container_add (GTK_CONTAINER (group_by_menu), artist_date_album);
 
-      artist = gtk_menu_item_new_with_mnemonic (_("Artist"));
-      gtk_widget_show (artist);
-      gtk_container_add (GTK_CONTAINER (group_by_menu), artist);
+        artist = gtk_menu_item_new_with_mnemonic (_("Artist"));
+        gtk_widget_show (artist);
+        gtk_container_add (GTK_CONTAINER (group_by_menu), artist);
 
-      custom = gtk_menu_item_new_with_mnemonic (_("Custom"));
-      gtk_widget_show (custom);
-      gtk_container_add (GTK_CONTAINER (group_by_menu), custom);
+        custom = gtk_menu_item_new_with_mnemonic (_("Custom"));
+        gtk_widget_show (custom);
+        gtk_container_add (GTK_CONTAINER (group_by_menu), custom);
 
-      g_signal_connect ((gpointer) none, "activate",
+        g_signal_connect ((gpointer) none, "activate",
               G_CALLBACK (on_group_by_none_activate),
               NULL);
 
-      g_signal_connect ((gpointer) pin_groups, "activate",
+        g_signal_connect ((gpointer) pin_groups, "activate",
               G_CALLBACK (on_pin_groups_active),
               NULL);
 
-      g_signal_connect ((gpointer) artist_date_album, "activate",
+        g_signal_connect ((gpointer) artist_date_album, "activate",
               G_CALLBACK (on_group_by_artist_date_album_activate),
               NULL);
 
-      g_signal_connect ((gpointer) artist, "activate",
+        g_signal_connect ((gpointer) artist, "activate",
               G_CALLBACK (on_group_by_artist_activate),
               NULL);
 
-      g_signal_connect ((gpointer) custom, "activate",
+        g_signal_connect ((gpointer) custom, "activate",
               G_CALLBACK (on_group_by_custom_activate),
               NULL);
-  }
+    }
 
-  g_signal_connect ((gpointer) add_column, "activate",
-                    G_CALLBACK (on_add_column_activate),
-                    listview);
-  g_signal_connect ((gpointer) edit_column, "activate",
-                    G_CALLBACK (on_edit_column_activate),
-                    listview);
-  g_signal_connect ((gpointer) remove_column, "activate",
-                    G_CALLBACK (on_remove_column_activate),
-                    listview);
+    g_signal_connect ((gpointer) add_column, "activate",
+                      G_CALLBACK (on_add_column_activate),
+                      listview);
+    g_signal_connect ((gpointer) edit_column, "activate",
+                      G_CALLBACK (on_edit_column_activate),
+                      listview);
+    g_signal_connect ((gpointer) remove_column, "activate",
+                      G_CALLBACK (on_remove_column_activate),
+                      listview);
 
-  return headermenu;
+    return headermenu;
 }
 
 void
