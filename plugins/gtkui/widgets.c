@@ -765,6 +765,15 @@ w_menu_deactivate (GtkMenuShell *menushell, gpointer user_data) {
     gtk_widget_queue_draw (w->widget);
 }
 
+static void
+add_menu_separator (GtkWidget *menu)
+{
+    GtkWidget *separator = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator);
+    gtk_container_add (GTK_CONTAINER (menu), separator);
+    gtk_widget_set_sensitive (separator, FALSE);
+}
+
 gboolean
 w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
     if (!design_mode || !TEST_RIGHT_CLICK(event)) {
@@ -801,10 +810,7 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
         gtk_widget_set_sensitive (item, FALSE);
         gtk_container_add (GTK_CONTAINER (menu), item);
 
-        GtkWidget *separator = gtk_separator_menu_item_new ();
-        gtk_widget_show (separator);
-        gtk_container_add (GTK_CONTAINER (menu), separator);
-        gtk_widget_set_sensitive (separator, FALSE);
+        add_menu_separator (menu);
     }
 
     if (strcmp (current_widget->type, "placeholder")) {
@@ -862,9 +868,11 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
             NULL);
 
     if (current_widget->initmenu) {
+        add_menu_separator (menu);
         current_widget->initmenu (current_widget, menu);
     }
     if (current_widget->parent && current_widget->parent->initchildmenu) {
+        add_menu_separator (menu);
         current_widget->parent->initchildmenu (current_widget, menu);
     }
 
