@@ -2539,22 +2539,31 @@ ddb_listview_update_scroll_ref_point (DdbListview *ps)
             abs_idx += grp->num_items;
             grp = grp->next;
         }
+        int grp_content_pos = grp_y + ps->grouptitle_height;
+        int grp_end_pos = grp_content_pos + (grp->num_items * ps->rowheight);
         // choose cursor_pos as anchor
         if (ps->scrollpos < cursor_pos && cursor_pos < ps->scrollpos + a.height && cursor_pos < ps->fullheight) {
             ps->ref_point = ps->binding->cursor ();
             ps->ref_point_offset = cursor_pos - ps->scrollpos;
         }
-        // choose first group as anchor
-        else if (ps->scrollpos < grp_y + ps-> grouptitle_height + (grp->num_items * ps->rowheight) && grp_y + ps-> grouptitle_height + (grp->num_items * ps->rowheight) < ps->scrollpos + a.height) {
-            ps->ref_point = abs_idx;
-            ps->ref_point_offset = (grp_y + ps->grouptitle_height) - ps->scrollpos;
+        else if (ps->scrollpos < grp_end_pos) {
+            if (grp_end_pos < ps->scrollpos + a.height) {
+                // choose first group as anchor
+                ps->ref_point = abs_idx;
+                ps->ref_point_offset = grp_content_pos - ps->scrollpos;
+            }
+            else if (grp_content_pos < ps->scrollpos) {
+                // choose first visible item as anchor
+                int first_item_idx = (ps->scrollpos - grp_content_pos)/ps->rowheight;
+                ps->ref_point = abs_idx + first_item_idx;
+                ps->ref_point_offset = grp_content_pos + (first_item_idx * ps->rowheight) - ps->scrollpos;
+            }
         }
         // choose next group as anchor
-        else {
-            grp_y += grp->height;
+        else if (grp->next) {
             abs_idx += grp->num_items;
             ps->ref_point = abs_idx;
-            ps->ref_point_offset = (grp_y + ps->grouptitle_height) - ps->scrollpos;
+            ps->ref_point_offset = grp_content_pos + grp->height - ps->scrollpos;
         }
     }
 }
