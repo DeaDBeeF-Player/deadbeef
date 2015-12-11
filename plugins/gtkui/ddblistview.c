@@ -1092,7 +1092,9 @@ invalidate_group (DdbListview *ps, int at_y)
     GtkAllocation a;
     gtk_widget_get_allocation(ps->list, &a);
     int group_height = next_group_y - at_y;
-    gtk_widget_queue_draw_area(ps->list, 0, 0, a.width, min(ps->grouptitle_height, group_height));
+    if (next_group_y > at_y) {
+        gtk_widget_queue_draw_area (ps->list, 0, 0, ps->list_width, min(ps->grouptitle_height, group_height));
+    }
     if (group_height > ps->grouptitle_height) {
         invalidate_album_art_cells(ps, 0, a.width, ps->grouptitle_height, group_height - ps->grouptitle_height);
     }
@@ -3281,7 +3283,7 @@ ddb_listview_resize_groups (DdbListview *listview) {
 
     if (full_height != listview->fullheight) {
         listview->fullheight = full_height;
-        g_idle_add_full(GTK_PRIORITY_RESIZE, ddb_listview_reconf_scrolling, listview, NULL);
+        adjust_scrollbar (listview->scrollbar, listview->fullheight, listview->list_height);
     }
 }
 
