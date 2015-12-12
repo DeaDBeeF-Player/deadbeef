@@ -1478,7 +1478,7 @@ on_remove_column_activate              (GtkMenuItem     *menuitem,
 }
 
 static GtkWidget*
-create_headermenu (DdbListview *listview, int groupby)
+create_headermenu (DdbListview *listview, int column, int groupby)
 {
     GtkWidget *headermenu;
     GtkWidget *add_column;
@@ -1506,6 +1506,11 @@ create_headermenu (DdbListview *listview, int groupby)
     remove_column = gtk_menu_item_new_with_mnemonic (_("Remove column"));
     gtk_widget_show (remove_column);
     gtk_container_add (GTK_CONTAINER (headermenu), remove_column);
+
+    if (column == -1) {
+        gtk_widget_set_sensitive (edit_column, FALSE);
+        gtk_widget_set_sensitive (remove_column, FALSE);
+    }
 
     if (groupby) {
         separator = gtk_separator_menu_item_new ();
@@ -1577,7 +1582,7 @@ create_headermenu (DdbListview *listview, int groupby)
 
 void
 pl_common_header_context_menu (DdbListview *ps, int column) {
-    GtkWidget *menu = create_headermenu (ps, 1);
+    GtkWidget *menu = create_headermenu (ps, column, 1);
     g_object_set_data (G_OBJECT (menu), "ps", ps);
     g_object_set_data (G_OBJECT (menu), "column", GINT_TO_POINTER (column));
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
