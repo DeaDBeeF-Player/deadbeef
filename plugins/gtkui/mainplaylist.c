@@ -104,21 +104,6 @@ void main_external_drag_n_drop (DdbListviewIter before, char *mem, int length) {
     gtkui_receive_fm_drop ((DB_playItem_t *)before, mem, length);
 }
 
-static gboolean
-playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer unused)
-{
-    DdbListview *pl = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    DB_playItem_t *it = (DB_playItem_t *)ddb_listview_get_iter_from_coord (pl, 0, y);
-    if (it) {
-        deadbeef->pl_lock ();
-        gtk_tooltip_set_text (tooltip, deadbeef->pl_find_meta (it, ":URI"));
-        deadbeef->pl_unlock ();
-        deadbeef->pl_item_unref (it);
-        return TRUE;
-    }
-    return FALSE;
-}
-
 // columns
 
 static void
@@ -165,9 +150,9 @@ main_vscroll_changed (int pos) {
 }
 
 static void
-main_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int column, int x, int y, int width, int height)
+main_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height)
 {
-    pl_common_draw_column_data (listview, cr, it, idx, column, PL_MAIN, x, y, width, height);
+    pl_common_draw_column_data (listview, cr, it, idx, PL_MAIN, align, user_data, fg_clr, x, y, width, height);
 }
 
 static void
@@ -237,15 +222,4 @@ main_playlist_init (GtkWidget *widget) {
         pl_common_add_column_helper (listview, _("Duration"), 50, -1, COLUMN_FORMAT_LENGTH, 0);
     }
     main_binding.columns_changed = main_columns_changed;
-
-    // FIXME: filepath should be in properties dialog, while tooltip should be
-    // used to show text that doesn't fit in column width
-    if (deadbeef->conf_get_int ("listview.showpathtooltip", 0)) {
-        GValue value = {0, };
-        g_value_init (&value, G_TYPE_BOOLEAN);
-        g_value_set_boolean (&value, TRUE);
-        DdbListview *pl = DDB_LISTVIEW (widget);
-        g_object_set_property (G_OBJECT (pl->list), "has-tooltip", &value);
-        g_signal_connect (G_OBJECT (pl->list), "query-tooltip", G_CALLBACK (playlist_tooltip_handler), NULL);
-    }
 }

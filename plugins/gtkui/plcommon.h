@@ -44,7 +44,7 @@ void
 pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
 
 void
-pl_common_draw_column_data (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int idx, int column, int iter, int x, int y, int width, int height);
+pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int iter, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height);
 
 void
 pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx);

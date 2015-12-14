@@ -242,6 +242,16 @@ draw_get_text_extents (drawctx_t *ctx, const char *text, int len, int *w, int *h
 }
 
 int
+draw_is_ellipsized (drawctx_t *ctx) {
+    return pango_layout_is_ellipsized (ctx->pangolayout);
+}
+
+const char *
+draw_get_text (drawctx_t *ctx) {
+    return pango_layout_get_text (ctx->pangolayout);
+}
+
+int
 draw_get_listview_rowheight (drawctx_t *ctx) {
     PangoFontDescription *font_desc = pango_font_description_copy (pango_layout_get_font_description (ctx->pangolayout));
     PangoFontMetrics *metrics = pango_context_get_metrics (ctx->pangoctx,

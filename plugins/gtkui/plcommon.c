@@ -181,15 +181,13 @@ pl_common_rewrite_column_config (DdbListview *listview, const char *name) {
 static gboolean
 tf_redraw_cb (gpointer user_data) {
     DdbListview *lv = user_data;
-
-    printf ("redraw track %d\n", lv->tf_redraw_track_idx);
     ddb_listview_draw_row (lv, lv->tf_redraw_track_idx, lv->tf_redraw_track);
     lv->tf_redraw_track_idx = -1;
     if (lv->tf_redraw_track) {
         lv->binding->unref (lv->tf_redraw_track);
         lv->tf_redraw_track = NULL;
     }
-    DDB_LISTVIEW(user_data)->tf_redraw_timeout_id = 0;
+    lv->tf_redraw_timeout_id = 0;
     return FALSE;
 }
 
@@ -338,22 +336,12 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it,
 }
 
 void
-pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int column, int iter, int x, int y, int width, int height) {
-    const char *ctitle;
-    int cwidth;
-    int calign_right;
-    col_info_t *cinf;
-    int color_override;
-    GdkColor fg_clr;
-    int res = ddb_listview_column_get_info (listview, column, &ctitle, &cwidth, &calign_right, NULL, &color_override, &fg_clr, (void **)&cinf);
-    if (res == -1) {
-        return;
-    }
+pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int iter, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height) {
+    col_info_t *info = user_data;
 
     DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
-    int theming = !gtkui_override_listview_colors ();
 
-    if (!gtkui_unicode_playstate && it && it == playing_track && cinf->id == DB_COLUMN_PLAYING) {
+    if (!gtkui_unicode_playstate && it && it == playing_track && info->id == DB_COLUMN_PLAYING) {
         int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
         GdkPixbuf *pixbuf;
@@ -366,13 +354,13 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
         else {
             pixbuf = buffering16_pixbuf;
         }
-        gdk_cairo_set_source_pixbuf (cr, pixbuf, x + cwidth/2 - 8, y + height/2 - 8);
-        cairo_rectangle (cr, x + cwidth/2 - 8, y + height/2 - 8, 16, 16);
+        gdk_cairo_set_source_pixbuf (cr, pixbuf, x + width/2 - 8, y + height/2 - 8);
+        cairo_rectangle (cr, x + width/2 - 8, y + height/2 - 8, 16, 16);
         cairo_fill (cr);
     }
     else if (it) {
         char text[1024] = "";
-        if (it == playing_track && cinf->id == DB_COLUMN_PLAYING) {
+        if (it == playing_track && info->id == DB_COLUMN_PLAYING) {
             int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
             int buffering = !deadbeef->streamer_ok_to_read (-1);
             if (paused) {
@@ -391,11 +379,11 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
                 .it = it,
                 .plt = deadbeef->plt_get_curr (),
                 .iter = iter,
-                .id = cinf->id,
+                .id = info->id,
                 .idx = idx,
                 .flags = DDB_TF_CONTEXT_HAS_ID | DDB_TF_CONTEXT_HAS_INDEX,
             };
-            deadbeef->tf_eval (&ctx, cinf->bytecode, text, sizeof (text));
+            deadbeef->tf_eval (&ctx, info->bytecode, text, sizeof (text));
             if (ctx.update > 0 && !listview->tf_redraw_timeout_id) {
                 if ((ctx.flags & DDB_TF_CONTEXT_HAS_INDEX) && ctx.iter == PL_MAIN) {
                     listview->tf_redraw_track_idx = ctx.idx;
@@ -421,13 +409,13 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
             }
         }
         GdkColor *color = NULL;
-        if (theming) {
+        if (!gtkui_override_listview_colors ()) {
             if (deadbeef->pl_is_selected (it)) {
                 color = &gtk_widget_get_style (theme_treeview)->text[GTK_STATE_SELECTED];
             }
             else {
-                if (color_override) {
-                    color = &fg_clr;
+                if (fg_clr) {
+                    color = fg_clr;
                 }
                 else {
                     color = &gtk_widget_get_style (theme_treeview)->text[GTK_STATE_NORMAL];
@@ -440,16 +428,16 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
                 color = (gtkui_get_listview_selected_text_color (&clr), &clr);
             }
             else if (it && it == playing_track) {
-                if (color_override) {
-                    color = &fg_clr;
+                if (fg_clr) {
+                    color = fg_clr;
                 }
                 else {
                     color = (gtkui_get_listview_playing_text_color (&clr), &clr);
                 }
             }
             else {
-                if (color_override) {
-                    color = &fg_clr;
+                if (fg_clr) {
+                    color = fg_clr;
                 }
                 else {
                     color = (gtkui_get_listview_text_color (&clr), &clr);
@@ -459,7 +447,6 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
         float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
         draw_set_fg_color (&listview->listctx, fg);
 
-        draw_init_font (&listview->listctx, DDB_LIST_FONT, 0);
         int bold = 0;
         int italic = 0;
         if (deadbeef->pl_is_selected (it)) {
@@ -471,9 +458,9 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
             italic = gtkui_italic_current_track;
         }
         cairo_save(cr);
-        cairo_rectangle(cr, x+5, y, cwidth-10, height);
+        cairo_rectangle(cr, x+5, y, width-10, height);
         cairo_clip(cr);
-        draw_text_custom (&listview->listctx, x + 5, y + 3, cwidth-10, calign_right, DDB_LIST_FONT, bold, italic, text);
+        draw_text_custom (&listview->listctx, x + 5, y + 3, width-10, align, DDB_LIST_FONT, bold, italic, text);
         cairo_restore(cr);
     }
     if (playing_track) {

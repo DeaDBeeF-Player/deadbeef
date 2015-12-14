@@ -93,7 +93,7 @@ typedef struct {
 
     void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int x, int y, int width, int height);
     void (*draw_album_art) (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
-    void (*draw_column_data) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int idx, int column, int x, int y, int width, int height);
+    void (*draw_column_data) (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height);
 
     // cols
     int (*is_album_art_column) (void *user_data);
@@ -214,8 +214,6 @@ void
 ddb_listview_set_binding (DdbListview *listview, DdbListviewBinding *binding);
 void
 ddb_listview_draw_row (DdbListview *listview, int idx, DdbListviewIter iter);
-DdbListviewIter
-ddb_listview_get_iter_from_coord (DdbListview *listview, int x, int y);
 int
 ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state);
 void
@@ -254,7 +252,6 @@ enum {
     DDB_LIST_CHANGED    = 16,
     DDB_REFRESH_CONFIG  = 32,
 };
-
 
 void
 ddb_listview_refresh (DdbListview *listview, uint32_t flags);

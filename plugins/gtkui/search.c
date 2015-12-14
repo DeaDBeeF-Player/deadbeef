@@ -472,9 +472,9 @@ static void search_delete_selected (void) {
 }
 
 static void
-search_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int column, int x, int y, int width, int height)
+search_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height)
 {
-    pl_common_draw_column_data (listview, cr, it, idx, column, PL_SEARCH, x, y, width, height);
+    pl_common_draw_column_data (listview, cr, it, idx, PL_SEARCH, align, user_data, fg_clr, x, y, width, height);
 }
 
 static void

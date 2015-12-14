@@ -91,6 +91,11 @@ draw_text_with_colors (drawctx_t *ctx, float x, float y, int width, int align, c
 
 void
 draw_get_text_extents (drawctx_t *ctx, const char *text, int len, int *w, int *h);
+int
+draw_is_ellipsized (drawctx_t *ctx);
+
+const char *
+draw_get_text (drawctx_t *ctx);
 
 int
 draw_get_listview_rowheight (drawctx_t *ctx);
