@@ -274,11 +274,13 @@ int64_t copy_up_to_header(DB_FILE *in, FILE *out, ogg_sync_state *oy, ogg_page *
 long flush_stream(FILE *out, ogg_stream_state *os)
 {
     ogg_page og;
+    bool test;
 #ifdef HAVE_OGG_STREAM_FLUSH_FILL
-    while (ogg_stream_flush_fill(os, &og, MAXPAYLOAD))
+    test = ogg_stream_flush_fill(os, &og, MAXPAYLOAD);
 #else
-    while (ogg_stream_flush(os, &og))
+    test = ogg_stream_flush(os, &og);
 #endif
+    while (test)
         if (!write_page(out, &og))
             return OGGEDIT_WRITE_ERROR;
 
