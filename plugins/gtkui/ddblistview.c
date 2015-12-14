@@ -1088,7 +1088,9 @@ invalidate_group (DdbListview *ps, int at_y)
     }
 
     int group_height = next_group_y - at_y;
-    gtk_widget_queue_draw_area (ps->list, 0, 0, ps->list_width, min(ps->grouptitle_height, group_height));
+    if (next_group_y > at_y) {
+        gtk_widget_queue_draw_area (ps->list, 0, 0, ps->list_width, min(ps->grouptitle_height, group_height));
+    }
     if (group_height > ps->grouptitle_height) {
         invalidate_album_art_cells (ps, 0, ps->list_width, ps->grouptitle_height, group_height - ps->grouptitle_height);
     }
@@ -1102,6 +1104,7 @@ ddb_listview_vscroll_value_changed (GtkRange *widget, gpointer user_data)
     if (newscroll == ps->scrollpos) {
         return;
     }
+
     if (ps->binding->vscroll_changed) {
         ps->binding->vscroll_changed (newscroll);
     }
@@ -2795,9 +2798,6 @@ ddb_listview_header_button_press_event           (GtkWidget       *widget,
     ps->prev_header_x = -1;
     if (TEST_LEFT_CLICK (event)) {
         ddb_listview_update_scroll_ref_point (ps);
-
-        ps->header_dragging = -1;
-        ps->header_sizing = -1;
         int x = -ps->hscrollpos;
         int i = 0;
         DdbListviewColumn *c = ps->columns;
@@ -2824,6 +2824,12 @@ ddb_listview_header_button_press_event           (GtkWidget       *widget,
         }
     }
     else if (TEST_RIGHT_CLICK (event)) {
+        if (ps->header_dragging != -1) {
+            gtk_widget_queue_draw (ps->header);
+            ps->header_dragging = -1;
+        }
+        ps->header_sizing = -1;
+        ps->header_prepare = 0;
         int idx = ddb_listview_header_get_column_idx_for_coord (ps, event->x);
         ps->binding->header_context_menu (ps, idx);
     }
@@ -2849,6 +2855,7 @@ ddb_listview_header_button_release_event         (GtkWidget       *widget,
         if (ps->header_sizing != -1) {
             ps->binding->columns_changed (ps);
             ddb_listview_list_update_total_width (ps, total_columns_width(ps), ps->list_width);
+            ps->header_sizing = -1;
         }
         else if (ps->header_dragging != -1) {
             if (ps->header_prepare) {
@@ -2877,14 +2884,12 @@ ddb_listview_header_button_release_event         (GtkWidget       *widget,
                 }
             }
             else {
-                ps->header_dragging = -1;
                 gtk_widget_queue_draw (ps->header);
             }
+            ps->header_dragging = -1;
         }
-        set_header_cursor(ps, event->x);
-        ps->header_sizing = -1;
-        ps->header_dragging = -1;
         ps->header_prepare = 0;
+        set_header_cursor(ps, event->x);
     }
     return FALSE;
 }
@@ -2893,19 +2898,18 @@ static gboolean
 ddb_listview_header_enter (GtkWidget *widget, GdkEventCrossing *event, gpointer user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    if (ps->header_prepare || ps->header_dragging != -1 || ps->header_sizing != -1) {
-        return FALSE;
-    }
-
-    int x = event->x;
+    if (!ps->header_prepare && ps->header_dragging == -1 && ps->header_sizing == -1) {
+        int x = event->x;
 #if GTK_CHECK_VERSION(3,0,0)
-    if (event->send_event) {
-        GdkWindow *win = gtk_widget_get_window(widget);
-        GdkDeviceManager *device_manager = gdk_display_get_device_manager(gdk_window_get_display(win));
-        gdk_window_get_device_position(win, gdk_device_manager_get_client_pointer(device_manager), &x, NULL, NULL);
-    }
+        if (event->send_event) {
+            GdkWindow *win = gtk_widget_get_window(widget);
+            GdkDeviceManager *device_manager = gdk_display_get_device_manager(gdk_window_get_display(win));
+            gdk_window_get_device_position(win, gdk_device_manager_get_client_pointer(device_manager), &x, NULL, NULL);
+        }
 #endif
-    set_header_cursor(ps, x);
+        set_header_cursor(ps, x);
+    }
+    return FALSE;
 }
 
 gboolean
@@ -3304,7 +3308,7 @@ ddb_listview_resize_groups (DdbListview *listview) {
 
     if (full_height != listview->fullheight) {
         listview->fullheight = full_height;
-        g_idle_add_full(GTK_PRIORITY_RESIZE, ddb_listview_reconf_scrolling, listview, NULL);
+        adjust_scrollbar (listview->scrollbar, listview->fullheight, listview->list_height);
     }
 }
 
