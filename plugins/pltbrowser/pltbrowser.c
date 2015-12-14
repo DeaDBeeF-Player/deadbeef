@@ -585,6 +585,7 @@ on_pltbrowser_header_clicked (GtkWidget       *widget,
     return FALSE;
 }
 
+/*
 static void
 plt_get_title_wrapper (int plt, char *buffer, int len) {
     if (plt == -1) {
@@ -657,6 +658,7 @@ on_pltbrowser_cell_edited (GtkCellRendererText *cell,
         deadbeef->pl_unlock ();
     }
 }
+*/
 
 static GtkTreeViewColumn *
 add_treeview_column (w_pltbrowser_t *w, GtkTreeView *tree, int pos, int expand, int align_right, const char *title, int is_pixbuf)
@@ -674,6 +676,9 @@ add_treeview_column (w_pltbrowser_t *w, GtkTreeView *tree, int pos, int expand, 
     if (align_right) {
         g_object_set (rend, "xalign", 1.0, NULL);
     }
+    // GTK+ breaks row activation on editable rows, so we have to disable
+    // inline editing for now
+    /*
     if (pos == COL_NAME) {
         g_object_set (rend, "editable", TRUE, NULL);
         g_signal_connect (rend, "editing_started",
@@ -683,6 +688,7 @@ add_treeview_column (w_pltbrowser_t *w, GtkTreeView *tree, int pos, int expand, 
                 G_CALLBACK (on_pltbrowser_cell_edited),
                 w);
     }
+    */
     gtk_tree_view_column_set_sizing (col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     gtk_tree_view_column_set_expand (col, expand);
     gtk_tree_view_insert_column (GTK_TREE_VIEW (tree), col, pos);
@@ -883,7 +889,9 @@ w_pltbrowser_create (void) {
 
     w->ri_id = g_signal_connect ((gpointer) store, "row_inserted", G_CALLBACK (on_pltbrowser_row_inserted), w);
 
+#if !GTK_CHECK_VERSION(3,14,0)
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
+#endif
     GtkTreeViewColumn *col1 = add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_NAME, 1, 0, _("Name"), 0);
 
     int show_playing_column = deadbeef->conf_get_int ("gtkui.pltbrowser.show_playing_column", 0);
@@ -930,9 +938,11 @@ w_pltbrowser_create (void) {
     g_signal_connect ((gpointer) w->tree, "drag_motion",
             G_CALLBACK (on_pltbrowser_drag_motion_event),
             w);
+    /*
     g_signal_connect ((gpointer) w->tree, "key_press_event",
             G_CALLBACK (on_pltbrowser_key_press_event),
             w);
+    */
 
     gtkui_plugin->w_override_signals (w->base.widget, w);
 
