@@ -3556,7 +3556,7 @@ plt_search_reset (playlist_t *playlist) {
 void
 plt_search_process2 (playlist_t *playlist, const char *text, int select_results) {
     LOCK;
-    plt_search_reset (playlist);
+    plt_search_reset_int (playlist, select_results);
 
     // convert text to lowercase, to save some cycles
     char lc[1000];
