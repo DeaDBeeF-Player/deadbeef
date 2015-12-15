@@ -72,6 +72,7 @@ struct _DdbListviewColumn {
     void *user_data;
     unsigned align_right : 2; // 0=left, 1=right, 2=center
     unsigned sort_order : 2; // 0=none, 1=asc, 2=desc
+    unsigned show_tooltip : 1;
 };
 typedef struct _DdbListviewColumn DdbListviewColumn;
 
@@ -293,6 +294,12 @@ ddb_listview_scroll_event               (GtkWidget       *widget,
 static gboolean
 ddb_listview_list_key_press_event (GtkWidget *widget, GdkEventKey *event, gpointer user_data);
 
+static gboolean
+header_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer p);
+
+static gboolean
+list_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer p);
+
 static void
 ddb_listview_class_init(DdbListviewClass *class)
 {
@@ -493,6 +500,14 @@ ddb_listview_init(DdbListview *listview)
             NULL);
 
     g_signal_connect ((gpointer)listview->list, "key_press_event", G_CALLBACK (ddb_listview_list_key_press_event), NULL);
+
+    GValue value = {0, };
+    g_value_init (&value, G_TYPE_BOOLEAN);
+    g_value_set_boolean (&value, TRUE);
+    g_object_set_property (G_OBJECT (listview->header), "has-tooltip", &value);
+    g_signal_connect (G_OBJECT (listview->header), "query-tooltip", G_CALLBACK (header_tooltip_handler), listview);
+    g_object_set_property (G_OBJECT (listview->list), "has-tooltip", &value);
+    g_signal_connect (G_OBJECT (listview->list), "query-tooltip", G_CALLBACK (list_tooltip_handler), listview);
 }
 
 GtkWidget * ddb_listview_new()
@@ -1395,11 +1410,10 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
 
 static void
 ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int idx, int y, int w, int h, int x1, int x2) {
-    int cidx = 0;
     int x = -ps->hscrollpos;
-    for (DdbListviewColumn *c = ps->columns; c && x < x2; x += c->width, c = c->next, cidx++) {
+    for (DdbListviewColumn *c = ps->columns; c && x < x2; x += c->width, c = c->next) {
         if (x + c->width > x1 && !ps->binding->is_album_art_column(c->user_data)) {
-            ps->binding->draw_column_data (ps, cr, it, idx, cidx, x, y, c->width, h);
+            ps->binding->draw_column_data (ps, cr, it, idx, c->align_right, c->user_data, c->color_override ? &c->color : NULL, x, y, c->width, h);
         }
     }
 }
@@ -2342,6 +2356,7 @@ draw_header_fg(DdbListview *ps, cairo_t *cr, DdbListviewColumn *c, GdkColor *clr
     cairo_rectangle(cr, x+5, 0, text_width, h);
     cairo_clip(cr);
     draw_text_custom(&ps->hdrctx, x+5, 3, text_width, 0, DDB_COLUMN_FONT, 0, 0, c->title);
+    c->show_tooltip = draw_is_ellipsized(&ps->hdrctx);
     cairo_restore(cr);
 }
 
@@ -2981,14 +2996,6 @@ ddb_listview_set_binding (DdbListview *listview, DdbListviewBinding *binding) {
     listview->binding = binding;
 }
 
-DdbListviewIter
-ddb_listview_get_iter_from_coord (DdbListview *listview, int x, int y) {
-    DdbListviewPickContext pick_ctx;
-    ddb_listview_list_pickpoint (listview, x, y + listview->scrollpos, &pick_ctx);
-    DdbListviewIter it = listview->binding->get_for_idx (pick_ctx.item_idx);
-    return it;
-}
-
 void
 ddb_listview_scroll_to (DdbListview *listview, int pos) {
     pos = ddb_listview_get_row_pos (listview, pos);
@@ -3350,4 +3357,66 @@ ddb_listview_list_key_press_event (GtkWidget *widget, GdkEventKey *event, gpoint
         return on_mainwin_key_press_event (widget, event, user_data);
     }
     return TRUE;
+}
+
+static void
+set_tooltip (GtkTooltip *tooltip, const char *text, int x, int y, int width, int height) {
+    GdkRectangle rect = {
+        .x = x,
+        .y = y,
+        .width = width,
+        .height = height
+    };
+    gtk_tooltip_set_tip_area (tooltip, &rect);
+    gtk_tooltip_set_text (tooltip, text);
+}
+
+static gboolean
+header_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer p)
+{
+    DdbListview *listview = DDB_LISTVIEW (p);
+    DdbListviewColumn *c;
+    int col_x = -listview->hscrollpos;
+    for (c = listview->columns; c && col_x + c->width < x; col_x += c->width, c = c->next);
+    if (c && c->show_tooltip && x < col_x + c->width - (c->sort_order ? 14 : 4)) {
+        GtkAllocation a;
+        gtk_widget_get_allocation(listview->header, &a);
+        set_tooltip (tooltip, c->title, col_x, 0, c->width - 4, a.height);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static gboolean
+list_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer p)
+{
+    DdbListview *listview = DDB_LISTVIEW (p);
+    DdbListviewPickContext pick_ctx;
+    ddb_listview_list_pickpoint (listview, x, y + listview->scrollpos, &pick_ctx);
+    if (pick_ctx.type == PICK_ITEM) {
+        int idx = pick_ctx.item_idx;
+        DdbListviewIter it = listview->binding->get_for_idx (idx);
+        if (it) {
+            DdbListviewColumn *c;
+            int col_x = -listview->hscrollpos;
+            for (c = listview->columns; c && col_x + c->width < x; col_x += c->width, c = c->next);
+            if (c) {
+                cairo_t *cr = gdk_cairo_create (gtk_widget_get_window(widget));
+                draw_begin (&listview->listctx, cr);
+                cairo_rectangle (cr, 0, 0, 0, 0);
+                cairo_clip (cr);
+                GdkColor clr = { 0 };
+                int row_y = ddb_listview_get_row_pos (listview, idx) - listview->scrollpos;
+                listview->binding->draw_column_data (listview, cr, it, idx, c->align_right, c->user_data, &clr, col_x, row_y, c->width, listview->rowheight);
+                cairo_destroy (cr);
+                if (draw_is_ellipsized (&listview->listctx)) {
+                    set_tooltip (tooltip, draw_get_text (&listview->listctx), col_x, row_y, c->width, listview->rowheight);
+                    deadbeef->pl_item_unref (it);
+                    return TRUE;
+                }
+            }
+            deadbeef->pl_item_unref (it);
+        }
+    }
+    return FALSE;
 }
