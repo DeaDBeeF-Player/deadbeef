@@ -266,7 +266,7 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
     gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 3, &mult);
     const char *svalue = g_value_get_string (&value);
     int imult = g_value_get_int (&mult);
-    if (strcmp (svalue, new_text) && (!imult || strlen (new_text))) {
+    if (strcmp (svalue, new_text) && (!imult || strlen (new_text) == 0)) {
         gtk_list_store_set (store, &iter, 1, new_text, 3, 0, -1);
         trkproperties_modified = 1;
     }
@@ -560,13 +560,12 @@ set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoi
         const char *svalue = g_value_get_string (&value);
 
         for (int i = 0; i < numtracks; i++) {
-            const char *oldvalue= deadbeef->pl_find_meta_raw (tracks[i], skey);
-            if (oldvalue && strlen (oldvalue) > MAX_GUI_FIELD_LEN) {
-                fprintf (stderr, "trkproperties: value is too long, ignored\n");
-                continue;
-            }
-
             if (*svalue) {
+                const char *oldvalue= deadbeef->pl_find_meta_raw (tracks[i], skey);
+                if (oldvalue && strlen (oldvalue) > MAX_GUI_FIELD_LEN) {
+                    fprintf (stderr, "trkproperties: value is too long, ignored\n");
+                    continue;
+                }
                 deadbeef->pl_replace_meta (tracks[i], skey, svalue);
             }
             else {
