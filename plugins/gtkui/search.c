@@ -73,7 +73,7 @@ static void
 search_process (DdbListview *listview, ddb_playlist_t *plt) {
     GtkEntry *entry = GTK_ENTRY(lookup_widget(searchwin, "searchentry"));
     const gchar *text = gtk_entry_get_text(entry);
-    deadbeef->plt_search_process (plt, text);
+    deadbeef->plt_search_process2 (plt, text, 0);
     ddb_listview_col_sort (listview);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SEARCHRESULT, 0);
     int row = deadbeef->pl_get_cursor (PL_SEARCH);

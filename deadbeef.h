@@ -71,6 +71,7 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 1.9 -- deadbeef-0.7.1
 // 1.8 -- deadbeef-0.7.0
 // 1.7 -- deadbeef-0.6.2
 // 1.6 -- deadbeef-0.6.1
@@ -93,7 +94,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 8
+#define DB_API_VERSION_MINOR 9
 
 #define DDB_DEPRECATED(x)
 
@@ -115,6 +116,12 @@ extern "C" {
 
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 9)
+#define DEPRECATED_19 DDB_DEPRECATED("since deadbeef API 1.9")
+#else
+#define DEPRECATED_19
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 8)
@@ -715,6 +722,8 @@ typedef struct {
     void (*plt_move_items) (ddb_playlist_t *to, int iter, ddb_playlist_t *from, DB_playItem_t *drop_before, uint32_t *indexes, int count);
     void (*plt_copy_items) (ddb_playlist_t *to, int iter, ddb_playlist_t * from, DB_playItem_t *before, uint32_t *indices, int cnt);
     void (*plt_search_reset) (ddb_playlist_t *plt);
+
+    // find the specified text in playlist, and select the results
     void (*plt_search_process) (ddb_playlist_t *plt, const char *text);
 
     // sort using the title formatting v1 (deprecated)
@@ -1156,6 +1165,13 @@ typedef struct {
 
     // system directory API, returns path by id from ddb_sys_directory_t enum
     const char *(*get_system_dir) (int dir_id);
+#endif
+
+    // since 1.9
+#if (DDB_API_LEVEL >= 9)
+    // same as plt_search_process, but allows to choose whether to select the
+    // search results, or not
+    void (*plt_search_process2) (ddb_playlist_t *plt, const char *text, int select_results);
 #endif
 } DB_functions_t;
 

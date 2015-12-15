@@ -394,6 +394,8 @@ static DB_functions_t deadbeef_api = {
     .playqueue_insert_at = (void (*) (int n, DB_playItem_t *it))playqueue_insert_at,
 
     .get_system_dir = plug_get_system_dir,
+
+    .plt_search_process2 = plt_search_process2,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

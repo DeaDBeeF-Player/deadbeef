@@ -415,6 +415,9 @@ void
 plt_search_process (playlist_t *plt, const char *text);
 
 void
+plt_search_process2 (playlist_t *plt, const char *text, int select_results);
+
+void
 plt_sort (playlist_t *plt, int iter, int id, const char *format, int order);
 
 void
