@@ -889,9 +889,7 @@ w_pltbrowser_create (void) {
 
     w->ri_id = g_signal_connect ((gpointer) store, "row_inserted", G_CALLBACK (on_pltbrowser_row_inserted), w);
 
-#if !GTK_CHECK_VERSION(3,14,0)
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
-#endif
     GtkTreeViewColumn *col1 = add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_NAME, 1, 0, _("Name"), 0);
 
     int show_playing_column = deadbeef->conf_get_int ("gtkui.pltbrowser.show_playing_column", 0);
