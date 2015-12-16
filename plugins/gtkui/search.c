@@ -138,6 +138,13 @@ search_destroy (void) {
     }
 }
 
+static DB_playItem_t *
+next_playitem (DB_playItem_t *it) {
+    DB_playItem_t *next = deadbeef->pl_get_next (it, PL_SEARCH);
+    deadbeef->pl_item_unref (it);
+    return next;
+}
+
 static gboolean
 paused_cb (gpointer p) {
     DB_playItem_t *it = deadbeef->streamer_get_playing_track();
@@ -178,27 +185,58 @@ header_redraw_cb (gpointer p) {
 }
 
 static gboolean
-focus_selection_cb (gpointer p) {
+scroll_to_cursor_cb (gpointer p) {
     DdbListview *listview = playlist_visible();
     if (listview) {
-        int cursor = deadbeef->pl_get_idx_of_iter (p, PL_SEARCH);
+        int cursor = deadbeef->pl_get_cursor (PL_SEARCH);
         if (cursor != -1) {
-            deadbeef->pl_set_cursor (PL_SEARCH, cursor);
             ddb_listview_scroll_to (listview, cursor);
         }
+    }
+    return FALSE;
+}
+
+static void
+set_cursor (DdbListview *listview, DB_playItem_t *it) {
+    int cursor = deadbeef->pl_get_cursor (PL_SEARCH);
+    int new_cursor = deadbeef->pl_get_idx_of_iter (it, PL_SEARCH);
+    if (new_cursor != cursor) {
+        if (cursor != -1) {
+            ddb_listview_draw_row (listview, cursor, NULL);
+        }
+        if (new_cursor != -1) {
+            deadbeef->pl_set_cursor (PL_SEARCH, new_cursor);
+            ddb_listview_draw_row (listview, new_cursor, NULL);
+        }
+    }
+    g_idle_add (scroll_to_cursor_cb, NULL);
+}
+
+static gboolean
+cursor_moved_cb (gpointer p) {
+    DdbListview *listview = playlist_visible();
+    if (listview) {
+        set_cursor (listview, p);
     }
     deadbeef->pl_item_unref (p);
     return FALSE;
 }
 
 static gboolean
-trackfocus_cb (gpointer data) {
-    deadbeef->pl_lock ();
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-    if (it) {
-        ddb_listview_track_focus (DDB_LISTVIEW (data), it);
+focus_selection_cb (gpointer data) {
+    DdbListview *listview = playlist_visible();
+    if (listview) {
+        deadbeef->pl_lock ();
+        DB_playItem_t *it = deadbeef->pl_get_first (PL_SEARCH);
+        while (it && !deadbeef->pl_is_selected (it)) {
+            it = next_playitem (it);
+        }
+        if (it) {
+            set_cursor (listview, it);
+            deadbeef->pl_item_unref (it);
+        }
+        deadbeef->pl_unlock ();
     }
-    deadbeef->pl_unlock ();
     return FALSE;
 }
 
@@ -274,19 +312,20 @@ search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
             }
             break;
         case DB_EV_PLAYLISTSWITCHED:
-                submit_refresh();
-            break;
-        case DB_EV_TRACKFOCUSCURRENT:
-            g_idle_add (trackfocus_cb, listview);
+            submit_refresh();
             break;
         case DB_EV_FOCUS_SELECTION:
-            if (p2 != PL_SEARCH) {
-                DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (p1, p2);
-                if (it) {
-                    g_idle_add (focus_selection_cb, it);
-                }
+            g_idle_add (focus_selection_cb, NULL);
+            break;
+        case DB_EV_CURSOR_MOVED:
+        {
+            ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
+            if (ev->track) {
+                deadbeef->pl_item_ref (ev->track);
+                g_idle_add (cursor_moved_cb, ev->track);
             }
             break;
+        }
         case DB_EV_CONFIGCHANGED:
             if (ctx) {
                 char *conf_str = (char *)ctx;
@@ -321,14 +360,18 @@ on_searchentry_changed                 (GtkEditable     *editable,
         if (plt) {
             deadbeef->plt_deselect_all (plt);
             search_process (listview, plt);
-            for (DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_SEARCH); it; it = deadbeef->pl_get_next (it, PL_SEARCH)) {
+            for (DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_SEARCH); it; it = next_playitem (it)) {
                 deadbeef->pl_set_selected (it, 1);
-                deadbeef->pl_item_unref (it);
             }
             deadbeef->plt_unref (plt);
         }
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
-        deadbeef->sendmessage(DB_EV_FOCUS_SELECTION, 0, 0, PL_SEARCH);
+        DB_playItem_t *head = deadbeef->pl_get_first (PL_SEARCH);
+        if (head) {
+            ddb_event_track_t *event = (ddb_event_track_t *)deadbeef->event_alloc(DB_EV_CURSOR_MOVED);
+            event->track = head;
+            deadbeef->event_send ((ddb_event_t *)event, 0, 0);
+        }
     }
 }
 
@@ -376,14 +419,10 @@ on_searchwin_window_state_event        (GtkWidget       *widget,
 static int
 search_get_sel_count (void) {
     int cnt = 0;
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_SEARCH);
-    while (it) {
+    for (DB_playItem_t *it = deadbeef->pl_get_first (PL_SEARCH); it; it = next_playitem (it)) {
         if (deadbeef->pl_is_selected (it)) {
             cnt++;
         }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_SEARCH);
-        deadbeef->pl_item_unref (it);
-        it = next;
     }
     return cnt;
 }
@@ -398,7 +437,12 @@ static int search_get_cursor (void) {
 
 static void search_set_cursor (int cursor) {
     deadbeef->pl_set_cursor (PL_SEARCH, cursor);
-    deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, 0, cursor, PL_SEARCH);
+    DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_SEARCH);
+    if (it) {
+        ddb_event_track_t *event = (ddb_event_track_t *)deadbeef->event_alloc(DB_EV_CURSOR_MOVED);
+        event->track = it;
+        deadbeef->event_send ((ddb_event_t *)event, 0, 0);
+    }
 }
 
 static DdbListviewIter search_head (void) {
@@ -462,7 +506,7 @@ search_selection_changed (DdbListview *ps, DdbListviewIter it, int idx) {
 static void search_delete_selected (void) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
-        for (DB_playItem_t *it = deadbeef->pl_get_first (PL_SEARCH); it; it = deadbeef->pl_get_next (it, PL_SEARCH)) {
+        for (DB_playItem_t *it = deadbeef->pl_get_first (PL_SEARCH); it; it = next_playitem (it)) {
             if (deadbeef->pl_is_selected (it)) {
                 deadbeef->plt_remove_item (plt, it);
             }
