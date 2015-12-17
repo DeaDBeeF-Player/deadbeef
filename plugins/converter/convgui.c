@@ -53,6 +53,8 @@ typedef struct {
     ddb_dsp_preset_t *current_dsp_preset;
 
     DB_playItem_t **convert_items;
+    ddb_playlist_t *convert_playlist;
+
     int convert_items_count;
     char *outfolder;
     char *outfile;
@@ -207,7 +209,7 @@ converter_worker (void *ctx) {
         g_idle_add (update_progress_cb, info);
 
         char outpath[2000];
-        converter_plugin->get_output_path (conv->convert_items[n], conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, root, conv->write_to_source_folder, outpath, sizeof (outpath));
+        converter_plugin->get_output_path2 (conv->convert_items[n], conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, root, conv->write_to_source_folder, outpath, sizeof (outpath));
 
         int skip = 0;
         char *real_out = realpath(outpath, NULL);
@@ -242,6 +244,9 @@ converter_worker (void *ctx) {
     g_idle_add (destroy_progress_cb, conv->progress);
     if (conv->convert_items) {
         free (conv->convert_items);
+    }
+    if (conv->convert_playlist) {
+        plt_unref (conv->convert_playlist);
     }
     if (conv->outfolder) {
         free (conv->outfolder);
@@ -356,6 +361,7 @@ converter_show_cb (void *data) {
             // copy list
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
             if (plt) {
+                conv->convert_playlist = plt;
                 conv->convert_items_count = deadbeef->plt_getselcount (plt);
                 if (0 < conv->convert_items_count) {
                     conv->convert_items = malloc (sizeof (DB_playItem_t *) * conv->convert_items_count);
@@ -382,6 +388,7 @@ converter_show_cb (void *data) {
             // copy list
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
             if (plt) {
+                conv->convert_playlist = plt;
                 conv->convert_items_count = deadbeef->plt_get_item_count (plt, PL_MAIN);
                 if (0 < conv->convert_items_count) {
                     conv->convert_items = malloc (sizeof (DB_playItem_t *) * conv->convert_items_count);
@@ -394,7 +401,6 @@ converter_show_cb (void *data) {
                         }
                     }
                 }
-                deadbeef->plt_unref (plt);
             }
             break;
         }
@@ -402,6 +408,7 @@ converter_show_cb (void *data) {
         {
             DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
             if (it) {
+                conv->convert_playlist = deadbeef->pl_get_playlist (it);
                 conv->convert_items_count = 1;
                 conv->convert_items = malloc (sizeof (DB_playItem_t *) * conv->convert_items_count);
                 if (conv->convert_items) {
