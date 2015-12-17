@@ -34,6 +34,7 @@ extern DB_functions_t *deadbeef;
 
     // conversion context
     DB_playItem_t **_convert_items;
+    ddb_playlist_t *_convert_playlist;
     int _convert_items_count;
     NSString *_outfolder;
     NSString *_outfile;
@@ -159,6 +160,12 @@ extern DB_functions_t *deadbeef;
         _convert_items = NULL;
     }
     _convert_items_count = 0;
+
+    if (_convert_playlist) {
+        deadbeef->plt_unref (_convert_playlist);
+        _convert_playlist = NULL;
+    }
+
     _outfolder = nil;
     _outfile = nil;
     if (_encoder_preset) {
@@ -190,6 +197,7 @@ extern DB_functions_t *deadbeef;
             // copy list
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
             if (plt) {
+                _convert_playlist = plt;
                 _convert_items_count = deadbeef->plt_getselcount (plt);
                 if (0 < _convert_items_count) {
                     _convert_items = malloc (sizeof (DB_playItem_t *) * _convert_items_count);
@@ -216,6 +224,7 @@ extern DB_functions_t *deadbeef;
             // copy list
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
             if (plt) {
+                _convert_playlist = plt;
                 _convert_items_count = deadbeef->plt_get_item_count (plt, PL_MAIN);
                 if (0 < _convert_items_count) {
                     _convert_items = malloc (sizeof (DB_playItem_t *) * _convert_items_count);
@@ -228,7 +237,6 @@ extern DB_functions_t *deadbeef;
                         }
                     }
                 }
-                deadbeef->plt_unref (plt);
             }
             break;
         }
@@ -236,6 +244,7 @@ extern DB_functions_t *deadbeef;
         {
             DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
             if (it) {
+                _convert_playlist = deadbeef->pl_get_playlist (it);
                 _convert_items_count = 1;
                 _convert_items = malloc (sizeof (DB_playItem_t *) * _convert_items_count);
                 if (_convert_items) {
@@ -488,7 +497,7 @@ extern DB_functions_t *deadbeef;
         });
 
         char outpath[2000];
-        _converter_plugin->get_output_path (_convert_items[n], [_outfolder UTF8String], [_outfile UTF8String], _encoder_preset, _preserve_folder_structure, root, _write_to_source_folder, outpath, sizeof (outpath));
+        _converter_plugin->get_output_path2 (_convert_items[n], _convert_playlist, [_outfolder UTF8String], [_outfile UTF8String], _encoder_preset, _preserve_folder_structure, root, _write_to_source_folder, outpath, sizeof (outpath));
 
         int skip = 0;
         char *real_out = realpath(outpath, NULL);

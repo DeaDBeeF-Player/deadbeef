@@ -1800,7 +1800,7 @@
 		2D22F76319E13DB2009C631E /* resid-emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "resid-emu.h"; path = "plugins/sid/sidplay-libs/builders/resid-builder/src/resid-emu.h"; sourceTree = "<group>"; };
 		2D22F76419E13DB2009C631E /* resid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = resid.cpp; path = "plugins/sid/sidplay-libs/builders/resid-builder/src/resid.cpp"; sourceTree = "<group>"; };
 		2D23511B1B138ECB00A62936 /* converter.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = converter.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D2351231B138F3200A62936 /* converter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = converter.c; path = plugins/converter/converter.c; sourceTree = "<group>"; };
+		2D2351231B138F3200A62936 /* converter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = converter.c; path = plugins/converter/converter.c; sourceTree = "<group>"; usesTabs = 0; };
 		2D2351241B138F3200A62936 /* converter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = converter.h; path = plugins/converter/converter.h; sourceTree = "<group>"; };
 		2D2351271B13922400A62936 /* Converter.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Converter.xib; sourceTree = "<group>"; };
 		2D2A135A19B647CF00AD1EB7 /* gme.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = gme.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -9711,6 +9711,7 @@
 				2D4458DB1C04F1C000230939 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2D5D21431A4033B0001D5A79 /* Build configuration list for PBXNativeTarget "lastfm" */ = {
 			isa = XCConfigurationList;
