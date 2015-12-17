@@ -2705,6 +2705,15 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
     return FALSE;
 }
 
+void
+ddb_listview_size_columns_without_scrollbar (DdbListview *listview) {
+    if (deadbeef->conf_get_int ("gtkui.autoresize_columns", 0) && gtk_widget_get_visible (listview->scrollbar)) {
+        GtkAllocation a;
+        gtk_widget_get_allocation (listview->scrollbar, &a);
+        autoresize_columns (listview, listview->list_width + a.width, listview->list_height);
+    }
+}
+
 static void
 ddb_listview_header_realize                      (GtkWidget       *widget,
                                         gpointer         user_data)
@@ -3301,6 +3310,7 @@ unlock_columns_cb (gpointer p) {
     DDB_LISTVIEW(p)->lock_columns = 0;
     return FALSE;
 }
+
 int
 ddb_listview_list_setup (DdbListview *listview, int scroll_to) {
     if (!list_is_realized(listview)) {

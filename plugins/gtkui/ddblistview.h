@@ -222,6 +222,8 @@ void
 ddb_listview_scroll_to (DdbListview *listview, int rowpos);
 int
 ddb_listview_list_setup (DdbListview *listview, int scroll_to);
+void
+ddb_listview_size_columns_without_scrollbar (DdbListview *listview);
 int
 ddb_listview_column_get_count (DdbListview *listview);
 void
