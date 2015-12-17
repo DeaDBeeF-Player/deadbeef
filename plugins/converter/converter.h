@@ -29,9 +29,9 @@
 // changes in 1.3:
 //   readonly preset support
 // changes in 1.4:
-//   changed escaping rules
-//   now get_output_path returns unescaped path, and
-//   doesn't create folders
+//   changed escaping rules:
+//   now get_output_path returns unescaped path, and doesn't create folders
+//   added get_output_path2
 
 enum {
     DDB_ENCODER_METHOD_PIPE = 0,
@@ -208,6 +208,12 @@ typedef struct {
     //  sz: size of the out buffer.
     void
     (*get_output_path) (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz);
+
+    // since 1.4
+    // same as get_output_path, but takes playlist as argument, and used the new title formatting
+    // plt: the playlist which contains the track 'it'
+    void
+    (*get_output_path2) (DB_playItem_t *it, ddb_playlist_t *plt, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz);
 } ddb_converter_t;
 
 #endif

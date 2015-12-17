@@ -693,8 +693,38 @@ get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
     trace ("field '%s' expanded to '%s'\n", field, out);
 }
 
-void
-get_output_path (DB_playItem_t *it, const char *outfolder_user, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz) {
+static void
+get_output_field2 (DB_playItem_t *it, ddb_playlist_t *plt, const char *field, char *out, int sz)
+{
+    int idx = deadbeef->pl_get_idx_of (it);
+    char temp[PATH_MAX];
+
+    char *tf = deadbeef->tf_compile (field);
+    if (!tf) {
+        *out = 0;
+        return;
+    }
+
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .flags = DDB_TF_CONTEXT_HAS_INDEX,
+        .it = it,
+        .idx = idx,
+        .iter = PL_MAIN,
+        .plt = plt,
+    };
+
+    deadbeef->tf_eval (&ctx, tf, temp, sizeof (temp));
+    deadbeef->tf_free (tf);
+
+    strncpy (out, temp, sz);
+    out[sz-1] = 0;
+    trace ("field '%s' expanded to '%s'\n", field, out);
+}
+
+
+static void
+get_output_path_int (DB_playItem_t *it, ddb_playlist_t *plt, const char *outfolder_user, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz, int use_new_tf) {
     trace ("get_output_path: %s %s %s\n", outfolder_user, outfile, root_folder);
     deadbeef->pl_lock ();
     const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
@@ -702,7 +732,7 @@ get_output_path (DB_playItem_t *it, const char *outfolder_user, const char *outf
     char outfolder_preserve[2000];
     if (preserve_folder_structure) {
         // generate new outfolder
-        int rootlen = strlen (root_folder);
+        size_t rootlen = strlen (root_folder);
         const char *e = strrchr (uri, '/');
         if (e) {
             const char *s = uri + rootlen;
@@ -729,7 +759,7 @@ get_output_path (DB_playItem_t *it, const char *outfolder_user, const char *outf
 
     int l;
     char fname[PATH_MAX];
-    int pathl = strlen(outfolder)*2+1;
+    size_t pathl = strlen(outfolder)*2+1;
     char path[pathl];
     char *pattern = strdupa (outfile);
 
@@ -741,7 +771,12 @@ get_output_path (DB_playItem_t *it, const char *outfolder_user, const char *outf
     while (*s) {
         if ((*s == '/') || (*s == '\\')) {
             *s = '\0';
-            get_output_field (it, field, fname, sizeof(fname));
+            if (use_new_tf) {
+                get_output_field2(it, plt, field, fname, sizeof (fname));
+            }
+            else {
+                get_output_field (it, field, fname, sizeof (fname));
+            }
 
             l = strlen (out);
             snprintf (out+l, sz-l, "%s/", fname);
@@ -752,11 +787,26 @@ get_output_path (DB_playItem_t *it, const char *outfolder_user, const char *outf
     }
 
     // last part of outfile is the filename
-    get_output_field (it, field, fname, sizeof(fname));
+    if (use_new_tf) {
+        get_output_field2(it, plt, field, fname, sizeof (fname));
+    }
+    else {
+        get_output_field (it, field, fname, sizeof(fname));
+    }
 
     l = strlen (out);
     snprintf (out+l, sz-l, "%s.%s", fname, encoder_preset->ext);
     trace ("converter output file is '%s'\n", out);
+}
+
+void
+get_output_path (DB_playItem_t *it, const char *outfolder_user, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz) {
+    get_output_path_int (it, NULL, outfolder_user, outfile, encoder_preset, preserve_folder_structure, root_folder, write_to_source_folder, out, sz, 0);
+}
+
+void
+get_output_path2 (DB_playItem_t *it, ddb_playlist_t *plt, const char *outfolder_user, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz) {
+    get_output_path_int (it, plt, outfolder_user, outfile, encoder_preset, preserve_folder_structure, root_folder, write_to_source_folder, out, sz, 1);
 }
 
 static void
@@ -1318,6 +1368,8 @@ static ddb_converter_t plugin = {
     // 1.2 entry points
     .convert = convert,
     .get_output_path = get_output_path,
+    // 1.4 entry points
+    .get_output_path2 = get_output_path2,
 };
 
 DB_plugin_t *
