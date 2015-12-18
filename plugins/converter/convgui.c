@@ -266,7 +266,7 @@ converter_process (converter_ctx_t *conv)
     conv->outfolder = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder"))));
     const char *outfile = gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")));
     if (outfile[0] == 0) {
-        outfile = "%a - %t";
+        outfile = "%album artist% - %title%";
     }
     conv->outfile = strdup (outfile);
     conv->preserve_folder_structure = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")));
