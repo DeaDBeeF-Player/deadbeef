@@ -732,13 +732,17 @@ trackfocus_cb (gpointer data) {
         ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
         if (plt) {
             deadbeef->plt_set_curr (plt);
+            deadbeef->plt_deselect_all (plt);
+            deadbeef->pl_set_selected (it, 1);
+            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
             int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
-            if (idx != -1 && (!scroll_is_set (plt, idx) || !cursor_is_set (plt, it, idx))) {
-                deadbeef->plt_deselect_all (plt);
-                deadbeef->pl_set_selected (it, 1);
-                deadbeef->plt_set_scroll (plt, idx);
+            if (idx != -1) {
+                deadbeef->plt_set_scroll (plt, -1 * idx);
                 deadbeef->plt_set_cursor (plt, PL_MAIN, idx);
-                deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+                ddb_event_track_t *event = (ddb_event_track_t *)deadbeef->event_alloc(DB_EV_CURSOR_MOVED);
+                event->track = it;
+                deadbeef->pl_item_ref (event->track);
+                deadbeef->event_send ((ddb_event_t *)event, 0, 0);
             }
             deadbeef->plt_unref (plt);
         }
@@ -748,7 +752,7 @@ trackfocus_cb (gpointer data) {
     return FALSE;
 }
 
-int
+static int
 gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     if (!gtkui_accept_messages) {
         return -1;

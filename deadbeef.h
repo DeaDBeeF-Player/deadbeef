@@ -428,6 +428,10 @@ enum {
     DB_EV_TRACKFOCUSCURRENT = 1006, // user wants to highlight/find the current playing track
 #endif
 
+#if (DDB_API_LEVEL >= 9)
+    DB_EV_CURSOR_MOVED = 1007, // for synchronising listviews, p1 = cursor index, p2 = playlist iter sending the message
+#endif
+
     DB_EV_MAX
 };
 

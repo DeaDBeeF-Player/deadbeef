@@ -2170,26 +2170,46 @@ songchanged_cb (gpointer data) {
 }
 
 static gboolean
-trackfocus_cb (gpointer data) {
-    deadbeef->pl_lock ();
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-    if (it) {
-        ddb_listview_track_focus (DDB_LISTVIEW (data), it);
-    }
-    deadbeef->pl_unlock ();
-    return FALSE;
-}
-
-static gboolean
-focus_selection_cb (gpointer data) {
+cursor_moved_cb (gpointer data) {
     w_trackdata_t *d = data;
-    int cursor = deadbeef->pl_get_idx_of (d->trk);
+    int cursor = deadbeef->pl_get_idx_of_iter (d->trk, PL_MAIN);
     if (cursor != -1) {
         deadbeef->pl_set_cursor (PL_MAIN, cursor);
         ddb_listview_scroll_to (d->listview, cursor);
     }
     deadbeef->pl_item_unref (d->trk);
-    free (d);
+    free (data);
+    return FALSE;
+}
+
+static gboolean
+focus_selection_cb (gpointer data) {
+    DdbListview *listview = data;
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it && !deadbeef->pl_is_selected (it)) {
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    if (it) {
+        int cursor = deadbeef->pl_get_cursor (PL_MAIN);
+        int new_cursor = deadbeef->pl_get_idx_of (it);
+        if (new_cursor != cursor) {
+            if (cursor != -1) {
+                ddb_listview_draw_row (listview, cursor, NULL);
+            }
+            deadbeef->pl_set_cursor (PL_MAIN, new_cursor);
+            if (new_cursor != -1) {
+                ddb_listview_draw_row (listview, new_cursor, NULL);
+            }
+        }
+        if (new_cursor != -1) {
+            ddb_listview_scroll_to (listview, new_cursor);
+        }
+        deadbeef->pl_item_unref (it);
+    }
+    deadbeef->pl_unlock ();
     return FALSE;
 }
 
@@ -2227,18 +2247,17 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
     case DB_EV_PLAYLISTSWITCHED:
         g_idle_add (playlist_setup_cb, p->list);
         break;
-    case DB_EV_TRACKFOCUSCURRENT:
-        g_idle_add (trackfocus_cb, p->list);
-        break;
     case DB_EV_FOCUS_SELECTION:
-        if (p2 != PL_MAIN) {
-            DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (p1, p2);
-            if (it) {
-                g_idle_add (focus_selection_cb, playlist_trackdata(p->list, it));
-                deadbeef->pl_item_unref (it);
-            }
+        g_idle_add (focus_selection_cb, p->list);
+        break;
+    case DB_EV_CURSOR_MOVED:
+    {
+        ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
+        if (ev->track) {
+            g_idle_add (cursor_moved_cb, playlist_trackdata(p->list, ev->track));
         }
         break;
+    }
     case DB_EV_CONFIGCHANGED:
         if (ctx) {
             char *conf_str = (char *)ctx;
