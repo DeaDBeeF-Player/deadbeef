@@ -188,7 +188,7 @@ my_error_exit (j_common_ptr cinfo)
   /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
   my_error_mgr_t *myerr = (my_error_mgr_t *) cinfo->err;
 
-//  (*cinfo->err->output_message) (cinfo);
+//  (*cinfo->err->output_message)(cinfo);
 
   /* Return control to the setjmp point */
   longjmp (myerr->setjmp_buffer, 1);
@@ -332,7 +332,7 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
         float y_interp = downscale_offset;
         for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++, y_interp+=scaling_ratio) {
             const uint_fast32_t y = y_interp;
-            const uint_fast16_t y_diff = (uint_fast32_t) (y_interp*256) - (y<<8);
+            const uint_fast16_t y_diff = (uint_fast32_t)(y_interp*256) - (y<<8);
             const uint_fast16_t y_remn = 256 - y_diff;
 
             if (cinfo.output_scanline < y+2) {
@@ -351,7 +351,7 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
                 const uint_fast32_t x_index = x * num_components;
                 const uint_fast32_t next_x_index = x+1 < width ? x_index+num_components : x_index;
 
-                const uint_fast16_t x_diff = (uint_fast32_t) (x_interp*256) - (x<<8);
+                const uint_fast16_t x_diff = (uint_fast32_t)(x_interp*256) - (x<<8);
                 const uint_fast16_t x_remn = 256 - x_diff;
                 const uint_fast32_t weight = x_remn * y_remn;
                 const uint_fast32_t weightx = x_diff * y_remn;
@@ -642,7 +642,7 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
             const png_byte *row = row_pointers[y];
             const png_byte *next_row = y+1 < height ? row_pointers[y+1] : row;
 
-            const uint_fast16_t y_diff = (uint_fast32_t) (y_interp*256) - (y<<8);
+            const uint_fast16_t y_diff = (uint_fast32_t)(y_interp*256) - (y<<8);
             const uint_fast16_t y_remn = 256 - y_diff;
 
             float x_interp = downscale_offset;
@@ -651,7 +651,7 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
                 const uint_fast32_t x_index = x * num_components;
                 const uint_fast32_t next_x_index = x < width ? x_index+num_components : x_index;
 
-                const uint_fast16_t x_diff = (uint_fast32_t) (x_interp*256) - (x<<8);
+                const uint_fast16_t x_diff = (uint_fast32_t)(x_interp*256) - (x<<8);
                 const uint_fast16_t x_remn = 256 - x_diff;
                 const uint_fast32_t weight = x_remn * y_remn;
                 const uint_fast32_t weightx = x_diff * y_remn;
@@ -1173,7 +1173,7 @@ scan_local_path (char *mask, const char *cache_path, const char *local_path, con
 {
     filter_custom_mask = mask;
     struct dirent **files;
-    int (* custom_scandir) (const char *, struct dirent ***, int (*) (const struct dirent *), int (*) (const struct dirent **, const struct dirent **));
+    int (* custom_scandir)(const char *, struct dirent ***, int (*)(const struct dirent *), int (*)(const struct dirent **, const struct dirent **));
     custom_scandir = vfsplug ? vfsplug->scandir : scandir;
     int files_count = custom_scandir (local_path, &files, filter_custom, NULL);
     if (files_count > 0) {
@@ -1355,23 +1355,23 @@ flac_io_read (void *ptr, size_t size, size_t nmemb, FLAC__IOHandle handle) {
 
 static int
 flac_io_seek (FLAC__IOHandle handle, FLAC__int64 offset, int whence) {
-    return deadbeef->fseek ( (DB_FILE *)handle, offset, whence);
+    return deadbeef->fseek ((DB_FILE *)handle, offset, whence);
 }
 
 static FLAC__int64
 flac_io_tell (FLAC__IOHandle handle) {
-    return deadbeef->ftell ( (DB_FILE *)handle);
+    return deadbeef->ftell ((DB_FILE *)handle);
 }
 
 static int
 flac_io_eof (FLAC__IOHandle handle) {
-    int64_t pos = deadbeef->ftell ( (DB_FILE *)handle);
-    return pos == deadbeef->fgetlength ( (DB_FILE *)handle);
+    int64_t pos = deadbeef->ftell ((DB_FILE *)handle);
+    return pos == deadbeef->fgetlength ((DB_FILE *)handle);
 }
 
 static int
 flac_io_close (FLAC__IOHandle handle) {
-    deadbeef->fclose ( (DB_FILE *)handle);
+    deadbeef->fclose ((DB_FILE *)handle);
     return 0;
 }
 
@@ -1944,9 +1944,9 @@ insert_cache_reset (void *user_data)
 
     cover_callback_t **last_callback = &queue->callback;
     while (*last_callback) {
-        if ( (*last_callback)->cb == cache_reset_callback) {
+        if ((*last_callback)->cb == cache_reset_callback) {
             /* Set an existing callback to do the right resets */
-            if ( (*last_callback)->ud == &scaled_cache_reset_time && user_data == &cache_reset_time) {
+            if ((*last_callback)->ud == &scaled_cache_reset_time && user_data == &cache_reset_time) {
                 (*last_callback)->ud = user_data;
             }
             return;
