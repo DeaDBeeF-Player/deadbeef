@@ -756,7 +756,7 @@ edit_encoder_preset (char *title, GtkWidget *toplevel) {
                 if (!err) {
                     if (old->title && strcmp (p->title, old->title)) {
                         char path[1024];
-                        if (snprintf (path, sizeof (path), "%s/presets/encoders/%s.txt", deadbeef->get_config_dir (), old->title) > 0) {
+                        if (snprintf (path, sizeof (path), "%s/presets/encoders/%s.txt", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG), old->title) > 0) {
                             unlink (path);
                         }
                     }
@@ -896,7 +896,7 @@ on_encoder_preset_remove                     (GtkButton       *button,
     gtk_widget_destroy (dlg);
     if (response == GTK_RESPONSE_YES) {
         char path[1024];
-        if (snprintf (path, sizeof (path), "%s/presets/encoders/%s.txt", deadbeef->get_config_dir (), p->title) > 0) {
+        if (snprintf (path, sizeof (path), "%s/presets/encoders/%s.txt", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG), p->title) > 0) {
             unlink (path);
         }
 
@@ -1473,7 +1473,7 @@ on_dsp_preset_remove                     (GtkButton       *button,
     gtk_widget_destroy (dlg);
     if (response == GTK_RESPONSE_YES) {
         char path[1024];
-        if (snprintf (path, sizeof (path), "%s/presets/dsp/%s.txt", deadbeef->get_config_dir (), p->title) > 0) {
+        if (snprintf (path, sizeof (path), "%s/presets/dsp/%s.txt", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG), p->title) > 0) {
             unlink (path);
         }
 
