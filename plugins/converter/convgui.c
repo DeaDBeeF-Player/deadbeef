@@ -246,7 +246,7 @@ converter_worker (void *ctx) {
         free (conv->convert_items);
     }
     if (conv->convert_playlist) {
-        plt_unref (conv->convert_playlist);
+        deadbeef->plt_unref (conv->convert_playlist);
     }
     if (conv->outfolder) {
         free (conv->outfolder);
