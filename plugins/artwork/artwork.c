@@ -1708,12 +1708,12 @@ process_query (const cover_query_t *query)
 
     if (query->album) {
         /* Try stripping parenthesised text off the end of the album name */
-        char *p = strpbrk (query->album, " ([");
+        char *p = strpbrk (query->album, "([");
         if (p) {
             char parenthesis = *p;
             *p = '\0';
             int res = web_lookups (query->artist, query->album, cache_path);
-            *p = ' (';
+            *p = '(';
             if (res >= 0) {
                 return res;
             }
