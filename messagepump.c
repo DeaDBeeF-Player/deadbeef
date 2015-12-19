@@ -154,6 +154,7 @@ messagepump_event_alloc (uint32_t id) {
     case DB_EV_SONGSTARTED:
     case DB_EV_SONGFINISHED:
     case DB_EV_TRACKINFOCHANGED:
+    case DB_EV_CURSOR_MOVED:
         sz = sizeof (ddb_event_track_t);
         break;
     case DB_EV_SEEKED:
@@ -185,6 +186,7 @@ messagepump_event_free (ddb_event_t *ev) {
     case DB_EV_SONGSTARTED:
     case DB_EV_SONGFINISHED:
     case DB_EV_TRACKINFOCHANGED:
+    case DB_EV_CURSOR_MOVED:
         {
             ddb_event_track_t *tc = (ddb_event_track_t*)ev;
             if (tc->track) {

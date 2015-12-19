@@ -217,11 +217,9 @@ ddb_listview_draw_row (DdbListview *listview, int idx, DdbListviewIter iter);
 int
 ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state);
 void
-ddb_listview_set_cursor (DdbListview *pl, int cursor);
+ddb_listview_select_single (DdbListview *listview, int sel);
 void
 ddb_listview_scroll_to (DdbListview *listview, int rowpos);
-void
-ddb_listview_track_focus (DdbListview *listview, DdbListviewIter it);
 int
 ddb_listview_list_setup (DdbListview *listview, int scroll_to);
 int
