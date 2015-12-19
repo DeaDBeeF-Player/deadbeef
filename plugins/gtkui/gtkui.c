@@ -686,41 +686,71 @@ set_title_cb (gpointer data) {
     return FALSE;
 }
 
-static int
-cursor_is_set (ddb_playlist_t *plt, DB_playItem_t *it, int idx) {
-    return deadbeef->pl_is_selected (it) && idx == deadbeef->plt_get_cursor (plt, PL_MAIN) && deadbeef->plt_getselcount (plt) == 1;
-}
-
-static int
-scroll_is_set (ddb_playlist_t *plt, int idx) {
-    return idx == deadbeef->plt_get_scroll (plt);
+// The intended scroll position is set for background tabs, etc.
+// This will be overwritten if there is a current main listview, or when the playlist is loaded by a listview
+static void
+playlist_set_intended_scroll (DB_playItem_t *it) {
+    ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
+    if (plt) {
+        int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
+        if (idx != -1) {
+            deadbeef->plt_set_scroll (plt, -1 * idx);
+        }
+        deadbeef->plt_unref (plt);
+    }
 }
 
 static gboolean
-songchanged_cb (gpointer data) {
+pre_songstarted_cb (gpointer data) {
+    if (deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)) {
+        playlist_set_intended_scroll (data);
+    }
+    deadbeef->pl_item_unref (data);
+    return FALSE;
+}
+
+static gboolean
+pre_trackfocus_cb (gpointer data) {
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (it) {
+        playlist_set_intended_scroll (it);
+        deadbeef->pl_item_unref (it);
+    }
+    deadbeef->pl_unlock ();
+    return FALSE;
+}
+
+// These functions handle cases that need a playlist switch, or when there is no main listview to take the message
+static void
+playlist_set_cursor (ddb_playlist_t *plt, DB_playItem_t *it) {
+    int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
+    if (idx != -1) {
+        if (!deadbeef->pl_is_selected (it) || idx != deadbeef->plt_get_cursor (plt, PL_MAIN) || deadbeef->plt_getselcount (plt) != 1) {
+            deadbeef->plt_deselect_all (plt);
+            deadbeef->pl_set_selected (it, 1);
+            deadbeef->plt_set_cursor (plt, PL_MAIN, idx);
+            ddb_event_track_t *event = (ddb_event_track_t *)deadbeef->event_alloc(DB_EV_CURSOR_MOVED);
+            event->track = it;
+            deadbeef->pl_item_ref (it);
+            deadbeef->event_send ((ddb_event_t *)event, PL_MAIN, 0);
+        }
+    }
+}
+
+static gboolean
+songstarted_cb (gpointer data) {
     DB_playItem_t *it = data;
-    ddb_playlist_t *to_plt = deadbeef->pl_get_playlist (it);
-    if (to_plt) {
-        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)) {
+        deadbeef->pl_lock ();
+        ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
         if (plt) {
-            int idx = deadbeef->plt_get_item_idx (to_plt, it, PL_MAIN);
-            if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1) && (to_plt != plt || !cursor_is_set (plt, it, idx))) {
-                deadbeef->plt_deselect_all (to_plt);
-                deadbeef->pl_set_selected (it, 1);
-                if (plt == to_plt) {
-                    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-                }
-                deadbeef->plt_set_cursor (to_plt, PL_MAIN, idx);
-            }
-            if (deadbeef->conf_get_int ("playlist.scroll.followplayback", 1) && (to_plt != plt || !scroll_is_set (plt, idx))) {
-                deadbeef->plt_set_scroll (to_plt, -1);
-            }
+            playlist_set_cursor (plt, it);
             deadbeef->plt_unref (plt);
         }
-        deadbeef->plt_unref (to_plt);
+        deadbeef->pl_unlock ();
     }
     deadbeef->pl_item_unref (it);
-
     return FALSE;
 }
 
@@ -732,14 +762,7 @@ trackfocus_cb (gpointer data) {
         ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
         if (plt) {
             deadbeef->plt_set_curr (plt);
-            int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
-            if (idx != -1 && (!scroll_is_set (plt, idx) || !cursor_is_set (plt, it, idx))) {
-                deadbeef->plt_deselect_all (plt);
-                deadbeef->pl_set_selected (it, 1);
-                deadbeef->plt_set_scroll (plt, idx);
-                deadbeef->plt_set_cursor (plt, PL_MAIN, idx);
-                deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-            }
+            playlist_set_cursor (plt, it);
             deadbeef->plt_unref (plt);
         }
         deadbeef->pl_item_unref (it);
@@ -748,10 +771,25 @@ trackfocus_cb (gpointer data) {
     return FALSE;
 }
 
-int
+static int
 gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     if (!gtkui_accept_messages) {
         return -1;
+    }
+
+    switch (id) {
+    case DB_EV_SONGSTARTED:
+    {
+        ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
+        if (ev->track) {
+            deadbeef->pl_item_ref (ev->track);
+            g_idle_add (pre_songstarted_cb, ev->track);
+        }
+        break;
+    }
+    case DB_EV_TRACKFOCUSCURRENT:
+        g_idle_add (pre_trackfocus_cb, NULL);
+        break;
     }
 
     search_message(id, ctx, p1, p2);
@@ -764,12 +802,12 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     case DB_EV_ACTIVATED:
         g_idle_add (activate_cb, NULL);
         break;
-    case DB_EV_SONGCHANGED:
+    case DB_EV_SONGSTARTED:
         g_idle_add (set_title_cb, NULL);
-        ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
-        if (ev->to) {
-            deadbeef->pl_item_ref (ev->to);
-            g_idle_add (songchanged_cb, ev->to);
+        ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
+        if (ev->track) {
+            deadbeef->pl_item_ref (ev->track);
+            g_idle_add (songstarted_cb, ev->track);
         }
         break;
     case DB_EV_TRACKINFOCHANGED:
@@ -786,11 +824,11 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
             g_idle_add (playlistcontentchanged_cb, NULL);
         }
         break;
-    case DB_EV_CONFIGCHANGED:
-        g_idle_add (gtkui_on_configchanged, NULL);
-        break;
     case DB_EV_TRACKFOCUSCURRENT:
         g_idle_add (trackfocus_cb, NULL);
+        break;
+    case DB_EV_CONFIGCHANGED:
+        g_idle_add (gtkui_on_configchanged, NULL);
         break;
     case DB_EV_OUTPUTCHANGED:
         g_idle_add (outputchanged_cb, NULL);

@@ -428,6 +428,10 @@ enum {
     DB_EV_TRACKFOCUSCURRENT = 1006, // user wants to highlight/find the current playing track
 #endif
 
+#if (DDB_API_LEVEL >= 9)
+    DB_EV_CURSOR_MOVED = 1007, // used for syncing cursor position between playlist views, p1 = PL_MAIN or PL_SEARCH, ctx is a ddb_event_track_t, containing the new track under cursor
+#endif
+
     DB_EV_MAX
 };
 
