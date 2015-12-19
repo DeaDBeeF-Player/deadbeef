@@ -223,8 +223,6 @@ ddb_listview_scroll_to (DdbListview *listview, int rowpos);
 int
 ddb_listview_list_setup (DdbListview *listview, int scroll_to);
 int
-ddb_listview_is_scrolling (DdbListview *listview);
-int
 ddb_listview_column_get_count (DdbListview *listview);
 void
 ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);

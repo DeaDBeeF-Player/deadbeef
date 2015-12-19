@@ -191,7 +191,7 @@ songstarted_cb (gpointer p) {
     if (listview) {
         int idx = deadbeef->pl_get_idx_of_iter (it, PL_SEARCH);
         if (idx != -1) {
-            if (!!ddb_listview_is_scrolling (listview)) {
+            if (!gtkui_listview_busy) {
                 if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)) {
                     ddb_listview_select_single (listview, idx);
                     deadbeef->pl_set_cursor (PL_SEARCH, idx);

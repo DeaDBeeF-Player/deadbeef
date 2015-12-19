@@ -2128,12 +2128,13 @@ songfinished_cb (gpointer data) {
     return FALSE;
 }
 
+// This only actually does anything if the track is in the current playlist, otherwise gtkui.c will handle it
 static gboolean
 songstarted_cb (gpointer data) {
     w_trackdata_t *d = data;
     int idx = deadbeef->pl_get_idx_of (d->trk);
     if (idx != -1) {
-        if (!ddb_listview_is_scrolling (d->listview)) {
+        if (!gtkui_listview_busy) {
             if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)) {
                 ddb_listview_select_single (d->listview, idx);
                 deadbeef->pl_set_cursor (PL_MAIN, idx);

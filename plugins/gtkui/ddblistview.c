@@ -1776,6 +1776,8 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
         }
     }
 
+    gtkui_listview_busy = 1;
+
     // set cursor
     int prev = cursor;
     if (pick_ctx.type != PICK_EMPTY_SPACE
@@ -1859,6 +1861,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
 
 void
 ddb_listview_list_mouse1_released (DdbListview *ps, int state, int ex, int ey, double time) {
+    gtkui_listview_busy = 0;
 
 #ifndef __APPLE__
     int selmask = GDK_CONTROL_MASK;
@@ -2997,11 +3000,6 @@ ddb_listview_scroll_to (DdbListview *listview, int pos) {
     if (pos < listview->scrollpos || pos + listview->rowheight >= listview->scrollpos + listview->list_height) {
         gtk_range_set_value (GTK_RANGE (listview->scrollbar), pos - listview->list_height/2);
     }
-}
-
-int
-ddb_listview_is_scrolling (DdbListview *listview) {
-    return listview->dragwait || listview->areaselect || listview->drag_motion_y != -1;
 }
 
 /////// column management code
