@@ -104,6 +104,7 @@ int gtkui_tabstrip_embolden_selected;
 int gtkui_tabstrip_italic_selected;
 
 int gtkui_groups_pinned;
+int gtkui_listview_busy;
 
 #ifdef __APPLE__
 int gtkui_is_retina = 0;
@@ -686,6 +687,24 @@ set_title_cb (gpointer data) {
     return FALSE;
 }
 
+static int
+is_current_playlist (DB_playItem_t *it) {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        ddb_playlist_t *it_plt = deadbeef->pl_get_playlist (it);
+        if (it_plt) {
+            if (it_plt == plt) {
+                deadbeef->plt_unref (it_plt);
+                deadbeef->plt_unref (plt);
+                return 1;
+            }
+            deadbeef->plt_unref (it_plt);
+        }
+        deadbeef->plt_unref (plt);
+    }
+    return 0;
+}
+
 // The intended scroll position is set for background tabs, etc.
 // This will be overwritten if there is a current main listview, or when the playlist is loaded by a listview
 static void
@@ -702,10 +721,11 @@ playlist_set_intended_scroll (DB_playItem_t *it) {
 
 static gboolean
 pre_songstarted_cb (gpointer data) {
-    if (deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)) {
-        playlist_set_intended_scroll (data);
+    DB_playItem_t *it = data;
+    if ((!gtkui_listview_busy || !is_current_playlist (it)) && deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)) {
+        playlist_set_intended_scroll (it);
     }
-    deadbeef->pl_item_unref (data);
+    deadbeef->pl_item_unref (it);
     return FALSE;
 }
 
@@ -726,7 +746,7 @@ static void
 playlist_set_cursor (ddb_playlist_t *plt, DB_playItem_t *it) {
     int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
     if (idx != -1) {
-        if (!deadbeef->pl_is_selected (it) || idx != deadbeef->plt_get_cursor (plt, PL_MAIN) || deadbeef->plt_getselcount (plt) != 1) {
+        if (deadbeef->pl_is_selected (it) || idx != deadbeef->plt_get_cursor (plt, PL_MAIN) || deadbeef->plt_getselcount (plt) != 1) {
             deadbeef->plt_deselect_all (plt);
             deadbeef->pl_set_selected (it, 1);
             deadbeef->plt_set_cursor (plt, PL_MAIN, idx);
@@ -741,7 +761,7 @@ playlist_set_cursor (ddb_playlist_t *plt, DB_playItem_t *it) {
 static gboolean
 songstarted_cb (gpointer data) {
     DB_playItem_t *it = data;
-    if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)) {
+    if ((!gtkui_listview_busy || !is_current_playlist (it)) && deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)) {
         deadbeef->pl_lock ();
         ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
         if (plt) {
