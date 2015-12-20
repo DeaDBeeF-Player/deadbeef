@@ -7,6 +7,35 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07021F4F1C27365800FC9AF9 /* asm_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F3D1C27365800FC9AF9 /* asm_arm.h */; };
+		07021F501C27365800FC9AF9 /* codeclib_misc.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F3E1C27365800FC9AF9 /* codeclib_misc.h */; };
+		07021F511C27365800FC9AF9 /* ffmpeg_bitstream.c in Sources */ = {isa = PBXBuildFile; fileRef = 07021F3F1C27365800FC9AF9 /* ffmpeg_bitstream.c */; };
+		07021F521C27365800FC9AF9 /* ffmpeg_get_bits.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F401C27365800FC9AF9 /* ffmpeg_get_bits.h */; };
+		07021F531C27365900FC9AF9 /* ffmpeg_intreadwrite.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F411C27365800FC9AF9 /* ffmpeg_intreadwrite.h */; };
+		07021F541C27365900FC9AF9 /* fft-ffmpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = 07021F421C27365800FC9AF9 /* fft-ffmpeg.c */; };
+		07021F551C27365900FC9AF9 /* fft-ffmpeg_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F431C27365800FC9AF9 /* fft-ffmpeg_arm.h */; };
+		07021F561C27365900FC9AF9 /* fft.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F441C27365800FC9AF9 /* fft.h */; };
+		07021F571C27365900FC9AF9 /* mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = 07021F451C27365800FC9AF9 /* mdct.c */; };
+		07021F581C27365900FC9AF9 /* mdct.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F461C27365800FC9AF9 /* mdct.h */; };
+		07021F591C27365900FC9AF9 /* mdct_lookup.c in Sources */ = {isa = PBXBuildFile; fileRef = 07021F471C27365800FC9AF9 /* mdct_lookup.c */; };
+		07021F5A1C27365900FC9AF9 /* mdct_lookup.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F481C27365800FC9AF9 /* mdct_lookup.h */; };
+		07021F5B1C27365900FC9AF9 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F491C27365800FC9AF9 /* types.h */; };
+		07021F5C1C27365900FC9AF9 /* wmadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F4A1C27365800FC9AF9 /* wmadata.h */; };
+		07021F5D1C27365900FC9AF9 /* wmadec.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F4B1C27365800FC9AF9 /* wmadec.h */; };
+		07021F5E1C27365900FC9AF9 /* wmadeci.c in Sources */ = {isa = PBXBuildFile; fileRef = 07021F4C1C27365800FC9AF9 /* wmadeci.c */; };
+		07021F5F1C27365900FC9AF9 /* wmafixed.c in Sources */ = {isa = PBXBuildFile; fileRef = 07021F4D1C27365800FC9AF9 /* wmafixed.c */; };
+		07021F601C27365900FC9AF9 /* wmafixed.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F4E1C27365800FC9AF9 /* wmafixed.h */; };
+		07021F641C27367B00FC9AF9 /* asf.c in Sources */ = {isa = PBXBuildFile; fileRef = 07021F621C27367B00FC9AF9 /* asf.c */; };
+		07021F651C27367B00FC9AF9 /* asf.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F631C27367B00FC9AF9 /* asf.h */; };
+		07021F681C27369B00FC9AF9 /* asfheader.c in Sources */ = {isa = PBXBuildFile; fileRef = 07021F661C27369B00FC9AF9 /* asfheader.c */; };
+		07021F691C27369B00FC9AF9 /* wma_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 07021F671C27369B00FC9AF9 /* wma_plugin.c */; };
+		07021F6E1C2736C300FC9AF9 /* libasflib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07021F2E1C2734D700FC9AF9 /* libasflib.a */; };
+		07021F6F1C2736C300FC9AF9 /* libwmalib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07021F191C2734AC00FC9AF9 /* libwmalib.a */; };
+		07021F721C27375800FC9AF9 /* libasflib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07021F2E1C2734D700FC9AF9 /* libasflib.a */; };
+		07021F731C27403300FC9AF9 /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; };
+		07021F741C27406C00FC9AF9 /* asf.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F631C27367B00FC9AF9 /* asf.h */; };
+		07021F751C2740A900FC9AF9 /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; };
+		07021F781C27410800FC9AF9 /* wma.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07021F3A1C2734F100FC9AF9 /* wma.dylib */; };
 		2D01D7CE1AB2219C00BCD3C4 /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D93DC521AADFEEF003D2D8D /* pluginsettings.c */; };
 		2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ED81837EC44003E6066 /* ConvertUTF.c */; };
 		2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F871837EC44003E6066 /* md5.c */; };
@@ -1383,6 +1412,34 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		07021F6A1C2736B700FC9AF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07021EAB1C2734AC00FC9AF9;
+			remoteInfo = wmalib;
+		};
+		07021F6C1C2736B700FC9AF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07021F271C2734D700FC9AF9;
+			remoteInfo = asflib;
+		};
+		07021F701C27374A00FC9AF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07021F271C2734D700FC9AF9;
+			remoteInfo = asflib;
+		};
+		07021F761C2740F100FC9AF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07021F2F1C2734F100FC9AF9;
+			remoteInfo = wma;
+		};
 		2D01D7E81AB221AA00BCD3C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -1715,6 +1772,31 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		07021F191C2734AC00FC9AF9 /* libwmalib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libwmalib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		07021F2E1C2734D700FC9AF9 /* libasflib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libasflib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		07021F3A1C2734F100FC9AF9 /* wma.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wma.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		07021F3D1C27365800FC9AF9 /* asm_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asm_arm.h; sourceTree = "<group>"; };
+		07021F3E1C27365800FC9AF9 /* codeclib_misc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = codeclib_misc.h; sourceTree = "<group>"; };
+		07021F3F1C27365800FC9AF9 /* ffmpeg_bitstream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffmpeg_bitstream.c; sourceTree = "<group>"; };
+		07021F401C27365800FC9AF9 /* ffmpeg_get_bits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffmpeg_get_bits.h; sourceTree = "<group>"; };
+		07021F411C27365800FC9AF9 /* ffmpeg_intreadwrite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffmpeg_intreadwrite.h; sourceTree = "<group>"; };
+		07021F421C27365800FC9AF9 /* fft-ffmpeg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "fft-ffmpeg.c"; sourceTree = "<group>"; };
+		07021F431C27365800FC9AF9 /* fft-ffmpeg_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "fft-ffmpeg_arm.h"; sourceTree = "<group>"; };
+		07021F441C27365800FC9AF9 /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft.h; sourceTree = "<group>"; };
+		07021F451C27365800FC9AF9 /* mdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mdct.c; sourceTree = "<group>"; };
+		07021F461C27365800FC9AF9 /* mdct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mdct.h; sourceTree = "<group>"; };
+		07021F471C27365800FC9AF9 /* mdct_lookup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mdct_lookup.c; sourceTree = "<group>"; };
+		07021F481C27365800FC9AF9 /* mdct_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mdct_lookup.h; sourceTree = "<group>"; };
+		07021F491C27365800FC9AF9 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+		07021F4A1C27365800FC9AF9 /* wmadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wmadata.h; sourceTree = "<group>"; };
+		07021F4B1C27365800FC9AF9 /* wmadec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wmadec.h; sourceTree = "<group>"; };
+		07021F4C1C27365800FC9AF9 /* wmadeci.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wmadeci.c; sourceTree = "<group>"; };
+		07021F4D1C27365800FC9AF9 /* wmafixed.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wmafixed.c; sourceTree = "<group>"; };
+		07021F4E1C27365800FC9AF9 /* wmafixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wmafixed.h; sourceTree = "<group>"; };
+		07021F621C27367B00FC9AF9 /* asf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = asf.c; sourceTree = "<group>"; };
+		07021F631C27367B00FC9AF9 /* asf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asf.h; sourceTree = "<group>"; };
+		07021F661C27369B00FC9AF9 /* asfheader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = asfheader.c; path = plugins/wma/asfheader.c; sourceTree = "<group>"; };
+		07021F671C27369B00FC9AF9 /* wma_plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wma_plugin.c; path = plugins/wma/wma_plugin.c; sourceTree = "<group>"; };
 		2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libddbcore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testbootstrap.c; sourceTree = "<group>"; };
 		2D05A8291B4BE59D004C913D /* sndfile.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = sndfile.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3147,6 +3229,30 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		07021F051C2734AC00FC9AF9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07021F721C27375800FC9AF9 /* libasflib.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07021F291C2734D700FC9AF9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07021F341C2734F100FC9AF9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07021F6E1C2736C300FC9AF9 /* libasflib.a in Frameworks */,
+				07021F6F1C2736C300FC9AF9 /* libwmalib.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D01D7C71AB2216900BCD3C4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3418,6 +3524,53 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		07021F3B1C27358700FC9AF9 /* wma */ = {
+			isa = PBXGroup;
+			children = (
+				07021F661C27369B00FC9AF9 /* asfheader.c */,
+				07021F671C27369B00FC9AF9 /* wma_plugin.c */,
+				07021F611C27367B00FC9AF9 /* libasf */,
+				07021F3C1C27365800FC9AF9 /* libwma */,
+			);
+			name = wma;
+			sourceTree = "<group>";
+		};
+		07021F3C1C27365800FC9AF9 /* libwma */ = {
+			isa = PBXGroup;
+			children = (
+				07021F3D1C27365800FC9AF9 /* asm_arm.h */,
+				07021F3E1C27365800FC9AF9 /* codeclib_misc.h */,
+				07021F3F1C27365800FC9AF9 /* ffmpeg_bitstream.c */,
+				07021F401C27365800FC9AF9 /* ffmpeg_get_bits.h */,
+				07021F411C27365800FC9AF9 /* ffmpeg_intreadwrite.h */,
+				07021F421C27365800FC9AF9 /* fft-ffmpeg.c */,
+				07021F431C27365800FC9AF9 /* fft-ffmpeg_arm.h */,
+				07021F441C27365800FC9AF9 /* fft.h */,
+				07021F451C27365800FC9AF9 /* mdct.c */,
+				07021F461C27365800FC9AF9 /* mdct.h */,
+				07021F471C27365800FC9AF9 /* mdct_lookup.c */,
+				07021F481C27365800FC9AF9 /* mdct_lookup.h */,
+				07021F491C27365800FC9AF9 /* types.h */,
+				07021F4A1C27365800FC9AF9 /* wmadata.h */,
+				07021F4B1C27365800FC9AF9 /* wmadec.h */,
+				07021F4C1C27365800FC9AF9 /* wmadeci.c */,
+				07021F4D1C27365800FC9AF9 /* wmafixed.c */,
+				07021F4E1C27365800FC9AF9 /* wmafixed.h */,
+			);
+			name = libwma;
+			path = plugins/wma/libwma;
+			sourceTree = "<group>";
+		};
+		07021F611C27367B00FC9AF9 /* libasf */ = {
+			isa = PBXGroup;
+			children = (
+				07021F621C27367B00FC9AF9 /* asf.c */,
+				07021F631C27367B00FC9AF9 /* asf.h */,
+			);
+			name = libasf;
+			path = plugins/wma/libasf;
+			sourceTree = "<group>";
+		};
 		2D05A8351B4BE5C4004C913D /* sndfile */ = {
 			isa = PBXGroup;
 			children = (
@@ -4987,6 +5140,9 @@
 				2D4458D91C04F1C000230939 /* vfs_zip.dylib */,
 				2D28F0411C283BE3004A6E7B /* aac.dylib */,
 				2D28F0551C283C75004A6E7B /* libfaad2.a */,
+				07021F191C2734AC00FC9AF9 /* libwmalib.a */,
+				07021F2E1C2734D700FC9AF9 /* libasflib.a */,
+				07021F3A1C2734F100FC9AF9 /* wma.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5136,6 +5292,7 @@
 				4D1B51551837F4E9003E6066 /* nullout */,
 				4D1B514D1837EF9D003E6066 /* libparser */,
 				2DF930481AB817190030C0CA /* wildmidi */,
+				07021F3B1C27358700FC9AF9 /* wma */,
 			);
 			name = plugins;
 			path = ..;
@@ -5590,6 +5747,43 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		07021F061C2734AC00FC9AF9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07021F741C27406C00FC9AF9 /* asf.h in Headers */,
+				07021F551C27365900FC9AF9 /* fft-ffmpeg_arm.h in Headers */,
+				07021F4F1C27365800FC9AF9 /* asm_arm.h in Headers */,
+				07021F5D1C27365900FC9AF9 /* wmadec.h in Headers */,
+				07021F531C27365900FC9AF9 /* ffmpeg_intreadwrite.h in Headers */,
+				07021F561C27365900FC9AF9 /* fft.h in Headers */,
+				07021F5A1C27365900FC9AF9 /* mdct_lookup.h in Headers */,
+				07021F581C27365900FC9AF9 /* mdct.h in Headers */,
+				07021F5C1C27365900FC9AF9 /* wmadata.h in Headers */,
+				07021F5B1C27365900FC9AF9 /* types.h in Headers */,
+				07021F601C27365900FC9AF9 /* wmafixed.h in Headers */,
+				07021F501C27365800FC9AF9 /* codeclib_misc.h in Headers */,
+				07021F521C27365800FC9AF9 /* ffmpeg_get_bits.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07021F2A1C2734D700FC9AF9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07021F731C27403300FC9AF9 /* deadbeef.h in Headers */,
+				07021F651C27367B00FC9AF9 /* asf.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07021F361C2734F100FC9AF9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07021F751C2740A900FC9AF9 /* deadbeef.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D01D7C81AB2216900BCD3C4 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -6305,6 +6499,60 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		07021EAB1C2734AC00FC9AF9 /* wmalib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 07021F161C2734AC00FC9AF9 /* Build configuration list for PBXNativeTarget "wmalib" */;
+			buildPhases = (
+				07021EAC1C2734AC00FC9AF9 /* Sources */,
+				07021F051C2734AC00FC9AF9 /* Frameworks */,
+				07021F061C2734AC00FC9AF9 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				07021F711C27374A00FC9AF9 /* PBXTargetDependency */,
+			);
+			name = wmalib;
+			productName = sndfilelib;
+			productReference = 07021F191C2734AC00FC9AF9 /* libwmalib.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		07021F271C2734D700FC9AF9 /* asflib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 07021F2B1C2734D700FC9AF9 /* Build configuration list for PBXNativeTarget "asflib" */;
+			buildPhases = (
+				07021F281C2734D700FC9AF9 /* Sources */,
+				07021F291C2734D700FC9AF9 /* Frameworks */,
+				07021F2A1C2734D700FC9AF9 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = asflib;
+			productName = sndfilelib;
+			productReference = 07021F2E1C2734D700FC9AF9 /* libasflib.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		07021F2F1C2734F100FC9AF9 /* wma */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 07021F371C2734F100FC9AF9 /* Build configuration list for PBXNativeTarget "wma" */;
+			buildPhases = (
+				07021F321C2734F100FC9AF9 /* Sources */,
+				07021F341C2734F100FC9AF9 /* Frameworks */,
+				07021F361C2734F100FC9AF9 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				07021F6B1C2736B700FC9AF9 /* PBXTargetDependency */,
+				07021F6D1C2736B700FC9AF9 /* PBXTargetDependency */,
+			);
+			name = wma;
+			productName = sndfile;
+			productReference = 07021F3A1C2734F100FC9AF9 /* wma.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2D01D7C91AB2216900BCD3C4 /* ddbcore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D01D7CB1AB2216900BCD3C4 /* Build configuration list for PBXNativeTarget "ddbcore" */;
@@ -6808,6 +7056,7 @@
 			);
 			dependencies = (
 				2D28F04F1C283C43004A6E7B /* PBXTargetDependency */,
+				07021F771C2740F100FC9AF9 /* PBXTargetDependency */,
 				2D4459F81C04F2C400230939 /* PBXTargetDependency */,
 				2DE92F551BAFFBE100F37154 /* PBXTargetDependency */,
 				2D11D3CC1B9DC6AA00C7C731 /* PBXTargetDependency */,
@@ -7078,6 +7327,9 @@
 				2D4458D81C04F1C000230939 /* vfs_zip */,
 				2D28F0401C283BE3004A6E7B /* aac */,
 				2D28F0541C283C75004A6E7B /* faad2 */,
+				07021F271C2734D700FC9AF9 /* asflib */,
+				07021EAB1C2734AC00FC9AF9 /* wmalib */,
+				07021F2F1C2734F100FC9AF9 /* wma */,
 			);
 		};
 /* End PBXProject section */
@@ -7174,6 +7426,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07021F781C27410800FC9AF9 /* wma.dylib in Resources */,
 				2D4459FC1C04F30E00230939 /* vfs_zip.dylib in Resources */,
 				2DE92F561BAFFBEE00F37154 /* wavpack.dylib in Resources */,
 				2D11D3CD1B9DC6B500C7C731 /* vtx.dylib in Resources */,
@@ -7258,6 +7511,36 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		07021EAC1C2734AC00FC9AF9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07021F511C27365800FC9AF9 /* ffmpeg_bitstream.c in Sources */,
+				07021F5E1C27365900FC9AF9 /* wmadeci.c in Sources */,
+				07021F5F1C27365900FC9AF9 /* wmafixed.c in Sources */,
+				07021F541C27365900FC9AF9 /* fft-ffmpeg.c in Sources */,
+				07021F571C27365900FC9AF9 /* mdct.c in Sources */,
+				07021F591C27365900FC9AF9 /* mdct_lookup.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07021F281C2734D700FC9AF9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07021F641C27367B00FC9AF9 /* asf.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07021F321C2734F100FC9AF9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07021F691C27369B00FC9AF9 /* wma_plugin.c in Sources */,
+				07021F681C27369B00FC9AF9 /* asfheader.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D01D7C61AB2216900BCD3C4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -8282,6 +8565,26 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		07021F6B1C2736B700FC9AF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07021EAB1C2734AC00FC9AF9 /* wmalib */;
+			targetProxy = 07021F6A1C2736B700FC9AF9 /* PBXContainerItemProxy */;
+		};
+		07021F6D1C2736B700FC9AF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07021F271C2734D700FC9AF9 /* asflib */;
+			targetProxy = 07021F6C1C2736B700FC9AF9 /* PBXContainerItemProxy */;
+		};
+		07021F711C27374A00FC9AF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07021F271C2734D700FC9AF9 /* asflib */;
+			targetProxy = 07021F701C27374A00FC9AF9 /* PBXContainerItemProxy */;
+		};
+		07021F771C2740F100FC9AF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07021F2F1C2734F100FC9AF9 /* wma */;
+			targetProxy = 07021F761C2740F100FC9AF9 /* PBXContainerItemProxy */;
+		};
 		2D01D7E91AB221AA00BCD3C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D01D7C91AB2216900BCD3C4 /* ddbcore */;
@@ -8470,6 +8773,135 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		07021F171C2734AC00FC9AF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../plugins/wma",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		07021F181C2734AC00FC9AF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../plugins/wma",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		07021F2C1C2734D700FC9AF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../plugins/wma",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		07021F2D1C2734D700FC9AF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../plugins/wma",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		07021F381C2734F100FC9AF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../plugins/wma",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		07021F391C2734F100FC9AF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../plugins/wma",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		2D01D7CC1AB2216900BCD3C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -10306,6 +10738,33 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		07021F161C2734AC00FC9AF9 /* Build configuration list for PBXNativeTarget "wmalib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07021F171C2734AC00FC9AF9 /* Debug */,
+				07021F181C2734AC00FC9AF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		07021F2B1C2734D700FC9AF9 /* Build configuration list for PBXNativeTarget "asflib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07021F2C1C2734D700FC9AF9 /* Debug */,
+				07021F2D1C2734D700FC9AF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		07021F371C2734F100FC9AF9 /* Build configuration list for PBXNativeTarget "wma" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07021F381C2734F100FC9AF9 /* Debug */,
+				07021F391C2734F100FC9AF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		2D01D7CB1AB2216900BCD3C4 /* Build configuration list for PBXNativeTarget "ddbcore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
