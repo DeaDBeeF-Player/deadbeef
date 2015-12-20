@@ -36,6 +36,12 @@
 		07021F741C27406C00FC9AF9 /* asf.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F631C27367B00FC9AF9 /* asf.h */; };
 		07021F751C2740A900FC9AF9 /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; };
 		07021F781C27410800FC9AF9 /* wma.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07021F3A1C2734F100FC9AF9 /* wma.dylib */; };
+		07021F851C2745E900FC9AF9 /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; };
+		07021F8F1C27464000FC9AF9 /* filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F8B1C27464000FC9AF9 /* filter.h */; };
+		07021F901C27464000FC9AF9 /* ttadec.c in Sources */ = {isa = PBXBuildFile; fileRef = 07021F8C1C27464000FC9AF9 /* ttadec.c */; };
+		07021F911C27464000FC9AF9 /* ttadec.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F8D1C27464000FC9AF9 /* ttadec.h */; };
+		07021F921C27464000FC9AF9 /* ttaplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 07021F8E1C27464000FC9AF9 /* ttaplug.c */; };
+		07021F951C27468D00FC9AF9 /* tta.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07021F891C2745E900FC9AF9 /* tta.dylib */; };
 		2D01D7CE1AB2219C00BCD3C4 /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D93DC521AADFEEF003D2D8D /* pluginsettings.c */; };
 		2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ED81837EC44003E6066 /* ConvertUTF.c */; };
 		2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F871837EC44003E6066 /* md5.c */; };
@@ -1440,6 +1446,13 @@
 			remoteGlobalIDString = 07021F2F1C2734F100FC9AF9;
 			remoteInfo = wma;
 		};
+		07021F931C27467B00FC9AF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07021F791C2745E900FC9AF9;
+			remoteInfo = tta;
+		};
 		2D01D7E81AB221AA00BCD3C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -1797,6 +1810,11 @@
 		07021F631C27367B00FC9AF9 /* asf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asf.h; sourceTree = "<group>"; };
 		07021F661C27369B00FC9AF9 /* asfheader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = asfheader.c; path = plugins/wma/asfheader.c; sourceTree = "<group>"; };
 		07021F671C27369B00FC9AF9 /* wma_plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wma_plugin.c; path = plugins/wma/wma_plugin.c; sourceTree = "<group>"; };
+		07021F891C2745E900FC9AF9 /* tta.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = tta.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		07021F8B1C27464000FC9AF9 /* filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = filter.h; path = plugins/tta/filter.h; sourceTree = "<group>"; };
+		07021F8C1C27464000FC9AF9 /* ttadec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ttadec.c; path = plugins/tta/ttadec.c; sourceTree = "<group>"; };
+		07021F8D1C27464000FC9AF9 /* ttadec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ttadec.h; path = plugins/tta/ttadec.h; sourceTree = "<group>"; };
+		07021F8E1C27464000FC9AF9 /* ttaplug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ttaplug.c; path = plugins/tta/ttaplug.c; sourceTree = "<group>"; };
 		2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libddbcore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testbootstrap.c; sourceTree = "<group>"; };
 		2D05A8291B4BE59D004C913D /* sndfile.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = sndfile.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3253,6 +3271,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		07021F811C2745E900FC9AF9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D01D7C71AB2216900BCD3C4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3569,6 +3594,17 @@
 			);
 			name = libasf;
 			path = plugins/wma/libasf;
+			sourceTree = "<group>";
+		};
+		07021F8A1C27462000FC9AF9 /* tta */ = {
+			isa = PBXGroup;
+			children = (
+				07021F8B1C27464000FC9AF9 /* filter.h */,
+				07021F8C1C27464000FC9AF9 /* ttadec.c */,
+				07021F8D1C27464000FC9AF9 /* ttadec.h */,
+				07021F8E1C27464000FC9AF9 /* ttaplug.c */,
+			);
+			name = tta;
 			sourceTree = "<group>";
 		};
 		2D05A8351B4BE5C4004C913D /* sndfile */ = {
@@ -5143,6 +5179,7 @@
 				07021F191C2734AC00FC9AF9 /* libwmalib.a */,
 				07021F2E1C2734D700FC9AF9 /* libasflib.a */,
 				07021F3A1C2734F100FC9AF9 /* wma.dylib */,
+				07021F891C2745E900FC9AF9 /* tta.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5266,6 +5303,7 @@
 			children = (
 				2D28F05A1C283CAC004A6E7B /* libfaad */,
 				2D28F02F1C283B1F004A6E7B /* aac */,
+				07021F8A1C27462000FC9AF9 /* tta */,
 				2D4458DD1C04F1E400230939 /* vfs_zip */,
 				2DE92F331BAFFB7700F37154 /* wavpack */,
 				2D11D3B41B9DC66500C7C731 /* vtx */,
@@ -5781,6 +5819,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				07021F751C2740A900FC9AF9 /* deadbeef.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07021F841C2745E900FC9AF9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07021F8F1C27464000FC9AF9 /* filter.h in Headers */,
+				07021F851C2745E900FC9AF9 /* deadbeef.h in Headers */,
+				07021F911C27464000FC9AF9 /* ttadec.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6553,6 +6601,23 @@
 			productReference = 07021F3A1C2734F100FC9AF9 /* wma.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		07021F791C2745E900FC9AF9 /* tta */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 07021F861C2745E900FC9AF9 /* Build configuration list for PBXNativeTarget "tta" */;
+			buildPhases = (
+				07021F7E1C2745E900FC9AF9 /* Sources */,
+				07021F811C2745E900FC9AF9 /* Frameworks */,
+				07021F841C2745E900FC9AF9 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = tta;
+			productName = sndfile;
+			productReference = 07021F891C2745E900FC9AF9 /* tta.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2D01D7C91AB2216900BCD3C4 /* ddbcore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D01D7CB1AB2216900BCD3C4 /* Build configuration list for PBXNativeTarget "ddbcore" */;
@@ -7056,6 +7121,7 @@
 			);
 			dependencies = (
 				2D28F04F1C283C43004A6E7B /* PBXTargetDependency */,
+				07021F941C27467B00FC9AF9 /* PBXTargetDependency */,
 				07021F771C2740F100FC9AF9 /* PBXTargetDependency */,
 				2D4459F81C04F2C400230939 /* PBXTargetDependency */,
 				2DE92F551BAFFBE100F37154 /* PBXTargetDependency */,
@@ -7330,6 +7396,7 @@
 				07021F271C2734D700FC9AF9 /* asflib */,
 				07021EAB1C2734AC00FC9AF9 /* wmalib */,
 				07021F2F1C2734F100FC9AF9 /* wma */,
+				07021F791C2745E900FC9AF9 /* tta */,
 			);
 		};
 /* End PBXProject section */
@@ -7426,6 +7493,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07021F951C27468D00FC9AF9 /* tta.dylib in Resources */,
 				07021F781C27410800FC9AF9 /* wma.dylib in Resources */,
 				2D4459FC1C04F30E00230939 /* vfs_zip.dylib in Resources */,
 				2DE92F561BAFFBEE00F37154 /* wavpack.dylib in Resources */,
@@ -7538,6 +7606,15 @@
 			files = (
 				07021F691C27369B00FC9AF9 /* wma_plugin.c in Sources */,
 				07021F681C27369B00FC9AF9 /* asfheader.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07021F7E1C2745E900FC9AF9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07021F901C27464000FC9AF9 /* ttadec.c in Sources */,
+				07021F921C27464000FC9AF9 /* ttaplug.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8585,6 +8662,11 @@
 			target = 07021F2F1C2734F100FC9AF9 /* wma */;
 			targetProxy = 07021F761C2740F100FC9AF9 /* PBXContainerItemProxy */;
 		};
+		07021F941C27467B00FC9AF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07021F791C2745E900FC9AF9 /* tta */;
+			targetProxy = 07021F931C27467B00FC9AF9 /* PBXContainerItemProxy */;
+		};
 		2D01D7E91AB221AA00BCD3C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D01D7C91AB2216900BCD3C4 /* ddbcore */;
@@ -8881,6 +8963,53 @@
 			name = Debug;
 		};
 		07021F391C2734F100FC9AF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../plugins/wma",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		07021F871C2745E900FC9AF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../plugins/wma",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		07021F881C2745E900FC9AF9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = NO;
@@ -10761,6 +10890,15 @@
 			buildConfigurations = (
 				07021F381C2734F100FC9AF9 /* Debug */,
 				07021F391C2734F100FC9AF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		07021F861C2745E900FC9AF9 /* Build configuration list for PBXNativeTarget "tta" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07021F871C2745E900FC9AF9 /* Debug */,
+				07021F881C2745E900FC9AF9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
