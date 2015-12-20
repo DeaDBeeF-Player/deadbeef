@@ -42,6 +42,28 @@
 		07021F911C27464000FC9AF9 /* ttadec.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F8D1C27464000FC9AF9 /* ttadec.h */; };
 		07021F921C27464000FC9AF9 /* ttaplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 07021F8E1C27464000FC9AF9 /* ttaplug.c */; };
 		07021F951C27468D00FC9AF9 /* tta.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07021F891C2745E900FC9AF9 /* tta.dylib */; };
+		0702202F1C27564200FC9AF9 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 070220191C27564200FC9AF9 /* crc32.c */; };
+		070220301C27564200FC9AF9 /* decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 0702201A1C27564200FC9AF9 /* decoder.h */; };
+		070220311C27564200FC9AF9 /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = 0702201B1C27564200FC9AF9 /* huffman.c */; };
+		070220321C27564200FC9AF9 /* huffman.h in Headers */ = {isa = PBXBuildFile; fileRef = 0702201C1C27564200FC9AF9 /* huffman.h */; };
+		070220331C27564200FC9AF9 /* internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0702201D1C27564200FC9AF9 /* internal.h */; };
+		070220341C27564200FC9AF9 /* minimax.h in Headers */ = {isa = PBXBuildFile; fileRef = 0702201F1C27564200FC9AF9 /* minimax.h */; };
+		070220351C27564200FC9AF9 /* mpc_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 070220201C27564200FC9AF9 /* mpc_types.h */; };
+		070220361C27564200FC9AF9 /* mpcdec.h in Headers */ = {isa = PBXBuildFile; fileRef = 070220211C27564200FC9AF9 /* mpcdec.h */; };
+		070220371C27564200FC9AF9 /* reader.h in Headers */ = {isa = PBXBuildFile; fileRef = 070220221C27564200FC9AF9 /* reader.h */; };
+		070220381C27564200FC9AF9 /* streaminfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 070220231C27564200FC9AF9 /* streaminfo.h */; };
+		070220391C27564200FC9AF9 /* mpc_bits_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 070220241C27564200FC9AF9 /* mpc_bits_reader.c */; };
+		0702203A1C27564200FC9AF9 /* mpc_bits_reader.h in Headers */ = {isa = PBXBuildFile; fileRef = 070220251C27564200FC9AF9 /* mpc_bits_reader.h */; };
+		0702203B1C27564200FC9AF9 /* mpc_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 070220261C27564200FC9AF9 /* mpc_decoder.c */; };
+		0702203C1C27564200FC9AF9 /* mpc_demux.c in Sources */ = {isa = PBXBuildFile; fileRef = 070220271C27564200FC9AF9 /* mpc_demux.c */; };
+		0702203D1C27564200FC9AF9 /* mpc_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 070220281C27564200FC9AF9 /* mpc_reader.c */; };
+		0702203E1C27564200FC9AF9 /* mpcdec_math.h in Headers */ = {isa = PBXBuildFile; fileRef = 070220291C27564200FC9AF9 /* mpcdec_math.h */; };
+		0702203F1C27564300FC9AF9 /* musepack.c in Sources */ = {isa = PBXBuildFile; fileRef = 0702202A1C27564200FC9AF9 /* musepack.c */; };
+		070220401C27564300FC9AF9 /* requant.c in Sources */ = {isa = PBXBuildFile; fileRef = 0702202B1C27564200FC9AF9 /* requant.c */; };
+		070220411C27564300FC9AF9 /* requant.h in Headers */ = {isa = PBXBuildFile; fileRef = 0702202C1C27564200FC9AF9 /* requant.h */; };
+		070220421C27564300FC9AF9 /* streaminfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 0702202D1C27564200FC9AF9 /* streaminfo.c */; };
+		070220431C27564300FC9AF9 /* synth_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = 0702202E1C27564200FC9AF9 /* synth_filter.c */; };
+		070220461C2756CF00FC9AF9 /* musepack.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07021FE91C27551D00FC9AF9 /* musepack.dylib */; };
 		2D01D7CE1AB2219C00BCD3C4 /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D93DC521AADFEEF003D2D8D /* pluginsettings.c */; };
 		2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ED81837EC44003E6066 /* ConvertUTF.c */; };
 		2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F871837EC44003E6066 /* md5.c */; };
@@ -1453,6 +1475,13 @@
 			remoteGlobalIDString = 07021F791C2745E900FC9AF9;
 			remoteInfo = tta;
 		};
+		070220441C2756C200FC9AF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07021FD91C27551D00FC9AF9;
+			remoteInfo = musepack;
+		};
 		2D01D7E81AB221AA00BCD3C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -1815,6 +1844,28 @@
 		07021F8C1C27464000FC9AF9 /* ttadec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ttadec.c; path = plugins/tta/ttadec.c; sourceTree = "<group>"; };
 		07021F8D1C27464000FC9AF9 /* ttadec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ttadec.h; path = plugins/tta/ttadec.h; sourceTree = "<group>"; };
 		07021F8E1C27464000FC9AF9 /* ttaplug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ttaplug.c; path = plugins/tta/ttaplug.c; sourceTree = "<group>"; };
+		07021FE91C27551D00FC9AF9 /* musepack.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = musepack.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		070220191C27564200FC9AF9 /* crc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = crc32.c; path = plugins/musepack/crc32.c; sourceTree = "<group>"; };
+		0702201A1C27564200FC9AF9 /* decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = decoder.h; path = plugins/musepack/decoder.h; sourceTree = "<group>"; };
+		0702201B1C27564200FC9AF9 /* huffman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = huffman.c; path = plugins/musepack/huffman.c; sourceTree = "<group>"; };
+		0702201C1C27564200FC9AF9 /* huffman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = huffman.h; path = plugins/musepack/huffman.h; sourceTree = "<group>"; };
+		0702201D1C27564200FC9AF9 /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = internal.h; path = plugins/musepack/internal.h; sourceTree = "<group>"; };
+		0702201F1C27564200FC9AF9 /* minimax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = minimax.h; sourceTree = "<group>"; };
+		070220201C27564200FC9AF9 /* mpc_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpc_types.h; sourceTree = "<group>"; };
+		070220211C27564200FC9AF9 /* mpcdec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpcdec.h; sourceTree = "<group>"; };
+		070220221C27564200FC9AF9 /* reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reader.h; sourceTree = "<group>"; };
+		070220231C27564200FC9AF9 /* streaminfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = streaminfo.h; sourceTree = "<group>"; };
+		070220241C27564200FC9AF9 /* mpc_bits_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mpc_bits_reader.c; path = plugins/musepack/mpc_bits_reader.c; sourceTree = "<group>"; };
+		070220251C27564200FC9AF9 /* mpc_bits_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpc_bits_reader.h; path = plugins/musepack/mpc_bits_reader.h; sourceTree = "<group>"; };
+		070220261C27564200FC9AF9 /* mpc_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mpc_decoder.c; path = plugins/musepack/mpc_decoder.c; sourceTree = "<group>"; };
+		070220271C27564200FC9AF9 /* mpc_demux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mpc_demux.c; path = plugins/musepack/mpc_demux.c; sourceTree = "<group>"; };
+		070220281C27564200FC9AF9 /* mpc_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mpc_reader.c; path = plugins/musepack/mpc_reader.c; sourceTree = "<group>"; };
+		070220291C27564200FC9AF9 /* mpcdec_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpcdec_math.h; path = plugins/musepack/mpcdec_math.h; sourceTree = "<group>"; };
+		0702202A1C27564200FC9AF9 /* musepack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = musepack.c; path = plugins/musepack/musepack.c; sourceTree = "<group>"; };
+		0702202B1C27564200FC9AF9 /* requant.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = requant.c; path = plugins/musepack/requant.c; sourceTree = "<group>"; };
+		0702202C1C27564200FC9AF9 /* requant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = requant.h; path = plugins/musepack/requant.h; sourceTree = "<group>"; };
+		0702202D1C27564200FC9AF9 /* streaminfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = streaminfo.c; path = plugins/musepack/streaminfo.c; sourceTree = "<group>"; };
+		0702202E1C27564200FC9AF9 /* synth_filter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth_filter.c; path = plugins/musepack/synth_filter.c; sourceTree = "<group>"; };
 		2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libddbcore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testbootstrap.c; sourceTree = "<group>"; };
 		2D05A8291B4BE59D004C913D /* sndfile.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = sndfile.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3278,6 +3329,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		07021FE11C27551D00FC9AF9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D01D7C71AB2216900BCD3C4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3605,6 +3663,43 @@
 				07021F8E1C27464000FC9AF9 /* ttaplug.c */,
 			);
 			name = tta;
+			sourceTree = "<group>";
+		};
+		07021FED1C27556500FC9AF9 /* musepack */ = {
+			isa = PBXGroup;
+			children = (
+				070220191C27564200FC9AF9 /* crc32.c */,
+				0702201A1C27564200FC9AF9 /* decoder.h */,
+				0702201B1C27564200FC9AF9 /* huffman.c */,
+				0702201C1C27564200FC9AF9 /* huffman.h */,
+				0702201D1C27564200FC9AF9 /* internal.h */,
+				0702201E1C27564200FC9AF9 /* mpc */,
+				070220241C27564200FC9AF9 /* mpc_bits_reader.c */,
+				070220251C27564200FC9AF9 /* mpc_bits_reader.h */,
+				070220261C27564200FC9AF9 /* mpc_decoder.c */,
+				070220271C27564200FC9AF9 /* mpc_demux.c */,
+				070220281C27564200FC9AF9 /* mpc_reader.c */,
+				070220291C27564200FC9AF9 /* mpcdec_math.h */,
+				0702202A1C27564200FC9AF9 /* musepack.c */,
+				0702202B1C27564200FC9AF9 /* requant.c */,
+				0702202C1C27564200FC9AF9 /* requant.h */,
+				0702202D1C27564200FC9AF9 /* streaminfo.c */,
+				0702202E1C27564200FC9AF9 /* synth_filter.c */,
+			);
+			name = musepack;
+			sourceTree = "<group>";
+		};
+		0702201E1C27564200FC9AF9 /* mpc */ = {
+			isa = PBXGroup;
+			children = (
+				0702201F1C27564200FC9AF9 /* minimax.h */,
+				070220201C27564200FC9AF9 /* mpc_types.h */,
+				070220211C27564200FC9AF9 /* mpcdec.h */,
+				070220221C27564200FC9AF9 /* reader.h */,
+				070220231C27564200FC9AF9 /* streaminfo.h */,
+			);
+			name = mpc;
+			path = plugins/musepack/mpc;
 			sourceTree = "<group>";
 		};
 		2D05A8351B4BE5C4004C913D /* sndfile */ = {
@@ -5180,6 +5275,7 @@
 				07021F2E1C2734D700FC9AF9 /* libasflib.a */,
 				07021F3A1C2734F100FC9AF9 /* wma.dylib */,
 				07021F891C2745E900FC9AF9 /* tta.dylib */,
+				07021FE91C27551D00FC9AF9 /* musepack.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5314,21 +5410,33 @@
 				2D6501CC1AA7882900E82A9E /* sc68 */,
 				2D5D21441A4033D3001D5A79 /* lastfm */,
 				2D91774F1A0E8A1F004BC222 /* mp4ff */,
+				07021FED1C27556500FC9AF9 /* musepack */,
 				2D91772E1A0E892F004BC222 /* alac */,
-				2DCB281819E8616E008E9DF6 /* m3u */,
-				2DA24B4F19E724C800E34920 /* vfs_curl */,
+				4DEE38461838E6450022D2B7 /* cocoaui */,
+				2D2351221B138F1700A62936 /* converter */,
+				4D1B515C1837F59F003E6066 /* coreaudio */,
 				2DA249A219E71FF100E34920 /* curl */,
-				2D22F5AB19E13621009C631E /* sid */,
 				2DB96A7619ABB3E500E318A8 /* dsp_libsrc */,
 				4D44E66919B752F900F780FC /* dumb */,
-				2D2A135519B647BB00AD1EB7 /* gme */,
-				4D32FA5419A645BB000FFDE0 /* mp3 */,
 				4D32F9F219A63500000FFDE0 /* ffap */,
 				4D32F99619A62F03000FFDE0 /* flac */,
-				4DEE38461838E6450022D2B7 /* cocoaui */,
-				4D1B515C1837F59F003E6066 /* coreaudio */,
-				4D1B51551837F4E9003E6066 /* nullout */,
+				2D2A135519B647BB00AD1EB7 /* gme */,
+				2D5D21441A4033D3001D5A79 /* lastfm */,
+				2D88E9FB1B2AF6C70072FD43 /* liboggedit */,
 				4D1B514D1837EF9D003E6066 /* libparser */,
+				2DCB281819E8616E008E9DF6 /* m3u */,
+				4D32FA5419A645BB000FFDE0 /* mp3 */,
+				2D91774F1A0E8A1F004BC222 /* mp4ff */,
+				4D1B51551837F4E9003E6066 /* nullout */,
+				2D6501CC1AA7882900E82A9E /* sc68 */,
+				2D22F5AB19E13621009C631E /* sid */,
+				2D05A8351B4BE5C4004C913D /* sndfile */,
+				07021F8A1C27462000FC9AF9 /* tta */,
+				2DA24B4F19E724C800E34920 /* vfs_curl */,
+				2D4458DD1C04F1E400230939 /* vfs_zip */,
+				2D88E9E81B2AF5FE0072FD43 /* vorbis */,
+				2D11D3B41B9DC66500C7C731 /* vtx */,
+				2DE92F331BAFFB7700F37154 /* wavpack */,
 				2DF930481AB817190030C0CA /* wildmidi */,
 				07021F3B1C27358700FC9AF9 /* wma */,
 			);
@@ -5829,6 +5937,24 @@
 				07021F8F1C27464000FC9AF9 /* filter.h in Headers */,
 				07021F851C2745E900FC9AF9 /* deadbeef.h in Headers */,
 				07021F911C27464000FC9AF9 /* ttadec.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07021FE41C27551D00FC9AF9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0702203A1C27564200FC9AF9 /* mpc_bits_reader.h in Headers */,
+				070220331C27564200FC9AF9 /* internal.h in Headers */,
+				0702203E1C27564200FC9AF9 /* mpcdec_math.h in Headers */,
+				070220351C27564200FC9AF9 /* mpc_types.h in Headers */,
+				070220411C27564300FC9AF9 /* requant.h in Headers */,
+				070220381C27564200FC9AF9 /* streaminfo.h in Headers */,
+				070220361C27564200FC9AF9 /* mpcdec.h in Headers */,
+				070220371C27564200FC9AF9 /* reader.h in Headers */,
+				070220321C27564200FC9AF9 /* huffman.h in Headers */,
+				070220341C27564200FC9AF9 /* minimax.h in Headers */,
+				070220301C27564200FC9AF9 /* decoder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6618,6 +6744,23 @@
 			productReference = 07021F891C2745E900FC9AF9 /* tta.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		07021FD91C27551D00FC9AF9 /* musepack */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 07021FE61C27551D00FC9AF9 /* Build configuration list for PBXNativeTarget "musepack" */;
+			buildPhases = (
+				07021FDE1C27551D00FC9AF9 /* Sources */,
+				07021FE11C27551D00FC9AF9 /* Frameworks */,
+				07021FE41C27551D00FC9AF9 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = musepack;
+			productName = sndfile;
+			productReference = 07021FE91C27551D00FC9AF9 /* musepack.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2D01D7C91AB2216900BCD3C4 /* ddbcore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D01D7CB1AB2216900BCD3C4 /* Build configuration list for PBXNativeTarget "ddbcore" */;
@@ -7121,6 +7264,7 @@
 			);
 			dependencies = (
 				2D28F04F1C283C43004A6E7B /* PBXTargetDependency */,
+				070220451C2756C200FC9AF9 /* PBXTargetDependency */,
 				07021F941C27467B00FC9AF9 /* PBXTargetDependency */,
 				07021F771C2740F100FC9AF9 /* PBXTargetDependency */,
 				2D4459F81C04F2C400230939 /* PBXTargetDependency */,
@@ -7397,6 +7541,7 @@
 				07021EAB1C2734AC00FC9AF9 /* wmalib */,
 				07021F2F1C2734F100FC9AF9 /* wma */,
 				07021F791C2745E900FC9AF9 /* tta */,
+				07021FD91C27551D00FC9AF9 /* musepack */,
 			);
 		};
 /* End PBXProject section */
@@ -7493,6 +7638,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				070220461C2756CF00FC9AF9 /* musepack.dylib in Resources */,
 				07021F951C27468D00FC9AF9 /* tta.dylib in Resources */,
 				07021F781C27410800FC9AF9 /* wma.dylib in Resources */,
 				2D4459FC1C04F30E00230939 /* vfs_zip.dylib in Resources */,
@@ -7615,6 +7761,23 @@
 			files = (
 				07021F901C27464000FC9AF9 /* ttadec.c in Sources */,
 				07021F921C27464000FC9AF9 /* ttaplug.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07021FDE1C27551D00FC9AF9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0702203C1C27564200FC9AF9 /* mpc_demux.c in Sources */,
+				0702203D1C27564200FC9AF9 /* mpc_reader.c in Sources */,
+				070220401C27564300FC9AF9 /* requant.c in Sources */,
+				070220421C27564300FC9AF9 /* streaminfo.c in Sources */,
+				070220391C27564200FC9AF9 /* mpc_bits_reader.c in Sources */,
+				0702202F1C27564200FC9AF9 /* crc32.c in Sources */,
+				070220431C27564300FC9AF9 /* synth_filter.c in Sources */,
+				070220311C27564200FC9AF9 /* huffman.c in Sources */,
+				0702203F1C27564300FC9AF9 /* musepack.c in Sources */,
+				0702203B1C27564200FC9AF9 /* mpc_decoder.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8667,6 +8830,11 @@
 			target = 07021F791C2745E900FC9AF9 /* tta */;
 			targetProxy = 07021F931C27467B00FC9AF9 /* PBXContainerItemProxy */;
 		};
+		070220451C2756C200FC9AF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07021FD91C27551D00FC9AF9 /* musepack */;
+			targetProxy = 070220441C2756C200FC9AF9 /* PBXContainerItemProxy */;
+		};
 		2D01D7E91AB221AA00BCD3C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D01D7C91AB2216900BCD3C4 /* ddbcore */;
@@ -9024,6 +9192,53 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/wma",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		07021FE71C27551D00FC9AF9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../plugins/musepack",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		07021FE81C27551D00FC9AF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../plugins/musepack",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -10899,6 +11114,15 @@
 			buildConfigurations = (
 				07021F871C2745E900FC9AF9 /* Debug */,
 				07021F881C2745E900FC9AF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		07021FE61C27551D00FC9AF9 /* Build configuration list for PBXNativeTarget "musepack" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07021FE71C27551D00FC9AF9 /* Debug */,
+				07021FE81C27551D00FC9AF9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
