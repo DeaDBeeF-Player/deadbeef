@@ -2726,8 +2726,7 @@ coverart_message (ddb_gtkui_widget_t *base, uint32_t id, uintptr_t ctx, uint32_t
     w_coverart_t *w = (w_coverart_t *)base;
     switch (id) {
     case DB_EV_PLAYLIST_REFRESH:
-    case DB_EV_SONGSTARTED:
-    case DB_EV_SONGFINISHED:
+    case DB_EV_SONGCHANGED:
         coverart_invalidate(w->drawarea);
         break;
     case DB_EV_PLAYLISTCHANGED:
