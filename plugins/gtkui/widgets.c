@@ -1696,6 +1696,20 @@ on_tab_popup_menu (GtkWidget *widget, gpointer user_data)
     GtkWidget *item;
     menu = gtk_menu_new ();
 
+    item = gtk_menu_item_new_with_mnemonic (_("Rename tab"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate",
+            G_CALLBACK (on_rename_tab_activate),
+            w);
+
+    item = gtk_menu_item_new_with_mnemonic (_("Remove tab"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate",
+            G_CALLBACK (on_remove_tab_activate),
+            w);
+
     item = gtk_menu_item_new_with_mnemonic (_("Add new tab"));
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
@@ -1703,12 +1717,7 @@ on_tab_popup_menu (GtkWidget *widget, gpointer user_data)
             G_CALLBACK (on_add_tab_activate),
             w);
 
-    item = gtk_menu_item_new_with_mnemonic (_("Rename tab"));
-    gtk_widget_show (item);
-    gtk_container_add (GTK_CONTAINER (menu), item);
-    g_signal_connect ((gpointer) item, "activate",
-            G_CALLBACK (on_rename_tab_activate),
-            w);
+    add_menu_separator (menu);
 
     item = gtk_menu_item_new_with_mnemonic (_("Move tab left"));
     gtk_widget_show (item);
@@ -1722,13 +1731,6 @@ on_tab_popup_menu (GtkWidget *widget, gpointer user_data)
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) item, "activate",
             G_CALLBACK (on_move_tab_right_activate),
-            w);
-
-    item = gtk_menu_item_new_with_mnemonic (_("Remove tab"));
-    gtk_widget_show (item);
-    gtk_container_add (GTK_CONTAINER (menu), item);
-    g_signal_connect ((gpointer) item, "activate",
-            G_CALLBACK (on_remove_tab_activate),
             w);
 
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, w, 0, gtk_get_current_event_time());
