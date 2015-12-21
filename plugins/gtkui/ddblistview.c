@@ -1446,14 +1446,15 @@ ddb_listview_deselect_all (DdbListview *listview)
     for (it = listview->binding->head (); it; idx++) {
         if (listview->binding->is_selected (it)) {
             listview->binding->select (it, 0);
-            ddb_listview_draw_row (listview, idx, it);
             if (notify_singly) {
+                ddb_listview_draw_row (listview, idx, it);
                 listview->binding->selection_changed (listview, it, idx);
             }
         }
         it = next_playitem(listview, it);
     }
     if (!notify_singly) {
+        ddb_listview_refresh (listview, DDB_REFRESH_LIST);
         listview->binding->selection_changed(listview, NULL, -1);
     }
 }
@@ -1481,8 +1482,8 @@ ddb_listview_select_group (DdbListview *listview, DdbListviewGroup *grp, int fir
         else {
             listview->binding->select (it, 1);
         }
-        ddb_listview_draw_row (listview, first_item_idx + group_idx, it);
         if (notify_singly) {
+            ddb_listview_draw_row (listview, first_item_idx + group_idx, it);
             listview->binding->selection_changed (listview, it, first_item_idx + group_idx);
         }
         it = next_playitem(listview, it);
@@ -1492,6 +1493,7 @@ ddb_listview_select_group (DdbListview *listview, DdbListviewGroup *grp, int fir
     }
 
     if (!notify_singly) {
+        ddb_listview_refresh (listview, DDB_REFRESH_LIST);
         listview->binding->selection_changed(listview, NULL, -1);
     }
 }
