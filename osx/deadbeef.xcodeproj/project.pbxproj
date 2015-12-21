@@ -5546,18 +5546,6 @@
 			children = (
 				2D28F05A1C283CAC004A6E7B /* libfaad */,
 				2D28F02F1C283B1F004A6E7B /* aac */,
-				07021F8A1C27462000FC9AF9 /* tta */,
-				2D4458DD1C04F1E400230939 /* vfs_zip */,
-				2DE92F331BAFFB7700F37154 /* wavpack */,
-				2D11D3B41B9DC66500C7C731 /* vtx */,
-				2D05A8351B4BE5C4004C913D /* sndfile */,
-				2D88E9FB1B2AF6C70072FD43 /* liboggedit */,
-				2D88E9E81B2AF5FE0072FD43 /* vorbis */,
-				2D2351221B138F1700A62936 /* converter */,
-				2D6501CC1AA7882900E82A9E /* sc68 */,
-				2D5D21441A4033D3001D5A79 /* lastfm */,
-				2D91774F1A0E8A1F004BC222 /* mp4ff */,
-				07021FED1C27556500FC9AF9 /* musepack */,
 				2D91772E1A0E892F004BC222 /* alac */,
 				4DEE38461838E6450022D2B7 /* cocoaui */,
 				2D2351221B138F1700A62936 /* converter */,
@@ -9296,6 +9284,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../plugins/wma",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -9316,6 +9305,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../plugins/wma",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
