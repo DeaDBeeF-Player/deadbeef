@@ -84,6 +84,21 @@
 		070220D31C275DAE00FC9AF9 /* tables.h in Headers */ = {isa = PBXBuildFile; fileRef = 070220BF1C275DAE00FC9AF9 /* tables.h */; };
 		070220D41C275DAE00FC9AF9 /* tendra.h in Headers */ = {isa = PBXBuildFile; fileRef = 070220C01C275DAE00FC9AF9 /* tendra.h */; };
 		070220D71C275F2900FC9AF9 /* dca.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 070220AA1C275D3900FC9AF9 /* dca.dylib */; };
+		07765D6A1C279B7D00F5F4BC /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; };
+		07765D7D1C279BFC00F5F4BC /* array.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D701C279BFC00F5F4BC /* array.c */; };
+		07765D7E1C279BFC00F5F4BC /* bitshift.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765D711C279BFC00F5F4BC /* bitshift.h */; };
+		07765D7F1C279BFC00F5F4BC /* convert.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D721C279BFC00F5F4BC /* convert.c */; };
+		07765D801C279BFC00F5F4BC /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D731C279BFC00F5F4BC /* misc.c */; };
+		07765D811C279BFC00F5F4BC /* output.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D741C279BFC00F5F4BC /* output.c */; };
+		07765D821C279BFC00F5F4BC /* seek.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D751C279BFC00F5F4BC /* seek.c */; };
+		07765D831C279BFC00F5F4BC /* shn.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D761C279BFC00F5F4BC /* shn.c */; };
+		07765D841C279BFC00F5F4BC /* shn.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765D771C279BFC00F5F4BC /* shn.h */; };
+		07765D851C279BFC00F5F4BC /* shorten.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D781C279BFC00F5F4BC /* shorten.c */; };
+		07765D861C279BFC00F5F4BC /* shorten.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765D791C279BFC00F5F4BC /* shorten.h */; };
+		07765D871C279BFC00F5F4BC /* sulawalaw.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D7A1C279BFC00F5F4BC /* sulawalaw.c */; };
+		07765D881C279BFC00F5F4BC /* vario.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D7B1C279BFC00F5F4BC /* vario.c */; };
+		07765D891C279BFC00F5F4BC /* wave.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D7C1C279BFC00F5F4BC /* wave.c */; };
+		07765D8C1C279CB300F5F4BC /* ddb_shn.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07765D6F1C279B7D00F5F4BC /* ddb_shn.dylib */; };
 		2D01D7CE1AB2219C00BCD3C4 /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D93DC521AADFEEF003D2D8D /* pluginsettings.c */; };
 		2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ED81837EC44003E6066 /* ConvertUTF.c */; };
 		2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F871837EC44003E6066 /* md5.c */; };
@@ -1509,6 +1524,13 @@
 			remoteGlobalIDString = 0702208E1C275D3900FC9AF9;
 			remoteInfo = dca;
 		};
+		07765D8A1C279C9700F5F4BC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07765D631C279B7D00F5F4BC;
+			remoteInfo = shn;
+		};
 		2D01D7E81AB221AA00BCD3C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -1914,6 +1936,20 @@
 		070220BE1C275DAE00FC9AF9 /* tables_vq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tables_vq.h; path = plugins/dca/tables_vq.h; sourceTree = "<group>"; };
 		070220BF1C275DAE00FC9AF9 /* tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tables.h; path = plugins/dca/tables.h; sourceTree = "<group>"; };
 		070220C01C275DAE00FC9AF9 /* tendra.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tendra.h; path = plugins/dca/tendra.h; sourceTree = "<group>"; };
+		07765D6F1C279B7D00F5F4BC /* ddb_shn.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ddb_shn.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		07765D701C279BFC00F5F4BC /* array.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = array.c; path = plugins/shn/array.c; sourceTree = "<group>"; };
+		07765D711C279BFC00F5F4BC /* bitshift.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bitshift.h; path = plugins/shn/bitshift.h; sourceTree = "<group>"; };
+		07765D721C279BFC00F5F4BC /* convert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = convert.c; path = plugins/shn/convert.c; sourceTree = "<group>"; };
+		07765D731C279BFC00F5F4BC /* misc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = misc.c; path = plugins/shn/misc.c; sourceTree = "<group>"; };
+		07765D741C279BFC00F5F4BC /* output.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = output.c; path = plugins/shn/output.c; sourceTree = "<group>"; };
+		07765D751C279BFC00F5F4BC /* seek.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = seek.c; path = plugins/shn/seek.c; sourceTree = "<group>"; };
+		07765D761C279BFC00F5F4BC /* shn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = shn.c; path = plugins/shn/shn.c; sourceTree = "<group>"; };
+		07765D771C279BFC00F5F4BC /* shn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = shn.h; path = plugins/shn/shn.h; sourceTree = "<group>"; };
+		07765D781C279BFC00F5F4BC /* shorten.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = shorten.c; path = plugins/shn/shorten.c; sourceTree = "<group>"; };
+		07765D791C279BFC00F5F4BC /* shorten.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = shorten.h; path = plugins/shn/shorten.h; sourceTree = "<group>"; };
+		07765D7A1C279BFC00F5F4BC /* sulawalaw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sulawalaw.c; path = plugins/shn/sulawalaw.c; sourceTree = "<group>"; };
+		07765D7B1C279BFC00F5F4BC /* vario.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vario.c; path = plugins/shn/vario.c; sourceTree = "<group>"; };
+		07765D7C1C279BFC00F5F4BC /* wave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wave.c; path = plugins/shn/wave.c; sourceTree = "<group>"; };
 		2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libddbcore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testbootstrap.c; sourceTree = "<group>"; };
 		2D05A8291B4BE59D004C913D /* sndfile.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = sndfile.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3391,6 +3427,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		07765D671C279B7D00F5F4BC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D01D7C71AB2216900BCD3C4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3782,6 +3825,26 @@
 				070220C01C275DAE00FC9AF9 /* tendra.h */,
 			);
 			name = dca;
+			sourceTree = "<group>";
+		};
+		07765D8D1C27A13A00F5F4BC /* shn */ = {
+			isa = PBXGroup;
+			children = (
+				07765D701C279BFC00F5F4BC /* array.c */,
+				07765D711C279BFC00F5F4BC /* bitshift.h */,
+				07765D721C279BFC00F5F4BC /* convert.c */,
+				07765D731C279BFC00F5F4BC /* misc.c */,
+				07765D741C279BFC00F5F4BC /* output.c */,
+				07765D751C279BFC00F5F4BC /* seek.c */,
+				07765D761C279BFC00F5F4BC /* shn.c */,
+				07765D771C279BFC00F5F4BC /* shn.h */,
+				07765D781C279BFC00F5F4BC /* shorten.c */,
+				07765D791C279BFC00F5F4BC /* shorten.h */,
+				07765D7A1C279BFC00F5F4BC /* sulawalaw.c */,
+				07765D7B1C279BFC00F5F4BC /* vario.c */,
+				07765D7C1C279BFC00F5F4BC /* wave.c */,
+			);
+			name = shn;
 			sourceTree = "<group>";
 		};
 		2D05A8351B4BE5C4004C913D /* sndfile */ = {
@@ -5359,6 +5422,7 @@
 				07021F891C2745E900FC9AF9 /* tta.dylib */,
 				07021FE91C27551D00FC9AF9 /* musepack.dylib */,
 				070220AA1C275D3900FC9AF9 /* dca.dylib */,
+				07765D6F1C279B7D00F5F4BC /* ddb_shn.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5514,6 +5578,7 @@
 				07021FED1C27556500FC9AF9 /* musepack */,
 				4D1B51551837F4E9003E6066 /* nullout */,
 				2D6501CC1AA7882900E82A9E /* sc68 */,
+				07765D8D1C27A13A00F5F4BC /* shn */,
 				2D22F5AB19E13621009C631E /* sid */,
 				2D05A8351B4BE5C4004C913D /* sndfile */,
 				07021F8A1C27462000FC9AF9 /* tta */,
@@ -6060,6 +6125,17 @@
 				070220CF1C275DAE00FC9AF9 /* tables_fir.h in Headers */,
 				070220C11C275DAE00FC9AF9 /* audio_out.h in Headers */,
 				070220C51C275DAE00FC9AF9 /* dca.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07765D681C279B7D00F5F4BC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07765D841C279BFC00F5F4BC /* shn.h in Headers */,
+				07765D6A1C279B7D00F5F4BC /* deadbeef.h in Headers */,
+				07765D861C279BFC00F5F4BC /* shorten.h in Headers */,
+				07765D7E1C279BFC00F5F4BC /* bitshift.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6883,6 +6959,23 @@
 			productReference = 070220AA1C275D3900FC9AF9 /* dca.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		07765D631C279B7D00F5F4BC /* ddb_shn */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 07765D6C1C279B7D00F5F4BC /* Build configuration list for PBXNativeTarget "ddb_shn" */;
+			buildPhases = (
+				07765D641C279B7D00F5F4BC /* Sources */,
+				07765D671C279B7D00F5F4BC /* Frameworks */,
+				07765D681C279B7D00F5F4BC /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ddb_shn;
+			productName = sndfile;
+			productReference = 07765D6F1C279B7D00F5F4BC /* ddb_shn.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2D01D7C91AB2216900BCD3C4 /* ddbcore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D01D7CB1AB2216900BCD3C4 /* Build configuration list for PBXNativeTarget "ddbcore" */;
@@ -7386,6 +7479,7 @@
 			);
 			dependencies = (
 				2D28F04F1C283C43004A6E7B /* PBXTargetDependency */,
+				07765D8B1C279C9700F5F4BC /* PBXTargetDependency */,
 				070220D61C275F1E00FC9AF9 /* PBXTargetDependency */,
 				070220451C2756C200FC9AF9 /* PBXTargetDependency */,
 				07021F941C27467B00FC9AF9 /* PBXTargetDependency */,
@@ -7666,6 +7760,7 @@
 				07021F791C2745E900FC9AF9 /* tta */,
 				07021FD91C27551D00FC9AF9 /* musepack */,
 				0702208E1C275D3900FC9AF9 /* dca */,
+				07765D631C279B7D00F5F4BC /* ddb_shn */,
 			);
 		};
 /* End PBXProject section */
@@ -7762,6 +7857,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07765D8C1C279CB300F5F4BC /* ddb_shn.dylib in Resources */,
 				070220D71C275F2900FC9AF9 /* dca.dylib in Resources */,
 				070220461C2756CF00FC9AF9 /* musepack.dylib in Resources */,
 				07021F951C27468D00FC9AF9 /* tta.dylib in Resources */,
@@ -7916,6 +8012,23 @@
 				070220C21C275DAE00FC9AF9 /* bitstream.c in Sources */,
 				070220C71C275DAE00FC9AF9 /* dcaplug.c in Sources */,
 				070220CB1C275DAE00FC9AF9 /* gettimeofday.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07765D641C279B7D00F5F4BC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07765D891C279BFC00F5F4BC /* wave.c in Sources */,
+				07765D821C279BFC00F5F4BC /* seek.c in Sources */,
+				07765D801C279BFC00F5F4BC /* misc.c in Sources */,
+				07765D7D1C279BFC00F5F4BC /* array.c in Sources */,
+				07765D851C279BFC00F5F4BC /* shorten.c in Sources */,
+				07765D831C279BFC00F5F4BC /* shn.c in Sources */,
+				07765D871C279BFC00F5F4BC /* sulawalaw.c in Sources */,
+				07765D881C279BFC00F5F4BC /* vario.c in Sources */,
+				07765D811C279BFC00F5F4BC /* output.c in Sources */,
+				07765D7F1C279BFC00F5F4BC /* convert.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8978,6 +9091,11 @@
 			target = 0702208E1C275D3900FC9AF9 /* dca */;
 			targetProxy = 070220D51C275F1E00FC9AF9 /* PBXContainerItemProxy */;
 		};
+		07765D8B1C279C9700F5F4BC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07765D631C279B7D00F5F4BC /* ddb_shn */;
+			targetProxy = 07765D8A1C279C9700F5F4BC /* PBXContainerItemProxy */;
+		};
 		2D01D7E91AB221AA00BCD3C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D01D7C91AB2216900BCD3C4 /* ddbcore */;
@@ -9427,6 +9545,53 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/musepack",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		07765D6D1C279B7D00F5F4BC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"PACKAGE=\\\"shn\\\"",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		07765D6E1C279B7D00F5F4BC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "PACKAGE=\\\"shn\\\"";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -11320,6 +11485,15 @@
 			buildConfigurations = (
 				070220A81C275D3900FC9AF9 /* Debug */,
 				070220A91C275D3900FC9AF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		07765D6C1C279B7D00F5F4BC /* Build configuration list for PBXNativeTarget "ddb_shn" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07765D6D1C279B7D00F5F4BC /* Debug */,
+				07765D6E1C279B7D00F5F4BC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
