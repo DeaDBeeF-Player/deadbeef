@@ -1833,7 +1833,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
             // deselect everything
             ddb_listview_deselect_all (ps);
             // select group
-            ddb_listview_select_group (ps, pick_ctx.grp, pick_ctx.item_idx, 0);
+            ddb_listview_select_group (ps, pick_ctx.grp, pick_ctx.item_grp_idx, 0);
         }
         else if (pick_ctx.type == PICK_ITEM || pick_ctx.type == PICK_EMPTY_SPACE) {
             // select range
