@@ -99,6 +99,21 @@
 		07765D881C279BFC00F5F4BC /* vario.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D7B1C279BFC00F5F4BC /* vario.c */; };
 		07765D891C279BFC00F5F4BC /* wave.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D7C1C279BFC00F5F4BC /* wave.c */; };
 		07765D8C1C279CB300F5F4BC /* ddb_shn.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07765D6F1C279B7D00F5F4BC /* ddb_shn.dylib */; };
+		07765E311C2855F800F5F4BC /* libmmslib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07765E211C28558B00F5F4BC /* libmmslib.a */; };
+		07765E431C28562000F5F4BC /* asfheader.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765E331C28562000F5F4BC /* asfheader.h */; };
+		07765E441C28562000F5F4BC /* bswap.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765E351C28562000F5F4BC /* bswap.h */; };
+		07765E451C28562000F5F4BC /* mms-common.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765E371C28562000F5F4BC /* mms-common.h */; };
+		07765E461C28562000F5F4BC /* mms.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765E381C28562000F5F4BC /* mms.c */; };
+		07765E471C28562000F5F4BC /* mms.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765E391C28562000F5F4BC /* mms.h */; };
+		07765E481C28562000F5F4BC /* mmsh.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765E3A1C28562000F5F4BC /* mmsh.c */; };
+		07765E491C28562000F5F4BC /* mmsh.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765E3B1C28562000F5F4BC /* mmsh.h */; };
+		07765E4A1C28562000F5F4BC /* mmsio.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765E3C1C28562000F5F4BC /* mmsio.h */; };
+		07765E4B1C28562000F5F4BC /* mmsx.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765E3D1C28562000F5F4BC /* mmsx.c */; };
+		07765E4C1C28562000F5F4BC /* mmsx.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765E3E1C28562000F5F4BC /* mmsx.h */; };
+		07765E4D1C28562000F5F4BC /* uri.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765E411C28562000F5F4BC /* uri.c */; };
+		07765E4E1C28562000F5F4BC /* uri.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765E421C28562000F5F4BC /* uri.h */; };
+		07765E501C28563D00F5F4BC /* mmsplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765E4F1C28563D00F5F4BC /* mmsplug.c */; };
+		07765E531C2856DF00F5F4BC /* mms.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07765E2E1C28559600F5F4BC /* mms.dylib */; };
 		2D01D7CE1AB2219C00BCD3C4 /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D93DC521AADFEEF003D2D8D /* pluginsettings.c */; };
 		2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ED81837EC44003E6066 /* ConvertUTF.c */; };
 		2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F871837EC44003E6066 /* md5.c */; };
@@ -1531,6 +1546,20 @@
 			remoteGlobalIDString = 07765D631C279B7D00F5F4BC;
 			remoteInfo = shn;
 		};
+		07765E2F1C2855F300F5F4BC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07765E041C28558B00F5F4BC;
+			remoteInfo = mmslib;
+		};
+		07765E511C2856D100F5F4BC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07765E221C28559600F5F4BC;
+			remoteInfo = mms;
+		};
 		2D01D7E81AB221AA00BCD3C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -1950,6 +1979,21 @@
 		07765D7A1C279BFC00F5F4BC /* sulawalaw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sulawalaw.c; path = plugins/shn/sulawalaw.c; sourceTree = "<group>"; };
 		07765D7B1C279BFC00F5F4BC /* vario.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vario.c; path = plugins/shn/vario.c; sourceTree = "<group>"; };
 		07765D7C1C279BFC00F5F4BC /* wave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wave.c; path = plugins/shn/wave.c; sourceTree = "<group>"; };
+		07765E211C28558B00F5F4BC /* libmmslib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmmslib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		07765E2E1C28559600F5F4BC /* mms.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = mms.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		07765E331C28562000F5F4BC /* asfheader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asfheader.h; sourceTree = "<group>"; };
+		07765E351C28562000F5F4BC /* bswap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bswap.h; sourceTree = "<group>"; };
+		07765E371C28562000F5F4BC /* mms-common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "mms-common.h"; sourceTree = "<group>"; };
+		07765E381C28562000F5F4BC /* mms.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mms.c; sourceTree = "<group>"; };
+		07765E391C28562000F5F4BC /* mms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mms.h; sourceTree = "<group>"; };
+		07765E3A1C28562000F5F4BC /* mmsh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mmsh.c; sourceTree = "<group>"; };
+		07765E3B1C28562000F5F4BC /* mmsh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mmsh.h; sourceTree = "<group>"; };
+		07765E3C1C28562000F5F4BC /* mmsio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mmsio.h; sourceTree = "<group>"; };
+		07765E3D1C28562000F5F4BC /* mmsx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mmsx.c; sourceTree = "<group>"; };
+		07765E3E1C28562000F5F4BC /* mmsx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mmsx.h; sourceTree = "<group>"; };
+		07765E411C28562000F5F4BC /* uri.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = uri.c; sourceTree = "<group>"; };
+		07765E421C28562000F5F4BC /* uri.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uri.h; sourceTree = "<group>"; };
+		07765E4F1C28563D00F5F4BC /* mmsplug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mmsplug.c; path = plugins/mms/mmsplug.c; sourceTree = "<group>"; };
 		2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libddbcore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testbootstrap.c; sourceTree = "<group>"; };
 		2D05A8291B4BE59D004C913D /* sndfile.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = sndfile.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3434,6 +3478,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		07765E0E1C28558B00F5F4BC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07765E261C28559600F5F4BC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07765E311C2855F800F5F4BC /* libmmslib.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D01D7C71AB2216900BCD3C4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3845,6 +3904,35 @@
 				07765D7C1C279BFC00F5F4BC /* wave.c */,
 			);
 			name = shn;
+			sourceTree = "<group>";
+		};
+		07765E031C28557900F5F4BC /* mms */ = {
+			isa = PBXGroup;
+			children = (
+				07765E4F1C28563D00F5F4BC /* mmsplug.c */,
+				07765E321C28562000F5F4BC /* libmms */,
+			);
+			name = mms;
+			sourceTree = "<group>";
+		};
+		07765E321C28562000F5F4BC /* libmms */ = {
+			isa = PBXGroup;
+			children = (
+				07765E331C28562000F5F4BC /* asfheader.h */,
+				07765E351C28562000F5F4BC /* bswap.h */,
+				07765E371C28562000F5F4BC /* mms-common.h */,
+				07765E381C28562000F5F4BC /* mms.c */,
+				07765E391C28562000F5F4BC /* mms.h */,
+				07765E3A1C28562000F5F4BC /* mmsh.c */,
+				07765E3B1C28562000F5F4BC /* mmsh.h */,
+				07765E3C1C28562000F5F4BC /* mmsio.h */,
+				07765E3D1C28562000F5F4BC /* mmsx.c */,
+				07765E3E1C28562000F5F4BC /* mmsx.h */,
+				07765E411C28562000F5F4BC /* uri.c */,
+				07765E421C28562000F5F4BC /* uri.h */,
+			);
+			name = libmms;
+			path = plugins/mms/libmms;
 			sourceTree = "<group>";
 		};
 		2D05A8351B4BE5C4004C913D /* sndfile */ = {
@@ -5423,6 +5511,8 @@
 				07021FE91C27551D00FC9AF9 /* musepack.dylib */,
 				070220AA1C275D3900FC9AF9 /* dca.dylib */,
 				07765D6F1C279B7D00F5F4BC /* ddb_shn.dylib */,
+				07765E211C28558B00F5F4BC /* libmmslib.a */,
+				07765E2E1C28559600F5F4BC /* mms.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5544,6 +5634,7 @@
 		4D1B514C1837EF7C003E6066 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				07765E031C28557900F5F4BC /* mms */,
 				2D28F05A1C283CAC004A6E7B /* libfaad */,
 				2D28F02F1C283B1F004A6E7B /* aac */,
 				2D91772E1A0E892F004BC222 /* alac */,
@@ -6124,6 +6215,28 @@
 				07765D6A1C279B7D00F5F4BC /* deadbeef.h in Headers */,
 				07765D861C279BFC00F5F4BC /* shorten.h in Headers */,
 				07765D7E1C279BFC00F5F4BC /* bitshift.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07765E101C28558B00F5F4BC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07765E4A1C28562000F5F4BC /* mmsio.h in Headers */,
+				07765E491C28562000F5F4BC /* mmsh.h in Headers */,
+				07765E471C28562000F5F4BC /* mms.h in Headers */,
+				07765E4E1C28562000F5F4BC /* uri.h in Headers */,
+				07765E451C28562000F5F4BC /* mms-common.h in Headers */,
+				07765E441C28562000F5F4BC /* bswap.h in Headers */,
+				07765E4C1C28562000F5F4BC /* mmsx.h in Headers */,
+				07765E431C28562000F5F4BC /* asfheader.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07765E271C28559600F5F4BC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6964,6 +7077,41 @@
 			productReference = 07765D6F1C279B7D00F5F4BC /* ddb_shn.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		07765E041C28558B00F5F4BC /* mmslib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 07765E1E1C28558B00F5F4BC /* Build configuration list for PBXNativeTarget "mmslib" */;
+			buildPhases = (
+				07765E071C28558B00F5F4BC /* Sources */,
+				07765E0E1C28558B00F5F4BC /* Frameworks */,
+				07765E101C28558B00F5F4BC /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mmslib;
+			productName = sndfilelib;
+			productReference = 07765E211C28558B00F5F4BC /* libmmslib.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		07765E221C28559600F5F4BC /* mms */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 07765E2B1C28559600F5F4BC /* Build configuration list for PBXNativeTarget "mms" */;
+			buildPhases = (
+				07765E231C28559600F5F4BC /* Sources */,
+				07765E261C28559600F5F4BC /* Frameworks */,
+				07765E271C28559600F5F4BC /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				07765E301C2855F300F5F4BC /* PBXTargetDependency */,
+			);
+			name = mms;
+			productName = sndfile;
+			productReference = 07765E2E1C28559600F5F4BC /* mms.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2D01D7C91AB2216900BCD3C4 /* ddbcore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D01D7CB1AB2216900BCD3C4 /* Build configuration list for PBXNativeTarget "ddbcore" */;
@@ -7466,6 +7614,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				07765E521C2856D100F5F4BC /* PBXTargetDependency */,
 				2D28F04F1C283C43004A6E7B /* PBXTargetDependency */,
 				07765D8B1C279C9700F5F4BC /* PBXTargetDependency */,
 				070220D61C275F1E00FC9AF9 /* PBXTargetDependency */,
@@ -7749,6 +7898,8 @@
 				07021FD91C27551D00FC9AF9 /* musepack */,
 				0702208E1C275D3900FC9AF9 /* dca */,
 				07765D631C279B7D00F5F4BC /* ddb_shn */,
+				07765E041C28558B00F5F4BC /* mmslib */,
+				07765E221C28559600F5F4BC /* mms */,
 			);
 		};
 /* End PBXProject section */
@@ -7845,6 +7996,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07765E531C2856DF00F5F4BC /* mms.dylib in Resources */,
 				07765D8C1C279CB300F5F4BC /* ddb_shn.dylib in Resources */,
 				070220D71C275F2900FC9AF9 /* dca.dylib in Resources */,
 				070220461C2756CF00FC9AF9 /* musepack.dylib in Resources */,
@@ -8017,6 +8169,25 @@
 				07765D881C279BFC00F5F4BC /* vario.c in Sources */,
 				07765D811C279BFC00F5F4BC /* output.c in Sources */,
 				07765D7F1C279BFC00F5F4BC /* convert.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07765E071C28558B00F5F4BC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07765E481C28562000F5F4BC /* mmsh.c in Sources */,
+				07765E461C28562000F5F4BC /* mms.c in Sources */,
+				07765E4D1C28562000F5F4BC /* uri.c in Sources */,
+				07765E4B1C28562000F5F4BC /* mmsx.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07765E231C28559600F5F4BC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07765E501C28563D00F5F4BC /* mmsplug.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9084,6 +9255,16 @@
 			target = 07765D631C279B7D00F5F4BC /* ddb_shn */;
 			targetProxy = 07765D8A1C279C9700F5F4BC /* PBXContainerItemProxy */;
 		};
+		07765E301C2855F300F5F4BC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07765E041C28558B00F5F4BC /* mmslib */;
+			targetProxy = 07765E2F1C2855F300F5F4BC /* PBXContainerItemProxy */;
+		};
+		07765E521C2856D100F5F4BC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07765E221C28559600F5F4BC /* mms */;
+			targetProxy = 07765E511C2856D100F5F4BC /* PBXContainerItemProxy */;
+		};
 		2D01D7E91AB221AA00BCD3C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D01D7C91AB2216900BCD3C4 /* ddbcore */;
@@ -9582,6 +9763,92 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		07765E1F1C28558B00F5F4BC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		07765E201C28558B00F5F4BC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		07765E2C1C28559600F5F4BC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../plugins/mms",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		07765E2D1C28559600F5F4BC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../plugins/mms",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -11484,6 +11751,24 @@
 			buildConfigurations = (
 				07765D6D1C279B7D00F5F4BC /* Debug */,
 				07765D6E1C279B7D00F5F4BC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		07765E1E1C28558B00F5F4BC /* Build configuration list for PBXNativeTarget "mmslib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07765E1F1C28558B00F5F4BC /* Debug */,
+				07765E201C28558B00F5F4BC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		07765E2B1C28559600F5F4BC /* Build configuration list for PBXNativeTarget "mms" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07765E2C1C28559600F5F4BC /* Debug */,
+				07765E2D1C28559600F5F4BC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
