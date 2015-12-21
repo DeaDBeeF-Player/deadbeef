@@ -1866,12 +1866,14 @@ on_tabs_button_press_event (GtkWidget      *notebook,
             }
         }
         else if (event->button == 3) {
-            /* update the current tab before we show the menu */
-            gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), page_num);
+            if (!design_mode) {
+                /* update the current tab before we show the menu */
+                gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), page_num);
 
-            /* show the tab menu */
-            on_tab_popup_menu (notebook, user_data);
-            return TRUE;
+                /* show the tab menu */
+                on_tab_popup_menu (notebook, user_data);
+                return TRUE;
+            }
         }
     }
     else if (event->type == GDK_2BUTTON_PRESS) {
