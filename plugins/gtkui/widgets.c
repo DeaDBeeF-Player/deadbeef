@@ -3541,12 +3541,12 @@ on_hvbox_toggle_homogeneous (GtkCheckMenuItem *checkmenuitem, gpointer user_data
 static void
 w_hvbox_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
     GtkWidget *item;
-    item = gtk_menu_item_new_with_mnemonic (_("Expand the Box by 1 Item"));
+    item = gtk_menu_item_new_with_mnemonic (_("Expand Box by 1 Item"));
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) item, "activate", G_CALLBACK (on_hvbox_expand), w);
 
-    item = gtk_menu_item_new_with_mnemonic (_("Shrink the Box by 1 Item"));
+    item = gtk_menu_item_new_with_mnemonic (_("Shrink Box by 1 Item"));
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) item, "activate", G_CALLBACK (on_hvbox_shrink), w);
