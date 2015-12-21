@@ -252,7 +252,7 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                     deadbeef->plt_modified (plt);
                     deadbeef->plt_unref (plt);
                 }
-                deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
+                deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
                 if (songstarted) {
 
                     float playpos = deadbeef->streamer_get_playpos ();
@@ -543,7 +543,7 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
         deadbeef->plt_unref (plt);
     }
     if (refresh_playlist) {
-        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     }
     if (!fp->icyheader) {
         fp->gotsomeheader = 1;
