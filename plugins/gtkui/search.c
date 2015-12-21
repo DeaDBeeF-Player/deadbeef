@@ -129,6 +129,7 @@ search_start (void) {
 void
 search_destroy (void) {
     if (searchwin) {
+        ddb_listview_size_columns_without_scrollbar (DDB_LISTVIEW (lookup_widget (searchwin, "searchlist")));
         gtk_widget_destroy (searchwin);
         searchwin = NULL;
     }

@@ -350,7 +350,7 @@ ddb_listview_init(DdbListview *listview)
     listview->fwidth = -1;
 
     listview->columns = NULL;
-    listview->lock_columns = 1;
+    listview->lock_columns = -1;
     listview->groups = NULL;
     listview->plt = NULL;
 
@@ -2505,8 +2505,10 @@ ddb_listview_column_size_changed (DdbListview *listview, DdbListviewColumn *c)
 {
     if (listview->binding->is_album_art_column(c->user_data)) {
         ddb_listview_resize_groups(listview);
-        int pos = ddb_listview_get_row_pos(listview, listview->ref_point);
-        gtk_range_set_value(GTK_RANGE(listview->scrollbar), pos - listview->ref_point_offset);
+        if (!listview->lock_columns) {
+            int pos = ddb_listview_get_row_pos(listview, listview->ref_point);
+            gtk_range_set_value(GTK_RANGE(listview->scrollbar), pos - listview->ref_point_offset);
+        }
     }
 }
 
@@ -2686,7 +2688,7 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
         ddb_listview_list_update_total_width (ps, total_columns_width(ps), event->width);
     }
 
-    if (!ps->lock_columns) {
+    if (ps->lock_columns != -1) {
         if (!deadbeef->conf_get_int ("gtkui.autoresize_columns", 0) || ps->header_sizing != -1) {
             set_fwidth (ps, event->width);
         }
@@ -2697,15 +2699,19 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
                 set_fwidth (ps, prev_width);
             }
             autoresize_columns (ps, event->width, event->height);
-            GtkAllocation a;
-            gtk_widget_get_allocation (ps->scrollbar, &a);
-            if (a.width > 1 && a.width == prev_width - event->width) {
-                gtk_range_set_value (GTK_RANGE (ps->scrollbar), prev_scrollpos);
-            }
         }
     }
 
     return FALSE;
+}
+
+void
+ddb_listview_size_columns_without_scrollbar (DdbListview *listview) {
+    if (deadbeef->conf_get_int ("gtkui.autoresize_columns", 0) && gtk_widget_get_visible (listview->scrollbar)) {
+        GtkAllocation a;
+        gtk_widget_get_allocation (listview->scrollbar, &a);
+        autoresize_columns (listview, listview->list_width + a.width, listview->list_height);
+    }
 }
 
 static void
@@ -3299,20 +3305,27 @@ ddb_listview_resize_groups (DdbListview *listview) {
     }
 }
 
+static gboolean
+unlock_columns_cb (gpointer p) {
+    DDB_LISTVIEW(p)->lock_columns = 0;
+    return FALSE;
+}
+
 int
 ddb_listview_list_setup (DdbListview *listview, int scroll_to) {
     if (!list_is_realized(listview)) {
         return FALSE;
     }
+    listview->lock_columns = 1;
     if (listview->scrollpos == -1) {
         listview->scrollpos = 0;
-        listview->lock_columns = 0;
     }
     deadbeef->pl_lock();
     listview->fullheight = build_groups(listview);
     deadbeef->pl_unlock();
     adjust_scrollbar (listview->scrollbar, listview->fullheight, listview->list_height);
     gtk_range_set_value (GTK_RANGE (listview->scrollbar), scroll_to);
+    g_idle_add (unlock_columns_cb, listview);
     return TRUE;
 }
 
