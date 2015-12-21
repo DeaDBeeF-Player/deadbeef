@@ -173,7 +173,7 @@ encoder_preset_save (ddb_encoder_preset_t *p, int overwrite) {
         fprintf (stderr, "encoder_preset_save: empty title\n");
         return -1;
     }
-    const char *confdir = deadbeef->get_config_dir ();
+    const char *confdir = deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG);
     char path[PATH_MAX];
     if (snprintf (path, sizeof (path), "%s/presets", confdir) < 0) {
         return -1;
@@ -377,7 +377,7 @@ dsp_preset_save (ddb_dsp_preset_t *p, int overwrite) {
         fprintf (stderr, "dsp_preset_save: empty title\n");
         return -1;
     }
-    const char *confdir = deadbeef->get_config_dir ();
+    const char *confdir = deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG);
     char path[PATH_MAX];
     if (snprintf (path, sizeof (path), "%s/presets", confdir) < 0) {
         return -1;
@@ -467,16 +467,16 @@ load_encoder_presets (void) {
     // check if we need to install presets
     char ppath[PATH_MAX];
     char epath[PATH_MAX];
-    snprintf (ppath, sizeof (ppath), "%s/presets", deadbeef->get_config_dir ());
+    snprintf (ppath, sizeof (ppath), "%s/presets", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG));
     snprintf (epath, sizeof (epath), "%s/encoders", ppath);
 
     char path[PATH_MAX];
-    if (snprintf (path, sizeof (path), "%s/presets/encoders", deadbeef->get_config_dir ()) < 0) {
+    if (snprintf (path, sizeof (path), "%s/presets/encoders", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG)) < 0) {
         return -1;
     }
 
     char syspath[PATH_MAX];
-    if (snprintf (syspath, sizeof (syspath), "%s/convpresets", deadbeef->get_plugin_dir ()) < 0) {
+    if (snprintf (syspath, sizeof (syspath), "%s/convpresets", deadbeef->get_system_dir (DDB_SYS_DIR_PLUGIN)) < 0) {
         return -1;
     }
 
@@ -560,7 +560,7 @@ int
 load_dsp_presets (void) {
     ddb_dsp_preset_t *tail = NULL;
     char path[PATH_MAX];
-    if (snprintf (path, sizeof (path), "%s/presets/dsp", deadbeef->get_config_dir ()) < 0) {
+    if (snprintf (path, sizeof (path), "%s/presets/dsp", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG)) < 0) {
         return -1;
     }
     struct dirent **namelist = NULL;

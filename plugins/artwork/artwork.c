@@ -978,7 +978,7 @@ get_default_cover (void)
 
     if (missing_artwork == 1) {
         /* 1 is the Deadbeef default image */
-        const char *pixmap_dir = deadbeef->get_pixmap_dir ();
+        const char *pixmap_dir = deadbeef->get_system_dir (DDB_SYS_DIR_PIXMAP);
         default_cover = malloc (strlen (pixmap_dir) + 1 + sizeof (NOARTWORK_IMAGE));
         if (default_cover) {
             sprintf (default_cover, "%s/%s", pixmap_dir, NOARTWORK_IMAGE);

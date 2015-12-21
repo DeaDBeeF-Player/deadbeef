@@ -90,7 +90,7 @@ dsp_fill_preset_list (GtkWidget *combobox) {
     gtk_list_store_clear (mdl);
     struct dirent **namelist = NULL;
     char path[1024];
-    if (snprintf (path, sizeof (path), "%s/presets/dsp", deadbeef->get_config_dir ()) > 0) {
+    if (snprintf (path, sizeof (path), "%s/presets/dsp", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG)) > 0) {
         int n = scandir (path, &namelist, scandir_preset_filter, dirent_alphasort);
         int i;
         for (i = 0; i < n; i++) {
@@ -434,7 +434,7 @@ void
 on_dsp_preset_save_clicked             (GtkButton       *button,
                                         gpointer         user_data)
 {
-    const char *confdir = deadbeef->get_config_dir ();
+    const char *confdir = deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG);
     char path[1024];
     if (snprintf (path, sizeof (path), "%s/presets", confdir) < 0) {
         return;
@@ -469,7 +469,7 @@ on_dsp_preset_load_clicked             (GtkButton       *button,
     if (entry) {
         const char *text = gtk_entry_get_text (GTK_ENTRY (entry));
         char path[PATH_MAX];
-        if (snprintf (path, sizeof (path), "%s/presets/dsp/%s.txt", deadbeef->get_config_dir (), text) > 0) {
+        if (snprintf (path, sizeof (path), "%s/presets/dsp/%s.txt", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG), text) > 0) {
             ddb_dsp_context_t *new_chain = NULL;
             int res = deadbeef->dsp_preset_load (path, &new_chain);
             if (!res) {
