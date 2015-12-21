@@ -31,6 +31,7 @@ create_converterdlg (void)
 {
   GtkWidget *converterdlg;
   GtkWidget *dialog_vbox6;
+  GtkWidget *hbox105;
   GtkWidget *vbox26;
   GtkWidget *hbox67;
   GtkWidget *label103;
@@ -66,11 +67,14 @@ create_converterdlg (void)
   GtkWidget *hbox99;
   GtkWidget *label121;
   GtkWidget *overwrite_action;
+  GtkWidget *scrolledwindow9;
+  GtkWidget *preview_tree;
   GtkWidget *dialog_action_area5;
   GtkWidget *converter_cancel;
   GtkWidget *converter_ok;
 
   converterdlg = gtk_dialog_new ();
+  gtk_widget_set_size_request (converterdlg, 720, -1);
   gtk_window_set_title (GTK_WINDOW (converterdlg), "Converter");
   gtk_window_set_position (GTK_WINDOW (converterdlg), GTK_WIN_POS_MOUSE);
   gtk_window_set_modal (GTK_WINDOW (converterdlg), TRUE);
@@ -81,9 +85,13 @@ create_converterdlg (void)
   dialog_vbox6 = gtk_dialog_get_content_area (GTK_DIALOG (converterdlg));
   gtk_widget_show (dialog_vbox6);
 
+  hbox105 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox105);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox6), hbox105, TRUE, TRUE, 0);
+
   vbox26 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox26);
-  gtk_box_pack_start (GTK_BOX (dialog_vbox6), vbox26, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox105), vbox26, FALSE, TRUE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (vbox26), 12);
 
   hbox67 = gtk_hbox_new (FALSE, 8);
@@ -117,7 +125,7 @@ create_converterdlg (void)
 
   hbox100 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox100);
-  gtk_box_pack_start (GTK_BOX (vbox26), hbox100, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox26), hbox100, FALSE, TRUE, 0);
 
   label122 = gtk_label_new (_("Output file name:"));
   gtk_widget_show (label122);
@@ -141,7 +149,7 @@ create_converterdlg (void)
 
   hbox69 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox69);
-  gtk_box_pack_start (GTK_BOX (vbox26), hbox69, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox26), hbox69, FALSE, TRUE, 0);
 
   label104 = gtk_label_new (_("Encoder:"));
   gtk_widget_show (label104);
@@ -219,7 +227,7 @@ create_converterdlg (void)
 
   hbox99 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox99);
-  gtk_box_pack_start (GTK_BOX (vbox26), hbox99, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox26), hbox99, FALSE, TRUE, 0);
 
   label121 = gtk_label_new (_("When file exists:"));
   gtk_widget_show (label121);
@@ -231,6 +239,17 @@ create_converterdlg (void)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (overwrite_action), _("Skip"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (overwrite_action), _("Prompt"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (overwrite_action), _("Overwrite"));
+
+  scrolledwindow9 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow9);
+  gtk_box_pack_start (GTK_BOX (hbox105), scrolledwindow9, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (scrolledwindow9), 12);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow9), GTK_SHADOW_IN);
+
+  preview_tree = gtk_tree_view_new ();
+  gtk_widget_show (preview_tree);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow9), preview_tree);
+  gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (preview_tree), TRUE);
 
   dialog_action_area5 = gtk_dialog_get_action_area (GTK_DIALOG (converterdlg));
   gtk_widget_show (dialog_action_area5);
@@ -254,9 +273,6 @@ create_converterdlg (void)
                     NULL);
   g_signal_connect ((gpointer) preserve_folders, "toggled",
                     G_CALLBACK (on_preserve_folders_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) output_file, "changed",
-                    G_CALLBACK (on_output_file_changed),
                     NULL);
   g_signal_connect ((gpointer) encoder, "changed",
                     G_CALLBACK (on_converter_encoder_changed),
@@ -283,6 +299,7 @@ create_converterdlg (void)
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (converterdlg, converterdlg, "converterdlg");
   GLADE_HOOKUP_OBJECT_NO_REF (converterdlg, dialog_vbox6, "dialog_vbox6");
+  GLADE_HOOKUP_OBJECT (converterdlg, hbox105, "hbox105");
   GLADE_HOOKUP_OBJECT (converterdlg, vbox26, "vbox26");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox67, "hbox67");
   GLADE_HOOKUP_OBJECT (converterdlg, label103, "label103");
@@ -317,6 +334,8 @@ create_converterdlg (void)
   GLADE_HOOKUP_OBJECT (converterdlg, hbox99, "hbox99");
   GLADE_HOOKUP_OBJECT (converterdlg, label121, "label121");
   GLADE_HOOKUP_OBJECT (converterdlg, overwrite_action, "overwrite_action");
+  GLADE_HOOKUP_OBJECT (converterdlg, scrolledwindow9, "scrolledwindow9");
+  GLADE_HOOKUP_OBJECT (converterdlg, preview_tree, "preview_tree");
   GLADE_HOOKUP_OBJECT_NO_REF (converterdlg, dialog_action_area5, "dialog_action_area5");
   GLADE_HOOKUP_OBJECT (converterdlg, converter_cancel, "converter_cancel");
   GLADE_HOOKUP_OBJECT (converterdlg, converter_ok, "converter_ok");
