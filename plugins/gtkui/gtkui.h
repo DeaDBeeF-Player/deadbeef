@@ -54,6 +54,7 @@ extern int gtkui_tabstrip_italic_playing;
 struct _GSList;
 
 extern int gtkui_groups_pinned;
+extern int gtkui_listview_busy;
 
 extern const char *gtkui_default_titlebar_playing;
 extern const char *gtkui_default_titlebar_stopped;

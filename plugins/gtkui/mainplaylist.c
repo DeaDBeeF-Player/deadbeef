@@ -62,7 +62,12 @@ main_get_cursor (void) {
 static void
 main_set_cursor (int cursor) {
     deadbeef->pl_set_cursor (PL_MAIN, cursor);
-    deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, 0, cursor, PL_MAIN);
+    DB_playItem_t *it = deadbeef->pl_get_for_idx (cursor);
+    if (it) {
+        ddb_event_track_t *event = (ddb_event_track_t *)deadbeef->event_alloc(DB_EV_CURSOR_MOVED);
+        event->track = it;
+        deadbeef->event_send ((ddb_event_t *)event, PL_MAIN, 0);
+    }
 }
 
 static DdbListviewIter main_head (void) {

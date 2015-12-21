@@ -1529,7 +1529,7 @@ ddb_listview_toggle_group_selection (DdbListview *listview, DdbListviewGroup *gr
     ddb_listview_select_group (listview, grp, item_idx, deselect);
 }
 
-static void
+void
 ddb_listview_select_single (DdbListview *ps, int sel) {
     deadbeef->pl_lock ();
     ddb_listview_deselect_all(ps);
@@ -1560,12 +1560,6 @@ ddb_listview_update_cursor (DdbListview *ps, int cursor)
     }
 }
 
-void
-ddb_listview_set_cursor (DdbListview *listview, int cursor) {
-    ddb_listview_update_cursor (listview, cursor);
-    ddb_listview_select_single (listview, cursor);
-}
-
 struct set_cursor_t {
     int cursor;
     DdbListview *pl;
@@ -1574,7 +1568,8 @@ struct set_cursor_t {
 static gboolean
 set_cursor_and_scroll_cb (gpointer data) {
     struct set_cursor_t *sc = (struct set_cursor_t *)data;
-    ddb_listview_set_cursor (sc->pl, sc->cursor);
+    ddb_listview_update_cursor (sc->pl, sc->cursor);
+    ddb_listview_select_single (sc->pl, sc->cursor);
 
     int cursor_scroll = ddb_listview_get_row_pos (sc->pl, sc->cursor);
     int newscroll = sc->pl->scrollpos;
@@ -1781,6 +1776,8 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
         }
     }
 
+    gtkui_listview_busy = 1;
+
     // set cursor
     int prev = cursor;
     if (pick_ctx.type != PICK_EMPTY_SPACE
@@ -1864,6 +1861,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
 
 void
 ddb_listview_list_mouse1_released (DdbListview *ps, int state, int ex, int ey, double time) {
+    gtkui_listview_busy = 0;
 
 #ifndef __APPLE__
     int selmask = GDK_CONTROL_MASK;
@@ -3002,26 +3000,6 @@ ddb_listview_scroll_to (DdbListview *listview, int pos) {
     if (pos < listview->scrollpos || pos + listview->rowheight >= listview->scrollpos + listview->list_height) {
         gtk_range_set_value (GTK_RANGE (listview->scrollbar), pos - listview->list_height/2);
     }
-}
-
-void
-ddb_listview_track_focus (DdbListview *listview, DdbListviewIter it) {
-    ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
-    if (plt) {
-        deadbeef->plt_set_curr (plt);
-        int cursor = listview->binding->get_idx (it);
-        if (cursor != -1) {
-            ddb_listview_scroll_to (listview, cursor);
-            ddb_listview_set_cursor (listview, cursor);
-        }
-        deadbeef->plt_unref (plt);
-    }
-    deadbeef->pl_item_unref (it);
-}
-
-int
-ddb_listview_is_scrolling (DdbListview *listview) {
-    return listview->dragwait || listview->areaselect || listview->drag_motion_y != -1;
 }
 
 /////// column management code
