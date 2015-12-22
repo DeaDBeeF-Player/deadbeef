@@ -1708,6 +1708,9 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 else if (!strcmp (name, "_deadbeef_version")) {
                     val = VERSION;
                 }
+                else {
+                    val = pl_find_meta_raw (it, name);
+                }
 
                 if (val) {
                     *bool_out = 1;
