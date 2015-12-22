@@ -1393,6 +1393,11 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 else if (!strcmp (name, "track number")) {
                     val = pl_find_meta_raw (it, "track");
                 }
+                else if (!strcmp (name, "date")) {
+                    // NOTE: foobar2000 uses "date" instead of "year"
+                    // so for %date% we simply return the content of "year"
+                    val = pl_find_meta_raw (it, "year");
+                }
                 else if (!strcmp (name, "samplerate")) {
                     val = pl_find_meta_raw (it, ":SAMPLERATE");
                 }
