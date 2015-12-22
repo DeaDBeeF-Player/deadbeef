@@ -229,16 +229,24 @@ draw_text_with_colors (drawctx_t *ctx, float x, float y, int width, int align, c
 }
 
 void
+draw_get_layout_extents (drawctx_t *ctx, int *w, int *h) {
+    PangoRectangle log;
+    pango_layout_get_pixel_extents (ctx->pangolayout, NULL, &log);
+    if (w) {
+        *w = log.width;
+    }
+    if (h) {
+        *h = log.height;
+    }
+}
+
+void
 draw_get_text_extents (drawctx_t *ctx, const char *text, int len, int *w, int *h) {
     draw_init_font (ctx, 0, 0);
-    pango_layout_set_width (ctx->pangolayout, 1000 * PANGO_SCALE);
+    pango_layout_set_width (ctx->pangolayout, -1);
     pango_layout_set_alignment (ctx->pangolayout, PANGO_ALIGN_LEFT);
     pango_layout_set_text (ctx->pangolayout, text, len);
-    PangoRectangle ink;
-    PangoRectangle log;
-    pango_layout_get_pixel_extents (ctx->pangolayout, &ink, &log);
-    *w = ink.width;
-    *h = ink.height;
+    draw_get_layout_extents (ctx, w, h);
 }
 
 int

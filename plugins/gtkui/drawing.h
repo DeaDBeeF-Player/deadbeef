@@ -90,6 +90,9 @@ void
 draw_text_with_colors (drawctx_t *ctx, float x, float y, int width, int align, const char *text);
 
 void
+draw_get_layout_extents (drawctx_t *ctx, int *w, int *h);
+
+void
 draw_get_text_extents (drawctx_t *ctx, const char *text, int len, int *w, int *h);
 
 int
