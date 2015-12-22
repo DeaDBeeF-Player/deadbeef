@@ -52,4 +52,7 @@ gettoken_err_eof (const char *p, char *tok);
 char *
 parser_escape_string (const char *in);
 
+char *
+parser_unescape_quoted_string (char *in);
+
 #endif
