@@ -91,7 +91,7 @@ static inline void
 pcm_write_samples_8_to_float (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < outputfmt->channels; c++) {
-            float sample = (*(input+channelmap[c])) / (float)0x7f;
+            float sample = (*(input+channelmap[c])) / (float)0x80;
             *((float *)(output + 4 * c)) = sample;
         }
         input += inputfmt->channels;
@@ -156,7 +156,7 @@ static inline void
 pcm_write_samples_16_to_float (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < outputfmt->channels; c++) {
-            float sample = (*((int16_t*)(input + channelmap[c]*2))) / (float)0x7fff;
+            float sample = (*((int16_t*)(input + channelmap[c]*2))) / (float)0x8000;
             *((float *)(output + 4 * c)) = sample;
         }
         input += 2 * inputfmt->channels;
@@ -228,7 +228,7 @@ pcm_write_samples_24_to_float (const ddb_waveformat_t * restrict inputfmt, const
             float *out = (float *)(output + 4 * c);
             const char *in = input + 3 * channelmap[c];
             int32_t sample = ((unsigned char)in[0]) | ((unsigned char)in[1]<<8) | (in[2]<<16);
-            *out = sample / (float)0x7fffff;
+            *out = sample / (float)0x800000;
         }
         input += inputfmt->channels * 3;
         output += outputsamplesize;
@@ -294,7 +294,7 @@ pcm_write_samples_32_to_float (const ddb_waveformat_t * restrict inputfmt, const
         for (int c = 0; c < outputfmt->channels; c++) {
             float *out = (float *)(output + 4 * c);
             int32_t sample = *((int32_t*)(input + channelmap[c] * 4));
-            *out = sample / (float)0x7fffffff;
+            *out = sample / (float)0x80000000;
         }
         input += 4 * inputfmt->channels;
         output += outputsamplesize;
@@ -308,14 +308,14 @@ pcm_write_samples_float_to_8 (const ddb_waveformat_t * restrict inputfmt, const 
         for (int c = 0; c < outputfmt->channels; c++) {
             int8_t *out = (int8_t*)(output + c);
             float sample = *((float*)(input + channelmap[c] * 4));
-            // FIXME: sse optimize
-            if (sample > 1) {
-                sample = 1;
+            int isample = sample * 0x80;
+            if (isample > 0x7f) {
+                isample = 0x7f;
             }
-            if (sample < -1) {
-                sample = -1;
+            else if (isample < -0x80) {
+                isample = -0x80;
             }
-            *out = (int8_t)ftoi (sample*0x7f);
+            *out = (int8_t)ftoi (isample);
         }
         input += 4 * inputfmt->channels;
         output += outputsamplesize;
@@ -331,14 +331,14 @@ pcm_write_samples_float_to_16 (const ddb_waveformat_t * restrict inputfmt, const
         for (int c = 0; c < outputfmt->channels; c++) {
             int16_t *out = (int16_t*)(output + 2 * c);
             float sample = *((float*)(input + 4 * channelmap[c]));
-            // FIXME: sse optimize
-            if (sample > 1) {
-                sample = 1;
+            int isample = ftoi (sample*0x8000);
+            if (isample > 0x7fff) {
+                isample = 0x7fff;
             }
-            if (sample < -1) {
-                sample = -1;
+            else if (isample < -0x8000) {
+                isample = -0x8000;
             }
-            *out = (int16_t)ftoi (sample*0x7fff);
+            *out = (int16_t)isample;
         }
         input += 4 * inputfmt->channels;
         output += outputsamplesize;
@@ -354,14 +354,13 @@ pcm_write_samples_float_to_24 (const ddb_waveformat_t * restrict inputfmt, const
         for (int c = 0; c < outputfmt->channels; c++) {
             char *out = output + 3 * c;
             float sample = *((float*)(input + channelmap[c] * 4));
-            // FIXME: sse optimize
-            if (sample > 1) {
-                sample = 1;
+            int32_t outsample = (int32_t)ftoi (sample * 0x800000);
+            if (outsample >= 0x7fffff) {
+                outsample = 0x7fffff;
             }
-            if (sample < -1) {
-                sample = -1;
+            else if (outsample < -0x800000) {
+                outsample = -0x800000;
             }
-            int32_t outsample = (int32_t)ftoi (sample * 0x7fffff);
             out[0] = (outsample&0x0000ff);
             out[1] = (outsample&0x00ff00)>>8;
             out[2] = (outsample&0xff0000)>>16;
@@ -378,13 +377,13 @@ pcm_write_samples_float_to_32 (const ddb_waveformat_t * restrict inputfmt, const
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < outputfmt->channels; c++) {
             float fsample = (*((float*)(input + channelmap[c] * 4)));
-            if (fsample > 0.999f) {
-                fsample = 0.999f;
+            if (fsample > (float)0x7fffffff/0x80000000) {
+                fsample = (float)0x7fffffff/0x80000000;
             }
-            else if (fsample < -0.999f) {
-                fsample = -0.999f;
+            else if (fsample < -1.f) {
+                fsample = -1.f;
             }
-            int sample = fsample * (float)0x7fffffff;
+            int32_t sample = fsample * (float)0x80000000;
             *((int32_t *)(output + 4 * c)) = sample;
         }
         input += 4 * inputfmt->channels;
