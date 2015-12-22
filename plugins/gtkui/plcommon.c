@@ -321,7 +321,7 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it,
     col_info_t *info = user_data;
 
     int art_x = x + ART_PADDING_HORZ;
-    int min_y = (pinned == 1 && gtkui_groups_pinned ? listview->grouptitle_height : y) + ART_PADDING_VERT;
+    int min_y = (pinned ? listview->grouptitle_height : y) + ART_PADDING_VERT;
     if (info->cover_size == art_width) {
         cover_draw_exact(it, art_x, min_y, next_y, art_width, art_height, cr, user_data);
     }
