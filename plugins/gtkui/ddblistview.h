@@ -236,8 +236,11 @@ int
 ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, minheight_cb_t *, int *color_override, GdkColor *color, void **user_data);
 int
 ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);
+
+// if 'gtkui.sticky_sort' is 1: sort columns by their current sort order
+// otherwise clear sort order
 void
-ddb_listview_col_sort (DdbListview *listview);
+ddb_listview_col_sort_update (DdbListview *listview);
 
 void
 ddb_listview_show_header (DdbListview *listview, int show);

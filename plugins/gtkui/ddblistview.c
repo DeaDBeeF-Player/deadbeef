@@ -2858,11 +2858,16 @@ ddb_listview_header_button_press_event           (GtkWidget       *widget,
 }
 
 void
-ddb_listview_col_sort (DdbListview *listview) {
-    for (DdbListviewColumn *c = listview->columns; c; c = c->next) {
-        if (c->sort_order) {
-            listview->binding->col_sort(c->sort_order, c->user_data);
+ddb_listview_col_sort_update (DdbListview *listview) {
+    if (deadbeef->conf_get_int ("gtkui.sticky_sort", 0)) {
+        for (DdbListviewColumn *c = listview->columns; c; c = c->next) {
+            if (c->sort_order) {
+                listview->binding->col_sort(c->sort_order, c->user_data);
+            }
         }
+    }
+    else {
+        ddb_listview_clear_sort (listview);
     }
 }
 
@@ -3087,6 +3092,7 @@ remove_column (DdbListview *listview, DdbListviewColumn **c_ptr) {
     assert (c);
     DdbListviewColumn *next = c->next;
     if (c->sort_order) {
+        // HACK: do nothing on main playlist, refresh search playlist
         listview->binding->col_sort (0, c->user_data);
     }
     set_column_width (listview, c, 0);
