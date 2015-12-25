@@ -1293,7 +1293,7 @@ on_splitter_lock_movement_toggled (GtkCheckMenuItem *checkmenuitem, gpointer    
 void
 w_splitter_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
     GtkWidget *item;
-    item = gtk_check_menu_item_new_with_mnemonic (_("Lock movement"));
+    item = gtk_check_menu_item_new_with_mnemonic (_("Lock Movement"));
     gtk_widget_show (item);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), ((w_splitter_t *)w)->locked);
     gtk_container_add (GTK_CONTAINER (menu), item);
@@ -1696,39 +1696,41 @@ on_tab_popup_menu (GtkWidget *widget, gpointer user_data)
     GtkWidget *item;
     menu = gtk_menu_new ();
 
-    item = gtk_menu_item_new_with_mnemonic (_("Add new tab"));
-    gtk_widget_show (item);
-    gtk_container_add (GTK_CONTAINER (menu), item);
-    g_signal_connect ((gpointer) item, "activate",
-            G_CALLBACK (on_add_tab_activate),
-            w);
-
-    item = gtk_menu_item_new_with_mnemonic (_("Rename tab"));
+    item = gtk_menu_item_new_with_mnemonic (_("Rename Tab"));
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) item, "activate",
             G_CALLBACK (on_rename_tab_activate),
             w);
 
-    item = gtk_menu_item_new_with_mnemonic (_("Move tab left"));
+    item = gtk_menu_item_new_with_mnemonic (_("Remove Tab"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate",
+            G_CALLBACK (on_remove_tab_activate),
+            w);
+
+    item = gtk_menu_item_new_with_mnemonic (_("Add New Tab"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate",
+            G_CALLBACK (on_add_tab_activate),
+            w);
+
+    add_menu_separator (menu);
+
+    item = gtk_menu_item_new_with_mnemonic (_("Move Tab Left"));
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) item, "activate",
             G_CALLBACK (on_move_tab_left_activate),
             w);
 
-    item = gtk_menu_item_new_with_mnemonic (_("Move tab right"));
+    item = gtk_menu_item_new_with_mnemonic (_("Move Tab Right"));
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) item, "activate",
             G_CALLBACK (on_move_tab_right_activate),
-            w);
-
-    item = gtk_menu_item_new_with_mnemonic (_("Remove tab"));
-    gtk_widget_show (item);
-    gtk_container_add (GTK_CONTAINER (menu), item);
-    g_signal_connect ((gpointer) item, "activate",
-            G_CALLBACK (on_remove_tab_activate),
             w);
 
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, w, 0, gtk_get_current_event_time());
@@ -1864,12 +1866,14 @@ on_tabs_button_press_event (GtkWidget      *notebook,
             }
         }
         else if (event->button == 3) {
-            /* update the current tab before we show the menu */
-            gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), page_num);
+            if (!design_mode) {
+                /* update the current tab before we show the menu */
+                gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), page_num);
 
-            /* show the tab menu */
-            on_tab_popup_menu (notebook, user_data);
-            return TRUE;
+                /* show the tab menu */
+                on_tab_popup_menu (notebook, user_data);
+                return TRUE;
+            }
         }
     }
     else if (event->type == GDK_2BUTTON_PRESS) {
@@ -1885,7 +1889,7 @@ on_tabs_button_press_event (GtkWidget      *notebook,
 static void
 w_tabs_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
     GtkWidget *item;
-    item = gtk_menu_item_new_with_mnemonic (_("Add new tab"));
+    item = gtk_menu_item_new_with_mnemonic (_("Add New Tab"));
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) item, "activate",
@@ -3536,12 +3540,12 @@ on_hvbox_toggle_homogeneous (GtkCheckMenuItem *checkmenuitem, gpointer user_data
 static void
 w_hvbox_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
     GtkWidget *item;
-    item = gtk_menu_item_new_with_mnemonic (_("Expand the box by 1 item"));
+    item = gtk_menu_item_new_with_mnemonic (_("Expand Box by 1 Item"));
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) item, "activate", G_CALLBACK (on_hvbox_expand), w);
 
-    item = gtk_menu_item_new_with_mnemonic (_("Shrink the box by 1 item"));
+    item = gtk_menu_item_new_with_mnemonic (_("Shrink Box by 1 Item"));
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) item, "activate", G_CALLBACK (on_hvbox_shrink), w);
@@ -3995,7 +3999,7 @@ on_button_config (GtkMenuItem *menuitem, gpointer user_data) {
 static void
 w_button_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
     GtkWidget *item;
-    item = gtk_menu_item_new_with_mnemonic (_("Configure button"));
+    item = gtk_menu_item_new_with_mnemonic (_("Configure Button"));
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) item, "activate", G_CALLBACK (on_button_config), w);
