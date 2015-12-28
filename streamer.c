@@ -1608,10 +1608,6 @@ streamer_thread (void *ctx) {
 
         if (nextsong >= 0) { // start streaming next song
             trace ("\033[0;34mnextsong=%d\033[37;0m\n", nextsong);
-            if (playing_track) {
-                trace ("sending songfinished to plugins [3]\n");
-                send_songfinished (playing_track);
-            }
             streamer_start_new_song ();
             if (nextsong_pstate == 2) {
                 nextsong_pstate = -1;
