@@ -1156,6 +1156,13 @@ typedef struct {
 
     // system directory API, returns path by id from ddb_sys_directory_t enum
     const char *(*get_system_dir) (int dir_id);
+
+    // set/get the selected playlist for plugin actions.
+    // the "set" is supposed to be set by the UI plugin,
+    // while the "get" is expected to be called by the action code.
+    // returned value is refcounted, so remember to call plt_unref.
+    void (*action_set_playlist) (ddb_playlist_t *plt);
+    ddb_playlist_t *(*action_get_playlist) (void);
 #endif
 } DB_functions_t;
 

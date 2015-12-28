@@ -394,6 +394,9 @@ static DB_functions_t deadbeef_api = {
     .playqueue_insert_at = (void (*) (int n, DB_playItem_t *it))playqueue_insert_at,
 
     .get_system_dir = plug_get_system_dir,
+
+    .action_set_playlist = action_set_playlist,
+    .action_get_playlist = action_get_playlist,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -1136,6 +1139,7 @@ plug_disconnect_all (void) {
 
 void
 plug_unload_all (void) {
+    action_set_playlist (NULL);
     trace ("plug_unload_all\n");
     plugin_t *p;
     for (p = plugins; p; p = p->next) {
@@ -1416,4 +1420,25 @@ background_job_decrement (void) {
 int
 have_background_jobs (void) {
     return num_background_jobs;
+}
+
+static ddb_playlist_t *action_playlist;
+
+void
+action_set_playlist (ddb_playlist_t *plt) {
+    if (action_playlist) {
+        plt_unref ((playlist_t *)action_playlist);
+    }
+    action_playlist = plt;
+    if (action_playlist) {
+        plt_ref ((playlist_t *)action_playlist);
+    }
+}
+
+ddb_playlist_t *
+action_get_playlist (void) {
+    if (action_playlist) {
+        plt_ref ((playlist_t *)action_playlist);
+    }
+    return action_playlist;
 }

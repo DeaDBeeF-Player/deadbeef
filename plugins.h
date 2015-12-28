@@ -148,4 +148,10 @@ background_job_decrement (void);
 int
 have_background_jobs (void);
 
+void
+action_set_playlist (ddb_playlist_t *plt);
+
+ddb_playlist_t *
+action_get_playlist (void);
+
 #endif // __PLUGINS_H
