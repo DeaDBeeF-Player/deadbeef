@@ -983,5 +983,18 @@
     XCTAssert(!strcmp (buffer, "random value"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_MultipleArtists_ReturnsArtistsSeparatedByLinebreaks {
+    pl_replace_meta (it, "artist", "Artist1\nArtist2");
+    char *bc = tf_compile("%artist%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "Artist1;Artist2"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_EmptyTitle_YieldsFilename {
+    pl_replace_meta (it, ":URI", "/home/user/filename.mp3");
+    char *bc = tf_compile("%title%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "filename"), @"The actual output is: %s", buffer);
+}
 
 @end
