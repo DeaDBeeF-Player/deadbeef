@@ -581,7 +581,9 @@ action_clear_playlist_handler (DB_plugin_action_t *act, int ctx) {
 
 int
 action_add_to_playqueue_handler (DB_plugin_action_t *act, int ctx) {
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    ddb_playlist_t *plt = deadbeef->action_get_playlist ();
+
+    DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
     while (it) {
         if (ctx == DDB_ACTION_CTX_PLAYLIST || (ctx == DDB_ACTION_CTX_SELECTION && deadbeef->pl_is_selected (it))) {
             deadbeef->pl_playqueue_push (it);
@@ -590,13 +592,19 @@ action_add_to_playqueue_handler (DB_plugin_action_t *act, int ctx) {
         deadbeef->pl_item_unref (it);
         it = next;
     }
+
     deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+
+    deadbeef->plt_unref (plt);
+
     return 0;
 }
 
 int
 action_remove_from_playqueue_handler (DB_plugin_action_t *act, int ctx) {
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    ddb_playlist_t *plt = deadbeef->action_get_playlist ();
+
+    DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
     while (it) {
         if (ctx == DDB_ACTION_CTX_PLAYLIST || (ctx == DDB_ACTION_CTX_SELECTION && deadbeef->pl_is_selected (it))) {
             deadbeef->pl_playqueue_remove (it);
@@ -605,7 +613,10 @@ action_remove_from_playqueue_handler (DB_plugin_action_t *act, int ctx) {
         deadbeef->pl_item_unref (it);
         it = next;
     }
+
     deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+
+    deadbeef->plt_unref (plt);
     return 0;
 }
 
