@@ -29,7 +29,7 @@
 struct DB_playItem_s;
 
 void
-show_track_properties_dlg (int ctx);
+show_track_properties_dlg (int ctx, ddb_playlist_t *plt);
 
 void
 trkproperties_destroy (void);

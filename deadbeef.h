@@ -1077,7 +1077,10 @@ typedef struct {
     int (*plt_get_idx) (ddb_playlist_t *plt);
 
     // save referenced playlist in config
+    // same as pl_save_current, but for index
     int (*plt_save_n) (int n);
+
+    // same as pl_save_current, but for playlist pointer
     int (*plt_save_config) (ddb_playlist_t *plt);
 
     // register file added callback
@@ -1170,11 +1173,16 @@ typedef struct {
     // system directory API, returns path by id from ddb_sys_directory_t enum
     const char *(*get_system_dir) (int dir_id);
 
-    // set/get the selected playlist for plugin actions.
-    // the "set" is supposed to be set by the UI plugin,
+    // set the selected playlist for the ongoing plugin action.
+    // the "set" function is expected to be called by the UI plugin,
     // while the "get" is expected to be called by the action code.
-    // returned value is refcounted, so remember to call plt_unref.
     void (*action_set_playlist) (ddb_playlist_t *plt);
+
+    // returns one of:
+    // selected playlist for context menu for the DDB_ACTION_CTX_PLAYLIST,
+    // or the current active playlist for any other context.
+    // returned value cannot be NULL
+    // returned value is refcounted, so remember to call plt_unref.
     ddb_playlist_t *(*action_get_playlist) (void);
 #endif
 
@@ -1231,7 +1239,7 @@ enum {
     DDB_ACTION_CTX_MAIN,
     DDB_ACTION_CTX_SELECTION,
     // NOTE: starting with API 1.8, plugins should be using the
-    // action_get_playlist function for getting the current playlist pointer.
+    // action_get_playlist function for getting the playlist pointer.
     DDB_ACTION_CTX_PLAYLIST,
     DDB_ACTION_CTX_NOWPLAYING,
     DDB_ACTION_CTX_COUNT

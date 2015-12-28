@@ -24,6 +24,7 @@
 #  include <config.h>
 #endif
 
+#include <stdlib.h>
 #include <string.h>
 #include <gtk/gtk.h>
 #include <unistd.h>
@@ -494,9 +495,15 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx) {
         }
     }
     else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
-        deadbeef->pl_clear ();
-        deadbeef->pl_save_current ();
-        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+        ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
+        ddb_playlist_t *plt = deadbeef->action_get_playlist ();
+        deadbeef->plt_clear (plt);
+        deadbeef->plt_save_config (plt);
+        if (plt == plt_curr) {
+            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+        }
+        deadbeef->plt_unref (plt);
+        deadbeef->plt_unref (plt_curr);
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
         int success = 0;
@@ -618,15 +625,26 @@ action_delete_from_disk_handler (DB_plugin_action_t *act, int ctx) {
     return 0;
 }
 
+typedef struct {
+    int ctx;
+    ddb_playlist_t *plt;
+} trkproperties_action_ctx_t;
+
 gboolean
 action_show_track_properties_handler_cb (void *data) {
-    show_track_properties_dlg ((intptr_t)data);
+    trkproperties_action_ctx_t *ctx = data;
+    show_track_properties_dlg (ctx->ctx, ctx->plt);
+    deadbeef->plt_unref (ctx->plt);
+    free (data);
     return FALSE;
 }
 
 int
 action_show_track_properties_handler (DB_plugin_action_t *act, int ctx) {
-    gdk_threads_add_idle (action_show_track_properties_handler_cb, (void *)(intptr_t)ctx);
+    trkproperties_action_ctx_t *data = calloc (1, sizeof (trkproperties_action_ctx_t));
+    data->ctx = ctx;
+    data->plt = deadbeef->action_get_playlist ();
+    gdk_threads_add_idle (action_show_track_properties_handler_cb, data);
     return 0;
 }
 

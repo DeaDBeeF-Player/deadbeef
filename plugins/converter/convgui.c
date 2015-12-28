@@ -509,7 +509,7 @@ converter_show_cb (void *data) {
     case DDB_ACTION_CTX_PLAYLIST:
         {
             // copy list
-            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            ddb_playlist_t *plt = deadbeef->action_get_playlist ();
             if (plt) {
                 conv->convert_playlist = plt;
                 conv->convert_items_count = deadbeef->plt_get_item_count (plt, PL_MAIN);

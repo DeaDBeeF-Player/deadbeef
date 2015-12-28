@@ -1439,8 +1439,10 @@ action_set_playlist (ddb_playlist_t *plt) {
 
 ddb_playlist_t *
 action_get_playlist (void) {
-    if (action_playlist) {
-        plt_ref ((playlist_t *)action_playlist);
+    if (!action_playlist) {
+        return (ddb_playlist_t *)plt_get_curr ();
     }
+
+    plt_ref ((playlist_t *)action_playlist);
     return action_playlist;
 }

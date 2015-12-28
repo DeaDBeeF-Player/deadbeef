@@ -158,7 +158,7 @@ shx_callback (Shx_action_t *action, int ctx)
         break;
     case DDB_ACTION_CTX_PLAYLIST:
         {
-            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            ddb_playlist_t *plt = deadbeef->action_get_playlist ();
             if (plt) {
                 deadbeef->pl_lock ();
                 DB_playItem_t **items;

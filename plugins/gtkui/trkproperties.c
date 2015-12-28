@@ -63,6 +63,7 @@ static int numtracks;
 static GtkWidget *progressdlg;
 static int progress_aborted;
 static int last_ctx;
+static ddb_playlist_t *last_plt;
 
 int
 build_key_list (const char ***pkeys, int props, DB_playItem_t **tracks, int numtracks) {
@@ -234,6 +235,11 @@ trkproperties_destroy (void) {
     if (trackproperties) {
         on_trackproperties_delete_event (trackproperties, NULL, NULL);
     }
+    if (last_plt) {
+        deadbeef->plt_unref (last_plt);
+        last_plt = NULL;
+    }
+    last_ctx = -1;
 }
 
 void
@@ -409,8 +415,13 @@ trkproperties_fill_metadata (void) {
 }
 
 void
-show_track_properties_dlg (int ctx) {
+show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
     last_ctx = ctx;
+    deadbeef->plt_ref (plt);
+    if (last_plt) {
+        deadbeef->plt_unref (last_plt);
+    }
+    last_plt = plt;
 
     if (tracks) {
         for (int i = 0; i < numtracks; i++) {
@@ -422,11 +433,6 @@ show_track_properties_dlg (int ctx) {
     }
 
     deadbeef->pl_lock ();
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (!plt) {
-        deadbeef->pl_unlock ();
-        return;
-    }
     int num = 0;
     if (ctx == DDB_ACTION_CTX_SELECTION) {
         num = deadbeef->plt_getselcount (plt);
@@ -439,7 +445,6 @@ show_track_properties_dlg (int ctx) {
     }
     if (num <= 0) {
         deadbeef->pl_unlock ();
-        deadbeef->plt_unref (plt);
         return;
     }
 
@@ -447,7 +452,6 @@ show_track_properties_dlg (int ctx) {
     if (!tracks) {
         fprintf (stderr, "gtkui: failed to alloc %d bytes to store selected tracks\n", (int)(num * sizeof (void *)));
         deadbeef->pl_unlock ();
-        deadbeef->plt_unref (plt);
         return;
     }
 
@@ -457,14 +461,13 @@ show_track_properties_dlg (int ctx) {
             free (tracks);
             tracks = NULL;
             deadbeef->pl_unlock ();
-            deadbeef->plt_unref (plt);
             return;
         }
         tracks[0] = it;
     }
     else {
         int n = 0;
-        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
         while (it) {
             if (ctx == DDB_ACTION_CTX_PLAYLIST || deadbeef->pl_is_selected (it)) {
                 assert (n < num);
@@ -479,8 +482,6 @@ show_track_properties_dlg (int ctx) {
     numtracks = num;
 
     deadbeef->pl_unlock ();
-    deadbeef->plt_unref (plt);
-    plt = NULL;
 
     GtkTreeView *tree;
     GtkTreeView *proptree;
@@ -581,13 +582,11 @@ static gboolean
 write_finished_cb (void *ctx) {
     gtk_widget_destroy (progressdlg);
     progressdlg = NULL;
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (plt) {
-        deadbeef->plt_modified (plt);
-        deadbeef->plt_unref (plt);
-    }
     trkproperties_modified = 0;
-    show_track_properties_dlg (last_ctx);
+    if (last_plt) {
+        deadbeef->plt_modified (last_plt);
+        show_track_properties_dlg (last_ctx, last_plt);
+    }
 
     return FALSE;
 }
