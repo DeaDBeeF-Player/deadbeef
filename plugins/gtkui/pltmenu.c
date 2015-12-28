@@ -116,7 +116,16 @@ on_actionitem_activate (GtkMenuItem     *menuitem,
         }
     }
     else {
-        action->callback2 (action, DDB_ACTION_CTX_PLAYLIST);
+        ddb_playlist_t *plt = NULL;
+        if (pltmenu_idx != -1) {
+            plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+            if (plt) {
+                deadbeef->action_set_playlist (plt);
+                deadbeef->plt_unref (plt);
+                action->callback2 (action, DDB_ACTION_CTX_PLAYLIST);
+                deadbeef->action_set_playlist (NULL);
+            }
+        }
     }
 }
 
