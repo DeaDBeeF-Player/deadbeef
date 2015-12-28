@@ -1230,6 +1230,8 @@ enum {
 enum {
     DDB_ACTION_CTX_MAIN,
     DDB_ACTION_CTX_SELECTION,
+    // NOTE: starting with API 1.8, plugins should be using the
+    // action_get_playlist function for getting the current playlist pointer.
     DDB_ACTION_CTX_PLAYLIST,
     DDB_ACTION_CTX_NOWPLAYING,
     DDB_ACTION_CTX_COUNT
@@ -1247,7 +1249,8 @@ typedef struct DB_plugin_action_s {
     const char *title;
     const char *name;
     uint32_t flags;
-    // the use of "callback" is deprecated, only use it if the code must be compatible with API 1.4
+    // the use of "callback" is deprecated,
+    // only use it if the code must be compatible with API 1.4
     // otherwise switch to callback2
     DB_plugin_action_callback_t callback;
     struct DB_plugin_action_s *next;
