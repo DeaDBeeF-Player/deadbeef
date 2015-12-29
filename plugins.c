@@ -398,7 +398,7 @@ static DB_functions_t deadbeef_api = {
     .action_set_playlist = action_set_playlist,
     .action_get_playlist = action_get_playlist,
 
-    .plt_search_process2 = plt_search_process2,
+    .plt_search_process2 = (void (*) (ddb_playlist_t *plt, const char *text, int select_results))plt_search_process2,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
