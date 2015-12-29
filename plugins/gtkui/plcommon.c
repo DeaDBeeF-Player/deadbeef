@@ -572,7 +572,7 @@ static void
 properties_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_show_track_properties_handler_cb ((void *)(intptr_t)DDB_ACTION_CTX_SELECTION);
+    action_show_track_properties_handler (NULL, DDB_ACTION_CTX_SELECTION);
 }
 
 void
