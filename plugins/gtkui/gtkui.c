@@ -1100,6 +1100,9 @@ gtkui_thread (void *ctx) {
 
     init_widget_layout ();
 
+    for (int i = 0; i < window_init_hooks_count; i++) {
+        window_init_hooks[i].callback (window_init_hooks[i].userdata);
+    }
     gtk_widget_show (mainwin);
 
     gtkui_set_titlebar (NULL);
@@ -1118,9 +1121,6 @@ gtkui_thread (void *ctx) {
     gtkui_is_retina = is_retina (mainwin);
 #endif
 
-    for (int i = 0; i < window_init_hooks_count; i++) {
-        window_init_hooks[i].callback (window_init_hooks[i].userdata);
-    }
     gtk_main ();
 
     deadbeef->unlisten_file_added (fileadded_listener_id);
