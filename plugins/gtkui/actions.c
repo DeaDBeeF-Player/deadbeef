@@ -165,7 +165,7 @@ add_mainmenu_actions (void)
                 snprintf (menuname, sizeof (menuname), "%s_menu", ptr);
 
                 previous = current;
-                current = lookup_widget (mainwin, menuname);
+                current = (GtkWidget*) g_object_get_data (G_OBJECT (mainwin), menuname);
                 if (!current)
                 {
                     GtkWidget *newitem;
