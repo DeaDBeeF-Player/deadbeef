@@ -162,10 +162,10 @@ add_tab_actions (GtkWidget *menu) {
     int item_count = 0;
     int playqueue_test = 0;
 
-    /* FIXME: since actions don't apply to the clicked playlist
-    but to the currently active playlist we have to use the current
-    one for now to determine if menu items should be sensitive or not */
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    ddb_playlist_t *plt = NULL;
+    if (pltmenu_idx != -1) {
+        plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+    }
     if (plt) {
         item_count = deadbeef->plt_get_item_count (plt, PL_MAIN);
 
