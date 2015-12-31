@@ -917,6 +917,8 @@ disk68_t * file68_load_uri(const char * fname)
   vfs68_t * is;
   rsc68_info_t  info;
 
+  memset (&info, 0, sizeof (info));
+
   TRACE68(file68_cat,"file68: load -- %s\n", strnull(fname));
 
   is = uri_or_file_create(fname, 1, &info);
