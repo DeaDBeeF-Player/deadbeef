@@ -94,11 +94,11 @@ in_sc68_la_SOURCES=in_sc68.c\
 	$(sc68path)/file68/sc68/file68_vfs.h\
 	$(sc68path)/file68/sc68/file68_uri.h\
 	$(sc68path)/file68/sc68/file68_vfs_z.h\
-	$(sc68path)/dial68/tracksel.c\
-	$(sc68path)/dial68/dial68.h\
-	$(sc68path)/dial68/dial68.c\
-	$(sc68path)/dial68/config.c\
-	$(sc68path)/dial68/fileinfo.c\
+	$(sc68path)/libsc68/dial68/dial68.h\
+	$(sc68path)/libsc68/dial68/dial68.c\
+	$(sc68path)/libsc68/dial68/dial_conf.c\
+	$(sc68path)/libsc68/dial68/dial_finf.c\
+	$(sc68path)/libsc68/dial68/dial_tsel.c\
 	$(sc68path)/unice68/unice68.h\
 	$(sc68path)/unice68/unice68_unpack.c\
 	$(sc68path)/unice68/unice68_pack.c\
