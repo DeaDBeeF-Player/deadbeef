@@ -27,11 +27,15 @@
 #endif
 
 #include "mfpemul.h"
-#include "emu68/assert68.h"
 #include <sc68/file68_msg.h>
+#include <assert.h>
 
-#define cpp(V)      (V*prediv_width[(int)ptimer->tcr])
-#define bogotohz(V) ((8000000u*192u)/(V))
+#define CPU    8010612u                 /* or 8000000u or 80006400u ? */
+#define BGM    MFP_BOGO_MUL
+#define BGD    MFP_BOGO_DIV
+
+#define cpp(V)      ((V)*prediv_width[(int)ptimer->tcr])
+#define bogotohz(V) ( ( (CPU)*BGM ) / (uint68_t)(V) )
 #define timerfrq(V) bogotohz(cpp(V))
 
 #define MYHD "mfp    : "
@@ -52,12 +56,12 @@ int mfp_cat = msg68_DEFAULT;
 
 /* About cycles.
  *
- *   The MFP uses its own crystal clock. Its frequency is not a
- *   multiple of the 68K one (8Mhz).
+ *   The MFP timers use a different clock. Its frequency is not a
+ *   multiple of the 68K one (~8Mhz).
  *   In order to convert 68K cycles to MFP ones the emulator use an
  *   internal cycle unit : a "BOGO" cycle.
- *   - 1 "BOGO" cycle => 192 "8mhz 68K" cycles
- *   - 1 "BOGO" cycle => 625 "mfp" cycle
+ *   - 1 "BOGO" cycle => BGM (256) "8mhz 68K" cycles
+ *   - 1 "BOGO" cycle => BGD (834) "mfp" cycle
  */
 
 static const mfp_timer_def_t timer_def[4] =
@@ -71,8 +75,8 @@ static const mfp_timer_def_t timer_def[4] =
 
 /* MFP prediviser value in ``bogo-cycle''. */
 static const bogoc68_t prediv_width[8] = {
-  0*625,   4*625,  10*625,  16*625,
-  50*625,  64*625, 100*625, 200*625
+   0*BGD,   4*BGD,  10*BGD,  16*BGD,
+  50*BGD,  64*BGD, 100*BGD, 200*BGD
 };
 
 /* Which timer will first interrupt ?
@@ -318,10 +322,10 @@ void mfp_put_tdr(mfp_t * const mfp, int timer, int68_t v, const bogoc68_t bogoc)
 /* Write Timer Control Register
 
    $$$ From Motorola Datasheet: when resetting ta0/tb0 (set bit 4) of
-   TDCRA/B the other bits in TCR must be written with their
-   previous value to avoid altering the operating mode; this
-   verify the fact than writting 2 times the same value in the
-   predivisor does not affect its count.
+   TDCRA/B the other bits in TCR must be written with their previous
+   value to avoid altering the operating mode; this verify the fact
+   than writting 2 times the same value in the predivisor does not
+   affect its count.
 
 */
 static void mfp_put_tcr_bogo(mfp_timer_t * const ptimer,
@@ -332,7 +336,7 @@ static void mfp_put_tcr_bogo(mfp_timer_t * const ptimer,
     if (!v) {
       stop_timer(ptimer,bogoc);
     } else if (!ptimer->tcr) {
-      resume_timer(ptimer, v, bogoc); /* hz=8000000*192/cpp */
+      resume_timer(ptimer, v, bogoc);
     } else {
       reconf_timer(ptimer, v, bogoc);
     }

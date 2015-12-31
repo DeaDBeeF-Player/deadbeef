@@ -44,8 +44,11 @@ int dial68(void * data, sc68_dial_f cntl)
 /* libc */
 #include <string.h>
 
+/* defined in dial_conf.c */
 SC68_EXTERN int dial68_new_conf(void ** pdata, sc68_dial_f * pcntl);
+/* defined in dial_finf.c */
 SC68_EXTERN int dial68_new_finf(void ** pdata, sc68_dial_f * pcntl);
+/* defined in dial_tsel.c */
 SC68_EXTERN int dial68_new_tsel(void ** pdata, sc68_dial_f * pcntl);
 
 int dial68(void * data, sc68_dial_f cntl)
@@ -54,7 +57,7 @@ int dial68(void * data, sc68_dial_f cntl)
   sc68_dialval_t v;
 
   if (!cntl) {
-    TRACE68(dial_cat,P "%s -- null cntl() function\n", __FUNCTION__);
+    TRACE68(dial_cat,P "%s -- no callback function\n", __FUNCTION__);
     goto exit;
   }
 
@@ -65,18 +68,21 @@ int dial68(void * data, sc68_dial_f cntl)
       res = dial68_new_finf(&data,&cntl);
     else if (!strcmp(v.s,"trackselect"))
       res = dial68_new_tsel(&data,&cntl);
-    else {
-      TRACE68(dial_cat,
-              P "unknow dialog \"%s\"\n", v.s);
+    else
+      TRACE68(dial_cat, P "unknow dialog -- \"%s\"\n", v.s);
+    if (!res) {
+      switch (cntl(data,SC68_DIAL_NEW,SC68_DIAL_CALL,&v)) {
+      case 1:  res = 0;   break;
+      case 0:  res = v.i; break;
+      default: res = -1;  break;
+      }
+      if (!res)
+        res = dial68_frontend(data,cntl);
     }
-    if (!res && !cntl(data,SC68_DIAL_NEW,SC68_DIAL_CALL,&v))
-      res = v.i;
-    if (!res)
-      res = dial68_frontend(data,cntl);
   }
 
 exit:
-  TRACE68(dial_cat,P "%s => %d\n",__FUNCTION__,res);
+  TRACE68(dial_cat,P "%s -- *%d*\n",__FUNCTION__,res);
   return res;
 }
 

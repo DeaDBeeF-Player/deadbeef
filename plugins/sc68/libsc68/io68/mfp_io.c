@@ -60,6 +60,13 @@ static const char * const regnames[] = {
   "UDR",  /* 2F - UDR,USART (DataRegister)               */
 };
 
+static const char * chnnames[16] = {
+  "GPIP#0", "GPIP#1", "GPIP#2", "GPIP#3",
+  "TIMER-D", "TIMER-C", "GPIP#6", "GPIP#5",
+  "TIMER-B", "XMIT-ERR", "XMIT-EMPTY","RCV-ERR",
+  "RCV-FULL", "TIMER-A", "GPIP#6", "GPIP#7"
+};
+
 #define MYHD "mfp    : "
 
 static const char * regname(int reg)
@@ -81,10 +88,13 @@ extern int mfp_cat;
 # define REPORTW(N,V)                                   \
   TRACE68(mfp_cat, MYHD "W [%02x] <  $%02x (%s)\n",     \
           N, (unsigned)(V), regname(N))
+# define MAYREPORT(N,V) if (mfp->map[N] != (V)) REPORTW(N,V)
+
 #else
-# define REPORTR(N)
-# define REPORTA(N,V)
-# define REPORTW(N,V)
+# define REPORTR(N)    for(;0;)
+# define REPORTA(N,V)  for(;0;)
+# define REPORTW(N,V)  for(;0;)
+# define MAYREPORT(N,V) for(;0;)
 #endif
 
 typedef struct {
@@ -93,8 +103,8 @@ typedef struct {
 } mfp_io68_t;
 
 /* $$$ Currently hardcoded for 8Mhz cpu */
-#define cpu2bogo(mfpio,cycle) ((bogoc68_t)((cycle)*192u))
-#define bogo2cpu(mfpio,bogoc) ((cycle68_t)((bogoc)/* +191u */)/192u)
+#define cpu2bogo(mfpio,cycle) ((bogoc68_t)((cycle) * MFP_BOGO_MUL))
+#define bogo2cpu(mfpio,bogoc) ((cycle68_t)((bogoc) / MFP_BOGO_MUL))
 
 /* 00/01 GPIP   General Purpose I/O */
 static int68_t mfpr_01(mfp_t * const mfp, const bogoc68_t bogoc) {

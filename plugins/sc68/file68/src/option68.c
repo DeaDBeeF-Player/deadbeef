@@ -472,7 +472,7 @@ const char * option68_getenv(option68_t * opt, int set)
   return val;
 }
 
-void option68_help(void * cookie, option68_help_t fct)
+void option68_help(void * cookie, option68_help_t fct, int flags)
 {
   option68_t * opt;
   char option[64], envvar[64], values[256];
@@ -485,6 +485,10 @@ void option68_help(void * cookie, option68_help_t fct)
 
   FOREACH_OPT(opt) {
     int l, j;
+
+    /* Ignore hidden options unless specified by bit#0 of flags */
+    if (opt->hide && !(flags&1))
+      continue;
 
     /* Build envvar name */
     /* snprintf(option, omax,"%s%s", */

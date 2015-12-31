@@ -183,7 +183,6 @@ static int save_config_entry(vfs68_t * os, const option68_t * opt)
 
 int config68_save(const char * confname)
 {
-    return 0;
   int err = 0;
   char tmp[128];
   option68_t * opt;

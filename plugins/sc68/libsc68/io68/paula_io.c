@@ -70,7 +70,7 @@ static int68_t _paula_readB(paula_io68_t * const paulaio,
 
   switch(i) {
   case PAULA_VHPOSR:
-    /* This is an ugly HAXXX: some player use this register in order
+    /* This is an ugly HAXXX: some players use this register in order
      * to wait for an actual DMA access to occur. Here the register is
      * just incremented each time it is read so that these players do
      * not loop forever.

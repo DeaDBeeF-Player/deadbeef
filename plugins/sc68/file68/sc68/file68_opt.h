@@ -91,7 +91,7 @@ typedef int (*option68_cb_t)(const option68_t *, value68_t *);
  * Macro to declare a generic option.
  */
 #define OPT68(PREFIX,NAME,CAT,DESC,SET,NSET,MIN,MAX,TYPE,SAVE,ONCHG)    \
-  { PREFIX,NAME,CAT,DESC,ONCHG,MIN,MAX,SET,NSET,TYPE,SAVE,opt68_UDF,{0} }
+  { PREFIX,NAME,CAT,DESC,ONCHG,MIN,MAX,SET,NSET,TYPE,SAVE,0,opt68_UDF,{0} }
 
 /**
  * Macro to declare a boolean option
@@ -154,6 +154,7 @@ struct option68_s {
   unsigned int    sets : 5;    /**< Size of set                     */
   unsigned int    type : 2;    /**< @see option68_type_e.           */
   unsigned int    save : 1;    /**< Save in config.                 */
+  unsigned int    hide : 1;    /**< Hide from user.                 */
   unsigned int    org  : 3;    /**< @see option68_org_e.            */
   value68_t       val;         /**< Option value.                   */
 
@@ -167,9 +168,12 @@ FILE68_API
  * Print defined options.
  *
  * @param  cookie  User data used as 1st argument for fct
- * @param  fct     Fonction call for each possible option
+ * @param  fct     Function call for each selected option
+ * @param flags    filter selection. At the moment only bit#0 is
+ *                 used to unhide options. Other bits are reserved
+ *                 for future use and must be clear.
  */
-void option68_help(void * cookie, option68_help_t fct);
+void option68_help(void * cookie, option68_help_t fct, int flags);
 
 
 FILE68_API

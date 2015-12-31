@@ -50,7 +50,7 @@
  *
  *   Atari-ST & Amiga IO areas :
  *   - @p  FF8800-FF88FF : YM2149 (ST)
- *   - @p  FF8900-FF89FF : Micro-Wire (STE)
+ *   - @p  FF8900-FF89FF : STE DMA and LMC1992
  *   - @p  FF8200-FF82FF : Shifter (ST)
  *   - @p  FFFA00-FFFAFF : MFP (ST)
  *   - @p  DFF000-DFF0DF : Paula (AMIGA)

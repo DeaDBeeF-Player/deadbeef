@@ -43,6 +43,7 @@
 #include <sc68/file68_opt.h>
 
 extern int ym_cat;                      /* defined in ymemul.c */
+extern int ym_dac_out;                  /* defined in ymemul.c */
 extern const u16 * ym_envelops[16];     /* defined in ym_envel.c */
 
 #ifndef INTMSB
@@ -74,12 +75,14 @@ static void filter_1pole(ym_t * const);
 static void filter_2pole(ym_t * const);
 static void filter_mixed(ym_t * const);
 static void filter_boxcar(ym_t * const);
+static void filter_dacout(ym_t * const);
 
 static const char f_2poles[] = "2-poles";
 static const char f_mixed[]  = "mixed";
 static const char f_1pole[]  = "1-pole";
 static const char f_boxcar[] = "boxcar";
 static const char f_none[]   = "none";
+static const char f_dacout[] = "dacout";
 
 static struct {
   const char * name;
@@ -90,9 +93,12 @@ static struct {
   { f_1pole,  filter_1pole  },
   { f_boxcar, filter_boxcar },
   { f_none,   filter_none   },
+  { f_dacout, filter_dacout },
 };
 
-static const char * f_names[] = { f_2poles,f_mixed,f_1pole,f_boxcar,f_none };
+static const char * f_names[] = {
+  f_2poles,f_mixed,f_1pole,f_boxcar,f_none,f_dacout
+};
 static const int n_filters = sizeof(filters)/sizeof(*filters);
 static int default_filter = 0;
 
@@ -241,7 +247,6 @@ static int generator(ym_t  * const ym, int ymcycles)
     sq &= (-(PULS.noise_bit&1) | nmsk);           /* Apply noise. */
     sq &= (waveform[PULS.envel_idx]&emsk) | vols; /* Apply volume. */
     sq &= ym->voice_mute;                          /* Apply mute. */
-    sq = (int) ym->ymout5[sq];
     *ym->outptr++ = sq;
 
   } while (--ymcycles);
@@ -326,7 +331,7 @@ static void simulation(ym_t * const ym, cycle68_t ymcycle)
 /* Butterworth high-pass                              */
 /* ---------------------                              */
 /*                                                    */
-/*   c  = tan(M_PI * cutoff / rate                    */
+/*   c  = tan(pi * cutoff / rate)                     */
 /*   a0 = 1 / (1 + sqrt(2) * c + c^2)                 */
 /*   a1 = -2 * a0                                     */
 /*   a2 = a0                                          */
@@ -339,6 +344,13 @@ static void simulation(ym_t * const ym, cycle68_t ymcycle)
 #define REVOL(V) ((V) >> 1)
 #define CLIP3(V,A,B) ( V < A ? A : ( V > B ? B : V ) )
 #define CLIP(V) CLIP3(V,-32768,32767)
+#define YMOUT(X) ymout(ym,X)
+
+static inline s16 ymout(const ym_t * const ym, const int v)
+{
+  assert (v >= 0 && v < (1<<15) );
+  return ym->ymout5[v];
+}
 
 static inline int clip(int o)
 {
@@ -368,7 +380,6 @@ static inline int clip(int o)
 }
 
 /* Resample ``n'' input samples from ``irate'' to ``orate''
- * With volume adjustement [0..64]
  * @warning irate <= 262143 or 32bit overflow
  */
 static s32 * resampling(s32 * dst, const int n,
@@ -412,10 +423,21 @@ static s32 * resampling(s32 * dst, const int n,
   return dst;
 }
 
+
+
+static void filter_dacout(ym_t * const ym)
+{
+  /* nothing to do ! */
+}
+
 static void filter_none(ym_t * const ym)
 {
   const int n = (ym->outptr - ym->outbuf);
   if (n > 0) {
+    int i;
+    /* DAC in -> out */
+    for (i=0; i<n; ++i)
+      ym->outbuf[i] = YMOUT(ym->outbuf[i]);
     ym->outptr =
       resampling(ym->outbuf, n, ym->clock>>3, ym->hz);
   }
@@ -426,11 +448,12 @@ static void filter_boxcar2(ym_t * const ym)
   const int n = (ym->outptr - ym->outbuf) >> 1;
 
   if (n > 0) {
+    /* DAC out 2 by 2 */
     int m = n;
     s32 * src = ym->outbuf, * dst = ym->outbuf;
 
     do {
-      *dst++ = ( src[0] + src[1] ) >> 1;
+      *dst++ = ( YMOUT(src[0]) + YMOUT(src[1]) ) >> 1;
       src += 2;
     } while (--m);
 
@@ -448,7 +471,8 @@ static void filter_boxcar4(ym_t * const ym)
     s32 * src = ym->outbuf, * dst = ym->outbuf;
 
     do {
-      *dst++ = ( src[0] + src[1] + src[2] + src[3] ) >> 2;
+      *dst++ = ( YMOUT(src[0]) + YMOUT(src[1]) +
+                 YMOUT(src[2]) + YMOUT(src[3]) ) >> 2;
       src += 4;
     } while (--m);
 
@@ -490,7 +514,8 @@ static void filter_mixed(ym_t * const ym)
       /* 4-tap boxcar filter; lower sampling rate from 250Khz to */
       /* 62.5Khz; emulates half level buzz sounds.               */
       /***********************************************************/
-      i0  = ( src[0] + src[1] + src[2] + src[3] ) >> 2;
+      i0  = ( YMOUT(src[0]) + YMOUT(src[1])
+              + YMOUT(src[2]) + YMOUT(src[3]) ) >> 2;
       src += 4;
 
       /*****************************************/
@@ -530,7 +555,7 @@ static void filter_mixed(ym_t * const ym)
     PULS.lopass_out1 = l_o1;
 
     ym->outptr =
-      resampling(ym->outbuf, n, /* 64, */ ym->clock>>(3+2), ym->hz);
+      resampling(ym->outbuf, n, ym->clock>>(3+2), ym->hz);
   }
 }
 
@@ -549,7 +574,7 @@ static void filter_1pole(ym_t * const ym)
     do {
       int68_t i0,o0;
 
-      i0  = *src++;
+      i0  = YMOUT(*src++);
 
       /*****************************************/
       /* Recursive single pole low-pass filter */
@@ -584,7 +609,7 @@ static void filter_1pole(ym_t * const ym)
     PULS.lopass_out1 = l_o1;
 
     ym->outptr =
-      resampling(ym->outbuf, n, /* 64, */ ym->clock>>(3+0), ym->hz);
+      resampling(ym->outbuf, n, ym->clock>>(3+0), ym->hz);
   }
 }
 
@@ -619,7 +644,7 @@ static void filter_2pole(ym_t * const ym)
     do {
       int68_t i0,o0;
 
-      i0  = *src++;
+      i0  = YMOUT(*src++);
 
       /******************************************/
       /* Recursive single pole high-pass filter */
@@ -656,7 +681,7 @@ static void filter_2pole(ym_t * const ym)
     PULS.hipass_out1 = h_o1;
 
     ym->outptr =
-      resampling(ym->outbuf, n, /* 64, */ ym->clock>>3, ym->hz);
+      resampling(ym->outbuf, n, ym->clock>>3, ym->hz);
   }
 }
 
@@ -726,9 +751,10 @@ static option68_t opts[] = {
              "set ym-2149 filter (pulse only)",
              f_names,sizeof(f_names)/sizeof(*f_names),1,onchange_filter)
 };
+
 #undef prefix
 
-int ym_puls_options(int argc, char ** argv)
+void ym_puls_add_options(void)
 {
   const int n_opts = sizeof(opts) / sizeof(*opts);
 
@@ -737,9 +763,4 @@ int ym_puls_options(int argc, char ** argv)
 
   /* Default option values */
   option68_iset(opts+0, default_filter, opt68_NOTSET, opt68_CFG);
-
-  /* Parse options */
-  argc = option68_parse(argc,argv);
-
-  return argc;
 }

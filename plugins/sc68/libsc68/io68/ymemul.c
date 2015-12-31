@@ -40,8 +40,10 @@
 # define DEBUG_YM_O 0
 #endif
 #define YMHD "ym-2149: "
-int ym_cat = msg68_DEFAULT;
-int ym_default_chans = 7;
+int ym_cat = msg68_DEFAULT;            /* For debug message */
+int ym_default_chans = 7;              /* Active channels */
+int ym_output_level = 0xCAFE;          /* PCM scaling */
+int ym_cur_volmodel = YM_VOL_QUERY;    /* Invalid value */
 
 #include "ym_linear_table.c"
 #include "ym_atarist_table.c"
@@ -109,7 +111,6 @@ int ym_reset(ym_t * const ym, const cycle68_t ymcycle)
 static ym_parms_t default_parms;
 
 /* Max output level for volume tables. */
-static const int output_level = 0xCAFE;
 
 
 static const char f_pulse[]  = "pulse";
@@ -171,6 +172,15 @@ static option68_t opts[] = {
 static const char * ym_engine_name(int emul);
 static const char * ym_volmodel_name(int model);
 
+/* Force output level in valid range */
+static void check_output_level(void)
+{
+  if (ym_output_level < 0)
+    ym_output_level = 0;
+  else if (ym_output_level >= 0x10000)
+    ym_output_level = 0xFFFF;
+}
+
 
 int ym_init(int * argc, char ** argv)
 {
@@ -193,22 +203,32 @@ int ym_init(int * argc, char ** argv)
                 opt68_NOTSET, opt68_CFG);
   option68_iset(opts+2, ym_default_chans, opt68_NOTSET, opt68_CFG);
 
-  /* Parse options */
+  /* Add ym-puls options */
+  ym_puls_add_options();
+
+  /* Add ym-dump options */
+  ym_dump_add_options();
+
+  /* Add ym-blep options */
+  ym_blep_add_options();
+
+  /* Parse options. */
   *argc = option68_parse(*argc,argv);
+
+  check_output_level();
 
   /* Set volume table (unique for all instance) */
   switch (default_parms.volmodel) {
   case YM_VOL_LINEAR:
-    ym_create_5bit_linear_table(ymout5, output_level);
+    ym_create_5bit_linear_table(ymout5, ym_output_level);
+    ym_cur_volmodel = YM_VOL_LINEAR;
     break;
   case YM_VOL_DEFAULT:
   case YM_VOL_ATARIST:
   default:
-    ym_create_5bit_atarist_table(ymout5, output_level);
+    ym_create_5bit_atarist_table(ymout5, ym_output_level);
+    ym_cur_volmodel = YM_VOL_ATARIST;
   }
-
-  /* Process ym-puls options */
-  *argc = ym_puls_options(*argc, argv);
 
   return 0;
 }
@@ -277,7 +297,7 @@ void ym_adjust_cycle(ym_t * const ym, const cycle68_t ymcycles)
 {
   if (ym && ymcycles) {
     ym_event_t * event;
-    
+
     /* Should not be run before events have been flushed or
      * processed. It's not really an error, but with the current
      * implementation it should not be happening. */
@@ -311,7 +331,6 @@ int ym_active_channels(ym_t * const ym, const int clr, const int set)
   }
   return v;
 }
-
 
 /* ,-----------------------------------------------------------------.
  * |                        Engine selection                         |
@@ -410,7 +429,8 @@ const char * ym_volmodel_name(int model)
 
 int ym_volume_model(ym_t * const ym, int model)
 {
-  /* Set volume table (unique for all instance) */
+  /* Set volume table (currently unique for all instances) */
+
   switch (model) {
 
   case YM_VOL_QUERY:
@@ -422,19 +442,19 @@ int ym_volume_model(ym_t * const ym, int model)
     model = default_parms.volmodel;
   case YM_VOL_LINEAR:
   case YM_VOL_ATARIST:
-    if (ym) {
-      model = ym->volmodel;
-    } else {
-      ym->volmodel = model;
-      assert(model == YM_VOL_LINEAR || model == YM_VOL_ATARIST);
-      if ( model == YM_VOL_LINEAR ) {
-        ym_create_5bit_linear_table(ymout5, output_level);
-      } else {
-        ym_create_5bit_atarist_table(ymout5, output_level);
-      }
+    assert(model == YM_VOL_LINEAR || model == YM_VOL_ATARIST);
+    if (ym)
+      ym->volmodel = model;             /* does nothing ATM */
+    if (model != ym_cur_volmodel) {
+      ym_cur_volmodel = model;
+      check_output_level();
+      if ( model == YM_VOL_LINEAR )
+        ym_create_5bit_linear_table(ymout5, ym_output_level);
+      else
+        ym_create_5bit_atarist_table(ymout5, ym_output_level);
       TRACE68(ym_cat,
-              YMHD "default volume model -- *%s*\n",
-              ym_volmodel_name(model));
+              YMHD "set volume table -- *%s $%04x*\n",
+              ym_volmodel_name(model), ym_output_level);
     }
     break;
   }

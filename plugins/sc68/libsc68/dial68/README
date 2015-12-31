@@ -1,0 +1,33 @@
+                  sc68 - system independent dialogs
+                                   
+                   It is part of the sc68 project.
+
+               (C) COPYRIGHT 1998-2015 Benjamin Gerard
+
+
+*Synopsis*                                   
+
+  A system independent dialog handler bound to a system dependent
+  front-end. Used by many sc68 application and plugins for opening
+  dialogs like configuration or file information.
+
+  Currently the only available front-end is for Windows system.
+
+
+*Files*
+
+  dial68.c ........ system independent dialog creation.
+  dial68.h ........ system independent dialog definitions.
+  dial_finf.c ..... system independent file info dialog.
+  dial_tsel.c ..... system independent track selector dialog.
+  dial_conf.c ..... system independent configuration dialog.
+  winui/ .......... directory for the native Windows dialog front-end.
+
+
+*Links*
+
+  sc68 website
+       <http://sc68.atari.org>
+
+  sc68 development project
+       <http://sourceforge.net/projects/sc68>

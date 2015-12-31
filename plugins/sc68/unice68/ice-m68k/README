@@ -1,0 +1,19 @@
+The 3 files in this directory are the original ICE sources slightly
+modifed.
+
+* ice_unpa.s and ice_unp2.s
+
+  are 2 versions of the ice depacker routine but I have no idea why
+  there is 2 of them. Back in tine I always used the first
+  version. That is also the one that was used for unice68 depacker.
+
+* ice-pack-235.s
+
+   is the packer routine stripped from everything else. Made PIC and
+   reentrant for the occasion and with an entry point (+2) that should
+   be compatible with the m68k ABI (so you can call it in "C"). I did
+   not really test that part though.
+
+
+--
+GB

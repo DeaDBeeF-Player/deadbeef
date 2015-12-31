@@ -28,10 +28,10 @@
 #endif
 
 /* libc */
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <assert.h>
 
 /* sc68 */
 #include "sc68/sc68.h"
@@ -43,12 +43,12 @@ static const int magic = ('T'<<24)|('S'<<16)|('E'<<8)|'L';
 
 struct dial_s {
   dial68_t     dial;                    /* base dialog */
-  sc68_t      *sc68;                    /*  */
-  sc68_disk_t  disk;                    /*  */
+  sc68_t      *sc68;                    /* result of "sc68" call */
+  sc68_disk_t  disk;                    /* result of "disk" call */
   int          track;                   /* 0:all >0 track# */
   int          asid;                    /* 0:off 1:on 2:force */
-  sc68_minfo_t info;                    /*  */
-  char         tstr[128];               /*  */
+  sc68_minfo_t info;                    /* store current track info */
+  char         tstr[128];               /* used as temporary string */
 };
 typedef struct dial_s dial_t;
 
@@ -58,12 +58,17 @@ static inline int ismagic(dial_t * dial)
     dial &&
     dial->dial.dial == magic &&
     dial->dial.size == sizeof(*dial) &&
-    dial->dial.cntl
+    dial->dial.cntl /* && dial->dial.data */
     ;
 }
 
 static inline void del_dial(dial_t * dial)
 {
+  assert(dial);
+  assert(!dial->dial.data);
+  assert(!dial->dial.cntl);
+  assert(!dial->dial.size);
+  assert(dial->dial.dial == ~magic);
   free(dial);
 }
 
@@ -85,6 +90,8 @@ int tsel(void * data, const char * key, int op, sc68_dialval_t *val)
 
   /* Kill special case. */
   if (op == SC68_DIAL_CALL && keyis(SC68_DIAL_KILL)) {
+    dial->dial.cntl = 0; dial->dial.data = 0; dial->dial.size = 0;
+    dial->dial.dial = ~dial->dial.dial;
     del_dial(dial);
     res = 0;
   }
@@ -165,26 +172,34 @@ int tsel(void * data, const char * key, int op, sc68_dialval_t *val)
     switch (op) {
     case SC68_DIAL_CNT:
       val->i = max;
-      TRACE68(dial_cat,P "asid entries = %d\n",max);
       assert(!res);
       break;
     case SC68_DIAL_GETI:
+      assert (dial->asid >= 0 && dial->asid < max);
       val->i = dial->asid;
       assert(!res);
       break;
     case SC68_DIAL_SETI:
-      if (val->i < 0 || val->i >= max)
-        val->i = 0;
-      dial->asid = val->i;
-      assert(!res);
+      assert (val->i >= 0 && val->i < max);
+      if (val->i >= 0 && val->i < max) {
+        dial->asid = val->i;
+        assert(!res);
+      } else
+        res = -1;
       break;
 
     case SC68_DIAL_ENUM:
-      if (val->i >= 0 && val->i < max) {
+      if (val->i == -1) {
+        assert (dial->asid >= 0 && dial->asid < max);
+        val->s = asid[dial->asid];
+        assert(!res);
+      } else if (val->i >= 0 && val->i < max) {
         val->s = asid[val->i];
         assert(!res);
-        break;
-      }
+      } else
+        res = -1;
+      break;
+
     default:
       res = -1;
     }

@@ -19,11 +19,69 @@
  * @ingroup   lib_io68
  * @brief     STE (MicroWire/LMC/DMA) emulator.
  *
+ * Hardware I/O registers
+ *
+ *  - $FF8900 (W) : DMA sound control register
+ *  - $FF8903 (B) : Frame Start Hi
+ *  - $FF8905 (B) : Frame Start Mi
+ *  - $FF8907 (B) : Frame Start Lo
+ *  - $FF8909 (B) : Frame Count Hi
+ *  - $FF890B (B) : Frame Count Mi
+ *  - $FF890D (B) : Frame Count Lo
+ *  - $FF890F (B) : Frame End Hi
+ *  - $FF8911 (B) : Frame End Mi
+ *  - $FF8913 (B) : Frame End Lo
+ *  - $FF8920 (W) : Sound Mode Control (frequency, mono/stereo)
+ *  - $FF8922 (B) : Microwire Data Register
+ *  - $FF8924 (B) : Microwire Mask Register
+ *
+ *
+ * Microwire and LMC 1992 commands
+ *
+ *  Commands format is XX YYY ZZZZZZ.
+ *
+ *  - XX is the chipset address (only 10 is the only one valid).
+ *  - YYY is the command number/identifier.
+ *  - ZZZZZZ is the command data/parameter.
+ *
+ *  Commands are
+ *
+ *  - 000 ....DD Mixer
+ *          - 00 : DMA sound only
+ *          - 01 : DMA sound + input 1 YM (FR) + DMA (-12dB)
+ *          - 10 : DMA sound + input 2 DMA sound only (LPF)
+ *          - 11 : DMA sound + input 3 (N/C) -> DMA sound only
+ *
+ *  - 001 XXD DDD Bass (2dB step)
+ *        - 0 000 : -12 dB
+ *        - 0 110 :   0 dB
+ *        - 1 100 : +12 dB
+ *
+ *  - 010 XXD DDD Treble (2dB step)
+ *        - 0 000 : -12 dB
+ *        - 0 110 :   0 dB
+ *        - 1 100 : +12 dB
+ *
+ *  - 011 DDD DDD Master volume (2dB step)
+ *      - 000 000 : -80 dB
+ *      - 010 100 : -40 dB
+ *      - 101 XXX :   0 dB
+ *
+ *  - 100 XDD DDD Right channel volume (2dB step)
+ *       - 00 000 : -40 dB
+ *       - 01 010 : -20 dB
+ *       - 10 1XX :   0 dB
+ *
+ *  - 101 XDD DDD  Left channel volume (2dB step)
+ *       - 00 000 : -40 dB
+ *       - 01 010 : -20 dB
+ *       - 10 1XX :   0 dB
+ *
  * @{
  */
 
 /**
- * Micro-Wire registers.
+ * DMA/Micro-Wire registers.
  */
 enum mw_reg_e {
   MW_ACTI = 0x01,        /**< Microwire enabled */

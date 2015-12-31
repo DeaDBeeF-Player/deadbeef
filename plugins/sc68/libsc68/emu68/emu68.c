@@ -187,13 +187,13 @@ u8 * emu68_memptr(emu68_t * const emu68, addr68_t dst, uint68_t sz)
 {
   u8 * ptr = 0;
   if (emu68) {
-    /* const addr68_t top = 0; */
-    const addr68_t bot = MEMMSK68+1;
-    const addr68_t end = dst+sz;
-    if (dst >= bot || end > bot || dst > end) {
+    const uint68_t adr = dst;
+    const uint68_t bot = MEMMSK68+1;
+    const uint68_t end = adr+sz;
+    if (adr >= bot || end > bot || adr > end) {
       emu68_error_add(emu68,
                       "invalid memory range [$%06x..$%06x] > $%06x",
-                      dst,end,bot);
+                      adr,end,bot);
     } else {
       ptr = emu68->mem + dst;
     }
@@ -300,7 +300,21 @@ int emu68_chkset(emu68_t * const emu68, addr68_t dst, u8 val, uint68_t sz)
   return -!ptr;
 }
 
-#include "crc32.c"
+static uint_t crc32b(uint_t crc, u8 * ptr, int len)
+{
+  u8 * end = ptr + len;
+  /* crc = (u32)~crc; */
+  while (ptr < end) {
+    int j;
+    crc ^= *ptr++;
+    for (j = 7; j >= 0; j--) {
+      const int mask = -(int)(crc & 1);
+      crc = (crc >> 1) ^ (0xEDB88320 & mask);
+    }
+  }
+  /* crc = (u32)~crc; */
+  return crc;
+}
 
 uint68_t emu68_crc32(emu68_t * const emu68)
 {
@@ -320,8 +334,8 @@ uint68_t emu68_crc32(emu68_t * const emu68)
     tmp[i++] = emu68->reg.sr;
     assert ( i == sizeof(tmp) );
 
-    crc = crc32(crc, tmp, i);
-    crc = crc32(crc, emu68->mem, emu68->memmsk+1);
+    crc = crc32b(0xFFFFFFFF, tmp, i);
+    crc = crc32b(crc, emu68->mem, emu68->memmsk+1);
   }
   return crc;
 }
