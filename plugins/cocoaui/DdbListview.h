@@ -65,6 +65,7 @@ typedef intptr_t DdbListviewCol_t;
 - (void)reloadMetadata;
 - (void)convertSelection;
 - (void)sortColumn:(DdbListviewCol_t)column withOrder:(int)order;
+- (void)scrollChanged:(int)scrollpos;
 @end
 
 typedef struct DdbListviewGroup_s {

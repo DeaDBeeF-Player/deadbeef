@@ -261,6 +261,7 @@ extern DB_functions_t *deadbeef;
     [self initContent];
     DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
     [view setDelegate:(id<DdbListviewDelegate>)self];
+    [self setupPlaylist:[view listview]];
 }
 
 - (void)freeColumns {
@@ -768,6 +769,25 @@ static char *group_bytecode = NULL;
     }
 }
 
+- (void)setupPlaylist:(DdbListview *)listview {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        int cursor = deadbeef->plt_get_cursor (plt, PL_MAIN);
+        int scroll = deadbeef->plt_get_scroll (plt);
+        if (cursor != -1) {
+            DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
+            if (it) {
+                deadbeef->pl_set_selected (it, 1);
+                deadbeef->pl_item_unref (it);
+            }
+        }
+        deadbeef->plt_unref (plt);
+
+        [listview reloadData];
+        [listview setVScroll:scroll];
+    }
+}
+
 - (int)handleListviewMessage:(DdbListview *)listview id:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     switch (_id) {
         case DB_EV_SONGCHANGED: {
@@ -840,22 +860,7 @@ static char *group_bytecode = NULL;
             break;
         case DB_EV_PLAYLISTSWITCHED: {
             dispatch_async(dispatch_get_main_queue(), ^{
-                ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-                if (plt) {
-                    int cursor = deadbeef->plt_get_cursor (plt, PL_MAIN);
-                    int scroll = deadbeef->plt_get_scroll (plt);
-                    if (cursor != -1) {
-                        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
-                        if (it) {
-                            deadbeef->pl_set_selected (it, 1);
-                            deadbeef->pl_item_unref (it);
-                        }
-                    }
-                    deadbeef->plt_unref (plt);
-
-                    [listview reloadData];
-                    [listview setVScroll:scroll];
-                }
+                [self setupPlaylist:listview];
             });
         }
             break;
@@ -985,6 +990,14 @@ static char *group_bytecode = NULL;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->plt_sort_v2 (plt, PL_MAIN, c->type, c->format, order-1);
     deadbeef->plt_unref (plt);
+}
+
+- (void)scrollChanged:(int)pos {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_set_scroll (plt, pos);
+        deadbeef->plt_unref (plt);
+    }
 }
 
 @end

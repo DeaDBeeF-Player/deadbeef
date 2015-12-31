@@ -736,8 +736,14 @@ int grouptitleheight = 22;
     }
 }
 
--(void)scrollChanged:(id)contentView {
+- (void)scrollChanged:(id)notification {
     [self.headerView setNeedsDisplay:YES];
+
+    NSScrollView *sv = [contentView enclosingScrollView];
+    NSRect vis = [sv documentVisibleRect];
+    if ([(NSObject *)_delegate respondsToSelector:@selector(scrollChanged:)]) {
+        [_delegate scrollChanged:vis.origin.y];
+    }
 }
 
 - (BOOL)isFlipped {
