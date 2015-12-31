@@ -248,6 +248,7 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
 
     sc68_music_info_t di;
+    memset (&di, 0, sizeof (di));
     int err = sc68_music_info (sc68, &di, 0, 0);
     if (err < 0) {
         sc68_destroy (sc68);
@@ -257,6 +258,7 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int samplerate = deadbeef->conf_get_int ("c68.samplerate", 44100);
     for (int tr = 0; tr < di.tracks; tr++) {
         sc68_music_info_t ti;
+        memset (&ti, 0, sizeof (ti));
         int err = sc68_music_info (sc68, &ti, tr+1, 0);
         if (err < 0) {
             continue;
