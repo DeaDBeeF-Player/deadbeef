@@ -857,7 +857,9 @@ void decode_frame(alac_file *alac,
             }
             else
             {
-                fprintf(stderr, "FIXME: unhandled predicition type: %i\n", prediction_type);
+                fprintf(stderr, "ALAC: unhandled predicition type: %i, the data seems to be corrupt\n", prediction_type);
+                *outputsize = 0;
+                return;
                 /* i think the only other prediction type (or perhaps this is just a
                  * boolean?) runs adaptive fir twice.. like:
                  * predictor_decompress_fir_adapt(predictor_error, tempout, ...)
@@ -1057,7 +1059,9 @@ void decode_frame(alac_file *alac,
             }
             else
             { /* see mono case */
-                fprintf(stderr, "FIXME: unhandled predicition type: %i\n", prediction_type_a);
+                fprintf(stderr, "ALAC: unhandled predicition type: %i, the data seems to be corrupt\n", prediction_type_a);
+                *outputsize = 0;
+                return;
             }
 
             /* channel 2 */
@@ -1082,7 +1086,9 @@ void decode_frame(alac_file *alac,
             }
             else
             {
-                fprintf(stderr, "FIXME: unhandled predicition type: %i\n", prediction_type_b);
+                fprintf(stderr, "ALAC: unhandled predicition type: %i, the data seems to be corrupt\n", prediction_type_b);
+                *outputsize = 0;
+                return;
             }
         }
         else
