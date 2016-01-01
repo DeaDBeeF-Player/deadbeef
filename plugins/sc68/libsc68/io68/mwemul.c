@@ -60,7 +60,7 @@ enum {
   MW_YM_MULT   = ((1<<MW_MIX_FIX)-MW_STE_MULT)
 };
 
-#ifndef MW_CALCUL_TABLE
+/* $$$/XXX THIS IS WRONG AND NEEDS TO BE FIXED */
 
 static const int Db_alone[MW_N_DECIBEL] = {
   0x40000,0x32d64,0x28619,0x20137,0x197a9,0x143d1,0x10137,0xcc50,
@@ -105,55 +105,6 @@ static const int Db_mix12[MW_N_DECIBEL] = {
 
 static void init_volume(void) { }
 
-#else
-
-# include <math.h>   /* $$$ Calcul DB table */
-# include <stdio.h>  /* $$$ For display table */
-
-static int Db_alone[MW_N_DECIBEL];
-static int Db_mix[MW_N_DECIBEL];
-static int Db_mix12[MW_N_DECIBEL];
-
-#define LN_10_OVER_10 0.230258509299
-
-/*
-
-  A,B signal intensity
-  1.Db = 10*LOG( A/B ) = 10*LN(A/B)/LN(10)
-  => A = B * EXP( Decibel*LN(10)/10 )
-  => A = B * R
-  with R=EXP( Decibel*LN(10)/10 )
-
-  R1,R2 rate of 2 signal for D1,D2 in decibel
-  A = B*R1*R2  <=> B*R3
-  with R3 = rate for (D1+D2) decibel
-
-*/
-
-static u32 calc_volume(s32 decibel, u32 mult)
-{
-  double r;
-  r = exp( (double)decibel*LN_10_OVER_10 );
-  r *= (double)mult;
-  return (u32)r;
-}
-
-static void init_volume(void)
-{
-  int i;
-
-  fprintf(stderr, "\n");
-  for(i=0; i<MW_N_DECIBEL; i++) {
-    Db_alone[i] = calc_volume(-i,256<<MW_MIX_FIX);
-    Db_mix[i]   = calc_volume(-i,MW_STE_MULT*256);
-    Db_mix12[i] = calc_volume(-i-12,MW_STE_MULT*256);
-    fprintf(stderr, "AAA:%x\n", Db_alone[i]);
-    fprintf(stderr, "BBB:%x\n", Db_mix[i]);
-    fprintf(stderr, "CCC:%x\n", Db_mix12[i]);
-  }
-}
-
-#endif
 
 static mw_parms_t default_parms;
 

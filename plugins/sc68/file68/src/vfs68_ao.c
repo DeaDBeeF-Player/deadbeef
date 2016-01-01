@@ -225,120 +225,128 @@ static int isao_open(vfs68_t * vfs)
 
   uri = is->name+6;                     /* skip "audio:" */
   do {
-    char * s = strchr(uri,'/'), *s2;
+    char * s = strchr(uri,'/'), *s2, *key = uri, *val = 0;
     if (s == uri) {
       ++uri; continue;                  /* skip "//" instance */
     }
     if (s) *s = 0;
     s2 = strchr(uri,'=');
     if (s2) {
-      char * key = uri;
-      char * val = s2+1;
       *s2 = 0;
-      TRACE68(ao68_cat,
-              AOHD "open -- have a key -- [%s]='%s'\n", key, val);
-      if (!strcmp68(key,"driver")) {
-        if (!strcmp68(val,"list") ) {
-          /* List all drivers in debug */
-          int id,n;
-          ao_info ** infolist = ao_driver_info_list(&n);
-          if (infolist) {
-            for (id=0; id<n; ++id) {
-              dump_ao_info(id, msg68_INFO, infolist[id], 1);
-            }
-          }
-        } else {
-          int id = !strcmp68(val,"default")
-            ? ao_default_driver_id()
-            : ao_driver_id(val);
-          info = ao_driver_info(id);
-          if (info) {
-            is->ao.driver_id = id;
-            TRACE68(ao68_cat,AOHD "open -- *DRIVER* #%d (%s) %s\n",
-                    id, info->short_name, info->name);
-          }
-        }
-      } else if (!strcmp68(key,"rate")) {
-        int frq = 0;
-        while (*val>='0' && *val<='9') frq = frq*10 + *val++ - '0';
-        if (frq) {
-          frq = spr_in_range(frq);
-          TRACE68(ao68_cat,AOHD "open -- *SAMPLING-RATE* %d\n",frq);
-          is->ao.format.rate = frq;
-        }
-      } else if (!strcmp68(key,"format")) {
-        while(*val) {
-          switch (*val++) {
-
-            /* ENDIANESS */
-          case 'n': /* native (same as cpu) */
-            is->ao.format.byte_format = AO_FMT_NATIVE;
-            break;
-          case 'l': /* little */
-            is->ao.format.byte_format = AO_FMT_LITTLE;
-            break;
-          case 'b': /* big    */
-            is->ao.format.byte_format = AO_FMT_BIG;
-            break;
-
-            /* SIGN */
-          case '+': /* unsigned */
-            msg68_warning(AOHD "ignoring -- *%s* request\n", "UNSIGNED");
-          case '-': /*   signed */
-            break;
-
-            /* CHANNELS */
-          case '1': /* mono, 1 channel */
-            is->ao.format.channels = 1;
-            break;
-          case '2': /* stereo, 2 channels */
-            is->ao.format.channels = 2;
-            break;
-
-            /* FORMAT */
-          case 'W': /* 16 bit */
-            is->ao.format.bits = 16;
-            break;
-          case 'B': /*  8 bit */
-            is->ao.format.bits = 8;
-            break;
-          case 'F': /* float  */
-            msg68_warning(AOHD "open -- ignoring *%s* request\n","FLOAT");
-            break;
-          } /* switch */
-        } /* while */
-      } else {
-        int i = 0;
-        if (!info)
-          msg68_warning(AOHD "choose driver before options -- [%s]='%s'\n",
-                        key, val);
-        else
-          for (; i<info->option_count && strcmp68(info->options[i],key); ++i)
-            ;
-        if (!info || i<info->option_count) {
-          int res = ao_append_option(&is->ao.options, key, val);
-          res = res;
-          TRACE68(ao68_cat, AOHD "add options [%s]='%s' -- *%s*\n",
-                  key, val, strok68(!res));
-        } else
-          msg68_warning(AOHD "ignore option for driver '%s' -- [%s]='%s'\n",
-                        info->short_name, key, val);
-      }
-      *s2 = '=';
-    } else {
-      /* not a key then use the remaining of URI as the output file
-       * name. */
-      if (s) *s = '/';          /* restore removed '/' in the URI */
-      s = 0;                    /* trick to end the options parsing */
-      is->outname = uri;
-      TRACE68(ao68_cat, AOHD "using '%s' as out file name\n", uri);
+      val = s2+1;
     }
 
-    if (s) {
-      *s = '/';
-      uri = s+1;
+    TRACE68(ao68_cat,
+            AOHD "open -- KEY[%s]='%s'\n", key, val?val:"");
+    if (!*key) {
+      /* nothing to do */
+    } else if (!strcmp68(key,"driver")) {
+      /* key: driver=list|default|name */
+      if (!strcmp68(val,"list") ) {
+        /* List all drivers in debug */
+        int id,n;
+        ao_info ** infolist = ao_driver_info_list(&n);
+        if (infolist) {
+          for (id=0; id<n; ++id) {
+            dump_ao_info(id, msg68_INFO, infolist[id], 1);
+          }
+        }
+      } else {
+        int id = !strcmp68(val,"default")
+          ? ao_default_driver_id()
+          : ao_driver_id(val);
+        info = ao_driver_info(id);
+        if (info) {
+          is->ao.driver_id = id;
+          TRACE68(ao68_cat,AOHD "open -- *DRIVER* #%d (%s) %s\n",
+                  id, info->short_name, info->name);
+        }
+      }
+    } else if (!strcmp68(key,"rate")) {
+      /* key: rate=[0-9]+ */
+      int frq = 0;
+      while (*val>='0' && *val<='9') frq = frq*10 + *val++ - '0';
+      if (frq) {
+        frq = spr_in_range(frq);
+        TRACE68(ao68_cat,AOHD "open -- *SAMPLING-RATE* %d\n",frq);
+        is->ao.format.rate = frq;
+      }
+    } else if (!strcmp68(key,"format")) {
+      /* key: format=[-+nlb12WBF] */
+      while(*val) {
+        switch (*val++) {
+
+          /* ENDIANESS */
+        case 'n': /* native (same as cpu) */
+          is->ao.format.byte_format = AO_FMT_NATIVE;
+          break;
+        case 'l': /* little */
+          is->ao.format.byte_format = AO_FMT_LITTLE;
+          break;
+        case 'b': /* big    */
+          is->ao.format.byte_format = AO_FMT_BIG;
+          break;
+
+          /* SIGN */
+        case '+': /* unsigned */
+          msg68_warning(AOHD "ignoring -- *%s* request\n", "UNSIGNED");
+        case '-': /*   signed */
+          break;
+
+          /* CHANNELS */
+        case '1': /* mono, 1 channel */
+          is->ao.format.channels = 1;
+          break;
+        case '2': /* stereo, 2 channels */
+          is->ao.format.channels = 2;
+          break;
+
+          /* FORMAT */
+        case 'W': /* 16 bit */
+          is->ao.format.bits = 16;
+          break;
+        case 'B': /*  8 bit */
+          is->ao.format.bits = 8;
+          break;
+        case 'F': /* float  */
+          msg68_warning(AOHD "open -- ignoring *%s* request\n","FLOAT");
+          break;
+        } /* switch */
+      } /* while */
+    } else  if (!strcmp68(key,"output")) {
+      /* key: output=.* */
+      if (s) *s = '/';          /* restore removed '/' in the URI */
+      s = 0;                    /* trick to end the options parsing */
+      is->outname = val;
+      TRACE68(ao68_cat, AOHD "open -- OUT='%s'\n", is->outname);
     } else {
-      uri = 0;
+      /* int i = 0; */
+      /* anything else is sent to ao driver as option */
+      if (!val)
+        val = (*key == '!' || *key == '~') ? "0" : "1";
+      /* removed all test for options, juut add */
+      ao_append_option(&is->ao.options, key, val);
+
+      /* if (!info) */
+      /*   msg68_warning(AOHD "choose driver before options -- [%s]='%s'\n", */
+      /*                 key, val); */
+      /* else */
+      /*   for (; i<info->option_count && strcmp68(info->options[i],key); ++i) */
+      /*     ; */
+      /* if (!info || i<info->option_count) { */
+      /*   int res = ao_append_option(&is->ao.options, key, val); */
+      /*   res = res; */
+      /*   TRACE68(ao68_cat, AOHD "add options [%s]='%s' -- *%s*\n", */
+      /*           key, val, strok68(!res)); */
+      /* } else */
+      /*   msg68_warning(AOHD "ignore option for driver '%s' -- [%s]='%s'\n", */
+      /*                 info->short_name, key, val); */
+    }
+    if (s2) *s2 = '=';                /* restore '=' */
+    uri = 0;
+    if (s) {
+      *s = '/';                       /* restore '/' */
+      uri = s+1;                      /* next */
     }
   } while (uri);
 
@@ -547,16 +555,31 @@ vfs68_t * vfs68_ao_create(const char * uri, int mode, int spr)
     goto error;
   }
 
-  len = strlen(uri);
+  len = strlen(uri) + 8;           /* Add a bit for file extension. */
   isf = calloc(sizeof(vfs68_ao_t) + len, 1);
   if (!isf) {
     goto error;
   }
 
-
   /* Setup for default driver */
   memset(&ao,0,sizeof(ao));
   ao.default_id         = ao_default_driver_id();
+  if (ao.default_id < 0) {
+    /* Could not find a default driver, that's probably bad not fatal
+     * yet.
+     *
+     * Following code tries to set libao null driver as the default
+     * driver but that's probably not such a good idea. We'd rather
+     * know if for some reason there is no working driver.
+     */
+#if 0
+    ao.default_id = ao_driver_id("null");
+    if (ao.default_id < 0)
+      msg68_warning(AOHD "could not find a default driver\n");
+    else
+      msg68_warning(AOHD "using *null* driver as default\n");
+#endif
+  }
   ao.driver_id          = ao.default_id;
   ao.format.bits        = 16;
   ao.format.channels    = 2;

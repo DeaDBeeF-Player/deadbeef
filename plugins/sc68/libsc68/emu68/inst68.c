@@ -44,8 +44,10 @@
 void exception68(emu68_t * const emu68, const int vector, const int level)
 {
   if ( vector < 0x100 ) {
-    int savesr = REG68.sr;
-    int savest = emu68->status;
+    /* Standard 68k exceptions */
+
+    int savesr = REG68.sr;              /* save sr as it was */
+    int savest = emu68->status;         /* save emu68 runstate */
 
     emu68->status = EMU68_XCT;         /* enter exception stat      */
     REG68.sr &= ~SR_T;                 /* no TRACE                  */
@@ -53,19 +55,23 @@ void exception68(emu68_t * const emu68, const int vector, const int level)
 
     if ( savest == EMU68_XCT &&
          ( vector == BUSERR_VECTOR || vector == ADRERR_VECTOR ) ) {
-      /* Double fault ! */
-      emu68->status = EMU68_HLT;       /* Halt processor */
-
+      /* That's a double fault (exception produced an exception) */
+      emu68->status = EMU68_HLT;        /* Halt processor */
       /* Let user know. */
       if (emu68->handler)
         emu68->handler(emu68, HWHALT_VECTOR, emu68->cookie);
+      /* If user did not override notify the error. */
+      if (emu68->status == EMU68_HLT)
+        emu68_error_add(emu68, "double-fault @$%06x vector:%$x",
+                        emu68->inst_pc, vector);
       return;
-
     } else if ( vector == RESET_VECTOR ) {
+      /* Reset reload SP and PC */
       REG68.sr  |= SR_I;
       REG68.a[7] = read_L(RESET_SP_VECTOR << 2);
       REG68.pc   = read_L(RESET_PC_VECTOR << 2);
     } else {
+      /* Standard exception, set IPL and trigger exception. */
       if ( (unsigned int)level < 8u ) {
         SET_IPL(REG68.sr,level);
       }
@@ -73,14 +79,12 @@ void exception68(emu68_t * const emu68, const int vector, const int level)
       pushw(savesr);
       REG68.pc  = read_L(vector << 2);
 
-      /* $$$ Which it is ??? */
-      if (0)
-        emu68->status = EMU68_NRM;     /* Back to normal mode */
-      else
-        emu68->status = savest;        /* Back to saved mode */
+      /* Back to saved runstate (not totally sure about that). */
+      emu68->status = savest;
     }
   }
 
+  /* Finally call the user handler for all kind of exceptions. */
   if (emu68->handler)
     emu68->handler(emu68, vector, emu68->cookie);
 

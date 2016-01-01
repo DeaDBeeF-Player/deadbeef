@@ -28,6 +28,7 @@
 #endif
 
 /* libc */
+#include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -46,23 +47,34 @@ typedef struct dial_s dial_t;
 
 static inline int ismagic(dial_t * dial)
 {
- return
-   dial &&
-   dial->dial.dial == magic &&
-   dial->dial.size == sizeof(*dial) &&
-   dial->dial.cntl
-   ;
+  return
+    dial &&
+    dial->dial.dial == magic &&
+    dial->dial.size == sizeof(*dial) &&
+    dial->dial.cntl /* && dial->dial.data */
+    ;
 }
 
 static inline void del_dial(dial_t * dial)
 {
+  assert(dial);
+  assert(!dial->dial.data);
+  assert(!dial->dial.cntl);
+  assert(!dial->dial.size);
+  assert(dial->dial.dial == ~magic);
   free(dial);
 }
 
+
+/* @retval  0  on success
+ * @retval  1  on unkown/unset key
+ * @retval -1  on error
+ */
 static int getopt(const char * key, int op, sc68_dialval_t * val)
 {
   option68_t * opt = option68_get(key, opt68_ALWAYS);
   const int org = opt68_CFG;
+  int ret = 1;
 
   if (opt) {
     const int isset = opt->org != opt68_UDF;
@@ -74,60 +86,81 @@ static int getopt(const char * key, int op, sc68_dialval_t * val)
     switch (op) {
 
     case SC68_DIAL_GETI:
-      if (isset && (opt->type == opt68_BOL ||
-                    opt->type == opt68_INT ||
-                    opt->type == opt68_ENU)) {
-        val->i = opt->val.num;
-        return 0;
-      }
+      if (opt->type == opt68_BOL ||
+          opt->type == opt68_INT ||
+          opt->type == opt68_ENU) {
+        if (isset) {
+          val->i = opt->val.num;
+          ret = 0;
+        }
+      } else
+        ret = -1;
       break;
 
     case SC68_DIAL_GETS:
-      if (isset && opt->type == opt68_STR) {
-        val->s = opt->val.str;
-        return 0;
+      if (opt->type == opt68_STR) {
+        if (isset) {
+          val->s = opt->val.str;
+          ret = 0;
+        }
       }
+      else if (opt->type != opt68_ENU) {
+        if (isset) {
+          val->s = opt->val.num[(const char **)opt->set];
+          ret = 0;
+        }
+      }
+      else
+        ret = -1;
       break;
 
     case SC68_DIAL_ENUM:
-      if (isset && opt->type == opt68_ENU &&
-          val->i >= 0 && val->i < (int)opt->sets) {
-        val->s = val->i[(const char **)opt->set];
-        return 0;
+      if (opt->type != opt68_ENU)
+        ret = -1;
+      else {
+        int idx = -1;
+        if (val->i == -1) {
+          if (isset)
+            idx = opt->val.num;
+        } else if (val->i >= 0 && val->i < (int)opt->sets) {
+          idx = val->i;
+        } else
+          ret = -1;                     /* out of range */
+
+        if (idx >= 0) {
+          assert(idx < (int)opt->sets);
+          val->s = idx[(const char **)opt->set];
+          ret = 0;
+        }
       }
       break;
 
     case SC68_DIAL_SETI:
-      return option68_iset(opt, val->i, opt68_ALWAYS, org);
+      ret = option68_iset(opt, val->i, opt68_ALWAYS, org);
+      break;
 
     case SC68_DIAL_SETS:
-      return option68_set(opt, val->s, opt68_ALWAYS, org);
+      ret = option68_set(opt, val->s, opt68_ALWAYS, org);
+      break;
 
     case SC68_DIAL_MIN:
-      val->i = opt->min;
-      return 0;
+      val->i = opt->min; ret = 0; break;
 
     case SC68_DIAL_MAX:
-      val->i = opt->max;
-      return 0;
+      val->i = opt->max; ret = 0; break;
 
     case SC68_DIAL_CNT:
-      val->i = opt->sets;
-      return 0;
+      val->i = opt->sets; ret = 0; break;
 
     case SC68_DIAL_CAT:
-      val->s = opt->cat;
-      return 0;
+      val->s = opt->cat; ret = 0; break;
 
     case SC68_DIAL_DESC:
-      val->s = opt->desc;
-      return 0;
-
-
+      val->s = opt->desc; ret = 0; break;
     }
   }
 
-  return -1;
+  return ret;
 }
 
 #define keyis(N) !strcmp(key,N)
@@ -156,6 +189,8 @@ static int conf(void * data, const char * key, int op, sc68_dialval_t *val)
 
   /* Kill special case. */
   if (op == SC68_DIAL_CALL && !strcmp(key,SC68_DIAL_KILL)) {
+    dial->dial.cntl = 0; dial->dial.data = 0; dial->dial.size = 0;
+    dial->dial.dial = ~dial->dial.dial;
     del_dial(dial);
     goto exit;
   }
@@ -202,7 +237,7 @@ static int conf(void * data, const char * key, int op, sc68_dialval_t *val)
 
   }
   else if (op == SC68_DIAL_CALL) {
-    /* Other special calls like real-tiem access */
+    /* Other special calls like real-time access */
     if (keyis(SC68_DIAL_NEW))
       val->i = 0;
     else if (keyis("save"))
@@ -213,6 +248,8 @@ static int conf(void * data, const char * key, int op, sc68_dialval_t *val)
     else if (keyis("amiga-blend"))
       /* $$$ TODO: realtime amiga-blend */
       val->i = val->i;
+    else
+      res = 1;
   }
   else {
     /* Finally try it as an option key.
@@ -222,7 +259,7 @@ static int conf(void * data, const char * key, int op, sc68_dialval_t *val)
      */
     if (op == SC68_DIAL_SETI && keyis("sampling-rate")
         && val->i > 0 && val->i < sprmax)
-        val->i = i_spr[val->i];
+      val->i = i_spr[val->i];
     res = getopt(key, op, val);
   }
 

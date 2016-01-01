@@ -248,6 +248,7 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
 
     sc68_music_info_t di;
+    memset (&di, 0, sizeof (di));
     int err = sc68_music_info (sc68, &di, 0, 0);
     if (err < 0) {
         sc68_destroy (sc68);
@@ -257,6 +258,7 @@ in_sc68_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int samplerate = deadbeef->conf_get_int ("c68.samplerate", 44100);
     for (int tr = 0; tr < di.tracks; tr++) {
         sc68_music_info_t ti;
+        memset (&ti, 0, sizeof (ti));
         int err = sc68_music_info (sc68, &ti, tr+1, 0);
         if (err < 0) {
             continue;
@@ -384,24 +386,25 @@ static DB_decoder_t plugin = {
         "\n"
         "\n"
         "sc68 - Atari ST and Amiga music player\n"
-        "Copyright (C) 1998-2003  Benjamin Gerard\n"
+        "Copyright (C) 1998-2015  Benjamin Gerard\n"
         "<ben@sashipa.com>\n"
         "<http://sashipa.ben.free.fr/sc68/>\n"
         "<http://sourceforge.net/projects/sc68/>\n"
         "\n"
-        "This program is free software; you can redistribute it and/or\n"
-        "modify it under the terms of the GNU General Public License\n"
-        "as published by the Free Software Foundation; either version 2\n"
-        "of the License, or (at your option) any later version.\n"
+        "This program is free software: you can redistribute it and/or\n"
+        "modify it under the terms of the GNU General Public License as\n"
+        "published by the Free Software Foundation, either version 3 of the\n"
+        "License, or (at your option) any later version.\n"
         "\n"
-        "This program is distributed in the hope that it will be useful,\n"
-        "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-        "GNU General Public License for more details.\n"
+        "This program is distributed in the hope that it will be useful, but\n"
+        "WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n"
+        "General Public License for more details.\n"
         "\n"
         "You should have received a copy of the GNU General Public License\n"
-        "along with this program; if not, write to the Free Software\n"
-        "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n",
+        "along with this program.\n"
+        "\n"
+        "If not, see <http://www.gnu.org/licenses/>.\n",
     .plugin.start = in_sc68_start,
     .plugin.stop = in_sc68_stop,
     .plugin.configdialog = settings_dlg,

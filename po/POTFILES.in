@@ -34,3 +34,4 @@ plugins/gtkui/ctmapping.c
 plugins/gtkui/widgets.c
 plugins/gtkui/pltmenu.c
 plugins/pltbrowser/pltbrowser.c
+tf.c

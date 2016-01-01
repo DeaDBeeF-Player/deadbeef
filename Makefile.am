@@ -29,6 +29,7 @@ deadbeef_SOURCES =\
 	volume.c volume.h\
 	junklib.h junklib.c utf8.c utf8.h\
 	u8_lc_map.h\
+	u8_uc_map.h\
 	fastftoi.h\
 	vfs.c vfs.h vfs_stdio.c\
 	md5/md5.c md5/md5.h\

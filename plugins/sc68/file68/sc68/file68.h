@@ -58,23 +58,30 @@
 enum {
   SC68_DISK_ID   = (('d' << 24) | ('i' << 16) | ('s' << 8) | 'k'),
   SC68_LOADADDR  = SC68_DEFADDR, /**< Default load address in 68K memory. */
-  SC68_MAX_TRACK = 63,  /**< Maximum track per disk (2 digits max). */
+  SC68_MAX_TRACK = 63,           /**< Maximum track per disk. */
 };
 
 /**
- * @name  Features flag definitions for music68_t.
+ * @name  Features flag definitions for file flags (portability). 
  * @{
  */
 enum  {
-  SC68_YM        = 1 << 0,   /**< YM-2149 active.                 */
-  SC68_STE       = 1 << 1,   /**< STE sound active.               */
-  SC68_AMIGA     = 1 << 2,   /**< AMIGA sound active.             */
-  SC68_STECHOICE = 1 << 3,   /**< Optionnal STF/STE (not tested). */
-  SC68_TIMERS    = 1 << 4,   /**< Has timer info.                 */
-  SC68_TIMERA    = 1 << 5,   /**< Timer-A used.                   */
-  SC68_TIMERB    = 1 << 6,   /**< Timer-B used.                   */
-  SC68_TIMERC    = 1 << 7,   /**< Timer-C used.                   */
-  SC68_TIMERD    = 1 << 8    /**< Timer-D used.                   */
+  SC68_PSG       = 1 << 0,   /**< YM-2149 (PSG).                  */
+  SC68_DMA       = 1 << 1,   /**< STE DMA.                        */
+  SC68_AGA       = 1 << 2,   /**< AMIGA/PAULA.                    */
+  SC68_XTD       = 1 << 3,   /**< Has extra info (following).     */
+  SC68_LMC       = 1 << 4,   /**< STE LMC-1992.                   */
+
+  SC68_MFP_BIT   = 5,        /**< MFP timers bit position.        */
+  SC68_MFP_TA    = 1 << 5,   /**< Timer-A used.                   */
+  SC68_MFP_TB    = 1 << 6,   /**< Timer-B used.                   */
+  SC68_MFP_TC    = 1 << 7,   /**< Timer-C used.                   */
+  SC68_MFP_TD    = 1 << 8,   /**< Timer-D used.                   */
+
+  SC68_HBL       = 1 << 9,   /**< HBL interrupt.                  */
+  SC68_BLT       = 1 << 10,  /**< STE blitter.                    */
+  SC68_DSP       = 1 << 11,  /**< Falcon DSP.                     */
+
 };
 /**
  * @}
@@ -87,23 +94,25 @@ enum  {
 /**
  * Hardware and features flags.
  */
-typedef union {
+typedef unsigned int hwflags68_t;
 
-  struct {
-    unsigned ym:1;        /**< Music uses YM-2149 (ST).          */
-    unsigned ste:1;       /**< Music uses STE specific hardware. */
-    unsigned amiga:1;     /**< Music uses Paula Amiga hardware.  */
-    unsigned stechoice:1; /**< Music allow STF/STE choices.      */
+/* typedef union { */
+/*   struct { */
+/*     unsigned psg:1;       /\**< Require YM-2149 (ST PSG)       *\/ */
+/*     unsigned dma:1;       /\**< Require STE DMA sound.         *\/ */
+/*     unsigned aga:1;       /\**< Require Amiga/paula hardware.  *\/ */
+/*     unsigned xtd:1;       /\**< Extended info available.       *\/ */
+/*     unsigned lmc:1;       /\**< xtd: Require LMC-1992.         *\/ */
+/*     unsigned mfp:4;       /\**< xtd: MFP timers (1 bit/timer). *\/ */
+/*     unsigned hbl:1;       /\**< xtd: HBL interrupt.            *\/ */
+/*     unsigned blt:1;       /\**< xtd: STE/Mega-ST blitter.      *\/ */
+/*     unsigned dsp:1;       /\**< xtd: Falcon DSP.               *\/ */
+/*   } bit;                  /\**< Flags bit field.               *\/ */
+/*   unsigned clr;           /\**< All flags (clear only).        *\/ */
+/* } hwflags68_t; */
 
-    unsigned timers:1;    /**< Set if the timer status is known. */
-    unsigned timera:1;    /**< Music uses timer A                */
-    unsigned timerb:1;    /**< Music uses timer B                */
-    unsigned timerc:1;    /**< Music uses timer C                */
-    unsigned timerd:1;    /**< Music uses timer D                */
 
-  } bit;                  /**< Flags bit field.                  */
-  unsigned all;           /**< All flags in one.                 */
-} hwflags68_t;
+
 
 
 /**
@@ -140,8 +149,8 @@ typedef struct {
  *
  *  The disk68_t structure is the memory representation for an SC68
  *  disk.  Each SC68 file could several music or tracks, in the limit
- *  of a maximum of 63 tracks per file. Each music is independant, but
- *  some information, including music data, could be inherit from
+ *  of a maximum of 256 tracks per file. Each music is independant,
+ *  but some information, including music data, could be inherit from
  *  previous track. In a general case, tracks are grouped by theme,
  *  that could be a demo or a game.
  *
@@ -481,7 +490,7 @@ FILE68_API
  * Initialize file68 library.
  *
  *  @param  argc  argument count
- *  @param  argv  argument array (as for main())
+ *  @param  argv  argument array
  *  @return new argument count
  */
 int file68_init(int argc, char **argv);

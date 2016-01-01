@@ -44,9 +44,9 @@ int pl_cat = msg68_DEFAULT;
 /* Filled by paula_init() to avoid field order dependencies */
 static paula_parms_t default_parms;
 
- /* big/little endian compliance */
-static int msw_first = 0;
 
+static int msw_first = 0;           /* big/little endian compliance */
+static int pl_chans  = 15;          /* active channels */
 
 static int onchange_filter(const option68_t * opt, value68_t * val)
 {
@@ -57,6 +57,12 @@ static int onchange_filter(const option68_t * opt, value68_t * val)
 static int onchange_clock(const option68_t * opt, value68_t * val)
 {
   paula_clock(0,!val->num?PAULA_CLOCK_PAL:PAULA_CLOCK_NTSC);
+  return 0;
+}
+
+static int onchange_chans(const option68_t * opt, value68_t * val)
+{
+  val->num = pl_chans = 15 & val->num;
   return 0;
 }
 
@@ -74,6 +80,9 @@ static option68_t opts[] = {
              0,0xFF,1,0),
   OPT68_ENUM(prefix,"amiga-clock",engcat,"paula clock",
              f_clock,sizeof(f_clock)/sizeof(*f_clock),1,onchange_clock),
+  OPT68_IRNG(prefix,"amiga-chans",engcat,
+             "set active paula channels {bit#0-3 = chan#A-C}",
+             0,15,0,onchange_chans),
 };
 #undef prefix
 
@@ -263,14 +272,15 @@ int paula_reset(paula_t * const paula)
 
   /* Some musics does not initialize volume (see support-request #4) */
   for (i=0; i<4; i++) {
-    paula->map[PAULA_VOICE(i)+9] = 64;
+    paula->map[PAULA_VOICE(i)+9] = 64;   /* default volume to 64 */
+    paula->map[PAULA_VOICE(i)+6] = 0x10; /* default period to 0x1000 */
   }
 
   /* reset voices */
   for (i=0; i<4; i++) {
-    paula->voice[i].adr   = 0;
+    paula->voice[i].adr   = 2;
     paula->voice[i].start = 0;
-    paula->voice[i].end   = 2;
+    paula->voice[i].end   = 0;   /* end < adr should prevent mixing */
   }
 
   /* Reset DMACON and INTENA/REQ to something that
@@ -285,13 +295,6 @@ int paula_reset(paula_t * const paula)
 }
 
 void paula_cleanup(paula_t * const paula) {}
-
-static void pl_info(paula_t * const paula)
-{
-  msg68_notice(PLHD "engine -- *%s*\n", pl_engine_name(paula->engine));
-  msg68_notice(PLHD "clock -- *%s*\n", pl_clock_name(paula->clock));
-  msg68_notice(PLHD "sampling rate -- *%dhz*\n", (int)paula->hz);
-}
 
 int paula_setup(paula_t * const paula,
                 paula_setup_t * const setup)
@@ -310,15 +313,19 @@ int paula_setup(paula_t * const paula,
     setup->parms.clock = default_parms.clock;
   }
 
-  paula->mem     = setup->mem;
-  paula->log2mem = setup->log2mem;
-  paula->ct_fix  = ( sizeof(plct_t) << 3 ) - paula->log2mem;
+  paula->chansptr = &pl_chans;
+  paula->mem      = setup->mem;
+  paula->log2mem  = setup->log2mem;
+  paula->ct_fix   = ( sizeof(plct_t) << 3 ) - paula->log2mem;
 
   setup->parms.engine = paula_engine(paula, setup->parms.engine);
   paula_reset(paula);
   set_clock(paula, setup->parms.clock, setup->parms.hz);
 
-  pl_info(paula);
+  /* Debug trace */
+  TRACE68(pl_cat, PLHD "engine -- *%s*\n", pl_engine_name(paula->engine));
+  TRACE68(pl_cat, PLHD "clock -- *%s*\n", pl_clock_name(paula->clock));
+  TRACE68(pl_cat, PLHD "sampling rate -- *%dhz*\n", (int)paula->hz);
 
   return 0;
 }
@@ -385,6 +392,7 @@ static void mix_one(paula_t * const paula,
     vol = 64;
   vol <<= 1;
 
+
   per = ( p[6] << 8 ) + p[7];
   if (!per) per = 1;                    /* or is it +1 for all ?? */
   stp = paula->clkperspl / per;
@@ -399,16 +407,16 @@ static void mix_one(paula_t * const paula,
   reend <<= (1 + ct_fix);             /* +1 as unit is 16-bit word */
   reend  += readr;
   assert( reend > readr );
-  if (reend < readr) {
-    /* $$$ ??? dunno why I did this !!! */
+  if (reend <= readr) {
+    /* $$$ ??? dunno why I did this !!! May be could happen on a
+     * modulo. */
     return;
   }
 
   adr = w->adr;
   end = w->end;
-  if (end < adr) {
+  if (end <= adr)
     return;
-  }
 
   /* mix stereo */
   do {
@@ -479,9 +487,10 @@ static void clear_buffer(s32 * b, int n)
 
 typedef struct {
   int on;
-  int adr;   /**< current sample counter (<<paula_t::ct_fix). */
-  int start; /**< loop address.                               */
-  int end;   /**< end address (<<paula_t::ct_fix).            */
+  unsigned int adr;   /**< current sample counter (<<paula_t::ct_fix). */
+  unsigned int start; /**< loop address.                               */
+  unsigned int end;   /**< end address (<<paula_t::ct_fix).            */
+  int len;
   int vol;
   int per;
 } paulav_dbg_t;
@@ -494,13 +503,14 @@ void paula_dbg(paulav_dbg_t * d, paula_t * const paula, int i)
   const int     ct_fix = paula->ct_fix;
 
   d->on   = ((paula->dmacon >> 9) & (paula->dmacon >> i) & 1);
-  d->adr  = w->adr << ct_fix;
-  d->end  = w->end << ct_fix;
-  d->start  = w->start << ct_fix;
+  d->adr  = w->adr >> ct_fix;
+  d->end  = w->end >> ct_fix;
+  d->start  = w->start >> ct_fix;
+  d->len  = d->end-w->start;
   d->vol = p[9] & 127;
-  if (d->vol >= 64) d->vol = 64;
+  /* if (d->vol >= 64) d->vol = 64; */
   d->per = ( p[6] << 8 ) + p[7];
-  if (!d->per) d->per = 1;
+  /* if (!d->per) d->per = 1; */
 }
 
 #endif
@@ -509,6 +519,7 @@ void paula_mix(paula_t * const paula, s32 * splbuf, int n)
 {
 
   if ( n > 0 ) {
+    const int pl_mask = paula->chansptr ? *paula->chansptr : 15;
     int i, b=0;
 #if DEBUG_PL_O == 1
     paulav_dbg_t d[4];
@@ -520,23 +531,24 @@ void paula_mix(paula_t * const paula, s32 * splbuf, int n)
 #if DEBUG_PL_O == 1
       paula_dbg(d+i, paula, i);
 #endif
-      if ((paula->dmacon >> 9) & (paula->dmacon >> i) & 1) {
+      if ((paula->dmacon >> 9) & ( (pl_mask & paula->dmacon) >> i) & 1) {
         mix_one(paula, i, right, splbuf, n);
         b += 1 << i;
       }
     }
 
 #if DEBUG_PL_O == 1
+    if (1) {
 #   define ONE "%c:%06x-%06x->%06x,%04x,%02d"
-    TRACE68(pl_cat,
-            PLHD "%d " ONE " " ONE " " ONE " " ONE "\n",
-            n,
-            d[0].on?'A':'.', d[0].adr, d[0].end, d[0].start, d[0].per,d[0].vol,
-            d[1].on?'B':'.', d[1].adr, d[1].end, d[1].start, d[1].per,d[1].vol,
-            d[2].on?'C':'.', d[2].adr, d[2].end, d[2].start, d[2].per,d[2].vol,
-            d[3].on?'D':'.', d[3].adr, d[3].end, d[3].start, d[3].per,d[3].vol);
+      TRACE68(pl_cat,
+              PLHD "%d " ONE " " ONE " " ONE " " ONE "\n",
+              n,
+              d[0].on?'A':'.', d[0].adr, d[0].end, d[0].start, d[0].per,d[0].vol,
+              d[1].on?'B':'.', d[1].adr, d[1].end, d[1].start, d[1].per,d[1].vol,
+              d[2].on?'C':'.', d[2].adr, d[2].end, d[2].start, d[2].per,d[2].vol,
+              d[3].on?'D':'.', d[3].adr, d[3].end, d[3].start, d[3].per,d[3].vol);
+    }
 #endif
-
   }
   /* HaxXx: assuming next mix is next frame reset beam V/H position. */
   paula->vhpos = 0;

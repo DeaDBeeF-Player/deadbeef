@@ -1,0 +1,67 @@
+                  unice68 - ice packer and depacker
+                                   
+                 unice68 is part of the sc68 project
+                       
+                    (C) 1998-2015 Benjamin Gerard
+
+
+ABOUT UNICE68
+
+  unice68 project  is a  "C" library  and a  command line  program for
+  packing and depacking !Ice compressed files.
+
+  Both the packer and depacker are buffer based only, you can't stream
+  them.
+
+  The depacker is based on the  original ICE unpack public source file
+  version 2.40.  The  packer is based on the  original PACKICE version
+  2.35.  This difference does not  really matter as the file generated
+  by the 2.35  cruncher are compatible with the  2.40 decruncher.  The
+  only problem is the magic 4CC identifier being different ('Ice!' for
+  the version 2.35 / 'ICE!'   for the version 2.40).  Unice68 depacker
+  will accept both.  Unice68 packer  will generate the 2.40 by default
+  for  compatibility  issue, even  if  it  should  not.  It  is  still
+  possible to force the header with the library and the cli program.
+
+  In the begin  unice68 was a front-end to the  original *native* ICE!
+  depacker  routine written  in  68000 assembler.   It was  functional
+  enough  but pretty  much  slow so  I decided  to  convert the  68000
+  assembly to "C"  code. This conversion is straight  forward and kind
+  of ugly.
+
+  In 2013 the packer source which was not available until then came to
+  my  attention  (I  think  it  was  released  in  2011  but  I'm  not
+  sure). Because sndh files is the  dominant format sc68 need the best
+  possible support for  them. Also it save me the  time to maintaining
+  the sc68 music database. A few sndh files are bugged and too many of
+  them  lack  the  duration  information  in  their  header,  this  is
+  something I  really don't like with  them so I intended  to fix that
+  and   submit   the   modified   file  back   to   their   respective
+  maintainer. SNDH files being by convention  ICE! packed I can now do
+  that  without launching  a ST  (simulator or  real) to  achieve this
+  goal.
+
+  Just like the depacker I have first tried a simulated version but it
+  was clearly too slow  so I decided to do the same  I had done before
+  with the  depacker: to  convert the m68k  assembler source  into "C"
+  code straight  forward. Maybe  someday I  will take  the time  to do
+  something cleaner but do not expect too much.
+
+  To perform  the first simulated try  with the ice packer  the source
+  had to  be cleaned.  Mainly  stripping every thing  unnecessary like
+  TOS/GEM/AES calls to keep only the  main crunch routine. Also in the
+  process it has become PIC (position independent code) and re-entrant
+  (variables are stored in the stack rather than globally).
+
+
+ABOUT ICE!
+
+  ICE was a  common compressor running on Atari  ST(tm) and compatible
+  machines made by  Axe of Superior. sc68 project needs  to handle the
+  many ICE! compressed Atari ST music files (namely sndh files).
+
+  From the source files you can read:
+
+    PACK-ICE is simply  the best packer that's available on  the ST. I
+    used especially  much time to  get the depacking-routine  as small
+    and fast (!!!) as possible

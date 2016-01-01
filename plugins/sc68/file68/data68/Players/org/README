@@ -1,0 +1,8 @@
+This directory contains original replay routines. Each is a raw binary
+MC68000 machine code.
+
+Technically each file has it's own copyright most of them probalbly
+belongs to their respective author. But everything is not clear and
+clean.
+
+-- Ben

@@ -24,6 +24,7 @@
 #include "pwm.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 //#include "gens_core/mem/mem_sh2.h"
 //#include "gens_core/cpu/sh2/sh2.h"

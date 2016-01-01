@@ -1,0 +1,408 @@
+2009-01-14    <sashipa.ben@gmail.com>
+
+	* file68/ (Module): Nothing to say
+
+2003-11-14  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* data/Replay/sndh_ice.bin, emu68/emu68.c, file68/file68.c, sc68.sln:
+	*** empty log message ***
+
+2003-11-13  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* data/Players/sndh_ice.s: Restore SR in play call.
+
+2003-11-11  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* api68/api68.c, api68/conf68.c: Handle amiga interpolation selection.
+
+	* io68/paulaemul.c, io68/paulaemul.h:
+	Added linear interpolation selection.
+
+2003-11-10  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* file68/file68.vcproj, io68/io68.vcproj, unice68/unice68.vcproj, api68/api68.c, api68/api68.h, api68/api68.vcproj, api68/conf68.c, api68/conf68.h, desa68/desa68.vcproj, emu68/emu68.vcproj, emu68/emu68debug.vcproj:
+	2.3.0 Windows modifications.
+
+2003-11-06  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* api68/api68.c, api68/api68.vcproj, api68/conf68.c, as68/as68.vcproj, debug68/debug68.vcproj, desa68/desa68.vcproj, emu68/emu68.vcproj, emu68/emu68debug.vcproj, file68/file68.c, file68/file68.vcproj, file68/init68.c, file68/istream68_curl.c, file68/registry68.c, info68/info68.vcproj, io68/io68.vcproj, sc68.sln, sc68/sc68.vcproj, sourcer68/sourcer68.vcproj, unice68/unice68.vcproj:
+	Various fix for win32 version and some bugs removal
+
+2003-11-05  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* file68/registry68.c, file68/registry68.h: Windows registry access
+
+	* file68/istream68_curl.c:
+	Fix compilation problem when curl support disabled
+
+	* file68/init68.c, file68/init68.h: Add missing files
+
+2003-11-01  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* api68/api68.c, file68/file68.c: Fix disk playing time when defaulted
+
+	* file68/file68.c: Fix SNDH header detection
+
+2003-10-30  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* ChangeLog, NEWS, debug68/sc68debug.c, file68/file68.c, file68/istream68_null.c, file68/url68.c, file68/url68.h, info68/info68.c, sc68.ebuild.in, sourcer68/sourcer68.c:
+	Version 2.3.0-rc-3 (tools modification for URL access)
+
+	* NEWS: Update for version 2.3
+
+	* api68/api68.c, api68/api68.h, file68/file68.c, file68/file68.h, file68/url68.c, file68/url68.h:
+	Version 2.3-rc-2
+
+2003-10-30  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* api68/api68.c, api68/api68.h, file68/file68.c, file68/file68.h, file68/url68.c, file68/url68.h:
+	Version 2.3-rc-2
+
+2003-10-29  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* INSTALL, Makefile.am, api68/api68.c, api68/api68.h, api68/conf68.c, api68/conf68.h, configure.ac, data/config.txt, debug68/debug68_doc.h, debug68/sc68debug.c, doc/devdoc.hin, emu68/cc68.h, emu68/emu68.h, emu68/error68.h, emu68/excep68.h, emu68/getea68.h, emu68/inst68.h, emu68/ioplug68.h, emu68/macro68.h, emu68/mem68.h, emu68/srdef68.h, emu68/struct68.h, emu68/type68.h, file68/Makefile.am, file68/file68.c, file68/file68.h, file68/istream68.c, file68/istream68.h, file68/istream68_curl.c, file68/istream68_curl.h, file68/istream68_fd.c, file68/istream68_z.c, file68/rsc68.c, file68/rsc68.h, file68/string68.h, man/as68.1, man/debug68.1, man/info68.1, man/sc68.1, man/sourcer68.1, man/unice68.1, sc68/sc68.c:
+	Version 2.3-rc-1
+
+	* file68/url68.c, file68/url68.h: url fucntions
+
+2003-10-11  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* io68/io68.h, io68/mfp_io.h, io68/mfpemul.h, io68/mw_io.h, io68/mwemul.h, io68/paula_io.h, io68/paulaemul.h, io68/shifter_io.h, io68/ym_io.h, io68/ymemul.h:
+	Update documentation.
+
+2003-10-10  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* file68/Makefile.am, file68/debugmsg68.h, file68/endian68.h, file68/file68.c, file68/file68.h, file68/gzip68.h, file68/ice68.h, file68/istream68_curl.c, file68/istream68_z.c, file68/istream68_z.h:
+	Fix deflate mode. Add gzip support for saving sc68 files.
+
+	* file68/istream68_null.c, file68/istream68_null.h:
+	Add null stream support
+
+2003-10-07  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* file68/alloc68.c, file68/alloc68.h, file68/error68.h, file68/istream68.c, file68/istream68.h, file68/istream68_curl.c, file68/istream68_curl.h, file68/istream68_def.h, file68/istream68_fd.h, file68/istream68_file.c, file68/istream68_file.h, file68/istream68_mem.h, file68/rsc68.h, file68/string68.h:
+	Organize documentation
+
+	* file68/Makefile.am, file68/file68.c, file68/file68.h, file68/istream68_z.c, file68/istream68_z.h:
+	zlib stream support
+
+2003-10-04  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* config_option68.h.in, config_platform68.h.in, configure.ac, file68/istream68_curl.c, file68/istream68_curl.h:
+	Add curl istream support.
+
+2003-10-02  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* data/Players/deltamusic2.s, data/Players/fred.s, data/Players/sidmon1.s, data/Players/sidmon2.s, data/Players/soundfx.s, data/Replay/deltamusic1.bin, data/Replay/deltamusic2.bin, data/Replay/fred.bin, data/Replay/sidmon1.bin, data/Replay/sidmon2.bin, data/Replay/soundfx.bin, data/Players/deltamusic1.s:
+	New Amiga replays provide by by Gerald Schnabel <gschnabel@gmx.de>
+
+	* sc68.spec.in:
+	New spec file provides by Gerald Schnabel <gschnabel@gmx.de>
+
+2003-09-30  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* configure.ac: Forget to change version number
+
+	* api68/Makefile.am, ChangeLog, NEWS, configure.ac:
+	Release 2.2.1 completed
+
+	* api68/api68.c, api68/api68.h, emu68/emu68.h, emu68/getea68.h, emu68/inst68.h, emu68/ioplug68.h, emu68/macro68.h, emu68/mem68.h, emu68/srdef68.h, emu68/struct68.h, file68/debugmsg68.h, file68/istream68_def.h, file68/istream68_fd.h, file68/istream68_file.c, file68/istream68_file.h, file68/istream68_mem.h, sc68.sln:
+	Modification for winamp-3 component (c++ fix)
+
+2003-09-30  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* api68/api68.c, api68/api68.h, emu68/emu68.h, emu68/getea68.h, emu68/inst68.h, emu68/ioplug68.h, emu68/macro68.h, emu68/mem68.h, emu68/srdef68.h, emu68/struct68.h, file68/debugmsg68.h, file68/istream68_def.h, file68/istream68_fd.h, file68/istream68_file.c, file68/istream68_file.h, file68/istream68_mem.h, sc68.sln:
+	Modification for winamp-3 component (c++ fix)
+
+2003-09-25  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* file68/Makefile.am, info68/Makefile.am, io68/Makefile.am, sc68/Makefile.am, sourcer68/Makefile.am, unice68/Makefile.am, api68/Makefile.am, as68/Makefile.am, debug68/Makefile.am, desa68/Makefile.am, emu68/Makefile.am, Makefile.am, configure.ac:
+	Remove MsVC project file from distrib.
+
+	* sourcer68/sourcer68.vcproj, unice68/unice68.c, unice68/unice68.vcproj, api68/api68.vcproj, as68/as68.vcproj, config68.h, config_package68.h.in, config_platform68.h.in, config_type68.h.in, configure.ac, debug68/debug68.vcproj, desa68/desa68.vcproj, emu68/emu68.c, emu68/emu68.vcproj, emu68/emu68debug.vcproj, file68/file68.vcproj, info68/info68.vcproj, io68/io68.vcproj, io68/mfpemul.c, sc68/sc68.vcproj:
+	Fix for cygwin compilation.
+
+	* desa68/desa68.c, info68/Makefile.am, sc68/Makefile.am, sourcer68/Makefile.am, debug68/Makefile.am, configure.ac, sc68-config.in, sc68.pc.in:
+	Fix link order (cygwin version).
+
+2003-09-24  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* config_win32.h: Removed win32 config header (no more needed)
+
+	* emu68/type68.h, file68/debugmsg68.c, file68/error68.c, file68/file68.c, file68/gzip68.c, file68/istream68_fd.c, file68/istream68_file.c, file68/istream68_mem.c, file68/rsc68.c, info/Makefile.am, info68/info68.c, io68/mwemul.c, io68/paula_io.c, io68/paulaemul.c, io68/ymemul.c, sc68/sc68.c, sourcer68/sourcer68.c, NEWS, api68/api68.c, api68/conf68.c, api68/mixer68.c, as68/as68.c, as68/opcode.c, config68.h, config_option68.h.in, config_package68.h.in, config_platform68.h.in, config_type68.h.in, configure.ac, debug68/SC68debug_comline.c, desa68/desa68.c:
+	Modification for release 2.2.0.
+
+2003-09-23  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* debug68/SC68debug_io.c, debug68/SC68debug_io.h, debug68/sc68debug.c:
+	Add hardware autodetect
+
+	* debug68/sc68debug.c, debug68/SC68debug_comline.c:
+	Fix a couple of bug involving replay frequency and time calculation. Many things need to be clean up.
+
+	* file68/file68.c:
+	Fix sndh loader. Sndh header parser does not break at the first error it encounters but to a given number of successive error.
+
+	* data/Players/ssd1.s, data/Replay/ssd1.bin:
+	New SidSoundDesigner wrapper. The new SSD wrapper is backward compatible. It handles both old 'SSD1' and new 'SSd1' files. The new file format allows to share many TVS and TRI files in a single 'SSd1' file. Notice that new files will not crash old player because 'SSD1' tags was checked.
+
+	* data/Scripts/SSDtunes.sh: Minor modifications.
+
+	* data/Scripts/SSDextract.sh, data/Scripts/extractor.sh, data/Scripts/unice.sh:
+	*** empty log message ***
+
+2003-09-22  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* api68/api68.vcproj, as68/as68.vcproj, debug68/debug68.vcproj, desa68/desa68.vcproj, emu68/emu68.vcproj, emu68/emu68debug.vcproj, file68/file68.vcproj, file68/gzip68.c, file68/ice68.c, file68/ice68.h, file68/istream68_fd.c, info68/info68.vcproj, io68/io68.vcproj, io68/mfpemul.c, sc68/sc68.vcproj, sourcer68/sourcer68.vcproj, unice68/unice68.vcproj, config_win32.h, sc68.sln:
+	Everything has been fixed for the release 2.20
+
+2003-09-21  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* api68/api68.c, config_package68.h.in, configure.ac:
+	Fix problem force_track out of range bug.
+
+	* api68/api68.c, api68/api68.h: Fix bugs in api config. Modify API.
+
+2003-09-20  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* configure.ac: Remove config68.h.
+
+	* config68.h.in: *** empty log message ***
+
+	* config68.h: No more configuration needed
+
+	* desa68/desa68.dsp, emu68/Makefile.am, emu68/emu68.dsp, emu68/emu68debug.dsp, file68/Makefile.am, file68/file68.dsp, file68/rsc68.c, file68/rsc68.h, info68/Makefile.am, info68/info68.dsp, io68/Makefile.am, io68/io68.dsp, sc68/Makefile.am, sc68/sc68.c, sourcer68/Makefile.am, sourcer68/sourcer68.dsp, unice68/Makefile.am, unice68/unice68.dsp, Makefile.am, api68/Makefile.am, api68/api68.c, api68/api68.dsp, api68/api68.h, api68/conf68.c, as68/Makefile.am, as68/as68.dsp, config_package68.h.in, configure.ac, debug68/Makefile.am, desa68/Makefile.am:
+	Changes for version 2.2.0
+
+2003-09-19  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* file68/error68.c: *** empty log message ***
+
+	* config_win32.h, sc68.sln: Fix for Win32 version.
+
+2003-09-18  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* sc68.sln: *** empty log message ***
+
+2003-09-17  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* file68/istream68_fd.h, file68/istream68_fd.c:
+	Add stream support for file descriptor.
+
+2003-09-16  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* sc68.sln: MsVC7 project file
+
+2003-09-12  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* api68/api68.c, api68/api68.h, api68/mixer68.c, as68/as68.c, config_win32.h, debug68/sc68debug.c, emu68/type68.h, file68/file68.c, file68/gzip68.c, file68/rsc68.c, io68/paula_io.c, io68/paulaemul.c, io68/shifter_io.c, sourcer68/sourcer68.c:
+	Fixes for MsVC7
+
+	* info68/info68.vcproj, io68/io68.vcproj, sc68/sc68.vcproj, sourcer68/sourcer68.vcproj, unice68/unice68.vcproj, api68/api68.vcproj, as68/as68.vcproj, debug68/debug68.vcproj, desa68/desa68.vcproj, emu68/emu68.vcproj, emu68/emu68debug.vcproj, file68/file68.vcproj:
+	Add MsVC7 project files
+
+2003-09-10  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* Makefile.am, README.CVS, api68/api68.c, as68/as68_doc.h, config68.h.in, config_option68.h.in, config_package68.h.in, config_platform68.h.in, config_type68.h.in, config_win32.h, configure.ac, debug68/Makefile.am, debug68/SC68debug_comline.c, emu68/type68.h, file68/Makefile.am, file68/gzip68.c, file68/istream68_def.h, file68/istream68_file.c, file68/istream68_mem.c, file68/rsc68.c, info68/info68.c:
+	Split configuration header into several files and remove autoheader.
+
+2003-09-06  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* NEWS: Add release 2.1.0 message
+
+	* ChangeLog: *** empty log message ***
+
+	* README: Update for 2.1.0 release.
+
+	* Makefile.am, configure.ac, debug68/Makefile.am, info68/Makefile.am, sc68-config.in, sc68.pc.in, sc68/Makefile.am, sourcer68/Makefile.am, unice68/Makefile.am, unice68/unice68.h, file68/Makefile.am, file68/gzip68.h:
+	*** empty log message ***
+
+	* file68/istream68.c, file68/istream68.h: Add a seek to function.
+
+	* file68/file68.c, file68/ice68.h, file68/ice68.c: Added ice loader
+
+	* Makefile.am, configure.ac, file68/Makefile.am, file68/gzip68.c, file68/istream68_file.c:
+	*** empty log message ***
+
+	* unice68/Makefile.am, unice68/unice68-emul.c, unice68/unice68.c, unice68/unice68.h, unice68/unice68_doc.h, unice68/unice68_native.c:
+	Add unice68 library to project.
+	The new ice depacker is a "C" conversion of the original ICE depacker routine. The old emulated version has been copied to unice68-emul.c. The new version of unice68 program use the unice68 library.
+
+	* doc/Makefile.in, doc/devdoc.hin: *** empty log message ***
+
+2003-09-06  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* README: Update for 2.1.0 release.
+
+	* file68/istream68.c, file68/istream68.h: Add a seek to function.
+
+	* file68/file68.c, file68/ice68.h, file68/ice68.c: Added ice loader
+
+	* unice68/unice_native68.c, unice68/unice68.h Add unice68 library
+	to project.  The new ice depacker is a "C" conversion of the
+	original ICE depacker routine. The old emulated version has been
+	copied to unice68-emul.c.
+
+	* unice68/unice68.c: The new version of unice68 program use the
+	unice68 library.
+
+2003-09-05  benjihan  <benjihan@ben.sashipa.dyndns.org>
+	
+	* file68/gzip68.c, file68/gzip68.h: Add gzip file support.
+
+2003-09-03  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* file68/istream68_mem.c, file68/istream68_mem.h: Add memory
+	stream read/write support.
+
+	* data/Scripts/SNDHinfo.sh: Add Timer-C tag handling.
+
+	* data/Scripts/ Add some script to produce sc68 files.
+
+	* debug68/sc68debug.c: Fix a bug in load data command.  Add error
+	handling for commands and on exit.  Add conditionnal execution of
+	instruction (very useful for script);
+
+
+2003-08-27  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* file68/rsc68.c: Force replay name to lowercase
+
+	* data/Replay/: Lowercase filename.
+
+
+2003-08-25  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* data/Replay/sndh_ice, data/Players/sndh_ice.s: Fix sndh_ice
+	replay to deal with both compressed and uncompressed files
+
+2003-08-22  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* api68/api68.dsp: This file is a fake.
+
+2003-08-21  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	Add tag for revision 2.0.
+
+	* emu68/emu68.c: Fix a bug in emu68 main loop in non-Debug mode.
+	Remove some automake generated files.
+
+	* README.CVS: Information file to help sc68 building from CVS version.
+
+	* Makefile.in, config68.h.in: Remove because this file is
+	generated by autoheader.
+
+	* config68.h.in configure.ac: Add missing file.
+
+2003-08-01  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* info/: Remove some files that have nothing to do here.
+
+2003-05-15  benjihan  <benjihan@ben.sashipa.dyndns.org>
+
+	* data/Replay/sndh_ice: cream sndh_ice external replay
+
+2003-08-14
+	
+	- New API 2.0.0
+
+
+2002-01-24
+	
+	- Add hidden screen to winamp GL intro.
+	
+2002-01-22
+	
+	- Remove muli-thread bug when seek for a new track in xmms
+	version.
+
+2002-01-21
+	
+	- Improve winamp GL intro to keep a good frame rate by adapting
+	render parameters.
+	
+	- Add some tests in 68K emulator in debug mode including PC
+	historic and pass counter.
+
+2002-01-16
+	
+	- Found a multi-thread bug in winamp plugin when seeking for a new
+	track.  This removed a lots (if not all) of strange bevahiours in
+	the 68K and MFP emulator.
+	
+	- Now the emulator must be launched with a number of cycle
+	multiple of 32. This could be removed without big work.
+
+2002-01-13
+	
+	- Additionnal entry point list parameter in sourcer command line.
+
+	
+2002-01-02
+	
+	- Optimize cycle main loop of envelop generator in YM2149
+	emulator.  TODO: The same thing for noise and mixer loops.
+
+2001-12-31
+	
+	- Improve STE DMA sound emulation (for Tao / TSD player). STE
+	microwire commands emulation still poor. It does not emulate the
+	shifting of register. This could make some programs enter a dead
+	lock while waiting for a shift !
+
+2001-12-29
+	
+	- Add TOS relocation to sourcer.
+	
+	- Add relative SYMBOL for inside opcode memory access.
+	
+	- Remove a debug in documentation comment.
+	
+	- Add modications for Windows compilation in config.h.
+
+2001-12-27
+	
+	- Include a cool 68000 sourcer to distribution. It implies some
+	improvements and debugging of the 68000 disassembler.
+	
+	- Revome ending (PC) from DBcc instructions disassemble.
+	
+	- Remove some errors in windows package.
+
+2001-12-25
+	
+	- All source headers were cleaned.
+	
+	- CVS repository created.
+	
+	- Jam-Hpn replay from Tao/Cream works.
+	
+	- Corrected a bug '-@' in info68.texi.
+	
+	- Add write permission check for user configuration file.
+	
+	- Remove CVS special files from sc68 resource tarball.
+
+2001-12-16
+	
+	- Install xmms plugin in $prefix directory and build symbolic link
+	to xmms input plugin directory.
+	
+2001-12-12
+	
+	- Added README, NEWS
+	
+	- Added man and info
+	
+	- The distrib seems to be nearly clean and GNU standards
+	compliants.
+	
+2001-12-10
+	
+	- Added sc68 command line player.
+	
+	- Added as68, info68 and sc68 man page generation.
+	
+2001-12-05
+	
+	- Added automake.

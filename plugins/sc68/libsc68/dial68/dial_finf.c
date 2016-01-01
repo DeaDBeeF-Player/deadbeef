@@ -28,10 +28,10 @@
 #endif
 
 /* libc */
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <assert.h>
 
 /* sc68 */
 #include "sc68/sc68.h"
@@ -43,9 +43,9 @@ static const int magic = ('F'<<24)|('I'<<16)|('N'<<8)|'F';
 
 struct dial_s {
   dial68_t     dial;                    /* base dialog */
-  sc68_t      *sc68;                    /*  */
-  sc68_disk_t  disk;                    /*  */
-  sc68_minfo_t info;                    /* current track info       */
+  sc68_t      *sc68;                    /* result of "sc68" call */
+  sc68_disk_t  disk;                    /* result of "disk" call */
+  sc68_minfo_t info;                    /* current track info    */
   char         tstr[4];                 /* Temp storage for track # */
 };
 typedef struct dial_s dial_t;
@@ -56,12 +56,17 @@ static inline int ismagic(dial_t * dial)
     dial &&
     dial->dial.dial == magic &&
     dial->dial.size == sizeof(*dial) &&
-    dial->dial.cntl
+    dial->dial.cntl /* && dial->dial.data */
     ;
 }
 
 static inline void del_dial(dial_t * dial)
 {
+  assert(dial);
+  assert(!dial->dial.data);
+  assert(!dial->dial.cntl);
+  assert(!dial->dial.size);
+  assert(dial->dial.dial == ~magic);
   free(dial);
 }
 
@@ -73,8 +78,12 @@ int finf(void * data, const char * key, int op, sc68_dialval_t *val)
   dial_t * const dial = data;
   int res;
 
+  assert(ismagic(dial));
+  assert(key);
+  assert(val);
+
   /* Sanity check */
-  if (!key || !ismagic(dial))
+  if (!key || !val || !ismagic(dial))
     return -1;
 
   /* Run user control function */
@@ -83,6 +92,8 @@ int finf(void * data, const char * key, int op, sc68_dialval_t *val)
 
   /* Kill special case. */
   if (op == SC68_DIAL_CALL && keyis(SC68_DIAL_KILL)) {
+    dial->dial.cntl = 0; dial->dial.data = 0; dial->dial.size = 0;
+    dial->dial.dial = ~dial->dial.dial;
     del_dial(dial);
     res = 0;
   }
@@ -100,11 +111,11 @@ int finf(void * data, const char * key, int op, sc68_dialval_t *val)
     if (!dial->dial.cntl(dial->dial.data, "disk", op, val))
       dial->disk = (sc68_disk_t) val->s;
     TRACE68(dial_cat, P "\"%s\" sc68:%p disk:%p\n",
-            key, dial->sc68, dial->disk);
+            key, (void*)dial->sc68, (void*)dial->disk);
     val->i = sc68_music_info(dial->sc68,&dial->info,1,dial->disk);
     if (!val->i) {
       TRACE68(dial_cat, P "Got info: %02d - %s - %s\n",
-              dial->info.tracks, dial->info.album, dial->info.title);
+              dial->info.tracks, dial->info.artist, dial->info.album);
     }
   } else if (keyis("track")) {
     int track;
@@ -170,7 +181,7 @@ int finf(void * data, const char * key, int op, sc68_dialval_t *val)
       else if (keyis("year"))
         val->s = dial->info.year;
       else
-        res = -1;
+        res = 1;
       break;
 
     case SC68_DIAL_GETI:
@@ -185,7 +196,7 @@ int finf(void * data, const char * key, int op, sc68_dialval_t *val)
       else if (keyis("tag-key"))
         val->i = 0;
       else
-        res = -1;
+        res = 1;
       break;
 
     case SC68_DIAL_ENUM:
@@ -201,16 +212,14 @@ int finf(void * data, const char * key, int op, sc68_dialval_t *val)
                 ? dial->info.trk.tag[val->i-a].key
                 : dial->info.trk.tag[val->i-a].val )
             ;
-          break;
-        } else {
-          TRACE68(dial_cat, P "index out of range \"%s\"[%d] > %d\n",
-                  key,val->i,n);
+        } else
           res = -1;
-        }
-      } break;
+      } else
+        res = 1;
+      break;
 
     default:
-      res = -1;
+      res = 1;
     }
   }
 

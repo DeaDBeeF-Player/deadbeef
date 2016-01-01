@@ -44,10 +44,40 @@
 #endif
 
 #define DDB_GTKUI_API_VERSION_MAJOR 2
-#define DDB_GTKUI_API_VERSION_MINOR 1
+#define DDB_GTKUI_API_VERSION_MINOR 2
 
-// added in API 2.1
+#define DDB_GTKUI_DEPRECATED(x)
+
+#ifdef __GNUC__
+// avoid including glibc headers, this is not very portable
+#if defined __GNUC__ && defined __GNUC_MINOR__
+# define __GNUC_PREREQ(maj, min) \
+	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
+#else
+# define __GNUC_PREREQ(maj, min) 0
+#endif
+#undef DDB_GTKUI_DEPRECATED
+#if __GNUC_PREREQ(4,5)
+#define DDB_GTKUI_DEPRECATED(x) __attribute__ ((deprecated(x)))
+#else
+#define DDB_GTKUI_DEPRECATED(x) __attribute__ ((deprecated))
+#endif
+#endif
+
+#ifndef DDB_GTKUI_API_LEVEL
+#define DDB_GTKUI_API_LEVEL (DDB_GTKUI_API_VERSION_MAJOR * 100 + DB_API_VERSION_MINOR)
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_GTKUI_API_LEVEL >= 202)
+#define DEPRECATED_202 DDB_GTKUI_DEPRECATED("since GTKUI API 2.2")
+#else
+#define DEPRECATED_202
+#endif
+
+#if (DDB_GTKUI_API_LEVEL >= 201)
+// added in API 2.1 (deadbeef-0.6.2)
 #define DDB_GTKUI_CONF_LAYOUT "gtkui.layout.0.6.2"
+#endif
 
 // this flag tells that the widget should be added to h/vboxes with expand=FALSE
 #define DDB_GTKUI_WIDGET_FLAG_NON_EXPANDABLE 0x00000001
@@ -200,15 +230,22 @@ typedef struct {
     // the callback will be called when the requested cover is available,
     // in which case you will need to call the get_cover_art_pixbuf again from
     // the callback.
-    // get_cover_art_pixbuf is deprecated.
+    // get_cover_art_pixbuf is deprecated in API 2.2.
     // in new code, use get_cover_art_primary to get the large single cover art image,
     // and get_cover_art_thumb to get one of many smaller cover art images.
-    GdkPixbuf *(*get_cover_art_pixbuf) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data);
-    GdkPixbuf *(*get_cover_art_primary) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data);
-    GdkPixbuf *(*get_cover_art_thumb) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data);
+    GdkPixbuf *(*get_cover_art_pixbuf) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data) DEPRECATED_202;
 
     // get_default_cover_pixbuf returns the default cover art image
     GdkPixbuf *(*cover_get_default_pixbuf) (void);
+
+#if (DDB_GTKUI_API_LEVEL >= 202)
+    // added in API 2.2 (deadbeef-0.7)
+    GdkPixbuf *(*get_cover_art_primary) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data);
+    GdkPixbuf *(*get_cover_art_thumb) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data);
+    // adds a hook to be called before the main loop starts running, but after
+    // the window was created.
+    void (*add_window_init_hook) (void (*callback) (void *userdata), void *userdata);
+#endif
 } ddb_gtkui_t;
 
 #endif

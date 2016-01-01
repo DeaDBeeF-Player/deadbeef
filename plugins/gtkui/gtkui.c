@@ -960,6 +960,27 @@ gtkui_add_file_end_cb (ddb_fileadd_data_t *data, void *user_data) {
     }
 }
 
+typedef struct {
+    void (*callback) (void *userdata);
+    void *userdata;
+} window_init_hook_t;
+
+#define WINDOW_INIT_HOOK_MAX 10
+static window_init_hook_t window_init_hooks[WINDOW_INIT_HOOK_MAX];
+static int window_init_hooks_count;
+
+static void
+add_window_init_hook (void (*callback) (void *userdata), void *userdata) {
+    if (window_init_hooks_count >= WINDOW_INIT_HOOK_MAX) {
+        fprintf (stderr, "gtkui: add_window_init_hook can't add another hook, maximum number of hooks (%d) exceeded\n", (int)WINDOW_INIT_HOOK_MAX);
+        return;
+    }
+
+    window_init_hooks[window_init_hooks_count].callback = callback;
+    window_init_hooks[window_init_hooks_count].userdata = userdata;
+    window_init_hooks_count++;
+}
+
 int
 gtkui_thread (void *ctx) {
 #ifdef __linux__
@@ -1078,6 +1099,9 @@ gtkui_thread (void *ctx) {
 
     init_widget_layout ();
 
+    for (int i = 0; i < window_init_hooks_count; i++) {
+        window_init_hooks[i].callback (window_init_hooks[i].userdata);
+    }
     gtk_widget_show (mainwin);
 
     gtkui_set_titlebar (NULL);
@@ -1095,6 +1119,7 @@ gtkui_thread (void *ctx) {
 #ifdef __APPLE__
     gtkui_is_retina = is_retina (mainwin);
 #endif
+
     gtk_main ();
 
     deadbeef->unlisten_file_added (fileadded_listener_id);
@@ -1685,4 +1710,5 @@ static ddb_gtkui_t plugin = {
     .get_cover_art_primary = get_cover_art_primary,
     .get_cover_art_thumb = get_cover_art_thumb,
     .cover_get_default_pixbuf = cover_get_default_pixbuf,
+    .add_window_init_hook = add_window_init_hook,
 };
