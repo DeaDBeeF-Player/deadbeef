@@ -62,7 +62,6 @@ in_sc68_la_SOURCES=in_sc68.c\
 	$(sc68path)/file68/src/rsc68.c\
 	$(sc68path)/file68/src/vfs68_fd.c\
 	$(sc68path)/file68/src/vfs68_file.c\
-	$(sc68path)/file68/src/ferror68.c\
 	$(sc68path)/file68/src/vfs68_mem.c\
 	$(sc68path)/file68/src/file68.c\
 	$(sc68path)/file68/src/string68.c\
@@ -187,6 +186,7 @@ sc68replaydata_DATA = \
 	file68/data68/Replay/alteredbeast.bin\
 	file68/data68/Replay/armalyte.bin\
 	file68/data68/Replay/asidifier.bin\
+	file68/data68/Replay/azidifier.bin\
 	file68/data68/Replay/bendaglish.deli.bin\
 	file68/data68/Replay/big.bin\
 	file68/data68/Replay/blipblop.bin\
@@ -234,14 +234,14 @@ sc68replaydata_DATA = \
 	file68/data68/Replay/ninjatfmx.bin\
 	file68/data68/Replay/nobuddiesland.bin\
 	file68/data68/Replay/none.bin\
-	file68/data68/Replay/note2.bin\
 	file68/data68/Replay/note.bin\
+	file68/data68/Replay/note2.bin\
 	file68/data68/Replay/page.bin\
 	file68/data68/Replay/protracker.bin\
 	file68/data68/Replay/psg1.bin\
 	file68/data68/Replay/psgtrackerv2.bin\
-	file68/data68/Replay/puma2.bin\
 	file68/data68/Replay/puma.bin\
+	file68/data68/Replay/puma2.bin\
 	file68/data68/Replay/quartet.bin\
 	file68/data68/Replay/quartet_mindbomb.bin\
 	file68/data68/Replay/realms.bin\
@@ -266,8 +266,8 @@ sc68replaydata_DATA = \
 	file68/data68/Replay/tao_tsd.bin\
 	file68/data68/Replay/tcbtracker.bin\
 	file68/data68/Replay/test.bin\
-	file68/data68/Replay/tfmx_aga.bin\
 	file68/data68/Replay/tfmx.bin\
+	file68/data68/Replay/tfmx_aga.bin\
 	file68/data68/Replay/tfmx_old.bin\
 	file68/data68/Replay/tfmx_st.bin\
 	file68/data68/Replay/timerc.bin\
