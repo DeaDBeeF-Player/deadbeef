@@ -70,7 +70,6 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // api version history:
-// 9.9 -- devel
 // 1.8 -- deadbeef-0.7.0
 // 1.7 -- deadbeef-0.6.2
 // 1.6 -- deadbeef-0.6.1
