@@ -68,6 +68,7 @@ in_sc68_la_SOURCES=in_sc68.c\
 	$(sc68path)/file68/src/endian68.c\
 	$(sc68path)/file68/src/vfs68_curl.c\
 	$(sc68path)/file68/src/option68.c\
+	$(sc68path)/file68/src/ferror68.c\
 	$(sc68path)/file68/sc68/file68_vfs_ao.h\
 	$(sc68path)/file68/sc68/file68.h\
 	$(sc68path)/file68/sc68/file68_ord.h\
