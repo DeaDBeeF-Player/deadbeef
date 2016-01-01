@@ -52,7 +52,7 @@ TargetEnvironment=Unity
 
 [Desktop Action Play]
 Name=Play
-Name[zh_tw]=播放
+Name[zh_TW]=播放
 Exec=deadbeef --play
 
 [Desktop Action Pause]
