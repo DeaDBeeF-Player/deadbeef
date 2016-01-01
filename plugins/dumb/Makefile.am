@@ -108,6 +108,9 @@ dumb-kode54/include/internal/barray.h\
 dumb-kode54/include/internal/tarray.h\
 dumb-kode54/include/internal/resampler.h\
 dumb-kode54/include/internal/riff.h\
+dumb-kode54/include/internal/lpc.h\
+dumb-kode54/include/internal/dumbfile.h\
+dumb-kode54/include/internal/stack_alloc.h\
 dumb-kode54/include/dumb.h\
 dumb-kode54/src/helpers/resample.inc\
 dumb-kode54/src/helpers/resamp2.inc\
