@@ -6,6 +6,7 @@ sc68path=@top_srcdir@/plugins/sc68
 
 # put the included .c files here
 EXTRA_DIST = \
+	$(sc68replaydata_DATA)\
 	$(sc68path)/libsc68/emu68/lines/table.c\
 	$(sc68path)/libsc68/emu68/lines/lineE.c\
 	$(sc68path)/libsc68/emu68/lines/line3.c\
