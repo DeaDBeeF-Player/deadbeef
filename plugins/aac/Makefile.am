@@ -1,6 +1,4 @@
 if HAVE_AAC
-aacpath=@top_srcdir@/plugins/aac
-aacdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = aac.la
 aac_la_SOURCES = aac.c aac_parser.c aac_parser.h
 aac_la_LDFLAGS = -module -avoid-version

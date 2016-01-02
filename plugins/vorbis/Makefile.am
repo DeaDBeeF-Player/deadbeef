@@ -1,5 +1,4 @@
 if HAVE_VORBIS
-vorbisdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = vorbis.la
 vorbis_la_SOURCES = vorbis.c
 vorbis_la_LDFLAGS = -module -avoid-version -lm -export-symbols-regex vorbis_load

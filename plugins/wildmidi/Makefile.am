@@ -1,8 +1,7 @@
-if HAVE_WILDMIDI
 wildmidipath=@top_srcdir@/plugins/wildmidi
-
 EXTRA_DIST = $(wildmidipath)/README
 
+if HAVE_WILDMIDI
 pkglib_LTLIBRARIES = wildmidi.la
 
 wildmidi_la_SOURCES = wildmidiplug.c src/wildmidi_lib.c include/wildmidi_lib.h

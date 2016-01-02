@@ -1,5 +1,4 @@
 if HAVE_ALAC
-alacdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = alac.la
 alac_la_SOURCES = alac_plugin.c\
 alac.c decomp.h demux.c demux.h stream.c stream.h

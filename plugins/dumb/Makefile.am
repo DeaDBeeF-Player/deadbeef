@@ -1,8 +1,7 @@
-if HAVE_DUMB
 dumbpath=@top_srcdir@/plugins/dumb/dumb-kode54
-
 EXTRA_DIST = $(dumbpath)/readme.txt $(dumbpath)/ChangeLog $(dumbpath)/licence.txt $(dumbpath)/release.txt $(dumbpath)/todo.txt
 
+if HAVE_DUMB
 pkglib_LTLIBRARIES = ddb_dumb.la
 
 ddb_dumb_la_CFLAGS = $(CFLAGS) -I$(dumbpath)/include -std=gnu99

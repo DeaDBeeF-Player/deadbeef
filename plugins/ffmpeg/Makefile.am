@@ -1,5 +1,4 @@
 if HAVE_FFMPEG
-ffmpegdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = ffmpeg.la
 ffmpeg_la_SOURCES = ffmpeg.c
 ffmpeg_la_LDFLAGS = -module -avoid-version

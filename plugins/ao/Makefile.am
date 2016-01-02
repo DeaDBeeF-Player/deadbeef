@@ -1,5 +1,6 @@
+EXTRA_DIST=eng_psf/peops/reverb.c eng_psf/peops/adsr.c eng_psf/peops/registers.c eng_psf/peops/dma.c eng_psf/peops2/spu2.c eng_psf/peops2/reverb2.c eng_psf/peops2/adsr2.c eng_dsf/arm7memil.c eng_dsf/aicalfo.c eng_ssf/scsplfo.c
+
 if HAVE_PSF
-aodir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = ddb_ao.la
 ddb_ao_la_SOURCES = plugin.c main.c corlett.c\
 eng_dsf/eng_dsf.c eng_dsf/dc_hw.c eng_dsf/aica.c eng_dsf/aicadsp.c eng_dsf/arm7.c eng_dsf/arm7i.c\
@@ -18,8 +19,6 @@ eng_psf/peops/adsr.h eng_psf/peops/dma.h eng_psf/peops/externals.h eng_psf/peops
 eng_psf/peops2/adsr.h eng_psf/peops2/dma.h eng_psf/peops2/externals.h eng_psf/peops2/gauss_i.h eng_psf/peops2/psemuxa.h eng_psf/peops2/registers.h eng_psf/peops2/regs.h eng_psf/peops2/reverb.h eng_psf/peops2/spu.h eng_psf/peops2/stdafx.h 
 
 ddb_ao_la_LDFLAGS = -module -avoid-version $(ZLIB_LIBS)
-
-EXTRA_DIST=eng_psf/peops/reverb.c eng_psf/peops/adsr.c eng_psf/peops/registers.c eng_psf/peops/dma.c eng_psf/peops2/spu2.c eng_psf/peops2/reverb2.c eng_psf/peops2/adsr2.c eng_dsf/arm7memil.c eng_dsf/aicalfo.c eng_ssf/scsplfo.c
 
 ddb_ao_la_LIBADD = $(LDADD)
 AM_CFLAGS = $(CFLAGS) $(ZLIB_CFLAGS) -Wall -DPATH_MAX=1024 -DHAS_PSXCPU=1 -I.. -Ieng_ssf -Ieng_qsf -Ieng_dsf -lm -fPIC 

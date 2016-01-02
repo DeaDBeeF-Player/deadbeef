@@ -1,5 +1,4 @@
 if HAVE_ARTWORK
-artworkdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = artwork.la
 
 if HAVE_OGG

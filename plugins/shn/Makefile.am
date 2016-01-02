@@ -1,5 +1,4 @@
 if HAVE_SHN
-shndir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = ddb_shn.la
 ddb_shn_la_SOURCES = array.c convert.c misc.c output.c seek.c shn.c shn.h shorten.c shorten.h sulawalaw.c vario.c wave.c bitshift.h
 
