@@ -402,7 +402,9 @@ trackinfochanged_cb (gpointer data) {
     if (track == curr) {
         gtkui_set_titlebar (track);
     }
-    deadbeef->pl_item_unref (track);
+    if (track) {
+        deadbeef->pl_item_unref (track);
+    }
     if (curr) {
         deadbeef->pl_item_unref (curr);
     }
@@ -809,6 +811,12 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     }
     case DB_EV_TRACKFOCUSCURRENT:
         g_idle_add (pre_trackfocus_cb, NULL);
+        break;
+    case DB_EV_SONGCHANGED:
+        // update titlebar when to==NULL, i.e. playback has stopped
+        if (!((ddb_event_trackchange_t *)ctx)->to) {
+            g_idle_add (trackinfochanged_cb, NULL);
+        }
         break;
     }
 
