@@ -437,6 +437,8 @@ gtkui_set_titlebar (DB_playItem_t *it) {
     ddb_tf_context_t ctx = {
         ._size = sizeof (ddb_tf_context_t),
         .it = it,
+        // FIXME: current playlist is not correct here.
+        // need the playlist corresponding to the pointed track
         .plt = deadbeef->plt_get_curr (),
     };
     deadbeef->tf_eval (&ctx, it ? titlebar_playing_bc : titlebar_stopped_bc, str, sizeof (str));

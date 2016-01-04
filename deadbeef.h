@@ -514,6 +514,10 @@ typedef struct {
     ddb_playItem_t *it; // track to get information from, or NULL
     ddb_playlist_t *plt; // playlist in which the track resides, or NULL
 
+    // NOTE: when plt is NULL, it means that the track is not in any playlist,
+    // that is -- playlist will never be automatically guessed, for performance
+    // reasons.
+
     // index of the track in playlist the track belongs to
     // if present, DDB_TF_CONTEXT_HAS_INDEX flag must be set
     int idx;
