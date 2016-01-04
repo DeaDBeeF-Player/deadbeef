@@ -841,10 +841,10 @@ typedef struct {
        %D directory name with full path (e.g. /home/user/file.mp3 -> /home/user)
        more to come
     */
-    int (*pl_format_title) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
+    int (*pl_format_title) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt) DEPRECATED_18;
 
     // _escaped version wraps all conversions with '' and replaces every ' in conversions with \'
-    int (*pl_format_title_escaped) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
+    int (*pl_format_title_escaped) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt) DEPRECATED_18;
 
     // format duration 't' (fractional seconds) into string, for display in playlist
     void (*pl_format_time) (float t, char *dur, int size);
