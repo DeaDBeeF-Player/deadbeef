@@ -191,7 +191,7 @@ main_groups_changed (DdbListview *listview, const char* format) {
         free (listview->group_title_bytecode);
         listview->group_title_bytecode = NULL;
     }
-    deadbeef->conf_set_str ("gtkui.playlist.group_by", format);
+    deadbeef->conf_set_str ("gtkui.playlist.group_by_tf", format);
     listview->group_format = strdup (format);
     listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
 }
@@ -299,7 +299,7 @@ main_playlist_init (GtkWidget *widget) {
     lock_column_config = 0;
 
     deadbeef->conf_lock ();
-    listview->group_format = strdup (deadbeef->conf_get_str_fast ("gtkui.playlist.group_by", ""));
+    listview->group_format = strdup (deadbeef->conf_get_str_fast ("gtkui.playlist.group_by_tf", ""));
     deadbeef->conf_unlock ();
     listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
 

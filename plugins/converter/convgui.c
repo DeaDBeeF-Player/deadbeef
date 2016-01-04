@@ -266,7 +266,7 @@ converter_process (converter_ctx_t *conv)
     conv->outfolder = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder"))));
     const char *outfile = gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")));
     if (outfile[0] == 0) {
-        outfile = "%a - %t";
+        outfile = "%artist% - %title%";
     }
     conv->outfile = strdup (outfile);
     conv->preserve_folder_structure = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")));
@@ -427,7 +427,7 @@ converter_show_cb (void *data) {
         out_folder = getenv("HOME");
     }
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder")), out_folder);
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")), deadbeef->conf_get_str_fast ("converter.output_file", ""));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")), deadbeef->conf_get_str_fast ("converter.output_file_tf", ""));
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")), deadbeef->conf_get_int ("converter.preserve_folder_structure", 0));
     int write_to_source_folder = deadbeef->conf_get_int ("converter.write_to_source_folder", 0);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "write_to_source_folder")), write_to_source_folder);
@@ -647,7 +647,7 @@ void
 on_output_file_changed                 (GtkEntry        *entry,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_str ("converter.output_file", gtk_entry_get_text (entry));
+    deadbeef->conf_set_str ("converter.output_file_tf", gtk_entry_get_text (entry));
     deadbeef->conf_save ();
 }
 
