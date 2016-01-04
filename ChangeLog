@@ -40,7 +40,7 @@ version 0.7.0
 	flac: fixed legacy cuesheet handling
 	added writing updated replaygain info to all supported tag formats
 	fixed setting focus on the main window / playlist on startup
-	changed volume up/down actions to have a step of 1 sec instead of 2 sec
+	changed volume up/down actions to have a step of 1dB instead of 2dB
 	fixed bigendian support in the converter
 	updated DUMB and GME to the newest versions (kode54)
 	fixed handling of several formats in sndfile plugin (kode54)

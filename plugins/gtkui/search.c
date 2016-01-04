@@ -529,7 +529,7 @@ search_col_sort (int sort_order, void *user_data) {
 
 static void
 search_groups_changed (const char *format) {
-    deadbeef->conf_set_str ("gtkui.search.group_by", format);
+    deadbeef->conf_set_str ("gtkui.search.group_by_tf", format);
 }
 
 static void
@@ -637,6 +637,6 @@ search_playlist_init (GtkWidget *mainwin) {
     }
     search_binding.columns_changed = search_columns_changed;
 
-    pl_common_set_group_format (listview, "gtkui.search.group_by");
+    pl_common_set_group_format (listview, "gtkui.search.group_by_tf");
     window_title_bytecode = deadbeef->tf_compile (_("Search [(%list_total% results)]"));
 }

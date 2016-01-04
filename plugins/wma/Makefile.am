@@ -1,5 +1,4 @@
 if HAVE_WMA
-wmadir = $(libdir)/$(PACKAGE)
 wmapath=@top_srcdir@/plugins/wma
 pkglib_LTLIBRARIES = wma.la
 wma_la_SOURCES = wma_plugin.c\

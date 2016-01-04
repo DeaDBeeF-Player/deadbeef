@@ -1,7 +1,6 @@
 if HAVE_ADPLUG
 adplugpath=@top_srcdir@/plugins/adplug
 
-adlibdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = adplug.la
 
 AM_CFLAGS = $(CFLAGS) -std=c99 -I$(adplugpath)/adplug -I$(adplugpath)/libbinio -fPIC

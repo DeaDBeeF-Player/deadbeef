@@ -77,7 +77,7 @@ enum {
     PRESET_TYPE_DSP
 };
 
-static const char *default_format = "%album artist% - %title%";
+static const char *default_format = "%artist% - %title%";
 
 static void
 fill_presets (GtkListStore *mdl, ddb_preset_t *head, int type) {
@@ -554,7 +554,7 @@ converter_show_cb (void *data) {
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder")), out_folder);
 
     GtkWidget *output_file = lookup_widget (conv->converter, "output_file");
-    const char *output_file_text = deadbeef->conf_get_str_fast ("converter.output_file", "");
+    const char *output_file_text = deadbeef->conf_get_str_fast ("converter.output_file_tf", "");
     gtk_entry_set_text (GTK_ENTRY (output_file), output_file_text);
 
     g_signal_connect ((gpointer) output_file, "changed",
@@ -797,7 +797,7 @@ on_output_file_changed                 (GtkEntry        *entry,
                                         gpointer         user_data)
 {
     preview_timeout_add (gtk_entry_get_text (entry));
-    deadbeef->conf_set_str ("converter.output_file", gtk_entry_get_text (entry));
+    deadbeef->conf_set_str ("converter.output_file_tf", gtk_entry_get_text (entry));
     deadbeef->conf_save ();
 }
 

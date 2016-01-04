@@ -196,7 +196,7 @@ typedef struct {
     //  outfolder: the folder to write the file to (usually specified in GUI)
     //  outfile: the filename pattern, which may include additional folder
     //           structure, and title formatting; without extension.
-    //           examples: "%a - %t", "subfolder/%t"
+    //           examples: "%artist% - %title%", "subfolder/%title%"
     //  encoder_preset: an existing encoder preset.
     //  preserve_folder_structure: set to 1 to recreate the existing folder
     //                             structure, when converting multiple files

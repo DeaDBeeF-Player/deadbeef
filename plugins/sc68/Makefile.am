@@ -1,11 +1,104 @@
-if HAVE_SC68
-
-pkglib_LTLIBRARIES = in_sc68.la
-
 sc68path=@top_srcdir@/plugins/sc68
 
-# put the included .c files here
+sc68replaydata = \
+	$(sc68path)/file68/data68/Replay/aenigmatica.bin\
+	$(sc68path)/file68/data68/Replay/alteredbeast.bin\
+	$(sc68path)/file68/data68/Replay/armalyte.bin\
+	$(sc68path)/file68/data68/Replay/asidifier.bin\
+	$(sc68path)/file68/data68/Replay/azidifier.bin\
+	$(sc68path)/file68/data68/Replay/bendaglish.deli.bin\
+	$(sc68path)/file68/data68/Replay/big.bin\
+	$(sc68path)/file68/data68/Replay/blipblop.bin\
+	$(sc68path)/file68/data68/Replay/blipp079.bin\
+	$(sc68path)/file68/data68/Replay/bs22.bin\
+	$(sc68path)/file68/data68/Replay/cabal.bin\
+	$(sc68path)/file68/data68/Replay/chipmon2.bin\
+	$(sc68path)/file68/data68/Replay/cosotfmx.bin\
+	$(sc68path)/file68/data68/Replay/crapman1.bin\
+	$(sc68path)/file68/data68/Replay/crapman2.bin\
+	$(sc68path)/file68/data68/Replay/deltamusic1.bin\
+	$(sc68path)/file68/data68/Replay/deltamusic2.bin\
+	$(sc68path)/file68/data68/Replay/digitfmx.bin\
+	$(sc68path)/file68/data68/Replay/dmu.bin\
+	$(sc68path)/file68/data68/Replay/dwaga.bin\
+	$(sc68path)/file68/data68/Replay/dyter07.bin\
+	$(sc68path)/file68/data68/Replay/elf.bin\
+	$(sc68path)/file68/data68/Replay/fc13_14.bin\
+	$(sc68path)/file68/data68/Replay/fireice.bin\
+	$(sc68path)/file68/data68/Replay/fred.bin\
+	$(sc68path)/file68/data68/Replay/gemx.bin\
+	$(sc68path)/file68/data68/Replay/harlequin.bin\
+	$(sc68path)/file68/data68/Replay/hippel-coso_note.deli.bin\
+	$(sc68path)/file68/data68/Replay/hpn-jam.bin\
+	$(sc68path)/file68/data68/Replay/huelsbeck.bin\
+	$(sc68path)/file68/data68/Replay/huntforredoct.bin\
+	$(sc68path)/file68/data68/Replay/ivanhoe.bin\
+	$(sc68path)/file68/data68/Replay/jamcracker10.bin\
+	$(sc68path)/file68/data68/Replay/jamcrackerpro.bin\
+	$(sc68path)/file68/data68/Replay/lastninja3.bin\
+	$(sc68path)/file68/data68/Replay/lastninjaiii.bin\
+	$(sc68path)/file68/data68/Replay/lcd.bin\
+	$(sc68path)/file68/data68/Replay/lx_mmme.bin\
+	$(sc68path)/file68/data68/Replay/mcoder.bin\
+	$(sc68path)/file68/data68/Replay/megatizer.bin\
+	$(sc68path)/file68/data68/Replay/metrocross.bin\
+	$(sc68path)/file68/data68/Replay/midi.bin\
+	$(sc68path)/file68/data68/Replay/mmme.bin\
+	$(sc68path)/file68/data68/Replay/mmmesid.bin\
+	$(sc68path)/file68/data68/Replay/mon.bin\
+	$(sc68path)/file68/data68/Replay/mon_old.deli.bin\
+	$(sc68path)/file68/data68/Replay/musmon1.bin\
+	$(sc68path)/file68/data68/Replay/musmon2.bin\
+	$(sc68path)/file68/data68/Replay/ninjaremix.bin\
+	$(sc68path)/file68/data68/Replay/ninjatfmx.bin\
+	$(sc68path)/file68/data68/Replay/nobuddiesland.bin\
+	$(sc68path)/file68/data68/Replay/none.bin\
+	$(sc68path)/file68/data68/Replay/note.bin\
+	$(sc68path)/file68/data68/Replay/note2.bin\
+	$(sc68path)/file68/data68/Replay/page.bin\
+	$(sc68path)/file68/data68/Replay/protracker.bin\
+	$(sc68path)/file68/data68/Replay/psg1.bin\
+	$(sc68path)/file68/data68/Replay/psgtrackerv2.bin\
+	$(sc68path)/file68/data68/Replay/puma.bin\
+	$(sc68path)/file68/data68/Replay/puma2.bin\
+	$(sc68path)/file68/data68/Replay/quartet.bin\
+	$(sc68path)/file68/data68/Replay/quartet_mindbomb.bin\
+	$(sc68path)/file68/data68/Replay/realms.bin\
+	$(sc68path)/file68/data68/Replay/robhubbard.deli.bin\
+	$(sc68path)/file68/data68/Replay/rollingronny.bin\
+	$(sc68path)/file68/data68/Replay/shadowdancer.bin\
+	$(sc68path)/file68/data68/Replay/sidmon1.bin\
+	$(sc68path)/file68/data68/Replay/sidmon2.bin\
+	$(sc68path)/file68/data68/Replay/sidsound.bin\
+	$(sc68path)/file68/data68/Replay/sndh_ice.bin\
+	$(sc68path)/file68/data68/Replay/soundfx.bin\
+	$(sc68path)/file68/data68/Replay/spacecrusade.bin\
+	$(sc68path)/file68/data68/Replay/spacegun.bin\
+	$(sc68path)/file68/data68/Replay/ssd1.bin\
+	$(sc68path)/file68/data68/Replay/stos.bin\
+	$(sc68path)/file68/data68/Replay/synthiv.bin\
+	$(sc68path)/file68/data68/Replay/tao_digi.bin\
+	$(sc68path)/file68/data68/Replay/tao_hubbard.bin\
+	$(sc68path)/file68/data68/Replay/tao_ms211.bin\
+	$(sc68path)/file68/data68/Replay/tao_ms25.bin\
+	$(sc68path)/file68/data68/Replay/tao_ms27.bin\
+	$(sc68path)/file68/data68/Replay/tao_tsd.bin\
+	$(sc68path)/file68/data68/Replay/tcbtracker.bin\
+	$(sc68path)/file68/data68/Replay/test.bin\
+	$(sc68path)/file68/data68/Replay/tfmx.bin\
+	$(sc68path)/file68/data68/Replay/tfmx_aga.bin\
+	$(sc68path)/file68/data68/Replay/tfmx_old.bin\
+	$(sc68path)/file68/data68/Replay/tfmx_st.bin\
+	$(sc68path)/file68/data68/Replay/timerc.bin\
+	$(sc68path)/file68/data68/Replay/toki.bin\
+	$(sc68path)/file68/data68/Replay/tsd1.bin\
+	$(sc68path)/file68/data68/Replay/utopia.bin\
+	$(sc68path)/file68/data68/Replay/vikingchild.bin\
+	$(sc68path)/file68/data68/Replay/xbiossound.bin\
+	$(sc68path)/file68/data68/Replay/zonewarrior.bin
+
 EXTRA_DIST = \
+	$(sc68replaydata)\
 	$(sc68path)/libsc68/emu68/lines/table.c\
 	$(sc68path)/libsc68/emu68/lines/lineE.c\
 	$(sc68path)/libsc68/emu68/lines/line3.c\
@@ -44,6 +137,12 @@ EXTRA_DIST = \
 	$(sc68path)/libsc68/emu68/crc32.c\
 	$(sc68path)/libsc68/emu68/table68.c
 
+if HAVE_SC68
+pkglib_LTLIBRARIES = in_sc68.la
+
+sc68replaydatadir = $(libdir)/deadbeef/data68/Replay
+sc68replaydata_DATA = $(sc68replaydata)
+
 in_sc68_la_SOURCES=in_sc68.c\
 	$(sc68path)/file68/src/gzip68.c\
 	$(sc68path)/file68/src/vfs68.c\
@@ -68,6 +167,7 @@ in_sc68_la_SOURCES=in_sc68.c\
 	$(sc68path)/file68/src/endian68.c\
 	$(sc68path)/file68/src/vfs68_curl.c\
 	$(sc68path)/file68/src/option68.c\
+	$(sc68path)/file68/src/ferror68.c\
 	$(sc68path)/file68/sc68/file68_vfs_ao.h\
 	$(sc68path)/file68/sc68/file68.h\
 	$(sc68path)/file68/sc68/file68_ord.h\
@@ -179,104 +279,6 @@ in_sc68_la_LDFLAGS = -module -avoid-version
 in_sc68_la_LIBADD = $(ZLIB_LIBS)
 
 AM_CFLAGS = $(CFLAGS) -std=c99 -DSC68_SHARED_DATA_PATH='"."' -DHAVE_GETENV=1 -DHAVE_CONFIG_CONFIG68_H=1 -DHAVE_STRING_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STDINT_H=1 -DHAVE_ASSERT_H -DHAVE_LIMITS_H=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_BASENAME=1 -DEMU68_MONOLITIC=1 -DPACKAGE_VERNUM=300 -DEMU68_EXPORT -DNDEBUG=1 -DNDEBUG_LIBSC68=1 -DUSE_FILE68=1 -DUSE_UNICE68=1 -DHAVE_INTMAX_T -DHAVE_GETENV=1 -DHAVE_STDIO_H=1 -DHAVE_MEMORY_H=1 -DHAVE_MALLOC=1 -DHAVE_FREE=1 -DHAVE_LONG_LONG_INT=1 -DHAVE_LONG_FILE_NAMES=1 -DHAVE_LIMITS_H=1 -DHAVE_LIBGEN_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_DLFCN_H=1 -I$(sc68path)/file68 -I$(sc68path)/file68/sc68 -I$(sc68path)/unice68 -I$(sc68path)/libsc68 -I$(sc68path)/libsc68/sc68 -I$(sc68path)/libsc68/emu68
-
-sc68replaydatadir = $(libdir)/deadbeef/data68/Replay
-sc68replaydata_DATA = \
-	$(sc68path)/file68/data68/Replay/aenigmatica.bin\
-	$(sc68path)/file68/data68/Replay/alteredbeast.bin\
-	$(sc68path)/file68/data68/Replay/armalyte.bin\
-	$(sc68path)/file68/data68/Replay/asidifier.bin\
-	$(sc68path)/file68/data68/Replay/azidifier.bin\
-	$(sc68path)/file68/data68/Replay/bendaglish.deli.bin\
-	$(sc68path)/file68/data68/Replay/big.bin\
-	$(sc68path)/file68/data68/Replay/blipblop.bin\
-	$(sc68path)/file68/data68/Replay/blipp079.bin\
-	$(sc68path)/file68/data68/Replay/bs22.bin\
-	$(sc68path)/file68/data68/Replay/cabal.bin\
-	$(sc68path)/file68/data68/Replay/chipmon2.bin\
-	$(sc68path)/file68/data68/Replay/cosotfmx.bin\
-	$(sc68path)/file68/data68/Replay/crapman1.bin\
-	$(sc68path)/file68/data68/Replay/crapman2.bin\
-	$(sc68path)/file68/data68/Replay/deltamusic1.bin\
-	$(sc68path)/file68/data68/Replay/deltamusic2.bin\
-	$(sc68path)/file68/data68/Replay/digitfmx.bin\
-	$(sc68path)/file68/data68/Replay/dmu.bin\
-	$(sc68path)/file68/data68/Replay/dwaga.bin\
-	$(sc68path)/file68/data68/Replay/dyter07.bin\
-	$(sc68path)/file68/data68/Replay/elf.bin\
-	$(sc68path)/file68/data68/Replay/fc13_14.bin\
-	$(sc68path)/file68/data68/Replay/fireice.bin\
-	$(sc68path)/file68/data68/Replay/fred.bin\
-	$(sc68path)/file68/data68/Replay/gemx.bin\
-	$(sc68path)/file68/data68/Replay/harlequin.bin\
-	$(sc68path)/file68/data68/Replay/hippel-coso_note.deli.bin\
-	$(sc68path)/file68/data68/Replay/hpn-jam.bin\
-	$(sc68path)/file68/data68/Replay/huelsbeck.bin\
-	$(sc68path)/file68/data68/Replay/huntforredoct.bin\
-	$(sc68path)/file68/data68/Replay/ivanhoe.bin\
-	$(sc68path)/file68/data68/Replay/jamcracker10.bin\
-	$(sc68path)/file68/data68/Replay/jamcrackerpro.bin\
-	$(sc68path)/file68/data68/Replay/lastninja3.bin\
-	$(sc68path)/file68/data68/Replay/lastninjaiii.bin\
-	$(sc68path)/file68/data68/Replay/lcd.bin\
-	$(sc68path)/file68/data68/Replay/lx_mmme.bin\
-	$(sc68path)/file68/data68/Replay/mcoder.bin\
-	$(sc68path)/file68/data68/Replay/megatizer.bin\
-	$(sc68path)/file68/data68/Replay/metrocross.bin\
-	$(sc68path)/file68/data68/Replay/midi.bin\
-	$(sc68path)/file68/data68/Replay/mmme.bin\
-	$(sc68path)/file68/data68/Replay/mmmesid.bin\
-	$(sc68path)/file68/data68/Replay/mon.bin\
-	$(sc68path)/file68/data68/Replay/mon_old.deli.bin\
-	$(sc68path)/file68/data68/Replay/musmon1.bin\
-	$(sc68path)/file68/data68/Replay/musmon2.bin\
-	$(sc68path)/file68/data68/Replay/ninjaremix.bin\
-	$(sc68path)/file68/data68/Replay/ninjatfmx.bin\
-	$(sc68path)/file68/data68/Replay/nobuddiesland.bin\
-	$(sc68path)/file68/data68/Replay/none.bin\
-	$(sc68path)/file68/data68/Replay/note.bin\
-	$(sc68path)/file68/data68/Replay/note2.bin\
-	$(sc68path)/file68/data68/Replay/page.bin\
-	$(sc68path)/file68/data68/Replay/protracker.bin\
-	$(sc68path)/file68/data68/Replay/psg1.bin\
-	$(sc68path)/file68/data68/Replay/psgtrackerv2.bin\
-	$(sc68path)/file68/data68/Replay/puma.bin\
-	$(sc68path)/file68/data68/Replay/puma2.bin\
-	$(sc68path)/file68/data68/Replay/quartet.bin\
-	$(sc68path)/file68/data68/Replay/quartet_mindbomb.bin\
-	$(sc68path)/file68/data68/Replay/realms.bin\
-	$(sc68path)/file68/data68/Replay/robhubbard.deli.bin\
-	$(sc68path)/file68/data68/Replay/rollingronny.bin\
-	$(sc68path)/file68/data68/Replay/shadowdancer.bin\
-	$(sc68path)/file68/data68/Replay/sidmon1.bin\
-	$(sc68path)/file68/data68/Replay/sidmon2.bin\
-	$(sc68path)/file68/data68/Replay/sidsound.bin\
-	$(sc68path)/file68/data68/Replay/sndh_ice.bin\
-	$(sc68path)/file68/data68/Replay/soundfx.bin\
-	$(sc68path)/file68/data68/Replay/spacecrusade.bin\
-	$(sc68path)/file68/data68/Replay/spacegun.bin\
-	$(sc68path)/file68/data68/Replay/ssd1.bin\
-	$(sc68path)/file68/data68/Replay/stos.bin\
-	$(sc68path)/file68/data68/Replay/synthiv.bin\
-	$(sc68path)/file68/data68/Replay/tao_digi.bin\
-	$(sc68path)/file68/data68/Replay/tao_hubbard.bin\
-	$(sc68path)/file68/data68/Replay/tao_ms211.bin\
-	$(sc68path)/file68/data68/Replay/tao_ms25.bin\
-	$(sc68path)/file68/data68/Replay/tao_ms27.bin\
-	$(sc68path)/file68/data68/Replay/tao_tsd.bin\
-	$(sc68path)/file68/data68/Replay/tcbtracker.bin\
-	$(sc68path)/file68/data68/Replay/test.bin\
-	$(sc68path)/file68/data68/Replay/tfmx.bin\
-	$(sc68path)/file68/data68/Replay/tfmx_aga.bin\
-	$(sc68path)/file68/data68/Replay/tfmx_old.bin\
-	$(sc68path)/file68/data68/Replay/tfmx_st.bin\
-	$(sc68path)/file68/data68/Replay/timerc.bin\
-	$(sc68path)/file68/data68/Replay/toki.bin\
-	$(sc68path)/file68/data68/Replay/tsd1.bin\
-	$(sc68path)/file68/data68/Replay/utopia.bin\
-	$(sc68path)/file68/data68/Replay/vikingchild.bin\
-	$(sc68path)/file68/data68/Replay/xbiossound.bin\
-	$(sc68path)/file68/data68/Replay/zonewarrior.bin
 
 endif
 

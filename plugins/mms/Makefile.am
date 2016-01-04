@@ -1,5 +1,4 @@
 if HAVE_MMS
-mmsdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = mms.la
 mms_la_SOURCES = mmsplug.c\
 	libmms/mms.c\

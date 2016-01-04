@@ -1,10 +1,11 @@
+plugindir = @top_srcdir@/plugins/ffap
+EXTRA_DIST = $(plugindir)/x86inc.asm
+
 if HAVE_FFAP
-ffapdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = ffap.la
 
 topsrcdir = @top_srcdir@
 YASM=$(topsrcdir)/yasmwrapper.sh
-EXTRA_DIST = dsputil_yasm.asm x86inc.asm
 SUFFIXES = .asm
 
 if HAVE_YASM

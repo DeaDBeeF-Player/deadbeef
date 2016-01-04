@@ -132,7 +132,7 @@ static void main_delete_selected (void) {
 
 static void
 main_groups_changed (const char* format) {
-    deadbeef->conf_set_str ("gtkui.playlist.group_by", format);
+    deadbeef->conf_set_str ("gtkui.playlist.group_by_tf", format);
 }
 
 static void
@@ -209,7 +209,7 @@ void
 main_playlist_init (GtkWidget *widget) {
     // make listview widget and bind it to data
     DdbListview *listview = DDB_LISTVIEW(widget);
-    pl_common_set_group_format (listview, "gtkui.playlist.group_by");
+    pl_common_set_group_format (listview, "gtkui.playlist.group_by_tf");
     main_binding.ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
     main_binding.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
     main_binding.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;

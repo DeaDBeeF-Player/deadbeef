@@ -1,6 +1,7 @@
-if HAVE_SHELLEXECUI
+pluginpath=@top_srcdir@/plugins/shellexecui
+EXTRA_DIST = $(pluginpath)/shellexec.glade
 
-EXTRA_DIST = shellexec.glade
+if HAVE_SHELLEXECUI
 
 if HAVE_GTK2
 if HAVE_GTK3
