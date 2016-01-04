@@ -52,7 +52,9 @@ gettoken_err_eof (const char *p, char *tok);
 char *
 parser_escape_string (const char *in);
 
-char *
+// reverses parser_escape_string
+// modified the input in-place
+void
 parser_unescape_quoted_string (char *in);
 
 #endif

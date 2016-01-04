@@ -153,7 +153,7 @@ parser_escape_string (const char *in) {
     return output;
 }
 
-char *
+void
 parser_unescape_quoted_string (char *in) {
     char *out = in;
     char *next = in;
@@ -167,5 +167,4 @@ parser_unescape_quoted_string (char *in) {
         *out++ = *next++;
     }
     *out = '\0';
-    return in;
 }

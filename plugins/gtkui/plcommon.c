@@ -986,14 +986,13 @@ groups_changed (DdbListview *listview, const char *format)
         listview->group_title_bytecode = NULL;
     }
     char *esc_format = parser_escape_string (format);
-    char *quoted_format = malloc (strlen(esc_format) + 3);
-    sprintf (quoted_format, "\"%s\"", esc_format);
-    listview->binding->groups_changed(quoted_format);
-    free (quoted_format);
+    char quoted_format[strlen (esc_format) + 3];
+    snprintf (quoted_format, sizeof (quoted_format), "\"%s\"", esc_format);
+    listview->binding->groups_changed (quoted_format);
     free (esc_format);
-    listview->group_format = strdup(format);
-    listview->group_title_bytecode = deadbeef->tf_compile(listview->group_format);
-    ddb_listview_refresh(listview, DDB_LIST_CHANGED | DDB_REFRESH_LIST);
+    listview->group_format = strdup (format);
+    listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
+    ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_LIST);
 }
 
 static void
@@ -1698,6 +1697,7 @@ pl_common_set_group_format (DdbListview *listview, char *format_conf) {
     deadbeef->conf_lock ();
     char *format = strdup (deadbeef->conf_get_str_fast (format_conf, ""));
     deadbeef->conf_unlock ();
-    listview->group_format = parser_unescape_quoted_string (format);
+    parser_unescape_quoted_string (format);
+    listview->group_format = format;
     listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
 }
