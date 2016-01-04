@@ -120,7 +120,7 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
 static void
 ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int idx, int y, int w, int h, int x1, int x2);
 static void
-ddb_listview_list_render_album_art (DdbListview *ps, cairo_t *cr, DdbListviewGroup *grp, int grp_next_y, int y, GdkRectangle *clip);
+ddb_listview_list_render_album_art (DdbListview *ps, cairo_t *cr, DdbListviewGroup *grp, int pinned, int grp_next_y, int y, GdkRectangle *clip);
 static void
 ddb_listview_list_track_dragdrop (DdbListview *ps, int x, int y);
 int
@@ -864,9 +864,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
     fill_list_background(listview, cr, scrollx, -listview->scrollpos, total_width, max(listview->fullheight, listview->list_height), clip);
 
     // find 1st group
-    for (DdbListviewGroup *grp_unpin = listview->groups; grp_unpin; grp_unpin = grp_unpin->next) {
-        grp_unpin->pinned = 0;
-    }
     DdbListviewGroup *grp = listview->groups;
     int idx = 0;
     int grp_y = -listview->scrollpos;
@@ -875,9 +872,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
         idx += grp->num_items;
         grp = grp->next;
     }
-    if (grp && grp_y < 0 && grp_y + grp->height >= 0) {
-        grp->pinned = 1;
-    }
+    DdbListviewGroup *pin_grp = gtkui_groups_pinned && grp && grp_y < 0 && grp_y + grp->height >= 0 ? grp : NULL;
 
     while (grp && grp_y < clip->y + clip->height) {
         int grp_height = title_height + grp->num_items * row_height;
@@ -900,9 +895,9 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
 
         // draw album art
         int grp_next_y = grp_y + grp->height;
-        ddb_listview_list_render_album_art(listview, cr, grp, grp_next_y, grp_y + title_height, clip);
+        ddb_listview_list_render_album_art(listview, cr, grp, pin_grp == grp, grp_next_y, grp_y + title_height, clip);
 
-        if (grp->pinned == 1 && gtkui_groups_pinned && clip->y <= title_height) {
+        if (pin_grp == grp && clip->y <= title_height) {
             // draw pinned group title
             fill_list_background(listview, cr, scrollx, 0, total_width, min(title_height, grp_next_y), clip);
 //            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, 0, total_width, min(title_height, grp_next_y), clip);
@@ -1419,13 +1414,13 @@ ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListvi
 }
 
 static void
-ddb_listview_list_render_album_art (DdbListview *ps, cairo_t *cr, DdbListviewGroup *grp, int grp_next_y, int y, GdkRectangle *clip) {
+ddb_listview_list_render_album_art (DdbListview *ps, cairo_t *cr, DdbListviewGroup *grp, int pinned, int grp_next_y, int y, GdkRectangle *clip) {
     int x = -ps->hscrollpos;
     for (DdbListviewColumn *c = ps->columns; c && x < clip->x+clip->width; x += c->width, c = c->next) {
         if (ps->binding->is_album_art_column(c->user_data) && x + c->width > clip->x) {
             fill_list_background(ps, cr, x, y, c->width, grp->height-ps->grouptitle_height, clip);
             if (ps->grouptitle_height > 0) {
-                ps->binding->draw_album_art(ps, cr, grp->head, c->user_data, grp->pinned, grp_next_y, x, y, c->width, grp->height-ps->grouptitle_height);
+                ps->binding->draw_album_art(ps, cr, grp->head, c->user_data, pinned, grp_next_y, x, y, c->width, grp->height-ps->grouptitle_height);
             }
         }
     }

@@ -321,7 +321,7 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it,
     col_info_t *info = user_data;
 
     int art_x = x + ART_PADDING_HORZ;
-    int min_y = (pinned == 1 && gtkui_groups_pinned ? listview->grouptitle_height : y) + ART_PADDING_VERT;
+    int min_y = (pinned ? listview->grouptitle_height : y) + ART_PADDING_VERT;
     if (info->cover_size == art_width) {
         cover_draw_exact(it, art_x, min_y, next_y, art_width, art_height, cr, user_data);
     }
@@ -985,7 +985,12 @@ groups_changed (DdbListview *listview, const char *format)
         free(listview->group_title_bytecode);
         listview->group_title_bytecode = NULL;
     }
-    listview->binding->groups_changed(format);
+    char *esc_format = parser_escape_string (format);
+    char *quoted_format = malloc (strlen(esc_format) + 3);
+    sprintf (quoted_format, "\"%s\"", esc_format);
+    listview->binding->groups_changed(quoted_format);
+    free (quoted_format);
+    free (esc_format);
     listview->group_format = strdup(format);
     listview->group_title_bytecode = deadbeef->tf_compile(listview->group_format);
     ddb_listview_refresh(listview, DDB_LIST_CHANGED | DDB_REFRESH_LIST);
@@ -1656,10 +1661,14 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
             float rgb[] = {clr.red/65535., clr.green/65535., clr.blue/65535.};
             draw_set_fg_color (&listview->grpctx, rgb);
         }
-        int ew, eh;
-        draw_get_text_extents (&listview->grpctx, str, -1, &ew, &eh);
-        draw_text_custom (&listview->grpctx, x + 5, y + height/2 - draw_get_listview_rowheight (&listview->grpctx)/2 + 3, ew+5, 0, DDB_GROUP_FONT, 0, 0, str);
-        draw_line (&listview->grpctx, x + 5 + ew + 3, y+height/2, x + width, y+height/2);
+        int ew;
+        draw_text_custom (&listview->grpctx, x + 5, y + height/2 - draw_get_listview_rowheight (&listview->grpctx)/2 + 3, -1, 0, DDB_GROUP_FONT, 0, 0, str);
+        draw_get_layout_extents (&listview->grpctx, &ew, NULL);
+        int len = strlen (str);
+        int line_x = x + 5 + ew + (len ? ew / len / 2 : 0);
+        if (line_x < x + width) {
+            draw_line (&listview->grpctx, line_x, y+height/2, x+width, y+height/2);
+        }
     }
 }
 
@@ -1687,7 +1696,8 @@ pl_common_col_sort (int sort_order, int iter, void *user_data) {
 void
 pl_common_set_group_format (DdbListview *listview, char *format_conf) {
     deadbeef->conf_lock ();
-    listview->group_format = strdup (deadbeef->conf_get_str_fast (format_conf, ""));
+    char *format = strdup (deadbeef->conf_get_str_fast (format_conf, ""));
     deadbeef->conf_unlock ();
+    listview->group_format = parser_unescape_quoted_string (format);
     listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
 }
