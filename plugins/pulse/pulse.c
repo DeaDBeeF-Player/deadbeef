@@ -33,6 +33,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 #include "../../deadbeef.h"
 
 //#define trace(...) { fprintf(stdout, __VA_ARGS__); }
@@ -163,7 +164,8 @@ static int pulse_init(void)
 {
     trace ("pulse_init\n");
     state = OUTPUT_STATE_STOPPED;
-    pulse_terminate = 0;
+    trace ("pulse_terminate=%d\n", pulse_terminate);
+    assert (!pulse_terminate);
 
     if (requested_fmt.samplerate != 0) {
         memcpy (&plugin.fmt, &requested_fmt, sizeof (ddb_waveformat_t));
@@ -218,13 +220,15 @@ static int pulse_free(void)
 {
     trace("pulse_free\n");
 
-    if (pulse_tid)
-    {
-        pulse_terminate = 1;
-        deadbeef->thread_join(pulse_tid);
+    if (!pulse_tid) {
+        return 0;
     }
 
+    intptr_t tid = pulse_tid;
     pulse_tid = 0;
+    pulse_terminate = 1;
+    deadbeef->thread_join(tid);
+
     state = OUTPUT_STATE_STOPPED;
     if (s)
     {
@@ -237,6 +241,7 @@ static int pulse_free(void)
 
 static int pulse_play(void)
 {
+    trace ("pulse_play\n");
     if (!pulse_tid)
     {
         if (pulse_init () < 0)
@@ -251,6 +256,7 @@ static int pulse_play(void)
 
 static int pulse_stop(void)
 {
+    trace ("pulse_stop\n");
     state = OUTPUT_STATE_STOPPED;
     deadbeef->streamer_reset(1);
     pulse_free();
@@ -259,6 +265,7 @@ static int pulse_stop(void)
 
 static int pulse_pause(void)
 {
+    trace ("pulse_pause\n");
     if (state == OUTPUT_STATE_STOPPED)
     {
         return -1;
@@ -271,6 +278,7 @@ static int pulse_pause(void)
 
 static int pulse_unpause(void)
 {
+    trace ("pulse_unpause\n");
     if (state == OUTPUT_STATE_PAUSED)
     {
         if (pulse_init () < 0)
@@ -315,11 +323,12 @@ static void pulse_thread(void *context)
         if (res < 0)
         {
             fprintf(stderr, "pulse: failed to write buffer\n");
-            pulse_tid = 0;
-            pulse_free ();
-            break;
+            usleep(10000);
         }
     }
+
+    pulse_terminate = 0;
+    trace ("pulse_thread finished\n");
 }
 
 static void pulse_callback(char *stream, int len)
