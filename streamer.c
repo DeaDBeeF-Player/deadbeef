@@ -2526,10 +2526,6 @@ streamer_read (char *bytes, int size) {
         return -1;
     }
     DB_output_t *output = plug_get_output ();
-    if (formatchanged && bytes_until_next_song <= 0) {
-        streamer_set_output_format ();
-        formatchanged = 0;
-    }
     streamer_lock ();
     int sz = min (size, streamer_ringbuf.remaining);
     if (sz) {
@@ -2714,7 +2710,7 @@ streamer_get_fill (void) {
 int
 streamer_ok_to_read (int len) {
     DB_output_t *output = plug_get_output ();
-    if (formatchanged && bytes_until_next_song <= 0) {
+    if (formatchanged && bytes_until_next_song <= 0 && len >= 0) {
         streamer_set_output_format ();
         formatchanged = 0;
     }
