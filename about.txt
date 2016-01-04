@@ -1,14 +1,20 @@
 DeaDBeeF - The Ultimate Music Player
-Copyright © 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>
+Copyright © 2009-2016 Alexey Yakovenko and contributors
 http://deadbeef.sf.net
 
-Contributors:
+The contributors:
 
     Alexey A. Smirnov <alexey.smirnov@gmx.com>
         Debian packaging, patches
 
     Anton Novikov <tonn.post@gmail.com>
         PulseAudio plugin
+
+    Christian Boxdörfer <christian.boxdoerfer@posteo.de>
+        Lots of work on improving the GTK UI
+
+    Ian Nartowicz
+        Improved artwork, GTK UI, Converter, CDDA, various codecs, and more
 
     Sofias <sofias@radikalismus.com>
         Icon
@@ -25,10 +31,8 @@ Contributors:
     These people have also contributed significantly to the project by sending patches, testing, etc:
     
         Alex Dedul <rotmer@gmail.com>
-        Christian Boxdörfer <christian.boxdoerfer@posteo.de>
         David Bryant <david@wavpack.com>
         Derreck <sarumyanxxl@users.sourceforge.net>
-        Ian Nartowicz
         Igor Murzov <igor@gplsoft.org>
         Igor Rudchenko <igor@thinkpads.net>
         Jan D. Behrens <zykure@web.de>
