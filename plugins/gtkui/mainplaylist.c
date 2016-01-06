@@ -288,6 +288,9 @@ main_playlist_init (GtkWidget *widget) {
     main_binding.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
     ddb_listview_set_binding (listview, &main_binding);
     lock_column_config = 1;
+    if (!deadbeef->conf_get_str_fast ("gtkui.columns.playlist", NULL)) {
+        import_column_config_0_6 ("playlist.column.", "gtkui.columns.playlist");
+    }
     if (load_column_config (listview, "gtkui.columns.playlist") < 0) {
         // create default set of columns
         add_column_helper (listview, "♫", 50, DB_COLUMN_PLAYING, "%playstatus%", 0);

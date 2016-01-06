@@ -65,4 +65,9 @@ pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int s
 void
 pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height);
 
+// import old playlist configuration from "playlist.%02d" syntax with old title
+// formatting to the new JSON syntax with new title formatting
+int
+import_column_config_0_6 (const char *oldkeyprefix, const char *newkey);
+
 #endif // __PLCOLUMNS_H
