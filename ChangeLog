@@ -8,7 +8,6 @@ version 0.7.0
 		middle-click on playlist to remove it,
 		highlight current playlist, configurable columns,
 		sort columns by clicking their headers,
-		inline-editing/renaming, including F2 shortcut,
 		performance optimizations (Christian Boxdörfer)
 	various selection properties improvements (Christian Boxdörfer)
 	added "Skip to ..." next/prev album/genre/composer actions (Christian Boxdörfer)
