@@ -1174,6 +1174,9 @@ typedef struct {
     // returned value cannot be NULL
     // returned value is refcounted, so remember to call plt_unref.
     ddb_playlist_t *(*action_get_playlist) (void);
+
+    // convert legacy title formatting to the new format, usable with tf_compile
+    void (*tf_import_legacy) (const char *fmt, char *out, int outsize);
 #endif
 } DB_functions_t;
 

@@ -397,6 +397,8 @@ static DB_functions_t deadbeef_api = {
 
     .action_set_playlist = action_set_playlist,
     .action_get_playlist = action_get_playlist,
+
+    .tf_import_legacy = tf_import_legacy,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

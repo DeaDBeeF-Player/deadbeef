@@ -2015,3 +2015,127 @@ void
 tf_free (char *code) {
     free (code);
 }
+
+void
+tf_import_legacy (const char *fmt, char *out, int outsize) {
+    while (*fmt && outsize > 1) {
+        if (*fmt == '\'' || *fmt == '$') {
+            if (outsize < 3) {
+                break;
+            }
+            *out++ = *fmt;
+            *out++ = *fmt++;
+            outsize -= 2;
+        }
+        else if (*fmt != '%') {
+            *out++ = *fmt++;
+            outsize--;
+        }
+        else {
+            fmt++;
+            if (!*fmt) {
+                break;
+            }
+            if (*fmt == '@') {
+                const char *e = fmt;
+                e++;
+                while (*e && *e != '@') {
+                    e++;
+                }
+#define APPEND(x) {size_t size = strlen (x); if (size >= outsize-1) break; memcpy (out, x, size); out += size; outsize -= size;}
+                if (*e == '@') {
+                    char nm[100];
+                    size_t l = e-fmt-1;
+                    l = min (l, sizeof (nm)-1);
+                    strncpy (nm+1, fmt+1, l);
+                    nm[l+2] = 0;
+                    nm[0] = '%';
+                    nm[l-1] = '%';
+
+                    APPEND (nm);
+                    fmt = e;
+                }
+                continue;
+            }
+            else if (*fmt == 'a') {
+                APPEND ("%artist%");
+            }
+            else if (*fmt == 't') {
+                APPEND ("%title%");
+            }
+            else if (*fmt == 'b') {
+                APPEND ("%album%");
+            }
+            else if (*fmt == 'B') {
+                APPEND ("%album artist%");
+            }
+            else if (*fmt == 'C') {
+                APPEND ("%composer%");
+            }
+            else if (*fmt == 'n') {
+                APPEND ("%track number%");
+            }
+            else if (*fmt == 'N') {
+                APPEND ("%numtracks%");
+            }
+            else if (*fmt == 'y') {
+                APPEND ("%date%");
+            }
+            else if (*fmt == 'Y') {
+                APPEND ("%original_release_time%");
+            }
+            else if (*fmt == 'g') {
+                APPEND ("%genre%");
+            }
+            else if (*fmt == 'c') {
+                APPEND ("%comment%");
+            }
+            else if (*fmt == 'r') {
+                APPEND ("%copyright%");
+            }
+            else if (*fmt == 'l') {
+                APPEND ("%length%");
+            }
+            else if (*fmt == 'e') {
+                APPEND ("%playback_time%");
+            }
+            else if (*fmt == 'f') {
+                APPEND ("%filename_ext%");
+            }
+            else if (*fmt == 'F') {
+                APPEND ("%_path_raw%");
+            }
+            else if (*fmt == 'T') {
+                APPEND ("$info(tagtype)");
+            }
+            else if (*fmt == 'd') {
+                APPEND ("%directoryname%");
+            }
+            else if (*fmt == 'D') {
+                APPEND ("$directory_path(%_path_raw%)");
+            }
+            else if (*fmt == 'L') {
+                APPEND ("%list_length%"); // TODO
+            }
+            else if (*fmt == 'X') {
+                APPEND ("%list_selected%"); // TODO
+            }
+            else if (*fmt == 'Z') {
+                APPEND ("$channels()");
+            }
+            else if (*fmt == 'V') {
+                APPEND ("%_deadbeef_version%");
+            }
+            else if (*fmt == '%') {
+                APPEND ("%%");
+            }
+            else {
+                *out++ = *fmt;
+                outsize--;
+            }
+#undef APPEND
+            fmt++;
+        }
+    }
+    *out = 0;
+}

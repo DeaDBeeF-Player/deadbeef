@@ -42,4 +42,8 @@ tf_free (char *code);
 int
 tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen);
 
+// convert legacy title formatting to the new format, usable with tf_compile
+void
+tf_import_legacy (const char *fmt, char *out, int outsize);
+
 #endif // __TF_H
