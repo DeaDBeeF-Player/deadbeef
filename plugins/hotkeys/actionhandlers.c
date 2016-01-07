@@ -336,7 +336,13 @@ action_reload_metadata_handler (DB_plugin_action_t *act, int ctx) {
         if (dec) {
             strncpy (decoder_id, dec, sizeof (decoder_id));
         }
-        int match = deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && dec;
+        int match;
+        if (ctx == DDB_ACTION_CTX_PLAYLIST) {
+            match = deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && dec;
+        }
+        else {
+            match = deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && dec;
+        }
         deadbeef->pl_unlock ();
 
         if (match) {
