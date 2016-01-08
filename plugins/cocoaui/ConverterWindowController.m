@@ -267,6 +267,20 @@ extern DB_functions_t *deadbeef;
 }
 
 - (IBAction)openOutputFolderAction:(id)sender {
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+
+    [panel setCanChooseDirectories:YES];
+    [panel setCanChooseFiles:NO];
+    [panel setAllowsMultipleSelection:NO];
+    [panel setMessage:@"Choose output folder"];
+
+    // Display the panel attached to the document's window.
+    [panel beginSheetModalForWindow:[self window] completionHandler:^(NSInteger result){
+        if (result == NSFileHandlingPanelOKButton) {
+            NSURL * url = [panel URL];
+            [_outputFolder setStringValue: [url path]];
+        }
+    }];
 }
 
 // encoder presets sheet
