@@ -1473,6 +1473,7 @@ pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int s
             ._size = sizeof (ddb_tf_context_t),
             .it = it,
             .plt = deadbeef->plt_get_curr (),
+            .flags = DDB_TF_CONTEXT_NO_DYNAMIC,
         };
         deadbeef->tf_eval (&ctx, listview->group_title_bytecode, str, size);
         if (ctx.plt) {
@@ -1501,7 +1502,8 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
                 ._size = sizeof (ddb_tf_context_t),
                 .it = it,
                 .plt = deadbeef->plt_get_curr (),
-                .iter = iter
+                .flags = DDB_TF_CONTEXT_NO_DYNAMIC,
+                .iter = iter,
             };
             deadbeef->tf_eval (&ctx, listview->group_title_bytecode, str, sizeof (str));
             if (ctx.plt) {
