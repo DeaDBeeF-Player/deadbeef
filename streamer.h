@@ -172,4 +172,7 @@ vis_spectrum_listen (void *ctx, void (*callback)(void *ctx, ddb_audio_data_t *da
 void
 vis_spectrum_unlisten (void *ctx);
 
+void
+streamer_set_playing_track (playItem_t *it);
+
 #endif // __STREAMER_H

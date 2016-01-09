@@ -94,7 +94,7 @@ static playlist_t empty_playlist;
 static char empty_code[4] = {0};
 
 int
-tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
+tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
     if (!code) {
         code = empty_code;
     }
@@ -1453,7 +1453,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 }
                 else if ((tmp_a = !strcmp (name, "playback_time")) || (tmp_b = !strcmp (name, "playback_time_seconds")) || (tmp_c = !strcmp (name, "playback_time_remaining")) || (tmp_d = !strcmp (name, "playback_time_remaining_seconds"))) {
                     playItem_t *playing = streamer_get_playing_track ();
-                    if (it && playing == it) {
+                    if (it && playing == it && !(ctx->flags & DDB_TF_CONTEXT_NO_DYNAMIC)) {
                         float t = streamer_get_playpos ();
                         if (tmp_c || tmp_d) {
                             printf ("inverse time %d %d %d %d\n", tmp_a, tmp_b, tmp_c, tmp_d);

@@ -505,6 +505,7 @@ typedef struct ddb_fileadd_data_s {
 enum {
     DDB_TF_CONTEXT_HAS_INDEX = 1,
     DDB_TF_CONTEXT_HAS_ID = 2,
+    DDB_TF_CONTEXT_NO_DYNAMIC = 4, // skip dynamic fields (%playback_time%)
 };
 
 // context for title formatting interpreter
@@ -1144,7 +1145,7 @@ typedef struct {
     // out: buffer allocated by the caller, must be big enough to fit the output string
     // outlen: the size of out buffer
     // returns -1 on fail, output size on success
-    int (*tf_eval) (ddb_tf_context_t *ctx, char *code, char *out, int outlen);
+    int (*tf_eval) (ddb_tf_context_t *ctx, const char *code, char *out, int outlen);
 
     // sort using title formatting v2
     void (*plt_sort_v2) (ddb_playlist_t *plt, int iter, int id, const char *format, int order);

@@ -3028,3 +3028,14 @@ struct handler_s *
 streamer_get_handler (void) {
     return handler;
 }
+
+void
+streamer_set_playing_track (playItem_t *it) {
+    if (playing_track) {
+        pl_item_unref (playing_track);
+    }
+    playing_track = it;
+    if (playing_track) {
+        pl_item_ref (playing_track);
+    }
+}
