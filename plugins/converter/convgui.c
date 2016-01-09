@@ -1598,7 +1598,7 @@ convgui_get_actions (DB_playItem_t *it)
     return &convert_action;
 }
 
-int
+static int
 convgui_connect (void) {
     gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id (DDB_GTKUI_PLUGIN_ID);
     converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id ("converter");
@@ -1615,6 +1615,23 @@ convgui_connect (void) {
         fprintf (stderr, "convgui: need converter>=1.%d, but found %d.%d\n", REQ_CONV_VERSION, converter_plugin->misc.plugin.version_major, converter_plugin->misc.plugin.version_minor);
         return -1;
     }
+    return 0;
+}
+
+static void
+import_legacy_tf (const char *key_from, const char *key_to) {
+    if (!deadbeef->conf_get_str_fast (key_to, NULL)
+            && deadbeef->conf_get_str_fast (key_from, "")) {
+        char old[200], new[200];
+        deadbeef->conf_get_str (key_from, "", old, sizeof (old));
+        deadbeef->tf_import_legacy (old, new, sizeof (new));
+        deadbeef->conf_set_str (key_to, new);
+    }
+}
+
+static int
+convgui_start (void) {
+    import_legacy_tf ("converter.output_file", "converter.output_file_tf");
     return 0;
 }
 
@@ -1659,6 +1676,7 @@ DB_misc_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.get_actions = convgui_get_actions,
     .plugin.connect = convgui_connect,
+    .plugin.start = convgui_start,
 };
 
 DB_plugin_t *
