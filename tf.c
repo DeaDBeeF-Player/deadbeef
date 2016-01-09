@@ -1935,7 +1935,11 @@ tf_compile_plain (tf_compiler_t *c) {
     c->eol = 0;
     char i = *(c->i);
     if (i == '$') {
-        if (tf_compile_func (c)) {
+        if (c->i[1] == '$') {
+            c->i++;
+            *(c->o++) = *(c->i++);
+        }
+        else if (tf_compile_func (c)) {
             return -1;
         }
     }
@@ -1945,6 +1949,11 @@ tf_compile_plain (tf_compiler_t *c) {
         }
     }
     else if (i == '%') {
+        if (c->i[1] == '%') {
+            c->i++;
+            *(c->o++) = *(c->i++);
+            return 0;
+        }
         if (tf_compile_field (c)) {
             return -1;
         }
@@ -1966,11 +1975,17 @@ tf_compile_plain (tf_compiler_t *c) {
     else if (i == '\'') {
         // copy as plain text to next single-quote
         c->i++;
-        while (c->i[0] && c->i[0] != '\'') {
+
+        if (c->i[0] == '\'') {
             *(c->o++) = *(c->i++);
         }
-        if (c->i[0] == '\'') {
-            c->i++;
+        else {
+            while (c->i[0] && c->i[0] != '\'') {
+                *(c->o++) = *(c->i++);
+            }
+            if (c->i[0] == '\'') {
+                c->i++;
+            }
         }
     }
     else if (i == '\n') {

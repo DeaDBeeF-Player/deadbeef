@@ -969,4 +969,11 @@
     XCTAssert(!strcmp (buffer, "file.iso.wv"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_DoublingPercentDollarApostrophe_OutputsSinglePercentDollarApostrophe {
+    char *bc = tf_compile("''$$%%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "'$%"), @"The actual output is: %s", buffer);
+}
+
+
 @end
