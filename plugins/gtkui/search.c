@@ -451,9 +451,12 @@ search_playlist_init (GtkWidget *widget) {
     search_binding.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
     ddb_listview_set_binding (listview, &search_binding);
     lock_column_config = 1;
+
+    deadbeef->conf_lock ();
     if (!deadbeef->conf_get_str_fast ("gtkui.columns.search", NULL)) {
         import_column_config_0_6 ("search.column.", "gtkui.columns.search");
     }
+    deadbeef->conf_unlock ();
     // create default set of columns
     if (load_column_config (listview, "gtkui.columns.search") < 0) {
         add_column_helper (listview, _("Artist / Album"), 150, -1, "%artist% - %album%", 0);
