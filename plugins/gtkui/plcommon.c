@@ -1640,6 +1640,7 @@ import_column_config_0_6 (const char *oldkeyprefix, const char *newkey) {
     deadbeef->conf_lock ();
     DB_conf_item_t *col = deadbeef->conf_find (oldkeyprefix, NULL);
     if (!col) {
+        deadbeef->conf_unlock ();
         return 0;
     }
 
