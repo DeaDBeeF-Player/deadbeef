@@ -1263,6 +1263,9 @@ gtkui_start (void) {
     import_legacy_tf ("gtkui.titlebar_playing", "gtkui.titlebar_playing_tf");
     import_legacy_tf ("gtkui.titlebar_stopped", "gtkui.titlebar_stopped_tf");
 
+    import_legacy_tf ("gtkui.playlist.group_by", "gtkui.playlist.group_by_tf");
+    import_legacy_tf ("gtkui.search.group_by", "gtkui.search.group_by_tf");
+
     gtkui_thread (NULL);
 
     return 0;
