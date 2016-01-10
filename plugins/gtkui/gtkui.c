@@ -1245,9 +1245,24 @@ gtkui_quit (void) {
     gdk_threads_add_idle (gtkui_quit_cb, NULL);
 }
 
+static void
+import_legacy_tf (const char *key_from, const char *key_to) {
+    if (!deadbeef->conf_get_str_fast (key_to, NULL)
+            && deadbeef->conf_get_str_fast (key_from, NULL)) {
+        char old[200], new[200];
+        deadbeef->conf_get_str (key_from, "", old, sizeof (old));
+        deadbeef->tf_import_legacy (old, new, sizeof (new));
+        deadbeef->conf_set_str (key_to, new);
+    }
+}
+
 static int
 gtkui_start (void) {
     fprintf (stderr, "gtkui plugin compiled for gtk version: %d.%d.%d\n", GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION);
+
+    import_legacy_tf ("gtkui.titlebar_playing", "gtkui.titlebar_playing_tf");
+    import_legacy_tf ("gtkui.titlebar_stopped", "gtkui.titlebar_stopped_tf");
+
     gtkui_thread (NULL);
 
     return 0;
