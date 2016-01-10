@@ -80,13 +80,7 @@ extern DB_functions_t *deadbeef;
     deadbeef->conf_unlock ();
 
     // fill encoder presets
-    [_encoderPreset removeAllItems];
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_list ();
-    while (p) {
-        [_encoderPreset addItemWithTitle:[self encoderPresetTitleForPreset:p]];
-        p = p->next;
-    }
-    [_encoderPreset selectItemAtIndex:deadbeef->conf_get_int ("converter.encoder_preset", 0)];
+    [self fillEncoderPresets];
 
     // TODO: fill dsp presets
     [_dspPreset addItemWithTitle:@"Pass through"];
@@ -99,6 +93,16 @@ extern DB_functions_t *deadbeef;
     [_progressBar setMinValue:0];
     [_progressBar setMaxValue:_convert_items_count-1];
     [_progressBar setDoubleValue:0];
+}
+
+-(void)fillEncoderPresets {
+    [_encoderPreset removeAllItems];
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_list ();
+    while (p) {
+        [_encoderPreset addItemWithTitle:[self encoderPresetTitleForPreset:p]];
+        p = p->next;
+    }
+    [_encoderPreset selectItemAtIndex:deadbeef->conf_get_int ("converter.encoder_preset", 0)];
 }
 
 - (IBAction)outputFolderChanged:(id)sender {
@@ -272,6 +276,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)didEndEncoderPresetList:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
     [_encoderPresetsPanel orderOut:self];
+    [self fillEncoderPresets];
 }
 
 
