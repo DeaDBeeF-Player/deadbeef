@@ -398,6 +398,8 @@ static DB_functions_t deadbeef_api = {
     .action_set_playlist = action_set_playlist,
     .action_get_playlist = action_get_playlist,
 
+    .tf_import_legacy = tf_import_legacy,
+
     .plt_search_process2 = (void (*) (ddb_playlist_t *plt, const char *text, int select_results))plt_search_process2,
 };
 

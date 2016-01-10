@@ -82,4 +82,9 @@ pl_common_col_sort (int sort_order, int iter, void *user_data);
 void
 pl_common_set_group_format (DdbListview *listview, char *format_conf);
 
+// import old playlist configuration from "playlist.%02d" syntax with old title
+// formatting to the new JSON syntax with new title formatting
+int
+import_column_config_0_6 (const char *oldkeyprefix, const char *newkey);
+
 #endif // __PLCOLUMNS_H

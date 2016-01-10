@@ -4,7 +4,7 @@
 
   application launcher, compatible with GNU/Linux and most other POSIX systems
 
-  Copyright (C) 2009-2013 Alexey Yakovenko
+  Copyright (C) 2009-2016 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -69,6 +69,7 @@
 #include "cocoautil.h"
 #endif
 #include "playqueue.h"
+#include "tf.h"
 
 #ifndef PREFIX
 #error PREFIX must be defined
@@ -120,8 +121,12 @@ print_help (void) {
     fprintf (stdout, _("                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
                 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
                 "                      copy[r]ight, [e]lapsed\n"));
-    fprintf (stdout, _("                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
+    fprintf (stdout, _("                      example: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
     fprintf (stdout, _("                      for more info, see %s\n"), "http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting");
+    fprintf (stdout, _("                      NOTE: --nowplaying is deprecated.\n"));
+    fprintf (stdout, _("   --nowplaying-tf FMT  Print formatted track name to stdout, using the new title formatting\n"));
+    fprintf (stdout, _("                      FMT syntax: http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting-2.0\n"));
+    fprintf (stdout, _("                      example: --nowplaying-tf \"%%artist%% - %%title%%\" should print \"artist - title\"\n"));
 #ifdef ENABLE_NLS
 	bind_textdomain_codeset (PACKAGE, "UTF-8");
 #endif
@@ -206,43 +211,71 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             parg += strlen (parg);
             parg++;
             if (parg >= pend) {
+                const char *errtext = "--nowplaying expects format argument";
                 if (sendback) {
-                    snprintf (sendback, sbsize, "error --nowplaying expects format argument\n");
+                    snprintf (sendback, sbsize, "error %s\n", errtext);
                     return 0;
                 }
                 else {
-                    fprintf (stderr, "--nowplaying expects format argument\n");
+                    fprintf (stderr, "%s\n", errtext);
                     return -1;
                 }
             }
-            if (sendback) {
-                playItem_t *curr = streamer_get_playing_track ();
-                DB_fileinfo_t *dec = streamer_get_current_fileinfo ();
-                if (curr && dec) {
-                    const char np[] = "nowplaying ";
-                    memcpy (sendback, np, sizeof (np)-1);
-                    pl_format_title (curr, -1, sendback+sizeof(np)-1, sbsize-sizeof(np)+1, -1, parg);
-                }
-                else {
-                    strcpy (sendback, "nowplaying nothing");
-                }
-                if (curr) {
-                    pl_item_unref (curr);
-                }
+            char out[2048];
+            playItem_t *curr = streamer_get_playing_track ();
+            if (curr) {
+                pl_format_title (curr, -1, out, sizeof (out), -1, parg);
+                pl_item_unref (curr);
             }
             else {
-                char out[2048];
-                playItem_t *curr = streamer_get_playing_track ();
-                DB_fileinfo_t *dec = streamer_get_current_fileinfo();
-                if (curr && dec) {
-                    pl_format_title (curr, -1, out, sizeof (out), -1, parg);
+                strcpy (out, "nothing");
+            }
+            if (sendback) {
+                snprintf (sendback, sbsize, "nowplaying %s", out);
+            }
+            else {
+                fwrite (out, 1, strlen (out), stdout);
+                return 1; // exit
+            }
+        }
+        else if (!strcmp (parg, "--nowplaying-tf")) {
+            parg += strlen (parg);
+            parg++;
+            if (parg >= pend) {
+                const char *errtext = "--nowplaying expects format argument";
+                if (sendback) {
+                    snprintf (sendback, sbsize, "error %s\n", errtext);
+                    return 0;
+                }
+                else {
+                    fprintf (stderr, "%s\n", errtext);
+                    return -1;
+                }
+            }
+            char out[2048];
+            playItem_t *curr = streamer_get_playing_track ();
+            if (curr) {
+                char *script = tf_compile (parg);
+                if (script) {
+                    ddb_tf_context_t ctx = {
+                        ._size = sizeof (ddb_tf_context_t),
+                        .it = (DB_playItem_t *)curr,
+                    };
+                    tf_eval (&ctx, script, out, sizeof (out));
+                    tf_free (script);
                 }
                 else {
                     strcpy (out, "nothing");
                 }
-                if (curr) {
-                    pl_item_unref (curr);
-                }
+                pl_item_unref (curr);
+            }
+            else {
+                strcpy (out, "nothing");
+            }
+            if (sendback) {
+                snprintf (sendback, sbsize, "nowplaying %s", out);
+            }
+            else {
                 fwrite (out, 1, strlen (out), stdout);
                 return 1; // exit
             }
@@ -951,7 +984,7 @@ main (int argc, char *argv[]) {
             return 0;
         }
         else if (!strcmp (argv[i], "--version")) {
-            fprintf (stderr, "DeaDBeeF " VERSION " Copyright © 2009-2013 Alexey Yakovenko\n");
+            fprintf (stderr, "DeaDBeeF " VERSION " Copyright © 2009-2016 Alexey Yakovenko\n");
             return 0;
         }
         else if (!strcmp (argv[i], "--gui")) {

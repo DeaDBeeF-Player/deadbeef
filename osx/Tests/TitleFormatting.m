@@ -3,6 +3,7 @@
 #include "playlist.h"
 #include "tf.h"
 #include "playqueue.h"
+#include "streamer.h"
 
 @interface TitleFormatting : XCTestCase {
     playItem_t *it;
@@ -24,9 +25,12 @@
     ctx._size = sizeof (ddb_tf_context_t);
     ctx.it = (DB_playItem_t *)it;
     ctx.plt = NULL;
+
+    streamer_set_playing_track (NULL);
 }
 
 - (void)tearDown {
+    streamer_set_playing_track (NULL);
     pl_item_unref (it);
     pl_free ();
 
@@ -969,6 +973,7 @@
     XCTAssert(!strcmp (buffer, "file.iso.wv"), @"The actual output is: %s", buffer);
 }
 
+<<<<<<< HEAD
 - (void)test_Date_ReturnsYearValue {
     pl_replace_meta (it, "year", "1980");
     char *bc = tf_compile("%date%");
@@ -995,6 +1000,26 @@
     char *bc = tf_compile("%title%");
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, "filename"), @"The actual output is: %s", buffer);
+=======
+- (void)test_DoublingPercentDollarApostrophe_OutputsSinglePercentDollarApostrophe {
+    char *bc = tf_compile("''$$%%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "'$%"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PlaybackTime_OutputsPlaybackTime {
+    streamer_set_playing_track (it);
+    char *bc = tf_compile("%playback_time%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, " 0:00"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_NoDynamicFlag_SkipsDynamicFields {
+    char *bc = tf_compile("header|%playback_time%|footer");
+    ctx.flags |= DDB_TF_CONTEXT_NO_DYNAMIC;
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "header||footer"), @"The actual output is: %s", buffer);
+>>>>>>> 0.7
 }
 
 @end

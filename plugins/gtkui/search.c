@@ -628,6 +628,9 @@ search_playlist_init (GtkWidget *mainwin) {
     search_binding.select = (void (*) (DdbListviewIter, int))deadbeef->pl_set_selected;
     ddb_listview_set_binding (listview, &search_binding);
 
+    if (!deadbeef->conf_get_str_fast ("gtkui.columns.search", NULL)) {
+        import_column_config_0_6 ("search.column.", "gtkui.columns.search");
+    }
     // create default set of columns
     if (pl_common_load_column_config (listview, "gtkui.columns.search") < 0) {
         pl_common_add_column_helper (listview, _("Artist / Album"), 150, -1, COLUMN_FORMAT_ARTISTALBUM, 0);

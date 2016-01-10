@@ -381,6 +381,8 @@ gtkui_set_titlebar (DB_playItem_t *it) {
     ddb_tf_context_t ctx = {
         ._size = sizeof (ddb_tf_context_t),
         .it = it,
+        // FIXME: current playlist is not correct here.
+        // need the playlist corresponding to the pointed track
         .plt = deadbeef->plt_get_curr (),
     };
     deadbeef->tf_eval (&ctx, it ? titlebar_playing_bc : titlebar_stopped_bc, str, sizeof (str));
@@ -1247,9 +1249,27 @@ gtkui_quit (void) {
     gdk_threads_add_idle (gtkui_quit_cb, NULL);
 }
 
+static void
+import_legacy_tf (const char *key_from, const char *key_to) {
+    if (!deadbeef->conf_get_str_fast (key_to, NULL)
+            && deadbeef->conf_get_str_fast (key_from, NULL)) {
+        char old[200], new[200];
+        deadbeef->conf_get_str (key_from, "", old, sizeof (old));
+        deadbeef->tf_import_legacy (old, new, sizeof (new));
+        deadbeef->conf_set_str (key_to, new);
+    }
+}
+
 static int
 gtkui_start (void) {
     fprintf (stderr, "gtkui plugin compiled for gtk version: %d.%d.%d\n", GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION);
+
+    import_legacy_tf ("gtkui.titlebar_playing", "gtkui.titlebar_playing_tf");
+    import_legacy_tf ("gtkui.titlebar_stopped", "gtkui.titlebar_stopped_tf");
+
+    import_legacy_tf ("gtkui.playlist.group_by", "gtkui.playlist.group_by_tf");
+    import_legacy_tf ("gtkui.search.group_by", "gtkui.search.group_by_tf");
+
     gtkui_thread (NULL);
 
     return 0;

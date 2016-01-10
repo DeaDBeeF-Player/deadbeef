@@ -516,6 +516,7 @@ typedef struct ddb_fileadd_data_s {
 enum {
     DDB_TF_CONTEXT_HAS_INDEX = 1,
     DDB_TF_CONTEXT_HAS_ID = 2,
+    DDB_TF_CONTEXT_NO_DYNAMIC = 4, // skip dynamic fields (%playback_time%)
 };
 
 // context for title formatting interpreter
@@ -524,6 +525,10 @@ typedef struct {
     uint32_t flags; // DDB_TF_CONTEXT_ flags
     ddb_playItem_t *it; // track to get information from, or NULL
     ddb_playlist_t *plt; // playlist in which the track resides, or NULL
+
+    // NOTE: when plt is NULL, it means that the track is not in any playlist,
+    // that is -- playlist will never be automatically guessed, for performance
+    // reasons.
 
     // index of the track in playlist the track belongs to
     // if present, DDB_TF_CONTEXT_HAS_INDEX flag must be set
@@ -854,10 +859,10 @@ typedef struct {
        %D directory name with full path (e.g. /home/user/file.mp3 -> /home/user)
        more to come
     */
-    int (*pl_format_title) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
+    int (*pl_format_title) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt) DEPRECATED_18;
 
     // _escaped version wraps all conversions with '' and replaces every ' in conversions with \'
-    int (*pl_format_title_escaped) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
+    int (*pl_format_title_escaped) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt) DEPRECATED_18;
 
     // format duration 't' (fractional seconds) into string, for display in playlist
     void (*pl_format_time) (float t, char *dur, int size);
@@ -1153,7 +1158,7 @@ typedef struct {
     // out: buffer allocated by the caller, must be big enough to fit the output string
     // outlen: the size of out buffer
     // returns -1 on fail, output size on success
-    int (*tf_eval) (ddb_tf_context_t *ctx, char *code, char *out, int outlen);
+    int (*tf_eval) (ddb_tf_context_t *ctx, const char *code, char *out, int outlen);
 
     // sort using title formatting v2
     void (*plt_sort_v2) (ddb_playlist_t *plt, int iter, int id, const char *format, int order);
@@ -1183,6 +1188,9 @@ typedef struct {
     // returned value cannot be NULL
     // returned value is refcounted, so remember to call plt_unref.
     ddb_playlist_t *(*action_get_playlist) (void);
+
+    // convert legacy title formatting to the new format, usable with tf_compile
+    void (*tf_import_legacy) (const char *fmt, char *out, int outsize);
 #endif
 
     // since 1.9

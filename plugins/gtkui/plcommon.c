@@ -1122,7 +1122,7 @@ pl_common_load_column_config (DdbListview *listview, const char *key) {
         int iwidth = 0;
         int icolor_override = 0;
         const char *scolor = NULL;
-        GdkColor gdkcolor;
+        GdkColor gdkcolor = {0};
         stitle = json_string_value (title);
         if (json_is_string (align)) {
             ialign = atoi (json_string_value (align));
@@ -1168,114 +1168,6 @@ error:
     fprintf (stderr, "%s config variable contains invalid data, ignored\n", key);
     json_decref(root);
     return -1;
-#if 0
-    // syntax: "title" "format" id width alignright
-    char token[MAX_TOKEN];
-    const char *p = def;
-    char title[MAX_TOKEN];
-    int id;
-    char fmt[MAX_TOKEN];
-    int width;
-    int align;
-    int color_override = 0;
-    GdkColor color = {0, 0, 0, 0};
-
-    parser_init ();
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        return;
-    }
-    strcpy (title, token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        return;
-    }
-    strcpy (fmt, token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        return;
-    }
-    id = atoi (token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        return;
-    }
-    width = atoi (token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        return;
-    }
-    align = atoi (token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        goto parse_end;
-    }
-    color_override = atoi (token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        goto parse_end;
-    }
-    color.red = atoi (token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        goto parse_end;
-    }
-    color.green = atoi (token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        goto parse_end;
-    }
-    color.blue = atoi (token);
-
-parse_end: ;
-
-    col_info_t *inf = create_col_info(listview, -1);
-
-    enum {
-        DB_COLUMN_ARTIST_ALBUM = 2,
-        DB_COLUMN_ARTIST = 3,
-        DB_COLUMN_ALBUM = 4,
-        DB_COLUMN_TITLE = 5,
-        DB_COLUMN_DURATION = 6,
-        DB_COLUMN_TRACK = 7,
-    };
-
-    // convert IDs from pre-0.4
-    switch (id) {
-    case DB_COLUMN_ARTIST_ALBUM:
-        inf->format = strdup ("%a - %b");
-        break;
-    case DB_COLUMN_ARTIST:
-        inf->format = strdup ("%a");
-        break;
-    case DB_COLUMN_ALBUM:
-        inf->format = strdup ("%b");
-        break;
-    case DB_COLUMN_TITLE:
-        inf->format = strdup ("%t");
-        break;
-    case DB_COLUMN_DURATION:
-        inf->format = strdup ("%l");
-        break;
-    case DB_COLUMN_TRACK:
-        inf->format = strdup ("%n");
-        break;
-    default:
-        inf->format = *fmt ? strdup (fmt) : NULL;
-        inf->id = id;
-        break;
-    }
-    ddb_listview_column_append (listview, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? width : 0, color_override, color, inf);
-#endif
 }
 
 static void
@@ -1604,6 +1496,7 @@ pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int s
             ._size = sizeof (ddb_tf_context_t),
             .it = it,
             .plt = deadbeef->plt_get_curr (),
+            .flags = DDB_TF_CONTEXT_NO_DYNAMIC,
         };
         deadbeef->tf_eval (&ctx, listview->group_title_bytecode, str, size);
         if (ctx.plt) {
@@ -1632,7 +1525,8 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
                 ._size = sizeof (ddb_tf_context_t),
                 .it = it,
                 .plt = deadbeef->plt_get_curr (),
-                .iter = iter
+                .flags = DDB_TF_CONTEXT_NO_DYNAMIC,
+                .iter = iter,
             };
             deadbeef->tf_eval (&ctx, listview->group_title_bytecode, str, sizeof (str));
             if (ctx.plt) {
@@ -1703,4 +1597,134 @@ pl_common_set_group_format (DdbListview *listview, char *format_conf) {
     parser_unescape_quoted_string (format);
     listview->group_format = format;
     listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
+}
+
+static int
+import_column_from_0_6 (const uint8_t *def, char *json_out, int outsize) {
+    // syntax: "title" "format" id width alignright
+    char token[MAX_TOKEN];
+    const char *p = def;
+    char title[MAX_TOKEN];
+    int id;
+    char fmt[MAX_TOKEN];
+    int width;
+    int align;
+
+    *json_out = 0;
+
+    parser_init ();
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return 0;
+    }
+    strcpy (title, token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return 0;
+    }
+    strcpy (fmt, token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return 0;
+    }
+    id = atoi (token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return 0;
+    }
+    width = atoi (token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return 0;
+    }
+    align = atoi (token);
+
+    enum {
+        DB_COLUMN_ARTIST_ALBUM = 2,
+        DB_COLUMN_ARTIST = 3,
+        DB_COLUMN_ALBUM = 4,
+        DB_COLUMN_TITLE = 5,
+        DB_COLUMN_DURATION = 6,
+        DB_COLUMN_TRACK = 7,
+    };
+
+    int out_id = -1;
+    const char *format;
+#define MAX_COLUMN_TF 2048
+    char out_tf[MAX_COLUMN_TF];
+
+    // convert IDs from pre-0.4
+    switch (id) {
+    case DB_COLUMN_ARTIST_ALBUM:
+        format = "%artist% - %album%";
+        break;
+    case DB_COLUMN_ARTIST:
+        format = "%artist%";
+        break;
+    case DB_COLUMN_ALBUM:
+        format = "%album%";
+        break;
+    case DB_COLUMN_TITLE:
+        format = "%title%";
+        break;
+    case DB_COLUMN_DURATION:
+        format = "%length%";
+        break;
+    case DB_COLUMN_TRACK:
+        format = "%track number%";
+        break;
+    default:
+        deadbeef->tf_import_legacy (fmt, out_tf, sizeof (out_tf));
+        format = out_tf;
+        out_id = id;
+        break;
+    }
+    int ret = snprintf (json_out, outsize, "{\"title\":\"%s\",\"id\":\"%d\",\"format\":\"%s\",\"size\":\"%d\",\"align\":\"%d\"}", title, out_id, format, width, align);
+    return min (ret, outsize);
+}
+
+
+int
+import_column_config_0_6 (const char *oldkeyprefix, const char *newkey) {
+    deadbeef->conf_lock ();
+    DB_conf_item_t *col = deadbeef->conf_find (oldkeyprefix, NULL);
+    if (!col) {
+        return 0;
+    }
+
+#define MAX_COLUMN_CONFIG 20000
+    char *json = calloc (1, MAX_COLUMN_CONFIG);
+    char *out = json;
+    int jsonsize = MAX_COLUMN_CONFIG-1;
+
+    *out++ = '[';
+    jsonsize--;
+
+    int idx = 0;
+    while (col) {
+        if (jsonsize < 2) {
+            break;
+        }
+        if (idx != 0) {
+            *out++ = ',';
+            jsonsize--;
+        }
+        int res = import_column_from_0_6 (col->value, out, jsonsize);
+        out += res;
+        jsonsize -= res;
+        col = deadbeef->conf_find (oldkeyprefix, col);
+        idx++;
+    }
+    *out++ = ']';
+    deadbeef->conf_unlock ();
+    if (*json) {
+        deadbeef->conf_set_str (newkey, json);
+    }
+    free (json);
+    return 0;
 }
