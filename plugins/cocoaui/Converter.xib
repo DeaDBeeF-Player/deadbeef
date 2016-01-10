@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="13F1096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="ConverterWindowController">
@@ -10,6 +9,15 @@
                 <outlet property="dspPreset" destination="0Cg-jo-Hgf" id="4GS-5q-ONd"/>
                 <outlet property="dspPresetsPanel" destination="dDd-sk-C7S" id="Gl4-VT-79J"/>
                 <outlet property="encoderPreset" destination="Kt3-Jm-ze1" id="jeA-sm-LRC"/>
+                <outlet property="encoderPresetApeTag" destination="hgT-8E-J8y" id="tlR-Qa-KMd"/>
+                <outlet property="encoderPresetCommandLine" destination="JvR-r9-BtQ" id="JCM-Du-jRA"/>
+                <outlet property="encoderPresetExecutionMethod" destination="NNy-Fn-Vwg" id="qg0-hs-vhD"/>
+                <outlet property="encoderPresetFlacTag" destination="sya-hi-yAp" id="4u3-hA-Ib2"/>
+                <outlet property="encoderPresetID3v1Tag" destination="fMm-cm-BXw" id="6Qf-mJ-wZf"/>
+                <outlet property="encoderPresetID3v2Tag" destination="bNW-Gt-Ejw" id="j58-5I-YEP"/>
+                <outlet property="encoderPresetID3v2TagVersion" destination="N4p-fI-yNY" id="eij-yS-No6"/>
+                <outlet property="encoderPresetOggVorbisTag" destination="cbC-ED-vWP" id="hMg-TU-eSv"/>
+                <outlet property="encoderPresetOutputFileExtension" destination="OcW-vl-LGs" id="Ovq-y6-wne"/>
                 <outlet property="encoderPresetsPanel" destination="9aW-Ah-4hk" id="TVo-1q-sKD"/>
                 <outlet property="encoderPresetsTableView" destination="dQ0-cs-T2a" id="hJ8-zj-3yd"/>
                 <outlet property="fileExistsAction" destination="v0z-m0-6CR" id="2hU-VA-83V"/>
@@ -440,6 +448,9 @@ Gw
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="encoderPresetID3v2TagChangedAction:" target="-2" id="a1G-qL-ozY"/>
+                        </connections>
                     </button>
                     <button id="hgT-8E-J8y">
                         <rect key="frame" x="213" y="64" width="63" height="18"/>
@@ -448,6 +459,9 @@ Gw
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="encoderPresetApeTagChangedAction:" target="-2" id="F8w-8L-IrJ"/>
+                        </connections>
                     </button>
                     <button id="fMm-cm-BXw">
                         <rect key="frame" x="370" y="89" width="61" height="18"/>
@@ -456,6 +470,9 @@ Gw
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="encoderPresetID3v1TagChangedAction:" target="-2" id="E6D-39-hPw"/>
+                        </connections>
                     </button>
                     <button id="sya-hi-yAp">
                         <rect key="frame" x="307" y="64" width="61" height="18"/>
@@ -464,6 +481,9 @@ Gw
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="encoderPresetFlacTagChangedAction:" target="-2" id="KCt-EB-T4k"/>
+                        </connections>
                     </button>
                     <button id="cbC-ED-vWP">
                         <rect key="frame" x="396" y="64" width="88" height="18"/>
@@ -472,6 +492,9 @@ Gw
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="encoderPresetOggVorbisTagChangedAction:" target="-2" id="IzK-cK-bZV"/>
+                        </connections>
                     </button>
                     <popUpButton verticalHuggingPriority="750" id="NNy-Fn-Vwg">
                         <rect key="frame" x="329" y="144" width="155" height="26"/>
@@ -486,6 +509,9 @@ Gw
                                 </items>
                             </menu>
                         </popUpButtonCell>
+                        <connections>
+                            <action selector="encoderPresetExecutionMethodChangedAction:" target="-2" id="aMA-K1-7xr"/>
+                        </connections>
                     </popUpButton>
                     <popUpButton verticalHuggingPriority="750" id="N4p-fI-yNY">
                         <rect key="frame" x="300" y="84" width="57" height="26"/>
@@ -500,6 +526,9 @@ Gw
                                 </items>
                             </menu>
                         </popUpButtonCell>
+                        <connections>
+                            <action selector="encoderPresetID3v2TagVersionChangedAction:" target="-2" id="9er-Qb-bmY"/>
+                        </connections>
                     </popUpButton>
                     <textField verticalHuggingPriority="750" id="OcW-vl-LGs">
                         <rect key="frame" x="352" y="240" width="129" height="22"/>
@@ -509,6 +538,9 @@ Gw
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
+                        <connections>
+                            <action selector="encoderPresetOutputFileExtensionChangedAction:" target="-2" id="i0j-nU-YkO"/>
+                        </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" id="JvR-r9-BtQ">
                         <rect key="frame" x="309" y="209" width="172" height="22"/>
@@ -518,6 +550,9 @@ Gw
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
+                        <connections>
+                            <action selector="encoderPresetCommandLineChangedAction:" target="-2" id="N3M-sJ-bIk"/>
+                        </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="hX2-AJ-qx5">
                         <rect key="frame" x="318" y="190" width="119" height="17"/>
@@ -558,6 +593,7 @@ Gw
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="eG4-HM-iU5" viewBased="YES" id="ufQ-DU-OZw">
+                                    <rect key="frame" x="0.0" y="0.0" width="362" height="133"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -750,6 +786,7 @@ Gw
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="rJv-Uq-MGm" viewBased="YES" id="ga6-tK-p9I">
+                                    <rect key="frame" x="0.0" y="0.0" width="179" height="145"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>

@@ -361,6 +361,112 @@ extern DB_functions_t *deadbeef;
 }
 
 
+- (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
+    [self setPresetInfo:[_encoderPresetsTableView selectedRow]];
+}
+
+- (void)setPresetInfo:(NSInteger)idx {
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx ((int)idx);
+    if (p) {
+
+        if (p->tag_id3v2 ^ [[self encoderPresetID3v2Tag] state] ) { [[self encoderPresetID3v2Tag] setNextState]; };
+        if (p->tag_id3v1 ^ [[self encoderPresetID3v1Tag] state]) { [[self encoderPresetID3v1Tag] setNextState]; };
+        if (p->tag_apev2 ^ [[self encoderPresetApeTag] state] ) { [[self encoderPresetApeTag] setNextState]; };
+        if (p->tag_flac ^ [[self encoderPresetFlacTag] state]) { [[self encoderPresetFlacTag] setNextState]; };
+        if (p->tag_oggvorbis ^ [[self encoderPresetOggVorbisTag] state]) { [[self encoderPresetOggVorbisTag] setNextState]; };
+
+        [[self encoderPresetOutputFileExtension] setStringValue: [NSString stringWithFormat:@"%s", p->ext] ];
+        [[self encoderPresetCommandLine] setStringValue: [NSString stringWithFormat:@"%s", p->encoder] ];
+
+        [[self encoderPresetExecutionMethod] selectItemAtIndex:(p->method)];
+        [[self encoderPresetID3v2TagVersion] selectItemAtIndex:(p->id3v2_version)];
+
+        BOOL enabled = !(p->readonly);
+        [[self encoderPresetOutputFileExtension] setEnabled: enabled ];
+        [[self encoderPresetCommandLine] setEnabled: enabled ];
+        [[self encoderPresetExecutionMethod] setEnabled: enabled ];
+        [[self encoderPresetID3v2TagVersion] setEnabled: enabled ];
+        [[self encoderPresetApeTag] setEnabled: enabled ];
+        [[self encoderPresetFlacTag] setEnabled: enabled ];
+        [[self encoderPresetOggVorbisTag] setEnabled: enabled ];
+        [[self encoderPresetID3v1Tag] setEnabled: enabled ];
+        [[self encoderPresetID3v2Tag] setEnabled: enabled ];
+    }
+}
+
+- (IBAction)encoderPresetOutputFileExtensionChangedAction:(id)sender {
+    int idx = (int)[_encoderPresetsTableView selectedRow];
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
+    if(p) {
+        p->ext = strdup ([[sender stringValue] UTF8String]);
+    }
+}
+
+- (IBAction)encoderPresetCommandLineChangedAction:(id)sender {
+    int idx = (int)[_encoderPresetsTableView selectedRow];
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
+    if(p) {
+        p->encoder = strdup ([[sender stringValue] UTF8String]);
+    }
+}
+
+- (IBAction)encoderPresetExecutionMethodChangedAction:(id)sender {
+    int idx = (int)[_encoderPresetsTableView selectedRow];
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
+    if(p) {
+        p->method = (int)[sender indexOfSelectedItem];
+    }
+}
+
+- (IBAction)encoderPresetID3v2TagVersionChangedAction:(id)sender {
+    int idx = (int)[_encoderPresetsTableView selectedRow];
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
+    if(p) {
+        p->id3v2_version = (int)[sender indexOfSelectedItem];
+    }
+}
+
+- (IBAction)encoderPresetApeTagChangedAction:(id)sender {
+    int idx = (int)[_encoderPresetsTableView selectedRow];
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
+    if(p) {
+        p->tag_apev2 = [sender state];
+    }
+}
+
+- (IBAction)encoderPresetFlacTagChangedAction:(id)sender {
+    int idx = (int)[_encoderPresetsTableView selectedRow];
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
+    if(p) {
+        p->tag_flac = [sender state];
+    }
+}
+
+- (IBAction)encoderPresetOggVorbisTagChangedAction:(id)sender {
+    int idx = (int)[_encoderPresetsTableView selectedRow];
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
+    if(p) {
+        p->tag_oggvorbis = [sender state];
+    }
+}
+
+- (IBAction)encoderPresetID3v1TagChangedAction:(id)sender {
+    int idx = (int)[_encoderPresetsTableView selectedRow];
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
+    if(p) {
+        p->tag_id3v1 = [sender state];
+    }
+}
+
+- (IBAction)encoderPresetID3v2TagChangedAction:(id)sender {
+    int idx = (int)[_encoderPresetsTableView selectedRow];
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
+    if(p) {
+        p->tag_id3v2 = [sender state];
+    }
+}
+
+
 // dsp presets sheet
 - (IBAction)editDSPPresetsAction:(id)sender {
     [NSApp beginSheet:_dspPresetsPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndDSPPresetList:returnCode:contextInfo:) contextInfo:nil];

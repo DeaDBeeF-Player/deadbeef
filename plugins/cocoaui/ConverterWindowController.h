@@ -50,9 +50,28 @@
 
 @property (strong) IBOutlet NSPanel *encoderPresetsPanel;
 - (IBAction)closeEncoderPresetsAction:(id)sender;
-@property (unsafe_unretained) IBOutlet NSTableView *encoderPresetsTableView;
 - (IBAction)addEncoderPresetAction:(id)sender;
 - (IBAction)removeEncoderPresetAction:(id)sender;
+@property (unsafe_unretained) IBOutlet NSTableView *encoderPresetsTableView;
+@property (unsafe_unretained) IBOutlet NSTextField *encoderPresetOutputFileExtension;
+@property (unsafe_unretained) IBOutlet NSTextField *encoderPresetCommandLine;
+@property (unsafe_unretained) IBOutlet NSPopUpButton *encoderPresetExecutionMethod;
+@property (unsafe_unretained) IBOutlet NSPopUpButton *encoderPresetID3v2TagVersion;
+@property (unsafe_unretained) IBOutlet NSButton *encoderPresetApeTag;
+@property (unsafe_unretained) IBOutlet NSButton *encoderPresetFlacTag;
+@property (unsafe_unretained) IBOutlet NSButton *encoderPresetOggVorbisTag;
+@property (unsafe_unretained) IBOutlet NSButton *encoderPresetID3v1Tag;
+@property (unsafe_unretained) IBOutlet NSButton *encoderPresetID3v2Tag;
+
+- (IBAction)encoderPresetOutputFileExtensionChangedAction:(id)sender;
+- (IBAction)encoderPresetCommandLineChangedAction:(id)sender;
+- (IBAction)encoderPresetExecutionMethodChangedAction:(id)sender;
+- (IBAction)encoderPresetID3v2TagVersionChangedAction:(id)sender;
+- (IBAction)encoderPresetApeTagChangedAction:(id)sender;
+- (IBAction)encoderPresetFlacTagChangedAction:(id)sender;
+- (IBAction)encoderPresetOggVorbisTagChangedAction:(id)sender;
+- (IBAction)encoderPresetID3v1TagChangedAction:(id)sender;
+- (IBAction)encoderPresetID3v2TagChangedAction:(id)sender;
 
 
 @property (strong) IBOutlet NSPanel *dspPresetsPanel;
