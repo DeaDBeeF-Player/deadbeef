@@ -1251,6 +1251,7 @@ gtkui_quit (void) {
 
 static void
 import_legacy_tf (const char *key_from, const char *key_to) {
+    deadbeef->conf_lock ();
     if (!deadbeef->conf_get_str_fast (key_to, NULL)
             && deadbeef->conf_get_str_fast (key_from, NULL)) {
         char old[200], new[200];
@@ -1258,6 +1259,7 @@ import_legacy_tf (const char *key_from, const char *key_to) {
         deadbeef->tf_import_legacy (old, new, sizeof (new));
         deadbeef->conf_set_str (key_to, new);
     }
+    deadbeef->conf_unlock ();
 }
 
 static int

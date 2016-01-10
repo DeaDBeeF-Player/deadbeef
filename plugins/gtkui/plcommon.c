@@ -1691,7 +1691,6 @@ import_column_from_0_6 (const uint8_t *def, char *json_out, int outsize) {
 
 int
 import_column_config_0_6 (const char *oldkeyprefix, const char *newkey) {
-    deadbeef->conf_lock ();
     DB_conf_item_t *col = deadbeef->conf_find (oldkeyprefix, NULL);
     if (!col) {
         return 0;
@@ -1721,7 +1720,6 @@ import_column_config_0_6 (const char *oldkeyprefix, const char *newkey) {
         idx++;
     }
     *out++ = ']';
-    deadbeef->conf_unlock ();
     if (*json) {
         deadbeef->conf_set_str (newkey, json);
     }
