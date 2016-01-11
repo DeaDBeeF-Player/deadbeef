@@ -358,6 +358,14 @@ extern DB_functions_t *deadbeef;
 }
 
 - (IBAction)removeEncoderPresetAction:(id)sender {
+    int idx = (int)[_encoderPresetsTableView selectedRow];
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
+    if (p) {
+        if (!p->readonly) {
+            _converter_plugin->encoder_preset_remove(p);
+            [_encoderPresetsTableView reloadData];
+        }
+    }
 }
 
 
