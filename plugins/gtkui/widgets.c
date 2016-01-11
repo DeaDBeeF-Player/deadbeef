@@ -3700,7 +3700,7 @@ w_button_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
             b->icon = val[0] ? strdup (val) : NULL;
         }
         else if (!strcmp (key, "label")) {
-            b->label = val[0] ? strdup (val) : NULL;
+            b->label = strdup (val);
         }
         else if (!strcmp (key, "action")) {
             b->action = val[0] ? strdup (val) : NULL;
@@ -3907,7 +3907,7 @@ on_button_config (GtkMenuItem *menuitem, gpointer user_data) {
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (use_color), b->use_color);
     gtk_color_button_set_color (GTK_COLOR_BUTTON (textcolor), &b->textcolor);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (use_textcolor), b->use_textcolor);
-    gtk_entry_set_text (GTK_ENTRY (label), b->label ? b->label : "");
+    gtk_entry_set_text (GTK_ENTRY (label), b->label ? b->label : _("Button"));
     set_button_action_label (b->action, b->action_ctx, action);
     g_signal_connect ((gpointer) action, "clicked",
             G_CALLBACK (on_button_set_action_clicked),
@@ -3969,9 +3969,7 @@ on_button_config (GtkMenuItem *menuitem, gpointer user_data) {
                 free (b->label);
                 b->label = NULL;
             }
-            if (l[0]) {
-                b->label = strdup (l);
-            }
+            b->label = strdup (l);
 
             const char *ic = NULL;
             int sel = gtk_combo_box_get_active (GTK_COMBO_BOX (icon));
