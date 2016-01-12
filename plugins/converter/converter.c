@@ -928,11 +928,6 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
             char *o = enc;
             *o = 0;
 
-#ifdef __APPLE__
-            strcpy (o, "/usr/local/bin/");
-            o += 15;
-#endif
-
             int len = sizeof (enc);
             while (e && *e) {
                 if (len <= 0) {
