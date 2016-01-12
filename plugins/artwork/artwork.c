@@ -873,33 +873,10 @@ scale_file (const char *in, const char *out, int img_size)
 #endif
 }
 
-static char
-esc_char (char c) {
-    if (c < 1
-        || (c >= 'a' && c <= 'z')
-        || (c >= 'A' && c <= 'Z')
-        || (c >= '0' && c <= '9')
-        || c == ' '
-        || c == '_'
-        || c == '-') {
-        return c;
-    }
-    return '_';
-}
-
 static int
 make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
-    char esc_artist[NAME_MAX+1];
-    if (artist) {
-        size_t i = 0;
-        while (artist[i] && i < NAME_MAX) {
-            esc_artist[i] = esc_char (artist[i]);
-            i++;
-        }
-        esc_artist[i] = '\0';
-    }
-    else {
-        strcpy (esc_artist, "Unknown artist");
+    if (!artist) {
+        artist = "Unknown artist";
     }
 
     if (make_cache_root_path (path, size) < 0) {
@@ -909,10 +886,10 @@ make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
     const size_t size_left = size - strlen (path);
     int path_length;
     if (img_size == -1) {
-        path_length = snprintf (path+strlen (path), size_left, "covers/%s/", esc_artist);
+        path_length = snprintf (path+strlen (path), size_left, "covers/%s/", artist);
     }
     else {
-        path_length = snprintf (path+strlen (path), size_left, "covers-%d/%s/", img_size, esc_artist);
+        path_length = snprintf (path+strlen (path), size_left, "covers-%d/%s/", img_size, artist);
     }
     if (path_length >= size_left) {
         trace ("Cache path truncated at %d bytes\n", size);
@@ -952,14 +929,9 @@ make_cache_path2 (char *path, int size, const char *fname, const char *album, co
         return -1;
     }
 
-    char esc_album[max_album_chars+1];
     const char *palbum = strlen (album) > max_album_chars ? album+strlen (album)-max_album_chars : album;
-    size_t i = 0;
-    do {
-        esc_album[i] = esc_char (palbum[i]);
-    } while (palbum[i++]);
 
-    sprintf (path+strlen (path), "%s%s", esc_album, ".jpg");
+    sprintf (path+strlen (path), "%s%s", palbum, ".jpg");
     return 0;
 }
 
