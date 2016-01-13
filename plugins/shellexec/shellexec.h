@@ -23,6 +23,9 @@
 
 #include "../../deadbeef.h"
 
+// Version history:
+// 1.2: changed configuration to JSON, use new title formatting
+
 //Probably it's reasonable to move these flags to parent struct
 enum {
     SHX_ACTION_LOCAL_ONLY       = 1 << 0,

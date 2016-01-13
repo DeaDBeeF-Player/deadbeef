@@ -237,7 +237,7 @@ dnl    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_L
 AM_CONDITIONAL(OS_OSX, test "x$OS_OSX" = "xyes")
 
 
-AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes"], [
+AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes" -o "${enable_shellexec}" = "yes"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         JANSSON_CFLAGS="-I../../$LIB/include"
         JANSSON_LIBS=-ljansson
