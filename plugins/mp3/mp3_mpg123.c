@@ -35,7 +35,7 @@ mp3_mpg123_init (mp3_info_t *info) {
     int ret;
     mpg123_init();
     info->mpg123_handle = mpg123_new (NULL, &ret);
-    ret = mpg123_param (info->mpg123_handle, MPG123_VERBOSE, 2, 0);
+//    ret = mpg123_param (info->mpg123_handle, MPG123_VERBOSE, 2, 0);
     ret = mpg123_format_none (info->mpg123_handle);
 //    ret = mpg123_param (info->mpg123_handle, MPG123_FLAGS, MPG123_FUZZY | MPG123_SEEKBUFFER | MPG123_GAPLESS, 0);
     ret = mpg123_format (info->mpg123_handle, info->info.fmt.samplerate, MPG123_MONO | MPG123_STEREO,  MPG123_ENC_SIGNED_16);
