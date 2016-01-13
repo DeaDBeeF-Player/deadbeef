@@ -873,18 +873,20 @@ scale_file (const char *in, const char *out, int img_size)
 #endif
 }
 
+// esc_char is needed to prevent using file path separators,
+// e.g. to avoid writing arbitrary files using "../../../filename"
 static char
 esc_char (char c) {
-    if (c < 1
-        || (c >= 'a' && c <= 'z')
-        || (c >= 'A' && c <= 'Z')
-        || (c >= '0' && c <= '9')
-        || c == ' '
-        || c == '_'
-        || c == '-') {
-        return c;
+#ifndef WIN32
+    if (c == '/') {
+        return '\\';
     }
-    return '_';
+#else
+    if (c == '\\') {
+        return '_';
+    }
+#endif
+    return c;
 }
 
 static int
