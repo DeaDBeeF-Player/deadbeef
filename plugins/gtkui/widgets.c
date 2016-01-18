@@ -1095,9 +1095,6 @@ w_placeholder_create (void) {
 // dummy widget
 static const char *
 w_dummy_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
-    if (strcmp (type, "dummy")) {
-        return NULL;
-    }
     w_dummy_t *b = (w_dummy_t *)w;
     char key[MAX_TOKEN], val[MAX_TOKEN];
     for (;;) {
