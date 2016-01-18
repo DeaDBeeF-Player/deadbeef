@@ -973,7 +973,6 @@
     XCTAssert(!strcmp (buffer, "file.iso.wv"), @"The actual output is: %s", buffer);
 }
 
-<<<<<<< HEAD
 - (void)test_Date_ReturnsYearValue {
     pl_replace_meta (it, "year", "1980");
     char *bc = tf_compile("%date%");
@@ -1000,7 +999,8 @@
     char *bc = tf_compile("%title%");
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, "filename"), @"The actual output is: %s", buffer);
-=======
+}
+
 - (void)test_DoublingPercentDollarApostrophe_OutputsSinglePercentDollarApostrophe {
     char *bc = tf_compile("''$$%%");
     tf_eval (&ctx, bc, buffer, 1000);
@@ -1019,7 +1019,6 @@
     ctx.flags |= DDB_TF_CONTEXT_NO_DYNAMIC;
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, "header||footer"), @"The actual output is: %s", buffer);
->>>>>>> 0.7
 }
 
 @end
