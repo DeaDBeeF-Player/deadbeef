@@ -3829,6 +3829,21 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 trace ("reached the end of tag\n");
                 break;
             }
+
+            // a hack to support malformed ID3v2.2 frame names in 2.3+ tags
+            // find the correct frame names, and rename if possible
+            for (int f = 0; frame_mapping[f]; f += FRAME_MAPPINGS) {
+                const char *frm_name = version_major == 3 ? frame_mapping[f+MAP_ID3V23] : frame_mapping[f+MAP_ID3V24];
+                const char *frm_name22 = frame_mapping[f+MAP_ID3V22];
+                if (frm_name && !strcmp (frameid, frm_name)) {
+                    break;
+                }
+                else if (frm_name && frm_name22 && !strcmp (frameid, frm_name22)) {
+                    strcpy (frameid, frm_name);
+                    break;
+                }
+            }
+
             uint32_t sz;
             if (version_major == 4) {
                 sz = (readptr[3] << 0) | (readptr[2] << 7) | (readptr[1] << 14) | (readptr[0] << 21);
