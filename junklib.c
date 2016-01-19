@@ -4427,6 +4427,9 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
 
         DB_metaInfo_t *meta = pl_get_metadata_head (it);
         while (meta) {
+            if (strchr (":!_", meta->key[0])) {
+                break;
+            }
             if (meta->value && *meta->value) {
                 int i;
                 for (i = 0; frame_mapping[i]; i += FRAME_MAPPINGS) {
@@ -4441,7 +4444,6 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                     }
                 }
                 if (!frame_mapping[i]
-                        && meta->key[0] != ':'
                         && strcasecmp (meta->key, "comment")
                         && strcasecmp (meta->key, "track")
                         && strcasecmp (meta->key, "numtracks")
@@ -4569,6 +4571,9 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         // add all basic frames
         DB_metaInfo_t *meta = pl_get_metadata_head (it);
         while (meta) {
+            if (strchr (":!_", meta->key[0])) {
+                break;
+            }
             if (meta->value && *meta->value) {
                 int i;
                 for (i = 0; frame_mapping[i]; i += FRAME_MAPPINGS) {
@@ -4579,7 +4584,6 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                     }
                 }
                 if (!frame_mapping[i]
-                        && meta->key[0] != ':'
                         && strcasecmp (meta->key, "track")
                         && strcasecmp (meta->key, "numtracks")
                         && strcasecmp (meta->key, "disc")

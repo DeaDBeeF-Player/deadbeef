@@ -737,10 +737,11 @@ tags_list(DB_playItem_t *it, OggVorbis_File *vorbis_file)
 
     deadbeef->pl_lock ();
     for (DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it); m; m = m->next) {
-        char *key = strdupa (m->key);
-        if (key && key[0] != ':' && key[0] != '!') {
-            split_tag (tags, oggedit_map_tag (key, "meta2tag"), m->value);
+        if (strchr (":!_", m->key[0])) {
+            break;
         }
+        char *key = strdupa (m->key);
+        split_tag (tags, oggedit_map_tag (key, "meta2tag"), m->value);
     }
     deadbeef->pl_unlock ();
 

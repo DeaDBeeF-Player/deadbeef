@@ -1151,38 +1151,39 @@ cflac_write_metadata (DB_playItem_t *it) {
     deadbeef->pl_lock ();
     DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it);
     while (m) {
-        if (m->key[0] != ':') {
-            int i;
-            for (i = 0; metainfo[i]; i += 2) {
-                if (!strcasecmp (metainfo[i+1], m->key)) {
-                    break;
-                }
+        if (strchr (":!_", m->key[0])) {
+            break;
+        }
+        int i;
+        for (i = 0; metainfo[i]; i += 2) {
+            if (!strcasecmp (metainfo[i+1], m->key)) {
+                break;
             }
-            const char *val = m->value;
-            if (val && *val) {
-                while (val) {
-                    const char *next = strchr (val, '\n');
-                    size_t l;
-                    if (next) {
-                        l = next - val;
-                        next++;
-                    }
-                    else {
-                        l = strlen (val);
-                    }
-                    if (l > 0) {
-                        char s[100+l+1];
-                        int n = snprintf (s, sizeof (s), "%s=", metainfo[i] ? metainfo[i] : m->key);
-                        strncpy (s+n, val, l);
-                        *(s+n+l) = 0;
-                        FLAC__StreamMetadata_VorbisComment_Entry ent = {
-                            .length = (FLAC__uint32)strlen (s),
-                            .entry = (FLAC__byte*)s
-                        };
-                        FLAC__metadata_object_vorbiscomment_append_comment (data, ent, 1);
-                    }
-                    val = next;
+        }
+        const char *val = m->value;
+        if (val && *val) {
+            while (val) {
+                const char *next = strchr (val, '\n');
+                size_t l;
+                if (next) {
+                    l = next - val;
+                    next++;
                 }
+                else {
+                    l = strlen (val);
+                }
+                if (l > 0) {
+                    char s[100+l+1];
+                    int n = snprintf (s, sizeof (s), "%s=", metainfo[i] ? metainfo[i] : m->key);
+                    strncpy (s+n, val, l);
+                    *(s+n+l) = 0;
+                    FLAC__StreamMetadata_VorbisComment_Entry ent = {
+                        .length = (FLAC__uint32)strlen (s),
+                        .entry = (FLAC__byte*)s
+                    };
+                    FLAC__metadata_object_vorbiscomment_append_comment (data, ent, 1);
+                }
+                val = next;
             }
         }
         m = m->next;
