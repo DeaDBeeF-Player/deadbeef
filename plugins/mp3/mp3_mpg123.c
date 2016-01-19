@@ -134,7 +134,12 @@ mp3_mpg123_stream_frame (mp3_info_t *info) {
         int samplesize = (info->info.fmt.bps>>3)*info->info.fmt.channels;
         info->buffer.decode_remaining = (int)nbytes/samplesize;
         info->mpg123_audio = audio;
-        deadbeef->streamer_set_bitrate (0);
+
+        // NOTE: calling frame_bitrate directly would be much faster, but the API is private,
+        // and mpg123_frameinfo struct is opaque, so we can't even get the parameters directly
+        struct mpg123_frameinfo inf;
+        mpg123_info (info->mpg123_handle, &inf);
+        deadbeef->streamer_set_bitrate (inf.bitrate);
         break;
     }
 
