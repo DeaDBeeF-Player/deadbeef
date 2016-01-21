@@ -1,0 +1,21 @@
+language: c
+
+git:
+  submodules: false
+
+os:
+    - linux
+    - osx
+
+script:
+    - ./travis/build.sh
+
+after_success:
+    - ./travis/upload.sh
+
+notifications:
+    irc:
+        channels:
+            - "chat.freenode.net#deadbeefplayer"
+        on_success: always
+        on_failure: always
