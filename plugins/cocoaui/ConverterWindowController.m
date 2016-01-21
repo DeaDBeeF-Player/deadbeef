@@ -115,7 +115,48 @@ extern DB_functions_t *deadbeef;
     deadbeef->conf_save ();
 }
 
+-(void)fillFileNamePreview {
+    ddb_encoder_preset_t *p = NULL;
+    int enc_preset = (int)[_encoderPreset indexOfSelectedItem];
+    if (enc_preset >= 0) {
+        p = _converter_plugin->encoder_preset_get_for_idx (enc_preset);
+    }
+    else {
+        return;
+    }
+    _outfile = [_outputFileName stringValue];
+
+    if ([_outfile isEqual:@""]) {
+        _outfile = @"%a - %t";
+    }
+    char * tf = deadbeef->tf_compile([_outfile UTF8String]);
+    if (!tf) {
+        return;
+    }
+
+    DB_playItem_t *it = _convert_items[0];
+    if (it) {
+        ddb_tf_context_t ctx = {
+            ._size = sizeof (ddb_tf_context_t),
+            .flags = DDB_TF_CONTEXT_HAS_INDEX,
+            .it = it,
+            .idx = deadbeef->pl_get_idx_of (it),
+            .iter = PL_MAIN,
+            .plt = _convert_playlist,
+        };
+
+        char filename[PATH_MAX];
+        deadbeef->tf_eval (&ctx, tf, filename, sizeof (filename));
+        char filename_ext[PATH_MAX];
+        snprintf (filename_ext, sizeof (filename_ext), "%s.%s", filename, p->ext);
+        [_outputFileNamePreview setStringValue:[NSString stringWithUTF8String:filename_ext]];
+    }
+
+    deadbeef->tf_free(tf);
+}
+
 - (IBAction)outputPathChanged:(id)sender {
+    [self fillFileNamePreview];
 }
 
 - (IBAction)writeToSourceFolderChanged:(id)sender {
@@ -129,6 +170,7 @@ extern DB_functions_t *deadbeef;
 
 - (IBAction)encoderPresetChanged:(id)sender {
     deadbeef->conf_set_int ("converter.encoder_preset", (int)[_encoderPreset indexOfSelectedItem]);
+    [self fillFileNamePreview];
 }
 
 - (IBAction)dspPresetChanged:(id)sender {
@@ -259,6 +301,7 @@ extern DB_functions_t *deadbeef;
             break;
     }
     deadbeef->pl_unlock ();
+    [self fillFileNamePreview];
 }
 
 

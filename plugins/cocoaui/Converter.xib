@@ -22,6 +22,7 @@
                 <outlet property="encoderPresetsTableView" destination="dQ0-cs-T2a" id="hJ8-zj-3yd"/>
                 <outlet property="fileExistsAction" destination="v0z-m0-6CR" id="2hU-VA-83V"/>
                 <outlet property="outputFileName" destination="lFC-nV-Fal" id="LjR-tW-TPL"/>
+                <outlet property="outputFileNamePreview" destination="8kT-5T-WgF" id="WHo-P5-CmB"/>
                 <outlet property="outputFolder" destination="fB2-eh-TCp" id="Glj-ov-3a1"/>
                 <outlet property="outputFormat" destination="OgZ-be-3hT" id="gQE-bj-SrE"/>
                 <outlet property="preserveFolderStructure" destination="DfS-tp-dx2" id="5cH-Oj-emx"/>
