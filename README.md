@@ -8,9 +8,11 @@ More info is [here](http://deadbeef.sf.net).
 
 [![Build Status](https://travis-ci.org/Alexey-Yakovenko/deadbeef.svg?branch=master)](https://travis-ci.org/Alexey-Yakovenko/deadbeef)
 
-[Download latest GNU/Linux i686 and x86_64 builds](https://drone.io/github.com/Alexey-Yakovenko/deadbeef/files)
+[Download the latest GNU/Linux builds](https://sourceforge.net/projects/deadbeef/files/travis/linux/)
 
-The OS X version is not production-ready yet, so I'm not making any official builds. Please use the instructions below to make your own build, if you feel adventurous.
+OSX/Cocoa version is very unfinished, but can be used. However, don't put your expectations to high yet.
+
+[Download the latest OSX build](https://sourceforge.net/projects/deadbeef/files/travis/osx/)
 
 ## Compiling
 
