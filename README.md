@@ -4,13 +4,13 @@ DeaDBeeF is a music player for \*nix-like systems and OS X.
 
 More info is [here](http://deadbeef.sf.net).
 
-## Drone.io
+## Download development builds
 
 [![Build Status](https://travis-ci.org/Alexey-Yakovenko/deadbeef.svg?branch=master)](https://travis-ci.org/Alexey-Yakovenko/deadbeef)
 
 [Download the latest GNU/Linux builds](https://sourceforge.net/projects/deadbeef/files/travis/linux/)
 
-OSX/Cocoa version is very unfinished, but can be used. However, don't put your expectations to high yet.
+Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy development. Don't put your expectations too high yet.
 
 [Download the latest OSX build](https://sourceforge.net/projects/deadbeef/files/travis/osx/)
 
