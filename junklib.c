@@ -31,7 +31,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#undef HAVE_ICI
 #if HAVE_ICONV
   #define LIBICONV_PLUG
   #include <iconv.h>
