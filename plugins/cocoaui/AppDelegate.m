@@ -194,32 +194,22 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 }
 
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
-    NSString *playlist = nil;
-    NSURL *url = [NSURL fileURLWithPath:filename];
-    // add to specific list if property set
-    if (conf_get_int ("cli_add_to_specific_playlist", 1)) {
-        char str[200];
-        conf_get_str ("cli_add_playlist_name", "Default", str, sizeof (str));
-        playlist = [NSString stringWithUTF8String:str];
-    }
-    [self addFiles:YES play:YES files:[NSArray arrayWithObject:url] playlist:nil];
+    dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(aQueue, ^{
+        char str[100];
+        add_paths([filename UTF8String], [filename length], 0, str, 100);
+    });
     return YES; // assume that everything went ok
 }
 
 
 - (void)application:(NSApplication *)sender openFiles:(NSArray *)filenames {
-    NSArray *urls = [NSArray array];
-    NSString *playlist = nil;
-    for (id filename in filenames) {
-        urls = [urls arrayByAddingObject:[NSURL fileURLWithPath:filename]];
-    }
-    // add to specific list if property set
-    if (conf_get_int ("cli_add_to_specific_playlist", 1)) {
-        char str[200];
-        conf_get_str ("cli_add_playlist_name", "Default", str, sizeof (str));
-        playlist = [NSString stringWithUTF8String:str];
-    }
-    [self addFiles:YES play:YES files:urls playlist:playlist];
+    dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(aQueue, ^{
+        char str[100];
+        NSString *paths =[ filenames componentsJoinedByString:@" "];
+        add_paths([paths UTF8String], [paths length], 0, str, 100);
+    });
 }
 
 
@@ -270,46 +260,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     return proposedSelectionIndexes;
 }
 
-- (void)addFiles:(BOOL)clear play:(BOOL)play files:(NSArray *)files playlist:(NSString *)playlist {
-    if (playlist != nil) {
-        const char *str = [playlist UTF8String];
-        int idx = plt_find (str);
-        if (idx < 0) {
-            idx = plt_add (plt_get_count (), str);
-        }
-        if (idx >= 0) {
-            plt_set_curr_idx (idx);
-        }
-    }
-
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (clear) {
-        deadbeef->plt_clear(plt);
-        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    }
-    if (plt) {
-        if (!deadbeef->plt_add_files_begin (plt, 0)) {
-            dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-            dispatch_async(aQueue, ^{
-                for( int i = 0; i < [files count]; i++ )
-                {
-                    NSString* fileName = [[files objectAtIndex:i] path];
-                    if (fileName) {
-                        deadbeef->plt_add_file2 (0, plt, [fileName UTF8String], NULL, NULL);
-                    }
-                }
-                deadbeef->plt_add_files_end (plt, 0);
-                deadbeef->plt_unref (plt);
-                deadbeef->pl_save_current();
-                if (play) {
-                    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-                    deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
-                }
-            });
-        }
-    }
-}
-
 - (void)openFiles:(BOOL)clear play:(BOOL)play {
     NSOpenPanel* openDlg = [NSOpenPanel openPanel];
     [openDlg setCanChooseFiles:YES];
@@ -318,7 +268,32 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     if ( [openDlg runModal] == NSOKButton )
     {
         NSArray* files = [openDlg URLs];
-        [self addFiles:clear play:play files:files playlist:nil];
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        if (clear) {
+            deadbeef->plt_clear(plt);
+            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+        }
+        if (plt) {
+            if (!deadbeef->plt_add_files_begin (plt, 0)) {
+                dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+                dispatch_async(aQueue, ^{
+                    for( int i = 0; i < [files count]; i++ )
+                    {
+                        NSString* fileName = [[files objectAtIndex:i] path];
+                        if (fileName) {
+                            deadbeef->plt_add_file2 (0, plt, [fileName UTF8String], NULL, NULL);
+                        }
+                    }
+                    deadbeef->plt_add_files_end (plt, 0);
+                    deadbeef->plt_unref (plt);
+                    deadbeef->pl_save_current();
+                    if (play) {
+                        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+                        deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
+                    }
+                });
+            }
+        }
     }
 }
 
