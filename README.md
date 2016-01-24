@@ -6,7 +6,7 @@ More info is [here](http://deadbeef.sf.net).
 
 ## Drone.io
 
-[![Build Status](https://drone.io/github.com/Alexey-Yakovenko/deadbeef/status.png)](https://drone.io/github.com/Alexey-Yakovenko/deadbeef/latest)
+[![Build Status](https://travis-ci.org/Alexey-Yakovenko/deadbeef.svg?branch=master)](https://travis-ci.org/Alexey-Yakovenko/deadbeef)
 
 [Download latest GNU/Linux i686 and x86_64 builds](https://drone.io/github.com/Alexey-Yakovenko/deadbeef/files)
 
