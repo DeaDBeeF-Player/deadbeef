@@ -207,7 +207,8 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
         char str[100];
-        NSString *paths =[ filenames componentsJoinedByString:@" "];
+        // building single paths string for the deadbeef function, paths must be separated by '\0'
+        NSString *paths =[filenames componentsJoinedByString:@"\0"];
         add_paths([paths UTF8String], [paths length], 0, str, 100);
     });
 }
