@@ -1100,12 +1100,12 @@ gtkui_thread (void *ctx) {
 #endif
 #endif
 
-    init_widget_layout ();
-
     for (int i = 0; i < window_init_hooks_count; i++) {
         window_init_hooks[i].callback (window_init_hooks[i].userdata);
     }
     gtk_widget_show (mainwin);
+
+    init_widget_layout ();
 
     gtkui_set_titlebar (NULL);
 
@@ -1218,6 +1218,8 @@ gtkui_show_info_window (const char *fname, const char *title, GtkWidget **pwindo
 
 gboolean
 gtkui_quit_cb (void *ctx) {
+    w_save ();
+
     if (deadbeef->have_background_jobs ()) {
         GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("The player is currently running background tasks. If you quit now, the tasks will be cancelled or interrupted. This may result in data loss."));
         gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
