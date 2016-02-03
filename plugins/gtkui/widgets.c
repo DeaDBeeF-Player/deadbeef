@@ -238,7 +238,6 @@ w_init (void) {
 
 void
 w_free (void) {
-    w_save ();
     w_creator_t *next = NULL;
     for (w_creator_t *cr = w_creators; cr; cr = next) {
         next = cr->next;

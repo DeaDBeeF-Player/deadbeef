@@ -181,6 +181,7 @@ pl_common_rewrite_column_config (DdbListview *listview, const char *name) {
 static gboolean
 tf_redraw_cb (gpointer user_data) {
     DdbListview *lv = user_data;
+
     ddb_listview_draw_row (lv, lv->tf_redraw_track_idx, lv->tf_redraw_track);
     lv->tf_redraw_track_idx = -1;
     if (lv->tf_redraw_track) {

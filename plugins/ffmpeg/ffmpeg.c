@@ -68,7 +68,7 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-#define DEFAULT_EXTS "aa3;oma;ac3;vqf;amr;opus;tak"
+#define DEFAULT_EXTS "aa3;oma;ac3;vqf;amr;opus;tak;dsf;dff"
 
 #define EXT_MAX 100
 
