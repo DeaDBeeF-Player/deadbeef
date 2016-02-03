@@ -4228,12 +4228,6 @@ junk_detect_charset_len (const char *s, int len) {
         return "cp1251";
     }
 
-    // if shift_jis detection is disabled, but russian and chinese failed,
-    // try it anyway
-    if (!enable_shift_jis_detection && can_be_shift_jis (s, len)) {
-        return "shift_jis";
-    }
-
     return "cp1252";
 }
 
