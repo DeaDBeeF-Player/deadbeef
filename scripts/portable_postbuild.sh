@@ -41,7 +41,9 @@ for i in nullout cdda flac alsa mp3 hotkeys vtx \
 	 lastfm sid adplug sndfile artwork alac \
 	 supereq gme dumb notify musepack wildmidi \
 	 tta dca aac mms shn ao shellexec vfs_zip \
-	 m3u converter pulse dsp_libsrc mono2stereo wma ; do
+	 m3u converter pulse dsp_libsrc mono2stereo \
+	 wma statusnotifier \
+	 ; do
     if [ -f ./plugins/$i/.libs/$i.so ]; then
 		 cp ./plugins/$i/.libs/$i.so $PLUGDIR/
 	elif [ -f ./plugins/$i/$i.so ]; then

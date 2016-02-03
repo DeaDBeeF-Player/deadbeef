@@ -73,6 +73,7 @@ DB_functions_t *deadbeef;
 
 // main widgets
 GtkWidget *mainwin;
+int gtkui_override_statusicon = 0;
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
 
@@ -279,6 +280,20 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
     return FALSE;
 }
 
+static gboolean
+show_traymenu_cb (gpointer data) {
+    if (!traymenu) {
+        traymenu = create_traymenu ();
+    }
+    gtk_menu_popup (GTK_MENU (traymenu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+    return FALSE;
+}
+
+static void
+show_traymenu (void) {
+    g_idle_add (show_traymenu_cb, NULL);
+}
+
 void
 mainwin_toggle_visible (void) {
     int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
@@ -429,6 +444,9 @@ gtkui_on_frameupdate (gpointer data) {
 static gboolean
 gtkui_update_status_icon (gpointer unused) {
     int hide_tray_icon = deadbeef->conf_get_int ("gtkui.hide_tray_icon", 0);
+    if (gtkui_override_statusicon) {
+        hide_tray_icon = 1;
+    }
     if (hide_tray_icon && !trayicon) {
         return FALSE;
     }
@@ -482,6 +500,12 @@ gtkui_update_status_icon (gpointer unused) {
     gtkui_set_titlebar (NULL);
 
     return FALSE;
+}
+
+static void
+override_builtin_statusicon (int override) {
+    gtkui_override_statusicon = override;
+    g_idle_add (gtkui_update_status_icon, NULL);
 }
 
 static void
@@ -1743,4 +1767,7 @@ static ddb_gtkui_t plugin = {
     .get_cover_art_thumb = get_cover_art_thumb,
     .cover_get_default_pixbuf = cover_get_default_pixbuf,
     .add_window_init_hook = add_window_init_hook,
+    .mainwin_toggle_visible = mainwin_toggle_visible,
+    .show_traymenu = show_traymenu,
+    .override_builtin_statusicon = override_builtin_statusicon,
 };

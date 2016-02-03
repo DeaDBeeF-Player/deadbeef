@@ -37,14 +37,18 @@
 // please visit the following page:
 // http://github.com/Alexey-Yakovenko/deadbeef/wiki/Porting-GUI-plugins-to-deadbeef-from-0.5.x-to-0.6.0
 
+#if defined(GTK_CHECK_VERSION)
 #if GTK_CHECK_VERSION(3,0,0)
 #define DDB_GTKUI_PLUGIN_ID "gtkui3_1"
 #else
 #define DDB_GTKUI_PLUGIN_ID "gtkui_1"
 #endif
+#else
+typedef void GtkWidget;
+#endif
 
 #define DDB_GTKUI_API_VERSION_MAJOR 2
-#define DDB_GTKUI_API_VERSION_MINOR 2
+#define DDB_GTKUI_API_VERSION_MINOR 3
 
 #define DDB_GTKUI_DEPRECATED(x)
 
@@ -245,6 +249,16 @@ typedef struct {
     // adds a hook to be called before the main loop starts running, but after
     // the window was created.
     void (*add_window_init_hook) (void (*callback) (void *userdata), void *userdata);
+#endif
+
+#if (DDB_GTKUI_API_LEVEL >= 203)
+    // Status icon plugin support functions
+    void (*mainwin_toggle_visible) (void);
+    void (*show_traymenu) (void);
+
+    // Tell GTKUI that the standard status icon must be hidden, because another
+    // plugin wants to make it in a different way
+    void (*override_builtin_statusicon) (int override_);
 #endif
 } ddb_gtkui_t;
 
