@@ -621,7 +621,7 @@ coverart_reset_queue (void) {
 void
 cover_art_init (void) {
     const DB_plugin_t *plugin = deadbeef->plug_get_for_id("artwork");
-    if (plugin && PLUG_TEST_COMPAT(plugin, 1, 2)) {
+    if (plugin && PLUG_TEST_COMPAT(plugin, 1, DDB_ARTWORK_VERSION)) {
         artwork_plugin = (DB_artwork_plugin_t *)plugin;
     }
     if (!artwork_plugin) {

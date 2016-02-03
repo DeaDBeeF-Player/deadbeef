@@ -26,6 +26,8 @@
 
 #include "../../deadbeef.h"
 
+#define DDB_ARTWORK_VERSION 3
+
 typedef void (*artwork_callback) (const char *fname, const char *artist, const char *album, void *user_data);
 
 typedef struct {
