@@ -237,7 +237,7 @@ mp3_check_xing_header (buffer_t *buffer, int packetlength, int sample, int sampl
             buffer->have_xing_header = 1;
             buffer->startoffset = framepos+packetlength;
             if (fsize >= 0) {
-                buffer->bitrate = (int)((fsize - buffer->startoffset - buffer->endoffset) / buffer->samplerate * 1000);
+                buffer->bitrate = (int)((fsize - buffer->startoffset - buffer->endoffset) / buffer->duration * 8);
             }
         }
     }
