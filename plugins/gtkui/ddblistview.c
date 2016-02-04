@@ -2578,6 +2578,20 @@ set_fwidth (DdbListview *ps, float list_width)
     ps->fwidth = total_width / list_width;
 }
 
+void
+ddb_listview_init_autoresize (DdbListview *ps, int totalwidth)
+{
+    if (totalwidth > 0) {
+        DdbListviewColumn *c;
+        if (!ps->col_autoresize) {
+            for (c = ps->columns; c; c = c->next) {
+                c->fwidth = (float)c->width / (float)totalwidth;
+            }
+            ps->col_autoresize = 1;
+        }
+    }
+}
+
 // Calculate the total height of all groups for a given min-height column width
 static int
 groups_full_height (DdbListview *listview, DdbListviewColumn *c, int new_width) {

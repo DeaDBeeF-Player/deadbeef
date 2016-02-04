@@ -244,6 +244,8 @@ ddb_listview_col_sort_update (DdbListview *listview);
 
 void
 ddb_listview_show_header (DdbListview *listview, int show);
+void
+ddb_listview_init_autoresize (DdbListview *ps, int totalwidth);
 
 enum {
     DDB_REFRESH_COLUMNS = 1,
