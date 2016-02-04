@@ -124,6 +124,7 @@ rewrite_column_config (DdbListview *listview, const char *name) {
     }
     strcpy (p, "]");
     deadbeef->conf_set_str (name, buffer);
+    deadbeef->conf_save ();
     return 0;
 }
 
