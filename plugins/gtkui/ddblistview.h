@@ -251,9 +251,10 @@ int
 ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, int *minheight, int *color_override, GdkColor *color, void **user_data);
 int
 ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, int minheight, int color_override, GdkColor color, void *user_data);
-
 void
 ddb_listview_show_header (DdbListview *listview, int show);
+void
+ddb_listview_init_autoresize (DdbListview *ps, int totalwidth);
 
 enum {
     DDB_REFRESH_COLUMNS = 1,

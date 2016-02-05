@@ -2579,6 +2579,20 @@ ddb_listview_update_scroll_ref_point (DdbListview *ps)
     }
 }
 
+void
+ddb_listview_init_autoresize (DdbListview *ps, int totalwidth)
+{
+    if (totalwidth > 0) {
+        DdbListviewColumn *c;
+        if (!ps->col_autoresize) {
+            for (c = ps->columns; c; c = c->next) {
+                c->fwidth = (float)c->width / (float)totalwidth;
+            }
+            ps->col_autoresize = 1;
+        }
+    }
+}
+
 gboolean
 ddb_listview_header_configure_event              (GtkWidget       *widget,
                                         GdkEventConfigure *event,
