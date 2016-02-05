@@ -1345,7 +1345,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                             }
                             p++;
                         }
-                        if (!*p) {
+                        if (p > v) {
                             int len = snprintf (out, outlen, "%02d", atoi(v));
                             out += len;
                             outlen -= len;
@@ -1383,7 +1383,22 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     val = pl_find_meta_raw (it, "numdiscs");
                 }
                 else if (!strcmp (name, "track number")) {
-                    val = pl_find_meta_raw (it, "track");
+                    const char *v = pl_find_meta_raw (it, "track");
+                    if (v) {
+                        const char *p = v;
+                        while (*p) {
+                            if (!isdigit (*p)) {
+                                break;
+                            }
+                            p++;
+                        }
+                        if (p > v) {
+                            int len = snprintf (out, outlen, "%d", atoi(v));
+                            out += len;
+                            outlen -= len;
+                            skip_out = 1;
+                        }
+                    }
                 }
                 else if (!strcmp (name, "date")) {
                     // NOTE: foobar2000 uses "date" instead of "year"

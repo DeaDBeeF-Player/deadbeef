@@ -1021,4 +1021,20 @@
     XCTAssert(!strcmp (buffer, "header||footer"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_Track_Number_SingleDigit_ReturnsNonZeroPaddedTrackNumber {
+    pl_replace_meta (it, "track", "5");
+    char *bc = tf_compile("%track number%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
+}
+
+// this should not normally happen if the metadata was loaded correctly
+// but older playlists can have this
+- (void)test_Track_Number_SingleDigitWithTotalTracks_ReturnsNonZeroPaddedTrackNumber {
+    pl_replace_meta (it, "track", "5/7");
+    char *bc = tf_compile("%track number%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
+}
+
 @end
