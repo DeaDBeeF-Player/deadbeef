@@ -973,6 +973,34 @@
     XCTAssert(!strcmp (buffer, "file.iso.wv"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_Date_ReturnsYearValue {
+    pl_replace_meta (it, "year", "1980");
+    char *bc = tf_compile("%date%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "1980"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_CustomField_ReturnsTheFieldValue {
+    pl_replace_meta (it, "random_name", "random value");
+    char *bc = tf_compile("%random_name%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "random value"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_MultipleArtists_ReturnsArtistsSeparatedByLinebreaks {
+    pl_replace_meta (it, "artist", "Artist1\nArtist2");
+    char *bc = tf_compile("%artist%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "Artist1;Artist2"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_EmptyTitle_YieldsFilename {
+    pl_replace_meta (it, ":URI", "/home/user/filename.mp3");
+    char *bc = tf_compile("%title%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "filename"), @"The actual output is: %s", buffer);
+}
+
 - (void)test_DoublingPercentDollarApostrophe_OutputsSinglePercentDollarApostrophe {
     char *bc = tf_compile("''$$%%");
     tf_eval (&ctx, bc, buffer, 1000);
@@ -991,6 +1019,22 @@
     ctx.flags |= DDB_TF_CONTEXT_NO_DYNAMIC;
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, "header||footer"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Track_Number_SingleDigit_ReturnsNonZeroPaddedTrackNumber {
+    pl_replace_meta (it, "track", "5");
+    char *bc = tf_compile("%track number%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
+}
+
+// this should not normally happen if the metadata was loaded correctly
+// but older playlists can have this
+- (void)test_Track_Number_SingleDigitWithTotalTracks_ReturnsNonZeroPaddedTrackNumber {
+    pl_replace_meta (it, "track", "5/7");
+    char *bc = tf_compile("%track number%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
 }
 
 @end

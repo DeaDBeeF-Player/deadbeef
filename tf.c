@@ -1336,41 +1336,34 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     }
                 }
                 else if (!strcmp (name, "tracknumber")) {
-                    val = pl_find_meta_raw (it, "track");
-                    if (val) {
-                        const char *p = val;
+                    const char *v = pl_find_meta_raw (it, "track");
+                    if (v) {
+                        const char *p = v;
                         while (*p) {
                             if (!isdigit (*p)) {
                                 break;
                             }
                             p++;
                         }
-                        if (*p) {
-                            val = NULL;
-                        }
-                        else {
-                            int len = snprintf (out, outlen, "%02d", atoi(val));
+                        if (p > v) {
+                            int len = snprintf (out, outlen, "%02d", atoi(v));
                             out += len;
                             outlen -= len;
                             skip_out = 1;
-                            val = NULL;
                         }
                     }
                 }
                 else if (!strcmp (name, "title")) {
                     val = pl_find_meta_raw (it, "title");
-                    if (val && !(*val)) {
-                        val = NULL;
-                    }
                     if (!val) {
-                        val = pl_find_meta_raw (it, ":URI");
-                        if (val) {
-                            const char *start = strrchr (val, '/');
+                        const char *v = pl_find_meta_raw (it, ":URI");
+                        if (v) {
+                            const char *start = strrchr (v, '/');
                             if (start) {
                                 start++;
                             }
                             else {
-                                start = val;
+                                start = v;
                             }
                             const char *end = strrchr (start, '.');
                             if (end) {
@@ -1380,7 +1373,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                                 outlen -= n;
                                 out += n;
                             }
-                            val = NULL;
                         }
                     }
                 }
@@ -1391,7 +1383,22 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     val = pl_find_meta_raw (it, "numdiscs");
                 }
                 else if (!strcmp (name, "track number")) {
-                    val = pl_find_meta_raw (it, "track");
+                    const char *v = pl_find_meta_raw (it, "track");
+                    if (v) {
+                        const char *p = v;
+                        while (*p) {
+                            if (!isdigit (*p)) {
+                                break;
+                            }
+                            p++;
+                        }
+                        if (p > v) {
+                            int len = snprintf (out, outlen, "%d", atoi(v));
+                            out += len;
+                            outlen -= len;
+                            skip_out = 1;
+                        }
+                    }
                 }
                 else if (!strcmp (name, "date")) {
                     // NOTE: foobar2000 uses "date" instead of "year"
@@ -1408,9 +1415,9 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     val = pl_find_meta_raw (it, ":FILE_SIZE");
                 }
                 else if (!strcmp (name, "filesize_natural")) {
-                    val = pl_find_meta_raw (it, ":FILE_SIZE");
-                    if (val) {
-                        int64_t bs = atoll (val);
+                    const char *v = pl_find_meta_raw (it, ":FILE_SIZE");
+                    if (v) {
+                        int64_t bs = atoll (v);
                         int len;
                         if (bs >= 1024*1024*1024) {
                             double gb = (double)bs / (double)(1024*1024*1024);
@@ -1430,7 +1437,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         out += len;
                         outlen -= len;
                         skip_out = 1;
-                        val = NULL;
                     }
                 }
                 else if (!strcmp (name, "channels")) {
@@ -1479,7 +1485,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                             out += len;
                             outlen -= len;
                             skip_out = 1;
-                            val = NULL;
                             // notify the caller about update interval
                             if (!ctx->update || (ctx->update > 1000)) {
                                 ctx->update = 1000;
@@ -1523,7 +1528,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         out += len;
                         outlen -= len;
                         skip_out = 1;
-                        val = NULL;
                     }
                 }
                 else if ((tmp_a = !strcmp (name, "length_seconds") || (tmp_b = !strcmp (name, "length_seconds_fp")))) {
@@ -1539,7 +1543,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         out += len;
                         outlen -= len;
                         skip_out = 1;
-                        val = NULL;
                     }
                 }
                 else if (!strcmp (name, "length_samples")) {
@@ -1547,7 +1550,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     out += len;
                     outlen -= len;
                     skip_out = 1;
-                    val = NULL;
                 }
                 else if ((tmp_a = !strcmp (name, "isplaying")) || (tmp_b = !strcmp (name, "ispaused"))) {
                     playItem_t *playing = streamer_get_playing_track ();
@@ -1560,48 +1562,45 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         *out++ = '1';
                         outlen--;
                         skip_out = 1;
-                        val = NULL;
                     }
                     if (playing) {
                         pl_item_unref (playing);
                     }
                 }
                 else if (!strcmp (name, "filename")) {
-                    val = pl_find_meta_raw (it, ":URI");
-                    if (val) {
+                    const char *v = pl_find_meta_raw (it, ":URI");
+                    if (v) {
                         const char *start = strrchr (val, '/');
                         if (start) {
                             start++;
                         }
                         else {
-                            start = val;
+                            start = v;
                         }
                         const char *end = strrchr (start, '.');
                         if (end) {
                             tf_append_out(&out, &outlen, start, (int)(end-start));
                             skip_out = 1;
                         }
-                        val = NULL;
                     }
                 }
                 else if (!strcmp (name, "filename_ext")) {
-                    val = pl_find_meta_raw (it, ":URI");
-                    if (val) {
-                        const char *start = strrchr (val, '/');
+                    const char *v = pl_find_meta_raw (it, ":URI");
+                    if (v) {
+                        const char *start = strrchr (v, '/');
                         if (start) {
                             tf_append_out (&out, &outlen, start+1, (int)strlen (start+1));
                             skip_out = 1;
                         }
-                        val = NULL;
                     }
                 }
                 else if (!strcmp (name, "directoryname")) {
-                    val = pl_find_meta_raw (it, ":URI");
-                    if (val) {
-                        const char *end = strrchr (val, '/');
+                    const char *v = pl_find_meta_raw (it, ":URI");
+                    if (v) {
+                        const char *end = strrchr (v, '/');
                         if (end) {
                             const char *start = end - 1;
-                            while (start >= val && *start != '/') {
+                            while (start >= v && *start != '/') {
                                 start--;
                             }
                             if (start && start != end) {
@@ -1610,7 +1609,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                                 skip_out = 1;
                             }
                         }
-                        val = NULL;
                     }
                 }
                 else if (!strcmp (name, "path")) {
@@ -1637,7 +1635,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         out += len;
                         outlen -= len;
                         skip_out = 1;
-                        val = NULL;
                     }
                 }
                 // total number of tracks in playlist
@@ -1658,7 +1655,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         out += len;
                         outlen -= len;
                         skip_out = 1;
-                        val = NULL;
                     }
                 }
                 // index of track in queue
@@ -1670,7 +1666,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                             out += len;
                             outlen -= len;
                             skip_out = 1;
-                            val = NULL;
                         }
                     }
                 }
@@ -1695,7 +1690,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                                 }
                             }
                             skip_out = 1;
-                            val = NULL;
                         }
                     }
                 }
@@ -1707,7 +1701,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         out += len;
                         outlen -= len;
                         skip_out = 1;
-                        val = NULL;
                     }
                 }
                 else if (!strcmp (name, "_deadbeef_version")) {
@@ -1723,7 +1716,17 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
 
                 // default case
                 if (!skip_out && val) {
-                    int32_t l = u8_strnbcpy(out, val, outlen);
+                    int32_t l = u8_strnbcpy (out, val, outlen);
+
+                    // replace any \n with ; for display
+                    char *p = out;
+                    while (p < out + l) {
+                        if (*p == '\n') {
+                            *p = ';';
+                        }
+                        p++;
+                    }
+
                     out += l;
                     outlen -= l;
                 }
