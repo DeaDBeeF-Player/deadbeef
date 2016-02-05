@@ -691,7 +691,6 @@
 		2D88EA0B1B2AF6DD0072FD43 /* oggedit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D88EA031B2AF6DD0072FD43 /* oggedit.h */; };
 		2D88EA0E1B2AF71A0072FD43 /* liboggedit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.a */; };
 		2D88EA111B2AF77B0072FD43 /* vorbis.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D88E9ED1B2AF6640072FD43 /* vorbis.dylib */; };
-		2D8C8D4E1C43118A008ACE29 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D8C8D3F1C43116A008ACE29 /* libz.tbd */; };
 		2D8E9C1819ED5C4400EE1408 /* curl_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8E9C1719ED5C4400EE1408 /* curl_config.h */; };
 		2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2D9177391A0E8966004BC222 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
@@ -926,6 +925,7 @@
 		2DF9304F1AB817310030C0CA /* wildmidi_lib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF9304A1AB817310030C0CA /* wildmidi_lib.h */; };
 		2DF930511AB817310030C0CA /* wildmidi_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304D1AB817310030C0CA /* wildmidi_lib.c */; };
 		2DF930521AB817310030C0CA /* wildmidiplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304E1AB817310030C0CA /* wildmidiplug.c */; };
+		2DFF33551C64E38B0022D2E2 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A8F1837EC49003E6066 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
@@ -2981,7 +2981,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D8C8D4E1C43118A008ACE29 /* libz.tbd in Frameworks */,
+				2DFF33551C64E38B0022D2E2 /* libz.dylib in Frameworks */,
 				2D4459FB1C04F2F000230939 /* libzip.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
