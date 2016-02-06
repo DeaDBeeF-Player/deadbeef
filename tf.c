@@ -2068,10 +2068,10 @@ tf_import_legacy (const char *fmt, char *out, int outsize) {
                     strncpy (nm+1, fmt+1, l);
                     nm[l+2] = 0;
                     nm[0] = '%';
-                    nm[l-1] = '%';
+                    nm[l+1] = '%';
 
                     APPEND (nm);
-                    fmt = e;
+                    fmt = e+1;
                 }
                 continue;
             }

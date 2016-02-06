@@ -1044,4 +1044,11 @@
     XCTAssert(!strcmp (buffer, "2:10"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_ImportLegacyDirectAccess_ProducesExpectedData {
+    const char *old = "%@disc@";
+    char new[100];
+    tf_import_legacy (old, new, sizeof (new));
+    XCTAssert(!strcmp (new, "%disc%"), @"The actual output is: %s", buffer);
+}
+
 @end
