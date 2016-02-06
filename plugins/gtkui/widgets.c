@@ -2360,7 +2360,6 @@ static void
 w_playlist_init (ddb_gtkui_widget_t *base) {
     w_playlist_t *w = (w_playlist_t *)base;
 
-    main_playlist_init (GTK_WIDGET (w->list));
     ddb_listview_show_header (w->list, !w->hideheaders);
     ddb_listview_init_autoresize (w->list, w->width);
     g_idle_add (playlist_setup_cb, w->list);
@@ -2421,6 +2420,7 @@ w_tabbed_playlist_create (void) {
     gtk_box_pack_start (GTK_BOX (vbox), sepbox, FALSE, TRUE, 0);
     gtk_box_pack_start (GTK_BOX (vbox), list, TRUE, TRUE, 0);
 
+    main_playlist_init (list);
 
     w_override_signals (w->plt.base.widget, w);
 
@@ -2443,6 +2443,7 @@ w_playlist_create (void) {
     w->base.init = w_playlist_init;
     w->base.initmenu = w_playlist_initmenu;
     gtk_widget_show (GTK_WIDGET (w->list));
+    main_playlist_init (GTK_WIDGET (w->list));
 
     if (deadbeef->conf_get_int ("gtkui.headers.visible", 1)) {
         ddb_listview_show_header (DDB_LISTVIEW (w->list), 1);
