@@ -1011,7 +1011,7 @@
     streamer_set_playing_track (it);
     char *bc = tf_compile("%playback_time%");
     tf_eval (&ctx, bc, buffer, 1000);
-    XCTAssert(!strcmp (buffer, " 0:00"), @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp (buffer, "0:00"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_NoDynamicFlag_SkipsDynamicFields {
@@ -1035,6 +1035,13 @@
     char *bc = tf_compile("%track number%");
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Length_DoesntGetPaddedWithSpace {
+    plt_set_item_duration(NULL, it, 130);
+    char *bc = tf_compile("%length%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "2:10"), @"The actual output is: %s", buffer);
 }
 
 @end
