@@ -1589,9 +1589,13 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     if (v) {
                         const char *start = strrchr (v, '/');
                         if (start) {
-                            tf_append_out (&out, &outlen, start+1, (int)strlen (start+1));
-                            skip_out = 1;
+                            start++;
                         }
+                        else {
+                            start = v;
+                        }
+                        tf_append_out (&out, &outlen, start, (int)strlen (start));
+                        skip_out = 1;
                     }
                 }
                 else if (!strcmp (name, "directoryname")) {
