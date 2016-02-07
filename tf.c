@@ -625,6 +625,7 @@ tf_func_ext (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
     while (c >= out && *c != '/') {
         if (*c == '.') {
             p = c+1;
+            break;
         }
         c--;
     }
