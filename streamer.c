@@ -1513,7 +1513,8 @@ streamer_start_new_song (void) {
             streamer_reset (1);
             if (fileinfo && memcmp (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
                 memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
-                formatchanged = 1;
+                memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+                streamer_set_output_format ();
             }
             // we need to start playback before we can pause it
             if (0 != output->play ()) {
