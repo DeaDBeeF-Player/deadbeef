@@ -952,7 +952,7 @@
 - (void)test_ExtOnFileExtWithMultiplePeriod_ReturnsExt {
     char *bc = tf_compile("$ext('/a/b/c/d/file.iso.wv')");
     tf_eval (&ctx, bc, buffer, 1000);
-    XCTAssert(!strcmp (buffer, "iso.wv"), @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp (buffer, "wv"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_FilenameOnFilePath_ReturnsFilename {
