@@ -1201,7 +1201,7 @@ init_column (col_info_t *inf, int id, const char *format) {
         inf->format = strdup ("%length%");
         break;
     case 8:
-        inf->format = strdup ("%track number%");
+        inf->format = strdup ("%tracknumber%");
         break;
     case 9:
         inf->format = strdup ("$if(%album artist%,%album artist%,Unknown Artist)");
@@ -1622,7 +1622,7 @@ import_column_from_0_6 (const uint8_t *def, char *json_out, int outsize) {
         format = "%length%";
         break;
     case DB_COLUMN_TRACK:
-        format = "%track number%";
+        format = "%tracknumber%";
         break;
     default:
         deadbeef->tf_import_legacy (fmt, out_tf, sizeof (out_tf));

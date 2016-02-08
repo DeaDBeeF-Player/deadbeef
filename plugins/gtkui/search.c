@@ -460,7 +460,7 @@ search_playlist_init (GtkWidget *widget) {
     // create default set of columns
     if (load_column_config (listview, "gtkui.columns.search") < 0) {
         add_column_helper (listview, _("Artist / Album"), 150, -1, "%artist% - %album%", 0);
-        add_column_helper (listview, _("Track No"), 50, -1, "%track number%", 1);
+        add_column_helper (listview, _("Track No"), 50, -1, "%tracknumber%", 1);
         add_column_helper (listview, _("Title"), 150, -1, "%title%", 0);
         add_column_helper (listview, _("Duration"), 50, -1, "%length%", 0);
     }
