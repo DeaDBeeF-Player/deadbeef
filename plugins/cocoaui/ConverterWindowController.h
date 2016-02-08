@@ -28,6 +28,7 @@
 @property (unsafe_unretained) IBOutlet NSButton *writeToSourceFolder;
 @property (unsafe_unretained) IBOutlet NSButton *preserveFolderStructure;
 @property (unsafe_unretained) IBOutlet NSTextField *outputFileName;
+@property (unsafe_unretained) IBOutlet NSArrayController *filenamePreviewController;
 @property (unsafe_unretained) IBOutlet NSPopUpButton *encoderPreset;
 @property (unsafe_unretained) IBOutlet NSPopUpButton *dspPreset;
 @property (unsafe_unretained) IBOutlet NSPopUpButton *outputFormat;

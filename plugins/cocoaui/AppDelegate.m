@@ -193,6 +193,27 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     return YES;
 }
 
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
+    dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(aQueue, ^{
+        char str[100];
+        add_paths([filename UTF8String], [filename length], 0, str, 100);
+    });
+    return YES; // assume that everything went ok
+}
+
+
+- (void)application:(NSApplication *)sender openFiles:(NSArray *)filenames {
+    dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(aQueue, ^{
+        char str[100];
+        // building single paths string for the deadbeef function, paths must be separated by '\0'
+        NSString *paths =[filenames componentsJoinedByString:@"\0"];
+        add_paths([paths UTF8String], [paths length], 0, str, 100);
+    });
+}
+
+
 - (IBAction)showMainWinAction:(id)sender {
     NSInteger st = [sender state];
     [[_mainWindow window] setIsVisible:st!=NSOnState];

@@ -26,6 +26,7 @@
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
+static NSString *default_format = @"%artist% - %title%";
 
 @interface ConverterWindowController () {
     ddb_converter_t *_converter_plugin;
@@ -115,7 +116,52 @@ extern DB_functions_t *deadbeef;
     deadbeef->conf_save ();
 }
 
+-(void)updateFilenamesPreview {
+    NSMutableArray *convert_items_preview = [NSMutableArray arrayWithCapacity:_convert_items_count];
+
+    ddb_encoder_preset_t *p = NULL;
+    int enc_preset = (int)[_encoderPreset indexOfSelectedItem];
+    if (enc_preset >= 0) {
+        p = _converter_plugin->encoder_preset_get_for_idx (enc_preset);
+    }
+    else {
+        return;
+    }
+    NSString *name_format = [_outputFileName stringValue];
+
+    if ([name_format isEqual:@""]) {
+        name_format = default_format;
+    }
+    char * tf = deadbeef->tf_compile([name_format UTF8String]);
+    if (!tf) {
+        return;
+    }
+    for (int n = 0; n < _convert_items_count; n++) {
+        DB_playItem_t *it = _convert_items[n];
+        if (it) {
+            ddb_tf_context_t ctx = {
+                ._size = sizeof (ddb_tf_context_t),
+                .flags = DDB_TF_CONTEXT_HAS_INDEX,
+                .it = it,
+                .idx = deadbeef->pl_get_idx_of (it),
+                .iter = PL_MAIN,
+                .plt = _convert_playlist,
+            };
+
+            char filename[PATH_MAX];
+            deadbeef->tf_eval (&ctx, tf, filename, sizeof (filename));
+            char filename_ext[PATH_MAX];
+            snprintf (filename_ext, sizeof (filename_ext), "%s.%s", filename, p->ext);
+            [convert_items_preview addObject:[NSString stringWithUTF8String:filename_ext]];
+        }
+    }
+
+    deadbeef->tf_free(tf);
+    [_filenamePreviewController setContent:convert_items_preview];
+}
+
 - (IBAction)outputPathChanged:(id)sender {
+    [self updateFilenamesPreview];
 }
 
 - (IBAction)writeToSourceFolderChanged:(id)sender {
@@ -129,6 +175,7 @@ extern DB_functions_t *deadbeef;
 
 - (IBAction)encoderPresetChanged:(id)sender {
     deadbeef->conf_set_int ("converter.encoder_preset", (int)[_encoderPreset indexOfSelectedItem]);
+    [self updateFilenamesPreview];
 }
 
 - (IBAction)dspPresetChanged:(id)sender {
@@ -259,6 +306,7 @@ extern DB_functions_t *deadbeef;
             break;
     }
     deadbeef->pl_unlock ();
+    [self updateFilenamesPreview];
 }
 
 
@@ -512,7 +560,7 @@ extern DB_functions_t *deadbeef;
     _outfile = [_outputFileName stringValue];
 
     if ([_outfile isEqual:@""]) {
-        _outfile = @"%a - %t";
+        _outfile = default_format;
     }
 
     _preserve_folder_structure = [_preserveFolderStructure state] == NSOnState;
