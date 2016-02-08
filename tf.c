@@ -2096,7 +2096,7 @@ tf_import_legacy (const char *fmt, char *out, int outsize) {
                 APPEND ("%composer%");
             }
             else if (*fmt == 'n') {
-                APPEND ("%track number%");
+                APPEND ("%tracknumber%");
             }
             else if (*fmt == 'N') {
                 APPEND ("%numtracks%");

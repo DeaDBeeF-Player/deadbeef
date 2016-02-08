@@ -1662,22 +1662,22 @@ import_column_from_0_6 (const uint8_t *def, char *json_out, int outsize) {
     // convert IDs from pre-0.4
     switch (id) {
     case DB_COLUMN_ARTIST_ALBUM:
-        format = "%artist% - %album%";
+        format = COLUMN_FORMAT_ARTISTALBUM;
         break;
     case DB_COLUMN_ARTIST:
-        format = "%artist%";
+        format = COLUMN_FORMAT_ARTIST;
         break;
     case DB_COLUMN_ALBUM:
-        format = "%album%";
+        format = COLUMN_FORMAT_ALBUM;
         break;
     case DB_COLUMN_TITLE:
-        format = "%title%";
+        format = COLUMN_FORMAT_TITLE;
         break;
     case DB_COLUMN_DURATION:
-        format = "%length%";
+        format = COLUMN_FORMAT_LENGTH;
         break;
     case DB_COLUMN_TRACK:
-        format = "%track number%";
+        format = COLUMN_FORMAT_TRACKNUMBER;
         break;
     default:
         deadbeef->tf_import_legacy (fmt, out_tf, sizeof (out_tf));

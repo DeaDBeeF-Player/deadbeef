@@ -31,7 +31,7 @@
 #define COLUMN_FORMAT_ALBUM "%album%"
 #define COLUMN_FORMAT_TITLE "%title%"
 #define COLUMN_FORMAT_LENGTH "%length%"
-#define COLUMN_FORMAT_TRACKNUMBER "%track number%"
+#define COLUMN_FORMAT_TRACKNUMBER "%tracknumber%"
 #define COLUMN_FORMAT_BAND "$if(%album artist%,%album artist%,Unknown Artist)"
 
 int
