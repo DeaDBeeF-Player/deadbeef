@@ -35,6 +35,18 @@
 				<string>com.microsoft.windows-media-wma</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>net.sourceforge.deadbeef.playlist</string>
+			</array>
+			<key>NSExportableTypes</key>
+			<array>
+				<string>net.sourceforge.deadbeef.playlist</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
@@ -67,5 +79,28 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+				<string>public.content</string>
+			</array>
+			<key>UTTypeIdentifier</key>
+			<string>net.sourceforge.deadbeef.playlist</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>com.apple.ostype</key>
+				<array>
+					<string>DBPL</string>
+				</array>
+				<key>public.filename-extension</key>
+				<array>
+					<string>dbpl</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
 </dict>
 </plist>
