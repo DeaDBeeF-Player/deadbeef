@@ -332,6 +332,9 @@ ddb_listview_update_fonts (DdbListview *ps);
 void
 ddb_listview_header_update_fonts (DdbListview *ps);
 
+void
+ddb_listview_cancel_autoredraw (DdbListview *listview);
+
 G_END_DECLS
 
 #endif // __DDBLISTVIEW_H

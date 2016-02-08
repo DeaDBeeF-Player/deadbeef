@@ -397,7 +397,8 @@ draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int id
                 .flags = DDB_TF_CONTEXT_HAS_ID | DDB_TF_CONTEXT_HAS_INDEX,
             };
             deadbeef->tf_eval (&ctx, cinf->bytecode, text, sizeof (text));
-            if (ctx.update > 0 && !listview->tf_redraw_timeout_id) {
+            if (ctx.update > 0) {
+                ddb_listview_cancel_autoredraw (listview);
                 if ((ctx.flags & DDB_TF_CONTEXT_HAS_INDEX) && ctx.iter == PL_MAIN) {
                     listview->tf_redraw_track_idx = ctx.idx;
                 }

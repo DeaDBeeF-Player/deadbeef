@@ -544,14 +544,8 @@ ddb_listview_destroy(GObject *object)
       free (listview->group_title_bytecode);
       listview->group_title_bytecode = NULL;
   }
-  if (listview->tf_redraw_timeout_id) {
-      g_source_remove (listview->tf_redraw_timeout_id);
-      listview->tf_redraw_timeout_id = 0;
-  }
-  if (listview->tf_redraw_track) {
-      listview->binding->unref (listview->tf_redraw_track);
-      listview->tf_redraw_track = NULL;
-  }
+  ddb_listview_cancel_autoredraw (listview);
+
   draw_free (&listview->listctx);
   draw_free (&listview->grpctx);
   draw_free (&listview->hdrctx);
@@ -3442,3 +3436,14 @@ ddb_listview_list_key_press_event (GtkWidget *widget, GdkEventKey *event, gpoint
     return TRUE;
 }
 
+void
+ddb_listview_cancel_autoredraw (DdbListview *listview) {
+    if (listview->tf_redraw_timeout_id) {
+        g_source_remove (listview->tf_redraw_timeout_id);
+        listview->tf_redraw_timeout_id = 0;
+    }
+    if (listview->tf_redraw_track) {
+        listview->binding->unref (listview->tf_redraw_track);
+        listview->tf_redraw_track = NULL;
+    }
+}
