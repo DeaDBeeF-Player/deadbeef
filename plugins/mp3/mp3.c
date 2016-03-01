@@ -501,7 +501,6 @@ retry_sync:
             if (nchannels > buffer->channels) {
                 buffer->channels = nchannels;
             }
-            buffer->bitspersample = 16;
 //            trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, nchannels);
         }
 // }}}
@@ -676,6 +675,13 @@ cmp3_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (mp3_info_t));
     mp3_info_t *info = (mp3_info_t *)_info;
     memset (info, 0, sizeof (mp3_info_t));
+
+#ifndef ANDROID // force 16 bit on android
+    if ((hints & DDB_DECODER_HINT_16BIT) || deadbeef->conf_get_int ("mp3.force16bit", 0))
+#endif
+    {
+        info->want_16bit = 1;
+    }
     return _info;
 }
 
@@ -694,7 +700,6 @@ cmp3_set_extra_properties (buffer_t *buffer, int fake) {
         snprintf (s, sizeof (s), "%d", buffer->bitrate/1000);
         deadbeef->pl_replace_meta (buffer->it, ":BITRATE", s);
     }
-    deadbeef->pl_replace_meta (buffer->it, ":BPS", "16");
     snprintf (s, sizeof (s), "%d", buffer->channels);
     deadbeef->pl_replace_meta (buffer->it, ":CHANNELS", s);
     snprintf (s, sizeof (s), "%d", buffer->samplerate);
@@ -891,7 +896,14 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         trace ("bad mpeg file: %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
-    _info->fmt.bps = info->buffer.bitspersample;
+    if (info->want_16bit) {
+        _info->fmt.bps = 16;
+        _info->fmt.is_float = 0;
+    }
+    else {
+        _info->fmt.bps = 32;
+        _info->fmt.is_float = 1;
+    }
     _info->fmt.samplerate = info->buffer.samplerate;
     _info->fmt.channels = info->buffer.channels;
     _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
@@ -956,7 +968,7 @@ dump_buffer (buffer_t *buffer) {
 
 // decoded requested number of samples to int16 format
 static void
-cmp3_decode_requested_int16 (mp3_info_t *info) {
+cmp3_decode_requested (mp3_info_t *info) {
     cmp3_skip (info);
     if (info->buffer.skipsamples > 0) {
         return;
@@ -972,12 +984,12 @@ cmp3_stream_frame (mp3_info_t *info) {
 }
 
 static int
-cmp3_decode_int16 (mp3_info_t *info) {
+cmp3_decode (mp3_info_t *info) {
     int eof = 0;
     while (!eof) {
         eof = cmp3_stream_frame (info);
         if (info->buffer.decode_remaining > 0) {
-            cmp3_decode_requested_int16 (info);
+            cmp3_decode_requested (info);
             if (info->buffer.readsize == 0) {
                 return 0;
             }
@@ -1024,7 +1036,9 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
     int initsize = size;
     info->buffer.readsize = size;
     info->buffer.out = bytes;
-    cmp3_decode_int16 (info);
+
+    cmp3_decode (info);
+
     info->buffer.currentsample += (size - info->buffer.readsize) / samplesize;
     _info->readpos = (float)(info->buffer.currentsample - info->buffer.startsample) / info->buffer.samplerate;
 #if WRITE_DUMP
@@ -1258,6 +1272,7 @@ static const char *exts[] = {
 };
 
 static const char settings_dlg[] =
+    "property \"Force 16 bit output\" checkbox mp3.force16bit 0;\n"
     "property \"Disable gapless playback (faster scanning)\" checkbox mp3.disable_gapless 0;\n"
 #if defined(USE_LIBMAD) && defined(USE_LIBMPG123)
     "property \"Backend\" select[2] mp3.backend 0 mpg123 mad;\n"

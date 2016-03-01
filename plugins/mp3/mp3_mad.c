@@ -87,8 +87,8 @@ MadFixedToFloat (mad_fixed_t Fixed) {
 
 #define MadErrorString(x) mad_stream_errorstr(x)
 
-void
-mp3_mad_decode (mp3_info_t *info) {
+static void
+mp3_mad_decode_int16 (mp3_info_t *info) {
     // copy synthesized samples into readbuffer
     int idx = info->mad_synth.pcm.length-info->buffer.decode_remaining;
     // stereo
@@ -134,6 +134,64 @@ mp3_mad_decode (mp3_info_t *info) {
             *((int16_t*)info->buffer.out) = sample;
             info->buffer.readsize -= 2;
             info->buffer.out += 2;
+            info->buffer.decode_remaining--;
+            idx++;
+        }
+    }
+}
+
+void
+mp3_mad_decode (mp3_info_t *info) {
+    if (info->want_16bit) {
+        mp3_mad_decode_int16 (info);
+        return;
+    }
+
+    // copy synthesized samples into readbuffer
+    int idx = info->mad_synth.pcm.length-info->buffer.decode_remaining;
+    // stereo
+    if (MAD_NCHANNELS(&info->mad_frame.header) == 2 && info->info.fmt.channels == 2) {
+        while (info->buffer.decode_remaining > 0 && info->buffer.readsize > 0) {
+            *((float*)info->buffer.out) = MadFixedToFloat (info->mad_synth.pcm.samples[0][idx]);
+            info->buffer.readsize -= 4;
+            info->buffer.out += 4;
+            *((float*)info->buffer.out) = MadFixedToFloat (info->mad_synth.pcm.samples[1][idx]);
+            info->buffer.readsize -= 4;
+            info->buffer.out += 4;
+            info->buffer.decode_remaining--;
+            idx++;
+        }
+    }
+    // mono
+    else if (MAD_NCHANNELS(&info->mad_frame.header) == 1 && info->info.fmt.channels == 1){
+        while (info->buffer.decode_remaining > 0 && info->buffer.readsize > 0) {
+            *((float*)info->buffer.out) = MadFixedToFloat (info->mad_synth.pcm.samples[0][idx]);
+            info->buffer.readsize -= 4;
+            info->buffer.out += 4;
+            info->buffer.decode_remaining--;
+            idx++;
+        }
+    }
+    // workaround for bad mp3s that have both mono and stereo frames
+    else if (MAD_NCHANNELS(&info->mad_frame.header) == 1 && info->info.fmt.channels == 2) {
+        while (info->buffer.decode_remaining > 0 && info->buffer.readsize > 0) {
+            int16_t sample = MadFixedToFloat (info->mad_synth.pcm.samples[0][idx]);
+            *((float*)info->buffer.out) = sample;
+            info->buffer.readsize -= 4;
+            info->buffer.out += 4;
+            *((float*)info->buffer.out) = sample;
+            info->buffer.readsize -= 4;
+            info->buffer.out += 4;
+            info->buffer.decode_remaining--;
+            idx++;
+        }
+    }
+    else if (MAD_NCHANNELS(&info->mad_frame.header) == 2 && info->info.fmt.channels == 1) {
+        while (info->buffer.decode_remaining > 0 && info->buffer.readsize > 0) {
+            float sample = MadFixedToFloat (info->mad_synth.pcm.samples[0][idx]);
+            *((float*)info->buffer.out) = sample;
+            info->buffer.readsize -= 4;
+            info->buffer.out += 4;
             info->buffer.decode_remaining--;
             idx++;
         }

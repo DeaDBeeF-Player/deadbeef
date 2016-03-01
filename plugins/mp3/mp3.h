@@ -74,7 +74,6 @@ typedef struct {
     int bitrate;
     int samplerate;
     int packetlength;
-    int bitspersample;
     int channels;
     float duration;
 
@@ -127,6 +126,7 @@ typedef struct {
 #endif
     };
 
+    int want_16bit;
     struct mp3_decoder_api_s *dec;
 } mp3_info_t;
 
