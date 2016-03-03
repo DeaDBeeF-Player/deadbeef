@@ -24,6 +24,10 @@
 #ifndef __ARTWORK_INTERNAL_H
 #define __ARTWORK_INTERNAL_H
 
+#if HAVE_LIMITS_H
+    #include <limits.h>
+#endif
+
 #include "../../deadbeef.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
