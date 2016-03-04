@@ -29,9 +29,7 @@
 
 #include <stdbool.h>
 #include <ogg/ogg.h>
-#if HAVE_SYS_SYSLIMITS_H
-#include <sys/syslimits.h>
-#endif
+#include <limits.h>
 #include "../../deadbeef.h"
 #include "oggedit.h"
 
