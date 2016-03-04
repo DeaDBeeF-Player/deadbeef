@@ -160,12 +160,17 @@ cache_cleaner_thread (void *none)
                         }
                     }
                 }
-                closedir (subdir);
+                if (subdir) {
+                    closedir (subdir);
+                }
             }
             usleep (100000);
             deadbeef->mutex_lock (thread_mutex);
         }
-        closedir (covers_dir);
+        if (covers_dir) {
+            closedir (covers_dir);
+            covers_dir = NULL;
+        }
 
         /* Sleep until just after the oldest file expires */
         if (cache_expiry_seconds > 0 && !terminate) {
