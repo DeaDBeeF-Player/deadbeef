@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <sys/stat.h>
+#include <limits.h>
 #include "artwork_internal.h"
 #include "../../deadbeef.h"
 
