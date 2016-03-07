@@ -15,6 +15,8 @@ case "$TRAVIS_OS_NAME" in
         echo "building for x86_64"
         ARCH=x86_64 ./scripts/static_build.sh || exit 1
         ARCH=x86_64 ./scripts/portable_package_static.sh || exit 1
+        echo "running make dist"
+        make dist || exit 1
     ;;
     osx)
         echo brew update ...
