@@ -1,3 +1,19 @@
+version 0.7.1
+	fixed GTKUI maximized window layout saving/restoring
+	fixed GTKUI maximized window column autoresize saving/restoring
+	fixed artwork plugin version checks
+	disabled bogus shift-jis detection, which was overriding cp1252
+	fixed mp3 bitrate calculation regression
+	fixed wrong padding of formatted time
+	fixed importing legacy title formatting fields bug
+	fixed incorrect output format after resuming paused session
+	fixed $ext title formatting bug
+	fixed %tracknumber% title formatting bug
+	fixed auto-updating title formatting fields
+	fixed FreeBSD compile issues
+	fixed cache cleaner crash bug
+	fixed crash when trying to play GYM files
+
 version 0.7.0
 	converter: fixed bug overwriting the source file with destination (Ian Nartowicz)
 	artwork: added cache cleaner, MusicBrainz backend,
