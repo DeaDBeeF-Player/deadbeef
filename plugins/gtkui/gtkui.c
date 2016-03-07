@@ -1284,6 +1284,7 @@ import_legacy_tf (const char *key_from, const char *key_to) {
         deadbeef->conf_get_str (key_from, "", old, sizeof (old));
         deadbeef->tf_import_legacy (old, new, sizeof (new));
         deadbeef->conf_set_str (key_to, new);
+        deadbeef->conf_save ();
     }
     deadbeef->conf_unlock ();
 }
@@ -1295,8 +1296,7 @@ gtkui_start (void) {
     import_legacy_tf ("gtkui.titlebar_playing", "gtkui.titlebar_playing_tf");
     import_legacy_tf ("gtkui.titlebar_stopped", "gtkui.titlebar_stopped_tf");
 
-    import_legacy_tf ("gtkui.playlist.group_by", "gtkui.playlist.group_by_tf");
-    import_legacy_tf ("gtkui.search.group_by", "gtkui.search.group_by_tf");
+    import_legacy_tf ("playlist.group_by", "gtkui.playlist.group_by_tf");
 
     gtkui_thread (NULL);
 
