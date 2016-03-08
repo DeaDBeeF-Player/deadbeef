@@ -13,6 +13,7 @@ version 0.7.1
 	fixed FreeBSD compile issues
 	fixed cache cleaner crash bug
 	fixed crash when trying to play GYM files
+	fixed importing legacy playlist grouping config
 
 version 0.7.0
 	converter: fixed bug overwriting the source file with destination (Ian Nartowicz)
