@@ -14,6 +14,8 @@ version 0.7.1
 	fixed cache cleaner crash bug
 	fixed crash when trying to play GYM files
 	fixed importing legacy playlist grouping config
+	fixed FLAC metadata field mapping
+	fixed FLAC metadata track/total and disc/total splitting
 
 version 0.7.0
 	converter: fixed bug overwriting the source file with destination (Ian Nartowicz)
