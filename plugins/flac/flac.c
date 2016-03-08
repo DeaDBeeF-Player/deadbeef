@@ -44,6 +44,7 @@
 #include "../../deadbeef.h"
 #include "../artwork/artwork.h"
 #include "../liboggedit/oggedit.h"
+#include "../../strdupa.h"
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -580,20 +581,42 @@ static const char *metainfo[] = {
     "GENRE", "genre",
     "COMMENT", "comment",
     "PERFORMER", "performer",
-//    "ENSEMBLE", "band",
     "COMPOSER", "composer",
     "ENCODED-BY", "vendor",
     "DISCNUMBER", "disc",
     "DISCTOTAL", "numdiscs",
     "TOTALDISCS", "numdiscs",
     "COPYRIGHT", "copyright",
-    "TOTALTRACKS", "numtracks",
-    "TRACKTOTAL", "numtracks",
-    "ALBUM ARTIST", "band",
     "ORIGINALDATE","original_release_time",
     "ORIGINALYEAR","original_release_year",
     NULL
 };
+
+static int
+add_track_meta (DB_playItem_t *it, char *track) {
+    char *slash = strchr (track, '/');
+    if (slash) {
+        // split into track/totaltracks
+        *slash = 0;
+        slash++;
+        deadbeef->pl_add_meta (it, "numtracks", slash);
+    }
+    deadbeef->pl_add_meta (it, "track", track);
+    return 0;
+}
+
+static int
+add_disc_meta (DB_playItem_t *it, char *disc) {
+    char *slash = strchr (disc, '/');
+    if (slash) {
+        // split into disc/totaldiscs
+        *slash = 0;
+        slash++;
+        deadbeef->pl_add_meta (it, "numdiscs", slash);
+    }
+    deadbeef->pl_add_meta (it, "disc", disc);
+    return 0;
+}
 
 static void
 cflac_add_metadata (DB_playItem_t *it, const char *s, int length) {
@@ -601,7 +624,16 @@ cflac_add_metadata (DB_playItem_t *it, const char *s, int length) {
     for (m = 0; metainfo[m]; m += 2) {
         size_t l = strlen (metainfo[m]);
         if (length > l && !strncasecmp (metainfo[m], s, l) && s[l] == '=') {
-            deadbeef->pl_append_meta (it, metainfo[m+1], s + l + 1);
+            const char *val = s + l + 1;
+            if (!strcmp (metainfo[m+1], "track")) {
+                add_track_meta (it, strdupa (val));
+            }
+            else if (!strcmp (metainfo[m+1], "disc")) {
+                add_disc_meta (it, strdupa (val));
+            }
+            else {
+                deadbeef->pl_append_meta (it, metainfo[m+1], val);
+            }
             break;
         }
     }
