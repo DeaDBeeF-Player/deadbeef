@@ -169,6 +169,7 @@ struct _DdbListview {
     int header_dragpt[2];
     gdouble prev_header_x;
     int header_prepare;
+    int col_autoresize;
     float fwidth;
 
     struct _DdbListviewColumn *columns;
@@ -270,18 +271,6 @@ ddb_listview_get_row_pos (DdbListview *listview, int row_idx);
 
 void
 ddb_listview_groupcheck (DdbListview *listview);
-
-int
-ddb_listview_is_album_art_column (DdbListview *listview, int x);
-
-int
-ddb_listview_is_album_art_column_idx (DdbListview *listview, int cidx);
-
-void
-ddb_listview_update_fonts (DdbListview *ps);
-
-void
-ddb_listview_header_update_fonts (DdbListview *ps);
 
 void
 ddb_listview_cancel_autoredraw (DdbListview *listview);
