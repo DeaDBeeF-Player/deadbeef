@@ -45,4 +45,10 @@ extern char dbplugindir[PATH_MAX]; // see deadbeef->get_plugin_dir
 extern char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
 extern char dbcachedir[PATH_MAX];
 
+// parses a list of paths and adds them to playlist
+// 0 - no error, files loaded
+// 1 - no error, but files not loaded
+int
+add_paths(const char *paths, int len, int queue, char *sendback, int sbsize);
+
 #endif // __COMMON_H

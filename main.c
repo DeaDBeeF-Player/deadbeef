@@ -197,11 +197,10 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
     if (sendback) {
         sendback[0] = 0;
     }
-    const uint8_t *parg = (const uint8_t *)cmdline;
-    const uint8_t *pend = cmdline + len;
+    const char *parg = cmdline;
+    const char *pend = cmdline + len;
     int queue = 0;
     while (parg < pend) {
-        const char *parg_c = parg;
         if (strlen (parg) >= 2 && parg[0] == '-' && parg[1] != '-') {
             parg += strlen (parg);
             parg++;
@@ -242,7 +241,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             parg += strlen (parg);
             parg++;
             if (parg >= pend) {
-                const char *errtext = "--nowplaying expects format argument";
+                const char *errtext = "--nowplaying-tf expects format argument";
                 if (sendback) {
                     snprintf (sendback, sbsize, "error %s\n", errtext);
                     return 0;
@@ -324,15 +323,6 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         else if (!strcmp (parg, "--quit")) {
             messagepump_push (DB_EV_TERMINATE, 0, 0, 0);
         }
-        else if (!strcmp (parg, "--sm-client-id")) {
-            parg += strlen (parg);
-            parg++;
-            if (parg < pend) {
-                parg += strlen (parg);
-                parg++;
-            }
-            continue;
-        }
         else if (!strcmp (parg, "--gui")) {
             // need to skip --gui here, it is handled in the client cmdline
             parg += strlen (parg);
@@ -351,7 +341,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         parg++;
     }
     if (parg < pend) {
-        if (add_paths(parg, pend - parg, queue, sendback, sbsize) > 0) {
+        if (add_paths(parg, (int)(pend - parg), queue, sendback, sbsize) > 0) {
             return 0; // files not loaded, but continue normally
         }
         if (!queue) {
@@ -366,8 +356,8 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
 // 1 - no error, but files not loaded
 int
 add_paths(const char *paths, int len, int queue, char *sendback, int sbsize) {
-    const uint8_t *parg = (const uint8_t *)paths;
-    const uint8_t *pend = paths + len;
+    const char *parg = paths;
+    const char *pend = paths + len;
 
     if (conf_get_int ("cli_add_to_specific_playlist", 1)) {
         char str[200];

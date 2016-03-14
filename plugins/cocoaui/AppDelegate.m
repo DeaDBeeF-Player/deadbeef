@@ -29,7 +29,7 @@
 #include "conf.h"
 #include "streamer.h"
 #include "junklib.h"
-
+#include "../../common.h"
 #include "../../deadbeef.h"
 #include <sys/time.h>
 
