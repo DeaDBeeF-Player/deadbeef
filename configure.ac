@@ -491,8 +491,8 @@ dnl cdda plugin
 AS_IF([test "${enable_cdda}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_CDDAPLUGIN=yes
-        CDDA_LIBS="../../$LIB/lib/libcdio.a ../../$LIB/lib/libudf.a ../../$LIB/lib/libiso9660.a ../../$LIB/lib/libcddb.a"
-        CDDA_CFLAGS="-I../../$LIB/include"
+        CDDA_LIBS="../../$LIB/lib/libcdio.a ../../$LIB/lib/libcdio_cdda.a ../../$LIB/lib/libcdio_paranoia.a ../../$LIB/lib/libudf.a ../../$LIB/lib/libiso9660.a ../../$LIB/lib/libcddb.a"
+        CDDA_CFLAGS="-I../../$LIB/include -DUSE_PARANOIA -DUSE_PARANOIA_10_2"
         AC_SUBST(CDDA_LIBS)
         AC_SUBST(CDDA_CFLAGS)
     ], [

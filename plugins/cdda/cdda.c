@@ -23,7 +23,10 @@
 #include <string.h>
 #include <sys/types.h>
 
-#if USE_PARANOIA
+#if USE_PARANOIA_10_2
+    #include <cdio/paranoia/cdda.h>
+    #include <cdio/paranoia/paranoia.h>
+#elif USE_PARANOIA
 #if USE_CDDA_SUBDIR
     #include <cdda/cdda_interface.h>
     #include <cdda/cdda_paranoia.h>
