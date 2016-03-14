@@ -44,19 +44,19 @@ typedef struct {
     int remaining;
     int skipsamples;
     float duration;
-} aoplug_info_t;
+} psfplug_info_t;
 
 static DB_fileinfo_t *
-aoplug_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (aoplug_info_t));
-    aoplug_info_t *info = (aoplug_info_t *)_info;
-    memset (info, 0, sizeof (aoplug_info_t));
+psfplug_open (uint32_t hints) {
+    DB_fileinfo_t *_info = malloc (sizeof (psfplug_info_t));
+    psfplug_info_t *info = (psfplug_info_t *)_info;
+    memset (info, 0, sizeof (psfplug_info_t));
     return _info;
 }
 
 static int
-aoplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
-    aoplug_info_t *info = (aoplug_info_t *)_info;
+psfplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
+    psfplug_info_t *info = (psfplug_info_t *)_info;
 
     _info->fmt.bps = 16;
     _info->fmt.channels = 2;
@@ -109,8 +109,8 @@ aoplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 }
 
 static void
-aoplug_free (DB_fileinfo_t *_info) {
-    aoplug_info_t *info = (aoplug_info_t *)_info;
+psfplug_free (DB_fileinfo_t *_info) {
+    psfplug_info_t *info = (psfplug_info_t *)_info;
     if (info) {
         if (info->type >= 0) {
             ao_stop (info->type, info->decoder);
@@ -124,9 +124,9 @@ aoplug_free (DB_fileinfo_t *_info) {
 }
 
 static int
-aoplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
-    aoplug_info_t *info = (aoplug_info_t *)_info;
-//    printf ("aoplug_read_int16 %d samples, curr %d, end %d\n", size/4, info->currentsample, (int)(info->duration * _info->samplerate));
+psfplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
+    psfplug_info_t *info = (psfplug_info_t *)_info;
+//    printf ("psfplug_read_int16 %d samples, curr %d, end %d\n", size/4, info->currentsample, (int)(info->duration * _info->samplerate));
 
     if (info->currentsample >= info->duration * _info->fmt.samplerate) {
         return 0;
@@ -166,8 +166,8 @@ aoplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
 }
 
 static int
-aoplug_seek_sample (DB_fileinfo_t *_info, int sample) {
-    aoplug_info_t *info = (aoplug_info_t *)_info;
+psfplug_seek_sample (DB_fileinfo_t *_info, int sample) {
+    psfplug_info_t *info = (psfplug_info_t *)_info;
     if (sample > info->currentsample) {
         info->skipsamples = sample-info->currentsample;
     }
@@ -182,12 +182,12 @@ aoplug_seek_sample (DB_fileinfo_t *_info, int sample) {
 }
 
 static int
-aoplug_seek (DB_fileinfo_t *_info, float time) {
-    return aoplug_seek_sample (_info, time * _info->fmt.samplerate);
+psfplug_seek (DB_fileinfo_t *_info, float time) {
+    return psfplug_seek_sample (_info, time * _info->fmt.samplerate);
 }
 
 static void
-aoplug_add_meta (DB_playItem_t *it, const char *key, const char *value, const char *comment_title) {
+psfplug_add_meta (DB_playItem_t *it, const char *key, const char *value, const char *comment_title) {
 //    const char *res = NULL;
     char tmp[200];
     // check utf8
@@ -213,7 +213,7 @@ aoplug_add_meta (DB_playItem_t *it, const char *key, const char *value, const ch
 }
 
 static DB_playItem_t *
-aoplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
+psfplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         fprintf (stderr, "psf: failed to fopen %s\n", fname);
@@ -306,33 +306,33 @@ aoplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                 else if (sscanf (info.info[i], "%f", &sec) == 1) {
                     duration = sec;
                 }
-                aoplug_add_meta (it, NULL, info.info[i], info.title[i]);
+                psfplug_add_meta (it, NULL, info.info[i], info.title[i]);
             }
             else if (!strncasecmp (info.title[i], "Name: ", 6) || !strncasecmp (info.title[i], "Song: ", 6)) {
-                aoplug_add_meta (it, "title", info.info[i], info.title[i]);
+                psfplug_add_meta (it, "title", info.info[i], info.title[i]);
             }
             else if (!strncasecmp (info.title[i], "Game: ", 6)) {
-                aoplug_add_meta (it, "album", info.info[i], info.title[i]);
+                psfplug_add_meta (it, "album", info.info[i], info.title[i]);
             }
             else if (!strncasecmp (info.title[i], "Artist: ", 8)) {
-                aoplug_add_meta (it, "artist", info.info[i], info.title[i]);
+                psfplug_add_meta (it, "artist", info.info[i], info.title[i]);
             }
             else if (!strncasecmp (info.title[i], "Copyright: ", 11)) {
-                aoplug_add_meta (it, "copyright", info.info[i], info.title[i]);
+                psfplug_add_meta (it, "copyright", info.info[i], info.title[i]);
             }
             else if (!strncasecmp (info.title[i], "Year: ", 6)) {
-                aoplug_add_meta (it, "year", info.info[i], info.title[i]);
+                psfplug_add_meta (it, "year", info.info[i], info.title[i]);
             }
             else if (!strncasecmp (info.title[i], "Fade: ", 6)) {
                 fade = atof (info.info[i]);
-                aoplug_add_meta (it, "fade", info.info[i], info.title[i]);
+                psfplug_add_meta (it, "fade", info.info[i], info.title[i]);
             }
             else {
                 char *colon = strchr (info.title[i], ':');
                 char name[colon-info.title[i]+1];
                 memcpy (name, info.title[i], colon-info.title[i]);
                 name[colon-info.title[i]] = 0;
-                aoplug_add_meta (it, name, info.info[i], info.title[i]);
+                psfplug_add_meta (it, name, info.info[i], info.title[i]);
             }
         }
     }
@@ -344,12 +344,12 @@ aoplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 }
 
 static int
-aoplug_start (void) {
+psfplug_start (void) {
     return 0;
 }
 
 static int
-aoplug_stop (void) {
+psfplug_stop (void) {
     return 0;
 }
 
@@ -384,20 +384,20 @@ static DB_decoder_t plugin = {
         "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
-    .plugin.start = aoplug_start,
-    .plugin.stop = aoplug_stop,
-    .open = aoplug_open,
-    .init = aoplug_init,
-    .free = aoplug_free,
-    .read = aoplug_read,
-    .seek = aoplug_seek,
-    .seek_sample = aoplug_seek_sample,
-    .insert = aoplug_insert,
+    .plugin.start = psfplug_start,
+    .plugin.stop = psfplug_stop,
+    .open = psfplug_open,
+    .init = psfplug_init,
+    .free = psfplug_free,
+    .read = psfplug_read,
+    .seek = psfplug_seek,
+    .seek_sample = psfplug_seek_sample,
+    .insert = psfplug_insert,
     .exts = exts,
 };
 
 DB_plugin_t *
-ddb_ao_load (DB_functions_t *api) {
+psf_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }

@@ -40,7 +40,7 @@ for i in nullout cdda flac alsa mp3 hotkeys vtx \
 	 ffap ffmpeg wavpack vorbis oss vfs_curl \
 	 lastfm sid adplug sndfile artwork alac \
 	 supereq gme dumb notify musepack wildmidi \
-	 tta dca aac mms shn ao shellexec vfs_zip \
+	 tta dca aac mms shn psf shellexec vfs_zip \
 	 m3u converter pulse dsp_libsrc mono2stereo \
 	 wma statusnotifier \
 	 ; do

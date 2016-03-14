@@ -65,7 +65,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/vtx.so\
     $PLUGDIR/wavpack.so\
     $PLUGDIR/wildmidi.so\
-    $PLUGDIR/ddb_ao.so\
+    $PLUGDIR/psf.so\
     $PLUGDIR/ddb_shn.so\
     $PLUGDIR/ddb_dumb.so\
     $PLUGDIR/converter.so\
