@@ -249,7 +249,12 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
     for (playItem_t *it = playlist->head[iter]; it; it = it->next[iter], idx++) {
         array[idx] = it;
     }
+
+#if HAVE_MERGESORT
+    mergesort (array, playlist->count[iter], sizeof (playItem_t *), qsort_cmp_func);
+#else
     qsort (array, playlist->count[iter], sizeof (playItem_t *), qsort_cmp_func);
+#endif
     playItem_t *prev = NULL;
     playlist->head[iter] = 0;
     for (idx = 0; idx < playlist->count[iter]; idx++) {

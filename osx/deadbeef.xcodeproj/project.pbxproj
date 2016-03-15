@@ -10342,6 +10342,7 @@
 					"DOCDIR=\\\"donotuse\\\"",
 					"VERSION=\\\"devel\\\"",
 					"HAVE_LOG2=1",
+					"HAVE_MERGESORT=1",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
@@ -10366,6 +10367,7 @@
 					"DOCDIR=\\\"donotuse\\\"",
 					"VERSION=\\\"devel\\\"",
 					"HAVE_LOG2=1",
+					"HAVE_MERGESORT=1",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
