@@ -37,6 +37,7 @@ int grouptitleheight = 22;
     NSPoint _dragPt;
     BOOL _prepare;
     int _sortOrder;
+    DdbListviewCol_t _sortColumn;
 }
 - (void)setListView:(DdbListview *)lv;
 @end
@@ -167,6 +168,10 @@ int grouptitleheight = 22;
     id <DdbListviewDelegate> delegate = [listview delegate];
 
     if (_prepare) { // clicked
+        if (_sortColumn != _dragging) {
+            _sortOrder = 0;
+        }
+        _sortColumn = _dragging;
         switch (_sortOrder) {
         case 0:
             _sortOrder = 1;
@@ -246,6 +251,7 @@ int grouptitleheight = 22;
         if (inspos != [delegate invalidColumn] && inspos != _dragging) {
             [delegate moveColumn:_dragging to:inspos];
             _dragging = inspos;
+            _sortColumn = [delegate invalidColumn];
             [listview reloadData];
         }
         else {
