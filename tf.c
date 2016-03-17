@@ -1571,7 +1571,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 else if (!strcmp (name, "filename")) {
                     const char *v = pl_find_meta_raw (it, ":URI");
                     if (v) {
-                        const char *start = strrchr (val, '/');
+                        const char *start = strrchr (v, '/');
                         if (start) {
                             start++;
                         }
