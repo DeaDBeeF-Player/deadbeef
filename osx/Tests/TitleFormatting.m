@@ -973,6 +973,13 @@
     XCTAssert(!strcmp (buffer, "file.iso.wv"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_FilenameMeta_ReturnsFilename {
+    pl_replace_meta (it, ":URI", "/path/file.mp3");
+    char *bc = tf_compile("%filename%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "file"), @"The actual output is: %s", buffer);
+}
+
 - (void)test_Date_ReturnsYearValue {
     pl_replace_meta (it, "year", "1980");
     char *bc = tf_compile("%date%");
