@@ -313,8 +313,8 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     int channels = -1;
     int totalsamples = -1;
 
-    info->junk = deadbeef->junk_get_leading_size (info->file);
     if (!info->file->vfs->is_streaming ()) {
+        info->junk = deadbeef->junk_get_leading_size (info->file);
         if (info->junk >= 0) {
             deadbeef->fseek (info->file, info->junk, SEEK_SET);
         }
@@ -333,106 +333,93 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->mp4reader.truncate = NULL;
     info->mp4reader.user_data = info;
 
-    if (!info->file->vfs->is_streaming ()) {
-        trace ("aac_init: mp4ff_open_read %s\n", deadbeef->pl_find_meta (it, ":URI"));
-        info->mp4 = mp4ff_open_read (&info->mp4reader);
-        if (info->mp4) {
-            int ntracks = mp4ff_total_tracks (info->mp4);
-            for (int i = 0; i < ntracks; i++) {
-                if (mp4ff_get_track_type (info->mp4, i) != TRACK_AUDIO) {
-                    continue;
-                }
-                int res = mp4_track_get_info (info->mp4, i, &duration, &samplerate, &channels, &totalsamples, &info->mp4framesize);
-                if (res >= 0 && duration > 0) {
-                    info->mp4track = i;
-                    break;
-                }
+    trace ("aac_init: mp4ff_open_read %s\n", deadbeef->pl_find_meta (it, ":URI"));
+    info->mp4 = mp4ff_open_read (&info->mp4reader);
+    if (info->mp4) {
+        int ntracks = mp4ff_total_tracks (info->mp4);
+        for (int i = 0; i < ntracks; i++) {
+            if (mp4ff_get_track_type (info->mp4, i) != TRACK_AUDIO) {
+                continue;
             }
-            trace ("track: %d\n", info->mp4track);
-            if (info->mp4track >= 0) {
-                // prepare decoder
-                int res = mp4_track_get_info (info->mp4, info->mp4track, &duration, &samplerate, &channels, &totalsamples, &info->mp4framesize);
-                if (res != 0) {
-                    trace ("aac: mp4_track_get_info(%d) returned error\n", info->mp4track);
-                    return -1;
-                }
-
-                // init mp4 decoding
-                info->mp4samples = mp4ff_num_samples(info->mp4, info->mp4track);
-                info->dec = NeAACDecOpen ();
-                unsigned long srate;
-                unsigned char ch;
-                unsigned char*  buff = 0;
-                unsigned int    buff_size = 0;
-                mp4AudioSpecificConfig mp4ASC;
-                mp4ff_get_decoder_config (info->mp4, info->mp4track, &buff, &buff_size);
-                if (NeAACDecInit2(info->dec, buff, buff_size, &srate, &ch) < 0) {
-                    trace ("NeAACDecInit2 returned error\n");
-                    free (buff);
-                    return -1;
-                }
-
-                if (buff) {
-                    free (buff);
-                }
-                trace ("aac: successfully initialized track %d\n", info->mp4track);
-                _info->fmt.samplerate = samplerate;
-                _info->fmt.channels = channels;
-            }
-            else {
-                trace ("aac: track not found in mp4 container\n");
-                mp4ff_close (info->mp4);
-                info->mp4 = NULL;
+            int res = mp4_track_get_info (info->mp4, i, &duration, &samplerate, &channels, &totalsamples, &info->mp4framesize);
+            if (res >= 0 && duration > 0) {
+                info->mp4track = i;
+                break;
             }
         }
-
-        if (!info->mp4) {
-            trace ("aac: looking for raw stream...\n");
-
-            if (info->junk >= 0) {
-                deadbeef->fseek (info->file, info->junk, SEEK_SET);
-            }
-            else {
-                deadbeef->rewind (info->file);
-            }
-            int offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, &totalsamples);
-            if (offs == -1) {
-                trace ("aac stream not found\n");
+        trace ("track: %d\n", info->mp4track);
+        if (info->mp4track >= 0) {
+            // prepare decoder
+            int res = mp4_track_get_info (info->mp4, info->mp4track, &duration, &samplerate, &channels, &totalsamples, &info->mp4framesize);
+            if (res != 0) {
+                trace ("aac: mp4_track_get_info(%d) returned error\n", info->mp4track);
                 return -1;
             }
-            if (offs > info->junk) {
-                info->junk = offs;
+
+            // init mp4 decoding
+            info->mp4samples = mp4ff_num_samples(info->mp4, info->mp4track);
+            info->dec = NeAACDecOpen ();
+            unsigned long srate;
+            unsigned char ch;
+            unsigned char*  buff = 0;
+            unsigned int    buff_size = 0;
+            mp4AudioSpecificConfig mp4ASC;
+            mp4ff_get_decoder_config (info->mp4, info->mp4track, &buff, &buff_size);
+            if (NeAACDecInit2(info->dec, buff, buff_size, &srate, &ch) < 0) {
+                trace ("NeAACDecInit2 returned error\n");
+                free (buff);
+                return -1;
             }
+
+            if (buff) {
+                free (buff);
+            }
+            trace ("aac: successfully initialized track %d\n", info->mp4track);
+            _info->fmt.samplerate = samplerate;
+            _info->fmt.channels = channels;
+        }
+        else {
+            trace ("aac: track not found in mp4 container\n");
+            mp4ff_close (info->mp4);
+            info->mp4 = NULL;
+        }
+    }
+
+    if (!info->mp4) {
+        trace ("aac: looking for raw stream...\n");
+        if (!info->file->vfs->is_streaming ()) {
+
             if (info->junk >= 0) {
                 deadbeef->fseek (info->file, info->junk, SEEK_SET);
             }
             else {
                 deadbeef->rewind (info->file);
             }
-            trace ("found aac stream (junk: %d, offs: %d)\n", info->junk, offs);
-
-            _info->fmt.channels = channels;
-            _info->fmt.samplerate = samplerate;
         }
-    }
-    else {
-        // sync before attempting to init
-        int samplerate, channels;
-        float duration;
-        int offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, NULL);
-        if (offs < 0) {
-            trace ("aac: parse_aac_stream failed\n");
+        int offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, &totalsamples);
+        if (offs == -1) {
+            trace ("aac stream not found\n");
             return -1;
         }
         if (offs > info->junk) {
             info->junk = offs;
         }
-        trace("parse_aac_stream returned %x\n", offs);
-        deadbeef->pl_replace_meta (it, "!FILETYPE", "AAC");
-    }
+        if (!info->file->vfs->is_streaming ()) {
+            if (info->junk >= 0) {
+                deadbeef->fseek (info->file, info->junk, SEEK_SET);
+            }
+            else {
+                deadbeef->rewind (info->file);
+            }
+        }
+        else {
+            deadbeef->pl_replace_meta (it, "!FILETYPE", "AAC");
+        }
+        trace ("found aac stream (junk: %d, offs: %d)\n", info->junk, offs);
 
-//    duration = (float)totalsamples / samplerate;
-//    deadbeef->pl_set_item_duration (it, duration);
+        _info->fmt.channels = channels;
+        _info->fmt.samplerate = samplerate;
+    }
 
     _info->fmt.bps = 16;
     _info->plugin = &plugin;

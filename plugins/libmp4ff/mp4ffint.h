@@ -366,6 +366,7 @@ int32_t mp4ff_meta_get_coverart(const mp4ff_t *f, char **value);
 
 /* mp4ff.c */
 mp4ff_t *mp4ff_open_read(mp4ff_callback_t *f);
+mp4ff_t *mp4ff_open_read_streaming(mp4ff_callback_t *f);
 #ifdef USE_TAGGING
 mp4ff_t *mp4ff_open_edit(mp4ff_callback_t *f);
 #endif
