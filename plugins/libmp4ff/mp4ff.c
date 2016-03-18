@@ -33,10 +33,12 @@
 #include <stdio.h>
 #include "mp4ffint.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
-mp4ff_t *mp4ff_open_read(mp4ff_callback_t *f)
+static int32_t parse_atoms_int (mp4ff_t *f,int meta_only,int stop_on_mdat);
+
+static mp4ff_t *mp4ff_open_read_int(mp4ff_callback_t *f, int is_streaming)
 {
     mp4ff_t *ff = malloc(sizeof(mp4ff_t));
 
@@ -44,9 +46,19 @@ mp4ff_t *mp4ff_open_read(mp4ff_callback_t *f)
 
     ff->stream = f;
 
-    parse_atoms(ff,0);
+    parse_atoms_int(ff,is_streaming,is_streaming);
 
     return ff;
+}
+
+mp4ff_t *mp4ff_open_read(mp4ff_callback_t *f)
+{
+    return mp4ff_open_read_int (f, 0);
+}
+
+mp4ff_t *mp4ff_open_read_streaming(mp4ff_callback_t *f)
+{
+    return mp4ff_open_read_int (f, 1);
 }
 
 mp4ff_t *mp4ff_open_read_metaonly(mp4ff_callback_t *f)
@@ -233,7 +245,7 @@ int32_t parse_sub_atoms(mp4ff_t *f, const uint64_t total_size,int meta_only)
 }
 
 /* parse root atoms */
-int32_t parse_atoms(mp4ff_t *f,int meta_only)
+static int32_t parse_atoms_int (mp4ff_t *f,int meta_only,int stop_on_mdat)
 {
     uint64_t size;
     uint8_t atom_type = 0;
@@ -250,7 +262,9 @@ int32_t parse_atoms(mp4ff_t *f,int meta_only)
         {
             /* moov atom is before mdat, we can stop reading when mdat is encountered */
             /* file position will stay at beginning of mdat data */
-//            break;
+            if (!stop_on_mdat) {
+                break;
+            }
         }
 
         if (atom_type == ATOM_MOOV && size > header_size)
@@ -274,6 +288,11 @@ int32_t parse_atoms(mp4ff_t *f,int meta_only)
     }
 
     return 0;
+}
+
+int32_t parse_atoms(mp4ff_t *f,int meta_only)
+{
+    return parse_atoms_int (f, meta_only, 0);
 }
 
 int32_t mp4ff_get_decoder_config(const mp4ff_t *f, const int32_t track,
