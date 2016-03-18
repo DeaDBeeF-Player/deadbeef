@@ -1124,7 +1124,7 @@ vfs_curl_stop (void) {
     return 0;
 }
 
-static const char *scheme_names[] = { "http://", "ftp://", NULL };
+static const char *scheme_names[] = { "http://", "https://", "ftp://", NULL };
 
 const char **
 http_get_schemes (void) {
