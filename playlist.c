@@ -3648,6 +3648,45 @@ plt_parse_query (const char *query) {
     return head;
 }
 
+int
+item_matches (DB_metaInfo_t *m, const char *lc, const int cmpidx) {
+
+    int is_uri = !strcmp (m->key, ":URI");
+    if ((m->key[0] == ':' && !is_uri) || m->key[0] == '_' || m->key[0] == '!') {
+        return 0;
+    }
+    const char *value = m->value;
+    if (is_uri) {
+        value = strrchr (value, '/');
+        if (value) {
+            value++;
+        }
+        else {
+            value = m->value;
+        }
+    }
+    if (strcasecmp(m->key, "cuesheet") && strcasecmp (m->key, "log")) {
+        char cmp = *(m->value-1);
+
+        if (abs (cmp) == cmpidx) {
+            if (cmp > 0) {
+                return 1;
+            }
+        }
+        else if (u8_valid(value, strlen(value), NULL) && u8_valid(lc, strlen(lc), NULL) && utfcasestr_fast (value, lc)) {
+            //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, value, pl_find_meta_raw (it, ":URI"), m->key);
+            // add to list
+            *((char *)m->value-1) = cmpidx;
+            return 2;
+        }
+        else {
+            *((char *)m->value-1) = -cmpidx;
+        }
+    }
+
+    return 3;
+}
+
 void
 plt_search_process2 (playlist_t *playlist, const char *text, int select_results) {
     LOCK;
@@ -3688,63 +3727,37 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
         if (*text) {
             DB_metaInfo_t *m = NULL;
             for (m = it->meta; m; m = m->next) {
-                int is_uri = !strcmp (m->key, ":URI");
-                if ((m->key[0] == ':' && !is_uri) || m->key[0] == '_' || m->key[0] == '!') {
+                switch (item_matches(m, lc, cmpidx)) {
+                case 1:
+                    it->next[PL_SEARCH] = NULL;
+                    it->prev[PL_SEARCH] = playlist->tail[PL_SEARCH];
+                    if (playlist->tail[PL_SEARCH]) {
+                        playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
+                        playlist->tail[PL_SEARCH] = it;
+                    }
+                    else {
+                        playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
+                    }
+                    if (select_results) {
+                        it->selected = 1;
+                    }
+                    playlist->count[PL_SEARCH]++;
                     break;
-                }
-                const char *value = m->value;
-                if (is_uri) {
-                    value = strrchr (value, '/');
-                    if (value) {
-                        value++;
+                case 2:
+                    it->next[PL_SEARCH] = NULL;
+                    it->prev[PL_SEARCH] = playlist->tail[PL_SEARCH];
+                    if (playlist->tail[PL_SEARCH]) {
+                        playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
+                        playlist->tail[PL_SEARCH] = it;
                     }
                     else {
-                        value = m->value;
+                        playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
                     }
-                }
-                if (strcasecmp(m->key, "cuesheet") && strcasecmp (m->key, "log")) {
-                    char cmp = *(m->value-1);
-
-                    if (abs (cmp) == cmpidx) {
-                        if (cmp > 0) {
-                            it->next[PL_SEARCH] = NULL;
-                            it->prev[PL_SEARCH] = playlist->tail[PL_SEARCH];
-                            if (playlist->tail[PL_SEARCH]) {
-                                playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
-                                playlist->tail[PL_SEARCH] = it;
-                            }
-                            else {
-                                playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
-                            }
-                            if (select_results) {
-                                it->selected = 1;
-                            }
-                            playlist->count[PL_SEARCH]++;
-                            break;
-                        }
+                    if (select_results) {
+                        it->selected = 1;
                     }
-                    else if (u8_valid(value, strlen(value), NULL) && u8_valid(lc, strlen(lc), NULL) && utfcasestr_fast (value, lc)) {
-                        //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, value, pl_find_meta_raw (it, ":URI"), m->key);
-                        // add to list
-                        it->next[PL_SEARCH] = NULL;
-                        it->prev[PL_SEARCH] = playlist->tail[PL_SEARCH];
-                        if (playlist->tail[PL_SEARCH]) {
-                            playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
-                            playlist->tail[PL_SEARCH] = it;
-                        }
-                        else {
-                            playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
-                        }
-                        if (select_results) {
-                            it->selected = 1;
-                        }
-                        playlist->count[PL_SEARCH]++;
-                        *((char *)m->value-1) = cmpidx;
-                        break;
-                    }
-                    else {
-                        *((char *)m->value-1) = -cmpidx;
-                    }
+                    playlist->count[PL_SEARCH]++;
+                    break;
                 }
             }
         }
