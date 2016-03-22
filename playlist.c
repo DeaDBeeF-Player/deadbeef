@@ -3555,8 +3555,8 @@ plt_search_reset (playlist_t *playlist) {
 
 typedef struct DB_searchTerm_s {
     struct DB_searchTerm_s *next;
-    const char *key;
-    const char *value;
+    char *key;
+    char *value;
 } DB_searchTerm_t;
 
 /*
@@ -3577,6 +3577,8 @@ plt_parse_query (const char *query) {
 #define ST_key    1
 #define ST_quoted 2
 
+    DB_searchTerm_t *head = NULL;
+
     char token[1000];
     const char *cur = query;
     while (*cur) {
@@ -3594,6 +3596,7 @@ plt_parse_query (const char *query) {
                 break;
         }
         char *copied = token;
+        char *key = NULL;
         while (*cur) {
             const char c = *cur++;
             // we're in a key or raw, and we see a space; we're done
@@ -3605,17 +3608,16 @@ plt_parse_query (const char *query) {
             if ('"' == c && ST_quoted == state) {
                 char next = *cur;
                 if (next <= ' ') {
-                    ++cur;
+                    if (next) {
+                        ++cur;
+                    }
                     break;
                 }
             }
 
             // we're in the key, and we've found the ':' which terminates it
-            if (ST_key == state && ':' == c) {
+            if (ST_key == state && ':' == c && *cur) {
                 switch (*cur) {
-                    case '\0':
-                        // consume and ignore; we're done anyway
-                        break;
                     case '"':
                         state = ST_quoted;
                         ++cur;
@@ -3624,14 +3626,26 @@ plt_parse_query (const char *query) {
                         state = ST_raw;
                         break;
                 }
+                *copied = '\0';
+                key = strdup(token);
+                copied = token;
+            } else {
+                *copied++ = c;
             }
-
-            *copied++ = c;
         }
 
         *copied = '\0';
-        fprintf(stderr, "%s\n", token);
+
+        DB_searchTerm_t *created = malloc(sizeof(DB_searchTerm_t));
+        created->next = head;
+        created->key = key;
+        created->value = strdup(token);
+        head = created;
+
+        //fprintf(stderr, "%s -> %s\n", key ? key : "[absent]", token);
     }
+
+    return head;
 }
 
 void
@@ -3659,7 +3673,7 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
         out += l;
     }
     *out = 0;
-    plt_parse_query(lc);
+    DB_searchTerm_t *search = plt_parse_query(lc);
 
     static int cmpidx = 0;
     cmpidx++;
@@ -3734,6 +3748,14 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
                 }
             }
         }
+    }
+
+    while (search) {
+        free(search->key);
+        free(search->value);
+        DB_searchTerm_t *next = search->next;
+        free(search);
+        search = next;
     }
     UNLOCK;
 }
