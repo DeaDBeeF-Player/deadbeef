@@ -3684,7 +3684,7 @@ item_matches (DB_metaInfo_t *m, const char *lc, const int cmpidx) {
         }
     }
 
-    return 3;
+    return 0;
 }
 
 void
@@ -3727,23 +3727,7 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
         if (*text) {
             DB_metaInfo_t *m = NULL;
             for (m = it->meta; m; m = m->next) {
-                switch (item_matches(m, lc, cmpidx)) {
-                case 1:
-                    it->next[PL_SEARCH] = NULL;
-                    it->prev[PL_SEARCH] = playlist->tail[PL_SEARCH];
-                    if (playlist->tail[PL_SEARCH]) {
-                        playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
-                        playlist->tail[PL_SEARCH] = it;
-                    }
-                    else {
-                        playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
-                    }
-                    if (select_results) {
-                        it->selected = 1;
-                    }
-                    playlist->count[PL_SEARCH]++;
-                    break;
-                case 2:
+                if (item_matches(m, lc, cmpidx)) {
                     it->next[PL_SEARCH] = NULL;
                     it->prev[PL_SEARCH] = playlist->tail[PL_SEARCH];
                     if (playlist->tail[PL_SEARCH]) {
