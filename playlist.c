@@ -3557,6 +3557,7 @@ typedef struct DB_searchTerm_s {
     struct DB_searchTerm_s *next;
     char *key;
     char *value;
+    uint32_t hits;
 } DB_searchTerm_t;
 
 /*
@@ -3687,6 +3688,26 @@ item_matches (DB_metaInfo_t *m, const char *lc, const int cmpidx) {
     return 0;
 }
 
+static void
+search_reset_counters (DB_searchTerm_t *search) {
+    while (search) {
+        search->hits = 0;
+        search = search->next;
+    }
+}
+
+static int
+search_all_hit (DB_searchTerm_t *search) {
+    while (search) {
+        if (0 == search->hits) {
+            return 0;
+        }
+        search = search->next;
+    }
+
+    return 1;
+}
+
 void
 plt_search_process2 (playlist_t *playlist, const char *text, int select_results) {
     LOCK;
@@ -3725,9 +3746,21 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
             it->selected = 0;
         }
         if (*text) {
+            search_reset_counters(search);
             DB_metaInfo_t *m = NULL;
             for (m = it->meta; m; m = m->next) {
-                if (item_matches(m, lc, cmpidx)) {
+                DB_searchTerm_t *searching = search;
+                while (searching) {
+                    if (0 == searching->hits) {
+                        if ((!searching->key || strstr(m->key, searching->key))
+                                && item_matches(m, searching->value, cmpidx)) {
+                            searching->hits++;
+                        }
+                    }
+                    searching = searching->next;
+                }
+
+                if (search_all_hit(search)) {
                     it->next[PL_SEARCH] = NULL;
                     it->prev[PL_SEARCH] = playlist->tail[PL_SEARCH];
                     if (playlist->tail[PL_SEARCH]) {
