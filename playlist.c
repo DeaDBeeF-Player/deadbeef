@@ -3553,6 +3553,87 @@ plt_search_reset (playlist_t *playlist) {
     plt_search_reset_int (playlist, 1);
 }
 
+typedef struct DB_searchTerm_s {
+    struct DB_searchTerm_s *next;
+    const char *key;
+    const char *value;
+} DB_searchTerm_t;
+
+/*
+ * Valid tokens:
+ * foo
+ * "foo bar"
+ * title:foo
+ * title:"foo bar"
+ *
+ */
+DB_searchTerm_t *
+plt_parse_query (const char *query) {
+    if (!*query) {
+        return NULL;
+    }
+
+#define ST_raw    0
+#define ST_key    1
+#define ST_quoted 2
+
+    char token[1000];
+    const char *cur = query;
+    while (*cur) {
+        cur = pl_cue_skipspaces(cur);
+        int state;
+        switch (*cur) {
+            case '\0':
+                continue;
+            case '"':
+                state = ST_quoted;
+                ++cur;
+                break;
+            default:
+                state = ST_key;
+                break;
+        }
+        char *copied = token;
+        while (*cur) {
+            const char c = *cur++;
+            // we're in a key or raw, and we see a space; we're done
+            if (c <= ' ' && ST_quoted != state) {
+                break;
+            }
+
+            // we're in a quoted string, and we see a quote followed by whitespace; we're done
+            if ('"' == c && ST_quoted == state) {
+                char next = *cur;
+                if (next <= ' ') {
+                    ++cur;
+                    break;
+                }
+            }
+
+            // we're in the key, and we've found the ':' which terminates it
+            if (ST_key == state && ':' == c) {
+                switch (*cur) {
+                    case '\0':
+                        // consume and ignore; we're done anyway
+                        break;
+                    case '"':
+                        state = ST_quoted;
+                        ++cur;
+                        break;
+                    default:
+                        state = ST_raw;
+                        break;
+                }
+            }
+
+            *copied++ = c;
+        }
+
+        *copied = '\0';
+        fprintf(stderr, "%s\n", token);
+    }
+}
+
 void
 plt_search_process2 (playlist_t *playlist, const char *text, int select_results) {
     LOCK;
@@ -3578,6 +3659,7 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
         out += l;
     }
     *out = 0;
+    plt_parse_query(lc);
 
     static int cmpidx = 0;
     cmpidx++;
