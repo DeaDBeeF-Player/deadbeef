@@ -3580,8 +3580,8 @@ plt_parse_query (const char *query) {
 
     DB_searchTerm_t *head = NULL;
 
-    char token[1000];
-    const char *cur = query;
+    uint8_t token[1000];
+    const uint8_t *cur = query;
     while (*cur) {
         cur = pl_cue_skipspaces(cur);
         int state;
@@ -3596,10 +3596,10 @@ plt_parse_query (const char *query) {
                 state = ST_key;
                 break;
         }
-        char *copied = token;
-        char *key = NULL;
+        uint8_t *copied = token;
+        uint8_t *key = NULL;
         while (*cur) {
-            const char c = *cur++;
+            const uint8_t c = *cur++;
             // we're in a key or raw, and we see a space; we're done
             if (c <= ' ' && ST_quoted != state) {
                 break;
@@ -3607,7 +3607,7 @@ plt_parse_query (const char *query) {
 
             // we're in a quoted string, and we see a quote followed by whitespace; we're done
             if ('"' == c && ST_quoted == state) {
-                char next = *cur;
+                uint8_t next = *cur;
                 if (next <= ' ') {
                     if (next) {
                         ++cur;
