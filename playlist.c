@@ -3568,7 +3568,7 @@ typedef struct DB_searchTerm_s {
  * title:"foo bar"
  *
  */
-DB_searchTerm_t *
+static DB_searchTerm_t *
 plt_parse_query (const char *query) {
     if (!*query) {
         return NULL;
@@ -3649,13 +3649,17 @@ plt_parse_query (const char *query) {
     return head;
 }
 
-int
-item_matches (DB_metaInfo_t *m, const char *lc) {
-
+static const char *
+value_if_key_considered (DB_metaInfo_t *m) {
     int is_uri = !strcmp (m->key, ":URI");
     if ((m->key[0] == ':' && !is_uri) || m->key[0] == '_' || m->key[0] == '!') {
-        return 0;
+        return NULL;
     }
+
+    if (0 == strcasecmp(m->key, "cuesheet") || 0 == strcasecmp (m->key, "log")) {
+        return NULL;
+    }
+
     const char *value = m->value;
     if (is_uri) {
         value = strrchr (value, '/');
@@ -3666,12 +3670,17 @@ item_matches (DB_metaInfo_t *m, const char *lc) {
             value = m->value;
         }
     }
-    if (strcasecmp(m->key, "cuesheet") && strcasecmp (m->key, "log")) {
-        if (u8_valid(value, strlen(value), NULL) && u8_valid(lc, strlen(lc), NULL) && utfcasestr_fast (value, lc)) {
-            //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, value, pl_find_meta_raw (it, ":URI"), m->key);
-            // add to list
-            return 1;
-        }
+
+    return value;
+}
+
+static int
+item_matches (const char *value, const char *lc) {
+
+    if (u8_valid(value, strlen(value), NULL) && u8_valid(lc, strlen(lc), NULL) && utfcasestr_fast (value, lc)) {
+        //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, value, pl_find_meta_raw (it, ":URI"), m->key);
+        // add to list
+        return 1;
     }
 
     return 0;
@@ -3733,11 +3742,15 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
             search_reset_counters(search);
             DB_metaInfo_t *m = NULL;
             for (m = it->meta; m; m = m->next) {
+                const char *value = value_if_key_considered(m);
+                if (!value) {
+                    continue;
+                }
                 DB_searchTerm_t *searching = search;
                 while (searching) {
                     if (0 == searching->hits) {
                         if ((!searching->key || strstr(m->key, searching->key))
-                                && item_matches(m, searching->value)) {
+                                && item_matches(value, searching->value)) {
                             searching->hits++;
                         }
                     }
