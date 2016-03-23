@@ -3650,7 +3650,7 @@ plt_parse_query (const char *query) {
 }
 
 int
-item_matches (DB_metaInfo_t *m, const char *lc, const int cmpidx) {
+item_matches (DB_metaInfo_t *m, const char *lc) {
 
     int is_uri = !strcmp (m->key, ":URI");
     if ((m->key[0] == ':' && !is_uri) || m->key[0] == '_' || m->key[0] == '!') {
@@ -3667,21 +3667,10 @@ item_matches (DB_metaInfo_t *m, const char *lc, const int cmpidx) {
         }
     }
     if (strcasecmp(m->key, "cuesheet") && strcasecmp (m->key, "log")) {
-        char cmp = *(m->value-1);
-
-        if (abs (cmp) == cmpidx) {
-            if (cmp > 0) {
-                return 1;
-            }
-        }
-        else if (u8_valid(value, strlen(value), NULL) && u8_valid(lc, strlen(lc), NULL) && utfcasestr_fast (value, lc)) {
+        if (u8_valid(value, strlen(value), NULL) && u8_valid(lc, strlen(lc), NULL) && utfcasestr_fast (value, lc)) {
             //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, value, pl_find_meta_raw (it, ":URI"), m->key);
             // add to list
-            *((char *)m->value-1) = cmpidx;
-            return 2;
-        }
-        else {
-            *((char *)m->value-1) = -cmpidx;
+            return 1;
         }
     }
 
@@ -3735,12 +3724,6 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
     *out = 0;
     DB_searchTerm_t *search = plt_parse_query(lc);
 
-    static int cmpidx = 0;
-    cmpidx++;
-    if (cmpidx > 127) {
-        cmpidx = 1;
-    }
-
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         if (select_results) {
             it->selected = 0;
@@ -3753,7 +3736,7 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
                 while (searching) {
                     if (0 == searching->hits) {
                         if ((!searching->key || strstr(m->key, searching->key))
-                                && item_matches(m, searching->value, cmpidx)) {
+                                && item_matches(m, searching->value)) {
                             searching->hits++;
                         }
                     }
