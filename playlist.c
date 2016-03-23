@@ -3650,13 +3650,23 @@ plt_parse_query (const char *query) {
 }
 
 static const char *
-value_if_key_considered (DB_metaInfo_t *m) {
+value_if_key_considered (DB_metaInfo_t *m, const char *user_key) {
+    if (user_key) {
+        if (!strcmp(m->key, user_key)) {
+            return m->value;
+        }
+        return NULL;
+    }
+
     int is_uri = !strcmp (m->key, ":URI");
     if ((m->key[0] == ':' && !is_uri) || m->key[0] == '_' || m->key[0] == '!') {
         return NULL;
     }
 
-    if (0 == strcasecmp(m->key, "cuesheet") || 0 == strcasecmp (m->key, "log")) {
+    if (!is_uri
+        && 0 != strcmp("artist", m->key)
+        && 0 != strcmp("title", m->key)
+        && 0 != strcmp("album", m->key)) {
         return NULL;
     }
 
@@ -3742,16 +3752,13 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
             search_reset_counters(search);
             DB_metaInfo_t *m = NULL;
             for (m = it->meta; m; m = m->next) {
-                const char *value = value_if_key_considered(m);
-                if (!value) {
-                    continue;
-                }
                 DB_searchTerm_t *searching = search;
                 while (searching) {
-                    if (0 == searching->hits) {
-                        if ((!searching->key || strstr(m->key, searching->key))
-                                && item_matches(value, searching->value)) {
-                            searching->hits++;
+                    if (!searching->hits) {
+                        const char *value = value_if_key_considered(m, searching->key);
+
+                        if (value && item_matches(value, searching->value)) {
+                            searching->hits = 1;
                         }
                     }
                     searching = searching->next;
