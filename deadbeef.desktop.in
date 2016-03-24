@@ -19,7 +19,7 @@ X-PulseAudio-Properties=media.role=music
 X-Ayatana-Desktop-Shortcuts=Play;Pause;Stop;Next;Prev
 
 Keywords=Sound;Music;Audio;Player;Musicplayer;MP3
-Keywords[zh_TW]=音樂;音樂播放器;播放器;音訊
+Keywords[zh_TW]=Sound;Music;Audio;Player;Musicplayer;MP3;音樂;音樂播放器;播放器;音訊
 
 [Play Shortcut Group]
 Name=Play
