@@ -689,7 +689,6 @@
 		2D565B961A40C05200CE1F5D /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565B951A40C05200CE1F5D /* mpg123.h */; };
 		2D565B9A1A40C15B00CE1F5D /* libmpg123.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D917E781A4046FE00C3EB44 /* libmpg123.a */; };
 		2D5D21461A4033FF001D5A79 /* lastfm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D21451A4033FF001D5A79 /* lastfm.c */; };
-		2D5D21491A403412001D5A79 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA2499E19E71FEB00E34920 /* libcurl.a */; };
 		2D5D214C1A403428001D5A79 /* lastfm.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D21401A4033B0001D5A79 /* lastfm.dylib */; };
 		2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D60108B1A9CDF06000136AF /* SearchWindowController.h */; };
 		2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D60108C1A9CDF06000136AF /* SearchWindowController.m */; };
@@ -1025,6 +1024,8 @@
 		2D91776D1A0E8A4D004BC222 /* libmp4ff.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D91774B1A0E8A10004BC222 /* libmp4ff.a */; };
 		2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D93DC531AADFEEF003D2D8D /* pluginsettings.h */; };
 		2D93DC571AADFEEF003D2D8D /* README in Resources */ = {isa = PBXBuildFile; fileRef = 2D93DC541AADFEEF003D2D8D /* README */; };
+		2D977F451CA4B1F3006DBE79 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
+		2D977F461CA4B209006DBE79 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
 		2DA0ACE91AA71516007EDD43 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2DA0ACEE1AA71E7C007EDD43 /* in_sc68.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */; };
 		2DA24AE119E7203A00E34920 /* asyn-ares.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A0F19E7203700E34920 /* asyn-ares.c */; };
@@ -1118,7 +1119,6 @@
 		2DA24B4519E7203B00E34920 /* wildcard.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A7319E7203700E34920 /* wildcard.c */; };
 		2DA24B4619E7203B00E34920 /* x509asn1.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A7419E7203700E34920 /* x509asn1.c */; };
 		2DA24B5119E724E100E34920 /* vfs_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24B5019E724E100E34920 /* vfs_curl.c */; };
-		2DA24B5419E724F500E34920 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA2499E19E71FEB00E34920 /* libcurl.a */; };
 		2DA24B9F19E7254F00E34920 /* vtls.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24B8719E7254F00E34920 /* vtls.c */; };
 		2DA24BA019E7254F00E34920 /* vtls.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA24B8819E7254F00E34920 /* vtls.h */; };
 		2DA24BA319E72A2500E34920 /* vfs_curl.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */; };
@@ -1829,13 +1829,6 @@
 			remoteGlobalIDString = 2D917E771A4046FE00C3EB44;
 			remoteInfo = mpg123lib;
 		};
-		2D5D21471A40340C001D5A79 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2DA2499D19E71FEA00E34920;
-			remoteInfo = curl;
-		};
 		2D5D214A1A40341D001D5A79 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -1891,13 +1884,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2DA0ABE01AA71055007EDD43;
 			remoteInfo = in_sc68;
-		};
-		2DA24B5219E724EB00E34920 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2DA2499D19E71FEA00E34920;
-			remoteInfo = curl;
 		};
 		2DA24BA119E72A0000E34920 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2564,6 +2550,7 @@
 		2D4458D91C04F1C000230939 /* vfs_zip.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vfs_zip.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D4458DE1C04F1FF00230939 /* vfs_zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vfs_zip.c; path = plugins/vfs_zip/vfs_zip.c; sourceTree = "<group>"; };
 		2D4459D21C04F28800230939 /* libzip.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libzip.xcodeproj; path = "osx/deps/libzip-1.0.1/xcode/libzip.xcodeproj"; sourceTree = "<group>"; };
+		2D4BEAEB1CA49EEC007ADB0A /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
 		2D51999A1A436FD100670717 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = "osx/deps/mpg123-1.21.0/ports/Xcode/config.h"; sourceTree = "<group>"; };
 		2D51999B1A436FD100670717 /* mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpg123.h; path = "osx/deps/mpg123-1.21.0/ports/Xcode/mpg123.h"; sourceTree = "<group>"; };
 		2D524C071B245AE00018C4FA /* DdbTitleFormattingHelpButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbTitleFormattingHelpButton.h; sourceTree = "<group>"; };
@@ -3027,6 +3014,7 @@
 		2D93DC521AADFEEF003D2D8D /* pluginsettings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pluginsettings.c; sourceTree = "<group>"; };
 		2D93DC531AADFEEF003D2D8D /* pluginsettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pluginsettings.h; sourceTree = "<group>"; };
 		2D93DC541AADFEEF003D2D8D /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		2D977F441CA4B1F3006DBE79 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
 		2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = in_sc68.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA0ACEA1AA7162C007EDD43 /* in_sc68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = in_sc68.c; path = plugins/sc68/in_sc68.c; sourceTree = "<group>"; };
 		2DA2499E19E71FEB00E34920 /* libcurl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcurl.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3792,7 +3780,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D5D21491A403412001D5A79 /* libcurl.a in Frameworks */,
+				2D977F461CA4B209006DBE79 /* libcurl.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3870,7 +3858,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DA24B5419E724F500E34920 /* libcurl.a in Frameworks */,
+				2D977F451CA4B1F3006DBE79 /* libcurl.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5908,6 +5896,8 @@
 		4D1B3E7C18379829003E6066 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2D977F441CA4B1F3006DBE79 /* libcurl.dylib */,
+				2D4BEAEB1CA49EEC007ADB0A /* libcurl.tbd */,
 				2D667E161C9C2E8400359129 /* libssl.dylib */,
 				2D667DFE1C9C2D1800359129 /* libcrypto.dylib */,
 				2D8C8D3F1C43116A008ACE29 /* libz.tbd */,
@@ -7763,7 +7753,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				2D5D21481A40340C001D5A79 /* PBXTargetDependency */,
 			);
 			name = lastfm;
 			productName = lastfm;
@@ -7939,7 +7928,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				2DA24B5319E724EB00E34920 /* PBXTargetDependency */,
 			);
 			name = vfs_curl;
 			productName = vfs_curl;
@@ -9858,11 +9846,6 @@
 			target = 2D917E771A4046FE00C3EB44 /* mpg123 */;
 			targetProxy = 2D565B971A40C0F300CE1F5D /* PBXContainerItemProxy */;
 		};
-		2D5D21481A40340C001D5A79 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2DA2499D19E71FEA00E34920 /* curl */;
-			targetProxy = 2D5D21471A40340C001D5A79 /* PBXContainerItemProxy */;
-		};
 		2D5D214B1A40341D001D5A79 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D5D213F1A4033B0001D5A79 /* lastfm */;
@@ -9902,11 +9885,6 @@
 			isa = PBXTargetDependency;
 			target = 2DA0ABE01AA71055007EDD43 /* in_sc68 */;
 			targetProxy = 2DA0ACEC1AA71E4B007EDD43 /* PBXContainerItemProxy */;
-		};
-		2DA24B5319E724EB00E34920 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2DA2499D19E71FEA00E34920 /* curl */;
-			targetProxy = 2DA24B5219E724EB00E34920 /* PBXContainerItemProxy */;
 		};
 		2DA24BA219E72A0000E34920 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
