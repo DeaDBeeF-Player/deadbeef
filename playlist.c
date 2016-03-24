@@ -1089,6 +1089,8 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
     const char *dec = pl_find_meta_raw (origin, ":DECODER");
     const char *filetype = pl_find_meta_raw (origin, ":FILETYPE");
 
+    int have_track = 0;
+
     playItem_t *cuetracks[MAX_CUE_TRACKS];
     int ncuetracks = 0;
 
@@ -1142,7 +1144,7 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
         }
         else if (!strncmp (p, "TRACK ", 6)) {
             trace ("cue: adding track: %s %s %s\n", uri, title, track);
-            if (title[0]) {
+            if (have_track) {
                 // add previous track
                 playItem_t *it = plt_process_cue_track (playlist, uri, origin->startsample, &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
                 trace ("cue: added %p\n", it);
@@ -1155,6 +1157,7 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
                 }
             }
 
+            have_track = 1;
             track[0] = 0;
             title[0] = 0;
             pregap[0] = 0;
@@ -1191,7 +1194,7 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
 //            fprintf (stderr, "got unknown line:\n%s\n", p);
         }
     }
-    if (title[0]) {
+    if (have_track) {
         // handle last track
         playItem_t *it = plt_process_cue_track (playlist, uri, origin->startsample, &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
         if (it) {
