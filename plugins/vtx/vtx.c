@@ -79,19 +79,24 @@ vtx_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     sz = deadbeef->fgetlength (fp);
     if (sz <= 0) {
         trace ("vtx: bad file size\n");
+        deadbeef->fclose (fp);
         return -1;
     }
 
     buf = malloc (sz);
     if (!buf) {
         trace ("vtx: out of memory\n");
+        deadbeef->fclose (fp);
         return -1;
     }
     if (deadbeef->fread (buf, 1, sz, fp) != sz) {
         trace ("vtx: read failed\n");
         free (buf);
+        deadbeef->fclose (fp);
         return -1;
     }
+
+    deadbeef->fclose (fp);
 
     info->decoder = ayemu_vtx_load (buf, sz);
     if (!info->decoder) {
