@@ -1051,4 +1051,11 @@
     XCTAssert(!strcmp (new, "%disc%"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_NestedSquareBracketsWithUndefVarsAndLiteralData_ReturnEmpty {
+    pl_replace_meta (it, "title", "title");
+    char *bc = tf_compile("[[%discnumber%]a] normaltext [%title%] [[%title%]a]");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, " normaltext title titlea"), @"The actual output is: %s", buffer);
+}
+
 @end

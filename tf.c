@@ -1753,6 +1753,9 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     out += res;
                     outlen -= res;
                 }
+                else if (res < 0 && fail_on_undef) {
+                    return res;
+                }
                 code += len;
                 size -= len;
             }
