@@ -4,7 +4,7 @@
 
   library for reading tags from various audio files
 
-  Copyright (C) 2009-2013 Alexey Yakovenko
+  Copyright (C) 2009-2016 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -64,7 +64,7 @@ int enable_cp1251_detection = 1;
 int enable_cp936_detection = 0;
 int enable_shift_jis_detection = 0;
 
-#define MAX_TEXT_FRAME_SIZE 1024
+#define MAX_TEXT_FRAME_SIZE 10000
 #define MAX_CUESHEET_FRAME_SIZE 10000
 #define MAX_APEV2_FRAME_SIZE 2000000
 #define MAX_ID3V2_FRAME_SIZE 100000
@@ -903,8 +903,7 @@ can_be_shift_jis (const unsigned char *str, int size) {
 
 
 static char *
-convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) {
-    char out[2048] = "";
+convstr_id3v2 (int version, uint8_t encoding, const uint8_t *str, int sz) {
     const char *enc = NULL;
 
     // detect encoding
@@ -961,7 +960,10 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
 
     int converted_sz = 0;
 
-    if ((converted_sz = junk_iconv (str, sz, out, sizeof (out), enc, UTF8_STR)) < 0) {
+    int outlen = sz*4+1;
+    char *out = malloc (outlen);
+    if ((converted_sz = junk_iconv (str, sz, out, outlen, enc, UTF8_STR)) < 0) {
+        free (out);
         return NULL;
     }
 //    trace ("%s -> %s\n", str, out);
@@ -980,15 +982,14 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
             break;
         }
     }
-    return strdup (out);
+    return out;
 }
 
 static const char *
-convstr_id3v1 (const char* str, int sz, const char *charset) {
+convstr_id3v1 (const char* str, int sz, const char *charset, char *out, int outsize) {
     if (!charset) {
         return str;
     }
-    static char out[2048];
     int i;
     for (i = 0; i < sz; i++) {
         if (str[i] != ' ') {
@@ -1000,7 +1001,7 @@ convstr_id3v1 (const char* str, int sz, const char *charset) {
         return out;
     }
 
-    int len = junk_iconv (str, sz, out, sizeof (out), charset, UTF8_STR);
+    int len = junk_iconv (str, sz, out, outsize, charset, UTF8_STR);
     if (len >= 0) {
         return out;
     }
@@ -1098,23 +1099,25 @@ junk_id3v1_read_int (playItem_t *it, char *buffer, const char **charset) {
         return 0;
     }
 
+    char utf8_value[150];
+
     if (*title) {
-        pl_add_meta (it, "title", convstr_id3v1 (title, strlen (title), *charset));
+        pl_add_meta (it, "title", convstr_id3v1 (title, (int)strlen (title), *charset, utf8_value, sizeof (utf8_value)));
     }
     if (*artist) {
-        pl_add_meta (it, "artist", convstr_id3v1 (artist, strlen (artist), *charset));
+        pl_add_meta (it, "artist", convstr_id3v1 (artist, (int)strlen (artist), *charset, utf8_value, sizeof (utf8_value)));
     }
     if (*album) {
-        pl_add_meta (it, "album", convstr_id3v1 (album, strlen (album), *charset));
+        pl_add_meta (it, "album", convstr_id3v1 (album, (int)strlen (album), *charset, utf8_value, sizeof (utf8_value)));
     }
     if (*year) {
-        pl_add_meta (it, "year", year);
+        pl_add_meta (it, "year", convstr_id3v1 (year, (int)strlen (year), *charset, utf8_value, sizeof (utf8_value)));
     }
     if (*comment) {
-        pl_add_meta (it, "comment", convstr_id3v1 (comment, strlen (comment), *charset));
+        pl_add_meta (it, "comment", convstr_id3v1 (comment, (int)strlen (comment), *charset, utf8_value, sizeof (utf8_value)));
     }
     if (genre && *genre) {
-        pl_add_meta (it, "genre", convstr_id3v1 (genre, strlen (genre), *charset));
+        pl_add_meta (it, "genre", convstr_id3v1 (genre, (int)strlen (genre), *charset, utf8_value, sizeof (utf8_value)));
     }
     if (tracknum != 0) {
         char s[4];
@@ -1913,7 +1916,7 @@ junk_id3v2_add_text_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char
     if (!inlen) {
         return NULL;
     }
-    uint8_t out[2048];
+    uint8_t *out = NULL;
 
     trace ("junklib: setting id3v2.%d text frame '%s' = '%s'\n", tag->version[0], frame_id, value);
 
@@ -1922,13 +1925,15 @@ junk_id3v2_add_text_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char
     size_t outlen = -1;
     if (tag->version[0] == 4) {
         outlen = inlen;
-        memcpy (out, value, inlen);
+        out = (uint8_t *)value;
         encoding = 3;
     }
     else {
-        outlen = junk_iconv (value, inlen, out, sizeof (out), UTF8_STR, "cp1252");
+        int bufsize = inlen * 4 + 1;
+        out = malloc (bufsize);
+        outlen = junk_iconv (value, inlen, out, bufsize, UTF8_STR, "cp1252");
         if (outlen == -1) {
-            outlen = junk_iconv (value, inlen, out+2, sizeof (out) - 2, UTF8_STR, "UCS-2LE");
+            outlen = junk_iconv (value, inlen, out+2, bufsize - 2, UTF8_STR, "UCS-2LE");
             if (outlen <= 0) {
                 return NULL;
             }
@@ -1952,6 +1957,11 @@ junk_id3v2_add_text_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char
     f->size = size;
     f->data[0] = encoding;
     memcpy (f->data + 1, out, outlen);
+
+    if (tag->version[0] != 4) {
+        free (out);
+    }
+
     // append to tag
     DB_id3v2_frame_t *tail = NULL;
 
@@ -1973,30 +1983,36 @@ junk_id3v2_add_comment_frame (DB_id3v2_tag_t *tag, const char *lang, const char 
     trace ("junklib: setting 2.3 COMM frame lang=%s, descr='%s', data='%s'\n", lang, descr, value);
 
     // make a frame
-    int descrlen = strlen (descr);
-    int outlen = strlen (value);
+    size_t descrlen = strlen (descr);
+    size_t outlen = strlen (value);
 
-    char input[descrlen+outlen+1];
+    size_t inputsize = descrlen+outlen+1;
+    char *input = malloc (inputsize);
+
     memcpy (input, descr, descrlen);
     input[descrlen] = 0;
     memcpy (input+descrlen+1, value, outlen);
 
-    char buffer[2048];
+    size_t buffersize = inputsize * 4;
+    char *buffer = malloc (buffersize);
+
     int enc = 0;
     int l;
 
     if (tag->version[0] == 4) {
         // utf8
         enc = 3;
-        memcpy (buffer, input, sizeof (input));
-        l = sizeof (input);
+        memcpy (buffer, input, inputsize);
+        l = inputsize;
     }
     else {
-        l = junk_iconv (input, sizeof (input), buffer, sizeof (buffer), UTF8_STR, "cp1252");
+        l = junk_iconv (input, (int)inputsize, buffer, (int)buffersize, UTF8_STR, "cp1252");
         if (l <= 0) {
-            l = junk_iconv (input, sizeof (input), buffer+2, sizeof (buffer) - 2, UTF8_STR, "UCS-2LE");
+            l = junk_iconv (input, (int)inputsize, buffer+2, (int)buffersize - 2, UTF8_STR, "UCS-2LE");
             if (l <= 0) {
                 trace ("failed to encode to ucs2 or cp1252\n");
+                free (input);
+                free (buffer);
                 return NULL;
             }
             else {
@@ -2008,6 +2024,8 @@ junk_id3v2_add_comment_frame (DB_id3v2_tag_t *tag, const char *lang, const char 
         }
     }
 
+    free (input);
+
     trace ("calculated frame size = %d\n", l + 4);
     DB_id3v2_frame_t *f = malloc (l + 4 + sizeof (DB_id3v2_frame_t));
     memset (f, 0, sizeof (DB_id3v2_frame_t));
@@ -2017,6 +2035,9 @@ junk_id3v2_add_comment_frame (DB_id3v2_tag_t *tag, const char *lang, const char 
     f->data[0] = enc; // encoding=utf8
     memcpy (&f->data[1], lang, 3);
     memcpy (&f->data[4], buffer, l);
+
+    free (buffer);
+
     // append to tag
     DB_id3v2_frame_t *tail;
     for (tail = tag->frames; tail && tail->next; tail = tail->next);
@@ -2082,19 +2103,20 @@ junk_id3v2_remove_all_txxx_frames (DB_id3v2_tag_t *tag) {
 
 DB_id3v2_frame_t *
 junk_id3v2_add_txxx_frame (DB_id3v2_tag_t *tag, const char *key, const char *value) {
-    int keylen = strlen (key);
-    int valuelen = strlen (value);
-    int len = keylen + valuelen + 1;
+    size_t keylen = strlen (key);
+    size_t valuelen = strlen (value);
+    size_t len = keylen + valuelen + 1;
     uint8_t buffer[len];
     memcpy (buffer, key, keylen);
     buffer[keylen] = 0;
     memcpy (buffer+keylen+1, value, valuelen);
-    
-    uint8_t out[2048];
+
+    size_t outsize = (keylen + valuelen) * 4 + 1;
+    uint8_t *out = malloc (outsize);
     int encoding = 0;
 
 
-    int res;
+    size_t res;
 
     if (tag->version[0] == 4) {
         res = len;
@@ -2104,9 +2126,9 @@ junk_id3v2_add_txxx_frame (DB_id3v2_tag_t *tag, const char *key, const char *val
         memcpy (out + keylen + 1, value, valuelen);
     }
     else { // version 3
-        res = junk_iconv (buffer, len, out, sizeof (out), UTF8_STR, "iso8859-1");
+        res = junk_iconv (buffer, len, out, outsize, UTF8_STR, "iso8859-1");
         if (res == -1) {
-            res = junk_iconv (buffer, len, out+2, sizeof (out) - 2, UTF8_STR, "UCS-2LE");
+            res = junk_iconv (buffer, len, out+2, outsize - 2, UTF8_STR, "UCS-2LE");
             if (res == -1) {
                 return NULL;
             }
@@ -2139,6 +2161,8 @@ junk_id3v2_add_txxx_frame (DB_id3v2_tag_t *tag, const char *key, const char *val
     else {
         tag->frames = f;
     }
+
+    free (out);
 
     return f;
 }
