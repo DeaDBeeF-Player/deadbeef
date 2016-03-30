@@ -119,44 +119,34 @@ static NSString *default_format = @"%artist% - %title%";
 -(void)updateFilenamesPreview {
     NSMutableArray *convert_items_preview = [NSMutableArray arrayWithCapacity:_convert_items_count];
 
-    ddb_encoder_preset_t *p = NULL;
     int enc_preset = (int)[_encoderPreset indexOfSelectedItem];
-    if (enc_preset >= 0) {
-        p = _converter_plugin->encoder_preset_get_for_idx (enc_preset);
-    }
-    else {
-        return;
-    }
-    NSString *name_format = [_outputFileName stringValue];
+    ddb_encoder_preset_t *encoder_preset = NULL;
 
-    if ([name_format isEqual:@""]) {
-        name_format = default_format;
+    if (enc_preset >= 0) {
+        encoder_preset = _converter_plugin->encoder_preset_get_for_idx (enc_preset);
     }
-    char * tf = deadbeef->tf_compile([name_format UTF8String]);
-    if (!tf) {
+
+    if (!encoder_preset) {
         return;
     }
+
+    NSString *outfile = [_outputFileName stringValue];
+
+    if ([outfile isEqual:@""]) {
+        outfile = default_format;
+    }
+
     for (int n = 0; n < _convert_items_count; n++) {
         DB_playItem_t *it = _convert_items[n];
         if (it) {
-            ddb_tf_context_t ctx = {
-                ._size = sizeof (ddb_tf_context_t),
-                .flags = DDB_TF_CONTEXT_HAS_INDEX,
-                .it = it,
-                .idx = deadbeef->pl_get_idx_of (it),
-                .iter = PL_MAIN,
-                .plt = _convert_playlist,
-            };
+            char outpath[PATH_MAX];
 
-            char filename[PATH_MAX];
-            deadbeef->tf_eval (&ctx, tf, filename, sizeof (filename));
-            char filename_ext[PATH_MAX];
-            snprintf (filename_ext, sizeof (filename_ext), "%s.%s", filename, p->ext);
-            [convert_items_preview addObject:[NSString stringWithUTF8String:filename_ext]];
+            _converter_plugin->get_output_path2 (_convert_items[n], _convert_playlist, [[_outputFolder stringValue] UTF8String], [outfile UTF8String], encoder_preset, [_preserveFolderStructure state] == NSOnState, "", [_writeToSourceFolder state] == NSOnState, outpath, sizeof (outpath));
+
+            [convert_items_preview addObject:[NSString stringWithUTF8String:outpath]];
         }
     }
 
-    deadbeef->tf_free(tf);
     [_filenamePreviewController setContent:convert_items_preview];
 }
 
@@ -677,7 +667,7 @@ static NSString *default_format = @"%artist% - %title%";
             [_progressText setStringValue:text];
         });
 
-        char outpath[2000];
+        char outpath[PATH_MAX];
         _converter_plugin->get_output_path2 (_convert_items[n], _convert_playlist, [_outfolder UTF8String], [_outfile UTF8String], _encoder_preset, _preserve_folder_structure, root, _write_to_source_folder, outpath, sizeof (outpath));
 
         int skip = 0;
