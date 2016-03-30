@@ -97,7 +97,9 @@ void remove_cache_item(const char *entry_path, const char *subdir_path, const ch
         }
         free(scaled_dirs[i]);
     }
-    free(scaled_dirs);
+    if (scaled_dirs) {
+        free(scaled_dirs);
+    }
     cache_unlock();
 }
 
