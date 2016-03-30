@@ -714,8 +714,20 @@ get_output_field2 (DB_playItem_t *it, ddb_playlist_t *plt, const char *field, ch
     deadbeef->tf_eval (&ctx, tf, temp, sizeof (temp));
     deadbeef->tf_free (tf);
 
-    strncpy (out, temp, sz);
-    out[sz-1] = 0;
+    char *o = out;
+    for (char *p = temp; *p && sz > 0; p++) {
+        if (*p == '/') {
+            *o++ = '-';
+        }
+        else
+        {
+            *o++ = *p;
+        }
+        sz--;
+    }
+
+    *o = 0;
+
     trace ("field '%s' expanded to '%s'\n", field, out);
 }
 
