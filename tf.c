@@ -1225,6 +1225,64 @@ tf_func_fix_eol (ddb_tf_context_t *ctx, int argc, const char *arglens, const cha
     return len;
 }
 
+int
+tf_func_hex (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1 && argc != 2) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    int len;
+
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+    int num = atoi (out);
+    int pad = 0;
+    *out = 0;
+
+    if (argc == 2) {
+        TF_EVAL_CHECK(len, ctx, args + arglens[0], arglens[1], out, outlen, fail_on_undef);
+        if (!isdigit (*out)) {
+            *out = 0;
+            return -1;
+        }
+        pad = atoi (out);
+        *out = 0;
+    }
+
+    int n = num;
+    int cnt = 0;
+    do {
+        n >>= 4;
+        cnt++;
+    } while (n);
+
+    char *p = out;
+
+    if (pad > outlen || cnt > outlen) {
+        return -1;
+    }
+
+    if (pad > cnt) {
+        for (n = 0; n < pad-cnt; n++, p++) {
+            *p = '0';
+        }
+    }
+    p += cnt;
+    *p-- = 0;
+
+    n = num;
+
+    const char hex[] = "0123456789abcdef";
+
+    do {
+        *p-- = hex[n & 0x0f];
+        n >>= 4;
+    } while (n);
+
+    return (int)strlen (out);
+}
+
 tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     // Control flow
     { "if", tf_func_if },
@@ -1266,6 +1324,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "ext", tf_func_ext },
     { "filename", tf_func_filename },
     { "fix_eol", tf_func_fix_eol },
+    { "hex", tf_func_hex },
     { "strcmp", tf_func_strcmp },
     // Track info
     { "meta", tf_func_meta },
