@@ -1080,4 +1080,13 @@
     XCTAssert(!strcmp (buffer, "line1 <...>"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_FixEofTwoArgsWithSmallBuffer_DoesntOverflowOffByOne {
+    pl_replace_meta (it, "title", "hello\n");
+    char *bc = tf_compile("$fix_eol(%title%, <...>)");
+    tf_eval (&ctx, bc, buffer, 12);
+    XCTAssert(!strcmp (buffer, "hello <...>"), @"The actual output is: %s", buffer);
+    tf_eval (&ctx, bc, buffer, 11);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
 @end
