@@ -70,6 +70,7 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // api version history:
+// 1.9 -- deadbeef-0.7.2
 // 1.8 -- deadbeef-0.7.0
 // 1.7 -- deadbeef-0.6.2
 // 1.6 -- deadbeef-0.6.1
@@ -1407,6 +1408,9 @@ typedef struct DB_decoder_s {
     int (*write_metadata) (DB_playItem_t *it);
 
     // NULL terminated array of all supported extensions
+    // examples:
+    // { "aac", "wma", "tak", NULL } -- supports 3 file extensions
+    // since API 1.9: { "*", NULL } -- supports any file extensions
     const char **exts;
 
     // NULL terminated array of all supported prefixes (UADE support needs that)
