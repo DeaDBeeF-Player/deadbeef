@@ -1212,6 +1212,10 @@ tf_func_fix_eol (ddb_tf_context_t *ctx, int argc, const char *arglens, const cha
 
     for (int n = 0; n < len; n++, p++) {
         if (*p == '\n') {
+            if (outlen-n < indlen) {
+                *out = 0;
+                return -1;
+            }
             memcpy (p, ind, indlen);
             len = n + indlen;
             break;
