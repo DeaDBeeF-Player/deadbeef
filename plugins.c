@@ -70,6 +70,53 @@
 #define PLUGINEXT ".so"
 #endif
 
+const char *lowprio_plugin_ids[] = {
+    "ffmpeg",
+    NULL
+};
+
+// internal plugin list
+typedef struct plugin_s {
+    void *handle;
+    DB_plugin_t *plugin;
+    struct plugin_s *next;
+} plugin_t;
+
+static plugin_t *plugins;
+static plugin_t *plugins_tail;
+
+// this list only gets used during plugin loading,
+// then it gets appended to the above "plugins" list,
+// and set to NULL
+static plugin_t *plugins_lowprio;
+static plugin_t *plugins_lowprio_tail;
+
+#define MAX_PLUGINS 100
+static DB_plugin_t *g_plugins[MAX_PLUGINS+1];
+
+#define MAX_GUI_PLUGINS 10
+static char *g_gui_names[MAX_GUI_PLUGINS+1];
+static int g_num_gui_names;
+
+#define MAX_DECODER_PLUGINS 50
+static DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
+
+#define MAX_VFS_PLUGINS 10
+static DB_vfs_t *g_vfs_plugins[MAX_VFS_PLUGINS+1];
+
+#define MAX_DSP_PLUGINS 10
+static DB_dsp_t *g_dsp_plugins[MAX_DSP_PLUGINS+1];
+
+#define MAX_OUTPUT_PLUGINS 10
+static DB_output_t *g_output_plugins[MAX_OUTPUT_PLUGINS+1];
+static DB_output_t *output_plugin = NULL;
+
+#define MAX_PLAYLIST_PLUGINS 10
+static DB_playlist_t *g_playlist_plugins[MAX_PLAYLIST_PLUGINS+1];
+
+static uintptr_t background_jobs_mutex;
+static int num_background_jobs;
+
 // deadbeef api
 static DB_functions_t deadbeef_api = {
     .vmajor = DB_API_VERSION_MAJOR,
@@ -459,32 +506,6 @@ plug_volume_set_amp (float amp) {
     messagepump_push (DB_EV_VOLUMECHANGED, 0, 0, 0);
 }
 
-#define MAX_PLUGINS 100
-DB_plugin_t *g_plugins[MAX_PLUGINS+1];
-
-#define MAX_GUI_PLUGINS 10
-static char *g_gui_names[MAX_GUI_PLUGINS+1];
-static int g_num_gui_names;
-
-#define MAX_DECODER_PLUGINS 50
-DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
-
-#define MAX_VFS_PLUGINS 10
-DB_vfs_t *g_vfs_plugins[MAX_VFS_PLUGINS+1];
-
-#define MAX_DSP_PLUGINS 10
-DB_dsp_t *g_dsp_plugins[MAX_DSP_PLUGINS+1];
-
-#define MAX_OUTPUT_PLUGINS 10
-DB_output_t *g_output_plugins[MAX_OUTPUT_PLUGINS+1];
-DB_output_t *output_plugin = NULL;
-
-#define MAX_PLAYLIST_PLUGINS 10
-DB_playlist_t *g_playlist_plugins[MAX_PLAYLIST_PLUGINS+1];
-
-static uintptr_t background_jobs_mutex;
-static int num_background_jobs;
-
 void
 plug_md5 (uint8_t sig[16], const char *in, int len) {
     md5_state_t st;
@@ -503,16 +524,6 @@ plug_md5_to_str (char *str, const uint8_t sig[16]) {
     }
     *str = 0;
 }
-
-// plugin control structures
-typedef struct plugin_s {
-    void *handle;
-    DB_plugin_t *plugin;
-    struct plugin_s *next;
-} plugin_t;
-
-plugin_t *plugins;
-plugin_t *plugins_tail;
 
 float
 plug_playback_get_pos (void) {
@@ -601,13 +612,34 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
     memset (plug, 0, sizeof (plugin_t));
     plug->plugin = plugin_api;
     plug->handle = handle;
-    if (plugins_tail) {
-        plugins_tail->next = plug;
-        plugins_tail = plug;
+
+    int lowprio = 0;
+    for (int n = 0; lowprio_plugin_ids[n]; n++) {
+        if (plugin_api->id && !strcmp (lowprio_plugin_ids[n], plugin_api->id)) {
+            lowprio = 1;
+            break;
+        }
+    }
+
+    if (lowprio) {
+        if (plugins_lowprio_tail) {
+            plugins_lowprio_tail->next = plug;
+            plugins_lowprio_tail = plug;
+        }
+        else {
+            plugins_lowprio = plugins_lowprio_tail = plug;
+        }
     }
     else {
-        plugins = plugins_tail = plug;
+        if (plugins_tail) {
+            plugins_tail->next = plug;
+            plugins_tail = plug;
+        }
+        else {
+            plugins = plugins_tail = plug;
+        }
     }
+
     return 0;
 }
 
@@ -791,7 +823,6 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
                 if (l < (sizeof(PLUGINEXT)-1)) {
                     break;
                 }
-                const char *e = PLUGINEXT;
                 if (strcasecmp (namelist[i]->d_name + l - sizeof(PLUGINEXT) + 1, PLUGINEXT)) {
                     break;
                 }
@@ -857,7 +888,7 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
                 }
 
                 if (!gui_scan) {
-                    if (0 != load_plugin (plugdir, d_name, l)) {
+                    if (0 != load_plugin (plugdir, d_name, (int)l)) {
                         trace ("plugin not found or failed to load\n");
                     }
                 }
@@ -995,6 +1026,19 @@ plug_load_all (void) {
 #include "moduleconf-android.h"
 #undef PLUG
 #endif
+
+    if (plugins_lowprio) {
+        if (plugins_tail) {
+            plugins_tail->next = plugins_lowprio;
+        }
+        else {
+            plugins = plugins_tail = plugins_lowprio;
+        }
+        while (plugins_tail->next) {
+            plugins_tail = plugins_tail->next;
+        }
+        plugins_lowprio = plugins_lowprio_tail = NULL;
+    }
 
     plugin_t *plug;
     // categorize plugins
