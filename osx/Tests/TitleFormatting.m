@@ -800,6 +800,7 @@
 }
 
 - (void)test_CrLf_InsertsLinebreak {
+    ctx.flags |= DDB_TF_CONTEXT_MULTILINE;
     char *bc = tf_compile("$crlf()");
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, "\n"), @"The actual output is: %s", buffer);
@@ -987,7 +988,7 @@
     XCTAssert(!strcmp (buffer, "random value"), @"The actual output is: %s", buffer);
 }
 
-- (void)test_MultipleArtists_ReturnsArtistsSeparatedByLinebreaks {
+- (void)test_MultipleArtists_ReturnsArtistsSeparatedBySemicolons {
     pl_replace_meta (it, "artist", "Artist1\nArtist2");
     char *bc = tf_compile("%artist%");
     tf_eval (&ctx, bc, buffer, 1000);
@@ -1056,6 +1057,20 @@
     char *bc = tf_compile("[[%discnumber%]a] normaltext [%title%] [[%title%]a]");
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, " normaltext title titlea"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_FixEof_PutsIndicatorAfterLineBreak {
+    pl_replace_meta (it, "title", "line1\nline2\n");
+    char *bc = tf_compile("$fix_eol(%title%)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "line1 (...)"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_FixEofTwoArgs_PutsCustomIndicatorAfterLineBreak {
+    pl_replace_meta (it, "title", "line1\nline2\n");
+    char *bc = tf_compile("$fix_eol(%title%, <...>)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "line1 <...>"), @"The actual output is: %s", buffer);
 }
 
 @end
