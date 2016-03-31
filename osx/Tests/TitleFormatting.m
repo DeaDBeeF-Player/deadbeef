@@ -1089,4 +1089,24 @@
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
+- (void)test_Hex_ReturnsHexConvertedNumber {
+    char *bc = tf_compile("$hex(11259375)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "abcdef"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_HexPadded_ReturnsHexConvertedNumberWithPadding {
+    char *bc = tf_compile("$hex(11259375,10)");
+    tf_eval (&ctx, bc, buffer, 10);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+    tf_eval (&ctx, bc, buffer, 11);
+    XCTAssert(!strcmp (buffer, "0000abcdef"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_HexZero_ReturnsZero {
+    char *bc = tf_compile("$hex(0)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "0"), @"The actual output is: %s", buffer);
+}
+
 @end
