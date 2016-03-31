@@ -14,6 +14,7 @@ case "$TRAVIS_OS_NAME" in
     ;;
     osx)
         echo Uploading mac artifacts...
-        rsync -e "$SSHOPTS" osx/build/Release/deadbeef.zip waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/osx/$TRAVIS_BRANCH/ || exit 1
+        VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
+        rsync -e "$SSHOPTS" osx/build/Release/deadbeef-$VERSION-osx-x86_64.zip waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/osx/$TRAVIS_BRANCH/ || exit 1
     ;;
 esac
