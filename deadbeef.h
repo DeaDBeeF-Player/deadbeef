@@ -517,6 +517,10 @@ enum {
     DDB_TF_CONTEXT_HAS_INDEX = 1,
     DDB_TF_CONTEXT_HAS_ID = 2,
     DDB_TF_CONTEXT_NO_DYNAMIC = 4, // skip dynamic fields (%playback_time%)
+#if (DDB_API_LEVEL >= 9)
+    // Don't convert linebreaks to semicolons
+    DDB_TF_CONTEXT_MULTILINE = 8,
+#endif
 };
 
 // context for title formatting interpreter
