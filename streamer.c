@@ -1232,7 +1232,7 @@ m3u_error:
                         const char **exts = decs[i]->exts;
                         if (exts) {
                             for (int j = 0; exts[j]; j++) {
-                                if (!strcasecmp (exts[j], ext)) {
+                                if (!strcasecmp (exts[j], ext) || !strcmp (exts[j], "*")) {
                                     fprintf (stderr, "streamer: %s : changed decoder plugin to %s\n", fname, decs[i]->plugin.id);
                                     pl_replace_meta (it, "!DECODER", decs[i]->plugin.id);
                                     pl_replace_meta (it, "!FILETYPE", ext);

@@ -1424,7 +1424,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         if (decoders[i]->exts && decoders[i]->insert) {
             const char **exts = decoders[i]->exts;
             for (int e = 0; exts[e]; e++) {
-                if (!strcasecmp (exts[e], eol)) {
+                if (!strcasecmp (exts[e], eol) || !strcmp (exts[e], "*")) {
                     playItem_t *inserted = (playItem_t *)decoders[i]->insert ((ddb_playlist_t *)playlist, DB_PLAYITEM (after), fname);
                     if (inserted != NULL) {
                         if (cb && cb (inserted, user_data) < 0) {
