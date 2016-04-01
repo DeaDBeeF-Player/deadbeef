@@ -68,13 +68,13 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-#define ENABLE_ALL_EXT 1
-
-#if ENABLE_ALL_EXT
-#define EXCLUDE_EXTS "" // TODO: add extensions supported by other plugins
-#endif
-
 #define DEFAULT_EXTS "aa3;oma;ac3;vqf;amr;opus;tak;dsf;dff"
+#define UNPOPULATED_EXTS_BY_FFMPEG \
+    "aif,aiff,afc,aifc,amr,asf," \
+    "wmv,wma,au,caf,webm," \
+    "gxf,lbc,mmf,mpg,mpeg,ts,m2t," \
+    "m2ts,mts,mxf,rm,ra,roq,sox," \
+    "spdif,swf,rcv,voc,w64,wav,wv"
 
 #define EXT_MAX 256
 
@@ -918,93 +918,96 @@ static URLProtocol vfswrapper = {
 };
 #endif
 
-static int assign_new_ext(int n, const char* new_ext, size_t size)
-{
-	char* ext = malloc (size + 1);
-	strncpy(ext, new_ext, size);
-	for (int i = 0; i < n; i++) {
-		if (strcmp(exts[i], ext) == 0) {
-			free(ext);
-			return n;
-		}
-	}
-	ext[size] = '\0';
-	free(exts[n]);
-	exts[n] = ext;
-	return n + 1;
+static int
+assign_new_ext (int n, const char* new_ext, size_t size) {
+    char* ext = malloc (size + 1);
+    strncpy (ext, new_ext, size);
+    for (int i = 0; i < n; i++) {
+        if (strcmp (exts[i], ext) == 0) {
+            free(ext);
+            return n;
+        }
+    }
+    ext[size] = '\0';
+    free (exts[n]);
+    exts[n] = ext;
+    return n + 1;
 }
 
-static int add_new_exts(int n, const char* new_exts, char delim)
-{
-	while (*new_exts) {
-		if (n >= EXT_MAX) {
-			fprintf (stderr, "ffmpeg: too many extensions, max is %d\n", EXT_MAX);
-			break;
-		}
-		const char *e = new_exts;
-		while (*e && (*e != delim || *e == ' ')) {
-			e++;
-		}
-		if (e != new_exts) {
-			n = assign_new_ext(n, new_exts, e-new_exts);
-		}
-		if (*e == 0) {
-			break;
-		}
-		new_exts = e+1;
-	}
-	return n;
+static int
+add_new_exts (int n, const char* new_exts, char delim) {
+    while (*new_exts) {
+        if (n >= EXT_MAX) {
+            fprintf (stderr, "ffmpeg: too many extensions, max is %d\n", EXT_MAX);
+            break;
+        }
+        const char *e = new_exts;
+        while (*e && (*e != delim || *e == ' ')) {
+            e++;
+        }
+        if (e != new_exts) {
+            n = assign_new_ext (n, new_exts, e-new_exts);
+        }
+        if (*e == 0) {
+            break;
+        }
+        new_exts = e+1;
+    }
+    return n;
 }
 
 static void
 ffmpeg_init_exts (void) {
     deadbeef->conf_lock ();
     const char *new_exts = deadbeef->conf_get_str_fast ("ffmpeg.extensions", DEFAULT_EXTS);
-    int use_all_ext = deadbeef->conf_get_int ("ffmpeg.enable_all_ext", ENABLE_ALL_EXT);
+    int use_all_ext = deadbeef->conf_get_int ("ffmpeg.enable_all_ext", 1);
     for (int i = 0; exts[i]; i++) {
         free (exts[i]);
-		exts[i] = NULL;
+        exts[i] = NULL;
     }
     exts[0] = NULL;
 
-	int n = 0;
-	if (!use_all_ext) {
-		n = add_new_exts(n, new_exts, ';');
-	} else {
-		AVInputFormat *ifmt  = NULL;
-		/*
- 		 * It's quite complicated to enumerate all supported extensions in
-		 * ffmpeg. If a decoder defines extensions in ffmpeg, the probing
-		 * mechanisim is disabled (see comments in avformat.h).
-		 * Thus some decoders doesn't claim its extensions (e.g. WavPack) 
-		 *
-		 * To get these missing extensions, we need to search corresponding
-		 * encoders for the same format, which will provide extensions for
-		 * encoding purpose, because ffmpeg will guess the output format from
-		 * the file name specified by users.
-		 */
-		while ((ifmt = av_iformat_next(ifmt))) {
-			if (ifmt->priv_class && AV_IS_INPUT_DEVICE(ifmt->priv_class->category))
-				continue; // Skip all input devices
-			const char* exts = NULL;
-			if (ifmt->extensions) {
-				exts = ifmt->extensions;
-			} else {
-				// We have to search the corresponding encoder
-				const char* name = ifmt->name;
-				AVOutputFormat *ofmt = NULL;
-				while ((ofmt = av_oformat_next(ofmt))) {
-					if (strcmp(ofmt->name, ifmt->name) == 0)
-						break;
-				}
-				if (ofmt)
-					exts = ofmt->extensions;
-			}
-			if (exts) {
-				n = add_new_exts(n, exts, ',');
-			}
+    int n = 0;
+    if (!use_all_ext) {
+        n = add_new_exts (n, new_exts, ';');
+    }
+	else {
+        AVInputFormat *ifmt  = NULL;
+        /*
+          * It's quite complicated to enumerate all supported extensions in
+         * ffmpeg. If a decoder defines extensions in ffmpeg, the probing
+         * mechanisim is disabled (see comments in avformat.h).
+         * Thus some decoders doesn't claim its extensions (e.g. WavPack) 
+         *
+         * To get these missing extensions, we need to search corresponding
+         * encoders for the same format, which will provide extensions for
+         * encoding purpose, because ffmpeg will guess the output format from
+         * the file name specified by users.
+         */
+        while (ifmt = av_iformat_next(ifmt)) {
+            if (ifmt->priv_class && AV_IS_INPUT_DEVICE(ifmt->priv_class->category))
+                continue; // Skip all input devices
+            if (ifmt->flags & AVFMT_NOFILE)
+                continue; // Skip format that's not even a file
+            if (ifmt->raw_codec_id > 0 &&
+                    (ifmt->raw_codec_id < AV_CODEC_ID_FIRST_AUDIO || ifmt->raw_codec_id > AV_CODEC_ID_FIRST_SUBTITLE)
+               )
+                continue; // Skip all non-audio raw formats
+            if (ifmt->long_name && strstr(ifmt->long_name, "subtitle"))
+                continue; // Skip all subtitle formats
+            if (ifmt->extensions)
+                n = add_new_exts (n, ifmt->extensions, ',');
         }
-	}
+        /*
+          * The above code doesn't guarntee all extensions are
+         * included, however. In the portable build the encoders are disabled,
+         * thus some extensions cannot be retrived.
+         *
+         * To fix this, we need to add some known extensions in addition to
+         * scanned extensions.
+         */
+        n = add_new_exts (n, UNPOPULATED_EXTS_BY_FFMPEG, ',');
+    }
     exts[n] = NULL;
     deadbeef->conf_unlock ();
 }
@@ -1122,13 +1125,7 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
 }
 
 static const char settings_dlg[] =
-    "property \"Use all extensions supported by ffmpeg\" checkbox ffmpeg.enable_all_exts "
-#if ENABLE_ALL_EXT
-    "1"
-#else
-	"0"
-#endif
-	";\n"
+    "property \"Use all extensions supported by ffmpeg\" checkbox ffmpeg.enable_all_exts 1;\n"
     "property \"File Extensions (separate with ';')\" entry ffmpeg.extensions \"" DEFAULT_EXTS "\";\n"
 ;
 
