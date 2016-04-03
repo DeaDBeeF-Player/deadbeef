@@ -2151,6 +2151,33 @@ tf_import_legacy (const char *fmt, char *out, int outsize) {
             *out++ = *fmt++;
             outsize -= 2;
         }
+        else if (*fmt == '\n') {
+            if (outsize < 7) {
+                break;
+            }
+            strcpy (out, "$crlf()");
+            out += 7;
+            outsize -= 7;
+            fmt++;
+        }
+        else if (*fmt == '[') {
+            if (outsize < 3) {
+                break;
+            }
+            strcpy (out, "'['");
+            out += 3;
+            outsize -= 3;
+            fmt++;
+        }
+        else if (*fmt == ']') {
+            if (outsize < 3) {
+                break;
+            }
+            strcpy (out, "']'");
+            out += 3;
+            outsize -= 3;
+            fmt++;
+        }
         else if (*fmt != '%') {
             *out++ = *fmt++;
             outsize--;
