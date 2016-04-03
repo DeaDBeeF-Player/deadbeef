@@ -1102,4 +1102,17 @@
     XCTAssert(!strcmp (buffer, "0"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_QuotedSquareBrackets_ReturnsSquareBrackets {
+    char *bc = tf_compile("'['']'");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "[]"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ImportLegacySquareBrackets_ProducesQuotedSquareBrackets {
+    const char *old = "[%y]";
+    char new[100];
+    tf_import_legacy (old, new, sizeof (new));
+    XCTAssert(!strcmp (new, "'['%date%']'"), @"The actual output is: %s", buffer);
+}
+
 @end
