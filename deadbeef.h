@@ -70,7 +70,8 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // api version history:
-// 1.9 -- trunk
+// 1.10 -- trunk
+// 1.9 -- deadbeef-0.7.2
 // 1.8 -- deadbeef-0.7.0
 // 1.7 -- deadbeef-0.6.2
 // 1.6 -- deadbeef-0.6.1
@@ -93,7 +94,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 9
+#define DB_API_VERSION_MINOR 10
 
 #define DDB_DEPRECATED(x)
 
@@ -115,6 +116,12 @@ extern "C" {
 
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 10)
+#define DEPRECATED_110 DDB_DEPRECATED("since deadbeef API 1.10")
+#else
+#define DEPRECATED_110
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 9)
@@ -427,7 +434,7 @@ enum {
     DB_EV_TRACKFOCUSCURRENT = 1006, // user wants to highlight/find the current playing track
 #endif
 
-#if (DDB_API_LEVEL >= 9)
+#if (DDB_API_LEVEL >= 10)
     DB_EV_CURSOR_MOVED = 1007, // used for syncing cursor position between playlist views, p1 = PL_MAIN or PL_SEARCH, ctx is a ddb_event_track_t, containing the new track under cursor
 #endif
 
@@ -1197,8 +1204,8 @@ typedef struct {
     void (*tf_import_legacy) (const char *fmt, char *out, int outsize);
 #endif
 
-    // since 1.9
-#if (DDB_API_LEVEL >= 9)
+    // since 1.10
+#if (DDB_API_LEVEL >= 10)
     // same as plt_search_process, but allows to choose whether to select the
     // search results, or not
     void (*plt_search_process2) (ddb_playlist_t *plt, const char *text, int select_results);
