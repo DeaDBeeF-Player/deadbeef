@@ -93,7 +93,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 8
+#define DB_API_VERSION_MINOR 9
 
 #define DDB_DEPRECATED(x)
 
@@ -115,6 +115,12 @@ extern "C" {
 
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 9)
+#define DEPRECATED_19 DDB_DEPRECATED("since deadbeef API 1.9")
+#else
+#define DEPRECATED_19
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 8)
