@@ -669,6 +669,7 @@ player_mainloop (void) {
                 case DB_EV_CONFIGCHANGED:
                     conf_save ();
                     streamer_configchanged ();
+                    pl_configchanged ();
                     junk_configchanged ();
                     break;
                 case DB_EV_SEEK:

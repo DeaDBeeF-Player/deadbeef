@@ -123,6 +123,8 @@ static int no_remove_notify;
 
 static playlist_t *addfiles_playlist; // current playlist for adding files/folders; set in pl_add_files_begin
 
+static int conf_cue_prefer_embedded = 0;
+
 typedef struct ddb_fileadd_listener_s {
     int id;
     int (*callback)(ddb_fileadd_data_t *data, void *user_data);
@@ -1041,7 +1043,11 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, const int starts
 }
 
 playItem_t *
-plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate) {
+plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, uint64_t numsamples64, int samplerate) {
+    // FIXME: DB_playItem_t only supports 32bit sample count now;
+    // the hack should be removed, when the 64 bit sample counts are implemented
+    int numsamples = (int)numsamples64;
+
     if (buffersize >= 3 && buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf) {
         buffer += 3;
         buffersize -= 3;
@@ -1245,7 +1251,12 @@ error:
 }
 
 playItem_t *
-plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int numsamples, int samplerate) {
+plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate) {
+    return plt_insert_cue_from_buffer_int (playlist, after, origin, buffer, buffersize, (uint64_t)numsamples, samplerate);
+}
+
+playItem_t *
+plt_insert_cue_int (playlist_t *plt, playItem_t *after, playItem_t *origin, uint64_t numsamples, int samplerate) {
     trace ("pl_insert_cue numsamples=%d, samplerate=%d\n", numsamples, samplerate);
     pl_lock ();
     const char *fname = pl_find_meta_raw (origin, ":URI");
@@ -1292,7 +1303,12 @@ plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int nums
         return NULL;
     }
     vfs_fclose (fp);
-    return plt_insert_cue_from_buffer (plt, after, origin, buf, sz, numsamples, samplerate);
+    return plt_insert_cue_from_buffer_int (plt, after, origin, buf, sz, numsamples, samplerate);
+}
+
+playItem_t *
+plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int numsamples, int samplerate) {
+    return plt_insert_cue_int (plt, after, origin, numsamples, samplerate);
 }
 
 // FIXME: this is not thread-safe
@@ -3980,3 +3996,54 @@ plt_get_scroll (playlist_t *plt) {
     return plt->scroll;
 }
 
+static playItem_t *
+plt_process_embedded_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate) {
+    pl_lock();
+
+    const char *cuesheet = pl_find_meta (it, "cuesheet");
+    if (cuesheet) {
+        playItem_t *cue_after = plt_insert_cue_from_buffer_int (plt, after, it, (const uint8_t *)cuesheet, (int)strlen (cuesheet), totalsamples, samplerate);
+        if (cue_after) {
+            pl_item_unref (cue_after);
+            pl_unlock();
+            return cue_after;
+        }
+    }
+    pl_unlock();
+    return NULL;
+}
+
+static playItem_t *
+plt_process_external_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate) {
+    playItem_t *cue_after = plt_insert_cue_int (plt, after, it, totalsamples, samplerate);
+    if (cue_after) {
+        pl_item_unref (cue_after);
+        return cue_after;
+    }
+    return NULL;
+}
+
+playItem_t *
+plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate) {
+    playItem_t *cue_after = NULL;
+
+    if (conf_cue_prefer_embedded) {
+        cue_after = plt_process_embedded_cue (plt, after, it, totalsamples, samplerate);
+        if (!cue_after) {
+            cue_after = plt_process_external_cue (plt, after, it, totalsamples, samplerate);
+        }
+    }
+    else {
+        cue_after = plt_process_external_cue (plt, after, it, totalsamples, samplerate);
+        if (!cue_after) {
+            cue_after = plt_process_embedded_cue (plt, after, it, totalsamples, samplerate);
+        }
+    }
+
+    return cue_after;
+}
+
+void
+pl_configchanged (void) {
+    conf_cue_prefer_embedded = conf_get_int ("cue.prefer_embedded", 0);
+}

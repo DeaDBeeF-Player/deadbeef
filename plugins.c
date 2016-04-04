@@ -448,6 +448,7 @@ static DB_functions_t deadbeef_api = {
     .tf_import_legacy = tf_import_legacy,
 
     .plt_search_process2 = (void (*) (ddb_playlist_t *plt, const char *text, int select_results))plt_search_process2,
+    .plt_process_cue = (DB_playItem_t * (*) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *it, uint64_t numsamples, int samplerate))plt_process_cue,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

@@ -522,4 +522,10 @@ pl_format_item_queue (playItem_t *it, char *s, int size);
 void
 send_trackinfochanged (playItem_t *track);
 
+playItem_t *
+plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate);
+
+void
+pl_configchanged (void);
+
 #endif // __PLAYLIST_H
