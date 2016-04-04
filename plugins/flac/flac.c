@@ -714,7 +714,7 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
 }
 
 static DB_playItem_t *
-cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const FLAC__StreamMetadata_CueSheet *cuesheet, int totalsamples, int samplerate) {
+cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const FLAC__StreamMetadata_CueSheet *cuesheet, uint64_t totalsamples, int samplerate) {
     static const char err_invalid_cuesheet[] = "The flac %s has invalid FLAC__METADATA_TYPE_CUESHEET block, which will get ignored. You should remove it using metaflac.\n";
     DB_playItem_t *ins = after;
 
@@ -931,8 +931,8 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
 
     // try embedded cue
-    deadbeef->pl_lock ();
     if (info.flac_cue_sheet) {
+        deadbeef->pl_lock ();
         DB_playItem_t *cue = cflac_insert_with_embedded_cue (plt, after, it, &info.flac_cue_sheet->data.cue_sheet, info.totalsamples, info.info.fmt.samplerate);
         if (cue) {
             cflac_free_temp (_info);
@@ -941,29 +941,17 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             deadbeef->pl_unlock ();
             return cue;
         }
+        deadbeef->pl_unlock ();
     }
-    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-    if (cuesheet) {
-        DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (const uint8_t *)cuesheet, strlen (cuesheet), info.totalsamples, info.info.fmt.samplerate);
-        if (last) {
-            cflac_free_temp (_info);
-            deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (last);
-            deadbeef->pl_unlock ();
-            return last;
-        }
-    }
-    deadbeef->pl_unlock ();
 
-    // try external cue
-    DB_playItem_t *cue_after = deadbeef->plt_insert_cue (plt, after, it, info.totalsamples, info.info.fmt.samplerate);
+    DB_playItem_t *cue_after = deadbeef->plt_process_cue (plt, after, it, info.totalsamples, info.info.fmt.samplerate);
+
     if (cue_after) {
         cflac_free_temp (_info);
         deadbeef->pl_item_unref (it);
-        deadbeef->pl_item_unref (cue_after);
-        trace ("flac: loaded external cuesheet\n");
         return cue_after;
     }
+
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
     cflac_free_temp (_info);
