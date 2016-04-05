@@ -3572,6 +3572,169 @@ plt_search_reset (playlist_t *playlist) {
     plt_search_reset_int (playlist, 1);
 }
 
+typedef struct DB_searchTerm_s {
+    struct DB_searchTerm_s *next;
+    char *key;
+    char *value;
+    uint32_t hits;
+} DB_searchTerm_t;
+
+/*
+ * Valid tokens:
+ * foo
+ * "foo bar"
+ * title:foo
+ * title:"foo bar"
+ *
+ */
+static DB_searchTerm_t *
+plt_parse_query (const char *query) {
+    if (!*query) {
+        return NULL;
+    }
+
+#define ST_raw    0
+#define ST_key    1
+#define ST_quoted 2
+
+    DB_searchTerm_t *head = NULL;
+
+    uint8_t token[1000];
+    const uint8_t *cur = query;
+    while (*cur) {
+        cur = pl_cue_skipspaces(cur);
+        int state;
+        switch (*cur) {
+            case '\0':
+                continue;
+            case '"':
+                state = ST_quoted;
+                ++cur;
+                break;
+            default:
+                state = ST_key;
+                break;
+        }
+        uint8_t *copied = token;
+        uint8_t *key = NULL;
+        while (*cur) {
+            const uint8_t c = *cur++;
+            // we're in a key or raw, and we see a space; we're done
+            if (c <= ' ' && ST_quoted != state) {
+                break;
+            }
+
+            // we're in a quoted string, and we see a quote followed by whitespace; we're done
+            if ('"' == c && ST_quoted == state) {
+                uint8_t next = *cur;
+                if (next <= ' ') {
+                    if (next) {
+                        ++cur;
+                    }
+                    break;
+                }
+            }
+
+            // we're in the key, and we've found the ':' which terminates it
+            if (ST_key == state && ':' == c && *cur) {
+                switch (*cur) {
+                    case '"':
+                        state = ST_quoted;
+                        ++cur;
+                        break;
+                    default:
+                        state = ST_raw;
+                        break;
+                }
+                *copied = '\0';
+                key = strdup(token);
+                copied = token;
+            } else {
+                *copied++ = c;
+            }
+        }
+
+        *copied = '\0';
+
+        DB_searchTerm_t *created = malloc(sizeof(DB_searchTerm_t));
+        created->next = head;
+        created->key = key;
+        created->value = strdup(token);
+        head = created;
+
+        //fprintf(stderr, "%s -> %s\n", key ? key : "[absent]", token);
+    }
+
+    return head;
+}
+
+static const char *
+value_if_key_considered (DB_metaInfo_t *m, const char *user_key) {
+    if (user_key) {
+        if (!strcmp(m->key, user_key)) {
+            return m->value;
+        }
+        return NULL;
+    }
+
+    int is_uri = !strcmp (m->key, ":URI");
+    if ((m->key[0] == ':' && !is_uri) || m->key[0] == '_' || m->key[0] == '!') {
+        return NULL;
+    }
+
+    if (!is_uri
+        && 0 != strcmp("artist", m->key)
+        && 0 != strcmp("title", m->key)
+        && 0 != strcmp("album", m->key)) {
+        return NULL;
+    }
+
+    const char *value = m->value;
+    if (is_uri) {
+        value = strrchr (value, '/');
+        if (value) {
+            value++;
+        }
+        else {
+            value = m->value;
+        }
+    }
+
+    return value;
+}
+
+static int
+item_matches (const char *value, const char *lc) {
+
+    if (u8_valid(value, strlen(value), NULL) && u8_valid(lc, strlen(lc), NULL) && utfcasestr_fast (value, lc)) {
+        //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, value, pl_find_meta_raw (it, ":URI"), m->key);
+        // add to list
+        return 1;
+    }
+
+    return 0;
+}
+
+static void
+search_reset_counters (DB_searchTerm_t *search) {
+    while (search) {
+        search->hits = 0;
+        search = search->next;
+    }
+}
+
+static int
+search_all_hit (DB_searchTerm_t *search) {
+    while (search) {
+        if (0 == search->hits) {
+            return 0;
+        }
+        search = search->next;
+    }
+
+    return 1;
+}
+
 void
 plt_search_process2 (playlist_t *playlist, const char *text, int select_results) {
     LOCK;
@@ -3597,80 +3760,54 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
         out += l;
     }
     *out = 0;
-
-    static int cmpidx = 0;
-    cmpidx++;
-    if (cmpidx > 127) {
-        cmpidx = 1;
-    }
+    DB_searchTerm_t *search = plt_parse_query(lc);
 
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         if (select_results) {
             it->selected = 0;
         }
         if (*text) {
+            search_reset_counters(search);
             DB_metaInfo_t *m = NULL;
             for (m = it->meta; m; m = m->next) {
-                int is_uri = !strcmp (m->key, ":URI");
-                if ((m->key[0] == ':' && !is_uri) || m->key[0] == '_' || m->key[0] == '!') {
-                    break;
-                }
-                const char *value = m->value;
-                if (is_uri) {
-                    value = strrchr (value, '/');
-                    if (value) {
-                        value++;
-                    }
-                    else {
-                        value = m->value;
-                    }
-                }
-                if (strcasecmp(m->key, "cuesheet") && strcasecmp (m->key, "log")) {
-                    char cmp = *(m->value-1);
+                DB_searchTerm_t *searching = search;
+                while (searching) {
+                    if (!searching->hits) {
+                        const char *value = value_if_key_considered(m, searching->key);
 
-                    if (abs (cmp) == cmpidx) {
-                        if (cmp > 0) {
-                            it->next[PL_SEARCH] = NULL;
-                            it->prev[PL_SEARCH] = playlist->tail[PL_SEARCH];
-                            if (playlist->tail[PL_SEARCH]) {
-                                playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
-                                playlist->tail[PL_SEARCH] = it;
-                            }
-                            else {
-                                playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
-                            }
-                            if (select_results) {
-                                it->selected = 1;
-                            }
-                            playlist->count[PL_SEARCH]++;
-                            break;
+                        if (value && item_matches(value, searching->value)) {
+                            searching->hits = 1;
                         }
                     }
-                    else if (u8_valid(value, strlen(value), NULL) && u8_valid(lc, strlen(lc), NULL) && utfcasestr_fast (value, lc)) {
-                        //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, value, pl_find_meta_raw (it, ":URI"), m->key);
-                        // add to list
-                        it->next[PL_SEARCH] = NULL;
-                        it->prev[PL_SEARCH] = playlist->tail[PL_SEARCH];
-                        if (playlist->tail[PL_SEARCH]) {
-                            playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
-                            playlist->tail[PL_SEARCH] = it;
-                        }
-                        else {
-                            playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
-                        }
-                        if (select_results) {
-                            it->selected = 1;
-                        }
-                        playlist->count[PL_SEARCH]++;
-                        *((char *)m->value-1) = cmpidx;
-                        break;
+                    searching = searching->next;
+                }
+
+                if (search_all_hit(search)) {
+                    it->next[PL_SEARCH] = NULL;
+                    it->prev[PL_SEARCH] = playlist->tail[PL_SEARCH];
+                    if (playlist->tail[PL_SEARCH]) {
+                        playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
+                        playlist->tail[PL_SEARCH] = it;
                     }
                     else {
-                        *((char *)m->value-1) = -cmpidx;
+                        playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
                     }
+                    if (select_results) {
+                        it->selected = 1;
+                    }
+                    playlist->count[PL_SEARCH]++;
+                    break;
                 }
             }
         }
+    }
+
+    while (search) {
+        free(search->key);
+        free(search->value);
+        DB_searchTerm_t *next = search->next;
+        free(search);
+        search = next;
     }
     UNLOCK;
 }

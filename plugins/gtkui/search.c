@@ -398,10 +398,15 @@ search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 
 ///////// searchwin playlist navigation and rendering
 
-void
-on_searchentry_changed                 (GtkEditable     *editable,
-                                        gpointer         user_data)
+static gint64 last_keypress = -1;
+
+gboolean
+attempt_search                         (gpointer         user_data)
 {
+    if (g_get_monotonic_time() - last_keypress < 100*1000) {
+        return TRUE;
+    }
+
     DdbListview *listview = playlist_visible();
     if (listview) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -421,6 +426,20 @@ on_searchentry_changed                 (GtkEditable     *editable,
             deadbeef->event_send ((ddb_event_t *)event, PL_SEARCH, 0);
         }
     }
+
+    last_keypress = -1;
+    return FALSE;
+}
+
+void
+on_searchentry_changed                 (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    if (-1 == last_keypress) {
+        g_timeout_add(10, &attempt_search, NULL);
+    }
+
+    last_keypress = g_get_monotonic_time();
 }
 
 void
