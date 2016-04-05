@@ -715,6 +715,8 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
 
 static DB_playItem_t *
 cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const FLAC__StreamMetadata_CueSheet *cuesheet, uint64_t totalsamples, int samplerate) {
+    deadbeef->pl_lock ();
+
     static const char err_invalid_cuesheet[] = "The flac %s has invalid FLAC__METADATA_TYPE_CUESHEET block, which will get ignored. You should remove it using metaflac.\n";
     DB_playItem_t *ins = after;
 
@@ -722,6 +724,7 @@ cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_pl
     for (int i = 0; i < cuesheet->num_tracks; i++) {
         if (cuesheet->tracks[i].offset > totalsamples) {
             fprintf (stderr, err_invalid_cuesheet, deadbeef->pl_find_meta_raw (origin, ":URI"));
+            deadbeef->pl_unlock ();
             return NULL;
         }
     }
@@ -729,14 +732,14 @@ cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_pl
     // use libflac to validate the cuesheet as well
     if(!FLAC__format_cuesheet_is_legal (cuesheet, 1, NULL)) {
         fprintf (stderr, err_invalid_cuesheet, deadbeef->pl_find_meta_raw (origin, ":URI"));
+        deadbeef->pl_unlock ();
         return NULL;
     }
 
+    const char *uri = deadbeef->pl_find_meta_raw (origin, ":URI");
+    const char *dec = deadbeef->pl_find_meta_raw (origin, ":DECODER");
+    const char *ftype = "FLAC";
     for (int i = 0; i < cuesheet->num_tracks-1; i++) {
-        const char *uri = deadbeef->pl_find_meta_raw (origin, ":URI");
-        const char *dec = deadbeef->pl_find_meta_raw (origin, ":DECODER");
-        const char *ftype= "FLAC";
-
         DB_playItem_t *it = deadbeef->pl_item_alloc_init (uri, dec);
         deadbeef->pl_set_meta_int (it, ":TRACKNUM", i+1);
         deadbeef->pl_set_meta_int (it, "TRACK", i+1);
@@ -762,15 +765,21 @@ cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_pl
     }
 
     if (!first) {
+        deadbeef->pl_unlock ();
         return NULL;
     }
 
-    // copy metadata from embedded tags
+    // copy metadata and flags from the source track
     uint32_t f = deadbeef->pl_get_item_flags (origin);
     f |= DDB_IS_SUBTRACK;
     deadbeef->pl_set_item_flags (origin, f);
+
     deadbeef->pl_items_copy_junk (origin, first, after);
     deadbeef->pl_item_unref (first);
+
+    deadbeef->pl_item_unref (after);
+
+    deadbeef->pl_unlock ();
 
     return after;
 }
@@ -930,21 +939,13 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         cflac_read_metadata (it);
     }
 
-    // try embedded cue
-    if (info.flac_cue_sheet) {
-        deadbeef->pl_lock ();
-        DB_playItem_t *cue = cflac_insert_with_embedded_cue (plt, after, it, &info.flac_cue_sheet->data.cue_sheet, info.totalsamples, info.info.fmt.samplerate);
-        if (cue) {
-            cflac_free_temp (_info);
-            deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (cue);
-            deadbeef->pl_unlock ();
-            return cue;
-        }
-        deadbeef->pl_unlock ();
-    }
+    DB_playItem_t *cue_after = NULL;
 
-    DB_playItem_t *cue_after = deadbeef->plt_process_cue (plt, after, it, info.totalsamples, info.info.fmt.samplerate);
+    cue_after = deadbeef->plt_process_cue (plt, after, it, info.totalsamples, info.info.fmt.samplerate);
+    if (!cue_after && info.flac_cue_sheet) {
+        // try native flac embedded cuesheet
+        cue_after = cflac_insert_with_embedded_cue (plt, after, it, &info.flac_cue_sheet->data.cue_sheet, info.totalsamples, info.info.fmt.samplerate);
+    }
 
     if (cue_after) {
         cflac_free_temp (_info);
