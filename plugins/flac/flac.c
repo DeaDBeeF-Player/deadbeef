@@ -764,7 +764,7 @@ cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_pl
     if (!first) {
         return NULL;
     }
-    trace ("aac: split by chapters success\n");
+
     // copy metadata from embedded tags
     uint32_t f = deadbeef->pl_get_item_flags (origin);
     f |= DDB_IS_SUBTRACK;
