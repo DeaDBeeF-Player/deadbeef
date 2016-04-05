@@ -780,7 +780,7 @@ load_gui_plugin (const char **plugdirs) {
                 return 0;
             }
             else {
-                trace ("plugin not found or failed to load\n");
+                trace ("the plugin not found or failed to load\n");
             }
         }
     }
