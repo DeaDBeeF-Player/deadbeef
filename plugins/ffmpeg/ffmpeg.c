@@ -408,10 +408,15 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 }
             }
 
-#elif LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52,25,0)
+#else
+            if (ensure_buffer (info, 16384)) { // FIXME: how to get the packet size in old ffmpeg?
+                return -1;
+            }
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52,25,0)
             len = avcodec_decode_audio3 (info->ctx, (int16_t *)info->buffer, &out_size, &info->pkt);
 #else
             len = avcodec_decode_audio2 (info->ctx, (int16_t *)info->buffer, &out_size, info->pkt.data, info->pkt.size);
+#endif
 #endif
             trace ("out: out_size=%d, len=%d\n", out_size, len);
             if (len <= 0) {
@@ -885,7 +890,7 @@ ffmpeg_vfs_write(URLContext *h, const unsigned char *buf, int size)
 static int64_t
 ffmpeg_vfs_seek(URLContext *h, int64_t pos, int whence)
 {
-    trace ("ffmpeg_vfs_seek %d %d\n", pos, whence);
+    trace ("ffmpeg_vfs_seek %lld %d\n", pos, whence);
     DB_FILE *f = h->priv_data;
 
     if (whence == AVSEEK_SIZE) {
@@ -960,7 +965,7 @@ static void
 ffmpeg_init_exts (void) {
     deadbeef->conf_lock ();
     const char *new_exts = deadbeef->conf_get_str_fast ("ffmpeg.extensions", DEFAULT_EXTS);
-    int use_all_ext = deadbeef->conf_get_int ("ffmpeg.enable_all_ext", 1);
+    int use_all_ext = deadbeef->conf_get_int ("ffmpeg.enable_all_exts", 1);
     for (int i = 0; exts[i]; i++) {
         free (exts[i]);
         exts[i] = NULL;
@@ -985,14 +990,20 @@ ffmpeg_init_exts (void) {
          * the file name specified by users.
          */
         while (ifmt = av_iformat_next(ifmt)) {
+#ifdef AV_IS_INPUT_DEVICE
             if (ifmt->priv_class && AV_IS_INPUT_DEVICE(ifmt->priv_class->category))
                 continue; // Skip all input devices
+#endif
+
             if (ifmt->flags & AVFMT_NOFILE)
                 continue; // Skip format that's not even a file
+
+#ifdef AV_CODEC_ID_FIRST_AUDIO
             if (ifmt->raw_codec_id > 0 &&
                     (ifmt->raw_codec_id < AV_CODEC_ID_FIRST_AUDIO || ifmt->raw_codec_id > AV_CODEC_ID_FIRST_SUBTITLE)
                )
                 continue; // Skip all non-audio raw formats
+#endif
             if (ifmt->long_name && strstr(ifmt->long_name, "subtitle"))
                 continue; // Skip all subtitle formats
             if (ifmt->extensions)
