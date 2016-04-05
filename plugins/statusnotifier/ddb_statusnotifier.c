@@ -42,6 +42,7 @@ static ddb_gtkui_t *gtkui_plugin;
 
 static StatusNotifierItem *notifier;
 static int sn_plugin_enabled = 1;
+static int sn_plugin_initialized = 0;
 
 static int
 sn_plugin_stop (void) {
@@ -57,8 +58,9 @@ sn_plugin_stop (void) {
 static void
 notifier_create_status_icon_from_icon_name (const char * icon_name);
 
-static void
-sn_plugin_setup (void) {
+static gboolean
+sn_plugin_setup (void *ctx) {
+    sn_plugin_initialized = 1;
     if (!gtkui_plugin) {
         gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id ("gtkui_1");
         if (!gtkui_plugin) {
@@ -67,7 +69,7 @@ sn_plugin_setup (void) {
     }
     if (!gtkui_plugin) {
         trace ("DDB_SN: failed to connect to gtkui plugin\n");
-        return;
+        return FALSE;
     }
     sn_plugin_enabled  = deadbeef->conf_get_int ("statusnotifier.enable", 1);
     if (!sn_plugin_enabled) {
@@ -76,7 +78,7 @@ sn_plugin_setup (void) {
             notifier = NULL;
         }
         gtkui_plugin->override_builtin_statusicon (0);
-        return;
+        return FALSE;
     }
     gtkui_plugin->override_builtin_statusicon (1);
     trace ("DDB_SN: sn_plugin_setup ()\n");
@@ -84,6 +86,7 @@ sn_plugin_setup (void) {
     if (!notifier) {
         notifier_create_status_icon_from_icon_name ("deadbeef");
     }
+    return FALSE;
 }
 
 static void
@@ -176,13 +179,14 @@ sn_plugin_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
     case DB_EV_CONFIGCHANGED:
         enabled = deadbeef->conf_get_int ("statusnotifier.enable", 1);
-        if (sn_plugin_enabled != enabled) {
+        if (sn_plugin_initialized && sn_plugin_enabled != enabled) {
             sn_plugin_enabled = enabled;
-            sn_plugin_setup ();
+            g_idle_add (sn_plugin_setup, NULL);
         }
         break;
     case DB_EV_PLUGINSLOADED:
-        sn_plugin_setup ();
+        g_type_init ();
+        g_idle_add (sn_plugin_setup, NULL);
         break;
     }
     return 0;
