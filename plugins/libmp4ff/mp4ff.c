@@ -46,7 +46,10 @@ static mp4ff_t *mp4ff_open_read_int(mp4ff_callback_t *f, int is_streaming)
 
     ff->stream = f;
 
-    parse_atoms_int(ff,is_streaming,is_streaming);
+    if (parse_atoms_int(ff,is_streaming,is_streaming) < 0) {
+        mp4ff_close (ff);
+        return NULL;
+    }
 
     return ff;
 }
@@ -255,6 +258,10 @@ static int32_t parse_atoms_int (mp4ff_t *f,int meta_only,int stop_on_mdat)
 
     while ((size = mp4ff_atom_read_header(f, &atom_type, &header_size)) != 0)
     {
+        if (atom_type == ATOM_UNKNOWN && mp4ff_position(f)+size > 100) {
+            return -1;
+        }
+
         f->file_size += size;
         f->last_atom = atom_type;
 
