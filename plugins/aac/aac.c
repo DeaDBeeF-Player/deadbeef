@@ -387,16 +387,19 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     if (!info->mp4) {
         trace ("aac: looking for raw stream...\n");
+        int offs;
         if (!info->file->vfs->is_streaming ()) {
-
             if (info->junk >= 0) {
                 deadbeef->fseek (info->file, info->junk, SEEK_SET);
             }
             else {
                 deadbeef->rewind (info->file);
             }
+            offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, &totalsamples);
         }
-        int offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, &totalsamples);
+        else {
+            offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, NULL);
+        }
         if (offs == -1) {
             trace ("aac stream not found\n");
             return -1;
