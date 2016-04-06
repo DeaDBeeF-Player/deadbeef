@@ -47,6 +47,7 @@
 #include "ddbvolumebar.h"
 #include "callbacks.h"
 #include "drawing.h"
+#include "ddb_splitter.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -94,7 +95,9 @@ typedef struct {
 typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *box;
-    int position;
+    int size_c1;
+    int size_c2;
+    float prop;
     int locked;
 } w_splitter_t;
 
@@ -1170,11 +1173,17 @@ w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
     for (;;) {
         get_keyvalue (s,key,val);
 
-        if (!strcmp (key, "pos")) {
-            ((w_splitter_t *)w)->position = atoi (val);
-        }
-        else if (!strcmp (key, "locked")) {
+        if (!strcmp (key, "locked")) {
             ((w_splitter_t *)w)->locked = atoi (val);
+        }
+        else if (!strcmp (key, "prop")) {
+            ((w_splitter_t *)w)->prop = atof (val);
+        }
+        else if (!strcmp (key, "size_c1")) {
+            ((w_splitter_t *)w)->size_c1 = atoi (val);
+        }
+        else if (!strcmp (key, "size_c2")) {
+            ((w_splitter_t *)w)->size_c2 = atoi (val);
         }
     }
 
@@ -1183,28 +1192,18 @@ w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
 
 void
 w_splitter_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
-    int pos = ((w_splitter_t *)w)->locked ? ((w_splitter_t *)w)->position : gtk_paned_get_position (GTK_PANED(((w_splitter_t *)w)->box));
+    w_splitter_t *sp = (w_splitter_t *)w;
+    int locked = ddb_splitter_get_size_mode (DDB_SPLITTER (sp->box));
+
+    float prop = ddb_splitter_get_proportion (DDB_SPLITTER (sp->box));
     char spos[100];
-    snprintf (spos, sizeof (spos), " pos=%d locked=%d", pos, ((w_splitter_t *)w)->locked);
+    snprintf (spos, sizeof (spos), " locked=%d prop=%f size_c1=%d size_c2=%d", locked, prop, sp->size_c1, sp->size_c2);
     strncat (s, spos, sz);
 }
 
 void
 w_splitter_add (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *child) {
     w_container_add (w, child);
-    if (((w_splitter_t *)w)->locked) {
-        if (child == w->children) {
-            if (GTK_IS_VBOX (((w_splitter_t *)w)->box)) {
-                gtk_widget_set_size_request (child->widget, -1, ((w_splitter_t *)w)->position);
-            }
-            else {
-                gtk_widget_set_size_request (child->widget, ((w_splitter_t *)w)->position, -1);
-            }
-        }
-    }
-    else {
-        gtk_paned_set_position (GTK_PANED(((w_splitter_t *)w)->box), ((w_splitter_t *)w)->position);
-    }
 }
 
 GtkWidget *
@@ -1213,89 +1212,82 @@ w_splitter_get_container (struct ddb_gtkui_widget_s *b) {
 }
 
 void
-w_splitter_lock (w_splitter_t *w) {
-    // we can't change GtkPaned behavior, so convert to vbox for now
-    if (w->locked) {
-        return;
-    }
-    w->locked = 1;
-
-    int vert = w->base.type == "vsplitter";
-
-    GtkAllocation a;
-    gtk_widget_get_allocation (w->base.widget, &a);
-
-    GtkWidget *box = vert ? gtk_vbox_new (FALSE, 3) : gtk_hbox_new (FALSE, 3);
-    gtk_widget_show (box);
-
-    w->position = gtk_paned_get_position (GTK_PANED (w->box));
-
-    GtkWidget *c1 = gtk_paned_get_child1 (GTK_PANED (w->box));
-    g_object_ref (c1);
-    GtkWidget *c2 = gtk_paned_get_child2 (GTK_PANED (w->box));
-    g_object_ref (c2);
-    gtk_container_remove (GTK_CONTAINER (w->box), c1);
-    gtk_container_remove (GTK_CONTAINER (w->box), c2);
-
-    gtk_box_pack_start (GTK_BOX (box), c1, FALSE, FALSE, 0);
-    gtk_widget_set_size_request (c1, vert ? -1 : w->position, vert ? w->position : -1);
-    gtk_box_pack_end (GTK_BOX (box), c2, TRUE, TRUE, 0);
-
-    gtk_container_remove (GTK_CONTAINER (w->base.widget), w->box);
-    gtk_container_add (GTK_CONTAINER (w->base.widget), box);
-    w->box = box;
-}
-
-void
-w_splitter_unlock (w_splitter_t *w) {
-    if (!w->locked) {
-        return;
-    }
-    w->locked = 0;
-
-    int vert = w->base.type == "vsplitter";
-    // convert back to vpaned
-    GtkWidget *paned = vert ? gtk_vpaned_new () : gtk_hpaned_new ();
-    gtk_widget_set_can_focus (paned, FALSE);
-    gtk_widget_show (paned);
-
-    GList *lst = gtk_container_get_children (GTK_CONTAINER (w->box));
-
-    GtkWidget *c1 = lst->data;
-    g_object_ref (c1);
-    GtkWidget *c2 = lst->next->data;
-    g_object_ref (c2);
-    gtk_container_remove (GTK_CONTAINER (w->box), c1);
-    gtk_container_remove (GTK_CONTAINER (w->box), c2);
-
-    gtk_container_add (GTK_CONTAINER (paned), c1);
-    gtk_container_add (GTK_CONTAINER (paned), c2);
-    gtk_paned_set_position (GTK_PANED (paned), w->position);
-
-    gtk_container_remove (GTK_CONTAINER (w->base.widget), w->box);
-    gtk_container_add (GTK_CONTAINER (w->base.widget), paned);
-    w->box = paned;
-}
-
-void
-on_splitter_lock_movement_toggled (GtkCheckMenuItem *checkmenuitem, gpointer          user_data) {
+on_splitter_lock_c1_toggled (GtkCheckMenuItem *checkmenuitem, gpointer user_data) {
+    w_splitter_t *sp = (w_splitter_t *)user_data;
     if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem))) {
-        w_splitter_lock (user_data);
+        sp->locked = DDB_SPLITTER_SIZE_MODE_LOCK_C1;
+        sp->size_c1 = ddb_splitter_get_child1_size (DDB_SPLITTER (sp->box));
+        ddb_splitter_set_size_mode (DDB_SPLITTER (sp->box), DDB_SPLITTER_SIZE_MODE_LOCK_C1);
     }
-    else {
-        w_splitter_unlock (user_data);
+}
+
+void
+on_splitter_lock_c2_toggled (GtkCheckMenuItem *checkmenuitem, gpointer user_data) {
+    w_splitter_t *sp = (w_splitter_t *)user_data;
+    if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem))) {
+        sp->locked = DDB_SPLITTER_SIZE_MODE_LOCK_C2;
+        sp->size_c2 = ddb_splitter_get_child2_size (DDB_SPLITTER (sp->box));
+        ddb_splitter_set_size_mode (DDB_SPLITTER (sp->box), DDB_SPLITTER_SIZE_MODE_LOCK_C2);
+    }
+}
+
+void
+on_splitter_lock_prop_toggled (GtkCheckMenuItem *checkmenuitem, gpointer user_data) {
+    w_splitter_t *sp = (w_splitter_t *)user_data;
+    if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem))) {
+        sp->locked = DDB_SPLITTER_SIZE_MODE_PROP;
+        ddb_splitter_set_size_mode (DDB_SPLITTER (sp->box), DDB_SPLITTER_SIZE_MODE_PROP);
     }
 }
 
 void
 w_splitter_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
-    GtkWidget *item;
-    item = gtk_check_menu_item_new_with_mnemonic (_("Lock Movement"));
+    w_splitter_t *sp = (w_splitter_t *)w;
+    GtkOrientation orientation = ddb_splitter_get_orientation (DDB_SPLITTER (sp->box));
+
+    GSList *group = NULL;
+
+    GtkWidget *item = gtk_radio_menu_item_new_with_mnemonic (group, _("Proportional Sizing"));
+    group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (item));
     gtk_widget_show (item);
-    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), ((w_splitter_t *)w)->locked);
+    if (sp->locked == DDB_SPLITTER_SIZE_MODE_PROP) {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), TRUE);
+    }
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) item, "toggled",
-            G_CALLBACK (on_splitter_lock_movement_toggled),
+            G_CALLBACK (on_splitter_lock_prop_toggled),
+            w);
+
+    if (orientation == GTK_ORIENTATION_VERTICAL) {
+        item = gtk_radio_menu_item_new_with_mnemonic (group, _("Lock Top Pane Height"));
+    }
+    else {
+        item = gtk_radio_menu_item_new_with_mnemonic (group, _("Lock Left Pane Width"));
+    }
+    group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (item));
+    gtk_widget_show (item);
+    if (sp->locked == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), TRUE);
+    }
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (on_splitter_lock_c1_toggled),
+            w);
+
+    if (orientation == GTK_ORIENTATION_VERTICAL) {
+        item = gtk_radio_menu_item_new_with_mnemonic (group, _("Lock Bottom Pane Height"));
+    }
+    else {
+        item = gtk_radio_menu_item_new_with_mnemonic (group, _("Lock Right Pane Width"));
+    }
+    group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (item));
+    gtk_widget_show (item);
+    if (sp->locked == DDB_SPLITTER_SIZE_MODE_LOCK_C2) {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), TRUE);
+    }
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (on_splitter_lock_c2_toggled),
             w);
 }
 
@@ -1317,21 +1309,11 @@ w_splitter_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtk
             w_destroy (child);
             GtkWidget *container = ((w_splitter_t *)cont)->box;
             gtk_widget_show (newchild->widget);
-            if (((w_splitter_t *)cont)->locked) {
-                if (ntab == 0) {
-                    gtk_box_pack_start (GTK_BOX (container), newchild->widget, TRUE, TRUE, 0);
-                }
-                else {
-                    gtk_box_pack_end (GTK_BOX (container), newchild->widget, TRUE, TRUE, 0);
-                }
+            if (ntab == 0) {
+                ddb_splitter_add_child_at_pos (DDB_SPLITTER (container), newchild->widget, 0);
             }
             else {
-                if (ntab == 0) {
-                    gtk_paned_add1 (GTK_PANED (container), newchild->widget);
-                }
-                else {
-                    gtk_paned_add2 (GTK_PANED (container), newchild->widget);
-                }
+                ddb_splitter_add_child_at_pos (DDB_SPLITTER (container), newchild->widget, 1);
             }
             break;
         }
@@ -1349,27 +1331,14 @@ w_splitter_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
 void
 w_vsplitter_init (ddb_gtkui_widget_t *base) {
     w_splitter_t *w = (w_splitter_t *)base;
-    int pos = ((w_splitter_t *)w)->position; // prevent lock/unlock from overwriting position
-    if (w->locked && !GTK_IS_BOX(w->box)) {
-        w->locked = 0;
-        w_splitter_lock (w);
+
+    ddb_splitter_set_proportion (DDB_SPLITTER (w->box), w->prop);
+    ddb_splitter_set_size_mode (DDB_SPLITTER (w->box), w->locked);
+    if (w->locked == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
+        ddb_splitter_set_child1_size (DDB_SPLITTER (w->box), w->size_c1);
     }
-    if (!w->locked && GTK_IS_BOX(w->box)) {
-        w->locked = 1;
-        w_splitter_unlock (w);
-    }
-    if (pos == -1) {
-        GtkAllocation a;
-        gtk_widget_get_allocation (w->base.widget, &a);
-        pos = a.height/2;
-    }
-    w->position = pos;
-    if (!w->locked) {
-        gtk_widget_set_size_request (w->base.children->widget, -1, -1);
-        gtk_paned_set_position (GTK_PANED(w->box), pos);
-    }
-    else {
-        gtk_widget_set_size_request (w->base.children->widget, -1, w->position);
+    else if (w->locked == DDB_SPLITTER_SIZE_MODE_LOCK_C2) {
+        ddb_splitter_set_child2_size (DDB_SPLITTER (w->box), w->size_c2);
     }
 }
 
@@ -1377,7 +1346,8 @@ ddb_gtkui_widget_t *
 w_vsplitter_create (void) {
     w_splitter_t *w = malloc (sizeof (w_splitter_t));
     memset (w, 0, sizeof (w_splitter_t));
-    w->position = -1;
+    w->prop = 0.5f;
+    w->locked = DDB_SPLITTER_SIZE_MODE_PROP;
     w->base.append = w_splitter_add;
     w->base.remove = w_splitter_remove;
     w->base.replace = w_splitter_replace;
@@ -1388,7 +1358,7 @@ w_vsplitter_create (void) {
     w->base.initmenu = w_splitter_initmenu;
 
     w->base.widget = gtk_event_box_new ();
-    w->box = gtk_vpaned_new ();
+    w->box = ddb_splitter_new (GTK_ORIENTATION_VERTICAL);
     gtk_widget_show (w->box);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
     w_override_signals (w->base.widget, w);
@@ -1407,27 +1377,14 @@ w_vsplitter_create (void) {
 void
 w_hsplitter_init (ddb_gtkui_widget_t *base) {
     w_splitter_t *w = (w_splitter_t *)base;
-    int pos = ((w_splitter_t *)w)->position; // prevent lock/unlock from overwriting position
-    if (w->locked && !GTK_IS_BOX(w->box)) {
-        w->locked = 0;
-        w_splitter_lock (w);
+
+    ddb_splitter_set_proportion (DDB_SPLITTER (w->box), w->prop);
+    ddb_splitter_set_size_mode (DDB_SPLITTER (w->box), w->locked);
+    if (w->locked == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
+        ddb_splitter_set_child1_size (DDB_SPLITTER (w->box), w->size_c1);
     }
-    else if (!w->locked && GTK_IS_BOX(w->box)) {
-        w->locked = 1;
-        w_splitter_unlock (w);
-    }
-    if (pos == -1) {
-        GtkAllocation a;
-        gtk_widget_get_allocation (w->base.widget, &a);
-        pos = a.width/2;
-    }
-    w->position = pos;
-    if (!w->locked) {
-        gtk_widget_set_size_request (w->base.children->widget, -1, -1);
-        gtk_paned_set_position (GTK_PANED(w->box), pos);
-    }
-    else {
-        gtk_widget_set_size_request (w->base.children->widget, w->position, -1);
+    else if (w->locked == DDB_SPLITTER_SIZE_MODE_LOCK_C2) {
+        ddb_splitter_set_child2_size (DDB_SPLITTER (w->box), w->size_c2);
     }
 }
 
@@ -1435,7 +1392,8 @@ ddb_gtkui_widget_t *
 w_hsplitter_create (void) {
     w_splitter_t *w = malloc (sizeof (w_splitter_t));
     memset (w, 0, sizeof (w_splitter_t));
-    w->position = -1;
+    w->prop = 0.5f;
+    w->locked = DDB_SPLITTER_SIZE_MODE_PROP;
     w->base.append = w_splitter_add;
     w->base.remove = w_splitter_remove;
     w->base.replace = w_splitter_replace;
@@ -1446,7 +1404,7 @@ w_hsplitter_create (void) {
     w->base.initmenu = w_splitter_initmenu;
 
     w->base.widget = gtk_event_box_new ();
-    w->box = gtk_hpaned_new ();
+    w->box = ddb_splitter_new (GTK_ORIENTATION_HORIZONTAL);
     gtk_widget_show (w->box);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
     w_override_signals (w->base.widget, w);
