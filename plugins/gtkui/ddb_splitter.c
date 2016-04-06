@@ -824,6 +824,8 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
     DdbSplitter *splitter = DDB_SPLITTER (widget);
     GtkWidget *c1 = splitter->priv->child1;
     GtkWidget *c2 = splitter->priv->child2;
+
+    gfloat old_proportion = splitter->priv->proportion;
     // TODO: consider border width
     gint border_width = 0;
     gtk_widget_set_allocation (widget, allocation);
@@ -1037,6 +1039,11 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
         }
     }
 
+    g_object_freeze_notify (G_OBJECT (splitter));
+    if (splitter->priv->proportion != old_proportion) {
+        g_object_notify (G_OBJECT (splitter), "proportion");
+    }
+    g_object_thaw_notify (G_OBJECT (splitter));
 }
 
 static void
