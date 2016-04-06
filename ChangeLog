@@ -2,7 +2,7 @@ version 0.7.2
 	fixed title formatting %filename% crash
 	fixed streaming of aac content in mp4 container
 	added https:// support to vfs_curl (Viktor Semykin)
-	added zh_TW translation to deadbeef.desktop
+	added zh_TW translation to deadbeef.desktop (laichiaheng)
 	fixed loading cue sheets without any metadata fields
 	fixed file close bug in VTX plugin
 	fixed evaluating nested square brackets syntax in title formatting
