@@ -693,7 +693,8 @@ ddb_splitter_size_request (GtkWidget      *widget,
 {
     DdbSplitter *splitter = DDB_SPLITTER (widget);
 
-    gint border_width = 0;
+    gint border_width = gtk_container_get_border_width (GTK_CONTAINER (splitter));
+
     GtkRequisition req_c1;
     req_c1.width = 0;
     req_c1.height = 0;
@@ -826,8 +827,8 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
     GtkWidget *c2 = splitter->priv->child2;
 
     gfloat old_proportion = splitter->priv->proportion;
-    // TODO: consider border width
-    gint border_width = 0;
+
+    gint border_width = gtk_container_get_border_width (GTK_CONTAINER (splitter));
     gtk_widget_set_allocation (widget, allocation);
 
     gboolean child1_visible = c1 && gtk_widget_get_visible (c1) ? TRUE : FALSE;
@@ -868,7 +869,7 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
                 }
             }
             child1_allocation.width = MAX (1, width);
-            child1_allocation.x =allocation->x + border_width;
+            child1_allocation.x = allocation->x + border_width;
             child1_allocation.y = allocation->y + border_width;
 
 
