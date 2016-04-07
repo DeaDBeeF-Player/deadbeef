@@ -17,6 +17,7 @@ version 0.7.2
 	fixed handling of ':' in file path in vfs_zip plugin
 	fixed old ffmpeg versions support
 	fixed wma decoder loudness issue
+	fixed DCA buffer allocation, to make it more musl-friendly
 
 version 0.7.1
 	fixed GTKUI maximized window layout saving/restoring
