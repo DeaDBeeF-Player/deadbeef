@@ -30,8 +30,8 @@
 #include "types.h"
 #include "mdct.h"
 
-#define PRECISION       15
-#define PRECISION64     15
+#define PRECISION       16
+#define PRECISION64     16
 
 
 #define fixtof64(x)       (float)((float)(x) / (float)(1 << PRECISION64))        //does not work on int64_t!
