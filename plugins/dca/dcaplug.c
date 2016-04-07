@@ -85,7 +85,8 @@ typedef struct {
     int disable_adjust;// = 0;
     float gain;// = 1;
     int disable_dynrng;// = 0;
-    uint8_t buf[BUFFER_SIZE];
+    uint8_t inbuf[BUFFER_SIZE]; // input data buffer
+    uint8_t buf[BUFFER_SIZE]; // decoder data buffer (inbuf gets appended here)
     uint8_t * bufptr;// = buf;
     uint8_t * bufpos;// = buf + HEADER_SIZE;
     int sample_rate;
@@ -93,7 +94,7 @@ typedef struct {
     int flags;
     int bit_rate;
     int frame_byte_size;
-    int16_t output_buffer[OUT_BUFFER_SIZE*6];
+    int16_t output_buffer[OUT_BUFFER_SIZE*6]; // output samples
     int remaining;
     int skipsamples;
 } ddb_dca_state_t;
@@ -251,6 +252,7 @@ dca_decode_data (ddb_dca_state_t *ddb_state, uint8_t * start, int size, int prob
         len = end - start;
         if (!len)
             break;
+
         if (len > ddb_state->bufpos - ddb_state->bufptr)
             len = ddb_state->bufpos - ddb_state->bufptr;
         memcpy (ddb_state->bufptr, start, len);
@@ -395,10 +397,7 @@ dts_open_wav (DB_FILE *fp, wavfmt_t *fmt, int64_t *totalsamples) {
 
 static DB_fileinfo_t *
 dts_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (ddb_dca_state_t));
-    ddb_dca_state_t *info = (ddb_dca_state_t *)_info;
-    memset (info, 0, sizeof (ddb_dca_state_t));
-    return _info;
+    return calloc (1, sizeof (ddb_dca_state_t));
 }
 
 static int
@@ -439,9 +438,8 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     // prebuffer 1st piece, and get decoded samplerate and nchannels
-    uint8_t buffer[BUFFER_SIZE];
-    size_t rd = deadbeef->fread (buffer, 1, sizeof (buffer), info->file);
-    int len = dca_decode_data (info, buffer, rd, 1);
+    size_t rd = deadbeef->fread (info->inbuf, 1, BUFFER_SIZE, info->file);
+    int len = dca_decode_data (info, info->inbuf, rd, 1);
     if (!len) {
         trace ("dca: probe failed\n");
         return -1;
@@ -585,9 +583,8 @@ dts_read (DB_fileinfo_t *_info, char *bytes, int size) {
 //            trace ("dca: write %d samples\n", n);
         }
         if (size > 0 && !info->remaining) {
-            uint8_t buffer[BUFFER_SIZE];
-            size_t rd = deadbeef->fread (buffer, 1, sizeof (buffer), info->file);
-            int nsamples = dca_decode_data (info, buffer, rd, 0);
+            size_t rd = deadbeef->fread (info->inbuf, 1, BUFFER_SIZE, info->file);
+            int nsamples = dca_decode_data (info, info->inbuf, rd, 0);
             if (!nsamples) {
                 break;
             }
@@ -625,6 +622,7 @@ dts_seek (DB_fileinfo_t *_info, float time) {
 
 static DB_playItem_t *
 dts_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
+    ddb_dca_state_t *state = NULL;
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         trace ("dca: failed to open %s\n", fname);
@@ -652,26 +650,30 @@ dts_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         //goto error;
     }
 
-
-    // try to decode piece of file -- that seems to be the only way to check
-    // it's dts
-    uint8_t buffer[BUFFER_SIZE];
-    size_t size = deadbeef->fread (buffer, 1, sizeof (buffer), fp);
-    trace ("got size: %d (requested %d)\n", size, sizeof (buffer));
-    ddb_dca_state_t state;
-    memset (&state, 0, sizeof (state));
-    state.state = dca_init (0);
-    if (!state.state) {
+    state = calloc (1, sizeof (ddb_dca_state_t));
+    if (!state) {
+        goto error;
+    }
+    state->state = dca_init (0);
+    if (!state->state) {
         trace ("dca_init failed\n");
         goto error;
     }
-    state.gain = 1;
-    state.bufptr = state.buf;
-    state.bufpos = state.buf + HEADER_SIZE;
 
-    int len = dca_decode_data (&state, buffer, size, 1);
+    // try to decode piece of file -- that seems to be the only way to check
+    // it's dts
+    size_t size = deadbeef->fread (state->inbuf, 1, BUFFER_SIZE, fp);
+    trace ("got size: %d (requested %d)\n", size, BUFFER_SIZE);
+    state->gain = 1;
+    state->bufptr = state->buf;
+    state->bufpos = state->buf + HEADER_SIZE;
 
-    dca_free (state.state);
+    int len = dca_decode_data (state, state->inbuf, size, 1);
+
+    dca_free (state->state);
+    free (state);
+    state = NULL;
+
     if (!len) {
         trace ("dca: doesn't seem to be a DTS stream\n");
         goto error;
@@ -680,8 +682,8 @@ dts_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     // calculate duration
     if (dur < 0) {
-        totalsamples = fsize / len * state.frame_length;
-        dur = (float)totalsamples / state.sample_rate;
+        totalsamples = fsize / len * state->frame_length;
+        dur = (float)totalsamples / state->sample_rate;
     }
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
@@ -692,7 +694,7 @@ dts_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     // embedded cue
     DB_playItem_t *cue = NULL;
-    cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, state.sample_rate);
+    cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, state->sample_rate);
     if (cue) {
         deadbeef->pl_item_unref (it);
         deadbeef->pl_item_unref (cue);
@@ -705,6 +707,9 @@ dts_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     return after;
 error:
+    if (state) {
+        free (state);
+    }
     if (fp) {
         deadbeef->fclose (fp);
     }
