@@ -36,6 +36,6 @@ The following instructions assume that commands are executed in deadbeef reposit
 
 ----
 
-[![Support via Gittip](https://rawgithub.com/twolfson/gittip-badge/0.1.0/dist/gittip.png)](https://www.gittip.com/Alexey-Yakovenko/)
+[![Support via Gratipay](https://cdn.rawgit.com/gratipay/gratipay-badge/2.3.0/dist/gratipay.png)](https://gratipay.com/deadbeef/)
 
 [More ways to support](http://deadbeef.sourceforge.net/support.html)
