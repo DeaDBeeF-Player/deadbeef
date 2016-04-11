@@ -81,6 +81,12 @@ static ddb_dsp_context_t *eq;
 
 static int dsp_on = 0;
 
+static char *dsp_input_buffer;
+static int dsp_input_buffer_size;
+
+static char *dsp_temp_buffer;
+static int dsp_temp_buffer_size;
+
 static int autoconv_8_to_16 = 1;
 
 static int autoconv_16_to_24 = 0;
@@ -1556,6 +1562,9 @@ streamer_set_dsp_chain_real (ddb_dsp_context_t *chain);
 static void
 streamer_notify_order_changed_real (int prev_order, int new_order);
 
+static void
+free_dsp_buffers (void);
+
 void
 streamer_thread (void *ctx) {
 #ifdef __linux__
@@ -2243,6 +2252,8 @@ streamer_free (void) {
     streamer_dsp_chain_free (dsp_chain);
     dsp_chain = NULL;
 
+    free_dsp_buffers ();
+
     eqplug = NULL;
     eq = NULL;
 
@@ -2305,6 +2316,45 @@ streamer_set_output_format (void) {
     return 0;
 }
 
+static char *
+ensure_dsp_input_buffer (int size) {
+    if (!size) {
+        if (dsp_input_buffer) {
+            free (dsp_input_buffer);
+            dsp_input_buffer = NULL;
+        }
+        return 0;
+    }
+    if (size != dsp_input_buffer_size) {
+        dsp_input_buffer = realloc (dsp_input_buffer, size);
+        dsp_input_buffer_size = size;
+    }
+    return dsp_input_buffer;
+}
+
+
+static char *
+ensure_dsp_temp_buffer (int size) {
+    if (!size) {
+        if (dsp_temp_buffer) {
+            free (dsp_temp_buffer);
+            dsp_temp_buffer = NULL;
+        }
+        return NULL;
+    }
+    if (size != dsp_temp_buffer_size) {
+        dsp_temp_buffer = realloc (dsp_temp_buffer, size);
+        dsp_temp_buffer_size = size;
+    }
+    return dsp_temp_buffer;
+}
+
+static void
+free_dsp_buffers (void) {
+    ensure_dsp_input_buffer (0);
+    ensure_dsp_temp_buffer (0);
+}
+
 // decodes data and converts to current output format
 // returns number of bytes been read
 static int
@@ -2361,10 +2411,8 @@ streamer_read_async (char *bytes, int size) {
             int dspsamplesize = fileinfo->fmt.channels * sizeof (float);
             int dsp_num_frames = size / (output->fmt.channels * output->fmt.bps / 8);
 
-            char outbuf[dsp_num_frames * dspsamplesize];
-
             int inputsize = dsp_num_frames * inputsamplesize;
-            char input[inputsize];
+            char *input = ensure_dsp_input_buffer (inputsize);
 
             // decode pcm
             int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
@@ -2375,14 +2423,15 @@ streamer_read_async (char *bytes, int size) {
 
             if (inputsize > 0) {
                 // make *MAX_DSP_RATIO sized buffer for float data
-                char tempbuf[inputsize/inputsamplesize * dspsamplesize * MAX_DSP_RATIO];
+                int tempbuf_size = inputsize/inputsamplesize * dspsamplesize * MAX_DSP_RATIO;
+                char *tempbuf = ensure_dsp_temp_buffer (tempbuf_size);
 
                 // convert to float
                 int tempsize = pcm_convert (&fileinfo->fmt, input, &dspfmt, tempbuf, inputsize);
                 int nframes = inputsize / inputsamplesize;
                 ddb_dsp_context_t *dsp = dsp_chain;
                 float ratio = 1.f;
-                int maxframes = sizeof (tempbuf) / dspsamplesize;
+                int maxframes = tempbuf_size / dspsamplesize;
                 while (dsp) {
                     if (dsp->enabled) {
                         float r = 1;
