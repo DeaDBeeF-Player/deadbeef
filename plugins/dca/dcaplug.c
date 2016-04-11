@@ -670,21 +670,24 @@ dts_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     int len = dca_decode_data (state, state->inbuf, size, 1);
 
-    dca_free (state->state);
-    free (state);
-    state = NULL;
-
     if (!len) {
         trace ("dca: doesn't seem to be a DTS stream\n");
         goto error;
     }
-    trace ("dca stream info: len=%d, samplerate=%d, bitrate=%d, framelength=%d\n", len, state.sample_rate, state.bit_rate, state.frame_length);
+    trace ("dca stream info: len=%d, samplerate=%d, bitrate=%d, framelength=%d\n", len, state->sample_rate, state->bit_rate, state->frame_length);
+
+    dca_free (state->state);
+
+    int samplerate = state->sample_rate;
 
     // calculate duration
     if (dur < 0) {
         totalsamples = fsize / len * state->frame_length;
         dur = (float)totalsamples / state->sample_rate;
     }
+
+    free (state);
+    state = NULL;
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     deadbeef->pl_add_meta (it, ":FILETYPE", filetype);
@@ -694,7 +697,7 @@ dts_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     // embedded cue
     DB_playItem_t *cue = NULL;
-    cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, state->sample_rate);
+    cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
     if (cue) {
         deadbeef->pl_item_unref (it);
         deadbeef->pl_item_unref (cue);
