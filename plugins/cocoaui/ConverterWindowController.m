@@ -26,7 +26,7 @@
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
-static NSString *default_format = @"%artist% - %title%";
+static NSString *default_format = @"[%tracknumber%. ]%artist% - %title%";
 
 @interface ConverterWindowController () {
     ddb_converter_t *_converter_plugin;
