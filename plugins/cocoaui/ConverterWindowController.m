@@ -709,9 +709,19 @@ static NSMutableArray *g_converterControllers;
             if (paths_match) {
                 fprintf (stderr, "converter: destination file is the same as source file, skipping\n");
             }
-            else if (_overwrite_action == 2 || (_overwrite_action == 1 && [self overwritePrompt:[NSString stringWithUTF8String:outpath]])) {
+            else if (_overwrite_action == 2) {
                 unlink (outpath);
                 skip = 0;
+            }
+            else {
+                NSInteger result = [self overwritePrompt:[NSString stringWithUTF8String:outpath]];
+                if (result == NSAlertSecondButtonReturn) {
+                    unlink (outpath);
+                    skip = 0;
+                }
+                else if (result == NSAlertThirdButtonReturn) {
+                    _cancelled = YES;
+                }
             }
         }
 
@@ -732,12 +742,13 @@ static NSMutableArray *g_converterControllers;
     _working = NO;
 }
 
-- (BOOL)overwritePrompt:(NSString *)path {
+- (NSInteger)overwritePrompt:(NSString *)path {
     _overwritePromptCondition = [[NSCondition alloc] init];
     dispatch_sync(dispatch_get_main_queue(), ^{
         NSAlert *alert = [[NSAlert alloc] init];
-        [alert addButtonWithTitle:@"Yes"];
         [alert addButtonWithTitle:@"No"];
+        [alert addButtonWithTitle:@"Yes"];
+        [alert addButtonWithTitle:@"Cancel"];
         [alert setMessageText:@"The file already exists. Overwrite?"];
         [alert setInformativeText:path];
         [alert setAlertStyle:NSCriticalAlertStyle];
@@ -749,7 +760,7 @@ static NSMutableArray *g_converterControllers;
     [_overwritePromptCondition wait];
     [_overwritePromptCondition unlock];
     _overwritePromptCondition = nil;
-    return _overwritePromptResult == NSAlertFirstButtonReturn;
+    return _overwritePromptResult;
 }
 
 - (void)alertDidEndOverwritePrompt:(NSAlert *)alert returnCode:(NSInteger)returnCode
