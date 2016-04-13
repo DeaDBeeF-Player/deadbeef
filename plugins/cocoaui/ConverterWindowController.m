@@ -48,10 +48,17 @@ static NSString *default_format = @"[%tracknumber%. ]%artist% - %title%";
     ddb_dsp_preset_t *_dsp_preset;
     int _cancelled;
     NSInteger _overwritePromptResult;
+    BOOL _working;
 }
 @end
 
+static NSMutableArray *g_converterControllers;
+
 @implementation ConverterWindowController
+
+- (void)dealloc {
+    [self reset];
+}
 
 - (NSString *)encoderPresetTitleForPreset:(ddb_encoder_preset_t *)thePreset {
     NSString *title = [NSString stringWithUTF8String:thePreset->title];
@@ -186,6 +193,7 @@ static NSString *default_format = @"[%tracknumber%. ]%artist% - %title%";
     [_encoderPresetsTableView setDataSource:(id<NSTableViewDataSource>)self];
     [_encoderPresetsTableView setDelegate:(id<NSTableViewDelegate>)self];
     [self initializeWidgets];
+    [self.window setDelegate:(id<NSWindowDelegate>)self];
 }
 
 - (IBAction)progressCancelAction:(id)sender {
@@ -300,8 +308,20 @@ static NSString *default_format = @"[%tracknumber%. ]%artist% - %title%";
 }
 
 
+- (void)converterFinished:(id)instance withResult:(int)result {
+    if (g_converterControllers) {
+        [g_converterControllers removeObject:instance];
+    }
+}
+
 - (IBAction)cancelAction:(id)sender {
     [[self window] close];
+}
+
+- (void)windowWillClose:(NSNotification *)notification {
+    if (!_working) {
+        [self converterFinished:self withResult:0];
+    }
 }
 
 - (IBAction)openOutputFolderAction:(id)sender {
@@ -613,6 +633,7 @@ static NSString *default_format = @"[%tracknumber%. ]%artist% - %title%";
     [[self window] setIsVisible:NO];
     [_progressPanel setIsVisible:YES];
 
+    _working = YES;
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
         [self converterWorker];
@@ -698,11 +719,12 @@ static NSString *default_format = @"[%tracknumber%. ]%artist% - %title%";
     }
     dispatch_async(dispatch_get_main_queue(), ^{
         [_progressPanel close];
+        [self converterFinished:self withResult:1];
     });
 
-    [self reset];
-
     deadbeef->background_job_decrement ();
+
+    _working = NO;
 }
 
 - (BOOL)overwritePrompt:(NSString *)path {
@@ -732,6 +754,20 @@ static NSString *default_format = @"[%tracknumber%. ]%artist% - %title%";
     _overwritePromptResult = returnCode;
     [_overwritePromptCondition signal];
     [_overwritePromptCondition unlock];
+}
+
++ (void)runConverter:(int)ctx {
+    ConverterWindowController *conv = [[ConverterWindowController alloc] initWithWindowNibName:@"Converter"];
+
+    if (!g_converterControllers) {
+        g_converterControllers = [[NSMutableArray alloc] init];
+    }
+    [g_converterControllers addObject:conv];
+    [conv run:DDB_ACTION_CTX_SELECTION];
+}
+
++ (void)converterCleanup {
+    g_converterControllers = nil;
 }
 
 @end

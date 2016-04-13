@@ -161,6 +161,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
         return NSTerminateNow;
     }
 
+    [ConverterWindowController converterCleanup];
     [_mainWindow close];
     [_searchWindow close];
 

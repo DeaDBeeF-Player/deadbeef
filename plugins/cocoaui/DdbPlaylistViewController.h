@@ -51,7 +51,6 @@ typedef struct {
     NSDictionary *_cellSelectedTextAttrsDictionary;
     NSDictionary *_groupTextAttrsDictionary;
     TrackPropertiesWindowController *_trkProperties;
-    ConverterWindowController *_converter;
 }
 
 - (void)initContent;

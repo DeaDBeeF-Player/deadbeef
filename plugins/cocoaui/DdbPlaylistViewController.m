@@ -24,11 +24,15 @@
 #import "DdbPlaylistViewController.h"
 #import "DdbPlaylistWidget.h"
 #import "DdbListview.h"
+#import "ConverterWindowController.h"
 #include "../../deadbeef.h"
 
 #define CELL_HPADDING 4
 
 extern DB_functions_t *deadbeef;
+
+@interface DdbPlaylistViewController()
+@end
 
 @implementation DdbPlaylistViewController
 
@@ -936,10 +940,7 @@ static char *group_bytecode = NULL;
 }
 
 - (void)convertSelection {
-    if (!_converter) {
-        _converter = [[ConverterWindowController alloc] initWithWindowNibName:@"Converter"];
-    }
-    [_converter run:DDB_ACTION_CTX_SELECTION];
+    [ConverterWindowController runConverter:DDB_ACTION_CTX_SELECTION];
 }
 
 - (void)trackProperties {

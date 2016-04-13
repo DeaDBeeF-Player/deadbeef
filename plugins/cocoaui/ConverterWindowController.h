@@ -23,7 +23,13 @@
 
 #import <Cocoa/Cocoa.h>
 
+@protocol ConverterWindowDelegate
+- (void)converterFinished:(id)instance withResult:(int)result;
+@end
+
+
 @interface ConverterWindowController : NSWindowController
+
 @property (unsafe_unretained) IBOutlet NSTextField *outputFolder;
 @property (unsafe_unretained) IBOutlet NSButton *writeToSourceFolder;
 @property (unsafe_unretained) IBOutlet NSButton *preserveFolderStructure;
@@ -35,6 +41,9 @@
 @property (unsafe_unretained) IBOutlet NSPopUpButton *fileExistsAction;
 - (IBAction)cancelAction:(id)sender;
 - (IBAction)okAction:(id)sender;
+
+- (IBAction)close:(id)sender;
+
 - (IBAction)openOutputFolderAction:(id)sender;
 - (IBAction)editEncoderPresetsAction:(id)sender;
 - (IBAction)editDSPPresetsAction:(id)sender;
@@ -85,5 +94,9 @@
 
 // ctx is one of the DDB_ACTION_CTX_ constants
 - (void)run:(int)ctx;
+
++ (void)runConverter:(int)ctx;
+
++ (void)converterCleanup;
 
 @end
