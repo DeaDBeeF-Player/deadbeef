@@ -161,6 +161,18 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
         return NSTerminateNow;
     }
 
+    if (deadbeef->have_background_jobs ()) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setMessageText:@"Do you really want to quit now?"];
+        [alert setInformativeText:@"DeaDBeeF is currently running background tasks. If you quit now, the tasks will be cancelled or interrupted. This may result in data loss."];
+        [alert addButtonWithTitle:@"No"];
+        [alert addButtonWithTitle:@"Yes"];
+        NSModalResponse res = [alert runModal];
+        if (res == NSAlertFirstButtonReturn) {
+            return NSTerminateCancel;
+        }
+    }
+
     [ConverterWindowController converterCleanup];
     [_mainWindow close];
     [_searchWindow close];
