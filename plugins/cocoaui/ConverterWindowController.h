@@ -89,6 +89,9 @@
 
 @property (strong) IBOutlet NSPanel *progressPanel;
 @property (unsafe_unretained) IBOutlet NSTextField *progressText;
+@property (unsafe_unretained) IBOutlet NSTextField *progressOutText;
+@property (unsafe_unretained) IBOutlet NSTextField *progressNumeric;
+
 @property (unsafe_unretained) IBOutlet NSProgressIndicator *progressBar;
 - (IBAction)progressCancelAction:(id)sender;
 

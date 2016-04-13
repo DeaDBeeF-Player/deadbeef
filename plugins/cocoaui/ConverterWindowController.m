@@ -96,11 +96,6 @@ static NSMutableArray *g_converterControllers;
 
     [_outputFormat selectItemAtIndex:deadbeef->conf_get_int ("converter.output_format", 0)];
     [_fileExistsAction selectItemAtIndex:deadbeef->conf_get_int ("converter.overwrite_action", 0)];
-
-    [_progressText setStringValue:@""];
-    [_progressBar setMinValue:0];
-    [_progressBar setMaxValue:_convert_items_count-1];
-    [_progressBar setDoubleValue:0];
 }
 
 -(void)fillEncoderPresets {
@@ -631,6 +626,13 @@ static NSMutableArray *g_converterControllers;
 
     _cancelled = NO;
     [[self window] setIsVisible:NO];
+
+    [_progressText setStringValue:@""];
+    [_progressOutText setStringValue:@""];
+    [_progressNumeric setStringValue:@""];
+    [_progressBar setMinValue:0];
+    [_progressBar setMaxValue:_convert_items_count-1];
+    [_progressBar setDoubleValue:0];
     [_progressPanel setIsVisible:YES];
 
     _working = YES;
@@ -683,13 +685,16 @@ static NSMutableArray *g_converterControllers;
         deadbeef->pl_lock ();
         NSString *text = [NSString stringWithUTF8String:deadbeef->pl_find_meta (_convert_items[n], ":URI")];
         deadbeef->pl_unlock ();
+        char outpath[PATH_MAX];
+        _converter_plugin->get_output_path2 (_convert_items[n], _convert_playlist, [_outfolder UTF8String], [_outfile UTF8String], _encoder_preset, _preserve_folder_structure, root, _write_to_source_folder, outpath, sizeof (outpath));
+        NSString *nsoutpath = [NSString stringWithUTF8String:outpath];
+
         dispatch_async(dispatch_get_main_queue(), ^{
             [_progressBar setDoubleValue:n];
             [_progressText setStringValue:text];
+            [_progressOutText setStringValue:nsoutpath];
+            [_progressNumeric setStringValue:[NSString stringWithFormat:@"%d/%d", n+1, _convert_items_count]];
         });
-
-        char outpath[PATH_MAX];
-        _converter_plugin->get_output_path2 (_convert_items[n], _convert_playlist, [_outfolder UTF8String], [_outfile UTF8String], _encoder_preset, _preserve_folder_structure, root, _write_to_source_folder, outpath, sizeof (outpath));
 
         int skip = 0;
         char *real_out = realpath(outpath, NULL);

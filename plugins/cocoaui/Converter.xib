@@ -28,6 +28,8 @@
                 <outlet property="outputFormat" destination="OgZ-be-3hT" id="gQE-bj-SrE"/>
                 <outlet property="preserveFolderStructure" destination="DfS-tp-dx2" id="5cH-Oj-emx"/>
                 <outlet property="progressBar" destination="E0t-9D-FFc" id="XJc-aJ-zxR"/>
+                <outlet property="progressNumeric" destination="U6E-2U-ccr" id="0h2-fC-bKO"/>
+                <outlet property="progressOutText" destination="h3B-7c-fcY" id="QY2-Na-HjT"/>
                 <outlet property="progressPanel" destination="kjC-Z7-bea" id="FFu-UH-FGp"/>
                 <outlet property="progressText" destination="VlD-73-H0N" id="AbD-iO-Okc"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="JY9-kI-KWJ"/>
@@ -357,7 +359,7 @@ Gw
                             <autoresizingMask key="autoresizingMask"/>
                             <animations/>
                         </scroller>
-                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="0.033333333333333333" horizontal="NO" id="6uu-gk-czP">
+                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="6uu-gk-czP">
                             <rect key="frame" x="224" y="17" width="15" height="102"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <animations/>
@@ -1025,15 +1027,15 @@ Gw
         <window title="Converting" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="converterProgress" animationBehavior="default" id="kjC-Z7-bea" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="560" y="411" width="397" height="83"/>
+            <rect key="contentRect" x="560" y="411" width="397" height="104"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
-            <value key="minSize" type="size" width="397" height="83"/>
+            <value key="minSize" type="size" width="397" height="104"/>
             <view key="contentView" id="VZc-ah-5Ea">
-                <rect key="frame" x="0.0" y="5" width="397" height="83"/>
+                <rect key="frame" x="0.0" y="5" width="397" height="104"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="VlD-73-H0N">
-                        <rect key="frame" x="20" y="46" width="333" height="16"/>
+                        <rect key="frame" x="20" y="67" width="333" height="16"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <animations/>
                         <textFieldCell key="cell" lineBreakMode="truncatingHead" allowsUndo="NO" sendsActionOnEndEditing="YES" borderStyle="bezel" usesSingleLineMode="YES" id="sPE-wc-BEH">
@@ -1042,13 +1044,18 @@ Gw
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <progressIndicator maxValue="100" style="bar" id="E0t-9D-FFc">
-                        <rect key="frame" x="20" y="19" width="333" height="20"/>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="h3B-7c-fcY">
+                        <rect key="frame" x="20" y="46" width="333" height="16"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <animations/>
-                    </progressIndicator>
+                        <textFieldCell key="cell" lineBreakMode="truncatingHead" allowsUndo="NO" sendsActionOnEndEditing="YES" borderStyle="bezel" usesSingleLineMode="YES" id="6o0-JX-mfG">
+                            <font key="font" metaFont="miniSystem"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                     <button verticalHuggingPriority="750" id="qVO-uj-Iev">
-                        <rect key="frame" x="361" y="47" width="21" height="15"/>
+                        <rect key="frame" x="361" y="68" width="21" height="15"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                         <animations/>
                         <buttonCell key="cell" type="inline" bezelStyle="inline" image="NSStopProgressTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="otS-rs-cbJ">
@@ -1062,10 +1069,25 @@ Gw
                             <action selector="progressCancelAction:" target="-2" id="peq-TM-Y3r"/>
                         </connections>
                     </button>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="U6E-2U-ccr">
+                        <rect key="frame" x="318" y="21" width="66" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <animations/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="SVe-GJ-rc8">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <progressIndicator wantsLayer="YES" maxValue="100" style="bar" id="E0t-9D-FFc">
+                        <rect key="frame" x="20" y="19" width="292" height="20"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                        <animations/>
+                    </progressIndicator>
                 </subviews>
                 <animations/>
             </view>
-            <point key="canvasLocation" x="273.5" y="534.5"/>
+            <point key="canvasLocation" x="273.5" y="545"/>
         </window>
         <arrayController objectClassName="NSString" editable="NO" id="ItZ-8Q-GON"/>
     </objects>
