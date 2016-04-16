@@ -204,6 +204,60 @@ tf_func_strcmp (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
     return !res;
 }
 
+// $num(n,len) Formats the integer number n in decimal notation with len characters. Pads with zeros
+// from the left if necessary. len includes the dash when the number is negative. If n is not numeric, it is treated as zero.
+int
+tf_func_num (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    const char *arg = args;
+    int bool_out = 0;
+    int len;
+
+    if (argc != 2) {
+        return -1;
+    }
+
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
+    arg += arglens[0];
+    int n = atoi (out);
+
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], out, outlen, fail_on_undef);
+    int n_len = atoi (out);
+
+    if (outlen < 1 || outlen < n_len) {
+        return -1;
+    }
+
+    if (n_len <= 0) {
+        *out = '0';
+        return 1;
+    }
+
+    char *out_w = out;
+    const char digit[] = "0123456789";
+    int is_negative = n < 0;
+    int num_len = floor (log10 (abs (n))) + 1; // how many digits has n
+
+    if (is_negative) {
+        *out_w++ = '-';
+        num_len++;
+        n *= -1;
+    }
+
+    int num_len_plus_padding = num_len;
+    while (num_len_plus_padding < n_len) { // padding required
+        *out_w++ = '0';
+        num_len_plus_padding++;
+    }
+
+    out_w += num_len - is_negative;
+    do {
+        *--out_w = digit[n%10];
+        n /= 10;
+    } while (n);
+
+    return n_len > num_len ? n_len : num_len;
+}
+
 int
 tf_func_abbr (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1 && argc != 2) {
@@ -1326,6 +1380,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "fix_eol", tf_func_fix_eol },
     { "hex", tf_func_hex },
     { "strcmp", tf_func_strcmp },
+    { "num", tf_func_num },
     // Track info
     { "meta", tf_func_meta },
     { "channels", tf_func_channels },
