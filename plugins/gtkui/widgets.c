@@ -1327,9 +1327,8 @@ w_splitter_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
     gtk_container_remove (GTK_CONTAINER (container), child->widget);
 }
 
-////// vsplitter widget
 void
-w_vsplitter_init (ddb_gtkui_widget_t *base) {
+w_splitter_init (ddb_gtkui_widget_t *base) {
     w_splitter_t *w = (w_splitter_t *)base;
 
     ddb_splitter_set_proportion (DDB_SPLITTER (w->box), w->prop);
@@ -1342,6 +1341,7 @@ w_vsplitter_init (ddb_gtkui_widget_t *base) {
     }
 }
 
+////// vsplitter widget
 ddb_gtkui_widget_t *
 w_vsplitter_create (void) {
     w_splitter_t *w = malloc (sizeof (w_splitter_t));
@@ -1354,7 +1354,7 @@ w_vsplitter_create (void) {
     w->base.get_container = w_splitter_get_container;
     w->base.load = w_splitter_load;
     w->base.save = w_splitter_save;
-    w->base.init = w_vsplitter_init;
+    w->base.init = w_splitter_init;
     w->base.initmenu = w_splitter_initmenu;
 
     w->base.widget = gtk_event_box_new ();
@@ -1374,20 +1374,6 @@ w_vsplitter_create (void) {
 }
 
 ////// hsplitter widget
-void
-w_hsplitter_init (ddb_gtkui_widget_t *base) {
-    w_splitter_t *w = (w_splitter_t *)base;
-
-    ddb_splitter_set_proportion (DDB_SPLITTER (w->box), w->prop);
-    ddb_splitter_set_size_mode (DDB_SPLITTER (w->box), w->locked);
-    if (w->locked == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
-        ddb_splitter_set_child1_size (DDB_SPLITTER (w->box), w->size_c1);
-    }
-    else if (w->locked == DDB_SPLITTER_SIZE_MODE_LOCK_C2) {
-        ddb_splitter_set_child2_size (DDB_SPLITTER (w->box), w->size_c2);
-    }
-}
-
 ddb_gtkui_widget_t *
 w_hsplitter_create (void) {
     w_splitter_t *w = malloc (sizeof (w_splitter_t));
@@ -1400,7 +1386,7 @@ w_hsplitter_create (void) {
     w->base.get_container = w_splitter_get_container;
     w->base.load = w_splitter_load;
     w->base.save = w_splitter_save;
-    w->base.init = w_hsplitter_init;
+    w->base.init = w_splitter_init;
     w->base.initmenu = w_splitter_initmenu;
 
     w->base.widget = gtk_event_box_new ();
