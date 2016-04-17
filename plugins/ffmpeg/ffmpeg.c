@@ -965,7 +965,7 @@ static void
 ffmpeg_init_exts (void) {
     deadbeef->conf_lock ();
     const char *new_exts = deadbeef->conf_get_str_fast ("ffmpeg.extensions", DEFAULT_EXTS);
-    int use_all_ext = deadbeef->conf_get_int ("ffmpeg.enable_all_exts", 1);
+    int use_all_ext = deadbeef->conf_get_int ("ffmpeg.enable_all_exts", 0);
     for (int i = 0; exts[i]; i++) {
         free (exts[i]);
         exts[i] = NULL;
@@ -1136,7 +1136,7 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
 }
 
 static const char settings_dlg[] =
-    "property \"Use all extensions supported by ffmpeg\" checkbox ffmpeg.enable_all_exts 1;\n"
+    "property \"Use all extensions supported by ffmpeg\" checkbox ffmpeg.enable_all_exts 0;\n"
     "property \"File Extensions (separate with ';')\" entry ffmpeg.extensions \"" DEFAULT_EXTS "\";\n"
 ;
 
