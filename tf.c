@@ -224,18 +224,23 @@ tf_func_num (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
     int n_len = atoi (out);
 
     if (outlen < 1 || outlen < n_len) {
+        *out = 0;
         return -1;
     }
 
-    if (n_len <= 0) {
-        *out = '0';
-        return 1;
+    if (n_len < 0) {
+        n_len = 0;
     }
 
     char *out_w = out;
-    const char digit[] = "0123456789";
     int is_negative = n < 0;
-    int num_len = floor (log10 (abs (n))) + 1; // how many digits has n
+    int num_len = 0;
+
+    int cnt = n;
+    do {
+        num_len++;
+        cnt /= 10;
+    } while (cnt);
 
     if (is_negative) {
         *out_w++ = '-';
@@ -244,14 +249,14 @@ tf_func_num (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
     }
 
     int num_len_plus_padding = num_len;
-    while (num_len_plus_padding < n_len) { // padding required
+    while (num_len_plus_padding < n_len) {
         *out_w++ = '0';
         num_len_plus_padding++;
     }
 
     out_w += num_len - is_negative;
     do {
-        *--out_w = digit[n%10];
+        *--out_w = (n % 10) + '0';
         n /= 10;
     } while (n);
 
