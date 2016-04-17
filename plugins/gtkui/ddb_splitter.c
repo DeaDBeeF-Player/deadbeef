@@ -396,7 +396,7 @@ static gboolean
 ddb_splitter_children_visible (DdbSplitter *splitter)
 {
     g_return_val_if_fail (DDB_IS_SPLITTER (splitter), FALSE);
-    if (splitter->priv->child1 
+    if (splitter->priv->child1
             && gtk_widget_get_visible (GTK_WIDGET (splitter->priv->child1))
             && splitter->priv->child2
             && gtk_widget_get_visible (GTK_WIDGET (splitter->priv->child2))) {
@@ -410,13 +410,13 @@ ddb_splitter_is_child_visible (DdbSplitter *splitter, guint child)
 {
     g_return_val_if_fail (DDB_IS_SPLITTER (splitter), FALSE);
     if (child == 0) {
-        if (splitter->priv->child1 
+        if (splitter->priv->child1
                 && gtk_widget_get_visible (GTK_WIDGET (splitter->priv->child1))) {
             return TRUE;
         }
     }
     else if (child == 1) {
-        if (splitter->priv->child2 
+        if (splitter->priv->child2
                 && gtk_widget_get_visible (GTK_WIDGET (splitter->priv->child2))) {
             return TRUE;
         }
