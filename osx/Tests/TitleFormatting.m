@@ -1115,4 +1115,40 @@
     XCTAssert(!strcmp (new, "'['%date%']'"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_Num_123_5_Returns_00123 {
+    char *bc = tf_compile("$num(123,5)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "00123"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Num_Minus123_5_Returns__0123 {
+    char *bc = tf_compile("$num(-123,5)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "-0123"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_NumFractional_ReturnsIntegerFloor {
+    char *bc = tf_compile("$num(4.8,5)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "00004"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_NumNonNumber_ReturnsZero {
+    char *bc = tf_compile("$num(A1,5)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "00000"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_NumLargeNumber_DoesntTruncate {
+    char *bc = tf_compile("$num(1234,3)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "1234"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_NumNegativePadding_GivesZeroPadding {
+    char *bc = tf_compile("$num(1,-3)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "1"), @"The actual output is: %s", buffer);
+}
+
 @end
