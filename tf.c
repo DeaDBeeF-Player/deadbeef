@@ -243,17 +243,10 @@ tf_func_num (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
         n *= -1;
     }
 
-    if (num_len < n_len) { // the number is too short. padding required
-        int num_len_plus_padding = num_len;
-        while (num_len_plus_padding < n_len) {
-            *out_w++ = '0';
-            num_len_plus_padding++;
-        }
-    } else { // the number is too long. clipping required
-        while (num_len > n_len) {
-            n /= 10;
-            num_len--;
-        }
+    int num_len_plus_padding = num_len;
+    while (num_len_plus_padding < n_len) { // padding required
+        *out_w++ = '0';
+        num_len_plus_padding++;
     }
 
     out_w += num_len - is_negative;
@@ -262,7 +255,7 @@ tf_func_num (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
         n /= 10;
     } while (n);
 
-    return n_len;
+    return n_len > num_len ? n_len : num_len;
 }
 
 int
