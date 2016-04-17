@@ -276,8 +276,7 @@ ddb_splitter_get_property (GObject *object,
 {
     DdbSplitter *splitter = DDB_SPLITTER (object);
 
-    switch (prop_id)
-    {
+    switch (prop_id) {
         case PROP_ORIENTATION:
             g_value_set_enum (value, ddb_splitter_get_orientation (splitter));
             break;
@@ -304,8 +303,7 @@ ddb_splitter_set_property (GObject *object,
 {
     DdbSplitter *splitter = DDB_SPLITTER (object);
 
-    switch (prop_id)
-    {
+    switch (prop_id) {
         case PROP_ORIENTATION:
             ddb_splitter_set_orientation (splitter, g_value_get_enum (value));
             break;
@@ -463,8 +461,7 @@ ddb_splitter_button_release (GtkWidget      *widget,
 {
     DdbSplitter *splitter = DDB_SPLITTER (widget);
 
-    if (splitter->priv->in_drag && (event->button == 1))
-    {
+    if (splitter->priv->in_drag && (event->button == 1)) {
         stop_drag (splitter);
 
         return TRUE;
@@ -507,8 +504,7 @@ ddb_splitter_motion (GtkWidget      *widget,
 {
     DdbSplitter *splitter = DDB_SPLITTER (widget);
 
-    if (splitter->priv->in_drag)
-    {
+    if (splitter->priv->in_drag) {
         update_drag (splitter);
         return TRUE;
     }
@@ -616,8 +612,7 @@ ddb_splitter_realize (GtkWidget *widget)
                 GDK_POINTER_MOTION_MASK |
                 GDK_POINTER_MOTION_HINT_MASK);
         attributes_mask = GDK_WA_X | GDK_WA_Y;
-        if (gtk_widget_is_sensitive (widget))
-        {
+        if (gtk_widget_is_sensitive (widget)) {
             if (splitter->priv->size_mode != DDB_SPLITTER_SIZE_MODE_PROP) {
                 attributes.cursor = NULL;
             }
@@ -656,8 +651,7 @@ ddb_splitter_unrealize (GtkWidget *widget)
 {
     DdbSplitter *splitter = DDB_SPLITTER (widget);
 
-    if (splitter->priv->handle)
-    {
+    if (splitter->priv->handle) {
         gdk_window_set_user_data (splitter->priv->handle, NULL);
         gdk_window_destroy (splitter->priv->handle);
         splitter->priv->handle = NULL;
@@ -723,8 +717,7 @@ ddb_splitter_size_request (GtkWidget      *widget,
         requisition->height += req_c1.height + req_c2.height;
     }
 
-    if (ddb_splitter_children_visible (splitter))
-    {
+    if (ddb_splitter_children_visible (splitter)) {
         if (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL)
             requisition->width += DDB_SPLITTER_PANE_SIZE;
         else
@@ -1023,8 +1016,7 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
         if (gtk_widget_get_mapped (widget))
             gdk_window_show (splitter->priv->handle);
 
-        if (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL)
-        {
+        if (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL) {
             gdk_window_move_resize (splitter->priv->handle,
                     splitter->priv->handle_pos.x,
                     splitter->priv->handle_pos.y,
@@ -1071,8 +1063,7 @@ ddb_splitter_add (GtkContainer *container, GtkWidget *widget)
         gtk_widget_realize (widget);
 
     /* map the widget if required */
-    if (gtk_widget_get_visible (GTK_WIDGET (container)) && gtk_widget_get_visible (widget))
-    {
+    if (gtk_widget_get_visible (GTK_WIDGET (container)) && gtk_widget_get_visible (widget)) {
         if (gtk_widget_get_mapped (GTK_WIDGET (container)))
             gtk_widget_map (widget);
     }
@@ -1162,8 +1153,7 @@ ddb_splitter_add_child_at_pos (DdbSplitter *splitter, GtkWidget *child, guint po
         gtk_widget_realize (child);
 
     /* map the widget if required */
-    if (gtk_widget_get_visible (GTK_WIDGET (splitter)) && gtk_widget_get_visible (child))
-    {
+    if (gtk_widget_get_visible (GTK_WIDGET (splitter)) && gtk_widget_get_visible (child)) {
         if (gtk_widget_get_mapped (GTK_WIDGET (splitter)))
             gtk_widget_map (child);
     }
@@ -1199,8 +1189,7 @@ ddb_splitter_set_size_mode (DdbSplitter *splitter, DdbSplitterSizeMode size_mode
 {
     g_return_if_fail (DDB_IS_SPLITTER (splitter));
 
-    if (G_LIKELY (splitter->priv->size_mode != size_mode))
-    {
+    if (G_LIKELY (splitter->priv->size_mode != size_mode)) {
         splitter->priv->size_mode = size_mode;
         ddb_splitter_update_cursor (splitter);
         gtk_widget_queue_resize (GTK_WIDGET (splitter));
@@ -1235,8 +1224,7 @@ ddb_splitter_set_orientation (DdbSplitter *splitter, GtkOrientation orientation)
 {
     g_return_if_fail (DDB_IS_SPLITTER (splitter));
 
-    if (G_LIKELY (splitter->priv->orientation != orientation))
-    {
+    if (G_LIKELY (splitter->priv->orientation != orientation)) {
         splitter->priv->orientation = orientation;
         gtk_widget_queue_resize (GTK_WIDGET (splitter));
         g_object_notify (G_OBJECT (splitter), "orientation");
@@ -1311,7 +1299,7 @@ ddb_splitter_set_child2_size (DdbSplitter *splitter, guint size)
 
 /* Return a new PSquare cast to a GtkWidget */
 GtkWidget *
-ddb_splitter_new(GtkOrientation orientation)
+ddb_splitter_new (GtkOrientation orientation)
 {
     return GTK_WIDGET (g_object_new (ddb_splitter_get_type (), "orientation", orientation, NULL));
 }
