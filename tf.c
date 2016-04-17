@@ -223,6 +223,10 @@ tf_func_num (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
     TF_EVAL_CHECK(len, ctx, arg, arglens[1], out, outlen, fail_on_undef);
     int n_len = atoi (out);
 
+    if (outlen < 1 || outlen < n_len) {
+        return -1;
+    }
+
     if (n_len <= 0) {
         *out = '0';
         return 1;
