@@ -253,14 +253,19 @@ static int32_t parse_atoms_int (mp4ff_t *f,int meta_only,int stop_on_mdat)
     uint64_t size;
     uint8_t atom_type = 0;
     uint8_t header_size = 0;
+    int had_valid_atoms = 0;
 
     f->file_size = 0;
 
     while ((size = mp4ff_atom_read_header(f, &atom_type, &header_size)) != 0)
     {
-        if (atom_type == ATOM_UNKNOWN && mp4ff_position(f)+size > 100) {
+        // FIXME: ATOM_UNKNOWN is returned both when a valid (but unknown) atom is encontered,
+        // and for invalid data. They need to be handled separately.
+        if (atom_type == ATOM_UNKNOWN && !had_valid_atoms && mp4ff_position(f)+size > 100) {
             return -1;
         }
+
+        had_valid_atoms = 1;
 
         f->file_size += size;
         f->last_atom = atom_type;
