@@ -1185,6 +1185,10 @@ w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
         else if (!strcmp (key, "size_c2")) {
             ((w_splitter_t *)w)->size_c2 = atoi (val);
         }
+        else if (!strcmp (key, "pos")) {
+            // import old pos value
+            ((w_splitter_t *)w)->size_c1 = atoi (val);
+        }
     }
 
     return s;
