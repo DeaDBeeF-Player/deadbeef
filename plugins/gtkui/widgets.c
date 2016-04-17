@@ -95,9 +95,11 @@ typedef struct {
 typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *box;
-    int size_c1;
-    int size_c2;
-    float prop;
+    // size of first child
+    int size1;
+    // size of second child
+    int size2;
+    float ratio;
     int locked;
 } w_splitter_t;
 
@@ -1176,18 +1178,14 @@ w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
         if (!strcmp (key, "locked")) {
             ((w_splitter_t *)w)->locked = atoi (val);
         }
-        else if (!strcmp (key, "prop")) {
-            ((w_splitter_t *)w)->prop = atof (val);
-        }
-        else if (!strcmp (key, "size_c1")) {
-            ((w_splitter_t *)w)->size_c1 = atoi (val);
-        }
-        else if (!strcmp (key, "size_c2")) {
-            ((w_splitter_t *)w)->size_c2 = atoi (val);
+        else if (!strcmp (key, "ratio")) {
+            ((w_splitter_t *)w)->ratio = atof (val);
         }
         else if (!strcmp (key, "pos")) {
-            // import old pos value
-            ((w_splitter_t *)w)->size_c1 = atoi (val);
+            ((w_splitter_t *)w)->size1 = atoi (val);
+        }
+        else if (!strcmp (key, "size2")) {
+            ((w_splitter_t *)w)->size2 = atoi (val);
         }
     }
 
@@ -1199,9 +1197,10 @@ w_splitter_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
     w_splitter_t *sp = (w_splitter_t *)w;
     int locked = ddb_splitter_get_size_mode (DDB_SPLITTER (sp->box));
 
-    float prop = ddb_splitter_get_proportion (DDB_SPLITTER (sp->box));
+    float ratio = ddb_splitter_get_proportion (DDB_SPLITTER (sp->box));
     char spos[100];
-    snprintf (spos, sizeof (spos), " locked=%d prop=%f size_c1=%d size_c2=%d", locked, prop, sp->size_c1, sp->size_c2);
+    // NOTE: we use pos instead of size1 to ensure compatiblity with older deadbeef versions
+    snprintf (spos, sizeof (spos), " locked=%d ratio=%f pos=%d size2=%d", locked, ratio, sp->size1, sp->size2);
     strncat (s, spos, sz);
 }
 
@@ -1220,7 +1219,7 @@ on_splitter_lock_c1_toggled (GtkCheckMenuItem *checkmenuitem, gpointer user_data
     w_splitter_t *sp = (w_splitter_t *)user_data;
     if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem))) {
         sp->locked = DDB_SPLITTER_SIZE_MODE_LOCK_C1;
-        sp->size_c1 = ddb_splitter_get_child1_size (DDB_SPLITTER (sp->box));
+        sp->size1 = ddb_splitter_get_child1_size (DDB_SPLITTER (sp->box));
         ddb_splitter_set_size_mode (DDB_SPLITTER (sp->box), DDB_SPLITTER_SIZE_MODE_LOCK_C1);
     }
 }
@@ -1230,7 +1229,7 @@ on_splitter_lock_c2_toggled (GtkCheckMenuItem *checkmenuitem, gpointer user_data
     w_splitter_t *sp = (w_splitter_t *)user_data;
     if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem))) {
         sp->locked = DDB_SPLITTER_SIZE_MODE_LOCK_C2;
-        sp->size_c2 = ddb_splitter_get_child2_size (DDB_SPLITTER (sp->box));
+        sp->size2 = ddb_splitter_get_child2_size (DDB_SPLITTER (sp->box));
         ddb_splitter_set_size_mode (DDB_SPLITTER (sp->box), DDB_SPLITTER_SIZE_MODE_LOCK_C2);
     }
 }
@@ -1335,13 +1334,13 @@ void
 w_splitter_init (ddb_gtkui_widget_t *base) {
     w_splitter_t *w = (w_splitter_t *)base;
 
-    ddb_splitter_set_proportion (DDB_SPLITTER (w->box), w->prop);
+    ddb_splitter_set_proportion (DDB_SPLITTER (w->box), w->ratio);
     ddb_splitter_set_size_mode (DDB_SPLITTER (w->box), w->locked);
     if (w->locked == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
-        ddb_splitter_set_child1_size (DDB_SPLITTER (w->box), w->size_c1);
+        ddb_splitter_set_child1_size (DDB_SPLITTER (w->box), w->size1);
     }
     else if (w->locked == DDB_SPLITTER_SIZE_MODE_LOCK_C2) {
-        ddb_splitter_set_child2_size (DDB_SPLITTER (w->box), w->size_c2);
+        ddb_splitter_set_child2_size (DDB_SPLITTER (w->box), w->size2);
     }
 }
 
@@ -1350,7 +1349,7 @@ ddb_gtkui_widget_t *
 w_vsplitter_create (void) {
     w_splitter_t *w = malloc (sizeof (w_splitter_t));
     memset (w, 0, sizeof (w_splitter_t));
-    w->prop = 0.5f;
+    w->ratio = 0.5f;
     w->locked = DDB_SPLITTER_SIZE_MODE_PROP;
     w->base.append = w_splitter_add;
     w->base.remove = w_splitter_remove;
@@ -1382,7 +1381,7 @@ ddb_gtkui_widget_t *
 w_hsplitter_create (void) {
     w_splitter_t *w = malloc (sizeof (w_splitter_t));
     memset (w, 0, sizeof (w_splitter_t));
-    w->prop = 0.5f;
+    w->ratio = 0.5f;
     w->locked = DDB_SPLITTER_SIZE_MODE_PROP;
     w->base.append = w_splitter_add;
     w->base.remove = w_splitter_remove;
