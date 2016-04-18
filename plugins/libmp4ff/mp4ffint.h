@@ -260,6 +260,19 @@ typedef struct
     uint32_t *i_track_ID;
 } mp4ff_trefdata_t;
 
+typedef struct mp4ff_cover_art_item_s
+{
+    char *data;
+    uint32_t size;
+    struct mp4ff_cover_art_item_s *next;
+} mp4ff_cover_art_item_t;
+
+typedef struct
+{
+    mp4ff_cover_art_item_t *items;
+    mp4ff_cover_art_item_t *tail;
+} mp4ff_cover_art_t;
+
 /* mp4 main file structure */
 typedef struct
 {
@@ -289,6 +302,10 @@ typedef struct
     /* chapters */
     mp4ff_chapterdata_t chapters;
     mp4ff_trefdata_t tref;
+
+    /* cover art data */
+    int load_covers;
+    mp4ff_cover_art_t covers;
 } mp4ff_t;
 
 
@@ -397,6 +414,10 @@ const char * mp4ff_meta_index_to_genre(uint32_t idx);//returns pointer to static
 
 void mp4ff_chapters_free (mp4ff_t *f);
 void mp4ff_tref_free (mp4ff_t *f);
+
+void mp4ff_set_load_covers (mp4ff_t *f, int load_covers);
+void mp4ff_cover_delete (mp4ff_cover_art_t *cover);
+void mp4ff_cover_append_item (mp4ff_t *f, char *data, uint32_t datasize);
 
 #ifdef __cplusplus
 }

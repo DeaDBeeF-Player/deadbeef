@@ -3042,7 +3042,7 @@
 		2D9177521A0E8A3D004BC222 /* mp4ffint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp4ffint.h; path = plugins/libmp4ff/mp4ffint.h; sourceTree = "<group>"; };
 		2D9177531A0E8A3D004BC222 /* mp4atom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp4atom.c; path = plugins/libmp4ff/mp4atom.c; sourceTree = "<group>"; };
 		2D9177541A0E8A3D004BC222 /* mp4ff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp4ff.c; path = plugins/libmp4ff/mp4ff.c; sourceTree = "<group>"; };
-		2D9177551A0E8A3D004BC222 /* mp4meta.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp4meta.c; path = plugins/libmp4ff/mp4meta.c; sourceTree = "<group>"; };
+		2D9177551A0E8A3D004BC222 /* mp4meta.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp4meta.c; path = plugins/libmp4ff/mp4meta.c; sourceTree = "<group>"; usesTabs = 1; };
 		2D9177561A0E8A3D004BC222 /* mp4sample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp4sample.c; path = plugins/libmp4ff/mp4sample.c; sourceTree = "<group>"; };
 		2D9177571A0E8A3D004BC222 /* mp4tagupdate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp4tagupdate.c; path = plugins/libmp4ff/mp4tagupdate.c; sourceTree = "<group>"; };
 		2D9177581A0E8A3D004BC222 /* mp4util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp4util.c; path = plugins/libmp4ff/mp4util.c; sourceTree = "<group>"; };

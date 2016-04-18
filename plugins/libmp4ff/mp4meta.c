@@ -36,7 +36,6 @@
 #include "mp4ffint.h"
 
 
-
 int32_t mp4ff_tag_add_field(mp4ff_metadata_t *tags, const char *item, const char *value)
 {
     void *backup = (void *)tags->tags;
@@ -291,6 +290,29 @@ int32_t mp4ff_parse_tag(mp4ff_t *f, const uint8_t parent_atom_type, const int32_
 						}
 						done = 1;
 					}
+				} else if (parent_atom_type == ATOM_COVER) {
+					if (data)
+					{
+						free(data);
+						data = NULL;
+					}
+					if (f->load_covers)
+					{
+						uint32_t datasize = (uint32_t)(subsize-(header_size+8));
+						data = malloc(datasize);
+						if (!data) {
+							// allocation error
+						}
+						else if (datasize != mp4ff_read_data(f, data, datasize))
+						{
+							free (data);
+							data = NULL;
+						}
+						else
+						{
+							mp4ff_cover_append_item (f, data, datasize);
+						}
+					}
 				} else
 				{
 					if (data) {free(data);data = NULL;}
@@ -461,7 +483,38 @@ int32_t mp4ff_meta_get_tempo(const mp4ff_t *f, char **value)
 
 int32_t mp4ff_meta_get_coverart(const mp4ff_t *f, char **value)
 {
-    return mp4ff_meta_find_by_name(f, "cover", value);
+	// mp4ff_cover_get must be used instead.
+	*value = NULL;
+	return 0;
+}
+
+void mp4ff_cover_append_item (mp4ff_t *f, char *data, uint32_t datasize)
+{
+	mp4ff_cover_art_item_t *item = calloc (1, sizeof (mp4ff_cover_art_item_t));
+	item->data = data;
+	item->size = datasize;
+
+	if (f->covers.tail) {
+		f->covers.tail->next = item;
+	}
+	else {
+		f->covers.tail = f->covers.items = item;
+	}
+}
+
+void mp4ff_cover_delete (mp4ff_cover_art_t *cover)
+{
+	while (cover->items) {
+		mp4ff_cover_art_item_t *next = cover->items->next;
+		free (cover->items->data);
+		free (cover->items);
+		cover->items = next;
+	}
+}
+
+mp4ff_cover_art_t *mp4ff_cover_get (mp4ff_t *f)
+{
+	return &f->covers;
 }
 
 #endif

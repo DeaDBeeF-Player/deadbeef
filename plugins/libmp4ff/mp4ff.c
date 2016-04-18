@@ -77,6 +77,19 @@ mp4ff_t *mp4ff_open_read_metaonly(mp4ff_callback_t *f)
     return ff;
 }
 
+mp4ff_t *mp4ff_open_read_coveronly(mp4ff_callback_t *f)
+{
+    mp4ff_t *ff = malloc(sizeof(mp4ff_t));
+
+    memset(ff, 0, sizeof(mp4ff_t));
+
+    ff->load_covers = 1;
+
+    parse_atoms(ff,2);
+
+    return ff;
+}
+
 void mp4ff_track_free (mp4ff_track_t *trk) {
 #if 0
     if (trk->chunk_sample_first) {
@@ -154,6 +167,7 @@ void mp4ff_close(mp4ff_t *ff)
 
 #ifdef USE_TAGGING
     mp4ff_tag_delete(&(ff->tags));
+    mp4ff_cover_delete (&(ff->covers));
 #endif
 
     mp4ff_chapters_free (ff);
