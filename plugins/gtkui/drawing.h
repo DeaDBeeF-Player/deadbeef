@@ -26,6 +26,8 @@
 
 #include <stdint.h>
 
+#define GTKUI_OVERRIDE_THEME_COLORS_DEFAULT 1
+
 typedef struct {
     cairo_t *drawable;
     GdkColor clrfg;

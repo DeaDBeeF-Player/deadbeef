@@ -293,12 +293,12 @@ gtkui_run_preferences_dlg (void) {
     }
 
     // override bar colors
-    int override = deadbeef->conf_get_int ("gtkui.override_bar_colors", 0);
+    int override = deadbeef->conf_get_int ("gtkui.override_bar_colors", GTKUI_OVERRIDE_THEME_COLORS_DEFAULT);
     set_toggle_button("override_bar_colors", override);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "bar_colors_group"), override);
 
     // override tabstrip colors
-    override = deadbeef->conf_get_int ("gtkui.override_tabstrip_colors", 0);
+    override = deadbeef->conf_get_int ("gtkui.override_tabstrip_colors", GTKUI_OVERRIDE_THEME_COLORS_DEFAULT);
     set_toggle_button("override_tabstrip_colors", override);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "tabstrip_colors_group"), override);
 
@@ -314,7 +314,7 @@ gtkui_run_preferences_dlg (void) {
     gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "tabstrip_text_font")), deadbeef->conf_get_str_fast ("gtkui.font.tabstrip_text", gtk_style_font));
 
     // override listview colors
-    override = deadbeef->conf_get_int ("gtkui.override_listview_colors", 0);
+    override = deadbeef->conf_get_int ("gtkui.override_listview_colors", GTKUI_OVERRIDE_THEME_COLORS_DEFAULT);
     set_toggle_button("override_listview_colors", override);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "listview_colors_group"), override);
 
