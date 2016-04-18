@@ -31,6 +31,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include "mp4ff.h"
 #include "demux.h"
 #include "decomp.h"
@@ -38,6 +41,12 @@
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
+
+#ifndef __linux__
+#define off64_t off_t
+#define lseek64 lseek
+#define O_LARGEFILE 0
+#endif
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -609,6 +618,128 @@ error:
     return it;
 }
 
+uint32_t stdio_read (void *user_data, void *buffer, uint32_t length) {
+    return (uint32_t)read (*(int *)user_data, buffer, length);
+}
+
+uint32_t stdio_write (void *user_data, void *buffer, uint32_t length) {
+    return (uint32_t)write (*(int *)user_data, buffer, length);
+}
+
+uint32_t stdio_seek (void *user_data, uint64_t position) {
+    return (uint32_t)lseek64 (*(int *)user_data, position, SEEK_SET);
+}
+
+uint32_t stdio_truncate (void *user_data) {
+    off64_t pos = lseek64 (*(int *)user_data, 0, SEEK_CUR);
+    return ftruncate(*(int *)user_data, pos);
+}
+
+
+static int alacplug_write_metadata (DB_playItem_t *it) {
+    deadbeef->pl_lock ();
+    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
+
+    if (!fp) {
+        return -1;
+    }
+
+    alacplug_info_t inf;
+    memset (&inf, 0, sizeof (inf));
+    inf.file = fp;
+    inf.junk = deadbeef->junk_get_leading_size (fp);
+    if (inf.junk >= 0) {
+        deadbeef->fseek (inf.file, inf.junk, SEEK_SET);
+    }
+    else {
+        inf.junk = 0;
+    }
+
+    mp4ff_callback_t cb = {
+        .read = alacplug_fs_read,
+        .write = NULL,
+        .seek = alacplug_fs_seek,
+        .truncate = NULL,
+        .user_data = &inf
+    };
+
+    mp4ff_t *mp4 = mp4ff_open_read (&cb);
+    deadbeef->fclose (fp);
+
+    if (!mp4) {
+        return -1;
+    }
+
+    alacplug_load_tags (it, mp4);
+
+    deadbeef->pl_lock ();
+    int fd_out = open (deadbeef->pl_find_meta (it, ":URI"), O_LARGEFILE | O_RDWR);
+    deadbeef->pl_unlock ();
+
+    mp4ff_callback_t write_cb = {
+        .read = stdio_read,
+        .write = stdio_write,
+        .seek = stdio_seek,
+        .truncate = stdio_truncate,
+        .user_data = &fd_out
+    };
+
+    mp4ff_tag_delete (&mp4->tags);
+
+    deadbeef->pl_lock ();
+    DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it);
+    while (m) {
+        if (strchr (":!_", m->key[0])) {
+            break;
+        }
+        int i;
+        for (i = 0; metainfo[i]; i += 2) {
+            if (!strcasecmp (metainfo[i+1], m->key)) {
+                break;
+            }
+        }
+        mp4ff_tag_add_field (&mp4->tags, metainfo[i] ? metainfo[i] : m->key, m->value);
+        m = m->next;
+    }
+
+    static const char *tag_rg_names[] = {
+        "replaygain_album_gain",
+        "replaygain_album_peak",
+        "replaygain_track_gain",
+        "replaygain_track_peak",
+        NULL
+    };
+
+    // replaygain key names in deadbeef internal metadata
+    static const char *ddb_internal_rg_keys[] = {
+        ":REPLAYGAIN_ALBUMGAIN",
+        ":REPLAYGAIN_ALBUMPEAK",
+        ":REPLAYGAIN_TRACKGAIN",
+        ":REPLAYGAIN_TRACKPEAK",
+        NULL
+    };
+
+    // add replaygain values
+    for (int n = 0; ddb_internal_rg_keys[n]; n++) {
+        if (deadbeef->pl_find_meta (it, ddb_internal_rg_keys[n])) {
+            float value = deadbeef->pl_get_item_replaygain (it, n);
+            char s[100];
+            snprintf (s, sizeof (s), "%f", value);
+            mp4ff_tag_add_field (&mp4->tags, tag_rg_names[n], s);
+        }
+    }
+
+    deadbeef->pl_unlock ();
+
+    int32_t res = mp4ff_meta_update(&write_cb, &mp4->tags);
+
+    mp4ff_close (mp4);
+    close (fd_out);
+
+    return !res;
+}
+
 static const char * exts[] = { "mp4", "m4a", NULL };
 
 // define plugin interface
@@ -656,6 +787,7 @@ static DB_decoder_t plugin = {
     .seek_sample = alacplug_seek_sample,
     .insert = alacplug_insert,
     .read_metadata = alacplug_read_metadata,
+    .write_metadata = alacplug_write_metadata,
     .exts = exts,
 };
 

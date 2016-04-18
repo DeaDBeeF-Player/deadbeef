@@ -116,6 +116,10 @@ int mp4ff_get_track_sample_size(mp4ff_t *f, int t, int s);
 #endif
 
 int32_t mp4ff_meta_update(mp4ff_callback_t *f,const mp4ff_metadata_t * data);
+int32_t mp4ff_tag_add_field(mp4ff_metadata_t *tags, const char *item, const char *value);
+int32_t mp4ff_tag_set_field(mp4ff_metadata_t *tags, const char *item, const char *value);
+int32_t mp4ff_set_metadata_name(mp4ff_t *f, const uint8_t atom_type, char **name);
+int32_t mp4ff_parse_tag(mp4ff_t *f, const uint8_t parent_atom_type, const int32_t size);
 
 #endif
 
