@@ -31,6 +31,6 @@ FLAC_DEPS=$(FLAC_LIBS)
 flac_cflags=-DUSE_METAFLAC $(FLAC_CFLAGS)
 endif
 
-AM_CFLAGS = $(CFLAGS) $(ARTWORK_CFLAGS) $(flac_cflags) $(artwork_net_cflags) $(ogg_def) -std=c99
-artwork_la_LIBADD = $(LDADD) $(ARTWORK_DEPS) $(FLAC_DEPS) $(ogg_libs)
+AM_CFLAGS = $(CFLAGS) $(ARTWORK_CFLAGS) $(flac_cflags) $(artwork_net_cflags) $(ogg_def) -DUSE_TAGGING -I@top_srcdir@/plugins/libmp4ff -std=c99
+artwork_la_LIBADD = $(LDADD) $(ARTWORK_DEPS) $(FLAC_DEPS) $(ogg_libs) ../libmp4ff/libmp4ff.a
 endif

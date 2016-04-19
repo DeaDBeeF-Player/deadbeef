@@ -60,6 +60,7 @@
 #include "wos.h"
 #include "cache.h"
 #include "artwork.h"
+#include "mp4ff.h"
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(...)
@@ -1507,6 +1508,56 @@ apev2_extract_art (const char *fname, const char *outname) {
     return err;
 }
 
+static uint32_t
+mp4_fp_read (void *user_data, void *buffer, uint32_t length) {
+    DB_FILE* stream = user_data;
+    uint32_t ret = (uint32_t)deadbeef->fread (buffer, 1, length, stream);
+    return ret;
+}
+
+static uint32_t
+mp4_fp_seek (void *user_data, uint64_t position) {
+    DB_FILE* stream = user_data;
+    return deadbeef->fseek (stream, (int64_t)position, SEEK_SET);
+}
+
+static int
+mp4_extract_art (const char *fname, const char *outname) {
+    int ret = 0;
+    DB_FILE* fp = deadbeef->fopen (fname);
+    if (!fp)
+        return -1;
+
+    mp4ff_callback_t cb = {
+        .read = mp4_fp_read,
+        .write = NULL,
+        .seek = mp4_fp_seek,
+        .truncate = NULL,
+        .user_data = fp
+    };
+    mp4ff_t *mp4 = mp4ff_open_read_coveronly(&cb);
+    if (!mp4) {
+        deadbeef->fclose (fp);
+        return -1;
+    }
+
+    mp4ff_cover_art_t* art_list = mp4ff_cover_get (mp4);
+    // FIXME: What shall we do if we have multiple covers in the same file?
+    if (!art_list->tail) {
+        ret = -1;
+    } else {
+        uint32_t sz = art_list->tail->size;
+        char* image_blob = art_list->tail->data;
+        trace (stderr, "will write mp4 cover art (%u bytes) into %s\n", sz, outname);
+        write_file (outname, image_blob, sz);
+    }
+
+    mp4ff_close (mp4);
+    deadbeef->fclose (fp);
+    return ret;
+}
+
+
 static int
 web_lookups (const char *artist, const char *album, const char *cache_path)
 {
@@ -1663,6 +1714,12 @@ process_query (const cover_query_t *query)
         // try to load embedded from apev2
         trace ("trying to load artwork from apev2 tag for %s\n", query->fname);
         if (!apev2_extract_art (query->fname, cache_path)) {
+            return 1;
+        }
+
+        // try to load embedded from mp4
+        trace ("trying to load artwork from mp4 tag for %s\n", query->fname);
+        if (!mp4_extract_art (query->fname, cache_path)) {
             return 1;
         }
     }
