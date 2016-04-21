@@ -1523,6 +1523,10 @@ mp4_fp_seek (void *user_data, uint64_t position) {
 
 static int
 mp4_extract_art (const char *fname, const char *outname) {
+    if (!strcasestr (fname, ".mp4") && !strcasestr (fname, ".m4a") && !strcasestr (fname, ".m4b")) {
+        return -1;
+    }
+
     int ret = 0;
     DB_FILE* fp = deadbeef->fopen (fname);
     if (!fp) {
