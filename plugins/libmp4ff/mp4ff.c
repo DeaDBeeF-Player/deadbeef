@@ -84,6 +84,7 @@ mp4ff_t *mp4ff_open_read_coveronly(mp4ff_callback_t *f)
     memset(ff, 0, sizeof(mp4ff_t));
 
     ff->load_covers = 1;
+    ff->stream = f;
 
     parse_atoms(ff,2);
 
