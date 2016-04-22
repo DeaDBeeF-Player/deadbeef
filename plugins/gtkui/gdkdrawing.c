@@ -37,6 +37,8 @@ static char gtkui_listview_group_text_font[1000];
 static char gtkui_listview_column_text_font[1000];
 static char gtkui_tabstrip_text_font[1000];
 
+static GtkWidget *theme_entry;
+
 static PangoFontDescription *
 get_new_font_description_from_type (int type)
 {
@@ -370,54 +372,34 @@ gtkui_override_tabstrip_colors (void) {
 
 void
 gtkui_init_theme_colors (void) {
+    if (!theme_entry) {
+        theme_entry = gtk_entry_new ();
+    }
+
     deadbeef->conf_lock ();
-    override_listview_colors= deadbeef->conf_get_int ("gtkui.override_listview_colors", GTKUI_OVERRIDE_THEME_COLORS_DEFAULT);
-    override_bar_colors = deadbeef->conf_get_int ("gtkui.override_bar_colors", GTKUI_OVERRIDE_THEME_COLORS_DEFAULT);
-    override_tabstrip_colors = deadbeef->conf_get_int ("gtkui.override_tabstrip_colors", GTKUI_OVERRIDE_THEME_COLORS_DEFAULT);
+    override_listview_colors= deadbeef->conf_get_int ("gtkui.override_listview_colors", 0);
+    override_bar_colors = deadbeef->conf_get_int ("gtkui.override_bar_colors", 0);
+    override_tabstrip_colors = deadbeef->conf_get_int ("gtkui.override_tabstrip_colors", 0);
 
     extern GtkWidget *mainwin;
-
-    GtkStyle *style = gtk_style_copy (gtk_widget_get_style (mainwin));
-
-    style->base[GTK_STATE_SELECTED].red = 0.24*0xffff;
-    style->base[GTK_STATE_SELECTED].green = 0.58*0xffff;
-    style->base[GTK_STATE_SELECTED].blue = 0.85*0xffff;
-    style->bg[GTK_STATE_SELECTED].red = 0.24*0xffff;
-    style->bg[GTK_STATE_SELECTED].green = 0.58*0xffff;
-    style->bg[GTK_STATE_SELECTED].blue = 0.85*0xffff;
-    style->fg[GTK_STATE_NORMAL].red = 0*0xffff;
-    style->fg[GTK_STATE_NORMAL].green = 0*0xffff;
-    style->fg[GTK_STATE_NORMAL].blue = 0*0xffff;
-    style->fg[GTK_STATE_SELECTED].red = 1*0xffff;
-    style->fg[GTK_STATE_SELECTED].green = 1*0xffff;
-    style->fg[GTK_STATE_SELECTED].blue = 1*0xffff;
-    style->dark[GTK_STATE_NORMAL].red = 0.68*0xffff;
-    style->dark[GTK_STATE_NORMAL].green = 0.66*0xffff;
-    style->dark[GTK_STATE_NORMAL].blue = 0.65*0xffff;
-    style->mid[GTK_STATE_NORMAL].red = 0.83*0xffff;
-    style->mid[GTK_STATE_NORMAL].green = 0.84*0xffff;
-    style->mid[GTK_STATE_NORMAL].blue = 0.82*0xffff;
-    style->light[GTK_STATE_NORMAL].red = 1*0xffff;
-    style->light[GTK_STATE_NORMAL].green = 1*0xffff;
-    style->light[GTK_STATE_NORMAL].blue = 1*0xffff;
-
+    GtkStyle *style = gtk_widget_get_style (mainwin);
+    GtkStyle *entry_style = gtk_widget_get_style (theme_entry);
     char color_text[100];
     const char *clr;
     const char *font_name = pango_font_description_to_string (style->font_desc);
 
     if (!override_bar_colors) {
         memcpy (&gtkui_bar_foreground_color, &style->base[GTK_STATE_SELECTED], sizeof (GdkColor));
-        memcpy (&gtkui_bar_background_color, &style->fg[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_bar_background_color, &style->text[GTK_STATE_NORMAL], sizeof (GdkColor));
     }
     else {
-        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->base[GTK_STATE_SELECTED].red, style->base[GTK_STATE_SELECTED].green, style->base[GTK_STATE_SELECTED].blue);
+        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", entry_style->base[GTK_STATE_SELECTED].red, entry_style->base[GTK_STATE_SELECTED].green, entry_style->base[GTK_STATE_SELECTED].blue);
         clr = deadbeef->conf_get_str_fast ("gtkui.color.bar_foreground", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_bar_foreground_color.red, &gtkui_bar_foreground_color.green, &gtkui_bar_foreground_color.blue);
 
-        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->fg[GTK_STATE_NORMAL].red, style->fg[GTK_STATE_NORMAL].green, style->fg[GTK_STATE_NORMAL].blue);
+        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", entry_style->fg[GTK_STATE_NORMAL].red, entry_style->fg[GTK_STATE_NORMAL].green, entry_style->fg[GTK_STATE_NORMAL].blue);
         clr = deadbeef->conf_get_str_fast ("gtkui.color.bar_background", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_bar_background_color.red, &gtkui_bar_background_color.green, &gtkui_bar_background_color.blue);
-
     }
 
     if (!override_tabstrip_colors) {
@@ -517,7 +499,6 @@ gtkui_init_theme_colors (void) {
         strncpy (gtkui_listview_group_text_font, deadbeef->conf_get_str_fast ("gtkui.font.listview_group_text", font_name), sizeof (gtkui_listview_group_text_font));
         strncpy (gtkui_listview_column_text_font, deadbeef->conf_get_str_fast ("gtkui.font.listview_column_text", font_name), sizeof (gtkui_listview_column_text_font));
     }
-    g_object_unref (style);
     deadbeef->conf_unlock ();
 }
 
