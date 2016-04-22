@@ -819,7 +819,11 @@ render_treeview_background (DdbListview *listview, cairo_t *cr, int selected, in
         gtk_render_background(context, cr, x, y, w, h);
         gtk_style_context_remove_region(context, GTK_STYLE_REGION_ROW);
 #else
+        if (GTK_WIDGET_HAS_FOCUS (listview->list)) {
+            GTK_WIDGET_SET_FLAGS(theme_treeview, GTK_HAS_FOCUS);
+        }
         gtk_paint_flat_box(gtk_widget_get_style(theme_treeview), gtk_widget_get_window(listview->list), selected ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, clip, theme_treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
+        GTK_WIDGET_UNSET_FLAGS(theme_treeview, GTK_HAS_FOCUS);
 #endif
     }
 }
