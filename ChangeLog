@@ -18,6 +18,8 @@ version 0.7.2
 	fixed old ffmpeg versions support
 	fixed wma decoder loudness issue
 	fixed DCA buffer allocation, to make it more musl-friendly
+	added $num implementation to title formatting (Peter Lamby)
+	fixed --nowplaying-tf behavior when player is stopped
 
 version 0.7.1
 	fixed GTKUI maximized window layout saving/restoring
