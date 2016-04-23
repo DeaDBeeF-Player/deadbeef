@@ -1873,7 +1873,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     val = pl_find_meta_raw (it, name);
                 }
 
-                if (val) {
+                if (val || (!val && out > init_out)) {
                     *bool_out = 1;
                 }
 

@@ -115,6 +115,9 @@ plug_reinit_sound (void);
 int
 plug_select_output (void);
 
+void
+plug_set_output (DB_output_t *out);
+
 const char *
 plug_get_decoder_id (const char *id);
 
