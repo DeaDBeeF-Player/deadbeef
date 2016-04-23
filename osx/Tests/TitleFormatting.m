@@ -4,6 +4,17 @@
 #include "tf.h"
 #include "playqueue.h"
 #include "streamer.h"
+#include "plugins.h"
+
+static int fake_out_state_value = OUTPUT_STATE_STOPPED;
+
+static int fake_out_state (void) {
+    return fake_out_state_value;
+}
+
+static DB_output_t fake_out = {
+    .state = fake_out_state,
+};
 
 @interface TitleFormatting : XCTestCase {
     playItem_t *it;
@@ -27,6 +38,8 @@
     ctx.plt = NULL;
 
     streamer_set_playing_track (NULL);
+
+    fake_out_state_value = OUTPUT_STATE_STOPPED;
 }
 
 - (void)tearDown {
@@ -1149,6 +1162,33 @@
     char *bc = tf_compile("$num(1,-3)");
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, "1"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_IsPlayingReturnValueTrue_CorrespondsToStringValue {
+    streamer_set_playing_track (it);
+    plug_set_output (&fake_out);
+    fake_out_state_value = OUTPUT_STATE_PLAYING;
+    char *bc = tf_compile("$if(%isplaying%,YES,NO) %isplaying%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "YES 1"), @"The actual output is: %s", buffer);
+
+}
+
+- (void)test_IsPlayingReturnValueFalse_CorrespondsToStringValue {
+    plug_set_output (&fake_out);
+    fake_out_state_value = OUTPUT_STATE_STOPPED;
+    char *bc = tf_compile("$if(%isplaying%,YES,NO) %isplaying%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "NO "), @"The actual output is: %s", buffer);
+}
+
+- (void)test_IsPausedReturnValueTrue_CorrespondsToStringValue {
+    streamer_set_playing_track (it);
+    plug_set_output (&fake_out);
+    fake_out_state_value = OUTPUT_STATE_PAUSED;
+    char *bc = tf_compile("$if(%ispaused%,YES,NO) %ispaused%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "YES 1"), @"The actual output is: %s", buffer);
 }
 
 @end

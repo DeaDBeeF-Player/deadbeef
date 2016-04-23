@@ -1233,6 +1233,11 @@ plug_unload_all (void) {
 }
 
 void
+plug_set_output (DB_output_t *out) {
+    output_plugin = out;
+}
+
+void
 plug_cleanup (void) {
     plug_free_decoder_ids ();
 }
