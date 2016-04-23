@@ -253,23 +253,20 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             }
             char out[2048];
             playItem_t *curr = streamer_get_playing_track ();
-            if (curr) {
-                char *script = tf_compile (parg);
-                if (script) {
-                    ddb_tf_context_t ctx = {
-                        ._size = sizeof (ddb_tf_context_t),
-                        .it = (DB_playItem_t *)curr,
-                    };
-                    tf_eval (&ctx, script, out, sizeof (out));
-                    tf_free (script);
-                }
-                else {
-                    strcpy (out, "nothing");
-                }
-                pl_item_unref (curr);
+            char *script = tf_compile (parg);
+            if (script) {
+                ddb_tf_context_t ctx = {
+                    ._size = sizeof (ddb_tf_context_t),
+                    .it = (DB_playItem_t *)curr,
+                };
+                tf_eval (&ctx, script, out, sizeof (out));
+                tf_free (script);
             }
             else {
-                strcpy (out, "nothing");
+                *out = 0;
+            }
+            if (curr) {
+                pl_item_unref (curr);
             }
             if (sendback) {
                 snprintf (sendback, sbsize, "nowplaying %s", out);
