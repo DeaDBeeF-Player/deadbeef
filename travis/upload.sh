@@ -24,6 +24,10 @@ case "$TRAVIS_OS_NAME" in
         echo Uploading linux artifacts...
         rsync -e "$SSHOPTS" deadbeef-*.tar.bz2 $UPLOAD_PATH || exit 1
         rsync -e "$SSHOPTS" portable_out/build/*.tar.bz2 $UPLOAD_PATH || exit 1
+        if [[ $VERSION =~ ^[0-9]*\.[0-9]*\.[0-9]$ ]]
+        then
+            ./scripts/packages_upload.sh || exit 1
+        fi
     ;;
     osx)
         echo Uploading mac artifacts...

@@ -1,3 +1,5 @@
+VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
+
 case "$TRAVIS_OS_NAME" in
     linux)
         STATICDEPS_URL="http://sourceforge.net/projects/deadbeef/files/staticdeps/ddb-static-deps-latest.tar.bz2/download"
@@ -16,6 +18,10 @@ case "$TRAVIS_OS_NAME" in
         ARCH=x86_64 ./scripts/static_build.sh || exit 1
         ARCH=x86_64 ./scripts/portable_package_static.sh || exit 1
         echo "running make dist"
+        if [[ $VERSION =~ ^[0-9]*\.[0-9]*\.[0-9]$ ]]
+        then
+            ./scripts/packages_build.sh || exit 1
+        fi
         make dist || exit 1
     ;;
     osx)
@@ -27,7 +33,6 @@ case "$TRAVIS_OS_NAME" in
         gem install xcpretty 1> /dev/null 2> /dev/null || exit 1
         git submodule update --init || exit 1
         xcodebuild -project osx/deadbeef.xcodeproj -target deadbeef -configuration Release | xcpretty || exit 1
-        VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
         cd osx/build/Release
         zip -r deadbeef-$VERSION-osx-x86_64.zip deadbeef.app || exit 1
         cd ../../..
