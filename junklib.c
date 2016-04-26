@@ -1021,6 +1021,14 @@ convstr_id3v2 (int version, uint8_t encoding, const uint8_t *str, int sz, int *o
         return NULL;
     }
 
+    // convert \r\n to \n
+    for (int i = 0; i < converted_sz; i++) {
+        if (out[i] == '\r' && out[i+1] == '\n') {
+            memmove (out+i, out+i+1, converted_sz-i-1);
+            converted_sz--;
+        }
+    }
+
     // trim trailing linebreaks
     while (converted_sz > 0 && (uint8_t)out[converted_sz-1] <= 32) {
         out[--converted_sz] = 0;
