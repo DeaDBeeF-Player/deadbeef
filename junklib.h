@@ -61,6 +61,9 @@ junk_id3v2_convert_apev2_to_24 (DB_apev2_tag_t *ape, DB_id3v2_tag_t *tag24);
 DB_id3v2_frame_t *
 junk_id3v2_add_text_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char *value);
 
+DB_id3v2_frame_t *
+junk_id3v2_add_text_frame2 (DB_id3v2_tag_t *tag, const char *frame_id, const char *value, size_t value_size);
+
 int
 junk_id3v2_remove_frames (DB_id3v2_tag_t *tag, const char *frame_id);
 

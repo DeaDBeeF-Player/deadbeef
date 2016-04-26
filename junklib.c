@@ -226,6 +226,60 @@ extract_f32 (unsigned char *buf) {
     return f;
 }
 
+static void
+_append_tag_values (playItem_t *it, const char *key, const char *value, size_t value_size) {
+    const char *p = value;
+    while (value_size > 0) {
+        pl_append_meta (it, key, p);
+        size_t l = strlen (p);
+        if (l < value_size) {
+            l++;
+        }
+        p += l;
+        value_size -= l;
+    }
+}
+
+static char *
+_get_combined_meta_value (DB_metaInfo_t *meta,  int * restrict out_size) {
+    *out_size = 0;
+    ddb_metaValue_t *data;
+    for (data = meta->values; data; data = data->next) {
+        if (data->value && *data->value) {
+            *out_size += strlen (data->value) + 1;
+        }
+    }
+
+    if (*out_size > 0) {
+        (*out_size)--; // don't write trailing zero
+    }
+
+    if (!(*out_size)) {
+        return strdup ("");
+    }
+
+    char *out = malloc (*out_size);
+    if (!out) {
+        *out_size = 0;
+        return strdup ("");
+    }
+
+    char *p = out;
+
+    for (data = meta->values; data; data = data->next) {
+        if (data->value && *data->value) {
+            size_t len = strlen (data->value);
+            if (data->next) {
+                len++;
+            }
+            memcpy (p, data->value, len);
+            p += len;
+        }
+    }
+
+    return out;
+}
+
 #ifdef DDB_RECODE
 
 static int
@@ -903,7 +957,7 @@ can_be_shift_jis (const unsigned char *str, int size) {
 
 
 static char *
-convstr_id3v2 (int version, uint8_t encoding, const uint8_t *str, int sz) {
+convstr_id3v2 (int version, uint8_t encoding, const uint8_t *str, int sz, int *out_size) {
     const char *enc = NULL;
 
     // detect encoding
@@ -966,21 +1020,13 @@ convstr_id3v2 (int version, uint8_t encoding, const uint8_t *str, int sz) {
         free (out);
         return NULL;
     }
-//    trace ("%s -> %s\n", str, out);
-    int n;
-    for (n = 0; n < converted_sz; n++) {
-        if (out[n] == 0 && n != converted_sz-1) {
-            out[n] = '\n';
-        }
-    }
+
     // trim trailing linebreaks
-    for (n = converted_sz-1; n >= 0; n--) {
-        if ((uint8_t)out[n] <= 32) {
-            out[n] = 0;
-        }
-        else {
-            break;
-        }
+    while (converted_sz > 0 && (uint8_t)out[converted_sz-1] <= 32) {
+        out[--converted_sz] = 0;
+    }
+    if (out_size) {
+        *out_size = converted_sz;
     }
     return out;
 }
@@ -1513,7 +1559,7 @@ junk_apev2_add_frame (playItem_t *it, DB_apev2_tag_t *tag_store, DB_apev2_frame_
                     }
                     else {
                         trace ("pl_append_meta %s %s\n", frame_mapping[m+MAP_DDB], value);
-                        pl_append_meta (it, frame_mapping[m+MAP_DDB], value);
+                        _append_tag_values (it, frame_mapping[m+MAP_DDB], value, itemsize);
                     }
                     break;
                 }
@@ -1540,7 +1586,7 @@ junk_apev2_add_frame (playItem_t *it, DB_apev2_tag_t *tag_store, DB_apev2_frame_
                 }
                 else {
                     trace ("%s=%s\n", key, value);
-                    pl_append_meta (it, key, value);;
+                    _append_tag_values (it, key, value, itemsize);
                 }
             }
         }
@@ -1610,15 +1656,6 @@ junk_apev2_read_full_mem (playItem_t *it, DB_apev2_tag_t *tag_store, char *mem, 
             }
             memcpy (value, mem, itemsize);
             value[itemsize] = 0;
-
-            // replace 0s with \n
-            uint8_t *p = value;
-            while (p < value + itemsize - 1) {
-                if (*p == 0) {
-                    *p = '\n';
-                }
-                p++;
-            }
 
             junk_apev2_add_frame (it, tag_store, &tail, itemsize, itemflags, key, value);
 
@@ -1724,17 +1761,6 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
                 return -1;
             }
             value[itemsize] = 0;
-
-            if ((flags&6) == 0 && strncasecmp (key, "cover art ", 10)) {
-                // replace 0s with \n
-                uint8_t *p = value;
-                while (p < value + itemsize - 1) {
-                    if (*p == 0) {
-                        *p = '\n';
-                    }
-                    p++;
-                }
-            }
 
             junk_apev2_add_frame (it, tag_store, &tail, itemsize, itemflags, key, value);
             free (value);
@@ -1893,26 +1919,9 @@ junk_id3v2_remove_frames (DB_id3v2_tag_t *tag, const char *frame_id) {
     return 0;
 }
 
-// this function will split multiline values into separate frames
 DB_id3v2_frame_t *
-junk_id3v2_add_text_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char *value) {
+junk_id3v2_add_text_frame2 (DB_id3v2_tag_t *tag, const char *frame_id, const char *value, size_t inlen) {
     // copy value to handle multiline strings
-    size_t inlen = strlen (value);
-    char buffer[inlen];
-    char *pp = buffer;
-    for (const char *p = value; *p; p++) {
-        if (*p == '\n') {
-            *pp++ = 0;
-            if (tag->version[0] == 3) {
-                inlen = p - value;
-                break;
-            }
-        }
-        else {
-            *pp++ = *p;
-        }
-    }
-
     if (!inlen) {
         return NULL;
     }
@@ -1976,6 +1985,19 @@ junk_id3v2_add_text_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char
     tail = f;
 
     return tail;
+}
+
+DB_id3v2_frame_t *
+junk_id3v2_add_text_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char *value) {
+    return junk_id3v2_add_text_frame2 (tag, frame_id, value, strlen (value));
+}
+
+static void
+_id3v2_append_combined_text_frame_from_meta (DB_id3v2_tag_t *id3v2, const char *key, DB_metaInfo_t *meta) {
+    int out_size;
+    char *tag_value = _get_combined_meta_value (meta, &out_size);
+    junk_id3v2_add_text_frame2 (id3v2, key, tag_value, out_size);
+    free (tag_value);
 }
 
 DB_id3v2_frame_t *
@@ -2057,7 +2079,7 @@ junk_id3v2_remove_txxx_frame (DB_id3v2_tag_t *tag, const char *key) {
     for (DB_id3v2_frame_t *f = tag->frames; f; ) {
         DB_id3v2_frame_t *next = f->next;
         if (!strcmp (f->id, "TXXX")) {
-            char *txx = convstr_id3v2 (tag->version[0], f->data[0], f->data+1, f->size-1);
+            char *txx = convstr_id3v2 (tag->version[0], f->data[0], f->data+1, f->size-1, NULL);
             if (txx && !strncasecmp (txx, key, strlen (key))) {
                 if (prev) {
                     prev->next = f->next;
@@ -2101,10 +2123,9 @@ junk_id3v2_remove_all_txxx_frames (DB_id3v2_tag_t *tag) {
     return 0;
 }
 
-DB_id3v2_frame_t *
-junk_id3v2_add_txxx_frame (DB_id3v2_tag_t *tag, const char *key, const char *value) {
+static DB_id3v2_frame_t *
+junk_id3v2_add_txxx_frame (DB_id3v2_tag_t *tag, const char *key, const char *value, size_t valuelen) {
     size_t keylen = strlen (key);
-    size_t valuelen = strlen (value);
     size_t len = keylen + valuelen + 1;
     uint8_t buffer[len];
     memcpy (buffer, key, keylen);
@@ -2257,7 +2278,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
                 trace ("COMM enc is: %d\n", (int)enc);
                 trace ("COMM language is: %s\n", lang);
 
-                char *descr = convstr_id3v2 (4, enc, f24->data+4, f24->size-4);
+                char *descr = convstr_id3v2 (4, enc, f24->data+4, f24->size-4, NULL);
                 if (!descr) {
                     trace ("failed to decode COMM frame, probably wrong encoding (%d)\n", enc);
                 }
@@ -2328,8 +2349,8 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
             f23->flags[1] = flags[1];
         }
         else if (text) {
-
-            char *decoded = convstr_id3v2 (4, f24->data[0], f24->data+1, f24->size-1);
+            int decoded_size;
+            char *decoded = convstr_id3v2 (4, f24->data[0], f24->data+1, f24->size-1, &decoded_size);
             if (!decoded) {
                 trace ("junk_id3v2_convert_24_to_23: failed to decode text frame %s\n", f24->id);
                 continue; // failed, discard it
@@ -2379,7 +2400,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
             }
             else {
                 // encode for 2.3
-                f23 = junk_id3v2_add_text_frame (tag23, f24->id, decoded);
+                f23 = junk_id3v2_add_text_frame2 (tag23, f24->id, decoded, decoded_size);
                 if (f23) {
                     tail = f23;
                     f23 = NULL;
@@ -2508,7 +2529,8 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
         }
         else if (text) {
             // decode text into utf8
-            char *decoded = convstr_id3v2 (3, f23->data[0], f23->data+1, f23->size-1);
+            int decoded_size;
+            char *decoded = convstr_id3v2 (3, f23->data[0], f23->data+1, f23->size-1, &decoded_size);
             if (!decoded) {
                 trace ("junk_id3v2_convert_23_to_24: failed to decode text frame %s\n", f23->id);
                 continue; // failed, discard it
@@ -2558,7 +2580,7 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
             }
             else {
                 // encode for 2.4
-                f24 = junk_id3v2_add_text_frame (tag24, f23->id, decoded);
+                f24 = junk_id3v2_add_text_frame2 (tag24, f23->id, decoded, decoded_size);
                 if (f24) {
                     tail = f24;
                     f24 = NULL;
@@ -2707,13 +2729,14 @@ junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24) {
         }
         else if (text != -1) {
             // decode text into utf8
-            char *decoded = convstr_id3v2 (2, f22->data[0], f22->data+1, f22->size-1);
+            int decoded_size;
+            char *decoded = convstr_id3v2 (2, f22->data[0], f22->data+1, f22->size-1, &decoded_size);
             if (!decoded) {
                 trace ("junk_id3v2_convert_23_to_24: failed to decode text frame %s\n", f22->id);
                 continue; // failed, discard it
             }
             // encode for 2.4
-            f24 = junk_id3v2_add_text_frame (tag24, text_frames_24[text], decoded);
+            f24 = junk_id3v2_add_text_frame2 (tag24, text_frames_24[text], decoded, decoded_size);
             if (f24) {
                 tail = f24;
                 f24 = NULL;
@@ -2721,21 +2744,21 @@ junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24) {
             free (decoded);
         }
         else if (!strcmp (f22->id, "TYE")) {
-            char *decoded = convstr_id3v2 (2, f22->data[0], f22->data+1, f22->size-1);
+            char *decoded = convstr_id3v2 (2, f22->data[0], f22->data+1, f22->size-1, NULL);
             if (decoded) {
                 year = atoi (decoded);
                 free (decoded);
             }
         }
         else if (!strcmp (f22->id, "TDA")) {
-            char *decoded = convstr_id3v2 (2, f22->data[0], f22->data+1, f22->size-1);
+            char *decoded = convstr_id3v2 (2, f22->data[0], f22->data+1, f22->size-1, NULL);
             if (decoded) {
                 sscanf (decoded, "%02d%02d", &month, &day);
                 free (decoded);
             }
         }
         else if (!strcmp (f22->id, "TIM")) {
-            char *decoded = convstr_id3v2 (2, f22->data[0], f22->data+1, f22->size-1);
+            char *decoded = convstr_id3v2 (2, f22->data[0], f22->data+1, f22->size-1, NULL);
             if (decoded) {
                 sscanf (decoded, "%02d%02d", &hour, &minute);
                 free (decoded);
@@ -2829,8 +2852,9 @@ junk_apev2_remove_all_text_frames (DB_apev2_tag_t *tag) {
     }
     return 0;
 }
+
 DB_apev2_frame_t *
-junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char *value) {
+junk_apev2_add_text_frame2 (DB_apev2_tag_t *tag, const char *frame_id, const char *value, size_t size) {
     trace ("adding apev2 frame %s %s\n", frame_id, value);
     if (!*value) {
         return NULL;
@@ -2840,47 +2864,6 @@ junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char
         tail = tail->next;
     }
 
-#if 0 // this will split every line into separate field
-    const char *next = value;
-    while (*value) {
-        while (*next && *next != '\n') {
-            next++;
-        }
-
-        //int size = strlen (value);
-        int size = next - value;
-        if (*next) {
-            next++;
-        }
-
-        if (!size) {
-            continue;
-        }
-
-        trace ("adding apev2 subframe %s len %d\n", value, size);
-        DB_apev2_frame_t *f = malloc (sizeof (DB_apev2_frame_t) + size);
-        if (!f) {
-            trace ("junk_apev2_add_text_frame: failed to allocate %d bytes\n", size);
-            return NULL;
-        }
-        memset (f, 0, sizeof (DB_apev2_frame_t));
-        f->flags = 0;
-        strcpy (f->key, frame_id);
-        f->size = size;
-        memcpy (f->data, value, size);
-
-        if (tail) {
-            tail->next = f;
-        }
-        else {
-            tag->frames = f;
-        }
-        tail = f;
-
-        value = next;
-    }
-#endif
-    size_t size = strlen (value);
     DB_apev2_frame_t *f = malloc (sizeof (DB_apev2_frame_t) + size);
     if (!f) {
         trace ("junk_apev2_add_text_frame: failed to allocate %d bytes\n", size);
@@ -2889,7 +2872,7 @@ junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char
     memset (f, 0, sizeof (DB_apev2_frame_t));
     f->flags = 0;
     strcpy (f->key, frame_id);
-    f->size = size;
+    f->size = (int)size;
     memcpy (f->data, value, size);
 
     if (tail) {
@@ -2900,6 +2883,19 @@ junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char
     }
     tail = f;
     return tail;
+}
+
+DB_apev2_frame_t *
+junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char *value) {
+    return junk_apev2_add_text_frame2(tag, frame_id, value, strlen (value));
+}
+
+static void
+_apev2_append_combined_text_frame_from_meta (DB_apev2_tag_t *apev2, const char *key, DB_metaInfo_t *meta) {
+    int out_size;
+    char *tag_value = _get_combined_meta_value (meta, &out_size);
+    junk_apev2_add_text_frame2 (apev2, key, tag_value, out_size);
+    free (tag_value);
 }
 
 int
@@ -2944,7 +2940,7 @@ junk_id3v2_convert_apev2_to_24 (DB_apev2_tag_t *ape, DB_id3v2_tag_t *tag24) {
             char str[f_ape->size+1];
             memcpy (str, f_ape->data, f_ape->size);
             str[f_ape->size] = 0;
-            f24 = junk_id3v2_add_text_frame (tag24, text_keys_24[i], str);
+            f24 = junk_id3v2_add_text_frame2 (tag24, text_keys_24[i], str, f_ape->size);
             if (f24) {
                 tail = f24;
                 f24 = NULL;
@@ -3478,7 +3474,7 @@ junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int s
     trace ("COMM language: %s\n", lang);
     trace ("COMM data size: %d\n", synched_size);
 
-    char *descr = convstr_id3v2 (version_major, enc, readptr+4, synched_size-4);
+    char *descr = convstr_id3v2 (version_major, enc, readptr+4, synched_size-4, NULL);
     if (!descr) {
         trace ("failed to decode COMM frame, probably wrong encoding (%d)\n", enc);
         return -1;
@@ -3659,20 +3655,18 @@ junk_id3v2_add_ufid_frame (DB_id3v2_tag_t *tag, const char *owner, const char *i
 
 int
 junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
-    char *txx = convstr_id3v2 (version_major, *readptr, readptr+1, synched_size-1);
+    int decoded_size;
+    char *txx = convstr_id3v2 (version_major, *readptr, readptr+1, synched_size-1, &decoded_size);
     if (!txx) {
         return -1;
     }
 
     char *val = NULL;
-    if (txx) {
-        char *p;
-        for (p = txx; *p; p++) {
-            if (*p == '\n') {
-                *p = 0;
-                val = p+1;
-                break;
-            }
+    for (char *p = txx; *p; p++) {
+        if (*p == '\n') {
+            *p = 0;
+            val = p+1;
+            break;
         }
     }
 
@@ -3700,7 +3694,7 @@ junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int sy
             pl_append_meta (it, "year", val);
         }
         else {
-            pl_append_meta (it, txx, val);
+            _append_tag_values (it, txx, val, decoded_size - (val - txx));
         }
     }
 
@@ -4013,7 +4007,8 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                                 break;
                             }
 
-                            char *text = convstr_id3v2 (version_major, readptr[0], readptr+1, synched_size-1);
+                            int text_size;
+                            char *text = convstr_id3v2 (version_major, readptr[0], readptr+1, synched_size-1, &text_size);
 
                             // couple of simple tests
                             //char *text = convstr_id3v2 (4, 3, "текст1\0текст2", strlen ("текст1")*2+2);
@@ -4031,7 +4026,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                                     junk_id3v2_add_genre (it, text);
                                 }
                                 else {
-                                    pl_append_meta (it, frame_mapping[f+MAP_DDB], text);
+                                    _append_tag_values (it, frame_mapping[f+MAP_DDB], text, text_size);
                                 }
 //                                if (text) {
 //                                    trace ("%s = %s\n", frameid, text);
@@ -4144,7 +4139,8 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                                 trace ("frame %s is too big, discard\n", frameid);
                                 break;
                             }
-                            char *text = convstr_id3v2 (version_major, readptr[0], readptr+1, synched_size-1);
+                            int text_size;
+                            char *text = convstr_id3v2 (version_major, readptr[0], readptr+1, synched_size-1, &text_size);
                             if (text && *text) {
                                 if (!strcmp (frameid, "TRK")) { // special case for track/totaltracks
                                     junk_add_track_meta (it, text);
@@ -4156,7 +4152,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                                     junk_id3v2_add_genre (it, text);
                                 }
                                 else {
-                                    pl_append_meta (it, frame_mapping[f+MAP_DDB], text);
+                                    _append_tag_values(it, frame_mapping[f+MAP_DDB], text, text_size);
                                 }
                                 free (text);
                             }
@@ -4297,7 +4293,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
 
     int64_t fsize = deadbeef->fgetlength (fp);
     int id3v2_size = 0;
-    int id3v2_start = deadbeef->junk_id3v2_find (fp, &id3v2_size);
+    int id3v2_start = junk_id3v2_find (fp, &id3v2_size);
     if (id3v2_start == -1) {
         id3v2_size = -1;
     }
@@ -4447,31 +4443,32 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             if (strchr (":!_", meta->key[0])) {
                 break;
             }
-            if (meta->value && *meta->value) {
-                int i;
-                for (i = 0; frame_mapping[i]; i += FRAME_MAPPINGS) {
-                    if (!strcasecmp (meta->key, frame_mapping[i+MAP_DDB])) {
-                        const char *frm_name = id3v2_version == 3 ? frame_mapping[i+MAP_ID3V23] : frame_mapping[i+MAP_ID3V24];
-                        if (frm_name) {
-                            // field is known and supported for this tag version
-                            trace ("add_frame %s %s\n", frm_name, meta->value);
-                            junk_id3v2_add_text_frame (&id3v2, frm_name, meta->value);
-                        }
-                        break;
+            int i;
+            for (i = 0; frame_mapping[i]; i += FRAME_MAPPINGS) {
+                if (!strcasecmp (meta->key, frame_mapping[i+MAP_DDB])) {
+                    const char *frm_name = id3v2_version == 3 ? frame_mapping[i+MAP_ID3V23] : frame_mapping[i+MAP_ID3V24];
+                    if (frm_name) {
+                        // field is known and supported for this tag version
+                        trace ("add_frame %s %s\n", frm_name, meta->value);
+                        _id3v2_append_combined_text_frame_from_meta (&id3v2, frm_name, meta);
                     }
+                    break;
                 }
-                if (!frame_mapping[i]
-                        && strcasecmp (meta->key, "comment")
-                        && strcasecmp (meta->key, "track")
-                        && strcasecmp (meta->key, "numtracks")
-                        && strcasecmp (meta->key, "disc")
-                        && strcasecmp (meta->key, "numdiscs")
-                   ) {
-                    // add as txxx
-                    trace ("adding unknown frame as TXX %s=%s\n", meta->key, meta->value);
-                    junk_id3v2_remove_txxx_frame (&id3v2, meta->key);
-                    junk_id3v2_add_txxx_frame (&id3v2, meta->key, meta->value);
-                }
+            }
+            if (!frame_mapping[i]
+                    && strcasecmp (meta->key, "comment")
+                    && strcasecmp (meta->key, "track")
+                    && strcasecmp (meta->key, "numtracks")
+                    && strcasecmp (meta->key, "disc")
+                    && strcasecmp (meta->key, "numdiscs")
+               ) {
+                // add as txxx
+                int out_size;
+                char *tag_value = _get_combined_meta_value (meta, &out_size);
+                trace ("adding unknown frame as TXX %s=%s\n", meta->key, tag_value);
+                junk_id3v2_remove_txxx_frame (&id3v2, meta->key);
+                junk_id3v2_add_txxx_frame (&id3v2, meta->key, tag_value, out_size);
+                free (tag_value);
             }
             meta = meta->next;
         }
@@ -4514,7 +4511,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                 float value = pl_get_item_replaygain (it, n);
                 char s[100];
                 snprintf (s, sizeof (s), "%f", value);
-                junk_id3v2_add_txxx_frame (&id3v2, tag_rg_names[n], s);
+                junk_id3v2_add_txxx_frame (&id3v2, tag_rg_names[n], s, strlen (s));
             }
         }
 
@@ -4591,24 +4588,22 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             if (strchr (":!_", meta->key[0])) {
                 break;
             }
-            if (meta->value && *meta->value) {
-                int i;
-                for (i = 0; frame_mapping[i]; i += FRAME_MAPPINGS) {
-                    if (!strcasecmp (meta->key, frame_mapping[i+MAP_DDB]) && frame_mapping[i+MAP_APEV2]) {
-                        trace ("apev2 writing known field: %s=%s\n", meta->key, meta->value);
-                        junk_apev2_add_text_frame (&apev2, frame_mapping[i+MAP_APEV2], meta->value);
-                        break;
-                    }
+            int i;
+            for (i = 0; frame_mapping[i]; i += FRAME_MAPPINGS) {
+                if (!strcasecmp (meta->key, frame_mapping[i+MAP_DDB]) && frame_mapping[i+MAP_APEV2]) {
+                    trace ("apev2 appending known field: %s=%s\n", meta->key, meta->value);
+                    _apev2_append_combined_text_frame_from_meta (&apev2, frame_mapping[i+MAP_APEV2], meta);
+                    break;
                 }
-                if (!frame_mapping[i]
-                        && strcasecmp (meta->key, "track")
-                        && strcasecmp (meta->key, "numtracks")
-                        && strcasecmp (meta->key, "disc")
-                        && strcasecmp (meta->key, "numdiscs")
-                   ) {
-                    trace ("apev2 writing unknown field: %s=%s\n", meta->key, meta->value);
-                    junk_apev2_add_text_frame (&apev2, meta->key, meta->value);
-                }
+            }
+            if (!frame_mapping[i]
+                    && strcasecmp (meta->key, "track")
+                    && strcasecmp (meta->key, "numtracks")
+                    && strcasecmp (meta->key, "disc")
+                    && strcasecmp (meta->key, "numdiscs")
+               ) {
+                trace ("apev2 writing unknown field: %s=%s\n", meta->key, meta->value);
+                _apev2_append_combined_text_frame_from_meta (&apev2, meta->key, meta);
             }
             meta = meta->next;
         }
