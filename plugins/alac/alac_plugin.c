@@ -406,12 +406,12 @@ alacplug_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
                     int i;
                     for (i = 0; metainfo[i]; i += 2) {
                         if (!strcasecmp (metainfo[i], key)) {
-                            deadbeef->pl_add_meta (it, metainfo[i+1], value);
+                            deadbeef->pl_append_meta (it, metainfo[i+1], value);
                             break;
                         }
                     }
                     if (!metainfo[i]) {
-                        deadbeef->pl_add_meta (it, key, value);
+                        deadbeef->pl_append_meta (it, key, value);
                     }
                 }
             }
@@ -699,6 +699,7 @@ static int alacplug_write_metadata (DB_playItem_t *it) {
                 break;
             }
         }
+        // FIXME: multiple values
         mp4ff_tag_add_field (&mp4->tags, metainfo[i] ? metainfo[i] : m->key, m->value);
         m = m->next;
     }
