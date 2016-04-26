@@ -712,7 +712,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
     void *handle = dlopen (fullname, RTLD_NOW);
     if (!handle) {
         trace ("dlopen error: %s\n", dlerror ());
-#if defined(ANDROID) || defined(HAVE_COCOAUI)
+#if defined(ANDROID) || defined(OSX_APPBUNDLE)
         return -1;
 #else
         strcpy (fullname + strlen(fullname) - sizeof (PLUGINEXT)+1, ".fallback.so");
@@ -915,7 +915,7 @@ plug_load_all (void) {
 
     const char *dirname = deadbeef->get_plugin_dir ();
 
-#ifdef HAVE_COCOAUI
+#ifdef OSX_APPBUNDLE
     const char *plugins_dirs[] = { dirname, NULL };
 #else
 #ifndef ANDROID
@@ -1126,10 +1126,12 @@ plug_load_all (void) {
     g_playlist_plugins[numplaylist] = NULL;
 
     // select output plugin
+#ifndef XCTEST
     if (plug_select_output () < 0) {
         trace ("failed to find output plugin!\n");
         return -1;
     }
+#endif
     return 0;
 }
 

@@ -268,6 +268,7 @@
 		2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */; };
 		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
 		2D0EE6971B86685C00487FA1 /* tabCloseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2D0EE6961B86685C00487FA1 /* tabCloseTemplate.pdf */; };
+		2D0F90C21CCFF094003FA197 /* Tagging.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F90C11CCFF094003FA197 /* Tagging.m */; };
 		2D10DFFD1B98350D00A2D465 /* resampler_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D10DFFB1B9834FD00A2D465 /* resampler_sse2.c */; };
 		2D11D3C41B9DC69C00C7C731 /* ay8912.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D11D3BD1B9DC69C00C7C731 /* ay8912.c */; };
 		2D11D3C51B9DC69C00C7C731 /* ayemu_8912.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11D3BE1B9DC69C00C7C731 /* ayemu_8912.h */; };
@@ -864,6 +865,35 @@
 		2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D713FFC1A5D7D5900EFF139 /* playqueue.h */; };
 		2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */; };
 		2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */; };
+		2D7492691CCFF94200D3A59E /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
+		2D74926A1CCFF9AE00D3A59E /* ffap.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32F9EA19A63441000FFDE0 /* ffap.dylib */; };
+		2D74926B1CCFF9AE00D3A59E /* mp3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; };
+		2D74926C1CCFF9AE00D3A59E /* flac.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA6219A646C0000FFDE0 /* flac.dylib */; };
+		2D74926D1CCFF9AE00D3A59E /* dsp_libsrc.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DB96A8019ABB47C00E318A8 /* dsp_libsrc.dylib */; };
+		2D74926E1CCFF9AE00D3A59E /* gme.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */; };
+		2D74926F1CCFF9AE00D3A59E /* ddb_dumb.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */; };
+		2D7492701CCFF9AE00D3A59E /* sid.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D22F75519E1384B009C631E /* sid.dylib */; };
+		2D7492711CCFF9AE00D3A59E /* vfs_curl.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */; };
+		2D7492721CCFF9AE00D3A59E /* m3u.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DCB281419E86162008E9DF6 /* m3u.dylib */; };
+		2D7492731CCFF9AE00D3A59E /* alac.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D91773F1A0E8966004BC222 /* alac.dylib */; };
+		2D7492741CCFF9AE00D3A59E /* lastfm.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D21401A4033B0001D5A79 /* lastfm.dylib */; };
+		2D7492751CCFF9AE00D3A59E /* in_sc68.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */; };
+		2D7492761CCFF9AE00D3A59E /* wildmidi.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DF930441AB816DC0030C0CA /* wildmidi.dylib */; };
+		2D7492771CCFF9AE00D3A59E /* converter.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D23511B1B138ECB00A62936 /* converter.dylib */; };
+		2D7492781CCFF9AE00D3A59E /* vorbis.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D88E9ED1B2AF6640072FD43 /* vorbis.dylib */; };
+		2D7492791CCFF9AE00D3A59E /* sndfile.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D05A8291B4BE59D004C913D /* sndfile.dylib */; };
+		2D74927A1CCFF9AE00D3A59E /* vtx.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D11D3B91B9DC67100C7C731 /* vtx.dylib */; };
+		2D74927B1CCFF9AE00D3A59E /* wavpack.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */; };
+		2D74927C1CCFF9AE00D3A59E /* vfs_zip.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D4458D91C04F1C000230939 /* vfs_zip.dylib */; };
+		2D74927D1CCFF9AE00D3A59E /* aac.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D28F0411C283BE3004A6E7B /* aac.dylib */; };
+		2D74927E1CCFF9AE00D3A59E /* wma.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07021F3A1C2734F100FC9AF9 /* wma.dylib */; };
+		2D74927F1CCFF9AE00D3A59E /* tta.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07021F891C2745E900FC9AF9 /* tta.dylib */; };
+		2D7492801CCFF9AE00D3A59E /* musepack.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07021FE91C27551D00FC9AF9 /* musepack.dylib */; };
+		2D7492811CCFF9AE00D3A59E /* dca.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 070220AA1C275D3900FC9AF9 /* dca.dylib */; };
+		2D7492821CCFF9AE00D3A59E /* ddb_shn.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07765D6F1C279B7D00F5F4BC /* ddb_shn.dylib */; };
+		2D7492831CCFF9AE00D3A59E /* mms.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07765E2E1C28559600F5F4BC /* mms.dylib */; };
+		2D7492841CCFF9AE00D3A59E /* psf.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DFD50951C9715B800961D19 /* psf.dylib */; };
+		2D7492851CCFF9AE00D3A59E /* ffmpeg.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; };
 		2D7C37F81B2C405F0029DE0A /* bitwise.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA141B2AF7F50072FD43 /* bitwise.c */; };
 		2D7C37F91B2C405F0029DE0A /* framing.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA151B2AF7F50072FD43 /* framing.c */; };
 		2D7C37FA1B2C40640029DE0A /* analysis.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA191B2AF8610072FD43 /* analysis.c */; };
@@ -1210,7 +1240,6 @@
 		2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */; };
 		2DD6D0A819AE6288009308A5 /* knobTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */; };
 		2DD877A31C370C7100CC94FB /* ferror68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD877A21C370C7100CC94FB /* ferror68.c */; };
-		2DD9EF0719A5089F00189344 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */; };
 		2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */; };
 		2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */; };
@@ -2234,6 +2263,8 @@
 		2D0A002519C390E9006F7462 /* tf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tf.c; sourceTree = "<group>"; };
 		2D0A002619C390E9006F7462 /* tf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tf.h; sourceTree = "<group>"; };
 		2D0EE6961B86685C00487FA1 /* tabCloseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = tabCloseTemplate.pdf; path = images/tabs/tabCloseTemplate.pdf; sourceTree = "<group>"; };
+		2D0F90B21CCFF06D003FA197 /* dummy_mp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dummy_mp3.c; sourceTree = "<group>"; };
+		2D0F90C11CCFF094003FA197 /* Tagging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tagging.m; sourceTree = "<group>"; };
 		2D10DFFB1B9834FD00A2D465 /* resampler_sse2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resampler_sse2.c; path = "plugins/dumb/dumb-kode54/src/helpers/resampler_sse2.c"; sourceTree = "<group>"; };
 		2D11D3B91B9DC67100C7C731 /* vtx.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vtx.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D11D3BD1B9DC69C00C7C731 /* ay8912.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ay8912.c; path = plugins/vtx/ay8912.c; sourceTree = "<group>"; };
@@ -5557,9 +5588,11 @@
 		2DAA4C091AAF88DE00519559 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				2D0F90B21CCFF06D003FA197 /* dummy_mp3.c */,
 				2DAA4C131AAF88FF00519559 /* TitleFormatting.m */,
 				2D7F38021B2858AC00692A7B /* Junklib.m */,
 				2DE7A8FA1CA493CE00318A9F /* Cuesheet.m */,
+				2D0F90C11CCFF094003FA197 /* Tagging.m */,
 				2DAA4C0A1AAF88DE00519559 /* Supporting Files */,
 			);
 			path = Tests;
@@ -8554,6 +8587,34 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D74926A1CCFF9AE00D3A59E /* ffap.dylib in Resources */,
+				2D74926B1CCFF9AE00D3A59E /* mp3.dylib in Resources */,
+				2D74926C1CCFF9AE00D3A59E /* flac.dylib in Resources */,
+				2D74926D1CCFF9AE00D3A59E /* dsp_libsrc.dylib in Resources */,
+				2D74926E1CCFF9AE00D3A59E /* gme.dylib in Resources */,
+				2D74926F1CCFF9AE00D3A59E /* ddb_dumb.dylib in Resources */,
+				2D7492701CCFF9AE00D3A59E /* sid.dylib in Resources */,
+				2D7492711CCFF9AE00D3A59E /* vfs_curl.dylib in Resources */,
+				2D7492721CCFF9AE00D3A59E /* m3u.dylib in Resources */,
+				2D7492731CCFF9AE00D3A59E /* alac.dylib in Resources */,
+				2D7492741CCFF9AE00D3A59E /* lastfm.dylib in Resources */,
+				2D7492751CCFF9AE00D3A59E /* in_sc68.dylib in Resources */,
+				2D7492761CCFF9AE00D3A59E /* wildmidi.dylib in Resources */,
+				2D7492771CCFF9AE00D3A59E /* converter.dylib in Resources */,
+				2D7492781CCFF9AE00D3A59E /* vorbis.dylib in Resources */,
+				2D7492791CCFF9AE00D3A59E /* sndfile.dylib in Resources */,
+				2D74927A1CCFF9AE00D3A59E /* vtx.dylib in Resources */,
+				2D74927B1CCFF9AE00D3A59E /* wavpack.dylib in Resources */,
+				2D74927C1CCFF9AE00D3A59E /* vfs_zip.dylib in Resources */,
+				2D74927D1CCFF9AE00D3A59E /* aac.dylib in Resources */,
+				2D74927E1CCFF9AE00D3A59E /* wma.dylib in Resources */,
+				2D74927F1CCFF9AE00D3A59E /* tta.dylib in Resources */,
+				2D7492801CCFF9AE00D3A59E /* musepack.dylib in Resources */,
+				2D7492811CCFF9AE00D3A59E /* dca.dylib in Resources */,
+				2D7492821CCFF9AE00D3A59E /* ddb_shn.dylib in Resources */,
+				2D7492831CCFF9AE00D3A59E /* mms.dylib in Resources */,
+				2D7492841CCFF9AE00D3A59E /* psf.dylib in Resources */,
+				2D7492851CCFF9AE00D3A59E /* ffmpeg.dylib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9531,6 +9592,7 @@
 				2DE7A8FB1CA493CE00318A9F /* Cuesheet.m in Sources */,
 				2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */,
 				2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */,
+				2D0F90C21CCFF094003FA197 /* Tagging.m in Sources */,
 				2DAA4C141AAF88FF00519559 /* TitleFormatting.m in Sources */,
 				2D7F38031B2858AC00692A7B /* Junklib.m in Sources */,
 			);
@@ -9639,11 +9701,11 @@
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
 				2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */,
 				2D9177671A0E8A3D004BC222 /* mp4tagupdate.c in Sources */,
-				2DD9EF0719A5089F00189344 /* cocoautil.m in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
 				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,
 				2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */,
 				2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */,
+				2D7492691CCFF94200D3A59E /* cocoautil.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
 				2D9177611A0E8A3D004BC222 /* mp4ff.c in Sources */,
@@ -11802,7 +11864,10 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(inherited)",
 				);
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"OSX_APPBUNDLE=1",
+					"XCTEST=1",
+				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -11825,7 +11890,10 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(inherited)",
 				);
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"OSX_APPBUNDLE=1",
+					"XCTEST=1",
+				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -12141,6 +12209,7 @@
 					"DOCDIR=\\\"donotuse\\\"",
 					"VERSION=\\\"devel\\\"",
 					"HAVE_LOG2=1",
+					"OSX_APPBUNDLE=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
@@ -12176,6 +12245,7 @@
 					"DOCDIR=\\\"donotuse\\\"",
 					"VERSION=\\\"devel\\\"",
 					"HAVE_LOG2=1",
+					"OSX_APPBUNDLE=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
