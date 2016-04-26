@@ -252,10 +252,17 @@ static void ddb_cell_renderer_text_multiline_gtk_cell_renderer_text_editing_done
     GtkTextBuffer* buf;
     GtkTextIter begin = {0};
     GtkTextIter end = {0};
+    gboolean canceled = FALSE;
     gchar* new_text;
     g_return_if_fail (entry != NULL);
     g_return_if_fail (_self_ != NULL);
-    g_signal_handler_disconnect ((GObject*) entry, _self_->priv->focus_out_id);
+
+    g_clear_object (&_self_->priv->entry);
+
+    if (_self_->priv->focus_out_id > 0) {
+        g_signal_handler_disconnect ((GObject*) entry, _self_->priv->focus_out_id);
+        _self_->priv->focus_out_id = 0;
+    }
 
     if (_self_->priv->populate_popup_id > 0)
     {
@@ -270,16 +277,21 @@ static void ddb_cell_renderer_text_multiline_gtk_cell_renderer_text_editing_done
     }
 
 
+    g_object_get (entry,
+            "editing-canceled", &canceled,
+            NULL);
 
     gtk_cell_renderer_stop_editing ((GtkCellRenderer*) _self_, entry->priv->editing_canceled);
+
+    if (canceled) {
+        return;
+    }
+
     buf = gtk_text_view_get_buffer ((GtkTextView*) entry);
-    _g_object_ref0 (buf);
     gtk_text_buffer_get_iter_at_offset (buf, &begin, 0);
     gtk_text_buffer_get_iter_at_offset (buf, &end, -1);
     new_text = gtk_text_buffer_get_text (buf, &begin, &end, TRUE);
     g_signal_emit_by_name ((GtkCellRendererText*) _self_, "edited", entry->tree_path, new_text);
-    _g_free0 (new_text);
-    _g_object_unref0 (buf);
     _g_free0 (new_text);
 }
 
@@ -465,7 +477,7 @@ static void ddb_cell_renderer_text_multiline_instance_init (DdbCellRendererTextM
 static void ddb_cell_renderer_text_multiline_finalize (GObject* obj) {
     DdbCellRendererTextMultiline * self;
     self = DDB_CELL_RENDERER_TEXT_MULTILINE (obj);
-    _g_object_unref0 (self->priv->entry);
+    g_clear_object (&self->priv->entry);
     G_OBJECT_CLASS (ddb_cell_renderer_text_multiline_parent_class)->finalize (obj);
 }
 
