@@ -890,4 +890,42 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     deadbeef->conf_save ();
 }
 
+- (void)didEndEditValuePanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+    [_editValuePanel orderOut:self];
+}
+
+- (IBAction)editValueAction:(id)sender {
+    if (_numtracks != 1) {
+        return; // TODO: multiple track editing support
+    }
+
+    NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
+    if ([ind count] != 1) {
+        return; // multiple fields can't be edited at the same time
+    }
+
+    NSInteger idx = [ind firstIndex];
+
+
+    [_fieldName setStringValue: [_store[idx][@"key"] uppercaseString]];
+    [_fieldValue setString: _store[idx][@"value"]];
+
+    [NSApp beginSheet:_editValuePanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndEditValuePanel:returnCode:contextInfo:) contextInfo:nil];
+}
+
+- (IBAction)cancelEditValuePanelAction:(id)sender {
+    [NSApp endSheet:_editValuePanel];
+}
+
+- (IBAction)okEditValuePanelAction:(id)sender {
+    NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
+    NSInteger idx = [ind firstIndex];
+    if (![_store[idx][@"value"] isEqualToString:[_fieldValue string]]) {
+        _store[idx][@"value"] = [_fieldValue string];
+        [_metadataTableView reloadData];
+        self.modified = YES;
+    }
+
+    [NSApp endSheet:_editValuePanel];
+}
 @end
