@@ -449,6 +449,7 @@ static DB_functions_t deadbeef_api = {
 
     .plt_search_process2 = (void (*) (ddb_playlist_t *plt, const char *text, int select_results))plt_search_process2,
     .plt_process_cue = (DB_playItem_t * (*) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *it, uint64_t numsamples, int samplerate))plt_process_cue,
+    .pl_meta_for_key = (DB_metaInfo_t * (*) (DB_playItem_t *it, const char *key))pl_meta_for_key,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

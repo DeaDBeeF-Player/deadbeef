@@ -34,8 +34,9 @@
 #define LOCK {pl_lock();}
 #define UNLOCK {pl_unlock();}
 
-static DB_metaInfo_t *
-_pl_meta_for_key (playItem_t *it, const char *key) {
+
+DB_metaInfo_t *
+pl_meta_for_key (playItem_t *it, const char *key) {
     pl_ensure_lock ();
     DB_metaInfo_t *m = it->meta;
     while (m) {
@@ -144,7 +145,7 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
 void
 pl_append_meta (playItem_t *it, const char *key, const char *value) {
     pl_lock ();
-    DB_metaInfo_t *meta = _pl_meta_for_key (it, key);
+    DB_metaInfo_t *meta = pl_meta_for_key (it, key);
 
     if (meta && (!strcasecmp (key, "cuesheet") || !strcasecmp (key, "log"))) {
         pl_unlock ();
@@ -261,7 +262,7 @@ pl_find_meta (playItem_t *it, const char *key) {
 
 const char *
 pl_find_meta_raw (playItem_t *it, const char *key) {
-    DB_metaInfo_t *m = _pl_meta_for_key (it, key);
+    DB_metaInfo_t *m = pl_meta_for_key (it, key);
     return m ? m->value : NULL;
 }
 

@@ -1220,8 +1220,12 @@ typedef struct {
     // same as plt_search_process, but allows to choose whether to select the
     // search results, or not
     void (*plt_search_process2) (ddb_playlist_t *plt, const char *text, int select_results);
+
     // try loading external and embedded cuesheet, using the configured order (cue.prefer_embedded, default=0)
     DB_playItem_t * (*plt_process_cue) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *it, uint64_t numsamples, int samplerate);
+
+    // return direct-access metadata structure for the given track and key
+    DB_metaInfo_t * (*pl_meta_for_key) (DB_playItem_t *it, const char *key);
 #endif
 } DB_functions_t;
 

@@ -271,7 +271,7 @@ u8_dec(const char *s, int32_t *i)
 }
 
 static int
-get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_playItem_t *it, const char *key), int (*equals)(const char *a, const char *b), DB_playItem_t **tracks, int numtracks) {
+get_field_value (char *out, int size, const char *key, NSString *(*getter)(DB_playItem_t *it, const char *key), int (*equals)(const char *a, const char *b), DB_playItem_t **tracks, int numtracks) {
     char *out_start = out;
 
     int multiple = 0;
@@ -284,7 +284,8 @@ get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_
     const char **prev = malloc (sizeof (const char *) * numtracks);
     memset (prev, 0, sizeof (const char *) * numtracks);
     for (int i = 0; i < numtracks; i++) {
-        const char *val = getter (tracks[i], key);
+        NSString *nsval = getter (tracks[i], key);
+        const char *val = [nsval UTF8String];
         if (val && val[0] == 0) {
             val = NULL;
         }
@@ -327,6 +328,28 @@ get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_
     return multiple;
 }
 
+NSString *get_combined_meta_value (DB_playItem_t *it, const char *key) {
+    DB_metaInfo_t *meta = deadbeef->pl_meta_for_key (it, key);
+    if (!meta) {
+        return NULL;
+    }
+    NSString *res = NULL;
+    ddb_metaValue_t *data = meta->values;
+    while (data) {
+        if (!res) {
+            res = [NSString stringWithUTF8String:data->value];
+        }
+        else {
+            res = [res stringByAppendingString:[NSString stringWithUTF8String:data->value]];
+        }
+        if (data->next) {
+            res = [res stringByAppendingString:@"; "];
+        }
+        data = data->next;
+    }
+    return res;
+}
+
 void
 add_field (NSMutableArray *store, const char *key, const char *title, int is_prop, DB_playItem_t **tracks, int numtracks) {
     // get value to edit
@@ -334,7 +357,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     char val[MAX_GUI_FIELD_LEN];
     size_t ml = strlen (mult);
     memcpy (val, mult, ml+1);
-    int n = get_field_value (val + ml, (int)(sizeof (val) - ml), key, deadbeef->pl_find_meta_raw, equals_ptr, tracks, numtracks);
+    int n = get_field_value (val + ml, (int)(sizeof (val) - ml), key, get_combined_meta_value, equals_ptr, tracks, numtracks);
 
     if (!is_prop) {
         if (n) {
@@ -342,7 +365,8 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         }
         else {
             deadbeef->pl_lock ();
-            const char *val = deadbeef->pl_find_meta_raw (tracks[0], key);
+            NSString *sval = get_combined_meta_value (tracks[0], key); // single-track case
+            const char *val = [sval UTF8String];
             if (!val) {
                 val = "";
             }
@@ -548,7 +572,21 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         return;
 
     const char *skey = [dict[@"key"] UTF8String];
-    const char *svalue = [dict[@"value"] UTF8String];
+    NSString *value = dict[@"value"];
+    NSArray *components = [value componentsSeparatedByString:@";"];
+
+    NSMutableArray *transformedValues = [[NSMutableArray alloc] init];
+    for (NSString *val in components) {
+        NSInteger i = 0;
+        while ((i < [val length])
+               && [[NSCharacterSet whitespaceCharacterSet] characterIsMember:[val characterAtIndex:i]]) {
+            i++;
+        }
+        if (i == [val length]-1) {
+            continue;
+        }
+        [transformedValues addObject: (i == 0 ? val : [val substringFromIndex:i])];
+    }
 
     for (int i = 0; i < _numtracks; i++) {
         const char *oldvalue= deadbeef->pl_find_meta_raw (_tracks[i], skey);
@@ -557,11 +595,9 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
             continue;
         }
 
-        if (*svalue) {
-            deadbeef->pl_replace_meta (_tracks[i], skey, svalue);
-        }
-        else {
-            deadbeef->pl_delete_meta (_tracks[i], skey);
+        deadbeef->pl_delete_meta (_tracks[i], skey);
+        for (NSString *val in transformedValues) {
+            deadbeef->pl_append_meta (_tracks[i], skey, [val UTF8String]);
         }
     }
 }

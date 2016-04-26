@@ -528,4 +528,7 @@ plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t to
 void
 pl_configchanged (void);
 
+DB_metaInfo_t *
+pl_meta_for_key (playItem_t *it, const char *key);
+
 #endif // __PLAYLIST_H
