@@ -79,16 +79,16 @@ write_file_from_data(const char *filename, const char *data, size_t size) {
     vfs_fclose (fp);
 }
 
-- (void)test_ReadMultiValueTPE1_ReadsAs3Values {
+- (void)test_ReadID3v24MultiValueTPE1_ReadsAs3Values {
     char path[PATH_MAX];
-    snprintf (path, sizeof (path), "%s/TestData/tpe1_multivalue.mp3", dbplugindir);
+    snprintf (path, sizeof (path), "%s/TestData/tpe1_multivalue_id3v2.4.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
     junk_id3v2_read (it, fp);
     vfs_fclose (fp);
 
     DB_metaInfo_t *meta = pl_meta_for_key (it, "artist");
     XCTAssert(meta, @"Pass");
-    XCTAssert(!strcmp (meta->value, "Value1"), @"Pass");
+    XCTAssert(!strcmp (meta->value, "Value1"), @"Got value: %s", meta->value);
 
     int cnt = 0;
     char combined[100] = "";
@@ -98,8 +98,31 @@ write_file_from_data(const char *filename, const char *data, size_t size) {
         strcat (combined, "/");
     }
 
-    XCTAssert(cnt == 3, @"Pass");
-    XCTAssert(!strcmp (combined, "Value1/Value2/Value3/"), @"Pass");
+    XCTAssert(cnt == 3, @"Got count: %d", cnt);
+    XCTAssert(!strcmp (combined, "Value1/Value2/Value3/"), @"Got value: %s", meta->value);
+}
+
+- (void)test_ReadID3v23MultiValueTPE1_ReadsAs3Values {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/tpe1_multivalue_id3v2.3.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    junk_id3v2_read (it, fp);
+    vfs_fclose (fp);
+
+    DB_metaInfo_t *meta = pl_meta_for_key (it, "artist");
+    XCTAssert(meta, @"Pass");
+    XCTAssert(!strcmp (meta->value, "Value1"), @"Got value: %s", meta->value);
+
+    int cnt = 0;
+    char combined[100] = "";
+
+    for (ddb_metaValue_t *data = meta->values; data; data = data->next, cnt++) {
+        strcat (combined, data->value);
+        strcat (combined, "/");
+    }
+
+    XCTAssert(cnt == 3, @"Got count: %d", cnt);
+    XCTAssert(!strcmp (combined, "Value1/Value2/Value3/"), @"Got value: %s", meta->value);
 }
 
 - (void)test_ReadMultiLineTPE1_ReadsAs1Value {

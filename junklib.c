@@ -226,11 +226,64 @@ extract_f32 (unsigned char *buf) {
     return f;
 }
 
+// When reading from tags which don't support multivalue fields natively,
+// these fields will be split on '/' symbol,
+// and leading and trailing whitespace will get stripped
+#define DEFAULT_MULTIVALUE_FIELDS "ARTIST;ALBUM ARTIST;PRODUCER;COMPOSER;PERFORMER;GENRE"
+char junk_multivalue_fields[200] = DEFAULT_MULTIVALUE_FIELDS;
+
+static int
+_is_multivalue_field (const char *key) {
+    const char *p = junk_multivalue_fields;
+    do {
+        p = strcasestr (p, key);
+        const char *semicolon = NULL;
+        if (p) {
+            semicolon = strchr (p, ';');
+            if ((p == junk_multivalue_fields || *(p-1) == ';')
+                && (
+                    (!semicolon && strlen (p) == strlen (key))
+                    || (semicolon && semicolon - p == strlen (key))
+                    )
+                ) {
+            return 1;
+            }
+        }
+        p = semicolon;
+    } while (p);
+    return 0;
+}
+
+static void
+_split_multivalue (char *text, size_t text_size) {
+    for (size_t i = 0; i < text_size; i++) {
+        if (text[i] == '/') {
+            text[i] = 0;
+            // remove trailing spaces
+            char *p = text + i - 1;
+            while (p >= text && *p == ' ') {
+                *p = 0;
+                p--;
+            }
+
+            // remove leading spaces
+            p = text + i + 1;
+            while (p < text + text_size && *p == ' ') {
+                *p = 0;
+                p++;
+            }
+            i = p - text - 1;
+        }
+    }
+}
+
 static void
 _append_tag_values (playItem_t *it, const char *key, const char *value, size_t value_size) {
     const char *p = value;
     while (value_size > 0) {
-        pl_append_meta (it, key, p);
+        if (*p) {
+            pl_append_meta (it, key, p);
+        }
         size_t l = strlen (p);
         if (l < value_size) {
             l++;
@@ -4034,6 +4087,9 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                                     junk_id3v2_add_genre (it, text);
                                 }
                                 else {
+                                    if (version_major == 3 && _is_multivalue_field (frame_mapping[f+MAP_DDB])) {
+                                        _split_multivalue (text, text_size);
+                                    }
                                     _append_tag_values (it, frame_mapping[f+MAP_DDB], text, text_size);
                                 }
 //                                if (text) {
@@ -4160,6 +4216,9 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                                     junk_id3v2_add_genre (it, text);
                                 }
                                 else {
+                                    if (_is_multivalue_field (frame_mapping[f+MAP_DDB])) {
+                                        _split_multivalue (text, text_size);
+                                    }
                                     _append_tag_values(it, frame_mapping[f+MAP_DDB], text, text_size);
                                 }
                                 free (text);
@@ -4754,6 +4813,7 @@ junk_configchanged (void) {
     int cp1251 = conf_get_int ("junk.enable_cp1251_detection", 1);
     int cp936 = conf_get_int ("junk.enable_cp936_detection", 0);
     int shift_jis = conf_get_int ("junk.enable_shift_jis_detection", 0);
+    conf_get_str("junk.multivalue_fields", DEFAULT_MULTIVALUE_FIELDS, junk_multivalue_fields, sizeof (junk_multivalue_fields));
     junk_enable_cp1251_detection (cp1251);
     junk_enable_cp936_detection (cp936);
     junk_enable_shift_jis_detection (shift_jis);
