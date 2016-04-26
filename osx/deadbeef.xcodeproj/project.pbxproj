@@ -2264,7 +2264,6 @@
 		2D0A002519C390E9006F7462 /* tf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tf.c; sourceTree = "<group>"; };
 		2D0A002619C390E9006F7462 /* tf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tf.h; sourceTree = "<group>"; };
 		2D0EE6961B86685C00487FA1 /* tabCloseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = tabCloseTemplate.pdf; path = images/tabs/tabCloseTemplate.pdf; sourceTree = "<group>"; };
-		2D0F90B21CCFF06D003FA197 /* dummy_mp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dummy_mp3.c; sourceTree = "<group>"; };
 		2D0F90C11CCFF094003FA197 /* Tagging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tagging.m; sourceTree = "<group>"; };
 		2D10DFFB1B9834FD00A2D465 /* resampler_sse2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resampler_sse2.c; path = "plugins/dumb/dumb-kode54/src/helpers/resampler_sse2.c"; sourceTree = "<group>"; };
 		2D11D3B91B9DC67100C7C731 /* vtx.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vtx.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5603,7 +5602,6 @@
 		2DAA4C0A1AAF88DE00519559 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				2D0F90B21CCFF06D003FA197 /* dummy_mp3.c */,
 				2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */,
 				2DAA4C0B1AAF88DE00519559 /* Info.plist */,
 			);
