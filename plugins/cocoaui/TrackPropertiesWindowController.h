@@ -26,12 +26,18 @@
 
 - (void)fill;
 
+@property (unsafe_unretained) BOOL modified;
+
 // trkproperties window
 @property (unsafe_unretained) IBOutlet NSTableView *metadataTableView;
 @property (unsafe_unretained) IBOutlet NSTableView *propertiesTableView;
 @property (unsafe_unretained) IBOutlet NSTextField *filename;
 - (IBAction)applyTrackPropertiesAction:(id)sender;
 - (IBAction)configureTagWritingAction:(id)sender;
+- (IBAction)reloadTrackPropertiesAction:(id)sender;
+- (IBAction)cancelTrackPropertiesAction:(id)sender;
+- (IBAction)okTrackPropertiesAction:(id)sender;
+
 
 // metadata writing progress dialog
 @property (strong) IBOutlet NSPanel *progressPanel;

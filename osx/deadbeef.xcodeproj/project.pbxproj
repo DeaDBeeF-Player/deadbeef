@@ -847,6 +847,8 @@
 		2D667E151C9C2E0D00359129 /* curl_darwinssl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA24B7419E7254F00E34920 /* curl_darwinssl.h */; };
 		2D667E171C9C2E8400359129 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D667E161C9C2E8400359129 /* libssl.dylib */; };
 		2D667E181C9C2E8C00359129 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D667DFE1C9C2D1800359129 /* libcrypto.dylib */; };
+		2D6D81EF1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6D81ED1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h */; };
+		2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6D81EE1CCF9E0B00028788 /* DdbTableViewRightClickActivate.m */; };
 		2D6EC2AF1A42120100DD1C72 /* mp3.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6EC2A71A42076B00DD1C72 /* mp3.h */; };
 		2D6EC2B11A42120E00DD1C72 /* mp3_mpg123.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6EC2A91A4210D800DD1C72 /* mp3_mpg123.c */; };
 		2D6EC2B21A42121100DD1C72 /* mp3_mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6EC2AA1A4210D800DD1C72 /* mp3_mpg123.h */; };
@@ -2846,6 +2848,8 @@
 		2D667E101C9C2DF600359129 /* openssl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = openssl.c; sourceTree = "<group>"; };
 		2D667E111C9C2DF600359129 /* openssl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = openssl.h; sourceTree = "<group>"; };
 		2D667E161C9C2E8400359129 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libssl.dylib; sourceTree = DEVELOPER_DIR; };
+		2D6D81ED1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbTableViewRightClickActivate.h; sourceTree = "<group>"; };
+		2D6D81EE1CCF9E0B00028788 /* DdbTableViewRightClickActivate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbTableViewRightClickActivate.m; sourceTree = "<group>"; };
 		2D6EC2A31A42068F00DD1C72 /* mp3_mad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp3_mad.c; path = plugins/mp3/mp3_mad.c; sourceTree = "<group>"; };
 		2D6EC2A41A42068F00DD1C72 /* mp3_mad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp3_mad.h; path = plugins/mp3/mp3_mad.h; sourceTree = "<group>"; };
 		2D6EC2A71A42076B00DD1C72 /* mp3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mp3.h; path = plugins/mp3/mp3.h; sourceTree = "<group>"; };
@@ -6403,6 +6407,8 @@
 				2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */,
 				2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */,
 				2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */,
+				2D6D81ED1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h */,
+				2D6D81EE1CCF9E0B00028788 /* DdbTableViewRightClickActivate.m */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -7455,6 +7461,7 @@
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
 				2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */,
 				2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */,
+				2D6D81EF1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h in Headers */,
 				2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */,
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
@@ -9647,6 +9654,7 @@
 				2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */,
 				2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* DdbSearchViewController.m in Sources */,
+				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
 				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
 				2D9177651A0E8A3D004BC222 /* mp4sample.c in Sources */,

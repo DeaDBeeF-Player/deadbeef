@@ -81,7 +81,6 @@ static const char *hc_props[] = {
     int _iter;
     DB_playItem_t **_tracks;
     int _numtracks;
-    BOOL _modified;
     NSMutableArray *_store;
     NSMutableArray *_propstore;
     BOOL _progress_aborted;
@@ -365,7 +364,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (void)fillMetadata {
-    _modified = NO;
+    self.modified = NO;
 
     deadbeef->pl_lock ();
 
@@ -509,7 +508,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         if (dict[@"n"]) {
             dict[@"n"] = [NSNumber numberWithInt:0];
         }
-        _modified = YES;
+        self.modified = YES;
     }
 }
 
@@ -587,7 +586,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
             deadbeef->plt_modified (plt);
             deadbeef->plt_unref (plt);
         }
-        _modified = NO;
+        self.modified = NO;
 // FIXME: update playlist/search/...
 #if 0
         main_refresh ();
@@ -601,6 +600,9 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (IBAction)applyTrackPropertiesAction:(id)sender {
+    if (!self.modified) {
+        return;
+    }
     deadbeef->pl_lock ();
     NSMutableArray *store = [self storeForTableView:_metadataTableView];
 
@@ -654,7 +656,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (BOOL)windowShouldClose:(id)sender {
-    if (_modified) {
+    if (self.modified) {
         NSAlert *alert = [[NSAlert alloc] init];
         [alert addButtonWithTitle:@"Yes"];
         [alert addButtonWithTitle:@"No"];
@@ -674,7 +676,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         [self applyTrackPropertiesAction:alert];
     }
     else if (returnCode == NSAlertSecondButtonReturn){
-        _modified = NO;
+        self.modified = NO;
         [[self window] close];
     }
 }
@@ -722,6 +724,51 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     [_wvStripID3v1 setState:wv_strip_id3v1];
 
     [NSApp beginSheet:_tagWriterSettingsPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndTagWriterSettings:returnCode:contextInfo:) contextInfo:nil];
+}
+
+- (IBAction)reloadTrackPropertiesAction:(id)sender {
+    for (int i = 0; i < _numtracks; i++) {
+        DB_playItem_t *it = _tracks[i];
+        deadbeef->pl_lock ();
+        char decoder_id[100];
+        const char *dec = deadbeef->pl_find_meta (it, ":DECODER");
+        if (dec) {
+            strncpy (decoder_id, dec, sizeof (decoder_id));
+        }
+        int match = deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && dec;
+        deadbeef->pl_unlock ();
+
+        if (match) {
+            uint32_t f = deadbeef->pl_get_item_flags (it);
+            if (!(f & DDB_IS_SUBTRACK)) {
+                f &= ~DDB_TAG_MASK;
+                deadbeef->pl_set_item_flags (it, f);
+                DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
+                for (int i = 0; decoders[i]; i++) {
+                    if (!strcmp (decoders[i]->plugin.id, decoder_id)) {
+                        if (decoders[i]->read_metadata) {
+                            decoders[i]->read_metadata (it);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    deadbeef->pl_save_current();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    [self fill];
+}
+
+- (IBAction)cancelTrackPropertiesAction:(id)sender {
+    if ([self windowShouldClose:sender]) {
+        [self close];
+    }
+}
+
+- (IBAction)okTrackPropertiesAction:(id)sender {
+    [self applyTrackPropertiesAction:sender];
+    [self close];
 }
 
 
