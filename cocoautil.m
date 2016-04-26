@@ -26,9 +26,6 @@
 
 int
 cocoautil_get_resources_path (char *s, int size) {
-    NSBundle *main =[NSBundle mainBundle];
-    NSURL *url = [main resourceURL];
-    const char *str = [url fileSystemRepresentation];
-    strcpy (s, str);
+    strcpy (s, [[[NSBundle mainBundle] resourcePath] UTF8String]);
     return 0;
 }

@@ -940,12 +940,7 @@ main (int argc, char *argv[]) {
             return -1;
         }
 #ifdef HAVE_COCOAUI
-        char respath[PATH_MAX];
-        cocoautil_get_resources_path (respath, sizeof (respath));
-        if (snprintf (dbplugindir, sizeof (dbplugindir), "%s", respath) > sizeof (dbplugindir)) {
-            fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
-            return -1;
-        }
+        cocoautil_get_resources_path (dbplugindir, sizeof (dbplugindir));
 #else
         if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/plugins", dbinstalldir) > sizeof (dbplugindir)) {
             fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
