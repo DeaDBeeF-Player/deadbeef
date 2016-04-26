@@ -34,6 +34,59 @@
 #define LOCK {pl_lock();}
 #define UNLOCK {pl_unlock();}
 
+static DB_metaInfo_t *
+_pl_meta_for_key (playItem_t *it, const char *key) {
+    pl_ensure_lock ();
+    DB_metaInfo_t *m = it->meta;
+    while (m) {
+        if (!strcasecmp (key, m->key)) {
+            return m;
+        }
+        m = m->next;
+    }
+    return NULL;
+}
+
+static ddb_metaValue_t *
+_meta_value_alloc (void) {
+    return calloc (1, sizeof (ddb_metaValue_t));
+}
+
+static void
+_meta_free_values (DB_metaInfo_t *meta) {
+    ddb_metaValue_t *data = meta->values;
+    while (data) {
+        metacache_remove_string (data->value);
+        ddb_metaValue_t *next = data->next;
+        free (data);
+        data = next;
+    }
+    meta->value = NULL;
+    meta->values = NULL;
+}
+
+static ddb_metaValue_t *
+_meta_append_value (DB_metaInfo_t *meta, const char *value, ddb_metaValue_t *tail) {
+    ddb_metaValue_t *data = _meta_value_alloc ();
+    data->value = metacache_add_string (value);
+
+    if (!tail && meta->values) {
+        tail = meta->values;
+        while (tail && tail->next) {
+            tail = tail->next;
+        }
+    }
+
+    if (tail) {
+        tail->next = data;
+    }
+    else {
+        meta->values = data;
+        meta->value = data->value;
+    }
+    return data;
+}
+
 void
 pl_add_meta (playItem_t *it, const char *key, const char *value) {
     if (!value || !*value) {
@@ -64,10 +117,9 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
         m = m->next;
     }
     // add
-    m = malloc (sizeof (DB_metaInfo_t));
-    memset (m, 0, sizeof (DB_metaInfo_t));
+    m = calloc (1, sizeof (DB_metaInfo_t));
     m->key = metacache_add_string (key);
-    m->value = metacache_add_string (value);
+    _meta_append_value(m, value, NULL);
 
     if (key[0] == ':' || key[0] == '_' || key[0] == '!') {
         if (tail) {
@@ -92,43 +144,31 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
 void
 pl_append_meta (playItem_t *it, const char *key, const char *value) {
     pl_lock ();
-    const char *old = pl_find_meta_raw (it, key);
+    DB_metaInfo_t *meta = _pl_meta_for_key (it, key);
 
-    if (old && (!strcasecmp (key, "cuesheet") || !strcasecmp (key, "log"))) {
+    if (meta && (!strcasecmp (key, "cuesheet") || !strcasecmp (key, "log"))) {
         pl_unlock ();
         return;
     }
 
-    size_t newlen = strlen (value);
-    if (!old) {
+    if (!meta) {
         pl_add_meta (it, key, value);
     }
     else {
-        // check for duplicate data
-        const char *str = old;
-        size_t len;
-        while (str) {
-            char *next = strchr (str, '\n');
+        ddb_metaValue_t *data = meta->values;
+        ddb_metaValue_t *tail = NULL;
 
-            if (next) {
-                len = next - str;
-                next++;
-            }
-            else {
-                len = strlen (str);
-            }
-
-            if (len == newlen && !memcmp (str, value, len)) {
+        // dupe check, and find tail
+        while (data) {
+            if (!strcmp (data->value, value)) {
                 pl_unlock ();
                 return;
             }
-
-            str = next;
+            tail = data;
+            data = data->next;
         }
-        size_t sz = strlen (old) + newlen + 2;
-        char out[sz];
-        snprintf (out, sz, "%s\n%s", old, value);
-        pl_replace_meta (it, key, out);
+
+        _meta_append_value (meta, value, tail);
     }
     pl_unlock ();
 }
@@ -145,8 +185,8 @@ pl_replace_meta (playItem_t *it, const char *key, const char *value) {
         m = m->next;
     }
     if (m) {
-        metacache_remove_string (m->value);
-        m->value = metacache_add_string (value);
+        _meta_free_values (m);
+        _meta_append_value(m, value, NULL);
         UNLOCK;
         return;
     }
@@ -184,7 +224,7 @@ pl_delete_meta (playItem_t *it, const char *key) {
                 it->meta = m->next;
             }
             metacache_remove_string (m->key);
-            metacache_remove_string (m->value);
+            _meta_free_values(m);
             free (m);
             break;
         }
@@ -221,15 +261,8 @@ pl_find_meta (playItem_t *it, const char *key) {
 
 const char *
 pl_find_meta_raw (playItem_t *it, const char *key) {
-    pl_ensure_lock ();
-    DB_metaInfo_t *m = it->meta;
-    while (m) {
-        if (!strcasecmp (key, m->key)) {
-            return m->value;
-        }
-        m = m->next;
-    }
-    return NULL;
+    DB_metaInfo_t *m = _pl_meta_for_key (it, key);
+    return m ? m->value : NULL;
 }
 
 int
@@ -269,7 +302,7 @@ pl_delete_metadata (playItem_t *it, DB_metaInfo_t *meta) {
                 it->meta = m->next;
             }
             metacache_remove_string (m->key);
-            metacache_remove_string (m->value);
+            _meta_free_values(m);
             free (m);
             break;
         }
@@ -297,7 +330,7 @@ pl_delete_all_meta (playItem_t *it) {
                 it->meta = next;
             }
             metacache_remove_string (m->key);
-            metacache_remove_string (m->value);
+            _meta_free_values (m);
             free (m);
         }
         m = next;

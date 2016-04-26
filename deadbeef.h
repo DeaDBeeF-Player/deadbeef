@@ -243,10 +243,21 @@ typedef ddb_playItem_t DB_playItem_t;
 typedef struct {
 } ddb_playlist_t;
 
+#if (DDB_API_LEVEL >= 10)
+typedef struct ddb_metaValue_s {
+    const char *value;
+    struct ddb_metaValue_s *next;
+} ddb_metaValue_t;
+#endif
+
 typedef struct DB_metaInfo_s {
     struct DB_metaInfo_s *next;
     const char *key;
     const char *value;
+
+#if (DDB_API_LEVEL >= 10)
+    ddb_metaValue_t *values;
+#endif
 } DB_metaInfo_t;
 
 // FIXME: that needs to be in separate plugin
