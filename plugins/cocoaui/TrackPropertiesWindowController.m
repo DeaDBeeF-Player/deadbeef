@@ -35,7 +35,6 @@ static const char *types[] = {
     "year", "Date",
     "genre", "Genre",
     "composer", "Composer",
-//    "performer", "Performer", // FIXME: tag mapping for performer seems to be missing
     "album artist", "Album Artist",
     "track", "Track Number",
     "numtracks", "Total Tracks",
@@ -54,6 +53,36 @@ static const char *hc_props[] = {
     ":DECODER", "Codec",
     NULL
 };
+
+@interface SingleLineFormatter : NSFormatter
+@end
+
+@implementation SingleLineFormatter
+- (NSString *)stringForObjectValue:(id)anObject {
+    if ([anObject isKindOfClass:[NSString class]]) {
+        NSString *str = anObject;
+        NSRange range = [str rangeOfString:@"\n"];
+        if (range.location != NSNotFound) {
+            return [[str substringToIndex:range.location-1] stringByAppendingString:@" (…)"];
+        }
+        else {
+            return str;
+        }
+    }
+    return @"";
+}
+
+- (NSString *)editingStringForObjectValue:(id)anObject {
+    return anObject;
+}
+
+- (BOOL)getObjectValue:(out id *)anObject
+             forString:(NSString *)string
+      errorDescription:(out NSString **)error {
+    *anObject = string;
+    return YES;
+}
+@end
 
 @interface NullFormatter : NSFormatter
 @end
@@ -468,7 +497,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     if([[aTableColumn identifier] isEqualToString:@"value"]){
 
-        [aCell setFormatter:nil];
+        [aCell setFormatter:[[SingleLineFormatter alloc] init]];
 
         NSDictionary *dict = store[rowIndex];
         if (rowIndex == [aTableView editedRow] && [[aTableView tableColumns] indexOfObject:aTableColumn] == [aTableView editedColumn]) {
