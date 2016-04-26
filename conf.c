@@ -44,8 +44,9 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 
 static DB_conf_item_t *conf_items;
-static int changed = 0;
+static int changed;
 static uintptr_t mutex;
+static disable_saving;
 
 void
 conf_init (void) {
@@ -158,6 +159,9 @@ conf_load (void) {
 
 int
 conf_save (void) {
+    if (disable_saving) {
+        return 0;
+    }
     char tempfile[PATH_MAX];
     char str[PATH_MAX];
     FILE *fp;
@@ -375,4 +379,9 @@ conf_remove_items (const char *key) {
         conf_items = next;
     }
     conf_unlock ();
+}
+
+void
+conf_enable_saving (int enable) {
+    disable_saving = !enable;
 }

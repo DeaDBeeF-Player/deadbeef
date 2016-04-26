@@ -90,4 +90,7 @@ conf_remove_items (const char *key);
 void
 conf_item_free (DB_conf_item_t *it);
 
+void
+conf_enable_saving (int enable);
+
 #endif // __CONF_H
