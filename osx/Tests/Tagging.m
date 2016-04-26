@@ -73,10 +73,46 @@ write_file_from_data(const char *filename, const char *data, size_t size) {
     [super tearDown];
 }
 
-- (void)test_loadTags_DoesntCrash {
+- (void)test_loadTestfileTags_DoesntCrash {
     DB_FILE *fp = vfs_fopen (TESTFILE);
     junk_id3v2_read (it, fp);
     vfs_fclose (fp);
+}
+
+- (void)test_ReadMultiValueTPE1_ReadsAs3Values {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/tpe1_multivalue.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    junk_id3v2_read (it, fp);
+    vfs_fclose (fp);
+
+    DB_metaInfo_t *meta = pl_meta_for_key (it, "artist");
+    XCTAssert(meta, @"Pass");
+    XCTAssert(!strcmp (meta->value, "Value1"), @"Pass");
+
+    int cnt = 0;
+    char combined[100] = "";
+
+    for (ddb_metaValue_t *data = meta->values; data; data = data->next, cnt++) {
+        strcat (combined, data->value);
+        strcat (combined, "/");
+    }
+
+    XCTAssert(cnt == 3, @"Pass");
+    XCTAssert(!strcmp (combined, "Value1/Value2/Value3/"), @"Pass");
+}
+
+- (void)test_ReadMultiLineTPE1_ReadsAs1Value {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/tpe1_multiline.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    junk_id3v2_read (it, fp);
+    vfs_fclose (fp);
+
+    DB_metaInfo_t *meta = pl_meta_for_key (it, "artist");
+    XCTAssert(meta, @"Pass");
+    XCTAssert(!strcmp (meta->value, "Line1\nLine2\nLine3"), @"Actual value: %s", meta->value);
+    XCTAssert(!meta->values->next, @"Pass");
 }
 
 @end

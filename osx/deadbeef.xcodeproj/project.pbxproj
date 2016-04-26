@@ -894,6 +894,7 @@
 		2D7492831CCFF9AE00D3A59E /* mms.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07765E2E1C28559600F5F4BC /* mms.dylib */; };
 		2D7492841CCFF9AE00D3A59E /* psf.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DFD50951C9715B800961D19 /* psf.dylib */; };
 		2D7492851CCFF9AE00D3A59E /* ffmpeg.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; };
+		2D7492871CCFFE7700D3A59E /* TestData in Resources */ = {isa = PBXBuildFile; fileRef = 2D7492861CCFFE7700D3A59E /* TestData */; };
 		2D7C37F81B2C405F0029DE0A /* bitwise.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA141B2AF7F50072FD43 /* bitwise.c */; };
 		2D7C37F91B2C405F0029DE0A /* framing.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA151B2AF7F50072FD43 /* framing.c */; };
 		2D7C37FA1B2C40640029DE0A /* analysis.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA191B2AF8610072FD43 /* analysis.c */; };
@@ -2897,6 +2898,7 @@
 		2D713FFC1A5D7D5900EFF139 /* playqueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playqueue.h; sourceTree = "<group>"; };
 		2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbPlaylistViewController.h; sourceTree = "<group>"; };
 		2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbPlaylistViewController.m; sourceTree = "<group>"; };
+		2D7492861CCFFE7700D3A59E /* TestData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TestData; sourceTree = "<group>"; };
 		2D7C37EC1B2C40520029DE0A /* libogglib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libogglib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7C37F41B2C40580029DE0A /* libvorbislib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvorbislib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7F38021B2858AC00692A7B /* Junklib.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Junklib.m; sourceTree = "<group>"; };
@@ -5588,11 +5590,11 @@
 		2DAA4C091AAF88DE00519559 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				2D0F90B21CCFF06D003FA197 /* dummy_mp3.c */,
 				2DAA4C131AAF88FF00519559 /* TitleFormatting.m */,
 				2D7F38021B2858AC00692A7B /* Junklib.m */,
 				2DE7A8FA1CA493CE00318A9F /* Cuesheet.m */,
 				2D0F90C11CCFF094003FA197 /* Tagging.m */,
+				2D7492861CCFFE7700D3A59E /* TestData */,
 				2DAA4C0A1AAF88DE00519559 /* Supporting Files */,
 			);
 			path = Tests;
@@ -5601,6 +5603,7 @@
 		2DAA4C0A1AAF88DE00519559 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				2D0F90B21CCFF06D003FA197 /* dummy_mp3.c */,
 				2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */,
 				2DAA4C0B1AAF88DE00519559 /* Info.plist */,
 			);
@@ -8614,6 +8617,7 @@
 				2D7492821CCFF9AE00D3A59E /* ddb_shn.dylib in Resources */,
 				2D7492831CCFF9AE00D3A59E /* mms.dylib in Resources */,
 				2D7492841CCFF9AE00D3A59E /* psf.dylib in Resources */,
+				2D7492871CCFFE7700D3A59E /* TestData in Resources */,
 				2D7492851CCFF9AE00D3A59E /* ffmpeg.dylib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
