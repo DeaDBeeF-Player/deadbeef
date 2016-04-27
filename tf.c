@@ -1449,6 +1449,10 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
     playItem_t *it = (playItem_t *)ctx->it;
     char *init_out = out;
     *bool_out = 0;
+
+    int count_true_conditionals = 0;
+    int count_false_conditionals = 0;
+
     while (size) {
         if (*code) {
             int len = u8_charcpy (out, code, outlen);
@@ -1958,13 +1962,15 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
 
                 int bool_out = 0;
                 int res = tf_eval_int (ctx, code, len, out, outlen, &bool_out, 1);
-                if (res > 0) {
+                if (res >= 0) {
                     out += res;
                     outlen -= res;
+                    count_true_conditionals++;
                 }
-                else if (res < 0 && fail_on_undef) {
-                    return res;
+                else if (res < 0) {
+                    count_false_conditionals++;
                 }
+
                 code += len;
                 size -= len;
             }
@@ -1987,6 +1993,11 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
         }
     }
     *out = 0;
+
+    if (fail_on_undef && count_false_conditionals > 0 && count_true_conditionals == 0) {
+        return -1;
+    }
+
     return (int)(out-init_out);
 }
 

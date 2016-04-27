@@ -1217,4 +1217,12 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "Text1__Text2_Text3"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_NestedSquareBracketsWithDefinedAndUndefinedVars_ReturnNonEmpty {
+    pl_replace_meta (it, "title", "title");
+    char *bc = tf_compile("header [[%discnumber%][%title%] a] footer");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "header title a footer"), @"The actual output is: %s", buffer);
+}
+
+
 @end
