@@ -150,6 +150,11 @@ static const char *hc_props[] = {
     [_propertiesTableView reloadData];
 }
 
+- (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
+    self.singleValueSelected = [[_metadataTableView selectedRowIndexes] count] == 1;
+}
+
+
 - (void)buildTrackListForCtx:(int)ctx {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (!plt) {
@@ -953,6 +958,17 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     [_fieldValue setString: _store[idx][@"value"]];
 
     [NSApp beginSheet:_editValuePanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndEditValuePanel:returnCode:contextInfo:) contextInfo:nil];
+}
+
+- (IBAction)editInPlaceAction:(id)sender {
+    NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
+    if ([ind count] != 1) {
+        return; // multiple fields can't be edited at the same time
+    }
+
+    NSInteger idx = [ind firstIndex];
+
+    [_metadataTableView editColumn:1 row:idx withEvent:nil select:YES];
 }
 
 - (IBAction)cancelEditValuePanelAction:(id)sender {

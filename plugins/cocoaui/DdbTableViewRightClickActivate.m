@@ -13,7 +13,7 @@
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent;
 {
     NSInteger row = [self rowAtPoint: [self convertPoint: [theEvent locationInWindow] fromView: nil]];
-    if (row != -1) {
+    if (row != -1 && ![[self selectedRowIndexes] containsIndex:row]) {
         [self selectRowIndexes: [NSIndexSet indexSetWithIndex:row] byExtendingSelection: NO];
     }
     return [super menu];

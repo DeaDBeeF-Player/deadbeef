@@ -27,6 +27,7 @@
 - (void)fill;
 
 @property (unsafe_unretained) BOOL modified;
+@property (unsafe_unretained) BOOL singleValueSelected;
 
 // trkproperties window
 @property (unsafe_unretained) IBOutlet NSTableView *metadataTableView;
@@ -49,6 +50,7 @@
 
 // menu
 - (IBAction)editValueAction:(id)sender;
+- (IBAction)editInPlaceAction:(id)sender;
 
 
 // metadata writing progress dialog
