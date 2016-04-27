@@ -1856,7 +1856,9 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     out->prev[PL_SEARCH] = it->prev[PL_SEARCH];
     out->_refc = 1;
 
-    pl_add_meta_copy (out, it->meta);
+    for (DB_metaInfo_t *meta = it->meta; meta; meta = meta->next) {
+        pl_add_meta_copy (out, meta);
+    }
     UNLOCK;
 }
 
