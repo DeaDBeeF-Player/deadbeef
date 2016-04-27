@@ -29,7 +29,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gtkui.h"
-#include "actionhandlers.h"
 #include "clipboard.h"
 #include "interface.h"
 #include "support.h"
