@@ -646,19 +646,49 @@ set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoi
         const char *skey = g_value_get_string (&key);
         const char *svalue = g_value_get_string (&value);
 
-        for (int i = 0; i < numtracks; i++) {
-            if (*svalue) {
-                const char *oldvalue= deadbeef->pl_find_meta_raw (tracks[i], skey);
-                if (oldvalue && strlen (oldvalue) > MAX_GUI_FIELD_LEN) {
-                    fprintf (stderr, "trkproperties: value is too long, ignored\n");
-                    continue;
-                }
-                deadbeef->pl_replace_meta (tracks[i], skey, svalue);
-            }
-            else {
-                deadbeef->pl_delete_meta (tracks[i], skey);
+        int num_values = 1;
+        for (int i = 0; svalue[i]; i++) {
+            if (svalue[i] == ';') {
+                num_values++;
             }
         }
+
+        char **values = calloc (num_values, sizeof (char *));
+        const char *p = svalue;
+        const char *e = p;
+        int n = 0;
+        do {
+            while (*e && *e != ';') {
+                e++;
+            }
+            char *v = malloc (e-p+1);
+            memcpy (v, p, e-p);
+            v[e-p] = 0;
+            values[n++] = v;
+            if (!*e) {
+                break;
+            }
+            p = ++e;
+        } while (*p);
+
+        for (int i = 0; i < numtracks; i++) {
+            deadbeef->pl_delete_meta (tracks[i], skey);
+            if (*svalue) {
+                const char *oldvalue= deadbeef->pl_find_meta_raw (tracks[i], skey);
+                for (n = 0; n < num_values; n++) {
+                    if (values[n] && *values[n]) {
+                        deadbeef->pl_append_meta (tracks[i], skey, values[n]);
+                    }
+                }
+            }
+        }
+
+        for (n = 0; n < num_values; n++) {
+            if (values[n]) {
+                free (values[n]);
+            }
+        }
+        free (values);
     }
 
     return FALSE;
