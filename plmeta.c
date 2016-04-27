@@ -53,8 +53,8 @@ _meta_value_alloc (void) {
     return calloc (1, sizeof (ddb_metaValue_t));
 }
 
-static void
-_meta_free_values (DB_metaInfo_t *meta) {
+void
+pl_meta_free_values (DB_metaInfo_t *meta) {
     ddb_metaValue_t *data = meta->values;
     while (data) {
         metacache_remove_string (data->value);
@@ -66,8 +66,8 @@ _meta_free_values (DB_metaInfo_t *meta) {
     meta->values = NULL;
 }
 
-static ddb_metaValue_t *
-_meta_append_value (DB_metaInfo_t *meta, const char *value, ddb_metaValue_t *tail) {
+ddb_metaValue_t *
+pl_meta_append_value (DB_metaInfo_t *meta, const char *value, ddb_metaValue_t *tail) {
     ddb_metaValue_t *data = _meta_value_alloc ();
     data->value = metacache_add_string (value);
 
@@ -88,12 +88,8 @@ _meta_append_value (DB_metaInfo_t *meta, const char *value, ddb_metaValue_t *tai
     return data;
 }
 
-void
-pl_add_meta (playItem_t *it, const char *key, const char *value) {
-    if (!value || !*value) {
-        return;
-    }
-    LOCK;
+DB_metaInfo_t *
+pl_add_empty_meta_for_key (playItem_t *it, const char *key) {
     // check if it's already set
     DB_metaInfo_t *normaltail = NULL;
     DB_metaInfo_t *propstart = NULL;
@@ -102,8 +98,7 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
     while (m) {
         if (!strcasecmp (key, m->key)) {
             // duplicate key
-            UNLOCK;
-            return;
+            return NULL;
         }
         // find end of normal metadata
         if (!normaltail && (!m->next || m->key[0] == ':' || m->key[0] == '_' || m->key[0] == '!')) {
@@ -120,7 +115,6 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
     // add
     m = calloc (1, sizeof (DB_metaInfo_t));
     m->key = metacache_add_string (key);
-    _meta_append_value(m, value, NULL);
 
     if (key[0] == ':' || key[0] == '_' || key[0] == '!') {
         if (tail) {
@@ -139,6 +133,18 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
             it->meta = m;
         }
     }
+
+    return m;
+}
+
+void
+pl_add_meta (playItem_t *it, const char *key, const char *value) {
+    if (!value || !*value) {
+        return;
+    }
+    LOCK;
+    DB_metaInfo_t *m = pl_add_empty_meta_for_key(it, key);
+    pl_meta_append_value(m, value, NULL);
     UNLOCK;
 }
 
@@ -169,7 +175,7 @@ pl_append_meta (playItem_t *it, const char *key, const char *value) {
             data = data->next;
         }
 
-        _meta_append_value (meta, value, tail);
+        pl_meta_append_value (meta, value, tail);
     }
     pl_unlock ();
 }
@@ -186,8 +192,8 @@ pl_replace_meta (playItem_t *it, const char *key, const char *value) {
         m = m->next;
     }
     if (m) {
-        _meta_free_values (m);
-        _meta_append_value(m, value, NULL);
+        pl_meta_free_values (m);
+        pl_meta_append_value(m, value, NULL);
         UNLOCK;
         return;
     }
@@ -225,7 +231,7 @@ pl_delete_meta (playItem_t *it, const char *key) {
                 it->meta = m->next;
             }
             metacache_remove_string (m->key);
-            _meta_free_values(m);
+            pl_meta_free_values(m);
             free (m);
             break;
         }
@@ -303,7 +309,7 @@ pl_delete_metadata (playItem_t *it, DB_metaInfo_t *meta) {
                 it->meta = m->next;
             }
             metacache_remove_string (m->key);
-            _meta_free_values(m);
+            pl_meta_free_values(m);
             free (m);
             break;
         }
@@ -331,7 +337,7 @@ pl_delete_all_meta (playItem_t *it) {
                 it->meta = next;
             }
             metacache_remove_string (m->key);
-            _meta_free_values (m);
+            pl_meta_free_values (m);
             free (m);
         }
         m = next;
@@ -376,4 +382,14 @@ pl_meta_exists (playItem_t *it, const char *key) {
     const char *v = pl_find_meta (it, key);
     pl_unlock ();
     return v ? 1 : 0;
+}
+
+void
+pl_add_meta_copy (playItem_t *it, DB_metaInfo_t *meta) {
+    DB_metaInfo_t *m = pl_add_empty_meta_for_key(it, meta->key);
+
+    ddb_metaValue_t *tail = NULL;
+    for (ddb_metaValue_t *data = meta->values; data; data = data->next) {
+        tail = pl_meta_append_value(m, data->value, tail);
+    }
 }

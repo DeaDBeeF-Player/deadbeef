@@ -531,4 +531,13 @@ pl_configchanged (void);
 DB_metaInfo_t *
 pl_meta_for_key (playItem_t *it, const char *key);
 
+ddb_metaValue_t *
+pl_meta_append_value (DB_metaInfo_t *meta, const char *value, ddb_metaValue_t *tail);
+
+void
+pl_meta_free_values (DB_metaInfo_t *meta);
+
+void
+pl_add_meta_copy (playItem_t *it, DB_metaInfo_t *meta);
+
 #endif // __PLAYLIST_H

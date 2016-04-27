@@ -1855,24 +1855,8 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     out->next[PL_SEARCH] = it->next[PL_SEARCH];
     out->prev[PL_SEARCH] = it->prev[PL_SEARCH];
     out->_refc = 1;
-    // copy metainfo
-    DB_metaInfo_t *prev = NULL;
-    DB_metaInfo_t *meta = it->meta;
-    while (meta) {
-        DB_metaInfo_t *m = malloc (sizeof (DB_metaInfo_t));
-        memset (m, 0, sizeof (DB_metaInfo_t));
-        m->key = metacache_add_string (meta->key);
-        m->value = metacache_add_string (meta->value);
-        m->next = NULL;
-        if (prev) {
-            prev->next = m;
-        }
-        else {
-            out->meta = m;
-        }
-        prev = m;
-        meta = meta->next;
-    }
+
+    pl_add_meta_copy (out, it->meta);
     UNLOCK;
 }
 
@@ -1906,10 +1890,9 @@ pl_item_free (playItem_t *it) {
     LOCK;
     if (it) {
         while (it->meta) {
+            pl_meta_free_values (it->meta);
             DB_metaInfo_t *m = it->meta;
             it->meta = m->next;
-            metacache_remove_string (m->key);
-            metacache_remove_string (m->value);
             free (m);
         }
         free (it);
@@ -1985,6 +1968,7 @@ pl_crop_selected (void) {
     UNLOCK;
 }
 
+// FIXME: multivalue support
 int
 plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     LOCK;
@@ -2533,6 +2517,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
                     goto load_fail;
                 }
                 value[l] = 0;
+                // FIXME: multivalue support
                 plt_add_meta (plt, key, value);
             }
         }
@@ -3572,6 +3557,7 @@ plt_search_reset (playlist_t *playlist) {
     plt_search_reset_int (playlist, 1);
 }
 
+// FIXME: multivalue support
 void
 plt_search_process2 (playlist_t *playlist, const char *text, int select_results) {
     LOCK;
@@ -3698,7 +3684,7 @@ pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
         playItem_t *i;
         for (i = first; i; i = i->next[PL_MAIN]) {
             i->_flags = from->_flags;
-            pl_add_meta (i, meta->key, meta->value);
+            pl_add_meta_copy (i, meta);
             if (i == last) {
                 break;
             }
