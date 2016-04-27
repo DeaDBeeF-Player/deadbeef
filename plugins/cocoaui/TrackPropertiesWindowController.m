@@ -645,7 +645,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         }
     }
     dispatch_async(dispatch_get_main_queue(), ^{
-        [_progressPanel orderOut:self];
+        [NSApp endSheet:_progressPanel];
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         if (plt) {
             deadbeef->plt_modified (plt);
@@ -708,12 +708,16 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     _progress_aborted = NO;
 
-    [NSApp beginSheet:_progressPanel modalForWindow:[self window] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+    [NSApp beginSheet:_progressPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(progressPanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
 
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
         [self writeMetaWorker];
     });
+}
+
+- (void)progressPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+    [sheet orderOut:self];
 }
 
 - (IBAction)cancelWritingAction:(id)sender {
