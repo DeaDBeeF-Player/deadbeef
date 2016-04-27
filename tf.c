@@ -142,9 +142,10 @@ tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
     }
 
     if (!(ctx->flags & DDB_TF_CONTEXT_MULTILINE)) {
+        // replace any unprintable char with '_'
         for (; *out; out++) {
-            if (*out == '\n') {
-                *out = ';';
+            if ((uint8_t)(*out) < ' ') {
+                *out = '_';
             }
         }
     }
@@ -1392,6 +1393,48 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { NULL, NULL }
 };
 
+static const char *
+_tf_get_combined_value (playItem_t *it, const char *key, int *needs_free) {
+    DB_metaInfo_t *meta = pl_meta_for_key (it, key);
+
+    if (!meta) {
+        *needs_free = 0;
+        return NULL;
+    }
+
+    if (!meta->values->next) {
+        *needs_free = 0;
+        return meta->value;
+    }
+
+    size_t len = 0;
+    ddb_metaValue_t *data = meta->values;
+    while (data) {
+        len += strlen (data->value);
+        len += 2; // ", "
+        data = data->next;
+    }
+
+    char *out = malloc (len + 1);
+
+    char *p = out;
+
+    data = meta->values;
+    while (data) {
+        len = strlen (data->value);
+        memcpy (p, data->value, data->next ? len : len + 1);
+        p += len;
+        if (data->next) {
+            memcpy (p, ", ", 2);
+            p += 2;
+        }
+        data = data->next;
+    }
+
+    *needs_free = 1;
+    return out;
+}
+
 static int
 tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int outlen, int *bool_out, int fail_on_undef) {
     playItem_t *it = (playItem_t *)ctx->it;
@@ -1455,6 +1498,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 // compatible with fb2k syntax
                 pl_lock ();
                 const char *val = NULL;
+                int needs_free = 0;
                 const char *aa_fields[] = { "album artist", "albumartist", "band", "artist", "composer", "performer", NULL };
                 const char *a_fields[] = { "artist", "album artist", "albumartist", "composer", "performer", NULL };
                 const char *alb_fields[] = { "album", "venue", NULL };
@@ -1472,7 +1516,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 }
                 else if (!strcmp (name, a_fields[0])) {
                     for (int i = 0; !val && a_fields[i]; i++) {
-                        val = pl_find_meta_raw (it, a_fields[i]);
+                        val = _tf_get_combined_value(it, a_fields[i], &needs_free);
                     }
                 }
                 else if (!strcmp (name, "album")) {
@@ -1896,6 +1940,10 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 pl_unlock ();
                 if (!skip_out && !val && fail_on_undef) {
                     return -1;
+                }
+
+                if (val && needs_free) {
+                    free ((char *)val);
                 }
 
                 code += len;
