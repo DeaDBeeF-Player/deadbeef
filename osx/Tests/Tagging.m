@@ -15,6 +15,8 @@
 #include "conf.h"
 #include "../../common.h"
 
+#define TESTFILE "/tmp/ddb_test.mp3"
+
 @interface Tagging : XCTestCase {
     playItem_t *it;
 }
@@ -37,7 +39,7 @@
         exit (-1);
     }
 
-    it = pl_item_alloc_init ("test.mp3", "stdmpg");
+    it = pl_item_alloc_init (TESTFILE, "stdmpg");
 }
 
 - (void)tearDown {
@@ -154,6 +156,129 @@
     XCTAssert(!meta->values->next, @"Pass");
 }
 
+- (void)test_WriteID3v2MultiLineArtist_MatchingBinaryReference {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
+
+    pl_append_meta (it, "artist", "Line1\nLine2\nLine3");
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithUTF8String:path] toPath:@TESTFILE error:nil];
+    junk_rewrite_tags(it, JUNK_WRITE_ID3V2, 3, NULL);
+
+    DB_FILE *fp = vfs_fopen (TESTFILE);
+    DB_id3v2_tag_t id3v2;
+    memset (&id3v2, 0, sizeof (id3v2));
+    junk_id3v2_read_full (it, &id3v2, fp);
+    vfs_fclose (fp);
+    unlink (TESTFILE);
+
+    DB_id3v2_frame_t *tpe1 = id3v2.frames;
+
+    XCTAssert (!strcmp (tpe1->id, "TPE1"), @"Unexpected frame: %s", tpe1->id);
+
+    const char refdata[] = "\0Line1\nLine2\nLine3";
+    XCTAssert (!memcmp (tpe1->data, refdata, sizeof (refdata)-1), @"TPE1 frame contents don't match reference");
+}
+
+- (void)test_WriteID3v23MultiValueArtist_MatchingBinaryReference {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
+
+    pl_append_meta (it, "artist", "Value1");
+    pl_append_meta (it, "artist", "Value2");
+    pl_append_meta (it, "artist", "Value3");
+
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithUTF8String:path] toPath:@TESTFILE error:nil];
+    junk_rewrite_tags(it, JUNK_WRITE_ID3V2, 3, NULL);
+
+    DB_FILE *fp = vfs_fopen (TESTFILE);
+    DB_id3v2_tag_t id3v2;
+    memset (&id3v2, 0, sizeof (id3v2));
+    junk_id3v2_read_full (it, &id3v2, fp);
+    vfs_fclose (fp);
+    unlink (TESTFILE);
+
+    DB_id3v2_frame_t *tpe1 = id3v2.frames;
+
+    XCTAssert (!strcmp (tpe1->id, "TPE1"), @"Unexpected frame: %s", tpe1->id);
+
+    const char refdata[] = "\0Value1 / Value2 / Value3";
+    XCTAssert (!memcmp (tpe1->data, refdata, sizeof (refdata)-1), @"TPE1 frame contents don't match reference");
+}
+
+- (void)test_WriteID3v24MultiValueArtist_MatchingBinaryReference {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
+
+    pl_append_meta (it, "artist", "Value1");
+    pl_append_meta (it, "artist", "Value2");
+    pl_append_meta (it, "artist", "Value3");
+
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithUTF8String:path] toPath:@TESTFILE error:nil];
+    junk_rewrite_tags(it, JUNK_WRITE_ID3V2, 4, NULL);
+
+    DB_FILE *fp = vfs_fopen (TESTFILE);
+    DB_id3v2_tag_t id3v2;
+    memset (&id3v2, 0, sizeof (id3v2));
+    junk_id3v2_read_full (it, &id3v2, fp);
+    vfs_fclose (fp);
+    unlink (TESTFILE);
+
+    DB_id3v2_frame_t *tpe1 = id3v2.frames;
+
+    XCTAssert (!strcmp (tpe1->id, "TPE1"), @"Unexpected frame: %s", tpe1->id);
+
+    const char refdata[] = "\x03Value1\0Value2\0Value3";
+    XCTAssert (!memcmp (tpe1->data, refdata, sizeof (refdata)-1), @"TPE1 frame contents don't match reference");
+}
+
+- (void)test_WriteAPEv2MultiLineArtist_MatchingBinaryReference {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
+
+    pl_append_meta (it, "artist", "Line1\nLine2\nLine3");
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithUTF8String:path] toPath:@TESTFILE error:nil];
+    junk_rewrite_tags(it, JUNK_WRITE_APEV2, 3, NULL);
+
+    DB_FILE *fp = vfs_fopen (TESTFILE);
+    DB_apev2_tag_t apev2;
+    memset (&apev2, 0, sizeof (apev2));
+    junk_apev2_read_full (it, &apev2, fp);
+    vfs_fclose (fp);
+    unlink (TESTFILE);
+
+    DB_apev2_frame_t *artist = apev2.frames;
+
+    XCTAssert (!strcasecmp (artist->key, "artist"), @"Unexpected frame: %s", artist->key);
+
+    const char refdata[] = "Line1\nLine2\nLine3";
+    XCTAssert (!memcmp (artist->data, refdata, sizeof (refdata)-1), @"ARTIST frame contents don't match reference");
+}
+
+- (void)test_WriteAPEv2MultiValueArtist_MatchingBinaryReference {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
+
+    pl_append_meta (it, "artist", "Value1");
+    pl_append_meta (it, "artist", "Value2");
+    pl_append_meta (it, "artist", "Value3");
+
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithUTF8String:path] toPath:@TESTFILE error:nil];
+    junk_rewrite_tags(it, JUNK_WRITE_APEV2, 3, NULL);
+
+    DB_FILE *fp = vfs_fopen (TESTFILE);
+    DB_apev2_tag_t apev2;
+    memset (&apev2, 0, sizeof (apev2));
+    junk_apev2_read_full (it, &apev2, fp);
+    vfs_fclose (fp);
+    unlink (TESTFILE);
+
+    DB_apev2_frame_t *artist = apev2.frames;
+
+    XCTAssert (!strcasecmp (artist->key, "artist"), @"Unexpected frame: %s", artist->key);
+
+    const char refdata[] = "Value1\0Value2\0Value3";
+    XCTAssert (!memcmp (artist->data, refdata, sizeof (refdata)-1), @"ARTIST frame contents don't match reference");
+}
 
 
 @end

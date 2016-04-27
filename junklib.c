@@ -294,17 +294,18 @@ _append_tag_values (playItem_t *it, const char *key, const char *value, size_t v
 }
 
 static char *
-_get_combined_meta_value (DB_metaInfo_t *meta,  int * restrict out_size) {
+_get_combined_meta_value (DB_metaInfo_t *meta,  int * restrict out_size, const char *separator, size_t separator_len) {
     *out_size = 0;
+
     ddb_metaValue_t *data;
     for (data = meta->values; data; data = data->next) {
         if (data->value && *data->value) {
-            *out_size += strlen (data->value) + 1;
+            *out_size += strlen (data->value) + separator_len;
         }
     }
 
     if (*out_size > 0) {
-        (*out_size)--; // don't write trailing zero
+        (*out_size) -= separator_len; // don't write trailing separator
     }
 
     if (!(*out_size)) {
@@ -322,11 +323,12 @@ _get_combined_meta_value (DB_metaInfo_t *meta,  int * restrict out_size) {
     for (data = meta->values; data; data = data->next) {
         if (data->value && *data->value) {
             size_t len = strlen (data->value);
-            if (data->next) {
-                len++;
-            }
             memcpy (p, data->value, len);
             p += len;
+            if (data->next) {
+                memcpy (p, separator, separator_len);
+                p += separator_len;
+            }
         }
     }
 
@@ -2065,7 +2067,17 @@ junk_id3v2_add_text_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char
 static void
 _id3v2_append_combined_text_frame_from_meta (DB_id3v2_tag_t *id3v2, const char *key, DB_metaInfo_t *meta) {
     int out_size;
-    char *tag_value = _get_combined_meta_value (meta, &out_size);
+
+    char *tag_value;
+    if (id3v2->version[0] == 4) {
+        tag_value = _get_combined_meta_value (meta, &out_size, "\0", 1);
+    }
+    else if (id3v2->version[0] == 3) {
+        tag_value = _get_combined_meta_value (meta, &out_size, " / ", 3);
+    }
+    else {
+        assert (0);
+    }
     junk_id3v2_add_text_frame2 (id3v2, key, tag_value, out_size);
     free (tag_value);
 }
@@ -2963,7 +2975,7 @@ junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char
 static void
 _apev2_append_combined_text_frame_from_meta (DB_apev2_tag_t *apev2, const char *key, DB_metaInfo_t *meta) {
     int out_size;
-    char *tag_value = _get_combined_meta_value (meta, &out_size);
+    char *tag_value = _get_combined_meta_value (meta, &out_size, "\0", 1);
     junk_apev2_add_text_frame2 (apev2, key, tag_value, out_size);
     free (tag_value);
 }
@@ -4540,7 +4552,17 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                ) {
                 // add as txxx
                 int out_size;
-                char *tag_value = _get_combined_meta_value (meta, &out_size);
+
+                char *tag_value;
+                if (id3v2.version[0] == 4) {
+                    tag_value = _get_combined_meta_value (meta, &out_size, "\0", 1);
+                }
+                else if (id3v2.version[0] == 3) {
+                    tag_value = _get_combined_meta_value (meta, &out_size, " / ", 3);
+                }
+                else {
+                    assert (0);
+                }
                 trace ("adding unknown frame as TXX %s=%s\n", meta->key, tag_value);
                 junk_id3v2_remove_txxx_frame (&id3v2, meta->key);
                 junk_id3v2_add_txxx_frame (&id3v2, meta->key, tag_value, out_size);
