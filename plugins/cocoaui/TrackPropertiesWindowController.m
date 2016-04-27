@@ -597,7 +597,9 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
         deadbeef->pl_delete_meta (_tracks[i], skey);
         for (NSString *val in transformedValues) {
-            deadbeef->pl_append_meta (_tracks[i], skey, [val UTF8String]);
+            if ([val length]) {
+                deadbeef->pl_append_meta (_tracks[i], skey, [val UTF8String]);
+            }
         }
     }
 }
