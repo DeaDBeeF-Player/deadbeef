@@ -29,6 +29,7 @@
 #include <string.h>
 #include <math.h>
 #include <assert.h>
+#include <ctype.h>
 #include "../../gettext.h"
 #include "ddblistview.h"
 #include "trkproperties.h"
@@ -67,7 +68,7 @@ static int last_ctx;
 static ddb_playlist_t *last_plt;
 
 static char *
-clip_multiline_value (char *v) {
+clip_multiline_value (const char *v) {
     char *clipped_val = NULL;
     size_t l = strlen (v);
     const char multiline_ellipsis[] = " (…)";
@@ -265,6 +266,19 @@ on_closebtn_clicked                    (GtkButton       *button,
     trkproperties_destroy ();
 }
 
+static void
+update_meta_iter_with_edited_value (GtkTreeIter *iter, const char *new_text) {
+    char *clipped_val = clip_multiline_value (new_text);
+    if (!clipped_val) {
+        gtk_list_store_set (store, iter, 1, new_text, 3, 0, 4, new_text, -1);
+    }
+    else {
+        gtk_list_store_set (store, iter, 1, clipped_val, 3, 0, 4, new_text, -1);
+        free (clipped_val);
+    }
+}
+
+
 void
 on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpointer user_data) {
     GtkListStore *store = GTK_LIST_STORE (user_data);
@@ -284,18 +298,12 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
 
     GValue value = {0,};
     GValue mult = {0,};
-    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 1, &value);
+    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 4, &value);
     gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 3, &mult);
     const char *svalue = g_value_get_string (&value);
     int imult = g_value_get_int (&mult);
     if (strcmp (svalue, new_text) && (!imult || strlen (new_text) == 0)) {
-        char *clipped_val = clip_multiline_value (new_text);
-        if (!clipped_val) {
-            gtk_list_store_set (store, &iter, 1, new_text, 3, 0, 4, new_text, -1);
-        }
-        else {
-            gtk_list_store_set (store, &iter, 1, clipped_val, 3, 0, 4, new_text, -1);
-        }
+        update_meta_iter_with_edited_value (&iter, new_text);
         trkproperties_modified = 1;
     }
     trkproperties_block_keyhandler = 0;
@@ -884,10 +892,73 @@ on_trackproperties_window_state_event  (GtkWidget       *widget,
 }
 
 void
-on_trkpropertis_edit_activate          (GtkMenuItem     *menuitem,
+on_trkproperties_edit_activate          (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    if (numtracks != 1) {
+        return; // TODO: multiple track editing support
+    }
 
+    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+    GtkTreeSelection *sel = gtk_tree_view_get_selection (treeview);
+    int count = gtk_tree_selection_count_selected_rows (sel);
+    if (count != 1) {
+        return; // multiple fields can't be edited at the same time
+    }
+
+
+    GtkWidget *dlg = create_edit_tag_value_dlg ();
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (trackproperties));
+    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
+
+    GList *lst = gtk_tree_selection_get_selected_rows (sel, NULL);
+
+    GtkTreePath *path = lst->data;
+
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, path);
+    GValue key = {0,};
+    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 2, &key);
+    GValue value = {0,};
+    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 4, &value);
+    const char *skey = g_value_get_string (&key);
+    const char *svalue = g_value_get_string (&value);
+
+    char *uppercase_key = strdup (skey);
+    for (char *p = uppercase_key; *p; p++) {
+        *p = toupper (*p);
+    }
+
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "field_name")), uppercase_key);
+
+    free (uppercase_key);
+
+    GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
+    gtk_text_buffer_set_text (buffer, svalue, strlen (svalue));
+    gtk_text_view_set_buffer (GTK_TEXT_VIEW (lookup_widget (dlg, "field_value")), buffer);
+
+    g_value_unset (&key);
+    g_value_unset (&value);
+
+    g_list_free_full (lst, (GDestroyNotify) gtk_tree_path_free);
+
+    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (response == GTK_RESPONSE_OK) {
+        GtkTextIter begin, end;
+
+        gtk_text_buffer_get_start_iter (buffer, &begin);
+        gtk_text_buffer_get_end_iter (buffer, &end);
+
+        char *new_text = gtk_text_buffer_get_text (buffer, &begin, &end, TRUE);
+
+        update_meta_iter_with_edited_value (&iter, new_text);
+
+        free (new_text);
+
+        trkproperties_modified = 1;
+    }
+    g_object_unref (buffer);
+    gtk_widget_destroy (dlg);
 }
 
 

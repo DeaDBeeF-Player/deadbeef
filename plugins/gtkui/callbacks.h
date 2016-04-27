@@ -1351,3 +1351,7 @@ on_trkproperties_automatically_fill_values_activate
 void
 on_trkproperties_crop_activate         (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_trkproperties_edit_activate         (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

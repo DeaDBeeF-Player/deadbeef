@@ -4831,7 +4831,7 @@ GtkWidget*
 create_trkproperties_popup_menu (void)
 {
   GtkWidget *trkproperties_popup_menu;
-  GtkWidget *trkpropertis_edit;
+  GtkWidget *trkproperties_edit;
   GtkWidget *trkproperties_edit_in_place;
   GtkWidget *trkproperties_remove;
   GtkWidget *trkproperties_crop;
@@ -4847,9 +4847,9 @@ create_trkproperties_popup_menu (void)
 
   trkproperties_popup_menu = gtk_menu_new ();
 
-  trkpropertis_edit = gtk_menu_item_new_with_mnemonic (_("Edit"));
-  gtk_widget_show (trkpropertis_edit);
-  gtk_container_add (GTK_CONTAINER (trkproperties_popup_menu), trkpropertis_edit);
+  trkproperties_edit = gtk_menu_item_new_with_mnemonic (_("Edit"));
+  gtk_widget_show (trkproperties_edit);
+  gtk_container_add (GTK_CONTAINER (trkproperties_popup_menu), trkproperties_edit);
 
   trkproperties_edit_in_place = gtk_menu_item_new_with_mnemonic (_("Edit (in place)"));
   gtk_widget_show (trkproperties_edit_in_place);
@@ -4899,8 +4899,8 @@ create_trkproperties_popup_menu (void)
   gtk_widget_show (trkproperties_automatically_fill_values);
   gtk_container_add (GTK_CONTAINER (trkproperties_popup_menu), trkproperties_automatically_fill_values);
 
-  g_signal_connect ((gpointer) trkpropertis_edit, "activate",
-                    G_CALLBACK (on_trkpropertis_edit_activate),
+  g_signal_connect ((gpointer) trkproperties_edit, "activate",
+                    G_CALLBACK (on_trkproperties_edit_activate),
                     NULL);
   g_signal_connect ((gpointer) trkproperties_edit_in_place, "activate",
                     G_CALLBACK (on_trkproperties_edit_in_place_activate),
@@ -4941,7 +4941,7 @@ create_trkproperties_popup_menu (void)
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (trkproperties_popup_menu, trkproperties_popup_menu, "trkproperties_popup_menu");
-  GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkpropertis_edit, "trkpropertis_edit");
+  GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_edit, "trkproperties_edit");
   GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_edit_in_place, "trkproperties_edit_in_place");
   GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_remove, "trkproperties_remove");
   GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_crop, "trkproperties_crop");
@@ -4974,6 +4974,7 @@ create_edit_tag_value_dlg (void)
   GtkWidget *okbutton12;
 
   edit_tag_value_dlg = gtk_dialog_new ();
+  gtk_widget_set_size_request (edit_tag_value_dlg, 300, 250);
   gtk_window_set_title (GTK_WINDOW (edit_tag_value_dlg), _("Edit Value"));
   gtk_window_set_type_hint (GTK_WINDOW (edit_tag_value_dlg), GDK_WINDOW_TYPE_HINT_DIALOG);
   gtk_dialog_set_has_separator (GTK_DIALOG (edit_tag_value_dlg), FALSE);
@@ -4985,6 +4986,7 @@ create_edit_tag_value_dlg (void)
   gtk_widget_show (vbox47);
   gtk_box_pack_start (GTK_BOX (dialog_vbox17), vbox47, TRUE, TRUE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (vbox47), 12);
+  gtk_widget_set_can_focus(vbox47, TRUE);
 
   label160 = gtk_label_new (_("Field name:"));
   gtk_widget_show (label160);
@@ -5038,6 +5040,7 @@ create_edit_tag_value_dlg (void)
   GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, cancelbutton12, "cancelbutton12");
   GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, okbutton12, "okbutton12");
 
+  gtk_widget_grab_focus (field_value);
   return edit_tag_value_dlg;
 }
 
