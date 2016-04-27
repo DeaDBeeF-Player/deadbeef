@@ -333,6 +333,17 @@ _get_combined_meta_value (DB_metaInfo_t *meta,  int * restrict out_size) {
     return out;
 }
 
+static int
+_convert_crlf_to_cr (char *data, int datasize) {
+    for (int i = 0; i < datasize; i++) {
+        if (data[i] == '\r' && data[i+1] == '\n') {
+            memmove (data+i, data+i+1, datasize-i);
+            datasize--;
+        }
+    }
+    return datasize;
+}
+
 #ifdef DDB_RECODE
 
 static int
@@ -1074,13 +1085,7 @@ convstr_id3v2 (int version, uint8_t encoding, const uint8_t *str, int sz, int *o
         return NULL;
     }
 
-    // convert \r\n to \n
-    for (int i = 0; i < converted_sz; i++) {
-        if (out[i] == '\r' && out[i+1] == '\n') {
-            memmove (out+i, out+i+1, converted_sz-i-1);
-            converted_sz--;
-        }
-    }
+    converted_sz = _convert_crlf_to_cr (out, converted_sz);
 
     // trim trailing linebreaks
     while (converted_sz > 0 && (uint8_t)out[converted_sz-1] <= 32) {
@@ -1718,6 +1723,8 @@ junk_apev2_read_full_mem (playItem_t *it, DB_apev2_tag_t *tag_store, char *mem, 
             memcpy (value, mem, itemsize);
             value[itemsize] = 0;
 
+            itemsize = _convert_crlf_to_cr (value, itemsize);
+
             junk_apev2_add_frame (it, tag_store, &tail, itemsize, itemflags, key, value);
 
             free (value);
@@ -1822,6 +1829,8 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
                 return -1;
             }
             value[itemsize] = 0;
+
+            itemsize = _convert_crlf_to_cr (value, itemsize);
 
             junk_apev2_add_frame (it, tag_store, &tail, itemsize, itemflags, key, value);
             free (value);

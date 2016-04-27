@@ -105,7 +105,7 @@
     XCTAssert(!strcmp (combined, "Value1/Value2/Value3/"), @"Got value: %s", meta->value);
 }
 
-- (void)test_ReadMultiLineTPE1_ReadsAs1Value {
+- (void)test_ReadID3v2MultiLineTPE1_ReadsAs1Value {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/tpe1_multiline.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
@@ -117,5 +117,43 @@
     XCTAssert(!strcmp (meta->value, "Line1\nLine2\nLine3"), @"Actual value: %s", meta->value);
     XCTAssert(!meta->values->next, @"Pass");
 }
+
+- (void)test_ReadAPEv2MultiValueArtist_ReadsAs3Values {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/artist_multivalue_apev2.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    junk_apev2_read (it, fp);
+    vfs_fclose (fp);
+
+    DB_metaInfo_t *meta = pl_meta_for_key (it, "artist");
+    XCTAssert(meta, @"Pass");
+    XCTAssert(!strcmp (meta->value, "Value1"), @"Got value: %s", meta->value);
+
+    int cnt = 0;
+    char combined[100] = "";
+
+    for (ddb_metaValue_t *data = meta->values; data; data = data->next, cnt++) {
+        strcat (combined, data->value);
+        strcat (combined, "/");
+    }
+
+    XCTAssert(cnt == 3, @"Got count: %d", cnt);
+    XCTAssert(!strcmp (combined, "Value1/Value2/Value3/"), @"Got value: %s", meta->value);
+}
+
+- (void)test_ReadAPEv2MultiLineArtist_ReadsAs1Value {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/artist_multiline_apev2.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    junk_apev2_read (it, fp);
+    vfs_fclose (fp);
+
+    DB_metaInfo_t *meta = pl_meta_for_key (it, "artist");
+    XCTAssert(meta, @"Pass");
+    XCTAssert(!strcmp (meta->value, "Line1\nLine2\nLine3"), @"Actual value: %s", meta->value);
+    XCTAssert(!meta->values->next, @"Pass");
+}
+
+
 
 @end
