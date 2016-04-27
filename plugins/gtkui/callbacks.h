@@ -1295,3 +1295,59 @@ gboolean
 on_prefwin_key_press_event             (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data);
+
+void
+on_trkpropertis_edit_activate          (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_trkproperties_edit_in_place_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_trkproperties_remove_activate       (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_trkproperties_cut_activate          (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_trkproperties_copy_activate         (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_trkproperties_paste_activate        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_trkproperties_capitalize_activate   (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_trkproperties_clean_up_activate     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_trkproperties_format_from_other_fields_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_trkproperties_add_new_field_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_trkproperties_paste_fields_activate (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_trkproperties_automatically_fill_values_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_trkproperties_crop_activate         (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

@@ -41,6 +41,7 @@
 #include "ddbcellrenderertextmultiline.h"
 #include "tagwritersettings.h"
 #include "wingeom.h"
+#include "callbacks.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -196,16 +197,7 @@ on_trackproperties_delete_event        (GtkWidget       *widget,
     return TRUE;
 }
 
-void
-on_remove_field_activate                 (GtkMenuItem     *menuitem,
-                                        gpointer         user_data);
-
-void
-on_add_field_activate                 (GtkMenuItem     *menuitem,
-                                        gpointer         user_data);
-
 int trkproperties_block_keyhandler = 0;
-
 
 gboolean
 on_trackproperties_key_press_event     (GtkWidget       *widget,
@@ -220,11 +212,11 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
         return TRUE;
     }
     else if (event->keyval == GDK_Delete) {
-        on_remove_field_activate (NULL, NULL);
+        on_trkproperties_remove_activate (NULL, NULL);
         return TRUE;
     }
     else if (event->keyval == GDK_Insert) {
-        on_add_field_activate (NULL, NULL);
+        on_trkproperties_add_new_field_activate (NULL, NULL);
         return TRUE;
     }
     return FALSE;
@@ -729,9 +721,155 @@ on_write_tags_clicked                  (GtkButton       *button,
     deadbeef->thread_detach (tid);
 }
 
+gboolean
+on_metalist_button_press_event         (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    if (event->button == 3) {
+        GtkWidget *menu = create_trkproperties_popup_menu ();
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, event->button, gtk_get_current_event_time());
+    }
+    return FALSE;
+}
+
 void
-on_add_field_activate                 (GtkMenuItem     *menuitem,
-                                        gpointer         user_data) {
+on_tagwriter_settings_clicked          (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    run_tagwriter_settings (trackproperties);
+}
+
+gboolean
+on_trackproperties_configure_event     (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data)
+{
+    wingeom_save (widget, "trkproperties");
+    return FALSE;
+}
+
+
+gboolean
+on_trackproperties_window_state_event  (GtkWidget       *widget,
+                                        GdkEventWindowState *event,
+                                        gpointer         user_data)
+{
+    wingeom_save_max (event, widget, "trkproperties");
+    return FALSE;
+}
+
+void
+on_trkpropertis_edit_activate          (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_trkproperties_edit_in_place_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_trkproperties_remove_activate       (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+    if (!gtk_widget_is_focus(GTK_WIDGET (treeview))) {
+        return; // do not remove field if Metadata tab is not focused
+    }
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (treeview, &path, &col);
+    if (!path || !col) {
+        return;
+    }
+
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, path);
+    GValue value = {0,};
+    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 2, &value);
+    const char *svalue = g_value_get_string (&value);
+
+    // delete unknown fields completely; otherwise just clear
+    int i = 0;
+    for (; types[i]; i += 2) {
+        if (!strcasecmp (svalue, types[i])) {
+            break;
+        }
+    }
+    if (types[i]) { // known val, clear
+        gtk_list_store_set (store, &iter, 1, "", 3, 0, -1);
+    }
+    else {
+        gtk_list_store_remove (store, &iter);
+    }
+    gtk_tree_view_set_cursor (treeview, path, NULL, FALSE); // restore cursor after deletion
+    gtk_tree_path_free (path);
+    trkproperties_modified = 1;
+}
+
+
+void
+on_trkproperties_cut_activate          (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_trkproperties_copy_activate         (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_trkproperties_paste_activate        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_trkproperties_capitalize_activate   (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_trkproperties_clean_up_activate     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_trkproperties_format_from_other_fields_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_trkproperties_add_new_field_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
     GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
     if (!gtk_widget_is_focus(GTK_WIDGET (treeview))) {
         return; // do not add field if Metadata tab is not focused
@@ -807,98 +945,28 @@ on_add_field_activate                 (GtkMenuItem     *menuitem,
     gtk_window_present (GTK_WINDOW (trackproperties));
 }
 
-void
-on_remove_field_activate                 (GtkMenuItem     *menuitem,
-                                        gpointer         user_data) {
-
-    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
-    if (!gtk_widget_is_focus(GTK_WIDGET (treeview))) {
-        return; // do not remove field if Metadata tab is not focused
-    }
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (treeview, &path, &col);
-    if (!path || !col) {
-        return;
-    }
-
-    GtkTreeIter iter;
-    gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, path);
-    GValue value = {0,};
-    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 2, &value);
-    const char *svalue = g_value_get_string (&value);
-
-    // delete unknown fields completely; otherwise just clear
-    int i = 0;
-    for (; types[i]; i += 2) {
-        if (!strcasecmp (svalue, types[i])) {
-            break;
-        }
-    }
-    if (types[i]) { // known val, clear
-        gtk_list_store_set (store, &iter, 1, "", 3, 0, -1);
-    }
-    else {
-        gtk_list_store_remove (store, &iter);
-    }
-    gtk_tree_view_set_cursor (treeview, path, NULL, FALSE); // restore cursor after deletion
-    gtk_tree_path_free (path);
-    trkproperties_modified = 1;
-}
-
-gboolean
-on_metalist_button_press_event         (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
-    if (event->button == 3) {
-        GtkWidget *menu;
-        GtkWidget *add;
-        GtkWidget *remove;
-        menu = gtk_menu_new ();
-        add = gtk_menu_item_new_with_mnemonic (_("Add field"));
-        gtk_widget_show (add);
-        gtk_container_add (GTK_CONTAINER (menu), add);
-        remove = gtk_menu_item_new_with_mnemonic (_("Remove field"));
-        gtk_widget_show (remove);
-        gtk_container_add (GTK_CONTAINER (menu), remove);
-
-        g_signal_connect ((gpointer) add, "activate",
-                G_CALLBACK (on_add_field_activate),
-                NULL);
-
-        g_signal_connect ((gpointer) remove, "activate",
-                G_CALLBACK (on_remove_field_activate),
-                NULL);
-
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, event->button, gtk_get_current_event_time());
-    }
-  return FALSE;
-}
 
 void
-on_tagwriter_settings_clicked          (GtkButton       *button,
+on_trkproperties_paste_fields_activate (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    run_tagwriter_settings (trackproperties);
-}
 
-gboolean
-on_trackproperties_configure_event     (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
-                                        gpointer         user_data)
-{
-    wingeom_save (widget, "trkproperties");
-    return FALSE;
 }
 
 
-gboolean
-on_trackproperties_window_state_event  (GtkWidget       *widget,
-                                        GdkEventWindowState *event,
+void
+on_trkproperties_automatically_fill_values_activate
+                                        (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    wingeom_save_max (event, widget, "trkproperties");
-    return FALSE;
+
+}
+
+
+void
+on_trkproperties_crop_activate         (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
 }
 

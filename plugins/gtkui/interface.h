@@ -21,3 +21,4 @@ GtkWidget* create_ctmappingeditdlg (void);
 GtkWidget* create_button_properties (void);
 GtkWidget* create_select_action (void);
 GtkWidget* create_setcustomtitledlg (void);
+GtkWidget* create_trkproperties_popup_menu (void);
