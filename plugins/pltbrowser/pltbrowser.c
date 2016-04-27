@@ -600,6 +600,7 @@ plt_get_title_wrapper (int plt, char *buffer, int len) {
         *end = 0;
     }
 }
+*/
 
 static gboolean
 on_pltbrowser_key_press_event (GtkWidget *widget,
@@ -607,21 +608,48 @@ on_pltbrowser_key_press_event (GtkWidget *widget,
                                gpointer   user_data)
 {
     w_pltbrowser_t *w = user_data;
-    if (event->keyval == GDK_F2) {
-        // rename selected playlist
-        GtkTreePath *path;
-        GtkTreeViewColumn *col;
-        gtk_tree_view_get_cursor (GTK_TREE_VIEW (w->tree), &path, NULL);
-        col = gtk_tree_view_get_column (GTK_TREE_VIEW (w->tree), COL_NAME);
-        if (!path || !col) {
-            return FALSE;
+    if (event->state & GDK_CONTROL_MASK) {
+        int row = get_treeview_cursor_pos (GTK_TREE_VIEW (w->tree));
+        if (row >= 0) {
+            deadbeef->pl_lock ();
+            ddb_playlist_t *plt = deadbeef->plt_get_for_idx (row);
+            deadbeef->pl_unlock ();
+            if (plt) {
+                int res = 0;
+                if (event->keyval == GDK_c) {
+                    gtkui_plugin->copy_selection (plt, DDB_ACTION_CTX_PLAYLIST);
+                    res = 1;
+                }
+                else if (event->keyval == GDK_v) {
+                    gtkui_plugin->paste_selection (plt, DDB_ACTION_CTX_PLAYLIST);
+                    res = 1;
+                }
+                else if (event->keyval == GDK_x) {
+                    gtkui_plugin->cut_selection (plt, DDB_ACTION_CTX_PLAYLIST);
+                    res = 1;
+                }
+                deadbeef->plt_unref (plt);
+                return res;
+            }
         }
-        // start editing
-        gtk_tree_view_set_cursor_on_cell (GTK_TREE_VIEW (w->tree), path, col, NULL, TRUE);
     }
+
+    //if (event->keyval == GDK_F2) {
+    //    // rename selected playlist
+    //    GtkTreePath *path;
+    //    GtkTreeViewColumn *col;
+    //    gtk_tree_view_get_cursor (GTK_TREE_VIEW (w->tree), &path, NULL);
+    //    col = gtk_tree_view_get_column (GTK_TREE_VIEW (w->tree), COL_NAME);
+    //    if (!path || !col) {
+    //        return FALSE;
+    //    }
+    //    // start editing
+    //    gtk_tree_view_set_cursor_on_cell (GTK_TREE_VIEW (w->tree), path, col, NULL, TRUE);
+    //}
     return FALSE;
 }
 
+/*
 static void
 on_pltbrowser_cell_edititing_started (GtkCellRenderer *renderer,
                                       GtkCellEditable *editable,
@@ -936,11 +964,9 @@ w_pltbrowser_create (void) {
     g_signal_connect ((gpointer) w->tree, "drag_motion",
             G_CALLBACK (on_pltbrowser_drag_motion_event),
             w);
-    /*
     g_signal_connect ((gpointer) w->tree, "key_press_event",
             G_CALLBACK (on_pltbrowser_key_press_event),
             w);
-    */
 
     gtkui_plugin->w_override_signals (w->base.widget, w);
 

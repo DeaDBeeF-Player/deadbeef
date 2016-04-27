@@ -575,6 +575,16 @@ search_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIt
     pl_common_draw_group_title (listview, drawable, it, PL_SEARCH, x, y, width, height);
 }
 
+void
+search_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter) {
+    list_context_menu (listview, it, idx, PL_SEARCH);
+}
+
+gboolean
+search_list_handle_keypress (DdbListview *ps, int keyval, int state, int iter) {
+    return list_handle_keypress (ps, keyval, state, PL_SEARCH);
+}
+
 static DdbListviewBinding search_binding = {
     // rows
     .count = search_get_count,
@@ -609,9 +619,11 @@ static DdbListviewBinding search_binding = {
 
     // callbacks
     .handle_doubleclick = search_handle_doubleclick,
+    .list_handle_keypress = search_list_handle_keypress,
     .selection_changed = search_selection_changed,
     .header_context_menu = pl_common_header_context_menu,
-    .list_context_menu = pl_common_list_context_menu,
+    .list_context_menu = search_list_context_menu,
+    .list_empty_region_context_menu = NULL,
     .delete_selected = search_delete_selected,
     .modification_idx = gtkui_get_curr_playlist_mod,
 };

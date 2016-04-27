@@ -40,6 +40,7 @@
 #include "support.h"
 #include "callbacks.h"
 #include "actionhandlers.h"
+#include "clipboard.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -1535,7 +1536,7 @@ ddb_listview_select_single (DdbListview *ps, int sel) {
     deadbeef->pl_unlock ();
 }
 
-static void
+ void
 ddb_listview_update_cursor (DdbListview *ps, int cursor)
 {
     int prev = ps->binding->cursor ();
@@ -1587,15 +1588,15 @@ set_cursor_and_scroll_cb (gpointer data) {
     return FALSE;
 }
 
-static void
-set_cursor_and_scroll (DdbListview *listview, int cursor) {
+void
+ddb_listview_set_cursor_and_scroll (DdbListview *listview, int cursor) {
     struct set_cursor_t *data = malloc (sizeof (struct set_cursor_t));
     data->cursor = cursor;
     data->pl = listview;
     g_idle_add (set_cursor_and_scroll_cb, data);
 }
 
-static void
+void
 ddb_listview_select_range (DdbListview *ps, int start, int end)
 {
     int nchanged = 0;
@@ -2097,109 +2098,6 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
     deadbeef->pl_unlock ();
 }
 
-int
-ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
-    int prev = ps->binding->cursor ();
-    int cursor = prev;
-    GtkWidget *range = ps->scrollbar;
-    GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (range));
-
-    state &= (GDK_SHIFT_MASK|GDK_CONTROL_MASK|GDK_MOD1_MASK|GDK_MOD4_MASK);
-
-    if (state & ~GDK_SHIFT_MASK) {
-        return FALSE;
-    }
-
-    if (keyval == GDK_Down) {
-        if (cursor < ps->binding->count () - 1) {
-            cursor++;
-        }
-        else {
-            gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_upper (adj));
-        }
-    }
-    else if (keyval == GDK_Up) {
-        if (cursor > 0) {
-            cursor--;
-        }
-        else {
-            gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_lower (adj));
-            if (cursor < 0 && ps->binding->count () > 0) {
-                cursor = 0;
-            }
-        }
-    }
-    else if (keyval == GDK_Page_Down) {
-        if (cursor < ps->binding->count () - 1) {
-            cursor += 10;
-            if (cursor >= ps->binding->count ()) {
-                cursor = ps->binding->count () - 1;
-            }
-        }
-        else {
-            gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_upper (adj));
-        }
-    }
-    else if (keyval == GDK_Page_Up) {
-        if (cursor > 0) {
-            cursor -= 10;
-            if (cursor < 0) {
-                gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_lower (adj));
-                cursor = 0;
-            }
-        }
-        else {
-            if (cursor < 0 && ps->binding->count () > 0) {
-                cursor = 0;
-            }
-            gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_lower (adj));
-        }
-    }
-    else if (keyval == GDK_End) {
-        cursor = ps->binding->count () - 1;
-        gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_upper (adj));
-    }
-    else if (keyval == GDK_Home) {
-        cursor = 0;
-        gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_lower (adj));
-    }
-    else {
-        return FALSE;
-    }
-
-    if (state & GDK_SHIFT_MASK) {
-        if (cursor != prev) {
-            int newscroll = ps->scrollpos;
-            int cursor_scroll = ddb_listview_get_row_pos (ps, cursor);
-            if (cursor_scroll < ps->scrollpos) {
-                newscroll = cursor_scroll;
-            }
-            else if (cursor_scroll >= ps->scrollpos + ps->list_height) {
-                newscroll = cursor_scroll - ps->list_height + 1;
-                if (newscroll < 0) {
-                    newscroll = 0;
-                }
-            }
-            if (ps->scrollpos != newscroll) {
-                GtkWidget *range = ps->scrollbar;
-                gtk_range_set_value (GTK_RANGE (range), newscroll);
-            }
-
-            // select all between shift_sel_anchor and deadbeef->pl_get_cursor (ps->iterator)
-            int start = min (cursor, ps->shift_sel_anchor);
-            int end = max (cursor, ps->shift_sel_anchor);
-
-            ddb_listview_select_range (ps, start, end);
-            ddb_listview_update_cursor (ps, cursor);
-        }
-    }
-    else {
-        ps->shift_sel_anchor = cursor;
-        set_cursor_and_scroll (ps, cursor);
-    }
-    return TRUE;
-}
-
 gboolean
 ddb_listview_list_popup_menu (GtkWidget *widget, gpointer user_data) {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
@@ -2209,8 +2107,11 @@ ddb_listview_list_popup_menu (GtkWidget *widget, gpointer user_data) {
     }
     if (it) {
         int sel = ps->binding->get_idx (it);
-        ps->binding->list_context_menu (ps, it, sel);
+        ps->binding->list_context_menu (ps, it, sel, PL_MAIN);
         ps->binding->unref (it);
+    }
+    else if (ps->binding->list_empty_region_context_menu) {
+        ps->binding->list_empty_region_context_menu (ps);
     }
     return TRUE;
 }
@@ -2968,12 +2869,16 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
         }
         ddb_listview_update_cursor (ps, cursor);
 
-        if (pick_ctx.type != PICK_EMPTY_SPACE) {
+        if (pick_ctx.type != PICK_EMPTY_SPACE
+                && pick_ctx.type != PICK_BELOW_PLAYLIST) {
             DdbListviewIter it = ps->binding->get_for_idx (pick_ctx.item_idx);
             if (it) {
-                ps->binding->list_context_menu (ps, it, pick_ctx.item_idx);
+                ps->binding->list_context_menu (ps, it, pick_ctx.item_idx, PL_MAIN);
                 UNREF (it);
             }
+        }
+        else if (ps->binding->list_empty_region_context_menu) {
+            ps->binding->list_empty_region_context_menu (ps);
         }
     }
     return TRUE;
@@ -3356,7 +3261,7 @@ ddb_listview_clear_sort (DdbListview *listview) {
 static gboolean
 ddb_listview_list_key_press_event (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
     DdbListview *listview = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    if (!ddb_listview_handle_keypress (listview, event->keyval, event->state)) {
+    if (!listview->binding->list_handle_keypress (listview, event->keyval, event->state, PL_MAIN)) {
         return on_mainwin_key_press_event (widget, event, user_data);
     }
     return TRUE;

@@ -29,6 +29,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gtkui.h"
+#include "actionhandlers.h"
+#include "clipboard.h"
 #include "interface.h"
 #include "support.h"
 
@@ -127,6 +129,46 @@ on_actionitem_activate (GtkMenuItem     *menuitem,
         }
     }
 }
+
+static void
+on_cut_activate (GtkMenuItem     *menuitem,
+                    gpointer         user_data)
+{
+    if (pltmenu_idx < 0) {
+        return;
+    }
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+    if (plt) {
+        clipboard_cut_selection (plt, DDB_ACTION_CTX_PLAYLIST);
+        deadbeef->plt_unref (plt);
+    }
+}
+
+static void
+on_copy_activate (GtkMenuItem     *menuitem,
+                    gpointer         user_data)
+{
+    if (pltmenu_idx < 0) {
+        return;
+    }
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+    if (plt) {
+        clipboard_copy_selection (plt, DDB_ACTION_CTX_PLAYLIST);
+        deadbeef->plt_unref (plt);
+    }
+}
+
+static void
+on_paste_activate (GtkMenuItem     *menuitem,
+                    gpointer         user_data)
+{
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+    clipboard_paste_selection (plt, DDB_ACTION_CTX_PLAYLIST);
+    if (plt) {
+        deadbeef->plt_unref (plt);
+    }
+}
+
 
 static GtkWidget*
 find_popup                          (GtkWidget       *widget,
@@ -297,10 +339,20 @@ gtkui_create_pltmenu (int plt_idx) {
     GtkWidget *rename_playlist1;
     GtkWidget *remove_playlist1;
     GtkWidget *add_new_playlist1;
-    GtkWidget *separator1;
+    GtkWidget *separator11;
+    GtkWidget *cut;
+    GtkWidget *cut_image;
+    GtkWidget *copy;
+    GtkWidget *copy_image;
+    GtkWidget *paste;
+    GtkWidget *paste_image;
+    GtkWidget *separator9;
     GtkWidget *load_playlist1;
     GtkWidget *save_playlist1;
     GtkWidget *save_all_playlists1;
+
+    GtkAccelGroup *accel_group = NULL;
+    accel_group = gtk_accel_group_new ();
 
     plmenu = gtk_menu_new ();
     pltmenu_idx = plt_idx;
@@ -323,10 +375,55 @@ gtkui_create_pltmenu (int plt_idx) {
     gtk_widget_show (add_new_playlist1);
     gtk_container_add (GTK_CONTAINER (plmenu), add_new_playlist1);
 
-    separator1 = gtk_separator_menu_item_new ();
-    gtk_widget_show (separator1);
-    gtk_container_add (GTK_CONTAINER (plmenu), separator1);
-    gtk_widget_set_sensitive (separator1, FALSE);
+    separator11 = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator11);
+    gtk_container_add (GTK_CONTAINER (plmenu), separator11);
+    gtk_widget_set_sensitive (separator11, FALSE);
+
+    cut = gtk_image_menu_item_new_with_mnemonic (_("Cu_t"));
+    gtk_widget_show (cut);
+    gtk_container_add (GTK_CONTAINER (plmenu), cut);
+    gtk_widget_add_accelerator (cut, "activate", accel_group, GDK_x, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    if (pltmenu_idx == -1) {
+        gtk_widget_set_sensitive (cut, FALSE);
+    }
+
+    cut_image = gtk_image_new_from_stock ("gtk-cut", GTK_ICON_SIZE_MENU);
+    gtk_widget_show (cut_image);
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (cut), cut_image);
+
+    copy = gtk_image_menu_item_new_with_mnemonic (_("_Copy"));
+    gtk_widget_show (copy);
+    gtk_container_add (GTK_CONTAINER (plmenu), copy);
+    gtk_widget_add_accelerator (copy, "activate", accel_group, GDK_c, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    if (pltmenu_idx == -1) {
+        gtk_widget_set_sensitive (copy, FALSE);
+    }
+
+    copy_image = gtk_image_new_from_stock ("gtk-copy", GTK_ICON_SIZE_MENU);
+    gtk_widget_show (copy_image);
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (copy), copy_image);
+
+    paste = gtk_image_menu_item_new_with_mnemonic (_("_Paste"));
+    gtk_widget_show (paste);
+    gtk_container_add (GTK_CONTAINER (plmenu), paste);
+    gtk_widget_add_accelerator (paste, "activate", accel_group, GDK_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
+    if (clipboard_is_clipboard_data_available ()) {
+        gtk_widget_set_sensitive (paste, TRUE);
+    }
+    else {
+        gtk_widget_set_sensitive (paste, FALSE);
+    }
+
+    paste_image = gtk_image_new_from_stock ("gtk-paste", GTK_ICON_SIZE_MENU);
+    gtk_widget_show (paste_image);
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (paste), paste_image);
+
+    separator9 = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator9);
+    gtk_container_add (GTK_CONTAINER (plmenu), separator9);
+    gtk_widget_set_sensitive (separator9, FALSE);
 
     g_signal_connect ((gpointer) rename_playlist1, "activate",
             G_CALLBACK (on_rename_playlist1_activate),
@@ -336,6 +433,15 @@ gtkui_create_pltmenu (int plt_idx) {
             NULL);
     g_signal_connect ((gpointer) add_new_playlist1, "activate",
             G_CALLBACK (on_add_new_playlist1_activate),
+            NULL);
+    g_signal_connect ((gpointer) cut, "activate",
+            G_CALLBACK (on_cut_activate),
+            NULL);
+    g_signal_connect ((gpointer) copy, "activate",
+            G_CALLBACK (on_copy_activate),
+            NULL);
+    g_signal_connect ((gpointer) paste, "activate",
+            G_CALLBACK (on_paste_activate),
             NULL);
 
     add_tab_actions (plmenu);

@@ -62,6 +62,7 @@
 #include "retina.h"
 #endif
 #include "actionhandlers.h"
+#include "clipboard.h"
 #include "hotkeys.h"
 #include "../hotkeys/hotkeys.h"
 
@@ -1165,6 +1166,8 @@ gtkui_thread (void *ctx) {
         g_source_remove (refresh_timeout);
         refresh_timeout = 0;
     }
+
+    clipboard_free_clipboard_data ();
     cover_art_free ();
     eq_window_destroy ();
     trkproperties_destroy ();
@@ -1770,4 +1773,7 @@ static ddb_gtkui_t plugin = {
     .mainwin_toggle_visible = mainwin_toggle_visible,
     .show_traymenu = show_traymenu,
     .override_builtin_statusicon = override_builtin_statusicon,
+    .copy_selection = clipboard_copy_selection,
+    .cut_selection = clipboard_cut_selection,
+    .paste_selection = clipboard_paste_selection,
 };

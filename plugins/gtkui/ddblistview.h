@@ -102,9 +102,11 @@ typedef struct {
     void (*col_free_user_data) (void *user_data);
 
     // callbacks
-    void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx);
+    void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx, int plt_iter);
+    void (*list_empty_region_context_menu) (DdbListview *listview);
     void (*header_context_menu) (DdbListview *listview, int col);
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
+    gboolean (*list_handle_keypress) (DdbListview *ps, int keyval, int state, int iter);
     void (*selection_changed) (DdbListview *listview, DdbListviewIter it, int idx);
     void (*delete_selected) (void);
     void (*groups_changed) (const char *format);
@@ -215,10 +217,10 @@ void
 ddb_listview_set_binding (DdbListview *listview, DdbListviewBinding *binding);
 void
 ddb_listview_draw_row (DdbListview *listview, int idx, DdbListviewIter iter);
-int
-ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state);
 void
 ddb_listview_select_single (DdbListview *listview, int sel);
+void
+ddb_listview_select_range (DdbListview *ps, int start, int end);
 void
 ddb_listview_scroll_to (DdbListview *listview, int rowpos);
 int
@@ -275,6 +277,11 @@ ddb_listview_groupcheck (DdbListview *listview);
 void
 ddb_listview_cancel_autoredraw (DdbListview *listview);
 
+void
+ddb_listview_update_cursor (DdbListview *ps, int cursor);
+
+void
+ddb_listview_set_cursor_and_scroll (DdbListview *listview, int cursor);
 G_END_DECLS
 
 #endif // __DDBLISTVIEW_H
