@@ -13,6 +13,7 @@
 #include "vfs.h"
 #include "plugins.h"
 #include "conf.h"
+#include "tf.h"
 #include "../../common.h"
 
 #define TESTFILE "/tmp/ddb_test.mp3"
@@ -116,7 +117,7 @@
 
     DB_metaInfo_t *meta = pl_meta_for_key (it, "artist");
     XCTAssert(meta, @"Pass");
-    XCTAssert(!strcmp (meta->value, "Line1\nLine2\nLine3"), @"Actual value: %s", meta->value);
+    XCTAssert(!strcmp (meta->value, "Line1\r\nLine2\r\nLine3"), @"Actual value: %s", meta->value);
     XCTAssert(!meta->values->next, @"Pass");
 }
 
@@ -152,7 +153,7 @@
 
     DB_metaInfo_t *meta = pl_meta_for_key (it, "artist");
     XCTAssert(meta, @"Pass");
-    XCTAssert(!strcmp (meta->value, "Line1\nLine2\nLine3"), @"Actual value: %s", meta->value);
+    XCTAssert(!strcmp (meta->value, "Line1\r\nLine2\r\nLine3"), @"Actual value: %s", meta->value);
     XCTAssert(!meta->values->next, @"Pass");
 }
 
@@ -288,6 +289,56 @@
     XCTAssert (!memcmp (artist->data, refdata, sizeof (refdata)-1), @"ARTIST frame contents don't match reference");
 
     junk_apev2_free (&apev2);
+}
+
+- (void)test_ReadID3v2WithNonprintableChars_MatchingBinaryReference {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/tpe1_nonprintable_id3v2.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    DB_id3v2_tag_t id3v2;
+    memset (&id3v2, 0, sizeof (id3v2));
+    junk_id3v2_read_full (NULL, &id3v2, fp);
+    vfs_fclose (fp);
+
+    const char refdata[] = {
+        0x01, 0xff, 0xfe, 0x4c,
+        0x00, 0x69, 0x00, 0x6e, 0x00, 0x65, 0x00, 0x31, 0x00, 0x01, 0x00, 0x02,
+        0x00, 0x03, 0x00, 0x04, 0x00, 0x05, 0x00, 0x06, 0x00, 0x07, 0x00, 0x08,
+        0x00, 0x09, 0x00, 0x0a, 0x00, 0x0b, 0x00, 0x0c, 0x00, 0x0d, 0x00, 0x0e,
+        0x00, 0x0f, 0x00, 0x10, 0x00, 0x11, 0x00, 0x12, 0x00, 0x13, 0x00, 0x14,
+        0x00, 0x15, 0x00, 0x16, 0x00, 0x17, 0x00, 0x18, 0x00, 0x19, 0x00, 0x1a,
+        0x00, 0x1b, 0x00, 0x1c, 0x00, 0x1d, 0x00, 0x1e, 0x00, 0x1f, 0x00, 0x0a,
+        0x00, 0x4c, 0x00, 0x69, 0x00, 0x6e, 0x00, 0x65, 0x00, 0x32, 0x00, 0x0d,
+        0x00, 0x0a, 0x00, 0x4c, 0x00, 0x69, 0x00, 0x6e, 0x00, 0x65, 0x00, 0x33
+    };
+
+    DB_id3v2_frame_t *tpe1 = id3v2.frames;
+    XCTAssert (!strcmp (tpe1->id, "TPE1"), @"Unexpected frame: %s", tpe1->id);
+    XCTAssert (!memcmp (tpe1->data, refdata, sizeof (refdata)-1), @"TPE1 frame contents don't match reference");
+
+    junk_id3v2_free (&id3v2);
+}
+
+- (void)test_ReadID3v2WithNonprintableChars_TFReplacesNonprintableWithUnderscores {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/tpe1_nonprintable_id3v2.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    junk_id3v2_read (it, fp);
+    vfs_fclose (fp);
+
+    char *bc = tf_compile("%artist%");
+    char buffer[1000];
+
+    ddb_tf_context_t ctx;
+    memset (&ctx, 0, sizeof (ctx));
+    ctx._size = sizeof (ddb_tf_context_t);
+    ctx.it = (DB_playItem_t *)it;
+    ctx.plt = NULL;
+
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+
+    XCTAssert (!strcmp (buffer, "Line1________________________________Line2__Line3"), @"Unexpected data: %s", buffer);
 }
 
 

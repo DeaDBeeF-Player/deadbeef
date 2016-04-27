@@ -1008,11 +1008,12 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "random value"), @"The actual output is: %s", buffer);
 }
 
-- (void)test_MultipleArtists_ReturnsArtistsSeparatedBySemicolons {
-    pl_replace_meta (it, "artist", "Artist1\nArtist2");
+- (void)test_MultipleArtists_ReturnsArtistsSeparatedByCommas {
+    pl_append_meta (it, "artist", "Artist1");
+    pl_append_meta (it, "artist", "Artist2");
     char *bc = tf_compile("%artist%");
     tf_eval (&ctx, bc, buffer, 1000);
-    XCTAssert(!strcmp (buffer, "Artist1;Artist2"), @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp (buffer, "Artist1, Artist2"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_EmptyTitle_YieldsFilename {
@@ -1196,6 +1197,24 @@ static DB_output_t fake_out = {
     char *bc = tf_compile("$if(%ispaused%,YES,NO) %ispaused%");
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, "YES 1"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_MultiValueField_OutputAsCommaSeparated {
+    pl_append_meta(it, "artist", "Value1");
+    pl_append_meta(it, "artist", "Value2");
+    pl_append_meta(it, "artist", "Value3");
+    char *bc = tf_compile("%artist%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Value1, Value2, Value3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LinebreaksAndTabs_OutputAsUnderscores {
+    pl_append_meta(it, "artist", "Text1\r\nText2\tText3");
+    char *bc = tf_compile("%artist%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Text1__Text2_Text3"), @"The actual output is: %s", buffer);
 }
 
 @end
