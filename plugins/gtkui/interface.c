@@ -4958,3 +4958,86 @@ create_trkproperties_popup_menu (void)
   return trkproperties_popup_menu;
 }
 
+GtkWidget*
+create_edit_tag_value_dlg (void)
+{
+  GtkWidget *edit_tag_value_dlg;
+  GtkWidget *dialog_vbox17;
+  GtkWidget *vbox47;
+  GtkWidget *label160;
+  GtkWidget *field_name;
+  GtkWidget *label161;
+  GtkWidget *scrolledwindow13;
+  GtkWidget *field_value;
+  GtkWidget *dialog_action_area16;
+  GtkWidget *cancelbutton12;
+  GtkWidget *okbutton12;
+
+  edit_tag_value_dlg = gtk_dialog_new ();
+  gtk_window_set_title (GTK_WINDOW (edit_tag_value_dlg), _("Edit Value"));
+  gtk_window_set_type_hint (GTK_WINDOW (edit_tag_value_dlg), GDK_WINDOW_TYPE_HINT_DIALOG);
+  gtk_dialog_set_has_separator (GTK_DIALOG (edit_tag_value_dlg), FALSE);
+
+  dialog_vbox17 = gtk_dialog_get_content_area (GTK_DIALOG (edit_tag_value_dlg));
+  gtk_widget_show (dialog_vbox17);
+
+  vbox47 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox47);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox17), vbox47, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox47), 12);
+
+  label160 = gtk_label_new (_("Field name:"));
+  gtk_widget_show (label160);
+  gtk_box_pack_start (GTK_BOX (vbox47), label160, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label160), 0, 0.5);
+
+  field_name = gtk_entry_new ();
+  gtk_widget_show (field_name);
+  gtk_box_pack_start (GTK_BOX (vbox47), field_name, FALSE, FALSE, 0);
+  gtk_editable_set_editable (GTK_EDITABLE (field_name), FALSE);
+  gtk_entry_set_invisible_char (GTK_ENTRY (field_name), 8226);
+
+  label161 = gtk_label_new (_("Field value:"));
+  gtk_widget_show (label161);
+  gtk_box_pack_start (GTK_BOX (vbox47), label161, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label161), 0, 0.5);
+
+  scrolledwindow13 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow13);
+  gtk_box_pack_start (GTK_BOX (vbox47), scrolledwindow13, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow13), GTK_SHADOW_IN);
+
+  field_value = gtk_text_view_new ();
+  gtk_widget_show (field_value);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow13), field_value);
+
+  dialog_action_area16 = gtk_dialog_get_action_area (GTK_DIALOG (edit_tag_value_dlg));
+  gtk_widget_show (dialog_action_area16);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area16), GTK_BUTTONBOX_END);
+
+  cancelbutton12 = gtk_button_new_from_stock ("gtk-cancel");
+  gtk_widget_show (cancelbutton12);
+  gtk_dialog_add_action_widget (GTK_DIALOG (edit_tag_value_dlg), cancelbutton12, GTK_RESPONSE_CANCEL);
+  gtk_widget_set_can_default(cancelbutton12, TRUE);
+
+  okbutton12 = gtk_button_new_from_stock ("gtk-ok");
+  gtk_widget_show (okbutton12);
+  gtk_dialog_add_action_widget (GTK_DIALOG (edit_tag_value_dlg), okbutton12, GTK_RESPONSE_OK);
+  gtk_widget_set_can_default(okbutton12, TRUE);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (edit_tag_value_dlg, edit_tag_value_dlg, "edit_tag_value_dlg");
+  GLADE_HOOKUP_OBJECT_NO_REF (edit_tag_value_dlg, dialog_vbox17, "dialog_vbox17");
+  GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, vbox47, "vbox47");
+  GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, label160, "label160");
+  GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, field_name, "field_name");
+  GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, label161, "label161");
+  GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, scrolledwindow13, "scrolledwindow13");
+  GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, field_value, "field_value");
+  GLADE_HOOKUP_OBJECT_NO_REF (edit_tag_value_dlg, dialog_action_area16, "dialog_action_area16");
+  GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, cancelbutton12, "cancelbutton12");
+  GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, okbutton12, "okbutton12");
+
+  return edit_tag_value_dlg;
+}
+

@@ -66,6 +66,22 @@ static int progress_aborted;
 static int last_ctx;
 static ddb_playlist_t *last_plt;
 
+static char *
+clip_multiline_value (char *v) {
+    char *clipped_val = NULL;
+    size_t l = strlen (v);
+    const char multiline_ellipsis[] = " (…)";
+    for (int i = 0; i < l; i++) {
+        if (v[i] == '\r' || v[i] == '\n') {
+            clipped_val = malloc (i + sizeof (multiline_ellipsis));
+            memcpy (clipped_val, v, i);
+            memcpy (clipped_val + i, multiline_ellipsis, sizeof (multiline_ellipsis));
+            break;
+        }
+    }
+    return clipped_val;
+}
+
 int
 build_key_list (const char ***pkeys, int props, DB_playItem_t **tracks, int numtracks) {
     int sz = 20;
@@ -114,7 +130,7 @@ equals_ptr (const char *a, const char *b) {
 }
 
 static int
-get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_playItem_t *it, const char *key), int (*equals)(const char *a, const char *b), DB_playItem_t **tracks, int numtracks) {
+get_field_value (char *out, int size, const char *key, char *(*getter)(DB_playItem_t *it, const char *key), int (*equals)(const char *a, const char *b), DB_playItem_t **tracks, int numtracks) {
     int multiple = 0;
     *out = 0;
     if (numtracks == 0) {
@@ -122,10 +138,12 @@ get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_
     }
     char *p = out;
     deadbeef->pl_lock ();
-    const char **prev = malloc (sizeof (const char *) * numtracks);
-    memset (prev, 0, sizeof (const char *) * numtracks);
+    // TODO: possible optimisation: only malloc/free the multivalue/multiline
+    // fields, keep the rest const to minimize overhead
+    char **prev = malloc (sizeof (char *) * numtracks);
+    memset (prev, 0, sizeof (char *) * numtracks);
     for (int i = 0; i < numtracks; i++) {
-        const char *val = getter (tracks[i], key);
+        char *val = getter (tracks[i], key);
         if (val && val[0] == 0) {
             val = NULL;
         }
@@ -133,6 +151,7 @@ get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_
             int n = 0;
             for (; n < i; n++) {
                 if (equals (prev[n], val)) {
+                    free (val);
                     break;
                 }
             }
@@ -161,6 +180,11 @@ get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_
     if (size <= 1) {
         gchar *prev = g_utf8_prev_char (out-4);
         strcpy (prev, "...");
+    }
+    for (int i = 0; i < numtracks; i++) {
+        if (prev[i]) {
+            free (prev[i]);
+        }
     }
     free (prev);
     return multiple;
@@ -265,7 +289,13 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
     const char *svalue = g_value_get_string (&value);
     int imult = g_value_get_int (&mult);
     if (strcmp (svalue, new_text) && (!imult || strlen (new_text) == 0)) {
-        gtk_list_store_set (store, &iter, 1, new_text, 3, 0, -1);
+        char *clipped_val = clip_multiline_value (new_text);
+        if (!clipped_val) {
+            gtk_list_store_set (store, &iter, 1, new_text, 3, 0, 4, new_text, -1);
+        }
+        else {
+            gtk_list_store_set (store, &iter, 1, clipped_val, 3, 0, 4, new_text, -1);
+        }
         trkproperties_modified = 1;
     }
     trkproperties_block_keyhandler = 0;
@@ -297,6 +327,56 @@ static const char *hc_props[] = {
     NULL
 };
 
+char *get_combined_meta_value (DB_playItem_t *it, const char *key) {
+    DB_metaInfo_t *meta = deadbeef->pl_meta_for_key (it, key);
+    if (!meta) {
+        return NULL;
+    }
+
+    // find size
+    size_t len = 0;
+    ddb_metaValue_t *data = meta->values;
+    while (data) {
+        const char *val = data->value;
+        int i = strlen (val);
+        len += i; 
+        if (data->next) {
+            len += 2; // for "; "
+        }
+        else {
+            len++;
+        }
+        data = data->next;
+    }
+
+    // combine / clip
+
+    char *out = malloc (len);
+    if (!out) {
+        return NULL;
+    }
+
+    char *p = out;
+
+    data = meta->values;
+    while (data) {
+        const char *val = data->value;
+        int i = strlen (val);
+        memcpy (p, val, i);
+        p += i;
+        if (data->next) {
+            memcpy (p, "; ", 2);
+            p += 2;
+        }
+        else {
+            *p++ = 0;
+        }
+        data = data->next;
+    }
+
+    return out;
+}
+
 void
 add_field (GtkListStore *store, const char *key, const char *title, int is_prop, DB_playItem_t **tracks, int numtracks) {
     // get value to edit
@@ -304,7 +384,7 @@ add_field (GtkListStore *store, const char *key, const char *title, int is_prop,
     char val[MAX_GUI_FIELD_LEN];
     size_t ml = strlen (mult);
     memcpy (val, mult, ml+1);
-    int n = get_field_value (val + ml, sizeof (val) - ml, key, deadbeef->pl_find_meta_raw, equals_ptr, tracks, numtracks);
+    int n = get_field_value (val + ml, sizeof (val) - ml, key, get_combined_meta_value, equals_ptr, tracks, numtracks);
 
     GtkTreeIter iter;
     gtk_list_store_append (store, &iter);
@@ -313,13 +393,16 @@ add_field (GtkListStore *store, const char *key, const char *title, int is_prop,
             gtk_list_store_set (store, &iter, 0, title, 1, val, 2, key, 3, n ? 1 : 0, -1);
         }
         else {
-            deadbeef->pl_lock ();
-            const char *val = deadbeef->pl_find_meta_raw (tracks[0], key);
-            if (!val) {
-                val = "";
+            char *v = val + ml;
+            char *clipped_val = clip_multiline_value (v);
+            if (!clipped_val) {
+                gtk_list_store_set (store, &iter, 0, title, 1, v,  2, key, 3, n ? 1 : 0, 4, v, -1);
             }
-            gtk_list_store_set (store, &iter, 0, title, 1, val, 2, key, 3, n ? 1 : 0, -1);
-            deadbeef->pl_unlock ();
+            else {
+                gtk_list_store_set (store, &iter, 0, title, 1, clipped_val, 2, key, 3, n ? 1 : 0, 4, v, -1);
+                free (clipped_val);
+            }
+
         }
     }
     else {
@@ -407,6 +490,14 @@ trkproperties_fill_metadata (void) {
 }
 
 void
+meta_value_transform_func (GtkTreeViewColumn *tree_column,
+        GtkCellRenderer *cell,
+        GtkTreeModel *tree_model,
+        GtkTreeIter *iter,
+        gpointer data) {
+}
+
+void
 show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
     last_ctx = ctx;
     deadbeef->plt_ref (plt);
@@ -484,7 +575,7 @@ show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
 
         // metadata tree
         tree = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
-        store = gtk_list_store_new (4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
+        store = gtk_list_store_new (5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
         gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
         GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
         rend_text2 = GTK_CELL_RENDERER (ddb_cell_renderer_text_multiline_new ());
@@ -493,6 +584,9 @@ show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
                 store);
         GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend_text, "text", 0, NULL);
         GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend_text2, "text", 1, NULL);
+
+        //gtk_tree_view_column_set_cell_data_func (col2, rend_text2, meta_value_transform_func, NULL, NULL);
+
         gtk_tree_view_append_column (tree, col1);
         gtk_tree_view_append_column (tree, col2);
 

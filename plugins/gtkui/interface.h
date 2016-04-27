@@ -22,3 +22,4 @@ GtkWidget* create_button_properties (void);
 GtkWidget* create_select_action (void);
 GtkWidget* create_setcustomtitledlg (void);
 GtkWidget* create_trkproperties_popup_menu (void);
+GtkWidget* create_edit_tag_value_dlg (void);

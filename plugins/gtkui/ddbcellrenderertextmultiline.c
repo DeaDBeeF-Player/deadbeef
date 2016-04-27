@@ -407,12 +407,23 @@ static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (Gtk
     _g_object_unref0 (self->priv->entry);
     self->priv->entry = textview = ddb_cell_editable_text_view_new ();
     g_object_ref_sink (textview);
-    if (mult != 0) {
-        g_object_set ((GtkCellRendererText*) self, "text", "", NULL);
-    }
     textview->tree_path = g_strdup (path);
     buf = gtk_text_buffer_new (NULL);
-    g_object_get ((GtkCellRendererText*) self, "text", &renderer_text, NULL);
+    if (!mult) {
+        GValue full_textv = {0};
+        gtk_tree_model_get_value ((GtkTreeModel*) store, &iter, 4, &full_textv);
+        if (G_IS_VALUE (&full_textv)) {
+            const char *full_text = g_value_get_string (&full_textv);
+            renderer_text = strdup (full_text);
+            g_value_unset (&full_textv);
+        }
+        if (!renderer_text) {
+            g_object_get ((GtkCellRendererText*) self, "text", &renderer_text, NULL);
+        }
+    }
+    else {
+        renderer_text = strdup ("");
+    }
     if (renderer_text) {
         gtk_text_buffer_set_text (buf, renderer_text, -1);
         _g_free0 (renderer_text);
