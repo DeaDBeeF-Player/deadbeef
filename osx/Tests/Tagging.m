@@ -177,6 +177,8 @@
 
     const char refdata[] = "\0Line1\nLine2\nLine3";
     XCTAssert (!memcmp (tpe1->data, refdata, sizeof (refdata)-1), @"TPE1 frame contents don't match reference");
+
+    junk_id3v2_free (&id3v2);
 }
 
 - (void)test_WriteID3v23MultiValueArtist_MatchingBinaryReference {
@@ -203,6 +205,8 @@
 
     const char refdata[] = "\0Value1 / Value2 / Value3";
     XCTAssert (!memcmp (tpe1->data, refdata, sizeof (refdata)-1), @"TPE1 frame contents don't match reference");
+
+    junk_id3v2_free (&id3v2);
 }
 
 - (void)test_WriteID3v24MultiValueArtist_MatchingBinaryReference {
@@ -229,6 +233,8 @@
 
     const char refdata[] = "\x03Value1\0Value2\0Value3";
     XCTAssert (!memcmp (tpe1->data, refdata, sizeof (refdata)-1), @"TPE1 frame contents don't match reference");
+
+    junk_id3v2_free (&id3v2);
 }
 
 - (void)test_WriteAPEv2MultiLineArtist_MatchingBinaryReference {
@@ -252,6 +258,8 @@
 
     const char refdata[] = "Line1\nLine2\nLine3";
     XCTAssert (!memcmp (artist->data, refdata, sizeof (refdata)-1), @"ARTIST frame contents don't match reference");
+
+    junk_apev2_free (&apev2);
 }
 
 - (void)test_WriteAPEv2MultiValueArtist_MatchingBinaryReference {
@@ -278,6 +286,8 @@
 
     const char refdata[] = "Value1\0Value2\0Value3";
     XCTAssert (!memcmp (artist->data, refdata, sizeof (refdata)-1), @"ARTIST frame contents don't match reference");
+
+    junk_apev2_free (&apev2);
 }
 
 
