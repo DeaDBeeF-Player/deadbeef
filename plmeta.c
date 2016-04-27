@@ -144,7 +144,9 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
     }
     LOCK;
     DB_metaInfo_t *m = pl_add_empty_meta_for_key(it, key);
-    pl_meta_append_value(m, value, NULL);
+    if (m) {
+        pl_meta_append_value(m, value, NULL);
+    }
     UNLOCK;
 }
 
@@ -387,6 +389,9 @@ pl_meta_exists (playItem_t *it, const char *key) {
 void
 pl_add_meta_copy (playItem_t *it, DB_metaInfo_t *meta) {
     DB_metaInfo_t *m = pl_add_empty_meta_for_key(it, meta->key);
+    if (!m) {
+        return; // dupe
+    }
 
     ddb_metaValue_t *tail = NULL;
     for (ddb_metaValue_t *data = meta->values; data; data = data->next) {
