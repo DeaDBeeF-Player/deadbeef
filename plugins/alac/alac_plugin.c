@@ -671,8 +671,6 @@ static int alacplug_write_metadata (DB_playItem_t *it) {
         return -1;
     }
 
-    alacplug_load_tags (it, mp4);
-
     deadbeef->pl_lock ();
     int fd_out = open (deadbeef->pl_find_meta (it, ":URI"), O_LARGEFILE | O_RDWR);
     deadbeef->pl_unlock ();
@@ -699,8 +697,10 @@ static int alacplug_write_metadata (DB_playItem_t *it) {
                 break;
             }
         }
-        // FIXME: multiple values
-        mp4ff_tag_add_field (&mp4->tags, metainfo[i] ? metainfo[i] : m->key, m->value);
+
+        for (ddb_metaValue_t *data = m->values; data; data = data->next) {
+            mp4ff_tag_add_field (&mp4->tags, metainfo[i] ? metainfo[i] : m->key, data->value);
+        }
         m = m->next;
     }
 
