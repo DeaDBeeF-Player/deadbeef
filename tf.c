@@ -82,6 +82,10 @@ typedef struct {
 static int
 tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int outlen, int *bool_out, int fail_on_undef);
 
+static const char *
+_tf_get_combined_value (playItem_t *it, const char *key, int *needs_free);
+
+
 #define TF_EVAL_CHECK(res, ctx, arg, arg_len, out, outlen, fail_on_undef)\
 res = tf_eval_int (ctx, arg, arg_len, out, outlen, &bool_out, fail_on_undef);\
 if (res < 0) { *out = 0; return -1; }
@@ -1139,12 +1143,17 @@ tf_func_meta (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
 
-    const char *meta = pl_find_meta_raw ((playItem_t *)ctx->it, out);
+    int needs_free = 0;
+    const char *meta = _tf_get_combined_value ((playItem_t *)ctx->it, out, &needs_free);
     if (!meta) {
         return 0;
     }
 
-    return u8_strnbcpy(out, meta, outlen);
+    int res = u8_strnbcpy(out, meta, outlen);
+    if (needs_free) {
+        free ((char *)meta);
+    }
+    return res;
 }
 
 const char *
@@ -1511,7 +1520,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
 
                 if (!strcmp (name, aa_fields[0])) {
                     for (int i = 0; !val && aa_fields[i]; i++) {
-                        val = pl_find_meta_raw (it, aa_fields[i]);
+                        val = _tf_get_combined_value(it, aa_fields[i], &needs_free);
                     }
                 }
                 else if (!strcmp (name, a_fields[0])) {
@@ -1521,18 +1530,18 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 }
                 else if (!strcmp (name, "album")) {
                     for (int i = 0; !val && alb_fields[i]; i++) {
-                        val = pl_find_meta_raw (it, alb_fields[i]);
+                        val = _tf_get_combined_value (it, alb_fields[i], &needs_free);
                     }
                 }
                 else if (!strcmp (name, "track artist")) {
                     const char *aa = NULL;
                     for (int i = 0; !val && aa_fields[i]; i++) {
-                        val = pl_find_meta_raw (it, aa_fields[i]);
+                        val = _tf_get_combined_value (it, aa_fields[i], &needs_free);
                     }
                     aa = val;
                     val = NULL;
                     for (int i = 0; !val && a_fields[i]; i++) {
-                        val = pl_find_meta_raw (it, a_fields[i]);
+                        val = _tf_get_combined_value (it, a_fields[i], &needs_free);
                     }
                     if (val && aa && !strcmp (val, aa)) {
                         val = NULL;
@@ -1557,7 +1566,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     }
                 }
                 else if (!strcmp (name, "title")) {
-                    val = pl_find_meta_raw (it, "title");
+                    val = _tf_get_combined_value (it, "title", &needs_free);
                     if (!val) {
                         const char *v = pl_find_meta_raw (it, ":URI");
                         if (v) {
@@ -1914,7 +1923,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     val = VERSION;
                 }
                 else {
-                    val = pl_find_meta_raw (it, name);
+                    val = _tf_get_combined_value (it, name, &needs_free);
                 }
 
                 if (val || (!val && out > init_out)) {
@@ -1924,16 +1933,6 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 // default case
                 if (!skip_out && val) {
                     int32_t l = u8_strnbcpy (out, val, outlen);
-
-                    // replace any \n with ; for display
-                    char *p = out;
-                    while (p < out + l) {
-                        if (*p == '\n') {
-                            //*p = ';';
-                        }
-                        p++;
-                    }
-
                     out += l;
                     outlen -= l;
                 }
