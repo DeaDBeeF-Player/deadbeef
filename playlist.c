@@ -2476,7 +2476,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
                     pl_replace_meta (it, key, value);
                 }
                 else {
-                    pl_append_meta_full (it, key, value, l+1);
+                    pl_add_meta_full (it, key, value, l+1);
                 }
             }
         }
