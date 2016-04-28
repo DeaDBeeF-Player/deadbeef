@@ -2123,7 +2123,7 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
                     goto save_fail;
                 }
             }
-            l = strlen (m->value);
+            l = m->valuesize-1;
             if (fwrite (&l, 1, 2, fp) != 2) {
                 goto save_fail;
             }
@@ -2476,7 +2476,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
                     pl_replace_meta (it, key, value);
                 }
                 else {
-                    pl_add_meta (it, key, value);
+                    pl_append_meta_full (it, key, value, l+1);
                 }
             }
         }

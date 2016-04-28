@@ -104,14 +104,73 @@ pl_add_empty_meta_for_key (playItem_t *it, const char *key) {
     return m;
 }
 
+static char *
+_strip_empty (const char *value, int size, int *outsize) {
+    char *data = malloc (size);
+    if (!data) {
+        return NULL;
+    }
+
+    *outsize = 0;
+    const char *p = value;
+    const char *e = value + size;
+    char *out = data;
+    while (p < e) {
+        size_t l = strlen (p) + 1;
+        if (l > 1) {
+            memcpy (out, p, l);
+            out += l;
+            *outsize += l;
+        }
+        p += l;
+    }
+
+    return data;
+}
+
+static void
+_meta_set_value (DB_metaInfo_t *m, const char *value, int size) {
+    size_t len = strlen (value) + 1;
+    if (len != size) {
+        // multivalue -- need to strip empty parts
+        char *data = _strip_empty (value, size, &m->valuesize);
+
+        if (m->valuesize > 0) {
+            m->value = metacache_add_value (data, m->valuesize);
+        }
+        else {
+            m->value = metacache_add_value ("", 1);
+            m->valuesize = 1;
+        }
+        free (data);
+    }
+    else {
+        m->value = metacache_add_value (value, size);
+        m->valuesize = size;
+    }
+}
+
+void
+pl_add_meta_full (playItem_t *it, const char *key, const char *value, int valuesize) {
+    if (!value || !*value) {
+        return;
+    }
+
+    DB_metaInfo_t *meta = pl_add_empty_meta_for_key (it, key);
+    if (!meta) {
+        return;
+    }
+
+    _meta_set_value (meta, value, valuesize);
+}
+
 void
 pl_add_meta (playItem_t *it, const char *key, const char *value) {
     if (!value || !*value) {
         return;
     }
-    // FIXME: it's not very clear what's the difference between add and append,
-    // need to find and document the behavior
-    return pl_append_meta (it, key, value);
+
+    pl_add_meta_full (it, key, value, (int)strlen (value) + 1);
 }
 
 static char *
@@ -153,6 +212,7 @@ _combine_into_unique_multivalue (const char *value1, int size1, const char *valu
     return buf;
 }
 
+
 // append zero-divided multivalue data to existing data
 // skip duplicates
 void
@@ -164,44 +224,7 @@ pl_append_meta_full (playItem_t *it, const char *key, const char *value, int siz
     }
 
     if (!m->value) {
-        size_t len = strlen (value) + 1;
-        if (len != size) {
-            // multivalue -- need to strip empty parts
-            char *data = malloc (size);
-            if (!data) {
-                m->value = metacache_add_value ("", 1);
-                m->valuesize = 1;
-                pl_unlock ();
-                return;
-            }
-
-            m->valuesize = 0;
-            const char *p = value;
-            const char *e = value + size;
-            char *out = data;
-            while (p < e) {
-                size_t l = strlen (p) + 1;
-                if (l > 1) {
-                    memcpy (out, p, l);
-                    out += l;
-                    m->valuesize += l;
-                }
-                p += l;
-            }
-
-            if (m->valuesize > 0) {
-                m->value = metacache_add_value (data, m->valuesize);
-            }
-            else {
-                m->value = metacache_add_value ("", 1);
-                m->valuesize = 1;
-            }
-            free (data);
-        }
-        else {
-            m->value = metacache_add_value (value, size);
-            m->valuesize = size;
-        }
+        _meta_set_value (m, value, size);
         pl_unlock ();
         return;
     }

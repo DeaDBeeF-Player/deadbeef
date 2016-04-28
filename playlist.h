@@ -251,9 +251,17 @@ plt_insert_cue_from_buffer (playlist_t *plt, playItem_t *after, playItem_t *orig
 playItem_t *
 plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int numsamples, int samplerate);
 
+// if value is NULL or empty - do nothing
+// if key already exists - do nothing
+// otherwise, add new meta field
 void
 pl_add_meta (playItem_t *it, const char *key, const char *value);
 
+void
+pl_add_meta_full (playItem_t *it, const char *key, const char *value, int valuesize);
+
+// if it already exists, append new value(s)
+// otherwise, call pl_add_meta
 void
 pl_append_meta (playItem_t *it, const char *key, const char *value);
 
