@@ -243,20 +243,13 @@ typedef ddb_playItem_t DB_playItem_t;
 typedef struct {
 } ddb_playlist_t;
 
-#if (DDB_API_LEVEL >= 10)
-typedef struct ddb_metaValue_s {
-    const char *value;
-    struct ddb_metaValue_s *next;
-} ddb_metaValue_t;
-#endif
-
 typedef struct DB_metaInfo_s {
     struct DB_metaInfo_s *next;
     const char *key;
     const char *value;
 
 #if (DDB_API_LEVEL >= 10)
-    ddb_metaValue_t *values;
+    int valuesize;
 #endif
 } DB_metaInfo_t;
 
@@ -1044,8 +1037,10 @@ typedef struct {
 
     const char * (*metacache_add_string) (const char *str);
     void (*metacache_remove_string) (const char *str);
-    void (*metacache_ref) (const char *str);
-    void (*metacache_unref) (const char *str);
+
+    // ref/unref do nothing, please don't use, they're left for compatibility
+    void (*metacache_ref) (const char *str) DEPRECATED_110;
+    void (*metacache_unref) (const char *str) DEPRECATED_110;
 
     // this function must return original un-overriden value (ignoring the keys prefixed with '!')
     // it's not thread-safe, and must be used under the same conditions as the

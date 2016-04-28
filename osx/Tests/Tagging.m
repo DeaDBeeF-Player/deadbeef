@@ -73,16 +73,8 @@
     XCTAssert(meta, @"Pass");
     XCTAssert(!strcmp (meta->value, "Value1"), @"Got value: %s", meta->value);
 
-    int cnt = 0;
-    char combined[100] = "";
-
-    for (ddb_metaValue_t *data = meta->values; data; data = data->next, cnt++) {
-        strcat (combined, data->value);
-        strcat (combined, "/");
-    }
-
-    XCTAssert(cnt == 3, @"Got count: %d", cnt);
-    XCTAssert(!strcmp (combined, "Value1/Value2/Value3/"), @"Got value: %s", meta->value);
+    const char refdata[] = "Value1\0Value2\0Value3\0";
+    XCTAssert(sizeof (refdata)-1 == meta->valuesize && !memcmp (meta->value, refdata, meta->valuesize), @"Got value: %s", meta->value);
 }
 
 - (void)test_ReadID3v23MultiValueTPE1_ReadsAs3Values {
@@ -96,16 +88,8 @@
     XCTAssert(meta, @"Pass");
     XCTAssert(!strcmp (meta->value, "Value1"), @"Got value: %s", meta->value);
 
-    int cnt = 0;
-    char combined[100] = "";
-
-    for (ddb_metaValue_t *data = meta->values; data; data = data->next, cnt++) {
-        strcat (combined, data->value);
-        strcat (combined, "/");
-    }
-
-    XCTAssert(cnt == 3, @"Got count: %d", cnt);
-    XCTAssert(!strcmp (combined, "Value1/Value2/Value3/"), @"Got value: %s", meta->value);
+    const char refdata[] = "Value1\0Value2\0Value3\0";
+    XCTAssert(sizeof (refdata)-1 == meta->valuesize && !memcmp (meta->value, refdata, meta->valuesize), @"Got value: %s", meta->value);
 }
 
 - (void)test_ReadID3v2MultiLineTPE1_ReadsAs1Value {
@@ -118,7 +102,7 @@
     DB_metaInfo_t *meta = pl_meta_for_key (it, "artist");
     XCTAssert(meta, @"Pass");
     XCTAssert(!strcmp (meta->value, "Line1\r\nLine2\r\nLine3"), @"Actual value: %s", meta->value);
-    XCTAssert(!meta->values->next, @"Pass");
+    XCTAssert(strlen (meta->value) + 1 == meta->valuesize, @"Pass");
 }
 
 - (void)test_ReadAPEv2MultiValueArtist_ReadsAs3Values {
@@ -132,16 +116,8 @@
     XCTAssert(meta, @"Pass");
     XCTAssert(!strcmp (meta->value, "Value1"), @"Got value: %s", meta->value);
 
-    int cnt = 0;
-    char combined[100] = "";
-
-    for (ddb_metaValue_t *data = meta->values; data; data = data->next, cnt++) {
-        strcat (combined, data->value);
-        strcat (combined, "/");
-    }
-
-    XCTAssert(cnt == 3, @"Got count: %d", cnt);
-    XCTAssert(!strcmp (combined, "Value1/Value2/Value3/"), @"Got value: %s", meta->value);
+    const char refdata[] = "Value1\0Value2\0Value3\0";
+    XCTAssert(sizeof (refdata)-1 == meta->valuesize && !memcmp (meta->value, refdata, meta->valuesize), @"Got value: %s", meta->value);
 }
 
 - (void)test_ReadAPEv2MultiLineArtist_ReadsAs1Value {
@@ -154,7 +130,7 @@
     DB_metaInfo_t *meta = pl_meta_for_key (it, "artist");
     XCTAssert(meta, @"Pass");
     XCTAssert(!strcmp (meta->value, "Line1\r\nLine2\r\nLine3"), @"Actual value: %s", meta->value);
-    XCTAssert(!meta->values->next, @"Pass");
+    XCTAssert(strlen (meta->value) + 1 == meta->valuesize, @"Pass");
 }
 
 - (void)test_WriteID3v2MultiLineArtist_MatchingBinaryReference {

@@ -257,6 +257,9 @@ pl_add_meta (playItem_t *it, const char *key, const char *value);
 void
 pl_append_meta (playItem_t *it, const char *key, const char *value);
 
+void
+pl_append_meta_full (playItem_t *it, const char *key, const char *value, int valuesize);
+
 // must be used in explicit pl_lock/unlock block
 // that makes it possible to avoid copying metadata on every access
 // pl_find_meta may return overriden value (where the key is prefixed with '!')
@@ -530,9 +533,6 @@ pl_configchanged (void);
 
 DB_metaInfo_t *
 pl_meta_for_key (playItem_t *it, const char *key);
-
-ddb_metaValue_t *
-pl_meta_append_value (DB_metaInfo_t *meta, const char *value, ddb_metaValue_t *tail);
 
 void
 pl_meta_free_values (DB_metaInfo_t *meta);

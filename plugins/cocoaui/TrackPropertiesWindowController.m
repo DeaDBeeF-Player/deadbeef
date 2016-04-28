@@ -339,18 +339,20 @@ NSString *get_combined_meta_value (DB_playItem_t *it, const char *key) {
         return NULL;
     }
     NSString *res = NULL;
-    ddb_metaValue_t *data = meta->values;
-    while (data) {
+    const char *value = meta->value;
+    const char *end = meta->value + meta->valuesize;
+    while (value < end) {
         if (!res) {
-            res = [NSString stringWithUTF8String:data->value];
+            res = [NSString stringWithUTF8String:value];
         }
         else {
-            res = [res stringByAppendingString:[NSString stringWithUTF8String:data->value]];
+            res = [res stringByAppendingString:[NSString stringWithUTF8String:value]];
         }
-        if (data->next) {
+        size_t l = strlen (value) + 1;
+        if (value + l != end) {
             res = [res stringByAppendingString:@"; "];
         }
-        data = data->next;
+        value += l;
     }
     return res;
 }

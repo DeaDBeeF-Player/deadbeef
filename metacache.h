@@ -33,6 +33,12 @@ metacache_add_string (const char *str);
 void
 metacache_remove_string (const char *str);
 
+const char *
+metacache_add_value (const char *value, size_t valuesize);
+
+void
+metacache_remove_value (const char *value, size_t valuesize);
+
 void
 metacache_ref (const char *str);
 

@@ -277,31 +277,23 @@ _split_multivalue (char *text, size_t text_size) {
     }
 }
 
-static void
-_append_tag_values (playItem_t *it, const char *key, const char *value, size_t value_size) {
-    const char *p = value;
-    while (value_size > 0) {
-        if (*p) {
-            pl_append_meta (it, key, p);
-        }
-        size_t l = strlen (p);
-        if (l < value_size) {
-            l++;
-        }
-        p += l;
-        value_size -= l;
-    }
-}
-
-static char *
-_get_combined_meta_value (DB_metaInfo_t *meta,  int * restrict out_size, const char *separator, size_t separator_len) {
+static const char *
+_get_combined_meta_value (DB_metaInfo_t *meta,  int * restrict out_size, const char *separator, size_t separator_len, int *needs_free) {
     *out_size = 0;
 
-    ddb_metaValue_t *data;
-    for (data = meta->values; data; data = data->next) {
-        if (data->value && *data->value) {
-            *out_size += strlen (data->value) + separator_len;
-        }
+    if (separator_len == 1 && *separator == 0) {
+        *out_size = meta->valuesize;
+        *needs_free = 0;
+        return meta->value;
+    }
+
+    const char *p = meta->value;
+    const char *e = p + meta->valuesize;
+    while (p < e) {
+        size_t l = strlen (p);
+        *out_size += l;
+        *out_size += separator_len;
+        p += l + 1;
     }
 
     if (*out_size > 0) {
@@ -309,29 +301,32 @@ _get_combined_meta_value (DB_metaInfo_t *meta,  int * restrict out_size, const c
     }
 
     if (!(*out_size)) {
-        return strdup ("");
+        *needs_free = 0;
+        return "";
     }
 
     char *out = malloc (*out_size);
     if (!out) {
-        *out_size = 0;
-        return strdup ("");
+        *needs_free = 0;
+        return "";
     }
 
-    char *p = out;
+    char *pp = out;
 
-    for (data = meta->values; data; data = data->next) {
-        if (data->value && *data->value) {
-            size_t len = strlen (data->value);
-            memcpy (p, data->value, len);
-            p += len;
-            if (data->next) {
-                memcpy (p, separator, separator_len);
-                p += separator_len;
-            }
+    p = meta->value;
+    e = p + meta->valuesize;
+    while (p < e) {
+        size_t l = strlen (p);
+        memcpy (pp, p, l);
+        pp += l;
+        if (p + l + 1 != e) {
+            memcpy (pp, separator, separator_len);
+            pp += separator_len;
         }
+        p += l + 1;
     }
 
+    *needs_free = 1;
     return out;
 }
 
@@ -1627,7 +1622,7 @@ junk_apev2_add_frame (playItem_t *it, DB_apev2_tag_t *tag_store, DB_apev2_frame_
                     }
                     else {
                         trace ("pl_append_meta %s %s\n", frame_mapping[m+MAP_DDB], value);
-                        _append_tag_values (it, frame_mapping[m+MAP_DDB], value, itemsize);
+                        pl_append_meta_full (it, frame_mapping[m+MAP_DDB], value, itemsize+1);
                     }
                     break;
                 }
@@ -1654,7 +1649,7 @@ junk_apev2_add_frame (playItem_t *it, DB_apev2_tag_t *tag_store, DB_apev2_frame_
                 }
                 else {
                     trace ("%s=%s\n", key, value);
-                    _append_tag_values (it, key, value, itemsize);
+                    pl_append_meta_full (it, key, value, itemsize+1);
                 }
             }
         }
@@ -2068,18 +2063,23 @@ static void
 _id3v2_append_combined_text_frame_from_meta (DB_id3v2_tag_t *id3v2, const char *key, DB_metaInfo_t *meta) {
     int out_size;
 
-    char *tag_value;
+    int needs_free;
+
+    const char *tag_value;
     if (id3v2->version[0] == 4) {
-        tag_value = _get_combined_meta_value (meta, &out_size, "\0", 1);
+        tag_value = _get_combined_meta_value (meta, &out_size, "\0", 1, &needs_free);
     }
     else if (id3v2->version[0] == 3) {
-        tag_value = _get_combined_meta_value (meta, &out_size, " / ", 3);
+        tag_value = _get_combined_meta_value (meta, &out_size, " / ", 3, &needs_free);
     }
     else {
         assert (0);
     }
     junk_id3v2_add_text_frame2 (id3v2, key, tag_value, out_size);
-    free (tag_value);
+
+    if (needs_free) {
+        free ((char *)tag_value);
+    }
 }
 
 DB_id3v2_frame_t *
@@ -2975,9 +2975,12 @@ junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char
 static void
 _apev2_append_combined_text_frame_from_meta (DB_apev2_tag_t *apev2, const char *key, DB_metaInfo_t *meta) {
     int out_size;
-    char *tag_value = _get_combined_meta_value (meta, &out_size, "\0", 1);
+    int needs_free;
+    const char *tag_value = _get_combined_meta_value (meta, &out_size, "\0", 1, &needs_free);
     junk_apev2_add_text_frame2 (apev2, key, tag_value, out_size);
-    free (tag_value);
+    if (needs_free) {
+        free ((char *)tag_value);
+    }
 }
 
 int
@@ -3776,7 +3779,7 @@ junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int sy
             pl_append_meta (it, "year", val);
         }
         else {
-            _append_tag_values (it, txx, val, decoded_size - (val - txx));
+            pl_append_meta_full (it, txx, val, decoded_size - (val - txx)+1);
         }
     }
 
@@ -4109,9 +4112,9 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                                 }
                                 else {
                                     if (version_major == 3 && _is_multivalue_field (frame_mapping[f+MAP_DDB])) {
-                                        _split_multivalue (text, text_size);
+                                        _split_multivalue (text, text_size+1);
                                     }
-                                    _append_tag_values (it, frame_mapping[f+MAP_DDB], text, text_size);
+                                    pl_append_meta_full (it, frame_mapping[f+MAP_DDB], text, text_size+1);
                                 }
 //                                if (text) {
 //                                    trace ("%s = %s\n", frameid, text);
@@ -4240,7 +4243,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                                     if (_is_multivalue_field (frame_mapping[f+MAP_DDB])) {
                                         _split_multivalue (text, text_size);
                                     }
-                                    _append_tag_values(it, frame_mapping[f+MAP_DDB], text, text_size);
+                                    pl_append_meta_full(it, frame_mapping[f+MAP_DDB], text, text_size+1);
                                 }
                                 free (text);
                             }
@@ -4553,12 +4556,13 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                 // add as txxx
                 int out_size;
 
-                char *tag_value;
+                int needs_free;
+                const char *tag_value;
                 if (id3v2.version[0] == 4) {
-                    tag_value = _get_combined_meta_value (meta, &out_size, "\0", 1);
+                    tag_value = _get_combined_meta_value (meta, &out_size, "\0", 1, &needs_free);
                 }
                 else if (id3v2.version[0] == 3) {
-                    tag_value = _get_combined_meta_value (meta, &out_size, " / ", 3);
+                    tag_value = _get_combined_meta_value (meta, &out_size, " / ", 3, &needs_free);
                 }
                 else {
                     assert (0);
@@ -4566,7 +4570,9 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                 trace ("adding unknown frame as TXX %s=%s\n", meta->key, tag_value);
                 junk_id3v2_remove_txxx_frame (&id3v2, meta->key);
                 junk_id3v2_add_txxx_frame (&id3v2, meta->key, tag_value, out_size);
-                free (tag_value);
+                if (needs_free) {
+                    free ((char *)tag_value);
+                }
             }
             meta = meta->next;
         }

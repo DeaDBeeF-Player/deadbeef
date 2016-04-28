@@ -1411,33 +1411,39 @@ _tf_get_combined_value (playItem_t *it, const char *key, int *needs_free) {
         return NULL;
     }
 
-    if (!meta->values->next) {
-        *needs_free = 0;
-        return meta->value;
-    }
-
     size_t len = 0;
-    ddb_metaValue_t *data = meta->values;
-    while (data) {
-        len += strlen (data->value);
+
+    const char *value = meta->value;
+    const char *end = meta->value +meta->valuesize;
+    while (value < end) {
+        size_t l = strlen (value);
+
+        // TEST
+        if (l+1 == meta->valuesize) {
+            *needs_free = 0;
+            return meta->value;
+        }
+
+        len += l;
         len += 2; // ", "
-        data = data->next;
+        value += l + 1;
     }
 
     char *out = malloc (len + 1);
 
     char *p = out;
 
-    data = meta->values;
-    while (data) {
-        len = strlen (data->value);
-        memcpy (p, data->value, data->next ? len : len + 1);
+    value = meta->value;
+    end = meta->value +meta->valuesize;
+    while (value < end) {
+        len = strlen (value);
+        memcpy (p, value, value + len + 1 != end ? len : len + 1);
         p += len;
-        if (data->next) {
+        if (value + len + 1 != end) {
             memcpy (p, ", ", 2);
             p += 2;
         }
-        data = data->next;
+        value += len + 1;
     }
 
     *needs_free = 1;

@@ -48,44 +48,11 @@ pl_meta_for_key (playItem_t *it, const char *key) {
     return NULL;
 }
 
-static ddb_metaValue_t *
-_meta_value_alloc (void) {
-    return calloc (1, sizeof (ddb_metaValue_t));
-}
-
 void
 pl_meta_free_values (DB_metaInfo_t *meta) {
-    ddb_metaValue_t *data = meta->values;
-    while (data) {
-        metacache_remove_string (data->value);
-        ddb_metaValue_t *next = data->next;
-        free (data);
-        data = next;
-    }
+    metacache_remove_value (meta->value, meta->valuesize);
     meta->value = NULL;
-    meta->values = NULL;
-}
-
-ddb_metaValue_t *
-pl_meta_append_value (DB_metaInfo_t *meta, const char *value, ddb_metaValue_t *tail) {
-    ddb_metaValue_t *data = _meta_value_alloc ();
-    data->value = metacache_add_string (value);
-
-    if (!tail && meta->values) {
-        tail = meta->values;
-        while (tail && tail->next) {
-            tail = tail->next;
-        }
-    }
-
-    if (tail) {
-        tail->next = data;
-    }
-    else {
-        meta->values = data;
-        meta->value = data->value;
-    }
-    return data;
+    meta->valuesize = 0;
 }
 
 DB_metaInfo_t *
@@ -142,44 +109,121 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
     if (!value || !*value) {
         return;
     }
-    LOCK;
-    DB_metaInfo_t *m = pl_add_empty_meta_for_key(it, key);
-    if (m) {
-        pl_meta_append_value(m, value, NULL);
-    }
-    UNLOCK;
+    // FIXME: it's not very clear what's the difference between add and append,
+    // need to find and document the behavior
+    return pl_append_meta (it, key, value);
 }
 
-void
-pl_append_meta (playItem_t *it, const char *key, const char *value) {
-    pl_lock ();
-    DB_metaInfo_t *meta = pl_meta_for_key (it, key);
+static char *
+_combine_into_unique_multivalue (const char *value1, int size1, const char *value2, int size2, int *outsize) {
+    char *buf = NULL;
+    size_t buflen = 0;
 
-    if (meta && (!strcasecmp (key, "cuesheet") || !strcasecmp (key, "log"))) {
+    const char *v = value2;
+    const char *ve = value2 + size2;
+    while (v < ve) {
+        const char *p = value1;
+        const char *e = value1 + size1;
+        while (p < e) {
+            if (!strcmp (p, v)) {
+                // dupe
+                break;
+            }
+            p += strlen (p) + 1;
+        }
+        size_t len = strlen (v);
+        if (p >= e) {
+            // append
+            if (!buf) {
+                buf = malloc (size1 + len + 1);
+                buflen = size1;
+                memcpy (buf, value1, size1);
+            }
+            else {
+                buf = realloc (buf, buflen + len + 1);
+            }
+            memcpy (buf + buflen, v, len + 1);
+            buflen += len + 1;
+        }
+
+        v += len + 1;
+    }
+
+    *outsize = (int)buflen;
+    return buf;
+}
+
+// append zero-divided multivalue data to existing data
+// skip duplicates
+void
+pl_append_meta_full (playItem_t *it, const char *key, const char *value, int size) {
+    pl_lock ();
+    DB_metaInfo_t *m = pl_meta_for_key (it, key);
+    if (!m) {
+        m = pl_add_empty_meta_for_key(it, key);
+    }
+
+    if (!m->value) {
+        size_t len = strlen (value) + 1;
+        if (len != size) {
+            // multivalue -- need to strip empty parts
+            char *data = malloc (size);
+            if (!data) {
+                m->value = metacache_add_value ("", 1);
+                m->valuesize = 1;
+                pl_unlock ();
+                return;
+            }
+
+            m->valuesize = 0;
+            const char *p = value;
+            const char *e = value + size;
+            char *out = data;
+            while (p < e) {
+                size_t l = strlen (p) + 1;
+                if (l > 1) {
+                    memcpy (out, p, l);
+                    out += l;
+                    m->valuesize += l;
+                }
+                p += l;
+            }
+
+            if (m->valuesize > 0) {
+                m->value = metacache_add_value (data, m->valuesize);
+            }
+            else {
+                m->value = metacache_add_value ("", 1);
+                m->valuesize = 1;
+            }
+            free (data);
+        }
+        else {
+            m->value = metacache_add_value (value, size);
+            m->valuesize = size;
+        }
         pl_unlock ();
         return;
     }
 
-    if (!meta) {
-        pl_add_meta (it, key, value);
-    }
-    else {
-        ddb_metaValue_t *data = meta->values;
-        ddb_metaValue_t *tail = NULL;
+    int buflen;
+    char *buf = _combine_into_unique_multivalue(m->value, m->valuesize, value, size, &buflen);
 
-        // dupe check, and find tail
-        while (data) {
-            if (!strcmp (data->value, value)) {
-                pl_unlock ();
-                return;
-            }
-            tail = data;
-            data = data->next;
-        }
-
-        pl_meta_append_value (meta, value, tail);
+    if (!buf) {
+        pl_unlock ();
+        return;
     }
+
+    metacache_remove_value (m->value, m->valuesize);
+    m->value = metacache_add_value (buf, buflen);
+    m->valuesize = (int)buflen;
+    free (buf);
     pl_unlock ();
+}
+
+void
+pl_append_meta (playItem_t *it, const char *key, const char *value) {
+    pl_append_meta_full(it, key, value, (int)strlen (value)+1);
 }
 
 void
@@ -195,7 +239,9 @@ pl_replace_meta (playItem_t *it, const char *key, const char *value) {
     }
     if (m) {
         pl_meta_free_values (m);
-        pl_meta_append_value(m, value, NULL);
+        int l = (int)strlen (value) + 1;
+        m->value = metacache_add_value(value, l);
+        m->valuesize = l;
         UNLOCK;
         return;
     }
@@ -393,8 +439,6 @@ pl_add_meta_copy (playItem_t *it, DB_metaInfo_t *meta) {
         return; // dupe
     }
 
-    ddb_metaValue_t *tail = NULL;
-    for (ddb_metaValue_t *data = meta->values; data; data = data->next) {
-        tail = pl_meta_append_value(m, data->value, tail);
-    }
+    m->value = metacache_add_value (meta->value, meta->valuesize);
+    m->valuesize = meta->valuesize;
 }

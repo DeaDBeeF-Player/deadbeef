@@ -698,8 +698,12 @@ static int alacplug_write_metadata (DB_playItem_t *it) {
             }
         }
 
-        for (ddb_metaValue_t *data = m->values; data; data = data->next) {
-            mp4ff_tag_add_field (&mp4->tags, metainfo[i] ? metainfo[i] : m->key, data->value);
+        const char *value = m->value;
+        const char *end = m->value + m->valuesize;
+        while (value < end) {
+            mp4ff_tag_add_field (&mp4->tags, metainfo[i] ? metainfo[i] : m->key, value);
+            size_t l = strlen (value) + 1;
+            value += l;
         }
         m = m->next;
     }
