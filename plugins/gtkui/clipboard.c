@@ -73,6 +73,7 @@ clipboard_free_clipboard_data ()
         }
         if (current_clipboard_data->plt_title) {
             free (current_clipboard_data->plt_title);
+            current_clipboard_data->plt_title = NULL;
         }
         current_clipboard_data->num_tracks = 0;
         current_clipboard_data->cut = 0;
@@ -149,8 +150,6 @@ clipboard_clear_clipboard_data (GtkClipboard *clipboard,
             for (int i = 0; i < clip_ctx->num_tracks; i++) {
                 if (clip_ctx->tracks[i]) {
                     deadbeef->pl_item_unref (clip_ctx->tracks[i]);
-                    if (clip_ctx->tracks[i]) {
-                    }
                 }
             }
             free (clip_ctx->tracks);
