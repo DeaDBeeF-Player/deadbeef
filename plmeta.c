@@ -253,13 +253,8 @@ void
 pl_replace_meta (playItem_t *it, const char *key, const char *value) {
     LOCK;
     // check if it's already set
-    DB_metaInfo_t *m = it->meta;
-    while (m) {
-        if (!strcasecmp (key, m->key)) {
-            break;
-        }
-        m = m->next;
-    }
+    DB_metaInfo_t *m = pl_meta_for_key (it, key);
+
     if (m) {
         pl_meta_free_values (m);
         int l = (int)strlen (value) + 1;

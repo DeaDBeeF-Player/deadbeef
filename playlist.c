@@ -2472,7 +2472,9 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
                 }
                 value[l] = 0;
                 if (key[0] == ':') {
-                    // to avoid storage conflicts -- give more priority to metadata
+                    // some values are stored twice:
+                    // once in legacy format, and once in metadata format
+                    // here, we delete what was set from legacy, and overwrite with metadata
                     pl_replace_meta (it, key, value);
                 }
                 else {

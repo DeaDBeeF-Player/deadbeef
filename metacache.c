@@ -96,6 +96,7 @@ metacache_add_value (const char *value, size_t len) {
     memset (data, 0, sizeof (metacache_str_t) + len);
     data->refcount = 1;
     memcpy (data->str, value, len);
+    data->value_length = len;
     data->next = bucket->chain;
     bucket->chain = data;
     n_strings++;
@@ -104,7 +105,7 @@ metacache_add_value (const char *value, size_t len) {
 
 const char *
 metacache_add_string (const char *str) {
-    return metacache_add_value (str, (int)strlen (str));
+    return metacache_add_value (str, (int)strlen (str) + 1);
 }
 
 void
