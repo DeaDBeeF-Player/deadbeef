@@ -25,7 +25,9 @@
 
 extern DB_functions_t *deadbeef;
 
-#define MAX_GUI_FIELD_LEN 5000
+// Max length of a string displayed in the TableView
+// If a string is longer -- it gets clipped, and appended with " (…)", like with linebreaks
+#define MAX_GUI_FIELD_LEN 500
 
 // full metadata
 static const char *types[] = {
@@ -62,7 +64,10 @@ static const char *hc_props[] = {
     if ([anObject isKindOfClass:[NSString class]]) {
         NSString *str = anObject;
         NSRange range = [str rangeOfString:@"\n"];
-        if (range.location != NSNotFound) {
+        if ([str length] >= MAX_GUI_FIELD_LEN && (range.location == NSNotFound || range.location >= MAX_GUI_FIELD_LEN)) {
+            range.location = MAX_GUI_FIELD_LEN;
+        }
+        if (range.location != NSNotFound ) {
             return [[str substringToIndex:range.location-1] stringByAppendingString:@" (…)"];
         }
         else {
@@ -294,14 +299,14 @@ get_field_value (char *out, int size, const char *key, NSString *(*getter)(DB_pl
         if (val && val[0] == 0) {
             val = NULL;
         }
-        if (i > 0/* || (val && strlen (val) >= MAX_GUI_FIELD_LEN)*/) {
+        if (i > 0) {
             int n = 0;
             for (; n < i; n++) {
                 if (equals (prev[n], val)) {
                     break;
                 }
             }
-            if (n == i/* || (val && strlen (val) >= MAX_GUI_FIELD_LEN)*/) {
+            if (n == i) {
                 multiple = 1;
                 if (val) {
                     size_t l = snprintf (out, size, out == p ? "%s" : "; %s", val ? val : "");
@@ -361,7 +366,7 @@ void
 add_field (NSMutableArray *store, const char *key, const char *title, int is_prop, DB_playItem_t **tracks, int numtracks) {
     // get value to edit
     const char *mult = is_prop ? "" : "[Multiple values] ";
-    char val[MAX_GUI_FIELD_LEN];
+    char val[5000];
     size_t ml = strlen (mult);
     memcpy (val, mult, ml+1);
     int n = get_field_value (val + ml, (int)(sizeof (val) - ml), key, get_combined_meta_value, equals_ptr, tracks, numtracks);
@@ -372,12 +377,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         }
         else {
             deadbeef->pl_lock ();
-            NSString *sval = get_combined_meta_value (tracks[0], key); // single-track case
-            const char *val = [sval UTF8String];
-            if (!val) {
-                val = "";
-            }
-            [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:val], @"value", [NSString stringWithUTF8String:key], @"key", [NSNumber numberWithInt: (n ? 1 : 0)], @"n", nil]];
+            [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:val+ml], @"value", [NSString stringWithUTF8String:key], @"key", [NSNumber numberWithInt: (n ? 1 : 0)], @"n", nil]];
             deadbeef->pl_unlock ();
         }
     }
@@ -412,10 +412,9 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
             continue;
         }
 
-        char title[MAX_GUI_FIELD_LEN];
-        if (!types[i]) {
-            snprintf (title, sizeof (title), "<%s>", keys[k]);
-        }
+        size_t l = strlen (keys[k]);
+        char title[l + 3];
+        snprintf (title, sizeof (title), "<%s>", keys[k]);
         add_field (_store, keys[k], title, 0, _tracks, _numtracks);
     }
     if (keys) {
@@ -448,7 +447,8 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         if (hc_props[i]) {
             continue;
         }
-        char title[MAX_GUI_FIELD_LEN];
+        size_t l = strlen (keys[k]) + 2;
+        char title[l];
         snprintf (title, sizeof (title), "<%s>", keys[k]+1);
         add_field (_propstore, keys[k], title, 1, _tracks, _numtracks);
     }
@@ -596,12 +596,6 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 
     for (int i = 0; i < _numtracks; i++) {
-        const char *oldvalue= deadbeef->pl_find_meta_raw (_tracks[i], skey);
-        if (oldvalue && strlen (oldvalue) > MAX_GUI_FIELD_LEN) {
-            fprintf (stderr, "trkproperties: value is too long, ignored\n");
-            continue;
-        }
-
         deadbeef->pl_delete_meta (_tracks[i], skey);
         for (NSString *val in transformedValues) {
             if ([val length]) {
