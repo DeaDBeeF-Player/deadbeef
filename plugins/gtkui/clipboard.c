@@ -203,8 +203,8 @@ clipboard_get_selected_tracks (clipboard_data_context_t *ctx, ddb_playlist_t *pl
     DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
     while (it) {
         if (deadbeef->pl_is_selected (it) && n < num) {
-            ctx->tracks[n] = deadbeef->pl_item_alloc ();
-            deadbeef->pl_item_copy (ctx->tracks[n++], it);
+            deadbeef->pl_item_ref (it);
+            ctx->tracks[n++] = it;
         }
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         deadbeef->pl_item_unref (it);
@@ -245,8 +245,8 @@ clipboard_get_all_tracks (clipboard_data_context_t *ctx, ddb_playlist_t *plt)
     int n = 0;
     DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
     while (it) {
-        ctx->tracks[n] = deadbeef->pl_item_alloc ();
-        deadbeef->pl_item_copy (ctx->tracks[n++], it);
+        deadbeef->pl_item_ref (it);
+        ctx->tracks[n++] = it;
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         deadbeef->pl_item_unref (it);
         it = next;
@@ -284,22 +284,6 @@ clipboard_delete_playlist (ddb_playlist_t *plt)
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     }
 }
-
-/* NOTE: in the current implementation copy/paste might require lots of memory
-   because all selected tracks get copied in memory to improve pasting speed.
-
-   The problem is:
-   playlist items are bound to a playlist, so when we copy a track and that
-   track gets deleted before a paste happend the data of the playlist item
-   might already be freed. So we have to copy that data in advance, which means we
-   have two copies of the same data in memory.
-
-   Of course we could fix that by storing the tracks' path instead and handle
-   a paste just like adding files or folders to a playlist. However this is quite slow
-   since we need to decode the tracks all over again.
-
-   As soon as we have a database we could improve that, because tracks would
-   be bound to the database and not the playlist and therefore be more persitent. */
 
 void
 clipboard_cut_selection (ddb_playlist_t *plt, int ctx) {
