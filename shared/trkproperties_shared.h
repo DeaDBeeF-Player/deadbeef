@@ -37,7 +37,7 @@ void
 trkproperties_free_track_list (DB_playItem_t ***tracks, int *numtracks);
 
 void
-trkproperties_build_track_list_for_ctx (int ctx, DB_playItem_t ***_tracks, int *_numtracks);
+trkproperties_build_track_list_for_ctx (ddb_playlist_t *plt, int ctx, DB_playItem_t ***_tracks, int *_numtracks);
 
 void
 trkproperties_reload_tags (DB_playItem_t **tracks, int numtracks);

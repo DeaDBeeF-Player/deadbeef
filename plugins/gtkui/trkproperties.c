@@ -43,17 +43,12 @@
 #include "tagwritersettings.h"
 #include "wingeom.h"
 #include "callbacks.h"
+#include "../../shared/trkproperties_shared.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
-
-// some versions of cairo crash when fields are too long
-// this is the workaround
-// the fields are limited to be no more than 1000 bytes
-// if they are larger - they will be treated as "multiple values".
-#define MAX_GUI_FIELD_LEN 5000
 
 static GtkWidget *trackproperties;
 static GtkCellRenderer *rend_text2;
@@ -67,129 +62,34 @@ static int progress_aborted;
 static int last_ctx;
 static ddb_playlist_t *last_plt;
 
+// Max length of a string displayed in the TableView
+// If a string is longer -- it gets clipped, and appended with " (…)", like with linebreaks
+#define MAX_GUI_FIELD_LEN 500
+
 static char *
 clip_multiline_value (const char *v) {
     char *clipped_val = NULL;
     size_t l = strlen (v);
     const char multiline_ellipsis[] = " (…)";
-    for (int i = 0; i < l; i++) {
+    int i;
+    for (i = 0; i < l; i++) {
         if (v[i] == '\r' || v[i] == '\n') {
-            clipped_val = malloc (i + sizeof (multiline_ellipsis));
-            memcpy (clipped_val, v, i);
-            memcpy (clipped_val + i, multiline_ellipsis, sizeof (multiline_ellipsis));
             break;
         }
+    }
+
+    if (l >= MAX_GUI_FIELD_LEN && (i == l || i >= MAX_GUI_FIELD_LEN)) {
+        i = MAX_GUI_FIELD_LEN;
+    }
+
+    if (i != l) {
+        clipped_val = malloc (i + sizeof (multiline_ellipsis));
+        memcpy (clipped_val, v, i);
+        memcpy (clipped_val + i, multiline_ellipsis, sizeof (multiline_ellipsis));
     }
     return clipped_val;
 }
 
-int
-build_key_list (const char ***pkeys, int props, DB_playItem_t **tracks, int numtracks) {
-    int sz = 20;
-    const char **keys = malloc (sizeof (const char *) * sz);
-    if (!keys) {
-        fprintf (stderr, "fatal: out of memory allocating key list\n");
-        assert (0);
-        return 0;
-    }
-
-    int n = 0;
-
-    for (int i = 0; i < numtracks; i++) {
-        DB_metaInfo_t *meta = deadbeef->pl_get_metadata_head (tracks[i]);
-        while (meta) {
-            if (meta->key[0] != '!' && ((props && meta->key[0] == ':') || (!props && meta->key[0] != ':'))) {
-                int k = 0;
-                for (; k < n; k++) {
-                    if (meta->key == keys[k]) {
-                        break;
-                    }
-                }
-                if (k == n) {
-                    if (n >= sz) {
-                        sz *= 2;
-                        keys = realloc (keys, sizeof (const char *) * sz);
-                        if (!keys) {
-                            fprintf (stderr, "fatal: out of memory reallocating key list (%d keys)\n", sz);
-                            assert (0);
-                        }
-                    }
-                    keys[n++] = meta->key;
-                }
-            }
-            meta = meta->next;
-        }
-    }
-
-    *pkeys = keys;
-    return n;
-}
-
-static int
-equals_ptr (const char *a, const char *b) {
-    return a == b;
-}
-
-static int
-get_field_value (char *out, int size, const char *key, char *(*getter)(DB_playItem_t *it, const char *key), int (*equals)(const char *a, const char *b), DB_playItem_t **tracks, int numtracks) {
-    int multiple = 0;
-    *out = 0;
-    if (numtracks == 0) {
-        return 0;
-    }
-    char *p = out;
-    deadbeef->pl_lock ();
-    // TODO: possible optimisation: only malloc/free the multivalue/multiline
-    // fields, keep the rest const to minimize overhead
-    char **prev = malloc (sizeof (char *) * numtracks);
-    memset (prev, 0, sizeof (char *) * numtracks);
-    for (int i = 0; i < numtracks; i++) {
-        char *val = getter (tracks[i], key);
-        if (val && val[0] == 0) {
-            val = NULL;
-        }
-        if (i > 0 || (val && strlen (val) >= MAX_GUI_FIELD_LEN)) {
-            int n = 0;
-            for (; n < i; n++) {
-                if (equals (prev[n], val)) {
-                    free (val);
-                    break;
-                }
-            }
-            if (n == i || (val && strlen (val) >= MAX_GUI_FIELD_LEN)) {
-                multiple = 1;
-                if (val) {
-                    size_t l = snprintf (out, size, out == p ? "%s" : "; %s", val ? val : "");
-                    l = min (l, size);
-                    out += l;
-                    size -= l;
-                }
-            }
-        }
-        else if (val) {
-            size_t l = snprintf (out, size, "%s", val ? val : "");
-            l = min (l, size);
-            out += l;
-            size -= l;
-        }
-        prev[i] = val;
-        if (size <= 1) {
-            break;
-        }
-    }
-    deadbeef->pl_unlock ();
-    if (size <= 1) {
-        gchar *prev = g_utf8_prev_char (out-4);
-        strcpy (prev, "...");
-    }
-    for (int i = 0; i < numtracks; i++) {
-        if (prev[i]) {
-            free (prev[i]);
-        }
-    }
-    free (prev);
-    return multiple;
-}
 
 gboolean
 on_trackproperties_delete_event        (GtkWidget       *widget,
@@ -309,90 +209,14 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
     trkproperties_block_keyhandler = 0;
 }
 
-// full metadata
-static const char *types[] = {
-    "artist", "Artist",
-    "title", "Track Title",
-    "album", "Album",
-    "year", "Date",
-    "track", "Track Number",
-    "numtracks", "Total Tracks",
-    "genre", "Genre",
-    "composer", "Composer",
-    "disc", "Disc Number",
-    "numdiscs", "Total Discs",
-    "comment", "Comment",
-    NULL
-};
-
-static const char *hc_props[] = {
-    ":URI", "Location",
-    ":TRACKNUM", "Subtrack Index",
-    ":DURATION", "Duration",
-    ":TAGS", "Tag Type(s)",
-    ":HAS_EMBEDDED_CUESHEET", "Embedded Cuesheet",
-    ":DECODER", "Codec",
-    NULL
-};
-
-char *get_combined_meta_value (DB_playItem_t *it, const char *key) {
-    DB_metaInfo_t *meta = deadbeef->pl_meta_for_key (it, key);
-    if (!meta) {
-        return NULL;
-    }
-
-    // find size
-    size_t len = 0;
-    ddb_metaValue_t *data = meta->values;
-    while (data) {
-        const char *val = data->value;
-        int i = strlen (val);
-        len += i; 
-        if (data->next) {
-            len += 2; // for "; "
-        }
-        else {
-            len++;
-        }
-        data = data->next;
-    }
-
-    // combine / clip
-
-    char *out = malloc (len);
-    if (!out) {
-        return NULL;
-    }
-
-    char *p = out;
-
-    data = meta->values;
-    while (data) {
-        const char *val = data->value;
-        int i = strlen (val);
-        memcpy (p, val, i);
-        p += i;
-        if (data->next) {
-            memcpy (p, "; ", 2);
-            p += 2;
-        }
-        else {
-            *p++ = 0;
-        }
-        data = data->next;
-    }
-
-    return out;
-}
-
 void
 add_field (GtkListStore *store, const char *key, const char *title, int is_prop, DB_playItem_t **tracks, int numtracks) {
     // get value to edit
     const char *mult = is_prop ? "" : _("[Multiple values] ");
-    char val[MAX_GUI_FIELD_LEN];
+    char val[5000];
     size_t ml = strlen (mult);
     memcpy (val, mult, ml+1);
-    int n = get_field_value (val + ml, sizeof (val) - ml, key, get_combined_meta_value, equals_ptr, tracks, numtracks);
+    int n = trkproperties_get_field_value (val + ml, sizeof (val) - ml, key, tracks, numtracks);
 
     GtkTreeIter iter;
     gtk_list_store_append (store, &iter);
@@ -426,31 +250,30 @@ trkproperties_fill_meta (GtkListStore *store, DB_playItem_t **tracks, int numtra
     }
 
     const char **keys = NULL;
-    int nkeys = build_key_list (&keys, 0, tracks, numtracks);
+    int nkeys = trkproperties_build_key_list (&keys, 0, tracks, numtracks);
 
     int k;
 
     // add "standard" fields
-    for (int i = 0; types[i]; i += 2) {
-        add_field (store, types[i], _(types[i+1]), 0, tracks, numtracks);
+    for (int i = 0; trkproperties_types[i]; i += 2) {
+        add_field (store, trkproperties_types[i], _(trkproperties_types[i+1]), 0, tracks, numtracks);
     }
 
     // add all other fields
     for (int k = 0; k < nkeys; k++) {
         int i;
-        for (i = 0; types[i]; i += 2) {
-            if (!strcasecmp (keys[k], types[i])) {
+        for (i = 0; trkproperties_types[i]; i += 2) {
+            if (!strcasecmp (keys[k], trkproperties_types[i])) {
                 break;
             }
         }
-        if (types[i]) {
+        if (trkproperties_types[i]) {
             continue;
         }
 
-        char title[MAX_GUI_FIELD_LEN];
-        if (!types[i]) {
-            snprintf (title, sizeof (title), "<%s>", keys[k]);
-        }
+        size_t l = strlen (keys[k]);
+        char title[l + 3];
+        snprintf (title, sizeof (title), "<%s>", keys[k]);
         add_field (store, keys[k], title, 0, tracks, numtracks);
     }
     if (keys) {
@@ -470,23 +293,24 @@ trkproperties_fill_metadata (void) {
     gtk_list_store_clear (propstore);
 
     // hardcoded properties
-    for (int i = 0; hc_props[i]; i += 2) {
-        add_field (propstore, hc_props[i], _(hc_props[i+1]), 1, tracks, numtracks);
+    for (int i = 0; trkproperties_hc_props[i]; i += 1) {
+        add_field (propstore, trkproperties_hc_props[i], _(trkproperties_hc_props[i+1]), 1, tracks, numtracks);
     }
     // properties
     const char **keys = NULL;
-    int nkeys = build_key_list (&keys, 1, tracks, numtracks);
+    int nkeys = trkproperties_build_key_list (&keys, 1, tracks, numtracks);
     for (int k = 0; k < nkeys; k++) {
         int i;
-        for (i = 0; hc_props[i]; i += 2) {
-            if (!strcasecmp (keys[k], hc_props[i])) {
+        for (i = 0; trkproperties_hc_props[i]; i += 2) {
+            if (!strcasecmp (keys[k], trkproperties_hc_props[i])) {
                 break;
             }
         }
-        if (hc_props[i]) {
+        if (trkproperties_hc_props[i]) {
             continue;
         }
-        char title[MAX_GUI_FIELD_LEN];
+        size_t l = strlen (keys[k]);
+        char title[l + 3];
         snprintf (title, sizeof (title), "<%s>", keys[k]+1);
         add_field (propstore, keys[k], title, 1, tracks, numtracks);
     }
@@ -514,65 +338,9 @@ show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
     }
     last_plt = plt;
 
-    if (tracks) {
-        for (int i = 0; i < numtracks; i++) {
-            deadbeef->pl_item_unref (tracks[i]);
-        }
-        free (tracks);
-        tracks = NULL;
-        numtracks = 0;
-    }
+    trkproperties_free_track_list (&tracks, &numtracks);
 
-    deadbeef->pl_lock ();
-    int num = 0;
-    if (ctx == DDB_ACTION_CTX_SELECTION) {
-        num = deadbeef->plt_getselcount (plt);
-    }
-    else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
-        num = deadbeef->plt_get_item_count (plt, PL_MAIN);
-    }
-    else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        num = 1;
-    }
-    if (num <= 0) {
-        deadbeef->pl_unlock ();
-        return;
-    }
-
-    tracks = malloc (sizeof (DB_playItem_t *) * num);
-    if (!tracks) {
-        fprintf (stderr, "gtkui: failed to alloc %d bytes to store selected tracks\n", (int)(num * sizeof (void *)));
-        deadbeef->pl_unlock ();
-        return;
-    }
-
-    if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-        if (!it) {
-            free (tracks);
-            tracks = NULL;
-            deadbeef->pl_unlock ();
-            return;
-        }
-        tracks[0] = it;
-    }
-    else {
-        int n = 0;
-        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
-        while (it) {
-            if (ctx == DDB_ACTION_CTX_PLAYLIST || deadbeef->pl_is_selected (it)) {
-                assert (n < num);
-                deadbeef->pl_item_ref (it);
-                tracks[n++] = it;
-            }
-            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-            deadbeef->pl_item_unref (it);
-            it = next;
-        }
-    }
-    numtracks = num;
-
-    deadbeef->pl_unlock ();
+    trkproperties_build_track_list_for_ctx (plt, ctx, &tracks, &numtracks);
 
     GtkTreeView *tree;
     GtkTreeView *proptree;
@@ -994,12 +762,12 @@ on_trkproperties_remove_activate       (GtkMenuItem     *menuitem,
 
     // delete unknown fields completely; otherwise just clear
     int i = 0;
-    for (; types[i]; i += 2) {
-        if (!strcasecmp (svalue, types[i])) {
+    for (; trkproperties_types[i]; i += 2) {
+        if (!strcasecmp (svalue, trkproperties_types[i])) {
             break;
         }
     }
-    if (types[i]) { // known val, clear
+    if (trkproperties_types[i]) { // known val, clear
         gtk_list_store_set (store, &iter, 1, "", 3, 0, -1);
     }
     else {

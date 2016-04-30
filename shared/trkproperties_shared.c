@@ -115,11 +115,7 @@ trkproperties_free_track_list (DB_playItem_t ***_tracks, int *_numtracks) {
 }
 
 void
-trkproperties_build_track_list_for_ctx (int ctx, DB_playItem_t ***_tracks, int *_numtracks) {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (!plt) {
-        return;
-    }
+trkproperties_build_track_list_for_ctx (ddb_playlist_t *plt, int ctx, DB_playItem_t ***_tracks, int *_numtracks) {
     deadbeef->pl_lock ();
 
     int num = 0;
@@ -134,15 +130,13 @@ trkproperties_build_track_list_for_ctx (int ctx, DB_playItem_t ***_tracks, int *
     }
     if (num <= 0) {
         deadbeef->pl_unlock ();
-        deadbeef->plt_unref (plt);
         return;
     }
 
     DB_playItem_t **tracks = calloc (num, sizeof (DB_playItem_t *));
     if (!tracks) {
-        fprintf (stderr, "gtkui: failed to alloc %d bytes to store selected tracks\n", (int)(num * sizeof (void *)));
+        fprintf (stderr, "trkproperties: failed to alloc %d bytes to store selected tracks\n", (int)(num * sizeof (void *)));
         deadbeef->pl_unlock ();
-        deadbeef->plt_unref (plt);
         return;
     }
 
@@ -152,7 +146,6 @@ trkproperties_build_track_list_for_ctx (int ctx, DB_playItem_t ***_tracks, int *
             free (tracks);
             tracks = NULL;
             deadbeef->pl_unlock ();
-            deadbeef->plt_unref (plt);
             return;
         }
         tracks[0] = it;
@@ -175,7 +168,6 @@ trkproperties_build_track_list_for_ctx (int ctx, DB_playItem_t ***_tracks, int *
     *_tracks = tracks;
 
     deadbeef->pl_unlock ();
-    deadbeef->plt_unref (plt);
 }
 
 void

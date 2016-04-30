@@ -37,6 +37,8 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
                    tfimport.c tfimport.h\
                    ddb_splitter.c ddb_splitter.h\
                    ddb_splitter_size_mode.c ddb_splitter_size_mode.h\
+                   ../../shared/trkproperties_shared.c ../../shared/trkproperties_shared.h\
+                   ../../utf8.c\
 				   $(SM_SOURCES) $(OSXSRC)
 
 sdkdir = $(pkgincludedir)
