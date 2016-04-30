@@ -21,9 +21,11 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 #import <Cocoa/Cocoa.h>
+#include "deadbeef.h"
 
 @interface TrackPropertiesWindowController : NSWindowController
 
+- (void)setPlaylist:(ddb_playlist_t *)plt;
 - (void)fill;
 
 @property (unsafe_unretained) BOOL modified;

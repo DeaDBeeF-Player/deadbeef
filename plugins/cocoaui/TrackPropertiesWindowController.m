@@ -89,6 +89,7 @@ extern DB_functions_t *deadbeef;
 
 @interface TrackPropertiesWindowController () {
     int _iter;
+    ddb_playlist_t *_last_plt;
     DB_playItem_t **_tracks;
     int _numtracks;
     NSMutableArray *_store;
@@ -101,12 +102,26 @@ extern DB_functions_t *deadbeef;
 
 @implementation TrackPropertiesWindowController
 
+- (void)setPlaylist:(ddb_playlist_t *)plt {
+    if (_last_plt) {
+        deadbeef->plt_unref (_last_plt);
+    }
+    _last_plt = plt;
+    if (_last_plt) {
+        deadbeef->plt_ref (_last_plt);
+    }
+}
+
 - (void)freeTrackList {
     trkproperties_free_track_list (&_tracks, &_numtracks);
 }
 
 - (void)dealloc {
     [self freeTrackList];
+    if (_last_plt) {
+        deadbeef->plt_unref (_last_plt);
+        _last_plt = NULL;
+    }
 }
 
 - (void)windowDidLoad
@@ -129,8 +144,8 @@ extern DB_functions_t *deadbeef;
 }
 
 
-- (void)buildTrackListForCtx:(int)ctx {
-    trkproperties_build_track_list_for_ctx(ctx, &_tracks, &_numtracks);
+- (void)buildTrackListForCtx:(int)ctx forPlaylist:(ddb_playlist_t *)plt {
+    trkproperties_build_track_list_for_ctx (plt, ctx, &_tracks, &_numtracks);
 }
 
 
@@ -240,7 +255,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     [self freeTrackList];
 
-    [self buildTrackListForCtx:DDB_ACTION_CTX_SELECTION];
+    [self buildTrackListForCtx:DDB_ACTION_CTX_SELECTION forPlaylist:_last_plt];
 
     NSString *fname;
 

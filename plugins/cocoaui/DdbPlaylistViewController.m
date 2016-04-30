@@ -947,6 +947,9 @@ static char *group_bytecode = NULL;
     if (!_trkProperties) {
         _trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
     }
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    [_trkProperties setPlaylist: plt];
+    deadbeef->plt_unref (plt);
     [_trkProperties fill];
     [_trkProperties showWindow:self];
 }
