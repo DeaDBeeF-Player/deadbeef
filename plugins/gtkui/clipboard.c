@@ -43,6 +43,7 @@ typedef struct {
 } clipboard_data_context_t;
 
 static clipboard_data_context_t *current_clipboard_data = NULL;
+static int current_clipboard_refcount = 0;
 
 enum {
     DDB_URI_LIST = 1,
@@ -57,30 +58,6 @@ static GtkTargetEntry targets[]=
     {"text/uri-list", 0, URI_LIST},
     {"x-special/gnome-copied-files", 0, GNOME_COPIED_FILES},
 };
-
-void
-clipboard_free_clipboard_data ()
-{
-    if (current_clipboard_data) {
-        if (current_clipboard_data->tracks) {
-            for (int i = 0; i < current_clipboard_data->num_tracks; i++) {
-                if (current_clipboard_data->tracks[i]) {
-                    deadbeef->pl_item_unref (current_clipboard_data->tracks[i]);
-                }
-            }
-            free (current_clipboard_data->tracks);
-            current_clipboard_data->tracks = NULL;
-        }
-        if (current_clipboard_data->plt_title) {
-            free (current_clipboard_data->plt_title);
-            current_clipboard_data->plt_title = NULL;
-        }
-        current_clipboard_data->num_tracks = 0;
-        current_clipboard_data->cut = 0;
-        free (current_clipboard_data);
-        current_clipboard_data = NULL;
-    }
-}
 
 static void
 clipboard_write_uri_list (clipboard_data_context_t *ctx, GString* buf)
@@ -141,8 +118,8 @@ clipboard_get_clipboard_data (GtkClipboard *clip, GtkSelectionData *sel, guint i
 }
 
 static void
-clipboard_clear_clipboard_data (GtkClipboard *clipboard,
-                             gpointer      user_data)
+clipboard_free (GtkClipboard *clipboard,
+                gpointer      user_data)
 {
     clipboard_data_context_t *clip_ctx = (clipboard_data_context_t *)user_data;
     if (clip_ctx) {
@@ -164,6 +141,15 @@ clipboard_clear_clipboard_data (GtkClipboard *clipboard,
         free (clip_ctx);
         clip_ctx = NULL;
     }
+    current_clipboard_refcount--;
+}
+
+void
+clipboard_free_current ()
+{
+    if (current_clipboard_refcount > 0) {
+        clipboard_free (NULL, current_clipboard_data);
+    }
 }
 
 static gboolean
@@ -173,7 +159,7 @@ clipboard_cut_or_copy_files (GtkWidget* src_widget, clipboard_data_context_t *ct
     GtkClipboard *clipboard = gtk_clipboard_get_for_display (display, GDK_SELECTION_CLIPBOARD);
     gboolean ret;
     ret = gtk_clipboard_set_with_data (clipboard, targets, G_N_ELEMENTS(targets),
-                                      clipboard_get_clipboard_data, clipboard_clear_clipboard_data, ctx);
+                                      clipboard_get_clipboard_data, clipboard_free, ctx);
     return ret;
 }
 
@@ -296,6 +282,7 @@ clipboard_cut_selection (ddb_playlist_t *plt, int ctx) {
 
     // save ptr to free on exit
     current_clipboard_data = clip_ctx;
+    current_clipboard_refcount++;
 
     clip_ctx->plt_title = NULL;
 
@@ -329,6 +316,7 @@ clipboard_copy_selection (ddb_playlist_t *plt, int ctx) {
 
     // save ptr to free on exit
     current_clipboard_data = clip_ctx;
+    current_clipboard_refcount++;
 
     clip_ctx->plt_title = NULL;
 

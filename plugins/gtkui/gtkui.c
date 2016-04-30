@@ -1167,7 +1167,7 @@ gtkui_thread (void *ctx) {
         refresh_timeout = 0;
     }
 
-    clipboard_free_clipboard_data ();
+    clipboard_free_current ();
     cover_art_free ();
     eq_window_destroy ();
     trkproperties_destroy ();

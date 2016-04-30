@@ -27,7 +27,7 @@
 #include "../../deadbeef.h"
 
 void
-clipboard_free_clipboard_data ();
+clipboard_free_current ();
 
 void
 clipboard_cut_selection (ddb_playlist_t *plt, int ctx);
