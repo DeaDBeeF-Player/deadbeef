@@ -22,6 +22,7 @@
 */
 #import "TrackPropertiesWindowController.h"
 #include "deadbeef.h"
+#include "../../utf8.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -264,73 +265,105 @@ build_key_list (const char ***pkeys, int props, DB_playItem_t **tracks, int numt
     return n;
 }
 
-static int
-equals_ptr (const char *a, const char *b) {
-    return a == b;
-}
-
 #define min(x,y) ((x)<(y)?(x):(y))
 
 #define isutf(c) (((c)&0xC0)!=0x80)
 
-static void
-u8_dec(const char *s, int32_t *i)
-{
-    (void)(isutf(s[--(*i)]) || isutf(s[--(*i)]) ||
-           isutf(s[--(*i)]) || --(*i));
+static int
+string_append_multivalue (char *out, int size, DB_metaInfo_t *meta, int *clipped) {
+    int initsize = size;
+    const char *p = meta->value;
+    const char *end = p + meta->valuesize;
+    while (p < end) {
+        size_t l = strlen (p) + 1;
+        if (l > size) {
+            l = size-1;
+            *clipped = 1;
+            u8_strnbcpy (out, p, (int)l);
+            out[l] = 0;
+            out += l;
+            size -= l;
+            break;
+        }
+
+        memcpy (out, p, (int)l);
+
+        p += l;
+        out += l-1;
+        size -= l-1;
+
+        if (p != end) {
+            if (size < 3) {
+                *clipped = 1;
+                break;
+            }
+            memcpy (out, "; ", 3);
+            out += 2;
+            size -= 2;
+        }
+    }
+    return initsize - size;
 }
 
 static int
-get_field_value (char *out, int size, const char *key, NSString *(*getter)(DB_playItem_t *it, const char *key), int (*equals)(const char *a, const char *b), DB_playItem_t **tracks, int numtracks) {
-    char *out_start = out;
-
+get_field_value (char *out, int size, const char *key, DB_playItem_t **tracks, int numtracks) {
     int multiple = 0;
+    char *out_start = out;
+    int clipped = 0;
     *out = 0;
     if (numtracks == 0) {
         return 0;
     }
-    char *p = out;
     deadbeef->pl_lock ();
     const char **prev = malloc (sizeof (const char *) * numtracks);
     memset (prev, 0, sizeof (const char *) * numtracks);
     for (int i = 0; i < numtracks; i++) {
-        NSString *nsval = getter (tracks[i], key);
-        const char *val = [nsval UTF8String];
-        if (val && val[0] == 0) {
-            val = NULL;
+        DB_metaInfo_t *meta = deadbeef->pl_meta_for_key (tracks[i], key);
+        if (meta && meta->valuesize == 1) {
+            meta = NULL;
         }
+
         if (i > 0) {
             int n = 0;
             for (; n < i; n++) {
-                if (equals (prev[n], val)) {
+                if (prev[n] == (meta ? meta->value : NULL)) {
                     break;
                 }
             }
             if (n == i) {
                 multiple = 1;
-                if (val) {
-                    size_t l = snprintf (out, size, out == p ? "%s" : "; %s", val ? val : "");
-                    l = min (l, size);
-                    out += l;
-                    size -= l;
+                if (meta) {
+                    if (out != out_start) {
+                        if (size < 3) {
+                            clipped = 1;
+                            break;
+                        }
+                        memcpy (out, "; ", 3);
+                        out += 2;
+                        size -= 2;
+                    }
+                    int n = string_append_multivalue (out, size, meta, &clipped);
+                    out += n;
+                    size -= n;
                 }
             }
         }
-        else if (val) {
-            size_t l = snprintf (out, size, "%s", val ? val : "");
-            l = min (l, size);
-            out += l;
-            size -= l;
+        else if (meta) {
+            int n = string_append_multivalue (out, size, meta, &clipped);
+            out += n;
+            size -= n;
         }
-        prev[i] = val;
-        if (size <= 1) {
+        prev[i] = meta ? meta->value : NULL;
+        if (size < 3) {
             break;
         }
     }
     deadbeef->pl_unlock ();
-    if (size <= 1) {
+    if (clipped) {
+        // FIXME: This is a hack for strings which don't fit in the preallocated 5K buffer
+        // When the code is converted to use dynamic buffer - this can be removed
         int idx = (int)(out - 4 - out_start);
-        u8_dec (out_start , &idx);
+        u8_dec (out_start, &idx);
         char *prev = out_start + idx;
         strcpy (prev, "...");
     }
@@ -338,38 +371,16 @@ get_field_value (char *out, int size, const char *key, NSString *(*getter)(DB_pl
     return multiple;
 }
 
-NSString *get_combined_meta_value (DB_playItem_t *it, const char *key) {
-    DB_metaInfo_t *meta = deadbeef->pl_meta_for_key (it, key);
-    if (!meta) {
-        return NULL;
-    }
-    NSString *res = NULL;
-    const char *value = meta->value;
-    const char *end = meta->value + meta->valuesize;
-    while (value < end) {
-        if (!res) {
-            res = [NSString stringWithUTF8String:value];
-        }
-        else {
-            res = [res stringByAppendingString:[NSString stringWithUTF8String:value]];
-        }
-        size_t l = strlen (value) + 1;
-        if (value + l != end) {
-            res = [res stringByAppendingString:@"; "];
-        }
-        value += l;
-    }
-    return res;
-}
-
+// NOTE: add_field gets called once for each unique key (e.g. Artist or Album),
+// which means it will usually contain 10-20 fields
 void
 add_field (NSMutableArray *store, const char *key, const char *title, int is_prop, DB_playItem_t **tracks, int numtracks) {
     // get value to edit
     const char *mult = is_prop ? "" : "[Multiple values] ";
-    char val[5000];
+    char val[5000]; // FIXME: this should be a dynamic buffer, to be able to hold any value
     size_t ml = strlen (mult);
     memcpy (val, mult, ml+1);
-    int n = get_field_value (val + ml, (int)(sizeof (val) - ml), key, get_combined_meta_value, equals_ptr, tracks, numtracks);
+    int n = get_field_value (val + ml, (int)(sizeof (val) - ml), key, tracks, numtracks);
 
     if (!is_prop) {
         if (n) {
