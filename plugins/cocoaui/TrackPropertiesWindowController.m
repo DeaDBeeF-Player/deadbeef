@@ -21,41 +21,16 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 #import "TrackPropertiesWindowController.h"
-#include "deadbeef.h"
+#include "../../deadbeef.h"
 #include "../../utf8.h"
-
-extern DB_functions_t *deadbeef;
+#include "../../shared/trkproperties_shared.h"
 
 // Max length of a string displayed in the TableView
 // If a string is longer -- it gets clipped, and appended with " (…)", like with linebreaks
 #define MAX_GUI_FIELD_LEN 500
 
-// full metadata
-static const char *types[] = {
-    "artist", "Artist Name",
-    "title", "Track Title",
-    "album", "Album Title",
-    "year", "Date",
-    "genre", "Genre",
-    "composer", "Composer",
-    "album artist", "Album Artist",
-    "track", "Track Number",
-    "numtracks", "Total Tracks",
-    "disc", "Disc Number",
-    "numdiscs", "Total Discs",
-    "comment", "Comment",
-    NULL
-};
 
-static const char *hc_props[] = {
-    ":URI", "Location",
-    ":TRACKNUM", "Subtrack Index",
-    ":DURATION", "Duration",
-    ":TAGS", "Tag Type(s)",
-    ":HAS_EMBEDDED_CUESHEET", "Embedded Cuesheet",
-    ":DECODER", "Codec",
-    NULL
-};
+extern DB_functions_t *deadbeef;
 
 @interface SingleLineFormatter : NSFormatter
 @end
@@ -127,14 +102,7 @@ static const char *hc_props[] = {
 @implementation TrackPropertiesWindowController
 
 - (void)freeTrackList {
-    if (_tracks) {
-        for (int i = 0; i < _numtracks; i++) {
-            deadbeef->pl_item_unref (_tracks[i]);
-        }
-        free (_tracks);
-        _tracks = NULL;
-        _numtracks = 0;
-    }
+    trkproperties_free_track_list (&_tracks, &_numtracks);
 }
 
 - (void)dealloc {
@@ -162,214 +130,11 @@ static const char *hc_props[] = {
 
 
 - (void)buildTrackListForCtx:(int)ctx {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (!plt) {
-        return;
-    }
-    deadbeef->pl_lock ();
-
-    int num = 0;
-    if (ctx == DDB_ACTION_CTX_SELECTION) {
-        num = deadbeef->plt_getselcount (plt);
-    }
-    else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
-        num = deadbeef->plt_get_item_count (plt, PL_MAIN);
-    }
-    else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        num = 1;
-    }
-    if (num <= 0) {
-        deadbeef->pl_unlock ();
-        deadbeef->plt_unref (plt);
-        return;
-    }
-
-    _tracks = malloc (sizeof (DB_playItem_t *) * num);
-    if (!_tracks) {
-        fprintf (stderr, "gtkui: failed to alloc %d bytes to store selected tracks\n", (int)(num * sizeof (void *)));
-        deadbeef->pl_unlock ();
-        deadbeef->plt_unref (plt);
-        return;
-    }
-
-    if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-        if (!it) {
-            free (_tracks);
-            _tracks = NULL;
-            deadbeef->pl_unlock ();
-            deadbeef->plt_unref (plt);
-            return;
-        }
-        _tracks[0] = it;
-    }
-    else {
-        int n = 0;
-        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-        while (it) {
-            if (ctx == DDB_ACTION_CTX_PLAYLIST || deadbeef->pl_is_selected (it)) {
-                assert (n < num);
-                deadbeef->pl_item_ref (it);
-                _tracks[n++] = it;
-            }
-            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-            deadbeef->pl_item_unref (it);
-            it = next;
-        }
-    }
-    _numtracks = num;
-
-    deadbeef->pl_unlock ();
-    deadbeef->plt_unref (plt);
+    trkproperties_build_track_list_for_ctx(ctx, &_tracks, &_numtracks);
 }
 
-int
-build_key_list (const char ***pkeys, int props, DB_playItem_t **tracks, int numtracks) {
-    int sz = 20;
-    const char **keys = malloc (sizeof (const char *) * sz);
-    if (!keys) {
-        fprintf (stderr, "fatal: out of memory allocating key list\n");
-        assert (0);
-        return 0;
-    }
-
-    int n = 0;
-
-    for (int i = 0; i < numtracks; i++) {
-        DB_metaInfo_t *meta = deadbeef->pl_get_metadata_head (tracks[i]);
-        while (meta) {
-            if (meta->key[0] != '!' && ((props && meta->key[0] == ':') || (!props && meta->key[0] != ':'))) {
-                int k = 0;
-                for (; k < n; k++) {
-                    if (meta->key == keys[k]) {
-                        break;
-                    }
-                }
-                if (k == n) {
-                    if (n >= sz) {
-                        sz *= 2;
-                        keys = realloc (keys, sizeof (const char *) * sz);
-                        if (!keys) {
-                            fprintf (stderr, "fatal: out of memory reallocating key list (%d keys)\n", sz);
-                            assert (0);
-                        }
-                    }
-                    keys[n++] = meta->key;
-                }
-            }
-            meta = meta->next;
-        }
-    }
-
-    *pkeys = keys;
-    return n;
-}
 
 #define min(x,y) ((x)<(y)?(x):(y))
-
-#define isutf(c) (((c)&0xC0)!=0x80)
-
-static int
-string_append_multivalue (char *out, int size, DB_metaInfo_t *meta, int *clipped) {
-    int initsize = size;
-    const char *p = meta->value;
-    const char *end = p + meta->valuesize;
-    while (p < end) {
-        size_t l = strlen (p) + 1;
-        if (l > size) {
-            l = size-1;
-            *clipped = 1;
-            u8_strnbcpy (out, p, (int)l);
-            out[l] = 0;
-            out += l;
-            size -= l;
-            break;
-        }
-
-        memcpy (out, p, (int)l);
-
-        p += l;
-        out += l-1;
-        size -= l-1;
-
-        if (p != end) {
-            if (size < 3) {
-                *clipped = 1;
-                break;
-            }
-            memcpy (out, "; ", 3);
-            out += 2;
-            size -= 2;
-        }
-    }
-    return initsize - size;
-}
-
-static int
-get_field_value (char *out, int size, const char *key, DB_playItem_t **tracks, int numtracks) {
-    int multiple = 0;
-    char *out_start = out;
-    int clipped = 0;
-    *out = 0;
-    if (numtracks == 0) {
-        return 0;
-    }
-    deadbeef->pl_lock ();
-    const char **prev = malloc (sizeof (const char *) * numtracks);
-    memset (prev, 0, sizeof (const char *) * numtracks);
-    for (int i = 0; i < numtracks; i++) {
-        DB_metaInfo_t *meta = deadbeef->pl_meta_for_key (tracks[i], key);
-        if (meta && meta->valuesize == 1) {
-            meta = NULL;
-        }
-
-        if (i > 0) {
-            int n = 0;
-            for (; n < i; n++) {
-                if (prev[n] == (meta ? meta->value : NULL)) {
-                    break;
-                }
-            }
-            if (n == i) {
-                multiple = 1;
-                if (meta) {
-                    if (out != out_start) {
-                        if (size < 3) {
-                            clipped = 1;
-                            break;
-                        }
-                        memcpy (out, "; ", 3);
-                        out += 2;
-                        size -= 2;
-                    }
-                    int n = string_append_multivalue (out, size, meta, &clipped);
-                    out += n;
-                    size -= n;
-                }
-            }
-        }
-        else if (meta) {
-            int n = string_append_multivalue (out, size, meta, &clipped);
-            out += n;
-            size -= n;
-        }
-        prev[i] = meta ? meta->value : NULL;
-        if (size < 3) {
-            break;
-        }
-    }
-    deadbeef->pl_unlock ();
-    if (clipped) {
-        // FIXME: This is a hack for strings which don't fit in the preallocated 5K buffer
-        // When the code is converted to use dynamic buffer - this can be removed
-        int idx = (int)(out - 4 - out_start);
-        u8_dec (out_start, &idx);
-        char *prev = out_start + idx;
-        strcpy (prev, "...");
-    }
-    free (prev);
-    return multiple;
-}
 
 // NOTE: add_field gets called once for each unique key (e.g. Artist or Album),
 // which means it will usually contain 10-20 fields
@@ -380,7 +145,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     char val[5000]; // FIXME: this should be a dynamic buffer, to be able to hold any value
     size_t ml = strlen (mult);
     memcpy (val, mult, ml+1);
-    int n = get_field_value (val + ml, (int)(sizeof (val) - ml), key, tracks, numtracks);
+    int n = trkproperties_get_field_value (val + ml, (int)(sizeof (val) - ml), key, tracks, numtracks);
 
     if (!is_prop) {
         if (n) {
@@ -404,22 +169,22 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 
     const char **keys = NULL;
-    int nkeys = build_key_list (&keys, 0, _tracks, _numtracks);
+    int nkeys = trkproperties_build_key_list (&keys, 0, _tracks, _numtracks);
 
     // add "standard" fields
-    for (int i = 0; types[i]; i += 2) {
-        add_field (_store, types[i], types[i+1], 0, _tracks, _numtracks);
+    for (int i = 0; trkproperties_types[i]; i += 2) {
+        add_field (_store, trkproperties_types[i], trkproperties_types[i+1], 0, _tracks, _numtracks);
     }
 
     // add all other fields
     for (int k = 0; k < nkeys; k++) {
         int i;
-        for (i = 0; types[i]; i += 2) {
-            if (!strcasecmp (keys[k], types[i])) {
+        for (i = 0; trkproperties_types[i]; i += 2) {
+            if (!strcasecmp (keys[k], trkproperties_types[i])) {
                 break;
             }
         }
-        if (types[i]) {
+        if (trkproperties_types[i]) {
             continue;
         }
 
@@ -442,20 +207,20 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     [_propstore removeAllObjects];
 
     // hardcoded properties
-    for (int i = 0; hc_props[i]; i += 2) {
-        add_field (_propstore, hc_props[i], hc_props[i+1], 1, _tracks, _numtracks);
+    for (int i = 0; trkproperties_hc_props[i]; i += 2) {
+        add_field (_propstore, trkproperties_hc_props[i], trkproperties_hc_props[i+1], 1, _tracks, _numtracks);
     }
     // properties
     const char **keys = NULL;
-    int nkeys = build_key_list (&keys, 1, _tracks, _numtracks);
+    int nkeys = trkproperties_build_key_list (&keys, 1, _tracks, _numtracks);
     for (int k = 0; k < nkeys; k++) {
         int i;
-        for (i = 0; hc_props[i]; i += 2) {
-            if (!strcasecmp (keys[k], hc_props[i])) {
+        for (i = 0; trkproperties_hc_props[i]; i += 2) {
+            if (!strcasecmp (keys[k], trkproperties_hc_props[i])) {
                 break;
             }
         }
-        if (hc_props[i]) {
+        if (trkproperties_hc_props[i]) {
             continue;
         }
         size_t l = strlen (keys[k]) + 2;
@@ -468,11 +233,6 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 
     deadbeef->pl_unlock ();
-
-#if 0
-    NSLog (@"%@\n", _propstore);
-    NSLog (@"%@\n", _store);
-#endif
 }
 
 - (void)fill {
@@ -713,12 +473,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
     deadbeef->pl_unlock ();
 
-    for (int i = 0; i < _numtracks; i++) {
-        ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
-        ev->track = _tracks[i];
-        deadbeef->pl_item_ref (ev->track);
-        deadbeef->event_send ((ddb_event_t*)ev, 0, 0);
-    }
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 
     _progress_aborted = NO;
 
@@ -810,34 +565,8 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (IBAction)reloadTrackPropertiesAction:(id)sender {
-    for (int i = 0; i < _numtracks; i++) {
-        DB_playItem_t *it = _tracks[i];
-        deadbeef->pl_lock ();
-        char decoder_id[100];
-        const char *dec = deadbeef->pl_find_meta (it, ":DECODER");
-        if (dec) {
-            strncpy (decoder_id, dec, sizeof (decoder_id));
-        }
-        int match = deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && dec;
-        deadbeef->pl_unlock ();
+    trkproperties_reload_tags (_tracks, _numtracks);
 
-        if (match) {
-            uint32_t f = deadbeef->pl_get_item_flags (it);
-            if (!(f & DDB_IS_SUBTRACK)) {
-                f &= ~DDB_TAG_MASK;
-                deadbeef->pl_set_item_flags (it, f);
-                DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
-                for (int i = 0; decoders[i]; i++) {
-                    if (!strcmp (decoders[i]->plugin.id, decoder_id)) {
-                        if (decoders[i]->read_metadata) {
-                            decoders[i]->read_metadata (it);
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-    }
     deadbeef->pl_save_current();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     [self fill];

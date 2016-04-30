@@ -1069,6 +1069,8 @@
 		2D9177691A0E8A3D004BC222 /* mp4util.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177581A0E8A3D004BC222 /* mp4util.c */; };
 		2D91776A1A0E8A3D004BC222 /* mp4util.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177581A0E8A3D004BC222 /* mp4util.c */; };
 		2D91776D1A0E8A4D004BC222 /* libmp4ff.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D91774B1A0E8A10004BC222 /* libmp4ff.a */; };
+		2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */; };
+		2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */; };
 		2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D93DC531AADFEEF003D2D8D /* pluginsettings.h */; };
 		2D93DC571AADFEEF003D2D8D /* README in Resources */ = {isa = PBXBuildFile; fileRef = 2D93DC541AADFEEF003D2D8D /* README */; };
 		2D977F451CA4B1F3006DBE79 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
@@ -3083,6 +3085,8 @@
 		2D9177571A0E8A3D004BC222 /* mp4tagupdate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp4tagupdate.c; path = plugins/libmp4ff/mp4tagupdate.c; sourceTree = "<group>"; };
 		2D9177581A0E8A3D004BC222 /* mp4util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp4util.c; path = plugins/libmp4ff/mp4util.c; sourceTree = "<group>"; };
 		2D917E781A4046FE00C3EB44 /* libmpg123.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmpg123.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trkproperties_shared.c; sourceTree = "<group>"; };
+		2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trkproperties_shared.h; sourceTree = "<group>"; };
 		2D93DC521AADFEEF003D2D8D /* pluginsettings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pluginsettings.c; sourceTree = "<group>"; };
 		2D93DC531AADFEEF003D2D8D /* pluginsettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pluginsettings.h; sourceTree = "<group>"; };
 		2D93DC541AADFEEF003D2D8D /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
@@ -5450,6 +5454,8 @@
 		2D93DC511AADFEEF003D2D8D /* shared */ = {
 			isa = PBXGroup;
 			children = (
+				2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */,
+				2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */,
 				2D93DC521AADFEEF003D2D8D /* pluginsettings.c */,
 				2D93DC531AADFEEF003D2D8D /* pluginsettings.h */,
 				2D93DC541AADFEEF003D2D8D /* README */,
@@ -7502,6 +7508,7 @@
 				2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */,
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
+				2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */,
 				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
 				2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */,
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
@@ -9714,6 +9721,7 @@
 				2D9177631A0E8A3D004BC222 /* mp4meta.c in Sources */,
 				2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
+				2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
 				2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */,
 				2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */,
