@@ -201,11 +201,20 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
     gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 4, &value);
     gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 3, &mult);
     const char *svalue = g_value_get_string (&value);
+    if (!svalue) {
+        svalue = "";
+    }
+
+    // The multiple values case gets cleared on attempt to edit,
+    // that's why the change gets applied unconditionally for multivalue case
     int imult = g_value_get_int (&mult);
-    if (strcmp (svalue, new_text) && (!imult || strlen (new_text) == 0)) {
+    if (strcmp (svalue, new_text) || imult) {
         update_meta_iter_with_edited_value (&iter, new_text);
         trkproperties_modified = 1;
     }
+
+    G_IS_VALUE (&value) ? (g_value_unset (&value), NULL) : NULL;
+    G_IS_VALUE (&mult) ? (g_value_unset (&mult), NULL) : NULL;
     trkproperties_block_keyhandler = 0;
 }
 
@@ -222,7 +231,14 @@ add_field (GtkListStore *store, const char *key, const char *title, int is_prop,
     gtk_list_store_append (store, &iter);
     if (!is_prop) {
         if (n) {
-            gtk_list_store_set (store, &iter, 0, title, 1, val, 2, key, 3, n ? 1 : 0, -1);
+            char *clipped_val = clip_multiline_value (val);
+            if (!clipped_val) {
+                gtk_list_store_set (store, &iter, 0, title, 1, val, 2, key, 3, n ? 1 : 0, 4, val, -1);
+            }
+            else {
+                gtk_list_store_set (store, &iter, 0, title, 1, clipped_val, 2, key, 3, n ? 1 : 0, 4, val, -1);
+                free (clipped_val);
+            }
         }
         else {
             char *v = val + ml;
@@ -234,7 +250,6 @@ add_field (GtkListStore *store, const char *key, const char *title, int is_prop,
                 gtk_list_store_set (store, &iter, 0, title, 1, clipped_val, 2, key, 3, n ? 1 : 0, 4, v, -1);
                 free (clipped_val);
             }
-
         }
     }
     else {
