@@ -35,10 +35,13 @@
 #include "../libparser/parser.h"
 #include "actions.h"
 #include "actionhandlers.h"
+#include "clipboard.h"
 #include "../../strdupa.h"
 #include <jansson.h>
 
 #define min(x,y) ((x)<(y)?(x):(y))
+#define max(x,y) ((x)>(y)?(x):(y))
+
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
@@ -531,6 +534,39 @@ remove_from_playback_queue_activate
     }
 }
 
+void
+on_cut_activate (GtkMenuItem     *menuitem,
+                    gpointer         user_data)
+{
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        clipboard_cut_selection (plt, DDB_ACTION_CTX_SELECTION);
+        deadbeef->plt_unref (plt);
+    }
+}
+
+void
+on_copy_activate (GtkMenuItem     *menuitem,
+                    gpointer         user_data)
+{
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        clipboard_copy_selection (plt, DDB_ACTION_CTX_SELECTION);
+        deadbeef->plt_unref (plt);
+    }
+}
+
+void
+on_paste_activate (GtkMenuItem     *menuitem,
+                    gpointer         user_data)
+{
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        clipboard_paste_selection (plt, DDB_ACTION_CTX_SELECTION);
+        deadbeef->plt_unref (plt);
+    }
+}
+
 static void
 reload_metadata_activate
                                         (GtkMenuItem     *menuitem,
@@ -734,7 +770,41 @@ popup_menu_position_func (GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gp
 #endif
 
 void
-pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
+list_empty_region_context_menu (DdbListview *listview) {
+    GtkWidget *playlist_menu;
+    GtkWidget *paste;
+    GtkWidget *paste_image;
+    GtkAccelGroup *accel_group = NULL;
+    accel_group = gtk_accel_group_new ();
+
+    playlist_menu = gtk_menu_new ();
+
+    paste = gtk_image_menu_item_new_with_mnemonic (_("_Paste"));
+    gtk_widget_show (paste);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), paste);
+    g_object_set_data (G_OBJECT (paste), "ps", listview);
+    gtk_widget_add_accelerator (paste, "activate", accel_group, GDK_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
+    if (clipboard_is_clipboard_data_available ()) {
+        gtk_widget_set_sensitive (paste, TRUE);
+    }
+    else {
+        gtk_widget_set_sensitive (paste, FALSE);
+    }
+
+    paste_image = gtk_image_new_from_stock ("gtk-paste", GTK_ICON_SIZE_MENU);
+    gtk_widget_show (paste_image);
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (paste), paste_image);
+
+    g_signal_connect ((gpointer) paste, "activate",
+            G_CALLBACK (on_paste_activate),
+            NULL);
+
+    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL/*popup_menu_position_func*/, listview, 0, gtk_get_current_event_time());
+}
+
+void
+list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter) {
     clicked_idx = deadbeef->pl_get_idx_of (it);
     GtkWidget *playlist_menu;
     GtkWidget *add_to_playback_queue1;
@@ -743,8 +813,19 @@ pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx)
     GtkWidget *remove2;
     GtkWidget *remove_from_disk;
     GtkWidget *separator8;
+    GtkWidget *cut;
+    GtkWidget *cut_image;
+    GtkWidget *copy;
+    GtkWidget *copy_image;
+    GtkWidget *paste;
+    GtkWidget *paste_image;
+    GtkWidget *separator9;
     GtkWidget *properties1;
     GtkWidget *reload_metadata;
+
+    GtkAccelGroup *accel_group = NULL;
+    accel_group = gtk_accel_group_new ();
+
 #ifndef DISABLE_CUSTOM_TITLE
     GtkWidget *set_custom_title;
 #endif
@@ -786,6 +867,53 @@ pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx)
     gtk_widget_show (separator);
     gtk_container_add (GTK_CONTAINER (playlist_menu), separator);
     gtk_widget_set_sensitive (separator, FALSE);
+
+    cut = gtk_image_menu_item_new_with_mnemonic (_("Cu_t"));
+    gtk_widget_show (cut);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), cut);
+    g_object_set_data (G_OBJECT (cut), "ps", listview);
+    gtk_widget_add_accelerator (cut, "activate", accel_group, GDK_x, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
+    cut_image = gtk_image_new_from_stock ("gtk-cut", GTK_ICON_SIZE_MENU);
+    gtk_widget_show (cut_image);
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (cut), cut_image);
+
+    copy = gtk_image_menu_item_new_with_mnemonic (_("_Copy"));
+    gtk_widget_show (copy);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), copy);
+    g_object_set_data (G_OBJECT (copy), "ps", listview);
+    gtk_widget_add_accelerator (copy, "activate", accel_group, GDK_c, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
+    copy_image = gtk_image_new_from_stock ("gtk-copy", GTK_ICON_SIZE_MENU);
+    gtk_widget_show (copy_image);
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (copy), copy_image);
+
+    paste = gtk_image_menu_item_new_with_mnemonic (_("_Paste"));
+    if (iter != PL_SEARCH) {
+        gtk_widget_show (paste);
+    }
+    else {
+        gtk_widget_hide (paste);
+    }
+    gtk_container_add (GTK_CONTAINER (playlist_menu), paste);
+    g_object_set_data (G_OBJECT (paste), "ps", listview);
+    gtk_widget_add_accelerator (paste, "activate", accel_group, GDK_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
+    if (clipboard_is_clipboard_data_available ()) {
+        gtk_widget_set_sensitive (paste, TRUE);
+    }
+    else {
+        gtk_widget_set_sensitive (paste, FALSE);
+    }
+
+    paste_image = gtk_image_new_from_stock ("gtk-paste", GTK_ICON_SIZE_MENU);
+    gtk_widget_show (paste_image);
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (paste), paste_image);
+
+    separator9 = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator9);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), separator9);
+    gtk_widget_set_sensitive (separator9, FALSE);
 
     remove2 = gtk_menu_item_new_with_mnemonic (_("Remove"));
     gtk_widget_show (remove2);
@@ -956,6 +1084,15 @@ pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx)
     g_signal_connect ((gpointer) reload_metadata, "activate",
             G_CALLBACK (reload_metadata_activate),
             NULL);
+    g_signal_connect ((gpointer) cut, "activate",
+            G_CALLBACK (on_cut_activate),
+            NULL);
+    g_signal_connect ((gpointer) copy, "activate",
+            G_CALLBACK (on_copy_activate),
+            NULL);
+    g_signal_connect ((gpointer) paste, "activate",
+            G_CALLBACK (on_paste_activate),
+            NULL);
     g_signal_connect ((gpointer) remove2, "activate",
             G_CALLBACK (on_remove2_activate),
             NULL);
@@ -996,6 +1133,131 @@ groups_changed (DdbListview *listview, const char *format)
     listview->group_format = strdup (format);
     listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
     ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_LIST);
+}
+
+gboolean
+list_handle_keypress (DdbListview *ps, int keyval, int state, int iter) {
+    int prev = ps->binding->cursor ();
+    int cursor = prev;
+    GtkWidget *range = ps->scrollbar;
+    GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (range));
+
+    state &= (GDK_SHIFT_MASK|GDK_CONTROL_MASK|GDK_MOD1_MASK|GDK_MOD4_MASK);
+
+    if (state & GDK_CONTROL_MASK) {
+        int res = 0;
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        if (plt) {
+            if (keyval == GDK_c) {
+                clipboard_copy_selection (plt, DDB_ACTION_CTX_SELECTION);
+                res = 1;
+            }
+            else if (keyval == GDK_v && iter != PL_SEARCH) {
+                clipboard_paste_selection (plt, DDB_ACTION_CTX_SELECTION);
+                res = 1;
+            }
+            else if (keyval == GDK_x) {
+                clipboard_cut_selection (plt, DDB_ACTION_CTX_SELECTION);
+                res = 1;
+            }
+            deadbeef->plt_unref (plt);
+            return res;
+        }
+    }
+
+    if (state & ~GDK_SHIFT_MASK) {
+        return FALSE;
+    }
+
+    if (keyval == GDK_Down) {
+        if (cursor < ps->binding->count () - 1) {
+            cursor++;
+        }
+        else {
+            gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_upper (adj));
+        }
+    }
+    else if (keyval == GDK_Up) {
+        if (cursor > 0) {
+            cursor--;
+        }
+        else {
+            gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_lower (adj));
+            if (cursor < 0 && ps->binding->count () > 0) {
+                cursor = 0;
+            }
+        }
+    }
+    else if (keyval == GDK_Page_Down) {
+        if (cursor < ps->binding->count () - 1) {
+            cursor += 10;
+            if (cursor >= ps->binding->count ()) {
+                cursor = ps->binding->count () - 1;
+            }
+        }
+        else {
+            gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_upper (adj));
+        }
+    }
+    else if (keyval == GDK_Page_Up) {
+        if (cursor > 0) {
+            cursor -= 10;
+            if (cursor < 0) {
+                gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_lower (adj));
+                cursor = 0;
+            }
+        }
+        else {
+            if (cursor < 0 && ps->binding->count () > 0) {
+                cursor = 0;
+            }
+            gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_lower (adj));
+        }
+    }
+    else if (keyval == GDK_End) {
+        cursor = ps->binding->count () - 1;
+        gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_upper (adj));
+    }
+    else if (keyval == GDK_Home) {
+        cursor = 0;
+        gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_lower (adj));
+    }
+    else {
+        return FALSE;
+    }
+
+    if (state & GDK_SHIFT_MASK) {
+        if (cursor != prev) {
+            int newscroll = ps->scrollpos;
+            int cursor_scroll = ddb_listview_get_row_pos (ps, cursor);
+            if (cursor_scroll < ps->scrollpos) {
+                newscroll = cursor_scroll;
+            }
+            else if (cursor_scroll >= ps->scrollpos + ps->list_height) {
+                newscroll = cursor_scroll - ps->list_height + 1;
+                if (newscroll < 0) {
+                    newscroll = 0;
+                }
+            }
+            if (ps->scrollpos != newscroll) {
+                GtkWidget *range = ps->scrollbar;
+                gtk_range_set_value (GTK_RANGE (range), newscroll);
+            }
+
+            // select all between shift_sel_anchor and deadbeef->pl_get_cursor (ps->iterator)
+            int start = min (cursor, ps->shift_sel_anchor);
+            int end = max (cursor, ps->shift_sel_anchor);
+
+            ddb_listview_select_range (ps, start, end);
+            ddb_listview_update_cursor (ps, cursor);
+        }
+    }
+    else {
+        ps->shift_sel_anchor = cursor;
+        ddb_listview_set_cursor_and_scroll (ps, cursor);
+    }
+
+    return TRUE;
 }
 
 static void

@@ -260,6 +260,14 @@ typedef struct {
     // plugin wants to make it in a different way
     void (*override_builtin_statusicon) (int override_);
 #endif
+#if (DDB_GTKUI_API_LEVEL >= 204)
+    // copy and paste actions
+    // plt_idx: the playlist to copy/cut from or paste to
+    // ctx: DDB_ACTION_CTX_SELECTION to copy/cut/paste tracks, DDB_ACTION_CTX_PLAYLIST to copy/cut/paste a playlist
+    void (*copy_selection) (ddb_playlist_t *plt, int ctx);
+    void (*cut_selection) (ddb_playlist_t *plt, int ctx);
+    void (*paste_selection) (ddb_playlist_t *plt, int ctx);
+#endif
 } ddb_gtkui_t;
 
 #endif

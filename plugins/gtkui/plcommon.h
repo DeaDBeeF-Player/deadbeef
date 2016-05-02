@@ -44,10 +44,16 @@ void
 pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
 
 void
-pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int iter, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height);
+list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter);
 
 void
-pl_common_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx);
+list_empty_region_context_menu (DdbListview *listview);
+
+gboolean
+list_handle_keypress (DdbListview *ps, int keyval, int state, int iter);
+
+void
+pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int iter, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height);
 
 int
 pl_common_load_column_config (DdbListview *listview, const char *key);
