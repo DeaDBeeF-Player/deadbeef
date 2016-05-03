@@ -66,23 +66,21 @@
 #define trace(...)
 
 DB_functions_t *deadbeef;
-static DB_artwork_plugin_t plugin;
+static ddb_artwork_plugin_t plugin;
 
 #define NOARTWORK_IMAGE "noartwork.png"
 static char *default_cover;
 
+// list of callbacks + queries for the same cover
 typedef struct cover_callback_s {
-    artwork_callback cb;
-    void *ud;
+    ddb_cover_callback_t cb;
+    ddb_cover_query_t *info;
     struct cover_callback_s *next;
 } cover_callback_t;
 
+// list of unique queries
 typedef struct cover_query_s {
-    char *fname;
-    char *artist;
-    char *album;
-    int size;
-    cover_callback_t *callback;
+    cover_callback_t *callbacks;
     struct cover_query_s *next;
 } cover_query_t;
 
@@ -657,7 +655,7 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
                 const uint_fast32_t weighty = x_remn * y_diff;
                 const uint_fast32_t weightxy = x_diff * y_diff;
 
-                uint_fast32_t alpha, alphax, alphay, alphaxy;
+                uint_fast32_t alpha = 0, alphax = 0, alphay = 0, alphaxy = 0;
                 if (has_alpha) {
                     /* Interpolate alpha channel and weight pixels by their alpha */
                     alpha = weight * row[x_index + num_values];
@@ -910,10 +908,10 @@ make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
     const size_t size_left = size - strlen (path);
     int path_length;
     if (img_size == -1) {
-        path_length = snprintf (path+strlen (path), size_left, "covers/%s/", esc_artist);
+        path_length = snprintf (path+strlen (path), size_left, "covers2/%s/", esc_artist);
     }
     else {
-        path_length = snprintf (path+strlen (path), size_left, "covers-%d/%s/", img_size, esc_artist);
+        path_length = snprintf (path+strlen (path), size_left, "covers2-%d/%s/", img_size, esc_artist);
     }
     if (path_length >= size_left) {
         trace ("Cache path truncated at %d bytes\n", size);
@@ -947,7 +945,8 @@ make_cache_path2 (char *path, int size, const char *fname, const char *album, co
         return -1;
     }
 
-    int max_album_chars = min (NAME_MAX, size - strlen (path)) - sizeof ("1.jpg.part");
+    int name_size = size - (int)strlen (path);
+    int max_album_chars = min (NAME_MAX, name_size) - (int)sizeof ("1.jpg.part");
     if (max_album_chars <= 0) {
         trace ("Path buffer not long enough for %s and filename\n", path);
         return -1;
@@ -1008,23 +1007,15 @@ clear_default_cover (void)
 }
 
 static void
-clear_query (cover_query_t *query)
+query_free (cover_query_t *query)
 {
-    if (query->fname) {
-        free (query->fname);
-    }
-    if (query->artist) {
-        free (query->artist);
-    }
-    if (query->album) {
-        free (query->album);
-    }
     free (query);
 }
 
 static void
-cache_reset_callback (const char *fname, const char *artist, const char *album, void *user_data)
-{
+cache_reset_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
+    // FIXME
+#if 0
     /* All scaled artwork is now (including this second) obsolete */
     deadbeef->mutex_lock (queue_mutex);
     scaled_cache_reset_time = time (NULL);
@@ -1042,71 +1033,68 @@ cache_reset_callback (const char *fname, const char *artist, const char *album, 
     while (time (NULL) == scaled_cache_reset_time) {
         usleep (100000);
     }
+#endif
 }
 
 static cover_callback_t *
-new_query_callback (artwork_callback cb, void *ud)
-{
+new_query_callback (ddb_cover_callback_t cb, ddb_cover_query_t *info) {
     if (!cb) {
         return NULL;
     }
 
-    cover_callback_t *callback = malloc (sizeof (cover_callback_t));
+    cover_callback_t *callback = calloc (1, sizeof (cover_callback_t));
     if (!callback) {
         trace ("artwork callback alloc failed\n");
-        cb (NULL, NULL, NULL, ud);
+        cb (-1, info, NULL);
         return NULL;
     }
 
     callback->cb = cb;
-    callback->ud = ud;
+    callback->info = info;
     callback->next = NULL;
     return callback;
 }
 
 static int
-strings_match (const char *s1, const char *s2)
+strings_equal (const char *s1, const char *s2)
 {
-    return s1 == s2 || s1 && s2 && !strcasecmp (s1, s2);
+    return (s1 == s2) || (s1 && s2 && !strcasecmp (s1, s2));
+}
+
+static int
+queries_equal (ddb_cover_query_t *q1, ddb_cover_query_t *q2) {
+    // FIXME
+    return 0;
 }
 
 static void
-enqueue_query (const char *fname, const char *artist, const char *album, int img_size, const artwork_callback cb, void *ud)
+enqueue_query (ddb_cover_query_t *new_query, const ddb_cover_callback_t cb)
 {
     for (cover_query_t *q = queue; q; q = q->next) {
-        if (strings_match (artist, q->artist) && strings_match (album, q->album) && q->size == img_size) {
-            trace ("artwork queue: %s %s %s %d already in queue - add to callbacks\n", fname, artist, album, img_size);
-            cover_callback_t **last_callback = &q->callback;
+        if (queries_equal (new_query, q->callbacks->info)) {
+            // append top existing pending query
+            cover_callback_t **last_callback = &q->callbacks;
             while (*last_callback && (*last_callback)->cb != cache_reset_callback) {
                 last_callback = & (*last_callback)->next;
             }
             if (!*last_callback) {
-                *last_callback = new_query_callback (cb, ud);
+                *last_callback = new_query_callback (cb, new_query);
                 return;
             }
         }
     }
 
-    trace ("artwork queue: enqueue_query %s %s %s %d\n", fname, artist, album, img_size);
-    cover_query_t *q = malloc (sizeof (cover_query_t));
+    // add new query
+    cover_query_t *q = calloc (1, sizeof (cover_query_t));
     if (q) {
-        q->fname = fname && *fname ? strdup (fname) : NULL;
-        q->artist = artist ? strdup (artist) : NULL;
-        q->album = album ? strdup (album) : NULL;
-        q->size = img_size;
-        q->next = NULL;
-        q->callback = new_query_callback (cb, ud);
-
-        if (fname && !q->fname || artist && !q->artist || album && !q->album) {
-            clear_query (q);
-            q = NULL;
-        }
+        q->callbacks = new_query_callback (cb, new_query);
     }
 
     if (!q) {
         if (cb) {
-            cb (NULL, NULL, NULL, ud);
+            cb (-1, new_query, NULL);
         }
+
         return;
     }
 
@@ -1207,7 +1195,7 @@ local_image_file (const char *cache_path, const char *local_path, const char *ur
     strcpy (filemask, artwork_filemask);
     const char *filemask_end = filemask + strlen (filemask);
     char *p;
-    while (p = strrchr (filemask, ';')) {
+    while ((p = strrchr (filemask, ';'))) {
         *p = '\0';
     }
 
@@ -1321,7 +1309,7 @@ apev2_artwork (const DB_apev2_frame_t *f)
         return NULL;
     }
 
-    int sz = end - ++data;
+    size_t sz = end - ++data;
     if (sz < 20) {
         trace ("artwork: apev2 cover art frame is too small\n");
         return NULL;
@@ -1468,7 +1456,7 @@ id3_extract_art (const char *fname, const char *outname) {
             if (image_data) {
                 const size_t sz = f->size - (image_data - f->data);
                 trace ("will write id3v2 APIC (%d bytes) into %s\n", sz, outname);
-                if (sz > 0 && !write_file (outname, image_data, sz)) {
+                if (sz > 0 && !write_file (outname, (const char *)image_data, sz)) {
                     err = 0;
                 }
             }
@@ -1493,7 +1481,7 @@ apev2_extract_art (const char *fname, const char *outname) {
             if (image_data) {
                 const size_t sz = f->size - (image_data - f->data);
                 trace ("will write apev2 cover art (%d bytes) into %s\n", sz, outname);
-                if (sz > 0 && !write_file (outname, image_data, sz)) {
+                if (sz > 0 && !write_file (outname, (const char *)image_data, sz)) {
                     err = 0;
                 }
                 break;
@@ -1600,6 +1588,8 @@ web_lookups (const char *artist, const char *album, const char *cache_path)
 static int
 process_scaled_query (const cover_query_t *query)
 {
+// FIXME
+/*
     char unscaled_path[PATH_MAX];
     make_cache_path2 (unscaled_path, sizeof (unscaled_path), query->fname, query->album, query->artist, -1);
 
@@ -1612,7 +1602,7 @@ process_scaled_query (const cover_query_t *query)
             return 1;
         }
     }
-
+*/
     return 0;
 }
 
@@ -2226,19 +2216,20 @@ static const char settings_dlg[] =
 ;
 
 // define plugin interface
-static DB_artwork_plugin_t plugin = {
+static ddb_artwork_plugin_t plugin = {
     .plugin.plugin.api_vmajor = 1,
     .plugin.plugin.api_vminor = 0,
-    .plugin.plugin.version_major = 1,
-    .plugin.plugin.version_minor = DDB_ARTWORK_VERSION,
+    .plugin.plugin.version_major = DDB_ARTWORK_MAJOR_VERSION,
+    .plugin.plugin.version_minor = DDB_ARTWORK_MINOR_VERSION,
     .plugin.plugin.type = DB_PLUGIN_MISC,
-    .plugin.plugin.id = "artwork",
+    .plugin.plugin.id = "artwork2",
     .plugin.plugin.name = "Album Artwork",
     .plugin.plugin.descr = "Loads album artwork from embedded tags, local directories, or internet services",
     .plugin.plugin.copyright =
         "Album Art plugin for DeaDBeeF\n"
         "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
-        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2016 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2014-2016 Ian Nartowicz <deadbeef@nartowicz.co.uk>\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
         "warranty.  In no event will the authors be held liable for any damages\n"
@@ -2264,12 +2255,8 @@ static DB_artwork_plugin_t plugin = {
     .plugin.plugin.configdialog = settings_dlg,
     .plugin.plugin.message = artwork_message,
     .plugin.plugin.get_actions = artwork_get_actions,
-    .get_album_art = get_album_art,
-    .reset = artwork_reset,
-    .get_default_cover = get_default_cover,
-    .get_album_art_sync = NULL,
-    .make_cache_path = make_cache_path,
-    .make_cache_path2 = make_cache_path2,
+//    .cover_get = cover_get,
+//    .reset = artwork_reset,
 };
 
 DB_plugin_t *

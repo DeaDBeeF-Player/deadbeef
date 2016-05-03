@@ -26,31 +26,35 @@
 
 #include "../../deadbeef.h"
 
-#define DDB_ARTWORK_VERSION 3
+#define DDB_ARTWORK_MAJOR_VERSION 2
+#define DDB_ARTWORK_MINOR_VERSION 0
 
-typedef void (*artwork_callback) (const char *fname, const char *artist, const char *album, void *user_data);
+typedef struct ddb_cover_query_s {
+    uint32_t _size;
+
+    void *user_data;
+
+    uint32_t flags; // e.g. HAVE_TRACK, HAVE_FILEPATH, HAVE_ALBUM, HAVE_ARTIST
+    DB_playItem_t *track;
+    char *filepath;
+    char *album;
+    char *artist;
+    char *type; // front/back/...
+    int img_size;
+} ddb_cover_query_t;
+
+typedef struct {
+    // ... the loaded cover info ...
+} ddb_cover_info_t;
+
+typedef void (*ddb_cover_callback_t) (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover);
 
 typedef struct {
     DB_misc_t plugin;
-    // returns filename of cached image, or NULL
-    char* (*get_album_art) (const char *fname, const char *artist, const char *album, int size, artwork_callback callback, void *user_data);
 
-    // this has to be called to clear queue on exit, before caller terminates
-    // `fast=1' means "don't wait, just flush queue"
-    void (*reset) (int fast);
-
-    // returns path to default album art
-    const char *(*get_default_cover) (void);
-
-    // synchronously get filename
-    char* (*get_album_art_sync) (const char *fname, const char *artist, const char *album, int size);
-
-    // creates full path string for cache storage
-    void (*make_cache_path) (char *path, int size, const char *album, const char *artist, int img_size);
-
-    // creates full path string for cache storage
-    int (*make_cache_path2) (char *path, int size, const char *fname, const char *album, const char *artist, int img_size);
-} DB_artwork_plugin_t;
+    void
+    (*cover_get) (ddb_cover_query_t *query, ddb_cover_callback_t callback);
+} ddb_artwork_plugin_t;
 
 #endif /*__ARTWORK_H*/
 
