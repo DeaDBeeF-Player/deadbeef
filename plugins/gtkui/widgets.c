@@ -2534,7 +2534,8 @@ w_selproperties_create (void) {
     gtk_tree_view_set_enable_search (GTK_TREE_VIEW (w->tree), FALSE);
     gtk_container_add (GTK_CONTAINER (scroll), w->tree);
 
-    GtkListStore *store = gtk_list_store_new (4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
+    // NOTE: this list store must be compatible with trkproperties_fill_meta
+    GtkListStore *store = gtk_list_store_new (5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
 
