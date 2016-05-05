@@ -1525,7 +1525,7 @@ on_rename_tab_activate (GtkMenuItem *menuitem, gpointer user_data) {
 
     GtkWidget *dlg = create_entrydialog ();
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-    gtk_window_set_title (GTK_WINDOW (dlg), _("Rename tab"));
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Rename Tab"));
     GtkWidget *e;
     e = lookup_widget (dlg, "title_label");
     gtk_label_set_text (GTK_LABEL(e), _("Title:"));
