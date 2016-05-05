@@ -409,9 +409,9 @@ on_pltbrowser_header_popup_menu (gpointer user_data)
 {
     w_pltbrowser_t *w = user_data;
     GtkWidget *popup = gtk_menu_new ();
-    GtkWidget *playing = gtk_check_menu_item_new_with_mnemonic ("Playing");
-    GtkWidget *items = gtk_check_menu_item_new_with_mnemonic ("Items");
-    GtkWidget *duration = gtk_check_menu_item_new_with_mnemonic ("Duration");
+    GtkWidget *playing = gtk_check_menu_item_new_with_mnemonic (_("Playing"));
+    GtkWidget *items = gtk_check_menu_item_new_with_mnemonic (_("Items"));
+    GtkWidget *duration = gtk_check_menu_item_new_with_mnemonic (_("Duration"));
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (playing), deadbeef->conf_get_int ("gtkui.pltbrowser.show_playing_column", 0));
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (items), deadbeef->conf_get_int ("gtkui.pltbrowser.show_items_column", 0));
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (duration), deadbeef->conf_get_int ("gtkui.pltbrowser.show_duration_column", 0));
