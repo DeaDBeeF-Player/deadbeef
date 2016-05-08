@@ -498,8 +498,9 @@ void mp4ff_cover_append_item (mp4ff_t *f, char *data, uint32_t datasize)
 		f->covers.tail->next = item;
 	}
 	else {
-		f->covers.tail = f->covers.items = item;
+		f->covers.items = item;
 	}
+	f->covers.tail = item;
 }
 
 void mp4ff_cover_delete (mp4ff_cover_art_t *cover)
@@ -510,6 +511,7 @@ void mp4ff_cover_delete (mp4ff_cover_art_t *cover)
 		free (cover->items);
 		cover->items = next;
 	}
+	cover->tail = NULL;
 }
 
 mp4ff_cover_art_t *mp4ff_cover_get (mp4ff_t *f)
