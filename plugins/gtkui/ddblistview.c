@@ -1152,25 +1152,33 @@ ddb_listview_list_drag_motion                (GtkWidget       *widget,
 {
     DdbListview *pl = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     ddb_listview_list_track_dragdrop (pl, x, y);
+
+    // NOTE: we need to check whether the source supports TARGET_PLAYITEMS
+    // in order to know which GdkDragAction to use
     GList *targets = gdk_drag_context_list_targets (drag_context);
+    gboolean source_is_listview = FALSE;
     int cnt = g_list_length (targets);
-    int i;
-    for (i = 0; i < cnt; i++) {
+    for (int i = 0; i < cnt; i++) {
         GdkAtom a = GDK_POINTER_TO_ATOM (g_list_nth_data (targets, i));
         gchar *nm = gdk_atom_name (a);
-        if (!strcmp (nm, "text/uri-list")) {
+        if (!strcmp (nm, TARGET_PLAYITEMS)) {
+            source_is_listview = TRUE;
             g_free (nm);
             break;
         }
         g_free (nm);
     }
-    if (i != cnt) {
+
+    if (!source_is_listview) {
+        // source doesn't support TARGET_PLAYITEMS, so it's probably a file manager
+        // and GDK_ACTION_MOVE wouldn't make any sense: only support GDK_ACTION_COPY
         gdk_drag_status (drag_context, GDK_ACTION_COPY, time);
     }
     else {
+        // source is listview, so we can support both GDK_ACTION_MOVE and GDK_ACTION_COPY
         GdkModifierType mask;
 
-    GdkWindow *win = gtk_widget_get_window (widget);
+        GdkWindow *win = gtk_widget_get_window (widget);
 #if GTK_CHECK_VERSION(3,0,0)
         GdkDeviceManager *device_manager = gdk_display_get_device_manager (gdk_window_get_display (win));
         GdkDevice *pointer = gdk_device_manager_get_client_pointer (device_manager);
@@ -1200,6 +1208,47 @@ ddb_listview_list_drag_drop                  (GtkWidget       *widget,
     return TRUE;
 }
 
+static gchar **
+ddb_listview_build_drag_uri_list (DdbListview *ps)
+{
+    int num_selected = deadbeef->plt_get_sel_count (ps->drag_source_playlist);
+    if (num_selected < 1) {
+        // no track selected
+        return NULL;
+    }
+    gchar **uri_list = g_new0 (gchar *, num_selected + 1);
+    if (!uri_list) {
+        return NULL;
+    }
+    // NOTE: hash table is used to detect duplicates since we don't want to
+    // copy files more than once
+    GHashTable *table = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+
+    deadbeef->pl_lock ();
+
+    DdbListviewIter it = deadbeef->plt_get_head (ps->drag_source_playlist);
+    int idx = 0;
+    while (it) {
+        if (ps->binding->is_selected (it)) {
+            const char *path = deadbeef->pl_find_meta (it, ":URI");
+            if (!g_hash_table_lookup (table, path)) {
+                // new track, add to hash table and uri list
+                gchar *key = g_strdup (path);
+                g_hash_table_replace (table, key, key);
+                uri_list[idx++] = g_filename_to_uri (path, NULL, NULL);
+            }
+        }
+        it = next_playitem (ps, it);
+    }
+    uri_list[idx] = NULL;
+
+    deadbeef->pl_unlock ();
+
+    g_hash_table_destroy (table);
+    table = NULL;
+
+    return uri_list;
+}
 
 static void
 ddb_listview_list_drag_data_get              (GtkWidget       *widget,
@@ -1210,7 +1259,19 @@ ddb_listview_list_drag_data_get              (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
+
     switch (target_type) {
+    case TARGET_URILIST:
+        {
+            // format as URI_LIST
+            gchar **uris = ddb_listview_build_drag_uri_list (ps);
+            if (uris) {
+                gtk_selection_data_set_uris (selection_data, uris);
+                g_strfreev (uris);
+                uris = NULL;
+            }
+        }
+        break;
     case TARGET_SAMEWIDGET:
         {
             // format as "STRING" consisting of array of pointers
@@ -2057,6 +2118,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
                 .info = TARGET_SAMEWIDGET
             };
             GtkTargetList *lst = gtk_target_list_new (&entry, 1);
+            gtk_target_list_add_uri_targets (lst, TARGET_URILIST);
             gtk_drag_begin (widget, lst, GDK_ACTION_COPY | GDK_ACTION_MOVE, 1, (GdkEvent *)ev);
         }
         else if (ps->areaselect) {
