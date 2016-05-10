@@ -1211,31 +1211,55 @@ ddb_listview_list_drag_drop                  (GtkWidget       *widget,
 static gchar **
 ddb_listview_build_drag_uri_list (DdbListview *ps)
 {
+    deadbeef->pl_lock ();
     int num_selected = deadbeef->plt_get_sel_count (ps->drag_source_playlist);
     if (num_selected < 1) {
         // no track selected
+        deadbeef->pl_unlock ();
         return NULL;
     }
     gchar **uri_list = g_new0 (gchar *, num_selected + 1);
     if (!uri_list) {
+        deadbeef->pl_unlock ();
         return NULL;
     }
     // NOTE: hash table is used to detect duplicates since we don't want to
     // copy files more than once
     GHashTable *table = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
-    deadbeef->pl_lock ();
 
     DdbListviewIter it = deadbeef->plt_get_head (ps->drag_source_playlist);
     int idx = 0;
     while (it) {
         if (ps->binding->is_selected (it)) {
             const char *path = deadbeef->pl_find_meta (it, ":URI");
-            if (!g_hash_table_lookup (table, path)) {
+
+            gboolean is_local_file = FALSE;
+            gboolean is_uri_scheme = FALSE;
+            if (path && path[0] == '/') {
+                is_local_file = TRUE;
+            }
+            else if (!strncasecmp (path, "file://", 7)) {
+                is_local_file = TRUE;
+                is_uri_scheme = TRUE;
+            }
+            if (is_local_file && !g_hash_table_lookup (table, path)) {
                 // new track, add to hash table and uri list
                 gchar *key = g_strdup (path);
                 g_hash_table_replace (table, key, key);
-                uri_list[idx++] = g_filename_to_uri (path, NULL, NULL);
+
+                gchar *uri = NULL;
+                if (!is_uri_scheme) {
+                    // we need to convert file name to URI scheme
+                    uri = g_filename_to_uri (path, NULL, NULL);
+                }
+                else {
+                    // path is already URI scheme, just copy string
+                    uri = g_strdup (path);
+                }
+                if (uri) {
+                    uri_list[idx++] = uri;
+                }
             }
         }
         it = next_playitem (ps, it);
