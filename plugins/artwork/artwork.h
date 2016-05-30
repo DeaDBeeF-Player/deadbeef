@@ -24,8 +24,6 @@
 #ifndef __ARTWORK_H
 #define __ARTWORK_H
 
-#include "../../deadbeef.h"
-
 #define DDB_ARTWORK_MAJOR_VERSION 2
 #define DDB_ARTWORK_MINOR_VERSION 0
 
@@ -35,7 +33,7 @@ typedef struct ddb_cover_query_s {
     void *user_data;
 
     uint32_t flags; // e.g. HAVE_TRACK, HAVE_FILEPATH, HAVE_ALBUM, HAVE_ARTIST
-    DB_playItem_t *track;
+    struct DB_playItem_s *track;
     char *filepath;
     char *album;
     char *artist;
