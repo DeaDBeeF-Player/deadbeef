@@ -392,7 +392,7 @@ int64_t read_packet(DB_FILE *in, ogg_sync_state *oy, ogg_stream_state *os, ogg_p
             if (serial <= OGGEDIT_EOF) {
                 return serial;
             }
-            if (os->serialno == serial) {
+            if ((uint32_t)os->serialno == (uint32_t)serial) {
                 pages++;
                 ogg_stream_pagein(os, og);
             }
