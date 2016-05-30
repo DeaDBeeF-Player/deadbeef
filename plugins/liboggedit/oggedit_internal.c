@@ -374,7 +374,7 @@ int64_t init_read_stream(DB_FILE *in, ogg_sync_state *oy, ogg_stream_state *os, 
     if (serial <= OGGEDIT_EOF)
         return serial;
 
-    if (ogg_stream_init(os, serial))
+    if (ogg_stream_init(os, (uint32_t)serial))
         return OGGEDIT_FAILED_TO_INIT_STREAM;
 
     os->b_o_s = 1;
@@ -383,14 +383,14 @@ int64_t init_read_stream(DB_FILE *in, ogg_sync_state *oy, ogg_stream_state *os, 
     return OGGEDIT_OK;
 }
 
-int64_t read_packet(DB_FILE *in, ogg_sync_state *oy, ogg_stream_state *os, ogg_page *og, ogg_packet *header, int pages)
+int read_packet(DB_FILE *in, ogg_sync_state *oy, ogg_stream_state *os, ogg_page *og, ogg_packet *header, int pages)
 {
     ogg_packet op;
     do {
         while (ogg_stream_packetpeek(os, NULL) == 0) {
             const int64_t serial = get_page(in, oy, og);
             if (serial <= OGGEDIT_EOF) {
-                return serial;
+                return (int)serial;
             }
             if ((uint32_t)os->serialno == (uint32_t)serial) {
                 pages++;
