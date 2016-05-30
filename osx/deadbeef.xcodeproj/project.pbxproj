@@ -724,7 +724,6 @@
 		2D621FDC1CD92CCA00EB6D22 /* musicbrainz.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D621FBF1CD92CC500EB6D22 /* musicbrainz.h */; };
 		2D621FDD1CD92CCA00EB6D22 /* wos.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D621FC01CD92CC500EB6D22 /* wos.c */; };
 		2D621FDE1CD92CCA00EB6D22 /* wos.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D621FC11CD92CC500EB6D22 /* wos.h */; };
-		2D621FE31CD92E5700EB6D22 /* artwork.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D621F831CD92C9000EB6D22 /* artwork.dylib */; };
 		2D6220421CD9302200EB6D22 /* cderror.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D621FED1CD9302100EB6D22 /* cderror.h */; };
 		2D6220431CD9302200EB6D22 /* cdjpeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D621FEE1CD9302100EB6D22 /* cdjpeg.h */; };
 		2D6220441CD9302200EB6D22 /* jchuff.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D621FEF1CD9302100EB6D22 /* jchuff.h */; };
@@ -2133,13 +2132,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D5D213F1A4033B0001D5A79;
 			remoteInfo = lastfm;
-		};
-		2D621FE11CD92E3100EB6D22 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2D621F821CD92C9000EB6D22;
-			remoteInfo = artwork;
 		};
 		2D6220971CD9304500EB6D22 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -9251,7 +9243,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				2D621FE21CD92E3100EB6D22 /* PBXTargetDependency */,
 				2D6530E31CE79F2900163808 /* PBXTargetDependency */,
 				2D026DA71CAC5C6600E27961 /* PBXTargetDependency */,
 				2DFD51661C9715FA00961D19 /* PBXTargetDependency */,
@@ -9777,7 +9768,6 @@
 				2DB10B8119B908630054A6AB /* tab_bottom_fill.png in Resources */,
 				2DF622BB1B335FF100C70C7D /* convpresets in Resources */,
 				2D28F0501C283C4B004A6E7B /* aac.dylib in Resources */,
-				2D621FE31CD92E5700EB6D22 /* artwork.dylib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11277,11 +11267,6 @@
 			isa = PBXTargetDependency;
 			target = 2D5D213F1A4033B0001D5A79 /* lastfm */;
 			targetProxy = 2D5D214A1A40341D001D5A79 /* PBXContainerItemProxy */;
-		};
-		2D621FE21CD92E3100EB6D22 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2D621F821CD92C9000EB6D22 /* artwork */;
-			targetProxy = 2D621FE11CD92E3100EB6D22 /* PBXContainerItemProxy */;
 		};
 		2D6220981CD9304500EB6D22 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
