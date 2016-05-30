@@ -72,7 +72,7 @@ int make_cache_root_path (char *path, const size_t size)
 static int
 filter_scaled_dirs (const struct dirent *f)
 {
-    return !strncasecmp (f->d_name, "covers2-", 7);
+    return !strncasecmp (f->d_name, "covers-", 7);
 }
 
 void remove_cache_item (const char *entry_path, const char *subdir_path, const char *subdir_name, const char *entry_name)
@@ -119,7 +119,7 @@ cache_cleaner_thread (void *none)
     if (make_cache_root_path (covers_path, PATH_MAX-10)) {
         return;
     }
-    strcat (covers_path, "covers2");
+    strcat (covers_path, "covers");
     const size_t covers_path_length = strlen (covers_path);
 
     deadbeef->mutex_lock (thread_mutex);

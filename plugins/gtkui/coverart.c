@@ -31,6 +31,7 @@
 #include <sys/prctl.h>
 #endif
 #include "../artwork/artwork.h"
+#include "../../deadbeef.h"
 #include "gtkui.h"
 #include "coverart.h"
 
