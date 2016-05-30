@@ -30,6 +30,7 @@
 #ifdef __linux__
 #include <sys/prctl.h>
 #endif
+#include "../../deadbeef.h"
 #include "../artwork/artwork.h"
 #include "gtkui.h"
 
