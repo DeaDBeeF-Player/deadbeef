@@ -86,7 +86,7 @@ static long write_vorbis_tags(FILE *out, const int64_t serial, const char *vendo
         return OGGEDIT_ALLOCATION_FAILURE;
 
     ogg_stream_state os;
-    if (ogg_stream_init(&os, serial))
+    if (ogg_stream_init(&os, (uint32_t)serial))
         return OGGEDIT_FAILED_TO_INIT_STREAM;
     os.b_o_s = 1;
     os.pageno = 1;
