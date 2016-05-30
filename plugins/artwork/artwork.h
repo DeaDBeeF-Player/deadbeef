@@ -38,7 +38,7 @@ typedef struct ddb_cover_query_s {
     char *album;
     char *artist;
     char *type; // front/back/...
-    int img_size;
+    int imgsize;
 } ddb_cover_query_t;
 
 typedef struct {
