@@ -1129,6 +1129,8 @@ str_trim_right (uint8_t *str, int len) {
 
 int
 junk_id3v1_read_int (playItem_t *it, char *buffer, const char **charset) {
+    const char *cs = NULL;
+
     if (!buffer) {
         return -1;
     }
@@ -1137,7 +1139,6 @@ junk_id3v1_read_int (playItem_t *it, char *buffer, const char **charset) {
         if (memcmp (buffer, "TAG", 3)) {
             return -1; // no tag
         }
-        const char *cs = NULL;
         charset = &cs;
         int res = junk_id3v1_read_int (NULL, buffer, charset);
         if (res) {
