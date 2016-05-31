@@ -798,7 +798,6 @@
 		2D6220941CD9302200EB6D22 /* wrppm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D62203F1CD9302200EB6D22 /* wrppm.c */; };
 		2D6220951CD9302200EB6D22 /* wrrle.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6220401CD9302200EB6D22 /* wrrle.c */; };
 		2D6220961CD9302200EB6D22 /* wrtarga.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6220411CD9302200EB6D22 /* wrtarga.c */; };
-		2D6220991CD9305200EB6D22 /* libjpeg.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D621FE81CD92FA400EB6D22 /* libjpeg.dylib */; };
 		2D62209B1CD9313E00EB6D22 /* jconfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D62209A1CD9313E00EB6D22 /* jconfig.h */; };
 		2D6220BC1CD933F200EB6D22 /* png.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6220A51CD933F200EB6D22 /* png.h */; };
 		2D6220BD1CD933F200EB6D22 /* pngconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6220A61CD933F200EB6D22 /* pngconf.h */; };
@@ -819,7 +818,6 @@
 		2D6220D01CD933F200EB6D22 /* pngwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6220B91CD933F200EB6D22 /* pngwrite.c */; };
 		2D6220D11CD933F200EB6D22 /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6220BA1CD933F200EB6D22 /* pngwtran.c */; };
 		2D6220D21CD933F200EB6D22 /* pngwutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6220BB1CD933F200EB6D22 /* pngwutil.c */; };
-		2D6220D31CD9341600EB6D22 /* libpng.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6220A01CD933D800EB6D22 /* libpng.dylib */; };
 		2D6220D61CD9368300EB6D22 /* pngerror.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6220AD1CD933F200EB6D22 /* pngerror.c */; };
 		2D6220D71CD9368300EB6D22 /* pngrio.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6220B21CD933F200EB6D22 /* pngrio.c */; };
 		2D6220D81CD9368300EB6D22 /* pngwio.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6220B81CD933F200EB6D22 /* pngwio.c */; };
@@ -1108,6 +1106,7 @@
 		2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D713FFC1A5D7D5900EFF139 /* playqueue.h */; };
 		2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */; };
 		2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */; };
+		2D72AE5E1CFE1F7500103AAE /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D72AE5D1CFE1F7500103AAE /* ImageIO.framework */; };
 		2D7492691CCFF94200D3A59E /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2D74926A1CCFF9AE00D3A59E /* ffap.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32F9EA19A63441000FFDE0 /* ffap.dylib */; };
 		2D74926B1CCFF9AE00D3A59E /* mp3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; };
@@ -2140,20 +2139,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D621F821CD92C9000EB6D22;
 			remoteInfo = artwork;
-		};
-		2D6220971CD9304500EB6D22 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2D621FE71CD92FA400EB6D22;
-			remoteInfo = jpeg;
-		};
-		2D6220D41CD9341B00EB6D22 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2D62209F1CD933D800EB6D22;
-			remoteInfo = png;
 		};
 		2D6530E21CE79F2900163808 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3415,6 +3400,7 @@
 		2D713FFC1A5D7D5900EFF139 /* playqueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playqueue.h; sourceTree = "<group>"; };
 		2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbPlaylistViewController.h; sourceTree = "<group>"; };
 		2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbPlaylistViewController.m; sourceTree = "<group>"; };
+		2D72AE5D1CFE1F7500103AAE /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		2D7492861CCFFE7700D3A59E /* TestData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TestData; sourceTree = "<group>"; };
 		2D7C37EC1B2C40520029DE0A /* libogglib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libogglib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7C37F41B2C40580029DE0A /* libvorbislib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvorbislib.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4399,9 +4385,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D72AE5E1CFE1F7500103AAE /* ImageIO.framework in Frameworks */,
 				2D6220DF1CD9393F00EB6D22 /* libmp4ff.a in Frameworks */,
-				2D6220D31CD9341600EB6D22 /* libpng.dylib in Frameworks */,
-				2D6220991CD9305200EB6D22 /* libjpeg.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6843,6 +6828,7 @@
 		4D1B3E7C18379829003E6066 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2D72AE5D1CFE1F7500103AAE /* ImageIO.framework */,
 				2D026DB71CAC5E8100E27961 /* Security.framework */,
 				2D026DB51CAC5E0E00E27961 /* VideoDecodeAcceleration.framework */,
 				2D026DB31CAC5DEC00E27961 /* libcrypto.dylib */,
@@ -8884,8 +8870,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				2D6220D51CD9341B00EB6D22 /* PBXTargetDependency */,
-				2D6220981CD9304500EB6D22 /* PBXTargetDependency */,
 			);
 			name = artwork;
 			productName = artwork;
@@ -11282,16 +11266,6 @@
 			isa = PBXTargetDependency;
 			target = 2D621F821CD92C9000EB6D22 /* artwork */;
 			targetProxy = 2D621FE11CD92E3100EB6D22 /* PBXContainerItemProxy */;
-		};
-		2D6220981CD9304500EB6D22 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2D621FE71CD92FA400EB6D22 /* jpeg */;
-			targetProxy = 2D6220971CD9304500EB6D22 /* PBXContainerItemProxy */;
-		};
-		2D6220D51CD9341B00EB6D22 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2D62209F1CD933D800EB6D22 /* png */;
-			targetProxy = 2D6220D41CD9341B00EB6D22 /* PBXContainerItemProxy */;
 		};
 		2D6530E31CE79F2900163808 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

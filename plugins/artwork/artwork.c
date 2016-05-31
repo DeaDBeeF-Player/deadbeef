@@ -1801,7 +1801,7 @@ queue_clear (void) {
     while (queue) {
         cover_query_t *next = queue->next;
         send_query_callbacks (queue->callbacks, NULL);
-        free (queue);
+        query_free (queue);
         queue = next;
     }
     queue_tail = NULL;
@@ -1844,7 +1844,7 @@ fetcher_thread (void *none)
                 trace ("artwork fetcher: no cover art found\n");
                 send_query_callbacks (query->callbacks, NULL);
             }
-            free (query);
+            query_free (query);
 
             /* Look for what to do next */
             deadbeef->mutex_lock (queue_mutex);
@@ -1888,11 +1888,14 @@ find_image (const char *path, const time_t reset_time)
     return path;
 }
 
-#warning !!!FIX OR REMOVE!!!
+static void
+cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
+    deadbeef->mutex_lock (queue_mutex);
+    enqueue_query (query, callback);
+    deadbeef->mutex_unlock (queue_mutex);
+
+#warning delete the original impl after feature parity is reached
 #if 0
-static char *
-get_album_art (const char *fname, const char *artist, const char *album, int size, artwork_callback callback, void *user_data)
-{
     /* Check if the image is already cached */
     char cache_path[PATH_MAX];
     make_cache_path2 (cache_path, sizeof (cache_path), fname, album, artist, size);
@@ -1919,8 +1922,8 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
     enqueue_query (fname, artist, album, size, callback, user_data);
     deadbeef->mutex_unlock (queue_mutex);
     return NULL;
-}
 #endif
+}
 
 static void
 artwork_reset (void) {
@@ -2254,7 +2257,7 @@ static ddb_artwork_plugin_t plugin = {
     .plugin.plugin.configdialog = settings_dlg,
     .plugin.plugin.message = artwork_message,
     .plugin.plugin.get_actions = artwork_get_actions,
-//    .cover_get = cover_get,
+    .cover_get = cover_get,
 //    .reset = artwork_reset,
 };
 
