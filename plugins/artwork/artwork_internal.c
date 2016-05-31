@@ -123,9 +123,9 @@ int ensure_dir (const char *path)
 {
     char dir[PATH_MAX];
     strcpy (dir, path);
-    dirname (dir);
-    trace ("artwork: ensure folder %s exists\n", dir);
-    return check_dir (dir);
+    char *dname = dirname (dir);
+    trace ("artwork: ensure folder %s exists\n", dname);
+    return check_dir (dname);
 }
 
 #define BUFFER_SIZE 4096
