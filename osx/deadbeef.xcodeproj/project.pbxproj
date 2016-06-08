@@ -619,6 +619,7 @@
 		2D2A14F119B64F2900AD1EB7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2D2A24761B4BF37300FBD939 /* au.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D05A8441B4BE600004C913D /* au.c */; };
 		2D3138151D08A52700CBD871 /* libmp4ff.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
+		2D3138251D08AB3400CBD871 /* artwork.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D621F831CD92C9000EB6D22 /* artwork.dylib */; };
 		2D3420E01D0856F0004C136A /* mp4ff_int_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9177501A0E8A3D004BC222 /* mp4ff_int_types.h */; };
 		2D3420E11D0856F0004C136A /* mp4ff.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9177511A0E8A3D004BC222 /* mp4ff.h */; };
 		2D3420E21D0856F0004C136A /* mp4ffint.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9177521A0E8A3D004BC222 /* mp4ffint.h */; };
@@ -2020,6 +2021,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D2A135919B647CF00AD1EB7;
 			remoteInfo = gme;
+		};
+		2D3138231D08AB2700CBD871 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D621F821CD92C9000EB6D22;
+			remoteInfo = artwork;
 		};
 		2D3420E91D085750004C136A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -9223,6 +9231,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D3138241D08AB2700CBD871 /* PBXTargetDependency */,
 				2D6530E31CE79F2900163808 /* PBXTargetDependency */,
 				2D026DA71CAC5C6600E27961 /* PBXTargetDependency */,
 				2DFD51661C9715FA00961D19 /* PBXTargetDependency */,
@@ -9661,6 +9670,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D3138251D08AB3400CBD871 /* artwork.dylib in Resources */,
 				2D3420EF1D085787004C136A /* libmp4ff.dylib in Resources */,
 				2D6530E41CE79F4E00163808 /* adplug.dylib in Resources */,
 				2D026DA81CAC5C7600E27961 /* ffmpeg.dylib in Resources */,
@@ -11218,6 +11228,11 @@
 			isa = PBXTargetDependency;
 			target = 2D2A135919B647CF00AD1EB7 /* gme */;
 			targetProxy = 2D2A14B819B6484100AD1EB7 /* PBXContainerItemProxy */;
+		};
+		2D3138241D08AB2700CBD871 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D621F821CD92C9000EB6D22 /* artwork */;
+			targetProxy = 2D3138231D08AB2700CBD871 /* PBXContainerItemProxy */;
 		};
 		2D3420EA1D085750004C136A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
