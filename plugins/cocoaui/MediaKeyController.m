@@ -69,8 +69,15 @@ CGEventRef tapEventCallback (CGEventTapProxy proxy, CGEventType type, CGEventRef
 
     switch (keyCode) {
         case NX_KEYTYPE_PLAY:
-            if(keyState == NX_KEYSTATE_DOWN)
-                deadbeef->sendmessage (DB_EV_TOGGLE_PAUSE, 0, 0, 0);
+            if(keyState == NX_KEYSTATE_DOWN) {
+                int state = deadbeef->get_output ()->state ();
+                if (state == OUTPUT_STATE_PLAYING) {
+                    deadbeef->sendmessage (DB_EV_PAUSE, 0, 0, 0);
+                }
+                else {
+                    deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
+                }
+            }
             if(keyState == NX_KEYSTATE_UP || keyState == NX_KEYSTATE_DOWN)
                 return NULL;
             break;
