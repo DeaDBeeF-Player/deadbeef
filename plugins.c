@@ -699,6 +699,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
     if (strstr (d_name, ".0.so")) {
         return -1;
     }
+
     char fullname[PATH_MAX];
     snprintf (fullname, PATH_MAX, "%s/%s", plugdir, d_name);
 
@@ -735,7 +736,16 @@ load_plugin (const char *plugdir, char *d_name, int l) {
     DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name+3);
 #endif
     if (!plug_load) {
-        trace ("dlsym error: %s (%s)\n", dlerror (), d_name + 3);
+        int android = 0;
+#ifdef ANDROID
+        android = 1;
+#endif
+        // don't error after failing to load plugins starting with "lib",
+        // e.g. attempting to load a plugin from "libmp4ff.so",
+        // except android, where all plugins have lib prefix
+        if (android || strlen (d_name) < 3 || memcmp (d_name, "lib", 3)) {
+            trace ("dlsym error: %s (%s)\n", dlerror (), d_name + 3);
+        }
         dlclose (handle);
         return -1;
     }
