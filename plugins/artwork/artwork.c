@@ -1120,36 +1120,29 @@ filter_custom (const struct dirent *f)
     return !fnmatch (filter_custom_mask, f->d_name, FNM_CASEFOLD);
 }
 
-static char *
-vfs_scan_results (struct dirent *entry, const char *container_uri)
+static int
+vfs_scan_results (struct dirent *entry, const char *container_uri, char *artwork_path, int artwork_path_size)
 {
     /* VFS container, double check the match in case scandir didn't implement filtering */
     if (filter_custom (entry)) {
         trace ("found cover %s in %s\n", entry->d_name, container_uri);
-        char *artwork_path = malloc (strlen (container_uri) + 1 + strlen (entry->d_name) + 1);
-        if (artwork_path) {
-            sprintf (artwork_path, "%s:%s", container_uri, entry->d_name);
-            return artwork_path;
-        }
+        snprintf (artwork_path, artwork_path_size, "%s:%s", container_uri, entry->d_name);
+        return 0;
     }
 
-    return NULL;
+    return -1;
 }
 
-static char *
-dir_scan_results (struct dirent **files, int files_count, const char *container)
+static int
+dir_scan_results (struct dirent **files, int files_count, const char *container, char *artwork_path, int artwork_path_size)
 {
-    /* Local file in directory */
+    /* Local file in a directory */
     for (size_t i = 0; i < files_count; i++) {
         trace ("found cover %s in local folder\n", files[0]->d_name);
-        char *artwork_path = malloc (strlen (container) + 1 + strlen (files[i]->d_name) + 1);
-        if (artwork_path) {
-            sprintf (artwork_path, "%s/%s", container, files[i]->d_name);
-            struct stat stat_struct;
-            if (!stat (artwork_path, &stat_struct) && S_ISREG (stat_struct.st_mode) && stat_struct.st_size > 0) {
-                return artwork_path;
-            }
-            free (artwork_path);
+        snprintf (artwork_path, artwork_path_size, "%s/%s", container, files[i]->d_name);
+        struct stat stat_struct;
+        if (!stat (artwork_path, &stat_struct) && S_ISREG (stat_struct.st_mode) && stat_struct.st_size > 0) {
+            return 0;
         }
     }
 
@@ -1157,7 +1150,7 @@ dir_scan_results (struct dirent **files, int files_count, const char *container)
 }
 
 static int
-scan_local_path (char *mask, const char *cache_path, const char *local_path, const char *uri, DB_vfs_t *vfsplug)
+scan_local_path (char *mask, const char *local_path, const char *uri, DB_vfs_t *vfsplug, char *artwork_path, int artwork_path_size)
 {
     filter_custom_mask = mask;
     struct dirent **files;
@@ -1165,25 +1158,27 @@ scan_local_path (char *mask, const char *cache_path, const char *local_path, con
     custom_scandir = vfsplug ? vfsplug->scandir : scandir;
     int files_count = custom_scandir (local_path, &files, filter_custom, NULL);
     if (files_count > 0) {
-        char *artwork_path = uri ? vfs_scan_results (files[0], uri) : dir_scan_results (files, files_count, local_path);
+        int err = -1;
+        if (uri) {
+            err = vfs_scan_results (files[0], uri, artwork_path, artwork_path_size);
+        }
+        else {
+            err = dir_scan_results (files, files_count, local_path, artwork_path, artwork_path_size);
+        }
 
         for (size_t i = 0; i < files_count; i++) {
             free (files[i]);
         }
         free (files);
 
-        if (artwork_path) {
-            int res = copy_file (artwork_path, cache_path);
-            free (artwork_path);
-            return res;
-        }
+        return err;
     }
 
     return -1;
 }
 
 static int
-local_image_file (const char *cache_path, const char *local_path, const char *uri, DB_vfs_t *vfsplug)
+local_image_file (const char *local_path, const char *uri, DB_vfs_t *vfsplug, char *artwork_path, int artwork_path_size)
 {
     if (!artwork_filemask) {
         return -1;
@@ -1199,12 +1194,13 @@ local_image_file (const char *cache_path, const char *local_path, const char *ur
     }
 
     for (char *mask = filemask; mask < filemask_end; mask += strlen (mask)+1) {
-        if (mask[0] && !scan_local_path (mask, cache_path, local_path, uri, vfsplug)) {
+        if (mask[0] && !scan_local_path (mask, local_path, uri, vfsplug, artwork_path, artwork_path_size)) {
             return 0;
         }
     }
-    if (!scan_local_path ("*.jpg", cache_path, local_path, uri, vfsplug) ||
-        !scan_local_path ("*.jpeg", cache_path, local_path, uri, vfsplug)) {
+    if (!scan_local_path ("*.jpg", local_path, uri, vfsplug, artwork_path, artwork_path_size)
+        || !scan_local_path ("*.jpeg", local_path, uri, vfsplug, artwork_path, artwork_path_size)
+        || !scan_local_path ("*.png", local_path, uri, vfsplug, artwork_path, artwork_path_size)) {
         return 0;
     }
 
@@ -1666,7 +1662,7 @@ recheck_missing_artwork (char *fname, const time_t placeholder_mtime)
 }
 
 static int
-process_query (const cover_query_t *query)
+process_query (const cover_query_t *query, char *artwork_path, int artwork_path_size)
 {
     if (!query->callbacks) {
         return 0;
@@ -1674,13 +1670,21 @@ process_query (const cover_query_t *query)
 
     ddb_cover_query_t *info = query->callbacks->info;
 
+    char *filepath = info->filepath;
+    if (!filepath) {
+#warning FIXME: locking
+        filepath = deadbeef->pl_find_meta (info->track, ":URI");
+    }
+
     char cache_path[PATH_MAX];
     make_cache_path (cache_path, sizeof (cache_path), info, -1);
 
+#warning FIXME not needed during development
+#if 0
     /* Flood control, don't retry missing artwork for an hour unless something changes */
     struct stat placeholder_stat;
     if (!stat (cache_path, &placeholder_stat) && placeholder_stat.st_mtime + 60*60 > time (NULL)) {
-        char *fname_copy = strdup (info->filepath);
+        char *fname_copy = strdup (filepath);
         if (fname_copy) {
             int recheck = recheck_missing_artwork (fname_copy, placeholder_stat.st_mtime);
             free (fname_copy);
@@ -1689,50 +1693,53 @@ process_query (const cover_query_t *query)
             }
         }
     }
+#endif
 
-    if (artwork_enable_embedded && deadbeef->is_local_file (info->filepath)) {
+    int islocal = deadbeef->is_local_file (filepath);
+
+    if (artwork_enable_embedded && islocal) {
 #ifdef USE_METAFLAC
         // try to load embedded from flac metadata
-        trace ("trying to load artwork from Flac tag for %s\n", query->fname);
-        if (!flac_extract_art (info->filepath, cache_path)) {
+        trace ("trying to load artwork from Flac tag for %s\n", filepath);
+        if (!flac_extract_art (filepath, cache_path)) {
             return 1;
         }
 #endif
 
         // try to load embedded from id3v2
-        trace ("trying to load artwork from id3v2 tag for %s\n", query->fname);
-        if (!id3_extract_art (info->filepath, cache_path)) {
+        trace ("trying to load artwork from id3v2 tag for %s\n", filepath);
+        if (!id3_extract_art (filepath, cache_path)) {
             return 1;
         }
 
         // try to load embedded from apev2
-        trace ("trying to load artwork from apev2 tag for %s\n", query->fname);
-        if (!apev2_extract_art (info->filepath, cache_path)) {
+        trace ("trying to load artwork from apev2 tag for %s\n", filepath);
+        if (!apev2_extract_art (filepath, cache_path)) {
             return 1;
         }
 
         // try to load embedded from mp4
-        trace ("trying to load artwork from mp4 tag for %s\n", query->fname);
-        if (!mp4_extract_art (info->filepath, cache_path)) {
+        trace ("trying to load artwork from mp4 tag for %s\n", filepath);
+        if (!mp4_extract_art (filepath, cache_path)) {
             return 1;
         }
     }
 
-    if (artwork_enable_local && deadbeef->is_local_file (info->filepath)) {
-        char *fname_copy = strdup (info->filepath);
+    if (artwork_enable_local && islocal) {
+        char *fname_copy = strdup (filepath);
         if (fname_copy) {
             char *vfs_fname = vfs_path (fname_copy);
             if (vfs_fname) {
                 /* Search inside scannable VFS containers */
                 DB_vfs_t *plugin = scandir_plug (vfs_fname);
-                if (plugin && !local_image_file (cache_path, vfs_fname, fname_copy, plugin)) {
+                if (plugin && !local_image_file (vfs_fname, fname_copy, plugin, artwork_path, artwork_path_size)) {
                     free (fname_copy);
                     return 1;
                 }
             }
 
             /* Search in file directory */
-            if (!local_image_file (cache_path, dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL)) {
+            if (!local_image_file (dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL, artwork_path, artwork_path_size)) {
                 free (fname_copy);
                 return 1;
             }
@@ -1782,7 +1789,9 @@ static void
 send_query_callbacks (cover_callback_t *callback, ddb_cover_info_t *cover) {
     while (callback) {
         callback->cb (cover ? 0 : -1, callback->info, cover);
+        cover_callback_t *next = callback->next;
         free (callback);
+        callback = next;
     }
 }
 
@@ -1828,7 +1837,10 @@ fetcher_thread (void *none)
             ddb_cover_query_t *info = queue->callbacks->info;
 
             /* Process this query, hopefully writing a file into cache */
-            int cached_art = info->imgsize == -1 ? process_query (queue) : process_scaled_query (queue);
+            ddb_cover_info_t cover;
+            char artwork_path[PATH_MAX];
+            cover.filename = artwork_path;
+            int cached_art = info->imgsize <= 0 ? process_query (queue, artwork_path, sizeof (artwork_path)) : process_scaled_query (queue);
             deadbeef->mutex_lock (queue_mutex);
             cover_query_t *query = query_pop ();
             deadbeef->mutex_unlock (queue_mutex);
@@ -1836,7 +1848,6 @@ fetcher_thread (void *none)
             /* Make all the callbacks (and free the chain), with data if a file was written */
             if (cached_art) {
                 trace ("artwork fetcher: cover art file cached\n");
-                ddb_cover_info_t cover;
 #warning !!!FILL OUT THE COVER!!!
                 send_query_callbacks (query->callbacks, &cover);
             }

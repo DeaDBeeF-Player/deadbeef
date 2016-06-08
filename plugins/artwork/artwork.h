@@ -43,6 +43,7 @@ typedef struct ddb_cover_query_s {
 
 typedef struct {
     // ... the loaded cover info ...
+    const char *filename;
 } ddb_cover_info_t;
 
 typedef void (*ddb_cover_callback_t) (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover);
