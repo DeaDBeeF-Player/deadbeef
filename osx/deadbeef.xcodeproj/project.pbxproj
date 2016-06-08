@@ -14142,6 +14142,7 @@
 				2D3420DF1D0856D5004C136A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2D4458DC1C04F1C000230939 /* Build configuration list for PBXNativeTarget "vfs_zip" */ = {
 			isa = XCConfigurationList;

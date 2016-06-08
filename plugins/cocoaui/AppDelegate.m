@@ -47,8 +47,6 @@ NSImage *bufferingImg;
 AppDelegate *g_appDelegate;
 NSInteger firstSelected = -1;
 
-@synthesize eventPort = _eventPort;
-
 - (void)dealloc {
     ungrabMediaKeys ();
 }

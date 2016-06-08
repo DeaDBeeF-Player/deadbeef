@@ -31,7 +31,6 @@
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import "AppDelegate.h"
 #import "MediaKeyController.h"
 #import <IOKit/hidsystem/ev_keymap.h>
 #include "../../deadbeef.h"
@@ -47,7 +46,7 @@ static CFRunLoopSourceRef _runLoopSource;
 CGEventRef tapEventCallback (CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *refcon) {
     if(type == kCGEventTapDisabledByTimeout) {
         ;
-        CGEventTapEnable([g_appDelegate eventPort], TRUE);
+        CGEventTapEnable(_eventPort, TRUE);
     }
 
     if(type != NX_SYSDEFINED)
