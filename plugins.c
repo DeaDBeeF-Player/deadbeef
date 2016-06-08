@@ -740,14 +740,15 @@ load_plugin (const char *plugdir, char *d_name, int l) {
 #ifdef ANDROID
         android = 1;
 #endif
+        dlclose (handle);
         // don't error after failing to load plugins starting with "lib",
         // e.g. attempting to load a plugin from "libmp4ff.so",
         // except android, where all plugins have lib prefix
         if (android || strlen (d_name) < 3 || memcmp (d_name, "lib", 3)) {
             trace ("dlsym error: %s (%s)\n", dlerror (), d_name + 3);
+            return -1;
         }
-        dlclose (handle);
-        return -1;
+        return 0;
     }
     if (plug_init_plugin (plug_load, handle) < 0) {
         d_name[l-sizeof (PLUGINEXT)+1] = 0;
