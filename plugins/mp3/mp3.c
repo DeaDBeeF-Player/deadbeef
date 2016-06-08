@@ -1263,7 +1263,7 @@ cmp3_write_metadata (DB_playItem_t *it) {
         id3v2_version = 3;
     }
     char id3v1_encoding[50];
-    deadbeef->conf_get_str ("mp3.id3v1_encoding", "iso8859-1", id3v1_encoding, sizeof (id3v1_encoding));
+    deadbeef->conf_get_str ("mp3.id3v1_encoding", "cp1252", id3v1_encoding, sizeof (id3v1_encoding));
     return deadbeef->junk_rewrite_tags (it, junk_flags, id3v2_version, id3v1_encoding);
 }
 
