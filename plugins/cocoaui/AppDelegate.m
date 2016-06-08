@@ -26,6 +26,7 @@
 #import "DdbWidgetManager.h"
 #import "DdbPlaylistViewController.h"
 #import "DdbShared.h"
+#import "MediaKeyController.h"
 #include "conf.h"
 #include "streamer.h"
 #include "junklib.h"
@@ -45,6 +46,12 @@ NSImage *pauseImg;
 NSImage *bufferingImg;
 AppDelegate *g_appDelegate;
 NSInteger firstSelected = -1;
+
+@synthesize eventPort = _eventPort;
+
+- (void)dealloc {
+    ungrabMediaKeys ();
+}
 
 - (NSWindow *)mainWindow {
     return [_mainWindow window];
@@ -194,6 +201,8 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     deadbeef->listen_file_added (file_added, NULL);
 
     g_appDelegate = self;
+
+    grabMediaKeys ();
 
     [self updateDockNowPlaying];
     [[NSApp dockTile] setContentView: _dockTileView];
@@ -764,5 +773,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 - (NSMenu *)applicationDockMenu:(NSApplication *)sender {
     return _dockMenu;
 }
+
 
 @end
