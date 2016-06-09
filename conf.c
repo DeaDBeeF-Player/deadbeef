@@ -106,6 +106,7 @@ conf_load (void) {
     if (l != fread (buffer, 1, l, fp)) {
         free (buffer);
         fprintf (stderr, "failed to read entire config file to memory\n");
+        fclose (fp);
         return -1;
     }
     buffer[l] = 0;
