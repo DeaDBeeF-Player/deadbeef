@@ -99,6 +99,11 @@ static char empty_code[4] = {0};
 
 int
 tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
+    if (ctx->_size != sizeof (ddb_tf_context_t)) {
+        *out = 0;
+        return -1;
+    }
+
     if (!code) {
         code = empty_code;
     }
