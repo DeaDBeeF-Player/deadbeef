@@ -109,28 +109,31 @@ check_dir (const char *path)
         return 0;
     }
 
-    char* dir = strdup (path);
-    if (!dir) {
-        return 0;
-    }
-
-    int good_dir = check_dir (dirname (dir));
+    char *dir = strdup (path);
+    char *dname = strdup (dirname (dir));
+    int good_dir = check_dir (dname);
     free (dir);
+    free (dname);
     return good_dir && !mkdir (path, 0755);
 }
 
-int ensure_dir (const char *path)
-{
-    char dir[PATH_MAX];
-    strcpy (dir, path);
-    dirname (dir);
-    trace ("artwork: ensure folder %s exists\n", dir);
-    return check_dir (dir);
+// check if directory of a supplied file exists,
+// attempt to create one if it doesn't,
+// return 1 on success.
+int
+ensure_dir (const char *path) {
+    char *dir = strdup (path);
+    char *dname = strdup (dirname (dir));
+    trace ("artwork: ensure folder %s exists\n", dname);
+    int res = check_dir (dname);
+    free (dir);
+    free (dname);
+    return res;
 }
 
 #define BUFFER_SIZE 4096
-int copy_file (const char *in, const char *out)
-{
+int
+copy_file (const char *in, const char *out) {
     trace ("copying %s to %s\n", in, out);
 
     if (!ensure_dir (out)) {
@@ -153,16 +156,12 @@ int copy_file (const char *in, const char *out)
     }
 
     int err = 0;
-    int bytes_read;
+    int64_t bytes_read;
     size_t file_bytes = 0;
     do {
         char buffer[BUFFER_SIZE];
         bytes_read = deadbeef->fread (buffer, 1, BUFFER_SIZE, request);
-        if (bytes_read < 0 || errno) {
-            trace ("artwork: failed to read file %s: %s\n", tmp_out, strerror (errno));
-            err = -1;
-        }
-        else if (bytes_read > 0 && fwrite (buffer, bytes_read, 1, fout) != 1) {
+        if (bytes_read > 0 && fwrite (buffer, bytes_read, 1, fout) != 1) {
             trace ("artwork: failed to write file %s: %s\n", tmp_out, strerror (errno));
             err = -1;
         }

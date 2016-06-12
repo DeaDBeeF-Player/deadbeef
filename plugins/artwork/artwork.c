@@ -1600,12 +1600,14 @@ path_more_recent (const char *fname, const time_t placeholder_mtime)
 }
 
 static int
-recheck_missing_artwork (char *fname, const time_t placeholder_mtime)
+recheck_missing_artwork (const char *input_fname, const time_t placeholder_mtime)
 {
+    int res = 0;
+    char *fname = strdup (input_fname);
     /* Check if local files could have new associated artwork */
     if (deadbeef->is_local_file (fname)) {
         char *vfs_fname = vfs_path (fname);
-        char *real_fname = vfs_fname ? vfs_fname : fname;
+        const char *real_fname = vfs_fname ? vfs_fname : fname;
 
         /* Recheck artwork if file (track or VFS container) was modified since the last check */
         if (path_more_recent (real_fname, placeholder_mtime)) {
@@ -1613,12 +1615,13 @@ recheck_missing_artwork (char *fname, const time_t placeholder_mtime)
         }
 
         /* Recheck local artwork if the directory contents have changed */
-        if (artwork_enable_local && path_more_recent (dirname (real_fname), placeholder_mtime)) {
-            return 1;
-        }
+        char *dname = strdup (dirname (fname));
+        res = artwork_enable_local && path_more_recent (dname, placeholder_mtime);
+        free (dname);
     }
 
-    return 0;
+    free (fname);
+    return res;
 }
 
 static int
@@ -1635,13 +1638,9 @@ process_query (const cover_query_t *query)
     /* Flood control, don't retry missing artwork for an hour unless something changes */
     struct stat placeholder_stat;
     if (!stat (cache_path, &placeholder_stat) && placeholder_stat.st_mtime + 60*60 > time (NULL)) {
-        char *fname_copy = strdup (query->fname);
-        if (fname_copy) {
-            int recheck = recheck_missing_artwork (fname_copy, placeholder_stat.st_mtime);
-            free (fname_copy);
-            if (!recheck) {
-                return 0;
-            }
+        int recheck = recheck_missing_artwork (query->fname, placeholder_stat.st_mtime);
+        if (!recheck) {
+            return 0;
         }
     }
 
