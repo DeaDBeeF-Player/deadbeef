@@ -63,8 +63,8 @@
 #include "mp4ff.h"
 #include "../../strdupa.h"
 
-//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
-#define trace(...)
+#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+//#define trace(...)
 
 DB_functions_t *deadbeef;
 static ddb_artwork_plugin_t plugin;
@@ -912,7 +912,7 @@ make_cache_dir_path (const char *artist, char *outpath, int outsize) {
     int path_length;
     path_length = snprintf (outpath+strlen (outpath), size_left, "covers2/%s/", esc_artist);
     if (path_length >= size_left) {
-        trace ("Cache path truncated at %d bytes\n", size);
+        trace ("Cache path truncated at %d bytes\n", (int)size_left);
         return -1;
     }
 
@@ -1434,9 +1434,10 @@ id3_extract_art (const char *fname, const char *outname) {
             const uint8_t *image_data = id3v2_artwork (f, minor_version);
             if (image_data) {
                 const size_t sz = f->size - (image_data - f->data);
-                trace ("will write id3v2 APIC (%d bytes) into %s\n", sz, outname);
+                trace ("will write id3v2 APIC (%d bytes) into %s\n", (int)sz, outname);
                 if (sz > 0 && !write_file (outname, (const char *)image_data, sz)) {
                     err = 0;
+                    break;
                 }
             }
         }
@@ -1604,12 +1605,14 @@ path_more_recent (const char *fname, const time_t placeholder_mtime)
 
 // returns 1 if enough time passed since the last attemp to find the requested cover
 static int
-recheck_missing_artwork (char *fname, const time_t placeholder_mtime)
+recheck_missing_artwork (const char *input_fname, const time_t placeholder_mtime)
 {
+    int res = 0;
+    char *fname = strdup (input_fname);
     /* Check if local files could have new associated artwork */
     if (deadbeef->is_local_file (fname)) {
         char *vfs_fname = vfs_path (fname);
-        char *real_fname = vfs_fname ? vfs_fname : fname;
+        const char *real_fname = vfs_fname ? vfs_fname : fname;
 
         /* Recheck artwork if file (track or VFS container) was modified since the last check */
         if (path_more_recent (real_fname, placeholder_mtime)) {
@@ -1617,12 +1620,13 @@ recheck_missing_artwork (char *fname, const time_t placeholder_mtime)
         }
 
         /* Recheck local artwork if the directory contents have changed */
-        if (artwork_enable_local && path_more_recent (dirname (real_fname), placeholder_mtime)) {
-            return 1;
-        }
+        char *dname = strdup (dirname (fname));
+        res = artwork_enable_local && path_more_recent (dname, placeholder_mtime);
+        free (dname);
     }
 
-    return 0;
+    free (fname);
+    return res;
 }
 
 static int
@@ -1636,13 +1640,9 @@ process_query (const char *filepath, const char *album, const char *artist, char
     /* Flood control, don't retry missing artwork for an hour unless something changes */
     struct stat placeholder_stat;
     if (!stat (cache_path, &placeholder_stat) && placeholder_stat.st_mtime + 60*60 > time (NULL)) {
-        char *fname_copy = strdup (filepath);
-        if (fname_copy) {
-            int recheck = recheck_missing_artwork (fname_copy, placeholder_stat.st_mtime);
-            free (fname_copy);
-            if (!recheck) {
-                return 0;
-            }
+        int recheck = recheck_missing_artwork (filepath, placeholder_stat.st_mtime);
+        if (!recheck) {
+            return 0;
         }
     }
 #endif
@@ -1654,6 +1654,7 @@ process_query (const char *filepath, const char *album, const char *artist, char
         // try to load embedded from flac metadata
         trace ("trying to load artwork from Flac tag for %s\n", filepath);
         if (!flac_extract_art (filepath, cache_path)) {
+            snprintf (artwork_path, artwork_path_size, "%s", cache_path);
             return 1;
         }
 #endif
@@ -1661,12 +1662,14 @@ process_query (const char *filepath, const char *album, const char *artist, char
         // try to load embedded from id3v2
         trace ("trying to load artwork from id3v2 tag for %s\n", filepath);
         if (!id3_extract_art (filepath, cache_path)) {
+            snprintf (artwork_path, artwork_path_size, "%s", cache_path);
             return 1;
         }
 
         // try to load embedded from apev2
         trace ("trying to load artwork from apev2 tag for %s\n", filepath);
         if (!apev2_extract_art (filepath, cache_path)) {
+            snprintf (artwork_path, artwork_path_size, "%s", cache_path);
             return 1;
         }
 
@@ -1704,6 +1707,7 @@ process_query (const char *filepath, const char *album, const char *artist, char
     /* Web lookups */
     if (artwork_enable_wos && strlen (filepath) > 3 && !strcasecmp (filepath+strlen (filepath)-3, ".ay")) {
         if (!fetch_from_wos (album, cache_path)) {
+            snprintf (artwork_path, artwork_path_size, "%s", cache_path);
             return 1;
         }
         if (errno == ECONNABORTED) {
@@ -1713,6 +1717,7 @@ process_query (const char *filepath, const char *album, const char *artist, char
 
     int res = web_lookups (artist, album, cache_path);
     if (res >= 0) {
+        snprintf (artwork_path, artwork_path_size, "%s", cache_path);
         return res;
     }
 
@@ -1724,6 +1729,7 @@ process_query (const char *filepath, const char *album, const char *artist, char
             int res = web_lookups (artist, album, cache_path);
             *p = '(';
             if (res >= 0) {
+                snprintf (artwork_path, artwork_path_size, "%s", cache_path);
                 return res;
             }
         }
@@ -1811,15 +1817,15 @@ fetcher_thread (void *none)
             deadbeef->tf_eval (&ctx, album_tf, album, sizeof (album));
             deadbeef->tf_eval (&ctx, artist_tf, artist, sizeof (artist));
             
-            int cached_art = process_query (filepath, album, artist, artwork_path, sizeof (artwork_path));
+            int cover_found = process_query (filepath, album, artist, artwork_path, sizeof (artwork_path));
 
             deadbeef->mutex_lock (queue_mutex);
             cover_query_t *query = query_pop ();
             deadbeef->mutex_unlock (queue_mutex);
 
             /* Make all the callbacks (and free the chain), with data if a file was written */
-            if (cached_art) {
-                trace ("artwork fetcher: cover art file cached\n");
+            if (cover_found) {
+                trace ("artwork fetcher: cover art file found: %s\n", artwork_path);
                 send_query_callbacks (query->callbacks, &cover);
             }
             else {
