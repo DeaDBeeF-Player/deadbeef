@@ -311,6 +311,7 @@ int32_t mp4ff_parse_tag(mp4ff_t *f, const uint8_t parent_atom_type, const int32_
 						else
 						{
 							mp4ff_cover_append_item (f, data, datasize);
+							data = NULL;
 						}
 					}
 				} else
