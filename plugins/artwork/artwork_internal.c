@@ -161,11 +161,7 @@ copy_file (const char *in, const char *out) {
     do {
         char buffer[BUFFER_SIZE];
         bytes_read = deadbeef->fread (buffer, 1, BUFFER_SIZE, request);
-        if (bytes_read != BUFFER_SIZE || errno) {
-            trace ("artwork: failed to read file %s: %s\n", tmp_out, strerror (errno));
-            err = -1;
-        }
-        else if (bytes_read > 0 && fwrite (buffer, bytes_read, 1, fout) != 1) {
+        if (bytes_read > 0 && fwrite (buffer, bytes_read, 1, fout) != 1) {
             trace ("artwork: failed to write file %s: %s\n", tmp_out, strerror (errno));
             err = -1;
         }
