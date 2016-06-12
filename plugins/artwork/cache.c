@@ -95,9 +95,10 @@ void remove_cache_item (const char *entry_path, const char *subdir_path, const c
         char scaled_entry_path[PATH_MAX];
         if (snprintf (scaled_entry_path, PATH_MAX, "%s%s/%s/%s", cache_root_path, scaled_dirs[i]->d_name, subdir_name, entry_name) < PATH_MAX) {
             unlink (scaled_entry_path);
-            char *scaled_entry_dir = dirname (scaled_entry_path);
+            char *scaled_entry_dir = strdup (dirname (scaled_entry_path));
             rmdir (scaled_entry_dir);
             rmdir (dirname (scaled_entry_dir));
+            free (scaled_entry_dir);
         }
         free (scaled_dirs[i]);
     }
