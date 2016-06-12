@@ -34,11 +34,7 @@ typedef struct ddb_cover_query_s {
 
     uint32_t flags; // e.g. HAVE_TRACK, HAVE_FILEPATH, HAVE_ALBUM, HAVE_ARTIST
     struct DB_playItem_s *track;
-    char *filepath;
-    char *album;
-    char *artist;
     char *type; // front/back/...
-    int imgsize;
 } ddb_cover_query_t;
 
 typedef struct {
@@ -51,8 +47,13 @@ typedef void (*ddb_cover_callback_t) (int error, ddb_cover_query_t *query, ddb_c
 typedef struct {
     DB_misc_t plugin;
 
+    // finds the cover art, corresponding to the supplied query, and calls the supplied callback with the search results
     void
     (*cover_get) (ddb_cover_query_t *query, ddb_cover_callback_t callback);
+
+    // returns the default cover image path, corresponding to the supplied query
+    void
+    (*cover_get_default) (ddb_cover_query_t *query, char *outpath, int outpath_size);
 } ddb_artwork_plugin_t;
 
 #endif /*__ARTWORK_H*/
