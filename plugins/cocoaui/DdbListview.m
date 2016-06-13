@@ -422,7 +422,7 @@ int grouptitleheight = 22;
 
         //ddb_listview_list_render_album_art (listview, cr, it, grp->head, 0, grp->height, grp->pinned, grp_next_y - listview->scrollpos, -listview->hscrollpos, grp_y + listview->grouptitle_height - listview->scrollpos, listview->totalwidth, grp_height_total);
 
-        if (grp->pinned == 1 && [listview groups_pinned]/* && dirtyRect.origin.y <= 0*/) {
+        if (grp->pinned == 1 && [delegate pinGroups]/* && dirtyRect.origin.y <= 0*/) {
             // draw pinned group title
             int pushback = 0;
             if (grp_next_y <= [listview grouptitle_height]) {
@@ -696,7 +696,6 @@ int grouptitleheight = 22;
 - (DdbListview *)initWithFrame:(NSRect)rect {
     self = [super initWithFrame:rect];
     if (self) {
-        _groups_pinned = YES;
         groups_build_idx = -1;
         DdbListHeaderView *thv = [[DdbListHeaderView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, headerheight)];
         [thv setAutoresizingMask:NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewMaxYMargin];
@@ -1010,7 +1009,7 @@ int grouptitleheight = 22;
         // clicked empty space, deselect everything
         [self deselectAll];
     }
-    else if ((sel != -1 && grp && grp_index == -1) || (pt.y <= _grouptitle_height + vis.origin.y && _groups_pinned) || album_art_column) {
+    else if ((sel != -1 && grp && grp_index == -1) || (pt.y <= _grouptitle_height + vis.origin.y && [_delegate pinGroups]) || album_art_column) {
         // clicked group title, select group
         DdbListviewRow_t it;
         int idx = 0;
@@ -1394,10 +1393,10 @@ int grouptitleheight = 22;
     int cursor_scroll = pos;
     int newscroll = scrollpos;
 
-    if (!_groups_pinned && cursor_scroll < scrollpos) {
+    if (![_delegate pinGroups] && cursor_scroll < scrollpos) {
         newscroll = cursor_scroll;
     }
-    else if (_groups_pinned && cursor_scroll < scrollpos + _grouptitle_height) {
+    else if ([_delegate pinGroups] && cursor_scroll < scrollpos + _grouptitle_height) {
         newscroll = cursor_scroll - _grouptitle_height;
     }
     else if (cursor_scroll + rowheight >= scrollpos + vis.size.height) {

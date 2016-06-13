@@ -34,7 +34,15 @@ extern DB_functions_t *deadbeef;
 @interface DdbPlaylistViewController()
 @end
 
-@implementation DdbPlaylistViewController
+@implementation DdbPlaylistViewController {
+    char *_group_str;
+    char *_group_bytecode;
+    BOOL _pin_groups;
+}
+
+- (void)dealloc {
+    [self clearGrouping];
+}
 
 - (void)menuAddColumn:(id)sender {
     [self initAddColumnSheet:-1];
@@ -102,7 +110,48 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)menuTogglePinGroups:(id)sender {
+    _pin_groups = [sender state] == NSOnState ? 0 : 1;
+    [sender setState:_pin_groups?NSOnState:NSOffState];
+    deadbeef->conf_set_int ([self pinGroupsConfStr], _pin_groups);
+    [[self view] setNeedsDisplay:YES];
+}
 
+- (void)clearGrouping {
+    if (_group_str) {
+        free (_group_str);
+        _group_str = NULL;
+    }
+    if (_group_bytecode) {
+        deadbeef->tf_free (_group_bytecode);
+        _group_bytecode = NULL;
+    }
+}
+
+- (void)menuGroupByNone:(id)sender {
+    [self clearGrouping];
+    deadbeef->conf_remove_items ([self groupByConfStr]);
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+    [[view listview] reloadData];
+}
+
+- (void)menuGroupByArtistDateAlbum:(id)sender {
+    [self clearGrouping];
+    _group_str = strdup ("%album artist% - ['['%year%']' ]%album%");
+    deadbeef->conf_set_str ([self groupByConfStr], _group_str);
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+    [[view listview] reloadData];
+}
+
+- (void)menuGroupByArtist:(id)sender {
+    [self clearGrouping];
+    _group_str = strdup ("%artist%");
+    deadbeef->conf_set_str ([self groupByConfStr], _group_str);
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+    [[view listview] reloadData];
+}
+
+- (void)menuGroupByCustom:(id)sender {
+    // TODO
 }
 
 - (void)updateColumn:(int)idx {
@@ -259,12 +308,31 @@ extern DB_functions_t *deadbeef;
                                         , textStyle, NSParagraphStyleAttributeName
                                         , nil];
 
+
+    // initialize group by str
+    deadbeef->conf_lock ();
+    const char *group_by = deadbeef->conf_get_str_fast ([self groupByConfStr], NULL);
+    if (group_by) {
+        _group_str = strdup (group_by);
+    }
+    deadbeef->conf_unlock ();
+
+    _pin_groups = deadbeef->conf_get_int ([self pinGroupsConfStr], 0);
+}
+
+- (const char *)groupByConfStr {
+    return "cocoaui.playlist.group_by";
+}
+
+- (const char *)pinGroupsConfStr {
+    return "cocoaui.playlist.pin_groups";
 }
 
 - (void)awakeFromNib {
-    [self initContent];
     DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
     [view setDelegate:(id<DdbListviewDelegate>)self];
+    [self initContent];
+
     [self setupPlaylist:[view listview]];
 }
 
@@ -329,7 +397,9 @@ extern DB_functions_t *deadbeef;
     if (col != -1) {
         [[menu insertItemWithTitle:@"Edit Column" action:@selector(menuEditColumn:) keyEquivalent:@"" atIndex:1] setTarget:self];
         [[menu insertItemWithTitle:@"Remove Column" action:@selector(menuRemoveColumn:) keyEquivalent:@"" atIndex:2] setTarget:self];
-        [[menu insertItemWithTitle:@"Pin Groups When Scrolling" action:@selector(menuTogglePinGroups:) keyEquivalent:@"" atIndex:3] setTarget:self];
+        NSMenuItem *item = [menu insertItemWithTitle:@"Pin Groups When Scrolling" action:@selector(menuTogglePinGroups:) keyEquivalent:@"" atIndex:3];
+        [item setState:_pin_groups?NSOnState:NSOffState];
+        [item setTarget:self];
 
         [menu insertItem:[NSMenuItem separatorItem] atIndex:4];
 
@@ -337,10 +407,10 @@ extern DB_functions_t *deadbeef;
         [groupBy setDelegate:(id<NSMenuDelegate>)self];
         [groupBy setAutoenablesItems:NO];
 
-        [[groupBy insertItemWithTitle:@"None" action:@selector(menuGroupByNone) keyEquivalent:@"" atIndex:0] setTarget:self];
-        [[groupBy insertItemWithTitle:@"Artist/Date/Album" action:@selector(menuGroupByArtistDateAlbum) keyEquivalent:@"" atIndex:1] setTarget:self];
-        [[groupBy insertItemWithTitle:@"Artist" action:@selector(menuGroupByArtist) keyEquivalent:@"" atIndex:2] setTarget:self];
-        [groupBy insertItemWithTitle:@"Custom" action:@selector(menuGroupByCustom) keyEquivalent:@"" atIndex:3];
+        [[groupBy insertItemWithTitle:@"None" action:@selector(menuGroupByNone:) keyEquivalent:@"" atIndex:0] setTarget:self];
+        [[groupBy insertItemWithTitle:@"Artist/Date/Album" action:@selector(menuGroupByArtistDateAlbum:) keyEquivalent:@"" atIndex:1] setTarget:self];
+        [[groupBy insertItemWithTitle:@"Artist" action:@selector(menuGroupByArtist:) keyEquivalent:@"" atIndex:2] setTarget:self];
+        [groupBy insertItemWithTitle:@"Custom" action:@selector(menuGroupByCustom:) keyEquivalent:@"" atIndex:3];
 
         NSMenuItem *groupByItem = [[NSMenuItem alloc] initWithTitle:@"Group By" action:nil keyEquivalent:@""];
         [groupByItem setSubmenu:groupBy];
@@ -628,9 +698,6 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-static const char *group_str = "%artist%[ - %year%][ - %album%]";
-static char *group_bytecode = NULL;
-
 - (void)drawGroupTitle:(DdbListviewRow_t)row inRect:(NSRect)rect {
     ddb_tf_context_t ctx = {
         ._size = sizeof (ddb_tf_context_t),
@@ -639,7 +706,7 @@ static char *group_bytecode = NULL;
     };
 
     char text[1024] = "";
-    deadbeef->tf_eval (&ctx, group_bytecode, text, sizeof (text));
+    deadbeef->tf_eval (&ctx, _group_bytecode, text, sizeof (text));
 
     NSString *title = [NSString stringWithUTF8String:text];
 
@@ -684,9 +751,11 @@ static char *group_bytecode = NULL;
 }
 
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row {
-    return nil;
-    if (!group_bytecode) {
-        group_bytecode = deadbeef->tf_compile (group_str);
+    if (!_group_str) {
+        return nil;
+    }
+    if (!_group_bytecode) {
+        _group_bytecode = deadbeef->tf_compile (_group_str);
     }
 
     ddb_tf_context_t ctx = {
@@ -696,7 +765,7 @@ static char *group_bytecode = NULL;
     };
     char buf[1024];
     NSString *ret = @"";
-    if (deadbeef->tf_eval (&ctx, group_bytecode, buf, sizeof (buf)) > 0) {
+    if (deadbeef->tf_eval (&ctx, _group_bytecode, buf, sizeof (buf)) > 0) {
         ret = [NSString stringWithUTF8String:buf];
         if (!ret) {
             ret = @"";
@@ -706,6 +775,10 @@ static char *group_bytecode = NULL;
         deadbeef->plt_unref (ctx.plt);
     }
     return ret;
+}
+
+- (BOOL)pinGroups {
+    return _pin_groups;
 }
 
 - (int)modificationIdx {

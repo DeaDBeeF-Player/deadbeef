@@ -53,6 +53,7 @@ typedef intptr_t DdbListviewCol_t;
 - (BOOL)rowSelected:(DdbListviewRow_t)row;
 - (void)deselectAll;
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row;
+- (BOOL)pinGroups;
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect;
 - (void)drawRowBackground:(DdbListviewRow_t)row inRect:(NSRect)rect;
 - (void)drawCell:(int)rowIdx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused;
@@ -82,7 +83,6 @@ typedef struct DdbListviewGroup_s {
     id<DdbListviewDelegate> _delegate;
     DdbListviewGroup_t *_groups;
     int _grouptitle_height;
-    BOOL _groups_pinned;
     int groups_build_idx;
     int _fullwidth;
     int _fullheight;
@@ -101,7 +101,6 @@ typedef struct DdbListviewGroup_s {
 @property (readonly) NSView *contentView;
 @property (readonly) DdbListviewGroup_t *groups;
 @property (readonly) int grouptitle_height;
-@property (readonly) BOOL groups_pinned;
 @property (readonly) int fullheight;
 @property (readwrite) NSPoint lastpos;
 @property (readwrite) int shift_sel_anchor;

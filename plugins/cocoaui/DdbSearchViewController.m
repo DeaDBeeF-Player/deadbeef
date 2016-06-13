@@ -48,8 +48,12 @@ extern DB_functions_t *deadbeef;
     [self initContent];
 }
 
-- (NSString *)rowGroupStr:(DdbListviewRow_t)row {
-    return nil;
+- (const char *)groupByConfStr {
+    return "cocoaui.search.group_by";
+}
+
+- (const char *)pinGroupsConfStr {
+    return "cocoaui.search.pin_groups";
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification {
