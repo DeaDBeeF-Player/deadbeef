@@ -930,9 +930,11 @@ extern DB_functions_t *deadbeef;
         }
             break;
         case DB_EV_PLAYLISTCHANGED: {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [listview reloadData];
-            });
+            if (!p1) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [listview reloadData];
+                });
+            }
         }
             break;
         case DB_EV_PLAYLISTSWITCHED: {
