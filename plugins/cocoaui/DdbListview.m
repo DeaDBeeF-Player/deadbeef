@@ -315,6 +315,33 @@ int grouptitleheight = 22;
     return NSDragOperationCopy;
 }
 
+- (void)renderAlbumArtForGroup:(DdbListviewGroup_t *)grp
+                 isPinnedGroup:(BOOL)isPinnedGroup
+                nextGroupCoord:(int)grp_next_y
+                          yPos:(int)y
+                    clipRegion:(NSRect)clip {
+    int x = 0;
+    id<DdbListviewDelegate> delegate = listview.delegate;
+
+    int title_height = [listview grouptitle_height];
+    for (DdbListviewCol_t col = [listview.delegate firstColumn];
+         col != [listview.delegate invalidColumn];
+         col = [listview.delegate nextColumn:col]) {
+
+        int w = [listview.delegate columnWidth:col];
+
+        if ([listview.delegate isAlbumArtColumn:col] && x + w > clip.origin.x) {
+            NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:0];
+            [clr set];
+            [NSBezierPath fillRect:NSMakeRect (x, y, w, grp_next_y - y)];
+            if (title_height > 0) {
+                [delegate drawAlbumArtForRow:grp->head inColumn:col isPinnedGroup:isPinnedGroup nextGroupCoord:grp_next_y xPos:x yPos:y width:w height:grp->height];
+            }
+        }
+    }
+}
+
+
 - (void)drawListView:(NSRect)dirtyRect {
     id<DdbListviewDelegate> delegate = listview.delegate;
 
@@ -400,7 +427,7 @@ int grouptitleheight = 22;
 
         // draw album art
         int grp_next_y = grp_y + grp->height;
-        //ddb_listview_list_render_album_art(listview, cr, grp, pin_grp == grp, grp_next_y, grp_y + title_height, clip);
+        [self renderAlbumArtForGroup:grp isPinnedGroup:pin_grp==grp nextGroupCoord:grp_next_y yPos:grp_y + title_height clipRegion:dirtyRect];
 
         #define min(x,y) ((x)<(y)?(x):(y))
         if (pin_grp == grp && clip_y-vis.origin.y <= title_height) {

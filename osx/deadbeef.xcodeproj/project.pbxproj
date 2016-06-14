@@ -1218,6 +1218,9 @@
 		2D88EA0E1B2AF71A0072FD43 /* liboggedit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.a */; };
 		2D88EA111B2AF77B0072FD43 /* vorbis.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D88E9ED1B2AF6640072FD43 /* vorbis.dylib */; };
 		2D8B54961CAC8CD500A6F5A4 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026D9F1CAC5C5000E27961 /* libavutil.a */; };
+		2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8D96AC1D10904A00A5C7E6 /* CoverManager.h */; };
+		2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D8D96AD1D10904A00A5C7E6 /* CoverManager.m */; };
+		2D8D96B11D1091F900A5C7E6 /* noartwork.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D8D96B01D1091F900A5C7E6 /* noartwork.png */; };
 		2D8DA07A1C97184B0044CC15 /* psf.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DFD50951C9715B800961D19 /* psf.dylib */; };
 		2D8DA0ED1C9718C10044CC15 /* ao.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8DA0881C9718C10044CC15 /* ao.h */; };
 		2D8DA0EE1C9718C10044CC15 /* corlett.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D8DA08A1C9718C10044CC15 /* corlett.c */; };
@@ -3467,6 +3470,9 @@
 		2D88EA461B2AF8610072FD43 /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = window.c; path = "osx/deps/libvorbis-1.3.3/lib/window.c"; sourceTree = "<group>"; };
 		2D88EA471B2AF8610072FD43 /* window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = window.h; path = "osx/deps/libvorbis-1.3.3/lib/window.h"; sourceTree = "<group>"; };
 		2D8C8D3F1C43116A008ACE29 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		2D8D96AC1D10904A00A5C7E6 /* CoverManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverManager.h; sourceTree = "<group>"; };
+		2D8D96AD1D10904A00A5C7E6 /* CoverManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverManager.m; sourceTree = "<group>"; };
+		2D8D96B01D1091F900A5C7E6 /* noartwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = noartwork.png; path = ../../pixmaps/noartwork.png; sourceTree = "<group>"; };
 		2D8DA0881C9718C10044CC15 /* ao.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ao.h; path = plugins/psf/ao.h; sourceTree = "<group>"; };
 		2D8DA0891C9718C10044CC15 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = plugins/psf/COPYING; sourceTree = "<group>"; };
 		2D8DA08A1C9718C10044CC15 /* corlett.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = corlett.c; path = plugins/psf/corlett.c; sourceTree = "<group>"; };
@@ -7043,6 +7049,7 @@
 				4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */,
 				2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */,
 				2D3E0E1B1B39AAC20007ECC3 /* btnBrowseTemplate.pdf */,
+				2D8D96B01D1091F900A5C7E6 /* noartwork.png */,
 			);
 			name = images;
 			sourceTree = "<group>";
@@ -7276,6 +7283,8 @@
 				2D6D81EE1CCF9E0B00028788 /* DdbTableViewRightClickActivate.m */,
 				2D5773A01D084E5A00F61BD1 /* MediaKeyController.m */,
 				2D5773A11D084E5A00F61BD1 /* MediaKeyController.h */,
+				2D8D96AC1D10904A00A5C7E6 /* CoverManager.h */,
+				2D8D96AD1D10904A00A5C7E6 /* CoverManager.m */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -8453,6 +8462,7 @@
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
 				2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */,
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
+				2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 				2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */,
 				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
@@ -9683,6 +9693,7 @@
 				07021F781C27410800FC9AF9 /* wma.dylib in Resources */,
 				2D4459FC1C04F30E00230939 /* vfs_zip.dylib in Resources */,
 				2DE92F561BAFFBEE00F37154 /* wavpack.dylib in Resources */,
+				2D8D96B11D1091F900A5C7E6 /* noartwork.png in Resources */,
 				2D11D3CD1B9DC6B500C7C731 /* vtx.dylib in Resources */,
 				2D05A8D91B4BE63D004C913D /* sndfile.dylib in Resources */,
 				2D88EA111B2AF77B0072FD43 /* vorbis.dylib in Resources */,
@@ -10921,6 +10932,7 @@
 				2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */,
 				2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */,
 				2D7492691CCFF94200D3A59E /* cocoautil.m in Sources */,
+				2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
 				2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */,

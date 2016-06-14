@@ -25,6 +25,7 @@
 #import "DdbPlaylistWidget.h"
 #import "DdbListview.h"
 #import "ConverterWindowController.h"
+#import "CoverManager.h"
 #include "../../deadbeef.h"
 
 #define CELL_HPADDING 4
@@ -420,6 +421,9 @@ extern DB_functions_t *deadbeef;
     [NSMenu popUpContextMenu:menu withEvent:theEvent forView:view];
 }
 
+- (BOOL)isAlbumArtColumn:(DdbListviewCol_t)col {
+    return _columns[col].type == DB_COLUMN_ALBUM_ART;
+}
 
 - (void)loadColumns:(NSArray *)cols {
     [self freeColumns];
@@ -726,6 +730,35 @@ extern DB_functions_t *deadbeef;
     if (size.width < rect.size.width - 15) {
         [NSBezierPath fillRect:NSMakeRect(size.width + 10, rect.origin.y + rect.size.height/2, rect.size.width - size.width - 15, 1)];
     }
+}
+
+#define ART_PADDING_HORZ 8
+#define ART_PADDING_VERT 0
+
+- (void)drawAlbumArtForRow:(DdbListviewRow_t)row
+                  inColumn:(DdbListviewCol_t)col
+             isPinnedGroup:(BOOL)pinned
+            nextGroupCoord:(int)grp_next_y
+                      xPos:(int)x
+                      yPos:(int)y
+                     width:(int)width
+                    height:(int)height {
+    DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)[self view];
+    DdbListview *listview = [pltWidget listview];
+    DB_playItem_t *it = (DB_playItem_t *)row;
+
+    int art_width = width - ART_PADDING_HORZ * 2;
+    int art_height = height - ART_PADDING_VERT * 2;
+
+    if (art_width < 8 || art_height < 8 || !it) {
+        return;
+    }
+
+    int art_x = x + ART_PADDING_HORZ;
+    int min_y = (pinned ? listview.grouptitle_height : y) + ART_PADDING_VERT;
+
+    NSImage *image = [[CoverManager defaultCoverManager] getTestCover];
+    [image drawInRect:NSMakeRect(art_x, min_y, art_width, art_width)];
 }
 
 - (void)selectRow:(DdbListviewRow_t)row withState:(BOOL)state {
