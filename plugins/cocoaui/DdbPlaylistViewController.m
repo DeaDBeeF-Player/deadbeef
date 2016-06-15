@@ -732,6 +732,11 @@ extern DB_functions_t *deadbeef;
     }
 }
 
+static void coverAvailCallback (NSImage *__strong img, void *user_data) {
+    DdbPlaylistViewController *ctl = (__bridge DdbPlaylistViewController *) user_data;
+    [[ctl view] setNeedsDisplay:YES];
+}
+
 #define ART_PADDING_HORZ 8
 #define ART_PADDING_VERT 0
 
@@ -746,6 +751,10 @@ extern DB_functions_t *deadbeef;
     DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)[self view];
     DdbListview *listview = [pltWidget listview];
     DB_playItem_t *it = (DB_playItem_t *)row;
+    NSImage *image = [[CoverManager defaultCoverManager] getCoverForTrack:it withCallbackWhenReady:coverAvailCallback withUserDataForCallback:(__bridge void *)self];
+    if (!image) {
+        return;
+    }
 
     int art_width = width - ART_PADDING_HORZ * 2;
     int art_height = height - ART_PADDING_VERT * 2;
@@ -757,7 +766,6 @@ extern DB_functions_t *deadbeef;
     int art_x = x + ART_PADDING_HORZ;
     int min_y = (pinned ? listview.grouptitle_height : y) + ART_PADDING_VERT;
 
-    NSImage *image = [[CoverManager defaultCoverManager] getTestCover];
     [image drawInRect:NSMakeRect(art_x, min_y, art_width, art_width)];
 }
 
