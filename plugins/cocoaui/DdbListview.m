@@ -283,8 +283,9 @@ int grouptitleheight = 22;
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)event {
-    if (event.buttonNumber == 1
-        || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask))) {
+    if ((event.type == NSRightMouseDown || event.type == NSLeftMouseDown)
+        && (event.buttonNumber == 1
+        || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask)))) {
         id <DdbListviewDelegate> delegate = [listview delegate];
         DdbListviewCol_t col = [self columnIndexForCoord:[event locationInWindow]];
         return [delegate contextMenuForColumn:col withEvent:event forView:self];
@@ -525,8 +526,9 @@ int grouptitleheight = 22;
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)event {
-    if (event.buttonNumber == 1
-        || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask))) {
+    if ((event.type == NSRightMouseDown || event.type == NSLeftMouseDown)
+        && (event.buttonNumber == 1
+            || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask)))) {
         if (event.buttonNumber == 0) {
             // ctrl+click blocks the mouseDown handler, do it now
             [self mouseDown:event];

@@ -661,10 +661,12 @@ plt_get_title_wrapper (int plt) {
     }
 }
 
-- (void)rightMouseDown:(NSEvent *)theEvent {
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent {
     NSPoint coord = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     _tab_clicked = [self tabUnderCursor:coord.x];
-    if (theEvent.type == NSRightMouseDown) {
+    if ((theEvent.type == NSRightMouseDown || theEvent.type == NSLeftMouseDown)
+        && (theEvent.buttonNumber == 1
+            || (theEvent.buttonNumber == 0 && (theEvent.modifierFlags & NSControlKeyMask)))) {
         NSMenu *menu = [[NSMenu alloc] initWithTitle:@"TabMenu"];
         [menu setDelegate:(id<NSMenuDelegate>)self];
         [menu setAutoenablesItems:NO];
@@ -675,8 +677,9 @@ plt_get_title_wrapper (int plt) {
             // ignore the warning, the message is sent to 1st responder, which will be the mainwincontroller in this case
             [menu insertItemWithTitle:@"Rename Playlist" action:@selector(renamePlaylistAction:) keyEquivalent:@"" atIndex:0];
         }
-        [NSMenu popUpContextMenu:menu withEvent:theEvent forView:self];
+        return menu;
     }
+    return nil;
 }
 
 -(void)otherMouseDown:(NSEvent *)event {
