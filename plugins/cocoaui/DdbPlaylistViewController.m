@@ -42,6 +42,12 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)dealloc {
+    [self cleanup];
+}
+
+- (void)cleanup {
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+    [[view listview] cleanup];
     [self clearGrouping];
 }
 

@@ -704,6 +704,10 @@ int grouptitleheight = 22;
 @synthesize contentView;
 
 - (void)dealloc {
+    [self cleanup];
+}
+
+- (void)cleanup {
     [self freeGroups];
 }
 

@@ -120,4 +120,5 @@ typedef struct DdbListviewGroup_s {
 - (void)setVScroll:(int)scroll;
 - (void)updateContentFrame;
 - (void)deselectAll;
+- (void)cleanup;
 @end

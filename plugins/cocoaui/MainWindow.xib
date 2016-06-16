@@ -8,6 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="MainWindowController">
             <connections>
                 <outlet property="buttonBar" destination="Q6A-xH-8bl" id="xdh-C7-jri"/>
+                <outlet property="playlistViewController" destination="9vD-D4-Hkc" id="q5O-bp-H6s"/>
                 <outlet property="renamePlaylistTitle" destination="4P3-F1-I64" id="hi5-uA-cY0"/>
                 <outlet property="renamePlaylistWindow" destination="dIi-bq-ybp" id="NYy-p3-ckT"/>
                 <outlet property="seekBar" destination="cFf-VJ-YO5" id="20Z-bb-Rt3"/>
