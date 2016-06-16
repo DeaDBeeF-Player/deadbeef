@@ -698,7 +698,23 @@ int grouptitleheight = 22;
 
 @end
 
-@implementation DdbListview
+@implementation DdbListview {
+    id<DdbListviewDelegate> _delegate;
+    DdbListviewGroup_t *_groups;
+    int _grouptitle_height;
+    int groups_build_idx;
+    int _fullwidth;
+    int _fullheight;
+    BOOL _areaselect;
+    int _areaselect_y;
+    int _area_selection_start;
+    int _area_selection_end;
+    int _shift_sel_anchor;
+    BOOL _dragwait;
+    int _scroll_direction;
+    int _scroll_pointer_y;
+    NSPoint _lastpos;
+}
 
 @synthesize headerView;
 @synthesize contentView;
