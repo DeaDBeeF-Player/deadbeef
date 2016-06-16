@@ -57,18 +57,26 @@ typedef struct {
 } cover_callback_info_t;
 
 static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
-    if (!error) {
-        NSImage *img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->filename]];
+    if (error) {
+        deadbeef->pl_item_unref (query->track);
+        free (query);
+        return;
+    }
+
+    NSString *imgFname = [NSString stringWithUTF8String:cover->filename];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSImage *img = [[NSImage alloc] initWithContentsOfFile:imgFname];
         if (img) {
             CoverManager *cm = [CoverManager defaultCoverManager];
             [cm addCoverForTrack:query->track withImage:img];
             cover_callback_info_t *info = query->user_data;
             info->real_callback (img, info->real_user_data);
         }
-    }
 
-    deadbeef->pl_item_unref (query->track);
-    free (query);
+        deadbeef->pl_item_unref (query->track);
+        free (query);
+    });
 }
 
 - (void)addCoverForTrack:(ddb_playItem_t *)track withImage:(NSImage *)img {

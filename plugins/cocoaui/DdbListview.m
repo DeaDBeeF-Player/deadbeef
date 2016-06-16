@@ -282,11 +282,16 @@ int grouptitleheight = 22;
     return col;
 }
 
-- (void)rightMouseDown:(NSEvent *)theEvent {
-    id <DdbListviewDelegate> delegate = [listview delegate];
-    DdbListviewCol_t col = [self columnIndexForCoord:[theEvent locationInWindow]];
-    [delegate contextMenuForColumn:col withEvent:theEvent forView:self];
+- (NSMenu *)menuForEvent:(NSEvent *)event {
+    if (event.buttonNumber == 1
+        || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask))) {
+        id <DdbListviewDelegate> delegate = [listview delegate];
+        DdbListviewCol_t col = [self columnIndexForCoord:[event locationInWindow]];
+        return [delegate contextMenuForColumn:col withEvent:event forView:self];
+    }
+    return nil;
 }
+
 @end
 
 @interface DdbListContentView : NSView {

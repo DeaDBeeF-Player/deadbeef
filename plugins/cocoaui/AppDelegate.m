@@ -791,8 +791,12 @@ void cover_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cove
         return;
     }
 
-    NSImage *img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->filename]];
-    [[g_appDelegate artworkImageView] setImage:img];
+    NSString *imgFname = [NSString stringWithUTF8String:cover->filename];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSImage *img = [[NSImage alloc] initWithContentsOfFile:imgFname];
+        [[g_appDelegate artworkImageView] setImage:img];
+    });
 }
 
 - (void)updateArtworkView {

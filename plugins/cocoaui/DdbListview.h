@@ -42,7 +42,7 @@ typedef intptr_t DdbListviewCol_t;
 - (int)columnMinHeight:(DdbListviewCol_t)col;
 - (void)moveColumn:(DdbListviewCol_t)col to:(DdbListviewCol_t)to;
 - (void)columnsChanged;
-- (void)contextMenuForColumn:(DdbListviewCol_t)col withEvent:(NSEvent*)theEvent forView:(NSView *)view;
+- (NSMenu *)contextMenuForColumn:(DdbListviewCol_t)col withEvent:(NSEvent*)theEvent forView:(NSView *)view;
 - (BOOL)isAlbumArtColumn:(DdbListviewCol_t)col;
 - (DdbListviewRow_t)firstRow;
 - (DdbListviewRow_t)nextRow:(DdbListviewRow_t)row;

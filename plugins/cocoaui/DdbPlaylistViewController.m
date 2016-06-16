@@ -389,7 +389,7 @@ extern DB_functions_t *deadbeef;
 }
 
 // pass col=-1 for "empty space", e.g. when appending new col
-- (void)contextMenuForColumn:(DdbListviewCol_t)col withEvent:(NSEvent*)theEvent forView:(NSView *)view {
+- (NSMenu *)contextMenuForColumn:(DdbListviewCol_t)col withEvent:(NSEvent*)theEvent forView:(NSView *)view {
     _menuColumn = (int)col;
     NSMenu *menu = [[NSMenu alloc] initWithTitle:@"ColumnMenu"];
     [menu setDelegate:(id<NSMenuDelegate>)self];
@@ -418,7 +418,7 @@ extern DB_functions_t *deadbeef;
         [menu insertItem:groupByItem atIndex:5];
     }
 
-    [NSMenu popUpContextMenu:menu withEvent:theEvent forView:view];
+    return menu;
 }
 
 - (BOOL)isAlbumArtColumn:(DdbListviewCol_t)col {
