@@ -145,16 +145,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [[_mainWindow window] setReleasedWhenClosed:NO];
     [[_mainWindow window]  setExcludedFromWindowsMenu:YES];
     [[_mainWindow window] setIsVisible:YES];
-
-/*
-    DdbPlaylistViewController *vc = [[DdbPlaylistViewController alloc] init];
-    NSView *view = [vc view];
-
-    [view setFrame:NSMakeRect(0, [_statusBar frame].size.height+2, [[_window contentView] frame].size.width, [_tabStrip frame].origin.y - [_statusBar frame].size.height - 1)];
-    [view setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-
-    [[_window contentView] addSubview:view];
-    */
 }
 
 - (void)initSearchWindow {
