@@ -1798,6 +1798,10 @@ fetcher_thread (void *none)
             cover_query_t *query = query_pop ();
             deadbeef->mutex_unlock (queue_mutex);
 
+            if (!query) {
+                break;
+            }
+
             /* Make all the callbacks (and free the chain), with data if a file was written */
             if (cover_found) {
                 trace ("artwork fetcher: cover art file found: %s\n", artwork_path);
