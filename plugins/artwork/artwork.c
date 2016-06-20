@@ -962,31 +962,6 @@ make_cache_path (const char *filepath, const char *album, const char *artist, ch
 }
 
 static void
-cover_get_default (ddb_cover_query_t *query, char *outpath, int outpath_size)
-{
-    if (!default_cover) {
-        if (missing_artwork == 1) {
-            /* 1 is the Deadbeef default image */
-            const char *pixmap_dir = deadbeef->get_system_dir (DDB_SYS_DIR_PIXMAP);
-            default_cover = malloc (strlen (pixmap_dir) + 1 + sizeof (NOARTWORK_IMAGE));
-            if (default_cover) {
-                sprintf (default_cover, "%s/%s", pixmap_dir, NOARTWORK_IMAGE);
-            }
-        }
-        else if (missing_artwork == 2 && nocover_path && nocover_path[0]) {
-            /* 2 is a custom image in nocover_path */
-            default_cover = strdup (nocover_path);
-        }
-        if (!default_cover) {
-            /* Everything else, including errors, is an empty image */
-            default_cover = strdup ("");
-        }
-    }
-
-    snprintf (outpath, outpath_size, "%s", default_cover);
-}
-
-static void
 clear_default_cover (void)
 {
     if (default_cover && default_cover[0]) {
@@ -2195,7 +2170,6 @@ static ddb_artwork_plugin_t plugin = {
     .plugin.plugin.message = artwork_message,
     .plugin.plugin.get_actions = artwork_get_actions,
     .cover_get = cover_get,
-    .cover_get_default = cover_get_default,
 };
 
 DB_plugin_t *

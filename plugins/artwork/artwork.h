@@ -50,10 +50,6 @@ typedef struct {
     // finds the cover art, corresponding to the supplied query, and calls the supplied callback with the search results
     void
     (*cover_get) (ddb_cover_query_t *query, ddb_cover_callback_t callback);
-
-    // returns the default cover image path, corresponding to the supplied query
-    void
-    (*cover_get_default) (ddb_cover_query_t *query, char *outpath, int outpath_size);
 } ddb_artwork_plugin_t;
 
 #endif /*__ARTWORK_H*/
