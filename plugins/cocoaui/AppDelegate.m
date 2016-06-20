@@ -605,10 +605,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
         [g_appDelegate performSelectorOnMainThread:@selector(volumeChanged) withObject:nil waitUntilDone:NO];
     }
 
-    if (_id == DB_EV_TRACKINFOCHANGED || _id == DB_EV_PLAYLISTCHANGED || _id == DB_EV_SELCHANGED) {
-        [g_appDelegate updateArtworkView];
-    }
-
     return 0;
 }
 
@@ -766,59 +762,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 
 - (NSMenu *)applicationDockMenu:(NSApplication *)sender {
     return _dockMenu;
-}
-
-ddb_artwork_plugin_t *artwork_plugin;
-
-void cover_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
-    if (!query) {
-        return;
-    }
-    deadbeef->pl_item_unref (query->track);
-    free (query);
-    if (!cover || !cover->filename) {
-        [[g_appDelegate artworkImageView] setImage:nil];
-        return;
-    }
-
-    NSString *imgFname = [NSString stringWithUTF8String:cover->filename];
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSImage *img = [[NSImage alloc] initWithContentsOfFile:imgFname];
-        [[g_appDelegate artworkImageView] setImage:img];
-    });
-}
-
-- (void)updateArtworkView {
-    if (!artwork_plugin) {
-        artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
-    }
-
-    deadbeef->pl_lock ();
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    ddb_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
-    while (it) {
-        if (deadbeef->pl_is_selected (it)) {
-            break;
-        }
-        ddb_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
-
-    deadbeef->plt_unref (plt);
-    deadbeef->pl_unlock ();
-
-    if (!it) {
-        [_artworkImageView setImage: nil];
-        return;
-    }
-
-    ddb_cover_query_t *query = calloc (1, sizeof (ddb_cover_query_t));
-    query->_size = sizeof (ddb_cover_query_t);
-    query->track = it;
-
-    artwork_plugin->cover_get (query, cover_callback);
 }
 
 @end
