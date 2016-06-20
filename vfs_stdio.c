@@ -98,6 +98,7 @@ stdio_close (DB_FILE *stream) {
     free (stream);
 }
 
+#ifndef USE_STDIO
 static int
 fillbuffer (STDIO_FILE *f) {
     assert (f->bufremaining >= 0);
@@ -111,6 +112,7 @@ fillbuffer (STDIO_FILE *f) {
     }
     return f->bufremaining;
 }
+#endif
 
 static size_t
 stdio_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
