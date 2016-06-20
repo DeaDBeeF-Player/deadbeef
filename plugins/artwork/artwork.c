@@ -1730,7 +1730,7 @@ send_query_callbacks (cover_callback_t *callback, ddb_cover_info_t *cover) {
 static cover_query_t *
 query_pop (void) {
     cover_query_t *query = queue;
-    queue = queue->next;
+    queue = queue ? queue->next : NULL;
     if (!queue) {
         queue_tail = NULL;
     }
