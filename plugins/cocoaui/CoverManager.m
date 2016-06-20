@@ -57,16 +57,17 @@ typedef struct {
 } cover_callback_info_t;
 
 static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
+    NSString *imgFname = nil;
+    NSString *resourceName = nil;
     if (error) {
-        deadbeef->pl_item_unref (query->track);
-        free (query);
-        return;
+        resourceName = @"noartwork";
+    }
+    else {
+        imgFname = [NSString stringWithUTF8String:cover->filename];
     }
 
-    NSString *imgFname = [NSString stringWithUTF8String:cover->filename];
-
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSImage *img = [[NSImage alloc] initWithContentsOfFile:imgFname];
+        NSImage *img = imgFname ? [[NSImage alloc] initWithContentsOfFile:imgFname] : [NSImage imageNamed:resourceName];
         if (img) {
             CoverManager *cm = [CoverManager defaultCoverManager];
             [cm addCoverForTrack:query->track withImage:img];
