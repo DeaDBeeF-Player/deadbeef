@@ -10,7 +10,7 @@ static CoverManager *g_DefaultCoverManager = nil;
 
 @implementation CoverManager {
     ddb_artwork_plugin_t *_artwork_plugin;
-    NSImage *_testCover;
+    NSImage *_defaultCover;
     NSMutableDictionary *_cachedCovers[CACHE_SIZE];
     char *_name_tf;
 }
@@ -29,14 +29,14 @@ static CoverManager *g_DefaultCoverManager = nil;
 - (CoverManager *)init {
     self = [super init];
     _artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
-    _testCover = [NSImage imageNamed:@"noartwork.png"];
+    _defaultCover = [NSImage imageNamed:@"noartwork.png"];
     //_name_tf = deadbeef->tf_compile ("$if2(b:%album%-a:%artist%,$if2(b:%album%,$if2(a:%artist,f:%directoryname%/%filename%)))");
     _name_tf = deadbeef->tf_compile ("b:%album%-a:%artist%");
     return self;
 }
 
-- (NSImage *)getTestCover {
-    return _testCover;
+- (NSImage *)defaultCover {
+    return _defaultCover;
 }
 
 - (NSString *)hashForTrack:(DB_playItem_t *)track  {
@@ -58,18 +58,14 @@ typedef struct {
 
 static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
     NSString *imgFname = nil;
-    NSString *resourceName = nil;
-    if (error) {
-        resourceName = @"noartwork";
-    }
-    else {
+    if (!error) {
         imgFname = [NSString stringWithUTF8String:cover->filename];
     }
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSImage *img = imgFname ? [[NSImage alloc] initWithContentsOfFile:imgFname] : [NSImage imageNamed:resourceName];
+        CoverManager *cm = [CoverManager defaultCoverManager];
+        NSImage *img = imgFname ? [[NSImage alloc] initWithContentsOfFile:imgFname] : [cm defaultCover];
         if (img) {
-            CoverManager *cm = [CoverManager defaultCoverManager];
             [cm addCoverForTrack:query->track withImage:img];
             cover_callback_info_t *info = query->user_data;
             info->real_callback (img, info->real_user_data);
