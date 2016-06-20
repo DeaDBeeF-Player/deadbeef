@@ -984,7 +984,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         }
             break;
         case DB_EV_PLAYLISTCHANGED: {
-            if (!p1) {
+            if (!p1 || (p1 & DDB_PLAYLIST_CHANGE_SEARCHRESULT)) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [listview reloadData];
                 });
