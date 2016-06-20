@@ -752,6 +752,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
             nextGroupCoord:(int)grp_next_y
                       xPos:(int)x
                       yPos:(int)y
+                 viewportY:(int)viewportY
                      width:(int)width
                     height:(int)height {
     DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)[self view];
@@ -770,9 +771,15 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     }
 
     int art_x = x + ART_PADDING_HORZ;
-    int min_y = (pinned ? listview.grouptitle_height : y) + ART_PADDING_VERT;
+    int min_y = (pinned ? viewportY+listview.grouptitle_height : y) + ART_PADDING_VERT;
+    int max_y = grp_next_y;
 
-    [image drawInRect:NSMakeRect(art_x, min_y, art_width, art_width)];
+    int ypos = min_y;
+    if (min_y + art_width + ART_PADDING_VERT >= max_y) {
+        ypos = max_y - art_width - ART_PADDING_VERT;
+    }
+
+    [image drawInRect:NSMakeRect(art_x, ypos, art_width, art_width)];
 }
 
 - (void)selectRow:(DdbListviewRow_t)row withState:(BOOL)state {

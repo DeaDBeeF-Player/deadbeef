@@ -325,6 +325,7 @@ int grouptitleheight = 22;
                  isPinnedGroup:(BOOL)isPinnedGroup
                 nextGroupCoord:(int)grp_next_y
                           yPos:(int)y
+                     viewportY:(int)viewportY
                     clipRegion:(NSRect)clip {
     int x = 0;
     id<DdbListviewDelegate> delegate = listview.delegate;
@@ -341,7 +342,7 @@ int grouptitleheight = 22;
             [clr set];
             [NSBezierPath fillRect:NSMakeRect (x, y, w, grp_next_y - y)];
             if (title_height > 0) {
-                [delegate drawAlbumArtForRow:grp->head inColumn:col isPinnedGroup:isPinnedGroup nextGroupCoord:grp_next_y xPos:x yPos:y width:w height:grp->height];
+                [delegate drawAlbumArtForRow:grp->head inColumn:col isPinnedGroup:isPinnedGroup nextGroupCoord:grp_next_y xPos:x yPos:y viewportY:viewportY width:w height:grp->height];
             }
         }
     }
@@ -433,7 +434,7 @@ int grouptitleheight = 22;
 
         // draw album art
         int grp_next_y = grp_y + grp->height;
-        [self renderAlbumArtForGroup:grp isPinnedGroup:pin_grp==grp nextGroupCoord:grp_next_y yPos:grp_y + title_height clipRegion:dirtyRect];
+        [self renderAlbumArtForGroup:grp isPinnedGroup:pin_grp==grp nextGroupCoord:grp_next_y yPos:grp_y + title_height viewportY:vis.origin.y clipRegion:dirtyRect];
 
         #define min(x,y) ((x)<(y)?(x):(y))
         if (pin_grp == grp && clip_y-vis.origin.y <= title_height) {
