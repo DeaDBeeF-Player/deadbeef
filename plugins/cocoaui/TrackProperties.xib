@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
+        <deployment version="1060" identifier="macosx"/>
+        <development version="6300" identifier="xcode"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TrackPropertiesWindowController">
@@ -43,13 +44,12 @@
             <rect key="contentRect" x="167" y="107" width="480" height="339"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
             <view key="contentView" id="iZJ-f1-AAo">
-                <rect key="frame" x="0.0" y="6" width="480" height="339"/>
+                <rect key="frame" x="0.0" y="0.0" width="480" height="339"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField verticalHuggingPriority="750" id="z74-7V-xI3">
                         <rect key="frame" x="20" y="297" width="440" height="22"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="WA0-9S-EHs">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -59,7 +59,6 @@
                     <tabView initialItem="lhD-Ti-6zn" id="WRA-LF-8XP">
                         <rect key="frame" x="13" y="41" width="454" height="254"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <animations/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="Metadata" identifier="1" id="lhD-Ti-6zn">
@@ -77,7 +76,6 @@
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" autosaveColumns="NO" headerView="TRT-0c-OiD" id="3K9-jX-20s" customClass="DdbTableViewRightClickActivate">
                                                         <rect key="frame" x="0.0" y="0.0" width="432" height="190"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <animations/>
                                                         <size key="intercellSpacing" width="3" height="2"/>
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
@@ -111,31 +109,25 @@
                                                         </tableColumns>
                                                     </tableView>
                                                 </subviews>
-                                                <animations/>
                                                 <nil key="backgroundColor"/>
                                             </clipView>
-                                            <animations/>
                                             <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="0uB-0n-ZjV">
                                                 <rect key="frame" x="1" y="119" width="223" height="15"/>
                                                 <autoresizingMask key="autoresizingMask"/>
-                                                <animations/>
                                             </scroller>
                                             <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="sjC-jK-Uwm">
                                                 <rect key="frame" x="224" y="17" width="15" height="102"/>
                                                 <autoresizingMask key="autoresizingMask"/>
-                                                <animations/>
                                             </scroller>
                                             <tableHeaderView key="headerView" id="TRT-0c-OiD">
                                                 <rect key="frame" x="0.0" y="0.0" width="238" height="17"/>
                                                 <autoresizingMask key="autoresizingMask"/>
-                                                <animations/>
                                             </tableHeaderView>
                                             <connections>
                                                 <outlet property="menu" destination="rFk-uf-gVv" id="IjQ-8A-xPw"/>
                                             </connections>
                                         </scrollView>
                                     </subviews>
-                                    <animations/>
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Properties" identifier="2" id="2Mj-Bh-Ca7">
@@ -153,7 +145,6 @@
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="2QI-u0-6vk" id="bz2-tU-emD" customClass="DdbTableViewRightClickActivate">
                                                         <rect key="frame" x="0.0" y="0.0" width="432" height="190"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <animations/>
                                                         <size key="intercellSpacing" width="3" height="2"/>
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
@@ -187,28 +178,22 @@
                                                         </tableColumns>
                                                     </tableView>
                                                 </subviews>
-                                                <animations/>
                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </clipView>
-                                            <animations/>
                                             <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="3F4-Jb-4Tp">
                                                 <rect key="frame" x="1" y="119" width="223" height="15"/>
                                                 <autoresizingMask key="autoresizingMask"/>
-                                                <animations/>
                                             </scroller>
                                             <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="O00-91-QbG">
                                                 <rect key="frame" x="224" y="17" width="15" height="102"/>
                                                 <autoresizingMask key="autoresizingMask"/>
-                                                <animations/>
                                             </scroller>
                                             <tableHeaderView key="headerView" id="2QI-u0-6vk">
                                                 <rect key="frame" x="0.0" y="0.0" width="238" height="17"/>
                                                 <autoresizingMask key="autoresizingMask"/>
-                                                <animations/>
                                             </tableHeaderView>
                                         </scrollView>
                                     </subviews>
-                                    <animations/>
                                 </view>
                             </tabViewItem>
                         </tabViewItems>
@@ -216,7 +201,6 @@
                     <button verticalHuggingPriority="750" id="jxY-7Q-v5B">
                         <rect key="frame" x="14" y="13" width="103" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Configure" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zhY-lZ-dL9">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -228,7 +212,6 @@
                     <button verticalHuggingPriority="750" id="ccs-Rn-ESN">
                         <rect key="frame" x="117" y="13" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Reload" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ejh-9G-xSQ">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -240,7 +223,6 @@
                     <button verticalHuggingPriority="750" id="95R-UB-ln2">
                         <rect key="frame" x="384" y="13" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mL6-Xn-rv1">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -255,7 +237,6 @@ DQ
                     <button verticalHuggingPriority="750" id="T1Z-yz-IPn">
                         <rect key="frame" x="302" y="13" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="lEn-2H-rX9">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -270,7 +251,6 @@ Gw
                     <button verticalHuggingPriority="750" id="f09-Mu-e9x">
                         <rect key="frame" x="226" y="13" width="76" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Apply" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PrG-Dk-zQ3">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -281,7 +261,6 @@ Gw
                         </connections>
                     </button>
                 </subviews>
-                <animations/>
             </view>
             <point key="canvasLocation" x="442" y="176.5"/>
         </window>
@@ -291,13 +270,12 @@ Gw
             <rect key="contentRect" x="139" y="149" width="514" height="62"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
             <view key="contentView" id="N0k-tN-FWw">
-                <rect key="frame" x="0.0" y="5" width="514" height="62"/>
+                <rect key="frame" x="0.0" y="0.0" width="514" height="62"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField verticalHuggingPriority="750" id="sXi-dN-WuM">
                         <rect key="frame" x="20" y="20" width="427" height="22"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="3FT-hs-m6e">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -307,7 +285,6 @@ Gw
                     <button verticalHuggingPriority="750" id="Ts3-9D-i7Q">
                         <rect key="frame" x="460" y="21" width="29" height="19"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="NSStopProgressTemplate" imagePosition="only" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k3m-g1-J7D">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                             <font key="font" metaFont="systemBold" size="12"/>
@@ -317,7 +294,6 @@ Gw
                         </connections>
                     </button>
                 </subviews>
-                <animations/>
             </view>
             <point key="canvasLocation" x="1248" y="28"/>
         </window>
@@ -328,13 +304,12 @@ Gw
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
             <value key="minSize" type="size" width="493" height="263"/>
             <view key="contentView" id="rWc-j3-tF4">
-                <rect key="frame" x="0.0" y="5" width="493" height="263"/>
+                <rect key="frame" x="0.0" y="0.0" width="493" height="263"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="C7J-dX-exC">
                         <rect key="frame" x="18" y="226" width="33" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="MP3" id="BkH-L6-XJE">
                             <font key="font" metaFont="systemBold"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -344,7 +319,6 @@ Gw
                     <button id="pnV-tv-6F6">
                         <rect key="frame" x="30" y="202" width="94" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="check" title="Write ID3v2" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="c67-Ea-KCg">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -356,7 +330,6 @@ Gw
                     <button id="bBF-e0-1cT">
                         <rect key="frame" x="30" y="182" width="91" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="check" title="Strip ID3v2" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="2HW-hT-MQx">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -368,7 +341,6 @@ Gw
                     <button id="qPw-ml-B2c">
                         <rect key="frame" x="128" y="202" width="94" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="check" title="Write ID3v1" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="dgA-jb-3rz">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -380,7 +352,6 @@ Gw
                     <button id="OZR-AQ-7gr">
                         <rect key="frame" x="226" y="202" width="99" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="check" title="Write APEv2" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="NwL-Sc-Mcw">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -392,7 +363,6 @@ Gw
                     <button id="dbC-Xj-n5r">
                         <rect key="frame" x="226" y="182" width="96" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="check" title="Strip APEv2" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="0ZV-GO-OaI">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -404,7 +374,6 @@ Gw
                     <button id="Rbd-3g-GW6">
                         <rect key="frame" x="128" y="182" width="91" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="check" title="Strip ID3v1" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="839-Lz-82A">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -416,7 +385,6 @@ Gw
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="AXD-p9-yL8">
                         <rect key="frame" x="30" y="157" width="88" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ID3v2 version" id="weU-wA-xp6">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -426,7 +394,6 @@ Gw
                     <popUpButton verticalHuggingPriority="750" id="vNc-eC-e1z">
                         <rect key="frame" x="122" y="152" width="354" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Oht-Vf-tGq">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
@@ -446,7 +413,6 @@ Gw
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="gnF-cL-io2">
                         <rect key="frame" x="30" y="128" width="163" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ID3v1 character encoding" id="anM-lS-6sK">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -456,7 +422,6 @@ Gw
                     <textField verticalHuggingPriority="750" id="Mlq-sS-Uzy">
                         <rect key="frame" x="199" y="125" width="274" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="iso8859-1" drawsBackground="YES" id="BG6-uL-zu8">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -469,7 +434,6 @@ Gw
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="2GR-u7-ih4">
                         <rect key="frame" x="18" y="103" width="30" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="APE" id="rSi-RZ-go7">
                             <font key="font" metaFont="systemBold"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -479,7 +443,6 @@ Gw
                     <button id="v1h-NM-qKW">
                         <rect key="frame" x="30" y="79" width="105" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="check" title="Write ID3v2.4" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="wly-cz-D0z">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -491,7 +454,6 @@ Gw
                     <button id="5LG-8B-V5Y">
                         <rect key="frame" x="30" y="59" width="91" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="check" title="Strip ID3v2" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="G9l-gF-jcL">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -503,7 +465,6 @@ Gw
                     <button id="pj6-4k-mZ8">
                         <rect key="frame" x="139" y="79" width="99" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="check" title="Write APEv2" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="qAd-Ol-Mbb">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -515,7 +476,6 @@ Gw
                     <button id="hIg-o4-UUx">
                         <rect key="frame" x="139" y="59" width="96" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="check" title="Strip APEv2" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="zgD-Cu-qAf">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -527,7 +487,6 @@ Gw
                     <button id="u9s-YX-mSj">
                         <rect key="frame" x="381" y="79" width="94" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="check" title="Write ID3v1" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="tNF-xr-F7B">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -539,7 +498,6 @@ Gw
                     <button id="S5W-Sk-8gE">
                         <rect key="frame" x="381" y="59" width="91" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="check" title="Strip ID3v1" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="qrQ-vP-w36">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -551,7 +509,6 @@ Gw
                     <button verticalHuggingPriority="750" id="dKd-kg-lir">
                         <rect key="frame" x="400" y="13" width="76" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="G4j-Pr-T4O">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -566,7 +523,6 @@ Gw
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="cAt-nd-DyC">
                         <rect key="frame" x="266" y="103" width="61" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="WavPack" id="4au-e5-ozt">
                             <font key="font" metaFont="systemBold"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -576,7 +532,6 @@ Gw
                     <button id="9Wb-gR-2Ep">
                         <rect key="frame" x="278" y="59" width="96" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="check" title="Strip APEv2" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="rRb-vH-3sZ">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -588,7 +543,6 @@ Gw
                     <button id="VAe-Oo-Pio">
                         <rect key="frame" x="278" y="79" width="99" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="check" title="Write APEv2" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="wAc-by-ORg">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -598,23 +552,21 @@ Gw
                         </connections>
                     </button>
                 </subviews>
-                <animations/>
             </view>
             <point key="canvasLocation" x="681.5" y="550.5"/>
         </window>
-        <userDefaultsController representsSharedInstance="YES" id="HQE-7J-2CM"/>
         <menu id="rFk-uf-gVv">
             <items>
                 <menuItem title="Edit" id="1QF-k7-M8X">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="editValueAction:" target="-2" id="tjO-gd-axn"/>
-                        <binding destination="-2" name="enabled" keyPath="singleValueSelected" id="ErX-m2-r4N"/>
                         <binding destination="-2" name="hidden" keyPath="singleValueSelected" previousBinding="ErX-m2-r4N" id="2Ph-us-YHR">
                             <dictionary key="options">
                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
                             </dictionary>
                         </binding>
+                        <binding destination="-2" name="enabled" keyPath="singleValueSelected" id="ErX-m2-r4N"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Edit (in-place)" id="8kT-p7-IkM">
@@ -675,13 +627,12 @@ Gw
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
             <value key="minSize" type="size" width="412" height="237"/>
             <view key="contentView" id="YV3-iK-vda">
-                <rect key="frame" x="0.0" y="5" width="412" height="237"/>
+                <rect key="frame" x="0.0" y="0.0" width="412" height="237"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="LfM-af-kG6">
                         <rect key="frame" x="18" y="200" width="376" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Field name:" id="cP6-qb-QKM">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -691,7 +642,6 @@ Gw
                     <textField verticalHuggingPriority="750" id="Gfu-7R-rdm">
                         <rect key="frame" x="20" y="170" width="372" height="22"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="WQs-qQ-kbY">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -701,7 +651,6 @@ Gw
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="zrb-t1-PRc">
                         <rect key="frame" x="18" y="145" width="376" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Field value:" id="ooR-xW-mW4">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -718,7 +667,6 @@ Gw
                                 <textView importsGraphics="NO" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="dyp-1d-Sb5">
                                     <rect key="frame" x="0.0" y="0.0" width="355" height="86"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <animations/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <size key="minSize" width="355" height="86"/>
                                     <size key="maxSize" width="463" height="10000000"/>
@@ -727,25 +675,20 @@ Gw
                                     <size key="maxSize" width="463" height="10000000"/>
                                 </textView>
                             </subviews>
-                            <animations/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         </clipView>
-                        <animations/>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="ddp-Wh-dlO">
                             <rect key="frame" x="-100" y="-100" width="87" height="18"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <animations/>
                         </scroller>
                         <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="RJh-LH-mg4">
-                            <rect key="frame" x="224" y="1" width="15" height="133"/>
+                            <rect key="frame" x="356" y="1" width="15" height="86"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <animations/>
                         </scroller>
                     </scrollView>
                     <button verticalHuggingPriority="750" id="P7h-NM-a8T">
                         <rect key="frame" x="339" y="13" width="59" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7BC-CI-Mh1">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -760,7 +703,6 @@ DQ
                     <button verticalHuggingPriority="750" id="Ojd-2p-eV5">
                         <rect key="frame" x="257" y="13" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Q4W-Rv-bQi">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -775,7 +717,6 @@ Gw
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Zer-HN-RES">
                         <rect key="frame" x="18" y="20" width="273" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Use ; character to separate multiple values." id="sNm-qj-ouB">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -783,7 +724,6 @@ Gw
                         </textFieldCell>
                     </textField>
                 </subviews>
-                <animations/>
             </view>
             <point key="canvasLocation" x="939" y="122.5"/>
         </window>
