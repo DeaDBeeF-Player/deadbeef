@@ -74,7 +74,7 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView identifier="Playback" id="Zmc-ua-enY">
-            <rect key="frame" x="0.0" y="-6" width="485" height="258"/>
+            <rect key="frame" x="0.0" y="0.0" width="485" height="258"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="ewW-aI-9Gc">
@@ -1242,7 +1242,7 @@
             </subviews>
             <point key="canvasLocation" x="412.5" y="1897.5"/>
         </customView>
-        <window identifier="Preferences" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" animationBehavior="default" id="KeT-Jx-1Jt">
+        <window identifier="Preferences" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" animationBehavior="default" id="KeT-Jx-1Jt">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="410" y="584" width="485" height="172"/>
@@ -1294,6 +1294,9 @@
                     <toolbarItem reference="mxa-vX-uKR"/>
                 </defaultToolbarItems>
             </toolbar>
+            <connections>
+                <outlet property="initialFirstResponder" destination="Hpk-X8-hJS" id="Bs8-31-O0l"/>
+            </connections>
             <point key="canvasLocation" x="303.5" y="-67"/>
         </window>
     </objects>
