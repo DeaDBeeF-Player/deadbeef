@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../../gettext.h"
-#include "../artwork/artwork.h"
+#include "../artwork-legacy/artwork.h"
 
 #define E_NOTIFICATION_BUS_NAME "org.freedesktop.Notifications"
 #define E_NOTIFICATION_INTERFACE "org.freedesktop.Notifications"

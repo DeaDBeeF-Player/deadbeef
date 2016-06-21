@@ -46,7 +46,6 @@
 #include "../libparser/parser.h"
 #include "drawing.h"
 #include "trkproperties.h"
-#include "../artwork/artwork.h"
 #include "coverart.h"
 #include "plcommon.h"
 #include "ddbtabstrip.h"

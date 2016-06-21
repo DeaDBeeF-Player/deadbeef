@@ -42,7 +42,6 @@
 #include <FLAC/metadata.h>
 #include <limits.h>
 #include "../../deadbeef.h"
-#include "../artwork/artwork.h"
 #include "../liboggedit/oggedit.h"
 #include "../../strdupa.h"
 
