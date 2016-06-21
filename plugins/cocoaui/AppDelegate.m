@@ -169,12 +169,18 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
         }
     }
 
+    deadbeef->sendmessage(DB_EV_TERMINATE, 0, 0, 0);
+    return NSTerminateLater;
+}
+
+extern void
+main_cleanup_and_quit (void);
+
+- (void)applicationWillTerminate:(NSNotification *)notification {
     [ConverterWindowController converterCleanup];
     [_mainWindow cleanup];
     [_searchWindow cleanup];
-
-    deadbeef->sendmessage(DB_EV_TERMINATE, 0, 0, 0);
-    return NSTerminateLater;
+    main_cleanup_and_quit();
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification

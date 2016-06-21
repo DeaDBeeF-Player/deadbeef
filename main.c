@@ -798,9 +798,6 @@ mainloop_thread (void *ctx) {
 
     // tell the gui thread to finish
     DB_plugin_t *gui = plug_get_gui ();
-#if HAVE_COCOAUI
-    main_cleanup_and_quit();
-#endif
     if (gui) {
         gui->stop ();
     }
