@@ -779,7 +779,9 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         ypos = max_y - art_width - ART_PADDING_VERT;
     }
 
-    [image drawInRect:NSMakeRect(art_x, ypos, art_width, art_width)];
+    NSSize size = [image size];
+
+    [image drawInRect:NSMakeRect(art_x, ypos, art_width, size.height / (size.width / art_width))];
 }
 
 - (void)selectRow:(DdbListviewRow_t)row withState:(BOOL)state {
