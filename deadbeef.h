@@ -98,7 +98,7 @@ extern "C" {
 
 #define DDB_DEPRECATED(x)
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__GNUC_PREREQ)
 // avoid including glibc headers, this is not very portable
 #if defined __GNUC__ && defined __GNUC_MINOR__
 # define __GNUC_PREREQ(maj, min) \
