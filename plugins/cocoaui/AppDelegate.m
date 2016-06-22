@@ -52,10 +52,6 @@ NSInteger firstSelected = -1;
     ungrabMediaKeys ();
 }
 
-- (NSWindow *)mainWindow {
-    return [_mainWindow window];
-}
-
 - (void)volumeChanged {
     [_mainWindow updateVolumeBar];
 }
@@ -109,7 +105,7 @@ static int fileadd_cancelled = 0;
 static void fileadd_begin (ddb_fileadd_data_t *data, void *user_data) {
     fileadd_cancelled = 0;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [NSApp beginSheet:g_appDelegate.addFilesWindow modalForWindow:[g_appDelegate mainWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+        [NSApp beginSheet:g_appDelegate.addFilesWindow modalForWindow:[[g_appDelegate mainWindow] window] modalDelegate:nil didEndSelector:nil contextInfo:nil];
     });
 }
 
@@ -117,7 +113,7 @@ static void fileadd_end (ddb_fileadd_data_t *data, void *user_data) {
     dispatch_async(dispatch_get_main_queue(), ^{
         [g_appDelegate.addFilesWindow orderOut:g_appDelegate];
         [NSApp endSheet:g_appDelegate.addFilesWindow];
-        [g_appDelegate.mainWindow makeKeyAndOrderFront:g_appDelegate];
+        [[[g_appDelegate mainWindow] window] makeKeyAndOrderFront:g_appDelegate];
     });
 }
 
@@ -185,6 +181,7 @@ main_cleanup_and_quit (void);
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    [_mainWindowToggleMenuItem bind:@"state" toObject:[_mainWindow window] withKeyPath:@"visible" options:nil];
     playImg = [NSImage imageNamed:@"btnplayTemplate.pdf"];
     pauseImg = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
     bufferingImg = [NSImage imageNamed:@"bufferingTemplate.pdf"];
@@ -232,9 +229,11 @@ main_cleanup_and_quit (void);
 
 
 - (IBAction)showMainWinAction:(id)sender {
-    NSInteger st = [sender state];
-    [[_mainWindow window] setIsVisible:st!=NSOnState];
-    [sender setState:st==NSOnState?NSOffState:NSOnState];
+    BOOL vis = ![[_mainWindow window] isVisible];
+    [[_mainWindow window] setIsVisible:vis];
+    if (vis) {
+        [[_mainWindow window] makeKeyWindow];
+    }
 }
 
 // playlist delegate
@@ -433,7 +432,7 @@ main_cleanup_and_quit (void);
     [_customSortEntry setStringValue:[NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.custom_sort_tf", "")]];
     deadbeef->pl_unlock ();
     [_customSortDescending setState:deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSOnState : NSOffState];
-    [NSApp beginSheet:_customSortPanel modalForWindow:[self mainWindow] modalDelegate:self didEndSelector:@selector(didEndCustomSort:returnCode:contextInfo:) contextInfo:nil];
+    [NSApp beginSheet:_customSortPanel modalForWindow:[_mainWindow window] modalDelegate:self didEndSelector:@selector(didEndCustomSort:returnCode:contextInfo:) contextInfo:nil];
 
 }
 

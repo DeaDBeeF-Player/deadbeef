@@ -140,7 +140,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
-    self.singleValueSelected = [[_metadataTableView selectedRowIndexes] count] == 1;
+    _singleValueSelected = [[_metadataTableView selectedRowIndexes] count] == 1;
 }
 
 

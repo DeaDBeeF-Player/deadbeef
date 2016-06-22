@@ -601,6 +601,7 @@ CA
                 <outlet property="loopNone" destination="pGf-UH-jjg" id="fd0-Uw-O2Y"/>
                 <outlet property="loopSingle" destination="V06-6E-L7R" id="hQ5-IG-2Gh"/>
                 <outlet property="mainMenu" destination="29" id="MgP-BD-1rr"/>
+                <outlet property="mainWindowToggleMenuItem" destination="my5-in-HKC" id="CK3-pY-XXg"/>
                 <outlet property="orderLinear" destination="utp-dm-oO6" id="xEe-Sa-V93"/>
                 <outlet property="orderRandom" destination="1U2-JB-RUf" id="KxR-mg-sUu"/>
                 <outlet property="orderShuffle" destination="15S-fQ-PaL" id="wGt-mg-WMg"/>
@@ -815,6 +816,7 @@ Gw
             </items>
             <point key="canvasLocation" x="38" y="412.5"/>
         </menu>
+        <userDefaultsController representsSharedInstance="YES" id="16v-aV-PG8"/>
     </objects>
     <resources>
         <image name="NSApplicationIcon" width="128" height="128"/>
