@@ -38,7 +38,18 @@
 extern DB_functions_t *deadbeef;
 
 extern BOOL g_CanQuit;
-@implementation AppDelegate
+@implementation AppDelegate {
+    PreferencesWindowController *_prefWindow;
+    SearchWindowController *_searchWindow;
+
+    NSMenuItem *_dockMenuNPHeading;
+    NSMenuItem *_dockMenuNPTitle;
+    NSMenuItem *_dockMenuNPArtistAlbum;
+    NSMenuItem *_dockMenuNPSeparator;
+
+    char *_titleScript;
+    char *_artistAlbumScript;
+}
 
 DB_playItem_t *prev = NULL;
 int prevIdx = -1;

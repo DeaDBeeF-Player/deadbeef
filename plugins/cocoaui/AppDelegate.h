@@ -29,18 +29,7 @@
 
 #define MAX_COLUMNS 20
 
-@interface AppDelegate : NSObject <NSApplicationDelegate> {
-    PreferencesWindowController *_prefWindow;
-    SearchWindowController *_searchWindow;
-
-    NSMenuItem *_dockMenuNPHeading;
-    NSMenuItem *_dockMenuNPTitle;
-    NSMenuItem *_dockMenuNPArtistAlbum;
-    NSMenuItem *_dockMenuNPSeparator;
-
-    char *_titleScript;
-    char *_artistAlbumScript;
-}
+@interface AppDelegate : NSObject <NSApplicationDelegate>
 
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
