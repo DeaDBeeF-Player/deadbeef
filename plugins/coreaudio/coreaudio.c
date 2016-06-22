@@ -151,6 +151,7 @@ ca_stop (void) {
         return -1;
     }
     state = OUTPUT_STATE_STOPPED;
+    device_id = 0;
 
     return 0;
 }
