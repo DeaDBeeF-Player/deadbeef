@@ -618,7 +618,6 @@
 		2D2A14BA19B6485200AD1EB7 /* gme.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */; };
 		2D2A14F119B64F2900AD1EB7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2D2A24761B4BF37300FBD939 /* au.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D05A8441B4BE600004C913D /* au.c */; };
-		2D3138151D08A52700CBD871 /* libmp4ff.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
 		2D3138251D08AB3400CBD871 /* artwork.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D621F831CD92C9000EB6D22 /* artwork.dylib */; };
 		2D3420E01D0856F0004C136A /* mp4ff_int_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9177501A0E8A3D004BC222 /* mp4ff_int_types.h */; };
 		2D3420E11D0856F0004C136A /* mp4ff.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9177511A0E8A3D004BC222 /* mp4ff.h */; };
@@ -632,6 +631,7 @@
 		2D3420EB1D085764004C136A /* libmp4ff.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
 		2D3420EC1D085771004C136A /* libmp4ff.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
 		2D3420EF1D085787004C136A /* libmp4ff.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
+		2D37CB421D1A91D500667E17 /* libmp4ff.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
 		2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2D3E0E1B1B39AAC20007ECC3 /* btnBrowseTemplate.pdf */; };
 		2D3EBD9D1A9379BD00E5E255 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D3EBD9C1A9379BD00E5E255 /* Preferences.xib */; };
 		2D4458DF1C04F1FF00230939 /* vfs_zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D4458DE1C04F1FF00230939 /* vfs_zip.c */; };
@@ -2040,6 +2040,13 @@
 			remoteInfo = mp4ff;
 		};
 		2D3420ED1D085776004C136A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D3420DB1D0856D5004C136A;
+			remoteInfo = mp4ff;
+		};
+		2D37CB431D1A91DE00667E17 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
 			proxyType = 1;
@@ -4394,7 +4401,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D3138151D08A52700CBD871 /* libmp4ff.dylib in Frameworks */,
+				2D37CB421D1A91D500667E17 /* libmp4ff.dylib in Frameworks */,
 				2D72AE5E1CFE1F7500103AAE /* ImageIO.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8893,6 +8900,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D37CB441D1A91DE00667E17 /* PBXTargetDependency */,
 			);
 			name = artwork;
 			productName = artwork;
@@ -11255,6 +11263,11 @@
 			isa = PBXTargetDependency;
 			target = 2D3420DB1D0856D5004C136A /* mp4ff */;
 			targetProxy = 2D3420ED1D085776004C136A /* PBXContainerItemProxy */;
+		};
+		2D37CB441D1A91DE00667E17 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D3420DB1D0856D5004C136A /* mp4ff */;
+			targetProxy = 2D37CB431D1A91DE00667E17 /* PBXContainerItemProxy */;
 		};
 		2D4459F81C04F2C400230939 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
