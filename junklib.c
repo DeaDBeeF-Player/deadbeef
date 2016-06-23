@@ -2361,17 +2361,18 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
                 trace ("COMM enc is: %d\n", (int)enc);
                 trace ("COMM language is: %s\n", lang);
 
-                char *descr = convstr_id3v2 (4, enc, f24->data+4, f24->size-4, NULL);
+                int outsize = 0;
+                char *descr = convstr_id3v2 (4, enc, f24->data+4, f24->size-4, &outsize);
                 if (!descr) {
                     trace ("failed to decode COMM frame, probably wrong encoding (%d)\n", enc);
                 }
                 else {
                     // find value
                     char *value = descr;
-                    while (*value && *value != '\n') {
+                    while (*value && outsize-- > 0) {
                         value++;
                     }
-                    if (*value != '\n') {
+                    if (*value != 0) {
                         trace ("failed to parse COMM frame, descr was \"%s\"\n", descr);
                     }
                     else {
@@ -3560,7 +3561,8 @@ junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int s
     trace ("COMM language: %s\n", lang);
     trace ("COMM data size: %d\n", synched_size);
 
-    char *descr = convstr_id3v2 (version_major, enc, readptr+4, synched_size-4, NULL);
+    int outsize = 0;
+    char *descr = convstr_id3v2 (version_major, enc, readptr+4, synched_size-4, &outsize);
     if (!descr) {
         trace ("failed to decode COMM frame, probably wrong encoding (%d)\n", enc);
         return -1;
@@ -3569,10 +3571,10 @@ junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int s
     trace ("COMM raw data: %s\n", descr);
     // find value
     char *value = descr;
-    while (*value && *value != '\n') {
+    while (*value && outsize-- > 0) {
         value++;
     }
-    if (*value != '\n') {
+    if (*value != 0) {
         trace ("failed to parse COMM frame, descr was \"%s\"\n", descr);
         free (descr);
         return -1;
@@ -3748,9 +3750,8 @@ junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int sy
     }
 
     char *val = NULL;
-    for (char *p = txx; *p; p++) {
-        if (*p == '\n') {
-            *p = 0;
+    for (char *p = txx; synched_size-- > 0; p++) {
+        if (*p == 0) {
             val = p+1;
             break;
         }

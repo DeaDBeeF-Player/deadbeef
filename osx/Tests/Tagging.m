@@ -317,5 +317,31 @@
     XCTAssert (!strcmp (buffer, "Line1________________________________Line2__Line3"), @"Unexpected data: %s", buffer);
 }
 
+- (void)test_ReadID3v2COMM_ObtainsTheData {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/comm_id3v2.3.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    junk_id3v2_read (it, fp);
+    vfs_fclose (fp);
+
+    DB_metaInfo_t *meta = pl_meta_for_key (it, "comment");
+    XCTAssert(meta, @"Pass");
+    XCTAssert(!strcmp (meta->value, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."), @"Actual value: %s", meta->value);
+    XCTAssert(strlen (meta->value) + 1 == meta->valuesize, @"Pass");
+}
+
+- (void)test_ReadID3v2TXXX_ObtainsTheData {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/txxx_album_artist_id3v2.3.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    junk_id3v2_read (it, fp);
+    vfs_fclose (fp);
+
+    DB_metaInfo_t *meta = pl_meta_for_key (it, "album artist");
+    XCTAssert(meta, @"Pass");
+    XCTAssert(!strcmp (meta->value, "Artist From ID3v2.3 Test File txxx_album_artist_id3v2.3"), @"Actual value: %s", meta->value);
+    XCTAssert(strlen (meta->value) + 1 == meta->valuesize, @"Pass");
+}
+
 
 @end
