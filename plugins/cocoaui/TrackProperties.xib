@@ -561,11 +561,6 @@ Gw
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="editValueAction:" target="-2" id="tjO-gd-axn"/>
-                        <binding destination="-2" name="hidden" keyPath="singleValueSelected" previousBinding="ErX-m2-r4N" id="2Ph-us-YHR">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">NSNegateBoolean</string>
-                            </dictionary>
-                        </binding>
                         <binding destination="-2" name="enabled" keyPath="singleValueSelected" id="ErX-m2-r4N"/>
                     </connections>
                 </menuItem>
@@ -574,11 +569,6 @@ Gw
                     <connections>
                         <action selector="editInPlaceAction:" target="-2" id="LeB-gi-rSK"/>
                         <binding destination="-2" name="enabled" keyPath="singleValueSelected" id="NaZ-Ux-RVn"/>
-                        <binding destination="-2" name="hidden" keyPath="singleValueSelected" previousBinding="NaZ-Ux-RVn" id="PHC-Ed-796">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">NSNegateBoolean</string>
-                            </dictionary>
-                        </binding>
                     </connections>
                 </menuItem>
                 <menuItem title="Remove" id="Ch6-4e-5ZL">
