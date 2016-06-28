@@ -48,18 +48,18 @@ int open_temp_file(const char *fname, char *tempname, FILE **out);
 FILE *open_new_file(const char *outname);
 off_t file_size(const char *fname);
 void cleanup(DB_FILE *in, FILE *out, ogg_sync_state *oy, void *buffer);
-int copy_up_to_codec(DB_FILE *in, FILE *out, ogg_sync_state *oy, ogg_page *og, const off_t start_offset, const off_t link_offset, const char *codec);
-int copy_up_to_header(DB_FILE *in, FILE *out, ogg_sync_state *oy, ogg_page *og, const int codec_serial);
+int64_t copy_up_to_codec(DB_FILE *in, FILE *out, ogg_sync_state *oy, ogg_page *og, const off_t start_offset, const off_t link_offset, const char *codec);
+int64_t copy_up_to_header(DB_FILE *in, FILE *out, ogg_sync_state *oy, ogg_page *og, const int64_t codec_serial);
 long flush_stream(FILE *out, ogg_stream_state *os);
 char *codec_names(DB_FILE *in, ogg_sync_state *oy, const off_t link_offset);
 off_t codec_stream_size(DB_FILE *in, ogg_sync_state *oy, const off_t start_offset, const off_t end_offset, const char *codec);
 char *parse_vendor(const ogg_packet *op, const size_t magic_length);
-int init_read_stream(DB_FILE *in, ogg_sync_state *oy, ogg_stream_state *os, ogg_page *og, const off_t offset, const char *codec);
+int64_t init_read_stream(DB_FILE *in, ogg_sync_state *oy, ogg_stream_state *os, ogg_page *og, const off_t offset, const char *codec);
 int read_packet(DB_FILE *in, ogg_sync_state *oy, ogg_stream_state *os, ogg_page *og, ogg_packet *header, int pages);
 ogg_packet *fill_vc_packet(const char *magic, const size_t magic_length, const char *vendor, const size_t num_tags, char **tags, const bool framing, const size_t padding, ogg_packet *op);
 size_t vc_size(const char *vendor, size_t num_tags, char **tags);
-int copy_remaining_pages(DB_FILE *in, FILE *out, ogg_sync_state *oy, const int codec_serial, uint32_t pageno);
-int write_all_streams(DB_FILE *in, FILE *out, ogg_sync_state *oy, const off_t offset);
-int write_one_stream(DB_FILE *in, FILE *out, ogg_sync_state *oy, const off_t offset, const char *codec);
+int64_t copy_remaining_pages(DB_FILE *in, FILE *out, ogg_sync_state *oy, const int64_t codec_serial, uint32_t pageno);
+int64_t write_all_streams(DB_FILE *in, FILE *out, ogg_sync_state *oy, const off_t offset);
+int64_t write_one_stream(DB_FILE *in, FILE *out, ogg_sync_state *oy, const off_t offset, const char *codec);
 
 #endif /* __OGGEDIT_INT_H */

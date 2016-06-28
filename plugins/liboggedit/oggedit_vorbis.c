@@ -50,7 +50,7 @@ static ptrdiff_t check_vorbis_headers(DB_FILE *in, ogg_sync_state *oy, const off
 {
     ogg_stream_state os;
     ogg_page og;
-    const int serial = init_read_stream(in, oy, &os, &og, offset, VORBISNAME);
+    const int64_t serial = init_read_stream(in, oy, &os, &og, offset, VORBISNAME);
     if (serial <= OGGEDIT_EOF)
         return serial;
 
@@ -79,14 +79,14 @@ static ptrdiff_t check_vorbis_headers(DB_FILE *in, ogg_sync_state *oy, const off
     return vc.bytes;
 }
 
-static long write_vorbis_tags(FILE *out, const int serial, const char *vendor, const size_t num_tags, char **tags, const size_t padding, ogg_packet *codebooks)
+static long write_vorbis_tags(FILE *out, const int64_t serial, const char *vendor, const size_t num_tags, char **tags, const size_t padding, ogg_packet *codebooks)
 {
     ogg_packet op;
     if (!fill_vc_packet(VCMAGIC, strlen(VCMAGIC), vendor, num_tags, tags, true, padding, &op))
         return OGGEDIT_ALLOCATION_FAILURE;
 
     ogg_stream_state os;
-    if (ogg_stream_init(&os, serial))
+    if (ogg_stream_init(&os, (uint32_t)serial))
         return OGGEDIT_FAILED_TO_INIT_STREAM;
     os.b_o_s = 1;
     os.pageno = 1;
@@ -137,13 +137,16 @@ off_t oggedit_write_vorbis_metadata(DB_FILE *in, const char *fname, const off_t 
 
     /* Write pages until the correct comment header */
     ogg_page og;
-    const int vorbis_serial = copy_up_to_codec(in, out, &oy, &og, *tempname ? 0 : offset, offset, VORBISNAME);
+    int64_t vorbis_serial = copy_up_to_codec(in, out, &oy, &og, *tempname ? 0 : offset, offset, VORBISNAME);
     if (vorbis_serial <= OGGEDIT_EOF) {
         res = vorbis_serial;
         goto cleanup;
     }
-    if ((res = copy_up_to_header(in, out, &oy, &og, vorbis_serial)) <= OGGEDIT_EOF)
+    vorbis_serial = copy_up_to_header(in, out, &oy, &og, vorbis_serial);
+    if (vorbis_serial <= OGGEDIT_EOF) {
+        res = vorbis_serial;
         goto cleanup;
+    }
     const long pageno = write_vorbis_tags(out, vorbis_serial, vendor, num_tags, tags, padding, &codebooks);
     if (pageno < OGGEDIT_EOF) {
         res = pageno;
@@ -152,8 +155,11 @@ off_t oggedit_write_vorbis_metadata(DB_FILE *in, const char *fname, const off_t 
 
     /* If we have tempfile, copy the remaining pages */
     if (*tempname) {
-        if ((res = copy_remaining_pages(in, out, &oy, vorbis_serial, pageno)) <= OGGEDIT_EOF)
+        vorbis_serial = copy_remaining_pages(in, out, &oy, vorbis_serial, pageno);
+        if (vorbis_serial <= OGGEDIT_EOF) {
+            res = vorbis_serial;
             goto cleanup;
+        }
         if (rename(tempname, fname)) {
             res = OGGEDIT_RENAME_FAILED;
             goto cleanup;
