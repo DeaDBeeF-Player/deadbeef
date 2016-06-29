@@ -4093,7 +4093,7 @@ static void process_playing(DUMB_IT_SIGRENDERER *sigrenderer, IT_PLAYING *playin
 	playing->sample_vibrato_time += playing->sample->vibrato_speed;
 }
 
-#if (defined(_MSC_VER) && _MSC_VER < 1800) || defined(__ANDROID__)
+#if (defined(_MSC_VER) && _MSC_VER < 1800) || defined(ANDROID)
 static float log2(float x) {return (float)log(x)/(float)log(2.0f);}
 #endif
 
