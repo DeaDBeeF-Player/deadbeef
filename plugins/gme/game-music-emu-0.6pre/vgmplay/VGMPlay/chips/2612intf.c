@@ -98,10 +98,10 @@ static stream_sample_t* DUMMYBUF[0x02] = {NULL, NULL};
 void ym2612_update_request(void *param)
 {
 	ym2612_state *info = (ym2612_state *)param;
-	if (!info) {
-		return;
-	}
 	//stream_update(info->stream);
+
+	if (!param)
+		return;
 	
 	switch(info->EMU_CORE)
 	{

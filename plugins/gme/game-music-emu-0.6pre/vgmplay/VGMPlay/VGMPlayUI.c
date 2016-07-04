@@ -131,6 +131,7 @@ static UINT8 Show95Cmds;
 
 extern float VolumeLevel;
 extern bool SurroundSound;
+extern UINT8 HardStopOldVGMs;
 extern bool FadeRAWLog;
 static UINT8 LogToWave;
 //extern bool FullBufFill;
@@ -1105,6 +1106,12 @@ static void ReadOptions(const char* AppName)
 				{
 					PauseTimeJ = strtoul(RStr, NULL, 0);
 				}
+				else if (! stricmp_u(LStr, "HardStopOld"))
+				{
+					HardStopOldVGMs = (UINT8)strtoul(RStr, &TempPnt, 0);
+					if (TempPnt == RStr)
+						HardStopOldVGMs = GetBoolFromStr(RStr) ? 0x01 : 0x00;
+				}
 				else if (! stricmp_u(LStr, "FadeRAWLogs"))
 				{
 					FadeRAWLog = GetBoolFromStr(RStr);
@@ -2004,7 +2011,7 @@ static void ShowVGMTag(void)
 	}
 	else
 	{
-#if (defined(_MSC_VER) && _MSC_VER < 1400) || defined(__MINGW32__)
+#if (defined(_MSC_VER) && _MSC_VER < 1400)// || defined(__MINGW32__)
 		swprintf(TitleStr, L"%.*ls", 0x70, TitleTag);
 #else
 		swprintf(TitleStr, 0x80, L"%.*ls", 0x70, TitleTag);
@@ -2014,7 +2021,7 @@ static void ShowVGMTag(void)
 	
 	if (wcslen(GameTag) && StrLen < 0x6C)
 	{
-#if (defined(_MSC_VER) && _MSC_VER < 1400) || defined(__MINGW32__)
+#if (defined(_MSC_VER) && _MSC_VER < 1400)// || defined(__MINGW32__)
 		swprintf(TitleStr + StrLen, L" (%.*ls)", 0x70 - 3 - StrLen, GameTag);
 #else
 		swprintf(TitleStr + StrLen, 0x80, L" (%.*ls)", 0x70 - 3 - StrLen, GameTag);

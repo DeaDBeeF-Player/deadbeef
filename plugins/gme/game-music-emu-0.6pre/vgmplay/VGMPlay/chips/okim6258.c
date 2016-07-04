@@ -19,7 +19,9 @@
 #include <math.h>
 #include "okim6258.h"
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 #define COMMAND_STOP		(1 << 0)
 #define COMMAND_PLAY		(1 << 1)
@@ -72,6 +74,8 @@ struct _okim6258_state
 
 	UINT8 Iternal10Bit;
 	UINT8 DCRemoval;
+    
+    UINT8 mute;
 };
 
 /* step size index shift table */
@@ -171,6 +175,7 @@ void okim6258_update(void *param, stream_sample_t **outputs, int samples)
 	//stream_sample_t *buffer = outputs[0];
 	stream_sample_t *bufL = outputs[0];
 	stream_sample_t *bufR = outputs[1];
+    int mute = chip->mute;
 
 	//memset(outputs[0], 0, samples * sizeof(*outputs[0]));
 
@@ -231,8 +236,16 @@ void okim6258_update(void *param, stream_sample_t **outputs, int samples)
 			nibble_shift ^= 4;
 
 			//*buffer++ = sample;
-			*bufL++ = (chip->pan & 0x02) ? 0x00 : sample;
-			*bufR++ = (chip->pan & 0x01) ? 0x00 : sample;
+            if (mute)
+            {
+                *bufL++ = 0;
+                *bufR++ = 0;
+            }
+            else
+            {
+                *bufL++ = (chip->pan & 0x02) ? 0x00 : sample;
+                *bufR++ = (chip->pan & 0x01) ? 0x00 : sample;
+            }
 			samples--;
 		}
 
@@ -251,6 +264,12 @@ void okim6258_update(void *param, stream_sample_t **outputs, int samples)
 	}
 }
 
+
+void okim6258_mute(void *ptr, int mute)
+{
+    okim6258_state *chip = (okim6258_state *)ptr;
+    chip->mute = mute;
+}
 
 
 /**********************************************************************************************
@@ -386,7 +405,7 @@ void okim6258_set_divider(void *_info, int val)
 {
 	//okim6258_state *info = get_safe_token(device);
 	okim6258_state *info = (okim6258_state *)_info;
-	int divider = dividers[val];
+	//int divider = dividers[val];
 
 	info->divider = dividers[val];
 	//stream_set_sample_rate(info->stream, info->master_clock / divider);
@@ -483,7 +502,9 @@ static void okim6258_data_w(void *_info, /*offs_t offset, */UINT8 data)
 	info->data_buf_pos &= 0xF3;
 	if ((info->data_buf_pos >> 4) == (info->data_buf_pos & 0x0F))
 	{
+#ifdef _DEBUG
 		logerror("Warning: FIFO full!\n");
+#endif
 		info->data_buf_pos = (info->data_buf_pos & 0xF0) | ((info->data_buf_pos-1) & 0x03);
 	}
 	info->data_empty = 0x00;
@@ -539,7 +560,9 @@ static void okim6258_ctrl_w(void *_info, /*offs_t offset, */UINT8 data)
 
 	if (data & COMMAND_RECORD)
 	{
+#ifdef _DEBUG
 		logerror("M6258: Record enabled\n");
+#endif
 		info->status |= STATUS_RECORDING;
 	}
 	else

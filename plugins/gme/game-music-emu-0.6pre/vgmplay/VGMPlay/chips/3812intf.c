@@ -16,7 +16,7 @@
 * NOTES
 *
 ******************************************************************************/
-#include <memory.h>
+#include <string.h>
 
 #include <stdlib.h>
 #include "mamedef.h"
@@ -32,7 +32,9 @@
 #define OPLTYPE_IS_OPL2
 #include "adlibemu.h"
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 
 #define EC_DBOPL	0x00	// DosBox OPL (AdLibEmu)
@@ -62,13 +64,15 @@ struct _ym3812_state
 }*/
 
 
-
+#ifdef ENABLE_ALL_CORES
 static void IRQHandler(void *param,int irq)
 {
-	ym3812_state *info = (ym3812_state *)param;
+	//ym3812_state *info = (ym3812_state *)param;
 	//if (info->intf->handler) (info->intf->handler)(info->device, irq ? ASSERT_LINE : CLEAR_LINE);
 	//if (info->intf->handler) (info->intf->handler)(irq ? ASSERT_LINE : CLEAR_LINE);
 }
+#endif
+
 /*static TIMER_CALLBACK( timer_callback_0 )
 {
 	ym3812_state *info = (ym3812_state *)ptr;
@@ -82,9 +86,10 @@ static TIMER_CALLBACK( timer_callback_1 )
 }*/
 
 //static void TimerHandler(void *param,int c,attotime period)
+#ifdef ENABLE_ALL_CORES
 static void TimerHandler(void *param,int c,int period)
 {
-	ym3812_state *info = (ym3812_state *)param;
+	//ym3812_state *info = (ym3812_state *)param;
 	//if( attotime_compare(period, attotime_zero) == 0 )
 	if( period == 0 )
 	{	/* Reset FM Timer */
@@ -95,6 +100,7 @@ static void TimerHandler(void *param,int c,int period)
 		//timer_adjust_oneshot(info->timer[c], period, 0);
 	}
 }
+#endif
 
 
 //static STREAM_UPDATE( ym3812_stream_update )

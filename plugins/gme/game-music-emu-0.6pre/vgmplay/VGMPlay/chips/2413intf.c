@@ -19,7 +19,9 @@
 #endif
 #define EC_EMU2413	0x00	// EMU2413 core from in_vgm, value 0 because it's better than MAME
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 /* for stream system */
 typedef struct _ym2413_state ym2413_state;
@@ -76,6 +78,7 @@ void ym2413_stream_update(void *_info, stream_sample_t **outputs, int samples)
 	}
 }
 
+#ifdef ENABLE_ALL_CORES
 static stream_sample_t* DUMMYBUF[0x02] = {NULL, NULL};
 
 static void _stream_update(void *param, int interval)
@@ -95,6 +98,7 @@ static void _stream_update(void *param, int interval)
 		break;
 	}
 }
+#endif
 
 //static DEVICE_START( ym2413 )
 int device_start_ym2413(void **_info, int EMU_CORE, int clock, int CHIP_SAMPLING_MODE, int CHIP_SAMPLE_RATE)

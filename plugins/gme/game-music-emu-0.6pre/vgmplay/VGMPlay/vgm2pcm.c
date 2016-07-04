@@ -27,7 +27,6 @@ int main(int argc, char *argv[]) {
     FILE *outputFile;
     void *vgmp;
     VGM_PLAYER *p;
-    int EndPlay;
 
     if (argc < 3) {
         fputs("usage: vgm2pcm vgm_file pcm_file\n", stderr);
@@ -58,8 +57,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    EndPlay = 0;
-    while (!EndPlay) {
+    while (!p->EndPlay) {
         UINT32 bufferSize = p->SampleRate;
         bufferedLength = FillBuffer(vgmp, sampleBuffer, bufferSize);
         if (bufferedLength) {
@@ -73,8 +71,6 @@ int main(int argc, char *argv[]) {
                 fputBE16(sampleData[currentSample], outputFile);
             }
         }
-        if (bufferedLength < bufferSize)
-            EndPlay = 1;
     }
 
     StopVGM(vgmp);

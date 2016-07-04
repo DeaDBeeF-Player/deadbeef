@@ -21,6 +21,8 @@ void device_reset_upd7759(void *chip);
 int device_start_upd7759(void **chip, int clock);
 void device_stop_upd7759(void *chip);
 
+void upd7759_mute(void *chip, int mute);
+
 //void upd7759_set_bank_base(running_device *device, offs_t base);
 
 //void upd7759_reset_w(running_device *device, UINT8 data);

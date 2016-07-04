@@ -9,12 +9,14 @@
 
 #include "mamedef.h"
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 //#include "sndintrf.h"
 //#include "streams.h"
 #include "ym2151.h"
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 
 /* undef this to not use MAME timer system */
@@ -1118,7 +1120,7 @@ void ym2151_write_reg(void *_chip, int r, int v)
 				chip->status &= ~1;
 				timer_set(chip->device->machine, attotime_zero,chip,0,irqAoff_callback);
 #else
-				int oldstate = chip->status & 3;
+				//int oldstate = chip->status & 3;
 				chip->status &= ~1;
 				//if ((oldstate==1) && (chip->irqhandler)) (*chip->irqhandler)(chip->device, 0);
 #endif
@@ -1130,7 +1132,7 @@ void ym2151_write_reg(void *_chip, int r, int v)
 				chip->status &= ~2;
 				timer_set(chip->device->machine, attotime_zero,chip,0,irqBoff_callback);
 #else
-				int oldstate = chip->status & 3;
+				//int oldstate = chip->status & 3;
 				chip->status &= ~2;
 				//if ((oldstate==2) && (chip->irqhandler)) (*chip->irqhandler)(chip->device, 0);
 #endif
@@ -2402,7 +2404,7 @@ INLINE signed int acc_calc(signed int value)
 */
 void ym2151_update_one(void *chip, SAMP **buffers, int length)
 {
-	int i, chn;
+	int i; // , chn;
 	signed int outl,outr;
 	SAMP *bufL, *bufR;
 
@@ -2422,7 +2424,7 @@ void ym2151_update_one(void *chip, SAMP **buffers, int length)
 			PSG->tim_B_val += PSG->tim_B_tab[ PSG->timer_B_index ];
 			if ( PSG->irq_enable & 0x08 )
 			{
-				int oldstate = PSG->status & 3;
+				//int oldstate = PSG->status & 3;
 				PSG->status |= 2;
 				//if ((!oldstate) && (PSG->irqhandler)) (*PSG->irqhandler)(chip->device, 1);
 			}
@@ -2500,7 +2502,7 @@ void ym2151_update_one(void *chip, SAMP **buffers, int length)
 				PSG->tim_A_val += PSG->tim_A_tab[ PSG->timer_A_index ];
 				if (PSG->irq_enable & 0x04)
 				{
-					int oldstate = PSG->status & 3;
+					//int oldstate = PSG->status & 3;
 					PSG->status |= 1;
 					//if ((!oldstate) && (PSG->irqhandler)) (*PSG->irqhandler)(chip->device, 1);
 				}

@@ -41,7 +41,7 @@
 
 #include "mamedef.h"
 #include <stdlib.h>	// for rand
-#include <memory.h>	// for memset
+#include <string.h>	// for memset
 //#include "emu.h"
 #include "gb.h"
 //#include "streams.h"

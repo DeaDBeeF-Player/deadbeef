@@ -5,7 +5,7 @@
 // (Custom Driver to handle PCM Streams of YM2612 DAC and PWM.)
 //
 // Written on 3 February 2011 by Valley Bell
-// Last Update: 13 April 2014
+// Last Update: 04 October 2015
 //
 // Only for usage in non-commercial, VGM file related software.
 
@@ -17,11 +17,11 @@
 */
 
 #include <stdlib.h>
+
 #include "mamedef.h"
 #include "dac_control.h"
 
-//#include "../ChipMapper.h"
-void chip_reg_write(void *param, UINT8 ChipType, UINT8 ChipID, UINT8 Port, UINT8 Offset, UINT8 Data);
+#include "../ChipMapper.h"
 
 #define DAC_SMPL_RATE	chip->SampleRate
 
@@ -57,7 +57,9 @@ typedef struct _dac_control
 	UINT32 SampleRate;
 } dac_control;
 
+#ifndef NULL
 #define NULL	(void*)0
+#endif
 
 INLINE void daccontrol_SendCommand(dac_control *chip)
 {
@@ -175,10 +177,31 @@ INLINE void daccontrol_SendCommand(dac_control *chip)
 		Command = (chip->DstCommand & 0x00FF) >> 0;
 		Data = ChipData[0x00];
 		
-		if (Port != 0xFF)	// Send Channel Select
+		if (Port == 0xFF)
+		{
+			chip_reg_write(chip->param, chip->DstChipType, chip->DstChipID, 0x00, Command & 0x0F, Data);
+		}
+		else
+		{
+			UINT8 prevChn;
+			
+			prevChn = Port;	// by default don't restore channel
+			// get current channel for supported chips
+			if (chip->DstChipType == 0x05)
+				;	// TODO
+			else if (chip->DstChipType == 0x05)
+				;	// TODO
+			else if (chip->DstChipType == 0x1B)
+				prevChn = chip_reg_read(chip->param, 0x1B, chip->DstChipID, 0x00, 0x00);
+			
+			// Send Channel Select
 			chip_reg_write(chip->param, chip->DstChipType, chip->DstChipID, 0x00, Command >> 4, Port);
-		// Send Data
-		chip_reg_write(chip->param, chip->DstChipType, chip->DstChipID, 0x00, Command & 0x0F, Data);
+			// Send Data
+			chip_reg_write(chip->param, chip->DstChipType, chip->DstChipID, 0x00, Command & 0x0F, Data);
+			// restore old channel
+			if (prevChn != Port)
+				chip_reg_write(chip->param, chip->DstChipType, chip->DstChipID, 0x00, Command >> 4, prevChn);
+		}
 		break;
 		// Generic support: 8-bit Register, 16-bit Data
 	case 0x1F:	// QSound

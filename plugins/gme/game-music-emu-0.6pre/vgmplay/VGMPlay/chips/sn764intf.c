@@ -18,7 +18,9 @@
 #define EC_MAXIM	0x01	// SN76489 core by Maxim (from in_vgm)
 #endif
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 /* for stream system */
 typedef struct _sn764xx_state sn764xx_state;

@@ -34,7 +34,7 @@
 #include <stdio.h>
 #endif
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 #include "ymf271.h"
 
 #ifndef __cplusplus	// C++ already has the bool-type
@@ -43,7 +43,9 @@
 typedef	unsigned char	bool;
 #endif // !__cplusplus
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 //#define DEVCB_NULL							{ DEVCB_TYPE_NULL }
 #define DEVCB_NULL							DEVCB_TYPE_NULL
@@ -1243,7 +1245,9 @@ static void ymf271_write_fm(YMF271Chip *chip, int bank, UINT8 address, UINT8 dat
 
 	if (groupnum == -1)
 	{
+#ifdef _DEBUG
 		logerror("ymf271_write_fm invalid group %02X %02X\n", address, data);
+#endif
 		return;
 	}
 
@@ -1340,7 +1344,9 @@ static void ymf271_write_pcm(YMF271Chip *chip, UINT8 address, UINT8 data)
 	YMF271Slot *slot;
 	if (slotnum == -1)
 	{
+#ifdef _DEBUG
 		logerror("ymf271_write_pcm invalid slot %02X %02X\n", address, data);
+#endif
 		return;
 	}
 	slot = &chip->slots[slotnum];
@@ -1465,7 +1471,9 @@ static void ymf271_write_timer(YMF271Chip *chip, UINT8 address, UINT8 data)
 		YMF271Group *group;
 		if (groupnum == -1)
 		{
+#ifdef _DEBUG
 			logerror("ymf271_write_timer invalid group %02X %02X\n", address, data);
+#endif
 			return;
 		}
 		group = &chip->groups[groupnum];

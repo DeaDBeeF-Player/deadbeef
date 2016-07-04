@@ -32,7 +32,7 @@
 
 static const int PSGVolumeValues[16] = {
 	/* These values are taken from a real SMS2's output */
-/*	{892,892,892,760,623,497,404,323,257,198,159,123,96,75,60,0}, /* I can't remember why 892... :P some scaling I did at some point */
+/*	{892,892,892,760,623,497,404,323,257,198,159,123,96,75,60,0},*/ /* I can't remember why 892... :P some scaling I did at some point */
 	/* these values are true volumes for 2dB drops at each step (multiply previous by 10^-0.1) */
 	/*1516,1205,957,760,603,479,381,303,240,191,152,120,96,76,60,0*/
 // The MAME core uses 0x2000 as maximum volume (0x1000 for bipolar output)

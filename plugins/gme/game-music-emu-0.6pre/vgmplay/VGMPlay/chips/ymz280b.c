@@ -36,11 +36,13 @@
 #ifdef _DEBUG
 #include <stdio.h>
 #endif
-#include <memory.h>
+#include <string.h>
 #include <stdlib.h>
 #include "ymz280b.h"
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 static void update_irq_state_timer_common(void *param, int voicenum);
 
@@ -1157,7 +1159,9 @@ static void write_to_register(ymz280b_state *chip, int data)
 			case 0x80: // d0-2: DSP Rch, d3: enable Rch (0: yes, 1: no), d4-6: DSP Lch, d7: enable Lch (0: yes, 1: no)
 			case 0x81: // d0: enable control of $82 (0: yes, 1: no)
 			case 0x82: // DSP data
+#ifdef _DEBUG
 				logerror("YMZ280B: DSP register write %02X = %02X\n", chip->current_register, data);
+#endif
 				break;
 
 			case 0x84:		/* ROM readback / RAM write (high) */

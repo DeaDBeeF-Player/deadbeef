@@ -26,9 +26,11 @@
 //#include "fm.h"
 #include "fmopl.h"
 
-#include <memory.h>
+#include <string.h>
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 
 typedef struct _y8950_state y8950_state;
@@ -54,7 +56,7 @@ struct _y8950_state
 
 static void IRQHandler(void *param,int irq)
 {
-	y8950_state *info = (y8950_state *)param;
+	//y8950_state *info = (y8950_state *)param;
 	//if (info->intf->handler) (info->intf->handler)(info->device, irq ? ASSERT_LINE : CLEAR_LINE);
 	//if (info->intf->handler) (info->intf->handler)(irq ? ASSERT_LINE : CLEAR_LINE);
 }
@@ -71,7 +73,7 @@ static TIMER_CALLBACK( timer_callback_1 )
 //static void TimerHandler(void *param,int c,attotime period)
 static void TimerHandler(void *param,int c,int period)
 {
-	y8950_state *info = (y8950_state *)param;
+	//y8950_state *info = (y8950_state *)param;
 	//if( attotime_compare(period, attotime_zero) == 0 )
 	if( period == 0 )
 	{	/* Reset FM Timer */
@@ -86,7 +88,7 @@ static void TimerHandler(void *param,int c,int period)
 
 static unsigned char Y8950PortHandler_r(void *param)
 {
-	y8950_state *info = (y8950_state *)param;
+	//y8950_state *info = (y8950_state *)param;
 	/*if (info->intf->portread)
 		return info->intf->portread(0);*/
 	return 0;
@@ -94,14 +96,14 @@ static unsigned char Y8950PortHandler_r(void *param)
 
 static void Y8950PortHandler_w(void *param,unsigned char data)
 {
-	y8950_state *info = (y8950_state *)param;
+	//y8950_state *info = (y8950_state *)param;
 	/*if (info->intf->portwrite)
 		info->intf->portwrite(0,data);*/
 }
 
 static unsigned char Y8950KeyboardHandler_r(void *param)
 {
-	y8950_state *info = (y8950_state *)param;
+	//y8950_state *info = (y8950_state *)param;
 	/*if (info->intf->keyboardread)
 		return info->intf->keyboardread(0);*/
 	return 0;
@@ -109,7 +111,7 @@ static unsigned char Y8950KeyboardHandler_r(void *param)
 
 static void Y8950KeyboardHandler_w(void *param,unsigned char data)
 {
-	y8950_state *info = (y8950_state *)param;
+	//y8950_state *info = (y8950_state *)param;
 	/*if (info->intf->keyboardwrite)
 		info->intf->keyboardwrite(0,data);*/
 }

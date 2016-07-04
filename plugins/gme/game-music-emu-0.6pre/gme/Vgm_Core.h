@@ -38,6 +38,13 @@ public:
 
 	// Skips the specified number of samples
 	void skip_( int count );
+    
+    int get_channel_count();
+    
+    char* get_voice_name(int channel);
+    void free_voice_name(char *);
+    
+    void set_mute(int mask);
 
 // Implementation
 public:

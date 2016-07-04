@@ -35,11 +35,13 @@
 //#include "streams.h"
 #include "mamedef.h"
 #include <math.h>
-#include <memory.h>
+#include <string.h>
 #include <stdlib.h>
 #include "multipcm.h"
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 //????
 #define MULTIPCM_CLOCKDIV   	(180.0)
@@ -760,7 +762,7 @@ void multipcm_write_rom(void *_info, offs_t ROMSize, offs_t DataStart, offs_t Da
 	
 	if (ptChip->ROMSize != ROMSize)
 	{
-		ptChip->ROM = (UINT8*)realloc(ptChip->ROM, ROMSize);
+		ptChip->ROM = (INT8*)realloc(ptChip->ROM, ROMSize);
 		ptChip->ROMSize = ROMSize;
 		
 		for (ptChip->ROMMask = 1; ptChip->ROMMask < ROMSize; ptChip->ROMMask <<= 1)
