@@ -46,7 +46,7 @@
 static DB_conf_item_t *conf_items;
 static int changed;
 static uintptr_t mutex;
-static disable_saving;
+static int disable_saving;
 
 void
 conf_init (void) {
