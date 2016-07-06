@@ -42,6 +42,8 @@ static const gchar introspection_xml[] =
         "    <property type='s' name='Title' access='read'/>"
         "    <property type='s' name='Status' access='read'/>"
         "    <property type='u' name='WindowId' access='read'/>"
+        "    <property type='o' name='Menu' access='read'/>"
+        "    <property type='b' name='ItemIsMenu' access='read'/>"
         "    <property type='s' name='IconName' access='read'/>"
         "    <property type='a(iiay)' name='IconPixmap' access='read'/>"
         "    <property type='s' name='OverlayIconName' access='read'/>"
@@ -572,7 +574,7 @@ static GVariant *
 handle_get_property(GDBusConnection *connection, const gchar *sender,
         const gchar *object_path, const gchar *interface_name,
         const gchar *property_name, GError **error, gpointer user_data) {
-    trace("StatusNotifier: handle_get_property()\n");
+    trace("StatusNotifier: handle_get_property(\"%s\")\n", property_name);
     GVariant *ret;
 
     StatusNotifierItem *instance = (StatusNotifierItem *) user_data;
@@ -588,6 +590,10 @@ handle_get_property(GDBusConnection *connection, const gchar *sender,
         ret = g_variant_new_string(nn(instance->status));
     else if (g_strcmp0(property_name, "WindowId") == 0)
         ret = g_variant_new_uint32(instance->windowid);
+    else if (g_strcmp0(property_name, "Menu") == 0)
+        ret = g_variant_new_object_path ("/MenuBar"); // FIXME: this needs to be an actual dbusmenu object path
+    else if (g_strcmp0(property_name, "ItemIsMenu") == 0)
+        ret = g_variant_new_boolean(FALSE);
     else if (g_strcmp0(property_name, "IconName") == 0)
         ret = g_variant_new_string(nn(instance->iconname));
     else if (g_strcmp0(property_name, "IconPixmap") == 0)
