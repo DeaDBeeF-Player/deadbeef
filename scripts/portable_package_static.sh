@@ -28,7 +28,6 @@ cd portable/$ARCH
 tar jcvf ../../portable_out/build/$OUTNAME\
     $SRCDIR/deadbeef\
     $SRCDIR/deadbeef.png\
-    $SRCDIR/.ddb_portable\
     $DOCDIR\
     $PLUGDIR/aac.so\
     $PLUGDIR/adplug.so\

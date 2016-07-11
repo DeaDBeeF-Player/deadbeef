@@ -834,9 +834,9 @@ main (int argc, char *argv[]) {
         *e = 0;
         struct stat st;
         char checkpath[PATH_MAX];
-        snprintf (checkpath, sizeof (checkpath), "%s/.ddb_portable", dbinstalldir);
+        snprintf (checkpath, sizeof (checkpath), "%s/plugins", dbinstalldir);
         if (!stat (checkpath, &st)) {
-            if (S_ISREG (st.st_mode)) {
+            if (S_ISDIR (st.st_mode)) {
                 portable = 1;
             }
         }
