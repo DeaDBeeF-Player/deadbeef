@@ -237,12 +237,14 @@ read_sector(cdda_info_t *info)
     if (info->paranoia) {
         const int16_t *p_readbuf = paranoia_read(info->paranoia, NULL);
         if (p_readbuf) {
+            info->current_sector++;
             return (char *)p_readbuf;
         }
     }
     else
 #endif
     if (!cdio_read_audio_sector(info->cdio, info->buffer, info->current_sector)) {
+        info->current_sector++;
         return info->buffer;
     }
 
@@ -275,7 +277,6 @@ cda_read (DB_fileinfo_t *_info, char *bytes, int size)
             return -1;
         }
 
-        info->current_sector++;
         if (fill+SECTORSIZE <= high_water) {
             memcpy(fill, p_readbuf, SECTORSIZE);
             fill += SECTORSIZE;
