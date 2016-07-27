@@ -28,12 +28,14 @@ static DB_functions_t *deadbeef;
 static DB_output_t plugin;
 
 static AudioDeviceID device_id;
+static AudioDeviceIOProcID process_id;
 static AudioStreamBasicDescription default_format;
+static AudioStreamBasicDescription current_format;
 static AudioStreamBasicDescription req_format;
 static int state = OUTPUT_STATE_STOPPED;
 
 static OSStatus
-ca_fmtchanged (AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput, AudioDevicePropertyID inPropertyID, void *inClientData);
+ca_fmtchanged (AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioObjectPropertyAddress* inAddresses, void* __nullable inClientData);
 
 static OSStatus
 ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const AudioBufferList * inInputData, const AudioTimeStamp * inInputTime, AudioBufferList * outOutputData, const AudioTimeStamp * inOutputTime, void * inClientData);
@@ -42,9 +44,20 @@ static int
 ca_apply_format (void) {
     UInt32 sz;
     if (req_format.mSampleRate > 0) {
+        AudioObjectPropertyAddress theAddress = { kAudioDevicePropertyStreamFormat,
+                                                  kAudioDevicePropertyScopeOutput,
+                                                  0 };
+        sz = sizeof (current_format);
+        if (AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &current_format)) {
+            return -1;
+        }
+        if (current_format.mSampleRate == req_format.mSampleRate &&
+            current_format.mChannelsPerFrame == req_format.mChannelsPerFrame) {
+            return 0;
+        }
         sz = sizeof (req_format);
-        if (AudioDeviceSetProperty(device_id, NULL, 0, 0, kAudioDevicePropertyStreamFormat, sz, &req_format)) {
-            if (AudioDeviceSetProperty(device_id, NULL, 0, 0, kAudioDevicePropertyStreamFormat, sz, &default_format)) {
+        if (AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &req_format)) {
+            if (AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &default_format)) {
                 return -1;
             }
         }
@@ -57,25 +70,34 @@ static int
 ca_init (void) {
     UInt32 sz;
     char device_name[128];
+    AudioObjectPropertyAddress theAddress = { kAudioHardwarePropertyDefaultOutputDevice,
+                                              kAudioObjectPropertyScopeGlobal,
+                                              kAudioObjectPropertyElementMaster };
 
     sz = sizeof(device_id);
-    if (AudioHardwareGetProperty (kAudioHardwarePropertyDefaultOutputDevice, &sz, &device_id)) {
+    if (AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &sz, &device_id)) {
         return -1;
     }
 
     sz = sizeof (device_name);
-    if (AudioDeviceGetProperty (device_id, 1, 0, kAudioDevicePropertyDeviceName, &sz, device_name)) {
+    theAddress.mSelector = kAudioDevicePropertyDeviceName;
+    theAddress.mScope = kAudioDevicePropertyScopeOutput;
+    theAddress.mElement = 1;
+    if (AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, device_name)) {
            return -1;
     }
     
     sz = sizeof (default_format);
-    if (AudioDeviceGetProperty (device_id, 0, 0, kAudioDevicePropertyStreamFormat, &sz, &default_format)) {
+    theAddress.mSelector = kAudioDevicePropertyStreamFormat;
+    theAddress.mElement = 0;
+    if (AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &default_format)) {
         return -1;
     }
 
     UInt32 bufsize = 4096;
     sz = sizeof (bufsize);
-    if (AudioDeviceSetProperty(device_id, NULL, 0, 0, kAudioDevicePropertyBufferFrameSize, sz, &bufsize)) {
+    theAddress.mSelector = kAudioDevicePropertyBufferFrameSize;
+    if (AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &bufsize)) {
         fprintf (stderr, "Failed to set buffer size\n");
     }
 
@@ -83,15 +105,16 @@ ca_init (void) {
         return -1;
     }
 
-    if (AudioDeviceAddIOProc (device_id, ca_buffer_callback, NULL)) {
+    if (AudioDeviceCreateIOProcID(device_id, ca_buffer_callback, NULL, &process_id)) {
         return -1;
     }
     
-    if (AudioDeviceAddPropertyListener (device_id, 0, 0, kAudioDevicePropertyStreamFormat, ca_fmtchanged, NULL)) {
+    theAddress.mSelector = kAudioDevicePropertyStreamFormat;
+    if (AudioObjectAddPropertyListener(device_id, &theAddress, ca_fmtchanged, NULL)) {
         return -1;
     }
     
-    ca_fmtchanged(0, 0, 0, kAudioDevicePropertyStreamFormat, NULL);
+    ca_fmtchanged(device_id, 1, &theAddress, NULL);
 
     state = OUTPUT_STATE_STOPPED;
 
@@ -101,9 +124,12 @@ ca_init (void) {
 static int
 ca_free (void) {
     if (device_id) {
+        AudioObjectPropertyAddress theAddress = { kAudioDevicePropertyStreamFormat,
+                                                  kAudioDevicePropertyScopeOutput,
+                                                  0 };
         AudioDeviceStop(device_id, ca_buffer_callback);
-        AudioDeviceRemovePropertyListener(device_id, 0, 0, kAudioDevicePropertyStreamFormat, ca_fmtchanged);
-        AudioDeviceRemoveIOProc(device_id, ca_buffer_callback);
+        AudioObjectRemovePropertyListener(device_id, &theAddress, ca_fmtchanged, NULL);
+        AudioDeviceDestroyIOProcID(device_id, process_id);
     }
     return 0;
 }
@@ -183,11 +209,14 @@ ca_state (void) {
 }
 
 static OSStatus
-ca_fmtchanged (AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput, AudioDevicePropertyID inPropertyID, void *inClientData) {
+ca_fmtchanged (AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioObjectPropertyAddress* inAddresses, void* __nullable inClientData) {
     
     AudioStreamBasicDescription device_format;
     UInt32 sz = sizeof (device_format);
-    if (!AudioDeviceGetProperty (device_id, 0, 0, kAudioDevicePropertyStreamFormat, &sz, &device_format)) {
+    AudioObjectPropertyAddress theAddress = { kAudioDevicePropertyStreamFormat,
+                                              kAudioDevicePropertyScopeOutput,
+                                              0 };
+    if (!AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &device_format)) {
         plugin.fmt.bps = device_format.mBitsPerChannel;
         plugin.fmt.channels = device_format.mChannelsPerFrame;
         plugin.fmt.is_float = 1;
@@ -237,6 +266,7 @@ static DB_output_t plugin = {
     .plugin.copyright =
         "DeaDBeeF CoreAudio output plugin\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko and other contributors\n"
+        "Copyright (C) 2016 Christopher Snowhill\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
         "warranty.  In no event will the authors be held liable for any damages\n"
