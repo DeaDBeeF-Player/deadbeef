@@ -783,7 +783,7 @@ on_trkproperties_remove_activate       (GtkMenuItem     *menuitem,
         }
     }
     if (trkproperties_types[i]) { // known val, clear
-        gtk_list_store_set (store, &iter, 1, "", 3, 0, -1);
+        gtk_list_store_set (store, &iter, 1, "", 3, 0, 4, "", -1);
     }
     else {
         gtk_list_store_remove (store, &iter);
@@ -900,7 +900,7 @@ on_trkproperties_add_new_field_activate
                 const char *key = text;
 
                 gtk_list_store_append (store, &iter);
-                gtk_list_store_set (store, &iter, 0, title, 1, value, 2, key, -1);
+                gtk_list_store_set (store, &iter, 0, title, 1, value, 2, key, 3, 0, 4, value, -1);
                 GtkTreePath *path;
                 gint rows = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (store), NULL);
                 path = gtk_tree_path_new_from_indices (rows - 1, -1);
