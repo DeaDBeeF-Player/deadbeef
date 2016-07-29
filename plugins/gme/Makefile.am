@@ -1,7 +1,7 @@
 gmeversion=game-music-emu-0.6pre
 gmepath=@top_srcdir@/plugins/gme/$(gmeversion)
 
-EXTRA_DIST = $(gmepath)/changes.txt $(gmepath)/design.txt $(gmepath)/gme.txt $(gmepath)/license.txt $(gmepath)/readme.txt $(gmepath)/vgmplay/VGMPlay/chips/emu2413_NESpatches.txt $(gmepath)/vgmplay/VGMPlay/licenses/GPL.txt $(gmepath)/vgmplay/VGMPlay/licenses/List.txt $(gmepath)/vgmplay/VGMPlay/licenses/mame_license.txt $(gmepath)/vgmplay/VGMPlay/SourceReadme.txt $(gmepath)/vgmplay/VGMPlay/VGMPlay.txt $(gmepath)/vgmplay/VGMPlay/VGMPlay_Updates.txt $(gmepath)/vgmplay/VGMPlay/vgmspec171.txt $(gmepath)/gme/higan/smp/memory.cpp $(gmepath)/gme/higan/smp/timing.cpp $(gmepath)/vgmplay/VGMPlay/chips/opl.c $(gmepath)/vgmplay/VGMPlay/chips/scsplfo.c
+EXTRA_DIST = $(gmepath)/changes.txt $(gmepath)/design.txt $(gmepath)/gme.txt $(gmepath)/license.txt $(gmepath)/readme.txt $(gmepath)/vgmplay/VGMPlay/chips/emu2413_NESpatches.txt $(gmepath)/vgmplay/VGMPlay/licenses/GPL.txt $(gmepath)/vgmplay/VGMPlay/licenses/List.txt $(gmepath)/vgmplay/VGMPlay/licenses/mame_license.txt $(gmepath)/vgmplay/VGMPlay/SourceReadme.txt $(gmepath)/vgmplay/VGMPlay/VGMPlay.txt $(gmepath)/vgmplay/VGMPlay/VGMPlay_Updates.txt $(gmepath)/vgmplay/VGMPlay/vgmspec171.txt $(gmepath)/gme/higan/smp/memory.cpp $(gmepath)/gme/higan/smp/timing.cpp $(gmepath)/vgmplay/VGMPlay/chips/opl.c $(gmepath)/vgmplay/VGMPlay/chips/emuconfig.h
 
 if HAVE_GME
 pkglib_LTLIBRARIES = gme.la
@@ -137,7 +137,6 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/vgmplay/VGMPlay/chips/saa1099.c\
 	$(gmeversion)/vgmplay/VGMPlay/chips/scd_pcm.c\
 	$(gmeversion)/vgmplay/VGMPlay/chips/scsp.c\
-	$(gmeversion)/vgmplay/VGMPlay/chips/scspdsp.c\
 	$(gmeversion)/vgmplay/VGMPlay/chips/segapcm.c\
 	$(gmeversion)/vgmplay/VGMPlay/chips/sn76489.c\
 	$(gmeversion)/vgmplay/VGMPlay/chips/sn76496.c\
@@ -154,6 +153,7 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/vgmplay/VGMPlay/chips/ymf271.c\
 	$(gmeversion)/vgmplay/VGMPlay/chips/ymf278b.c\
 	$(gmeversion)/vgmplay/VGMPlay/chips/ymz280b.c\
+	$(gmeversion)/vgmplay/VGMPlay/chips/yam.c\
 	$(gmeversion)/vgmplay/VGMPlay/resampler.c\
 	$(gmeversion)/vgmplay/VGMPlay/VGMPlay.c\
 	$(gmeversion)/gme/Ay_Apu.h\
@@ -294,7 +294,6 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/vgmplay/VGMPlay/chips/saa1099.h\
 	$(gmeversion)/vgmplay/VGMPlay/chips/scd_pcm.h\
 	$(gmeversion)/vgmplay/VGMPlay/chips/scsp.h\
-	$(gmeversion)/vgmplay/VGMPlay/chips/scspdsp.h\
 	$(gmeversion)/vgmplay/VGMPlay/chips/segapcm.h\
 	$(gmeversion)/vgmplay/VGMPlay/chips/sn76489.h\
 	$(gmeversion)/vgmplay/VGMPlay/chips/sn76496.h\
@@ -313,6 +312,7 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/vgmplay/VGMPlay/chips/ymf271.h\
 	$(gmeversion)/vgmplay/VGMPlay/chips/ymf278b.h\
 	$(gmeversion)/vgmplay/VGMPlay/chips/ymz280b.h\
+   	$(gmeversion)/vgmplay/VGMPlay/chips/yam.h\
 	$(gmeversion)/vgmplay/VGMPlay/resampler.h\
 	$(gmeversion)/vgmplay/VGMPlay/stdbool.h\
 	$(gmeversion)/vgmplay/VGMPlay/VGMFile.h\
