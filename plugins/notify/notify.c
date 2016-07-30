@@ -178,6 +178,7 @@ static void show_notification (DB_playItem_t *track) {
     ddb_tf_context_t ctx = {
         ._size = sizeof (ddb_tf_context_t),
         .it = track,
+        .flags = DDB_TF_CONTEXT_MULTILINE | DDB_TF_CONTEXT_NO_DYNAMIC,
     };
 
     deadbeef->tf_eval (&ctx, tf_title, title, sizeof (title));
