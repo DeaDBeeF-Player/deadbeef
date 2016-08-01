@@ -114,5 +114,13 @@ dumb-kode54/include/dumb.h\
 dumb-kode54/src/helpers/resample.inc\
 dumb-kode54/src/helpers/resamp2.inc\
 dumb-kode54/src/helpers/resamp3.inc\
-cdumb.c
+modloader.cpp\
+modloader.h\
+umr.h\
+unmo3.h\
+unrealfmt.cpp\
+unrealfmtdata.cpp\
+urf.h\
+cdumb.c\
+cdumb.h
 endif
