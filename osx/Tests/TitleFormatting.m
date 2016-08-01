@@ -1224,5 +1224,24 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "header title a footer"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_PathStripFileUriScheme_ReturnStripped {
+    pl_replace_meta (it, ":URI", "file:///home/user/filename.mp3");
+    char *bc = tf_compile("%path%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "/home/user/filename.mp3"), @"The actual output is: %s", buffer);
+}
 
+- (void)test_PathStripHTTPUriScheme_ReturnUnStripped {
+    pl_replace_meta (it, ":URI", "http://example.com/filename.mp3");
+    char *bc = tf_compile("%path%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "http://example.com/filename.mp3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_RawPathWithFileUriScheme_ReturnUnStripped {
+    pl_replace_meta (it, ":URI", "file:///home/user/filename.mp3");
+    char *bc = tf_compile("%_path_raw%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "file:///home/user/filename.mp3"), @"The actual output is: %s", buffer);
+}
 @end
