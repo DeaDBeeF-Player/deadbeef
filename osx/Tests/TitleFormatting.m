@@ -1191,4 +1191,49 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "YES 1"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_MultiValueField_OutputAsCommaSeparated {
+    pl_append_meta(it, "artist", "Value1");
+    pl_append_meta(it, "artist", "Value2");
+    pl_append_meta(it, "artist", "Value3");
+    char *bc = tf_compile("%artist%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Value1, Value2, Value3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LinebreaksAndTabs_OutputAsUnderscores {
+    pl_append_meta(it, "artist", "Text1\r\nText2\tText3");
+    char *bc = tf_compile("%artist%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Text1__Text2_Text3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_NestedSquareBracketsWithDefinedAndUndefinedVars_ReturnNonEmpty {
+    pl_replace_meta (it, "title", "title");
+    char *bc = tf_compile("header [[%discnumber%][%title%] a] footer");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "header title a footer"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PathStripFileUriScheme_ReturnStripped {
+    pl_replace_meta (it, ":URI", "file:///home/user/filename.mp3");
+    char *bc = tf_compile("%path%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "/home/user/filename.mp3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PathStripHTTPUriScheme_ReturnUnStripped {
+    pl_replace_meta (it, ":URI", "http://example.com/filename.mp3");
+    char *bc = tf_compile("%path%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "http://example.com/filename.mp3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_RawPathWithFileUriScheme_ReturnUnStripped {
+    pl_replace_meta (it, ":URI", "file:///home/user/filename.mp3");
+    char *bc = tf_compile("%_path_raw%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    XCTAssert(!strcmp (buffer, "file:///home/user/filename.mp3"), @"The actual output is: %s", buffer);
+}
 @end

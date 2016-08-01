@@ -1770,8 +1770,35 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                         }
                     }
                 }
+                else if (!strcmp (name, "_path_raw")) {
+                    val = pl_find_meta_raw (it, ":URI");
+                }
                 else if (!strcmp (name, "path")) {
                     val = pl_find_meta_raw (it, ":URI");
+
+                    // strip file://
+                    if (!strncmp (val, "file://", 7)) {
+                        val += 7;
+                    }
+#if 0
+                    // strip any URI scheme
+                    if (isalpha (*val)) {
+                        const char *slash = strchr (val, ':');
+                        if (slash && strlen (slash) > 3 && slash[1] == '/' && slash[2] == '/') {
+                            const char *p = val;
+                            while (p < slash) {
+                                if (!isalpha (*p) && !isdigit (*p) && !strchr ("+.-", *p)) {
+                                    p = NULL;
+                                    break;
+                                }
+                                p++;
+                            }
+                            if (p) {
+                                val = slash + 3;
+                            }
+                        }
+                    }
+#endif
                 }
                 // index of track in playlist (zero-padded)
                 else if (!strcmp (name, "list_index")) {
