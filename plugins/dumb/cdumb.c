@@ -85,7 +85,7 @@ cdumb_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             ext--;
         }
         ext++;
-        char *ftype;
+        const char *ftype;
         info->duh = g_open_module (uri, &is_it, &is_dos, &is_ptcompat, 0, &ftype);
     }
     deadbeef->pl_unlock ();
@@ -328,7 +328,7 @@ cdumb_read_metadata (DB_playItem_t *it) {
     deadbeef->pl_lock ();
     {
         const char *fname = deadbeef->pl_find_meta (it, ":URI");
-        char *ftype;
+        const char *ftype;
         duh = g_open_module(fname, &is_it, &is_dos, &is_ptcompat, 0, &ftype);
     }
     deadbeef->pl_unlock ();
