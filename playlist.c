@@ -1642,18 +1642,25 @@ plt_remove_item (playlist_t *playlist, playItem_t *it) {
         if (it->prev[iter] || it->next[iter] || playlist->head[iter] == it || playlist->tail[iter] == it) {
             playlist->count[iter]--;
         }
-        if (it->prev[iter]) {
-            it->prev[iter]->next[iter] = it->next[iter];
+
+        playItem_t *next = it->next[iter];
+        playItem_t *prev = it->prev[iter];
+
+        if (prev) {
+            prev->next[iter] = next;
         }
         else {
-            playlist->head[iter] = it->next[iter];
+            playlist->head[iter] = next;
         }
-        if (it->next[iter]) {
-            it->next[iter]->prev[iter] = it->prev[iter];
+        if (next) {
+            next->prev[iter] = prev;
         }
         else {
-            playlist->tail[iter] = it->prev[iter];
+            playlist->tail[iter] = prev;
         }
+
+        it->next[iter] = NULL;
+        it->prev[iter] = NULL;
     }
 
     // totaltime
@@ -1897,6 +1904,7 @@ pl_item_free (playItem_t *it) {
             it->meta = m->next;
             free (m);
         }
+
         free (it);
     }
     UNLOCK;
