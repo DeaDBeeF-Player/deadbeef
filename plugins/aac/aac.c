@@ -40,7 +40,6 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-//#define AAC_BUFFER_SIZE 50000
 #define AAC_BUFFER_SIZE (FAAD_MIN_STREAMSIZE * 16)
 #define OUT_BUFFER_SIZE 100000
 
@@ -398,7 +397,8 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, &totalsamples);
         }
         else {
-            offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, NULL);
+            deadbeef->rewind (info->file);
+            offs = 0;
         }
         if (offs == -1) {
             trace ("aac stream not found\n");
@@ -415,7 +415,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                 deadbeef->rewind (info->file);
             }
         }
-        else {
+        if (info->file->vfs->is_streaming ()) {
             deadbeef->pl_replace_meta (it, "!FILETYPE", "AAC");
         }
         trace ("found aac stream (junk: %d, offs: %d)\n", info->junk, offs);
@@ -432,33 +432,45 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         info->dec = NeAACDecOpen ();
 
         trace ("prepare for NeAACDecInit: fread %d from offs %lld\n", AAC_BUFFER_SIZE, deadbeef->ftell (info->file));
-        info->remaining = deadbeef->fread (info->buffer, 1, AAC_BUFFER_SIZE, info->file);
 
         NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (info->dec);
-//        conf->dontUpSampleImplicitSBR = 1;
         NeAACDecSetConfiguration (info->dec, conf);
-        unsigned long srate;
-        unsigned char ch;
-        trace ("NeAACDecInit (%d bytes)\n", info->remaining);
-        int consumed = NeAACDecInit (info->dec, info->buffer, info->remaining, &srate, &ch);
-        trace ("NeAACDecInit returned samplerate=%d, channels=%d, consumed: %d\n", (int)srate, (int)ch, consumed);
-        if (consumed < 0) {
-            trace ("NeAACDecInit returned %d\n", consumed);
+
+        int scan_size = AAC_BUFFER_SIZE;
+
+        while (scan_size > 0) {
+            info->remaining = (int)deadbeef->fread (info->buffer, 1, AAC_BUFFER_SIZE, info->file);
+            char *p = info->buffer;
+
+            // sync the initial buffer
+            unsigned long srate;
+            unsigned char ch;
+            long consumed = 0;
+            while (p < info->buffer+info->remaining) {
+                int bufsize = info->remaining-(int)(p-info->buffer);
+                consumed = NeAACDecInit (info->dec, (uint8_t *)p, bufsize, &srate, &ch);
+                if (consumed >= 0) {
+                    _info->fmt.channels = ch;
+                    _info->fmt.samplerate = (int)srate;
+                    break;
+                }
+                p++;
+            }
+            if (consumed >= 0) {
+                if (consumed != info->remaining && consumed > 0) {
+                    memmove (info->buffer, info->buffer + consumed, info->remaining - consumed);
+                }
+                info->remaining -= consumed;
+                break;
+            }
+
+            scan_size -= info->remaining;
+        }
+
+        if (scan_size <= 0) {
             return -1;
         }
-        if (consumed > info->remaining) {
-            trace ("NeAACDecInit consumed more than available! wtf?\n");
-            return -1;
-        }
-        if (consumed == info->remaining) {
-            info->remaining = 0;
-        }
-        else if (consumed > 0) {
-            memmove (info->buffer, info->buffer + consumed, info->remaining - consumed);
-            info->remaining -= consumed;
-        }
-        _info->fmt.channels = ch;
-        _info->fmt.samplerate = srate;
+
     }
 
     if (!info->file->vfs->is_streaming ()) {
