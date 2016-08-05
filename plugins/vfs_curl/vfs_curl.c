@@ -484,7 +484,7 @@ parse_header (const uint8_t *p, const uint8_t *e, uint8_t *key, int keysize, uin
 
 static size_t
 http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
-    trace ("http_content_header_handler\n");
+//    trace ("http_content_header_handler\n");
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     const uint8_t *p = ptr;
@@ -509,7 +509,7 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
             p++;
         }
         p = parse_header (p, end, key, sizeof (key), value, sizeof (value));
-        trace ("%skey=%s value=%s\n", fp->icyheader ? "[icy] " : "", key, value);
+        //trace ("%skey=%s value=%s\n", fp->icyheader ? "[icy] " : "", key, value);
         if (!strcasecmp (key, "Content-Type")) {
             if (fp->content_type) {
                 free (fp->content_type);
@@ -561,7 +561,7 @@ http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, d
     float sec = tm.tv_sec - fp->last_read_time.tv_sec;
     long response;
     CURLcode code = curl_easy_getinfo (fp->curl, CURLINFO_RESPONSE_CODE, &response);
-    trace ("http_curl_control: status = %d, response = %d, interval: %f seconds\n", fp ? fp->status : -1, (int)response, sec);
+    //trace ("http_curl_control: status = %d, response = %d, interval: %f seconds\n", fp ? fp->status : -1, (int)response, sec);
     if (fp->status == STATUS_READING && sec > TIMEOUT) {
         trace ("http_curl_control: timed out, restarting read\n");
         memcpy (&fp->last_read_time, &tm, sizeof (struct timeval));
