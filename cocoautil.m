@@ -29,3 +29,8 @@ cocoautil_get_resources_path (char *s, int size) {
     strcpy (s, [[[NSBundle mainBundle] resourcePath] UTF8String]);
     return 0;
 }
+
+void
+cocoautil_backtrace (void) {
+    NSLog(@"%@",[NSThread callStackSymbols]);
+}

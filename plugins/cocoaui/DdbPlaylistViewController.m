@@ -905,6 +905,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 - (void)setupPlaylist:(DdbListview *)listview {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
+        deadbeef->pl_lock ();
         int cursor = deadbeef->plt_get_cursor (plt, PL_MAIN);
         int scroll = deadbeef->plt_get_scroll (plt);
         if (cursor != -1) {
@@ -917,6 +918,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         deadbeef->plt_unref (plt);
 
         [listview reloadData];
+        deadbeef->pl_unlock ();
         [listview setVScroll:scroll];
     }
 }
