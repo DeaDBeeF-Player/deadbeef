@@ -1834,6 +1834,8 @@
 		8374A5641B8946A800C6A572 /* VGMPlay_Intf.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374A45A1B8946A800C6A572 /* VGMPlay_Intf.h */; };
 		8374A56F1B895D2000C6A572 /* Ym2413_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8374A56D1B895D2000C6A572 /* Ym2413_Emu.cpp */; };
 		8374A5701B895D2000C6A572 /* Ym2413_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374A56E1B895D2000C6A572 /* Ym2413_Emu.h */; };
+		83BA8E501D542D0D00D345EE /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83BA8E4F1D542D0D00D345EE /* VideoToolbox.framework */; };
+		83BA8E5F1D542D2700D345EE /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83BA8E5E1D542D2700D345EE /* CoreMedia.framework */; };
 		83D020A81D2A0B4A0019FF75 /* emuconfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D020A51D2A0B4A0019FF75 /* emuconfig.h */; };
 		83D020A91D2A0B4A0019FF75 /* yam.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D020A61D2A0B4A0019FF75 /* yam.c */; };
 		83D020AA1D2A0B4A0019FF75 /* yam.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D020A71D2A0B4A0019FF75 /* yam.h */; };
@@ -4238,6 +4240,8 @@
 		8374A45A1B8946A800C6A572 /* VGMPlay_Intf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VGMPlay_Intf.h; sourceTree = "<group>"; };
 		8374A56D1B895D2000C6A572 /* Ym2413_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ym2413_Emu.cpp; path = "plugins/gme/game-music-emu-0.6pre/gme/Ym2413_Emu.cpp"; sourceTree = "<group>"; };
 		8374A56E1B895D2000C6A572 /* Ym2413_Emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ym2413_Emu.h; path = "plugins/gme/game-music-emu-0.6pre/gme/Ym2413_Emu.h"; sourceTree = "<group>"; };
+		83BA8E4F1D542D0D00D345EE /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
+		83BA8E5E1D542D2700D345EE /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		83D020A51D2A0B4A0019FF75 /* emuconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = emuconfig.h; sourceTree = "<group>"; };
 		83D020A61D2A0B4A0019FF75 /* yam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = yam.c; sourceTree = "<group>"; };
 		83D020A71D2A0B4A0019FF75 /* yam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yam.h; sourceTree = "<group>"; };
@@ -4358,6 +4362,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83BA8E5F1D542D2700D345EE /* CoreMedia.framework in Frameworks */,
+				83BA8E501D542D0D00D345EE /* VideoToolbox.framework in Frameworks */,
 				2D026DB81CAC5E8100E27961 /* Security.framework in Frameworks */,
 				2D026DB61CAC5E0E00E27961 /* VideoDecodeAcceleration.framework in Frameworks */,
 				2D026DB21CAC5DE300E27961 /* libiconv.dylib in Frameworks */,
@@ -6950,6 +6956,8 @@
 		4D1B3E7C18379829003E6066 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				83BA8E5E1D542D2700D345EE /* CoreMedia.framework */,
+				83BA8E4F1D542D0D00D345EE /* VideoToolbox.framework */,
 				2D72AE5D1CFE1F7500103AAE /* ImageIO.framework */,
 				2D026DB71CAC5E8100E27961 /* Security.framework */,
 				2D026DB51CAC5E0E00E27961 /* VideoDecodeAcceleration.framework */,
