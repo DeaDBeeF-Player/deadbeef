@@ -32,6 +32,7 @@
 //static char LOG_CYM_FILE = 0x00;
 //static FILE * cymfile = NULL;
 
+typedef struct YM2151 YM2151;
 
 /* struct describing a single operator */
 typedef struct{
@@ -86,7 +87,7 @@ typedef struct{
 } YM2151Operator;
 
 
-typedef struct
+struct YM2151
 {
 	YM2151Operator	oper[32];			/* the 32 operators */
 
@@ -175,7 +176,7 @@ typedef struct
 	//const device_config *device;
 	unsigned int clock;					/* chip clock in Hz (passed from 2151intf.c) */
 	unsigned int sampfreq;				/* sampling frequency in Hz (passed from 2151intf.c) */
-} YM2151;
+};
 
 
 #define FREQ_SH			16  /* 16.16 fixed point (frequency calculations) */

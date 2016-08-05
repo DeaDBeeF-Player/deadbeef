@@ -48,7 +48,7 @@ blargg_err_t Gbs_Core::load_( Data_Reader& in )
 	if ( !header_.valid_tag() )
 		return blargg_err_file_type;
 	
-	if ( header_.vers != 1 )
+	if ( header_.vers < 1 || header_.vers > 2 )
 		set_warning( "Unknown file version" );
 	
 	if ( header_.timer_mode & 0x78 )
