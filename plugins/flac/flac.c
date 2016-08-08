@@ -932,16 +932,6 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     // try embedded cue
     deadbeef->pl_lock ();
-    if (info.flac_cue_sheet) {
-        DB_playItem_t *cue = cflac_insert_with_embedded_cue (plt, after, it, &info.flac_cue_sheet->data.cue_sheet, info.totalsamples, info.info.fmt.samplerate);
-        if (cue) {
-            cflac_free_temp (_info);
-            deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (cue);
-            deadbeef->pl_unlock ();
-            return cue;
-        }
-    }
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
     if (cuesheet) {
         DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (const uint8_t *)cuesheet, strlen (cuesheet), info.totalsamples, info.info.fmt.samplerate);
@@ -951,6 +941,16 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             deadbeef->pl_item_unref (last);
             deadbeef->pl_unlock ();
             return last;
+        }
+    }
+    if (info.flac_cue_sheet) {
+        DB_playItem_t *cue = cflac_insert_with_embedded_cue (plt, after, it, &info.flac_cue_sheet->data.cue_sheet, info.totalsamples, info.info.fmt.samplerate);
+        if (cue) {
+            cflac_free_temp (_info);
+            deadbeef->pl_item_unref (it);
+            deadbeef->pl_item_unref (cue);
+            deadbeef->pl_unlock ();
+            return cue;
         }
     }
     deadbeef->pl_unlock ();
