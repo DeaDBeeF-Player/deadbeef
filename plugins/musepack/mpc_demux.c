@@ -614,6 +614,9 @@ mpc_status mpc_demux_seek_sample(mpc_demux * d, mpc_uint64_t destsample)
 				i++;
 			}
 			fpos += ((mpc_uint32_t)b.size + size) * 8;
+			if (fpos >= d->si.total_file_length) {
+				return MPC_STATUS_FILE;
+			}
 			mpc_demux_seek(d, fpos, 11);
 			size = mpc_bits_get_block(&d->bits_reader, &b);
 		}
