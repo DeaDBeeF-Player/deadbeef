@@ -30,6 +30,7 @@
 enum {
     PROP_GROUP,
     PROP_SUBMENU,
+    PROP_ACTION,
     PROP_ENTRY,
     PROP_PASSWORD,
     PROP_CHECKBOX,
@@ -44,7 +45,9 @@ typedef struct {
     char *title;
     char *def;
 
-    const char *select_options; // list separated with spaces, ends with ;
+    // for "select": list separated with spaces, ends with ';'
+    // for vscale, hscale, spinbtn: contents of the [] markers, ends with ']'
+    const char *select_options;
 } settings_property_t;
 
 typedef struct {
