@@ -79,10 +79,12 @@ extern DB_functions_t *deadbeef;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         deadbeef->plt_search_reset (plt);
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION | DDB_PLAYLIST_CHANGE_SEARCHRESULT, 0);
         deadbeef->plt_unref (plt);
     }
     [_entry setStringValue:@""];
     [_entry becomeFirstResponder];
+
 }
 
 - (void)sortColumn:(DdbListviewCol_t)column withOrder:(int)order {
