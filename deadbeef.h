@@ -96,22 +96,33 @@ extern "C" {
 #define DB_API_VERSION_MAJOR 1
 #define DB_API_VERSION_MINOR 10
 
-#define DDB_DEPRECATED(x)
+#if defined(__clang__)
 
-#if defined(__GNUC__) && !defined(__GNUC_PREREQ)
-// avoid including glibc headers, this is not very portable
-#if defined __GNUC__ && defined __GNUC_MINOR__
-# define __GNUC_PREREQ(maj, min) \
-	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
+#   define DDB_DEPRECATED(x) __attribute__ ((deprecated(x)))
+
+#elif defined(__GNUC__)
+
+    #if !defined(__GNUC_PREREQ)
+        // avoid including glibc headers, this is not very portable
+        #if defined __GNUC_MINOR__
+        #   define __GNUC_PREREQ(maj, min) \
+            ((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
+        #else
+        #   define __GNUC_PREREQ(maj, min) 0
+        #endif
+
+    #endif
+
+    #if __GNUC_PREREQ(4,5)
+    #   define DDB_DEPRECATED(x) __attribute__ ((deprecated(x)))
+    #else
+    #   define DDB_DEPRECATED(x) __attribute__ ((deprecated))
+    #endif
+
 #else
-# define __GNUC_PREREQ(maj, min) 0
-#endif
-#undef DDB_DEPRECATED
-#if __GNUC_PREREQ(4,5)
-#define DDB_DEPRECATED(x) __attribute__ ((deprecated(x)))
-#else
-#define DDB_DEPRECATED(x) __attribute__ ((deprecated))
-#endif
+
+    #define DDB_DEPRECATED(x)
+
 #endif
 
 #ifndef DDB_API_LEVEL
