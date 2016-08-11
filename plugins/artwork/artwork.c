@@ -63,8 +63,7 @@
 #include "mp4ff.h"
 #include "../../strdupa.h"
 
-#define trace(...) { fprintf (stderr, __VA_ARGS__); }
-//#define trace(...)
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 DB_functions_t *deadbeef;
 static ddb_artwork_plugin_t plugin;
