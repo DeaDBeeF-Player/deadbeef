@@ -37,8 +37,7 @@
 #include "mp3_mpg123.h"
 #endif
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 //#define WRITE_DUMP 1
 
@@ -1282,7 +1281,7 @@ static const char settings_dlg[] =
 // define plugin interface
 static DB_decoder_t plugin = {
     .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    .plugin.api_vminor = 10, // requires API level 10 for logger support
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
