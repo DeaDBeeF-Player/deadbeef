@@ -564,6 +564,24 @@ typedef struct {
 } ddb_tf_context_t;
 #endif
 
+#if (DDB_API_LEVEL>=10)
+enum {
+    // Layer 0 means it's always on, and important.
+    // This layer is suitable for critical error messages,
+    // but it's also useful for plugin-specific messages,
+    // which can be turned on and off in the settings.
+    // It is expected that the UI plugins will auto-show the Log View,
+    // when any message is logged on this layer
+    DDB_LOG_LAYER_DEFAULT = 0,
+
+    // Layer 1 should contain informational non-critical messages, like boot log.
+    // This layer is always on.
+    // UI should not auto-show the Log View for this layer.
+    DDB_LOG_LAYER_INFO = 1,
+};
+
+#endif
+
 // forward decl for plugin struct
 struct DB_plugin_s;
 
@@ -1221,6 +1239,28 @@ typedef struct {
 
     // return direct-access metadata structure for the given track and key
     DB_metaInfo_t * (*pl_meta_for_key) (DB_playItem_t *it, const char *key);
+
+    ////////////  Logging  ///////////
+
+    // The recommended usage in plugins:
+    // #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
+    // Then use trace () as you would use printf
+    // The user would be able to enable/disable logging in your plugin via the standard UI features.
+    // Remember to set plugin.api_vminor = 10 or higher
+
+    // Low level log function, where plugin and level can be specified.
+    // Plugin defines the scope, so logging can be toggled per plugin
+    // Layers is a combination of bits, which define the priority/visibility of the message.
+    // See DDB_LOG_LAYER_* for details
+    void (*log_detailed) (struct DB_plugin_s *plugin, uint32_t layers, const char *fmt, ...);
+
+    // High level easy-to-use log function, with no scope
+    // These log messages cannot be disabled, and will always appear in the Log Viewers
+    void (*log) (const char *fmt, ...);
+
+    // Custom log viewers, for use in e.g. UI plugins
+    void (*log_viewer_register) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text));
+    void (*log_viewer_unregister) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text));
 #endif
 } DB_functions_t;
 
@@ -1297,6 +1337,12 @@ typedef struct DB_plugin_action_s {
 #endif
 } DB_plugin_action_t;
 
+#if (DDB_API_LEVEL >= 10)
+enum {
+    DDB_PLUGIN_FLAG_LOGGING = 1,
+};
+#endif
+
 // base plugin interface
 typedef struct DB_plugin_s {
     // type must be one of DB_PLUGIN_ types
@@ -1308,7 +1354,7 @@ typedef struct DB_plugin_s {
     int16_t version_major;
     int16_t version_minor;
 
-    uint32_t flags; // currently unused
+    uint32_t flags; // DDB_PLUGIN_FLAG_*
     uint32_t reserved1;
     uint32_t reserved2;
     uint32_t reserved3;

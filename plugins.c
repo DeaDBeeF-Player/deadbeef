@@ -58,9 +58,16 @@
 #include "tf.h"
 #include "playqueue.h"
 #include "sort.h"
+#include "logger.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+DB_plugin_t main_plugin = {
+    .type = DB_PLUGIN_MISC,
+    .version_major = DB_API_VERSION_MAJOR,
+    .version_minor = DB_API_VERSION_MINOR,
+    .name = "deadbeef",
+    .id = "deadbeef",
+    .flags = DDB_PLUGIN_FLAG_LOGGING,
+};
 
 //#define DISABLE_VERSIONCHECK 1
 
@@ -450,6 +457,12 @@ static DB_functions_t deadbeef_api = {
     .plt_search_process2 = (void (*) (ddb_playlist_t *plt, const char *text, int select_results))plt_search_process2,
     .plt_process_cue = (DB_playItem_t * (*) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *it, uint64_t numsamples, int samplerate))plt_process_cue,
     .pl_meta_for_key = (DB_metaInfo_t * (*) (DB_playItem_t *it, const char *key))pl_meta_for_key,
+
+    .log_detailed = ddb_log_detailed,
+    .log = ddb_log,
+
+    .log_viewer_register = ddb_log_viewer_register,
+    .log_viewer_unregister = ddb_log_viewer_unregister,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -724,7 +737,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
             return -1;
         }
         else {
-            fprintf (stderr, "successfully started fallback plugin %s\n", fullname);
+            trace ("successfully started fallback plugin %s\n", fullname);
         }
 #endif
     }
@@ -873,7 +886,7 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
                     if (gui_scan) {
                         trace ("found gui plugin %s\n", d_name);
                         if (g_num_gui_names >= MAX_GUI_PLUGINS) {
-                            fprintf (stderr, "too many gui plugins\n");
+                            trace_err ("too many gui plugins\n");
                             break; // no more gui plugins allowed
                         }
                         char *nm = d_name + 8;
@@ -1105,7 +1118,7 @@ plug_load_all (void) {
     for (plug = plugins; plug;) {
         if (plug->plugin->type != DB_PLUGIN_GUI && plug->plugin->start) {
             if (plug->plugin->start () < 0) {
-                fprintf (stderr, "plugin %s failed to start, deactivated.\n", plug->plugin->name);
+                trace_err ("plugin %s failed to start, deactivated.\n", plug->plugin->name);
                 if (plug->plugin->stop) {
                     plug->plugin->stop ();
                 }
@@ -1153,7 +1166,7 @@ plug_connect_all (void) {
     for (plug = plugins; plug;) {
         if (plug->plugin->connect) {
             if (plug->plugin->connect () < 0) {
-                fprintf (stderr, "plugin %s failed to connect to dependencies, deactivated.\n", plug->plugin->name);
+                trace ("plugin %s failed to connect to dependencies, deactivated.\n", plug->plugin->name);
 
                 if (plug->plugin->disconnect) {
                     plug->plugin->disconnect ();

@@ -638,6 +638,8 @@
 		2D4458DF1C04F1FF00230939 /* vfs_zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D4458DE1C04F1FF00230939 /* vfs_zip.c */; };
 		2D4459FB1C04F2F000230939 /* libzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4459E61C04F28800230939 /* libzip.framework */; };
 		2D4459FC1C04F30E00230939 /* vfs_zip.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D4458D91C04F1C000230939 /* vfs_zip.dylib */; };
+		2D448A841D5C5C6500B43F12 /* logger.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D448A821D5C5C6500B43F12 /* logger.c */; };
+		2D448A851D5C5C6500B43F12 /* logger.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D448A831D5C5C6500B43F12 /* logger.h */; };
 		2D5121C61B01DEFD009F6410 /* sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D642EAD1AE9152E00FC1F7B /* sort.c */; };
 		2D51999C1A436FD100670717 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999A1A436FD100670717 /* config.h */; };
 		2D51999D1A436FD100670717 /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999B1A436FD100670717 /* mpg123.h */; };
@@ -2892,6 +2894,8 @@
 		2D4458D91C04F1C000230939 /* vfs_zip.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vfs_zip.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D4458DE1C04F1FF00230939 /* vfs_zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vfs_zip.c; path = plugins/vfs_zip/vfs_zip.c; sourceTree = "<group>"; };
 		2D4459D21C04F28800230939 /* libzip.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libzip.xcodeproj; path = "osx/deps/libzip-1.0.1/xcode/libzip.xcodeproj"; sourceTree = "<group>"; };
+		2D448A821D5C5C6500B43F12 /* logger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = logger.c; sourceTree = "<group>"; };
+		2D448A831D5C5C6500B43F12 /* logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logger.h; sourceTree = "<group>"; };
 		2D4BEAEB1CA49EEC007ADB0A /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
 		2D51999A1A436FD100670717 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = "osx/deps/mpg123-1.21.0/ports/Xcode/config.h"; sourceTree = "<group>"; };
 		2D51999B1A436FD100670717 /* mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpg123.h; path = "osx/deps/mpg123-1.21.0/ports/Xcode/mpg123.h"; sourceTree = "<group>"; };
@@ -6959,6 +6963,8 @@
 				4D1B49EE1837EC49003E6066 /* volume.h */,
 				2D642EAD1AE9152E00FC1F7B /* sort.c */,
 				2D642EAE1AE9152E00FC1F7B /* sort.h */,
+				2D448A821D5C5C6500B43F12 /* logger.c */,
+				2D448A831D5C5C6500B43F12 /* logger.h */,
 			);
 			name = deadbeef;
 			path = ..;
@@ -7618,6 +7624,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9937,6 +9944,7 @@
 				2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */,
 				2D5121C61B01DEFD009F6410 /* sort.c in Sources */,
 				2D01D7E21AB2219C00BCD3C4 /* streamer.c in Sources */,
+				2D448A841D5C5C6500B43F12 /* logger.c in Sources */,
 				2D01D7E71AB2219C00BCD3C4 /* volume.c in Sources */,
 				2D01D7E61AB2219C00BCD3C4 /* vfs_stdio.c in Sources */,
 				2D01D7D91AB2219C00BCD3C4 /* messagepump.c in Sources */,
