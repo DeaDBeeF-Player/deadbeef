@@ -27,6 +27,7 @@
 #import "DdbPlaylistViewController.h"
 #import "DdbShared.h"
 #import "MediaKeyController.h"
+#import "LogWindowController.h"
 #include "conf.h"
 #include "streamer.h"
 #include "junklib.h"
@@ -41,6 +42,7 @@ extern BOOL g_CanQuit;
 @implementation AppDelegate {
     PreferencesWindowController *_prefWindow;
     SearchWindowController *_searchWindow;
+    LogWindowController *_logWindow;
 
     NSMenuItem *_dockMenuNPHeading;
     NSMenuItem *_dockMenuNPTitle;
@@ -59,7 +61,27 @@ NSImage *bufferingImg;
 AppDelegate *g_appDelegate;
 NSInteger firstSelected = -1;
 
+static void
+_cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text) {
+    [g_appDelegate appendLoggerText:text forPlugin:plugin onLayers:layers];
+}
+
+- (void)appendLoggerText:(const char *)text forPlugin:(DB_plugin_t *)plugin onLayers:(uint32_t)layers {
+    NSString *str = [NSString stringWithUTF8String:text];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_logWindow appendText:str];
+
+        if (layers == DDB_LOG_LAYER_DEFAULT) {
+            if (![[_logWindow window] isVisible]) {
+                [_logWindow showWindow:self];
+            }
+        }
+    });
+}
+
 - (void)dealloc {
+    deadbeef->log_viewer_unregister (_cocoaui_logger_callback);
     ungrabMediaKeys ();
 }
 
@@ -144,6 +166,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 - (void)awakeFromNib {
     [self initMainWindow];
     [self initSearchWindow];
+    [self initLogWindow];
 }
 
 - (void)initMainWindow {
@@ -152,11 +175,18 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [[_mainWindow window] setReleasedWhenClosed:NO];
     [[_mainWindow window] setExcludedFromWindowsMenu:YES];
     [[_mainWindow window] setIsVisible:YES];
+    [_mainWindowToggleMenuItem bind:@"state" toObject:[_mainWindow window] withKeyPath:@"visible" options:nil];
 }
 
 - (void)initSearchWindow {
     _searchWindow = [[SearchWindowController alloc] initWithWindowNibName:@"Search"];
     [_searchWindow setShouldCascadeWindows:NO];
+}
+
+- (void)initLogWindow {
+    _logWindow = [[LogWindowController alloc] initWithWindowNibName:@"Log"];
+    [_logWindowToggleMenuItem bind:@"state" toObject:[_logWindow window] withKeyPath:@"visible" options:nil];
+    [[_logWindow window] setExcludedFromWindowsMenu:YES];
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
@@ -192,7 +222,6 @@ main_cleanup_and_quit (void);
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    [_mainWindowToggleMenuItem bind:@"state" toObject:[_mainWindow window] withKeyPath:@"visible" options:nil];
     playImg = [NSImage imageNamed:@"btnplayTemplate.pdf"];
     pauseImg = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
     bufferingImg = [NSImage imageNamed:@"bufferingTemplate.pdf"];
@@ -211,6 +240,8 @@ main_cleanup_and_quit (void);
     [[NSApp dockTile] setContentView: _dockTileView];
 //    [[NSApp dockTile] setBadgeLabel:@"Hello"];
     [[NSApp dockTile] display];
+
+    deadbeef->log_viewer_register (_cocoaui_logger_callback);
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag{
@@ -222,7 +253,7 @@ main_cleanup_and_quit (void);
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
         char str[100];
-        add_paths([filename UTF8String], [filename length], 0, str, 100);
+        add_paths([filename UTF8String], (int)[filename length], 0, str, 100);
     });
     return YES; // assume that everything went ok
 }
@@ -234,7 +265,7 @@ main_cleanup_and_quit (void);
         char str[100];
         // building single paths string for the deadbeef function, paths must be separated by '\0'
         NSString *paths =[filenames componentsJoinedByString:@"\0"];
-        add_paths([paths UTF8String], [paths length], 0, str, 100);
+        add_paths([paths UTF8String], (int)[paths length], 0, str, 100);
     });
 }
 
@@ -244,6 +275,14 @@ main_cleanup_and_quit (void);
     [[_mainWindow window] setIsVisible:vis];
     if (vis) {
         [[_mainWindow window] makeKeyWindow];
+    }
+}
+
+- (IBAction)showLogWindowAction:(id)sender {
+    BOOL vis = ![[_logWindow window] isVisible];
+    [[_logWindow window] setIsVisible:vis];
+    if (vis) {
+        [[_logWindow window] makeKeyWindow];
     }
 }
 

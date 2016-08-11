@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1060" identifier="macosx"/>
         <development version="6300" identifier="xcode"/>
@@ -567,6 +567,12 @@ CA
                                     <action selector="showMainWinAction:" target="494" id="oym-O9-Z75"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Log Window" id="0kj-VC-KFs">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showLogWindowAction:" target="494" id="CoP-S4-VLW"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
@@ -597,6 +603,7 @@ CA
                 <outlet property="descendingSortMode" destination="a0b-O2-r16" id="jve-MJ-Pfo"/>
                 <outlet property="dockMenu" destination="891-Kp-BFs" id="DTX-sh-Bko"/>
                 <outlet property="dockTileView" destination="h87-hn-tWh" id="h87-62-sdr"/>
+                <outlet property="logWindowToggleMenuItem" destination="0kj-VC-KFs" id="oPf-z6-Bk7"/>
                 <outlet property="loopAll" destination="bp3-Nw-TaR" id="t92-xv-gTj"/>
                 <outlet property="loopNone" destination="pGf-UH-jjg" id="fd0-Uw-O2Y"/>
                 <outlet property="loopSingle" destination="V06-6E-L7R" id="hQ5-IG-2Gh"/>

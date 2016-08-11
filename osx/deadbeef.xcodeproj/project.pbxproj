@@ -640,6 +640,9 @@
 		2D4459FC1C04F30E00230939 /* vfs_zip.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D4458D91C04F1C000230939 /* vfs_zip.dylib */; };
 		2D448A841D5C5C6500B43F12 /* logger.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D448A821D5C5C6500B43F12 /* logger.c */; };
 		2D448A851D5C5C6500B43F12 /* logger.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D448A831D5C5C6500B43F12 /* logger.h */; };
+		2D49856F1D5CF0E900E4D985 /* Log.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D49856E1D5CF0E900E4D985 /* Log.xib */; };
+		2D49857F1D5CF13F00E4D985 /* LogWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D49857D1D5CF13F00E4D985 /* LogWindowController.h */; };
+		2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D49857E1D5CF13F00E4D985 /* LogWindowController.m */; };
 		2D5121C61B01DEFD009F6410 /* sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D642EAD1AE9152E00FC1F7B /* sort.c */; };
 		2D51999C1A436FD100670717 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999A1A436FD100670717 /* config.h */; };
 		2D51999D1A436FD100670717 /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999B1A436FD100670717 /* mpg123.h */; };
@@ -2896,6 +2899,9 @@
 		2D4459D21C04F28800230939 /* libzip.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libzip.xcodeproj; path = "osx/deps/libzip-1.0.1/xcode/libzip.xcodeproj"; sourceTree = "<group>"; };
 		2D448A821D5C5C6500B43F12 /* logger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = logger.c; sourceTree = "<group>"; };
 		2D448A831D5C5C6500B43F12 /* logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logger.h; sourceTree = "<group>"; };
+		2D49856E1D5CF0E900E4D985 /* Log.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Log.xib; sourceTree = "<group>"; };
+		2D49857D1D5CF13F00E4D985 /* LogWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogWindowController.h; sourceTree = "<group>"; };
+		2D49857E1D5CF13F00E4D985 /* LogWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogWindowController.m; sourceTree = "<group>"; };
 		2D4BEAEB1CA49EEC007ADB0A /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
 		2D51999A1A436FD100670717 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = "osx/deps/mpg123-1.21.0/ports/Xcode/config.h"; sourceTree = "<group>"; };
 		2D51999B1A436FD100670717 /* mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpg123.h; path = "osx/deps/mpg123-1.21.0/ports/Xcode/mpg123.h"; sourceTree = "<group>"; };
@@ -5422,6 +5428,7 @@
 				2D3EBD9C1A9379BD00E5E255 /* Preferences.xib */,
 				2D11E8B11AA0E3DD00A67A20 /* MainWindow.xib */,
 				2D2351271B13922400A62936 /* Converter.xib */,
+				2D49856E1D5CF0E900E4D985 /* Log.xib */,
 			);
 			name = XIB;
 			sourceTree = "<group>";
@@ -7323,6 +7330,8 @@
 				2D5773A11D084E5A00F61BD1 /* MediaKeyController.h */,
 				2D8D96AC1D10904A00A5C7E6 /* CoverManager.h */,
 				2D8D96AD1D10904A00A5C7E6 /* CoverManager.m */,
+				2D49857D1D5CF13F00E4D985 /* LogWindowController.h */,
+				2D49857E1D5CF13F00E4D985 /* LogWindowController.m */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -8520,6 +8529,7 @@
 				2D5773A31D084E5A00F61BD1 /* MediaKeyController.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* DdbSearchViewController.h in Headers */,
 				2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */,
+				2D49857F1D5CF13F00E4D985 /* LogWindowController.h in Headers */,
 				2D642EB01AE9152E00FC1F7B /* sort.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9793,6 +9803,7 @@
 				2DB10B8A19B908630054A6AB /* tab_unsel_left@2x.png in Resources */,
 				2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */,
 				2DBEE69319B4EB0900A60609 /* sb_back_filler@2x.png in Resources */,
+				2D49856F1D5CF0E900E4D985 /* Log.xib in Resources */,
 				4D2A6CA1183BC29400AC6BF5 /* btnnextTemplate.pdf in Resources */,
 				2DCD78DD19A665CA00EA50FA /* deadbeef.png in Resources */,
 				2DB10B8719B908630054A6AB /* tab_unsel_fill.png in Resources */,
@@ -10989,6 +11000,7 @@
 				2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */,
 				2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */,
 				2D5773A21D084E5A00F61BD1 /* MediaKeyController.m in Sources */,
+				2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* DdbSearchViewController.m in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
 				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,

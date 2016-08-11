@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment version="1060" identifier="macosx"/>
         <development version="6300" identifier="xcode"/>
@@ -297,11 +297,11 @@ Gw
                         <rect key="frame" x="396" y="58" width="209" height="195"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" autoresizesSubviews="NO" copiesOnScroll="NO" id="aDx-rg-jnV">
-                            <rect key="frame" x="1" y="0.0" width="207" height="194"/>
+                            <rect key="frame" x="1.5" y="0.0" width="207" height="179"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView autoresizesSubviews="NO" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" headerView="TXW-fB-2Tx" id="wP3-lw-iE6">
-                                    <rect key="frame" x="0.0" y="0.0" width="207" height="177"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="208" height="177"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -332,8 +332,8 @@ Gw
                             </subviews>
                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </clipView>
-                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="0.5" horizontal="YES" id="DNn-Vz-hph">
-                            <rect key="frame" x="1" y="118.89098823070526" width="238" height="15"/>
+                        <scroller key="horizontalScroller" verticalHuggingPriority="750" doubleValue="0.5" horizontal="YES" id="DNn-Vz-hph">
+                            <rect key="frame" x="1" y="179" width="207" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="6uu-gk-czP">
@@ -341,7 +341,7 @@ Gw
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <tableHeaderView key="headerView" autoresizesSubviews="NO" id="TXW-fB-2Tx">
-                            <rect key="frame" x="0.0" y="0.0" width="207" height="17"/>
+                            <rect key="frame" x="0.0" y="0.0" width="208" height="17"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
@@ -948,7 +948,7 @@ Gw
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
             <value key="minSize" type="size" width="397" height="104"/>
             <view key="contentView" id="VZc-ah-5Ea">
-                <rect key="frame" x="0.0" y="5" width="397" height="104"/>
+                <rect key="frame" x="0.0" y="0.0" width="397" height="104"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="VlD-73-H0N">

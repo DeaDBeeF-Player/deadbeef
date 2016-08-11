@@ -42,8 +42,6 @@
 - (IBAction)cancelAction:(id)sender;
 - (IBAction)okAction:(id)sender;
 
-- (IBAction)close:(id)sender;
-
 - (IBAction)openOutputFolderAction:(id)sender;
 - (IBAction)editEncoderPresetsAction:(id)sender;
 - (IBAction)editDSPPresetsAction:(id)sender;
