@@ -68,7 +68,7 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-#define DEFAULT_EXTS "aa3;oma;ac3;vqf;amr;opus;tak;dsf;dff"
+#define DEFAULT_EXTS "aa3;oma;ac3;vqf;amr;opus;tak;dsf;dff;wma"
 #define UNPOPULATED_EXTS_BY_FFMPEG \
     "aif,aiff,afc,aifc,amr,asf," \
     "wmv,wma,au,caf,webm," \
@@ -98,6 +98,11 @@ enum {
 
 typedef struct {
     DB_fileinfo_t info;
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+    DB_FILE *f;
+    unsigned char *iobuffer;
+    AVIOContext *ioctx;
+#endif
     AVCodec *codec;
     AVCodecContext *ctx;
     AVFormatContext *fctx;
@@ -148,6 +153,34 @@ ensure_buffer (ffmpeg_info_t *info, int frame_size) {
     return 0;
 }
 
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+static int ffmpeg_fread(void *opaque, uint8_t *buf, int buf_size)
+{
+    DB_FILE *f = (DB_FILE *) opaque;
+    return (int) deadbeef->fread(buf, 1, buf_size, f);
+}
+
+static int ffmpeg_fwrite(void *opaque, uint8_t *buf, int buf_size)
+{
+    return -1;
+}
+
+static int64_t ffmpeg_fseek(void *opaque, int64_t offset, int whence)
+{
+    DB_FILE *f = (DB_FILE *) opaque;
+    int streaming = f->vfs->is_streaming ();
+    if (whence & AVSEEK_SIZE) {
+        if (streaming) return -1;
+        else return deadbeef->fgetlength(f);
+    }
+    whence &= ~(AVSEEK_SIZE | AVSEEK_FORCE);
+    if (!streaming || whence != SEEK_END)
+        deadbeef->fseek(f, offset, whence);
+    return deadbeef->ftell(f);
+}
+#endif
+
+
 static int
 ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     ffmpeg_info_t *info = (ffmpeg_info_t *)_info;
@@ -183,8 +216,15 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     current_track = it;
     current_info = _info;
 #if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
-    avformat_network_init();
+    info->f = deadbeef->fopen(uri);
+    if (!info->f) {
+        trace ("fopen failed for file: %s\n", uri);
+        return -1;
+    }
+    info->iobuffer = av_malloc(128 * 1024);
+    info->ioctx = avio_alloc_context(info->iobuffer, 128 * 1024, 0, info->f, ffmpeg_fread, ffmpeg_fwrite, ffmpeg_fseek);
     info->fctx = avformat_alloc_context ();
+    info->fctx->pb = info->ioctx;
     if ((ret = avformat_open_input(&info->fctx, uri, NULL, NULL)) < 0) {
 #else
     if ((ret = av_open_input_file(&info->fctx, uri, NULL, 0, NULL)) < 0) {
@@ -324,6 +364,18 @@ ffmpeg_free (DB_fileinfo_t *_info) {
         if (info->fctx) {
             av_close_input_file (info->fctx);
         }
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+        if (info->ioctx) {
+            info->iobuffer = info->ioctx->buffer;
+            av_free(info->ioctx);
+        }
+        if (info->iobuffer) {
+            av_free(info->iobuffer);
+        }
+        if (info->f) {
+            deadbeef->fclose(info->f);
+        }
+#endif
         free (info);
     }
 }
@@ -703,6 +755,11 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     AVCodec *codec = NULL;
     AVCodecContext *ctx = NULL;
     AVFormatContext *fctx = NULL;
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+    DB_FILE *f;
+    unsigned char *iobuffer;
+    AVIOContext *ioctx;
+#endif
     int ret;
     int l = strlen (fname);
     char *uri = NULL;
@@ -722,12 +779,22 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     // open file
 #if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
-    avformat_network_init();
+    f = deadbeef->fopen(uri);
+    if (!f) {
+        trace ("fopen failed for file: %s\n", uri);
+        return NULL;
+    }
+    iobuffer = av_malloc(128 * 1024);
+    ioctx = avio_alloc_context(iobuffer, 128 * 1024, 0, f, ffmpeg_fread, ffmpeg_fwrite, ffmpeg_fseek);
     fctx = avformat_alloc_context ();
+    fctx->pb = ioctx;
     if ((ret = avformat_open_input(&fctx, uri, NULL, NULL)) < 0) {
 #else
     if ((ret = av_open_input_file(&fctx, uri, NULL, 0, NULL)) < 0) {
 #endif
+        av_free(ioctx->buffer);
+        av_free(ioctx);
+        deadbeef->fclose(f);
         print_error (uri, ret);
         return NULL;
     }
@@ -770,6 +837,9 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     {
         trace ("ffmpeg can't decode %s\n", fname);
         av_close_input_file(fctx);
+        av_free(ioctx->buffer);
+        av_free(ioctx);
+        deadbeef->fclose(f);
         return NULL;
     }
     trace ("ffmpeg can decode %s\n", fname);
@@ -778,6 +848,9 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     if (avcodec_open (ctx, codec) < 0) {
         trace ("ffmpeg: avcodec_open failed\n");
         av_close_input_file(fctx);
+        av_free(ioctx->buffer);
+        av_free(ioctx);
+        deadbeef->fclose(f);
         return NULL;
     }
 
@@ -810,6 +883,11 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     
     int64_t fsize = -1;
 
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+    if (!f->vfs->is_streaming ()) {
+        fsize = deadbeef->fgetlength (f);
+    }
+#else
     DB_FILE *fp = deadbeef->fopen (fname);
     if (fp) {
         if (!fp->vfs->is_streaming ()) {
@@ -817,6 +895,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         }
         deadbeef->fclose (fp);
     }
+#endif
 
     if (fsize >= 0 && duration > 0) {
         char s[100];
@@ -836,6 +915,10 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     // free decoder
     avcodec_close (ctx);
     av_close_input_file(fctx);
+
+    av_free(ioctx->buffer);
+    av_free(ioctx);
+    deadbeef->fclose(f);
 
     // external cuesheet
     DB_playItem_t *cue = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
@@ -1073,6 +1156,11 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
     AVCodec *codec = NULL;
     AVCodecContext *ctx = NULL;
     AVFormatContext *fctx = NULL;
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+    DB_FILE *f;
+    unsigned char *iobuffer;
+    AVIOContext *ioctx;
+#endif
     int ret;
     char *uri = NULL;
     int i;
@@ -1098,13 +1186,23 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
 
     // open file
 #if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
-    avformat_network_init();
+    f = deadbeef->fopen(uri);
+    if (!f) {
+        trace ("fopen failed for file: %s\n", uri);
+        return -1;
+    }
+    iobuffer = av_malloc(128 * 1024);
+    ioctx = avio_alloc_context(iobuffer, 128 * 1024, 0, f, ffmpeg_fread, ffmpeg_fwrite, ffmpeg_fseek);
     fctx = avformat_alloc_context ();
+    fctx->pb = ioctx;
     if ((ret = avformat_open_input(&fctx, uri, NULL, NULL)) < 0) {
 #else
     if ((ret = av_open_input_file(&fctx, uri, NULL, 0, NULL)) < 0) {
 #endif
         trace ("fctx is %p, ret %d/%s", fctx, ret, strerror(-ret));
+        av_free(ioctx->buffer);
+        av_free(ioctx);
+        deadbeef->fclose(f);
         return -1;
     }
 
@@ -1128,11 +1226,17 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
     {
         trace ("ffmpeg can't decode %s\n", deadbeef->pl_find_meta (it, ":URI"));
         av_close_input_file(fctx);
+        av_free(ioctx->buffer);
+        av_free(ioctx);
+        deadbeef->fclose(f);
         return -1;
     }
     if (avcodec_open (ctx, codec) < 0) {
         trace ("ffmpeg: avcodec_open failed\n");
         av_close_input_file(fctx);
+        av_free(ioctx->buffer);
+        av_free(ioctx);
+        deadbeef->fclose(f);
         return -1;
     }
 
@@ -1140,6 +1244,10 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
     ffmpeg_read_metadata_internal (it, fctx);
 
     av_close_input_file(fctx);
+    av_free(ioctx->buffer);
+    av_free(ioctx);
+    deadbeef->fclose(f);
+
     return 0;
 }
 
