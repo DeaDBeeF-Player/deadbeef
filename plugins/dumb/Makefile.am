@@ -6,7 +6,7 @@ pkglib_LTLIBRARIES = ddb_dumb.la
 
 ddb_dumb_la_CFLAGS = $(CFLAGS) -I$(dumbpath)/include -std=gnu99
 ddb_dumb_la_CXXFLAGS = $(CFLAGS) -I$(dumbpath)/include -fno-exceptions -fno-rtti -fno-unwind-tables
-ddb_dumb_la_LDFLAGS = -module -avoid-version -lm
+ddb_dumb_la_LDFLAGS = -module -avoid-version -lm $(NOCPPLIB)
 if HAVE_SSE2
 noinst_LIBRARIES = libdumbsse2.a
 libdumbsse2_a_SOURCES = dumb-kode54/src/helpers/resampler_sse2.c
