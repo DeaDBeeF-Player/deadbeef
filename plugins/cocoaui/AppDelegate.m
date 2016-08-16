@@ -150,12 +150,21 @@ static void fileadd_end (ddb_fileadd_data_t *data, void *user_data) {
     });
 }
 
+static BOOL _settingLabel = NO;
+
 static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     const char *uri = deadbeef->pl_find_meta (data->track, ":URI");
-    NSString *s = [NSString stringWithUTF8String:uri];
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        [g_appDelegate.addFilesLabel setStringValue:s];
-    });
+    if (!_settingLabel) {
+        // HACK: we want to set the label asynchronously, to minimize delays,
+        // but we also want to avoid sending multiple labels, becuase that's meaningless.
+        // So we use a basic flag, to see if the label is being set already.
+        NSString *s = [NSString stringWithUTF8String:uri];
+        _settingLabel = YES;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [g_appDelegate.addFilesLabel setStringValue:s];
+            _settingLabel = NO;
+        });
+    }
     return fileadd_cancelled ? -1 : 0;
 }
 
