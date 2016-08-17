@@ -545,6 +545,15 @@ enum {
 #endif
 };
 
+// since 1.10
+#if (DDB_API_LEVEL >= 10)
+typedef struct ddb_file_found_data_s {
+    ddb_playlist_t *plt;
+    const char *filename;
+    int is_dir;
+} ddb_file_found_data_t;
+#endif
+
 // context for title formatting interpreter
 typedef struct {
     int _size; // must be set to sizeof(tf_context_t)
@@ -1068,8 +1077,8 @@ typedef struct {
     void (*metacache_remove_string) (const char *str);
 
     // ref/unref do nothing, please don't use, they're left for compatibility
-    void (*metacache_ref) (const char *str) DEPRECATED_110;
-    void (*metacache_unref) (const char *str) DEPRECATED_110;
+    void (*metacache_ref) (const char *str);
+    void (*metacache_unref) (const char *str);
 
     // this function must return original un-overriden value (ignoring the keys prefixed with '!')
     // it's not thread-safe, and must be used under the same conditions as the
@@ -1147,6 +1156,8 @@ typedef struct {
     // visibility is a number, which tells listeners about the caller.
     // the value DDB_FILEADD_VISIBILITY_GUI (or 0) is reserved for callers which
     // want the GUI to intercept the calls and show visual updates.
+    //
+    // To skip UI, it is recommended to use visibility=-1
     //
     // this is the default value passed from plt_load, plt_add_dir, plt_add_file.
     //
@@ -1272,6 +1283,35 @@ typedef struct {
     // Custom log viewers, for use in e.g. UI plugins
     void (*log_viewer_register) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text));
     void (*log_viewer_unregister) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text));
+
+    ///////// File add filtering ///////
+
+    // It works by calling the filter right after a file or folder was found, but before it's open / processed
+    // Then if the filter returns a negative value -- the file/folder will be skipped
+    // It's designed to work with plt_insert_dir and plt_insert_file.
+    // In case of plt_insert_file, the filter will only be used for recursive plt_insert_dir calls (e.g. for VFS containers)
+
+    // Registers the file add filter, and returns the filter ID, which can be used to unregister the filter
+    // Calls the callback before each file is processed
+    // The callback must return 0 to continue, or a negative value to skip the file
+    int (*register_fileadd_filter) (int (*callback)(ddb_file_found_data_t *data, void *user_data), void *user_data);
+
+    // Unregisters the filter by ID, returned by register_file_filter
+    void (*unregister_fileadd_filter) (int id);
+
+    ////// MetaCache APIs available from 1.10+ //////
+
+    // Returns an existing NULL-terminated string, or NULL if it doesn't exist
+    const char * (*metacache_get_string) (const char *str);
+
+    // Adds a new value of specified size, or finds an existing one
+    const char * (*metacache_add_value) (const char *value, size_t valuesize);
+
+    // Returns an existing value of specified size, or NULL if it doesn't exist
+    const char *(*metacache_get_value) (const char *value, size_t valuesize);
+
+    // Removes an existing value of specified size, ignoring refcount
+    void (*metacache_remove_value) (const char *value, size_t valuesize);
 #endif
 } DB_functions_t;
 

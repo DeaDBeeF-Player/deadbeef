@@ -548,4 +548,10 @@ pl_meta_free_values (DB_metaInfo_t *meta);
 void
 pl_add_meta_copy (playItem_t *it, DB_metaInfo_t *meta);
 
+int
+register_fileadd_filter (int (*callback)(ddb_file_found_data_t *data, void *user_data), void *user_data);
+
+void
+unregister_fileadd_filter (int id);
+
 #endif // __PLAYLIST_H

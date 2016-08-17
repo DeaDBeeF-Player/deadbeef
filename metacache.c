@@ -28,6 +28,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "metacache.h"
 
 typedef struct metacache_str_s {
     struct metacache_str_s *next;
@@ -140,10 +141,30 @@ metacache_remove_string (const char *str) {
 
 void
 metacache_ref (const char *str) {
-    // left for compatibility
+    uint32_t *refc = (uint32_t *)(str-5);
+    (*refc)++;
 }
 
 void
 metacache_unref (const char *str) {
-    // left for compatibility
+    uint32_t *refc = (uint32_t *)(str-5);
+    (*refc)--;
+}
+
+const char *
+metacache_get_string (const char *str) {
+    return metacache_get_value (str, strlen (str)+1);
+}
+
+const char *
+metacache_get_value (const char *value, size_t len) {
+    uint32_t h = metacache_get_hash_sdbm (value, len);
+    metacache_str_t *data = metacache_find_in_bucket (h % HASH_SIZE, value, len);
+    n_inserts++;
+    if (data) {
+        data->refcount++;
+        return data->str;
+    }
+
+    return NULL;
 }

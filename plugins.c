@@ -463,6 +463,14 @@ static DB_functions_t deadbeef_api = {
 
     .log_viewer_register = ddb_log_viewer_register,
     .log_viewer_unregister = ddb_log_viewer_unregister,
+
+    .register_fileadd_filter = register_fileadd_filter,
+    .unregister_fileadd_filter = unregister_fileadd_filter,
+
+    .metacache_get_string = metacache_get_string,
+    .metacache_add_value = metacache_add_value,
+    .metacache_get_value = metacache_get_value,
+    .metacache_remove_value = metacache_remove_value,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

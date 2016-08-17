@@ -27,21 +27,35 @@
 #ifndef __METACACHE_H
 #define __METACACHE_H
 
+// Adds a new NULL-terminated string, or finds an existing one
 const char *
 metacache_add_string (const char *str);
 
+// Returns an existing NULL-terminated string, or NULL if it doesn't exist
+const char *
+metacache_get_string (const char *str);
+
+// Removes an existing string, ignoring refcount
 void
 metacache_remove_string (const char *str);
 
+// Adds a new value of specified size, or finds an existing one
 const char *
 metacache_add_value (const char *value, size_t valuesize);
 
+// Returns an existing value of specified size, or NULL if it doesn't exist
+const char *
+metacache_get_value (const char *value, size_t valuesize);
+
+// Removes an existing value of specified size, ignoring refcount
 void
 metacache_remove_value (const char *value, size_t valuesize);
 
+// Increases reference count of the specified value
 void
 metacache_ref (const char *str);
 
+// Decreases reference count of the specified value
 void
 metacache_unref (const char *str);
 
