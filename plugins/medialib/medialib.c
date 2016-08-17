@@ -23,9 +23,14 @@
 
 #include <sys/time.h>
 #include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <assert.h>
 #include "../../deadbeef.h"
 
 DB_functions_t *deadbeef;
+
+static int filter_id;
 
 typedef struct ml_string_s {
     const char *text;
@@ -41,10 +46,16 @@ typedef struct ml_entry_s {
     ml_string_t *genre;
     ml_string_t *folder;
     struct ml_entry_s *next;
+    struct ml_entry_s *bucket_next;
 } ml_entry_t;
+
+#define ENTRY_HASH_SIZE 4096
 
 typedef struct {
     ml_entry_t *tracks;
+
+    // hash formed by filename pointer
+    ml_entry_t *filename_hash[ENTRY_HASH_SIZE];
 
     // index tables
     ml_string_t *album;
@@ -52,6 +63,9 @@ typedef struct {
     ml_string_t *genre;
     ml_string_t *folder;
 } ml_db_t;
+
+static ddb_playlist_t *ml_playlist;
+static ml_db_t db;
 
 #define REG_COL(col)\
 ml_string_t *\
@@ -97,30 +111,21 @@ add_file_info_cb (DB_playItem_t *it, void *data) {
     return 0;
 }
 
+// This should be called only on pre-existing ml playlist.
+// Subsequent indexing should be done on the fly, using fileadd listener.
 static void
-scanner_thread (void *none) {
-    return;
-    // create invisible playlist
-    ddb_playlist_t *plt = deadbeef->plt_alloc ("scanner");
-
-    struct timeval tm1;
-    gettimeofday (&tm1, NULL);
-
-    plt_insert_dir (plt, NULL, "/backup/mus/en", &scanner_terminate, add_file_info_cb, NULL);
-
-    struct timeval tm2;
-    gettimeofday (&tm2, NULL);
-    int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
-    fprintf (stderr, "initial scan time: %f seconds (%d tracks)\n", ms / 1000.f, deadbeef->plt_get_item_count (plt, PL_MAIN));
-
+ml_index (void) {
     fprintf (stderr, "building index...\n");
+
+    struct timeval tm1, tm2;
     gettimeofday (&tm1, NULL);
-    ml_db_t db;
+
+    // FIXME: memsetting the DB won't clear the string references
     memset (&db, 0, sizeof (db));
 
     ml_entry_t *tail = NULL;
 
-    DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+    DB_playItem_t *it = deadbeef->plt_get_first (ml_playlist, PL_MAIN);
     while (it) {
 
         ml_entry_t *en = malloc (sizeof (ml_entry_t));
@@ -144,12 +149,17 @@ scanner_thread (void *none) {
             folder[fn-uri] = 0;
             const char *s = deadbeef->metacache_add_string (folder);
             fld = ml_reg_folder (&db, s);
-            deadbeef->metacache_unref (s); // there should be at least 1 ref left, so it's safe
+            deadbeef->metacache_unref (s);
         }
 
         deadbeef->metacache_ref (uri);
         en->file = uri;
-        deadbeef->metacache_ref (title);
+        if (strstr (uri, "Space_Journey_2SID.sid")) {
+            printf ("found\n");
+        }
+        if (title) {
+            deadbeef->metacache_ref (title);
+        }
         if (deadbeef->pl_get_item_flags (it) & DDB_IS_SUBTRACK) {
             en->subtrack = deadbeef->pl_find_meta_int (it, ":TRACKNUM", -1);
         }
@@ -170,11 +180,15 @@ scanner_thread (void *none) {
             tail = db.tracks = en;
         }
 
+        // add to the hash table
+        uint32_t hash = (((uint32_t)(en->file))>>1) & (ENTRY_HASH_SIZE-1);
+        en->bucket_next = db.filename_hash[hash];
+        db.filename_hash[hash] = en;
+
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         deadbeef->pl_item_unref (it);
         it = next;
     }
-    ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
 
     int nalb = 0;
     int nart = 0;
@@ -185,15 +199,121 @@ scanner_thread (void *none) {
     for (s = db.artist; s; s = s->next, nart++);
     for (s = db.genre; s; s = s->next, ngnr++);
     for (s = db.folder; s; s = s->next, nfld++);
+    gettimeofday (&tm2, NULL);
+    long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
 
     fprintf (stderr, "index build time: %f seconds (%d albums, %d artists, %d genres, %d folders)\n", ms / 1000.f, nalb, nart, ngnr, nfld);
+}
 
-    deadbeef->plt_free (plt);
+static void
+scanner_thread (void *none) {
+    return;
+    char plpath[PATH_MAX];
+    snprintf (plpath, sizeof (plpath), "%s/medialib.dbpl", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG));
+
+    if (!ml_playlist) {
+        ml_playlist = deadbeef->plt_alloc ("medialib");
+
+        if (deadbeef->plt_load2 (-1, ml_playlist, NULL, plpath, NULL, NULL, NULL)) {
+            ml_index ();
+        }
+    }
+
+    struct timeval tm1;
+    gettimeofday (&tm1, NULL);
+
+    const char *musicdir = deadbeef->conf_get_str_fast ("medialib.path", NULL);
+    if (!musicdir) {
+        return;
+    }
+
+    plt_insert_dir (ml_playlist, NULL, musicdir, &scanner_terminate, add_file_info_cb, NULL);
+
+    struct timeval tm2;
+    gettimeofday (&tm2, NULL);
+    long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
+    fprintf (stderr, "scan time: %f seconds (%d tracks)\n", ms / 1000.f, deadbeef->plt_get_item_count (ml_playlist, PL_MAIN));
+
+//    ml_index ();
+
+    deadbeef->plt_save (ml_playlist, NULL, NULL, plpath, NULL, NULL, NULL);
+    exit (0);
+
+}
+
+//#define FILTER_PERF
+
+// intention is to skip the files which are already indexed
+// how to speed this up:
+// first check if a folder exists (early out?)
+static int
+ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
+    int res = 0;
+
+    if (data->plt != ml_playlist || data->is_dir) {
+        return 0;
+    }
+
+#if FILTER_PERF
+    struct timeval tm1, tm2;
+    gettimeofday (&tm1, NULL);
+#endif
+
+    const char *s = deadbeef->metacache_get_string (data->filename);
+    if (!s) {
+        return 0;
+    }
+
+    uint32_t hash = (((uint32_t)(s))>>1) & (ENTRY_HASH_SIZE-1);
+
+#if 0
+    for (ml_entry_t *e = db.tracks; e; e = e->next) {
+        if (e->file == s) {
+            res = -1;
+            break;
+        }
+    }
+#endif
+
+    if (!db.filename_hash[hash]) {
+        return 0;
+    }
+
+    ml_entry_t *en = db.filename_hash[hash];
+    while (en) {
+        if (en->file == s) {
+            res = -1;
+            break;
+        }
+        en = en->bucket_next;
+    }
+
+#if FILTER_PERF
+    gettimeofday (&tm2, NULL);
+    long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
+
+    if (!res) {
+        fprintf (stderr, "ADD %s: file presence check took %f sec\n", s, ms / 1000.f);
+    }
+    else {
+        fprintf (stderr, "SKIP %s: file presence check took %f sec\n", s, ms / 1000.f);
+    }
+#endif
+
+    deadbeef->metacache_unref (s);
+
+    return res;
 }
 
 static int
 ml_connect (void) {
     tid = deadbeef->thread_start_low_priority (scanner_thread, NULL);
+    return 0;
+}
+
+static int
+ml_start (void) {
+    filter_id = deadbeef->register_fileadd_filter (ml_fileadd_filter, NULL);
     return 0;
 }
 
@@ -204,6 +324,14 @@ ml_stop (void) {
         deadbeef->thread_join (tid);
         tid = 0;
     }
+    if (filter_id) {
+        deadbeef->unregister_fileadd_filter (filter_id);
+        filter_id = 0;
+    }
+
+    if (ml_playlist) {
+        deadbeef->plt_free (ml_playlist);
+    }
 
     return 0;
 }
@@ -213,7 +341,7 @@ ml_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
 }
 
-typedef struct {
+typedef struct ddb_medialib_plugin_s {
     DB_misc_t plugin;
 } ddb_medialib_plugin_t;
 
@@ -251,6 +379,7 @@ static ddb_medialib_plugin_t plugin = {
     ,
     .plugin.plugin.website = "http://deadbeef.sf.net",
     .plugin.plugin.connect = ml_connect,
+    .plugin.plugin.start = ml_start,
     .plugin.plugin.stop = ml_stop,
 //    .plugin.plugin.configdialog = settings_dlg,
     .plugin.plugin.message = ml_message,
