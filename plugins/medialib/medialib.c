@@ -1,6 +1,6 @@
 /*
     Media Library plugin for DeaDBeeF Player
-    Copyright (C) 2009-2014 Alexey Yakovenko
+    Copyright (C) 2009-2016 Alexey Yakovenko
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -32,9 +32,12 @@ DB_functions_t *deadbeef;
 
 static int filter_id;
 
+// FIXME: "next" pointer can be avoided
+
 typedef struct ml_string_s {
     const char *text;
     struct ml_string_s *next;
+    struct ml_string_s *bucket_next;
 } ml_string_t;
 
 typedef struct ml_entry_s {
@@ -49,56 +52,77 @@ typedef struct ml_entry_s {
     struct ml_entry_s *bucket_next;
 } ml_entry_t;
 
-#define ENTRY_HASH_SIZE 4096
+#define ML_HASH_SIZE 4096
 
 typedef struct {
+    // plain list of all tracks in the entire collection
     ml_entry_t *tracks;
 
     // hash formed by filename pointer
-    ml_entry_t *filename_hash[ENTRY_HASH_SIZE];
+    ml_entry_t *filename_hash[ML_HASH_SIZE];
 
-    // index tables
-    ml_string_t *album;
-    ml_string_t *artist;
-    ml_string_t *genre;
-    ml_string_t *folder;
+    // hash tables for each index
+    ml_string_t *hash_album[ML_HASH_SIZE];
+    ml_string_t *hash_artist[ML_HASH_SIZE];
+    ml_string_t *hash_genre[ML_HASH_SIZE];
+    ml_string_t *hash_folder[ML_HASH_SIZE];
 } ml_db_t;
 
-static ddb_playlist_t *ml_playlist;
-static ml_db_t db;
-
-#define REG_COL(col)\
-ml_string_t *\
-ml_reg_##col (ml_db_t *db, const char *col) {\
-    ml_string_t *s;\
-    int release = 0;\
-    if (!col) {\
-        col = deadbeef->metacache_add_string ("Unknown");\
-        release = 1;\
-    }\
-    for (s = db->col; s; s = s->next) {\
-        if (s->text == col) {\
-            if (release) {\
-                deadbeef->metacache_unref (col);\
-            }\
-            return s;\
-        }\
-    }\
-    if (!release) {\
-        deadbeef->metacache_ref (col);\
-    }\
-    s = malloc (sizeof (ml_string_t));\
-    memset (s, 0, sizeof (ml_string_t));\
-    s->text = col;\
-    s->next = db->col;\
-    db->col = s;\
-    return s;\
+static uint32_t
+hash_for_ptr (void *ptr) {
+    return (((uint32_t)(ptr))>>1) & (ML_HASH_SIZE-1);
 }
 
-REG_COL(album);
-REG_COL(artist);
-REG_COL(genre);
-REG_COL(folder);
+static ml_string_t *
+hash_find_for_hashkey (ml_string_t **hash, const char *val, uint32_t h) {
+    ml_string_t *bucket = hash[h];
+    while (bucket) {
+        if (bucket->text == val) {
+            return bucket;
+        }
+        bucket = bucket->bucket_next;
+    }
+    return NULL;
+}
+
+ml_string_t *
+hash_find (ml_string_t **hash, const char *val) {
+    uint32_t h = hash_for_ptr ((void *)val) & (ML_HASH_SIZE-1);
+    return hash_find_for_hashkey(hash, val, h);
+}
+
+static ml_string_t *
+hash_add (ml_string_t **hash, const char *val) {
+    uint32_t h = hash_for_ptr ((void *)val) & (ML_HASH_SIZE-1);
+    if (!hash_find_for_hashkey(hash, val, h)) {
+        deadbeef->metacache_ref (val);
+        ml_string_t *s = calloc (sizeof (ml_string_t), 1);
+        s->bucket_next = hash[h];
+        s->text = val;
+        deadbeef->metacache_ref (val);
+        hash[h] = s;
+        return s;
+    }
+    return NULL;
+}
+
+static ddb_playlist_t *ml_playlist; // this playlist contains the actual data of the media library in plain list
+
+static ml_db_t db; // this is the index, which can be rebuilt from the playlist at any given time
+
+#define REG_COL_DEF(col)\
+ml_string_t *\
+ml_reg_##col (ml_db_t *db, const char *c) {\
+    if (!c) {\
+        return NULL;\
+    }\
+    return hash_add (db->hash_##col, c);\
+}
+
+REG_COL_DEF(album);
+REG_COL_DEF(artist);
+REG_COL_DEF(genre);
+REG_COL_DEF(folder);
 
 DB_playItem_t *(*plt_insert_dir) (ddb_playlist_t *plt, DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
@@ -111,32 +135,70 @@ add_file_info_cb (DB_playItem_t *it, void *data) {
     return 0;
 }
 
+#define FREE_COL(col)\
+    for (int idx_##col = 0; idx_##col < ML_HASH_SIZE; idx_##col++) {\
+        ml_string_t *s = db.hash_##col[idx_##col];\
+        while (s) {\
+            ml_string_t *next = s->bucket_next;\
+            if (s->text) {\
+                deadbeef->metacache_unref (s->text);\
+            }\
+            free (s);\
+            s = next;\
+        }\
+        db.hash_##col[idx_##col] = NULL;\
+    }
+
+static void
+ml_free_db (void) {
+    fprintf (stderr, "clearing index...\n");
+
+    FREE_COL(album);
+    FREE_COL(artist);
+    FREE_COL(genre);
+    FREE_COL(folder);
+
+    while (db.tracks) {
+        ml_entry_t *next = db.tracks->next;
+        if (db.tracks->title) {
+            deadbeef->metacache_unref (db.tracks->title);
+        }
+        if (db.tracks->file) {
+            deadbeef->metacache_unref (db.tracks->file);
+        }
+        free (db.tracks);
+        db.tracks = next;
+    }
+
+    memset (&db, 0, sizeof (db));
+}
+
 // This should be called only on pre-existing ml playlist.
 // Subsequent indexing should be done on the fly, using fileadd listener.
 static void
 ml_index (void) {
+    ml_free_db();
+
     fprintf (stderr, "building index...\n");
 
     struct timeval tm1, tm2;
     gettimeofday (&tm1, NULL);
 
-    // FIXME: memsetting the DB won't clear the string references
-    memset (&db, 0, sizeof (db));
-
     ml_entry_t *tail = NULL;
+
+    char folder[PATH_MAX];
 
     DB_playItem_t *it = deadbeef->plt_get_first (ml_playlist, PL_MAIN);
     while (it) {
-
-        ml_entry_t *en = malloc (sizeof (ml_entry_t));
-        memset (en, 0, sizeof (ml_entry_t));
+        ml_entry_t *en = calloc (sizeof (ml_entry_t), 1);
 
         const char *uri = deadbeef->pl_find_meta (it, ":URI");
         const char *title = deadbeef->pl_find_meta (it, "title");
         const char *artist = deadbeef->pl_find_meta (it, "artist");
+
+        // FIXME: album needs to be a combination of album + artist for indexing / library
         const char *album = deadbeef->pl_find_meta (it, "album");
         const char *genre = deadbeef->pl_find_meta (it, "genre");
-
         ml_string_t *alb = ml_reg_album (&db, album);
         ml_string_t *art = ml_reg_artist (&db, artist);
         ml_string_t *gnr = ml_reg_genre (&db, genre);
@@ -144,7 +206,6 @@ ml_index (void) {
         char *fn = strrchr (uri, '/');
         ml_string_t *fld = NULL;
         if (fn) {
-            char folder[fn-uri+1];
             memcpy (folder, uri, fn-uri);
             folder[fn-uri] = 0;
             const char *s = deadbeef->metacache_add_string (folder);
@@ -152,11 +213,10 @@ ml_index (void) {
             deadbeef->metacache_unref (s);
         }
 
+        // uri and title are not indexed, only a part of track list,
+        // that's why they have an extra ref for each entry
         deadbeef->metacache_ref (uri);
         en->file = uri;
-        if (strstr (uri, "Space_Journey_2SID.sid")) {
-            printf ("found\n");
-        }
         if (title) {
             deadbeef->metacache_ref (title);
         }
@@ -181,7 +241,8 @@ ml_index (void) {
         }
 
         // add to the hash table
-        uint32_t hash = (((uint32_t)(en->file))>>1) & (ENTRY_HASH_SIZE-1);
+        // at this point, we only have unique pointers, and don't need a duplicate check
+        uint32_t hash = hash_for_ptr ((void *)en->file);
         en->bucket_next = db.filename_hash[hash];
         db.filename_hash[hash] = en;
 
@@ -195,10 +256,12 @@ ml_index (void) {
     int ngnr = 0;
     int nfld = 0;
     ml_string_t *s;
-    for (s = db.album; s; s = s->next, nalb++);
-    for (s = db.artist; s; s = s->next, nart++);
-    for (s = db.genre; s; s = s->next, ngnr++);
-    for (s = db.folder; s; s = s->next, nfld++);
+    for (int i = 0; i < ML_HASH_SIZE; i++) {
+        for (s = db.hash_album[i]; s; s = s->bucket_next, nalb++);
+        for (s = db.hash_artist[i]; s; s = s->bucket_next, nart++);
+        for (s = db.hash_genre[i]; s; s = s->bucket_next, ngnr++);
+        for (s = db.hash_folder[i]; s; s = s->bucket_next, nfld++);
+    }
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
 
@@ -207,19 +270,28 @@ ml_index (void) {
 
 static void
 scanner_thread (void *none) {
-    return;
     char plpath[PATH_MAX];
     snprintf (plpath, sizeof (plpath), "%s/medialib.dbpl", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG));
+
+    struct timeval tm1, tm2;
 
     if (!ml_playlist) {
         ml_playlist = deadbeef->plt_alloc ("medialib");
 
-        if (deadbeef->plt_load2 (-1, ml_playlist, NULL, plpath, NULL, NULL, NULL)) {
-            ml_index ();
+        printf ("loading %s\n", plpath);
+        gettimeofday (&tm1, NULL);
+        DB_playItem_t *plt_head = deadbeef->plt_load2 (-1, ml_playlist, NULL, plpath, NULL, NULL, NULL);
+        gettimeofday (&tm2, NULL);
+        long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
+        fprintf (stderr, "ml playlist load time: %f seconds\n", ms / 1000.f);
+
+        if (plt_head) {
+//            for (int i = 0; i < 100; i++) {
+                ml_index ();
+//            }
         }
     }
 
-    struct timeval tm1;
     gettimeofday (&tm1, NULL);
 
     const char *musicdir = deadbeef->conf_get_str_fast ("medialib.path", NULL);
@@ -227,18 +299,14 @@ scanner_thread (void *none) {
         return;
     }
 
+    printf ("adding dir: %s\n", musicdir);
     plt_insert_dir (ml_playlist, NULL, musicdir, &scanner_terminate, add_file_info_cb, NULL);
 
-    struct timeval tm2;
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
     fprintf (stderr, "scan time: %f seconds (%d tracks)\n", ms / 1000.f, deadbeef->plt_get_item_count (ml_playlist, PL_MAIN));
 
-//    ml_index ();
-
     deadbeef->plt_save (ml_playlist, NULL, NULL, plpath, NULL, NULL, NULL);
-    exit (0);
-
 }
 
 //#define FILTER_PERF
@@ -264,16 +332,7 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
         return 0;
     }
 
-    uint32_t hash = (((uint32_t)(s))>>1) & (ENTRY_HASH_SIZE-1);
-
-#if 0
-    for (ml_entry_t *e = db.tracks; e; e = e->next) {
-        if (e->file == s) {
-            res = -1;
-            break;
-        }
-    }
-#endif
+    uint32_t hash = (((uint32_t)(s))>>1) & (ML_HASH_SIZE-1);
 
     if (!db.filename_hash[hash]) {
         return 0;
@@ -307,7 +366,17 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
 
 static int
 ml_connect (void) {
-    tid = deadbeef->thread_start_low_priority (scanner_thread, NULL);
+#if 0
+    //tid = deadbeef->thread_start_low_priority (scanner_thread, NULL);
+
+    struct timeval tm1, tm2;
+    gettimeofday (&tm1, NULL);
+    scanner_thread(NULL);
+    gettimeofday (&tm2, NULL);
+    long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
+    fprintf (stderr, "whole ml init time: %f seconds\n", ms / 1000.f);
+    exit (0);
+#endif
     return 0;
 }
 
