@@ -356,7 +356,7 @@ cdumb_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int is_it;
     int is_dos;
     int is_ptcompat;
-    const char *ftype;
+    const char *ftype = NULL;
     DUH* duh = g_open_module(fname, &is_it, &is_dos, &is_ptcompat, 0, &ftype);
     if (!duh) {
         return NULL;

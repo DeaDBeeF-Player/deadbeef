@@ -328,6 +328,7 @@ DUH * g_open_module(const char * path, int *is_it, int *is_dos, int *is_ptcompat
             dumb_it_convert_tempos( itsd, true );
         }
         if ( duh ) *is_ptcompat = 1;
+        *ftype = "MOD";
     }
 
     dumbfile_close(f);
