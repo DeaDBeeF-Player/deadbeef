@@ -564,11 +564,11 @@ action_delete_from_disk_handler_cb (void *data) {
     if (ctx == DDB_ACTION_CTX_SELECTION) {
         DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
         while (it) {
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (uri)) {
                 delete_and_remove_track (uri, plt, it);
             }
-            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             deadbeef->pl_item_unref (it);
             it = next;
         }
