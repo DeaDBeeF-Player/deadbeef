@@ -50,6 +50,7 @@
 #define AUTOSCROLL_UPDATE_FREQ 0.01f
 #define NUM_ROWS_TO_NOTIFY_SINGLY 10
 #define MIN_COLUMN_WIDTH 16
+#define BLANK_GROUP_SUBDIVISION 100
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -3254,13 +3255,10 @@ build_groups (DdbListview *listview) {
     }
     if (!listview->group_format || !listview->group_format[0]) {
         listview->grouptitle_height = 0;
-        listview->groups = calloc(1, sizeof(DdbListviewGroup));
-        listview->groups->head = it;
-        listview->groups->num_items = listview->binding->count();
-        listview->groups->height = listview->groups->num_items * listview->rowheight;
-        return listview->groups->height;
     }
-    listview->grouptitle_height = listview->calculated_grouptitle_height;
+    else {
+        listview->grouptitle_height = listview->calculated_grouptitle_height;
+    }
     listview->groups = new_group(listview, it);
     int min_height = ddb_listview_min_group_height(listview->columns);
     int full_height = 0;
@@ -3271,7 +3269,7 @@ build_groups (DdbListview *listview) {
         do {
             grp->num_items++;
             it = next_playitem(listview, it);
-        } while (it && listview->binding->get_group(listview, it, next_title, sizeof(next_title)) != -1 && !strcmp(group_title, next_title));
+        } while (it && ((!listview->grouptitle_height && grp->num_items < BLANK_GROUP_SUBDIVISION) || (listview->grouptitle_height && !strcmp(group_title, next_title))));
         grp->height = listview->grouptitle_height + max(grp->num_items * listview->rowheight, min_height);
         full_height += grp->height;
         grp->next = it ? new_group(listview, it) : NULL;
