@@ -25,6 +25,8 @@
 
 //#define DEBUG_DRAW_GROUP_TITLES 1
 
+#define BLANK_GROUP_SUBDIVISION 100
+
 int headerheight = 17;
 int rowheight = 19;
 int grouptitleheight = 22;
@@ -853,24 +855,12 @@ int grouptitleheight = 22;
     DdbListviewRow_t it = [_delegate firstRow];
     while (it != [_delegate invalidRow]) {
         curr = [_delegate rowGroupStr:it];
-        if (!curr) {
-            grp = malloc (sizeof (DdbListviewGroup_t));
-            _groups = grp;
-            memset (grp, 0, sizeof (DdbListviewGroup_t));
-            grp->head = it;
-            grp->head_idx = idx;
-            grp->num_items = [_delegate rowCount];
-            _grouptitle_height = 0;
-            grp->height = _grouptitle_height + grp->num_items * rowheight;
-            _fullheight = grp->height;
-            _fullheight += _grouptitle_height;
 
-            [self updateContentFrame];
-            [_delegate unlock];
-            return;
+        if (!curr) {
+            _grouptitle_height = 0;
         }
 
-        if (!grp || [str isNotEqualTo:curr]) {
+        if (!grp || (!curr && grp->num_items >= BLANK_GROUP_SUBDIVISION) || (curr && [str isNotEqualTo:curr])) {
             str = curr;
             DdbListviewGroup_t *newgroup = malloc (sizeof (DdbListviewGroup_t));
             if (grp) {
