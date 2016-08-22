@@ -1007,15 +1007,21 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
                 DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
                 if (it) {
                     ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
-                    if (plt) {
+                    ddb_playlist_t *prev_plt = deadbeef->plt_get_curr ();
+
+                    if (prev_plt != plt) {
+                        // force group rebuild
                         deadbeef->plt_set_curr (plt);
-                        int idx = deadbeef->pl_get_idx_of_iter (it, [self playlistIter]);
-                        if (idx != -1) {
-                            [listview setCursor:idx noscroll:YES];
-                            [listview scrollToRowWithIndex:idx];
-                        }
-                        deadbeef->plt_unref (plt);
+                        [listview reloadData];
                     }
+
+                    int idx = deadbeef->pl_get_idx_of_iter (it, [self playlistIter]);
+                    if (idx != -1) {
+                        [listview setCursor:idx noscroll:YES];
+                        [listview scrollToRowWithIndex:idx];
+                    }
+                    deadbeef->plt_unref (plt);
+                    deadbeef->plt_unref (prev_plt);
                     deadbeef->pl_item_unref (it);
                 }
                 deadbeef->pl_unlock ();
