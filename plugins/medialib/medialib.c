@@ -32,11 +32,8 @@ DB_functions_t *deadbeef;
 
 static int filter_id;
 
-// FIXME: "next" pointer can be avoided
-
 typedef struct ml_string_s {
     const char *text;
-    struct ml_string_s *next;
     struct ml_string_s *bucket_next;
 } ml_string_t;
 
@@ -59,6 +56,8 @@ typedef struct {
     ml_entry_t *tracks;
 
     // hash formed by filename pointer
+    // this hash purpose is to quickly check whether the filename is in the library already
+    // NOTE: this hash doesn't contain all of the tracks from the `tracks` list, because of subtracks
     ml_entry_t *filename_hash[ML_HASH_SIZE];
 
     // hash tables for each index
