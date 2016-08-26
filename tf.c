@@ -1964,6 +1964,9 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 else if (!strcmp (name, "_deadbeef_version")) {
                     val = VERSION;
                 }
+                else if (!strcmp (name, "_playlist_name")) {
+                    val = ((playlist_t *)ctx->plt)->title;
+                }
                 else {
                     val = _tf_get_combined_value (it, name, &needs_free);
                 }
