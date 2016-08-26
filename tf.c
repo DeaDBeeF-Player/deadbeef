@@ -1709,6 +1709,11 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                         }
                     }
                 }
+                else if (!strcmp (name, "playlist")) {
+                    char pltname[2000];
+                    deadbeef->plt_get_title (ctx->plt, pltname, sizeof (pltname));
+                    val = pltname;
+                }
                 else if (!strcmp (name, "discnumber")) {
                     val = pl_find_meta_raw (it, "disc");
                 }
