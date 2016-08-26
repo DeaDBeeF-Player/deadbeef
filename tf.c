@@ -273,6 +273,66 @@ tf_func_num (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
     return n_len > num_len ? n_len : num_len;
 }
 
+// $replace(subject, search, replace, ...) Replaces all occurrences of `search`
+// substring in `subject` with `replace`. Accepts multiple search and replace
+// substrings
+int
+tf_func_replace (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 3 || argc % 2 == 0) {
+        return -1;
+    }
+
+    int bool_out = 0;
+    int i;
+
+    const char *arg = args;
+    char buf[2000];
+    char *lines[argc];
+    int lens[argc];
+    char *ptr = buf;
+
+    for (i = 0; i < argc; ++i) {
+        lines[i] = ptr;
+        TF_EVAL_CHECK (lens[i], ctx, arg, arglens[i], ptr, buf+sizeof(buf)-ptr, fail_on_undef);
+        ptr += lens[i]+1;
+        arg += arglens[i];
+    }
+
+    char *optr = out;
+    const char *iptr = lines[0];
+
+    for (;;) {
+        int chunklen = lines[0] + lens[0] - iptr; //chunk is a substring before the found needle
+        int idx = -1; //index of the found needle
+
+        for (i = 0; i < (argc - 1) / 2; ++i) {
+            char *found = strstr (iptr, lines[i*2+1]);
+            if (found && found - iptr < chunklen) {
+                chunklen = found - iptr;
+                idx = i;
+            }
+        }
+
+        if (chunklen > out + outlen - optr)
+            return -1;
+        memcpy (optr, iptr, chunklen);
+        optr += chunklen;
+
+        if (idx == -1) //nothing found
+            break;
+
+        if (lens[idx*2+2] > out + outlen - optr)
+            return -1;
+
+        memcpy (optr, lines[idx*2+2], lens[idx*2+2]);
+        optr += lens[idx*2+2];
+
+        iptr += chunklen + lens[idx*2+1];
+    }
+    *optr = 0;
+    return optr - out;
+}
+
 int
 tf_func_abbr (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1 && argc != 2) {
@@ -1401,6 +1461,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "hex", tf_func_hex },
     { "strcmp", tf_func_strcmp },
     { "num", tf_func_num },
+    { "replace", tf_func_replace },
     // Track info
     { "meta", tf_func_meta },
     { "channels", tf_func_channels },
@@ -2282,6 +2343,7 @@ tf_compile (const char *script) {
 
     while (*(c.i)) {
         if (tf_compile_plain (&c)) {
+            trace ("tf: compilation failed <%s>\n", c.i);
             return NULL;
         }
     }
