@@ -273,6 +273,110 @@ tf_func_num (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
     return n_len > num_len ? n_len : num_len;
 }
 
+static int
+strreplace (const char *src, const char **needles, const char **replaces, int count, char *out, int outlen)
+{
+    const char *iptr = src;
+    char *optr = out;
+    size_t inlen = strlen (src);
+    int i;
+
+    for (;;) {
+        int chunklen = inlen; //chunk is a substring before the found needle
+        int idx = -1; //index of the found needle
+
+        for (i = 0; i < count; ++i)
+        {
+            char *found = strstr (iptr, needles[i]);
+            if (!found)
+                continue;
+            if (found - iptr < chunklen)
+            {
+                chunklen = found - iptr;
+                idx = i;
+            }
+        }
+        if (idx == -1) //nothing found
+            break;
+
+        size_t nlen = strlen (needles[idx]);
+
+        if (chunklen > outlen)
+            return -1;
+        memcpy (optr, iptr, chunklen);
+        optr += chunklen;
+        outlen -= chunklen;
+        iptr += chunklen + nlen;
+        inlen -= chunklen + nlen;
+
+        size_t rlen = strlen (replaces[idx]);
+
+        if (rlen > outlen)
+            return -1;
+
+        memcpy (optr, replaces[idx], rlen);
+        optr += rlen;
+        outlen -= rlen;
+    }
+    memcpy (optr, iptr, inlen);
+    optr += inlen;
+    *optr = 0;
+    return optr - out;
+}
+
+int
+tf_func_replace (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 3 || argc % 2 == 0)
+    {
+        return -1;
+    }
+
+    int bool_out = 0;
+    int i;
+    const int count = (argc - 1)/2;
+
+    const char *arg = args;
+    char src[1000];
+    int len;
+    TF_EVAL_CHECK (len, ctx, arg, arglens[0], src, sizeof (src), fail_on_undef);
+
+    char *needles[count];
+    char *replaces[count];
+
+    for (i = 0; i < count; ++i) {
+        needles[i] = alloca (1000);
+        replaces[i] = alloca (1000);
+        arg += arglens[i*2];
+        TF_EVAL_CHECK (len, ctx, arg, arglens[i*2+1], needles[i], sizeof (needles[i]), fail_on_undef);
+
+        arg += arglens[i*2+1];
+        TF_EVAL_CHECK (len, ctx, arg, arglens[i*2+2], replaces[i], sizeof (replaces[i]), fail_on_undef);
+    }
+    return strreplace (src, needles, replaces, count, out, outlen);
+}
+
+int
+tf_func_shesc (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1)
+        return -1;
+
+    int bool_out = 0;
+
+    const char *arg = args;
+    char src[1000];
+    int len;
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], src, sizeof (src), fail_on_undef);
+
+    const char *needles[] = {"'"};
+    const char *replaces[] = {"'\\''"};
+
+    len = strreplace (src, needles, replaces, 1, out+1, outlen-2);
+    out[0] = '\'';
+    out[len+1] = '\'';
+    out[len+2] = 0;
+    return len+2;
+}
+
 int
 tf_func_abbr (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1 && argc != 2) {
@@ -1401,6 +1505,8 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "hex", tf_func_hex },
     { "strcmp", tf_func_strcmp },
     { "num", tf_func_num },
+    { "replace", tf_func_replace },
+    { "shesc", tf_func_shesc },
     // Track info
     { "meta", tf_func_meta },
     { "channels", tf_func_channels },
@@ -1602,6 +1708,11 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             }
                         }
                     }
+                }
+                else if (!strcmp (name, "playlist")) {
+                    char pltname[2000];
+                    deadbeef->plt_get_title (ctx->plt, pltname, sizeof (pltname));
+                    val = pltname;
                 }
                 else if (!strcmp (name, "discnumber")) {
                     val = pl_find_meta_raw (it, "disc");
@@ -2279,6 +2390,7 @@ tf_compile (const char *script) {
 
     while (*(c.i)) {
         if (tf_compile_plain (&c)) {
+            trace ("tf: compilation failed <%s>\n", c.i);
             return NULL;
         }
     }

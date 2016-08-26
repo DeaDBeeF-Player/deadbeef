@@ -1,6 +1,6 @@
 title FLAC (compression level 5)
 ext flac
-encoder flac -o %o -5 --ignore-chunk-sizes -
+encoder flac -o '%'o -5 --ignore-chunk-sizes -
 method 0
 id3v2_version 1
 tag_id3v2 0
