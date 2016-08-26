@@ -1603,6 +1603,9 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                         }
                     }
                 }
+                else if (!strcmp (name, "_playlist_name")) {
+                    val = ctx->plt->name;
+                }
                 else if (!strcmp (name, "discnumber")) {
                     val = pl_find_meta_raw (it, "disc");
                 }
