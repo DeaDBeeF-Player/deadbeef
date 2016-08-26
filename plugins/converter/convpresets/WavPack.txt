@@ -1,6 +1,6 @@
 title WavPack
 ext wv
-encoder wavpack -i - -o %o
+encoder wavpack -i - -o '%'o
 method 0
 id3v2_version 0
 tag_id3v2 0

@@ -437,7 +437,7 @@ create_convpreset_editor (void)
   encoder = gtk_entry_new ();
   gtk_widget_show (encoder);
   gtk_box_pack_start (GTK_BOX (hbox93), encoder, TRUE, TRUE, 0);
-  gtk_widget_set_tooltip_text (encoder, _("Example: lame - %o\n%i for input file, %o for output file, - for stdin"));
+  gtk_widget_set_tooltip_text (encoder, _("Example: lame - \'%\'o\n\'%\'i for input file, \'%\'o for output file, - for stdin"));
   gtk_entry_set_invisible_char (GTK_ENTRY (encoder), 9679);
   gtk_entry_set_activates_default (GTK_ENTRY (encoder), TRUE);
 
@@ -447,7 +447,7 @@ create_convpreset_editor (void)
   gtk_widget_set_can_focus(custom4, FALSE);
   gtk_widget_set_can_default(custom4, FALSE);
 
-  label124 = gtk_label_new (_("<small>%o - output file name\n%i - temporary input file name</small>"));
+  label124 = gtk_label_new (_("<small>\'%\'o - output file name\n\'%\'i - temporary input file name</small>"));
   gtk_widget_show (label124);
   gtk_box_pack_start (GTK_BOX (vbox27), label124, FALSE, FALSE, 0);
   gtk_label_set_use_markup (GTK_LABEL (label124), TRUE);

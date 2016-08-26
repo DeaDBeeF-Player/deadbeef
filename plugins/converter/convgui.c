@@ -38,6 +38,9 @@
 #include "interface.h"
 #include "../gtkui/gtkui_api.h"
 
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 DB_functions_t *deadbeef;
 
 ddb_converter_t *converter_plugin;
@@ -207,6 +210,20 @@ converter_worker (void *ctx) {
         }
     }
 
+    char *encoder = conv->encoder_preset->encoder;
+    char *script = deadbeef->tf_compile (encoder);
+    char formatted[2000];
+    ddb_tf_context_t tf_ctx;
+    if (script)
+    {
+        memset (&tf_ctx, 0, sizeof (tf_ctx));
+        tf_ctx._size = sizeof (ddb_tf_context_t);
+        tf_ctx.flags = DDB_TF_CONTEXT_NO_DYNAMIC;
+        tf_ctx.plt = conv->convert_playlist;
+    }
+    else
+        trace ("failed to compile <%s>\n", encoder);
+
     for (int n = 0; n < conv->convert_items_count; n++) {
         update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
         info->entry = conv->progress_entry;
@@ -239,6 +256,13 @@ converter_worker (void *ctx) {
         }
 
         if (!skip) {
+            if (script) {
+                tf_ctx.it = conv->convert_items[n];
+                if (-1 != deadbeef->tf_eval (&tf_ctx, script, formatted, sizeof (formatted)))
+                    conv->encoder_preset->encoder = formatted;
+                else
+                    conv->encoder_preset->encoder = encoder;
+            }
             converter_plugin->convert (conv->convert_items[n], outpath, conv->output_bps, conv->output_is_float, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
         }
         if (conv->cancelled) {
@@ -248,6 +272,10 @@ converter_worker (void *ctx) {
             break;
         }
         deadbeef->pl_item_unref (conv->convert_items[n]);
+    }
+    conv->encoder_preset->encoder = encoder;
+    if (script) {
+        deadbeef->tf_free (script);
     }
     g_idle_add (destroy_progress_cb, conv->progress);
     if (conv->convert_items) {

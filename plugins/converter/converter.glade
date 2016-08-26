@@ -920,8 +920,8 @@ Overwrite</property>
 		  <child>
 		    <widget class="GtkEntry" id="encoder">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Example: lame - %o
-%i for input file, %o for output file, - for stdin</property>
+		      <property name="tooltip" translatable="yes">Example: lame - &apos;%&apos;o
+&apos;%&apos;i for input file, &apos;%&apos;o for output file, - for stdin</property>
 		      <property name="can_focus">True</property>
 		      <property name="editable">True</property>
 		      <property name="visibility">True</property>
@@ -971,8 +971,8 @@ Overwrite</property>
 	  <child>
 	    <widget class="GtkLabel" id="label124">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">&lt;small&gt;%o - output file name
-%i - temporary input file name&lt;/small&gt;</property>
+	      <property name="label" translatable="yes">&lt;small&gt;&apos;%&apos;o - output file name
+&apos;%&apos;i - temporary input file name&lt;/small&gt;</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">True</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
