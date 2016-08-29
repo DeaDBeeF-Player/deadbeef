@@ -38,6 +38,7 @@
 #include "demux.h"
 #include "decomp.h"
 #include "stream.h"
+#include "../../shared/mp4tagutil.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -70,7 +71,8 @@ typedef struct {
     stream_t *stream;
     alac_file *alac;
     int junk;
-    char out_buffer[BUFFER_SIZE];
+    uint8_t buffer[IN_BUFFER_SIZE];
+    uint8_t out_buffer[BUFFER_SIZE];
     int out_remaining;
     int skipsamples;
     int currentsample;
@@ -87,18 +89,6 @@ alacplug_open (uint32_t hints) {
     alacplug_info_t *info = (alacplug_info_t *)_info;
     memset (info, 0, sizeof (alacplug_info_t));
     return _info;
-}
-
-static uint32_t
-alacplug_fs_read (void *user_data, void *buffer, uint32_t length) {
-    alacplug_info_t *info = user_data;
-    return deadbeef->fread (buffer, 1, length, info->file);
-}
-
-static uint32_t
-alacplug_fs_seek (void *user_data, uint64_t position) {
-    alacplug_info_t *info = user_data;
-    return deadbeef->fseek (info->file, position+info->junk, SEEK_SET);
 }
 
 static int
@@ -249,7 +239,7 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
             int n = size / samplesize;
             n = min (info->out_remaining, n);
 
-            char *src = info->out_buffer;
+            uint8_t *src = info->out_buffer;
             memcpy (bytes, src, n * samplesize);
             bytes += n * samplesize;
             src += n * samplesize;
@@ -291,11 +281,10 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
             break;
         }
 
-        char buffer[IN_BUFFER_SIZE];
-        stream_read(info->stream, sample_byte_size, buffer);
+        stream_read(info->stream, sample_byte_size, info->buffer);
 
         outputBytes = BUFFER_SIZE;
-        decode_frame(info->alac, buffer, info->out_buffer, &outputBytes);
+        decode_frame(info->alac, info->buffer, info->out_buffer, &outputBytes);
         info->current_frame++;
 
         info->out_remaining += outputBytes / samplesize;
@@ -347,135 +336,6 @@ alacplug_seek_sample (DB_fileinfo_t *_info, int sample) {
 static int
 alacplug_seek (DB_fileinfo_t *_info, float t) {
     return alacplug_seek_sample (_info, t * _info->fmt.samplerate);
-}
-
-static const char *metainfo[] = {
-    "artist", "artist",
-    "title", "title",
-    "album", "album",
-    "track", "track",
-    "date", "year",
-    "genre", "genre",
-    "comment", "comment",
-    "performer", "performer",
-    "album_artist", "band",
-    "writer", "composer",
-    "vendor", "vendor",
-    "disc", "disc",
-    "compilation", "compilation",
-    "totaldiscs", "numdiscs",
-    "copyright", "copyright",
-    "totaltracks", "numtracks",
-    "tool", "tool",
-    "MusicBrainz Track Id", "musicbrainz_trackid",
-    NULL
-};
-
-
-/* find a metadata item by name */
-/* returns 0 if item found, 1 if no such item */
-int32_t mp4ff_meta_find_by_name(const mp4ff_t *f, const char *item, char **value);
-
-
-void
-alacplug_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
-    char *s = NULL;
-    int got_itunes_tags = 0;
-
-    int n = mp4ff_meta_get_num_items (mp4);
-    for (int t = 0; t < n; t++)  {
-        char *key = NULL;
-        char *value = NULL;
-        int res = mp4ff_meta_get_by_index(mp4, t, &key, &value);
-        if (key && value) {
-            got_itunes_tags = 1;
-            if (strcasecmp (key, "cover")) {
-                if (!strcasecmp (key, "replaygain_track_gain")) {
-                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (value));
-                }
-                else if (!strcasecmp (key, "replaygain_album_gain")) {
-                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (value));
-                }
-                else if (!strcasecmp (key, "replaygain_track_peak")) {
-                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (value));
-                }
-                else if (!strcasecmp (key, "replaygain_album_peak")) {
-                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (value));
-                }
-                else {
-                    int i;
-                    for (i = 0; metainfo[i]; i += 2) {
-                        if (!strcasecmp (metainfo[i], key)) {
-                            deadbeef->pl_append_meta (it, metainfo[i+1], value);
-                            break;
-                        }
-                    }
-                    if (!metainfo[i]) {
-                        deadbeef->pl_append_meta (it, key, value);
-                    }
-                }
-            }
-        }
-        if (key) {
-            free (key);
-        }
-        if (value) {
-            free (value);
-        }
-    }
-
-    if (got_itunes_tags) {
-        uint32_t f = deadbeef->pl_get_item_flags (it);
-        f |= DDB_TAG_ITUNES;
-        deadbeef->pl_set_item_flags (it, f);
-    }
-}
-
-int
-alacplug_read_metadata (DB_playItem_t *it) {
-    deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
-    deadbeef->pl_unlock ();
-    if (!fp) {
-        return -1;
-    }
-
-    if (fp->vfs->is_streaming ()) {
-        deadbeef->fclose (fp);
-        return -1;
-    }
-
-    alacplug_info_t inf;
-    memset (&inf, 0, sizeof (inf));
-    inf.file = fp;
-    inf.junk = deadbeef->junk_get_leading_size (fp);
-    if (inf.junk >= 0) {
-        deadbeef->fseek (inf.file, inf.junk, SEEK_SET);
-    }
-    else {
-        inf.junk = 0;
-    }
-
-    mp4ff_callback_t cb = {
-        .read = alacplug_fs_read,
-        .write = NULL,
-        .seek = alacplug_fs_seek,
-        .truncate = NULL,
-        .user_data = &inf
-    };
-
-    deadbeef->pl_delete_all_meta (it);
-
-    mp4ff_t *mp4 = mp4ff_open_read (&cb);
-    if (mp4) {
-        alacplug_load_tags (it, mp4);
-        mp4ff_close (mp4);
-    }
-    /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
-    /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
-    /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
-    deadbeef->fclose (fp);
-    return 0;
 }
 
 static DB_playItem_t *
@@ -531,28 +391,15 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     deadbeef->plt_set_item_duration (plt, it, duration);
 
-    // read tags
-    mp4ff_callback_t cb = {
-        .read = alacplug_fs_read,
-        .write = NULL,
-        .seek = alacplug_fs_seek,
-        .truncate = NULL,
-        .user_data = &info
-    };
-    deadbeef->fseek (fp, info.junk, SEEK_SET);
-    mp4 = mp4ff_open_read (&cb);
-    if (mp4) {
-        alacplug_load_tags (it, mp4);
-    }
-
-    int apeerr = deadbeef->junk_apev2_read (it, fp);
-    int v2err = deadbeef->junk_id3v2_read (it, fp);
-    int v1err = deadbeef->junk_id3v1_read (it, fp);
+    deadbeef->rewind (fp);
+    mp4_read_metadata_file (it, fp);
 
     int64_t fsize = deadbeef->fgetlength (fp);
 
     deadbeef->fclose (fp);
     fp = NULL;
+
+
     stream_destroy (stream);
     stream = NULL;
     if (mp4) {
@@ -585,7 +432,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         DB_playItem_t *cue = NULL;
 
         if (cuesheet) {
-            cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
+            cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (const uint8_t *)cuesheet, (int)strlen (cuesheet), totalsamples, samplerate);
             if (cue) {
                 deadbeef->pl_item_unref (it);
                 deadbeef->pl_item_unref (cue);
@@ -616,133 +463,6 @@ error:
     }
     qtmovie_free_demux (&demux_res);
     return it;
-}
-
-uint32_t stdio_read (void *user_data, void *buffer, uint32_t length) {
-    return (uint32_t)read (*(int *)user_data, buffer, length);
-}
-
-uint32_t stdio_write (void *user_data, void *buffer, uint32_t length) {
-    return (uint32_t)write (*(int *)user_data, buffer, length);
-}
-
-uint32_t stdio_seek (void *user_data, uint64_t position) {
-    return (uint32_t)lseek64 (*(int *)user_data, position, SEEK_SET);
-}
-
-uint32_t stdio_truncate (void *user_data) {
-    off64_t pos = lseek64 (*(int *)user_data, 0, SEEK_CUR);
-    return ftruncate(*(int *)user_data, pos);
-}
-
-
-static int alacplug_write_metadata (DB_playItem_t *it) {
-    deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
-    deadbeef->pl_unlock ();
-
-    if (!fp) {
-        return -1;
-    }
-
-    alacplug_info_t inf;
-    memset (&inf, 0, sizeof (inf));
-    inf.file = fp;
-    inf.junk = deadbeef->junk_get_leading_size (fp);
-    if (inf.junk >= 0) {
-        deadbeef->fseek (inf.file, inf.junk, SEEK_SET);
-    }
-    else {
-        inf.junk = 0;
-    }
-
-    mp4ff_callback_t cb = {
-        .read = alacplug_fs_read,
-        .write = NULL,
-        .seek = alacplug_fs_seek,
-        .truncate = NULL,
-        .user_data = &inf
-    };
-
-    mp4ff_t *mp4 = mp4ff_open_read (&cb);
-    deadbeef->fclose (fp);
-
-    if (!mp4) {
-        return -1;
-    }
-
-    deadbeef->pl_lock ();
-    int fd_out = open (deadbeef->pl_find_meta (it, ":URI"), O_LARGEFILE | O_RDWR);
-    deadbeef->pl_unlock ();
-
-    mp4ff_callback_t write_cb = {
-        .read = stdio_read,
-        .write = stdio_write,
-        .seek = stdio_seek,
-        .truncate = stdio_truncate,
-        .user_data = &fd_out
-    };
-
-    mp4ff_tag_delete (&mp4->tags);
-
-    deadbeef->pl_lock ();
-    DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it);
-    while (m) {
-        if (strchr (":!_", m->key[0])) {
-            break;
-        }
-        int i;
-        for (i = 0; metainfo[i]; i += 2) {
-            if (!strcasecmp (metainfo[i+1], m->key)) {
-                break;
-            }
-        }
-
-        const char *value = m->value;
-        const char *end = m->value + m->valuesize;
-        while (value < end) {
-            mp4ff_tag_add_field (&mp4->tags, metainfo[i] ? metainfo[i] : m->key, value);
-            size_t l = strlen (value) + 1;
-            value += l;
-        }
-        m = m->next;
-    }
-
-    static const char *tag_rg_names[] = {
-        "replaygain_album_gain",
-        "replaygain_album_peak",
-        "replaygain_track_gain",
-        "replaygain_track_peak",
-        NULL
-    };
-
-    // replaygain key names in deadbeef internal metadata
-    static const char *ddb_internal_rg_keys[] = {
-        ":REPLAYGAIN_ALBUMGAIN",
-        ":REPLAYGAIN_ALBUMPEAK",
-        ":REPLAYGAIN_TRACKGAIN",
-        ":REPLAYGAIN_TRACKPEAK",
-        NULL
-    };
-
-    // add replaygain values
-    for (int n = 0; ddb_internal_rg_keys[n]; n++) {
-        if (deadbeef->pl_find_meta (it, ddb_internal_rg_keys[n])) {
-            float value = deadbeef->pl_get_item_replaygain (it, n);
-            char s[100];
-            snprintf (s, sizeof (s), "%f", value);
-            mp4ff_tag_add_field (&mp4->tags, tag_rg_names[n], s);
-        }
-    }
-
-    deadbeef->pl_unlock ();
-
-    int32_t res = mp4ff_meta_update(&write_cb, &mp4->tags);
-
-    mp4ff_close (mp4);
-    close (fd_out);
-
-    return !res;
 }
 
 static const char * exts[] = { "mp4", "m4a", NULL };
@@ -791,8 +511,8 @@ static DB_decoder_t plugin = {
     .seek = alacplug_seek,
     .seek_sample = alacplug_seek_sample,
     .insert = alacplug_insert,
-    .read_metadata = alacplug_read_metadata,
-    .write_metadata = alacplug_write_metadata,
+    .read_metadata = mp4_read_metadata,
+    .write_metadata = mp4_write_metadata,
     .exts = exts,
 };
 
