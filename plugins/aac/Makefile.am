@@ -1,6 +1,8 @@
 if HAVE_AAC
 pkglib_LTLIBRARIES = aac.la
-aac_la_SOURCES = aac.c aac_parser.c aac_parser.h
+aac_la_SOURCES = aac.c aac_parser.c aac_parser.h\
+	../../shared/mp4tagutil.c ../../shared/mp4tagutil.h
+
 aac_la_LDFLAGS = -module -avoid-version
 
 aac_la_LIBADD = $(LDADD) $(FAAD2_LIBS) ../libmp4ff/libmp4ff.a
