@@ -70,6 +70,7 @@
 @property (unsafe_unretained) IBOutlet NSButton *encoderPresetOggVorbisTag;
 @property (unsafe_unretained) IBOutlet NSButton *encoderPresetID3v1Tag;
 @property (unsafe_unretained) IBOutlet NSButton *encoderPresetID3v2Tag;
+@property (unsafe_unretained) IBOutlet NSButton *encoderPresetMP4Tag;
 
 - (IBAction)encoderPresetOutputFileExtensionChangedAction:(id)sender;
 - (IBAction)encoderPresetCommandLineChangedAction:(id)sender;
@@ -80,6 +81,8 @@
 - (IBAction)encoderPresetOggVorbisTagChangedAction:(id)sender;
 - (IBAction)encoderPresetID3v1TagChangedAction:(id)sender;
 - (IBAction)encoderPresetID3v2TagChangedAction:(id)sender;
+- (IBAction)encoderPresetMP4TagChangedAction:(id)sender;
+
 
 
 @property (strong) IBOutlet NSPanel *dspPresetsPanel;

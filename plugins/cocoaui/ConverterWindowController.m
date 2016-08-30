@@ -454,6 +454,7 @@ static NSMutableArray *g_converterControllers;
         if (p->tag_apev2 ^ [[self encoderPresetApeTag] state] ) { [[self encoderPresetApeTag] setNextState]; };
         if (p->tag_flac ^ [[self encoderPresetFlacTag] state]) { [[self encoderPresetFlacTag] setNextState]; };
         if (p->tag_oggvorbis ^ [[self encoderPresetOggVorbisTag] state]) { [[self encoderPresetOggVorbisTag] setNextState]; };
+        if (p->tag_mp4 ^ [[self encoderPresetMP4Tag] state] ) { [[self encoderPresetMP4Tag] setNextState]; };
 
         [[self encoderPresetOutputFileExtension] setStringValue: [NSString stringWithFormat:@"%s", p->ext] ];
         [[self encoderPresetCommandLine] setStringValue: [NSString stringWithFormat:@"%s", p->encoder] ];
@@ -471,6 +472,7 @@ static NSMutableArray *g_converterControllers;
         [[self encoderPresetOggVorbisTag] setEnabled: enabled ];
         [[self encoderPresetID3v1Tag] setEnabled: enabled ];
         [[self encoderPresetID3v2Tag] setEnabled: enabled ];
+        [[self encoderPresetMP4Tag] setEnabled: enabled ];
     }
 }
 
@@ -551,6 +553,15 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->tag_id3v2 = [sender state];
+        _converter_plugin->encoder_preset_save (p, 1);
+    }
+}
+
+- (IBAction)encoderPresetMP4TagChangedAction:(id)sender {
+    int idx = (int)[_encoderPresetsTableView selectedRow];
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
+    if(p) {
+        p->tag_mp4 = [sender state];
         _converter_plugin->encoder_preset_save (p, 1);
     }
 }

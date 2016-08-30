@@ -1325,6 +1325,8 @@
 		2D93DC571AADFEEF003D2D8D /* README in Resources */ = {isa = PBXBuildFile; fileRef = 2D93DC541AADFEEF003D2D8D /* README */; };
 		2D977F451CA4B1F3006DBE79 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
 		2D977F461CA4B209006DBE79 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
+		2D9FFA251D7588A700D1B5F8 /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6965371D74338A00EB99D8 /* mp4tagutil.c */; };
+		2D9FFA351D7589A000D1B5F8 /* libmp4ff.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
 		2DA0ACE91AA71516007EDD43 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2DA0ACEE1AA71E7C007EDD43 /* in_sc68.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */; };
 		2DA24AE119E7203A00E34920 /* asyn-ares.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A0F19E7203700E34920 /* asyn-ares.c */; };
@@ -2219,6 +2221,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D9177371A0E8966004BC222;
 			remoteInfo = alac;
+		};
+		2D9FFA331D75899000D1B5F8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D3420DB1D0856D5004C136A;
+			remoteInfo = mp4ff;
 		};
 		2DA0ACEC1AA71E4B007EDD43 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4390,6 +4399,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D9FFA351D7589A000D1B5F8 /* libmp4ff.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8871,6 +8881,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D9FFA341D75899000D1B5F8 /* PBXTargetDependency */,
 			);
 			name = converter;
 			productName = converter;
@@ -10222,6 +10233,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D9FFA251D7588A700D1B5F8 /* mp4tagutil.c in Sources */,
 				2D2351251B138F3200A62936 /* converter.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -11455,6 +11467,11 @@
 			isa = PBXTargetDependency;
 			target = 2D9177371A0E8966004BC222 /* alac */;
 			targetProxy = 2D9177401A0E89B8004BC222 /* PBXContainerItemProxy */;
+		};
+		2D9FFA341D75899000D1B5F8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D3420DB1D0856D5004C136A /* mp4ff */;
+			targetProxy = 2D9FFA331D75899000D1B5F8 /* PBXContainerItemProxy */;
 		};
 		2DA0ACED1AA71E4B007EDD43 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
