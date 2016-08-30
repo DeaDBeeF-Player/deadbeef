@@ -374,6 +374,7 @@ create_convpreset_editor (void)
   GtkWidget *hbox104;
   GtkWidget *id3v2;
   GtkWidget *id3v2_version;
+  GtkWidget *mp4;
   GtkWidget *label125;
   GtkWidget *dialog_action_area6;
   GtkWidget *convpreset_cancel;
@@ -521,6 +522,12 @@ create_convpreset_editor (void)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id3v2_version), "2.3");
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id3v2_version), "2.4");
 
+  mp4 = gtk_check_button_new_with_mnemonic (_("MP4"));
+  gtk_widget_show (mp4);
+  gtk_table_attach (GTK_TABLE (table2), mp4, 0, 1, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
   label125 = gtk_label_new (_("<b>Tag writer</b>"));
   gtk_widget_show (label125);
   gtk_frame_set_label_widget (GTK_FRAME (frame9), label125);
@@ -573,6 +580,7 @@ create_convpreset_editor (void)
   GLADE_HOOKUP_OBJECT (convpreset_editor, hbox104, "hbox104");
   GLADE_HOOKUP_OBJECT (convpreset_editor, id3v2, "id3v2");
   GLADE_HOOKUP_OBJECT (convpreset_editor, id3v2_version, "id3v2_version");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, mp4, "mp4");
   GLADE_HOOKUP_OBJECT (convpreset_editor, label125, "label125");
   GLADE_HOOKUP_OBJECT_NO_REF (convpreset_editor, dialog_action_area6, "dialog_action_area6");
   GLADE_HOOKUP_OBJECT (convpreset_editor, convpreset_cancel, "convpreset_cancel");
