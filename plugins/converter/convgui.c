@@ -851,6 +851,7 @@ init_encoder_preset_from_dlg (GtkWidget *dlg, ddb_encoder_preset_t *p) {
     p->tag_apev2 = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "apev2")));
     p->tag_flac = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "flac")));
     p->tag_oggvorbis = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "oggvorbis")));
+    p->tag_mp4 = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "mp4")));
 }
 
 int
@@ -879,6 +880,7 @@ edit_encoder_preset (char *title, GtkWidget *toplevel) {
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "apev2")), p->tag_apev2);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "flac")), p->tag_flac);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "oggvorbis")), p->tag_oggvorbis);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "mp4")), p->tag_mp4);
 
     ddb_encoder_preset_t *old = p;
     int r = GTK_RESPONSE_CANCEL;
