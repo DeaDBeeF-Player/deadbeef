@@ -26,6 +26,8 @@
 #include <stdint.h>
 #include "../../deadbeef.h"
 
+// changes in 1.5:
+//   added mp4 tagging support
 // changes in 1.4:
 //   changed escaping rules:
 //   now get_output_path returns unescaped path, and doesn't create folders
@@ -63,6 +65,7 @@ typedef struct ddb_encoder_preset_s {
     int tag_flac;
     int tag_oggvorbis;
     int tag_mp3xing;
+    int tag_mp4;
     int id3v2_version;
 
     // added in converter-1.3

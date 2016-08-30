@@ -39,6 +39,9 @@
 #include "converter.h"
 #include "../../deadbeef.h"
 #include "../../strdupa.h"
+#include "mp4tagutil.h"
+
+static ddb_converter_t plugin;
 
 #ifndef __linux__
 #define O_LARGEFILE 0
@@ -46,11 +49,10 @@
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&plugin, 0, __VA_ARGS__); }
 
 static ddb_converter_t plugin;
-static DB_functions_t *deadbeef;
+DB_functions_t *deadbeef;
 
 static ddb_encoder_preset_t *encoder_presets;
 static ddb_dsp_preset_t *dsp_presets;
@@ -139,6 +141,9 @@ encoder_preset_load (const char *fname) {
         else if (!strcmp (str, "tag_oggvorbis")) {
             p->tag_oggvorbis = atoi (item);
         }
+        else if (!strcmp (str, "tag_mp4")) {
+            p->tag_mp4 = atoi (item);
+        }
     }
 
     if (!p->title) {
@@ -207,6 +212,7 @@ encoder_preset_save (ddb_encoder_preset_t *p, int overwrite) {
     fprintf (fp, "tag_apev2 %d\n", p->tag_apev2);
     fprintf (fp, "tag_flac %d\n", p->tag_flac);
     fprintf (fp, "tag_oggvorbis %d\n", p->tag_oggvorbis);
+    fprintf (fp, "tag_mp4 %d\n", p->tag_mp4);
 
     fclose (fp);
     return 0;
@@ -223,6 +229,7 @@ encoder_preset_copy (ddb_encoder_preset_t *to, ddb_encoder_preset_t *from) {
     to->tag_apev2 = from->tag_apev2;
     to->tag_flac = from->tag_flac;
     to->tag_oggvorbis = from->tag_oggvorbis;
+    to->tag_mp4 = from->tag_mp4;
     to->tag_mp3xing = from->tag_mp3xing;
     to->id3v2_version = from->id3v2_version;
 }
@@ -1200,7 +1207,7 @@ error:
 
     DB_playItem_t *out_it = NULL;
 
-    if (encoder_preset->tag_id3v2 || encoder_preset->tag_id3v1 || encoder_preset->tag_apev2 || encoder_preset->tag_flac || encoder_preset->tag_oggvorbis) {
+    if (encoder_preset->tag_id3v2 || encoder_preset->tag_id3v1 || encoder_preset->tag_apev2 || encoder_preset->tag_flac || encoder_preset->tag_oggvorbis || encoder_preset->tag_mp4) {
         out_it = deadbeef->pl_item_alloc ();
         deadbeef->pl_item_copy (out_it, it);
         deadbeef->pl_set_item_flags (out_it, 0);
@@ -1272,6 +1279,15 @@ error:
             fprintf (stderr, "converter: failed to write ogg metadata, not an ogg file?\n");
         }
     }
+
+    if (encoder_preset->tag_mp4) {
+        int res = mp4_write_metadata(out_it);
+        if (res) {
+            trace ("Failed to write mp4 metadata, not an mp4 file?\n");
+        }
+    }
+
+
     if (out_it) {
         deadbeef->pl_item_unref (out_it);
     }
@@ -1310,7 +1326,7 @@ static ddb_converter_t plugin = {
     .misc.plugin.api_vmajor = 1,
     .misc.plugin.api_vminor = 0,
     .misc.plugin.version_major = 1,
-    .misc.plugin.version_minor = 4,
+    .misc.plugin.version_minor = 5,
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.name = "Converter",
     .misc.plugin.id = "converter",
