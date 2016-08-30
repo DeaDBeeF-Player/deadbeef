@@ -417,10 +417,15 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx ((int)rowIndex);
     if (p) {
         if (p->title) {
+            char path[PATH_MAX];
+            if (snprintf (path, sizeof (path), "%s/presets/encoders/%s.txt", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG), p->title) > 0) {
+                unlink (path);
+            }
             free (p->title);
         }
         NSString *title = [self uniqueEncoderPresetTitle:anObject];
         p->title = strdup ([title UTF8String]);
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -474,6 +479,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->ext = strdup ([[sender stringValue] UTF8String]);
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -482,6 +488,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->encoder = strdup ([[sender stringValue] UTF8String]);
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -490,6 +497,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->method = (int)[sender indexOfSelectedItem];
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -498,6 +506,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->id3v2_version = (int)[sender indexOfSelectedItem];
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -506,6 +515,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->tag_apev2 = [sender state];
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -514,6 +524,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->tag_flac = [sender state];
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -522,6 +533,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->tag_oggvorbis = [sender state];
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -530,6 +542,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->tag_id3v1 = [sender state];
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -538,6 +551,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->tag_id3v2 = [sender state];
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
