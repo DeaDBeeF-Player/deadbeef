@@ -3269,6 +3269,9 @@ build_groups (DdbListview *listview) {
         do {
             grp->num_items++;
             it = next_playitem(listview, it);
+            if (listview->grouptitle_height) {
+                listview->binding->get_group(listview, it, next_title, sizeof(next_title));
+            }
         } while (it && ((!listview->grouptitle_height && grp->num_items < BLANK_GROUP_SUBDIVISION) || (listview->grouptitle_height && !strcmp(group_title, next_title))));
         grp->height = listview->grouptitle_height + max(grp->num_items * listview->rowheight, min_height);
         full_height += grp->height;
