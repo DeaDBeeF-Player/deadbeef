@@ -49,7 +49,7 @@ static ddb_converter_t plugin;
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
-#define trace(...) { deadbeef->log_detailed (&plugin, 0, __VA_ARGS__); }
+#define trace(...) { deadbeef->log_detailed (&plugin.misc.plugin, 0, __VA_ARGS__); }
 
 static ddb_converter_t plugin;
 DB_functions_t *deadbeef;
@@ -172,7 +172,7 @@ encoder_preset_load (const char *fname) {
 int
 encoder_preset_save (ddb_encoder_preset_t *p, int overwrite) {
     if (!p->title || !p->title[0]) {
-        fprintf (stderr, "encoder_preset_save: empty title\n");
+        trace ("encoder_preset_save: empty title\n");
         return -1;
     }
     const char *confdir = deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG);
@@ -378,7 +378,7 @@ dsp_preset_load (const char *fname) {
 int
 dsp_preset_save (ddb_dsp_preset_t *p, int overwrite) {
     if (!p->title || !p->title[0]) {
-        fprintf (stderr, "dsp_preset_save: empty title\n");
+        trace ("dsp_preset_save: empty title\n");
         return -1;
     }
     const char *confdir = deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG);
@@ -415,53 +415,6 @@ scandir_preset_filter (const struct dirent *ent) {
     char *ext = strrchr (ent->d_name, '.');
     if (ext && !strcasecmp (ext, ".txt")) {
         return 1;
-    }
-    return 0;
-}
-
-static int
-copy_file (const char *in, const char *out) {
-    int BUFFER_SIZE = 1000;
-    FILE *fin = fopen (in, "rb");
-    if (!fin) {
-        fprintf (stderr, "converter: failed to open file %s for reading\n", in);
-        return -1;
-    }
-    FILE *fout = fopen (out, "w+b");
-    if (!fout) {
-        fclose (fin);
-        fprintf (stderr, "converter: failed to open file %s for writing\n", out);
-        return -1;
-    }
-    char *buf = malloc (BUFFER_SIZE);
-    if (!buf) {
-        fprintf (stderr, "converter: failed to alloc %d bytes\n", BUFFER_SIZE);
-        fclose (fin);
-        fclose (fout);
-        return -1;
-    }
-
-    fseek (fin, 0, SEEK_END);
-    size_t sz = ftell (fin);
-    rewind (fin);
-
-    while (sz > 0) {
-        int rs = min (sz, BUFFER_SIZE);
-        if (fread (buf, rs, 1, fin) != 1) {
-            fprintf (stderr, "converter: failed to read file %s\n", in);
-            break;
-        }
-        if (fwrite (buf, rs, 1, fout) != 1) {
-            fprintf (stderr, "converter: failed to write file %s\n", out);
-            break;
-        }
-        sz -= rs;
-    }
-    free (buf);
-    fclose (fin);
-    fclose (fout);
-    if (sz > 0) {
-        unlink (out);
     }
     return 0;
 }
@@ -694,7 +647,7 @@ get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
 
     strncpy (out, temp, sz);
     out[sz-1] = 0;
-    trace ("field '%s' expanded to '%s'\n", field, out);
+    //trace ("field '%s' expanded to '%s'\n", field, out);
 }
 
 static void
@@ -735,13 +688,13 @@ get_output_field2 (DB_playItem_t *it, ddb_playlist_t *plt, const char *field, ch
 
     *o = 0;
 
-    trace ("field '%s' expanded to '%s'\n", field, out);
+    //trace ("field '%s' expanded to '%s'\n", field, out);
 }
 
 
 static void
 get_output_path_int (DB_playItem_t *it, ddb_playlist_t *plt, const char *outfolder_user, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz, int use_new_tf) {
-    trace ("get_output_path: %s %s %s\n", outfolder_user, outfile, root_folder);
+//    trace ("get_output_path: %s %s %s\n", outfolder_user, outfile, root_folder);
     deadbeef->pl_lock ();
     const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
@@ -773,10 +726,8 @@ get_output_path_int (DB_playItem_t *it, ddb_playlist_t *plt, const char *outfold
         outfolder = preserve_folder_structure ? outfolder_preserve : outfolder_user;
     }
 
-    int l;
+    size_t l;
     char fname[PATH_MAX];
-    size_t pathl = strlen(outfolder)*2+1;
-    char path[pathl];
     char *pattern = strdupa (outfile);
 
     snprintf (out, sz, "%s/", outfolder);
@@ -812,7 +763,7 @@ get_output_path_int (DB_playItem_t *it, ddb_playlist_t *plt, const char *outfold
 
     l = strlen (out);
     snprintf (out+l, sz-l, "%s.%s", fname, encoder_preset->ext);
-    trace ("converter output file is '%s'\n", out);
+    //trace ("converter output file is '%s'\n", out);
 }
 
 void
@@ -827,7 +778,7 @@ get_output_path2 (DB_playItem_t *it, ddb_playlist_t *plt, const char *outfolder_
 
 static void
 get_output_path_1_0 (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, char *out, int sz) {
-    fprintf (stderr, "converter: warning: old version of \"get_output_path\" has been called, please update your plugins which depend on converter 1.1\n");
+    trace ("warning: old version of \"get_output_path\" has been called, please update your plugins which depend on converter 1.1\n");
     *out = 0;
     sz = 0;
 }
@@ -877,11 +828,15 @@ write_int16_le (char *p, uint16_t value) {
 
 int
 convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
+
+    char enc[2000];
+    memset (enc, 0, sizeof (enc));
+
     char *buffer = NULL;
     char *dspbuffer = NULL;
     if (deadbeef->pl_get_item_duration (it) <= 0) {
         deadbeef->pl_lock ();
-        fprintf (stderr, "converter: stream %s doesn't have finite length, skipped\n", deadbeef->pl_find_meta (it, ":URI"));
+        trace ("stream %s doesn't have finite length, skipped\n", deadbeef->pl_find_meta (it, ":URI"));
         deadbeef->pl_unlock ();
         return -1;
     }
@@ -900,7 +855,7 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
         fileinfo = dec->open (0);
         if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (it)) != 0) {
             deadbeef->pl_lock ();
-            fprintf (stderr, "converter: failed to decode file %s\n", deadbeef->pl_find_meta (it, ":URI"));
+            trace ("Failed to decode file %s\n", deadbeef->pl_find_meta (it, ":URI"));
             deadbeef->pl_unlock ();
             goto error;
         }
@@ -915,7 +870,7 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
             if (sep) {
                 *sep = 0;
                 if (!check_dir (final_path, 0755)) {
-                    fprintf (stderr, "converter: failed to create output folder: %s\n", final_path);
+                    trace ("Failed to create output folder: %s\n", final_path);
                     goto error;
                 }
             }
@@ -926,15 +881,12 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
                     tmp = "/tmp";
                 }
                 snprintf (input_file_name, sizeof (input_file_name), "%s/ddbconvXXXXXX", tmp);
-                char *res = mktemp (input_file_name);
+                (void)mktemp (input_file_name);
                 strcat (input_file_name, ".wav");
             }
             else {
                 strcpy (input_file_name, "-");
             }
-
-            char enc[2000];
-            memset (enc, 0, sizeof (enc));
 
             char escaped_out[PATH_MAX];
             escape_filepath (out, escaped_out, sizeof (escaped_out));
@@ -947,7 +899,7 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
             int len = sizeof (enc);
             while (e && *e) {
                 if (len <= 0) {
-                    fprintf (stderr, "converter: failed to assemble encoder command line - buffer is not big enough, try to shorten your parameters. max allowed length is %u characters\n", (unsigned)sizeof (enc));
+                    trace ("Failed to assemble encoder command line - buffer is not big enough, try to shorten your parameters. max allowed length is %u characters\n", (unsigned)sizeof (enc));
                     goto error;
                 }
                 if (e[0] == '%' && e[1]) {
@@ -975,8 +927,6 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
                 }
             }
 
-            fprintf (stderr, "converter: will encode using: %s\n", enc[0] ? enc : "internal RIFF WAVE writer");
-
             mode_t wrmode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
             if (!encoder_preset->encoder[0]) {
@@ -984,21 +934,21 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
                 trace ("opening %s\n", out);
                 temp_file = open (out, O_LARGEFILE | O_WRONLY | O_CREAT | O_TRUNC, wrmode);
                 if (temp_file == -1) {
-                    fprintf (stderr, "converter: failed to open output wave file %s\n", out);
+                    trace ("Failed to open output wave file %s\n", out);
                     goto error;
                 }
             }
             else if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
                 temp_file = open (input_file_name, O_LARGEFILE | O_WRONLY | O_CREAT | O_TRUNC, wrmode);
                 if (temp_file == -1) {
-                    fprintf (stderr, "converter: failed to open temp file %s\n", input_file_name);
+                    trace ("Failed to open temp file %s\n", input_file_name);
                     goto error;
                 }
             }
             else {
                 enc_pipe = popen (enc, "w");
                 if (!enc_pipe) {
-                    fprintf (stderr, "converter: failed to open encoder\n");
+                    trace ("Failed to execute the encoder, command used:\n%s\n", enc[0] ? enc : "internal RIFF WAVE writer");
                     goto error;
                 }
             }
@@ -1062,7 +1012,7 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
                         dsp = dsp->next;
                     }
                     if (frames <= 0) {
-                        fprintf (stderr, "converter: dsp error, please check you dsp preset\n");
+                        trace ("DSP error, please check you dsp preset\n");
                         goto error;
                     }
 
@@ -1116,7 +1066,7 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
 
                     uint32_t size32 = 0xffffffff;
                     if (chunksize <= 0xffffffff) {
-                        size32 = chunksize;
+                        size32 = (uint32_t)chunksize;
                     }
                     write_int32_le (wavehdr+4, size32);
                     write_int16_le (wavehdr+22, outch);
@@ -1127,18 +1077,18 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
 
                     size32 = 0xffffffff;
                     if (size <= 0xffffffff) {
-                        size32 = size;
+                        size32 = (uint32_t)size;
                     }
 
                     if (wavehdr_size != write (temp_file, wavehdr, wavehdr_size)) {
-                        fprintf (stderr, "converter: wave header write error\n");
+                        trace ("Wave header write error\n");
                         goto error;
                     }
                     if (encoder_preset->method == DDB_ENCODER_METHOD_PIPE) {
                         size32 = 0;
                     }
                     if (write (temp_file, &size32, sizeof (size32)) != sizeof (size32)) {
-                        fprintf (stderr, "converter: wave header size write error\n");
+                         trace ("Wave header size write error\n");
                         goto error;
                     }
                     header_written = 1;
@@ -1146,7 +1096,7 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
 
                 int64_t res = write (temp_file, buffer, sz);
                 if (sz != res) {
-                    fprintf (stderr, "converter: write error (%"PRId64" bytes written out of %d)\n", res, sz);
+                     trace ("Write error (%"PRId64" bytes written out of %d)\n", res, sz);
                     goto error;
                 }
             }
@@ -1156,7 +1106,7 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
             if (temp_file != -1 && (!enc_pipe || temp_file != fileno (enc_pipe))) {
                 lseek (temp_file, wavehdr_size, SEEK_SET);
                 if (4 != write (temp_file, &outsize, 4)) {
-                    fprintf (stderr, "converter: data size write error\n");
+                     trace ("Data size write error\n");
                     goto error;
                 }
 
@@ -1186,7 +1136,12 @@ error:
         temp_file = -1;
     }
     if (enc_pipe) {
-        pclose (enc_pipe);
+        err = pclose (enc_pipe);
+        err = WEXITSTATUS(err);
+        if (err) {
+            trace ("Failed to execute the encoder, command used:\n%s\n", enc[0] ? enc : "internal RIFF WAVE writer");
+            err = -1;
+        }
         enc_pipe = NULL;
     }
     if (dec && fileinfo) {
@@ -1252,11 +1207,11 @@ error:
             }
         }
         if (!flac) {
-            fprintf (stderr, "converter: flac plugin not found, cannot write flac metadata\n");
+             trace ("flac plugin not found, cannot write flac metadata\n");
         }
         else {
             if (0 != flac->write_metadata (out_it)) {
-                fprintf (stderr, "converter: failed to write flac metadata, not a flac file?\n");
+                 trace ("Failed to write flac metadata, not a flac file?\n");
             }
         }
     }
@@ -1276,7 +1231,7 @@ error:
             }
         }
         if (res) {
-            fprintf (stderr, "converter: failed to write ogg metadata, not an ogg file?\n");
+            trace ("Failed to write ogg metadata, not an ogg file?\n");
         }
     }
 
@@ -1297,7 +1252,7 @@ error:
 
 int
 convert_1_0 (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
-    fprintf (stderr, "converter: warning: old version of \"convert\" has been called, please update your plugins which depend on converter 1.1\n");
+    trace ("An old version of \"convert\" has been called, please update your plugins which depend on converter 1.1\n");
     return -1;
 }
 
@@ -1327,6 +1282,7 @@ static ddb_converter_t plugin = {
     .misc.plugin.api_vminor = 0,
     .misc.plugin.version_major = 1,
     .misc.plugin.version_minor = 5,
+    .misc.plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.name = "Converter",
     .misc.plugin.id = "converter",
