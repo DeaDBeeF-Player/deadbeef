@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
+#include <stdlib.h>
 #include "logger.h"
 #include "deadbeef.h"
 
