@@ -1306,4 +1306,47 @@ static DB_output_t fake_out = {
     tf_free (bc);
     XCTAssert(!strcmp (buffer, "Test Playlist"), @"The actual output is: %s", buffer);
 }
+
+- (void)test_ReplaceWith3Arguments_ReturnsExpectedValue {
+    char *bc = tf_compile("$replace(ab,a,b,b,c)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "bc"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ReplaceWith3ArgumentsNested_ReturnsExpectedValue {
+    char *bc = tf_compile("$replace($replace(ab,a,b),b,c)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "cc"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ReplaceWith1Argument_ReturnsEmpty {
+    char *bc = tf_compile("$replace(ab)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ReplaceWith2Arguments_ReturnsEmpty {
+    char *bc = tf_compile("$replace(ab,a)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ReplaceWith4Arguments_ReturnsEmpty {
+    char *bc = tf_compile("$replace(ab,a,c,d)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ReplaceLongerSubstring_ReturnsExpected {
+    char *bc = tf_compile("$replace(foobar,foo,DeaD,bar,BeeF)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "DeaDBeeF"), @"The actual output is: %s", buffer);
+}
+
 @end
