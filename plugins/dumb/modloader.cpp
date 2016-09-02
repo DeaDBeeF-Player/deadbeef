@@ -34,7 +34,7 @@
 #include "../../deadbeef.h"
 
 // FIXME: config
-static int cfg_dumb_count_patterns = 0; // MOD - Count patterns from the order list
+static int cfg_dumb_count_patterns = 1; // MOD - Count patterns from the order list
 static int cfg_autochip = 0; // ???
 static int cfg_autochip_size_force = 100;
 static int cfg_autochip_size_scan = 500;
@@ -328,6 +328,7 @@ DUH * g_open_module(const char * path, int *is_it, int *is_dos, int *is_ptcompat
             dumb_it_convert_tempos( itsd, true );
         }
         if ( duh ) *is_ptcompat = 1;
+
         *ftype = "MOD";
     }
 
