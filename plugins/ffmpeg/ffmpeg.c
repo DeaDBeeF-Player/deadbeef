@@ -236,6 +236,11 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     int bps = av_get_bits_per_sample_format (info->ctx->sample_fmt);
     int samplerate = info->ctx->sample_rate;
+
+    if (bps <= 0 || info->ctx->channels <= 0 || samplerate <= 0) {
+        return -1;
+    }
+
     float duration = info->fctx->duration / (float)AV_TIME_BASE;
     trace ("ffmpeg: bits per sample is %d\n", bps);
     trace ("ffmpeg: samplerate is %d\n", samplerate);
@@ -263,7 +268,6 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (info->ctx->sample_fmt == AV_SAMPLE_FMT_FLT || info->ctx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
         _info->fmt.is_float = 1;
     }
-
 
     int64_t layout = info->ctx->channel_layout;
     if (layout != 0, 0) {
@@ -785,6 +789,10 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("ffmpeg: samplerate is %d\n", samplerate);
     trace ("ffmpeg: duration is %f\n", duration);
 
+    if (bps <= 0 || ctx->channels <= 0 || samplerate <= 0) {
+        return NULL;
+    }
+
     int totalsamples = fctx->duration * samplerate / AV_TIME_BASE;
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
@@ -814,7 +822,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         char s[100];
         snprintf (s, sizeof (s), "%lld", fsize);
         deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
-        snprintf (s, sizeof (s), "%d", av_get_bits_per_sample_format (ctx->sample_fmt));
+        snprintf (s, sizeof (s), "%d", bps);
         deadbeef->pl_add_meta (it, ":BPS", s);
         snprintf (s, sizeof (s), "%d", ctx->channels);
         deadbeef->pl_add_meta (it, ":CHANNELS", s);
