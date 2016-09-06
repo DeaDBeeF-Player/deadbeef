@@ -31,7 +31,7 @@ endif
 convdatadir = $(libdir)/deadbeef/convpresets
 convdata_DATA = $(convdata)
 
-converter_la_CFLAGS =  $(CFLAGS) -I@top_srcdir@/plugins/libmp4ff -std=c99 -fPIC
+converter_la_CFLAGS =  $(CFLAGS) -I@top_srcdir@/plugins/libmp4ff -std=c99 -fPIC -DUSE_TAGGING=1
 converter_la_SOURCES = converter.c converter.h\
 	../../shared/mp4tagutil.c ../../shared/mp4tagutil.h
 converter_la_LDFLAGS = -module -avoid-version

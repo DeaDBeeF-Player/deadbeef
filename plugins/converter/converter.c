@@ -36,6 +36,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <inttypes.h>
+#include <errno.h>
 #include "converter.h"
 #include "../../deadbeef.h"
 #include "../../strdupa.h"
