@@ -250,6 +250,20 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
                                         GdkEventScroll  *event,
                                         gpointer         user_data)
 {
+    int change_track = deadbeef->conf_get_int ("tray.scroll_changes_track", 0)
+        ? ((event->state & GDK_CONTROL_MASK) == 0)
+        : ((event->state & GDK_CONTROL_MASK) != 0)
+        ;
+    if (change_track) {
+        if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
+            deadbeef->sendmessage (DB_EV_NEXT, 0, 0, 0);
+        }
+        else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
+            deadbeef->sendmessage (DB_EV_PREV, 0, 0, 0);
+        }
+        return FALSE;
+    }
+
     float vol = deadbeef->volume_get_db ();
     int sens = deadbeef->conf_get_int ("gtkui.tray_volume_sensitivity", 1);
     if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
