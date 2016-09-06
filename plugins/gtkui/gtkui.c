@@ -1168,6 +1168,9 @@ gtkui_thread (void *ctx) {
     gtkui_is_retina = is_retina (mainwin);
 #endif
 
+    if (deadbeef->conf_get_int ("tray.start_minimized", 0)) {
+        gtk_widget_hide (mainwin);
+    }
     gtk_main ();
 
     deadbeef->unlisten_file_added (fileadded_listener_id);
