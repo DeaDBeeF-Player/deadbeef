@@ -1349,4 +1349,12 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "DeaDBeeF"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_FilenameExt_ReturnsFilenameWithExt {
+    pl_replace_meta (it, ":URI", "/Users/User/MyFile.mod");
+    char *bc = tf_compile("%filename_ext%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "MyFile.mod"), @"The actual output is: %s", buffer);
+}
+
 @end

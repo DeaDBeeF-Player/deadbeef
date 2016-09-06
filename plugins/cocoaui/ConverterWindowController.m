@@ -154,6 +154,8 @@ static NSMutableArray *g_converterControllers;
 
 - (IBAction)outputPathChanged:(id)sender {
     [self updateFilenamesPreview];
+    deadbeef->conf_set_str ("converter.output_file", [[_outputFileName stringValue] UTF8String]);
+    deadbeef->conf_save ();
 }
 
 - (IBAction)writeToSourceFolderChanged:(id)sender {

@@ -38,6 +38,7 @@
 enum {
     DDB_ENCODER_METHOD_PIPE = 0,
     DDB_ENCODER_METHOD_FILE = 1,
+    DDB_ENCODER_METHOD_FILENAME = 2, // added in converter-1.5
 };
 
 enum {
@@ -58,7 +59,7 @@ typedef struct ddb_encoder_preset_s {
     struct ddb_encoder_preset_s *next;
     char *ext;
     char *encoder;
-    int method; // pipe or file
+    int method; // DDB_ENCODER_METHOD_*
     int tag_id3v2;
     int tag_id3v1;
     int tag_apev2;

@@ -695,10 +695,12 @@ get_output_field2 (DB_playItem_t *it, ddb_playlist_t *plt, const char *field, ch
 static void
 get_output_path_int (DB_playItem_t *it, ddb_playlist_t *plt, const char *outfolder_user, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz, int use_new_tf) {
 //    trace ("get_output_path: %s %s %s\n", outfolder_user, outfile, root_folder);
+
     deadbeef->pl_lock ();
     const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
-    char outfolder_preserve[2000];
+
+    char outfolder_preserve[PATH_MAX];
     if (preserve_folder_structure) {
         // generate new outfolder
         size_t rootlen = strlen (root_folder);
@@ -762,7 +764,12 @@ get_output_path_int (DB_playItem_t *it, ddb_playlist_t *plt, const char *outfold
     }
 
     l = strlen (out);
-    snprintf (out+l, sz-l, "%s.%s", fname, encoder_preset->ext);
+    if (encoder_preset->ext && encoder_preset->ext[0]) {
+        snprintf (out+l, sz-l, "%s.%s", fname, encoder_preset->ext);
+    }
+    else {
+        snprintf (out+l, sz-l, "%s", fname);
+    }
     //trace ("converter output file is '%s'\n", out);
 }
 
@@ -825,6 +832,213 @@ write_int16_le (char *p, uint16_t value) {
     p[1] = (value >> 8) & 0xff;
 }
 
+static char wavehdr_int[] = {
+    0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00, 0x57, 0x41, 0x56, 0x45, 0x66, 0x6d, 0x74, 0x20, 0x10, 0x00, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x44, 0xac, 0x00, 0x00, 0x10, 0xb1, 0x02, 0x00, 0x04, 0x00, 0x10, 0x00, 0x64, 0x61, 0x74, 0x61
+};
+
+static char wavehdr_float[] = {
+    0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00, 0x57, 0x41, 0x56, 0x45, 0x66, 0x6d, 0x74, 0x20, 0x28, 0x00, 0x00, 0x00, 0xfe, 0xff, 0x02, 0x00, 0x40, 0x1f, 0x00, 0x00, 0x00, 0xfa, 0x00, 0x00, 0x08, 0x00, 0x20, 0x00, 0x16, 0x00, 0x20, 0x00, 0x03, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71, 0x66, 0x61, 0x63, 0x74, 0x04, 0x00, 0x00, 0x00, 0xc5, 0x5b, 0x00, 0x00, 0x64, 0x61, 0x74, 0x61
+};
+
+static int32_t
+_write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_dsp_preset_t *dsp_preset, ddb_encoder_preset_t *encoder_preset, int *abort, int fd, int output_bps, int output_is_float) {
+    int res = -1;
+    char *buffer = NULL;
+    char *dspbuffer = NULL;
+
+    // write wave header
+    char *wavehdr = output_is_float ? wavehdr_float : wavehdr_int;
+    int wavehdr_size = output_is_float ? sizeof (wavehdr_float) : sizeof (wavehdr_int);
+    int header_written = 0;
+    uint32_t outsize = 0;
+    uint32_t outsr = fileinfo->fmt.samplerate;
+    uint16_t outch = fileinfo->fmt.channels;
+
+    int samplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
+
+    // block size
+    int bs = 2000 * samplesize;
+    // expected buffer size after worst-case dsp
+    int dspsize = bs/samplesize*sizeof(float)*8*48;
+    buffer = malloc (dspsize);
+    // account for up to float32 7.1 resampled to 48x ratio
+    dspbuffer = malloc (dspsize);
+    int eof = 0;
+    for (;;) {
+        if (eof) {
+            break;
+        }
+        if (abort && *abort) {
+            break;
+        }
+        int sz = dec->read (fileinfo, buffer, bs);
+
+        if (sz != bs) {
+            eof = 1;
+        }
+        if (dsp_preset) {
+            ddb_waveformat_t fmt;
+            ddb_waveformat_t outfmt;
+            memcpy (&fmt, &fileinfo->fmt, sizeof (fmt));
+            memcpy (&outfmt, &fileinfo->fmt, sizeof (fmt));
+            fmt.bps = 32;
+            fmt.is_float = 1;
+            deadbeef->pcm_convert (&fileinfo->fmt, buffer, &fmt, dspbuffer, sz);
+
+            ddb_dsp_context_t *dsp = dsp_preset->chain;
+            int frames = sz / samplesize;
+            while (dsp) {
+                frames = dsp->plugin->process (dsp, (float *)dspbuffer, frames, dspsize / (fmt.channels * 4), &fmt, NULL);
+                if (frames <= 0) {
+                    break;
+                }
+                dsp = dsp->next;
+            }
+            if (frames <= 0) {
+                trace ("DSP error, please check you dsp preset\n");
+                goto error;
+            }
+
+            outsr = fmt.samplerate;
+            outch = fmt.channels;
+
+            outfmt.bps = output_bps;
+            outfmt.is_float = output_is_float;
+            outfmt.channels = outch;
+            outfmt.samplerate = outsr;
+
+            int n = deadbeef->pcm_convert (&fmt, dspbuffer, &outfmt, buffer, frames * sizeof (float) * fmt.channels);
+            sz = n;
+        }
+        else if (fileinfo->fmt.bps != output_bps || fileinfo->fmt.is_float != output_is_float) {
+            ddb_waveformat_t outfmt;
+            memcpy (&outfmt, &fileinfo->fmt, sizeof (outfmt));
+            outfmt.bps = output_bps;
+            outfmt.is_float = output_is_float;
+            outfmt.channels = outch;
+            outfmt.samplerate = outsr;
+
+            int frames = sz / samplesize;
+            int n = deadbeef->pcm_convert (&fileinfo->fmt, buffer, &outfmt, dspbuffer, frames * samplesize);
+            memcpy (buffer, dspbuffer, n);
+            sz = n;
+        }
+        outsize += sz;
+
+        if (!header_written) {
+            uint64_t size = (int64_t)(it->endsample-it->startsample) * outch * output_bps / 8;
+            if (!size) {
+                size = (double)deadbeef->pl_get_item_duration (it) * fileinfo->fmt.samplerate * outch * output_bps / 8;
+
+            }
+
+            if (outsr != fileinfo->fmt.samplerate) {
+                uint64_t temp = size;
+                temp *= outsr;
+                temp /= fileinfo->fmt.samplerate;
+                size  = temp;
+            }
+
+            uint64_t chunksize;
+            chunksize = size + 40;
+
+            // for float, add 36 more
+            if (output_is_float) {
+                chunksize += 36;
+            }
+
+            uint32_t size32 = 0xffffffff;
+            if (chunksize <= 0xffffffff) {
+                size32 = (uint32_t)chunksize;
+            }
+            write_int32_le (wavehdr+4, size32);
+            write_int16_le (wavehdr+22, outch);
+            write_int32_le (wavehdr+24, outsr);
+            uint16_t blockalign = outch * output_bps / 8;
+            write_int16_le (wavehdr+32, blockalign);
+            write_int16_le (wavehdr+34, output_bps);
+
+            size32 = 0xffffffff;
+            if (size <= 0xffffffff) {
+                size32 = (uint32_t)size;
+            }
+
+            if (wavehdr_size != write (fd, wavehdr, wavehdr_size)) {
+                trace ("Wave header write error\n");
+                goto error;
+            }
+            if (encoder_preset->method == DDB_ENCODER_METHOD_PIPE) {
+                size32 = 0;
+            }
+            if (write (fd, &size32, sizeof (size32)) != sizeof (size32)) {
+                trace ("Wave header size write error\n");
+                goto error;
+            }
+            header_written = 1;
+        }
+
+        int64_t res = write (fd, buffer, sz);
+        if (sz != res) {
+            trace ("Write error (%"PRId64" bytes written out of %d)\n", res, sz);
+            goto error;
+        }
+    }
+
+    res = outsize;
+
+error:
+
+    if (buffer) {
+        free (buffer);
+        buffer = NULL;
+    }
+    if (dspbuffer) {
+        free (dspbuffer);
+        dspbuffer = NULL;
+    }
+
+    return res;
+}
+
+static int
+_get_encoder_cmdline (ddb_encoder_preset_t *encoder_preset, char *enc, int len, const char *escaped_out, const char *input_file_name) {
+    // formatting: %o = outfile, %i = infile
+    char *e = encoder_preset->encoder;
+    char *o = enc;
+    *o = 0;
+
+    while (e && *e) {
+        if (len <= 0) {
+            trace ("Failed to assemble encoder command line - buffer is not big enough, try to shorten your parameters. max allowed length is %u characters\n", (unsigned)sizeof (enc));
+            return -1;
+        }
+        if (e[0] == '%' && e[1]) {
+            if (e[1] == 'o') {
+                int l = snprintf (o, len, "\"%s\"", escaped_out);
+                o += l;
+                len -= l;
+            }
+            else if (e[1] == 'i') {
+                int l = snprintf (o, len, "\"%s\"", input_file_name);
+                o += l;
+                len -= l;
+            }
+            else {
+                strncpy (o, e, 2);
+                o += 2;
+                len -= 2;
+            }
+            e += 2;
+        }
+        else {
+            *o++ = *e++;
+            *o = 0;
+            len--;
+        }
+    }
+
+    return 0;
+}
 
 int
 convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
@@ -832,12 +1046,13 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
     char enc[2000];
     memset (enc, 0, sizeof (enc));
 
-    char *buffer = NULL;
-    char *dspbuffer = NULL;
+    const char *fname;
+    deadbeef->pl_lock ();
+    fname = strdupa (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
+
     if (deadbeef->pl_get_item_duration (it) <= 0) {
-        deadbeef->pl_lock ();
-        trace ("stream %s doesn't have finite length, skipped\n", deadbeef->pl_find_meta (it, ":URI"));
-        deadbeef->pl_unlock ();
+        trace ("stream %s doesn't have finite length, skipped\n", fname);
         return -1;
     }
 
@@ -847,290 +1062,134 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
     DB_decoder_t *dec = NULL;
     DB_fileinfo_t *fileinfo = NULL;
     char input_file_name[PATH_MAX] = "";
-    deadbeef->pl_lock ();
-    dec = (DB_decoder_t *)deadbeef->plug_get_for_id (deadbeef->pl_find_meta (it, ":DECODER"));
-    deadbeef->pl_unlock ();
 
-    if (dec) {
-        fileinfo = dec->open (0);
-        if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (it)) != 0) {
-            deadbeef->pl_lock ();
-            trace ("Failed to decode file %s\n", deadbeef->pl_find_meta (it, ":URI"));
-            deadbeef->pl_unlock ();
+    char *final_path = strdupa (out);
+    char *sep = strrchr (final_path, '/');
+    if (sep) {
+        *sep = 0;
+        if (!check_dir (final_path, 0755)) {
+            trace ("Failed to create output folder: %s\n", final_path);
             goto error;
         }
-        if (fileinfo) {
-            if (output_bps == -1) {
-                output_bps = fileinfo->fmt.bps;
-                output_is_float = fileinfo->fmt.is_float;
-            }
+    }
+    char escaped_out[PATH_MAX];
+    escape_filepath (out, escaped_out, sizeof (escaped_out));
 
-            char *final_path = strdupa (out);
-            char *sep = strrchr (final_path, '/');
-            if (sep) {
-                *sep = 0;
-                if (!check_dir (final_path, 0755)) {
-                    trace ("Failed to create output folder: %s\n", final_path);
-                    goto error;
-                }
-            }
+    // only need to decode / process the file if not passing the source filename
+    if (encoder_preset->method == DDB_ENCODER_METHOD_FILE || encoder_preset->method == DDB_ENCODER_METHOD_PIPE) {
+        deadbeef->pl_lock ();
+        dec = (DB_decoder_t *)deadbeef->plug_get_for_id (deadbeef->pl_find_meta (it, ":DECODER"));
+        deadbeef->pl_unlock ();
 
-            if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
-                const char *tmp = getenv ("TMPDIR");
-                if (!tmp) {
-                    tmp = "/tmp";
-                }
-                snprintf (input_file_name, sizeof (input_file_name), "%s/ddbconvXXXXXX", tmp);
-                (void)mktemp (input_file_name);
-                strcat (input_file_name, ".wav");
-            }
-            else {
-                strcpy (input_file_name, "-");
-            }
-
-            char escaped_out[PATH_MAX];
-            escape_filepath (out, escaped_out, sizeof (escaped_out));
-
-            // formatting: %o = outfile, %i = infile
-            char *e = encoder_preset->encoder;
-            char *o = enc;
-            *o = 0;
-
-            int len = sizeof (enc);
-            while (e && *e) {
-                if (len <= 0) {
-                    trace ("Failed to assemble encoder command line - buffer is not big enough, try to shorten your parameters. max allowed length is %u characters\n", (unsigned)sizeof (enc));
-                    goto error;
-                }
-                if (e[0] == '%' && e[1]) {
-                    if (e[1] == 'o') {
-                        int l = snprintf (o, len, "\"%s\"", escaped_out);
-                        o += l;
-                        len -= l;
-                    }
-                    else if (e[1] == 'i') {
-                        int l = snprintf (o, len, "\"%s\"", input_file_name);
-                        o += l;
-                        len -= l;
-                    }
-                    else {
-                        strncpy (o, e, 2);
-                        o += 2;
-                        len -= 2;
-                    }
-                    e += 2;
-                }
-                else {
-                    *o++ = *e++;
-                    *o = 0;
-                    len--;
-                }
-            }
-
-            mode_t wrmode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-
-            if (!encoder_preset->encoder[0]) {
-                // write to wave file
-                trace ("opening %s\n", out);
-                temp_file = open (out, O_LARGEFILE | O_WRONLY | O_CREAT | O_TRUNC, wrmode);
-                if (temp_file == -1) {
-                    trace ("Failed to open output wave file %s\n", out);
-                    goto error;
-                }
-            }
-            else if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
-                temp_file = open (input_file_name, O_LARGEFILE | O_WRONLY | O_CREAT | O_TRUNC, wrmode);
-                if (temp_file == -1) {
-                    trace ("Failed to open temp file %s\n", input_file_name);
-                    goto error;
-                }
-            }
-            else {
-                enc_pipe = popen (enc, "w");
-                if (!enc_pipe) {
-                    trace ("Failed to execute the encoder, command used:\n%s\n", enc[0] ? enc : "internal RIFF WAVE writer");
-                    goto error;
-                }
-            }
-
-            if (temp_file == -1 && enc_pipe) {
-                temp_file = fileno (enc_pipe);
-            }
-
-            // write wave header
-            char wavehdr_int[] = {
-                0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00, 0x57, 0x41, 0x56, 0x45, 0x66, 0x6d, 0x74, 0x20, 0x10, 0x00, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x44, 0xac, 0x00, 0x00, 0x10, 0xb1, 0x02, 0x00, 0x04, 0x00, 0x10, 0x00, 0x64, 0x61, 0x74, 0x61
-            };
-            char wavehdr_float[] = {
-                0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00, 0x57, 0x41, 0x56, 0x45, 0x66, 0x6d, 0x74, 0x20, 0x28, 0x00, 0x00, 0x00, 0xfe, 0xff, 0x02, 0x00, 0x40, 0x1f, 0x00, 0x00, 0x00, 0xfa, 0x00, 0x00, 0x08, 0x00, 0x20, 0x00, 0x16, 0x00, 0x20, 0x00, 0x03, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71, 0x66, 0x61, 0x63, 0x74, 0x04, 0x00, 0x00, 0x00, 0xc5, 0x5b, 0x00, 0x00, 0x64, 0x61, 0x74, 0x61
-            };
-            char *wavehdr = output_is_float ? wavehdr_float : wavehdr_int;
-            int wavehdr_size = output_is_float ? sizeof (wavehdr_float) : sizeof (wavehdr_int);
-            int header_written = 0;
-            uint32_t outsize = 0;
-            uint32_t outsr = fileinfo->fmt.samplerate;
-            uint16_t outch = fileinfo->fmt.channels;
-
-            int samplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
-
-            // block size
-            int bs = 2000 * samplesize;
-            // expected buffer size after worst-case dsp
-            int dspsize = bs/samplesize*sizeof(float)*8*48;
-            buffer = malloc (dspsize);
-            // account for up to float32 7.1 resampled to 48x ratio
-            dspbuffer = malloc (dspsize);
-            int eof = 0;
-            for (;;) {
-                if (eof) {
-                    break;
-                }
-                if (abort && *abort) {
-                    break;
-                }
-                int sz = dec->read (fileinfo, buffer, bs);
-
-                if (sz != bs) {
-                    eof = 1;
-                }
-                if (dsp_preset) {
-                    ddb_waveformat_t fmt;
-                    ddb_waveformat_t outfmt;
-                    memcpy (&fmt, &fileinfo->fmt, sizeof (fmt));
-                    memcpy (&outfmt, &fileinfo->fmt, sizeof (fmt));
-                    fmt.bps = 32;
-                    fmt.is_float = 1;
-                    deadbeef->pcm_convert (&fileinfo->fmt, buffer, &fmt, dspbuffer, sz);
-
-                    ddb_dsp_context_t *dsp = dsp_preset->chain;
-                    int frames = sz / samplesize;
-                    while (dsp) {
-                        frames = dsp->plugin->process (dsp, (float *)dspbuffer, frames, dspsize / (fmt.channels * 4), &fmt, NULL);
-                        if (frames <= 0) {
-                            break;
-                        }
-                        dsp = dsp->next;
-                    }
-                    if (frames <= 0) {
-                        trace ("DSP error, please check you dsp preset\n");
-                        goto error;
-                    }
-
-                    outsr = fmt.samplerate;
-                    outch = fmt.channels;
-
-                    outfmt.bps = output_bps;
-                    outfmt.is_float = output_is_float;
-                    outfmt.channels = outch;
-                    outfmt.samplerate = outsr;
-
-                    int n = deadbeef->pcm_convert (&fmt, dspbuffer, &outfmt, buffer, frames * sizeof (float) * fmt.channels);
-                    sz = n;
-                }
-                else if (fileinfo->fmt.bps != output_bps || fileinfo->fmt.is_float != output_is_float) {
-                    ddb_waveformat_t outfmt;
-                    memcpy (&outfmt, &fileinfo->fmt, sizeof (outfmt));
-                    outfmt.bps = output_bps;
-                    outfmt.is_float = output_is_float;
-                    outfmt.channels = outch;
-                    outfmt.samplerate = outsr;
-
-                    int frames = sz / samplesize;
-                    int n = deadbeef->pcm_convert (&fileinfo->fmt, buffer, &outfmt, dspbuffer, frames * samplesize);
-                    memcpy (buffer, dspbuffer, n);
-                    sz = n;
-                }
-                outsize += sz;
-
-                if (!header_written) {
-                    uint64_t size = (int64_t)(it->endsample-it->startsample) * outch * output_bps / 8;
-                    if (!size) {
-                        size = (double)deadbeef->pl_get_item_duration (it) * fileinfo->fmt.samplerate * outch * output_bps / 8;
-
-                    }
-
-                    if (outsr != fileinfo->fmt.samplerate) {
-                        uint64_t temp = size;
-                        temp *= outsr;
-                        temp /= fileinfo->fmt.samplerate;
-                        size  = temp;
-                    }
-
-                    uint64_t chunksize;
-                    chunksize = size + 40;
-
-                    // for float, add 36 more
-                    if (output_is_float) {
-                        chunksize += 36;
-                    }
-
-                    uint32_t size32 = 0xffffffff;
-                    if (chunksize <= 0xffffffff) {
-                        size32 = (uint32_t)chunksize;
-                    }
-                    write_int32_le (wavehdr+4, size32);
-                    write_int16_le (wavehdr+22, outch);
-                    write_int32_le (wavehdr+24, outsr);
-                    uint16_t blockalign = outch * output_bps / 8;
-                    write_int16_le (wavehdr+32, blockalign);
-                    write_int16_le (wavehdr+34, output_bps);
-
-                    size32 = 0xffffffff;
-                    if (size <= 0xffffffff) {
-                        size32 = (uint32_t)size;
-                    }
-
-                    if (wavehdr_size != write (temp_file, wavehdr, wavehdr_size)) {
-                        trace ("Wave header write error\n");
-                        goto error;
-                    }
-                    if (encoder_preset->method == DDB_ENCODER_METHOD_PIPE) {
-                        size32 = 0;
-                    }
-                    if (write (temp_file, &size32, sizeof (size32)) != sizeof (size32)) {
-                         trace ("Wave header size write error\n");
-                        goto error;
-                    }
-                    header_written = 1;
-                }
-
-                int64_t res = write (temp_file, buffer, sz);
-                if (sz != res) {
-                     trace ("Write error (%"PRId64" bytes written out of %d)\n", res, sz);
-                    goto error;
-                }
-            }
-            if (abort && *abort) {
+        if (dec) {
+            fileinfo = dec->open (0);
+            if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (it)) != 0) {
+                trace ("Failed to decode file %s\n", fname);
                 goto error;
             }
-            if (temp_file != -1 && (!enc_pipe || temp_file != fileno (enc_pipe))) {
-                lseek (temp_file, wavehdr_size, SEEK_SET);
-                if (4 != write (temp_file, &outsize, 4)) {
-                     trace ("Data size write error\n");
+            if (fileinfo) {
+                if (output_bps == -1) {
+                    output_bps = fileinfo->fmt.bps;
+                    output_is_float = fileinfo->fmt.is_float;
+                }
+
+                switch (encoder_preset->method) {
+                    case DDB_ENCODER_METHOD_FILE:
+                    {
+                        const char *tmp = getenv ("TMPDIR");
+                        if (!tmp) {
+                            tmp = "/tmp";
+                        }
+                        snprintf (input_file_name, sizeof (input_file_name), "%s/ddbconvXXXXXX", tmp);
+                        (void)mktemp (input_file_name);
+                        strcat (input_file_name, ".wav");
+                    }
+                        break;
+                    case DDB_ENCODER_METHOD_PIPE:
+                        strcpy (input_file_name, "-");
+                        break;
+                    default:
+                        trace ("Invalid encoder method: %d, check your encoder preset\n", encoder_preset->method);
+                        goto error;
+                }
+
+                if (_get_encoder_cmdline (encoder_preset, enc, sizeof (enc), escaped_out, input_file_name) < 0) {
                     goto error;
                 }
 
-                if (temp_file != -1 && (!enc_pipe || temp_file != fileno (enc_pipe))) {
-                    close (temp_file);
-                    temp_file = -1;
-                }
-            }
+                mode_t wrmode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
-            if (encoder_preset->encoder[0] && encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
-                enc_pipe = popen (enc, "w");
+                if (!encoder_preset->encoder[0]) {
+                    // write to wave file
+                    trace ("opening %s\n", out);
+                    temp_file = open (out, O_LARGEFILE | O_WRONLY | O_CREAT | O_TRUNC, wrmode);
+                    if (temp_file == -1) {
+                        trace ("Failed to open output wave file %s\n", out);
+                        goto error;
+                    }
+                }
+                else if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
+                    temp_file = open (input_file_name, O_LARGEFILE | O_WRONLY | O_CREAT | O_TRUNC, wrmode);
+                    if (temp_file == -1) {
+                        trace ("Failed to open temp file %s\n", input_file_name);
+                        goto error;
+                    }
+                }
+                else {
+                    enc_pipe = popen (enc, "w");
+                    if (!enc_pipe) {
+                        trace ("Failed to execute the encoder, command used:\n%s\n", enc[0] ? enc : "internal RIFF WAVE writer");
+                        goto error;
+                    }
+                }
+
+                if (encoder_preset->method == DDB_ENCODER_METHOD_FILE || encoder_preset->method == DDB_ENCODER_METHOD_PIPE) {
+                    if (temp_file == -1 && enc_pipe) {
+                        temp_file = fileno (enc_pipe);
+                    }
+                }
+
+                if (temp_file > 0) {
+                    int32_t outsize = _write_wav (it, dec, fileinfo, dsp_preset, encoder_preset, abort, temp_file, output_bps, output_is_float);
+
+                    if (outsize < 0) {
+                        goto error;
+                    }
+
+                    if (abort && *abort) {
+                        goto error;
+                    }
+
+                    if (DDB_ENCODER_METHOD_FILE) {
+                        // rewrite wave data size
+                        int wavehdr_size = output_is_float ? sizeof (wavehdr_float) : sizeof (wavehdr_int);
+                        lseek (temp_file, wavehdr_size, SEEK_SET);
+                        if (4 != write (temp_file, &outsize, 4)) {
+                            trace ("Data size write error\n");
+                            goto error;
+                        }
+
+                        if (temp_file != -1 && (!enc_pipe || temp_file != fileno (enc_pipe))) {
+                            close (temp_file);
+                            temp_file = -1;
+                        }
+                    }
+                }
             }
         }
     }
+    else if (encoder_preset->method == DDB_ENCODER_METHOD_FILENAME) {
+        if (_get_encoder_cmdline (encoder_preset, enc, sizeof (enc), escaped_out, fname) < 0) {
+            goto error;
+        }
+    }
+
+    if (enc[0] && (encoder_preset->method == DDB_ENCODER_METHOD_FILE || encoder_preset->method == DDB_ENCODER_METHOD_FILENAME)) {
+        enc_pipe = popen (enc, "w");
+    }
+
     err = 0;
 error:
-    if (buffer) {
-        free (buffer);
-        buffer = NULL;
-    }
-    if (dspbuffer) {
-        free (dspbuffer);
-        dspbuffer = NULL;
-    }
     if (temp_file != -1 && (!enc_pipe || temp_file != fileno (enc_pipe))) {
         close (temp_file);
         temp_file = -1;
