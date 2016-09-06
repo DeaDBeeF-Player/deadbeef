@@ -308,6 +308,12 @@ show_traymenu (void) {
     g_idle_add (show_traymenu_cb, NULL);
 }
 
+static gboolean
+mainwin_hide_cb (gpointer data) {
+    gtk_widget_hide (mainwin);
+    return FALSE;
+}
+
 void
 mainwin_toggle_visible (void) {
     int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
@@ -1168,6 +1174,9 @@ gtkui_thread (void *ctx) {
     gtkui_is_retina = is_retina (mainwin);
 #endif
 
+    if (deadbeef->conf_get_int ("gtkui.start_hidden", 0)) {
+        g_idle_add (mainwin_hide_cb, NULL);
+    }
     gtk_main ();
 
     deadbeef->unlisten_file_added (fileadded_listener_id);
