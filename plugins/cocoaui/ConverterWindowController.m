@@ -78,6 +78,7 @@ static NSMutableArray *g_converterControllers;
     [_outputFolder setStringValue:[NSString stringWithUTF8String:out_folder]];
     [_outputFileName setStringValue:[NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("converter.output_file", "")]];
     [_preserveFolderStructure setState:deadbeef->conf_get_int ("converter.preserve_folder_structure", 0) ? NSOnState : NSOffState];
+    [_bypassSameFormat setState:deadbeef->conf_get_int ("converter.bypass_same_format", 0)];
 
     int write_to_source_folder = deadbeef->conf_get_int ("converter.write_to_source_folder", 0);
     [_writeToSourceFolder setState:write_to_source_folder ? NSOnState : NSOffState];
@@ -115,6 +116,11 @@ static NSMutableArray *g_converterControllers;
 
 - (IBAction)preserveFolderStructureChanged:(id)sender {
     deadbeef->conf_set_int ("converter.preserve_folder_structure", [_preserveFolderStructure state] == NSOnState);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)bypassSameFormatChanged:(id)sender {
+    deadbeef->conf_set_int ("converter.bypass_same_format", [_bypassSameFormat state] == NSOnState);
     deadbeef->conf_save ();
 }
 
@@ -708,6 +714,14 @@ static NSMutableArray *g_converterControllers;
         }
     }
 
+    ddb_converter_settings_t settings = {
+        .output_bps = _output_bps,
+        .output_is_float = _output_is_float,
+        .encoder_preset = _encoder_preset,
+        .dsp_preset = _dsp_preset,
+        .bypass_conversion_on_same_format = ([_bypassSameFormat state] == NSOnState),
+    };
+
     for (int n = 0; n < _convert_items_count; n++) {
         deadbeef->pl_lock ();
         NSString *text = [NSString stringWithUTF8String:deadbeef->pl_find_meta (_convert_items[n], ":URI")];
@@ -753,7 +767,7 @@ static NSMutableArray *g_converterControllers;
         }
 
         if (!skip) {
-            _converter_plugin->convert (_convert_items[n], outpath, _output_bps, _output_is_float, _encoder_preset, _dsp_preset, &_cancelled);
+            _converter_plugin->convert2 (&settings, _convert_items[n], outpath, &_cancelled);
         }
         if (_cancelled) {
             break;

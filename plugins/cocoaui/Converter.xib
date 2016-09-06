@@ -8,6 +8,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="ConverterWindowController">
             <connections>
+                <outlet property="bypassSameFormat" destination="WGd-za-GTw" id="hSw-kU-NrI"/>
                 <outlet property="dspPreset" destination="0Cg-jo-Hgf" id="4GS-5q-ONd"/>
                 <outlet property="dspPresetsPanel" destination="dDd-sk-C7S" id="Gl4-VT-79J"/>
                 <outlet property="encoderPreset" destination="Kt3-Jm-ze1" id="jeA-sm-LRC"/>
@@ -319,12 +320,15 @@
                         </tableHeaderView>
                     </scrollView>
                     <button id="WGd-za-GTw">
-                        <rect key="frame" x="20" y="189" width="294" height="18"/>
+                        <rect key="frame" x="20" y="189" width="229" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="check" title="Copy file if the output format doesn't change" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="N87-c7-pGd">
+                        <buttonCell key="cell" type="check" title="Copy if the format doesn't change" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="N87-c7-pGd">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="bypassSameFormatChanged:" target="-2" id="KW4-DP-oCC"/>
+                        </connections>
                     </button>
                     <button verticalHuggingPriority="750" id="Edn-RS-XUc">
                         <rect key="frame" x="522" y="13" width="89" height="32"/>

@@ -803,7 +803,6 @@ check_dir (const char *dir, mode_t mode)
             *slash = 0;
         if (-1 == stat (tmp, &stat_buf))
         {
-            trace ("creating dir %s\n", tmp);
             if (0 != mkdir (tmp, mode))
             {
                 trace ("Failed to create %s\n", tmp);
@@ -1040,8 +1039,73 @@ _get_encoder_cmdline (ddb_encoder_preset_t *encoder_preset, char *enc, int len, 
     return 0;
 }
 
-int
-convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
+#define BUFFER_SIZE 4096
+static int
+_copy_file (const char *in, const char *out) {
+    char *final_path = strdupa (out);
+    char *sep = strrchr (final_path, '/');
+    if (sep) {
+        *sep = 0;
+        if (!check_dir (final_path, 0755)) {
+            trace ("Failed to create output folder: %s\n", final_path);
+            return -1;
+        }
+    }
+
+    DB_FILE *infile = deadbeef->fopen (in);
+    if (!infile) {
+        trace ("Failed to open file %s for reading\n", in);
+        return -1;
+    }
+
+    char tmp_out[PATH_MAX];
+    snprintf (tmp_out, PATH_MAX, "%s.part", out);
+    FILE *fout = fopen (tmp_out, "w+b");
+    if (!fout) {
+        trace ("Failed to open file %s for writing\n", tmp_out);
+        deadbeef->fclose (infile);
+        return -1;
+    }
+
+    int err = 0;
+    int64_t bytes_read;
+    size_t file_bytes = 0;
+    do {
+        char buffer[BUFFER_SIZE];
+        bytes_read = deadbeef->fread (buffer, 1, BUFFER_SIZE, infile);
+        if (bytes_read > 0 && fwrite (buffer, bytes_read, 1, fout) != 1) {
+            trace ("Failed to write file %s: %s\n", tmp_out, strerror (errno));
+            err = -1;
+        }
+        file_bytes += bytes_read;
+    } while (!err && bytes_read == BUFFER_SIZE);
+
+    deadbeef->fclose (infile);
+
+    if (fclose (fout)) {
+        trace ("Failed to write file %s: %s\n", tmp_out, strerror (errno));
+        unlink (tmp_out);
+        return -1;
+    }
+
+    if (file_bytes > 0 && !err) {
+        err = rename (tmp_out, out);
+        if (err) {
+            trace ("Failed to move %s to %s: %s\n", tmp_out, out, strerror (errno));
+        }
+    }
+
+    unlink (tmp_out);
+    return err;
+}
+
+static int
+convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out, int *pabort) {
+    int output_bps = settings->output_bps;
+    int output_is_float = settings->output_is_float;
+    ddb_encoder_preset_t *encoder_preset = settings->encoder_preset;
+    ddb_dsp_preset_t *dsp_preset = settings->dsp_preset;
+    int bypass_conversion_on_same_format = settings->bypass_conversion_on_same_format;
 
     char enc[2000];
     memset (enc, 0, sizeof (enc));
@@ -1054,6 +1118,18 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
     if (deadbeef->pl_get_item_duration (it) <= 0) {
         trace ("stream %s doesn't have finite length, skipped\n", fname);
         return -1;
+    }
+
+    const char *ext = strrchr (fname, '.');
+    if (ext) {
+        ext++;
+    }
+    else {
+        ext = "";
+    }
+
+    if (bypass_conversion_on_same_format && !strcasecmp (ext, encoder_preset->ext)) {
+        return _copy_file (fname, out);
     }
 
     int err = -1;
@@ -1150,13 +1226,13 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
                 }
 
                 if (temp_file > 0) {
-                    int32_t outsize = _write_wav (it, dec, fileinfo, dsp_preset, encoder_preset, abort, temp_file, output_bps, output_is_float);
+                    int32_t outsize = _write_wav (it, dec, fileinfo, dsp_preset, encoder_preset, pabort, temp_file, output_bps, output_is_float);
 
                     if (outsize < 0) {
                         goto error;
                     }
 
-                    if (abort && *abort) {
+                    if (pabort && *pabort) {
                         goto error;
                     }
 
@@ -1207,7 +1283,7 @@ error:
         dec->free (fileinfo);
         fileinfo = NULL;
     }
-    if (abort && *abort && out[0]) {
+    if (pabort && *abort && out[0]) {
         unlink (out);
     }
     if (input_file_name[0] && strcmp (input_file_name, "-")) {
@@ -1309,7 +1385,21 @@ error:
     return err;
 }
 
-int
+static int
+convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
+    ddb_converter_settings_t settings = {
+        .output_bps = output_bps,
+        .output_is_float = output_is_float,
+        .encoder_preset = encoder_preset,
+        .dsp_preset = dsp_preset,
+        .bypass_conversion_on_same_format = 0,
+    };
+
+    return convert2(&settings, it, out, abort);
+}
+
+
+static int
 convert_1_0 (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
     trace ("An old version of \"convert\" has been called, please update your plugins which depend on converter 1.1\n");
     return -1;
@@ -1405,6 +1495,8 @@ static ddb_converter_t plugin = {
     .get_output_path = get_output_path,
     // 1.4 entry points
     .get_output_path2 = get_output_path2,
+    // 1.5 entry points
+    .convert2 = convert2,
 };
 
 DB_plugin_t *
