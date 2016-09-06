@@ -64,7 +64,6 @@ typedef struct {
     ddb_encoder_preset_t *encoder_preset;
     ddb_dsp_preset_t *dsp_preset;
     GtkWidget *progress;
-    GtkWidget *progress_entry;
     int cancelled;
 } converter_ctx_t;
 
@@ -109,16 +108,23 @@ on_converter_realize                 (GtkWidget        *widget,
                                         gpointer         user_data);
 
 typedef struct {
-    GtkWidget *entry;
-    char *text;
+    GtkWidget *dialog;
+    char *status;
+    char *outname;
+    double fraction;
 } update_progress_info_t;
 
 static gboolean
 update_progress_cb (gpointer ctx) {
     update_progress_info_t *info = ctx;
-    gtk_entry_set_text (GTK_ENTRY (info->entry), info->text);
-    free (info->text);
-    g_object_unref (info->entry);
+
+    gtk_label_set_text (GTK_LABEL (lookup_widget (info->dialog, "status")), info->status);
+    gtk_label_set_text (GTK_LABEL (lookup_widget (info->dialog, "outname")), info->outname);
+    gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (lookup_widget (info->dialog, "convprogress")), info->fraction);
+
+    free (info->status);
+    free (info->outname);
+    g_object_unref (info->dialog);
     free (info);
     return FALSE;
 }
@@ -170,6 +176,7 @@ static void
 converter_worker (void *ctx) {
     deadbeef->background_job_increment ();
     converter_ctx_t *conv = ctx;
+    int nskipped = 0;
 
     char root[2000] = "";
     int rootlen = 0;
@@ -208,13 +215,6 @@ converter_worker (void *ctx) {
     }
 
     for (int n = 0; n < conv->convert_items_count; n++) {
-        update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
-        info->entry = conv->progress_entry;
-        g_object_ref (info->entry);
-        deadbeef->pl_lock ();
-        info->text = strdup (deadbeef->pl_find_meta (conv->convert_items[n], ":URI"));
-        deadbeef->pl_unlock ();
-        g_idle_add (update_progress_cb, info);
 
         char outpath[2000];
         converter_plugin->get_output_path2 (conv->convert_items[n], conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, root, conv->write_to_source_folder, outpath, sizeof (outpath));
@@ -238,9 +238,23 @@ converter_worker (void *ctx) {
             }
         }
 
+        update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
+        asprintf (&info->status,
+            "Track: %d/%d (%d%%)\n"
+            "Skipped: %d (%d%%)",
+            n+1, conv->convert_items_count, (n+1)*100/conv->convert_items_count,
+            nskipped, nskipped*100/conv->convert_items_count
+        );
+        info->outname = strdup (outpath);
+        info->dialog = g_object_ref (conv->progress);
+        info->fraction = (double)n / conv->convert_items_count;
+        g_idle_add (update_progress_cb, info);
+
         if (!skip) {
             converter_plugin->convert (conv->convert_items[n], outpath, conv->output_bps, conv->output_is_float, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
         }
+        else
+            ++nskipped;
         if (conv->cancelled) {
             for (; n < conv->convert_items_count; n++) {
                 deadbeef->pl_item_unref (conv->convert_items[n]);
@@ -331,20 +345,13 @@ converter_process (converter_ctx_t *conv)
         converter_plugin->dsp_preset_copy (conv->dsp_preset, dsp_preset);
     }
 
-    GtkWidget *progress = gtk_dialog_new_with_buttons (_("Converting..."), GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
-    GtkWidget *vbox = gtk_dialog_get_content_area (GTK_DIALOG (progress));
-    GtkWidget *entry = gtk_entry_new ();
-    gtk_widget_set_size_request (entry, 400, -1);
-    gtk_editable_set_editable (GTK_EDITABLE (entry), FALSE);
-    gtk_widget_show (entry);
-    gtk_box_pack_start (GTK_BOX (vbox), entry, TRUE, TRUE, 12);
+    GtkWidget *progress = create_procdlg();
+    gtk_widget_set_size_request (progress, 400, -1);
 
     g_signal_connect ((gpointer)progress, "response", G_CALLBACK (on_converter_progress_cancel), conv);
-
     gtk_widget_show (progress);
 
     conv->progress = progress;
-    conv->progress_entry = entry;
     intptr_t tid = deadbeef->thread_start (converter_worker, conv);
     deadbeef->thread_detach (tid);
     return 0;
