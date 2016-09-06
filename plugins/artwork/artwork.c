@@ -1650,6 +1650,7 @@ process_query (const char *filepath, const char *album, const char *artist, char
         // try to load embedded from mp4
         trace ("trying to load artwork from mp4 tag for %s\n", filepath);
         if (!mp4_extract_art (filepath, cache_path)) {
+            snprintf (artwork_path, artwork_path_size, "%s", cache_path);
             return 1;
         }
     }
