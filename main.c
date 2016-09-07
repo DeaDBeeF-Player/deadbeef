@@ -649,7 +649,7 @@ player_mainloop (void) {
                     }
                     break;
                 case DB_EV_TOGGLE_PAUSE:
-                    if (output->state () == OUTPUT_STATE_PAUSED) {
+                    if (output->state () != OUTPUT_STATE_PLAYING) {
                         streamer_play_current_track ();
                     }
                     else {
