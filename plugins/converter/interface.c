@@ -40,6 +40,7 @@ create_converterdlg (void)
   GtkWidget *converter_output_browse;
   GtkWidget *write_to_source_folder;
   GtkWidget *preserve_folders;
+  GtkWidget *bypass_same_format;
   GtkWidget *hbox100;
   GtkWidget *label122;
   GtkWidget *hbox101;
@@ -122,6 +123,10 @@ create_converterdlg (void)
   preserve_folders = gtk_check_button_new_with_mnemonic (_("Preserve folder structure"));
   gtk_widget_show (preserve_folders);
   gtk_box_pack_start (GTK_BOX (vbox26), preserve_folders, FALSE, FALSE, 0);
+
+  bypass_same_format = gtk_check_button_new_with_mnemonic (_("Copy if the format is not changing"));
+  gtk_widget_show (bypass_same_format);
+  gtk_box_pack_start (GTK_BOX (vbox26), bypass_same_format, FALSE, FALSE, 0);
 
   hbox100 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox100);
@@ -274,6 +279,9 @@ create_converterdlg (void)
   g_signal_connect ((gpointer) preserve_folders, "toggled",
                     G_CALLBACK (on_preserve_folders_toggled),
                     NULL);
+  g_signal_connect ((gpointer) bypass_same_format, "toggled",
+                    G_CALLBACK (on_bypass_same_format_toggled),
+                    NULL);
   g_signal_connect ((gpointer) encoder, "changed",
                     G_CALLBACK (on_converter_encoder_changed),
                     NULL);
@@ -308,6 +316,7 @@ create_converterdlg (void)
   GLADE_HOOKUP_OBJECT (converterdlg, converter_output_browse, "converter_output_browse");
   GLADE_HOOKUP_OBJECT (converterdlg, write_to_source_folder, "write_to_source_folder");
   GLADE_HOOKUP_OBJECT (converterdlg, preserve_folders, "preserve_folders");
+  GLADE_HOOKUP_OBJECT (converterdlg, bypass_same_format, "bypass_same_format");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox100, "hbox100");
   GLADE_HOOKUP_OBJECT (converterdlg, label122, "label122");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox101, "hbox101");
@@ -465,7 +474,8 @@ create_convpreset_editor (void)
   gtk_widget_show (method);
   gtk_box_pack_start (GTK_BOX (hbox73), method, TRUE, TRUE, 0);
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (method), _("Pipe"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (method), _("Temporary file"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (method), _("Temp File"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (method), _("Source File"));
 
   frame9 = gtk_frame_new (NULL);
   gtk_widget_show (frame9);

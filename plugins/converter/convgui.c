@@ -58,6 +58,7 @@ typedef struct {
     char *outfile;
     int preserve_folder_structure;
     int write_to_source_folder;
+    int bypass_same_format;
     int output_bps;
     int output_is_float;
     int overwrite_action;
@@ -207,6 +208,14 @@ converter_worker (void *ctx) {
         }
     }
 
+    ddb_converter_settings_t settings = {
+        .output_bps = conv->output_bps,
+        .output_is_float = conv->output_is_float,
+        .encoder_preset = conv->encoder_preset,
+        .dsp_preset = conv->dsp_preset,
+        .bypass_conversion_on_same_format = conv->bypass_same_format,
+    };
+
     for (int n = 0; n < conv->convert_items_count; n++) {
         update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
         info->entry = conv->progress_entry;
@@ -239,7 +248,7 @@ converter_worker (void *ctx) {
         }
 
         if (!skip) {
-            converter_plugin->convert (conv->convert_items[n], outpath, conv->output_bps, conv->output_is_float, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
+            converter_plugin->convert2 (&settings, conv->convert_items[n], outpath, &conv->cancelled);
         }
         if (conv->cancelled) {
             for (; n < conv->convert_items_count; n++) {
@@ -279,7 +288,9 @@ converter_process (converter_ctx_t *conv)
     conv->outfile = strdup (outfile);
     conv->preserve_folder_structure = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")));
     conv->write_to_source_folder = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "write_to_source_folder")));
+    conv->bypass_same_format = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "bypass_same_format")));
     conv->overwrite_action = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (conv->converter, "overwrite_action")));
+    conv->bypass_same_format = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "bypass_same_format")));
 
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "output_format"));
     int selected_format = gtk_combo_box_get_active (combo);
@@ -566,8 +577,12 @@ converter_show_cb (void *data) {
 
 
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")), deadbeef->conf_get_int ("converter.preserve_folder_structure", 0));
+
     int write_to_source_folder = deadbeef->conf_get_int ("converter.write_to_source_folder", 0);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "write_to_source_folder")), write_to_source_folder);
+
+    int bypass_same_format = deadbeef->conf_get_int ("converter.bypass_same_format", 0);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "bypass_same_format")), bypass_same_format);
 
     g_signal_connect ((gpointer) lookup_widget (conv->converter, "write_to_source_folder"), "toggled",
             G_CALLBACK (on_write_to_source_folder_toggled),
@@ -816,8 +831,17 @@ on_write_to_source_folder_toggled      (GtkToggleButton *togglebutton,
     deadbeef->conf_set_int ("converter.write_to_source_folder", active);
     gtk_widget_set_sensitive (lookup_widget (conv->converter, "output_folder"), !active);
     gtk_widget_set_sensitive (lookup_widget (conv->converter, "preserve_folders"), !active);
+    deadbeef->conf_save ();
 }
 
+void
+on_bypass_same_format_toggled          (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (togglebutton);
+    deadbeef->conf_set_int ("converter.bypass_same_format", active);
+    deadbeef->conf_save ();
+}
 
 DB_decoder_t *
 plug_get_decoder_for_id (const char *id) {

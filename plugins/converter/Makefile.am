@@ -10,7 +10,9 @@ convdata = \
 	convpresets/Opus.txt\
 	convpresets/TTA.txt\
 	convpresets/WavPack.txt\
-	convpresets/ALAC.txt
+	convpresets/ALAC.txt\
+	convpresets/File_Copy.txt\
+	convpresets/File_Move.txt
 
 EXTRA_DIST = $(convdata) converter.glade
 
