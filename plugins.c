@@ -459,7 +459,9 @@ static DB_functions_t deadbeef_api = {
     .pl_meta_for_key = (DB_metaInfo_t * (*) (DB_playItem_t *it, const char *key))pl_meta_for_key,
 
     .log_detailed = ddb_log_detailed,
+    .vlog_detailed = ddb_vlog_detailed,
     .log = ddb_log,
+    .vlog = ddb_vlog,
 
     .log_viewer_register = ddb_log_viewer_register,
     .log_viewer_unregister = ddb_log_viewer_unregister,
