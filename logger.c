@@ -72,12 +72,32 @@ ddb_log_detailed (DB_plugin_t *plugin, uint32_t layers, const char *fmt, ...) {
 }
 
 void
+ddb_vlog_detailed (DB_plugin_t *plugin, uint32_t layers, const char *fmt, va_list ap) {
+    if (!_is_log_visible(plugin, layers)) {
+        return;
+    }
+
+    char text[2048];
+    (void) vsnprintf(text, sizeof (text), fmt, ap);
+
+    _log_internal (plugin, layers, text);
+}
+
+void
 ddb_log (const char *fmt, ...) {
     char text[2048];
     va_list ap;
     va_start(ap, fmt);
-    (void) vsnprintf(text, 128, fmt, ap);
+    (void) vsnprintf(text, sizeof (text), fmt, ap);
     va_end(ap);
+
+    _log_internal (NULL, 0, text);
+}
+
+void
+ddb_vlog (const char *fmt, va_list ap) {
+    char text[2048];
+    (void) vsnprintf(text, sizeof (text), fmt, ap);
 
     _log_internal (NULL, 0, text);
 }

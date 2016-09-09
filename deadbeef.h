@@ -29,6 +29,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <dirent.h>
+#include <stdarg.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -1304,9 +1305,15 @@ typedef struct {
     // See DDB_LOG_LAYER_* for details
     void (*log_detailed) (struct DB_plugin_s *plugin, uint32_t layers, const char *fmt, ...);
 
+    // Same as log_detailed but uses va_list
+    void (*vlog_detailed) (struct DB_plugin_s *plugin, uint32_t layer, const char *fmt, va_list ap);
+
     // High level easy-to-use log function, with no scope
     // These log messages cannot be disabled, and will always appear in the Log Viewers
     void (*log) (const char *fmt, ...);
+
+    // Same as log but uses va_list
+    void (*vlog) (const char *fmt, va_list ap);
 
     // Custom log viewers, for use in e.g. UI plugins
     void (*log_viewer_register) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text));

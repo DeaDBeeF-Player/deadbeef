@@ -30,7 +30,13 @@ void
 ddb_log_detailed (DB_plugin_t *plugin, uint32_t layers, const char *fmt, ...);
 
 void
+ddb_vlog_detailed (DB_plugin_t *plugin, uint32_t layers, const char *fmt, va_list ap);
+
+void
 ddb_log (const char *fmt, ...);
+
+void
+ddb_vlog (const char *fmt, va_list ap);
 
 void
 ddb_log_viewer_register (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text));
