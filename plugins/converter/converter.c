@@ -1284,7 +1284,7 @@ error:
         dec->free (fileinfo);
         fileinfo = NULL;
     }
-    if (pabort && *abort && out[0]) {
+    if (pabort && *pabort && out[0]) {
         unlink (out);
     }
     if (input_file_name[0] && strcmp (input_file_name, "-")) {
