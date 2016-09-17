@@ -1327,7 +1327,7 @@ plug_select_output (void) {
 #else
     char outplugname[100];
 #if defined( HAVE_COCOAUI)
-    conf_get_str ("output_plugin", "CoreAudio", outplugname, sizeof (outplugname));
+    conf_get_str ("output_plugin", "CoreAudio output plugin", outplugname, sizeof (outplugname));
 #elif defined(HAVE_SNDIO)
     conf_get_str ("output_plugin", "sndio output plugin", outplugname, sizeof (outplugname));
 #else
