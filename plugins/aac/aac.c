@@ -29,7 +29,7 @@
 #include "../../deadbeef.h"
 #include "aac_parser.h"
 
-#include "mp4ff.h"
+#include "../libmp4ff/mp4ff.h"
 
 #include "../../shared/mp4tagutil.h"
 
