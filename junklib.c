@@ -700,7 +700,7 @@ junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in,
     if (cd == (iconv_t)-1) {
         return -1;
     }
-#ifdef __linux__
+#if defined(__linux__) || defined(__OpenBSD__)
     char *pin = (char*)in;
 #else
     const char *pin = in;
