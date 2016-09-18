@@ -46,11 +46,14 @@ deadbeef_SOURCES =\
 	playqueue.c playqueue.h\
 	sort.c sort.h\
 	logger.c logger.h
-	
+
 #	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
+
+# Fix 'undefined symbol' errors when loading plugins
+deadbeef_LDFLAGS = $(LDFLAGS) -Wl,--export-dynamic
 
 deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread $(INTL_LIBS) plugins/libparser/libparser.a
 
