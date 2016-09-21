@@ -452,7 +452,13 @@ on_pref_output_plugin_changed          (GtkComboBox     *combobox,
     DB_output_t *new = NULL;
 
     deadbeef->conf_lock ();
+#if defined(HAVE_COCOAUI)
+    const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", "CoreAudio output plugin");
+#elif defined(HAVE_SNDIO)
+    const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", "sndio output plugin");
+#else
     const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", "ALSA output plugin");
+#endif
     for (int i = 0; out_plugs[i]; i++) {
         if (!strcmp (out_plugs[i]->plugin.name, outplugname)) {
             prev = out_plugs[i];

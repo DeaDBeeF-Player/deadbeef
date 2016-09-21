@@ -1326,8 +1326,10 @@ plug_select_output (void) {
     return 0;
 #else
     char outplugname[100];
-#ifdef HAVE_COCOAUI
-    conf_get_str ("output_plugin", "CoreAudio", outplugname, sizeof (outplugname));
+#if defined( HAVE_COCOAUI)
+    conf_get_str ("output_plugin", "CoreAudio output plugin", outplugname, sizeof (outplugname));
+#elif defined(HAVE_SNDIO)
+    conf_get_str ("output_plugin", "sndio output plugin", outplugname, sizeof (outplugname));
 #else
     conf_get_str ("output_plugin", "ALSA output plugin", outplugname, sizeof (outplugname));
 #endif
@@ -1372,8 +1374,10 @@ plug_reinit_sound (void) {
 
     if (plug_select_output () < 0) {
         char outplugname[100];
-#ifdef HAVE_COCOAUI
-        conf_get_str ("output_plugin", "core audio output plugin", outplugname, sizeof (outplugname));
+#if defined(HAVE_COCOAUI)
+        conf_get_str ("output_plugin", "CoreAudio output plugin", outplugname, sizeof (outplugname));
+#elif defined(HAVE_SNDIO)
+        conf_get_str ("output_plugin", "sndio output plugin", outplugname, sizeof (outplugname));
 #else
         conf_get_str ("output_plugin", "ALSA output plugin", outplugname, sizeof (outplugname));
 #endif

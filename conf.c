@@ -73,6 +73,7 @@ conf_free (void) {
     }
     conf_items = NULL;
     changed = 0;
+    mutex_unlock (mutex);
     mutex_free (mutex);
     mutex = 0;
 }

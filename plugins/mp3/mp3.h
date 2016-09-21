@@ -109,23 +109,16 @@ typedef struct {
     DB_fileinfo_t info;
     // input buffer, for MPEG data
     buffer_t buffer;
-    union {
 #ifdef USE_LIBMAD
-        struct {
-            struct mad_stream mad_stream;
-            struct mad_frame mad_frame;
-            struct mad_synth mad_synth;
-        };
+    struct mad_stream mad_stream;
+    struct mad_frame mad_frame;
+    struct mad_synth mad_synth;
 #endif
 #ifdef USE_LIBMPG123
-        struct {
-            mpg123_handle *mpg123_handle;
-            int mpg123_status;
-            unsigned char *mpg123_audio;
-        };
+    mpg123_handle *mpg123_handle;
+    int mpg123_status;
+    unsigned char *mpg123_audio;
 #endif
-    };
-
     int want_16bit;
     struct mp3_decoder_api_s *dec;
 } mp3_info_t;
