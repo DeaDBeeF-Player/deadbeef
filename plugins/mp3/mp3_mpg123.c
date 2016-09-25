@@ -38,7 +38,7 @@ mp3_mpg123_init (mp3_info_t *info) {
 //    ret = mpg123_param (info->mpg123_handle, MPG123_VERBOSE, 2, 0);
     ret = mpg123_format_none (info->mpg123_handle);
 //    ret = mpg123_param (info->mpg123_handle, MPG123_FLAGS, MPG123_FUZZY | MPG123_SEEKBUFFER | MPG123_GAPLESS, 0);
-    ret = mpg123_format (info->mpg123_handle, info->info.fmt.samplerate, MPG123_MONO | MPG123_STEREO,  info->want_16bit ? MPG123_ENC_SIGNED_16 : MPG123_ENC_FLOAT_32);
+    ret = mpg123_format (info->mpg123_handle, info->info.fmt.samplerate, MPG123_MONO | MPG123_STEREO, MPG123_ENC_FLOAT_32);
     ret = mpg123_open_feed (info->mpg123_handle);
 
     info->mpg123_status = MPG123_NEED_MORE;
@@ -97,22 +97,6 @@ mp3_mpg123_stream_frame (mp3_info_t *info) {
                 mpg123_getformat (info->mpg123_handle, &rate, &channels, &enc);
                 info->info.fmt.samplerate = (int)rate;
                 info->info.fmt.channels = channels;
-                if (enc & MPG123_ENC_FLOAT_32) {
-                    info->info.fmt.bps = 32;
-                    info->info.fmt.is_float = 1;
-                }
-                else if (enc & MPG123_ENC_16) {
-                    info->info.fmt.bps = 16;
-                    info->info.fmt.is_float = 0;
-                }
-                else if (enc & MPG123_ENC_8) {
-                    info->info.fmt.bps = 8;
-                    info->info.fmt.is_float = 0;
-                }
-                else {
-                    trace ("mpg123 have synthesized frame in unsupported format: %d\n", (int)enc);
-                    return -1;
-                }
                 continue;
             }
             else if (info->mpg123_status != MPG123_OK) {

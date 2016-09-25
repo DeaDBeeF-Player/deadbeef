@@ -781,6 +781,7 @@ cmp3_set_extra_properties (buffer_t *buffer, int fake) {
 static int
 cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     mp3_info_t *info = (mp3_info_t *)_info;
+
 #if defined(USE_LIBMAD) && defined(USE_LIBMPG123)
     int backend = deadbeef->conf_get_int ("mp3.backend", 0);
     switch (backend) {
@@ -1003,6 +1004,9 @@ cmp3_free (DB_fileinfo_t *_info) {
     if (info->buffer.it) {
         deadbeef->pl_item_unref (info->buffer.it);
     }
+    if (info->conv_buf) {
+        free (info->conv_buf);
+    }
     if (info->buffer.file) {
         deadbeef->fclose (info->buffer.file);
         info->buffer.file = NULL;
@@ -1032,11 +1036,45 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
         }
     }
+
     int initsize = size;
-    info->buffer.readsize = size;
-    info->buffer.out = bytes;
+
+    int req_size;
+    if (info->want_16bit) {
+        req_size = size * 2;
+        // decode in 32 bit temp buffer, then convert to 16 below
+        if (info->conv_buf_size < req_size) {
+            info->conv_buf_size = req_size;
+            if (info->conv_buf) {
+                free (info->conv_buf);
+            }
+            info->conv_buf = malloc (info->conv_buf_size);
+        }
+        info->buffer.readsize = req_size;
+        info->buffer.out = info->conv_buf;
+    }
+    else {
+        req_size = size;
+        // decode straight to 32 bit
+        info->buffer.readsize = size;
+        info->buffer.out = bytes;
+    }
 
     cmp3_decode (info);
+
+    // apply replaygain, before clipping
+    ddb_waveformat_t fmt;
+    memcpy (&fmt, &info->info.fmt, sizeof (fmt));
+    fmt.bps = 32;
+    fmt.is_float = 1;
+    deadbeef->replaygain_apply (&fmt, info->want_16bit ? info->conv_buf : bytes, req_size - info->buffer.readsize);
+
+    // convert to 16 bit, if needed
+    if (info->want_16bit) {
+        int sz = req_size - info->buffer.readsize;
+        int ret = deadbeef->pcm_convert (&fmt, info->conv_buf, &_info->fmt, bytes, sz);
+        info->buffer.readsize = size-ret;
+    }
 
     info->buffer.currentsample += (size - info->buffer.readsize) / samplesize;
     _info->readpos = (float)(info->buffer.currentsample - info->buffer.startsample) / info->buffer.samplerate;
@@ -1281,10 +1319,11 @@ static const char settings_dlg[] =
 // define plugin interface
 static DB_decoder_t plugin = {
     .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 10, // requires API level 10 for logger support
+    .plugin.api_vminor = 10, // requires API level 10 for logger and replaygain support
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
+    .plugin.flags = DDB_PLUGIN_FLAG_REPLAYGAIN,
     .plugin.id = "stdmpg",
     .plugin.name = "MP3 player",
     .plugin.descr = "MPEG v1/2 layer1/2/3 decoder\n\n"

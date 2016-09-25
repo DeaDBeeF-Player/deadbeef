@@ -107,8 +107,14 @@ typedef struct {
 
 typedef struct {
     DB_fileinfo_t info;
+
     // input buffer, for MPEG data
     buffer_t buffer;
+
+    // temp buffer for 32bit decoding, before converting to 16 bit
+    char *conv_buf;
+    int conv_buf_size;
+
     union {
 #ifdef USE_LIBMAD
         struct {
