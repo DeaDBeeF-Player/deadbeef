@@ -153,9 +153,7 @@
 		2D026DAB1CAC5CB900E27961 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DAA1CAC5CB900E27961 /* libbz2.dylib */; };
 		2D026DAD1CAC5CDF00E27961 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DAC1CAC5CDF00E27961 /* CoreFoundation.framework */; };
 		2D026DAF1CAC5DAD00E27961 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DAE1CAC5DAD00E27961 /* CoreVideo.framework */; };
-		2D026DB01CAC5DBD00E27961 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA24B5519E7252300E34920 /* libssl.dylib */; };
 		2D026DB21CAC5DE300E27961 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DB11CAC5DE300E27961 /* libiconv.dylib */; };
-		2D026DB41CAC5DEC00E27961 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DB31CAC5DEC00E27961 /* libcrypto.dylib */; };
 		2D026DB61CAC5E0E00E27961 /* VideoDecodeAcceleration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DB51CAC5E0E00E27961 /* VideoDecodeAcceleration.framework */; };
 		2D026DB81CAC5E8100E27961 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DB71CAC5E8100E27961 /* Security.framework */; };
 		2D05A8861B4BE600004C913D /* chanmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D05A8371B4BE600004C913D /* chanmap.h */; };
@@ -4345,9 +4343,7 @@
 			files = (
 				2D026DB81CAC5E8100E27961 /* Security.framework in Frameworks */,
 				2D026DB61CAC5E0E00E27961 /* VideoDecodeAcceleration.framework in Frameworks */,
-				2D026DB41CAC5DEC00E27961 /* libcrypto.dylib in Frameworks */,
 				2D026DB21CAC5DE300E27961 /* libiconv.dylib in Frameworks */,
-				2D026DB01CAC5DBD00E27961 /* libssl.dylib in Frameworks */,
 				2D026DAF1CAC5DAD00E27961 /* CoreVideo.framework in Frameworks */,
 				2D026DAD1CAC5CDF00E27961 /* CoreFoundation.framework in Frameworks */,
 				2D026DAB1CAC5CB900E27961 /* libbz2.dylib in Frameworks */,
