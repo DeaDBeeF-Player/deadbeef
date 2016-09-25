@@ -134,6 +134,7 @@ static int last_bitrate = -1; // last bitrate of current song
 
 static playlist_t *streamer_playlist;
 static playItem_t *playing_track;
+static int input_does_rg = 0; // 1 if plugin does RG on its own
 static float playtime; // total playtime of playing track
 static time_t started_timestamp; // result of calling time(NULL)
 static playItem_t *streaming_track;
@@ -1302,6 +1303,7 @@ m3u_error:
             streaming_track = it;
             if (streaming_track) {
                 pl_item_ref (streaming_track);
+                input_does_rg = dec->plugin.flags & DDB_PLUGIN_FLAG_REPLAYGAIN;
                 streamer_set_replaygain (streaming_track);
             }
 
@@ -2543,7 +2545,9 @@ streamer_read_async (char *bytes, int size) {
         }
 #endif
 
-        replaygain_apply (&output->fmt, streaming_track, bytes, bytesread);
+        if (!input_does_rg) {
+            replaygain_apply (&output->fmt, bytes, bytesread);
+        }
     }
     if (!is_eof) {
         return bytesread;

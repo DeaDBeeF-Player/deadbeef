@@ -30,7 +30,7 @@
 #include "deadbeef.h"
 
 void
-replaygain_apply (ddb_waveformat_t *fmt, playItem_t *it, char *bytes, int bytesread);
+replaygain_apply (ddb_waveformat_t *fmt, char *bytes, int numbytes);
 
 void
 replaygain_set (int mode, int scale, float preamp, float global_preamp);
@@ -39,18 +39,18 @@ void
 replaygain_set_values (float albumgain, float albumpeak, float trackgain, float trackpeak);
 
 void
-apply_replay_gain_int8 (playItem_t *it, char *bytes, int size);
+apply_replay_gain_int8 (char *bytes, int size);
 
 void
-apply_replay_gain_int16 (playItem_t *it, char *bytes, int size);
+apply_replay_gain_int16 (char *bytes, int size);
 
 void
-apply_replay_gain_int24 (playItem_t *it, char *bytes, int size);
+apply_replay_gain_int24 (char *bytes, int size);
 
 void
-apply_replay_gain_int32 (playItem_t *it, char *bytes, int size);
+apply_replay_gain_int32 (char *bytes, int size);
 
 void
-apply_replay_gain_float32 (playItem_t *it, char *bytes, int size);
+apply_replay_gain_float32 (char *bytes, int size);
 
 #endif

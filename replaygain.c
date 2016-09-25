@@ -43,22 +43,22 @@ static float rg_albumgain_global_preamp = 1;
 static float rg_trackgain_global_preamp = 1;
 
 void
-replaygain_apply (ddb_waveformat_t *fmt, playItem_t *it, char *bytes, int bytesread) {
+replaygain_apply (ddb_waveformat_t *fmt, char *bytes, int bytesread) {
     // FIXME: separate replaygain DSP plugin?
     if (fmt->bps == 16) {
-        apply_replay_gain_int16 (it, bytes, bytesread);
+        apply_replay_gain_int16 (bytes, bytesread);
     }
     else if (fmt->bps == 24) {
-        apply_replay_gain_int24 (it, bytes, bytesread);
+        apply_replay_gain_int24 (bytes, bytesread);
     }
     else if (fmt->bps == 8) {
-        apply_replay_gain_int16 (it, bytes, bytesread);
+        apply_replay_gain_int16 (bytes, bytesread);
     }
     else if (fmt->bps == 32 && !fmt->is_float) {
-        apply_replay_gain_int32 (it, bytes, bytesread);
+        apply_replay_gain_int32 (bytes, bytesread);
     }
     else if (fmt->bps == 32 && fmt->is_float) {
-        apply_replay_gain_float32 (it, bytes, bytesread);
+        apply_replay_gain_float32 (bytes, bytesread);
     }
 }
 
@@ -128,7 +128,7 @@ get_int_volume (void) {
 }
 
 void
-apply_replay_gain_int8 (playItem_t *it, char *bytes, int size) {
+apply_replay_gain_int8 (char *bytes, int size) {
     if (!conf_replaygain_mode) {
         return;
     }
@@ -151,7 +151,7 @@ apply_replay_gain_int8 (playItem_t *it, char *bytes, int size) {
 }
 
 void
-apply_replay_gain_int16 (playItem_t *it, char *bytes, int size) {
+apply_replay_gain_int16 (char *bytes, int size) {
     if (!conf_replaygain_mode) {
         return;
     }
@@ -174,7 +174,7 @@ apply_replay_gain_int16 (playItem_t *it, char *bytes, int size) {
 }
 
 void
-apply_replay_gain_int24 (playItem_t *it, char *bytes, int size) {
+apply_replay_gain_int24 (char *bytes, int size) {
     if (!conf_replaygain_mode) {
         return;
     }
@@ -200,7 +200,7 @@ apply_replay_gain_int24 (playItem_t *it, char *bytes, int size) {
 }
 
 void
-apply_replay_gain_int32 (playItem_t *it, char *bytes, int size) {
+apply_replay_gain_int32 (char *bytes, int size) {
     if (!conf_replaygain_mode) {
         return;
     }
@@ -217,7 +217,7 @@ apply_replay_gain_int32 (playItem_t *it, char *bytes, int size) {
 }
 
 void
-apply_replay_gain_float32 (playItem_t *it, char *bytes, int size) {
+apply_replay_gain_float32 (char *bytes, int size) {
     if (!conf_replaygain_mode) {
         return;
     }

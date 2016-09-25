@@ -1312,6 +1312,9 @@ typedef struct {
 
     // Removes an existing value of specified size, ignoring refcount
     void (*metacache_remove_value) (const char *value, size_t valuesize);
+
+    // apply replaygain according to the current settings
+    void (*replaygain_apply) (ddb_waveformat_t *fmt, char *bytes, int numbytes);
 #endif
 } DB_functions_t;
 
@@ -1390,7 +1393,11 @@ typedef struct DB_plugin_action_s {
 
 #if (DDB_API_LEVEL >= 10)
 enum {
+    // Tells the system that the plugin has logging enabled
     DDB_PLUGIN_FLAG_LOGGING = 1,
+
+    // Tells the system that the plugin supports replaygain, and streamer should not do it
+    DDB_PLUGIN_FLAG_REPLAYGAIN = 2,
 };
 #endif
 

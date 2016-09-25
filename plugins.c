@@ -59,6 +59,7 @@
 #include "playqueue.h"
 #include "sort.h"
 #include "logger.h"
+#include "replaygain.h"
 
 DB_plugin_t main_plugin = {
     .type = DB_PLUGIN_MISC,
@@ -471,6 +472,8 @@ static DB_functions_t deadbeef_api = {
     .metacache_add_value = metacache_add_value,
     .metacache_get_value = metacache_get_value,
     .metacache_remove_value = metacache_remove_value,
+
+    .replaygain_apply = replaygain_apply,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
