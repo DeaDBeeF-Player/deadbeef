@@ -1159,7 +1159,7 @@ convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out
         deadbeef->pl_unlock ();
 
         if (dec) {
-            fileinfo = dec->open (0);
+            fileinfo = dec->open (DDB_DECODER_HINT_RAW_SIGNAL);
             if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (it)) != 0) {
                 trace ("Failed to decode file %s\n", fname);
                 goto error;
