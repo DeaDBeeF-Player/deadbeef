@@ -1314,6 +1314,8 @@ typedef struct {
     void (*metacache_remove_value) (const char *value, size_t valuesize);
 
     // apply replaygain according to the current settings
+    // NOTE: this only works for the current streaming_track,
+    // as the current settings are controlled by the streamer.
     void (*replaygain_apply) (ddb_waveformat_t *fmt, char *bytes, int numbytes);
 #endif
 } DB_functions_t;
@@ -1516,6 +1518,11 @@ enum {
     // Decoders can do their own infinite looping when this flag is set, in the
     // "Loop Single" looping mode.
     DDB_DECODER_HINT_CAN_LOOP = 0x4,
+#endif
+#if (DDB_API_LEVEL >= 10)
+    // Don't modify the stream (e.g. no replaygain, clipping, etc), provide the maximum possible precision, preferrably in float32.
+    // Supposed to be used by converter, replaygain scanner, etc.
+    DDB_DECODER_HINT_RAW_SIGNAL = 0x8,
 #endif
 };
 
