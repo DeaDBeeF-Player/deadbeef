@@ -675,6 +675,10 @@ cmp3_open (uint32_t hints) {
     mp3_info_t *info = (mp3_info_t *)_info;
     memset (info, 0, sizeof (mp3_info_t));
 
+    if (hints & DDB_DECODER_HINT_RAW_SIGNAL) {
+        info->raw_signal = 1;
+    }
+
 #ifndef ANDROID // force 16 bit on android
     if ((hints & DDB_DECODER_HINT_16BIT) || deadbeef->conf_get_int ("mp3.force16bit", 0))
 #endif
@@ -896,7 +900,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         trace ("bad mpeg file: %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
-    if (info->want_16bit) {
+    if (info->want_16bit && !info->raw_signal) {
         _info->fmt.bps = 16;
         _info->fmt.is_float = 0;
     }
@@ -1040,7 +1044,7 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
     int initsize = size;
 
     int req_size;
-    if (info->want_16bit) {
+    if (info->want_16bit && !info->raw_signal) {
         req_size = size * 2;
         // decode in 32 bit temp buffer, then convert to 16 below
         if (info->conv_buf_size < req_size) {
@@ -1062,18 +1066,20 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
     cmp3_decode (info);
 
-    // apply replaygain, before clipping
-    ddb_waveformat_t fmt;
-    memcpy (&fmt, &info->info.fmt, sizeof (fmt));
-    fmt.bps = 32;
-    fmt.is_float = 1;
-    deadbeef->replaygain_apply (&fmt, info->want_16bit ? info->conv_buf : bytes, req_size - info->buffer.readsize);
+    if (!info->raw_signal) {
+        // apply replaygain, before clipping
+        ddb_waveformat_t fmt;
+        memcpy (&fmt, &info->info.fmt, sizeof (fmt));
+        fmt.bps = 32;
+        fmt.is_float = 1;
+        deadbeef->replaygain_apply (&fmt, info->want_16bit ? info->conv_buf : bytes, req_size - info->buffer.readsize);
 
-    // convert to 16 bit, if needed
-    if (info->want_16bit) {
-        int sz = req_size - info->buffer.readsize;
-        int ret = deadbeef->pcm_convert (&fmt, info->conv_buf, &_info->fmt, bytes, sz);
-        info->buffer.readsize = size-ret;
+        // convert to 16 bit, if needed
+        if (info->want_16bit) {
+            int sz = req_size - info->buffer.readsize;
+            int ret = deadbeef->pcm_convert (&fmt, info->conv_buf, &_info->fmt, bytes, sz);
+            info->buffer.readsize = size-ret;
+        }
     }
 
     info->buffer.currentsample += (size - info->buffer.readsize) / samplesize;

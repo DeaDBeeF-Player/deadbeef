@@ -133,6 +133,7 @@ typedef struct {
     };
 
     int want_16bit;
+    int raw_signal;
     struct mp3_decoder_api_s *dec;
 } mp3_info_t;
 
