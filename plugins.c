@@ -474,6 +474,8 @@ static DB_functions_t deadbeef_api = {
     .metacache_remove_value = metacache_remove_value,
 
     .replaygain_apply = replaygain_apply,
+    .replaygain_apply_with_settings = replaygain_apply_with_settings,
+    .replaygain_init_settings = (void (*)(ddb_replaygain_settings_t *settings, DB_playItem_t *it))replaygain_init_settings,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

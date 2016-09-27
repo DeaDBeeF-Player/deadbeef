@@ -30,7 +30,13 @@
 #include "deadbeef.h"
 
 void
+replaygain_init_settings (ddb_replaygain_settings_t *settings, playItem_t *it);
+
+void
 replaygain_apply (ddb_waveformat_t *fmt, char *bytes, int numbytes);
+
+void
+replaygain_apply_with_settings (ddb_replaygain_settings_t *settings, ddb_waveformat_t *fmt, char *bytes, int numbytes);
 
 void
 replaygain_set (int mode, int scale, float preamp, float global_preamp);
@@ -38,19 +44,21 @@ replaygain_set (int mode, int scale, float preamp, float global_preamp);
 void
 replaygain_set_values (float albumgain, float albumpeak, float trackgain, float trackpeak);
 
-void
-apply_replay_gain_int8 (char *bytes, int size);
+struct ddb_replaygain_params_s;
 
 void
-apply_replay_gain_int16 (char *bytes, int size);
+apply_replay_gain_int8 (struct ddb_replaygain_params_s *params, char *bytes, int size);
 
 void
-apply_replay_gain_int24 (char *bytes, int size);
+apply_replay_gain_int16 (struct ddb_replaygain_params_s *params, char *bytes, int size);
 
 void
-apply_replay_gain_int32 (char *bytes, int size);
+apply_replay_gain_int24 (struct ddb_replaygain_params_s *params, char *bytes, int size);
 
 void
-apply_replay_gain_float32 (char *bytes, int size);
+apply_replay_gain_int32 (struct ddb_replaygain_params_s *params, char *bytes, int size);
+
+void
+apply_replay_gain_float32 (struct ddb_replaygain_params_s *params, char *bytes, int size);
 
 #endif

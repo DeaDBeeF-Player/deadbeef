@@ -472,6 +472,20 @@ enum {
     DDB_REPLAYGAIN_TRACKPEAK,
 };
 
+#if (DDB_API_LEVEL >= 10)
+typedef struct {
+    int _size;
+    int mode;
+    int scale;
+    float preamp;
+    float global_preamp;
+    float albumgain;
+    float albumpeak;
+    float trackgain;
+    float trackpeak;
+} ddb_replaygain_settings_t;
+#endif
+
 // sort order constants
 enum ddb_sort_order_t {
     DDB_SORT_DESCENDING,
@@ -1313,10 +1327,23 @@ typedef struct {
     // Removes an existing value of specified size, ignoring refcount
     void (*metacache_remove_value) (const char *value, size_t valuesize);
 
-    // apply replaygain according to the current settings
-    // NOTE: this only works for the current streaming_track,
+    // Apply replaygain according to the current settings.
+    // NOTE: This only works for the current streaming_track,
     // as the current settings are controlled by the streamer.
+    // Can be used to apply replaygain in decoders, but the appropriate flags
+    // need to be checked, e.g. the DDB_DECODER_HINT_RAW_SIGNAL.
+    // Make sure to set the DDB_PLUGIN_FLAG_REPLAYGAIN bit in plugin.flags,
+    // otherwise replaygain could be applied twice.
     void (*replaygain_apply) (ddb_waveformat_t *fmt, char *bytes, int numbytes);
+
+    // Same as replaygain_apply, but with specified settings.
+    // Suitable to use from the converter and for other similar uses.
+    void (*replaygain_apply_with_settings) (ddb_replaygain_settings_t *settings, ddb_waveformat_t *fmt, char *bytes, int numbytes);
+
+    // Utility function to init the replaygain settings from the current
+    // player configuration, and the supplied track.
+    // After initializing the settings, pass the pointer to replaygain_apply_with_settings
+    void (*replaygain_init_settings) (ddb_replaygain_settings_t *settings, DB_playItem_t *it);
 #endif
 } DB_functions_t;
 
