@@ -83,8 +83,9 @@ extern DB_functions_t *deadbeef;
     // playback
     [_replaygain_mode selectItemAtIndex: deadbeef->conf_get_int ("replaygain_mode", 0)];
     [_replaygain_scale setState: deadbeef->conf_get_int ("replaygain_scale", 1) ? NSOnState : NSOffState];
-    [_replaygain_preamp setIntValue:deadbeef->conf_get_int ("replaygain_preamp", 0)];
-    [_global_preamp setIntValue:deadbeef->conf_get_int ("global_preamp", 0)];
+    [_replaygain_preamp_with_rg setFloatValue:deadbeef->conf_get_float ("replaygain_preamp", 0)];
+    [_replaygain_preamp_without_rg setFloatValue:deadbeef->conf_get_float ("global_preamp", 0)];
+    [self updateRGLabels];
     [_cli_add_to_specific_playlist setState: deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1) ? NSOnState : NSOffState];
     [_cli_add_playlist_name setStringValue: [NSString stringWithUTF8String: deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default")]];
     [_resume_last_session setState: deadbeef->conf_get_int ("resume_last_session", 0) ? NSOnState : NSOffState];
@@ -378,6 +379,32 @@ extern DB_functions_t *deadbeef;
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
     [self setPluginInfo:[_pluginList selectedRow]];
+}
+
+- (void)updateRGLabels {
+    float value = [_replaygain_preamp_with_rg floatValue];
+    [_replaygain_preamp_with_rg_label setStringValue:[NSString stringWithFormat:@"%s%0.2f", value >= 0 ? "+" : "", value]];
+    value = [_replaygain_preamp_without_rg floatValue];
+    [_replaygain_preamp_without_rg_label setStringValue:[NSString stringWithFormat:@"%s%0.2f", value >= 0 ? "+" : "", value]];
+}
+
+- (IBAction)replaygain_preamp_with_rg_action:(id)sender {
+    float value = [sender floatValue];
+    deadbeef->conf_set_float ("replaygain_preamp", value);
+    [self updateRGLabels];
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)replaygain_preamp_without_rg_action:(id)sender {
+    float value = [sender floatValue];
+    deadbeef->conf_set_float ("global_preamp", value);
+    [self updateRGLabels];
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)replaygain_peak_scale_action:(id)sender {
+    deadbeef->conf_set_int ("replaygain_scale", [sender state] == NSOnState);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 @end
