@@ -47,18 +47,18 @@ replaygain_set_values (float albumgain, float albumpeak, float trackgain, float 
 struct ddb_replaygain_params_s;
 
 void
-apply_replay_gain_int8 (struct ddb_replaygain_params_s *params, char *bytes, int size);
+apply_replay_gain_int8 (ddb_replaygain_settings_t *settings, char *bytes, int size);
 
 void
-apply_replay_gain_int16 (struct ddb_replaygain_params_s *params, char *bytes, int size);
+apply_replay_gain_int16 (ddb_replaygain_settings_t *settings, char *bytes, int size);
 
 void
-apply_replay_gain_int24 (struct ddb_replaygain_params_s *params, char *bytes, int size);
+apply_replay_gain_int24 (ddb_replaygain_settings_t *settings, char *bytes, int size);
 
 void
-apply_replay_gain_int32 (struct ddb_replaygain_params_s *params, char *bytes, int size);
+apply_replay_gain_int32 (ddb_replaygain_settings_t *settings, char *bytes, int size);
 
 void
-apply_replay_gain_float32 (struct ddb_replaygain_params_s *params, char *bytes, int size);
+apply_replay_gain_float32 (ddb_replaygain_settings_t *settings, char *bytes, int size);
 
 #endif

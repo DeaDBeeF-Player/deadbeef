@@ -4,7 +4,7 @@
 
   replaygain support
 
-  Copyright (C) 2009-2013 Alexey Yakovenko
+  Copyright (C) 2009-2016 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -30,13 +30,8 @@
 #include "replaygain.h"
 #include "conf.h"
 
-typedef struct ddb_replaygain_params_s {
-    ddb_replaygain_settings_t settings;
-    float albumgain_full_preamp;
-    float trackgain_full_preamp;
-    float albumgain_global_preamp;
-    float trackgain_global_preamp;
-} ddb_replaygain_params_t;
+// FIXME: the tracks without RG are detected by checking that gain is ±0dB;
+// need to be checking by the presence of RG values in the track info.
 
 static ddb_replaygain_settings_t current_settings;
 
@@ -46,27 +41,20 @@ replaygain_apply_with_settings (ddb_replaygain_settings_t *settings, ddb_wavefor
         return;
     }
 
-    ddb_replaygain_params_t params;
-    memcpy (&params.settings, settings, sizeof (ddb_replaygain_settings_t));
-    params.albumgain_full_preamp = settings->albumgain * settings->preamp * settings->global_preamp;
-    params.trackgain_full_preamp = settings->trackgain * settings->preamp * settings->global_preamp;
-    params.albumgain_global_preamp = settings->albumgain * settings->global_preamp;
-    params.trackgain_global_preamp = settings->trackgain * settings->global_preamp;
-
     if (fmt->bps == 16) {
-        apply_replay_gain_int16 (&params, bytes, numbytes);
+        apply_replay_gain_int16 (settings, bytes, numbytes);
     }
     else if (fmt->bps == 24) {
-        apply_replay_gain_int24 (&params, bytes, numbytes);
+        apply_replay_gain_int24 (settings, bytes, numbytes);
     }
     else if (fmt->bps == 8) {
-        apply_replay_gain_int8 (&params, bytes, numbytes);
+        apply_replay_gain_int8 (settings, bytes, numbytes);
     }
     else if (fmt->bps == 32 && !fmt->is_float) {
-        apply_replay_gain_int32 (&params, bytes, numbytes);
+        apply_replay_gain_int32 (settings, bytes, numbytes);
     }
     else if (fmt->bps == 32 && fmt->is_float) {
-        apply_replay_gain_float32 (&params, bytes, numbytes);
+        apply_replay_gain_float32 (settings, bytes, numbytes);
     }
 }
 
@@ -79,16 +67,16 @@ void
 replaygain_set (int mode, int scale, float preamp, float global_preamp) {
     current_settings.mode = mode;
     current_settings.scale = scale;
-    current_settings.preamp = db_to_amp (preamp);
-    current_settings.global_preamp = db_to_amp (global_preamp);
+    current_settings.preamp_with_rg = db_to_amp (preamp);
+    current_settings.preamp_without_rg = db_to_amp (global_preamp);
 }
 
 void
 replaygain_init_settings (ddb_replaygain_settings_t *settings, playItem_t *it) {
     settings->mode = conf_get_int ("replaygain_mode", 0);
     settings->scale = conf_get_int ("replaygain_scale", 1);
-    settings->preamp = conf_get_float ("replaygain_preamp", 0);
-    settings->global_preamp = conf_get_float ("global_preamp", 0);
+    settings->preamp_with_rg = conf_get_float ("replaygain_preamp", 0);
+    settings->preamp_without_rg = conf_get_float ("global_preamp", 0);
     pl_lock ();
     const char *gain;
     gain = pl_find_meta (it, ":REPLAYGAIN_ALBUMGAIN");
@@ -121,29 +109,29 @@ replaygain_set_values (float albumgain, float albumpeak, float trackgain, float 
 }
 
 static inline int
-get_int_volume (ddb_replaygain_params_t *params) {
+get_int_volume (ddb_replaygain_settings_t *settings) {
     int vol = 1000;
-    if (params->settings.mode == 1) {
-        if (params->settings.trackgain == 1) {
-            vol = params->settings.global_preamp * 1000;
+    if (settings->mode == 1) {
+        if (settings->trackgain == 1) {
+            vol = settings->preamp_without_rg * 1000;
         } else {
-            vol = params->trackgain_full_preamp * 1000;
+            vol = settings->preamp_with_rg * settings->trackgain * 1000;
         }
-        if (params->settings.scale) {
-            if (vol * params->settings.trackpeak > 1000) {
-                vol = 1000 / params->settings.trackpeak;
+        if (settings->scale) {
+            if (vol * settings->trackpeak > 1000) {
+                vol = 1000 / settings->trackpeak;
             }
         }
     }
-    else if (params->settings.mode == 2) {
-        if (params->settings.albumgain == 1) {
-            vol = params->albumgain_global_preamp * 1000;
+    else if (settings->mode == 2) {
+        if (settings->albumgain == 1) {
+            vol = settings->preamp_without_rg *  1000;
         } else {
-            vol = params->albumgain_full_preamp * 1000;
+            vol = settings->preamp_with_rg * settings->albumgain * 1000;
         }
-        if (params->settings.scale) {
-            if (vol * params->settings.albumpeak > 1000) {
-                vol = 1000 / params->settings.albumpeak;
+        if (settings->scale) {
+            if (vol * settings->albumpeak > 1000) {
+                vol = 1000 / settings->albumpeak;
             }
         }
     }
@@ -151,8 +139,8 @@ get_int_volume (ddb_replaygain_params_t *params) {
 }
 
 void
-apply_replay_gain_int8 (ddb_replaygain_params_t *params, char *bytes, int size) {
-    int vol = get_int_volume (params);
+apply_replay_gain_int8 (ddb_replaygain_settings_t *settings, char *bytes, int size) {
+    int vol = get_int_volume (settings);
     if (vol < 0) {
         return;
     }
@@ -171,8 +159,8 @@ apply_replay_gain_int8 (ddb_replaygain_params_t *params, char *bytes, int size) 
 }
 
 void
-apply_replay_gain_int16 (ddb_replaygain_params_t *params, char *bytes, int size) {
-    int vol = get_int_volume (params);
+apply_replay_gain_int16 (ddb_replaygain_settings_t *settings, char *bytes, int size) {
+    int vol = get_int_volume (settings);
     if (vol < 0) {
         return;
     }
@@ -191,8 +179,8 @@ apply_replay_gain_int16 (ddb_replaygain_params_t *params, char *bytes, int size)
 }
 
 void
-apply_replay_gain_int24 (ddb_replaygain_params_t *params, char *bytes, int size) {
-    int64_t vol = get_int_volume (params);
+apply_replay_gain_int24 (ddb_replaygain_settings_t *settings, char *bytes, int size) {
+    int64_t vol = get_int_volume (settings);
     if (vol < 0) {
         return;
     }
@@ -214,8 +202,8 @@ apply_replay_gain_int24 (ddb_replaygain_params_t *params, char *bytes, int size)
 }
 
 void
-apply_replay_gain_int32 (ddb_replaygain_params_t *params, char *bytes, int size) {
-    int64_t vol = get_int_volume (params);
+apply_replay_gain_int32 (ddb_replaygain_settings_t *settings, char *bytes, int size) {
+    int64_t vol = get_int_volume (settings);
     if (vol < 0) {
         return;
     }
@@ -228,29 +216,29 @@ apply_replay_gain_int32 (ddb_replaygain_params_t *params, char *bytes, int size)
 }
 
 void
-apply_replay_gain_float32 (ddb_replaygain_params_t *params, char *bytes, int size) {
+apply_replay_gain_float32 (ddb_replaygain_settings_t *settings, char *bytes, int size) {
     float vol = 1.f;
-    if (params->settings.mode == 1) {
-        if (params->settings.trackgain == 1) {
-            vol = params->trackgain_global_preamp;
+    if (settings->mode == 1) {
+        if (settings->trackgain == 1) {
+            vol = settings->preamp_without_rg;
         } else {
-            vol = params->trackgain_full_preamp;
+            vol = settings->preamp_with_rg * settings->trackgain;
         }
-        if (params->settings.scale) {
-            if (vol * params->settings.trackpeak > 1.f) {
-                vol = 1.f / params->settings.trackpeak;
+        if (settings->scale) {
+            if (vol * settings->trackpeak > 1.f) {
+                vol = 1.f / settings->trackpeak;
             }
         }
     }
-    else if (params->settings.mode == 2) {
-        if (params->settings.albumgain == 1) {
-            vol = params->albumgain_global_preamp;
+    else if (settings->mode == 2) {
+        if (settings->albumgain == 1) {
+            vol = settings->preamp_without_rg;
         } else {
-            vol = params->albumgain_full_preamp;
+            vol = settings->preamp_with_rg * settings->albumgain;
         }
-        if (params->settings.scale) {
-            if (vol * params->settings.albumpeak > 1.f) {
-                vol = 1.f / params->settings.albumpeak;
+        if (settings->scale) {
+            if (vol * settings->albumpeak > 1.f) {
+                vol = 1.f / settings->albumpeak;
             }
         }
     }

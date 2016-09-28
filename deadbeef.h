@@ -477,8 +477,8 @@ typedef struct {
     int _size;
     int mode;
     int scale;
-    float preamp;
-    float global_preamp;
+    float preamp_with_rg;
+    float preamp_without_rg;
     float albumgain;
     float albumpeak;
     float trackgain;
