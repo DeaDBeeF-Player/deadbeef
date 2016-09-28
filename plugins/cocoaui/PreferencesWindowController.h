@@ -43,8 +43,8 @@
 - (IBAction)pluginsAction:(id)sender;
 
 //// playback properties
-@property (unsafe_unretained) IBOutlet NSPopUpButton *replaygain_mode;
-@property (unsafe_unretained) IBOutlet NSButton *replaygain_scale;
+@property (unsafe_unretained) IBOutlet NSPopUpButton *replaygain_source_mode;
+@property (unsafe_unretained) IBOutlet NSPopUpButton *replaygain_processing;
 @property (unsafe_unretained) IBOutlet NSSlider *replaygain_preamp_with_rg;
 @property (unsafe_unretained) IBOutlet NSSlider *replaygain_preamp_without_rg;
 @property (unsafe_unretained) IBOutlet NSTextField *replaygain_preamp_with_rg_label;
@@ -52,8 +52,8 @@
 
 - (IBAction)replaygain_preamp_with_rg_action:(id)sender;
 - (IBAction)replaygain_preamp_without_rg_action:(id)sender;
-- (IBAction)replaygain_peak_scale_action:(id)sender;
-
+- (IBAction)replaygain_source_mode_action:(id)sender;
+- (IBAction)replaygain_processing_action:(id)sender;
 
 
 @property (unsafe_unretained) IBOutlet NSButton *cli_add_to_specific_playlist;

@@ -81,10 +81,23 @@ extern DB_functions_t *deadbeef;
 
 - (void)setInitialValues {
     // playback
-    [_replaygain_mode selectItemAtIndex: deadbeef->conf_get_int ("replaygain_mode", 0)];
-    [_replaygain_scale setState: deadbeef->conf_get_int ("replaygain_scale", 1) ? NSOnState : NSOffState];
-    [_replaygain_preamp_with_rg setFloatValue:deadbeef->conf_get_float ("replaygain_preamp", 0)];
-    [_replaygain_preamp_without_rg setFloatValue:deadbeef->conf_get_float ("global_preamp", 0)];
+    [_replaygain_source_mode selectItemAtIndex: deadbeef->conf_get_int ("replaygain.source_mode", 0)];
+
+    int processing_idx = 0;
+    int processing_flags = deadbeef->conf_get_int ("replaygain.processing_flags", 0);
+    if (processing_flags == DDB_RG_PROCESSING_GAIN) {
+        processing_idx = 1;
+    }
+    else if (processing_flags == (DDB_RG_PROCESSING_GAIN|DDB_RG_PROCESSING_PREVENT_CLIPPING)) {
+        processing_idx = 2;
+    }
+    else if (processing_flags == DDB_RG_PROCESSING_PREVENT_CLIPPING) {
+        processing_idx = 3;
+    }
+
+    [_replaygain_processing selectItemAtIndex:processing_idx];
+    [_replaygain_preamp_with_rg setFloatValue:deadbeef->conf_get_float ("replaygain.preamp_with_rg", 0)];
+    [_replaygain_preamp_without_rg setFloatValue:deadbeef->conf_get_float ("replaygain.preamp_without_rg", 0)];
     [self updateRGLabels];
     [_cli_add_to_specific_playlist setState: deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1) ? NSOnState : NSOffState];
     [_cli_add_playlist_name setStringValue: [NSString stringWithUTF8String: deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default")]];
@@ -383,27 +396,45 @@ extern DB_functions_t *deadbeef;
 
 - (void)updateRGLabels {
     float value = [_replaygain_preamp_with_rg floatValue];
-    [_replaygain_preamp_with_rg_label setStringValue:[NSString stringWithFormat:@"%s%0.2f", value >= 0 ? "+" : "", value]];
+    [_replaygain_preamp_with_rg_label setStringValue:[NSString stringWithFormat:@"%s%0.2fdB", value >= 0 ? "+" : "", value]];
     value = [_replaygain_preamp_without_rg floatValue];
-    [_replaygain_preamp_without_rg_label setStringValue:[NSString stringWithFormat:@"%s%0.2f", value >= 0 ? "+" : "", value]];
+    [_replaygain_preamp_without_rg_label setStringValue:[NSString stringWithFormat:@"%s%0.2fdB", value >= 0 ? "+" : "", value]];
 }
 
 - (IBAction)replaygain_preamp_with_rg_action:(id)sender {
     float value = [sender floatValue];
-    deadbeef->conf_set_float ("replaygain_preamp", value);
+    deadbeef->conf_set_float ("replaygain.preamp_with_rg", value);
     [self updateRGLabels];
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 - (IBAction)replaygain_preamp_without_rg_action:(id)sender {
     float value = [sender floatValue];
-    deadbeef->conf_set_float ("global_preamp", value);
+    deadbeef->conf_set_float ("replaygain.preamp_without_rg", value);
     [self updateRGLabels];
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-- (IBAction)replaygain_peak_scale_action:(id)sender {
-    deadbeef->conf_set_int ("replaygain_scale", [sender state] == NSOnState);
+- (IBAction)replaygain_source_mode_action:(id)sender {
+    NSInteger idx = [_replaygain_source_mode indexOfSelectedItem];
+    deadbeef->conf_set_int ("replaygain.source_mode", (int)idx);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)replaygain_processing_action:(id)sender {
+    uint32_t flags = 0;
+    NSInteger idx = [_replaygain_processing indexOfSelectedItem];
+    if (idx == 1) {
+        flags = DDB_RG_PROCESSING_GAIN;
+    }
+    if (idx == 2) {
+        flags = DDB_RG_PROCESSING_GAIN | DDB_RG_PROCESSING_PREVENT_CLIPPING;
+    }
+    if (idx == 3) {
+        flags = DDB_RG_PROCESSING_PREVENT_CLIPPING;
+    }
+
+    deadbeef->conf_set_int ("replaygain.processing_flags", flags);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
