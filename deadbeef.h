@@ -473,12 +473,26 @@ enum {
 };
 
 #if (DDB_API_LEVEL >= 10)
+enum {
+    DDB_RG_SOURCE_MODE_PLAYBACK_ORDER = 0,
+    DDB_RG_SOURCE_MODE_TRACK = 1,
+    DDB_RG_SOURCE_MODE_ALBUM = 2,
+};
+
+enum {
+    DDB_RG_PROCESSING_NONE = 0,
+    DDB_RG_PROCESSING_GAIN = 1,
+    DDB_RG_PROCESSING_PREVENT_CLIPPING = 2,
+};
+
 typedef struct {
     int _size;
-    int mode;
-    int scale;
+    int source_mode;
+    uint32_t processing_flags;
     float preamp_with_rg;
     float preamp_without_rg;
+    int has_album_gain;
+    int has_track_gain;
     float albumgain;
     float albumpeak;
     float trackgain;

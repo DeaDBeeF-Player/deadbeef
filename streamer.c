@@ -173,6 +173,9 @@ typedef struct wavedata_listener_s {
 static wavedata_listener_t *waveform_listeners;
 static wavedata_listener_t *spectrum_listeners;
 
+// replaygain
+static ddb_replaygain_settings_t streamer_rg_settings;
+
 #if DETECT_PL_LOCK_RC
 volatile pthread_t streamer_lock_tid = 0;
 #endif
@@ -237,18 +240,9 @@ streamer_abort_files (void) {
 
 static void
 streamer_set_replaygain (playItem_t *it) {
-    // setup replaygain
-    pl_lock ();
-    const char *gain;
-    gain = pl_find_meta (it, ":REPLAYGAIN_ALBUMGAIN");
-    float albumgain = gain ? atof (gain) : 1000;
-    float albumpeak = pl_get_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK);
-
-    gain = pl_find_meta (it, ":REPLAYGAIN_TRACKGAIN");
-    float trackgain = gain ? atof (gain) : 1000;
-    float trackpeak = pl_get_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK);
-    pl_unlock ();
-    replaygain_set_values (albumgain, albumpeak, trackgain, trackpeak);
+    streamer_rg_settings._size = sizeof (ddb_replaygain_settings_t);
+    replaygain_init_settings (&streamer_rg_settings, it);
+    replaygain_set_current (&streamer_rg_settings);
 }
 
 static void
@@ -2200,7 +2194,7 @@ streamer_init (void) {
 
     streamer_dsp_init ();
 
-    replaygain_set (conf_get_int ("replaygain_mode", 0), conf_get_int ("replaygain_scale", 1), conf_get_float ("replaygain_preamp", 0), conf_get_float ("global_preamp", 0));
+    streamer_set_replaygain (streaming_track);
 
     ctmap_init_mutex ();
     deadbeef->conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, conf_network_ctmapping, sizeof (conf_network_ctmapping));
@@ -2779,7 +2773,8 @@ streamer_ok_to_read (int len) {
 
 void
 streamer_configchanged (void) {
-    replaygain_set (conf_get_int ("replaygain_mode", 0), conf_get_int ("replaygain_scale", 1), conf_get_float ("replaygain_preamp", 0), conf_get_float ("global_preamp", 0));
+    streamer_set_replaygain (streaming_track);
+    
     pl_set_order (conf_get_int ("playback.order", 0));
     if (playing_track) {
         playing_track->played = 1;

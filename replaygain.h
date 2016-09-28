@@ -39,12 +39,7 @@ void
 replaygain_apply_with_settings (ddb_replaygain_settings_t *settings, ddb_waveformat_t *fmt, char *bytes, int numbytes);
 
 void
-replaygain_set (int mode, int scale, float preamp, float global_preamp);
-
-void
-replaygain_set_values (float albumgain, float albumpeak, float trackgain, float trackpeak);
-
-struct ddb_replaygain_params_s;
+replaygain_set_current (ddb_replaygain_settings_t *settings);
 
 void
 apply_replay_gain_int8 (ddb_replaygain_settings_t *settings, char *bytes, int size);
