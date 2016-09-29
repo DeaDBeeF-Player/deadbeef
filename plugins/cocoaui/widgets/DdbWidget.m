@@ -24,17 +24,25 @@
 #import "DdbWidget.h"
 #import "DdbWidgetManager.h"
 
-@implementation DdbWidget
+@implementation DdbWidget {
+    BOOL _registered;
+}
 
 - (void)awakeFromNib {
-    [[DdbWidgetManager defaultWidgetManager] addWidget:self];
+    if (!_registered) {
+        [[DdbWidgetManager defaultWidgetManager] addWidget:self];
+        _registered = YES;
+    }
 }
 
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
-        [[DdbWidgetManager defaultWidgetManager] addWidget:self];
+        if (!_registered) {
+            [[DdbWidgetManager defaultWidgetManager] addWidget:self];
+            _registered = YES;
+        }
 #if 0
         // Initialization code here.
         NSMenu *menu = [[NSMenu alloc] initWithTitle:@"WidgetMenu"];
