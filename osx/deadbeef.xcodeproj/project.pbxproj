@@ -367,6 +367,11 @@
 		2D2351251B138F3200A62936 /* converter.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2351231B138F3200A62936 /* converter.c */; };
 		2D2351261B138F3200A62936 /* converter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2351241B138F3200A62936 /* converter.h */; };
 		2D2351281B13922400A62936 /* Converter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D2351271B13922400A62936 /* Converter.xib */; };
+		2D27AEE81D9D871600842D76 /* rg_scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D27AEE61D9D871600842D76 /* rg_scanner.c */; };
+		2D27AEE91D9D871600842D76 /* rg_scanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D27AEE71D9D871600842D76 /* rg_scanner.h */; };
+		2D27AEED1D9D873E00842D76 /* ebur128.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D27AEEB1D9D873E00842D76 /* ebur128.c */; };
+		2D27AEEE1D9D873E00842D76 /* ebur128.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D27AEEC1D9D873E00842D76 /* ebur128.h */; };
+		2D27AEF11D9D877D00842D76 /* rg_scanner.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */; };
 		2D28F0481C283BF7004A6E7B /* aac_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D28F0451C283BF7004A6E7B /* aac_parser.c */; };
 		2D28F0491C283BF7004A6E7B /* aac_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D28F0461C283BF7004A6E7B /* aac_parser.h */; };
 		2D28F04A1C283BF7004A6E7B /* aac.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D28F0471C283BF7004A6E7B /* aac.c */; };
@@ -2024,6 +2029,13 @@
 			remoteGlobalIDString = 2D23511A1B138ECB00A62936;
 			remoteInfo = converter;
 		};
+		2D27AEEF1D9D876E00842D76 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D27AED31D9D86ED00842D76;
+			remoteInfo = rg_scanner;
+		};
 		2D28F04E1C283C43004A6E7B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -2661,6 +2673,11 @@
 		2D2351231B138F3200A62936 /* converter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = converter.c; path = plugins/converter/converter.c; sourceTree = "<group>"; usesTabs = 0; };
 		2D2351241B138F3200A62936 /* converter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = converter.h; path = plugins/converter/converter.h; sourceTree = "<group>"; };
 		2D2351271B13922400A62936 /* Converter.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Converter.xib; sourceTree = "<group>"; };
+		2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = rg_scanner.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D27AEE61D9D871600842D76 /* rg_scanner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = rg_scanner.c; path = plugins/rg_scanner/rg_scanner.c; sourceTree = "<group>"; };
+		2D27AEE71D9D871600842D76 /* rg_scanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rg_scanner.h; path = plugins/rg_scanner/rg_scanner.h; sourceTree = "<group>"; };
+		2D27AEEB1D9D873E00842D76 /* ebur128.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ebur128.c; path = plugins/rg_scanner/ebur128/ebur128.c; sourceTree = "<group>"; };
+		2D27AEEC1D9D873E00842D76 /* ebur128.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ebur128.h; path = plugins/rg_scanner/ebur128/ebur128.h; sourceTree = "<group>"; };
 		2D28F0411C283BE3004A6E7B /* aac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = aac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D28F0451C283BF7004A6E7B /* aac_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = aac_parser.c; path = plugins/aac/aac_parser.c; sourceTree = "<group>"; };
 		2D28F0461C283BF7004A6E7B /* aac_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aac_parser.h; path = plugins/aac/aac_parser.h; sourceTree = "<group>"; };
@@ -4399,6 +4416,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2D27AED11D9D86ED00842D76 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D28F03E1C283BE3004A6E7B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -5098,6 +5122,25 @@
 				2D2351241B138F3200A62936 /* converter.h */,
 			);
 			name = converter;
+			sourceTree = "<group>";
+		};
+		2D27AEE51D9D86F600842D76 /* rg_scanner */ = {
+			isa = PBXGroup;
+			children = (
+				2D27AEEA1D9D873200842D76 /* ebur128 */,
+				2D27AEE61D9D871600842D76 /* rg_scanner.c */,
+				2D27AEE71D9D871600842D76 /* rg_scanner.h */,
+			);
+			name = rg_scanner;
+			sourceTree = "<group>";
+		};
+		2D27AEEA1D9D873200842D76 /* ebur128 */ = {
+			isa = PBXGroup;
+			children = (
+				2D27AEEB1D9D873E00842D76 /* ebur128.c */,
+				2D27AEEC1D9D873E00842D76 /* ebur128.h */,
+			);
+			name = ebur128;
 			sourceTree = "<group>";
 		};
 		2D28F02F1C283B1F004A6E7B /* aac */ = {
@@ -6899,6 +6942,7 @@
 				2D652FCB1CE79E8500163808 /* adplug.dylib */,
 				2D3420DC1D0856D5004C136A /* libmp4ff.dylib */,
 				2D3A4BB41D631530002C7098 /* medialib.dylib */,
+				2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -7041,6 +7085,7 @@
 		4D1B514C1837EF7C003E6066 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				2D27AEE51D9D86F600842D76 /* rg_scanner */,
 				2D3A4BB81D631569002C7098 /* medialib */,
 				2D026D9A1CAC5BD300E27961 /* ffmpeg */,
 				2DFD50A61C9715C200961D19 /* psf */,
@@ -7785,6 +7830,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D2351261B138F3200A62936 /* converter.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D27AED21D9D86ED00842D76 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D27AEEE1D9D873E00842D76 /* ebur128.h in Headers */,
+				2D27AEE91D9D871600842D76 /* rg_scanner.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8884,6 +8938,23 @@
 			productReference = 2D23511B1B138ECB00A62936 /* converter.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		2D27AED31D9D86ED00842D76 /* rg_scanner */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D27AEE41D9D86ED00842D76 /* Build configuration list for PBXNativeTarget "rg_scanner" */;
+			buildPhases = (
+				2D27AED01D9D86ED00842D76 /* Sources */,
+				2D27AED11D9D86ED00842D76 /* Frameworks */,
+				2D27AED21D9D86ED00842D76 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = rg_scanner;
+			productName = rg_scanner;
+			productReference = 2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2D28F0401C283BE3004A6E7B /* aac */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D28F0421C283BE3004A6E7B /* Build configuration list for PBXNativeTarget "aac" */;
@@ -9366,6 +9437,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D27AEF01D9D876E00842D76 /* PBXTargetDependency */,
 				2D3A4BBC1D6315CE002C7098 /* PBXTargetDependency */,
 				2D3138241D08AB2700CBD871 /* PBXTargetDependency */,
 				2D6530E31CE79F2900163808 /* PBXTargetDependency */,
@@ -9544,6 +9616,10 @@
 					2D23511A1B138ECB00A62936 = {
 						CreatedOnToolsVersion = 6.3.1;
 					};
+					2D27AED31D9D86ED00842D76 = {
+						CreatedOnToolsVersion = 8.0;
+						ProvisioningStyle = Automatic;
+					};
 					2D28F0401C283BE3004A6E7B = {
 						CreatedOnToolsVersion = 6.2;
 					};
@@ -9685,6 +9761,7 @@
 				2D652FCA1CE79E8500163808 /* adplug */,
 				2D3420DB1D0856D5004C136A /* mp4ff */,
 				2D3A4BB31D631530002C7098 /* medialib */,
+				2D27AED31D9D86ED00842D76 /* rg_scanner */,
 			);
 		};
 /* End PBXProject section */
@@ -9810,6 +9887,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D27AEF11D9D877D00842D76 /* rg_scanner.dylib in Resources */,
 				2D3A4BBD1D6315D6002C7098 /* medialib.dylib in Resources */,
 				2D3138251D08AB3400CBD871 /* artwork.dylib in Resources */,
 				2D3420EF1D085787004C136A /* libmp4ff.dylib in Resources */,
@@ -10231,6 +10309,15 @@
 			files = (
 				2D9FFA251D7588A700D1B5F8 /* mp4tagutil.c in Sources */,
 				2D2351251B138F3200A62936 /* converter.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D27AED01D9D86ED00842D76 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D27AEE81D9D871600842D76 /* rg_scanner.c in Sources */,
+				2D27AEED1D9D873E00842D76 /* ebur128.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11374,6 +11461,11 @@
 			target = 2D23511A1B138ECB00A62936 /* converter */;
 			targetProxy = 2D23511F1B138EFC00A62936 /* PBXContainerItemProxy */;
 		};
+		2D27AEF01D9D876E00842D76 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D27AED31D9D86ED00842D76 /* rg_scanner */;
+			targetProxy = 2D27AEEF1D9D876E00842D76 /* PBXContainerItemProxy */;
+		};
 		2D28F04F1C283C43004A6E7B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D28F0401C283BE3004A6E7B /* aac */;
@@ -12475,6 +12567,59 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		2D27AED51D9D86ED00842D76 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2D27AED61D9D86ED00842D76 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -14327,6 +14472,15 @@
 			buildConfigurations = (
 				2D23511C1B138ECB00A62936 /* Debug */,
 				2D23511D1B138ECB00A62936 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D27AEE41D9D86ED00842D76 /* Build configuration list for PBXNativeTarget "rg_scanner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D27AED51D9D86ED00842D76 /* Debug */,
+				2D27AED61D9D86ED00842D76 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
