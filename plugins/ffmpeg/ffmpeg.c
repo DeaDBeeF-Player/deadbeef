@@ -463,7 +463,7 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
             //trace ("got packet: size=%d\n", info->pkt.size);
             
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 37, 100)
             if ((ret = avcodec_send_packet(info->ctx, info->end_of_file ? NULL : &info->pkt)) < 0) {
                 if (ret != AVERROR(EAGAIN)) {
                     break;
@@ -495,7 +495,7 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
             //trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
 
 #if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(53, 40, 0)
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 37, 100)
             if ((len = avcodec_receive_frame(info->ctx, info->frame)) < 0) {
                 if (len == AVERROR_EOF) {
                     len = -1;
