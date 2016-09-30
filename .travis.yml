@@ -1,4 +1,5 @@
 language: c
+osx_image: xcode8
 
 git:
   submodules: false
