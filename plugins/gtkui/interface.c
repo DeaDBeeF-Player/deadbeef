@@ -3710,7 +3710,7 @@ create_groupbydlg (void)
 
   custom1 = title_formatting_help_link_create ("custom1", "", "", 0, 0);
   gtk_widget_show (custom1);
-  gtk_box_pack_start (GTK_BOX (hbox75), custom1, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox75), custom1, FALSE, TRUE, 0);
   gtk_widget_set_can_focus(custom1, FALSE);
   gtk_widget_set_can_default(custom1, FALSE);
 
