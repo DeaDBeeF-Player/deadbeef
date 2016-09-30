@@ -458,11 +458,11 @@ static ddb_rg_scanner_t plugin = {
     .misc.plugin.api_vmajor = 1,
     .misc.plugin.api_vminor = 10,
     .misc.plugin.version_major = 1,
-    .misc.plugin.version_minor = 1,
+    .misc.plugin.version_minor = 0,
     .misc.plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.name = "ReplayGain Scanner",
-    .misc.plugin.id = "rgscanner",
+    .misc.plugin.id = "rg_scanner",
     .misc.plugin.descr =
         "Calculates and writes ReplayGain tags, based on the EBUR128 spec.\n"
         "Requires a GUI plugin, e.g. the GTK2 RG GUI plugin, to work.\n",

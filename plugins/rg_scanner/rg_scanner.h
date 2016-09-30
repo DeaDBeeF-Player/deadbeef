@@ -1,8 +1,8 @@
 /*
- * rg_scanner.h - libEBUR128-based ReplayGain scanner plugin
- *                      for the DeaDBeeF audio player
+ * ReplayGain Scanner plugin for DeaDBeeF Player
  *
  * Copyright (c) 2015 Ivan Pilipenko
+ * Copyright (c) 2016 Alexey Yakovenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,9 +34,9 @@ typedef struct {
     DB_playItem_t **scan_items;    // tracks to scan
     int num_tracks;                // how many tracks
     float *out_track_rg;           // individual track ReplayGain
-    float *out_track_pk;           // indivirual track peak
-    float out_album_rg;           // album track ReplayGain
-    float out_album_pk;           // album peak
+    float *out_track_pk;           // individual track peak
+    float out_album_rg;            // album track ReplayGain
+    float out_album_pk;            // album peak
     float targetdb;                // our target loudness
     int num_threads;               // number of threads
     int *pabort;                   // abort execution if set to 1
