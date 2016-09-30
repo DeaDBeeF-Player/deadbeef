@@ -1376,7 +1376,7 @@ create_editcolumndlg (void)
 
   title_formatting_help_link = title_formatting_help_link_create ("title_formatting_help_link", "", "", 0, 0);
   gtk_widget_show (title_formatting_help_link);
-  gtk_box_pack_start (GTK_BOX (hbox74), title_formatting_help_link, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox74), title_formatting_help_link, FALSE, TRUE, 0);
   gtk_widget_set_can_focus(title_formatting_help_link, FALSE);
   gtk_widget_set_can_default(title_formatting_help_link, FALSE);
 
