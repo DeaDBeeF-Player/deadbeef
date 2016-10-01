@@ -513,41 +513,18 @@ int grouptitleheight = 22;
     return YES;
 }
 
-- (void)trackProperties {
-    id<DdbListviewDelegate> delegate = listview.delegate;
-    [delegate trackProperties];
-}
-
-- (void)reloadMetadata {
-    id<DdbListviewDelegate> delegate = listview.delegate;
-    [delegate reloadMetadata];
-}
-
-- (void)convertSelection {
-    id<DdbListviewDelegate> delegate = listview.delegate;
-    [delegate convertSelection];
-}
-
 - (NSMenu *)menuForEvent:(NSEvent *)event {
     if ((event.type == NSRightMouseDown || event.type == NSLeftMouseDown)
         && (event.buttonNumber == 1
-            || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask)))) {
+        || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask))))
+    {
         if (event.buttonNumber == 0) {
             // ctrl+click blocks the mouseDown handler, do it now
             [self mouseDown:event];
         }
-        NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
+
         id<DdbListviewDelegate> delegate = listview.delegate;
-        BOOL enabled = [delegate selectedCount] != 0;
-
-        [[theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
-
-        [[theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
-
-        // FIXME: should be added via plugin action
-        [[theMenu insertItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
-        [theMenu setAutoenablesItems:NO];
-        return theMenu;
+        return [delegate contextMenuForEvent:event forView:self];
     }
     return nil;
 }

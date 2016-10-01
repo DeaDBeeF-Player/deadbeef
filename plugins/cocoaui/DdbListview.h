@@ -64,9 +64,7 @@ typedef intptr_t DdbListviewCol_t;
 - (void)selectionChanged:(DdbListviewRow_t)row;
 - (int)selectedCount;
 - (BOOL)hasDND;
-- (void)trackProperties;
-- (void)reloadMetadata;
-- (void)convertSelection;
+- (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view;
 - (void)sortColumn:(DdbListviewCol_t)column withOrder:(int)order;
 - (void)scrollChanged:(int)scrollpos;
 @end

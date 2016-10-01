@@ -1093,6 +1093,32 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     [_trkProperties showWindow:self];
 }
 
+- (void)addToPlaybackQueue {
+    int iter = [self playlistIter];
+    DB_playItem_t *it = deadbeef->pl_get_first(iter);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->playqueue_push (it);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, iter);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+}
+
+- (void)removeFromPlaybackQueue {
+    int iter = [self playlistIter];
+    DB_playItem_t *it = deadbeef->pl_get_first(iter);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->playqueue_remove (it);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, iter);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+}
+
 - (void)reloadMetadata {
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
@@ -1144,4 +1170,25 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     }
 }
 
+- (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view {
+    NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
+    BOOL enabled = [self selectedCount] != 0;
+
+    [[theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+
+    [[theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+
+    // FIXME: should be added via plugin action
+    [[theMenu insertItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+
+    [theMenu insertItem:[NSMenuItem separatorItem] atIndex:0];
+
+    [[theMenu insertItemWithTitle:@"Remove From Playback Queue" action:@selector(removeFromPlaybackQueue) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+
+    [[theMenu insertItemWithTitle:@"Add To Playback Queue" action:@selector(addToPlaybackQueue) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+
+    [theMenu setAutoenablesItems:NO];
+
+    return theMenu;
+}
 @end
