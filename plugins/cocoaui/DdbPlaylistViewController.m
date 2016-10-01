@@ -26,6 +26,7 @@
 #import "DdbListview.h"
 #import "ConverterWindowController.h"
 #import "CoverManager.h"
+#import "ReplayGainScanResultsWindowController.h"
 #include "../../deadbeef.h"
 
 #define CELL_HPADDING 4
@@ -39,6 +40,7 @@ extern DB_functions_t *deadbeef;
     char *_group_str;
     char *_group_bytecode;
     BOOL _pin_groups;
+    ReplayGainScanResultsWindowController *_rgScannerWindow;
 }
 
 - (void)dealloc {
@@ -1170,11 +1172,40 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     }
 }
 
+- (void)rgRemove:(id)sender {
+}
+
+- (void)rgScanAlbum:(id)sender {
+}
+
+- (void)rgScanAlbumsAuto:(id)sender {
+}
+
+- (void)rgScanTracks:(id)sender {
+    _rgScannerWindow = [[ReplayGainScanResultsWindowController alloc] initWithWindowNibName:@"ReplayGain"];
+    [[_rgScannerWindow window] setIsVisible:YES];
+    [[_rgScannerWindow window] makeKeyWindow];
+}
+
 - (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view {
     NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
     BOOL enabled = [self selectedCount] != 0;
 
     [[theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+
+    NSMenu *rgMenu = [[NSMenu alloc] initWithTitle:@"ReplayGain"];
+    [rgMenu setDelegate:(id<NSMenuDelegate>)self];
+    [rgMenu setAutoenablesItems:NO];
+
+    [[rgMenu insertItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@"" atIndex:0]  setEnabled:enabled];
+    [[rgMenu insertItemWithTitle:@"Scan Selection As Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@"" atIndex:1]  setEnabled:enabled];
+    [[rgMenu insertItemWithTitle:@"Scan Selection As Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@"" atIndex:1]  setEnabled:enabled];
+    [[rgMenu insertItemWithTitle:@"Remove ReplayGain Information" action:@selector(rgRemove:) keyEquivalent:@"" atIndex:3] setEnabled:enabled];
+
+    NSMenuItem *rgMenuItem = [[NSMenuItem alloc] initWithTitle:@"ReplayGain" action:nil keyEquivalent:@""];
+    [rgMenuItem setEnabled:enabled];
+    [rgMenuItem setSubmenu:rgMenu];
+    [theMenu insertItem:rgMenuItem atIndex:0];
 
     [[theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
 
