@@ -101,12 +101,26 @@ replaygain_init_settings (ddb_replaygain_settings_t *settings, playItem_t *it) {
     pl_unlock ();
 }
 
+static int
+_get_source_mode (int mode) {
+    if (mode != DDB_RG_SOURCE_MODE_PLAYBACK_ORDER) {
+        return mode;
+    }
+    int order = pl_get_order ();
+    if (order == PLAYBACK_ORDER_SHUFFLE_ALBUMS || order == PLAYBACK_ORDER_LINEAR) {
+        return DDB_RG_SOURCE_MODE_ALBUM;
+    }
+    else {
+        return DDB_RG_SOURCE_MODE_TRACK;
+    }
+}
+
 static inline int
 get_int_volume (ddb_replaygain_settings_t *settings) {
     int vol = 1000;
 
-    switch (settings->source_mode) {
-    case DDB_RG_SOURCE_MODE_PLAYBACK_ORDER: // FIXME
+    int mode = _get_source_mode (settings->source_mode);
+    switch (mode) {
     case DDB_RG_SOURCE_MODE_TRACK:
         if (settings->has_track_gain) {
             vol = settings->preamp_without_rg * 1000;
@@ -217,8 +231,10 @@ apply_replay_gain_int32 (ddb_replaygain_settings_t *settings, char *bytes, int s
 void
 apply_replay_gain_float32 (ddb_replaygain_settings_t *settings, char *bytes, int size) {
     float vol = 1.f;
-    switch (settings->source_mode) {
-    case DDB_RG_SOURCE_MODE_PLAYBACK_ORDER: // FIXME
+    int mode = _get_source_mode (settings->source_mode);
+    switch (mode) {
+    case DDB_RG_SOURCE_MODE_PLAYBACK_ORDER:
+        break;
     case DDB_RG_SOURCE_MODE_TRACK:
         if (!settings->has_track_gain) {
             vol = settings->preamp_without_rg;
