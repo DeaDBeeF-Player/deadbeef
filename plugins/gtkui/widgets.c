@@ -3103,9 +3103,34 @@ spectrum_audio_listener (void *ctx, ddb_audio_data_t *data) {
     memcpy (w->data, data->data, DDB_FREQ_BANDS * sizeof (float));
 }
 
+static void
+_spectrum_run (ddb_gtkui_widget_t *w) {
+    w_spectrum_t *s = (w_spectrum_t *)w;
+    if (s->drawtimer > 0) {
+        return;
+    }
+    s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
+}
+
+static void
+_spectrum_stop (ddb_gtkui_widget_t *w) {
+    w_spectrum_t *s = (w_spectrum_t *)w;
+    if (s->drawtimer > 0) {
+        g_source_remove (s->drawtimer);
+        s->drawtimer = 0;
+    }
+}
+
 static gboolean
 spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     w_spectrum_t *w = user_data;
+
+    int playback_status = deadbeef->get_output ()->state ();
+
+    if (playback_status == OUTPUT_STATE_STOPPED || playback_status == OUTPUT_STATE_PAUSED) {
+        _spectrum_stop (user_data);
+    }
+
     float *freq = w->data;
 
     GtkAllocation a;
@@ -3245,7 +3270,6 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     return FALSE;
 }
 
-
 gboolean
 spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
     cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
@@ -3253,6 +3277,7 @@ spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
     cairo_destroy (cr);
     return res;
 }
+
 void
 w_spectrum_init (ddb_gtkui_widget_t *w) {
     w_spectrum_t *s = (w_spectrum_t *)w;
@@ -3261,12 +3286,15 @@ w_spectrum_init (ddb_gtkui_widget_t *w) {
         s->drawtimer = 0;
     }
 #if USE_OPENGL
-    if (!gtkui_gl_init ()) {
-        s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
+    if (gtkui_gl_init ()) {
+        return;
     }
-#else
-    s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
 #endif
+    int playback_status = deadbeef->get_output ()->state ();
+
+    if (playback_status == OUTPUT_STATE_PLAYING) { 
+        _spectrum_run (w);
+    }
 }
 
 void
@@ -3277,6 +3305,23 @@ spectrum_realize (GtkWidget *widget, gpointer data) {
 #endif
 }
 
+static int
+w_spectrum_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_SONGSTARTED:
+        _spectrum_run (w);
+        break;
+    case DB_EV_PAUSED:
+        if (p1) {
+            _spectrum_stop (w);
+        }
+        else {
+            _spectrum_run (w);
+        }
+        break;
+    }
+}
+
 ddb_gtkui_widget_t *
 w_spectrum_create (void) {
     w_spectrum_t *w = malloc (sizeof (w_spectrum_t));
@@ -3285,6 +3330,7 @@ w_spectrum_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.init = w_spectrum_init;
     w->base.destroy  = w_spectrum_destroy;
+    w->base.message = w_spectrum_message;
     w->drawarea = gtk_drawing_area_new ();
 #if USE_OPENGL
     int attrlist[] = {GDK_GL_ATTRIB_LIST_NONE};
