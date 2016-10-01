@@ -1376,8 +1376,11 @@ int grouptitleheight = 22;
     [_delegate setCursor:cursor];
 
     DdbListviewRow_t row = [_delegate rowForIndex:cursor];
-    if (![_delegate rowSelected:row]) {
+    if (row != [_delegate invalidRow] && ![_delegate rowSelected:row]) {
         [self selectSingle:cursor];
+    }
+    if (row != [_delegate invalidRow]) {
+        [_delegate unrefRow:row];
     }
 
     BOOL need_redraw = YES;
