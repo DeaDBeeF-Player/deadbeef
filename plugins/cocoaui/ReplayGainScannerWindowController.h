@@ -8,6 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface ReplayGainScanResultsWindowController : NSWindowController
+@interface ReplayGainScannerWindowController : NSWindowController
+
+@property (strong) IBOutlet NSPanel *progressPanel;
 
 @end

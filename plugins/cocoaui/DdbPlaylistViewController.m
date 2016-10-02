@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2015 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2016 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -26,8 +26,9 @@
 #import "DdbListview.h"
 #import "ConverterWindowController.h"
 #import "CoverManager.h"
-#import "ReplayGainScanResultsWindowController.h"
+#import "ReplayGainScannerWindowController.h"
 #include "../../deadbeef.h"
+#include "rg_scanner.h"
 
 #define CELL_HPADDING 4
 
@@ -40,7 +41,8 @@ extern DB_functions_t *deadbeef;
     char *_group_str;
     char *_group_bytecode;
     BOOL _pin_groups;
-    ReplayGainScanResultsWindowController *_rgScannerWindow;
+    ReplayGainScannerWindowController *_rgScannerWindowController;
+    BOOL _rgScannerRunning;
 }
 
 - (void)dealloc {
@@ -1176,15 +1178,37 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 }
 
 - (void)rgScanAlbum:(id)sender {
+    [self rgScan:DDB_RG_SCAN_MODE_SINGLE_ALBUM];
 }
 
 - (void)rgScanAlbumsAuto:(id)sender {
+    [self rgScan:DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS];
 }
 
 - (void)rgScanTracks:(id)sender {
-    _rgScannerWindow = [[ReplayGainScanResultsWindowController alloc] initWithWindowNibName:@"ReplayGain"];
-    [[_rgScannerWindow window] setIsVisible:YES];
-    [[_rgScannerWindow window] makeKeyWindow];
+    [self rgScan:DDB_RG_SCAN_MODE_TRACK];
+}
+
+- (void)rgScan:(int)mode {
+    if (_rgScannerRunning) {
+        // TODO: error message
+        return;
+    }
+    if (!_rgScannerWindowController) {
+        _rgScannerWindowController = [[ReplayGainScannerWindowController alloc] initWithWindowNibName:@"ReplayGain"];
+    }
+    _rgScannerRunning = YES;
+//    [[_rgScannerWindowController window] setIsVisible:YES];
+//    [[_rgScannerWindowController window] makeKeyWindow];
+    [[_rgScannerWindowController progressPanel] setIsVisible:YES];
+    [[_rgScannerWindowController progressPanel] makeKeyWindow];
+
+    dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(aQueue, ^{
+        // ...
+        // ddb_rg_scanner_settings_t rg_settings;
+        // rg_plugin->scan (&settings);
+    });
 }
 
 - (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view {

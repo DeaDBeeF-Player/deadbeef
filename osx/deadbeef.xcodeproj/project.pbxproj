@@ -282,8 +282,8 @@
 		2D11E8B41AA0E3DD00A67A20 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D11E8B11AA0E3DD00A67A20 /* MainWindow.xib */; };
 		2D17F8461AB3391A00AF2853 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D17F8451AB3391A00AF2853 /* MainMenu.xib */; };
 		2D1A563A1D9FF9A4005E5CDD /* ReplayGain.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */; };
-		2D1A564A1D9FFB10005E5CDD /* ReplayGainScanResultsWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1A56481D9FFB10005E5CDD /* ReplayGainScanResultsWindowController.h */; };
-		2D1A564B1D9FFB10005E5CDD /* ReplayGainScanResultsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A56491D9FFB10005E5CDD /* ReplayGainScanResultsWindowController.m */; };
+		2D1A564A1D9FFB10005E5CDD /* ReplayGainScannerWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1A56481D9FFB10005E5CDD /* ReplayGainScannerWindowController.h */; };
+		2D1A564B1D9FFB10005E5CDD /* ReplayGainScannerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A56491D9FFB10005E5CDD /* ReplayGainScannerWindowController.m */; };
 		2D22F70719E13838009C631E /* c64cia.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F60D19E13762009C631E /* c64cia.h */; };
 		2D22F70819E13838009C631E /* c64vic.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F60E19E13762009C631E /* c64vic.h */; };
 		2D22F70919E13838009C631E /* c64xsid.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F60F19E13762009C631E /* c64xsid.h */; };
@@ -2593,8 +2593,8 @@
 		2D11E8B11AA0E3DD00A67A20 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		2D17F8451AB3391A00AF2853 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ReplayGain.xib; sourceTree = "<group>"; };
-		2D1A56481D9FFB10005E5CDD /* ReplayGainScanResultsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayGainScanResultsWindowController.h; sourceTree = "<group>"; };
-		2D1A56491D9FFB10005E5CDD /* ReplayGainScanResultsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayGainScanResultsWindowController.m; sourceTree = "<group>"; };
+		2D1A56481D9FFB10005E5CDD /* ReplayGainScannerWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayGainScannerWindowController.h; sourceTree = "<group>"; };
+		2D1A56491D9FFB10005E5CDD /* ReplayGainScannerWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayGainScannerWindowController.m; sourceTree = "<group>"; };
 		2D22F5AD19E136D1009C631E /* envelope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = envelope.h; path = "plugins/sid/sidplay-libs/resid/envelope.h"; sourceTree = "<group>"; };
 		2D22F5AE19E136D1009C631E /* extfilt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = extfilt.h; path = "plugins/sid/sidplay-libs/resid/extfilt.h"; sourceTree = "<group>"; };
 		2D22F5AF19E136D1009C631E /* filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = filter.h; path = "plugins/sid/sidplay-libs/resid/filter.h"; sourceTree = "<group>"; };
@@ -7434,8 +7434,8 @@
 				2D8D96AD1D10904A00A5C7E6 /* CoverManager.m */,
 				2D49857D1D5CF13F00E4D985 /* LogWindowController.h */,
 				2D49857E1D5CF13F00E4D985 /* LogWindowController.m */,
-				2D1A56481D9FFB10005E5CDD /* ReplayGainScanResultsWindowController.h */,
-				2D1A56491D9FFB10005E5CDD /* ReplayGainScanResultsWindowController.m */,
+				2D1A56481D9FFB10005E5CDD /* ReplayGainScannerWindowController.h */,
+				2D1A56491D9FFB10005E5CDD /* ReplayGainScannerWindowController.m */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -8634,7 +8634,7 @@
 				2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */,
 				2D6D81EF1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h in Headers */,
 				2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */,
-				2D1A564A1D9FFB10005E5CDD /* ReplayGainScanResultsWindowController.h in Headers */,
+				2D1A564A1D9FFB10005E5CDD /* ReplayGainScannerWindowController.h in Headers */,
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
 				2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */,
@@ -11185,7 +11185,7 @@
 				2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
-				2D1A564B1D9FFB10005E5CDD /* ReplayGainScanResultsWindowController.m in Sources */,
+				2D1A564B1D9FFB10005E5CDD /* ReplayGainScannerWindowController.m in Sources */,
 				2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
 				2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */,

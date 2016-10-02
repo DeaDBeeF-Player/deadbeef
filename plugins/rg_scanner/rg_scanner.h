@@ -29,6 +29,12 @@
 
 #include "../../deadbeef.h"
 
+enum {
+    DDB_RG_SCAN_MODE_TRACK = 1,
+    DDB_RG_SCAN_MODE_SINGLE_ALBUM = 2,
+    DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS = 3,
+};
+
 typedef struct {
     int _size;
     DB_playItem_t **scan_items;    // tracks to scan

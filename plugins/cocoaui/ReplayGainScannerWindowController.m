@@ -6,13 +6,13 @@
 //  Copyright © 2016 Alexey Yakovenko. All rights reserved.
 //
 
-#import "ReplayGainScanResultsWindowController.h"
+#import "ReplayGainScannerWindowController.h"
 
-@interface ReplayGainScanResultsWindowController ()
+@interface ReplayGainScannerWindowController ()
 
 @end
 
-@implementation ReplayGainScanResultsWindowController
+@implementation ReplayGainScannerWindowController
 
 - (void)windowDidLoad {
     [super windowDidLoad];
