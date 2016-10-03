@@ -51,10 +51,10 @@ DB_plugin_t *rg_scanner_load (DB_functions_t *api) {
 
 struct rg_thread_arg {
     int result; // result of this thread
-    int thread_id; // number of this thread
+    int track_index;
     ddb_rg_scanner_settings_t *settings;
-    ebur128_state **status_gain;
-    ebur128_state **status_peak;
+    ebur128_state **gain_state;
+    ebur128_state **peak_state;
     double loudness;
 };
 
@@ -68,9 +68,9 @@ void rg_calc_thread(void *_args) {
         args->result = -2;
         return;
     }
-    if (deadbeef->pl_get_item_duration (args->settings->scan_items[args->thread_id]) <= 0) {
+    if (deadbeef->pl_get_item_duration (args->settings->tracks[args->track_index]) <= 0) {
         deadbeef->pl_lock ();
-        trace ("rg scan: stream %s doesn't have finite length, skipped\n", deadbeef->pl_find_meta (args->settings->scan_items[args->thread_id], ":URI"));
+        trace ("rg scan: stream %s doesn't have finite length, skipped\n", deadbeef->pl_find_meta (args->settings->tracks[args->track_index], ":URI"));
         deadbeef->pl_unlock ();
         args->result = -1;
         return;
@@ -79,15 +79,16 @@ void rg_calc_thread(void *_args) {
     DB_decoder_t *dec = NULL;
     DB_fileinfo_t *fileinfo = NULL;
 
+    // FIXME: race condition
     deadbeef->pl_lock ();
-    dec = (DB_decoder_t *)deadbeef->plug_get_for_id (deadbeef->pl_find_meta (args->settings->scan_items[args->thread_id], ":DECODER"));
+    dec = (DB_decoder_t *)deadbeef->plug_get_for_id (deadbeef->pl_find_meta (args->settings->tracks[args->track_index], ":DECODER"));
     deadbeef->pl_unlock ();
 
     if (dec) { // we have our decoder
         fileinfo = dec->open (DDB_DECODER_HINT_RAW_SIGNAL);
-        if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (args->settings->scan_items[args->thread_id])) != 0) {
+        if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (args->settings->tracks[args->track_index])) != 0) {
             deadbeef->pl_lock ();
-            trace ("rg scan: failed to decode file %s\n", deadbeef->pl_find_meta (args->settings->scan_items[args->thread_id], ":URI"));
+            trace ("rg scan: failed to decode file %s\n", deadbeef->pl_find_meta (args->settings->tracks[args->track_index], ":URI"));
             deadbeef->pl_unlock ();
             args->result = -1;
             return;
@@ -95,90 +96,91 @@ void rg_calc_thread(void *_args) {
 
         if (fileinfo) { // we have all info needed to scan
             // this is a status object for ebur128 gain scanning
-            args->status_gain[args->thread_id] = ebur128_init(fileinfo->fmt.channels,   // channels
+            args->gain_state[args->track_index] = ebur128_init(fileinfo->fmt.channels,   // channels
                                           fileinfo->fmt.samplerate, // samplerate
                                           EBUR128_MODE_I);          // mode: Integrated (over the length of the track)
 
             // this is a status object for ebur128 peak scanning - needs a different mode, so separate
-            args->status_peak[args->thread_id] = ebur128_init(fileinfo->fmt.channels,   // channels
+            args->peak_state[args->track_index] = ebur128_init(fileinfo->fmt.channels,   // channels
                                           fileinfo->fmt.samplerate, // samplerate
                                           EBUR128_MODE_SAMPLE_PEAK);// mode: find sample peak
-            if(args->status_gain[args->thread_id] == NULL || args->status_peak[args->thread_id] == NULL) {
+            if(args->gain_state[args->track_index] == NULL || args->peak_state[args->track_index] == NULL) {
                 deadbeef->pl_lock ();
-                trace ("rg scan: failed to init libebur128 object for file %s, aborting\n", deadbeef->pl_find_meta (args->settings->scan_items[args->thread_id], ":URI"));
+                trace ("rg scan: failed to init libebur128 object for file %s, aborting\n", deadbeef->pl_find_meta (args->settings->tracks[args->track_index], ":URI"));
                 deadbeef->pl_unlock ();
                 args->result = -1;
                 return;
             }
 
             // setting channel map
+            // FIXME: can be converted into a table + loop
             switch(fileinfo->fmt.channels) {
                 case 1: // mono
-                    ebur128_set_channel (args->status_gain[args->thread_id], 0, EBUR128_CENTER);
+                    ebur128_set_channel (args->gain_state[args->track_index], 0, EBUR128_CENTER);
 
-                    ebur128_set_channel (args->status_peak[args->thread_id], 0, EBUR128_CENTER);
+                    ebur128_set_channel (args->peak_state[args->track_index], 0, EBUR128_CENTER);
                     break;
                 case 2: // stereo
-                    ebur128_set_channel (args->status_gain[args->thread_id], 0, EBUR128_LEFT);
-                    ebur128_set_channel (args->status_gain[args->thread_id], 1, EBUR128_RIGHT);
+                    ebur128_set_channel (args->gain_state[args->track_index], 0, EBUR128_LEFT);
+                    ebur128_set_channel (args->gain_state[args->track_index], 1, EBUR128_RIGHT);
 
-                    ebur128_set_channel (args->status_peak[args->thread_id], 0, EBUR128_LEFT);
-                    ebur128_set_channel (args->status_peak[args->thread_id], 1, EBUR128_RIGHT);
+                    ebur128_set_channel (args->peak_state[args->track_index], 0, EBUR128_LEFT);
+                    ebur128_set_channel (args->peak_state[args->track_index], 1, EBUR128_RIGHT);
                     break;
                 case 3: // 3.1
-                    ebur128_set_channel(args->status_gain[args->thread_id], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->status_gain[args->thread_id], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->status_gain[args->thread_id], 2, EBUR128_CENTER);
+                    ebur128_set_channel(args->gain_state[args->track_index], 0, EBUR128_LEFT);
+                    ebur128_set_channel(args->gain_state[args->track_index], 1, EBUR128_RIGHT);
+                    ebur128_set_channel(args->gain_state[args->track_index], 2, EBUR128_CENTER);
 
-                    ebur128_set_channel(args->status_peak[args->thread_id], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->status_peak[args->thread_id], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->status_peak[args->thread_id], 2, EBUR128_CENTER);
+                    ebur128_set_channel(args->peak_state[args->track_index], 0, EBUR128_LEFT);
+                    ebur128_set_channel(args->peak_state[args->track_index], 1, EBUR128_RIGHT);
+                    ebur128_set_channel(args->peak_state[args->track_index], 2, EBUR128_CENTER);
                     break;
                 case 4:
-                    ebur128_set_channel(args->status_gain[args->thread_id], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->status_gain[args->thread_id], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->status_gain[args->thread_id], 2, EBUR128_LEFT_SURROUND);
-                    ebur128_set_channel(args->status_gain[args->thread_id], 3, EBUR128_RIGHT_SURROUND);
+                    ebur128_set_channel(args->gain_state[args->track_index], 0, EBUR128_LEFT);
+                    ebur128_set_channel(args->gain_state[args->track_index], 1, EBUR128_RIGHT);
+                    ebur128_set_channel(args->gain_state[args->track_index], 2, EBUR128_LEFT_SURROUND);
+                    ebur128_set_channel(args->gain_state[args->track_index], 3, EBUR128_RIGHT_SURROUND);
 
-                    ebur128_set_channel(args->status_peak[args->thread_id], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->status_peak[args->thread_id], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->status_peak[args->thread_id], 2, EBUR128_LEFT_SURROUND);
-                    ebur128_set_channel(args->status_peak[args->thread_id], 3, EBUR128_RIGHT_SURROUND);
+                    ebur128_set_channel(args->peak_state[args->track_index], 0, EBUR128_LEFT);
+                    ebur128_set_channel(args->peak_state[args->track_index], 1, EBUR128_RIGHT);
+                    ebur128_set_channel(args->peak_state[args->track_index], 2, EBUR128_LEFT_SURROUND);
+                    ebur128_set_channel(args->peak_state[args->track_index], 3, EBUR128_RIGHT_SURROUND);
                     break;
                 case 5:
-                    ebur128_set_channel(args->status_gain[args->thread_id], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->status_gain[args->thread_id], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->status_gain[args->thread_id], 2, EBUR128_CENTER);
-                    ebur128_set_channel(args->status_gain[args->thread_id], 3, EBUR128_LEFT_SURROUND);
-                    ebur128_set_channel(args->status_gain[args->thread_id], 4, EBUR128_RIGHT_SURROUND);
+                    ebur128_set_channel(args->gain_state[args->track_index], 0, EBUR128_LEFT);
+                    ebur128_set_channel(args->gain_state[args->track_index], 1, EBUR128_RIGHT);
+                    ebur128_set_channel(args->gain_state[args->track_index], 2, EBUR128_CENTER);
+                    ebur128_set_channel(args->gain_state[args->track_index], 3, EBUR128_LEFT_SURROUND);
+                    ebur128_set_channel(args->gain_state[args->track_index], 4, EBUR128_RIGHT_SURROUND);
 
-                    ebur128_set_channel(args->status_peak[args->thread_id], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->status_peak[args->thread_id], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->status_peak[args->thread_id], 2, EBUR128_CENTER);
-                    ebur128_set_channel(args->status_peak[args->thread_id], 3, EBUR128_LEFT_SURROUND);
-                    ebur128_set_channel(args->status_peak[args->thread_id], 4, EBUR128_RIGHT_SURROUND);
+                    ebur128_set_channel(args->peak_state[args->track_index], 0, EBUR128_LEFT);
+                    ebur128_set_channel(args->peak_state[args->track_index], 1, EBUR128_RIGHT);
+                    ebur128_set_channel(args->peak_state[args->track_index], 2, EBUR128_CENTER);
+                    ebur128_set_channel(args->peak_state[args->track_index], 3, EBUR128_LEFT_SURROUND);
+                    ebur128_set_channel(args->peak_state[args->track_index], 4, EBUR128_RIGHT_SURROUND);
                     break;
                 case 6:
-                    ebur128_set_channel(args->status_gain[args->thread_id], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->status_gain[args->thread_id], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->status_gain[args->thread_id], 2, EBUR128_CENTER);
+                    ebur128_set_channel(args->gain_state[args->track_index], 0, EBUR128_LEFT);
+                    ebur128_set_channel(args->gain_state[args->track_index], 1, EBUR128_RIGHT);
+                    ebur128_set_channel(args->gain_state[args->track_index], 2, EBUR128_CENTER);
                     // LFE is not being taken into account when scanning
                     // see R128 spec at https://tech.ebu.ch/docs/tech/tech3341.pdf
-                    ebur128_set_channel(args->status_gain[args->thread_id], 3, EBUR128_UNUSED);
-                    ebur128_set_channel(args->status_gain[args->thread_id], 4, EBUR128_LEFT_SURROUND);
-                    ebur128_set_channel(args->status_gain[args->thread_id], 5, EBUR128_RIGHT_SURROUND);
+                    ebur128_set_channel(args->gain_state[args->track_index], 3, EBUR128_UNUSED);
+                    ebur128_set_channel(args->gain_state[args->track_index], 4, EBUR128_LEFT_SURROUND);
+                    ebur128_set_channel(args->gain_state[args->track_index], 5, EBUR128_RIGHT_SURROUND);
 
-                    ebur128_set_channel(args->status_peak[args->thread_id], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->status_peak[args->thread_id], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->status_peak[args->thread_id], 2, EBUR128_CENTER);
-                    ebur128_set_channel(args->status_peak[args->thread_id], 3, EBUR128_UNUSED);
-                    ebur128_set_channel(args->status_peak[args->thread_id], 4, EBUR128_LEFT_SURROUND);
-                    ebur128_set_channel(args->status_peak[args->thread_id], 5, EBUR128_RIGHT_SURROUND);
+                    ebur128_set_channel(args->peak_state[args->track_index], 0, EBUR128_LEFT);
+                    ebur128_set_channel(args->peak_state[args->track_index], 1, EBUR128_RIGHT);
+                    ebur128_set_channel(args->peak_state[args->track_index], 2, EBUR128_CENTER);
+                    ebur128_set_channel(args->peak_state[args->track_index], 3, EBUR128_UNUSED);
+                    ebur128_set_channel(args->peak_state[args->track_index], 4, EBUR128_LEFT_SURROUND);
+                    ebur128_set_channel(args->peak_state[args->track_index], 5, EBUR128_RIGHT_SURROUND);
                     break;
                 default:
                     deadbeef->pl_lock ();
                     trace ("rg scan: file %s has %d channels - libebur128 only supports up to 6. Aborting.\n",
-                                     deadbeef->pl_find_meta (args->settings->scan_items[args->thread_id], ":URI"),
+                                     deadbeef->pl_find_meta (args->settings->tracks[args->track_index], ":URI"),
                                      fileinfo->fmt.channels);
                     deadbeef->pl_unlock ();
                     args->result = -1;
@@ -226,8 +228,8 @@ void rg_calc_thread(void *_args) {
 
                 int frames = sz / samplesize;
 
-                ebur128_add_frames_float (args->status_gain[args->thread_id], (float*) bufferf, frames); // collect data
-                ebur128_add_frames_float (args->status_peak[args->thread_id], (float*) bufferf, frames); // collect data
+                ebur128_add_frames_float (args->gain_state[args->track_index], (float*) bufferf, frames); // collect data
+                ebur128_add_frames_float (args->peak_state[args->track_index], (float*) bufferf, frames); // collect data
             }
         }
     }
@@ -238,7 +240,7 @@ void rg_calc_thread(void *_args) {
     double ch_peak = 0;
     int res;
     for (int ch = 0; ch < fileinfo->fmt.channels; ++ch) {
-        res = ebur128_sample_peak (args->status_peak[args->thread_id], ch, &ch_peak);
+        res = ebur128_sample_peak (args->peak_state[args->track_index], ch, &ch_peak);
         if (res == EBUR128_ERROR_INVALID_MODE) {
             trace ("rg scan: internal error: invalid mode set\n");
             *args->settings->pabort = 1;
@@ -252,10 +254,10 @@ void rg_calc_thread(void *_args) {
         }
     }
 
-    args->settings->out_track_pk[args->thread_id] = (float) tr_peak;
+    args->settings->out_track_peak[args->track_index] = (float) tr_peak;
 
     // calculate track loudness
-    ebur128_loudness_global (args->status_gain[args->thread_id], &args->loudness);
+    ebur128_loudness_global (args->gain_state[args->track_index], &args->loudness);
 
     /*
      * EBUR128 sets the target level to -23 LUFS = 84dB
@@ -264,7 +266,7 @@ void rg_calc_thread(void *_args) {
      * The old implementation of RG used 89dB, most people still use that
      * -> the above + (targetdb - 84) = track gain to get to 89dB (or user specified)
      */
-    args->settings->out_track_rg[args->thread_id] = (float)(-23 - args->loudness + args->settings->targetdb - 84);
+    args->settings->out_track_gain[args->track_index] = (float)(-23 - args->loudness + args->settings->targetdb - 84);
 
     // clean up
     if (buffer) {
@@ -284,16 +286,13 @@ int rg_scan (ddb_rg_scanner_settings_t *settings) {
 
     trace ("rg scan: using %d thread(s)\n", settings->num_threads);
 
-    ebur128_state **status_gain = NULL;
-    ebur128_state **status_peak = NULL;
+    ebur128_state **gain_state = NULL;
+    ebur128_state **peak_state = NULL;
     double loudness;
 
-    settings->out_album_pk = 0;
-    settings->out_album_rg = 0;
-
     // allocate status array
-    status_gain = malloc (settings->num_tracks * sizeof (ebur128_state *));
-    status_peak = malloc (settings->num_tracks * sizeof (ebur128_state *));
+    gain_state = malloc (settings->num_tracks * sizeof (ebur128_state *));
+    peak_state = malloc (settings->num_tracks * sizeof (ebur128_state *));
 
     // used for joining threads
     intptr_t *rg_threads = NULL;
@@ -301,8 +300,13 @@ int rg_scan (ddb_rg_scanner_settings_t *settings) {
     struct rg_thread_arg *args = NULL;
     args = malloc (settings->num_tracks * sizeof (struct rg_thread_arg));
 
-    // calculate gain for each track
+    float album_peak = 0;
+
+    // calculate gain for each track and album
     for (int i = 0; i < settings->num_tracks; ++i) {
+        if (settings->progress_callback) {
+            settings->progress_callback (i, settings->progress_cb_user_data);
+        }
         // limit number of parallel threads
         if (i >= settings->num_threads) {
             // simple blocking mechanism: join 'oldest' thread
@@ -311,10 +315,10 @@ int rg_scan (ddb_rg_scanner_settings_t *settings) {
 
         // initialize arguments
         args[i].result = 0;
-        args[i].thread_id = i;
+        args[i].track_index = i;
         args[i].settings = settings;
-        args[i].status_gain = status_gain;
-        args[i].status_peak = status_peak;
+        args[i].gain_state = gain_state;
+        args[i].peak_state = peak_state;
         args[i].loudness = loudness;
 
         // run thread
@@ -332,8 +336,8 @@ int rg_scan (ddb_rg_scanner_settings_t *settings) {
 
     // update album peak if necessary
     for (int i = 0; i < settings->num_tracks; ++i) {
-        if (settings->out_album_pk < args[i].settings->out_track_pk[i]) {
-            settings->out_album_pk = args[i].settings->out_track_pk[i];
+        if (album_peak < args[i].settings->out_track_peak[i]) {
+            album_peak = args[i].settings->out_track_peak[i];
         }
     }
 
@@ -348,23 +352,37 @@ int rg_scan (ddb_rg_scanner_settings_t *settings) {
     }
 
     // calculate album loudness
-    ebur128_loudness_global_multiple(status_gain, (size_t)settings->num_tracks, &loudness);
-    settings->out_album_rg = -23 - (float)loudness + settings->targetdb - 84; // see above
+    ebur128_loudness_global_multiple(gain_state, (size_t)settings->num_tracks, &loudness);
+
+// TODO: album gain temporarily broken
+//    settings->out_album_gain[i] = -23 - (float)loudness + settings->targetdb - 84; // see above
 
     // clean up
-    if (status_gain) {
+    if (gain_state) {
         for (int i = 0; i < settings->num_tracks; ++i) {
-            ebur128_destroy(&status_gain[i]);
+            ebur128_destroy(&gain_state[i]);
         }
-        free(status_gain);
+        free(gain_state);
     }
-    if (status_peak) {
+    if (peak_state) {
         for (int i = 0; i < settings->num_tracks; ++i) {
-            ebur128_destroy(&status_peak[i]);
+            ebur128_destroy(&peak_state[i]);
         }
-        free(status_peak);
+        free(peak_state);
     }
     return 0;
+}
+
+void
+rg_clear_settings (ddb_rg_scanner_settings_t *settings) {
+    if (settings->out_track_peak) {
+        free (settings->out_track_peak);
+        settings->out_track_peak = NULL;
+    }
+    if (settings->out_track_gain) {
+        free (settings->out_track_gain);
+        settings->out_track_gain = NULL;
+    }
 }
 
 int rg_write_meta (DB_playItem_t *track) {
@@ -494,6 +512,7 @@ static ddb_rg_scanner_t plugin = {
         "THE SOFTWARE.\n",
     .misc.plugin.website = "http://deadbeef.sf.net",
     .scan = rg_scan,
+    .clear_settings = rg_clear_settings,
     .apply = rg_apply,
     .remove = rg_remove
 };

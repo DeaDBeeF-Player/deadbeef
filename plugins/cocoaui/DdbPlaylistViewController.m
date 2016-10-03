@@ -26,7 +26,7 @@
 #import "DdbListview.h"
 #import "ConverterWindowController.h"
 #import "CoverManager.h"
-#import "ReplayGainScannerWindowController.h"
+#import "ReplayGainScannerController.h"
 #include "../../deadbeef.h"
 #include "rg_scanner.h"
 
@@ -41,8 +41,6 @@ extern DB_functions_t *deadbeef;
     char *_group_str;
     char *_group_bytecode;
     BOOL _pin_groups;
-    ReplayGainScannerWindowController *_rgScannerWindowController;
-    BOOL _rgScannerRunning;
 }
 
 - (void)dealloc {
@@ -1190,25 +1188,30 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 }
 
 - (void)rgScan:(int)mode {
-    if (_rgScannerRunning) {
-        // TODO: error message
-        return;
-    }
-    if (!_rgScannerWindowController) {
-        _rgScannerWindowController = [[ReplayGainScannerWindowController alloc] initWithWindowNibName:@"ReplayGain"];
-    }
-    _rgScannerRunning = YES;
-//    [[_rgScannerWindowController window] setIsVisible:YES];
-//    [[_rgScannerWindowController window] makeKeyWindow];
-    [[_rgScannerWindowController progressPanel] setIsVisible:YES];
-    [[_rgScannerWindowController progressPanel] makeKeyWindow];
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    int numtracks = deadbeef->plt_getselcount (plt);
+    if (numtracks > 0) {
+        deadbeef->pl_lock ();
+        DB_playItem_t **tracks = calloc (numtracks, sizeof (DB_playItem_t *));
 
-    dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(aQueue, ^{
-        // ...
-        // ddb_rg_scanner_settings_t rg_settings;
-        // rg_plugin->scan (&settings);
-    });
+        int n = 0;
+        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+        while (it) {
+            if (deadbeef->pl_is_selected (it)) {
+                assert (n < numtracks);
+                deadbeef->pl_item_ref (it);
+                tracks[n++] = it;
+            }
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+
+
+        [ReplayGainScannerController runScanner:mode forTracks:tracks count:numtracks];
+        deadbeef->pl_unlock ();
+    }
+    deadbeef->plt_unref (plt);
 }
 
 - (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view {

@@ -37,15 +37,22 @@ enum {
 
 typedef struct {
     int _size;
-    DB_playItem_t **scan_items;    // tracks to scan
-    int num_tracks;                // how many tracks
-    float *out_track_rg;           // individual track ReplayGain
-    float *out_track_pk;           // individual track peak
-    float out_album_rg;            // album track ReplayGain
-    float out_album_pk;            // album peak
-    float targetdb;                // our target loudness
-    int num_threads;               // number of threads
+
+    int mode; // one of DDB_RG_SCAN_MODE_*
+
+    DB_playItem_t **tracks;
+    int num_tracks;
+    float *out_track_gain;
+    float *out_track_peak;
+    float *out_album_gain;
+    float *out_album_peak;
+
+    float targetdb;                // requested reference gain
+    int num_threads;               // max number of concurrent threads
     int *pabort;                   // abort execution if set to 1
+
+    void (*progress_callback) (int current_track, void *user_data);
+    void *progress_cb_user_data;
 } ddb_rg_scanner_settings_t;
 
 typedef struct {
@@ -53,9 +60,12 @@ typedef struct {
 
     int (*scan) (ddb_rg_scanner_settings_t *settings);
 
+    void (*clear_settings) (ddb_rg_scanner_settings_t *settings);
+
     int (*apply) (DB_playItem_t *track, float track_gain, float album_gain, float track_peak, float album_peak);
 
     void (*remove) (DB_playItem_t **work_items, int num_tracks);
+
 } ddb_rg_scanner_t;
 
 #endif //__RG_SCANNER_H
