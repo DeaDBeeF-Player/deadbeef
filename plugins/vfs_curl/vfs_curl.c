@@ -620,6 +620,7 @@ http_thread_func (void *ctx) {
         deadbeef->conf_get_str ("network.http_user_agent", "deadbeef", ua, sizeof (ua));
         curl_easy_setopt (curl, CURLOPT_USERAGENT, ua);
         curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 1);
+        curl_easy_setopt (curl, CURLOPT_TIMEOUT, TIMEOUT);
         curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, http_curl_write);
         curl_easy_setopt (curl, CURLOPT_WRITEDATA, ctx);
         curl_easy_setopt (curl, CURLOPT_ERRORBUFFER, fp->http_err);
