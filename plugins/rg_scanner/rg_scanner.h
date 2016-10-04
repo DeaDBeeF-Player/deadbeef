@@ -35,23 +35,47 @@ enum {
     DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS = 3,
 };
 
+enum {
+    DDG_RG_SCAN_RESULT_SUCCESS = 0,
+    DDG_RG_SCAN_RESULT_FILE_NOT_FOUND = -1,
+};
+
 typedef struct {
+    float track_gain;
+    float album_gain;
+    float track_peak;
+    float album_peak;
+    int scan_result;
+} ddb_rg_scanner_result_t;
+
+typedef struct {
+    // Size of this structure
     int _size;
 
-    int mode; // one of DDB_RG_SCAN_MODE_*
+    // The scanning mode, one of DDB_RG_SCAN_MODE_*
+    int mode;
 
+    // The list of tracks and results.
+    // The caller is responsible to allocate and free these buffers.
     DB_playItem_t **tracks;
+    ddb_rg_scanner_result_t *results;
+
     int num_tracks;
-    float *out_track_gain;
-    float *out_track_peak;
-    float *out_album_gain;
-    float *out_album_peak;
 
-    float targetdb;                // requested reference gain
-    int num_threads;               // max number of concurrent threads
-    int *pabort;                   // abort execution if set to 1
+    // Requested reference gain.
+    // FIXME: it is questionable if this is necessary
+    float targetdb;
 
+    // Max number of concurrent threads
+    int num_threads;
+
+    // Optional pointer to the abort flag; the scanner will abort if the pointed value is non-zero
+    int *pabort;
+
+    // Optional progress callback, with the current track index.
     void (*progress_callback) (int current_track, void *user_data);
+
+    // An additional user-defined parameter, which will be passed to the progress_callback.
     void *progress_cb_user_data;
 } ddb_rg_scanner_settings_t;
 
@@ -60,12 +84,9 @@ typedef struct {
 
     int (*scan) (ddb_rg_scanner_settings_t *settings);
 
-    void (*clear_settings) (ddb_rg_scanner_settings_t *settings);
-
     int (*apply) (DB_playItem_t *track, float track_gain, float album_gain, float track_peak, float album_peak);
 
     void (*remove) (DB_playItem_t **work_items, int num_tracks);
-
 } ddb_rg_scanner_t;
 
 #endif //__RG_SCANNER_H

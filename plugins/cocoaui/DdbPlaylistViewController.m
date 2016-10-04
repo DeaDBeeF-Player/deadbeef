@@ -1207,8 +1207,8 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
             it = next;
         }
 
-
         [ReplayGainScannerController runScanner:mode forTracks:tracks count:numtracks];
+
         deadbeef->pl_unlock ();
     }
     deadbeef->plt_unref (plt);

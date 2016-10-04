@@ -32,19 +32,13 @@
 #include "../../deadbeef.h"
 #include "ebur128/ebur128.h"
 
-// Initial changes, compared to the original plugin:
-// * Use the new logging API
-// * Better plugin API, using a shared structure instead of many arguments
-// * Better format conversion / buffer management
-// * Code reformatted
-// * Use the new DDB_DECODER_HINT_RAW_SIGNAL for getting the signal with "headroom"
-
 #define trace(...) { deadbeef->log_detailed (&plugin.misc.plugin, 0, __VA_ARGS__); }
 
 static ddb_rg_scanner_t plugin;
 static DB_functions_t *deadbeef;
 
-DB_plugin_t *rg_scanner_load (DB_functions_t *api) {
+DB_plugin_t *
+rg_scanner_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }
@@ -58,12 +52,13 @@ struct rg_thread_arg {
     double loudness;
 };
 
-void rg_calc_thread(void *_args) {
+void
+rg_calc_thread(void *_args) {
     char *buffer = NULL;
     char *bufferf = NULL;
 
     struct rg_thread_arg *args = (struct rg_thread_arg *)_args;
-    if (args->settings->pabort && args->settings->pabort) {
+    if (args->settings->pabort && *(args->settings->pabort)) {
         trace ("rg scan: user asked to abort, main loop aborted.\n");
         args->result = -2;
         return;
@@ -209,7 +204,7 @@ void rg_calc_thread(void *_args) {
                 if (eof) {
                     break;
                 }
-                if (args->settings->pabort && *args->settings->pabort) {
+                if (args->settings->pabort && *(args->settings->pabort)) {
                     trace ("rg scan: user asked to abort, scanning aborted.\n");
                     break;
                 }
@@ -243,7 +238,6 @@ void rg_calc_thread(void *_args) {
         res = ebur128_sample_peak (args->peak_state[args->track_index], ch, &ch_peak);
         if (res == EBUR128_ERROR_INVALID_MODE) {
             trace ("rg scan: internal error: invalid mode set\n");
-            *args->settings->pabort = 1;
             args->result = -1;
             return;
         }
@@ -254,7 +248,7 @@ void rg_calc_thread(void *_args) {
         }
     }
 
-    args->settings->out_track_peak[args->track_index] = (float) tr_peak;
+    args->settings->results[args->track_index].track_peak = (float) tr_peak;
 
     // calculate track loudness
     ebur128_loudness_global (args->gain_state[args->track_index], &args->loudness);
@@ -266,10 +260,10 @@ void rg_calc_thread(void *_args) {
      * The old implementation of RG used 89dB, most people still use that
      * -> the above + (targetdb - 84) = track gain to get to 89dB (or user specified)
      */
-    args->settings->out_track_gain[args->track_index] = (float)(-23 - args->loudness + args->settings->targetdb - 84);
+    args->settings->results[args->track_index].track_gain = -23 - args->loudness + args->settings->targetdb - 84;
 
     // clean up
-    if (buffer) {
+    if (buffer && buffer != bufferf) {
         free (buffer);
         buffer = NULL;
     }
@@ -279,7 +273,8 @@ void rg_calc_thread(void *_args) {
     }
 }
 
-int rg_scan (ddb_rg_scanner_settings_t *settings) {
+int
+rg_scan (ddb_rg_scanner_settings_t *settings) {
     if (settings->num_threads <= 0) {
         settings->num_threads = 1;
     }
@@ -291,8 +286,8 @@ int rg_scan (ddb_rg_scanner_settings_t *settings) {
     double loudness;
 
     // allocate status array
-    gain_state = malloc (settings->num_tracks * sizeof (ebur128_state *));
-    peak_state = malloc (settings->num_tracks * sizeof (ebur128_state *));
+    gain_state = calloc (settings->num_tracks, sizeof (ebur128_state *));
+    peak_state = calloc (settings->num_tracks, sizeof (ebur128_state *));
 
     // used for joining threads
     intptr_t *rg_threads = NULL;
@@ -309,7 +304,7 @@ int rg_scan (ddb_rg_scanner_settings_t *settings) {
         }
         // limit number of parallel threads
         if (i >= settings->num_threads) {
-            // simple blocking mechanism: join 'oldest' thread
+            // simple blocking mechanism: join the 'oldest' thread
             deadbeef->thread_join(rg_threads[i - settings->num_threads]);
         }
 
@@ -325,7 +320,7 @@ int rg_scan (ddb_rg_scanner_settings_t *settings) {
         rg_threads[i] = deadbeef->thread_start(&rg_calc_thread, (void*)(&args[i]));
     }
 
-    /* wait for remaining threads to join */
+    // wait for remaining threads to join
     int remaining_thread_id = settings->num_tracks - settings->num_threads;
     if (remaining_thread_id < 0) {
         remaining_thread_id = 0;
@@ -334,14 +329,22 @@ int rg_scan (ddb_rg_scanner_settings_t *settings) {
         deadbeef->thread_join(rg_threads[i]);
     }
 
-    // update album peak if necessary
-    for (int i = 0; i < settings->num_tracks; ++i) {
-        if (album_peak < args[i].settings->out_track_peak[i]) {
-            album_peak = args[i].settings->out_track_peak[i];
+    if (!settings->pabort || !*(settings->pabort)) {
+        // update album peak if necessary
+        for (int i = 0; i < settings->num_tracks; ++i) {
+            if (album_peak < args[i].settings->results[i].track_peak) {
+                album_peak = args[i].settings->results[i].track_peak;
+            }
         }
+
+        // calculate album gain
+        ebur128_loudness_global_multiple(gain_state, (size_t)settings->num_tracks, &loudness);
+
+        // TODO: album gain temporarily broken
+        //    settings->out_album_gain[i] = -23 - (float)loudness + settings->targetdb - 84; // see above
     }
 
-    /* free thread storage */
+    // free thread storage */
     if (rg_threads) {
         free (rg_threads);
         rg_threads = NULL;
@@ -351,41 +354,28 @@ int rg_scan (ddb_rg_scanner_settings_t *settings) {
         args = NULL;
     }
 
-    // calculate album loudness
-    ebur128_loudness_global_multiple(gain_state, (size_t)settings->num_tracks, &loudness);
-
-// TODO: album gain temporarily broken
-//    settings->out_album_gain[i] = -23 - (float)loudness + settings->targetdb - 84; // see above
-
     // clean up
     if (gain_state) {
         for (int i = 0; i < settings->num_tracks; ++i) {
-            ebur128_destroy(&gain_state[i]);
+            if (gain_state[i]) {
+                ebur128_destroy (&gain_state[i]);
+            }
         }
-        free(gain_state);
+        free (gain_state);
     }
     if (peak_state) {
         for (int i = 0; i < settings->num_tracks; ++i) {
-            ebur128_destroy(&peak_state[i]);
+            if (peak_state[i]) {
+                ebur128_destroy (&peak_state[i]);
+            }
         }
-        free(peak_state);
+        free (peak_state);
     }
     return 0;
 }
 
-void
-rg_clear_settings (ddb_rg_scanner_settings_t *settings) {
-    if (settings->out_track_peak) {
-        free (settings->out_track_peak);
-        settings->out_track_peak = NULL;
-    }
-    if (settings->out_track_gain) {
-        free (settings->out_track_gain);
-        settings->out_track_gain = NULL;
-    }
-}
-
-int rg_write_meta (DB_playItem_t *track) {
+int
+rg_write_meta (DB_playItem_t *track) {
     deadbeef->pl_lock ();
     const char *dec = deadbeef->pl_find_meta_raw (track, ":DECODER");
     char decoder_id[100];
@@ -421,7 +411,8 @@ int rg_write_meta (DB_playItem_t *track) {
     return 0;
 }
 
-int rg_apply (DB_playItem_t *track, float track_gain, float track_peak, float album_gain, float album_peak) {
+int
+rg_apply (DB_playItem_t *track, float track_gain, float track_peak, float album_gain, float album_peak) {
 
     // set RG tags 
     deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_ALBUMGAIN, album_gain);
@@ -433,7 +424,8 @@ int rg_apply (DB_playItem_t *track, float track_gain, float track_peak, float al
     return rg_write_meta (track);
 }
 
-void rg_remove (DB_playItem_t **work_items, int num_tracks) {
+void
+rg_remove (DB_playItem_t **work_items, int num_tracks) {
     for (int it = 0; it < num_tracks; ++it) {
         deadbeef->pl_delete_meta (work_items[it], ":REPLAYGAIN_ALBUMGAIN");
         deadbeef->pl_delete_meta (work_items[it], ":REPLAYGAIN_ALBUMPEAK");
@@ -512,7 +504,6 @@ static ddb_rg_scanner_t plugin = {
         "THE SOFTWARE.\n",
     .misc.plugin.website = "http://deadbeef.sf.net",
     .scan = rg_scan,
-    .clear_settings = rg_clear_settings,
     .apply = rg_apply,
     .remove = rg_remove
 };

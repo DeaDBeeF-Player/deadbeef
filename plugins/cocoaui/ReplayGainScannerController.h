@@ -10,9 +10,16 @@
 #include "../../deadbeef.h"
 
 @interface ReplayGainScannerController : NSWindowController
-@property (strong) IBOutlet NSPanel *progressPanel;
+
+@property (strong) IBOutlet NSWindow *resultsWindow;
+
+@property (unsafe_unretained) IBOutlet NSTableView *resultsTableView;
+- (IBAction)updateFileTagsAction:(id)sender;
+- (IBAction)resultsCancelAction:(id)sender;
+
 @property (unsafe_unretained) IBOutlet NSTextField *progressText;
 @property (unsafe_unretained) IBOutlet NSTextField *statusLabel;
+@property (unsafe_unretained) IBOutlet NSProgressIndicator *progressIndicator;
 
 - (IBAction)progressCancelAction:(id)sender;
 
