@@ -178,7 +178,7 @@ static NSMutableArray *g_rgControllers;
         }
         break;
     case 1:
-        return _rg_settings.results[rowIndex].scan_result < 2 ? status_str[_rg_settings.results[rowIndex].scan_result] : @"Unknown error";
+        return -_rg_settings.results[rowIndex].scan_result < 2 ? status_str[-_rg_settings.results[rowIndex].scan_result] : @"Unknown error";
     case 2:
         return _rg_settings.mode == DDB_RG_SCAN_MODE_TRACK ? @"" : [NSString stringWithFormat:@"%0.2f dB", _rg_settings.results[rowIndex].album_gain];
     case 3:
