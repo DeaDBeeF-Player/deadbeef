@@ -92,6 +92,7 @@ static NSMutableArray *g_rgControllers;
     _rg_settings.mode = mode;
     _rg_settings.tracks = tracks;
     _rg_settings.num_tracks = count;
+    _rg_settings.targetdb = deadbeef->conf_get_float ("rg_scanner.target_db", DDB_RG_SCAN_DEFAULT_LOUDNESS);
     _rg_settings.results = calloc (count, sizeof (ddb_rg_scanner_result_t));
     _rg_settings.pabort = &_abort_flag;
     _rg_settings.progress_callback = _scan_progress;

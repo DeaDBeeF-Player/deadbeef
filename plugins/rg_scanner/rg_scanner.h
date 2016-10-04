@@ -40,6 +40,8 @@ enum {
     DDG_RG_SCAN_RESULT_FILE_NOT_FOUND = -1,
 };
 
+#define DDB_RG_SCAN_DEFAULT_LOUDNESS 89.f
+
 typedef struct {
     float track_gain;
     float album_gain;
@@ -62,8 +64,8 @@ typedef struct {
 
     int num_tracks;
 
-    // Requested reference gain.
-    // FIXME: it is questionable if this is necessary
+    // Requested reference gain, will be automatically set to DDB_RG_SCAN_DEFAULT_LOUDNESS
+    // Preferred config variable: rg_scanner.target_db=89
     float targetdb;
 
     // Max number of concurrent threads

@@ -283,7 +283,7 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
 
     ebur128_state **gain_state = NULL;
     ebur128_state **peak_state = NULL;
-    double loudness;
+    double loudness = settings->targetdb == 0 ? DDB_RG_SCAN_DEFAULT_LOUDNESS : settings->targetdb;
 
     // allocate status array
     gain_state = calloc (settings->num_tracks, sizeof (ebur128_state *));
