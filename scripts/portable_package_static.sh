@@ -35,7 +35,6 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/artwork.so\
     $PLUGDIR/cdda.so\
     $PLUGDIR/dca.so\
-    $PLUGDIR/ddb_gui_GTK2.fallback.so\
     $PLUGDIR/ddb_gui_GTK2.so\
     $PLUGDIR/ddb_gui_GTK3.so\
     $PLUGDIR/ffap.so\

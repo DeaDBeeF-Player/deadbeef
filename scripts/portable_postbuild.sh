@@ -70,9 +70,6 @@ if [ -f ./plugins/gtkui/.libs/ddb_gui_GTK2.so ]; then
 else
     echo ./plugins/gtkui/.libs/ddb_gui_GTK2.so not found
 fi
-if [ -f ./plugins/gtkui/.libs/ddb_gui_GTK2.fallback.so ]; then
-    cp ./plugins/gtkui/.libs/ddb_gui_GTK2.fallback.so $PLUGDIR/
-fi
 
 if [ -f ./plugins/gtkui/.libs/ddb_gui_GTK3.so ]; then
     cp ./plugins/gtkui/.libs/ddb_gui_GTK3.so $PLUGDIR/
