@@ -1225,8 +1225,8 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     [rgMenu setAutoenablesItems:NO];
 
     [[rgMenu insertItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@"" atIndex:0]  setEnabled:enabled];
-    [[rgMenu insertItemWithTitle:@"Scan Selection As Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@"" atIndex:1]  setEnabled:enabled];
-    [[rgMenu insertItemWithTitle:@"Scan Selection As Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@"" atIndex:1]  setEnabled:enabled];
+    [[rgMenu insertItemWithTitle:@"Scan Selection As Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@"" atIndex:1] setEnabled:enabled];
+    [[rgMenu insertItemWithTitle:@"Scan Selection As Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@"" atIndex:2] setEnabled:enabled];
     [[rgMenu insertItemWithTitle:@"Remove ReplayGain Information" action:@selector(rgRemove:) keyEquivalent:@"" atIndex:3] setEnabled:enabled];
 
     NSMenuItem *rgMenuItem = [[NSMenuItem alloc] initWithTitle:@"ReplayGain" action:nil keyEquivalent:@""];
