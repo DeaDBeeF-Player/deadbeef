@@ -34,6 +34,8 @@
 
 #define trace(...) { deadbeef->log_detailed (&plugin.misc.plugin, 0, __VA_ARGS__); }
 
+static const char *album_signature = "$if2(%artist% - %album%,%filename%)";
+
 static ddb_rg_scanner_t plugin;
 static DB_functions_t *deadbeef;
 
@@ -59,13 +61,13 @@ rg_calc_thread(void *_args) {
 
     struct rg_thread_arg *args = (struct rg_thread_arg *)_args;
     if (args->settings->pabort && *(args->settings->pabort)) {
-        trace ("rg scan: user asked to abort, main loop aborted.\n");
+        trace ("rg_scanner: user asked to abort, main loop aborted.\n");
         args->result = -2;
         return;
     }
     if (deadbeef->pl_get_item_duration (args->settings->tracks[args->track_index]) <= 0) {
         deadbeef->pl_lock ();
-        trace ("rg scan: stream %s doesn't have finite length, skipped\n", deadbeef->pl_find_meta (args->settings->tracks[args->track_index], ":URI"));
+        trace ("rg_scanner: stream %s doesn't have finite length, skipped\n", deadbeef->pl_find_meta (args->settings->tracks[args->track_index], ":URI"));
         deadbeef->pl_unlock ();
         args->result = -1;
         return;
@@ -83,7 +85,7 @@ rg_calc_thread(void *_args) {
         fileinfo = dec->open (DDB_DECODER_HINT_RAW_SIGNAL);
         if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (args->settings->tracks[args->track_index])) != 0) {
             deadbeef->pl_lock ();
-            trace ("rg scan: failed to decode file %s\n", deadbeef->pl_find_meta (args->settings->tracks[args->track_index], ":URI"));
+            trace ("rg_scanner: failed to decode file %s\n", deadbeef->pl_find_meta (args->settings->tracks[args->track_index], ":URI"));
             deadbeef->pl_unlock ();
             args->result = -1;
             return;
@@ -101,85 +103,35 @@ rg_calc_thread(void *_args) {
                                           EBUR128_MODE_SAMPLE_PEAK);// mode: find sample peak
             if(args->gain_state[args->track_index] == NULL || args->peak_state[args->track_index] == NULL) {
                 deadbeef->pl_lock ();
-                trace ("rg scan: failed to init libebur128 object for file %s, aborting\n", deadbeef->pl_find_meta (args->settings->tracks[args->track_index], ":URI"));
+                trace ("rg_scanner: failed to init libebur128 object for file %s, aborting\n", deadbeef->pl_find_meta (args->settings->tracks[args->track_index], ":URI"));
                 deadbeef->pl_unlock ();
                 args->result = -1;
                 return;
             }
 
-            // setting channel map
-            // FIXME: can be converted into a table + loop
-            switch(fileinfo->fmt.channels) {
-                case 1: // mono
-                    ebur128_set_channel (args->gain_state[args->track_index], 0, EBUR128_CENTER);
+            const int maps[6][6] = {
+                {EBUR128_CENTER, 0, 0, 0, 0, 0},
+                {EBUR128_LEFT,EBUR128_RIGHT, 0, 0, 0, 0},
+                {EBUR128_LEFT,EBUR128_RIGHT,EBUR128_CENTER, 0, 0, 0},
+                {EBUR128_LEFT,EBUR128_RIGHT,EBUR128_LEFT_SURROUND,EBUR128_RIGHT_SURROUND, 0, 0},
+                {EBUR128_LEFT,EBUR128_RIGHT,EBUR128_CENTER,EBUR128_LEFT_SURROUND,EBUR128_RIGHT_SURROUND, 0},
+                {EBUR128_LEFT,EBUR128_RIGHT,EBUR128_UNUSED,EBUR128_CENTER,EBUR128_LEFT_SURROUND,EBUR128_RIGHT_SURROUND},
+            };
 
-                    ebur128_set_channel (args->peak_state[args->track_index], 0, EBUR128_CENTER);
-                    break;
-                case 2: // stereo
-                    ebur128_set_channel (args->gain_state[args->track_index], 0, EBUR128_LEFT);
-                    ebur128_set_channel (args->gain_state[args->track_index], 1, EBUR128_RIGHT);
+            if (fileinfo->fmt.channels > 6) {
+                deadbeef->pl_lock ();
+                trace ("rg_scanner: file %s has %d channels - libebur128 only supports up to 6. Aborting.\n",
+                       deadbeef->pl_find_meta (args->settings->tracks[args->track_index], ":URI"),
+                       fileinfo->fmt.channels);
+                deadbeef->pl_unlock ();
+                args->result = -1;
+                return;
+            }
 
-                    ebur128_set_channel (args->peak_state[args->track_index], 0, EBUR128_LEFT);
-                    ebur128_set_channel (args->peak_state[args->track_index], 1, EBUR128_RIGHT);
-                    break;
-                case 3: // 3.1
-                    ebur128_set_channel(args->gain_state[args->track_index], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->gain_state[args->track_index], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->gain_state[args->track_index], 2, EBUR128_CENTER);
+            for (int i = 0; i < fileinfo->fmt.channels; i++) {
+                ebur128_set_channel (args->gain_state[args->track_index], i, maps[fileinfo->fmt.channels-1][i]);
 
-                    ebur128_set_channel(args->peak_state[args->track_index], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->peak_state[args->track_index], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->peak_state[args->track_index], 2, EBUR128_CENTER);
-                    break;
-                case 4:
-                    ebur128_set_channel(args->gain_state[args->track_index], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->gain_state[args->track_index], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->gain_state[args->track_index], 2, EBUR128_LEFT_SURROUND);
-                    ebur128_set_channel(args->gain_state[args->track_index], 3, EBUR128_RIGHT_SURROUND);
-
-                    ebur128_set_channel(args->peak_state[args->track_index], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->peak_state[args->track_index], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->peak_state[args->track_index], 2, EBUR128_LEFT_SURROUND);
-                    ebur128_set_channel(args->peak_state[args->track_index], 3, EBUR128_RIGHT_SURROUND);
-                    break;
-                case 5:
-                    ebur128_set_channel(args->gain_state[args->track_index], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->gain_state[args->track_index], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->gain_state[args->track_index], 2, EBUR128_CENTER);
-                    ebur128_set_channel(args->gain_state[args->track_index], 3, EBUR128_LEFT_SURROUND);
-                    ebur128_set_channel(args->gain_state[args->track_index], 4, EBUR128_RIGHT_SURROUND);
-
-                    ebur128_set_channel(args->peak_state[args->track_index], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->peak_state[args->track_index], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->peak_state[args->track_index], 2, EBUR128_CENTER);
-                    ebur128_set_channel(args->peak_state[args->track_index], 3, EBUR128_LEFT_SURROUND);
-                    ebur128_set_channel(args->peak_state[args->track_index], 4, EBUR128_RIGHT_SURROUND);
-                    break;
-                case 6:
-                    ebur128_set_channel(args->gain_state[args->track_index], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->gain_state[args->track_index], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->gain_state[args->track_index], 2, EBUR128_CENTER);
-                    // LFE is not being taken into account when scanning
-                    // see R128 spec at https://tech.ebu.ch/docs/tech/tech3341.pdf
-                    ebur128_set_channel(args->gain_state[args->track_index], 3, EBUR128_UNUSED);
-                    ebur128_set_channel(args->gain_state[args->track_index], 4, EBUR128_LEFT_SURROUND);
-                    ebur128_set_channel(args->gain_state[args->track_index], 5, EBUR128_RIGHT_SURROUND);
-
-                    ebur128_set_channel(args->peak_state[args->track_index], 0, EBUR128_LEFT);
-                    ebur128_set_channel(args->peak_state[args->track_index], 1, EBUR128_RIGHT);
-                    ebur128_set_channel(args->peak_state[args->track_index], 2, EBUR128_CENTER);
-                    ebur128_set_channel(args->peak_state[args->track_index], 3, EBUR128_UNUSED);
-                    ebur128_set_channel(args->peak_state[args->track_index], 4, EBUR128_LEFT_SURROUND);
-                    ebur128_set_channel(args->peak_state[args->track_index], 5, EBUR128_RIGHT_SURROUND);
-                    break;
-                default:
-                    deadbeef->pl_lock ();
-                    trace ("rg scan: file %s has %d channels - libebur128 only supports up to 6. Aborting.\n",
-                                     deadbeef->pl_find_meta (args->settings->tracks[args->track_index], ":URI"),
-                                     fileinfo->fmt.channels);
-                    deadbeef->pl_unlock ();
-                    args->result = -1;
-                    return;
+                ebur128_set_channel (args->peak_state[args->track_index], i, maps[fileinfo->fmt.channels-1][i]);
             }
 
             int samplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
@@ -205,7 +157,7 @@ rg_calc_thread(void *_args) {
                     break;
                 }
                 if (args->settings->pabort && *(args->settings->pabort)) {
-                    trace ("rg scan: user asked to abort, scanning aborted.\n");
+                    trace ("rg_scanner: user asked to abort, scanning aborted.\n");
                     break;
                 }
 
@@ -237,13 +189,13 @@ rg_calc_thread(void *_args) {
     for (int ch = 0; ch < fileinfo->fmt.channels; ++ch) {
         res = ebur128_sample_peak (args->peak_state[args->track_index], ch, &ch_peak);
         if (res == EBUR128_ERROR_INVALID_MODE) {
-            trace ("rg scan: internal error: invalid mode set\n");
+            trace ("rg_scanner: internal error: invalid mode set\n");
             args->result = -1;
             return;
         }
-        trace ("rg scan: peak for ch %d: %f\n", ch, ch_peak);
+        trace ("rg_scanner: peak for ch %d: %f\n", ch, ch_peak);
         if (ch_peak > tr_peak) {
-            trace ("rg scan: %f > %f\n", ch_peak, tr_peak);
+            trace ("rg_scanner: %f > %f\n", ch_peak, tr_peak);
             tr_peak = ch_peak;
         }
     }
@@ -273,13 +225,50 @@ rg_calc_thread(void *_args) {
     }
 }
 
+static int
+_update_album_gain (ddb_rg_scanner_settings_t *settings, int i, int album_start, char *current_album, char *album, double loudness, ebur128_state **gain_state) {
+    if (strcmp (album, current_album)) {
+        if (i > 0) {
+            // update current album gain/peak
+            float album_peak = 0;
+
+            for (int n = album_start; n < i; ++n) {
+                if (album_peak < settings->results[n].track_peak) {
+                    album_peak = settings->results[n].track_peak;
+                }
+            }
+
+            // calculate gain of all tracks of the current album
+            ebur128_loudness_global_multiple(&gain_state[album_start], (size_t)i-album_start, &loudness);
+
+            float album_gain = -23 - (float)loudness + settings->targetdb - 84;
+
+            for (int n = album_start; n < i; ++n) {
+                settings->results[n].album_gain = album_gain;
+                settings->results[n].album_peak = album_peak;
+            }
+        }
+
+        // proceed to next album
+        strcpy (current_album, album);
+        return i;
+    }
+    return album_start;
+}
+
 int
 rg_scan (ddb_rg_scanner_settings_t *settings) {
     if (settings->num_threads <= 0) {
         settings->num_threads = 1;
     }
 
-    trace ("rg scan: using %d thread(s)\n", settings->num_threads);
+    char *album_signature_tf = NULL;
+    if (settings->mode == DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS) {
+        album_signature_tf = deadbeef->tf_compile (album_signature);
+        deadbeef->sort_track_array (NULL, settings->tracks, settings->num_tracks, album_signature, DDB_SORT_ASCENDING);
+    }
+
+    trace ("rg_scanner: using %d thread(s)\n", settings->num_threads);
 
     ebur128_state **gain_state = NULL;
     ebur128_state **peak_state = NULL;
@@ -294,6 +283,17 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
     rg_threads = malloc (settings->num_tracks * sizeof (intptr_t));
     struct rg_thread_arg *args = NULL;
     args = malloc (settings->num_tracks * sizeof (struct rg_thread_arg));
+
+    int album_start = -1;
+    char current_album[1000] = "";
+    char album[1000];
+
+    ddb_tf_context_t ctx;
+
+    ctx._size = sizeof (ctx);
+    ctx.plt = NULL;
+    ctx.idx = -1;
+    ctx.id = -1;
 
     // calculate gain for each track and album
     for (int i = 0; i < settings->num_tracks; ++i) {
@@ -314,6 +314,13 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
         args[i].peak_state = peak_state;
         args[i].loudness = loudness;
 
+        if (settings->mode == DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS) {
+            // set album gain when the album change is detected
+            ctx.it = settings->tracks[i];
+            deadbeef->tf_eval(&ctx, album_signature_tf, album, sizeof (album));
+            album_start = _update_album_gain (settings, i, album_start, current_album, album, loudness, gain_state);
+        }
+
         // run thread
         rg_threads[i] = deadbeef->thread_start(&rg_calc_thread, (void*)(&args[i]));
     }
@@ -325,6 +332,21 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
     }
     for (int i = remaining_thread_id; i < settings->num_tracks; ++i) {
         deadbeef->thread_join(rg_threads[i]);
+
+        // album gain for remaining tracks
+        if (settings->mode == DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS) {
+            // set album gain when the album change is detected
+            ctx.it = settings->tracks[i];
+            deadbeef->tf_eval(&ctx, album_signature_tf, album, sizeof (album));
+            album_start = _update_album_gain (settings, i, album_start, current_album, album, loudness, gain_state);
+        }
+    }
+
+    // album gain after the last track
+    if (settings->mode == DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS) {
+        // set album gain when the album change is detected
+        *album = 0;
+        album_start = _update_album_gain (settings, settings->num_tracks, album_start, current_album, album, loudness, gain_state);
     }
 
     if (!settings->pabort || !*(settings->pabort)) {
@@ -332,8 +354,8 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
             float album_peak = 0;
             
             for (int i = 0; i < settings->num_tracks; ++i) {
-                if (album_peak < args[i].settings->results[i].track_peak) {
-                    album_peak = args[i].settings->results[i].track_peak;
+                if (album_peak < settings->results[i].track_peak) {
+                    album_peak = settings->results[i].track_peak;
                 }
             }
 
@@ -376,6 +398,11 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
         }
         free (peak_state);
     }
+
+    if (album_signature_tf) {
+        deadbeef->tf_free (album_signature_tf);
+    }
+
     return 0;
 }
 
@@ -409,7 +436,7 @@ rg_write_meta (DB_playItem_t *track) {
     }
     else {
         deadbeef->pl_lock ();
-        trace ("rg scan: could not find matching decoder for %s\n", deadbeef->pl_find_meta (track, ":URI"));
+        trace ("rg_scanner: could not find matching decoder for %s\n", deadbeef->pl_find_meta (track, ":URI"));
         deadbeef->pl_unlock ();
         return -1;
     }
