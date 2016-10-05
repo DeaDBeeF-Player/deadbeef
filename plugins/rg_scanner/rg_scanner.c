@@ -295,8 +295,6 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
     struct rg_thread_arg *args = NULL;
     args = malloc (settings->num_tracks * sizeof (struct rg_thread_arg));
 
-    float album_peak = 0;
-
     // calculate gain for each track and album
     for (int i = 0; i < settings->num_tracks; ++i) {
         if (settings->progress_callback) {
@@ -330,18 +328,25 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
     }
 
     if (!settings->pabort || !*(settings->pabort)) {
-        // update album peak if necessary
-        for (int i = 0; i < settings->num_tracks; ++i) {
-            if (album_peak < args[i].settings->results[i].track_peak) {
-                album_peak = args[i].settings->results[i].track_peak;
+        if (settings->mode == DDB_RG_SOURCE_MODE_ALBUM) {
+            float album_peak = 0;
+            
+            for (int i = 0; i < settings->num_tracks; ++i) {
+                if (album_peak < args[i].settings->results[i].track_peak) {
+                    album_peak = args[i].settings->results[i].track_peak;
+                }
+            }
+
+            // calculate gain of all tracks combined
+            ebur128_loudness_global_multiple(gain_state, (size_t)settings->num_tracks, &loudness);
+
+            float album_gain = -23 - (float)loudness + settings->targetdb - 84;
+
+            for (int i = 0; i < settings->num_tracks; ++i) {
+                settings->results[i].album_gain = album_gain;
+                settings->results[i].album_peak = album_peak;
             }
         }
-
-        // calculate album gain
-        ebur128_loudness_global_multiple(gain_state, (size_t)settings->num_tracks, &loudness);
-
-        // TODO: album gain temporarily broken
-        //    settings->out_album_gain[i] = -23 - (float)loudness + settings->targetdb - 84; // see above
     }
 
     // free thread storage */
