@@ -1,7 +1,6 @@
 /*
  * ReplayGain Scanner plugin for DeaDBeeF Player
  *
- * Copyright (c) 2015 Ivan Pilipenko
  * Copyright (c) 2016 Alexey Yakovenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -36,8 +35,9 @@ enum {
 };
 
 enum {
-    DDG_RG_SCAN_RESULT_SUCCESS = 0,
-    DDG_RG_SCAN_RESULT_FILE_NOT_FOUND = -1,
+    DDB_RG_SCAN_RESULT_SUCCESS = 0,
+    DDB_RG_SCAN_RESULT_FILE_NOT_FOUND = -1,
+    DDB_RG_SCAN_RESULT_INVALID_FILE = -2,
 };
 
 #define DDB_RG_SCAN_DEFAULT_LOUDNESS 89.f
@@ -64,9 +64,9 @@ typedef struct {
 
     int num_tracks;
 
-    // Requested reference gain, will be automatically set to DDB_RG_SCAN_DEFAULT_LOUDNESS
+    // Requested reference loudness, will be automatically set to DDB_RG_SCAN_DEFAULT_LOUDNESS
     // Preferred config variable: rg_scanner.target_db=89
-    float targetdb;
+    float ref_loudness;
 
     // Max number of concurrent threads
     int num_threads;
