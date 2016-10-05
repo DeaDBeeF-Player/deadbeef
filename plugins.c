@@ -60,7 +60,9 @@
 #include "sort.h"
 #include "logger.h"
 #include "replaygain.h"
+#ifdef __APPLE__
 #include "cocoautil.h"
+#endif
 
 DB_plugin_t main_plugin = {
     .type = DB_PLUGIN_MISC,
