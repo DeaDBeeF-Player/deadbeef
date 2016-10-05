@@ -370,6 +370,11 @@ gtkui_override_tabstrip_colors (void) {
     return override_tabstrip_colors;
 }
 
+static void
+color_dump (const char *name, GdkColor *c) {
+    printf ("%s: %x %x %x\n", name, c->red>>8, c->green>>8, c->blue>>8);
+}
+
 void
 gtkui_init_theme_colors (void) {
     if (!theme_entry) {
@@ -391,6 +396,14 @@ gtkui_init_theme_colors (void) {
     if (!override_bar_colors) {
         memcpy (&gtkui_bar_foreground_color, &style->base[GTK_STATE_SELECTED], sizeof (GdkColor));
         memcpy (&gtkui_bar_background_color, &style->text[GTK_STATE_NORMAL], sizeof (GdkColor));
+
+        // HACK: if gtk says selected color is the same as background -- set it
+        // to a shade of blue
+        if (!memcmp (&style->bg[GTK_STATE_NORMAL], &gtkui_bar_foreground_color, sizeof (gtkui_bar_foreground_color))) {
+            gtkui_bar_foreground_color.red = 0x2b84;
+            gtkui_bar_foreground_color.green = 0x7fff;
+            gtkui_bar_foreground_color.blue = 0xbae0;
+        }
     }
     else {
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", entry_style->base[GTK_STATE_SELECTED].red, entry_style->base[GTK_STATE_SELECTED].green, entry_style->base[GTK_STATE_SELECTED].blue);
