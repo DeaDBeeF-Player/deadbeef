@@ -35,7 +35,8 @@
 static void
 plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, int order, int version);
 
-void plt_sort_v2 (playlist_t *plt, int iter, int id, const char *format, int order) {
+void
+plt_sort_v2 (playlist_t *plt, int iter, int id, const char *format, int order) {
     plt_sort_internal (plt, iter, id, format, order, 1);
 }
 
@@ -299,3 +300,57 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
 
     pl_unlock ();
 }
+
+void
+sort_track_array (playlist_t *playlist, playItem_t **tracks, int num_tracks, const char *format, int order) {
+    if (order != DDB_SORT_DESCENDING && order != DDB_SORT_ASCENDING) {
+        // unsupported
+        return;
+    }
+    int ascending = order == DDB_SORT_DESCENDING ? 0 : 1;
+
+    if (format == NULL || !tracks || !num_tracks) {
+        return;
+    }
+
+    pl_lock ();
+    pl_sort_ascending = ascending;
+    pl_sort_id = -1;
+
+    pl_sort_version = 1;
+    pl_sort_format = NULL;
+    pl_sort_tf_bytecode = tf_compile (format);
+    pl_sort_tf_ctx._size = sizeof (pl_sort_tf_ctx);
+    pl_sort_tf_ctx.it = NULL;
+    pl_sort_tf_ctx.plt = (ddb_playlist_t *)playlist;
+    pl_sort_tf_ctx.idx = -1;
+    pl_sort_tf_ctx.id = -1;
+
+    if (format
+        && !strcmp (format, "%length%")) {
+        pl_sort_is_duration = 1;
+    }
+    else {
+        pl_sort_is_duration = 0;
+    }
+    if (format
+        && (!strcmp (format, "%track number%") || !strcmp (format, "%tracknumber%"))) {
+        pl_sort_is_track = 1;
+    }
+    else {
+        pl_sort_is_track = 0;
+    }
+
+#if HAVE_MERGESORT
+    mergesort (tracks, num_tracks, sizeof (playItem_t *), qsort_cmp_func);
+#else
+    qsort (tracks, num_tracks, sizeof (playItem_t *), qsort_cmp_func);
+#endif
+
+    tf_free (pl_sort_tf_bytecode);
+    pl_sort_tf_bytecode = NULL;
+    memset (&pl_sort_tf_ctx, 0, sizeof (pl_sort_tf_ctx));
+
+    pl_unlock ();
+}
+

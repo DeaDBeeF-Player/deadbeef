@@ -1341,6 +1341,8 @@ typedef struct {
     // Removes an existing value of specified size, ignoring refcount
     void (*metacache_remove_value) (const char *value, size_t valuesize);
 
+    ////// ReplayGain APIs available from 1.10+ //////
+
     // Apply replaygain according to the current settings.
     // NOTE: This only works for the current streaming_track,
     // as the current settings are controlled by the streamer.
@@ -1358,6 +1360,17 @@ typedef struct {
     // player configuration, and the supplied track.
     // After initializing the settings, pass the pointer to replaygain_apply_with_settings
     void (*replaygain_init_settings) (ddb_replaygain_settings_t *settings, DB_playItem_t *it);
+
+    ////// Sort APIs available from 1.10+ //////
+
+    // Sort a plain array of tracks, according to specified title formatting v2 script and column id.
+    // The sorting is applied in-place, i.e. the input array is modified.
+    // `playlist` can be NULL, otherwise must point to the playlist which ALL of the tracks belong to;
+    // `tracks` and `numtracks` specify the array of tracks;
+    // `format` is title formatting v2 script;
+    // `order` can be one of DDB_SORT_ASCENDING or DDB_SORT_DESCENDING (no random).
+    void (*sort_track_array) (ddb_playlist_t *playlist, DB_playItem_t **tracks, int num_tracks, const char *format, int order);
+
 #endif
 } DB_functions_t;
 
