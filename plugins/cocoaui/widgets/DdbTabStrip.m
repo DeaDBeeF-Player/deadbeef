@@ -285,16 +285,19 @@ plt_get_title_wrapper (int plt) {
     [gc setPatternPhase:convPt];
     [NSBezierPath fillRect:NSMakeRect(area.origin.x + [tleft size].width, area.origin.y, area.size.width-[tleft size].width-[tright size].width, [tfill size].height)];
     [gc restoreGraphicsState];
-    
+
     [tright drawAtPoint:NSMakePoint(area.origin.x+area.size.width-[tleft size].width, area.origin.y) fromRect:NSMakeRect(0,0,[_tabRight size].width,[tright size].height) operation:NSCompositeSourceOver fraction:1];
 
     NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [textStyle setAlignment:NSLeftTextAlignment];
     [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-    
+
+    NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
     NSDictionary *attrs = [NSDictionary dictionaryWithObjectsAndKeys
                            : textStyle, NSParagraphStyleAttributeName
+                           ,font , NSFontAttributeName
                            , nil];
+
     NSString *tab_title = plt_get_title_wrapper (idx);
     
     [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + text_vert_offset, area.size.width - (text_left_padding + text_right_padding - 1), area.size.height) withAttributes:attrs];
