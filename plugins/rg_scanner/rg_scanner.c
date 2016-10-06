@@ -214,6 +214,8 @@ _update_album_gain (ddb_rg_scanner_settings_t *settings, int i, int album_start,
 
         // proceed to next album
         strcpy (current_album, album);
+
+        //trace ("next album found %d -> %d\n", album_start, i);
         return i;
     }
     return album_start;
@@ -250,17 +252,6 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
     intptr_t *rg_threads = calloc (settings->num_tracks, sizeof (intptr_t));
     track_state_t *track_states = calloc (settings->num_tracks, sizeof (track_state_t));
 
-    int album_start = -1;
-    char current_album[1000] = "";
-    char album[1000];
-
-    ddb_tf_context_t ctx;
-
-    ctx._size = sizeof (ctx);
-    ctx.plt = NULL;
-    ctx.idx = -1;
-    ctx.id = -1;
-
     // calculate gain for each track and album
     for (int i = 0; i < settings->num_tracks; ++i) {
         if (settings->progress_callback) {
@@ -283,13 +274,6 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
         track_states[i].gain_state = gain_state;
         track_states[i].peak_state = peak_state;
 
-        if (settings->mode == DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS) {
-            // set album gain when the album change is detected
-            ctx.it = settings->tracks[i];
-            deadbeef->tf_eval(&ctx, album_signature_tf, album, sizeof (album));
-            album_start = _update_album_gain (settings, i, album_start, current_album, album, loudness, gain_state);
-        }
-
         // run thread
         rg_threads[i] = deadbeef->thread_start(&rg_calc_thread, (void*)(&track_states[i]));
     }
@@ -306,20 +290,31 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
         if (settings->pabort && *(settings->pabort)) {
             goto cleanup;
         }
-        // album gain for remaining tracks
-        if (settings->mode == DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS) {
-            // set album gain when the album change is detected
-            ctx.it = settings->tracks[i];
-            deadbeef->tf_eval(&ctx, album_signature_tf, album, sizeof (album));
-            album_start = _update_album_gain (settings, i, album_start, current_album, album, loudness, gain_state);
-        }
     }
 
-    // album gain after the last track
     if (settings->mode == DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS) {
-        // set album gain when the album change is detected
-        *album = 0;
-        album_start = _update_album_gain (settings, settings->num_tracks, album_start, current_album, album, loudness, gain_state);
+        int album_start = -1;
+        char current_album[1000] = "";
+        char album[1000];
+
+        ddb_tf_context_t ctx;
+
+        ctx._size = sizeof (ctx);
+        ctx.plt = NULL;
+        ctx.idx = -1;
+        ctx.id = -1;
+
+        for (int i = 0; i <= settings->num_tracks; i++) {
+            // set album gain when the album change is detected
+            if (i < settings->num_tracks) {
+                ctx.it = settings->tracks[i];
+                deadbeef->tf_eval(&ctx, album_signature_tf, album, sizeof (album));
+            }
+            else {
+                *album = 0;
+            }
+            album_start = _update_album_gain (settings, i, album_start, current_album, album, loudness, gain_state);
+        }
     }
 
     if (settings->mode == DDB_RG_SOURCE_MODE_ALBUM) {
