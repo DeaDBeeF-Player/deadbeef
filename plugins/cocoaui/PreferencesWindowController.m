@@ -24,11 +24,13 @@
 #import "PreferencesWindowController.h"
 #include "deadbeef.h"
 #include "pluginsettings.h"
+#include "parser.h"
 
 extern DB_functions_t *deadbeef;
 
 @interface PreferencesWindowController () {
     settings_data_t _settingsData;
+    NSMutableArray *_bindings;
 }
 
 @end
@@ -262,6 +264,8 @@ extern DB_functions_t *deadbeef;
 
     DB_plugin_t *p = deadbeef->plug_get_list()[idx];
 
+    _bindings = [[NSMutableArray alloc] init];
+
     while ([[v subviews] count] > 0) {
         [[[v subviews] lastObject] removeFromSuperview];
     }
@@ -273,7 +277,7 @@ extern DB_functions_t *deadbeef;
         return;
     }
 
-    int label_padding = 8;
+    int label_padding = 4;
     int unit_spacing = 4;
     int unit_h = 22;
     int h = _settingsData.nprops * (unit_h + unit_spacing);
@@ -299,7 +303,7 @@ extern DB_functions_t *deadbeef;
             case PROP_FILE:
             {
                 NSTextField *lbl = [[NSTextField alloc] initWithFrame:NSMakeRect(0, y-2, 500, unit_h)];
-                [lbl setStringValue:[NSString stringWithUTF8String:_settingsData.props[i].title]];
+                [lbl setStringValue:[[NSString stringWithUTF8String:_settingsData.props[i].title] stringByAppendingString:@":"]];
                 [lbl setBezeled:NO];
                 [lbl setDrawsBackground:NO];
                 [lbl setEditable:NO];
@@ -321,12 +325,14 @@ extern DB_functions_t *deadbeef;
             case PROP_PASSWORD:
             case PROP_FILE:
             {
-                NSRect frame = NSMakeRect(label_w + label_padding, y, sz.width-label_w - label_padding - 4, unit_h);
-                NSTextField *tf = _settingsData.props[i].type == PROP_PASSWORD ? [[NSSecureTextField alloc] initWithFrame:frame] : [[NSTextField alloc] initWithFrame:frame];
-                [tf setStringValue:[NSString stringWithUTF8String:deadbeef->conf_get_str_fast (_settingsData.props[i].key, _settingsData.props[i].def)]];
+                int right_offs = 0;
                 if (_settingsData.props[i].type == PROP_FILE) {
-                    [tf setEditable:NO];
+                    right_offs = 24;
                 }
+                NSRect frame = NSMakeRect(label_w + label_padding, y, sz.width-label_w - label_padding - 4 - right_offs, unit_h);
+                NSTextField *tf = _settingsData.props[i].type == PROP_PASSWORD ? [[NSSecureTextField alloc] initWithFrame:frame] : [[NSTextField alloc] initWithFrame:frame];
+                [tf setUsesSingleLineMode:YES];
+                [tf setStringValue:[NSString stringWithUTF8String:deadbeef->conf_get_str_fast (_settingsData.props[i].key, _settingsData.props[i].def)]];
                 [v addSubview:tf];
                 break;
             }
@@ -338,12 +344,77 @@ extern DB_functions_t *deadbeef;
                 [checkbox setTitle:[NSString stringWithUTF8String:_settingsData.props[i].title]];
                 [checkbox setState:deadbeef->conf_get_int (_settingsData.props[i].key, atoi(_settingsData.props[i].def)) ? NSOnState : NSOffState];
                 [v addSubview:checkbox];
+                break;
+            }
+            case PROP_SLIDER:
+            {
+                NSRect frame = NSMakeRect(label_w + label_padding, y, sz.width-label_w - label_padding - 4 - 32, unit_h);
+                NSSlider *slider = [[NSSlider alloc] initWithFrame:frame];
+                const char *opts = _settingsData.props[i].select_options;
+                float min, max, step;
+                sscanf (opts, "%f,%f,%f", &min, &max, &step);
+                [slider setMinValue:min];
+                [slider setMaxValue:max];
+                [slider setContinuous:YES];
+                [slider setIntValue:deadbeef->conf_get_int (_settingsData.props[i].key, atoi(_settingsData.props[i].def))];
+
+                frame = NSMakeRect(label_w + sz.width-label_w - label_padding - 4 - 32 + 4, y, 28, unit_h);
+                NSTextField *label = [[NSTextField alloc] initWithFrame:frame];
+                [label setStringValue:[NSString stringWithUTF8String: deadbeef->conf_get_str_fast (_settingsData.props[i].key, _settingsData.props[i].def)]];
+                [label setBezeled:NO];
+                [label setDrawsBackground:NO];
+                [label setEditable:NO];
+                [label setSelectable:NO];
+
+                [_bindings addObject:@[slider, label, [NSNumber numberWithBool:YES]]];
+
+                [slider setTarget:self];
+                [slider setAction:@selector(valueChanged:)];
+
+                [v addSubview:slider];
+                [v addSubview:label];
+                break;
+            }
+            case PROP_SELECT:
+            {
+                NSRect frame = NSMakeRect(label_w + label_padding, y, sz.width-label_w - label_padding - 4, unit_h);
+                NSPopUpButton *popUpButton = [[NSPopUpButton alloc] initWithFrame:frame];
+
+                char token[MAX_TOKEN];
+                const char *script = _settingsData.props[i].select_options;
+
+                char value[100];
+                deadbeef->conf_get_str (_settingsData.props[i].key, _settingsData.props[i].def, value, sizeof (value));
+
+                while ((script = gettoken (script, token)) && strcmp (token, ";")) {
+                    [popUpButton addItemWithTitle:[NSString stringWithUTF8String:token]];
+                    if (!strcmp (value, token)) {
+                        [popUpButton selectItemAtIndex:[popUpButton numberOfItems]-1];
+                    }
+                }
+
+                [v addSubview:popUpButton];
+                break;
             }
         }
     }
     deadbeef->conf_unlock ();
     NSRect frame = [v frame];
     [v setFrame:NSMakeRect(0, 0, frame.size.width, h)];
+}
+
+- (void)valueChanged:(id)sender {
+    for (NSArray *binding in _bindings) {
+        if (binding[0] == sender) {
+            if ([binding count] > 2 && [binding[2] boolValue]) {
+                [binding[1] setIntValue:[sender intValue]];
+            }
+            else {
+                [binding[1] setStringValue:[sender stringValue]];
+            }
+            break;
+        }
+    }
 }
 
 - (void)setPluginInfo:(NSInteger)idx {
