@@ -2112,15 +2112,11 @@ artwork_plugin_start (void)
 }
 
 static const char settings_dlg[] =
-    "property box hbox[1] border=8 height=-1;\n"
     "property \"Cache update period (in hours, 0=never)\" entry artwork.cache.period 48;\n"
     "property \"Fetch from embedded tags\" checkbox artwork.enable_embedded 1;\n"
-    "property box hbox[2] spacing=0 height=-1;\n"
     "property \"Fetch from local folder\" checkbox artwork.enable_localfolder 1;\n"
-    "property box vbox[1] expand fill height=-1;\n"
-    "property \" -\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
+    "property \"Local file mask\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
 #ifdef USE_VFS_CURL
-    "property box hbox[3] spacing=16 height=-1;\n"
     "property \"Fetch from Last.fm\" checkbox artwork.enable_lastfm 0;\n"
     "property \"Fetch from MusicBrainz\" checkbox artwork.enable_musicbrainz 0;\n"
     "property \"Fetch from Albumart.org\" checkbox artwork.enable_albumartorg 0;\n"
