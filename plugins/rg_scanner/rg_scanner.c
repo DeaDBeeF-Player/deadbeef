@@ -270,6 +270,11 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
         if (i >= settings->num_threads) {
             // simple blocking mechanism: join the 'oldest' thread
             deadbeef->thread_join(rg_threads[i - settings->num_threads]);
+            rg_threads[i - settings->num_threads] = 0;
+        }
+
+        if (settings->pabort && *(settings->pabort)) {
+            goto cleanup;
         }
 
         // initialize arguments
@@ -296,7 +301,11 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
     }
     for (int i = remaining_thread_id; i < settings->num_tracks; ++i) {
         deadbeef->thread_join(rg_threads[i]);
+        rg_threads[i] = 0;
 
+        if (settings->pabort && *(settings->pabort)) {
+            goto cleanup;
+        }
         // album gain for remaining tracks
         if (settings->mode == DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS) {
             // set album gain when the album change is detected
@@ -313,39 +322,46 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
         album_start = _update_album_gain (settings, settings->num_tracks, album_start, current_album, album, loudness, gain_state);
     }
 
-    if (!settings->pabort || !*(settings->pabort)) {
-        if (settings->mode == DDB_RG_SOURCE_MODE_ALBUM) {
-            float album_peak = 0;
-            
-            for (int i = 0; i < settings->num_tracks; ++i) {
-                if (album_peak < settings->results[i].track_peak) {
-                    album_peak = settings->results[i].track_peak;
-                }
+    if (settings->mode == DDB_RG_SOURCE_MODE_ALBUM) {
+        float album_peak = 0;
+
+        for (int i = 0; i < settings->num_tracks; ++i) {
+            if (album_peak < settings->results[i].track_peak) {
+                album_peak = settings->results[i].track_peak;
             }
+        }
 
-            // calculate gain of all tracks combined
-            ebur128_loudness_global_multiple(gain_state, (size_t)settings->num_tracks, &loudness);
+        // calculate gain of all tracks combined
+        ebur128_loudness_global_multiple(gain_state, (size_t)settings->num_tracks, &loudness);
 
-            float album_gain = -23 - (float)loudness + settings->ref_loudness - 84;
+        float album_gain = -23 - (float)loudness + settings->ref_loudness - 84;
 
-            for (int i = 0; i < settings->num_tracks; ++i) {
-                settings->results[i].album_gain = album_gain;
-                settings->results[i].album_peak = album_peak;
-            }
+        for (int i = 0; i < settings->num_tracks; ++i) {
+            settings->results[i].album_gain = album_gain;
+            settings->results[i].album_peak = album_peak;
         }
     }
 
-    // free thread storage */
+cleanup:
+    // free thread storage
     if (rg_threads) {
+        // join the still-active threads
+        for (int i = 0; i < settings->num_tracks; i++) {
+            if (rg_threads[i]) {
+                deadbeef->thread_join (rg_threads[i]);
+                rg_threads[i] = 0;
+            }
+        }
+
         free (rg_threads);
         rg_threads = NULL;
     }
+
     if (track_states) {
         free (track_states);
         track_states = NULL;
     }
 
-    // clean up
     if (gain_state) {
         for (int i = 0; i < settings->num_tracks; ++i) {
             if (gain_state[i]) {
@@ -353,7 +369,9 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
             }
         }
         free (gain_state);
+        gain_state = NULL;
     }
+
     if (peak_state) {
         for (int i = 0; i < settings->num_tracks; ++i) {
             if (peak_state[i]) {
@@ -361,10 +379,12 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
             }
         }
         free (peak_state);
+        peak_state = NULL;
     }
 
     if (album_signature_tf) {
         deadbeef->tf_free (album_signature_tf);
+        album_signature_tf = NULL;
     }
 
     return 0;
