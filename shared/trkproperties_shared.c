@@ -152,7 +152,7 @@ trkproperties_build_track_list_for_ctx (ddb_playlist_t *plt, int ctx, DB_playIte
     }
     else {
         int n = 0;
-        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
         while (it) {
             if (ctx == DDB_ACTION_CTX_PLAYLIST || deadbeef->pl_is_selected (it)) {
                 assert (n < num);
