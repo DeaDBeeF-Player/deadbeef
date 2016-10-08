@@ -457,6 +457,9 @@ void entropy_rice_decode(alac_file* alac,
 			// got blockSize 0s
 			if (blockSize > 0)
 			{
+				if (outputCount + 1 + blockSize > outputSize) {
+					blockSize = outputSize - outputCount - 1;
+				}
 				memset(&outputBuffer[outputCount + 1], 0, blockSize * sizeof(*outputBuffer));
 				outputCount += blockSize;
 			}
@@ -792,11 +795,17 @@ void decode_frame(alac_file *alac,
 
         isnotcompressed = readbits(alac, 1); /* whether the frame is compressed */
 
+        uint32_t read_output_samples = 0;
+
         if (hassize)
         {
             /* now read the number of samples,
              * as a 32bit integer */
-            outputsamples = readbits(alac, 32);
+            read_output_samples = readbits(alac, 32);
+            outputsamples = read_output_samples;
+            if (outputsamples > alac->setinfo_max_samples_per_frame) {
+                outputsamples = alac->setinfo_max_samples_per_frame;
+            }
             *outputsize = outputsamples * alac->bytespersample;
         }
 
@@ -971,11 +980,17 @@ void decode_frame(alac_file *alac,
 
         isnotcompressed = readbits(alac, 1); /* whether the frame is compressed */
 
+        uint32_t read_output_samples = 0;
+
         if (hassize)
         {
             /* now read the number of samples,
              * as a 32bit integer */
-            outputsamples = readbits(alac, 32);
+            read_output_samples = readbits(alac, 32);
+            outputsamples = read_output_samples;
+            if (outputsamples > alac->setinfo_max_samples_per_frame) {
+                outputsamples = alac->setinfo_max_samples_per_frame;
+            }
             *outputsize = outputsamples * alac->bytespersample;
         }
 
