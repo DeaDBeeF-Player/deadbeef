@@ -432,7 +432,7 @@ on_column_id_changed                   (GtkComboBox     *combobox,
         trace ("failed to get column format widget\n");
         return;
     }
-    gtk_widget_set_sensitive (fmt, act >= 10 ? TRUE : FALSE);
+    gtk_widget_set_sensitive (fmt, act >= 11 ? TRUE : FALSE);
 
     if (!editcolumn_title_changed) {
         GtkWidget *title= lookup_widget (toplevel, "title");

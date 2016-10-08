@@ -1470,12 +1470,15 @@ init_column (col_info_t *inf, int id, const char *format) {
         inf->format = strdup (COLUMN_FORMAT_TITLE);
         break;
     case 7:
-        inf->format = strdup (COLUMN_FORMAT_LENGTH);
+        inf->format = strdup (COLUMN_FORMAT_YEAR);
         break;
     case 8:
-        inf->format = strdup (COLUMN_FORMAT_TRACKNUMBER);
+        inf->format = strdup (COLUMN_FORMAT_LENGTH);
         break;
     case 9:
+        inf->format = strdup (COLUMN_FORMAT_TRACKNUMBER);
+        break;
+    case 10:
         inf->format = strdup (COLUMN_FORMAT_BAND);
         break;
     default:
