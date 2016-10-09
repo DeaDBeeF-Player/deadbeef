@@ -13,7 +13,7 @@
 
 typedef struct stream_tTAG stream_t;
 
-void stream_read(stream_t *stream, size_t len, void *buf);
+int32_t stream_read(stream_t *stream, size_t len, void *buf);
 
 int32_t stream_read_int32(stream_t *stream);
 uint32_t stream_read_uint32(stream_t *stream);

@@ -1321,10 +1321,7 @@
 		2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2D9177391A0E8966004BC222 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
 		2D9177421A0E89C8004BC222 /* alac.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D91773F1A0E8966004BC222 /* alac.dylib */; };
-		2D9177431A0E89F1004BC222 /* alac_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177331A0E895E004BC222 /* alac_plugin.c */; };
-		2D9177441A0E89F1004BC222 /* alac.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177341A0E895E004BC222 /* alac.c */; };
-		2D9177451A0E89F1004BC222 /* demux.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177351A0E895E004BC222 /* demux.c */; };
-		2D9177461A0E89F1004BC222 /* stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177361A0E895E004BC222 /* stream.c */; };
+		2D9177431A0E89F1004BC222 /* alac_plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177331A0E895E004BC222 /* alac_plugin.cpp */; };
 		2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */; };
 		2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */; };
 		2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D93DC531AADFEEF003D2D8D /* pluginsettings.h */; };
@@ -1455,6 +1452,25 @@
 		2DB225401D4F2F9500776E31 /* urf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB225371D4F2F9500776E31 /* urf.h */; };
 		2DB225431D4F30C100776E31 /* modloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DB225411D4F30C100776E31 /* modloader.cpp */; };
 		2DB225441D4F30C100776E31 /* modloader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB225421D4F30C100776E31 /* modloader.h */; };
+		2DB61F5C1DA8EEDA0095742A /* ag_dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB61F4F1DA8EEDA0095742A /* ag_dec.c */; };
+		2DB61F5D1DA8EEDA0095742A /* aglib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB61F501DA8EEDA0095742A /* aglib.h */; };
+		2DB61F5E1DA8EEDA0095742A /* ALACAudioTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB61F511DA8EEDA0095742A /* ALACAudioTypes.h */; };
+		2DB61F5F1DA8EEDA0095742A /* ALACBitUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB61F521DA8EEDA0095742A /* ALACBitUtilities.c */; };
+		2DB61F601DA8EEDA0095742A /* ALACBitUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB61F531DA8EEDA0095742A /* ALACBitUtilities.h */; };
+		2DB61F611DA8EEDA0095742A /* ALACDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DB61F541DA8EEDA0095742A /* ALACDecoder.cpp */; };
+		2DB61F621DA8EEDA0095742A /* ALACDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB61F551DA8EEDA0095742A /* ALACDecoder.h */; };
+		2DB61F631DA8EEDA0095742A /* dp_dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB61F561DA8EEDA0095742A /* dp_dec.c */; };
+		2DB61F641DA8EEDA0095742A /* dplib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB61F571DA8EEDA0095742A /* dplib.h */; };
+		2DB61F651DA8EEDA0095742A /* EndianPortable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB61F581DA8EEDA0095742A /* EndianPortable.c */; };
+		2DB61F661DA8EEDA0095742A /* EndianPortable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB61F591DA8EEDA0095742A /* EndianPortable.h */; };
+		2DB61F671DA8EEDA0095742A /* matrix_dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB61F5A1DA8EEDA0095742A /* matrix_dec.c */; };
+		2DB61F681DA8EEDA0095742A /* matrixlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB61F5B1DA8EEDA0095742A /* matrixlib.h */; };
+		2DB61F6B1DA8F1750095742A /* demux.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB61F691DA8F1750095742A /* demux.h */; };
+		2DB61F6C1DA8F1750095742A /* demux.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB61F6A1DA8F1750095742A /* demux.c */; };
+		2DB61F6E1DA8F1B80095742A /* stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB61F6D1DA8F1B80095742A /* stream.c */; };
+		2DB61F701DA8F1C00095742A /* stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB61F6F1DA8F1C00095742A /* stream.h */; };
+		2DB61F721DA8F6670095742A /* plugindef.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB61F711DA8F6670095742A /* plugindef.c */; };
+		2DB61F741DA8F67B0095742A /* alac_plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB61F731DA8F67B0095742A /* alac_plugin.h */; };
 		2DB96A8419ABB48300E318A8 /* src.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB96A6A19ABB32E00E318A8 /* src.c */; };
 		2DB96A8519ABB48300E318A8 /* src.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A6B19ABB32E00E318A8 /* src.h */; };
 		2DB96A9B19ABB50300E318A8 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A9019ABB50300E318A8 /* common.h */; };
@@ -1540,6 +1556,8 @@
 		2DEA2F951B99A15800A4C6EA /* Bml_Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCA51B7710650063DA75 /* Bml_Parser.cpp */; };
 		2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEF494219C4DB4100B718C1 /* DdbListview.h */; };
 		2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF494319C4DB4100B718C1 /* DdbListview.m */; };
+		2DF1ED691DAA376B00E23298 /* decomp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF1ED671DAA376B00E23298 /* decomp.h */; };
+		2DF1ED6A1DAA376B00E23298 /* alac.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF1ED681DAA376B00E23298 /* alac.c */; };
 		2DF622BB1B335FF100C70C7D /* convpresets in Resources */ = {isa = PBXBuildFile; fileRef = 2DF622B81B335DF400C70C7D /* convpresets */; };
 		2DF9304F1AB817310030C0CA /* wildmidi_lib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF9304A1AB817310030C0CA /* wildmidi_lib.h */; };
 		2DF930511AB817310030C0CA /* wildmidi_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304D1AB817310030C0CA /* wildmidi_lib.c */; };
@@ -3646,14 +3664,7 @@
 		2D8DA0EC1C9718C10044CC15 /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = readme.txt; path = plugins/psf/readme.txt; sourceTree = "<group>"; };
 		2D8E9C1719ED5C4400EE1408 /* curl_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = curl_config.h; path = osx/curl_config.h; sourceTree = "<group>"; };
 		2D8E9C1919ED5C8200EE1408 /* libpoll.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpoll.dylib; path = usr/lib/libpoll.dylib; sourceTree = SDKROOT; };
-		2D91772F1A0E895E004BC222 /* decomp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = decomp.h; path = plugins/alac/decomp.h; sourceTree = "<group>"; };
-		2D9177301A0E895E004BC222 /* demux.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = demux.h; path = plugins/alac/demux.h; sourceTree = "<group>"; };
-		2D9177311A0E895E004BC222 /* stdint_win.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stdint_win.h; path = plugins/alac/stdint_win.h; sourceTree = "<group>"; };
-		2D9177321A0E895E004BC222 /* stream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stream.h; path = plugins/alac/stream.h; sourceTree = "<group>"; };
-		2D9177331A0E895E004BC222 /* alac_plugin.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = alac_plugin.c; path = plugins/alac/alac_plugin.c; sourceTree = "<group>"; };
-		2D9177341A0E895E004BC222 /* alac.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = alac.c; path = plugins/alac/alac.c; sourceTree = "<group>"; };
-		2D9177351A0E895E004BC222 /* demux.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = demux.c; path = plugins/alac/demux.c; sourceTree = "<group>"; };
-		2D9177361A0E895E004BC222 /* stream.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = stream.c; path = plugins/alac/stream.c; sourceTree = "<group>"; };
+		2D9177331A0E895E004BC222 /* alac_plugin.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = alac_plugin.cpp; path = plugins/alac/alac_plugin.cpp; sourceTree = "<group>"; };
 		2D91773F1A0E8966004BC222 /* alac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = alac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D9177501A0E8A3D004BC222 /* mp4ff_int_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp4ff_int_types.h; path = plugins/libmp4ff/mp4ff_int_types.h; sourceTree = "<group>"; };
 		2D9177511A0E8A3D004BC222 /* mp4ff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp4ff.h; path = plugins/libmp4ff/mp4ff.h; sourceTree = "<group>"; };
@@ -3800,6 +3811,25 @@
 		2DB225371D4F2F9500776E31 /* urf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = urf.h; path = plugins/dumb/urf.h; sourceTree = "<group>"; };
 		2DB225411D4F30C100776E31 /* modloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = modloader.cpp; path = plugins/dumb/modloader.cpp; sourceTree = "<group>"; };
 		2DB225421D4F30C100776E31 /* modloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = modloader.h; path = plugins/dumb/modloader.h; sourceTree = "<group>"; };
+		2DB61F4F1DA8EEDA0095742A /* ag_dec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ag_dec.c; path = plugins/alac/ALAC/codec/ag_dec.c; sourceTree = "<group>"; };
+		2DB61F501DA8EEDA0095742A /* aglib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aglib.h; path = plugins/alac/ALAC/codec/aglib.h; sourceTree = "<group>"; };
+		2DB61F511DA8EEDA0095742A /* ALACAudioTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ALACAudioTypes.h; path = plugins/alac/ALAC/codec/ALACAudioTypes.h; sourceTree = "<group>"; };
+		2DB61F521DA8EEDA0095742A /* ALACBitUtilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ALACBitUtilities.c; path = plugins/alac/ALAC/codec/ALACBitUtilities.c; sourceTree = "<group>"; };
+		2DB61F531DA8EEDA0095742A /* ALACBitUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ALACBitUtilities.h; path = plugins/alac/ALAC/codec/ALACBitUtilities.h; sourceTree = "<group>"; };
+		2DB61F541DA8EEDA0095742A /* ALACDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ALACDecoder.cpp; path = plugins/alac/ALAC/codec/ALACDecoder.cpp; sourceTree = "<group>"; };
+		2DB61F551DA8EEDA0095742A /* ALACDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ALACDecoder.h; path = plugins/alac/ALAC/codec/ALACDecoder.h; sourceTree = "<group>"; };
+		2DB61F561DA8EEDA0095742A /* dp_dec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dp_dec.c; path = plugins/alac/ALAC/codec/dp_dec.c; sourceTree = "<group>"; };
+		2DB61F571DA8EEDA0095742A /* dplib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dplib.h; path = plugins/alac/ALAC/codec/dplib.h; sourceTree = "<group>"; };
+		2DB61F581DA8EEDA0095742A /* EndianPortable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = EndianPortable.c; path = plugins/alac/ALAC/codec/EndianPortable.c; sourceTree = "<group>"; };
+		2DB61F591DA8EEDA0095742A /* EndianPortable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EndianPortable.h; path = plugins/alac/ALAC/codec/EndianPortable.h; sourceTree = "<group>"; };
+		2DB61F5A1DA8EEDA0095742A /* matrix_dec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = matrix_dec.c; path = plugins/alac/ALAC/codec/matrix_dec.c; sourceTree = "<group>"; };
+		2DB61F5B1DA8EEDA0095742A /* matrixlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = matrixlib.h; path = plugins/alac/ALAC/codec/matrixlib.h; sourceTree = "<group>"; };
+		2DB61F691DA8F1750095742A /* demux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = demux.h; path = plugins/alac/demux.h; sourceTree = "<group>"; };
+		2DB61F6A1DA8F1750095742A /* demux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = demux.c; path = plugins/alac/demux.c; sourceTree = "<group>"; };
+		2DB61F6D1DA8F1B80095742A /* stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream.c; path = plugins/alac/stream.c; sourceTree = "<group>"; };
+		2DB61F6F1DA8F1C00095742A /* stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stream.h; path = plugins/alac/stream.h; sourceTree = "<group>"; };
+		2DB61F711DA8F6670095742A /* plugindef.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = plugindef.c; path = plugins/alac/plugindef.c; sourceTree = "<group>"; };
+		2DB61F731DA8F67B0095742A /* alac_plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = alac_plugin.h; path = plugins/alac/alac_plugin.h; sourceTree = "<group>"; };
 		2DB96A6A19ABB32E00E318A8 /* src.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src.c; path = ../plugins/dsp_libsrc/src.c; sourceTree = "<group>"; };
 		2DB96A6B19ABB32E00E318A8 /* src.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = src.h; path = ../plugins/dsp_libsrc/src.h; sourceTree = "<group>"; };
 		2DB96A8019ABB47C00E318A8 /* dsp_libsrc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dsp_libsrc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3882,6 +3912,8 @@
 		2DE92F521BAFFBC700F37154 /* wavpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wavpack.c; path = plugins/wavpack/wavpack.c; sourceTree = "<group>"; };
 		2DEF494219C4DB4100B718C1 /* DdbListview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbListview.h; sourceTree = "<group>"; };
 		2DEF494319C4DB4100B718C1 /* DdbListview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbListview.m; sourceTree = "<group>"; };
+		2DF1ED671DAA376B00E23298 /* decomp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = decomp.h; path = plugins/alac/decomp.h; sourceTree = "<group>"; };
+		2DF1ED681DAA376B00E23298 /* alac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = alac.c; path = plugins/alac/alac.c; sourceTree = "<group>"; };
 		2DF622B81B335DF400C70C7D /* convpresets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = convpresets; path = plugins/converter/convpresets; sourceTree = "<group>"; };
 		2DF930441AB816DC0030C0CA /* wildmidi.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wildmidi.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DF9304A1AB817310030C0CA /* wildmidi_lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wildmidi_lib.h; sourceTree = "<group>"; };
@@ -6285,14 +6317,16 @@
 		2D91772E1A0E892F004BC222 /* alac */ = {
 			isa = PBXGroup;
 			children = (
-				2D91772F1A0E895E004BC222 /* decomp.h */,
-				2D9177301A0E895E004BC222 /* demux.h */,
-				2D9177311A0E895E004BC222 /* stdint_win.h */,
-				2D9177321A0E895E004BC222 /* stream.h */,
-				2D9177331A0E895E004BC222 /* alac_plugin.c */,
-				2D9177341A0E895E004BC222 /* alac.c */,
-				2D9177351A0E895E004BC222 /* demux.c */,
-				2D9177361A0E895E004BC222 /* stream.c */,
+				2DB61F691DA8F1750095742A /* demux.h */,
+				2DB61F6A1DA8F1750095742A /* demux.c */,
+				2DB61F6D1DA8F1B80095742A /* stream.c */,
+				2DB61F6F1DA8F1C00095742A /* stream.h */,
+				2DF1ED671DAA376B00E23298 /* decomp.h */,
+				2DF1ED681DAA376B00E23298 /* alac.c */,
+				2DB61F4E1DA8EECD0095742A /* ALAC */,
+				2D9177331A0E895E004BC222 /* alac_plugin.cpp */,
+				2DB61F731DA8F67B0095742A /* alac_plugin.h */,
+				2DB61F711DA8F6670095742A /* plugindef.c */,
 			);
 			name = alac;
 			sourceTree = "<group>";
@@ -6587,6 +6621,26 @@
 				2DB10B7419B9085A0054A6AB /* tab_unsel_right@2x.png */,
 			);
 			name = tabs;
+			sourceTree = "<group>";
+		};
+		2DB61F4E1DA8EECD0095742A /* ALAC */ = {
+			isa = PBXGroup;
+			children = (
+				2DB61F4F1DA8EEDA0095742A /* ag_dec.c */,
+				2DB61F501DA8EEDA0095742A /* aglib.h */,
+				2DB61F511DA8EEDA0095742A /* ALACAudioTypes.h */,
+				2DB61F521DA8EEDA0095742A /* ALACBitUtilities.c */,
+				2DB61F531DA8EEDA0095742A /* ALACBitUtilities.h */,
+				2DB61F541DA8EEDA0095742A /* ALACDecoder.cpp */,
+				2DB61F551DA8EEDA0095742A /* ALACDecoder.h */,
+				2DB61F561DA8EEDA0095742A /* dp_dec.c */,
+				2DB61F571DA8EEDA0095742A /* dplib.h */,
+				2DB61F581DA8EEDA0095742A /* EndianPortable.c */,
+				2DB61F591DA8EEDA0095742A /* EndianPortable.h */,
+				2DB61F5A1DA8EEDA0095742A /* matrix_dec.c */,
+				2DB61F5B1DA8EEDA0095742A /* matrixlib.h */,
+			);
+			name = ALAC;
 			sourceTree = "<group>";
 		};
 		2DB96A7619ABB3E500E318A8 /* dsp_libsrc */ = {
@@ -8309,7 +8363,18 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DB61F741DA8F67B0095742A /* alac_plugin.h in Headers */,
+				2DB61F641DA8EEDA0095742A /* dplib.h in Headers */,
+				2DB61F601DA8EEDA0095742A /* ALACBitUtilities.h in Headers */,
+				2DB61F5D1DA8EEDA0095742A /* aglib.h in Headers */,
+				2DB61F6B1DA8F1750095742A /* demux.h in Headers */,
+				2DB61F701DA8F1C00095742A /* stream.h in Headers */,
+				2DF1ED691DAA376B00E23298 /* decomp.h in Headers */,
+				2DB61F5E1DA8EEDA0095742A /* ALACAudioTypes.h in Headers */,
 				2D69653B1D74338A00EB99D8 /* mp4tagutil.h in Headers */,
+				2DB61F681DA8EEDA0095742A /* matrixlib.h in Headers */,
+				2DB61F621DA8EEDA0095742A /* ALACDecoder.h in Headers */,
+				2DB61F661DA8EEDA0095742A /* EndianPortable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10827,12 +10892,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DF1ED6A1DAA376B00E23298 /* alac.c in Sources */,
+				2DB61F5F1DA8EEDA0095742A /* ALACBitUtilities.c in Sources */,
+				2DB61F651DA8EEDA0095742A /* EndianPortable.c in Sources */,
+				2DB61F721DA8F6670095742A /* plugindef.c in Sources */,
+				2DB61F611DA8EEDA0095742A /* ALACDecoder.cpp in Sources */,
+				2DB61F671DA8EEDA0095742A /* matrix_dec.c in Sources */,
+				2DB61F5C1DA8EEDA0095742A /* ag_dec.c in Sources */,
+				2DB61F631DA8EEDA0095742A /* dp_dec.c in Sources */,
 				2D6965391D74338A00EB99D8 /* mp4tagutil.c in Sources */,
-				2D9177441A0E89F1004BC222 /* alac.c in Sources */,
+				2DB61F6C1DA8F1750095742A /* demux.c in Sources */,
+				2DB61F6E1DA8F1B80095742A /* stream.c in Sources */,
 				2D9177391A0E8966004BC222 /* m3u.c in Sources */,
-				2D9177431A0E89F1004BC222 /* alac_plugin.c in Sources */,
-				2D9177451A0E89F1004BC222 /* demux.c in Sources */,
-				2D9177461A0E89F1004BC222 /* stream.c in Sources */,
+				2D9177431A0E89F1004BC222 /* alac_plugin.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13388,7 +13460,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "USE_TAGGING=1";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = alac;
 			};
@@ -13405,7 +13477,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "USE_TAGGING=1";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = alac;
 			};
