@@ -247,6 +247,8 @@ static uint8_t mp4ff_atom_name_to_type(const int8_t a, const int8_t b,
         return ATOM_TEXT;
     else if (mp4ff_atom_compare(a,b,c,d, 'e','l','s','t'))
         return ATOM_ELST;
+    else if (mp4ff_atom_compare(a,b,c,d, 'a','l','a','c'))
+        return ATOM_ALAC;
     else
         return ATOM_UNKNOWN;
 }
@@ -398,6 +400,18 @@ static int32_t mp4ff_read_mp4a(mp4ff_t *f)
     return 0;
 }
 
+static int32_t mp4ff_read_alac(mp4ff_t *f, int frame_size)
+{
+    // read decoder config
+    int64_t currpos = mp4ff_position(f);
+    mp4ff_set_position(f, currpos + 40);
+    int sz = (int)(frame_size - 40);
+    f->track[f->total_tracks - 1]->decoderConfig = malloc (sz);
+    f->track[f->total_tracks - 1]->decoderConfigLen = (int)sz;
+    mp4ff_read_data(f, (int8_t *)f->track[f->total_tracks - 1]->decoderConfig, (int)sz);
+    return 0;
+}
+
 static int32_t mp4ff_read_stsd(mp4ff_t *f)
 {
     int32_t i;
@@ -420,6 +434,9 @@ static int32_t mp4ff_read_stsd(mp4ff_t *f)
         {
             f->track[f->total_tracks - 1]->type = TRACK_AUDIO;
             mp4ff_read_mp4a(f);
+        } else if (atom_type == ATOM_ALAC) {
+            f->track[f->total_tracks - 1]->type = TRACK_AUDIO;
+            mp4ff_read_alac(f, size - header_size);
         } else if (atom_type == ATOM_MP4V) {
             f->track[f->total_tracks - 1]->type = TRACK_VIDEO;
         } else if (atom_type == ATOM_MP4S) {

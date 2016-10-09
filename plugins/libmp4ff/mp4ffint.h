@@ -99,6 +99,7 @@ extern "C" {
 #define ATOM_CHAP           175
 #define ATOM_TEXT 176
 #define ATOM_ELST 176
+#define ATOM_ALAC 178
 
 #define ATOM_UNKNOWN 255
 #define ATOM_FREE ATOM_UNKNOWN
