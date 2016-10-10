@@ -102,6 +102,19 @@ on_add_new_playlist1_activate          (GtkMenuItem     *menuitem,
 }
 
 static void
+on_copy_playlist1_activate        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    const ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+    if (plt) {
+        int playlist = gtkui_copy_playlist (plt);
+        if (playlist != -1) {
+            gtkui_playlist_set_curr (playlist);
+        }
+    }
+}
+
+static void
 on_actionitem_activate (GtkMenuItem     *menuitem,
                            DB_plugin_action_t *action)
 {
@@ -338,6 +351,7 @@ gtkui_create_pltmenu (int plt_idx) {
     GtkWidget *rename_playlist1;
     GtkWidget *remove_playlist1;
     GtkWidget *add_new_playlist1;
+    GtkWidget *copy_playlist1;
     GtkWidget *separator11;
     GtkWidget *cut;
     GtkWidget *cut_image;
@@ -373,6 +387,10 @@ gtkui_create_pltmenu (int plt_idx) {
     add_new_playlist1 = gtk_menu_item_new_with_mnemonic (_("Add New Playlist"));
     gtk_widget_show (add_new_playlist1);
     gtk_container_add (GTK_CONTAINER (plmenu), add_new_playlist1);
+
+    copy_playlist1 = gtk_menu_item_new_with_mnemonic (_("Duplicate Playlist"));
+    gtk_widget_show (copy_playlist1);
+    gtk_container_add (GTK_CONTAINER (plmenu), copy_playlist1);
 
     separator11 = gtk_separator_menu_item_new ();
     gtk_widget_show (separator11);
@@ -432,6 +450,9 @@ gtkui_create_pltmenu (int plt_idx) {
             NULL);
     g_signal_connect ((gpointer) add_new_playlist1, "activate",
             G_CALLBACK (on_add_new_playlist1_activate),
+            NULL);
+    g_signal_connect ((gpointer) copy_playlist1, "activate",
+            G_CALLBACK (on_copy_playlist1_activate),
             NULL);
     g_signal_connect ((gpointer) cut, "activate",
             G_CALLBACK (on_cut_activate),
