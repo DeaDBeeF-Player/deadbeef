@@ -96,6 +96,9 @@ enum {
 int
 gtkui_add_new_playlist (void);
 
+int
+gtkui_copy_playlist (const ddb_playlist_t *plt);
+
 void
 seekbar_draw (GtkWidget *widget, cairo_t *cr);
 
