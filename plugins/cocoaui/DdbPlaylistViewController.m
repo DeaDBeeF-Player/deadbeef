@@ -1121,6 +1121,25 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     }
 }
 
+- (void)forEachTrack:(BOOL (^)(DB_playItem_t *it))block forIter:(int)iter {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->pl_get_first (iter);
+    while (it) {
+        BOOL res = block (it);
+        if (!res) {
+            deadbeef->pl_item_unref (it);
+            break;
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, iter);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+
+    deadbeef->pl_unlock ();
+    deadbeef->plt_unref (plt);
+}
+
 - (void)reloadMetadata {
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
@@ -1189,28 +1208,27 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 
 - (void)rgScan:(int)mode {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->pl_lock ();
     int numtracks = deadbeef->plt_getselcount (plt);
     if (numtracks > 0) {
-        deadbeef->pl_lock ();
-        DB_playItem_t **tracks = calloc (numtracks, sizeof (DB_playItem_t *));
-
-        int n = 0;
-        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-        while (it) {
+        DB_playItem_t __block **tracks = calloc (numtracks, sizeof (DB_playItem_t *));
+        int __block n = 0;
+        [self forEachTrack:^(DB_playItem_t *it) {
             if (deadbeef->pl_is_selected (it)) {
                 assert (n < numtracks);
                 deadbeef->pl_item_ref (it);
                 tracks[n++] = it;
             }
-            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-            deadbeef->pl_item_unref (it);
-            it = next;
-        }
+            return YES;
+        }  forIter:PL_MAIN];
+        deadbeef->pl_unlock ();
 
         [ReplayGainScannerController runScanner:mode forTracks:tracks count:numtracks];
-
+    }
+    else {
         deadbeef->pl_unlock ();
     }
+
     deadbeef->plt_unref (plt);
 }
 
@@ -1224,10 +1242,33 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     [rgMenu setDelegate:(id<NSMenuDelegate>)self];
     [rgMenu setAutoenablesItems:NO];
 
-    [[rgMenu insertItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@"" atIndex:0]  setEnabled:enabled];
-    [[rgMenu insertItemWithTitle:@"Scan Selection As Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@"" atIndex:1] setEnabled:enabled];
-    [[rgMenu insertItemWithTitle:@"Scan Selection As Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@"" atIndex:2] setEnabled:enabled];
-    [[rgMenu insertItemWithTitle:@"Remove ReplayGain Information" action:@selector(rgRemove:) keyEquivalent:@"" atIndex:3] setEnabled:enabled];
+    BOOL __block has_rg_info = NO;
+    BOOL __block can_be_rg_scanned = NO;
+    if (enabled) {
+        ddb_replaygain_settings_t __block s;
+        s._size = sizeof (ddb_replaygain_settings_t);
+
+        [self forEachTrack:^(DB_playItem_t *it){
+            if (deadbeef->pl_is_selected (it)) {
+                if (deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI"))) {
+                    if (deadbeef->pl_get_item_duration (it) > 0) {
+                        can_be_rg_scanned = YES;
+                    }
+                    deadbeef->replaygain_init_settings (&s, it);
+                    if (s.has_album_gain || s.has_track_gain) {
+                        has_rg_info = YES;
+                        return NO;
+                    }
+                }
+            }
+            return YES;
+        } forIter:PL_MAIN];
+    }
+
+    [[rgMenu insertItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@"" atIndex:0]  setEnabled:can_be_rg_scanned];
+    [[rgMenu insertItemWithTitle:@"Scan Selection As Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@"" atIndex:1] setEnabled:can_be_rg_scanned];
+    [[rgMenu insertItemWithTitle:@"Scan Selection As Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@"" atIndex:2] setEnabled:can_be_rg_scanned];
+    [[rgMenu insertItemWithTitle:@"Remove ReplayGain Information" action:@selector(rgRemove:) keyEquivalent:@"" atIndex:3] setEnabled:has_rg_info];
 
     NSMenuItem *rgMenuItem = [[NSMenuItem alloc] initWithTitle:@"ReplayGain" action:nil keyEquivalent:@""];
     [rgMenuItem setEnabled:enabled];
