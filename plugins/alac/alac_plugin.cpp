@@ -159,7 +159,7 @@ mp4_track_get_info (mp4ff_t *mp4, int track, float *duration, int *samplerate, i
 #if USE_APPLE_CODEC
 
     ALACDecoder dec;
-    int rc = dec.Init(buff, buff_size);
+    int rc = dec.Init(buff+12, buff_size-12);
     free (buff);
 
     if(rc < 0) {
@@ -279,7 +279,7 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     int samplerate = 0;
     int channels = 0;
-    int bps;
+    int bps = 0;
     float duration = 0;
 
     trace ("alac_init: mp4ff_open_read %s\n", deadbeef->pl_find_meta (it, ":URI"));
@@ -298,13 +298,6 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
         trace ("track: %d\n", info->mp4track);
         if (info->mp4track >= 0) {
-            // prepare decoder
-            int res = mp4_track_get_info (info->mp4, info->mp4track, &duration, &samplerate, &channels, &bps, &totalsamples, &info->mp4framesize);
-            if (res != 0) {
-                trace ("alac: mp4_track_get_info(%d) returned error\n", info->mp4track);
-                return -1;
-            }
-
             // init mp4 decoding
             info->mp4samples = mp4ff_num_samples(info->mp4, info->mp4track);
 
@@ -316,7 +309,7 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
 #if USE_APPLE_CODEC
             info->alac = new ALACDecoder;
-            res = info->alac->Init(buff, buff_size);
+            int res = info->alac->Init(buff + 12, buff_size - 12);
             free (buff);
 
             if (res < 0) {
@@ -462,10 +455,10 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
             continue;
         }
 
-        int outputBytes = 0;
         unsigned char *buffer = NULL;
         int64_t offs = deadbeef->ftell (info->file);
         uint32_t buffer_size = 0;
+        uint32_t outNumSamples = 0;
 
 #if USE_MP4FF
         if (info->mp4sample >= info->mp4samples) {
@@ -507,23 +500,23 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
 
         buffer = info->buffer;
-        outputBytes = BUFFER_SIZE;
 #endif
 
 #if USE_APPLE_CODEC
-        BitBufferInit(&info->theInputBuffer, info->buffer, nb);
+        BitBufferInit(&info->theInputBuffer, buffer, buffer_size);
 
-        uint32_t outNumSamples = 0;
         int32_t err = info->alac->Decode(&info->theInputBuffer, info->out_buffer, BUFFER_SIZE/samplesize, info->alac->mConfig.numChannels, &outNumSamples);
         if (err) {
             printf ("alac->Decode error: %d\n", err);
         }
 
-        info->out_remaining += outNumSamples;
 #else
+        int outputBytes = 0;
         decode_frame(info->_alac, buffer, info->out_buffer, &outputBytes);
-        info->out_remaining += outputBytes / samplesize;
+        outNumSamples = outputBytes / samplesize;
 #endif
+
+        info->out_remaining += outNumSamples;
         info->mp4sample++;
 
 #if USE_MP4FF
