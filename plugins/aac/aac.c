@@ -36,8 +36,7 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
@@ -337,19 +336,13 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             }
             int res = mp4_track_get_info (info->mp4, i, &duration, &samplerate, &channels, &totalsamples, &info->mp4framesize);
             if (res >= 0 && duration > 0) {
+                trace ("mp4_track_get_info: %d, dur: %f, samplerate: %d, channels: %d, totalsamples: %d\n", i, (float)duration, (int)samplerate, (int)channels, (int)totalsamples);
                 info->mp4track = i;
                 break;
             }
         }
         trace ("track: %d\n", info->mp4track);
         if (info->mp4track >= 0) {
-            // prepare decoder
-            int res = mp4_track_get_info (info->mp4, info->mp4track, &duration, &samplerate, &channels, &totalsamples, &info->mp4framesize);
-            if (res != 0) {
-                trace ("aac: mp4_track_get_info(%d) returned error\n", info->mp4track);
-                return -1;
-            }
-
             // init mp4 decoding
             info->mp4samples = mp4ff_num_samples(info->mp4, info->mp4track);
             info->dec = NeAACDecOpen ();
@@ -416,19 +409,16 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
         _info->fmt.channels = channels;
         _info->fmt.samplerate = samplerate;
-    }
 
-    _info->fmt.bps = 16;
-    _info->plugin = &plugin;
-
-    if (!info->mp4) {
         trace ("NeAACDecOpen for raw stream\n");
         info->dec = NeAACDecOpen ();
 
         trace ("prepare for NeAACDecInit: fread %d from offs %lld\n", AAC_BUFFER_SIZE, deadbeef->ftell (info->file));
 
         NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (info->dec);
-        NeAACDecSetConfiguration (info->dec, conf);
+        if (!NeAACDecSetConfiguration (info->dec, conf)) {
+            return -1;
+        }
 
         int scan_size = AAC_BUFFER_SIZE;
 
@@ -464,8 +454,10 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         if (scan_size <= 0) {
             return -1;
         }
-
     }
+
+    _info->fmt.bps = 16;
+    _info->plugin = &plugin;
 
     if (!info->file->vfs->is_streaming ()) {
         if (it->endsample > 0) {
@@ -482,7 +474,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.channels = 8;
     }
 
-    trace ("totalsamples: %d, endsample: %d, samples-from-duration: %d, samplerate %d, channels %d\n", totalsamples-1, info->endsample, (int)deadbeef->pl_get_item_duration (it)*44100, _info->fmt.samplerate, _info->fmt.channels);
+    trace ("totalsamples: %d, endsample: %d, samples-from-duration: %d, samplerate %d, channels %d\n", (int)totalsamples, (int)info->endsample, (int)deadbeef->pl_get_item_duration (it)*44100, _info->fmt.samplerate, _info->fmt.channels);
 
     for (int i = 0; i < _info->fmt.channels; i++) {
         _info->fmt.channelmask |= 1 << i;
@@ -521,6 +513,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
         trace ("aac_read: received call after eof\n");
         return 0;
     }
+
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     if (!info->file->vfs->is_streaming ()) {
         if (info->currentsample + size / samplesize > info->endsample) {
@@ -1169,6 +1162,7 @@ static DB_decoder_t plugin = {
     .plugin.api_vminor = 0,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
+//    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "aac",
     .plugin.name = "AAC player",
