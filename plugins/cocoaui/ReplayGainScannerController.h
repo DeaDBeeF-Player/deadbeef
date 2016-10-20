@@ -35,6 +35,7 @@
 @property (unsafe_unretained) IBOutlet NSTextField *progressText;
 @property (unsafe_unretained) IBOutlet NSTextField *statusLabel;
 @property (unsafe_unretained) IBOutlet NSProgressIndicator *progressIndicator;
+@property (unsafe_unretained) IBOutlet NSTextField *resultStatusLabel;
 
 - (IBAction)progressCancelAction:(id)sender;
 

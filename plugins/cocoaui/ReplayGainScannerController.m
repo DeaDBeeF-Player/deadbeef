@@ -23,6 +23,7 @@
 
 #import "ReplayGainScannerController.h"
 #include "rg_scanner.h"
+#include <sys/time.h>
 
 extern DB_functions_t *deadbeef;
 
@@ -41,6 +42,7 @@ static NSMutableArray *g_rgControllers;
     ddb_rg_scanner_settings_t _rg_settings;
     ddb_rg_scanner_t *_rg;
     int _abort_flag;
+    struct timeval _rg_start_tv;
 }
 
 - (void)windowDidLoad {
@@ -113,6 +115,9 @@ static NSMutableArray *g_rgControllers;
     _rg_settings.progress_callback = _scan_progress;
     _rg_settings.progress_cb_user_data = (__bridge void *)self;
 
+    gettimeofday (&_rg_start_tv, NULL);
+    [self progress:0];
+
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
         _rg->scan (&_rg_settings);
@@ -127,16 +132,66 @@ static NSMutableArray *g_rgControllers;
     });
 }
 
+- (NSString *)formatTime:(float)sec extraPrecise:(BOOL)extraPrecise {
+    int hr;
+    int min;
+    hr = (int)floor (sec / 360);
+    sec -= hr * 360;
+    min = (int)floor (sec / 60);
+    sec -= min * 60;
+
+    if (extraPrecise) {
+        if (hr > 0) {
+            return [NSString stringWithFormat:@"%d:%02d:%0.3f", hr, min, sec];
+        }
+        return [NSString stringWithFormat:@"%02d:%0.3f", min, sec];
+    }
+    if (hr > 0) {
+        return [NSString stringWithFormat:@"%d:%02d:%02d", hr, min, (int)floor(sec)];
+    }
+    return [NSString stringWithFormat:@"%02d:%02d", min, (int)floor(sec)];
+}
+
+- (float)getScanSpeed:(uint64_t)bytes_processed overTime:(float)time {
+    return bytes_processed / (1024*150.f) / time;
+}
+
 - (void)progress:(int)current {
     deadbeef->pl_lock ();
     const char *uri = deadbeef->pl_find_meta (_rg_settings.tracks[current], ":URI");
 
     [_progressText setStringValue:[NSString stringWithUTF8String:uri]];
     [_progressIndicator setDoubleValue:(double)current/_rg_settings.num_tracks*100];
+
+    struct timeval tv;
+    gettimeofday (&tv, NULL);
+    float timePassed = (tv.tv_sec-_rg_start_tv.tv_sec) + (tv.tv_usec - _rg_start_tv.tv_usec) / 1000000.f;
+    if (timePassed > 0 && _rg_settings.bytes_processed > 0 && current > 0) {
+        float speed = [self getScanSpeed:_rg_settings.bytes_processed overTime:timePassed];
+        float predicted_bytes_total = _rg_settings.bytes_processed / (float)current * _rg_settings.num_tracks;
+
+        float frac = (float)((double)predicted_bytes_total / _rg_settings.bytes_processed);
+        float est = timePassed * frac;
+
+        NSString *elapsed = [self formatTime:timePassed extraPrecise:NO];
+        NSString *estimated = [self formatTime:est extraPrecise:NO];
+
+        [_statusLabel setStringValue:[NSString stringWithFormat:@"Time elapsed: %@, estimated: %@, speed: %0.2fx", elapsed, estimated, speed]];
+    }
+    else {
+        [_statusLabel setStringValue:@""];
+    }
+
     deadbeef->pl_unlock ();
 }
 
 - (void)scanFinished {
+    struct timeval tv;
+    gettimeofday (&tv, NULL);
+    float timePassed = (tv.tv_sec-_rg_start_tv.tv_sec) + (tv.tv_usec - _rg_start_tv.tv_usec) / 1000000.f;
+    NSString *elapsed = [self formatTime:timePassed extraPrecise:YES];
+    float speed = [self getScanSpeed:_rg_settings.bytes_processed overTime:timePassed];
+    [_resultStatusLabel setStringValue:[NSString stringWithFormat:@"Calculated in: %@, speed: %0.2fx", elapsed, speed]];
     [[self window] setIsVisible:NO];
     [_resultsWindow setIsVisible:YES];
     [_resultsWindow makeKeyWindow];
