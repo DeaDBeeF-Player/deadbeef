@@ -50,6 +50,8 @@ typedef struct {
     int scan_result;
 } ddb_rg_scanner_result_t;
 
+// FIXME: parts of this structure must be made private
+
 typedef struct {
     // Size of this structure
     int _size;
@@ -79,6 +81,13 @@ typedef struct {
 
     // An additional user-defined parameter, which will be passed to the progress_callback.
     void *progress_cb_user_data;
+
+    // How many bytes of 16bit/stereo PCM data have been processed.
+    // Set by the scanner, can be used from the progress callback.
+    uint64_t bytes_processed;
+
+    // Internal mutex, used for thread syncronization
+    uintptr_t sync_mutex;
 } ddb_rg_scanner_settings_t;
 
 typedef struct {

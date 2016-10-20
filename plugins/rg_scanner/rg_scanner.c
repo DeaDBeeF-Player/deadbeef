@@ -128,6 +128,10 @@ rg_calc_thread(void *ctx) {
 
                 int sz = dec->read (fileinfo, buffer, bs); // read one block
 
+                deadbeef->mutex_lock (st->settings->sync_mutex);
+                st->settings->bytes_processed += sz / (fileinfo->fmt.channels * (fileinfo->fmt.bps >> 3)) * 4;
+                deadbeef->mutex_unlock (st->settings->sync_mutex);
+
                 if (sz != bs) {
                     eof = 1;
                 }
@@ -223,6 +227,12 @@ _update_album_gain (ddb_rg_scanner_settings_t *settings, int i, int album_start,
 
 int
 rg_scan (ddb_rg_scanner_settings_t *settings) {
+    if (settings->_size != sizeof (ddb_rg_scanner_settings_t)) {
+        return -1;
+    }
+
+    settings->sync_mutex = deadbeef->mutex_create ();
+
     if (settings->num_threads <= 0) {
         settings->num_threads = 4;
     }
@@ -380,6 +390,11 @@ cleanup:
     if (album_signature_tf) {
         deadbeef->tf_free (album_signature_tf);
         album_signature_tf = NULL;
+    }
+
+    if (settings->sync_mutex) {
+        deadbeef->mutex_free (settings->sync_mutex);
+        settings->sync_mutex = 0;
     }
 
     return 0;
