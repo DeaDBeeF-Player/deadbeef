@@ -43,6 +43,7 @@ static NSMutableArray *g_rgControllers;
     ddb_rg_scanner_t *_rg;
     int _abort_flag;
     struct timeval _rg_start_tv;
+    BOOL _abortTagWriting;
 }
 
 - (void)windowDidLoad {
@@ -192,7 +193,7 @@ static NSMutableArray *g_rgControllers;
     NSString *elapsed = [self formatTime:timePassed extraPrecise:YES];
     float speed = [self getScanSpeed:_rg_settings.bytes_processed overTime:timePassed];
     [_resultStatusLabel setStringValue:[NSString stringWithFormat:@"Calculated in: %@, speed: %0.2fx", elapsed, speed]];
-    [[self window] setIsVisible:NO];
+    [[self window] close];
     [_resultsWindow setIsVisible:YES];
     [_resultsWindow makeKeyWindow];
     [_resultsTableView setDataSource:(id<NSTableViewDataSource>)self];
@@ -200,9 +201,38 @@ static NSMutableArray *g_rgControllers;
 }
 
 - (IBAction)updateFileTagsAction:(id)sender {
+    [_resultsWindow close];
+    [_updateTagsProgressWindow setIsVisible:YES];
+    _abortTagWriting = NO;
+    dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(aQueue, ^{
+        for (int i = 0; i < _rg_settings.num_tracks; i++) {
+            if (_abortTagWriting) {
+                break;
+            }
+
+            if (_rg_settings.results[i].scan_result == DDB_RG_SCAN_RESULT_SUCCESS) {
+                deadbeef->pl_lock ();
+                NSString *path = [NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (_rg_settings.tracks[i], ":URI")];
+                deadbeef->pl_unlock ();
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [_updateTagsProgressText setStringValue:path];
+                    [_updateTagsProgressIndicator setDoubleValue:(double)i/_rg_settings.num_tracks*100];
+                });
+                
+                _rg->apply (_rg_settings.tracks[i], _rg_settings.results[i].track_gain, _rg_settings.results[i].track_peak, _rg_settings.results[i].album_gain, _rg_settings.results[i].album_peak);
+            }
+        }
+        [self dismissController:self];
+    });
 }
 
 - (IBAction)resultsCancelAction:(id)sender {
+    [self dismissController:self];
+}
+
+- (IBAction)updateTagsCancelAction:(id)sender {
+    _abortTagWriting = YES;
 }
 
 // NSTableViewDataSource

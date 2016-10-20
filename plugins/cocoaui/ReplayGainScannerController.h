@@ -27,6 +27,7 @@
 @interface ReplayGainScannerController : NSWindowController
 
 @property (strong) IBOutlet NSWindow *resultsWindow;
+@property (strong) IBOutlet NSPanel *updateTagsProgressWindow;
 
 @property (unsafe_unretained) IBOutlet NSTableView *resultsTableView;
 - (IBAction)updateFileTagsAction:(id)sender;
@@ -38,6 +39,11 @@
 @property (unsafe_unretained) IBOutlet NSTextField *resultStatusLabel;
 
 - (IBAction)progressCancelAction:(id)sender;
+
+@property (unsafe_unretained) IBOutlet NSTextField *updateTagsProgressText;
+@property (unsafe_unretained) IBOutlet NSProgressIndicator *updateTagsProgressIndicator;
+@property (unsafe_unretained) IBOutlet NSTextField *updateTagsStatusLabel;
+- (IBAction)updateTagsCancelAction:(id)sender;
 
 + (ReplayGainScannerController *)runScanner:(int)mode forTracks:(DB_playItem_t **)tracks count:(int)count;
 @end
