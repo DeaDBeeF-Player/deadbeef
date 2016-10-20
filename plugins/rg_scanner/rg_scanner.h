@@ -95,9 +95,9 @@ typedef struct {
 
     int (*scan) (ddb_rg_scanner_settings_t *settings);
 
-    int (*apply) (DB_playItem_t *track, float track_gain, float album_gain, float track_peak, float album_peak);
+    int (*apply) (DB_playItem_t *track, float track_gain, float track_peak, float album_gain, float album_peak);
 
-    void (*remove) (DB_playItem_t **work_items, int num_tracks);
+    int (*remove) (DB_playItem_t *track);
 } ddb_rg_scanner_t;
 
 #endif //__RG_SCANNER_H

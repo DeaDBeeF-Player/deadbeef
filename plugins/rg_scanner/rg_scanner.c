@@ -32,6 +32,7 @@
 
 #include "../../deadbeef.h"
 #include "ebur128/ebur128.h"
+#include "../../strdupa.h"
 
 #define trace(...) { deadbeef->log_detailed (&plugin.misc.plugin, 0, __VA_ARGS__); }
 
@@ -400,16 +401,30 @@ cleanup:
     return 0;
 }
 
-int
-rg_write_meta (DB_playItem_t *track) {
+static int
+_rg_write_meta (DB_playItem_t *track) {
+    const char *path = NULL;
+    const char *decoder_id = NULL;
+
     deadbeef->pl_lock ();
-    const char *dec = deadbeef->pl_find_meta_raw (track, ":DECODER");
-    char decoder_id[100];
-    if (dec) {
-        strncpy (decoder_id, dec, sizeof (decoder_id));
+    path = strdupa (deadbeef->pl_find_meta_raw (track, ":URI"));
+    int is_subtrack = deadbeef->pl_get_item_flags (track) & DDB_IS_SUBTRACK;
+    if (is_subtrack) {
+        trace ("rg_scanner: Can't write to subtrack of file: %s\n", path);
+        deadbeef->pl_unlock ();
+        return -1;
     }
-    int match = track && dec;
+    decoder_id = deadbeef->pl_find_meta_raw (track, ":DECODER");
+    if (!decoder_id) {
+        trace ("rg_scanner: Invalid decoder in track %s\n", path);
+        deadbeef->pl_unlock ();
+        return -1;
+    }
+    decoder_id = strdupa (decoder_id);
+
+    int match = track && decoder_id;
     deadbeef->pl_unlock ();
+
     if (match) {
         int is_subtrack = deadbeef->pl_get_item_flags (track) & DDB_IS_SUBTRACK;
         if (is_subtrack) {
@@ -422,16 +437,20 @@ rg_write_meta (DB_playItem_t *track) {
             if (!strcmp (decoders[i]->plugin.id, decoder_id)) {
                 dec = decoders[i];
                 if (dec->write_metadata) {
-                    dec->write_metadata (track);
+                    if (dec->write_metadata (track)) {
+                        trace ("rg_scanner: Failed to write tag to %s\n", path);
+                        return -1;
+                    }
+                }
+                else {
+                    trace ("rg_scanner: Writing tags is not supported for the file %s\n", path);
                 }
                 break;
             }
         }
     }
     else {
-        deadbeef->pl_lock ();
-        trace ("rg_scanner: could not find matching decoder for %s\n", deadbeef->pl_find_meta (track, ":URI"));
-        deadbeef->pl_unlock ();
+        trace ("rg_scanner: Could not find matching decoder for %s\n", path);
         return -1;
     }
     return 0;
@@ -439,54 +458,22 @@ rg_write_meta (DB_playItem_t *track) {
 
 int
 rg_apply (DB_playItem_t *track, float track_gain, float track_peak, float album_gain, float album_peak) {
-
-    // set RG tags 
-    deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_ALBUMGAIN, album_gain);
-    deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_ALBUMPEAK, album_peak);
     deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_TRACKGAIN, track_gain);
     deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_TRACKPEAK, track_peak);
+    deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_ALBUMGAIN, album_gain);
+    deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_ALBUMPEAK, album_peak);
 
-    // tags are NOT written yet - they are merely data in the playlist item, so "flush" them to file
-    return rg_write_meta (track);
+    return _rg_write_meta (track);
 }
 
-void
-rg_remove (DB_playItem_t **work_items, int num_tracks) {
-    for (int it = 0; it < num_tracks; ++it) {
-        deadbeef->pl_delete_meta (work_items[it], ":REPLAYGAIN_ALBUMGAIN");
-        deadbeef->pl_delete_meta (work_items[it], ":REPLAYGAIN_ALBUMPEAK");
-        deadbeef->pl_delete_meta (work_items[it], ":REPLAYGAIN_TRACKGAIN");
-        deadbeef->pl_delete_meta (work_items[it], ":REPLAYGAIN_TRACKPEAK");
+int
+rg_remove (DB_playItem_t *track) {
+    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_ALBUMGAIN");
+    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_ALBUMPEAK");
+    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_TRACKGAIN");
+    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_TRACKPEAK");
 
-        DB_playItem_t *track = work_items[it];
-        deadbeef->pl_lock ();
-        const char *dec = deadbeef->pl_find_meta_raw (track, ":DECODER");
-        char decoder_id[100];
-        if (dec) {
-            strncpy (decoder_id, dec, sizeof (decoder_id));
-        }
-        int match = track && dec;
-        deadbeef->pl_unlock ();
-        if (match) {
-            int is_subtrack = deadbeef->pl_get_item_flags (track) & DDB_IS_SUBTRACK;
-            if (is_subtrack) {
-                continue;
-            }
-            // find decoder
-            DB_decoder_t *dec = NULL;
-            DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
-            for (int i = 0; decoders[i]; i++) {
-                if (!strcmp (decoders[i]->plugin.id, decoder_id)) {
-                    dec = decoders[i];
-                    if (dec->write_metadata) {
-                        dec->write_metadata (track);
-                    }
-                    break;
-                }
-            }
-        }
-        deadbeef->pl_item_unref (work_items[it]);
-    }
+    return _rg_write_meta (track);
 }
 
 // plugin structure and info
