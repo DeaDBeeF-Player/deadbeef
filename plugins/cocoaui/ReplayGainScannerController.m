@@ -153,8 +153,8 @@ static NSMutableArray *g_rgControllers;
     return [NSString stringWithFormat:@"%02d:%02d", min, (int)floor(sec)];
 }
 
-- (float)getScanSpeed:(uint64_t)bytes_processed overTime:(float)time {
-    return bytes_processed / (1024*150.f) / time;
+- (float)getScanSpeed:(uint64_t)cd_samples_processed overTime:(float)time {
+    return cd_samples_processed / 44100.f / time;
 }
 
 - (void)progress:(int)current {
@@ -167,11 +167,11 @@ static NSMutableArray *g_rgControllers;
     struct timeval tv;
     gettimeofday (&tv, NULL);
     float timePassed = (tv.tv_sec-_rg_start_tv.tv_sec) + (tv.tv_usec - _rg_start_tv.tv_usec) / 1000000.f;
-    if (timePassed > 0 && _rg_settings.bytes_processed > 0 && current > 0) {
-        float speed = [self getScanSpeed:_rg_settings.bytes_processed overTime:timePassed];
-        float predicted_bytes_total = _rg_settings.bytes_processed / (float)current * _rg_settings.num_tracks;
+    if (timePassed > 0 && _rg_settings.cd_samples_processed > 0 && current > 0) {
+        float speed = [self getScanSpeed:_rg_settings.cd_samples_processed overTime:timePassed];
+        float predicted_samples_total = _rg_settings.cd_samples_processed / (float)current * _rg_settings.num_tracks;
 
-        float frac = (float)((double)predicted_bytes_total / _rg_settings.bytes_processed);
+        float frac = (float)((double)predicted_samples_total / _rg_settings.cd_samples_processed);
         float est = timePassed * frac;
 
         NSString *elapsed = [self formatTime:timePassed extraPrecise:NO];
@@ -191,7 +191,7 @@ static NSMutableArray *g_rgControllers;
     gettimeofday (&tv, NULL);
     float timePassed = (tv.tv_sec-_rg_start_tv.tv_sec) + (tv.tv_usec - _rg_start_tv.tv_usec) / 1000000.f;
     NSString *elapsed = [self formatTime:timePassed extraPrecise:YES];
-    float speed = [self getScanSpeed:_rg_settings.bytes_processed overTime:timePassed];
+    float speed = [self getScanSpeed:_rg_settings.cd_samples_processed overTime:timePassed];
     [_resultStatusLabel setStringValue:[NSString stringWithFormat:@"Calculated in: %@, speed: %0.2fx", elapsed, speed]];
     [[self window] close];
     [_resultsWindow setIsVisible:YES];

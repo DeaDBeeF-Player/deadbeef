@@ -130,7 +130,9 @@ rg_calc_thread(void *ctx) {
                 int sz = dec->read (fileinfo, buffer, bs); // read one block
 
                 deadbeef->mutex_lock (st->settings->sync_mutex);
-                st->settings->bytes_processed += sz / (fileinfo->fmt.channels * (fileinfo->fmt.bps >> 3)) * 4;
+                int samplesize = fileinfo->fmt.channels * (fileinfo->fmt.bps >> 3);
+                int numsamples = sz / samplesize;
+                st->settings->cd_samples_processed += numsamples * 44100 / fileinfo->fmt.samplerate;
                 deadbeef->mutex_unlock (st->settings->sync_mutex);
 
                 if (sz != bs) {

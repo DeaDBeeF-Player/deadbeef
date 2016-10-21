@@ -82,9 +82,9 @@ typedef struct {
     // An additional user-defined parameter, which will be passed to the progress_callback.
     void *progress_cb_user_data;
 
-    // How many bytes of 16bit/stereo PCM data have been processed.
-    // Set by the scanner, can be used from the progress callback.
-    uint64_t bytes_processed;
+    // How many 44.1kHz samples of PCM data have been processed.
+    // Set by the scanner, can be used in the progress callback, to calculate scanning speed.
+    uint64_t cd_samples_processed;
 
     // Internal mutex, used for thread syncronization
     uintptr_t sync_mutex;
