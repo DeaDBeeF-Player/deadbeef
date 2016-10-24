@@ -2671,26 +2671,31 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     int prev_width = ps->list_width;
-    if (event->width != prev_width || event->height != ps->list_height) {
-        ps->list_width = event->width;
-        ps->list_height = event->height;
+
+    // the values in event->width/height are broken since GTK-3.22.1, so let's use widget's allocation instead, and hope this is reliable.
+    GtkAllocation a;
+    gtk_widget_get_allocation (GTK_WIDGET (widget), &a);
+
+    if (a.width != prev_width || a.height != ps->list_height) {
+        ps->list_width = a.width;
+        ps->list_height = a.height;
         g_idle_add_full (GTK_PRIORITY_RESIZE, ddb_listview_reconf_scrolling, ps, NULL);
     }
-    if (event->width != prev_width) {
-        ddb_listview_list_update_total_width (ps, total_columns_width(ps), event->width);
+    if (a.width != prev_width) {
+        ddb_listview_list_update_total_width (ps, total_columns_width(ps), a.width);
     }
 
     if (ps->lock_columns != -1) {
         if (!deadbeef->conf_get_int ("gtkui.autoresize_columns", 0) || ps->header_sizing != -1) {
-            set_fwidth (ps, event->width);
+            set_fwidth (ps, a.width);
         }
-        else if (event->width != prev_width) {
+        else if (a.width != prev_width) {
             int prev_scrollpos = ps->scrollpos;
             ddb_listview_update_scroll_ref_point (ps);
             if (ps->fwidth == -1) {
                 set_fwidth (ps, prev_width);
             }
-            autoresize_columns (ps, event->width, event->height);
+            autoresize_columns (ps, a.width, a.height);
         }
     }
 
