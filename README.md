@@ -4,6 +4,8 @@ DeaDBeeF is a music player for \*nix-like systems and OS X.
 
 More info is [here](http://deadbeef.sf.net).
 
+[Join us on slack](https://deadbeef-slack.herokuapp.com)
+
 ## Download development builds
 
 [![Build Status](https://travis-ci.org/Alexey-Yakovenko/deadbeef.svg?branch=master)](https://travis-ci.org/Alexey-Yakovenko/deadbeef)
