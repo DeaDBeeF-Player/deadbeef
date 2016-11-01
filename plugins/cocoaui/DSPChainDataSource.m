@@ -117,4 +117,13 @@ dsp_chain_clone (ddb_dsp_context_t *source_chain) {
     }
 }
 
+- (ddb_dsp_context_t *)getItemAtIndex:(int)index {
+    ddb_dsp_context_t *node = _chain;
+    while (index > 0 && node) {
+        node = node->next;
+        index--;
+    }
+    return node;
+}
+
 @end

@@ -64,6 +64,9 @@
 @property (unsafe_unretained) IBOutlet NSButton *stop_after_album_reset;
 
 // dsp properties
+@property (strong) IBOutlet NSPanel *dspConfigPanel;
+@property (unsafe_unretained) IBOutlet NSScrollView *dspConfigView;
+
 - (IBAction)dspChainAction:(id)sender;
 - (IBAction)dspSaveAction:(id)sender;
 - (IBAction)dspLoadAction:(id)sender;
@@ -126,8 +129,8 @@
 @property (unsafe_unretained) IBOutlet NSTextView *pluginDescription;
 @property (unsafe_unretained) IBOutlet NSTextView *pluginLicense;
 
-@property (unsafe_unretained) IBOutlet NSScrollView *pluginPropertiesScroller;
-@property (unsafe_unretained) IBOutlet NSView *pluginPropertiesView;
+//@property (unsafe_unretained) IBOutlet NSScrollView *pluginPropertiesScroller;
+@property (unsafe_unretained) IBOutlet NSScrollView *pluginPropertiesView;
 
 - (IBAction)pluginOpenWebsite:(id)sender;
 - (IBAction)pluginConfResetDefaults:(id)sender;
