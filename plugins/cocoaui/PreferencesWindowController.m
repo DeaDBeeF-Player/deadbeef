@@ -233,19 +233,74 @@ extern DB_functions_t *deadbeef;
     [self switchToView:_pluginsView];
 }
 
+- (NSMenu *)getDSPMenu {
+    NSMenu *menu = [[NSMenu alloc] initWithTitle:@"DspChainMenu"];
+    [menu setDelegate:(id<NSMenuDelegate>)self];
+    [menu setAutoenablesItems:NO];
+
+    DB_dsp_t **plugins = deadbeef->plug_get_dsp_list ();
+
+    for (int i = 0; plugins[i]; i++) {
+        [[menu insertItemWithTitle:[NSString stringWithUTF8String:plugins[i]->plugin.name] action:@selector(addDspNode:) keyEquivalent:@"" atIndex:i] setTarget:self];
+    }
+
+    return menu;
+}
+
+- (void)addDspNode:(id)sender {
+    NSMenuItem *item = sender;
+    const char *name = [[item title] UTF8String];
+    DB_dsp_t **plugins = deadbeef->plug_get_dsp_list ();
+
+    for (int i = 0; plugins[i]; i++) {
+        if (!strcmp (plugins[i]->plugin.name, name))
+        {
+            [_dspChainDataSource addItem:plugins[i]];
+            [_dspList reloadData];
+            break;
+        }
+    }
+}
+
 - (IBAction)dspAddAction:(id)sender {
+    NSMenu *menu = [self getDSPMenu];
+    [NSMenu popUpContextMenu:menu withEvent:[NSApp currentEvent] forView:sender];
 }
 
 - (IBAction)dspRemoveAction:(id)sender {
+    NSInteger index = [_dspList selectedRow];
+    if (index < 0) {
+        return;
+    }
+
+    [_dspChainDataSource removeItemAtIndex:(int)index];
+    [_dspList reloadData];
+
+    if (index >= [_dspList numberOfRows]) {
+        index--;
+    }
+    if (index >= 0) {
+        [_dspList selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+    }
 }
 
 - (IBAction)dspConfigureAction:(id)sender {
 }
 
-- (IBAction)dspMoveUpAction:(id)sender {
-}
+- (IBAction)dspChainAction:(id)sender {
+    NSInteger selectedSegment = [sender selectedSegment];
 
-- (IBAction)dspMoveDownAction:(id)sender {
+    switch (selectedSegment) {
+    case 0:
+        [self dspAddAction:sender];
+        break;
+    case 1:
+        [self dspRemoveAction:sender];
+        break;
+    case 2:
+        [self dspConfigureAction:sender];
+        break;
+    }
 }
 
 - (IBAction)dspSaveAction:(id)sender {

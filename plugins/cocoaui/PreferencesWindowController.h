@@ -64,11 +64,7 @@
 @property (unsafe_unretained) IBOutlet NSButton *stop_after_album_reset;
 
 // dsp properties
-- (IBAction)dspAddAction:(id)sender;
-- (IBAction)dspRemoveAction:(id)sender;
-- (IBAction)dspConfigureAction:(id)sender;
-- (IBAction)dspMoveUpAction:(id)sender;
-- (IBAction)dspMoveDownAction:(id)sender;
+- (IBAction)dspChainAction:(id)sender;
 - (IBAction)dspSaveAction:(id)sender;
 - (IBAction)dspLoadAction:(id)sender;
 

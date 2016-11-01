@@ -77,4 +77,44 @@ dsp_chain_clone (ddb_dsp_context_t *source_chain) {
     return [NSString stringWithUTF8String:node->plugin->plugin.name];
 }
 
+- (void)addItem:(DB_dsp_t *)plugin {
+    ddb_dsp_context_t *node = _chain;
+    ddb_dsp_context_t *tail = NULL;
+    while (node) {
+        tail = node;
+        node = node->next;
+    }
+
+    ddb_dsp_context_t *inst = plugin->open ();
+
+    if (tail) {
+        tail->next = inst;
+    }
+    else {
+        _chain = inst;
+    }
+    deadbeef->streamer_set_dsp_chain (_chain);
+}
+
+- (void)removeItemAtIndex:(int)index {
+    ddb_dsp_context_t *node = _chain;
+    ddb_dsp_context_t *prev = NULL;
+    while (index > 0 && node) {
+        prev = node;
+        node = node->next;
+        index--;
+    }
+
+    if (node) {
+        if (prev) {
+            prev->next = node->next;
+        }
+        else {
+            _chain = node->next;
+        }
+
+        node->plugin->close (node);
+    }
+}
+
 @end
