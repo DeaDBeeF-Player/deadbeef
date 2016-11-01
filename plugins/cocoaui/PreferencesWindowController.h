@@ -72,7 +72,7 @@
 - (IBAction)dspSaveAction:(id)sender;
 - (IBAction)dspLoadAction:(id)sender;
 
-@property (unsafe_unretained) IBOutlet NSScrollView *dspList;
+@property (unsafe_unretained) IBOutlet NSTableView *dspList;
 @property (unsafe_unretained) IBOutlet NSComboBox *dspPresets;
 
 // GUI misc properties

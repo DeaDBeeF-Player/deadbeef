@@ -22,6 +22,7 @@
 */
 
 #import "PreferencesWindowController.h"
+#import "DSPChainDataSource.h"
 #include "deadbeef.h"
 #include "pluginsettings.h"
 #include "parser.h"
@@ -31,6 +32,7 @@ extern DB_functions_t *deadbeef;
 @interface PreferencesWindowController () {
     settings_data_t _settingsData;
     NSMutableArray *_bindings;
+    DSPChainDataSource *_dspChainDataSource;
 }
 
 @end
@@ -109,6 +111,8 @@ extern DB_functions_t *deadbeef;
     [_stop_after_album_reset setState: deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0) ? NSOnState : NSOffState];
 
     // dsp
+    _dspChainDataSource = [[DSPChainDataSource alloc] initWithChain:deadbeef->streamer_get_dsp_chain ()];
+    [_dspList setDataSource:(id<NSTableViewDataSource>)_dspChainDataSource];
 
     // gui/misc -> player
     [_enable_shift_jis_detection setState: deadbeef->conf_get_int ("junk.enable_shift_jis_detection", 0) ? NSOnState : NSOffState];
