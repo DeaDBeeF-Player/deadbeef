@@ -406,11 +406,40 @@ static int32_t mp4ff_read_alac(mp4ff_t *f, int frame_size)
 {
     // read decoder config
     int64_t currpos = mp4ff_position(f);
-    mp4ff_set_position(f, currpos + 40);
-    int sz = (int)(frame_size - 40);
-    f->track[f->total_tracks - 1]->decoderConfig = malloc (sz);
-    f->track[f->total_tracks - 1]->decoderConfigLen = (int)sz;
-    mp4ff_read_data(f, (int8_t *)f->track[f->total_tracks - 1]->decoderConfig, (int)sz);
+
+    for (int i = 0; i < 6; i++)
+    {
+        mp4ff_read_char(f); // reserved
+    }
+    (void)mp4ff_read_int16(f); // data_reference_index
+
+    mp4ff_read_int32(f); // reserved
+    mp4ff_read_int32(f); // reserved
+
+    f->track[f->total_tracks - 1]->channelCount = mp4ff_read_int16(f);
+    f->track[f->total_tracks - 1]->sampleSize = mp4ff_read_int16(f);
+
+    // packet size
+    (void)mp4ff_read_int16(f); // skip 2 bytes
+    f->track[f->total_tracks - 1]->sampleRate = mp4ff_read_int32(f);
+
+    // reserved size
+    (void)mp4ff_read_int16(f); // skip 2 bytes
+
+    // the rest is decoder config, max size 64 bytes
+    int remaining = frame_size - (int)(mp4ff_position(f) - currpos);
+    if (remaining > 64) {
+        return -1;
+    }
+
+    // first 12 bytes are audio format / ignored stuff
+    // then goes the file content
+    int sz = (int)remaining + 12;
+    f->track[f->total_tracks - 1]->decoderConfigLen = sz;
+    f->track[f->total_tracks - 1]->decoderConfig = calloc (1, sz);
+
+    int8_t *buf = (int8_t *)f->track[f->total_tracks - 1]->decoderConfig + 12;
+    mp4ff_read_data(f, buf, remaining);
     return 0;
 }
 
@@ -438,7 +467,7 @@ static int32_t mp4ff_read_stsd(mp4ff_t *f)
             mp4ff_read_mp4a(f);
         } else if (atom_type == ATOM_ALAC) {
             f->track[f->total_tracks - 1]->type = TRACK_AUDIO;
-            mp4ff_read_alac(f, size - header_size);
+            mp4ff_read_alac(f, (int)size - header_size);
         } else if (atom_type == ATOM_MP4V) {
             f->track[f->total_tracks - 1]->type = TRACK_VIDEO;
         } else if (atom_type == ATOM_MP4S) {

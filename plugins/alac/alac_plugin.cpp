@@ -35,12 +35,16 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#define USE_APPLE_CODEC 1
-#define USE_MP4FF 0
+#define USE_APPLE_CODEC 0
+#define USE_MP4FF 1
 
 #if USE_APPLE_CODEC
 #include "ALACDecoder.h"
 #include "ALACBitUtilities.h"
+#else
+extern "C" {
+#include "decomp.h"
+}
 #endif
 
 #include "mp4ff.h"
@@ -52,7 +56,6 @@ extern "C" {
 extern "C" {
 #include "demux.h"
 #include "stream.h"
-#include "decomp.h"
 }
 #endif
 
@@ -96,21 +99,20 @@ typedef struct {
     int mp4track;
     int mp4framesize;
     int mp4samples;
-    int mp4sample;
 #else
     demux_res_t demux_res;
     stream_t *stream;
+    uint8_t buffer[IN_BUFFER_SIZE];
     int64_t dataoffs;
-    int current_frame;
 #endif
 #if USE_APPLE_CODEC
     ALACDecoder *alac;
+    BitBuffer theInputBuffer;
 #else
     alac_file *_alac;
 #endif
+    int mp4sample;
     int junk;
-    BitBuffer theInputBuffer;
-    uint8_t buffer[IN_BUFFER_SIZE];
     uint8_t out_buffer[BUFFER_SIZE];
     int out_remaining;
     int skipsamples;
@@ -153,8 +155,11 @@ mp4_track_get_info (mp4ff_t *mp4, int track, float *duration, int *samplerate, i
     if (!buff) {
         return -1;
     }
+
+#if USE_APPLE_CODEC
+
     ALACDecoder dec;
-    int rc = dec.Init(buff, buff_size);
+    int rc = dec.Init(buff+12, buff_size-12);
     free (buff);
 
     if(rc < 0) {
@@ -165,6 +170,14 @@ mp4_track_get_info (mp4ff_t *mp4, int track, float *duration, int *samplerate, i
     *samplerate = dec.mConfig.sampleRate;
     *channels = dec.mConfig.numChannels;
     *bps = dec.mConfig.bitDepth;
+#else
+    alac_file *alac = create_alac (mp4->track[track]->sampleSize, mp4->track[track]->channelCount);
+    alac_set_info (alac, (char *)buff);
+
+    *samplerate = mp4->track[track]->sampleRate;
+    *channels = mp4->track[track]->channelCount;
+    *bps = mp4->track[track]->sampleSize;
+#endif
 
     samples = mp4ff_num_samples(mp4, track);
 
@@ -266,7 +279,7 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     int samplerate = 0;
     int channels = 0;
-    int bps;
+    int bps = 0;
     float duration = 0;
 
     trace ("alac_init: mp4ff_open_read %s\n", deadbeef->pl_find_meta (it, ":URI"));
@@ -285,29 +298,28 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
         trace ("track: %d\n", info->mp4track);
         if (info->mp4track >= 0) {
-            // prepare decoder
-            int res = mp4_track_get_info (info->mp4, info->mp4track, &duration, &samplerate, &channels, &bps, &totalsamples, &info->mp4framesize);
-            if (res != 0) {
-                trace ("alac: mp4_track_get_info(%d) returned error\n", info->mp4track);
-                return -1;
-            }
-
             // init mp4 decoding
             info->mp4samples = mp4ff_num_samples(info->mp4, info->mp4track);
-            info->alac = new ALACDecoder;
+
             unsigned char*  buff = 0;
             unsigned int    buff_size = 0;
             if (mp4ff_get_decoder_config (info->mp4, info->mp4track, &buff, &buff_size)) {
                 return -1;
             }
-            res = info->alac->Init(buff, buff_size);
+
+#if USE_APPLE_CODEC
+            info->alac = new ALACDecoder;
+            int res = info->alac->Init(buff + 12, buff_size - 12);
             free (buff);
 
             if (res < 0) {
                 trace ("ALACDecoder.Init returned %d\n", res);
                 return -1;
             }
-
+#else
+            info->_alac = create_alac (info->mp4->track[info->mp4track]->sampleSize, info->mp4->track[info->mp4track]->channelCount);
+            alac_set_info (info->_alac, (char *)buff);
+#endif
             trace ("alac: successfully initialized track %d\n", info->mp4track);
             _info->fmt.samplerate = samplerate;
             _info->fmt.channels = channels;
@@ -443,45 +455,32 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
             continue;
         }
 
+        unsigned char *buffer = NULL;
+        int64_t offs = deadbeef->ftell (info->file);
+        uint32_t buffer_size = 0;
+        uint32_t outNumSamples = 0;
+
 #if USE_MP4FF
         if (info->mp4sample >= info->mp4samples) {
             trace ("alac: finished with the last mp4sample\n");
             break;
         }
 
-        unsigned char *buffer = NULL;
-        uint32_t buffer_size = 0;
         int rc = mp4ff_read_sample (info->mp4, info->mp4track, info->mp4sample, &buffer, &buffer_size);
         if (rc == 0) {
             trace ("mp4ff_read_sample failed\n");
             break;
         }
-        info->mp4sample++;
-
-        BitBufferInit(&info->theInputBuffer, buffer, buffer_size);
-
-        uint32_t outNumSamples = 0;
-        int32_t err = info->alac->Decode(&info->theInputBuffer, info->out_buffer, BUFFER_SIZE/samplesize, info->alac->mConfig.numChannels, &outNumSamples);
-        if (err) {
-            break;
-        }
-
-        info->out_remaining += outNumSamples;
-
-        if (buffer) {
-            free (buffer);
-        }
 #else
         // decode next frame
-        if (info->current_frame == info->demux_res.num_sample_byte_sizes) {
+        if (info->mp4sample == info->demux_res.num_sample_byte_sizes) {
             break; // end of file
         }
 
         uint32_t sample_duration;
         uint32_t sample_byte_size;
-        int outputBytes;
         /* just get one sample for now */
-        if (!get_sample_info(&info->demux_res, info->current_frame,
+        if (!get_sample_info(&info->demux_res, info->mp4sample,
                              &sample_duration, &sample_byte_size))
         {
             fprintf(stderr, "alac: sample failed\n");
@@ -495,27 +494,35 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
             break;
         }
 
-
-        int32_t nb = stream_read (info->stream, sample_byte_size, info->buffer);
+        buffer_size = stream_read (info->stream, sample_byte_size, info->buffer);
         if (stream_eof (info->stream)) {
             break;
         }
 
-        outputBytes = BUFFER_SIZE;
-#if USE_APPLE_CODEC
-        BitBufferInit(&info->theInputBuffer, info->buffer, nb);
+        buffer = info->buffer;
+#endif
 
-        uint32_t outNumSamples = 0;
+#if USE_APPLE_CODEC
+        BitBufferInit(&info->theInputBuffer, buffer, buffer_size);
+
         int32_t err = info->alac->Decode(&info->theInputBuffer, info->out_buffer, BUFFER_SIZE/samplesize, info->alac->mConfig.numChannels, &outNumSamples);
+        if (err) {
+            printf ("alac->Decode error: %d\n", err);
+        }
+
+#else
+        int outputBytes = 0;
+        decode_frame(info->_alac, buffer, info->out_buffer, &outputBytes);
+        outNumSamples = outputBytes / samplesize;
+#endif
 
         info->out_remaining += outNumSamples;
+        info->mp4sample++;
 
-        //        BitBufferReset(&info->theInputBuffer);
-#else
-        decode_frame(info->_alac, info->buffer, info->out_buffer, &outputBytes);
-        info->out_remaining += outputBytes / samplesize;
-#endif
-        info->current_frame++;
+#if USE_MP4FF
+        if (buffer) {
+            free (buffer);
+        }
 #endif
     }
 
@@ -580,7 +587,7 @@ alacplug_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     deadbeef->fseek(info->file, info->dataoffs + seekpos, SEEK_SET);
 
-    info->current_frame = i;
+    info->mp4sample = i;
 #endif
     info->out_remaining = 0;
     info->currentsample = sample;
@@ -602,6 +609,8 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int channels = 0;
 #if !USE_MP4FF
     int64_t fsize = 0;
+#endif
+#if USE_APPLE_CODEC
     ALACDecoder *alac = NULL;
 #endif
     int64_t totalsamples = 0;
@@ -770,6 +779,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         }
     }
 
+#if USE_APPLE_CODEC
     alac = new ALACDecoder;
     if (alac->Init(demux_res.codecdata+12, demux_res.codecdata_len-12) < 0) {
         delete alac;
@@ -778,6 +788,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     demux_res.sample_rate = alac->mConfig.sampleRate;
     demux_res.sample_size = alac->mConfig.bitDepth;
     delete alac;
+#endif
 
     it = deadbeef->pl_item_alloc_init (fname, alac_plugin.plugin.id);
     deadbeef->pl_add_meta (it, ":FILETYPE", "ALAC");
@@ -827,7 +838,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         DB_playItem_t *cue = NULL;
 
         if (cuesheet) {
-            cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (const uint8_t *)cuesheet, (int)strlen (cuesheet), totalsamples, samplerate);
+            cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (const uint8_t *)cuesheet, (int)strlen (cuesheet), (int)totalsamples, samplerate);
             if (cue) {
                 deadbeef->pl_item_unref (it);
                 deadbeef->pl_item_unref (cue);
@@ -837,7 +848,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         }
         deadbeef->pl_unlock ();
 
-        cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
+        cue  = deadbeef->plt_insert_cue (plt, after, it, (int)totalsamples, samplerate);
         if (cue) {
             deadbeef->pl_item_unref (it);
             deadbeef->pl_item_unref (cue);
