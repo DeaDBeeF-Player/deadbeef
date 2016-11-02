@@ -33,6 +33,7 @@ extern DB_functions_t *deadbeef;
     settings_data_t _settingsData;
     NSMutableArray *_bindings;
     DSPChainDataSource *_dspChainDataSource;
+    ddb_dsp_context_t *_curr_dsp;
 }
 
 @end
@@ -295,15 +296,6 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)didEndDspConfigPanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    if (returnCode == NSOKButton) {
-        NSInteger index = [_dspList selectedRow];
-        if (index < 0) {
-            return;
-        }
-        ddb_dsp_context_t *dsp = [_dspChainDataSource getItemAtIndex:(int)index];
-        [self savePluginConfiguration:dsp];
-    }
-
     [_dspConfigPanel orderOut:self];
 }
 
@@ -316,12 +308,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (IBAction)dspConfigResetAction:(id)sender {
-    NSInteger index = [_dspList selectedRow];
-    if (index < 0) {
-        return;
-    }
-    ddb_dsp_context_t *dsp = [_dspChainDataSource getItemAtIndex:(int)index];
-    [self resetPluginConfigToDefaults:dsp];
+    [self resetPluginConfigToDefaults:_curr_dsp];
 }
 
 - (IBAction)dspChainAction:(id)sender {
@@ -384,6 +371,7 @@ extern DB_functions_t *deadbeef;
         [_dspChainDataSource apply];
     }
     else {
+        deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
         deadbeef->conf_save ();
     }
 }
@@ -400,10 +388,13 @@ extern DB_functions_t *deadbeef;
             }
         }
     }
+
+    [self savePluginConfiguration:dsp];
 }
 
 - (void)initPluginConfiguration:(const char *)config inView:(NSView *)view dsp:(ddb_dsp_context_t *)dsp {
     _bindings = [[NSMutableArray alloc] init];
+    _curr_dsp = dsp;
     
     NSScrollView *scrollView = (NSScrollView *)view;
     view = [scrollView documentView];
@@ -525,6 +516,10 @@ extern DB_functions_t *deadbeef;
                                        @"propname":propname,
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
+
+                [checkbox setTarget:self];
+                [checkbox setAction:@selector(valueChanged:)];
+
                 break;
             }
             case PROP_SLIDER:
@@ -589,6 +584,9 @@ extern DB_functions_t *deadbeef;
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
 
+                [popUpButton setTarget:self];
+                [popUpButton setAction:@selector(valueChanged:)];
+
                 [view addSubview:popUpButton];
                 break;
             }
@@ -612,13 +610,40 @@ extern DB_functions_t *deadbeef;
 
 - (void)valueChanged:(id)sender {
     for (NSDictionary *binding in _bindings) {
-        if (binding[@"sender"] == sender && binding[@"valueview"]) {
-            if (binding[@"isInteger"]) {
-                [binding[@"valueview"] setStringValue:[@([sender integerValue]) stringValue]];
+        if (binding[@"sender"] == sender) {
+            // synchronize dependent widgets, e.g. slider with its textfield
+            if (binding[@"valueview"]) {
+                if (binding[@"isInteger"]) {
+                    [binding[@"valueview"] setStringValue:[@([sender integerValue]) stringValue]];
+                }
+                else {
+                    [binding[@"valueview"] setStringValue:[sender stringValue]];
+                }
+            }
+
+            // update config
+            NSString *value;
+            if (binding[@"isInteger"] && [binding[@"isInteger"] boolValue]) {
+                value = [@([sender integerValue]) stringValue];
+            }
+            else if ([sender isKindOfClass:[NSPopUpButton class]]) {
+                value = [@([sender indexOfSelectedItem]) stringValue];
             }
             else {
-                [binding[@"valueview"] setStringValue:[sender stringValue]];
+                value = [sender stringValue];
             }
+            const char *propname = [binding[@"propname"] UTF8String];
+            const char *svalue = [value UTF8String];
+            if (_curr_dsp) {
+                _curr_dsp->plugin->set_param (_curr_dsp, atoi (propname), svalue);
+                [_dspChainDataSource apply];
+            }
+            else {
+                deadbeef->conf_set_str (propname, svalue);
+                deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+                deadbeef->conf_save ();
+            }
+
             break;
         }
     }

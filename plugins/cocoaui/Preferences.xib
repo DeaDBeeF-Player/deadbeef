@@ -1114,7 +1114,7 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <clipView key="contentView" copiesOnScroll="NO" id="c6E-sw-DGw">
                                             <rect key="frame" x="1" y="1" width="398" height="232"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <view misplaced="YES" id="9eO-pn-WbB">
                                                     <rect key="frame" x="0.0" y="0.0" width="661" height="387"/>
@@ -1263,23 +1263,9 @@
                         </scroller>
                     </scrollView>
                     <button verticalHuggingPriority="750" misplaced="YES" id="L3W-p1-piB">
-                        <rect key="frame" x="353" y="13" width="59" height="32"/>
+                        <rect key="frame" x="345" y="13" width="75" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="f8p-hn-MkL">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-DQ
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="dspConfigOkAction:" target="-2" id="Aoo-oA-I3G"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" misplaced="YES" id="bDv-pG-qdl">
-                        <rect key="frame" x="271" y="13" width="82" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="F4g-G0-6zJ">
+                        <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="f8p-hn-MkL">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                             <string key="keyEquivalent" base64-UTF8="YES">
@@ -1287,11 +1273,11 @@ Gw
 </string>
                         </buttonCell>
                         <connections>
-                            <action selector="dspConfigCancelAction:" target="-2" id="WVr-Kl-lOa"/>
+                            <action selector="dspConfigOkAction:" target="-2" id="Aoo-oA-I3G"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" misplaced="YES" id="4gX-Ix-h4v">
-                        <rect key="frame" x="128" y="13" width="143" height="32"/>
+                        <rect key="frame" x="202" y="13" width="143" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Reset to defaults" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="j6T-6W-KcH">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
