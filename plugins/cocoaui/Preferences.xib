@@ -1109,15 +1109,15 @@
                                             <action selector="pluginConfResetDefaults:" target="-2" id="EWR-Ux-2kq"/>
                                         </connections>
                                     </button>
-                                    <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="Oef-pD-hfw">
+                                    <scrollView autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="Oef-pD-hfw">
                                         <rect key="frame" x="17" y="44" width="415" height="234"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                        <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="c6E-sw-DGw">
-                                            <rect key="frame" x="0.0" y="0.0" width="400" height="234"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                        <clipView key="contentView" copiesOnScroll="NO" id="c6E-sw-DGw">
+                                            <rect key="frame" x="1" y="1" width="398" height="232"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
-                                                <view id="9eO-pn-WbB">
-                                                    <rect key="frame" x="0.0" y="0.0" width="663" height="389"/>
+                                                <view misplaced="YES" id="9eO-pn-WbB">
+                                                    <rect key="frame" x="0.0" y="0.0" width="661" height="387"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 </view>
                                             </subviews>
@@ -1127,7 +1127,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Ywy-t2-JeC">
-                                            <rect key="frame" x="400" y="0.0" width="15" height="234"/>
+                                            <rect key="frame" x="399" y="1" width="15" height="232"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                     </scrollView>
@@ -1239,15 +1239,15 @@
                 <rect key="frame" x="0.0" y="0.0" width="437" height="222"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <scrollView misplaced="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="Q0a-Lt-Ngu">
+                    <scrollView misplaced="YES" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="Q0a-Lt-Ngu">
                         <rect key="frame" x="20" y="61" width="397" height="141"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <clipView key="contentView" drawsBackground="NO" id="uSY-oD-soz">
-                            <rect key="frame" x="0.0" y="0.0" width="397" height="141"/>
+                        <clipView key="contentView" id="uSY-oD-soz">
+                            <rect key="frame" x="1" y="1" width="395" height="139"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <view id="LIK-8h-N20">
-                                    <rect key="frame" x="0.0" y="0.0" width="382" height="126"/>
+                                <view misplaced="YES" id="LIK-8h-N20">
+                                    <rect key="frame" x="0.0" y="0.0" width="395" height="139"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </view>
                             </subviews>
@@ -1258,7 +1258,7 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="jjB-tF-AmN">
-                            <rect key="frame" x="279" y="1" width="15" height="110"/>
+                            <rect key="frame" x="-100" y="-100" width="15" height="110"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
@@ -1288,6 +1288,17 @@ Gw
                         </buttonCell>
                         <connections>
                             <action selector="dspConfigCancelAction:" target="-2" id="WVr-Kl-lOa"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" misplaced="YES" id="4gX-Ix-h4v">
+                        <rect key="frame" x="128" y="13" width="143" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Reset to defaults" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="j6T-6W-KcH">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="dspConfigResetAction:" target="-2" id="Z3w-5g-m5A"/>
                         </connections>
                     </button>
                 </subviews>

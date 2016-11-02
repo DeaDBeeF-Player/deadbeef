@@ -315,6 +315,15 @@ extern DB_functions_t *deadbeef;
     [NSApp endSheet:_dspConfigPanel returnCode:NSOKButton];
 }
 
+- (IBAction)dspConfigResetAction:(id)sender {
+    NSInteger index = [_dspList selectedRow];
+    if (index < 0) {
+        return;
+    }
+    ddb_dsp_context_t *dsp = [_dspChainDataSource getItemAtIndex:(int)index];
+    [self resetPluginConfigToDefaults:dsp];
+}
+
 - (IBAction)dspChainAction:(id)sender {
     NSInteger selectedSegment = [sender selectedSegment];
 
@@ -344,6 +353,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (IBAction)pluginConfResetDefaults:(id)sender {
+    [self resetPluginConfigToDefaults:NULL];
 }
 
 - (void)savePluginConfiguration:(ddb_dsp_context_t *)dsp {
@@ -378,24 +388,38 @@ extern DB_functions_t *deadbeef;
     }
 }
 
+- (void)resetPluginConfigToDefaults:(ddb_dsp_context_t *)dsp {
+    for (NSDictionary *binding in _bindings) {
+        if (binding[@"sender"] && binding[@"default"]) {
+            id sender = binding[@"sender"];
+            if ([sender isKindOfClass:[NSPopUpButton class]]) {
+                [sender selectItemAtIndex:[binding[@"default"] intValue]];
+            }
+            else {
+                [sender setStringValue:binding[@"default"]];
+            }
+        }
+    }
+}
+
 - (void)initPluginConfiguration:(const char *)config inView:(NSView *)view dsp:(ddb_dsp_context_t *)dsp {
     _bindings = [[NSMutableArray alloc] init];
     
     NSScrollView *scrollView = (NSScrollView *)view;
-    view = [[scrollView contentView] subviews][0];
+    view = [scrollView documentView];
     
     while ([[view subviews] count] > 0) {
         [[[view subviews] lastObject] removeFromSuperview];
     }
     
     settings_data_free (&_settingsData);
-    
+
+    BOOL have_settings = YES;
     if (!config || settings_data_init(&_settingsData, config) < 0) {
-        // TODO: show information that the plugin doesn't have settings
-        return;
+        have_settings = NO;
     }
-    
-    int label_padding = 4;
+
+    int label_padding = 8;
     int unit_spacing = 4;
     int unit_h = 22;
     int h = _settingsData.nprops * (unit_h + unit_spacing);
@@ -405,7 +429,27 @@ extern DB_functions_t *deadbeef;
     if (h < sz.height) {
         h = sz.height;
     }
-    
+    NSRect frame = [view frame];
+    [view setFrame:NSMakeRect(0, 0, frame.size.width, h)];
+
+    NSPoint pt = NSMakePoint(0.0, [[scrollView documentView]
+                                   bounds].size.height);
+    [[scrollView documentView] scrollPoint:pt];
+
+    sz = [scrollView contentSize];
+
+    if (!have_settings) {
+        NSTextField *lbl = [[NSTextField alloc] initWithFrame:NSMakeRect(0, sz.height/2 - unit_h/2, sz.width, unit_h)];
+        [lbl setStringValue:@"This plugin doesn't have settings"];
+        [lbl setAlignment:NSCenterTextAlignment];
+        [lbl setBezeled:NO];
+        [lbl setDrawsBackground:NO];
+        [lbl setEditable:NO];
+        [lbl setSelectable:NO];
+        [view addSubview:lbl];
+        return;
+    }
+
     deadbeef->conf_lock ();
     for (int i = 0; i < _settingsData.nprops; i++) {
         int y = h - (unit_h + unit_spacing) * i - unit_h - 4;
@@ -420,7 +464,7 @@ extern DB_functions_t *deadbeef;
             case PROP_SLIDER:
             case PROP_FILE:
             {
-                NSTextField *lbl = [[NSTextField alloc] initWithFrame:NSMakeRect(0, y-2, 500, unit_h)];
+                NSTextField *lbl = [[NSTextField alloc] initWithFrame:NSMakeRect(4, y-2, 500, unit_h)];
                 [lbl setStringValue:[[NSString stringWithUTF8String:_settingsData.props[i].title] stringByAppendingString:@":"]];
                 [lbl setBezeled:NO];
                 [lbl setDrawsBackground:NO];
@@ -463,13 +507,14 @@ extern DB_functions_t *deadbeef;
                 [tf setStringValue:[NSString stringWithUTF8String:value]];
                 [view addSubview:tf];
                 [_bindings addObject:@{@"sender":tf,
-                                       @"propname":propname
+                                       @"propname":propname,
+                                       @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
                 break;
             }
             case PROP_CHECKBOX:
             {
-                NSRect frame = NSMakeRect(0, y, sz.width - 4, unit_h);
+                NSRect frame = NSMakeRect(4, y, sz.width - 4, unit_h);
                 NSButton *checkbox = [[NSButton alloc] initWithFrame:frame];
                 [checkbox setButtonType:NSSwitchButton];
                 [checkbox setTitle:[NSString stringWithUTF8String:_settingsData.props[i].title]];
@@ -477,13 +522,14 @@ extern DB_functions_t *deadbeef;
                 [view addSubview:checkbox];
 
                 [_bindings addObject:@{@"sender":checkbox,
-                                       @"propname":propname
+                                       @"propname":propname,
+                                       @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
                 break;
             }
             case PROP_SLIDER:
             {
-                NSRect frame = NSMakeRect(label_w + label_padding, y, sz.width-label_w - label_padding - 4 - 64, unit_h);
+                NSRect frame = NSMakeRect(label_w + label_padding, y, sz.width - (label_w + label_padding) - 72, unit_h);
                 NSSlider *slider = [[NSSlider alloc] initWithFrame:frame];
                 const char *opts = _settingsData.props[i].select_options;
                 float min, max, step;
@@ -493,20 +539,24 @@ extern DB_functions_t *deadbeef;
                 [slider setContinuous:YES];
                 [slider setIntValue:atoi(value)];
                 
-                frame = NSMakeRect(label_w + sz.width-label_w - label_padding - 4 - 64 + 4, y, 60, unit_h);
+                frame = NSMakeRect(label_w + sz.width-label_w - label_padding - 64, y, 68, unit_h);
                 NSTextField *valueedit = [[NSTextField alloc] initWithFrame:frame];
                 [valueedit setStringValue:[NSString stringWithUTF8String: value]];
                 [valueedit setEditable:YES];
 
                 [_bindings addObject:@{@"sender":slider,
+                                       @"propname":propname,
                                        @"valueview":valueedit,
-                                       @"isInteger":[NSNumber numberWithBool:YES]
+                                       @"isInteger":[NSNumber numberWithBool:YES],
+                                       @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
 
                 [_bindings addObject:@{@"sender":valueedit,
                                        @"propname":propname,
                                        @"valueview":slider,
-                                       @"isInteger":[NSNumber numberWithBool:YES]}];
+                                       @"isInteger":[NSNumber numberWithBool:YES],
+                                       @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
+                                       }];
 
                 [slider setTarget:self];
                 [slider setAction:@selector(valueChanged:)];
@@ -535,7 +585,8 @@ extern DB_functions_t *deadbeef;
                 }
                 
                 [_bindings addObject:@{@"sender":popUpButton,
-                                       @"propname":propname
+                                       @"propname":propname,
+                                       @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
 
                 [view addSubview:popUpButton];
@@ -544,18 +595,14 @@ extern DB_functions_t *deadbeef;
         }
     }
     deadbeef->conf_unlock ();
-    NSRect frame = [view frame];
-    [view setFrame:NSMakeRect(0, 0, frame.size.width, h)];
 }
 
 - (void)initPluginConfiguration:(NSInteger)idx {
-    NSView *v = _pluginPropertiesView;
-
     DB_plugin_t *p = deadbeef->plug_get_list()[idx];
     
     const char *config = p->configdialog;
     
-    [self initPluginConfiguration:config inView:v dsp:NULL];
+    [self initPluginConfiguration:config inView:_pluginPropertiesView dsp:NULL];
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification {

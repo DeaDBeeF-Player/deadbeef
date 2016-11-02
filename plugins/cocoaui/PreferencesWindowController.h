@@ -68,6 +68,7 @@
 @property (unsafe_unretained) IBOutlet NSScrollView *dspConfigView;
 - (IBAction)dspConfigCancelAction:(id)sender;
 - (IBAction)dspConfigOkAction:(id)sender;
+- (IBAction)dspConfigResetAction:(id)sender;
 
 - (IBAction)dspChainAction:(id)sender;
 - (IBAction)dspSaveAction:(id)sender;
