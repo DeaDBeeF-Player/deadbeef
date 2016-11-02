@@ -115,6 +115,7 @@ dsp_chain_clone (ddb_dsp_context_t *source_chain) {
 
         node->plugin->close (node);
     }
+    deadbeef->streamer_set_dsp_chain (_chain);
 }
 
 - (ddb_dsp_context_t *)getItemAtIndex:(int)index {
@@ -124,6 +125,10 @@ dsp_chain_clone (ddb_dsp_context_t *source_chain) {
         index--;
     }
     return node;
+}
+
+- (void)apply {
+    deadbeef->streamer_set_dsp_chain (_chain);
 }
 
 @end

@@ -66,6 +66,8 @@
 // dsp properties
 @property (strong) IBOutlet NSPanel *dspConfigPanel;
 @property (unsafe_unretained) IBOutlet NSScrollView *dspConfigView;
+- (IBAction)dspConfigCancelAction:(id)sender;
+- (IBAction)dspConfigOkAction:(id)sender;
 
 - (IBAction)dspChainAction:(id)sender;
 - (IBAction)dspSaveAction:(id)sender;

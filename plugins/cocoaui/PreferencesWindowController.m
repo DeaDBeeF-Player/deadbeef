@@ -295,7 +295,24 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)didEndDspConfigPanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+    if (returnCode == NSOKButton) {
+        NSInteger index = [_dspList selectedRow];
+        if (index < 0) {
+            return;
+        }
+        ddb_dsp_context_t *dsp = [_dspChainDataSource getItemAtIndex:(int)index];
+        [self savePluginConfiguration:dsp];
+    }
+
     [_dspConfigPanel orderOut:self];
+}
+
+- (IBAction)dspConfigCancelAction:(id)sender {
+    [NSApp endSheet:_dspConfigPanel returnCode:NSCancelButton];
+}
+
+- (IBAction)dspConfigOkAction:(id)sender {
+    [NSApp endSheet:_dspConfigPanel returnCode:NSOKButton];
 }
 
 - (IBAction)dspChainAction:(id)sender {
@@ -327,6 +344,38 @@ extern DB_functions_t *deadbeef;
 }
 
 - (IBAction)pluginConfResetDefaults:(id)sender {
+}
+
+- (void)savePluginConfiguration:(ddb_dsp_context_t *)dsp {
+    for (NSDictionary *binding in _bindings) {
+        if (binding[@"sender"] && binding[@"propname"]) {
+            id sender = binding[@"sender"];
+            NSString *value;
+            if (binding[@"isInteger"] && [binding[@"isInteger"] boolValue]) {
+                value = [@([sender integerValue]) stringValue];
+            }
+            else if ([sender isKindOfClass:[NSPopUpButton class]]) {
+                value = [@([sender indexOfSelectedItem]) stringValue];
+            }
+            else {
+                value = [sender stringValue];
+            }
+            const char *propname = [binding[@"propname"] UTF8String];
+            const char *svalue = [value UTF8String];
+            if (dsp) {
+                dsp->plugin->set_param (dsp, atoi (propname), svalue);
+            }
+            else {
+                deadbeef->conf_set_str (propname, svalue);
+            }
+        }
+    }
+    if (dsp) {
+        [_dspChainDataSource apply];
+    }
+    else {
+        deadbeef->conf_save ();
+    }
 }
 
 - (void)initPluginConfiguration:(const char *)config inView:(NSView *)view dsp:(ddb_dsp_context_t *)dsp {
@@ -397,7 +446,8 @@ extern DB_functions_t *deadbeef;
         else {
             deadbeef->conf_get_str (_settingsData.props[i].key, _settingsData.props[i].def, value, sizeof (value));
         }
-        
+        NSString *propname = [NSString stringWithUTF8String:_settingsData.props[i].key];
+
         switch (_settingsData.props[i].type) {
             case PROP_ENTRY:
             case PROP_PASSWORD:
@@ -412,6 +462,9 @@ extern DB_functions_t *deadbeef;
                 [tf setUsesSingleLineMode:YES];
                 [tf setStringValue:[NSString stringWithUTF8String:value]];
                 [view addSubview:tf];
+                [_bindings addObject:@{@"sender":tf,
+                                       @"propname":propname
+                                       }];
                 break;
             }
             case PROP_CHECKBOX:
@@ -422,6 +475,10 @@ extern DB_functions_t *deadbeef;
                 [checkbox setTitle:[NSString stringWithUTF8String:_settingsData.props[i].title]];
                 [checkbox setState:atoi(value) ? NSOnState : NSOffState];
                 [view addSubview:checkbox];
+
+                [_bindings addObject:@{@"sender":checkbox,
+                                       @"propname":propname
+                                       }];
                 break;
             }
             case PROP_SLIDER:
@@ -437,20 +494,27 @@ extern DB_functions_t *deadbeef;
                 [slider setIntValue:atoi(value)];
                 
                 frame = NSMakeRect(label_w + sz.width-label_w - label_padding - 4 - 64 + 4, y, 60, unit_h);
-                NSTextField *label = [[NSTextField alloc] initWithFrame:frame];
-                [label setStringValue:[NSString stringWithUTF8String: value]];
-                [label setBezeled:NO];
-                [label setDrawsBackground:NO];
-                [label setEditable:NO];
-                [label setSelectable:NO];
-                
-                [_bindings addObject:@[slider, label, [NSNumber numberWithBool:YES]]];
-                
+                NSTextField *valueedit = [[NSTextField alloc] initWithFrame:frame];
+                [valueedit setStringValue:[NSString stringWithUTF8String: value]];
+                [valueedit setEditable:YES];
+
+                [_bindings addObject:@{@"sender":slider,
+                                       @"valueview":valueedit,
+                                       @"isInteger":[NSNumber numberWithBool:YES]
+                                       }];
+
+                [_bindings addObject:@{@"sender":valueedit,
+                                       @"propname":propname,
+                                       @"valueview":slider,
+                                       @"isInteger":[NSNumber numberWithBool:YES]}];
+
                 [slider setTarget:self];
                 [slider setAction:@selector(valueChanged:)];
-                
+
+                [valueedit setDelegate:(id<NSTextFieldDelegate>)self];
+
                 [view addSubview:slider];
-                [view addSubview:label];
+                [view addSubview:valueedit];
                 break;
             }
             case PROP_SELECT:
@@ -470,6 +534,10 @@ extern DB_functions_t *deadbeef;
                     }
                 }
                 
+                [_bindings addObject:@{@"sender":popUpButton,
+                                       @"propname":propname
+                                       }];
+
                 [view addSubview:popUpButton];
                 break;
             }
@@ -490,14 +558,19 @@ extern DB_functions_t *deadbeef;
     [self initPluginConfiguration:config inView:v dsp:NULL];
 }
 
+- (void)controlTextDidChange:(NSNotification *)notification {
+    NSTextField *textField = [notification object];
+    [self valueChanged:textField];
+}
+
 - (void)valueChanged:(id)sender {
-    for (NSArray *binding in _bindings) {
-        if (binding[0] == sender) {
-            if ([binding count] > 2 && [binding[2] boolValue]) {
-                [binding[1] setIntValue:[sender intValue]];
+    for (NSDictionary *binding in _bindings) {
+        if (binding[@"sender"] == sender && binding[@"valueview"]) {
+            if (binding[@"isInteger"]) {
+                [binding[@"valueview"] setStringValue:[@([sender integerValue]) stringValue]];
             }
             else {
-                [binding[1] setStringValue:[sender stringValue]];
+                [binding[@"valueview"] setStringValue:[sender stringValue]];
             }
             break;
         }
