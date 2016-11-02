@@ -406,8 +406,9 @@ static int32_t mp4ff_read_alac(mp4ff_t *f, int frame_size)
 {
     // read decoder config
     int64_t currpos = mp4ff_position(f);
+    int i;
 
-    for (int i = 0; i < 6; i++)
+    for (i = 0; i < 6; i++)
     {
         mp4ff_read_char(f); // reserved
     }
