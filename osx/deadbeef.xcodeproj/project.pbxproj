@@ -1545,6 +1545,12 @@
 		2DEA2F951B99A15800A4C6EA /* Bml_Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCA51B7710650063DA75 /* Bml_Parser.cpp */; };
 		2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEF494219C4DB4100B718C1 /* DdbListview.h */; };
 		2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF494319C4DB4100B718C1 /* DdbListview.m */; };
+		2DF16CB61DCB62FD007D7F05 /* supereq.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DF16CB01DCB62D9007D7F05 /* supereq.dylib */; };
+		2DF16CBC1DCB6335007D7F05 /* Equ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DF16CB71DCB6335007D7F05 /* Equ.cpp */; };
+		2DF16CBD1DCB6335007D7F05 /* Equ.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF16CB81DCB6335007D7F05 /* Equ.h */; };
+		2DF16CBE1DCB6335007D7F05 /* Fftsg_fl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF16CB91DCB6335007D7F05 /* Fftsg_fl.c */; };
+		2DF16CBF1DCB6335007D7F05 /* paramlist.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 2DF16CBA1DCB6335007D7F05 /* paramlist.hpp */; };
+		2DF16CC01DCB6335007D7F05 /* supereq.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF16CBB1DCB6335007D7F05 /* supereq.c */; };
 		2DF1ED691DAA376B00E23298 /* decomp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF1ED671DAA376B00E23298 /* decomp.h */; };
 		2DF1ED6A1DAA376B00E23298 /* alac.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF1ED681DAA376B00E23298 /* alac.c */; };
 		2DF622BB1B335FF100C70C7D /* convpresets in Resources */ = {isa = PBXBuildFile; fileRef = 2DF622B81B335DF400C70C7D /* convpresets */; };
@@ -2299,6 +2305,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2DE92F2E1BAFFB4F00F37154;
 			remoteInfo = wavpack;
+		};
+		2DF16CB41DCB62F4007D7F05 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DF16CAF1DCB62D9007D7F05;
+			remoteInfo = supereq;
 		};
 		2DF930531AB8175D0030C0CA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3897,6 +3910,12 @@
 		2DE92F521BAFFBC700F37154 /* wavpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wavpack.c; path = plugins/wavpack/wavpack.c; sourceTree = "<group>"; };
 		2DEF494219C4DB4100B718C1 /* DdbListview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbListview.h; sourceTree = "<group>"; };
 		2DEF494319C4DB4100B718C1 /* DdbListview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbListview.m; sourceTree = "<group>"; };
+		2DF16CB01DCB62D9007D7F05 /* supereq.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = supereq.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DF16CB71DCB6335007D7F05 /* Equ.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Equ.cpp; path = plugins/supereq/Equ.cpp; sourceTree = "<group>"; };
+		2DF16CB81DCB6335007D7F05 /* Equ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Equ.h; path = plugins/supereq/Equ.h; sourceTree = "<group>"; };
+		2DF16CB91DCB6335007D7F05 /* Fftsg_fl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Fftsg_fl.c; path = plugins/supereq/Fftsg_fl.c; sourceTree = "<group>"; };
+		2DF16CBA1DCB6335007D7F05 /* paramlist.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = paramlist.hpp; path = plugins/supereq/paramlist.hpp; sourceTree = "<group>"; };
+		2DF16CBB1DCB6335007D7F05 /* supereq.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = supereq.c; path = plugins/supereq/supereq.c; sourceTree = "<group>"; };
 		2DF1ED671DAA376B00E23298 /* decomp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = decomp.h; path = plugins/alac/decomp.h; sourceTree = "<group>"; };
 		2DF1ED681DAA376B00E23298 /* alac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = alac.c; path = plugins/alac/alac.c; sourceTree = "<group>"; };
 		2DF622B81B335DF400C70C7D /* convpresets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = convpresets; path = plugins/converter/convpresets; sourceTree = "<group>"; };
@@ -4647,6 +4666,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2DE92F2C1BAFFB4F00F37154 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DF16CAD1DCB62D9007D7F05 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -6867,6 +6893,18 @@
 			name = wavpack;
 			sourceTree = "<group>";
 		};
+		2DF16CAB1DCB62B6007D7F05 /* supereq */ = {
+			isa = PBXGroup;
+			children = (
+				2DF16CB71DCB6335007D7F05 /* Equ.cpp */,
+				2DF16CB81DCB6335007D7F05 /* Equ.h */,
+				2DF16CB91DCB6335007D7F05 /* Fftsg_fl.c */,
+				2DF16CBA1DCB6335007D7F05 /* paramlist.hpp */,
+				2DF16CBB1DCB6335007D7F05 /* supereq.c */,
+			);
+			name = supereq;
+			sourceTree = "<group>";
+		};
 		2DF930481AB817190030C0CA /* wildmidi */ = {
 			isa = PBXGroup;
 			children = (
@@ -6988,6 +7026,7 @@
 				2D3A4BB41D631530002C7098 /* medialib.dylib */,
 				2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */,
 				2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */,
+				2DF16CB01DCB62D9007D7F05 /* supereq.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -7132,6 +7171,7 @@
 		4D1B514C1837EF7C003E6066 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				2DF16CAB1DCB62B6007D7F05 /* supereq */,
 				2D5423B51DCB38BC00ACBDEB /* mono2stereo */,
 				2D27AEE51D9D86F600842D76 /* rg_scanner */,
 				2D3A4BB81D631569002C7098 /* medialib */,
@@ -8542,6 +8582,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DF16CAE1DCB62D9007D7F05 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DF16CBF1DCB6335007D7F05 /* paramlist.hpp in Headers */,
+				2DF16CBD1DCB6335007D7F05 /* Equ.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DF930421AB816DC0030C0CA /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -9472,6 +9521,23 @@
 			productReference = 2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		2DF16CAF1DCB62D9007D7F05 /* supereq */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DF16CB11DCB62D9007D7F05 /* Build configuration list for PBXNativeTarget "supereq" */;
+			buildPhases = (
+				2DF16CAC1DCB62D9007D7F05 /* Sources */,
+				2DF16CAD1DCB62D9007D7F05 /* Frameworks */,
+				2DF16CAE1DCB62D9007D7F05 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = supereq;
+			productName = supereq;
+			productReference = 2DF16CB01DCB62D9007D7F05 /* supereq.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2DF930431AB816DC0030C0CA /* wildmidi */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2DF930471AB816DC0030C0CA /* Build configuration list for PBXNativeTarget "wildmidi" */;
@@ -9518,6 +9584,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DF16CB51DCB62F4007D7F05 /* PBXTargetDependency */,
 				2D1DC09B1DCB3A1000441A08 /* PBXTargetDependency */,
 				2D27AEF01D9D876E00842D76 /* PBXTargetDependency */,
 				2D3A4BBC1D6315CE002C7098 /* PBXTargetDependency */,
@@ -9769,6 +9836,10 @@
 					2DE92F2E1BAFFB4F00F37154 = {
 						CreatedOnToolsVersion = 6.2;
 					};
+					2DF16CAF1DCB62D9007D7F05 = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
+					};
 					2DF930431AB816DC0030C0CA = {
 						CreatedOnToolsVersion = 6.2;
 					};
@@ -9849,6 +9920,7 @@
 				2D3A4BB31D631530002C7098 /* medialib */,
 				2D27AED31D9D86ED00842D76 /* rg_scanner */,
 				2D1DC0951DCB39EC00441A08 /* ddb_mono2stereo */,
+				2DF16CAF1DCB62D9007D7F05 /* supereq */,
 			);
 		};
 /* End PBXProject section */
@@ -9974,6 +10046,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DF16CB61DCB62FD007D7F05 /* supereq.dylib in Resources */,
 				2D1DC09C1DCB3A1500441A08 /* ddb_mono2stereo.dylib in Resources */,
 				2D27AEF11D9D877D00842D76 /* rg_scanner.dylib in Resources */,
 				2D3A4BBD1D6315D6002C7098 /* medialib.dylib in Resources */,
@@ -11200,6 +11273,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DF16CAC1DCB62D9007D7F05 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DF16CBE1DCB6335007D7F05 /* Fftsg_fl.c in Sources */,
+				2DF16CC01DCB6335007D7F05 /* supereq.c in Sources */,
+				2DF16CBC1DCB6335007D7F05 /* Equ.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DF930401AB816DC0030C0CA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -11694,6 +11777,11 @@
 			isa = PBXTargetDependency;
 			target = 2DE92F2E1BAFFB4F00F37154 /* wavpack */;
 			targetProxy = 2DE92F541BAFFBE100F37154 /* PBXContainerItemProxy */;
+		};
+		2DF16CB51DCB62F4007D7F05 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DF16CAF1DCB62D9007D7F05 /* supereq */;
+			targetProxy = 2DF16CB41DCB62F4007D7F05 /* PBXContainerItemProxy */;
 		};
 		2DF930541AB8175D0030C0CA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -14003,6 +14091,57 @@
 			};
 			name = Release;
 		};
+		2DF16CB21DCB62D9007D7F05 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = USE_OOURA;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2DF16CB31DCB62D9007D7F05 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = USE_OOURA;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		2DF930451AB816DC0030C0CA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -14613,6 +14752,7 @@
 				2D1DC0991DCB39EC00441A08 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2D22F70419E1382C009C631E /* Build configuration list for PBXNativeTarget "libsidplay2" */ = {
 			isa = XCConfigurationList;
@@ -14874,6 +15014,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		2DF16CB11DCB62D9007D7F05 /* Build configuration list for PBXNativeTarget "supereq" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DF16CB21DCB62D9007D7F05 /* Debug */,
+				2DF16CB31DCB62D9007D7F05 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		2DF930471AB816DC0030C0CA /* Build configuration list for PBXNativeTarget "wildmidi" */ = {
 			isa = XCConfigurationList;

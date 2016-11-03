@@ -529,8 +529,15 @@ extern DB_functions_t *deadbeef;
                 const char *opts = _settingsData.props[i].select_options;
                 float min, max, step;
                 sscanf (opts, "%f,%f,%f", &min, &max, &step);
-                [slider setMinValue:min];
-                [slider setMaxValue:max];
+
+                if (min > max) {
+                    [slider setMinValue:max];
+                    [slider setMaxValue:min];
+                }
+                else {
+                    [slider setMinValue:min];
+                    [slider setMaxValue:max];
+                }
                 [slider setContinuous:YES];
                 if (step == 1) {
                     [slider setIntValue:atoi(value)];
