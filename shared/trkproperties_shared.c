@@ -23,6 +23,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
 #include "trkproperties_shared.h"
 #include "../deadbeef.h"
 #include "../utf8.h"

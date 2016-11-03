@@ -25,6 +25,7 @@
   Alexey Yakovenko waker@users.sourceforge.net
 */
 #include <string.h>
+#include <stdlib.h>
 #include "playlist.h"
 #include "volume.h"
 #include "replaygain.h"
