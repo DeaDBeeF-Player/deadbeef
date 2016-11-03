@@ -532,17 +532,34 @@ extern DB_functions_t *deadbeef;
                 [slider setMinValue:min];
                 [slider setMaxValue:max];
                 [slider setContinuous:YES];
-                [slider setIntValue:atoi(value)];
+                if (step == 1) {
+                    [slider setIntValue:atoi(value)];
+                }
+                else {
+                    [slider setFloatValue:atof(value)];
+                }
                 
                 frame = NSMakeRect(label_w + sz.width-label_w - label_padding - 64, y, 68, unit_h);
                 NSTextField *valueedit = [[NSTextField alloc] initWithFrame:frame];
+#if 0
+                NSNumberFormatter *fmt = [[NSNumberFormatter alloc] init];
+                if (step == 1) {
+                    fmt.allowsFloats = NO;
+                }
+                else {
+                    fmt.allowsFloats = YES;
+                }
+                fmt.minimum = [NSNumber numberWithFloat:min];
+                fmt.maximum = [NSNumber numberWithFloat:max];
+                [valueedit setFormatter:fmt];
+#endif
                 [valueedit setStringValue:[NSString stringWithUTF8String: value]];
                 [valueedit setEditable:YES];
 
                 [_bindings addObject:@{@"sender":slider,
                                        @"propname":propname,
                                        @"valueview":valueedit,
-                                       @"isInteger":[NSNumber numberWithBool:YES],
+                                       @"isInteger":[NSNumber numberWithBool:step == 1 ? YES:NO],
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
 
@@ -613,7 +630,7 @@ extern DB_functions_t *deadbeef;
         if (binding[@"sender"] == sender) {
             // synchronize dependent widgets, e.g. slider with its textfield
             if (binding[@"valueview"]) {
-                if (binding[@"isInteger"]) {
+                if (binding[@"isInteger"] && [binding[@"isInteger"] boolValue]) {
                     [binding[@"valueview"] setStringValue:[@([sender integerValue]) stringValue]];
                 }
                 else {
