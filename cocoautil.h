@@ -26,3 +26,6 @@ cocoautil_get_resources_path (char *s, int size);
 
 void
 cocoautil_backtrace (void);
+
+int
+cocoautil_get_library_path (char *s, int size);

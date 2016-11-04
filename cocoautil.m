@@ -34,3 +34,15 @@ void
 cocoautil_backtrace (void) {
     NSLog(@"%@",[NSThread callStackSymbols]);
 }
+
+int
+cocoautil_get_library_path (char *s, int size) {
+    *s = 0;
+
+    NSArray* paths = NSSearchPathForDirectoriesInDomains( NSLibraryDirectory, NSUserDomainMask, YES );
+    if (![paths count]) {
+        return -1;
+    }
+    strncat (s, [paths[0] UTF8String], size);
+    return 0;
+}

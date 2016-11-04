@@ -60,6 +60,7 @@
 #include "sort.h"
 #include "logger.h"
 #include "replaygain.h"
+#include "cocoautil.h"
 
 DB_plugin_t main_plugin = {
     .type = DB_PLUGIN_MISC,
@@ -957,7 +958,12 @@ plug_load_all (void) {
     const char *dirname = deadbeef->get_plugin_dir ();
 
 #ifdef OSX_APPBUNDLE
-    const char *plugins_dirs[] = { dirname, NULL };
+    char libpath[PATH_MAX];
+    int res = cocoautil_get_library_path (libpath, sizeof (libpath));
+    if (!res) {
+        strncat (libpath, "/deadbeef/plugins", sizeof (libpath) - strlen (libpath) - 1);
+    }
+    const char *plugins_dirs[] = { dirname, !res ? libpath : NULL, NULL };
 #else
 #ifndef ANDROID
     char *xdg_local_home = getenv ("XDG_LOCAL_HOME");
