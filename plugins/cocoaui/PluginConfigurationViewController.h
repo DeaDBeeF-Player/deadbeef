@@ -1,11 +1,3 @@
-//
-//  PluginConfigurationViewController.h
-//  deadbeef
-//
-//  Created by Oleksiy Yakovenko on 08/11/2016.
-//  Copyright © 2016 Alexey Yakovenko. All rights reserved.
-//
-
 #import <Cocoa/Cocoa.h>
 #include "../../deadbeef.h"
 

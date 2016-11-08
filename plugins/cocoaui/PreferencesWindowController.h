@@ -23,6 +23,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "PluginConfigurationViewController.h"
+#import "DSPPresetListDataSource.h"
 
 #define DEFAULT_TITLEBAR_PLAYING_VALUE "%artist% - %title% - DeaDBeeF-%_deadbeef_version%"
 #define DEFAULT_TITLEBAR_STOPPED_VALUE "DeaDBeeF-%_deadbeef_version%"
@@ -80,6 +81,7 @@
 
 @property (unsafe_unretained) IBOutlet NSTableView *dspList;
 @property (unsafe_unretained) IBOutlet NSComboBox *dspPresets;
+@property (strong) IBOutlet DSPPresetListDataSource *dspPresetListDataSource;
 
 // GUI misc properties
 @property (unsafe_unretained) IBOutlet NSButton *enable_shift_jis_detection;

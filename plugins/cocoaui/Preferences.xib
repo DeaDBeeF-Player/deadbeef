@@ -2,9 +2,9 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2657" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
+        <development version="7000" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
         <capability name="box content view" minToolsVersion="7.0"/>
-        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowController">
@@ -26,6 +26,7 @@
                 <outlet property="dspConfigPanel" destination="KZ2-z5-gK4" id="zno-tA-8TW"/>
                 <outlet property="dspConfigViewController" destination="ze1-2I-ayd" id="Vf1-Pf-99Y"/>
                 <outlet property="dspList" destination="lHr-gY-cwb" id="YuW-ad-G45"/>
+                <outlet property="dspPresetListDataSource" destination="ASJ-FT-ifo" id="aW8-Tf-sWm"/>
                 <outlet property="dspPresets" destination="eNV-BC-Eql" id="1SS-zT-mr4"/>
                 <outlet property="dspView" destination="FgU-f9-bru" id="lA3-wb-KlQ"/>
                 <outlet property="enable_cp1251_detection" destination="nXp-DV-5XR" id="1Gk-V1-leH"/>
@@ -310,16 +311,14 @@
                 <comboBox verticalHuggingPriority="750" id="eNV-BC-Eql">
                     <rect key="frame" x="139" y="18" width="140" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="3aA-gn-3ck">
+                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" usesDataSource="YES" numberOfVisibleItems="5" id="3aA-gn-3ck">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        <objectValues>
-                            <string>Item 1</string>
-                            <string>Item 2</string>
-                            <string>Item 3</string>
-                        </objectValues>
                     </comboBoxCell>
+                    <connections>
+                        <outlet property="dataSource" destination="ASJ-FT-ifo" id="DR9-n9-R6x"/>
+                    </connections>
                 </comboBox>
                 <button verticalHuggingPriority="750" id="wpL-RP-2RG">
                     <rect key="frame" x="285" y="13" width="69" height="32"/>
@@ -1301,6 +1300,7 @@ Gw
                 <outlet property="view" destination="Oef-pD-hfw" id="0Uc-7j-d5f"/>
             </connections>
         </viewController>
+        <customObject id="ASJ-FT-ifo" customClass="DSPPresetListDataSource"/>
     </objects>
     <resources>
         <image name="NSActionTemplate" width="14" height="14"/>

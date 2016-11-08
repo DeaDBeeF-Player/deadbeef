@@ -23,6 +23,7 @@
 
 #import "PreferencesWindowController.h"
 #import "DSPChainDataSource.h"
+#import "DSPPresetListDataSource.h"
 #include "deadbeef.h"
 #include "pluginsettings.h"
 
@@ -111,6 +112,7 @@ extern DB_functions_t *deadbeef;
     // dsp
     _dspChainDataSource = [[DSPChainDataSource alloc] initWithChain:deadbeef->streamer_get_dsp_chain ()];
     [_dspList setDataSource:(id<NSTableViewDataSource>)_dspChainDataSource];
+
 
     // gui/misc -> player
     [_enable_shift_jis_detection setState: deadbeef->conf_get_int ("junk.enable_shift_jis_detection", 0) ? NSOnState : NSOffState];
