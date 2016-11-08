@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2657" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
-        <deployment version="1060" identifier="macosx"/>
-        <development version="7000" identifier="xcode"/>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
         <capability name="box content view" minToolsVersion="7.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowController">
@@ -24,7 +24,7 @@
                 <outlet property="color_listview_selected_text" destination="Rhn-mE-OBT" id="hSC-Ge-MS3"/>
                 <outlet property="color_listview_text" destination="RuD-hX-F2n" id="bIl-YI-gyG"/>
                 <outlet property="dspConfigPanel" destination="KZ2-z5-gK4" id="zno-tA-8TW"/>
-                <outlet property="dspConfigView" destination="Q0a-Lt-Ngu" id="spx-4t-Pta"/>
+                <outlet property="dspConfigViewController" destination="ze1-2I-ayd" id="Vf1-Pf-99Y"/>
                 <outlet property="dspList" destination="lHr-gY-cwb" id="YuW-ad-G45"/>
                 <outlet property="dspPresets" destination="eNV-BC-Eql" id="1SS-zT-mr4"/>
                 <outlet property="dspView" destination="FgU-f9-bru" id="lA3-wb-KlQ"/>
@@ -51,10 +51,10 @@
                 <outlet property="override_bar_colors" destination="KCh-ey-ibq" id="i0u-b3-pMw"/>
                 <outlet property="override_playlist_colors" destination="xaR-5U-yt4" id="kff-f4-3XY"/>
                 <outlet property="playbackView" destination="Zmc-ua-enY" id="oGy-nE-FiQ"/>
+                <outlet property="pluginConfViewController" destination="MIg-N1-ie7" id="j3E-7j-FeK"/>
                 <outlet property="pluginDescription" destination="RAU-kc-ZWb" id="zfn-9H-cxs"/>
                 <outlet property="pluginLicense" destination="8p1-kz-NZ1" id="Lfo-no-HoV"/>
                 <outlet property="pluginList" destination="oDJ-0h-H53" id="0mm-vA-Zd6"/>
-                <outlet property="pluginPropertiesView" destination="Oef-pD-hfw" id="suL-rH-fWX"/>
                 <outlet property="pluginTabView" destination="bES-gi-vpR" id="YOE-ij-uIw"/>
                 <outlet property="pluginUnselectedText" destination="Oe9-ps-NvQ" id="alq-55-LVG"/>
                 <outlet property="pluginVersion" destination="wDm-op-PV2" id="yb0-S2-7T0"/>
@@ -524,7 +524,7 @@
             <point key="canvasLocation" x="303.5" y="765.5"/>
         </customView>
         <customView identifier="Appearance" id="Psg-tn-Uc3">
-            <rect key="frame" x="0.0" y="5" width="485" height="414"/>
+            <rect key="frame" x="0.0" y="0.0" width="485" height="414"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <tabView id="c4d-XP-hqd">
@@ -1038,7 +1038,7 @@
                                         <rect key="frame" x="17" y="17" width="415" height="231"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <clipView key="contentView" id="Lle-Gh-L94">
-                                            <rect key="frame" x="1" y="1" width="398" height="229"/>
+                                            <rect key="frame" x="1" y="1" width="413" height="229"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="RAU-kc-ZWb">
@@ -1057,7 +1057,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="VjM-Ek-iC2">
-                                            <rect key="frame" x="399" y="1" width="15" height="229"/>
+                                            <rect key="frame" x="398" y="1" width="16" height="229"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                     </scrollView>
@@ -1113,7 +1113,7 @@
                                         <rect key="frame" x="17" y="44" width="415" height="234"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <clipView key="contentView" copiesOnScroll="NO" id="c6E-sw-DGw">
-                                            <rect key="frame" x="1" y="1" width="398" height="232"/>
+                                            <rect key="frame" x="1" y="1" width="413" height="232"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <view misplaced="YES" id="9eO-pn-WbB">
@@ -1127,7 +1127,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Ywy-t2-JeC">
-                                            <rect key="frame" x="399" y="1" width="15" height="232"/>
+                                            <rect key="frame" x="398" y="1" width="16" height="232"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                     </scrollView>
@@ -1143,7 +1143,7 @@
                                         <rect key="frame" x="17" y="17" width="414.5" height="261"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <clipView key="contentView" id="kGi-v7-aYF">
-                                            <rect key="frame" x="1" y="1" width="397.5" height="259"/>
+                                            <rect key="frame" x="1" y="1" width="412.5" height="259"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="8p1-kz-NZ1">
@@ -1291,6 +1291,16 @@ Gw
             </view>
             <point key="canvasLocation" x="-218.5" y="638"/>
         </window>
+        <viewController id="ze1-2I-ayd" customClass="PluginConfigurationViewController">
+            <connections>
+                <outlet property="view" destination="Q0a-Lt-Ngu" id="2vS-5i-bHq"/>
+            </connections>
+        </viewController>
+        <viewController id="MIg-N1-ie7" customClass="PluginConfigurationViewController">
+            <connections>
+                <outlet property="view" destination="Oef-pD-hfw" id="0Uc-7j-d5f"/>
+            </connections>
+        </viewController>
     </objects>
     <resources>
         <image name="NSActionTemplate" width="14" height="14"/>

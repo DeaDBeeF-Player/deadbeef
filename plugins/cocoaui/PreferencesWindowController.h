@@ -22,6 +22,7 @@
 */
 
 #import <Cocoa/Cocoa.h>
+#import "PluginConfigurationViewController.h"
 
 #define DEFAULT_TITLEBAR_PLAYING_VALUE "%artist% - %title% - DeaDBeeF-%_deadbeef_version%"
 #define DEFAULT_TITLEBAR_STOPPED_VALUE "DeaDBeeF-%_deadbeef_version%"
@@ -65,8 +66,11 @@
 
 // dsp properties
 @property (strong) IBOutlet NSPanel *dspConfigPanel;
-@property (unsafe_unretained) IBOutlet NSScrollView *dspConfigView;
-- (IBAction)dspConfigCancelAction:(id)sender;
+//@property (unsafe_unretained) IBOutlet NSScrollView *dspConfigView;
+@property (strong) IBOutlet PluginConfigurationViewController *dspConfigViewController;
+
+
+
 - (IBAction)dspConfigOkAction:(id)sender;
 - (IBAction)dspConfigResetAction:(id)sender;
 
@@ -132,8 +136,9 @@
 @property (unsafe_unretained) IBOutlet NSTextView *pluginDescription;
 @property (unsafe_unretained) IBOutlet NSTextView *pluginLicense;
 
-//@property (unsafe_unretained) IBOutlet NSScrollView *pluginPropertiesScroller;
-@property (unsafe_unretained) IBOutlet NSScrollView *pluginPropertiesView;
+@property (strong) IBOutlet PluginConfigurationViewController *pluginConfViewController;
+
+
 
 - (IBAction)pluginOpenWebsite:(id)sender;
 - (IBAction)pluginConfResetDefaults:(id)sender;
