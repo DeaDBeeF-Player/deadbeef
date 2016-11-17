@@ -193,8 +193,6 @@ mp3_check_xing_header (buffer_t *buffer, int packetlength, int sample, int sampl
         case XING_CBR ... XING_ABR2:
             buffer->vbr = rev & 0x0f;
             break;
-        default:
-            buffer->vbr = DETECTED_VBR;
             break;
         }
         if (!memcmp (buf, "LAME", 4)) {
@@ -477,7 +475,7 @@ retry_sync:
 // }}}
 
 // {{{ vbr adjustement
-        if (!buffer->have_xing_header && prev_bitrate != -1 && prev_bitrate != bitrate) {
+        if ((!buffer->have_xing_header || !buffer->vbr) && prev_bitrate != -1 && prev_bitrate != bitrate) {
             buffer->vbr = DETECTED_VBR;
         }
         prev_bitrate = bitrate;
@@ -711,7 +709,7 @@ cmp3_set_extra_properties (buffer_t *buffer, int fake) {
     // set codec profile (cbr or vbr) and mp3 vbr method (guessed, or from Xing/Info header)
 
     char codec_profile[100];
-    snprintf (codec_profile, sizeof (codec_profile), "MP3 %s", (buffer->vbr == XING_CBR || buffer->vbr == XING_CBR2) ?  "CBR" : "VBR");
+    snprintf (codec_profile, sizeof (codec_profile), "MP3 %s", (!buffer->vbr || buffer->vbr == XING_CBR || buffer->vbr == XING_CBR2) ?  "CBR" : "VBR");
     if (buffer->vbr != XING_CBR && buffer->vbr != XING_CBR2 && (buffer->lamepreset & 0x7ff)) {
         const static struct {
             int v;
