@@ -463,6 +463,12 @@ retry_sync:
                 }
             }
             packetlength = samples_per_frame / 8 * bitrate / samplerate + padding;
+
+            // stop if the packet size is larger than remaining data
+            // FIXME: should be doing fsize-id3v1size if present
+            if (fsize >= 0 && offs + packetlength > fsize) {
+                break;
+            }
 //            if (sample > 0) {
 //                printf ("frame: %d, crc: %d, layer: %d, bitrate: %d, samplerate: %d, filepos: 0x%llX, dataoffs: 0x%X, size: 0x%X\n", nframe, prot, layer, bitrate, samplerate, deadbeef->ftell (buffer->file)-8, data_ptr, packetlength);
 //            }
