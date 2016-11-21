@@ -1101,12 +1101,111 @@ _copy_file (const char *in, const char *out) {
 }
 
 static int
+_converter_write_tags (ddb_encoder_preset_t *encoder_preset, DB_playItem_t *it, const char *out) {
+    int err = 0;
+
+    DB_playItem_t *out_it = NULL;
+
+    if (!(encoder_preset->tag_id3v2
+        || encoder_preset->tag_id3v1
+        || encoder_preset->tag_apev2
+        || encoder_preset->tag_flac
+        || encoder_preset->tag_oggvorbis
+        || encoder_preset->tag_mp4)) {
+        // encoder doesn't specify tagging format
+        return 0;
+    }
+    out_it = deadbeef->pl_item_alloc ();
+    deadbeef->pl_item_copy (out_it, it);
+    deadbeef->pl_set_item_flags (out_it, 0);
+    DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (out_it);
+    while (m) {
+        DB_metaInfo_t *next = m->next;
+        if (m->key[0] == ':' || m->key[0] == '!' || !strcasecmp (m->key, "cuesheet")) {
+            if (strcasestr (m->key, ":REPLAYGAIN_")) {
+                deadbeef->pl_delete_metadata (out_it, m);
+            }
+        }
+        m = next;
+    }
+    deadbeef->pl_replace_meta (out_it, ":URI", out);
+
+    uint32_t tagflags = 0;
+    if (encoder_preset->tag_id3v2) {
+        tagflags |= JUNK_WRITE_ID3V2;
+    }
+    if (encoder_preset->tag_id3v1) {
+        tagflags |= JUNK_WRITE_ID3V1;
+    }
+    if (encoder_preset->tag_apev2) {
+        tagflags |= JUNK_WRITE_APEV2;
+    }
+
+    if (tagflags) {
+        tagflags |= JUNK_STRIP_ID3V2 | JUNK_STRIP_APEV2 | JUNK_STRIP_ID3V1;
+        deadbeef->junk_rewrite_tags (out_it, tagflags, encoder_preset->id3v2_version + 3, "iso8859-1");
+    }
+
+    // write flac tags
+    if (encoder_preset->tag_flac) {
+        // find flac decoder plugin
+        DB_decoder_t **plugs = deadbeef->plug_get_decoder_list ();
+        int res = -1;
+        for (int i = 0; plugs[i]; i++) {
+            if (!strcmp (plugs[i]->plugin.id, "stdflac")) {
+                res = plugs[i]->write_metadata (out_it);
+                if (!res) {
+                    break;
+                }
+                break;
+            }
+        }
+        if (res) {
+            trace ("converter: Failed to write FLAC metadata to %s\n", out);
+        }
+    }
+
+    // write vorbis tags
+    if (encoder_preset->tag_oggvorbis) {
+        // find flac decoder plugin
+        DB_decoder_t **plugs = deadbeef->plug_get_decoder_list ();
+        int res = -1;
+        for (int i = 0; plugs[i]; i++) {
+            if (!strcmp (plugs[i]->plugin.id, "stdogg")
+                || !strcmp (plugs[i]->plugin.id, "stdopus")) {
+                res = plugs[i]->write_metadata (out_it);
+                if (!res) {
+                    break;
+                }
+            }
+        }
+        if (res) {
+            trace ("converter: Failed to write ogg metadata to %s\n", out);
+        }
+    }
+
+    if (encoder_preset->tag_mp4) {
+        int res = mp4_write_metadata(out_it);
+        if (res) {
+            trace ("converter: Failed to write mp4 metadata to %s\n", out);
+        }
+    }
+
+    if (out_it) {
+        deadbeef->pl_item_unref (out_it);
+    }
+
+    return err;
+}
+
+static int
 convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out, int *pabort) {
     int output_bps = settings->output_bps;
     int output_is_float = settings->output_is_float;
     ddb_encoder_preset_t *encoder_preset = settings->encoder_preset;
     ddb_dsp_preset_t *dsp_preset = settings->dsp_preset;
     int bypass_conversion_on_same_format = settings->bypass_conversion_on_same_format;
+    int rewrite_tags_after_copy = settings->rewrite_tags_after_copy;
 
     char enc[2000];
     memset (enc, 0, sizeof (enc));
@@ -1130,7 +1229,14 @@ convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out
     }
 
     if (bypass_conversion_on_same_format && !strcasecmp (ext, encoder_preset->ext)) {
-        return _copy_file (fname, out);
+        int res = _copy_file (fname, out);
+        if (res) {
+            return res;
+        }
+        if (rewrite_tags_after_copy) {
+            (void)_converter_write_tags (encoder_preset, it, out);
+        }
+        return res;
     }
 
     int err = -1;
@@ -1294,94 +1400,7 @@ error:
         return err;
     }
 
-    // write junklib tags
-
-    DB_playItem_t *out_it = NULL;
-
-    if (encoder_preset->tag_id3v2 || encoder_preset->tag_id3v1 || encoder_preset->tag_apev2 || encoder_preset->tag_flac || encoder_preset->tag_oggvorbis || encoder_preset->tag_mp4) {
-        out_it = deadbeef->pl_item_alloc ();
-        deadbeef->pl_item_copy (out_it, it);
-        deadbeef->pl_set_item_flags (out_it, 0);
-        DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (out_it);
-        while (m) {
-            DB_metaInfo_t *next = m->next;
-            if (m->key[0] == ':' || m->key[0] == '!' || !strcasecmp (m->key, "cuesheet")) {
-                if (strcasestr (m->key, ":REPLAYGAIN_")) {
-                    deadbeef->pl_delete_metadata (out_it, m);
-                }
-            }
-            m = next;
-        }
-        deadbeef->pl_replace_meta (out_it, ":URI", out);
-    }
-
-    uint32_t tagflags = 0;
-    if (encoder_preset->tag_id3v2) {
-        tagflags |= JUNK_WRITE_ID3V2;
-    }
-    if (encoder_preset->tag_id3v1) {
-        tagflags |= JUNK_WRITE_ID3V1;
-    }
-    if (encoder_preset->tag_apev2) {
-        tagflags |= JUNK_WRITE_APEV2;
-    }
-
-    if (tagflags) {
-        tagflags |= JUNK_STRIP_ID3V2 | JUNK_STRIP_APEV2 | JUNK_STRIP_ID3V1;
-        deadbeef->junk_rewrite_tags (out_it, tagflags, encoder_preset->id3v2_version + 3, "iso8859-1");
-    }
-
-    // write flac tags
-    if (encoder_preset->tag_flac) {
-        // find flac decoder plugin
-        DB_decoder_t **plugs = deadbeef->plug_get_decoder_list ();
-        DB_decoder_t *flac = NULL;
-        for (int i = 0; plugs[i]; i++) {
-            if (!strcmp (plugs[i]->plugin.id, "stdflac")) {
-                flac = plugs[i];
-                break;
-            }
-        }
-        if (!flac) {
-             trace ("flac plugin not found, cannot write flac metadata\n");
-        }
-        else {
-            if (0 != flac->write_metadata (out_it)) {
-                 trace ("Failed to write flac metadata, not a flac file?\n");
-            }
-        }
-    }
-
-    // write vorbis tags
-    if (encoder_preset->tag_oggvorbis) {
-        // find flac decoder plugin
-        DB_decoder_t **plugs = deadbeef->plug_get_decoder_list ();
-        int res = -1;
-        for (int i = 0; plugs[i]; i++) {
-            if (!strcmp (plugs[i]->plugin.id, "stdogg")
-                    || !strcmp (plugs[i]->plugin.id, "stdopus")) {
-                res = plugs[i]->write_metadata (out_it);
-                if (!res) {
-                    break;
-                }
-            }
-        }
-        if (res) {
-            trace ("Failed to write ogg metadata, not an ogg file?\n");
-        }
-    }
-
-    if (encoder_preset->tag_mp4) {
-        int res = mp4_write_metadata(out_it);
-        if (res) {
-            trace ("Failed to write mp4 metadata, not an mp4 file?\n");
-        }
-    }
-
-
-    if (out_it) {
-        deadbeef->pl_item_unref (out_it);
-    }
+    (void)_converter_write_tags (encoder_preset, it, out);
 
     return err;
 }
@@ -1393,7 +1412,6 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
         .output_is_float = output_is_float,
         .encoder_preset = encoder_preset,
         .dsp_preset = dsp_preset,
-        .bypass_conversion_on_same_format = 0,
     };
 
     return convert2(&settings, it, out, abort);

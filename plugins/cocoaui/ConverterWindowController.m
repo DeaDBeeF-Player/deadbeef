@@ -79,6 +79,7 @@ static NSMutableArray *g_converterControllers;
     [_outputFileName setStringValue:[NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("converter.output_file", "")]];
     [_preserveFolderStructure setState:deadbeef->conf_get_int ("converter.preserve_folder_structure", 0) ? NSOnState : NSOffState];
     [_bypassSameFormat setState:deadbeef->conf_get_int ("converter.bypass_same_format", 0)];
+    [_retagAfterCopy setState:deadbeef->conf_get_int ("converter.retag_after_copy", 0)];
 
     int write_to_source_folder = deadbeef->conf_get_int ("converter.write_to_source_folder", 0);
     [_writeToSourceFolder setState:write_to_source_folder ? NSOnState : NSOffState];
@@ -121,6 +122,13 @@ static NSMutableArray *g_converterControllers;
 
 - (IBAction)bypassSameFormatChanged:(id)sender {
     deadbeef->conf_set_int ("converter.bypass_same_format", [_bypassSameFormat state] == NSOnState);
+    deadbeef->conf_save ();
+
+    [_retagAfterCopy setEnabled:[_bypassSameFormat state] == NSOnState];
+}
+
+- (IBAction)retagAfterCopyChanged:(id)sender {
+    deadbeef->conf_set_int ("converter.retag_after_copy", [_retagAfterCopy state] == NSOnState);
     deadbeef->conf_save ();
 }
 
@@ -720,6 +728,7 @@ static NSMutableArray *g_converterControllers;
         .encoder_preset = _encoder_preset,
         .dsp_preset = _dsp_preset,
         .bypass_conversion_on_same_format = ([_bypassSameFormat state] == NSOnState),
+        .rewrite_tags_after_copy = ([_retagAfterCopy state] == NSOnState),
     };
 
     for (int n = 0; n < _convert_items_count; n++) {

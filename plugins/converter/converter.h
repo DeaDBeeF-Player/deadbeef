@@ -97,6 +97,9 @@ typedef struct ddb_converter_settings_s {
 
     // bypass conversion, and copy the file as-is, if the output file extension is the same
     int bypass_conversion_on_same_format;
+
+    // rewrite tags after copy, if the bypass_conversion_on_same_format is true
+    int rewrite_tags_after_copy;
 } ddb_converter_settings_t;
 
 typedef struct {

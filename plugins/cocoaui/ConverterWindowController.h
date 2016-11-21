@@ -34,6 +34,7 @@
 @property (unsafe_unretained) IBOutlet NSButton *writeToSourceFolder;
 @property (unsafe_unretained) IBOutlet NSButton *preserveFolderStructure;
 @property (unsafe_unretained) IBOutlet NSButton *bypassSameFormat;
+@property (weak) IBOutlet NSButton *retagAfterCopy;
 @property (unsafe_unretained) IBOutlet NSTextField *outputFileName;
 @property (unsafe_unretained) IBOutlet NSArrayController *filenamePreviewController;
 @property (unsafe_unretained) IBOutlet NSPopUpButton *encoderPreset;
@@ -51,6 +52,7 @@
 - (IBAction)writeToSourceFolderChanged:(id)sender;
 - (IBAction)preserveFolderStructureChanged:(id)sender;
 - (IBAction)bypassSameFormatChanged:(id)sender;
+- (IBAction)retagAfterCopyChanged:(id)sender;
 - (IBAction)outputPathChanged:(id)sender;
 - (IBAction)encoderPresetChanged:(id)sender;
 - (IBAction)dspPresetChanged:(id)sender;
