@@ -1100,6 +1100,15 @@ _copy_file (const char *in, const char *out) {
     return err;
 }
 
+// replaygain key names in deadbeef internal metadata
+static const char *ddb_internal_rg_keys[] = {
+    ":REPLAYGAIN_ALBUMGAIN",
+    ":REPLAYGAIN_ALBUMPEAK",
+    ":REPLAYGAIN_TRACKGAIN",
+    ":REPLAYGAIN_TRACKPEAK",
+    NULL
+};
+
 static int
 _converter_write_tags (ddb_encoder_preset_t *encoder_preset, DB_playItem_t *it, const char *out) {
     int err = 0;
@@ -1122,7 +1131,13 @@ _converter_write_tags (ddb_encoder_preset_t *encoder_preset, DB_playItem_t *it, 
     while (m) {
         DB_metaInfo_t *next = m->next;
         if (m->key[0] == ':' || m->key[0] == '!' || !strcasecmp (m->key, "cuesheet")) {
-            if (strcasestr (m->key, ":REPLAYGAIN_")) {
+            int i;
+            for (i = 0; ddb_internal_rg_keys[i]; i++) {
+                if (!strcasecmp (m->key, ddb_internal_rg_keys[i])) {
+                    break;
+                }
+            }
+            if (!ddb_internal_rg_keys[i]) {
                 deadbeef->pl_delete_metadata (out_it, m);
             }
         }
