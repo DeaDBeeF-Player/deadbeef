@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-11-27 19:42+0500\n"
-"PO-Revision-Date: 2016-01-25 18:09+0000\n"
+"PO-Revision-Date: 2016-11-27 19:48+0500\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/ru/)\n"
@@ -25,6 +25,7 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: ../plugins/gtkui/callbacks.c:353
 #, c-format
@@ -1979,49 +1980,49 @@ msgstr "Включить surround"
 #. Hotkeys Playback/Skip to/* strings
 #: ../translation/extra.c:105
 msgid "Skip to"
-msgstr ""
+msgstr "Пропустить до"
 
 #: ../translation/extra.c:106
 msgid "Previous genre"
-msgstr ""
+msgstr "Предыдущего жанра"
 
 #: ../translation/extra.c:107
 msgid "Previous composer"
-msgstr ""
+msgstr "Предыдущего композитора"
 
 #: ../translation/extra.c:108
 msgid "Previous artist"
-msgstr ""
+msgstr "Предыдущего исполнителя"
 
 #: ../translation/extra.c:109
 msgid "Previous album"
-msgstr ""
+msgstr "Предыдущего альбома"
 
 #: ../translation/extra.c:110
 msgid "Next genre"
-msgstr ""
+msgstr "Следующего жанра"
 
 #: ../translation/extra.c:111
 msgid "Next composer"
-msgstr ""
+msgstr "Следующего композитора"
 
 #: ../translation/extra.c:112
 msgid "Next artist"
-msgstr ""
+msgstr "Следующего исполнителя"
 
 #: ../translation/extra.c:113
 msgid "Next album"
-msgstr ""
+msgstr "Следующего альбома"
 
 #. artwork
 #: ../translation/extra.c:115
 msgid "Refresh cover art"
-msgstr ""
+msgstr "Обновить обложку"
 
 #. lastfm
 #: ../translation/extra.c:117
 msgid "Lookup On Last.fm"
-msgstr ""
+msgstr "Найти на Last.fm"
 
 #: ../plugins/converter/convgui.c:90
 #, c-format
