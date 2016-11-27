@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-27 15:12+0500\n"
+"POT-Creation-Date: 2016-11-27 19:42+0500\n"
 "PO-Revision-Date: 2015-06-15 13:32+0000\n"
 "Last-Translator: Kiril Kirilov <cybercop_montana@abv.bg>\n"
 "Language-Team: Bulgarian (http://www.transifex.com/p/deadbeef-player/"
@@ -1948,6 +1948,53 @@ msgstr ""
 #: ../translation/extra.c:103
 msgid "Enable surround"
 msgstr "Разреши съраунд"
+
+#. Hotkeys Playback/Skip to/* strings
+#: ../translation/extra.c:105
+msgid "Skip to"
+msgstr ""
+
+#: ../translation/extra.c:106
+msgid "Previous genre"
+msgstr ""
+
+#: ../translation/extra.c:107
+msgid "Previous composer"
+msgstr ""
+
+#: ../translation/extra.c:108
+msgid "Previous artist"
+msgstr ""
+
+#: ../translation/extra.c:109
+msgid "Previous album"
+msgstr ""
+
+#: ../translation/extra.c:110
+msgid "Next genre"
+msgstr ""
+
+#: ../translation/extra.c:111
+msgid "Next composer"
+msgstr ""
+
+#: ../translation/extra.c:112
+msgid "Next artist"
+msgstr ""
+
+#: ../translation/extra.c:113
+msgid "Next album"
+msgstr ""
+
+#. artwork
+#: ../translation/extra.c:115
+msgid "Refresh cover art"
+msgstr ""
+
+#. lastfm
+#: ../translation/extra.c:117
+msgid "Lookup On Last.fm"
+msgstr ""
 
 #: ../plugins/converter/convgui.c:90
 #, c-format
