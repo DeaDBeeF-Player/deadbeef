@@ -87,11 +87,11 @@ adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
     }
     else {
-        if (deadbeef->conf_get_int ("adplug.use_satoh", 0)) {
-            info->opl = new CEmuopl (samplerate, bps == 16, channels == 2);
+        if (deadbeef->conf_get_int ("adplug.use_ken", 0)) {
+            info->opl = new CKemuopl (samplerate, bps == 16, channels == 2);
         }
         else {
-            info->opl = new CKemuopl (samplerate, bps == 16, channels == 2);
+            info->opl = new CEmuopl (samplerate, bps == 16, channels == 2);
         }
     }
     deadbeef->pl_lock ();
