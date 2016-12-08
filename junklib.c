@@ -4106,7 +4106,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                                 if (!strcmp (frameid, "TRCK")) { // special case for track/totaltracks
                                     junk_add_track_meta (it, text);
                                 }
-                                if (!strcmp (frameid, "TPOS")) { // special case for disc/totaldiscs
+                                else if (!strcmp (frameid, "TPOS")) { // special case for disc/totaldiscs
                                     junk_add_disc_meta (it, text);
                                 }
                                 else if (!strcmp (frameid, "TCON")) {
@@ -4235,7 +4235,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                                 if (!strcmp (frameid, "TRK")) { // special case for track/totaltracks
                                     junk_add_track_meta (it, text);
                                 }
-                                if (!strcmp (frameid, "TPA")) { // special case for disc/totaldiscs
+                                else if (!strcmp (frameid, "TPA")) { // special case for disc/totaldiscs
                                     junk_add_disc_meta (it, text);
                                 }
                                 else if (!strcmp (frameid, "TCO")) {

@@ -343,5 +343,25 @@
     XCTAssert(strlen (meta->value) + 1 == meta->valuesize, @"Pass");
 }
 
+- (void)test_ReadID3v23TRCK_ReadsAsTrackNumAndTrackTotal {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/trck_num_with_total_id3v2.3.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    junk_id3v2_read (it, fp);
+    vfs_fclose (fp);
+
+    ddb_tf_context_t ctx;
+    char buffer[1000];
+    memset (&ctx, 0, sizeof (ctx));
+    ctx._size = sizeof (ddb_tf_context_t);
+    ctx.it = (DB_playItem_t *)it;
+    ctx.plt = NULL;
+
+    char *bc = tf_compile("track:%track% total:%numtracks%");
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+
+    XCTAssert(!strcmp (buffer, "track:10 total:11"), @"Got value: %s", buffer);
+}
 
 @end
