@@ -384,6 +384,8 @@ int grouptitleheight = 22;
 
     int title_height = [listview grouptitle_height];
 
+    BOOL focused = [[self window] isKeyWindow];
+
     while (grp && grp_y < clip_y + clip_h) {
         DdbListviewRow_t it = grp->head;
         [listview.delegate refRow:it];
@@ -402,13 +404,13 @@ int grouptitleheight = 22;
                 for (DdbListviewCol_t col = [listview.delegate firstColumn]; col != [listview.delegate invalidColumn]; col = [listview.delegate nextColumn:col]) {
                     int w = [listview.delegate columnWidth:col];
                     if (CGRectIntersectsRect(dirtyRect, NSMakeRect(x, yy, w, rowheight))) {
-                        [listview.delegate drawCell:idx+i forRow: it forColumn:col inRect:NSMakeRect(x, yy, w, rowheight-1) focused:YES];
+                        [listview.delegate drawCell:idx+i forRow: it forColumn:col inRect:NSMakeRect(x, yy, w, rowheight-1) focused:focused];
                     }
                     x += w;
                 }
 
                 if (x < dirtyRect.size.width) {
-                    [listview.delegate drawCell:idx+i forRow:it forColumn:[delegate invalidColumn] inRect:NSMakeRect(x, yy, dirtyRect.size.width-x, rowheight-1) focused:YES];
+                    [listview.delegate drawCell:idx+i forRow:it forColumn:[delegate invalidColumn] inRect:NSMakeRect(x, yy, dirtyRect.size.width-x, rowheight-1) focused:focused];
                 }
 
                 if (it == cursor_it) {

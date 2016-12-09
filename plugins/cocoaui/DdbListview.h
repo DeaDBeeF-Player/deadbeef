@@ -56,7 +56,6 @@ typedef intptr_t DdbListviewCol_t;
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row;
 - (BOOL)pinGroups;
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect;
-- (void)drawRowBackground:(DdbListviewRow_t)row inRect:(NSRect)rect;
 - (void)drawCell:(int)rowIdx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused;
 - (void)drawGroupTitle:(DdbListviewRow_t)row inRect:(NSRect)rect;
 - (void)drawAlbumArtForRow:(DdbListviewRow_t)row inColumn:(DdbListviewCol_t)col isPinnedGroup:(BOOL)pinned nextGroupCoord:(int)grp_next_y xPos:(int)x yPos:(int)y viewportY:(int)viewportY width:(int)width height:(int)height;

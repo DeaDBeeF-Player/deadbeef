@@ -620,13 +620,6 @@ extern DB_functions_t *deadbeef;
     [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y+1, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
 }
 
-- (void)drawRowBackground:(DdbListviewRow_t)row inRect:(NSRect)rect {
-    if (row%2) {
-        [[NSColor selectedTextBackgroundColor] set];
-        [NSBezierPath fillRect:rect];
-    }
-}
-
 - (void)drawCell:(int)idx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused {
     int sel = deadbeef->pl_is_selected((DB_playItem_t *)row);
     if (sel) {
@@ -634,10 +627,12 @@ extern DB_functions_t *deadbeef;
             [[NSColor alternateSelectedControlColor] set];
             [NSBezierPath fillRect:rect];
         }
+#if 0 // FIXME: inactive window selected background color
         else {
-            [[NSColor selectedControlColor] set];
+            [[NSColor controlShadowColor] set];
             [NSBezierPath fillRect:rect];
         }
+#endif
     }
 
     if (col == [self invalidColumn]) {
