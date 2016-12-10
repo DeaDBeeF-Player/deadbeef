@@ -588,9 +588,9 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
                 temp[i] = in[i+1];
                 temp[i+1] = in[i];
             }
+            in = temp;
             char *target = out;
-            char *src = temp;
-            ConversionResult result = ConvertUTF16BEtoUTF8 ((const UTF16**)&src, (const UTF16*)(temp + inlen), (UTF8**)&target, (UTF8*)(out + outlen), strictConversion);
+            ConversionResult result = ConvertUTF16toUTF8 ((const UTF16**)&in, (const UTF16*)(in + inlen), (UTF8**)&target, (UTF8*)(out + outlen), strictConversion);
             if (result == conversionOK) {
                 *target = 0;
                 len = target - out;
