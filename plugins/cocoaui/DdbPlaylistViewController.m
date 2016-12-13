@@ -627,12 +627,10 @@ extern DB_functions_t *deadbeef;
             [[NSColor alternateSelectedControlColor] set];
             [NSBezierPath fillRect:rect];
         }
-#if 0 // FIXME: inactive window selected background color
         else {
             [[NSColor controlShadowColor] set];
             [NSBezierPath fillRect:rect];
         }
-#endif
     }
 
     if (col == [self invalidColumn]) {

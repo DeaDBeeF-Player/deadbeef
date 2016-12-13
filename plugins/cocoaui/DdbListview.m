@@ -532,9 +532,6 @@ int grouptitleheight = 22;
 }
 
 - (void)rightMouseDown:(NSEvent *)theEvent {
-    if (![[self window] isKeyWindow]) {
-        return;
-    }
     [self mouseDown:theEvent];
     [super rightMouseDown:theEvent];
 }
@@ -745,10 +742,21 @@ int grouptitleheight = 22;
 
         [contentView registerForDraggedTypes:[NSArray arrayWithObjects:NSStringPboardType, nil]];
 
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(windowDidBecomeKey:)
+                                                     name:NSWindowDidBecomeKeyNotification
+                                                   object:[self window]];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(windowDidBecomeKey:)
+                                                     name:NSWindowDidResignKeyNotification
+                                                   object:[self window]];
     }
     return self;
 }
 
+- (void)windowDidBecomeKey:(id)sender {
+    [self setNeedsDisplay:YES];
+}
 
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
