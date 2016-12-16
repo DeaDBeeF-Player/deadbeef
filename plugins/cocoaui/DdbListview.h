@@ -65,8 +65,8 @@ typedef intptr_t DdbListviewCol_t;
 - (void)reloadMetadata;
 - (void)convertSelection;
 - (void)sortColumn:(DdbListviewCol_t)column withOrder:(int)order;
-- (void)drop_items:(int)from_playlist before:(DdbListviewRow_t)before indices:(uint32_t *)indices count:(int)count copy:(BOOL)copy;
-- (void)external_drop_items:(NSArray *)paths after:(DdbListviewRow_t)after;
+- (void)dropItems:(int)from_playlist before:(DdbListviewRow_t)before indices:(uint32_t *)indices count:(int)count copy:(BOOL)copy;
+- (void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)after;
 
 @end
 

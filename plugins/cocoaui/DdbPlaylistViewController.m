@@ -987,7 +987,7 @@ static char *group_bytecode = NULL;
     deadbeef->plt_unref (plt);
 }
 
-- (void)drop_items:(int)from_playlist before:(DdbListviewRow_t)before indices:(uint32_t *)indices count:(int)count copy:(BOOL)copy {
+- (void)dropItems:(int)from_playlist before:(DdbListviewRow_t)before indices:(uint32_t *)indices count:(int)count copy:(BOOL)copy {
 
     deadbeef->pl_lock ();
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -1008,7 +1008,7 @@ static char *group_bytecode = NULL;
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
--(void)external_drop_items:(NSArray *)paths after:(DdbListviewRow_t)after {
+-(void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)after {
 
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {

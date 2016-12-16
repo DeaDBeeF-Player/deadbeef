@@ -458,7 +458,7 @@ int grouptitleheight = 22;
         uint32_t * indices = [holder indices];
         int length = [holder count];
 
-        [delegate drop_items:from_playlist before:row indices:indices count:length copy:NO];
+        [delegate dropItems:from_playlist before:row indices:indices count:length copy:NO];
         free(indices);
 
     }
@@ -466,11 +466,11 @@ int grouptitleheight = 22;
 
         NSArray *paths = [pboard propertyListForType:NSFilenamesPboardType];
         if (row) {
-            [delegate external_drop_items:paths after:row];
+            [delegate externalDropItems:paths after:row];
         }
         else {
             DdbListviewRow_t lastRow = [delegate rowForIndex:([delegate rowCount]-1)];
-            [delegate external_drop_items:paths after: lastRow];
+            [delegate externalDropItems:paths after: lastRow];
         }
     }
 
