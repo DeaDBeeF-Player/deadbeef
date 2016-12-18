@@ -92,9 +92,6 @@
 #error writing playlists in format <1.2 is not supported
 #endif
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
-
 #define SKIP_BLANK_CUE_TRACKS 0
 #define MAX_CUE_TRACKS 99
 
@@ -185,7 +182,6 @@ pl_init (void) {
 
 void
 pl_free (void) {
-    trace ("pl_free\n");
     LOCK;
     playqueue_clear ();
     plt_loading = 1;
@@ -379,7 +375,6 @@ plt_alloc (const char *title) {
 int
 plt_add (int before, const char *title) {
     assert (before >= 0);
-    trace ("plt_add\n");
     playlist_t *plt = plt_alloc (title);
     plt_modified (plt);
 
@@ -480,7 +475,6 @@ plt_remove (int plt) {
     }
 
     if (!plt_loading && (playlists_head && !playlists_head->next)) {
-        trace ("warning: deleting last playlist\n");
         pl_clear ();
         free (playlist->title);
         playlist->title = strdup (_("Default"));
@@ -673,11 +667,9 @@ plt_free (playlist_t *plt) {
 
 void
 plt_move (int from, int to) {
-    trace ("%d -> %d\n", from, to);
     if (from == to) {
         return;
     }
-    trace ("plt_move %d -> %d\n", from, to);
     int i;
     LOCK;
     playlist_t *p = playlists_head;
@@ -700,12 +692,9 @@ plt_move (int from, int to) {
         return;
     }
 
-//    trace ("will rename %s->%s\n", path1, temp);
     struct stat st;
     int err = stat (path1, &st);
     if (!err) {
-        trace ("rename %s->%s\n", path1, temp);
-
         int err = rename (path1, temp);
         if (err != 0) {
             fprintf (stderr, "playlist rename %s->%s failed: %s\n", path1, temp, strerror (errno));
@@ -741,10 +730,8 @@ plt_move (int from, int to) {
             fprintf (stderr, "error: failed to make path string for playlist file\n");
             continue;
         }
-//        trace ("will rename %s->%s\n", path2, path1);
         int err = stat (path2, &st);
         if (!err) {
-            trace ("rename %s->%s\n", path2, path1);
             int err = rename (path2, path1);
             if (err != 0) {
                 fprintf (stderr, "playlist rename %s->%s failed: %s\n", path2, path1, strerror (errno));
@@ -762,10 +749,8 @@ plt_move (int from, int to) {
             fprintf (stderr, "error: failed to make path string for playlist file\n");
             continue;
         }
-        trace ("will rename %s->%s\n", path1, path2);
         int err = stat (path1, &st);
         if (!err) {
-            trace ("rename %s->%s\n", path1, path2);
             int err = rename (path1, path2);
             if (err != 0) {
                 fprintf (stderr, "playlist rename %s->%s failed: %s\n", path1, path2, strerror (errno));
@@ -779,7 +764,6 @@ plt_move (int from, int to) {
     else {
         int err = stat (temp, &st);
         if (!err) {
-            trace ("move %s->%s\n", temp, path1);
             int err = rename (temp, path1);
             if (err != 0) {
                 fprintf (stderr, "playlist rename %s->%s failed: %s\n", temp, path1, strerror (errno));
@@ -989,14 +973,8 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, const int starts
             (*prev)->endsample = startsample + (prevtime * samplerate) - 1;
             float dur = (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate;
             plt_set_item_duration (playlist, *prev, dur);
-            if (dur > 0) {
-                trace ("success :-D\n");
-            }
-            else {
-                trace ("fail :-(\n");
-            }
         }
-        trace ("startsample=%d, endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", (*prev)->startsample, (*prev)->endsample,  prevtime, samplerate, (*prev)->_duration);
+//        trace ("startsample=%d, endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", (*prev)->startsample, (*prev)->endsample,  prevtime, samplerate, (*prev)->_duration);
     }
     // non-compliant hack to handle tracks which only store pregap info
     if (!index01[0]) {
@@ -1084,7 +1062,6 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
 
     LOCK;
     playItem_t *ins = after;
-    trace ("plt_insert_cue_from_buffer numsamples=%d, samplerate=%d\n", numsamples, samplerate);
     char albumperformer[256] = "";
     char performer[256] = "";
     char albumtitle[256] = "";
@@ -1130,7 +1107,6 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
         buffersize -= p-buffer;
         buffer = p;
         p = pl_cue_skipspaces (str);
-//        trace ("cue line: %s\n", p);
         if (!strncmp (p, "PERFORMER ", 10)) {
             if (!track[0]) {
                 pl_get_qvalue_from_cue (p + 10, sizeof (albumperformer), albumperformer, charset);
@@ -1138,16 +1114,13 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
             else {
                 pl_get_qvalue_from_cue (p + 10, sizeof (performer), performer, charset);
             }
-            trace ("cue: got performer: %s\n", performer);
         }
         else if (!strncmp (p, "TITLE ", 6)) {
             if (str[0] > ' ' && !albumtitle[0]) {
                 pl_get_qvalue_from_cue (p + 6, sizeof (albumtitle), albumtitle, charset);
-                trace ("cue: got albumtitle: %s\n", albumtitle);
             }
             else {
                 pl_get_qvalue_from_cue (p + 6, sizeof (title), title, charset);
-                trace ("cue: got title: %s\n", title);
             }
         }
         else if (!strncmp (p, "REM GENRE ", 10)) {
@@ -1157,14 +1130,11 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
             pl_get_value_from_cue (p + 9, sizeof (date), date);
         }
         else if (!strncmp (p, "TRACK ", 6)) {
-            trace ("cue: adding track: %s %s %s\n", uri, title, track);
             if (have_track) {
                 // add previous track
                 playItem_t *it = plt_process_cue_track (playlist, uri, origin->startsample, &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
-                trace ("cue: added %p\n", it);
                 if (it) {
                     if ((it->startsample-origin->startsample) >= numsamples || (it->endsample-origin->startsample) >= numsamples) {
-                        trace ("cue: the track is shorter than cue timeline\n");
                         goto error;
                     }
                     cuetracks[ncuetracks++] = it;
@@ -1181,7 +1151,6 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
             replaygain_track_peak[0] = 0;
             performer[0] = 0;
             pl_get_value_from_cue (p + 6, sizeof (track), track);
-            trace ("cue: got track: %s\n", track);
         }
         else if (!strncmp (p, "REM REPLAYGAIN_ALBUM_GAIN ", 26)) {
             pl_get_value_from_cue (p + 26, sizeof (replaygain_album_gain), replaygain_album_gain);
@@ -1212,7 +1181,6 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
         // handle last track
         playItem_t *it = plt_process_cue_track (playlist, uri, origin->startsample, &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
         if (it) {
-            trace ("last track endsample: %d\n", origin->startsample+numsamples-1);
             it->endsample = origin->startsample + numsamples - 1;
             if ((it->endsample-origin->startsample) >= numsamples || (it->startsample-origin->startsample) >= numsamples) {
                 goto error;
@@ -1265,7 +1233,6 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
 
 playItem_t *
 plt_insert_cue_int (playlist_t *plt, playItem_t *after, playItem_t *origin, uint64_t numsamples, int samplerate) {
-    trace ("pl_insert_cue numsamples=%d, samplerate=%d\n", numsamples, samplerate);
     pl_lock ();
     const char *fname = pl_find_meta_raw (origin, ":URI");
     int len = strlen (fname);
@@ -1342,8 +1309,6 @@ fileadd_filter_test (ddb_file_found_data_t *data) {
 
 static playItem_t *
 plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    trace ("count: %d\n", playlist->count[PL_MAIN]);
-    trace ("pl_insert_file %s\n", fname);
     if (!fname || !(*fname)) {
         return NULL;
     }
@@ -1354,7 +1319,6 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         for (int i = 0; vfsplugs[i]; i++) {
             if (vfsplugs[i]->is_container) {
                 if (vfsplugs[i]->is_container (fname)) {
-                    trace ("inserting %s via vfs %s\n", fname, vfsplugs[i]->plugin.id);
                     playItem_t *it = plt_insert_dir_int (visibility, playlist, vfsplugs[i], after, fname, pabort, cb, user_data);
                     if (it) {
                         return it;
@@ -1452,7 +1416,6 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
     DB_decoder_t **decoders = plug_get_decoder_list ();
     // match by decoder
     for (int i = 0; decoders[i]; i++) {
-        trace ("matching decoder %d(%s)...\n", i, decoders[i]->plugin.id);
         if (decoders[i]->exts && decoders[i]->insert) {
             const char **exts = decoders[i]->exts;
             for (int e = 0; exts[e]; e++) {
@@ -1486,7 +1449,6 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
                                 }
                             }
                         }
-                        trace ("file has been added by decoder: %s\n", decoders[i]->plugin.id);
                         return inserted;
                     }
                 }
@@ -1531,7 +1493,6 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
             }
         }
     }
-    trace ("no decoder found for %s\n", fname);
     return NULL;
 }
 
@@ -2274,7 +2235,6 @@ pl_save_current (void) {
 
 int
 pl_save_all (void) {
-    trace ("pl_save_all\n");
     char path[PATH_MAX];
     if (snprintf (path, sizeof (path), "%s/playlists", dbconfdir) > sizeof (path)) {
         fprintf (stderr, "error: failed to make path string for playlists folder\n");
@@ -2316,7 +2276,6 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
     // try plugins 1st
     const char *ext = strrchr (fname, '.');
     if (ext) {
-        trace ("finding playlist plugin for %s\n", ext);
         ext++;
         DB_playlist_t **plug = plug_get_playlist_list ();
         int p, e;
@@ -2335,7 +2294,6 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
             }
         }
     }
-    trace ("plt_load: loading dbpl\n");
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
         trace ("plt_load: failed to open %s\n", fname);
@@ -2370,7 +2328,6 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
         trace ("bad minorver=%d\n", minorver);
         goto load_fail;
     }
-    trace ("playlist version=%d.%d\n", majorver, minorver);
     uint32_t cnt;
     if (fread (&cnt, 1, 4, fp) != 4) {
         goto load_fail;
@@ -2587,7 +2544,6 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
     if (fp) {
         fclose (fp);
     }
-    trace ("plt_load: success\n");
     if (last_added) {
         pl_item_unref (last_added);
     }
@@ -2632,12 +2588,9 @@ pl_load_all (void) {
         plt_unref (plt);
         return 0;
     }
-    trace ("pl_load_all started\n");
     LOCK;
-    trace ("locked\n");
     plt_loading = 1;
     while (it) {
-        fprintf (stderr, "INFO: loading playlist %s\n", it->value);
         if (!err) {
             if (plt_add (plt_get_count (), it->value) < 0) {
                 return -1;
@@ -2667,7 +2620,6 @@ pl_load_all (void) {
             }
         }
         it = conf_find ("playlist.tab.", it);
-        trace ("conf_find returned %p (%s)\n", it, it ? it->value : "null");
         i++;
     }
     plt_set_curr (0);
@@ -2675,7 +2627,6 @@ pl_load_all (void) {
     plt_gen_conf ();
     messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
     UNLOCK;
-    trace ("pl_load_all finished\n");
     return err;
 }
 
