@@ -153,3 +153,18 @@ parser_escape_string (const char *in) {
     return output;
 }
 
+void
+parser_unescape_quoted_string (char *in) {
+    char *out = in;
+    char *next = in;
+    if (next[0] == '"') {
+        next++;
+    }
+    while (*next && *next != '"') {
+        if (*next == '\\' && (*(next+1) == '"' || *(next+1) == '\\')) {
+            next++;
+        }
+        *out++ = *next++;
+    }
+    *out = '\0';
+}

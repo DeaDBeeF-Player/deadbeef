@@ -2,7 +2,7 @@
 // by Valley Bell on 26 September 2013
 
 #include <stdlib.h>	// for rand()
-#include <memory.h>	// for memset()
+#include <string.h>	// for memset()
 #include <stddef.h>	// for NULL
 #include <math.h>	// for exp()
 #include "mamedef.h"

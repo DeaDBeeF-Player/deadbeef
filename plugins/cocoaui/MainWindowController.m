@@ -44,11 +44,17 @@ extern DB_functions_t *deadbeef;
 @implementation MainWindowController
 
 - (void)dealloc {
+    [self cleanup];
+}
+
+- (void)cleanup {
     if (_updateTimer) {
         [_updateTimer invalidate];
         _updateTimer = nil;
     }
     [self freeTitleBarConfig];
+
+    [_playlistViewController cleanup];
 }
 
 - (void)windowDidLoad {

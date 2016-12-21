@@ -37,8 +37,7 @@
 #include "mp3_mpg123.h"
 #endif
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 //#define WRITE_DUMP 1
 
@@ -194,8 +193,6 @@ mp3_check_xing_header (buffer_t *buffer, int packetlength, int sample, int sampl
         case XING_CBR ... XING_ABR2:
             buffer->vbr = rev & 0x0f;
             break;
-        default:
-            buffer->vbr = DETECTED_VBR;
             break;
         }
         if (!memcmp (buf, "LAME", 4)) {
@@ -237,7 +234,7 @@ mp3_check_xing_header (buffer_t *buffer, int packetlength, int sample, int sampl
             buffer->have_xing_header = 1;
             buffer->startoffset = framepos+packetlength;
             if (fsize >= 0) {
-                buffer->bitrate = (int)((fsize - buffer->startoffset - buffer->endoffset) / buffer->samplerate * 1000);
+                buffer->bitrate = (int)((fsize - buffer->startoffset - buffer->endoffset) / buffer->duration * 8);
             }
         }
     }
@@ -466,6 +463,12 @@ retry_sync:
                 }
             }
             packetlength = samples_per_frame / 8 * bitrate / samplerate + padding;
+
+            // stop if the packet size is larger than remaining data
+            // FIXME: should be doing fsize-id3v1size if present
+            if (fsize >= 0 && offs + packetlength > fsize) {
+                break;
+            }
 //            if (sample > 0) {
 //                printf ("frame: %d, crc: %d, layer: %d, bitrate: %d, samplerate: %d, filepos: 0x%llX, dataoffs: 0x%X, size: 0x%X\n", nframe, prot, layer, bitrate, samplerate, deadbeef->ftell (buffer->file)-8, data_ptr, packetlength);
 //            }
@@ -478,7 +481,7 @@ retry_sync:
 // }}}
 
 // {{{ vbr adjustement
-        if (!buffer->have_xing_header && prev_bitrate != -1 && prev_bitrate != bitrate) {
+        if ((!buffer->have_xing_header || !buffer->vbr) && prev_bitrate != -1 && prev_bitrate != bitrate) {
             buffer->vbr = DETECTED_VBR;
         }
         prev_bitrate = bitrate;
@@ -501,7 +504,6 @@ retry_sync:
             if (nchannels > buffer->channels) {
                 buffer->channels = nchannels;
             }
-            buffer->bitspersample = 16;
 //            trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, nchannels);
         }
 // }}}
@@ -676,6 +678,17 @@ cmp3_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (mp3_info_t));
     mp3_info_t *info = (mp3_info_t *)_info;
     memset (info, 0, sizeof (mp3_info_t));
+
+    if (hints & DDB_DECODER_HINT_RAW_SIGNAL) {
+        info->raw_signal = 1;
+    }
+
+#ifndef ANDROID // force 16 bit on android
+    if ((hints & DDB_DECODER_HINT_16BIT) || deadbeef->conf_get_int ("mp3.force16bit", 0))
+#endif
+    {
+        info->want_16bit = 1;
+    }
     return _info;
 }
 
@@ -694,7 +707,6 @@ cmp3_set_extra_properties (buffer_t *buffer, int fake) {
         snprintf (s, sizeof (s), "%d", buffer->bitrate/1000);
         deadbeef->pl_replace_meta (buffer->it, ":BITRATE", s);
     }
-    deadbeef->pl_replace_meta (buffer->it, ":BPS", "16");
     snprintf (s, sizeof (s), "%d", buffer->channels);
     deadbeef->pl_replace_meta (buffer->it, ":CHANNELS", s);
     snprintf (s, sizeof (s), "%d", buffer->samplerate);
@@ -703,7 +715,7 @@ cmp3_set_extra_properties (buffer_t *buffer, int fake) {
     // set codec profile (cbr or vbr) and mp3 vbr method (guessed, or from Xing/Info header)
 
     char codec_profile[100];
-    snprintf (codec_profile, sizeof (codec_profile), "MP3 %s", (buffer->vbr == XING_CBR || buffer->vbr == XING_CBR2) ?  "CBR" : "VBR");
+    snprintf (codec_profile, sizeof (codec_profile), "MP3 %s", (!buffer->vbr || buffer->vbr == XING_CBR || buffer->vbr == XING_CBR2) ?  "CBR" : "VBR");
     if (buffer->vbr != XING_CBR && buffer->vbr != XING_CBR2 && (buffer->lamepreset & 0x7ff)) {
         const static struct {
             int v;
@@ -777,6 +789,7 @@ cmp3_set_extra_properties (buffer_t *buffer, int fake) {
 static int
 cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     mp3_info_t *info = (mp3_info_t *)_info;
+
 #if defined(USE_LIBMAD) && defined(USE_LIBMPG123)
     int backend = deadbeef->conf_get_int ("mp3.backend", 0);
     switch (backend) {
@@ -891,7 +904,14 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         trace ("bad mpeg file: %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
-    _info->fmt.bps = info->buffer.bitspersample;
+    if (info->want_16bit && !info->raw_signal) {
+        _info->fmt.bps = 16;
+        _info->fmt.is_float = 0;
+    }
+    else {
+        _info->fmt.bps = 32;
+        _info->fmt.is_float = 1;
+    }
     _info->fmt.samplerate = info->buffer.samplerate;
     _info->fmt.channels = info->buffer.channels;
     _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
@@ -956,7 +976,7 @@ dump_buffer (buffer_t *buffer) {
 
 // decoded requested number of samples to int16 format
 static void
-cmp3_decode_requested_int16 (mp3_info_t *info) {
+cmp3_decode_requested (mp3_info_t *info) {
     cmp3_skip (info);
     if (info->buffer.skipsamples > 0) {
         return;
@@ -972,12 +992,12 @@ cmp3_stream_frame (mp3_info_t *info) {
 }
 
 static int
-cmp3_decode_int16 (mp3_info_t *info) {
+cmp3_decode (mp3_info_t *info) {
     int eof = 0;
     while (!eof) {
         eof = cmp3_stream_frame (info);
         if (info->buffer.decode_remaining > 0) {
-            cmp3_decode_requested_int16 (info);
+            cmp3_decode_requested (info);
             if (info->buffer.readsize == 0) {
                 return 0;
             }
@@ -991,6 +1011,9 @@ cmp3_free (DB_fileinfo_t *_info) {
     mp3_info_t *info = (mp3_info_t *)_info;
     if (info->buffer.it) {
         deadbeef->pl_item_unref (info->buffer.it);
+    }
+    if (info->conv_buf) {
+        free (info->conv_buf);
     }
     if (info->buffer.file) {
         deadbeef->fclose (info->buffer.file);
@@ -1021,10 +1044,48 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
         }
     }
+
     int initsize = size;
-    info->buffer.readsize = size;
-    info->buffer.out = bytes;
-    cmp3_decode_int16 (info);
+
+    int req_size;
+    if (info->want_16bit && !info->raw_signal) {
+        req_size = size * 2;
+        // decode in 32 bit temp buffer, then convert to 16 below
+        if (info->conv_buf_size < req_size) {
+            info->conv_buf_size = req_size;
+            if (info->conv_buf) {
+                free (info->conv_buf);
+            }
+            info->conv_buf = malloc (info->conv_buf_size);
+        }
+        info->buffer.readsize = req_size;
+        info->buffer.out = info->conv_buf;
+    }
+    else {
+        req_size = size;
+        // decode straight to 32 bit
+        info->buffer.readsize = size;
+        info->buffer.out = bytes;
+    }
+
+    cmp3_decode (info);
+
+    if (!info->raw_signal) {
+        // apply replaygain, before clipping
+        ddb_waveformat_t fmt;
+        memcpy (&fmt, &info->info.fmt, sizeof (fmt));
+        fmt.bps = 32;
+        fmt.is_float = 1;
+        deadbeef->replaygain_apply (&fmt, info->want_16bit ? info->conv_buf : bytes, req_size - info->buffer.readsize);
+
+        // convert to 16 bit, if needed
+        if (info->want_16bit) {
+            int sz = req_size - info->buffer.readsize;
+            int ret = deadbeef->pcm_convert (&fmt, info->conv_buf, &_info->fmt, bytes, sz);
+            info->buffer.readsize = size-ret;
+        }
+    }
+
     info->buffer.currentsample += (size - info->buffer.readsize) / samplesize;
     _info->readpos = (float)(info->buffer.currentsample - info->buffer.startsample) / info->buffer.samplerate;
 #if WRITE_DUMP
@@ -1249,7 +1310,7 @@ cmp3_write_metadata (DB_playItem_t *it) {
         id3v2_version = 3;
     }
     char id3v1_encoding[50];
-    deadbeef->conf_get_str ("mp3.id3v1_encoding", "iso8859-1", id3v1_encoding, sizeof (id3v1_encoding));
+    deadbeef->conf_get_str ("mp3.id3v1_encoding", "cp1252", id3v1_encoding, sizeof (id3v1_encoding));
     return deadbeef->junk_rewrite_tags (it, junk_flags, id3v2_version, id3v1_encoding);
 }
 
@@ -1258,6 +1319,7 @@ static const char *exts[] = {
 };
 
 static const char settings_dlg[] =
+    "property \"Force 16 bit output\" checkbox mp3.force16bit 0;\n"
     "property \"Disable gapless playback (faster scanning)\" checkbox mp3.disable_gapless 0;\n"
 #if defined(USE_LIBMAD) && defined(USE_LIBMPG123)
     "property \"Backend\" select[2] mp3.backend 0 mpg123 mad;\n"
@@ -1267,10 +1329,11 @@ static const char settings_dlg[] =
 // define plugin interface
 static DB_decoder_t plugin = {
     .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    .plugin.api_vminor = 10, // requires API level 10 for logger and replaygain support
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
+    .plugin.flags = DDB_PLUGIN_FLAG_REPLAYGAIN,
     .plugin.id = "stdmpg",
     .plugin.name = "MP3 player",
     .plugin.descr = "MPEG v1/2 layer1/2/3 decoder\n\n"

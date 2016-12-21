@@ -42,7 +42,8 @@ typedef intptr_t DdbListviewCol_t;
 - (int)columnMinHeight:(DdbListviewCol_t)col;
 - (void)moveColumn:(DdbListviewCol_t)col to:(DdbListviewCol_t)to;
 - (void)columnsChanged;
-- (void)contextMenuForColumn:(DdbListviewCol_t)col withEvent:(NSEvent*)theEvent forView:(NSView *)view;
+- (NSMenu *)contextMenuForColumn:(DdbListviewCol_t)col withEvent:(NSEvent*)theEvent forView:(NSView *)view;
+- (BOOL)isAlbumArtColumn:(DdbListviewCol_t)col;
 - (DdbListviewRow_t)firstRow;
 - (DdbListviewRow_t)nextRow:(DdbListviewRow_t)row;
 - (DdbListviewRow_t)invalidRow;
@@ -53,21 +54,20 @@ typedef intptr_t DdbListviewCol_t;
 - (BOOL)rowSelected:(DdbListviewRow_t)row;
 - (void)deselectAll;
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row;
+- (BOOL)pinGroups;
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect;
-- (void)drawRowBackground:(DdbListviewRow_t)row inRect:(NSRect)rect;
 - (void)drawCell:(int)rowIdx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused;
 - (void)drawGroupTitle:(DdbListviewRow_t)row inRect:(NSRect)rect;
+- (void)drawAlbumArtForRow:(DdbListviewRow_t)row inColumn:(DdbListviewCol_t)col isPinnedGroup:(BOOL)pinned nextGroupCoord:(int)grp_next_y xPos:(int)x yPos:(int)y viewportY:(int)viewportY width:(int)width height:(int)height;
 - (int)modificationIdx;
 - (void)selectionChanged:(DdbListviewRow_t)row;
 - (int)selectedCount;
 - (BOOL)hasDND;
-- (void)trackProperties;
-- (void)reloadMetadata;
-- (void)convertSelection;
+- (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view;
 - (void)sortColumn:(DdbListviewCol_t)column withOrder:(int)order;
 - (void)dropItems:(int)from_playlist before:(DdbListviewRow_t)before indices:(uint32_t *)indices count:(int)count copy:(BOOL)copy;
 - (void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)after;
-
+- (void)scrollChanged:(int)scrollpos;
 @end
 
 typedef struct DdbListviewGroup_s {
@@ -76,34 +76,15 @@ typedef struct DdbListviewGroup_s {
     int32_t height;
     int32_t min_height;
     int32_t num_items;
-    int pinned;
     struct DdbListviewGroup_s *next;
 } DdbListviewGroup_t;
 
-@interface DdbListview : NSView {
-    id<DdbListviewDelegate> _delegate;
-    DdbListviewGroup_t *_groups;
-    int _grouptitle_height;
-    BOOL _groups_pinned;
-    int groups_build_idx;
-    int _fullwidth;
-    int _fullheight;
-    BOOL _areaselect;
-    int _areaselect_y;
-    int _area_selection_start;
-    int _area_selection_end;
-    int _shift_sel_anchor;
-    BOOL _dragwait;
-    int _scroll_direction;
-    int _scroll_pointer_y;
-    NSPoint _lastpos;
-}
+@interface DdbListview : NSView
 
 @property (readonly) NSView *headerView;
 @property (readonly) NSView *contentView;
 @property (readonly) DdbListviewGroup_t *groups;
 @property (readonly) int grouptitle_height;
-@property (readonly) BOOL groups_pinned;
 @property (readonly) int fullheight;
 @property (readwrite) NSPoint lastpos;
 @property (readwrite) int shift_sel_anchor;
@@ -122,4 +103,5 @@ typedef struct DdbListviewGroup_s {
 - (void)setVScroll:(int)scroll;
 - (void)updateContentFrame;
 - (void)deselectAll;
+- (void)cleanup;
 @end

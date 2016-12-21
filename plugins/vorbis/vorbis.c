@@ -151,12 +151,17 @@ update_vorbis_comments (DB_playItem_t *it, OggVorbis_File *vorbis_file, const in
     for (int i = 0; i < vc->comments; i++) {
         char *tag = strdup(vc->user_comments[i]);
         char *value;
-        if (tag && (value = strchr(tag, '='))) {
+        if (tag && (value = strchr(tag, '='))
+#ifdef ANDROID
+            && strlen (value) < 4000
+#endif
+            ) {
             *value++ = '\0';
             if (!replaygain_tag(it, DDB_REPLAYGAIN_ALBUMGAIN, tag, value) &&
                 !replaygain_tag(it, DDB_REPLAYGAIN_ALBUMPEAK, tag, value) &&
                 !replaygain_tag(it, DDB_REPLAYGAIN_TRACKGAIN, tag, value) &&
-                !replaygain_tag(it, DDB_REPLAYGAIN_TRACKPEAK, tag, value)) {
+                !replaygain_tag(it, DDB_REPLAYGAIN_TRACKPEAK, tag, value)
+                && strcasecmp (tag, "METADATA_BLOCK_PICTURE")) {
                     add_meta(it, oggedit_map_tag(tag, "tag2meta"), value);
             }
         }
@@ -737,10 +742,11 @@ tags_list(DB_playItem_t *it, OggVorbis_File *vorbis_file)
 
     deadbeef->pl_lock ();
     for (DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it); m; m = m->next) {
-        char *key = strdupa (m->key);
-        if (key && key[0] != ':' && key[0] != '!') {
-            split_tag (tags, oggedit_map_tag (key, "meta2tag"), m->value);
+        if (strchr (":!_", m->key[0])) {
+            break;
         }
+        char *key = strdupa (m->key);
+        split_tag (tags, oggedit_map_tag (key, "meta2tag"), m->value);
     }
     deadbeef->pl_unlock ();
 

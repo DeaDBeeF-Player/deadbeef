@@ -42,6 +42,29 @@
 #include <sc68/file68_str.h>
 #include <sc68/file68_opt.h>
 
+/* command line options option */
+/* static const char prefix[] = "sc68-"; */
+#define prefix 0
+static const char engcat[] = "ym-dump";
+static option68_t opts[] = {
+  OPT68_BOOL(prefix,"ym-clean-dump",engcat,
+             "dump only effective bits", 0, 0)
+};
+#undef prefix
+
+void ym_dump_add_options(void)
+{
+  const int n_opts = sizeof(opts) / sizeof(*opts);
+
+  opts[0].hide = 1;                     /* hide -clean-dump */
+
+  /* Register ym-dump options */
+  option68_append(opts, n_opts);
+
+  /* Default option values */
+  option68_iset(opts+0, 1, opt68_NOTSET, opt68_CFG);
+}
+
 static int reset(ym_t * const ym, const cycle68_t ymcycle)
 {
   ym_dump_t * const dump = &ym->emu.dump;
@@ -67,10 +90,25 @@ int run(ym_t * const ym, s32 * output, const cycle68_t ymcycles)
     '8','9','A','B','C','D','E','F'
   };
 
+  static const u8 allbits[14] = {
+    0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF
+  };
+
+  static const u8 effbits[14] = {
+    0xFF,0x0F, 0xFF,0x0F, 0xFF,0x0F,    /* pulse periods */
+    0x1F,                               /* Noise */
+    0x3F,                               /* Mixer (ignoring io port direction bit */
+    0x1F,0x1F,0x1F,                     /* Volume */
+    0xFF,0xFF,                          /* env period */
+    0xF                                 /* env shape */
+  };
+
   ym_dump_t * const dump = &ym->emu.dump;
   cycle68_t curcycle;
   u64       longcycle;
   int       i, len, ymreg[16], reg_mute, mix_mute;
+  const u8 *bits = opts->val.num ? effbits : allbits;
+
 
   char tmp [128], * buf;
   ym_event_t * ptr = ym->event_buf;
@@ -142,8 +180,9 @@ int run(ym_t * const ym, s32 * output, const cycle68_t ymcycles)
         *buf++ = '.';
         *buf++ = '.';
       } else {
-        *buf++ = hex[ ymreg[i] >> 4 ];
-        *buf++ = hex[ ymreg[i] & 15 ];
+        int v = ymreg[i] & bits[i];
+        *buf++ = hex[ v >> 4 ];
+        *buf++ = hex[ v & 15 ];
       }
       ymreg[i] = -1;
     }

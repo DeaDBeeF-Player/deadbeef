@@ -34,7 +34,7 @@ cp ./plugins/dca/.libs/dca.so $PREFIX/lib/deadbeef/
 cp ./plugins/aac/.libs/aac.so $PREFIX/lib/deadbeef/
 cp ./plugins/mms/.libs/mms.so $PREFIX/lib/deadbeef/
 cp ./plugins/shn/.libs/ddb_shn.so $PREFIX/lib/deadbeef/
-cp ./plugins/ao/.libs/ddb_ao.so $PREFIX/lib/deadbeef/
+cp ./plugins/psf/.libs/psf.so $PREFIX/lib/deadbeef/
 cp ./plugins/shellexec/.libs/shellexec.so $PREFIX/lib/deadbeef/
 cp ./plugins/shellexecui/.libs/shellexecui_gtk2.so $PREFIX/lib/deadbeef/
 cp ./plugins/shellexecui/.libs/shellexecui_gtk3.so $PREFIX/lib/deadbeef/
@@ -54,3 +54,4 @@ cp ./plugins/pltbrowser/.libs/pltbrowser_gtk2.so $PREFIX/lib/deadbeef/
 cp ./plugins/pltbrowser/.libs/pltbrowser_gtk3.so $PREFIX/lib/deadbeef/
 cp ./plugins/coreaudio/.libs/coreaudio.so $PREFIX/lib/deadbeef/
 cp ./plugins/sc68/.libs/in_sc68.so $PREFIX/lib/deadbeef/
+cp ./plugins/statusnotifier/.libs/statusnotifier.so $PREFIX/lib/deadbeef/

@@ -295,12 +295,6 @@ on_loop_disable_activate               (GtkMenuItem     *menuitem,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-void
-on_searchlist_realize                  (GtkWidget       *widget,
-                                        gpointer         user_data)
-{
-}
-
 gboolean
 on_mainwin_delete_event                (GtkWidget       *widget,
                                         GdkEvent        *event,
@@ -358,7 +352,7 @@ on_about1_activate                     (GtkMenuItem     *menuitem,
     char s[200];
     snprintf (s, sizeof (s), _("About DeaDBeeF %s"), VERSION);
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "about.txt");
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_system_dir(DDB_SYS_DIR_DOC), "about.txt");
     gtkui_show_info_window (fname, s, &aboutwindow);
 }
 
@@ -371,7 +365,7 @@ on_changelog1_activate                 (GtkMenuItem     *menuitem,
     char s[200];
     snprintf (s, sizeof (s), _("DeaDBeeF %s ChangeLog"), VERSION);
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "ChangeLog");
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_system_dir(DDB_SYS_DIR_DOC), "ChangeLog");
     gtkui_show_info_window (fname, s, &changelogwindow);
 }
 
@@ -382,7 +376,7 @@ on_gpl1_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "COPYING.GPLv2");
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_system_dir(DDB_SYS_DIR_DOC), "COPYING.GPLv2");
     gtkui_show_info_window (fname, "GNU GENERAL PUBLIC LICENSE Version 2", &gplwindow);
 }
 
@@ -393,7 +387,7 @@ on_lgpl1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "COPYING.LGPLv2.1");
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_system_dir(DDB_SYS_DIR_DOC), "COPYING.LGPLv2.1");
     gtkui_show_info_window (fname, "GNU LESSER GENERAL PUBLIC LICENSE Version 2.1", &lgplwindow);
 }
 
@@ -438,7 +432,7 @@ on_column_id_changed                   (GtkComboBox     *combobox,
         trace ("failed to get column format widget\n");
         return;
     }
-    gtk_widget_set_sensitive (fmt, act >= 10 ? TRUE : FALSE);
+    gtk_widget_set_sensitive (fmt, act >= 11 ? TRUE : FALSE);
 
     if (!editcolumn_title_changed) {
         GtkWidget *title= lookup_widget (toplevel, "title");
@@ -631,7 +625,7 @@ on_translators1_activate               (GtkMenuItem     *menuitem,
     char s[200];
     snprintf (s, sizeof (s), _("DeaDBeeF Translators"));
     char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "translators.txt");
+    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_system_dir(DDB_SYS_DIR_DOC), "translators.txt");
     gtkui_show_info_window (fname, s, &translatorswindow);
 }
 
@@ -640,7 +634,7 @@ GtkWidget*
 title_formatting_help_link_create (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2)
 {
-    GtkWidget *link = gtk_link_button_new_with_label ("http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting-2.0", "Help");
+    GtkWidget *link = gtk_link_button_new_with_label ("http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting-2.0", _("Help"));
     return link;
 }
 

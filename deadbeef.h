@@ -29,6 +29,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <dirent.h>
+#include <stdarg.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -70,7 +71,8 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // api version history:
-// 9.9 -- devel
+// 1.10 -- trunk
+// 1.9 -- deadbeef-0.7.2
 // 1.8 -- deadbeef-0.7.0
 // 1.7 -- deadbeef-0.6.2
 // 1.6 -- deadbeef-0.6.1
@@ -93,28 +95,51 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 8
+#define DB_API_VERSION_MINOR 10
 
-#define DDB_DEPRECATED(x)
+#if defined(__clang__)
 
-#ifdef __GNUC__
-// avoid including glibc headers, this is not very portable
-#if defined __GNUC__ && defined __GNUC_MINOR__
-# define __GNUC_PREREQ(maj, min) \
-	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
+#   define DDB_DEPRECATED(x) __attribute__ ((deprecated(x)))
+
+#elif defined(__GNUC__)
+
+    #if !defined(__GNUC_PREREQ)
+        // avoid including glibc headers, this is not very portable
+        #if defined __GNUC_MINOR__
+        #   define __GNUC_PREREQ(maj, min) \
+            ((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
+        #else
+        #   define __GNUC_PREREQ(maj, min) 0
+        #endif
+
+    #endif
+
+    #if __GNUC_PREREQ(4,5)
+    #   define DDB_DEPRECATED(x) __attribute__ ((deprecated(x)))
+    #else
+    #   define DDB_DEPRECATED(x) __attribute__ ((deprecated))
+    #endif
+
 #else
-# define __GNUC_PREREQ(maj, min) 0
-#endif
-#undef DDB_DEPRECATED
-#if __GNUC_PREREQ(4,5)
-#define DDB_DEPRECATED(x) __attribute__ ((deprecated(x)))
-#else
-#define DDB_DEPRECATED(x) __attribute__ ((deprecated))
-#endif
+
+    #define DDB_DEPRECATED(x)
+
 #endif
 
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 10)
+#define DEPRECATED_110 DDB_DEPRECATED("since deadbeef API 1.10")
+#else
+#define DEPRECATED_110
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 9)
+#define DEPRECATED_19 DDB_DEPRECATED("since deadbeef API 1.9")
+#else
+#define DEPRECATED_19
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 8)
@@ -188,7 +213,7 @@ extern "C" {
 // default values for some common config variables should go here
 
 // network.ctmapping : content-type to plugin mapping
-#define DDB_DEFAULT_CTMAPPING "audio/mpeg {stdmpg ffmpeg} audio/x-mpeg {stdmpg ffmpeg} application/ogg {stdogg ffmpeg} audio/ogg {stdogg ffmpeg} audio/aac {aac ffmpeg} audio/aacp {aac ffmpeg} audio/wma {wma ffmpeg}"
+#define DDB_DEFAULT_CTMAPPING "audio/mpeg {stdmpg ffmpeg} audio/x-mpeg {stdmpg ffmpeg} application/ogg {stdogg ffmpeg} audio/ogg {stdogg ffmpeg} audio/aac {aac ffmpeg} audio/aacp {aac ffmpeg} audio/x-m4a {aac ffmpeg} audio/wma {wma ffmpeg}"
 
 ////////////////////////////
 // playlist structures
@@ -234,6 +259,10 @@ typedef struct DB_metaInfo_s {
     struct DB_metaInfo_s *next;
     const char *key;
     const char *value;
+
+#if (DDB_API_LEVEL >= 10)
+    int valuesize;
+#endif
 } DB_metaInfo_t;
 
 // FIXME: that needs to be in separate plugin
@@ -421,6 +450,10 @@ enum {
     DB_EV_TRACKFOCUSCURRENT = 1006, // user wants to highlight/find the current playing track
 #endif
 
+#if (DDB_API_LEVEL >= 10)
+    DB_EV_CURSOR_MOVED = 1007, // used for syncing cursor position between playlist views, p1 = PL_MAIN or PL_SEARCH, ctx is a ddb_event_track_t, containing the new track under cursor
+#endif
+
     DB_EV_MAX
 };
 
@@ -439,6 +472,34 @@ enum {
     DDB_REPLAYGAIN_TRACKGAIN,
     DDB_REPLAYGAIN_TRACKPEAK,
 };
+
+#if (DDB_API_LEVEL >= 10)
+enum {
+    DDB_RG_SOURCE_MODE_PLAYBACK_ORDER = 0,
+    DDB_RG_SOURCE_MODE_TRACK = 1,
+    DDB_RG_SOURCE_MODE_ALBUM = 2,
+};
+
+enum {
+    DDB_RG_PROCESSING_NONE = 0,
+    DDB_RG_PROCESSING_GAIN = 1,
+    DDB_RG_PROCESSING_PREVENT_CLIPPING = 2,
+};
+
+typedef struct {
+    int _size;
+    int source_mode;
+    uint32_t processing_flags;
+    float preamp_with_rg;
+    float preamp_without_rg;
+    int has_album_gain;
+    int has_track_gain;
+    float albumgain;
+    float albumpeak;
+    float trackgain;
+    float trackpeak;
+} ddb_replaygain_settings_t;
+#endif
 
 // sort order constants
 enum ddb_sort_order_t {
@@ -506,7 +567,21 @@ typedef struct ddb_fileadd_data_s {
 enum {
     DDB_TF_CONTEXT_HAS_INDEX = 1,
     DDB_TF_CONTEXT_HAS_ID = 2,
+    DDB_TF_CONTEXT_NO_DYNAMIC = 4, // skip dynamic fields (%playback_time%)
+#if (DDB_API_LEVEL >= 9)
+    // Don't convert linebreaks to semicolons
+    DDB_TF_CONTEXT_MULTILINE = 8,
+#endif
 };
+
+// since 1.10
+#if (DDB_API_LEVEL >= 10)
+typedef struct ddb_file_found_data_s {
+    ddb_playlist_t *plt;
+    const char *filename;
+    int is_dir;
+} ddb_file_found_data_t;
+#endif
 
 // context for title formatting interpreter
 typedef struct {
@@ -514,6 +589,10 @@ typedef struct {
     uint32_t flags; // DDB_TF_CONTEXT_ flags
     ddb_playItem_t *it; // track to get information from, or NULL
     ddb_playlist_t *plt; // playlist in which the track resides, or NULL
+
+    // NOTE: when plt is NULL, it means that the track is not in any playlist,
+    // that is -- playlist will never be automatically guessed, for performance
+    // reasons.
 
     // index of the track in playlist the track belongs to
     // if present, DDB_TF_CONTEXT_HAS_INDEX flag must be set
@@ -532,6 +611,24 @@ typedef struct {
     // >0: number of milliseconds between updates / until next update
     int update;
 } ddb_tf_context_t;
+#endif
+
+#if (DDB_API_LEVEL>=10)
+enum {
+    // Layer 0 means it's always on, and important.
+    // This layer is suitable for critical error messages,
+    // but it's also useful for plugin-specific messages,
+    // which can be turned on and off in the settings.
+    // It is expected that the UI plugins will auto-show the Log View,
+    // when any message is logged on this layer
+    DDB_LOG_LAYER_DEFAULT = 0,
+
+    // Layer 1 should contain informational non-critical messages, like boot log.
+    // This layer is always on.
+    // UI should not auto-show the Log View for this layer.
+    DDB_LOG_LAYER_INFO = 1,
+};
+
 #endif
 
 // forward decl for plugin struct
@@ -715,6 +812,8 @@ typedef struct {
     void (*plt_move_items) (ddb_playlist_t *to, int iter, ddb_playlist_t *from, DB_playItem_t *drop_before, uint32_t *indexes, int count);
     void (*plt_copy_items) (ddb_playlist_t *to, int iter, ddb_playlist_t * from, DB_playItem_t *before, uint32_t *indices, int cnt);
     void (*plt_search_reset) (ddb_playlist_t *plt);
+
+    // find the specified text in playlist, and select the results
     void (*plt_search_process) (ddb_playlist_t *plt, const char *text);
 
     // sort using the title formatting v1 (deprecated)
@@ -842,10 +941,10 @@ typedef struct {
        %D directory name with full path (e.g. /home/user/file.mp3 -> /home/user)
        more to come
     */
-    int (*pl_format_title) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
+    int (*pl_format_title) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt) DEPRECATED_18;
 
     // _escaped version wraps all conversions with '' and replaces every ' in conversions with \'
-    int (*pl_format_title_escaped) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
+    int (*pl_format_title_escaped) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt) DEPRECATED_18;
 
     // format duration 't' (fractional seconds) into string, for display in playlist
     void (*pl_format_time) (float t, char *dur, int size);
@@ -1005,6 +1104,8 @@ typedef struct {
 
     const char * (*metacache_add_string) (const char *str);
     void (*metacache_remove_string) (const char *str);
+
+    // ref/unref do nothing, please don't use, they're left for compatibility
     void (*metacache_ref) (const char *str);
     void (*metacache_unref) (const char *str);
 
@@ -1064,7 +1165,10 @@ typedef struct {
     int (*plt_get_idx) (ddb_playlist_t *plt);
 
     // save referenced playlist in config
+    // same as pl_save_current, but for index
     int (*plt_save_n) (int n);
+
+    // same as pl_save_current, but for playlist pointer
     int (*plt_save_config) (ddb_playlist_t *plt);
 
     // register file added callback
@@ -1081,6 +1185,8 @@ typedef struct {
     // visibility is a number, which tells listeners about the caller.
     // the value DDB_FILEADD_VISIBILITY_GUI (or 0) is reserved for callers which
     // want the GUI to intercept the calls and show visual updates.
+    //
+    // To skip UI, it is recommended to use visibility=-1
     //
     // this is the default value passed from plt_load, plt_add_dir, plt_add_file.
     //
@@ -1138,7 +1244,7 @@ typedef struct {
     // out: buffer allocated by the caller, must be big enough to fit the output string
     // outlen: the size of out buffer
     // returns -1 on fail, output size on success
-    int (*tf_eval) (ddb_tf_context_t *ctx, char *code, char *out, int outlen);
+    int (*tf_eval) (ddb_tf_context_t *ctx, const char *code, char *out, int outlen);
 
     // sort using title formatting v2
     void (*plt_sort_v2) (ddb_playlist_t *plt, int iter, int id, const char *format, int order);
@@ -1156,6 +1262,122 @@ typedef struct {
 
     // system directory API, returns path by id from ddb_sys_directory_t enum
     const char *(*get_system_dir) (int dir_id);
+
+    // set the selected playlist for the ongoing plugin action.
+    // the "set" function is expected to be called by the UI plugin,
+    // while the "get" is expected to be called by the action code.
+    void (*action_set_playlist) (ddb_playlist_t *plt);
+
+    // returns one of:
+    // selected playlist for context menu for the DDB_ACTION_CTX_PLAYLIST,
+    // or the current active playlist for any other context.
+    // returned value cannot be NULL
+    // returned value is refcounted, so remember to call plt_unref.
+    ddb_playlist_t *(*action_get_playlist) (void);
+
+    // convert legacy title formatting to the new format, usable with tf_compile
+    void (*tf_import_legacy) (const char *fmt, char *out, int outsize);
+#endif
+
+    // since 1.10
+#if (DDB_API_LEVEL >= 10)
+    // same as plt_search_process, but allows to choose whether to select the
+    // search results, or not
+    void (*plt_search_process2) (ddb_playlist_t *plt, const char *text, int select_results);
+
+    // try loading external and embedded cuesheet, using the configured order (cue.prefer_embedded, default=0)
+    DB_playItem_t * (*plt_process_cue) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *it, uint64_t numsamples, int samplerate);
+
+    // return direct-access metadata structure for the given track and key
+    DB_metaInfo_t * (*pl_meta_for_key) (DB_playItem_t *it, const char *key);
+
+    ////////////  Logging  ///////////
+
+    // The recommended usage in plugins:
+    // #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
+    // Then use trace () as you would use printf
+    // The user would be able to enable/disable logging in your plugin via the standard UI features.
+    // Remember to set plugin.api_vminor = 10 or higher
+
+    // Low level log function, where plugin and level can be specified.
+    // Plugin defines the scope, so logging can be toggled per plugin
+    // Layers is a combination of bits, which define the priority/visibility of the message.
+    // See DDB_LOG_LAYER_* for details
+    void (*log_detailed) (struct DB_plugin_s *plugin, uint32_t layers, const char *fmt, ...);
+
+    // Same as log_detailed but uses va_list
+    void (*vlog_detailed) (struct DB_plugin_s *plugin, uint32_t layer, const char *fmt, va_list ap);
+
+    // High level easy-to-use log function, with no scope
+    // These log messages cannot be disabled, and will always appear in the Log Viewers
+    void (*log) (const char *fmt, ...);
+
+    // Same as log but uses va_list
+    void (*vlog) (const char *fmt, va_list ap);
+
+    // Custom log viewers, for use in e.g. UI plugins
+    void (*log_viewer_register) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text));
+    void (*log_viewer_unregister) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text));
+
+    ///////// File add filtering ///////
+
+    // It works by calling the filter right after a file or folder was found, but before it's open / processed
+    // Then if the filter returns a negative value -- the file/folder will be skipped
+    // It's designed to work with plt_insert_dir and plt_insert_file.
+    // In case of plt_insert_file, the filter will only be used for recursive plt_insert_dir calls (e.g. for VFS containers)
+
+    // Registers the file add filter, and returns the filter ID, which can be used to unregister the filter
+    // Calls the callback before each file is processed
+    // The callback must return 0 to continue, or a negative value to skip the file
+    int (*register_fileadd_filter) (int (*callback)(ddb_file_found_data_t *data, void *user_data), void *user_data);
+
+    // Unregisters the filter by ID, returned by register_file_filter
+    void (*unregister_fileadd_filter) (int id);
+
+    ////// MetaCache APIs available from 1.10+ //////
+
+    // Returns an existing NULL-terminated string, or NULL if it doesn't exist
+    const char * (*metacache_get_string) (const char *str);
+
+    // Adds a new value of specified size, or finds an existing one
+    const char * (*metacache_add_value) (const char *value, size_t valuesize);
+
+    // Returns an existing value of specified size, or NULL if it doesn't exist
+    const char *(*metacache_get_value) (const char *value, size_t valuesize);
+
+    // Removes an existing value of specified size, ignoring refcount
+    void (*metacache_remove_value) (const char *value, size_t valuesize);
+
+    ////// ReplayGain APIs available from 1.10+ //////
+
+    // Apply replaygain according to the current settings.
+    // NOTE: This only works for the current streaming_track,
+    // as the current settings are controlled by the streamer.
+    // Can be used to apply replaygain in decoders, but the appropriate flags
+    // need to be checked, e.g. the DDB_DECODER_HINT_RAW_SIGNAL.
+    // Make sure to set the DDB_PLUGIN_FLAG_REPLAYGAIN bit in plugin.flags,
+    // otherwise replaygain could be applied twice.
+    void (*replaygain_apply) (ddb_waveformat_t *fmt, char *bytes, int numbytes);
+
+    // Same as replaygain_apply, but with specified settings.
+    // Suitable to use from the converter and for other similar uses.
+    void (*replaygain_apply_with_settings) (ddb_replaygain_settings_t *settings, ddb_waveformat_t *fmt, char *bytes, int numbytes);
+
+    // Utility function to init the replaygain settings from the current
+    // player configuration, and the supplied track.
+    // After initializing the settings, pass the pointer to replaygain_apply_with_settings
+    void (*replaygain_init_settings) (ddb_replaygain_settings_t *settings, DB_playItem_t *it);
+
+    ////// Sort APIs available from 1.10+ //////
+
+    // Sort a plain array of tracks, according to specified title formatting v2 script and column id.
+    // The sorting is applied in-place, i.e. the input array is modified.
+    // `playlist` can be NULL, otherwise must point to the playlist which ALL of the tracks belong to;
+    // `tracks` and `numtracks` specify the array of tracks;
+    // `format` is title formatting v2 script;
+    // `order` can be one of DDB_SORT_ASCENDING or DDB_SORT_DESCENDING (no random).
+    void (*sort_track_array) (ddb_playlist_t *playlist, DB_playItem_t **tracks, int num_tracks, const char *format, int order);
+
 #endif
 } DB_functions_t;
 
@@ -1203,6 +1425,8 @@ enum {
 enum {
     DDB_ACTION_CTX_MAIN,
     DDB_ACTION_CTX_SELECTION,
+    // NOTE: starting with API 1.8, plugins should be using the
+    // action_get_playlist function for getting the playlist pointer.
     DDB_ACTION_CTX_PLAYLIST,
     DDB_ACTION_CTX_NOWPLAYING,
     DDB_ACTION_CTX_COUNT
@@ -1220,7 +1444,8 @@ typedef struct DB_plugin_action_s {
     const char *title;
     const char *name;
     uint32_t flags;
-    // the use of "callback" is deprecated, only use it if the code must be compatible with API 1.4
+    // the use of "callback" is deprecated,
+    // only use it if the code must be compatible with API 1.4
     // otherwise switch to callback2
     DB_plugin_action_callback_t callback;
     struct DB_plugin_action_s *next;
@@ -1228,6 +1453,16 @@ typedef struct DB_plugin_action_s {
     DB_plugin_action_callback2_t callback2;
 #endif
 } DB_plugin_action_t;
+
+#if (DDB_API_LEVEL >= 10)
+enum {
+    // Tells the system that the plugin has logging enabled
+    DDB_PLUGIN_FLAG_LOGGING = 1,
+
+    // Tells the system that the plugin supports replaygain, and streamer should not do it
+    DDB_PLUGIN_FLAG_REPLAYGAIN = 2,
+};
+#endif
 
 // base plugin interface
 typedef struct DB_plugin_s {
@@ -1240,7 +1475,7 @@ typedef struct DB_plugin_s {
     int16_t version_major;
     int16_t version_minor;
 
-    uint32_t flags; // currently unused
+    uint32_t flags; // DDB_PLUGIN_FLAG_*
     uint32_t reserved1;
     uint32_t reserved2;
     uint32_t reserved3;
@@ -1345,6 +1580,11 @@ enum {
     // "Loop Single" looping mode.
     DDB_DECODER_HINT_CAN_LOOP = 0x4,
 #endif
+#if (DDB_API_LEVEL >= 10)
+    // Don't modify the stream (e.g. no replaygain, clipping, etc), provide the maximum possible precision, preferrably in float32.
+    // Supposed to be used by converter, replaygain scanner, etc.
+    DDB_DECODER_HINT_RAW_SIGNAL = 0x8,
+#endif
 };
 
 // decoder plugin
@@ -1382,6 +1622,9 @@ typedef struct DB_decoder_s {
     int (*write_metadata) (DB_playItem_t *it);
 
     // NULL terminated array of all supported extensions
+    // examples:
+    // { "aac", "wma", "tak", NULL } -- supports 3 file extensions
+    // since API 1.9: { "*", NULL } -- supports any file extensions
     const char **exts;
 
     // NULL terminated array of all supported prefixes (UADE support needs that)

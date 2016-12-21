@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2015 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2016 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -24,13 +24,34 @@
 #import "DdbPlaylistViewController.h"
 #import "DdbPlaylistWidget.h"
 #import "DdbListview.h"
+#import "ConverterWindowController.h"
+#import "CoverManager.h"
+#import "ReplayGainScannerController.h"
 #include "../../deadbeef.h"
+#include "rg_scanner.h"
 
 #define CELL_HPADDING 4
 
 extern DB_functions_t *deadbeef;
 
-@implementation DdbPlaylistViewController
+@interface DdbPlaylistViewController()
+@end
+
+@implementation DdbPlaylistViewController {
+    char *_group_str;
+    char *_group_bytecode;
+    BOOL _pin_groups;
+}
+
+- (void)dealloc {
+    [self cleanup];
+}
+
+- (void)cleanup {
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+    [[view listview] cleanup];
+    [self clearGrouping];
+}
 
 - (void)menuAddColumn:(id)sender {
     [self initAddColumnSheet:-1];
@@ -98,7 +119,48 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)menuTogglePinGroups:(id)sender {
+    _pin_groups = [sender state] == NSOnState ? 0 : 1;
+    [sender setState:_pin_groups?NSOnState:NSOffState];
+    deadbeef->conf_set_int ([self pinGroupsConfStr], _pin_groups);
+    [[self view] setNeedsDisplay:YES];
+}
 
+- (void)clearGrouping {
+    if (_group_str) {
+        free (_group_str);
+        _group_str = NULL;
+    }
+    if (_group_bytecode) {
+        deadbeef->tf_free (_group_bytecode);
+        _group_bytecode = NULL;
+    }
+}
+
+- (void)menuGroupByNone:(id)sender {
+    [self clearGrouping];
+    deadbeef->conf_remove_items ([self groupByConfStr]);
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+    [[view listview] reloadData];
+}
+
+- (void)menuGroupByArtistDateAlbum:(id)sender {
+    [self clearGrouping];
+    _group_str = strdup ("%album artist% - ['['%year%']' ]%album%");
+    deadbeef->conf_set_str ([self groupByConfStr], _group_str);
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+    [[view listview] reloadData];
+}
+
+- (void)menuGroupByArtist:(id)sender {
+    [self clearGrouping];
+    _group_str = strdup ("%artist%");
+    deadbeef->conf_set_str ([self groupByConfStr], _group_str);
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+    [[view listview] reloadData];
+}
+
+- (void)menuGroupByCustom:(id)sender {
+    // TODO
 }
 
 - (void)updateColumn:(int)idx {
@@ -255,12 +317,32 @@ extern DB_functions_t *deadbeef;
                                         , textStyle, NSParagraphStyleAttributeName
                                         , nil];
 
+
+    // initialize group by str
+    deadbeef->conf_lock ();
+    const char *group_by = deadbeef->conf_get_str_fast ([self groupByConfStr], NULL);
+    if (group_by) {
+        _group_str = strdup (group_by);
+    }
+    deadbeef->conf_unlock ();
+
+    _pin_groups = deadbeef->conf_get_int ([self pinGroupsConfStr], 0);
+}
+
+- (const char *)groupByConfStr {
+    return "cocoaui.playlist.group_by";
+}
+
+- (const char *)pinGroupsConfStr {
+    return "cocoaui.playlist.pin_groups";
 }
 
 - (void)awakeFromNib {
-    [self initContent];
     DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
     [view setDelegate:(id<DdbListviewDelegate>)self];
+    [self initContent];
+
+    [self setupPlaylist:[view listview]];
 }
 
 - (void)freeColumns {
@@ -315,7 +397,7 @@ extern DB_functions_t *deadbeef;
 }
 
 // pass col=-1 for "empty space", e.g. when appending new col
-- (void)contextMenuForColumn:(DdbListviewCol_t)col withEvent:(NSEvent*)theEvent forView:(NSView *)view {
+- (NSMenu *)contextMenuForColumn:(DdbListviewCol_t)col withEvent:(NSEvent*)theEvent forView:(NSView *)view {
     _menuColumn = (int)col;
     NSMenu *menu = [[NSMenu alloc] initWithTitle:@"ColumnMenu"];
     [menu setDelegate:(id<NSMenuDelegate>)self];
@@ -324,7 +406,9 @@ extern DB_functions_t *deadbeef;
     if (col != -1) {
         [[menu insertItemWithTitle:@"Edit Column" action:@selector(menuEditColumn:) keyEquivalent:@"" atIndex:1] setTarget:self];
         [[menu insertItemWithTitle:@"Remove Column" action:@selector(menuRemoveColumn:) keyEquivalent:@"" atIndex:2] setTarget:self];
-        [[menu insertItemWithTitle:@"Pin Groups When Scrolling" action:@selector(menuTogglePinGroups:) keyEquivalent:@"" atIndex:3] setTarget:self];
+        NSMenuItem *item = [menu insertItemWithTitle:@"Pin Groups When Scrolling" action:@selector(menuTogglePinGroups:) keyEquivalent:@"" atIndex:3];
+        [item setState:_pin_groups?NSOnState:NSOffState];
+        [item setTarget:self];
 
         [menu insertItem:[NSMenuItem separatorItem] atIndex:4];
 
@@ -332,19 +416,22 @@ extern DB_functions_t *deadbeef;
         [groupBy setDelegate:(id<NSMenuDelegate>)self];
         [groupBy setAutoenablesItems:NO];
 
-        [[groupBy insertItemWithTitle:@"None" action:@selector(menuGroupByNone) keyEquivalent:@"" atIndex:0] setTarget:self];
-        [[groupBy insertItemWithTitle:@"Artist/Date/Album" action:@selector(menuGroupByArtistDateAlbum) keyEquivalent:@"" atIndex:1] setTarget:self];
-        [[groupBy insertItemWithTitle:@"Artist" action:@selector(menuGroupByArtist) keyEquivalent:@"" atIndex:2] setTarget:self];
-        [groupBy insertItemWithTitle:@"Custom" action:@selector(menuGroupByCustom) keyEquivalent:@"" atIndex:3];
+        [[groupBy insertItemWithTitle:@"None" action:@selector(menuGroupByNone:) keyEquivalent:@"" atIndex:0] setTarget:self];
+        [[groupBy insertItemWithTitle:@"Artist/Date/Album" action:@selector(menuGroupByArtistDateAlbum:) keyEquivalent:@"" atIndex:1] setTarget:self];
+        [[groupBy insertItemWithTitle:@"Artist" action:@selector(menuGroupByArtist:) keyEquivalent:@"" atIndex:2] setTarget:self];
+        [groupBy insertItemWithTitle:@"Custom" action:@selector(menuGroupByCustom:) keyEquivalent:@"" atIndex:3];
 
         NSMenuItem *groupByItem = [[NSMenuItem alloc] initWithTitle:@"Group By" action:nil keyEquivalent:@""];
         [groupByItem setSubmenu:groupBy];
         [menu insertItem:groupByItem atIndex:5];
     }
 
-    [NSMenu popUpContextMenu:menu withEvent:theEvent forView:view];
+    return menu;
 }
 
+- (BOOL)isAlbumArtColumn:(DdbListviewCol_t)col {
+    return _columns[col].type == DB_COLUMN_ALBUM_ART;
+}
 
 - (void)loadColumns:(NSArray *)cols {
     [self freeColumns];
@@ -533,13 +620,6 @@ extern DB_functions_t *deadbeef;
     [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y+1, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
 }
 
-- (void)drawRowBackground:(DdbListviewRow_t)row inRect:(NSRect)rect {
-    if (row%2) {
-        [[NSColor selectedTextBackgroundColor] set];
-        [NSBezierPath fillRect:rect];
-    }
-}
-
 - (void)drawCell:(int)idx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused {
     int sel = deadbeef->pl_is_selected((DB_playItem_t *)row);
     if (sel) {
@@ -548,7 +628,7 @@ extern DB_functions_t *deadbeef;
             [NSBezierPath fillRect:rect];
         }
         else {
-            [[NSColor selectedControlColor] set];
+            [[NSColor controlShadowColor] set];
             [NSBezierPath fillRect:rect];
         }
     }
@@ -623,9 +703,6 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-static const char *group_str = "%artist%[ - %year%][ - %album%]";
-static char *group_bytecode = NULL;
-
 - (void)drawGroupTitle:(DdbListviewRow_t)row inRect:(NSRect)rect {
     ddb_tf_context_t ctx = {
         ._size = sizeof (ddb_tf_context_t),
@@ -634,7 +711,7 @@ static char *group_bytecode = NULL;
     };
 
     char text[1024] = "";
-    deadbeef->tf_eval (&ctx, group_bytecode, text, sizeof (text));
+    deadbeef->tf_eval (&ctx, _group_bytecode, text, sizeof (text));
 
     NSString *title = [NSString stringWithUTF8String:text];
 
@@ -654,6 +731,52 @@ static char *group_bytecode = NULL;
     if (size.width < rect.size.width - 15) {
         [NSBezierPath fillRect:NSMakeRect(size.width + 10, rect.origin.y + rect.size.height/2, rect.size.width - size.width - 15, 1)];
     }
+}
+
+static void coverAvailCallback (NSImage *__strong img, void *user_data) {
+    DdbPlaylistViewController *ctl = (__bridge DdbPlaylistViewController *) user_data;
+    [[ctl view] setNeedsDisplay:YES];
+}
+
+#define ART_PADDING_HORZ 8
+#define ART_PADDING_VERT 0
+
+- (void)drawAlbumArtForRow:(DdbListviewRow_t)row
+                  inColumn:(DdbListviewCol_t)col
+             isPinnedGroup:(BOOL)pinned
+            nextGroupCoord:(int)grp_next_y
+                      xPos:(int)x
+                      yPos:(int)y
+                 viewportY:(int)viewportY
+                     width:(int)width
+                    height:(int)height {
+    DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)[self view];
+    DdbListview *listview = [pltWidget listview];
+    DB_playItem_t *it = (DB_playItem_t *)row;
+    NSImage *image = [[CoverManager defaultCoverManager] getCoverForTrack:it withCallbackWhenReady:coverAvailCallback withUserDataForCallback:(__bridge void *)self];
+    if (!image) {
+        return;
+    }
+
+    int art_width = width - ART_PADDING_HORZ * 2;
+    int art_height = height - ART_PADDING_VERT * 2;
+
+    if (art_width < 8 || art_height < 8 || !it) {
+        return;
+    }
+
+    int art_x = x + ART_PADDING_HORZ;
+    int min_y = (pinned ? viewportY+listview.grouptitle_height : y) + ART_PADDING_VERT;
+    int max_y = grp_next_y;
+
+    int ypos = min_y;
+    if (min_y + art_width + ART_PADDING_VERT >= max_y) {
+        ypos = max_y - art_width - ART_PADDING_VERT;
+    }
+
+    NSSize size = [image size];
+
+    [image drawInRect:NSMakeRect(art_x, ypos, art_width, size.height / (size.width / art_width))];
 }
 
 - (void)selectRow:(DdbListviewRow_t)row withState:(BOOL)state {
@@ -679,9 +802,11 @@ static char *group_bytecode = NULL;
 }
 
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row {
-    return nil;
-    if (!group_bytecode) {
-        group_bytecode = deadbeef->tf_compile (group_str);
+    if (!_group_str) {
+        return nil;
+    }
+    if (!_group_bytecode) {
+        _group_bytecode = deadbeef->tf_compile (_group_str);
     }
 
     ddb_tf_context_t ctx = {
@@ -691,7 +816,7 @@ static char *group_bytecode = NULL;
     };
     char buf[1024];
     NSString *ret = @"";
-    if (deadbeef->tf_eval (&ctx, group_bytecode, buf, sizeof (buf)) > 0) {
+    if (deadbeef->tf_eval (&ctx, _group_bytecode, buf, sizeof (buf)) > 0) {
         ret = [NSString stringWithUTF8String:buf];
         if (!ret) {
             ret = @"";
@@ -701,6 +826,10 @@ static char *group_bytecode = NULL;
         deadbeef->plt_unref (ctx.plt);
     }
     return ret;
+}
+
+- (BOOL)pinGroups {
+    return _pin_groups;
 }
 
 - (int)modificationIdx {
@@ -765,6 +894,27 @@ static char *group_bytecode = NULL;
     }
     if (to && to_idx != -1) {
         [listview drawRow:to_idx];
+    }
+}
+
+- (void)setupPlaylist:(DdbListview *)listview {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->pl_lock ();
+        int cursor = deadbeef->plt_get_cursor (plt, PL_MAIN);
+        int scroll = deadbeef->plt_get_scroll (plt);
+        if (cursor != -1) {
+            DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
+            if (it) {
+                deadbeef->pl_set_selected (it, 1);
+                deadbeef->pl_item_unref (it);
+            }
+        }
+        deadbeef->plt_unref (plt);
+
+        [listview reloadData];
+        deadbeef->pl_unlock ();
+        [listview setVScroll:scroll];
     }
 }
 
@@ -833,29 +983,16 @@ static char *group_bytecode = NULL;
         }
             break;
         case DB_EV_PLAYLISTCHANGED: {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [listview reloadData];
-            });
+            if (!p1 || (p1 & DDB_PLAYLIST_CHANGE_SEARCHRESULT)) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [listview reloadData];
+                });
+            }
         }
             break;
         case DB_EV_PLAYLISTSWITCHED: {
             dispatch_async(dispatch_get_main_queue(), ^{
-                ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-                if (plt) {
-                    int cursor = deadbeef->plt_get_cursor (plt, PL_MAIN);
-                    int scroll = deadbeef->plt_get_scroll (plt);
-                    if (cursor != -1) {
-                        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
-                        if (it) {
-                            deadbeef->pl_set_selected (it, 1);
-                            deadbeef->pl_item_unref (it);
-                        }
-                    }
-                    deadbeef->plt_unref (plt);
-
-                    [listview reloadData];
-                    [listview setVScroll:scroll];
-                }
+                [self setupPlaylist:listview];
             });
         }
             break;
@@ -865,15 +1002,21 @@ static char *group_bytecode = NULL;
                 DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
                 if (it) {
                     ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
-                    if (plt) {
+                    ddb_playlist_t *prev_plt = deadbeef->plt_get_curr ();
+
+                    if (prev_plt != plt) {
+                        // force group rebuild
                         deadbeef->plt_set_curr (plt);
-                        int idx = deadbeef->pl_get_idx_of_iter (it, [self playlistIter]);
-                        if (idx != -1) {
-                            [listview setCursor:idx noscroll:YES];
-                            [listview scrollToRowWithIndex:idx];
-                        }
-                        deadbeef->plt_unref (plt);
+                        [listview reloadData];
                     }
+
+                    int idx = deadbeef->pl_get_idx_of_iter (it, [self playlistIter]);
+                    if (idx != -1) {
+                        [listview setCursor:idx noscroll:YES];
+                        [listview scrollToRowWithIndex:idx];
+                    }
+                    deadbeef->plt_unref (plt);
+                    deadbeef->plt_unref (prev_plt);
                     deadbeef->pl_item_unref (it);
                 }
                 deadbeef->pl_unlock ();
@@ -931,18 +1074,63 @@ static char *group_bytecode = NULL;
 }
 
 - (void)convertSelection {
-    if (!_converter) {
-        _converter = [[ConverterWindowController alloc] initWithWindowNibName:@"Converter"];
-    }
-    [_converter run:DDB_ACTION_CTX_SELECTION];
+    [ConverterWindowController runConverter:DDB_ACTION_CTX_SELECTION];
 }
 
 - (void)trackProperties {
     if (!_trkProperties) {
         _trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
     }
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    [_trkProperties setPlaylist: plt];
+    deadbeef->plt_unref (plt);
     [_trkProperties fill];
     [_trkProperties showWindow:self];
+}
+
+- (void)addToPlaybackQueue {
+    int iter = [self playlistIter];
+    DB_playItem_t *it = deadbeef->pl_get_first(iter);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->playqueue_push (it);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, iter);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+}
+
+- (void)removeFromPlaybackQueue {
+    int iter = [self playlistIter];
+    DB_playItem_t *it = deadbeef->pl_get_first(iter);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->playqueue_remove (it);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, iter);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+}
+
+- (void)forEachTrack:(BOOL (^)(DB_playItem_t *it))block forIter:(int)iter {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->pl_get_first (iter);
+    while (it) {
+        BOOL res = block (it);
+        if (!res) {
+            deadbeef->pl_item_unref (it);
+            break;
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, iter);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+
+    deadbeef->pl_unlock ();
+    deadbeef->plt_unref (plt);
 }
 
 - (void)reloadMetadata {
@@ -977,6 +1165,7 @@ static char *group_bytecode = NULL;
         deadbeef->pl_item_unref (it);
         it = next;
     }
+    deadbeef->pl_save_current();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
@@ -1031,4 +1220,111 @@ static char *group_bytecode = NULL;
 
 }
 
+- (void)scrollChanged:(int)pos {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_set_scroll (plt, pos);
+        deadbeef->plt_unref (plt);
+    }
+}
+
+- (void)rgRemove:(id)sender {
+}
+
+- (void)rgScanAlbum:(id)sender {
+    [self rgScan:DDB_RG_SCAN_MODE_SINGLE_ALBUM];
+}
+
+- (void)rgScanAlbumsAuto:(id)sender {
+    [self rgScan:DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS];
+}
+
+- (void)rgScanTracks:(id)sender {
+    [self rgScan:DDB_RG_SCAN_MODE_TRACK];
+}
+
+- (void)rgScan:(int)mode {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->pl_lock ();
+    int numtracks = deadbeef->plt_getselcount (plt);
+    if (numtracks > 0) {
+        DB_playItem_t __block **tracks = calloc (numtracks, sizeof (DB_playItem_t *));
+        int __block n = 0;
+        [self forEachTrack:^(DB_playItem_t *it) {
+            if (deadbeef->pl_is_selected (it)) {
+                assert (n < numtracks);
+                deadbeef->pl_item_ref (it);
+                tracks[n++] = it;
+            }
+            return YES;
+        }  forIter:PL_MAIN];
+        deadbeef->pl_unlock ();
+
+        [ReplayGainScannerController runScanner:mode forTracks:tracks count:numtracks];
+    }
+    else {
+        deadbeef->pl_unlock ();
+    }
+
+    deadbeef->plt_unref (plt);
+}
+
+- (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view {
+    NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
+    BOOL enabled = [self selectedCount] != 0;
+
+    [[theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+
+    NSMenu *rgMenu = [[NSMenu alloc] initWithTitle:@"ReplayGain"];
+    [rgMenu setDelegate:(id<NSMenuDelegate>)self];
+    [rgMenu setAutoenablesItems:NO];
+
+    BOOL __block has_rg_info = NO;
+    BOOL __block can_be_rg_scanned = NO;
+    if (enabled) {
+        ddb_replaygain_settings_t __block s;
+        s._size = sizeof (ddb_replaygain_settings_t);
+
+        [self forEachTrack:^(DB_playItem_t *it){
+            if (deadbeef->pl_is_selected (it)) {
+                if (deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI"))) {
+                    if (deadbeef->pl_get_item_duration (it) > 0) {
+                        can_be_rg_scanned = YES;
+                    }
+                    deadbeef->replaygain_init_settings (&s, it);
+                    if (s.has_album_gain || s.has_track_gain) {
+                        has_rg_info = YES;
+                        return NO;
+                    }
+                }
+            }
+            return YES;
+        } forIter:PL_MAIN];
+    }
+
+    [[rgMenu insertItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@"" atIndex:0]  setEnabled:can_be_rg_scanned];
+    [[rgMenu insertItemWithTitle:@"Scan Selection As Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@"" atIndex:1] setEnabled:can_be_rg_scanned];
+    [[rgMenu insertItemWithTitle:@"Scan Selection As Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@"" atIndex:2] setEnabled:can_be_rg_scanned];
+    [[rgMenu insertItemWithTitle:@"Remove ReplayGain Information" action:@selector(rgRemove:) keyEquivalent:@"" atIndex:3] setEnabled:has_rg_info];
+
+    NSMenuItem *rgMenuItem = [[NSMenuItem alloc] initWithTitle:@"ReplayGain" action:nil keyEquivalent:@""];
+    [rgMenuItem setEnabled:enabled];
+    [rgMenuItem setSubmenu:rgMenu];
+    [theMenu insertItem:rgMenuItem atIndex:0];
+
+    [[theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+
+    // FIXME: should be added via plugin action
+    [[theMenu insertItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+
+    [theMenu insertItem:[NSMenuItem separatorItem] atIndex:0];
+
+    [[theMenu insertItemWithTitle:@"Remove From Playback Queue" action:@selector(removeFromPlaybackQueue) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+
+    [[theMenu insertItemWithTitle:@"Add To Playback Queue" action:@selector(addToPlaybackQueue) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+
+    [theMenu setAutoenablesItems:NO];
+
+    return theMenu;
+}
 @end

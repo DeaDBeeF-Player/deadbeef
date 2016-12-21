@@ -188,6 +188,10 @@ int file68_init(int argc, char **argv)
   /* Options */
   option68_init();
 
+#if !defined(DEBUG) || defined(NDEBUG)
+  opts[4].hide = opts[5].hide = 1;      /* hide debugs option */
+#endif
+
   option68_append(opts,sizeof(opts)/sizeof(*opts));
   argc = option68_parse(argc, argv);
 

@@ -21,39 +21,49 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 #import "TrackPropertiesWindowController.h"
-#include "deadbeef.h"
+#include "../../deadbeef.h"
+#include "../../utf8.h"
+#include "../../shared/trkproperties_shared.h"
+
+// Max length of a string displayed in the TableView
+// If a string is longer -- it gets clipped, and appended with " (…)", like with linebreaks
+#define MAX_GUI_FIELD_LEN 500
+
 
 extern DB_functions_t *deadbeef;
 
-#define MAX_GUI_FIELD_LEN 5000
+@interface SingleLineFormatter : NSFormatter
+@end
 
-// full metadata
-static const char *types[] = {
-    "artist", "Artist Name",
-    "title", "Track Title",
-    "album", "Album Title",
-    "year", "Date",
-    "genre", "Genre",
-    "composer", "Composer",
-//    "performer", "Performer", // FIXME: tag mapping for performer seems to be missing
-    "album artist", "Album Artist",
-    "track", "Track Number",
-    "numtracks", "Total Tracks",
-    "disc", "Disc Number",
-    "numdiscs", "Total Discs",
-    "comment", "Comment",
-    NULL
-};
+@implementation SingleLineFormatter
+- (NSString *)stringForObjectValue:(id)anObject {
+    if ([anObject isKindOfClass:[NSString class]]) {
+        NSString *str = anObject;
+        NSRange range = [str rangeOfString:@"\n"];
+        if ([str length] >= MAX_GUI_FIELD_LEN && (range.location == NSNotFound || range.location >= MAX_GUI_FIELD_LEN)) {
+            range.location = MAX_GUI_FIELD_LEN;
+        }
+        if (range.location != NSNotFound ) {
+            return [[str substringToIndex:range.location-1] stringByAppendingString:@" (…)"];
+        }
+        else {
+            return str;
+        }
+    }
+    return @"";
+}
 
-static const char *hc_props[] = {
-    ":URI", "Location",
-    ":TRACKNUM", "Subtrack Index",
-    ":DURATION", "Duration",
-    ":TAGS", "Tag Type(s)",
-    ":HAS_EMBEDDED_CUESHEET", "Embedded Cuesheet",
-    ":DECODER", "Codec",
-    NULL
-};
+- (NSString *)editingStringForObjectValue:(id)anObject {
+    return anObject;
+}
+
+- (BOOL)getObjectValue:(out id *)anObject
+             forString:(NSString *)string
+      errorDescription:(out NSString **)error {
+    *anObject = string;
+    return YES;
+}
+@end
 
 @interface NullFormatter : NSFormatter
 @end
@@ -79,9 +89,9 @@ static const char *hc_props[] = {
 
 @interface TrackPropertiesWindowController () {
     int _iter;
+    ddb_playlist_t *_last_plt;
     DB_playItem_t **_tracks;
     int _numtracks;
-    BOOL _modified;
     NSMutableArray *_store;
     NSMutableArray *_propstore;
     BOOL _progress_aborted;
@@ -92,19 +102,26 @@ static const char *hc_props[] = {
 
 @implementation TrackPropertiesWindowController
 
-- (void)freeTrackList {
-    if (_tracks) {
-        for (int i = 0; i < _numtracks; i++) {
-            deadbeef->pl_item_unref (_tracks[i]);
-        }
-        free (_tracks);
-        _tracks = NULL;
-        _numtracks = 0;
+- (void)setPlaylist:(ddb_playlist_t *)plt {
+    if (_last_plt) {
+        deadbeef->plt_unref (_last_plt);
     }
+    _last_plt = plt;
+    if (_last_plt) {
+        deadbeef->plt_ref (_last_plt);
+    }
+}
+
+- (void)freeTrackList {
+    trkproperties_free_track_list (&_tracks, &_numtracks);
 }
 
 - (void)dealloc {
     [self freeTrackList];
+    if (_last_plt) {
+        deadbeef->plt_unref (_last_plt);
+        _last_plt = NULL;
+    }
 }
 
 - (void)windowDidLoad
@@ -122,191 +139,28 @@ static const char *hc_props[] = {
     [_propertiesTableView reloadData];
 }
 
-- (void)buildTrackListForCtx:(int)ctx {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (!plt) {
-        return;
-    }
-    deadbeef->pl_lock ();
-
-    int num = 0;
-    if (ctx == DDB_ACTION_CTX_SELECTION) {
-        num = deadbeef->plt_getselcount (plt);
-    }
-    else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
-        num = deadbeef->plt_get_item_count (plt, PL_MAIN);
-    }
-    else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        num = 1;
-    }
-    if (num <= 0) {
-        deadbeef->pl_unlock ();
-        deadbeef->plt_unref (plt);
-        return;
-    }
-
-    _tracks = malloc (sizeof (DB_playItem_t *) * num);
-    if (!_tracks) {
-        fprintf (stderr, "gtkui: failed to alloc %d bytes to store selected tracks\n", (int)(num * sizeof (void *)));
-        deadbeef->pl_unlock ();
-        deadbeef->plt_unref (plt);
-        return;
-    }
-
-    if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-        if (!it) {
-            free (_tracks);
-            _tracks = NULL;
-            deadbeef->pl_unlock ();
-            deadbeef->plt_unref (plt);
-            return;
-        }
-        _tracks[0] = it;
-    }
-    else {
-        int n = 0;
-        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-        while (it) {
-            if (ctx == DDB_ACTION_CTX_PLAYLIST || deadbeef->pl_is_selected (it)) {
-                assert (n < num);
-                deadbeef->pl_item_ref (it);
-                _tracks[n++] = it;
-            }
-            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-            deadbeef->pl_item_unref (it);
-            it = next;
-        }
-    }
-    _numtracks = num;
-
-    deadbeef->pl_unlock ();
-    deadbeef->plt_unref (plt);
+- (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
+    _singleValueSelected = [[_metadataTableView selectedRowIndexes] count] == 1;
 }
 
-int
-build_key_list (const char ***pkeys, int props, DB_playItem_t **tracks, int numtracks) {
-    int sz = 20;
-    const char **keys = malloc (sizeof (const char *) * sz);
-    if (!keys) {
-        fprintf (stderr, "fatal: out of memory allocating key list\n");
-        assert (0);
-        return 0;
-    }
 
-    int n = 0;
-
-    for (int i = 0; i < numtracks; i++) {
-        DB_metaInfo_t *meta = deadbeef->pl_get_metadata_head (tracks[i]);
-        while (meta) {
-            if (meta->key[0] != '!' && ((props && meta->key[0] == ':') || (!props && meta->key[0] != ':'))) {
-                int k = 0;
-                for (; k < n; k++) {
-                    if (meta->key == keys[k]) {
-                        break;
-                    }
-                }
-                if (k == n) {
-                    if (n >= sz) {
-                        sz *= 2;
-                        keys = realloc (keys, sizeof (const char *) * sz);
-                        if (!keys) {
-                            fprintf (stderr, "fatal: out of memory reallocating key list (%d keys)\n", sz);
-                            assert (0);
-                        }
-                    }
-                    keys[n++] = meta->key;
-                }
-            }
-            meta = meta->next;
-        }
-    }
-
-    *pkeys = keys;
-    return n;
+- (void)buildTrackListForCtx:(int)ctx forPlaylist:(ddb_playlist_t *)plt {
+    trkproperties_build_track_list_for_ctx (plt, ctx, &_tracks, &_numtracks);
 }
 
-static int
-equals_ptr (const char *a, const char *b) {
-    return a == b;
-}
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
-#define isutf(c) (((c)&0xC0)!=0x80)
-
-static void
-u8_dec(const char *s, int32_t *i)
-{
-    (void)(isutf(s[--(*i)]) || isutf(s[--(*i)]) ||
-           isutf(s[--(*i)]) || --(*i));
-}
-
-static int
-get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_playItem_t *it, const char *key), int (*equals)(const char *a, const char *b), DB_playItem_t **tracks, int numtracks) {
-    char *out_start = out;
-
-    int multiple = 0;
-    *out = 0;
-    if (numtracks == 0) {
-        return 0;
-    }
-    char *p = out;
-    deadbeef->pl_lock ();
-    const char **prev = malloc (sizeof (const char *) * numtracks);
-    memset (prev, 0, sizeof (const char *) * numtracks);
-    for (int i = 0; i < numtracks; i++) {
-        const char *val = getter (tracks[i], key);
-        if (val && val[0] == 0) {
-            val = NULL;
-        }
-        if (i > 0/* || (val && strlen (val) >= MAX_GUI_FIELD_LEN)*/) {
-            int n = 0;
-            for (; n < i; n++) {
-                if (equals (prev[n], val)) {
-                    break;
-                }
-            }
-            if (n == i/* || (val && strlen (val) >= MAX_GUI_FIELD_LEN)*/) {
-                multiple = 1;
-                if (val) {
-                    size_t l = snprintf (out, size, out == p ? "%s" : "; %s", val ? val : "");
-                    l = min (l, size);
-                    out += l;
-                    size -= l;
-                }
-            }
-        }
-        else if (val) {
-            size_t l = snprintf (out, size, "%s", val ? val : "");
-            l = min (l, size);
-            out += l;
-            size -= l;
-        }
-        prev[i] = val;
-        if (size <= 1) {
-            break;
-        }
-    }
-    deadbeef->pl_unlock ();
-    if (size <= 1) {
-        int idx = (int)(out - 4 - out_start);
-        u8_dec (out_start , &idx);
-        char *prev = out_start + idx;
-        strcpy (prev, "...");
-    }
-    free (prev);
-    return multiple;
-}
-
+// NOTE: add_field gets called once for each unique key (e.g. Artist or Album),
+// which means it will usually contain 10-20 fields
 void
 add_field (NSMutableArray *store, const char *key, const char *title, int is_prop, DB_playItem_t **tracks, int numtracks) {
     // get value to edit
     const char *mult = is_prop ? "" : "[Multiple values] ";
-    char val[MAX_GUI_FIELD_LEN];
+    char val[5000]; // FIXME: this should be a dynamic buffer, to be able to hold any value
     size_t ml = strlen (mult);
     memcpy (val, mult, ml+1);
-    int n = get_field_value (val + ml, (int)(sizeof (val) - ml), key, deadbeef->pl_find_meta_raw, equals_ptr, tracks, numtracks);
+    int n = trkproperties_get_field_value (val + ml, (int)(sizeof (val) - ml), key, tracks, numtracks);
 
     if (!is_prop) {
         if (n) {
@@ -314,11 +168,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         }
         else {
             deadbeef->pl_lock ();
-            const char *val = deadbeef->pl_find_meta_raw (tracks[0], key);
-            if (!val) {
-                val = "";
-            }
-            [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:val], @"value", [NSString stringWithUTF8String:key], @"key", [NSNumber numberWithInt: (n ? 1 : 0)], @"n", nil]];
+            [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:val+ml], @"value", [NSString stringWithUTF8String:key], @"key", [NSNumber numberWithInt: (n ? 1 : 0)], @"n", nil]];
             deadbeef->pl_unlock ();
         }
     }
@@ -334,29 +184,28 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 
     const char **keys = NULL;
-    int nkeys = build_key_list (&keys, 0, _tracks, _numtracks);
+    int nkeys = trkproperties_build_key_list (&keys, 0, _tracks, _numtracks);
 
     // add "standard" fields
-    for (int i = 0; types[i]; i += 2) {
-        add_field (_store, types[i], types[i+1], 0, _tracks, _numtracks);
+    for (int i = 0; trkproperties_types[i]; i += 2) {
+        add_field (_store, trkproperties_types[i], trkproperties_types[i+1], 0, _tracks, _numtracks);
     }
 
     // add all other fields
     for (int k = 0; k < nkeys; k++) {
         int i;
-        for (i = 0; types[i]; i += 2) {
-            if (!strcasecmp (keys[k], types[i])) {
+        for (i = 0; trkproperties_types[i]; i += 2) {
+            if (!strcasecmp (keys[k], trkproperties_types[i])) {
                 break;
             }
         }
-        if (types[i]) {
+        if (trkproperties_types[i]) {
             continue;
         }
 
-        char title[MAX_GUI_FIELD_LEN];
-        if (!types[i]) {
-            snprintf (title, sizeof (title), "<%s>", keys[k]);
-        }
+        size_t l = strlen (keys[k]);
+        char title[l + 3];
+        snprintf (title, sizeof (title), "<%s>", keys[k]);
         add_field (_store, keys[k], title, 0, _tracks, _numtracks);
     }
     if (keys) {
@@ -365,7 +214,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (void)fillMetadata {
-    _modified = NO;
+    self.modified = NO;
 
     deadbeef->pl_lock ();
 
@@ -373,23 +222,24 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     [_propstore removeAllObjects];
 
     // hardcoded properties
-    for (int i = 0; hc_props[i]; i += 2) {
-        add_field (_propstore, hc_props[i], hc_props[i+1], 1, _tracks, _numtracks);
+    for (int i = 0; trkproperties_hc_props[i]; i += 2) {
+        add_field (_propstore, trkproperties_hc_props[i], trkproperties_hc_props[i+1], 1, _tracks, _numtracks);
     }
     // properties
     const char **keys = NULL;
-    int nkeys = build_key_list (&keys, 1, _tracks, _numtracks);
+    int nkeys = trkproperties_build_key_list (&keys, 1, _tracks, _numtracks);
     for (int k = 0; k < nkeys; k++) {
         int i;
-        for (i = 0; hc_props[i]; i += 2) {
-            if (!strcasecmp (keys[k], hc_props[i])) {
+        for (i = 0; trkproperties_hc_props[i]; i += 2) {
+            if (!strcasecmp (keys[k], trkproperties_hc_props[i])) {
                 break;
             }
         }
-        if (hc_props[i]) {
+        if (trkproperties_hc_props[i]) {
             continue;
         }
-        char title[MAX_GUI_FIELD_LEN];
+        size_t l = strlen (keys[k]) + 2;
+        char title[l];
         snprintf (title, sizeof (title), "<%s>", keys[k]+1);
         add_field (_propstore, keys[k], title, 1, _tracks, _numtracks);
     }
@@ -398,11 +248,6 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 
     deadbeef->pl_unlock ();
-
-#if 0
-    NSLog (@"%@\n", _propstore);
-    NSLog (@"%@\n", _store);
-#endif
 }
 
 - (void)fill {
@@ -410,7 +255,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     [self freeTrackList];
 
-    [self buildTrackListForCtx:DDB_ACTION_CTX_SELECTION];
+    [self buildTrackListForCtx:DDB_ACTION_CTX_SELECTION forPlaylist:_last_plt];
 
     NSString *fname;
 
@@ -469,7 +314,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     if([[aTableColumn identifier] isEqualToString:@"value"]){
 
-        [aCell setFormatter:nil];
+        [aCell setFormatter:[[SingleLineFormatter alloc] init]];
 
         NSDictionary *dict = store[rowIndex];
         if (rowIndex == [aTableView editedRow] && [[aTableView tableColumns] indexOfObject:aTableColumn] == [aTableView editedColumn]) {
@@ -509,7 +354,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         if (dict[@"n"]) {
             dict[@"n"] = [NSNumber numberWithInt:0];
         }
-        _modified = YES;
+        self.modified = YES;
     }
 }
 
@@ -520,20 +365,28 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         return;
 
     const char *skey = [dict[@"key"] UTF8String];
-    const char *svalue = [dict[@"value"] UTF8String];
+    NSString *value = dict[@"value"];
+    NSArray *components = [value componentsSeparatedByString:@";"];
 
-    for (int i = 0; i < _numtracks; i++) {
-        const char *oldvalue= deadbeef->pl_find_meta_raw (_tracks[i], skey);
-        if (oldvalue && strlen (oldvalue) > MAX_GUI_FIELD_LEN) {
-            fprintf (stderr, "trkproperties: value is too long, ignored\n");
+    NSMutableArray *transformedValues = [[NSMutableArray alloc] init];
+    for (NSString *val in components) {
+        NSInteger i = 0;
+        while ((i < [val length])
+               && [[NSCharacterSet whitespaceCharacterSet] characterIsMember:[val characterAtIndex:i]]) {
+            i++;
+        }
+        if (i == [val length]-1) {
             continue;
         }
+        [transformedValues addObject: (i == 0 ? val : [val substringFromIndex:i])];
+    }
 
-        if (*svalue) {
-            deadbeef->pl_replace_meta (_tracks[i], skey, svalue);
-        }
-        else {
-            deadbeef->pl_delete_meta (_tracks[i], skey);
+    for (int i = 0; i < _numtracks; i++) {
+        deadbeef->pl_delete_meta (_tracks[i], skey);
+        for (NSString *val in transformedValues) {
+            if ([val length]) {
+                deadbeef->pl_append_meta (_tracks[i], skey, [val UTF8String]);
+            }
         }
     }
 }
@@ -581,13 +434,13 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         }
     }
     dispatch_async(dispatch_get_main_queue(), ^{
-        [_progressPanel orderOut:self];
+        [NSApp endSheet:_progressPanel];
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         if (plt) {
             deadbeef->plt_modified (plt);
             deadbeef->plt_unref (plt);
         }
-        _modified = NO;
+        self.modified = NO;
 // FIXME: update playlist/search/...
 #if 0
         main_refresh ();
@@ -601,6 +454,9 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (IBAction)applyTrackPropertiesAction:(id)sender {
+    if (!self.modified) {
+        return;
+    }
     deadbeef->pl_lock ();
     NSMutableArray *store = [self storeForTableView:_metadataTableView];
 
@@ -632,16 +488,11 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
     deadbeef->pl_unlock ();
 
-    for (int i = 0; i < _numtracks; i++) {
-        ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
-        ev->track = _tracks[i];
-        deadbeef->pl_item_ref (ev->track);
-        deadbeef->event_send ((ddb_event_t*)ev, 0, 0);
-    }
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 
     _progress_aborted = NO;
 
-    [NSApp beginSheet:_progressPanel modalForWindow:[self window] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+    [NSApp beginSheet:_progressPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(progressPanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
 
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
@@ -649,12 +500,16 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     });
 }
 
+- (void)progressPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+    [sheet orderOut:self];
+}
+
 - (IBAction)cancelWritingAction:(id)sender {
     _progress_aborted = YES;
 }
 
 - (BOOL)windowShouldClose:(id)sender {
-    if (_modified) {
+    if (self.modified) {
         NSAlert *alert = [[NSAlert alloc] init];
         [alert addButtonWithTitle:@"Yes"];
         [alert addButtonWithTitle:@"No"];
@@ -674,7 +529,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         [self applyTrackPropertiesAction:alert];
     }
     else if (returnCode == NSAlertSecondButtonReturn){
-        _modified = NO;
+        self.modified = NO;
         [[self window] close];
     }
 }
@@ -722,6 +577,25 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     [_wvStripID3v1 setState:wv_strip_id3v1];
 
     [NSApp beginSheet:_tagWriterSettingsPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndTagWriterSettings:returnCode:contextInfo:) contextInfo:nil];
+}
+
+- (IBAction)reloadTrackPropertiesAction:(id)sender {
+    trkproperties_reload_tags (_tracks, _numtracks);
+
+    deadbeef->pl_save_current();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    [self fill];
+}
+
+- (IBAction)cancelTrackPropertiesAction:(id)sender {
+    if ([self windowShouldClose:sender]) {
+        [self close];
+    }
+}
+
+- (IBAction)okTrackPropertiesAction:(id)sender {
+    [self applyTrackPropertiesAction:sender];
+    [self close];
 }
 
 
@@ -814,4 +688,53 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     deadbeef->conf_save ();
 }
 
+- (void)didEndEditValuePanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+    [_editValuePanel orderOut:self];
+}
+
+- (IBAction)editValueAction:(id)sender {
+    if (_numtracks != 1) {
+        return; // TODO: multiple track editing support
+    }
+
+    NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
+    if ([ind count] != 1) {
+        return; // multiple fields can't be edited at the same time
+    }
+
+    NSInteger idx = [ind firstIndex];
+
+
+    [_fieldName setStringValue: [_store[idx][@"key"] uppercaseString]];
+    [_fieldValue setString: _store[idx][@"value"]];
+
+    [NSApp beginSheet:_editValuePanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndEditValuePanel:returnCode:contextInfo:) contextInfo:nil];
+}
+
+- (IBAction)editInPlaceAction:(id)sender {
+    NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
+    if ([ind count] != 1) {
+        return; // multiple fields can't be edited at the same time
+    }
+
+    NSInteger idx = [ind firstIndex];
+
+    [_metadataTableView editColumn:1 row:idx withEvent:nil select:YES];
+}
+
+- (IBAction)cancelEditValuePanelAction:(id)sender {
+    [NSApp endSheet:_editValuePanel];
+}
+
+- (IBAction)okEditValuePanelAction:(id)sender {
+    NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
+    NSInteger idx = [ind firstIndex];
+    if (![_store[idx][@"value"] isEqualToString:[_fieldValue string]]) {
+        _store[idx][@"value"] = [_fieldValue string];
+        [_metadataTableView reloadData];
+        self.modified = YES;
+    }
+
+    [NSApp endSheet:_editValuePanel];
+}
 @end

@@ -44,8 +44,9 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 
 static DB_conf_item_t *conf_items;
-static int changed = 0;
+static int changed;
 static uintptr_t mutex;
+static int disable_saving;
 
 void
 conf_init (void) {
@@ -105,6 +106,7 @@ conf_load (void) {
     if (l != fread (buffer, 1, l, fp)) {
         free (buffer);
         fprintf (stderr, "failed to read entire config file to memory\n");
+        fclose (fp);
         return -1;
     }
     buffer[l] = 0;
@@ -158,6 +160,9 @@ conf_load (void) {
 
 int
 conf_save (void) {
+    if (disable_saving) {
+        return 0;
+    }
     char tempfile[PATH_MAX];
     char str[PATH_MAX];
     FILE *fp;
@@ -375,4 +380,9 @@ conf_remove_items (const char *key) {
         conf_items = next;
     }
     conf_unlock ();
+}
+
+void
+conf_enable_saving (int enable) {
+    disable_saving = !enable;
 }

@@ -29,6 +29,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gtkui.h"
+#include "clipboard.h"
 #include "interface.h"
 #include "support.h"
 
@@ -59,7 +60,7 @@ on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
 {
     GtkWidget *dlg = create_entrydialog ();
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-    gtk_window_set_title (GTK_WINDOW (dlg), _("Edit playlist"));
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Rename Playlist"));
     GtkWidget *e;
     e = lookup_widget (dlg, "title_label");
     gtk_label_set_text (GTK_LABEL(e), _("Title:"));
@@ -85,7 +86,6 @@ on_remove_playlist1_activate           (GtkMenuItem     *menuitem,
 {
     if (pltmenu_idx != -1) {
         deadbeef->plt_remove (pltmenu_idx);
-        search_refresh ();
         int playlist = deadbeef->plt_get_curr_idx ();
         deadbeef->conf_set_int ("playlist.current", playlist);
     }
@@ -98,6 +98,19 @@ on_add_new_playlist1_activate          (GtkMenuItem     *menuitem,
     int playlist = gtkui_add_new_playlist ();
     if (playlist != -1) {
         gtkui_playlist_set_curr (playlist);
+    }
+}
+
+static void
+on_copy_playlist1_activate        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    const ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+    if (plt) {
+        int playlist = gtkui_copy_playlist (plt);
+        if (playlist != -1) {
+            gtkui_playlist_set_curr (playlist);
+        }
     }
 }
 
@@ -116,9 +129,58 @@ on_actionitem_activate (GtkMenuItem     *menuitem,
         }
     }
     else {
-        action->callback2 (action, DDB_ACTION_CTX_PLAYLIST);
+        ddb_playlist_t *plt = NULL;
+        if (pltmenu_idx != -1) {
+            plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+            if (plt) {
+                deadbeef->action_set_playlist (plt);
+                deadbeef->plt_unref (plt);
+                action->callback2 (action, DDB_ACTION_CTX_PLAYLIST);
+                deadbeef->action_set_playlist (NULL);
+            }
+        }
     }
 }
+
+static void
+on_cut_activate (GtkMenuItem     *menuitem,
+                    gpointer         user_data)
+{
+    if (pltmenu_idx < 0) {
+        return;
+    }
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+    if (plt) {
+        clipboard_cut_selection (plt, DDB_ACTION_CTX_PLAYLIST);
+        deadbeef->plt_unref (plt);
+    }
+}
+
+static void
+on_copy_activate (GtkMenuItem     *menuitem,
+                    gpointer         user_data)
+{
+    if (pltmenu_idx < 0) {
+        return;
+    }
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+    if (plt) {
+        clipboard_copy_selection (plt, DDB_ACTION_CTX_PLAYLIST);
+        deadbeef->plt_unref (plt);
+    }
+}
+
+static void
+on_paste_activate (GtkMenuItem     *menuitem,
+                    gpointer         user_data)
+{
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+    clipboard_paste_selection (plt, DDB_ACTION_CTX_PLAYLIST);
+    if (plt) {
+        deadbeef->plt_unref (plt);
+    }
+}
+
 
 static GtkWidget*
 find_popup                          (GtkWidget       *widget,
@@ -151,6 +213,30 @@ add_tab_actions (GtkWidget *menu) {
 
     int added_entries = 0;
 
+    int item_count = 0;
+    int playqueue_test = 0;
+
+    ddb_playlist_t *plt = NULL;
+    if (pltmenu_idx != -1) {
+        plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+    }
+    if (plt) {
+        item_count = deadbeef->plt_get_item_count (plt, PL_MAIN);
+
+        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+        while (it) {
+            if (deadbeef->playqueue_test (it) != -1) {
+                playqueue_test = 1;
+                deadbeef->pl_item_unref (it);
+                break;
+            }
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+        deadbeef->plt_unref (plt);
+    }
+
     int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
 
     for (i = 0; plugins[i]; i++)
@@ -172,14 +258,16 @@ add_tab_actions (GtkWidget *menu) {
                 continue;
             }
 
+            int sensitive = item_count ? 1 : 0;
+
             // create submenus (separated with '/')
             const char *prev = action->title;
             while (*prev && *prev == '/') {
                 prev++;
             }
-            
+
             GtkWidget *popup = NULL;
-            
+
             for (;;) {
                 const char *slash = strchr (prev, '/');
                 if (slash && *(slash-1) != '\\') {
@@ -204,6 +292,7 @@ add_tab_actions (GtkWidget *menu) {
                     popup = find_popup (prev_menu, name);
                     if (!popup) {
                         GtkWidget *item = gtk_image_menu_item_new_with_mnemonic (_(name));
+                        gtk_widget_set_sensitive (item, sensitive);
                         gtk_widget_show (item);
                         gtk_container_add (GTK_CONTAINER (prev_menu), item);
                         popup = gtk_menu_new ();
@@ -237,7 +326,15 @@ add_tab_actions (GtkWidget *menu) {
             }
             *t = 0;
 
+            if (action->name && !strcmp (action->name, "remove_from_playback_queue")) {
+                if (!playqueue_test) {
+                    // no playitem in queue, make menu item insenstive
+                    sensitive = 0;
+                }
+            }
+
             actionitem = gtk_menu_item_new_with_mnemonic (_(title));
+            gtk_widget_set_sensitive (actionitem, sensitive);
             gtk_widget_show (actionitem);
             gtk_container_add (popup ? GTK_CONTAINER (popup) : GTK_CONTAINER (menu), actionitem);
 
@@ -254,10 +351,21 @@ gtkui_create_pltmenu (int plt_idx) {
     GtkWidget *rename_playlist1;
     GtkWidget *remove_playlist1;
     GtkWidget *add_new_playlist1;
+    GtkWidget *copy_playlist1;
     GtkWidget *separator11;
+    GtkWidget *cut;
+    GtkWidget *cut_image;
+    GtkWidget *copy;
+    GtkWidget *copy_image;
+    GtkWidget *paste;
+    GtkWidget *paste_image;
+    GtkWidget *separator9;
     GtkWidget *load_playlist1;
     GtkWidget *save_playlist1;
     GtkWidget *save_all_playlists1;
+
+    GtkAccelGroup *accel_group = NULL;
+    accel_group = gtk_accel_group_new ();
 
     plmenu = gtk_menu_new ();
     pltmenu_idx = plt_idx;
@@ -280,6 +388,60 @@ gtkui_create_pltmenu (int plt_idx) {
     gtk_widget_show (add_new_playlist1);
     gtk_container_add (GTK_CONTAINER (plmenu), add_new_playlist1);
 
+    copy_playlist1 = gtk_menu_item_new_with_mnemonic (_("Duplicate Playlist"));
+    gtk_widget_show (copy_playlist1);
+    gtk_container_add (GTK_CONTAINER (plmenu), copy_playlist1);
+
+    separator11 = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator11);
+    gtk_container_add (GTK_CONTAINER (plmenu), separator11);
+    gtk_widget_set_sensitive (separator11, FALSE);
+
+    cut = gtk_image_menu_item_new_with_mnemonic (_("Cu_t"));
+    gtk_widget_show (cut);
+    gtk_container_add (GTK_CONTAINER (plmenu), cut);
+    gtk_widget_add_accelerator (cut, "activate", accel_group, GDK_x, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    if (pltmenu_idx == -1) {
+        gtk_widget_set_sensitive (cut, FALSE);
+    }
+
+    cut_image = gtk_image_new_from_stock ("gtk-cut", GTK_ICON_SIZE_MENU);
+    gtk_widget_show (cut_image);
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (cut), cut_image);
+
+    copy = gtk_image_menu_item_new_with_mnemonic (_("_Copy"));
+    gtk_widget_show (copy);
+    gtk_container_add (GTK_CONTAINER (plmenu), copy);
+    gtk_widget_add_accelerator (copy, "activate", accel_group, GDK_c, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    if (pltmenu_idx == -1) {
+        gtk_widget_set_sensitive (copy, FALSE);
+    }
+
+    copy_image = gtk_image_new_from_stock ("gtk-copy", GTK_ICON_SIZE_MENU);
+    gtk_widget_show (copy_image);
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (copy), copy_image);
+
+    paste = gtk_image_menu_item_new_with_mnemonic (_("_Paste"));
+    gtk_widget_show (paste);
+    gtk_container_add (GTK_CONTAINER (plmenu), paste);
+    gtk_widget_add_accelerator (paste, "activate", accel_group, GDK_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
+    if (clipboard_is_clipboard_data_available ()) {
+        gtk_widget_set_sensitive (paste, TRUE);
+    }
+    else {
+        gtk_widget_set_sensitive (paste, FALSE);
+    }
+
+    paste_image = gtk_image_new_from_stock ("gtk-paste", GTK_ICON_SIZE_MENU);
+    gtk_widget_show (paste_image);
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (paste), paste_image);
+
+    separator9 = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator9);
+    gtk_container_add (GTK_CONTAINER (plmenu), separator9);
+    gtk_widget_set_sensitive (separator9, FALSE);
+
     g_signal_connect ((gpointer) rename_playlist1, "activate",
             G_CALLBACK (on_rename_playlist1_activate),
             NULL);
@@ -288,6 +450,18 @@ gtkui_create_pltmenu (int plt_idx) {
             NULL);
     g_signal_connect ((gpointer) add_new_playlist1, "activate",
             G_CALLBACK (on_add_new_playlist1_activate),
+            NULL);
+    g_signal_connect ((gpointer) copy_playlist1, "activate",
+            G_CALLBACK (on_copy_playlist1_activate),
+            NULL);
+    g_signal_connect ((gpointer) cut, "activate",
+            G_CALLBACK (on_cut_activate),
+            NULL);
+    g_signal_connect ((gpointer) copy, "activate",
+            G_CALLBACK (on_copy_activate),
+            NULL);
+    g_signal_connect ((gpointer) paste, "activate",
+            G_CALLBACK (on_paste_activate),
             NULL);
 
     add_tab_actions (plmenu);

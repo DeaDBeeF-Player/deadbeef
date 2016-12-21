@@ -21,10 +21,15 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 #import <Cocoa/Cocoa.h>
+#include "deadbeef.h"
 
 @interface TrackPropertiesWindowController : NSWindowController
 
+- (void)setPlaylist:(ddb_playlist_t *)plt;
 - (void)fill;
+
+@property (unsafe_unretained) BOOL modified;
+@property (unsafe_unretained) BOOL singleValueSelected;
 
 // trkproperties window
 @property (unsafe_unretained) IBOutlet NSTableView *metadataTableView;
@@ -32,6 +37,23 @@
 @property (unsafe_unretained) IBOutlet NSTextField *filename;
 - (IBAction)applyTrackPropertiesAction:(id)sender;
 - (IBAction)configureTagWritingAction:(id)sender;
+- (IBAction)reloadTrackPropertiesAction:(id)sender;
+- (IBAction)cancelTrackPropertiesAction:(id)sender;
+- (IBAction)okTrackPropertiesAction:(id)sender;
+
+// edit value panel
+@property (strong) IBOutlet NSPanel *editValuePanel;
+@property (unsafe_unretained) IBOutlet NSTextField *fieldName;
+
+- (IBAction)cancelEditValuePanelAction:(id)sender;
+- (IBAction)okEditValuePanelAction:(id)sender;
+@property (unsafe_unretained) IBOutlet NSTextView *fieldValue;
+
+
+// menu
+- (IBAction)editValueAction:(id)sender;
+- (IBAction)editInPlaceAction:(id)sender;
+
 
 // metadata writing progress dialog
 @property (strong) IBOutlet NSPanel *progressPanel;

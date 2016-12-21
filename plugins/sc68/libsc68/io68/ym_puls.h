@@ -29,13 +29,10 @@ int ym_puls_setup(ym_t * const ym);
 
 IO68_EXTERN
 /**
- *  Creates and parse ym pulse engine options
+ *  Creates ym pulse engine options.
  *
- *  @param   argc  argument count
- *  @param   argv  argument values
- *  @retval  remaining argument count
  */
-int ym_puls_options(int argc, char ** argv);
+void ym_puls_add_options(void);
 
 /**
  * Type definition for the pulse engine filter function.

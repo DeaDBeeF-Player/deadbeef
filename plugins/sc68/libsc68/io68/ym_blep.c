@@ -165,7 +165,6 @@ static void ym2149_new_output_level(ym_t * const ym)
     /* Add a new blep before the others */
     blep->blep_idx -= 1;
     blep->blep_idx &= MAX_BLEPS - 1;
-
     blep->blepstate[blep->blep_idx].stamp = blep->time;
     blep->blepstate[blep->blep_idx].level = blep->global_output_level - output;
     blep->global_output_level = output;
@@ -200,6 +199,7 @@ static void ym2149_clock(ym_t * const ym, cycle68_t cycles)
     /* Clock subsystems forward */
     for (i = 0; i < 3; i++) {
       blep->tonegen[i].count -= iter;
+      assert(blep->tonegen[i].count >= 0);
       if (blep->tonegen[i].count == 0) {
         blep->tonegen[i].flip_flop = ~blep->tonegen[i].flip_flop;
         blep->tonegen[i].count = blep->tonegen[i].event;
@@ -208,6 +208,7 @@ static void ym2149_clock(ym_t * const ym, cycle68_t cycles)
     }
 
     blep->noise_count -= iter;
+    assert(blep->noise_count >= 0);
     if (blep->noise_count == 0) {
       u16 new_noise;
       blep->noise_state =
@@ -221,6 +222,7 @@ static void ym2149_clock(ym_t * const ym, cycle68_t cycles)
     }
 
     blep->env_count -= iter;
+    assert(blep->env_count >= 0);
     if (blep->env_count == 0) {
       u16 new_env = waveform[blep->env_state];
       if (++ blep->env_state == 96)
@@ -239,11 +241,16 @@ static void ym2149_clock(ym_t * const ym, cycle68_t cycles)
 static s32 ym2149_output(ym_t * const ym, const u8 subsample)
 {
   ym_blep_t *blep = &ym->emu.blep;
-
   u32 i = blep->blep_idx;
   s32 output = 0;
+
+  /* Workaround bug #30: 
+   * https://sourceforge.net/p/sc68/bugs/30/
+   */
+  blep->blepstate[(i-1)&(MAX_BLEPS-1)].stamp = blep->time - BLEP_SIZE;
+  
   while (1) {
-    s16 age = blep->time - blep->blepstate[i].stamp;
+    u16 age = blep->time - blep->blepstate[i].stamp;
     if (age >= BLEP_SIZE-1)
       break;
     /* JOS says that we should have several subphases of SINC for
@@ -457,4 +464,8 @@ int ym_blep_setup(ym_t * const ym)
   ym->cb_buffersize    = buffersize;
   ym->cb_sampling_rate = sampling_rate;
   return 0;
+}
+
+void ym_blep_add_options(void)
+{
 }

@@ -107,7 +107,13 @@
         rc.size.width = (int)(rc.size.width * _value / ([self maxValue] - [self minValue]));
         rc.size.height -= 2;
         rc.origin.y += 1;
-        [[NSColor keyboardFocusIndicatorColor] set];
+        NSWindow *window = [controlView window];
+        if ([window isKeyWindow]) {
+            [[NSColor keyboardFocusIndicatorColor] set];
+        }
+        else {
+            [[NSColor controlShadowColor] set];
+        }
         [NSBezierPath fillRect:rc];
     }
 

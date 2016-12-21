@@ -49,6 +49,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <assert.h>
+#include <jansson.h>
 #include "../../deadbeef.h"
 #include "shellexec.h"
 
@@ -158,7 +159,7 @@ shx_callback (Shx_action_t *action, int ctx)
         break;
     case DDB_ACTION_CTX_PLAYLIST:
         {
-            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            ddb_playlist_t *plt = deadbeef->action_get_playlist ();
             if (plt) {
                 deadbeef->pl_lock ();
                 DB_playItem_t **items;
@@ -237,46 +238,68 @@ shx_find_sep (char *str) {
 void
 shx_save_actions (void)
 {
-    deadbeef->conf_remove_items("shellexec.");
-    Shx_action_t *action = actions;
+    json_t *json = json_array ();
+
     int i = 0;
-    while(action) {
-        // build config line
-        // format- shellexec.NN shcmd:title:name:flags
-        size_t conf_line_length = 100 +
-                                  strlen(action->shcommand) + 1 +
-                                  strlen(action->parent.title) + 1 +
-                                  strlen(action->parent.name) + 1;
-        char conf_line[conf_line_length];
-        char conf_key[50];
-        sprintf(conf_key, "shellexec.%d", i);
-        sprintf(conf_line, "%s:%s:%s:", action->shcommand,
-                                        action->parent.title,
-                                        action->parent.name);
+    Shx_action_t *action = actions;
+    while (action) {
+        json_t *item = json_object ();
+
+        json_object_set_new (item, "command", json_string (action->shcommand));
+        json_object_set_new (item, "title", json_string (action->parent.title));
+        json_object_set_new (item, "name", json_string (action->parent.name));
+        json_t *flags = json_array ();
+
         if(action->shx_flags & SHX_ACTION_REMOTE_ONLY) {
-            strcat(conf_line, "remote,");
+            json_array_append_new (flags, json_string ("remote"));
         }
         if(action->shx_flags & SHX_ACTION_LOCAL_ONLY) {
-            strcat(conf_line, "local,");
+            json_array_append_new (flags, json_string ("local"));
         }
         if(action->parent.flags & DB_ACTION_SINGLE_TRACK) {
-            strcat(conf_line, "single,");
+            json_array_append_new (flags, json_string ("single"));
         }
         if(action->parent.flags & DB_ACTION_MULTIPLE_TRACKS) {
-            strcat(conf_line, "multiple,");
+            json_array_append_new (flags, json_string ("multiple"));
         }
         if(action->parent.flags & DB_ACTION_COMMON) {
-            strcat(conf_line, "common,");
+            json_array_append_new (flags, json_string ("common"));
         }
-        deadbeef->conf_set_str(conf_key, conf_line);
+        json_object_set_new (item, "flags", flags);
+        json_array_append_new (json, item);
         action = (Shx_action_t*)action->parent.next;
         i++;
     }
-    deadbeef->conf_save();
+    char *str = json_dumps (json, 0);
+    json_decref (json);
+    if (str) {
+        deadbeef->conf_set_str("shellexec_config_wip", str);
+        free (str);
+        deadbeef->conf_save();
+    }
+    else {
+        fprintf (stderr, "shellexec: failed to save json configuration\n");
+    }
 }
 
-Shx_action_t*
-shx_get_actions (DB_plugin_action_callback2_t callback)
+/* The 0.6.2 format spec, for better import understanding:
+
+    Syntax in the config file:
+    shellexec.NN shcmd:title:name:flag1,flag2,flag3,...
+    NN is any (unique) number, e.g. 01, 02, 03, etc
+    shcmd is the command to execute, supports title formatting
+    title is the name of command displayed in UI (context menu)
+    name used for referencing commands from other plugins, e.g hotkeys
+    flags are comma-separated list of items, allowed items are:
+        single - command allowed only for single track
+        local - command allowed only for local files
+        remote - command allowed only for non-local files
+    EXAMPLE: shellexec.00 notify-send "%a - %t":Show selected track:notify:single
+    this would show the name of selected track in notification popup"
+*/
+
+static Shx_action_t*
+shx_get_actions_legacy ()
 {
     Shx_action_t *action_list = NULL;
     Shx_action_t *prev = NULL;
@@ -324,7 +347,7 @@ shx_get_actions (DB_plugin_action_callback2_t callback)
         action->parent.title = strdup (title);
         action->parent.name = strdup (name);
         action->shcommand = strdup (command);
-        action->parent.callback2 = callback;
+        action->parent.callback2 = (DB_plugin_action_callback2_t)shx_callback;
         action->parent.next = NULL;
         action->parent.flags |= DB_ACTION_ADD_MENU;
 
@@ -353,6 +376,102 @@ shx_get_actions (DB_plugin_action_callback2_t callback)
             action_list = action;
 
         item = deadbeef->conf_find ("shellexec.", item);
+    }
+    return action_list;
+}
+
+static Shx_action_t *
+shx_get_actions_json (json_t *json) {
+    Shx_action_t *action_list = NULL;
+    Shx_action_t *prev = NULL;
+
+    if (!json_is_array (json)) {
+        return NULL;
+    }
+
+    unsigned n = json_array_size (json);
+    for (int i = 0; i < n; i++) {
+        json_t *item = json_array_get (json, i);
+        if (!json_is_object (item)) {
+            continue;
+        }
+
+        json_t *jcommand = json_object_get (item, "command");
+        json_t *jtitle = json_object_get (item, "title");
+        json_t *jname = json_object_get (item, "name");
+        json_t *jflags = json_object_get (item, "flags");
+
+        if (!json_is_string (jcommand)
+            || !json_is_string (jtitle)
+            || (jname && !json_is_string (jname))
+            || (jflags && !json_is_array (jflags))) {
+            continue;
+        }
+
+        const char *command = json_string_value (jcommand);
+        const char *title = json_string_value (jtitle);
+
+        const char *name;
+
+        if (jname) {
+            name = json_string_value (jname);
+        }
+        else {
+            name = "noname";
+        }
+
+        Shx_action_t *action = calloc (sizeof (Shx_action_t), 1);
+
+        action->parent.title = strdup (title);
+        action->parent.name = strdup (name);
+        action->shcommand = strdup (command);
+        action->parent.callback2 = (DB_plugin_action_callback2_t)shx_callback;
+        action->parent.next = NULL;
+        action->parent.flags |= DB_ACTION_ADD_MENU;
+
+        if (!jflags) {
+            action->shx_flags = SHX_ACTION_LOCAL_ONLY | DB_ACTION_SINGLE_TRACK;
+        }
+        else {
+            action->shx_flags = 0;
+
+            int nflags = json_array_size (jflags);
+            for (int i = 0; i < nflags; i++) {
+                json_t *jflag = json_array_get (jflags, i);
+                if (!json_is_string (jflag)) {
+                    continue;
+                }
+                const char *flag = json_string_value (jflag);
+                if (strstr (flag, "local")) {
+                    action->shx_flags |= SHX_ACTION_LOCAL_ONLY;
+                }
+
+                if (strstr (flag, "remote")) {
+                    action->shx_flags |= SHX_ACTION_REMOTE_ONLY;
+                }
+
+                if (strstr (flag, "single")) {
+                    action->parent.flags |= DB_ACTION_SINGLE_TRACK;
+                }
+
+                if (strstr (flag, "multiple")) {
+                    action->parent.flags |= DB_ACTION_MULTIPLE_TRACKS;
+                }
+
+                if (strstr (flag, "common")) {
+                    action->parent.flags |= DB_ACTION_COMMON;
+                }
+            }
+        }
+
+        if (prev) {
+            prev->parent.next = (DB_plugin_action_t *)action;
+        }
+        prev = action;
+
+        if (!action_list) {
+            action_list = action;
+        }
     }
     return action_list;
 }
@@ -410,7 +529,26 @@ shx_action_remove (Shx_action_t *action) {
 static int
 shx_start ()
 {
-    actions = shx_get_actions((DB_plugin_action_callback2_t)shx_callback);
+    deadbeef->conf_lock ();
+    const char *conf = deadbeef->conf_get_str_fast ("shellexec_config_wip", NULL);
+    if (conf) {
+        json_error_t err;
+        json_t *json = json_loads (conf, 0, &err);
+        if (json) {
+            actions = shx_get_actions_json (json);
+            json_decref (json);
+        }
+        else {
+            fprintf (stderr, "shellexec: json parser error at line %d:\n%s\n", err.line, err.text);
+        }
+    }
+    else {
+        actions = shx_get_actions_legacy ();
+        if (actions) {
+            shx_save_actions ();
+        }
+    }
+    deadbeef->conf_unlock ();
     return 0;
 }
 
@@ -441,24 +579,12 @@ static Shx_plugin_t plugin = {
     .misc.plugin.api_vmajor = 1,
     .misc.plugin.api_vminor = 5,
     .misc.plugin.version_major = 1,
-    .misc.plugin.version_minor = 1,
+    .misc.plugin.version_minor = 2,
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.id = "shellexec",
     .misc.plugin.name = "Shell commands",
-    .misc.plugin.descr = "Executes configurable shell commands for tracks\n"
-    "If you don't have shellexecui installed,\n"
-    "you can still use the following syntax in the config file:\n\n"
-    "shellexec.NN shcmd:title:name:flag1,flag2,flag3,...\n\n"
-    "NN is any (unique) number, e.g. 01, 02, 03, etc\n\n"
-    "shcmd is the command to execute, supports title formatting\n\n"
-    "title is the name of command displayed in UI (context menu)\n\n"
-    "name used for referencing commands from other plugins, e.g hotkeys\n\n"
-    "flags are comma-separated list of items, allowed items are:\n"
-    "    single - command allowed only for single track\n"
-    "    local - command allowed only for local files\n"
-    "    remote - command allowed only for non-local files\n"
-    "EXAMPLE: shellexec.00 notify-send \"%a - %t\":Show selected track:notify:single\n"
-    "this would show the name of selected track in notification popup"
+    .misc.plugin.descr = "Run custom shell commands as plugin actions.\n"
+        "... FIXME ..."
     ,
     .misc.plugin.copyright = 
         "Shellexec plugin for DeaDBeeF\n"

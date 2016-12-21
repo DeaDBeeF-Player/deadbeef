@@ -29,7 +29,7 @@
 
 #include <math.h>
 #include <stdlib.h> // rand()
-#include <memory.h>	// for memset()
+#include <string.h>	// for memset()
 //#include "dosbox.h"
 #include "../stdbool.h"
 #include "opl.h"

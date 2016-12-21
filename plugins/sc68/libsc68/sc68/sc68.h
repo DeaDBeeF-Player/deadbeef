@@ -743,7 +743,8 @@ typedef union sc68_dialval_u sc68_dialval_t;
  *
  *  @return error code
  *  @retval 0 on success
- *  @retval -1 on error
+ *  @retval 1 not handled
+ *  @retval -1 on error (handled but something got wrong)
  */
 typedef int (*sc68_dial_f)(void *, const char *, int, sc68_dialval_t *);
 

@@ -617,6 +617,9 @@ reverse:
 			while (samples--)
 			{
 				/* fetch two samples */
+#ifdef VGM_BIG_ENDIAN
+	#warning "ES5506 sound emulation not Endian-Safe!"
+#endif
 				INT32 val1 = base[accum >> 11];
 				INT32 val2 = base[((accum + (1 << 11)) & voice->accum_mask) >> 11];
 
@@ -655,6 +658,9 @@ reverse:
 			while (samples--)
 			{
 				/* fetch two samples */
+#ifdef VGM_BIG_ENDIAN
+	#warning "ES5506 sound emulation not Endian-Safe!"
+#endif
 				INT32 val1 = base[accum >> 11];
 				INT32 val2 = base[((accum + (1 << 11)) & voice->accum_mask) >> 11];
 
@@ -723,6 +729,9 @@ reverse:
 			while (samples--)
 			{
 				/* fetch two samples */
+#ifdef VGM_BIG_ENDIAN
+	#warning "ES5506 sound emulation not Endian-Safe!"
+#endif
 				INT32 val1 = (INT16)base[accum >> 11];
 				INT32 val2 = (INT16)base[((accum + (1 << 11)) & voice->accum_mask) >> 11];
 
@@ -757,6 +766,9 @@ reverse:
 			while (samples--)
 			{
 				/* fetch two samples */
+#ifdef VGM_BIG_ENDIAN
+	#warning "ES5506 sound emulation not Endian-Safe!"
+#endif
 				INT32 val1 = (INT16)base[accum >> 11];
 				INT32 val2 = (INT16)base[((accum + (1 << 11)) & voice->accum_mask) >> 11];
 
@@ -852,7 +864,9 @@ static void generate_samples(es5506_state *chip, INT32 **outputs, int offset, in
 		/* does this voice have it's IRQ bit raised? */
 		if (voice->control&CONTROL_IRQ)
 		{
+#ifdef _DEBUG
 			logerror("es5506: IRQ raised on voice %d!!\n",v);
+#endif
 			/* only update voice vector if existing IRQ is acked by host */
 			if (chip->irqv&0x80)
 			{
@@ -925,7 +939,7 @@ static void es5506_start_common(es5506_state *chip, int clock, UINT8 sndtype)
 	chip->sndtype = sndtype;
 	/* only override the number of channels if the value is in the valid range 1 .. 6 */
 	max_chns = chip->sndtype ? 6 : 4;	// 6 for ES5506, 4 for ES5505
-	if (chip->channels < 1|| chip->channels > max_chns)
+	if (chip->channels < 1 || chip->channels > max_chns)
 		chip->channels = 1;	/* 1 channel by default, for backward compatibility */
 	
 	/* debugging */
@@ -2141,7 +2155,9 @@ INLINE UINT16 es5505_reg_read_high(es5506_state *chip, es5506_voice *voice, offs
 			if ((voice->control & CONTROL_STOPMASK) && chip->region_base[voice->control >> 14])
 			{
 				voice->o1n1 = chip->region_base[voice->control >> 14][voice->exbank + (voice->accum >> 11)];
+#ifdef _DEBUG
 				logerror("%02x %08x ==> %08x\n",voice->o1n1,voice->control >> 14,voice->exbank + (voice->accum >> 11));
+#endif
 			}
 			result = voice->o1n1;
 			break;

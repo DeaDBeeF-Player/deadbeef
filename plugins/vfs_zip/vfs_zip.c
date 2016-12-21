@@ -77,30 +77,44 @@ vfs_zip_open (const char *fname) {
     }
 
     fname += 6;
-    const char *colon = strchr (fname, ':');
-    if (!colon) {
-        return NULL;
+
+    struct zip *z = NULL;
+    struct zip_stat st;
+
+    const char *colon = fname;
+
+    for (;;) {
+        colon = strchr (colon, ':');
+        if (!colon) {
+            break;
+        }
+
+        char zipname[colon-fname+1];
+        memcpy (zipname, fname, colon-fname);
+        zipname[colon-fname] = 0;
+
+        colon = colon+1;
+
+        z = zip_open (zipname, 0, NULL);
+        if (!z) {
+            continue;
+        }
+        memset (&st, 0, sizeof (st));
+
+        int res = zip_stat(z, colon, 0, &st);
+        if (res != 0) {
+            zip_close (z);
+            return NULL;
+        }
+
+        break;
     }
 
-
-    char zipname[colon-fname+1];
-    memcpy (zipname, fname, colon-fname);
-    zipname[colon-fname] = 0;
-
-    fname = colon+1;
-
-    struct zip *z = zip_open (zipname, 0, NULL);
     if (!z) {
         return NULL;
     }
-    struct zip_stat st;
-    memset (&st, 0, sizeof (st));
 
-    int res = zip_stat(z, fname, 0, &st);
-    if (res != 0) {
-        zip_close (z);
-        return NULL;
-    }
+    fname = colon;
 
     struct zip_file *zf = zip_fopen_index (z, st.index, 0);
     if (!zf) {

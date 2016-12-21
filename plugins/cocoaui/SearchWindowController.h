@@ -28,5 +28,6 @@
 @property (strong) IBOutlet DdbSearchViewController *viewController;
 
 - (void)reset;
+- (void)cleanup;
 
 @end

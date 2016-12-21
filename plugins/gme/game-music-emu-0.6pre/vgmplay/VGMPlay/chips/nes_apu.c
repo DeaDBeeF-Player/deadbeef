@@ -46,7 +46,7 @@
 
 #include "mamedef.h"
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 #include <stddef.h>	// for NULL
 //#include "emu.h"
 //#include "streams.h"

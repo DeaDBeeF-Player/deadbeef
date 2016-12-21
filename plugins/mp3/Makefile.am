@@ -1,5 +1,4 @@
 if HAVE_MP3
-mp3dir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = mp3.la
 
 if HAVE_LIBMAD

@@ -1,5 +1,4 @@
 if HAVE_VFS_CURL
-vfs_curldir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = vfs_curl.la
 vfs_curl_la_SOURCES = vfs_curl.c
 vfs_curl_la_LDFLAGS = -module -avoid-version

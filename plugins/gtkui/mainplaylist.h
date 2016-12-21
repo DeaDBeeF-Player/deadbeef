@@ -33,12 +33,6 @@ void
 main_playlist_free (void);
 
 void
-main_refresh (void);
-
-int
-main_get_idx (DdbListviewIter it);
-
-void
 main_drag_n_drop (DdbListviewIter before, DdbPlaylistHandle from_playlist, uint32_t *indices, int length, int copy);
 
 #endif

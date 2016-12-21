@@ -70,7 +70,7 @@ typedef struct {
     int eol;
 } tf_compiler_t;
 
-typedef int (*tf_func_ptr_t)(ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef);
+typedef int (*tf_func_ptr_t)(ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef);
 
 #define TF_MAX_FUNCS 0xff
 
@@ -80,7 +80,11 @@ typedef struct {
 } tf_func_def;
 
 static int
-tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen, int *bool_out, int fail_on_undef);
+tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int outlen, int *bool_out, int fail_on_undef);
+
+static const char *
+_tf_get_combined_value (playItem_t *it, const char *key, int *needs_free);
+
 
 #define TF_EVAL_CHECK(res, ctx, arg, arg_len, out, outlen, fail_on_undef)\
 res = tf_eval_int (ctx, arg, arg_len, out, outlen, &bool_out, fail_on_undef);\
@@ -94,7 +98,12 @@ static playlist_t empty_playlist;
 static char empty_code[4] = {0};
 
 int
-tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
+tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
+    if (ctx->_size != sizeof (ddb_tf_context_t)) {
+        *out = 0;
+        return -1;
+    }
+
     if (!code) {
         code = empty_code;
     }
@@ -141,14 +150,15 @@ tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
         break;
     }
 
-#if 0
-    // this breaks $crlf()
-    for (; *out; out++) {
-        if (*out == '\n') {
-            *out = ';';
+    if (!(ctx->flags & DDB_TF_CONTEXT_MULTILINE)) {
+        // replace any unprintable char with '_'
+        for (; *out; out++) {
+            if ((uint8_t)(*out) < ' ') {
+                *out = '_';
+            }
         }
     }
-#endif
+
     if (null_it) {
         ctx->it = NULL;
     }
@@ -160,11 +170,11 @@ tf_eval (ddb_tf_context_t *ctx, char *code, char *out, int outlen) {
 
 // $greater(a,b) returns true if a is greater than b, otherwise false
 int
-tf_func_greater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_greater (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 2) {
         return -1;
     }
-    char *arg = args;
+    const char *arg = args;
 
     int bool_out = 0;
 
@@ -184,11 +194,11 @@ tf_func_greater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, cha
 
 // $strcmp(s1,s2) compares s1 and s2, returns true if equal, otherwise false
 int
-tf_func_strcmp (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_strcmp (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 2) {
         return -1;
     }
-    char *arg = args;
+    const char *arg = args;
 
     int bool_out = 0;
 
@@ -204,13 +214,132 @@ tf_func_strcmp (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char
     return !res;
 }
 
+// $num(n,len) Formats the integer number n in decimal notation with len characters. Pads with zeros
+// from the left if necessary. len includes the dash when the number is negative. If n is not numeric, it is treated as zero.
 int
-tf_func_abbr (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_num (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    const char *arg = args;
+    int bool_out = 0;
+    int len;
+
+    if (argc != 2) {
+        return -1;
+    }
+
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
+    arg += arglens[0];
+    int n = atoi (out);
+
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], out, outlen, fail_on_undef);
+    int n_len = atoi (out);
+
+    if (outlen < 1 || outlen < n_len) {
+        *out = 0;
+        return -1;
+    }
+
+    if (n_len < 0) {
+        n_len = 0;
+    }
+
+    char *out_w = out;
+    int is_negative = n < 0;
+    int num_len = 0;
+
+    int cnt = n;
+    do {
+        num_len++;
+        cnt /= 10;
+    } while (cnt);
+
+    if (is_negative) {
+        *out_w++ = '-';
+        num_len++;
+        n *= -1;
+    }
+
+    int num_len_plus_padding = num_len;
+    while (num_len_plus_padding < n_len) {
+        *out_w++ = '0';
+        num_len_plus_padding++;
+    }
+
+    out_w += num_len - is_negative;
+    do {
+        *--out_w = (n % 10) + '0';
+        n /= 10;
+    } while (n);
+
+    return n_len > num_len ? n_len : num_len;
+}
+
+// $replace(subject, search, replace, ...) Replaces all occurrences of `search`
+// substring in `subject` with `replace`. Accepts multiple search and replace
+// substrings
+int
+tf_func_replace (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 3 || argc % 2 == 0) {
+        return -1;
+    }
+
+    int bool_out = 0;
+    int i;
+
+    const char *arg = args;
+    char buf[2000];
+    char *lines[argc];
+    int lens[argc];
+    char *ptr = buf;
+
+    for (i = 0; i < argc; ++i) {
+        lines[i] = ptr;
+        TF_EVAL_CHECK (lens[i], ctx, arg, arglens[i], ptr, buf+sizeof(buf)-ptr, fail_on_undef);
+        ptr += lens[i]+1;
+        arg += arglens[i];
+    }
+
+    char *optr = out;
+    const char *iptr = lines[0];
+
+    for (;;) {
+        int chunklen = lines[0] + lens[0] - iptr; //chunk is a substring before the found needle
+        int idx = -1; //index of the found needle
+
+        for (i = 0; i < (argc - 1) / 2; ++i) {
+            char *found = strstr (iptr, lines[i*2+1]);
+            if (found && found - iptr < chunklen) {
+                chunklen = found - iptr;
+                idx = i;
+            }
+        }
+
+        if (chunklen > out + outlen - optr)
+            return -1;
+        memcpy (optr, iptr, chunklen);
+        optr += chunklen;
+
+        if (idx == -1) //nothing found
+            break;
+
+        if (lens[idx*2+2] > out + outlen - optr)
+            return -1;
+
+        memcpy (optr, lines[idx*2+2], lens[idx*2+2]);
+        optr += lens[idx*2+2];
+
+        iptr += chunklen + lens[idx*2+1];
+    }
+    *optr = 0;
+    return optr - out;
+}
+
+int
+tf_func_abbr (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1 && argc != 2) {
         return -1;
     }
 
-    char *arg = args;
+    const char *arg = args;
 
     int bool_out = 0;
 
@@ -268,7 +397,7 @@ tf_func_abbr (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
 }
 
 int
-tf_func_ansi (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_ansi (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -281,7 +410,7 @@ tf_func_ansi (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
 }
 
 int
-tf_func_ascii (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_ascii (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -298,7 +427,7 @@ tf_func_ascii (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char 
 }
 
 int
-tf_caps_impl (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef, int do_lowercasing) {
+tf_caps_impl (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef, int do_lowercasing) {
     if (argc != 1) {
         return -1;
     }
@@ -366,17 +495,17 @@ tf_caps_impl (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
 }
 
 int
-tf_func_caps (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_caps (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     return tf_caps_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 1);
 }
 
 int
-tf_func_caps2 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_caps2 (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     return tf_caps_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 0);
 }
 
 int
-tf_func_char (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_char (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -398,7 +527,7 @@ tf_func_char (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
 }
 
 int
-tf_func_crc32 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_crc32 (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -466,7 +595,7 @@ tf_func_crc32 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char 
 }
 
 int
-tf_func_crlf (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_crlf (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 0 || outlen < 2) {
         return -1;
     }
@@ -477,11 +606,11 @@ tf_func_crlf (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
 
 // $left(text,n) returns the first n characters of text
 int
-tf_func_left (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_left (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 2) {
         return -1;
     }
-    char *arg = args;
+    const char *arg = args;
 
     int bool_out = 0;
 
@@ -507,7 +636,7 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
 }
 
 int
-tf_func_directory (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_directory (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 1 || argc > 2) {
         return -1;
     }
@@ -579,7 +708,7 @@ tf_func_directory (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, c
 }
 
 int
-tf_func_directory_path (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_directory_path (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 1 || argc > 2) {
         return -1;
     }
@@ -608,7 +737,7 @@ tf_func_directory_path (ddb_tf_context_t *ctx, int argc, char *arglens, char *ar
 }
 
 int
-tf_func_ext (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_ext (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 1 || argc > 2) {
         return -1;
     }
@@ -625,6 +754,7 @@ tf_func_ext (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
     while (c >= out && *c != '/') {
         if (*c == '.') {
             p = c+1;
+            break;
         }
         c--;
     }
@@ -639,7 +769,7 @@ tf_func_ext (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
 }
 
 int
-tf_func_filename (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_filename (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 1 || argc > 2) {
         return -1;
     }
@@ -662,11 +792,11 @@ tf_func_filename (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, ch
 }
 
 int
-tf_func_add (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_add (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     int outval = 0;
-    char *arg = args;
+    const char *arg = args;
     for (int i = 0; i < argc; i++) {
         int len;
         TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
@@ -677,7 +807,7 @@ tf_func_add (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
 }
 
 int
-tf_func_div (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_div (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     if (argc < 2) {
@@ -685,7 +815,7 @@ tf_func_div (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
     }
 
     float outval = 0;
-    char *arg = args;
+    const char *arg = args;
     for (int i = 0; i < argc; i++) {
         int len;
         TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
@@ -707,7 +837,7 @@ tf_func_div (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
 }
 
 int
-tf_func_max (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_max (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     if (argc == 0) {
@@ -715,7 +845,7 @@ tf_func_max (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
     }
 
     int nmax = -1;
-    char *arg = args;
+    const char *arg = args;
     for (int i = 0; i < argc; i++) {
         int len;
         TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
@@ -730,7 +860,7 @@ tf_func_max (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
 }
 
 int
-tf_func_min (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_min (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     if (argc == 0) {
@@ -738,7 +868,7 @@ tf_func_min (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
     }
 
     int nmin = 0x7fffffff;
-    char *arg = args;
+    const char *arg = args;
     for (int i = 0; i < argc; i++) {
         int len;
         TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
@@ -753,7 +883,7 @@ tf_func_min (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
 }
 
 int
-tf_func_mod (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_mod (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     if (argc < 2) {
@@ -761,7 +891,7 @@ tf_func_mod (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
     }
 
     int outval = 0;
-    char *arg = args;
+    const char *arg = args;
     for (int i = 0; i < argc; i++) {
         int len;
         TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
@@ -783,7 +913,7 @@ tf_func_mod (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
 }
 
 int
-tf_func_mul (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_mul (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     if (argc < 2) {
@@ -791,7 +921,7 @@ tf_func_mul (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
     }
 
     int outval = 0;
-    char *arg = args;
+    const char *arg = args;
     for (int i = 0; i < argc; i++) {
         int len;
         TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
@@ -808,7 +938,7 @@ tf_func_mul (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
 }
 
 int
-tf_func_muldiv (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_muldiv (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     if (argc != 3) {
@@ -816,7 +946,7 @@ tf_func_muldiv (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char
     }
 
     int vals[3];
-    char *arg = args;
+    const char *arg = args;
     for (int i = 0; i < argc; i++) {
         int len;
         TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
@@ -836,7 +966,7 @@ tf_func_muldiv (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char
 }
 
 int
-tf_func_rand (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_rand (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 0) {
         return -1;
     }
@@ -848,7 +978,7 @@ tf_func_rand (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
 }
 
 int
-tf_func_sub (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_sub (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     if (argc < 2) {
@@ -856,7 +986,7 @@ tf_func_sub (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
     }
 
     int outval = 0;
-    char *arg = args;
+    const char *arg = args;
     for (int i = 0; i < argc; i++) {
         int len;
         TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
@@ -873,13 +1003,13 @@ tf_func_sub (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
 }
 
 int
-tf_func_if (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_if (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 2 || argc > 3) {
         return -1;
     }
     int bool_out = 0;
 
-    char *arg = args;
+    const char *arg = args;
     int res;
     TF_EVAL_CHECK(res, ctx, arg, arglens[0], out, outlen, fail_on_undef);
     arg += arglens[0];
@@ -897,13 +1027,13 @@ tf_func_if (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *ou
 }
 
 int
-tf_func_if2 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_if2 (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 2) {
         return -1;
     }
     int bool_out = 0;
 
-    char *arg = args;
+    const char *arg = args;
     int res;
     TF_EVAL_CHECK(res, ctx, arg, arglens[0], out, outlen, fail_on_undef);
     arg += arglens[0];
@@ -918,13 +1048,13 @@ tf_func_if2 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
 }
 
 int
-tf_func_if3 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_if3 (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 2) {
         return -1;
     }
     int bool_out = 0;
 
-    char *arg = args;
+    const char *arg = args;
     for (int i = 0; i < argc; i++) {
         int res;
         TF_EVAL_CHECK(res, ctx, arg, arglens[i], out, outlen, fail_on_undef);
@@ -938,14 +1068,14 @@ tf_func_if3 (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
 }
 
 int
-tf_func_ifequal (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_ifequal (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 4) {
         return -1;
     }
 
     int bool_out = 0;
 
-    char *arg = args;
+    const char *arg = args;
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
 
@@ -969,14 +1099,14 @@ tf_func_ifequal (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, cha
 }
 
 int
-tf_func_ifgreater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_ifgreater (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 4) {
         return -1;
     }
 
     int bool_out = 0;
 
-    char *arg = args;
+    const char *arg = args;
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
 
@@ -1000,14 +1130,14 @@ tf_func_ifgreater (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, c
 }
 
 int
-tf_func_iflonger (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_iflonger (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 4) {
         return -1;
     }
 
     int bool_out = 0;
 
-    char *arg = args;
+    const char *arg = args;
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
     int l1 = (int)strlen (out);
@@ -1028,12 +1158,12 @@ tf_func_iflonger (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, ch
 }
 
 int
-tf_func_select (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_select (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 3) {
         return -1;
     }
 
-    char *arg = args;
+    const char *arg = args;
 
     int bool_out = 0;
 
@@ -1063,7 +1193,7 @@ tf_append_out (char **out, int *out_len, const char *in, int in_len) {
 }
 
 int
-tf_func_meta (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_meta (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -1074,16 +1204,21 @@ tf_func_meta (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *
 
     int bool_out = 0;
 
-    char *arg = args;
+    const char *arg = args;
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
 
-    const char *meta = pl_find_meta_raw ((playItem_t *)ctx->it, out);
+    int needs_free = 0;
+    const char *meta = _tf_get_combined_value ((playItem_t *)ctx->it, out, &needs_free);
     if (!meta) {
         return 0;
     }
 
-    return u8_strnbcpy(out, meta, outlen);
+    int res = u8_strnbcpy(out, meta, outlen);
+    if (needs_free) {
+        free ((char *)meta);
+    }
+    return res;
 }
 
 const char *
@@ -1105,7 +1240,7 @@ tf_get_channels_string_for_track (playItem_t *it) {
 }
 
 int
-tf_func_channels (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_channels (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 0) {
         return -1;
     }
@@ -1120,10 +1255,10 @@ tf_func_channels (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, ch
 
 // Boolean
 int
-tf_func_and (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_and (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
-    char *arg = args;
+    const char *arg = args;
     for (int i = 0; i < argc; i++) {
         int len;
         TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
@@ -1137,10 +1272,10 @@ tf_func_and (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
 }
 
 int
-tf_func_or (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_or (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
-    char *arg = args;
+    const char *arg = args;
     for (int i = 0; i < argc; i++) {
         int len;
         TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
@@ -1154,7 +1289,7 @@ tf_func_or (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *ou
 }
 
 int
-tf_func_not (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_not (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -1166,11 +1301,11 @@ tf_func_not (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
 }
 
 int
-tf_func_xor (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_xor (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
     int result = 0;
 
-    char *arg = args;
+    const char *arg = args;
     for (int i = 0; i < argc; i++) {
         int len;
         TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
@@ -1184,6 +1319,102 @@ tf_func_xor (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *o
     }
     *out = 0;
     return result;
+}
+
+int
+tf_func_fix_eol (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1 && argc != 2) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    int len;
+
+    char *p = out;
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+
+    char ind[1000];
+    int indlen = sizeof (ind);
+    if (argc == 2) {
+        TF_EVAL_CHECK(indlen, ctx, args + arglens[0], arglens[1], ind, indlen, fail_on_undef);
+    }
+    else {
+        strcpy (ind, " (...)");
+        indlen = (int)strlen (ind);
+    }
+
+    for (int n = 0; n < len; n++, p++) {
+        if (*p == '\n') {
+            if (outlen-n < indlen) {
+                *out = 0;
+                return -1;
+            }
+            memcpy (p, ind, indlen);
+            len = n + indlen;
+            break;
+        }
+    }
+
+    return len;
+}
+
+int
+tf_func_hex (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1 && argc != 2) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    int len;
+
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+    int num = atoi (out);
+    int pad = 0;
+    *out = 0;
+
+    if (argc == 2) {
+        TF_EVAL_CHECK(len, ctx, args + arglens[0], arglens[1], out, outlen, fail_on_undef);
+        if (!isdigit (*out)) {
+            *out = 0;
+            return -1;
+        }
+        pad = atoi (out);
+        *out = 0;
+    }
+
+    int n = num;
+    int cnt = 0;
+    do {
+        n >>= 4;
+        cnt++;
+    } while (n);
+
+    char *p = out;
+
+    if (pad > outlen || cnt > outlen) {
+        return -1;
+    }
+
+    if (pad > cnt) {
+        for (n = 0; n < pad-cnt; n++, p++) {
+            *p = '0';
+        }
+    }
+    p += cnt;
+    *p-- = 0;
+
+    n = num;
+
+    const char hex[] = "0123456789abcdef";
+
+    do {
+        *p-- = hex[n & 0x0f];
+        n >>= 4;
+    } while (n);
+
+    return (int)strlen (out);
 }
 
 tf_func_def tf_funcs[TF_MAX_FUNCS] = {
@@ -1226,18 +1457,74 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "directory_path", tf_func_directory_path },
     { "ext", tf_func_ext },
     { "filename", tf_func_filename },
+    { "fix_eol", tf_func_fix_eol },
+    { "hex", tf_func_hex },
     { "strcmp", tf_func_strcmp },
+    { "num", tf_func_num },
+    { "replace", tf_func_replace },
     // Track info
     { "meta", tf_func_meta },
     { "channels", tf_func_channels },
     { NULL, NULL }
 };
 
+static const char *
+_tf_get_combined_value (playItem_t *it, const char *key, int *needs_free) {
+    DB_metaInfo_t *meta = pl_meta_for_key (it, key);
+
+    if (!meta) {
+        *needs_free = 0;
+        return NULL;
+    }
+
+    size_t len = 0;
+
+    const char *value = meta->value;
+    const char *end = meta->value +meta->valuesize;
+    while (value < end) {
+        size_t l = strlen (value);
+
+        // TEST
+        if (l+1 == meta->valuesize) {
+            *needs_free = 0;
+            return meta->value;
+        }
+
+        len += l;
+        len += 2; // ", "
+        value += l + 1;
+    }
+
+    char *out = malloc (len + 1);
+
+    char *p = out;
+
+    value = meta->value;
+    end = meta->value +meta->valuesize;
+    while (value < end) {
+        len = strlen (value);
+        memcpy (p, value, value + len + 1 != end ? len : len + 1);
+        p += len;
+        if (value + len + 1 != end) {
+            memcpy (p, ", ", 2);
+            p += 2;
+        }
+        value += len + 1;
+    }
+
+    *needs_free = 1;
+    return out;
+}
+
 static int
-tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen, int *bool_out, int fail_on_undef) {
+tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int outlen, int *bool_out, int fail_on_undef) {
     playItem_t *it = (playItem_t *)ctx->it;
     char *init_out = out;
     *bool_out = 0;
+
+    int count_true_conditionals = 0;
+    int count_false_conditionals = 0;
+
     while (size) {
         if (*code) {
             int len = u8_charcpy (out, code, outlen);
@@ -1296,7 +1583,8 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 // compatible with fb2k syntax
                 pl_lock ();
                 const char *val = NULL;
-                const char *aa_fields[] = { "album artist", "albumartist", "band", "composer", "performer", "artist", NULL };
+                int needs_free = 0;
+                const char *aa_fields[] = { "album artist", "albumartist", "band", "artist", "composer", "performer", NULL };
                 const char *a_fields[] = { "artist", "album artist", "albumartist", "composer", "performer", NULL };
                 const char *alb_fields[] = { "album", "venue", NULL };
 
@@ -1308,69 +1596,62 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
 
                 if (!strcmp (name, aa_fields[0])) {
                     for (int i = 0; !val && aa_fields[i]; i++) {
-                        val = pl_find_meta_raw (it, aa_fields[i]);
+                        val = _tf_get_combined_value(it, aa_fields[i], &needs_free);
                     }
                 }
                 else if (!strcmp (name, a_fields[0])) {
                     for (int i = 0; !val && a_fields[i]; i++) {
-                        val = pl_find_meta_raw (it, a_fields[i]);
+                        val = _tf_get_combined_value(it, a_fields[i], &needs_free);
                     }
                 }
                 else if (!strcmp (name, "album")) {
                     for (int i = 0; !val && alb_fields[i]; i++) {
-                        val = pl_find_meta_raw (it, alb_fields[i]);
+                        val = _tf_get_combined_value (it, alb_fields[i], &needs_free);
                     }
                 }
                 else if (!strcmp (name, "track artist")) {
                     const char *aa = NULL;
                     for (int i = 0; !val && aa_fields[i]; i++) {
-                        val = pl_find_meta_raw (it, aa_fields[i]);
+                        val = _tf_get_combined_value (it, aa_fields[i], &needs_free);
                     }
                     aa = val;
                     val = NULL;
                     for (int i = 0; !val && a_fields[i]; i++) {
-                        val = pl_find_meta_raw (it, a_fields[i]);
+                        val = _tf_get_combined_value (it, a_fields[i], &needs_free);
                     }
                     if (val && aa && !strcmp (val, aa)) {
                         val = NULL;
                     }
                 }
                 else if (!strcmp (name, "tracknumber")) {
-                    val = pl_find_meta_raw (it, "track");
-                    if (val) {
-                        const char *p = val;
+                    const char *v = pl_find_meta_raw (it, "track");
+                    if (v) {
+                        const char *p = v;
                         while (*p) {
                             if (!isdigit (*p)) {
                                 break;
                             }
                             p++;
                         }
-                        if (*p) {
-                            val = NULL;
-                        }
-                        else {
-                            int len = snprintf (out, outlen, "%02d", atoi(val));
+                        if (p > v) {
+                            int len = snprintf (out, outlen, "%02d", atoi(v));
                             out += len;
                             outlen -= len;
                             skip_out = 1;
-                            val = NULL;
                         }
                     }
                 }
                 else if (!strcmp (name, "title")) {
-                    val = pl_find_meta_raw (it, "title");
-                    if (val && !(*val)) {
-                        val = NULL;
-                    }
+                    val = _tf_get_combined_value (it, "title", &needs_free);
                     if (!val) {
-                        val = pl_find_meta_raw (it, ":URI");
-                        if (val) {
-                            const char *start = strrchr (val, '/');
+                        const char *v = pl_find_meta_raw (it, ":URI");
+                        if (v) {
+                            const char *start = strrchr (v, '/');
                             if (start) {
                                 start++;
                             }
                             else {
-                                start = val;
+                                start = v;
                             }
                             const char *end = strrchr (start, '.');
                             if (end) {
@@ -1380,7 +1661,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                                 outlen -= n;
                                 out += n;
                             }
-                            val = NULL;
                         }
                     }
                 }
@@ -1391,7 +1671,27 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     val = pl_find_meta_raw (it, "numdiscs");
                 }
                 else if (!strcmp (name, "track number")) {
-                    val = pl_find_meta_raw (it, "track");
+                    const char *v = pl_find_meta_raw (it, "track");
+                    if (v) {
+                        const char *p = v;
+                        while (*p) {
+                            if (!isdigit (*p)) {
+                                break;
+                            }
+                            p++;
+                        }
+                        if (p > v) {
+                            int len = snprintf (out, outlen, "%d", atoi(v));
+                            out += len;
+                            outlen -= len;
+                            skip_out = 1;
+                        }
+                    }
+                }
+                else if (!strcmp (name, "date")) {
+                    // NOTE: foobar2000 uses "date" instead of "year"
+                    // so for %date% we simply return the content of "year"
+                    val = pl_find_meta_raw (it, "year");
                 }
                 else if (!strcmp (name, "samplerate")) {
                     val = pl_find_meta_raw (it, ":SAMPLERATE");
@@ -1403,9 +1703,9 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     val = pl_find_meta_raw (it, ":FILE_SIZE");
                 }
                 else if (!strcmp (name, "filesize_natural")) {
-                    val = pl_find_meta_raw (it, ":FILE_SIZE");
-                    if (val) {
-                        int64_t bs = atoll (val);
+                    const char *v = pl_find_meta_raw (it, ":FILE_SIZE");
+                    if (v) {
+                        int64_t bs = atoll (v);
                         int len;
                         if (bs >= 1024*1024*1024) {
                             double gb = (double)bs / (double)(1024*1024*1024);
@@ -1425,7 +1725,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         out += len;
                         outlen -= len;
                         skip_out = 1;
-                        val = NULL;
                     }
                 }
                 else if (!strcmp (name, "channels")) {
@@ -1448,7 +1747,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 }
                 else if ((tmp_a = !strcmp (name, "playback_time")) || (tmp_b = !strcmp (name, "playback_time_seconds")) || (tmp_c = !strcmp (name, "playback_time_remaining")) || (tmp_d = !strcmp (name, "playback_time_remaining_seconds"))) {
                     playItem_t *playing = streamer_get_playing_track ();
-                    if (it && playing == it) {
+                    if (it && playing == it && !(ctx->flags & DDB_TF_CONTEXT_NO_DYNAMIC)) {
                         float t = streamer_get_playpos ();
                         if (tmp_c || tmp_d) {
                             printf ("inverse time %d %d %d %d\n", tmp_a, tmp_b, tmp_c, tmp_d);
@@ -1462,10 +1761,10 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                                 int mn = (t-hr*3600)/60;
                                 int sc = t-hr*3600-mn*60;
                                 if (hr) {
-                                    len = snprintf (out, outlen, "%2d:%02d:%02d", hr, mn, sc);
+                                    len = snprintf (out, outlen, "%d:%02d:%02d", hr, mn, sc);
                                 }
                                 else {
-                                    len = snprintf (out, outlen, "%2d:%02d", mn, sc);
+                                    len = snprintf (out, outlen, "%d:%02d", mn, sc);
                                 }
                             }
                             else if (tmp_b || tmp_d) {
@@ -1474,7 +1773,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                             out += len;
                             outlen -= len;
                             skip_out = 1;
-                            val = NULL;
                             // notify the caller about update interval
                             if (!ctx->update || (ctx->update > 1000)) {
                                 ctx->update = 1000;
@@ -1501,24 +1799,23 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         int len = 0;
                         if (tmp_a) {
                             if (hr) {
-                                len = snprintf (out, outlen, "%2d:%02d:%02d", hr, mn, sc);
+                                len = snprintf (out, outlen, "%d:%02d:%02d", hr, mn, sc);
                             }
                             else {
-                                len = snprintf (out, outlen, "%2d:%02d", mn, sc);
+                                len = snprintf (out, outlen, "%d:%02d", mn, sc);
                             }
                         }
                         else if (tmp_b) {
                             if (hr) {
-                                len = snprintf (out, outlen, "%2d:%02d:%02d.%03d", hr, mn, sc, ms);
+                                len = snprintf (out, outlen, "%d:%02d:%02d.%03d", hr, mn, sc, ms);
                             }
                             else {
-                                len = snprintf (out, outlen, "%2d:%02d.%03d", mn, sc, ms);
+                                len = snprintf (out, outlen, "%d:%02d.%03d", mn, sc, ms);
                             }
                         }
                         out += len;
                         outlen -= len;
                         skip_out = 1;
-                        val = NULL;
                     }
                 }
                 else if ((tmp_a = !strcmp (name, "length_seconds") || (tmp_b = !strcmp (name, "length_seconds_fp")))) {
@@ -1534,7 +1831,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         out += len;
                         outlen -= len;
                         skip_out = 1;
-                        val = NULL;
                     }
                 }
                 else if (!strcmp (name, "length_samples")) {
@@ -1542,7 +1838,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     out += len;
                     outlen -= len;
                     skip_out = 1;
-                    val = NULL;
                 }
                 else if ((tmp_a = !strcmp (name, "isplaying")) || (tmp_b = !strcmp (name, "ispaused"))) {
                     playItem_t *playing = streamer_get_playing_track ();
@@ -1555,48 +1850,49 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         *out++ = '1';
                         outlen--;
                         skip_out = 1;
-                        val = NULL;
                     }
                     if (playing) {
                         pl_item_unref (playing);
                     }
                 }
                 else if (!strcmp (name, "filename")) {
-                    val = pl_find_meta_raw (it, ":URI");
-                    if (val) {
-                        const char *start = strrchr (val, '/');
+                    const char *v = pl_find_meta_raw (it, ":URI");
+                    if (v) {
+                        const char *start = strrchr (v, '/');
                         if (start) {
                             start++;
                         }
                         else {
-                            start = val;
+                            start = v;
                         }
                         const char *end = strrchr (start, '.');
                         if (end) {
                             tf_append_out(&out, &outlen, start, (int)(end-start));
                             skip_out = 1;
                         }
-                        val = NULL;
                     }
                 }
                 else if (!strcmp (name, "filename_ext")) {
-                    val = pl_find_meta_raw (it, ":URI");
-                    if (val) {
-                        const char *start = strrchr (val, '/');
+                    const char *v = pl_find_meta_raw (it, ":URI");
+                    if (v) {
+                        const char *start = strrchr (v, '/');
                         if (start) {
-                            tf_append_out (&out, &outlen, start+1, (int)strlen (start+1));
-                            skip_out = 1;
+                            start++;
                         }
-                        val = NULL;
+                        else {
+                            start = v;
+                        }
+                        tf_append_out (&out, &outlen, start, (int)strlen (start));
+                        skip_out = 1;
                     }
                 }
                 else if (!strcmp (name, "directoryname")) {
-                    val = pl_find_meta_raw (it, ":URI");
-                    if (val) {
-                        const char *end = strrchr (val, '/');
+                    const char *v = pl_find_meta_raw (it, ":URI");
+                    if (v) {
+                        const char *end = strrchr (v, '/');
                         if (end) {
                             const char *start = end - 1;
-                            while (start >= val && *start != '/') {
+                            while (start >= v && *start != '/') {
                                 start--;
                             }
                             if (start && start != end) {
@@ -1605,11 +1901,37 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                                 skip_out = 1;
                             }
                         }
-                        val = NULL;
                     }
+                }
+                else if (!strcmp (name, "_path_raw")) {
+                    val = pl_find_meta_raw (it, ":URI");
                 }
                 else if (!strcmp (name, "path")) {
                     val = pl_find_meta_raw (it, ":URI");
+
+                    // strip file://
+                    if (!strncmp (val, "file://", 7)) {
+                        val += 7;
+                    }
+#if 0
+                    // strip any URI scheme
+                    if (isalpha (*val)) {
+                        const char *slash = strchr (val, ':');
+                        if (slash && strlen (slash) > 3 && slash[1] == '/' && slash[2] == '/') {
+                            const char *p = val;
+                            while (p < slash) {
+                                if (!isalpha (*p) && !isdigit (*p) && !strchr ("+.-", *p)) {
+                                    p = NULL;
+                                    break;
+                                }
+                                p++;
+                            }
+                            if (p) {
+                                val = slash + 3;
+                            }
+                        }
+                    }
+#endif
                 }
                 // index of track in playlist (zero-padded)
                 else if (!strcmp (name, "list_index")) {
@@ -1632,7 +1954,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         out += len;
                         outlen -= len;
                         skip_out = 1;
-                        val = NULL;
                     }
                 }
                 // total number of tracks in playlist
@@ -1653,7 +1974,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         out += len;
                         outlen -= len;
                         skip_out = 1;
-                        val = NULL;
                     }
                 }
                 // index of track in queue
@@ -1665,7 +1985,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                             out += len;
                             outlen -= len;
                             skip_out = 1;
-                            val = NULL;
                         }
                     }
                 }
@@ -1690,7 +2009,6 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                                 }
                             }
                             skip_out = 1;
-                            val = NULL;
                         }
                     }
                 }
@@ -1702,26 +2020,35 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                         out += len;
                         outlen -= len;
                         skip_out = 1;
-                        val = NULL;
                     }
                 }
                 else if (!strcmp (name, "_deadbeef_version")) {
                     val = VERSION;
                 }
+                else if (!strcmp (name, "_playlist_name")) {
+                    val = ((playlist_t *)ctx->plt)->title;
+                }
+                else {
+                    val = _tf_get_combined_value (it, name, &needs_free);
+                }
 
-                if (val) {
+                if (val || (!val && out > init_out)) {
                     *bool_out = 1;
                 }
 
                 // default case
                 if (!skip_out && val) {
-                    int32_t l = u8_strnbcpy(out, val, outlen);
+                    int32_t l = u8_strnbcpy (out, val, outlen);
                     out += l;
                     outlen -= l;
                 }
                 pl_unlock ();
                 if (!skip_out && !val && fail_on_undef) {
                     return -1;
+                }
+
+                if (val && needs_free) {
+                    free ((char *)val);
                 }
 
                 code += len;
@@ -1737,10 +2064,15 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
 
                 int bool_out = 0;
                 int res = tf_eval_int (ctx, code, len, out, outlen, &bool_out, 1);
-                if (res > 0) {
+                if (res >= 0) {
                     out += res;
                     outlen -= res;
+                    count_true_conditionals++;
                 }
+                else if (res < 0) {
+                    count_false_conditionals++;
+                }
+
                 code += len;
                 size -= len;
             }
@@ -1763,6 +2095,11 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
         }
     }
     *out = 0;
+
+    if (fail_on_undef && count_false_conditionals > 0 && count_true_conditionals == 0) {
+        return -1;
+    }
+
     return (int)(out-init_out);
 }
 
@@ -1927,7 +2264,11 @@ tf_compile_plain (tf_compiler_t *c) {
     c->eol = 0;
     char i = *(c->i);
     if (i == '$') {
-        if (tf_compile_func (c)) {
+        if (c->i[1] == '$') {
+            c->i++;
+            *(c->o++) = *(c->i++);
+        }
+        else if (tf_compile_func (c)) {
             return -1;
         }
     }
@@ -1937,6 +2278,11 @@ tf_compile_plain (tf_compiler_t *c) {
         }
     }
     else if (i == '%') {
+        if (c->i[1] == '%') {
+            c->i++;
+            *(c->o++) = *(c->i++);
+            return 0;
+        }
         if (tf_compile_field (c)) {
             return -1;
         }
@@ -1958,11 +2304,17 @@ tf_compile_plain (tf_compiler_t *c) {
     else if (i == '\'') {
         // copy as plain text to next single-quote
         c->i++;
-        while (c->i[0] && c->i[0] != '\'') {
+
+        if (c->i[0] == '\'') {
             *(c->o++) = *(c->i++);
         }
-        if (c->i[0] == '\'') {
-            c->i++;
+        else {
+            while (c->i[0] && c->i[0] != '\'') {
+                *(c->o++) = *(c->i++);
+            }
+            if (c->i[0] == '\'') {
+                c->i++;
+            }
         }
     }
     else if (i == '\n') {
@@ -1991,6 +2343,7 @@ tf_compile (const char *script) {
 
     while (*(c.i)) {
         if (tf_compile_plain (&c)) {
+            trace ("tf: compilation failed <%s>\n", c.i);
             return NULL;
         }
     }
@@ -2006,4 +2359,155 @@ tf_compile (const char *script) {
 void
 tf_free (char *code) {
     free (code);
+}
+
+void
+tf_import_legacy (const char *fmt, char *out, int outsize) {
+    while (*fmt && outsize > 1) {
+        if (*fmt == '\'' || *fmt == '$') {
+            if (outsize < 3) {
+                break;
+            }
+            *out++ = *fmt;
+            *out++ = *fmt++;
+            outsize -= 2;
+        }
+        else if (*fmt == '\n') {
+            if (outsize < 7) {
+                break;
+            }
+            strcpy (out, "$crlf()");
+            out += 7;
+            outsize -= 7;
+            fmt++;
+        }
+        else if (*fmt == '[') {
+            if (outsize < 3) {
+                break;
+            }
+            strcpy (out, "'['");
+            out += 3;
+            outsize -= 3;
+            fmt++;
+        }
+        else if (*fmt == ']') {
+            if (outsize < 3) {
+                break;
+            }
+            strcpy (out, "']'");
+            out += 3;
+            outsize -= 3;
+            fmt++;
+        }
+        else if (*fmt != '%') {
+            *out++ = *fmt++;
+            outsize--;
+        }
+        else {
+            fmt++;
+            if (!*fmt) {
+                break;
+            }
+            if (*fmt == '@') {
+                const char *e = fmt;
+                e++;
+                while (*e && *e != '@') {
+                    e++;
+                }
+#define APPEND(x) {size_t size = strlen (x); if (size >= outsize-1) break; memcpy (out, x, size); out += size; outsize -= size;}
+                if (*e == '@') {
+                    char nm[100];
+                    size_t l = e-fmt-1;
+                    l = min (l, sizeof (nm)-1);
+                    strncpy (nm+1, fmt+1, l);
+                    nm[l+2] = 0;
+                    nm[0] = '%';
+                    nm[l+1] = '%';
+
+                    APPEND (nm);
+                    fmt = e+1;
+                }
+                continue;
+            }
+            else if (*fmt == 'a') {
+                APPEND ("%artist%");
+            }
+            else if (*fmt == 't') {
+                APPEND ("%title%");
+            }
+            else if (*fmt == 'b') {
+                APPEND ("%album%");
+            }
+            else if (*fmt == 'B') {
+                APPEND ("%album artist%");
+            }
+            else if (*fmt == 'C') {
+                APPEND ("%composer%");
+            }
+            else if (*fmt == 'n') {
+                APPEND ("%tracknumber%");
+            }
+            else if (*fmt == 'N') {
+                APPEND ("%numtracks%");
+            }
+            else if (*fmt == 'y') {
+                APPEND ("%date%");
+            }
+            else if (*fmt == 'Y') {
+                APPEND ("%original_release_time%");
+            }
+            else if (*fmt == 'g') {
+                APPEND ("%genre%");
+            }
+            else if (*fmt == 'c') {
+                APPEND ("%comment%");
+            }
+            else if (*fmt == 'r') {
+                APPEND ("%copyright%");
+            }
+            else if (*fmt == 'l') {
+                APPEND ("%length%");
+            }
+            else if (*fmt == 'e') {
+                APPEND ("%playback_time%");
+            }
+            else if (*fmt == 'f') {
+                APPEND ("%filename_ext%");
+            }
+            else if (*fmt == 'F') {
+                APPEND ("%_path_raw%");
+            }
+            else if (*fmt == 'T') {
+                APPEND ("$info(tagtype)");
+            }
+            else if (*fmt == 'd') {
+                APPEND ("%directoryname%");
+            }
+            else if (*fmt == 'D') {
+                APPEND ("$directory_path(%_path_raw%)");
+            }
+            else if (*fmt == 'L') {
+                APPEND ("%list_length%"); // TODO
+            }
+            else if (*fmt == 'X') {
+                APPEND ("%list_selected%"); // TODO
+            }
+            else if (*fmt == 'Z') {
+                APPEND ("$channels()");
+            }
+            else if (*fmt == 'V') {
+                APPEND ("%_deadbeef_version%");
+            }
+            else if (*fmt == '%') {
+                APPEND ("%%");
+            }
+            else {
+                *out++ = *fmt;
+                outsize--;
+            }
+#undef APPEND
+            fmt++;
+        }
+    }
+    *out = 0;
 }

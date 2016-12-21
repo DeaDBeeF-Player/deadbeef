@@ -336,7 +336,13 @@ action_reload_metadata_handler (DB_plugin_action_t *act, int ctx) {
         if (dec) {
             strncpy (decoder_id, dec, sizeof (decoder_id));
         }
-        int match = deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && dec;
+        int match;
+        if (ctx == DDB_ACTION_CTX_PLAYLIST) {
+            match = deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && dec;
+        }
+        else {
+            match = deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && dec;
+        }
         deadbeef->pl_unlock ();
 
         if (match) {
@@ -581,31 +587,38 @@ action_clear_playlist_handler (DB_plugin_action_t *act, int ctx) {
 
 int
 action_add_to_playqueue_handler (DB_plugin_action_t *act, int ctx) {
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    ddb_playlist_t *plt = deadbeef->action_get_playlist ();
+
+    DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
     while (it) {
         if (ctx == DDB_ACTION_CTX_PLAYLIST || (ctx == DDB_ACTION_CTX_SELECTION && deadbeef->pl_is_selected (it))) {
-            deadbeef->pl_playqueue_push (it);
+            deadbeef->playqueue_push (it);
         }
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         deadbeef->pl_item_unref (it);
         it = next;
     }
-    deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+
+    deadbeef->plt_unref (plt);
+
     return 0;
 }
 
 int
 action_remove_from_playqueue_handler (DB_plugin_action_t *act, int ctx) {
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    ddb_playlist_t *plt = deadbeef->action_get_playlist ();
+
+    DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
     while (it) {
         if (ctx == DDB_ACTION_CTX_PLAYLIST || (ctx == DDB_ACTION_CTX_SELECTION && deadbeef->pl_is_selected (it))) {
-            deadbeef->pl_playqueue_remove (it);
+            deadbeef->playqueue_remove (it);
         }
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         deadbeef->pl_item_unref (it);
         it = next;
     }
-    deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+
+    deadbeef->plt_unref (plt);
     return 0;
 }
 

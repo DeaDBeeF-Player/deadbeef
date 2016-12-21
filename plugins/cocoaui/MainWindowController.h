@@ -25,6 +25,7 @@
 
 #import "DdbTabStrip.h"
 #import "DdbListview.h"
+#import "DdbPlaylistViewController.h"
 
 @interface MainWindowController : NSWindowController
 
@@ -32,6 +33,8 @@
 @property (unsafe_unretained) IBOutlet NSTextField *statusBar;
 @property (unsafe_unretained) IBOutlet NSSlider *seekBar;
 @property (unsafe_unretained) IBOutlet NSSlider *volumeBar;
+@property (strong) IBOutlet DdbPlaylistViewController *playlistViewController;
+
 - (IBAction)seekBarAction:(id)sender;
 - (IBAction)volumeBarAction:(id)sender;
 @property (unsafe_unretained) IBOutlet NSSegmentedControl *buttonBar;
@@ -47,4 +50,5 @@
 - (void)updateVolumeBar;
 - (void)updateTitleBarConfig;
 - (void)updateTitleBar;
+- (void)cleanup;
 @end

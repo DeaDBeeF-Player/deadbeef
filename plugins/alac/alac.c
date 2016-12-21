@@ -457,6 +457,9 @@ void entropy_rice_decode(alac_file* alac,
 			// got blockSize 0s
 			if (blockSize > 0)
 			{
+				if (outputCount + 1 + blockSize > outputSize) {
+					blockSize = outputSize - outputCount - 1;
+				}
 				memset(&outputBuffer[outputCount + 1], 0, blockSize * sizeof(*outputBuffer));
 				outputCount += blockSize;
 			}
@@ -792,11 +795,17 @@ void decode_frame(alac_file *alac,
 
         isnotcompressed = readbits(alac, 1); /* whether the frame is compressed */
 
+        uint32_t read_output_samples = 0;
+
         if (hassize)
         {
             /* now read the number of samples,
              * as a 32bit integer */
-            outputsamples = readbits(alac, 32);
+            read_output_samples = readbits(alac, 32);
+            outputsamples = read_output_samples;
+            if (outputsamples > alac->setinfo_max_samples_per_frame) {
+                outputsamples = alac->setinfo_max_samples_per_frame;
+            }
             *outputsize = outputsamples * alac->bytespersample;
         }
 
@@ -857,7 +866,9 @@ void decode_frame(alac_file *alac,
             }
             else
             {
-                fprintf(stderr, "FIXME: unhandled predicition type: %i\n", prediction_type);
+                fprintf(stderr, "ALAC: unhandled predicition type: %i, the data seems to be corrupt\n", prediction_type);
+                *outputsize = 0;
+                return;
                 /* i think the only other prediction type (or perhaps this is just a
                  * boolean?) runs adaptive fir twice.. like:
                  * predictor_decompress_fir_adapt(predictor_error, tempout, ...)
@@ -969,11 +980,17 @@ void decode_frame(alac_file *alac,
 
         isnotcompressed = readbits(alac, 1); /* whether the frame is compressed */
 
+        uint32_t read_output_samples = 0;
+
         if (hassize)
         {
             /* now read the number of samples,
              * as a 32bit integer */
-            outputsamples = readbits(alac, 32);
+            read_output_samples = readbits(alac, 32);
+            outputsamples = read_output_samples;
+            if (outputsamples > alac->setinfo_max_samples_per_frame) {
+                outputsamples = alac->setinfo_max_samples_per_frame;
+            }
             *outputsize = outputsamples * alac->bytespersample;
         }
 
@@ -1057,7 +1074,9 @@ void decode_frame(alac_file *alac,
             }
             else
             { /* see mono case */
-                fprintf(stderr, "FIXME: unhandled predicition type: %i\n", prediction_type_a);
+                fprintf(stderr, "ALAC: unhandled predicition type: %i, the data seems to be corrupt\n", prediction_type_a);
+                *outputsize = 0;
+                return;
             }
 
             /* channel 2 */
@@ -1082,7 +1101,9 @@ void decode_frame(alac_file *alac,
             }
             else
             {
-                fprintf(stderr, "FIXME: unhandled predicition type: %i\n", prediction_type_b);
+                fprintf(stderr, "ALAC: unhandled predicition type: %i, the data seems to be corrupt\n", prediction_type_b);
+                *outputsize = 0;
+                return;
             }
         }
         else

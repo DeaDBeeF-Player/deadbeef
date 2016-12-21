@@ -1,0 +1,12 @@
+			   ** sc68 NEWS **
+
+
+sc68-3.0.0
+
+	This New version of the sc68 command line player takes advantage of
+	all new features of sc68 engine 3.0.0.
+
+	- direct audio output via with the xiph ao library.
+	- wav file ouput with the xiph-ao library.
+	- enhanced sound quality.
+	- alternate YM emulation.

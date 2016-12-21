@@ -56,22 +56,22 @@ typedef struct _DdbCellRendererTextMultilineClass DdbCellRendererTextMultilineCl
 typedef struct _DdbCellRendererTextMultilinePrivate DdbCellRendererTextMultilinePrivate;
 
 struct _DdbCellEditableTextView {
-	GtkTextView parent_instance;
-	DdbCellEditableTextViewPrivate * priv;
-	gchar* tree_path;
+    GtkTextView parent_instance;
+    DdbCellEditableTextViewPrivate * priv;
+    gchar* tree_path;
 };
 
 struct _DdbCellEditableTextViewClass {
-	GtkTextViewClass parent_class;
+    GtkTextViewClass parent_class;
 };
 
 struct _DdbCellRendererTextMultiline {
-	GtkCellRendererText parent_instance;
-	DdbCellRendererTextMultilinePrivate * priv;
+    GtkCellRendererText parent_instance;
+    DdbCellRendererTextMultilinePrivate * priv;
 };
 
 struct _DdbCellRendererTextMultilineClass {
-	GtkCellRendererTextClass parent_class;
+    GtkCellRendererTextClass parent_class;
 };
 
 

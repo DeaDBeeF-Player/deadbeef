@@ -1,5 +1,4 @@
 if HAVE_ALSA
-alsadir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = alsa.la
 alsa_la_SOURCES = alsa.c
 alsa_la_LDFLAGS = -module -avoid-version

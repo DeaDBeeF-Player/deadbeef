@@ -294,7 +294,7 @@ cgme_add_meta (DB_playItem_t *it, const char *key, const char *value) {
         return;
     }
 
-    if (deadbeef->junk_iconv (value, len, out, sizeof (out), "iso8859-1", "utf-8") >= 0) {
+    if (deadbeef->junk_iconv (value, len, out, sizeof (out), "cp1252", "utf-8") >= 0) {
         deadbeef->pl_add_meta (it, key, out);
         return;
     }

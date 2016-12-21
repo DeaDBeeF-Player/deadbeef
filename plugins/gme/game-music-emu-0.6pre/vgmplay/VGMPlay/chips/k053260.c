@@ -10,10 +10,12 @@
 #include <stdio.h>
 #endif
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 #include "k053260.h"
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 /* 2004-02-28: Fixed PPCM decoding. Games sound much better now.*/
 
@@ -319,7 +321,9 @@ INLINE void check_bounds( k053260_state *ic, int channel )
 	int channel_end = channel_start + ic->channels[channel].size - 1;
 
 	if ( channel_start > ic->rom_size ) {
+#ifdef _DEBUG
 		logerror("K53260: Attempting to start playing past the end of the ROM ( start = %06x, end = %06x ).\n", channel_start, channel_end );
+#endif
 
 		ic->channels[channel].play = 0;
 
@@ -327,11 +331,15 @@ INLINE void check_bounds( k053260_state *ic, int channel )
 	}
 
 	if ( channel_end > ic->rom_size ) {
+#ifdef _DEBUG
 		logerror("K53260: Attempting to play past the end of the ROM ( start = %06x, end = %06x ).\n", channel_start, channel_end );
+#endif
 
 		ic->channels[channel].size = ic->rom_size - channel_start;
 	}
+#ifdef _DEBUG
 	if (LOG) logerror("K053260: Sample Start = %06x, Sample End = %06x, Sample rate = %04x, PPCM = %s\n", channel_start, channel_end, ic->channels[channel].rate, ic->channels[channel].ppcm ? "yes" : "no" );
+#endif
 }
 
 //WRITE8_DEVICE_HANDLER( k053260_w )
@@ -345,7 +353,9 @@ void k053260_w(void *_info, offs_t offset, UINT8 data)
 	k053260_state *ic = (k053260_state *)_info;
 
 	if ( r > 0x2f ) {
+#ifdef _DEBUG
 		logerror("K053260: Writing past registers\n" );
+#endif
 		return;
 	}
 
@@ -480,7 +490,9 @@ UINT8 k053260_r(void *_info, offs_t offset)
 
 				if ( offs > ic->rom_size ) {
 					//logerror("%s: K53260: Attempting to read past ROM size in ROM Read Mode (offs = %06x, size = %06x).\n", device->machine().describe_context(),offs,ic->rom_size );
+#ifdef _DEBUG
 					logerror("K53260: Attempting to read past ROM size in ROM Read Mode (offs = %06x, size = %06x).\n", offs,ic->rom_size );
+#endif
 
 					return 0;
 				}

@@ -4,6 +4,7 @@
 
 #include "blargg_endian.h"
 #include <math.h>
+#include <stdio.h>
 
 /* Copyright (C) 2003-2008 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -28,6 +29,7 @@ Vgm_Core::Vgm_Core()
 Vgm_Core::~Vgm_Core()
 {
 	StopVGM(vgmp);
+	CloseVGMFile(vgmp);
 	VGMPlay_Deinit(vgmp);
 }
 
@@ -75,7 +77,7 @@ void Vgm_Core::set_tempo( double t )
 {
 	if ( file_begin() )
 	{
-        int vgm_rate_unit = get_le32(&header().lngRate);
+        int vgm_rate_unit = header().lngRate;
         if (!vgm_rate_unit)
             vgm_rate_unit = 44100;
 		int vgm_rate = (int) (vgm_rate_unit * t + 0.5);
@@ -137,6 +139,12 @@ static UINT32 VGMF_mem_GetSize(VGM_FILE* f)
 	return mf->size;
 }
 
+static UINT32 VGMF_mem_Tell(VGM_FILE* f)
+{
+	VGM_FILE_mem* mf = (VGM_FILE_mem *) f;
+	return mf->ptr;
+}
+
 blargg_err_t Vgm_Core::load_mem_( byte const data [], int size )
 {
 	VGM_FILE_mem memFile;
@@ -144,6 +152,7 @@ blargg_err_t Vgm_Core::load_mem_( byte const data [], int size )
 	memFile.vf.Read = &VGMF_mem_Read;
 	memFile.vf.Seek = &VGMF_mem_Seek;
 	memFile.vf.GetSize = &VGMF_mem_GetSize;
+	memFile.vf.Tell = &VGMF_mem_Tell;
 	memFile.buffer = data;
 	memFile.ptr = 0;
 	memFile.size = size;
@@ -156,12 +165,53 @@ blargg_err_t Vgm_Core::load_mem_( byte const data [], int size )
 	if ( !OpenVGMFile_Handle( vgmp, (VGM_FILE *) &memFile ) )
 		return blargg_err_file_type;
     
-    if ( !_header.lngLoopOffset )
+    if ( !header().lngLoopOffset )
         vgmp->VGMMaxLoop = 1;
 
 	set_tempo( 1 );
-
+    
 	return blargg_ok;
+}
+
+int Vgm_Core::get_channel_count()
+{
+    // XXX may support more than this, but 32 bit masks and all...
+    unsigned i;
+    UINT32 j;
+    for (i = 0; i < 32; i++)
+    {
+        if (!GetAccurateChipNameByChannel(vgmp, i, &j))
+            break;
+    }
+    return i;
+}
+
+char* Vgm_Core::get_voice_name(int channel)
+{
+    UINT32 realChannel;
+    const char * name = GetAccurateChipNameByChannel(vgmp, channel, &realChannel);
+    size_t length = strlen(name) + 16;
+    char * finalName = (char *) malloc(length);
+    if (finalName)
+#ifdef _MSC_VER
+        sprintf_s(finalName, length, "%s #%u", name, realChannel);
+#else
+        sprintf(finalName, "%s #%u", name, realChannel);
+#endif
+    return finalName;
+}
+
+void Vgm_Core::free_voice_name(char *name)
+{
+    free(name);
+}
+
+void Vgm_Core::set_mute(int mask)
+{
+    for (int i = 0; i < 32; i++)
+    {
+        SetChannelMute(vgmp, i, (mask >> i) & 1);
+    }
 }
 
 void Vgm_Core::start_track()

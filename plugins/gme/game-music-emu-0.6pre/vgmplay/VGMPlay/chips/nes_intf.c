@@ -5,7 +5,7 @@
 ****************************************************************/
 
 #include "mamedef.h"
-#include <memory.h>	// for memset
+#include <string.h>	// for memset
 #include <stdlib.h>	// for free
 #include <stddef.h>	// for NULL
 #include "../stdbool.h"

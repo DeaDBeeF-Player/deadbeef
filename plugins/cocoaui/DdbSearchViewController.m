@@ -48,8 +48,12 @@ extern DB_functions_t *deadbeef;
     [self initContent];
 }
 
-- (NSString *)rowGroupStr:(DdbListviewRow_t)row {
-    return nil;
+- (const char *)groupByConfStr {
+    return "cocoaui.search.group_by";
+}
+
+- (const char *)pinGroupsConfStr {
+    return "cocoaui.search.pin_groups";
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification {
@@ -75,10 +79,12 @@ extern DB_functions_t *deadbeef;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         deadbeef->plt_search_reset (plt);
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION | DDB_PLAYLIST_CHANGE_SEARCHRESULT, 0);
         deadbeef->plt_unref (plt);
     }
     [_entry setStringValue:@""];
     [_entry becomeFirstResponder];
+
 }
 
 - (void)sortColumn:(DdbListviewCol_t)column withOrder:(int)order {
@@ -86,6 +92,10 @@ extern DB_functions_t *deadbeef;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->plt_sort_v2 (plt, PL_SEARCH, c->type, c->format, order-1);
     deadbeef->plt_unref (plt);
+}
+
+- (void)dealloc {
+    [self cleanup];
 }
 
 @end

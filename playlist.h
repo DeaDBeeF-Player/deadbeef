@@ -251,11 +251,22 @@ plt_insert_cue_from_buffer (playlist_t *plt, playItem_t *after, playItem_t *orig
 playItem_t *
 plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int numsamples, int samplerate);
 
+// if value is NULL or empty - do nothing
+// if key already exists - do nothing
+// otherwise, add new meta field
 void
 pl_add_meta (playItem_t *it, const char *key, const char *value);
 
 void
+pl_add_meta_full (playItem_t *it, const char *key, const char *value, int valuesize);
+
+// if it already exists, append new value(s)
+// otherwise, call pl_add_meta
+void
 pl_append_meta (playItem_t *it, const char *key, const char *value);
+
+void
+pl_append_meta_full (playItem_t *it, const char *key, const char *value, int valuesize);
 
 // must be used in explicit pl_lock/unlock block
 // that makes it possible to avoid copying metadata on every access
@@ -415,6 +426,9 @@ void
 plt_search_process (playlist_t *plt, const char *text);
 
 void
+plt_search_process2 (playlist_t *plt, const char *text, int select_results);
+
+void
 plt_sort (playlist_t *plt, int iter, int id, const char *format, int order);
 
 void
@@ -518,5 +532,26 @@ pl_format_item_queue (playItem_t *it, char *s, int size);
 
 void
 send_trackinfochanged (playItem_t *track);
+
+playItem_t *
+plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate);
+
+void
+pl_configchanged (void);
+
+DB_metaInfo_t *
+pl_meta_for_key (playItem_t *it, const char *key);
+
+void
+pl_meta_free_values (DB_metaInfo_t *meta);
+
+void
+pl_add_meta_copy (playItem_t *it, DB_metaInfo_t *meta);
+
+int
+register_fileadd_filter (int (*callback)(ddb_file_found_data_t *data, void *user_data), void *user_data);
+
+void
+unregister_fileadd_filter (int id);
 
 #endif // __PLAYLIST_H

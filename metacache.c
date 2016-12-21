@@ -28,9 +28,11 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "metacache.h"
 
 typedef struct metacache_str_s {
     struct metacache_str_s *next;
+    size_t value_length;
     uint32_t refcount;
     char cmpidx; // positive means "equals", negative means "notequals"
     char str[1];
@@ -45,23 +47,27 @@ typedef struct {
 
 static metacache_hash_t hash[HASH_SIZE];
 
-uint32_t
-metacache_get_hash_sdbm (const char *str) {
+static uint32_t
+metacache_get_hash_sdbm (const char *str, size_t len) {
     uint32_t hash = 0;
     int c;
 
-    while (c = *str++)
+    const char *end = str+len;
+
+    while (str < end) {
+        c = *str++;
         hash = c + (hash << 6) + (hash << 16) - hash;
+    }
 
     return hash;
 }
 
-metacache_str_t *
-metacache_find_in_bucket (uint32_t h, const char *str) {
+static metacache_str_t *
+metacache_find_in_bucket (uint32_t h, const char *value, size_t len) {
     metacache_hash_t *bucket = &hash[h];
     metacache_str_t *chain = bucket->chain;
     while (chain) {
-        if (!strcmp (chain->str, str)) {
+        if (chain->value_length == len && !memcmp (chain->str, value, len)) {
             return chain;
         }
         chain = chain->next;
@@ -74,38 +80,43 @@ static int n_inserts = 0;
 static int n_buckets = 0;
 
 const char *
-metacache_add_string (const char *str) {
-//    printf ("n_strings=%d, n_inserts=%d, n_buckets=%d\n", n_strings, n_inserts, n_buckets);
-    uint32_t h = metacache_get_hash_sdbm (str);
-    metacache_str_t *data = metacache_find_in_bucket (h % HASH_SIZE, str);
+metacache_add_value (const char *value, size_t len) {
+    //    printf ("n_strings=%d, n_inserts=%d, n_buckets=%d\n", n_strings, n_inserts, n_buckets);
+    uint32_t h = metacache_get_hash_sdbm (value, len);
+    metacache_str_t *data = metacache_find_in_bucket (h & (HASH_SIZE-1), value, len);
     n_inserts++;
     if (data) {
         data->refcount++;
         return data->str;
     }
-    metacache_hash_t *bucket = &hash[h % HASH_SIZE];
+    metacache_hash_t *bucket = &hash[h & (HASH_SIZE-1)];
     if (!bucket->chain) {
         n_buckets++;
     }
-    size_t len = strlen (str);
     data = malloc (sizeof (metacache_str_t) + len);
     memset (data, 0, sizeof (metacache_str_t) + len);
     data->refcount = 1;
-    memcpy (data->str, str, len+1);
+    memcpy (data->str, value, len);
+    data->value_length = len;
     data->next = bucket->chain;
     bucket->chain = data;
     n_strings++;
     return data->str;
 }
 
+const char *
+metacache_add_string (const char *str) {
+    return metacache_add_value (str, (int)strlen (str) + 1);
+}
+
 void
-metacache_remove_string (const char *str) {
-    uint32_t h = metacache_get_hash_sdbm (str);
-    metacache_hash_t *bucket = &hash[h % HASH_SIZE];
+metacache_remove_value (const char *value, size_t valuesize) {
+    uint32_t h = metacache_get_hash_sdbm (value, valuesize);
+    metacache_hash_t *bucket = &hash[h & (HASH_SIZE-1)];
     metacache_str_t *chain = bucket->chain;
     metacache_str_t *prev = NULL;
     while (chain) {
-        if (!strcmp (chain->str, str)) {
+        if (chain->value_length == valuesize && !memcmp (chain->str, value, valuesize)) {
             chain->refcount--;
             if (chain->refcount == 0) {
                 if (prev) {
@@ -124,13 +135,36 @@ metacache_remove_string (const char *str) {
 }
 
 void
+metacache_remove_string (const char *str) {
+    return metacache_remove_value (str, strlen (str) + 1);
+}
+
+void
 metacache_ref (const char *str) {
     uint32_t *refc = (uint32_t *)(str-5);
-    *refc++;
+    (*refc)++;
 }
 
 void
 metacache_unref (const char *str) {
     uint32_t *refc = (uint32_t *)(str-5);
-    *refc--;
+    (*refc)--;
+}
+
+const char *
+metacache_get_string (const char *str) {
+    return metacache_get_value (str, strlen (str)+1);
+}
+
+const char *
+metacache_get_value (const char *value, size_t len) {
+    uint32_t h = metacache_get_hash_sdbm (value, len);
+    metacache_str_t *data = metacache_find_in_bucket (h & (HASH_SIZE-1), value, len);
+    n_inserts++;
+    if (data) {
+        data->refcount++;
+        return data->str;
+    }
+
+    return NULL;
 }

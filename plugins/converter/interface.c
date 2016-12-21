@@ -31,6 +31,7 @@ create_converterdlg (void)
 {
   GtkWidget *converterdlg;
   GtkWidget *dialog_vbox6;
+  GtkWidget *hbox105;
   GtkWidget *vbox26;
   GtkWidget *hbox67;
   GtkWidget *label103;
@@ -39,6 +40,7 @@ create_converterdlg (void)
   GtkWidget *converter_output_browse;
   GtkWidget *write_to_source_folder;
   GtkWidget *preserve_folders;
+  GtkWidget *bypass_same_format;
   GtkWidget *hbox100;
   GtkWidget *label122;
   GtkWidget *hbox101;
@@ -66,11 +68,14 @@ create_converterdlg (void)
   GtkWidget *hbox99;
   GtkWidget *label121;
   GtkWidget *overwrite_action;
+  GtkWidget *scrolledwindow9;
+  GtkWidget *preview_tree;
   GtkWidget *dialog_action_area5;
   GtkWidget *converter_cancel;
   GtkWidget *converter_ok;
 
   converterdlg = gtk_dialog_new ();
+  gtk_widget_set_size_request (converterdlg, 720, -1);
   gtk_window_set_title (GTK_WINDOW (converterdlg), "Converter");
   gtk_window_set_position (GTK_WINDOW (converterdlg), GTK_WIN_POS_MOUSE);
   gtk_window_set_modal (GTK_WINDOW (converterdlg), TRUE);
@@ -81,9 +86,13 @@ create_converterdlg (void)
   dialog_vbox6 = gtk_dialog_get_content_area (GTK_DIALOG (converterdlg));
   gtk_widget_show (dialog_vbox6);
 
+  hbox105 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox105);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox6), hbox105, TRUE, TRUE, 0);
+
   vbox26 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox26);
-  gtk_box_pack_start (GTK_BOX (dialog_vbox6), vbox26, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox105), vbox26, FALSE, TRUE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (vbox26), 12);
 
   hbox67 = gtk_hbox_new (FALSE, 8);
@@ -115,9 +124,13 @@ create_converterdlg (void)
   gtk_widget_show (preserve_folders);
   gtk_box_pack_start (GTK_BOX (vbox26), preserve_folders, FALSE, FALSE, 0);
 
+  bypass_same_format = gtk_check_button_new_with_mnemonic (_("Copy if the format is not changing"));
+  gtk_widget_show (bypass_same_format);
+  gtk_box_pack_start (GTK_BOX (vbox26), bypass_same_format, FALSE, FALSE, 0);
+
   hbox100 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox100);
-  gtk_box_pack_start (GTK_BOX (vbox26), hbox100, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox26), hbox100, FALSE, TRUE, 0);
 
   label122 = gtk_label_new (_("Output file name:"));
   gtk_widget_show (label122);
@@ -130,7 +143,7 @@ create_converterdlg (void)
   output_file = gtk_entry_new ();
   gtk_widget_show (output_file);
   gtk_box_pack_start (GTK_BOX (hbox101), output_file, TRUE, TRUE, 0);
-  gtk_widget_set_tooltip_text (output_file, _("Extension (e.g. .mp3) will be appended automatically.\nLeave the field empty for default (%a - %t)."));
+  gtk_widget_set_tooltip_text (output_file, _("Extension (e.g. .mp3) will be appended automatically.\nLeave the field empty for default (%artist% - %title%)."));
   gtk_entry_set_invisible_char (GTK_ENTRY (output_file), 8226);
 
   custom6 = title_formatting_help_link_create ("custom6", "", "", 0, 0);
@@ -141,7 +154,7 @@ create_converterdlg (void)
 
   hbox69 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox69);
-  gtk_box_pack_start (GTK_BOX (vbox26), hbox69, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox26), hbox69, FALSE, TRUE, 0);
 
   label104 = gtk_label_new (_("Encoder:"));
   gtk_widget_show (label104);
@@ -219,7 +232,7 @@ create_converterdlg (void)
 
   hbox99 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox99);
-  gtk_box_pack_start (GTK_BOX (vbox26), hbox99, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox26), hbox99, FALSE, TRUE, 0);
 
   label121 = gtk_label_new (_("When file exists:"));
   gtk_widget_show (label121);
@@ -231,6 +244,17 @@ create_converterdlg (void)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (overwrite_action), _("Skip"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (overwrite_action), _("Prompt"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (overwrite_action), _("Overwrite"));
+
+  scrolledwindow9 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow9);
+  gtk_box_pack_start (GTK_BOX (hbox105), scrolledwindow9, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (scrolledwindow9), 12);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow9), GTK_SHADOW_IN);
+
+  preview_tree = gtk_tree_view_new ();
+  gtk_widget_show (preview_tree);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow9), preview_tree);
+  gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (preview_tree), TRUE);
 
   dialog_action_area5 = gtk_dialog_get_action_area (GTK_DIALOG (converterdlg));
   gtk_widget_show (dialog_action_area5);
@@ -255,8 +279,8 @@ create_converterdlg (void)
   g_signal_connect ((gpointer) preserve_folders, "toggled",
                     G_CALLBACK (on_preserve_folders_toggled),
                     NULL);
-  g_signal_connect ((gpointer) output_file, "changed",
-                    G_CALLBACK (on_output_file_changed),
+  g_signal_connect ((gpointer) bypass_same_format, "toggled",
+                    G_CALLBACK (on_bypass_same_format_toggled),
                     NULL);
   g_signal_connect ((gpointer) encoder, "changed",
                     G_CALLBACK (on_converter_encoder_changed),
@@ -283,6 +307,7 @@ create_converterdlg (void)
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (converterdlg, converterdlg, "converterdlg");
   GLADE_HOOKUP_OBJECT_NO_REF (converterdlg, dialog_vbox6, "dialog_vbox6");
+  GLADE_HOOKUP_OBJECT (converterdlg, hbox105, "hbox105");
   GLADE_HOOKUP_OBJECT (converterdlg, vbox26, "vbox26");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox67, "hbox67");
   GLADE_HOOKUP_OBJECT (converterdlg, label103, "label103");
@@ -291,6 +316,7 @@ create_converterdlg (void)
   GLADE_HOOKUP_OBJECT (converterdlg, converter_output_browse, "converter_output_browse");
   GLADE_HOOKUP_OBJECT (converterdlg, write_to_source_folder, "write_to_source_folder");
   GLADE_HOOKUP_OBJECT (converterdlg, preserve_folders, "preserve_folders");
+  GLADE_HOOKUP_OBJECT (converterdlg, bypass_same_format, "bypass_same_format");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox100, "hbox100");
   GLADE_HOOKUP_OBJECT (converterdlg, label122, "label122");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox101, "hbox101");
@@ -317,6 +343,8 @@ create_converterdlg (void)
   GLADE_HOOKUP_OBJECT (converterdlg, hbox99, "hbox99");
   GLADE_HOOKUP_OBJECT (converterdlg, label121, "label121");
   GLADE_HOOKUP_OBJECT (converterdlg, overwrite_action, "overwrite_action");
+  GLADE_HOOKUP_OBJECT (converterdlg, scrolledwindow9, "scrolledwindow9");
+  GLADE_HOOKUP_OBJECT (converterdlg, preview_tree, "preview_tree");
   GLADE_HOOKUP_OBJECT_NO_REF (converterdlg, dialog_action_area5, "dialog_action_area5");
   GLADE_HOOKUP_OBJECT (converterdlg, converter_cancel, "converter_cancel");
   GLADE_HOOKUP_OBJECT (converterdlg, converter_ok, "converter_ok");
@@ -355,6 +383,7 @@ create_convpreset_editor (void)
   GtkWidget *hbox104;
   GtkWidget *id3v2;
   GtkWidget *id3v2_version;
+  GtkWidget *mp4;
   GtkWidget *label125;
   GtkWidget *dialog_action_area6;
   GtkWidget *convpreset_cancel;
@@ -445,7 +474,8 @@ create_convpreset_editor (void)
   gtk_widget_show (method);
   gtk_box_pack_start (GTK_BOX (hbox73), method, TRUE, TRUE, 0);
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (method), _("Pipe"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (method), _("Temporary file"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (method), _("Temp File"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (method), _("Source File"));
 
   frame9 = gtk_frame_new (NULL);
   gtk_widget_show (frame9);
@@ -502,6 +532,12 @@ create_convpreset_editor (void)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id3v2_version), "2.3");
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id3v2_version), "2.4");
 
+  mp4 = gtk_check_button_new_with_mnemonic (_("MP4"));
+  gtk_widget_show (mp4);
+  gtk_table_attach (GTK_TABLE (table2), mp4, 0, 1, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
   label125 = gtk_label_new (_("<b>Tag writer</b>"));
   gtk_widget_show (label125);
   gtk_frame_set_label_widget (GTK_FRAME (frame9), label125);
@@ -554,6 +590,7 @@ create_convpreset_editor (void)
   GLADE_HOOKUP_OBJECT (convpreset_editor, hbox104, "hbox104");
   GLADE_HOOKUP_OBJECT (convpreset_editor, id3v2, "id3v2");
   GLADE_HOOKUP_OBJECT (convpreset_editor, id3v2_version, "id3v2_version");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, mp4, "mp4");
   GLADE_HOOKUP_OBJECT (convpreset_editor, label125, "label125");
   GLADE_HOOKUP_OBJECT_NO_REF (convpreset_editor, dialog_action_area6, "dialog_action_area6");
   GLADE_HOOKUP_OBJECT (convpreset_editor, convpreset_cancel, "convpreset_cancel");

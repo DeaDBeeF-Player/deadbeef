@@ -409,9 +409,9 @@ on_pltbrowser_header_popup_menu (gpointer user_data)
 {
     w_pltbrowser_t *w = user_data;
     GtkWidget *popup = gtk_menu_new ();
-    GtkWidget *playing = gtk_check_menu_item_new_with_mnemonic ("Playing");
-    GtkWidget *items = gtk_check_menu_item_new_with_mnemonic ("Items");
-    GtkWidget *duration = gtk_check_menu_item_new_with_mnemonic ("Duration");
+    GtkWidget *playing = gtk_check_menu_item_new_with_mnemonic (_("Playing"));
+    GtkWidget *items = gtk_check_menu_item_new_with_mnemonic (_("Items"));
+    GtkWidget *duration = gtk_check_menu_item_new_with_mnemonic (_("Duration"));
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (playing), deadbeef->conf_get_int ("gtkui.pltbrowser.show_playing_column", 0));
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (items), deadbeef->conf_get_int ("gtkui.pltbrowser.show_items_column", 0));
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (duration), deadbeef->conf_get_int ("gtkui.pltbrowser.show_duration_column", 0));
@@ -585,6 +585,7 @@ on_pltbrowser_header_clicked (GtkWidget       *widget,
     return FALSE;
 }
 
+/*
 static void
 plt_get_title_wrapper (int plt, char *buffer, int len) {
     if (plt == -1) {
@@ -599,6 +600,7 @@ plt_get_title_wrapper (int plt, char *buffer, int len) {
         *end = 0;
     }
 }
+*/
 
 static gboolean
 on_pltbrowser_key_press_event (GtkWidget *widget,
@@ -606,21 +608,48 @@ on_pltbrowser_key_press_event (GtkWidget *widget,
                                gpointer   user_data)
 {
     w_pltbrowser_t *w = user_data;
-    if (event->keyval == GDK_F2) {
-        // rename selected playlist
-        GtkTreePath *path;
-        GtkTreeViewColumn *col;
-        gtk_tree_view_get_cursor (GTK_TREE_VIEW (w->tree), &path, NULL);
-        col = gtk_tree_view_get_column (GTK_TREE_VIEW (w->tree), COL_NAME);
-        if (!path || !col) {
-            return FALSE;
+    if (event->state & GDK_CONTROL_MASK) {
+        int row = get_treeview_cursor_pos (GTK_TREE_VIEW (w->tree));
+        if (row >= 0) {
+            deadbeef->pl_lock ();
+            ddb_playlist_t *plt = deadbeef->plt_get_for_idx (row);
+            deadbeef->pl_unlock ();
+            if (plt) {
+                int res = 0;
+                if (event->keyval == GDK_c) {
+                    gtkui_plugin->copy_selection (plt, DDB_ACTION_CTX_PLAYLIST);
+                    res = 1;
+                }
+                else if (event->keyval == GDK_v) {
+                    gtkui_plugin->paste_selection (plt, DDB_ACTION_CTX_PLAYLIST);
+                    res = 1;
+                }
+                else if (event->keyval == GDK_x) {
+                    gtkui_plugin->cut_selection (plt, DDB_ACTION_CTX_PLAYLIST);
+                    res = 1;
+                }
+                deadbeef->plt_unref (plt);
+                return res;
+            }
         }
-        // start editing
-        gtk_tree_view_set_cursor_on_cell (GTK_TREE_VIEW (w->tree), path, col, NULL, TRUE);
     }
+
+    //if (event->keyval == GDK_F2) {
+    //    // rename selected playlist
+    //    GtkTreePath *path;
+    //    GtkTreeViewColumn *col;
+    //    gtk_tree_view_get_cursor (GTK_TREE_VIEW (w->tree), &path, NULL);
+    //    col = gtk_tree_view_get_column (GTK_TREE_VIEW (w->tree), COL_NAME);
+    //    if (!path || !col) {
+    //        return FALSE;
+    //    }
+    //    // start editing
+    //    gtk_tree_view_set_cursor_on_cell (GTK_TREE_VIEW (w->tree), path, col, NULL, TRUE);
+    //}
     return FALSE;
 }
 
+/*
 static void
 on_pltbrowser_cell_edititing_started (GtkCellRenderer *renderer,
                                       GtkCellEditable *editable,
@@ -657,6 +686,7 @@ on_pltbrowser_cell_edited (GtkCellRendererText *cell,
         deadbeef->pl_unlock ();
     }
 }
+*/
 
 static GtkTreeViewColumn *
 add_treeview_column (w_pltbrowser_t *w, GtkTreeView *tree, int pos, int expand, int align_right, const char *title, int is_pixbuf)
@@ -674,6 +704,9 @@ add_treeview_column (w_pltbrowser_t *w, GtkTreeView *tree, int pos, int expand, 
     if (align_right) {
         g_object_set (rend, "xalign", 1.0, NULL);
     }
+    // GTK+ breaks row activation on editable rows, so we have to disable
+    // inline editing for now
+    /*
     if (pos == COL_NAME) {
         g_object_set (rend, "editable", TRUE, NULL);
         g_signal_connect (rend, "editing_started",
@@ -683,6 +716,7 @@ add_treeview_column (w_pltbrowser_t *w, GtkTreeView *tree, int pos, int expand, 
                 G_CALLBACK (on_pltbrowser_cell_edited),
                 w);
     }
+    */
     gtk_tree_view_column_set_sizing (col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     gtk_tree_view_column_set_expand (col, expand);
     gtk_tree_view_insert_column (GTK_TREE_VIEW (tree), col, pos);

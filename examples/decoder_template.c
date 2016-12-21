@@ -74,7 +74,22 @@ example_free (DB_fileinfo_t *_info) {
 static int
 example_read (DB_fileinfo_t *_info, char *bytes, int size) {
     example_info_t *info = (example_info_t *)_info;
-    info->currentsample += size / (_info->fmt.channels * _info->fmt.bps/8);
+
+    // CUE track switching support
+    int samplesize = _info->fmt.bps / 8 * _info->fmt.channels;
+
+    if (info->currentsample + size / samplesize > info->endsample) {
+        size = (info->endsample - info->currentsample + 1) * samplesize;
+        if (size <= 0) {
+            return 0;
+        }
+    }
+
+    int nblocks = size / samplesize;
+
+    // ... decode nblocks blocks here ...
+
+    info->currentsample += nblocks;
     return size;
 }
 

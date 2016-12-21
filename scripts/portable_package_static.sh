@@ -28,7 +28,6 @@ cd portable/$ARCH
 tar jcvf ../../portable_out/build/$OUTNAME\
     $SRCDIR/deadbeef\
     $SRCDIR/deadbeef.png\
-    $SRCDIR/.ddb_portable\
     $DOCDIR\
     $PLUGDIR/aac.so\
     $PLUGDIR/adplug.so\
@@ -36,7 +35,6 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/artwork.so\
     $PLUGDIR/cdda.so\
     $PLUGDIR/dca.so\
-    $PLUGDIR/ddb_gui_GTK2.fallback.so\
     $PLUGDIR/ddb_gui_GTK2.so\
     $PLUGDIR/ddb_gui_GTK3.so\
     $PLUGDIR/ffap.so\
@@ -65,7 +63,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/vtx.so\
     $PLUGDIR/wavpack.so\
     $PLUGDIR/wildmidi.so\
-    $PLUGDIR/ddb_ao.so\
+    $PLUGDIR/psf.so\
     $PLUGDIR/ddb_shn.so\
     $PLUGDIR/ddb_dumb.so\
     $PLUGDIR/converter.so\
@@ -80,6 +78,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/pltbrowser_gtk2.so\
     $PLUGDIR/pltbrowser_gtk3.so\
     $PLUGDIR/in_sc68.so\
+    $PLUGDIR/statusnotifier.so\
     $PLUGDIR/data68\
     $PIXMAPDIR\
     $SRCDIR/locale\

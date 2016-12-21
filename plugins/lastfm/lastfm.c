@@ -41,7 +41,9 @@ static DB_functions_t *deadbeef;
 static char lfm_user[100];
 static char lfm_pass[100];
 
-static char lfm_sess[33];
+#define SESS_ID_MAX 100
+
+static char lfm_sess[SESS_ID_MAX];
 static char lfm_nowplaying_url[256];
 static char lfm_submission_url[256];
 
@@ -258,8 +260,8 @@ auth (void) {
         while (*end && *end >= 0x20) {
             end++;
         }
-        if (end-p > 32) {
-            trace ("scrobbler session id is invalid length. probably plugin needs fixing.\n");
+        if (end-p >= SESS_ID_MAX) {
+            trace ("scrobbler session id is too large (%d).\n", (int)(end-p));
             goto fail;
         }
         strncpy (lfm_sess, p, 32);
@@ -600,7 +602,7 @@ lfm_send_nowplaying (void) {
         return;
     }
     trace ("auth successful! setting nowplaying\n");
-    char s[100];
+    char s[SESS_ID_MAX + 4];
     snprintf (s, sizeof (s), "s=%s&", lfm_sess);
     int l = strlen (lfm_nowplaying);
     strcpy (lfm_nowplaying+l, s);
@@ -750,94 +752,6 @@ lfm_thread (void *ctx) {
         }
     }
 }
-
-
-// {{{ lastfm v2 get session
-#if 0
-int
-auth_v2 (void) {
-    if (lfm_sess[0]) {
-        return 0;
-    }
-    char msg[4096];
-    char sigstr[4096];
-    uint8_t sig[16];
-    snprintf (sigstr, sizeof (sigstr), "api_key%smethodauth.getToken%s", LASTFM_API_KEY, LASTFM_API_SECRET);
-    deadbeef->md5 (sig, sigstr, strlen (sigstr));
-    deadbeef->md5_to_str (sigstr, sig);
-    snprintf (msg, sizeof (msg), "%s/?api_key=%s&method=auth.getToken&api_sig=%s", SCROBBLER_URL, LASTFM_API_KEY, sigstr);
-    // get token
-    char lfm_token[33] = "";
-    int status = curl_req_send (msg, NULL);
-    if (!status) {
-        // parse output
-        if (strstr (lfm_reply, "<lfm status=\"ok\">")) {
-            char *token = strstr (lfm_reply, "<token>");
-            if (token) {
-                token += 7;
-                char *end = strstr (token, "</token>");
-                if (end) {
-                    *end = 0;
-                    snprintf (msg, sizeof (msg), "http://www.last.fm/api/auth/?api_key=%s&token=%s", LASTFM_API_KEY, token);
-                    trace ("Dear user. Please visit this URL and authenticate deadbeef. Thanks.\n");
-
-                    trace ("%s\n", msg);
-                    strncpy (lfm_token, token, 32);
-                    lfm_token[32] = 0;
-                }
-            }
-        }
-    }
-    curl_req_cleanup ();
-    if (!lfm_token[0]) {
-        // total fail, give up
-        return -1;
-    }
-    // get session
-    snprintf (sigstr, sizeof (sigstr), "api_key%smethodauth.getSessiontoken%s%s", LASTFM_API_KEY, lfm_token, LASTFM_API_SECRET);
-    deadbeef->md5 (sig, sigstr, strlen (sigstr));
-    deadbeef->md5_to_str (sigstr, sig);
-    snprintf (msg, sizeof (msg), "method=auth.getSession&token=%s&api_key=%s&api_sig=%s", lfm_token, LASTFM_API_KEY, sigstr);
-    for (;;) {
-        status = curl_req_send (SCROBBLER_URL, msg);
-        if (!status) {
-            char *sess = strstr (lfm_reply, "<key>");
-            if (sess) {
-                sess += 5;
-                char *end = strstr (sess, "</key>");
-                if (end) {
-                    *end = 0;
-                    char config[1024];
-                    snprintf (config, sizeof (config), "%s/.config/deadbeef/lastfmv2", getenv ("HOME"));
-                    trace ("got session key %s\n", sess);
-                    FILE *fp = fopen (config, "w+b");
-                    if (!fp) {
-                        trace ("lastfm: failed to write config file %s\n", config);
-                        curl_req_cleanup ();
-                        return -1;
-                    }
-                    if (fwrite (sess, 1, 32, fp) != 32) {
-                        fclose (fp);
-                        trace ("lastfm: failed to write config file %s\n", config);
-                        curl_req_cleanup ();
-                        return -1;
-                    }
-                    fclose (fp);
-                    strcpy (lfm_sess, sess);
-                }
-            }
-//            trace ("reply: %s\n", lfm_reply);
-        }
-        curl_req_cleanup ();
-        if (lfm_sess[0]) {
-            break;
-        }
-        sleep (5);
-    }
-    return 0;
-}
-#endif
-// }}}
 
 static int
 lfm_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {

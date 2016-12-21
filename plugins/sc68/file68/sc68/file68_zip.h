@@ -24,7 +24,7 @@
  * @{
  */
 
-FILE68_EXTERN
+FILE68_API
 /**
  * Test gzip file header magic header.
  *
@@ -35,7 +35,7 @@ FILE68_EXTERN
  */
 int gzip68_is_magic(const void * buffer);
 
-FILE68_EXTERN
+FILE68_API
 /**
  * Load an optionnally gzipped file.
  *
@@ -51,7 +51,7 @@ FILE68_EXTERN
  */
 void * gzip68_load(const char * fname, int * ulen);
 
-FILE68_EXTERN
+FILE68_API
 /**
  * Unzip from and to memory.
  *

@@ -29,9 +29,7 @@
 
 #include <stdbool.h>
 #include <ogg/ogg.h>
-#if HAVE_SYS_SYSLIMITS_H
-#include <sys/syslimits.h>
-#endif
+#include <limits.h>
 #include "../../deadbeef.h"
 #include "oggedit.h"
 
@@ -57,7 +55,7 @@ char *codec_names(DB_FILE *in, ogg_sync_state *oy, const off_t link_offset);
 off_t codec_stream_size(DB_FILE *in, ogg_sync_state *oy, const off_t start_offset, const off_t end_offset, const char *codec);
 char *parse_vendor(const ogg_packet *op, const size_t magic_length);
 int64_t init_read_stream(DB_FILE *in, ogg_sync_state *oy, ogg_stream_state *os, ogg_page *og, const off_t offset, const char *codec);
-int64_t read_packet(DB_FILE *in, ogg_sync_state *oy, ogg_stream_state *os, ogg_page *og, ogg_packet *header, int pages);
+int read_packet(DB_FILE *in, ogg_sync_state *oy, ogg_stream_state *os, ogg_page *og, ogg_packet *header, int pages);
 ogg_packet *fill_vc_packet(const char *magic, const size_t magic_length, const char *vendor, const size_t num_tags, char **tags, const bool framing, const size_t padding, ogg_packet *op);
 size_t vc_size(const char *vendor, size_t num_tags, char **tags);
 int64_t copy_remaining_pages(DB_FILE *in, FILE *out, ogg_sync_state *oy, const int64_t codec_serial, uint32_t pageno);

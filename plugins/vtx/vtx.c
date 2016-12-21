@@ -79,19 +79,24 @@ vtx_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     sz = deadbeef->fgetlength (fp);
     if (sz <= 0) {
         trace ("vtx: bad file size\n");
+        deadbeef->fclose (fp);
         return -1;
     }
 
     buf = malloc (sz);
     if (!buf) {
         trace ("vtx: out of memory\n");
+        deadbeef->fclose (fp);
         return -1;
     }
     if (deadbeef->fread (buf, 1, sz, fp) != sz) {
         trace ("vtx: read failed\n");
         free (buf);
+        deadbeef->fclose (fp);
         return -1;
     }
+
+    deadbeef->fclose (fp);
 
     info->decoder = ayemu_vtx_load (buf, sz);
     if (!info->decoder) {
@@ -302,7 +307,7 @@ vtx_stop (void) {
 }
 
 static const char settings_dlg[] =
-    "property \"Bits per sample (8 or 16)\" entry vtx.bps 16;\n"
+    "property \"Bits per sample\" select[2] vtx.bps 0 16 8;\n"
 ;
 
 // define plugin interface

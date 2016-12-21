@@ -53,7 +53,7 @@
  *  INTREQW (W) DFF09C [-x---DCBA--------] Interrupt request write.
  *
  *  INTENAR (W) DFF01C [-M---DCBA--------] Interrupt enable read (M=Master).
- *  INTENAW (W) DFF09A [-M---DCBA--------] Interrupt enable write (M=Master).
+ *  INTENAW (W) DFF09A [SM---DCBA--------] Interrupt enable write (M=Master).
  *
  *  DMACONW (W) DFF096 [S00000E00000DBCA] DMA control register write (E=Enable).
  *  DMACONR (W) DFF002 [000000E00000DBCA] DMA control register read (E=Enable).
@@ -65,7 +65,7 @@
  *
  *  VOICEX
  *  +0 (L) START  [00000000 00000xxx xxxxxxxx xxxxxxx0] start address (even).
- *  +4 (W) LENGHT [xxxxxxxx xxxxxxxx] Length in word (0=010000).
+ *  +4 (W) LENGTH [xxxxxxxx xxxxxxxx] Length in word (0=010000).
  *  +6 (W) PERIOD [0000xxxx xxxxxxxx] Period (in paula cycle).
  *  +8 (W) VOLUME [0xxxxxxx] Volume [0-64] (presume value > 64 => 64).
  *  @endcode
@@ -216,6 +216,7 @@ typedef struct {
   int      clock;      /**< Clock type. @see paula_clock_e.      */
   plct_t   clkperspl;  /**< (clock<<paula_t::ct_fix)/hz.         */
   uint_t   hz;         /**< Sampling rate in hz,                 */
+  int    * chansptr;   /**< Pointer to enabled channels mask.    */
 
   const u8 * mem;      /**< 68K memory buffer.                   */
   int        log2mem;  /**< 68K memory buffer size (2^log2mem).  */

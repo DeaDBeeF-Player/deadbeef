@@ -29,23 +29,14 @@
 
 #define MAX_COLUMNS 20
 
-@interface AppDelegate : NSObject <NSApplicationDelegate> {
-    MainWindowController *_mainWindow;
-    PreferencesWindowController *_prefWindow;
-    SearchWindowController *_searchWindow;
-
-    NSMenuItem *_dockMenuNPHeading;
-    NSMenuItem *_dockMenuNPTitle;
-    NSMenuItem *_dockMenuNPArtistAlbum;
-    NSMenuItem *_dockMenuNPSeparator;
-
-    char *_titleScript;
-    char *_artistAlbumScript;
-}
-
-- (NSWindow *)mainWindow;
+@interface AppDelegate : NSObject <NSApplicationDelegate>
 
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
+
+@property MainWindowController *mainWindow;
+
+@property (unsafe_unretained) IBOutlet NSMenuItem *mainWindowToggleMenuItem;
+@property (unsafe_unretained) IBOutlet NSMenuItem *logWindowToggleMenuItem;
 
 @property (unsafe_unretained) IBOutlet NSMenu *mainMenu;
 @property (unsafe_unretained) IBOutlet NSMenu *dockMenu;
@@ -137,6 +128,7 @@
 
 // window menu
 - (IBAction)showMainWinAction:(id)sender;
+- (IBAction)showLogWindowAction:(id)sender;
 
 @end
 

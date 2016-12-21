@@ -42,8 +42,8 @@
 #include <FLAC/metadata.h>
 #include <limits.h>
 #include "../../deadbeef.h"
-#include "../artwork/artwork.h"
 #include "../liboggedit/oggedit.h"
+#include "../../strdupa.h"
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -580,20 +580,42 @@ static const char *metainfo[] = {
     "GENRE", "genre",
     "COMMENT", "comment",
     "PERFORMER", "performer",
-//    "ENSEMBLE", "band",
     "COMPOSER", "composer",
     "ENCODED-BY", "vendor",
     "DISCNUMBER", "disc",
     "DISCTOTAL", "numdiscs",
     "TOTALDISCS", "numdiscs",
     "COPYRIGHT", "copyright",
-    "TOTALTRACKS", "numtracks",
-    "TRACKTOTAL", "numtracks",
-    "ALBUM ARTIST", "band",
     "ORIGINALDATE","original_release_time",
     "ORIGINALYEAR","original_release_year",
     NULL
 };
+
+static int
+add_track_meta (DB_playItem_t *it, char *track) {
+    char *slash = strchr (track, '/');
+    if (slash) {
+        // split into track/totaltracks
+        *slash = 0;
+        slash++;
+        deadbeef->pl_add_meta (it, "numtracks", slash);
+    }
+    deadbeef->pl_add_meta (it, "track", track);
+    return 0;
+}
+
+static int
+add_disc_meta (DB_playItem_t *it, char *disc) {
+    char *slash = strchr (disc, '/');
+    if (slash) {
+        // split into disc/totaldiscs
+        *slash = 0;
+        slash++;
+        deadbeef->pl_add_meta (it, "numdiscs", slash);
+    }
+    deadbeef->pl_add_meta (it, "disc", disc);
+    return 0;
+}
 
 static void
 cflac_add_metadata (DB_playItem_t *it, const char *s, int length) {
@@ -601,7 +623,16 @@ cflac_add_metadata (DB_playItem_t *it, const char *s, int length) {
     for (m = 0; metainfo[m]; m += 2) {
         size_t l = strlen (metainfo[m]);
         if (length > l && !strncasecmp (metainfo[m], s, l) && s[l] == '=') {
-            deadbeef->pl_append_meta (it, metainfo[m+1], s + l + 1);
+            const char *val = s + l + 1;
+            if (!strcmp (metainfo[m+1], "track")) {
+                add_track_meta (it, strdupa (val));
+            }
+            else if (!strcmp (metainfo[m+1], "disc")) {
+                add_disc_meta (it, strdupa (val));
+            }
+            else {
+                deadbeef->pl_append_meta (it, metainfo[m+1], val);
+            }
             break;
         }
     }
@@ -682,7 +713,9 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
 }
 
 static DB_playItem_t *
-cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const FLAC__StreamMetadata_CueSheet *cuesheet, int totalsamples, int samplerate) {
+cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const FLAC__StreamMetadata_CueSheet *cuesheet, uint64_t totalsamples, int samplerate) {
+    deadbeef->pl_lock ();
+
     static const char err_invalid_cuesheet[] = "The flac %s has invalid FLAC__METADATA_TYPE_CUESHEET block, which will get ignored. You should remove it using metaflac.\n";
     DB_playItem_t *ins = after;
 
@@ -690,6 +723,7 @@ cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_pl
     for (int i = 0; i < cuesheet->num_tracks; i++) {
         if (cuesheet->tracks[i].offset > totalsamples) {
             fprintf (stderr, err_invalid_cuesheet, deadbeef->pl_find_meta_raw (origin, ":URI"));
+            deadbeef->pl_unlock ();
             return NULL;
         }
     }
@@ -697,14 +731,14 @@ cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_pl
     // use libflac to validate the cuesheet as well
     if(!FLAC__format_cuesheet_is_legal (cuesheet, 1, NULL)) {
         fprintf (stderr, err_invalid_cuesheet, deadbeef->pl_find_meta_raw (origin, ":URI"));
+        deadbeef->pl_unlock ();
         return NULL;
     }
 
+    const char *uri = deadbeef->pl_find_meta_raw (origin, ":URI");
+    const char *dec = deadbeef->pl_find_meta_raw (origin, ":DECODER");
+    const char *ftype = "FLAC";
     for (int i = 0; i < cuesheet->num_tracks-1; i++) {
-        const char *uri = deadbeef->pl_find_meta_raw (origin, ":URI");
-        const char *dec = deadbeef->pl_find_meta_raw (origin, ":DECODER");
-        const char *ftype= "FLAC";
-
         DB_playItem_t *it = deadbeef->pl_item_alloc_init (uri, dec);
         deadbeef->pl_set_meta_int (it, ":TRACKNUM", i+1);
         deadbeef->pl_set_meta_int (it, "TRACK", i+1);
@@ -730,15 +764,21 @@ cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_pl
     }
 
     if (!first) {
+        deadbeef->pl_unlock ();
         return NULL;
     }
-    trace ("aac: split by chapters success\n");
-    // copy metadata from embedded tags
+
+    // copy metadata and flags from the source track
     uint32_t f = deadbeef->pl_get_item_flags (origin);
     f |= DDB_IS_SUBTRACK;
     deadbeef->pl_set_item_flags (origin, f);
+
     deadbeef->pl_items_copy_junk (origin, first, after);
     deadbeef->pl_item_unref (first);
+
+    deadbeef->pl_item_unref (after);
+
+    deadbeef->pl_unlock ();
 
     return after;
 }
@@ -898,40 +938,20 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         cflac_read_metadata (it);
     }
 
-    // try embedded cue
-    deadbeef->pl_lock ();
-    if (info.flac_cue_sheet) {
-        DB_playItem_t *cue = cflac_insert_with_embedded_cue (plt, after, it, &info.flac_cue_sheet->data.cue_sheet, info.totalsamples, info.info.fmt.samplerate);
-        if (cue) {
-            cflac_free_temp (_info);
-            deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (cue);
-            deadbeef->pl_unlock ();
-            return cue;
-        }
-    }
-    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-    if (cuesheet) {
-        DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (const uint8_t *)cuesheet, strlen (cuesheet), info.totalsamples, info.info.fmt.samplerate);
-        if (last) {
-            cflac_free_temp (_info);
-            deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (last);
-            deadbeef->pl_unlock ();
-            return last;
-        }
-    }
-    deadbeef->pl_unlock ();
+    DB_playItem_t *cue_after = NULL;
 
-    // try external cue
-    DB_playItem_t *cue_after = deadbeef->plt_insert_cue (plt, after, it, info.totalsamples, info.info.fmt.samplerate);
+    cue_after = deadbeef->plt_process_cue (plt, after, it, info.totalsamples, info.info.fmt.samplerate);
+    if (!cue_after && info.flac_cue_sheet) {
+        // try native flac embedded cuesheet
+        cue_after = cflac_insert_with_embedded_cue (plt, after, it, &info.flac_cue_sheet->data.cue_sheet, info.totalsamples, info.info.fmt.samplerate);
+    }
+
     if (cue_after) {
         cflac_free_temp (_info);
         deadbeef->pl_item_unref (it);
-        deadbeef->pl_item_unref (cue_after);
-        trace ("flac: loaded external cuesheet\n");
         return cue_after;
     }
+
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
     cflac_free_temp (_info);
@@ -1151,38 +1171,39 @@ cflac_write_metadata (DB_playItem_t *it) {
     deadbeef->pl_lock ();
     DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it);
     while (m) {
-        if (m->key[0] != ':') {
-            int i;
-            for (i = 0; metainfo[i]; i += 2) {
-                if (!strcasecmp (metainfo[i+1], m->key)) {
-                    break;
-                }
+        if (strchr (":!_", m->key[0])) {
+            break;
+        }
+        int i;
+        for (i = 0; metainfo[i]; i += 2) {
+            if (!strcasecmp (metainfo[i+1], m->key)) {
+                break;
             }
-            const char *val = m->value;
-            if (val && *val) {
-                while (val) {
-                    const char *next = strchr (val, '\n');
-                    size_t l;
-                    if (next) {
-                        l = next - val;
-                        next++;
-                    }
-                    else {
-                        l = strlen (val);
-                    }
-                    if (l > 0) {
-                        char s[100+l+1];
-                        int n = snprintf (s, sizeof (s), "%s=", metainfo[i] ? metainfo[i] : m->key);
-                        strncpy (s+n, val, l);
-                        *(s+n+l) = 0;
-                        FLAC__StreamMetadata_VorbisComment_Entry ent = {
-                            .length = (FLAC__uint32)strlen (s),
-                            .entry = (FLAC__byte*)s
-                        };
-                        FLAC__metadata_object_vorbiscomment_append_comment (data, ent, 1);
-                    }
-                    val = next;
+        }
+        const char *val = m->value;
+        if (val && *val) {
+            while (val) {
+                const char *next = strchr (val, '\n');
+                size_t l;
+                if (next) {
+                    l = next - val;
+                    next++;
                 }
+                else {
+                    l = strlen (val);
+                }
+                if (l > 0) {
+                    char s[100+l+1];
+                    int n = snprintf (s, sizeof (s), "%s=", metainfo[i] ? metainfo[i] : m->key);
+                    strncpy (s+n, val, l);
+                    *(s+n+l) = 0;
+                    FLAC__StreamMetadata_VorbisComment_Entry ent = {
+                        .length = (FLAC__uint32)strlen (s),
+                        .entry = (FLAC__byte*)s
+                    };
+                    FLAC__metadata_object_vorbiscomment_append_comment (data, ent, 1);
+                }
+                val = next;
             }
         }
         m = m->next;

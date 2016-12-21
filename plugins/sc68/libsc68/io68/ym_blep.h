@@ -19,6 +19,7 @@
  * @{
  */
 
+IO68_EXTERN
 /**
  * Setup function for ym blep synthesis engine.
  *
@@ -30,6 +31,12 @@
  *  @retval  -1  on failure
  */
 int ym_blep_setup(ym_t * const ym);
+
+IO68_EXTERN
+/**
+ *  Creates ym blep engine options.
+ */
+void ym_blep_add_options(void);
 
 enum {
   MAX_BLEPS = 256                       /**< @nodoc */

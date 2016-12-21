@@ -200,7 +200,7 @@ struct emu68_s {
   emu68_handler_t   handler;         /**< Exception trap handler.   */
   void            * cookie;          /**< User data.                */
 
-  int status;                           /**< Execution status.      */
+  int      status;                      /**< Execution status.      */
   uint68_t instructions;                /**< Instruction countdown. */
   addr68_t finish_sp;                   /**< Finish Stack Pointer.  */
 

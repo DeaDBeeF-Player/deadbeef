@@ -126,3 +126,7 @@ on_preserve_root_folder_changed        (GtkEditable     *editable,
 void
 on_write_to_source_folder_toggled      (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_bypass_same_format_toggled          (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);

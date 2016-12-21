@@ -870,7 +870,7 @@ void CmidPlayer::rewind(int subsong)
     adlib_mode=ADLIB_MELODIC;
     for (i=0; i<128; i++)
         for (j=0; j<16; j++)
-            myinsbank[i][j]=midi_fm_instruments[i][j];
+            myinsbank[i][j]=midi_fm_instruments[i][j < 14 ? j : 0];
 	for (i=0; i<16; i++)
         {
         ch[i].inum=0;

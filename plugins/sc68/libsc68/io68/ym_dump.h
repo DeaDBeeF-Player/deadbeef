@@ -30,6 +30,7 @@ IO68_EXTERN
  */
 int ym_dump_setup(ym_t * const ym);
 
+IO68_EXTERN
 /**
  *  Get/Set sc68 dump ym engine active state.
  *
@@ -38,6 +39,12 @@ int ym_dump_setup(ym_t * const ym);
  *  @return  previous status
  */
 int ym_dump_active(ym_t * const ym, int val);
+
+IO68_EXTERN
+/**
+ *  Creates ym dump engine options.
+ */
+void ym_dump_add_options(void);
 
 /**
  * YM-2149 internal data structure for original emulator.

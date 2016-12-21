@@ -1,0 +1,35 @@
+                    sc68 - Windows dialog front-end
+                                   
+                   It is part of the sc68 project.
+
+               (C) COPYRIGHT 1998-2015 Benjamin Gerard
+
+
+*Synopsis*                                   
+
+  sc68 dialogs for Windows system.
+
+
+*Files*
+
+  winui_dlg.c ... windows dialogs heavy lifting.
+  winui_dll.c ... For building a dll (work in progress)
+  resource.rc ... Resource source file.
+  resource.h  ... Resource definitions file.
+
+
+*Exports*
+
+  int dial68_frontend(void * data, sc68_dial_f cntl);
+
+
+*Links*
+
+  sc68 website
+       <http://sc68.atari.org>
+
+  sc68 development project
+       <http://sourceforge.net/projects/sc68>
+
+  ResEdit - a resource editor for Windows programs
+       <http://www.resedit.net/>

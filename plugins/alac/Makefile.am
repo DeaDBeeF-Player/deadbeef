@@ -1,8 +1,8 @@
 if HAVE_ALAC
-alacdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = alac.la
 alac_la_SOURCES = alac_plugin.c\
-alac.c decomp.h demux.c demux.h stream.c stream.h
+	alac.c decomp.h demux.c demux.h stream.c stream.h\
+	../../shared/mp4tagutil.c ../../shared/mp4tagutil.h
 
 alac_la_LDFLAGS = -module -avoid-version
 

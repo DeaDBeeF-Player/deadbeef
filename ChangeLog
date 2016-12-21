@@ -1,3 +1,22 @@
+version 0.7.1
+	fixed GTKUI maximized window layout saving/restoring
+	fixed GTKUI maximized window column autoresize saving/restoring
+	fixed artwork plugin version checks
+	disabled bogus shift-jis detection, which was overriding cp1252
+	fixed mp3 bitrate calculation regression
+	fixed wrong padding of formatted time
+	fixed importing legacy title formatting fields bug
+	fixed incorrect output format after resuming paused session
+	fixed $ext title formatting bug
+	fixed %tracknumber% title formatting bug
+	fixed auto-updating title formatting fields
+	fixed FreeBSD compile issues
+	fixed cache cleaner crash bug
+	fixed crash when trying to play GYM files
+	fixed importing legacy playlist grouping config
+	fixed FLAC metadata field mapping
+	fixed FLAC metadata track/total and disc/total splitting
+
 version 0.7.0
 	converter: fixed bug overwriting the source file with destination (Ian Nartowicz)
 	artwork: added cache cleaner, MusicBrainz backend,
@@ -8,7 +27,6 @@ version 0.7.0
 		middle-click on playlist to remove it,
 		highlight current playlist, configurable columns,
 		sort columns by clicking their headers,
-		inline-editing/renaming, including F2 shortcut,
 		performance optimizations (Christian Boxdörfer)
 	various selection properties improvements (Christian Boxdörfer)
 	added "Skip to ..." next/prev album/genre/composer actions (Christian Boxdörfer)
@@ -40,7 +58,7 @@ version 0.7.0
 	flac: fixed legacy cuesheet handling
 	added writing updated replaygain info to all supported tag formats
 	fixed setting focus on the main window / playlist on startup
-	changed volume up/down actions to have a step of 1 sec instead of 2 sec
+	changed volume up/down actions to have a step of 1dB instead of 2dB
 	fixed bigendian support in the converter
 	updated DUMB and GME to the newest versions (kode54)
 	fixed handling of several formats in sndfile plugin (kode54)
@@ -49,6 +67,19 @@ version 0.7.0
 	fixed a bug which was skipping next track after deleting current track
 	DUMB and GME can now do their own proper infinite looping in "Loop single" mode (kode54)
 	alac: Fix bits per sample varying from what the MP4 container specifies (kode54)
+	psf: fixed crash after format probing failure
+	search window title will show the number of search results
+	SRC resampler: fixed very rare buffer overflow crash
+	mp3: added LAME preset support
+	album art: fixed scaling of non-square images (Ian Nartowicz)
+	ffmpeg: updated to support new library versions
+	gtkui: improved playlist column drag-n-drop (Ian Nartowicz)
+	configuration file is now written with 0600 permissions
+	added tracktotal and disctotal support for many tagging formats
+	added extended ID3v1 genres
+	fixed int-float conversion off-by-one precision bug
+	fixed sorting algorithm u8_strcasecmp stability issue (Ian Nartowicz)
+	fixed playlist context menu actions to work on clicked playlist, instead of the current one
 
 version 0.6.2
 	added "Stop playback after current album finished" (Aleksejs Popovs)

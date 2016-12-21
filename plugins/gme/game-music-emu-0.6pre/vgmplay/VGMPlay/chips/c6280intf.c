@@ -10,7 +10,9 @@
 #endif
 #define EC_OOTAKE	0x00
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 typedef struct _c6280_state
 {

@@ -1,5 +1,4 @@
 if HAVE_SNDFILE
-sndfiledir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = sndfile.la
 sndfile_la_SOURCES = sndfile.c
 sndfile_la_LDFLAGS = -module -avoid-version

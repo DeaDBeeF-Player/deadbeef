@@ -8,7 +8,7 @@
 
 //#include <assert.h>
 #include <stdlib.h>
-#include <memory.h>	// for memset()
+#include <string.h>	// for memset()
 #include <stddef.h>	// for NULL
 #include "mamedef.h"
 #include "../stdbool.h"

@@ -147,6 +147,10 @@ static NSString *ddbPlaylistItemsUTIType = @"net.sourceforge.deadbeef.playlistIt
 
 @end
 
+//#define DEBUG_DRAW_GROUP_TITLES 1
+
+#define BLANK_GROUP_SUBDIVISION 100
+
 int headerheight = 17;
 int rowheight = 19;
 int grouptitleheight = 22;
@@ -161,6 +165,7 @@ int grouptitleheight = 22;
     NSPoint _dragPt;
     BOOL _prepare;
     int _sortOrder;
+    DdbListviewCol_t _sortColumn;
 }
 - (void)setListView:(DdbListview *)lv;
 @end
@@ -291,6 +296,10 @@ int grouptitleheight = 22;
     id <DdbListviewDelegate> delegate = [listview delegate];
 
     if (_prepare) { // clicked
+        if (_sortColumn != _dragging) {
+            _sortOrder = 0;
+        }
+        _sortColumn = _dragging;
         switch (_sortOrder) {
         case 0:
             _sortOrder = 1;
@@ -370,6 +379,7 @@ int grouptitleheight = 22;
         if (inspos != [delegate invalidColumn] && inspos != _dragging) {
             [delegate moveColumn:_dragging to:inspos];
             _dragging = inspos;
+            _sortColumn = [delegate invalidColumn];
             [listview reloadData];
         }
         else {
@@ -398,11 +408,17 @@ int grouptitleheight = 22;
     return col;
 }
 
-- (void)rightMouseDown:(NSEvent *)theEvent {
-    id <DdbListviewDelegate> delegate = [listview delegate];
-    DdbListviewCol_t col = [self columnIndexForCoord:[theEvent locationInWindow]];
-    [delegate contextMenuForColumn:col withEvent:theEvent forView:self];
+- (NSMenu *)menuForEvent:(NSEvent *)event {
+    if ((event.type == NSRightMouseDown || event.type == NSLeftMouseDown)
+        && (event.buttonNumber == 1
+        || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask)))) {
+        id <DdbListviewDelegate> delegate = [listview delegate];
+        DdbListviewCol_t col = [self columnIndexForCoord:[event locationInWindow]];
+        return [delegate contextMenuForColumn:col withEvent:event forView:self];
+    }
+    return nil;
 }
+
 @end
 
 @interface DdbListContentView : NSView {
@@ -477,10 +493,35 @@ int grouptitleheight = 22;
     return YES;
 }
 
-- (void)drawListView:(NSRect)dirtyRect {
-    int idx = 0;
-    int abs_idx = 0;
+- (void)renderAlbumArtForGroup:(DdbListviewGroup_t *)grp
+                 isPinnedGroup:(BOOL)isPinnedGroup
+                nextGroupCoord:(int)grp_next_y
+                          yPos:(int)y
+                     viewportY:(int)viewportY
+                    clipRegion:(NSRect)clip {
+    int x = 0;
+    id<DdbListviewDelegate> delegate = listview.delegate;
 
+    int title_height = [listview grouptitle_height];
+    for (DdbListviewCol_t col = [listview.delegate firstColumn];
+         col != [listview.delegate invalidColumn];
+         col = [listview.delegate nextColumn:col]) {
+
+        int w = [listview.delegate columnWidth:col];
+
+        if ([listview.delegate isAlbumArtColumn:col] && x + w > clip.origin.x) {
+            NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:0];
+            [clr set];
+            [NSBezierPath fillRect:NSMakeRect (x, y, w, grp_next_y - y)];
+            if (title_height > 0) {
+                [delegate drawAlbumArtForRow:grp->head inColumn:col isPinnedGroup:isPinnedGroup nextGroupCoord:grp_next_y xPos:x yPos:y viewportY:viewportY width:w height:grp->height];
+            }
+        }
+    }
+}
+
+
+- (void)drawListView:(NSRect)dirtyRect {
     id<DdbListviewDelegate> delegate = listview.delegate;
 
     [delegate lock];
@@ -492,9 +533,18 @@ int grouptitleheight = 22;
     NSScrollView *sv = [self enclosingScrollView];
     NSRect vis = [sv documentVisibleRect];
 
+    int clip_y = dirtyRect.origin.y;
+    int clip_h = dirtyRect.size.height;
+
+    // find 1st group
+    int idx = 0;
     int grp_y = 0;
-    int grp_next_y = 0;
-    DdbListviewGroup_t *pinned_grp = NULL;
+    while (grp && grp_y + grp->height < vis.origin.y) {
+        grp_y += grp->height;
+        idx += grp->num_items;
+        grp = grp->next;
+    }
+    DdbListviewGroup_t *pin_grp = [delegate pinGroups] && grp && grp_y < vis.origin.y && grp_y + grp->height >= vis.origin.y ? grp : NULL;
 
     int cursor = [delegate cursor];
     DdbListviewRow_t cursor_it = [delegate invalidRow];
@@ -502,131 +552,101 @@ int grouptitleheight = 22;
         cursor_it = [delegate rowForIndex:cursor];
     }
 
-    while (grp && grp_y + grp->height < dirtyRect.origin.y) {
-        if (grp_y < vis.origin.y && grp_y + grp->height >= vis.origin.y) {
-            pinned_grp = grp;
-            grp->pinned = 1;
-        }
-        grp_y += grp->height;
-        idx += grp->num_items + 1;
-        abs_idx += grp->num_items;
-        grp = grp->next;
-    }
+    int title_height = [listview grouptitle_height];
 
-    if (grp && !pinned_grp && grp_y < vis.origin.y) {
-        grp->pinned = 1;
-        pinned_grp = grp;
-    }
-    else if (grp && pinned_grp && pinned_grp->next == grp) {
-        grp->pinned = 2;
-    }
+    BOOL focused = [[self window] isKeyWindow];
 
-    while (grp && grp_y < dirtyRect.origin.y + dirtyRect.size.height) {
+    while (grp && grp_y < clip_y + clip_h) {
         DdbListviewRow_t it = grp->head;
-        int grp_height = [listview grouptitle_height] + grp->num_items * rowheight;
-        int grp_height_total = grp->height;
-
-        if (grp_y >= dirtyRect.origin.y + dirtyRect.size.height) {
-            break;
-        }
         [listview.delegate refRow:it];
 
-        grp_next_y = grp_y + grp_height_total;
         int ii = 0;
-        for (int i = 0; i < grp->num_items; i++) {
+        for (int i = 0, yy = grp_y + title_height; it && i < grp->num_items && yy < clip_y + clip_h; i++, yy += rowheight) {
             ii++;
-            int grp_row_y = grp_y + [listview grouptitle_height] + i * rowheight;
-            if (grp_row_y >= dirtyRect.origin.y + dirtyRect.size.height) {
-                break;
-            }
-            if (grp_y + [listview grouptitle_height] + (i+1) * rowheight >= dirtyRect.origin.y
-                && grp_row_y < dirtyRect.origin.y + dirtyRect.size.height) {
 
+            if (yy + rowheight >= clip_y) {
+                // draw row
                 NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:ii % 2];
                 [clr set];
-                [NSBezierPath fillRect:NSMakeRect(dirtyRect.origin.x, grp_row_y, dirtyRect.size.width, rowheight)];
+                [NSBezierPath fillRect:NSMakeRect(dirtyRect.origin.x, yy, dirtyRect.size.width, rowheight)];
 
                 int x = 0;
                 for (DdbListviewCol_t col = [listview.delegate firstColumn]; col != [listview.delegate invalidColumn]; col = [listview.delegate nextColumn:col]) {
                     int w = [listview.delegate columnWidth:col];
-                    if (CGRectIntersectsRect(dirtyRect, NSMakeRect(x, grp_row_y, w, rowheight))) {
-                        [listview.delegate drawCell:abs_idx forRow: it forColumn:col inRect:NSMakeRect(x, grp_row_y, w, rowheight-1) focused:YES];
+                    if (CGRectIntersectsRect(dirtyRect, NSMakeRect(x, yy, w, rowheight))) {
+                        [listview.delegate drawCell:idx+i forRow: it forColumn:col inRect:NSMakeRect(x, yy, w, rowheight-1) focused:focused];
                     }
                     x += w;
                 }
 
                 if (x < dirtyRect.size.width) {
-                    [listview.delegate drawCell:abs_idx forRow:it forColumn:[delegate invalidColumn] inRect:NSMakeRect(x, grp_row_y, dirtyRect.size.width-x, rowheight-1) focused:YES];
+                    [listview.delegate drawCell:idx+i forRow:it forColumn:[delegate invalidColumn] inRect:NSMakeRect(x, yy, dirtyRect.size.width-x, rowheight-1) focused:focused];
                 }
-            }
-            if (it == cursor_it) {
-                [[NSGraphicsContext currentContext] saveGraphicsState];
-                [NSBezierPath setDefaultLineWidth:2.f];
-                [[NSColor textColor] set];
-                NSRect rect = NSMakeRect(dirtyRect.origin.x, grp_row_y, dirtyRect.size.width, rowheight-1);
-                [NSBezierPath clipRect:rect];
-                [NSBezierPath strokeRect:rect];
-                [[NSGraphicsContext currentContext] restoreGraphicsState];
+
+                if (it == cursor_it) {
+                    [[NSGraphicsContext currentContext] saveGraphicsState];
+                    [NSBezierPath setDefaultLineWidth:2.f];
+                    [[NSColor textColor] set];
+                    NSRect rect = NSMakeRect(dirtyRect.origin.x, yy, dirtyRect.size.width, rowheight-1);
+                    [NSBezierPath clipRect:rect];
+                    [NSBezierPath strokeRect:rect];
+                    [[NSGraphicsContext currentContext] restoreGraphicsState];
+                }
+
             }
             DdbListviewRow_t next = [listview.delegate nextRow:it];
             [listview.delegate unrefRow:it];
             it = next;
-            if (!it) {
+            if (it == [delegate invalidRow]) {
                 break; // sanity check, in case groups were not rebuilt yet
             }
-            abs_idx++;
+        }
+        if (it != [delegate invalidRow]) {
+            [listview.delegate unrefRow:it];
         }
 
-        idx += grp->num_items + 1;
 
-        int filler = grp_height_total - (grp_height);
-        if (filler > 0) {
-            // fill with background color: x, grp_y - listview->scrollpos + grp_height, w, filler
-        }
+        // draw album art
+        int grp_next_y = grp_y + grp->height;
+        [self renderAlbumArtForGroup:grp isPinnedGroup:pin_grp==grp nextGroupCoord:grp_next_y yPos:grp_y + title_height viewportY:vis.origin.y clipRegion:dirtyRect];
 
-        //ddb_listview_list_render_album_art (listview, cr, it, grp->head, 0, grp->height, grp->pinned, grp_next_y - listview->scrollpos, -listview->hscrollpos, grp_y + listview->grouptitle_height - listview->scrollpos, listview->totalwidth, grp_height_total);
-
-        if (grp->pinned == 1 && [listview groups_pinned]/* && dirtyRect.origin.y <= 0*/) {
+        #define min(x,y) ((x)<(y)?(x):(y))
+        if (pin_grp == grp && clip_y-vis.origin.y <= title_height) {
             // draw pinned group title
-            int pushback = 0;
-            if (grp_next_y <= [listview grouptitle_height]) {
-                pushback = [listview grouptitle_height] - grp_next_y;
-            }
-
-            NSRect groupRect = NSMakeRect(0, vis.origin.y - pushback, [self frame].size.width, [listview grouptitle_height]);
+            // scrollx, 0, total_width, min(title_height, grp_next_y)
+            NSRect groupRect = NSMakeRect(0, vis.origin.y, [self frame].size.width, min (title_height, grp_next_y));
             NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:0];
             [clr set];
+#if DEBUG_DRAW_GROUP_TITLES
+            [[NSColor redColor] set];
+#endif
+
             [NSBezierPath fillRect:groupRect];
-            if ([listview grouptitle_height] > 0) {
+            if (title_height > 0) {
+                // scrollx, min(0, grp_next_y-title_height), total_width, title_height
+                groupRect.origin.y = min (vis.origin.y, grp_next_y-title_height);
+                groupRect.size.height = title_height;
                 [delegate drawGroupTitle:grp->head inRect:groupRect];
             }
         }
-        else if (grp_y + [listview grouptitle_height] >= dirtyRect.origin.y && grp_y < dirtyRect.origin.y + dirtyRect.size.height) {
-            if ([listview grouptitle_height] > 0) {
-                NSRect groupRect = NSMakeRect(0, grp_y, [self frame].size.width, [listview grouptitle_height]);
+        else if (clip_y <= grp_y + title_height) {
+            // draw normal group title
+            if (title_height > 0) {
+                // scrollx, grp_y, total_width, title_height
+                NSRect groupRect = NSMakeRect(0, grp_y, [self frame].size.width, title_height);
                 NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:0];
                 [clr set];
+#if DEBUG_DRAW_GROUP_TITLES
+                [[NSColor greenColor] set];
+#endif
                 [NSBezierPath fillRect:groupRect];
                 [delegate drawGroupTitle:grp->head inRect:groupRect];
             }
         }
 
-        if (it) {
-            [listview.delegate unrefRow:it];
-        }
-        grp_y += grp_height_total;
-        if (grp->pinned == 1) {
-            grp = grp->next;
-            if (grp) {
-                grp->pinned = 2;
-            }
-        }
-        else {
-            grp = grp->next;
-            if (grp) {
-                grp->pinned = 0;
-            }
-        }
+        idx += grp->num_items;
+        grp_y += grp->height;
+        grp = grp->next;
     }
 
     if (cursor_it != [delegate invalidRow]) {
@@ -665,48 +685,23 @@ int grouptitleheight = 22;
     return YES;
 }
 
-- (void)trackProperties {
-    id<DdbListviewDelegate> delegate = listview.delegate;
-    [delegate trackProperties];
-}
-
-- (void)reloadMetadata {
-    id<DdbListviewDelegate> delegate = listview.delegate;
-    [delegate reloadMetadata];
-}
-
-- (void)convertSelection {
-    id<DdbListviewDelegate> delegate = listview.delegate;
-    [delegate convertSelection];
-}
-
 - (NSMenu *)menuForEvent:(NSEvent *)event {
-    if (event.buttonNumber == 1
-        || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask))) {
+    if ((event.type == NSRightMouseDown || event.type == NSLeftMouseDown)
+        && (event.buttonNumber == 1
+        || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask))))
+    {
         if (event.buttonNumber == 0) {
             // ctrl+click blocks the mouseDown handler, do it now
             [self mouseDown:event];
         }
-        NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
+
         id<DdbListviewDelegate> delegate = listview.delegate;
-        BOOL enabled = [delegate selectedCount] != 0;
-
-        [[theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
-
-        [[theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
-
-        // FIXME: should be added via plugin action
-        [[theMenu insertItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
-        [theMenu setAutoenablesItems:NO];
-        return theMenu;
+        return [delegate contextMenuForEvent:event forView:self];
     }
     return nil;
 }
 
 - (void)rightMouseDown:(NSEvent *)theEvent {
-    if (![[self window] isKeyWindow]) {
-        return;
-    }
     [self mouseDown:theEvent];
     [super rightMouseDown:theEvent];
 }
@@ -852,15 +847,38 @@ int grouptitleheight = 22;
 
 @end
 
-@implementation DdbListview
+@implementation DdbListview {
+    id<DdbListviewDelegate> _delegate;
+    DdbListviewGroup_t *_groups;
+    int _grouptitle_height;
+    int groups_build_idx;
+    int _fullwidth;
+    int _fullheight;
+    BOOL _areaselect;
+    int _areaselect_y;
+    int _area_selection_start;
+    int _area_selection_end;
+    int _shift_sel_anchor;
+    BOOL _dragwait;
+    int _scroll_direction;
+    int _scroll_pointer_y;
+    NSPoint _lastpos;
+}
 
 @synthesize headerView;
 @synthesize contentView;
 
+- (void)dealloc {
+    [self cleanup];
+}
+
+- (void)cleanup {
+    [self freeGroups];
+}
+
 - (DdbListview *)initWithFrame:(NSRect)rect {
     self = [super initWithFrame:rect];
     if (self) {
-        _groups_pinned = YES;
         groups_build_idx = -1;
         DdbListHeaderView *thv = [[DdbListHeaderView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, headerheight)];
         [thv setAutoresizingMask:NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewMaxYMargin];
@@ -894,10 +912,21 @@ int grouptitleheight = 22;
 
         [contentView registerForDraggedTypes:[NSArray arrayWithObjects:ddbPlaylistItemsUTIType, NSFilenamesPboardType, nil]];
 
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(windowDidBecomeKey:)
+                                                     name:NSWindowDidBecomeKeyNotification
+                                                   object:[self window]];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(windowDidBecomeKey:)
+                                                     name:NSWindowDidResignKeyNotification
+                                                   object:[self window]];
     }
     return self;
 }
 
+- (void)windowDidBecomeKey:(id)sender {
+    [self setNeedsDisplay:YES];
+}
 
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
@@ -906,8 +935,14 @@ int grouptitleheight = 22;
     }
 }
 
--(void)scrollChanged:(id)contentView {
+- (void)scrollChanged:(id)notification {
     [self.headerView setNeedsDisplay:YES];
+
+    NSScrollView *sv = [contentView enclosingScrollView];
+    NSRect vis = [sv documentVisibleRect];
+    if ([(NSObject *)_delegate respondsToSelector:@selector(scrollChanged:)]) {
+        [_delegate scrollChanged:vis.origin.y];
+    }
 }
 
 - (BOOL)isFlipped {
@@ -916,7 +951,7 @@ int grouptitleheight = 22;
 
 - (void)freeGroups {
     while (_groups) {
-        if (_groups->head) {
+        if (_groups->head != [_delegate invalidRow]) {
             [_delegate unrefRow:_groups->head];
         }
         DdbListviewGroup_t *next = _groups->next;
@@ -977,24 +1012,12 @@ int grouptitleheight = 22;
     DdbListviewRow_t it = [_delegate firstRow];
     while (it != [_delegate invalidRow]) {
         curr = [_delegate rowGroupStr:it];
-        if (!curr) {
-            grp = malloc (sizeof (DdbListviewGroup_t));
-            _groups = grp;
-            memset (grp, 0, sizeof (DdbListviewGroup_t));
-            grp->head = it;
-            grp->head_idx = idx;
-            grp->num_items = [_delegate rowCount];
-            _grouptitle_height = 0;
-            grp->height = _grouptitle_height + grp->num_items * rowheight;
-            _fullheight = grp->height;
-            _fullheight += _grouptitle_height;
 
-            [self updateContentFrame];
-            [_delegate unlock];
-            return;
+        if (!curr) {
+            _grouptitle_height = 0;
         }
 
-        if (!grp || [str isNotEqualTo:curr]) {
+        if (!grp || (!curr && grp->num_items >= BLANK_GROUP_SUBDIVISION) || (curr && [str isNotEqualTo:curr])) {
             str = curr;
             DdbListviewGroup_t *newgroup = malloc (sizeof (DdbListviewGroup_t));
             if (grp) {
@@ -1021,6 +1044,9 @@ int grouptitleheight = 22;
         [_delegate unrefRow:it];
         it = next;
         idx++;
+    }
+    if (it != [_delegate invalidRow]) {
+        [_delegate unrefRow:it];
     }
     if (grp) {
         if (grp->height - _grouptitle_height < min_height) {
@@ -1168,7 +1194,7 @@ int grouptitleheight = 22;
         // clicked empty space, deselect everything
         [self deselectAll];
     }
-    else if ((sel != -1 && grp && grp_index == -1) || (pt.y <= _grouptitle_height + vis.origin.y && _groups_pinned) || album_art_column) {
+    else if ((sel != -1 && grp && grp_index == -1) || (pt.y <= _grouptitle_height + vis.origin.y && [_delegate pinGroups]) || album_art_column) {
         // clicked group title, select group
         DdbListviewRow_t it;
         int idx = 0;
@@ -1541,8 +1567,11 @@ int grouptitleheight = 22;
     [_delegate setCursor:cursor];
 
     DdbListviewRow_t row = [_delegate rowForIndex:cursor];
-    if (![_delegate rowSelected:row]) {
+    if (row != [_delegate invalidRow] && ![_delegate rowSelected:row]) {
         [self selectSingle:cursor];
+    }
+    if (row != [_delegate invalidRow]) {
+        [_delegate unrefRow:row];
     }
 
     BOOL need_redraw = YES;
@@ -1563,10 +1592,10 @@ int grouptitleheight = 22;
     int cursor_scroll = pos;
     int newscroll = scrollpos;
 
-    if (!_groups_pinned && cursor_scroll < scrollpos) {
+    if (![_delegate pinGroups] && cursor_scroll < scrollpos) {
         newscroll = cursor_scroll;
     }
-    else if (_groups_pinned && cursor_scroll < scrollpos + _grouptitle_height) {
+    else if ([_delegate pinGroups] && cursor_scroll < scrollpos + _grouptitle_height) {
         newscroll = cursor_scroll - _grouptitle_height;
     }
     else if (cursor_scroll + rowheight >= scrollpos + vis.size.height) {

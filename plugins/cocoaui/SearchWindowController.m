@@ -28,6 +28,14 @@
 
 @implementation SearchWindowController
 
+- (void)dealloc {
+    [self cleanup];
+}
+
+- (void)cleanup {
+    [_viewController cleanup];
+}
+
 - (void)windowDidLoad {
     [super windowDidLoad];
     

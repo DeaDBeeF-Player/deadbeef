@@ -1,3 +1,21 @@
+convdata = \
+	convpresets/AAC_(Nero_FAAC).txt\
+	convpresets/FLAC_(compression_level_5).txt\
+	convpresets/MP3_CBR_320_Kbps_(Lame).txt\
+	convpresets/MP3_VBR_192Kbps_(Lame).txt\
+	convpresets/MS_RIFF_WAV.txt\
+	convpresets/MusePack.txt\
+	convpresets/Ogg_FLAC.txt\
+	convpresets/Ogg_Vorbis_(-q_5).txt\
+	convpresets/Opus.txt\
+	convpresets/TTA.txt\
+	convpresets/WavPack.txt\
+	convpresets/ALAC.txt\
+	convpresets/File_Copy.txt\
+	convpresets/File_Move.txt
+
+EXTRA_DIST = $(convdata) converter.glade
+
 if HAVE_CONVERTER
 
 if HAVE_GTK2
@@ -13,26 +31,13 @@ endif
 endif
 
 convdatadir = $(libdir)/deadbeef/convpresets
-convdata_DATA = \
-	convpresets/AAC_(Nero_FAAC).txt\
-	convpresets/FLAC_(compression_level_5).txt\
-	convpresets/MP3_CBR_320_Kbps_(Lame).txt\
-	convpresets/MP3_VBR_192Kbps_(Lame).txt\
-	convpresets/MS_RIFF_WAV.txt\
-	convpresets/MusePack.txt\
-	convpresets/Ogg_FLAC.txt\
-	convpresets/Ogg_Vorbis_(-q_5).txt\
-	convpresets/Opus.txt\
-	convpresets/TTA.txt\
-	convpresets/WavPack.txt\
-	convpresets/ALAC.txt
+convdata_DATA = $(convdata)
 
-EXTRA_DIST = $(convdata_DATA) converter.glade
-
-AM_CFLAGS = $(CFLAGS) -std=c99 -fPIC
-
-converter_la_SOURCES = converter.c converter.h
+converter_la_CFLAGS =  $(CFLAGS) -I@top_srcdir@/plugins/libmp4ff -std=c99 -fPIC -DUSE_TAGGING=1
+converter_la_SOURCES = converter.c converter.h\
+	../../shared/mp4tagutil.c ../../shared/mp4tagutil.h
 converter_la_LDFLAGS = -module -avoid-version
+converter_la_LIBADD = $(LDADD) ../libmp4ff/libmp4ff.a
 
 if HAVE_GTK2
 converter_gtk2_la_SOURCES = convgui.c interface.c support.c callbacks.h converter.h interface.h support.h

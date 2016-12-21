@@ -48,11 +48,13 @@ struct _ymf262_state
 
 
 
+#ifdef ENABLE_ALL_CORES
 static void IRQHandler_262(void *param,int irq)
 {
-	ymf262_state *info = (ymf262_state *)param;
+	//ymf262_state *info = (ymf262_state *)param;
 	//if (info->intf->handler) (info->intf->handler)(info->device, irq);
 }
+#endif
 
 /*static TIMER_CALLBACK( timer_callback_262_0 )
 {
@@ -67,9 +69,10 @@ static TIMER_CALLBACK( timer_callback_262_1 )
 }*/
 
 //static void timer_handler_262(void *param,int timer, attotime period)
+#ifdef ENABLE_ALL_CORES
 static void timer_handler_262(void *param,int timer, int period)
 {
-	ymf262_state *info = (ymf262_state *)param;
+	//ymf262_state *info = (ymf262_state *)param;
 	if( period == 0 )
 	{	/* Reset FM Timer */
 		//timer_enable(info->timer[timer], 0);
@@ -79,6 +82,7 @@ static void timer_handler_262(void *param,int timer, int period)
 		//timer_adjust_oneshot(info->timer[timer], period, 0);
 	}
 }
+#endif
 
 //static STREAM_UPDATE( ymf262_stream_update )
 void ymf262_stream_update(void *param, stream_sample_t **outputs, int samples)

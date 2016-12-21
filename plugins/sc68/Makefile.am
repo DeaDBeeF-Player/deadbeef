@@ -1,192 +1,11 @@
-if HAVE_SC68
-
-pkglib_LTLIBRARIES = in_sc68.la
-
 sc68path=@top_srcdir@/plugins/sc68
 
-# put the included .c files here
-EXTRA_DIST = \
-	$(sc68path)/libsc68/emu68/lines/table.c\
-	$(sc68path)/libsc68/emu68/lines/lineE.c\
-	$(sc68path)/libsc68/emu68/lines/line3.c\
-	$(sc68path)/libsc68/emu68/lines/line6.c\
-	$(sc68path)/libsc68/emu68/lines/lineB.c\
-	$(sc68path)/libsc68/emu68/lines/line5.c\
-	$(sc68path)/libsc68/emu68/lines/line8.c\
-	$(sc68path)/libsc68/emu68/lines/lineC.c\
-	$(sc68path)/libsc68/emu68/lines/line1.c\
-	$(sc68path)/libsc68/emu68/lines/lineD.c\
-	$(sc68path)/libsc68/emu68/lines/lineF.c\
-	$(sc68path)/libsc68/emu68/lines/line2.c\
-	$(sc68path)/libsc68/emu68/lines/lineA.c\
-	$(sc68path)/libsc68/emu68/lines/line0.c\
-	$(sc68path)/libsc68/emu68/lines/line4.c\
-	$(sc68path)/libsc68/emu68/lines/line7.c\
-	$(sc68path)/libsc68/emu68/lines/line9.c\
-	$(sc68path)/libsc68/emu68/line3_68.c\
-	$(sc68path)/libsc68/emu68/line7_68.c\
-	$(sc68path)/libsc68/emu68/line5_68.c\
-	$(sc68path)/libsc68/emu68/lineC_68.c\
-	$(sc68path)/libsc68/emu68/lineB_68.c\
-	$(sc68path)/libsc68/emu68/line9_68.c\
-	$(sc68path)/libsc68/emu68/lineE_68.c\
-	$(sc68path)/libsc68/emu68/line8_68.c\
-	$(sc68path)/libsc68/emu68/line4_68.c\
-	$(sc68path)/libsc68/emu68/line6_68.c\
-	$(sc68path)/libsc68/emu68/lineF_68.c\
-	$(sc68path)/libsc68/emu68/lineA_68.c\
-	$(sc68path)/libsc68/emu68/line0_68.c\
-	$(sc68path)/libsc68/emu68/lineD_68.c\
-	$(sc68path)/libsc68/emu68/line1_68.c\
-	$(sc68path)/libsc68/emu68/line2_68.c\
-	$(sc68path)/libsc68/io68/ym_linear_table.c\
-	$(sc68path)/libsc68/io68/ym_atarist_table.c\
-	$(sc68path)/libsc68/emu68/crc32.c\
-	$(sc68path)/libsc68/emu68/table68.c
-
-in_sc68_la_SOURCES=in_sc68.c\
-	$(sc68path)/file68/src/gzip68.c\
-	$(sc68path)/file68/src/vfs68.c\
-	$(sc68path)/file68/src/ice68.c\
-	$(sc68path)/file68/src/vfs68_ao.c\
-	$(sc68path)/file68/src/vfs68_null.c\
-	$(sc68path)/file68/src/replay.inc.h\
-	$(sc68path)/file68/src/msg68.c\
-	$(sc68path)/file68/src/timedb68.c\
-	$(sc68path)/file68/src/timedb.inc.h\
-	$(sc68path)/file68/src/init68.c\
-	$(sc68path)/file68/src/vfs68_z.c\
-	$(sc68path)/file68/src/replay68.c\
-	$(sc68path)/file68/src/registry68.c\
-	$(sc68path)/file68/src/uri68.c\
-	$(sc68path)/file68/src/rsc68.c\
-	$(sc68path)/file68/src/vfs68_fd.c\
-	$(sc68path)/file68/src/vfs68_file.c\
-	$(sc68path)/file68/src/ferror68.c\
-	$(sc68path)/file68/src/vfs68_mem.c\
-	$(sc68path)/file68/src/file68.c\
-	$(sc68path)/file68/src/string68.c\
-	$(sc68path)/file68/src/endian68.c\
-	$(sc68path)/file68/src/vfs68_curl.c\
-	$(sc68path)/file68/src/option68.c\
-	$(sc68path)/file68/sc68/file68_vfs_ao.h\
-	$(sc68path)/file68/sc68/file68.h\
-	$(sc68path)/file68/sc68/file68_ord.h\
-	$(sc68path)/file68/sc68/file68_tag.h\
-	$(sc68path)/file68/sc68/file68_vfs_curl.h\
-	$(sc68path)/file68/sc68/file68_str.h\
-	$(sc68path)/file68/sc68/file68_features.h\
-	$(sc68path)/file68/sc68/file68_vfs_def.h\
-	$(sc68path)/file68/sc68/file68_msg.h\
-	$(sc68path)/file68/sc68/file68_vfs_file.h\
-	$(sc68path)/file68/sc68/file68_api.h\
-	$(sc68path)/file68/sc68/file68_chk.h\
-	$(sc68path)/file68/sc68/file68_ice.h\
-	$(sc68path)/file68/sc68/file68_err.h\
-	$(sc68path)/file68/sc68/file68_opt.h\
-	$(sc68path)/file68/sc68/file68_vfs_mem.h\
-	$(sc68path)/file68/sc68/file68_rsc.h\
-	$(sc68path)/file68/sc68/file68_zip.h\
-	$(sc68path)/file68/sc68/file68_vfs_null.h\
-	$(sc68path)/file68/sc68/file68_tdb.h\
-	$(sc68path)/file68/sc68/file68_reg.h\
-	$(sc68path)/file68/sc68/file68_vfs_fd.h\
-	$(sc68path)/file68/sc68/file68_vfs.h\
-	$(sc68path)/file68/sc68/file68_uri.h\
-	$(sc68path)/file68/sc68/file68_vfs_z.h\
-	$(sc68path)/dial68/tracksel.c\
-	$(sc68path)/dial68/dial68.h\
-	$(sc68path)/dial68/dial68.c\
-	$(sc68path)/dial68/config.c\
-	$(sc68path)/dial68/fileinfo.c\
-	$(sc68path)/unice68/unice68.h\
-	$(sc68path)/unice68/unice68_unpack.c\
-	$(sc68path)/unice68/unice68_pack.c\
-	$(sc68path)/unice68/unice68_version.c\
-	$(sc68path)/libsc68/conf68.c\
-	$(sc68path)/libsc68/api68.c\
-	$(sc68path)/libsc68/mixer68.c\
-	$(sc68path)/libsc68/io68/io68_api.h\
-	$(sc68path)/libsc68/io68/paulaemul.c\
-	$(sc68path)/libsc68/io68/io68.h\
-	$(sc68path)/libsc68/io68/shifter_io.h\
-	$(sc68path)/libsc68/io68/ym_envel.c\
-	$(sc68path)/libsc68/io68/mfp_io.h\
-	$(sc68path)/libsc68/io68/ym_dump.h\
-	$(sc68path)/libsc68/io68/ym_blep.h\
-	$(sc68path)/libsc68/io68/ymemul.c\
-	$(sc68path)/libsc68/io68/mwemul.h\
-	$(sc68path)/libsc68/io68/ymoutorg.h\
-	$(sc68path)/libsc68/io68/shifter_io.c\
-	$(sc68path)/libsc68/io68/paula_io.c\
-	$(sc68path)/libsc68/io68/mw_io.c\
-	$(sc68path)/libsc68/io68/mw_io.h\
-	$(sc68path)/libsc68/io68/mfpemul.h\
-	$(sc68path)/libsc68/io68/paula_io.h\
-	$(sc68path)/libsc68/io68/ym_dump.c\
-	$(sc68path)/libsc68/io68/mfp_io.c\
-	$(sc68path)/libsc68/io68/mwemul.c\
-	$(sc68path)/libsc68/io68/paulaemul.h\
-	$(sc68path)/libsc68/io68/ym_fixed_vol.h\
-	$(sc68path)/libsc68/io68/ym_io.c\
-	$(sc68path)/libsc68/io68/io68.c\
-	$(sc68path)/libsc68/io68/ym_puls.h\
-	$(sc68path)/libsc68/io68/ym_blep.c\
-	$(sc68path)/libsc68/io68/ymemul.h\
-	$(sc68path)/libsc68/io68/ymout2k9.h\
-	$(sc68path)/libsc68/io68/default.h\
-	$(sc68path)/libsc68/io68/mfpemul.c\
-	$(sc68path)/libsc68/io68/ym_io.h\
-	$(sc68path)/libsc68/io68/ym_puls.c\
-	$(sc68path)/libsc68/libsc68.c\
-	$(sc68path)/libsc68/emu68/inl68_datamove.h\
-	$(sc68path)/libsc68/emu68/lines68.c\
-	$(sc68path)/libsc68/emu68/lines68.h\
-	$(sc68path)/libsc68/emu68/inl68_bitmanip.h\
-	$(sc68path)/libsc68/emu68/inst68.h\
-	$(sc68path)/libsc68/emu68/inl68_progctrl.h\
-	$(sc68path)/libsc68/emu68/cc68.h\
-	$(sc68path)/libsc68/emu68/macro68.h\
-	$(sc68path)/libsc68/emu68/mem68.h\
-	$(sc68path)/libsc68/emu68/error68.h\
-	$(sc68path)/libsc68/emu68/ioplug68.c\
-	$(sc68path)/libsc68/emu68/inl68_logic.h\
-	$(sc68path)/libsc68/emu68/mem68.c\
-	$(sc68path)/libsc68/emu68/assert68.h\
-	$(sc68path)/libsc68/emu68/getea68.c\
-	$(sc68path)/libsc68/emu68/inl68_exception.h\
-	$(sc68path)/libsc68/emu68/inst68.c\
-	$(sc68path)/libsc68/emu68/emu68.c\
-	$(sc68path)/libsc68/emu68/srdef68.h\
-	$(sc68path)/libsc68/emu68/type68.h\
-	$(sc68path)/libsc68/emu68/struct68.h\
-	$(sc68path)/libsc68/emu68/error68.c\
-	$(sc68path)/libsc68/emu68/excep68.h\
-	$(sc68path)/libsc68/emu68/emu68.h\
-	$(sc68path)/libsc68/emu68/inl68_shifting.h\
-	$(sc68path)/libsc68/emu68/inl68_arithmetic.h\
-	$(sc68path)/libsc68/emu68/inl68_bcd.h\
-	$(sc68path)/libsc68/emu68/inl68_systctrl.h\
-	$(sc68path)/libsc68/emu68/emu68_api.h\
-	$(sc68path)/libsc68/emu68/ioplug68.h\
-	$(sc68path)/libsc68/sc68/trap68.h\
-	$(sc68path)/libsc68/sc68/conf68.h\
-	$(sc68path)/libsc68/sc68/sc68.h\
-	$(sc68path)/libsc68/sc68/mixer68.h\
-	$(sc68path)/desa68/desa68.h\
-	$(sc68path)/desa68/desa68.c
-
-in_sc68_la_LDFLAGS = -module -avoid-version
-in_sc68_la_LIBADD = $(ZLIB_LIBS)
-
-AM_CFLAGS = $(CFLAGS) -std=c99 -DSC68_SHARED_DATA_PATH='"."' -DHAVE_GETENV=1 -DHAVE_CONFIG_CONFIG68_H=1 -DHAVE_STRING_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STDINT_H=1 -DHAVE_ASSERT_H -DHAVE_LIMITS_H=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_BASENAME=1 -DEMU68_MONOLITIC=1 -DPACKAGE_VERNUM=300 -DEMU68_EXPORT -DNDEBUG=1 -DNDEBUG_LIBSC68=1 -DUSE_FILE68=1 -DUSE_UNICE68=1 -DHAVE_INTMAX_T -DHAVE_GETENV=1 -DHAVE_STDIO_H=1 -DHAVE_MEMORY_H=1 -DHAVE_MALLOC=1 -DHAVE_FREE=1 -DHAVE_LONG_LONG_INT=1 -DHAVE_LONG_FILE_NAMES=1 -DHAVE_LIMITS_H=1 -DHAVE_LIBGEN_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_DLFCN_H=1 -I$(sc68path)/file68 -I$(sc68path)/file68/sc68 -I$(sc68path)/unice68 -I$(sc68path)/libsc68 -I$(sc68path)/libsc68/sc68 -I$(sc68path)/libsc68/emu68
-
-sc68replaydatadir = $(libdir)/deadbeef/data68/Replay
-sc68replaydata_DATA = \
+sc68replaydata = \
 	file68/data68/Replay/aenigmatica.bin\
 	file68/data68/Replay/alteredbeast.bin\
 	file68/data68/Replay/armalyte.bin\
 	file68/data68/Replay/asidifier.bin\
+	file68/data68/Replay/azidifier.bin\
 	file68/data68/Replay/bendaglish.deli.bin\
 	file68/data68/Replay/big.bin\
 	file68/data68/Replay/blipblop.bin\
@@ -234,14 +53,14 @@ sc68replaydata_DATA = \
 	file68/data68/Replay/ninjatfmx.bin\
 	file68/data68/Replay/nobuddiesland.bin\
 	file68/data68/Replay/none.bin\
-	file68/data68/Replay/note2.bin\
 	file68/data68/Replay/note.bin\
+	file68/data68/Replay/note2.bin\
 	file68/data68/Replay/page.bin\
 	file68/data68/Replay/protracker.bin\
 	file68/data68/Replay/psg1.bin\
 	file68/data68/Replay/psgtrackerv2.bin\
-	file68/data68/Replay/puma2.bin\
 	file68/data68/Replay/puma.bin\
+	file68/data68/Replay/puma2.bin\
 	file68/data68/Replay/quartet.bin\
 	file68/data68/Replay/quartet_mindbomb.bin\
 	file68/data68/Replay/realms.bin\
@@ -266,8 +85,8 @@ sc68replaydata_DATA = \
 	file68/data68/Replay/tao_tsd.bin\
 	file68/data68/Replay/tcbtracker.bin\
 	file68/data68/Replay/test.bin\
-	file68/data68/Replay/tfmx_aga.bin\
 	file68/data68/Replay/tfmx.bin\
+	file68/data68/Replay/tfmx_aga.bin\
 	file68/data68/Replay/tfmx_old.bin\
 	file68/data68/Replay/tfmx_st.bin\
 	file68/data68/Replay/timerc.bin\
@@ -277,6 +96,189 @@ sc68replaydata_DATA = \
 	file68/data68/Replay/vikingchild.bin\
 	file68/data68/Replay/xbiossound.bin\
 	file68/data68/Replay/zonewarrior.bin
+
+EXTRA_DIST = \
+	$(sc68replaydata)\
+	libsc68/emu68/lines/table.c\
+	libsc68/emu68/lines/lineE.c\
+	libsc68/emu68/lines/line3.c\
+	libsc68/emu68/lines/line6.c\
+	libsc68/emu68/lines/lineB.c\
+	libsc68/emu68/lines/line5.c\
+	libsc68/emu68/lines/line8.c\
+	libsc68/emu68/lines/lineC.c\
+	libsc68/emu68/lines/line1.c\
+	libsc68/emu68/lines/lineD.c\
+	libsc68/emu68/lines/lineF.c\
+	libsc68/emu68/lines/line2.c\
+	libsc68/emu68/lines/lineA.c\
+	libsc68/emu68/lines/line0.c\
+	libsc68/emu68/lines/line4.c\
+	libsc68/emu68/lines/line7.c\
+	libsc68/emu68/lines/line9.c\
+	libsc68/emu68/line3_68.c\
+	libsc68/emu68/line7_68.c\
+	libsc68/emu68/line5_68.c\
+	libsc68/emu68/lineC_68.c\
+	libsc68/emu68/lineB_68.c\
+	libsc68/emu68/line9_68.c\
+	libsc68/emu68/lineE_68.c\
+	libsc68/emu68/line8_68.c\
+	libsc68/emu68/line4_68.c\
+	libsc68/emu68/line6_68.c\
+	libsc68/emu68/lineF_68.c\
+	libsc68/emu68/lineA_68.c\
+	libsc68/emu68/line0_68.c\
+	libsc68/emu68/lineD_68.c\
+	libsc68/emu68/line1_68.c\
+	libsc68/emu68/line2_68.c\
+	libsc68/io68/ym_linear_table.c\
+	libsc68/io68/ym_atarist_table.c\
+	libsc68/emu68/crc32.c\
+	libsc68/emu68/table68.c
+
+if HAVE_SC68
+pkglib_LTLIBRARIES = in_sc68.la
+
+sc68replaydatadir = $(libdir)/deadbeef/data68/Replay
+sc68replaydata_DATA = $(sc68replaydata)
+
+in_sc68_la_SOURCES=in_sc68.c\
+	file68/src/gzip68.c\
+	file68/src/vfs68.c\
+	file68/src/ice68.c\
+	file68/src/vfs68_ao.c\
+	file68/src/vfs68_null.c\
+	file68/src/replay.inc.h\
+	file68/src/msg68.c\
+	file68/src/timedb68.c\
+	file68/src/timedb.inc.h\
+	file68/src/init68.c\
+	file68/src/vfs68_z.c\
+	file68/src/replay68.c\
+	file68/src/registry68.c\
+	file68/src/uri68.c\
+	file68/src/rsc68.c\
+	file68/src/vfs68_fd.c\
+	file68/src/vfs68_file.c\
+	file68/src/vfs68_mem.c\
+	file68/src/file68.c\
+	file68/src/string68.c\
+	file68/src/endian68.c\
+	file68/src/vfs68_curl.c\
+	file68/src/option68.c\
+	file68/src/ferror68.c\
+	file68/sc68/file68_vfs_ao.h\
+	file68/sc68/file68.h\
+	file68/sc68/file68_ord.h\
+	file68/sc68/file68_tag.h\
+	file68/sc68/file68_vfs_curl.h\
+	file68/sc68/file68_str.h\
+	file68/sc68/file68_features.h\
+	file68/sc68/file68_vfs_def.h\
+	file68/sc68/file68_msg.h\
+	file68/sc68/file68_vfs_file.h\
+	file68/sc68/file68_api.h\
+	file68/sc68/file68_chk.h\
+	file68/sc68/file68_ice.h\
+	file68/sc68/file68_err.h\
+	file68/sc68/file68_opt.h\
+	file68/sc68/file68_vfs_mem.h\
+	file68/sc68/file68_rsc.h\
+	file68/sc68/file68_zip.h\
+	file68/sc68/file68_vfs_null.h\
+	file68/sc68/file68_tdb.h\
+	file68/sc68/file68_reg.h\
+	file68/sc68/file68_vfs_fd.h\
+	file68/sc68/file68_vfs.h\
+	file68/sc68/file68_uri.h\
+	file68/sc68/file68_vfs_z.h\
+	libsc68/dial68/dial68.h\
+	libsc68/dial68/dial68.c\
+	libsc68/dial68/dial_conf.c\
+	libsc68/dial68/dial_finf.c\
+	libsc68/dial68/dial_tsel.c\
+	unice68/unice68.h\
+	unice68/unice68_unpack.c\
+	unice68/unice68_pack.c\
+	unice68/unice68_version.c\
+	libsc68/conf68.c\
+	libsc68/api68.c\
+	libsc68/mixer68.c\
+	libsc68/io68/io68_api.h\
+	libsc68/io68/paulaemul.c\
+	libsc68/io68/io68.h\
+	libsc68/io68/shifter_io.h\
+	libsc68/io68/ym_envel.c\
+	libsc68/io68/mfp_io.h\
+	libsc68/io68/ym_dump.h\
+	libsc68/io68/ym_blep.h\
+	libsc68/io68/ymemul.c\
+	libsc68/io68/mwemul.h\
+	libsc68/io68/ymoutorg.h\
+	libsc68/io68/shifter_io.c\
+	libsc68/io68/paula_io.c\
+	libsc68/io68/mw_io.c\
+	libsc68/io68/mw_io.h\
+	libsc68/io68/mfpemul.h\
+	libsc68/io68/paula_io.h\
+	libsc68/io68/ym_dump.c\
+	libsc68/io68/mfp_io.c\
+	libsc68/io68/mwemul.c\
+	libsc68/io68/paulaemul.h\
+	libsc68/io68/ym_fixed_vol.h\
+	libsc68/io68/ym_io.c\
+	libsc68/io68/io68.c\
+	libsc68/io68/ym_puls.h\
+	libsc68/io68/ym_blep.c\
+	libsc68/io68/ymemul.h\
+	libsc68/io68/ymout2k9.h\
+	libsc68/io68/default.h\
+	libsc68/io68/mfpemul.c\
+	libsc68/io68/ym_io.h\
+	libsc68/io68/ym_puls.c\
+	libsc68/libsc68.c\
+	libsc68/emu68/inl68_datamove.h\
+	libsc68/emu68/lines68.c\
+	libsc68/emu68/lines68.h\
+	libsc68/emu68/inl68_bitmanip.h\
+	libsc68/emu68/inst68.h\
+	libsc68/emu68/inl68_progctrl.h\
+	libsc68/emu68/cc68.h\
+	libsc68/emu68/macro68.h\
+	libsc68/emu68/mem68.h\
+	libsc68/emu68/error68.h\
+	libsc68/emu68/ioplug68.c\
+	libsc68/emu68/inl68_logic.h\
+	libsc68/emu68/mem68.c\
+	libsc68/emu68/assert68.h\
+	libsc68/emu68/getea68.c\
+	libsc68/emu68/inl68_exception.h\
+	libsc68/emu68/inst68.c\
+	libsc68/emu68/emu68.c\
+	libsc68/emu68/srdef68.h\
+	libsc68/emu68/type68.h\
+	libsc68/emu68/struct68.h\
+	libsc68/emu68/error68.c\
+	libsc68/emu68/excep68.h\
+	libsc68/emu68/emu68.h\
+	libsc68/emu68/inl68_shifting.h\
+	libsc68/emu68/inl68_arithmetic.h\
+	libsc68/emu68/inl68_bcd.h\
+	libsc68/emu68/inl68_systctrl.h\
+	libsc68/emu68/emu68_api.h\
+	libsc68/emu68/ioplug68.h\
+	libsc68/sc68/trap68.h\
+	libsc68/sc68/conf68.h\
+	libsc68/sc68/sc68.h\
+	libsc68/sc68/mixer68.h\
+	desa68/desa68.h\
+	desa68/desa68.c
+
+in_sc68_la_LDFLAGS = -module -avoid-version
+in_sc68_la_LIBADD = $(ZLIB_LIBS)
+
+AM_CFLAGS = $(CFLAGS) -std=c99 -DSC68_SHARED_DATA_PATH='"."' -DHAVE_GETENV=1 -DHAVE_CONFIG_CONFIG68_H=1 -DHAVE_STRING_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STDINT_H=1 -DHAVE_ASSERT_H -DHAVE_LIMITS_H=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_BASENAME=1 -DEMU68_MONOLITIC=1 -DPACKAGE_VERNUM=300 -DEMU68_EXPORT -DNDEBUG=1 -DNDEBUG_LIBSC68=1 -DUSE_FILE68=1 -DUSE_UNICE68=1 -DHAVE_INTMAX_T -DHAVE_GETENV=1 -DHAVE_STDIO_H=1 -DHAVE_MEMORY_H=1 -DHAVE_MALLOC=1 -DHAVE_FREE=1 -DHAVE_LONG_LONG_INT=1 -DHAVE_LONG_FILE_NAMES=1 -DHAVE_LIMITS_H=1 -DHAVE_LIBGEN_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_DLFCN_H=1 -I$(sc68path)/file68 -I$(sc68path)/file68/sc68 -I$(sc68path)/unice68 -I$(sc68path)/libsc68 -I$(sc68path)/libsc68/sc68 -I$(sc68path)/libsc68/emu68
 
 endif
 

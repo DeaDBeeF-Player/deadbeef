@@ -74,7 +74,6 @@ typedef struct {
     int bitrate;
     int samplerate;
     int packetlength;
-    int bitspersample;
     int channels;
     float duration;
 
@@ -108,8 +107,14 @@ typedef struct {
 
 typedef struct {
     DB_fileinfo_t info;
+
     // input buffer, for MPEG data
     buffer_t buffer;
+
+    // temp buffer for 32bit decoding, before converting to 16 bit
+    char *conv_buf;
+    int conv_buf_size;
+
     union {
 #ifdef USE_LIBMAD
         struct {
@@ -127,6 +132,8 @@ typedef struct {
 #endif
     };
 
+    int want_16bit;
+    int raw_signal;
     struct mp3_decoder_api_s *dec;
 } mp3_info_t;
 

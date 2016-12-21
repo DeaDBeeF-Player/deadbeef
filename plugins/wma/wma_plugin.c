@@ -234,12 +234,6 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
                         int wmares = wma_decode_superframe_frame(&info->wmadec,
                                 audiobuf + b * info->wfx.blockalign, info->wfx.blockalign);
 
-
-                        if (wmares * info->wfx.channels * info->wfx.bitspersample / 8 > sizeof (info->buffer) - info->remaining) {
-                            fprintf (stderr, "WMA: decoding buffer is too small\n");
-                            break;
-                        }
-
                         if (wmares < 0) {
                             /* Do the above, but for errors in decode. */
                             errcount++;
@@ -250,11 +244,16 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
                                 goto new_packet;
                             }
                         } else if (wmares > 0) {
+                            if (wmares * info->wfx.channels * info->wfx.bitspersample / 8 > sizeof (info->buffer) - info->remaining) {
+                                fprintf (stderr, "WMA: decoding buffer is too small\n");
+                                break;
+                            }
+
                             int16_t *p = (int16_t *)&(info->buffer[info->remaining]);
                             for (int s = 0; s < wmares; s++) {
                                 for (int ch = 0; ch < info->wfx.channels; ch++) {
                                     fixed32 *chan = info->wmadec.frame_out[ch];
-                                    p[s*info->wfx.channels+ch] = chan[s] >> 16;
+                                    p[s*info->wfx.channels+ch] = chan[s] >> 15;
                                 }
                             }
                             info->remaining += wmares * info->wfx.channels * info->wfx.bitspersample / 8;

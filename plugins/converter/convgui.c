@@ -27,9 +27,7 @@
 #if HAVE_SYS_CDEFS_H
 #include <sys/cdefs.h>
 #endif
-#if HAVE_SYS_SYSLIMITS_H
-#include <sys/syslimits.h>
-#endif
+#include <limits.h>
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -53,11 +51,14 @@ typedef struct {
     ddb_dsp_preset_t *current_dsp_preset;
 
     DB_playItem_t **convert_items;
+    ddb_playlist_t *convert_playlist;
+
     int convert_items_count;
     char *outfolder;
     char *outfile;
     int preserve_folder_structure;
     int write_to_source_folder;
+    int bypass_same_format;
     int output_bps;
     int output_is_float;
     int overwrite_action;
@@ -74,6 +75,8 @@ enum {
     PRESET_TYPE_ENCODER,
     PRESET_TYPE_DSP
 };
+
+static const char *default_format = "%artist% - %title%";
 
 static void
 fill_presets (GtkListStore *mdl, ddb_preset_t *head, int type) {
@@ -97,6 +100,14 @@ on_converter_progress_cancel (GtkDialog *dialog, gint response_id, gpointer user
     converter_ctx_t *ctx = user_data;
     ctx->cancelled = 1;
 }
+
+void
+on_output_file_changed                 (GtkEntry        *entry,
+                                        gpointer         user_data);
+
+void
+on_converter_realize                 (GtkWidget        *widget,
+                                        gpointer         user_data);
 
 typedef struct {
     GtkWidget *entry;
@@ -197,6 +208,14 @@ converter_worker (void *ctx) {
         }
     }
 
+    ddb_converter_settings_t settings = {
+        .output_bps = conv->output_bps,
+        .output_is_float = conv->output_is_float,
+        .encoder_preset = conv->encoder_preset,
+        .dsp_preset = conv->dsp_preset,
+        .bypass_conversion_on_same_format = conv->bypass_same_format,
+    };
+
     for (int n = 0; n < conv->convert_items_count; n++) {
         update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
         info->entry = conv->progress_entry;
@@ -207,7 +226,7 @@ converter_worker (void *ctx) {
         g_idle_add (update_progress_cb, info);
 
         char outpath[2000];
-        converter_plugin->get_output_path (conv->convert_items[n], conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, root, conv->write_to_source_folder, outpath, sizeof (outpath));
+        converter_plugin->get_output_path2 (conv->convert_items[n], conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, root, conv->write_to_source_folder, outpath, sizeof (outpath));
 
         int skip = 0;
         char *real_out = realpath(outpath, NULL);
@@ -229,7 +248,7 @@ converter_worker (void *ctx) {
         }
 
         if (!skip) {
-            converter_plugin->convert (conv->convert_items[n], outpath, conv->output_bps, conv->output_is_float, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
+            converter_plugin->convert2 (&settings, conv->convert_items[n], outpath, &conv->cancelled);
         }
         if (conv->cancelled) {
             for (; n < conv->convert_items_count; n++) {
@@ -242,6 +261,9 @@ converter_worker (void *ctx) {
     g_idle_add (destroy_progress_cb, conv->progress);
     if (conv->convert_items) {
         free (conv->convert_items);
+    }
+    if (conv->convert_playlist) {
+        deadbeef->plt_unref (conv->convert_playlist);
     }
     if (conv->outfolder) {
         free (conv->outfolder);
@@ -261,12 +283,14 @@ converter_process (converter_ctx_t *conv)
     conv->outfolder = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder"))));
     const char *outfile = gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")));
     if (outfile[0] == 0) {
-        outfile = "%a - %t";
+        outfile = default_format;
     }
     conv->outfile = strdup (outfile);
     conv->preserve_folder_structure = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")));
     conv->write_to_source_folder = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "write_to_source_folder")));
+    conv->bypass_same_format = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "bypass_same_format")));
     conv->overwrite_action = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (conv->converter, "overwrite_action")));
+    conv->bypass_same_format = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "bypass_same_format")));
 
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "output_format"));
     int selected_format = gtk_combo_box_get_active (combo);
@@ -337,6 +361,119 @@ converter_process (converter_ctx_t *conv)
     return 0;
 }
 
+static int preview_delay_timer = 0;
+
+static gboolean
+preview_update (gpointer user_data)
+{
+    // reset delay
+    if (preview_delay_timer) {
+        g_source_remove (preview_delay_timer);
+        preview_delay_timer = 0;
+    }
+
+    converter_ctx_t *conv = current_ctx;
+    if (!conv) {
+        return FALSE;
+    }
+
+    GtkTreeView *tree_view = GTK_TREE_VIEW (lookup_widget (conv->converter, "preview_tree"));
+    GtkListStore *store = GTK_LIST_STORE (gtk_tree_view_get_model (tree_view));
+
+    if (!tree_view || !store) {
+        return FALSE;
+    }
+    gtk_list_store_clear (store);
+
+    // get encoder preset to access filename extension
+    GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "encoder"));
+    int enc_preset = gtk_combo_box_get_active (combo);
+    ddb_encoder_preset_t *p = NULL;
+    if (enc_preset >= 0) {
+        p = converter_plugin->encoder_preset_get_for_idx (enc_preset);
+    }
+    else {
+        return FALSE;
+    }
+
+    const char *format = user_data;
+    if (!format) {
+        // get filename format
+        GtkEntry *output_file = GTK_ENTRY (lookup_widget (conv->converter, "output_file"));
+        format = gtk_entry_get_text (output_file);
+        if (!format || format[0] == 0) {
+            // use default format when entry is empty
+            format = default_format;
+        }
+    }
+
+    char *tf = deadbeef->tf_compile (format);
+    if (!tf) {
+        return FALSE;
+    }
+
+    // detach model from treeview while adding lots of items to increase performance
+    g_object_ref (store);
+    gtk_tree_view_set_model (tree_view, NULL);
+
+    // NOTE: while displaying is not a problem, adding lots of rows to a GtkListStore
+    // can be quite slow (about 20s for ~60.000 rows)
+    // so we better prevent those huge numbers from locking the UI
+    int num_items = MIN (1000, conv->convert_items_count);
+    for (int n = 0; n < num_items; n++) {
+        DB_playItem_t *it = conv->convert_items[n];
+        if (it) {
+            ddb_tf_context_t ctx = {
+                ._size = sizeof (ddb_tf_context_t),
+                .flags = DDB_TF_CONTEXT_HAS_INDEX,
+                .it = it,
+                .idx = deadbeef->pl_get_idx_of (it),
+                .iter = PL_MAIN,
+                .plt = conv->convert_playlist,
+            };
+
+            char filename[PATH_MAX];
+            deadbeef->tf_eval (&ctx, tf, filename, sizeof (filename));
+            char filename_ext[PATH_MAX];
+            snprintf (filename_ext, sizeof (filename_ext), "%s.%s", filename, p->ext);
+
+            GtkTreeIter iter;
+            gtk_list_store_insert_with_values (store, &iter, -1, 0, filename_ext, -1);
+        }
+    }
+    // reattach model to treeview
+    gtk_tree_view_set_model (tree_view, GTK_TREE_MODEL (store));
+    g_object_unref (store);
+    deadbeef->tf_free (tf);
+    return FALSE;
+}
+
+static void
+preview_timeout_add (const char *format)
+{
+    if (preview_delay_timer) {
+        g_source_remove (preview_delay_timer);
+        preview_delay_timer = 0;
+    }
+    preview_delay_timer = g_timeout_add (500, preview_update, (void *)format);
+}
+
+static void
+create_preview_treeview (converter_ctx_t *conv)
+{
+    GtkWidget *treeview = lookup_widget (conv->converter, "preview_tree");
+    GtkListStore *store = gtk_list_store_new (1, G_TYPE_STRING);
+    gtk_tree_view_set_model (GTK_TREE_VIEW (treeview), GTK_TREE_MODEL (store));
+
+    GtkCellRenderer   *renderer = gtk_cell_renderer_text_new ();
+    GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes ("Preview",
+                                                       renderer,
+                                                       "text", 0,
+                                                       NULL);
+    gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+    gtk_tree_view_insert_column (GTK_TREE_VIEW (treeview), column, 0);
+}
+
 void
 on_write_to_source_folder_toggled      (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
@@ -356,6 +493,7 @@ converter_show_cb (void *data) {
             // copy list
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
             if (plt) {
+                conv->convert_playlist = plt;
                 conv->convert_items_count = deadbeef->plt_getselcount (plt);
                 if (0 < conv->convert_items_count) {
                     conv->convert_items = malloc (sizeof (DB_playItem_t *) * conv->convert_items_count);
@@ -380,8 +518,9 @@ converter_show_cb (void *data) {
     case DDB_ACTION_CTX_PLAYLIST:
         {
             // copy list
-            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            ddb_playlist_t *plt = deadbeef->action_get_playlist ();
             if (plt) {
+                conv->convert_playlist = plt;
                 conv->convert_items_count = deadbeef->plt_get_item_count (plt, PL_MAIN);
                 if (0 < conv->convert_items_count) {
                     conv->convert_items = malloc (sizeof (DB_playItem_t *) * conv->convert_items_count);
@@ -394,7 +533,6 @@ converter_show_cb (void *data) {
                         }
                     }
                 }
-                deadbeef->plt_unref (plt);
             }
             break;
         }
@@ -402,6 +540,7 @@ converter_show_cb (void *data) {
         {
             DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
             if (it) {
+                conv->convert_playlist = deadbeef->pl_get_playlist (it);
                 conv->convert_items_count = 1;
                 conv->convert_items = malloc (sizeof (DB_playItem_t *) * conv->convert_items_count);
                 if (conv->convert_items) {
@@ -414,16 +553,36 @@ converter_show_cb (void *data) {
     deadbeef->pl_unlock ();
 
     conv->converter = create_converterdlg ();
+    create_preview_treeview (conv);
+
     deadbeef->conf_lock ();
     const char *out_folder = deadbeef->conf_get_str_fast ("converter.output_folder", "");
     if (!out_folder[0]) {
         out_folder = getenv("HOME");
     }
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder")), out_folder);
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")), deadbeef->conf_get_str_fast ("converter.output_file", ""));
+
+    GtkWidget *output_file = lookup_widget (conv->converter, "output_file");
+    const char *output_file_text = deadbeef->conf_get_str_fast ("converter.output_file_tf", "");
+    gtk_entry_set_text (GTK_ENTRY (output_file), output_file_text);
+
+    g_signal_connect ((gpointer) output_file, "changed",
+            G_CALLBACK (on_output_file_changed),
+            conv);
+
+    // fill preview on window launch
+    g_signal_connect ((gpointer) conv->converter, "realize",
+            G_CALLBACK (on_converter_realize),
+            (void *)output_file_text);
+
+
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")), deadbeef->conf_get_int ("converter.preserve_folder_structure", 0));
+
     int write_to_source_folder = deadbeef->conf_get_int ("converter.write_to_source_folder", 0);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "write_to_source_folder")), write_to_source_folder);
+
+    int bypass_same_format = deadbeef->conf_get_int ("converter.bypass_same_format", 0);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "bypass_same_format")), bypass_same_format);
 
     g_signal_connect ((gpointer) lookup_widget (conv->converter, "write_to_source_folder"), "toggled",
             G_CALLBACK (on_write_to_source_folder_toggled),
@@ -458,6 +617,7 @@ converter_show_cb (void *data) {
     // overwrite action
     combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "overwrite_action"));
     gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.overwrite_action", 0));
+
 
     for (;;) {
         int response = gtk_dialog_run (GTK_DIALOG (conv->converter));
@@ -510,6 +670,8 @@ on_converter_encoder_changed           (GtkComboBox     *combobox,
 {
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (current_ctx->converter, "encoder"));
     int act = gtk_combo_box_get_active (combo);
+    // update preview to show new filename extensions
+    preview_timeout_add (NULL);
     deadbeef->conf_set_int ("converter.encoder_preset", act);
     deadbeef->conf_save ();
 }
@@ -637,10 +799,18 @@ on_encoder_changed                     (GtkEditable     *editable,
 }
 
 void
+on_converter_realize                 (GtkWidget        *widget,
+                                        gpointer         user_data)
+{
+    preview_timeout_add (NULL);
+}
+
+void
 on_output_file_changed                 (GtkEntry        *entry,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_str ("converter.output_file", gtk_entry_get_text (entry));
+    preview_timeout_add (gtk_entry_get_text (entry));
+    deadbeef->conf_set_str ("converter.output_file_tf", gtk_entry_get_text (entry));
     deadbeef->conf_save ();
 }
 
@@ -661,8 +831,17 @@ on_write_to_source_folder_toggled      (GtkToggleButton *togglebutton,
     deadbeef->conf_set_int ("converter.write_to_source_folder", active);
     gtk_widget_set_sensitive (lookup_widget (conv->converter, "output_folder"), !active);
     gtk_widget_set_sensitive (lookup_widget (conv->converter, "preserve_folders"), !active);
+    deadbeef->conf_save ();
 }
 
+void
+on_bypass_same_format_toggled          (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (togglebutton);
+    deadbeef->conf_set_int ("converter.bypass_same_format", active);
+    deadbeef->conf_save ();
+}
 
 DB_decoder_t *
 plug_get_decoder_for_id (const char *id) {
@@ -696,6 +875,7 @@ init_encoder_preset_from_dlg (GtkWidget *dlg, ddb_encoder_preset_t *p) {
     p->tag_apev2 = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "apev2")));
     p->tag_flac = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "flac")));
     p->tag_oggvorbis = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "oggvorbis")));
+    p->tag_mp4 = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "mp4")));
 }
 
 int
@@ -724,6 +904,7 @@ edit_encoder_preset (char *title, GtkWidget *toplevel) {
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "apev2")), p->tag_apev2);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "flac")), p->tag_flac);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "oggvorbis")), p->tag_oggvorbis);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "mp4")), p->tag_mp4);
 
     ddb_encoder_preset_t *old = p;
     int r = GTK_RESPONSE_CANCEL;
@@ -749,7 +930,7 @@ edit_encoder_preset (char *title, GtkWidget *toplevel) {
                 if (!err) {
                     if (old->title && strcmp (p->title, old->title)) {
                         char path[1024];
-                        if (snprintf (path, sizeof (path), "%s/presets/encoders/%s.txt", deadbeef->get_config_dir (), old->title) > 0) {
+                        if (snprintf (path, sizeof (path), "%s/presets/encoders/%s.txt", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG), old->title) > 0) {
                             unlink (path);
                         }
                     }
@@ -889,7 +1070,7 @@ on_encoder_preset_remove                     (GtkButton       *button,
     gtk_widget_destroy (dlg);
     if (response == GTK_RESPONSE_YES) {
         char path[1024];
-        if (snprintf (path, sizeof (path), "%s/presets/encoders/%s.txt", deadbeef->get_config_dir (), p->title) > 0) {
+        if (snprintf (path, sizeof (path), "%s/presets/encoders/%s.txt", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG), p->title) > 0) {
             unlink (path);
         }
 
@@ -1466,7 +1647,7 @@ on_dsp_preset_remove                     (GtkButton       *button,
     gtk_widget_destroy (dlg);
     if (response == GTK_RESPONSE_YES) {
         char path[1024];
-        if (snprintf (path, sizeof (path), "%s/presets/dsp/%s.txt", deadbeef->get_config_dir (), p->title) > 0) {
+        if (snprintf (path, sizeof (path), "%s/presets/dsp/%s.txt", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG), p->title) > 0) {
             unlink (path);
         }
 
@@ -1591,7 +1772,7 @@ convgui_get_actions (DB_playItem_t *it)
     return &convert_action;
 }
 
-int
+static int
 convgui_connect (void) {
     gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id (DDB_GTKUI_PLUGIN_ID);
     converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id ("converter");
@@ -1608,6 +1789,25 @@ convgui_connect (void) {
         fprintf (stderr, "convgui: need converter>=1.%d, but found %d.%d\n", REQ_CONV_VERSION, converter_plugin->misc.plugin.version_major, converter_plugin->misc.plugin.version_minor);
         return -1;
     }
+    return 0;
+}
+
+static void
+import_legacy_tf (const char *key_from, const char *key_to) {
+    deadbeef->conf_lock ();
+    if (!deadbeef->conf_get_str_fast (key_to, NULL)
+            && deadbeef->conf_get_str_fast (key_from, NULL)) {
+        char old[200], new[200];
+        deadbeef->conf_get_str (key_from, "", old, sizeof (old));
+        deadbeef->tf_import_legacy (old, new, sizeof (new));
+        deadbeef->conf_set_str (key_to, new);
+    }
+    deadbeef->conf_unlock ();
+}
+
+static int
+convgui_start (void) {
+    import_legacy_tf ("converter.output_file", "converter.output_file_tf");
     return 0;
 }
 
@@ -1652,6 +1852,7 @@ DB_misc_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.get_actions = convgui_get_actions,
     .plugin.connect = convgui_connect,
+    .plugin.start = convgui_start,
 };
 
 DB_plugin_t *

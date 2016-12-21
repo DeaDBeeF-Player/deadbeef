@@ -58,9 +58,20 @@
 #include "tf.h"
 #include "playqueue.h"
 #include "sort.h"
+#include "logger.h"
+#include "replaygain.h"
+#ifdef __APPLE__
+#include "cocoautil.h"
+#endif
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+DB_plugin_t main_plugin = {
+    .type = DB_PLUGIN_MISC,
+    .version_major = DB_API_VERSION_MAJOR,
+    .version_minor = DB_API_VERSION_MINOR,
+    .name = "deadbeef",
+    .id = "deadbeef",
+    .flags = DDB_PLUGIN_FLAG_LOGGING,
+};
 
 //#define DISABLE_VERSIONCHECK 1
 
@@ -69,6 +80,53 @@
 #else
 #define PLUGINEXT ".so"
 #endif
+
+const char *lowprio_plugin_ids[] = {
+    "ffmpeg",
+    NULL
+};
+
+// internal plugin list
+typedef struct plugin_s {
+    void *handle;
+    DB_plugin_t *plugin;
+    struct plugin_s *next;
+} plugin_t;
+
+static plugin_t *plugins;
+static plugin_t *plugins_tail;
+
+// this list only gets used during plugin loading,
+// then it gets appended to the above "plugins" list,
+// and set to NULL
+static plugin_t *plugins_lowprio;
+static plugin_t *plugins_lowprio_tail;
+
+#define MAX_PLUGINS 100
+static DB_plugin_t *g_plugins[MAX_PLUGINS+1];
+
+#define MAX_GUI_PLUGINS 10
+static char *g_gui_names[MAX_GUI_PLUGINS+1];
+static int g_num_gui_names;
+
+#define MAX_DECODER_PLUGINS 50
+static DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
+
+#define MAX_VFS_PLUGINS 10
+static DB_vfs_t *g_vfs_plugins[MAX_VFS_PLUGINS+1];
+
+#define MAX_DSP_PLUGINS 10
+static DB_dsp_t *g_dsp_plugins[MAX_DSP_PLUGINS+1];
+
+#define MAX_OUTPUT_PLUGINS 10
+static DB_output_t *g_output_plugins[MAX_OUTPUT_PLUGINS+1];
+static DB_output_t *output_plugin = NULL;
+
+#define MAX_PLAYLIST_PLUGINS 10
+static DB_playlist_t *g_playlist_plugins[MAX_PLAYLIST_PLUGINS+1];
+
+static uintptr_t background_jobs_mutex;
+static int num_background_jobs;
 
 // deadbeef api
 static DB_functions_t deadbeef_api = {
@@ -394,6 +452,37 @@ static DB_functions_t deadbeef_api = {
     .playqueue_insert_at = (void (*) (int n, DB_playItem_t *it))playqueue_insert_at,
 
     .get_system_dir = plug_get_system_dir,
+
+    .action_set_playlist = action_set_playlist,
+    .action_get_playlist = action_get_playlist,
+
+    .tf_import_legacy = tf_import_legacy,
+
+    .plt_search_process2 = (void (*) (ddb_playlist_t *plt, const char *text, int select_results))plt_search_process2,
+    .plt_process_cue = (DB_playItem_t * (*) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *it, uint64_t numsamples, int samplerate))plt_process_cue,
+    .pl_meta_for_key = (DB_metaInfo_t * (*) (DB_playItem_t *it, const char *key))pl_meta_for_key,
+
+    .log_detailed = ddb_log_detailed,
+    .vlog_detailed = ddb_vlog_detailed,
+    .log = ddb_log,
+    .vlog = ddb_vlog,
+
+    .log_viewer_register = ddb_log_viewer_register,
+    .log_viewer_unregister = ddb_log_viewer_unregister,
+
+    .register_fileadd_filter = register_fileadd_filter,
+    .unregister_fileadd_filter = unregister_fileadd_filter,
+
+    .metacache_get_string = metacache_get_string,
+    .metacache_add_value = metacache_add_value,
+    .metacache_get_value = metacache_get_value,
+    .metacache_remove_value = metacache_remove_value,
+
+    .replaygain_apply = replaygain_apply,
+    .replaygain_apply_with_settings = replaygain_apply_with_settings,
+    .replaygain_init_settings = (void (*) (ddb_replaygain_settings_t *settings, DB_playItem_t *it))replaygain_init_settings,
+
+    .sort_track_array = (void (*) (ddb_playlist_t *playlist, DB_playItem_t **tracks, int num_tracks, const char *format, int order))sort_track_array,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -454,32 +543,6 @@ plug_volume_set_amp (float amp) {
     messagepump_push (DB_EV_VOLUMECHANGED, 0, 0, 0);
 }
 
-#define MAX_PLUGINS 100
-DB_plugin_t *g_plugins[MAX_PLUGINS+1];
-
-#define MAX_GUI_PLUGINS 10
-static char *g_gui_names[MAX_GUI_PLUGINS+1];
-static int g_num_gui_names;
-
-#define MAX_DECODER_PLUGINS 50
-DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
-
-#define MAX_VFS_PLUGINS 10
-DB_vfs_t *g_vfs_plugins[MAX_VFS_PLUGINS+1];
-
-#define MAX_DSP_PLUGINS 10
-DB_dsp_t *g_dsp_plugins[MAX_DSP_PLUGINS+1];
-
-#define MAX_OUTPUT_PLUGINS 10
-DB_output_t *g_output_plugins[MAX_OUTPUT_PLUGINS+1];
-DB_output_t *output_plugin = NULL;
-
-#define MAX_PLAYLIST_PLUGINS 10
-DB_playlist_t *g_playlist_plugins[MAX_PLAYLIST_PLUGINS+1];
-
-static uintptr_t background_jobs_mutex;
-static int num_background_jobs;
-
 void
 plug_md5 (uint8_t sig[16], const char *in, int len) {
     md5_state_t st;
@@ -498,16 +561,6 @@ plug_md5_to_str (char *str, const uint8_t sig[16]) {
     }
     *str = 0;
 }
-
-// plugin control structures
-typedef struct plugin_s {
-    void *handle;
-    DB_plugin_t *plugin;
-    struct plugin_s *next;
-} plugin_t;
-
-plugin_t *plugins;
-plugin_t *plugins_tail;
 
 float
 plug_playback_get_pos (void) {
@@ -596,13 +649,34 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
     memset (plug, 0, sizeof (plugin_t));
     plug->plugin = plugin_api;
     plug->handle = handle;
-    if (plugins_tail) {
-        plugins_tail->next = plug;
-        plugins_tail = plug;
+
+    int lowprio = 0;
+    for (int n = 0; lowprio_plugin_ids[n]; n++) {
+        if (plugin_api->id && !strcmp (lowprio_plugin_ids[n], plugin_api->id)) {
+            lowprio = 1;
+            break;
+        }
+    }
+
+    if (lowprio) {
+        if (plugins_lowprio_tail) {
+            plugins_lowprio_tail->next = plug;
+            plugins_lowprio_tail = plug;
+        }
+        else {
+            plugins_lowprio = plugins_lowprio_tail = plug;
+        }
     }
     else {
-        plugins = plugins_tail = plug;
+        if (plugins_tail) {
+            plugins_tail->next = plug;
+            plugins_tail = plug;
+        }
+        else {
+            plugins = plugins_tail = plug;
+        }
     }
+
     return 0;
 }
 
@@ -658,6 +732,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
     if (strstr (d_name, ".0.so")) {
         return -1;
     }
+
     char fullname[PATH_MAX];
     snprintf (fullname, PATH_MAX, "%s/%s", plugdir, d_name);
 
@@ -671,7 +746,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
     void *handle = dlopen (fullname, RTLD_NOW);
     if (!handle) {
         trace ("dlopen error: %s\n", dlerror ());
-#if defined(ANDROID) || defined(HAVE_COCOAUI)
+#if defined(ANDROID) || defined(OSX_APPBUNDLE)
         return -1;
 #else
         strcpy (fullname + strlen(fullname) - sizeof (PLUGINEXT)+1, ".fallback.so");
@@ -682,7 +757,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
             return -1;
         }
         else {
-            fprintf (stderr, "successfully started fallback plugin %s\n", fullname);
+            trace ("successfully started fallback plugin %s\n", fullname);
         }
 #endif
     }
@@ -694,9 +769,19 @@ load_plugin (const char *plugdir, char *d_name, int l) {
     DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name+3);
 #endif
     if (!plug_load) {
-        trace ("dlsym error: %s (%s)\n", dlerror (), d_name + 3);
+        int android = 0;
+#ifdef ANDROID
+        android = 1;
+#endif
         dlclose (handle);
-        return -1;
+        // don't error after failing to load plugins starting with "lib",
+        // e.g. attempting to load a plugin from "libmp4ff.so",
+        // except android, where all plugins have lib prefix
+        if (android || strlen (d_name) < 3 || memcmp (d_name, "lib", 3)) {
+            trace ("dlsym error: %s (%s)\n", dlerror (), d_name + 3);
+            return -1;
+        }
+        return 0;
     }
     if (plug_init_plugin (plug_load, handle) < 0) {
         d_name[l-sizeof (PLUGINEXT)+1] = 0;
@@ -740,7 +825,7 @@ load_gui_plugin (const char **plugdirs) {
                 return 0;
             }
             else {
-                trace ("plugin not found or failed to load\n");
+                trace ("the plugin not found or failed to load\n");
             }
         }
     }
@@ -786,7 +871,6 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
                 if (l < (sizeof(PLUGINEXT)-1)) {
                     break;
                 }
-                const char *e = PLUGINEXT;
                 if (strcasecmp (namelist[i]->d_name + l - sizeof(PLUGINEXT) + 1, PLUGINEXT)) {
                     break;
                 }
@@ -822,7 +906,7 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
                     if (gui_scan) {
                         trace ("found gui plugin %s\n", d_name);
                         if (g_num_gui_names >= MAX_GUI_PLUGINS) {
-                            fprintf (stderr, "too many gui plugins\n");
+                            trace_err ("too many gui plugins\n");
                             break; // no more gui plugins allowed
                         }
                         char *nm = d_name + 8;
@@ -852,7 +936,7 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
                 }
 
                 if (!gui_scan) {
-                    if (0 != load_plugin (plugdir, d_name, l)) {
+                    if (0 != load_plugin (plugdir, d_name, (int)l)) {
                         trace ("plugin not found or failed to load\n");
                     }
                 }
@@ -875,8 +959,13 @@ plug_load_all (void) {
 
     const char *dirname = deadbeef->get_plugin_dir ();
 
-#ifdef HAVE_COCOAUI
-    const char *plugins_dirs[] = { dirname, NULL };
+#ifdef OSX_APPBUNDLE
+    char libpath[PATH_MAX];
+    int res = cocoautil_get_library_path (libpath, sizeof (libpath));
+    if (!res) {
+        strncat (libpath, "/deadbeef/plugins", sizeof (libpath) - strlen (libpath) - 1);
+    }
+    const char *plugins_dirs[] = { dirname, !res ? libpath : NULL, NULL };
 #else
 #ifndef ANDROID
     char *xdg_local_home = getenv ("XDG_LOCAL_HOME");
@@ -991,6 +1080,19 @@ plug_load_all (void) {
 #undef PLUG
 #endif
 
+    if (plugins_lowprio) {
+        if (plugins_tail) {
+            plugins_tail->next = plugins_lowprio;
+        }
+        else {
+            plugins = plugins_tail = plugins_lowprio;
+        }
+        while (plugins_tail->next) {
+            plugins_tail = plugins_tail->next;
+        }
+        plugins_lowprio = plugins_lowprio_tail = NULL;
+    }
+
     plugin_t *plug;
     // categorize plugins
     int numplugins = 0;
@@ -1041,7 +1143,7 @@ plug_load_all (void) {
     for (plug = plugins; plug;) {
         if (plug->plugin->type != DB_PLUGIN_GUI && plug->plugin->start) {
             if (plug->plugin->start () < 0) {
-                fprintf (stderr, "plugin %s failed to start, deactivated.\n", plug->plugin->name);
+                trace_err ("plugin %s failed to start, deactivated.\n", plug->plugin->name);
                 if (plug->plugin->stop) {
                     plug->plugin->stop ();
                 }
@@ -1073,10 +1175,12 @@ plug_load_all (void) {
     g_playlist_plugins[numplaylist] = NULL;
 
     // select output plugin
+#ifndef XCTEST
     if (plug_select_output () < 0) {
         trace ("failed to find output plugin!\n");
         return -1;
     }
+#endif
     return 0;
 }
 
@@ -1087,7 +1191,7 @@ plug_connect_all (void) {
     for (plug = plugins; plug;) {
         if (plug->plugin->connect) {
             if (plug->plugin->connect () < 0) {
-                fprintf (stderr, "plugin %s failed to connect to dependencies, deactivated.\n", plug->plugin->name);
+                trace ("plugin %s failed to connect to dependencies, deactivated.\n", plug->plugin->name);
 
                 if (plug->plugin->disconnect) {
                     plug->plugin->disconnect ();
@@ -1136,6 +1240,7 @@ plug_disconnect_all (void) {
 
 void
 plug_unload_all (void) {
+    action_set_playlist (NULL);
     trace ("plug_unload_all\n");
     plugin_t *p;
     for (p = plugins; p; p = p->next) {
@@ -1180,6 +1285,11 @@ plug_unload_all (void) {
         mutex_free (background_jobs_mutex);
         background_jobs_mutex = 0;
     }
+}
+
+void
+plug_set_output (DB_output_t *out) {
+    output_plugin = out;
 }
 
 void
@@ -1416,4 +1526,27 @@ background_job_decrement (void) {
 int
 have_background_jobs (void) {
     return num_background_jobs;
+}
+
+static ddb_playlist_t *action_playlist;
+
+void
+action_set_playlist (ddb_playlist_t *plt) {
+    if (action_playlist) {
+        plt_unref ((playlist_t *)action_playlist);
+    }
+    action_playlist = plt;
+    if (action_playlist) {
+        plt_ref ((playlist_t *)action_playlist);
+    }
+}
+
+ddb_playlist_t *
+action_get_playlist (void) {
+    if (!action_playlist) {
+        return (ddb_playlist_t *)plt_get_curr ();
+    }
+
+    plt_ref ((playlist_t *)action_playlist);
+    return action_playlist;
 }

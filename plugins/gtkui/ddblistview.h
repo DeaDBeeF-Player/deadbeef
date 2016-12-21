@@ -55,7 +55,6 @@ typedef void * DdbPlaylistHandle;
 struct _DdbListviewGroup {
     DdbListviewIter head;
     int32_t height;
-    int32_t min_height;
     int32_t num_items;
     int pinned;
     struct _DdbListviewGroup *next;
@@ -92,23 +91,25 @@ typedef struct {
     void (*drag_n_drop) (DdbListviewIter before, DdbPlaylistHandle playlist_from, uint32_t *indices, int length, int copy);
     void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
 
-    void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int pl_iter, int x, int y, int width, int height);
+    void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int x, int y, int width, int height);
     void (*draw_album_art) (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
-    void (*draw_column_data) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int idx, int column, int pl_iter, int x, int y, int width, int height);
+    void (*draw_column_data) (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height);
 
     // cols
     int (*is_album_art_column) (void *user_data);
     void (*columns_changed) (DdbListview *listview);
-    void (*col_sort) (int col, int sort_order, void *user_data);
+    void (*col_sort) (int sort_order, void *user_data);
     void (*col_free_user_data) (void *user_data);
 
     // callbacks
-    void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx);
+    void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx, int plt_iter);
+    void (*list_empty_region_context_menu) (DdbListview *listview);
     void (*header_context_menu) (DdbListview *listview, int col);
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
+    gboolean (*list_handle_keypress) (DdbListview *ps, int keyval, int state, int iter);
     void (*selection_changed) (DdbListview *listview, DdbListviewIter it, int idx);
     void (*delete_selected) (void);
-    void (*groups_changed) (DdbListview *listview, const char *format);
+    void (*groups_changed) (const char *format);
     void (*vscroll_changed) (int pos);
     void (*cursor_changed) (int pos);
     int (*modification_idx) (void);
@@ -129,7 +130,10 @@ struct _DdbListview {
     GtkWidget *scrollbar;
     GtkWidget *hscrollbar;
 
-    int totalwidth; // width of listview, including invisible (scrollable) part
+    int list_width; // width if the list widget as of the last resize
+    int list_height; // heught of the list widget as of the last resize
+    int totalwidth; // width of listview, including any invisible (scrollable) part
+    int fullheight; // total height of all groups
     const char *title; // unique id, used for config writing, etc
     int lastpos[2]; // last mouse position (for list widget)
     // current state
@@ -167,8 +171,8 @@ struct _DdbListview {
     int header_dragpt[2];
     gdouble prev_header_x;
     int header_prepare;
-    int header_width; // previous width before resize
     int col_autoresize;
+    float fwidth;
 
     struct _DdbListviewColumn *columns;
     gboolean lock_columns;
@@ -176,8 +180,6 @@ struct _DdbListview {
     ddb_playlist_t *plt; // current playlist (refcounted), must be unreffed with the group
     struct _DdbListviewGroup *groups;
     int groups_build_idx; // must be the same as playlist modification idx
-    int fullheight;
-    int block_redraw_on_scroll;
     int grouptitle_height;
     int calculated_grouptitle_height;
 
@@ -215,24 +217,16 @@ void
 ddb_listview_set_binding (DdbListview *listview, DdbListviewBinding *binding);
 void
 ddb_listview_draw_row (DdbListview *listview, int idx, DdbListviewIter iter);
-int
-ddb_listview_get_vscroll_pos (DdbListview *listview);
-int
-ddb_listview_get_hscroll_pos (DdbListview *listview);
-DdbListviewIter
-ddb_listview_get_iter_from_coord (DdbListview *listview, int x, int y);
-int
-ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state);
 void
-ddb_listview_set_cursor (DdbListview *pl, int cursor);
+ddb_listview_select_single (DdbListview *listview, int sel);
 void
-ddb_listview_set_cursor_noscroll (DdbListview *pl, int cursor);
+ddb_listview_select_range (DdbListview *ps, int start, int end);
 void
 ddb_listview_scroll_to (DdbListview *listview, int rowpos);
-void
-ddb_listview_set_vscroll (DdbListview *listview, int scroll);
 int
-ddb_listview_is_scrolling (DdbListview *listview);
+ddb_listview_list_setup (DdbListview *listview, int scroll_to);
+void
+ddb_listview_size_columns_without_scrollbar (DdbListview *listview);
 int
 ddb_listview_column_get_count (DdbListview *listview);
 void
@@ -246,8 +240,15 @@ ddb_listview_column_get_info (DdbListview *listview, int col, const char **title
 int
 ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);
 
+// if 'gtkui.sticky_sort' is 1: sort columns by their current sort order
+// otherwise clear sort order
+void
+ddb_listview_col_sort_update (DdbListview *listview);
+
 void
 ddb_listview_show_header (DdbListview *listview, int show);
+void
+ddb_listview_init_autoresize (DdbListview *ps, int totalwidth);
 
 enum {
     DDB_REFRESH_COLUMNS = 1,
@@ -255,60 +256,17 @@ enum {
     DDB_REFRESH_VSCROLL = 4,
     DDB_REFRESH_LIST    = 8,
     DDB_LIST_CHANGED    = 16,
+    DDB_REFRESH_CONFIG  = 32,
 };
 
-void ddb_listview_refresh (DdbListview *listview, uint32_t flags);
-
-gboolean
-ddb_listview_list_drag_drop                  (GtkWidget       *widget,
-                                        GdkDragContext  *drag_context,
-                                        gint             x,
-                                        gint             y,
-                                        guint            time,
-                                        gpointer         user_data);
-
 void
-ddb_listview_list_drag_data_get              (GtkWidget       *widget,
-                                        GdkDragContext  *drag_context,
-                                        GtkSelectionData *data,
-                                        guint            info,
-                                        guint            time,
-                                        gpointer         user_data);
-
-void
-ddb_listview_list_drag_end                   (GtkWidget       *widget,
-                                        GdkDragContext  *drag_context,
-                                        gpointer         user_data);
-
-void
-ddb_listview_list_drag_data_received         (GtkWidget       *widget,
-                                        GdkDragContext  *drag_context,
-                                        gint             x,
-                                        gint             y,
-                                        GtkSelectionData *data,
-                                        guint            target_type,
-                                        guint            time,
-                                        gpointer         user_data);
-
-void
-ddb_listview_list_drag_leave                 (GtkWidget       *widget,
-                                        GdkDragContext  *drag_context,
-                                        guint            time,
-                                        gpointer         user_data);
-
-void
-ddb_listview_list_drag_end                   (GtkWidget       *widget,
-                                        GdkDragContext  *drag_context,
-                                        gpointer         user_data);
+ddb_listview_refresh (DdbListview *listview, uint32_t flags);
 
 void
 ddb_listview_invalidate_album_art_columns (DdbListview *listview);
 
 void
 ddb_listview_clear_sort (DdbListview *listview);
-
-void
-ddb_listview_lock_columns (DdbListview *lv, gboolean lock);
 
 int
 ddb_listview_get_row_pos (DdbListview *listview, int row_idx);
@@ -317,11 +275,13 @@ void
 ddb_listview_groupcheck (DdbListview *listview);
 
 void
-ddb_listview_update_fonts (DdbListview *ps);
+ddb_listview_cancel_autoredraw (DdbListview *listview);
 
 void
-ddb_listview_header_update_fonts (DdbListview *ps);
+ddb_listview_update_cursor (DdbListview *ps, int cursor);
 
+void
+ddb_listview_set_cursor_and_scroll (DdbListview *listview, int cursor);
 G_END_DECLS
 
 #endif // __DDBLISTVIEW_H

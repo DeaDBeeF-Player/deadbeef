@@ -26,17 +26,32 @@
 #import "DdbWidgetManager.h"
 #import "DdbPlaylistViewController.h"
 #import "DdbShared.h"
+#import "MediaKeyController.h"
+#import "LogWindowController.h"
 #include "conf.h"
 #include "streamer.h"
 #include "junklib.h"
-
+#include "../../common.h"
 #include "../../deadbeef.h"
+#include "../../plugins/artwork/artwork.h"
 #include <sys/time.h>
 
 extern DB_functions_t *deadbeef;
 
 extern BOOL g_CanQuit;
-@implementation AppDelegate
+@implementation AppDelegate {
+    PreferencesWindowController *_prefWindow;
+    SearchWindowController *_searchWindow;
+    LogWindowController *_logWindow;
+
+    NSMenuItem *_dockMenuNPHeading;
+    NSMenuItem *_dockMenuNPTitle;
+    NSMenuItem *_dockMenuNPArtistAlbum;
+    NSMenuItem *_dockMenuNPSeparator;
+
+    char *_titleScript;
+    char *_artistAlbumScript;
+}
 
 DB_playItem_t *prev = NULL;
 int prevIdx = -1;
@@ -46,8 +61,28 @@ NSImage *bufferingImg;
 AppDelegate *g_appDelegate;
 NSInteger firstSelected = -1;
 
-- (NSWindow *)mainWindow {
-    return [_mainWindow window];
+static void
+_cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text) {
+    [g_appDelegate appendLoggerText:text forPlugin:plugin onLayers:layers];
+}
+
+- (void)appendLoggerText:(const char *)text forPlugin:(DB_plugin_t *)plugin onLayers:(uint32_t)layers {
+    NSString *str = [NSString stringWithUTF8String:text];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_logWindow appendText:str];
+
+        if (layers == DDB_LOG_LAYER_DEFAULT) {
+            if (![[_logWindow window] isVisible]) {
+                [_logWindow showWindow:self];
+            }
+        }
+    });
+}
+
+- (void)dealloc {
+    deadbeef->log_viewer_unregister (_cocoaui_logger_callback);
+    ungrabMediaKeys ();
 }
 
 - (void)volumeChanged {
@@ -103,7 +138,7 @@ static int fileadd_cancelled = 0;
 static void fileadd_begin (ddb_fileadd_data_t *data, void *user_data) {
     fileadd_cancelled = 0;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [NSApp beginSheet:g_appDelegate.addFilesWindow modalForWindow:[g_appDelegate mainWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+        [NSApp beginSheet:g_appDelegate.addFilesWindow modalForWindow:[[g_appDelegate mainWindow] window] modalDelegate:nil didEndSelector:nil contextInfo:nil];
     });
 }
 
@@ -111,16 +146,25 @@ static void fileadd_end (ddb_fileadd_data_t *data, void *user_data) {
     dispatch_async(dispatch_get_main_queue(), ^{
         [g_appDelegate.addFilesWindow orderOut:g_appDelegate];
         [NSApp endSheet:g_appDelegate.addFilesWindow];
-        [g_appDelegate.mainWindow makeKeyAndOrderFront:g_appDelegate];
+        [[[g_appDelegate mainWindow] window] makeKeyAndOrderFront:g_appDelegate];
     });
 }
 
+static BOOL _settingLabel = NO;
+
 static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     const char *uri = deadbeef->pl_find_meta (data->track, ":URI");
-    NSString *s = [NSString stringWithUTF8String:uri];
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        [g_appDelegate.addFilesLabel setStringValue:s];
-    });
+    if (!_settingLabel) {
+        // HACK: we want to set the label asynchronously, to minimize delays,
+        // but we also want to avoid sending multiple labels, becuase that's meaningless.
+        // So we use a basic flag, to see if the label is being set already.
+        NSString *s = [NSString stringWithUTF8String:uri];
+        _settingLabel = YES;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [g_appDelegate.addFilesLabel setStringValue:s];
+            _settingLabel = NO;
+        });
+    }
     return fileadd_cancelled ? -1 : 0;
 }
 
@@ -131,24 +175,16 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 - (void)awakeFromNib {
     [self initMainWindow];
     [self initSearchWindow];
+    [self initLogWindow];
 }
 
 - (void)initMainWindow {
     _mainWindow = [[MainWindowController alloc] initWithWindowNibName:@"MainWindow"];
     [_mainWindow setShouldCascadeWindows:NO];
     [[_mainWindow window] setReleasedWhenClosed:NO];
-    [[_mainWindow window]  setExcludedFromWindowsMenu:YES];
+    [[_mainWindow window] setExcludedFromWindowsMenu:YES];
     [[_mainWindow window] setIsVisible:YES];
-
-/*
-    DdbPlaylistViewController *vc = [[DdbPlaylistViewController alloc] init];
-    NSView *view = [vc view];
-
-    [view setFrame:NSMakeRect(0, [_statusBar frame].size.height+2, [[_window contentView] frame].size.width, [_tabStrip frame].origin.y - [_statusBar frame].size.height - 1)];
-    [view setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-
-    [[_window contentView] addSubview:view];
-    */
+    [_mainWindowToggleMenuItem bind:@"state" toObject:[_mainWindow window] withKeyPath:@"visible" options:nil];
 }
 
 - (void)initSearchWindow {
@@ -156,16 +192,41 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [_searchWindow setShouldCascadeWindows:NO];
 }
 
+- (void)initLogWindow {
+    _logWindow = [[LogWindowController alloc] initWithWindowNibName:@"Log"];
+    [_logWindowToggleMenuItem bind:@"state" toObject:[_logWindow window] withKeyPath:@"visible" options:nil];
+    [[_logWindow window] setExcludedFromWindowsMenu:YES];
+}
+
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
     if (g_CanQuit) {
         return NSTerminateNow;
     }
 
-    [_mainWindow close];
-    [_searchWindow close];
+    if (deadbeef->have_background_jobs ()) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setMessageText:@"Do you really want to quit now?"];
+        [alert setInformativeText:@"DeaDBeeF is currently running background tasks. If you quit now, the tasks will be cancelled or interrupted. This may result in data loss."];
+        [alert addButtonWithTitle:@"No"];
+        [alert addButtonWithTitle:@"Yes"];
+        NSModalResponse res = [alert runModal];
+        if (res == NSAlertFirstButtonReturn) {
+            return NSTerminateCancel;
+        }
+    }
 
     deadbeef->sendmessage(DB_EV_TERMINATE, 0, 0, 0);
     return NSTerminateLater;
+}
+
+extern void
+main_cleanup_and_quit (void);
+
+- (void)applicationWillTerminate:(NSNotification *)notification {
+    [ConverterWindowController converterCleanup];
+    [_mainWindow cleanup];
+    [_searchWindow cleanup];
+    main_cleanup_and_quit();
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -182,10 +243,14 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 
     g_appDelegate = self;
 
+    grabMediaKeys ();
+
     [self updateDockNowPlaying];
     [[NSApp dockTile] setContentView: _dockTileView];
 //    [[NSApp dockTile] setBadgeLabel:@"Hello"];
     [[NSApp dockTile] display];
+
+    deadbeef->log_viewer_register (_cocoaui_logger_callback);
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag{
@@ -193,10 +258,41 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     return YES;
 }
 
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
+    dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(aQueue, ^{
+        char str[100];
+        add_paths([filename UTF8String], (int)[filename length], 0, str, 100);
+    });
+    return YES; // assume that everything went ok
+}
+
+
+- (void)application:(NSApplication *)sender openFiles:(NSArray *)filenames {
+    dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(aQueue, ^{
+        char str[100];
+        // building single paths string for the deadbeef function, paths must be separated by '\0'
+        NSString *paths =[filenames componentsJoinedByString:@"\0"];
+        add_paths([paths UTF8String], (int)[paths length], 0, str, 100);
+    });
+}
+
+
 - (IBAction)showMainWinAction:(id)sender {
-    NSInteger st = [sender state];
-    [[_mainWindow window] setIsVisible:st!=NSOnState];
-    [sender setState:st==NSOnState?NSOffState:NSOnState];
+    BOOL vis = ![[_mainWindow window] isVisible];
+    [[_mainWindow window] setIsVisible:vis];
+    if (vis) {
+        [[_mainWindow window] makeKeyWindow];
+    }
+}
+
+- (IBAction)showLogWindowAction:(id)sender {
+    BOOL vis = ![[_logWindow window] isVisible];
+    [[_logWindow window] setIsVisible:vis];
+    if (vis) {
+        [[_logWindow window] makeKeyWindow];
+    }
 }
 
 // playlist delegate
@@ -395,7 +491,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [_customSortEntry setStringValue:[NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.custom_sort_tf", "")]];
     deadbeef->pl_unlock ();
     [_customSortDescending setState:deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSOnState : NSOffState];
-    [NSApp beginSheet:_customSortPanel modalForWindow:[self mainWindow] modalDelegate:self didEndSelector:@selector(didEndCustomSort:returnCode:contextInfo:) contextInfo:nil];
+    [NSApp beginSheet:_customSortPanel modalForWindow:[_mainWindow window] modalDelegate:self didEndSelector:@selector(didEndCustomSort:returnCode:contextInfo:) contextInfo:nil];
 
 }
 
@@ -572,6 +668,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     else if (_id == DB_EV_VOLUMECHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(volumeChanged) withObject:nil waitUntilDone:NO];
     }
+
     return 0;
 }
 

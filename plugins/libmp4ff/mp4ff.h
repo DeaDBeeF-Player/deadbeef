@@ -46,6 +46,7 @@ extern "C" {
 
 mp4ff_t *mp4ff_open_read(mp4ff_callback_t *f);
 mp4ff_t *mp4ff_open_read_metaonly(mp4ff_callback_t *f);
+mp4ff_t *mp4ff_open_read_coveronly(mp4ff_callback_t *f);
 void mp4ff_close(mp4ff_t *f);
 int32_t mp4ff_get_sample_duration(const mp4ff_t *f, const int32_t track, const int32_t sample);
 int32_t mp4ff_get_num_sample_byte_sizes (const mp4ff_t *f, const int32_t track);
@@ -102,6 +103,9 @@ int mp4ff_meta_get_totaltracks(const mp4ff_t *f, char **value);
 int mp4ff_meta_get_totaldiscs(const mp4ff_t *f, char **value);
 int mp4ff_meta_get_compilation(const mp4ff_t *f, char **value);
 int mp4ff_meta_get_tempo(const mp4ff_t *f, char **value);
+
+// The mp4ff_meta_get_coverart doesn't function correctly, and should be avoided
+// Please use mp4ff_cover_get instead
 int32_t mp4ff_meta_get_coverart(const mp4ff_t *f, char **value);
 #ifdef USE_TAGGING
 
@@ -116,7 +120,16 @@ int mp4ff_get_track_sample_size(mp4ff_t *f, int t, int s);
 #endif
 
 int32_t mp4ff_meta_update(mp4ff_callback_t *f,const mp4ff_metadata_t * data);
+int32_t mp4ff_tag_add_field(mp4ff_metadata_t *tags, const char *item, const char *value);
+int32_t mp4ff_tag_set_field(mp4ff_metadata_t *tags, const char *item, const char *value);
+int32_t mp4ff_set_metadata_name(mp4ff_t *f, const uint8_t atom_type, char **name);
+int32_t mp4ff_parse_tag(mp4ff_t *f, const uint8_t parent_atom_type, const int32_t size);
 
+void mp4ff_cover_delete (mp4ff_cover_art_t *cover);
+void mp4ff_cover_append_item (mp4ff_t *f, char *data, uint32_t datasize);
+
+// returns a linked list of all available cover art images
+mp4ff_cover_art_t *mp4ff_cover_get (mp4ff_t *f);
 #endif
 
 

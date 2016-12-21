@@ -33,11 +33,10 @@
 #define TBIT 6                          /* # of bit for track    */
 #define WBIT 5                          /* # of bit for hardware */
 #define FBIT (64-HBIT-TBIT-WBIT)        /* # of bit for frames   */
-
 #define HFIX (32-HBIT)
 
 #define TIMEDB_ENTRY(HASH,TRACK,FRAMES,FLAGS) \
-  { (HASH)>>HFIX, TRACK, FLAGS, FRAMES }
+  { 0x##HASH>>HFIX, TRACK, FLAGS, FRAMES }
 #define E_EMPTY { 0,0,0,0 }
 
 

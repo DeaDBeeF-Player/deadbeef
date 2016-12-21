@@ -22,7 +22,7 @@
  * @{
  */
 
-FILE68_EXTERN
+FILE68_API
 /**
  * Get ICE! depacker version.
  *
@@ -34,7 +34,7 @@ FILE68_EXTERN
  */
 int file68_ice_version(void);
 
-FILE68_EXTERN
+FILE68_API
 /**
  * Test ice file header magic header.
  *
@@ -45,7 +45,7 @@ FILE68_EXTERN
  */
 int file68_ice_is_magic(const void * buffer);
 
-FILE68_EXTERN
+FILE68_API
 /**
  * Load an iced stream.
  *
@@ -61,7 +61,7 @@ FILE68_EXTERN
  */
 void * file68_ice_load(vfs68_t * is, int * ulen);
 
-FILE68_EXTERN
+FILE68_API
 /**
  * Load an iced file.
  *

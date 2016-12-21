@@ -99,6 +99,8 @@ extern "C" {
 #define ATOM_CHAP           175
 #define ATOM_TEXT 176
 #define ATOM_ELST 176
+#define ATOM_ALAC 178
+#define ATOM_SIDX 179
 
 #define ATOM_UNKNOWN 255
 #define ATOM_FREE ATOM_UNKNOWN
@@ -260,6 +262,19 @@ typedef struct
     uint32_t *i_track_ID;
 } mp4ff_trefdata_t;
 
+typedef struct mp4ff_cover_art_item_s
+{
+    char *data;
+    uint32_t size;
+    struct mp4ff_cover_art_item_s *next;
+} mp4ff_cover_art_item_t;
+
+typedef struct
+{
+    mp4ff_cover_art_item_t *items;
+    mp4ff_cover_art_item_t *tail;
+} mp4ff_cover_art_t;
+
 /* mp4 main file structure */
 typedef struct
 {
@@ -289,6 +304,10 @@ typedef struct
     /* chapters */
     mp4ff_chapterdata_t chapters;
     mp4ff_trefdata_t tref;
+
+    /* cover art data */
+    int load_covers;
+    mp4ff_cover_art_t covers;
 } mp4ff_t;
 
 
@@ -339,10 +358,10 @@ int32_t mp4ff_set_sample_position(mp4ff_t *f, const int32_t track, const int32_t
 
 #ifdef USE_TAGGING
 /* mp4meta.c */
-static int32_t mp4ff_tag_add_field(mp4ff_metadata_t *tags, const char *item, const char *value);
-static int32_t mp4ff_tag_set_field(mp4ff_metadata_t *tags, const char *item, const char *value);
-static int32_t mp4ff_set_metadata_name(mp4ff_t *f, const uint8_t atom_type, char **name);
-static int32_t mp4ff_parse_tag(mp4ff_t *f, const uint8_t parent_atom_type, const int32_t size);
+int32_t mp4ff_tag_add_field(mp4ff_metadata_t *tags, const char *item, const char *value);
+int32_t mp4ff_tag_set_field(mp4ff_metadata_t *tags, const char *item, const char *value);
+int32_t mp4ff_set_metadata_name(mp4ff_t *f, const uint8_t atom_type, char **name);
+int32_t mp4ff_parse_tag(mp4ff_t *f, const uint8_t parent_atom_type, const int32_t size);
 int32_t mp4ff_meta_find_by_name(const mp4ff_t *f, const char *item, char **value);
 int32_t mp4ff_parse_metadata(mp4ff_t *f, const int32_t size);
 int32_t mp4ff_tag_delete(mp4ff_metadata_t *tags);
@@ -366,6 +385,7 @@ int32_t mp4ff_meta_get_coverart(const mp4ff_t *f, char **value);
 
 /* mp4ff.c */
 mp4ff_t *mp4ff_open_read(mp4ff_callback_t *f);
+mp4ff_t *mp4ff_open_read_streaming(mp4ff_callback_t *f);
 #ifdef USE_TAGGING
 mp4ff_t *mp4ff_open_edit(mp4ff_callback_t *f);
 #endif
@@ -396,6 +416,10 @@ const char * mp4ff_meta_index_to_genre(uint32_t idx);//returns pointer to static
 
 void mp4ff_chapters_free (mp4ff_t *f);
 void mp4ff_tref_free (mp4ff_t *f);
+
+void mp4ff_set_load_covers (mp4ff_t *f, int load_covers);
+void mp4ff_cover_delete (mp4ff_cover_art_t *cover);
+void mp4ff_cover_append_item (mp4ff_t *f, char *data, uint32_t datasize);
 
 #ifdef __cplusplus
 }

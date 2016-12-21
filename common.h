@@ -45,4 +45,20 @@ extern char dbplugindir[PATH_MAX]; // see deadbeef->get_plugin_dir
 extern char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
 extern char dbcachedir[PATH_MAX];
 
+// parses a list of paths and adds them to playlist
+// 0 - no error, files loaded
+// 1 - no error, but files not loaded
+int
+add_paths(const char *paths, int len, int queue, char *sendback, int sbsize);
+
+// This is a fake plugin, representing the deadbeef core module.
+// The intention is that it's only used in combination with logger,
+// which is based on the plugin interface.
+extern DB_plugin_t main_plugin;
+
+// In the core, we want the "trace" to be low priority messages,
+// and "trace_err" is for criticals, needing extra attention
+#define trace(...) { deadbeef->log_detailed (&main_plugin, DDB_LOG_LAYER_INFO, __VA_ARGS__); }
+#define trace_err(...) { deadbeef->log_detailed (&main_plugin, DDB_LOG_LAYER_DEFAULT, __VA_ARGS__); }
+
 #endif // __COMMON_H

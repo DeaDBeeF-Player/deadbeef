@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../../gettext.h"
-#include "../artwork/artwork.h"
+#include "../artwork-legacy/artwork.h"
 
 #define E_NOTIFICATION_BUS_NAME "org.freedesktop.Notifications"
 #define E_NOTIFICATION_INTERFACE "org.freedesktop.Notifications"
@@ -34,8 +34,11 @@ DB_artwork_plugin_t *artwork_plugin;
 
 static dbus_uint32_t replaces_id = 0;
 
-#define NOTIFY_DEFAULT_TITLE "%t"
-#define NOTIFY_DEFAULT_CONTENT "%a - %b"
+#define NOTIFY_DEFAULT_TITLE "%title%"
+#define NOTIFY_DEFAULT_CONTENT "%artist% - %album%"
+
+static char *tf_title;
+static char *tf_content;
 
 static void
 notify_thread (void *ctx) {
@@ -172,17 +175,16 @@ static void show_notification (DB_playItem_t *track) {
     char title[1024];
     char content[1024];
 
-    char format[200];
-    char format_content[200];
-    deadbeef->conf_get_str ("notify.format", NOTIFY_DEFAULT_TITLE, format, sizeof (format));
-    deadbeef->conf_get_str ("notify.format_content", NOTIFY_DEFAULT_CONTENT, format_content, sizeof (format_content));
-    deadbeef->pl_format_title (track, -1, title, sizeof (title), -1, format);
-    deadbeef->pl_format_title (track, -1, content, sizeof (content), -1, format_content);
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .it = track,
+        .flags = DDB_TF_CONTEXT_MULTILINE | DDB_TF_CONTEXT_NO_DYNAMIC,
+    };
 
-    // escape &
-//    char esc_title[1024];
+    deadbeef->tf_eval (&ctx, tf_title, title, sizeof (title));
+    deadbeef->tf_eval (&ctx, tf_content, content, sizeof (content));
+
     char esc_content[1024];
-//    esc_xml (title, esc_title, sizeof (esc_title));
     esc_xml (content, esc_content, sizeof (esc_content));
     DBusMessage *msg = dbus_message_new_method_call (E_NOTIFICATION_BUS_NAME, E_NOTIFICATION_PATH, E_NOTIFICATION_INTERFACE, "Notify");
 
@@ -259,18 +261,51 @@ on_songstarted (ddb_event_track_t *ev) {
     return 0;
 }
 
+static void
+init_tf (void) {
+    if (tf_title) {
+        deadbeef->tf_free (tf_title);
+    }
+    if (tf_content) {
+        deadbeef->tf_free (tf_content);
+    }
+    char format[200];
+    deadbeef->conf_get_str ("notify.format_title_tf", NOTIFY_DEFAULT_TITLE, format, sizeof (format));
+    tf_title = deadbeef->tf_compile (format);
+    deadbeef->conf_get_str ("notify.format_content_tf", NOTIFY_DEFAULT_CONTENT, format, sizeof (format));
+    tf_content = deadbeef->tf_compile (format);
+}
+
 static int
 notify_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
     case DB_EV_SONGSTARTED:
         on_songstarted ((ddb_event_track_t *)ctx);
         break;
+    case DB_EV_CONFIGCHANGED:
+        init_tf ();
+        break;
     }
     return 0;
 }
 
+static void
+import_legacy_tf (const char *key_from, const char *key_to) {
+    deadbeef->conf_lock ();
+    if (!deadbeef->conf_get_str_fast (key_to, NULL)
+            && deadbeef->conf_get_str_fast (key_from, NULL)) {
+        char old[200], new[200];
+        deadbeef->conf_get_str (key_from, "", old, sizeof (old));
+        deadbeef->tf_import_legacy (old, new, sizeof (new));
+        deadbeef->conf_set_str (key_to, new);
+    }
+    deadbeef->conf_unlock ();
+}
+
 int
 notify_start (void) {
+    import_legacy_tf ("notify.format", "notify.format_title_tf");
+    import_legacy_tf ("notify.format_content", "notify.format_content_tf");
     return 0;
 }
 
@@ -282,6 +317,15 @@ notify_stop (void) {
         last_track = NULL;
     }
     deadbeef->pl_unlock ();
+
+    if (tf_title) {
+        deadbeef->tf_free (tf_title);
+        tf_title = NULL;
+    }
+    if (tf_content) {
+        deadbeef->tf_free (tf_content);
+        tf_content = NULL;
+    }
     return 0;
 }
 
@@ -299,8 +343,8 @@ notify_disconnect (void) {
 
 static const char settings_dlg[] =
     "property \"Enable\" checkbox notify.enable 0;\n"
-    "property \"Notification title format\" entry notify.format \"" NOTIFY_DEFAULT_TITLE "\";\n"
-    "property \"Notification content format\" entry notify.format_content \"" NOTIFY_DEFAULT_CONTENT "\";\n"
+    "property \"Notification title format\" entry notify.format_title_tf \"" NOTIFY_DEFAULT_TITLE "\";\n"
+    "property \"Notification content format\" entry notify.format_content_tf \"" NOTIFY_DEFAULT_CONTENT "\";\n"
     "property \"Show album art\" checkbox notify.albumart 1;\n"
     "property \"Album art size (px)\" entry notify.albumart_size 64;\n"
 ;

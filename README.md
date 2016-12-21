@@ -4,13 +4,17 @@ DeaDBeeF is a music player for \*nix-like systems and OS X.
 
 More info is [here](http://deadbeef.sf.net).
 
-## Drone.io
+[Join us on slack](https://deadbeef-slack.herokuapp.com)
 
-[![Build Status](https://drone.io/github.com/Alexey-Yakovenko/deadbeef/status.png)](https://drone.io/github.com/Alexey-Yakovenko/deadbeef/latest)
+## Download development builds
 
-[Download latest GNU/Linux i686 and x86_64 builds](https://drone.io/github.com/Alexey-Yakovenko/deadbeef/files)
+[![Build Status](https://travis-ci.org/Alexey-Yakovenko/deadbeef.svg?branch=master)](https://travis-ci.org/Alexey-Yakovenko/deadbeef)
 
-The OS X version is not production-ready yet, so I'm not making any official builds. Please use the instructions below to make your own build, if you feel adventurous.
+[Download the latest GNU/Linux builds](https://sourceforge.net/projects/deadbeef/files/travis/linux/)
+
+Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy development. Don't put your expectations too high yet.
+
+[Download the latest OSX build](https://sourceforge.net/projects/deadbeef/files/travis/osx/)
 
 ## Compiling
 
@@ -34,6 +38,6 @@ The following instructions assume that commands are executed in deadbeef reposit
 
 ----
 
-[![Support via Gittip](https://rawgithub.com/twolfson/gittip-badge/0.1.0/dist/gittip.png)](https://www.gittip.com/Alexey-Yakovenko/)
+[![Support via Gratipay](https://cdn.rawgit.com/gratipay/gratipay-badge/2.3.0/dist/gratipay.png)](https://gratipay.com/deadbeef/)
 
 [More ways to support](http://deadbeef.sourceforge.net/support.html)

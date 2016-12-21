@@ -285,16 +285,19 @@ plt_get_title_wrapper (int plt) {
     [gc setPatternPhase:convPt];
     [NSBezierPath fillRect:NSMakeRect(area.origin.x + [tleft size].width, area.origin.y, area.size.width-[tleft size].width-[tright size].width, [tfill size].height)];
     [gc restoreGraphicsState];
-    
+
     [tright drawAtPoint:NSMakePoint(area.origin.x+area.size.width-[tleft size].width, area.origin.y) fromRect:NSMakeRect(0,0,[_tabRight size].width,[tright size].height) operation:NSCompositeSourceOver fraction:1];
 
     NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [textStyle setAlignment:NSLeftTextAlignment];
     [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-    
+
+    NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
     NSDictionary *attrs = [NSDictionary dictionaryWithObjectsAndKeys
                            : textStyle, NSParagraphStyleAttributeName
+                           ,font , NSFontAttributeName
                            , nil];
+
     NSString *tab_title = plt_get_title_wrapper (idx);
     
     [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + text_vert_offset, area.size.width - (text_left_padding + text_right_padding - 1), area.size.height) withAttributes:attrs];
@@ -661,10 +664,12 @@ plt_get_title_wrapper (int plt) {
     }
 }
 
-- (void)rightMouseDown:(NSEvent *)theEvent {
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent {
     NSPoint coord = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     _tab_clicked = [self tabUnderCursor:coord.x];
-    if (theEvent.type == NSRightMouseDown) {
+    if ((theEvent.type == NSRightMouseDown || theEvent.type == NSLeftMouseDown)
+        && (theEvent.buttonNumber == 1
+            || (theEvent.buttonNumber == 0 && (theEvent.modifierFlags & NSControlKeyMask)))) {
         NSMenu *menu = [[NSMenu alloc] initWithTitle:@"TabMenu"];
         [menu setDelegate:(id<NSMenuDelegate>)self];
         [menu setAutoenablesItems:NO];
@@ -675,8 +680,9 @@ plt_get_title_wrapper (int plt) {
             // ignore the warning, the message is sent to 1st responder, which will be the mainwincontroller in this case
             [menu insertItemWithTitle:@"Rename Playlist" action:@selector(renamePlaylistAction:) keyEquivalent:@"" atIndex:0];
         }
-        [NSMenu popUpContextMenu:menu withEvent:theEvent forView:self];
+        return menu;
     }
+    return nil;
 }
 
 -(void)otherMouseDown:(NSEvent *)event {
@@ -831,9 +837,13 @@ plt_get_title_wrapper (int plt) {
 // ...
 
 - (int)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
+    // FIXME: it's completely unclear why the code below is needed on playlist change/switch.
+    // Needs to either be removed or documented.
     switch (_id) {
         case DB_EV_PLAYLISTSWITCHED:
             [self performSelectorOnMainThread:@selector(handleResizeNotification) withObject:nil waitUntilDone:NO];
+            [self setNeedsDisplay:YES];
+            break;
         case DB_EV_PLAYLISTCHANGED:
             [self setNeedsDisplay:YES];
             break;

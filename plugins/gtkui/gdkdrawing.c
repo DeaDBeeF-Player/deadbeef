@@ -37,6 +37,8 @@ static char gtkui_listview_group_text_font[1000];
 static char gtkui_listview_column_text_font[1000];
 static char gtkui_tabstrip_text_font[1000];
 
+static GtkWidget *theme_entry;
+
 static PangoFontDescription *
 get_new_font_description_from_type (int type)
 {
@@ -229,16 +231,34 @@ draw_text_with_colors (drawctx_t *ctx, float x, float y, int width, int align, c
 }
 
 void
+draw_get_layout_extents (drawctx_t *ctx, int *w, int *h) {
+    PangoRectangle log;
+    pango_layout_get_pixel_extents (ctx->pangolayout, NULL, &log);
+    if (w) {
+        *w = log.width;
+    }
+    if (h) {
+        *h = log.height;
+    }
+}
+
+void
 draw_get_text_extents (drawctx_t *ctx, const char *text, int len, int *w, int *h) {
     draw_init_font (ctx, 0, 0);
-    pango_layout_set_width (ctx->pangolayout, 1000 * PANGO_SCALE);
+    pango_layout_set_width (ctx->pangolayout, -1);
     pango_layout_set_alignment (ctx->pangolayout, PANGO_ALIGN_LEFT);
     pango_layout_set_text (ctx->pangolayout, text, len);
-    PangoRectangle ink;
-    PangoRectangle log;
-    pango_layout_get_pixel_extents (ctx->pangolayout, &ink, &log);
-    *w = ink.width;
-    *h = ink.height;
+    draw_get_layout_extents (ctx, w, h);
+}
+
+int
+draw_is_ellipsized (drawctx_t *ctx) {
+    return pango_layout_is_ellipsized (ctx->pangolayout);
+}
+
+const char *
+draw_get_text (drawctx_t *ctx) {
+    return pango_layout_get_text (ctx->pangolayout);
 }
 
 int
@@ -286,6 +306,56 @@ static int override_bar_colors = 0;
 static int override_tabstrip_colors = 0;
 
 int
+gtkui_listview_override_conf (const char *conf_str) {
+    return !strcmp(conf_str, "gtkui.override_listview_colors");
+}
+
+int
+gtkui_listview_font_conf (const char *conf_str) {
+    return !strncmp(conf_str, "gtkui.font.listview", strlen("gtkui.font.listview"));
+}
+
+int
+gtkui_listview_font_style_conf (const char *conf_str) {
+    return !strncmp(conf_str, "gtkui.italic", strlen("gtkui.italic")) || !strncmp(conf_str, "gtkui.embolden", strlen("gtkui.embolden"));
+}
+
+int
+gtkui_listview_colors_conf (const char *conf_str) {
+    return !strncmp(conf_str, "gtkui.color.listview", strlen("gtkui.color.listview"));
+}
+
+int
+gtkui_tabstrip_override_conf (const char *conf_str) {
+    return !strcmp(conf_str, "gtkui.override_tabstrip_colors");
+}
+
+int
+gtkui_tabstrip_font_conf (const char *conf_str) {
+    return !strncmp(conf_str, "gtkui.font.tabstrip", strlen("gtkui.font.tabstrip"));
+}
+
+int
+gtkui_tabstrip_font_style_conf (const char *conf_str) {
+    return !strncmp(conf_str, "gtkui.tabstrip_italic", strlen("gtkui.tabstrip_italic")) || !strncmp(conf_str, "gtkui.tabstrip_embolden", strlen("gtkui.tabstrip_embolden"));
+}
+
+int
+gtkui_tabstrip_colors_conf (const char *conf_str) {
+    return !strncmp(conf_str, "gtkui.color.tabstrip", strlen("gtkui.color.tabstrip"));
+}
+
+int
+gtkui_bar_override_conf (const char *conf_str) {
+    return !strcmp(conf_str, "gtkui.override_bar_colors");
+}
+
+int
+gtkui_bar_colors_conf (const char *conf_str) {
+    return !strncmp(conf_str, "gtkui.color.bar", strlen("gtkui.color.bar"));
+}
+
+int
 gtkui_override_listview_colors (void) {
     return override_listview_colors;
 }
@@ -300,8 +370,17 @@ gtkui_override_tabstrip_colors (void) {
     return override_tabstrip_colors;
 }
 
+static void
+color_dump (const char *name, GdkColor *c) {
+    printf ("%s: %x %x %x\n", name, c->red>>8, c->green>>8, c->blue>>8);
+}
+
 void
 gtkui_init_theme_colors (void) {
+    if (!theme_entry) {
+        theme_entry = gtk_entry_new ();
+    }
+
     deadbeef->conf_lock ();
     override_listview_colors= deadbeef->conf_get_int ("gtkui.override_listview_colors", 0);
     override_bar_colors = deadbeef->conf_get_int ("gtkui.override_bar_colors", 0);
@@ -309,23 +388,31 @@ gtkui_init_theme_colors (void) {
 
     extern GtkWidget *mainwin;
     GtkStyle *style = gtk_widget_get_style (mainwin);
+    GtkStyle *entry_style = gtk_widget_get_style (theme_entry);
     char color_text[100];
     const char *clr;
     const char *font_name = pango_font_description_to_string (style->font_desc);
 
     if (!override_bar_colors) {
         memcpy (&gtkui_bar_foreground_color, &style->base[GTK_STATE_SELECTED], sizeof (GdkColor));
-        memcpy (&gtkui_bar_background_color, &style->fg[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_bar_background_color, &style->text[GTK_STATE_NORMAL], sizeof (GdkColor));
+
+        // HACK: if gtk says selected color is the same as background -- set it
+        // to a shade of blue
+        if (!memcmp (&style->bg[GTK_STATE_NORMAL], &gtkui_bar_foreground_color, sizeof (gtkui_bar_foreground_color))) {
+            gtkui_bar_foreground_color.red = 0x2b84;
+            gtkui_bar_foreground_color.green = 0x7fff;
+            gtkui_bar_foreground_color.blue = 0xbae0;
+        }
     }
     else {
-        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->base[GTK_STATE_SELECTED].red, style->base[GTK_STATE_SELECTED].green, style->base[GTK_STATE_SELECTED].blue);
+        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", entry_style->base[GTK_STATE_SELECTED].red, entry_style->base[GTK_STATE_SELECTED].green, entry_style->base[GTK_STATE_SELECTED].blue);
         clr = deadbeef->conf_get_str_fast ("gtkui.color.bar_foreground", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_bar_foreground_color.red, &gtkui_bar_foreground_color.green, &gtkui_bar_foreground_color.blue);
 
-        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->fg[GTK_STATE_NORMAL].red, style->fg[GTK_STATE_NORMAL].green, style->fg[GTK_STATE_NORMAL].blue);
+        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", entry_style->fg[GTK_STATE_NORMAL].red, entry_style->fg[GTK_STATE_NORMAL].green, entry_style->fg[GTK_STATE_NORMAL].blue);
         clr = deadbeef->conf_get_str_fast ("gtkui.color.bar_background", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_bar_background_color.red, &gtkui_bar_background_color.green, &gtkui_bar_background_color.blue);
-
     }
 
     if (!override_tabstrip_colors) {
