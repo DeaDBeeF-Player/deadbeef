@@ -24,7 +24,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <neaacdec.h>
+#include "aacdecoder_lib.h"
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif
@@ -45,7 +45,7 @@
 static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
 
-#define AAC_BUFFER_SIZE (FAAD_MIN_STREAMSIZE * 16)
+#define AAC_BUFFER_SIZE (1024 * 16) // FIXME: 1024 is wrong
 #define OUT_BUFFER_SIZE 100000
 
 #define MP4FILE mp4ff_t *
@@ -66,11 +66,11 @@ DB_functions_t *deadbeef;
 
 typedef struct {
     DB_fileinfo_t info;
-    NeAACDecHandle dec;
+    HANDLE_AACDECODER dec;
     DB_FILE *file;
     MP4FILE mp4;
     MP4FILE_CB mp4reader;
-    NeAACDecFrameInfo frame_info; // last frame info
+// FAAD    NeAACDecFrameInfo frame_info; // last frame info
     int mp4track;
     int mp4samples;
     int mp4sample;
@@ -213,33 +213,42 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
 static int
 mp4_track_get_info(mp4ff_t *mp4, int track, float *duration, int *samplerate, int *channels, int64_t *totalsamples, int *mp4framesize) {
     int sr = -1;
+    int ch = -1;
     unsigned char*  buff = 0;
     unsigned int    buff_size = 0;
-    mp4AudioSpecificConfig mp4ASC;
     mp4ff_get_decoder_config(mp4, track, &buff, &buff_size);
     if (buff) {
-        int rc = AudioSpecificConfig(buff, buff_size, &mp4ASC);
-        sr = (int)mp4ASC.samplingFrequency;
-        if(rc < 0) {
+        int samplerate_index = ((buff[0]&0xE0)>>4) | ((buff[1]&0x80)>>7); // bits 5..8
+        if (samplerate_index >= 12) {
             free (buff);
-            return -1;
+            return -1; // invalid format
         }
+        if (samplerate_index == 0x0f) {
+            // skip 24 bits
+        }
+
+        static const int samplerates[] = {
+            96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000
+        };
+
+        sr = samplerates[samplerate_index];
+
+        // bits 9..12
+        ch = (buff[1]&0x78)>>3;
     }
 
-    unsigned long srate;
-    unsigned char ch;
     int samples;
 
     // init mp4 decoding
-    NeAACDecHandle dec = NeAACDecOpen ();
-    if (NeAACDecInit2(dec, buff, buff_size, &srate, &ch) < 0) {
+    HANDLE_AACDECODER dec = aacDecoder_Open(TT_MP4_RAW, 1);
+    if (aacDecoder_ConfigRaw(dec, &buff, &buff_size) != AAC_DEC_OK) {
         goto error;
     }
-    *samplerate = (int)srate;
+    *samplerate = sr;
     *channels = ch;
     samples = mp4ff_num_samples(mp4, track);
     
-    NeAACDecClose (dec);
+    aacDecoder_Close (dec);
     dec = NULL;
 
     if (samples <= 0) {
@@ -263,7 +272,7 @@ mp4_track_get_info(mp4ff_t *mp4, int track, float *duration, int *samplerate, in
     return 0;
 error:
     if (dec) {
-        NeAACDecClose (dec);
+        aacDecoder_Close (dec);
     }
     free (buff);
     return -1;
@@ -334,13 +343,11 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         if (info->mp4track >= 0) {
             // init mp4 decoding
             info->mp4samples = mp4ff_num_samples(info->mp4, info->mp4track);
-            info->dec = NeAACDecOpen ();
-            unsigned long srate;
-            unsigned char ch;
+            info->dec = aacDecoder_Open (TT_MP4_RAW, 1);
             unsigned char*  buff = 0;
             unsigned int    buff_size = 0;
             mp4ff_get_decoder_config (info->mp4, info->mp4track, &buff, &buff_size);
-            if (NeAACDecInit2(info->dec, buff, buff_size, &srate, &ch) < 0) {
+            if (aacDecoder_ConfigRaw(info->dec, &buff, &buff_size) != AAC_DEC_OK) {
                 free (buff);
                 return -1;
             }
@@ -393,13 +400,15 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.channels = channels;
         _info->fmt.samplerate = samplerate;
 
-        info->dec = NeAACDecOpen ();
+        info->dec = aacDecoder_Open(TT_MP4_RAW, 1);
 
 
+#if 0 // FIXME: bogus?
         NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (info->dec);
         if (!NeAACDecSetConfiguration (info->dec, conf)) {
             return -1;
         }
+#endif
 
         int scan_size = AAC_BUFFER_SIZE;
 
@@ -413,7 +422,8 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             long consumed = 0;
             while (p < info->buffer+info->remaining) {
                 int bufsize = info->remaining-(int)(p-info->buffer);
-                consumed = NeAACDecInit (info->dec, (uint8_t *)p, bufsize, &srate, &ch);
+                // FIXME: figure out how to do initial scan with the new API
+                // consumed = NeAACDecInit (info->dec, (uint8_t *)p, bufsize, &srate, &ch);
                 if (consumed >= 0) {
                     _info->fmt.channels = ch;
                     _info->fmt.samplerate = (int)srate;
@@ -477,7 +487,7 @@ aac_free (DB_fileinfo_t *_info) {
             mp4ff_close (info->mp4);
         }
         if (info->dec) {
-            NeAACDecClose (info->dec);
+            aacDecoder_Close (info->dec);
         }
         free (info);
     }
@@ -523,6 +533,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
             else {
                 int i, j;
+#if 0 // FIXME: remap
                 if (info->remap[0] == -1) {
                     // build remap mtx
                     // FIXME: should build channelmask 1st; then remap based on channelmask
@@ -560,6 +571,18 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                             break;
                         }
                     }
+/* The ordering of the following fixed channel labels has to be in MPEG-4 style.
+ * From the center to the back with left and right channel interleaved (starting with left).
+ * The last channel label index has to be smaller than PCM_DMX_MAX_CHANNELS. */
+#define CENTER_FRONT_CHANNEL    ( 0 )     /* C  */
+#define LEFT_FRONT_CHANNEL      ( 1 )     /* L  */
+#define RIGHT_FRONT_CHANNEL     ( 2 )     /* R  */
+#define LEFT_REAR_CHANNEL       ( 3 )     /* Lr (aka left back channel) or center back channel */
+#define RIGHT_REAR_CHANNEL      ( 4 )     /* Rr (aka right back channel) */
+#define LOW_FREQUENCY_CHANNEL   ( 5 )     /* Lf */
+#define LEFT_MULTIPRPS_CHANNEL  ( 6 )     /* Left multipurpose channel */
+#define RIGHT_MULTIPRPS_CHANNEL ( 7 )     /* Right multipurpose channel */
+
 #if 0
                     for (i = 0; i < _info->fmt.channels; i++) {
                         trace ("%d ", info->remap[i]);
@@ -570,10 +593,11 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                         info->remap[0] = 0;
                     }
                     if ((_info->fmt.channels == 1 && info->remap[0] == FRONT_CHANNEL_CENTER)
-                        || (_info->fmt.channels == 2 && info->remap[0] == FRONT_CHANNEL_LEFT && info->remap[1] == FRONT_CHANNEL_RIGHT)) {
+                        || (_info->fmt.channels == 2 && info->remap[0] == ACT_LEFT && info->remap[1] == FRONT_CHANNEL_RIGHT)) {
                         info->noremap = 1;
                     }
                 }
+#endif
 
                 for (i = 0; i < n; i++) {
                     for (j = 0; j < _info->fmt.channels; j++) {
@@ -615,7 +639,12 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 break;
             }
             info->mp4sample++;
-            samples = NeAACDecDecode(info->dec, &info->frame_info, buffer, buffer_size);
+
+            samples = malloc (8*2*1024);
+
+            UINT bytesValid = buffer_size;
+            aacDecoder_Fill(info->dec, &buffer, &buffer_size, &bytesValid);
+            aacDecoder_DecodeFrame(info->dec, (short *)samples, 8*2*1024, 0);
 
             if (buffer) {
                 free (buffer);
@@ -633,7 +662,12 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 }
             }
 
-            samples = NeAACDecDecode (info->dec, &info->frame_info, info->buffer, info->remaining);
+            samples = malloc (8*2*1024);
+
+            UINT bytesValid = info->remaining;
+            aacDecoder_Fill(info->dec, (uint8_t **)&info->buffer, (UINT *)&info->remaining, &bytesValid);
+            aacDecoder_DecodeFrame(info->dec, (short *)samples, 8*2*1024, 0);
+
             if (!samples) {
                 if (info->num_errors > 10) {
                     break;
@@ -643,7 +677,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 continue;
             }
             info->num_errors=0;
-            unsigned long consumed = info->frame_info.bytesconsumed;
+            unsigned long consumed = bytesValid;
             if (consumed > info->remaining) {
                 break;
             }
@@ -656,9 +690,11 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
         }
 
-        if (info->frame_info.samples > 0) {
-            memcpy (info->out_buffer, samples, info->frame_info.samples * 2);
-            info->out_remaining = (int)(info->frame_info.samples / info->frame_info.channels);
+        CStreamInfo *stream_info = aacDecoder_GetStreamInfo(info->dec);
+        int frame_size = stream_info->frameSize * stream_info->numChannels;
+        if (frame_size > 0) {
+            memcpy (info->out_buffer, samples, frame_size * 2);
+            info->out_remaining = (int)stream_info->frameSize;
         }
     }
 

@@ -481,7 +481,6 @@
 		2D28F1251C283CAD004A6E7B /* syntax.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D28F0C21C283CAC004A6E7B /* syntax.h */; };
 		2D28F1261C283CAD004A6E7B /* tns.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D28F0C31C283CAC004A6E7B /* tns.c */; };
 		2D28F1271C283CAD004A6E7B /* tns.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D28F0C41C283CAC004A6E7B /* tns.h */; };
-		2D28F12A1C283CD9004A6E7B /* libfaad2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D28F0551C283C75004A6E7B /* libfaad2.a */; };
 		2D2A135F19B6480E00AD1EB7 /* cgme.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2A135E19B6480E00AD1EB7 /* cgme.c */; };
 		2D2A140C19B6482600AD1EB7 /* Ay_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2A136019B6482600AD1EB7 /* Ay_Apu.cpp */; };
 		2D2A140D19B6482600AD1EB7 /* Ay_Apu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2A136119B6482600AD1EB7 /* Ay_Apu.h */; };
@@ -659,6 +658,7 @@
 		2D51999D1A436FD100670717 /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999B1A436FD100670717 /* mpg123.h */; };
 		2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D524C071B245AE00018C4FA /* DdbTitleFormattingHelpButton.h */; };
 		2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D524C081B245AE00018C4FA /* DdbTitleFormattingHelpButton.m */; };
+		2D5568991E0AB56D00AFA742 /* libFDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D55688B1E0AA80000AFA742 /* libFDK.a */; };
 		2D565B0C1A40BCE200CE1F5D /* abi_align.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565A831A40BCE200CE1F5D /* abi_align.h */; };
 		2D565B0E1A40BCE200CE1F5D /* compat.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D565A851A40BCE200CE1F5D /* compat.c */; };
 		2D565B0F1A40BCE200CE1F5D /* compat.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565A861A40BCE200CE1F5D /* compat.h */; };
@@ -2204,6 +2204,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4B01D68A15B2F3F1002D5007;
 			remoteInfo = libzip;
+		};
+		2D55688A1E0AA80000AFA742 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D65D9891E0A930400FD1C8A /* FDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2D65D6EE1E0A910B00FD1C8A;
+			remoteInfo = FDK;
 		};
 		2D565B971A40C0F300CE1F5D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4491,8 +4498,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D5568991E0AB56D00AFA742 /* libFDK.a in Frameworks */,
 				2D3420EB1D085764004C136A /* libmp4ff.dylib in Frameworks */,
-				2D28F12A1C283CD9004A6E7B /* libfaad2.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5570,6 +5577,14 @@
 				2D5423B61DCB38D600ACBDEB /* mono2stereo.c */,
 			);
 			name = mono2stereo;
+			sourceTree = "<group>";
+		};
+		2D5568871E0AA80000AFA742 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2D55688B1E0AA80000AFA742 /* libFDK.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		2D5D21441A4033D3001D5A79 /* lastfm */ = {
@@ -9877,6 +9892,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 2D5568871E0AA80000AFA742 /* Products */;
+					ProjectRef = 2D65D9891E0A930400FD1C8A /* FDK.xcodeproj */;
+				},
+				{
 					ProductGroup = 2D4459D31C04F28800230939 /* Products */;
 					ProjectRef = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
 				},
@@ -10010,6 +10029,13 @@
 			fileType = "compiled.mach-o.executable";
 			path = tryopen;
 			remoteRef = 2D4459F51C04F28800230939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2D55688B1E0AA80000AFA742 /* libFDK.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFDK.a;
+			remoteRef = 2D55688A1E0AA80000AFA742 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -12903,7 +12929,11 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/deps/faad2-2.7/include\"",
+					"\"$(SRCROOT)/../plugins/fdk/libAACdec/include\"",
+					"\"$(SRCROOT)/../plugins/fdk/libFDK/include\"",
+					"\"$(SRCROOT)/../plugins/fdk/libMpegTPDec/include\"",
+					"\"$(SRCROOT)/../plugins/fdk/libPCMutils/include\"",
+					"\"$(SRCROOT)/../plugins/fdk/libSYS/include\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -12930,7 +12960,11 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/deps/faad2-2.7/include\"",
+					"\"$(SRCROOT)/../plugins/fdk/libAACdec/include\"",
+					"\"$(SRCROOT)/../plugins/fdk/libFDK/include\"",
+					"\"$(SRCROOT)/../plugins/fdk/libMpegTPDec/include\"",
+					"\"$(SRCROOT)/../plugins/fdk/libPCMutils/include\"",
+					"\"$(SRCROOT)/../plugins/fdk/libSYS/include\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
