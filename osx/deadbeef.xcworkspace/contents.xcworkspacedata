@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:../plugins/fdk/FDK/FDK.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "container:deadbeef.xcodeproj">
    </FileRef>
 </Workspace>

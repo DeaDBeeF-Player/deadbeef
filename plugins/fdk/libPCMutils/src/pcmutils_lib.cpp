@@ -88,7 +88,7 @@ amm-info@iis.fraunhofer.de
                 expansion in the PCM time domain.
 
 *******************************************************************************/
-#include <log/log.h>
+//#include <log/log.h>
 #include "pcmutils_lib.h"
 
 #include "genericStds.h"
@@ -2079,7 +2079,7 @@ PCMDMX_ERROR pcmDmx_ApplyFrame (
         }
       }
       if (ch != numInChannels) {
-          ALOGE("b/23876444");
+//          ALOGE("b/23876444");
           return PCMDMX_INVALID_ARGUMENT;
       }
 

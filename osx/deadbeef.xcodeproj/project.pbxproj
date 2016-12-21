@@ -3319,6 +3319,7 @@
 		2D65305E1CE79ED400163808 /* binwrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = binwrap.cpp; sourceTree = "<group>"; };
 		2D65305F1CE79ED400163808 /* binwrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = binwrap.h; sourceTree = "<group>"; };
 		2D6530631CE79ED400163808 /* plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plugin.c; sourceTree = "<group>"; };
+		2D65D9891E0A930400FD1C8A /* FDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FDK.xcodeproj; path = plugins/fdk/FDK/FDK.xcodeproj; sourceTree = "<group>"; };
 		2D65FE1C1AA7881A00E82A9E /* desa68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = desa68.c; sourceTree = "<group>"; };
 		2D65FE1D1AA7881A00E82A9E /* desa68.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = desa68.h; sourceTree = "<group>"; };
 		2D65FF0D1AA7881B00E82A9E /* file68.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = file68.h; sourceTree = "<group>"; };
@@ -5216,6 +5217,7 @@
 		2D28F02F1C283B1F004A6E7B /* aac */ = {
 			isa = PBXGroup;
 			children = (
+				2D65D9891E0A930400FD1C8A /* FDK.xcodeproj */,
 				2D28F0451C283BF7004A6E7B /* aac_parser.c */,
 				2D28F0461C283BF7004A6E7B /* aac_parser.h */,
 				2D28F0471C283BF7004A6E7B /* aac.c */,
@@ -12901,6 +12903,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/deps/faad2-2.7/include\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -12927,6 +12930,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/deps/faad2-2.7/include\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = NO;

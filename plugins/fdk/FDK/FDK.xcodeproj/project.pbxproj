@@ -29,7 +29,6 @@
 		2D65D86A1E0A911B00FD1C8A /* aacdecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7141E0A911A00FD1C8A /* aacdecoder.cpp */; };
 		2D65D86B1E0A911B00FD1C8A /* aacdecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7151E0A911A00FD1C8A /* aacdecoder.h */; };
 		2D65D86C1E0A911B00FD1C8A /* aacdecoder_lib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7161E0A911A00FD1C8A /* aacdecoder_lib.cpp */; };
-		2D65D86D1E0A911B00FD1C8A /* block_arm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7181E0A911A00FD1C8A /* block_arm.cpp */; };
 		2D65D86E1E0A911B00FD1C8A /* block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7191E0A911A00FD1C8A /* block.cpp */; };
 		2D65D86F1E0A911B00FD1C8A /* block.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D71A1E0A911A00FD1C8A /* block.h */; };
 		2D65D8701E0A911B00FD1C8A /* channel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D71B1E0A911A00FD1C8A /* channel.cpp */; };
@@ -55,12 +54,6 @@
 		2D65D8841E0A911B00FD1C8A /* stereo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D72F1E0A911A00FD1C8A /* stereo.cpp */; };
 		2D65D8851E0A911B00FD1C8A /* stereo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7301E0A911A00FD1C8A /* stereo.h */; };
 		2D65D8CD1E0A911B00FD1C8A /* abs.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D77D1E0A911A00FD1C8A /* abs.h */; };
-		2D65D8CE1E0A911B00FD1C8A /* clz_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D77F1E0A911A00FD1C8A /* clz_arm.h */; };
-		2D65D8CF1E0A911B00FD1C8A /* cplx_mul.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7801E0A911A00FD1C8A /* cplx_mul.h */; };
-		2D65D8D01E0A911B00FD1C8A /* fixmadd_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7811E0A911A00FD1C8A /* fixmadd_arm.h */; };
-		2D65D8D11E0A911B00FD1C8A /* fixmul_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7821E0A911A00FD1C8A /* fixmul_arm.h */; };
-		2D65D8D21E0A911B00FD1C8A /* scale.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7831E0A911A00FD1C8A /* scale.h */; };
-		2D65D8D31E0A911B00FD1C8A /* scramble.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7841E0A911A00FD1C8A /* scramble.h */; };
 		2D65D8D41E0A911B00FD1C8A /* autocorr2nd.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7851E0A911A00FD1C8A /* autocorr2nd.h */; };
 		2D65D8D51E0A911B00FD1C8A /* clz.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7861E0A911A00FD1C8A /* clz.h */; };
 		2D65D8D61E0A911B00FD1C8A /* common_fix.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7871E0A911A00FD1C8A /* common_fix.h */; };
@@ -81,24 +74,12 @@
 		2D65D8E51E0A911B00FD1C8A /* fixmul.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7961E0A911A00FD1C8A /* fixmul.h */; };
 		2D65D8E61E0A911B00FD1C8A /* fixpoint_math.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7971E0A911A00FD1C8A /* fixpoint_math.h */; };
 		2D65D8E71E0A911B00FD1C8A /* mdct.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7981E0A911A00FD1C8A /* mdct.h */; };
-		2D65D8E81E0A911B00FD1C8A /* abs_mips.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D79A1E0A911A00FD1C8A /* abs_mips.h */; };
-		2D65D8E91E0A911B00FD1C8A /* clz_mips.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D79B1E0A911A00FD1C8A /* clz_mips.h */; };
-		2D65D8EA1E0A911B00FD1C8A /* cplx_mul.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D79C1E0A911A00FD1C8A /* cplx_mul.h */; };
-		2D65D8EB1E0A911B00FD1C8A /* fixmadd_mips.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D79D1E0A911A00FD1C8A /* fixmadd_mips.h */; };
-		2D65D8EC1E0A911B00FD1C8A /* fixmul_mips.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D79E1E0A911A00FD1C8A /* fixmul_mips.h */; };
-		2D65D8ED1E0A911B00FD1C8A /* scale.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D79F1E0A911A00FD1C8A /* scale.h */; };
-		2D65D8EE1E0A911B00FD1C8A /* scramble.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7A01E0A911A00FD1C8A /* scramble.h */; };
 		2D65D8EF1E0A911B00FD1C8A /* qmf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7A11E0A911A00FD1C8A /* qmf.h */; };
 		2D65D8F01E0A911B00FD1C8A /* scale.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7A21E0A911A00FD1C8A /* scale.h */; };
 		2D65D8F11E0A911B00FD1C8A /* scramble.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7A31E0A911A00FD1C8A /* scramble.h */; };
 		2D65D8F21E0A911B00FD1C8A /* abs_x86.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7A51E0A911A00FD1C8A /* abs_x86.h */; };
 		2D65D8F31E0A911B00FD1C8A /* clz_x86.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7A61E0A911A00FD1C8A /* clz_x86.h */; };
 		2D65D8F41E0A911B00FD1C8A /* fixmul_x86.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7A71E0A911A00FD1C8A /* fixmul_x86.h */; };
-		2D65D8F51E0A911B00FD1C8A /* autocorr2nd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7AA1E0A911A00FD1C8A /* autocorr2nd.cpp */; };
-		2D65D8F61E0A911B00FD1C8A /* dct_arm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7AB1E0A911A00FD1C8A /* dct_arm.cpp */; };
-		2D65D8F71E0A911B00FD1C8A /* fft_rad2_arm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7AC1E0A911A00FD1C8A /* fft_rad2_arm.cpp */; };
-		2D65D8F81E0A911B00FD1C8A /* qmf_arm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7AD1E0A911A00FD1C8A /* qmf_arm.cpp */; };
-		2D65D8F91E0A911B00FD1C8A /* scale_arm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7AE1E0A911A00FD1C8A /* scale_arm.cpp */; };
 		2D65D8FA1E0A911B00FD1C8A /* autocorr2nd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7AF1E0A911A00FD1C8A /* autocorr2nd.cpp */; };
 		2D65D8FB1E0A911B00FD1C8A /* dct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7B01E0A911A00FD1C8A /* dct.cpp */; };
 		2D65D8FC1E0A911B00FD1C8A /* FDK_bitbuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7B11E0A911A00FD1C8A /* FDK_bitbuffer.cpp */; };
@@ -111,9 +92,6 @@
 		2D65D9031E0A911B00FD1C8A /* fft_rad2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7B81E0A911A00FD1C8A /* fft_rad2.cpp */; };
 		2D65D9041E0A911B00FD1C8A /* fixpoint_math.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7B91E0A911A00FD1C8A /* fixpoint_math.cpp */; };
 		2D65D9051E0A911B00FD1C8A /* mdct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7BA1E0A911A00FD1C8A /* mdct.cpp */; };
-		2D65D9061E0A911B00FD1C8A /* fft_rad2_mips.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7BC1E0A911A00FD1C8A /* fft_rad2_mips.cpp */; };
-		2D65D9071E0A911B00FD1C8A /* mips_fft_twiddles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7BD1E0A911A00FD1C8A /* mips_fft_twiddles.cpp */; };
-		2D65D9081E0A911B00FD1C8A /* scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7BE1E0A911A00FD1C8A /* scale.cpp */; };
 		2D65D9091E0A911B00FD1C8A /* qmf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7BF1E0A911A00FD1C8A /* qmf.cpp */; };
 		2D65D90A1E0A911B00FD1C8A /* scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7C01E0A911A00FD1C8A /* scale.cpp */; };
 		2D65D90B1E0A911B00FD1C8A /* mpegFileRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7C31E0A911A00FD1C8A /* mpegFileRead.h */; };
@@ -135,8 +113,6 @@
 		2D65D9271E0A911B00FD1C8A /* limiter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7E81E0A911B00FD1C8A /* limiter.cpp */; };
 		2D65D9281E0A911B00FD1C8A /* pcmutils_lib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7E91E0A911B00FD1C8A /* pcmutils_lib.cpp */; };
 		2D65D9291E0A911B00FD1C8A /* sbrdecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7EC1E0A911B00FD1C8A /* sbrdecoder.h */; };
-		2D65D92A1E0A911B00FD1C8A /* env_calc_arm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7EF1E0A911B00FD1C8A /* env_calc_arm.cpp */; };
-		2D65D92B1E0A911B00FD1C8A /* lpp_tran_arm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7F01E0A911B00FD1C8A /* lpp_tran_arm.cpp */; };
 		2D65D92C1E0A911B00FD1C8A /* env_calc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7F11E0A911B00FD1C8A /* env_calc.cpp */; };
 		2D65D92D1E0A911B00FD1C8A /* env_calc.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D65D7F21E0A911B00FD1C8A /* env_calc.h */; };
 		2D65D92E1E0A911B00FD1C8A /* env_dec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D7F31E0A911B00FD1C8A /* env_dec.cpp */; };
@@ -185,13 +161,11 @@
 		2D65D9831E0A911B00FD1C8A /* FDK_stackload_linux.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D84F1E0A911B00FD1C8A /* FDK_stackload_linux.cpp */; };
 		2D65D9841E0A911B00FD1C8A /* genericStds_linux.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D8501E0A911B00FD1C8A /* genericStds_linux.cpp */; };
 		2D65D9851E0A911B00FD1C8A /* uart_linux.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D8511E0A911B00FD1C8A /* uart_linux.cpp */; };
-		2D65D9861E0A911B00FD1C8A /* genericStds_mips.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D8531E0A911B00FD1C8A /* genericStds_mips.cpp */; };
 		2D65D9871E0A911B00FD1C8A /* wav_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D65D8541E0A911B00FD1C8A /* wav_file.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		2D65D6EE1E0A910B00FD1C8A /* libFDK.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libFDK.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D65D6FB1E0A911A00FD1C8A /* FDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = FDK.xcodeproj; sourceTree = "<group>"; };
 		2D65D7001E0A911A00FD1C8A /* aacdecoder_lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aacdecoder_lib.h; sourceTree = "<group>"; };
 		2D65D7021E0A911A00FD1C8A /* aac_ram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = aac_ram.cpp; sourceTree = "<group>"; };
 		2D65D7031E0A911A00FD1C8A /* aac_ram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aac_ram.h; sourceTree = "<group>"; };
@@ -214,7 +188,6 @@
 		2D65D7141E0A911A00FD1C8A /* aacdecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = aacdecoder.cpp; sourceTree = "<group>"; };
 		2D65D7151E0A911A00FD1C8A /* aacdecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aacdecoder.h; sourceTree = "<group>"; };
 		2D65D7161E0A911A00FD1C8A /* aacdecoder_lib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = aacdecoder_lib.cpp; sourceTree = "<group>"; };
-		2D65D7181E0A911A00FD1C8A /* block_arm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = block_arm.cpp; sourceTree = "<group>"; };
 		2D65D7191E0A911A00FD1C8A /* block.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = block.cpp; sourceTree = "<group>"; };
 		2D65D71A1E0A911A00FD1C8A /* block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = block.h; sourceTree = "<group>"; };
 		2D65D71B1E0A911A00FD1C8A /* channel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = channel.cpp; sourceTree = "<group>"; };
@@ -240,12 +213,6 @@
 		2D65D72F1E0A911A00FD1C8A /* stereo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stereo.cpp; sourceTree = "<group>"; };
 		2D65D7301E0A911A00FD1C8A /* stereo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stereo.h; sourceTree = "<group>"; };
 		2D65D77D1E0A911A00FD1C8A /* abs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = abs.h; sourceTree = "<group>"; };
-		2D65D77F1E0A911A00FD1C8A /* clz_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clz_arm.h; sourceTree = "<group>"; };
-		2D65D7801E0A911A00FD1C8A /* cplx_mul.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cplx_mul.h; sourceTree = "<group>"; };
-		2D65D7811E0A911A00FD1C8A /* fixmadd_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixmadd_arm.h; sourceTree = "<group>"; };
-		2D65D7821E0A911A00FD1C8A /* fixmul_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixmul_arm.h; sourceTree = "<group>"; };
-		2D65D7831E0A911A00FD1C8A /* scale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scale.h; sourceTree = "<group>"; };
-		2D65D7841E0A911A00FD1C8A /* scramble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scramble.h; sourceTree = "<group>"; };
 		2D65D7851E0A911A00FD1C8A /* autocorr2nd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = autocorr2nd.h; sourceTree = "<group>"; };
 		2D65D7861E0A911A00FD1C8A /* clz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clz.h; sourceTree = "<group>"; };
 		2D65D7871E0A911A00FD1C8A /* common_fix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common_fix.h; sourceTree = "<group>"; };
@@ -266,24 +233,12 @@
 		2D65D7961E0A911A00FD1C8A /* fixmul.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixmul.h; sourceTree = "<group>"; };
 		2D65D7971E0A911A00FD1C8A /* fixpoint_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixpoint_math.h; sourceTree = "<group>"; };
 		2D65D7981E0A911A00FD1C8A /* mdct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mdct.h; sourceTree = "<group>"; };
-		2D65D79A1E0A911A00FD1C8A /* abs_mips.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = abs_mips.h; sourceTree = "<group>"; };
-		2D65D79B1E0A911A00FD1C8A /* clz_mips.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clz_mips.h; sourceTree = "<group>"; };
-		2D65D79C1E0A911A00FD1C8A /* cplx_mul.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cplx_mul.h; sourceTree = "<group>"; };
-		2D65D79D1E0A911A00FD1C8A /* fixmadd_mips.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixmadd_mips.h; sourceTree = "<group>"; };
-		2D65D79E1E0A911A00FD1C8A /* fixmul_mips.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixmul_mips.h; sourceTree = "<group>"; };
-		2D65D79F1E0A911A00FD1C8A /* scale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scale.h; sourceTree = "<group>"; };
-		2D65D7A01E0A911A00FD1C8A /* scramble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scramble.h; sourceTree = "<group>"; };
 		2D65D7A11E0A911A00FD1C8A /* qmf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qmf.h; sourceTree = "<group>"; };
 		2D65D7A21E0A911A00FD1C8A /* scale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scale.h; sourceTree = "<group>"; };
 		2D65D7A31E0A911A00FD1C8A /* scramble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scramble.h; sourceTree = "<group>"; };
 		2D65D7A51E0A911A00FD1C8A /* abs_x86.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = abs_x86.h; sourceTree = "<group>"; };
 		2D65D7A61E0A911A00FD1C8A /* clz_x86.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clz_x86.h; sourceTree = "<group>"; };
 		2D65D7A71E0A911A00FD1C8A /* fixmul_x86.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixmul_x86.h; sourceTree = "<group>"; };
-		2D65D7AA1E0A911A00FD1C8A /* autocorr2nd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = autocorr2nd.cpp; sourceTree = "<group>"; };
-		2D65D7AB1E0A911A00FD1C8A /* dct_arm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dct_arm.cpp; sourceTree = "<group>"; };
-		2D65D7AC1E0A911A00FD1C8A /* fft_rad2_arm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fft_rad2_arm.cpp; sourceTree = "<group>"; };
-		2D65D7AD1E0A911A00FD1C8A /* qmf_arm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qmf_arm.cpp; sourceTree = "<group>"; };
-		2D65D7AE1E0A911A00FD1C8A /* scale_arm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scale_arm.cpp; sourceTree = "<group>"; };
 		2D65D7AF1E0A911A00FD1C8A /* autocorr2nd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = autocorr2nd.cpp; sourceTree = "<group>"; };
 		2D65D7B01E0A911A00FD1C8A /* dct.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dct.cpp; sourceTree = "<group>"; };
 		2D65D7B11E0A911A00FD1C8A /* FDK_bitbuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FDK_bitbuffer.cpp; sourceTree = "<group>"; };
@@ -296,9 +251,6 @@
 		2D65D7B81E0A911A00FD1C8A /* fft_rad2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fft_rad2.cpp; sourceTree = "<group>"; };
 		2D65D7B91E0A911A00FD1C8A /* fixpoint_math.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fixpoint_math.cpp; sourceTree = "<group>"; };
 		2D65D7BA1E0A911A00FD1C8A /* mdct.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mdct.cpp; sourceTree = "<group>"; };
-		2D65D7BC1E0A911A00FD1C8A /* fft_rad2_mips.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fft_rad2_mips.cpp; sourceTree = "<group>"; };
-		2D65D7BD1E0A911A00FD1C8A /* mips_fft_twiddles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mips_fft_twiddles.cpp; sourceTree = "<group>"; };
-		2D65D7BE1E0A911A00FD1C8A /* scale.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scale.cpp; sourceTree = "<group>"; };
 		2D65D7BF1E0A911A00FD1C8A /* qmf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qmf.cpp; sourceTree = "<group>"; };
 		2D65D7C01E0A911A00FD1C8A /* scale.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scale.cpp; sourceTree = "<group>"; };
 		2D65D7C31E0A911A00FD1C8A /* mpegFileRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpegFileRead.h; sourceTree = "<group>"; };
@@ -321,8 +273,6 @@
 		2D65D7E81E0A911B00FD1C8A /* limiter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = limiter.cpp; sourceTree = "<group>"; };
 		2D65D7E91E0A911B00FD1C8A /* pcmutils_lib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pcmutils_lib.cpp; sourceTree = "<group>"; };
 		2D65D7EC1E0A911B00FD1C8A /* sbrdecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sbrdecoder.h; sourceTree = "<group>"; };
-		2D65D7EF1E0A911B00FD1C8A /* env_calc_arm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = env_calc_arm.cpp; sourceTree = "<group>"; };
-		2D65D7F01E0A911B00FD1C8A /* lpp_tran_arm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lpp_tran_arm.cpp; sourceTree = "<group>"; };
 		2D65D7F11E0A911B00FD1C8A /* env_calc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = env_calc.cpp; sourceTree = "<group>"; };
 		2D65D7F21E0A911B00FD1C8A /* env_calc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = env_calc.h; sourceTree = "<group>"; };
 		2D65D7F31E0A911B00FD1C8A /* env_dec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = env_dec.cpp; sourceTree = "<group>"; };
@@ -371,7 +321,6 @@
 		2D65D84F1E0A911B00FD1C8A /* FDK_stackload_linux.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FDK_stackload_linux.cpp; sourceTree = "<group>"; };
 		2D65D8501E0A911B00FD1C8A /* genericStds_linux.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = genericStds_linux.cpp; sourceTree = "<group>"; };
 		2D65D8511E0A911B00FD1C8A /* uart_linux.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = uart_linux.cpp; sourceTree = "<group>"; };
-		2D65D8531E0A911B00FD1C8A /* genericStds_mips.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = genericStds_mips.cpp; sourceTree = "<group>"; };
 		2D65D8541E0A911B00FD1C8A /* wav_file.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wav_file.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -405,7 +354,6 @@
 		2D65D6F51E0A911A00FD1C8A /* fdk */ = {
 			isa = PBXGroup;
 			children = (
-				2D65D6FA1E0A911A00FD1C8A /* FDK */,
 				2D65D6FE1E0A911A00FD1C8A /* libAACdec */,
 				2D65D77B1E0A911A00FD1C8A /* libFDK */,
 				2D65D7C11E0A911A00FD1C8A /* libMpegTPDec */,
@@ -415,19 +363,6 @@
 			);
 			name = fdk;
 			path = ..;
-			sourceTree = "<group>";
-		};
-		2D65D6FA1E0A911A00FD1C8A /* FDK */ = {
-			isa = PBXGroup;
-			children = (
-				2D65D6FB1E0A911A00FD1C8A /* FDK.xcodeproj */,
-			);
-			path = FDK;
-			sourceTree = "<group>";
-		};
-		2D65D6FC1E0A911A00FD1C8A /* Products */ = {
-			isa = PBXGroup;
-			name = Products;
 			sourceTree = "<group>";
 		};
 		2D65D6FE1E0A911A00FD1C8A /* libAACdec */ = {
@@ -471,7 +406,6 @@
 				2D65D7141E0A911A00FD1C8A /* aacdecoder.cpp */,
 				2D65D7151E0A911A00FD1C8A /* aacdecoder.h */,
 				2D65D7161E0A911A00FD1C8A /* aacdecoder_lib.cpp */,
-				2D65D7171E0A911A00FD1C8A /* arm */,
 				2D65D7191E0A911A00FD1C8A /* block.cpp */,
 				2D65D71A1E0A911A00FD1C8A /* block.h */,
 				2D65D71B1E0A911A00FD1C8A /* channel.cpp */,
@@ -500,14 +434,6 @@
 			path = src;
 			sourceTree = "<group>";
 		};
-		2D65D7171E0A911A00FD1C8A /* arm */ = {
-			isa = PBXGroup;
-			children = (
-				2D65D7181E0A911A00FD1C8A /* block_arm.cpp */,
-			);
-			path = arm;
-			sourceTree = "<group>";
-		};
 		2D65D77B1E0A911A00FD1C8A /* libFDK */ = {
 			isa = PBXGroup;
 			children = (
@@ -521,7 +447,6 @@
 			isa = PBXGroup;
 			children = (
 				2D65D77D1E0A911A00FD1C8A /* abs.h */,
-				2D65D77E1E0A911A00FD1C8A /* arm */,
 				2D65D7851E0A911A00FD1C8A /* autocorr2nd.h */,
 				2D65D7861E0A911A00FD1C8A /* clz.h */,
 				2D65D7871E0A911A00FD1C8A /* common_fix.h */,
@@ -542,40 +467,12 @@
 				2D65D7961E0A911A00FD1C8A /* fixmul.h */,
 				2D65D7971E0A911A00FD1C8A /* fixpoint_math.h */,
 				2D65D7981E0A911A00FD1C8A /* mdct.h */,
-				2D65D7991E0A911A00FD1C8A /* mips */,
 				2D65D7A11E0A911A00FD1C8A /* qmf.h */,
 				2D65D7A21E0A911A00FD1C8A /* scale.h */,
 				2D65D7A31E0A911A00FD1C8A /* scramble.h */,
 				2D65D7A41E0A911A00FD1C8A /* x86 */,
 			);
 			path = include;
-			sourceTree = "<group>";
-		};
-		2D65D77E1E0A911A00FD1C8A /* arm */ = {
-			isa = PBXGroup;
-			children = (
-				2D65D77F1E0A911A00FD1C8A /* clz_arm.h */,
-				2D65D7801E0A911A00FD1C8A /* cplx_mul.h */,
-				2D65D7811E0A911A00FD1C8A /* fixmadd_arm.h */,
-				2D65D7821E0A911A00FD1C8A /* fixmul_arm.h */,
-				2D65D7831E0A911A00FD1C8A /* scale.h */,
-				2D65D7841E0A911A00FD1C8A /* scramble.h */,
-			);
-			path = arm;
-			sourceTree = "<group>";
-		};
-		2D65D7991E0A911A00FD1C8A /* mips */ = {
-			isa = PBXGroup;
-			children = (
-				2D65D79A1E0A911A00FD1C8A /* abs_mips.h */,
-				2D65D79B1E0A911A00FD1C8A /* clz_mips.h */,
-				2D65D79C1E0A911A00FD1C8A /* cplx_mul.h */,
-				2D65D79D1E0A911A00FD1C8A /* fixmadd_mips.h */,
-				2D65D79E1E0A911A00FD1C8A /* fixmul_mips.h */,
-				2D65D79F1E0A911A00FD1C8A /* scale.h */,
-				2D65D7A01E0A911A00FD1C8A /* scramble.h */,
-			);
-			path = mips;
 			sourceTree = "<group>";
 		};
 		2D65D7A41E0A911A00FD1C8A /* x86 */ = {
@@ -591,7 +488,6 @@
 		2D65D7A81E0A911A00FD1C8A /* src */ = {
 			isa = PBXGroup;
 			children = (
-				2D65D7A91E0A911A00FD1C8A /* arm */,
 				2D65D7AF1E0A911A00FD1C8A /* autocorr2nd.cpp */,
 				2D65D7B01E0A911A00FD1C8A /* dct.cpp */,
 				2D65D7B11E0A911A00FD1C8A /* FDK_bitbuffer.cpp */,
@@ -604,33 +500,10 @@
 				2D65D7B81E0A911A00FD1C8A /* fft_rad2.cpp */,
 				2D65D7B91E0A911A00FD1C8A /* fixpoint_math.cpp */,
 				2D65D7BA1E0A911A00FD1C8A /* mdct.cpp */,
-				2D65D7BB1E0A911A00FD1C8A /* mips */,
 				2D65D7BF1E0A911A00FD1C8A /* qmf.cpp */,
 				2D65D7C01E0A911A00FD1C8A /* scale.cpp */,
 			);
 			path = src;
-			sourceTree = "<group>";
-		};
-		2D65D7A91E0A911A00FD1C8A /* arm */ = {
-			isa = PBXGroup;
-			children = (
-				2D65D7AA1E0A911A00FD1C8A /* autocorr2nd.cpp */,
-				2D65D7AB1E0A911A00FD1C8A /* dct_arm.cpp */,
-				2D65D7AC1E0A911A00FD1C8A /* fft_rad2_arm.cpp */,
-				2D65D7AD1E0A911A00FD1C8A /* qmf_arm.cpp */,
-				2D65D7AE1E0A911A00FD1C8A /* scale_arm.cpp */,
-			);
-			path = arm;
-			sourceTree = "<group>";
-		};
-		2D65D7BB1E0A911A00FD1C8A /* mips */ = {
-			isa = PBXGroup;
-			children = (
-				2D65D7BC1E0A911A00FD1C8A /* fft_rad2_mips.cpp */,
-				2D65D7BD1E0A911A00FD1C8A /* mips_fft_twiddles.cpp */,
-				2D65D7BE1E0A911A00FD1C8A /* scale.cpp */,
-			);
-			path = mips;
 			sourceTree = "<group>";
 		};
 		2D65D7C11E0A911A00FD1C8A /* libMpegTPDec */ = {
@@ -718,7 +591,6 @@
 		2D65D7ED1E0A911B00FD1C8A /* src */ = {
 			isa = PBXGroup;
 			children = (
-				2D65D7EE1E0A911B00FD1C8A /* arm */,
 				2D65D7F11E0A911B00FD1C8A /* env_calc.cpp */,
 				2D65D7F21E0A911B00FD1C8A /* env_calc.h */,
 				2D65D7F31E0A911B00FD1C8A /* env_dec.cpp */,
@@ -756,15 +628,6 @@
 			path = src;
 			sourceTree = "<group>";
 		};
-		2D65D7EE1E0A911B00FD1C8A /* arm */ = {
-			isa = PBXGroup;
-			children = (
-				2D65D7EF1E0A911B00FD1C8A /* env_calc_arm.cpp */,
-				2D65D7F01E0A911B00FD1C8A /* lpp_tran_arm.cpp */,
-			);
-			path = arm;
-			sourceTree = "<group>";
-		};
 		2D65D83F1E0A911B00FD1C8A /* libSYS */ = {
 			isa = PBXGroup;
 			children = (
@@ -795,7 +658,6 @@
 				2D65D84A1E0A911B00FD1C8A /* conv_string.cpp */,
 				2D65D84B1E0A911B00FD1C8A /* genericStds.cpp */,
 				2D65D84C1E0A911B00FD1C8A /* linux */,
-				2D65D8521E0A911B00FD1C8A /* mips */,
 				2D65D8541E0A911B00FD1C8A /* wav_file.cpp */,
 			);
 			path = src;
@@ -813,14 +675,6 @@
 			path = linux;
 			sourceTree = "<group>";
 		};
-		2D65D8521E0A911B00FD1C8A /* mips */ = {
-			isa = PBXGroup;
-			children = (
-				2D65D8531E0A911B00FD1C8A /* genericStds_mips.cpp */,
-			);
-			path = mips;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -834,7 +688,6 @@
 				2D65D9371E0A911B00FD1C8A /* psbitdec.h in Headers */,
 				2D65D8F11E0A911B00FD1C8A /* scramble.h in Headers */,
 				2D65D8731E0A911B00FD1C8A /* channelinfo.h in Headers */,
-				2D65D8EC1E0A911B00FD1C8A /* fixmul_mips.h in Headers */,
 				2D65D8571E0A911B00FD1C8A /* aacdecoder_lib.h in Headers */,
 				2D65D8631E0A911B00FD1C8A /* aacdec_hcr_types.h in Headers */,
 				2D65D8851E0A911B00FD1C8A /* stereo.h in Headers */,
@@ -844,11 +697,9 @@
 				2D65D94C1E0A911B00FD1C8A /* transcendent.h in Headers */,
 				2D65D90E1E0A911B00FD1C8A /* mpegFileFormat.h in Headers */,
 				2D65D8751E0A911B00FD1C8A /* conceal.h in Headers */,
-				2D65D8D11E0A911B00FD1C8A /* fixmul_arm.h in Headers */,
 				2D65D85E1E0A911B00FD1C8A /* aacdec_drc_types.h in Headers */,
 				2D65D8E31E0A911B00FD1C8A /* fixmadd.h in Headers */,
 				2D65D8DB1E0A911B00FD1C8A /* FDK_bitstream.h in Headers */,
-				2D65D8EE1E0A911B00FD1C8A /* scramble.h in Headers */,
 				2D65D93B1E0A911B00FD1C8A /* psdec_hybrid.h in Headers */,
 				2D65D97C1E0A911B00FD1C8A /* machine_type.h in Headers */,
 				2D65D87E1E0A911B00FD1C8A /* rvlc.h in Headers */,
@@ -858,9 +709,6 @@
 				2D65D9101E0A911B00FD1C8A /* tpdec_adif.h in Headers */,
 				2D65D86B1E0A911B00FD1C8A /* aacdecoder.h in Headers */,
 				2D65D8DE1E0A911B00FD1C8A /* FDK_hybrid.h in Headers */,
-				2D65D8E91E0A911B00FD1C8A /* clz_mips.h in Headers */,
-				2D65D8ED1E0A911B00FD1C8A /* scale.h in Headers */,
-				2D65D8D21E0A911B00FD1C8A /* scale.h in Headers */,
 				2D65D9311E0A911B00FD1C8A /* env_extr.h in Headers */,
 				2D65D90B1E0A911B00FD1C8A /* mpegFileRead.h in Headers */,
 				2D65D8DA1E0A911B00FD1C8A /* FDK_bitbuffer.h in Headers */,
@@ -873,8 +721,6 @@
 				2D65D86F1E0A911B00FD1C8A /* block.h in Headers */,
 				2D65D8F41E0A911B00FD1C8A /* fixmul_x86.h in Headers */,
 				2D65D93F1E0A911B00FD1C8A /* sbr_deb.h in Headers */,
-				2D65D8D31E0A911B00FD1C8A /* scramble.h in Headers */,
-				2D65D8D01E0A911B00FD1C8A /* fixmadd_arm.h in Headers */,
 				2D65D8F21E0A911B00FD1C8A /* abs_x86.h in Headers */,
 				2D65D92F1E0A911B00FD1C8A /* env_dec.h in Headers */,
 				2D65D8F31E0A911B00FD1C8A /* clz_x86.h in Headers */,
@@ -885,7 +731,6 @@
 				2D65D9431E0A911B00FD1C8A /* sbr_ram.h in Headers */,
 				2D65D9481E0A911B00FD1C8A /* sbrdec_drc.h in Headers */,
 				2D65D9391E0A911B00FD1C8A /* psdec.h in Headers */,
-				2D65D8EA1E0A911B00FD1C8A /* cplx_mul.h in Headers */,
 				2D65D9171E0A911B00FD1C8A /* tpdec_latm.h in Headers */,
 				2D65D8651E0A911B00FD1C8A /* aacdec_hcrs.h in Headers */,
 				2D65D8601E0A911B00FD1C8A /* aacdec_hcr.h in Headers */,
@@ -902,7 +747,6 @@
 				2D65D9461E0A911B00FD1C8A /* sbr_scale.h in Headers */,
 				2D65D97B1E0A911B00FD1C8A /* genericStds.h in Headers */,
 				2D65D8DF1E0A911B00FD1C8A /* FDK_tools_rom.h in Headers */,
-				2D65D8CF1E0A911B00FD1C8A /* cplx_mul.h in Headers */,
 				2D65D97D1E0A911B00FD1C8A /* wav_file.h in Headers */,
 				2D65D8811E0A911B00FD1C8A /* rvlcbit.h in Headers */,
 				2D65D8DD1E0A911B00FD1C8A /* FDK_crc.h in Headers */,
@@ -911,12 +755,10 @@
 				2D65D8D41E0A911B00FD1C8A /* autocorr2nd.h in Headers */,
 				2D65D94A1E0A911B00FD1C8A /* sbrdec_freq_sca.h in Headers */,
 				2D65D9331E0A911B00FD1C8A /* huff_dec.h in Headers */,
-				2D65D8E81E0A911B00FD1C8A /* abs_mips.h in Headers */,
 				2D65D8E01E0A911B00FD1C8A /* FDK_trigFcts.h in Headers */,
 				2D65D9291E0A911B00FD1C8A /* sbrdecoder.h in Headers */,
 				2D65D8F01E0A911B00FD1C8A /* scale.h in Headers */,
 				2D65D8D81E0A911B00FD1C8A /* dct.h in Headers */,
-				2D65D8CE1E0A911B00FD1C8A /* clz_arm.h in Headers */,
 				2D65D8791E0A911B00FD1C8A /* ldfiltbank.h in Headers */,
 				2D65D9151E0A911B00FD1C8A /* tpdec_drm.h in Headers */,
 				2D65D8D51E0A911B00FD1C8A /* clz.h in Headers */,
@@ -924,7 +766,6 @@
 				2D65D85D1E0A911B00FD1C8A /* aacdec_drc.h in Headers */,
 				2D65D93D1E0A911B00FD1C8A /* sbr_crc.h in Headers */,
 				2D65D8D71E0A911B00FD1C8A /* cplx_mul.h in Headers */,
-				2D65D8EB1E0A911B00FD1C8A /* fixmadd_mips.h in Headers */,
 				2D65D8D91E0A911B00FD1C8A /* FDK_archdef.h in Headers */,
 				2D65D8E71E0A911B00FD1C8A /* mdct.h in Headers */,
 				2D65D9771E0A911B00FD1C8A /* audio.h in Headers */,
@@ -977,12 +818,6 @@
 			mainGroup = 2D65D6E51E0A910B00FD1C8A;
 			productRefGroup = 2D65D6EF1E0A910B00FD1C8A /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 2D65D6FC1E0A911A00FD1C8A /* Products */;
-					ProjectRef = 2D65D6FB1E0A911A00FD1C8A /* FDK.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				2D65D6ED1E0A910B00FD1C8A /* FDK */,
@@ -999,7 +834,6 @@
 				2D65D8FE1E0A911B00FD1C8A /* FDK_crc.cpp in Sources */,
 				2D65D9131E0A911B00FD1C8A /* tpdec_asc.cpp in Sources */,
 				2D65D85A1E0A911B00FD1C8A /* aac_rom.cpp in Sources */,
-				2D65D8F81E0A911B00FD1C8A /* qmf_arm.cpp in Sources */,
 				2D65D9421E0A911B00FD1C8A /* sbr_ram.cpp in Sources */,
 				2D65D93C1E0A911B00FD1C8A /* sbr_crc.cpp in Sources */,
 				2D65D9301E0A911B00FD1C8A /* env_extr.cpp in Sources */,
@@ -1011,9 +845,7 @@
 				2D65D9441E0A911B00FD1C8A /* sbr_rom.cpp in Sources */,
 				2D65D8661E0A911B00FD1C8A /* aacdec_pns.cpp in Sources */,
 				2D65D9281E0A911B00FD1C8A /* pcmutils_lib.cpp in Sources */,
-				2D65D8F51E0A911B00FD1C8A /* autocorr2nd.cpp in Sources */,
 				2D65D9811E0A911B00FD1C8A /* audio_linux.cpp in Sources */,
-				2D65D92A1E0A911B00FD1C8A /* env_calc_arm.cpp in Sources */,
 				2D65D85C1E0A911B00FD1C8A /* aacdec_drc.cpp in Sources */,
 				2D65D8681E0A911B00FD1C8A /* aacdec_tns.cpp in Sources */,
 				2D65D87B1E0A911B00FD1C8A /* pulsedata.cpp in Sources */,
@@ -1021,11 +853,9 @@
 				2D65D9341E0A911B00FD1C8A /* lpp_tran.cpp in Sources */,
 				2D65D9181E0A911B00FD1C8A /* tpdec_lib.cpp in Sources */,
 				2D65D92C1E0A911B00FD1C8A /* env_calc.cpp in Sources */,
-				2D65D9071E0A911B00FD1C8A /* mips_fft_twiddles.cpp in Sources */,
 				2D65D86E1E0A911B00FD1C8A /* block.cpp in Sources */,
 				2D65D9851E0A911B00FD1C8A /* uart_linux.cpp in Sources */,
 				2D65D9401E0A911B00FD1C8A /* sbr_dec.cpp in Sources */,
-				2D65D9861E0A911B00FD1C8A /* genericStds_mips.cpp in Sources */,
 				2D65D93E1E0A911B00FD1C8A /* sbr_deb.cpp in Sources */,
 				2D65D97E1E0A911B00FD1C8A /* cmdl_parser.cpp in Sources */,
 				2D65D9471E0A911B00FD1C8A /* sbrdec_drc.cpp in Sources */,
@@ -1039,12 +869,9 @@
 				2D65D9051E0A911B00FD1C8A /* mdct.cpp in Sources */,
 				2D65D93A1E0A911B00FD1C8A /* psdec_hybrid.cpp in Sources */,
 				2D65D9491E0A911B00FD1C8A /* sbrdec_freq_sca.cpp in Sources */,
-				2D65D86D1E0A911B00FD1C8A /* block_arm.cpp in Sources */,
 				2D65D8781E0A911B00FD1C8A /* ldfiltbank.cpp in Sources */,
 				2D65D9821E0A911B00FD1C8A /* coresup_linux.cpp in Sources */,
 				2D65D8FD1E0A911B00FD1C8A /* FDK_core.cpp in Sources */,
-				2D65D8F91E0A911B00FD1C8A /* scale_arm.cpp in Sources */,
-				2D65D8F71E0A911B00FD1C8A /* fft_rad2_arm.cpp in Sources */,
 				2D65D9871E0A911B00FD1C8A /* wav_file.cpp in Sources */,
 				2D65D9031E0A911B00FD1C8A /* fft_rad2.cpp in Sources */,
 				2D65D86C1E0A911B00FD1C8A /* aacdecoder_lib.cpp in Sources */,
@@ -1055,9 +882,7 @@
 				2D65D9091E0A911B00FD1C8A /* qmf.cpp in Sources */,
 				2D65D8721E0A911B00FD1C8A /* channelinfo.cpp in Sources */,
 				2D65D8FA1E0A911B00FD1C8A /* autocorr2nd.cpp in Sources */,
-				2D65D8F61E0A911B00FD1C8A /* dct_arm.cpp in Sources */,
 				2D65D9001E0A911B00FD1C8A /* FDK_tools_rom.cpp in Sources */,
-				2D65D9081E0A911B00FD1C8A /* scale.cpp in Sources */,
 				2D65D8821E0A911B00FD1C8A /* rvlcconceal.cpp in Sources */,
 				2D65D9161E0A911B00FD1C8A /* tpdec_latm.cpp in Sources */,
 				2D65D8581E0A911B00FD1C8A /* aac_ram.cpp in Sources */,
@@ -1069,8 +894,6 @@
 				2D65D92E1E0A911B00FD1C8A /* env_dec.cpp in Sources */,
 				2D65D9381E0A911B00FD1C8A /* psdec.cpp in Sources */,
 				2D65D9841E0A911B00FD1C8A /* genericStds_linux.cpp in Sources */,
-				2D65D9061E0A911B00FD1C8A /* fft_rad2_mips.cpp in Sources */,
-				2D65D92B1E0A911B00FD1C8A /* lpp_tran_arm.cpp in Sources */,
 				2D65D90A1E0A911B00FD1C8A /* scale.cpp in Sources */,
 				2D65D9141E0A911B00FD1C8A /* tpdec_drm.cpp in Sources */,
 				2D65D9801E0A911B00FD1C8A /* genericStds.cpp in Sources */,
