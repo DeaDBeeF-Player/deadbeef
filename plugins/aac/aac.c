@@ -70,7 +70,7 @@ typedef struct {
     DB_FILE *file;
     MP4FILE mp4;
     MP4FILE_CB mp4reader;
-// FAAD    NeAACDecFrameInfo frame_info; // last frame info
+// FAAD    NeAACDecFrameInfo frame_info; // last frame info, used for channel mapping
     int mp4track;
     int mp4samples;
     int mp4sample;
@@ -218,7 +218,8 @@ mp4_track_get_info(mp4ff_t *mp4, int track, float *duration, int *samplerate, in
     unsigned int    buff_size = 0;
     mp4ff_get_decoder_config(mp4, track, &buff, &buff_size);
     if (buff) {
-        int samplerate_index = ((buff[0]&0xE0)>>4) | ((buff[1]&0x80)>>7); // bits 5..8
+        //int objectTypeIndex = (buff[0]&0xf8)>>3; // bits 0..4
+        int samplerate_index = ((buff[0]&0x07)<<1) | ((buff[1]&0x80)>>7); // bits 5..8
         if (samplerate_index >= 12) {
             free (buff);
             return -1; // invalid format
@@ -421,10 +422,10 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             unsigned char ch;
             long consumed = 0;
             while (p < info->buffer+info->remaining) {
-                int bufsize = info->remaining-(int)(p-info->buffer);
-                // FIXME: figure out how to do initial scan with the new API
-                // consumed = NeAACDecInit (info->dec, (uint8_t *)p, bufsize, &srate, &ch);
-                if (consumed >= 0) {
+                UINT bufsize = info->remaining-(int)(p-info->buffer);
+                UINT consumed = bufsize;
+                AAC_DECODER_ERROR err = aacDecoder_Fill (info->dec, &p, &bufsize, &consumed);
+                if (err == AAC_DEC_OK && consumed > 0) {
                     _info->fmt.channels = ch;
                     _info->fmt.samplerate = (int)srate;
                     break;
@@ -642,9 +643,9 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
             samples = malloc (8*2*1024);
 
-            UINT bytesValid = buffer_size;
-            aacDecoder_Fill(info->dec, &buffer, &buffer_size, &bytesValid);
-            aacDecoder_DecodeFrame(info->dec, (short *)samples, 8*2*1024, 0);
+            UINT consumed = buffer_size;
+            AAC_DECODER_ERROR err = aacDecoder_Fill(info->dec, &buffer, &buffer_size, &consumed);
+            err = aacDecoder_DecodeFrame(info->dec, (short *)samples, 8*2*1024, 0);
 
             if (buffer) {
                 free (buffer);
@@ -1116,7 +1117,7 @@ static const char * exts[] = { "aac", "mp4", "m4a", "m4b", NULL };
 static DB_decoder_t plugin = {
     .plugin.api_vmajor = 1,
     .plugin.api_vminor = 0,
-    .plugin.version_major = 1,
+    .plugin.version_major = 2,
     .plugin.version_minor = 0,
 //    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .plugin.type = DB_PLUGIN_DECODER,
