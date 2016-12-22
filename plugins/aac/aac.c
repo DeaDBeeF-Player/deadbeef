@@ -70,7 +70,7 @@ typedef struct {
     DB_FILE *file;
     MP4FILE mp4;
     MP4FILE_CB mp4reader;
-// FAAD    NeAACDecFrameInfo frame_info; // last frame info, used for channel mapping
+    CStreamInfo *frame_info; // last frame info, used for channel mapping
     int mp4track;
     int mp4samples;
     int mp4sample;
@@ -404,13 +404,6 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         info->dec = aacDecoder_Open(TT_MP4_RAW, 1);
 
 
-#if 0 // FIXME: bogus?
-        NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (info->dec);
-        if (!NeAACDecSetConfiguration (info->dec, conf)) {
-            return -1;
-        }
-#endif
-
         int scan_size = AAC_BUFFER_SIZE;
 
         while (scan_size > 0) {
@@ -421,11 +414,12 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             unsigned long srate;
             unsigned char ch;
             long consumed = 0;
+            // FIXME: raw aac untested
             while (p < info->buffer+info->remaining) {
                 UINT bufsize = info->remaining-(int)(p-info->buffer);
-                UINT consumed = bufsize;
-                AAC_DECODER_ERROR err = aacDecoder_Fill (info->dec, &p, &bufsize, &consumed);
-                if (err == AAC_DEC_OK && consumed > 0) {
+                UINT valid = bufsize;
+                AAC_DECODER_ERROR err = aacDecoder_Fill (info->dec, &p, &bufsize, &valid);
+                if (err == AAC_DEC_OK && valid < bufsize) {
                     _info->fmt.channels = ch;
                     _info->fmt.samplerate = (int)srate;
                     break;
@@ -534,71 +528,21 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
             else {
                 int i, j;
-#if 0 // FIXME: remap
+
                 if (info->remap[0] == -1) {
                     // build remap mtx
-                    // FIXME: should build channelmask 1st; then remap based on channelmask
                     for (i = 0; i < _info->fmt.channels; i++) {
-                        switch (info->frame_info.channel_position[i]) {
-                        case FRONT_CHANNEL_CENTER:
-                            info->remap[2] = i;
-                            break;
-                        case FRONT_CHANNEL_LEFT:
-                            info->remap[0] = i;
-                            break;
-                        case FRONT_CHANNEL_RIGHT:
-                            info->remap[1] = i;
-                            break;
-                        case SIDE_CHANNEL_LEFT:
-                            info->remap[6] = i;
-                            break;
-                        case SIDE_CHANNEL_RIGHT:
-                            info->remap[7] = i;
-                            break;
-                        case BACK_CHANNEL_LEFT:
-                            info->remap[4] = i;
-                            break;
-                        case BACK_CHANNEL_RIGHT:
-                            info->remap[5] = i;
-                            break;
-                        case BACK_CHANNEL_CENTER:
-                            info->remap[8] = i;
-                            break;
-                        case LFE_CHANNEL:
-                            info->remap[3] = i;
-                            break;
-                        default:
-                            trace ("aac: unknown ch(%d)->%d\n", info->frame_info.channel_position[i], i);
-                            break;
-                        }
+                        AUDIO_CHANNEL_TYPE idx = info->frame_info->pChannelIndices[i];
+                        info->remap[idx] = i;
                     }
-/* The ordering of the following fixed channel labels has to be in MPEG-4 style.
- * From the center to the back with left and right channel interleaved (starting with left).
- * The last channel label index has to be smaller than PCM_DMX_MAX_CHANNELS. */
-#define CENTER_FRONT_CHANNEL    ( 0 )     /* C  */
-#define LEFT_FRONT_CHANNEL      ( 1 )     /* L  */
-#define RIGHT_FRONT_CHANNEL     ( 2 )     /* R  */
-#define LEFT_REAR_CHANNEL       ( 3 )     /* Lr (aka left back channel) or center back channel */
-#define RIGHT_REAR_CHANNEL      ( 4 )     /* Rr (aka right back channel) */
-#define LOW_FREQUENCY_CHANNEL   ( 5 )     /* Lf */
-#define LEFT_MULTIPRPS_CHANNEL  ( 6 )     /* Left multipurpose channel */
-#define RIGHT_MULTIPRPS_CHANNEL ( 7 )     /* Right multipurpose channel */
-
-#if 0
-                    for (i = 0; i < _info->fmt.channels; i++) {
-                        trace ("%d ", info->remap[i]);
-                    }
-                    trace ("\n");
-#endif
                     if (info->remap[0] == -1) {
                         info->remap[0] = 0;
                     }
-                    if ((_info->fmt.channels == 1 && info->remap[0] == FRONT_CHANNEL_CENTER)
-                        || (_info->fmt.channels == 2 && info->remap[0] == ACT_LEFT && info->remap[1] == FRONT_CHANNEL_RIGHT)) {
+                    if ((_info->fmt.channels == 1 && info->remap[0] == 0)
+                        || (_info->fmt.channels == 2 && info->remap[0] == 0 && info->remap[1] == 1)) {
                         info->noremap = 1;
                     }
                 }
-#endif
 
                 for (i = 0; i < n; i++) {
                     for (j = 0; j < _info->fmt.channels; j++) {
@@ -692,6 +636,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
 
         CStreamInfo *stream_info = aacDecoder_GetStreamInfo(info->dec);
+        info->frame_info = stream_info;
         int frame_size = stream_info->frameSize * stream_info->numChannels;
         if (frame_size > 0) {
             memcpy (info->out_buffer, samples, frame_size * 2);
