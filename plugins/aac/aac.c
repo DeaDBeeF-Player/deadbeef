@@ -45,8 +45,8 @@
 static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
 
-#define AAC_BUFFER_SIZE (1024 * 16) // FIXME: 1024 is wrong
-#define OUT_BUFFER_SIZE 100000
+#define OUT_BUFFER_SIZE 1024*8*2 // AAC frame can be 1024 or 960 samples, up to 8 channels, 2 bytes each
+#define AAC_MAX_PACKET_SIZE OUT_BUFFER_SIZE // setting max input packet size, to have some headroom
 
 #define MP4FILE mp4ff_t *
 #define MP4FILE_CB mp4ff_callback_t
@@ -70,7 +70,6 @@ typedef struct {
     DB_FILE *file;
     MP4FILE mp4;
     MP4FILE_CB mp4reader;
-    CStreamInfo *frame_info; // last frame info, used for channel mapping
     int mp4track;
     int mp4samples;
     int mp4sample;
@@ -79,8 +78,12 @@ typedef struct {
     int startsample;
     int endsample;
     int currentsample;
-    uint8_t buffer[AAC_BUFFER_SIZE];
+
+    // buffer with input packet data
+    uint8_t buffer[AAC_MAX_PACKET_SIZE];
     int remaining;
+
+    // buffer with decoded samples
     uint8_t out_buffer[OUT_BUFFER_SIZE];
     int out_remaining;
     int num_errors;
@@ -403,11 +406,11 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
         info->dec = aacDecoder_Open(TT_MP4_RAW, 1);
 
-
-        int scan_size = AAC_BUFFER_SIZE;
+        // In case the stream has some garbage at the start, try to find the packet in the first 1024 bytes.
+        int scan_size = 1024;
 
         while (scan_size > 0) {
-            info->remaining = (int)deadbeef->fread (info->buffer, 1, AAC_BUFFER_SIZE, info->file);
+            info->remaining = (int)deadbeef->fread (info->buffer, 1, AAC_MAX_PACKET_SIZE, info->file);
             uint8_t *p = info->buffer;
 
             // sync the initial buffer
@@ -490,6 +493,9 @@ aac_free (DB_fileinfo_t *_info) {
 
 static int
 aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
+    // this needs to persist until aacDecoder_DecodeFrame ends
+    unsigned char *mp4packet = NULL;
+
     aac_info_t *info = (aac_info_t *)_info;
     if (info->eof) {
         return 0;
@@ -529,21 +535,6 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             else {
                 int i, j;
 
-                if (info->remap[0] == -1) {
-                    // build remap mtx
-                    for (i = 0; i < _info->fmt.channels; i++) {
-                        AUDIO_CHANNEL_TYPE idx = info->frame_info->pChannelIndices[i];
-                        info->remap[idx] = i;
-                    }
-                    if (info->remap[0] == -1) {
-                        info->remap[0] = 0;
-                    }
-                    if ((_info->fmt.channels == 1 && info->remap[0] == 0)
-                        || (_info->fmt.channels == 2 && info->remap[0] == 0 && info->remap[1] == 1)) {
-                        info->noremap = 1;
-                    }
-                }
-
                 for (i = 0; i < n; i++) {
                     for (j = 0; j < _info->fmt.channels; j++) {
                         if (info->remap[j] == -1) {
@@ -569,51 +560,39 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             continue;
         }
 
-        char *samples = NULL;
-
         if (info->mp4) {
             if (info->mp4sample >= info->mp4samples) {
                 break;
             }
             
-            unsigned char *buffer = NULL;
             uint32_t buffer_size = 0;
-            int rc = mp4ff_read_sample (info->mp4, info->mp4track, info->mp4sample, &buffer, &buffer_size);
+            int rc = mp4ff_read_sample (info->mp4, info->mp4track, info->mp4sample, &mp4packet, &buffer_size);
             if (rc == 0) {
                 info->eof = 1;
                 break;
             }
             info->mp4sample++;
 
-            samples = malloc (8*2*1024);
-
             UINT consumed = buffer_size;
-            AAC_DECODER_ERROR err = aacDecoder_Fill(info->dec, &buffer, &buffer_size, &consumed);
-            err = aacDecoder_DecodeFrame(info->dec, (short *)samples, 8*2*1024, 0);
+            AAC_DECODER_ERROR err = aacDecoder_Fill(info->dec, &mp4packet, &buffer_size, &consumed);
 
-            if (buffer) {
-                free (buffer);
-            }
-            if (!samples) {
-                break;
+            if (err != AAC_DEC_OK) {
+                goto error;
             }
         }
         else {
-            if (info->remaining < AAC_BUFFER_SIZE) {
-                size_t res = deadbeef->fread (info->buffer + info->remaining, 1, AAC_BUFFER_SIZE-info->remaining, info->file);
+            if (info->remaining < AAC_MAX_PACKET_SIZE) {
+                size_t res = deadbeef->fread (info->buffer + info->remaining, 1, AAC_MAX_PACKET_SIZE-info->remaining, info->file);
                 info->remaining += res;
                 if (!info->remaining) {
                     break;
                 }
             }
 
-            samples = malloc (8*2*1024);
-
             UINT bytesValid = info->remaining;
-            aacDecoder_Fill(info->dec, (uint8_t **)&info->buffer, (UINT *)&info->remaining, &bytesValid);
-            aacDecoder_DecodeFrame(info->dec, (short *)samples, 8*2*1024, 0);
-
-            if (!samples) {
+            AAC_DECODER_ERROR err = aacDecoder_Fill(info->dec, (uint8_t **)&info->buffer, (UINT *)&info->remaining, &bytesValid);
+            if (err != AAC_DEC_OK) {
+                trace ("aacDecoder_Fill: error %d\n", err);
                 if (info->num_errors > 10) {
                     break;
                 }
@@ -622,7 +601,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 continue;
             }
             info->num_errors=0;
-            unsigned long consumed = bytesValid;
+            unsigned long consumed = info->remaining-bytesValid;
             if (consumed > info->remaining) {
                 break;
             }
@@ -635,18 +614,45 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
         }
 
-        CStreamInfo *stream_info = aacDecoder_GetStreamInfo(info->dec);
-        info->frame_info = stream_info;
-        int frame_size = stream_info->frameSize * stream_info->numChannels;
-        if (frame_size > 0) {
-            memcpy (info->out_buffer, samples, frame_size * 2);
-            info->out_remaining = (int)stream_info->frameSize;
+        AAC_DECODER_ERROR err = aacDecoder_DecodeFrame(info->dec, (short *)info->out_buffer, OUT_BUFFER_SIZE, 0);
+        if (err != AAC_DEC_OK) {
+            trace ("aacDecoder_DecodeFrame: error %d\n", err);
+            goto error;
         }
-    }
+
+        if (mp4packet) {
+            free (mp4packet);
+        }
+
+        CStreamInfo *frame_info = aacDecoder_GetStreamInfo(info->dec);
+        info->out_remaining = (int)frame_info->frameSize;
+
+        if (info->remap[0] == -1) {
+            // build remap mtx
+            for (int i = 0; i < _info->fmt.channels; i++) {
+                AUDIO_CHANNEL_TYPE idx = frame_info->pChannelIndices[i];
+                info->remap[idx] = i;
+            }
+            if (info->remap[0] == -1) {
+                info->remap[0] = 0;
+            }
+            if ((_info->fmt.channels == 1 && info->remap[0] == 0)
+                || (_info->fmt.channels == 2 && info->remap[0] == 0 && info->remap[1] == 1)) {
+                info->noremap = 1;
+            }
+        }
+
+}
 
     info->currentsample += (initsize-size) / samplesize;
 
     return initsize-size;
+
+error:
+    if (mp4packet) {
+        free (mp4packet);
+    }
+    return -1;
 }
 
 // returns -1 on error, 0 on success
