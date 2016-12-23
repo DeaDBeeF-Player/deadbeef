@@ -576,13 +576,14 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
 
         AAC_DECODER_ERROR err = aacDecoder_DecodeFrame(info->dec, (short *)info->out_buffer, OUT_BUFFER_SIZE, 0);
-        if (err != AAC_DEC_OK) {
-            trace ("aacDecoder_DecodeFrame: error %d\n", err);
-            goto error;
-        }
 
         if (mp4packet) {
             free (mp4packet);
+        }
+
+        if (err != AAC_DEC_OK) {
+            trace ("aacDecoder_DecodeFrame: error %d\n", err);
+            continue;
         }
 
         CStreamInfo *frame_info = aacDecoder_GetStreamInfo(info->dec);
@@ -602,8 +603,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 info->noremap = 1;
             }
         }
-
-}
+    }
 
     info->currentsample += (initsize-size) / samplesize;
 
