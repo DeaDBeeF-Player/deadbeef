@@ -46,7 +46,7 @@ static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
 
 #define OUT_BUFFER_SIZE 1024*8*2 // AAC frame can be 1024 or 960 samples, up to 8 channels, 2 bytes each
-#define AAC_MAX_PACKET_SIZE OUT_BUFFER_SIZE // setting max input packet size, to have some headroom
+#define AAC_MAX_PACKET_SIZE 768*8 // setting max input packet size, to have some headroom
 
 #define MP4FILE mp4ff_t *
 #define MP4FILE_CB mp4ff_callback_t
@@ -380,8 +380,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, &totalsamples);
         }
         else {
-            deadbeef->rewind (info->file);
-            offs = 0;
+            offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, NULL);
         }
         if (offs == -1) {
             return -1;
@@ -405,44 +404,6 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.samplerate = samplerate;
 
         info->dec = aacDecoder_Open(TT_MP4_RAW, 1);
-
-        // In case the stream has some garbage at the start, try to find the packet in the first 1024 bytes.
-        int scan_size = 1024;
-
-        while (scan_size > 0) {
-            info->remaining = (int)deadbeef->fread (info->buffer, 1, AAC_MAX_PACKET_SIZE, info->file);
-            uint8_t *p = info->buffer;
-
-            // sync the initial buffer
-            unsigned long srate;
-            unsigned char ch;
-            long consumed = 0;
-            // FIXME: raw aac untested
-            while (p < info->buffer+info->remaining) {
-                UINT bufsize = info->remaining-(int)(p-info->buffer);
-                UINT valid = bufsize;
-                AAC_DECODER_ERROR err = aacDecoder_Fill (info->dec, &p, &bufsize, &valid);
-                if (err == AAC_DEC_OK && valid < bufsize) {
-                    _info->fmt.channels = ch;
-                    _info->fmt.samplerate = (int)srate;
-                    break;
-                }
-                p++;
-            }
-            if (consumed >= 0) {
-                if (consumed != info->remaining && consumed > 0) {
-                    memmove (info->buffer, info->buffer + consumed, info->remaining - consumed);
-                }
-                info->remaining -= consumed;
-                break;
-            }
-
-            scan_size -= info->remaining;
-        }
-
-        if (scan_size <= 0) {
-            return -1;
-        }
     }
 
     _info->fmt.bps = 16;
