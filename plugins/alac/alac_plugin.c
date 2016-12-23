@@ -671,7 +671,6 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                         return cue;
                     }
                 }
-                deadbeef->pl_unlock ();
 
                 cue  = deadbeef->plt_insert_cue (plt, after, it, (int)totalsamples, samplerate);
                 if (cue) {
