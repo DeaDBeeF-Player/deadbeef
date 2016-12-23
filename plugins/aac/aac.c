@@ -41,7 +41,7 @@
 static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
 
-#define AAC_BUFFER_SIZE (FAAD_MIN_STREAMSIZE * 16)
+#define AAC_BUFFER_SIZE 768*8
 #define OUT_BUFFER_SIZE 100000
 
 #define MP4FILE mp4ff_t *
@@ -384,8 +384,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, &totalsamples);
         }
         else {
-            deadbeef->rewind (info->file);
-            offs = 0;
+            offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, NULL);
         }
         if (offs == -1) {
             trace ("aac stream not found\n");
@@ -420,40 +419,16 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             return -1;
         }
 
-        int scan_size = AAC_BUFFER_SIZE;
-
-        while (scan_size > 0) {
-            info->remaining = (int)deadbeef->fread (info->buffer, 1, AAC_BUFFER_SIZE, info->file);
-            uint8_t *p = info->buffer;
-
-            // sync the initial buffer
-            unsigned long srate;
-            unsigned char ch;
-            long consumed = 0;
-            while (p < info->buffer+info->remaining) {
-                int bufsize = info->remaining-(int)(p-info->buffer);
-                consumed = NeAACDecInit (info->dec, (uint8_t *)p, bufsize, &srate, &ch);
-                if (consumed >= 0) {
-                    _info->fmt.channels = ch;
-                    _info->fmt.samplerate = (int)srate;
-                    break;
-                }
-                p++;
-            }
-            if (consumed >= 0) {
-                if (consumed != info->remaining && consumed > 0) {
-                    memmove (info->buffer, info->buffer + consumed, info->remaining - consumed);
-                }
-                info->remaining -= consumed;
-                break;
-            }
-
-            scan_size -= info->remaining;
-        }
-
-        if (scan_size <= 0) {
+        info->remaining = (int)deadbeef->fread (info->buffer, 1, AAC_BUFFER_SIZE, info->file);
+        unsigned long srate;
+        unsigned char ch;
+        long err = NeAACDecInit (info->dec, (uint8_t *)info->buffer, info->remaining, &srate, &ch);
+        if (err) {
             return -1;
         }
+
+        _info->fmt.channels = ch;
+        _info->fmt.samplerate = (int)srate;
     }
 
     _info->fmt.bps = 16;
