@@ -118,6 +118,9 @@ static const char *container_atoms[] = {
 	NULL
 };
 
+// read/skip uint8 version and uint24 flags
+#define READ_COMMON_HEADER() {READ_UINT32(fp);}
+
 // The function may return -1 on parser failures,
 // but this should not be considered a critical failure.
 int
@@ -148,8 +151,7 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 #endif
 	}
 	else if (!_atom_type_compare(atom, "mvhd")) {
-		uint8_t version;
-		uint8_t flags[3];
+		READ_COMMON_HEADER();
 		uint32_t creation_time;
 		uint32_t modification_time;
 		uint32_t time_scale;
@@ -166,8 +168,6 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		uint32_t current_time;
 		uint32_t next_track_id;
 
-		version = READ_UINT8(fp);
-		READ_BUF(fp, flags, 3);
 		creation_time = READ_UINT32(fp);
 		modification_time = READ_UINT32(fp);
 		time_scale = READ_UINT32(fp);
@@ -185,8 +185,7 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		next_track_id = READ_UINT32(fp);
 	}
 	else if (!_atom_type_compare(atom, "tkhd")) {
-		uint8_t version;
-		uint8_t flags[3];
+		READ_COMMON_HEADER();
 		uint32_t creation_time;
 		uint32_t modification_time;
 		uint32_t track_id;
@@ -201,8 +200,6 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		uint32_t track_width;
 		uint32_t track_height;
 
-		version = READ_UINT8(fp);
-		READ_BUF(fp, flags, 3);
 		creation_time = READ_UINT32(fp);
 		modification_time = READ_UINT32(fp);
 		track_id = READ_UINT32(fp);
@@ -218,8 +215,7 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		track_height = READ_UINT32(fp);
 	}
 	else if (!_atom_type_compare(atom, "mdhd")) {
-		uint8_t version;
-		uint8_t flags[3];
+		READ_COMMON_HEADER();
 		uint32_t creation_time;
 		uint32_t modification_time;
 		uint32_t time_scale;
@@ -227,8 +223,6 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		uint16_t language;
 		uint16_t quality;
 
-		version = READ_UINT8(fp);
-		READ_BUF(fp, flags, 3);
 		creation_time = READ_UINT32(fp);
 		modification_time = READ_UINT32(fp);
 		time_scale = READ_UINT32(fp);
@@ -237,16 +231,13 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		quality = READ_UINT16(fp);
 	}
 	else if (!_atom_type_compare(atom, "hdlr")) {
-		uint8_t version;
-		uint8_t flags[3];
+		READ_COMMON_HEADER();
 		uint32_t component_type;
 		uint32_t component_subtype;
 		uint32_t component_manufacturer;
 		uint32_t component_flags;
 		uint32_t component_flags_mask;
 
-		version = READ_UINT8(fp);
-		READ_BUF(fp, flags, 3);
 		component_type = READ_UINT32(fp);
 		component_subtype = READ_UINT32(fp);
 		component_manufacturer = READ_UINT32(fp);
@@ -260,21 +251,15 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		}
 	}
 	else if (!_atom_type_compare(atom, "smhd")) {
-		uint8_t version;
-		uint8_t flags[3];
+		READ_COMMON_HEADER();
 		uint16_t balance;
 
-		version = READ_UINT8(fp);
-		READ_BUF(fp, flags, 3);
 		balance = READ_UINT16(fp);
 	}
 	else if (!_atom_type_compare(atom, "stsd")) {
-		uint8_t version;
-		uint8_t flags[3];
+		READ_COMMON_HEADER();
 		uint32_t number_of_entries;
 
-		version = READ_UINT8(fp);
-		READ_BUF(fp, flags, 3);
 		number_of_entries = READ_UINT32(fp);
 
 		for (int i = 0; i < number_of_entries; i++) {
@@ -295,12 +280,9 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		}
 	}
 	else if (!_atom_type_compare(atom, "stts")) {
-		uint8_t version;
-		uint8_t flags[3];
+		READ_COMMON_HEADER();
 		uint32_t number_of_entries;
 
-		version = READ_UINT8(fp);
-		READ_BUF(fp, flags, 3);
 		number_of_entries = READ_UINT32(fp);
 		for (uint32_t i = 0; i < number_of_entries; i++) {
 			uint32_t sample_count;
@@ -311,12 +293,9 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		}
 	}
 	else if (!_atom_type_compare(atom, "stsc")) {
-		uint8_t version;
-		uint8_t flags[3];
+		READ_COMMON_HEADER();
 		uint32_t number_of_entries;
 
-		version = READ_UINT8(fp);
-		READ_BUF(fp, flags, 3);
 		number_of_entries = READ_UINT32(fp);
 		for (uint32_t i = 0; i < number_of_entries; i++) {
 			uint32_t first_chunk;
@@ -329,13 +308,10 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		}
 	}
 	else if (!_atom_type_compare(atom, "stsz")) {
-		uint8_t version;
-		uint8_t flags[3];
+		READ_COMMON_HEADER();
 		uint32_t sample_size;
 		uint32_t number_of_entries;
 
-		version = READ_UINT8(fp);
-		READ_BUF(fp, flags, 3);
 		sample_size = READ_UINT32(fp);
 		number_of_entries = READ_UINT32(fp);
 		for (uint32_t i = 0; i < number_of_entries; i++) {
@@ -344,12 +320,9 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		}
 	}
 	else if (!_atom_type_compare(atom, "stco")) {
-		uint8_t version;
-		uint8_t flags[3];
+		READ_COMMON_HEADER();
 		uint32_t number_of_entries;
 
-		version = READ_UINT8(fp);
-		READ_BUF(fp, flags, 3);
 		number_of_entries = READ_UINT32(fp);
 		for (uint32_t i = 0; i < number_of_entries; i++) {
 			uint32_t offset;
@@ -357,12 +330,9 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		}
 	}
 	else if (!_atom_type_compare(atom, "co64")) {
-		uint8_t version;
-		uint8_t flags[3];
+		READ_COMMON_HEADER();
 		uint32_t number_of_entries;
 
-		version = READ_UINT8(fp);
-		READ_BUF(fp, flags, 3);
 		number_of_entries = READ_UINT32(fp);
 		for (uint32_t i = 0; i < number_of_entries; i++) {
 			uint64_t offset;
@@ -370,12 +340,9 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		}
 	}
 	else if (!_atom_type_compare(atom, "dref")) {
-		uint8_t version;
-		uint8_t flags[3];
+		READ_COMMON_HEADER();
 		uint32_t number_of_entries;
 
-		version = READ_UINT8(fp);
-		READ_BUF(fp, flags, 3);
 		number_of_entries = READ_UINT32(fp);
 		_load_subatoms(atom, fp);
 	}
