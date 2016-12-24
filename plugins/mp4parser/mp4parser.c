@@ -549,3 +549,16 @@ mp4p_atom_find (mp4p_atom_t *root, const char *path) {
 	}
 	return NULL;
 }
+
+uint64_t
+mp4p_stts_total_num_samples (mp4p_atom_t *stts_atom) {
+    mp4p_stts_t *stts = stts_atom->data;
+    if (!stts) {
+        return 0;
+    }
+    uint64_t total = 0;
+    for (uint32_t i = 0; i < stts->number_of_entries; i++) {
+        total += stts->entries[i].sample_count;
+    }
+    return total;
+}

@@ -158,4 +158,7 @@ mp4p_open (const char *fname, mp4p_file_callbacks_t *callbacks);
 mp4p_atom_t *
 mp4p_atom_find (mp4p_atom_t *root, const char *path);
 
+uint64_t
+mp4p_stts_total_num_samples (mp4p_atom_t *stts_atom);
+
 #endif /* mp4parser_h */
