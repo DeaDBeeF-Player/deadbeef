@@ -133,12 +133,12 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 
 	if (!_atom_type_compare (atom, "ftyp")) {
 		mp4p_mtyp_t *mtyp = calloc (sizeof (mp4p_mtyp_t), 1);
+		atom->data = mtyp;
+		atom->free = free;
 		READ_BUF(fp,mtyp->major_brand,4);
 		READ_BUF(fp,mtyp->version,4);
 		READ_BUF(fp,mtyp->compat_brand_1,4);
 		READ_BUF(fp,mtyp->compat_brand_2,4);
-		atom->data = mtyp;
-		atom->free = free;
 
 		// can have more than 4 values, which can be extracted if needed
 #if 0
@@ -151,37 +151,25 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 	}
 	else if (!_atom_type_compare(atom, "mvhd")) {
 		READ_COMMON_HEADER();
-		uint32_t creation_time;
-		uint32_t modification_time;
-		uint32_t time_scale;
-		uint32_t duration;
-		uint32_t preferred_rate;
-		uint16_t preferred_volume;
-		uint8_t reserved[10];
-		uint8_t matrix_structure[36];
-		uint32_t preview_time;
-		uint32_t preview_duration;
-		uint32_t poster_time;
-		uint32_t selection_time;
-		uint32_t selection_duration;
-		uint32_t current_time;
-		uint32_t next_track_id;
+		mp4p_mvhd_t *mvhd = calloc (sizeof (mp4p_mvhd_t), 1);
+		atom->data = mvhd;
+		atom->free = free;
 
-		creation_time = READ_UINT32(fp);
-		modification_time = READ_UINT32(fp);
-		time_scale = READ_UINT32(fp);
-		duration = READ_UINT32(fp);
-		preferred_rate = READ_UINT32(fp);
-		preferred_volume = READ_UINT16(fp);
-		READ_BUF(fp, reserved, 10);
-		READ_BUF(fp, matrix_structure, 36);
-		preview_time = READ_UINT32(fp);
-		preview_duration = READ_UINT32(fp);
-		poster_time = READ_UINT32(fp);
-		selection_time = READ_UINT32(fp);
-		selection_duration = READ_UINT32(fp);
-		current_time = READ_UINT32(fp);
-		next_track_id = READ_UINT32(fp);
+		mvhd->creation_time = READ_UINT32(fp);
+		mvhd->modification_time = READ_UINT32(fp);
+		mvhd->time_scale = READ_UINT32(fp);
+		mvhd->duration = READ_UINT32(fp);
+		mvhd->preferred_rate = READ_UINT32(fp);
+		mvhd->preferred_volume = READ_UINT16(fp);
+		READ_BUF(fp, mvhd->reserved, 10);
+		READ_BUF(fp, mvhd->matrix_structure, 36);
+		mvhd->preview_time = READ_UINT32(fp);
+		mvhd->preview_duration = READ_UINT32(fp);
+		mvhd->poster_time = READ_UINT32(fp);
+		mvhd->selection_time = READ_UINT32(fp);
+		mvhd->selection_duration = READ_UINT32(fp);
+		mvhd->current_time = READ_UINT32(fp);
+		mvhd->next_track_id = READ_UINT32(fp);
 	}
 	else if (!_atom_type_compare(atom, "tkhd")) {
 		READ_COMMON_HEADER();
