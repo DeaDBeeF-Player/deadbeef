@@ -397,10 +397,13 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		}
 	}
 	else if (!_atom_type_compare(atom, "dref")) {
-		READ_COMMON_HEADER();
-		uint32_t number_of_entries;
+		mp4p_stco_t *dref = calloc (sizeof (mp4p_dref_t), 1);
+		atom->data = dref;
+		atom->free = free;
 
-		number_of_entries = READ_UINT32(fp);
+		READ_COMMON_HEADER();
+
+		dref->number_of_entries = READ_UINT32(fp);
 		_load_subatoms(atom, fp);
 	}
 	else if (!_atom_type_compare(atom, "tref")) {

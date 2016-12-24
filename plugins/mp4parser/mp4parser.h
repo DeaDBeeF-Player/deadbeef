@@ -131,6 +131,10 @@ typedef struct {
 	mp4p_stco_entry_t *entries;
 } mp4p_stco_t;
 
+typedef struct {
+	uint32_t number_of_entries;
+} mp4p_dref_t;
+
 void
 mp4p_atom_free (mp4p_atom_t *atom);
 
