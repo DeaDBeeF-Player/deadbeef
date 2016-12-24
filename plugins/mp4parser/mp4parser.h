@@ -100,6 +100,17 @@ typedef struct {
 	mp4p_stts_entry_t *entries;
 } mp4p_stts_t;
 
+typedef struct {
+	uint32_t first_chunk;
+	uint32_t samples_per_chunk;
+	uint32_t sample_description_id;
+} mp4p_stsc_entry_t;
+
+typedef struct {
+	uint32_t number_of_entries;
+	mp4p_stsc_entry_t *entries;
+} mp4p_stsc_t;
+
 void
 mp4p_atom_free (mp4p_atom_t *atom);
 

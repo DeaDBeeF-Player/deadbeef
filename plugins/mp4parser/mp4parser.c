@@ -153,6 +153,15 @@ _stts_free (void *data) {
 	free (stts);
 }
 
+static void
+_stsc_free (void *data) {
+	mp4p_stsc_t *stsc = data;
+	if (stsc->entries) {
+		free (stsc->entries);
+	}
+	free (stsc);
+}
+
 // The function may return -1 on parser failures,
 // but this should not be considered a critical failure.
 int
@@ -307,18 +316,20 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		}
 	}
 	else if (!_atom_type_compare(atom, "stsc")) {
+		mp4p_stsc_t *stsc = calloc (sizeof (mp4p_stsc_t), 1);
+		atom->data = stsc;
+		atom->free = _stsc_free;
+
 		READ_COMMON_HEADER();
-		uint32_t number_of_entries;
 
-		number_of_entries = READ_UINT32(fp);
-		for (uint32_t i = 0; i < number_of_entries; i++) {
-			uint32_t first_chunk;
-			uint32_t samples_per_chunk;
-			uint32_t sample_description_id;
-
-			first_chunk = READ_UINT32(fp);
-			samples_per_chunk = READ_UINT32(fp);
-			sample_description_id = READ_UINT32(fp);
+		stsc->number_of_entries = READ_UINT32(fp);
+		if (stsc->number_of_entries) {
+			stsc->entries = calloc (sizeof (mp4p_stsc_entry_t), stsc->number_of_entries);
+		}
+		for (uint32_t i = 0; i < stsc->number_of_entries; i++) {
+			stsc->entries[i].first_chunk = READ_UINT32(fp);
+			stsc->entries[i].samples_per_chunk = READ_UINT32(fp);
+			stsc->entries[i].sample_description_id = READ_UINT32(fp);
 		}
 	}
 	else if (!_atom_type_compare(atom, "stsz")) {
