@@ -26,15 +26,21 @@ static int _atom_type_compare (mp4p_atom_t *atom, const char *type) {
 }
 
 static int _dbg_indent = 0;
+
+static void
+_dbg_print_indented (const char *msg) {
+    for (int i = 0; i < _dbg_indent; i++) {
+        printf (" ");
+    }
+    printf ("%s\n", msg);
+}
+
 static void
 _dbg_print_atom (mp4p_atom_t *atom) {
-	for (int i = 0; i < _dbg_indent; i++) {
-		printf (" ");
-	}
 	char type[5];
 	memcpy (type, atom->type, 4);
 	type[4] = 0;
-	printf ("%s\n", type);
+    _dbg_print_indented(type);
 }
 
 int
@@ -131,20 +137,6 @@ _hdlr_free (void *data) {
 }
 
 static void
-_stsd_free (void *data) {
-	mp4p_stsd_t *stsd = data;
-	if (stsd->entries) {
-		for (uint32_t i = 0; i < stsd->number_of_entries; i++) {
-			if (stsd->entries[i].decoder_info) {
-				free (stsd->entries[i].decoder_info);
-			}
-		}
-		free (stsd->entries);
-	}
-	free (stsd);
-}
-
-static void
 _stts_free (void *data) {
 	mp4p_stts_t *stts = data;
 	if (stts->entries) {
@@ -180,10 +172,20 @@ _stco_free (void *data) {
 	free (stco);
 }
 
+static void
+_alac_free (void *data) {
+    mp4p_alac_t *alac = data;
+    if (alac->asc) {
+        free (alac->asc);
+    }
+    free (alac);
+}
+
 // The function may return -1 on parser failures,
 // but this should not be considered a critical failure.
 int
 mp4p_atom_init (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
+    _dbg_print_atom (atom);
 	for (int i = 0; container_atoms[i]; i++) {
 		if (!_atom_type_compare (atom, container_atoms[i])) {
 			return _load_subatoms(atom, fp);
@@ -297,10 +299,14 @@ mp4p_atom_init (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 	else if (!_atom_type_compare(atom, "stsd")) {
 		mp4p_stsd_t *stsd = calloc (sizeof (mp4p_stsd_t), 1);
 		atom->data = stsd;
-		atom->free = _stsd_free;
+		atom->free = free;
 		READ_COMMON_HEADER();
 
 		stsd->number_of_entries = READ_UINT32(fp);
+        _load_subatoms(atom, fp);
+#if 0
+// NOTE: the stsd entries can be loaded as atoms, but then we would need to parse each atom individually
+// Instead, we load their fixed headers, + blob with decoder-specific info
 		if (stsd->number_of_entries) {
 			stsd->entries = calloc (sizeof (mp4p_stsd_entry_t), stsd->number_of_entries);
 		}
@@ -316,6 +322,7 @@ mp4p_atom_init (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 				READ_BUF(fp, stsd->entries[i].decoder_info, stsd->entries[i].sample_description_size);
 			}
 		}
+#endif
 	}
 	else if (!_atom_type_compare(atom, "stts")) {
 		mp4p_stts_t *stts = calloc (sizeof (mp4p_stts_t), 1);
@@ -409,6 +416,34 @@ mp4p_atom_init (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 	else if (!_atom_type_compare(atom, "tref")) {
 		_load_subatoms(atom, fp);
 	}
+    else if (!_atom_type_compare(atom, "alac")) {
+        mp4p_alac_t *alac = calloc (sizeof (mp4p_alac_t), 1);
+        atom->data = alac;
+        atom->free = _alac_free;
+
+        READ_BUF(fp, alac->reserved, 6);
+        alac->data_reference_index = READ_UINT16(fp);
+
+        READ_BUF(fp, alac->reserved2, 8);
+
+        // we parse these values, but also read them into the ASC
+        alac->channel_count = READ_UINT16(fp);
+        alac->bps = READ_UINT16(fp);
+        alac->packet_size = READ_UINT16(fp);
+        alac->sample_rate = READ_UINT32(fp);
+
+        alac->asc_size = atom->size - 24;
+        if (alac->asc_size > 64) {
+            alac->asc_size = 64;
+        }
+        fp->fseek (fp->data, -10, SEEK_CUR);
+        alac->asc = calloc (alac->asc_size, 1);
+        READ_BUF(fp, alac->asc, alac->asc_size);
+    }
+
+    else {
+        _dbg_print_indented ("unknown");
+    }
 
 	return 0;
 }
@@ -430,7 +465,6 @@ _atom_load (mp4p_file_callbacks_t *fp) {
 		goto error;
 	}
 
-	_dbg_print_atom (atom);
 	mp4p_atom_init (atom, fp);
 
 	fp->fseek (fp->data, fpos + atom->size, SEEK_SET);
@@ -463,7 +497,7 @@ _stdio_ftell (void *stream) {
 mp4p_atom_t *
 mp4p_open (const char *fname, mp4p_file_callbacks_t *callbacks) {
 	mp4p_file_callbacks_t stdio_callbacks;
-	FILE *fp;
+	FILE *fp = NULL;
 	if (!callbacks) {
 		fp = fopen (fname, "rb");
 		stdio_callbacks.data = fp;
@@ -507,6 +541,9 @@ mp4p_atom_find (mp4p_atom_t *root, const char *path) {
 		}
 		a = a->next;
 	}
+    if (a && !path[4]) {
+        return a;
+    }
 	if (a && path[4]) {
 		return mp4p_atom_find (a->subatoms, path+5);
 	}

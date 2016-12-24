@@ -78,16 +78,7 @@ typedef struct {
 } mp4p_smhd_t;
 
 typedef struct {
-	uint32_t sample_description_size;
-	char data_format[4];
-	uint8_t reserved[6];
-	uint16_t data_reference_index;
-	char *decoder_info;
-} mp4p_stsd_entry_t;
-
-typedef struct {
 	uint32_t number_of_entries;
-	mp4p_stsd_entry_t *entries;
 } mp4p_stsd_t;
 
 typedef struct {
@@ -134,6 +125,20 @@ typedef struct {
 typedef struct {
 	uint32_t number_of_entries;
 } mp4p_dref_t;
+
+typedef struct {
+    uint8_t reserved[6];
+    uint16_t data_reference_index;
+    uint8_t reserved2[8];
+    uint16_t channel_count;
+    uint16_t bps;
+    uint16_t packet_size;
+    uint32_t sample_rate;
+    uint8_t reserved3[2];
+
+    uint32_t asc_size;
+    uint8_t *asc;
+} mp4p_alac_t;
 
 void
 mp4p_atom_free (mp4p_atom_t *atom);
