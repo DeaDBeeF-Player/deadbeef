@@ -121,6 +121,15 @@ static const char *container_atoms[] = {
 // read/skip uint8 version and uint24 flags
 #define READ_COMMON_HEADER() {READ_UINT32(fp);}
 
+static void
+_hdlr_free (void *data) {
+	mp4p_hdlr_t *hdlr = data;
+	if (hdlr->buf) {
+		free (hdlr->buf);
+	}
+	free (hdlr);
+}
+
 // The function may return -1 on parser failures,
 // but this should not be considered a critical failure.
 int
@@ -150,10 +159,11 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 #endif
 	}
 	else if (!_atom_type_compare(atom, "mvhd")) {
-		READ_COMMON_HEADER();
 		mp4p_mvhd_t *mvhd = calloc (sizeof (mp4p_mvhd_t), 1);
 		atom->data = mvhd;
 		atom->free = free;
+
+		READ_COMMON_HEADER();
 
 		mvhd->creation_time = READ_UINT32(fp);
 		mvhd->modification_time = READ_UINT32(fp);
@@ -172,76 +182,67 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		mvhd->next_track_id = READ_UINT32(fp);
 	}
 	else if (!_atom_type_compare(atom, "tkhd")) {
-		READ_COMMON_HEADER();
-		uint32_t creation_time;
-		uint32_t modification_time;
-		uint32_t track_id;
-		uint8_t reserved[4];
-		uint32_t duration;
-		uint8_t reserved2[8];
-		uint16_t layer;
-		uint16_t alternate_group;
-		uint16_t volume;
-		uint8_t reserved3[2];
-		uint8_t matrix_structure[36];
-		uint32_t track_width;
-		uint32_t track_height;
+		mp4p_tkhd_t *tkhd = calloc (sizeof (mp4p_tkhd_t), 1);
+		atom->data = tkhd;
+		atom->free = free;
 
-		creation_time = READ_UINT32(fp);
-		modification_time = READ_UINT32(fp);
-		track_id = READ_UINT32(fp);
-		READ_BUF(fp, reserved, 4);
-		duration = READ_UINT32(fp);
-		READ_BUF(fp, reserved2, 8);
-		layer = READ_UINT16(fp);
-		alternate_group = READ_UINT16(fp);
-		volume = READ_UINT16(fp);
-		READ_BUF(fp, reserved3, 2);
-		READ_BUF(fp, matrix_structure, 36);
-		track_width = READ_UINT32(fp);
-		track_height = READ_UINT32(fp);
+		READ_COMMON_HEADER();
+
+		tkhd->creation_time = READ_UINT32(fp);
+		tkhd->modification_time = READ_UINT32(fp);
+		tkhd->track_id = READ_UINT32(fp);
+		READ_BUF(fp, tkhd->reserved, 4);
+		tkhd->duration = READ_UINT32(fp);
+		READ_BUF(fp, tkhd->reserved2, 8);
+		tkhd->layer = READ_UINT16(fp);
+		tkhd->alternate_group = READ_UINT16(fp);
+		tkhd->volume = READ_UINT16(fp);
+		READ_BUF(fp, tkhd->reserved3, 2);
+		READ_BUF(fp, tkhd->matrix_structure, 36);
+		tkhd->track_width = READ_UINT32(fp);
+		tkhd->track_height = READ_UINT32(fp);
 	}
 	else if (!_atom_type_compare(atom, "mdhd")) {
-		READ_COMMON_HEADER();
-		uint32_t creation_time;
-		uint32_t modification_time;
-		uint32_t time_scale;
-		uint32_t duration;
-		uint16_t language;
-		uint16_t quality;
+		mp4p_mdhd_t *mdhd = calloc (sizeof (mp4p_mdhd_t), 1);
+		atom->data = mdhd;
+		atom->free = free;
 
-		creation_time = READ_UINT32(fp);
-		modification_time = READ_UINT32(fp);
-		time_scale = READ_UINT32(fp);
-		duration = READ_UINT32(fp);
-		language = READ_UINT16(fp);
-		quality = READ_UINT16(fp);
+		READ_COMMON_HEADER();
+
+		mdhd->creation_time = READ_UINT32(fp);
+		mdhd->modification_time = READ_UINT32(fp);
+		mdhd->time_scale = READ_UINT32(fp);
+		mdhd->duration = READ_UINT32(fp);
+		mdhd->language = READ_UINT16(fp);
+		mdhd->quality = READ_UINT16(fp);
 	}
 	else if (!_atom_type_compare(atom, "hdlr")) {
-		READ_COMMON_HEADER();
-		uint32_t component_type;
-		uint32_t component_subtype;
-		uint32_t component_manufacturer;
-		uint32_t component_flags;
-		uint32_t component_flags_mask;
+		mp4p_hdlr_t *hdlr = calloc (sizeof (mp4p_hdlr_t), 1);
+		atom->data = hdlr;
+		atom->free = _hdlr_free;
 
-		component_type = READ_UINT32(fp);
-		component_subtype = READ_UINT32(fp);
-		component_manufacturer = READ_UINT32(fp);
-		component_flags = READ_UINT32(fp);
-		component_flags_mask = READ_UINT32(fp);
+		READ_COMMON_HEADER();
+
+		hdlr->component_type = READ_UINT32(fp);
+		hdlr->component_subtype = READ_UINT32(fp);
+		hdlr->component_manufacturer = READ_UINT32(fp);
+		hdlr->component_flags = READ_UINT32(fp);
+		hdlr->component_flags_mask = READ_UINT32(fp);
 
 		uint16_t len = READ_UINT16(fp);
 		if (len) {
-			char *buf = malloc (len);
-			READ_BUF(fp, buf, len);
+            hdlr->buf = calloc (len, 1);
+			READ_BUF(fp, hdlr->buf, len);
 		}
 	}
 	else if (!_atom_type_compare(atom, "smhd")) {
-		READ_COMMON_HEADER();
-		uint16_t balance;
+		mp4p_smhd_t *smhd = calloc (sizeof (mp4p_smhd_t), 1);
+		atom->data = smhd;
+		atom->free = free;
 
-		balance = READ_UINT16(fp);
+		READ_COMMON_HEADER();
+
+		smhd->balance = READ_UINT16(fp);
 	}
 	else if (!_atom_type_compare(atom, "stsd")) {
 		READ_COMMON_HEADER();

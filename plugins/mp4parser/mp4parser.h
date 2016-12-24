@@ -39,6 +39,44 @@ typedef struct {
 	uint32_t next_track_id;
 } mp4p_mvhd_t;
 
+typedef struct {
+	uint32_t creation_time;
+	uint32_t modification_time;
+	uint32_t track_id;
+	uint8_t reserved[4];
+	uint32_t duration;
+	uint8_t reserved2[8];
+	uint16_t layer;
+	uint16_t alternate_group;
+	uint16_t volume;
+	uint8_t reserved3[2];
+	uint8_t matrix_structure[36];
+	uint32_t track_width;
+	uint32_t track_height;
+} mp4p_tkhd_t;
+
+typedef struct {
+    uint32_t creation_time;
+    uint32_t modification_time;
+    uint32_t time_scale;
+    uint32_t duration;
+    uint16_t language;
+    uint16_t quality;
+} mp4p_mdhd_t;
+
+typedef struct {
+	uint32_t component_type;
+	uint32_t component_subtype;
+	uint32_t component_manufacturer;
+	uint32_t component_flags;
+	uint32_t component_flags_mask;
+    char *buf;
+} mp4p_hdlr_t;
+
+typedef struct {
+	uint16_t balance;
+} mp4p_smhd_t;
+
 void
 mp4p_atom_free (mp4p_atom_t *atom);
 
