@@ -373,6 +373,9 @@
 		2D2351251B138F3200A62936 /* converter.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2351231B138F3200A62936 /* converter.c */; };
 		2D2351261B138F3200A62936 /* converter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2351241B138F3200A62936 /* converter.h */; };
 		2D2351281B13922400A62936 /* Converter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D2351271B13922400A62936 /* Converter.xib */; };
+		2D24B69B1E0E77A10059B1AE /* mp4parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D24B6991E0E77A10059B1AE /* mp4parser.c */; };
+		2D24B69C1E0E77A10059B1AE /* mp4parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D24B69A1E0E77A10059B1AE /* mp4parser.h */; };
+		2D24B69F1E0E77C70059B1AE /* libmp4parser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D24B6941E0E777D0059B1AE /* libmp4parser.a */; };
 		2D27AEE81D9D871600842D76 /* rg_scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D27AEE61D9D871600842D76 /* rg_scanner.c */; };
 		2D27AEE91D9D871600842D76 /* rg_scanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D27AEE71D9D871600842D76 /* rg_scanner.h */; };
 		2D27AEED1D9D873E00842D76 /* ebur128.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D27AEEB1D9D873E00842D76 /* ebur128.c */; };
@@ -2058,6 +2061,13 @@
 			remoteGlobalIDString = 2D23511A1B138ECB00A62936;
 			remoteInfo = converter;
 		};
+		2D24B69D1E0E77B40059B1AE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D24B6931E0E777D0059B1AE;
+			remoteInfo = mp4parser;
+		};
 		2D27AEEF1D9D876E00842D76 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -2721,6 +2731,9 @@
 		2D2351231B138F3200A62936 /* converter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = converter.c; path = plugins/converter/converter.c; sourceTree = "<group>"; usesTabs = 0; };
 		2D2351241B138F3200A62936 /* converter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = converter.h; path = plugins/converter/converter.h; sourceTree = "<group>"; };
 		2D2351271B13922400A62936 /* Converter.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Converter.xib; sourceTree = "<group>"; };
+		2D24B6941E0E777D0059B1AE /* libmp4parser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmp4parser.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D24B6991E0E77A10059B1AE /* mp4parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp4parser.c; path = plugins/mp4parser/mp4parser.c; sourceTree = "<group>"; };
+		2D24B69A1E0E77A10059B1AE /* mp4parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp4parser.h; path = plugins/mp4parser/mp4parser.h; sourceTree = "<group>"; };
 		2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = rg_scanner.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D27AEE61D9D871600842D76 /* rg_scanner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = rg_scanner.c; path = plugins/rg_scanner/rg_scanner.c; sourceTree = "<group>"; };
 		2D27AEE71D9D871600842D76 /* rg_scanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rg_scanner.h; path = plugins/rg_scanner/rg_scanner.h; sourceTree = "<group>"; };
@@ -4487,6 +4500,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2D24B6911E0E777D0059B1AE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D27AED11D9D86ED00842D76 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4615,6 +4635,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D24B69F1E0E77C70059B1AE /* libmp4parser.a in Frameworks */,
 				2D3420EC1D085771004C136A /* libmp4ff.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5200,6 +5221,15 @@
 				2D2351241B138F3200A62936 /* converter.h */,
 			);
 			name = converter;
+			sourceTree = "<group>";
+		};
+		2D24B6981E0E77920059B1AE /* mp4parser */ = {
+			isa = PBXGroup;
+			children = (
+				2D24B6991E0E77A10059B1AE /* mp4parser.c */,
+				2D24B69A1E0E77A10059B1AE /* mp4parser.h */,
+			);
+			name = mp4parser;
 			sourceTree = "<group>";
 		};
 		2D27AEE51D9D86F600842D76 /* rg_scanner */ = {
@@ -7052,6 +7082,7 @@
 				2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */,
 				2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */,
 				2DF16CB01DCB62D9007D7F05 /* supereq.dylib */,
+				2D24B6941E0E777D0059B1AE /* libmp4parser.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -7196,6 +7227,7 @@
 		4D1B514C1837EF7C003E6066 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				2D24B6981E0E77920059B1AE /* mp4parser */,
 				2DF16CAB1DCB62B6007D7F05 /* supereq */,
 				2D5423B51DCB38BC00ACBDEB /* mono2stereo */,
 				2D27AEE51D9D86F600842D76 /* rg_scanner */,
@@ -7958,6 +7990,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D2351261B138F3200A62936 /* converter.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D24B6921E0E777D0059B1AE /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D24B69C1E0E77A10059B1AE /* mp4parser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9099,6 +9139,23 @@
 			productReference = 2D23511B1B138ECB00A62936 /* converter.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		2D24B6931E0E777D0059B1AE /* mp4parser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D24B6951E0E777D0059B1AE /* Build configuration list for PBXNativeTarget "mp4parser" */;
+			buildPhases = (
+				2D24B6901E0E777D0059B1AE /* Sources */,
+				2D24B6911E0E777D0059B1AE /* Frameworks */,
+				2D24B6921E0E777D0059B1AE /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mp4parser;
+			productName = mp4parser;
+			productReference = 2D24B6941E0E777D0059B1AE /* libmp4parser.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		2D27AED31D9D86ED00842D76 /* rg_scanner */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D27AEE41D9D86ED00842D76 /* Build configuration list for PBXNativeTarget "rg_scanner" */;
@@ -9389,6 +9446,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D24B69E1E0E77B40059B1AE /* PBXTargetDependency */,
 				2D3420EE1D085776004C136A /* PBXTargetDependency */,
 			);
 			name = alac;
@@ -9800,6 +9858,10 @@
 					2D23511A1B138ECB00A62936 = {
 						CreatedOnToolsVersion = 6.3.1;
 					};
+					2D24B6931E0E777D0059B1AE = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+					};
 					2D27AED31D9D86ED00842D76 = {
 						CreatedOnToolsVersion = 8.0;
 						ProvisioningStyle = Automatic;
@@ -9956,6 +10018,7 @@
 				2D27AED31D9D86ED00842D76 /* rg_scanner */,
 				2D1DC0951DCB39EC00441A08 /* ddb_mono2stereo */,
 				2DF16CAF1DCB62D9007D7F05 /* supereq */,
+				2D24B6931E0E777D0059B1AE /* mp4parser */,
 			);
 		};
 /* End PBXProject section */
@@ -10521,6 +10584,14 @@
 			files = (
 				2D9FFA251D7588A700D1B5F8 /* mp4tagutil.c in Sources */,
 				2D2351251B138F3200A62936 /* converter.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D24B6901E0E777D0059B1AE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D24B69B1E0E77A10059B1AE /* mp4parser.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11692,6 +11763,11 @@
 			target = 2D23511A1B138ECB00A62936 /* converter */;
 			targetProxy = 2D23511F1B138EFC00A62936 /* PBXContainerItemProxy */;
 		};
+		2D24B69E1E0E77B40059B1AE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D24B6931E0E777D0059B1AE /* mp4parser */;
+			targetProxy = 2D24B69D1E0E77B40059B1AE /* PBXContainerItemProxy */;
+		};
 		2D27AEF01D9D876E00842D76 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D27AED31D9D86ED00842D76 /* rg_scanner */;
@@ -12856,6 +12932,55 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		2D24B6961E0E777D0059B1AE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2D24B6971E0E777D0059B1AE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -14832,6 +14957,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		2D24B6951E0E777D0059B1AE /* Build configuration list for PBXNativeTarget "mp4parser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D24B6961E0E777D0059B1AE /* Debug */,
+				2D24B6971E0E777D0059B1AE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		2D27AEE41D9D86ED00842D76 /* Build configuration list for PBXNativeTarget "rg_scanner" */ = {
 			isa = XCConfigurationList;
