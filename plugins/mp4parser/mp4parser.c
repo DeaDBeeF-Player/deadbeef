@@ -562,3 +562,16 @@ mp4p_stts_total_num_samples (mp4p_atom_t *stts_atom) {
     }
     return total;
 }
+
+uint64_t
+mp4p_stts_total_sample_duration (mp4p_atom_t *stts_atom) {
+    mp4p_stts_t *stts = stts_atom->data;
+    if (!stts) {
+        return 0;
+    }
+    uint64_t total = 0;
+    for (uint32_t i = 0; i < stts->number_of_entries; i++) {
+        total += stts->entries[i].sample_duration * stts->entries[i].sample_count;
+    }
+    return total;
+}

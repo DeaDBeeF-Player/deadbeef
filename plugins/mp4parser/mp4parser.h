@@ -161,4 +161,7 @@ mp4p_atom_find (mp4p_atom_t *root, const char *path);
 uint64_t
 mp4p_stts_total_num_samples (mp4p_atom_t *stts_atom);
 
+uint64_t
+mp4p_stts_total_sample_duration (mp4p_atom_t *stts_atom);
+
 #endif /* mp4parser_h */
