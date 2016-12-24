@@ -472,3 +472,19 @@ mp4p_open (const char *fname) {
 	return head;
 }
 
+mp4p_atom_t *
+mp4p_atom_find (mp4p_atom_t *root, const char *path) {
+	mp4p_atom_t *a = root;
+	while (a) {
+		if (!memcmp (a->type, path, 4)) {
+			printf ("found: ");
+			_dbg_print_atom (a);
+			break;
+		}
+		a = a->next;
+	}
+	if (a && path[4]) {
+		return mp4p_atom_find (a->subatoms, path+5);
+	}
+	return NULL;
+}

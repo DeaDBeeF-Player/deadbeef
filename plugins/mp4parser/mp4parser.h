@@ -141,4 +141,7 @@ mp4p_atom_free (mp4p_atom_t *atom);
 mp4p_atom_t *
 mp4p_open (const char *fname);
 
+mp4p_atom_t *
+mp4p_atom_find (mp4p_atom_t *root, const char *path);
+
 #endif /* mp4parser_h */
