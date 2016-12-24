@@ -1463,10 +1463,6 @@
 		2DB225401D4F2F9500776E31 /* urf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB225371D4F2F9500776E31 /* urf.h */; };
 		2DB225431D4F30C100776E31 /* modloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DB225411D4F30C100776E31 /* modloader.cpp */; };
 		2DB225441D4F30C100776E31 /* modloader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB225421D4F30C100776E31 /* modloader.h */; };
-		2DB61F6B1DA8F1750095742A /* demux.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB61F691DA8F1750095742A /* demux.h */; };
-		2DB61F6C1DA8F1750095742A /* demux.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB61F6A1DA8F1750095742A /* demux.c */; };
-		2DB61F6E1DA8F1B80095742A /* stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB61F6D1DA8F1B80095742A /* stream.c */; };
-		2DB61F701DA8F1C00095742A /* stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB61F6F1DA8F1C00095742A /* stream.h */; };
 		2DB96A8419ABB48300E318A8 /* src.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB96A6A19ABB32E00E318A8 /* src.c */; };
 		2DB96A8519ABB48300E318A8 /* src.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A6B19ABB32E00E318A8 /* src.h */; };
 		2DB96A9B19ABB50300E318A8 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A9019ABB50300E318A8 /* common.h */; };
@@ -3853,10 +3849,6 @@
 		2DB225371D4F2F9500776E31 /* urf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = urf.h; path = plugins/dumb/urf.h; sourceTree = "<group>"; };
 		2DB225411D4F30C100776E31 /* modloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = modloader.cpp; path = plugins/dumb/modloader.cpp; sourceTree = "<group>"; };
 		2DB225421D4F30C100776E31 /* modloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = modloader.h; path = plugins/dumb/modloader.h; sourceTree = "<group>"; };
-		2DB61F691DA8F1750095742A /* demux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = demux.h; path = plugins/alac/demux.h; sourceTree = "<group>"; };
-		2DB61F6A1DA8F1750095742A /* demux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = demux.c; path = plugins/alac/demux.c; sourceTree = "<group>"; };
-		2DB61F6D1DA8F1B80095742A /* stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream.c; path = plugins/alac/stream.c; sourceTree = "<group>"; };
-		2DB61F6F1DA8F1C00095742A /* stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stream.h; path = plugins/alac/stream.h; sourceTree = "<group>"; };
 		2DB96A6A19ABB32E00E318A8 /* src.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src.c; path = ../plugins/dsp_libsrc/src.c; sourceTree = "<group>"; };
 		2DB96A6B19ABB32E00E318A8 /* src.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = src.h; path = ../plugins/dsp_libsrc/src.h; sourceTree = "<group>"; };
 		2DB96A8019ABB47C00E318A8 /* dsp_libsrc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dsp_libsrc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6398,10 +6390,6 @@
 		2D91772E1A0E892F004BC222 /* alac */ = {
 			isa = PBXGroup;
 			children = (
-				2DB61F691DA8F1750095742A /* demux.h */,
-				2DB61F6A1DA8F1750095742A /* demux.c */,
-				2DB61F6D1DA8F1B80095742A /* stream.c */,
-				2DB61F6F1DA8F1C00095742A /* stream.h */,
 				2DF1ED671DAA376B00E23298 /* decomp.h */,
 				2DF1ED681DAA376B00E23298 /* alac.c */,
 				2D1DC09E1DCB3B7500441A08 /* alac_plugin.c */,
@@ -8460,8 +8448,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DB61F6B1DA8F1750095742A /* demux.h in Headers */,
-				2DB61F701DA8F1C00095742A /* stream.h in Headers */,
 				2DF1ED691DAA376B00E23298 /* decomp.h in Headers */,
 				2D69653B1D74338A00EB99D8 /* mp4tagutil.h in Headers */,
 			);
@@ -11094,8 +11080,6 @@
 				2DF1ED6A1DAA376B00E23298 /* alac.c in Sources */,
 				2D1DC09F1DCB3B7500441A08 /* alac_plugin.c in Sources */,
 				2D6965391D74338A00EB99D8 /* mp4tagutil.c in Sources */,
-				2DB61F6C1DA8F1750095742A /* demux.c in Sources */,
-				2DB61F6E1DA8F1B80095742A /* stream.c in Sources */,
 				2D9177391A0E8966004BC222 /* m3u.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -14965,6 +14949,7 @@
 				2D24B6971E0E777D0059B1AE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2D27AEE41D9D86ED00842D76 /* Build configuration list for PBXNativeTarget "rg_scanner" */ = {
 			isa = XCConfigurationList;
