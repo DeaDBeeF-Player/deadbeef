@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2DEBA1601E0D2C2200F6C062 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBA15F1E0D2C2200F6C062 /* main.c */; };
-		2DEBA1681E0D34D200F6C062 /* mp4parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBA1661E0D34D200F6C062 /* mp4parser.c */; };
+		2D24B6A31E0E79AF0059B1AE /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D24B6A01E0E79AF0059B1AE /* main.c */; };
+		2D24B6A41E0E79AF0059B1AE /* mp4parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D24B6A11E0E79AF0059B1AE /* mp4parser.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,10 +24,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2D24B6A01E0E79AF0059B1AE /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = SOURCE_ROOT; };
+		2D24B6A11E0E79AF0059B1AE /* mp4parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp4parser.c; sourceTree = SOURCE_ROOT; };
+		2D24B6A21E0E79AF0059B1AE /* mp4parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4parser.h; sourceTree = SOURCE_ROOT; };
 		2DEBA15C1E0D2C2200F6C062 /* mp4parser */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mp4parser; sourceTree = BUILT_PRODUCTS_DIR; };
-		2DEBA15F1E0D2C2200F6C062 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		2DEBA1661E0D34D200F6C062 /* mp4parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp4parser.c; sourceTree = "<group>"; };
-		2DEBA1671E0D34D200F6C062 /* mp4parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4parser.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,9 +60,9 @@
 		2DEBA15E1E0D2C2200F6C062 /* mp4parser */ = {
 			isa = PBXGroup;
 			children = (
-				2DEBA15F1E0D2C2200F6C062 /* main.c */,
-				2DEBA1661E0D34D200F6C062 /* mp4parser.c */,
-				2DEBA1671E0D34D200F6C062 /* mp4parser.h */,
+				2D24B6A01E0E79AF0059B1AE /* main.c */,
+				2D24B6A11E0E79AF0059B1AE /* mp4parser.c */,
+				2D24B6A21E0E79AF0059B1AE /* mp4parser.h */,
 			);
 			path = mp4parser;
 			sourceTree = "<group>";
@@ -124,8 +124,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DEBA1681E0D34D200F6C062 /* mp4parser.c in Sources */,
-				2DEBA1601E0D2C2200F6C062 /* main.c in Sources */,
+				2D24B6A41E0E79AF0059B1AE /* mp4parser.c in Sources */,
+				2D24B6A31E0E79AF0059B1AE /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

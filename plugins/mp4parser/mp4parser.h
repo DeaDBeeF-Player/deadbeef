@@ -138,8 +138,17 @@ typedef struct {
 void
 mp4p_atom_free (mp4p_atom_t *atom);
 
+typedef struct {
+	void *data;
+	size_t (*fread) (void *ptr, size_t size, size_t nmemb, void *stream);
+	int (*fseek) (void *stream, int64_t offset, int whence);
+	int64_t (*ftell) (void *stream);
+} mp4p_file_callbacks_t;
+
+// `callbacks` can be NULL, in which case stdio is used.
+// Loading starts from the current position in the stream.
 mp4p_atom_t *
-mp4p_open (const char *fname);
+mp4p_open (const char *fname, mp4p_file_callbacks_t *callbacks);
 
 mp4p_atom_t *
 mp4p_atom_find (mp4p_atom_t *root, const char *path);

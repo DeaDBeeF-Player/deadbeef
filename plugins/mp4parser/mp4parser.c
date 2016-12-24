@@ -4,7 +4,7 @@
 #include "mp4parser.h"
 
 static mp4p_atom_t *
-_atom_load (FILE *fp);
+_atom_load (mp4p_file_callbacks_t *fp);
 
 void
 mp4p_atom_free (mp4p_atom_t *atom) {
@@ -38,10 +38,10 @@ _dbg_print_atom (mp4p_atom_t *atom) {
 }
 
 int
-_load_subatoms (mp4p_atom_t *atom, FILE *fp) {
+_load_subatoms (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 	_dbg_indent += 4;
 	mp4p_atom_t *tail = NULL;
-	while (ftell (fp) < atom->pos + atom->size) {
+	while (fp->ftell (fp->data) < atom->pos + atom->size) {
 		mp4p_atom_t *c = _atom_load (fp);
 		if (!c) {
 			break;
@@ -60,9 +60,9 @@ _load_subatoms (mp4p_atom_t *atom, FILE *fp) {
 
 #if 0
 static int
-_load_fourcc_atom (mp4p_atom_t *atom, const char *expected, FILE *fp) {
+_load_fourcc_atom (mp4p_atom_t *atom, const char *expected, mp4p_file_callbacks_t *fp) {
 	char fourcc[4];
-	if (4 != fread (fourcc, 1, 4, fp)) {
+	if (4 != fp->fread (fourcc, 1, 4, fp->data)) {
 		return -1;
 	}
 	if (_str_type_compare(fourcc, expected)) {
@@ -73,9 +73,9 @@ _load_fourcc_atom (mp4p_atom_t *atom, const char *expected, FILE *fp) {
 #endif
 
 static int
-_read_uint16 (FILE *fp, uint16_t *value) {
+_read_uint16 (mp4p_file_callbacks_t *fp, uint16_t *value) {
 	uint8_t csize[2];
-	if (2 != fread (csize, 1, 2, fp)) {
+	if (2 != fp->fread (csize, 1, 2, fp->data)) {
 		return -1;
 	}
 	*value = (csize[1]) | (csize[0]<<8);
@@ -83,9 +83,9 @@ _read_uint16 (FILE *fp, uint16_t *value) {
 }
 
 static int
-_read_uint32 (FILE *fp, uint32_t *value) {
+_read_uint32 (mp4p_file_callbacks_t *fp, uint32_t *value) {
 	uint8_t csize[4];
-	if (4 != fread (csize, 1, 4, fp)) {
+	if (4 != fp->fread (csize, 1, 4, fp->data)) {
 		return -1;
 	}
 	*value = csize[3] | (csize[2]<<8) | (csize[1]<<16) | (csize[0]<<24);
@@ -93,20 +93,20 @@ _read_uint32 (FILE *fp, uint32_t *value) {
 }
 
 static int
-_read_uint64 (FILE *fp, uint64_t *value) {
+_read_uint64 (mp4p_file_callbacks_t *fp, uint64_t *value) {
 	uint8_t csize[8];
-	if (8 != fread (csize, 1, 8, fp)) {
+	if (8 != fp->fread (csize, 1, 8, fp->data)) {
 		return -1;
 	}
 	*value = (uint64_t)csize[7] | ((uint64_t)csize[6]<<8) | ((uint64_t)csize[5]<<16) | ((uint64_t)csize[4]<<24) | ((uint64_t)csize[3]<<32) | ((uint64_t)csize[2]<<40) | ((uint64_t)csize[1] << 48) | ((uint64_t)csize[0] << 56);
 	return 0;
 }
 
-#define READ_UINT8(fp) ({uint8_t _temp8; if (1 != fread (&_temp8, 1, 1, fp)) return -1; _temp8;})
+#define READ_UINT8(fp) ({uint8_t _temp8; if (1 != fp->fread (&_temp8, 1, 1, fp->data)) return -1; _temp8;})
 #define READ_UINT16(fp) ({uint16_t _temp16; if (_read_uint16 (fp, &_temp16) < 0) return -1; _temp16;})
 #define READ_UINT32(fp) ({ uint32_t _temp32; if (_read_uint32 (fp, &_temp32) < 0) return -1; _temp32;})
 #define READ_UINT64(fp) ({ uint64_t _temp64; if (_read_uint64 (fp, &_temp64) < 0) return -1; _temp64;})
-#define READ_BUF(fp,buf,size) {if (size != fread(buf, 1, size, fp)) return -1;}
+#define READ_BUF(fp,buf,size) {if (size != fp->fread(buf, 1, size, fp->data)) return -1;}
 
 static const char *container_atoms[] = {
 	"moov",
@@ -183,7 +183,7 @@ _stco_free (void *data) {
 // The function may return -1 on parser failures,
 // but this should not be considered a critical failure.
 int
-mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
+mp4p_atom_init (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 	for (int i = 0; container_atoms[i]; i++) {
 		if (!_atom_type_compare (atom, container_atoms[i])) {
 			return _load_subatoms(atom, fp);
@@ -414,8 +414,8 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 }
 
 static mp4p_atom_t *
-_atom_load (FILE *fp) {
-	size_t fpos = ftell (fp);
+_atom_load (mp4p_file_callbacks_t *fp) {
+	size_t fpos = fp->ftell (fp->data);
 
 	mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
 
@@ -426,14 +426,14 @@ _atom_load (FILE *fp) {
 		goto error;
 	}
 
-	if (4 != fread (&atom->type, 1, 4, fp)) {
+	if (4 != fp->fread (&atom->type, 1, 4, fp->data)) {
 		goto error;
 	}
 
 	_dbg_print_atom (atom);
 	mp4p_atom_init (atom, fp);
 
-	fseek (fp, fpos + atom->size, SEEK_SET);
+	fp->fseek (fp->data, fpos + atom->size, SEEK_SET);
 
 	goto success;
 error:
@@ -445,15 +445,39 @@ success:
 	return atom;
 }
 
+static size_t
+_stdio_fread (void *ptr, size_t size, size_t nmemb, void *stream) {
+	return fread (ptr, size, nmemb, (FILE *)stream);
+}
+
+static int
+_stdio_fseek (void *stream, int64_t offset, int whence) {
+	return fseek ((FILE *)stream, offset, whence);
+}
+
+static int64_t
+_stdio_ftell (void *stream) {
+	return ftell ((FILE *)stream);
+}
+
 mp4p_atom_t *
-mp4p_open (const char *fname) {
-	FILE *fp = fopen (fname, "rb");
+mp4p_open (const char *fname, mp4p_file_callbacks_t *callbacks) {
+	mp4p_file_callbacks_t stdio_callbacks;
+	FILE *fp;
+	if (!callbacks) {
+		fp = fopen (fname, "rb");
+		stdio_callbacks.data = fp;
+		stdio_callbacks.fread = _stdio_fread;
+		stdio_callbacks.fseek = _stdio_fseek;
+		stdio_callbacks.ftell = _stdio_ftell;
+		callbacks = &stdio_callbacks;
+	}
 
 	mp4p_atom_t *head = NULL;
 	mp4p_atom_t *tail = NULL;
 
 	for (;;) {
-		mp4p_atom_t *atom = _atom_load(fp);
+		mp4p_atom_t *atom = _atom_load(callbacks);
 		if (!atom) {
 			break;
 		}
