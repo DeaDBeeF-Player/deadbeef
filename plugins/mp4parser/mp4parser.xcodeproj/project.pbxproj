@@ -25,9 +25,9 @@
 
 /* Begin PBXFileReference section */
 		2DEBA15C1E0D2C2200F6C062 /* mp4parser */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mp4parser; sourceTree = BUILT_PRODUCTS_DIR; };
-		2DEBA15F1E0D2C2200F6C062 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		2DEBA1661E0D34D200F6C062 /* mp4parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp4parser.c; sourceTree = "<group>"; };
-		2DEBA1671E0D34D200F6C062 /* mp4parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4parser.h; sourceTree = "<group>"; };
+		2DEBA15F1E0D2C2200F6C062 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main.c; path = ../main.c; sourceTree = "<group>"; };
+		2DEBA1661E0D34D200F6C062 /* mp4parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp4parser.c; path = ../mp4parser.c; sourceTree = "<group>"; };
+		2DEBA1671E0D34D200F6C062 /* mp4parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp4parser.h; path = ../mp4parser.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -252,6 +252,7 @@
 				2DEBA1651E0D2C2200F6C062 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
