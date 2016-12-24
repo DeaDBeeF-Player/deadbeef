@@ -16,7 +16,7 @@ mp4p_atom_free (mp4p_atom_t *atom) {
 	}
 
 	if (atom->free) {
-		atom->free (atom);
+		atom->free (atom->data);
 	}
 	free (atom);
 }
@@ -132,14 +132,13 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 	}
 
 	if (!_atom_type_compare (atom, "ftyp")) {
-		char major_brand[4];
-		char version[4];
-		char compat_brand_1[4];
-		char compat_brand_2[4];
-		READ_BUF(fp,major_brand,4);
-		READ_BUF(fp,version,4);
-		READ_BUF(fp,compat_brand_1,4);
-		READ_BUF(fp,compat_brand_2,4);
+		mp4p_mtyp_t *mtyp = calloc (sizeof (mp4p_mtyp_t), 1);
+		READ_BUF(fp,mtyp->major_brand,4);
+		READ_BUF(fp,mtyp->version,4);
+		READ_BUF(fp,mtyp->compat_brand_1,4);
+		READ_BUF(fp,mtyp->compat_brand_2,4);
+		atom->data = mtyp;
+		atom->free = free;
 
 		// can have more than 4 values, which can be extracted if needed
 #if 0
