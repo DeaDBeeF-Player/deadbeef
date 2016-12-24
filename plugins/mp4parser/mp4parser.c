@@ -171,6 +171,15 @@ _stsz_free (void *data) {
 	free (stsz);
 }
 
+static void
+_stco_free (void *data) {
+	mp4p_stco_t *stco = data;
+	if (stco->entries) {
+		free (stco->entries);
+	}
+	free (stco);
+}
+
 // The function may return -1 on parser failures,
 // but this should not be considered a critical failure.
 int
@@ -358,23 +367,33 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		}
 	}
 	else if (!_atom_type_compare(atom, "stco")) {
-		READ_COMMON_HEADER();
-		uint32_t number_of_entries;
+		mp4p_stco_t *stco = calloc (sizeof (mp4p_stco_t), 1);
+		atom->data = stco;
+		atom->free = _stco_free;
 
-		number_of_entries = READ_UINT32(fp);
-		for (uint32_t i = 0; i < number_of_entries; i++) {
-			uint32_t offset;
-			offset = READ_UINT32(fp);
+		READ_COMMON_HEADER();
+
+		stco->number_of_entries = READ_UINT32(fp);
+		if (stco->number_of_entries) {
+			stco->entries = calloc (sizeof (mp4p_stco_entry_t), stco->number_of_entries);
+		}
+		for (uint32_t i = 0; i < stco->number_of_entries; i++) {
+			stco->entries[i].offset = (uint64_t)READ_UINT32(fp);
 		}
 	}
 	else if (!_atom_type_compare(atom, "co64")) {
-		READ_COMMON_HEADER();
-		uint32_t number_of_entries;
+		mp4p_stco_t *stco = calloc (sizeof (mp4p_stco_t), 1);
+		atom->data = stco;
+		atom->free = _stco_free;
 
-		number_of_entries = READ_UINT32(fp);
-		for (uint32_t i = 0; i < number_of_entries; i++) {
-			uint64_t offset;
-			offset = READ_UINT64(fp);
+		READ_COMMON_HEADER();
+		stco->number_of_entries = READ_UINT32(fp);
+		if (stco->number_of_entries) {
+			stco->entries = calloc (sizeof (mp4p_stco_entry_t), stco->number_of_entries);
+		}
+
+		for (uint32_t i = 0; i < stco->number_of_entries; i++) {
+			stco->entries[i].offset = READ_UINT64(fp);
 		}
 	}
 	else if (!_atom_type_compare(atom, "dref")) {
