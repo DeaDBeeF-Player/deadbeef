@@ -77,6 +77,19 @@ typedef struct {
 	uint16_t balance;
 } mp4p_smhd_t;
 
+typedef struct {
+	uint32_t sample_description_size;
+	char data_format[4];
+	uint8_t reserved[6];
+	uint16_t data_reference_index;
+	char *decoder_info;
+} mp4p_stsd_entry_t;
+
+typedef struct {
+	uint32_t number_of_entries;
+	mp4p_stsd_entry_t *entries;
+} mp4p_stsd_t;
+
 void
 mp4p_atom_free (mp4p_atom_t *atom);
 

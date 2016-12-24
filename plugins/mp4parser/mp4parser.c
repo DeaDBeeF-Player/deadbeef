@@ -130,6 +130,20 @@ _hdlr_free (void *data) {
 	free (hdlr);
 }
 
+static void
+_stsd_free (void *data) {
+	mp4p_stsd_t *stsd = data;
+	if (stsd->entries) {
+		for (uint32_t i = 0; i < stsd->number_of_entries; i++) {
+			if (stsd->entries[i].decoder_info) {
+				free (stsd->entries[i].decoder_info);
+			}
+		}
+		free (stsd->entries);
+	}
+	free (stsd);
+}
+
 // The function may return -1 on parser failures,
 // but this should not be considered a critical failure.
 int
@@ -245,25 +259,25 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		smhd->balance = READ_UINT16(fp);
 	}
 	else if (!_atom_type_compare(atom, "stsd")) {
+		mp4p_stsd_t *stsd = calloc (sizeof (mp4p_stsd_t), 1);
+		atom->data = stsd;
+		atom->free = _stsd_free;
 		READ_COMMON_HEADER();
-		uint32_t number_of_entries;
 
-		number_of_entries = READ_UINT32(fp);
+		stsd->number_of_entries = READ_UINT32(fp);
+		if (stsd->number_of_entries) {
+			stsd->entries = calloc (sizeof (mp4p_stsd_entry_t), stsd->number_of_entries);
+		}
 
-		for (int i = 0; i < number_of_entries; i++) {
-			uint32_t sample_description_size;
-			char data_format[4];
-			uint8_t reserved[6];
-			uint16_t data_reference_index;
+		for (int i = 0; i < stsd->number_of_entries; i++) {
+			stsd->entries[i].sample_description_size = READ_UINT32(fp);
+			READ_BUF(fp, stsd->entries[i].data_format, 4);
+			READ_BUF(fp, stsd->entries[i].reserved, 6);
+			stsd->entries[i].data_reference_index = READ_UINT16(fp);
 
-			sample_description_size = READ_UINT32(fp);
-			READ_BUF(fp, data_format, 4);
-			READ_BUF(fp, reserved, 6);
-			data_reference_index = READ_UINT16(fp);
-
-			if (sample_description_size) {
-				char decoder_info[sample_description_size];
-				READ_BUF(fp, decoder_info, sizeof (decoder_info));
+			if (stsd->entries[i].sample_description_size) {
+				stsd->entries[i].decoder_info = calloc (stsd->entries[i].sample_description_size, 1);
+				READ_BUF(fp, stsd->entries[i].decoder_info, stsd->entries[i].sample_description_size);
 			}
 		}
 	}
