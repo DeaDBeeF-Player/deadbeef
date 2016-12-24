@@ -90,6 +90,16 @@ typedef struct {
 	mp4p_stsd_entry_t *entries;
 } mp4p_stsd_t;
 
+typedef struct {
+	uint32_t sample_count;
+	uint32_t sample_duration;
+} mp4p_stts_entry_t;
+
+typedef struct {
+	uint32_t number_of_entries;
+	mp4p_stts_entry_t *entries;
+} mp4p_stts_t;
+
 void
 mp4p_atom_free (mp4p_atom_t *atom);
 

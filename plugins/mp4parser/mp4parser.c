@@ -144,6 +144,15 @@ _stsd_free (void *data) {
 	free (stsd);
 }
 
+static void
+_stts_free (void *data) {
+	mp4p_stts_t *stts = data;
+	if (stts->entries) {
+		free (stts->entries);
+	}
+	free (stts);
+}
+
 // The function may return -1 on parser failures,
 // but this should not be considered a critical failure.
 int
@@ -282,16 +291,19 @@ mp4p_atom_init (mp4p_atom_t *atom, FILE *fp) {
 		}
 	}
 	else if (!_atom_type_compare(atom, "stts")) {
+		mp4p_stts_t *stts = calloc (sizeof (mp4p_stts_t), 1);
+		atom->data = stts;
+		atom->free = _stts_free;
+
 		READ_COMMON_HEADER();
-		uint32_t number_of_entries;
 
-		number_of_entries = READ_UINT32(fp);
-		for (uint32_t i = 0; i < number_of_entries; i++) {
-			uint32_t sample_count;
-			uint32_t sample_duration;
-
-			sample_count = READ_UINT32(fp);
-			sample_duration = READ_UINT32(fp);
+		stts->number_of_entries = READ_UINT32(fp);
+		if (stts->number_of_entries) {
+			stts->entries = calloc (sizeof (mp4p_stts_entry_t), stts->number_of_entries);
+		}
+		for (uint32_t i = 0; i < stts->number_of_entries; i++) {
+			stts->entries[i].sample_count = READ_UINT32(fp);
+			stts->entries[i].sample_duration = READ_UINT32(fp);
 		}
 	}
 	else if (!_atom_type_compare(atom, "stsc")) {
