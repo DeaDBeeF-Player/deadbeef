@@ -164,4 +164,10 @@ mp4p_stts_total_num_samples (mp4p_atom_t *stts_atom);
 uint64_t
 mp4p_stts_total_sample_duration (mp4p_atom_t *stts_atom);
 
+uint32_t
+mp4p_sample_size (mp4p_atom_t *stsz_atom, uint32_t sample);
+
+uint64_t
+mp4p_sample_offset (mp4p_atom_t *stbl_atom, uint32_t sample);
+
 #endif /* mp4parser_h */

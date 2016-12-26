@@ -575,3 +575,70 @@ mp4p_stts_total_sample_duration (mp4p_atom_t *stts_atom) {
     }
     return total;
 }
+
+uint32_t
+mp4p_sample_size (mp4p_atom_t *stsz_atom, uint32_t sample)
+{
+    mp4p_stsz_t *stsz = stsz_atom->data;
+    if (stsz->sample_size) {
+        return stsz->sample_size;
+    }
+    else if (sample < stsz->number_of_entries) {
+        return stsz->entries[sample].sample_size;
+    }
+    return 0;
+}
+
+uint64_t
+mp4p_sample_offset (mp4p_atom_t *stbl_atom, uint32_t sample) {
+    // get chunk idx from sample (stsc table)
+    mp4p_atom_t *stsc_atom = mp4p_atom_find(stbl_atom, "stbl/stsc");
+    mp4p_stsc_t *stsc = stsc_atom->data;
+
+	if (!stsc->number_of_entries) {
+		return 0;
+	}
+
+	// get chunk offset (stco/co64 table)
+	mp4p_atom_t *stco_atom = mp4p_atom_find(stbl_atom, "stbl/co64");
+	if (!stco_atom) {
+		stco_atom = mp4p_atom_find(stbl_atom, "stbl/stco");
+	}
+
+	mp4p_stco_t *stco = stco_atom->data;
+
+	// walk over chunk table, and find the chunk containing the sample
+	uint32_t chunk = 0;
+	uint32_t nsample = 0;
+	uint32_t num_chunks = 0;
+	uint64_t offs = 0;
+
+	for (;;) {
+		if (chunk == stsc->number_of_entries-1
+			|| nsample + num_chunks * stsc->entries[chunk].samples_per_chunk >= sample) {
+			// last chunk entry is repeated infinitely
+			int n = (sample - nsample)/stsc->entries[chunk].samples_per_chunk;
+			num_chunks += n;
+			nsample += n * stsc->entries[chunk].samples_per_chunk;
+			offs += stco->entries[chunk].offset * n;
+			break;
+		}
+		uint32_t repeat_chunks = stsc->entries[chunk+1].first_chunk - stsc->entries[chunk].first_chunk;
+		if (repeat_chunks * stsc->entries[chunk].samples_per_chunk < sample) {
+			nsample += repeat_chunks * stsc->entries[chunk].samples_per_chunk;
+			chunk++;
+			continue; // next entry
+		}
+	}
+
+    // skip N samples in the chunk, until we get to the needed one
+    mp4p_atom_t *stsz_atom = mp4p_atom_find(stbl_atom, "stbl/stsz");
+    mp4p_stsz_t *stsz = stsz_atom->data;
+
+	while (nsample < sample) {
+        offs += stsz->entries[nsample].sample_size;
+		nsample++;
+    }
+
+    return offs;
+}
