@@ -577,8 +577,9 @@ mp4p_stts_total_sample_duration (mp4p_atom_t *stts_atom) {
 }
 
 uint32_t
-mp4p_sample_size (mp4p_atom_t *stsz_atom, uint32_t sample)
+mp4p_sample_size (mp4p_atom_t *stbl_atom, uint32_t sample)
 {
+    mp4p_atom_t *stsz_atom = mp4p_atom_find(stbl_atom, "stbl/stsz");
     mp4p_stsz_t *stsz = stsz_atom->data;
     if (stsz->sample_size) {
         return stsz->sample_size;
