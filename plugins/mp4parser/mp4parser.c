@@ -610,35 +610,37 @@ mp4p_sample_offset (mp4p_atom_t *stbl_atom, uint32_t sample) {
 	// walk over chunk table, and find the chunk containing the sample
 	uint32_t chunk = 0;
 	uint32_t nsample = 0;
-	uint32_t num_chunks = 0;
 	uint64_t offs = 0;
 
 	for (;;) {
-		if (chunk == stsc->number_of_entries-1
-			|| nsample + num_chunks * stsc->entries[chunk].samples_per_chunk >= sample) {
+		if (chunk == stsc->number_of_entries-1) {
 			// last chunk entry is repeated infinitely
-			int n = (sample - nsample)/stsc->entries[chunk].samples_per_chunk;
-			num_chunks += n;
-			nsample += n * stsc->entries[chunk].samples_per_chunk;
-			offs += stco->entries[chunk].offset * n;
 			break;
 		}
+
 		uint32_t repeat_chunks = stsc->entries[chunk+1].first_chunk - stsc->entries[chunk].first_chunk;
-		if (repeat_chunks * stsc->entries[chunk].samples_per_chunk < sample) {
-			nsample += repeat_chunks * stsc->entries[chunk].samples_per_chunk;
-			chunk++;
-			continue; // next entry
+		if (nsample + repeat_chunks * stsc->entries[chunk].samples_per_chunk >= sample) {
+			break;
 		}
+
+		nsample += repeat_chunks * stsc->entries[chunk].samples_per_chunk;
+		chunk++;
 	}
 
     // skip N samples in the chunk, until we get to the needed one
     mp4p_atom_t *stsz_atom = mp4p_atom_find(stbl_atom, "stbl/stsz");
     mp4p_stsz_t *stsz = stsz_atom->data;
 
-	while (nsample < sample) {
-        offs += stsz->entries[nsample].sample_size;
-		nsample++;
-    }
+	offs = stco->entries[chunk].offset;
+	if (stsz->sample_size) {
+		offs += stsz->sample_size * (sample-nsample);
+	}
+	else {
+		while (nsample < sample) {
+			offs += stsz->entries[nsample].sample_size;
+			nsample++;
+		}
+	}
 
     return offs;
 }

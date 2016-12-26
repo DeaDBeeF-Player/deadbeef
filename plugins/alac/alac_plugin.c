@@ -40,6 +40,8 @@
 #include "mp4ff.h"
 #include "../../shared/mp4tagutil.h"
 
+#include "../mp4parser/mp4parser.h"
+
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
@@ -78,7 +80,6 @@ typedef struct {
     MP4FILE mp4;
     MP4FILE_CB mp4reader;
     int mp4track;
-    int mp4framesize;
     int mp4samples;
 #endif
     alac_file *_alac;
@@ -115,7 +116,7 @@ mp4_fs_seek (void *user_data, uint64_t position) {
 }
 
 static int
-mp4_track_get_info (mp4ff_t *mp4, int track, float *duration, int *samplerate, int *channels, int *bps, int64_t *totalsamples, int *mp4framesize) {
+mp4_track_get_info (mp4ff_t *mp4, int track, float *duration, int *samplerate, int *channels, int *bps, int64_t *totalsamples) {
     unsigned char*  buff = 0;
     unsigned int    buff_size = 0;
     int samples = 0;
@@ -150,7 +151,6 @@ mp4_track_get_info (mp4ff_t *mp4, int track, float *duration, int *samplerate, i
     }
     if (totalsamples) {
         *totalsamples = total_dur * (*samplerate) / mp4ff_time_scale (mp4, track);
-        *mp4framesize = (int)((*totalsamples) / i_sample_count);
     }
     *duration = total_dur / (float)mp4ff_time_scale (mp4, track);
 
@@ -192,7 +192,7 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             if (mp4ff_get_track_type (info->mp4, i) != TRACK_AUDIO) {
                 continue;
             }
-            int res = mp4_track_get_info (info->mp4, i, &duration, &samplerate, &channels, &bps, &totalsamples, &info->mp4framesize);
+            int res = mp4_track_get_info (info->mp4, i, &duration, &samplerate, &channels, &bps, &totalsamples);
             if (res >= 0 && duration > 0) {
                 info->mp4track = i;
                 break;
@@ -241,6 +241,70 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     for (int i = 0; i < _info->fmt.channels; i++) {
         _info->fmt.channelmask |= 1 << i;
     }
+
+    // prototype
+    DB_FILE *file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    mp4p_file_callbacks_t cb = {
+        .data = file,
+        .fread = deadbeef->fread,
+        .fseek = deadbeef->fseek,
+        .ftell = deadbeef->ftell
+    };
+
+    mp4p_atom_t *root = mp4p_open(NULL, &cb);
+
+    // iterate over tracks, and the ALAC one
+    mp4p_atom_t *trak = mp4p_atom_find (root, "moov/trak");
+    mp4p_alac_t *alac = NULL;
+    while (trak) {
+        mp4p_atom_t *alac_atom = mp4p_atom_find (trak, "trak/mdia/minf/stbl/stsd/alac");
+        if (alac_atom) {
+            alac = alac_atom->data;
+            break;
+        }
+        trak = trak->next;
+    }
+    if (!alac) {
+        printf ("not found\n");
+    }
+
+    // get audio format: samplerate, bps, channels
+    int _samplerate = alac->sample_rate;
+    int _bps = alac->bps;
+    int _channels = alac->channel_count;
+    printf ("%d %d %d\n", _samplerate, _bps, _channels);
+
+    // get file info: totalsamples
+
+    // 1. sum of all stts entries
+    mp4p_atom_t *stts_atom = mp4p_atom_find(trak, "trak/mdia/minf/stbl/stts");
+    mp4p_atom_t *mdhd_atom = mp4p_atom_find(trak, "trak/mdia/mdhd");
+    mp4p_atom_t *stsz_atom = mp4p_atom_find(trak, "trak/mdia/minf/stbl/stsz");
+    mp4p_atom_t *stbl_atom = mp4p_atom_find(trak, "trak/mdia/minf/stbl");
+
+    mp4p_mdhd_t *mdhd = mdhd_atom->data;
+
+    uint64_t num_mp4samples = mp4p_stts_total_num_samples(stts_atom);
+
+    printf ("num_samples: %lld\n", num_mp4samples);
+
+    // total PCM samples and duration
+
+    // duration is calculated from stts table (time-to-sample), which is not pcm-sample-precise.
+    // there should be a way to count pcm samples
+    uint64_t total_sample_duration = mp4p_stts_total_sample_duration (stts_atom);
+    uint64_t _totalsamples = total_sample_duration * _samplerate / mdhd->time_scale;
+    float _duration = total_sample_duration / (float)mdhd->time_scale;
+
+    // byte size of a sample
+    uint32_t _sample_size = mp4p_sample_size (stsz_atom, 20);
+
+    // byte offset of a sample
+    uint64_t _sample_offs = mp4p_sample_offset (stbl_atom, 20);
+
+    mp4p_atom_free (root);
+
+    exit (0);
 
     return 0;
 }
@@ -370,10 +434,8 @@ alacplug_seek_sample (DB_fileinfo_t *_info, int sample) {
         }
         totalsamples += thissample_duration;
     }
-    //        i = sample / info->mp4framesize;
-    //        info->skipsamples = sample - info->mp4sample * info->mp4framesize;
     info->mp4sample = i;
-    trace ("seek res: frame %d (old: %d*%d), skip %d\n", info->mp4sample, sample / info->mp4framesize, info->mp4framesize, info->skipsamples);
+    trace ("seek res: frame %d, skip %d\n", info->mp4sample, info->skipsamples);
 #endif
     info->out_remaining = 0;
     info->currentsample = sample;
@@ -442,8 +504,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                 trace ("alac: track %d is not audio\n", i);
                 continue;
             }
-            int mp4framesize;
-            int res = mp4_track_get_info (mp4, i, &duration, &samplerate, &channels, &bps, &totalsamples, &mp4framesize);
+            int res = mp4_track_get_info (mp4, i, &duration, &samplerate, &channels, &bps, &totalsamples);
             if (res >= 0 && duration > 0) {
                 trace ("alac: found audio track %d (duration=%f, totalsamples=%d)\n", i, duration, totalsamples);
 
