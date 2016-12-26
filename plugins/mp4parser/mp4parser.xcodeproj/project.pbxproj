@@ -7,49 +7,44 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2D24B6A31E0E79AF0059B1AE /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D24B6A01E0E79AF0059B1AE /* main.c */; };
-		2D24B6A41E0E79AF0059B1AE /* mp4parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D24B6A11E0E79AF0059B1AE /* mp4parser.c */; };
-		2D6D528E1E11293900E051E4 /* MP4PTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6D528D1E11293900E051E4 /* MP4PTests.m */; };
-		2D6D52931E11293E00E051E4 /* Mp4parserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6D52851E111FD200E051E4 /* Mp4parserTests.m */; };
-		2D6D52951E1129BB00E051E4 /* Mp4parserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6D52851E111FD200E051E4 /* Mp4parserTests.m */; };
-		2D6D52961E1129BC00E051E4 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D24B6A01E0E79AF0059B1AE /* main.c */; };
-		2D6D52971E1129BC00E051E4 /* mp4parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D24B6A11E0E79AF0059B1AE /* mp4parser.c */; };
+		2D2667D31E1139EC007D1279 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D2667D01E1139EC007D1279 /* main.m */; };
+		2D2667D41E1139EC007D1279 /* mp4parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2667D11E1139EC007D1279 /* mp4parser.c */; };
+		2D2667DC1E1139FB007D1279 /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D2667DB1E1139FB007D1279 /* Tests.m */; };
+		2D2667E31E113AC7007D1279 /* mp4parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2667D11E1139EC007D1279 /* mp4parser.c */; };
+		2D59D0F81E113BBE00B6E504 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D59D0F71E113BBE00B6E504 /* MainMenu.xib */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		2DEBA15A1E0D2C2200F6C062 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
+/* Begin PBXContainerItemProxy section */
+		2D2667DE1E1139FB007D1279 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D2667B41E1139AC007D1279 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D2667BB1E1139AC007D1279;
+			remoteInfo = mp4parser;
 		};
-/* End PBXCopyFilesBuildPhase section */
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2D24B6A01E0E79AF0059B1AE /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = SOURCE_ROOT; };
-		2D24B6A11E0E79AF0059B1AE /* mp4parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp4parser.c; sourceTree = SOURCE_ROOT; };
-		2D24B6A21E0E79AF0059B1AE /* mp4parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4parser.h; sourceTree = SOURCE_ROOT; };
-		2D6D52851E111FD200E051E4 /* Mp4parserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mp4parserTests.m; sourceTree = SOURCE_ROOT; };
-		2D6D528B1E11293900E051E4 /* MP4PTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MP4PTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D6D528D1E11293900E051E4 /* MP4PTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MP4PTests.m; sourceTree = "<group>"; };
-		2D6D528F1E11293900E051E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2DCFC4291E1031F900DF93F4 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		2DCFC42B1E10320A00DF93F4 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
-		2DEBA15C1E0D2C2200F6C062 /* mp4parser */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mp4parser; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D2667BC1E1139AC007D1279 /* mp4parser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mp4parser.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D2667CA1E1139AD007D1279 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2D2667D01E1139EC007D1279 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = SOURCE_ROOT; };
+		2D2667D11E1139EC007D1279 /* mp4parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp4parser.c; sourceTree = SOURCE_ROOT; };
+		2D2667D21E1139EC007D1279 /* mp4parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4parser.h; sourceTree = SOURCE_ROOT; };
+		2D2667D91E1139FB007D1279 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D2667DB1E1139FB007D1279 /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
+		2D2667DD1E1139FB007D1279 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2D59D0F71E113BBE00B6E504 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		2D6D52881E11293900E051E4 /* Frameworks */ = {
+		2D2667B91E1139AC007D1279 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2DEBA1591E0D2C2200F6C062 /* Frameworks */ = {
+		2D2667D61E1139FB007D1279 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -59,89 +54,55 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2D6D528C1E11293900E051E4 /* MP4PTests */ = {
+		2D2667B31E1139AC007D1279 = {
 			isa = PBXGroup;
 			children = (
-				2D6D528D1E11293900E051E4 /* MP4PTests.m */,
-				2D6D528F1E11293900E051E4 /* Info.plist */,
-			);
-			path = MP4PTests;
-			sourceTree = "<group>";
-		};
-		2D944E381E1032F0006D2DFF /* Mp4parserTests */ = {
-			isa = PBXGroup;
-			children = (
-				2D6D52851E111FD200E051E4 /* Mp4parserTests.m */,
-			);
-			path = Mp4parserTests;
-			sourceTree = "<group>";
-		};
-		2DCFC4281E1031F800DF93F4 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				2DCFC42B1E10320A00DF93F4 /* CoreFoundation.framework */,
-				2DCFC4291E1031F900DF93F4 /* XCTest.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		2DEBA1531E0D2C2200F6C062 = {
-			isa = PBXGroup;
-			children = (
-				2DEBA15E1E0D2C2200F6C062 /* mp4parser */,
-				2D944E381E1032F0006D2DFF /* Mp4parserTests */,
-				2D6D528C1E11293900E051E4 /* MP4PTests */,
-				2DEBA15D1E0D2C2200F6C062 /* Products */,
-				2DCFC4281E1031F800DF93F4 /* Frameworks */,
+				2D2667BE1E1139AC007D1279 /* mp4parser */,
+				2D2667DA1E1139FB007D1279 /* Tests */,
+				2D2667BD1E1139AC007D1279 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		2DEBA15D1E0D2C2200F6C062 /* Products */ = {
+		2D2667BD1E1139AC007D1279 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2DEBA15C1E0D2C2200F6C062 /* mp4parser */,
-				2D6D528B1E11293900E051E4 /* MP4PTests.xctest */,
+				2D2667BC1E1139AC007D1279 /* mp4parser.app */,
+				2D2667D91E1139FB007D1279 /* Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		2DEBA15E1E0D2C2200F6C062 /* mp4parser */ = {
+		2D2667BE1E1139AC007D1279 /* mp4parser */ = {
 			isa = PBXGroup;
 			children = (
-				2D24B6A01E0E79AF0059B1AE /* main.c */,
-				2D24B6A11E0E79AF0059B1AE /* mp4parser.c */,
-				2D24B6A21E0E79AF0059B1AE /* mp4parser.h */,
+				2D2667D01E1139EC007D1279 /* main.m */,
+				2D2667D11E1139EC007D1279 /* mp4parser.c */,
+				2D2667D21E1139EC007D1279 /* mp4parser.h */,
+				2D2667CA1E1139AD007D1279 /* Info.plist */,
+				2D59D0F71E113BBE00B6E504 /* MainMenu.xib */,
 			);
 			path = mp4parser;
+			sourceTree = "<group>";
+		};
+		2D2667DA1E1139FB007D1279 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				2D2667DB1E1139FB007D1279 /* Tests.m */,
+				2D2667DD1E1139FB007D1279 /* Info.plist */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2D6D528A1E11293900E051E4 /* MP4PTests */ = {
+		2D2667BB1E1139AC007D1279 /* mp4parser */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2D6D52901E11293900E051E4 /* Build configuration list for PBXNativeTarget "MP4PTests" */;
+			buildConfigurationList = 2D2667CD1E1139AD007D1279 /* Build configuration list for PBXNativeTarget "mp4parser" */;
 			buildPhases = (
-				2D6D52871E11293900E051E4 /* Sources */,
-				2D6D52881E11293900E051E4 /* Frameworks */,
-				2D6D52891E11293900E051E4 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = MP4PTests;
-			productName = MP4PTests;
-			productReference = 2D6D528B1E11293900E051E4 /* MP4PTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		2DEBA15B1E0D2C2200F6C062 /* mp4parser */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2DEBA1631E0D2C2200F6C062 /* Build configuration list for PBXNativeTarget "mp4parser" */;
-			buildPhases = (
-				2DEBA1581E0D2C2200F6C062 /* Sources */,
-				2DEBA1591E0D2C2200F6C062 /* Frameworks */,
-				2DEBA15A1E0D2C2200F6C062 /* CopyFiles */,
+				2D2667B81E1139AC007D1279 /* Sources */,
+				2D2667B91E1139AC007D1279 /* Frameworks */,
+				2D2667BA1E1139AC007D1279 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -149,48 +110,76 @@
 			);
 			name = mp4parser;
 			productName = mp4parser;
-			productReference = 2DEBA15C1E0D2C2200F6C062 /* mp4parser */;
-			productType = "com.apple.product-type.tool";
+			productReference = 2D2667BC1E1139AC007D1279 /* mp4parser.app */;
+			productType = "com.apple.product-type.application";
+		};
+		2D2667D81E1139FB007D1279 /* Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D2667E01E1139FB007D1279 /* Build configuration list for PBXNativeTarget "Tests" */;
+			buildPhases = (
+				2D2667D51E1139FB007D1279 /* Sources */,
+				2D2667D61E1139FB007D1279 /* Frameworks */,
+				2D2667D71E1139FB007D1279 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2D2667DF1E1139FB007D1279 /* PBXTargetDependency */,
+			);
+			name = Tests;
+			productName = Tests;
+			productReference = 2D2667D91E1139FB007D1279 /* Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		2DEBA1541E0D2C2200F6C062 /* Project object */ = {
+		2D2667B41E1139AC007D1279 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Alexey Yakovenko";
 				TargetAttributes = {
-					2D6D528A1E11293900E051E4 = {
+					2D2667BB1E1139AC007D1279 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
 					};
-					2DEBA15B1E0D2C2200F6C062 = {
+					2D2667D81E1139FB007D1279 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
+						TestTargetID = 2D2667BB1E1139AC007D1279;
 					};
 				};
 			};
-			buildConfigurationList = 2DEBA1571E0D2C2200F6C062 /* Build configuration list for PBXProject "mp4parser" */;
+			buildConfigurationList = 2D2667B71E1139AC007D1279 /* Build configuration list for PBXProject "mp4parser" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
-			mainGroup = 2DEBA1531E0D2C2200F6C062;
-			productRefGroup = 2DEBA15D1E0D2C2200F6C062 /* Products */;
+			mainGroup = 2D2667B31E1139AC007D1279;
+			productRefGroup = 2D2667BD1E1139AC007D1279 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2DEBA15B1E0D2C2200F6C062 /* mp4parser */,
-				2D6D528A1E11293900E051E4 /* MP4PTests */,
+				2D2667BB1E1139AC007D1279 /* mp4parser */,
+				2D2667D81E1139FB007D1279 /* Tests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		2D6D52891E11293900E051E4 /* Resources */ = {
+		2D2667BA1E1139AC007D1279 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D59D0F81E113BBE00B6E504 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D2667D71E1139FB007D1279 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -200,53 +189,36 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		2D6D52871E11293900E051E4 /* Sources */ = {
+		2D2667B81E1139AC007D1279 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D6D52931E11293E00E051E4 /* Mp4parserTests.m in Sources */,
-				2D6D528E1E11293900E051E4 /* MP4PTests.m in Sources */,
-				2D6D52971E1129BC00E051E4 /* mp4parser.c in Sources */,
-				2D6D52961E1129BC00E051E4 /* main.c in Sources */,
+				2D2667D41E1139EC007D1279 /* mp4parser.c in Sources */,
+				2D2667D31E1139EC007D1279 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2DEBA1581E0D2C2200F6C062 /* Sources */ = {
+		2D2667D51E1139FB007D1279 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D24B6A41E0E79AF0059B1AE /* mp4parser.c in Sources */,
-				2D6D52951E1129BB00E051E4 /* Mp4parserTests.m in Sources */,
-				2D24B6A31E0E79AF0059B1AE /* main.c in Sources */,
+				2D2667E31E113AC7007D1279 /* mp4parser.c in Sources */,
+				2D2667DC1E1139FB007D1279 /* Tests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		2D2667DF1E1139FB007D1279 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D2667BB1E1139AC007D1279 /* mp4parser */;
+			targetProxy = 2D2667DE1E1139FB007D1279 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
-		2D6D52911E11293900E051E4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = MP4PTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ddb.MP4PTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		2D6D52921E11293900E051E4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = MP4PTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ddb.MP4PTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		2DEBA1611E0D2C2200F6C062 /* Debug */ = {
+		2D2667CB1E1139AD007D1279 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -293,7 +265,7 @@
 			};
 			name = Debug;
 		};
-		2DEBA1621E0D2C2200F6C062 /* Release */ = {
+		2D2667CC1E1139AD007D1279 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -333,50 +305,87 @@
 			};
 			name = Release;
 		};
-		2DEBA1641E0D2C2200F6C062 /* Debug */ = {
+		2D2667CE1E1139AD007D1279 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = mp4parser/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ddb.mp4parser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		2DEBA1651E0D2C2200F6C062 /* Release */ = {
+		2D2667CF1E1139AD007D1279 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = mp4parser/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ddb.mp4parser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		2D2667E11E1139FB007D1279 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ddb.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/mp4parser.app/Contents/MacOS/mp4parser";
+			};
+			name = Debug;
+		};
+		2D2667E21E1139FB007D1279 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ddb.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/mp4parser.app/Contents/MacOS/mp4parser";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2D6D52901E11293900E051E4 /* Build configuration list for PBXNativeTarget "MP4PTests" */ = {
+		2D2667B71E1139AC007D1279 /* Build configuration list for PBXProject "mp4parser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2D6D52911E11293900E051E4 /* Debug */,
-				2D6D52921E11293900E051E4 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-		};
-		2DEBA1571E0D2C2200F6C062 /* Build configuration list for PBXProject "mp4parser" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2DEBA1611E0D2C2200F6C062 /* Debug */,
-				2DEBA1621E0D2C2200F6C062 /* Release */,
+				2D2667CB1E1139AD007D1279 /* Debug */,
+				2D2667CC1E1139AD007D1279 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2DEBA1631E0D2C2200F6C062 /* Build configuration list for PBXNativeTarget "mp4parser" */ = {
+		2D2667CD1E1139AD007D1279 /* Build configuration list for PBXNativeTarget "mp4parser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2DEBA1641E0D2C2200F6C062 /* Debug */,
-				2DEBA1651E0D2C2200F6C062 /* Release */,
+				2D2667CE1E1139AD007D1279 /* Debug */,
+				2D2667CF1E1139AD007D1279 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D2667E01E1139FB007D1279 /* Build configuration list for PBXNativeTarget "Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D2667E11E1139FB007D1279 /* Debug */,
+				2D2667E21E1139FB007D1279 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 2DEBA1541E0D2C2200F6C062 /* Project object */;
+	rootObject = 2D2667B41E1139AC007D1279 /* Project object */;
 }
