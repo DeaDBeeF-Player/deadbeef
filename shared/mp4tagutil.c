@@ -26,6 +26,7 @@
 #include <fcntl.h>
 #include "mp4tagutil.h"
 #include "mp4ff.h"
+#include "mp4parser.h"
 
 #ifndef __linux__
 #define off64_t off_t
@@ -256,32 +257,26 @@ mp4_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
 
 int
 mp4_read_metadata_file (DB_playItem_t *it, DB_FILE *fp) {
-    file_info_t inf;
-    memset (&inf, 0, sizeof (inf));
-    inf.file = fp;
-    inf.junk = deadbeef->junk_get_leading_size (fp);
-    if (inf.junk >= 0) {
-        deadbeef->fseek (inf.file, inf.junk, SEEK_SET);
+    int junk = deadbeef->junk_get_leading_size (fp);
+    if (junk >= 0) {
+        deadbeef->fseek (fp, junk, SEEK_SET);
     }
     else {
-        inf.junk = 0;
+        junk = 0;
     }
 
-    mp4ff_callback_t cb = {
-        .read = _fs_read,
-        .write = NULL,
-        .seek = _fs_seek,
-        .truncate = NULL,
-        .user_data = &inf
-    };
+    mp4p_file_callbacks_t mp4reader;
+    mp4reader.data = fp;
+    mp4reader.fread = (size_t (*) (void *ptr, size_t size, size_t nmemb, void *stream))deadbeef->fread;
+    mp4reader.fseek = (int (*) (void *stream, int64_t offset, int whence))deadbeef->fseek;
+    mp4reader.ftell = (int64_t (*) (void *stream))deadbeef->ftell;
+    mp4p_atom_t *mp4file = mp4p_open(NULL, &mp4reader);
 
     deadbeef->pl_delete_all_meta (it);
 
-    mp4ff_t *mp4 = mp4ff_open_read (&cb);
-    if (mp4) {
-        mp4_load_tags (it, mp4);
-        mp4ff_close (mp4);
-    }
+    // convert
+    mp4p_atom_free (mp4file);
+
     (void)deadbeef->junk_apev2_read (it, fp);
     (void)deadbeef->junk_id3v2_read (it, fp);
     (void)deadbeef->junk_id3v1_read (it, fp);

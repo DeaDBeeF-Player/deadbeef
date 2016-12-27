@@ -221,19 +221,23 @@ _alac_free (void *data) {
     free (alac);
 }
 
-typedef struct {
-    uint32_t version_flags;
-    uint32_t data_size;
-	uint64_t data_offset;
-    char *text;
-	uint16_t *values;
-} mp4p_meta_t;
+static void
+_meta_free (void *data) {
+    mp4p_meta_t *meta = data;
+    if (meta->values) {
+        free (meta->values);
+    }
+    if (meta->text) {
+        free (meta->text);
+    }
+    free (meta);
+}
 
 static int
 _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
     atom->data = meta;
-    atom->free = free;
+    atom->free = _meta_free;
 
     uint32_t size = READ_UINT32(fp);
     char data[4];

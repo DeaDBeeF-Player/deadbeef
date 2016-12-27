@@ -140,6 +140,14 @@ typedef struct {
     uint8_t *asc;
 } mp4p_alac_t;
 
+typedef struct {
+    uint32_t version_flags;
+    uint32_t data_size;
+    uint64_t data_offset;
+    char *text;
+    uint16_t *values;
+} mp4p_meta_t;
+
 void
 mp4p_atom_free (mp4p_atom_t *atom);
 
