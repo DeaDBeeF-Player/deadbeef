@@ -157,8 +157,10 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     totalsamples = total_sample_duration * samplerate / mdhd->time_scale;
     duration = total_sample_duration / (float)mdhd->time_scale;
 
+    mp4p_atom_t *stsz_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stsz");
+    mp4p_stsz_t *stsz = stsz_atom->data;
     // FIXME: use stsz->number_of_entries
-    info->mp4samples = mp4p_stts_total_num_samples(stts_atom);
+    info->mp4samples = stsz->number_of_entries;
 
     _info->fmt.samplerate = samplerate;
     _info->fmt.channels = channels;
@@ -184,17 +186,6 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.channelmask |= 1 << i;
     }
 
-#if 0
-    // byte size of a sample
-    uint32_t _sample_size = mp4p_sample_size (stsz_atom, 0);
-
-    // byte offset of a sample
-    uint64_t _sample_offs = mp4p_sample_offset (stbl_atom, 0);
-
-    mp4p_atom_free (root);
-
-    exit (0);
-#endif
     return 0;
 }
 

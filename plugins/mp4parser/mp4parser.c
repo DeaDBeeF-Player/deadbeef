@@ -670,7 +670,6 @@ mp4p_stts_sample_duration (mp4p_atom_t *stts_atom, uint32_t sample) {
     if (!stts) {
         return 0;
     }
-    uint64_t total = 0;
     uint32_t n = 0;
     for (uint32_t i = 0; i < stts->number_of_entries; i++) {
         n += stts->entries[i].sample_count;
