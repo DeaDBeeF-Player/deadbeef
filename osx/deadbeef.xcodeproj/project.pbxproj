@@ -739,6 +739,7 @@
 		2D5773A31D084E5A00F61BD1 /* MediaKeyController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5773A11D084E5A00F61BD1 /* MediaKeyController.h */; };
 		2D5D21461A4033FF001D5A79 /* lastfm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D21451A4033FF001D5A79 /* lastfm.c */; };
 		2D5D214C1A403428001D5A79 /* lastfm.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D21401A4033B0001D5A79 /* lastfm.dylib */; };
+		2D5F88F51E12F94300A7DA8D /* MP4Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5F88F41E12F94300A7DA8D /* MP4Parser.m */; };
 		2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D60108B1A9CDF06000136AF /* SearchWindowController.h */; };
 		2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D60108C1A9CDF06000136AF /* SearchWindowController.m */; };
 		2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */; };
@@ -1515,6 +1516,7 @@
 		2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCF73B21A952F8900495740 /* PreferencesWindowController.h */; };
 		2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DCF73B31A952F8900495740 /* PreferencesWindowController.m */; };
+		2DCF90901E12FA2D008D7B08 /* mp4parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D24B6991E0E77A10059B1AE /* mp4parser.c */; };
 		2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */; };
 		2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */; };
 		2DD6D0A819AE6288009308A5 /* knobTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */; };
@@ -3097,6 +3099,7 @@
 		2D5773A11D084E5A00F61BD1 /* MediaKeyController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeyController.h; sourceTree = "<group>"; };
 		2D5D21401A4033B0001D5A79 /* lastfm.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = lastfm.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D5D21451A4033FF001D5A79 /* lastfm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lastfm.c; path = plugins/lastfm/lastfm.c; sourceTree = "<group>"; };
+		2D5F88F41E12F94300A7DA8D /* MP4Parser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MP4Parser.m; sourceTree = "<group>"; };
 		2D60108B1A9CDF06000136AF /* SearchWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchWindowController.h; sourceTree = "<group>"; };
 		2D60108C1A9CDF06000136AF /* SearchWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchWindowController.m; sourceTree = "<group>"; };
 		2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbTabStrip.h; path = widgets/DdbTabStrip.h; sourceTree = "<group>"; };
@@ -6666,6 +6669,7 @@
 		2DAA4C091AAF88DE00519559 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				2D5F88F41E12F94300A7DA8D /* MP4Parser.m */,
 				2DAA4C131AAF88FF00519559 /* TitleFormatting.m */,
 				2D7F38021B2858AC00692A7B /* Junklib.m */,
 				2DE7A8FA1CA493CE00318A9F /* Cuesheet.m */,
@@ -11335,7 +11339,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D5F88F51E12F94300A7DA8D /* MP4Parser.m in Sources */,
 				2DE7A8FB1CA493CE00318A9F /* Cuesheet.m in Sources */,
+				2DCF90901E12FA2D008D7B08 /* mp4parser.c in Sources */,
 				2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */,
 				2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */,
 				2D0F90C21CCFF094003FA197 /* Tagging.m in Sources */,
