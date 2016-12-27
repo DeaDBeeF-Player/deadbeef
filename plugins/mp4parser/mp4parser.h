@@ -182,4 +182,7 @@ mp4p_sample_size (mp4p_atom_t *stsz_atom, uint32_t sample);
 uint64_t
 mp4p_sample_offset (mp4p_atom_t *stbl_atom, uint32_t sample);
 
+const char *
+mp4p_genre_name_for_index (uint16_t index);
+
 #endif /* mp4parser_h */

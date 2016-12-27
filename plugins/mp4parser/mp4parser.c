@@ -271,7 +271,7 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 
     uint32_t flag = meta->version_flags & 0xff;
 
-    if (flag == 0 || flag == 21) {
+    if (flag == 0) {
         meta->values = calloc (meta->data_size / 2, 1);
         for (int i = 0; i < meta->data_size/2; i++) {
             meta->values[i] = READ_UINT16(fp);
@@ -287,6 +287,9 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
         meta->text[meta->data_size] = 0;
 
         printf ("%s\n", meta->text);
+    }
+    else {
+        return -1;
     }
 
     return 0;
@@ -415,25 +418,6 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
 
         stsd->number_of_entries = READ_UINT32(fp);
         _load_subatoms(atom, fp);
-#if 0
-// NOTE: the stsd entries can be loaded as atoms, but then we would need to parse each atom individually
-// Instead, we load their fixed headers, + blob with decoder-specific info
-        if (stsd->number_of_entries) {
-            stsd->entries = calloc (sizeof (mp4p_stsd_entry_t), stsd->number_of_entries);
-        }
-
-        for (int i = 0; i < stsd->number_of_entries; i++) {
-            stsd->entries[i].sample_description_size = READ_UINT32(fp);
-            READ_BUF(fp, stsd->entries[i].data_format, 4);
-            READ_BUF(fp, stsd->entries[i].reserved, 6);
-            stsd->entries[i].data_reference_index = READ_UINT16(fp);
-
-            if (stsd->entries[i].sample_description_size) {
-                stsd->entries[i].decoder_info = calloc (stsd->entries[i].sample_description_size, 1);
-                READ_BUF(fp, stsd->entries[i].decoder_info, stsd->entries[i].sample_description_size);
-            }
-        }
-#endif
     }
     else if (!_atom_type_compare(atom, "stts")) {
         mp4p_stts_t *stts = calloc (sizeof (mp4p_stts_t), 1);
@@ -785,4 +769,284 @@ mp4p_sample_offset (mp4p_atom_t *stbl_atom, uint32_t sample) {
     }
 
     return offs;
+}
+
+#define _GENRE_COUNT (sizeof(_genretbl) / sizeof (char *) - 1)
+static const char *_genretbl[] = {
+    "Blues",
+    "Classic Rock",
+    "Country",
+    "Dance",
+    "Disco",
+    "Funk",
+    "Grunge",
+    "Hip-Hop",
+    "Jazz",
+    "Metal",
+    "New Age",
+    "Oldies",
+    "Other",
+    "Pop",
+    "R&B",
+    "Rap",
+    "Reggae",
+    "Rock",
+    "Techno",
+    "Industrial",
+    "Alternative",
+    "Ska",
+    "Death Metal",
+    "Pranks",
+    "Soundtrack",
+    "Euro-Techno",
+    "Ambient",
+    "Trip-Hop",
+    "Vocal",
+    "Jazz+Funk",
+    "Fusion",
+    "Trance",
+    "Classical",
+    "Instrumental",
+    "Acid",
+    "House",
+    "Game",
+    "Sound Clip",
+    "Gospel",
+    "Noise",
+    "AlternRock",
+    "Bass",
+    "Soul",
+    "Punk",
+    "Space",
+    "Meditative",
+    "Instrumental Pop",
+    "Instrumental Rock",
+    "Ethnic",
+    "Gothic",
+    "Darkwave",
+    "Techno-Industrial",
+    "Electronic",
+    "Pop-Folk",
+    "Eurodance",
+    "Dream",
+    "Southern Rock",
+    "Comedy",
+    "Cult",
+    "Gangsta",
+    "Top 40",
+    "Christian Rap",
+    "Pop/Funk",
+    "Jungle",
+    "Native American",
+    "Cabaret",
+    "New Wave",
+    "Psychedelic",
+    "Rave",
+    "Showtunes",
+    "Trailer",
+    "Lo-Fi",
+    "Tribal",
+    "Acid Punk",
+    "Acid Jazz",
+    "Polka",
+    "Retro",
+    "Musical",
+    "Rock & Roll",
+    "Hard Rock",
+    "Folk",
+    "Folk-Rock",
+    "National Folk",
+    "Swing",
+    "Fast Fusion",
+    "Bebob",
+    "Latin",
+    "Revival",
+    "Celtic",
+    "Bluegrass",
+    "Avantgarde",
+    "Gothic Rock",
+    "Progressive Rock",
+    "Psychedelic Rock",
+    "Symphonic Rock",
+    "Slow Rock",
+    "Big Band",
+    "Chorus",
+    "Easy Listening",
+    "Acoustic",
+    "Humour",
+    "Speech",
+    "Chanson",
+    "Opera",
+    "Chamber Music",
+    "Sonata",
+    "Symphony",
+    "Booty Bass",
+    "Primus",
+    "Porn Groove",
+    "Satire",
+    "Slow Jam",
+    "Club",
+    "Tango",
+    "Samba",
+    "Folklore",
+    "Ballad",
+    "Power Ballad",
+    "Rhythmic Soul",
+    "Freestyle",
+    "Duet",
+    "Punk Rock",
+    "Drum Solo",
+    "Acapella",
+    "Euro-House",
+    "Dance Hall",
+    "Goa",
+    "Drum & Bass",
+    "Club-House",
+    "Hardcore",
+    "Terror",
+    "Indie",
+    "BritPop",
+    "Negerpunk",
+    "Polsk Punk",
+    "Beat",
+    "Christian Gangsta",
+    "Heavy Metal",
+    "Black Metal",
+    "Crossover",
+    "Contemporary C",
+    "Christian Rock",
+    "Merengue",
+    "Salsa",
+    "Thrash Metal",
+    "Anime",
+    "JPop",
+    "SynthPop",
+    "Abstract",
+    "Art Rock",
+    "Baroque",
+    "Bhangra",
+    "Big Beat",
+    "Breakbeat",
+    "Chillout",
+    "Downtempo",
+    "Dub",
+    "EBM",
+    "Eclectic",
+    "Electro",
+    "Electroclash",
+    "Emo",
+    "Experimental",
+    "Garage",
+    "Global",
+    "IDM",
+    "Illbient",
+    "Industro-Goth",
+    "Jam Band",
+    "Krautrock",
+    "Leftfield",
+    "Lounge",
+    "Math Rock",
+    "New Romantic",
+    "Nu-Breakz",
+    "Post-Punk",
+    "Post-Rock",
+    "Psytrance",
+    "Shoegaze",
+    "Space Rock",
+    "Trop Rock",
+    "World Music",
+    "Neoclassical",
+    "Audiobook",
+    "Audio Theatre",
+    "Neue Deutsche Welle",
+    "Podcast",
+    "Indie Rock",
+    "G-Funk",
+    "Dubstep",
+    "Garage Rock",
+    "Psybient",
+    NULL
+};
+
+const char *
+mp4p_genre_name_for_index (uint16_t genreid) {
+    if (genreid-1 < _GENRE_COUNT) {
+        return _genretbl[genreid-1];
+    }
+    return NULL;
+}
+
+uint16_t
+mp4p_genre_index_for_name (const char *name) {
+    for (uint16_t i = 0; _genretbl[i]; i++) {
+        if (!strcasecmp (name, _genretbl[i])) {
+            return i+1;
+        }
+    }
+    return 0;
+}
+
+mp4p_atom_t *
+mp4p_ilst_append_custom (mp4p_atom_t *ilst_atom, const char *name, const char *text) {
+    mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
+    mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
+    atom->data = meta;
+    atom->free = _meta_free;
+
+    memcpy (atom->type, "----", 4);
+    meta->name = strdup (name);
+    meta->text = strdup (text);
+    return atom;
+}
+
+mp4p_atom_t *
+mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text) {
+    mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
+    mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
+    atom->data = meta;
+    atom->free = _meta_free;
+
+    uint16_t genre_id = mp4p_genre_index_for_name (text);
+    if (genre_id) {
+        memcpy (atom->type, "gnre", 4);
+        meta->version_flags = 0;
+        meta->values = malloc (2);
+        meta->values[0] = genre_id;
+    }
+    else {
+        memcpy (atom->type, COPYRIGHT_SYM "gen", 4);
+        meta->version_flags = 1;
+        meta->text = strdup (text);
+    }
+    return NULL;
+}
+
+mp4p_atom_t *
+mp4p_ilst_append_track_disc (mp4p_atom_t *ilst_atom, const char *type, uint16_t index, uint16_t total) {
+    mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
+    mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
+    atom->data = meta;
+    atom->free = _meta_free;
+
+    memcpy (atom->type, type, 4);
+    meta->version_flags = 0;
+    meta->values = malloc (6);
+    meta->values[0] = 0;
+    meta->values[1] = index;
+    meta->values[2] = total;
+    return atom;
+}
+
+mp4p_atom_t *
+mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *text) {
+    mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
+    mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
+    atom->data = meta;
+    atom->free = _meta_free;
+
+    memcpy (atom->type, type, 4);
+    meta->version_flags = 1;
+    meta->text = strdup (text);
+
+    return atom;
 }
