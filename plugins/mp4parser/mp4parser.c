@@ -600,6 +600,10 @@ mp4p_open (const char *fname, mp4p_file_callbacks_t *callbacks) {
 
 mp4p_atom_t *
 mp4p_atom_find (mp4p_atom_t *root, const char *path) {
+    if (strlen (path) < 4) {
+        return NULL;
+    }
+
 	mp4p_atom_t *a = root;
 	while (a) {
 		if (!memcmp (a->type, path, 4)) {
@@ -612,7 +616,7 @@ mp4p_atom_find (mp4p_atom_t *root, const char *path) {
     if (a && !path[4]) {
         return a;
     }
-	if (a && path[4]) {
+	if (a && path[4] == '/') {
 		return mp4p_atom_find (a->subatoms, path+5);
 	}
 	return NULL;
