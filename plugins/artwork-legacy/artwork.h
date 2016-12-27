@@ -21,8 +21,8 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
-#ifndef __ARTWORK_H
-#define __ARTWORK_H
+#ifndef __LEGACY_ARTWORK_H
+#define __LEGACY_ARTWORK_H
 
 #define DDB_ARTWORK_VERSION 3
 
@@ -50,5 +50,5 @@ typedef struct {
     int (*make_cache_path2) (char *path, int size, const char *fname, const char *album, const char *artist, int img_size);
 } DB_artwork_plugin_t;
 
-#endif /*__ARTWORK_H*/
+#endif /*__LEGACY_ARTWORK_H*/
 

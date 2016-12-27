@@ -23,6 +23,10 @@
 #include <string.h>
 #include "../../gettext.h"
 #include "../artwork-legacy/artwork.h"
+#include "../artwork/artwork.h"
+
+//#define trace(...) { fprintf (stderr, "plugin/notify: "); fprintf (stderr, __VA_ARGS__); }
+#define trace(...) { }
 
 #define E_NOTIFICATION_BUS_NAME "org.freedesktop.Notifications"
 #define E_NOTIFICATION_INTERFACE "org.freedesktop.Notifications"
@@ -31,6 +35,7 @@
 DB_functions_t *deadbeef;
 DB_misc_t plugin;
 DB_artwork_plugin_t *artwork_plugin;
+ddb_artwork_plugin_t *artwork2_plugin;
 
 static dbus_uint32_t replaces_id = 0;
 
@@ -150,10 +155,11 @@ esc_xml (const char *cmd, char *esc, int size) {
     *dst = 0;
 }
 
-static void show_notification (DB_playItem_t *track);
+static void show_notification (DB_playItem_t *track, char * iconfname);
 static DB_playItem_t *last_track = NULL;
 static time_t request_timer = 0;
 
+//Callback for legacy plugin
 static void
 cover_avail_callback (const char *fname, const char *artist, const char *album, void *user_data) {
     if (!fname) {
@@ -162,7 +168,7 @@ cover_avail_callback (const char *fname, const char *artist, const char *album, 
     }
     deadbeef->pl_lock ();
     if (last_track && (time (NULL) - request_timer < 4)) {
-        show_notification (last_track);
+        show_notification (last_track, NULL);
     }
     if (last_track) {
         deadbeef->pl_item_unref (last_track);
@@ -171,7 +177,38 @@ cover_avail_callback (const char *fname, const char *artist, const char *album, 
     deadbeef->pl_unlock ();
 }
 
-static void show_notification (DB_playItem_t *track) {
+//Callback for non-legacy plugin
+static void
+cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
+    if (!error) {
+        //Use either the first cover or the cover with "front" type
+        const char * fname = cover->filename;
+        ddb_cover_info_t * cover_current = cover->next;
+        while (cover_current) {
+            if (strcmp(cover_current->type, "front")) {
+                fname = cover_current->filename;
+            }
+            cover_current = cover_current->next;
+        }
+        trace ("Found cover image (%s) with non-legacy plugin\n", fname);
+
+        char * iconfname = malloc (sizeof (char) * strlen (fname));
+        strcpy (iconfname, fname);
+
+        deadbeef->pl_lock ();
+        if (last_track && (time (NULL) - request_timer < 4)) {
+            show_notification (last_track, iconfname);
+        }
+        if (last_track) {
+            deadbeef->pl_item_unref (last_track);
+            last_track = NULL;
+        }
+        deadbeef->pl_unlock ();
+    }
+    free (query);
+}
+
+static void show_notification (DB_playItem_t *track, char * iconfname) {
     char title[1024];
     char content[1024];
 
@@ -201,16 +238,32 @@ static void show_notification (DB_playItem_t *track) {
     const char *v_appname = "DeaDBeeF";
     dbus_uint32_t v_id = 0;
     char *v_iconname = NULL;
-    if (deadbeef->conf_get_int("notify.albumart", 0) && artwork_plugin) {
-        deadbeef->pl_lock ();
-        const char *album = deadbeef->pl_find_meta (track, "album");
-        const char *artist = deadbeef->pl_find_meta (track, "artist");
-        const char *fname = deadbeef->pl_find_meta (track, ":URI");
-        if (!album || !*album) {
-            album = deadbeef->pl_find_meta (track, "title");
+    if (deadbeef->conf_get_int("notify.albumart", 0)) {
+        if (iconfname) {
+            v_iconname = iconfname;
+        } else {
+            if (artwork_plugin) {
+                //Get artwork with legacy plugin
+                deadbeef->pl_lock ();
+                const char *album = deadbeef->pl_find_meta (track, "album");
+                const char *artist = deadbeef->pl_find_meta (track, "artist");
+                const char *fname = deadbeef->pl_find_meta (track, ":URI");
+                if (!album || !*album) {
+                    album = deadbeef->pl_find_meta (track, "title");
+                }
+                v_iconname = artwork_plugin->get_album_art (fname, artist, album, deadbeef->conf_get_int ("notify.albumart_size", 64), cover_avail_callback, NULL);
+                deadbeef->pl_unlock ();
+            }
+            if (artwork2_plugin) {
+                //Get artwork with non-legacy plugin
+                trace ("Requesting artwork (non-legacy)\n");
+                ddb_cover_query_t * query = calloc (1, sizeof (ddb_cover_query_t));
+                query->_size = sizeof (ddb_cover_query_t);
+                query->track = track;
+
+                artwork2_plugin->cover_get (query, cover_get_callback);
+            }
         }
-        v_iconname = artwork_plugin->get_album_art (fname, artist, album, deadbeef->conf_get_int ("notify.albumart_size", 64), cover_avail_callback, NULL);
-        deadbeef->pl_unlock ();
     }
     if (!v_iconname) {
         v_iconname = strdup ("deadbeef");
@@ -255,7 +308,7 @@ on_songstarted (ddb_event_track_t *ev) {
     if (ev->track && deadbeef->conf_get_int ("notify.enable", 0)) {
         DB_playItem_t *track = ev->track;
         if (track) {
-            show_notification (track);
+            show_notification (track, NULL);
         }
     }
     return 0;
@@ -331,13 +384,25 @@ notify_stop (void) {
 
 static int
 notify_connect (void) {
-    artwork_plugin = (DB_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork");
+    artwork2_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id("artwork2");
+    if(artwork2_plugin) {
+        trace("Using non-legacy artwork plugin\n");
+        artwork_plugin = NULL;
+        return 0;
+    } else {
+        artwork_plugin = (DB_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork");
+        if(artwork_plugin) {
+            trace("Using legacy artwork plugin\n");
+            return 0;
+        }
+    }
     return 0;
 }
 
 static int
 notify_disconnect (void) {
     artwork_plugin = NULL;
+    artwork2_plugin = NULL;
     return 0;
 }
 
