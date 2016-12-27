@@ -36,6 +36,36 @@
 
 extern DB_functions_t *deadbeef;
 
+#define COPYRIGHT_SYM "\xa9"
+
+static const char *_mp4_atom_map[] = {
+    COPYRIGHT_SYM "alb", "album",
+    COPYRIGHT_SYM "art", "artist",
+    "aART", "band",
+    COPYRIGHT_SYM "cmt", "comment",
+    COPYRIGHT_SYM "day", "year",
+    COPYRIGHT_SYM "nam", "title",
+    COPYRIGHT_SYM "gen", "genre",
+    "gnre", "genre",
+    "trkn", "track"
+    "disk", "disc",
+    COPYRIGHT_SYM "wrt", "composer",
+    COPYRIGHT_SYM "too", "encoder",
+    "tmpo", "bpm",
+    "cprt", "copyright",
+    COPYRIGHT_SYM "grp", "grouping",
+    "cpil", "compilation",
+    "pcst", "podcast",
+    "catg", "category",
+    "keyw", "keyword",
+    "desc", "description",
+    COPYRIGHT_SYM "lyr", "lyrics",
+    "purd", "purchase date",
+    "MusicBrainz Track Id", "musicbrainz_trackid",
+
+    NULL, NULL
+};
+
 typedef struct {
     DB_FILE *file;
     int64_t junk;
@@ -91,6 +121,26 @@ static const char *metainfo[] = {
     "MusicBrainz Track Id", "musicbrainz_trackid",
     NULL
 };
+
+/* For writing:
+ * Load/get the existing udta atom
+ * If present:
+ *   Find ilst
+ *   Remove all known non-custom fields, keep the rest
+ *   Remove all custom fields
+ * If not present:
+ *   Create new udta/meta/hdlr, udta/meta/ilst
+ * Re-append all new non-custom fields
+ * Re-append all new custom fields
+ * Generate data block
+ * If the new idta block can fit over the old one, with at least 8 bytes extra for the "free" atom:
+ *   Overwrite the old block
+ *   Pad with "free" atom if necessary
+ * If can't fit:
+ *   Rename the existing udta into "free"
+ *   Append the new udta block to the end of file
+ */
+
 
 int
 mp4_write_metadata (DB_playItem_t *it) {
@@ -201,36 +251,6 @@ mp4_write_metadata (DB_playItem_t *it) {
     
     return !res;
 }
-
-#define COPYRIGHT_SYM "\xa9"
-
-static const char *_mp4_atom_map[] = {
-    COPYRIGHT_SYM "alb", "album",
-    COPYRIGHT_SYM "art", "artist",
-    "aART", "band",
-    COPYRIGHT_SYM "cmt", "comment",
-    COPYRIGHT_SYM "day", "year",
-    COPYRIGHT_SYM "nam", "title",
-    COPYRIGHT_SYM "gen", "genre",
-    "gnre", "genre",
-    "trkn", "track"
-    "disk", "disc",
-    COPYRIGHT_SYM "wrt", "composer",
-    COPYRIGHT_SYM "too", "encoder",
-    "tmpo", "bpm",
-    "cprt", "copyright",
-    COPYRIGHT_SYM "grp", "grouping",
-    "cpil", "compilation",
-    "pcst", "podcast",
-    "catg", "category",
-    "keyw", "keyword",
-    "desc", "description",
-    COPYRIGHT_SYM "lyr", "lyrics",
-    "purd", "purchase date",
-
-    NULL, NULL
-};
-
 
 static void
 mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
