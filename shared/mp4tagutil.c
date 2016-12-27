@@ -240,13 +240,34 @@ mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     mp4p_atom_t *meta_atom = ilst_atom->subatoms;
 
     while (meta_atom) {
+        got_itunes_tags = 1;
+
+        mp4p_meta_t *meta = meta_atom->data;
+
+        char type[5];
+        memcpy (type, meta_atom->type, 4);
+        type[4] = 0;
+        const char *name = meta->name ? meta->name : type;
+
+        if (!strcasecmp (name, "replaygain_track_gain")) {
+            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (meta->text));
+            continue;
+        }
+        else if (!strcasecmp (name, "replaygain_album_gain")) {
+            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (meta->text));
+            continue;
+        }
+        else if (!strcasecmp (name, "replaygain_track_peak")) {
+            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (meta->text));
+            continue;
+        }
+        else if (!strcasecmp (name, "replaygain_album_peak")) {
+            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (meta->text));
+            continue;
+        }
+
         for (int i = 0; _mp4_atom_map[i]; i += 2) {
-            char type[5];
-            memcpy (type, meta_atom->type, 4);
-            type[4] = 0;
-            if (!strcasecmp (type, _mp4_atom_map[i])) {
-                got_itunes_tags = 1;
-                mp4p_meta_t *meta = meta_atom->data;
+            if (!strcasecmp (name, _mp4_atom_map[i])) {
                 if (meta->text) {
                     deadbeef->pl_append_meta (it, _mp4_atom_map[i+1], meta->text);
                 }
