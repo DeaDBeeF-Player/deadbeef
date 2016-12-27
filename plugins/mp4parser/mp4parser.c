@@ -125,45 +125,6 @@ static const char *container_atoms[] = {
 	NULL
 };
 
-#define COPYRIGHT_SYM "\xfb"
-
-static const char *metadata_atoms[] = {
-    COPYRIGHT_SYM "alb",
-    COPYRIGHT_SYM "art",
-    "aART",
-    COPYRIGHT_SYM "cmt",
-    COPYRIGHT_SYM "day",
-    COPYRIGHT_SYM "nam",
-    COPYRIGHT_SYM "gen",
-    "gnre",
-    "trkn",
-    "disk",
-    COPYRIGHT_SYM "wrt",
-    COPYRIGHT_SYM "too",
-    "tmpo",
-    "cprt",
-    "cpil",
-    "covr",
-    "rtng",
-    COPYRIGHT_SYM "grp",
-    "stik",
-    "pcst",
-    "catg",
-    "keyw",
-    "purl",
-    "egid",
-    "desc",
-    COPYRIGHT_SYM "lyr",
-    "tvnn",
-    "tvsh",
-    "tven",
-    "tvsn",
-    "tves",
-    "purd",
-    "pgap",
-    NULL
-};
-
 // read/skip uint8 version and uint24 flags
 #define READ_COMMON_HEADER() {READ_UINT32(fp);}
 
@@ -232,6 +193,8 @@ _meta_free (void *data) {
     }
     free (meta);
 }
+
+#define COPYRIGHT_SYM "\xa9"
 
 static int
 _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {

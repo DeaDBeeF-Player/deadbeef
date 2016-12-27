@@ -202,52 +202,314 @@ mp4_write_metadata (DB_playItem_t *it) {
     return !res;
 }
 
+#define _GENRE_COUNT (sizeof(_genretbl) / sizeof (char *) - 1)
+static const char *_genretbl[] = {
+    "Blues",
+    "Classic Rock",
+    "Country",
+    "Dance",
+    "Disco",
+    "Funk",
+    "Grunge",
+    "Hip-Hop",
+    "Jazz",
+    "Metal",
+    "New Age",
+    "Oldies",
+    "Other",
+    "Pop",
+    "R&B",
+    "Rap",
+    "Reggae",
+    "Rock",
+    "Techno",
+    "Industrial",
+    "Alternative",
+    "Ska",
+    "Death Metal",
+    "Pranks",
+    "Soundtrack",
+    "Euro-Techno",
+    "Ambient",
+    "Trip-Hop",
+    "Vocal",
+    "Jazz+Funk",
+    "Fusion",
+    "Trance",
+    "Classical",
+    "Instrumental",
+    "Acid",
+    "House",
+    "Game",
+    "Sound Clip",
+    "Gospel",
+    "Noise",
+    "AlternRock",
+    "Bass",
+    "Soul",
+    "Punk",
+    "Space",
+    "Meditative",
+    "Instrumental Pop",
+    "Instrumental Rock",
+    "Ethnic",
+    "Gothic",
+    "Darkwave",
+    "Techno-Industrial",
+    "Electronic",
+    "Pop-Folk",
+    "Eurodance",
+    "Dream",
+    "Southern Rock",
+    "Comedy",
+    "Cult",
+    "Gangsta",
+    "Top 40",
+    "Christian Rap",
+    "Pop/Funk",
+    "Jungle",
+    "Native American",
+    "Cabaret",
+    "New Wave",
+    "Psychedelic",
+    "Rave",
+    "Showtunes",
+    "Trailer",
+    "Lo-Fi",
+    "Tribal",
+    "Acid Punk",
+    "Acid Jazz",
+    "Polka",
+    "Retro",
+    "Musical",
+    "Rock & Roll",
+    "Hard Rock",
+    "Folk",
+    "Folk-Rock",
+    "National Folk",
+    "Swing",
+    "Fast Fusion",
+    "Bebob",
+    "Latin",
+    "Revival",
+    "Celtic",
+    "Bluegrass",
+    "Avantgarde",
+    "Gothic Rock",
+    "Progressive Rock",
+    "Psychedelic Rock",
+    "Symphonic Rock",
+    "Slow Rock",
+    "Big Band",
+    "Chorus",
+    "Easy Listening",
+    "Acoustic",
+    "Humour",
+    "Speech",
+    "Chanson",
+    "Opera",
+    "Chamber Music",
+    "Sonata",
+    "Symphony",
+    "Booty Bass",
+    "Primus",
+    "Porn Groove",
+    "Satire",
+    "Slow Jam",
+    "Club",
+    "Tango",
+    "Samba",
+    "Folklore",
+    "Ballad",
+    "Power Ballad",
+    "Rhythmic Soul",
+    "Freestyle",
+    "Duet",
+    "Punk Rock",
+    "Drum Solo",
+    "Acapella",
+    "Euro-House",
+    "Dance Hall",
+    "Goa",
+    "Drum & Bass",
+    "Club-House",
+    "Hardcore",
+    "Terror",
+    "Indie",
+    "BritPop",
+    "Negerpunk",
+    "Polsk Punk",
+    "Beat",
+    "Christian Gangsta",
+    "Heavy Metal",
+    "Black Metal",
+    "Crossover",
+    "Contemporary C",
+    "Christian Rock",
+    "Merengue",
+    "Salsa",
+    "Thrash Metal",
+    "Anime",
+    "JPop",
+    "SynthPop",
+    "Abstract",
+    "Art Rock",
+    "Baroque",
+    "Bhangra",
+    "Big Beat",
+    "Breakbeat",
+    "Chillout",
+    "Downtempo",
+    "Dub",
+    "EBM",
+    "Eclectic",
+    "Electro",
+    "Electroclash",
+    "Emo",
+    "Experimental",
+    "Garage",
+    "Global",
+    "IDM",
+    "Illbient",
+    "Industro-Goth",
+    "Jam Band",
+    "Krautrock",
+    "Leftfield",
+    "Lounge",
+    "Math Rock",
+    "New Romantic",
+    "Nu-Breakz",
+    "Post-Punk",
+    "Post-Rock",
+    "Psytrance",
+    "Shoegaze",
+    "Space Rock",
+    "Trop Rock",
+    "World Music",
+    "Neoclassical",
+    "Audiobook",
+    "Audio Theatre",
+    "Neue Deutsche Welle",
+    "Podcast",
+    "Indie Rock",
+    "G-Funk",
+    "Dubstep",
+    "Garage Rock",
+    "Psybient",
+    NULL
+};
+
+#define COPYRIGHT_SYM "\xa9"
+
+static const char *_mp4_atom_map[] = {
+    COPYRIGHT_SYM "alb", "album",
+    COPYRIGHT_SYM "art", "artist",
+    "aART", "band",
+    COPYRIGHT_SYM "cmt", "comment",
+    COPYRIGHT_SYM "day", "year",
+    COPYRIGHT_SYM "nam", "title",
+    COPYRIGHT_SYM "gen", "genre",
+    "gnre", "genre",
+    "trkn", "track"
+    "disk", "disc",
+    COPYRIGHT_SYM "wrt", "composer",
+    COPYRIGHT_SYM "too", "encoder",
+    "tmpo", "bpm",
+    "cprt", "copyright",
+    "cpil", "compilation",
+    "covr", "cover",
+    "rtng", "rating",
+    "pcst", "podcast",
+    "catg", "category",
+    "keyw", "keyword",
+    "purl", "podcast_url",
+    "desc", "description",
+    COPYRIGHT_SYM "lyr", "lyrics",
+    "purd", "purchase date",
+    "pgap", "gapless playback",
+
+    // not really useful...
+    COPYRIGHT_SYM "grp", "grouping",
+    "stik", "stik",
+    "egid", "episode global id",
+    "tvnn", "tv network name",
+    "tvsh", "tv show name",
+    "tven", "tv episode number",
+    "tvsn", "tv season",
+    "tves", "tv episode",
+
+    NULL, NULL
+};
+
+
 static void
-mp4_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
+mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     int got_itunes_tags = 0;
 
-    int n = mp4ff_meta_get_num_items (mp4);
-    for (int t = 0; t < n; t++)  {
-        char *key = NULL;
-        char *value = NULL;
-        int res = mp4ff_meta_get_by_index(mp4, t, &key, &value);
-        if (res) {
-            got_itunes_tags = 1;
-            if (strcasecmp (key, "cover")) {
-                if (!strcasecmp (key, "replaygain_track_gain")) {
-                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (value));
+    mp4p_atom_t *ilst_atom = mp4p_atom_find (mp4file, "moov/udta/meta/ilst");
+    mp4p_atom_t *meta_atom = ilst_atom->subatoms;
+
+    while (meta_atom) {
+        for (int i = 0; _mp4_atom_map[i]; i += 2) {
+            char type[5];
+            memcpy (type, meta_atom->type, 4);
+            type[4] = 0;
+            if (!strcasecmp (type, _mp4_atom_map[i])) {
+                got_itunes_tags = 1;
+                mp4p_meta_t *meta = meta_atom->data;
+                if (meta->text) {
+                    deadbeef->pl_append_meta (it, _mp4_atom_map[i+1], meta->text);
                 }
-                else if (!strcasecmp (key, "replaygain_album_gain")) {
-                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (value));
-                }
-                else if (!strcasecmp (key, "replaygain_track_peak")) {
-                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (value));
-                }
-                else if (!strcasecmp (key, "replaygain_album_peak")) {
-                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (value));
-                }
-                else {
-                    int i;
-                    for (i = 0; metainfo[i]; i += 2) {
-                        if (!strcasecmp (metainfo[i], key)) {
-                            deadbeef->pl_append_meta (it, metainfo[i+1], value);
-                            break;
+                else if (meta->values) {
+                    if (!memcmp (meta_atom->type, "trkn", 4)) {
+                        if (meta->data_size >= 6) { // leading + idx + total
+                            uint16_t track = meta->values[1];
+                            uint16_t total = meta->values[2];
+                            char s[10];
+                            if (track) {
+                                snprintf (s, sizeof (s), "%d", (int)track);
+                                deadbeef->pl_replace_meta (it, "track", s);
+                            }
+                            if (total) {
+                                snprintf (s, sizeof (s), "%d", (int)total);
+                                deadbeef->pl_replace_meta (it, "numtracks", s);
+                            }
                         }
                     }
-                    if (!metainfo[i]) {
-                        deadbeef->pl_append_meta (it, key, value);
+                    else if (!memcmp (meta_atom->type, "disk", 4)) {
+                        if (meta->data_size >= 6) { // leading + idx + total
+                            uint16_t track = meta->values[1];
+                            uint16_t total = meta->values[2];
+                            char s[10];
+                            if (track) {
+                                snprintf (s, sizeof (s), "%d", (int)track);
+                                deadbeef->pl_replace_meta (it, "disc", s);
+                            }
+                            if (total) {
+                                snprintf (s, sizeof (s), "%d", (int)total);
+                                deadbeef->pl_replace_meta (it, "numdiscs", s);
+                            }
+                        }
+                    }
+                    else if (!strcmp (_mp4_atom_map[i+1], "genre")) {
+                        if (meta->values[0]) {
+                            uint16_t genreid = meta->values[0]-1;
+                            if (genreid < _GENRE_COUNT) {
+                                deadbeef->pl_replace_meta (it, _mp4_atom_map[i+1], _genretbl[genreid]);
+                            }
+                        }
+                    }
+                    else {
+                        char s[10];
+                        snprintf (s, sizeof (s), "%d", (int)meta->values[0]);
+                        deadbeef->pl_replace_meta (it, _mp4_atom_map[i+1], s);
                     }
                 }
+                break;
             }
         }
-        if (key) {
-            free (key);
-        }
-        if (value) {
-            free (value);
-        }
+        meta_atom = meta_atom->next;
     }
-
     if (got_itunes_tags) {
         uint32_t f = deadbeef->pl_get_item_flags (it);
         f |= DDB_TAG_ITUNES;
@@ -275,6 +537,7 @@ mp4_read_metadata_file (DB_playItem_t *it, DB_FILE *fp) {
     deadbeef->pl_delete_all_meta (it);
 
     // convert
+    mp4_load_tags (mp4file, it);
     mp4p_atom_free (mp4file);
 
     (void)deadbeef->junk_apev2_read (it, fp);
