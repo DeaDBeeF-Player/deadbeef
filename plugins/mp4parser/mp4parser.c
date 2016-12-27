@@ -664,6 +664,23 @@ mp4p_stts_total_num_samples (mp4p_atom_t *stts_atom) {
     return total;
 }
 
+uint32_t
+mp4p_stts_sample_duration (mp4p_atom_t *stts_atom, uint32_t sample) {
+    mp4p_stts_t *stts = stts_atom->data;
+    if (!stts) {
+        return 0;
+    }
+    uint64_t total = 0;
+    uint32_t n = 0;
+    for (uint32_t i = 0; i < stts->number_of_entries; i++) {
+        n += stts->entries[i].sample_count;
+        if (n >= sample) {
+            return stts->entries[i].sample_duration;
+        }
+    }
+    return 0;
+}
+
 uint64_t
 mp4p_stts_total_sample_duration (mp4p_atom_t *stts_atom) {
     mp4p_stts_t *stts = stts_atom->data;
