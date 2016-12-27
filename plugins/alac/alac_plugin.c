@@ -56,13 +56,6 @@
 static DB_decoder_t alac_plugin;
 DB_functions_t *deadbeef;
 
-#define USE_MP4FF 1
-
-#if USE_MP4FF
-#define MP4FILE mp4ff_t *
-#define MP4FILE_CB mp4ff_callback_t
-#endif
-
 #ifdef WORDS_BIGENDIAN
 int host_bigendian = 1;
 #else
@@ -164,6 +157,7 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     totalsamples = total_sample_duration * samplerate / mdhd->time_scale;
     duration = total_sample_duration / (float)mdhd->time_scale;
 
+    // FIXME: use stsz->number_of_entries
     info->mp4samples = mp4p_stts_total_num_samples(stts_atom);
 
     _info->fmt.samplerate = samplerate;
@@ -283,7 +277,7 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
         buffer = malloc (size);
         deadbeef->fseek (info->file, offs+info->junk, SEEK_SET);
         if (size != deadbeef->fread (buffer, 1, size, info->file)) {
-            trace ("mp4ff_read_sample failed\n");
+            trace ("alac: failed to read sample\n");
             break;
         }
 
@@ -309,30 +303,25 @@ alacplug_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     sample += info->startsample;
 
-#if 0
-#if USE_MP4FF
-    int totalsamples = 0;
-    int i;
-    int num_sample_byte_sizes = mp4ff_get_num_sample_byte_sizes (info->mp4, info->mp4track);
-    int scale = _info->fmt.samplerate / mp4ff_time_scale (info->mp4, info->mp4track);
-    for (i = 0; i < num_sample_byte_sizes; i++)
+    mp4p_atom_t *mdhd_atom = mp4p_atom_find(info->trak, "trak/mdia/mdhd");
+    mp4p_mdhd_t *mdhd = mdhd_atom->data;
+
+    mp4p_atom_t *stts_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stts");
+
+    int scale = _info->fmt.samplerate / mdhd->time_scale;
+    int pos = 0;
+    for (int i = 0; i < info->mp4samples; i++)
     {
-        unsigned int thissample_duration = 0;
-        unsigned int thissample_bytesize = 0;
+        uint32_t thissample_duration = mp4p_stts_sample_duration(stts_atom, i);
 
-        mp4ff_get_sample_info(info->mp4, info->mp4track, i, &thissample_duration,
-                              &thissample_bytesize);
-
-        if (totalsamples + thissample_duration > sample / scale) {
-            info->skipsamples = sample - totalsamples * scale;
+        if (pos + thissample_duration > sample / scale) {
+            info->skipsamples = sample - pos * scale;
+            info->mp4sample = i;
             break;
         }
-        totalsamples += thissample_duration;
+        pos += thissample_duration;
     }
-    info->mp4sample = i;
     trace ("seek res: frame %d, skip %d\n", info->mp4sample, info->skipsamples);
-#endif
-#endif
     info->out_remaining = 0;
     info->currentsample = sample;
     _info->readpos = (float)(info->currentsample - info->startsample) / _info->fmt.samplerate;
