@@ -5,8 +5,8 @@
 #import <Cocoa/Cocoa.h>
 
 int main(int argc, const char * argv[]) {
-	//	mp4p_atom_t *mp4 = mp4p_open ("/Users/waker/temp/01. Tim Follin - Chronos - Title (AY & Beeper).m4a", NULL);
-	mp4p_atom_t *mp4 = mp4p_open ("/Users/waker/mus/ru/Виктор Аргонов Project - 2032 - Легенда О Несбывшемся Грядущем (2007) (ALAC)/01. Виктор Аргонов Project - Увертюра.m4a", NULL);
+	mp4p_atom_t *mp4 = mp4p_open ("/Users/waker/temp/01. Tim Follin - Chronos - Title (AY & Beeper).m4a", NULL);
+	//mp4p_atom_t *mp4 = mp4p_open ("/Users/waker/mus/ru/Виктор Аргонов Project - 2032 - Легенда О Несбывшемся Грядущем (2007) (ALAC)/01. Виктор Аргонов Project - Увертюра.m4a", NULL);
 
 	printf ("----\n");
 	printf ("Find ftyp...\n");
