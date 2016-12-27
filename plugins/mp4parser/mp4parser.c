@@ -4,7 +4,7 @@
 #include "mp4parser.h"
 
 static mp4p_atom_t *
-_atom_load (mp4p_file_callbacks_t *fp);
+_atom_load (mp4p_atom_t *parent_atom, mp4p_file_callbacks_t *fp);
 
 void
 mp4p_atom_free (mp4p_atom_t *atom) {
@@ -43,12 +43,12 @@ _dbg_print_atom (mp4p_atom_t *atom) {
     _dbg_print_indented(type);
 }
 
-int
+static int
 _load_subatoms (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 	_dbg_indent += 4;
 	mp4p_atom_t *tail = NULL;
 	while (fp->ftell (fp->data) < atom->pos + atom->size) {
-		mp4p_atom_t *c = _atom_load (fp);
+		mp4p_atom_t *c = _atom_load (atom, fp);
 		if (!c) {
 			break;
 		}
@@ -121,7 +121,47 @@ static const char *container_atoms[] = {
 	"minf",
 	"dinf",
 	"stbl",
+    "udta",
 	NULL
+};
+
+#define COPYRIGHT_SYM "\xfb"
+
+static const char *metadata_atoms[] = {
+    COPYRIGHT_SYM "alb",
+    COPYRIGHT_SYM "art",
+    "aART",
+    COPYRIGHT_SYM "cmt",
+    COPYRIGHT_SYM "day",
+    COPYRIGHT_SYM "nam",
+    COPYRIGHT_SYM "gen",
+    "gnre",
+    "trkn",
+    "disk",
+    COPYRIGHT_SYM "wrt",
+    COPYRIGHT_SYM "too",
+    "tmpo",
+    "cprt",
+    "cpil",
+    "covr",
+    "rtng",
+    COPYRIGHT_SYM "grp",
+    "stik",
+    "pcst",
+    "catg",
+    "keyw",
+    "purl",
+    "egid",
+    "desc",
+    COPYRIGHT_SYM "lyr",
+    "tvnn",
+    "tvsh",
+    "tven",
+    "tvsn",
+    "tves",
+    "purd",
+    "pgap",
+    NULL
 };
 
 // read/skip uint8 version and uint24 flags
@@ -181,10 +221,57 @@ _alac_free (void *data) {
     free (alac);
 }
 
+typedef struct {
+    uint32_t version_flags;
+    uint32_t data_size;
+	uint64_t data_offset;
+    char *text;
+	uint8_t value;
+} mp4p_meta_t;
+
+static int
+_load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
+    mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
+    atom->data = meta;
+    atom->free = free;
+
+    uint32_t size = READ_UINT32(fp);
+    char data[4];
+    READ_BUF(fp, data, 4);
+    if (memcmp (data, "data", 4)) {
+        return -1;
+    }
+    meta->version_flags = READ_UINT32(fp);
+
+	meta->data_size = size - 12;
+
+	READ_UINT32(fp);
+
+    // TODO: check size limits here
+
+	meta->data_offset = fp->ftell (fp->data);
+
+	uint32_t flag = meta->version_flags & 0xff;
+
+	if (flag == 0 || flag == 21) {
+		meta->value = READ_UINT8(fp);
+		printf ("%d\n", (int)meta->value);
+	}
+    else if (flag == 1) {
+		meta->text = calloc (meta->data_size+1, 1);
+		READ_BUF(fp, meta->text, meta->data_size);
+		meta->text[meta->data_size] = 0;
+
+        printf ("%s\n", meta->text);
+    }
+
+    return 0;
+}
+
 // The function may return -1 on parser failures,
 // but this should not be considered a critical failure.
 int
-mp4p_atom_init (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
+mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     _dbg_print_atom (atom);
 	for (int i = 0; container_atoms[i]; i++) {
 		if (!_atom_type_compare (atom, container_atoms[i])) {
@@ -440,6 +527,16 @@ mp4p_atom_init (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
         alac->asc = calloc (alac->asc_size, 1);
         READ_BUF(fp, alac->asc, alac->asc_size);
     }
+    else if (!_atom_type_compare(atom, "meta")) {
+        READ_COMMON_HEADER();
+        return _load_subatoms(atom, fp);
+    }
+    else if (!_atom_type_compare(atom, "ilst")) {
+        return _load_subatoms(atom, fp);
+    }
+	else if (parent_atom && !_atom_type_compare(parent_atom, "ilst")) {
+		return _load_metadata_atom (atom, fp);
+	}
 
     else {
         _dbg_print_indented ("unknown");
@@ -449,7 +546,7 @@ mp4p_atom_init (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 }
 
 static mp4p_atom_t *
-_atom_load (mp4p_file_callbacks_t *fp) {
+_atom_load (mp4p_atom_t *parent_atom, mp4p_file_callbacks_t *fp) {
 	size_t fpos = fp->ftell (fp->data);
 
 	mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
@@ -465,7 +562,7 @@ _atom_load (mp4p_file_callbacks_t *fp) {
 		goto error;
 	}
 
-	mp4p_atom_init (atom, fp);
+	mp4p_atom_init (parent_atom, atom, fp);
 
 	fp->fseek (fp->data, fpos + atom->size, SEEK_SET);
 
@@ -511,7 +608,7 @@ mp4p_open (const char *fname, mp4p_file_callbacks_t *callbacks) {
 	mp4p_atom_t *tail = NULL;
 
 	for (;;) {
-		mp4p_atom_t *atom = _atom_load(callbacks);
+		mp4p_atom_t *atom = _atom_load (NULL, callbacks);
 		if (!atom) {
 			break;
 		}
