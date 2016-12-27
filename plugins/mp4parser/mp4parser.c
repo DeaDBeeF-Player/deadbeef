@@ -226,7 +226,7 @@ typedef struct {
     uint32_t data_size;
 	uint64_t data_offset;
     char *text;
-	uint8_t value;
+	uint16_t *values;
 } mp4p_meta_t;
 
 static int
@@ -243,21 +243,25 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     }
     meta->version_flags = READ_UINT32(fp);
 
-	meta->data_size = size - 12;
+	meta->data_size = size - 16;
 
 	READ_UINT32(fp);
-
-    // TODO: check size limits here
 
 	meta->data_offset = fp->ftell (fp->data);
 
 	uint32_t flag = meta->version_flags & 0xff;
 
 	if (flag == 0 || flag == 21) {
-		meta->value = READ_UINT8(fp);
-		printf ("%d\n", (int)meta->value);
+		meta->values = calloc (meta->data_size / 2, 1);
+		for (int i = 0; i < meta->data_size/2; i++) {
+			meta->values[i] = READ_UINT16(fp);
+			printf ("%d\n", (int)meta->values[i]);
+		}
 	}
     else if (flag == 1) {
+		if (meta->data_size > 255 && memcmp (atom->type, COPYRIGHT_SYM "lyr", 4)) {
+			return -1;
+		}
 		meta->text = calloc (meta->data_size+1, 1);
 		READ_BUF(fp, meta->text, meta->data_size);
 		meta->text[meta->data_size] = 0;
