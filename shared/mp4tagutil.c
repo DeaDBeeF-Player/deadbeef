@@ -76,12 +76,15 @@ static const char *_mp4_atom_map[] = {
  * Re-append all new non-custom fields
  * Re-append all new custom fields
  * Generate data block
- * If the new idta block can fit over the old one, with at least 8 bytes extra for the "free" atom:
+ * If the new udta block can fit over the old one, with at least 8 bytes extra for the "free" atom:
  *   Overwrite the old block
  *   Pad with "free" atom if necessary
- * If can't fit:
- *   Rename the existing udta into "free"
- *   Append the new udta block to the end of file
+ * If can't fit: the entire moov atom has to be relocated!
+ *   Rename the existing moov into "free"
+ *   Append the modified moov block to the end of file, after the last atom
+ *   IMPORTANT: the entirety of moov atom with all sub atoms needs to be loaded and saved
+ * Further work:
+ *   Find if there are "free" blocks between ftyp and mdat, and try to fit the moov there; If that works, truncate the file.
  */
 
 static void
@@ -104,47 +107,32 @@ _remove_known_fields (mp4p_atom_t *ilst) {
     }
 }
 
-int
-mp4_write_metadata (DB_playItem_t *it) {
-    deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
-    deadbeef->pl_unlock ();
+void
+mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
+    mp4p_atom_t *udta = NULL;
+    mp4p_atom_t *meta = NULL;
+    mp4p_atom_t *ilst = NULL;
 
-    if (!fp) {
-        return -1;
-    }
-
-    int junk = deadbeef->junk_get_leading_size (fp);
-    if (junk >= 0) {
-        deadbeef->fseek (fp, junk, SEEK_SET);
+    udta = mp4p_atom_find(mp4file, "moov/udta");
+    if (udta) {
+        meta = mp4p_atom_find(udta, "udta/meta");
     }
     else {
-        junk = 0;
+        udta = mp4p_atom_append (mp4file, mp4p_atom_new ("udta"));
     }
 
-    mp4p_file_callbacks_t mp4reader;
-    mp4reader.data = fp;
-    mp4reader.fread = (size_t (*) (void *ptr, size_t size, size_t nmemb, void *stream))deadbeef->fread;
-    mp4reader.fseek = (int (*) (void *stream, int64_t offset, int whence))deadbeef->fseek;
-    mp4reader.ftell = (int64_t (*) (void *stream))deadbeef->ftell;
-    mp4p_atom_t *mp4file = mp4p_open(NULL, &mp4reader);
-
-    deadbeef->fclose (fp);
-
-    if (!mp4file) {
-        return -1;
-    }
-
-    mp4p_atom_t *meta = mp4p_atom_find(mp4file, "moov/udta/meta");
-    mp4p_atom_t *ilst = NULL;
     if (meta) {
         ilst = mp4p_atom_find(meta, "meta/ilst");
     }
+    else {
+        meta = mp4p_atom_append (udta, mp4p_atom_new ("meta"));
+    }
+
     if (ilst) {
         _remove_known_fields (ilst);
     }
     else {
-        ilst = mp4p_atom_new ("ilst");
+        ilst = mp4p_atom_append(meta, mp4p_atom_new ("ilst"));
     }
 
     deadbeef->pl_lock ();
@@ -159,6 +147,7 @@ mp4_write_metadata (DB_playItem_t *it) {
             || !strcasecmp (m->key, "disc")
             || !strcasecmp (m->key, "numdiscs")
             || !strcasecmp (m->key, "genre")) {
+            m = m->next;
             continue;
         }
 
@@ -239,8 +228,42 @@ mp4_write_metadata (DB_playItem_t *it) {
             mp4p_ilst_append_custom(mp4file, tag_rg_names[n], s);
         }
     }
-
+    
     deadbeef->pl_unlock ();
+}
+
+int
+mp4_write_metadata (DB_playItem_t *it) {
+    deadbeef->pl_lock ();
+    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
+
+    if (!fp) {
+        return -1;
+    }
+
+    int junk = deadbeef->junk_get_leading_size (fp);
+    if (junk >= 0) {
+        deadbeef->fseek (fp, junk, SEEK_SET);
+    }
+    else {
+        junk = 0;
+    }
+
+    mp4p_file_callbacks_t mp4reader;
+    mp4reader.data = fp;
+    mp4reader.fread = (size_t (*) (void *ptr, size_t size, size_t nmemb, void *stream))deadbeef->fread;
+    mp4reader.fseek = (int (*) (void *stream, int64_t offset, int whence))deadbeef->fseek;
+    mp4reader.ftell = (int64_t (*) (void *stream))deadbeef->ftell;
+    mp4p_atom_t *mp4file = mp4p_open(NULL, &mp4reader);
+
+    deadbeef->fclose (fp);
+
+    if (!mp4file) {
+        return -1;
+    }
+
+    mp4tagutil_modify_meta(mp4file, it);
 
     return mp4p_update_metadata (mp4file);
 }

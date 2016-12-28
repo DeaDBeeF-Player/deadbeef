@@ -193,6 +193,9 @@ mp4p_atom_t *
 mp4p_atom_new (const char *type);
 
 mp4p_atom_t *
+mp4p_atom_append (mp4p_atom_t *parent, mp4p_atom_t *atom);
+
+mp4p_atom_t *
 mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text);
 
 mp4p_atom_t *

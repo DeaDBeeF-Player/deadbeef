@@ -8,6 +8,11 @@
 
 #import <XCTest/XCTest.h>
 #include "mp4parser.h"
+#include "playlist.h"
+#include "mp4tagutil.h"
+#include "plugins.h"
+#include "conf.h"
+#include "../../common.h"
 
 @interface MP4Parser : XCTestCase
 
@@ -17,9 +22,25 @@
 
 - (void)setUp {
     [super setUp];
+    NSString *resPath = [[NSBundle bundleForClass:[self class]] resourcePath];
+    const char *str = [resPath UTF8String];
+    strcpy (dbplugindir, str);
+
+    conf_init ();
+    conf_enable_saving (0);
+
+    pl_init ();
+    if (plug_load_all ()) { // required to add files to playlist from commandline
+        exit (-1);
+    }
 }
 
 - (void)tearDown {
+    plug_disconnect_all ();
+    plug_unload_all ();
+    pl_free ();
+    conf_free ();
+
     [super tearDown];
 }
 
@@ -132,6 +153,26 @@
     uint64_t offs = mp4p_sample_offset(&stbl_atom, 20);
     
     XCTAssert(offs == 20000, @"Got %lld instead of expected 20000", offs);
+}
+
+- (void)test_addMetadataBlockToEmptyMP4 {
+    mp4p_atom_t *mp4file = mp4p_atom_new("moov");
+
+    playItem_t *it = pl_item_alloc();
+
+    pl_append_meta(it, "title", "Title");
+    pl_append_meta(it, "artist", "Artist");
+    pl_append_meta(it, "album", "Album");
+    pl_append_meta(it, "genre", "Folk");
+    pl_append_meta(it, "track", "5");
+    pl_append_meta(it, "numtracks", "15");
+    pl_append_meta(it, "disc", "3");
+    pl_append_meta(it, "numdiscs", "5");
+
+    mp4tagutil_modify_meta(mp4file, (DB_playItem_t *)it);
+
+    pl_item_unref (it);
+    mp4p_atom_free (mp4file);
 }
 
 @end

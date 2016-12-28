@@ -1001,7 +1001,7 @@ mp4p_ilst_append_custom (mp4p_atom_t *ilst_atom, const char *name, const char *t
     memcpy (atom->type, "----", 4);
     meta->name = strdup (name);
     meta->text = strdup (text);
-    return atom;
+    return mp4p_atom_append (ilst_atom, atom);
 }
 
 mp4p_atom_t *
@@ -1023,7 +1023,7 @@ mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text) {
         meta->version_flags = 1;
         meta->text = strdup (text);
     }
-    return NULL;
+    return mp4p_atom_append (ilst_atom, atom);
 }
 
 mp4p_atom_t *
@@ -1039,7 +1039,7 @@ mp4p_ilst_append_track_disc (mp4p_atom_t *ilst_atom, const char *type, uint16_t 
     meta->values[0] = 0;
     meta->values[1] = index;
     meta->values[2] = total;
-    return atom;
+    return mp4p_atom_append (ilst_atom, atom);
 }
 
 mp4p_atom_t *
@@ -1053,7 +1053,7 @@ mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *tex
     meta->version_flags = 1;
     meta->text = strdup (text);
 
-    return atom;
+    return mp4p_atom_append (ilst_atom, atom);
 }
 
 void
@@ -1081,6 +1081,23 @@ mp4p_atom_t *
 mp4p_atom_new (const char *type) {
     mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
     memcpy (atom->type, type, 4);
+    return atom;
+}
+
+mp4p_atom_t *
+mp4p_atom_append (mp4p_atom_t *parent, mp4p_atom_t *atom) {
+    mp4p_atom_t *prev = NULL;
+    mp4p_atom_t *c = parent->subatoms;
+    while (c) {
+        prev = c;
+        c = c->next;
+    }
+    if (prev) {
+        prev->next = atom;
+    }
+    else {
+        parent->subatoms = atom;
+    }
     return atom;
 }
 
