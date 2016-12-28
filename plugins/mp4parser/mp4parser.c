@@ -35,19 +35,22 @@ mp4p_atom_type_compare (mp4p_atom_t *atom, const char *type) {
 static int _dbg_indent = 0;
 
 static void
-_dbg_print_indented (const char *msg) {
+_dbg_print_fourcc (const char *fourcc) {
+    printf ("%c%c%c%c", fourcc[0], fourcc[1], fourcc[2], fourcc[3]);
+}
+
+static void
+_dbg_print_indent (void) {
     for (int i = 0; i < _dbg_indent; i++) {
         printf (" ");
     }
-    printf ("%s\n", msg);
 }
 
 static void
 _dbg_print_atom (mp4p_atom_t *atom) {
-    char type[5];
-    memcpy (type, atom->type, 4);
-    type[4] = 0;
-    _dbg_print_indented(type);
+    _dbg_print_indent();
+    _dbg_print_fourcc(atom->type);
+    printf ("\n");
 }
 
 static int
@@ -121,6 +124,15 @@ _read_uint64 (mp4p_file_callbacks_t *fp, uint64_t *value) {
 #define READ_UINT64(fp) ({ uint64_t _temp64; if (_read_uint64 (fp, &_temp64) < 0) return -1; _temp64;})
 #define READ_BUF(fp,buf,size) {if (size != fp->fread(buf, 1, size, fp->data)) return -1;}
 
+// read/skip uint8 version and uint24 flags
+#define READ_COMMON_HEADER() {READ_UINT32(fp);}
+
+#define WRITE_UINT8(x) {if (buffer_size < 1) return 0; *buffer++ = x; buffer_size--; }
+#define WRITE_UINT16(x) {if (buffer_size < 2) return 0; *buffer++ = (x>>8); *buffer++ = (x & 0xff); buffer_size -= 2;}
+#define WRITE_UINT32(x) {if (buffer_size < 4) return 0; *buffer++ = ((x>>24)); *buffer++ = ((x>>16)&0xff); *buffer++ = ((x>>8)&0xff); *buffer++ = (x & 0xff); buffer_size -=4 ;}
+#define WRITE_BUF(buf,size) {if (buffer_size < size) return 0; memcpy (buffer, buf, size); buffer += size; buffer_size -= size; }
+#define WRITE_COMMON_HEADER() {WRITE_UINT32(0);}
+
 static const char *container_atoms[] = {
     "moov",
     "trak",
@@ -132,8 +144,6 @@ static const char *container_atoms[] = {
     NULL
 };
 
-// read/skip uint8 version and uint24 flags
-#define READ_COMMON_HEADER() {READ_UINT32(fp);}
 
 static void
 _hdlr_free (void *data) {
@@ -142,6 +152,23 @@ _hdlr_free (void *data) {
         free (hdlr->buf);
     }
     free (hdlr);
+}
+
+static uint32_t
+_hdlr_write (mp4p_atom_t *atom, char *buffer, uint32_t buffer_size) {
+    uint32_t init_size = buffer_size;
+    mp4p_hdlr_t *hdlr = atom->data;
+    WRITE_COMMON_HEADER();
+    WRITE_BUF(hdlr->component_type, 4);
+    WRITE_BUF(hdlr->component_subtype, 4);
+    WRITE_BUF(hdlr->component_manufacturer, 4);
+    WRITE_UINT32(hdlr->component_flags);
+    WRITE_UINT32(hdlr->component_flags_mask);
+    WRITE_UINT16(hdlr->buf_len);
+    if (hdlr->buf_len) {
+        WRITE_BUF(hdlr->buf, hdlr->buf_len);
+    }
+    return init_size - buffer_size;
 }
 
 static void
@@ -203,6 +230,28 @@ _meta_free (void *data) {
     }
     free (meta);
 }
+
+static uint32_t
+_meta_write (mp4p_atom_t *atom, char *buffer, uint32_t buffer_size) {
+    uint32_t init_size = buffer_size;
+    mp4p_meta_t *meta = atom->data;
+    WRITE_UINT32(meta->version_flags);
+    if (meta->text) {
+        WRITE_UINT32(0);
+        WRITE_BUF(meta->text,meta->data_size);
+    }
+    else if (meta->values) {
+        WRITE_UINT32(0);
+        for (int i = 0; i < meta->data_size/2; i++) {
+            WRITE_UINT16(meta->values[i]);
+        }
+    }
+    else if (meta->name) {
+        // TODO: custom
+    }
+    return init_size - buffer_size;
+}
+
 
 #define COPYRIGHT_SYM "\xa9"
 
@@ -268,6 +317,7 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     if (memcmp (data, "data", 4)) {
         return -1;
     }
+    atom->to_buffer = _meta_write;
     meta->version_flags = READ_UINT32(fp);
 
     meta->data_size = size - 16;
@@ -559,7 +609,8 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     }
 
     else {
-        _dbg_print_indented ("unknown");
+        _dbg_print_indent ();
+        printf ("unknown\n");
     }
 
     return 0;
@@ -1004,6 +1055,7 @@ mp4p_ilst_append_custom (mp4p_atom_t *ilst_atom, const char *name, const char *t
     mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
     atom->data = meta;
     atom->free = _meta_free;
+    atom->to_buffer = _meta_write;
 
     memcpy (atom->type, "----", 4);
     atom->size = 24;
@@ -1021,6 +1073,7 @@ mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text) {
     mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
     atom->data = meta;
     atom->free = _meta_free;
+    atom->to_buffer = _meta_write;
 
     uint16_t genre_id = mp4p_genre_index_for_name (text);
     if (genre_id) {
@@ -1045,6 +1098,7 @@ mp4p_ilst_append_track_disc (mp4p_atom_t *ilst_atom, const char *type, uint16_t 
     mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
     atom->data = meta;
     atom->free = _meta_free;
+    atom->to_buffer = _meta_write;
     atom->size = 24+6;
 
     memcpy (atom->type, type, 4);
@@ -1062,6 +1116,7 @@ mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *tex
     mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
     atom->data = meta;
     atom->free = _meta_free;
+    atom->to_buffer = _meta_write;
     atom->size = 24+(uint32_t)strlen(text);
 
     memcpy (atom->type, type, 4);
@@ -1129,17 +1184,14 @@ mp4p_atom_dump (mp4p_atom_t *atom) {
 void
 mp4p_hdlr_init (mp4p_atom_t *hdlr_atom, const char *type, const char *subtype, const char *manufacturer) {
     mp4p_hdlr_t *hdlr = calloc(sizeof (mp4p_hdlr_t), 1);
+    hdlr_atom->size = 33;
     hdlr_atom->data = hdlr;
     hdlr_atom->free = _hdlr_free;
+    hdlr_atom->to_buffer = _hdlr_write;
     memcpy (hdlr->component_type, type, 4);
     memcpy (hdlr->component_subtype, subtype, 4);
     memcpy (hdlr->component_manufacturer, manufacturer, 4);
 }
-
-#define WRITE_UINT8(x)
-#define WRITE_UINT16(x)
-#define WRITE_UINT32(x)
-#define WRITE_BUF(buf,size)
 
 uint32_t
 mp4p_atom_to_buffer (mp4p_atom_t *atom, char *buffer, uint32_t buffer_size) {
@@ -1151,16 +1203,37 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, char *buffer, uint32_t buffer_size) {
         }
 
         if (buffer) {
+            uint32_t init_size = buffer_size;
             WRITE_UINT32(size);
             WRITE_BUF(atom->type, 4);
+            for (mp4p_atom_t *c = atom->subatoms; c; c = c->next) {
+                size += mp4p_atom_to_buffer (c, buffer, buffer_size);
+            }
+
+            return init_size - buffer_size;
         }
 
         return size;
     }
     else {
         if (buffer) {
-            // write this atom
+            if (atom->size == 0) {
+                _dbg_print_fourcc(atom->type);
+                printf (": size=0\n");
+                return 0;
+            }
+            WRITE_UINT32(atom->size);
+            WRITE_BUF(atom->type, 4);
+            if (!atom->to_buffer) {
+                _dbg_print_fourcc(atom->type);
+                printf (": doesn't have writer\n");
+                //WRITE_BUF(atom->data, atom->size - 8);
+            }
+            else {
+                return atom->to_buffer (atom, buffer, buffer_size);
+            }
         }
+
         return atom->size;
     }
     return 0;

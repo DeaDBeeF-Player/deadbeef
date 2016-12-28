@@ -12,6 +12,9 @@ typedef struct mp4p_atom_s {
     struct mp4p_atom_s *next;
 
     void (*free) (void *data);
+
+    // if to_buffer is null, data must point to a plain buffer of size-8 bytes, that can be saved directly
+    uint32_t (*to_buffer) (struct mp4p_atom_s *atom, char *buffer, uint32_t buffer_size);
 } mp4p_atom_t;
 
 typedef struct {
@@ -220,6 +223,6 @@ int
 mp4p_fourcc_compare (const char *value1, const char *value2);
 
 uint32_t
-mp4p_udta_to_buffer (mp4p_atom_t *udta, char *buffer, uint32_t buffer_size);
+mp4p_atom_to_buffer (mp4p_atom_t *atom, char *buffer, uint32_t buffer_size);
 
 #endif /* mp4parser_h */

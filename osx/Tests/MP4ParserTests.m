@@ -175,6 +175,17 @@
 
     pl_item_unref (it);
     mp4p_atom_dump (mp4file);
+
+    uint32_t size = mp4p_atom_to_buffer (mp4file, NULL, 0);
+    printf ("calculated size: %d\n", (int)size);
+
+    XCTAssert (size != 0);
+
+    char *buffer = malloc (size);
+    uint32_t written_size = mp4p_atom_to_buffer(mp4file, buffer, size);
+
+    XCTAssert (written_size == size);
+
     mp4p_atom_free (mp4file);
 }
 
