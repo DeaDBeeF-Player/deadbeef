@@ -65,11 +65,12 @@ typedef struct {
 } mp4p_mdhd_t;
 
 typedef struct {
-    uint32_t component_type;
-    uint32_t component_subtype;
-    uint32_t component_manufacturer;
+    char component_type[4];
+    char component_subtype[4];
+    char component_manufacturer[4];
     uint32_t component_flags;
     uint32_t component_flags_mask;
+    uint16_t buf_len;
     char *buf;
 } mp4p_hdlr_t;
 

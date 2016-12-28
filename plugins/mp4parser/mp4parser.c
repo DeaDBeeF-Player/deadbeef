@@ -389,16 +389,21 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
 
         READ_COMMON_HEADER();
 
-        hdlr->component_type = READ_UINT32(fp);
-        hdlr->component_subtype = READ_UINT32(fp);
-        hdlr->component_manufacturer = READ_UINT32(fp);
+        // NOTE: in the udta/meta/hdlr,
+        // type is "\0\0\0\0"
+        // the subtype is "mdir"
+        // and manufacturer is "appl"
+        READ_BUF(fp, hdlr->component_type, 4);
+        READ_BUF(fp, hdlr->component_subtype, 4);
+        READ_BUF(fp, hdlr->component_manufacturer, 4);
+
         hdlr->component_flags = READ_UINT32(fp);
         hdlr->component_flags_mask = READ_UINT32(fp);
 
-        uint16_t len = READ_UINT16(fp);
-        if (len) {
-            hdlr->buf = calloc (len, 1);
-            READ_BUF(fp, hdlr->buf, len);
+        hdlr->buf_len = READ_UINT16(fp);
+        if (hdlr->buf_len) {
+            hdlr->buf = calloc (hdlr->buf_len, 1);
+            READ_BUF(fp, hdlr->buf, hdlr->buf_len);
         }
     }
     else if (!_atom_type_compare(atom, "smhd")) {
