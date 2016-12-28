@@ -642,7 +642,6 @@
 		2D3420E71D0856F0004C136A /* mp4tagupdate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177571A0E8A3D004BC222 /* mp4tagupdate.c */; };
 		2D3420E81D0856F0004C136A /* mp4util.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177581A0E8A3D004BC222 /* mp4util.c */; };
 		2D3420EB1D085764004C136A /* libmp4ff.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
-		2D3420EC1D085771004C136A /* libmp4ff.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
 		2D3420EF1D085787004C136A /* libmp4ff.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
 		2D37CB421D1A91D500667E17 /* libmp4ff.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
 		2D3A4BBA1D631582002C7098 /* medialib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A4BB91D631582002C7098 /* medialib.c */; };
@@ -2098,13 +2097,6 @@
 			remoteInfo = artwork;
 		};
 		2D3420E91D085750004C136A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2D3420DB1D0856D5004C136A;
-			remoteInfo = mp4ff;
-		};
-		2D3420ED1D085776004C136A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
 			proxyType = 1;
@@ -4650,7 +4642,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D24B69F1E0E77C70059B1AE /* libmp4parser.a in Frameworks */,
-				2D3420EC1D085771004C136A /* libmp4ff.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9458,7 +9449,6 @@
 			);
 			dependencies = (
 				2D24B69E1E0E77B40059B1AE /* PBXTargetDependency */,
-				2D3420EE1D085776004C136A /* PBXTargetDependency */,
 			);
 			name = alac;
 			productName = m3u;
@@ -11804,11 +11794,6 @@
 			isa = PBXTargetDependency;
 			target = 2D3420DB1D0856D5004C136A /* mp4ff */;
 			targetProxy = 2D3420E91D085750004C136A /* PBXContainerItemProxy */;
-		};
-		2D3420EE1D085776004C136A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2D3420DB1D0856D5004C136A /* mp4ff */;
-			targetProxy = 2D3420ED1D085776004C136A /* PBXContainerItemProxy */;
 		};
 		2D37CB441D1A91DE00667E17 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
