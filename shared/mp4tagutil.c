@@ -25,7 +25,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include "mp4tagutil.h"
-#include "mp4ff.h"
 #include "mp4parser.h"
 
 #ifndef __linux__
@@ -66,62 +65,6 @@ static const char *_mp4_atom_map[] = {
     NULL, NULL
 };
 
-typedef struct {
-    DB_FILE *file;
-    int64_t junk;
-} file_info_t;
-
-static uint32_t
-_fs_read (void *user_data, void *buffer, uint32_t length) {
-    file_info_t *info = user_data;
-    return (uint32_t)deadbeef->fread (buffer, 1, length, info->file);
-}
-
-static uint32_t
-_fs_seek (void *user_data, uint64_t position) {
-    file_info_t *info = user_data;
-    return deadbeef->fseek (info->file, position+info->junk, SEEK_SET);
-}
-
-static uint32_t stdio_read (void *user_data, void *buffer, uint32_t length) {
-    return (uint32_t)read (*(int *)user_data, buffer, length);
-}
-
-static uint32_t stdio_write (void *user_data, void *buffer, uint32_t length) {
-    return (uint32_t)write (*(int *)user_data, buffer, length);
-}
-
-static uint32_t stdio_seek (void *user_data, uint64_t position) {
-    return (uint32_t)lseek64 (*(int *)user_data, position, SEEK_SET);
-}
-
-static uint32_t stdio_truncate (void *user_data) {
-    off64_t pos = lseek64 (*(int *)user_data, 0, SEEK_CUR);
-    return ftruncate(*(int *)user_data, pos);
-}
-
-static const char *metainfo[] = {
-    "artist", "artist",
-    "title", "title",
-    "album", "album",
-    "track", "track",
-    "date", "year",
-    "genre", "genre",
-    "comment", "comment",
-    "performer", "performer",
-    "album_artist", "band",
-    "writer", "composer",
-    "vendor", "vendor",
-    "disc", "disc",
-    "compilation", "compilation",
-    "totaldiscs", "numdiscs",
-    "copyright", "copyright",
-    "totaltracks", "numtracks",
-    "tool", "tool",
-    "MusicBrainz Track Id", "musicbrainz_trackid",
-    NULL
-};
-
 /* For writing:
  * Load/get the existing udta atom
  * If present:
@@ -129,7 +72,7 @@ static const char *metainfo[] = {
  *   Remove all known non-custom fields, keep the rest
  *   Remove all custom fields
  * If not present:
- *   Create new udta/meta/hdlr, udta/meta/ilst
+ *   Create new udta/meta/ilst
  * Re-append all new non-custom fields
  * Re-append all new custom fields
  * Generate data block
@@ -141,6 +84,25 @@ static const char *metainfo[] = {
  *   Append the new udta block to the end of file
  */
 
+static void
+_remove_known_fields (mp4p_atom_t *ilst) {
+    mp4p_atom_t *meta_atom = ilst->subatoms;
+    while (meta_atom) {
+        mp4p_atom_t *next = meta_atom->next;
+        mp4p_meta_t *meta = meta_atom->data;
+
+        for (int i = 0; _mp4_atom_map[i]; i++) {
+            char type[5];
+            memcpy (type, meta_atom->type, 4);
+            type[4] = 0;
+            if (meta->name || !strcasecmp(type, _mp4_atom_map[i])) {
+                mp4p_atom_remove_subatom (ilst, meta_atom);
+                break;
+            }
+        }
+        meta_atom = next;
+    }
+}
 
 int
 mp4_write_metadata (DB_playItem_t *it) {
@@ -152,45 +114,38 @@ mp4_write_metadata (DB_playItem_t *it) {
         return -1;
     }
 
-    file_info_t inf;
-    memset (&inf, 0, sizeof (inf));
-    inf.file = fp;
-    inf.junk = deadbeef->junk_get_leading_size (fp);
-    if (inf.junk >= 0) {
-        deadbeef->fseek (inf.file, inf.junk, SEEK_SET);
+    int junk = deadbeef->junk_get_leading_size (fp);
+    if (junk >= 0) {
+        deadbeef->fseek (fp, junk, SEEK_SET);
     }
     else {
-        inf.junk = 0;
+        junk = 0;
     }
 
-    mp4ff_callback_t read_cb = {
-        .read = _fs_read,
-        .write = NULL,
-        .seek = _fs_seek,
-        .truncate = NULL,
-        .user_data = &inf
-    };
+    mp4p_file_callbacks_t mp4reader;
+    mp4reader.data = fp;
+    mp4reader.fread = (size_t (*) (void *ptr, size_t size, size_t nmemb, void *stream))deadbeef->fread;
+    mp4reader.fseek = (int (*) (void *stream, int64_t offset, int whence))deadbeef->fseek;
+    mp4reader.ftell = (int64_t (*) (void *stream))deadbeef->ftell;
+    mp4p_atom_t *mp4file = mp4p_open(NULL, &mp4reader);
 
-    mp4ff_t *mp4 = mp4ff_open_read (&read_cb);
     deadbeef->fclose (fp);
 
-    if (!mp4) {
+    if (!mp4file) {
         return -1;
     }
 
-    deadbeef->pl_lock ();
-    int fd_out = open (deadbeef->pl_find_meta (it, ":URI"), O_LARGEFILE | O_RDWR);
-    deadbeef->pl_unlock ();
-
-    mp4ff_callback_t write_cb = {
-        .read = stdio_read,
-        .write = stdio_write,
-        .seek = stdio_seek,
-        .truncate = stdio_truncate,
-        .user_data = &fd_out
-    };
-
-    mp4ff_tag_delete (&mp4->tags);
+    mp4p_atom_t *meta = mp4p_atom_find(mp4file, "moov/udta/meta");
+    mp4p_atom_t *ilst = NULL;
+    if (meta) {
+        ilst = mp4p_atom_find(meta, "meta/ilst");
+    }
+    if (ilst) {
+        _remove_known_fields (ilst);
+    }
+    else {
+        ilst = mp4p_atom_new ("ilst");
+    }
 
     deadbeef->pl_lock ();
     DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it);
@@ -198,9 +153,18 @@ mp4_write_metadata (DB_playItem_t *it) {
         if (strchr (":!_", m->key[0])) {
             break;
         }
+
+        if (!strcasecmp (m->key, "track")
+            || !strcasecmp (m->key, "numtracks")
+            || !strcasecmp (m->key, "disc")
+            || !strcasecmp (m->key, "numdiscs")
+            || !strcasecmp (m->key, "genre")) {
+            continue;
+        }
+
         int i;
-        for (i = 0; metainfo[i]; i += 2) {
-            if (!strcasecmp (metainfo[i+1], m->key)) {
+        for (i = 0; _mp4_atom_map[i]; i += 2) {
+            if (!strcasecmp (_mp4_atom_map[i+1], m->key)) {
                 break;
             }
         }
@@ -208,11 +172,45 @@ mp4_write_metadata (DB_playItem_t *it) {
         const char *value = m->value;
         const char *end = m->value + m->valuesize;
         while (value < end) {
-            mp4ff_tag_add_field (&mp4->tags, metainfo[i] ? metainfo[i] : m->key, value);
+            if (!_mp4_atom_map[i] || strlen (_mp4_atom_map[i]) != 4) {
+                mp4p_ilst_append_custom(mp4file, _mp4_atom_map[i] ? _mp4_atom_map[i] : m->key, value);
+            }
+            else {
+                mp4p_ilst_append_text(ilst, _mp4_atom_map[i], value);
+            }
             size_t l = strlen (value) + 1;
             value += l;
         }
         m = m->next;
+    }
+
+    const char *genre = deadbeef->pl_find_meta (it, "genre");
+    if (genre) {
+        mp4p_ilst_append_genre (ilst, genre);
+    }
+    const char *track = deadbeef->pl_find_meta (it, "track");
+    const char *numtracks = deadbeef->pl_find_meta (it, "numtracks");
+    const char *disc = deadbeef->pl_find_meta (it, "disc");
+    const char *numdiscs = deadbeef->pl_find_meta (it, "numdiscs");
+
+    uint16_t itrack = 0, inumtracks = 0, idisc = 0, inumdiscs = 0;
+    if (track) {
+        itrack = atoi (track);
+    }
+    if (numtracks) {
+        inumtracks = atoi (numtracks);
+    }
+    if (disc) {
+        idisc = atoi (disc);
+    }
+    if (numdiscs) {
+        inumdiscs = atoi (numdiscs);
+    }
+    if (itrack || inumtracks) {
+        mp4p_ilst_append_track_disc(mp4file, "trck", itrack, inumtracks);
+    }
+    if (idisc || inumdiscs) {
+        mp4p_ilst_append_track_disc(mp4file, "disk", itrack, inumtracks);
     }
 
     static const char *tag_rg_names[] = {
@@ -238,18 +236,13 @@ mp4_write_metadata (DB_playItem_t *it) {
             float value = deadbeef->pl_get_item_replaygain (it, n);
             char s[100];
             snprintf (s, sizeof (s), "%f", value);
-            mp4ff_tag_add_field (&mp4->tags, tag_rg_names[n], s);
+            mp4p_ilst_append_custom(mp4file, tag_rg_names[n], s);
         }
     }
 
     deadbeef->pl_unlock ();
 
-    int32_t res = mp4ff_meta_update(&write_cb, &mp4->tags);
-
-    mp4ff_close (mp4);
-    close (fd_out);
-    
-    return !res;
+    return mp4p_update_metadata (mp4file);
 }
 
 static void

@@ -1050,3 +1050,36 @@ mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *tex
 
     return atom;
 }
+
+void
+mp4p_atom_remove_subatom (mp4p_atom_t *atom, mp4p_atom_t *subatom) {
+    mp4p_atom_t *c = atom->subatoms;
+    mp4p_atom_t *prev = NULL;
+    while (c) {
+        mp4p_atom_t *next = c->next;
+        if (c == subatom) {
+            mp4p_atom_free (subatom);
+            if (prev) {
+                prev->next = next;
+            }
+            else {
+                atom->subatoms = next;
+            }
+            return;
+        }
+        prev = c;
+        c = next;
+    }
+}
+
+mp4p_atom_t *
+mp4p_atom_new (const char *type) {
+    mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
+    memcpy (atom->type, type, 4);
+    return atom;
+}
+
+int
+mp4p_update_metadata (mp4p_atom_t *root) {
+    return 0;
+}

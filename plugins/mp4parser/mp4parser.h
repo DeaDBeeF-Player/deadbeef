@@ -185,4 +185,25 @@ mp4p_sample_offset (mp4p_atom_t *stbl_atom, uint32_t sample);
 const char *
 mp4p_genre_name_for_index (uint16_t index);
 
+void
+mp4p_atom_remove_subatom (mp4p_atom_t *atom, mp4p_atom_t *subatom);
+
+mp4p_atom_t *
+mp4p_atom_new (const char *type);
+
+mp4p_atom_t *
+mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text);
+
+mp4p_atom_t *
+mp4p_ilst_append_track_disc (mp4p_atom_t *ilst_atom, const char *type, uint16_t index, uint16_t total);
+
+mp4p_atom_t *
+mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *text);
+
+mp4p_atom_t *
+mp4p_ilst_append_custom (mp4p_atom_t *ilst_atom, const char *name, const char *text);
+
+int
+mp4p_update_metadata (mp4p_atom_t *root);
+
 #endif /* mp4parser_h */
