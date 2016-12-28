@@ -163,15 +163,18 @@
     pl_append_meta(it, "title", "Title");
     pl_append_meta(it, "artist", "Artist");
     pl_append_meta(it, "album", "Album");
+    pl_append_meta(it, "my custom tag 1", "custom tag value 1");
     pl_append_meta(it, "genre", "Folk");
     pl_append_meta(it, "track", "5");
     pl_append_meta(it, "numtracks", "15");
     pl_append_meta(it, "disc", "3");
     pl_append_meta(it, "numdiscs", "5");
+    pl_append_meta(it, "my custom tag 2", "custom tag value 2");
 
     mp4tagutil_modify_meta(mp4file, (DB_playItem_t *)it);
 
     pl_item_unref (it);
+    mp4p_atom_dump (mp4file);
     mp4p_atom_free (mp4file);
 }
 

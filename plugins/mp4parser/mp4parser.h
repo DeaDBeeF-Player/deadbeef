@@ -207,7 +207,19 @@ mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *tex
 mp4p_atom_t *
 mp4p_ilst_append_custom (mp4p_atom_t *ilst_atom, const char *name, const char *text);
 
+void
+mp4p_atom_dump (mp4p_atom_t *atom);
+
+void
+mp4p_hdlr_init (mp4p_atom_t *hdlr_atom, const char *type, const char *subtype, const char *manufacturer);
+
 int
-mp4p_update_metadata (mp4p_atom_t *root);
+mp4p_atom_type_compare (mp4p_atom_t *atom, const char *type);
+
+int
+mp4p_fourcc_compare (const char *value1, const char *value2);
+
+uint32_t
+mp4p_udta_to_buffer (mp4p_atom_t *udta, char *buffer, uint32_t buffer_size);
 
 #endif /* mp4parser_h */

@@ -21,8 +21,15 @@ mp4p_atom_free (mp4p_atom_t *atom) {
     free (atom);
 }
 
-static int _atom_type_compare (mp4p_atom_t *atom, const char *type) {
-    return memcmp (atom->type, type, 4);
+int
+mp4p_fourcc_compare (const char *value1, const char *value2) {
+    // FIXME: should be case-insensitive
+    return memcmp (value1, value2, 4);
+}
+
+int
+mp4p_atom_type_compare (mp4p_atom_t *atom, const char *type) {
+    return mp4p_fourcc_compare(atom->type, type);
 }
 
 static int _dbg_indent = 0;
@@ -301,12 +308,12 @@ int
 mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     _dbg_print_atom (atom);
     for (int i = 0; container_atoms[i]; i++) {
-        if (!_atom_type_compare (atom, container_atoms[i])) {
+        if (!mp4p_atom_type_compare (atom, container_atoms[i])) {
             return _load_subatoms(atom, fp);
         }
     }
 
-    if (!_atom_type_compare (atom, "ftyp")) {
+    if (!mp4p_atom_type_compare (atom, "ftyp")) {
         mp4p_mtyp_t *mtyp = calloc (sizeof (mp4p_mtyp_t), 1);
         atom->data = mtyp;
         atom->free = free;
@@ -324,7 +331,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         }
 #endif
     }
-    else if (!_atom_type_compare(atom, "mvhd")) {
+    else if (!mp4p_atom_type_compare(atom, "mvhd")) {
         mp4p_mvhd_t *mvhd = calloc (sizeof (mp4p_mvhd_t), 1);
         atom->data = mvhd;
         atom->free = free;
@@ -347,7 +354,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         mvhd->current_time = READ_UINT32(fp);
         mvhd->next_track_id = READ_UINT32(fp);
     }
-    else if (!_atom_type_compare(atom, "tkhd")) {
+    else if (!mp4p_atom_type_compare(atom, "tkhd")) {
         mp4p_tkhd_t *tkhd = calloc (sizeof (mp4p_tkhd_t), 1);
         atom->data = tkhd;
         atom->free = free;
@@ -368,7 +375,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         tkhd->track_width = READ_UINT32(fp);
         tkhd->track_height = READ_UINT32(fp);
     }
-    else if (!_atom_type_compare(atom, "mdhd")) {
+    else if (!mp4p_atom_type_compare(atom, "mdhd")) {
         mp4p_mdhd_t *mdhd = calloc (sizeof (mp4p_mdhd_t), 1);
         atom->data = mdhd;
         atom->free = free;
@@ -382,7 +389,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         mdhd->language = READ_UINT16(fp);
         mdhd->quality = READ_UINT16(fp);
     }
-    else if (!_atom_type_compare(atom, "hdlr")) {
+    else if (!mp4p_atom_type_compare(atom, "hdlr")) {
         mp4p_hdlr_t *hdlr = calloc (sizeof (mp4p_hdlr_t), 1);
         atom->data = hdlr;
         atom->free = _hdlr_free;
@@ -406,7 +413,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
             READ_BUF(fp, hdlr->buf, hdlr->buf_len);
         }
     }
-    else if (!_atom_type_compare(atom, "smhd")) {
+    else if (!mp4p_atom_type_compare(atom, "smhd")) {
         mp4p_smhd_t *smhd = calloc (sizeof (mp4p_smhd_t), 1);
         atom->data = smhd;
         atom->free = free;
@@ -415,7 +422,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
 
         smhd->balance = READ_UINT16(fp);
     }
-    else if (!_atom_type_compare(atom, "stsd")) {
+    else if (!mp4p_atom_type_compare(atom, "stsd")) {
         mp4p_stsd_t *stsd = calloc (sizeof (mp4p_stsd_t), 1);
         atom->data = stsd;
         atom->free = free;
@@ -424,7 +431,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         stsd->number_of_entries = READ_UINT32(fp);
         _load_subatoms(atom, fp);
     }
-    else if (!_atom_type_compare(atom, "stts")) {
+    else if (!mp4p_atom_type_compare(atom, "stts")) {
         mp4p_stts_t *stts = calloc (sizeof (mp4p_stts_t), 1);
         atom->data = stts;
         atom->free = _stts_free;
@@ -440,7 +447,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
             stts->entries[i].sample_duration = READ_UINT32(fp);
         }
     }
-    else if (!_atom_type_compare(atom, "stsc")) {
+    else if (!mp4p_atom_type_compare(atom, "stsc")) {
         mp4p_stsc_t *stsc = calloc (sizeof (mp4p_stsc_t), 1);
         atom->data = stsc;
         atom->free = _stsc_free;
@@ -457,7 +464,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
             stsc->entries[i].sample_description_id = READ_UINT32(fp);
         }
     }
-    else if (!_atom_type_compare(atom, "stsz")) {
+    else if (!mp4p_atom_type_compare(atom, "stsz")) {
         mp4p_stsz_t *stsz = calloc (sizeof (mp4p_stsz_t), 1);
         atom->data = stsz;
         atom->free = _stsz_free;
@@ -473,7 +480,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
             stsz->entries[i].sample_size = READ_UINT32(fp);
         }
     }
-    else if (!_atom_type_compare(atom, "stco")) {
+    else if (!mp4p_atom_type_compare(atom, "stco")) {
         mp4p_stco_t *stco = calloc (sizeof (mp4p_stco_t), 1);
         atom->data = stco;
         atom->free = _stco_free;
@@ -488,7 +495,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
             stco->entries[i].offset = (uint64_t)READ_UINT32(fp);
         }
     }
-    else if (!_atom_type_compare(atom, "co64")) {
+    else if (!mp4p_atom_type_compare(atom, "co64")) {
         mp4p_stco_t *stco = calloc (sizeof (mp4p_stco_t), 1);
         atom->data = stco;
         atom->free = _stco_free;
@@ -503,7 +510,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
             stco->entries[i].offset = READ_UINT64(fp);
         }
     }
-    else if (!_atom_type_compare(atom, "dref")) {
+    else if (!mp4p_atom_type_compare(atom, "dref")) {
         mp4p_stco_t *dref = calloc (sizeof (mp4p_dref_t), 1);
         atom->data = dref;
         atom->free = free;
@@ -513,10 +520,10 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         dref->number_of_entries = READ_UINT32(fp);
         _load_subatoms(atom, fp);
     }
-    else if (!_atom_type_compare(atom, "tref")) {
+    else if (!mp4p_atom_type_compare(atom, "tref")) {
         _load_subatoms(atom, fp);
     }
-    else if (!_atom_type_compare(atom, "alac")) {
+    else if (!mp4p_atom_type_compare(atom, "alac")) {
         mp4p_alac_t *alac = calloc (sizeof (mp4p_alac_t), 1);
         atom->data = alac;
         atom->free = _alac_free;
@@ -540,14 +547,14 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         alac->asc = calloc (alac->asc_size, 1);
         READ_BUF(fp, alac->asc, alac->asc_size);
     }
-    else if (!_atom_type_compare(atom, "meta")) {
+    else if (!mp4p_atom_type_compare(atom, "meta")) {
         READ_COMMON_HEADER();
         return _load_subatoms(atom, fp);
     }
-    else if (!_atom_type_compare(atom, "ilst")) {
+    else if (!mp4p_atom_type_compare(atom, "ilst")) {
         return _load_subatoms(atom, fp);
     }
-    else if (parent_atom && !_atom_type_compare(parent_atom, "ilst")) {
+    else if (parent_atom && !mp4p_atom_type_compare(parent_atom, "ilst")) {
         return _load_metadata_atom (atom, fp);
     }
 
@@ -999,6 +1006,10 @@ mp4p_ilst_append_custom (mp4p_atom_t *ilst_atom, const char *name, const char *t
     atom->free = _meta_free;
 
     memcpy (atom->type, "----", 4);
+    atom->size = 24;
+    atom->size = (uint32_t)(strlen(name)+strlen(text));
+    atom->size += 28; // mean
+    atom->size += 12; // name
     meta->name = strdup (name);
     meta->text = strdup (text);
     return mp4p_atom_append (ilst_atom, atom);
@@ -1014,12 +1025,14 @@ mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text) {
     uint16_t genre_id = mp4p_genre_index_for_name (text);
     if (genre_id) {
         memcpy (atom->type, "gnre", 4);
+        atom->size = 24+2;
         meta->version_flags = 0;
         meta->values = malloc (2);
         meta->values[0] = genre_id;
     }
     else {
         memcpy (atom->type, COPYRIGHT_SYM "gen", 4);
+        atom->size = 24 + (uint32_t)strlen(text);
         meta->version_flags = 1;
         meta->text = strdup (text);
     }
@@ -1032,6 +1045,7 @@ mp4p_ilst_append_track_disc (mp4p_atom_t *ilst_atom, const char *type, uint16_t 
     mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
     atom->data = meta;
     atom->free = _meta_free;
+    atom->size = 24+6;
 
     memcpy (atom->type, type, 4);
     meta->version_flags = 0;
@@ -1048,6 +1062,7 @@ mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *tex
     mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
     atom->data = meta;
     atom->free = _meta_free;
+    atom->size = 24+(uint32_t)strlen(text);
 
     memcpy (atom->type, type, 4);
     meta->version_flags = 1;
@@ -1101,7 +1116,53 @@ mp4p_atom_append (mp4p_atom_t *parent, mp4p_atom_t *atom) {
     return atom;
 }
 
-int
-mp4p_update_metadata (mp4p_atom_t *root) {
+void
+mp4p_atom_dump (mp4p_atom_t *atom) {
+    _dbg_print_atom(atom);
+    _dbg_indent += 4;
+    for (mp4p_atom_t *c = atom->subatoms; c; c = c->next) {
+        mp4p_atom_dump (c);
+    }
+    _dbg_indent -= 4;
+}
+
+void
+mp4p_hdlr_init (mp4p_atom_t *hdlr_atom, const char *type, const char *subtype, const char *manufacturer) {
+    mp4p_hdlr_t *hdlr = calloc(sizeof (mp4p_hdlr_t), 1);
+    hdlr_atom->data = hdlr;
+    hdlr_atom->free = _hdlr_free;
+    memcpy (hdlr->component_type, type, 4);
+    memcpy (hdlr->component_subtype, subtype, 4);
+    memcpy (hdlr->component_manufacturer, manufacturer, 4);
+}
+
+#define WRITE_UINT8(x)
+#define WRITE_UINT16(x)
+#define WRITE_UINT32(x)
+#define WRITE_BUF(buf,size)
+
+uint32_t
+mp4p_atom_to_buffer (mp4p_atom_t *atom, char *buffer, uint32_t buffer_size) {
+    // calculate the size of all sub-atoms
+    if (atom->subatoms) {
+        uint32_t size = 8;
+        for (mp4p_atom_t *c = atom->subatoms; c; c = c->next) {
+            size += mp4p_atom_to_buffer (c, NULL, 0);
+        }
+
+        if (buffer) {
+            WRITE_UINT32(size);
+            WRITE_BUF(atom->type, 4);
+        }
+
+        return size;
+    }
+    else {
+        if (buffer) {
+            // write this atom
+        }
+        return atom->size;
+    }
     return 0;
 }
+
