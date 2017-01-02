@@ -1355,3 +1355,11 @@ on_trkproperties_crop_activate         (GtkMenuItem     *menuitem,
 void
 on_trkproperties_edit_activate         (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_pref_replaygain_source_mode_changed (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_pref_replaygain_processing_changed  (GtkComboBox     *combobox,
+                                        gpointer         user_data);
