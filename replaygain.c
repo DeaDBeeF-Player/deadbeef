@@ -234,8 +234,6 @@ apply_replay_gain_float32 (ddb_replaygain_settings_t *settings, char *bytes, int
     float vol = 1.f;
     int mode = _get_source_mode (settings->source_mode);
     switch (mode) {
-    case DDB_RG_SOURCE_MODE_PLAYBACK_ORDER:
-        break;
     case DDB_RG_SOURCE_MODE_TRACK:
         if (!settings->has_track_gain) {
             vol = settings->preamp_without_rg;
