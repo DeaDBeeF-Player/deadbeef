@@ -155,7 +155,7 @@
     XCTAssert(offs == 20000, @"Got %lld instead of expected 20000", offs);
 }
 
-- (void)test_addMetadataBlockToEmptyMP4 {
+- (void)test_WriteMoovWithMetadataToBuffer_WrittenSizeMatchingCalculatedSize {
     mp4p_atom_t *mp4file = mp4p_atom_new("moov");
 
     playItem_t *it = pl_item_alloc();
@@ -184,9 +184,9 @@
     char *buffer = malloc (size);
     uint32_t written_size = mp4p_atom_to_buffer(mp4file, buffer, size);
 
-    XCTAssert (written_size == size);
-
     mp4p_atom_free (mp4file);
+
+    XCTAssert (written_size == size);
 }
 
 @end

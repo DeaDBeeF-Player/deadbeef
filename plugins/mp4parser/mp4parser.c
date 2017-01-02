@@ -1102,12 +1102,14 @@ mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text) {
         meta->version_flags = 0;
         meta->values = malloc (2);
         meta->values[0] = genre_id;
+        meta->data_size = 2;
     }
     else {
         memcpy (atom->type, COPYRIGHT_SYM "gen", 4);
         atom->size = 24 + (uint32_t)strlen(text);
         meta->version_flags = 1;
         meta->text = strdup (text);
+        meta->data_size = (uint32_t)strlen(text);
     }
     return mp4p_atom_append (ilst_atom, atom);
 }
@@ -1124,6 +1126,7 @@ mp4p_ilst_append_track_disc (mp4p_atom_t *ilst_atom, const char *type, uint16_t 
     memcpy (atom->type, type, 4);
     meta->version_flags = 0;
     meta->values = malloc (6);
+    meta->data_size = 6;
     meta->values[0] = 0;
     meta->values[1] = index;
     meta->values[2] = total;
