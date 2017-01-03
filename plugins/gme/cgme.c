@@ -59,6 +59,7 @@ typedef struct {
     float duration; // of current song
     int eof;
     int can_loop;
+    int fade_set;
 } gme_fileinfo_t;
 
 static DB_fileinfo_t *
@@ -244,8 +245,6 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
         if (t <= 0) {
             return 0;
         }
-        // DON'T ajust size, buffer must always be po2
-        //size = t * (float)info->samplerate * 4;
     }
 
     if (chip_voices_changed) {
@@ -253,11 +252,16 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
         chip_voices_changed = 0;
         gme_mute_voices (info->emu, chip_voices^0xff);
     }
-    
-    if (playForever)
+
+    // FIXME: it makes more sense to call gme_set_fade on init and configchanged
+    if (playForever && info->fade_set) {
         gme_set_fade(info->emu, -1, 0);
-    else
-        gme_set_fade(info->emu, (int)(info->duration * 1000), conf_fadeout * 1000);
+        info->fade_set = 0;
+    }
+    else if (!playForever && !info->fade_set && conf_fadeout > 0 && info->duration >= conf_fadeout && info->reallength <= 0 && _info->readpos >= info->duration - conf_fadeout) {
+        gme_set_fade(info->emu, (int)(_info->readpos * 1000), conf_fadeout * 1000);
+        info->fade_set = 1;
+    }
 
     if (gme_play (info->emu, size/2, (short*)bytes)) {
         return 0;
