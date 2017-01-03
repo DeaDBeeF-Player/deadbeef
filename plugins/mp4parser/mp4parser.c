@@ -341,7 +341,7 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 
     READ_UINT32(fp);
 
-    meta->data_size = size - 32;
+    meta->data_size = size - 12;
 
     meta->data_offset = fp->ftell (fp->data);
 
@@ -351,7 +351,6 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
         meta->values = calloc (meta->data_size / 2, 1);
         for (int i = 0; i < meta->data_size/2; i++) {
             meta->values[i] = READ_UINT16(fp);
-            printf ("%d\n", (int)meta->values[i]);
         }
     }
     else if (flag == 1) {
