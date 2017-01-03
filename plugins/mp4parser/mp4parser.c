@@ -232,6 +232,15 @@ _meta_free (void *data) {
     free (meta);
 }
 
+static void
+_esds_free (void *data) {
+    mp4p_esds_t *esds = data;
+    if (esds->asc) {
+        free (esds->asc);
+    }
+    free (esds);
+}
+
 static uint32_t
 _meta_write (mp4p_atom_t *atom, char *buffer, uint32_t buffer_size) {
     uint32_t init_size = buffer_size;
@@ -367,6 +376,22 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
         return -1;
     }
 
+    return 0;
+}
+
+// read tag size, encoded in a 1-4 byte sequence, terminated when high bit is 0
+int
+_read_esds_tag_size (mp4p_file_callbacks_t *fp, uint32_t *retval) {
+    uint32_t num = 0;
+    for (int i = 0; i < 4; i++) {
+        uint8_t val = READ_UINT8(fp);
+        num <<= 7;
+        num |= (val & 0x7f);
+        if (!(val & 0x80)) {
+            break;
+        }
+    }
+    *retval = num;
     return 0;
 }
 
@@ -615,6 +640,85 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         alac->asc = calloc (alac->asc_size, 1);
         READ_BUF(fp, alac->asc, alac->asc_size);
     }
+    // mp4a is the same as alac, but followed with subatoms
+    else if (!mp4p_atom_type_compare(atom, "mp4a")) {
+        mp4p_mp4a_t *mp4a = calloc (sizeof (mp4p_mp4a_t), 1);
+        atom->data = mp4a;
+
+        READ_BUF(fp, mp4a->reserved, 6);
+        mp4a->data_reference_index = READ_UINT16(fp);
+
+        READ_BUF(fp, mp4a->reserved2, 8);
+
+        // we parse these values, but also read them into the ASC
+        mp4a->channel_count = READ_UINT16(fp);
+        mp4a->bps = READ_UINT16(fp);
+        mp4a->packet_size = READ_UINT16(fp);
+        mp4a->sample_rate = READ_UINT32(fp);
+
+        READ_BUF(fp, mp4a->reserved3, 2);
+
+        return _load_subatoms(atom, fp);
+    }
+    else if (!mp4p_atom_type_compare(atom, "esds")) {
+        mp4p_esds_t *esds = calloc (sizeof (mp4p_esds_t), 1);
+        atom->data = esds;
+        atom->free = _esds_free;
+
+        READ_COMMON_HEADER();
+
+        uint8_t es_tag = READ_UINT8(fp);
+        if (es_tag == 3)
+        {
+            uint32_t es_tag_size;
+            if (_read_esds_tag_size (fp, &es_tag_size)) {
+                return -1;
+            }
+            if (es_tag_size < 20) {
+                return -1;
+            }
+
+            READ_UINT8(fp);
+        }
+
+        READ_UINT8(fp);
+        READ_UINT8(fp);
+
+        uint8_t dc_tag = READ_UINT8(fp);
+        if (dc_tag != 4) {
+            return -1;
+        }
+
+        uint32_t dc_tag_size;
+        if (_read_esds_tag_size (fp, &dc_tag_size)) {
+            return -1;
+        }
+        if (dc_tag_size < 13) {
+            return -1;
+        }
+
+        esds->dc_audiotype = READ_UINT8(fp);
+        esds->dc_audiostream = READ_UINT8(fp);
+        READ_BUF(fp, esds->dc_buffersize_db, 3);
+
+        esds->dc_max_bitrate = READ_UINT32(fp);
+        esds->dc_avg_bitrate = READ_UINT32(fp);
+
+        uint8_t ds_tag = READ_UINT8(fp);
+        if (ds_tag != 5) {
+            return -1;
+        }
+
+        if (_read_esds_tag_size(fp, &esds->asc_size)) {
+            return -1;
+        }
+        if (!esds->asc_size) {
+            return 0;
+        }
+
+        esds->asc = malloc (esds->asc_size);
+        READ_BUF(fp, esds->asc, esds->asc_size);
+    }
     else if (!mp4p_atom_type_compare(atom, "meta")) {
         READ_COMMON_HEADER();
         return _load_subatoms(atom, fp);
@@ -642,7 +746,6 @@ _atom_load (mp4p_atom_t *parent_atom, mp4p_file_callbacks_t *fp) {
 
     atom->pos = fpos;
 
-    // big-endian
     if (_read_uint32 (fp, &atom->size) < 0) {
         goto error;
     }

@@ -145,6 +145,28 @@ typedef struct {
 } mp4p_alac_t;
 
 typedef struct {
+    uint8_t reserved[6];
+    uint16_t data_reference_index;
+    uint8_t reserved2[8];
+    uint16_t channel_count;
+    uint16_t bps;
+    uint16_t packet_size;
+    uint32_t sample_rate;
+    uint8_t reserved3[2];
+} mp4p_mp4a_t;
+
+typedef struct {
+    uint8_t dc_audiotype;
+    uint8_t dc_audiostream;
+    uint8_t dc_buffersize_db[3];
+    uint32_t dc_max_bitrate;
+    uint32_t dc_avg_bitrate;
+
+    uint32_t asc_size;
+    char *asc;
+} mp4p_esds_t;
+
+typedef struct {
     uint32_t version_flags;
     uint32_t data_size;
     uint64_t data_offset;
