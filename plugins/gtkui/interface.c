@@ -1813,7 +1813,7 @@ create_prefwin (void)
   gtk_container_add (GTK_CONTAINER (frame14), alignment30);
   gtk_alignment_set_padding (GTK_ALIGNMENT (alignment30), 0, 0, 12, 0);
 
-  vbox48 = gtk_vbox_new (FALSE, 0);
+  vbox48 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox48);
   gtk_container_add (GTK_CONTAINER (alignment30), vbox48);
 
