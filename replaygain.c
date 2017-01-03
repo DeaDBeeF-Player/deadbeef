@@ -123,7 +123,7 @@ get_int_volume (ddb_replaygain_settings_t *settings) {
     int mode = _get_source_mode (settings->source_mode);
     switch (mode) {
     case DDB_RG_SOURCE_MODE_TRACK:
-        if (settings->has_track_gain) {
+        if (!settings->has_track_gain) {
             vol = settings->preamp_without_rg * 1000;
         } else {
             vol = settings->preamp_with_rg * settings->trackgain * 1000;
@@ -135,7 +135,7 @@ get_int_volume (ddb_replaygain_settings_t *settings) {
         }
         break;
     case DDB_RG_SOURCE_MODE_ALBUM:
-        if (settings->has_album_gain) {
+        if (!settings->has_album_gain) {
             vol = settings->preamp_without_rg *  1000;
         } else {
             vol = settings->preamp_with_rg * settings->albumgain * 1000;
@@ -234,8 +234,6 @@ apply_replay_gain_float32 (ddb_replaygain_settings_t *settings, char *bytes, int
     float vol = 1.f;
     int mode = _get_source_mode (settings->source_mode);
     switch (mode) {
-    case DDB_RG_SOURCE_MODE_PLAYBACK_ORDER:
-        break;
     case DDB_RG_SOURCE_MODE_TRACK:
         if (!settings->has_track_gain) {
             vol = settings->preamp_without_rg;

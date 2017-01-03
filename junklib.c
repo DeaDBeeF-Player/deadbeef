@@ -1578,7 +1578,7 @@ int
 junk_add_disc_meta (playItem_t *it, const char *disc) {
     char *slash = strchr (disc, '/');
     if (slash) {
-        // split into track/number
+        // split into disc/number
         *slash = 0;
         slash++;
         pl_add_meta (it, "numdiscs", slash);
@@ -1620,6 +1620,9 @@ junk_apev2_add_frame (playItem_t *it, DB_apev2_tag_t *tag_store, DB_apev2_frame_
                 if (frame_mapping[m + MAP_APEV2] && !strcasecmp (key, frame_mapping[m + MAP_APEV2])) {
                     if (!strcmp (frame_mapping[m+MAP_DDB], "track")) {
                         junk_add_track_meta (it, value);
+                    }
+                    else if (!strcmp (frame_mapping[m+MAP_DDB], "disc")) {
+                        junk_add_disc_meta (it, value);
                     }
                     else {
                         trace ("pl_append_meta %s %s\n", frame_mapping[m+MAP_DDB], value);

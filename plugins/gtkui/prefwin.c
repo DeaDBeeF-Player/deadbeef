@@ -208,17 +208,30 @@ gtkui_run_preferences_dlg (void) {
             NULL);
 
     // replaygain_mode
-    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_mode"));
-    set_combobox (combobox, deadbeef->conf_get_int ("replaygain_mode", 0));
+    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_source_mode"));
+    set_combobox (combobox, deadbeef->conf_get_int ("replaygain.source_mode", 0));
 
-    // replaygain_scale
-    set_toggle_button("pref_replaygain_scale", deadbeef->conf_get_int ("replaygain_scale", 1));
+    // replaygain_processing
+    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_processing"));
+    int processing_idx = 0;
+    int processing_flags = deadbeef->conf_get_int ("replaygain.processing_flags", 0);
+    if (processing_flags == DDB_RG_PROCESSING_GAIN) {
+        processing_idx = 1;
+    }
+    else if (processing_flags == (DDB_RG_PROCESSING_GAIN|DDB_RG_PROCESSING_PREVENT_CLIPPING)) {
+        processing_idx = 2;
+    }
+    else if (processing_flags == DDB_RG_PROCESSING_PREVENT_CLIPPING) {
+        processing_idx = 3;
+    }
 
-    // replaygain_preamp
-    set_scale("replaygain_preamp", deadbeef->conf_get_int ("replaygain_preamp", 0));
+    set_combobox (combobox, processing_idx);
 
-    // global_preamp
-    set_scale("global_preamp", deadbeef->conf_get_int ("global_preamp", 0));
+    // preamp with rg
+    set_scale("replaygain_preamp", deadbeef->conf_get_int ("replaygain.preamp_with_rg", 0));
+
+    // preamp without rg
+    set_scale("global_preamp", deadbeef->conf_get_int ("replaygain.preamp_without_rg", 0));
 
     // 8_to_16
     set_toggle_button("convert8to16", deadbeef->conf_get_int ("streamer.8_to_16", 1));
@@ -475,13 +488,35 @@ on_pref_output_plugin_changed          (GtkComboBox     *combobox,
 }
 
 void
-on_pref_replaygain_mode_changed        (GtkComboBox     *combobox,
+on_pref_replaygain_source_mode_changed (GtkComboBox     *combobox,
                                         gpointer         user_data)
 {
     int active = gtk_combo_box_get_active (combobox);
-    deadbeef->conf_set_int ("replaygain_mode", active == -1 ? 0 : active);
+    deadbeef->conf_set_int ("replaygain.source_mode", active);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
+
+
+void
+on_pref_replaygain_processing_changed  (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    uint32_t flags = 0;
+    int idx = gtk_combo_box_get_active (combobox);
+    if (idx == 1) {
+        flags = DDB_RG_PROCESSING_GAIN;
+    }
+    if (idx == 2) {
+        flags = DDB_RG_PROCESSING_GAIN | DDB_RG_PROCESSING_PREVENT_CLIPPING;
+    }
+    if (idx == 3) {
+        flags = DDB_RG_PROCESSING_PREVENT_CLIPPING;
+    }
+
+    deadbeef->conf_set_int ("replaygain.processing_flags", flags);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
 
 void
 on_pref_replaygain_scale_clicked       (GtkButton       *button,
@@ -497,7 +532,7 @@ on_replaygain_preamp_value_changed     (GtkRange        *range,
                                         gpointer         user_data)
 {
     float val = gtk_range_get_value (range);
-    deadbeef->conf_set_float ("replaygain_preamp", val);
+    deadbeef->conf_set_float ("replaygain.preamp_with_rg", val);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
@@ -506,7 +541,7 @@ on_global_preamp_value_changed     (GtkRange        *range,
                                     gpointer         user_data)
 {
     float val = gtk_range_get_value (range);
-    deadbeef->conf_set_float ("global_preamp", val);
+    deadbeef->conf_set_float ("replaygain.preamp_without_rg", val);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 

@@ -1515,10 +1515,15 @@ create_prefwin (void)
   GtkWidget *convert16to24;
   GtkWidget *Sound;
   GtkWidget *vbox8;
+  GtkWidget *frame14;
+  GtkWidget *alignment30;
+  GtkWidget *vbox48;
   GtkWidget *hbox10;
   GtkWidget *label8;
-  GtkWidget *pref_replaygain_mode;
-  GtkWidget *pref_replaygain_scale;
+  GtkWidget *pref_replaygain_source_mode;
+  GtkWidget *hbox139;
+  GtkWidget *label163;
+  GtkWidget *pref_replaygain_processing;
   GtkWidget *table1;
   GtkWidget *hbox100;
   GtkWidget *label125;
@@ -1530,6 +1535,7 @@ create_prefwin (void)
   GtkWidget *label125a;
   GtkWidget *global_preamp;
   GtkWidget *label126a;
+  GtkWidget *label162;
   GtkWidget *hbox66;
   GtkWidget *cli_add_to_playlist;
   GtkWidget *cli_playlist_name;
@@ -1797,30 +1803,58 @@ create_prefwin (void)
   gtk_container_add (GTK_CONTAINER (notebook), vbox8);
   gtk_container_set_border_width (GTK_CONTAINER (vbox8), 12);
 
+  frame14 = gtk_frame_new (NULL);
+  gtk_widget_show (frame14);
+  gtk_box_pack_start (GTK_BOX (vbox8), frame14, FALSE, FALSE, 0);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame14), GTK_SHADOW_NONE);
+
+  alignment30 = gtk_alignment_new (0.5, 0.5, 1, 1);
+  gtk_widget_show (alignment30);
+  gtk_container_add (GTK_CONTAINER (frame14), alignment30);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment30), 0, 0, 12, 0);
+
+  vbox48 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox48);
+  gtk_container_add (GTK_CONTAINER (alignment30), vbox48);
+
   hbox10 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox10);
-  gtk_box_pack_start (GTK_BOX (vbox8), hbox10, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox48), hbox10, TRUE, TRUE, 0);
 
-  label8 = gtk_label_new (_("Replaygain mode:"));
+  label8 = gtk_label_new (_("Source mode:"));
   gtk_widget_show (label8);
   gtk_box_pack_start (GTK_BOX (hbox10), label8, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label8), 0, 0.5);
 
-  pref_replaygain_mode = gtk_combo_box_text_new ();
-  gtk_widget_show (pref_replaygain_mode);
-  gtk_box_pack_start (GTK_BOX (hbox10), pref_replaygain_mode, TRUE, TRUE, 0);
-  gtk_widget_set_size_request (pref_replaygain_mode, 337, -1);
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_replaygain_mode), _("Disable"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_replaygain_mode), _("Track"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_replaygain_mode), _("Album"));
+  pref_replaygain_source_mode = gtk_combo_box_text_new ();
+  gtk_widget_show (pref_replaygain_source_mode);
+  gtk_box_pack_start (GTK_BOX (hbox10), pref_replaygain_source_mode, TRUE, TRUE, 0);
+  gtk_widget_set_size_request (pref_replaygain_source_mode, 337, -1);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_replaygain_source_mode), _("By playback order"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_replaygain_source_mode), _("Track"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_replaygain_source_mode), _("Album"));
 
-  pref_replaygain_scale = gtk_check_button_new_with_mnemonic (_("Replaygain peak scale"));
-  gtk_widget_show (pref_replaygain_scale);
-  gtk_box_pack_start (GTK_BOX (vbox8), pref_replaygain_scale, FALSE, FALSE, 0);
+  hbox139 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox139);
+  gtk_box_pack_start (GTK_BOX (vbox48), hbox139, TRUE, TRUE, 0);
+
+  label163 = gtk_label_new (_("Processing:"));
+  gtk_widget_show (label163);
+  gtk_box_pack_start (GTK_BOX (hbox139), label163, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label163), 0, 0.5);
+
+  pref_replaygain_processing = gtk_combo_box_text_new ();
+  gtk_widget_show (pref_replaygain_processing);
+  gtk_box_pack_start (GTK_BOX (hbox139), pref_replaygain_processing, TRUE, TRUE, 0);
+  gtk_widget_set_size_request (pref_replaygain_processing, 337, -1);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_replaygain_processing), _("None"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_replaygain_processing), _("Apply gain"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_replaygain_processing), _("Apply gain and prevent clipping according to peak"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_replaygain_processing), _("Only prevent clipping"));
 
   table1 = gtk_table_new (2, 2, FALSE);
   gtk_widget_show (table1);
-  gtk_box_pack_start (GTK_BOX (vbox8), table1, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox48), table1, TRUE, TRUE, 0);
   gtk_table_set_col_spacings (GTK_TABLE (table1), 8);
 
   hbox100 = gtk_hbox_new (FALSE, 8);
@@ -1843,14 +1877,14 @@ create_prefwin (void)
   gtk_widget_show (label126);
   gtk_box_pack_start (GTK_BOX (hbox100), label126, FALSE, FALSE, 0);
 
-  label124 = gtk_label_new (_("Replaygain preamp:"));
+  label124 = gtk_label_new (_("Preamp with RG:"));
   gtk_widget_show (label124);
   gtk_table_attach (GTK_TABLE (table1), label124, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label124), 0, 0.5);
 
-  label124a = gtk_label_new (_("Global preamp:"));
+  label124a = gtk_label_new (_("Preamp without RG:"));
   gtk_widget_show (label124a);
   gtk_table_attach (GTK_TABLE (table1), label124a, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
@@ -1876,6 +1910,11 @@ create_prefwin (void)
   label126a = gtk_label_new (_("+12 dB"));
   gtk_widget_show (label126a);
   gtk_box_pack_start (GTK_BOX (hbox100a), label126a, FALSE, FALSE, 0);
+
+  label162 = gtk_label_new (_("<b>ReplayGain</b>"));
+  gtk_widget_show (label162);
+  gtk_frame_set_label_widget (GTK_FRAME (frame14), label162);
+  gtk_label_set_use_markup (GTK_LABEL (label162), TRUE);
 
   hbox66 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox66);
@@ -2912,11 +2951,11 @@ create_prefwin (void)
   g_signal_connect ((gpointer) convert16to24, "toggled",
                     G_CALLBACK (on_convert16to24_toggled),
                     NULL);
-  g_signal_connect ((gpointer) pref_replaygain_mode, "changed",
-                    G_CALLBACK (on_pref_replaygain_mode_changed),
+  g_signal_connect ((gpointer) pref_replaygain_source_mode, "changed",
+                    G_CALLBACK (on_pref_replaygain_source_mode_changed),
                     NULL);
-  g_signal_connect ((gpointer) pref_replaygain_scale, "clicked",
-                    G_CALLBACK (on_pref_replaygain_scale_clicked),
+  g_signal_connect ((gpointer) pref_replaygain_processing, "changed",
+                    G_CALLBACK (on_pref_replaygain_processing_changed),
                     NULL);
   g_signal_connect ((gpointer) replaygain_preamp, "value_changed",
                     G_CALLBACK (on_replaygain_preamp_value_changed),
@@ -3183,10 +3222,15 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, convert16to24, "convert16to24");
   GLADE_HOOKUP_OBJECT (prefwin, Sound, "Sound");
   GLADE_HOOKUP_OBJECT (prefwin, vbox8, "vbox8");
+  GLADE_HOOKUP_OBJECT (prefwin, frame14, "frame14");
+  GLADE_HOOKUP_OBJECT (prefwin, alignment30, "alignment30");
+  GLADE_HOOKUP_OBJECT (prefwin, vbox48, "vbox48");
   GLADE_HOOKUP_OBJECT (prefwin, hbox10, "hbox10");
   GLADE_HOOKUP_OBJECT (prefwin, label8, "label8");
-  GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_mode, "pref_replaygain_mode");
-  GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_scale, "pref_replaygain_scale");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_source_mode, "pref_replaygain_source_mode");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox139, "hbox139");
+  GLADE_HOOKUP_OBJECT (prefwin, label163, "label163");
+  GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_processing, "pref_replaygain_processing");
   GLADE_HOOKUP_OBJECT (prefwin, table1, "table1");
   GLADE_HOOKUP_OBJECT (prefwin, hbox100, "hbox100");
   GLADE_HOOKUP_OBJECT (prefwin, label125, "label125");
@@ -3198,6 +3242,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label125a, "label125a");
   GLADE_HOOKUP_OBJECT (prefwin, global_preamp, "global_preamp");
   GLADE_HOOKUP_OBJECT (prefwin, label126a, "label126a");
+  GLADE_HOOKUP_OBJECT (prefwin, label162, "label162");
   GLADE_HOOKUP_OBJECT (prefwin, hbox66, "hbox66");
   GLADE_HOOKUP_OBJECT (prefwin, cli_add_to_playlist, "cli_add_to_playlist");
   GLADE_HOOKUP_OBJECT (prefwin, cli_playlist_name, "cli_playlist_name");
