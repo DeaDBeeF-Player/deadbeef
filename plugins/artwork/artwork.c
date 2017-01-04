@@ -49,8 +49,12 @@
 #ifdef USE_IMLIB2
     #include <Imlib2.h>
 #else
+#ifdef USE_LIBJPEG
     #include <jpeglib.h>
+#endif
+#ifdef USE_LIBPNG
     #include <png.h>
+#endif
 #endif
 #include "../../deadbeef.h"
 #include "artwork_internal.h"
@@ -152,11 +156,14 @@ static int_fast16_t bcerp (const png_byte *row0, const png_byte *row1, const png
     return cerp (p0, p1, p2, p3, dx, dx2, dx3) + 0.5;
 }
 #endif
+
+#ifdef USE_LIBPNG
 static uint_fast32_t blerp_pixel (const png_byte *row, const png_byte *next_row, const uint_fast32_t x_index, const uint_fast32_t next_x_index,
                                  const uint_fast32_t weight, const uint_fast32_t weightx, const uint_fast32_t weighty, const uint_fast32_t weightxy)
 {
     return row[x_index]*weight + row[next_x_index]*weightx + next_row[x_index]*weighty + next_row[next_x_index]*weightxy;
 }
+#endif
 
 static uint_fast32_t *
 calculate_quick_dividers (float scaling_ratio)
@@ -176,6 +183,7 @@ calculate_quick_dividers (float scaling_ratio)
     return dividers;
 }
 
+#ifdef USE_LIBJPEG
 typedef struct {
     struct jpeg_error_mgr pub;	/* "public" fields */
     jmp_buf setjmp_buffer;	/* for return to caller */
@@ -436,7 +444,9 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
 
     return 0;
 }
+#endif
 
+#ifdef USE_LIBPNG
 static int
 png_resize (const char *fname, const char *outname, int scaled_size) {
     png_structp png_ptr = NULL, new_png_ptr = NULL;
@@ -786,7 +796,7 @@ error:
 
     return err;
 }
-
+#endif
 #endif
 
 #ifdef USE_IMLIB2
@@ -859,17 +869,26 @@ scale_file (const char *in, const char *out, int img_size)
     cache_unlock ();
     return imlib_err;
 #else
-    int err = jpeg_resize (in, out, img_size);
-    if (err != 0) {
+
+    int err = -1;
+
+#ifdef USE_LIBJPEG
+    err = jpeg_resize (in, out, img_size);
+    if (err) {
         unlink (out);
-        err = png_resize (in, out, img_size);
-        if (err != 0) {
-            unlink (out);
-        }
     }
+#endif
+#ifdef USE_LIBPNG
+    if (err) {
+        err = png_resize (in, out, img_size);
+    }
+    if (err) {
+        unlink (out);
+    }
+#endif
+#endif
     cache_unlock ();
     return err;
-#endif
 }
 
 // esc_char is needed to prevent using file path separators,
