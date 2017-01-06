@@ -404,6 +404,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.samplerate = samplerate;
 
         info->dec = aacDecoder_Open(TT_MP4_RAW, 1);
+        // FIXME: need to initialize audio-specific config
     }
 
     _info->fmt.bps = 16;
@@ -473,6 +474,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     }
 
     int initsize = size;
+    unsigned long consumed = 0;
 
     while (size > 0) {
         if (info->skipsamples > 0 && info->out_remaining > 0) {
@@ -562,28 +564,27 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 continue;
             }
             info->num_errors=0;
-            unsigned long consumed = info->remaining-bytesValid;
-            if (consumed > info->remaining) {
-                break;
-            }
-            if (consumed == info->remaining) {
-                info->remaining = 0;
-            }
-            else if (consumed > 0) {
-                memmove (info->buffer, info->buffer + consumed, info->remaining - consumed);
-                info->remaining -= consumed;
-            }
+            consumed = info->remaining-bytesValid;
         }
 
         AAC_DECODER_ERROR err = aacDecoder_DecodeFrame(info->dec, (short *)info->out_buffer, OUT_BUFFER_SIZE, 0);
 
         if (mp4packet) {
             free (mp4packet);
+            mp4packet = NULL;
+        }
+
+        if (consumed == info->remaining) {
+            info->remaining = 0;
+        }
+        else if (consumed > 0) {
+            memmove (info->buffer, info->buffer + consumed, info->remaining - consumed);
+            info->remaining -= consumed;
         }
 
         if (err != AAC_DEC_OK) {
             trace ("aacDecoder_DecodeFrame: error %d\n", err);
-            continue;
+            break;
         }
 
         CStreamInfo *frame_info = aacDecoder_GetStreamInfo(info->dec);
