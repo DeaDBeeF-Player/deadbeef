@@ -1358,7 +1358,7 @@ convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out
                         goto error;
                     }
 
-                    if (DDB_ENCODER_METHOD_FILE) {
+                    if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
                         // rewrite wave data size
                         int wavehdr_size = output_is_float ? sizeof (wavehdr_float) : sizeof (wavehdr_int);
                         lseek (temp_file, wavehdr_size, SEEK_SET);
