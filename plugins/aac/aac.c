@@ -244,17 +244,10 @@ mp4_track_get_info(mp4ff_t *mp4, int track, float *duration, int *samplerate, in
     int samples;
 
     // init mp4 decoding
-    HANDLE_AACDECODER dec = aacDecoder_Open(TT_MP4_RAW, 1);
-    if (aacDecoder_ConfigRaw(dec, &buff, &buff_size) != AAC_DEC_OK) {
-        goto error;
-    }
     *samplerate = sr;
     *channels = ch;
     samples = mp4ff_num_samples(mp4, track);
     
-    aacDecoder_Close (dec);
-    dec = NULL;
-
     if (samples <= 0) {
         goto error;
     }
@@ -275,9 +268,6 @@ mp4_track_get_info(mp4ff_t *mp4, int track, float *duration, int *samplerate, in
 
     return 0;
 error:
-    if (dec) {
-        aacDecoder_Close (dec);
-    }
     free (buff);
     return -1;
 }
@@ -403,8 +393,8 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.channels = channels;
         _info->fmt.samplerate = samplerate;
 
-        info->dec = aacDecoder_Open(TT_MP4_RAW, 1);
-        // FIXME: need to initialize audio-specific config
+        // FIXME: FDK-AAC likes to crash on unsupported/unrecognized data, so need to bail here if ADTS stream is not detected.
+        info->dec = aacDecoder_Open(TT_MP4_ADTS, 1);
     }
 
     _info->fmt.bps = 16;
@@ -544,18 +534,14 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
         }
         else {
-            if (info->remaining < AAC_MAX_PACKET_SIZE) {
-                size_t res = deadbeef->fread (info->buffer + info->remaining, 1, AAC_MAX_PACKET_SIZE-info->remaining, info->file);
-                info->remaining += res;
-                if (!info->remaining) {
-                    break;
-                }
+            uint8_t *packet = info->buffer;
+            UINT packet_size;
+            size_t n = deadbeef->fread (packet, 1, 2, info->file);
+            if (n != 2) {
+                goto error;
             }
-
-            UINT bytesValid = info->remaining;
-            AAC_DECODER_ERROR err = aacDecoder_Fill(info->dec, (uint8_t **)&info->buffer, (UINT *)&info->remaining, &bytesValid);
-            if (err != AAC_DEC_OK) {
-                trace ("aacDecoder_Fill: error %d\n", err);
+            if (packet[0] != 0xff || (packet[1] & 0xf0) != 0xf0) {
+                trace ("aac: ADTS out of sync, resyncing\n");
                 if (info->num_errors > 10) {
                     break;
                 }
@@ -563,8 +549,23 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 info->remaining = 0;
                 continue;
             }
+            n = deadbeef->fread (packet+2, 1, 5, info->file);
+            if (n != 5) {
+                goto error;
+            }
+
             info->num_errors=0;
-            consumed = info->remaining-bytesValid;
+            packet_size = ((packet[3] & 0x03) << 11) | (packet[4] << 3) | (packet[5] >> 5);
+            n = deadbeef->fread(packet + 7, 1, packet_size - 7, info->file);
+            if (n != packet_size - 7) {
+                goto error;
+            }
+            UINT valid = packet_size;
+            AAC_DECODER_ERROR err = aacDecoder_Fill(info->dec, &packet, &packet_size, &valid);
+            if (err != AAC_DEC_OK) {
+                goto error;
+            }
+            consumed = info->remaining-valid;
         }
 
         AAC_DECODER_ERROR err = aacDecoder_DecodeFrame(info->dec, (short *)info->out_buffer, OUT_BUFFER_SIZE, 0);
@@ -687,8 +688,6 @@ aac_seek_sample (DB_fileinfo_t *_info, int sample) {
             }
             totalsamples += thissample_duration;
         }
-//        i = sample / info->mp4framesize;
-//        info->skipsamples = sample - info->mp4sample * info->mp4framesize;
         info->mp4sample = i;
     }
     else {
