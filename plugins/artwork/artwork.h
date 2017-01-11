@@ -100,6 +100,10 @@ typedef struct {
     // Avoid running slow blocking code in the callbacks.
     void
     (*cover_get) (ddb_cover_query_t *query, ddb_cover_callback_t callback);
+
+    // Clears the current queue, calling the callback with no results for each item.
+    void
+    (*reset) (void);
 } ddb_artwork_plugin_t;
 
 #endif /*__ARTWORK_H*/

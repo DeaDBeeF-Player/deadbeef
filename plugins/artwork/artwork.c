@@ -64,10 +64,12 @@
 #include "wos.h"
 #include "cache.h"
 #include "artwork.h"
+#ifdef USE_MP4FF
 #include "mp4ff.h"
+#endif
 #include "../../strdupa.h"
 
-#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin.plugin, 0, __VA_ARGS__); }
 
 DB_functions_t *deadbeef;
 static ddb_artwork_plugin_t plugin;
@@ -1469,6 +1471,7 @@ apev2_extract_art (const char *fname, const char *outname) {
     return err;
 }
 
+#ifdef USE_MP4FF
 static uint32_t
 mp4_fp_read (void *user_data, void *buffer, uint32_t length) {
     DB_FILE* stream = user_data;
@@ -1521,7 +1524,7 @@ mp4_extract_art (const char *fname, const char *outname) {
     deadbeef->fclose (fp);
     return ret;
 }
-
+#endif
 
 static int
 web_lookups (const char *artist, const char *album, const char *cache_path)
@@ -1666,12 +1669,14 @@ process_query (const char *filepath, const char *album, const char *artist, char
             return 1;
         }
 
+#ifdef USE_MP4FF
         // try to load embedded from mp4
         trace ("trying to load artwork from mp4 tag for %s\n", filepath);
         if (!mp4_extract_art (filepath, cache_path)) {
             snprintf (artwork_path, artwork_path_size, "%s", cache_path);
             return 1;
         }
+#endif
     }
 
     if (artwork_enable_local && islocal) {
@@ -1778,6 +1783,7 @@ fetcher_thread (void *none)
     deadbeef->mutex_lock (queue_mutex);
     while (!terminate) {
         trace ("artwork fetcher: waiting for signal ...\n");
+        // FIXME: use deadbeef->cond_wait
         pthread_cond_wait ((pthread_cond_t *)queue_cond, (pthread_mutex_t *)queue_mutex);
         trace ("artwork fetcher: cond signalled, process queue\n");
 
@@ -2189,6 +2195,7 @@ static ddb_artwork_plugin_t plugin = {
     .plugin.plugin.message = artwork_message,
     .plugin.plugin.get_actions = artwork_get_actions,
     .cover_get = cover_get,
+    .reset = artwork_reset,
 };
 
 DB_plugin_t *
