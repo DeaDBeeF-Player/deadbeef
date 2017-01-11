@@ -1,7 +1,8 @@
 /*
     Album Art plugin for DeaDBeeF
+    Copyright (C) 2009-2017 Alexey Yakovenko <waker@users.sourceforge.net>
     Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2014-2016 Ian Nartowicz <deadbeef@nartowicz.co.uk>
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -57,13 +58,13 @@
 #endif
 #endif
 #include "../../deadbeef.h"
+#include "artwork.h"
 #include "artwork_internal.h"
 #include "lastfm.h"
 #include "musicbrainz.h"
 #include "albumartorg.h"
 #include "wos.h"
 #include "cache.h"
-#include "artwork.h"
 #ifdef USE_MP4FF
 #include "mp4ff.h"
 #endif
@@ -97,6 +98,18 @@ static intptr_t tid;
 static uintptr_t queue_mutex;
 static uintptr_t queue_cond;
 
+#ifdef ANDROID
+#define DEFAULT_DISABLE_CACHE 1
+#define DEFAULT_SAVE_TO_MUSIC_FOLDERS 1
+static int artwork_disable_cache = DEFAULT_DISABLE_CACHE;
+static int artwork_save_to_music_folders = DEFAULT_SAVE_TO_MUSIC_FOLDERS;
+#else
+#define DEFAULT_DISABLE_CACHE 0
+#define DEFAULT_SAVE_TO_MUSIC_FOLDERS 0
+static int artwork_disable_cache = DEFAULT_DISABLE_CACHE;
+static int artwork_save_to_music_folders = DEFAULT_SAVE_TO_MUSIC_FOLDERS;
+#endif
+
 static int artwork_enable_embedded;
 static int artwork_enable_local;
 #ifdef USE_VFS_CURL
@@ -112,12 +125,13 @@ static char *nocover_path;
 static time_t cache_reset_time;
 static time_t default_reset_time;
 
-#define DEFAULT_FILEMASK "*cover*.jpg;*front*.jpg;*folder*.jpg;*cover*.png;*front*.png;*folder*.png"
+#define DEFAULT_FILEMASK "ddbcover.png;ddbcover.jpg;*cover*.jpg;*front*.jpg;*folder*.jpg;*cover*.png;*front*.png;*folder*.png"
 static char *artwork_filemask;
 
 static char *album_tf;
 static char *artist_tf;
 
+#if defined(USE_IMLIB2) || defined(USE_LIBJPEG)
 static float
 scale_dimensions (int scaled_size, int width, int height, unsigned int *scaled_width, unsigned int *scaled_height)
 {
@@ -135,6 +149,7 @@ scale_dimensions (int scaled_size, int width, int height, unsigned int *scaled_w
     }
     return scaling_ratio;
 }
+#endif
 
 #ifndef USE_IMLIB2
 #ifdef USE_BICUBIC
@@ -167,6 +182,7 @@ static uint_fast32_t blerp_pixel (const png_byte *row, const png_byte *next_row,
 }
 #endif
 
+#if defined(USE_LIBPNG) || defined(USE_LIBJPEG)
 static uint_fast32_t *
 calculate_quick_dividers (float scaling_ratio)
 {
@@ -184,6 +200,7 @@ calculate_quick_dividers (float scaling_ratio)
     }
     return dividers;
 }
+#endif
 
 #ifdef USE_LIBJPEG
 typedef struct {
@@ -851,6 +868,7 @@ imlib_resize (const char *in, const char *out, int img_size)
 }
 #endif
 
+#if defined(USE_IMLIB2) || defined(USE_LIBJPEG) || defined(USE_LIBPNG)
 static int
 scale_file (const char *in, const char *out, int img_size)
 {
@@ -892,6 +910,7 @@ scale_file (const char *in, const char *out, int img_size)
     cache_unlock ();
     return err;
 }
+#endif
 
 // esc_char is needed to prevent using file path separators,
 // e.g. to avoid writing arbitrary files using "../../../filename"
@@ -1100,12 +1119,14 @@ filter_custom (const struct dirent *f)
 }
 
 static int
-vfs_scan_results (struct dirent *entry, const char *container_uri, char *artwork_path, int artwork_path_size)
+vfs_scan_results (struct dirent *entry, const char *container_uri, ddb_cover_info_t *cover)
 {
     /* VFS container, double check the match in case scandir didn't implement filtering */
     if (filter_custom (entry)) {
         trace ("found cover %s in %s\n", entry->d_name, container_uri);
-        snprintf (artwork_path, artwork_path_size, "%s:%s", container_uri, entry->d_name);
+        size_t len = strlen (container_uri) + strlen(entry->d_name) + 2;
+        cover->filename = malloc (len);
+        snprintf (cover->filename, len, "%s:%s", container_uri, entry->d_name);
         return 0;
     }
 
@@ -1113,15 +1134,21 @@ vfs_scan_results (struct dirent *entry, const char *container_uri, char *artwork
 }
 
 static int
-dir_scan_results (struct dirent **files, int files_count, const char *container, char *artwork_path, int artwork_path_size)
+dir_scan_results (struct dirent **files, int files_count, const char *container, ddb_cover_info_t *cover)
 {
     /* Local file in a directory */
     for (size_t i = 0; i < files_count; i++) {
         trace ("found cover %s in local folder\n", files[0]->d_name);
-        snprintf (artwork_path, artwork_path_size, "%s/%s", container, files[i]->d_name);
+        size_t len = strlen (container) + strlen(files[i]->d_name) + 2;
+        cover->filename = malloc (len);
+        snprintf (cover->filename, len, "%s/%s", container, files[i]->d_name);
         struct stat stat_struct;
-        if (!stat (artwork_path, &stat_struct) && S_ISREG (stat_struct.st_mode) && stat_struct.st_size > 0) {
+        if (!stat (cover->filename, &stat_struct) && S_ISREG (stat_struct.st_mode) && stat_struct.st_size > 0) {
             return 0;
+        }
+        else {
+            free (cover->filename);
+            cover->filename = NULL;
         }
     }
 
@@ -1129,7 +1156,7 @@ dir_scan_results (struct dirent **files, int files_count, const char *container,
 }
 
 static int
-scan_local_path (char *mask, const char *local_path, const char *uri, DB_vfs_t *vfsplug, char *artwork_path, int artwork_path_size)
+scan_local_path (char *mask, const char *local_path, const char *uri, DB_vfs_t *vfsplug, ddb_cover_info_t *cover)
 {
     filter_custom_mask = mask;
     struct dirent **files;
@@ -1139,10 +1166,10 @@ scan_local_path (char *mask, const char *local_path, const char *uri, DB_vfs_t *
     if (files_count > 0) {
         int err = -1;
         if (uri) {
-            err = vfs_scan_results (files[0], uri, artwork_path, artwork_path_size);
+            err = vfs_scan_results (files[0], uri, cover);
         }
         else {
-            err = dir_scan_results (files, files_count, local_path, artwork_path, artwork_path_size);
+            err = dir_scan_results (files, files_count, local_path, cover);
         }
 
         for (size_t i = 0; i < files_count; i++) {
@@ -1157,7 +1184,7 @@ scan_local_path (char *mask, const char *local_path, const char *uri, DB_vfs_t *
 }
 
 static int
-local_image_file (const char *local_path, const char *uri, DB_vfs_t *vfsplug, char *artwork_path, int artwork_path_size)
+local_image_file (const char *local_path, const char *uri, DB_vfs_t *vfsplug, ddb_cover_info_t *cover)
 {
     if (!artwork_filemask) {
         return -1;
@@ -1173,13 +1200,13 @@ local_image_file (const char *local_path, const char *uri, DB_vfs_t *vfsplug, ch
     }
 
     for (char *mask = filemask; mask < filemask_end; mask += strlen (mask)+1) {
-        if (mask[0] && !scan_local_path (mask, local_path, uri, vfsplug, artwork_path, artwork_path_size)) {
+        if (mask[0] && !scan_local_path (mask, local_path, uri, vfsplug, cover)) {
             return 0;
         }
     }
-    if (!scan_local_path ("*.jpg", local_path, uri, vfsplug, artwork_path, artwork_path_size)
-        || !scan_local_path ("*.jpeg", local_path, uri, vfsplug, artwork_path, artwork_path_size)
-        || !scan_local_path ("*.png", local_path, uri, vfsplug, artwork_path, artwork_path_size)) {
+    if (!scan_local_path ("*.jpg", local_path, uri, vfsplug, cover)
+        || !scan_local_path ("*.jpeg", local_path, uri, vfsplug, cover)
+        || !scan_local_path ("*.png", local_path, uri, vfsplug, cover)) {
         return 0;
     }
 
@@ -1235,22 +1262,14 @@ id3v2_artwork (const DB_id3v2_frame_t *f, int minor_version)
 #endif
     const uint8_t *end = f->data + f->size;
     int enc = *data;
-    data++; // enc
-    // mime-type must always be ASCII - hence enc is 0 here
-    const uint8_t *mime_end = id3v2_skip_str (enc, data, end);
+    data++;
+
+    // mime type is ascii always, the enc above is for the picture type
+    const uint8_t *mime_end = id3v2_skip_str (0, data, end);
     if (!mime_end) {
         trace ("artwork: corrupted id3v2 APIC frame\n");
         return NULL;
     }
-//    if (strcasecmp (data, "image/jpeg") &&
-#ifdef USE_IMLIB2
-//        strcasecmp (data, "image/gif") &&
-//        strcasecmp (data, "image/tiff") &&
-#endif
-//        strcasecmp (data, "image/png")) {
-//        trace ("artwork: unsupported mime type: %s\n", data);
-//        return NULL;
-//    }
     if (*mime_end != 3) {
         trace ("artwork: picture type=%d\n", *mime_end);
         return NULL;
@@ -1326,18 +1345,6 @@ flac_io_tell (FLAC__IOHandle handle) {
     return deadbeef->ftell ((DB_FILE *)handle);
 }
 
-static int
-flac_io_eof (FLAC__IOHandle handle) {
-    int64_t pos = deadbeef->ftell ((DB_FILE *)handle);
-    return pos == deadbeef->fgetlength ((DB_FILE *)handle);
-}
-
-static int
-flac_io_close (FLAC__IOHandle handle) {
-    deadbeef->fclose ((DB_FILE *)handle);
-    return 0;
-}
-
 static FLAC__IOCallbacks flac_iocb = {
     .read = flac_io_read,
     .write = NULL,
@@ -1348,7 +1355,7 @@ static FLAC__IOCallbacks flac_iocb = {
 };
 
 static int
-flac_extract_art (const char *filename, const char *outname) {
+flac_extract_art (const char *filename, const char *outname, ddb_cover_info_t *cover) {
     if (!strcasestr (filename, ".flac") && !strcasestr (filename, ".oga")) {
         return -1;
     }
@@ -1401,7 +1408,17 @@ flac_extract_art (const char *filename, const char *outname) {
     if (pic && pic->data_length > 0) {
         trace ("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
         trace ("will write flac cover art into %s\n", outname);
-        if (!write_file (outname, pic->data, pic->data_length)) {
+        if (!artwork_disable_cache) {
+            if (!write_file (outname, (char *)pic->data, pic->data_length)) {
+                cover->filename = strdup (outname);
+                err = 0;
+            }
+        }
+        else {
+            cover->blob = malloc (pic->data_length);
+            memcpy (cover->blob, pic->data, pic->data_length);
+            cover->blob_size = pic->data_length;
+            cover->blob_image_size = pic->data_length;
             err = 0;
         }
     }
@@ -1417,7 +1434,7 @@ error:
 #endif
 
 static int
-id3_extract_art (const char *fname, const char *outname) {
+id3_extract_art (const char *fname, const char *outname, ddb_cover_info_t *cover) {
     int err = -1;
 
     DB_id3v2_tag_t id3v2_tag;
@@ -1425,16 +1442,40 @@ id3_extract_art (const char *fname, const char *outname) {
     DB_FILE *id3v2_fp = deadbeef->fopen (fname);
     if (id3v2_fp && !deadbeef->junk_id3v2_read_full (NULL, &id3v2_tag, id3v2_fp)) {
         int minor_version = id3v2_tag.version[0];
+        DB_id3v2_frame_t *fprev = NULL;
         for (DB_id3v2_frame_t *f = id3v2_tag.frames; f; f = f->next) {
             const uint8_t *image_data = id3v2_artwork (f, minor_version);
             if (image_data) {
                 const size_t sz = f->size - (image_data - f->data);
-                trace ("will write id3v2 APIC (%d bytes) into %s\n", (int)sz, outname);
-                if (sz > 0 && !write_file (outname, (const char *)image_data, sz)) {
+                if (sz <= 0) {
+                    continue;
+                }
+                if (!artwork_disable_cache) {
+                    trace ("will write id3v2 APIC (%d bytes) into %s\n", (int)sz, outname);
+                    if (!write_file (outname, (const char *)image_data, sz)) {
+                        cover->filename = strdup(outname);
+                        err = 0;
+                        break;
+                    }
+                }
+                else {
+                    // steal the frame memory from DB_id3v2_tag_t
+                    if (fprev) {
+                        fprev->next = f->next;
+                    }
+                    else {
+                        id3v2_tag.frames = f->next;
+                    }
+
+                    cover->blob = (char *)f;
+                    cover->blob_size = f->size;
+                    cover->blob_image_offset = (uint64_t)((char *)image_data - (char *)cover->blob);
+                    cover->blob_image_size = sz;
                     err = 0;
                     break;
                 }
             }
+            fprev = f;
         }
     }
     deadbeef->junk_id3v2_free (&id3v2_tag);
@@ -1445,7 +1486,7 @@ id3_extract_art (const char *fname, const char *outname) {
 }
 
 static int
-apev2_extract_art (const char *fname, const char *outname) {
+apev2_extract_art (const char *fname, const char *outname, ddb_cover_info_t *cover) {
     int err = -1;
     DB_apev2_tag_t apev2_tag;
     memset (&apev2_tag, 0, sizeof (apev2_tag));
@@ -1455,11 +1496,26 @@ apev2_extract_art (const char *fname, const char *outname) {
             const uint8_t *image_data = apev2_artwork (f);
             if (image_data) {
                 const size_t sz = f->size - (image_data - f->data);
-                trace ("will write apev2 cover art (%d bytes) into %s\n", sz, outname);
-                if (sz > 0 && !write_file (outname, (const char *)image_data, sz)) {
-                    err = 0;
+                if (sz <= 0) {
+                    continue;
                 }
-                break;
+                trace ("will write apev2 cover art (%d bytes) into %s\n", sz, outname);
+                if (!artwork_disable_cache) {
+                    if (!write_file (outname, (const char *)image_data, sz)) {
+                        cover->filename = strdup (outname);
+                        err = 0;
+                        break;
+                    }
+                }
+                else {
+                    // FIXME: can do the same malloc hack here as with ID3
+                    cover->blob = malloc (sz);
+                    memcpy (cover->blob, image_data, sz);
+                    cover->blob_size = sz;
+                    cover->blob_image_size = sz;
+                    err = 0;
+                    break;
+                }
             }
         }
 
@@ -1486,12 +1542,12 @@ mp4_fp_seek (void *user_data, uint64_t position) {
 }
 
 static int
-mp4_extract_art (const char *fname, const char *outname) {
+mp4_extract_art (const char *fname, const char *outname, ddb_cover_info_t *cover) {
+    int ret = -1;
     if (!strcasestr (fname, ".mp4") && !strcasestr (fname, ".m4a") && !strcasestr (fname, ".m4b")) {
         return -1;
     }
 
-    int ret = 0;
     DB_FILE* fp = deadbeef->fopen (fname);
     if (!fp) {
         return -1;
@@ -1511,13 +1567,14 @@ mp4_extract_art (const char *fname, const char *outname) {
     }
 
     mp4ff_cover_art_t* art_list = mp4ff_cover_get (mp4);
-    if (!art_list->tail) {
-        ret = -1;
-    } else {
+    if (art_list->tail) {
         uint32_t sz = art_list->tail->size;
         char* image_blob = art_list->tail->data;
         trace ("will write mp4 cover art (%u bytes) into %s\n", sz, outname);
-        write_file (outname, image_blob, sz);
+        if (!write_file (outname, image_blob, sz)) {
+            ret = 0;
+            cover->filename = strdup (outname);
+        }
     }
 
     mp4ff_close (mp4);
@@ -1527,11 +1584,15 @@ mp4_extract_art (const char *fname, const char *outname) {
 #endif
 
 static int
-web_lookups (const char *artist, const char *album, const char *cache_path)
+web_lookups (const char *artist, const char *album, const char *cache_path, ddb_cover_info_t *cover)
 {
+    if (!cache_path) {
+        return 0;
+    }
 #if USE_VFS_CURL
     if (artwork_enable_lfm) {
         if (!fetch_from_lastfm (artist, album, cache_path)) {
+            cover->filename = strdup (cache_path);
             return 1;
         }
         if (errno == ECONNABORTED) {
@@ -1541,6 +1602,7 @@ web_lookups (const char *artist, const char *album, const char *cache_path)
 
     if (artwork_enable_mb) {
         if (!fetch_from_musicbrainz (artist, album, cache_path)) {
+            cover->filename = strdup (cache_path);
             return 1;
         }
         if (errno == ECONNABORTED) {
@@ -1550,6 +1612,7 @@ web_lookups (const char *artist, const char *album, const char *cache_path)
 
     if (artwork_enable_aao) {
         if (!fetch_from_albumart_org (artist, album, cache_path)) {
+            cover->filename = strdup (cache_path);
             return 1;
         }
         if (errno == ECONNABORTED) {
@@ -1592,6 +1655,8 @@ scandir_plug (const char *vfs_fname)
     return NULL;
 }
 
+// might be used from process_query, when cache impl is finalized
+#if 0
 static int
 path_more_recent (const char *fname, const time_t placeholder_mtime)
 {
@@ -1624,12 +1689,23 @@ recheck_missing_artwork (const char *input_fname, const time_t placeholder_mtime
     free (fname);
     return res;
 }
+#endif
 
+// Behavior:
+// Local cover: path is returned
+// Found in cache: path is returned
+// Embedded cover: !cache_disabled ? save_to_cash&return_path : return blob
+// Web cover: save_to_local ? save_to_local&return_path : ( !cache_disabled ? save_to_cache&return_path : NOP )
 static int
-process_query (const char *filepath, const char *album, const char *artist, char *artwork_path, int artwork_path_size)
+process_query (const char *filepath, const char *album, const char *artist, ddb_cover_info_t *cover)
 {
-    char cache_path[PATH_MAX];
-    make_cache_path (filepath, album, artist, cache_path, sizeof (cache_path));
+    char cache_path_buf[PATH_MAX];
+    char *cache_path = NULL;
+
+    if (!artwork_disable_cache) {
+        cache_path = cache_path_buf;
+        make_cache_path (filepath, album, artist, cache_path, sizeof (cache_path));
+    }
 
 #if 0
 #warning FIXME not needed during development; also this assumes that disk cache is used for everything
@@ -1649,31 +1725,27 @@ process_query (const char *filepath, const char *album, const char *artist, char
 #ifdef USE_METAFLAC
         // try to load embedded from flac metadata
         trace ("trying to load artwork from Flac tag for %s\n", filepath);
-        if (!flac_extract_art (filepath, cache_path)) {
-            snprintf (artwork_path, artwork_path_size, "%s", cache_path);
+        if (!flac_extract_art (filepath, cache_path, cover)) {
             return 1;
         }
 #endif
 
         // try to load embedded from id3v2
         trace ("trying to load artwork from id3v2 tag for %s\n", filepath);
-        if (!id3_extract_art (filepath, cache_path)) {
-            snprintf (artwork_path, artwork_path_size, "%s", cache_path);
+        if (!id3_extract_art (filepath, cache_path, cover)) {
             return 1;
         }
 
         // try to load embedded from apev2
         trace ("trying to load artwork from apev2 tag for %s\n", filepath);
-        if (!apev2_extract_art (filepath, cache_path)) {
-            snprintf (artwork_path, artwork_path_size, "%s", cache_path);
+        if (!apev2_extract_art (filepath, cache_path, cover)) {
             return 1;
         }
 
 #ifdef USE_MP4FF
         // try to load embedded from mp4
         trace ("trying to load artwork from mp4 tag for %s\n", filepath);
-        if (!mp4_extract_art (filepath, cache_path)) {
-            snprintf (artwork_path, artwork_path_size, "%s", cache_path);
+        if (!mp4_extract_art (filepath, cache_path, cover)) {
             return 1;
         }
 #endif
@@ -1686,14 +1758,14 @@ process_query (const char *filepath, const char *album, const char *artist, char
             if (vfs_fname) {
                 /* Search inside scannable VFS containers */
                 DB_vfs_t *plugin = scandir_plug (vfs_fname);
-                if (plugin && !local_image_file (vfs_fname, fname_copy, plugin, artwork_path, artwork_path_size)) {
+                if (plugin && !local_image_file (vfs_fname, fname_copy, plugin, cover)) {
                     free (fname_copy);
                     return 1;
                 }
             }
 
             /* Search in file directory */
-            if (!local_image_file (dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL, artwork_path, artwork_path_size)) {
+            if (!local_image_file (dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL, cover)) {
                 free (fname_copy);
                 return 1;
             }
@@ -1702,11 +1774,15 @@ process_query (const char *filepath, const char *album, const char *artist, char
         }
     }
 
+    if (!cache_path) {
+        return 0;
+    }
+
 #ifdef USE_VFS_CURL
     /* Web lookups */
     if (artwork_enable_wos && strlen (filepath) > 3 && !strcasecmp (filepath+strlen (filepath)-3, ".ay")) {
         if (!fetch_from_wos (album, cache_path)) {
-            snprintf (artwork_path, artwork_path_size, "%s", cache_path);
+            cover->filename = strdup(cache_path);
             return 1;
         }
         if (errno == ECONNABORTED) {
@@ -1714,9 +1790,8 @@ process_query (const char *filepath, const char *album, const char *artist, char
         }
     }
 
-    int res = web_lookups (artist, album, cache_path);
+    int res = web_lookups (artist, album, cache_path, cover);
     if (res >= 0) {
-        snprintf (artwork_path, artwork_path_size, "%s", cache_path);
         return res;
     }
 
@@ -1725,10 +1800,9 @@ process_query (const char *filepath, const char *album, const char *artist, char
         char *p = strpbrk (album, "([");
         if (p) {
             *p = '\0';
-            int res = web_lookups (artist, album, cache_path);
+            int res = web_lookups (artist, album, cache_path, cover);
             *p = '(';
             if (res >= 0) {
-                snprintf (artwork_path, artwork_path_size, "%s", cache_path);
                 return res;
             }
         }
@@ -1773,6 +1847,20 @@ queue_clear (void) {
 }
 
 static void
+cover_info_free (ddb_cover_info_t *cover) {
+    if (cover->type) {
+        free (cover->type);
+    }
+    if (cover->filename) {
+        free (cover->filename);
+    }
+    if (cover->blob) {
+        free (cover->blob);
+    }
+    free (cover);
+}
+
+static void
 fetcher_thread (void *none)
 {
 #ifdef __linux__
@@ -1794,9 +1882,7 @@ fetcher_thread (void *none)
             ddb_cover_query_t *info = queue->callbacks->info;
 
             /* Process this query, hopefully writing a file into cache */
-            ddb_cover_info_t cover;
-            char artwork_path[PATH_MAX];
-            cover.filename = artwork_path;
+            ddb_cover_info_t *cover = calloc (sizeof (ddb_cover_info_t), 1);
 
             if (!album_tf) {
                 album_tf = deadbeef->tf_compile ("%album%");
@@ -1817,7 +1903,7 @@ fetcher_thread (void *none)
             deadbeef->tf_eval (&ctx, album_tf, album, sizeof (album));
             deadbeef->tf_eval (&ctx, artist_tf, artist, sizeof (artist));
             
-            int cover_found = process_query (filepath, album, artist, artwork_path, sizeof (artwork_path));
+            int cover_found = process_query (filepath, album, artist, cover);
 
             deadbeef->mutex_lock (queue_mutex);
             cover_query_t *query = query_pop ();
@@ -1829,8 +1915,8 @@ fetcher_thread (void *none)
 
             /* Make all the callbacks (and free the chain), with data if a file was written */
             if (cover_found) {
-                trace ("artwork fetcher: cover art file found: %s\n", artwork_path);
-                send_query_callbacks (query->callbacks, &cover);
+                trace ("artwork fetcher: cover art file found: %s\n", cover->filename);
+                send_query_callbacks (query->callbacks, cover);
             }
             else {
                 trace ("artwork fetcher: no cover art found\n");
@@ -1844,40 +1930,6 @@ fetcher_thread (void *none)
     }
     deadbeef->mutex_unlock (queue_mutex);
     trace ("artwork fetcher: terminate thread\n");
-}
-
-static int
-check_file_age (const char *path, const time_t mtime, const time_t reset_time)
-{
-    if (mtime <= reset_time) {
-        trace ("artwork: deleting cached file %s after reset\n", path);
-        unlink (path);
-        return 0;
-    }
-
-    return 1;
-}
-
-static const char *
-find_image (const char *path, const time_t reset_time)
-{
-    struct stat stat_buf;
-    if (stat (path, &stat_buf) || !S_ISREG (stat_buf.st_mode)) {
-        trace ("artwork: %s not found or not regular file\n", path);
-        return NULL;
-    }
-
-    if (stat_buf.st_size == 0 && !check_file_age (path, stat_buf.st_mtime, default_reset_time)) {
-        trace ("artwork: %s invalidated after default artwork reset\n", path);
-        return NULL;
-    }
-
-    if (!check_file_age (path, stat_buf.st_mtime, reset_time) || stat_buf.st_size == 0) {
-        trace ("artwork: %s is a placeholder or was invalidated after cache reset\n", path);
-        return NULL;
-    }
-
-    return path;
 }
 
 static void
@@ -1898,6 +1950,9 @@ artwork_reset (void) {
 static void
 get_fetcher_preferences (void)
 {
+    artwork_disable_cache = deadbeef->conf_get_int ("artwork.disable_cache", DEFAULT_DISABLE_CACHE);
+    artwork_save_to_music_folders = deadbeef->conf_get_int ("artwork.save_to_music_folders", DEFAULT_SAVE_TO_MUSIC_FOLDERS);
+
     artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
     artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
     if (artwork_enable_local) {
@@ -1943,6 +1998,8 @@ artwork_configchanged (void)
 {
     cache_configchanged ();
 
+    int old_artwork_disable_cache = artwork_disable_cache;
+
     int old_artwork_enable_embedded = artwork_enable_embedded;
     int old_artwork_enable_local = artwork_enable_local;
     const char *old_artwork_filemask = artwork_filemask;
@@ -1958,7 +2015,7 @@ artwork_configchanged (void)
 
     get_fetcher_preferences ();
 
-    if (old_missing_artwork != missing_artwork || old_nocover_path != nocover_path) {
+    if (old_artwork_disable_cache != artwork_disable_cache || old_missing_artwork != missing_artwork || old_nocover_path != nocover_path) {
         trace ("artwork config changed, invalidating default artwork...\n");
         clear_default_cover ();
         default_reset_time = time (NULL);
@@ -2136,8 +2193,14 @@ artwork_plugin_start (void)
     return 0;
 }
 
+#define STR(x) #x
+
 static const char settings_dlg[] =
-    "property \"Cache update period (in hours, 0=never)\" entry artwork.cache.period 48;\n"
+// on android, cache is always off and music is saved to music folders by default
+#ifndef ANDROID
+    "property \"Disable disk cache\" checkbox artwork.disable_cache " STR(DEFAULT_DISABLE_CACHE) ";\n"
+    "property \"Save extracted covert to music folders\" entry artwork.save_to_music_folders " STR(DEFAULT_SAVE_TO_MUSIC_FOLDERS) ";\n"
+#endif
     "property \"Fetch from embedded tags\" checkbox artwork.enable_embedded 1;\n"
     "property \"Fetch from local folder\" checkbox artwork.enable_localfolder 1;\n"
     "property \"Local file mask\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
@@ -2147,11 +2210,15 @@ static const char settings_dlg[] =
     "property \"Fetch from Albumart.org\" checkbox artwork.enable_albumartorg 0;\n"
     "property \"Fetch from World of Spectrum (AY files only)\" checkbox artwork.enable_wos 0;\n"
 #endif
+// android doesn't display any image when cover is not found, and positioning algorithm is really different,
+// therefore the below options are useless
+#ifndef ANDROID
     "property box vbox[2] spacing=4 border=8;\n"
     "property box hbox[1] height=-1;"
     "property \"When no artwork is found\" select[3] artwork.missing_artwork 1 \"leave blank\" \"use DeaDBeeF default cover\" \"display custom image\";"
     "property \"Custom image path\" file artwork.nocover_path \"\";\n"
     "property \"Scale artwork towards longer side\" checkbox artwork.scale_towards_longer 1;\n"
+#endif
 ;
 
 // define plugin interface
@@ -2196,6 +2263,7 @@ static ddb_artwork_plugin_t plugin = {
     .plugin.plugin.get_actions = artwork_get_actions,
     .cover_get = cover_get,
     .reset = artwork_reset,
+    .cover_info_free = cover_info_free,
 };
 
 DB_plugin_t *

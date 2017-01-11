@@ -266,6 +266,8 @@
 		2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */; };
 		2D08359A1D4F4DB600A5C643 /* cdumb.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0835991D4F4DB600A5C643 /* cdumb.h */; };
 		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
+		2D0E02E71E26703D00D3D8E6 /* libflaclib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; };
+		2D0E02EA1E26706300D3D8E6 /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
 		2D0EE6971B86685C00487FA1 /* tabCloseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2D0EE6961B86685C00487FA1 /* tabCloseTemplate.pdf */; };
 		2D0F90C21CCFF094003FA197 /* Tagging.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F90C11CCFF094003FA197 /* Tagging.m */; };
 		2D10DFFD1B98350D00A2D465 /* resampler_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D10DFFB1B9834FD00A2D465 /* resampler_sse2.c */; };
@@ -1219,7 +1221,7 @@
 		2D7C38201B2C40640029DE0A /* vorbisfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA451B2AF8610072FD43 /* vorbisfile.c */; };
 		2D7C38211B2C40640029DE0A /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA461B2AF8610072FD43 /* window.c */; };
 		2D7C38221B2C40640029DE0A /* window.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D88EA471B2AF8610072FD43 /* window.h */; };
-		2D7C38271B2C407C0029DE0A /* libogglib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.a */; };
+		2D7C38271B2C407C0029DE0A /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
 		2D7C38281B2C407C0029DE0A /* libvorbislib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37F41B2C40580029DE0A /* libvorbislib.a */; };
 		2D7F38031B2858AC00692A7B /* Junklib.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D7F38021B2858AC00692A7B /* Junklib.m */; };
 		2D828E5419E5679800EE874F /* Search.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D828E5319E5679800EE874F /* Search.xib */; };
@@ -1244,6 +1246,8 @@
 		2D88EA0E1B2AF71A0072FD43 /* liboggedit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.a */; };
 		2D88EA111B2AF77B0072FD43 /* vorbis.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D88E9ED1B2AF6640072FD43 /* vorbis.dylib */; };
 		2D8B54961CAC8CD500A6F5A4 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026D9F1CAC5C5000E27961 /* libavutil.a */; };
+		2D8BA3521E2672BF001D5708 /* libogglib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
+		2D8BA3531E2672C3001D5708 /* libflaclib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; };
 		2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8D96AC1D10904A00A5C7E6 /* CoverManager.h */; };
 		2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D8D96AD1D10904A00A5C7E6 /* CoverManager.m */; };
 		2D8D96B11D1091F900A5C7E6 /* noartwork.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D8D96B01D1091F900A5C7E6 /* noartwork.png */; };
@@ -1628,7 +1632,7 @@
 		4D32FA5619A645CA000FFDE0 /* mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32FA5519A645CA000FFDE0 /* mp3.c */; };
 		4D32FA5919A645E9000FFDE0 /* libmad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D32FA1519A6448A000FFDE0 /* libmad.a */; };
 		4D32FA6619A646C8000FFDE0 /* flac.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F99719A62F2A000FFDE0 /* flac.c */; };
-		4D32FA6A19A64794000FFDE0 /* libflaclib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.a */; };
+		4D32FA6A19A64794000FFDE0 /* libflaclib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; };
 		4D32FA6B19A647B5000FFDE0 /* flac.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA6219A646C0000FFDE0 /* flac.dylib */; };
 		4D44E67319B7532700F780FC /* cdumb.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E67219B7532700F780FC /* cdumb.c */; };
 		4D44E68019B7533B00F780FC /* atexit.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E67419B7533B00F780FC /* atexit.c */; };
@@ -2022,6 +2026,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D05A8301B4BE5BC004C913D;
 			remoteInfo = sndfilelib;
+		};
+		2D0E02E51E26703700D3D8E6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4D32F9A619A63094000FFDE0;
+			remoteInfo = flaclib;
+		};
+		2D0E02E81E26705D00D3D8E6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D7C37EB1B2C40520029DE0A;
+			remoteInfo = ogglib;
 		};
 		2D11D3CB1B9DC6AA00C7C731 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3518,7 +3536,7 @@
 		2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbPlaylistViewController.m; sourceTree = "<group>"; };
 		2D72AE5D1CFE1F7500103AAE /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		2D7492861CCFFE7700D3A59E /* TestData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TestData; sourceTree = "<group>"; };
-		2D7C37EC1B2C40520029DE0A /* libogglib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libogglib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D7C37EC1B2C40520029DE0A /* libogglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libogglib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7C37F41B2C40580029DE0A /* libvorbislib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvorbislib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7F38021B2858AC00692A7B /* Junklib.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Junklib.m; sourceTree = "<group>"; };
 		2D828E5319E5679800EE874F /* Search.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Search.xib; sourceTree = "<group>"; };
@@ -4003,7 +4021,7 @@
 		4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnprevTemplate.pdf; path = images/btnprevTemplate.pdf; sourceTree = "<group>"; };
 		4D2A6CA0183BC29400AC6BF5 /* btnstopTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnstopTemplate.pdf; path = images/btnstopTemplate.pdf; sourceTree = "<group>"; };
 		4D32F99719A62F2A000FFDE0 /* flac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = flac.c; path = plugins/flac/flac.c; sourceTree = "<group>"; };
-		4D32F9A719A63094000FFDE0 /* libflaclib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libflaclib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D32F9A719A63094000FFDE0 /* libflaclib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libflaclib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D32F9AD19A630F8000FFDE0 /* bitmath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bitmath.c; path = "deps/flac-1.3.0/src/libFLAC/bitmath.c"; sourceTree = "<group>"; };
 		4D32F9AE19A630F8000FFDE0 /* bitreader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bitreader.c; path = "deps/flac-1.3.0/src/libFLAC/bitreader.c"; sourceTree = "<group>"; };
 		4D32F9AF19A630F8000FFDE0 /* bitwriter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bitwriter.c; path = "deps/flac-1.3.0/src/libFLAC/bitwriter.c"; sourceTree = "<group>"; };
@@ -4545,6 +4563,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D0E02E71E26703D00D3D8E6 /* libflaclib.dylib in Frameworks */,
 				2D37CB421D1A91D500667E17 /* libmp4ff.dylib in Frameworks */,
 				2D72AE5E1CFE1F7500103AAE /* ImageIO.framework in Frameworks */,
 			);
@@ -4590,7 +4609,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D7C38271B2C407C0029DE0A /* libogglib.a in Frameworks */,
+				2D7C38271B2C407C0029DE0A /* libogglib.dylib in Frameworks */,
 				2D7C38281B2C407C0029DE0A /* libvorbislib.a in Frameworks */,
 				2D88EA0E1B2AF71A0072FD43 /* liboggedit.a in Frameworks */,
 			);
@@ -4718,6 +4737,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D0E02EA1E26706300D3D8E6 /* libogglib.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4748,7 +4768,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D32FA6A19A64794000FFDE0 /* libflaclib.a in Frameworks */,
+				4D32FA6A19A64794000FFDE0 /* libflaclib.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6982,7 +7002,7 @@
 			isa = PBXGroup;
 			children = (
 				4D1B3E7A18379829003E6066 /* deadbeef.app */,
-				4D32F9A719A63094000FFDE0 /* libflaclib.a */,
+				4D32F9A719A63094000FFDE0 /* libflaclib.dylib */,
 				4D32F9EA19A63441000FFDE0 /* ffap.dylib */,
 				4D32FA1519A6448A000FFDE0 /* libmad.a */,
 				4D32FA5019A64577000FFDE0 /* mp3.dylib */,
@@ -7006,7 +7026,7 @@
 				2D23511B1B138ECB00A62936 /* converter.dylib */,
 				2D88E9ED1B2AF6640072FD43 /* vorbis.dylib */,
 				2D88E9F71B2AF6BC0072FD43 /* liboggedit.a */,
-				2D7C37EC1B2C40520029DE0A /* libogglib.a */,
+				2D7C37EC1B2C40520029DE0A /* libogglib.dylib */,
 				2D7C37F41B2C40580029DE0A /* libvorbislib.a */,
 				2D05A8291B4BE59D004C913D /* sndfile.dylib */,
 				2D05A8311B4BE5BC004C913D /* libsndfilelib.a */,
@@ -9232,6 +9252,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D0E02E61E26703700D3D8E6 /* PBXTargetDependency */,
 				2D37CB441D1A91DE00667E17 /* PBXTargetDependency */,
 			);
 			name = artwork;
@@ -9304,8 +9325,8 @@
 			);
 			name = ogglib;
 			productName = ogglib;
-			productReference = 2D7C37EC1B2C40520029DE0A /* libogglib.a */;
-			productType = "com.apple.product-type.library.static";
+			productReference = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 		2D7C37F31B2C40580029DE0A /* vorbislib */ = {
 			isa = PBXNativeTarget;
@@ -9651,11 +9672,12 @@
 				4D32FA0C19A64275000FFDE0 /* PBXBuildRule */,
 			);
 			dependencies = (
+				2D0E02E91E26705D00D3D8E6 /* PBXTargetDependency */,
 			);
 			name = flaclib;
 			productName = FLAC;
-			productReference = 4D32F9A719A63094000FFDE0 /* libflaclib.a */;
-			productType = "com.apple.product-type.library.static";
+			productReference = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 		4D32F9E919A63441000FFDE0 /* ffap */ = {
 			isa = PBXNativeTarget;
@@ -10060,6 +10082,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D8BA3531E2672C3001D5708 /* libflaclib.dylib in Resources */,
+				2D8BA3521E2672BF001D5708 /* libogglib.dylib in Resources */,
 				2DF16CB61DCB62FD007D7F05 /* supereq.dylib in Resources */,
 				2D1DC09C1DCB3A1500441A08 /* ddb_mono2stereo.dylib in Resources */,
 				2D27AEF11D9D877D00842D76 /* rg_scanner.dylib in Resources */,
@@ -11638,6 +11662,16 @@
 			isa = PBXTargetDependency;
 			target = 2D05A8301B4BE5BC004C913D /* sndfilelib */;
 			targetProxy = 2D05A8DA1B4BE647004C913D /* PBXContainerItemProxy */;
+		};
+		2D0E02E61E26703700D3D8E6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4D32F9A619A63094000FFDE0 /* flaclib */;
+			targetProxy = 2D0E02E51E26703700D3D8E6 /* PBXContainerItemProxy */;
+		};
+		2D0E02E91E26705D00D3D8E6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D7C37EB1B2C40520029DE0A /* ogglib */;
+			targetProxy = 2D0E02E81E26705D00D3D8E6 /* PBXContainerItemProxy */;
 		};
 		2D11D3CC1B9DC6AA00C7C731 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -13233,6 +13267,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_TAGGING=1",
 					"USE_VFS_CURL=1",
+					"USE_MP4FF=1",
+					"USE_METAFLAC=1",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
@@ -13240,6 +13276,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/jpeg-6b\"",
 					"\"$(SRCROOT)/deps/libpng-1.6.21\"",
+					"\"$(SRCROOT)/deps/flac-1.3.0/include\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -13267,6 +13304,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_TAGGING=1",
 					"USE_VFS_CURL=1",
+					"USE_MP4FF=1",
+					"USE_METAFLAC=1",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
@@ -13274,6 +13313,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/jpeg-6b\"",
 					"\"$(SRCROOT)/deps/libpng-1.6.21\"",
+					"\"$(SRCROOT)/deps/flac-1.3.0/include\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -13449,6 +13489,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 				);
+				MACH_O_TYPE = mh_dylib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -13470,6 +13511,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 				);
+				MACH_O_TYPE = mh_dylib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -14405,6 +14447,7 @@
 					"$(SRCROOT)/deps/libogg-1.3.1/include",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
+				MACH_O_TYPE = mh_dylib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -14430,6 +14473,7 @@
 					"$(SRCROOT)/deps/libogg-1.3.1/include",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
+				MACH_O_TYPE = mh_dylib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

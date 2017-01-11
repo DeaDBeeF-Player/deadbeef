@@ -54,7 +54,7 @@ static CoverManager *g_DefaultCoverManager = nil;
     _artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     _defaultCover = [NSImage imageNamed:@"noartwork.png"];
     //_name_tf = deadbeef->tf_compile ("$if2(b:%album%-a:%artist%,$if2(b:%album%,$if2(a:%artist,f:%directoryname%/%filename%)))");
-    _name_tf = deadbeef->tf_compile ("b:%album%-a:%artist%");
+    _name_tf = deadbeef->tf_compile ("b:%album%-a:%artist%-t:%title%");
     return self;
 }
 
@@ -80,14 +80,24 @@ typedef struct {
 } cover_callback_info_t;
 
 static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
-    NSString *imgFname = nil;
-    if (!error) {
-        imgFname = [NSString stringWithUTF8String:cover->filename];
+    if (error) {
+        return;
     }
 
     dispatch_async(dispatch_get_main_queue(), ^{
         CoverManager *cm = [CoverManager defaultCoverManager];
-        NSImage *img = imgFname ? [[NSImage alloc] initWithContentsOfFile:imgFname] : [cm defaultCover];
+        NSImage *img = nil;
+        if (!img && cover->blob) {
+            NSData *data = [NSData dataWithBytesNoCopy:cover->blob + cover->blob_image_offset length:cover->blob_image_size freeWhenDone:NO];
+            img = [[NSImage alloc] initWithData:data];
+            data = nil;
+        }
+        if (!img && cover->filename) {
+            img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->filename]];
+        }
+        if (!img) {
+            img = [cm defaultCover];
+        }
         if (img) {
             [cm addCoverForTrack:query->track withImage:img];
             cover_callback_info_t *info = query->user_data;
@@ -95,6 +105,9 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
         }
 
         deadbeef->pl_item_unref (query->track);
+
+        cm->_artwork_plugin->cover_info_free (cover);
+
         free (query);
     });
 }
