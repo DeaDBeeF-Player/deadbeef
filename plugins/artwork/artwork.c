@@ -125,7 +125,7 @@ static char *nocover_path;
 static time_t cache_reset_time;
 static time_t default_reset_time;
 
-#define DEFAULT_FILEMASK "ddbcover.png;ddbcover.jpg;*front*.png;*front*.jpg;*cover*.png;*cover*.jpg;*folder*.png;*folder*.jpg"
+#define DEFAULT_FILEMASK "*front*.png;*front*.jpg;*cover*.png;*cover*.jpg;*folder*.png;*folder*.jpg"
 #define DEFAULT_FOLDERS "art;scans;covers;artwork;artworks"
 
 static char *artwork_filemask;
@@ -2005,7 +2005,6 @@ get_fetcher_preferences (void)
         const char *new_artwork_filemask = deadbeef->conf_get_str_fast ("artwork.filemask", NULL);
         if (!new_artwork_filemask || !new_artwork_filemask[0]) {
             new_artwork_filemask = DEFAULT_FILEMASK;
-            deadbeef->conf_set_str ("artwork.filemask", new_artwork_filemask);
         }
         if (!strings_equal (artwork_filemask, new_artwork_filemask)) {
             char *old_artwork_filemask = artwork_filemask;
@@ -2018,7 +2017,6 @@ get_fetcher_preferences (void)
         const char *new_artwork_folders = deadbeef->conf_get_str_fast ("artwork.folders", NULL);
         if (!new_artwork_folders || !new_artwork_folders[0]) {
             new_artwork_folders = DEFAULT_FOLDERS;
-            deadbeef->conf_set_str ("artwork.folders", new_artwork_folders);
         }
         if (!strings_equal (artwork_folders, new_artwork_folders)) {
             char *old_artwork_folders = artwork_folders;
@@ -2264,8 +2262,8 @@ artwork_plugin_start (void)
 static const char settings_dlg[] =
 // on android, cache is always off and music is saved to music folders by default
 #ifndef ANDROID
-    "property \"Disable disk cache\" checkbox artwork.disable_cache " STR(DEFAULT_DISABLE_CACHE) ";\n"
-    "property \"Save extracted covert to music folders\" entry artwork.save_to_music_folders " STR(DEFAULT_SAVE_TO_MUSIC_FOLDERS) ";\n"
+    "property \"Disable disk cache\" checkbox artwork.disable_cache 0;\n"
+    "property \"Save extracted covers to music folders\" checkbox artwork.save_to_music_folders 0;\n"
 #endif
     "property \"Fetch from embedded tags\" checkbox artwork.enable_embedded 1;\n"
     "property \"Fetch from local folder\" checkbox artwork.enable_localfolder 1;\n"
