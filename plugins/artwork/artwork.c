@@ -1186,6 +1186,37 @@ scan_local_path (char *mask, const char *local_path, const char *uri, DB_vfs_t *
     return -1;
 }
 
+static const char *filter_strcasecmp_name = NULL;
+
+static int
+filter_strcasecmp (const struct dirent *f)
+{
+    return !strcasecmp (filter_strcasecmp_name, f->d_name);
+}
+
+// FIXME: this returns only one path that matches subfolder. Usually that's enough, but can be improved.
+static char *
+get_case_insensitive_path (const char *local_path, const char *subfolder, DB_vfs_t *vfsplug) {
+    filter_strcasecmp_name = subfolder;
+    struct dirent **files;
+    int (* custom_scandir)(const char *, struct dirent ***, int (*)(const struct dirent *), int (*)(const struct dirent **, const struct dirent **));
+    custom_scandir = vfsplug ? vfsplug->scandir : scandir;
+    int files_count = custom_scandir (local_path, &files, filter_strcasecmp, NULL);
+    if (files_count > 0) {
+        size_t l = strlen (local_path) + strlen (files[0]->d_name) + 2;
+        char *ret = malloc (l);
+        snprintf (ret, l, "%s/%s", local_path, files[0]->d_name);
+
+        for (size_t i = 0; i < files_count; i++) {
+            free (files[i]);
+        }
+        free (files);
+
+        return ret;
+    }
+    return NULL;
+}
+
 static int
 local_image_file (const char *local_path, const char *uri, DB_vfs_t *vfsplug, ddb_cover_info_t *cover)
 {
@@ -1218,11 +1249,8 @@ local_image_file (const char *local_path, const char *uri, DB_vfs_t *vfsplug, dd
             path = strdup (local_path);
         }
         else {
-            size_t l = strlen (folder);
-            size_t full_l = l + strlen (local_path) + 2;
-            path = malloc (full_l);
-            snprintf (path, full_l, "%s/%s", local_path, folder);
-            folder += l+1;
+            path = get_case_insensitive_path (local_path, folder, vfsplug);
+            folder += strlen (folder)+1;
         }
         trace ("scanning %s for artwork\n", path);
         for (char *mask = filemask; mask < filemask_end; mask += strlen (mask)+1) {
