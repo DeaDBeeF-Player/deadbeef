@@ -1005,9 +1005,16 @@ int grouptitleheight = 22;
         if (idx == i) {
             NSScrollView *sv = [contentView enclosingScrollView];
             NSRect vis = [sv documentVisibleRect];
-            NSRect rect = NSMakeRect(vis.origin.x, y-vis.origin.y, vis.size.width, grp->height);
+            NSRect rect = NSMakeRect(vis.origin.x, y, vis.size.width, grp->height);
+            /*if (rect.origin.y < 0) {
+                rect.size.height += rect.origin.y;
+                rect.origin.y = 0;
+            }
+            if (rect.origin.y + rect.size.height >= vis.size.height) {
+                rect.size.height = vis.size.height - rect.origin.y;
+            }
             rect.origin.x = vis.origin.x;
-            rect.size.width = vis.size.width;
+            rect.size.width = vis.size.width;*/
             [contentView setNeedsDisplayInRect:rect];
             break;
         }

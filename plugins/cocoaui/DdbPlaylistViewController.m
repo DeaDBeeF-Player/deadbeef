@@ -745,7 +745,6 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     DdbListview *listview = [pltWidget listview];
     [listview drawGroup:info->grp];
     free (info);
-//    [[ctl view] setNeedsDisplay:YES];
 }
 
 #define ART_PADDING_HORZ 8

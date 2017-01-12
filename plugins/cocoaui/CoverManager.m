@@ -83,13 +83,6 @@ typedef struct {
 } cover_callback_info_t;
 
 static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
-#if 0
-    if (error) {
-        deadbeef->pl_item_unref (query->track);
-        return;
-    }
-#endif
-
     // We want to load the images in background, to keep UI responsive
     CoverManager *cm = [CoverManager defaultCoverManager];
     NSImage *img = nil;

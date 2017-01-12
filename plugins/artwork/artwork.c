@@ -1642,13 +1642,37 @@ mp4_extract_art (const char *fname, const char *outname, ddb_cover_info_t *cover
     }
 
     mp4ff_cover_art_t* art_list = mp4ff_cover_get (mp4);
-    if (art_list->tail) {
-        uint32_t sz = art_list->tail->size;
-        char* image_blob = art_list->tail->data;
+    mp4ff_cover_art_item_t *f;
+    mp4ff_cover_art_item_t *fprev = NULL;
+    for (f = art_list->items; f; f = f->next) {
+        if (!f->next) {
+            break;
+        }
+        fprev = f;
+    }
+    if (f) {
+        uint32_t sz = f->size;
+        char* image_blob = f->data;
         trace ("will write mp4 cover art (%u bytes) into %s\n", sz, outname);
-        if (!write_file (outname, image_blob, sz)) {
+        if (!artwork_disable_cache) {
+            if (!write_file (outname, image_blob, sz)) {
+                ret = 0;
+                cover->filename = strdup (outname);
+            }
+        }
+        else {
+            // steal the frame memory from mp4ff_cover_art_t
+            art_list->tail = fprev;
+            if (fprev) {
+                fprev->next = NULL;
+            }
+            else {
+                art_list->items = NULL;
+            }
+            cover->blob = (char *)image_blob;
+            cover->blob_size = sz;
+            cover->blob_image_size = sz;
             ret = 0;
-            cover->filename = strdup (outname);
         }
     }
 
