@@ -126,7 +126,10 @@ static time_t cache_reset_time;
 static time_t default_reset_time;
 
 #define DEFAULT_FILEMASK "ddbcover.png;ddbcover.jpg;*front*.png;*front*.jpg;*cover*.png;*cover*.jpg;*folder*.png;*folder*.jpg"
+#define DEFAULT_FOLDERS "art;scans;covers;artwork;artworks"
+
 static char *artwork_filemask;
+static char *artwork_folders;
 
 static char *album_tf;
 static char *artist_tf;
@@ -1190,27 +1193,60 @@ local_image_file (const char *local_path, const char *uri, DB_vfs_t *vfsplug, dd
         return -1;
     }
 
-    trace ("scanning %s for artwork\n", local_path);
-    char filemask[strlen (artwork_filemask)+1];
+    char *p;
+
+    char *filemask = strdup (artwork_filemask);
     strcpy (filemask, artwork_filemask);
     const char *filemask_end = filemask + strlen (filemask);
-    char *p;
     while ((p = strrchr (filemask, ';'))) {
         *p = '\0';
     }
 
-    for (char *mask = filemask; mask < filemask_end; mask += strlen (mask)+1) {
-        if (mask[0] && !scan_local_path (mask, local_path, uri, vfsplug, cover)) {
+    char *folders = strdup (artwork_folders);
+    strcpy (folders, artwork_folders);
+    const char *folders_end = folders + strlen (folders);
+    while ((p = strrchr (folders, ';'))) {
+        *p = '\0';
+    }
+
+    int root = 1;
+    char *folder = folders;
+    while (folder < folders_end) {
+        char *path;
+        if (root) {
+            root = 0;
+            path = strdup (local_path);
+        }
+        else {
+            size_t l = strlen (folder);
+            size_t full_l = l + strlen (local_path) + 2;
+            path = malloc (full_l);
+            snprintf (path, full_l, "%s/%s", local_path, folder);
+            folder += l+1;
+        }
+        trace ("scanning %s for artwork\n", path);
+        for (char *mask = filemask; mask < filemask_end; mask += strlen (mask)+1) {
+            if (mask[0] && !scan_local_path (mask, path, uri, vfsplug, cover)) {
+                free (filemask);
+                free (folders);
+                free (path);
+                return 0;
+            }
+        }
+        if (!scan_local_path ("*.jpg", path, uri, vfsplug, cover)
+            || !scan_local_path ("*.jpeg", path, uri, vfsplug, cover)
+            || !scan_local_path ("*.png", path, uri, vfsplug, cover)) {
+            free (filemask);
+            free (folders);
+            free (path);
             return 0;
         }
-    }
-    if (!scan_local_path ("*.jpg", local_path, uri, vfsplug, cover)
-        || !scan_local_path ("*.jpeg", local_path, uri, vfsplug, cover)
-        || !scan_local_path ("*.png", local_path, uri, vfsplug, cover)) {
-        return 0;
+        free (path);
     }
 
     trace ("No cover art files in local folder\n");
+    free (filemask);
+    free (folders);
     return -1;
 }
 
@@ -1978,6 +2014,19 @@ get_fetcher_preferences (void)
                 free (old_artwork_filemask);
             }
         }
+
+        const char *new_artwork_folders = deadbeef->conf_get_str_fast ("artwork.folders", NULL);
+        if (!new_artwork_folders || !new_artwork_folders[0]) {
+            new_artwork_folders = DEFAULT_FOLDERS;
+            deadbeef->conf_set_str ("artwork.folders", new_artwork_folders);
+        }
+        if (!strings_equal (artwork_folders, new_artwork_folders)) {
+            char *old_artwork_folders = artwork_folders;
+            artwork_folders = strdup (new_artwork_folders);
+            if (old_artwork_folders) {
+                free (old_artwork_folders);
+            }
+        }
         deadbeef->conf_unlock ();
     }
 #ifdef USE_VFS_CURL
@@ -2011,7 +2060,8 @@ artwork_configchanged (void)
 
     int old_artwork_enable_embedded = artwork_enable_embedded;
     int old_artwork_enable_local = artwork_enable_local;
-    const char *old_artwork_filemask = artwork_filemask;
+    char *old_artwork_filemask = strdup(artwork_filemask ? artwork_filemask : "");
+    char *old_artwork_folders = strdup(artwork_folders ? artwork_folders : "");
 #ifdef USE_VFS_CURL
     int old_artwork_enable_lfm = artwork_enable_lfm;
     int old_artwork_enable_mb = artwork_enable_mb;
@@ -2039,7 +2089,9 @@ artwork_configchanged (void)
         old_artwork_enable_aao != artwork_enable_aao ||
         old_artwork_enable_wos != artwork_enable_wos ||
 #endif
-        old_artwork_filemask != artwork_filemask) {
+        strcmp(old_artwork_filemask, artwork_filemask) ||
+        strcmp(old_artwork_folders, artwork_folders)
+        ) {
         trace ("artwork config changed, invalidating cache...\n");
         deadbeef->mutex_lock (queue_mutex);
 
@@ -2052,6 +2104,8 @@ artwork_configchanged (void)
         artwork_abort_http_request ();
         deadbeef->mutex_unlock (queue_mutex);
     }
+    free (old_artwork_filemask);
+    free (old_artwork_folders);
 }
 
 static int
@@ -2156,6 +2210,9 @@ artwork_plugin_stop (void)
     if (artwork_filemask) {
         free (artwork_filemask);
     }
+    if (artwork_folders) {
+        free (artwork_folders);
+    }
     clear_default_cover ();
     if (nocover_path) {
         free (nocover_path);
@@ -2213,6 +2270,7 @@ static const char settings_dlg[] =
     "property \"Fetch from embedded tags\" checkbox artwork.enable_embedded 1;\n"
     "property \"Fetch from local folder\" checkbox artwork.enable_localfolder 1;\n"
     "property \"Local file mask\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
+    "property \"Artwork folders\" entry artwork.folders \"" DEFAULT_FOLDERS "\";\n"
 #ifdef USE_VFS_CURL
     "property \"Fetch from Last.fm\" checkbox artwork.enable_lastfm 0;\n"
     "property \"Fetch from MusicBrainz\" checkbox artwork.enable_musicbrainz 0;\n"
