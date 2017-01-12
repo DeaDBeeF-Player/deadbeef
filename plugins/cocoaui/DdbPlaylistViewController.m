@@ -733,15 +733,26 @@ extern DB_functions_t *deadbeef;
     }
 }
 
+typedef struct {
+    void *ctl; // DdbPlaylistViewController ptr (retain)
+    int grp;
+} cover_avail_info_t;
+
 static void coverAvailCallback (NSImage *__strong img, void *user_data) {
-    DdbPlaylistViewController *ctl = (__bridge DdbPlaylistViewController *) user_data;
-    [[ctl view] setNeedsDisplay:YES];
+    cover_avail_info_t *info = user_data;
+    DdbPlaylistViewController *ctl = (__bridge_transfer DdbPlaylistViewController *)info->ctl;
+    DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)[ctl view];
+    DdbListview *listview = [pltWidget listview];
+    [listview drawGroup:info->grp];
+    free (info);
+//    [[ctl view] setNeedsDisplay:YES];
 }
 
 #define ART_PADDING_HORZ 8
 #define ART_PADDING_VERT 0
 
-- (void)drawAlbumArtForRow:(DdbListviewRow_t)row
+- (void)drawAlbumArtForGroup:(DdbListviewGroup_t *)grp
+                  groupIndex:(int)groupIndex
                   inColumn:(DdbListviewCol_t)col
              isPinnedGroup:(BOOL)pinned
             nextGroupCoord:(int)grp_next_y
@@ -752,9 +763,13 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
                     height:(int)height {
     DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)[self view];
     DdbListview *listview = [pltWidget listview];
-    DB_playItem_t *it = (DB_playItem_t *)row;
-    NSImage *image = [[CoverManager defaultCoverManager] getCoverForTrack:it withCallbackWhenReady:coverAvailCallback withUserDataForCallback:(__bridge void *)self];
+    DB_playItem_t *it = (DB_playItem_t *)grp->head;
+    cover_avail_info_t *inf = calloc (sizeof (cover_avail_info_t), 1);
+    inf->ctl = (__bridge_retained void *)self;
+    inf->grp = groupIndex;
+    NSImage *image = [[CoverManager defaultCoverManager] getCoverForTrack:it withCallbackWhenReady:coverAvailCallback withUserDataForCallback:inf];
     if (!image) {
+        // FIXME: the problem here is that if the cover is not found (yet) -- it won't draw anything, but the rect is already invalidated, and will come out as background color
         return;
     }
 

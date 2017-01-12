@@ -324,6 +324,7 @@ int grouptitleheight = 22;
 }
 
 - (void)renderAlbumArtForGroup:(DdbListviewGroup_t *)grp
+                    groupIndex:(int)groupIndex
                  isPinnedGroup:(BOOL)isPinnedGroup
                 nextGroupCoord:(int)grp_next_y
                           yPos:(int)y
@@ -344,7 +345,7 @@ int grouptitleheight = 22;
             [clr set];
             [NSBezierPath fillRect:NSMakeRect (x, y, w, grp_next_y - y)];
             if (title_height > 0) {
-                [delegate drawAlbumArtForRow:grp->head inColumn:col isPinnedGroup:isPinnedGroup nextGroupCoord:grp_next_y xPos:x yPos:y viewportY:viewportY width:w height:grp->height];
+                [delegate drawAlbumArtForGroup:grp groupIndex:groupIndex inColumn:col isPinnedGroup:isPinnedGroup nextGroupCoord:grp_next_y xPos:x yPos:y viewportY:viewportY width:w height:grp->height];
             }
         }
     }
@@ -369,10 +370,12 @@ int grouptitleheight = 22;
     // find 1st group
     int idx = 0;
     int grp_y = 0;
+    int groupIndex = 0;
     while (grp && grp_y + grp->height < vis.origin.y) {
         grp_y += grp->height;
         idx += grp->num_items;
         grp = grp->next;
+        groupIndex++;
     }
     DdbListviewGroup_t *pin_grp = [delegate pinGroups] && grp && grp_y < vis.origin.y && grp_y + grp->height >= vis.origin.y ? grp : NULL;
 
@@ -438,7 +441,7 @@ int grouptitleheight = 22;
 
         // draw album art
         int grp_next_y = grp_y + grp->height;
-        [self renderAlbumArtForGroup:grp isPinnedGroup:pin_grp==grp nextGroupCoord:grp_next_y yPos:grp_y + title_height viewportY:vis.origin.y clipRegion:dirtyRect];
+        [self renderAlbumArtForGroup:grp groupIndex:groupIndex isPinnedGroup:pin_grp==grp nextGroupCoord:grp_next_y yPos:grp_y + title_height viewportY:vis.origin.y clipRegion:dirtyRect];
 
         #define min(x,y) ((x)<(y)?(x):(y))
         if (pin_grp == grp && clip_y-vis.origin.y <= title_height) {
@@ -477,6 +480,7 @@ int grouptitleheight = 22;
         idx += grp->num_items;
         grp_y += grp->height;
         grp = grp->next;
+        groupIndex++;
     }
 
     if (cursor_it != [delegate invalidRow]) {
@@ -992,6 +996,24 @@ int grouptitleheight = 22;
     rect.size.width = vis.size.width;
 
     [contentView setNeedsDisplayInRect:rect];
+}
+
+- (void)drawGroup:(int)idx {
+    int i = 0;
+    int y = 0;
+    for (DdbListviewGroup_t *grp = _groups; grp; grp = grp->next) {
+        if (idx == i) {
+            NSScrollView *sv = [contentView enclosingScrollView];
+            NSRect vis = [sv documentVisibleRect];
+            NSRect rect = NSMakeRect(vis.origin.x, y-vis.origin.y, vis.size.width, grp->height);
+            rect.origin.x = vis.origin.x;
+            rect.size.width = vis.size.width;
+            [contentView setNeedsDisplayInRect:rect];
+            break;
+        }
+        i++;
+        y += grp->height;
+    }
 }
 
 - (void)deselectAll {
