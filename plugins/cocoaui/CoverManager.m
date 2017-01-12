@@ -53,8 +53,11 @@ static CoverManager *g_DefaultCoverManager = nil;
     self = [super init];
     _artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     _defaultCover = [NSImage imageNamed:@"noartwork.png"];
-    //_name_tf = deadbeef->tf_compile ("$if2(b:%album%-a:%artist%,$if2(b:%album%,$if2(a:%artist,f:%directoryname%/%filename%)))");
-    _name_tf = deadbeef->tf_compile ("b:%album%-a:%artist%-t:%title%");
+
+    // Each file may contain its own album art, therefore we can't really cache them easily by album/artist/title.
+    // This however would duplicate the same image, for every track in every album, if the custom grouping is set per file.
+    //_name_tf = deadbeef->tf_compile ("b:%album%-a:%artist%-t:%title%");
+    _name_tf = deadbeef->tf_compile ("%_path_raw%");
     return self;
 }
 
@@ -80,25 +83,29 @@ typedef struct {
 } cover_callback_info_t;
 
 static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
+#if 0
     if (error) {
         deadbeef->pl_item_unref (query->track);
         return;
     }
+#endif
+
+    // We want to load the images in background, to keep UI responsive
+    CoverManager *cm = [CoverManager defaultCoverManager];
+    NSImage *img = nil;
+    if (!img && cover && cover->blob) {
+        NSData *data = [NSData dataWithBytesNoCopy:cover->blob + cover->blob_image_offset length:cover->blob_image_size freeWhenDone:NO];
+        img = [[NSImage alloc] initWithData:data];
+        data = nil;
+    }
+    if (!img && cover && cover->filename) {
+        img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->filename]];
+    }
+    if (!img) {
+        img = [cm defaultCover];
+    }
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        CoverManager *cm = [CoverManager defaultCoverManager];
-        NSImage *img = nil;
-        if (!img && cover->blob) {
-            NSData *data = [NSData dataWithBytesNoCopy:cover->blob + cover->blob_image_offset length:cover->blob_image_size freeWhenDone:NO];
-            img = [[NSImage alloc] initWithData:data];
-            data = nil;
-        }
-        if (!img && cover->filename) {
-            img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->filename]];
-        }
-        if (!img) {
-            img = [cm defaultCover];
-        }
         if (img) {
             [cm addCoverForTrack:query->track withImage:img];
             cover_callback_info_t *info = query->user_data;
@@ -107,7 +114,9 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
 
         deadbeef->pl_item_unref (query->track);
 
-        cm->_artwork_plugin->cover_info_free (cover);
+        if (cover) {
+            cm->_artwork_plugin->cover_info_free (cover);
+        }
 
         free (query);
     });
