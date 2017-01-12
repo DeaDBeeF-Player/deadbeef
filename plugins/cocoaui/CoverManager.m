@@ -81,6 +81,7 @@ typedef struct {
 
 static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
     if (error) {
+        deadbeef->pl_item_unref (query->track);
         return;
     }
 
