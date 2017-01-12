@@ -68,6 +68,7 @@ typedef struct ddb_cover_query_s {
 // This structure is passed to the callback, when the artwork query has been processed.
 // It doesn't need to be freed by the caller
 typedef struct ddb_cover_info_s {
+    int refc; // Reference count, to allow sending the same cover to multiple callbacks
     char *type; // A type of image, e.g. "front" or "back" (can be NULL)
 
     char *filename; // A name of file with the image

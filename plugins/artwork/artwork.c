@@ -1063,7 +1063,9 @@ strings_equal (const char *s1, const char *s2)
 
 static int
 queries_equal (ddb_cover_query_t *q1, ddb_cover_query_t *q2) {
-    // FIXME
+    if (q1->track == q2->track) {
+        return 1;
+    }
     return 0;
 }
 
@@ -1890,6 +1892,14 @@ process_query (const char *filepath, const char *album, const char *artist, ddb_
 
 static void
 send_query_callbacks (cover_callback_t *callback, ddb_cover_info_t *cover) {
+    if (cover) {
+        cover->refc = 0;
+        cover_callback_t *c = callback;
+        while (c) {
+            cover->refc++;
+            c = c->next;
+        }
+    }
     while (callback) {
         callback->cb (cover ? 0 : -1, callback->info, cover);
         cover_callback_t *next = callback->next;
@@ -1921,6 +1931,10 @@ queue_clear (void) {
 
 static void
 cover_info_free (ddb_cover_info_t *cover) {
+    cover->refc--;
+    if (cover->refc != 0) {
+        return;
+    }
     if (cover->type) {
         free (cover->type);
     }

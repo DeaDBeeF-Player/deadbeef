@@ -117,18 +117,29 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
 
     NSNumber *t = [NSNumber numberWithLong:time (NULL)];
     int i_min = 0;
+    BOOL foundEmpty = NO;
     for (int i = 0; i < CACHE_SIZE; i++) {
         NSMutableDictionary *d = _cachedCovers[i];
-        if (!d) {
+        if (!d && !foundEmpty) {
+            i_min = i;
+            foundEmpty = YES;
+            continue;
+        }
+
+        // same image
+        if ([d[@"hash"] isEqualToString:hash]) {
             i_min = i;
             break;
         }
+
+        // lowest timestamp
         NSNumber *ts = d[@"ts"];
-        if ([ts isLessThan:t]) {
+        if (!foundEmpty && [ts isLessThan:t]) {
             i_min = i;
         }
     }
 
+//    NSLog (@"+ %@", hash);
     NSMutableDictionary *d = [[NSMutableDictionary alloc] initWithObjectsAndKeys:hash, @"hash", t, @"ts", img, @"img", nil];
     _cachedCovers[i_min] = d;
 }
@@ -146,6 +157,7 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
         }
     }
 
+//    NSLog (@"! %@", hash);
     ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
     query->_size = sizeof (ddb_cover_query_t);
     query->track = track;
