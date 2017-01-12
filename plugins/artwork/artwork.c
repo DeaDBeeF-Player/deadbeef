@@ -125,7 +125,7 @@ static char *nocover_path;
 static time_t cache_reset_time;
 static time_t default_reset_time;
 
-#define DEFAULT_FILEMASK "ddbcover.png;ddbcover.jpg;*cover*.jpg;*front*.jpg;*folder*.jpg;*cover*.png;*front*.png;*folder*.png"
+#define DEFAULT_FILEMASK "ddbcover.png;ddbcover.jpg;*front*.png;*front*.jpg;*cover*.png;*cover*.jpg;*folder*.png;*folder*.jpg"
 static char *artwork_filemask;
 
 static char *album_tf;
@@ -1492,6 +1492,7 @@ apev2_extract_art (const char *fname, const char *outname, ddb_cover_info_t *cov
     memset (&apev2_tag, 0, sizeof (apev2_tag));
     DB_FILE *apev2_fp = deadbeef->fopen (fname);
     if (apev2_fp && !deadbeef->junk_apev2_read_full (NULL, &apev2_tag, apev2_fp)) {
+        DB_apev2_frame_t *fprev = NULL;
         for (DB_apev2_frame_t *f = apev2_tag.frames; f; f = f->next) {
             const uint8_t *image_data = apev2_artwork (f);
             if (image_data) {
@@ -1508,15 +1509,23 @@ apev2_extract_art (const char *fname, const char *outname, ddb_cover_info_t *cov
                     }
                 }
                 else {
-                    // FIXME: can do the same malloc hack here as with ID3
-                    cover->blob = malloc (sz);
-                    memcpy (cover->blob, image_data, sz);
-                    cover->blob_size = sz;
+                    // steal the frame memory from DB_id3v2_tag_t
+                    if (fprev) {
+                        fprev->next = f->next;
+                    }
+                    else {
+                        apev2_tag.frames = f->next;
+                    }
+
+                    cover->blob = (char *)f;
+                    cover->blob_size = f->size;
+                    cover->blob_image_offset = (uint64_t)((char *)image_data - (char *)cover->blob);
                     cover->blob_image_size = sz;
                     err = 0;
                     break;
                 }
             }
+            fprev = f;
         }
 
     }
