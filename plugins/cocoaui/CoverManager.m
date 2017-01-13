@@ -148,6 +148,11 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
 }
 
 - (NSImage *)getCoverForTrack:(DB_playItem_t *)track withCallbackWhenReady:(void (*) (NSImage *img, void *user_data))callback withUserDataForCallback:(void *)user_data {
+    if (!_artwork_plugin) {
+        callback (nil, user_data);
+        return nil;
+    }
+
     NSString *hash = [self hashForTrack:track];
     for (int i = 0; i < CACHE_SIZE; i++) {
         NSMutableDictionary *d = _cachedCovers[i];
