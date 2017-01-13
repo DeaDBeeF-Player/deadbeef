@@ -125,7 +125,7 @@ static char *nocover_path;
 static time_t cache_reset_time;
 static time_t default_reset_time;
 
-#define DEFAULT_FILEMASK "*front*.png;*front*.jpg;*cover*.png;*cover*.jpg;*folder*.png;*folder*.jpg"
+#define DEFAULT_FILEMASK "front.png;front.jpg;folder.png;folder.jpg;cover.png;cover.jpg;f.png;f.jpg;*front*.png;*front*.jpg;*cover*.png;*cover*.jpg;*folder*.png;*folder*.jpg;*.png;*.jpg"
 #define DEFAULT_FOLDERS "art;scans;covers;artwork;artworks"
 
 static char *artwork_filemask;
