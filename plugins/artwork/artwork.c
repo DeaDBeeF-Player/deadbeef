@@ -75,9 +75,6 @@
 DB_functions_t *deadbeef;
 static ddb_artwork_plugin_t plugin;
 
-#define NOARTWORK_IMAGE "noartwork.png"
-static char *default_cover;
-
 // list of callbacks + queries for the same cover
 typedef struct cover_callback_s {
     ddb_cover_callback_t cb;
@@ -1001,15 +998,6 @@ make_cache_path (const char *filepath, const char *album, const char *artist, ch
 
     sprintf (outpath+strlen (outpath), "%s%s", esc_album, ".jpg");
     return 0;
-}
-
-static void
-clear_default_cover (void)
-{
-    if (default_cover && default_cover[0]) {
-        free (default_cover);
-    }
-    default_cover = NULL;
 }
 
 static void
@@ -2134,7 +2122,6 @@ artwork_configchanged (void)
 
     if (old_artwork_disable_cache != artwork_disable_cache || old_missing_artwork != missing_artwork || old_nocover_path != nocover_path) {
         trace ("artwork config changed, invalidating default artwork...\n");
-        clear_default_cover ();
         default_reset_time = time (NULL);
         deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
     }
@@ -2213,8 +2200,6 @@ invalidate_playitem_cache (DB_plugin_action_t *action, int ctx)
     }
     deadbeef->plt_unref (plt);
 
-    clear_default_cover ();
-
     deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
     return 0;
 }
@@ -2271,11 +2256,6 @@ artwork_plugin_stop (void)
     if (artwork_folders) {
         free (artwork_folders);
     }
-    clear_default_cover ();
-    if (nocover_path) {
-        free (nocover_path);
-    }
-
 
     if (album_tf) {
         deadbeef->tf_free (album_tf);
