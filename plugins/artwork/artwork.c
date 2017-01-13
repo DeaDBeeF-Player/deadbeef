@@ -1301,7 +1301,7 @@ id3v2_skip_str (int enc, const uint8_t *ptr, const uint8_t *end) {
 static const uint8_t *
 id3v2_artwork (const DB_id3v2_frame_t *f, int minor_version)
 {
-    if (strcmp (f->id, "APIC")) {
+    if ((minor_version > 2 && strcmp (f->id, "APIC")) || (minor_version == 2 && strcmp (f->id, "PIC"))) {
         return NULL;
     }
 
@@ -1315,33 +1315,27 @@ id3v2_artwork (const DB_id3v2_frame_t *f, int minor_version)
     if (minor_version == 4 && (f->flags[1] & 1)) {
         data += 4;
     }
-#if 0
-    printf ("version: %d, flags: %d %d\n", minor_version, (int)f->flags[0], (int)f->flags[1]);
-    for (size_t i = 0; i < 20; i++) {
-        printf ("%c", data[i] < 0x20 ? '?' : data[i]);
-    }
-    printf ("\n");
-    for (size_t i = 0; i < 20; i++) {
-        printf ("%02x ", data[i]);
-    }
-    printf ("\n");
-#endif
     const uint8_t *end = f->data + f->size;
     int enc = *data;
     data++;
 
-    // mime type is ascii always, the enc above is for the picture type
-    const uint8_t *mime_end = id3v2_skip_str (0, data, end);
-    if (!mime_end) {
-        trace ("artwork: corrupted id3v2 APIC frame\n");
-        return NULL;
+    if (minor_version > 2) {
+        // mime type is ascii always, the enc above is for the picture type
+        const uint8_t *mime_end = id3v2_skip_str (0, data, end);
+        if (!mime_end) {
+            trace ("artwork: corrupted id3v2 APIC frame\n");
+            return NULL;
+        }
+        if (*mime_end != 3) {
+            trace ("artwork: picture type=%d\n", *mime_end);
+            return NULL;
+        }
+        trace ("artwork: mime-type=%s, picture type: %d\n", data, *mime_end);
+        data = mime_end;
     }
-    if (*mime_end != 3) {
-        trace ("artwork: picture type=%d\n", *mime_end);
-        return NULL;
+    else {
+        data += 3; // image format
     }
-    trace ("artwork: mime-type=%s, picture type: %d\n", data, *mime_end);
-    data = mime_end;
     data++; // picture type
     data = id3v2_skip_str (enc, data, end); // description
     if (!data) {

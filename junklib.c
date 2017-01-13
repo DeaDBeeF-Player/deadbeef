@@ -4191,7 +4191,14 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             if (sz < 1) {
                 break; // frame must be at least 1 byte long
             }
-            if (sz > MAX_ID3V2_FRAME_SIZE) {
+            if (!strcmp (frameid, "PIC")) {
+                if (sz > MAX_ID3V2_APIC_FRAME_SIZE) {
+                    trace ("junk_id3v2_read_full: frame %s size is too big (%d), discarded\n", frameid, sz);
+                    readptr += sz;
+                    continue;
+                }
+            }
+            else if (sz > MAX_ID3V2_FRAME_SIZE) {
                 trace ("junk_id3v2_read_full: frame %s size is too big, discarded\n", frameid);
                 readptr += sz;
                 continue;
