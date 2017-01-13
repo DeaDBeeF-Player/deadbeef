@@ -214,6 +214,66 @@ tf_func_strcmp (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
     return !res;
 }
 
+// $upper(str) converts a string to uppercase
+int
+tf_func_upper (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    int len;
+    char temp_str[1000];
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str), fail_on_undef);
+
+    char *pout = out;
+    char *p = temp_str;
+    while (*p && outlen > 0) {
+        uint32_t i = 0;
+        u8_nextchar (p, &i);
+        if (i > outlen) {
+            break;
+        }
+        int l = u8_toupper (p, i, pout);
+        p += i;
+        pout += l;
+        outlen -= l;
+    }
+
+    return (int)(pout - out);
+}
+
+// $lower(str) converts a string to lowercase
+int
+tf_func_lower (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    int len;
+    char temp_str[1000];
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str), fail_on_undef);
+
+    char *pout = out;
+    char *p = temp_str;
+    while (*p && outlen > 0) {
+        uint32_t i = 0;
+        u8_nextchar (p, &i);
+        if (i > outlen) {
+            break;
+        }
+        int l = u8_tolower (p, i, pout);
+        p += i;
+        pout += l;
+        outlen -= l;
+    }
+
+    return (int)(pout - out);
+}
+
 // $num(n,len) Formats the integer number n in decimal notation with len characters. Pads with zeros
 // from the left if necessary. len includes the dash when the number is negative. If n is not numeric, it is treated as zero.
 int
@@ -1460,6 +1520,8 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "fix_eol", tf_func_fix_eol },
     { "hex", tf_func_hex },
     { "strcmp", tf_func_strcmp },
+    { "upper", tf_func_upper },
+    { "lower", tf_func_lower },
     { "num", tf_func_num },
     { "replace", tf_func_replace },
     // Track info

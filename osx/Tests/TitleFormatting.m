@@ -1357,4 +1357,61 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "MyFile.mod"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_UpperForAllLowerCase_ReturnsUppercase {
+    char *bc = tf_compile("$upper(abcd)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "ABCD"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_UpperForAllUpperCase_ReturnsUppercase {
+    char *bc = tf_compile("$upper(ABCD)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "ABCD"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_UpperForMixed_ReturnsUppercase {
+    char *bc = tf_compile("$upper(aBcD)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "ABCD"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_UpperForAllLowerCaseNonAscii_ReturnsUppercase {
+    char *bc = tf_compile("$upper(абвгд)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "АБВГД"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LowerForAllUpperCase_ReturnsLowercase {
+    char *bc = tf_compile("$lower(ABCD)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "abcd"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LowerForAllLowerCase_ReturnsLowercase {
+    char *bc = tf_compile("$lower(abcd)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "abcd"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LowerForMixed_ReturnsLowercase {
+    char *bc = tf_compile("$lower(aBcD)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "abcd"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LowerForAllUpperCaseNonAscii_ReturnsLowercase {
+    char *bc = tf_compile("$lower(АБВГД)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "абвгд"), @"The actual output is: %s", buffer);
+}
+
+
 @end
