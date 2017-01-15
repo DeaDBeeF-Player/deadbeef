@@ -1785,7 +1785,7 @@ process_query (const char *filepath, const char *album, const char *artist, ddb_
 
     if (!artwork_disable_cache) {
         cache_path = cache_path_buf;
-        make_cache_path (filepath, album, artist, cache_path, sizeof (cache_path));
+        make_cache_path (filepath, album, artist, cache_path, sizeof (cache_path_buf));
     }
 
 #if 0
