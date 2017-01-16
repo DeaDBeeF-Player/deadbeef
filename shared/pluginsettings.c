@@ -73,7 +73,7 @@ settings_data_init (settings_data_t *settings_data, const char *layout) {
         if (!script) {
             break;
         }
-        char *type_ptr = script;
+        const char *type_ptr = script;
         char type[MAX_TOKEN];
         script = gettoken_warn_eof (script, type);
         if (!script) {

@@ -768,7 +768,11 @@ get_param (const char *key, char *value, int len, const char *def)
     return;
 }
 
-#define DRIVE_COMBO_SCRIPT "property box vbox[1] hmg expand fill border=10 height=250; property box hbox[1] hmg height=-1; property \"CD drive to load\" select[%u] cdda.drive_device 0"
+#define DRIVE_COMBO_SCRIPT\
+"property box vbox[1] hmg expand fill border=10 height=250;"\
+"property box hbox[1] hmg height=-1;"\
+"property \"CD drive to load\" select[%u] cdda.drive_device 0"
+
 static int
 cda_action_add_cd (DB_plugin_action_t *act, int ctx)
 {
