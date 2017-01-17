@@ -132,10 +132,6 @@ sub string_to_id {
 	return $s_unique;
 }
 
-sub string_xml_esc {
-
-}
-
 if ($android_xml) {
 	my $fname = $out_fname // 'strings.xml';
     open XML, '>:encoding(utf8)', $fname or die "Failed to open $fname\n";
