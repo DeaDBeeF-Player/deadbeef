@@ -120,14 +120,21 @@ sub string_to_id {
 	my $s = shift;
 
 	$s =~ s/[^a-zA-Z0-9_]/_/g;
-	$s =~ s/^([^a-zA-Z_])/_/;
+	if ($s =~ /^([^a-zA-Z_])/) {
+		$s = 'num_'.$s;
+	}
 
 	my $s_unique = $s;
 	my $cnt = 1;
-	while (grep ({ $_ eq $s_unique} @unique_ids)) {
-		$s_unique = $s.$cnt;
-		$cnt++;
+	if (grep ({ $_ eq $s_unique} @unique_ids)) {
+		die "The generated ID is not unique: $s\n";
 	}
+	# NOTE: we want an algorithm which is very simple and fast,
+	# and doesn't generate non-unique ids from unique strings.
+	#while (grep ({ $_ eq $s_unique} @unique_ids)) {
+	#	$s_unique = $s.$cnt;
+	#	$cnt++;
+	#}
 	push @unique_ids, $s_unique;
 	return $s_unique;
 }
