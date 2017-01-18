@@ -453,6 +453,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     int scansamples = 0;
     int valid_frames = 0;
     int prev_bitrate = -1;
+    int64_t valid_frame_pos = -1;
     // this flag is used to make sure we only check the 1st frame for xing info
     int checked_xing_header = buffer->have_xing_header;
 
@@ -478,6 +479,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         int64_t framepos = offs;
         int64_t new_offs = _scan_mpeg_header(buffer, offs, fsize, &frame);
         if (new_offs == -1) {
+            valid_frame_pos = -1;
             lastframe_valid = 0;
             if (sample == 0) {
                 valid_frames = 0;
@@ -487,6 +489,9 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         }
         if (new_offs == -2) {
             break;
+        }
+        if (valid_frame_pos == -1) {
+            valid_frame_pos = framepos;
         }
         offs = new_offs;
 // {{{ vbr adjustement
@@ -594,8 +599,8 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             buffer->avg_samplerate += frame.samplerate;
             buffer->avg_samples_per_frame += frame.samples_per_frame;
             //avg_bitrate += bitrate;
-            if (nframe >= 100) {
-                deadbeef->fseek (buffer->file, framepos, SEEK_SET);
+            if (nframe >= (buffer->file->vfs->is_streaming () ? 10 : 100)) {
+                deadbeef->fseek (buffer->file, valid_frame_pos, SEEK_SET);
                 goto end_scan;
             }
 // }}}
@@ -856,17 +861,11 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     else {
         deadbeef->fset_track (info->buffer.file, it);
         deadbeef->pl_add_meta (it, "title", NULL);
-        int skip = deadbeef->junk_get_leading_size (info->buffer.file);
-        if (skip > 0) {
-            trace ("mp3: skipping %d(%xH) bytes of junk\n", skip, skip);
-            deadbeef->fseek (info->buffer.file, skip, SEEK_SET);
-        }
         int res = cmp3_scan_stream (&info->buffer, 0);
         if (res < 0) {
             trace ("mp3: cmp3_init: initial cmp3_scan_stream failed\n");
             return -1;
         }
-        deadbeef->fseek (info->buffer.file, 0, SEEK_SET);
 
         cmp3_set_extra_properties (&info->buffer, 1);
 
