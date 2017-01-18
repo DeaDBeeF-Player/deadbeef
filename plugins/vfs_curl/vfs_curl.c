@@ -31,8 +31,7 @@
 #include <time.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -1132,6 +1131,7 @@ static DB_vfs_t plugin = {
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_VFS,
+//    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .plugin.id = "vfs_curl",
     .plugin.name = "cURL vfs",
     .plugin.descr = "http and ftp streaming module using libcurl, with ICY protocol support",
