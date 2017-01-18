@@ -459,6 +459,10 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 
     int64_t fsize = deadbeef->fgetlength (buffer->file);
 
+    if (fsize < 0) {
+        buffer->duration = -1;
+    }
+
     int64_t lead_in_frame_pos = buffer->startoffset;
     int64_t lead_in_frame_no = 0;
 
@@ -502,6 +506,8 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 // }}}
 
         valid_frames++;
+
+        trace ("valid: %d, sr: %d, ch: %d\n", valid_frames, frame.samplerate, frame.nchannels);
 
 // {{{ update stream parameters, only when sample!=0 or 1st frame
         if (sample != 0 || nframe == 0)
@@ -598,8 +604,25 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             buffer->avg_packetlength += frame.packetlength;
             buffer->avg_samplerate += frame.samplerate;
             buffer->avg_samples_per_frame += frame.samples_per_frame;
-            //avg_bitrate += bitrate;
-            if (nframe >= (buffer->file->vfs->is_streaming () ? 20 : 100)) {
+
+            buffer->version = frame.ver;
+            buffer->layer = frame.layer;
+            buffer->bitrate = frame.bitrate;
+            buffer->samplerate = frame.samplerate;
+            buffer->packetlength = frame.packetlength;
+            if (frame.nchannels > buffer->channels) {
+                buffer->channels = frame.nchannels;
+            }
+
+            if (buffer->file->vfs->is_streaming ()) {
+                if (valid_frames >= 20) {
+                    deadbeef->fseek (buffer->file, valid_frame_pos, SEEK_SET);
+                    buffer->duration = -1;
+                    buffer->totalsamples = 0;
+                    return 0;
+                }
+            }
+            else if (valid_frames >= 100) {
                 deadbeef->fseek (buffer->file, valid_frame_pos, SEEK_SET);
                 goto end_scan;
             }
@@ -629,8 +652,6 @@ end_scan:
         buffer->avg_packetlength /= (float)valid_frames;
         buffer->avg_samplerate /= valid_frames;
         buffer->avg_samples_per_frame /= valid_frames;
-//        avg_bitrate /= valid_frames;
-        //trace ("valid_frames=%d, avg_bitrate=%d, avg_packetlength=%f, avg_samplerate=%d, avg_samples_per_frame=%d\n", valid_frames, avg_bitrate, buffer->avg_packetlength, buffer->avg_samplerate, buffer->avg_samples_per_frame);
         trace ("startoffs: %lld, endoffs: %lld\n",  buffer->startoffset, buffer->endoffset);
 
         buffer->nframes = (fsize - buffer->startoffset - buffer->endoffset) / buffer->avg_packetlength;
@@ -878,9 +899,6 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             info->buffer.endsample = info->buffer.totalsamples - 1;
         }
         else {
-//            info->buffer.duration = 200;
-//            info->buffer.totalsamples = 10000000;
-//            info->buffer.endsample = info->buffer.totalsamples-1;
             info->buffer.endsample = -1;
             info->buffer.totalsamples = -1;
         }
@@ -1086,9 +1104,6 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
         fwrite (bytes, 1, size - info->buffer.readsize, out);
     }
 #endif
-//    if (initsize-info->buffer.readsize != size) {
-//        printf ("\033[0;31meof at sample %d\033[37;0m\n", info->buffer.currentsample);
-//    }
     return initsize - info->buffer.readsize;
 }
 
