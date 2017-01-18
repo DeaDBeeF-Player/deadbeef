@@ -479,6 +479,9 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         int64_t new_offs = _scan_mpeg_header(buffer, offs, fsize, &frame);
         if (new_offs == -1) {
             lastframe_valid = 0;
+            if (sample == 0) {
+                valid_frames = 0;
+            }
             offs++;
             continue;
         }
@@ -533,6 +536,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 
             if (buffer->have_xing_header) {
                 // trust the xing header -- even if requested to scan for precise duration
+                buffer->startoffset = offs;
                 if (sample <= 0) {
                     // parameters have been discovered from xing header, no need to continue
                     deadbeef->fseek (buffer->file, buffer->startoffset, SEEK_SET);
@@ -545,7 +549,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             }
 
             if (sample == 0) {
-                if (buffer->file->vfs->is_streaming ()) {
+                if (!buffer->file->vfs->is_streaming ()) {
                     // guess duration from filesize
                     int64_t sz = deadbeef->fgetlength (buffer->file) - buffer->startoffset;
                     if (sz > 0) {
@@ -579,28 +583,19 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 
                     return 0;
                 }
-                else {
-                    deadbeef->fseek (buffer->file, framepos, SEEK_SET);
-                }
-            }
-            else {
-                deadbeef->fseek (buffer->file, framepos+frame.packetlength, SEEK_SET);
             }
         }
 // }}}
 
         if (sample == 0) {
 // {{{ update averages, interrupt scan on frame #100
-            if (fsize <= 0) {
-                trace ("cmp3_scan_stream: negative file size\n");
-                return -1;
-            }
             // calculating apx duration based on 1st 100 frames
             buffer->avg_packetlength += frame.packetlength;
             buffer->avg_samplerate += frame.samplerate;
             buffer->avg_samples_per_frame += frame.samples_per_frame;
             //avg_bitrate += bitrate;
             if (nframe >= 100) {
+                deadbeef->fseek (buffer->file, framepos, SEEK_SET);
                 goto end_scan;
             }
 // }}}
