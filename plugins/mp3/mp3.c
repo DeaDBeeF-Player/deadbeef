@@ -599,7 +599,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             buffer->avg_samplerate += frame.samplerate;
             buffer->avg_samples_per_frame += frame.samples_per_frame;
             //avg_bitrate += bitrate;
-            if (nframe >= (buffer->file->vfs->is_streaming () ? 10 : 100)) {
+            if (nframe >= (buffer->file->vfs->is_streaming () ? 20 : 100)) {
                 deadbeef->fseek (buffer->file, valid_frame_pos, SEEK_SET);
                 goto end_scan;
             }
