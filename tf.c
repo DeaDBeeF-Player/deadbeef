@@ -1793,7 +1793,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     val = tf_get_channels_string_for_track (it);
                 }
                 else if (!strcmp (name, "codec")) {
-                    val = pl_find_meta_raw (it, ":FILETYPE");
+                    val = pl_find_meta (it, ":FILETYPE");
                 }
                 else if (!strcmp (name, "replaygain_album_gain")) {
                     val = pl_find_meta_raw (it, ":REPLAYGAIN_ALBUMGAIN");
