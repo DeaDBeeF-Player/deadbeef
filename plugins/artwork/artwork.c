@@ -1287,7 +1287,7 @@ id3v2_skip_str (int enc, const uint8_t *ptr, const uint8_t *end) {
 }
 
 static const uint8_t *
-id3v2_artwork (const DB_id3v2_frame_t *f, int minor_version)
+id3v2_artwork (const DB_id3v2_frame_t *f, int minor_version, int type)
 {
     if ((minor_version > 2 && strcmp (f->id, "APIC")) || (minor_version == 2 && strcmp (f->id, "PIC"))) {
         return NULL;
@@ -1314,7 +1314,7 @@ id3v2_artwork (const DB_id3v2_frame_t *f, int minor_version)
             trace ("artwork: corrupted id3v2 APIC frame\n");
             return NULL;
         }
-        if (*mime_end != 3) {
+        if (type == -1 || *mime_end == type) {
             trace ("artwork: picture type=%d\n", *mime_end);
             return NULL;
         }
@@ -1492,7 +1492,11 @@ id3_extract_art (const char *fname, const char *outname, ddb_cover_info_t *cover
         int minor_version = id3v2_tag.version[0];
         DB_id3v2_frame_t *fprev = NULL;
         for (DB_id3v2_frame_t *f = id3v2_tag.frames; f; f = f->next) {
-            const uint8_t *image_data = id3v2_artwork (f, minor_version);
+            const uint8_t *image_data = id3v2_artwork (f, minor_version, 3);
+            if (!image_data) {
+                // try any cover if front is not available
+                image_data = id3v2_artwork (f, minor_version, 0);
+            }
             if (image_data) {
                 const size_t sz = f->size - (image_data - f->data);
                 if (sz <= 0) {
