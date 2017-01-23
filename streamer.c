@@ -126,6 +126,8 @@ static int nextsong = -1;
 static int nextsong_pstate = -1;
 static int badsong = -1;
 
+static int autoplay = 0; // set to 1 if streamer should call output->play on track change (e.g. after manual track change)
+
 static float last_seekpos = -1;
 
 static float playpos = 0; // play position of current song
@@ -438,6 +440,7 @@ stop_after_album_check (playItem_t *cur, playItem_t *next) {
 static int
 streamer_move_to_nextsong_real (int reason) {
     if (reason) {
+        autoplay = 1;
         plug_get_output ()->stop ();
     }
     trace ("streamer_move_to_nextsong (%d)\n", reason);
@@ -661,6 +664,7 @@ streamer_move_to_nextsong_real (int reason) {
 static int
 streamer_move_to_prevsong_real (int r) {
     if (r) {
+        autoplay = 1;
         plug_get_output ()->stop ();
     }
     pl_lock ();
@@ -778,6 +782,7 @@ streamer_move_to_prevsong_real (int r) {
 static int
 streamer_move_to_randomsong_real (int reason) {
     if (reason) {
+        autoplay = 1;
         plug_get_output ()->stop ();
     }
     if (!streamer_playlist) {
@@ -1372,12 +1377,10 @@ streamer_set_nextsong (int song, int pstate) {
 static void
 streamer_set_nextsong_real (int song, int pstate) {
     DB_output_t *output = plug_get_output ();
-    if (pstate != 4) {
-        int n = 0;
-    }
     trace ("\033[0;35mstreamer_set_nextsong %d %d\033[37;0m\n", song, pstate);
     if (pstate == 4) {
         pstate = 1;
+        autoplay = 1;
         output->stop ();
     }
     streamer_lock ();
@@ -1496,7 +1499,7 @@ streamer_start_new_song (void) {
 //                fprintf (stderr, "streamer_set_output_format %dbit %s %dch %dHz channelmask=%X\n", output_format.bps, output_format.is_float ? "float" : "int", output_format.channels, output_format.samplerate, output_format.channelmask);
                 streamer_set_output_format ();
             }
-            if (0 != output->play ()) {
+            if (autoplay && 0 != output->play ()) {
                 // give a chance to DSP plugins to convert format to something
                 // supported
                 streamer_set_generic_output_format ();
@@ -1527,6 +1530,7 @@ streamer_start_new_song (void) {
         }
         output->pause ();
     }
+    autoplay = 0;
 }
 
 static void
@@ -1704,10 +1708,13 @@ streamer_thread (void *ctx) {
         }
 
         float seek = seekpos;
-        if (seek >= 0 && pl_get_item_duration (playing_track) > 0) {
+        float dur = pl_get_item_duration (playing_track);
+        if (seek >= 0 && dur > 0) {
+            if (seek >= dur) {
+                seek = dur - 0.000001f;
+            }
             playpos = seek;
             trace ("seeking to %f\n", seek);
-            float pos = seek;
 
             if (playing_track != streaming_track) {
                 trace ("streamer already switched to next track\n");
@@ -1773,16 +1780,10 @@ streamer_thread (void *ctx) {
             if (streaming_track) {
                 send_trackinfochanged (streaming_track);
             }
-            float dur = pl_get_item_duration (playing_track);
             if (fileinfo && playing_track && dur > 0) {
-                if (pos >= dur) {
-                    output->stop ();
-                    streamer_move_to_nextsong (1);
-                    continue;
-                }
                 streamer_lock ();
                 streamer_reset (1);
-                if (fileinfo->plugin->seek (fileinfo, pos) >= 0) {
+                if (fileinfo->plugin->seek (fileinfo, playpos) >= 0) {
                     playpos = fileinfo->readpos;
                 }
                 last_bitrate = -1;
