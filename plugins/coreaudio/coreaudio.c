@@ -184,23 +184,17 @@ ca_stop (void) {
 
 static int
 ca_pause (void) {
+    state = OUTPUT_STATE_PAUSED;
     if (AudioDeviceStop (device_id, ca_buffer_callback)) {
         return -1;
     }
-    state = OUTPUT_STATE_PAUSED;
 
     return 0;
 }
 
 static int
 ca_unpause (void) {
-    if (AudioDeviceStart (device_id, ca_buffer_callback))
-    {
-        return -1;
-    }
-    state = OUTPUT_STATE_PLAYING;
-
-    return 0;
+    return ca_play ();
 }
 
 static int
