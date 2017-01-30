@@ -1708,7 +1708,7 @@ streamer_thread (void *ctx) {
         }
 
         float seek = seekpos;
-        float dur = pl_get_item_duration (playing_track);
+        float dur = playing_track ? pl_get_item_duration (playing_track) : -1;
         if (seek >= 0 && dur > 0) {
             if (seek >= dur) {
                 seek = dur - 0.000001f;
@@ -3087,5 +3087,12 @@ streamer_set_playing_track (playItem_t *it) {
     playing_track = it;
     if (playing_track) {
         pl_item_ref (playing_track);
+    }
+}
+
+void
+streamer_yield (void) {
+    while (handler_hasmessages(handler)) {
+        usleep(50000);
     }
 }

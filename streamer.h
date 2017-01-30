@@ -175,4 +175,8 @@ vis_spectrum_unlisten (void *ctx);
 void
 streamer_set_playing_track (playItem_t *it);
 
+// force streamer to flush its msg queue
+void
+streamer_yield (void);
+
 #endif // __STREAMER_H
