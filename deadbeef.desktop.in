@@ -1,4 +1,5 @@
 [Desktop Entry]
+Type=Application
 Name=DeaDBeeF
 GenericName=Audio Player
 GenericName[pt_BR]=Reprodutor de áudio
@@ -8,19 +9,17 @@ Comment=Listen to music
 Comment[pt_BR]=Escute músicas
 Comment[ru]=Слушай музыку
 Comment[zh_TW]=聆聽音樂
+Icon=deadbeef
 Exec=deadbeef %F
+Terminal=false
+Actions=Play;Pause;Stop;Next;Prev
 MimeType=application/ogg;audio/x-vorbis+ogg;application/x-ogg;audio/mp3;audio/prs.sid;audio/x-flac;audio/mpeg;audio/x-mpeg;audio/x-mod;audio/x-it;audio/x-s3m;audio/x-xm;audio/x-mpegurl;audio/x-scpls;
 Categories=AudioVideo;Player;GTK;
-Terminal=false
-Type=Application
-Icon=deadbeef
-X-PulseAudio-Properties=media.role=music
-
-Actions=Play;Pause;Stop;Next;Prev
-X-Ayatana-Desktop-Shortcuts=Play;Pause;Stop;Next;Prev
-
 Keywords=Sound;Music;Audio;Player;Musicplayer;MP3
 Keywords[zh_TW]=Sound;Music;Audio;Player;Musicplayer;MP3;音樂;音樂播放器;播放器;音訊
+
+X-Ayatana-Desktop-Shortcuts=Play;Pause;Stop;Next;Prev
+X-PulseAudio-Properties=media.role=music
 
 [Play Shortcut Group]
 Name=Play
