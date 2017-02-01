@@ -16,6 +16,7 @@ Type=Application
 Icon=deadbeef
 X-PulseAudio-Properties=media.role=music
 
+Actions=Play;Pause;Stop;Next;Prev
 X-Ayatana-Desktop-Shortcuts=Play;Pause;Stop;Next;Prev
 
 Keywords=Sound;Music;Audio;Player;Musicplayer;MP3
