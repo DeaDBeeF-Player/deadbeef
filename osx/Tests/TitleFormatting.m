@@ -1413,5 +1413,13 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "абвгд"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_PathWithNullUri_ReturnsEmpty {
+    pl_delete_meta (it, ":URI");
+    char *bc = tf_compile("%path%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
 
 @end
