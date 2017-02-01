@@ -1589,7 +1589,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         idx = 2;
     }
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), idx);
-    if (idx == 10) {
+    if (idx == 11) {
         gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "format")), inf->format);
     }
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), align_right);
