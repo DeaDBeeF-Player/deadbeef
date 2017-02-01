@@ -71,7 +71,7 @@ Name=Next
 Name[zh_TW]=下一首
 Exec=deadbeef --next
 
-[Desktop Action Previous]
+[Desktop Action Prev]
 Name=Prev
 Name[zh_TW]=上一首
 Exec=deadbeef --prev
