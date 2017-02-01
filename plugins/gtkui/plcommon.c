@@ -1556,7 +1556,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         return;
     }
 
-    int idx = 10;
+    int idx = 11;
     if (inf->id == -1) {
         if (inf->format) {
             if (!strcmp (inf->format, COLUMN_FORMAT_ARTISTALBUM)) {
