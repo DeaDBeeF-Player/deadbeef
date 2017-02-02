@@ -308,7 +308,7 @@ trkproperties_fill_metadata (void) {
     gtk_list_store_clear (propstore);
 
     // hardcoded properties
-    for (int i = 0; trkproperties_hc_props[i]; i += 1) {
+    for (int i = 0; trkproperties_hc_props[i]; i += 2) {
         add_field (propstore, trkproperties_hc_props[i], _(trkproperties_hc_props[i+1]), 1, tracks, numtracks);
     }
     // properties
