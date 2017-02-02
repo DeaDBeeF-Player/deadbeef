@@ -604,6 +604,7 @@ reload_metadata_activate
         deadbeef->pl_item_unref (it);
         it = next;
     }
+    deadbeef->pl_save_current ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
