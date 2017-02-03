@@ -1972,7 +1972,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     val = pl_find_meta_raw (it, ":URI");
 
                     // strip file://
-                    if (!strncmp (val, "file://", 7)) {
+                    if (val && !strncmp (val, "file://", 7)) {
                         val += 7;
                     }
 #if 0
