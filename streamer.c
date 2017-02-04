@@ -1497,6 +1497,7 @@ streamer_start_new_song (void) {
                 memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                 memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
 //                fprintf (stderr, "streamer_set_output_format %dbit %s %dch %dHz channelmask=%X\n", output_format.bps, output_format.is_float ? "float" : "int", output_format.channels, output_format.samplerate, output_format.channelmask);
+                formatchanged = 1;
                 streamer_set_output_format ();
             }
             if (autoplay && 0 != output->play ()) {
@@ -1517,8 +1518,8 @@ streamer_start_new_song (void) {
             avg_bitrate = -1;
             streamer_reset (1);
             if (fileinfo && memcmp (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
-                memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                 memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+                memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                 streamer_set_output_format ();
             }
             // we need to start playback before we can pause it
@@ -1529,6 +1530,7 @@ streamer_start_new_song (void) {
             }
         }
         output->pause ();
+        messagepump_push (DB_EV_PAUSED, 0, 1, 0);
     }
     autoplay = 0;
 }
@@ -1898,7 +1900,6 @@ streamer_thread (void *ctx) {
         if (trace_bufferfill >= 2) {
             fprintf (stderr, "slept %dms (alloc=%dms, bytespersec=%d, chan=%d, blocksize=%d), fill: %d/%d (cursor=%d)\n", (int)(alloc_time-ms), (int)alloc_time, (int)bytes_in_one_second, output->fmt.channels, blocksize, (int)streamer_ringbuf.remaining, STREAM_BUFFER_SIZE, (int)streamer_ringbuf.cursor);
         }
-
         // add 1ms here to compensate the rounding error
         // and another 1ms to buffer slightly faster then playing
         alloc_time -= ms+2;
@@ -2514,7 +2515,6 @@ streamer_read_async (char *bytes, int size) {
                         bytesread -= (bytesread % outsamplesize);
                     }
 
-
                     // 4x downsample
                     int nframes = bytesread / (output->fmt.bps >> 3) / output->fmt.channels;
                     assert (bytesread % ((output->fmt.bps >> 3) * output->fmt.channels) == 0);
@@ -2558,7 +2558,7 @@ streamer_read_async (char *bytes, int size) {
         }
 
         // if track finished playing -- go to next
-        if (bytes_until_next_song < 0) {
+        if (bytes_until_next_song < 0 && (output->state() == OUTPUT_STATE_PLAYING || autoplay)) {
             streamer_next (bytesread);
         }
     }
