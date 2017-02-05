@@ -33,9 +33,16 @@ DB_functions_t *deadbeef;
 
 static int filter_id;
 
+typedef struct coll_item_s {
+    DB_playItem_t *it;
+    struct coll_item_s *next;
+} coll_item_t;
+
 typedef struct ml_string_s {
     const char *text;
+    coll_item_t *items;
     struct ml_string_s *bucket_next;
+    struct ml_string_s *next;
 } ml_string_t;
 
 typedef struct ml_entry_s {
@@ -53,6 +60,12 @@ typedef struct ml_entry_s {
 #define ML_HASH_SIZE 4096
 
 typedef struct {
+    ml_string_t *hash[ML_HASH_SIZE];
+    ml_string_t *head;
+    ml_string_t *tail;
+} collection_t;
+
+typedef struct {
     // plain list of all tracks in the entire collection
     ml_entry_t *tracks;
 
@@ -61,11 +74,11 @@ typedef struct {
     // NOTE: this hash doesn't contain all of the tracks from the `tracks` list, because of subtracks
     ml_entry_t *filename_hash[ML_HASH_SIZE];
 
-    // hash tables for each index
-    ml_string_t *hash_album[ML_HASH_SIZE];
-    ml_string_t *hash_artist[ML_HASH_SIZE];
-    ml_string_t *hash_genre[ML_HASH_SIZE];
-    ml_string_t *hash_folder[ML_HASH_SIZE];
+    // plain lists for each index
+    collection_t albums;
+    collection_t artists;
+    collection_t genres;
+    collection_t folders;
 } ml_db_t;
 
 static uint32_t
@@ -94,37 +107,74 @@ hash_find (ml_string_t **hash, const char *val) {
 }
 
 static ml_string_t *
-hash_add (ml_string_t **hash, const char *val) {
+hash_add (ml_string_t **hash, const char *val, DB_playItem_t *it) {
     uint32_t h = hash_for_ptr ((void *)val) & (ML_HASH_SIZE-1);
-    if (!hash_find_for_hashkey(hash, val, h)) {
+    ml_string_t *s = hash_find_for_hashkey(hash, val, h);
+    ml_string_t *retval = NULL;
+    if (!s) {
         deadbeef->metacache_ref (val);
-        ml_string_t *s = calloc (sizeof (ml_string_t), 1);
+        s = calloc (sizeof (ml_string_t), 1);
         s->bucket_next = hash[h];
         s->text = val;
         deadbeef->metacache_ref (val);
         hash[h] = s;
-        return s;
+        retval = s;
     }
-    return NULL;
+
+    coll_item_t *item = calloc (sizeof (coll_item_t), 1);
+    deadbeef->pl_item_ref (it);
+    item->it = it;
+    item->next = s->items;
+    s->items = item;
+
+    return retval;
 }
 
 static ddb_playlist_t *ml_playlist; // this playlist contains the actual data of the media library in plain list
 
 static ml_db_t db; // this is the index, which can be rebuilt from the playlist at any given time
 
-#define REG_COL_DEF(col)\
-ml_string_t *\
-ml_reg_##col (ml_db_t *db, const char *c) {\
-    if (!c) {\
-        return NULL;\
-    }\
-    return hash_add (db->hash_##col, c);\
+static ml_string_t *
+ml_reg_col (collection_t *coll, const char *c, DB_playItem_t *it) {
+    if (!c) {
+        return NULL;
+    }
+    ml_string_t *s = hash_add (coll->hash, c, it);
+    if (s) {
+        if (coll->tail) {
+            coll->tail->next = s;
+            coll->tail = s;
+        }
+        else {
+            coll->tail = coll->head = s;
+        }
+    }
+    return s;
 }
 
-REG_COL_DEF(album);
-REG_COL_DEF(artist);
-REG_COL_DEF(genre);
-REG_COL_DEF(folder);
+static void
+ml_free_col (collection_t *coll) {
+    ml_string_t *s = coll->head;
+    while (s) {
+        ml_string_t *next = s->next;
+
+        while (s->items) {
+            coll_item_t *next = s->items->next;
+            deadbeef->pl_item_unref (s->items->it);
+            free (s->items);
+            s->items = next;
+        }
+
+        if (s->text) {
+            deadbeef->metacache_unref (s->text);
+        }
+        free (s);
+        s = next;
+    }
+    memset (coll->hash, 0, sizeof (coll->hash));
+    coll->head = NULL;
+    coll->tail = NULL;
+}
 
 DB_playItem_t *(*plt_insert_dir) (ddb_playlist_t *plt, DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
@@ -137,28 +187,14 @@ add_file_info_cb (DB_playItem_t *it, void *data) {
     return 0;
 }
 
-#define FREE_COL(col)\
-    for (int idx_##col = 0; idx_##col < ML_HASH_SIZE; idx_##col++) {\
-        ml_string_t *s = db.hash_##col[idx_##col];\
-        while (s) {\
-            ml_string_t *next = s->bucket_next;\
-            if (s->text) {\
-                deadbeef->metacache_unref (s->text);\
-            }\
-            free (s);\
-            s = next;\
-        }\
-        db.hash_##col[idx_##col] = NULL;\
-    }
-
 static void
 ml_free_db (void) {
     fprintf (stderr, "clearing index...\n");
 
-    FREE_COL(album);
-    FREE_COL(artist);
-    FREE_COL(genre);
-    FREE_COL(folder);
+    ml_free_col(&db.albums);
+    ml_free_col(&db.artists);
+    ml_free_col(&db.genres);
+    ml_free_col(&db.folders);
 
     while (db.tracks) {
         ml_entry_t *next = db.tracks->next;
@@ -201,9 +237,9 @@ ml_index (void) {
         // FIXME: album needs to be a combination of album + artist for indexing / library
         const char *album = deadbeef->pl_find_meta (it, "album");
         const char *genre = deadbeef->pl_find_meta (it, "genre");
-        ml_string_t *alb = ml_reg_album (&db, album);
-        ml_string_t *art = ml_reg_artist (&db, artist);
-        ml_string_t *gnr = ml_reg_genre (&db, genre);
+        ml_string_t *alb = ml_reg_col (&db.albums, album, it);
+        ml_string_t *art = ml_reg_col (&db.artists, artist, it);
+        ml_string_t *gnr = ml_reg_col (&db.genres, genre, it);
 
         char *fn = strrchr (uri, '/');
         ml_string_t *fld = NULL;
@@ -211,7 +247,7 @@ ml_index (void) {
             memcpy (folder, uri, fn-uri);
             folder[fn-uri] = 0;
             const char *s = deadbeef->metacache_add_string (folder);
-            fld = ml_reg_folder (&db, s);
+            fld = ml_reg_col (&db.folders, s, it);
             deadbeef->metacache_unref (s);
         }
 
@@ -258,12 +294,10 @@ ml_index (void) {
     int ngnr = 0;
     int nfld = 0;
     ml_string_t *s;
-    for (int i = 0; i < ML_HASH_SIZE; i++) {
-        for (s = db.hash_album[i]; s; s = s->bucket_next, nalb++);
-        for (s = db.hash_artist[i]; s; s = s->bucket_next, nart++);
-        for (s = db.hash_genre[i]; s; s = s->bucket_next, ngnr++);
-        for (s = db.hash_folder[i]; s; s = s->bucket_next, nfld++);
-    }
+    for (s = db.albums.head; s; s = s->next, nalb++);
+    for (s = db.artists.head; s; s = s->next, nart++);
+    for (s = db.genres.head; s; s = s->next, ngnr++);
+    for (s = db.folders.head; s; s = s->next, nfld++);
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
 
@@ -405,6 +439,17 @@ ml_stop (void) {
     }
 
     return 0;
+}
+
+ddb_medialib_list_t *
+ml_get_list (const char *index) {
+    ddb_medialib_list_t *lst = calloc (sizeof (ddb_medialib_list_t), 1);
+
+    return lst;
+}
+
+void
+ml_free_list (ddb_medialib_list_t *list) {
 }
 
 static int

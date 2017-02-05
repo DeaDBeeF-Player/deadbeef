@@ -24,10 +24,18 @@
 #ifndef medialib_h
 #define medialib_h
 
+typedef struct ddb_medialib_list_s {
+    const char *text; // e.g. the Genre
+    DB_playItem_t **tracks;
+    int num_tracks;
+    struct ddb_medialib_list_s *next; // next item in the list
+} ddb_medialib_list_t;
+
 typedef struct ddb_medialib_plugin_s {
     DB_misc_t plugin;
 
-    void (*get_index)(const char *index, )
+    ddb_medialib_list_t * (*get_list)(const char *index);
+    void (*free_list) (ddb_medialib_list_t *list);
 } ddb_medialib_plugin_t;
 
 #endif /* medialib_h */
