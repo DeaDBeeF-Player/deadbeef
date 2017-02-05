@@ -24,15 +24,31 @@
 #ifndef medialib_h
 #define medialib_h
 
-typedef struct ddb_medialib_list_s {
-    const char *text; // e.g. the Genre
+#define DDB_MEDIALIB_VERSION_MAJOR 1
+#define DDB_MEDIALIB_VERSION_MINOR 0
+
+typedef struct {
+    const char *text; // e.g. the genre
     DB_playItem_t **tracks;
     int num_tracks;
-    struct ddb_medialib_list_s *next; // next item in the list
+} ddb_medialib_item_t;
+
+typedef struct {
+    int count;
+    ddb_medialib_item_t items[1];
 } ddb_medialib_list_t;
+
+enum {
+    DDB_MEDIALIB_EVENT_CHANGED = 1
+};
+
+typedef void (* ddb_medialib_listener_t)(int event, void *user_data);
 
 typedef struct ddb_medialib_plugin_s {
     DB_misc_t plugin;
+
+    int (*add_listener)(ddb_medialib_listener_t listener, void *user_data);
+    void (*remove_listener)(int listener_id);
 
     ddb_medialib_list_t * (*get_list)(const char *index);
     void (*free_list) (ddb_medialib_list_t *list);

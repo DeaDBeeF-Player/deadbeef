@@ -65,6 +65,7 @@ typedef struct {
     ml_string_t *hash[ML_HASH_SIZE];
     ml_string_t *head;
     ml_string_t *tail;
+    int count;
 } collection_t;
 
 typedef struct {
@@ -139,6 +140,10 @@ static ml_db_t db; // this is the index, which can be rebuilt from the playlist 
 
 static uintptr_t mutex;
 
+#define MAX_LISTENERS 10
+static ddb_medialib_listener_t listeners[MAX_LISTENERS];
+static void *listeners_ud[MAX_LISTENERS];
+
 static ml_string_t *
 ml_reg_col (collection_t *coll, const char *c, DB_playItem_t *it) {
     if (!c) {
@@ -153,6 +158,7 @@ ml_reg_col (collection_t *coll, const char *c, DB_playItem_t *it) {
         else {
             coll->tail = coll->head = s;
         }
+        coll->count++;
     }
     return s;
 }
@@ -315,6 +321,15 @@ ml_index (void) {
 }
 
 static void
+ml_notify_listeners (int event) {
+    for (int i = 0; i < MAX_LISTENERS; i++) {
+        if (listeners[i]) {
+            listeners[i] (event, listeners_ud[i]);
+        }
+    }
+}
+
+static void
 scanner_thread (void *none) {
     char plpath[PATH_MAX];
     snprintf (plpath, sizeof (plpath), "%s/medialib.dbpl", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG));
@@ -333,6 +348,7 @@ scanner_thread (void *none) {
 
         if (plt_head) {
             ml_index ();
+            ml_notify_listeners (DDB_MEDIALIB_EVENT_CHANGED);
         }
     }
 
@@ -344,7 +360,10 @@ scanner_thread (void *none) {
     }
 
     printf ("adding dir: %s\n", musicdir);
+    deadbeef->plt_clear (ml_playlist);
     plt_insert_dir (ml_playlist, NULL, musicdir, &scanner_terminate, add_file_info_cb, NULL);
+    ml_index ();
+    ml_notify_listeners (DDB_MEDIALIB_EVENT_CHANGED);
 
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
@@ -459,7 +478,25 @@ ml_stop (void) {
     return 0;
 }
 
-ddb_medialib_list_t *
+static int
+ml_add_listener (ddb_medialib_listener_t listener, void *user_data) {
+    for (int i = 0; i < MAX_LISTENERS; i++) {
+        if (!listeners[i]) {
+            listeners[i] = listener;
+            listeners_ud[i] = user_data;
+            return i;
+        }
+    }
+    return -1;
+}
+
+static void
+ml_remove_listener (int listener_id) {
+    listeners[listener_id] = NULL;
+    listeners_ud[listener_id] = NULL;
+}
+
+static ddb_medialib_list_t *
 ml_get_list (const char *index) {
     collection_t *coll;
 
@@ -481,11 +518,13 @@ ml_get_list (const char *index) {
 
     deadbeef->mutex_lock (mutex);
 
-    ddb_medialib_list_t *head = NULL;
-    ddb_medialib_list_t *tail = NULL;
+    size_t sz = sizeof (ddb_medialib_list_t) + sizeof (ddb_medialib_item_t) * (coll->count-1);
+    ddb_medialib_list_t *list = malloc (sz);
+    memset (list, 0, sz);
 
-    for (ml_string_t *s = coll->head; s; s = s->next) {
-        ddb_medialib_list_t *item = calloc (sizeof (ddb_medialib_list_t), 1);
+    int idx = 0;
+    for (ml_string_t *s = coll->head; s; s = s->next, idx++) {
+        ddb_medialib_item_t *item = &list->items[idx];
         item->text = s->text;
         deadbeef->metacache_ref (s->text);
         item->num_tracks = s->items_count;
@@ -498,32 +537,25 @@ ml_get_list (const char *index) {
                 coll_item = coll_item->next;
             }
         }
-        if (tail) {
-            tail->next = item;
-            tail = item;
-        }
-        else {
-            tail = head = item;
-        }
     }
+    list->count = coll->count;
 
     deadbeef->mutex_unlock (mutex);
 
-    return head;
+    return list;
 }
 
-void
+static void
 ml_free_list (ddb_medialib_list_t *list) {
-    while (list) {
-        ddb_medialib_list_t *next = list->next;
-        deadbeef->metacache_unref (list->text);
-        for (int i = 0; i < list->num_tracks; i++) {
-            deadbeef->pl_item_unref (list->tracks[i]);
+    for (int i = 0; i < list->count; i++) {
+        ddb_medialib_item_t *item = &list->items[i];
+        deadbeef->metacache_unref (item->text);
+        for (int i = 0; i < item->num_tracks; i++) {
+            deadbeef->pl_item_unref (item->tracks[i]);
         }
-        free (list->tracks);
-        free (list);
-        list = next;
+        free (item->tracks);
     }
+    free (list);
 }
 
 static int
@@ -534,9 +566,9 @@ ml_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 // define plugin interface
 static ddb_medialib_plugin_t plugin = {
     .plugin.plugin.api_vmajor = 1,
-    .plugin.plugin.api_vminor = 0,
-    .plugin.plugin.version_major = 0,
-    .plugin.plugin.version_minor = 1,
+    .plugin.plugin.api_vminor = 10,
+    .plugin.plugin.version_major = DDB_MEDIALIB_VERSION_MAJOR,
+    .plugin.plugin.version_minor = DDB_MEDIALIB_VERSION_MINOR,
     .plugin.plugin.type = DB_PLUGIN_MISC,
     .plugin.plugin.id = "medialib",
     .plugin.plugin.name = "Media Library",
@@ -569,6 +601,8 @@ static ddb_medialib_plugin_t plugin = {
     .plugin.plugin.stop = ml_stop,
 //    .plugin.plugin.configdialog = settings_dlg,
     .plugin.plugin.message = ml_message,
+    .add_listener = ml_add_listener,
+    .remove_listener = ml_remove_listener,
     .get_list = ml_get_list,
     .free_list = ml_free_list,
 };

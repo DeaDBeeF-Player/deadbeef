@@ -7,6 +7,7 @@
 //
 
 #import "MediaLibraryWindowController.h"
+#import "MediaLibraryItem.h"
 #include "../../deadbeef.h"
 #include "../medialib/medialib.h"
 
@@ -14,44 +15,58 @@ extern DB_functions_t *deadbeef;
 
 @interface MediaLibraryWindowController () {
     ddb_medialib_plugin_t *_medialib;
-    NSString *_rootItem;
+    ddb_medialib_list_t *_list;
+    MediaLibraryItem *_root;
 }
-
 @end
 
 @implementation MediaLibraryWindowController
+
+static void _medialib_listener (int event, void *user_data) {
+    MediaLibraryWindowController *ctl = (__bridge MediaLibraryWindowController *)user_data;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [ctl medialibEvent:event];
+    });
+}
+
+- (void)medialibEvent:(int)event {
+    _root = nil;
+    if (_list) {
+        _medialib->free_list (_list);
+    }
+    _list = _medialib->get_list ("genre");
+    _root = [MediaLibraryItem initTree:_list];
+    [_outlineView reloadData];
+}
 
 - (void)windowDidLoad {
     [super windowDidLoad];
 
     _medialib = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
-    
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
-//    [_outlineView setDelegate:(id<NSOutlineViewDelegate> _Nullable)self];
+    _medialib->add_listener (_medialib_listener, (__bridge void *)self);
 
-    _rootItem = @"All music";
+    [self medialibEvent:DDB_MEDIALIB_EVENT_CHANGED];
+
     [_outlineView setDataSource:(id<NSOutlineViewDataSource> _Nullable)self];
 }
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
-
-    return (item == nil) ? 1 : 0;//[item numberOfChildren];
+    return (item == nil) ? 1 : [item numberOfChildren];
 }
 
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item {
-    return (item == nil) ? YES : NO;//([item numberOfChildren] != -1);
+    return [item numberOfChildren] > 0;
 }
 
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
-
-    return (item == nil) ? _rootItem : nil;//[(FileSystemItem *)item childAtIndex:index];
+    return (item == nil) ? _root : [item childAtIndex:index];
 }
 
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
-    return (item == nil) ? @"/" : item;
+    return (item == nil) ? @"/" : [item stringValue];
 }
 
 @end

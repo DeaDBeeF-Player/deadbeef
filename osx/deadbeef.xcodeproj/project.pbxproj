@@ -1442,6 +1442,8 @@
 		2DA24BA019E7254F00E34920 /* vtls.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA24B8819E7254F00E34920 /* vtls.h */; };
 		2DA24BA319E72A2500E34920 /* vfs_curl.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */; };
 		2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */; };
+		2DA2ED4C1E47C6F5007039F7 /* MediaLibraryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA2ED4A1E47C6F5007039F7 /* MediaLibraryItem.h */; };
+		2DA2ED4D1E47C6F5007039F7 /* MediaLibraryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA2ED4B1E47C6F5007039F7 /* MediaLibraryItem.m */; };
 		2DAA4C141AAF88FF00519559 /* TitleFormatting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA4C131AAF88FF00519559 /* TitleFormatting.m */; };
 		2DACBB241A40CEB100CCF401 /* mp3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; };
 		2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */; };
@@ -3829,6 +3831,8 @@
 		2DA24B8719E7254F00E34920 /* vtls.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vtls.c; sourceTree = "<group>"; };
 		2DA24B8819E7254F00E34920 /* vtls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vtls.h; sourceTree = "<group>"; };
 		2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = u8_uc_map.h; sourceTree = "<group>"; };
+		2DA2ED4A1E47C6F5007039F7 /* MediaLibraryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaLibraryItem.h; sourceTree = "<group>"; };
+		2DA2ED4B1E47C6F5007039F7 /* MediaLibraryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryItem.m; sourceTree = "<group>"; };
 		2DA6F89B19A5332D002151EB /* escape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = escape.c; sourceTree = "<group>"; };
 		2DA6F89F19A53334002151EB /* escape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = escape.h; sourceTree = "<group>"; };
 		2DAA4C081AAF88DE00519559 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7554,6 +7558,8 @@
 				2D6FCDC11DD277CD003FCDE2 /* DSPPresetListDataSource.m */,
 				2D54327D1E467E0E0048AF73 /* MediaLibraryWindowController.h */,
 				2D54327E1E467E0E0048AF73 /* MediaLibraryWindowController.m */,
+				2DA2ED4A1E47C6F5007039F7 /* MediaLibraryItem.h */,
+				2DA2ED4B1E47C6F5007039F7 /* MediaLibraryItem.m */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -8782,6 +8788,7 @@
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 				2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */,
 				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
+				2DA2ED4C1E47C6F5007039F7 /* MediaLibraryItem.h in Headers */,
 				2D71C26A1DC88E5C00247CEF /* DSPChainDataSource.h in Headers */,
 				2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */,
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
@@ -11405,6 +11412,7 @@
 				2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
 				2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */,
+				2DA2ED4D1E47C6F5007039F7 /* MediaLibraryItem.m in Sources */,
 				2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */,
 				2D5773A21D084E5A00F61BD1 /* MediaKeyController.m in Sources */,
 				2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */,
