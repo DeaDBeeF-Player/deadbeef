@@ -2811,6 +2811,7 @@ static void
 streamer_play_current_track_real (void) {
     playlist_t *plt = plt_get_curr ();
     DB_output_t *output = plug_get_output ();
+    autoplay = 1;
     if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
         if (is_remote_stream (playing_track) && pl_get_item_duration (playing_track) < 0) {
             streamer_reset (1);
