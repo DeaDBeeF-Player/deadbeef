@@ -1,6 +1,6 @@
 /*
     Media Library plugin for DeaDBeeF Player
-    Copyright (C) 2009-2016 Alexey Yakovenko
+    Copyright (C) 2009-2017 Alexey Yakovenko
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -27,6 +27,7 @@
 #include <limits.h>
 #include <assert.h>
 #include "../../deadbeef.h"
+#include "medialib.h"
 
 DB_functions_t *deadbeef;
 
@@ -69,7 +70,9 @@ typedef struct {
 
 static uint32_t
 hash_for_ptr (void *ptr) {
-    return (((uint32_t)(ptr))>>1) & (ML_HASH_SIZE-1);
+    // scrambling multiplier from http://vigna.di.unimi.it/ftp/papers/xorshift.pdf
+    uint64_t scrambled = 1181783497276652981ULL * (uintptr_t)ptr;
+    return (uint32_t)(scrambled & (ML_HASH_SIZE-1));
 }
 
 static ml_string_t *
@@ -365,16 +368,16 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
 
 static int
 ml_connect (void) {
-#if 0
-    //tid = deadbeef->thread_start_low_priority (scanner_thread, NULL);
+    tid = deadbeef->thread_start_low_priority (scanner_thread, NULL);
 
+#if 0
     struct timeval tm1, tm2;
     gettimeofday (&tm1, NULL);
     scanner_thread(NULL);
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
     fprintf (stderr, "whole ml init time: %f seconds\n", ms / 1000.f);
-    exit (0);
+//    exit (0);
 #endif
     return 0;
 }
@@ -409,10 +412,6 @@ ml_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
 }
 
-typedef struct ddb_medialib_plugin_s {
-    DB_misc_t plugin;
-} ddb_medialib_plugin_t;
-
 // define plugin interface
 static ddb_medialib_plugin_t plugin = {
     .plugin.plugin.api_vmajor = 1,
@@ -425,7 +424,7 @@ static ddb_medialib_plugin_t plugin = {
     .plugin.plugin.descr = "Scans disk for music files and manages them as database",
     .plugin.plugin.copyright = 
         "Media Library plugin for DeaDBeeF Player\n"
-        "Copyright (C) 2009-2014 Alexey Yakovenko\n"
+        "Copyright (C) 2009-2017 Alexey Yakovenko\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
         "warranty.  In no event will the authors be held liable for any damages\n"

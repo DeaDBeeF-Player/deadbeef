@@ -661,6 +661,9 @@
 		2D51999D1A436FD100670717 /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999B1A436FD100670717 /* mpg123.h */; };
 		2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D524C071B245AE00018C4FA /* DdbTitleFormattingHelpButton.h */; };
 		2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D524C081B245AE00018C4FA /* DdbTitleFormattingHelpButton.m */; };
+		2D54326F1E467C060048AF73 /* MediaLibrary.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D54326E1E467C060048AF73 /* MediaLibrary.xib */; };
+		2D54327F1E467E0E0048AF73 /* MediaLibraryWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D54327D1E467E0E0048AF73 /* MediaLibraryWindowController.h */; };
+		2D5432801E467E0E0048AF73 /* MediaLibraryWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D54327E1E467E0E0048AF73 /* MediaLibraryWindowController.m */; };
 		2D565B0C1A40BCE200CE1F5D /* abi_align.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565A831A40BCE200CE1F5D /* abi_align.h */; };
 		2D565B0E1A40BCE200CE1F5D /* compat.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D565A851A40BCE200CE1F5D /* compat.c */; };
 		2D565B0F1A40BCE200CE1F5D /* compat.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565A861A40BCE200CE1F5D /* compat.h */; };
@@ -3006,6 +3009,10 @@
 		2D524C071B245AE00018C4FA /* DdbTitleFormattingHelpButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbTitleFormattingHelpButton.h; sourceTree = "<group>"; };
 		2D524C081B245AE00018C4FA /* DdbTitleFormattingHelpButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbTitleFormattingHelpButton.m; sourceTree = "<group>"; };
 		2D5423B61DCB38D600ACBDEB /* mono2stereo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mono2stereo.c; path = plugins/mono2stereo/mono2stereo.c; sourceTree = "<group>"; };
+		2D54326E1E467C060048AF73 /* MediaLibrary.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MediaLibrary.xib; sourceTree = "<group>"; };
+		2D54327D1E467E0E0048AF73 /* MediaLibraryWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaLibraryWindowController.h; sourceTree = "<group>"; };
+		2D54327E1E467E0E0048AF73 /* MediaLibraryWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryWindowController.m; sourceTree = "<group>"; };
+		2D5432831E4680B90048AF73 /* medialib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = medialib.h; path = plugins/medialib/medialib.h; sourceTree = "<group>"; };
 		2D565A831A40BCE200CE1F5D /* abi_align.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = abi_align.h; path = "osx/deps/mpg123-1.21.0/src/libmpg123/abi_align.h"; sourceTree = "<group>"; };
 		2D565A851A40BCE200CE1F5D /* compat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = compat.c; path = "osx/deps/mpg123-1.21.0/src/libmpg123/compat.c"; sourceTree = "<group>"; };
 		2D565A861A40BCE200CE1F5D /* compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = compat.h; path = "osx/deps/mpg123-1.21.0/src/libmpg123/compat.h"; sourceTree = "<group>"; };
@@ -5552,6 +5559,7 @@
 			isa = PBXGroup;
 			children = (
 				2D3A4BB91D631582002C7098 /* medialib.c */,
+				2D5432831E4680B90048AF73 /* medialib.h */,
 			);
 			name = medialib;
 			sourceTree = "<group>";
@@ -5609,6 +5617,7 @@
 				2D2351271B13922400A62936 /* Converter.xib */,
 				2D49856E1D5CF0E900E4D985 /* Log.xib */,
 				2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */,
+				2D54326E1E467C060048AF73 /* MediaLibrary.xib */,
 			);
 			name = XIB;
 			sourceTree = "<group>";
@@ -7543,6 +7552,8 @@
 				2D6FCDBD1DD26867003FCDE2 /* PluginConfigurationViewController.m */,
 				2D6FCDC01DD277CD003FCDE2 /* DSPPresetListDataSource.h */,
 				2D6FCDC11DD277CD003FCDE2 /* DSPPresetListDataSource.m */,
+				2D54327D1E467E0E0048AF73 /* MediaLibraryWindowController.h */,
+				2D54327E1E467E0E0048AF73 /* MediaLibraryWindowController.m */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -8757,6 +8768,7 @@
 				2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */,
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
 				2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */,
+				2D54327F1E467E0E0048AF73 /* MediaLibraryWindowController.h in Headers */,
 				2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */,
 				2D6D81EF1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h in Headers */,
 				2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */,
@@ -10147,6 +10159,7 @@
 				2D2351281B13922400A62936 /* Converter.xib in Resources */,
 				2DD6D0A819AE6288009308A5 /* knobTemplate.pdf in Resources */,
 				4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */,
+				2D54326F1E467C060048AF73 /* MediaLibrary.xib in Resources */,
 				2DCD78DC19A665CA00EA50FA /* deadbeef.png in Resources */,
 				4D2A6CA4183BC29400AC6BF5 /* btnstopTemplate.pdf in Resources */,
 				2DCD78D719A665CA00EA50FA /* deadbeef.png in Resources */,
@@ -11385,6 +11398,7 @@
 				2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
+				2D5432801E467E0E0048AF73 /* MediaLibraryWindowController.m in Sources */,
 				2D1A564B1D9FFB10005E5CDD /* ReplayGainScannerController.m in Sources */,
 				2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,

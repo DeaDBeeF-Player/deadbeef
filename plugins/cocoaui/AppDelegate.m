@@ -43,6 +43,7 @@ extern BOOL g_CanQuit;
     PreferencesWindowController *_prefWindow;
     SearchWindowController *_searchWindow;
     LogWindowController *_logWindow;
+    MediaLibraryWindowController *_mediaLibraryWindow;
 
     NSMenuItem *_dockMenuNPHeading;
     NSMenuItem *_dockMenuNPTitle;
@@ -176,6 +177,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [self initMainWindow];
     [self initSearchWindow];
     [self initLogWindow];
+    [self initMediaLibraryWindow];
 }
 
 - (void)initMainWindow {
@@ -196,6 +198,11 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     _logWindow = [[LogWindowController alloc] initWithWindowNibName:@"Log"];
     [_logWindowToggleMenuItem bind:@"state" toObject:[_logWindow window] withKeyPath:@"visible" options:nil];
     [[_logWindow window] setExcludedFromWindowsMenu:YES];
+}
+
+- (void)initMediaLibraryWindow {
+    _mediaLibraryWindow = [[MediaLibraryWindowController alloc] initWithWindowNibName:@"MediaLibrary"];
+    [[_mediaLibraryWindow window] setIsVisible:YES];
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
