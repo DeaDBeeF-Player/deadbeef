@@ -1572,14 +1572,17 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
             else if (!strcmp (inf->format, COLUMN_FORMAT_TITLE)) {
                 idx = 6;
             }
-            else if (!strcmp (inf->format, COLUMN_FORMAT_LENGTH)) {
+            else if (!strcmp (inf->format, COLUMN_FORMAT_YEAR)) {
                 idx = 7;
             }
-            else if (!strcmp (inf->format, COLUMN_FORMAT_TRACKNUMBER)) {
+            else if (!strcmp (inf->format, COLUMN_FORMAT_LENGTH)) {
                 idx = 8;
             }
-            else if (!strcmp (inf->format, COLUMN_FORMAT_BAND)) {
+            else if (!strcmp (inf->format, COLUMN_FORMAT_TRACKNUMBER)) {
                 idx = 9;
+            }
+            else if (!strcmp (inf->format, COLUMN_FORMAT_BAND)) {
+                idx = 10;
             }
         }
     }
