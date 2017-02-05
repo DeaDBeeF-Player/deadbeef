@@ -1784,10 +1784,10 @@ streamer_thread (void *ctx) {
             }
             if (fileinfo && playing_track && dur > 0) {
                 streamer_lock ();
-                streamer_reset (1);
                 if (fileinfo->plugin->seek (fileinfo, playpos) >= 0) {
-                    playpos = fileinfo->readpos;
+                    streamer_reset (1);
                 }
+                playpos = fileinfo->readpos;
                 last_bitrate = -1;
                 avg_bitrate = -1;
                 streamer_unlock();
