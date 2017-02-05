@@ -667,7 +667,12 @@ player_mainloop (void) {
                     junk_configchanged ();
                     break;
                 case DB_EV_SEEK:
-                    streamer_set_seek (p1 / 1000.f);
+                    {
+                        int32_t pos = (int32_t)p1;
+                        if (pos > 0) {
+                            streamer_set_seek (p1 / 1000.f);
+                        }
+                    }
                     break;
                 }
             }
