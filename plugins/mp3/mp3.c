@@ -1147,8 +1147,7 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     sample += info->buffer.startsample;
     if (sample > info->buffer.endsample) {
-        trace ("seek sample %d is beyond end of track (%d)\n", sample, info->buffer.endsample);
-        return -1; // eof
+        sample = info->buffer.endsample;
     }
     // restart file, and load until we hit required pos
     deadbeef->fseek (info->buffer.file, info->buffer.startoffset, SEEK_SET);
