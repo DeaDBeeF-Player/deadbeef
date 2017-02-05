@@ -1784,10 +1784,10 @@ streamer_thread (void *ctx) {
             }
             if (fileinfo && playing_track && dur > 0) {
                 streamer_lock ();
-                streamer_reset (1);
                 if (fileinfo->plugin->seek (fileinfo, playpos) >= 0) {
-                    playpos = fileinfo->readpos;
+                    streamer_reset (1);
                 }
+                playpos = fileinfo->readpos;
                 last_bitrate = -1;
                 avg_bitrate = -1;
                 streamer_unlock();
@@ -2811,6 +2811,7 @@ static void
 streamer_play_current_track_real (void) {
     playlist_t *plt = plt_get_curr ();
     DB_output_t *output = plug_get_output ();
+    autoplay = 1;
     if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
         if (is_remote_stream (playing_track) && pl_get_item_duration (playing_track) < 0) {
             streamer_reset (1);
