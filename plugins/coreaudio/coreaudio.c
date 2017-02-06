@@ -130,6 +130,7 @@ ca_free (void) {
         AudioDeviceStop(device_id, ca_buffer_callback);
         AudioObjectRemovePropertyListener(device_id, &theAddress, ca_fmtchanged, NULL);
         AudioDeviceDestroyIOProcID(device_id, process_id);
+        process_id = 0;
         device_id = 0;
     }
     return 0;
