@@ -162,9 +162,11 @@ ca_play (void) {
             return -1;
         }
     }
+
     if (AudioDeviceStart (device_id, ca_buffer_callback)) {
         return -1;
     }
+
     state = OUTPUT_STATE_PLAYING;
 
     return 0;
@@ -172,13 +174,14 @@ ca_play (void) {
 
 static int
 ca_stop (void) {
+    state = OUTPUT_STATE_STOPPED;
+
     if (!device_id) {
         return 0;
     }
     if (AudioDeviceStop (device_id, ca_buffer_callback)) {
         return -1;
     }
-    state = OUTPUT_STATE_STOPPED;
 
     return 0;
 }
@@ -186,6 +189,11 @@ ca_stop (void) {
 static int
 ca_pause (void) {
     state = OUTPUT_STATE_PAUSED;
+
+    if (!device_id) {
+        return 0;
+    }
+
     if (AudioDeviceStop (device_id, ca_buffer_callback)) {
         return -1;
     }
