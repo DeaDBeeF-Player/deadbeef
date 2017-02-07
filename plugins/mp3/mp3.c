@@ -558,43 +558,6 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     continue;
                 }
             }
-
-            if (sample == 0) {
-                if (!buffer->file->vfs->is_streaming ()) {
-                    // guess duration from filesize
-                    int64_t sz = deadbeef->fgetlength (buffer->file) - buffer->startoffset;
-                    if (sz > 0) {
-                        sz -= buffer->startoffset + buffer->endoffset;
-                        if (sz < 0) {
-                            trace ("cmp3_scan_stream: bad file headers\n");
-                            return -1;
-                        }
-                    }
-                    if (sz < 0) {
-                        // unable to determine duration
-                        buffer->duration = -1;
-                        buffer->totalsamples = -1;
-                        if (sample == 0) {
-                            trace ("check validity of the next frame...\n");
-                            continue;
-                        }
-                        trace ("cmp3_scan_stream: unable to determine duration");
-                        return 0;
-                    }
-                    buffer->nframes = (int)(sz / frame.packetlength);
-                    buffer->avg_packetlength = frame.packetlength;
-                    buffer->avg_samplerate = frame.samplerate;
-                    buffer->avg_samples_per_frame = frame.samples_per_frame;
-                    buffer->duration = (((uint64_t)buffer->nframes * (uint64_t)frame.samples_per_frame) - buffer->delay - buffer->padding)/ (float)frame.samplerate;
-                    buffer->totalsamples = buffer->nframes * frame.samples_per_frame;
-                    trace ("totalsamples: %d, samplesperframe: %d, fsize=%lld\n", buffer->totalsamples, frame.samples_per_frame, fsize);
-        //                    trace ("bitrate=%d, layer=%d, packetlength=%d, fsize=%d, nframes=%d, samples_per_frame=%d, samplerate=%d, duration=%f, totalsamples=%d\n", bitrate, layer, packetlength, sz, nframe, samples_per_frame, samplerate, buffer->duration, buffer->totalsamples);
-
-                    deadbeef->fseek (buffer->file, framepos, SEEK_SET);
-
-                    return 0;
-                }
-            }
         }
 // }}}
 
