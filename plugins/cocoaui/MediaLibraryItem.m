@@ -11,9 +11,16 @@
 extern DB_functions_t *deadbeef;
 
 static char *title_script;
-static char *fname_script;
+
+enum {
+    LV_ROOT,
+    LV_LIST_ITEMS,
+};
 
 @implementation MediaLibraryItem {
+    MediaLibraryItem *parent;
+    NSString *_stringValue;
+
     ddb_medialib_list_t *_list;
     ddb_medialib_item_t *_item;
     DB_playItem_t *_track;
@@ -31,13 +38,13 @@ static char *fname_script;
     return self;
 }
 
-- (id)initNode:(ddb_medialib_item_t *)item {
+- (id)initItemNode:(ddb_medialib_item_t *)item parent:(MediaLibraryItem *)parent{
     self = [self init];
     _item = item;
     return self;
 }
 
-- (id)initLeaf:(DB_playItem_t *)track {
+- (id)initTrackNode:(DB_playItem_t *)track parent:(MediaLibraryItem *)parent {
     self = [self init];
     _track = track;
     return self;
@@ -62,13 +69,13 @@ static char *fname_script;
         if (_list) {
             _children = [[NSMutableArray alloc] initWithCapacity:_list->count];
             for (int i = 0; i < _list->count; i++) {
-                _children[i] = [[MediaLibraryItem alloc] initNode:&_list->items[i]];
+                _children[i] = [[MediaLibraryItem alloc] initItemNode:&_list->items[i] parent:self];
             }
         }
         else if (_item) {
             _children = [[NSMutableArray alloc] initWithCapacity:_item->num_tracks];
             for (int i = 0; i < _item->num_tracks; i++) {
-                _children[i] = [[MediaLibraryItem alloc] initLeaf:_item->tracks[i]];
+                _children[i] = [[MediaLibraryItem alloc] initTrackNode:_item->tracks[i] parent:self];
             }
         }
     }
@@ -77,10 +84,12 @@ static char *fname_script;
 
 - (NSString *)stringValue {
     if (_list) {
-        return @"All Music";
+        _stringValue = @"All Music";
+        return _stringValue;
     }
     else if (_item) {
-        return [NSString stringWithFormat:@"%@ (%d)", [NSString stringWithUTF8String:_item->text], _item->num_tracks];
+        _stringValue = [NSString stringWithFormat:@"%@ (%d)", [NSString stringWithUTF8String:_item->text], _item->num_tracks];
+        return _stringValue;
     }
 
     if (!title_script) {
@@ -92,7 +101,8 @@ static char *fname_script;
     ctx.it = _track;
     char buf[1000];
     deadbeef->tf_eval (&ctx, title_script, buf, sizeof (buf));
-    return [NSString stringWithUTF8String:buf];
+    _stringValue = [NSString stringWithUTF8String:buf];
+    return _stringValue;
 
 }
 

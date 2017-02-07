@@ -66,6 +66,7 @@ static void _medialib_listener (int event, void *user_data) {
 
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
+//    NSLog (@"%@", [item stringValue]);
     return (item == nil) ? @"/" : [item stringValue];
 }
 
