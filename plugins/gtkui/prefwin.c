@@ -281,7 +281,7 @@ gtkui_run_preferences_dlg (void) {
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (prefwin, "cli_playlist_name")), deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default"));
 
     // resume last session
-    set_toggle_button("resume_last_session", deadbeef->conf_get_int ("resume_last_session", 0));
+    set_toggle_button("resume_last_session", deadbeef->conf_get_int ("resume_last_session", 1));
 
     // enable shift-jis recoding
     set_toggle_button("enable_shift_jis_recoding", deadbeef->conf_get_int ("junk.enable_shift_jis_detection", 0));

@@ -104,7 +104,7 @@ extern DB_functions_t *deadbeef;
     [self updateRGLabels];
     [_cli_add_to_specific_playlist setState: deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1) ? NSOnState : NSOffState];
     [_cli_add_playlist_name setStringValue: [NSString stringWithUTF8String: deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default")]];
-    [_resume_last_session setState: deadbeef->conf_get_int ("resume_last_session", 0) ? NSOnState : NSOffState];
+    [_resume_last_session setState: deadbeef->conf_get_int ("resume_last_session", 1) ? NSOnState : NSOffState];
     [_ignore_archives setState: deadbeef->conf_get_int ("ignore_archives", 1) ? NSOnState : NSOffState];
     [_stop_after_current_reset setState: deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0) ? NSOnState : NSOffState];
     [_stop_after_album_reset setState: deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0) ? NSOnState : NSOffState];

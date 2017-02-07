@@ -722,18 +722,23 @@ sigsegv_handler (int sig) {
 void
 restore_resume_state (void) {
     DB_output_t *output = plug_get_output ();
-    if (conf_get_int ("resume_last_session", 0) && output->state () == OUTPUT_STATE_STOPPED) {
+    if (conf_get_int ("resume_last_session", 1) && output->state () == OUTPUT_STATE_STOPPED) {
         int plt = conf_get_int ("resume.playlist", -1);
         int track = conf_get_int ("resume.track", -1);
         float pos = conf_get_float ("resume.position", -1);
         int paused = conf_get_int ("resume.paused", 0);
         trace ("resume: track %d pos %f playlist %d\n", track, pos, plt);
         if (plt >= 0 && track >= 0 && pos >= 0) {
-            streamer_lock (); // need to hold streamer thread to make the resume operation atomic
+            output->pause ();
             streamer_set_current_playlist (plt);
+            streamer_yield ();
             streamer_set_nextsong (track, paused ? 2 : 3);
+            streamer_yield ();
             streamer_set_seek (pos);
-            streamer_unlock ();
+            streamer_yield ();
+            if (!paused) {
+                output->play ();
+            }
         }
     }
 }
