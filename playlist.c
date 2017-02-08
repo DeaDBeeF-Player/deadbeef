@@ -1990,7 +1990,6 @@ pl_crop_selected (void) {
     UNLOCK;
 }
 
-// FIXME: multivalue support
 int
 plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     LOCK;
@@ -2488,10 +2487,18 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
                 }
                 value[l] = 0;
                 if (key[0] == ':') {
-                    // some values are stored twice:
-                    // once in legacy format, and once in metadata format
-                    // here, we delete what was set from legacy, and overwrite with metadata
-                    pl_replace_meta (it, key, value);
+                    if (!strcmp (key, ":STARTSAMPLE")) {
+                        pl_item_set_startsample (it, atoll (value));
+                    }
+                    else if (!strcmp (key, ":ENDSAMPLE")) {
+                        pl_item_set_endsample (it, atoll (value));
+                    }
+                    else {
+                        // some values are stored twice:
+                        // once in legacy format, and once in metadata format
+                        // here, we delete what was set from legacy, and overwrite with metadata
+                        pl_replace_meta (it, key, value);
+                    }
                 }
                 else {
                     pl_add_meta_full (it, key, value, l+1);
