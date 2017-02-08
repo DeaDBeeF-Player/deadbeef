@@ -388,7 +388,11 @@ add_paths(const char *paths, int len, int queue, char *sendback, int sbsize) {
         if (deadbeef->plt_add_dir2 (0, (ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
             if (deadbeef->plt_add_file2 (0, (ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
                 int ab = 0;
-                playItem_t *it = plt_load2 (0, curr_plt, NULL, pname, &ab, NULL, NULL);
+                playItem_t *after = plt_get_last (curr_plt, PL_MAIN);
+                playItem_t *it = plt_load2 (0, curr_plt, after, pname, &ab, NULL, NULL);
+                if (after) {
+                    pl_item_unref (after);
+                }
                 if (!it) {
                     trace_err ("failed to add file or folder %s\n", pname);
                 }
