@@ -45,13 +45,13 @@
 #include "volume.h"
 #include "vfs.h"
 #include "premix.h"
-//#include "ringbuf.h"
 #include "fft.h"
 #include "handler.h"
 #include "plugins/libparser/parser.h"
 #include "strdupa.h"
 #include "playqueue.h"
 #include "streamreader.h"
+#include "dsp.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #undef trace
@@ -68,19 +68,6 @@ FILE *out;
 #define STREAMER_HINTS (DDB_DECODER_HINT_NEED_BITRATE|DDB_DECODER_HINT_CAN_LOOP)
 
 static intptr_t streamer_tid;
-static ddb_dsp_context_t *dsp_chain;
-static float dsp_ratio = 1;
-
-static DB_dsp_t *eqplug;
-static ddb_dsp_context_t *eq;
-
-static int dsp_on = 0;
-
-static char *dsp_input_buffer;
-static int dsp_input_buffer_size;
-
-static char *dsp_temp_buffer;
-static int dsp_temp_buffer_size;
 
 static int autoconv_8_to_16 = 1;
 
@@ -98,11 +85,6 @@ static int streaming_terminate;
 // buffer up to 3 seconds at 44100Hz stereo
 #define STREAM_BUFFER_SIZE 0x80000 // slightly more than 3 seconds of 44100 stereo
 
-// how much bigger should read-buffer be to allow upsampling.
-// e.g. 8000Hz -> 192000Hz upsampling requires 24x buffer size,
-// so if we originally request 4096 bytes blocks -
-// that will require 24x buffer size, which is 98304 bytes buffer
-#define MAX_DSP_RATIO 24
 
 static uintptr_t mutex;
 static uintptr_t currtrack_mutex;
@@ -1489,16 +1471,7 @@ streamer_next (void) {
 }
 
 static void
-streamer_dsp_postinit (void);
-
-static void
-streamer_set_dsp_chain_real (ddb_dsp_context_t *chain);
-
-static void
 streamer_notify_order_changed_real (int prev_order, int new_order);
-
-static void
-free_dsp_buffers (void);
 
 void
 streamer_thread (void *ctx) {
@@ -1842,241 +1815,8 @@ streamer_thread (void *ctx) {
 }
 
 void
-streamer_dsp_chain_free (ddb_dsp_context_t *dsp_chain) {
-    while (dsp_chain) {
-        ddb_dsp_context_t *next = dsp_chain->next;
-        dsp_chain->plugin->close (dsp_chain);
-        dsp_chain = next;
-    }
-}
-
-ddb_dsp_context_t *
-streamer_dsp_chain_load (const char *fname) {
-    int err = 1;
-    FILE *fp = fopen (fname, "rt");
-    if (!fp) {
-        return NULL;
-    }
-
-    char temp[100];
-    ddb_dsp_context_t *chain = NULL;
-    ddb_dsp_context_t *tail = NULL;
-    for (;;) {
-        // plugin enabled {
-        int enabled = 0;
-        int err = fscanf (fp, "%99s %d {\n", temp, &enabled);
-        if (err == EOF) {
-            break;
-        }
-        else if (2 != err) {
-            fprintf (stderr, "error plugin name\n");
-            goto error;
-        }
-
-        DB_dsp_t *plug = (DB_dsp_t *)deadbeef->plug_get_for_id (temp);
-        if (!plug) {
-            fprintf (stderr, "streamer_dsp_chain_load: plugin %s not found. preset will not be loaded\n", temp);
-            goto error;
-        }
-        ddb_dsp_context_t *ctx = plug->open ();
-        if (!ctx) {
-            fprintf (stderr, "streamer_dsp_chain_load: failed to open ctxance of plugin %s\n", temp);
-            goto error;
-        }
-
-        if (tail) {
-            tail->next = ctx;
-            tail = ctx;
-        }
-        else {
-            tail = chain = ctx;
-        }
-
-        int n = 0;
-        for (;;) {
-            char value[1000];
-            if (!fgets (temp, sizeof (temp), fp)) {
-                fprintf (stderr, "streamer_dsp_chain_load: unexpected eof while reading plugin params\n");
-                goto error;
-            }
-            if (!strcmp (temp, "}\n")) {
-                break;
-            }
-            else if (1 != sscanf (temp, "\t%1000[^\n]\n", value)) {
-                fprintf (stderr, "streamer_dsp_chain_load: error loading param %d\n", n);
-                goto error;
-            }
-            if (plug->num_params) {
-                plug->set_param (ctx, n, value);
-            }
-            n++;
-        }
-        ctx->enabled = enabled;
-    }
-
-    err = 0;
-error:
-    if (err) {
-        fprintf (stderr, "streamer_dsp_chain_load: error loading %s\n", fname);
-    }
-    if (fp) {
-        fclose (fp);
-    }
-    if (err && chain) {
-        streamer_dsp_chain_free (chain);
-        chain = NULL;
-    }
-    return chain;
-}
-
-int
-streamer_dsp_chain_save_internal (const char *fname, ddb_dsp_context_t *chain) {
-    char tempfile[PATH_MAX];
-    snprintf (tempfile, sizeof (tempfile), "%s.tmp", fname);
-    FILE *fp = fopen (tempfile, "w+t");
-    if (!fp) {
-        return -1;
-    }
-
-    ddb_dsp_context_t *ctx = chain;
-    while (ctx) {
-        if (fprintf (fp, "%s %d {\n", ctx->plugin->plugin.id, (int)ctx->enabled) < 0) {
-            fprintf (stderr, "write to %s failed (%s)\n", tempfile, strerror (errno));
-            goto error;
-        }
-        if (ctx->plugin->num_params) {
-            int n = ctx->plugin->num_params ();
-            int i;
-            for (i = 0; i < n; i++) {
-                char v[1000];
-                ctx->plugin->get_param (ctx, i, v, sizeof (v));
-                if (fprintf (fp, "\t%s\n", v) < 0) {
-                    fprintf (stderr, "write to %s failed (%s)\n", tempfile, strerror (errno));
-                    goto error;
-                }
-            }
-        }
-        if (fprintf (fp, "}\n") < 0) {
-            fprintf (stderr, "write to %s failed (%s)\n", tempfile, strerror (errno));
-            goto error;
-        }
-        ctx = ctx->next;
-    }
-
-    fclose (fp);
-    if (rename (tempfile, fname) != 0) {
-        fprintf (stderr, "dspconfig rename %s -> %s failed: %s\n", tempfile, fname, strerror (errno));
-        return -1;
-    }
-    return 0;
-error:
-    fclose (fp);
-    return -1;
-}
-
-int
-streamer_dsp_chain_save (void) {
-    char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/dspconfig", plug_get_config_dir ());
-    return streamer_dsp_chain_save_internal (fname, dsp_chain);
-}
-
-static void
-streamer_dsp_postinit (void) {
-    // note about EQ hack:
-    // we 1st check if there's an EQ in dsp chain, and just use it
-    // if not -- we add our own
-
-    // eq plug
-    if (eqplug) {
-        ddb_dsp_context_t *p;
-
-        for (p = dsp_chain; p; p = p->next) {
-            if (!strcmp (p->plugin->plugin.id, "supereq")) {
-                break;
-            }
-        }
-        if (p) {
-            eq = p;
-        }
-        else {
-            eq = eqplug->open ();
-            eq->enabled = 0;
-            eq->next = dsp_chain;
-            dsp_chain = eq;
-        }
-
-    }
-    ddb_dsp_context_t *ctx = dsp_chain;
-    while (ctx) {
-        if (ctx->enabled) {
-            break;
-        }
-        ctx = ctx->next;
-    }
-    if (!ctx && fileinfo) {
-        if (memcmp (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
-            memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
-            memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
-            formatchanged = 1;
-        }
-        dsp_on = 0;
-    }
-    else if (ctx) {
-        dsp_on = 1;
-    }
-    else if (!ctx) {
-        dsp_on = 0;
-    }
-}
-
-void
 streamer_dsp_refresh (void) {
     handler_push (handler, STR_EV_DSP_RELOAD, 0, 0, 0);
-}
-
-static void
-streamer_dsp_init (void) {
-    // load dsp chain from file
-    char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/dspconfig", plug_get_config_dir ());
-    dsp_chain = streamer_dsp_chain_load (fname);
-    if (!dsp_chain) {
-        // first run, let's add resampler
-        DB_dsp_t *src = (DB_dsp_t *)plug_get_for_id ("SRC");
-        if (src) {
-            ddb_dsp_context_t *inst = src->open ();
-            inst->enabled = 1;
-            src->set_param (inst, 0, "48000"); // samplerate
-            src->set_param (inst, 1, "2"); // quality=SINC_FASTEST
-            src->set_param (inst, 2, "1"); // auto
-            inst->next = dsp_chain;
-            dsp_chain = inst;
-        }
-    }
-
-    eqplug = (DB_dsp_t *)plug_get_for_id ("supereq");
-    streamer_dsp_postinit ();
-
-    // load legacy eq settings from pre-0.5
-    if (eq && eqplug && conf_find ("eq.", NULL)) {
-        eq->enabled = deadbeef->conf_get_int ("eq.enable", 0);
-        char s[50];
-
-        // 0.4.4 was writing buggy settings, need to multiply by 2 to compensate
-        conf_get_str ("eq.preamp", "0", s, sizeof (s));
-        snprintf (s, sizeof (s), "%f", atof(s)*2);
-        eqplug->set_param (eq, 0, s);
-        for (int i = 0; i < 18; i++) {
-            char key[100];
-            snprintf (key, sizeof (key), "eq.band%d", i);
-            conf_get_str (key, "0", s, sizeof (s));
-            snprintf (s, sizeof (s), "%f", atof(s)*2);
-            eqplug->set_param (eq, 1+i, s);
-        }
-        // delete obsolete settings
-        conf_remove_items ("eq.");
-    }
 }
 
 int
@@ -2146,13 +1886,7 @@ streamer_free (void) {
 
     streamer_dsp_chain_save();
 
-    streamer_dsp_chain_free (dsp_chain);
-    dsp_chain = NULL;
-
-    free_dsp_buffers ();
-
-    eqplug = NULL;
-    eq = NULL;
+    dsp_free ();
 
     if (handler) {
         handler_free (handler);
@@ -2162,32 +1896,17 @@ streamer_free (void) {
 
 void
 streamer_reset (int full) { // must be called when current song changes by external reasons
+#warning blockreader FIXME: need to do a proper reset: restart reading from the point of the first data block
     if (!mutex) {
         fprintf (stderr, "ERROR: someone called streamer_reset after exit\n");
         return; // failsafe, in case someone calls streamer reset after deinit
     }
 
     streamreader_reset ();
-
-#if 0
-    if (full) {
-        streamer_lock ();
-        streamer_ringbuf.remaining = 0;
-        streamer_unlock ();
-    }
-#endif
-
-    // reset dsp
-    ddb_dsp_context_t *dsp = dsp_chain;
-    while (dsp) {
-        if (dsp->plugin->reset) {
-            dsp->plugin->reset (dsp);
-        }
-        dsp = dsp->next;
-    }
+    dsp_reset ();
 }
 
-// NOTE: this is supposed to be only called from streamer_read, before DSP
+// NOTE: this is supposed to be only called from streamer_read
 static int
 update_output_format (ddb_waveformat_t *fmt) {
     DB_output_t *output = plug_get_output ();
@@ -2213,44 +1932,6 @@ update_output_format (ddb_waveformat_t *fmt) {
     return 0;
 }
 
-static char *
-ensure_dsp_input_buffer (int size) {
-    if (!size) {
-        if (dsp_input_buffer) {
-            free (dsp_input_buffer);
-            dsp_input_buffer = NULL;
-        }
-        return 0;
-    }
-    if (size != dsp_input_buffer_size) {
-        dsp_input_buffer = realloc (dsp_input_buffer, size);
-        dsp_input_buffer_size = size;
-    }
-    return dsp_input_buffer;
-}
-
-
-static char *
-ensure_dsp_temp_buffer (int size) {
-    if (!size) {
-        if (dsp_temp_buffer) {
-            free (dsp_temp_buffer);
-            dsp_temp_buffer = NULL;
-        }
-        return NULL;
-    }
-    if (size != dsp_temp_buffer_size) {
-        dsp_temp_buffer = realloc (dsp_temp_buffer, size);
-        dsp_temp_buffer_size = size;
-    }
-    return dsp_temp_buffer;
-}
-
-static void
-free_dsp_buffers (void) {
-    ensure_dsp_input_buffer (0);
-    ensure_dsp_temp_buffer (0);
-}
 
 #if 0
 // decodes data and converts to current output format
@@ -2506,6 +2187,8 @@ streamer_read (char *bytes, int size) {
     if (block->pos >= block->size) {
         streamreader_next_block ();
     }
+
+    float dsp_ratio = dsp_apply ();
 
     playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dsp_ratio;
     playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels);
@@ -2807,48 +2490,6 @@ streamer_notify_playlist_deleted (playlist_t *plt) {
         plt_unref (streamer_playlist);
         streamer_playlist = NULL;
     }
-}
-
-ddb_dsp_context_t *
-streamer_get_dsp_chain (void) {
-    return dsp_chain;
-}
-
-static ddb_dsp_context_t *
-dsp_clone (ddb_dsp_context_t *from) {
-    ddb_dsp_context_t *dsp = from->plugin->open ();
-    char param[2000];
-    if (from->plugin->num_params) {
-        int n = from->plugin->num_params ();
-        for (int i = 0; i < n; i++) {
-            from->plugin->get_param (from, i, param, sizeof (param));
-            dsp->plugin->set_param (dsp, i, param);
-        }
-    }
-    dsp->enabled = from->enabled;
-    return dsp;
-}
-
-static void
-streamer_set_dsp_chain_real (ddb_dsp_context_t *chain) {
-    streamer_dsp_chain_free (dsp_chain);
-    dsp_chain = chain;
-    eq = NULL;
-    streamer_dsp_postinit ();
-    if (fileinfo) {
-        memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
-        memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
-        formatchanged = 1;
-    }
-
-    streamer_dsp_chain_save();
-    streamer_reset (1);
-
-    DB_output_t *output = plug_get_output ();
-    if (playing_track && output->state () != OUTPUT_STATE_STOPPED) {
-        streamer_set_seek (playpos);
-    }
-    messagepump_push (DB_EV_DSPCHAINCHANGED, 0, 0, 0);
 }
 
 void
