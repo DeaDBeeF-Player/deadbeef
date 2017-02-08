@@ -230,13 +230,6 @@ mp3_check_xing_header (buffer_t *buffer, int packetlength, int sample, int sampl
             deadbeef->fread (buf, 1, 4, buffer->file);
             trace ("lame totalsamples: %d\n", buffer->totalsamples);
         }
-        if (flags&FRAMES_FLAG) {
-            buffer->have_xing_header = 1;
-            buffer->startoffset = framepos+packetlength;
-            if (fsize >= 0) {
-                buffer->bitrate = (int)((fsize - buffer->startoffset - buffer->endoffset) / buffer->duration * 8);
-            }
-        }
     }
 
     return 0;
