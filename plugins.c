@@ -485,6 +485,11 @@ static DB_functions_t deadbeef_api = {
     .sort_track_array = (void (*) (ddb_playlist_t *playlist, DB_playItem_t **tracks, int num_tracks, const char *format, int order))sort_track_array,
 
     .pl_item_init = (DB_playItem_t *(*)(const char *fname))pl_item_init,
+
+    .pl_item_get_startsample = (int64_t (*) (DB_playItem_t *it))pl_item_get_startsample,
+    .pl_item_get_endsample = (int64_t (*) (DB_playItem_t *it))pl_item_get_endsample,
+    .pl_item_set_startsample = (void (*) (DB_playItem_t *it, int64_t sample))pl_item_set_startsample,
+    .pl_item_set_endsample = (void (*) (DB_playItem_t *it, int64_t sample))pl_item_set_endsample,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

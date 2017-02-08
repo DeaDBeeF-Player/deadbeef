@@ -814,9 +814,10 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         if (info->buffer.padding >= 529) {
             info->buffer.padding -= 529;
         }
-        if (it->endsample > 0) {
-            info->buffer.startsample = it->startsample + info->buffer.delay;
-            info->buffer.endsample = it->endsample + info->buffer.delay;
+        int64_t endsample = deadbeef->pl_item_get_endsample (it);
+        if (endsample > 0) {
+            info->buffer.startsample = deadbeef->pl_item_get_startsample (it) + info->buffer.delay;
+            info->buffer.endsample = endsample + info->buffer.delay;
             // that comes from cue, don't calc duration, just seek and play
             trace ("mp3 totalsamples: %d\n", info->buffer.endsample-info->buffer.startsample+1);
         }

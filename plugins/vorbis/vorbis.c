@@ -516,9 +516,10 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
     bytes_read = samples_read * sizeof(float) * _info->fmt.channels;
 #endif
 
-    _info->readpos = (float)(ov_pcm_tell(&info->vorbis_file) - info->it->startsample) / _info->fmt.samplerate;
+    int64_t startsample = deadbeef->pl_item_get_startsample (info->it);
+    _info->readpos = (float)(ov_pcm_tell(&info->vorbis_file) - startsample) / _info->fmt.samplerate;
     if (info->set_bitrate && _info->readpos > info->next_update) {
-        const int rate = ov_bitrate_instant(&info->vorbis_file) / 1000;
+        const int rate = (int)ov_bitrate_instant(&info->vorbis_file) / 1000;
         if (rate > 0) {
             deadbeef->streamer_set_bitrate(rate);
             info->next_update = info->next_update <= 0 ? info->next_update + 1 : _info->readpos + 5;
@@ -581,7 +582,7 @@ cvorbis_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
 
     long nstreams = ov_streams (&vorbis_file);
-    int currentsample = 0;
+    int64_t currentsample = 0;
     for (int stream = 0; stream < nstreams; stream++) {
         const vorbis_info *vi = ov_info (&vorbis_file, stream);
         if (!vi) {
@@ -593,23 +594,26 @@ cvorbis_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 #else
         const float duration = ov_time_total(&vorbis_file, stream);
 #endif
-        int totalsamples = ov_pcm_total (&vorbis_file, stream);
+        int64_t totalsamples = ov_pcm_total (&vorbis_file, stream);
 
         DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
         deadbeef->pl_set_meta_int (it, ":TRACKNUM", stream);
         deadbeef->plt_set_item_duration (plt, it, duration);
         if (nstreams > 1) {
-            it->startsample = currentsample;
-            it->endsample = currentsample + totalsamples - 1;
+            deadbeef->pl_item_set_startsample (it, currentsample);
+            deadbeef->pl_item_set_endsample (it, currentsample + totalsamples - 1);
             deadbeef->pl_set_item_flags (it, DDB_IS_SUBTRACK);
         }
 
         if (update_vorbis_comments (it, &vorbis_file, stream))
             continue;
-        int samplerate = vi->rate;
+        int samplerate = (int)vi->rate;
 
-        const off_t start_offset = sample_offset(&vorbis_file, it->startsample-1);
-        const off_t end_offset = sample_offset(&vorbis_file, it->endsample);
+        int64_t startsample = deadbeef->pl_item_get_startsample (it);
+        int64_t endsample = deadbeef->pl_item_get_endsample (it);
+
+        const off_t start_offset = sample_offset(&vorbis_file, startsample-1);
+        const off_t end_offset = sample_offset(&vorbis_file, endsample);
         char *filetype = NULL;
         const off_t stream_size = oggedit_vorbis_stream_info(deadbeef->fopen(fname), start_offset, end_offset, &filetype);
         if (filetype) {
