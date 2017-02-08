@@ -45,15 +45,16 @@
 #include "volume.h"
 #include "vfs.h"
 #include "premix.h"
-#include "ringbuf.h"
-#include "replaygain.h"
+//#include "ringbuf.h"
 #include "fft.h"
 #include "handler.h"
 #include "plugins/libparser/parser.h"
 #include "strdupa.h"
 #include "playqueue.h"
+#include "streamreader.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#undef trace
 #define trace(fmt,...)
 
 //#define WRITE_DUMP 1
@@ -65,9 +66,6 @@ FILE *out;
 
 #define MAX_PLAYLIST_DOWNLOAD_SIZE 25000
 #define STREAMER_HINTS (DDB_DECODER_HINT_NEED_BITRATE|DDB_DECODER_HINT_CAN_LOOP)
-
-static int
-streamer_read_async (char *bytes, int size);
 
 static int
 streamer_set_output_format (void);
@@ -109,14 +107,6 @@ static int streaming_terminate;
 // that will require 24x buffer size, which is 98304 bytes buffer
 #define MAX_DSP_RATIO 24
 
-#define MIN_BLOCK_SIZE 4096
-#define MAX_BLOCK_SIZE 16384
-#define READBUFFER_SIZE (MAX_BLOCK_SIZE * MAX_DSP_RATIO)
-static char readbuffer[READBUFFER_SIZE];
-
-static ringbuf_t streamer_ringbuf;
-static char streambuffer[STREAM_BUFFER_SIZE];
-
 static int bytes_until_next_song = 0;
 static uintptr_t mutex;
 static uintptr_t currtrack_mutex;
@@ -136,7 +126,6 @@ static int last_bitrate = -1; // last bitrate of current song
 
 static playlist_t *streamer_playlist;
 static playItem_t *playing_track;
-static int input_does_rg = 0; // 1 if plugin does RG on its own
 static float playtime; // total playtime of playing track
 static time_t started_timestamp; // result of calling time(NULL)
 static playItem_t *streaming_track;
@@ -174,9 +163,6 @@ typedef struct wavedata_listener_s {
 
 static wavedata_listener_t *waveform_listeners;
 static wavedata_listener_t *spectrum_listeners;
-
-// replaygain
-static ddb_replaygain_settings_t streamer_rg_settings;
 
 #if DETECT_PL_LOCK_RC
 volatile pthread_t streamer_lock_tid = 0;
@@ -238,13 +224,6 @@ streamer_abort_files (void) {
         deadbeef->fabort (strfile);
     }
 
-}
-
-static void
-streamer_set_replaygain (playItem_t *it) {
-    streamer_rg_settings._size = sizeof (ddb_replaygain_settings_t);
-    replaygain_init_settings (&streamer_rg_settings, it);
-    replaygain_set_current (&streamer_rg_settings);
 }
 
 static void
@@ -900,7 +879,6 @@ ctmap_init (void) {
 
     const char *p = mapstr;
     char t[MAX_TOKEN];
-    char ct[MAX_TOKEN];
     char plugins[MAX_TOKEN*5];
 
     ctmap_t *tail = NULL;
@@ -1089,7 +1067,7 @@ streamer_set_current (playItem_t *it) {
             FILE *out = NULL;
             char tempfile[1000] = "";
 
-            int size = vfs_fgetlength (fp);
+            int64_t size = vfs_fgetlength (fp);
             if (size <= 0) {
                 size = MAX_PLAYLIST_DOWNLOAD_SIZE;
             }
@@ -1099,7 +1077,7 @@ streamer_set_current (playItem_t *it) {
                 goto m3u_error;
             }
             trace ("reading %d bytes\n", size);
-            int rd = vfs_fread (buf, 1, size, fp);
+            int64_t rd = vfs_fread (buf, 1, size, fp);
             if (rd <= 0) {
                 trace ("failed to download %d bytes (got %d bytes)\n", size, rd);
                 goto m3u_error;
@@ -1121,7 +1099,7 @@ streamer_set_current (playItem_t *it) {
                 trace ("fdopen failed for %s\n", tempfile);
                 goto m3u_error;
             }
-            int rw = fwrite (buf, 1, rd, out);
+            int64_t rw = fwrite (buf, 1, rd, out);
             if (rw != rd) {
                 trace ("failed to write %d bytes into file %s\n", size, tempfile);
                 goto m3u_error;
@@ -1134,7 +1112,7 @@ streamer_set_current (playItem_t *it) {
             // load playlist
             playlist_t *plt = plt_alloc ("temp");
             DB_playlist_t **plug = plug_get_playlist_list ();
-            int p, e;
+            int p;
             DB_playItem_t *m3u = NULL;
             for (p = 0; plug[p]; p++) {
                 if (plug[p]->load) {
@@ -1302,8 +1280,6 @@ m3u_error:
             streaming_track = it;
             if (streaming_track) {
                 pl_item_ref (streaming_track);
-                input_does_rg = dec->plugin.flags & DDB_PLUGIN_FLAG_REPLAYGAIN;
-                streamer_set_replaygain (streaming_track);
             }
 
             trace ("bps=%d, channels=%d, samplerate=%d\n", new_fileinfo->fmt.bps, new_fileinfo->fmt.channels, new_fileinfo->fmt.samplerate);
@@ -1428,7 +1404,6 @@ streamer_start_new_song (void) {
     streamer_lock ();
     DB_output_t *output = plug_get_output ();
     int sng = nextsong;
-    int initsng = nextsong;
     int pstate = nextsong_pstate;
     nextsong = -1;
     streamer_unlock ();
@@ -1535,6 +1510,7 @@ streamer_start_new_song (void) {
     autoplay = 0;
 }
 
+#if 0
 static void
 streamer_next (int bytesread) {
     streamer_lock ();
@@ -1554,6 +1530,7 @@ streamer_next (int bytesread) {
         streamer_move_to_nextsong_real (0);
     }
 }
+#endif
 
 static void
 streamer_dsp_postinit (void);
@@ -1734,7 +1711,6 @@ streamer_thread (void *ctx) {
                 streaming_track = playing_track;
                 if (streaming_track) {
                     pl_item_ref (streaming_track);
-                    streamer_set_replaygain (streaming_track);
                 }
                 mutex_unlock (currtrack_mutex);
 
@@ -1802,42 +1778,24 @@ streamer_thread (void *ctx) {
         }
         last_seekpos = -1;
 
-        // read ahead at 2x speed of output samplerate, in 4k blocks
-        int rate = output->fmt.samplerate;
-        if (!rate) {
-            trace ("str: got 0 output samplerate\n");
-            usleep(20000);
-            continue;
+        streamer_lock ();
+        streamblock_t *block = NULL;
+        int res = streamreader_read_next_block (streaming_track, fileinfo, &block);
+        streamer_unlock ();
+        if (res < 0) {
+            // error
         }
-        int channels = output->fmt.channels;
-        int bytes_in_one_second = rate * (output->fmt.bps>>3) * channels;
-        int blocksize = bytes_in_one_second / 120;
-
-        if (blocksize < MIN_BLOCK_SIZE) {
-            blocksize = MIN_BLOCK_SIZE;
-        }
-        else if (blocksize > MAX_BLOCK_SIZE) {
-            blocksize = MAX_BLOCK_SIZE;
+        else if (res == 0) {
+            // buffer full
         }
 
-        blocksize &= ~3; // 4byte alignment is required
-
-        if (bytes_in_one_second < blocksize) {
-            bytes_in_one_second = blocksize;
-        }
-
-        int alloc_time = 1000 / (bytes_in_one_second / blocksize);
-
-        int skip = 0;
-        if (bytes_until_next_song >= 0) {
-            // check if streaming format differs from output
-            if (memcmp(&fileinfo->fmt, &orig_output_format, sizeof (ddb_waveformat_t))) {
-                skip = 1;
-                streamer_buffering = 0;
+        if (res > 0) {
+            if (block->last) {
+                // end of file, next track
             }
         }
-        streamer_lock ();
 
+#if 0
         if (!formatchanged && !skip && streamer_ringbuf.remaining < (STREAM_BUFFER_SIZE-blocksize * MAX_DSP_RATIO)) {
             int sz = STREAM_BUFFER_SIZE - streamer_ringbuf.remaining;
             int minsize = blocksize;
@@ -1918,6 +1876,7 @@ streamer_thread (void *ctx) {
         else if (bytes_until_next_song > 0) {
             usleep (20000);
         }
+#endif
     }
 
     // stop streaming song
@@ -2190,13 +2149,13 @@ streamer_init (void) {
     currtrack_mutex = mutex_create ();
     wdl_mutex = mutex_create ();
 
+#if 0
     ringbuf_init (&streamer_ringbuf, streambuffer, STREAM_BUFFER_SIZE);
+#endif
 
     pl_set_order (conf_get_int ("playback.order", 0));
 
     streamer_dsp_init ();
-
-    streamer_set_replaygain (streaming_track);
 
     ctmap_init_mutex ();
     deadbeef->conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, conf_network_ctmapping, sizeof (conf_network_ctmapping));
@@ -2267,11 +2226,16 @@ streamer_reset (int full) { // must be called when current song changes by exter
         fprintf (stderr, "ERROR: someone called streamer_reset after exit\n");
         return; // failsafe, in case someone calls streamer reset after deinit
     }
+
+    streamreader_reset ();
+
+#if 0
     if (full) {
         streamer_lock ();
         streamer_ringbuf.remaining = 0;
         streamer_unlock ();
     }
+#endif
 
     // reset dsp
     ddb_dsp_context_t *dsp = dsp_chain;
@@ -2353,6 +2317,7 @@ free_dsp_buffers (void) {
     ensure_dsp_temp_buffer (0);
 }
 
+#if 0
 // decodes data and converts to current output format
 // returns number of bytes been read
 static int
@@ -2564,6 +2529,7 @@ streamer_read_async (char *bytes, int size) {
     }
     return bytesread;
 }
+#endif
 
 int
 streamer_read (char *bytes, int size) {
@@ -2574,11 +2540,29 @@ streamer_read (char *bytes, int size) {
     if (!playing_track) {
         return -1;
     }
-    DB_output_t *output = plug_get_output ();
+
     streamer_lock ();
-    int sz = min (size, streamer_ringbuf.remaining);
+    streamblock_t *block = streamreader_get_curr_block();
+    if (!block) {
+        streamer_unlock ();
+        return -1;
+    }
+
+    DB_output_t *output = plug_get_output ();
+    int sz = min (size, block->size - block->pos);
     if (sz) {
-        ringbuf_read (&streamer_ringbuf, bytes, sz);
+        // TODO:
+        // * set output format to the file's format
+        // * replaygain: need to pass RG parameters from decoder at read time
+        // * DSP (including resampling to the format set by output)
+        // * convert to output format
+
+        memcpy (bytes, block->buf+block->pos, sz);
+        block->pos += sz;
+        if (block->pos >= block->size) {
+            streamreader_next_block ();
+        }
+
         playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dsp_ratio;
         playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels);
         if (bytes_until_next_song > 0) {
@@ -2717,7 +2701,7 @@ streamer_read (char *bytes, int size) {
                 int third = bytesread/3;
                 for (int i = 0; i < third; i++) {
                     int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1]<<8) | (stream[2]<<16);
-                    int32_t newsample = (int64_t)sample * ivolume / 1000;
+                    int32_t newsample = (int32_t)((int64_t)sample * ivolume / 1000);
                     stream[0] = (newsample&0x0000ff);
                     stream[1] = (newsample&0x00ff00)>>8;
                     stream[2] = (newsample&0xff0000)>>16;
@@ -2731,7 +2715,7 @@ streamer_read (char *bytes, int size) {
             if (ivolume != 1000) {
                 for (int i = 0; i < bytesread/4; i++) {
                     int32_t sample = *((int32_t*)stream);
-                    int32_t newsample = (int64_t)sample * ivolume / 1000;
+                    int32_t newsample = (int32_t)((int64_t)sample * ivolume / 1000);
                     *((int32_t*)stream) = newsample;
                     stream += 4;
                 }
@@ -2751,31 +2735,19 @@ streamer_read (char *bytes, int size) {
     return sz;
 }
 
-static int
-streamer_get_fill (void) {
-    return streamer_ringbuf.remaining;
-}
-
 int
 streamer_ok_to_read (int len) {
-    DB_output_t *output = plug_get_output ();
-    if (formatchanged && bytes_until_next_song <= 0 && len >= 0) {
-        streamer_set_output_format ();
-        formatchanged = 0;
-    }
-    if (len >= 0 && (bytes_until_next_song > 0 || streamer_ringbuf.remaining >= (len*2))) {
+    streamer_lock ();
+    streamblock_t *block = streamreader_get_curr_block ();
+    streamer_unlock ();
+    if (block) {
         return 1;
-    }
-    else {
-        return 1-streamer_buffering;
     }
     return 0;
 }
 
 void
 streamer_configchanged (void) {
-    streamer_set_replaygain (streaming_track);
-    
     pl_set_order (conf_get_int ("playback.order", 0));
     if (playing_track) {
         playing_track->played = 1;
