@@ -223,7 +223,7 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
     const uint8_t *p = (const uint8_t*)ptr;
     while (*p) {
         const uint8_t *pe = p;
-        while (*pe && *pe > ' ') {
+        while (*pe && *pe >= ' ') {
             pe++;
         }
         if (pe - p < 4096 && pe - p > 7) {
