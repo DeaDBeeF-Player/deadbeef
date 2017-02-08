@@ -3939,6 +3939,13 @@ plt_add_file2 (int visibility, playlist_t *plt, const char *fname, int (*callbac
     return plt_add_file_int (visibility, plt, fname, callback, user_data);
 }
 
+playItem_t *
+pl_item_init (const char *fname) {
+    playlist_t plt;
+    memset (&plt, 0, sizeof (plt));
+    return plt_insert_file_int (-1, &plt, NULL, fname, NULL, NULL, NULL);
+}
+
 int
 plt_add_dir2 (int visibility, playlist_t *plt, const char *dirname, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
     follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);

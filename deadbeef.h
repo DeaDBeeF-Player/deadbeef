@@ -1378,6 +1378,9 @@ typedef struct {
     // `order` can be one of DDB_SORT_ASCENDING or DDB_SORT_DESCENDING (no random).
     void (*sort_track_array) (ddb_playlist_t *playlist, DB_playItem_t **tracks, int num_tracks, const char *format, int order);
 
+    // initialize playitem, same as plt_add_file, except do not add to any playlist
+    DB_playItem_t *(*pl_item_init) (const char *fname);
+
 #endif
 } DB_functions_t;
 

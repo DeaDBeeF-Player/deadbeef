@@ -554,4 +554,7 @@ register_fileadd_filter (int (*callback)(ddb_file_found_data_t *data, void *user
 void
 unregister_fileadd_filter (int id);
 
+playItem_t *
+pl_item_init (const char *fname);
+
 #endif // __PLAYLIST_H

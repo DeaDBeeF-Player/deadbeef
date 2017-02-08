@@ -1124,9 +1124,33 @@ _converter_write_tags (ddb_encoder_preset_t *encoder_preset, DB_playItem_t *it, 
         // encoder doesn't specify tagging format
         return 0;
     }
-    out_it = deadbeef->pl_item_alloc ();
-    deadbeef->pl_item_copy (out_it, it);
-    deadbeef->pl_set_item_flags (out_it, 0);
+
+    out_it = deadbeef->pl_item_init (out);
+
+    if (!out_it) {
+        // can't initialize the converted file, just copy metadata from source
+        out_it = deadbeef->pl_item_alloc ();
+        deadbeef->pl_item_copy (out_it, it);
+        deadbeef->pl_set_item_flags (out_it, 0);
+    }
+    else {
+        // merge metadata
+        deadbeef->pl_lock ();
+
+        DB_metaInfo_t *meta = deadbeef->pl_get_metadata_head (it);
+        while (meta) {
+            if (strchr (":!_", meta->key[0])) {
+                break;
+            }
+            if (!deadbeef->pl_meta_exists (out_it, meta->key)) {
+                deadbeef->pl_append_meta (out_it, meta->key, meta->value);
+            }
+            meta = meta->next;
+        }
+
+        deadbeef->pl_unlock ();
+    }
+
     DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (out_it);
     while (m) {
         DB_metaInfo_t *next = m->next;
