@@ -926,7 +926,9 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
         outsize += sz;
 
         if (!header_written) {
-            uint64_t size = (int64_t)(it->endsample-it->startsample) * outch * output_bps / 8;
+            int64_t startsample = deadbeef->pl_item_get_startsample (it);
+            int64_t endsample = deadbeef->pl_item_get_endsample (it);
+            uint64_t size = (int64_t)(endsample-startsample) * outch * output_bps / 8;
             if (!size) {
                 size = (double)deadbeef->pl_get_item_duration (it) * fileinfo->fmt.samplerate * outch * output_bps / 8;
 

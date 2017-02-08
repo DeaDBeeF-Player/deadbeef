@@ -212,19 +212,20 @@ cvorbis_seek_sample (DB_fileinfo_t *_info, int sample) {
         }
         deadbeef->pl_unlock ();
     }
-    sample += info->it->startsample;
+    int64_t startsample = deadbeef->pl_item_get_startsample (info->it);
+    sample += startsample;
     trace ("vorbis: seek to sample %d\n", sample);
     int res = ov_pcm_seek (&info->vorbis_file, sample);
     if (res != 0 && res != OV_ENOSEEK) {
         trace ("vorbis: error %x seeking to sample %d\n", res, sample);
         return -1;
     }
-    int tell = ov_pcm_tell (&info->vorbis_file);
+    int64_t tell = ov_pcm_tell (&info->vorbis_file);
     if (tell != sample) {
         trace ("vorbis: failed to do sample-accurate seek (%d->%d)\n", sample, tell);
     }
     trace ("vorbis: seek successful\n")
-    _info->readpos = (float)(sample - info->it->startsample)/_info->fmt.samplerate;
+    _info->readpos = (float)(sample - startsample)/_info->fmt.samplerate;
     info->next_update = -2;
     return 0;
 }
@@ -324,12 +325,12 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 //    _info->readpos = 0;
     if (info->info.file->vfs->is_streaming ()) {
-        info->it->startsample = 0;
+        deadbeef->pl_item_set_startsample (info->it, 0);
         if (deadbeef->pl_get_item_duration (it) < 0) {
-            it->endsample = -1;
+            deadbeef->pl_item_set_endsample (info->it, -1);
         }
         else {
-            it->endsample = ov_pcm_total (&info->vorbis_file, -1)-1;
+            deadbeef->pl_item_set_endsample (it, ov_pcm_total (&info->vorbis_file, -1)-1);
         }
         if (update_vorbis_comments (it, &info->vorbis_file, -1))
             return -1;
@@ -448,7 +449,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
     /* Don't read past the end of a sub-track */
     int samples_to_read = bytes_to_read / sizeof(float) / _info->fmt.channels;
     if (deadbeef->pl_get_item_flags(info->it) & DDB_IS_SUBTRACK) {
-        const ogg_int64_t samples_left = info->it->endsample - ov_pcm_tell(&info->vorbis_file);
+        const ogg_int64_t samples_left = deadbeef->pl_item_get_endsample (info->it) - ov_pcm_tell(&info->vorbis_file);
         if (samples_left < samples_to_read) {
             samples_to_read = samples_left;
             bytes_to_read = samples_to_read * sizeof(float) * _info->fmt.channels;

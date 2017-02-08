@@ -1900,7 +1900,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     }
                 }
                 else if (!strcmp (name, "length_samples")) {
-                    int len = snprintf (out, outlen, "%d", ctx->it->endsample - ctx->it->startsample);
+                    int len = snprintf (out, outlen, "%lld", pl_item_get_endsample (ctx->it) - pl_item_get_startsample (ctx->it));
                     out += len;
                     outlen -= len;
                     skip_out = 1;

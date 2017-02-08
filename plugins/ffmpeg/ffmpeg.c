@@ -120,9 +120,9 @@ typedef struct {
     int left_in_buffer;
     int buffer_size;
 
-    int startsample;
-    int endsample;
-    int currentsample;
+    int64_t startsample;
+    int64_t endsample;
+    int64_t currentsample;
 } ffmpeg_info_t;
 
 static DB_playItem_t *current_track;
@@ -327,9 +327,10 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     // subtrack info
     info->currentsample = 0;
-    if (it->endsample > 0) {
-        info->startsample = it->startsample;
-        info->endsample = it->endsample;
+    int64_t endsample = deadbeef->pl_item_get_endsample (it);
+    if (endsample > 0) {
+        info->startsample = deadbeef->pl_item_get_startsample (it);
+        info->endsample = endsample;
         plugin.seek_sample (_info, 0);
     }
     else {

@@ -99,9 +99,9 @@ typedef struct {
     uint8_t out_buffer[BUFFER_SIZE];
     int out_remaining;
     int skipsamples;
-    int currentsample;
-    int startsample;
-    int endsample;
+    int64_t currentsample;
+    int64_t startsample;
+    int64_t endsample;
 } alacplug_info_t;
 
 // allocate codec control structure
@@ -311,9 +311,10 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 #endif
 
     if (!info->file->vfs->is_streaming ()) {
-        if (it->endsample > 0) {
-            info->startsample = it->startsample;
-            info->endsample = it->endsample;
+        int64_t endsample = deadbeef->pl_item_get_endsample (it);
+        if (endsample > 0) {
+            info->startsample = deadbeef->pl_item_get_startsample (it);
+            info->endsample = endsample;
             alac_plugin.seek_sample (_info, 0);
         }
         else {

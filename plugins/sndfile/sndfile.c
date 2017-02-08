@@ -41,9 +41,9 @@ typedef struct {
     DB_fileinfo_t info;
     SNDFILE *ctx;
     DB_FILE *file;
-    int startsample;
-    int endsample;
-    int currentsample;
+    int64_t startsample;
+    int64_t endsample;
+    int64_t currentsample;
     int bitrate;
     int sf_format;
     int read_as_short;
@@ -225,9 +225,10 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     _info->readpos = 0;
-    if (it->endsample > 0) {
-        info->startsample = it->startsample;
-        info->endsample = it->endsample;
+    int64_t endsample = deadbeef->pl_item_get_endsample (it);
+    if (endsample > 0) {
+        info->startsample = deadbeef->pl_item_get_startsample (it);
+        info->endsample = endsample;
         if (plugin.seek_sample (_info, 0) < 0) {
             return -1;
         }

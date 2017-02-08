@@ -54,8 +54,8 @@ typedef struct {
     DB_FILE *c_file;
 #endif
     WavpackContext *ctx;
-    int startsample;
-    int endsample;
+    int64_t startsample;
+    int64_t endsample;
 } wvctx_t;
 
 #ifdef TINYWV
@@ -172,9 +172,10 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.channelmask |= 1 << i;
     }
     _info->readpos = 0;
-    if (it->endsample > 0) {
-        info->startsample = it->startsample;
-        info->endsample = it->endsample;
+    int64_t endsample = deadbeef->pl_item_get_endsample (it);
+    if (endsample > 0) {
+        info->startsample = deadbeef->pl_item_get_startsample (it);
+        info->endsample = endsample;
         if (plugin.seek_sample (_info, 0) < 0) {
             return -1;
         }

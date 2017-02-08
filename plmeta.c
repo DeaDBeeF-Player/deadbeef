@@ -277,6 +277,13 @@ pl_set_meta_int (playItem_t *it, const char *key, int value) {
 }
 
 void
+pl_set_meta_int64 (playItem_t *it, const char *key, int64_t value) {
+    char s[20];
+    snprintf (s, sizeof (s), "%lld", value);
+    pl_replace_meta (it, key, s);
+}
+
+void
 pl_set_meta_float (playItem_t *it, const char *key, float value) {
     char s[20];
     snprintf (s, sizeof (s), "%f", value);
@@ -343,6 +350,15 @@ pl_find_meta_int (playItem_t *it, const char *key, int def) {
     pl_lock ();
     const char *val = pl_find_meta (it, key);
     int res = val ? atoi (val) : def;
+    pl_unlock ();
+    return res;
+}
+
+int64_t
+pl_find_meta_int64 (playItem_t *it, const char *key, int64_t def) {
+    pl_lock ();
+    const char *val = pl_find_meta (it, key);
+    int64_t res = val ? atoll (val) : def;
     pl_unlock ();
     return res;
 }
