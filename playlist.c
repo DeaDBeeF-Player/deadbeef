@@ -2549,7 +2549,6 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
     }
     return last_added;
 load_fail:
-    plt_clear (plt);
     fprintf (stderr, "playlist load fail (%s)!\n", fname);
     if (fp) {
         fclose (fp);
