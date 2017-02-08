@@ -1404,6 +1404,9 @@ pl_common_load_column_config (DdbListview *listview, const char *key) {
         }
         if (json_is_string (width)) {
             iwidth = atoi (json_string_value (width));
+            if (iwidth < 0) {
+                iwidth = 50;
+            }
         }
         if (json_is_string (color_override)) {
             icolor_override = atoi (json_string_value (color_override));
