@@ -1715,6 +1715,10 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             else {
                                 start = v;
                             }
+                            const char *startcol = strrchr (v, ':');
+                            if (startcol > start) {
+                                start = startcol+1;
+                            }
                             const char *end = strrchr (start, '.');
                             if (end) {
                                 int n = (int)(end-start);

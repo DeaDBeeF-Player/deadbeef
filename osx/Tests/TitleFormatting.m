@@ -1421,5 +1421,13 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
+- (void)test_VfsPathTitle_GivesCorrectTitle {
+    pl_replace_meta (it, ":URI", "/path/file/myfile.zip:mytrack.mp3");
+    char *bc = tf_compile("%title%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "mytrack"), @"The actual output is: %s", buffer);
+}
+
 
 @end
