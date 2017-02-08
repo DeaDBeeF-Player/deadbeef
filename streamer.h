@@ -4,7 +4,7 @@
 
   streamer implementation
 
-  Copyright (C) 2009-2013 Alexey Yakovenko
+  Copyright (C) 2009-2017 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages

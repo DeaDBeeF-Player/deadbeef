@@ -33,10 +33,11 @@ streamer_dsp_init (void);
 void
 streamer_set_dsp_chain_real (ddb_dsp_context_t *chain);
 
-float
-dsp_apply (void);
-
 ddb_dsp_context_t *
 dsp_clone (ddb_dsp_context_t *from);
+
+int
+dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
+           ddb_waveformat_t *out_fmt, char **out_bytes, int *out_numbytes, float *out_dsp_ratio);
 
 #endif /* dsp_h */

@@ -14,6 +14,7 @@
 #include "messagepump.h"
 #include "plugins.h"
 #include "conf.h"
+#include "premix.h"
 
 static ddb_dsp_context_t *dsp_chain;
 static DB_dsp_t *eqplug;
@@ -358,8 +359,151 @@ streamer_dsp_init (void) {
 }
 
 
-float
-dsp_apply (void) {
-    float dsp_ratio = 1;
-    return dsp_ratio;
+int
+dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
+           ddb_waveformat_t *out_fmt, char **out_bytes, int *out_numbytes, float *out_dsp_ratio) {
+
+    *out_dsp_ratio = 1;
+
+    ddb_waveformat_t dspfmt;
+    memcpy (&dspfmt, input_fmt, sizeof (ddb_waveformat_t));
+    dspfmt.bps = 32;
+    dspfmt.is_float = 1;
+
+    int can_bypass = 0;
+    if (dsp_on) {
+        // check if DSP can be passed through
+        ddb_dsp_context_t *dsp = dsp_chain;
+        while (dsp) {
+            if (dsp->enabled) {
+                if (dsp->plugin->plugin.api_vminor >= 1) {
+                    if (dsp->plugin->can_bypass && !dsp->plugin->can_bypass (dsp, &dspfmt)) {
+                        break;
+                    }
+                }
+                else {
+                    break;
+                }
+            }
+            dsp = dsp->next;
+        }
+        if (!dsp) {
+            can_bypass = 1;
+        }
+    }
+
+    if (!dsp_on || can_bypass) {
+        return 0;
+    }
+
+    int inputsamplesize = input_fmt->channels * input_fmt->bps / 8;
+
+    // convert to float, pass through streamer DSP chain
+    int dspsamplesize = input_fmt->channels * sizeof (float);
+
+    // make *MAX_DSP_RATIO sized buffer for float data
+    int tempbuf_size = inputsize/inputsamplesize * dspsamplesize * MAX_DSP_RATIO;
+    char *tempbuf = ensure_dsp_temp_buffer (tempbuf_size);
+
+    // convert to float
+    /*int tempsize = */pcm_convert (input_fmt, input, &dspfmt, tempbuf, inputsize);
+    int nframes = inputsize / inputsamplesize;
+    ddb_dsp_context_t *dsp = dsp_chain;
+    float ratio = 1.f;
+    int maxframes = tempbuf_size / dspsamplesize;
+    while (dsp) {
+        if (dsp->enabled) {
+            float r = 1;
+            nframes = dsp->plugin->process (dsp, (float *)tempbuf, nframes, maxframes, &dspfmt, &r);
+            ratio *= r;
+        }
+        dsp = dsp->next;
+    }
+
+    *out_dsp_ratio = ratio;
+
+    memcpy (out_fmt, &dspfmt, sizeof (ddb_waveformat_t));
+    *out_bytes = tempbuf;
+    *out_numbytes = nframes * dspfmt.channels * sizeof (float);
+
+    return 1;
+
+#warning blockbased FIXME: split post-dsp conversion and android resampler into separate functions
+#if 0
+    {
+        int outputsamplesize = output->fmt.channels * output->fmt.bps / 8;
+#ifdef ANDROID
+        // if we not compensate here, the streamer loop will go crazy
+        if (fileinfo->fmt.samplerate != output->fmt.samplerate) {
+            if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 2 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
+                size <<= 1;
+            }
+            else if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 4 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
+                size <<= 2;
+            }
+        }
+#endif
+
+        // convert from input fmt to output fmt
+        int inputsize = size/outputsamplesize*inputsamplesize;
+        char input[inputsize];
+        int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
+        if (nb != inputsize) {
+            bytesread = nb;
+            is_eof = 1;
+        }
+        inputsize = nb;
+        //            trace ("convert %d|%d|%d|%d|%d|%d to %d|%d|%d|%d|%d|%d\n"
+        //                , fileinfo->fmt.bps, fileinfo->fmt.channels, fileinfo->fmt.samplerate, fileinfo->fmt.channelmask, fileinfo->fmt.is_float, fileinfo->fmt.is_bigendian
+        //                , output->fmt.bps, output->fmt.channels, output->fmt.samplerate, output->fmt.channelmask, output->fmt.is_float, output->fmt.is_bigendian);
+        bytesread = pcm_convert (&fileinfo->fmt, input, &output->fmt, bytes, inputsize);
+
+#ifdef ANDROID
+        // downsample
+        if (fileinfo->fmt.samplerate > output->fmt.samplerate) {
+            if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 2 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
+                // clip to multiple of 2 samples
+                int outsamplesize = output->fmt.channels * (output->fmt.bps>>3) * 2;
+                if ((bytesread % outsamplesize) != 0) {
+                    bytesread -= (bytesread % outsamplesize);
+                }
+
+                // 2x downsample
+                int nframes = bytesread / (output->fmt.bps >> 3) / output->fmt.channels;
+                int16_t *in = (int16_t *)bytes;
+                int16_t *out = in;
+                for (int f = 0; f < nframes/2; f++) {
+                    for (int c = 0; c < output->fmt.channels; c++) {
+                        out[f*output->fmt.channels+c] = (in[f*2*output->fmt.channels+c] + in[(f*2+1)*output->fmt.channels+c]) >> 1;
+                    }
+                }
+                bytesread >>= 1;
+            }
+            else if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 4 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
+                // clip to multiple of 4 samples
+                int outsamplesize = output->fmt.channels * (output->fmt.bps>>3) * 4;
+                if ((bytesread % outsamplesize) != 0) {
+                    bytesread -= (bytesread % outsamplesize);
+                }
+
+                // 4x downsample
+                int nframes = bytesread / (output->fmt.bps >> 3) / output->fmt.channels;
+                assert (bytesread % ((output->fmt.bps >> 3) * output->fmt.channels) == 0);
+                int16_t *in = (int16_t *)bytes;
+                for (int f = 0; f < nframes/4; f++) {
+                    for (int c = 0; c < output->fmt.channels; c++) {
+                        in[f*output->fmt.channels+c] = (in[f*4*output->fmt.channels+c]
+                                                        + in[(f*4+1)*output->fmt.channels+c]
+                                                        + in[(f*4+2)*output->fmt.channels+c]
+                                                        + in[(f*4+3)*output->fmt.channels+c]) >> 2;
+                    }
+                }
+                bytesread >>= 2;
+            }
+        }
+        assert ((bytesread%2) == 0);
+#endif
+
+    }
+#endif
 }

@@ -4,7 +4,7 @@
 
   streamer implementation
 
-  Copyright (C) 2009-2013 Alexey Yakovenko
+  Copyright (C) 2009-2017 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -2167,10 +2167,6 @@ streamer_read (char *bytes, int size) {
     DB_output_t *output = plug_get_output ();
     int sz = min (size, block->size - block->pos);
     assert (sz);
-    // TODO:
-    // * set playing track / remove from other places
-    // * DSP (including resampling to the format set by output)
-    // * convert to output format
 
     if (playing_track != block->track) {
         // next track started
@@ -2180,17 +2176,43 @@ streamer_read (char *bytes, int size) {
         send_songstarted (playing_track);
     }
 
-    update_output_format (&block->fmt);
+    ddb_waveformat_t datafmt; // comes either from dsp, or from input plugin
 
-    memcpy (bytes, block->buf+block->pos, sz);
-    block->pos += sz;
+    char *dspbytes;
+    int dspsize;
+    float dspratio = 1;
+    int dsp_res = dsp_apply (&block->fmt, block->buf + block->pos, sz,
+                                 &datafmt, &dspbytes, &dspsize, &dspratio);
+    if (dsp_res) {
+        block->pos += sz;
+        // preserve sampleformat, but take channels, samplerate
+        ddb_waveformat_t outfmt;
+        outfmt.bps = block->fmt.bps;
+        outfmt.is_float = block->fmt.is_float;
+        // channelmask from dsp chain
+        outfmt.channels = datafmt.channels;
+        outfmt.samplerate = datafmt.samplerate;
+        outfmt.channelmask = datafmt.channelmask;
+        outfmt.is_bigendian = block->fmt.is_bigendian;
+        update_output_format (&outfmt);
+        sz = dspsize;
+    }
+    else {
+        memcpy (&datafmt, &block->fmt, sizeof (ddb_waveformat_t));
+        memcpy (bytes, block->buf+block->pos, sz);
+        block->pos += sz;
+        update_output_format (&block->fmt);
+    }
+
+    if (memcmp (&output->fmt, &datafmt, sizeof (ddb_waveformat_t))) {
+        sz = pcm_convert (&datafmt, dspbytes, &output->fmt, bytes, sz);
+    }
+
     if (block->pos >= block->size) {
         streamreader_next_block ();
     }
 
-    float dsp_ratio = dsp_apply ();
-
-    playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dsp_ratio;
+    playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dspratio;
     playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels);
     streamer_unlock ();
 
