@@ -1566,45 +1566,6 @@ streamer_thread (void *ctx) {
             continue;
         }
 
-#if 0
-        // This code was handling switching to next track,
-        // don't remove until converted
-        if (bytes_until_next_song == 0) {
-            streamer_lock ();
-            if (!streaming_track) {
-                // means last song was deleted during final drain
-                nextsong = -1;
-                output->stop ();
-                streamer_set_current (NULL);
-                streamer_unlock ();
-                continue;
-            }
-            trace ("bytes_until_next_song=0, starting playback of new song\n");
-            //playItem_t *from = playing_track;
-            //playItem_t *to = streaming_track;
-            trace ("sending songchanged\n");
-            bytes_until_next_song = -1;
-            // plugin will get pointer to str_playing_song
-            if (playing_track) {
-                trace ("sending songfinished to plugins [2]\n");
-                send_songfinished (playing_track);
-            }
-            // copy streaming into playing
-            trace ("\033[0;35mstreamer_start_playback[2] from %p to %p\033[37;0m\n", playing_track, streaming_track);
-            streamer_start_playback (playing_track, streaming_track);
-            trace ("songstarted %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
-            playtime = 0;
-            send_songstarted (playing_track);
-            last_bitrate = -1;
-            avg_bitrate = -1;
-            playlist_track = playing_track;
-            playpos = 0;
-            last_seekpos = -1;
-            seekpos = -1;
-            streamer_unlock ();
-        }
-#endif
-
         float seek = seekpos;
         float dur = playing_track ? pl_get_item_duration (playing_track) : -1;
         if (seek >= 0 && dur > 0) {
@@ -1871,6 +1832,11 @@ process_output_block (char *bytes) {
         send_songfinished (playing_track);
         streamer_start_playback (playing_track, block->track);
         send_songstarted (playing_track);
+        playtime = 0;
+        playpos = 0;
+        last_bitrate = -1;
+        avg_bitrate = -1;
+        last_seekpos = -1;
     }
 
     update_output_format (&block->fmt);
