@@ -37,7 +37,7 @@ streamreader_free (void) {
         streamblock_t *next = blocks->next;
         free (blocks->buf);
         free (blocks);
-        blocks->next = next;
+        blocks = next;
     }
     block_next = block_data = NULL;
 }
@@ -78,9 +78,7 @@ streamreader_read_next_block (playItem_t *track, DB_fileinfo_t *fileinfo, stream
     }
 
 
-    if (rb != size) {
-        block_next->last = 1;
-    }
+    block_next->last = (rb != size);
 
     if (!block_data) {
         block_data = block_next;

@@ -1913,6 +1913,9 @@ streamer_read (char *bytes, int size) {
     if (memcmp (&output->fmt, &datafmt, sizeof (ddb_waveformat_t))) {
         sz = pcm_convert (&datafmt, dspbytes, &output->fmt, bytes, sz);
     }
+    else {
+        memcpy (bytes, dspbytes, sz);
+    }
 
     if (block->pos >= block->size) {
         streamreader_next_block ();
@@ -2085,9 +2088,7 @@ streamer_read (char *bytes, int size) {
 
 int
 streamer_ok_to_read (int len) {
-    streamer_lock ();
     streamblock_t *block = streamreader_get_curr_block ();
-    streamer_unlock ();
     if (block) {
         return 1;
     }
