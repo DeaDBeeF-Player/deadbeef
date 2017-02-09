@@ -28,7 +28,7 @@ streamreader_init (void) {
         b->next = blocks;
         blocks = b;
     }
-    block_next = NULL;
+    block_next = blocks;
 }
 
 void

@@ -1695,6 +1695,10 @@ streamer_thread (void *ctx) {
         }
         last_seekpos = -1;
 
+        if (!fileinfo) {
+            continue;
+        }
+
         streamer_lock ();
         streamblock_t *block = NULL;
         int res = streamreader_read_next_block (streaming_track, fileinfo, &block);
@@ -1711,89 +1715,6 @@ streamer_thread (void *ctx) {
                 streamer_next ();
             }
         }
-
-#if 0
-        if (!formatchanged && !skip && streamer_ringbuf.remaining < (STREAM_BUFFER_SIZE-blocksize * MAX_DSP_RATIO)) {
-            int sz = STREAM_BUFFER_SIZE - streamer_ringbuf.remaining;
-            int minsize = blocksize;
-
-            // speed up buffering when empty
-            if (streamer_ringbuf.remaining < MAX_BLOCK_SIZE) {
-                minsize *= 4;
-                alloc_time *= 4;
-            }
-            sz = min (minsize, sz);
-            assert ((sz&3) == 0);
-            // buffer must be larger enough to accomodate resamplers/pitchers/...
-            // FIXME: bounds checking
-            streamer_unlock ();
-
-            // ensure that size is possible with current format
-            int samplesize = output->fmt.channels * (output->fmt.bps>>3);
-            if (sz % samplesize) {
-                sz -= (sz % samplesize);
-            }
-            int bytesread = 0;
-            do {
-                int prev_buns = bytes_until_next_song;
-                int nb = streamer_read_async (readbuffer+bytesread,sz-bytesread);
-                if (nb <= 0) {
-                    break;
-                }
-                bytesread += nb;
-                struct timeval tm2;
-                gettimeofday (&tm2, NULL);
-                int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
-                if (ms >= alloc_time) {
-                    break;
-                }
-                if (prev_buns != bytes_until_next_song) {
-                    break;
-                }
-            } while (bytesread < sz-100);
-            streamer_lock ();
-
-            if (bytesread > 0) {
-                ringbuf_write (&streamer_ringbuf, readbuffer, bytesread);
-            }
-
-            if (trace_bufferfill >= 1) {
-                fprintf (stderr, "fill: %d, read: %d, size=%d, blocksize=%d\n", (int)streamer_ringbuf.remaining, (int)bytesread, (int)STREAM_BUFFER_SIZE, (int)blocksize);
-            }
-        }
-        streamer_unlock ();
-        if ((streamer_ringbuf.remaining > 128000 && streamer_buffering) || !streaming_track) {
-            streamer_buffering = 0;
-            if (streaming_track) {
-                send_trackinfochanged (streaming_track);
-            }
-        }
-        struct timeval tm2;
-        gettimeofday (&tm2, NULL);
-
-        int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
-        if (trace_bufferfill >= 2) {
-            fprintf (stderr, "slept %dms (alloc=%dms, bytespersec=%d, chan=%d, blocksize=%d), fill: %d/%d (cursor=%d)\n", (int)(alloc_time-ms), (int)alloc_time, (int)bytes_in_one_second, output->fmt.channels, blocksize, (int)streamer_ringbuf.remaining, STREAM_BUFFER_SIZE, (int)streamer_ringbuf.cursor);
-        }
-        // add 1ms here to compensate the rounding error
-        // and another 1ms to buffer slightly faster then playing
-        alloc_time -= ms+2;
-        if (streamer_buffering) {
-            alloc_time = 0;
-        }
-        else if (streamer_ringbuf.remaining < STREAM_BUFFER_SIZE / 2) {
-            alloc_time >>= 2; // speed-up loading a little
-        }
-
-        //printf ("sleep: %d, buffering: %d, buffer_starving: %d (%d/%d)\n", alloc_time, streamer_buffering, streamer_ringbuf.remaining < STREAM_BUFFER_SIZE / 2, streamer_ringbuf.remaining, STREAM_BUFFER_SIZE / 2);
-
-        if (alloc_time > 0 && !conf_streamer_nosleep) {
-            usleep (alloc_time * 1000);
-        }
-        else if (bytes_until_next_song > 0) {
-            usleep (20000);
-        }
-#endif
     }
 
     // stop streaming song
@@ -1932,221 +1853,6 @@ update_output_format (ddb_waveformat_t *fmt) {
     return 0;
 }
 
-
-#if 0
-// decodes data and converts to current output format
-// returns number of bytes been read
-static int
-streamer_read_async (char *bytes, int size) {
-    DB_output_t *output = plug_get_output ();
-    int initsize = size;
-    int bytesread = 0;
-    if (!fileinfo) {
-        // means there's nothing left to stream, so just do nothing
-        return 0;
-    }
-    int is_eof = 0;
-
-    if (fileinfo->fmt.samplerate != -1) {
-        int outputsamplesize = output->fmt.channels * output->fmt.bps / 8;
-        int inputsamplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
-
-        ddb_waveformat_t dspfmt;
-        memcpy (&dspfmt, &fileinfo->fmt, sizeof (ddb_waveformat_t));
-        dspfmt.bps = 32;
-        dspfmt.is_float = 1;
-        int can_bypass = 0;
-        if (dsp_on) {
-            // check if DSP can be passed through
-            ddb_dsp_context_t *dsp = dsp_chain;
-            while (dsp) {
-                if (dsp->enabled) {
-                    if (dsp->plugin->plugin.api_vminor >= 1) {
-                        if (dsp->plugin->can_bypass && !dsp->plugin->can_bypass (dsp, &dspfmt)) {
-                            break;
-                        }
-                    }
-                    else {
-                        break;
-                    }
-                }
-                dsp = dsp->next;
-            }
-            if (!dsp) {
-                can_bypass = 1;
-            }
-        }
-
-        if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t)) && (!dsp_on || can_bypass)) {
-            // pass through from input to output
-            bytesread = fileinfo->plugin->read (fileinfo, bytes, size);
-
-            if (bytesread != size) {
-                is_eof = 1;
-            }
-        }
-        else if (dsp_on) {
-            // convert to float, pass through streamer DSP chain
-            int dspsamplesize = fileinfo->fmt.channels * sizeof (float);
-            int dsp_num_frames = size / (output->fmt.channels * output->fmt.bps / 8);
-
-            int inputsize = dsp_num_frames * inputsamplesize;
-            char *input = ensure_dsp_input_buffer (inputsize);
-
-            // decode pcm
-            int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
-            if (nb != inputsize) {
-                is_eof = 1;
-            }
-            inputsize = nb;
-
-            if (inputsize > 0) {
-                // make *MAX_DSP_RATIO sized buffer for float data
-                int tempbuf_size = inputsize/inputsamplesize * dspsamplesize * MAX_DSP_RATIO;
-                char *tempbuf = ensure_dsp_temp_buffer (tempbuf_size);
-
-                // convert to float
-                int tempsize = pcm_convert (&fileinfo->fmt, input, &dspfmt, tempbuf, inputsize);
-                int nframes = inputsize / inputsamplesize;
-                ddb_dsp_context_t *dsp = dsp_chain;
-                float ratio = 1.f;
-                int maxframes = tempbuf_size / dspsamplesize;
-                while (dsp) {
-                    if (dsp->enabled) {
-                        float r = 1;
-                        nframes = dsp->plugin->process (dsp, (float *)tempbuf, nframes, maxframes, &dspfmt, &r);
-                        ratio *= r;
-                    }
-                    dsp = dsp->next;
-                }
-                dsp_ratio = ratio;
-
-                ddb_waveformat_t outfmt;
-                // preserve sampleformat, but take channels, samplerate
-                outfmt.bps = fileinfo->fmt.bps;
-                outfmt.is_float = fileinfo->fmt.is_float;
-                // channelmask from dsp chain
-                outfmt.channels = dspfmt.channels;
-                outfmt.samplerate = dspfmt.samplerate;
-                outfmt.channelmask = dspfmt.channelmask;
-                outfmt.is_bigendian = fileinfo->fmt.is_bigendian;
-                if (bytes_until_next_song <= 0 && memcmp (&output_format, &outfmt, sizeof (ddb_waveformat_t))) {
-                    memcpy (&output_format, &outfmt, sizeof (ddb_waveformat_t));
-                    streamer_set_output_format ();
-                }
-
-                //printf ("convert from %dbit %s %dch %dHz channelmask=%X to %dbit %s %dch %dHz channelmask=%X\n", dspfmt.bps, dspfmt.is_float ? "float" : "int", dspfmt.channels, dspfmt.samplerate, dspfmt.channelmask, output->fmt.bps, output->fmt.is_float ? "float" : "int", output->fmt.channels, output->fmt.samplerate, output->fmt.channelmask);
-
-                int n = pcm_convert (&dspfmt, tempbuf, &output->fmt, bytes, nframes * dspfmt.channels * sizeof (float));
-
-                bytesread = n;
-            }
-        }
-        else {
-#ifdef ANDROID
-            // if we not compensate here, the streamer loop will go crazy
-            if (fileinfo->fmt.samplerate != output->fmt.samplerate) {
-                if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 2 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
-                    size <<= 1;
-                }
-                else if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 4 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
-                    size <<= 2;
-                }
-            }
-#endif
-            // convert from input fmt to output fmt
-            int inputsize = size/outputsamplesize*inputsamplesize;
-            char input[inputsize];
-            int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
-            if (nb != inputsize) {
-                bytesread = nb;
-                is_eof = 1;
-            }
-            inputsize = nb;
-//            trace ("convert %d|%d|%d|%d|%d|%d to %d|%d|%d|%d|%d|%d\n"
-//                , fileinfo->fmt.bps, fileinfo->fmt.channels, fileinfo->fmt.samplerate, fileinfo->fmt.channelmask, fileinfo->fmt.is_float, fileinfo->fmt.is_bigendian
-//                , output->fmt.bps, output->fmt.channels, output->fmt.samplerate, output->fmt.channelmask, output->fmt.is_float, output->fmt.is_bigendian);
-            bytesread = pcm_convert (&fileinfo->fmt, input, &output->fmt, bytes, inputsize);
-
-#ifdef ANDROID
-            // downsample
-            if (fileinfo->fmt.samplerate > output->fmt.samplerate) {
-                if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 2 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
-                    // clip to multiple of 2 samples
-                    int outsamplesize = output->fmt.channels * (output->fmt.bps>>3) * 2;
-                    if ((bytesread % outsamplesize) != 0) {
-                        bytesread -= (bytesread % outsamplesize);
-                    }
-
-                    // 2x downsample
-                    int nframes = bytesread / (output->fmt.bps >> 3) / output->fmt.channels;
-                    int16_t *in = (int16_t *)bytes;
-                    int16_t *out = in;
-                    for (int f = 0; f < nframes/2; f++) {
-                        for (int c = 0; c < output->fmt.channels; c++) {
-                            out[f*output->fmt.channels+c] = (in[f*2*output->fmt.channels+c] + in[(f*2+1)*output->fmt.channels+c]) >> 1;
-                        }
-                    }
-                    bytesread >>= 1;
-                }
-                else if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 4 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
-                    // clip to multiple of 4 samples
-                    int outsamplesize = output->fmt.channels * (output->fmt.bps>>3) * 4;
-                    if ((bytesread % outsamplesize) != 0) {
-                        bytesread -= (bytesread % outsamplesize);
-                    }
-
-                    // 4x downsample
-                    int nframes = bytesread / (output->fmt.bps >> 3) / output->fmt.channels;
-                    assert (bytesread % ((output->fmt.bps >> 3) * output->fmt.channels) == 0);
-                    int16_t *in = (int16_t *)bytes;
-                    for (int f = 0; f < nframes/4; f++) {
-                        for (int c = 0; c < output->fmt.channels; c++) {
-                            in[f*output->fmt.channels+c] = (in[f*4*output->fmt.channels+c]
-                                    + in[(f*4+1)*output->fmt.channels+c]
-                                    + in[(f*4+2)*output->fmt.channels+c]
-                                    + in[(f*4+3)*output->fmt.channels+c]) >> 2;
-                        }
-                    }
-                    bytesread >>= 2;
-                }
-            }
-            assert ((bytesread%2) == 0);
-#endif
-
-        }
-#if WRITE_DUMP
-        if (bytesread) {
-            fwrite (bytes, 1, bytesread, out);
-        }
-#endif
-
-        if (!input_does_rg) {
-            replaygain_apply (&output->fmt, bytes, bytesread);
-        }
-    }
-    if (!is_eof) {
-        return bytesread;
-    }
-    else  {
-        // that means EOF
-        // trace ("streamer: EOF! buns: %d, bytesread: %d, buffering: %d, bufferfill: %d\n", bytes_until_next_song, bytesread, streamer_buffering, streamer_ringbuf.remaining);
-
-        // EOF or error while buffering -- stop buffering
-        if (bytesread <= 0 && bytes_until_next_song >= 0 && streamer_buffering) {
-            streamer_buffering = 0;
-            return bytesread;
-        }
-
-        // if track finished playing -- go to next
-        if (bytes_until_next_song < 0 && (output->state() == OUTPUT_STATE_PLAYING || autoplay)) {
-            streamer_next (bytesread);
-        }
-    }
-    return bytesread;
-}
-#endif
-
 int
 streamer_read (char *bytes, int size) {
 #if 0
@@ -2178,8 +1884,8 @@ streamer_read (char *bytes, int size) {
 
     ddb_waveformat_t datafmt; // comes either from dsp, or from input plugin
 
-    char *dspbytes;
-    int dspsize;
+    char *dspbytes = NULL;
+    int dspsize = 0;
     float dspratio = 1;
     int dsp_res = dsp_apply (&block->fmt, block->buf + block->pos, sz,
                                  &datafmt, &dspbytes, &dspsize, &dspratio);
@@ -2199,7 +1905,7 @@ streamer_read (char *bytes, int size) {
     }
     else {
         memcpy (&datafmt, &block->fmt, sizeof (ddb_waveformat_t));
-        memcpy (bytes, block->buf+block->pos, sz);
+        dspbytes = block->buf+block->pos;
         block->pos += sz;
         update_output_format (&block->fmt);
     }
