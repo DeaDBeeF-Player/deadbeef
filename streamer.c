@@ -1707,7 +1707,8 @@ streamer_thread (void *ctx) {
             // error
         }
         else if (res == 0) {
-            // buffer full
+            // buffers full, sleep for a bit
+            usleep (50000);
         }
         else if (res > 0) {
             if (block->last) {
@@ -1853,25 +1854,15 @@ update_output_format (ddb_waveformat_t *fmt) {
     return 0;
 }
 
-int
-streamer_read (char *bytes, int size) {
-#if 0
-    struct timeval tm1;
-    gettimeofday (&tm1, NULL);
-#endif
-    if (!playing_track) {
-        return -1;
-    }
-
-    streamer_lock ();
+static int
+process_output_block (char *bytes) {
     streamblock_t *block = streamreader_get_curr_block();
     if (!block) {
-        streamer_unlock ();
         return -1;
     }
 
     DB_output_t *output = plug_get_output ();
-    int sz = min (size, block->size - block->pos);
+    int sz = block->size - block->pos;
     assert (sz);
 
     if (playing_track != block->track) {
@@ -1882,13 +1873,15 @@ streamer_read (char *bytes, int size) {
         send_songstarted (playing_track);
     }
 
+    update_output_format (&block->fmt);
+
     ddb_waveformat_t datafmt; // comes either from dsp, or from input plugin
 
     char *dspbytes = NULL;
     int dspsize = 0;
     float dspratio = 1;
     int dsp_res = dsp_apply (&block->fmt, block->buf + block->pos, sz,
-                                 &datafmt, &dspbytes, &dspsize, &dspratio);
+                             &datafmt, &dspbytes, &dspsize, &dspratio);
     if (dsp_res) {
         block->pos += sz;
         // preserve sampleformat, but take channels, samplerate
@@ -1900,14 +1893,13 @@ streamer_read (char *bytes, int size) {
         outfmt.samplerate = datafmt.samplerate;
         outfmt.channelmask = datafmt.channelmask;
         outfmt.is_bigendian = block->fmt.is_bigendian;
-        update_output_format (&outfmt);
+        //        update_output_format (&outfmt);
         sz = dspsize;
     }
     else {
         memcpy (&datafmt, &block->fmt, sizeof (ddb_waveformat_t));
         dspbytes = block->buf+block->pos;
         block->pos += sz;
-        update_output_format (&block->fmt);
     }
 
     if (memcmp (&output->fmt, &datafmt, sizeof (ddb_waveformat_t))) {
@@ -1923,7 +1915,56 @@ streamer_read (char *bytes, int size) {
 
     playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dspratio;
     playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels);
+
+    return sz;
+}
+
+// We always decode the entire block, 16384 bytes of input PCM
+// after DSP that can become really big.
+// Think converting from 8KHz/8 bit to 192KHz/32 bit, thats 96x size increase,
+// which gives us the need of 1.5MB buffer.
+//
+// It's guaranteed that outbuffer contains only samples from the files with same wave format.
+//
+// FIXME: this BSS allocation is temporary, needs to be on heap, and allocated on demand.
+// FIXME: streamer_reset should flush this.
+static char outbuffer[512*1024];
+static int outbuffer_remaining;
+
+int
+streamer_read (char *bytes, int size) {
+#if 0
+    struct timeval tm1;
+    gettimeofday (&tm1, NULL);
+#endif
+    if (!playing_track) {
+        return -1;
+    }
+
+    streamer_lock ();
+    // decode enough blocks to fill the output buffer
+    while (outbuffer_remaining < size) {
+        int rb = process_output_block (outbuffer + outbuffer_remaining);
+        if (rb <= 0) {
+            break;
+        }
+        outbuffer_remaining += rb;
+
+        // stop if starved or format changed
+        streamblock_t *block = streamreader_get_curr_block();
+        if (!block || memcmp (&block->fmt, &orig_output_format, sizeof (ddb_waveformat_t))) {
+            break;
+        }
+    }
     streamer_unlock ();
+
+    // consume decoded data
+    int sz = min (size, outbuffer_remaining);
+    memcpy (bytes, outbuffer, sz);
+    if (sz < outbuffer_remaining) {
+        memmove (outbuffer, outbuffer + sz, outbuffer_remaining - sz);
+    }
+    outbuffer_remaining -= sz;
 
     // approximate bitrate
     if (last_bitrate != -1) {
@@ -1958,6 +1999,7 @@ streamer_read (char *bytes, int size) {
     printf ("streamer_read took %d ms\n", ms);
 #endif
 
+    DB_output_t *output = plug_get_output ();
     if (waveform_listeners || spectrum_listeners) {
         int in_frame_size = (output->fmt.bps >> 3) * output->fmt.channels;
         int in_frames = sz / in_frame_size;
