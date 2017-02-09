@@ -19,6 +19,8 @@ static streamblock_t *block_data; // first available block with data (can be NUL
 
 static streamblock_t *block_next; // next block available
 
+static int numblocks_ready;
+
 void
 streamreader_init (void) {
     for (int i = 0; i < BLOCK_COUNT; i++) {
@@ -29,6 +31,7 @@ streamreader_init (void) {
         blocks = b;
     }
     block_next = blocks;
+    numblocks_ready = 0;
 }
 
 void
@@ -40,6 +43,7 @@ streamreader_free (void) {
         blocks = next;
     }
     block_next = block_data = NULL;
+    numblocks_ready = 0;
 }
 
 int
@@ -91,6 +95,8 @@ streamreader_read_next_block (playItem_t *track, DB_fileinfo_t *fileinfo, stream
         block_next = blocks;
     }
 
+    numblocks_ready++;
+
     return 1;
 }
 
@@ -109,6 +115,11 @@ streamreader_next_block (void) {
         block_data = block_data->next;
         if (!block_data) {
             block_data = blocks;
+        }
+
+        numblocks_ready--;
+        if (numblocks_ready < 0) {
+            numblocks_ready = 0;
         }
     }
 
@@ -129,4 +140,10 @@ streamreader_reset (void) {
     }
     block_next = blocks;
     block_data = NULL;
+    numblocks_ready = 0;
+}
+
+int
+streamreader_num_blocks_ready (void) {
+    return numblocks_ready;
 }

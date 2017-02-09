@@ -47,4 +47,7 @@ streamreader_next_block (void);
 void
 streamreader_reset (void);
 
+int
+streamreader_num_blocks_ready (void);
+
 #endif /* streamreader_h */

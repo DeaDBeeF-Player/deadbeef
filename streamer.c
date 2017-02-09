@@ -2096,8 +2096,8 @@ streamer_read (char *bytes, int size) {
 
 int
 streamer_ok_to_read (int len) {
-    streamblock_t *block = streamreader_get_curr_block ();
-    if (block) {
+    int nb = streamreader_num_blocks_ready ();
+    if (nb > 4) {
         return 1;
     }
     return 0;
