@@ -509,7 +509,7 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
 }
 
 void
-dsp_get_output_format_for_input (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt) {
+dsp_get_output_format (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt) {
     memcpy (out_fmt, in_fmt, sizeof (ddb_waveformat_t));
     if (dsp_on) {
         // check if DSP can be passed through

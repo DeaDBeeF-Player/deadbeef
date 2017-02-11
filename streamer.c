@@ -110,8 +110,7 @@ static time_t started_timestamp; // result of calling time(NULL)
 static playItem_t *streaming_track;
 static playItem_t *playlist_track;
 
-static ddb_waveformat_t output_format; // format that was requested after DSP
-static ddb_waveformat_t orig_output_format; // format that was requested before DSP
+static ddb_waveformat_t prev_output_format; // input file format that was requested
 static int formatchanged;
 
 static DB_fileinfo_t *fileinfo;
@@ -1792,29 +1791,20 @@ streamer_reset (int full) { // must be called when current song changes by exter
 }
 
 // NOTE: this is supposed to be only called from streamer_read
-static int
-update_output_format (ddb_waveformat_t *fmt) {
-    DB_output_t *output = plug_get_output ();
-
-    ddb_waveformat_t new_format;
-    memcpy (&new_format, fmt, sizeof (ddb_waveformat_t));
+static void
+get_desired_output_format (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt) {
+    memcpy (out_fmt, in_fmt, sizeof (ddb_waveformat_t));
 
     if (autoconv_8_to_16) {
-        if (new_format.bps == 8) {
-            new_format.bps = 16;
+        if (out_fmt->bps == 8) {
+            out_fmt->bps = 16;
         }
     }
     if (autoconv_16_to_24) {
-        if (new_format.bps == 16) {
-            new_format.bps = 24;
+        if (out_fmt->bps == 16) {
+            out_fmt->bps = 24;
         }
     }
-    if (memcmp (&orig_output_format, &new_format, sizeof (ddb_waveformat_t))) {
-        memcpy (&orig_output_format, &new_format, sizeof (ddb_waveformat_t));
-        output->setformat (&new_format);
-        return 1;
-    }
-    return 0;
 }
 
 static int
@@ -1917,9 +1907,18 @@ streamer_read (char *bytes, int size) {
         return -1;
     }
 
+    // if file waveformat changed -- calculate and set the post dsp format,
+    // and remember the input format for later comparisons
+    ddb_waveformat_t dspfmt;
+    dsp_get_output_format (&block->fmt, &dspfmt);
     ddb_waveformat_t outfmt;
-    dsp_get_output_format_for_input (&block->fmt, &outfmt);
-    update_output_format (&block->fmt);
+    get_desired_output_format (&dspfmt, &outfmt);
+
+    if (memcmp (&prev_output_format, &outfmt, sizeof (ddb_waveformat_t))) {
+        memcpy (&prev_output_format, &outfmt, sizeof (ddb_waveformat_t));
+        DB_output_t *output = plug_get_output ();
+        output->setformat (&dspfmt);
+    }
 
     // decode enough blocks to fill the output buffer
     while (outbuffer_remaining < size) {
@@ -2246,11 +2245,6 @@ streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
     }
 
     handler_push (handler, STR_EV_SET_DSP_CHAIN, (uintptr_t)new_chain, 0, 0);
-}
-
-void
-streamer_get_output_format (ddb_waveformat_t *fmt) {
-    memcpy (fmt, &output_format, sizeof (ddb_waveformat_t));
 }
 
 static void

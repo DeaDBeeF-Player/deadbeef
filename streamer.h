@@ -142,9 +142,6 @@ streamer_set_dsp_chain (struct ddb_dsp_context_s *chain);
 void
 streamer_dsp_refresh (void);
 
-void
-streamer_get_output_format (ddb_waveformat_t *fmt);
-
 int
 streamer_dsp_chain_save (void);
 

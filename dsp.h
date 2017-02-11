@@ -41,6 +41,6 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
            ddb_waveformat_t *out_fmt, char **out_bytes, int *out_numbytes, float *out_dsp_ratio);
 
 void
-dsp_get_output_format_for_input (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt);
+dsp_get_output_format (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt);
 
 #endif /* dsp_h */

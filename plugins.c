@@ -1384,13 +1384,9 @@ plug_reinit_sound (void) {
     int state = OUTPUT_STATE_STOPPED;
 
     ddb_waveformat_t fmt = {0};
-
-    streamer_get_output_format (&fmt);
     if (prev) {
         state = prev->state ();
-        if (!fmt.channels) {
-            memcpy (&fmt, &prev->fmt, sizeof (fmt));
-        }
+        memcpy (&fmt, &prev->fmt, sizeof (ddb_waveformat_t));
         prev->free ();
     }
 
