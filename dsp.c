@@ -507,3 +507,27 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
     }
 #endif
 }
+
+void
+dsp_get_output_format_for_input (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt) {
+    memcpy (out_fmt, in_fmt, sizeof (ddb_waveformat_t));
+    if (dsp_on) {
+        // check if DSP can be passed through
+        ddb_dsp_context_t *dsp = dsp_chain;
+        while (dsp) {
+            if (dsp->enabled) {
+                float ratio;
+                if (dsp->plugin->plugin.api_vminor >= 1) {
+                    if (dsp->plugin->can_bypass && !dsp->plugin->can_bypass (dsp, out_fmt)) {
+                        dsp->plugin->process (dsp, NULL, 0, 0, out_fmt, &ratio);
+                    }
+                }
+                else {
+                    dsp->plugin->process (dsp, NULL, 0, 0, out_fmt, &ratio);
+                }
+            }
+            dsp = dsp->next;
+        }
+    }
+
+}

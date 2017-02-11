@@ -1295,6 +1295,7 @@ streamer_get_playpos (void) {
 void
 streamer_set_bitrate (int bitrate) {
 #warning blockbased FIXME
+// This is called from decoder->read, so we can pass this to the currently decoded block
 #if 0
     if (bytes_until_next_song <= 0) { // prevent next track from resetting current playback bitrate
         last_bitrate = bitrate;
@@ -1821,6 +1822,10 @@ process_output_block (char *bytes) {
     if (!block) {
         return -1;
     }
+    if (!block->size) {
+        streamreader_next_block ();
+        return 0;
+    }
 
     DB_output_t *output = plug_get_output ();
     int sz = block->size - block->pos;
@@ -1838,8 +1843,6 @@ process_output_block (char *bytes) {
         avg_bitrate = -1;
         last_seekpos = -1;
     }
-
-    update_output_format (&block->fmt);
 
     ddb_waveformat_t datafmt; // comes either from dsp, or from input plugin
 
@@ -1908,6 +1911,16 @@ streamer_read (char *bytes, int size) {
     }
 
     streamer_lock ();
+    streamblock_t *block = streamreader_get_curr_block();
+    if (!block) {
+        streamer_unlock();
+        return -1;
+    }
+
+    ddb_waveformat_t outfmt;
+    dsp_get_output_format_for_input (&block->fmt, &outfmt);
+    update_output_format (&block->fmt);
+
     // decode enough blocks to fill the output buffer
     while (outbuffer_remaining < size) {
         int rb = process_output_block (outbuffer + outbuffer_remaining);
@@ -1915,12 +1928,6 @@ streamer_read (char *bytes, int size) {
             break;
         }
         outbuffer_remaining += rb;
-
-        // stop if starved or format changed
-        streamblock_t *block = streamreader_get_curr_block();
-        if (!block || memcmp (&block->fmt, &orig_output_format, sizeof (ddb_waveformat_t))) {
-            break;
-        }
     }
     streamer_unlock ();
 
