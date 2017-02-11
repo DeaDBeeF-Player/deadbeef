@@ -100,7 +100,8 @@ static float last_seekpos = -1;
 
 static float playpos = 0; // play position of current song
 static int avg_bitrate = -1; // avg bitrate of current song
-static int last_bitrate = -1; // last bitrate of current song
+
+static int streamer_is_buffering;
 
 static playlist_t *streamer_playlist;
 static playItem_t *playing_track;
@@ -1292,17 +1293,6 @@ streamer_get_playpos (void) {
     return playpos;
 }
 
-void
-streamer_set_bitrate (int bitrate) {
-#warning blockbased FIXME
-// This is called from decoder->read, so we can pass this to the currently decoded block
-#if 0
-    if (bytes_until_next_song <= 0) { // prevent next track from resetting current playback bitrate
-        last_bitrate = bitrate;
-    }
-#endif
-}
-
 int
 streamer_get_apx_bitrate (void) {
     return avg_bitrate;
@@ -1423,7 +1413,6 @@ streamer_start_new_song (void) {
         output->stop ();
     }
     else if (pstate == 1 || pstate == 3) {
-        last_bitrate = -1;
         avg_bitrate = -1;
         if (output->state () != OUTPUT_STATE_PLAYING) {
             streamer_reset (1);
@@ -1436,7 +1425,6 @@ streamer_start_new_song (void) {
     }
     else if (pstate == 2) {
         if (output->state () == OUTPUT_STATE_STOPPED) {
-            last_bitrate = -1;
             avg_bitrate = -1;
             streamer_reset (1);
             // we need to start playback before we can pause it
@@ -1643,7 +1631,6 @@ streamer_thread (void *ctx) {
                     streamer_reset (1);
                 }
                 playpos = fileinfo->readpos;
-                last_bitrate = -1;
                 avg_bitrate = -1;
                 streamer_unlock();
             }
@@ -1664,6 +1651,20 @@ streamer_thread (void *ctx) {
         streamer_lock ();
         streamblock_t *block = NULL;
         int res = streamreader_read_next_block (streaming_track, fileinfo, &block);
+
+        int buffering = streamreader_num_blocks_ready () < 4;
+        if (buffering != streamer_is_buffering) {
+            streamer_is_buffering = buffering;
+            if (playing_track) {
+                ddb_event_track_t *pev = (ddb_event_track_t *)messagepump_event_alloc (DB_EV_TRACKINFOCHANGED);
+                pev->track = DB_PLAYITEM (playing_track);
+                pl_item_ref (playing_track);
+                pev->playtime = 0;
+                pev->started_timestamp = time(NULL);
+                messagepump_push_event ((ddb_event_t*)pev, 0, 0);
+            }
+        }
+
         streamer_unlock ();
         if (res < 0) {
             // error
@@ -1839,7 +1840,6 @@ process_output_block (char *bytes) {
         send_songstarted (playing_track);
         playtime = 0;
         playpos = 0;
-        last_bitrate = -1;
         avg_bitrate = -1;
         last_seekpos = -1;
     }
@@ -1940,28 +1940,25 @@ streamer_read (char *bytes, int size) {
     outbuffer_remaining -= sz;
 
     // approximate bitrate
-    if (last_bitrate != -1) {
+    if (block->bitrate != -1) {
         if (avg_bitrate == -1) {
-            avg_bitrate = last_bitrate;
+            avg_bitrate = block->bitrate;
         }
         else {
-            if (avg_bitrate < last_bitrate) {
+            if (avg_bitrate < block->bitrate) {
                 avg_bitrate += 5;
-                if (avg_bitrate > last_bitrate) {
-                    avg_bitrate = last_bitrate;
+                if (avg_bitrate > block->bitrate) {
+                    avg_bitrate = block->bitrate;
                 }
             }
-            else if (avg_bitrate > last_bitrate) {
+            else if (avg_bitrate > block->bitrate) {
                 avg_bitrate -= 5;
-                if (avg_bitrate < last_bitrate) {
-                    avg_bitrate = last_bitrate;
+                if (avg_bitrate < block->bitrate) {
+                    avg_bitrate = block->bitrate;
                 }
             }
         }
 //        printf ("apx bitrate: %d (last %d)\n", avg_bitrate, last_bitrate);
-    }
-    else {
-        avg_bitrate = -1;
     }
 
 #if 0
@@ -2103,11 +2100,7 @@ streamer_read (char *bytes, int size) {
 
 int
 streamer_ok_to_read (int len) {
-    int nb = streamreader_num_blocks_ready ();
-    if (nb > 4) {
-        return 1;
-    }
-    return 0;
+    return !streamer_is_buffering;
 }
 
 void

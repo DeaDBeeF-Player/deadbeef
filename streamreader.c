@@ -21,6 +21,8 @@ static streamblock_t *block_next; // next block available
 
 static int numblocks_ready;
 
+static int curr_block_bitrate;
+
 void
 streamreader_init (void) {
     for (int i = 0; i < BLOCK_COUNT; i++) {
@@ -61,10 +63,13 @@ streamreader_read_next_block (playItem_t *track, DB_fileinfo_t *fileinfo, stream
         size -= mod;
     }
 
+    // NOTE: streamer_set_bitrate may be called during decoder->read, and set immediated bitrate of the block
+    curr_block_bitrate = -1;
     int rb = fileinfo->plugin->read (fileinfo, block_next->buf, size);
     if (rb < 0) {
         return -1;
     }
+    block_next->bitrate = curr_block_bitrate;
 
     block_next->pos = 0;
     block_next->size = rb;
@@ -98,6 +103,11 @@ streamreader_read_next_block (playItem_t *track, DB_fileinfo_t *fileinfo, stream
     numblocks_ready++;
 
     return 1;
+}
+
+void
+streamer_set_bitrate (int bitrate) {
+    curr_block_bitrate = bitrate;
 }
 
 streamblock_t *

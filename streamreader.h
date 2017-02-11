@@ -18,6 +18,7 @@ typedef struct streamblock_s {
     int size; // how much bytes total in the buffer, up to BLOCK_SIZE, but can be less
     int pos; // read position in the buffer
     int last; // set to 1 for last buffer of the stream
+    int bitrate;
 
     playItem_t *track;
     ddb_waveformat_t fmt;
