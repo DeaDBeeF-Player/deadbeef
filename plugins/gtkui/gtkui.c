@@ -116,6 +116,14 @@ int gtkui_disable_seekbar_overlay = 0;
 
 #define TRAY_ICON "deadbeef_tray_icon"
 
+const char *gtkui_default_titlebar_playing = "%artist% - %title% - DeaDBeeF-%_deadbeef_version%";
+const char *gtkui_default_titlebar_stopped = "DeaDBeeF-%_deadbeef_version%";
+
+static char *titlebar_playing_bc;
+static char *titlebar_stopped_bc;
+
+static char *statusbar_bc;
+
 void
 gtkpl_free (DdbListview *pl) {
 #if 0
@@ -334,14 +342,6 @@ activate_cb (gpointer nothing) {
     gtk_window_present (GTK_WINDOW (mainwin));
     return FALSE;
 }
-
-const char *gtkui_default_titlebar_playing = "%artist% - %title% - DeaDBeeF-%_deadbeef_version%";
-const char *gtkui_default_titlebar_stopped = "DeaDBeeF-%_deadbeef_version%";
-
-static char *titlebar_playing_bc;
-static char *titlebar_stopped_bc;
-
-static char *statusbar_bc;
 
 static void
 titlebar_tf_free (void) {
