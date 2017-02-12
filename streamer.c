@@ -181,6 +181,8 @@ streamer_play_current_track_real (void);
 static void
 streamer_set_current_playlist_real (int plt);
 
+static int
+stream_track (playItem_t *track);
 
 static void
 streamer_abort_files (void) {
@@ -581,10 +583,8 @@ streamer_move_to_nextsong_real (int reason) {
                 it = plt->head[PL_MAIN];
             }
             else {
-                send_trackinfochanged (streaming_track);
-                badsong = -1;
                 pl_unlock ();
-                streamer_set_nextsong_real (-2, -2);
+                stream_track (NULL);
                 return 0;
             }
         }
@@ -1472,14 +1472,15 @@ stream_track (playItem_t *track) {
         streaming_track = NULL;
     }
     streaming_track = track;
-    if (streaming_track) {
-        pl_item_ref (streaming_track);
+    if (!streaming_track) {
+        mutex_unlock(currtrack_mutex);
+        return 0;
     }
+
+    pl_item_ref (streaming_track);
     mutex_unlock (currtrack_mutex);
 
-    if (streaming_track) {
-        send_trackinfochanged (streaming_track);
-    }
+    send_trackinfochanged (streaming_track);
 
     DB_decoder_t *dec = NULL;
     pl_lock ();
@@ -1636,6 +1637,14 @@ streamer_thread (void *ctx) {
             continue;
         }
 
+        int buffering = streamreader_num_blocks_ready () < 4 && streaming_track;
+        if (buffering != streamer_is_buffering) {
+            streamer_is_buffering = buffering;
+            if (playing_track) {
+                send_trackinfochanged (playing_track);
+            }
+        }
+
         if (!fileinfo) {
             continue;
         }
@@ -1644,13 +1653,6 @@ streamer_thread (void *ctx) {
         streamblock_t *block = NULL;
         int res = streamreader_read_next_block (streaming_track, fileinfo, &block);
 
-        int buffering = streamreader_num_blocks_ready () < 4;
-        if (buffering != streamer_is_buffering) {
-            streamer_is_buffering = buffering;
-            if (playing_track) {
-                send_trackinfochanged (playing_track);
-            }
-        }
 
         streamer_unlock ();
         if (res < 0) {
@@ -1887,10 +1889,25 @@ streamer_read (char *bytes, int size) {
         return -1;
     }
 
+    DB_output_t *output = plug_get_output ();
+
     streamer_lock ();
     streamblock_t *block = streamreader_get_curr_block();
     if (!block) {
         streamer_unlock();
+
+        if (!streaming_track) {
+            update_stop_after_current ();
+            send_songfinished (playing_track);
+            send_trackinfochanged (playing_track);
+            streamer_start_playback (playing_track, NULL);
+            output->stop ();
+            playtime = 0;
+            playpos = 0;
+            avg_bitrate = -1;
+            last_seekpos = -1;
+        }
+
         return -1;
     }
 
@@ -1955,7 +1972,6 @@ streamer_read (char *bytes, int size) {
     printf ("streamer_read took %d ms\n", ms);
 #endif
 
-    DB_output_t *output = plug_get_output ();
     if (waveform_listeners || spectrum_listeners) {
         int in_frame_size = (output->fmt.bps >> 3) * output->fmt.channels;
         int in_frames = sz / in_frame_size;
