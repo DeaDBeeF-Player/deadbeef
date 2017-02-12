@@ -285,7 +285,7 @@ streamer_get_streaming_track (void) {
 
 playItem_t *
 streamer_get_playing_track (void) {
-    playItem_t *it = playing_track;// ? playing_track : playlist_track;
+    playItem_t *it = playing_track;
     if (it) {
         pl_item_ref (it);
     }
@@ -1894,8 +1894,6 @@ streamer_read (char *bytes, int size) {
     streamer_lock ();
     streamblock_t *block = streamreader_get_curr_block();
     if (!block) {
-        streamer_unlock();
-
         if (!streaming_track) {
             update_stop_after_current ();
             send_songfinished (playing_track);
@@ -1907,6 +1905,7 @@ streamer_read (char *bytes, int size) {
             avg_bitrate = -1;
             last_seekpos = -1;
         }
+        streamer_unlock();
 
         return -1;
     }
