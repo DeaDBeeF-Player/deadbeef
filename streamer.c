@@ -1461,6 +1461,90 @@ streamer_next (void) {
 static void
 streamer_notify_order_changed_real (int prev_order, int new_order);
 
+static int
+stream_track (playItem_t *track) {
+    mutex_lock (currtrack_mutex);
+    if(fileinfo) {
+        fileinfo->plugin->free (fileinfo);
+        fileinfo = NULL;
+        fileinfo_file = NULL;
+        pl_item_unref (streaming_track);
+        streaming_track = NULL;
+    }
+    streaming_track = track;
+    if (streaming_track) {
+        pl_item_ref (streaming_track);
+    }
+    mutex_unlock (currtrack_mutex);
+
+    if (streaming_track) {
+        send_trackinfochanged (streaming_track);
+    }
+
+    DB_decoder_t *dec = NULL;
+    pl_lock ();
+    const char *decoder_id = pl_find_meta (streaming_track, ":DECODER");
+    if (decoder_id) {
+        dec = plug_get_decoder_for_id (decoder_id);
+    }
+    pl_unlock ();
+    if (dec) {
+        fileinfo = dec_open (dec, STREAMER_HINTS, streaming_track);
+        if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) != 0) {
+            dec->free (fileinfo);
+            fileinfo = NULL;
+            fileinfo_file = NULL;
+        }
+    }
+
+    if (!dec || !fileinfo) {
+        if (streaming_track) {
+            send_trackinfochanged (streaming_track);
+        }
+        return -1;
+    }
+    return 0;
+}
+
+static void
+streamer_seek_real (float seekpos) {
+    float seek = seekpos;
+    float dur = playing_track ? pl_get_item_duration (playing_track) : -1;
+    if (seek >= 0 && dur > 0) {
+        if (seek >= dur) {
+            seek = dur - 0.000001f;
+        }
+        playpos = seek;
+        trace ("seeking to %f\n", seek);
+
+        if (playing_track != streaming_track) {
+            // restart streaming the playing track
+            if (stream_track (playing_track) < 0) {
+                streamer_move_to_nextsong (0);
+                return;
+            }
+        }
+
+        if (fileinfo && playing_track && dur > 0) {
+            streamer_lock ();
+            if (fileinfo->plugin->seek (fileinfo, playpos) >= 0) {
+                streamer_reset (1);
+            }
+            playpos = fileinfo->readpos;
+            avg_bitrate = -1;
+            streamer_unlock();
+        }
+        ddb_event_playpos_t *ev = (ddb_event_playpos_t *)messagepump_event_alloc (DB_EV_SEEKED);
+        ev->track = DB_PLAYITEM (playing_track);
+        if (playing_track) {
+            pl_item_ref (playing_track);
+        }
+        ev->playpos = playpos;
+        messagepump_push_event ((ddb_event_t*)ev, 0, 0);
+    }
+    last_seekpos = -1;
+}
+
 void
 streamer_thread (void *ctx) {
 #ifdef __linux__
@@ -1468,8 +1552,6 @@ streamer_thread (void *ctx) {
 #endif
 
     while (!streaming_terminate) {
-        float seekpos = -1;
-
         struct timeval tm1;
         DB_output_t *output = plug_get_output ();
         gettimeofday (&tm1, NULL);
@@ -1495,7 +1577,7 @@ streamer_thread (void *ctx) {
                 streamer_move_to_randomsong_real (p1);
                 break;
             case STR_EV_SEEK:
-                seekpos = *((float *)&p1);
+                streamer_seek_real(*((float *)&p1));
                 break;
             case STR_EV_SET_CURR_PLT:
                 streamer_set_current_playlist_real (p1);
@@ -1554,95 +1636,6 @@ streamer_thread (void *ctx) {
             continue;
         }
 
-        float seek = seekpos;
-        float dur = playing_track ? pl_get_item_duration (playing_track) : -1;
-        if (seek >= 0 && dur > 0) {
-            if (seek >= dur) {
-                seek = dur - 0.000001f;
-            }
-            playpos = seek;
-            trace ("seeking to %f\n", seek);
-
-            if (playing_track != streaming_track) {
-                trace ("streamer already switched to next track\n");
-                // FIXME: this won't work the same way with new block based streaming
-                // In this case we need to flush the streamreader, and restart streaming playing_track from new position
-
-                // restart playing from new position
-
-                mutex_lock (currtrack_mutex);
-                if(fileinfo) {
-                    fileinfo->plugin->free (fileinfo);
-                    fileinfo = NULL;
-                    fileinfo_file = NULL;
-                    pl_item_unref (streaming_track);
-                    streaming_track = NULL;
-                }
-                streaming_track = playing_track;
-                if (streaming_track) {
-                    pl_item_ref (streaming_track);
-                }
-                mutex_unlock (currtrack_mutex);
-
-                if (streaming_track) {
-                    send_trackinfochanged (streaming_track);
-                }
-
-                DB_decoder_t *dec = NULL;
-                pl_lock ();
-                const char *decoder_id = pl_find_meta (streaming_track, ":DECODER");
-                if (decoder_id) {
-                    dec = plug_get_decoder_for_id (decoder_id);
-                }
-                pl_unlock ();
-                if (dec) {
-                    fileinfo = dec_open (dec, STREAMER_HINTS, streaming_track);
-                    if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) != 0) {
-                        dec->free (fileinfo);
-                        fileinfo = NULL;
-                        fileinfo_file = NULL;
-                    }
-                }
-                else {
-                    if (fileinfo) {
-                        fileinfo_file = fileinfo->file;
-                    }
-                }
-
-                if (!dec || !fileinfo) {
-                    if (streaming_track) {
-                        send_trackinfochanged (streaming_track);
-                    }
-                    trace ("failed to restart prev track on seek, trying to jump to next track\n");
-                    trace ("streamer_move_to_nextsong from seek\n");
-                    streamer_move_to_nextsong (0);
-                    usleep (50000);
-                    continue;
-                }
-            }
-
-            if (streaming_track) {
-                send_trackinfochanged (streaming_track);
-            }
-            if (fileinfo && playing_track && dur > 0) {
-                streamer_lock ();
-                if (fileinfo->plugin->seek (fileinfo, playpos) >= 0) {
-                    streamer_reset (1);
-                }
-                playpos = fileinfo->readpos;
-                avg_bitrate = -1;
-                streamer_unlock();
-            }
-            ddb_event_playpos_t *ev = (ddb_event_playpos_t *)messagepump_event_alloc (DB_EV_SEEKED);
-            ev->track = DB_PLAYITEM (playing_track);
-            if (playing_track) {
-                pl_item_ref (playing_track);
-            }
-            ev->playpos = playpos;
-            messagepump_push_event ((ddb_event_t*)ev, 0, 0);
-        }
-        last_seekpos = -1;
-
         if (!fileinfo) {
             continue;
         }
@@ -1655,12 +1648,7 @@ streamer_thread (void *ctx) {
         if (buffering != streamer_is_buffering) {
             streamer_is_buffering = buffering;
             if (playing_track) {
-                ddb_event_track_t *pev = (ddb_event_track_t *)messagepump_event_alloc (DB_EV_TRACKINFOCHANGED);
-                pev->track = DB_PLAYITEM (playing_track);
-                pl_item_ref (playing_track);
-                pev->playtime = 0;
-                pev->started_timestamp = time(NULL);
-                messagepump_push_event ((ddb_event_t*)pev, 0, 0);
+                send_trackinfochanged (playing_track);
             }
         }
 
@@ -1780,7 +1768,6 @@ streamer_free (void) {
 
 void
 streamer_reset (int full) { // must be called when current song changes by external reasons
-#warning blockreader FIXME: need to do a proper reset: restart reading from the point of the first data block
     if (!mutex) {
         fprintf (stderr, "ERROR: someone called streamer_reset after exit\n");
         return; // failsafe, in case someone calls streamer reset after deinit
