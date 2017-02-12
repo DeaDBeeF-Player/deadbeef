@@ -1762,6 +1762,19 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 else if (!strcmp (name, "samplerate")) {
                     val = pl_find_meta_raw (it, ":SAMPLERATE");
                 }
+                else if (!strcmp (name, "playback_bitrate")) {
+                    playItem_t *playing_track = streamer_get_playing_track();
+                    if (playing_track) {
+                        int br = streamer_get_apx_bitrate();
+                        if (br >= 0) {
+                            int len = snprintf (out, outlen, "%d", br);
+                            out += len;
+                            outlen -= len;
+                            skip_out = 1;
+                        }
+                        pl_item_unref (playing_track);
+                    }
+                }
                 else if (!strcmp (name, "bitrate")) {
                     val = pl_find_meta_raw (it, ":BITRATE");
                 }

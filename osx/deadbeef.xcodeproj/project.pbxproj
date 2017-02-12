@@ -1708,11 +1708,15 @@
 		4D44E70319B7539C00F780FC /* sampbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F819B7539C00F780FC /* sampbuf.c */; };
 		4D44E70419B7539C00F780FC /* silence.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F919B7539C00F780FC /* silence.c */; };
 		4D44E70519B7539C00F780FC /* stdfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6FA19B7539C00F780FC /* stdfile.c */; };
+		4D62C0C71E4C9ACA005F9482 /* streamreader.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D62C0C51E4C9ACA005F9482 /* streamreader.c */; };
+		4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D62C0C61E4C9ACA005F9482 /* streamreader.h */; };
 		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
 		4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */; };
 		4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BE51838EAAB00A98C62 /* Images.xcassets */; };
 		4DA72BED1838EAAB00A98C62 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BE61838EAAB00A98C62 /* main.m */; };
 		4DAF343F19B75FF500EE96ED /* ddb_dumb.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */; };
+		4DC96E6F1E4CC9670093CFD3 /* dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DC96E6D1E4CC9670093CFD3 /* dsp.c */; };
+		4DC96E701E4CC9670093CFD3 /* dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC96E6E1E4CC9670093CFD3 /* dsp.h */; };
 		8374A47E1B8946A800C6A572 /* ChipMapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374A3671B8946A800C6A572 /* ChipMapper.c */; };
 		8374A47F1B8946A800C6A572 /* ChipMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374A3681B8946A800C6A572 /* ChipMapper.h */; };
 		8374A4811B8946A800C6A572 /* 2151intf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374A36B1B8946A800C6A572 /* 2151intf.c */; };
@@ -4155,6 +4159,8 @@
 		4D44E6F819B7539C00F780FC /* sampbuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sampbuf.c; path = "plugins/dumb/dumb-kode54/src/helpers/sampbuf.c"; sourceTree = "<group>"; };
 		4D44E6F919B7539C00F780FC /* silence.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = silence.c; path = "plugins/dumb/dumb-kode54/src/helpers/silence.c"; sourceTree = "<group>"; };
 		4D44E6FA19B7539C00F780FC /* stdfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stdfile.c; path = "plugins/dumb/dumb-kode54/src/helpers/stdfile.c"; sourceTree = "<group>"; };
+		4D62C0C51E4C9ACA005F9482 /* streamreader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = streamreader.c; sourceTree = "<group>"; };
+		4D62C0C61E4C9ACA005F9482 /* streamreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = streamreader.h; sourceTree = "<group>"; };
 		4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnplayTemplate.pdf; path = images/btnplayTemplate.pdf; sourceTree = "<group>"; };
 		4DA72BD91838EAAB00A98C62 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -4162,6 +4168,8 @@
 		4DA72BDF1838EAAB00A98C62 /* deadbeef-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "deadbeef-Prefix.pch"; sourceTree = "<group>"; };
 		4DA72BE51838EAAB00A98C62 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		4DA72BE61838EAAB00A98C62 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		4DC96E6D1E4CC9670093CFD3 /* dsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsp.c; sourceTree = "<group>"; };
+		4DC96E6E1E4CC9670093CFD3 /* dsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsp.h; sourceTree = "<group>"; };
 		8374A3671B8946A800C6A572 /* ChipMapper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ChipMapper.c; sourceTree = "<group>"; };
 		8374A3681B8946A800C6A572 /* ChipMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChipMapper.h; sourceTree = "<group>"; };
 		8374A36B1B8946A800C6A572 /* 2151intf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 2151intf.c; sourceTree = "<group>"; };
@@ -7171,6 +7179,10 @@
 				2D642EAE1AE9152E00FC1F7B /* sort.h */,
 				2D448A821D5C5C6500B43F12 /* logger.c */,
 				2D448A831D5C5C6500B43F12 /* logger.h */,
+				4D62C0C51E4C9ACA005F9482 /* streamreader.c */,
+				4D62C0C61E4C9ACA005F9482 /* streamreader.h */,
+				4DC96E6D1E4CC9670093CFD3 /* dsp.c */,
+				4DC96E6E1E4CC9670093CFD3 /* dsp.h */,
 			);
 			name = deadbeef;
 			path = ..;
@@ -8752,9 +8764,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4DC96E701E4CC9670093CFD3 /* dsp.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */,
+				4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */,
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
 				2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */,
 				2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */,
@@ -11375,6 +11389,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4DC96E6F1E4CC9670093CFD3 /* dsp.c in Sources */,
 				2D6FCDC31DD277CD003FCDE2 /* DSPPresetListDataSource.m in Sources */,
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
 				2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */,
@@ -11405,6 +11420,7 @@
 				2D6FCDBF1DD26867003FCDE2 /* PluginConfigurationViewController.m in Sources */,
 				2D828E5819E567C800EE874F /* DdbSearchWidget.m in Sources */,
 				2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */,
+				4D62C0C71E4C9ACA005F9482 /* streamreader.c in Sources */,
 				2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

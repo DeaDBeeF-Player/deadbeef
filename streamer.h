@@ -4,7 +4,7 @@
 
   streamer implementation
 
-  Copyright (C) 2009-2013 Alexey Yakovenko
+  Copyright (C) 2009-2017 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -64,7 +64,6 @@ streamer_unlock (void);
 
 // pstate indicates what to do with playback
 // -1 means "don't do anything"
-// -2 means "end of playlist"
 // 0 stop
 // 1 switch to current (gui) playlist, play if not playing
 // 2 pause
@@ -141,9 +140,6 @@ streamer_set_dsp_chain (struct ddb_dsp_context_s *chain);
 
 void
 streamer_dsp_refresh (void);
-
-void
-streamer_get_output_format (ddb_waveformat_t *fmt);
 
 int
 streamer_dsp_chain_save (void);
