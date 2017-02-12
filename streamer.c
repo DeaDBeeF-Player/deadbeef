@@ -344,7 +344,7 @@ stop_after_album_check (playItem_t *cur, playItem_t *next) {
     }
 
     if (!next) {
-        streamer_set_nextsong_real (-2, -2);
+        stream_track (NULL);
         if (conf_get_int ("playlist.stop_after_album_reset", 0)) {
             conf_set_int ("playlist.stop_after_album", 0);
             stop_after_album = 0;
@@ -382,7 +382,7 @@ stop_after_album_check (playItem_t *cur, playItem_t *next) {
         return 0;
     }
 
-    streamer_set_nextsong_real (-2, -2);
+    stream_track (NULL);
     if (conf_get_int ("playlist.stop_after_album_reset", 0)) {
         conf_set_int ("playlist.stop_after_album", 0);
         stop_after_album = 0;
@@ -510,7 +510,7 @@ streamer_move_to_nextsong_real (int reason) {
                 playItem_t *temp;
                 plt_reshuffle (streamer_playlist, &temp, NULL);
                 pl_unlock ();
-                streamer_set_nextsong_real (-2, -2);
+                stream_track (NULL);
                 return -1;
             }
             int r = str_get_idx_of (it);
@@ -548,7 +548,7 @@ streamer_move_to_nextsong_real (int reason) {
                 playItem_t *temp;
                 plt_reshuffle (streamer_playlist, &temp, NULL);
                 pl_unlock ();
-                streamer_set_nextsong_real (-2, -2);
+                stream_track (NULL);
                 return -1;
             }
             int r = str_get_idx_of (it);
@@ -1357,7 +1357,7 @@ streamer_start_new_song (void) {
     streamer_unlock ();
     if (badsong == sng) {
         trace ("looped to bad file. stopping...\n");
-        streamer_set_nextsong_real (-2, -2);
+        stream_track (NULL);
         badsong = -1;
         return;
     }
@@ -1450,7 +1450,7 @@ update_stop_after_current (void) {
 static void
 streamer_next (void) {
     if (stop_after_current) {
-        streamer_set_nextsong_real (-2, -2);
+        stream_track (NULL);
     }
     else {
         trace ("streamer_move_to_nextsong (0) called from streamer_next\n");
