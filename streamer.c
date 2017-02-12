@@ -460,13 +460,6 @@ get_next_track (playItem_t *playlist_track) {
                 }
             }
             playItem_t *it = pmin;
-            // although it is possible that, although it == NULL, reshuffling the playlist
-            // will result in the next track belonging to the same album as this one, this
-            // is most likely not what the user wants.
-            if (stop_after_album_check(curr, it)) {
-                pl_unlock ();
-                return NULL;
-            }
             if (!it) {
                 // all songs played, reshuffle and try again
                 if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
@@ -1336,11 +1329,16 @@ streamer_next (void) {
         stream_track (NULL);
     }
     else {
-        trace ("streamer_move_to_nextsong (0) called from streamer_next\n");
         playItem_t *next = get_next_track(streaming_track);
-        stream_track(next);
-        if (next) {
+        if (next && stop_after_album_check (streaming_track, next)) {
+            stream_track (NULL);
             pl_item_unref(next);
+        }
+        else {
+            stream_track(next);
+            if (next) {
+                pl_item_unref(next);
+            }
         }
     }
 }
