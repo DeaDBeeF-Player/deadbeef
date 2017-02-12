@@ -284,7 +284,7 @@ static struct timeval last_br_update;
     deadbeef->conf_get_str ("cocoaui.titlebar_stopped", DEFAULT_TITLEBAR_STOPPED_VALUE, script, sizeof (script));
     _titlebar_stopped_script = deadbeef->tf_compile (script);
 
-    _statusbar_playing_script = deadbeef->tf_compile ("$if2($strcmp(%ispaused%,),Paused | )%codec% |[ %playback_bitrate% kbps |] %samplerate%Hz |[ %:BPS% bit |] %channels% | %playback_time% / %length%");
+    _statusbar_playing_script = deadbeef->tf_compile ("$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length%");
 }
 
 - (void)updateTitleBar {

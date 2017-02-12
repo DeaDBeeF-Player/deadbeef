@@ -373,7 +373,7 @@ gtkui_titlebar_tf_init (void) {
     deadbeef->conf_get_str ("gtkui.titlebar_stopped_tf", gtkui_default_titlebar_stopped, fmt, sizeof (fmt));
     titlebar_stopped_bc = deadbeef->tf_compile (fmt);
 
-    statusbar_bc = deadbeef->tf_compile ("$if2($strcmp(%ispaused%,),Paused | )%codec% |[ %playback_bitrate% kbps |] %samplerate%Hz |[ %:BPS% bit |] %channels% | %playback_time% / %length%");
+    statusbar_bc = deadbeef->tf_compile ("$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length%");
 }
 
 void
