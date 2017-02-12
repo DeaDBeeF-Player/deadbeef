@@ -599,7 +599,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         nframe++;
     }
 end_scan:
-    if (nframe == 0) {
+    if (nframe == 0 || valid_frames == 0) {
         trace ("cmp3_scan_stream: couldn't find mpeg frames in file\n");
         return -1;
     }
