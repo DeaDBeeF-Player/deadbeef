@@ -96,8 +96,6 @@ static struct timeval last_br_update;
     }
     
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
-
-    float duration = track ? deadbeef->pl_get_item_duration (track) : -1;
     
     if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track)) {
         snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
@@ -105,7 +103,7 @@ static struct timeval last_br_update;
     else {
         ddb_tf_context_t ctx = {
             ._size = sizeof (ddb_tf_context_t),
-            .it = deadbeef->streamer_get_playing_track (),
+            .it = track,
             .iter = PL_MAIN,
         };
 
