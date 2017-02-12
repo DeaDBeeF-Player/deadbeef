@@ -10,8 +10,9 @@
 #include "streamreader.h"
 #include "replaygain.h"
 
+// read ahead about 5 sec at 44100/16/2
 #define BLOCK_SIZE 16384
-#define BLOCK_COUNT 16
+#define BLOCK_COUNT 48
 
 static streamblock_t *blocks; // list of all blocks
 
