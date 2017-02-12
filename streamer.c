@@ -540,18 +540,16 @@ get_next_track (playItem_t *playlist_track) {
             }
             else {
                 pl_unlock ();
-                stream_track (NULL);
-                return 0;
+                return NULL;
             }
         }
         if (!it) {
             pl_unlock ();
             return NULL;
         }
-        int r = str_get_idx_of (it);
+        pl_item_ref (it);
         pl_unlock ();
-        streamer_set_nextsong_real (r, 1);
-        return 0;
+        return it;
     }
     else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
         pl_unlock ();
@@ -1515,31 +1513,21 @@ streamer_thread (void *ctx) {
         }
         else if (nextsong == -2 && nextsong_pstate==0) {
             streamer_lock ();
-            playItem_t *from = playing_track;
-            trace ("nextsong=-2\n");
-            nextsong = -1;
-            if (playing_track) {
-                trace ("sending songfinished to plugins [1]\n");
-                send_songfinished (playing_track);
-            }
-            if (from) {
-                pl_item_ref (from);
-            }
             streamreader_reset ();
-            streamer_set_current (NULL);
-            if (playing_track) {
-                pl_item_unref (playing_track);
-                playing_track = NULL;
-            }
-            send_trackchanged (from, NULL);
-            if (from) {
-                pl_item_unref (from);
+            stream_track (NULL);
+            output->stop ();
+            playItem_t *it = playing_track;
+            playing_track = NULL;
+            if (it) {
+                send_trackinfochanged (it);
+                pl_item_unref (it);
             }
             streamer_unlock ();
-            output->stop ();
+            nextsong = -1;
             continue;
         }
-        else if (output->state () == OUTPUT_STATE_STOPPED) {
+
+        if (output->state () == OUTPUT_STATE_STOPPED) {
             usleep (50000);
             continue;
         }
@@ -1675,6 +1663,18 @@ streamer_free (void) {
     }
 }
 
+// We always decode the entire block, 16384 bytes of input PCM
+// after DSP that can become really big.
+// Think converting from 8KHz/8 bit to 192KHz/32 bit, thats 96x size increase,
+// which gives us the need of 1.5MB buffer.
+//
+// It's guaranteed that outbuffer contains only samples from the files with same wave format.
+//
+// FIXME: this BSS allocation is temporary, needs to be on heap, and allocated on demand.
+// FIXME: streamer_reset should flush this.
+static char outbuffer[512*1024];
+static int outbuffer_remaining;
+
 void
 streamer_reset (int full) { // must be called when current song changes by external reasons
     if (!mutex) {
@@ -1684,6 +1684,7 @@ streamer_reset (int full) { // must be called when current song changes by exter
 
     streamreader_reset ();
     dsp_reset ();
+    outbuffer_remaining = 0;
 }
 
 // NOTE: this is supposed to be only called from streamer_read
@@ -1775,18 +1776,6 @@ process_output_block (char *bytes) {
 
     return sz;
 }
-
-// We always decode the entire block, 16384 bytes of input PCM
-// after DSP that can become really big.
-// Think converting from 8KHz/8 bit to 192KHz/32 bit, thats 96x size increase,
-// which gives us the need of 1.5MB buffer.
-//
-// It's guaranteed that outbuffer contains only samples from the files with same wave format.
-//
-// FIXME: this BSS allocation is temporary, needs to be on heap, and allocated on demand.
-// FIXME: streamer_reset should flush this.
-static char outbuffer[512*1024];
-static int outbuffer_remaining;
 
 int
 streamer_read (char *bytes, int size) {
