@@ -1653,10 +1653,10 @@ streamer_thread (void *ctx) {
         streamblock_t *block = NULL;
         int res = streamreader_read_next_block (streaming_track, fileinfo, &block);
 
-
         streamer_unlock ();
         if (res < 0) {
             // error
+            streamer_next ();
         }
         else if (res == 0) {
             // buffers full, sleep for a bit
