@@ -160,59 +160,22 @@ update_songinfo (gpointer ctx) {
     }
 
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
-    DB_fileinfo_t *c = deadbeef->streamer_get_current_fileinfo (); // FIXME: might crash streamer
 
     float duration = track ? deadbeef->pl_get_item_duration (track) : -1;
 
-    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track || !c)) {
+    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track)) {
         snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
     }
     else {
-        float playpos = deadbeef->streamer_get_playpos ();
-        int minpos = playpos / 60;
-        int secpos = playpos - minpos * 60;
-        int mindur = duration / 60;
-        int secdur = duration - mindur * 60;
+        ddb_tf_context_t ctx = {
+            ._size = sizeof (ddb_tf_context_t),
+            .it = deadbeef->streamer_get_playing_track (),
+            .iter = PL_MAIN,
+        };
 
-        const char *mode;
-        char temp[20];
-        if (c->fmt.channels <= 2) {
-            mode = c->fmt.channels == 1 ? _("Mono") : _("Stereo");
-        }
-        else {
-            snprintf (temp, sizeof (temp), "%dch Multichannel", c->fmt.channels);
-            mode = temp;
-        }
-        int samplerate = c->fmt.samplerate;
-        int bitspersample = c->fmt.bps;
-        //        codec_unlock ();
-
-        char t[100];
-        if (duration >= 0) {
-            snprintf (t, sizeof (t), "%d:%02d", mindur, secdur);
-        }
-        else {
-            strcpy (t, "-:--");
-        }
-
-        struct timeval tm;
-        gettimeofday (&tm, NULL);
-        if (tm.tv_sec - last_br_update.tv_sec + (tm.tv_usec - last_br_update.tv_usec) / 1000000.0 >= 0.3) {
-            memcpy (&last_br_update, &tm, sizeof (tm));
-            int bitrate = deadbeef->streamer_get_apx_bitrate ();
-            if (bitrate > 0) {
-                snprintf (sbitrate, sizeof (sbitrate), _("| %4d kbps "), bitrate);
-            }
-            else {
-                sbitrate[0] = 0;
-            }
-        }
-        const char *spaused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED ? _("Paused | ") : "";
-        char filetype[20];
-        if (!deadbeef->pl_get_meta (track, ":FILETYPE", filetype, sizeof (filetype))) {
-            strcpy (filetype, "-");
-        }
-        snprintf (sbtext_new, sizeof (sbtext_new), _("%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"), spaused, filetype, sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+        char buffer[200];
+        deadbeef->tf_eval (&ctx, statusbar_bc, buffer, sizeof (buffer));
+        snprintf (sbtext_new, sizeof (sbtext_new), "%s | %d tracks | %s total playtime", buffer, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
     }
 
     if (strcmp (sbtext_new, sb_text)) {
@@ -380,6 +343,8 @@ const char *gtkui_default_titlebar_stopped = "DeaDBeeF-%_deadbeef_version%";
 static char *titlebar_playing_bc;
 static char *titlebar_stopped_bc;
 
+static char *statusbar_bc;
+
 static void
 titlebar_tf_free (void) {
     if (titlebar_playing_bc) {
@@ -390,6 +355,11 @@ titlebar_tf_free (void) {
     if (titlebar_stopped_bc) {
         deadbeef->tf_free (titlebar_stopped_bc);
         titlebar_stopped_bc = NULL;
+    }
+
+    if (statusbar_bc) {
+        deadbeef->tf_free (statusbar_bc);
+        statusbar_bc = NULL;
     }
 }
 
@@ -402,6 +372,8 @@ gtkui_titlebar_tf_init (void) {
     titlebar_playing_bc = deadbeef->tf_compile (fmt);
     deadbeef->conf_get_str ("gtkui.titlebar_stopped_tf", gtkui_default_titlebar_stopped, fmt, sizeof (fmt));
     titlebar_stopped_bc = deadbeef->tf_compile (fmt);
+
+    statusbar_bc = deadbeef->tf_compile ("$if2($strcmp(%ispaused%,),Paused | )%codec% |[ %playback_bitrate% kbps |] %samplerate%Hz |[ %:BPS% bit |] %channels% | %playback_time% / %length%");
 }
 
 void
