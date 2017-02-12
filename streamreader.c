@@ -70,6 +70,12 @@ streamreader_read_next_block (playItem_t *track, DB_fileinfo_t *fileinfo, stream
     if (rb < 0) {
         return -1;
     }
+
+    if (!rb) {
+        // streamer should not be attempting to read beyond end of track, but handle it anyway
+        return -1;
+    }
+
     block_next->bitrate = curr_block_bitrate;
 
     block_next->pos = 0;
