@@ -8,6 +8,7 @@
 
 #include <string.h>
 #include <limits.h>
+#include <errno.h>
 #include "deadbeef.h"
 #include "dsp.h"
 #include "streamer.h"
