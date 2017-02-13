@@ -108,7 +108,7 @@ static playItem_t *playing_track;
 static float playtime; // total playtime of playing track
 static time_t started_timestamp; // result of calling time(NULL)
 static playItem_t *streaming_track;
-static playItem_t *playlist_track;
+static playItem_t *last_played; // this is the last track that was played, should avoid setting this to NULL
 
 static ddb_waveformat_t prev_output_format; // input file format that was requested
 static int formatchanged;
@@ -232,6 +232,17 @@ send_trackchanged (playItem_t *from, playItem_t *to) {
 }
 
 static void
+set_last_played (playItem_t *track) {
+    if (last_played) {
+        pl_item_unref (last_played);
+    }
+    last_played = track;
+    if (last_played) {
+        pl_item_ref (last_played);
+    }
+}
+
+static void
 streamer_start_playback (playItem_t *from, playItem_t *it) {
     if (from) {
         pl_item_ref (from);
@@ -244,15 +255,15 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
         pl_item_unref (playing_track);
         playing_track = NULL;
     }
-    pl_lock ();
-    playlist_track = it;
-    pl_unlock ();
     // assign new
     playing_track = it;
+
     if (playing_track) {
         pl_item_ref (playing_track);
-
         playing_track->played = 1;
+
+        set_last_played (playing_track);
+
         trace ("from=%p (%s), to=%p (%s) [2]\n", from, from ? pl_find_meta (from, ":URI") : "null", it, it ? pl_find_meta (it, ":URI") : "null");
         send_trackchanged (from, it);
         started_timestamp = time (NULL);
@@ -407,13 +418,11 @@ get_random_track (void) {
 }
 
 static playItem_t *
-get_next_track (playItem_t *playlist_track) {
+get_next_track (playItem_t *curr) {
     pl_lock ();
     if (!streamer_playlist) {
         streamer_playlist = plt_get_curr ();
     }
-
-    playItem_t *curr = playlist_track;
 
     while (playqueue_getcount ()) {
         trace ("playqueue_getnext\n");
@@ -467,8 +476,6 @@ get_next_track (playItem_t *playlist_track) {
                 }
             }
             if (!it) { // nothing found after reshuffle
-                playItem_t *temp;
-                plt_reshuffle (streamer_playlist, &temp, NULL);
                 pl_unlock ();
                 return NULL;
             }
@@ -513,18 +520,8 @@ get_next_track (playItem_t *playlist_track) {
     }
     else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
         playItem_t *it = NULL;
-        if (!curr) {
-            int cur = plt_get_cursor (streamer_playlist, PL_MAIN);
-            if (cur != -1) {
-                curr = plt_get_item_for_idx (streamer_playlist, cur, PL_MAIN);
-                pl_item_unref (curr);
-            }
-        }
         if (curr) {
             it = curr->next[PL_MAIN];
-        }
-        else {
-            it = streamer_playlist->head[PL_MAIN];
         }
         if (!it) {
             trace ("streamer_move_nextsong: was last track\n");
@@ -553,15 +550,15 @@ get_next_track (playItem_t *playlist_track) {
 }
 
 static playItem_t *
-get_prev_track (playItem_t *playlist_track) {
+get_prev_track (playItem_t *curr) {
     pl_lock ();
     if (streamer_playlist) {
         plt_unref (streamer_playlist);
     }
     streamer_playlist = plt_get_curr ();
     // check if prev song is in this playlist
-    if (-1 == str_get_idx_of (playlist_track)) {
-        playlist_track = NULL;
+    if (-1 == str_get_idx_of (curr)) {
+        curr = NULL;
     }
 
     playlist_t *plt = streamer_playlist;
@@ -573,23 +570,23 @@ get_prev_track (playItem_t *playlist_track) {
     int pl_order = conf_get_int ("playback.order", 0);
     int pl_loop_mode = conf_get_int ("playback.loop", 0);
     if (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) { // shuffle
-        if (!playlist_track) {
+        if (!curr) {
             playItem_t *it = plt->head[PL_MAIN];
             pl_item_ref(it);
             pl_unlock ();
             return it;
         }
         else {
-            playlist_track->played = 0;
+            curr->played = 0;
             // find already played song with maximum shuffle rating below prev song
-            int rating = playlist_track->shufflerating;
+            int rating = curr->shufflerating;
             playItem_t *pmax = NULL; // played maximum
             playItem_t *amax = NULL; // absolute maximum
             for (playItem_t *i = plt->head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
-                if (i != playlist_track && i->played && (!amax || i->shufflerating > amax->shufflerating)) {
+                if (i != curr && i->played && (!amax || i->shufflerating > amax->shufflerating)) {
                     amax = i;
                 }
-                if (i == playlist_track || i->shufflerating > rating || !i->played) {
+                if (i == curr || i->shufflerating > rating || !i->played) {
                     continue;
                 }
                 if (!pmax || i->shufflerating > pmax->shufflerating) {
@@ -625,13 +622,8 @@ get_prev_track (playItem_t *playlist_track) {
     }
     else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
         playItem_t *it = NULL;
-        if (playlist_track) {
-            it = playlist_track->prev[PL_MAIN];
-        }
-        if (!it) {
-            if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
-                it = plt->tail[PL_MAIN];
-            }
+        if (curr) {
+            it = curr->prev[PL_MAIN];
         }
         if (!it) {
             pl_unlock ();
@@ -682,8 +674,8 @@ streamer_song_removed_notify (playItem_t *it) {
     if (!mutex) {
         return; // streamer is not running
     }
-    if (it == playlist_track) {
-        playlist_track = playlist_track->prev[PL_MAIN];
+    if (it == last_played) {
+        set_last_played (last_played->prev[PL_MAIN]);
     }
 }
 
@@ -1033,14 +1025,13 @@ m3u_error:
         streamer_file = NULL;
         vfs_fclose (fp);
     }
-    playlist_track = it;
 
     int plug_idx = 0;
     for (;;) {
         if (!decoder_id[0] && plugs[0] && !plugs[plug_idx]) {
             it->played = 1;
             trace ("decoder->init returned %p\n", new_fileinfo);
-            if (playlist_track == it) {
+            if (playing_track == it) {
                 send_trackinfochanged (to);
             }
             err = -1;
@@ -1090,7 +1081,7 @@ m3u_error:
         if (!dec) {
             trace ("no decoder in playitem!\n");
             it->played = 1;
-            if (playlist_track == it) {
+            if (playing_track == it) {
                 send_trackinfochanged (to);
             }
             if (from) {
@@ -1257,7 +1248,7 @@ streamer_start_new_song (void) {
     int ret = streamer_set_current (try);
 
     if (ret < 0) {
-        trace ("\033[0;31mfailed to play track %s, skipping (current=%p/%p)...\033[37;0m\n", pl_find_meta (try, ":URI"), streaming_track, playlist_track);
+        trace ("\033[0;31mfailed to play track %s, skipping (current=%p/%p)...\033[37;0m\n", pl_find_meta (try, ":URI"), streaming_track, last_played);
         // remember bad song number in case of looping
         if (badsong == -1) {
             badsong = sng;
@@ -1455,22 +1446,24 @@ streamer_thread (void *ctx) {
                 break;
             case STR_EV_NEXT:
                 {
-                    playItem_t *next = get_next_track(playing_track);
+                    playItem_t *next = get_next_track(last_played);
                     streamer_reset(1);
                     stream_track(next);
                     if (next) {
                         pl_item_unref(next);
                     }
+                    output->play ();
                 }
                 break;
             case STR_EV_PREV:
                 {
-                    playItem_t *next = get_prev_track(playing_track);
+                    playItem_t *next = get_prev_track(last_played);
                     streamer_reset(1);
                     stream_track(next);
                     if (next) {
                         pl_item_unref(next);
                     }
+                    output->play ();
                 }
                 break;
             case STR_EV_RAND:
@@ -1633,8 +1626,9 @@ streamer_free (void) {
         pl_item_unref (playing_track);
         playing_track = NULL;
     }
-    if (playlist_track) {
-        playlist_track = NULL;
+    if (last_played) {
+        pl_item_unref (last_played);
+        last_played = NULL;
     }
     if (streamer_playlist) {
         plt_unref (streamer_playlist);
@@ -1789,9 +1783,11 @@ streamer_read (char *bytes, int size) {
     if (!block) {
         if (!streaming_track) {
             update_stop_after_current ();
-            send_songfinished (playing_track);
-            send_trackinfochanged (playing_track);
-            streamer_start_playback (playing_track, NULL);
+            if (playing_track) {
+                send_songfinished (playing_track);
+                send_trackinfochanged (playing_track);
+                streamer_start_playback (playing_track, NULL);
+            }
             output->stop ();
             playtime = 0;
             playpos = 0;
