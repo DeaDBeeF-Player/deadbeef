@@ -120,13 +120,10 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text) 
     [_cursorFollowsPlayback setState:deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)?NSOnState:NSOffState];
     
     [_stopAfterCurrent setState:deadbeef->conf_get_int ("playlist.stop_after_current", 0)?NSOnState:NSOffState];
-    [_stopAfterCurrentAlbum setState:deadbeef->conf_get_int ("playlist.stop_after_current_album", 0)?NSOnState:NSOffState];
+    [_stopAfterCurrentAlbum setState:deadbeef->conf_get_int ("playlist.stop_after_album", 0)?NSOnState:NSOffState];
 
     [_descendingSortMode setState:deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSOnState : NSOffState];
 
-    conf_save ();
-    streamer_configchanged ();
-    junk_configchanged ();
     [self volumeChanged];
 
     [_mainWindow updateTitleBarConfig];
@@ -602,9 +599,9 @@ main_cleanup_and_quit (void);
 }
 
 - (IBAction)stopAfterCurrentAlbumAction:(id)sender {
-    int state = deadbeef->conf_get_int ("playlist.stop_after_current_album", 0);
+    int state = deadbeef->conf_get_int ("playlist.stop_after_album", 0);
     state = 1 - state;
-    deadbeef->conf_set_int ("playlist.stop_after_current_album", state);
+    deadbeef->conf_set_int ("playlist.stop_after_album", state);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
