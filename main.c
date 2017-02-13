@@ -1148,6 +1148,8 @@ main (int argc, char *argv[]) {
 
     mainloop_tid = thread_start (mainloop_thread, NULL);
 
+    messagepump_push (DB_EV_CONFIGCHANGED, 0, 0, 0);
+
     DB_plugin_t *gui = plug_get_gui ();
     if (gui) {
         gui->start ();
