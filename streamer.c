@@ -167,7 +167,7 @@ static void
 streamer_set_nextsong_real (int song, int pstate);
 
 static void
-streamer_play_current_track_real (void);
+play_current (void);
 
 static void
 streamer_set_current_playlist_real (int plt);
@@ -1442,7 +1442,7 @@ streamer_thread (void *ctx) {
                 streamer_set_nextsong_real (p1, p2);
                 break;
             case STR_EV_PLAY_CURR:
-                streamer_play_current_track_real ();
+                play_current ();
                 break;
             case STR_EV_NEXT:
                 {
@@ -2026,16 +2026,22 @@ streamer_configchanged (void) {
     conf_streamer_nosleep = conf_get_int ("streamer.nosleep", 0);
 }
 
+// if a track is playing: restart
+// if a track is paused: unpause
+// if no track is playing: do what comes first:
+//     play next in queue
+//     play track under cursor
+//     stop playback
 static void
-streamer_play_current_track_real (void) {
+play_current (void) {
     playlist_t *plt = plt_get_curr ();
     DB_output_t *output = plug_get_output ();
     autoplay = 1;
     if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
+        // restart if network stream
         if (is_remote_stream (playing_track) && pl_get_item_duration (playing_track) < 0) {
             streamer_reset (1);
-            streamer_set_current (NULL);
-            streamer_set_current (playing_track);
+            stream_track (playing_track);
         }
         // unpause currently paused track
         output->unpause ();
@@ -2044,6 +2050,7 @@ streamer_play_current_track_real (void) {
     else if (plt->current_row[PL_MAIN] != -1) {
         // play currently selected track in current playlist
         output->stop ();
+        streamer_reset(1);
         // get next song in queue
         int idx = -1;
         playItem_t *next = playqueue_getnext ();
@@ -2054,20 +2061,20 @@ streamer_play_current_track_real (void) {
         }
         else {
             idx = plt->current_row[PL_MAIN];
+            next = pl_get_for_idx(idx);
         }
 
-        streamer_set_nextsong_real (idx, 1);
         pl_lock ();
-        if (streamer_playlist) {
-            plt_unref (streamer_playlist);
+        if (plt != streamer_playlist) {
+            if (streamer_playlist) {
+                plt_unref (streamer_playlist);
+            }
+            streamer_playlist = plt;
+            plt_ref (streamer_playlist);
         }
-        streamer_playlist = plt;
         pl_unlock ();
-        return;
-    }
-    else {
-        output->stop ();
-        streamer_move_to_nextsong (1);
+        stream_track (next);
+        output->play ();
     }
     if (plt) {
         plt_unref (plt);
