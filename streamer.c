@@ -1386,7 +1386,11 @@ stream_track (playItem_t *track) {
 static void
 streamer_seek_real (float seekpos) {
     float seek = seekpos;
-    float dur = playing_track ? pl_get_item_duration (playing_track) : -1;
+    playItem_t *track = playing_track;
+    if (!playing_track) {
+        track = streaming_track;
+    }
+    float dur = track ? pl_get_item_duration (track) : -1;
     if (seek >= 0 && dur > 0) {
         if (seek >= dur) {
             seek = dur - 0.000001f;
@@ -1394,7 +1398,7 @@ streamer_seek_real (float seekpos) {
         playpos = seek;
         trace ("seeking to %f\n", seek);
 
-        if (playing_track != streaming_track) {
+        if (track == playing_track && track != streaming_track) {
             // restart streaming the playing track
             if (stream_track (playing_track) < 0) {
                 streamer_move_to_nextsong (0);
@@ -1402,7 +1406,7 @@ streamer_seek_real (float seekpos) {
             }
         }
 
-        if (fileinfo && playing_track && dur > 0) {
+        if (fileinfo && track && dur > 0) {
             streamer_lock ();
             if (fileinfo->plugin->seek (fileinfo, playpos) >= 0) {
                 streamer_reset (1);
@@ -1412,9 +1416,9 @@ streamer_seek_real (float seekpos) {
             streamer_unlock();
         }
         ddb_event_playpos_t *ev = (ddb_event_playpos_t *)messagepump_event_alloc (DB_EV_SEEKED);
-        ev->track = DB_PLAYITEM (playing_track);
-        if (playing_track) {
-            pl_item_ref (playing_track);
+        ev->track = DB_PLAYITEM (track);
+        if (track) {
+            pl_item_ref (track);
         }
         ev->playpos = playpos;
         messagepump_push_event ((ddb_event_t*)ev, 0, 0);
@@ -1720,7 +1724,7 @@ process_output_block (char *bytes) {
         streamer_start_playback (playing_track, block->track);
         send_songstarted (playing_track);
         playtime = 0;
-        playpos = 0;
+        playpos = fileinfo->readpos;
         avg_bitrate = -1;
         last_seekpos = -1;
     }
@@ -1764,7 +1768,7 @@ process_output_block (char *bytes) {
     }
 
     playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dspratio;
-    playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels);
+    playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dspratio;
 
     return sz;
 }
