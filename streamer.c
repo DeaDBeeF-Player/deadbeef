@@ -1678,9 +1678,11 @@ streamer_reset (int full) { // must be called when current song changes by exter
         return; // failsafe, in case someone calls streamer reset after deinit
     }
 
+    streamer_lock();
     streamreader_reset ();
     dsp_reset ();
     outbuffer_remaining = 0;
+    streamer_unlock();
 }
 
 // NOTE: this is supposed to be only called from streamer_read
