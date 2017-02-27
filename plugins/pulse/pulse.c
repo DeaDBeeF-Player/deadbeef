@@ -231,6 +231,7 @@ static int pulse_play(void)
         }
     }
 
+    pa_simple_flush (s, NULL);
     state = OUTPUT_STATE_PLAYING;
     return 0;
 }
