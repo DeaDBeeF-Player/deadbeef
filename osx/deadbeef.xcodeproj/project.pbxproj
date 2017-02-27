@@ -1223,6 +1223,8 @@
 		2D7C38221B2C40640029DE0A /* window.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D88EA471B2AF8610072FD43 /* window.h */; };
 		2D7C38271B2C407C0029DE0A /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
 		2D7C38281B2C407C0029DE0A /* libvorbislib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37F41B2C40580029DE0A /* libvorbislib.a */; };
+		2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D62C0C51E4C9ACA005F9482 /* streamreader.c */; };
+		2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DC96E6D1E4CC9670093CFD3 /* dsp.c */; };
 		2D7F38031B2858AC00692A7B /* Junklib.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D7F38021B2858AC00692A7B /* Junklib.m */; };
 		2D828E5419E5679800EE874F /* Search.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D828E5319E5679800EE874F /* Search.xib */; };
 		2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D828E5519E567C800EE874F /* DdbSearchWidget.h */; };
@@ -1708,14 +1710,12 @@
 		4D44E70319B7539C00F780FC /* sampbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F819B7539C00F780FC /* sampbuf.c */; };
 		4D44E70419B7539C00F780FC /* silence.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F919B7539C00F780FC /* silence.c */; };
 		4D44E70519B7539C00F780FC /* stdfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6FA19B7539C00F780FC /* stdfile.c */; };
-		4D62C0C71E4C9ACA005F9482 /* streamreader.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D62C0C51E4C9ACA005F9482 /* streamreader.c */; };
 		4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D62C0C61E4C9ACA005F9482 /* streamreader.h */; };
 		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
 		4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */; };
 		4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BE51838EAAB00A98C62 /* Images.xcassets */; };
 		4DA72BED1838EAAB00A98C62 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BE61838EAAB00A98C62 /* main.m */; };
 		4DAF343F19B75FF500EE96ED /* ddb_dumb.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */; };
-		4DC96E6F1E4CC9670093CFD3 /* dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DC96E6D1E4CC9670093CFD3 /* dsp.c */; };
 		4DC96E701E4CC9670093CFD3 /* dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC96E6E1E4CC9670093CFD3 /* dsp.h */; };
 		8374A47E1B8946A800C6A572 /* ChipMapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374A3671B8946A800C6A572 /* ChipMapper.c */; };
 		8374A47F1B8946A800C6A572 /* ChipMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374A3681B8946A800C6A572 /* ChipMapper.h */; };
@@ -10337,6 +10337,8 @@
 				2D01D7D51AB2219C00BCD3C4 /* dsppreset.c in Sources */,
 				2D01D7E01AB2219C00BCD3C4 /* replaygain.c in Sources */,
 				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
+				2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */,
+				2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */,
 				2D01D7D21AB2219C00BCD3C4 /* tf.c in Sources */,
 				2D01D7E11AB2219C00BCD3C4 /* ringbuf.c in Sources */,
 			);
@@ -11389,7 +11391,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4DC96E6F1E4CC9670093CFD3 /* dsp.c in Sources */,
 				2D6FCDC31DD277CD003FCDE2 /* DSPPresetListDataSource.m in Sources */,
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
 				2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */,
@@ -11420,7 +11421,6 @@
 				2D6FCDBF1DD26867003FCDE2 /* PluginConfigurationViewController.m in Sources */,
 				2D828E5819E567C800EE874F /* DdbSearchWidget.m in Sources */,
 				2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */,
-				4D62C0C71E4C9ACA005F9482 /* streamreader.c in Sources */,
 				2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
