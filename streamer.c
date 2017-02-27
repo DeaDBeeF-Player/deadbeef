@@ -1726,7 +1726,7 @@ process_output_block (char *bytes) {
         streamer_start_playback (playing_track, block->track);
         send_songstarted (playing_track);
         playtime = 0;
-        playpos = fileinfo->readpos;
+        playpos = 0;
         avg_bitrate = -1;
         last_seekpos = -1;
     }
