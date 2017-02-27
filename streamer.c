@@ -2054,7 +2054,6 @@ play_current (void) {
     }
     else if (plt->current_row[PL_MAIN] != -1) {
         // play currently selected track in current playlist
-        output->stop ();
         streamer_reset(1);
         // get next song in queue
         int idx = -1;
