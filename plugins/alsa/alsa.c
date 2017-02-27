@@ -55,7 +55,7 @@ static snd_pcm_uframes_t req_period_size;
 static int conf_alsa_resample = 1;
 static char conf_alsa_soundcard[100] = "default";
 
-static int alsa_formatchanged = 0;
+static int in_callback;
 
 static int
 palsa_callback (char *stream, int len);
@@ -322,11 +322,9 @@ error:
     return err;
 }
 
-int
+static int
 palsa_init (void) {
     int err;
-    alsa_tid = 0;
-    mutex = 0;
 
     // get and cache conf variables
     conf_alsa_resample = deadbeef->conf_get_int ("alsa.resample", 1);
@@ -341,8 +339,6 @@ palsa_init (void) {
                 snd_strerror (err));
         return -1;
     }
-
-    mutex = deadbeef->mutex_create ();
 
     if (requested_fmt.samplerate != 0) {
         memcpy (&plugin.fmt, &requested_fmt, sizeof (ddb_waveformat_t));
@@ -420,7 +416,7 @@ open_error:
     return -1;
 }
 
-int
+static int
 palsa_setformat (ddb_waveformat_t *fmt) {
     memcpy (&requested_fmt, fmt, sizeof (ddb_waveformat_t));
     trace ("palsa_setformat %dbit %s %dch %dHz channelmask=%X\n", requested_fmt.bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
@@ -446,9 +442,6 @@ palsa_setformat (ddb_waveformat_t *fmt) {
         );
     }
     LOCK;
-    int s = state;
-    state = OUTPUT_STATE_STOPPED;
-    snd_pcm_drop (audio);
     int ret = palsa_set_hw_params (&requested_fmt);
     if (ret < 0) {
         trace ("palsa_setformat: impossible to set requested format\n");
@@ -459,50 +452,26 @@ palsa_setformat (ddb_waveformat_t *fmt) {
     }
     trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
 
-    int res = -1;
-    switch (s) {
-    case OUTPUT_STATE_STOPPED:
-        res = palsa_stop ();
-        break;
-    case OUTPUT_STATE_PLAYING:
-        res = palsa_play ();
-        break;
-    case OUTPUT_STATE_PAUSED:
-        if (0 != palsa_play ()) {
-            res = -1;
-        }
-        if (0 != palsa_pause ()) {
-            res = -1;
-        }
-        break;
-    }
-    trace ("alsa_formatchanged=1\n");
-    alsa_formatchanged = 1;
     UNLOCK;
-    return res;
+    return 0;
 }
 
-int
+static int
 palsa_free (void) {
     trace ("palsa_free\n");
-    if (audio && !alsa_terminate) {
-        LOCK;
+    if (!alsa_tid) {
+        return 0;
+    }
+
+    LOCK;
+    if (in_callback) {
         alsa_terminate = 1;
         UNLOCK;
-        trace ("waiting for alsa thread to finish\n");
-        if (alsa_tid) {
-            deadbeef->thread_join (alsa_tid);
-            alsa_tid = 0;
-        }
-        snd_pcm_close(audio);
-        audio = NULL;
-        if (mutex) {
-            deadbeef->mutex_free (mutex);
-            mutex = 0;
-        }
-        state = OUTPUT_STATE_STOPPED;
-        alsa_terminate = 0;
+        return 0;
     }
+    UNLOCK;
+    alsa_terminate = 1;
+    deadbeef->thread_join (alsa_tid);
     return 0;
 }
 
@@ -523,7 +492,7 @@ palsa_hw_pause (int pause) {
     }
 }
 
-int
+static int
 palsa_play (void) {
     int err;
     if (state == OUTPUT_STATE_STOPPED) {
@@ -543,11 +512,6 @@ palsa_play (void) {
     }
     if (state != OUTPUT_STATE_PLAYING) {
         LOCK;
-//        trace ("alsa: installing async handler\n");
-//        if (snd_async_add_pcm_handler (&pcm_callback, audio, alsa_callback, NULL) < 0) {
-//            perror ("snd_async_add_pcm_handler");
-//        }
-//        trace ("pcm_callback=%p\n", pcm_callback);
         snd_pcm_start (audio);
         UNLOCK;
         state = OUTPUT_STATE_PLAYING;
@@ -556,7 +520,7 @@ palsa_play (void) {
 }
 
 
-int
+static int
 palsa_stop (void) {
     if (!audio) {
         return 0;
@@ -564,29 +528,9 @@ palsa_stop (void) {
     state = OUTPUT_STATE_STOPPED;
     LOCK;
     snd_pcm_drop (audio);
-#if 0
-    if (pcm_callback) {
-        snd_async_del_handler (pcm_callback);
-        pcm_callback = NULL;
-    }
-#endif
     UNLOCK;
-    deadbeef->streamer_reset (1);
-    DB_playItem_t *ts = deadbeef->streamer_get_streaming_track ();
-    DB_playItem_t *tp = deadbeef->streamer_get_playing_track ();
-    if (deadbeef->conf_get_int ("alsa.freeonstop", 0) && !ts && !tp)  {
-        palsa_free ();
-        trace ("\033[0;31malsa released!\033[37;0m\n");
-    }
-    else {
-        trace ("\033[0;32malsa not released!\033[37;0m\n");
-    }
-    if (tp) {
-        deadbeef->pl_item_unref (tp);
-    }
-    if (ts) {
-        deadbeef->pl_item_unref (ts);
-    }
+
+    palsa_free ();
     return 0;
 }
 
@@ -603,7 +547,7 @@ palsa_pause (void) {
     return 0;
 }
 
-int
+static int
 palsa_unpause (void) {
     // unset pause state
     if (state == OUTPUT_STATE_PAUSED) {
@@ -627,60 +571,33 @@ palsa_thread (void *context) {
             usleep (10000);
             continue;
         }
-        LOCK;
-        if (alsa_formatchanged) {
-            trace ("handled alsa_formatchanged [1]\n");
-            alsa_formatchanged = 0;
-            UNLOCK;
-            continue;
-        }
-        char buf[period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels];
+
         int bytes_to_write = 0;
         
         /* find out how much space is available for playback data */
+        LOCK;
         snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
 
-        // FIXME: pushing data without waiting for next buffer will drain entire
-        // streamer buffer, and might lead to stuttering
-        // however, waiting for buffer does a lot of cpu wakeups
-        while (/*state == OUTPUT_STATE_PLAYING*/frames_to_deliver >= period_size) {
-            if (alsa_terminate) {
-                break;
-            }
+        while (!alsa_terminate && frames_to_deliver >= period_size) {
             err = 0;
+            int sz = period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels;
+            char buf[sz];
             if (!bytes_to_write) {
-                UNLOCK; // holding a lock here may cause deadlock in the streamer
-                bytes_to_write = palsa_callback (buf, period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels);
-                LOCK;
+                bytes_to_write = palsa_callback (buf, sz);
                 if (OUTPUT_STATE_PLAYING != state || alsa_terminate) {
                     break;
                 }
             }
 
             if (bytes_to_write >= (plugin.fmt.bps>>3) * plugin.fmt.channels) {
-                UNLOCK;
                 err = snd_pcm_writei (audio, buf, snd_pcm_bytes_to_frames(audio, bytes_to_write));
-                LOCK;
-                if (alsa_formatchanged) {
-                    trace ("handled alsa_formatchanged [2]\n");
-                    alsa_formatchanged = 0;
-                    UNLOCK;
-                    break;
-                }
                 if (alsa_terminate) {
                     break;
                 }
             }
             else {
-                UNLOCK;
                 usleep (10000);
                 bytes_to_write = 0;
-                LOCK;
-                if (alsa_formatchanged) {
-                    trace ("handled alsa_formatchanged [3]\n");
-                    alsa_formatchanged = 0;
-                    break;
-                }
                 continue;
             }
 
@@ -693,17 +610,12 @@ palsa_thread (void *context) {
                     if (err < 0) {
                         err = snd_pcm_prepare(audio);
                         if (err < 0) {
-                            fprintf (stderr, "Can't recovery from suspend, prepare failed: %s", snd_strerror(err));
+                            fprintf (stderr, "Can't recover from suspend, prepare failed: %s", snd_strerror(err));
                             exit (-1);
                         }
                     }
-            //        deadbeef->sendmessage (DB_EV_REINIT_SOUND, 0, 0, 0);
-            //        break;
                 }
                 else {
-                    //if (err != -EPIPE) {
-                    //    fprintf (stderr, "alsa: snd_pcm_writei error=%d, %s\n", err, snd_strerror (err));
-                    //}
                     snd_pcm_prepare (audio);
                     snd_pcm_start (audio);
                 }
@@ -718,11 +630,21 @@ palsa_thread (void *context) {
             usleep (sleeptime * 1000 / plugin.fmt.samplerate * 1000);
         }
     }
+
+    LOCK;
+    snd_pcm_close(audio);
+    audio = NULL;
+    alsa_terminate = 0;
+    alsa_tid = 0;
+    UNLOCK;
 }
 
 static int
 palsa_callback (char *stream, int len) {
-    return deadbeef->streamer_read (stream, len);
+    in_callback = 1;
+    int bytesread = deadbeef->streamer_read (stream, len);
+    in_callback = 0;
+    return bytesread;
 }
 
 static int
@@ -790,11 +712,16 @@ alsa_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 
 static int
 alsa_start (void) {
+    mutex = deadbeef->mutex_create ();
     return 0;
 }
 
 static int
 alsa_stop (void) {
+    if (mutex) {
+        deadbeef->mutex_free (mutex);
+        mutex = 0;
+    }
     return 0;
 }
 
@@ -806,7 +733,6 @@ alsa_load (DB_functions_t *api) {
 
 static const char settings_dlg[] =
     "property \"Use ALSA resampling\" checkbox alsa.resample 1;\n"
-    "property \"Release device while stopped\" checkbox alsa.freeonstop 0;\n"
     "property \"Preferred buffer size\" entry alsa.buffer " DEFAULT_BUFFER_SIZE_STR ";\n"
     "property \"Preferred period size\" entry alsa.period " DEFAULT_PERIOD_SIZE_STR ";\n"
 ;

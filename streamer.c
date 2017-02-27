@@ -1781,7 +1781,6 @@ streamer_read (char *bytes, int size) {
     struct timeval tm1;
     gettimeofday (&tm1, NULL);
 #endif
-
     DB_output_t *output = plug_get_output ();
 
     streamer_lock ();
