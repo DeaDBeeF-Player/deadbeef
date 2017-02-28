@@ -1317,21 +1317,10 @@ update_stop_after_current (void) {
 
 static void
 streamer_next (void) {
-    if (stop_after_current) {
-        stream_track (NULL);
-    }
-    else {
-        playItem_t *next = get_next_track(streaming_track);
-        if (next && stop_after_album_check (streaming_track, next)) {
-            stream_track (NULL);
-            pl_item_unref(next);
-        }
-        else {
-            stream_track(next);
-            if (next) {
-                pl_item_unref(next);
-            }
-        }
+    playItem_t *next = get_next_track (streaming_track);
+    stream_track (next);
+    if (next) {
+        pl_item_unref (next);
     }
 }
 
@@ -1545,14 +1534,15 @@ streamer_thread (void *ctx) {
         streamblock_t *block = NULL;
         int res = streamreader_read_next_block (streaming_track, fileinfo, &block);
 
-        streamer_unlock ();
         if (res < 0) {
             // error
             streamer_next ();
         }
         else if (res == 0) {
             // buffers full, sleep for a bit
+            streamer_unlock();
             usleep (50000);
+            streamer_lock();
         }
         else if (res > 0) {
             if (block->last) {
@@ -1560,6 +1550,7 @@ streamer_thread (void *ctx) {
                 streamer_next ();
             }
         }
+        streamer_unlock ();
     }
 
     // stop streaming song
@@ -1720,9 +1711,33 @@ process_output_block (char *bytes, int firstblock) {
     int sz = block->size - block->pos;
     assert (sz);
 
-    if (playing_track != block->track) {
+    // handle stop after current
+    int stop = 0;
+    if (block->last) {
+        if (stop_after_current) {
+            stop = 1;
+        }
+        else {
+            if (stop_after_album_check (playing_track, block->track)) {
+                stop = 1;
+            }
+        }
+    }
+
+    // handle change of track, or start of a new track
+    if (block->last || block->track != playing_track) {
         // next track started
         update_stop_after_current ();
+
+        if (stop) {
+            streamer_lock();
+            set_last_played (playing_track);
+            stream_track (NULL);
+            streamer_reset (1);
+            streamer_unlock();
+            return 0;
+        }
+
         if (playing_track) {
             send_songfinished (playing_track);
         }
@@ -1774,9 +1789,6 @@ process_output_block (char *bytes, int firstblock) {
     playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dspratio;
 
     if (block->pos >= block->size) {
-        if (block->last) {
-            playpos = playtime = 0;
-        }
         streamreader_next_block ();
     }
 
