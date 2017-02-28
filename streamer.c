@@ -1704,8 +1704,9 @@ get_desired_output_format (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt) 
     }
 }
 
+// when firstblock is true -- means it's allowed to change output format
 static int
-process_output_block (char *bytes) {
+process_output_block (char *bytes, int firstblock) {
     streamblock_t *block = streamreader_get_curr_block();
     if (!block) {
         return -1;
@@ -1733,6 +1734,7 @@ process_output_block (char *bytes) {
     }
 
     ddb_waveformat_t datafmt; // comes either from dsp, or from input plugin
+    memcpy (&datafmt, &block->fmt, sizeof (ddb_waveformat_t));
 
     char *dspbytes = NULL;
     int dspsize = 0;
@@ -1741,22 +1743,24 @@ process_output_block (char *bytes) {
                              &datafmt, &dspbytes, &dspsize, &dspratio);
     if (dsp_res) {
         block->pos += sz;
-        // preserve sampleformat, but take channels, samplerate
-        ddb_waveformat_t outfmt;
-        outfmt.bps = block->fmt.bps;
-        outfmt.is_float = block->fmt.is_float;
-        // channelmask from dsp chain
-        outfmt.channels = datafmt.channels;
-        outfmt.samplerate = datafmt.samplerate;
-        outfmt.channelmask = datafmt.channelmask;
-        outfmt.is_bigendian = block->fmt.is_bigendian;
-        //        update_output_format (&outfmt);
         sz = dspsize;
     }
     else {
         memcpy (&datafmt, &block->fmt, sizeof (ddb_waveformat_t));
         dspbytes = block->buf+block->pos;
         block->pos += sz;
+    }
+
+    // change output wave format once per frame max
+    if (firstblock) {
+        ddb_waveformat_t outfmt;
+        get_desired_output_format (&datafmt, &outfmt);
+
+        if (memcmp (&prev_output_format, &outfmt, sizeof (ddb_waveformat_t))) {
+            memcpy (&prev_output_format, &outfmt, sizeof (ddb_waveformat_t));
+            DB_output_t *output = plug_get_output ();
+            output->setformat (&outfmt);
+        }
     }
 
     if (memcmp (&output->fmt, &datafmt, sizeof (ddb_waveformat_t))) {
@@ -1807,26 +1811,15 @@ streamer_read (char *bytes, int size) {
         return -1;
     }
 
-    // if file waveformat changed -- calculate and set the post dsp format,
-    // and remember the input format for later comparisons
-    ddb_waveformat_t dspfmt;
-    dsp_get_output_format (&block->fmt, &dspfmt);
-    ddb_waveformat_t outfmt;
-    get_desired_output_format (&dspfmt, &outfmt);
-
-    if (memcmp (&prev_output_format, &outfmt, sizeof (ddb_waveformat_t))) {
-        memcpy (&prev_output_format, &outfmt, sizeof (ddb_waveformat_t));
-        DB_output_t *output = plug_get_output ();
-        output->setformat (&dspfmt);
-    }
-
     // decode enough blocks to fill the output buffer
+    int firstblock = 1;
     while (outbuffer_remaining < size) {
-        int rb = process_output_block (outbuffer + outbuffer_remaining);
+        int rb = process_output_block (outbuffer + outbuffer_remaining, firstblock);
         if (rb <= 0) {
             break;
         }
         outbuffer_remaining += rb;
+        firstblock = 0;
     }
     streamer_unlock ();
 
