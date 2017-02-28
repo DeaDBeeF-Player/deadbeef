@@ -451,6 +451,7 @@ get_next_track (playItem_t *curr) {
             return NULL; // track is not in current playlist
         }
         else {
+            pl_item_ref (curr);
             return curr;
         }
         return 0;
@@ -1196,7 +1197,7 @@ streamer_set_nextsong_real (int song, int pstate) {
             pl_unlock ();
         }
         // no sense to wait until end of previous song, reset buffer
-        playpos = 0;
+        playpos = playtime = 0;
         last_seekpos = -1;
     }
     if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
@@ -1456,6 +1457,7 @@ streamer_thread (void *ctx) {
                     if (next) {
                         pl_item_unref(next);
                     }
+                    playpos = playtime = 0;
                     output->play ();
                 }
                 break;
@@ -1725,8 +1727,7 @@ process_output_block (char *bytes) {
         }
         streamer_start_playback (playing_track, block->track);
         send_songstarted (playing_track);
-        playtime = 0;
-        playpos = 0;
+        playpos = playtime = 0;
         avg_bitrate = -1;
         last_seekpos = -1;
     }
@@ -1765,12 +1766,15 @@ process_output_block (char *bytes) {
         memcpy (bytes, dspbytes, sz);
     }
 
-    if (block->pos >= block->size) {
-        streamreader_next_block ();
-    }
-
     playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dspratio;
     playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dspratio;
+
+    if (block->pos >= block->size) {
+        if (block->last) {
+            playpos = playtime = 0;
+        }
+        streamreader_next_block ();
+    }
 
     return sz;
 }
@@ -1794,8 +1798,7 @@ streamer_read (char *bytes, int size) {
                 streamer_start_playback (playing_track, NULL);
             }
             output->stop ();
-            playtime = 0;
-            playpos = 0;
+            playpos = playtime = 0;
             avg_bitrate = -1;
             last_seekpos = -1;
         }
