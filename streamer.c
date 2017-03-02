@@ -1285,7 +1285,6 @@ streamer_start_new_song (void) {
             streamer_reset (1);
             if (autoplay && 0 != output->play ()) {
                 // probably bad/unset output format
-                assert (0);
                 streamer_set_nextsong_real (-2, 0);
             }
         }
@@ -1296,7 +1295,6 @@ streamer_start_new_song (void) {
             streamer_reset (1);
             // we need to start playback before we can pause it
             if (0 != output->play ()) {
-                assert (0);
                 streamer_set_nextsong_real (-2, 0);
             }
         }
