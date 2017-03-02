@@ -87,7 +87,6 @@ static int streaming_terminate;
 
 
 static uintptr_t mutex;
-static uintptr_t currtrack_mutex;
 static uintptr_t wdl_mutex; // wavedata listener
 
 static int nextsong = -1;
@@ -817,13 +816,13 @@ streamer_set_current (playItem_t *it) {
         pl_item_ref (to);
     }
 
-    mutex_lock (currtrack_mutex);
+    streamer_lock ();
     if (streaming_track) {
         pl_item_unref (streaming_track);
         streaming_track = NULL;
     }
+    streamer_unlock ();
 
-    mutex_unlock (currtrack_mutex);
 
     int paused_stream = 0;
     if (it && nextsong_pstate == 2) {
@@ -1235,7 +1234,7 @@ streamer_start_new_song (void) {
         trace ("track #%d is not in playlist; stopping playback\n", sng);
         output->stop ();
 
-        mutex_lock (currtrack_mutex);
+        streamer_lock ();
         if (playing_track) {
             pl_item_unref (playing_track);
             playing_track = NULL;
@@ -1244,7 +1243,7 @@ streamer_start_new_song (void) {
             pl_item_unref (streaming_track);
             streaming_track = NULL;
         }
-        mutex_unlock (currtrack_mutex);
+        streamer_unlock ();
 
         send_trackchanged (NULL, NULL);
         return;
@@ -1330,7 +1329,7 @@ streamer_notify_order_changed_real (int prev_order, int new_order);
 
 static int
 stream_track (playItem_t *track) {
-    mutex_lock (currtrack_mutex);
+    streamer_lock ();
     if(fileinfo) {
         fileinfo->plugin->free (fileinfo);
         fileinfo = NULL;
@@ -1340,12 +1339,12 @@ stream_track (playItem_t *track) {
     }
     streaming_track = track;
     if (!streaming_track) {
-        mutex_unlock(currtrack_mutex);
+        streamer_unlock ();
         return 0;
     }
 
     pl_item_ref (streaming_track);
-    mutex_unlock (currtrack_mutex);
+    streamer_unlock ();
 
     send_trackinfochanged (streaming_track);
 
@@ -1528,11 +1527,12 @@ streamer_thread (void *ctx) {
             }
         }
 
+        streamer_lock ();
         if (!fileinfo) {
+            streamer_unlock ();
             continue;
         }
 
-        streamer_lock ();
         streamblock_t *block = NULL;
         int res = streamreader_read_next_block (streaming_track, fileinfo, &block);
 
@@ -1561,7 +1561,7 @@ streamer_thread (void *ctx) {
         fileinfo = NULL;
         fileinfo_file = NULL;
     }
-    mutex_lock (currtrack_mutex);
+    streamer_lock ();
     if (streaming_track) {
         pl_item_unref (streaming_track);
         streaming_track = NULL;
@@ -1570,7 +1570,7 @@ streamer_thread (void *ctx) {
         pl_item_unref (playing_track);
         playing_track = NULL;
     }
-    mutex_unlock (currtrack_mutex);
+    streamer_unlock ();
 }
 
 void
@@ -1586,7 +1586,6 @@ streamer_init (void) {
     out = fopen ("out.raw", "w+b");
 #endif
     mutex = mutex_create ();
-    currtrack_mutex = mutex_create ();
     wdl_mutex = mutex_create ();
 
     streamreader_init();
@@ -1637,8 +1636,6 @@ streamer_free (void) {
     ctmap_free ();
     ctmap_free_mutex ();
 
-    mutex_free (currtrack_mutex);
-    currtrack_mutex = 0;
     mutex_free (mutex);
     mutex = 0;
     mutex_free (wdl_mutex);
