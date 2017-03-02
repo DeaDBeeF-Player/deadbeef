@@ -2104,6 +2104,8 @@ play_current (void) {
         }
         pl_unlock ();
         stream_track (next);
+        playpos = 0;
+        playtime = 0;
         output->play ();
     }
     if (plt) {
