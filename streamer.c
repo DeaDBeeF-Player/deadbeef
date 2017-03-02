@@ -1831,7 +1831,6 @@ streamer_read (char *bytes, int size) {
                 send_trackinfochanged (playing_track);
                 streamer_start_playback (playing_track, NULL);
             }
-            output->stop ();
             playpos = 0;
             playtime = 0;
             avg_bitrate = -1;

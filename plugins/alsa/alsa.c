@@ -456,19 +456,20 @@ palsa_setformat (ddb_waveformat_t *fmt) {
 static int
 palsa_free (void) {
     trace ("palsa_free\n");
+    LOCK;
     if (!alsa_tid) {
+        UNLOCK;
         return 0;
     }
 
-    LOCK;
     if (in_callback) {
         alsa_terminate = 1;
         deadbeef->thread_detach (alsa_tid);
         UNLOCK;
         return 0;
     }
-    UNLOCK;
     alsa_terminate = 1;
+    UNLOCK;
     deadbeef->thread_join (alsa_tid);
     return 0;
 }
@@ -563,8 +564,6 @@ palsa_thread (void *context) {
             continue;
         }
 
-        int bytes_to_write = 0;
-        
         /* find out how much space is available for playback data */
         snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
 
@@ -572,23 +571,24 @@ palsa_thread (void *context) {
             err = 0;
             int sz = period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels;
             char buf[sz];
-            if (!bytes_to_write) {
-                bytes_to_write = palsa_callback (buf, sz);
-                if (OUTPUT_STATE_PLAYING != state || alsa_terminate) {
-                    break;
-                }
+            int br = palsa_callback (buf, sz);
+            if (OUTPUT_STATE_PLAYING != state || alsa_terminate) {
+                break;
+            }
+            if (br < 0) {
+                snd_pcm_drain (audio);
+                state = OUTPUT_STATE_STOPPED;
+                alsa_terminate = 1;
+                break;
             }
 
-            if (bytes_to_write >= (plugin.fmt.bps>>3) * plugin.fmt.channels) {
-                err = snd_pcm_writei (audio, buf, snd_pcm_bytes_to_frames(audio, bytes_to_write));
-                if (alsa_terminate) {
-                    break;
-                }
+            if (br != sz) {
+                memset (buf+br, 0, sz-br);
             }
-            else {
-                usleep (10000);
-                bytes_to_write = 0;
-                continue;
+
+            err = snd_pcm_writei (audio, buf, snd_pcm_bytes_to_frames(audio, sz));
+            if (alsa_terminate) {
+                break;
             }
 
             if (err < 0) {
@@ -611,7 +611,6 @@ palsa_thread (void *context) {
                 }
                 continue;
             }
-            bytes_to_write = 0;
             frames_to_deliver = snd_pcm_avail_update (audio);
         }
         int sleeptime = period_size-frames_to_deliver;
