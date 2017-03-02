@@ -1693,6 +1693,17 @@ get_desired_output_format (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt) 
     }
 }
 
+static void
+streamer_set_output_format (ddb_waveformat_t *fmt) {
+    ddb_waveformat_t outfmt;
+    get_desired_output_format (fmt, &outfmt);
+    if (memcmp (&prev_output_format, &outfmt, sizeof (ddb_waveformat_t))) {
+        memcpy (&prev_output_format, &outfmt, sizeof (ddb_waveformat_t));
+        DB_output_t *output = plug_get_output ();
+        output->setformat (&outfmt);
+    }
+}
+
 // when firstblock is true -- means it's allowed to change output format
 static int
 process_output_block (char *bytes, int firstblock) {
@@ -1746,6 +1757,12 @@ process_output_block (char *bytes, int firstblock) {
         last_seekpos = -1;
     }
 
+    if (firstblock) {
+        // Try to set output format to the input format, before running dsp.
+        // This is needed so that resampler knows what to resample to.
+        streamer_set_output_format (&block->fmt);
+    }
+
     ddb_waveformat_t datafmt; // comes either from dsp, or from input plugin
     memcpy (&datafmt, &block->fmt, sizeof (ddb_waveformat_t));
 
@@ -1764,16 +1781,9 @@ process_output_block (char *bytes, int firstblock) {
         block->pos += sz;
     }
 
-    // change output wave format once per frame max
+    // Set the final post-dsp output format, if differs
     if (firstblock) {
-        ddb_waveformat_t outfmt;
-        get_desired_output_format (&datafmt, &outfmt);
-
-        if (memcmp (&prev_output_format, &outfmt, sizeof (ddb_waveformat_t))) {
-            memcpy (&prev_output_format, &outfmt, sizeof (ddb_waveformat_t));
-            DB_output_t *output = plug_get_output ();
-            output->setformat (&outfmt);
-        }
+        streamer_set_output_format (&datafmt);
     }
 
     if (memcmp (&output->fmt, &datafmt, sizeof (ddb_waveformat_t))) {
