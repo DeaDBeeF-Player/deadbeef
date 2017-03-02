@@ -1199,7 +1199,8 @@ streamer_set_nextsong_real (int song, int pstate) {
             pl_unlock ();
         }
         // no sense to wait until end of previous song, reset buffer
-        playpos = playtime = 0;
+        playpos = 0;
+        playtime = 0;
         last_seekpos = -1;
     }
     if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
@@ -1446,7 +1447,8 @@ streamer_thread (void *ctx) {
                     if (next) {
                         pl_item_unref(next);
                     }
-                    playpos = playtime = 0;
+                    playpos = 0;
+                    playtime = 0;
                     output->play ();
                 }
                 break;
@@ -1751,12 +1753,16 @@ process_output_block (char *bytes, int firstblock) {
 
         if (playing_track) {
             send_songfinished (playing_track);
+
+            // only reset playpos/bitrate if track changing to another,
+            // otherwise the track is the first one, and playpos is pre-set
+            playpos = 0;
+            playtime = 0;
+            avg_bitrate = -1;
+            last_seekpos = -1;
         }
         streamer_start_playback (playing_track, block->track);
         send_songstarted (playing_track);
-        playpos = playtime = 0;
-        avg_bitrate = -1;
-        last_seekpos = -1;
     }
 
     if (firstblock) {
@@ -1829,7 +1835,8 @@ streamer_read (char *bytes, int size) {
                 streamer_start_playback (playing_track, NULL);
             }
             output->stop ();
-            playpos = playtime = 0;
+            playpos = 0;
+            playtime = 0;
             avg_bitrate = -1;
             last_seekpos = -1;
         }
