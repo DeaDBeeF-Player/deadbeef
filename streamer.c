@@ -110,7 +110,9 @@ static time_t started_timestamp; // result of calling time(NULL)
 static playItem_t *streaming_track;
 static playItem_t *last_played; // this is the last track that was played, should avoid setting this to NULL
 
-static ddb_waveformat_t prev_output_format; // input file format that was requested
+static ddb_waveformat_t prev_output_format; // last format that was sent to output via streamer_set_output_format
+static ddb_waveformat_t last_block_fmt; // input file format corresponding to the current output
+
 static int formatchanged;
 
 static DB_fileinfo_t *fileinfo;
@@ -1760,7 +1762,11 @@ process_output_block (char *bytes, int firstblock) {
     if (firstblock) {
         // Try to set output format to the input format, before running dsp.
         // This is needed so that resampler knows what to resample to.
-        streamer_set_output_format (&block->fmt);
+        // This only needs to be done once per input format change.
+        if (memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+            streamer_set_output_format (&block->fmt);
+            memcpy (&last_block_fmt, &block->fmt, sizeof (ddb_waveformat_t));
+        }
     }
 
     ddb_waveformat_t datafmt; // comes either from dsp, or from input plugin
@@ -1781,7 +1787,8 @@ process_output_block (char *bytes, int firstblock) {
         block->pos += sz;
     }
 
-    // Set the final post-dsp output format, if differs
+    // Set the final post-dsp output format, if differs.
+    // DSP plugins may change output format at any time.
     if (firstblock) {
         streamer_set_output_format (&datafmt);
     }
