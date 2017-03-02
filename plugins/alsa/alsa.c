@@ -502,16 +502,15 @@ palsa_play (void) {
     state = OUTPUT_STATE_STOPPED;
     err = snd_pcm_drop (audio);
     if (err < 0) {
+        fprintf (stderr, "snd_pcm_drop: %s\n", snd_strerror (err));
         return err;
     }
     err = snd_pcm_prepare (audio);
     if (err < 0) {
+        fprintf (stderr, "snd_pcm_prepare: %s\n", snd_strerror (err));
         return err;
     }
-    err = snd_pcm_start (audio);
-    if (err < 0) {
-        return err;
-    }
+    snd_pcm_start (audio);
 
     state = OUTPUT_STATE_PLAYING;
     return 0;
