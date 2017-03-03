@@ -1824,6 +1824,8 @@ streamer_read (char *bytes, int size) {
     streamer_lock ();
     streamblock_t *block = streamreader_get_curr_block();
     if (!block) {
+        // NULL streaming_track means playback stopped,
+        // otherwise just a buffer starvation (e.g. after seeking)
         if (!streaming_track) {
             update_stop_after_current ();
             if (playing_track) {
@@ -1838,7 +1840,7 @@ streamer_read (char *bytes, int size) {
         }
         streamer_unlock();
 
-        return -1;
+        return streaming_track ? 0 : -1;
     }
 
     // decode enough blocks to fill the output buffer
