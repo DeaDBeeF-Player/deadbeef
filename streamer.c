@@ -168,6 +168,9 @@ static void
 streamer_set_nextsong_real (int song, int pstate);
 
 static void
+play_index (int idx);
+
+static void
 play_current (void);
 
 static void
@@ -299,7 +302,9 @@ int
 str_get_idx_of (playItem_t *it) {
     pl_lock ();
     if (!streamer_playlist) {
-        streamer_playlist = plt_get_curr ();
+        playlist_t *plt = plt_get_curr ();
+        streamer_set_streamer_playlist (plt);
+        plt_unref (plt);
     }
     playItem_t *c = streamer_playlist->head[PL_MAIN];
     int idx = 0;
@@ -319,7 +324,9 @@ playItem_t *
 str_get_for_idx (int idx) {
     pl_lock ();
     if (!streamer_playlist) {
-        streamer_playlist = plt_get_curr ();
+        playlist_t *plt = plt_get_curr ();
+        streamer_set_streamer_playlist (plt);
+        plt_unref (plt);
     }
     playItem_t *it = streamer_playlist->head[PL_MAIN];
     while (idx--) {
@@ -398,7 +405,9 @@ stop_after_album_check (playItem_t *cur, playItem_t *next) {
 static playItem_t *
 get_random_track (void) {
     if (!streamer_playlist) {
-        streamer_playlist = plt_get_curr ();
+        playlist_t *plt = plt_get_curr ();
+        streamer_set_streamer_playlist (plt);
+        plt_unref (plt);
     }
     playlist_t *plt = streamer_playlist;
     int cnt = plt->count[PL_MAIN];
@@ -422,7 +431,9 @@ static playItem_t *
 get_next_track (playItem_t *curr) {
     pl_lock ();
     if (!streamer_playlist) {
-        streamer_playlist = plt_get_curr ();
+        playlist_t *plt = plt_get_curr ();
+        streamer_set_streamer_playlist (plt);
+        plt_unref (plt);
     }
 
     while (playqueue_getcount ()) {
@@ -554,16 +565,14 @@ get_next_track (playItem_t *curr) {
 static playItem_t *
 get_prev_track (playItem_t *curr) {
     pl_lock ();
-    if (streamer_playlist) {
-        plt_unref (streamer_playlist);
-    }
-    streamer_playlist = plt_get_curr ();
+    playlist_t *plt = plt_get_curr ();
+    streamer_set_streamer_playlist (plt);
+    plt_unref (plt);
     // check if prev song is in this playlist
     if (-1 == str_get_idx_of (curr)) {
         curr = NULL;
     }
 
-    playlist_t *plt = streamer_playlist;
     playqueue_clear ();
     if (!plt->head[PL_MAIN]) {
         pl_unlock ();
@@ -823,7 +832,9 @@ streamer_set_current (playItem_t *it) {
     }
     streamer_unlock ();
 
-
+    // FIXME: there's no way to start stream paused anymore, which means resumed session on pause will start streaming immediately.
+    // This needs fixing
+#if 0
     int paused_stream = 0;
     if (it && nextsong_pstate == 2) {
         paused_stream = is_remote_stream (it);
@@ -832,6 +843,8 @@ streamer_set_current (playItem_t *it) {
     if (!it || paused_stream) {
         goto success;
     }
+#endif
+
     if (to) {
         send_trackinfochanged (to);
     }
@@ -1165,15 +1178,13 @@ streamer_get_apx_bitrate (void) {
 }
 
 void
-streamer_set_nextsong (int song, int pstate) {
-//    pthread_t tid = pthread_self ();
-//    assert (tid != streamer_tid);
-    if (pstate == 0) {
+streamer_set_nextsong (int song) {
+    if (song == -1) {
         // this is a stop query -- clear the queue
         handler_reset (handler);
     }
     streamer_abort_files ();
-    handler_push (handler, STR_EV_PLAY_TRACK_IDX, 0, song, pstate);
+    handler_push (handler, STR_EV_PLAY_TRACK_IDX, 0, song, 0);
 }
 
 static void
@@ -1190,12 +1201,9 @@ streamer_set_nextsong_real (int song, int pstate) {
     nextsong_pstate = pstate;
     if (output->state () == OUTPUT_STATE_STOPPED) {
         if (pstate == 1) { // means user initiated this
-            pl_lock ();
-            if (streamer_playlist) {
-                plt_unref (streamer_playlist);
-            }
-            streamer_playlist = plt_get_curr ();
-            pl_unlock ();
+            playlist_t *plt = plt_get_curr ();
+            streamer_set_streamer_playlist (plt);
+            plt_unref (plt);
         }
         // no sense to wait until end of previous song, reset buffer
         playpos = 0;
@@ -1433,7 +1441,7 @@ streamer_thread (void *ctx) {
         if (!handler_pop (handler, &id, &ctx, &p1, &p2)) {
             switch (id) {
             case STR_EV_PLAY_TRACK_IDX:
-                streamer_set_nextsong_real (p1, p2);
+                play_index (p1);
                 break;
             case STR_EV_PLAY_CURR:
                 play_current ();
@@ -1628,10 +1636,7 @@ streamer_free (void) {
         pl_item_unref (last_played);
         last_played = NULL;
     }
-    if (streamer_playlist) {
-        plt_unref (streamer_playlist);
-        streamer_playlist = NULL;
-    }
+    streamer_set_streamer_playlist (NULL);
 
     ctmap_free ();
     ctmap_free_mutex ();
@@ -1829,9 +1834,13 @@ streamer_read (char *bytes, int size) {
         if (!streaming_track) {
             update_stop_after_current ();
             if (playing_track) {
-                send_songfinished (playing_track);
-                send_trackinfochanged (playing_track);
+                playItem_t *trk = playing_track;
+                pl_item_ref (trk);
+                send_songfinished (trk);
                 streamer_start_playback (playing_track, NULL);
+                send_trackinfochanged (trk);
+                send_trackchanged (trk, NULL);
+                pl_item_unref (trk);
             }
             playpos = 0;
             playtime = 0;
@@ -2059,6 +2068,37 @@ streamer_configchanged (void) {
     conf_streamer_nosleep = conf_get_int ("streamer.nosleep", 0);
 }
 
+// play track in current playlist by index
+static void
+play_index (int idx) {
+    playlist_t *plt = plt_get_curr ();
+    playItem_t *it = plt_get_item_for_idx (plt, idx, PL_MAIN);
+    if (!it) {
+        plt_unref (plt);
+        return;
+    }
+
+    DB_output_t *output = plug_get_output ();
+
+    pl_lock ();
+    if (plt != streamer_playlist) {
+        streamer_set_streamer_playlist (plt);
+    }
+    pl_unlock ();
+    if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
+        plt_init_shuffle_albums (plt, idx);
+    }
+    streamer_reset (1);
+    stream_track (it);
+    playpos = 0;
+    playtime = 0;
+    streamer_start_playback (playing_track, it);
+    send_songstarted (playing_track);
+    output->play ();
+    pl_item_unref(it);
+    plt_unref (plt);
+}
+
 // if a track is playing: restart
 // if a track is paused: unpause
 // if no track is playing: do what comes first:
@@ -2098,11 +2138,7 @@ play_current (void) {
 
         pl_lock ();
         if (plt != streamer_playlist) {
-            if (streamer_playlist) {
-                plt_unref (streamer_playlist);
-            }
-            streamer_playlist = plt;
-            plt_ref (streamer_playlist);
+            streamer_set_streamer_playlist (plt);
         }
         pl_unlock ();
         stream_track (next);
@@ -2274,6 +2310,7 @@ vis_spectrum_unlisten (void *ctx) {
 
 void
 streamer_set_streamer_playlist (playlist_t *plt) {
+    pl_lock ();
     if (streamer_playlist) {
         plt_unref (streamer_playlist);
     }
@@ -2281,6 +2318,7 @@ streamer_set_streamer_playlist (playlist_t *plt) {
     if (streamer_playlist) {
         plt_ref (streamer_playlist);
     }
+    pl_unlock ();
 }
 
 struct handler_s *

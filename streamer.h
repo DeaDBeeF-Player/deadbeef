@@ -32,7 +32,7 @@
 
 // events to pass to streamer thread
 enum {
-    STR_EV_PLAY_TRACK_IDX, // p1 = idx, p2 = pstate; see streamer_set_nextsong semantics
+    STR_EV_PLAY_TRACK_IDX, // p1 = idx, or -1 to stop
     STR_EV_PLAY_CURR, // will play the current streamer track (playing_track), see more details in streamer_play_current_track
     STR_EV_NEXT, // streamer_move_to_nextsong
     STR_EV_PREV, // streamer_move_to_prevsong
@@ -62,15 +62,9 @@ streamer_lock (void);
 void
 streamer_unlock (void);
 
-// pstate indicates what to do with playback
-// -1 means "don't do anything"
-// 0 stop
-// 1 switch to current (gui) playlist, play if not playing
-// 2 pause
-// 3 play if not playing, don't switch playlist
-// 4 same as 1, but stops playback before proceeding
+// song == -1 means "stop and clear streamer message queue"
 void
-streamer_set_nextsong (int song, int pstate);
+streamer_set_nextsong (int song);
 
 void
 streamer_set_seek (float pos);

@@ -635,10 +635,10 @@ player_mainloop (void) {
                     break;
                 case DB_EV_PLAY_NUM:
                     playqueue_clear ();
-                    streamer_set_nextsong (p1, 4);
+                    streamer_set_nextsong (p1);
                     break;
                 case DB_EV_STOP:
-                    streamer_set_nextsong (-2, 0);
+                    streamer_set_nextsong (-1);
                     break;
                 case DB_EV_NEXT:
                     streamer_move_to_nextsong (1);
@@ -734,15 +734,14 @@ restore_resume_state (void) {
         int paused = conf_get_int ("resume.paused", 0);
         trace ("resume: track %d pos %f playlist %d\n", track, pos, plt);
         if (plt >= 0 && track >= 0 && pos >= 0) {
-            output->pause ();
             streamer_set_current_playlist (plt);
             streamer_yield ();
-            streamer_set_nextsong (track, paused ? 2 : 3);
+            streamer_set_nextsong (track);
             streamer_yield ();
             streamer_set_seek (pos);
             streamer_yield ();
-            if (!paused) {
-                output->play ();
+            if (paused) {
+                output->pause ();
             }
         }
     }
