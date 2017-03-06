@@ -3365,6 +3365,27 @@ pl_get_totaltime (void) {
     return t;
 }
 
+float
+plt_get_seltime (playlist_t *playlist) {
+    float t = 0;
+
+    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+        if (it->selected) {
+            t += it->_duration;
+        }
+    }
+
+    return t;
+}
+
+float
+pl_get_seltime (void) {
+    LOCK;
+    float t = plt_get_seltime (playlist);
+    UNLOCK;
+    return t;
+}
+
 void
 pl_set_selected (playItem_t *it, int sel) {
     LOCK;
