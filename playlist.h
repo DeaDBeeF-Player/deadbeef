@@ -66,6 +66,7 @@ typedef struct playlist_s {
     struct playlist_s *next;
     int count[2];
     float totaltime;
+    float seltime;
     int modification_idx;
     int last_save_modification_idx;
     playItem_t *head[PL_MAX_ITERATORS]; // head of linked list
