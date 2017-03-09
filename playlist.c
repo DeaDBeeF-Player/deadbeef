@@ -536,18 +536,22 @@ plt_find (const char *name) {
 
 
 void
+plt_recalculate_seltime (playlist_t *plt) {
+    for (playItem_t *it = plt->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+        if (it->selected) {
+            float dur = pl_get_item_duration (it);
+            plt->seltime += dur;
+        }
+    }
+}
+
+void
 plt_set_curr (playlist_t *plt) {
     LOCK;
     if (plt != playlist) {
         playlist = plt;
         if (!plt_loading) {
-
-            for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-                if (it->selected) {
-                    float dur = pl_get_item_duration (it);
-                    playlist->seltime += dur;
-                }
-            }
+            plt_recalculate_seltime(playlist);
 
             messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
             conf_set_int ("playlist.current", plt_get_curr_idx ());
@@ -568,13 +572,7 @@ plt_set_curr_idx (int plt) {
     if (p != playlist) {
         playlist = p;
         if (!plt_loading) {
-
-            for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-                if (it->selected) {
-                    float dur = pl_get_item_duration (it);
-                    playlist->seltime += dur;
-                }
-            }
+            plt_recalculate_seltime(playlist);
 
             messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
             conf_set_int ("playlist.current", plt);

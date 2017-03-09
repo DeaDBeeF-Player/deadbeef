@@ -142,6 +142,9 @@ int
 plt_find (const char *name);
 
 void
+plt_recalculate_seltime (playlist_t *plt);
+
+void
 plt_set_curr_idx (int plt);
 
 int
