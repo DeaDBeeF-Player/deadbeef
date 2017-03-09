@@ -3392,14 +3392,9 @@ pl_get_totaltime (void) {
 
 float
 plt_get_seltime (playlist_t *playlist) {
-    float t = 0;
-
-    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-        if (it->selected) {
-            t += it->_duration;
-        }
-    }
-
+    LOCK
+    float t = playlist->seltime;
+    UNLOCK;
     return t;
 }
 
