@@ -181,27 +181,26 @@ update_songinfo (gpointer ctx) {
     if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track)) {
         snprintf (sbtext_new,
                   sizeof (sbtext_new),
-                  _("Stopped | %d tracks | %s total playtime | %s selected playtime"),
+                  _("Stopped | %d tracks | %s total playtime"),
                   deadbeef->pl_getcount (PL_MAIN),
-                  totaltime_str,
-                  seltime_str);
+                  totaltime_str);
     }
     else {
         ddb_tf_context_t ctx = {
             ._size = sizeof (ddb_tf_context_t),
             .it = track,
             .iter = PL_MAIN,
+            .plt = deadbeef->plt_get_curr()
         };
 
         char buffer[200];
         deadbeef->tf_eval (&ctx, statusbar_bc, buffer, sizeof (buffer));
         snprintf (sbtext_new,
                   sizeof (sbtext_new),
-                  "%s | %d tracks | %s total playtime | %s selected playtime",
+                  "%s | %d tracks | %s total playtime",
                   buffer,
                   deadbeef->pl_getcount (PL_MAIN),
-                  totaltime_str,
-                  seltime_str);
+                  totaltime_str);
     }
 
     if (strcmp (sbtext_new, sb_text)) {
@@ -391,7 +390,7 @@ gtkui_titlebar_tf_init (void) {
     deadbeef->conf_get_str ("gtkui.titlebar_stopped_tf", gtkui_default_titlebar_stopped, fmt, sizeof (fmt));
     titlebar_stopped_bc = deadbeef->tf_compile (fmt);
 
-    statusbar_bc = deadbeef->tf_compile ("$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length%");
+    statusbar_bc = deadbeef->tf_compile ("$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length% | %seltime% selected playtime");
 }
 
 void
