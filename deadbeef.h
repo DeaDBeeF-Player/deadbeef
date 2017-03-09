@@ -800,7 +800,6 @@ typedef struct {
     int (*plt_remove_item) (ddb_playlist_t *playlist, DB_playItem_t *it);
     int (*plt_getselcount) (ddb_playlist_t *playlist);
     float (*plt_get_totaltime) (ddb_playlist_t *plt);
-    float (*plt_get_seltime) (ddb_playlist_t *plt);
     int (*plt_get_item_count) (ddb_playlist_t *plt, int iter);
     int (*plt_delete_selected) (ddb_playlist_t *plt);
     void (*plt_set_cursor) (ddb_playlist_t *plt, int iter, int cursor);
@@ -868,9 +867,6 @@ typedef struct {
 
     // get total play time of all tracks in MAIN
     float (*pl_get_totaltime) (void);
-
-    // get total play time of selected tracks in MAIN
-    float (*pl_get_seltime) (void);
 
     // get number of tracks in MAIN or SEARCH
     int (*pl_getcount) (int iter);
@@ -1392,6 +1388,12 @@ typedef struct {
     void (*pl_item_set_startsample) (DB_playItem_t *it, int64_t sample);
 
     void (*pl_item_set_endsample) (DB_playItem_t *it, int64_t sample);
+
+
+    // get total play time of selected tracks
+    float (*plt_get_seltime) (ddb_playlist_t *plt);
+
+    float (*pl_get_seltime) (void);
 
 #endif
 } DB_functions_t;
