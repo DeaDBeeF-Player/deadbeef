@@ -3396,14 +3396,6 @@ plt_get_seltime (playlist_t *playlist) {
     return t;
 }
 
-float
-pl_get_seltime (void) {
-    LOCK;
-    float t = plt_get_seltime (playlist);
-    UNLOCK;
-    return t;
-}
-
 void
 pl_set_selected (playItem_t *it, int sel) {
     LOCK;

@@ -1393,8 +1393,6 @@ typedef struct {
     // get total play time of selected tracks
     float (*plt_get_seltime) (ddb_playlist_t *plt);
 
-    float (*pl_get_seltime) (void);
-
 #endif
 } DB_functions_t;
 

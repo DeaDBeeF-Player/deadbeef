@@ -249,10 +249,8 @@ static DB_functions_t deadbeef_api = {
     .pl_set_item_replaygain = (void (*)(DB_playItem_t *it, int idx, float value))pl_set_item_replaygain,
     .pl_get_item_replaygain = (float (*)(DB_playItem_t *it, int idx))pl_get_item_replaygain,
     .plt_get_totaltime = (float (*) (ddb_playlist_t *plt))plt_get_totaltime,
-    .plt_get_seltime = (float (*) (ddb_playlist_t *plt))plt_get_seltime,
     .plt_get_item_for_idx = (DB_playItem_t * (*) (ddb_playlist_t *playlist, int idx, int iter))plt_get_item_for_idx,
     .pl_get_totaltime = pl_get_totaltime,
-    .pl_get_seltime = pl_get_seltime,
     .pl_getcount = pl_getcount,
     .plt_get_item_count = (int (*)(ddb_playlist_t *plt, int iter))plt_get_item_count,
     .plt_delete_selected = (int (*) (ddb_playlist_t *plt))plt_delete_selected,
@@ -492,6 +490,8 @@ static DB_functions_t deadbeef_api = {
     .pl_item_get_endsample = (int64_t (*) (DB_playItem_t *it))pl_item_get_endsample,
     .pl_item_set_startsample = (void (*) (DB_playItem_t *it, int64_t sample))pl_item_set_startsample,
     .pl_item_set_endsample = (void (*) (DB_playItem_t *it, int64_t sample))pl_item_set_endsample,
+
+    .plt_get_seltime = (float (*) (ddb_playlist_t *plt))plt_get_seltime,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

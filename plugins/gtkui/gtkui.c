@@ -172,10 +172,6 @@ update_songinfo (gpointer ctx) {
     char totaltime_str[512] = "";
     format_timestr(totaltime_str, pl_totaltime);
 
-    float pl_seltime = deadbeef->pl_get_seltime ();
-    char seltime_str[512] = "";
-    format_timestr(seltime_str, pl_seltime);
-
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
 
     if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track)) {
