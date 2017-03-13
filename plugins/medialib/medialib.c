@@ -620,6 +620,9 @@ ml_get_list (const char *index) {
 
     deadbeef->mutex_lock (mutex);
 
+    struct timeval tm1, tm2;
+    gettimeofday (&tm1, NULL);
+
     ddb_medialib_item_t *root = calloc (1, sizeof (ddb_medialib_item_t));
     root->text = deadbeef->metacache_add_string ("All Music");
     ddb_medialib_item_t *tail = NULL;
@@ -649,6 +652,10 @@ ml_get_list (const char *index) {
         parent->num_children++;
     }
 
+    gettimeofday (&tm2, NULL);
+    long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
+
+    fprintf (stderr, "tree build time: %f seconds\n", ms / 1000.f);
     deadbeef->mutex_unlock (mutex);
 
     return root;
