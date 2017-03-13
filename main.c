@@ -388,7 +388,11 @@ add_paths(const char *paths, int len, int queue, char *sendback, int sbsize) {
         if (deadbeef->plt_add_dir2 (0, (ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
             if (deadbeef->plt_add_file2 (0, (ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
                 int ab = 0;
-                playItem_t *it = plt_load2 (0, curr_plt, NULL, pname, &ab, NULL, NULL);
+                playItem_t *after = plt_get_last (curr_plt, PL_MAIN);
+                playItem_t *it = plt_load2 (0, curr_plt, after, pname, &ab, NULL, NULL);
+                if (after) {
+                    pl_item_unref (after);
+                }
                 if (!it) {
                     trace_err ("failed to add file or folder %s\n", pname);
                 }
@@ -631,10 +635,10 @@ player_mainloop (void) {
                     break;
                 case DB_EV_PLAY_NUM:
                     playqueue_clear ();
-                    streamer_set_nextsong (p1, 4);
+                    streamer_set_nextsong (p1);
                     break;
                 case DB_EV_STOP:
-                    streamer_set_nextsong (-2, 0);
+                    streamer_set_nextsong (-1);
                     break;
                 case DB_EV_NEXT:
                     streamer_move_to_nextsong (1);
@@ -669,9 +673,10 @@ player_mainloop (void) {
                 case DB_EV_SEEK:
                     {
                         int32_t pos = (int32_t)p1;
-                        if (pos > 0) {
-                            streamer_set_seek (p1 / 1000.f);
+                        if (pos < 0) {
+                            pos = 0;
                         }
+                        streamer_set_seek (p1 / 1000.f);
                     }
                     break;
                 }
@@ -722,18 +727,22 @@ sigsegv_handler (int sig) {
 void
 restore_resume_state (void) {
     DB_output_t *output = plug_get_output ();
-    if (conf_get_int ("resume_last_session", 0) && output->state () == OUTPUT_STATE_STOPPED) {
+    if (conf_get_int ("resume_last_session", 1) && output->state () == OUTPUT_STATE_STOPPED) {
         int plt = conf_get_int ("resume.playlist", -1);
         int track = conf_get_int ("resume.track", -1);
         float pos = conf_get_float ("resume.position", -1);
         int paused = conf_get_int ("resume.paused", 0);
         trace ("resume: track %d pos %f playlist %d\n", track, pos, plt);
         if (plt >= 0 && track >= 0 && pos >= 0) {
-            streamer_lock (); // need to hold streamer thread to make the resume operation atomic
             streamer_set_current_playlist (plt);
-            streamer_set_nextsong (track, paused ? 2 : 3);
+            streamer_yield ();
+            streamer_set_nextsong (track);
+            streamer_yield ();
             streamer_set_seek (pos);
-            streamer_unlock ();
+            streamer_yield ();
+            if (paused) {
+                output->pause ();
+            }
         }
     }
 }
@@ -1137,6 +1146,8 @@ main (int argc, char *argv[]) {
     server_tid = thread_start (server_loop, NULL);
 
     mainloop_tid = thread_start (mainloop_thread, NULL);
+
+    messagepump_push (DB_EV_CONFIGCHANGED, 0, 0, 0);
 
     DB_plugin_t *gui = plug_get_gui ();
     if (gui) {

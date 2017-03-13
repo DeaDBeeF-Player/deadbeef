@@ -230,13 +230,6 @@ mp3_check_xing_header (buffer_t *buffer, int packetlength, int sample, int sampl
             deadbeef->fread (buf, 1, 4, buffer->file);
             trace ("lame totalsamples: %d\n", buffer->totalsamples);
         }
-        if (flags&FRAMES_FLAG) {
-            buffer->have_xing_header = 1;
-            buffer->startoffset = framepos+packetlength;
-            if (fsize >= 0) {
-                buffer->bitrate = (int)((fsize - buffer->startoffset - buffer->endoffset) / buffer->duration * 8);
-            }
-        }
     }
 
     return 0;
@@ -558,43 +551,6 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     continue;
                 }
             }
-
-            if (sample == 0) {
-                if (!buffer->file->vfs->is_streaming ()) {
-                    // guess duration from filesize
-                    int64_t sz = deadbeef->fgetlength (buffer->file) - buffer->startoffset;
-                    if (sz > 0) {
-                        sz -= buffer->startoffset + buffer->endoffset;
-                        if (sz < 0) {
-                            trace ("cmp3_scan_stream: bad file headers\n");
-                            return -1;
-                        }
-                    }
-                    if (sz < 0) {
-                        // unable to determine duration
-                        buffer->duration = -1;
-                        buffer->totalsamples = -1;
-                        if (sample == 0) {
-                            trace ("check validity of the next frame...\n");
-                            continue;
-                        }
-                        trace ("cmp3_scan_stream: unable to determine duration");
-                        return 0;
-                    }
-                    buffer->nframes = (int)(sz / frame.packetlength);
-                    buffer->avg_packetlength = frame.packetlength;
-                    buffer->avg_samplerate = frame.samplerate;
-                    buffer->avg_samples_per_frame = frame.samples_per_frame;
-                    buffer->duration = (((uint64_t)buffer->nframes * (uint64_t)frame.samples_per_frame) - buffer->delay - buffer->padding)/ (float)frame.samplerate;
-                    buffer->totalsamples = buffer->nframes * frame.samples_per_frame;
-                    trace ("totalsamples: %d, samplesperframe: %d, fsize=%lld\n", buffer->totalsamples, frame.samples_per_frame, fsize);
-        //                    trace ("bitrate=%d, layer=%d, packetlength=%d, fsize=%d, nframes=%d, samples_per_frame=%d, samplerate=%d, duration=%f, totalsamples=%d\n", bitrate, layer, packetlength, sz, nframe, samples_per_frame, samplerate, buffer->duration, buffer->totalsamples);
-
-                    deadbeef->fseek (buffer->file, framepos, SEEK_SET);
-
-                    return 0;
-                }
-            }
         }
 // }}}
 
@@ -643,7 +599,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         nframe++;
     }
 end_scan:
-    if (nframe == 0) {
+    if (nframe == 0 || valid_frames == 0) {
         trace ("cmp3_scan_stream: couldn't find mpeg frames in file\n");
         return -1;
     }
@@ -858,9 +814,10 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         if (info->buffer.padding >= 529) {
             info->buffer.padding -= 529;
         }
-        if (it->endsample > 0) {
-            info->buffer.startsample = it->startsample + info->buffer.delay;
-            info->buffer.endsample = it->endsample + info->buffer.delay;
+        int64_t endsample = deadbeef->pl_item_get_endsample (it);
+        if (endsample > 0) {
+            info->buffer.startsample = deadbeef->pl_item_get_startsample (it) + info->buffer.delay;
+            info->buffer.endsample = endsample + info->buffer.delay;
             // that comes from cue, don't calc duration, just seek and play
             trace ("mp3 totalsamples: %d\n", info->buffer.endsample-info->buffer.startsample+1);
         }
@@ -1082,12 +1039,16 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
     cmp3_decode (info);
 
     if (!info->raw_signal) {
-        // apply replaygain, before clipping
         ddb_waveformat_t fmt;
         memcpy (&fmt, &info->info.fmt, sizeof (fmt));
         fmt.bps = 32;
         fmt.is_float = 1;
+
+#if 0
+        // RG disabled because block-based streaming doesn't set the RG parameters at read time
+        // apply replaygain, before clipping
         deadbeef->replaygain_apply (&fmt, info->want_16bit ? info->conv_buf : bytes, req_size - info->buffer.readsize);
+#endif
 
         // convert to 16 bit, if needed
         if (info->want_16bit) {
@@ -1340,7 +1301,7 @@ static DB_decoder_t plugin = {
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
-    .plugin.flags = DDB_PLUGIN_FLAG_REPLAYGAIN,
+//    .plugin.flags = DDB_PLUGIN_FLAG_REPLAYGAIN,
     .plugin.id = "stdmpg",
     .plugin.name = "MP3 player",
     .plugin.descr = "MPEG v1/2 layer1/2/3 decoder\n\n"

@@ -926,7 +926,9 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
         outsize += sz;
 
         if (!header_written) {
-            uint64_t size = (int64_t)(it->endsample-it->startsample) * outch * output_bps / 8;
+            int64_t startsample = deadbeef->pl_item_get_startsample (it);
+            int64_t endsample = deadbeef->pl_item_get_endsample (it);
+            uint64_t size = (int64_t)(endsample-startsample) * outch * output_bps / 8;
             if (!size) {
                 size = (double)deadbeef->pl_get_item_duration (it) * fileinfo->fmt.samplerate * outch * output_bps / 8;
 
@@ -1124,9 +1126,33 @@ _converter_write_tags (ddb_encoder_preset_t *encoder_preset, DB_playItem_t *it, 
         // encoder doesn't specify tagging format
         return 0;
     }
-    out_it = deadbeef->pl_item_alloc ();
-    deadbeef->pl_item_copy (out_it, it);
-    deadbeef->pl_set_item_flags (out_it, 0);
+
+    out_it = deadbeef->pl_item_init (out);
+
+    if (!out_it) {
+        // can't initialize the converted file, just copy metadata from source
+        out_it = deadbeef->pl_item_alloc ();
+        deadbeef->pl_item_copy (out_it, it);
+        deadbeef->pl_set_item_flags (out_it, 0);
+    }
+    else {
+        // merge metadata
+        deadbeef->pl_lock ();
+
+        DB_metaInfo_t *meta = deadbeef->pl_get_metadata_head (it);
+        while (meta) {
+            if (strchr (":!_", meta->key[0])) {
+                break;
+            }
+            if (!deadbeef->pl_meta_exists (out_it, meta->key)) {
+                deadbeef->pl_append_meta (out_it, meta->key, meta->value);
+            }
+            meta = meta->next;
+        }
+
+        deadbeef->pl_unlock ();
+    }
+
     DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (out_it);
     while (m) {
         DB_metaInfo_t *next = m->next;

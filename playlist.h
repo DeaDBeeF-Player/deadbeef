@@ -41,9 +41,12 @@
 // :DURATION - length in seconds
 
 typedef struct playItem_s {
-    int startsample;
-    int endsample;
-    int shufflerating; // sort order for shuffle mode
+    int32_t startsample32;
+    int32_t endsample32;
+    int32_t shufflerating; // sort order for shuffle mode
+
+    int64_t startsample64;
+    int64_t endsample64;
     // private area, must not be visible to plugins
     float _duration;
     uint32_t _flags;
@@ -54,6 +57,8 @@ typedef struct playItem_s {
     unsigned selected : 1;
     unsigned played : 1; // mark as played in shuffle mode
     unsigned in_playlist : 1; // 1 if item is in playlist
+    unsigned has_startsample64 : 1;
+    unsigned has_endsample64 : 1;
 } playItem_t;
 
 typedef struct playlist_s {
@@ -280,6 +285,9 @@ pl_find_meta_raw (playItem_t *it, const char *key);
 int
 pl_find_meta_int (playItem_t *it, const char *key, int def);
 
+int64_t
+pl_find_meta_int64 (playItem_t *it, const char *key, int64_t def);
+
 float
 pl_find_meta_float (playItem_t *it, const char *key, float def);
 
@@ -288,6 +296,9 @@ pl_replace_meta (playItem_t *it, const char *key, const char *value);
 
 void
 pl_set_meta_int (playItem_t *it, const char *key, int value);
+
+void
+pl_set_meta_int64 (playItem_t *it, const char *key, int64_t value);
 
 void
 pl_set_meta_float (playItem_t *it, const char *key, float value);
@@ -553,5 +564,20 @@ register_fileadd_filter (int (*callback)(ddb_file_found_data_t *data, void *user
 
 void
 unregister_fileadd_filter (int id);
+
+playItem_t *
+pl_item_init (const char *fname);
+
+int64_t
+pl_item_get_startsample (playItem_t *it);
+
+int64_t
+pl_item_get_endsample (playItem_t *it);
+
+void
+pl_item_set_startsample (playItem_t *it, int64_t sample);
+
+void
+pl_item_set_endsample (playItem_t *it, int64_t sample);
 
 #endif // __PLAYLIST_H

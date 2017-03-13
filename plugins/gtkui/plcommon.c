@@ -1404,6 +1404,9 @@ pl_common_load_column_config (DdbListview *listview, const char *key) {
         }
         if (json_is_string (width)) {
             iwidth = atoi (json_string_value (width));
+            if (iwidth < 0) {
+                iwidth = 50;
+            }
         }
         if (json_is_string (color_override)) {
             icolor_override = atoi (json_string_value (color_override));
@@ -1572,14 +1575,17 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
             else if (!strcmp (inf->format, COLUMN_FORMAT_TITLE)) {
                 idx = 6;
             }
-            else if (!strcmp (inf->format, COLUMN_FORMAT_LENGTH)) {
+            else if (!strcmp (inf->format, COLUMN_FORMAT_YEAR)) {
                 idx = 7;
             }
-            else if (!strcmp (inf->format, COLUMN_FORMAT_TRACKNUMBER)) {
+            else if (!strcmp (inf->format, COLUMN_FORMAT_LENGTH)) {
                 idx = 8;
             }
-            else if (!strcmp (inf->format, COLUMN_FORMAT_BAND)) {
+            else if (!strcmp (inf->format, COLUMN_FORMAT_TRACKNUMBER)) {
                 idx = 9;
+            }
+            else if (!strcmp (inf->format, COLUMN_FORMAT_BAND)) {
+                idx = 10;
             }
         }
     }

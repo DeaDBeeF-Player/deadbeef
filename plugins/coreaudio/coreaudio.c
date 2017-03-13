@@ -130,6 +130,8 @@ ca_free (void) {
         AudioDeviceStop(device_id, ca_buffer_callback);
         AudioObjectRemovePropertyListener(device_id, &theAddress, ca_fmtchanged, NULL);
         AudioDeviceDestroyIOProcID(device_id, process_id);
+        process_id = 0;
+        device_id = 0;
     }
     return 0;
 }
@@ -160,9 +162,11 @@ ca_play (void) {
             return -1;
         }
     }
+
     if (AudioDeviceStart (device_id, ca_buffer_callback)) {
         return -1;
     }
+
     state = OUTPUT_STATE_PLAYING;
 
     return 0;
@@ -170,14 +174,14 @@ ca_play (void) {
 
 static int
 ca_stop (void) {
+    state = OUTPUT_STATE_STOPPED;
+
     if (!device_id) {
         return 0;
     }
     if (AudioDeviceStop (device_id, ca_buffer_callback)) {
         return -1;
     }
-    state = OUTPUT_STATE_STOPPED;
-    device_id = 0;
 
     return 0;
 }
@@ -185,6 +189,11 @@ ca_stop (void) {
 static int
 ca_pause (void) {
     state = OUTPUT_STATE_PAUSED;
+
+    if (!device_id) {
+        return 0;
+    }
+
     if (AudioDeviceStop (device_id, ca_buffer_callback)) {
         return -1;
     }
@@ -233,8 +242,9 @@ ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const A
 
     if (state == OUTPUT_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1)) {
         int br = deadbeef->streamer_read (buffer, sz);
-        if (br <= 0) {
-            memset (buffer, 0, sz);
+        if (br < 0) {
+            state = OUTPUT_STATE_STOPPED;
+            AudioDeviceStop (device_id, ca_buffer_callback);
             return -1;
         }
         if (br != sz) {

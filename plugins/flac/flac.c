@@ -382,9 +382,10 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     info->buffer = malloc (BUFFERSIZE);
     info->remaining = 0;
-    if (it->endsample > 0) {
-        info->startsample = it->startsample;
-        info->endsample = it->endsample;
+    int64_t endsample = deadbeef->pl_item_get_endsample (it);
+    if (endsample > 0) {
+        info->startsample = deadbeef->pl_item_get_startsample (it);
+        info->endsample = endsample;
         if (plugin.seek_sample (_info, 0) < 0) {
             trace ("cflac_init failed to seek to sample 0\n");
             return -1;
@@ -748,10 +749,12 @@ cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_pl
         snprintf (id, sizeof (id), "ARTIST[%d]", i+1);
         deadbeef->pl_add_meta (it, "artist", deadbeef->pl_find_meta (origin, id));
         deadbeef->pl_add_meta (it, "band", deadbeef->pl_find_meta (origin, "artist"));
-        it->startsample = cuesheet->tracks[i].offset;
-        it->endsample = cuesheet->tracks[i+1].offset-1;
+        int64_t startsample = cuesheet->tracks[i].offset;
+        int64_t endsample = cuesheet->tracks[i+1].offset-1;
+        deadbeef->pl_item_set_startsample (it, startsample);
+        deadbeef->pl_item_set_endsample (it, endsample);
         deadbeef->pl_replace_meta (it, ":FILETYPE", ftype);
-        deadbeef->plt_set_item_duration (plt, it, (float)(it->endsample - it->startsample + 1) / samplerate);
+        deadbeef->plt_set_item_duration (plt, it, (float)(endsample - startsample + 1) / samplerate);
         after = deadbeef->plt_insert_item (plt, after, it);
         deadbeef->pl_item_unref (it);
     }

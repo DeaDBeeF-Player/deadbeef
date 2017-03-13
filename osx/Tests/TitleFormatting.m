@@ -733,24 +733,24 @@ static DB_output_t fake_out = {
 }
 
 - (void)test_LengthSamplesOf100Start300End_Returns200 {
-    it->startsample = 100;
-    it->endsample = 300;
+    pl_item_set_startsample (it, 100);
+    pl_item_set_endsample (it, 300);
     char *bc = tf_compile("%length_samples%");
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, "200"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_AbbrTestString_ReturnsAbbreviatedString {
-    it->startsample = 100;
-    it->endsample = 300;
+    pl_item_set_startsample (it, 100);
+    pl_item_set_endsample (it, 300);
     char *bc = tf_compile("$abbr('This is a Long Title (12-inch version) [needs tags]')");
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, "TiaLT1v[needst"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_AbbrTestUnicodeString_ReturnsAbbreviatedString {
-    it->startsample = 100;
-    it->endsample = 300;
+    pl_item_set_startsample (it, 100);
+    pl_item_set_endsample (it, 300);
     char *bc = tf_compile("$abbr('This ɀHİJ a русский Title (12-inch version) [needs tags]')");
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, "TɀaрT1v[needst"), @"The actual output is: %s", buffer);
@@ -1419,6 +1419,14 @@ static DB_output_t fake_out = {
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_VfsPathTitle_GivesCorrectTitle {
+    pl_replace_meta (it, ":URI", "/path/file/myfile.zip:mytrack.mp3");
+    char *bc = tf_compile("%title%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "mytrack"), @"The actual output is: %s", buffer);
 }
 
 

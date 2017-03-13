@@ -72,9 +72,9 @@ typedef struct {
     int mp4sample;
     int mp4framesize;
     int skipsamples;
-    int startsample;
-    int endsample;
-    int currentsample;
+    int64_t startsample;
+    int64_t endsample;
+    int64_t currentsample;
     uint8_t buffer[AAC_BUFFER_SIZE];
     int remaining;
     uint8_t out_buffer[OUT_BUFFER_SIZE];
@@ -435,9 +435,10 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->plugin = &plugin;
 
     if (!info->file->vfs->is_streaming ()) {
-        if (it->endsample > 0) {
-            info->startsample = it->startsample;
-            info->endsample = it->endsample;
+        int64_t endsample = deadbeef->pl_item_get_endsample (it);
+        if (endsample > 0) {
+            info->startsample = deadbeef->pl_item_get_startsample (it);
+            info->endsample = endsample;
             plugin.seek_sample (_info, 0);
         }
         else {
@@ -904,10 +905,10 @@ aac_insert_with_chapters (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem
         else {
             deadbeef->pl_add_meta (it, "title", chapters[i].title);
         }
-        it->startsample = chapters[i].startsample;
-        it->endsample = chapters[i].endsample;
+        deadbeef->pl_item_set_startsample (it, chapters[i].startsample);
+        deadbeef->pl_item_set_endsample (it, chapters[i].endsample);
         deadbeef->pl_replace_meta (it, ":FILETYPE", ftype);
-        deadbeef->plt_set_item_duration (plt, it, (float)(it->endsample - it->startsample + 1) / samplerate);
+        deadbeef->plt_set_item_duration (plt, it, (float)(chapters[i].endsample - chapters[i].startsample + 1) / samplerate);
         after = deadbeef->plt_insert_item (plt, after, it);
         deadbeef->pl_item_unref (it);
     }

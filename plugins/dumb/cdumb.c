@@ -206,7 +206,7 @@ cdumb_seek (DB_fileinfo_t *_info, float time) {
     }
     int pos = time * _info->fmt.samplerate;
     duh_sigrenderer_generate_samples (info->renderer, 0, 65536.0f / _info->fmt.samplerate, pos, NULL);
-    _info->readpos = duh_sigrenderer_get_position (info->renderer) / 65536.f;
+    _info->readpos = pos;
     return 0;
 }
 

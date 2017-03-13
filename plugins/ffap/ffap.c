@@ -267,7 +267,7 @@ typedef struct APEContext {
     int packet_remaining; // number of bytes in packet_data
     int packet_sizeleft; // number of bytes left unread for current ape frame
     int samplestoskip;
-    int currentsample; // current sample from beginning of file
+    int64_t currentsample; // current sample from beginning of file
 
     uint8_t buffer[BLOCKS_PER_LOOP * 2 * 2 * 2];
     int remaining;
@@ -279,8 +279,8 @@ typedef struct APEContext {
 
 typedef struct {
     DB_fileinfo_t info;
-    int startsample;
-    int endsample;
+    int64_t startsample;
+    int64_t endsample;
     APEContext ape_ctx;
     DB_FILE *fp;
 } ape_info_t;
@@ -754,9 +754,10 @@ ffap_init (DB_fileinfo_t *_info, DB_playItem_t *it)
         return -1;
     }
 
-    if (it->endsample > 0) {
-        info->startsample = it->startsample;
-        info->endsample = it->endsample;
+    int64_t endsample = deadbeef->pl_item_get_endsample (it);
+    if (endsample > 0) {
+        info->startsample = deadbeef->pl_item_get_startsample (it);
+        info->endsample = endsample;
         plugin.seek_sample (_info, 0);
         //trace ("start: %d/%f, end: %d/%f\n", startsample, timestart, endsample, timeend);
     }

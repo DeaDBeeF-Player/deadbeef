@@ -245,9 +245,9 @@ enum {
 // playlist item
 // these are "public" fields, available to plugins
 typedef struct DB_playItem_s {
-    int startsample; // start sample of track, or -1 for auto
-    int endsample; // end sample of track, or -1 for auto
-    int shufflerating; // sort order for shuffle mode
+    int32_t startsample32; // start sample of track, or -1 for auto
+    int32_t endsample32; // end sample of track, or -1 for auto
+    int32_t shufflerating; // sort order for shuffle mode
 } ddb_playItem_t;
 
 typedef ddb_playItem_t DB_playItem_t;
@@ -1377,6 +1377,17 @@ typedef struct {
     // `format` is title formatting v2 script;
     // `order` can be one of DDB_SORT_ASCENDING or DDB_SORT_DESCENDING (no random).
     void (*sort_track_array) (ddb_playlist_t *playlist, DB_playItem_t **tracks, int num_tracks, const char *format, int order);
+
+    // initialize playitem, same as plt_add_file, except do not add to any playlist
+    DB_playItem_t *(*pl_item_init) (const char *fname);
+
+    int64_t (*pl_item_get_startsample) (DB_playItem_t *it);
+
+    int64_t (*pl_item_get_endsample) (DB_playItem_t *it);
+
+    void (*pl_item_set_startsample) (DB_playItem_t *it, int64_t sample);
+
+    void (*pl_item_set_endsample) (DB_playItem_t *it, int64_t sample);
 
 #endif
 } DB_functions_t;
