@@ -487,6 +487,16 @@ ml_stop (void) {
         deadbeef->plt_free (ml_playlist);
     }
 
+    if (artist_album_bc) {
+        deadbeef->tf_free (artist_album_bc);
+        artist_album_bc = NULL;
+    }
+
+    if (title_bc) {
+        deadbeef->tf_free (title_bc);
+        title_bc = NULL;
+    }
+
     if (mutex) {
         deadbeef->mutex_free (mutex);
         mutex = 0;
