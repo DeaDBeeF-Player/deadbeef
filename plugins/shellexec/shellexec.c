@@ -88,7 +88,7 @@ static int shx_exec_track_cmd (Shx_action_t *action, DB_playItem_t *it) {
         trace ("shellexec: failed to format string for execution (too long?)\n");
         return -1;
     }
-    strcat (cmd, "&");
+    strcat (cmd, " &");
 
     // replace \' with '"'"'
     size_t l = strlen (cmd);
@@ -109,7 +109,7 @@ static int shx_exec_track_cmd (Shx_action_t *action, DB_playItem_t *it) {
 
     trace ("%s\n", cmd);
     res = system (cmd);
-    return 0;
+    return res;
 }
 
 static int
@@ -118,8 +118,42 @@ shx_callback (Shx_action_t *action, int ctx)
     int res = 0;
     switch (ctx) {
     case DDB_ACTION_CTX_MAIN:
-        trace ("%s\n", action->shcommand);
-        int res = system (action->shcommand);
+        {
+            // command parameter substitution
+            deadbeef->pl_lock ();
+            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            if (plt) {
+                DB_playItem_t **items = NULL;
+                int items_count = deadbeef->plt_getselcount (plt);
+                if (0 < items_count) {
+                    items = malloc (sizeof (DB_playItem_t *) * items_count);
+                    if (items) {
+                        int n = 0;
+                        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+                        while (it) {
+                            if (deadbeef->pl_is_selected (it)) {
+                                assert (n < items_count);
+                                deadbeef->pl_item_ref (it);
+                                items[n++] = it;
+                            }
+                            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+                            deadbeef->pl_item_unref (it);
+                            it = next;
+                        }
+                        for (int i = 0; i < items_count; i++) {
+                            res = shx_exec_track_cmd (action, items[i]);
+                            deadbeef->pl_item_unref (items[i]);
+                        }
+                        free (items);
+                    }
+                }
+                else {
+                  int res = system (action->shcommand);
+                }
+                deadbeef->plt_unref (plt);
+            }
+            deadbeef->pl_unlock ();
+        }
         break;
     case DDB_ACTION_CTX_SELECTION:
         {
@@ -579,7 +613,7 @@ static Shx_plugin_t plugin = {
     .misc.plugin.api_vmajor = 1,
     .misc.plugin.api_vminor = 5,
     .misc.plugin.version_major = 1,
-    .misc.plugin.version_minor = 2,
+    .misc.plugin.version_minor = 3,
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.id = "shellexec",
     .misc.plugin.name = "Shell commands",

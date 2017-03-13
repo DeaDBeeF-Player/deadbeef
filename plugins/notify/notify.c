@@ -72,9 +72,7 @@ notify_thread (void *ctx) {
         if (dbus_message_iter_init(reply, &args)) {
             if (DBUS_TYPE_UINT32 == dbus_message_iter_get_arg_type(&args)) {
                 dbus_message_iter_get_basic(&args, &id);
-                if (id != replaces_id) {
-                    replaces_id = id;
-                }
+                replaces_id = id;
                 dbus_message_unref (reply);
             } else {
                 fprintf(stderr, "Argument is not uint32\n"); 
@@ -161,12 +159,8 @@ cover_avail_callback (const char *fname, const char *artist, const char *album, 
         return;
     }
     deadbeef->pl_lock ();
-    if (last_track && (time (NULL) - request_timer < 4)) {
-        show_notification (last_track);
-    }
     if (last_track) {
-        deadbeef->pl_item_unref (last_track);
-        last_track = NULL;
+        show_notification (last_track);
     }
     deadbeef->pl_unlock ();
 }
@@ -227,26 +221,25 @@ static void show_notification (DB_playItem_t *track) {
     char *v_iconname = NULL;    
     if (deadbeef->conf_get_int("notify.albumart", 0) && artwork_plugin) {
         deadbeef->pl_lock ();
-        if (last_track) {
-            deadbeef->pl_item_unref (last_track);
-            last_track = NULL;
-        }
         const char *album = deadbeef->pl_find_meta (track, "album");
         const char *artist = deadbeef->pl_find_meta (track, "artist");
         const char *fname = deadbeef->pl_find_meta (track, ":URI");
         if (!album || !*album) {
             album = deadbeef->pl_find_meta (track, "title");
         }
+        if (last_track) {
+            deadbeef->pl_item_unref (last_track);
+        }
+        last_track = track;
+        deadbeef->pl_item_ref (last_track);
         // load artwork from cache
         v_iconname = artwork_plugin->get_album_art (fname, artist, album, deadbeef->conf_get_int ("notify.albumart_size", 64), cover_avail_callback, NULL);
-        if (v_iconname) {
-            // show notification with artwork
-            dbus_notification (track, v_iconname);
-        } else {
-            // activate get_album_art callback by filling in last_track
-            last_track = track;
-            deadbeef->pl_item_ref (last_track);
+        if (!v_iconname) {
+            // set default artwork (program icon)
+            v_iconname = strdup ("deadbeef");
         }
+        // show notification
+        dbus_notification (track, v_iconname);
         deadbeef->pl_unlock ();
     } else {
         v_iconname = strdup ("deadbeef");
