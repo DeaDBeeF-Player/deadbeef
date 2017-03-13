@@ -159,8 +159,10 @@ static void *listeners_ud[MAX_LISTENERS];
 
 static ml_string_t *
 ml_reg_col (collection_t *coll, const char *c, DB_playItem_t *it) {
+    int need_unref = 0;
     if (!c) {
-        return NULL;
+        c = deadbeef->metacache_add_string ("");
+        need_unref = 1;
     }
     ml_string_t *s = hash_add (coll->hash, c, it);
     if (s) {
@@ -172,6 +174,9 @@ ml_reg_col (collection_t *coll, const char *c, DB_playItem_t *it) {
             coll->tail = coll->head = s;
         }
         coll->count++;
+    }
+    if (need_unref) {
+        deadbeef->metacache_remove_string (c);
     }
     return s;
 }
