@@ -32,6 +32,8 @@
 DB_functions_t *deadbeef;
 
 static int filter_id;
+static char *artist_album_bc;
+static char *title_bc;
 
 typedef struct coll_item_s {
     DB_playItem_t *it;
@@ -127,8 +129,19 @@ hash_add (ml_string_t **hash, const char *val, DB_playItem_t *it) {
     coll_item_t *item = calloc (sizeof (coll_item_t), 1);
     deadbeef->pl_item_ref (it);
     item->it = it;
-    item->next = s->items;
-    s->items = item;
+
+    coll_item_t *tail = s->items;
+    while (tail && tail->next) {
+        tail = tail->next;
+    }
+
+    if (tail) {
+        tail->next = item;
+    }
+    else {
+        s->items = item;
+    }
+
     s->items_count++;
 
     return retval;
@@ -496,6 +509,80 @@ ml_remove_listener (int listener_id) {
     listeners_ud[listener_id] = NULL;
 }
 
+static void
+get_list_of_albums_for_genre (ddb_medialib_item_t *genre) {
+    if (!artist_album_bc) {
+        artist_album_bc = deadbeef->tf_compile ("[%artist% - ]%album%");
+    }
+    if (!title_bc) {
+        title_bc = deadbeef->tf_compile ("[%tracknumber%. ]%title%");
+    }
+
+    ml_string_t *album = db.albums.head;
+    ddb_medialib_item_t *tail = NULL;
+    char text[1024];
+
+    for (int i = 0; i < db.albums.count; i++, album = album->next) {
+        if (!album->items_count) {
+            continue;
+        }
+
+        ddb_medialib_item_t *album_item = NULL;
+        ddb_medialib_item_t *album_tail = NULL;
+
+        coll_item_t *album_coll_item = album->items;
+        for (int j = 0; j < album->items_count; j++, album_coll_item = album_coll_item->next) {
+            DB_playItem_t *it = album_coll_item->it;
+            const char *track_genre = deadbeef->pl_find_meta (it, "genre");
+
+            if (track_genre == genre->text) {
+                if (!album_item) {
+                    album_item = calloc (1, sizeof (ddb_medialib_item_t));
+                    if (tail) {
+                        tail->next = album_item;
+                        tail = album_item;
+                    }
+                    else {
+                        tail = genre->children = album_item;
+                    }
+                    ddb_tf_context_t ctx = {
+                        ._size = sizeof (ddb_tf_context_t),
+                        .it = it,
+                    };
+
+                    deadbeef->tf_eval (&ctx, artist_album_bc, text, sizeof (text));
+
+                    album_item->text = deadbeef->metacache_add_string (text);
+                    genre->num_children++;
+                }
+
+                ddb_medialib_item_t *track_item = calloc(1, sizeof (ddb_medialib_item_t));
+
+                if (album_tail) {
+                    album_tail->next = track_item;
+                    album_tail = track_item;
+                }
+                else {
+                    album_tail = album_item->children = track_item;
+                }
+                album_item->num_children++;
+
+                ddb_tf_context_t ctx = {
+                    ._size = sizeof (ddb_tf_context_t),
+                    .it = it,
+                };
+
+                deadbeef->tf_eval (&ctx, title_bc, text, sizeof (text));
+
+                track_item->text = deadbeef->metacache_add_string (text);
+            }
+        }
+    }
+}
+
+static void
+ml_free_list (ddb_medialib_item_t *list);
+
 static ddb_medialib_item_t *
 ml_get_list (const char *index) {
     collection_t *coll;
@@ -527,6 +614,16 @@ ml_get_list (const char *index) {
     int idx = 0;
     for (ml_string_t *s = coll->head; s; s = s->next, idx++) {
         ddb_medialib_item_t *item = calloc (1, sizeof (ddb_medialib_item_t));
+
+        item->text = deadbeef->metacache_add_string (s->text);
+
+        get_list_of_albums_for_genre (item);
+
+        if (!item->children) {
+            ml_free_list (item);
+            continue;
+        }
+
         if (tail) {
             tail->next = item;
             tail = item;
@@ -535,9 +632,6 @@ ml_get_list (const char *index) {
             tail = parent->children = item;
         }
         parent->num_children++;
-
-        item->text = s->text;
-        deadbeef->metacache_add_string (s->text);
     }
 
     deadbeef->mutex_unlock (mutex);
