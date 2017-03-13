@@ -10,8 +10,6 @@
 
 extern DB_functions_t *deadbeef;
 
-static char *title_script;
-
 enum {
     LV_ROOT,
     LV_LIST_ITEMS,
@@ -64,10 +62,10 @@ enum {
 
 - (NSString *)stringValue {
     if (_item->num_children) {
-        _stringValue = [NSString stringWithFormat:@"%s (%d)", _item->text, _item->num_children];
+        _stringValue = [NSString stringWithFormat:@"%@ (%d)", [NSString stringWithUTF8String:_item->text], _item->num_children];
     }
     else {
-        _stringValue = [NSString stringWithFormat:@"%s", _item->text];
+        _stringValue = [NSString stringWithFormat:@"%@", [NSString stringWithUTF8String:_item->text]];
     }
     return _stringValue;
 }
