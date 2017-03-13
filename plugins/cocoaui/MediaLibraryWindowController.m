@@ -15,7 +15,7 @@ extern DB_functions_t *deadbeef;
 
 @interface MediaLibraryWindowController () {
     ddb_medialib_plugin_t *_medialib;
-    ddb_medialib_list_t *_list;
+    ddb_medialib_item_t *_tree;
     MediaLibraryItem *_root;
 }
 @end
@@ -31,11 +31,11 @@ static void _medialib_listener (int event, void *user_data) {
 
 - (void)medialibEvent:(int)event {
     _root = nil;
-    if (_list) {
-        _medialib->free_list (_list);
+    if (_tree) {
+        _medialib->free_list (_tree);
     }
-    _list = _medialib->get_list ("genre");
-    _root = [MediaLibraryItem initTree:_list];
+    _tree = _medialib->get_list ("genre");
+    _root = [MediaLibraryItem initTree:_tree];
     [_outlineView reloadData];
 }
 

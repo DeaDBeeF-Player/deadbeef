@@ -21,43 +21,29 @@ enum {
     MediaLibraryItem *parent;
     NSString *_stringValue;
 
-    ddb_medialib_list_t *_list;
     ddb_medialib_item_t *_item;
-    DB_playItem_t *_track;
     NSMutableArray *_children;
 }
 
-+ (id)initTree:(ddb_medialib_list_t *)list {
-    MediaLibraryItem *rootItem = [[MediaLibraryItem alloc] initRoot:list];
++ (id)initTree:(ddb_medialib_item_t *)tree {
+    MediaLibraryItem *rootItem = [[MediaLibraryItem alloc] initRoot:tree];
     return rootItem;
 }
 
-- (id)initRoot:(ddb_medialib_list_t *)list {
+- (id)initRoot:(ddb_medialib_item_t *)tree {
     self = [self init];
-    _list = list;
+    _item = tree;
     return self;
 }
 
-- (id)initItemNode:(ddb_medialib_item_t *)item parent:(MediaLibraryItem *)parent{
+- (id)initNode:(ddb_medialib_item_t *)item parent:(MediaLibraryItem *)parent{
     self = [self init];
     _item = item;
     return self;
 }
 
-- (id)initTrackNode:(DB_playItem_t *)track parent:(MediaLibraryItem *)parent {
-    self = [self init];
-    _track = track;
-    return self;
-}
-
 - (NSUInteger)numberOfChildren {
-    if (_list) {
-        return _list->count;
-    }
-    else if (_item) {
-        return _item->num_tracks;
-    }
-    return 0;
+    return _item->num_children;
 }
 
 - (MediaLibraryItem *)childAtIndex:(NSUInteger)index {
@@ -65,45 +51,25 @@ enum {
 }
 
 - (NSArray *)children {
-    if (!_children && (_list || _item)) {
-        if (_list) {
-            _children = [[NSMutableArray alloc] initWithCapacity:_list->count];
-            for (int i = 0; i < _list->count; i++) {
-                _children[i] = [[MediaLibraryItem alloc] initItemNode:&_list->items[i] parent:self];
-            }
-        }
-        else if (_item) {
-            _children = [[NSMutableArray alloc] initWithCapacity:_item->num_tracks];
-            for (int i = 0; i < _item->num_tracks; i++) {
-                _children[i] = [[MediaLibraryItem alloc] initTrackNode:_item->tracks[i] parent:self];
-            }
+    if (!_children && _item->num_children > 0) {
+        _children = [[NSMutableArray alloc] initWithCapacity:_item->num_children];
+        ddb_medialib_item_t *c = _item->children;
+        for (int i = 0; i < _item->num_children; i++) {
+            _children[i] = [[MediaLibraryItem alloc] initNode:c parent:self];
+            c = c->next;
         }
     }
     return _children;
 }
 
 - (NSString *)stringValue {
-    if (_list) {
-        _stringValue = @"All Music";
-        return _stringValue;
+    if (_item->num_children) {
+        _stringValue = [NSString stringWithFormat:@"%s (%d)", _item->text, _item->num_children];
     }
-    else if (_item) {
-        _stringValue = [NSString stringWithFormat:@"%@ (%d)", [NSString stringWithUTF8String:_item->text], _item->num_tracks];
-        return _stringValue;
+    else {
+        _stringValue = [NSString stringWithFormat:@"%s", _item->text];
     }
-
-    if (!title_script) {
-        title_script = deadbeef->tf_compile ("[%artist% - ]%title%");
-    }
-
-    ddb_tf_context_t ctx;
-    ctx._size = sizeof (ddb_tf_context_t);
-    ctx.it = _track;
-    char buf[1000];
-    deadbeef->tf_eval (&ctx, title_script, buf, sizeof (buf));
-    _stringValue = [NSString stringWithUTF8String:buf];
     return _stringValue;
-
 }
 
 @end

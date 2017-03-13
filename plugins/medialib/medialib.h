@@ -27,16 +27,15 @@
 #define DDB_MEDIALIB_VERSION_MAJOR 1
 #define DDB_MEDIALIB_VERSION_MINOR 0
 
-typedef struct {
+typedef struct ddb_medialib_item_s {
     const char *text; // e.g. the genre
-    DB_playItem_t **tracks;
-    int num_tracks;
-} ddb_medialib_item_t;
 
-typedef struct {
-    int count;
-    ddb_medialib_item_t items[1];
-} ddb_medialib_list_t;
+    DB_playItem_t *track; // NULL in non-leaf nodes
+
+    struct ddb_medialib_item_s *next;
+    struct ddb_medialib_item_s *children;
+    int num_children;
+} ddb_medialib_item_t;
 
 enum {
     DDB_MEDIALIB_EVENT_CHANGED = 1
@@ -50,8 +49,8 @@ typedef struct ddb_medialib_plugin_s {
     int (*add_listener)(ddb_medialib_listener_t listener, void *user_data);
     void (*remove_listener)(int listener_id);
 
-    ddb_medialib_list_t * (*get_list)(const char *index);
-    void (*free_list) (ddb_medialib_list_t *list);
+    ddb_medialib_item_t * (*get_list)(const char *index);
+    void (*free_list) (ddb_medialib_item_t *list);
 } ddb_medialib_plugin_t;
 
 #endif /* medialib_h */

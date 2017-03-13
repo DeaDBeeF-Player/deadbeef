@@ -12,11 +12,10 @@
 
 @interface MediaLibraryItem : NSObject
 
-+ (id)initTree:(ddb_medialib_list_t *)list;
++ (id)initTree:(ddb_medialib_item_t *)list;
 
-- (id)initRoot:(ddb_medialib_list_t *)list;
-- (id)initItemNode:(ddb_medialib_item_t *)item parent:(MediaLibraryItem *)parent;
-- (id)initTrackNode:(DB_playItem_t *)data parent:(MediaLibraryItem *)parent;
+- (id)initRoot:(ddb_medialib_item_t *)list;
+- (id)initNode:(ddb_medialib_item_t *)item parent:(MediaLibraryItem *)parent;
 
 - (NSUInteger)numberOfChildren;
 - (MediaLibraryItem *)childAtIndex:(NSUInteger)index;

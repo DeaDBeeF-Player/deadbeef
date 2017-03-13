@@ -115,11 +115,11 @@ hash_add (ml_string_t **hash, const char *val, DB_playItem_t *it) {
     ml_string_t *s = hash_find_for_hashkey(hash, val, h);
     ml_string_t *retval = NULL;
     if (!s) {
-        deadbeef->metacache_ref (val);
+        deadbeef->metacache_add_string (val);
         s = calloc (sizeof (ml_string_t), 1);
         s->bucket_next = hash[h];
         s->text = val;
-        deadbeef->metacache_ref (val);
+        deadbeef->metacache_add_string (val);
         hash[h] = s;
         retval = s;
     }
@@ -177,7 +177,7 @@ ml_free_col (collection_t *coll) {
         }
 
         if (s->text) {
-            deadbeef->metacache_unref (s->text);
+            deadbeef->metacache_remove_string (s->text);
         }
         free (s);
         s = next;
@@ -211,10 +211,10 @@ ml_free_db (void) {
     while (db.tracks) {
         ml_entry_t *next = db.tracks->next;
         if (db.tracks->title) {
-            deadbeef->metacache_unref (db.tracks->title);
+            deadbeef->metacache_remove_string (db.tracks->title);
         }
         if (db.tracks->file) {
-            deadbeef->metacache_unref (db.tracks->file);
+            deadbeef->metacache_remove_string (db.tracks->file);
         }
         free (db.tracks);
         db.tracks = next;
@@ -263,15 +263,15 @@ ml_index (void) {
             folder[fn-uri] = 0;
             const char *s = deadbeef->metacache_add_string (folder);
             fld = ml_reg_col (&db.folders, s, it);
-            deadbeef->metacache_unref (s);
+            deadbeef->metacache_remove_string (s);
         }
 
         // uri and title are not indexed, only a part of track list,
         // that's why they have an extra ref for each entry
-        deadbeef->metacache_ref (uri);
+        deadbeef->metacache_add_string (uri);
         en->file = uri;
         if (title) {
-            deadbeef->metacache_ref (title);
+            deadbeef->metacache_add_string (title);
         }
         if (deadbeef->pl_get_item_flags (it) & DDB_IS_SUBTRACK) {
             en->subtrack = deadbeef->pl_find_meta_int (it, ":TRACKNUM", -1);
@@ -422,7 +422,7 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
     }
 #endif
 
-    deadbeef->metacache_unref (s);
+    deadbeef->metacache_remove_string (s);
 
     return res;
 }
@@ -496,7 +496,7 @@ ml_remove_listener (int listener_id) {
     listeners_ud[listener_id] = NULL;
 }
 
-static ddb_medialib_list_t *
+static ddb_medialib_item_t *
 ml_get_list (const char *index) {
     collection_t *coll;
 
@@ -518,42 +518,50 @@ ml_get_list (const char *index) {
 
     deadbeef->mutex_lock (mutex);
 
-    size_t sz = sizeof (ddb_medialib_list_t) + sizeof (ddb_medialib_item_t) * (coll->count-1);
-    ddb_medialib_list_t *list = malloc (sz);
-    memset (list, 0, sz);
+    ddb_medialib_item_t *root = calloc (1, sizeof (ddb_medialib_item_t));
+    root->text = deadbeef->metacache_add_string ("All Music");
+    ddb_medialib_item_t *tail = NULL;
 
+    // top level list (e.g. list of genres)
+    ddb_medialib_item_t *parent = root;
     int idx = 0;
     for (ml_string_t *s = coll->head; s; s = s->next, idx++) {
-        ddb_medialib_item_t *item = &list->items[idx];
-        item->text = s->text;
-        deadbeef->metacache_ref (s->text);
-        item->num_tracks = s->items_count;
-        if (item->num_tracks) {
-            item->tracks = malloc (sizeof (DB_playItem_t *) * item->num_tracks);
-            coll_item_t *coll_item = s->items;
-            for (int i = 0; i < item->num_tracks; i++) {
-                item->tracks[i] = coll_item->it;
-                deadbeef->pl_item_ref (item->tracks[i]);
-                coll_item = coll_item->next;
-            }
+        ddb_medialib_item_t *item = calloc (1, sizeof (ddb_medialib_item_t));
+        if (tail) {
+            tail->next = item;
+            tail = item;
         }
+        else {
+            tail = parent->children = item;
+        }
+        parent->num_children++;
+
+        item->text = s->text;
+        deadbeef->metacache_add_string (s->text);
     }
-    list->count = coll->count;
 
     deadbeef->mutex_unlock (mutex);
 
-    return list;
+    return root;
 }
 
 static void
-ml_free_list (ddb_medialib_list_t *list) {
-    for (int i = 0; i < list->count; i++) {
-        ddb_medialib_item_t *item = &list->items[i];
-        deadbeef->metacache_unref (item->text);
-        for (int i = 0; i < item->num_tracks; i++) {
-            deadbeef->pl_item_unref (item->tracks[i]);
+ml_free_list (ddb_medialib_item_t *list) {
+    if (list->children) {
+        ml_free_list(list->children);
+        list->children = NULL;
+    }
+    while (list->next) {
+        ddb_medialib_item_t *item = list->next;
+        ddb_medialib_item_t *next = item->next;
+        if (item->text) {
+            deadbeef->metacache_remove_string (item->text);
         }
-        free (item->tracks);
+        if (item->track) {
+            deadbeef->pl_item_unref (item->track);
+        }
+        free (item);
+        list->next = next;
     }
     free (list);
 }
