@@ -525,7 +525,7 @@ ml_remove_listener (int listener_id) {
 }
 
 static void
-get_list_of_albums_for_genre (ddb_medialib_item_t *genre) {
+get_list_of_albums_for_item (ddb_medialib_item_t *libitem, const char *field, int field_tf) {
     if (!artist_album_bc) {
         artist_album_bc = deadbeef->tf_compile ("[%artist% - ]%album%");
     }
@@ -536,6 +536,11 @@ get_list_of_albums_for_genre (ddb_medialib_item_t *genre) {
     ml_string_t *album = db.albums.head;
     ddb_medialib_item_t *tail = NULL;
     char text[1024];
+
+    char *tf = NULL;
+    if (field_tf) {
+        tf = deadbeef->tf_compile (field);
+    }
 
     for (int i = 0; i < db.albums.count; i++, album = album->next) {
         if (!album->items_count) {
@@ -548,9 +553,26 @@ get_list_of_albums_for_genre (ddb_medialib_item_t *genre) {
         coll_item_t *album_coll_item = album->items;
         for (int j = 0; j < album->items_count; j++, album_coll_item = album_coll_item->next) {
             DB_playItem_t *it = album_coll_item->it;
-            const char *track_genre = deadbeef->pl_find_meta (it, "genre");
+            ddb_tf_context_t ctx = {
+                ._size = sizeof (ddb_tf_context_t),
+                .it = it,
+            };
 
-            if (track_genre == genre->text) {
+            const char *track_field = NULL;
+            if (!tf) {
+                track_field = deadbeef->pl_find_meta (it, field);
+            }
+            else {
+                deadbeef->tf_eval (&ctx, tf, text, sizeof (text));
+                track_field = text;
+            }
+
+            if (!track_field) {
+                track_field = "";
+            }
+
+            // FIXME: strcasecmp might work better, but the parent list must use case-insensitive filtering first.
+            if (!strcmp (track_field, libitem->text)) {
                 if (!album_item) {
                     album_item = calloc (1, sizeof (ddb_medialib_item_t));
                     if (tail) {
@@ -558,17 +580,13 @@ get_list_of_albums_for_genre (ddb_medialib_item_t *genre) {
                         tail = album_item;
                     }
                     else {
-                        tail = genre->children = album_item;
+                        tail = libitem->children = album_item;
                     }
-                    ddb_tf_context_t ctx = {
-                        ._size = sizeof (ddb_tf_context_t),
-                        .it = it,
-                    };
 
                     deadbeef->tf_eval (&ctx, artist_album_bc, text, sizeof (text));
 
                     album_item->text = deadbeef->metacache_add_string (text);
-                    genre->num_children++;
+                    libitem->num_children++;
                 }
 
                 ddb_medialib_item_t *track_item = calloc(1, sizeof (ddb_medialib_item_t));
@@ -593,6 +611,9 @@ get_list_of_albums_for_genre (ddb_medialib_item_t *genre) {
             }
         }
     }
+    if (tf) {
+        deadbeef->tf_free (tf);
+    }
 }
 
 static void
@@ -602,14 +623,22 @@ static ddb_medialib_item_t *
 ml_get_list (const char *index) {
     collection_t *coll;
 
+    const char *field = NULL;
+    int use_tf = 0;
+
     if (!strcmp (index, "album")) {
         coll = &db.albums;
+        field = "%album%";
+        use_tf = 1;
     }
     else if (!strcmp (index, "artist")) {
         coll = &db.artists;
+        field = "%artist%";
+        use_tf = 1;
     }
     else if (!strcmp (index, "genre")) {
         coll = &db.genres;
+        field = "genre";
     }
     else if (!strcmp (index, "folder")) {
         coll = &db.folders;
@@ -635,7 +664,7 @@ ml_get_list (const char *index) {
 
         item->text = deadbeef->metacache_add_string (s->text);
 
-        get_list_of_albums_for_genre (item);
+        get_list_of_albums_for_item (item, field, use_tf);
 
         if (!item->children) {
             ml_free_list (item);
