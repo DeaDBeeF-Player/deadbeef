@@ -44,6 +44,7 @@ typedef struct ml_string_s {
     const char *text;
     coll_item_t *items;
     int items_count;
+    coll_item_t *items_tail;
     struct ml_string_s *bucket_next;
     struct ml_string_s *next;
 } ml_string_t;
@@ -164,16 +165,12 @@ hash_add (ml_string_t **hash, const char *val, DB_playItem_t *it) {
     deadbeef->pl_item_ref (it);
     item->it = it;
 
-    coll_item_t *tail = s->items;
-    while (tail && tail->next) {
-        tail = tail->next;
-    }
-
-    if (tail) {
-        tail->next = item;
+    if (s->items_tail) {
+        s->items_tail->next = item;
+        s->items_tail = item;
     }
     else {
-        s->items = item;
+        s->items = s->items_tail = item;
     }
 
     s->items_count++;
