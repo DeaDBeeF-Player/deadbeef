@@ -2068,9 +2068,27 @@ streamer_configchanged (void) {
     conf_streamer_nosleep = conf_get_int ("streamer.nosleep", 0);
 }
 
-// play track in current playlist by index
+// play track in current playlist by index;
+// negative index will stop playback
 static void
 play_index (int idx) {
+    DB_output_t *output = plug_get_output ();
+
+    if (idx < 0) {
+        streamer_lock();
+        streamer_reset (1);
+        stream_track (NULL);
+        output->stop ();
+        playItem_t *it = playing_track;
+        playing_track = NULL;
+        if (it) {
+            send_trackinfochanged (it);
+            pl_item_unref (it);
+        }
+        streamer_unlock();
+        return;
+    }
+
     playlist_t *plt = plt_get_curr ();
     playItem_t *it = plt_get_item_for_idx (plt, idx, PL_MAIN);
     if (!it) {
@@ -2078,13 +2096,13 @@ play_index (int idx) {
         return;
     }
 
-    DB_output_t *output = plug_get_output ();
-
     pl_lock ();
     if (plt != streamer_playlist) {
         streamer_set_streamer_playlist (plt);
     }
     pl_unlock ();
+
+    streamer_lock();
     if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
         plt_init_shuffle_albums (plt, idx);
     }
@@ -2097,6 +2115,7 @@ play_index (int idx) {
     output->play ();
     pl_item_unref(it);
     plt_unref (plt);
+    streamer_unlock ();
 }
 
 // if a track is playing: restart
