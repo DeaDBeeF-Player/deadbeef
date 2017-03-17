@@ -44,16 +44,16 @@ bool ChscPlayer::load(const char *filename, const CFileProvider &fp)
   }
 
   // load section
-  for(i=0;i<128*12;i++)		// load instruments
-    *((unsigned char *)instr + i) = f->readInt(1);
+  f->readBuf ((char *)instr, 128*12);
+
+
   for (i=0;i<128;i++) {			// correct instruments
     instr[i][2] ^= (instr[i][2] & 0x40) << 1;
     instr[i][3] ^= (instr[i][3] & 0x40) << 1;
     instr[i][11] >>= 4;			// slide
   }
-  for(i=0;i<51;i++) song[i] = f->readInt(1);	// load tracklist
-  for(i=0;i<50*64*9;i++)			// load patterns
-    *((char *)patterns + i) = f->readInt(1);
+  f->readBuf ((char *)song, 51); // load tracklist
+  f->readBuf ((char *)patterns, 50*64*9); // load patterns
 
   fp.close(f);
   rewind(0);					// rewind module
