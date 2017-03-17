@@ -70,6 +70,7 @@ public:
 
 protected:
   virtual Byte getByte();
+  virtual void getBuf(char *buf, int size);
 };
 
 class binofstream: public binostream, virtual public binfbase
