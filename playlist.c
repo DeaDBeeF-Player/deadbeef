@@ -1451,6 +1451,9 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
                         }
                         return inserted;
                     }
+                    else {
+                        trace_err ("ERROR: could not load: %s\n", fname);
+                    }
                 }
             }
         }
