@@ -124,5 +124,6 @@ ddb_log_viewer_unregister (void (*callback)(DB_plugin_t *plugin, uint32_t layers
             free (l);
             return;
         }
+        prev = l;
     }
 }
