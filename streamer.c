@@ -809,10 +809,9 @@ static DB_fileinfo_t *dec_open (DB_decoder_t *dec, uint32_t hints, playItem_t *i
     return dec->open (hints);
 }
 
-// that must be called after last sample from str_playing_song was done reading
 static int
-streamer_set_current (playItem_t *it) {
-    trace ("streamer_set_current %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
+stream_track (playItem_t *it) {
+    trace ("stream_track %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
     int err = 0;
     playItem_t *from, *to;
     // need to add refs here, because streamer_start_playback can destroy items
@@ -840,10 +839,11 @@ streamer_set_current (playItem_t *it) {
         paused_stream = is_remote_stream (it);
     }
 
-    if (!it || paused_stream) {
+#endif
+
+    if (!it/* || paused_stream*/) { // FIXME
         goto success;
     }
-#endif
 
     if (to) {
         send_trackinfochanged (to);
@@ -996,7 +996,7 @@ streamer_set_current (playItem_t *it) {
                 pl_lock ();
                 pl_replace_meta (it, "!URI", pl_find_meta_raw (i, ":URI"));
                 pl_unlock ();
-                res = streamer_set_current (it);
+                res = stream_track (it);
                 if (!res) {
                     pl_item_unref (i);
                     break;
@@ -1256,7 +1256,7 @@ streamer_start_new_song (void) {
         send_trackchanged (NULL, NULL);
         return;
     }
-    int ret = streamer_set_current (try);
+    int ret = stream_track (try);
 
     if (ret < 0) {
         trace ("\033[0;31mfailed to play track %s, skipping (current=%p/%p)...\033[37;0m\n", pl_find_meta (try, ":URI"), streaming_track, last_played);
@@ -1334,52 +1334,6 @@ streamer_next (void) {
 
 static void
 streamer_notify_order_changed_real (int prev_order, int new_order);
-
-static int
-stream_track (playItem_t *track) {
-    streamer_lock ();
-    if(fileinfo) {
-        fileinfo->plugin->free (fileinfo);
-        fileinfo = NULL;
-        fileinfo_file = NULL;
-        pl_item_unref (streaming_track);
-        streaming_track = NULL;
-    }
-    streaming_track = track;
-    if (!streaming_track) {
-        streamer_unlock ();
-        return 0;
-    }
-
-    pl_item_ref (streaming_track);
-    streamer_unlock ();
-
-    send_trackinfochanged (streaming_track);
-
-    DB_decoder_t *dec = NULL;
-    pl_lock ();
-    const char *decoder_id = pl_find_meta (streaming_track, ":DECODER");
-    if (decoder_id) {
-        dec = plug_get_decoder_for_id (decoder_id);
-    }
-    pl_unlock ();
-    if (dec) {
-        fileinfo = dec_open (dec, STREAMER_HINTS, streaming_track);
-        if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) != 0) {
-            dec->free (fileinfo);
-            fileinfo = NULL;
-            fileinfo_file = NULL;
-        }
-    }
-
-    if (!dec || !fileinfo) {
-        if (streaming_track) {
-            send_trackinfochanged (streaming_track);
-        }
-        return -1;
-    }
-    return 0;
-}
 
 static void
 streamer_seek_real (float seekpos) {
