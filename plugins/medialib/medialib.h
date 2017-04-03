@@ -51,6 +51,9 @@ typedef struct ddb_medialib_plugin_s {
 
     ddb_medialib_item_t * (*get_list)(const char *index);
     void (*free_list) (ddb_medialib_item_t *list);
+
+    // Find the same track in DB
+    DB_playItem_t *( *find_track) (DB_playItem_t *track);
 } ddb_medialib_plugin_t;
 
 #endif /* medialib_h */
