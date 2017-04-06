@@ -1135,6 +1135,7 @@ gtkui_thread (void *ctx) {
     w_reg_widget (_("Playback controls"), 0, w_playtb_create, "playtb", NULL);
     w_reg_widget (_("Volume bar"), 0, w_volumebar_create, "volumebar", NULL);
     w_reg_widget (_("Chiptune voices"), 0, w_ctvoices_create, "ctvoices", NULL);
+    w_reg_widget (_("Log viewer"), 0, w_logviewer_create, "logviewer", NULL);
 
     mainwin = create_mainwin ();
 

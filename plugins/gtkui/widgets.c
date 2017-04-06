@@ -232,6 +232,16 @@ typedef struct {
     GtkWidget *voices[8];
 } w_ctvoices_t;
 
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *textview;
+} w_logviewer_t;
+
+typedef struct {
+    w_logviewer_t *w;
+    char *text_to_add;
+} logviewer_addtexts_t;
+
 static int design_mode;
 static ddb_gtkui_widget_t *rootwidget;
 
@@ -4300,4 +4310,101 @@ w_ctvoices_create (void) {
 
     w_override_signals (w->base.widget, w);
     return (ddb_gtkui_widget_t*)w;
+}
+
+
+////// Log viewer widget
+
+#if 0
+static int
+logviewer_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    w_logviewer_t *logviewer_w = (w_logviewer_t *)w;
+    switch (id) {
+        break;
+    }
+    return 0;
+}
+
+#endif
+
+
+static void
+logviewer_logger_callback (struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx);
+
+static void
+w_logviewer_init (struct ddb_gtkui_widget_s *widget) {
+    GtkTextBuffer *buffer;
+    w_logviewer_t *w = (w_logviewer_t *)widget;
+    buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (w->textview));
+    gtk_text_buffer_set_text (buffer, "Log\n", -1);
+    deadbeef->log("Logging started.");
+}
+
+static gboolean
+logviewer_addtext_cb (gpointer data) {
+    logviewer_addtexts_t *s = (logviewer_addtexts_t *)data;
+    w_logviewer_t *w = s->w;
+
+    GtkTextBuffer *buffer;
+    GtkTextIter iter;
+    size_t len;
+    len = strlen(s->text_to_add);
+    buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (w->textview));
+
+    gtk_text_buffer_get_end_iter(buffer, &iter);
+    gtk_text_buffer_insert(buffer, &iter, s->text_to_add, len);
+    // Make sure it ends on a newline
+    if (s->text_to_add[len-1] != '\n') {
+        gtk_text_buffer_get_end_iter(buffer, &iter);
+        gtk_text_buffer_insert(buffer, &iter, "\n", 1);
+    }
+
+    free (s->text_to_add);
+    free(s);
+    return FALSE;
+}
+
+static void
+logviewer_logger_callback (struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx) {
+    logviewer_addtexts_t *s = malloc (sizeof (logviewer_addtexts_t));
+    s->w = (w_logviewer_t *)ctx;
+    s->text_to_add = strdup(text);
+    g_idle_add(logviewer_addtext_cb, (gpointer)s);
+}
+
+void
+w_logviewer_destroy (ddb_gtkui_widget_t *w) {
+    deadbeef->log_viewer_unregister (logviewer_logger_callback, w);
+}
+
+ddb_gtkui_widget_t *
+w_logviewer_create (void) {
+    w_logviewer_t *w = malloc (sizeof (w_logviewer_t));
+    memset (w, 0, sizeof (w_logviewer_t));
+
+    w->base.widget = gtk_event_box_new ();
+    w->base.init = w_logviewer_init;
+    w->base.destroy = w_logviewer_destroy;
+    //w->base.message = logviewer_message;
+    //w->base.initmenu = w_logviewer_initmenu;
+
+    gtk_widget_set_can_focus (w->base.widget, FALSE);
+
+    GtkWidget *scroll = gtk_scrolled_window_new (NULL, NULL);
+    gtk_widget_set_can_focus (scroll, FALSE);
+    gtk_widget_show (scroll);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), scroll);
+
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scroll), GTK_SHADOW_ETCHED_IN);
+    w->textview = gtk_text_view_new ();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(w->textview), FALSE);
+    gtk_widget_show (w->textview);
+    gtk_container_add (GTK_CONTAINER (scroll), w->textview);
+
+    w_override_signals (w->base.widget, w);
+
+    deadbeef->log_viewer_register (logviewer_logger_callback, w);
+
+    return (ddb_gtkui_widget_t *)w;
 }
