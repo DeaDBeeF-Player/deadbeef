@@ -29,7 +29,8 @@
 #include "deadbeef.h"
 
 typedef struct logger_s {
-    void (*log) (DB_plugin_t *plugin, uint32_t layers, const char *text);
+    void (*log) (DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx);
+    void *ctx;
     struct logger_s *next;
 } logger_t;
 
@@ -40,7 +41,7 @@ static void
 _log_internal (DB_plugin_t *plugin, uint32_t layers, const char *text) {
     fwrite (text, strlen(text), 1, stderr);
     for (logger_t *l = _loggers; l; l = l->next) {
-        l->log (plugin, layers, text);
+        l->log (plugin, layers, text, l->ctx);
     }
 }
 
@@ -103,18 +104,19 @@ ddb_vlog (const char *fmt, va_list ap) {
 }
 
 void
-ddb_log_viewer_register (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text)) {
+ddb_log_viewer_register (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx), void *ctx) {
     logger_t *logger = calloc (sizeof (logger_t), 1);
     logger->log = callback;
+    logger->ctx = ctx;
     logger->next = _loggers;
     _loggers = logger;
 }
 
 void
-ddb_log_viewer_unregister (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text)) {
+ddb_log_viewer_unregister (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx), void *ctx) {
     logger_t *prev = NULL;
     for (logger_t *l = _loggers; l; l = l->next) {
-        if (l->log == callback) {
+        if (l->log == callback && l->ctx == ctx) {
             if (prev) {
                 prev->next = l->next;
             }

@@ -1316,8 +1316,8 @@ typedef struct {
     void (*vlog) (const char *fmt, va_list ap);
 
     // Custom log viewers, for use in e.g. UI plugins
-    void (*log_viewer_register) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text));
-    void (*log_viewer_unregister) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text));
+    void (*log_viewer_register) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx), void *ctx);
+    void (*log_viewer_unregister) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx), void *ctx);
 
     ///////// File add filtering ///////
 
