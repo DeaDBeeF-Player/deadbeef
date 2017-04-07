@@ -1140,3 +1140,15 @@ action_playback_loop_cycle_handler(DB_plugin_action_t *act, int ctx) {
     g_idle_add (action_playback_loop_cycle_handler_cb, NULL);
     return 0;
 }
+
+gboolean
+action_toggle_logwindow_handler_cb (void *data) {
+    gtkui_toggle_log_window();
+    return FALSE;
+}
+
+int
+action_toggle_logwindow_handler(DB_plugin_action_t *act, int ctx) {
+    g_idle_add (action_toggle_logwindow_handler_cb, NULL);
+    return 0;
+}

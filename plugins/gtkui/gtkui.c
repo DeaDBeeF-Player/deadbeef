@@ -1092,8 +1092,24 @@ add_window_init_hook (void (*callback) (void *userdata), void *userdata) {
 
 
 void
+gtkui_toggle_log_window(void) {
+    if (gtk_widget_get_visible (logwindow)) {
+        gtkui_show_log_window(FALSE);
+    }
+    else {
+        gtkui_show_log_window(TRUE);
+    }
+}
+
+void
 gtkui_show_log_window(gboolean show) {
-    gtk_widget_set_visible(logwindow, show);
+    if (show) {
+        wingeom_restore (logwindow, "logwindow", 40, 40, 200, 200, 0);
+    }
+    else {
+        wingeom_save(logwindow, "logwindow");
+    }
+    gtk_widget_set_visible (logwindow, show);
     GtkWidget *menuitem = lookup_widget (mainwin, "view_log");
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), show);
 }
@@ -1801,10 +1817,18 @@ static DB_plugin_action_t action_find = {
     .next = &action_show_mainwin
 };
 
+static DB_plugin_action_t action_view_log = {
+    .title = "View/Show\\/Hide Log window",
+    .name = "toggle_log_window",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_toggle_logwindow_handler,
+    .next = &action_find
+};
+
 static DB_plugin_action_t *
 gtkui_get_actions (DB_playItem_t *it)
 {
-    return &action_find;
+    return &action_view_log;
 }
 
 #if !GTK_CHECK_VERSION(3,0,0)
