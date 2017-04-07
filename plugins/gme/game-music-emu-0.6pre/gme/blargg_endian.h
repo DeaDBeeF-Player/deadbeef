@@ -21,7 +21,7 @@
 // BLARGG_BIG_ENDIAN, BLARGG_LITTLE_ENDIAN: Determined automatically, otherwise only
 // one may be #defined to 1. Only needed if something actually depends on byte order.
 #if !defined (BLARGG_BIG_ENDIAN) && !defined (BLARGG_LITTLE_ENDIAN)
-#ifdef __GLIBC__
+#if defined(__BYTE_ORDER) && defined(__LITTLE_ENDIAN) && defined(__BIG_ENDIAN)
 	// GCC handles this for us
 	#include <endian.h>
 	#if __BYTE_ORDER == __LITTLE_ENDIAN
