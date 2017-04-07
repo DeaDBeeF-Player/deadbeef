@@ -70,6 +70,7 @@
 #endif
 #include "playqueue.h"
 #include "tf.h"
+#include "logger.h"
 
 #ifndef PREFIX
 #error PREFIX must be defined
@@ -798,6 +799,8 @@ main_cleanup_and_quit (void) {
     messagepump_free ();
     trace ("plug_cleanup\n");
     plug_cleanup ();
+    trace ("logger_free\n");
+    ddb_logger_free();
 
     trace ("hej-hej!\n");
 }
@@ -823,6 +826,7 @@ main (int argc, char *argv[]) {
 #else
     int staticlink = 0;
 #endif
+    ddb_logger_init ();
 #if PORTABLE
     portable = 1;
     if (!realpath (argv[0], dbinstalldir)) {

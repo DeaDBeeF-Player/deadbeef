@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include "logger.h"
 #include "deadbeef.h"
+#include "threading.h"
 
 typedef struct logger_s {
     void (*log) (DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx);
@@ -36,13 +37,16 @@ typedef struct logger_s {
 
 static uint32_t _log_layers = DDB_LOG_LAYER_DEFAULT | DDB_LOG_LAYER_INFO;
 static logger_t *_loggers;
+static uint64_t _mutex;
 
 static void
 _log_internal (DB_plugin_t *plugin, uint32_t layers, const char *text) {
     fwrite (text, strlen(text), 1, stderr);
+    mutex_lock (_mutex);
     for (logger_t *l = _loggers; l; l = l->next) {
         l->log (plugin, layers, text, l->ctx);
     }
+    mutex_unlock(_mutex);
 }
 
 static int
@@ -55,6 +59,29 @@ _is_log_visible (DB_plugin_t *plugin, uint32_t layers) {
     }
 
     return 1;
+}
+
+int
+ddb_logger_init (void) {
+    _mutex = mutex_create ();
+    if (!_mutex) {
+        return -1;
+    }
+    return 0;
+}
+
+void
+ddb_logger_free (void) {
+    if (_mutex) {
+        mutex_lock (_mutex);
+
+        while (_loggers) {
+            ddb_log_viewer_unregister(_loggers->log, _loggers->ctx);
+        }
+
+        mutex_free (_mutex);
+        _mutex = 0;
+    }
 }
 
 void
@@ -105,15 +132,27 @@ ddb_vlog (const char *fmt, va_list ap) {
 
 void
 ddb_log_viewer_register (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx), void *ctx) {
+    mutex_lock(_mutex);
+
+    for (logger_t *l = _loggers; l; l = l->next) {
+        if (l->log == callback && l->ctx == ctx) {
+            mutex_unlock(_mutex);
+            return;
+        }
+    }
+
     logger_t *logger = calloc (sizeof (logger_t), 1);
     logger->log = callback;
     logger->ctx = ctx;
     logger->next = _loggers;
+
     _loggers = logger;
+    mutex_unlock(_mutex);
 }
 
 void
 ddb_log_viewer_unregister (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx), void *ctx) {
+    mutex_lock(_mutex);
     logger_t *prev = NULL;
     for (logger_t *l = _loggers; l; l = l->next) {
         if (l->log == callback && l->ctx == ctx) {
@@ -128,4 +167,5 @@ ddb_log_viewer_unregister (void (*callback)(DB_plugin_t *plugin, uint32_t layers
         }
         prev = l;
     }
+    mutex_unlock(_mutex);
 }
