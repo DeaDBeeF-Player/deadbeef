@@ -1363,3 +1363,11 @@ on_pref_replaygain_source_mode_changed (GtkComboBox     *combobox,
 void
 on_pref_replaygain_processing_changed  (GtkComboBox     *combobox,
                                         gpointer         user_data);
+
+void
+on_view_log_activate                   (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_log_clear_clicked                   (GtkButton       *button,
+                                        gpointer         user_data);

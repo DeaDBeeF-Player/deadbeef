@@ -165,4 +165,7 @@ gtkui_get_gui_refresh_rate ();
 void
 gtkui_titlebar_tf_init (void);
 
+void
+gtkui_show_log_window(gboolean show);
+
 #endif

@@ -771,3 +771,23 @@ on_prefwin_key_press_event             (GtkWidget       *widget,
     return FALSE;
 }
 
+
+void
+on_view_log_activate                   (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    gboolean act = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem));
+    gtkui_show_log_window(act);
+}
+
+
+void
+on_log_clear_clicked                   (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *textview = lookup_widget (gtk_widget_get_toplevel (GTK_WIDGET (button)), "logwindow_textview");
+    GtkTextBuffer *buffer;
+    buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (textview));    
+    gtk_text_buffer_set_text(buffer, "", 0);
+}
+

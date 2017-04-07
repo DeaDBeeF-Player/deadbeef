@@ -76,6 +76,7 @@ GtkWidget *mainwin;
 int gtkui_override_statusicon = 0;
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
+GtkWidget *logwindow;
 
 static int gtkui_accept_messages = 0;
 
@@ -1089,6 +1090,67 @@ add_window_init_hook (void (*callback) (void *userdata), void *userdata) {
     window_init_hooks_count++;
 }
 
+
+void
+gtkui_show_log_window(gboolean show) {
+    gtk_widget_set_visible(logwindow, show);
+    GtkWidget *menuitem = lookup_widget (mainwin, "view_log");
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), show);
+}
+
+gboolean
+on_gtkui_log_window_delete (GtkWidget *widget, GdkEventAny *event, GtkWidget **pwindow) {
+    gtkui_show_log_window(FALSE);
+    return TRUE; // don't destroy window
+}
+
+void
+gtkui_create_log_window (GtkWidget **pwindow) {
+    if (*pwindow) {
+        return;
+    }
+    GtkWidget *widget = *pwindow = create_log_window ();
+    g_object_set_data (G_OBJECT (widget), "pointer", pwindow);
+    g_signal_connect (widget, "delete_event", G_CALLBACK (on_gtkui_log_window_delete), pwindow);
+    gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (mainwin));
+    GtkWidget *txt = lookup_widget (widget, "logwindow_textview");
+    GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
+
+    const char *startup_msg = "deadbeef " VERSION "\n";
+    gtk_text_buffer_set_text (buffer, startup_msg, strlen (startup_msg));
+    gtk_text_view_set_buffer (GTK_TEXT_VIEW (txt), buffer);
+    g_object_unref (buffer);
+}
+
+static gboolean
+logwindow_addtext_cb (gpointer data) {
+    char *s = (char *)data;
+
+    GtkWidget *textview=lookup_widget(logwindow, "logwindow_textview");
+    GtkTextBuffer *buffer;
+    GtkTextIter iter;
+    size_t len;
+    len = strlen(s);
+    buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (textview));
+
+    gtk_text_buffer_get_end_iter(buffer, &iter);
+    gtk_text_buffer_insert(buffer, &iter, s, len);
+    // Make sure it ends on a newline
+    if (s[len-1] != '\n') {
+        gtk_text_buffer_get_end_iter(buffer, &iter);
+        gtk_text_buffer_insert(buffer, &iter, "\n", 1);
+    }
+
+    free(s);
+    return FALSE;
+}
+
+static void
+logwindow_logger_callback (struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx) {
+    g_idle_add(logwindow_addtext_cb, (gpointer)strdup(text));
+}
+
+
 int
 gtkui_thread (void *ctx) {
 #ifdef __linux__
@@ -1138,6 +1200,9 @@ gtkui_thread (void *ctx) {
     w_reg_widget (_("Log viewer"), 0, w_logviewer_create, "logviewer", NULL);
 
     mainwin = create_mainwin ();
+
+    gtkui_create_log_window(&logwindow);
+    deadbeef->log_viewer_register (logwindow_logger_callback, logwindow);
 
     // initialize default hotkey mapping
     if (!deadbeef->conf_get_int ("hotkeys_created", 0)) {
@@ -1410,6 +1475,7 @@ static int
 gtkui_stop (void) {
     trace ("quitting gtk\n");
     cover_art_disconnect();
+    deadbeef->log_viewer_unregister (logwindow_logger_callback, logwindow);
     g_idle_add (quit_gtk_cb, NULL);
     return 0;
 }
