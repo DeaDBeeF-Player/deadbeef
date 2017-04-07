@@ -800,9 +800,9 @@ main_cleanup_and_quit (void) {
     trace ("plug_cleanup\n");
     plug_cleanup ();
     trace ("logger_free\n");
-    ddb_logger_free();
 
     trace ("hej-hej!\n");
+    ddb_logger_free();
 }
 
 static void
@@ -820,13 +820,13 @@ mainloop_thread (void *ctx) {
 
 int
 main (int argc, char *argv[]) {
+    ddb_logger_init ();
     int portable = 0;
 #if STATICLINK
     int staticlink = 1;
 #else
     int staticlink = 0;
 #endif
-    ddb_logger_init ();
 #if PORTABLE
     portable = 1;
     if (!realpath (argv[0], dbinstalldir)) {
