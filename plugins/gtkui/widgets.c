@@ -4315,21 +4315,19 @@ w_ctvoices_create (void) {
 
 ////// Log viewer widget
 
-#if 0
+static void
+logviewer_logger_callback (struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx);
+
 static int
 logviewer_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     w_logviewer_t *logviewer_w = (w_logviewer_t *)w;
     switch (id) {
+        case DB_EV_TERMINATE:
+        deadbeef->log_viewer_unregister (logviewer_logger_callback, logviewer_w);
         break;
     }
     return 0;
 }
-
-#endif
-
-
-static void
-logviewer_logger_callback (struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx);
 
 static void
 w_logviewer_init (struct ddb_gtkui_widget_s *widget) {
@@ -4337,7 +4335,6 @@ w_logviewer_init (struct ddb_gtkui_widget_s *widget) {
     w_logviewer_t *w = (w_logviewer_t *)widget;
     buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (w->textview));
     gtk_text_buffer_set_text (buffer, "Log\n", -1);
-    deadbeef->log("Logging started.");
 }
 
 static gboolean
@@ -4374,6 +4371,7 @@ logviewer_logger_callback (struct DB_plugin_s *plugin, uint32_t layers, const ch
 
 void
 w_logviewer_destroy (ddb_gtkui_widget_t *w) {
+    // This is only called if removing widget in design mode
     deadbeef->log_viewer_unregister (logviewer_logger_callback, w);
 }
 
@@ -4385,8 +4383,7 @@ w_logviewer_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.init = w_logviewer_init;
     w->base.destroy = w_logviewer_destroy;
-    //w->base.message = logviewer_message;
-    //w->base.initmenu = w_logviewer_initmenu;
+    w->base.message = logviewer_message;
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
