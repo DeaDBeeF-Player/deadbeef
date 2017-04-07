@@ -2061,12 +2061,18 @@ play_index (int idx) {
         plt_init_shuffle_albums (plt, idx);
     }
     streamer_reset (1);
-    stream_track (it);
-    playpos = 0;
-    playtime = 0;
-    streamer_start_playback (playing_track, it);
-    send_songstarted (playing_track);
-    output->play ();
+    if (!stream_track (it)) {
+        playpos = 0;
+        playtime = 0;
+        streamer_start_playback (playing_track, it);
+        send_songstarted (playing_track);
+        output->play ();
+    }
+    else {
+        // FIXME: this indicates that playing the file at index failed, and next one should be picked
+        streamer_start_playback (playing_track, NULL);
+        output->stop ();
+    }
     pl_item_unref(it);
     plt_unref (plt);
     streamer_unlock ();
