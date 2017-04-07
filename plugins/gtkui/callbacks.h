@@ -1371,3 +1371,8 @@ on_view_log_activate                   (GtkMenuItem     *menuitem,
 void
 on_log_clear_clicked                   (GtkButton       *button,
                                         gpointer         user_data);
+
+gboolean
+on_log_window_key_press_event          (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);

@@ -10060,6 +10060,7 @@ Descending</property>
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">True</property>
+  <property name="icon_name"></property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">True</property>
   <property name="skip_pager_hint">True</property>
@@ -10067,7 +10068,7 @@ Descending</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
-  <signal name="key_press_event" handler="on_helpwindow_key_press_event" last_modification_time="Sun, 04 Oct 2009 19:06:07 GMT"/>
+  <signal name="key_press_event" handler="on_log_window_key_press_event" last_modification_time="Fri, 07 Apr 2017 20:09:58 GMT"/>
 
   <child>
     <widget class="GtkScrolledWindow" id="scrolledwindow14">

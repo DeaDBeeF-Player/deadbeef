@@ -5148,7 +5148,7 @@ create_log_window (void)
   gtk_box_pack_end (GTK_BOX (hbox140), log_clear, FALSE, FALSE, 0);
 
   g_signal_connect ((gpointer) log_window, "key_press_event",
-                    G_CALLBACK (on_helpwindow_key_press_event),
+                    G_CALLBACK (on_log_window_key_press_event),
                     NULL);
   g_signal_connect ((gpointer) log_clear, "clicked",
                     G_CALLBACK (on_log_clear_clicked),

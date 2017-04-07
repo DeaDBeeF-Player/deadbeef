@@ -791,3 +791,13 @@ on_log_clear_clicked                   (GtkButton       *button,
     gtk_text_buffer_set_text(buffer, "", 0);
 }
 
+
+gboolean
+on_log_window_key_press_event          (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data)
+{
+    gtkui_show_log_window(FALSE);
+    return FALSE;
+}
+
