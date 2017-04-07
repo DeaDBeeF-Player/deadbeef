@@ -5103,9 +5103,9 @@ GtkWidget*
 create_log_window (void)
 {
   GtkWidget *log_window;
-  GtkWidget *scrolledwindow14;
   GtkWidget *viewport1;
   GtkWidget *vbox49;
+  GtkWidget *scrolledwindow14;
   GtkWidget *logwindow_textview;
   GtkWidget *hbox140;
   GtkWidget *log_clear;
@@ -5118,22 +5118,21 @@ create_log_window (void)
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (log_window), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (log_window), TRUE);
 
-  scrolledwindow14 = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrolledwindow14);
-  gtk_container_add (GTK_CONTAINER (log_window), scrolledwindow14);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow14), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
   viewport1 = gtk_viewport_new (NULL, NULL);
   gtk_widget_show (viewport1);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow14), viewport1);
+  gtk_container_add (GTK_CONTAINER (log_window), viewport1);
 
   vbox49 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox49);
   gtk_container_add (GTK_CONTAINER (viewport1), vbox49);
 
+  scrolledwindow14 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow14);
+  gtk_box_pack_start (GTK_BOX (vbox49), scrolledwindow14, TRUE, TRUE, 0);
+
   logwindow_textview = gtk_text_view_new ();
   gtk_widget_show (logwindow_textview);
-  gtk_box_pack_start (GTK_BOX (vbox49), logwindow_textview, TRUE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow14), logwindow_textview);
   gtk_text_view_set_editable (GTK_TEXT_VIEW (logwindow_textview), FALSE);
   gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (logwindow_textview), GTK_WRAP_WORD);
   gtk_text_view_set_left_margin (GTK_TEXT_VIEW (logwindow_textview), 10);
@@ -5142,6 +5141,7 @@ create_log_window (void)
   hbox140 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox140);
   gtk_box_pack_start (GTK_BOX (vbox49), hbox140, FALSE, FALSE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (hbox140), 5);
 
   log_clear = gtk_button_new_with_mnemonic (_("Clear"));
   gtk_widget_show (log_clear);
@@ -5156,9 +5156,9 @@ create_log_window (void)
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (log_window, log_window, "log_window");
-  GLADE_HOOKUP_OBJECT (log_window, scrolledwindow14, "scrolledwindow14");
   GLADE_HOOKUP_OBJECT (log_window, viewport1, "viewport1");
   GLADE_HOOKUP_OBJECT (log_window, vbox49, "vbox49");
+  GLADE_HOOKUP_OBJECT (log_window, scrolledwindow14, "scrolledwindow14");
   GLADE_HOOKUP_OBJECT (log_window, logwindow_textview, "logwindow_textview");
   GLADE_HOOKUP_OBJECT (log_window, hbox140, "hbox140");
   GLADE_HOOKUP_OBJECT (log_window, log_clear, "log_clear");
