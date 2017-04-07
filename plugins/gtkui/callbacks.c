@@ -797,7 +797,9 @@ on_log_window_key_press_event          (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
-    gtkui_show_log_window(FALSE);
+    if (event->keyval == GDK_Escape) {
+        gtkui_show_log_window(FALSE);
+    }
     return FALSE;
 }
 
