@@ -1218,7 +1218,9 @@ gtkui_thread (void *ctx) {
     mainwin = create_mainwin ();
 
     gtkui_create_log_window(&logwindow);
-    deadbeef->log_viewer_register (logwindow_logger_callback, logwindow);
+    if (logwindow) {
+        deadbeef->log_viewer_register (logwindow_logger_callback, logwindow);
+    }
 
     // initialize default hotkey mapping
     if (!deadbeef->conf_get_int ("hotkeys_created", 0)) {
@@ -1335,6 +1337,12 @@ gtkui_thread (void *ctx) {
     search_destroy ();
 //    draw_free ();
     titlebar_tf_free ();
+
+    if (logwindow) {
+        deadbeef->log_viewer_unregister (logwindow_logger_callback, logwindow);
+        gtk_widget_destroy (logwindow);
+        logwindow = NULL;
+    }
     if (mainwin) {
         gtk_widget_destroy (mainwin);
         mainwin = NULL;
@@ -1491,7 +1499,6 @@ static int
 gtkui_stop (void) {
     trace ("quitting gtk\n");
     cover_art_disconnect();
-    deadbeef->log_viewer_unregister (logwindow_logger_callback, logwindow);
     g_idle_add (quit_gtk_cb, NULL);
     return 0;
 }
