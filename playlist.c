@@ -536,23 +536,11 @@ plt_find (const char *name) {
 
 
 void
-plt_recalculate_seltime (playlist_t *plt) {
-    for (playItem_t *it = plt->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-        if (it->selected) {
-            float dur = pl_get_item_duration (it);
-            plt->seltime += dur;
-        }
-    }
-}
-
-void
 plt_set_curr (playlist_t *plt) {
     LOCK;
     if (plt != playlist) {
         playlist = plt;
         if (!plt_loading) {
-            plt_recalculate_seltime(playlist);
-
             messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
             conf_set_int ("playlist.current", plt_get_curr_idx ());
             conf_save ();
@@ -572,8 +560,6 @@ plt_set_curr_idx (int plt) {
     if (p != playlist) {
         playlist = p;
         if (!plt_loading) {
-            plt_recalculate_seltime(playlist);
-
             messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
             conf_set_int ("playlist.current", plt);
             conf_save ();
@@ -2665,7 +2651,7 @@ void
 plt_select_all (playlist_t *playlist) {
     LOCK;
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-        pl_set_selected(it, 1);
+        pl_set_select_in_playlist (playlist, it, 1);
     }
     UNLOCK;
 }
@@ -3390,35 +3376,40 @@ pl_get_totaltime (void) {
 
 float
 plt_get_seltime (playlist_t *playlist) {
-    LOCK
-    float t = playlist->seltime;
+    LOCK;
+
+    float t = 0;
+
+    if (playlist->recalc_seltime) {
+        for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+            if (it->selected){
+                t += it->_duration;
+            }
+        }
+
+        playlist->seltime = t;
+        playlist->recalc_seltime = 0;
+    }
+    else {
+        t = playlist->seltime;
+    }
+
     UNLOCK;
+
     return t;
+}
+
+void
+pl_set_select_in_playlist (playlist_t *playlist, playItem_t *it, int sel)
+{
+    it->selected = sel;
+    playlist->recalc_seltime = 1;
 }
 
 void
 pl_set_selected (playItem_t *it, int sel) {
     LOCK;
-    float dur = pl_get_item_duration (it);
-    if (dur > 0 && it->in_playlist){
-        for (playItem_t *playlist_it = playlist->head[PL_MAIN];
-            playlist_it;
-            playlist_it = playlist_it->next[PL_MAIN]) {
-            if (it == playlist_it) {
-                if (sel && !it->selected) {
-                        playlist->seltime += dur;
-                }
-                else {
-                    playlist->seltime -= dur;
-                    if (playlist->seltime < 0) {
-                        playlist->seltime = 0;
-                    }
-                }
-            }
-        }
-    }
-
-    it->selected = sel;
+    pl_set_select_in_playlist(playlist, it, sel);
     UNLOCK;
 }
 
@@ -3611,7 +3602,7 @@ plt_search_reset_int (playlist_t *playlist, int clear_selection) {
     while (playlist->head[PL_SEARCH]) {
         playItem_t *next = playlist->head[PL_SEARCH]->next[PL_SEARCH];
         if (clear_selection) {
-            pl_set_selected(playlist->head[PL_SEARCH], 0);
+            pl_set_select_in_playlist(playlist, playlist->head[PL_SEARCH], 0);
         }
         playlist->head[PL_SEARCH]->next[PL_SEARCH] = NULL;
         playlist->head[PL_SEARCH]->prev[PL_SEARCH] = NULL;
@@ -3664,7 +3655,7 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
 
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         if (select_results) {
-            pl_set_selected(it, 0);
+            pl_set_select_in_playlist(playlist, it, 0);
         }
         if (*text) {
             DB_metaInfo_t *m = NULL;
@@ -3698,7 +3689,7 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
                                 playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
                             }
                             if (select_results) {
-                                pl_set_selected(it, 1);
+                                pl_set_select_in_playlist(playlist, it, 1);
                             }
                             playlist->count[PL_SEARCH]++;
                             break;
@@ -3717,7 +3708,7 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
                             playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
                         }
                         if (select_results) {
-                            pl_set_selected(it, 1);
+                            pl_set_select_in_playlist(playlist, it, 1);
                         }
                         playlist->count[PL_SEARCH]++;
                         *((char *)m->value-1) = cmpidx;
@@ -4087,6 +4078,7 @@ plt_deselect_all (playlist_t *playlist) {
         it->selected = 0;
     }
     playlist->seltime = 0;
+    playlist->recalc_seltime = 0;
     UNLOCK;
 }
 
