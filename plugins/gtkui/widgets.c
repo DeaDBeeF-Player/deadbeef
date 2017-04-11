@@ -250,6 +250,10 @@ w_free (void) {
         free (cr);
     }
     w_creators = NULL;
+
+    w_remove (NULL, rootwidget);
+    w_destroy (rootwidget);
+    rootwidget = NULL;
 }
 
 ddb_gtkui_widget_t *
@@ -309,24 +313,26 @@ w_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
         w_destroy (c);
     }
 
-    if (cont->remove) {
-        cont->remove (cont, child);
-    }
-    child->widget = NULL;
-    ddb_gtkui_widget_t *prev = NULL;
-    for (ddb_gtkui_widget_t *c = cont->children; c; c = c->next) {
-        if (c == child) {
-            if (prev) {
-                prev->next = c->next;
-            }
-            else {
-                cont->children = c->next;
-            }
-            break;
+    if (cont) {
+        if (cont->remove) {
+            cont->remove (cont, child);
         }
-        prev = c;
+        ddb_gtkui_widget_t *prev = NULL;
+        for (ddb_gtkui_widget_t *c = cont->children; c; c = c->next) {
+            if (c == child) {
+                if (prev) {
+                    prev->next = c->next;
+                }
+                else {
+                    cont->children = c->next;
+                }
+                break;
+            }
+            prev = c;
+        }
     }
     child->parent = NULL;
+    child->widget = NULL;
 }
 
 GtkWidget *
