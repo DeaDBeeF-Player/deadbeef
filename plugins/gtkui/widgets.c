@@ -4318,16 +4318,6 @@ w_ctvoices_create (void) {
 static void
 logviewer_logger_callback (struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx);
 
-static int
-logviewer_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
-    w_logviewer_t *logviewer_w = (w_logviewer_t *)w;
-    switch (id) {
-        case DB_EV_TERMINATE:
-        deadbeef->log_viewer_unregister (logviewer_logger_callback, logviewer_w);
-        break;
-    }
-    return 0;
-}
 
 static void
 w_logviewer_init (struct ddb_gtkui_widget_s *widget) {
@@ -4383,7 +4373,6 @@ w_logviewer_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.init = w_logviewer_init;
     w->base.destroy = w_logviewer_destroy;
-    w->base.message = logviewer_message;
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
