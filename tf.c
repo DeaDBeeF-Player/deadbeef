@@ -2107,6 +2107,29 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 else if (!strcmp (name, "_playlist_name")) {
                     val = ((playlist_t *)ctx->plt)->title;
                 }
+                else if (!strcmp (name, "seltime")) {
+                    float seltime = plt_get_seltime((playlist_t *)ctx->plt);
+
+                    int daystotal = (int)seltime / (3600*24);
+                    int hourtotal = ((int)seltime / 3600) % 24;
+                    int mintotal = ((int)seltime/60) % 60;
+                    int sectotal = ((int)seltime) % 60;
+
+                    int len = 0;
+                    if (daystotal == 0) {
+                        len = snprintf (out, outlen, "%d:%02d:%02d", hourtotal, mintotal, sectotal);
+                    }
+                    else if (daystotal == 1) {
+                        len = snprintf (out, outlen, _("1 day %d:%02d:%02d"), hourtotal, mintotal, sectotal);
+                    }
+                    else {
+                        len = snprintf (out, outlen, _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
+                    }
+
+                    out += len;
+                    outlen -= len;
+                    skip_out = 1;
+                }
                 else {
                     val = _tf_get_combined_value (it, name, &needs_free);
                 }

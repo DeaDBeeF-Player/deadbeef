@@ -141,6 +141,24 @@ static float last_songpos = -1;
 static char sbitrate[20] = "";
 static struct timeval last_br_update;
 
+static void
+format_timestr (char *buf, float time) {
+    int daystotal = (int)time / (3600*24);
+    int hourtotal = ((int)time / 3600) % 24;
+    int mintotal = ((int)time/60) % 60;
+    int sectotal = ((int)time) % 60;
+
+    if (daystotal == 0) {
+        snprintf (buf, sizeof (buf), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
+    }
+    else if (daystotal == 1) {
+        snprintf (buf, sizeof (buf), _("1 day %d:%02d:%02d"), hourtotal, mintotal, sectotal);
+    }
+    else {
+        snprintf (buf, sizeof (buf), _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
+    }
+}
+
 static gboolean
 update_songinfo (gpointer ctx) {
     int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
@@ -151,37 +169,34 @@ update_songinfo (gpointer ctx) {
     char sbtext_new[512] = "-";
 
     float pl_totaltime = deadbeef->pl_get_totaltime ();
-    int daystotal = (int)pl_totaltime / (3600*24);
-    int hourtotal = ((int)pl_totaltime / 3600) % 24;
-    int mintotal = ((int)pl_totaltime/60) % 60;
-    int sectotal = ((int)pl_totaltime) % 60;
-
     char totaltime_str[512] = "";
-    if (daystotal == 0) {
-        snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
-    }
-    else if (daystotal == 1) {
-        snprintf (totaltime_str, sizeof (totaltime_str), _("1 day %d:%02d:%02d"), hourtotal, mintotal, sectotal);
-    }
-    else {
-        snprintf (totaltime_str, sizeof (totaltime_str), _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
-    }
+    format_timestr(totaltime_str, pl_totaltime);
 
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
 
     if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track)) {
-        snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+        snprintf (sbtext_new,
+                  sizeof (sbtext_new),
+                  _("Stopped | %d tracks | %s total playtime"),
+                  deadbeef->pl_getcount (PL_MAIN),
+                  totaltime_str);
     }
     else {
         ddb_tf_context_t ctx = {
             ._size = sizeof (ddb_tf_context_t),
             .it = track,
             .iter = PL_MAIN,
+            .plt = deadbeef->plt_get_curr()
         };
 
         char buffer[200];
         deadbeef->tf_eval (&ctx, statusbar_bc, buffer, sizeof (buffer));
-        snprintf (sbtext_new, sizeof (sbtext_new), "%s | %d tracks | %s total playtime", buffer, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+        snprintf (sbtext_new,
+                  sizeof (sbtext_new),
+                  "%s | %d tracks | %s total playtime",
+                  buffer,
+                  deadbeef->pl_getcount (PL_MAIN),
+                  totaltime_str);
     }
 
     if (strcmp (sbtext_new, sb_text)) {
@@ -371,7 +386,7 @@ gtkui_titlebar_tf_init (void) {
     deadbeef->conf_get_str ("gtkui.titlebar_stopped_tf", gtkui_default_titlebar_stopped, fmt, sizeof (fmt));
     titlebar_stopped_bc = deadbeef->tf_compile (fmt);
 
-    statusbar_bc = deadbeef->tf_compile ("$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length%");
+    statusbar_bc = deadbeef->tf_compile ("$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length% | %seltime% selected playtime");
 }
 
 void
