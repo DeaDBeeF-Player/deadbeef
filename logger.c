@@ -163,7 +163,7 @@ ddb_log_viewer_unregister (void (*callback)(DB_plugin_t *plugin, uint32_t layers
                 _loggers = l->next;
             }
             free (l);
-            return;
+            break;
         }
         prev = l;
     }
