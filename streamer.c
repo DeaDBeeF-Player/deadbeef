@@ -2027,45 +2027,23 @@ streamer_configchanged (void) {
 static void
 play_index (int idx) {
     DB_output_t *output = plug_get_output ();
+    playItem_t *it = NULL;
+    playlist_t *plt = NULL;
 
     if (idx < 0) {
-        streamer_lock();
-        streamer_reset (1);
-        stream_track (NULL);
-        output->stop ();
-        playItem_t *it = playing_track;
-        playing_track = NULL;
-        if (it) {
-            send_trackinfochanged (it);
-            pl_item_unref (it);
-        }
-        streamer_unlock();
-        return;
+        goto error;
     }
 
-    playlist_t *plt = plt_get_curr ();
-    playItem_t *it = plt_get_item_for_idx (plt, idx, PL_MAIN);
+    plt = plt_get_curr ();
+    it = plt_get_item_for_idx (plt, idx, PL_MAIN);
     if (!it) {
-        plt_unref (plt);
-        return;
+        goto error;
     }
 
-    pl_lock ();
-    if (plt != streamer_playlist) {
-        streamer_set_streamer_playlist (plt);
-    }
-    pl_unlock ();
-
-    streamer_lock();
-    if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
-        plt_init_shuffle_albums (plt, idx);
-    }
-    streamer_reset (1);
-    if (!stream_track (it)) {
+    streamer_reset(1);
+    if (!stream_track(it)) {
         playpos = 0;
         playtime = 0;
-        streamer_start_playback (playing_track, it);
-        send_songstarted (playing_track);
         output->play ();
     }
     else {
@@ -2073,9 +2051,26 @@ play_index (int idx) {
         streamer_start_playback (playing_track, NULL);
         output->stop ();
     }
+
     pl_item_unref(it);
     plt_unref (plt);
-    streamer_unlock ();
+    return;
+
+error:
+    streamer_lock();
+    streamer_reset (1);
+    stream_track (NULL);
+    output->stop ();
+    it = playing_track;
+    playing_track = NULL;
+    if (it) {
+        send_trackinfochanged (it);
+        pl_item_unref (it);
+    }
+    if (plt) {
+        plt_unref (plt);
+    }
+    streamer_unlock();
 }
 
 // if a track is playing: restart
