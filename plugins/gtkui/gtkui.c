@@ -1148,14 +1148,16 @@ logwindow_addtext_cb (gpointer data) {
     size_t len;
     len = strlen(s);
     buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (textview));
+    GtkTextMark *mark = gtk_text_buffer_get_insert (buffer);
 
     gtk_text_buffer_get_end_iter(buffer, &iter);
-    gtk_text_buffer_insert(buffer, &iter, s, len);
+    gtk_text_buffer_move_mark( buffer, mark, &iter );
+    gtk_text_buffer_insert_at_cursor( buffer, s, len );
     // Make sure it ends on a newline
     if (s[len-1] != '\n') {
-        gtk_text_buffer_get_end_iter(buffer, &iter);
-        gtk_text_buffer_insert(buffer, &iter, "\n", 1);
+        gtk_text_buffer_insert_at_cursor(buffer, "\n", 1);
     }
+    gtk_text_view_scroll_to_mark( GTK_TEXT_VIEW (textview), mark, 0.0, TRUE, 0, 1 );
 
     free(s);
     return FALSE;

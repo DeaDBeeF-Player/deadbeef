@@ -4337,15 +4337,17 @@ logviewer_addtext_cb (gpointer data) {
     size_t len;
     len = strlen(s->text_to_add);
     buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (w->textview));
+    GtkTextMark *mark = gtk_text_buffer_get_insert (buffer);
 
     gtk_text_buffer_get_end_iter(buffer, &iter);
-    gtk_text_buffer_insert(buffer, &iter, s->text_to_add, len);
+    gtk_text_buffer_move_mark( buffer, mark, &iter );
+    gtk_text_buffer_insert_at_cursor( buffer, s->text_to_add, len );
     // Make sure it ends on a newline
     if (s->text_to_add[len-1] != '\n') {
-        gtk_text_buffer_get_end_iter(buffer, &iter);
-        gtk_text_buffer_insert(buffer, &iter, "\n", 1);
+        gtk_text_buffer_insert_at_cursor(buffer, "\n", 1);
     }
 
+    gtk_text_view_scroll_to_mark( GTK_TEXT_VIEW (w->textview), mark, 0.0, TRUE, 0, 1 );
     free (s->text_to_add);
     free(s);
     return FALSE;
@@ -4385,6 +4387,7 @@ w_logviewer_create (void) {
     gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scroll), GTK_SHADOW_ETCHED_IN);
     w->textview = gtk_text_view_new ();
     gtk_text_view_set_editable(GTK_TEXT_VIEW(w->textview), FALSE);
+    //gtk_widget_set_size_request(w->textview, 320, 240);
     gtk_widget_show (w->textview);
     gtk_container_add (GTK_CONTAINER (scroll), w->textview);
 
