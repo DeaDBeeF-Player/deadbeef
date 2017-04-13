@@ -758,6 +758,12 @@ plug_get_gui (void) {
 
 void
 main_cleanup_and_quit (void) {
+    // stop streaming and playback before unloading plugins
+    DB_output_t *output = plug_get_output ();
+    output->stop ();
+    streamer_free ();
+    output->free ();
+
     // terminate server and wait for completion
     if (server_tid) {
         server_terminate = 1;
@@ -1156,12 +1162,6 @@ main (int argc, char *argv[]) {
     
     trace ("gui plugin has quit; waiting for mainloop thread to finish\n");
     thread_join (mainloop_tid);
-
-    // stop streaming and playback before unloading plugins
-    DB_output_t *output = plug_get_output ();
-    output->stop ();
-    streamer_free ();
-    output->free ();
 
     main_cleanup_and_quit ();
     return 0;
