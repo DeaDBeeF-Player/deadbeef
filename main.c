@@ -1159,6 +1159,9 @@ main (int argc, char *argv[]) {
     if (gui) {
         gui->start ();
     }
+
+    // NOTE: It's not guaranteed that the code after this line will be called.
+    // On some platforms (cocoa), main_cleanup_and_quit is called directly before quit.
     
     trace ("gui plugin has quit; waiting for mainloop thread to finish\n");
     thread_join (mainloop_tid);
