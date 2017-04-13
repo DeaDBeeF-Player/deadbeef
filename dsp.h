@@ -24,6 +24,8 @@
 #ifndef dsp_h
 #define dsp_h
 
+#include "deadbeef.h"
+
 void
 dsp_free (void);
 
@@ -57,5 +59,8 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
 
 void
 dsp_get_output_format (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt);
+
+int
+dsp_apply_simple_downsampler (int input_samplerate, int channels, char *input, int inputsize, int output_samplerate, char **out_bytes, int *out_numbytes);
 
 #endif /* dsp_h */
