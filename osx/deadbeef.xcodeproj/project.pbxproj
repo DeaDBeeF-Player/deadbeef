@@ -1577,6 +1577,7 @@
 		4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6C9E183BC29400AC6BF5 /* btnpauseTemplate.pdf */; };
 		4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */; };
 		4D2A6CA4183BC29400AC6BF5 /* btnstopTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6CA0183BC29400AC6BF5 /* btnstopTemplate.pdf */; };
+		4D31BECE1E9FB194001D1B89 /* StreamerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D31BECD1E9FB194001D1B89 /* StreamerTest.m */; };
 		4D32F9C319A630F8000FFDE0 /* bitmath.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9AD19A630F8000FFDE0 /* bitmath.c */; };
 		4D32F9C419A630F8000FFDE0 /* bitreader.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9AE19A630F8000FFDE0 /* bitreader.c */; };
 		4D32F9C519A630F8000FFDE0 /* bitwriter.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9AF19A630F8000FFDE0 /* bitwriter.c */; };
@@ -4024,6 +4025,7 @@
 		4D2A6C9E183BC29400AC6BF5 /* btnpauseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnpauseTemplate.pdf; path = images/btnpauseTemplate.pdf; sourceTree = "<group>"; };
 		4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnprevTemplate.pdf; path = images/btnprevTemplate.pdf; sourceTree = "<group>"; };
 		4D2A6CA0183BC29400AC6BF5 /* btnstopTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnstopTemplate.pdf; path = images/btnstopTemplate.pdf; sourceTree = "<group>"; };
+		4D31BECD1E9FB194001D1B89 /* StreamerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamerTest.m; sourceTree = "<group>"; };
 		4D32F99719A62F2A000FFDE0 /* flac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = flac.c; path = plugins/flac/flac.c; sourceTree = "<group>"; };
 		4D32F9A719A63094000FFDE0 /* libflaclib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libflaclib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D32F9AD19A630F8000FFDE0 /* bitmath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bitmath.c; path = "deps/flac-1.3.0/src/libFLAC/bitmath.c"; sourceTree = "<group>"; };
@@ -6647,6 +6649,7 @@
 				2D0F90C11CCFF094003FA197 /* Tagging.m */,
 				2D7492861CCFFE7700D3A59E /* TestData */,
 				2DAA4C0A1AAF88DE00519559 /* Supporting Files */,
+				4D31BECD1E9FB194001D1B89 /* StreamerTest.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -11277,6 +11280,7 @@
 				2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */,
 				2D0F90C21CCFF094003FA197 /* Tagging.m in Sources */,
 				2DAA4C141AAF88FF00519559 /* TitleFormatting.m in Sources */,
+				4D31BECE1E9FB194001D1B89 /* StreamerTest.m in Sources */,
 				2D7F38031B2858AC00692A7B /* Junklib.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
