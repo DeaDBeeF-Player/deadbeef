@@ -268,6 +268,8 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
 
         set_last_played (playing_track);
 
+        playqueue_remove (playing_track);
+
         trace ("from=%p (%s), to=%p (%s) [2]\n", from, from ? pl_find_meta (from, ":URI") : "null", it, it ? pl_find_meta (it, ":URI") : "null");
         send_trackchanged (from, it);
         started_timestamp = time (NULL);
@@ -440,7 +442,6 @@ get_next_track (playItem_t *curr) {
         trace ("playqueue_getnext\n");
         playItem_t *it = playqueue_getnext ();
         if (it) {
-            playqueue_pop ();
             pl_unlock ();
             return it; // from playqueue
         }
@@ -573,7 +574,6 @@ get_prev_track (playItem_t *curr) {
         curr = NULL;
     }
 
-    playqueue_clear ();
     if (!plt->head[PL_MAIN]) {
         pl_unlock ();
         return NULL;
@@ -2030,6 +2030,8 @@ play_index (int idx) {
     playItem_t *it = NULL;
     playlist_t *plt = NULL;
 
+    playqueue_clear ();
+
     if (idx < 0) {
         goto error;
     }
@@ -2097,28 +2099,29 @@ play_current (void) {
     else if (plt->current_row[PL_MAIN] != -1) {
         // play currently selected track in current playlist
         streamer_reset(1);
-        // get next song in queue
-        int idx = -1;
-        playItem_t *next = playqueue_getnext ();
-        if (next) {
-            idx = str_get_idx_of (next);
-            playqueue_pop ();
-            pl_item_unref (next);
-        }
-        else {
-            idx = plt->current_row[PL_MAIN];
-            next = pl_get_for_idx(idx);
+
+        playItem_t *next = NULL;
+        int idx = plt->current_row[PL_MAIN];
+        if (idx >= 0) {
+            next = plt_get_item_for_idx (plt, idx, PL_MAIN);
         }
 
-        pl_lock ();
-        if (plt != streamer_playlist) {
-            streamer_set_streamer_playlist (plt);
+        if (next) {
+            pl_lock ();
+            if (plt != streamer_playlist) {
+                streamer_set_streamer_playlist (plt);
+            }
+            pl_unlock ();
+            stream_track (next);
+            playpos = 0;
+            playtime = 0;
+            output->play ();
         }
-        pl_unlock ();
-        stream_track (next);
-        playpos = 0;
-        playtime = 0;
-        output->play ();
+        else {
+            // FIXME: this indicates that playing the file at index failed, and next one should be picked
+            streamer_start_playback (playing_track, NULL);
+            output->stop ();
+        }
     }
     if (plt) {
         plt_unref (plt);
