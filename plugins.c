@@ -618,7 +618,7 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
         int same_name = (!p->plugin->id || !plugin_api->id) && p->plugin->name && plugin_api->name && !strcmp (p->plugin->name, plugin_api->name);
         if (same_id || same_name) {
             if (plugin_api->version_major > p->plugin->version_major || (plugin_api->version_major == p->plugin->version_major && plugin_api->version_minor > p->plugin->version_minor)) {
-                trace ("found newer version of plugin \"%s\" (%s), replacing\n", plugin_api->id, plugin_api->name);
+                trace_err ("found newer version of plugin \"%s\" (%s), replacing\n", plugin_api->id, plugin_api->name);
                 // unload older plugin before replacing
                 dlclose (p->handle);
                 if (prev) {
@@ -633,7 +633,7 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
                 free (p);
             }
             else {
-                trace ("found copy of plugin \"%s\" (%s), but newer version is already loaded\n", plugin_api->id, plugin_api->name)
+                trace_err ("found copy of plugin \"%s\" (%s), but newer version is already loaded\n", plugin_api->id, plugin_api->name)
                 return -1;
             }
         }
@@ -644,13 +644,13 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
         // version check enabled
         if (DB_API_VERSION_MAJOR != 9 && DB_API_VERSION_MINOR != 9) {
             if (plugin_api->api_vmajor != DB_API_VERSION_MAJOR || plugin_api->api_vminor > DB_API_VERSION_MINOR) {
-                trace ("\033[0;31mWARNING: plugin \"%s\" wants API v%d.%d (got %d.%d), will not be loaded\033[0;m\n", plugin_api->name, plugin_api->api_vmajor, plugin_api->api_vminor, DB_API_VERSION_MAJOR, DB_API_VERSION_MINOR);
+                trace_err ("WARNING: plugin \"%s\" wants API v%d.%d (got %d.%d), will not be loaded\n", plugin_api->name, plugin_api->api_vmajor, plugin_api->api_vminor, DB_API_VERSION_MAJOR, DB_API_VERSION_MINOR);
                 return -1;
             }
         }
     }
     else {
-            trace ("\033[0;31mWARNING: plugin \"%s\" has disabled version check. please don't distribute it!\033[0;m\n", plugin_api->name);
+            trace_err ("WARNING: plugin \"%s\" has disabled version check. please don't distribute it!\n", plugin_api->name);
     }
 #endif
 
@@ -946,7 +946,7 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
 
                 if (!gui_scan) {
                     if (0 != load_plugin (plugdir, d_name, (int)l)) {
-                        trace ("plugin not found or failed to load\n");
+                        trace_err ("plugin %s not found or failed to load\n", d_name);
                     }
                 }
                 break;
@@ -988,7 +988,7 @@ plug_load_all (void) {
         char *homedir = getenv ("HOME");
 
         if (!homedir) {
-            trace ("plug_load_all: warning: unable to find home directory\n");
+            trace_err ("plug_load_all: warning: unable to find home directory\n");
             xdg_plugin_dir[0] = 0;
         }
         else {
@@ -997,12 +997,12 @@ plug_load_all (void) {
             // 2. load from lib if present
             int written = snprintf (xdg_plugin_dir, sizeof (xdg_plugin_dir), "%s/.local/lib/deadbeef", homedir);
             if (written > sizeof (xdg_plugin_dir)) {
-                trace ("warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
+                trace_err ("warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
                 xdg_plugin_dir[0] = 0;
             }
             written = snprintf (xdg_plugin_dir_explicit_arch, sizeof (xdg_plugin_dir_explicit_arch), "%s/.local/lib%d/deadbeef", homedir, (int)(sizeof (long) * 8));
             if (written > sizeof (xdg_plugin_dir_explicit_arch)) {
-                trace ("warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
+                trace_err ("warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
                 xdg_plugin_dir_explicit_arch[0] = 0;
             }
         }
@@ -1200,7 +1200,7 @@ plug_connect_all (void) {
     for (plug = plugins; plug;) {
         if (plug->plugin->connect) {
             if (plug->plugin->connect () < 0) {
-                trace ("plugin %s failed to connect to dependencies, deactivated.\n", plug->plugin->name);
+                trace_err ("plugin %s failed to connect to dependencies, deactivated.\n", plug->plugin->name);
 
                 if (plug->plugin->disconnect) {
                     plug->plugin->disconnect ();
@@ -1399,7 +1399,7 @@ plug_reinit_sound (void) {
 #else
         conf_get_str ("output_plugin", "ALSA output plugin", outplugname, sizeof (outplugname));
 #endif
-        trace ("failed to select output plugin %s\nreverted to %s\n", outplugname, prev->plugin.name);
+        trace_err ("failed to select output plugin %s\nreverted to %s\n", outplugname, prev->plugin.name);
         output_plugin = prev;
     }
     DB_output_t *output = plug_get_output ();
@@ -1414,7 +1414,7 @@ plug_reinit_sound (void) {
 
     if (state != OUTPUT_STATE_PAUSED && state != OUTPUT_STATE_STOPPED) {
         if (output->play () < 0) {
-            trace ("failed to reinit sound output\n");
+            trace_err ("failed to reinit sound output\n");
             streamer_set_nextsong (-1);
         }
     }
