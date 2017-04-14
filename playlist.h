@@ -391,10 +391,7 @@ float
 pl_get_totaltime (void);
 
 float
-plt_get_seltime (playlist_t *plt);
-
-void
-pl_set_select_in_playlist (playlist_t *playlist, playItem_t *it, int sel);
+plt_get_selection_playback_time (playlist_t *plt);
 
 void
 pl_set_selected (playItem_t *it, int sel);

@@ -1579,6 +1579,27 @@ _tf_get_combined_value (playItem_t *it, const char *key, int *needs_free) {
 }
 
 static int
+format_playback_time (char *out, int outlen, float t) {
+    int daystotal = (int)t / (3600*24);
+    int hourtotal = ((int)t / 3600) % 24;
+    int mintotal = ((int)t / 60) % 60;
+    int sectotal = ((int)t) % 60;
+
+    int len = 0;
+    if (daystotal == 0) {
+        len = snprintf (out, outlen, "%d:%02d:%02d", hourtotal, mintotal, sectotal);
+    }
+    else if (daystotal == 1) {
+        len = snprintf (out, outlen, _("1 day %d:%02d:%02d"), hourtotal, mintotal, sectotal);
+    }
+    else {
+        len = snprintf (out, outlen, _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
+    }
+
+    return len;
+}
+
+static int
 tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int outlen, int *bool_out, int fail_on_undef) {
     playItem_t *it = (playItem_t *)ctx->it;
     char *init_out = out;
@@ -1829,7 +1850,6 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     if (it && playing == it && !(ctx->flags & DDB_TF_CONTEXT_NO_DYNAMIC)) {
                         float t = streamer_get_playpos ();
                         if (tmp_c || tmp_d) {
-                            printf ("inverse time %d %d %d %d\n", tmp_a, tmp_b, tmp_c, tmp_d);
                             float dur = pl_get_item_duration (it);
                             t = dur - t;
                         }
@@ -1913,7 +1933,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     }
                 }
                 else if (!strcmp (name, "length_samples")) {
-                    int len = snprintf (out, outlen, "%lld", pl_item_get_endsample (ctx->it) - pl_item_get_startsample (ctx->it));
+                    int len = snprintf (out, outlen, "%lld", pl_item_get_endsample ((playItem_t *)ctx->it) - pl_item_get_startsample ((playItem_t *)ctx->it));
                     out += len;
                     outlen -= len;
                     skip_out = 1;
@@ -2107,24 +2127,10 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 else if (!strcmp (name, "_playlist_name")) {
                     val = ((playlist_t *)ctx->plt)->title;
                 }
-                else if (!strcmp (name, "seltime")) {
-                    float seltime = plt_get_seltime((playlist_t *)ctx->plt);
+                else if (!strcmp (name, "selection_playback_time")) {
+                    float seltime = plt_get_selection_playback_time((playlist_t *)ctx->plt);
 
-                    int daystotal = (int)seltime / (3600*24);
-                    int hourtotal = ((int)seltime / 3600) % 24;
-                    int mintotal = ((int)seltime/60) % 60;
-                    int sectotal = ((int)seltime) % 60;
-
-                    int len = 0;
-                    if (daystotal == 0) {
-                        len = snprintf (out, outlen, "%d:%02d:%02d", hourtotal, mintotal, sectotal);
-                    }
-                    else if (daystotal == 1) {
-                        len = snprintf (out, outlen, _("1 day %d:%02d:%02d"), hourtotal, mintotal, sectotal);
-                    }
-                    else {
-                        len = snprintf (out, outlen, _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
-                    }
+                    int len = format_playback_time (out, outlen, seltime);
 
                     out += len;
                     outlen -= len;

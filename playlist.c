@@ -2650,11 +2650,18 @@ pl_load_all (void) {
     return err;
 }
 
+static inline void
+pl_set_selected_in_playlist (playlist_t *playlist, playItem_t *it, int sel)
+{
+    it->selected = sel;
+    playlist->recalc_seltime = 1;
+}
+
 void
 plt_select_all (playlist_t *playlist) {
     LOCK;
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-        pl_set_select_in_playlist (playlist, it, 1);
+        pl_set_selected_in_playlist (playlist, it, 1);
     }
     UNLOCK;
 }
@@ -3378,24 +3385,25 @@ pl_get_totaltime (void) {
 }
 
 float
-plt_get_seltime (playlist_t *playlist) {
+plt_get_selection_playback_time (playlist_t *playlist) {
     LOCK;
+
+    if (!playlist->recalc_seltime) {
+        float t = playlist->seltime;
+        UNLOCK;
+        return t;
+    }
 
     float t = 0;
 
-    if (playlist->recalc_seltime) {
-        for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-            if (it->selected){
-                t += it->_duration;
-            }
+    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+        if (it->selected){
+            t += it->_duration;
         }
+    }
 
-        playlist->seltime = t;
-        playlist->recalc_seltime = 0;
-    }
-    else {
-        t = playlist->seltime;
-    }
+    playlist->seltime = t;
+    playlist->recalc_seltime = 0;
 
     UNLOCK;
 
@@ -3403,16 +3411,13 @@ plt_get_seltime (playlist_t *playlist) {
 }
 
 void
-pl_set_select_in_playlist (playlist_t *playlist, playItem_t *it, int sel)
-{
-    it->selected = sel;
-    playlist->recalc_seltime = 1;
-}
-
-void
 pl_set_selected (playItem_t *it, int sel) {
     LOCK;
-    pl_set_select_in_playlist(playlist, it, sel);
+    // NOTE: it's not really known here, which playlist the item belongs to, but we're assuming it's in the current playlist.
+    // If the item is in another playlist -- this call will make selection playback time
+    // to be recalculated for the current playlist, next time it's requested,
+    // while the same value will be off in the playlist which the item belongs to.
+    pl_set_selected_in_playlist(playlist, it, sel);
     UNLOCK;
 }
 
@@ -3605,7 +3610,7 @@ plt_search_reset_int (playlist_t *playlist, int clear_selection) {
     while (playlist->head[PL_SEARCH]) {
         playItem_t *next = playlist->head[PL_SEARCH]->next[PL_SEARCH];
         if (clear_selection) {
-            pl_set_select_in_playlist(playlist, playlist->head[PL_SEARCH], 0);
+            pl_set_selected_in_playlist(playlist, playlist->head[PL_SEARCH], 0);
         }
         playlist->head[PL_SEARCH]->next[PL_SEARCH] = NULL;
         playlist->head[PL_SEARCH]->prev[PL_SEARCH] = NULL;
@@ -3658,7 +3663,7 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
 
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         if (select_results) {
-            pl_set_select_in_playlist(playlist, it, 0);
+            pl_set_selected_in_playlist(playlist, it, 0);
         }
         if (*text) {
             DB_metaInfo_t *m = NULL;
@@ -3692,7 +3697,7 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
                                 playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
                             }
                             if (select_results) {
-                                pl_set_select_in_playlist(playlist, it, 1);
+                                pl_set_selected_in_playlist(playlist, it, 1);
                             }
                             playlist->count[PL_SEARCH]++;
                             break;
@@ -3711,7 +3716,7 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
                             playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
                         }
                         if (select_results) {
-                            pl_set_select_in_playlist(playlist, it, 1);
+                            pl_set_selected_in_playlist(playlist, it, 1);
                         }
                         playlist->count[PL_SEARCH]++;
                         *((char *)m->value-1) = cmpidx;
