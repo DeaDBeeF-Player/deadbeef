@@ -1109,6 +1109,12 @@ gtkui_show_log_window(gboolean show) {
     else {
         wingeom_save(logwindow, "logwindow");
     }
+    gtkui_show_log_window_internal(show);
+}
+
+void
+gtkui_show_log_window_internal(gboolean show) {
+
     gtk_widget_set_visible (logwindow, show);
     GtkWidget *menuitem = lookup_widget (mainwin, "view_log");
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), show);
@@ -1138,34 +1144,49 @@ gtkui_create_log_window (GtkWidget **pwindow) {
     g_object_unref (buffer);
 }
 
+typedef struct {
+    char *str;
+    uint32_t layers;
+} addtext_struct_t;
+
 static gboolean
 logwindow_addtext_cb (gpointer data) {
-    char *s = (char *)data;
+    addtext_struct_t *addtext = (addtext_struct_t *)data;
 
     GtkWidget *textview=lookup_widget(logwindow, "logwindow_textview");
+    GtkWidget *scrolledwindow14=lookup_widget(logwindow, "scrolledwindow14");
     GtkTextBuffer *buffer;
     GtkTextIter iter;
     size_t len;
-    len = strlen(s);
+    len = strlen(addtext->str);
     buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (textview));
-    GtkTextMark *mark = gtk_text_buffer_get_insert (buffer);
-
     gtk_text_buffer_get_end_iter(buffer, &iter);
-    gtk_text_buffer_move_mark( buffer, mark, &iter );
-    gtk_text_buffer_insert_at_cursor( buffer, s, len );
+    gtk_text_buffer_insert( buffer, &iter, addtext->str, len );
     // Make sure it ends on a newline
-    if (s[len-1] != '\n') {
-        gtk_text_buffer_insert_at_cursor(buffer, "\n", 1);
+    if (addtext->str[len-1] != '\n') {
+        gtk_text_buffer_get_end_iter(buffer, &iter);
+        gtk_text_buffer_insert(buffer, &iter, "\n", 1);
     }
-    gtk_text_view_scroll_to_mark( GTK_TEXT_VIEW (textview), mark, 0.0, TRUE, 0, 1 );
-
-    free(s);
+    GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment (scrolledwindow14);
+    if (gtk_adjustment_get_value(adjustment) >=
+        gtk_adjustment_get_upper(adjustment) -
+        gtk_adjustment_get_page_size(adjustment) -1e-12 ) {
+        gtk_text_buffer_get_end_iter(buffer, &iter);
+        GtkTextMark *mark = gtk_text_buffer_create_mark (buffer, NULL, &iter, FALSE);
+        gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (textview), mark);
+    }
+    if (addtext->layers == DDB_LOG_LAYER_DEFAULT) gtkui_show_log_window_internal(TRUE);
+    free(addtext->str);
+    free(addtext);
     return FALSE;
 }
 
 static void
 logwindow_logger_callback (struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx) {
-    g_idle_add(logwindow_addtext_cb, (gpointer)strdup(text));
+    addtext_struct_t *data = malloc(sizeof(addtext_struct_t));
+    data->str = strdup(text);
+    data->layers = layers;
+    g_idle_add(logwindow_addtext_cb, (gpointer)data);
 }
 
 
