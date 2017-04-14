@@ -1160,6 +1160,8 @@ main (int argc, char *argv[]) {
         gui->start ();
     }
 
+    ddb_logger_stop_buffering ();
+
     // NOTE: It's not guaranteed that the code after this line will be called.
     // On some platforms (cocoa), main_cleanup_and_quit is called directly before quit.
     

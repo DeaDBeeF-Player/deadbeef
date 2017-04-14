@@ -39,12 +39,27 @@ static uint32_t _log_layers = DDB_LOG_LAYER_DEFAULT | DDB_LOG_LAYER_INFO;
 static logger_t *_loggers;
 static uint64_t _mutex;
 
+// This buffer is used during the initialization time, before there are any listeners.
+// As soon as the first listener registers -- it gets a callback with this buffer, then buffering stops.
+// Only error messages are buffered (DDB_LOG_LAYER_DEFAULT)
+#define INIT_BUFFER_SIZE 32768
+static char *init_buffer;
+static char *init_buffer_ptr;
+
 static void
 _log_internal (DB_plugin_t *plugin, uint32_t layers, const char *text) {
-    fwrite (text, strlen(text), 1, stderr);
+    size_t len = strlen (text);
+    fwrite (text, len, 1, stderr);
     mutex_lock (_mutex);
     for (logger_t *l = _loggers; l; l = l->next) {
         l->log (plugin, layers, text, l->ctx);
+    }
+    if (init_buffer && (layers & DDB_LOG_LAYER_DEFAULT)) {
+        if (init_buffer_ptr - init_buffer + len + 1 < INIT_BUFFER_SIZE) {
+            memcpy (init_buffer_ptr, text, len);
+            init_buffer_ptr += len;
+            *init_buffer_ptr = 0;
+        }
     }
     mutex_unlock(_mutex);
 }
@@ -67,13 +82,27 @@ ddb_logger_init (void) {
     if (!_mutex) {
         return -1;
     }
+    init_buffer = calloc(1, INIT_BUFFER_SIZE);
+    init_buffer_ptr = init_buffer;
     return 0;
+}
+
+void
+ddb_logger_stop_buffering (void) {
+    mutex_lock (_mutex);
+    if (init_buffer) {
+        free (init_buffer);
+        init_buffer = init_buffer_ptr = NULL;
+    }
+    mutex_unlock (_mutex);
 }
 
 void
 ddb_logger_free (void) {
     if (_mutex) {
         mutex_lock (_mutex);
+
+        ddb_logger_stop_buffering ();
 
         while (_loggers) {
             ddb_log_viewer_unregister(_loggers->log, _loggers->ctx);
@@ -147,6 +176,14 @@ ddb_log_viewer_register (void (*callback)(DB_plugin_t *plugin, uint32_t layers, 
     logger->next = _loggers;
 
     _loggers = logger;
+
+    if (init_buffer) {
+        if (*init_buffer) {
+            callback (NULL, 0, init_buffer, ctx);
+        }
+        ddb_logger_stop_buffering ();
+    }
+
     mutex_unlock(_mutex);
 }
 
