@@ -501,8 +501,8 @@ dsp_apply_simple_downsampler (int input_samplerate, int channels, char *input, i
 
         // 2x downsample
         int nframes = inputsize / 2 / channels;
-        int16_t *in = (int16_t *)bytes;
-        int16_t *out = in;
+        int16_t *in = (int16_t *)input;
+        int16_t *out = (int16_t *)bytes;
         for (int f = 0; f < nframes/2; f++) {
             for (int c = 0; c < channels; c++) {
                 out[f*channels+c] = (in[f*2*channels+c] + in[(f*2+1)*channels+c]) >> 1;
@@ -528,10 +528,11 @@ dsp_apply_simple_downsampler (int input_samplerate, int channels, char *input, i
         // 4x downsample
         int nframes = inputsize / 2 / channels;
         assert (inputsize % (2 * channels) == 0);
-        int16_t *in = (int16_t *)bytes;
+        int16_t *in = (int16_t *)input;
+        int16_t *out = (int16_t *)bytes;
         for (int f = 0; f < nframes/4; f++) {
             for (int c = 0; c < channels; c++) {
-                in[f*channels+c] = (in[f*4*channels+c]
+                out[f*channels+c] = (in[f*4*channels+c]
                                     + in[(f*4+1)*channels+c]
                                     + in[(f*4+2)*channels+c]
                                     + in[(f*4+3)*channels+c]) >> 2;

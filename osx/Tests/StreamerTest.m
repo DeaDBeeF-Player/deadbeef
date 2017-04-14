@@ -93,4 +93,32 @@
     XCTAssert(out_size == 2*2, @"The actual output is: %d", out_size);
 }
 
+- (void)testSimpleDownsamplerOutputBufSizeFrom192To48 {
+    short input[4] = {
+        0, 0x7fff, 0, 0x7fff
+    };
+    char *out_buf;
+    int out_size;
+
+    int res = dsp_apply_simple_downsampler (192000, 1, (char *)input, sizeof (input), 48000, &out_buf, &out_size);
+
+    XCTAssert(res == 8);
+    XCTAssert(out_size == 2);
+    XCTAssert(((short*)out_buf)[0] == 0x3fff, @"The actual output is: %d", (int)((short*)out_buf)[0]);
+}
+
+- (void)testSimpleDownsamplerOutputBufSizeFrom96To48 {
+    short input[2] = {
+        0, 0x7fff
+    };
+    char *out_buf;
+    int out_size;
+
+    int res = dsp_apply_simple_downsampler (96000, 1, (char *)input, sizeof (input), 48000, &out_buf, &out_size);
+
+    XCTAssert(res == 4);
+    XCTAssert(out_size == 2);
+    XCTAssert(((short*)out_buf)[0] == 0x3fff, @"The actual output is: %d", (int)((short*)out_buf)[0]);
+}
+
 @end
