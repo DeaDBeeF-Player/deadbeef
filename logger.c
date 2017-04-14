@@ -54,7 +54,7 @@ _log_internal (DB_plugin_t *plugin, uint32_t layers, const char *text) {
     for (logger_t *l = _loggers; l; l = l->next) {
         l->log (plugin, layers, text, l->ctx);
     }
-    if (init_buffer && (layers & DDB_LOG_LAYER_DEFAULT)) {
+    if (init_buffer && (layers == DDB_LOG_LAYER_DEFAULT)) {
         if (init_buffer_ptr - init_buffer + len + 1 < INIT_BUFFER_SIZE) {
             memcpy (init_buffer_ptr, text, len);
             init_buffer_ptr += len;
