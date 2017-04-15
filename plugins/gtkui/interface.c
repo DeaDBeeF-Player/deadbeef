@@ -5103,7 +5103,6 @@ GtkWidget*
 create_log_window (void)
 {
   GtkWidget *log_window;
-  GtkWidget *viewport1;
   GtkWidget *vbox49;
   GtkWidget *scrolledwindow14;
   GtkWidget *logwindow_textview;
@@ -5111,20 +5110,16 @@ create_log_window (void)
   GtkWidget *log_clear;
 
   log_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_widget_set_size_request (log_window, 600, 400);
   gtk_widget_set_events (log_window, GDK_KEY_PRESS_MASK);
   gtk_window_set_title (GTK_WINDOW (log_window), _("DeaDBeeF Log"));
+  gtk_window_set_default_size (GTK_WINDOW (log_window), 400, 200);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (log_window), TRUE);
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (log_window), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (log_window), TRUE);
 
-  viewport1 = gtk_viewport_new (NULL, NULL);
-  gtk_widget_show (viewport1);
-  gtk_container_add (GTK_CONTAINER (log_window), viewport1);
-
   vbox49 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox49);
-  gtk_container_add (GTK_CONTAINER (viewport1), vbox49);
+  gtk_container_add (GTK_CONTAINER (log_window), vbox49);
 
   scrolledwindow14 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow14);
@@ -5156,7 +5151,6 @@ create_log_window (void)
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (log_window, log_window, "log_window");
-  GLADE_HOOKUP_OBJECT (log_window, viewport1, "viewport1");
   GLADE_HOOKUP_OBJECT (log_window, vbox49, "vbox49");
   GLADE_HOOKUP_OBJECT (log_window, scrolledwindow14, "scrolledwindow14");
   GLADE_HOOKUP_OBJECT (log_window, logwindow_textview, "logwindow_textview");
