@@ -549,8 +549,15 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
 
 
     if (!strcmp (cs_in, "UTF-16")) {
-        if (in[0] == 0xfe && in[1] == 0xff) {
+        if ((uint8_t)in[0] == 0xfe && (uint8_t)in[1] == 0xff) {
             cs_in = "UTF-16BE";
+            in += 2;
+            inlen -= 2;
+        }
+        else if ((uint8_t)in[0] == 0xff && (uint8_t)in[1] == 0xfe) {
+            cs_in = "UTF-16LE";
+            in += 2;
+            inlen -= 2;
         }
         else {
             cs_in = "UTF-16LE";
