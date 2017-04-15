@@ -1102,22 +1102,22 @@ gtkui_toggle_log_window(void) {
 }
 
 void
-gtkui_show_log_window(gboolean show) {
-    if (show) {
-        wingeom_restore (logwindow, "logwindow", 40, 40, 200, 200, 0);
-    }
-    else {
-        wingeom_save(logwindow, "logwindow");
-    }
-    gtkui_show_log_window_internal(show);
-}
-
-void
 gtkui_show_log_window_internal(gboolean show) {
 
     gtk_widget_set_visible (logwindow, show);
     GtkWidget *menuitem = lookup_widget (mainwin, "view_log");
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), show);
+}
+
+void
+gtkui_show_log_window(gboolean show) {
+    if (show) {
+        wingeom_restore (logwindow, "logwindow", 40, 40, 400, 200, 0);
+    }
+    else {
+        wingeom_save(logwindow, "logwindow");
+    }
+    gtkui_show_log_window_internal(show);
 }
 
 gboolean
