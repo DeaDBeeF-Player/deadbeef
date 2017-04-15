@@ -5124,6 +5124,7 @@ create_log_window (void)
   scrolledwindow14 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow14);
   gtk_box_pack_start (GTK_BOX (vbox49), scrolledwindow14, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow14), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
   logwindow_textview = gtk_text_view_new ();
   gtk_widget_show (logwindow_textview);
