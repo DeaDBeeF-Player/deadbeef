@@ -1167,7 +1167,7 @@ logwindow_addtext_cb (gpointer data) {
         gtk_text_buffer_get_end_iter(buffer, &iter);
         gtk_text_buffer_insert(buffer, &iter, "\n", 1);
     }
-    GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment (scrolledwindow14);
+    GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment ( GTK_SCROLLED_WINDOW (scrolledwindow14));
     if (gtk_adjustment_get_value(adjustment) >=
         gtk_adjustment_get_upper(adjustment) -
         gtk_adjustment_get_page_size(adjustment) -1e-12 ) {
