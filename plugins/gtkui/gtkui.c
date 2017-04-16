@@ -1135,13 +1135,6 @@ gtkui_create_log_window (GtkWidget **pwindow) {
     g_object_set_data (G_OBJECT (widget), "pointer", pwindow);
     g_signal_connect (widget, "delete_event", G_CALLBACK (on_gtkui_log_window_delete), pwindow);
     gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (mainwin));
-    GtkWidget *txt = lookup_widget (widget, "logwindow_textview");
-    GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
-
-    const char *startup_msg = "deadbeef " VERSION "\n";
-    gtk_text_buffer_set_text (buffer, startup_msg, strlen (startup_msg));
-    gtk_text_view_set_buffer (GTK_TEXT_VIEW (txt), buffer);
-    g_object_unref (buffer);
 }
 
 typedef struct {
