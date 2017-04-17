@@ -1126,15 +1126,12 @@ on_gtkui_log_window_delete (GtkWidget *widget, GdkEventAny *event, GtkWidget **p
     return TRUE; // don't destroy window
 }
 
-void
-gtkui_create_log_window (GtkWidget **pwindow) {
-    if (*pwindow) {
-        return;
-    }
-    GtkWidget *widget = *pwindow = create_log_window ();
-    g_object_set_data (G_OBJECT (widget), "pointer", pwindow);
-    g_signal_connect (widget, "delete_event", G_CALLBACK (on_gtkui_log_window_delete), pwindow);
-    gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (mainwin));
+GtkWidget *
+gtkui_create_log_window (void) {
+    GtkWidget *pwindow = create_log_window ();
+    g_signal_connect (pwindow, "delete_event", G_CALLBACK (on_gtkui_log_window_delete), pwindow);
+    gtk_window_set_transient_for (GTK_WINDOW (pwindow), GTK_WINDOW (mainwin));
+    return pwindow;
 }
 
 typedef struct {
@@ -1233,7 +1230,7 @@ gtkui_thread (void *ctx) {
 
     mainwin = create_mainwin ();
 
-    gtkui_create_log_window(&logwindow);
+    logwindow = gtkui_create_log_window();
     if (logwindow) {
         deadbeef->log_viewer_register (logwindow_logger_callback, logwindow);
     }
