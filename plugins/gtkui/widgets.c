@@ -4336,18 +4336,23 @@ logviewer_addtext_cb (gpointer data) {
     GtkTextIter iter;
     size_t len;
     len = strlen(s->text_to_add);
+    GtkWidget *scrolled_window = gtk_widget_get_parent (w->textview);
     buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (w->textview));
-    GtkTextMark *mark = gtk_text_buffer_get_insert (buffer);
-
     gtk_text_buffer_get_end_iter(buffer, &iter);
-    gtk_text_buffer_move_mark( buffer, mark, &iter );
-    gtk_text_buffer_insert_at_cursor( buffer, s->text_to_add, len );
+    gtk_text_buffer_insert( buffer, &iter, s->text_to_add, len );
     // Make sure it ends on a newline
     if (s->text_to_add[len-1] != '\n') {
-        gtk_text_buffer_insert_at_cursor(buffer, "\n", 1);
+        gtk_text_buffer_get_end_iter(buffer, &iter);
+        gtk_text_buffer_insert(buffer, &iter, "\n", 1);
     }
-
-    gtk_text_view_scroll_to_mark( GTK_TEXT_VIEW (w->textview), mark, 0.0, TRUE, 0, 1 );
+    GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment ( GTK_SCROLLED_WINDOW (scrolled_window));
+    if (gtk_adjustment_get_value(adjustment) >=
+        gtk_adjustment_get_upper(adjustment) -
+        gtk_adjustment_get_page_size(adjustment) -1e-12 ) {
+        gtk_text_buffer_get_end_iter(buffer, &iter);
+        GtkTextMark *mark = gtk_text_buffer_create_mark (buffer, NULL, &iter, FALSE);
+        gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (w->textview), mark);
+    }
     free (s->text_to_add);
     free(s);
     return FALSE;
