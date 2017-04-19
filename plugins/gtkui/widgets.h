@@ -142,4 +142,7 @@ w_ctvoices_create (void);
 ddb_gtkui_widget_t *
 w_logviewer_create (void);
 
+gboolean
+w_logviewer_is_present(void);
+
 #endif

@@ -237,6 +237,8 @@ typedef struct {
     GtkWidget *textview;
 } w_logviewer_t;
 
+static guint w_logviewer_instancecount;
+
 typedef struct {
     w_logviewer_t *w;
     char *text_to_add;
@@ -4370,6 +4372,7 @@ void
 w_logviewer_destroy (ddb_gtkui_widget_t *w) {
     // This is only called if removing widget in design mode
     deadbeef->log_viewer_unregister (logviewer_logger_callback, w);
+    if (w_logviewer_instancecount > 0) w_logviewer_instancecount--;
 }
 
 ddb_gtkui_widget_t *
@@ -4400,5 +4403,12 @@ w_logviewer_create (void) {
 
     deadbeef->log_viewer_register (logviewer_logger_callback, w);
 
+    w_logviewer_instancecount++;
+
     return (ddb_gtkui_widget_t *)w;
+}
+
+gboolean
+w_logviewer_is_present(void) {
+    return (w_logviewer_instancecount>0);
 }

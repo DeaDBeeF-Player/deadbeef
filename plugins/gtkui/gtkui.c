@@ -1165,9 +1165,7 @@ logwindow_addtext_cb (gpointer data) {
         GtkTextMark *mark = gtk_text_buffer_create_mark (buffer, NULL, &iter, FALSE);
         gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (textview), mark);
     }
-    char layout[20000];
-    deadbeef->conf_get_str (DDB_GTKUI_CONF_LAYOUT, "-", layout, sizeof (layout));
-    if (!strstr(layout, "logviewer") && addtext->layers == DDB_LOG_LAYER_DEFAULT)
+    if (!w_logviewer_is_present() && addtext->layers == DDB_LOG_LAYER_DEFAULT)
         gtkui_show_log_window_internal(TRUE);
     free(addtext->str);
     free(addtext);
