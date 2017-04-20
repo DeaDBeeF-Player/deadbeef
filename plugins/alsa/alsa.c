@@ -494,26 +494,31 @@ palsa_hw_pause (int pause) {
 static int
 palsa_play (void) {
     int err = 0;
+    LOCK;
     if (!audio) {
         err = palsa_init ();
     }
     if (err < 0) {
+        UNLOCK;
         return err;
     }
     state = OUTPUT_STATE_STOPPED;
     err = snd_pcm_drop (audio);
     if (err < 0) {
+        UNLOCK;
         fprintf (stderr, "snd_pcm_drop: %s\n", snd_strerror (err));
         return err;
     }
     err = snd_pcm_prepare (audio);
     if (err < 0) {
+        UNLOCK;
         fprintf (stderr, "snd_pcm_prepare: %s\n", snd_strerror (err));
         return err;
     }
     snd_pcm_start (audio);
 
     state = OUTPUT_STATE_PLAYING;
+    UNLOCK;
     return 0;
 }
 
@@ -523,8 +528,11 @@ palsa_stop (void) {
     if (!audio) {
         return 0;
     }
+    LOCK;
+
     state = OUTPUT_STATE_STOPPED;
     snd_pcm_drop (audio);
+    UNLOCK;
 
     palsa_free ();
     return 0;
@@ -536,8 +544,10 @@ palsa_pause (void) {
         return -1;
     }
     // set pause state
+    LOCK;
     palsa_hw_pause (1);
     state = OUTPUT_STATE_PAUSED;
+    UNLOCK;
     return 0;
 }
 
@@ -545,8 +555,10 @@ static int
 palsa_unpause (void) {
     // unset pause state
     if (state == OUTPUT_STATE_PAUSED) {
+        LOCK;
         state = OUTPUT_STATE_PLAYING;
         palsa_hw_pause (0);
+        UNLOCK;
     }
     return 0;
 }
@@ -564,21 +576,26 @@ palsa_thread (void *context) {
             continue;
         }
 
+        LOCK;
         /* find out how much space is available for playback data */
         snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
+        UNLOCK;
 
         while (!alsa_terminate && frames_to_deliver >= period_size) {
+            LOCK;
             err = 0;
             int sz = period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels;
             char buf[sz];
             int br = palsa_callback (buf, sz);
             if (OUTPUT_STATE_PLAYING != state || alsa_terminate) {
+                UNLOCK;
                 break;
             }
             if (br < 0) {
                 snd_pcm_drain (audio);
                 state = OUTPUT_STATE_STOPPED;
                 alsa_terminate = 1;
+                UNLOCK;
                 break;
             }
 
@@ -588,6 +605,7 @@ palsa_thread (void *context) {
 
             err = snd_pcm_writei (audio, buf, snd_pcm_bytes_to_frames(audio, sz));
             if (alsa_terminate) {
+                UNLOCK;
                 break;
             }
 
@@ -609,9 +627,11 @@ palsa_thread (void *context) {
                     snd_pcm_prepare (audio);
                     snd_pcm_start (audio);
                 }
+                UNLOCK;
                 continue;
             }
             frames_to_deliver = snd_pcm_avail_update (audio);
+            UNLOCK;
         }
         int sleeptime = period_size-frames_to_deliver;
         if (sleeptime > 0 && plugin.fmt.samplerate > 0 && plugin.fmt.channels > 0) {
