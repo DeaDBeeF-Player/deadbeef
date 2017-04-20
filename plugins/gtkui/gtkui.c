@@ -76,6 +76,7 @@ GtkWidget *mainwin;
 int gtkui_override_statusicon = 0;
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
+GtkWidget *logwindow;
 
 static int gtkui_accept_messages = 0;
 
@@ -1089,6 +1090,97 @@ add_window_init_hook (void (*callback) (void *userdata), void *userdata) {
     window_init_hooks_count++;
 }
 
+
+void
+gtkui_toggle_log_window(void) {
+    if (gtk_widget_get_visible (logwindow)) {
+        gtkui_show_log_window(FALSE);
+    }
+    else {
+        gtkui_show_log_window(TRUE);
+    }
+}
+
+void
+gtkui_show_log_window_internal(gboolean show) {
+
+    gtk_widget_set_visible (logwindow, show);
+    GtkWidget *menuitem = lookup_widget (mainwin, "view_log");
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), show);
+}
+
+void
+gtkui_show_log_window(gboolean show) {
+    if (show) {
+        wingeom_restore (logwindow, "logwindow", 40, 40, 400, 200, 0);
+    }
+    else {
+        wingeom_save(logwindow, "logwindow");
+    }
+    gtkui_show_log_window_internal(show);
+}
+
+gboolean
+on_gtkui_log_window_delete (GtkWidget *widget, GdkEventAny *event, GtkWidget **pwindow) {
+    gtkui_show_log_window(FALSE);
+    return TRUE; // don't destroy window
+}
+
+GtkWidget *
+gtkui_create_log_window (void) {
+    GtkWidget *pwindow = create_log_window ();
+    g_signal_connect (pwindow, "delete_event", G_CALLBACK (on_gtkui_log_window_delete), pwindow);
+    gtk_window_set_transient_for (GTK_WINDOW (pwindow), GTK_WINDOW (mainwin));
+    return pwindow;
+}
+
+typedef struct {
+    char *str;
+    uint32_t layers;
+} addtext_struct_t;
+
+static gboolean
+logwindow_addtext_cb (gpointer data) {
+    addtext_struct_t *addtext = (addtext_struct_t *)data;
+
+    GtkWidget *textview=lookup_widget(logwindow, "logwindow_textview");
+    GtkWidget *scrolledwindow14=lookup_widget(logwindow, "scrolledwindow14");
+    GtkTextBuffer *buffer;
+    GtkTextIter iter;
+    size_t len;
+    len = strlen(addtext->str);
+    buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (textview));
+    gtk_text_buffer_get_end_iter(buffer, &iter);
+    gtk_text_buffer_insert( buffer, &iter, addtext->str, len );
+    // Make sure it ends on a newline
+    if (addtext->str[len-1] != '\n') {
+        gtk_text_buffer_get_end_iter(buffer, &iter);
+        gtk_text_buffer_insert(buffer, &iter, "\n", 1);
+    }
+    GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment ( GTK_SCROLLED_WINDOW (scrolledwindow14));
+    if (gtk_adjustment_get_value(adjustment) >=
+        gtk_adjustment_get_upper(adjustment) -
+        gtk_adjustment_get_page_size(adjustment) -1e-12 ) {
+        gtk_text_buffer_get_end_iter(buffer, &iter);
+        GtkTextMark *mark = gtk_text_buffer_create_mark (buffer, NULL, &iter, FALSE);
+        gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (textview), mark);
+    }
+    if (!w_logviewer_is_present() && addtext->layers == DDB_LOG_LAYER_DEFAULT)
+        gtkui_show_log_window_internal(TRUE);
+    free(addtext->str);
+    free(addtext);
+    return FALSE;
+}
+
+static void
+logwindow_logger_callback (struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx) {
+    addtext_struct_t *data = malloc(sizeof(addtext_struct_t));
+    data->str = strdup(text);
+    data->layers = layers;
+    g_idle_add(logwindow_addtext_cb, (gpointer)data);
+}
+
+
 int
 gtkui_thread (void *ctx) {
 #ifdef __linux__
@@ -1135,8 +1227,14 @@ gtkui_thread (void *ctx) {
     w_reg_widget (_("Playback controls"), 0, w_playtb_create, "playtb", NULL);
     w_reg_widget (_("Volume bar"), 0, w_volumebar_create, "volumebar", NULL);
     w_reg_widget (_("Chiptune voices"), 0, w_ctvoices_create, "ctvoices", NULL);
+    w_reg_widget (_("Log viewer"), 0, w_logviewer_create, "logviewer", NULL);
 
     mainwin = create_mainwin ();
+
+    logwindow = gtkui_create_log_window();
+    if (logwindow) {
+        deadbeef->log_viewer_register (logwindow_logger_callback, logwindow);
+    }
 
     // initialize default hotkey mapping
     if (!deadbeef->conf_get_int ("hotkeys_created", 0)) {
@@ -1253,6 +1351,12 @@ gtkui_thread (void *ctx) {
     search_destroy ();
 //    draw_free ();
     titlebar_tf_free ();
+
+    if (logwindow) {
+        deadbeef->log_viewer_unregister (logwindow_logger_callback, logwindow);
+        gtk_widget_destroy (logwindow);
+        logwindow = NULL;
+    }
     if (mainwin) {
         gtk_widget_destroy (mainwin);
         mainwin = NULL;
@@ -1734,10 +1838,18 @@ static DB_plugin_action_t action_find = {
     .next = &action_show_mainwin
 };
 
+static DB_plugin_action_t action_view_log = {
+    .title = "View/Show\\/Hide Log window",
+    .name = "toggle_log_window",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_toggle_logwindow_handler,
+    .next = &action_find
+};
+
 static DB_plugin_action_t *
 gtkui_get_actions (DB_playItem_t *it)
 {
-    return &action_find;
+    return &action_view_log;
 }
 
 #if !GTK_CHECK_VERSION(3,0,0)

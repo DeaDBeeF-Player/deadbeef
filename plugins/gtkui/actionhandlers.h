@@ -210,4 +210,7 @@ action_playback_order_cycle_handler(DB_plugin_action_t *act, int ctx);
 int
 action_playback_loop_cycle_handler(DB_plugin_action_t *act, int ctx);
 
+int
+action_toggle_logwindow_handler(DB_plugin_action_t *act, int ctx);
+
 #endif
