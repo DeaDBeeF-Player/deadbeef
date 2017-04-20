@@ -1412,6 +1412,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
     eol++;
 
     int filter_done = 0;
+    int file_recognized = 0;
 
     DB_decoder_t **decoders = plug_get_decoder_list ();
     // match by decoder
@@ -1431,46 +1432,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
                         filter_done = 1;
                     }
 
-                    playItem_t *inserted = (playItem_t *)decoders[i]->insert ((ddb_playlist_t *)playlist, DB_PLAYITEM (after), fname);
-                    if (inserted != NULL) {
-                        if (cb && cb (inserted, user_data) < 0) {
-                            *pabort = 1;
-                        }
-                        if (file_add_listeners) {
-                            ddb_fileadd_data_t d;
-                            memset (&d, 0, sizeof (d));
-                            d.visibility = visibility;
-                            d.plt = (ddb_playlist_t *)playlist;
-                            d.track = (ddb_playItem_t *)inserted;
-                            for (ddb_fileadd_listener_t *l = file_add_listeners; l; l = l->next) {
-                                if (l->callback (&d, l->user_data) < 0) {
-                                    *pabort = 1;
-                                    break;
-                                }
-                            }
-                        }
-                        return inserted;
-                    }
-                    else {
-                        trace_err ("ERROR: could not load: %s\n", fname);
-                    }
-                }
-            }
-        }
-        if (decoders[i]->prefixes && decoders[i]->insert) {
-            const char **prefixes = decoders[i]->prefixes;
-            for (int e = 0; prefixes[e]; e++) {
-                if (!strncasecmp (prefixes[e], fn, strlen(prefixes[e])) && *(fn + strlen (prefixes[e])) == '.') {
-                    if (!filter_done) {
-                        ddb_file_found_data_t dt;
-                        dt.filename = fname;
-                        dt.plt = (ddb_playlist_t *)playlist;
-                        dt.is_dir = 0;
-                        if (fileadd_filter_test (&dt) < 0) {
-                            return NULL;
-                        }
-                        filter_done = 1;
-                    }
+                    file_recognized = 1;
 
                     playItem_t *inserted = (playItem_t *)decoders[i]->insert ((ddb_playlist_t *)playlist, DB_PLAYITEM (after), fname);
                     if (inserted != NULL) {
@@ -1495,6 +1457,48 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
                 }
             }
         }
+        if (decoders[i]->prefixes && decoders[i]->insert) {
+            const char **prefixes = decoders[i]->prefixes;
+            for (int e = 0; prefixes[e]; e++) {
+                if (!strncasecmp (prefixes[e], fn, strlen(prefixes[e])) && *(fn + strlen (prefixes[e])) == '.') {
+                    if (!filter_done) {
+                        ddb_file_found_data_t dt;
+                        dt.filename = fname;
+                        dt.plt = (ddb_playlist_t *)playlist;
+                        dt.is_dir = 0;
+                        if (fileadd_filter_test (&dt) < 0) {
+                            return NULL;
+                        }
+                        filter_done = 1;
+                    }
+
+                    file_recognized = 1;
+                    playItem_t *inserted = (playItem_t *)decoders[i]->insert ((ddb_playlist_t *)playlist, DB_PLAYITEM (after), fname);
+                    if (inserted != NULL) {
+                        if (cb && cb (inserted, user_data) < 0) {
+                            *pabort = 1;
+                        }
+                        if (file_add_listeners) {
+                            ddb_fileadd_data_t d;
+                            memset (&d, 0, sizeof (d));
+                            d.visibility = visibility;
+                            d.plt = (ddb_playlist_t *)playlist;
+                            d.track = (ddb_playItem_t *)inserted;
+                            for (ddb_fileadd_listener_t *l = file_add_listeners; l; l = l->next) {
+                                if (l->callback (&d, l->user_data) < 0) {
+                                    *pabort = 1;
+                                    break;
+                                }
+                            }
+                        }
+                        return inserted;
+                    }
+                }
+            }
+        }
+    }
+    if (file_recognized) {
+        trace_err ("ERROR: could not load: %s\n", fname);
     }
     return NULL;
 }
