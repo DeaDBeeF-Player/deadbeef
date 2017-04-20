@@ -2042,6 +2042,11 @@ play_index (int idx) {
         goto error;
     }
 
+    pl_lock ();
+    if (plt != streamer_playlist) {
+        streamer_set_streamer_playlist (plt);
+    }
+    pl_unlock();
     streamer_reset(1);
     if (!stream_track(it)) {
         playpos = 0;
