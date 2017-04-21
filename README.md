@@ -22,9 +22,10 @@ The following instructions assume that commands are executed in deadbeef reposit
 
 ### Linux, BSD and similar (GTK/*NIX version)
 
-* Install autoconf, automake, libtool, intltool, autopoint
+* Install autoconf, automake, libtool, intltool, autopoint, libjansson-dev
 * Run ```./autogen.sh``` to bootstrap
-* Read the generated INSTALL file and ```./configure --help``` for instructions
+* ./configure && make -j$(nproc) && sudo make install
+* Read the generated INSTALL file and ```./configure --help``` for further instructions
 * See the README file for more information
 
 ### OS X (COCOA version)
