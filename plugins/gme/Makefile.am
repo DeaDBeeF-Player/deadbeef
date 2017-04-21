@@ -7,7 +7,7 @@ if HAVE_GME
 pkglib_LTLIBRARIES = gme.la
 
 # 0.6pre (foo_gep) files
-gme_la_SOURCES = cgme.c\
+gme_la_SOURCES = cgme.c gmewrap.cpp gmewrap.h\
 	game-music-emu-0.6pre/gme/Ay_Apu.cpp\
 	game-music-emu-0.6pre/gme/Ay_Core.cpp\
 	game-music-emu-0.6pre/gme/Ay_Cpu.cpp\

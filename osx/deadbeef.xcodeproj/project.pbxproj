@@ -1569,6 +1569,8 @@
 		2DF930521AB817310030C0CA /* wildmidiplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304E1AB817310030C0CA /* wildmidiplug.c */; };
 		2DFD51681C97175F00961D19 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
+		4D046CE41EA9F8C300B80B2E /* gmewrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D046CE21EA9F8C300B80B2E /* gmewrap.cpp */; };
+		4D046CE51EA9F8C300B80B2E /* gmewrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D046CE31EA9F8C300B80B2E /* gmewrap.h */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A8F1837EC49003E6066 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
 		4D1B51681837F655003E6066 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51671837F655003E6066 /* AudioUnit.framework */; };
@@ -3960,6 +3962,8 @@
 		2DFA31EB1AAF351800792053 /* sid6510c.i */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c.preprocessed; name = sid6510c.i; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/sid6510c.i"; sourceTree = "<group>"; };
 		2DFD50951C9715B800961D19 /* psf.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = psf.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D011FFC19AB9589005499B4 /* coreaudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = coreaudio.c; sourceTree = "<group>"; };
+		4D046CE21EA9F8C300B80B2E /* gmewrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gmewrap.cpp; path = plugins/gme/gmewrap.cpp; sourceTree = "<group>"; };
+		4D046CE31EA9F8C300B80B2E /* gmewrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gmewrap.h; path = plugins/gme/gmewrap.h; sourceTree = "<group>"; };
 		4D1B3E7A18379829003E6066 /* deadbeef.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deadbeef.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D1B3E7D18379829003E6066 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4D1B3E8018379829003E6066 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -5541,6 +5545,8 @@
 				2D2A140A19B6482600AD1EB7 /* Z80_Cpu.cpp */,
 				2D2A140B19B6482600AD1EB7 /* Z80_Cpu.h */,
 				2D2A135E19B6480E00AD1EB7 /* cgme.c */,
+				4D046CE21EA9F8C300B80B2E /* gmewrap.cpp */,
+				4D046CE31EA9F8C300B80B2E /* gmewrap.h */,
 			);
 			name = gme;
 			sourceTree = "<group>";
@@ -8089,6 +8095,7 @@
 				8374A49F1B8946A800C6A572 /* 8950intf.h in Headers */,
 				8374A4E91B8946A800C6A572 /* nes_defs.h in Headers */,
 				2D2A140D19B6482600AD1EB7 /* Ay_Apu.h in Headers */,
+				4D046CE51EA9F8C300B80B2E /* gmewrap.h in Headers */,
 				2D2A141819B6482600AD1EB7 /* blargg_errors.h in Headers */,
 				2D2A144619B6482600AD1EB7 /* Hes_Apu.h in Headers */,
 				8374A5111B8946A800C6A572 /* saa1099.h in Headers */,
@@ -10710,6 +10717,7 @@
 				2D2A143919B6482600AD1EB7 /* Gbs_Emu.cpp in Sources */,
 				83D1CD651B77108E0063DA75 /* timing.cpp in Sources */,
 				2D2A141319B6482600AD1EB7 /* blargg_common.cpp in Sources */,
+				4D046CE41EA9F8C300B80B2E /* gmewrap.cpp in Sources */,
 				2D2A146B19B6482600AD1EB7 /* Nes_Oscs.cpp in Sources */,
 				8374A5601B8946A800C6A572 /* VGMPlay.c in Sources */,
 				8374A5321B8946A800C6A572 /* ws_audio.c in Sources */,
