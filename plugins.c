@@ -1200,7 +1200,7 @@ plug_connect_all (void) {
     for (plug = plugins; plug;) {
         if (plug->plugin->connect) {
             if (plug->plugin->connect () < 0) {
-                trace_err ("plugin %s failed to connect to dependencies, deactivated.\n", plug->plugin->name);
+                trace ("plugin %s failed to connect to dependencies, deactivated.\n", plug->plugin->name);
 
                 if (plug->plugin->disconnect) {
                     plug->plugin->disconnect ();
