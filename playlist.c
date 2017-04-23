@@ -1166,6 +1166,7 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
             replaygain_track_gain[0] = 0;
             replaygain_track_peak[0] = 0;
             performer[0] = 0;
+            songwriter[0] = 0;
             pl_get_value_from_cue (p + 6, sizeof (track), track);
         }
         else if (!strncmp (p, "REM REPLAYGAIN_ALBUM_GAIN ", 26)) {
