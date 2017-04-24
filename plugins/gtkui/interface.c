@@ -1589,6 +1589,7 @@ create_prefwin (void)
   GtkWidget *hbox101;
   GtkWidget *label128;
   GtkWidget *gui_plugin;
+  GtkWidget *display_seltime;
   GtkWidget *label147;
   GtkWidget *vbox44;
   GtkWidget *mmb_delete_playlist;
@@ -2113,6 +2114,10 @@ create_prefwin (void)
   gui_plugin = gtk_combo_box_text_new ();
   gtk_widget_show (gui_plugin);
   gtk_box_pack_start (GTK_BOX (hbox101), gui_plugin, TRUE, TRUE, 0);
+
+  display_seltime = gtk_check_button_new_with_mnemonic (_("Display selection playback time in status bar"));
+  gtk_widget_show (display_seltime);
+  gtk_box_pack_start (GTK_BOX (vbox9), display_seltime, FALSE, FALSE, 0);
 
   label147 = gtk_label_new (_("Player"));
   gtk_widget_show (label147);
@@ -3041,6 +3046,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) gui_plugin, "changed",
                     G_CALLBACK (on_gui_plugin_changed),
                     NULL);
+  g_signal_connect ((gpointer) display_seltime, "toggled",
+                    G_CALLBACK (on_display_seltime_toggled),
+                    NULL);
   g_signal_connect ((gpointer) mmb_delete_playlist, "toggled",
                     G_CALLBACK (on_mmb_delete_playlist_toggled),
                     NULL);
@@ -3296,6 +3304,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hbox101, "hbox101");
   GLADE_HOOKUP_OBJECT (prefwin, label128, "label128");
   GLADE_HOOKUP_OBJECT (prefwin, gui_plugin, "gui_plugin");
+  GLADE_HOOKUP_OBJECT (prefwin, display_seltime, "display_seltime");
   GLADE_HOOKUP_OBJECT (prefwin, label147, "label147");
   GLADE_HOOKUP_OBJECT (prefwin, vbox44, "vbox44");
   GLADE_HOOKUP_OBJECT (prefwin, mmb_delete_playlist, "mmb_delete_playlist");
