@@ -997,10 +997,10 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t st
         pl_add_meta (it, "artist", albumperformer);
     }
     if (songwriter[0]) {
-        pl_add_meta (it, "composer", songwriter);
+        pl_add_meta (it, "SONGWRITER", songwriter);
     }
     else if (albumsongwriter[0]) {
-        pl_add_meta (it, "composer", albumsongwriter);
+        pl_add_meta (it, "SONGWRITER", albumsongwriter);
     }
     if (albumtitle[0]) {
         pl_add_meta (it, "album", albumtitle);
