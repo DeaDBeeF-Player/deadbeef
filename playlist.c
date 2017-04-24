@@ -920,7 +920,7 @@ pl_cue_parse_time (const char *p) {
 }
 
 static playItem_t *
-plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t startsample, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *albumperformer, char *performer, char *albumsongwriter, char *songwriter, char *albumtitle, char *genre, char *date, char *replaygain_album_gain, char *replaygain_album_peak, char *replaygain_track_gain, char *replaygain_track_peak, const char *decoder_id, const char *ftype, int samplerate) {
+plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t startsample, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *albumperformer, char *performer, char *albumsongwriter, char *songwriter, char *albumtitle, char *genre, char *date, char *comment, char *replaygain_album_gain, char *replaygain_album_peak, char *replaygain_track_gain, char *replaygain_track_peak, const char *decoder_id, const char *ftype, int samplerate) {
     if (!track[0]) {
         trace ("pl_process_cue_track: invalid track (file=%s, title=%s)\n", fname, title);
         return NULL;
@@ -1017,6 +1017,9 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t st
     if (date[0]) {
         pl_add_meta (it, "year", date);
     }
+    if (comment[0]) {
+        pl_add_meta (it, "comment", comment);
+    }
     if (replaygain_album_gain[0]) {
         pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (replaygain_album_gain));
     }
@@ -1075,6 +1078,7 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
     char albumtitle[256] = "";
     char genre[256] = "";
     char date[256] = "";
+    char comment[256] = "";
     char track[256] = "";
     char title[256] = "";
     char pregap[256] = "";
@@ -1145,10 +1149,13 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
         else if (!strncmp (p, "REM DATE ", 9)) {
             pl_get_value_from_cue (p + 9, sizeof (date), date);
         }
+        else if (!strncmp (p, "REM COMMENT ", 12)) {
+            pl_get_qvalue_from_cue (p + 12, sizeof (comment), comment, charset);
+        }
         else if (!strncmp (p, "TRACK ", 6)) {
             if (have_track) {
                 // add previous track
-                playItem_t *it = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumsongwriter, songwriter, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
+                playItem_t *it = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumsongwriter, songwriter, albumtitle, genre, date, comment, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
                 if (it) {
                     if ((pl_item_get_startsample (it)-pl_item_get_startsample (origin)) >= numsamples || (pl_item_get_endsample (it)-pl_item_get_startsample (origin)) >= numsamples) {
                         goto error;
@@ -1196,7 +1203,7 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
     }
     if (have_track) {
         // handle last track
-        playItem_t *it = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumsongwriter, songwriter, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
+        playItem_t *it = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumsongwriter, songwriter, albumtitle, genre, date, comment, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
         if (it) {
             pl_item_set_endsample (it, pl_item_get_startsample (origin) + numsamples - 1);
             if ((pl_item_get_endsample (it)-pl_item_get_startsample (origin)) >= numsamples || (pl_item_get_startsample (it)-pl_item_get_startsample (origin)) >= numsamples) {
