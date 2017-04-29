@@ -1219,10 +1219,14 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
         return NULL;
     }
 
+    char totaltracks[10];
+    snprintf(totaltracks, sizeof(totaltracks), "%d", ncuetracks);
+
     playItem_t *last = cuetracks[ncuetracks-1];
     pl_item_ref (last);
 
     for (int i = 0; i < ncuetracks; i++) {
+        pl_add_meta(cuetracks[i], "numtracks", totaltracks);
         after = plt_insert_item (playlist, after, cuetracks[i]);
         pl_item_unref (cuetracks[i]);
     }
