@@ -80,7 +80,7 @@ static DB_functions_t *deadbeef;
 
 #define FFMPEG_MAX_ANALYZE_DURATION 500000
 
-static char * exts[EXT_MAX] = {NULL};
+static char * exts[EXT_MAX+1] = {NULL};
 
 enum {
     FT_ALAC = 0,
