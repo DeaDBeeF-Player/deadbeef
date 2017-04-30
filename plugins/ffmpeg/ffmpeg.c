@@ -76,7 +76,7 @@ static DB_functions_t *deadbeef;
     "m2ts,mts,mxf,rm,ra,roq,sox," \
     "spdif,swf,rcv,voc,w64,wav,wv"
 
-#define EXT_MAX 256
+#define EXT_MAX 1024
 
 #define FFMPEG_MAX_ANALYZE_DURATION 500000
 
