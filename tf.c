@@ -695,6 +695,42 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *
     return res;
 }
 
+// $repeat(text,n) repeats text n times
+int
+tf_func_repeat (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 2) {
+        return -1;
+    }
+    const char *arg = args;
+
+    int bool_out = 0;
+
+    // get number of characters
+    char num_chars_str[10];
+    arg += arglens[0];
+    int len;
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str), fail_on_undef);
+    int repeat_count = atoi (num_chars_str);
+    if (repeat_count <= 0) {
+        *out = 0;
+        return -1;
+    }
+
+    // get text
+    char text[1000];
+    arg = args;
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], text, sizeof (text), fail_on_undef);
+
+    int res=0;
+    for (int i=0; i<repeat_count; i++) {
+        if (res+len>outlen) break;
+        res += u8_strnbcpy(out+len*i, text, len);
+    }
+
+    trace ("repeat: (%s,%d) -> (%s), res: %d\n", text, repeat_count, out, res);
+    return res;
+}
+
 int
 tf_func_directory (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 1 || argc > 2) {
@@ -1524,6 +1560,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "lower", tf_func_lower },
     { "num", tf_func_num },
     { "replace", tf_func_replace },
+    { "repeat", tf_func_repeat },
     // Track info
     { "meta", tf_func_meta },
     { "channels", tf_func_channels },
