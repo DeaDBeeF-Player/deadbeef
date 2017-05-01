@@ -1429,5 +1429,35 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "mytrack"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_RepeatSingleChar11Times_Gives11Chars {
+    char *bc = tf_compile("$repeat(x,11)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "xxxxxxxxxxx"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_RepeatTwoChars3Times_Gives3DoubleChars {
+    char *bc = tf_compile("$repeat(xy,3)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "xyxyxy"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_RepeatCalculatedExpr2Times_Gives2Exprs {
+    pl_replace_meta (it, "title", "abc");
+    char *bc = tf_compile("$repeat(%title%,2)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "abcabc"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_RepeatCalculatedExprNTimes_GivesNExprs {
+    pl_replace_meta (it, "title", "abc");
+    pl_replace_meta (it, "count", "3");
+    char *bc = tf_compile("$repeat(%title%,%count%)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "abcabcabc"), @"The actual output is: %s", buffer);
+}
 
 @end

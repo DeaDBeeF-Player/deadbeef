@@ -695,7 +695,7 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *
     return res;
 }
 
-// $repeat(text,n) repeats text n times
+// $repeat(expr,count): repeat `count` copies of `expr`
 int
 tf_func_repeat (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 2) {
@@ -705,7 +705,7 @@ tf_func_repeat (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
 
     int bool_out = 0;
 
-    // get number of characters
+    // get repeat count
     char num_chars_str[10];
     arg += arglens[0];
     int len;
@@ -716,18 +716,19 @@ tf_func_repeat (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
         return -1;
     }
 
-    // get text
+    // get expr
     char text[1000];
     arg = args;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], text, sizeof (text), fail_on_undef);
 
     int res=0;
-    for (int i=0; i<repeat_count; i++) {
-        if (res+len>outlen) break;
-        res += u8_strnbcpy(out+len*i, text, len);
+    for (int i = 0; i < repeat_count; i++) {
+        if (res + len > outlen) {
+            break;
+        }
+        res += u8_strnbcpy (out + len * i, text, len);
     }
 
-    trace ("repeat: (%s,%d) -> (%s), res: %d\n", text, repeat_count, out, res);
     return res;
 }
 
