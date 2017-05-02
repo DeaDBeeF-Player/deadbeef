@@ -733,6 +733,37 @@ tf_func_repeat (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
 }
 
 int
+tf_func_len_impl (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef, int multi_byte) {
+    if (argc != 1) {
+        return -1;
+    }
+    const char *arg = args;
+
+    int bool_out = 0;
+    int len;
+
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
+
+    if (multi_byte) {
+        return snprintf(out, outlen, "%u", len);
+    } else {
+        return snprintf(out, outlen, "%u", u8_strlen(out));
+    }
+}
+
+// $len(expr): returns lenght of `expr`
+int
+tf_func_len (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_func_len_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 0);
+}
+
+// $len2(expr): returns lenght of `expr` respecting double-width character rules (double-width characters will be counted as two).
+int
+tf_func_len2 (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_func_len_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 1);
+}
+
+int
 tf_func_directory (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 1 || argc > 2) {
         return -1;
@@ -1562,6 +1593,8 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "num", tf_func_num },
     { "replace", tf_func_replace },
     { "repeat", tf_func_repeat },
+    { "len", tf_func_len },
+    { "len2", tf_func_len2 },
     // Track info
     { "meta", tf_func_meta },
     { "channels", tf_func_channels },
