@@ -775,7 +775,7 @@ tf_func_insert (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
 
     int res = u8_strncpy(out, str, insertion_point);
     res += u8_strnbcpy(out + res, insert, insert_len);
-    res += u8_strnbcpy(out + res, str + u8_offset(str, insertion_point), str_len-insert_len+1);
+    res += u8_strncpy(out + res, str + u8_offset(str, insertion_point), str_chars-insertion_point);
 
     return res;
 }
