@@ -1532,17 +1532,24 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "Value:Insert Before"), @"The actual output is: %s", buffer);
 }
 
-- (void)test_Left2fUnicodeString_Takes2Chars {
+- (void)test_LeftOfUnicodeString_Takes2Chars {
     char *bc = tf_compile("$left(АБВГД,2)");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
     XCTAssert(!strcmp (buffer, "АБ"), @"The actual output is: %s", buffer);
 }
 
-- (void)test_Left2fUnicodeStringBufFor1Char_Takes1Char {
+- (void)test_Left2OfUnicodeStringBufFor1Char_Takes1Char {
     char *bc = tf_compile("$left(АБВГД,2)");
     tf_eval (&ctx, bc, buffer, 3);
     tf_free (bc);
     XCTAssert(!strcmp (buffer, "А"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LenOfUnicodeString_ReturnsLengthInChars {
+    char *bc = tf_compile("$len(АБВГД)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
 }
 @end
