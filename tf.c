@@ -732,6 +732,54 @@ tf_func_repeat (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
     return res;
 }
 
+// $insert(str,insert,n): Inserts `insert` into `str` after `n` characters.
+int
+tf_func_insert (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 3) {
+        return -1;
+    }
+    const char *arg = args;
+
+    int bool_out = 0;
+
+    int len, str_len, insert_len;
+
+    // get str
+    char str[1000];
+    arg = args;
+    TF_EVAL_CHECK(str_len, ctx, arg, arglens[0], str, sizeof (str), fail_on_undef);
+    int str_chars = u8_strlen(str);
+
+    // get insert
+    char insert[1000];
+    arg += arglens[0];
+    TF_EVAL_CHECK(insert_len, ctx, arg, arglens[1], insert, sizeof (insert), fail_on_undef);
+
+    if (str_len + insert_len > outlen) {
+        *out = 0;
+        return -1;
+    }
+
+    // get insertion point
+    char num_chars_str[10];
+    arg += arglens[1];
+    TF_EVAL_CHECK(len, ctx, arg, arglens[2], num_chars_str, sizeof (num_chars_str), fail_on_undef);
+    int insertion_point = atoi (num_chars_str);
+    if (insertion_point < 0) {
+        *out = 0;
+        return -1;
+    }
+    if (insertion_point > str_chars) {
+        insertion_point = str_chars;
+    }
+
+    int res = u8_strncpy(out, str, insertion_point);
+    res += u8_strnbcpy(out + res, insert, insert_len);
+    res += u8_strncpy(out + res, str + u8_offset(str, insertion_point), str_chars-insertion_point);
+
+    return res;
+}
+
 int
 tf_func_directory (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 1 || argc > 2) {
@@ -1562,6 +1610,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "num", tf_func_num },
     { "replace", tf_func_replace },
     { "repeat", tf_func_repeat },
+    { "insert", tf_func_insert },
     // Track info
     { "meta", tf_func_meta },
     { "channels", tf_func_channels },
