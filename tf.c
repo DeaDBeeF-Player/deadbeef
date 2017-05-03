@@ -690,7 +690,7 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *
     arg = args;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], text, sizeof (text), fail_on_undef);
 
-    int res = u8_strncpy (out, text, num_chars);
+    int res = u8_strnbcpy (out, text, num_chars);
     trace ("left: (%s,%d) -> (%s), res: %d\n", text, num_chars, out, res);
     return res;
 }
@@ -728,6 +728,54 @@ tf_func_repeat (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
         }
         res += u8_strnbcpy (out + len * i, text, len);
     }
+
+    return res;
+}
+
+// $insert(str,insert,n): Inserts `insert` into `str` after `n` characters.
+int
+tf_func_insert (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 3) {
+        return -1;
+    }
+    const char *arg = args;
+
+    int bool_out = 0;
+
+    int len, str_len, insert_len;
+
+    // get str
+    char str[1000];
+    arg = args;
+    TF_EVAL_CHECK(str_len, ctx, arg, arglens[0], str, sizeof (str), fail_on_undef);
+    int str_chars = u8_strlen(str);
+
+    // get insert
+    char insert[1000];
+    arg += arglens[0];
+    TF_EVAL_CHECK(insert_len, ctx, arg, arglens[1], insert, sizeof (insert), fail_on_undef);
+
+    if (str_len + insert_len > outlen) {
+        *out = 0;
+        return -1;
+    }
+
+    // get insertion point
+    char num_chars_str[10];
+    arg += arglens[1];
+    TF_EVAL_CHECK(len, ctx, arg, arglens[2], num_chars_str, sizeof (num_chars_str), fail_on_undef);
+    int insertion_point = atoi (num_chars_str);
+    if (insertion_point < 0) {
+        *out = 0;
+        return -1;
+    }
+    if (insertion_point > str_chars) {
+        insertion_point = str_chars;
+    }
+
+    int res = u8_strnbcpy(out, str, insertion_point);
+    res += u8_strnbcpy(out + res, insert, insert_len);
+    res += u8_strnbcpy(out + res, str + u8_offset(str, insertion_point), str_chars-insertion_point);
 
     return res;
 }
@@ -1595,6 +1643,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "repeat", tf_func_repeat },
     { "len", tf_func_len },
     { "len2", tf_func_len2 },
+    { "insert", tf_func_insert },
     // Track info
     { "meta", tf_func_meta },
     { "channels", tf_func_channels },

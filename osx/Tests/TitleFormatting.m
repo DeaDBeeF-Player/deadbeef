@@ -1460,4 +1460,39 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "abcabcabc"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_InsertStrMiddle_GivesInsertedStr {
+    pl_replace_meta (it, "title", "Insert [] Here");
+    pl_replace_meta (it, "album", "Value");
+    char *bc = tf_compile("$insert(%title%,%album%,8)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Insert [Value] Here"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrEnd_GivesAppendedStr {
+    pl_replace_meta (it, "title", "Insert Here:");
+    pl_replace_meta (it, "album", "Value");
+    char *bc = tf_compile("$insert(%title%,%album%,12)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Insert Here:Value"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrOutOfBounds_GivesAppendedStr {
+    pl_replace_meta (it, "title", "Insert Here:");
+    pl_replace_meta (it, "album", "Value");
+    char *bc = tf_compile("$insert(%title%,%album%,13)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Insert Here:Value"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrBegin_GivesPrependedStr {
+    pl_replace_meta (it, "title", ":Insert Before");
+    pl_replace_meta (it, "album", "Value");
+    char *bc = tf_compile("$insert(%title%,%album%,0)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Value:Insert Before"), @"The actual output is: %s", buffer);
+}
 @end
