@@ -690,8 +690,10 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *
     arg = args;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], text, sizeof (text), fail_on_undef);
 
-    int res = u8_strnbcpy (out, text, num_chars);
-    trace ("left: (%s,%d) -> (%s), res: %d\n", text, num_chars, out, res);
+    // convert num_chars to num_bytes
+    int num_bytes = u8_offset(text, num_chars);
+
+    int res = u8_strnbcpy (out, text, min(num_bytes, outlen));
     return res;
 }
 
@@ -755,11 +757,6 @@ tf_func_insert (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
     arg += arglens[0];
     TF_EVAL_CHECK(insert_len, ctx, arg, arglens[1], insert, sizeof (insert), fail_on_undef);
 
-    if (str_len + insert_len > outlen) {
-        *out = 0;
-        return -1;
-    }
-
     // get insertion point
     char num_chars_str[10];
     arg += arglens[1];
@@ -773,15 +770,39 @@ tf_func_insert (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
         insertion_point = str_chars;
     }
 
-    int res = u8_strnbcpy(out, str, insertion_point);
-    res += u8_strnbcpy(out + res, insert, insert_len);
-    res += u8_strnbcpy(out + res, str + u8_offset(str, insertion_point), str_chars-insertion_point);
+    // convert num_chars to num_bytes
+    int nb_before = u8_offset (str, insertion_point);
+    int nb_after = u8_offset (str + nb_before, str_chars - insertion_point);
+
+    int l;
+    int res = 0;
+
+    l = u8_strnbcpy(out, str, min (nb_before, outlen));
+    outlen -= l;
+    out += l;
+    res += l;
+
+    l = u8_strnbcpy(out, insert, min (insert_len, outlen));
+    outlen -= l;
+    out += l;
+    res += l;
+
+    l = u8_strnbcpy(out, str + nb_before, min (nb_after, outlen));
+    outlen -= l;
+    out += l;
+    res += l;
 
     return res;
 }
 
 int
 tf_func_len_impl (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef, int multi_byte) {
+
+}
+
+// $len(expr): returns lenght of `expr`
+int
+tf_func_len (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -792,23 +813,7 @@ tf_func_len_impl (ddb_tf_context_t *ctx, int argc, const char *arglens, const ch
 
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
 
-    if (multi_byte) {
-        return snprintf(out, outlen, "%u", len);
-    } else {
-        return snprintf(out, outlen, "%u", u8_strlen(out));
-    }
-}
-
-// $len(expr): returns lenght of `expr`
-int
-tf_func_len (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
-    return tf_func_len_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 0);
-}
-
-// $len2(expr): returns lenght of `expr` respecting double-width character rules (double-width characters will be counted as two).
-int
-tf_func_len2 (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
-    return tf_func_len_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 1);
+    return snprintf(out, outlen, "%d", len);
 }
 
 int
@@ -1642,7 +1647,6 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "replace", tf_func_replace },
     { "repeat", tf_func_repeat },
     { "len", tf_func_len },
-    { "len2", tf_func_len2 },
     { "insert", tf_func_insert },
     // Track info
     { "meta", tf_func_meta },
