@@ -1,9 +1,5 @@
 EXTRA_DIST = deadbeef.glade
 
-if OS_OSX
-osx_sources = retina.m
-endif
-
 GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   callbacks.c interface.c support.c callbacks.h interface.h support.h\
 				   ddblistview.c ddblistview.h\
@@ -79,7 +75,7 @@ ddb_gui_GTK2_la_CFLAGS = -std=c99 $(GTK2_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFL
 endif
 
 if HAVE_GTK3
-GTKUI_SOURCES_GTK3 = $(GTKUI_SOURCES) $(osx_sources)
+GTKUI_SOURCES_GTK3 = $(GTKUI_SOURCES)
 
 ddb_gui_GTK3_la_LDFLAGS = -module -avoid-version
 
