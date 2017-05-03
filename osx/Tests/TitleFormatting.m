@@ -1469,6 +1469,15 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "Insert [Value] Here"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_InsertStrMiddleUnicode_GivesInsertedStr {
+    pl_replace_meta (it, "title", "Вставить [] сюда");
+    pl_replace_meta (it, "album", "Значение");
+    char *bc = tf_compile("$insert(%title%,%album%,10)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Вставить [Значение] сюда"), @"The actual output is: %s", buffer);
+}
+
 - (void)test_InsertStrEnd_GivesAppendedStr {
     pl_replace_meta (it, "title", "Insert Here:");
     pl_replace_meta (it, "album", "Value");
@@ -1494,5 +1503,12 @@ static DB_output_t fake_out = {
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
     XCTAssert(!strcmp (buffer, "Value:Insert Before"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Left2fUnicodeString_Takes2Chars {
+    char *bc = tf_compile("$left(АБВГД,2)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "АБ"), @"The actual output is: %s", buffer);
 }
 @end

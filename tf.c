@@ -690,8 +690,7 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *
     arg = args;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], text, sizeof (text), fail_on_undef);
 
-    int res = u8_strnbcpy (out, text, num_chars);
-    trace ("left: (%s,%d) -> (%s), res: %d\n", text, num_chars, out, res);
+    int res = u8_strncpy (out, text, num_chars);
     return res;
 }
 
@@ -773,9 +772,9 @@ tf_func_insert (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
         insertion_point = str_chars;
     }
 
-    int res = u8_strnbcpy(out, str, insertion_point);
+    int res = u8_strncpy(out, str, insertion_point);
     res += u8_strnbcpy(out + res, insert, insert_len);
-    res += u8_strnbcpy(out + res, str + u8_offset(str, insertion_point), str_chars-insertion_point);
+    res += u8_strncpy(out + res, str + u8_offset(str, insertion_point), str_chars-insertion_point);
 
     return res;
 }
