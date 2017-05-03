@@ -690,7 +690,10 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *
     arg = args;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], text, sizeof (text), fail_on_undef);
 
-    int res = u8_strncpy (out, text, num_chars);
+    // convert num_chars to num_bytes
+    int num_bytes = u8_offset(text, num_chars);
+
+    int res = u8_strnbcpy (out, text, min(num_bytes, outlen));
     return res;
 }
 
@@ -772,9 +775,27 @@ tf_func_insert (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
         insertion_point = str_chars;
     }
 
-    int res = u8_strncpy(out, str, insertion_point);
-    res += u8_strnbcpy(out + res, insert, insert_len);
-    res += u8_strncpy(out + res, str + u8_offset(str, insertion_point), str_chars-insertion_point);
+    // convert num_chars to num_bytes
+    int nb_before = u8_offset (str, insertion_point);
+    int nb_after = u8_offset (str + nb_before, str_chars - insertion_point);
+
+    int l;
+    int res = 0;
+
+    l = u8_strnbcpy(out, str, min (nb_before, outlen));
+    outlen -= l;
+    out += l;
+    res += l;
+
+    l = u8_strnbcpy(out, insert, min (insert_len, outlen));
+    outlen -= l;
+    out += l;
+    res += l;
+
+    l = u8_strnbcpy(out, str + nb_before, min (nb_after, outlen));
+    outlen -= l;
+    out += l;
+    res += l;
 
     return res;
 }
