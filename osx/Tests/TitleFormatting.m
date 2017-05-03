@@ -1496,6 +1496,33 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "Insert Here:Value"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_InsertStrBufferTooSmallUnicode_GivesTruncatedAtBeforeStr {
+    pl_replace_meta (it, "title", "Вставить [] сюда");
+    pl_replace_meta (it, "album", "Значение");
+    char *bc = tf_compile("$insert(%title%,%album%,10)");
+    tf_eval (&ctx, bc, buffer, 5);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Вс"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrBufferTooSmallUnicode_GivesTruncatedAtMiddleStr {
+    pl_replace_meta (it, "title", "Вставить [] сюда");
+    pl_replace_meta (it, "album", "Значение");
+    char *bc = tf_compile("$insert(%title%,%album%,10)");
+    tf_eval (&ctx, bc, buffer, 27);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Вставить [Знач"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrBufferTooSmallUnicode_GivesTruncatedAtAfterStr {
+    pl_replace_meta (it, "title", "Вставить [] сюда");
+    pl_replace_meta (it, "album", "Значение");
+    char *bc = tf_compile("$insert(%title%,%album%,10)");
+    tf_eval (&ctx, bc, buffer, 41);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Вставить [Значение] сю"), @"The actual output is: %s", buffer);
+}
+
 - (void)test_InsertStrBegin_GivesPrependedStr {
     pl_replace_meta (it, "title", ":Insert Before");
     pl_replace_meta (it, "album", "Value");

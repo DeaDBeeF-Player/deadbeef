@@ -757,11 +757,6 @@ tf_func_insert (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
     arg += arglens[0];
     TF_EVAL_CHECK(insert_len, ctx, arg, arglens[1], insert, sizeof (insert), fail_on_undef);
 
-    if (str_len + insert_len > outlen) {
-        *out = 0;
-        return -1;
-    }
-
     // get insertion point
     char num_chars_str[10];
     arg += arglens[1];
