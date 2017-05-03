@@ -809,11 +809,36 @@ static DB_fileinfo_t *dec_open (DB_decoder_t *dec, uint32_t hints, playItem_t *i
     return dec->open (hints);
 }
 
+static playItem_t *first_failed_track;
+
+static void
+streamer_play_failed (playItem_t *failed_track) {
+    streamer_lock();
+    if (!first_failed_track) {
+        first_failed_track = failed_track;
+        if (first_failed_track) {
+            pl_item_ref (first_failed_track);
+        }
+    }
+    if (first_failed_track) {
+        handler_push (handler, STR_EV_NEXT, 0, 0, 0);
+    }
+    streamer_unlock();
+}
+
 static int
 stream_track (playItem_t *it) {
     trace ("stream_track %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
     int err = 0;
     playItem_t *from, *to;
+
+    if (first_failed_track == it) {
+        streamer_play_failed (NULL); // looped to the first failed track
+        pl_item_unref (it);
+        it = NULL;
+        goto error;
+    }
+
     // need to add refs here, because streamer_start_playback can destroy items
     from = playing_track;
     to = it;
@@ -1008,6 +1033,7 @@ stream_track (playItem_t *it) {
             plt_free (plt);
             if (res == 0) {
                 // succeeded -- playing now
+                streamer_play_failed (NULL); // reset failed track
                 if (from) {
                     pl_item_unref (from);
                 }
@@ -1099,6 +1125,9 @@ m3u_error:
             if (playing_track == it) {
                 send_trackinfochanged (to);
             }
+
+            // failed to play the track, ask for the next one
+            streamer_play_failed (it);
             if (from) {
                 pl_item_unref (from);
             }
@@ -2053,11 +2082,6 @@ play_index (int idx) {
         playtime = 0;
         output->play ();
     }
-    else {
-        // FIXME: this indicates that playing the file at index failed, and next one should be picked
-        streamer_start_playback (playing_track, NULL);
-        output->stop ();
-    }
 
     pl_item_unref(it);
     plt_unref (plt);
@@ -2121,11 +2145,6 @@ play_current (void) {
             playpos = 0;
             playtime = 0;
             output->play ();
-        }
-        else {
-            // FIXME: this indicates that playing the file at index failed, and next one should be picked
-            streamer_start_playback (playing_track, NULL);
-            output->stop ();
         }
     }
     if (plt) {
