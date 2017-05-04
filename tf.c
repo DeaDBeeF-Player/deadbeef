@@ -38,6 +38,8 @@
 //   len:int32, data
 //  4: pre-interpreted text
 //   len:int32, data
+//  5: text dimming block
+//   dim_amount:int8, len:int32, data
 // !0: plain text
 
 #ifdef HAVE_CONFIG_H
@@ -154,6 +156,9 @@ tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
         // replace any unprintable char with '_'
         for (; *out; out++) {
             if ((uint8_t)(*out) < ' ') {
+                if (*out == '\033' && (ctx->flags & DDB_TF_CONTEXT_TEXT_DIM)) {
+                    continue;
+                }
                 *out = '_';
             }
         }
@@ -2280,7 +2285,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 code += len;
                 size -= len;
             }
-            else if (*code == 3) {
+            else if (*code == 3) { // conditional expression
                 code++;
                 size--;
                 int32_t len;
@@ -2302,7 +2307,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 code += len;
                 size -= len;
             }
-            else if (*code == 4) {
+            else if (*code == 4) { // preformatted text
                 code++;
                 size--;
                 int32_t len;
@@ -2314,6 +2319,55 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 outlen -= l;
                 code += len;
                 size -= len;
+            }
+            else if (*code == 5) { // dimming of text
+                code++;
+                size--;
+
+                int8_t amount = *code;
+
+                code++;
+                size--;
+
+                char dim[10] = "";
+                char undim[10] = "";
+                int dimlen = 0;
+                int undimlen = 0;
+
+                if (ctx->flags & DDB_TF_CONTEXT_TEXT_DIM) {
+                    // text dimming esc sequence
+                    // `\eX,Ym` where X and Y are numbers, which can be negative
+                    snprintf (dim, sizeof(dim), "\033%d;%dm", DDB_TF_ESC_DIM, (int)amount);
+                    snprintf (undim, sizeof(undim), "\033%d;%dm", DDB_TF_ESC_DIM, -(int)amount);
+                    dimlen = (int)strlen (dim);
+                    undimlen = (int)strlen (undim);
+
+                    if (dimlen + undimlen > outlen) {
+                        return -1;
+                    }
+
+                    memcpy (out, dim, dimlen);
+                    out += dimlen;
+                    outlen -= dimlen;
+                }
+
+                int32_t len;
+                memcpy (&len, code, 4);
+                code += 4;
+                size -= 4;
+
+                int bool_out = 0;
+                int res = tf_eval_int (ctx, code, len, out, outlen - dimlen, &bool_out, 1);
+                out += res ;
+                outlen -= res;
+                code += len;
+                size -= len;
+
+                if ((ctx->flags & DDB_TF_CONTEXT_TEXT_DIM) && outlen >= undimlen) {
+                    memcpy (out, undim, undimlen);
+                    out += undimlen;
+                    outlen -= undimlen;
+                }
             }
             else {
                 return -1;
@@ -2485,6 +2539,67 @@ tf_compile_ifdef (tf_compiler_t *c) {
 }
 
 int
+tf_compile_text_dim (tf_compiler_t *c) {
+    *(c->o++) = 0;
+    *(c->o++) = 5;
+
+    char *pamount = c->o;
+    c->o++;
+
+    char *plen = c->o;
+    c->o += 4;
+
+    char *start = c->o;
+
+    char marker = *(c->i);
+    // count number of leading '<'
+    int count = 0;
+    while (*(c->i) && *(c->i) == marker) {
+        c->i++;
+        count++;
+    }
+
+    marker = marker == '<' ? '>' : '<';
+
+    while (*(c->i)) {
+        if (*(c->i) == '\\') {
+            c->i++;
+            if (*(c->i) != 0) {
+                *(c->o++) = *(c->i++);
+            }
+        }
+        else if (*(c->i) == marker) {
+            int cnt = 0;
+            while (*(c->i) && *(c->i) == marker && cnt < count) {
+                cnt ++;
+                c->i++;
+            }
+            if (cnt != count) {
+                return -1;
+            }
+            break;
+        }
+        else if (tf_compile_plain (c)) {
+            return -1;
+        }
+    }
+
+    if (marker == '>') {
+        count = -count;
+    }
+
+    *pamount = (int8_t)count;
+
+    int32_t len = (int32_t)(c->o - plen - 4);
+    memcpy (plen, &len, 4);
+
+    char value[len+1];
+    memcpy (value, start, len);
+    value[len] = 0;
+    return 0;
+}
+
+int
 tf_compile_plain (tf_compiler_t *c) {
     int eol = c->eol;
     c->eol = 0;
@@ -2546,6 +2661,11 @@ tf_compile_plain (tf_compiler_t *c) {
     else if (i == '\n') {
         c->i++;
         c->eol = 1;
+    }
+    else if (i == '<' || i == '>') {
+        if (tf_compile_text_dim (c)) {
+            return -1;
+        }
     }
     else {
         *(c->o++) = *(c->i++);

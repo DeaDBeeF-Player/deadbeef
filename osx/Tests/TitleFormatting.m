@@ -1552,4 +1552,21 @@ static DB_output_t fake_out = {
     tf_free (bc);
     XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
 }
+
+- (void)test_DimTextExpression_ReturnsPlainText {
+    char *bc = tf_compile("<<<dim this text>>>");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "dim this text"), @"The actual output is: %s", buffer);    ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
+}
+
+- (void)test_DimTextExpression_ReturnsTextWithDimEscSequence {
+    char *bc = tf_compile("<<<dim this text>>>");
+    ctx.flags |= DDB_TF_CONTEXT_TEXT_DIM;
+    tf_eval (&ctx, bc, buffer, 1000);
+    ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "\0331;-3mdim this text\0331;3m"), @"The actual output is: %s", buffer);
+}
+
 @end
