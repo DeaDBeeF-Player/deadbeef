@@ -31,7 +31,7 @@
 // bytecode format
 // 0: indicates start of special block
 //  1: function call
-//   func_idx:byte, num_args:byte, arg1_len:byte[,arg2_len:byte[,...]]
+//   func_idx:byte, num_args:byte, arg1_len:uint16[,arg2_len:byte[,...]]
 //  2: meta field
 //   len:byte, data
 //  3: if_defined block
@@ -52,6 +52,7 @@
 #include <ctype.h>
 #include <inttypes.h>
 #include <math.h>
+#include <assert.h>
 #include "streamer.h"
 #include "utf8.h"
 #include "playlist.h"
@@ -72,7 +73,7 @@ typedef struct {
     int eol;
 } tf_compiler_t;
 
-typedef int (*tf_func_ptr_t)(ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef);
+typedef int (*tf_func_ptr_t)(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef);
 
 #define TF_MAX_FUNCS 0xff
 
@@ -175,7 +176,7 @@ tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
 
 // $greater(a,b) returns true if a is greater than b, otherwise false
 int
-tf_func_greater (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_greater (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 2) {
         return -1;
     }
@@ -199,7 +200,7 @@ tf_func_greater (ddb_tf_context_t *ctx, int argc, const char *arglens, const cha
 
 // $strcmp(s1,s2) compares s1 and s2, returns true if equal, otherwise false
 int
-tf_func_strcmp (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_strcmp (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 2) {
         return -1;
     }
@@ -221,7 +222,7 @@ tf_func_strcmp (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
 
 // $upper(str) converts a string to uppercase
 int
-tf_func_upper (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_upper (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -251,7 +252,7 @@ tf_func_upper (ddb_tf_context_t *ctx, int argc, const char *arglens, const char 
 
 // $lower(str) converts a string to lowercase
 int
-tf_func_lower (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_lower (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -282,7 +283,7 @@ tf_func_lower (ddb_tf_context_t *ctx, int argc, const char *arglens, const char 
 // $num(n,len) Formats the integer number n in decimal notation with len characters. Pads with zeros
 // from the left if necessary. len includes the dash when the number is negative. If n is not numeric, it is treated as zero.
 int
-tf_func_num (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_num (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     const char *arg = args;
     int bool_out = 0;
     int len;
@@ -342,7 +343,7 @@ tf_func_num (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 // substring in `subject` with `replace`. Accepts multiple search and replace
 // substrings
 int
-tf_func_replace (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_replace (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 3 || argc % 2 == 0) {
         return -1;
     }
@@ -399,7 +400,7 @@ tf_func_replace (ddb_tf_context_t *ctx, int argc, const char *arglens, const cha
 }
 
 int
-tf_func_abbr (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_abbr (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1 && argc != 2) {
         return -1;
     }
@@ -462,7 +463,7 @@ tf_func_abbr (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *
 }
 
 int
-tf_func_ansi (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_ansi (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -475,7 +476,7 @@ tf_func_ansi (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *
 }
 
 int
-tf_func_ascii (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_ascii (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -492,7 +493,7 @@ tf_func_ascii (ddb_tf_context_t *ctx, int argc, const char *arglens, const char 
 }
 
 int
-tf_caps_impl (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef, int do_lowercasing) {
+tf_caps_impl (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef, int do_lowercasing) {
     if (argc != 1) {
         return -1;
     }
@@ -560,17 +561,17 @@ tf_caps_impl (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *
 }
 
 int
-tf_func_caps (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_caps (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     return tf_caps_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 1);
 }
 
 int
-tf_func_caps2 (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_caps2 (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     return tf_caps_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 0);
 }
 
 int
-tf_func_char (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_char (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -592,7 +593,7 @@ tf_func_char (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *
 }
 
 int
-tf_func_crc32 (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_crc32 (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -660,7 +661,7 @@ tf_func_crc32 (ddb_tf_context_t *ctx, int argc, const char *arglens, const char 
 }
 
 int
-tf_func_crlf (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_crlf (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 0 || outlen < 2) {
         return -1;
     }
@@ -671,7 +672,7 @@ tf_func_crlf (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *
 
 // $left(text,n) returns the first n characters of text
 int
-tf_func_left (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_left (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 2) {
         return -1;
     }
@@ -704,7 +705,7 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *
 
 // $repeat(expr,count): repeat `count` copies of `expr`
 int
-tf_func_repeat (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_repeat (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 2) {
         return -1;
     }
@@ -741,7 +742,7 @@ tf_func_repeat (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
 
 // $insert(str,insert,n): Inserts `insert` into `str` after `n` characters.
 int
-tf_func_insert (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_insert (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 3) {
         return -1;
     }
@@ -802,7 +803,7 @@ tf_func_insert (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
 
 // $len(expr): returns lenght of `expr`
 int
-tf_func_len (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_len (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -816,7 +817,7 @@ tf_func_len (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 }
 
 int
-tf_func_directory (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_directory (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 1 || argc > 2) {
         return -1;
     }
@@ -888,7 +889,7 @@ tf_func_directory (ddb_tf_context_t *ctx, int argc, const char *arglens, const c
 }
 
 int
-tf_func_directory_path (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_directory_path (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 1 || argc > 2) {
         return -1;
     }
@@ -917,7 +918,7 @@ tf_func_directory_path (ddb_tf_context_t *ctx, int argc, const char *arglens, co
 }
 
 int
-tf_func_ext (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_ext (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 1 || argc > 2) {
         return -1;
     }
@@ -949,7 +950,7 @@ tf_func_ext (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 }
 
 int
-tf_func_filename (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_filename (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 1 || argc > 2) {
         return -1;
     }
@@ -972,7 +973,7 @@ tf_func_filename (ddb_tf_context_t *ctx, int argc, const char *arglens, const ch
 }
 
 int
-tf_func_add (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_add (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     int outval = 0;
@@ -987,7 +988,7 @@ tf_func_add (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 }
 
 int
-tf_func_div (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_div (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     if (argc < 2) {
@@ -1017,7 +1018,7 @@ tf_func_div (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 }
 
 int
-tf_func_max (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_max (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     if (argc == 0) {
@@ -1040,7 +1041,7 @@ tf_func_max (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 }
 
 int
-tf_func_min (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_min (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     if (argc == 0) {
@@ -1063,7 +1064,7 @@ tf_func_min (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 }
 
 int
-tf_func_mod (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_mod (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     if (argc < 2) {
@@ -1093,7 +1094,7 @@ tf_func_mod (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 }
 
 int
-tf_func_mul (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_mul (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     if (argc < 2) {
@@ -1118,7 +1119,7 @@ tf_func_mul (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 }
 
 int
-tf_func_muldiv (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_muldiv (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     if (argc != 3) {
@@ -1146,7 +1147,7 @@ tf_func_muldiv (ddb_tf_context_t *ctx, int argc, const char *arglens, const char
 }
 
 int
-tf_func_rand (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_rand (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 0) {
         return -1;
     }
@@ -1158,7 +1159,7 @@ tf_func_rand (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *
 }
 
 int
-tf_func_sub (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_sub (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     if (argc < 2) {
@@ -1183,7 +1184,7 @@ tf_func_sub (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 }
 
 int
-tf_func_if (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_if (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 2 || argc > 3) {
         return -1;
     }
@@ -1207,7 +1208,7 @@ tf_func_if (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *ar
 }
 
 int
-tf_func_if2 (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_if2 (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 2) {
         return -1;
     }
@@ -1228,7 +1229,7 @@ tf_func_if2 (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 }
 
 int
-tf_func_if3 (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_if3 (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 2) {
         return -1;
     }
@@ -1248,7 +1249,7 @@ tf_func_if3 (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 }
 
 int
-tf_func_ifequal (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_ifequal (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 4) {
         return -1;
     }
@@ -1279,7 +1280,7 @@ tf_func_ifequal (ddb_tf_context_t *ctx, int argc, const char *arglens, const cha
 }
 
 int
-tf_func_ifgreater (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_ifgreater (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 4) {
         return -1;
     }
@@ -1310,7 +1311,7 @@ tf_func_ifgreater (ddb_tf_context_t *ctx, int argc, const char *arglens, const c
 }
 
 int
-tf_func_iflonger (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_iflonger (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 4) {
         return -1;
     }
@@ -1324,7 +1325,7 @@ tf_func_iflonger (ddb_tf_context_t *ctx, int argc, const char *arglens, const ch
 
     arg += arglens[0];
     TF_EVAL_CHECK(len, ctx, arg, arglens[1], out, outlen, fail_on_undef);
-    int l2 = (int)strlen (out);
+    int l2 = (int)atoi (out);
 
     arg += arglens[1];
     int idx = 2;
@@ -1338,7 +1339,7 @@ tf_func_iflonger (ddb_tf_context_t *ctx, int argc, const char *arglens, const ch
 }
 
 int
-tf_func_select (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_select (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 3) {
         return -1;
     }
@@ -1373,7 +1374,7 @@ tf_append_out (char **out, int *out_len, const char *in, int in_len) {
 }
 
 int
-tf_func_meta (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_meta (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -1420,7 +1421,7 @@ tf_get_channels_string_for_track (playItem_t *it) {
 }
 
 int
-tf_func_channels (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_channels (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 0) {
         return -1;
     }
@@ -1435,7 +1436,7 @@ tf_func_channels (ddb_tf_context_t *ctx, int argc, const char *arglens, const ch
 
 // Boolean
 int
-tf_func_and (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_and (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     const char *arg = args;
@@ -1452,7 +1453,7 @@ tf_func_and (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 }
 
 int
-tf_func_or (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_or (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
 
     const char *arg = args;
@@ -1469,7 +1470,7 @@ tf_func_or (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *ar
 }
 
 int
-tf_func_not (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_not (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
         return -1;
     }
@@ -1481,7 +1482,7 @@ tf_func_not (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 }
 
 int
-tf_func_xor (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_xor (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     int bool_out = 0;
     int result = 0;
 
@@ -1502,7 +1503,7 @@ tf_func_xor (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 }
 
 int
-tf_func_fix_eol (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_fix_eol (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1 && argc != 2) {
         return -1;
     }
@@ -1540,7 +1541,7 @@ tf_func_fix_eol (ddb_tf_context_t *ctx, int argc, const char *arglens, const cha
 }
 
 int
-tf_func_hex (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_hex (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1 && argc != 2) {
         return -1;
     }
@@ -1751,7 +1752,13 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 tf_func_ptr_t func = tf_funcs[*code].func;
                 code++;
                 size--;
-                int res = func (ctx, code[0], code+1, code+1+code[0], out, outlen, fail_on_undef);
+                uint16_t *arglens = NULL;
+                if (*code) {
+                    // copy arg lengths, to make sure they're aligned
+                    arglens = alloca (*code * sizeof (uint16_t));
+                    memcpy (arglens, code+1, *code * sizeof (uint16_t));
+                };
+                int res = func (ctx, code[0], arglens, code+1+code[0]*sizeof (uint16_t), out, outlen, fail_on_undef);
                 if (res == -1) {
                     return -1;
                 }
@@ -1766,9 +1773,9 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 out += res;
                 outlen -= res;
 
-                int blocksize = 1 + code[0];
+                int blocksize = 1 + code[0]*2;
                 for (int i = 0; i < code[0]; i++) {
-                    blocksize += code[1+i];
+                    blocksize += arglens[i];
                 }
                 code += blocksize;
                 size -= blocksize;
@@ -2428,6 +2435,8 @@ tf_compile_func (tf_compiler_t *c) {
     *(c->o++) = 0; // num args
     char *argstart = c->o;
 
+    uint16_t *arglens = (uint16_t *)c->o;
+
     //parse comma separated args until )
     while (*(c->i)) {
         if (*(c->i) == ',' || *(c->i) == ')') {
@@ -2438,13 +2447,16 @@ tf_compile_func (tf_compiler_t *c) {
             if (len == 0 && *(c->i) == ')' && (*start) == 0) {
                 break;
             }
+            assert(len<=0xffff);
 
             // expand arg lengths buffer by 1
-            memmove (start+(*start)+2, start+(*start)+1, c->o - start - (*start));
-            c->o++;
-            (*start)++; // num args++
+            int num_args = *start;
+
+            memmove (arglens+num_args+1, arglens+num_args, c->o - start - num_args*sizeof(uint16_t));
+            c->o += 2;
             // store arg length
-            start[*start] = len;
+            arglens[*start] = len;
+            (*start)++; // num args++
             argstart = c->o;
 
             if (*(c->i) == ')') {

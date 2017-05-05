@@ -315,14 +315,14 @@ static DB_output_t fake_out = {
 }
 
 - (void)test_IfLongerTrue_EvalsToTrue {
-    char *bc = tf_compile("$iflonger(abcd,ef,istrue,isfalse)");
+    char *bc = tf_compile("$iflonger(abcd,2,istrue,isfalse)");
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert(!strcmp ("istrue", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_IfLongerFalse_EvalsToFalse {
-    char *bc = tf_compile("$iflonger(ab,cdef,istrue,isfalse)");
+    char *bc = tf_compile("$iflonger(ab,4,istrue,isfalse)");
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert(!strcmp ("isfalse", buffer), @"The actual output is: %s", buffer);
@@ -1123,17 +1123,17 @@ static DB_output_t fake_out = {
 
 - (void)test_FixEofTwoArgs_PutsCustomIndicatorAfterLineBreak {
     pl_replace_meta (it, "title", "line1\nline2\n");
-    char *bc = tf_compile("$fix_eol(%title%, <...>)");
+    char *bc = tf_compile("$fix_eol(%title%, _..._)");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert(!strcmp (buffer, "line1 <...>"), @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp (buffer, "line1 _..._"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_FixEofTwoArgsWithSmallBuffer_DoesntOverflowOffByOne {
     pl_replace_meta (it, "title", "hello\n");
-    char *bc = tf_compile("$fix_eol(%title%, <...>)");
+    char *bc = tf_compile("$fix_eol(%title%, _..._)");
     tf_eval (&ctx, bc, buffer, 12);
-    XCTAssert(!strcmp (buffer, "hello <...>"), @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp (buffer, "hello _..._"), @"The actual output is: %s", buffer);
     tf_eval (&ctx, bc, buffer, 11);
     tf_free (bc);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
