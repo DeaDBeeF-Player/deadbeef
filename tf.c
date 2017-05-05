@@ -816,6 +816,27 @@ tf_func_len (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *a
 }
 
 int
+tf_func_len_impl (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef, int multi_byte) {
+
+}
+
+// $len(expr): returns lenght of `expr`
+int
+tf_func_len (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1) {
+        return -1;
+    }
+    const char *arg = args;
+
+    int bool_out = 0;
+    int len;
+
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
+
+    return snprintf(out, outlen, "%d", len);
+}
+
+int
 tf_func_directory (ddb_tf_context_t *ctx, int argc, const char *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 1 || argc > 2) {
         return -1;
@@ -1645,6 +1666,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "num", tf_func_num },
     { "replace", tf_func_replace },
     { "repeat", tf_func_repeat },
+    { "len", tf_func_len },
     { "insert", tf_func_insert },
     { "len", tf_func_len },
     // Track info
