@@ -1557,6 +1557,7 @@ static DB_output_t fake_out = {
     char *bc = tf_compile("<<<dim this text>>>");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
+    XCTAssert(!ctx.dimmed);
     XCTAssert(!strcmp (buffer, "dim this text"), @"The actual output is: %s", buffer);    ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
 }
 
@@ -1566,6 +1567,7 @@ static DB_output_t fake_out = {
     tf_eval (&ctx, bc, buffer, 1000);
     ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
     tf_free (bc);
+    XCTAssert(ctx.dimmed);
     XCTAssert(!strcmp (buffer, "\0331;-3mdim this text\0331;3m"), @"The actual output is: %s", buffer);
 }
 
@@ -1575,6 +1577,7 @@ static DB_output_t fake_out = {
     tf_eval (&ctx, bc, buffer, 1000);
     ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
     tf_free (bc);
+    XCTAssert(ctx.dimmed);
     XCTAssert(!strcmp (buffer, "\0331;3mbrighten this text\0331;-3m"), @"The actual output is: %s", buffer);
 }
 

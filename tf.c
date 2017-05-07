@@ -134,6 +134,8 @@ tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
         id = ctx->id;
     }
 
+    ctx->dimmed = 0;
+
     switch (id) {
     case DB_COLUMN_FILENUMBER:
         if (ctx->flags & DDB_TF_CONTEXT_HAS_INDEX) {
@@ -2356,6 +2358,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     memcpy (out, dim, dimlen);
                     out += dimlen;
                     outlen -= dimlen;
+                    ctx->dimmed = 1;
                 }
 
                 int32_t len;

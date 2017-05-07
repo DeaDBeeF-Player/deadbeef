@@ -623,6 +623,10 @@ typedef struct {
     // <0: updates on every call
     // >0: number of milliseconds between updates / until next update
     int update;
+
+    // Return value, is set to non-zero if text was <<<dimmed>>> or >>>brightened<<<
+    // This is helpful to determine whether text needs to be searched for the corresponding esc sequences
+    int dimmed;
 } ddb_tf_context_t;
 #endif
 
