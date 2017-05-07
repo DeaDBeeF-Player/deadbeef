@@ -1569,4 +1569,13 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "\0331;-3mdim this text\0331;3m"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_BrightenTextExpression_ReturnsTextWithBrightenEscSequence {
+    char *bc = tf_compile(">>>brighten this text<<<");
+    ctx.flags |= DDB_TF_CONTEXT_TEXT_DIM;
+    tf_eval (&ctx, bc, buffer, 1000);
+    ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "\0331;3mbrighten this text\0331;-3m"), @"The actual output is: %s", buffer);
+}
+
 @end
