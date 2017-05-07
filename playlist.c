@@ -1069,6 +1069,12 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
 
     const char *charset = junk_detect_charset_len (buffer, buffersize);
 
+    char *cue_commands[] = {
+        "CATALOG ", "CDTEXTFILE ", "FILE ", "FLAGS ", "INDEX ", "ISRC ",
+        "PERFORMER ", "POSTGAP ", "PREGAP ", "REM ", "SONGWRITER ",
+        "TITLE ", "TRACK ", NULL,
+    };
+
     LOCK;
     playItem_t *ins = after;
     char albumperformer[256] = "";
@@ -1119,6 +1125,20 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
         buffersize -= p-buffer;
         buffer = p;
         p = pl_cue_skipspaces (str);
+
+        // validate cue command
+        int i = 0, valid_cue_command = 0;
+        for (i = 0; cue_commands[i]; i++) {
+            if (!strncmp (p, cue_commands[i], strlen(cue_commands[i]))) {
+               valid_cue_command = 1;
+               break;
+            }
+        }
+        if (valid_cue_command == 0) {
+            trace_err ("Unknown cue sheet item: %s\n", p);
+            continue;
+        }
+
         if (!strncmp (p, "PERFORMER ", 10)) {
             if (!track[0]) {
                 pl_get_qvalue_from_cue (p + 10, sizeof (albumperformer), albumperformer, charset);
@@ -1196,9 +1216,6 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
         }
         else if (!strncmp (p, "INDEX 01 ", 9)) {
             pl_get_value_from_cue (p + 9, sizeof (index01), index01);
-        }
-        else {
-//            fprintf (stderr, "got unknown line:\n%s\n", p);
         }
     }
     if (have_track) {
