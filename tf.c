@@ -2367,9 +2367,15 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 size -= 4;
 
                 int bool_out = 0;
-                int res = tf_eval_int (ctx, code, len, out, outlen - dimlen, &bool_out, 1);
-                out += res ;
-                outlen -= res;
+                int res = tf_eval_int (ctx, code, len, out, outlen - dimlen, &bool_out, fail_on_undef);
+                if (res >= 0) {
+                    out += res;
+                    outlen -= res;
+                    count_true_conditionals++;
+                }
+                else if (res < 0) {
+                    count_false_conditionals++;
+                }
                 code += len;
                 size -= len;
 

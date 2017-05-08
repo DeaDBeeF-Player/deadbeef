@@ -1581,4 +1581,15 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "\0331;3mbrighten this text\0331;-3m"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_BrightenInfiniteLengthTextExpression_ReturnsTextWithBrightenEscSequence {
+    plt_set_item_duration(NULL, it, -1);
+    char *bc = tf_compile("xxx>>>aaa%length%bbb<<<yyy");
+    ctx.flags |= DDB_TF_CONTEXT_TEXT_DIM;
+    tf_eval (&ctx, bc, buffer, 1000);
+    ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
+    tf_free (bc);
+    XCTAssert(ctx.dimmed);
+    XCTAssert(!strcmp (buffer, "xxx\0331;3maaabbb\0331;-3myyy"), @"The actual output is: %s", buffer);
+}
+
 @end
