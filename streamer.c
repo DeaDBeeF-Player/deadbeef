@@ -254,16 +254,9 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
     if (it) {
         pl_item_ref (it);
     }
-    // free old copy of playing
-    if (playing_track) {
-        pl_item_unref (playing_track);
-        playing_track = NULL;
-    }
-    // assign new
-    playing_track = it;
 
+    streamer_set_playing_track (it);
     if (playing_track) {
-        pl_item_ref (playing_track);
         playing_track->played = 1;
 
         set_last_played (playing_track);
@@ -1283,10 +1276,7 @@ streamer_start_new_song (void) {
         output->stop ();
 
         streamer_lock ();
-        if (playing_track) {
-            pl_item_unref (playing_track);
-            playing_track = NULL;
-        }
+        streamer_set_playing_track (NULL);
         if (streaming_track) {
             pl_item_unref (streaming_track);
             streaming_track = NULL;
