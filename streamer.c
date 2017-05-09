@@ -89,10 +89,6 @@ static int streaming_terminate;
 static uintptr_t mutex;
 static uintptr_t wdl_mutex; // wavedata listener
 
-static int nextsong = -1;
-static int nextsong_pstate = -1;
-static int badsong = -1;
-
 static int autoplay = 0; // set to 1 if streamer should call output->play on track change (e.g. after manual track change)
 
 static float last_seekpos = -1;
@@ -1220,128 +1216,10 @@ streamer_set_nextsong (int song) {
     handler_push (handler, STR_EV_PLAY_TRACK_IDX, 0, song, 0);
 }
 
-static void
-streamer_set_nextsong_real (int song, int pstate) {
-    DB_output_t *output = plug_get_output ();
-    trace ("\033[0;35mstreamer_set_nextsong %d %d\033[37;0m\n", song, pstate);
-    if (pstate == 4) {
-        pstate = 1;
-        autoplay = 1;
-        output->stop ();
-    }
-    streamer_lock ();
-    nextsong = song;
-    nextsong_pstate = pstate;
-    if (output->state () == OUTPUT_STATE_STOPPED) {
-        if (pstate == 1) { // means user initiated this
-            playlist_t *plt = plt_get_curr ();
-            streamer_set_streamer_playlist (plt);
-            plt_unref (plt);
-        }
-        // no sense to wait until end of previous song, reset buffer
-        playpos = 0;
-        playtime = 0;
-        last_seekpos = -1;
-    }
-    if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
-        plt_init_shuffle_albums (streamer_playlist, song);
-    }
-    streamer_unlock ();
-}
-
 void
 streamer_set_seek (float pos) {
     last_seekpos = pos;
     handler_push (handler, STR_EV_SEEK, 0, *((uint32_t *)&pos), 0);
-}
-
-static void
-streamer_start_new_song (void) {
-    trace ("nextsong=%d (badsong=%d)\n", nextsong, badsong);
-    streamer_lock ();
-    DB_output_t *output = plug_get_output ();
-    int sng = nextsong;
-    int pstate = nextsong_pstate;
-    nextsong = -1;
-    streamer_unlock ();
-    if (badsong == sng) {
-        trace ("looped to bad file. stopping...\n");
-        stream_track (NULL);
-        badsong = -1;
-        return;
-    }
-    playItem_t *try = str_get_for_idx (sng);
-    if (!try) { // track is not in playlist
-        trace ("track #%d is not in playlist; stopping playback\n", sng);
-        output->stop ();
-
-        streamer_lock ();
-        streamer_set_playing_track (NULL);
-        if (streaming_track) {
-            pl_item_unref (streaming_track);
-            streaming_track = NULL;
-        }
-        streamer_unlock ();
-
-        send_trackchanged (NULL, NULL);
-        return;
-    }
-    int ret = stream_track (try);
-
-    if (ret < 0) {
-        trace ("\033[0;31mfailed to play track %s, skipping (current=%p/%p)...\033[37;0m\n", pl_find_meta (try, ":URI"), streaming_track, last_played);
-        // remember bad song number in case of looping
-        if (badsong == -1) {
-            badsong = sng;
-        }
-        trace ("\033[0;34mbadsong=%d\033[37;0m\n", badsong);
-        // try jump to next song
-        if (nextsong == -1) {
-            trace ("streamer_move_to_nextsong after skip\n");
-            playItem_t *next = get_next_track (try);
-            try = NULL;
-            if (next) {
-                stream_track (next);
-                pl_item_unref (next);
-            }
-        }
-        else {
-            trace ("nextsong changed from %d to %d by another thread, reinit\n", initsng, nextsong);
-            badsong = -1;
-        }
-        return;
-    }
-    pl_item_unref (try);
-    try = NULL;
-    badsong = -1;
-    trace ("pstate = %d\n", pstate);
-    trace ("playback state = %d\n", output->state ());
-    if (pstate == 0) {
-        output->stop ();
-    }
-    else if (pstate == 1 || pstate == 3) {
-        avg_bitrate = -1;
-        if (output->state () != OUTPUT_STATE_PLAYING) {
-            streamer_reset (1);
-            if (autoplay && 0 != output->play ()) {
-                // probably bad/unset output format
-                streamer_set_nextsong_real (-2, 0);
-            }
-        }
-    }
-    else if (pstate == 2) {
-        if (output->state () == OUTPUT_STATE_STOPPED) {
-            avg_bitrate = -1;
-            streamer_reset (1);
-            // we need to start playback before we can pause it
-            if (0 != output->play ()) {
-                streamer_set_nextsong_real (-2, 0);
-            }
-        }
-        output->pause ();
-        messagepump_push (DB_EV_PAUSED, 0, 1, 0);
-    }
-    autoplay = 0;
 }
 
 static void
@@ -1477,33 +1355,6 @@ streamer_thread (void *ctx) {
                 streamer_notify_order_changed_real(p1, p2);
                 break;
             }
-        }
-
-        if (nextsong >= 0) { // start streaming next song
-            trace ("\033[0;34mnextsong=%d\033[37;0m\n", nextsong);
-            streamer_start_new_song ();
-            if (nextsong_pstate == 2) {
-                nextsong_pstate = -1;
-            }
-            // it's totally possible that song was switched
-            // while streamer_set_current was running,
-            // so we need to restart here
-            continue;
-        }
-        else if (nextsong == -2 && nextsong_pstate==0) {
-            streamer_lock ();
-            streamreader_reset ();
-            stream_track (NULL);
-            output->stop ();
-            playItem_t *it = playing_track;
-            playing_track = NULL;
-            if (it) {
-                send_trackinfochanged (it);
-                pl_item_unref (it);
-            }
-            streamer_unlock ();
-            nextsong = -1;
-            continue;
         }
 
         if (output->state () == OUTPUT_STATE_STOPPED) {
