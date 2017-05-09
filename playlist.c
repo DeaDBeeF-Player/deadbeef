@@ -920,7 +920,7 @@ pl_cue_parse_time (const char *p) {
 }
 
 static playItem_t *
-plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t startsample, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *albumperformer, char *performer, char *albumsongwriter, char *songwriter, char *albumtitle, char *genre, char *date, char *comment, char *replaygain_album_gain, char *replaygain_album_peak, char *replaygain_track_gain, char *replaygain_track_peak, const char *decoder_id, const char *ftype, int samplerate) {
+plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t startsample, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *albumperformer, char *performer, char *albumsongwriter, char *songwriter, char *albumtitle, char *replaygain_album_gain, char *replaygain_album_peak, char *replaygain_track_gain, char *replaygain_track_peak, const char *decoder_id, const char *ftype, int samplerate) {
     if (!track[0]) {
         trace ("pl_process_cue_track: invalid track (file=%s, title=%s)\n", fname, title);
         return NULL;
@@ -1011,15 +1011,6 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t st
     if (title[0]) {
         pl_add_meta (it, "title", title);
     }
-    if (genre[0]) {
-        pl_add_meta (it, "genre", genre);
-    }
-    if (date[0]) {
-        pl_add_meta (it, "year", date);
-    }
-    if (comment[0]) {
-        pl_add_meta (it, "comment", comment);
-    }
     if (replaygain_album_gain[0]) {
         pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (replaygain_album_gain));
     }
@@ -1076,9 +1067,6 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
     char albumsongwriter[256] = "" ;
     char songwriter[256] = "" ;
     char albumtitle[256] = "";
-    char genre[256] = "";
-    char date[256] = "";
-    char comment[256] = "";
     char track[256] = "";
     char title[256] = "";
     char pregap[256] = "";
@@ -1091,6 +1079,11 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
     const char *uri = pl_find_meta_raw (origin, ":URI");
     const char *dec = pl_find_meta_raw (origin, ":DECODER");
     const char *filetype = pl_find_meta_raw (origin, ":FILETYPE");
+
+#define MAX_EXTRA_CUE_TAGS 9
+    const char extra_tags_cue[MAX_EXTRA_CUE_TAGS][30] =     { "CATALOG ", "ISRC ", "REM DATE ", "REM GENRE ", "REM COMMENT ", "REM COMPOSER ", "REM DISCNUMBER ", "REM TOTALDISCS ", "REM DISCID ", };
+    const char extra_tags_fields[MAX_EXTRA_CUE_TAGS][30] =  { "CATALOG",  "ISRC",  "year",      "genre",      "comment",      "composer",      "disc",            "numdiscs",        "DISCID",      };
+    char extra_tags_values[MAX_EXTRA_CUE_TAGS][255] =       { "",         "",      "",          "",           "",             "",              "",                "",                "",            };
 
     int have_track = 0;
 
@@ -1119,6 +1112,7 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
         buffersize -= p-buffer;
         buffer = p;
         p = pl_cue_skipspaces (str);
+
         if (!strncmp (p, "PERFORMER ", 10)) {
             if (!track[0]) {
                 pl_get_qvalue_from_cue (p + 10, sizeof (albumperformer), albumperformer, charset);
@@ -1127,7 +1121,7 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
                 pl_get_qvalue_from_cue (p + 10, sizeof (performer), performer, charset);
             }
         }
-        if (!strncmp (p, "SONGWRITER ", 11)) {
+        else if (!strncmp (p, "SONGWRITER ", 11)) {
             if (!track[0]) {
                 pl_get_qvalue_from_cue (p + 11, sizeof (albumsongwriter), albumsongwriter, charset);
             }
@@ -1143,19 +1137,10 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
                 pl_get_qvalue_from_cue (p + 6, sizeof (title), title, charset);
             }
         }
-        else if (!strncmp (p, "REM GENRE ", 10)) {
-            pl_get_qvalue_from_cue (p + 10, sizeof (genre), genre, charset);
-        }
-        else if (!strncmp (p, "REM DATE ", 9)) {
-            pl_get_value_from_cue (p + 9, sizeof (date), date);
-        }
-        else if (!strncmp (p, "REM COMMENT ", 12)) {
-            pl_get_qvalue_from_cue (p + 12, sizeof (comment), comment, charset);
-        }
         else if (!strncmp (p, "TRACK ", 6)) {
             if (have_track) {
                 // add previous track
-                playItem_t *it = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumsongwriter, songwriter, albumtitle, genre, date, comment, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
+                playItem_t *it = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumsongwriter, songwriter, albumtitle, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
                 if (it) {
                     if ((pl_item_get_startsample (it)-pl_item_get_startsample (origin)) >= numsamples || (pl_item_get_endsample (it)-pl_item_get_startsample (origin)) >= numsamples) {
                         goto error;
@@ -1198,12 +1183,24 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
             pl_get_value_from_cue (p + 9, sizeof (index01), index01);
         }
         else {
+            // determine and get extra tags
+            int extra_tag = 0;
+            if (!have_track) {
+                for (int i = 0; i < MAX_EXTRA_CUE_TAGS; i++) {
+                    if (!strncmp (p, extra_tags_cue[i], strlen(extra_tags_cue[i]))) {
+                        pl_get_qvalue_from_cue (p + strlen(extra_tags_cue[i]), sizeof(extra_tags_values[i]), extra_tags_values[i], charset);
+                        extra_tag = 1;
+                    }
+                }
+            }
+            if (extra_tag == 0) {
 //            fprintf (stderr, "got unknown line:\n%s\n", p);
+            }
         }
     }
     if (have_track) {
         // handle last track
-        playItem_t *it = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumsongwriter, songwriter, albumtitle, genre, date, comment, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
+        playItem_t *it = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumsongwriter, songwriter, albumtitle, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
         if (it) {
             pl_item_set_endsample (it, pl_item_get_startsample (origin) + numsamples - 1);
             if ((pl_item_get_endsample (it)-pl_item_get_startsample (origin)) >= numsamples || (pl_item_get_startsample (it)-pl_item_get_startsample (origin)) >= numsamples) {
@@ -1226,7 +1223,15 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
     pl_item_ref (last);
 
     for (int i = 0; i < ncuetracks; i++) {
+        // add extra tags to tracks
+        for (int y = 0; y < MAX_EXTRA_CUE_TAGS; y++) {
+           if (extra_tags_values[y]) {
+               pl_add_meta (cuetracks[i], extra_tags_fields[y], extra_tags_values[y]);
+           }
+        }
+        // generated "total tracks" field
         pl_add_meta(cuetracks[i], "numtracks", totaltracks);
+        // --
         after = plt_insert_item (playlist, after, cuetracks[i]);
         pl_item_unref (cuetracks[i]);
     }
