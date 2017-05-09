@@ -38,6 +38,7 @@
 #include "clipboard.h"
 #include "../../strdupa.h"
 #include <jansson.h>
+#include <math.h>
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -340,6 +341,50 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it,
     }
 }
 
+#define CHANNEL_BLENDR(CHANNELA,CHANNELB,BLEND) ( \
+	sqrt(((1.0 - BLEND) * (CHANNELA * CHANNELA)) + (BLEND * (CHANNELB * CHANNELB))) \
+)
+
+
+
+PangoAttrList *
+convert_escapetext_to_pango_attrlist (char *text, float *fg, float *highlight) {
+    PangoAttrList *lst = pango_attr_list_new ();
+    char *pin = text;
+    int x,y,a=0;
+    PangoAttribute *attr;
+    int index=0;
+    while (*pin) {
+        int pos=0;
+        if ( sscanf(pin, "\033%d;%dm%n", &x, &y, &pos) == 2 && x == DDB_TF_ESC_DIM) {
+
+            memmove(pin, pin+pos, strlen(pin+pos)+1);
+            a += y;
+
+            if (a == 0) {
+                attr->end_index = index+1;
+                pango_attr_list_insert (lst, attr);
+            } else if (y >= 1 && y <= 3) {
+                const float blend[] = {.50f, .25f, 0};
+                int r = CHANNEL_BLENDR(highlight[0], fg[0], blend[y-1]) * 65535;
+                int g = CHANNEL_BLENDR(highlight[1], fg[1], blend[y-1]) * 65535;
+                int b = CHANNEL_BLENDR(highlight[2], fg[2], blend[y-1]) * 65535;
+
+                attr = pango_attr_foreground_new (r, g, b);
+                attr->start_index = index;
+            } else if (y >= -3 && y <= -1) {
+                const float alpha[] = {.80f, .60f, .30f};
+                attr = pango_attr_foreground_alpha_new (alpha[-y-1]*65535);
+                attr->start_index = index;
+            }
+        } else {
+            pin++;
+            index++;
+        }
+    }
+    return lst;
+}
+
 void
 pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int iter, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height) {
     col_info_t *info = user_data;
@@ -365,6 +410,7 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
     }
     else if (it) {
         char text[1024] = "";
+        int is_dimmed;
         if (it == playing_track && info->id == DB_COLUMN_PLAYING) {
             int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
             int buffering = !deadbeef->streamer_ok_to_read (-1);
@@ -386,9 +432,10 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
                 .iter = iter,
                 .id = info->id,
                 .idx = idx,
-                .flags = DDB_TF_CONTEXT_HAS_ID | DDB_TF_CONTEXT_HAS_INDEX,
+                .flags = DDB_TF_CONTEXT_HAS_ID | DDB_TF_CONTEXT_HAS_INDEX | DDB_TF_CONTEXT_TEXT_DIM,
             };
             deadbeef->tf_eval (&ctx, info->bytecode, text, sizeof (text));
+            is_dimmed = ctx.dimmed;
             if (ctx.update > 0) {
                 ddb_listview_cancel_autoredraw (listview);
                 if ((ctx.flags & DDB_TF_CONTEXT_HAS_INDEX) && ctx.iter == PL_MAIN) {
@@ -466,7 +513,28 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
         cairo_save(cr);
         cairo_rectangle(cr, x+5, y, width-10, height);
         cairo_clip(cr);
-        draw_text_custom (&listview->listctx, x + 5, y + 3, width-10, align, DDB_LIST_FONT, bold, italic, text);
+
+        GdkColor *highlight_color;
+        GdkColor hlclr;
+        if (!gtkui_override_listview_colors ()) {
+            highlight_color = &gtk_widget_get_style(theme_treeview)->fg[GTK_STATE_NORMAL];
+        }
+        else {
+            highlight_color = (gtkui_get_listview_group_text_color (&hlclr), &hlclr);
+        }
+
+        float highlight[] = {highlight_color->red/65535., highlight_color->green/65535., highlight_color->blue/65535.};
+
+        if (is_dimmed) {
+            PangoAttrList *attrs = convert_escapetext_to_pango_attrlist(text, fg, highlight);
+            pango_layout_set_attributes (listview->listctx.pangolayout, attrs);
+            pango_attr_list_unref(attrs);
+            draw_text_custom (&listview->listctx, x + 5, y + 3, width-10, align, DDB_LIST_FONT, bold, italic, text);
+            pango_layout_set_attributes (listview->listctx.pangolayout, NULL);
+        } else {
+            draw_text_custom (&listview->listctx, x + 5, y + 3, width-10, align, DDB_LIST_FONT, bold, italic, text);
+        }
+
         cairo_restore(cr);
     }
     if (playing_track) {
