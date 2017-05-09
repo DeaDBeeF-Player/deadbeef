@@ -1132,9 +1132,10 @@ m3u_error:
         if (!dec) {
             trace ("no decoder in playitem!\n");
             it->played = 1;
-            if (playing_track == it) {
-                send_trackinfochanged (to);
-            }
+
+            // set the failed track as current, and send event, for UI refresh
+            streamer_set_playing_track (it);
+            send_trackinfochanged (it);
 
             // failed to play the track, ask for the next one
             streamer_play_failed (it);
