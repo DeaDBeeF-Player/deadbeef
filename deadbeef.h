@@ -568,11 +568,24 @@ enum {
     DDB_TF_CONTEXT_HAS_INDEX = 1,
     DDB_TF_CONTEXT_HAS_ID = 2,
     DDB_TF_CONTEXT_NO_DYNAMIC = 4, // skip dynamic fields (%playback_time%)
+// since 1.9
 #if (DDB_API_LEVEL >= 9)
     // Don't convert linebreaks to semicolons
     DDB_TF_CONTEXT_MULTILINE = 8,
 #endif
+// since 1.10
+#if (DDB_API_LEVEL >= 10)
+    // the caller supports text dimming functions
+    DDB_TF_CONTEXT_TEXT_DIM = 16,
+#endif
 };
+
+// since 1.10
+#if (DDB_API_LEVEL >= 10)
+enum {
+    DDB_TF_ESC_DIM = 1,
+};
+#endif
 
 // since 1.10
 #if (DDB_API_LEVEL >= 10)
@@ -610,6 +623,10 @@ typedef struct {
     // <0: updates on every call
     // >0: number of milliseconds between updates / until next update
     int update;
+
+    // Return value, is set to non-zero if text was <<<dimmed>>> or >>>brightened<<<
+    // This is helpful to determine whether text needs to be searched for the corresponding esc sequences
+    int dimmed;
 } ddb_tf_context_t;
 #endif
 

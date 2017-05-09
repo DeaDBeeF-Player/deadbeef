@@ -315,14 +315,14 @@ static DB_output_t fake_out = {
 }
 
 - (void)test_IfLongerTrue_EvalsToTrue {
-    char *bc = tf_compile("$iflonger(abcd,ef,istrue,isfalse)");
+    char *bc = tf_compile("$iflonger(abcd,2,istrue,isfalse)");
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert(!strcmp ("istrue", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_IfLongerFalse_EvalsToFalse {
-    char *bc = tf_compile("$iflonger(ab,cdef,istrue,isfalse)");
+    char *bc = tf_compile("$iflonger(ab,4,istrue,isfalse)");
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert(!strcmp ("isfalse", buffer), @"The actual output is: %s", buffer);
@@ -1123,17 +1123,17 @@ static DB_output_t fake_out = {
 
 - (void)test_FixEofTwoArgs_PutsCustomIndicatorAfterLineBreak {
     pl_replace_meta (it, "title", "line1\nline2\n");
-    char *bc = tf_compile("$fix_eol(%title%, <...>)");
+    char *bc = tf_compile("$fix_eol(%title%, _..._)");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert(!strcmp (buffer, "line1 <...>"), @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp (buffer, "line1 _..._"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_FixEofTwoArgsWithSmallBuffer_DoesntOverflowOffByOne {
     pl_replace_meta (it, "title", "hello\n");
-    char *bc = tf_compile("$fix_eol(%title%, <...>)");
+    char *bc = tf_compile("$fix_eol(%title%, _..._)");
     tf_eval (&ctx, bc, buffer, 12);
-    XCTAssert(!strcmp (buffer, "hello <...>"), @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp (buffer, "hello _..._"), @"The actual output is: %s", buffer);
     tf_eval (&ctx, bc, buffer, 11);
     tf_free (bc);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
@@ -1458,6 +1458,138 @@ static DB_output_t fake_out = {
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
     XCTAssert(!strcmp (buffer, "abcabcabc"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrMiddle_GivesInsertedStr {
+    pl_replace_meta (it, "title", "Insert [] Here");
+    pl_replace_meta (it, "album", "Value");
+    char *bc = tf_compile("$insert(%title%,%album%,8)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Insert [Value] Here"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrMiddleUnicode_GivesInsertedStr {
+    pl_replace_meta (it, "title", "Вставить [] сюда");
+    pl_replace_meta (it, "album", "Значение");
+    char *bc = tf_compile("$insert(%title%,%album%,10)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Вставить [Значение] сюда"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrEnd_GivesAppendedStr {
+    pl_replace_meta (it, "title", "Insert Here:");
+    pl_replace_meta (it, "album", "Value");
+    char *bc = tf_compile("$insert(%title%,%album%,12)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Insert Here:Value"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrOutOfBounds_GivesAppendedStr {
+    pl_replace_meta (it, "title", "Insert Here:");
+    pl_replace_meta (it, "album", "Value");
+    char *bc = tf_compile("$insert(%title%,%album%,13)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Insert Here:Value"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrBufferTooSmallUnicode_GivesTruncatedAtBeforeStr {
+    pl_replace_meta (it, "title", "Вставить [] сюда");
+    pl_replace_meta (it, "album", "Значение");
+    char *bc = tf_compile("$insert(%title%,%album%,10)");
+    tf_eval (&ctx, bc, buffer, 5);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Вс"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrBufferTooSmallUnicode_GivesTruncatedAtMiddleStr {
+    pl_replace_meta (it, "title", "Вставить [] сюда");
+    pl_replace_meta (it, "album", "Значение");
+    char *bc = tf_compile("$insert(%title%,%album%,10)");
+    tf_eval (&ctx, bc, buffer, 27);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Вставить [Знач"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrBufferTooSmallUnicode_GivesTruncatedAtAfterStr {
+    pl_replace_meta (it, "title", "Вставить [] сюда");
+    pl_replace_meta (it, "album", "Значение");
+    char *bc = tf_compile("$insert(%title%,%album%,10)");
+    tf_eval (&ctx, bc, buffer, 41);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Вставить [Значение] сю"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrBegin_GivesPrependedStr {
+    pl_replace_meta (it, "title", ":Insert Before");
+    pl_replace_meta (it, "album", "Value");
+    char *bc = tf_compile("$insert(%title%,%album%,0)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Value:Insert Before"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LeftOfUnicodeString_Takes2Chars {
+    char *bc = tf_compile("$left(АБВГД,2)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "АБ"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Left2OfUnicodeStringBufFor1Char_Takes1Char {
+    char *bc = tf_compile("$left(АБВГД,2)");
+    tf_eval (&ctx, bc, buffer, 3);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "А"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LenOfUnicodeString_ReturnsLengthInChars {
+    char *bc = tf_compile("$len(АБВГД)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DimTextExpression_ReturnsPlainText {
+    char *bc = tf_compile("<<<dim this text>>>");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!ctx.dimmed);
+    XCTAssert(!strcmp (buffer, "dim this text"), @"The actual output is: %s", buffer);    ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
+}
+
+- (void)test_DimTextExpression_ReturnsTextWithDimEscSequence {
+    char *bc = tf_compile("<<<dim this text>>>");
+    ctx.flags |= DDB_TF_CONTEXT_TEXT_DIM;
+    tf_eval (&ctx, bc, buffer, 1000);
+    ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
+    tf_free (bc);
+    XCTAssert(ctx.dimmed);
+    XCTAssert(!strcmp (buffer, "\0331;-3mdim this text\0331;3m"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_BrightenTextExpression_ReturnsTextWithBrightenEscSequence {
+    char *bc = tf_compile(">>>brighten this text<<<");
+    ctx.flags |= DDB_TF_CONTEXT_TEXT_DIM;
+    tf_eval (&ctx, bc, buffer, 1000);
+    ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
+    tf_free (bc);
+    XCTAssert(ctx.dimmed);
+    XCTAssert(!strcmp (buffer, "\0331;3mbrighten this text\0331;-3m"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_BrightenInfiniteLengthTextExpression_ReturnsTextWithBrightenEscSequence {
+    plt_set_item_duration(NULL, it, -1);
+    char *bc = tf_compile("xxx>>>aaa%length%bbb<<<yyy");
+    ctx.flags |= DDB_TF_CONTEXT_TEXT_DIM;
+    tf_eval (&ctx, bc, buffer, 1000);
+    ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
+    tf_free (bc);
+    XCTAssert(ctx.dimmed);
+    XCTAssert(!strcmp (buffer, "xxx\0331;3maaabbb\0331;-3myyy"), @"The actual output is: %s", buffer);
 }
 
 @end
