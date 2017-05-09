@@ -820,7 +820,18 @@ streamer_play_failed (playItem_t *failed_track) {
             pl_item_ref (first_failed_track);
         }
     }
-    if (first_failed_track) {
+    else if (!failed_track) { // reset fail check
+        if (first_failed_track) {
+            pl_item_unref (first_failed_track);
+            first_failed_track = NULL;
+        }
+    }
+
+    if (failed_track) {
+        pl_lock ();
+        trace_err ("Failed to play track: %s\n", pl_find_meta(failed_track, ":URI"));
+        pl_unlock ();
+        set_last_played (failed_track);
         handler_push (handler, STR_EV_NEXT, 0, 0, 0);
     }
     streamer_unlock();
@@ -830,12 +841,11 @@ static int
 stream_track (playItem_t *it) {
     trace ("stream_track %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
     int err = 0;
-    playItem_t *from, *to;
+    playItem_t *from = NULL;
+    playItem_t *to = NULL;
 
     if (first_failed_track == it) {
         streamer_play_failed (NULL); // looped to the first failed track
-        pl_item_unref (it);
-        it = NULL;
         goto error;
     }
 
@@ -1607,6 +1617,10 @@ streamer_free (void) {
 
     streamreader_free ();
 
+    if (first_failed_track) {
+        pl_item_unref (first_failed_track);
+        first_failed_track = NULL;
+    }
     if (streaming_track) {
         pl_item_unref (streaming_track);
         streaming_track = NULL;
