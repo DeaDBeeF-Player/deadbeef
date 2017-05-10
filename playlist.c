@@ -149,6 +149,20 @@ typedef struct ddb_fileadd_beginend_listener_s {
 
 static ddb_fileadd_beginend_listener_t *file_add_beginend_listeners;
 
+const char *cue_field_map[] = {
+    "CATALOG ", "CATALOG",
+    "ISRC ", "ISRC",
+    "REM DATE ", "year",
+    "REM GENRE ", "genre",
+    "REM COMMENT ", "comment",
+    "REM COMPOSER ", "composer",
+    "REM DISCNUMBER ", "disc",
+    "REM TOTALDISCS ", "numdiscs",
+    "REM DISCID ", "DISCID",
+    NULL, NULL,
+};
+#define MAX_EXTRA_TAGS_FROM_CUE ((sizeof(cue_field_map) / sizeof(cue_field_map[0])) / 2)
+
 void
 pl_set_order (int order) {
     int prev_order = pl_order;
@@ -1080,10 +1094,8 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
     const char *dec = pl_find_meta_raw (origin, ":DECODER");
     const char *filetype = pl_find_meta_raw (origin, ":FILETYPE");
 
-#define MAX_EXTRA_CUE_TAGS 9
-    const char extra_tags_cue[MAX_EXTRA_CUE_TAGS][30] =     { "CATALOG ", "ISRC ", "REM DATE ", "REM GENRE ", "REM COMMENT ", "REM COMPOSER ", "REM DISCNUMBER ", "REM TOTALDISCS ", "REM DISCID ", };
-    const char extra_tags_fields[MAX_EXTRA_CUE_TAGS][30] =  { "CATALOG",  "ISRC",  "year",      "genre",      "comment",      "composer",      "disc",            "numdiscs",        "DISCID",      };
-    char extra_tags_values[MAX_EXTRA_CUE_TAGS][255] =       { "",         "",      "",          "",           "",             "",              "",                "",                "",            };
+    char extra_tags_values[MAX_EXTRA_TAGS_FROM_CUE][255];
+    memset (extra_tags_values, 0, sizeof (extra_tags_values));
 
     int have_track = 0;
 
@@ -1184,20 +1196,18 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
         }
         else {
             // determine and get extra tags
-            int extra_tag = 0;
             if (!have_track) {
-                for (int i = 0; i < MAX_EXTRA_CUE_TAGS; i++) {
-                    if (!strncmp (p, extra_tags_cue[i], strlen(extra_tags_cue[i]))) {
-                        pl_get_qvalue_from_cue (p + strlen(extra_tags_cue[i]), sizeof(extra_tags_values[i]), extra_tags_values[i], charset);
-                        extra_tag = 1;
+                for (int m = 0; cue_field_map[m]; m += 2) {
+                    if (!strncmp (p, cue_field_map[m], strlen(cue_field_map[m]))) {
+                        pl_get_qvalue_from_cue (p + strlen(cue_field_map[m]), sizeof(extra_tags_values[m/2]), extra_tags_values[m/2], charset);
+                        continue;
                     }
                 }
             }
-            if (extra_tag == 0) {
-//            fprintf (stderr, "got unknown line:\n%s\n", p);
-            }
+//          fprintf (stderr, "got unknown line:\n%s\n", p);
         }
-    }
+    } /* end of while loop */
+
     if (have_track) {
         // handle last track
         playItem_t *it = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumsongwriter, songwriter, albumtitle, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
@@ -1224,14 +1234,13 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
 
     for (int i = 0; i < ncuetracks; i++) {
         // add extra tags to tracks
-        for (int y = 0; y < MAX_EXTRA_CUE_TAGS; y++) {
-           if (extra_tags_values[y]) {
-               pl_add_meta (cuetracks[i], extra_tags_fields[y], extra_tags_values[y]);
+        for (int m = 0; cue_field_map[m+1]; m += 2) {
+           if (extra_tags_values[m/2]) {
+               pl_add_meta (cuetracks[i], cue_field_map[m+1], extra_tags_values[m/2]);
            }
         }
         // generated "total tracks" field
         pl_add_meta(cuetracks[i], "numtracks", totaltracks);
-        // --
         after = plt_insert_item (playlist, after, cuetracks[i]);
         pl_item_unref (cuetracks[i]);
     }
