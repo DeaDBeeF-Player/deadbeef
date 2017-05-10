@@ -828,6 +828,11 @@ streamer_play_failed (playItem_t *failed_track) {
 
 static int
 stream_track (playItem_t *it) {
+    if (fileinfo) {
+        fileinfo->plugin->free (fileinfo);
+        fileinfo = NULL;
+        fileinfo_file = NULL;
+    }
     trace ("stream_track %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
     int err = 0;
     playItem_t *from = NULL;
@@ -1169,11 +1174,7 @@ m3u_error:
         }
     }
 success:
-    if (fileinfo) {
-        fileinfo->plugin->free (fileinfo);
-        fileinfo = NULL;
-        fileinfo_file = NULL;
-    }
+    streamer_play_failed (NULL);
     if (new_fileinfo) {
         fileinfo = new_fileinfo;
         new_fileinfo = NULL;
