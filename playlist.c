@@ -161,7 +161,7 @@ const char *cue_field_map[] = {
     "REM DISCID ", "DISCID",
     NULL, NULL,
 };
-#define MAX_EXTRA_TAGS_FROM_CUE ((sizeof(cue_field_map) / sizeof(cue_field_map[0])) / 2)
+#define MAX_EXTRA_TAGS_FROM_CUE ((sizeof(cue_field_map) / sizeof(cue_field_map[0])))
 
 void
 pl_set_order (int order) {
@@ -1094,8 +1094,9 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
     const char *dec = pl_find_meta_raw (origin, ":DECODER");
     const char *filetype = pl_find_meta_raw (origin, ":FILETYPE");
 
-    char extra_tags_values[MAX_EXTRA_TAGS_FROM_CUE][255];
-    memset (extra_tags_values, 0, sizeof (extra_tags_values));
+    char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255];
+    memset (extra_tags, 0, sizeof (extra_tags));
+    int extra_tag_index = 0;
 
     int have_track = 0;
 
@@ -1199,7 +1200,9 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
             if (!have_track) {
                 for (int m = 0; cue_field_map[m]; m += 2) {
                     if (!strncmp (p, cue_field_map[m], strlen(cue_field_map[m]))) {
-                        pl_get_qvalue_from_cue (p + strlen(cue_field_map[m]), sizeof(extra_tags_values[m/2]), extra_tags_values[m/2], charset);
+                        strcpy(extra_tags[extra_tag_index],cue_field_map[m+1]);
+                        pl_get_qvalue_from_cue (p + strlen(cue_field_map[m]), sizeof(extra_tags[extra_tag_index+1]), extra_tags[extra_tag_index+1], charset);
+                        extra_tag_index += 2;
                         continue;
                     }
                 }
@@ -1234,10 +1237,10 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
 
     for (int i = 0; i < ncuetracks; i++) {
         // add extra tags to tracks
-        for (int m = 0; cue_field_map[m+1]; m += 2) {
-           if (extra_tags_values[m/2]) {
-               pl_add_meta (cuetracks[i], cue_field_map[m+1], extra_tags_values[m/2]);
-           }
+        for (int y = 0; y < extra_tag_index; y += 2) {
+            if (extra_tags[y+1]) {
+                pl_add_meta (cuetracks[i], extra_tags[y], extra_tags[y+1]);
+            }
         }
         // generated "total tracks" field
         pl_add_meta(cuetracks[i], "numtracks", totaltracks);
