@@ -2466,7 +2466,7 @@ create_prefwin (void)
 
   vseparator1 = gtk_vseparator_new ();
   gtk_widget_show (vseparator1);
-  gtk_box_pack_start (GTK_BOX (listview_colors_group), vseparator1, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (listview_colors_group), vseparator1, FALSE, TRUE, 5);
 
   frame13 = gtk_frame_new (NULL);
   gtk_widget_show (frame13);
