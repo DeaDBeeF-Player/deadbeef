@@ -624,9 +624,11 @@ typedef struct {
     // >0: number of milliseconds between updates / until next update
     int update;
 
+#if (DDB_API_LEVEL >= 10)
     // Return value, is set to non-zero if text was <<<dimmed>>> or >>>brightened<<<
     // This is helpful to determine whether text needs to be searched for the corresponding esc sequences
     int dimmed;
+#endif
 } ddb_tf_context_t;
 #endif
 

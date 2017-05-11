@@ -67,6 +67,9 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+// check the presence of `dimmed` field in context, based on reported size
+#define HAS_DIMMED(ctx) (ctx->_size >= (char *)&ctx->dimmed - (char *)&ctx)
+
 typedef struct {
     const char *i;
     char *o;
@@ -134,7 +137,9 @@ tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
         id = ctx->id;
     }
 
-    ctx->dimmed = 0;
+    if (HAS_DIMMED (ctx)) {
+        ctx->dimmed = 0;
+    }
 
     switch (id) {
     case DB_COLUMN_FILENUMBER:
@@ -2358,7 +2363,9 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     memcpy (out, dim, dimlen);
                     out += dimlen;
                     outlen -= dimlen;
-                    ctx->dimmed = 1;
+                    if (HAS_DIMMED(ctx)) {
+                        ctx->dimmed = 1;
+                    }
                 }
 
                 int32_t len;
