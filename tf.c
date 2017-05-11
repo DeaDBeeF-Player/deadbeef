@@ -68,7 +68,7 @@
 #define trace(fmt,...)
 
 // check the presence of `dimmed` field in context, based on reported size
-#define HAS_DIMMED(ctx) (ctx->_size >= (char *)&ctx->dimmed - (char *)&ctx)
+#define HAS_DIMMED(ctx) (ctx->_size >= (char *)&ctx->dimmed - (char *)ctx)
 
 typedef struct {
     const char *i;
