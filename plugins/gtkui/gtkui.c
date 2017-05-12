@@ -107,6 +107,7 @@ int gtkui_tabstrip_italic_selected;
 
 int gtkui_groups_pinned;
 int gtkui_listview_busy;
+int gtkui_groups_spacing;
 
 #ifdef __APPLE__
 int gtkui_is_retina = 0;
@@ -592,6 +593,7 @@ gtkui_on_configchanged (void *data) {
 
     // pin groups
     gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups", 0);
+    gtkui_groups_spacing = deadbeef->conf_get_int ("playlist.groups.spacing", 0);
 
     // play state images
     gtkui_unicode_playstate = deadbeef->conf_get_int ("gtkui.unicode_playstate", 0);
