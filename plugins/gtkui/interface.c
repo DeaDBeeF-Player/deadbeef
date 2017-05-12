@@ -3217,6 +3217,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) pref_pluginlist, "cursor_changed",
                     G_CALLBACK (on_pref_pluginlist_cursor_changed),
                     NULL);
+  g_signal_connect ((gpointer) pref_pluginlist, "row_activated",
+                    G_CALLBACK (on_pref_pluginlist_row_activated),
+                    NULL);
   g_signal_connect ((gpointer) configure_plugin, "clicked",
                     G_CALLBACK (on_configure_plugin_clicked),
                     NULL);

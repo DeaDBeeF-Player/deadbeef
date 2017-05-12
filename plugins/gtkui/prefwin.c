@@ -659,6 +659,17 @@ on_configure_plugin_clicked            (GtkButton       *button,
     }
 }
 
+void
+on_pref_pluginlist_row_activated       (GtkTreeView     *treeview,
+                                        GtkTreePath     *path,
+                                        GtkTreeViewColumn *column,
+                                        gpointer         user_data)
+{
+    GtkWidget *w = prefwin;
+    GtkButton *btn = GTK_BUTTON (lookup_widget (w, "configure_plugin"));
+    gtk_button_clicked(btn);
+}
+
 static void
 override_set_helper (GtkToggleButton  *togglebutton, const char* conf_str, const char *group_name)
 {
