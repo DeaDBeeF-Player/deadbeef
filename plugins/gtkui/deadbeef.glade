@@ -6370,6 +6370,7 @@ if you don't press Apply.</property>
 		      <property name="hover_selection">False</property>
 		      <property name="hover_expand">False</property>
 		      <signal name="cursor_changed" handler="on_pref_pluginlist_cursor_changed" last_modification_time="Sat, 10 Oct 2009 19:54:17 GMT"/>
+		      <signal name="row_activated" handler="on_pref_pluginlist_row_activated" last_modification_time="Fri, 12 May 2017 18:53:38 GMT"/>
 		    </widget>
 		  </child>
 		</widget>

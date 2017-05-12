@@ -1380,3 +1380,9 @@ on_log_window_key_press_event          (GtkWidget       *widget,
 void
 on_display_seltime_toggled             (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_pref_pluginlist_row_activated       (GtkTreeView     *treeview,
+                                        GtkTreePath     *path,
+                                        GtkTreeViewColumn *column,
+                                        gpointer         user_data);
