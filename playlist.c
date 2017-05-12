@@ -1126,7 +1126,7 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
         buffer = p;
         p = pl_cue_skipspaces (str);
 
-        if (!strncmp (p, "PERFORMER ", 10)) {
+        if (!strncasecmp (p, "PERFORMER ", 10)) {
             if (!track[0]) {
                 pl_get_qvalue_from_cue (p + 10, sizeof (albumperformer), albumperformer, charset);
             }
@@ -1134,7 +1134,7 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
                 pl_get_qvalue_from_cue (p + 10, sizeof (performer), performer, charset);
             }
         }
-        else if (!strncmp (p, "SONGWRITER ", 11)) {
+        else if (!strncasecmp (p, "SONGWRITER ", 11)) {
             if (!track[0]) {
                 pl_get_qvalue_from_cue (p + 11, sizeof (albumsongwriter), albumsongwriter, charset);
             }
@@ -1142,7 +1142,7 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
                 pl_get_qvalue_from_cue (p + 11, sizeof (songwriter), songwriter, charset);
             }
         }
-        else if (!strncmp (p, "TITLE ", 6)) {
+        else if (!strncasecmp (p, "TITLE ", 6)) {
             if (str[0] > ' ' && !albumtitle[0]) {
                 pl_get_qvalue_from_cue (p + 6, sizeof (albumtitle), albumtitle, charset);
             }
@@ -1150,7 +1150,7 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
                 pl_get_qvalue_from_cue (p + 6, sizeof (title), title, charset);
             }
         }
-        else if (!strncmp (p, "TRACK ", 6)) {
+        else if (!strncasecmp (p, "TRACK ", 6)) {
             if (have_track) {
                 // add previous track
                 playItem_t *it = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumsongwriter, songwriter, albumtitle, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
@@ -1174,32 +1174,32 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
             songwriter[0] = 0;
             pl_get_value_from_cue (p + 6, sizeof (track), track);
         }
-        else if (!strncmp (p, "REM REPLAYGAIN_ALBUM_GAIN ", 26)) {
+        else if (!strncasecmp (p, "REM REPLAYGAIN_ALBUM_GAIN ", 26)) {
             pl_get_value_from_cue (p + 26, sizeof (replaygain_album_gain), replaygain_album_gain);
         }
-        else if (!strncmp (p, "REM REPLAYGAIN_ALBUM_PEAK ", 26)) {
+        else if (!strncasecmp (p, "REM REPLAYGAIN_ALBUM_PEAK ", 26)) {
             pl_get_value_from_cue (p + 26, sizeof (replaygain_album_peak), replaygain_album_peak);
         }
-        else if (!strncmp (p, "REM REPLAYGAIN_TRACK_GAIN ", 26)) {
+        else if (!strncasecmp (p, "REM REPLAYGAIN_TRACK_GAIN ", 26)) {
             pl_get_value_from_cue (p + 26, sizeof (replaygain_track_gain), replaygain_track_gain);
         }
-        else if (!strncmp (p, "REM REPLAYGAIN_TRACK_PEAK ", 26)) {
+        else if (!strncasecmp (p, "REM REPLAYGAIN_TRACK_PEAK ", 26)) {
             pl_get_value_from_cue (p + 26, sizeof (replaygain_track_peak), replaygain_track_peak);
         }
-        else if (!strncmp (p, "PREGAP ", 7)) {
+        else if (!strncasecmp (p, "PREGAP ", 7)) {
             pl_get_value_from_cue (p + 7, sizeof (pregap), pregap);
         }
-        else if (!strncmp (p, "INDEX 00 ", 9)) {
+        else if (!strncasecmp (p, "INDEX 00 ", 9)) {
             pl_get_value_from_cue (p + 9, sizeof (index00), index00);
         }
-        else if (!strncmp (p, "INDEX 01 ", 9)) {
+        else if (!strncasecmp (p, "INDEX 01 ", 9)) {
             pl_get_value_from_cue (p + 9, sizeof (index01), index01);
         }
         else {
             // determine and get extra tags
             if (!have_track) {
                 for (int m = 0; cue_field_map[m]; m += 2) {
-                    if (!strncmp (p, cue_field_map[m], strlen(cue_field_map[m]))) {
+                    if (!strncasecmp (p, cue_field_map[m], strlen(cue_field_map[m]))) {
                         strcpy(extra_tags[extra_tag_index],cue_field_map[m+1]);
                         pl_get_qvalue_from_cue (p + strlen(cue_field_map[m]), sizeof(extra_tags[extra_tag_index+1]), extra_tags[extra_tag_index+1], charset);
                         extra_tag_index += 2;
