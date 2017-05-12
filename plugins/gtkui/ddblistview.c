@@ -3279,6 +3279,9 @@ build_groups (DdbListview *listview) {
             }
         } while (it && ((!listview->grouptitle_height && grp->num_items < BLANK_GROUP_SUBDIVISION) || (listview->grouptitle_height && !strcmp(group_title, next_title))));
         grp->height = listview->grouptitle_height + max(grp->num_items * listview->rowheight, min_height);
+        if (it) {
+            grp->height += gtkui_groups_spacing;
+        }
         full_height += grp->height;
         grp->next = it ? new_group(listview, it) : NULL;
     }

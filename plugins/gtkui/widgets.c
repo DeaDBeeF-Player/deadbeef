@@ -2249,7 +2249,8 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
                 g_idle_add (playlist_list_refresh_cb, p->list);
                 g_idle_add (playlist_header_refresh_cb, p->list);
             }
-            else if (gtkui_listview_font_style_conf(conf_str) || !strcmp (conf_str, "playlist.pin.groups")) {
+            else if (gtkui_listview_font_style_conf(conf_str) || !strcmp (conf_str, "playlist.pin.groups") ||
+                    !strcmp (conf_str, "playlist.groups.spacing") ) {
                 g_idle_add (playlist_list_refresh_cb, p->list);
             }
             else if (gtkui_tabstrip_override_conf(conf_str) || gtkui_tabstrip_colors_conf(conf_str)) {

@@ -1386,3 +1386,7 @@ on_pref_pluginlist_row_activated       (GtkTreeView     *treeview,
                                         GtkTreePath     *path,
                                         GtkTreeViewColumn *column,
                                         gpointer         user_data);
+void
+on_listview_group_spacing_value_changed
+                                        (GtkSpinButton   *spinbutton,
+                                        gpointer         user_data);
