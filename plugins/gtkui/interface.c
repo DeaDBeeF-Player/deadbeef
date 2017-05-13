@@ -1292,6 +1292,10 @@ create_editcolumndlg (void)
   GtkWidget *hbox74;
   GtkWidget *format;
   GtkWidget *title_formatting_help_link;
+  GtkWidget *hbox141;
+  GtkWidget *label164;
+  GtkWidget *sort_format;
+  GtkWidget *label165;
   GtkWidget *hbox32;
   GtkWidget *label38;
   GtkWidget *align;
@@ -1390,6 +1394,23 @@ create_editcolumndlg (void)
   gtk_widget_set_can_focus(title_formatting_help_link, FALSE);
   gtk_widget_set_can_default(title_formatting_help_link, FALSE);
 
+  hbox141 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox141);
+  gtk_box_pack_start (GTK_BOX (vbox14), hbox141, TRUE, TRUE, 0);
+
+  label164 = gtk_label_new (_("Sort format:"));
+  gtk_widget_show (label164);
+  gtk_box_pack_start (GTK_BOX (hbox141), label164, FALSE, FALSE, 0);
+
+  sort_format = gtk_entry_new ();
+  gtk_widget_show (sort_format);
+  gtk_box_pack_start (GTK_BOX (hbox141), sort_format, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (sort_format), 8226);
+
+  label165 = gtk_label_new (_("(if non-empty)"));
+  gtk_widget_show (label165);
+  gtk_box_pack_start (GTK_BOX (hbox141), label165, FALSE, FALSE, 0);
+
   hbox32 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox32);
   gtk_box_pack_start (GTK_BOX (vbox14), hbox32, FALSE, FALSE, 0);
@@ -1486,6 +1507,10 @@ create_editcolumndlg (void)
   GLADE_HOOKUP_OBJECT (editcolumndlg, hbox74, "hbox74");
   GLADE_HOOKUP_OBJECT (editcolumndlg, format, "format");
   GLADE_HOOKUP_OBJECT (editcolumndlg, title_formatting_help_link, "title_formatting_help_link");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, hbox141, "hbox141");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, label164, "label164");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, sort_format, "sort_format");
+  GLADE_HOOKUP_OBJECT (editcolumndlg, label165, "label165");
   GLADE_HOOKUP_OBJECT (editcolumndlg, hbox32, "hbox32");
   GLADE_HOOKUP_OBJECT (editcolumndlg, label38, "label38");
   GLADE_HOOKUP_OBJECT (editcolumndlg, align, "align");
