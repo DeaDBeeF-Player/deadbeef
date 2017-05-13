@@ -60,7 +60,7 @@ int
 pl_common_load_column_config (DdbListview *listview, const char *key);
 
 void
-pl_common_add_column_helper (DdbListview *listview, const char *title, int width, int id, const char *format, int align_right);
+pl_common_add_column_helper (DdbListview *listview, const char *title, int width, int id, const char *format, const char *sort_format, int align_right);
 
 void
 pl_common_header_context_menu (DdbListview *ps, int column);
