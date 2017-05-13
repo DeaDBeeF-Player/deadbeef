@@ -423,6 +423,7 @@ action_add_location_handler_cb (void *user_data) {
 #endif
 
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
     if (res == GTK_RESPONSE_OK) {
         GtkEntry *entry = GTK_ENTRY (lookup_widget (dlg, "addlocation_entry"));
