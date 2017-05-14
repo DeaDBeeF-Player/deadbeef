@@ -823,6 +823,89 @@ tf_func_len (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
     return snprintf(out, outlen, "%d", u8_strlen(out));
 }
 
+// $pad(expr,len[, char]): If `expr` is shorter than len characters, the function adds `char` characters (if present otherwise
+// spaces) to the right of `expr` to make the result `len` characters long. Otherwise the function returns str unchanged.
+int
+tf_func_pad_impl (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef, int right) {
+    if (argc < 1 || argc > 3) {
+        return -1;
+    }
+
+    int bool_out = 0;
+    int len, str_len;
+    const char *arg = args;
+    char pad_char_str[10] = " ";
+    int nb_pad_char=1;
+
+    // get expr
+    char str[1000];
+    TF_EVAL_CHECK(str_len, ctx, args, arglens[0], str, sizeof(str), fail_on_undef);
+
+    // get len
+    char num_chars_str[10];
+    arg += arglens[0];
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str), fail_on_undef);
+    int padlen_chars = atoi (num_chars_str);
+    if (padlen_chars < 0) {
+        *out = 0;
+        return -1;
+    }
+    // get char
+    if (argc == 3) {
+        arg += arglens[1];
+        TF_EVAL_CHECK(len, ctx, arg, arglens[2], pad_char_str, sizeof (pad_char_str), fail_on_undef);
+        // only accept first character
+        nb_pad_char = u8_offset(pad_char_str, 1);
+        pad_char_str[nb_pad_char] = 0;
+ 
+    }
+    int str_chars = u8_strlen(str);
+    if (str_chars >= padlen_chars) {
+        u8_strnbcpy(out, str, min (str_len, outlen));
+        return str_len;
+    }
+
+    int res=0,l;
+    int repeat_count = padlen_chars-str_chars;
+
+
+    if (!right) {
+        l = u8_strnbcpy(out, str, min (str_len, outlen));
+        outlen -= l;
+        out += l;
+        res += l;
+    }
+
+    for (int i = 0; i < repeat_count && outlen; i++) {
+        l = u8_charcpy (out, pad_char_str, nb_pad_char);
+        outlen -= l;
+        out += l;
+        res += l;
+    }
+
+    if (right) {
+        l = u8_strnbcpy(out, str, min (str_len, outlen));
+        outlen -= l;
+        out += l;
+        res += l;
+    }
+
+    out[res] = 0;
+    
+    return res;
+}
+
+int
+tf_func_pad (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_func_pad_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 0);
+}
+
+// $pad_right(expr,len[,char]): same as $pad but right aligns string
+int
+tf_func_pad_right (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_func_pad_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 1);
+}
+
 int
 tf_func_directory (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 1 || argc > 2) {
@@ -1655,6 +1738,8 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "repeat", tf_func_repeat },
     { "insert", tf_func_insert },
     { "len", tf_func_len },
+    { "pad", tf_func_pad },
+    { "pad_right", tf_func_pad_right },
     // Track info
     { "meta", tf_func_meta },
     { "channels", tf_func_channels },
