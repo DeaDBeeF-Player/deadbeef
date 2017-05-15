@@ -1615,4 +1615,88 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
+- (void)test_PadHelloWith5_GivesHello {
+    char *bc = tf_compile("$pad(Hello,5)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadHelloWith5Xs_GivesHello {
+    char *bc = tf_compile("$pad(Hello,5,X)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadHelloWith10_Gives_Hello_____ {
+    char *bc = tf_compile("$pad(Hello,10)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hello     "), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadHelloWith10Xs_GivesHelloXXXXX {
+    char *bc = tf_compile("$pad(Hello,10,X)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "HelloXXXXX"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadHelloWith10XYs_GivesHelloXXXXX {
+    char *bc = tf_compile("$pad(Hello,10,XY)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "HelloXXXXX"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadUnicodeStringWith10UnitydeChars_GivesExpectedOutput {
+    char *bc = tf_compile("$pad(АБВГД,10,Ё)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "АБВГДЁЁЁЁЁ"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadRightHelloWith5_GivesHello {
+    char *bc = tf_compile("$pad_right(Hello,5)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadRightHelloWith5Xs_GivesHello {
+    char *bc = tf_compile("$pad_right(Hello,5,X)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadRightHelloWith10_Gives______Hello {
+    char *bc = tf_compile("$pad_right(Hello,10)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "     Hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadRightHelloWith10Xs_GivesXXXXXHello {
+    char *bc = tf_compile("$pad_right(Hello,10,X)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "XXXXXHello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadRightHelloWith10XYs_GivesXXXXXHello {
+    char *bc = tf_compile("$pad_right(Hello,10,XY)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "XXXXXHello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadRightUnicodeStringWith10UnitydeChars_GivesExpectedOutput {
+    char *bc = tf_compile("$pad_right(АБВГД,10,Ё)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "ЁЁЁЁЁАБВГД"), @"The actual output is: %s", buffer);
+}
+
 @end
