@@ -731,9 +731,14 @@ tf_func_repeat (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const 
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str), fail_on_undef);
     int repeat_count = atoi (num_chars_str);
-    if (repeat_count <= 0) {
+    if (repeat_count < 0) {
         *out = 0;
         return -1;
+    }
+    else if (repeat_count == 0) {
+        // early out on zero repeat count
+        *out = 0;
+        return 0;
     }
 
     // get expr

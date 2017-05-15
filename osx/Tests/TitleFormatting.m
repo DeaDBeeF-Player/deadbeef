@@ -1460,6 +1460,13 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "abcabcabc"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_RepeatSingleCharZeroTimes_GivesZeroChars {
+    char *bc = tf_compile("pre$repeat(x,0)post");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "prepost"), @"The actual output is: %s", buffer);
+}
+
 - (void)test_InsertStrMiddle_GivesInsertedStr {
     pl_replace_meta (it, "title", "Insert [] Here");
     pl_replace_meta (it, "album", "Value");
