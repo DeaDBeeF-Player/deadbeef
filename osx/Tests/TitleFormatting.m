@@ -1592,4 +1592,20 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "xxx\0331;3maaabbb\0331;-3myyy"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_0_7_2_ContextSizeCheck_ReturnsResult {
+    char *bc = tf_compile("test");
+    ctx._size = (int)((char *)&ctx.dimmed - (char *)&ctx);
+    tf_eval (&ctx, bc, buffer, 1000);
+    ctx._size = sizeof (ctx);
+    XCTAssert(!strcmp (buffer, "test"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InvalidContextSizeCheck_ReturnsEmpty {
+    char *bc = tf_compile("test");
+    ctx._size = (int)((char *)&ctx.dimmed - (char *)&ctx - 1);
+    tf_eval (&ctx, bc, buffer, 1000);
+    ctx._size = sizeof (ctx);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
 @end
