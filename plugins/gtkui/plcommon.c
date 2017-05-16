@@ -348,7 +348,7 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it,
 
 
 PangoAttrList *
-convert_escapetext_to_pango_attrlist (char *text, float *fg, float *highlight) {
+convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *highlight) {
     PangoAttrList *lst = pango_attr_list_new ();
     char *pin = text;
     int x,y,a=0;
@@ -373,8 +373,12 @@ convert_escapetext_to_pango_attrlist (char *text, float *fg, float *highlight) {
                 attr = pango_attr_foreground_new (r, g, b);
                 attr->start_index = index;
             } else if (y >= -3 && y <= -1) {
-                const float alpha[] = {.80f, .60f, .30f};
-                attr = pango_attr_foreground_alpha_new (alpha[-y-1]*65535);
+                const float blend[] = {.30f, .60f, .80f};
+                int r = CHANNEL_BLENDR(fg[0], bg[0], blend[-y-1]) * 65535;
+                int g = CHANNEL_BLENDR(fg[1], bg[1], blend[-y-1]) * 65535;
+                int b = CHANNEL_BLENDR(fg[2], bg[2], blend[-y-1]) * 65535;
+
+                attr = pango_attr_foreground_new (r, g, b);
                 attr->start_index = index;
             }
         } else {
@@ -525,8 +529,31 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
 
         float highlight[] = {highlight_color->red/65535., highlight_color->green/65535., highlight_color->blue/65535.};
 
+        GdkColor *background_color;
+        GdkColor bgclr;
+
+        if (!gtkui_override_listview_colors ()) {
+            if (deadbeef->pl_is_selected (it)) {
+                background_color = &gtk_widget_get_style (theme_treeview)->bg[GTK_STATE_SELECTED];
+            } else {
+                background_color = &gtk_widget_get_style(theme_treeview)->bg[GTK_STATE_NORMAL];
+            }
+        } else {
+            if (deadbeef->pl_is_selected (it)) {
+                gtkui_get_listview_selection_color (&bgclr);
+            } else {
+                if (idx % 2) {
+                    gtkui_get_listview_even_row_color (&bgclr);
+                } else {
+                    gtkui_get_listview_odd_row_color (&bgclr);
+                }
+            }
+            background_color = &bgclr;
+        }
+        float bg[] = {background_color->red/65535., background_color->green/65535., background_color->blue/65535.};
+
         if (is_dimmed) {
-            PangoAttrList *attrs = convert_escapetext_to_pango_attrlist(text, fg, highlight);
+            PangoAttrList *attrs = convert_escapetext_to_pango_attrlist(text, fg, bg, highlight);
             pango_layout_set_attributes (listview->listctx.pangolayout, attrs);
             pango_attr_list_unref(attrs);
             draw_text_custom (&listview->listctx, x + 5, y + 3, width-10, align, DDB_LIST_FONT, bold, italic, text);
