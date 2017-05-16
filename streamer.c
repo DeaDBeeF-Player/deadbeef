@@ -161,13 +161,13 @@ streamer_unlock (void) {
 }
 
 static void
-streamer_set_nextsong_real (int song, int pstate);
-
-static void
 play_index (int idx);
 
 static void
 play_current (void);
+
+static void
+play_next (void);
 
 static void
 streamer_set_current_playlist_real (int plt);
@@ -874,12 +874,6 @@ stream_track (playItem_t *it) {
         goto success;
     }
 
-    if (to) {
-        send_trackinfochanged (to);
-    }
-    if (from) {
-        send_trackinfochanged (from);
-    }
     char decoder_id[100] = "";
     char filetype[100] = "";
     pl_lock ();
@@ -1077,7 +1071,7 @@ m3u_error:
             it->played = 1;
             trace ("decoder->init returned %p\n", new_fileinfo);
             if (playing_track == it) {
-                send_trackinfochanged (to);
+                send_trackinfochanged (to); // got new metadata, refresh UI
             }
             err = -1;
             goto error;
@@ -1127,9 +1121,7 @@ m3u_error:
             trace ("no decoder in playitem!\n");
             it->played = 1;
 
-            // set the failed track as current, and send event, for UI refresh
-            streamer_set_playing_track (it);
-            send_trackinfochanged (it);
+            streamer_set_playing_track (NULL);
 
             // failed to play the track, ask for the next one
             streamer_play_failed (it);
@@ -1180,7 +1172,6 @@ success:
         new_fileinfo = NULL;
         new_fileinfo_file = NULL;
     }
-    send_trackinfochanged (to);
 
 error:
     if (from) {
@@ -1310,17 +1301,7 @@ streamer_thread (void *ctx) {
                 play_current ();
                 break;
             case STR_EV_NEXT:
-                {
-                    playItem_t *next = get_next_track(last_played);
-                    streamer_reset(1);
-                    stream_track(next);
-                    if (next) {
-                        pl_item_unref(next);
-                    }
-                    playpos = 0;
-                    playtime = 0;
-                    output->play ();
-                }
+                play_next ();
                 break;
             case STR_EV_PREV:
                 {
@@ -1367,7 +1348,7 @@ streamer_thread (void *ctx) {
         if (buffering != streamer_is_buffering) {
             streamer_is_buffering = buffering;
             if (playing_track) {
-                send_trackinfochanged (playing_track);
+                send_trackinfochanged (playing_track); // to update buffering UI
             }
         }
 
@@ -1580,7 +1561,7 @@ process_output_block (char *bytes, int firstblock) {
     }
 
     // handle change of track, or start of a new track
-    if (block->last || block->track != playing_track) {
+    if (block->last || block->track != playing_track || (playing_track && last_played != playing_track)) {
         // next track started
         update_stop_after_current ();
 
@@ -1678,7 +1659,6 @@ streamer_read (char *bytes, int size) {
                 pl_item_ref (trk);
                 send_songfinished (trk);
                 streamer_start_playback (playing_track, NULL);
-                send_trackinfochanged (trk);
                 send_trackchanged (trk, NULL);
                 pl_item_unref (trk);
             }
@@ -1912,6 +1892,7 @@ streamer_configchanged (void) {
 // negative index will stop playback
 static void
 play_index (int idx) {
+    streamer_is_buffering = 1;
     DB_output_t *output = plug_get_output ();
     playItem_t *it = NULL;
     playlist_t *plt = NULL;
@@ -1934,10 +1915,14 @@ play_index (int idx) {
     }
     pl_unlock();
     streamer_reset(1);
+    streamer_set_playing_track (it);
     if (!stream_track(it)) {
         playpos = 0;
         playtime = 0;
         output->play ();
+    }
+    else {
+        streamer_set_playing_track (NULL);
     }
 
     pl_item_unref(it);
@@ -1949,12 +1934,7 @@ error:
     streamer_reset (1);
     stream_track (NULL);
     output->stop ();
-    it = playing_track;
-    playing_track = NULL;
-    if (it) {
-        send_trackinfochanged (it);
-        pl_item_unref (it);
-    }
+    streamer_set_playing_track (NULL);
     if (plt) {
         plt_unref (plt);
     }
@@ -1969,6 +1949,7 @@ error:
 //     stop playback
 static void
 play_current (void) {
+    streamer_is_buffering = 1;
     playlist_t *plt = plt_get_curr ();
     DB_output_t *output = plug_get_output ();
     autoplay = 1;
@@ -1998,15 +1979,44 @@ play_current (void) {
                 streamer_set_streamer_playlist (plt);
             }
             pl_unlock ();
-            stream_track (next);
-            playpos = 0;
-            playtime = 0;
-            output->play ();
+            streamer_set_playing_track (next);
+            if (!stream_track (next)) {
+                playpos = 0;
+                playtime = 0;
+                output->play ();
+            }
+            else {
+                streamer_set_playing_track (NULL);
+            }
         }
     }
     if (plt) {
         plt_unref (plt);
     }
+}
+
+static void
+play_next (void) {
+    DB_output_t *output = plug_get_output ();
+    streamer_reset(1);
+    playItem_t *next = get_next_track(last_played);
+    streamer_is_buffering = 1;
+    streamer_set_playing_track (next);
+
+    if (!next) {
+        output->stop ();
+        return;
+    }
+
+    if (!stream_track(next)) {
+        playpos = 0;
+        playtime = 0;
+        output->play ();
+    }
+    else {
+        streamer_set_playing_track (NULL);
+    }
+    pl_item_unref(next);
 }
 
 void
@@ -2184,16 +2194,27 @@ streamer_get_handler (void) {
     return handler;
 }
 
-// NOTE: This is used for testing (title formatting unit tests).
-// It's not recommended to use this for anything else.
 void
 streamer_set_playing_track (playItem_t *it) {
-    if (playing_track) {
-        pl_item_unref (playing_track);
+    if (it == playing_track) {
+        return;
     }
+
+    playItem_t *prev = playing_track;
+
+    playing_track = NULL;
+
     playing_track = it;
     if (playing_track) {
         pl_item_ref (playing_track);
+    }
+
+    send_trackinfochanged(prev);
+
+    send_trackinfochanged(playing_track);
+
+    if (prev) {
+        pl_item_unref (prev);
     }
 }
 
