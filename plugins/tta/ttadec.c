@@ -459,7 +459,7 @@ int get_samples (tta_info *info, byte *buffer) {
 	byte *p = buffer;
 	decoder *dec = info->tta;
 	int *prev = info->cache;
-	int value, res;
+	int value, res, tmp;
 
 	for (res = 0; p < buffer + info->pcm_buffer_size;) {
 		fltst *fst = &dec->fst;
@@ -513,6 +513,8 @@ int get_samples (tta_info *info, byte *buffer) {
 		}
 
 		value = DEC(value);
+		tmp = DEC(value);
+		value = tmp;
 
 		// decompress stage 1: adaptive hybrid filter
 		hybrid_filter(fst, &value);
