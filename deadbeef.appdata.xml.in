@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application>
+  <id type="desktop">deadbeef.desktop</id>
+  <license>Zlib and GPL-2.0+ and LGPL-2.1+ and BSD-3-Clause</license>
+  <metadata_license>CC0-1.0</metadata_license>
+  <summary>The Ultimate Music Player</summary>
+  <description>
+    <_p>
+      DeaDBeeF (as in 0xDEADBEEF) is an audio player with the following main features
+    </_p>
+    <ul>
+        <_li>mp3, ogg vorbis, flac, ape, wv/iso.wv, wav, m4a/mp3 (aac and alac), mpc, tta, cd audio, and many more</_li>
+        <_li>i>nsf, ay, vtx, vgm/vgz, spc and many other popular chiptune formats</_li>
+        <_li>SID with HVSC song length database support for sid</_li>
+        <_li>tracker modules - mod, s3m, it, xm, etc</_li>
+        <_li>ID3v1, ID3v2.2, ID3v2.3, ID3v2.4, APEv2, Xing/Info, VorbisComments tag reading and writing, as well as reading many other tag/metadata formats in most supported formats</_li>
+        <_li>automatic character set detection for non-unicode id3 tags - supports cp1251, iso8859-1, and now chinese cp936 (optional), as well as SHIFT-JIS and MS-DOS CP866 for selected formats</_li>
+        <_li>unicode tags are fully supported as well (both utf8 and ucs2)</_li>
+        <_li>cuesheet (.cue files) support, including charset detection/conversion</_li>
+        <_li>minimization to system tray, with scrollwheel volume control, etc</_li>
+        <_li>drag and drop, both in playlist, and from other apps</_li>
+        <_li>control playback from command line</_li>
+        <_li>global hotkeys</_li>
+        <_li>multiple playlists using tabbed interface</_li>
+        <_li>album cover display</_li>
+        <_li>OSD notifications about current playing songs</_li>
+        <_li>18-band graphical equalizer and other DSP plugins</_li>
+        <_li>built-in high quality tag editor, with custom fields support</_li>
+        <_li>customizable groups in playlists</_li>
+        <_li>customizable columns with flexible title formatting</_li>
+        <_li>streaming radio support for ogg vorbis, mp3 and aac streams</_li>
+        <_li>gapless playback for correctly encoded files</_li>
+        <_li>lots of plugin, such as global hotkeys, last.fm scrobbler, converter, and many more, sdk is included</_li>
+        <_li>comes with advanced Converter plugin, which allows to transcode files to other formats</_li>
+    </ul>
+  </description>
+  <screenshots>
+      <screenshot type="default">http://deadbeef.sourceforge.net/screenshots/0.6/01.png</screenshot>
+  </screenshots>
+  <url type="homepage">http://deadbeef.sourceforge.net/</url>
+  <translation type="gettext">deadbeef</translation>
+</application>

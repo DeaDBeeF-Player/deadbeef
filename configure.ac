@@ -955,6 +955,7 @@ plugins/statusnotifier/Makefile
 intl/Makefile
 po/Makefile.in
 deadbeef.desktop
+deadbeef.appdata.xml
 ])
 
 AC_OUTPUT
