@@ -54,7 +54,7 @@ gboolean
 list_handle_keypress (DdbListview *ps, int keyval, int state, int iter);
 
 void
-pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int iter, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height);
+pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int iter, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height, int even);
 
 int
 pl_common_load_column_config (DdbListview *listview, const char *key);

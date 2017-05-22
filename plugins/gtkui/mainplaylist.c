@@ -155,9 +155,9 @@ main_vscroll_changed (int pos) {
 }
 
 static void
-main_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height)
+main_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height, int even)
 {
-    pl_common_draw_column_data (listview, cr, it, idx, PL_MAIN, align, user_data, fg_clr, x, y, width, height);
+    pl_common_draw_column_data (listview, cr, it, idx, PL_MAIN, align, user_data, fg_clr, x, y, width, height, even);
 }
 
 static void
