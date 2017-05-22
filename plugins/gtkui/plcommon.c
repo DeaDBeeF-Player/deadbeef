@@ -402,7 +402,7 @@ convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *h
 }
 
 void
-pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int iter, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height) {
+pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int iter, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height, int even) {
     col_info_t *info = user_data;
 
     DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
@@ -554,7 +554,7 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
             if (deadbeef->pl_is_selected (it)) {
                 gtkui_get_listview_selection_color (&bgclr);
             } else {
-                if (idx % 2) {
+                if (even) {
                     gtkui_get_listview_even_row_color (&bgclr);
                 } else {
                     gtkui_get_listview_odd_row_color (&bgclr);
