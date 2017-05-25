@@ -1,0 +1,22 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "0.1.0",
+    "showOutput": "always",
+    "osx": {
+        "tasks": [
+            {
+                "isBuildCommand": true,
+                "taskName": "Build Debug",
+                "command": "xcodebuild",
+                "args": ["-project", "osx/deadbeef.xcodeproj", "-target", "deadbeef", "-configuration", "Debug"]
+            },
+            {
+                "isBuildCommand": true,
+                "taskName": "Build Release",
+                "command": "xcodebuild",
+                "args": ["-project", "osx/deadbeef.xcodeproj", "-target", "deadbeef", "-configuration", "Release"]
+            }
+        ]
+    }
+}
