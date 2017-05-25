@@ -228,10 +228,10 @@ main_playlist_init (GtkWidget *widget) {
     // create default set of columns
     if (pl_common_load_column_config (listview, "gtkui.columns.playlist") < 0) {
         pl_common_add_column_helper (listview, "♫", 50, DB_COLUMN_PLAYING, "%playstatus%", NULL, 0);
-        pl_common_add_column_helper (listview, _("Artist / Album"), 150, -1, COLUMN_FORMAT_ARTISTALBUM, NULL, 0);
-        pl_common_add_column_helper (listview, _("Track No"), 50, -1, COLUMN_FORMAT_TRACKNUMBER, NULL, 1);
-        pl_common_add_column_helper (listview, _("Title"), 150, -1, COLUMN_FORMAT_TITLE, NULL, 0);
-        pl_common_add_column_helper (listview, _("Duration"), 50, -1, COLUMN_FORMAT_LENGTH, NULL, 0);
+        pl_common_add_column_helper (listview, _("Artist / Album"), 150, DB_COLUMN_STANDARD, COLUMN_FORMAT_ARTISTALBUM, NULL, 0);
+        pl_common_add_column_helper (listview, _("Track No"), 50, DB_COLUMN_STANDARD, COLUMN_FORMAT_TRACKNUMBER, NULL, 1);
+        pl_common_add_column_helper (listview, _("Title"), 150, DB_COLUMN_STANDARD, COLUMN_FORMAT_TITLE, NULL, 0);
+        pl_common_add_column_helper (listview, _("Duration"), 50, DB_COLUMN_STANDARD, COLUMN_FORMAT_LENGTH, NULL, 0);
     }
     main_binding.columns_changed = main_columns_changed;
 }
