@@ -24,6 +24,18 @@
             "environment": [],
             "externalConsole": true,
             "MIMode": "lldb"
+        },
+        {
+            "name": "(gdb) Launch Debug Linux",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/opt/deadbeef/bin/deadbeef",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb"
         }
     ]
 }

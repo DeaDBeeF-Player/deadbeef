@@ -1,0 +1,3 @@
+#!/bin/sh
+make || exit 1
+sudo scripts/quickinstall.sh

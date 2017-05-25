@@ -24,5 +24,15 @@
                 "args": ["test", "-project", "osx/deadbeef.xcodeproj", "-scheme", "deadbeef", "-destination", "platform=OS X,arch=x86_64"]
             }
         ]
+    },
+    "linux": {
+        "tasks": [
+            {
+                "isBuildCommand": true,
+                "taskName": "Build",
+                "command": "${workspaceRoot}/.vscode/linux-build",
+                "args": []
+            }
+        ]
     }
 }
