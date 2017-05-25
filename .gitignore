@@ -83,5 +83,4 @@ portable_out
 static
 INSTALL
 /static-deps
-.vscode
 osx/build
