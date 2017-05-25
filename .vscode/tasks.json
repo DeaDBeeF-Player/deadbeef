@@ -16,6 +16,12 @@
                 "taskName": "Build Release",
                 "command": "xcodebuild",
                 "args": ["-project", "osx/deadbeef.xcodeproj", "-target", "deadbeef", "-configuration", "Release"]
+            },
+            {
+                "isTestCommand": true,
+                "taskName": "XCTest Debug",
+                "command": "xcodebuild",
+                "args": ["test", "-project", "osx/deadbeef.xcodeproj", "-scheme", "deadbeef", "-destination", "platform=OS X,arch=x86_64"]
             }
         ]
     }
