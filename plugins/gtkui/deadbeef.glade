@@ -2013,18 +2013,7 @@
 	      <child>
 		<widget class="GtkComboBox" id="id">
 		  <property name="visible">True</property>
-		  <property name="items" translatable="yes">Item Index
-Playing
-Album Art
-Artist - Album
-Artist
-Album
-Title
-Year
-Duration
-Track Number
-Band / Album Artist
-Custom</property>
+		  <property name="items" translatable="yes"></property>
 		  <property name="add_tearoffs">False</property>
 		  <property name="focus_on_click">True</property>
 		  <signal name="changed" handler="on_column_id_changed" last_modification_time="Mon, 04 Jan 2010 17:31:44 GMT"/>

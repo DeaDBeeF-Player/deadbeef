@@ -460,9 +460,11 @@ enum {
 // preset columns, working using IDs
 // DON'T add new ids in range 2-7, they are reserved for backwards compatibility
 enum pl_column_t {
+    DB_COLUMN_STANDARD = -1,
     DB_COLUMN_FILENUMBER = 0,
     DB_COLUMN_PLAYING = 1,
     DB_COLUMN_ALBUM_ART = 8,
+    DB_COLUMN_CUSTOM = 9
 };
 
 // replaygain constants
