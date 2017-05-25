@@ -70,6 +70,50 @@ static GdkPixbuf *buffering16_pixbuf;
 
 static int clicked_idx = -1;
 
+struct pl_preset_column_format {
+    enum pl_column_t id;
+    char *title;
+    char *format;
+};
+
+#define PRESET_COLUMN_NUMITEMS 14
+
+struct pl_preset_column_format pl_preset_column_formats[PRESET_COLUMN_NUMITEMS];
+
+static void
+init_preset_column_struct(void) {
+    // There can only be one instance of columns of type DB_COLUMN_FILENUMBER, DB_COLUMN_PLAYING, DB_COLUMN_ALBUM_ART and DB_COLUMN_CUSTOM
+    struct pl_preset_column_format data[] = {
+        {DB_COLUMN_FILENUMBER, _("Item Index"), NULL},
+        {DB_COLUMN_PLAYING, _("Playing"), NULL},
+        {DB_COLUMN_ALBUM_ART, _("Album Art"), NULL},
+        {DB_COLUMN_STANDARD, _("Artist - Album"), COLUMN_FORMAT_ARTISTALBUM},
+        {DB_COLUMN_STANDARD, _("Artist"), COLUMN_FORMAT_ARTIST},
+        {DB_COLUMN_STANDARD, _("Album"), COLUMN_FORMAT_ALBUM},
+        {DB_COLUMN_STANDARD, _("Title"), COLUMN_FORMAT_TITLE},
+        {DB_COLUMN_STANDARD, _("Year"), COLUMN_FORMAT_YEAR},
+        {DB_COLUMN_STANDARD, _("Duration"), COLUMN_FORMAT_LENGTH},
+        {DB_COLUMN_STANDARD, _("Track Number"), COLUMN_FORMAT_TRACKNUMBER},
+        {DB_COLUMN_STANDARD, _("Band / Album Artist"), COLUMN_FORMAT_BAND},
+        {DB_COLUMN_STANDARD, _("Codec"), COLUMN_FORMAT_CODEC},
+        {DB_COLUMN_STANDARD, _("Bitrate"), COLUMN_FORMAT_BITRATE},
+        {DB_COLUMN_CUSTOM, _("Custom"), NULL}
+    };
+    memcpy(pl_preset_column_formats, data, sizeof(pl_preset_column_formats));
+}
+
+int
+find_first_preset_column_type (int type) {
+    int idx = -1;
+    for (int i = 0; i < PRESET_COLUMN_NUMITEMS; i++) {
+        if (pl_preset_column_formats[i].id == type) {
+            idx = i;
+            break;
+        }
+    }
+    return idx;
+}
+
 void
 pl_common_init(void)
 {
@@ -88,6 +132,8 @@ pl_common_init(void)
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_VIEW);
 #endif
     theme_button = mainwin;
+
+    init_preset_column_struct();
 }
 
 void
@@ -1576,45 +1622,15 @@ init_column (col_info_t *inf, int id, const char *format, const char *sort_forma
         deadbeef->tf_free (inf->sort_bytecode);
         inf->sort_bytecode = NULL;
     }
-    inf->id = -1;
 
-    switch (id) {
-    case 0:
-        inf->id = DB_COLUMN_FILENUMBER;
-        break;
-    case 1:
-        inf->id = DB_COLUMN_PLAYING;
-        break;
-    case 2:
-        inf->id = DB_COLUMN_ALBUM_ART;
-        break;
-    case 3:
-        inf->format = strdup (COLUMN_FORMAT_ARTISTALBUM);
-        break;
-    case 4:
-        inf->format = strdup (COLUMN_FORMAT_ARTIST);
-        break;
-    case 5:
-        inf->format = strdup (COLUMN_FORMAT_ALBUM);
-        break;
-    case 6:
-        inf->format = strdup (COLUMN_FORMAT_TITLE);
-        break;
-    case 7:
-        inf->format = strdup (COLUMN_FORMAT_YEAR);
-        break;
-    case 8:
-        inf->format = strdup (COLUMN_FORMAT_LENGTH);
-        break;
-    case 9:
-        inf->format = strdup (COLUMN_FORMAT_TRACKNUMBER);
-        break;
-    case 10:
-        inf->format = strdup (COLUMN_FORMAT_BAND);
-        break;
-    default:
+    inf->id = pl_preset_column_formats[id].id;
+
+    if (pl_preset_column_formats[id].id == DB_COLUMN_CUSTOM) {
         inf->format = strdup (format);
+    } else if (pl_preset_column_formats[id].id == DB_COLUMN_STANDARD && pl_preset_column_formats[id].format) {
+        inf->format = strdup (pl_preset_column_formats[id].format);
     }
+
     if (inf->format) {
         inf->bytecode = deadbeef->tf_compile (inf->format);
     }
@@ -1622,6 +1638,13 @@ init_column (col_info_t *inf, int id, const char *format, const char *sort_forma
     if (sort_format) {
         inf->sort_format = strdup(sort_format);
         inf->sort_bytecode = deadbeef->tf_compile (inf->sort_format);
+    }
+}
+
+static void
+populate_column_id_combo_box(GtkComboBoxText *combo_box) {
+    for (int i = 0; i < PRESET_COLUMN_NUMITEMS; i++) {
+        gtk_combo_box_text_append_text (combo_box, pl_preset_column_formats[i].title);
     }
 }
 
@@ -1639,6 +1662,7 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_title (GTK_WINDOW (dlg), _("Add column"));
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
+    populate_column_id_combo_box (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), 0);
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), 0);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "color_override")), 0);
@@ -1680,6 +1704,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_title (GTK_WINDOW (dlg), _("Edit column"));
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
+    populate_column_id_combo_box (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
 
     const char *title;
     int width;
@@ -1693,43 +1718,27 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         return;
     }
 
-    int idx = 11;
-    if (inf->id == -1) {
-        if (inf->format) {
-            if (!strcmp (inf->format, COLUMN_FORMAT_ARTISTALBUM)) {
-                idx = 3;
-            }
-            else if (!strcmp (inf->format, COLUMN_FORMAT_ARTIST)) {
-                idx = 4;
-            }
-            else if (!strcmp (inf->format, COLUMN_FORMAT_ALBUM)) {
-                idx = 5;
-            }
-            else if (!strcmp (inf->format, COLUMN_FORMAT_TITLE)) {
-                idx = 6;
-            }
-            else if (!strcmp (inf->format, COLUMN_FORMAT_YEAR)) {
-                idx = 7;
-            }
-            else if (!strcmp (inf->format, COLUMN_FORMAT_LENGTH)) {
-                idx = 8;
-            }
-            else if (!strcmp (inf->format, COLUMN_FORMAT_TRACKNUMBER)) {
-                idx = 9;
-            }
-            else if (!strcmp (inf->format, COLUMN_FORMAT_BAND)) {
-                idx = 10;
+    int idx = -1;
+
+    // get index for id
+    if (inf->id == DB_COLUMN_STANDARD) {
+        for (int i = 0; i < PRESET_COLUMN_NUMITEMS; i++) {
+            if (pl_preset_column_formats[i].id == DB_COLUMN_STANDARD && inf->format &&
+                pl_preset_column_formats[i].format && !strcmp (inf->format, pl_preset_column_formats[i].format)) {
+                idx = i;
+                break;
             }
         }
+        // old style custom column
+        if (idx == -1) {
+            idx = find_first_preset_column_type(DB_COLUMN_CUSTOM);
+        }
+    } else {
+        idx = find_first_preset_column_type(inf->id);
     }
-    else if (inf->id <= DB_COLUMN_PLAYING) {
-        idx = inf->id;
-    }
-    else if (inf->id == DB_COLUMN_ALBUM_ART) {
-        idx = 2;
-    }
+
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), idx);
-    if (idx == 11) {
+    if (idx == PRESET_COLUMN_NUMITEMS-1) {
         gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "format")), inf->format);
     }
     if (inf->sort_format) {

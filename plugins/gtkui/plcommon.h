@@ -34,6 +34,8 @@
 #define COLUMN_FORMAT_LENGTH "%length%"
 #define COLUMN_FORMAT_TRACKNUMBER "%tracknumber%"
 #define COLUMN_FORMAT_BAND "$if(%album artist%,%album artist%,Unknown Artist)"
+#define COLUMN_FORMAT_CODEC "%codec%"
+#define COLUMN_FORMAT_BITRATE "%bitrate%"
 
 int
 pl_common_rewrite_column_config (DdbListview *listview, const char *name);
@@ -93,5 +95,8 @@ pl_common_set_group_format (DdbListview *listview, char *format_conf);
 // formatting to the new JSON syntax with new title formatting
 int
 import_column_config_0_6 (const char *oldkeyprefix, const char *newkey);
+
+int
+find_first_preset_column_type (int type);
 
 #endif // __PLCOLUMNS_H

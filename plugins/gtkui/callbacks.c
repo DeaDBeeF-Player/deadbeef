@@ -57,6 +57,7 @@
 #include "../hotkeys/hotkeys.h"
 #include "actionhandlers.h"
 #include "actions.h"
+#include "plcommon.h"
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -432,7 +433,7 @@ on_column_id_changed                   (GtkComboBox     *combobox,
         trace ("failed to get column format widget\n");
         return;
     }
-    gtk_widget_set_sensitive (fmt, act >= 11 ? TRUE : FALSE);
+    gtk_widget_set_sensitive (fmt, act == find_first_preset_column_type(DB_COLUMN_CUSTOM) ? TRUE : FALSE);
 
     if (!editcolumn_title_changed) {
         GtkWidget *title= lookup_widget (toplevel, "title");
