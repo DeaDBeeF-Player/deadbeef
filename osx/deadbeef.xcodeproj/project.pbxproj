@@ -1503,20 +1503,6 @@
 		2DCB281A19E86183008E9DF6 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
 		2DCB281D19E86194008E9DF6 /* m3u.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DCB281419E86162008E9DF6 /* m3u.dylib */; };
 		2DCCED2C1C3E654800BD071D /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
-		2DCD78D419A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78B919A665CA00EA50FA /* deadbeef.png */; };
-		2DCD78D519A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78BB19A665CA00EA50FA /* deadbeef.png */; };
-		2DCD78D619A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78BD19A665CA00EA50FA /* deadbeef.png */; };
-		2DCD78D719A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78BF19A665CA00EA50FA /* deadbeef.png */; };
-		2DCD78D819A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78C119A665CA00EA50FA /* deadbeef.png */; };
-		2DCD78D919A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78C319A665CA00EA50FA /* deadbeef.png */; };
-		2DCD78DA19A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78C519A665CA00EA50FA /* deadbeef.png */; };
-		2DCD78DB19A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78C719A665CA00EA50FA /* deadbeef.png */; };
-		2DCD78DC19A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78C919A665CA00EA50FA /* deadbeef.png */; };
-		2DCD78DD19A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78CB19A665CA00EA50FA /* deadbeef.png */; };
-		2DCD78DE19A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78CD19A665CA00EA50FA /* deadbeef.png */; };
-		2DCD78DF19A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78CF19A665CA00EA50FA /* deadbeef.png */; };
-		2DCD78E019A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D119A665CA00EA50FA /* deadbeef.png */; };
-		2DCD78E119A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
 		2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCF73B21A952F8900495740 /* PreferencesWindowController.h */; };
 		2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DCF73B31A952F8900495740 /* PreferencesWindowController.m */; };
@@ -10148,18 +10134,14 @@
 				2D2A14BA19B6485200AD1EB7 /* gme.dylib in Resources */,
 				2DBEE69619B4EB0900A60609 /* sb_front_cap_right.png in Resources */,
 				2DB96AA819ABB52200E318A8 /* dsp_libsrc.dylib in Resources */,
-				2DCD78E019A665CA00EA50FA /* deadbeef.png in Resources */,
 				2DB10B8B19B908630054A6AB /* tab_unsel_right.png in Resources */,
 				2D3EBD9D1A9379BD00E5E255 /* Preferences.xib in Resources */,
 				4D32FA6B19A647B5000FFDE0 /* flac.dylib in Resources */,
 				2DB10B8319B908630054A6AB /* tab_fill.png in Resources */,
-				2DCD78E119A665CA00EA50FA /* deadbeef.png in Resources */,
 				4D32FA0019A63644000FFDE0 /* ffap.dylib in Resources */,
 				2DB10B8419B908630054A6AB /* tab_fill@2x.png in Resources */,
 				2D0EE6971B86685C00487FA1 /* tabCloseTemplate.pdf in Resources */,
-				2DCD78DA19A665CA00EA50FA /* deadbeef.png in Resources */,
 				4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */,
-				2DCD78D819A665CA00EA50FA /* deadbeef.png in Resources */,
 				4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */,
 				2DBEE69519B4EB0900A60609 /* sb_front_cap_left@2x.png in Resources */,
 				2DBEE69419B4EB0900A60609 /* sb_front_cap_left.png in Resources */,
@@ -10167,35 +10149,25 @@
 				2DB10B8619B908630054A6AB /* tab_left@2x.png in Resources */,
 				2DBEE69919B4EB0900A60609 /* sb_front_filler@2x.png in Resources */,
 				2DBEE69119B4EB0900A60609 /* sb_back_cap_right@2x.png in Resources */,
-				2DCD78D419A665CA00EA50FA /* deadbeef.png in Resources */,
 				2D2351281B13922400A62936 /* Converter.xib in Resources */,
 				2DD6D0A819AE6288009308A5 /* knobTemplate.pdf in Resources */,
 				4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */,
-				2DCD78DC19A665CA00EA50FA /* deadbeef.png in Resources */,
 				4D2A6CA4183BC29400AC6BF5 /* btnstopTemplate.pdf in Resources */,
-				2DCD78D719A665CA00EA50FA /* deadbeef.png in Resources */,
-				2DCD78D919A665CA00EA50FA /* deadbeef.png in Resources */,
 				2DB10B8819B908630054A6AB /* tab_unsel_fill@2x.png in Resources */,
 				2DB10B8A19B908630054A6AB /* tab_unsel_left@2x.png in Resources */,
 				2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */,
 				2DBEE69319B4EB0900A60609 /* sb_back_filler@2x.png in Resources */,
 				2D49856F1D5CF0E900E4D985 /* Log.xib in Resources */,
 				4D2A6CA1183BC29400AC6BF5 /* btnnextTemplate.pdf in Resources */,
-				2DCD78DD19A665CA00EA50FA /* deadbeef.png in Resources */,
 				2DB10B8719B908630054A6AB /* tab_unsel_fill.png in Resources */,
 				2DBEE69719B4EB0900A60609 /* sb_front_cap_right@2x.png in Resources */,
 				2DB10B8519B908630054A6AB /* tab_left.png in Resources */,
 				2DBEE69219B4EB0900A60609 /* sb_back_filler.png in Resources */,
 				2DBEE68F19B4EB0900A60609 /* sb_back_cap_left@2x.png in Resources */,
-				2DCD78DB19A665CA00EA50FA /* deadbeef.png in Resources */,
-				2DCD78D619A665CA00EA50FA /* deadbeef.png in Resources */,
-				2DCD78DF19A665CA00EA50FA /* deadbeef.png in Resources */,
 				2DB10B8F19B90BE90054A6AB /* tab_right.png in Resources */,
 				4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */,
-				2DCD78DE19A665CA00EA50FA /* deadbeef.png in Resources */,
 				2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */,
 				2DBEE69019B4EB0900A60609 /* sb_back_cap_right.png in Resources */,
-				2DCD78D519A665CA00EA50FA /* deadbeef.png in Resources */,
 				2DB10B8219B908630054A6AB /* tab_bottom_fill@2x.png in Resources */,
 				2D1A563A1D9FF9A4005E5CDD /* ReplayGain.xib in Resources */,
 				2DBEE69819B4EB0900A60609 /* sb_front_filler.png in Resources */,
