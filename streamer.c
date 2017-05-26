@@ -100,6 +100,7 @@ static int streamer_is_buffering;
 
 static playlist_t *streamer_playlist;
 static playItem_t *playing_track;
+static playItem_t *buffering_track;
 static float playtime; // total playtime of playing track
 static time_t started_timestamp; // result of calling time(NULL)
 static playItem_t *streaming_track;
@@ -282,7 +283,7 @@ streamer_get_streaming_track (void) {
 
 playItem_t *
 streamer_get_playing_track (void) {
-    playItem_t *it = playing_track;
+    playItem_t *it = buffering_track ? buffering_track : playing_track;
     if (it) {
         pl_item_ref (it);
     }
@@ -1344,11 +1345,20 @@ streamer_thread (void *ctx) {
             continue;
         }
 
-        int buffering = streamreader_num_blocks_ready () < 4 && streaming_track;
+        int buffering = (streamreader_num_blocks_ready () < 4) && streaming_track;
         if (buffering != streamer_is_buffering) {
             streamer_is_buffering = buffering;
+
+            // update buffering UI
+            if (!buffering) {
+                streamer_set_buffering_track (NULL);
+            }
+            else if (buffering_track) {
+                send_trackinfochanged (buffering_track);
+            }
+
             if (playing_track) {
-                send_trackinfochanged (playing_track); // to update buffering UI
+                send_trackinfochanged (playing_track);
             }
         }
 
@@ -1452,6 +1462,10 @@ streamer_free (void) {
     if (playing_track) {
         pl_item_unref (playing_track);
         playing_track = NULL;
+    }
+    if (buffering_track) {
+        pl_item_unref (buffering_track);
+        buffering_track = NULL;
     }
     if (last_played) {
         pl_item_unref (last_played);
@@ -1915,14 +1929,14 @@ play_index (int idx) {
     }
     pl_unlock();
     streamer_reset(1);
-    streamer_set_playing_track (it);
+    streamer_set_buffering_track (it);
     if (!stream_track(it)) {
         playpos = 0;
         playtime = 0;
         output->play ();
     }
     else {
-        streamer_set_playing_track (NULL);
+        streamer_set_buffering_track (NULL);
     }
 
     pl_item_unref(it);
@@ -1934,7 +1948,6 @@ error:
     streamer_reset (1);
     stream_track (NULL);
     output->stop ();
-    streamer_set_playing_track (NULL);
     if (plt) {
         plt_unref (plt);
     }
@@ -1979,14 +1992,14 @@ play_current (void) {
                 streamer_set_streamer_playlist (plt);
             }
             pl_unlock ();
-            streamer_set_playing_track (next);
+            streamer_set_buffering_track (next);
             if (!stream_track (next)) {
                 playpos = 0;
                 playtime = 0;
                 output->play ();
             }
             else {
-                streamer_set_playing_track (NULL);
+                streamer_set_buffering_track (NULL);
             }
         }
     }
@@ -2001,20 +2014,20 @@ play_next (void) {
     streamer_reset(1);
     playItem_t *next = get_next_track(last_played);
     streamer_is_buffering = 1;
-    streamer_set_playing_track (next);
 
     if (!next) {
         output->stop ();
         return;
     }
 
+    streamer_set_buffering_track (next);
     if (!stream_track(next)) {
         playpos = 0;
         playtime = 0;
         output->play ();
     }
     else {
-        streamer_set_playing_track (NULL);
+        streamer_set_buffering_track (NULL);
     }
     pl_item_unref(next);
 }
@@ -2211,7 +2224,35 @@ streamer_set_playing_track (playItem_t *it) {
 
     send_trackinfochanged(prev);
 
-    send_trackinfochanged(playing_track);
+    if (playing_track) {
+        send_trackinfochanged(playing_track);
+    }
+
+    if (prev) {
+        pl_item_unref (prev);
+    }
+}
+
+void
+streamer_set_buffering_track (playItem_t *it) {
+    if (it == buffering_track) {
+        return;
+    }
+
+    playItem_t *prev = buffering_track;
+
+    buffering_track = NULL;
+
+    buffering_track = it;
+    if (buffering_track) {
+        pl_item_ref (buffering_track);
+    }
+
+    send_trackinfochanged(prev);
+
+    if (buffering_track) {
+        send_trackinfochanged(buffering_track);
+    }
 
     if (prev) {
         pl_item_unref (prev);
