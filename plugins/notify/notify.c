@@ -72,9 +72,7 @@ notify_thread (void *ctx) {
         if (dbus_message_iter_init(reply, &args)) {
             if (DBUS_TYPE_UINT32 == dbus_message_iter_get_arg_type(&args)) {
                 dbus_message_iter_get_basic(&args, &id);
-                if (id != replaces_id) {
-                    replaces_id = id;
-                }
+                replaces_id = id;
                 dbus_message_unref (reply);
             } else {
                 fprintf(stderr, "Argument is not uint32\n"); 
@@ -161,17 +159,14 @@ cover_avail_callback (const char *fname, const char *artist, const char *album, 
         return;
     }
     deadbeef->pl_lock ();
-    if (last_track && (time (NULL) - request_timer < 4)) {
-        show_notification (last_track);
-    }
     if (last_track) {
-        deadbeef->pl_item_unref (last_track);
-        last_track = NULL;
+        show_notification (last_track);
     }
     deadbeef->pl_unlock ();
 }
 
-static void show_notification (DB_playItem_t *track) {
+
+static void dbus_notification (DB_playItem_t *track, char *v_iconname) {
     char title[1024];
     char content[1024];
 
@@ -183,41 +178,16 @@ static void show_notification (DB_playItem_t *track) {
 
     deadbeef->tf_eval (&ctx, tf_title, title, sizeof (title));
     deadbeef->tf_eval (&ctx, tf_content, content, sizeof (content));
-
+    
+    // escape &
     char esc_content[1024];
     esc_xml (content, esc_content, sizeof (esc_content));
+    
     DBusMessage *msg = dbus_message_new_method_call (E_NOTIFICATION_BUS_NAME, E_NOTIFICATION_PATH, E_NOTIFICATION_INTERFACE, "Notify");
-
-    deadbeef->pl_lock ();
-    if (last_track) {
-        deadbeef->pl_item_unref (last_track);
-        last_track = 0;
-    }
-    last_track = track;
-    deadbeef->pl_item_ref (last_track);
-    request_timer = time (NULL);
-    deadbeef->pl_unlock ();
-
     const char *v_appname = "DeaDBeeF";
-    dbus_uint32_t v_id = 0;
-    char *v_iconname = NULL;
-    if (deadbeef->conf_get_int("notify.albumart", 0) && artwork_plugin) {
-        deadbeef->pl_lock ();
-        const char *album = deadbeef->pl_find_meta (track, "album");
-        const char *artist = deadbeef->pl_find_meta (track, "artist");
-        const char *fname = deadbeef->pl_find_meta (track, ":URI");
-        if (!album || !*album) {
-            album = deadbeef->pl_find_meta (track, "title");
-        }
-        v_iconname = artwork_plugin->get_album_art (fname, artist, album, deadbeef->conf_get_int ("notify.albumart_size", 64), cover_avail_callback, NULL);
-        deadbeef->pl_unlock ();
-    }
-    if (!v_iconname) {
-        v_iconname = strdup ("deadbeef");
-    }
     const char *v_summary = title;
     const char *v_body = esc_content;
-    dbus_int32_t v_timeout = -1;
+    dbus_int32_t v_timeout = deadbeef->conf_get_int ("notify.timeout", -1);
 
     dbus_message_append_args (msg
             , DBUS_TYPE_STRING, &v_appname
@@ -245,6 +215,36 @@ static void show_notification (DB_playItem_t *track) {
         deadbeef->thread_detach (tid);  
     }
     dbus_message_unref (msg);
+}
+
+static void show_notification (DB_playItem_t *track) {
+    char *v_iconname = NULL;    
+    if (deadbeef->conf_get_int("notify.albumart", 0) && artwork_plugin) {
+        deadbeef->pl_lock ();
+        const char *album = deadbeef->pl_find_meta (track, "album");
+        const char *artist = deadbeef->pl_find_meta (track, "artist");
+        const char *fname = deadbeef->pl_find_meta (track, ":URI");
+        if (!album || !*album) {
+            album = deadbeef->pl_find_meta (track, "title");
+        }
+        if (last_track) {
+            deadbeef->pl_item_unref (last_track);
+        }
+        last_track = track;
+        deadbeef->pl_item_ref (last_track);
+        // load artwork from cache
+        v_iconname = artwork_plugin->get_album_art (fname, artist, album, deadbeef->conf_get_int ("notify.albumart_size", 64), cover_avail_callback, NULL);
+        if (!v_iconname) {
+            // set default artwork (program icon)
+            v_iconname = strdup ("deadbeef");
+        }
+        // show notification
+        dbus_notification (track, v_iconname);
+        deadbeef->pl_unlock ();
+    } else {
+        v_iconname = strdup ("deadbeef");
+        dbus_notification (track, v_iconname);
+    }
     if (v_iconname) {
         free (v_iconname);
     }
@@ -347,6 +347,7 @@ static const char settings_dlg[] =
     "property \"Notification content format\" entry notify.format_content_tf \"" NOTIFY_DEFAULT_CONTENT "\";\n"
     "property \"Show album art\" checkbox notify.albumart 1;\n"
     "property \"Album art size (px)\" entry notify.albumart_size 64;\n"
+    "property \"Timeout (ms)\" entry notify.timeout 14000;\n"
 ;
 
 DB_misc_t plugin = {
@@ -354,7 +355,7 @@ DB_misc_t plugin = {
     .plugin.api_vminor = 0,
     .plugin.type = DB_PLUGIN_MISC,
     .plugin.version_major = 1,
-    .plugin.version_minor = 0,
+    .plugin.version_minor = 1,
     .plugin.id = "notify",
     .plugin.name = "OSD Notify",
     .plugin.descr = "Displays notifications when new track starts.\nRequires dbus and notification daemon to be running.\nNotification daemon should be provided by your desktop environment.\n",
