@@ -177,6 +177,9 @@ static int
 stream_track (playItem_t *track);
 
 static void
+_handle_playback_stopped (void);
+
+static void
 streamer_abort_files (void) {
     DB_FILE *file = fileinfo_file;
     DB_FILE *newfile = new_fileinfo_file;
@@ -839,7 +842,7 @@ stream_track (playItem_t *it) {
     playItem_t *from = NULL;
     playItem_t *to = NULL;
 
-    if (first_failed_track == it) {
+    if (first_failed_track && first_failed_track == it) {
         streamer_play_failed (NULL); // looped to the first failed track
         goto error;
     }
@@ -1668,14 +1671,7 @@ streamer_read (char *bytes, int size) {
         // otherwise just a buffer starvation (e.g. after seeking)
         if (!streaming_track) {
             update_stop_after_current ();
-            if (playing_track) {
-                playItem_t *trk = playing_track;
-                pl_item_ref (trk);
-                send_songfinished (trk);
-                streamer_start_playback (playing_track, NULL);
-                send_trackchanged (trk, NULL);
-                pl_item_unref (trk);
-            }
+            _handle_playback_stopped();
             playpos = 0;
             playtime = 0;
             avg_bitrate = -1;
@@ -1902,11 +1898,22 @@ streamer_configchanged (void) {
     conf_streamer_nosleep = conf_get_int ("streamer.nosleep", 0);
 }
 
+static void
+_handle_playback_stopped (void) {
+    if (playing_track) {
+        playItem_t *trk = playing_track;
+        pl_item_ref (trk);
+        send_songfinished (trk);
+        streamer_start_playback (playing_track, NULL);
+        send_trackchanged (trk, NULL);
+        pl_item_unref (trk);
+    }
+}
+
 // play track in current playlist by index;
 // negative index will stop playback
 static void
 play_index (int idx) {
-    streamer_is_buffering = 1;
     DB_output_t *output = plug_get_output ();
     playItem_t *it = NULL;
     playlist_t *plt = NULL;
@@ -1929,6 +1936,7 @@ play_index (int idx) {
     }
     pl_unlock();
     streamer_reset(1);
+    streamer_is_buffering = 1;
     streamer_set_buffering_track (it);
     if (!stream_track(it)) {
         playpos = 0;
@@ -1944,10 +1952,13 @@ play_index (int idx) {
     return;
 
 error:
+    output->stop ();
+
     streamer_lock();
     streamer_reset (1);
+
+    _handle_playback_stopped ();
     stream_track (NULL);
-    output->stop ();
     if (plt) {
         plt_unref (plt);
     }
@@ -1962,7 +1973,6 @@ error:
 //     stop playback
 static void
 play_current (void) {
-    streamer_is_buffering = 1;
     playlist_t *plt = plt_get_curr ();
     DB_output_t *output = plug_get_output ();
     autoplay = 1;
@@ -1992,6 +2002,7 @@ play_current (void) {
                 streamer_set_streamer_playlist (plt);
             }
             pl_unlock ();
+            streamer_is_buffering = 1;
             streamer_set_buffering_track (next);
             if (!stream_track (next)) {
                 playpos = 0;
@@ -2017,6 +2028,7 @@ play_next (void) {
 
     if (!next) {
         output->stop ();
+        _handle_playback_stopped ();
         return;
     }
 
