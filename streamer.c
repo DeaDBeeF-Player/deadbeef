@@ -100,6 +100,7 @@ static int streamer_is_buffering;
 
 static playlist_t *streamer_playlist;
 static playItem_t *playing_track;
+static playItem_t *buffering_track;
 static float playtime; // total playtime of playing track
 static time_t started_timestamp; // result of calling time(NULL)
 static playItem_t *streaming_track;
@@ -161,19 +162,22 @@ streamer_unlock (void) {
 }
 
 static void
-streamer_set_nextsong_real (int song, int pstate);
-
-static void
 play_index (int idx);
 
 static void
 play_current (void);
 
 static void
+play_next (void);
+
+static void
 streamer_set_current_playlist_real (int plt);
 
 static int
 stream_track (playItem_t *track);
+
+static void
+_handle_playback_stopped (void);
 
 static void
 streamer_abort_files (void) {
@@ -282,7 +286,7 @@ streamer_get_streaming_track (void) {
 
 playItem_t *
 streamer_get_playing_track (void) {
-    playItem_t *it = playing_track;
+    playItem_t *it = buffering_track ? buffering_track : playing_track;
     if (it) {
         pl_item_ref (it);
     }
@@ -838,7 +842,7 @@ stream_track (playItem_t *it) {
     playItem_t *from = NULL;
     playItem_t *to = NULL;
 
-    if (first_failed_track == it) {
+    if (first_failed_track && first_failed_track == it) {
         streamer_play_failed (NULL); // looped to the first failed track
         goto error;
     }
@@ -874,12 +878,6 @@ stream_track (playItem_t *it) {
         goto success;
     }
 
-    if (to) {
-        send_trackinfochanged (to);
-    }
-    if (from) {
-        send_trackinfochanged (from);
-    }
     char decoder_id[100] = "";
     char filetype[100] = "";
     pl_lock ();
@@ -1077,7 +1075,7 @@ m3u_error:
             it->played = 1;
             trace ("decoder->init returned %p\n", new_fileinfo);
             if (playing_track == it) {
-                send_trackinfochanged (to);
+                send_trackinfochanged (to); // got new metadata, refresh UI
             }
             err = -1;
             goto error;
@@ -1127,9 +1125,7 @@ m3u_error:
             trace ("no decoder in playitem!\n");
             it->played = 1;
 
-            // set the failed track as current, and send event, for UI refresh
-            streamer_set_playing_track (it);
-            send_trackinfochanged (it);
+            streamer_set_playing_track (NULL);
 
             // failed to play the track, ask for the next one
             streamer_play_failed (it);
@@ -1180,7 +1176,6 @@ success:
         new_fileinfo = NULL;
         new_fileinfo_file = NULL;
     }
-    send_trackinfochanged (to);
 
 error:
     if (from) {
@@ -1310,17 +1305,7 @@ streamer_thread (void *ctx) {
                 play_current ();
                 break;
             case STR_EV_NEXT:
-                {
-                    playItem_t *next = get_next_track(last_played);
-                    streamer_reset(1);
-                    stream_track(next);
-                    if (next) {
-                        pl_item_unref(next);
-                    }
-                    playpos = 0;
-                    playtime = 0;
-                    output->play ();
-                }
+                play_next ();
                 break;
             case STR_EV_PREV:
                 {
@@ -1363,9 +1348,18 @@ streamer_thread (void *ctx) {
             continue;
         }
 
-        int buffering = streamreader_num_blocks_ready () < 4 && streaming_track;
+        int buffering = (streamreader_num_blocks_ready () < 4) && streaming_track;
         if (buffering != streamer_is_buffering) {
             streamer_is_buffering = buffering;
+
+            // update buffering UI
+            if (!buffering) {
+                streamer_set_buffering_track (NULL);
+            }
+            else if (buffering_track) {
+                send_trackinfochanged (buffering_track);
+            }
+
             if (playing_track) {
                 send_trackinfochanged (playing_track);
             }
@@ -1471,6 +1465,10 @@ streamer_free (void) {
     if (playing_track) {
         pl_item_unref (playing_track);
         playing_track = NULL;
+    }
+    if (buffering_track) {
+        pl_item_unref (buffering_track);
+        buffering_track = NULL;
     }
     if (last_played) {
         pl_item_unref (last_played);
@@ -1580,7 +1578,7 @@ process_output_block (char *bytes, int firstblock) {
     }
 
     // handle change of track, or start of a new track
-    if (block->last || block->track != playing_track) {
+    if (block->last || block->track != playing_track || (playing_track && last_played != playing_track)) {
         // next track started
         update_stop_after_current ();
 
@@ -1673,15 +1671,7 @@ streamer_read (char *bytes, int size) {
         // otherwise just a buffer starvation (e.g. after seeking)
         if (!streaming_track) {
             update_stop_after_current ();
-            if (playing_track) {
-                playItem_t *trk = playing_track;
-                pl_item_ref (trk);
-                send_songfinished (trk);
-                streamer_start_playback (playing_track, NULL);
-                send_trackinfochanged (trk);
-                send_trackchanged (trk, NULL);
-                pl_item_unref (trk);
-            }
+            _handle_playback_stopped();
             playpos = 0;
             playtime = 0;
             avg_bitrate = -1;
@@ -1908,6 +1898,18 @@ streamer_configchanged (void) {
     conf_streamer_nosleep = conf_get_int ("streamer.nosleep", 0);
 }
 
+static void
+_handle_playback_stopped (void) {
+    if (playing_track) {
+        playItem_t *trk = playing_track;
+        pl_item_ref (trk);
+        send_songfinished (trk);
+        streamer_start_playback (playing_track, NULL);
+        send_trackchanged (trk, NULL);
+        pl_item_unref (trk);
+    }
+}
+
 // play track in current playlist by index;
 // negative index will stop playback
 static void
@@ -1934,10 +1936,15 @@ play_index (int idx) {
     }
     pl_unlock();
     streamer_reset(1);
+    streamer_is_buffering = 1;
+    streamer_set_buffering_track (it);
     if (!stream_track(it)) {
         playpos = 0;
         playtime = 0;
         output->play ();
+    }
+    else {
+        streamer_set_buffering_track (NULL);
     }
 
     pl_item_unref(it);
@@ -1945,16 +1952,13 @@ play_index (int idx) {
     return;
 
 error:
+    output->stop ();
+
     streamer_lock();
     streamer_reset (1);
+
+    _handle_playback_stopped ();
     stream_track (NULL);
-    output->stop ();
-    it = playing_track;
-    playing_track = NULL;
-    if (it) {
-        send_trackinfochanged (it);
-        pl_item_unref (it);
-    }
     if (plt) {
         plt_unref (plt);
     }
@@ -1998,15 +2002,46 @@ play_current (void) {
                 streamer_set_streamer_playlist (plt);
             }
             pl_unlock ();
-            stream_track (next);
-            playpos = 0;
-            playtime = 0;
-            output->play ();
+            streamer_is_buffering = 1;
+            streamer_set_buffering_track (next);
+            if (!stream_track (next)) {
+                playpos = 0;
+                playtime = 0;
+                output->play ();
+            }
+            else {
+                streamer_set_buffering_track (NULL);
+            }
         }
     }
     if (plt) {
         plt_unref (plt);
     }
+}
+
+static void
+play_next (void) {
+    DB_output_t *output = plug_get_output ();
+    streamer_reset(1);
+    playItem_t *next = get_next_track(last_played);
+    streamer_is_buffering = 1;
+
+    if (!next) {
+        output->stop ();
+        _handle_playback_stopped ();
+        return;
+    }
+
+    streamer_set_buffering_track (next);
+    if (!stream_track(next)) {
+        playpos = 0;
+        playtime = 0;
+        output->play ();
+    }
+    else {
+        streamer_set_buffering_track (NULL);
+    }
+    pl_item_unref(next);
 }
 
 void
@@ -2184,16 +2219,55 @@ streamer_get_handler (void) {
     return handler;
 }
 
-// NOTE: This is used for testing (title formatting unit tests).
-// It's not recommended to use this for anything else.
 void
 streamer_set_playing_track (playItem_t *it) {
-    if (playing_track) {
-        pl_item_unref (playing_track);
+    if (it == playing_track) {
+        return;
     }
+
+    playItem_t *prev = playing_track;
+
+    playing_track = NULL;
+
     playing_track = it;
     if (playing_track) {
         pl_item_ref (playing_track);
+    }
+
+    send_trackinfochanged(prev);
+
+    if (playing_track) {
+        send_trackinfochanged(playing_track);
+    }
+
+    if (prev) {
+        pl_item_unref (prev);
+    }
+}
+
+void
+streamer_set_buffering_track (playItem_t *it) {
+    if (it == buffering_track) {
+        return;
+    }
+
+    playItem_t *prev = buffering_track;
+
+    buffering_track = NULL;
+
+    buffering_track = it;
+    if (buffering_track) {
+        pl_item_ref (buffering_track);
+    }
+
+    send_trackinfochanged(prev);
+
+    if (buffering_track) {
+        send_trackinfochanged(buffering_track);
+    }
+
+    if (prev) {
+        pl_item_unref (prev);
     }
 }
 
