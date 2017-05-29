@@ -1583,10 +1583,11 @@ process_output_block (char *bytes, int firstblock) {
         update_stop_after_current ();
 
         if (stop) {
+            output->stop ();
             streamer_lock();
-            set_last_played (playing_track);
-            stream_track (NULL);
             streamer_reset (1);
+            _handle_playback_stopped ();
+            stream_track (NULL);
             streamer_unlock();
             return 0;
         }
