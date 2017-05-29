@@ -29,9 +29,15 @@
         "tasks": [
             {
                 "isBuildCommand": true,
-                "taskName": "Build",
+                "taskName": "Build Release",
                 "command": "${workspaceRoot}/.vscode/linux-build",
                 "args": []
+            },
+            {
+                "isBuildCommand": true,
+                "taskName": "Clean",
+                "command": "make",
+                "args": ["clean"]
             }
         ]
     }
