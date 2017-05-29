@@ -115,6 +115,7 @@ static const char *frame_mapping[] = {
     "INITIAL_KEY", "TKEY", "TKEY", "TKE", NULL,
     "LANGUAGES", "TLAN", "TLAN", "TLA", NULL,
     "LENGTH", "TLEN", "TLEN", "TLE", NULL,
+    "LYRICS", "USLT", "USLT", "ULT", NULL,
     "MEDIA_TYPE", "TMED", "TMED", "TMT", NULL,
     "ORIGINAL_ALBUM_TITLE", "TOAL", "TOAL", "TOT", NULL,
     "ORIGINAL_FILENAME", "TOFN", "TOFN", "TOF", NULL,
@@ -2085,6 +2086,18 @@ _id3v2_append_combined_text_frame_from_meta (DB_id3v2_tag_t *id3v2, const char *
     }
     else {
         assert (0);
+    }
+    if (!strcmp (key, "USLT")) { // add the language code
+        const char *new_value = malloc (4 + out_size);
+        if (new_value) {
+            memcpy (new_value, "XXX", 4);
+            memcpy (new_value + 4, tag_value, out_size);
+            if (needs_free) {
+                free ((char*) tag_value);
+            }
+            tag_value = new_value;
+            needs_free = 1;
+        }
     }
     junk_id3v2_add_text_frame2 (id3v2, key, tag_value, out_size);
 
@@ -4122,6 +4135,11 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                                 else if (!strcmp (frameid, "TCON")) {
                                     junk_id3v2_add_genre (it, text);
                                 }
+                                else if (!strcmp (frameid, "USLT")) {
+                                    if (!strcmp (text, "XXX")) { // as we discard the language code, make sure we can restore it back
+                                        pl_append_meta_full (it, frame_mapping[f+MAP_DDB], text+4, text_size-4+1);
+                                    }
+                                }
                                 else {
                                     if (version_major == 3 && _is_multivalue_field (frame_mapping[f+MAP_DDB])) {
                                         _split_multivalue (text, text_size+1);
@@ -4257,6 +4275,11 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                                 }
                                 else if (!strcmp (frameid, "TCO")) {
                                     junk_id3v2_add_genre (it, text);
+                                }
+                                else if (!strcmp (frameid, "ULT")) {
+                                    if (!strcmp (text, "XXX")) { // as we discard the language code, make sure we can restore it back
+                                        pl_append_meta_full (it, frame_mapping[f+MAP_DDB], text+4, text_size-4+1);
+                                    }
                                 }
                                 else {
                                     if (_is_multivalue_field (frame_mapping[f+MAP_DDB])) {
