@@ -84,3 +84,4 @@ static
 INSTALL
 /static-deps
 osx/build
+.dirstamp
