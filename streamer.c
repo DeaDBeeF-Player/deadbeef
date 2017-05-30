@@ -1599,15 +1599,16 @@ process_output_block (char *bytes, int firstblock) {
 
         if (playing_track) {
             send_songfinished (playing_track);
-
-            // only reset playpos/bitrate if track changing to another,
-            // otherwise the track is the first one, and playpos is pre-set
-            playpos = 0;
-            playtime = 0;
-            avg_bitrate = -1;
-            last_seekpos = -1;
         }
+
         streamer_start_playback (playing_track, block->track);
+
+        // only reset playpos/bitrate if track changing to another,
+        // otherwise the track is the first one, and playpos is pre-set
+        playpos = 0;
+        playtime = 0;
+        avg_bitrate = -1;
+        last_seekpos = -1;
         send_songstarted (playing_track);
     }
 
