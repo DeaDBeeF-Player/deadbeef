@@ -22,6 +22,7 @@
 */
 
 #include <string.h>
+#include <assert.h>
 #include "streamreader.h"
 #include "replaygain.h"
 
@@ -64,13 +65,16 @@ streamreader_free (void) {
     numblocks_ready = 0;
 }
 
-int
-streamreader_read_next_block (playItem_t *track, DB_fileinfo_t *fileinfo, streamblock_t **block) {
-    *block = NULL;
+streamblock_t *
+streamreader_get_next_block (void) {
     if (block_next->pos >= 0) {
-        return 0; // all buffers full
+        return NULL; // all buffers full
     }
+    return block_next;
+}
 
+int
+streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t *fileinfo) {
     // clip size to max possible, with current sample format
     int size = BLOCK_SIZE;
     int samplesize = fileinfo->fmt.channels * (fileinfo->fmt.bps>>3);
@@ -81,7 +85,7 @@ streamreader_read_next_block (playItem_t *track, DB_fileinfo_t *fileinfo, stream
 
     // NOTE: streamer_set_bitrate may be called during decoder->read, and set immediated bitrate of the block
     curr_block_bitrate = -1;
-    int rb = fileinfo->plugin->read (fileinfo, block_next->buf, size);
+    int rb = fileinfo->plugin->read (fileinfo, block->buf, size);
     if (rb < 0) {
         return -1;
     }
@@ -91,13 +95,13 @@ streamreader_read_next_block (playItem_t *track, DB_fileinfo_t *fileinfo, stream
         return -1;
     }
 
-    block_next->bitrate = curr_block_bitrate;
+    block->bitrate = curr_block_bitrate;
 
-    block_next->pos = 0;
-    block_next->size = rb;
-    memcpy (&block_next->fmt, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+    block->pos = 0;
+    block->size = rb;
+    memcpy (&block->fmt, &fileinfo->fmt, sizeof (ddb_waveformat_t));
     pl_item_ref (track);
-    block_next->track = track;
+    block->track = track;
 
     int input_does_rg = fileinfo->plugin->plugin.flags & DDB_PLUGIN_FLAG_REPLAYGAIN;
     if (!input_does_rg) {
@@ -105,17 +109,22 @@ streamreader_read_next_block (playItem_t *track, DB_fileinfo_t *fileinfo, stream
         rg_settings._size = sizeof (rg_settings);
         replaygain_init_settings (&rg_settings, track);
         replaygain_set_current (&rg_settings);
-        replaygain_apply (&fileinfo->fmt, block_next->buf, block_next->size);
+        replaygain_apply (&fileinfo->fmt, block->buf, block->size);
     }
 
 
-    block_next->last = (rb != size);
+    block->last = (rb != size);
 
+    return 1;
+}
+
+void
+streamreader_enqueue_block (streamblock_t *block) {
+    // block is passed just for sanity checking
+    assert (block == block_next);
     if (!block_data) {
         block_data = block_next;
     }
-
-    *block = block_next;
 
     block_next = block_next->next;
     if (!block_next) {
@@ -123,8 +132,6 @@ streamreader_read_next_block (playItem_t *track, DB_fileinfo_t *fileinfo, stream
     }
 
     numblocks_ready++;
-
-    return 1;
 }
 
 void

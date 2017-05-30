@@ -1371,26 +1371,31 @@ streamer_thread (void *ctx) {
             continue;
         }
 
-        streamblock_t *block = NULL;
-        int res = streamreader_read_next_block (streaming_track, fileinfo, &block);
+        streamblock_t *block = streamreader_get_next_block ();
+        streamer_unlock ();
+
+        if (!block) {
+            usleep (50000);
+            continue;
+        }
+
+        int res = streamreader_read_block (block, streaming_track, fileinfo);
 
         if (res < 0) {
             // error
             streamer_next ();
         }
-        else if (res == 0) {
-            // buffers full, sleep for a bit
-            streamer_unlock();
-            usleep (50000);
-            streamer_lock();
-        }
-        else if (res > 0) {
-            if (block->last) {
+        else  {
+            streamer_lock ();
+            streamreader_enqueue_block (block);
+            int last = block->last;
+            streamer_unlock ();
+
+            if (last) {
                 // end of file, next track
                 streamer_next ();
             }
         }
-        streamer_unlock ();
     }
 
     // stop streaming song
