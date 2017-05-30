@@ -2052,7 +2052,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             len = snprintf (out, outlen, "%.3lf KB", kb);
                         }
                         else {
-                            len = snprintf (out, outlen, "%lld B", bs);
+                            len = snprintf (out, outlen, "%ld B", bs);
                         }
                         out += len;
                         outlen -= len;
@@ -2165,7 +2165,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     }
                 }
                 else if (!strcmp (name, "length_samples")) {
-                    int len = snprintf (out, outlen, "%lld", pl_item_get_endsample ((playItem_t *)ctx->it) - pl_item_get_startsample ((playItem_t *)ctx->it));
+                    int len = snprintf (out, outlen, "%ld", pl_item_get_endsample ((playItem_t *)ctx->it) - pl_item_get_startsample ((playItem_t *)ctx->it));
                     out += len;
                     outlen -= len;
                     skip_out = 1;
