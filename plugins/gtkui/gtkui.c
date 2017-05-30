@@ -64,6 +64,9 @@
 #include "clipboard.h"
 #include "hotkeys.h"
 #include "../hotkeys/hotkeys.h"
+#if GTK_CHECK_VERSION(3,0,0)
+#include "deadbeefapp.h"
+#endif
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -1112,6 +1115,11 @@ gtkui_show_log_window_internal(gboolean show) {
     gtk_widget_set_visible (logwindow, show);
     GtkWidget *menuitem = lookup_widget (mainwin, "view_log");
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), show);
+
+#if GTK_CHECK_VERSION(3,0,0)
+    g_simple_action_set_state ( deadbeef_app_get_log_action (gapp),
+        g_variant_new_boolean (show));
+#endif
 }
 
 void
@@ -1185,32 +1193,8 @@ logwindow_logger_callback (struct DB_plugin_s *plugin, uint32_t layers, const ch
     g_idle_add(logwindow_addtext_cb, (gpointer)data);
 }
 
-
-int
-gtkui_thread (void *ctx) {
-#ifdef __linux__
-    prctl (PR_SET_NAME, "deadbeef-gtkui", 0, 0, 0, 0);
-#endif
-
-    int argc = 2;
-    const char **argv = alloca (sizeof (char *) * argc);
-    argv[0] = "deadbeef";
-    argv[1] = "--sync";
-    //argv[1] = "--g-fatal-warnings";
-    if (!deadbeef->conf_get_int ("gtkui.sync", 0)) {
-        argc = 1;
-    }
-
-    gtk_disable_setlocale ();
-    add_pixmap_directory (deadbeef->get_system_dir(DDB_SYS_DIR_PIXMAP));
-
-    // let's start some gtk
-    g_thread_init (NULL);
-    gdk_threads_init ();
-    gdk_threads_enter ();
-
-    gtk_init (&argc, (char ***)&argv);
-
+void
+gtkui_mainwin_init(void) {
     // register widget types
     w_reg_widget (_("Playlist with tabs"), DDB_WF_SINGLE_INSTANCE, w_tabbed_playlist_create, "tabbed_playlist", NULL);
     w_reg_widget (_("Playlist"), DDB_WF_SINGLE_INSTANCE, w_playlist_create, "playlist", NULL);
@@ -1236,10 +1220,13 @@ gtkui_thread (void *ctx) {
 
     mainwin = create_mainwin ();
 
+#if GTK_CHECK_VERSION(3,0,0)
+    // This must be called before window is shown
+    gtk_application_add_window ( GTK_APPLICATION (gapp), GTK_WINDOW (mainwin));
+#endif
+
     logwindow = gtkui_create_log_window();
-    if (logwindow) {
-        deadbeef->log_viewer_register (logwindow_logger_callback, logwindow);
-    }
+    deadbeef->log_viewer_register (logwindow_logger_callback, logwindow);
 
     // initialize default hotkey mapping
     if (!deadbeef->conf_get_int ("hotkeys_created", 0)) {
@@ -1334,8 +1321,10 @@ gtkui_thread (void *ctx) {
     if (deadbeef->conf_get_int ("gtkui.start_hidden", 0)) {
         g_idle_add (mainwin_hide_cb, NULL);
     }
-    gtk_main ();
+}
 
+void
+gtkui_mainwin_free(void) {
     deadbeef->unlisten_file_added (fileadded_listener_id);
     deadbeef->unlisten_file_add_beginend (fileadd_beginend_listener_id);
 
@@ -1366,7 +1355,39 @@ gtkui_thread (void *ctx) {
         gtk_widget_destroy (mainwin);
         mainwin = NULL;
     }
-    gdk_threads_leave ();
+
+}
+
+int
+gtkui_thread (void *ctx) {
+#ifdef __linux__
+    prctl (PR_SET_NAME, "deadbeef-gtkui", 0, 0, 0, 0);
+#endif
+
+    int argc = 2;
+    const char **argv = alloca (sizeof (char *) * argc);
+    argv[0] = "deadbeef";
+    argv[1] = "--sync";
+    //argv[1] = "--g-fatal-warnings";
+    if (!deadbeef->conf_get_int ("gtkui.sync", 0)) {
+        argc = 1;
+    }
+
+    gtk_disable_setlocale ();
+    add_pixmap_directory (deadbeef->get_system_dir(DDB_SYS_DIR_PIXMAP));
+
+#if GTK_CHECK_VERSION(3,0,0)
+    gapp = deadbeef_app_new ();
+    g_application_run ( G_APPLICATION (gapp), argc, (char**)argv);
+    g_object_unref (gapp);
+#else
+    gtk_init (&argc, (char ***)&argv);
+
+    gtkui_mainwin_init ();
+    gtk_main ();
+    gtkui_mainwin_free ();
+#endif
+
     return 0;
 }
 
@@ -1509,7 +1530,11 @@ quit_gtk_cb (gpointer nothing) {
     trkproperties_modified = 0;
     trkproperties_destroy ();
     search_destroy ();
+#if GTK_CHECK_VERSION(3,0,0)
+    g_application_quit (G_APPLICATION (gapp));
+#else
     gtk_main_quit ();
+#endif
     trace ("gtkui_stop completed\n");
     return FALSE;
 }

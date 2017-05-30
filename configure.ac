@@ -224,8 +224,9 @@ AS_IF([test "${enable_gtk3}" = "yes"], [
         AC_SUBST(GTK3_DEPS_LIBS)
         HAVE_GTK3=yes
     ], [
-       PKG_CHECK_MODULES(GTK3_DEPS, gtk+-3.0 >= 3.0 gthread-2.0 glib-2.0, HAVE_GTK3=yes, HAVE_GTK3=no)
+       PKG_CHECK_MODULES(GTK3_DEPS, gtk+-3.0 >= 3.0 gthread-2.0 glib-2.0 gio-2.0, HAVE_GTK3=yes, HAVE_GTK3=no)
     ])
+    AC_PATH_PROG([GLIB_COMPILE_RESOURCES], [glib-compile-resources])
 dnl    AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
 dnl    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
     if test "$OS_OSX" = "yes"; then
