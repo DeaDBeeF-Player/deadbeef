@@ -3249,6 +3249,15 @@ new_group (DdbListview *listview, DdbListviewIter it) {
 }
 
 static int
+calc_group_height(DdbListview *listview, DdbListviewGroup *grp, int min_height, int is_last) {
+    grp->height = listview->grouptitle_height + max(grp->num_items * listview->rowheight, min_height);
+    if (!is_last) {
+        grp->height += gtkui_groups_spacing;
+    }
+    return grp->height;
+}
+
+static int
 build_groups (DdbListview *listview) {
     listview->groups_build_idx = listview->binding->modification_idx();
     ddb_listview_free_groups(listview);
@@ -3278,11 +3287,7 @@ build_groups (DdbListview *listview) {
                 listview->binding->get_group(listview, it, next_title, sizeof(next_title));
             }
         } while (it && ((!listview->grouptitle_height && grp->num_items < BLANK_GROUP_SUBDIVISION) || (listview->grouptitle_height && !strcmp(group_title, next_title))));
-        grp->height = listview->grouptitle_height + max(grp->num_items * listview->rowheight, min_height);
-        if (it) {
-            grp->height += gtkui_groups_spacing;
-        }
-        full_height += grp->height;
+        full_height += calc_group_height (listview, grp, min_height, !(it > 0));
         grp->next = it ? new_group(listview, it) : NULL;
     }
     return full_height;
@@ -3305,9 +3310,9 @@ ddb_listview_resize_groups (DdbListview *listview) {
     int min_height = ddb_listview_min_group_height(listview->columns);
     int full_height = 0;
     for (DdbListviewGroup *grp = listview->groups; grp; grp = grp->next) {
-        grp->height = listview->grouptitle_height + max(grp->num_items * listview->rowheight, min_height);
-        full_height += grp->height;
+        full_height += calc_group_height (listview, grp, min_height, !grp->next);
     }
+
 
     if (full_height != listview->fullheight) {
         listview->fullheight = full_height;
