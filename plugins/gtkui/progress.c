@@ -96,6 +96,9 @@ gtkui_progress_show_idle (gpointer data) {
     gtk_widget_show_all (progressdlg);
     gtk_window_present (GTK_WINDOW (progressdlg));
     gtk_window_set_transient_for (GTK_WINDOW (progressdlg), GTK_WINDOW (mainwin));
+#if GTK_CHECK_VERSION(3,0,0)
+    g_application_mark_busy (G_APPLICATION (gapp));
+#endif
     return FALSE;
 }
 
@@ -108,6 +111,9 @@ progress_show (void) {
 gboolean
 gtkui_progress_hide_idle (gpointer data) {
     gtk_widget_hide (progressdlg);
+#if GTK_CHECK_VERSION(3,0,0)
+    g_application_unmark_busy (G_APPLICATION (gapp));
+#endif
     return FALSE;
 }
 

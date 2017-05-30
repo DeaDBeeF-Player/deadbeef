@@ -32,6 +32,11 @@
 
 #include "../../deadbeef.h"
 
+#if GTK_CHECK_VERSION(3,0,0)
+#include "deadbeefapp.h"
+extern DeadbeefApp *gapp;
+#endif
+
 extern DB_functions_t *deadbeef;
 extern GtkWidget *mainwin;
 
@@ -172,5 +177,10 @@ gtkui_show_log_window(gboolean show);
 void
 gtkui_toggle_log_window(void);
 
+void
+gtkui_mainwin_init(void);
+
+void
+gtkui_mainwin_free(void);
 
 #endif
