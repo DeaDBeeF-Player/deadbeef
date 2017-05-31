@@ -1609,7 +1609,9 @@ process_output_block (char *bytes, int firstblock) {
         playtime = 0;
         avg_bitrate = -1;
         last_seekpos = -1;
-        send_songstarted (playing_track);
+        if (playing_track) {
+            send_songstarted (playing_track);
+        }
     }
 
     if (firstblock) {
