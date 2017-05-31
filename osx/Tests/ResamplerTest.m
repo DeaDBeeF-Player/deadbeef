@@ -1,5 +1,5 @@
 //
-//  StreamerTest.m
+//  ResamplerTest.m
 //  deadbeef
 //
 //  Created by Oleksiy Yakovenko on 13/04/2017.
@@ -9,11 +9,11 @@
 #import <XCTest/XCTest.h>
 #include "dsp.h"
 
-@interface StreamerTest : XCTestCase
+@interface ResamplerTest : XCTestCase
 
 @end
 
-@implementation StreamerTest
+@implementation ResamplerTest
 
 - (void)setUp {
     [super setUp];
