@@ -101,3 +101,17 @@ _("Disable gapless playback (faster scanning)")
 // adplug
 _("Prefer Ken emu over Satoh (surround won't work)")
 _("Enable surround")
+// Hotkeys Playback/Skip to/* strings
+_("Skip to")
+_("Previous genre")
+_("Previous composer")
+_("Previous artist")
+_("Previous album")
+_("Next genre")
+_("Next composer")
+_("Next artist")
+_("Next album")
+// artwork
+_("Refresh cover art")
+// lastfm
+_("Lookup On Last.fm")
