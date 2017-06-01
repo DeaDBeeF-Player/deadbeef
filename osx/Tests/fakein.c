@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <unistd.h>
 #include "../../deadbeef.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -83,6 +84,9 @@ fakein_free (DB_fileinfo_t *_info) {
 static int
 fakein_read (DB_fileinfo_t *_info, char *bytes, int size) {
     fakein_info_t *info = (fakein_info_t *)_info;
+
+// uncomment to simulate slow streamer
+//    usleep (1000000);
 
     int samplesize = _info->fmt.bps / 8 * _info->fmt.channels;
 

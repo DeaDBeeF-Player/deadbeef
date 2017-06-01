@@ -155,9 +155,11 @@ mainloop (void) {
     DB_playItem_t *_sinewave = deadbeef->plt_insert_file2 (0, plt, NULL, "sine.fake", NULL, NULL, NULL);
     DB_playItem_t *_squarewave = deadbeef->plt_insert_file2 (0, plt, _sinewave, "square.fake", NULL, NULL, NULL);
 
-    deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
+    streamer_set_nextsong (0);
+    streamer_yield ();
 
     // wait until finished!
+    //while (_fakeout->state () != OUTPUT_STATE_STOPPED) {
     for (;;) {
         usleep (10000);
     }
