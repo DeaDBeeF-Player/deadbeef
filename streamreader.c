@@ -113,16 +113,21 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
         replaygain_apply (&fileinfo->fmt, block->buf, block->size);
     }
 
+    if (rb != size) {
+        block->last = 1;
+    }
+    else {
+        block->last = 0;
+    }
 
-    block->last = (rb != size);
-
-    return 1;
+    return 0;
 }
 
 void
 streamreader_enqueue_block (streamblock_t *block) {
     // block is passed just for sanity checking
     assert (block == block_next);
+    assert (block->track);
     if (!block_data) {
         block_data = block_next;
     }
@@ -132,6 +137,7 @@ streamreader_enqueue_block (streamblock_t *block) {
         block_next = blocks;
     }
 
+    block->queued = 1;
     numblocks_ready++;
 }
 
@@ -151,6 +157,7 @@ streamreader_next_block (void) {
         block_data->pos = -1;
         pl_item_unref (block_data->track);
         block_data->track = NULL;
+        block_data->queued = 0;
 
         block_data = block_data->next;
         if (!block_data) {
@@ -163,7 +170,7 @@ streamreader_next_block (void) {
         }
     }
 
-    if (block_data && block_data->pos < 0) {
+    if (block_data && !block_data->queued) {
         block_data = NULL; // no available blocks with data
     }
 }
@@ -172,10 +179,12 @@ void
 streamreader_reset (void) {
     streamblock_t *b = blocks;
     while (b) {
-        if (b->pos >= 0) {
-            b->pos = -1;
+        b->pos = -1;
+        if (b->track) {
             pl_item_unref (b->track);
+            b->track = NULL;
         }
+        b->queued = 0;
         b = b->next;
     }
     block_next = blocks;

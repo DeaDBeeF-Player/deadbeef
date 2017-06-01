@@ -1282,6 +1282,28 @@ streamer_seek_real (float seekpos) {
     last_seekpos = -1;
 }
 
+static void
+_update_buffering_state () {
+    int buffering = (streamreader_num_blocks_ready () < 4) && streaming_track;
+
+    if (buffering != streamer_is_buffering) {
+        streamer_is_buffering = buffering;
+
+        // update buffering UI
+        if (!buffering) {
+            streamer_set_buffering_track (NULL);
+        }
+        else if (buffering_track) {
+            send_trackinfochanged (buffering_track);
+        }
+
+        if (playing_track) {
+            send_trackinfochanged (playing_track);
+        }
+    }
+}
+
+
 void
 streamer_thread (void *ctx) {
 #ifdef __linux__
@@ -1348,22 +1370,7 @@ streamer_thread (void *ctx) {
             continue;
         }
 
-        int buffering = (streamreader_num_blocks_ready () < 4) && streaming_track;
-        if (buffering != streamer_is_buffering) {
-            streamer_is_buffering = buffering;
-
-            // update buffering UI
-            if (!buffering) {
-                streamer_set_buffering_track (NULL);
-            }
-            else if (buffering_track) {
-                send_trackinfochanged (buffering_track);
-            }
-
-            if (playing_track) {
-                send_trackinfochanged (playing_track);
-            }
-        }
+        _update_buffering_state ();
 
         streamer_lock ();
         if (!fileinfo) {
@@ -1562,6 +1569,7 @@ process_output_block (char *bytes, int firstblock) {
     }
     if (!block->size) {
         streamreader_next_block ();
+        _update_buffering_state ();
         return 0;
     }
 
@@ -1660,6 +1668,7 @@ process_output_block (char *bytes, int firstblock) {
 
     if (block->pos >= block->size) {
         streamreader_next_block ();
+        _update_buffering_state ();
     }
 
     return sz;
@@ -1676,6 +1685,7 @@ streamer_read (char *bytes, int size) {
     streamer_lock ();
     streamblock_t *block = streamreader_get_curr_block();
     if (!block) {
+        fprintf (stderr, "streamer: streamer_read has starved. The current output plugin might be broken\n");
         // NULL streaming_track means playback stopped,
         // otherwise just a buffer starvation (e.g. after seeking)
         if (!streaming_track) {
