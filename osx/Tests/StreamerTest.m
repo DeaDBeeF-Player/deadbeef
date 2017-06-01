@@ -17,6 +17,8 @@
 #include "threading.h"
 #include "messagepump.h"
 
+static int count_played = 0;
+
 // super oversimplified mainloop
 static void
 mainloop (void) {
@@ -75,6 +77,9 @@ mainloop (void) {
                         streamer_set_seek (p1 / 1000.f);
                     }
                         break;
+                    case DB_EV_SONGSTARTED:
+                        count_played++;
+                        break;
                 }
             }
             if (msg >= DB_EV_FIRST && ctx) {
@@ -88,11 +93,30 @@ mainloop (void) {
     }
 }
 
+void
+wait_until_stopped (void) {
+    // wait until finished!
+    BOOL finished = NO;
+
+    while (!finished) {
+        playItem_t *streaming_track = streamer_get_streaming_track();
+        playItem_t *playing_track = streamer_get_playing_track();
+        if (!streaming_track && !playing_track) {
+            finished = YES;
+        }
+        if (streaming_track) {
+            pl_item_unref (streaming_track);
+        }
+        if (playing_track) {
+            pl_item_unref(playing_track);
+        }
+    }
+}
+
 @interface StreamerTest : XCTestCase {
     DB_plugin_t *_fakein;
     DB_output_t *_fakeout;
     uintptr_t _mainloop_tid;
-
 }
 
 @end
@@ -130,6 +154,10 @@ mainloop (void) {
     plug_set_output (_fakeout);
 
     streamer_init ();
+
+    conf_set_int ("playback.loop", 1);
+    count_played = 0;
+
     _mainloop_tid = thread_start (mainloop, NULL);
 }
 
@@ -149,7 +177,7 @@ mainloop (void) {
     [super tearDown];
 }
 
-- (void)testExample {
+- (void)test_Play2TracksNoLoop_Sends2SongChanged {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     // create two test fake tracks
     DB_playItem_t *_sinewave = deadbeef->plt_insert_file2 (0, plt, NULL, "sine.fake", NULL, NULL, NULL);
@@ -158,15 +186,12 @@ mainloop (void) {
     streamer_set_nextsong (0);
     streamer_yield ();
 
-    // wait until finished!
-    //while (_fakeout->state () != OUTPUT_STATE_STOPPED) {
-    for (;;) {
-        usleep (10000);
-    }
+    wait_until_stopped ();
 
     deadbeef->pl_item_unref (_sinewave);
     deadbeef->pl_item_unref (_squarewave);
     deadbeef->plt_unref (plt);
+    XCTAssert (count_played = 2);
 }
 
 @end
