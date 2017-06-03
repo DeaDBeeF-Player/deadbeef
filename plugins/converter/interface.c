@@ -910,3 +910,58 @@ create_preset_list (void)
   return preset_list;
 }
 
+GtkWidget*
+create_procdlg (void)
+{
+  GtkWidget *procdlg;
+  GtkWidget *dialog_vbox12;
+  GtkWidget *status;
+  GtkWidget *outname;
+  GtkWidget *convprogress;
+  GtkWidget *dialog_action_area11;
+  GtkWidget *closebutton1;
+
+  procdlg = gtk_dialog_new ();
+  gtk_window_set_title (GTK_WINDOW (procdlg), _("Converting..."));
+  gtk_window_set_type_hint (GTK_WINDOW (procdlg), GDK_WINDOW_TYPE_HINT_DIALOG);
+  gtk_dialog_set_has_separator (GTK_DIALOG (procdlg), FALSE);
+
+  dialog_vbox12 = gtk_dialog_get_content_area (GTK_DIALOG (procdlg));
+  gtk_widget_show (dialog_vbox12);
+
+  status = gtk_label_new (_("File 12/100\nETA: 1:11"));
+  gtk_widget_show (status);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox12), status, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (status), 0, 0.5);
+
+  outname = gtk_label_new (_("file...mp3"));
+  gtk_widget_show (outname);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox12), outname, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (outname), 0, 0.5);
+  gtk_label_set_ellipsize (GTK_LABEL (outname), PANGO_ELLIPSIZE_MIDDLE);
+
+  convprogress = gtk_progress_bar_new ();
+  gtk_widget_show (convprogress);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox12), convprogress, FALSE, FALSE, 0);
+
+  dialog_action_area11 = gtk_dialog_get_action_area (GTK_DIALOG (procdlg));
+  gtk_widget_show (dialog_action_area11);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area11), GTK_BUTTONBOX_END);
+
+  closebutton1 = gtk_button_new_from_stock ("gtk-stop");
+  gtk_widget_show (closebutton1);
+  gtk_dialog_add_action_widget (GTK_DIALOG (procdlg), closebutton1, GTK_RESPONSE_REJECT);
+  gtk_widget_set_can_default(closebutton1, TRUE);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (procdlg, procdlg, "procdlg");
+  GLADE_HOOKUP_OBJECT_NO_REF (procdlg, dialog_vbox12, "dialog_vbox12");
+  GLADE_HOOKUP_OBJECT (procdlg, status, "status");
+  GLADE_HOOKUP_OBJECT (procdlg, outname, "outname");
+  GLADE_HOOKUP_OBJECT (procdlg, convprogress, "convprogress");
+  GLADE_HOOKUP_OBJECT_NO_REF (procdlg, dialog_action_area11, "dialog_action_area11");
+  GLADE_HOOKUP_OBJECT (procdlg, closebutton1, "closebutton1");
+
+  return procdlg;
+}
+
