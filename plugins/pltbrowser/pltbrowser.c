@@ -860,7 +860,7 @@ on_pltbrowser_popup_menu (GtkWidget *widget, gpointer user_data) {
 
 static void
 on_pltbrowser_row_activated (GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data) {
-    if (deadbeef->conf_get_int ("gtkui.pltbrowser.doubleclick_switch_playlist", 0))
+    if (deadbeef->conf_get_int ("gtkui.pltbrowser.doubleclick_switch_playlist", 1))
         deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
 }
 
