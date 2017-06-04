@@ -918,8 +918,7 @@ gtkui_set_default_hotkeys (void) {
     deadbeef->conf_set_str ("hotkey.key09", "\"F1\" 0 0 help");
     deadbeef->conf_set_str ("hotkey.key10", "\"Delete\" 1 0 remove_from_playlist");
     deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
-    deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
-    deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
+    deadbeef->conf_set_str ("hotkey.key13", "\"Alt Return\" 1 0 track_properties");
     deadbeef->conf_set_str ("hotkey.key14", "\"Return\" 0 0 play");
     deadbeef->conf_set_str ("hotkey.key15", "\"Ctrl p\" 0 0 toggle_pause");
     deadbeef->conf_set_str ("hotkey.key16", "\"Alt 1\" 0 0 playlist1");
