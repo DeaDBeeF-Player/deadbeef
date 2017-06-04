@@ -1070,12 +1070,20 @@ static DB_plugin_action_t action_add_to_playqueue = {
     .next = &action_remove_from_playqueue
 };
 
+static DB_plugin_action_t action_toggle_playqueue = {
+    .title = "Playback/Add\\/Remove From Playback Queue",
+    .name = "toggle_playback_queue",
+    .flags = DB_ACTION_MULTIPLE_TRACKS,
+    .callback2 = action_toggle_playqueue_handler,
+    .next = &action_add_to_playqueue
+};
+
 static DB_plugin_action_t action_toggle_mute = {
     .title = "Playback/Toggle Mute",
     .name = "toggle_mute",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_toggle_mute_handler,
-    .next = &action_add_to_playqueue
+    .next = &action_toggle_playqueue
 };
 
 static DB_plugin_action_t action_play = {
