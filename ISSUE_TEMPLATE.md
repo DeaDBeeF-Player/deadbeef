@@ -1,6 +1,9 @@
-### Expected behavior
+### Steps to reproduce the problem
 
-### Actual behavior
+### What's going on? Describe the problem in as much detail as possible.
 
-### Steps to reproduce the behavior
+### Information about the software:
+
+Deadbeef version:
+OS:
 
