@@ -592,14 +592,7 @@ action_toggle_playqueue_handler (DB_plugin_action_t *act, int ctx) {
     DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
     while (it) {
         if (ctx == DDB_ACTION_CTX_PLAYLIST || (ctx == DDB_ACTION_CTX_SELECTION && deadbeef->pl_is_selected (it))) {
-            int i,on_queue=0;
-            for(i=0;i<deadbeef->playqueue_get_count();i++){
-                if(deadbeef->playqueue_get_item (i) == it ){
-                    on_queue=1;
-                    break;
-                }
-            }
-            if(on_queue)
+            if(deadbeef->playqueue_test(it) != -1)
                 deadbeef->playqueue_remove (it);
             else
                 deadbeef->playqueue_push (it);
