@@ -17,7 +17,9 @@
 #include "threading.h"
 #include "messagepump.h"
 
-static int count_played = 0;
+static int count_played;
+
+static void (*_trackinfochanged_handler)(ddb_event_track_t *ev);
 
 // super oversimplified mainloop
 static void
@@ -79,6 +81,11 @@ mainloop (void) {
                         break;
                     case DB_EV_SONGSTARTED:
                         count_played++;
+                        break;
+                    case DB_EV_TRACKINFOCHANGED:
+                        if (_trackinfochanged_handler) {
+                            _trackinfochanged_handler ((ddb_event_track_t *)ctx);
+                        }
                         break;
                 }
             }
@@ -155,7 +162,7 @@ wait_until_stopped (void) {
 
     streamer_init ();
 
-    conf_set_int ("playback.loop", 1);
+    conf_set_int ("playback.loop", PLAYBACK_MODE_NOLOOP);
     count_played = 0;
 
     _mainloop_tid = thread_start (mainloop, NULL);
@@ -193,5 +200,66 @@ wait_until_stopped (void) {
     deadbeef->plt_unref (plt);
     XCTAssert (count_played = 2);
 }
+
+// This test is a complicated
+// Given two tracks A and B
+// Start track A
+// Start track B
+// Monitor trackinfochanged events, and make sure that track A is never in "playing" state after track B started "buffering"
+
+static DB_playItem_t *switchtest_tracks[2];
+static int switchtest_counts[2];
+static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
+    if (deadbeef->streamer_ok_to_read (-1)) {
+        DB_playItem_t *playing = deadbeef->streamer_get_playing_track ();
+        if (ev->track == switchtest_tracks[0] && playing == ev->track) {
+            printf ("track A playing!\n");
+            switchtest_counts[0]++;
+        }
+        else if (ev->track == switchtest_tracks[1] && playing == ev->track) {
+            switchtest_counts[1]++;
+        }
+        if (playing) {
+            deadbeef->pl_item_unref (playing);
+        }
+    }
+}
+
+- (void)test_SwitchBetweenTracks_DoesNotJumpBackToPrevious {
+    // for this test, we want "loop single" mode, to make sure first track is playing when we start the 2nd one.
+    conf_set_int ("playback.loop", PLAYBACK_MODE_LOOP_SINGLE);
+
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    // create two test fake tracks
+    switchtest_tracks[0] = deadbeef->plt_insert_file2 (0, plt, NULL, "sine.fake", NULL, NULL, NULL);
+    switchtest_tracks[1] = deadbeef->plt_insert_file2 (0, plt, switchtest_tracks[0], "square.fake", NULL, NULL, NULL);
+
+    switchtest_counts[0] = switchtest_counts[1] = 0;
+
+    printf ("start track A...\n");
+    streamer_set_nextsong (0);
+    streamer_yield ();
+
+    printf ("wait...\n");
+    // FIXME: sleeping is not predictable, should instead make fakeout plugin consume samples
+    // E.g.: fakeout_setmanual (1); ... fakeout_consume (4096);
+    usleep (1000000);
+    printf ("start track B...\n");
+    streamer_set_nextsong (1);
+    streamer_yield ();
+
+    _trackinfochanged_handler = switchtest_trackinfochanged_handler;
+
+    printf ("wait...\n");
+    usleep (1000000);
+
+    deadbeef->pl_item_unref (switchtest_tracks[0]);
+    deadbeef->pl_item_unref (switchtest_tracks[1]);
+    deadbeef->plt_unref (plt);
+    _trackinfochanged_handler = NULL;
+    XCTAssert (switchtest_counts[0] == 0);
+    XCTAssert (count_played = 2);
+}
+
 
 @end
