@@ -1,5 +1,9 @@
 #!/bin/bash
 . .install
+PREFIX="${PREFIX:-`pwd`/build}"
+mkdir -p $PREFIX/lib/deadbeef
+mkdir -p $PREFIX/bin
+
 rm -f $PREFIX/lib/deadbeef/*.so
 cp ./deadbeef $PREFIX/bin/
 cp ./plugins/nullout/.libs/nullout.so $PREFIX/lib/deadbeef/

@@ -108,6 +108,7 @@ for i in po/*.gmo ; do
 done
 cp translation/help.pt_BR.txt $OUTDIR/doc/
 cp translation/help.ru.txt $OUTDIR/doc/
+cp translation/help.zh_TW.txt $OUTDIR/doc/
 
 # strip
 if [ $OSTYPE != 'Darwin' ];then
