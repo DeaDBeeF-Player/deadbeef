@@ -121,6 +121,7 @@ static int no_remove_notify;
 static playlist_t *addfiles_playlist; // current playlist for adding files/folders; set in pl_add_files_begin
 
 static int conf_cue_prefer_embedded = 0;
+static char cue_file[255] = "";
 
 typedef struct ddb_fileadd_listener_s {
     int id;
@@ -1044,6 +1045,11 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t st
 
 playItem_t *
 plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, uint64_t numsamples64, int samplerate) {
+
+    if (cue_file[0] && strcmp(cue_file, "___null") == 0) {
+        return NULL;
+    }
+
     // FIXME: DB_playItem_t only supports 32bit sample count now;
     // the hack should be removed, when the 64 bit sample counts are implemented
     int numsamples = (int)numsamples64;
@@ -1278,31 +1284,41 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
 
 playItem_t *
 plt_insert_cue_int (playlist_t *plt, playItem_t *after, playItem_t *origin, uint64_t numsamples, int samplerate) {
-    pl_lock ();
-    const char *fname = pl_find_meta_raw (origin, ":URI");
-    int len = strlen (fname);
-    char cuename[len+5];
-    strcpy (cuename, fname);
-    pl_unlock ();
-    strcpy (cuename+len, ".cue");
-    DB_FILE *fp = vfs_fopen (cuename);
-    if (!fp) {
-        strcpy (cuename+len, ".CUE");
-        fp = vfs_fopen (cuename);
+    if (cue_file[0] && strcmp(cue_file, "___null") == 0) {
+        return NULL;
     }
-    if (!fp) {
-        char *ptr = cuename + len-1;
-        while (ptr >= cuename && *ptr != '.') {
-            ptr--;
-        }
-        if (ptr < cuename) {
-            return NULL;
-        }
-        strcpy (ptr+1, "cue");
+
+    DB_FILE *fp;
+    if (cue_file[0]) {
+        fp = vfs_fopen (cue_file);
+    }
+    else {
+        pl_lock ();
+        const char *fname = pl_find_meta_raw (origin, ":URI");
+        int len = strlen (fname);
+        char cuename[len+5];
+        strcpy (cuename, fname);
+        pl_unlock ();
+        strcpy (cuename+len, ".cue");
         fp = vfs_fopen (cuename);
         if (!fp) {
-            strcpy (ptr+1, "CUE");
+            strcpy (cuename+len, ".CUE");
             fp = vfs_fopen (cuename);
+        }
+        if (!fp) {
+            char *ptr = cuename + len-1;
+            while (ptr >= cuename && *ptr != '.') {
+                ptr--;
+            }
+            if (ptr < cuename) {
+                return NULL;
+            }
+            strcpy (ptr+1, "cue");
+            fp = vfs_fopen (cuename);
+            if (!fp) {
+                strcpy (ptr+1, "CUE");
+                fp = vfs_fopen (cuename);
+            }
         }
     }
     if (!fp) {
@@ -4151,8 +4167,11 @@ plt_get_scroll (playlist_t *plt) {
 
 static playItem_t *
 plt_process_embedded_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate) {
-    pl_lock();
+    if (cue_file[0] && strcmp(cue_file, "___null") == 0) {
+        return NULL;
+    }
 
+    pl_lock();
     const char *cuesheet = pl_find_meta (it, "cuesheet");
     if (cuesheet) {
         playItem_t *cue_after = plt_insert_cue_from_buffer_int (plt, after, it, (const uint8_t *)cuesheet, (int)strlen (cuesheet), totalsamples, samplerate);
@@ -4194,6 +4213,16 @@ plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t to
     }
 
     return cue_after;
+}
+
+void
+plt_set_cue_file(const char *filename) {
+    strncpy(cue_file, filename, sizeof(cue_file));
+}
+
+void
+plt_unset_cue_file(void) {
+    memset(cue_file, 0, sizeof(cue_file));
 }
 
 void

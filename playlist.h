@@ -553,6 +553,12 @@ playItem_t *
 plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate);
 
 void
+plt_set_cue_file(const char *filename);
+
+void
+plt_unset_cue_file(void);
+
+void
 pl_configchanged (void);
 
 DB_metaInfo_t *
