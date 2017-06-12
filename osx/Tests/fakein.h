@@ -9,6 +9,8 @@
 #ifndef fakein_h
 #define fakein_h
 
-#include <stdio.h>
+// amount of sleep (µsec) on each read, for simulating slow streaming
+void
+fakein_set_sleep (int sleep);
 
 #endif /* fakein_h */

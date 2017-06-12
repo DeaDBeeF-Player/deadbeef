@@ -293,6 +293,15 @@ streamer_get_playing_track (void) {
     return it;
 }
 
+playItem_t *
+streamer_get_buffering_track (void) {
+    playItem_t *it = buffering_track;
+    if (it) {
+        pl_item_ref (it);
+    }
+    return it;
+}
+
 int
 str_get_idx_of (playItem_t *it) {
     pl_lock ();
@@ -1923,7 +1932,9 @@ _handle_playback_stopped (void) {
         playItem_t *trk = playing_track;
         pl_item_ref (trk);
         send_songfinished (trk);
+        streamer_is_buffering = 0;
         streamer_start_playback (playing_track, NULL);
+        streamer_set_buffering_track (NULL);
         send_trackchanged (trk, NULL);
         pl_item_unref (trk);
     }
@@ -1956,6 +1967,7 @@ play_index (int idx) {
     pl_unlock();
     streamer_reset(1);
     streamer_is_buffering = 1;
+    streamer_set_playing_track(NULL);
     streamer_set_buffering_track (it);
     if (!stream_track(it)) {
         playpos = 0;
@@ -2022,6 +2034,7 @@ play_current (void) {
             }
             pl_unlock ();
             streamer_is_buffering = 1;
+            streamer_set_playing_track(NULL);
             streamer_set_buffering_track (next);
             if (!stream_track (next)) {
                 playpos = 0;
@@ -2051,6 +2064,7 @@ play_next (void) {
         return;
     }
 
+    streamer_set_playing_track(NULL);
     streamer_set_buffering_track (next);
     if (!stream_track(next)) {
         playpos = 0;
@@ -2245,8 +2259,6 @@ streamer_set_playing_track (playItem_t *it) {
     }
 
     playItem_t *prev = playing_track;
-
-    playing_track = NULL;
 
     playing_track = it;
     if (playing_track) {

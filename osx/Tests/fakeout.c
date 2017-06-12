@@ -17,7 +17,13 @@ static intptr_t fakeout_tid;
 static int fakeout_terminate;
 static int state;
 
-static void
+// in manual mode, output will run manually through calling fakeout_consume
+static int _manual;
+
+// in realtime mode, simulate real time audio playback with sleeps calculated from bytes / samplerate
+static int _realtime;
+
+static int
 fakeout_callback (char *stream, int len);
 
 static void
@@ -48,8 +54,10 @@ int
 fakeout_init (void) {
     trace ("fakeout_init\n");
     state = OUTPUT_STATE_STOPPED;
-    fakeout_terminate = 0;
-    fakeout_tid = deadbeef->thread_start (fakeout_thread, NULL);
+    if (!_manual) {
+        fakeout_terminate = 0;
+        fakeout_tid = deadbeef->thread_start (fakeout_thread, NULL);
+    }
     return 0;
 }
 
@@ -62,6 +70,9 @@ fakeout_setformat (ddb_waveformat_t *fmt) {
 int
 fakeout_free (void) {
     trace ("fakeout_free\n");
+    if (_manual) {
+        return 0;
+    }
     if (!fakeout_terminate) {
         if (fakeout_tid) {
             fakeout_terminate = 1;
@@ -76,7 +87,7 @@ fakeout_free (void) {
 
 int
 fakeout_play (void) {
-    if (!fakeout_tid) {
+    if (!fakeout_tid && !_manual) {
         fakeout_init ();
     }
     state = OUTPUT_STATE_PLAYING;
@@ -114,31 +125,32 @@ fakeout_thread (void *context) {
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-fakeout", 0, 0, 0, 0);
 #endif
+
+    char buf[4096];
+
     for (;;) {
         if (fakeout_terminate) {
             break;
         }
+
         if (state != OUTPUT_STATE_PLAYING) {
             usleep (10000);
             continue;
         }
 
-        char buf[4096];
-        fakeout_callback (buf, 1024);
+        fakeout_callback (buf, sizeof (buf));
     }
 }
 
-static void
+static int
 fakeout_callback (char *stream, int len) {
     if (!deadbeef->streamer_ok_to_read (len)) {
         memset (stream, 0, len);
-        return;
+        return 0; // NOTE: this is not what real output plugins should do, but better for testing
     }
     int bytesread = deadbeef->streamer_read (stream, len);
 
-    if (bytesread < len) {
-        memset (stream + bytesread, 0, len-bytesread);
-    }
+    return bytesread;
 }
 
 int
@@ -183,3 +195,31 @@ static DB_output_t plugin = {
     .state = fakeout_get_state,
     .fmt = {.samplerate = 44100, .channels = 2, .bps = 32, .is_float = 1, .channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT}
 };
+
+/////////////////////
+
+void
+fakeout_set_manual (int manual) {
+    _manual = manual;
+}
+
+void
+fakeout_consume (int nbytes) {
+    // for now, always assume playing state
+    char buf[4096];
+    while (nbytes > 0) {
+        int n = sizeof (buf);
+        if (n > nbytes) {
+            n = nbytes;
+        }
+        nbytes -= fakeout_callback (buf, n);
+        if (_realtime) {
+            usleep ((int64_t)n * 1000000 / (44100 * 4 * 2));
+        }
+    }
+}
+
+void
+fakeout_set_realtime (int realtime) {
+    _realtime = realtime;
+}

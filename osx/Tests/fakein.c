@@ -7,6 +7,7 @@
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 
 #define FAKEIN_NUMSAMPLES 44100 * 5 // 5 sec
+static int _sleep;
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -86,7 +87,7 @@ fakein_read (DB_fileinfo_t *_info, char *bytes, int size) {
     fakein_info_t *info = (fakein_info_t *)_info;
 
 // uncomment to simulate slow streamer
-    usleep (10000);
+    usleep (_sleep);
 
     int samplesize = _info->fmt.bps / 8 * _info->fmt.channels;
 
@@ -164,3 +165,7 @@ fakein_load (DB_functions_t *api) {
     return DB_PLUGIN (&plugin);
 }
 
+void
+fakein_set_sleep (int sleep) {
+    _sleep = sleep;
+}

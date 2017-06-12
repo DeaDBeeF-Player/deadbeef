@@ -16,6 +16,8 @@
 #include "streamer.h"
 #include "threading.h"
 #include "messagepump.h"
+#include "fakein.h"
+#include "fakeout.h"
 
 static int count_played;
 
@@ -213,7 +215,6 @@ static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
     if (deadbeef->streamer_ok_to_read (-1)) {
         DB_playItem_t *playing = deadbeef->streamer_get_playing_track ();
         if (ev->track == switchtest_tracks[0] && playing == ev->track) {
-            printf ("track A playing!\n");
             switchtest_counts[0]++;
         }
         else if (ev->track == switchtest_tracks[1] && playing == ev->track) {
@@ -234,24 +235,31 @@ static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
     switchtest_tracks[0] = deadbeef->plt_insert_file2 (0, plt, NULL, "sine.fake", NULL, NULL, NULL);
     switchtest_tracks[1] = deadbeef->plt_insert_file2 (0, plt, switchtest_tracks[0], "square.fake", NULL, NULL, NULL);
 
+//    printf ("A:%p B:%p\n", switchtest_tracks[0], switchtest_tracks[1]);
+
     switchtest_counts[0] = switchtest_counts[1] = 0;
 
-    printf ("start track A...\n");
+    fakein_set_sleep (100000);
+    fakeout_set_manual (1);
+    fakeout_set_realtime (1);
+
+//    printf ("start track A...\n");
     streamer_set_nextsong (0);
     streamer_yield ();
 
-    printf ("wait...\n");
-    // FIXME: sleeping is not predictable, should instead make fakeout plugin consume samples
-    // E.g.: fakeout_setmanual (1); ... fakeout_consume (4096);
-    usleep (1000000);
-    printf ("start track B...\n");
+//    printf ("consume 1 sec...\n");
+    fakeout_consume (44100 * 4 * 2);
+
+//    printf ("start track B...\n");
     streamer_set_nextsong (1);
     streamer_yield ();
 
+    // we're testing that track A is never "playing" after this point
     _trackinfochanged_handler = switchtest_trackinfochanged_handler;
 
-    printf ("wait...\n");
-    usleep (1000000);
+//    printf ("consume 1 sec...\n");
+    fakeout_consume (44100 * 4 * 2);
+    fakeout_set_manual (0);
 
     deadbeef->pl_item_unref (switchtest_tracks[0]);
     deadbeef->pl_item_unref (switchtest_tracks[1]);

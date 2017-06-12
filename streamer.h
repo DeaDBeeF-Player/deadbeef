@@ -84,6 +84,9 @@ streamer_get_streaming_track (void);
 playItem_t *
 streamer_get_playing_track (void);
 
+playItem_t *
+streamer_get_buffering_track (void);
+
 void
 streamer_configchanged (void);
 

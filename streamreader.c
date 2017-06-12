@@ -35,7 +35,7 @@ static streamblock_t *blocks; // list of all blocks
 
 static streamblock_t *block_data; // first available block with data (can be NULL)
 
-static streamblock_t *block_next; // next block available
+static streamblock_t *block_next; // next block available to be read into / queued
 
 static int numblocks_ready;
 
@@ -126,7 +126,6 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
 void
 streamreader_enqueue_block (streamblock_t *block) {
     // block is passed just for sanity checking
-    assert (block == block_next);
     assert (block->track);
     if (!block_data) {
         block_data = block_next;
