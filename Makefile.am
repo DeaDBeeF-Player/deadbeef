@@ -19,7 +19,7 @@ DISTCLEANFILES = \
 deadbeef_SOURCES =\
 	main.c common.h deadbeef.h\
 	plugins.c plugins.h moduleconf.h\
-	playlist.c playlist.h \
+	shared/cueutil.c shared/cueutil.h playlist.c playlist.h \
 	plmeta.c pltmeta.c pltmeta.h\
 	streamer.c streamer.h\
 	dsp.c dsp.h\

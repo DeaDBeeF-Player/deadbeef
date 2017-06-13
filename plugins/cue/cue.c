@@ -1,5 +1,6 @@
 /*
     CUE playlist plugin for DeaDBeeF Player
+    Copyright (C) 2017 wdlkmpx
     Copyright (C) 2017 Alexey Yakovenko
 
     This software is provided 'as-is', without any express or implied
@@ -31,15 +32,14 @@
 #include <ctype.h>
 
 #include "../../deadbeef.h"
+#include "../../shared/cueutil.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-static DB_functions_t *deadbeef;
+DB_functions_t *deadbeef;
 
 //===================================================================================
-
-#define SKIP_BLANK_CUE_TRACKS 0
 
 const char *cue_field_map[] = {
     "CATALOG ", "CATALOG",
@@ -55,82 +55,6 @@ const char *cue_field_map[] = {
 };
 #define MAX_EXTRA_TAGS_FROM_CUE ((sizeof(cue_field_map) / sizeof(cue_field_map[0])))
 static int extra_tag_index = 0;
-
-static const uint8_t *
-pl_cue_skipspaces (const uint8_t *p) {
-    while (*p && *p <= ' ') {
-        p++;
-    }
-    return p;
-}
-
-static void
-pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out, const char *charset) {
-    char *str = out;
-    if (*p == 0) {
-        *out = 0;
-        return;
-    }
-    p = pl_cue_skipspaces (p);
-    if (*p == 0) {
-        *out = 0;
-        return;
-    }
-
-    if (*p == '"') {
-        p++;
-        p = pl_cue_skipspaces (p);
-        while (*p && *p != '"' && sz > 1) {
-            sz--;
-            *out++ = *p++;
-        }
-        *out = 0;
-    }
-    else {
-        while (*p && *p >= 0x20) {
-            sz--;
-            *out++ = *p++;
-        }
-        out--;
-        while (out > str && *out == 0x20) {
-            out--;
-        }
-        out++;
-        *out = 0;
-    }
-
-    if (!charset) {
-        return;
-    }
-
-    // recode
-    size_t l = strlen (str);
-    if (l == 0) {
-        return;
-    }
-
-    char recbuf[l*10];
-    int res = deadbeef->junk_recode (str, (int)l, recbuf, (int)(sizeof (recbuf)-1), charset);
-    if (res >= 0) {
-        strcpy (str, recbuf);
-    }
-    else
-    {
-        strcpy (str, "<UNRECOGNIZED CHARSET>");
-    }
-}
-
-static void
-pl_get_value_from_cue (const char *p, int sz, char *out) {
-    while (*p >= ' ' && sz > 1) {
-        sz--;
-        *out++ = *p++;
-    }
-    while (out > p && (*(out-1) == 0x20 || *(out-1) == 0x8)) {
-        out--;
-    }
-    *out = 0;
-}
 
 void
 plt_process_cue_track2 (DB_playItem_t *it, const char *fname, char *track, char *index00, char *index01, char *pregap, char *title, char *albumperformer, char *performer, char *albumsongwriter, char *songwriter, char *albumtitle, char *replaygain_album_gain, char *replaygain_album_peak, char *replaygain_track_gain, char *replaygain_track_peak, char *totaltracks, char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255]) {
@@ -305,7 +229,7 @@ load_cue (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             if (!strncasecmp (p, "FILE ", 5)) {
                 DB_playItem_t *it = NULL;
                 pl_get_qvalue_from_cue (p + 5, sizeof (audio_file), audio_file, charset);
-                deadbeef->plt_set_cue_file(fname);
+                deadbeef->plt_set_cue_file(plt, fname);
                 if (audio_file[0] == '/') { //full path
                     trace ("pl_insert_cue: adding file %s\n", audio_file);
                     it = deadbeef->plt_insert_file2 (0, plt, after, audio_file, pabort, cb, user_data);
@@ -317,7 +241,7 @@ load_cue (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                     snprintf(fullpath, sizeof(fullpath), "%s/%s", cue_file_dir, audio_file);
                     it = deadbeef->plt_insert_file2 (0, plt, after, fullpath, pabort, cb, user_data);
                 }
-                deadbeef->plt_unset_cue_file();
+                deadbeef->plt_set_cue_file(plt, NULL);
                 free(membuffer);
                 deadbeef->pl_unlock();
                 return it;
@@ -368,8 +292,8 @@ load_cue (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
     p = buffer;
 
     deadbeef->pl_lock();
-    // ___null = deadbeef ignores external and internal cue files
-    deadbeef->plt_set_cue_file("___null");
+    // __ignore = deadbeef ignores external and internal cue files
+    deadbeef->plt_set_cue_file(plt, "__ignore");
 
     while (p < end) {
         p = skipspaces (p, end);
@@ -477,7 +401,7 @@ load_cue (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         } /* end of while loop */
 
         if (pabort && *pabort) {
-            deadbeef->plt_unset_cue_file();
+            deadbeef->plt_set_cue_file(plt, NULL);
             deadbeef->pl_unlock();
             free (membuffer);
             return after;
@@ -494,7 +418,7 @@ load_cue (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         plt_process_cue_track2 (it, fname, track, index00, index01, pregap, title, albumperformer, performer, albumsongwriter, songwriter, albumtitle, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, totaltracks, extra_tags);
     }
 
-    deadbeef->plt_unset_cue_file();
+    deadbeef->plt_set_cue_file(plt, NULL);
     deadbeef->pl_unlock();
     trace ("leave pl_insert_cue\n");
     free (membuffer);

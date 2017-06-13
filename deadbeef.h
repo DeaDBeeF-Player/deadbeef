@@ -1306,9 +1306,6 @@ typedef struct {
     // search results, or not
     void (*plt_search_process2) (ddb_playlist_t *plt, const char *text, int select_results);
 
-    void (*plt_set_cue_file) (const char *filename);
-    void (*plt_unset_cue_file) (void);
-
     // try loading external and embedded cuesheet, using the configured order (cue.prefer_embedded, default=0)
     DB_playItem_t * (*plt_process_cue) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *it, uint64_t numsamples, int samplerate);
 
@@ -1415,6 +1412,8 @@ typedef struct {
 
     // get total playback time of selected tracks
     float (*plt_get_selection_playback_time) (ddb_playlist_t *plt);
+
+    void (*plt_set_cue_file) (ddb_playlist_t *plt, const char *filename);
 #endif
 } DB_functions_t;
 

@@ -79,6 +79,7 @@ typedef struct playlist_s {
     unsigned fast_mode : 1;
     unsigned files_adding : 1;
     unsigned recalc_seltime : 1;
+    char *cue_file;
 } playlist_t;
 
 // global playlist control functions
@@ -553,10 +554,7 @@ playItem_t *
 plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate);
 
 void
-plt_set_cue_file(const char *filename);
-
-void
-plt_unset_cue_file(void);
+plt_set_cue_file(playlist_t *plt, const char *filename);
 
 void
 pl_configchanged (void);

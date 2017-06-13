@@ -67,6 +67,8 @@
 #include "tf.h"
 #include "playqueue.h"
 
+#include "shared/cueutil.h"
+
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
 
@@ -91,9 +93,6 @@
 #if (PLAYLIST_MINOR_VER<2)
 #error writing playlists in format <1.2 is not supported
 #endif
-
-#define SKIP_BLANK_CUE_TRACKS 0
-#define MAX_CUE_TRACKS 99
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -121,7 +120,6 @@ static int no_remove_notify;
 static playlist_t *addfiles_playlist; // current playlist for adding files/folders; set in pl_add_files_begin
 
 static int conf_cue_prefer_embedded = 0;
-static char cue_file[255] = "";
 
 typedef struct ddb_fileadd_listener_s {
     int id;
@@ -384,6 +382,7 @@ plt_alloc (const char *title) {
     memset (plt, 0, sizeof (playlist_t));
     plt->refc = 1;
     plt->title = strdup (title);
+    plt->cue_file = NULL;
     return plt;
 }
 
@@ -831,109 +830,6 @@ pl_clear (void) {
     UNLOCK;
 }
 
-static const uint8_t *
-pl_str_skipspaces (const uint8_t *p, const uint8_t *end) {
-    while (p < end && *p <= ' ') {
-        p++;
-    }
-    return p;
-}
-static const uint8_t *
-pl_cue_skipspaces (const uint8_t *p) {
-    while (*p && *p <= ' ') {
-        p++;
-    }
-    return p;
-}
-
-static void
-pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out, const char *charset) {
-    char *str = out;
-    if (*p == 0) {
-        *out = 0;
-        return;
-    }
-    p = pl_cue_skipspaces (p);
-    if (*p == 0) {
-        *out = 0;
-        return;
-    }
-
-    if (*p == '"') {
-        p++;
-        p = pl_cue_skipspaces (p);
-        while (*p && *p != '"' && sz > 1) {
-            sz--;
-            *out++ = *p++;
-        }
-        *out = 0;
-    }
-    else {
-        while (*p && *p >= 0x20) {
-            sz--;
-            *out++ = *p++;
-        }
-        out--;
-        while (out > str && *out == 0x20) {
-            out--;
-        }
-        out++;
-        *out = 0;
-    }
-
-    if (!charset) {
-        return;
-    }
-
-    // recode
-    size_t l = strlen (str);
-    if (l == 0) {
-        return;
-    }
-
-    char recbuf[l*10];
-    int res = junk_recode (str, (int)l, recbuf, (int)(sizeof (recbuf)-1), charset);
-    if (res >= 0) {
-        strcpy (str, recbuf);
-    }
-    else
-    {
-        strcpy (str, "<UNRECOGNIZED CHARSET>");
-    }
-}
-
-static void
-pl_get_value_from_cue (const char *p, int sz, char *out) {
-    while (*p >= ' ' && sz > 1) {
-        sz--;
-        *out++ = *p++;
-    }
-    while (out > p && (*(out-1) == 0x20 || *(out-1) == 0x8)) {
-        out--;
-    }
-    *out = 0;
-}
-
-static float
-pl_cue_parse_time (const char *p) {
-    char *endptr;
-    long mins = strtol(p, &endptr, 10);
-    if (endptr - p < 1 || *endptr != ':') {
-        return -1;
-    }
-    p = endptr + 1;
-    long sec = strtol(p, &endptr, 10);
-    if (endptr - p != 2 || *endptr != ':') {
-        return -1;
-    }
-    p = endptr + 1;
-    long frm = strtol(p, &endptr, 10);
-    if (endptr - p != 2 || *endptr != '\0') {
-        return -1;
-    }
-    return mins * 60.f + sec + frm / 75.f;
-}
-
 static playItem_t *
 plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t startsample, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *albumperformer, char *performer, char *albumsongwriter, char *songwriter, char *albumtitle, char *replaygain_album_gain, char *replaygain_album_peak, char *replaygain_track_gain, char *replaygain_track_peak, const char *decoder_id, const char *ftype, int samplerate) {
     if (!track[0]) {
@@ -1045,8 +941,7 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t st
 
 playItem_t *
 plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, uint64_t numsamples64, int samplerate) {
-
-    if (cue_file[0] && strcmp(cue_file, "___null") == 0) {
+    if (playlist->cue_file && strcmp(playlist->cue_file, "__ignore") == 0) {
         return NULL;
     }
 
@@ -1284,13 +1179,13 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
 
 playItem_t *
 plt_insert_cue_int (playlist_t *plt, playItem_t *after, playItem_t *origin, uint64_t numsamples, int samplerate) {
-    if (cue_file[0] && strcmp(cue_file, "___null") == 0) {
+    if (plt->cue_file && strcmp(plt->cue_file, "__ignore") == 0) {
         return NULL;
     }
 
     DB_FILE *fp;
-    if (cue_file[0]) {
-        fp = vfs_fopen (cue_file);
+    if (plt->cue_file) {
+        fp = vfs_fopen (plt->cue_file);
     }
     else {
         pl_lock ();
@@ -4167,9 +4062,9 @@ plt_get_scroll (playlist_t *plt) {
 
 static playItem_t *
 plt_process_embedded_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate) {
-    if (cue_file[0] && strcmp(cue_file, "___null") == 0) {
-        return NULL;
-    }
+    //if (plt->cue_file && strcmp(plt->cue_file, "__ignore") == 0) {
+    //    return NULL;
+    //}
 
     pl_lock();
     const char *cuesheet = pl_find_meta (it, "cuesheet");
@@ -4216,13 +4111,14 @@ plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t to
 }
 
 void
-plt_set_cue_file(const char *filename) {
-    strncpy(cue_file, filename, sizeof(cue_file));
-}
-
-void
-plt_unset_cue_file(void) {
-    memset(cue_file, 0, sizeof(cue_file));
+plt_set_cue_file(playlist_t *plt, const char *filename) {
+    LOCK;
+    free (plt->cue_file);
+    plt->cue_file = NULL;
+    if (filename) {
+        plt->cue_file = strdup (filename);
+    }
+    UNLOCK;
 }
 
 void
