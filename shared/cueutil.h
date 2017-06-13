@@ -35,6 +35,32 @@
 #define SKIP_BLANK_CUE_TRACKS 0
 #define MAX_CUE_TRACKS 99
 
+extern const char *cue_field_map[];
+#define MAX_EXTRA_TAGS_FROM_CUE 18 //((sizeof(cue_field_map) / sizeof(cue_field_map[0])))
+
+enum {
+    CUE_FIELD_ALBUM_PERFORMER,
+    CUE_FIELD_PERFORMER,
+    CUE_FIELD_ALBUM_SONGWRITER,
+    CUE_FIELD_SONGWRITER,
+    CUE_FIELD_ALBUM_TITLE,
+    CUE_FIELD_FILE,
+    CUE_FIELD_TRACK,
+    CUE_FIELD_TITLE,
+    CUE_FIELD_PREGAP,
+    CUE_FIELD_INDEX00,
+    CUE_FIELD_INDEX01,
+    CUE_FIELD_REPLAYGAIN_ALBUM_GAIN,
+    CUE_FIELD_REPLAYGAIN_ALBUM_PEAK,
+    CUE_FIELD_REPLAYGAIN_TRACK_GAIN,
+    CUE_FIELD_REPLAYGAIN_TRACK_PEAK,
+    CUE_FIELD_TOTALTRACKS,
+    CUE_MAX_FIELDS,
+};
+
+const uint8_t *
+skipspaces (const uint8_t *p, const uint8_t *end);
+
 const uint8_t *
 pl_cue_skipspaces (const uint8_t *p);
 
@@ -46,5 +72,17 @@ pl_get_value_from_cue (const char *p, int sz, char *out);
 
 float
 pl_cue_parse_time (const char *p);
+
+void
+pl_cue_get_total_tracks_and_files(const uint8_t *buffer, const uint8_t *buffersize, int *ncuefiles, int *ncuetracks);
+
+void
+pl_cue_set_track_field_values(DB_playItem_t *it, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], int extra_tag_index);
+
+void
+pl_cue_reset_per_track_fields(char cuefields[CUE_MAX_FIELDS][255]);
+
+int
+pl_cue_get_field_value(const char *p, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], const char *charset, int have_track, int *extra_tag_index);
 
 #endif /* cueutil_h */

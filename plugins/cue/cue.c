@@ -1,6 +1,6 @@
 /*
     CUE playlist plugin for DeaDBeeF Player
-    Copyright (C) 2017 wdlkmpx
+    Copyright (C) 2017 github:wdlkmpx
     Copyright (C) 2017 Alexey Yakovenko
 
     This software is provided 'as-is', without any express or implied
@@ -34,117 +34,46 @@
 #include "../../deadbeef.h"
 #include "../../shared/cueutil.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 DB_functions_t *deadbeef;
 
-//===================================================================================
-
-const char *cue_field_map[] = {
-    "CATALOG ", "CATALOG",
-    "ISRC ", "ISRC",
-    "REM DATE ", "year",
-    "REM GENRE ", "genre",
-    "REM COMMENT ", "comment",
-    "REM COMPOSER ", "composer",
-    "REM DISCNUMBER ", "disc",
-    "REM TOTALDISCS ", "numdiscs",
-    "REM DISCID ", "DISCID",
-    NULL, NULL,
-};
-#define MAX_EXTRA_TAGS_FROM_CUE ((sizeof(cue_field_map) / sizeof(cue_field_map[0])))
-static int extra_tag_index = 0;
-
 void
-plt_process_cue_track2 (DB_playItem_t *it, const char *fname, char *track, char *index00, char *index01, char *pregap, char *title, char *albumperformer, char *performer, char *albumsongwriter, char *songwriter, char *albumtitle, char *replaygain_album_gain, char *replaygain_album_peak, char *replaygain_track_gain, char *replaygain_track_peak, char *totaltracks, char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255]) {
-	DB_playItem_t *prev = it;
-    if (!track[0]) {
-        trace ("pl_process_cue_track: invalid track (file=%s, title=%s)\n", fname, title);
+plt_process_cue_track2 (DB_playItem_t *it, const char *fname, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], int extra_tag_index) {
+    DB_playItem_t *prev = it;
+    if (!cuefields[CUE_FIELD_TRACK][0]) {
+        trace ("pl_process_cue_track: invalid track (file=%s, title=%s)\n", fname, cuefields[CUE_FIELD_TITLE]);
         return;
     }
-    if (!index00[0] && !index01[0]) {
-        trace ("pl_process_cue_track: invalid index (file=%s, title=%s, track=%s)\n", fname, title, track);
+    if (!cuefields[CUE_FIELD_INDEX00][0] && !cuefields[CUE_FIELD_INDEX01][0]) {
+        trace ("pl_process_cue_track: invalid index (file=%s, title=%s, track=%s)\n", fname, cuefields[CUE_FIELD_TITLE], cuefields[CUE_FIELD_TRACK]);
         //return;
     }
 #if SKIP_BLANK_CUE_TRACKS
-    if (!title[0]) {
-        trace ("pl_process_cue_track: invalid title (file=%s, title=%s, track=%s)\n", fname, title, track);
+    if (!cuefields[CUE_FIELD_TITLE][0]) {
+        trace ("pl_process_cue_track: invalid title (file=%s, title=%s, track=%s)\n", fname, cuefields[CUE_FIELD_TITLE], cuefields[CUE_FIELD_TRACK]);
         return;
     }
 #endif
     // fix track number
-    char *p = track;
+    char *p = cuefields[CUE_FIELD_TRACK];
     while (*p && isdigit (*p)) {
         p++;
     }
     *p = 0;
 
-    if (!index01[0]) {
-        trace ("pl_process_cue_track: invalid index01 (pregap=%s, index01=%s)\n", pregap, index01);
-    }
-
-    if (performer[0]) {
-        deadbeef->pl_add_meta (it, "artist", performer);
-        if (albumperformer[0] && strcmp (albumperformer, performer)) {
-            deadbeef->pl_add_meta (it, "album artist", albumperformer);
-        }
-    }
-    else if (albumperformer[0]) {
-        deadbeef->pl_add_meta (it, "artist", albumperformer);
-    }
-    if (songwriter[0]) {
-        deadbeef->pl_add_meta (it, "SONGWRITER", songwriter);
-    }
-    else if (albumsongwriter[0]) {
-        deadbeef->pl_add_meta (it, "SONGWRITER", albumsongwriter);
-    }
-    if (albumtitle[0]) {
-        deadbeef->pl_add_meta (it, "album", albumtitle);
-    }
-    if (track[0]) {
-        deadbeef->pl_add_meta (it, "track", track);
-    }
-    if (title[0]) {
-        deadbeef->pl_add_meta (it, "title", title);
-    }
-    if (replaygain_album_gain[0]) {
-        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (replaygain_album_gain));
-    }
-    if (replaygain_album_peak[0]) {
-        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (replaygain_album_peak));
-    }
-    if (replaygain_track_gain[0]) {
-        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (replaygain_track_gain));
-    }
-    if (replaygain_track_peak[0]) {
-        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (replaygain_track_peak));
+    if (!cuefields[CUE_FIELD_INDEX01][0]) {
+        trace ("pl_process_cue_track: invalid index01 (pregap=%s, index01=%s)\n", cuefields[CUE_FIELD_PREGAP], cuefields[CUE_FIELD_INDEX01]);
     }
 
     uint32_t iflags = deadbeef->pl_get_item_flags(it);
     iflags |= DDB_TAG_CUESHEET;
     deadbeef->pl_set_item_flags(it, iflags);
 
-    // add extra tags to tracks
-    for (int y = 0; y < extra_tag_index; y += 2) {
-        if (extra_tags[y+1]) {
-            deadbeef->pl_add_meta (it, extra_tags[y], extra_tags[y+1]);
-        }
-    }
-    // generated "total tracks" field
-    deadbeef->pl_add_meta(it, "numtracks", totaltracks);
-
+    pl_cue_set_track_field_values(it, cuefields, extra_tags, extra_tag_index);
 }
 
-//=====================================================================================
-
-static const uint8_t *
-skipspaces (const uint8_t *p, const uint8_t *end) {
-    while (p < end && *p <= ' ') {
-        p++;
-    }
-    return p;
-}
 
 static DB_playItem_t *
 load_cue (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
@@ -154,7 +83,7 @@ load_cue (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
     if (slash && slash > fname) {
         strncpy(cue_file_dir, fname, slash - fname);
     }
-    trace ("enter pl_insert_cue: fname \n");
+    trace ("enter pl_insert_cue: %s\n", fname);
     trace ("cue directory: %s \n", cue_file_dir);
     // skip all empty lines and comments
     DB_FILE *fp = deadbeef->fopen (fname);
@@ -187,26 +116,8 @@ load_cue (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
     const uint8_t *end = buffer+sz;
 
     // determine total tracks/files
-    int ncuetracks = 0;
-    int ncuefiles = 0;
-    while (p < end) {
-        p = skipspaces (p, end);
-        if (p >= end) {
-            break;
-        }
-        if (!strncasecmp (p, "FILE ", 5)) {
-            ncuefiles++;
-        }
-        if (!strncasecmp (p, "TRACK ", 6)) {
-            ncuetracks++;
-        }
-        // move pointer to the next line
-        while (p < end && *p >= 0x20) {
-           p++;
-        }
-    }
-    trace("totaltracks: %d\n", ncuetracks);
-    trace("totalfiles: %d\n", ncuefiles);
+    int ncuetracks, ncuefiles;
+    pl_cue_get_total_tracks_and_files(p, end, &ncuefiles, &ncuetracks);
     if (!ncuefiles || !ncuetracks) {
         deadbeef->log("invalid cuesheet (%s)\n", fname);
         return NULL;
@@ -261,28 +172,13 @@ load_cue (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         return NULL;
     }
 
-    char totaltracks[10];
-    snprintf(totaltracks, sizeof(totaltracks), "%d", ncuetracks);
-
-    char file[256] = "";
-    char albumperformer[256] = "";
-    char performer[256] = "";
-    char albumsongwriter[256] = "" ;
-    char songwriter[256] = "" ;
-    char albumtitle[256] = "";
-    char track[256] = "";
-    char title[256] = "";
-    char pregap[256] = "";
-    char index00[256] = "";
-    char index01[256] = "";
-    char replaygain_album_gain[256] = "";
-    char replaygain_album_peak[256] = "";
-    char replaygain_track_gain[256] = "";
-    char replaygain_track_peak[256] = "";
+    char cuefields[CUE_MAX_FIELDS][255];
+    memset(cuefields, 0, sizeof(cuefields));
+    snprintf(cuefields[CUE_FIELD_TOTALTRACKS], sizeof(cuefields[CUE_FIELD_TOTALTRACKS]), "%d", ncuetracks);
 
     char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255];
     memset (extra_tags, 0, sizeof (extra_tags));
-    extra_tag_index = 0;
+    int extra_tag_index = 0;
 
     int have_track = 0;
 
@@ -301,104 +197,34 @@ load_cue (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             break;
         }
 
-        if (!strncasecmp (p, "FILE ", 5)) {
-            pl_get_qvalue_from_cue (p + 5, sizeof (file), file, charset);
-            if (file[0] == '/') { //full path
-                trace ("pl_insert_cue: adding file %s\n", file);
-                it = deadbeef->plt_insert_file2 (0, plt, after, file, pabort, cb, user_data);
+        int field = pl_cue_get_field_value(p, cuefields, extra_tags, charset, have_track, &extra_tag_index);
+
+        if (field == CUE_FIELD_FILE) {
+            if (cuefields[CUE_FIELD_FILE][0] == '/') { //full path
+                trace ("pl_insert_cue: adding file %s\n", cuefields[CUE_FIELD_FILE]);
+                it = deadbeef->plt_insert_file2 (0, plt, after, cuefields[CUE_FIELD_FILE], pabort, cb, user_data);
             }
             else {
-                int l = strlen(cue_file_dir) + strlen (file) + 10;
+                int l = strlen(cue_file_dir) + strlen (cuefields[CUE_FIELD_FILE]) + 10;
                 char fullpath[l];
-                snprintf(fullpath, sizeof(fullpath), "%s/%s", cue_file_dir, file);
+                snprintf(fullpath, sizeof(fullpath), "%s/%s", cue_file_dir, cuefields[CUE_FIELD_FILE]);
                 trace ("pl_insert_cue: adding file %s\n", fullpath);
                 it = deadbeef->plt_insert_file2 (0, plt, after, fullpath, pabort, cb, user_data);
             }
             if (it) {
                 if (prev) {
                     // add previous track
-                    trace("adding info to %s",fname);
-                    plt_process_cue_track2 (prev, fname, track, index00, index01, pregap, title, albumperformer, performer, albumsongwriter, songwriter, albumtitle, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, totaltracks, extra_tags);
+                    plt_process_cue_track2 (prev, fname, cuefields, extra_tags, extra_tag_index);
                 }
-                // reset per-track fields
-                track[0] = 0;
-                title[0] = 0;
-                pregap[0] = 0;
-                index00[0] = 0;
-                index01[0] = 0;
-                replaygain_track_gain[0] = 0;
-                replaygain_track_peak[0] = 0;
-                performer[0] = 0;
-                songwriter[0] = 0;
-
                 after = it;
                 prev = it;
             }
-
+            pl_cue_reset_per_track_fields(cuefields);
         }
-        else if (!strncasecmp (p, "TRACK ", 6)) {
-            pl_get_value_from_cue (p + 6, sizeof (track), track);
+        else if (field == CUE_FIELD_TRACK) {
             have_track = 1;
+            pl_get_value_from_cue (p + 6, sizeof (cuefields[CUE_FIELD_TRACK]), cuefields[CUE_FIELD_TRACK]);
         }
-        else if (!strncasecmp (p, "PERFORMER ", 10)) {
-            if (!track[0]) {
-                pl_get_qvalue_from_cue (p + 10, sizeof (albumperformer), albumperformer, charset);
-            }
-            else {
-                pl_get_qvalue_from_cue (p + 10, sizeof (performer), performer, charset);
-            }
-        }
-        else if (!strncasecmp (p, "SONGWRITER ", 11)) {
-            if (!track[0]) {
-                pl_get_qvalue_from_cue (p + 11, sizeof (albumsongwriter), albumsongwriter, charset);
-            }
-            else {
-                pl_get_qvalue_from_cue (p + 11, sizeof (songwriter), songwriter, charset);
-            }
-        }
-        else if (!strncasecmp (p, "TITLE ", 6)) {
-            if (!have_track && !albumtitle[0]) {
-                pl_get_qvalue_from_cue (p + 6, sizeof (albumtitle), albumtitle, charset);
-            }
-            else {
-                pl_get_qvalue_from_cue (p + 6, sizeof (title), title, charset);
-            }
-        }
-        else if (!strncasecmp (p, "REM REPLAYGAIN_ALBUM_GAIN ", 26)) {
-            pl_get_value_from_cue (p + 26, sizeof (replaygain_album_gain), replaygain_album_gain);
-        }
-        else if (!strncasecmp (p, "REM REPLAYGAIN_ALBUM_PEAK ", 26)) {
-            pl_get_value_from_cue (p + 26, sizeof (replaygain_album_peak), replaygain_album_peak);
-        }
-        else if (!strncasecmp (p, "REM REPLAYGAIN_TRACK_GAIN ", 26)) {
-            pl_get_value_from_cue (p + 26, sizeof (replaygain_track_gain), replaygain_track_gain);
-        }
-        else if (!strncasecmp (p, "REM REPLAYGAIN_TRACK_PEAK ", 26)) {
-            pl_get_value_from_cue (p + 26, sizeof (replaygain_track_peak), replaygain_track_peak);
-        }
-        else if (!strncasecmp (p, "PREGAP ", 7)) {
-            pl_get_value_from_cue (p + 7, sizeof (pregap), pregap);
-        }
-        else if (!strncasecmp (p, "INDEX 00 ", 9)) {
-            pl_get_value_from_cue (p + 9, sizeof (index00), index00);
-        }
-        else if (!strncasecmp (p, "INDEX 01 ", 9)) {
-            pl_get_value_from_cue (p + 9, sizeof (index01), index01);
-        }
-        else {
-            // determine and get extra tags
-            if (!have_track) {
-                for (int m = 0; cue_field_map[m]; m += 2) {
-                    if (!strncasecmp (p, cue_field_map[m], strlen(cue_field_map[m]))) {
-                        strcpy(extra_tags[extra_tag_index],cue_field_map[m+1]);
-                        pl_get_qvalue_from_cue (p + strlen(cue_field_map[m]), sizeof(extra_tags[extra_tag_index+1]), extra_tags[extra_tag_index+1], charset);
-                        extra_tag_index += 2;
-                        continue;
-                    }
-                }
-            }
-//          fprintf (stderr, "got unknown line:\n%s\n", p);
-        } /* end of while loop */
 
         if (pabort && *pabort) {
             deadbeef->plt_set_cue_file(plt, NULL);
@@ -410,12 +236,11 @@ load_cue (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         while (p < end && *p >= 0x20) {
            p++;
         }
-
     } /* end of while loop */
 
     if (it) {
         // handle last track
-        plt_process_cue_track2 (it, fname, track, index00, index01, pregap, title, albumperformer, performer, albumsongwriter, songwriter, albumtitle, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, totaltracks, extra_tags);
+        plt_process_cue_track2 (it, fname, cuefields, extra_tags, extra_tag_index);
     }
 
     deadbeef->plt_set_cue_file(plt, NULL);

@@ -63,6 +63,7 @@ typedef struct playItem_s {
 
 typedef struct playlist_s {
     char *title;
+    char *cue_file;
     struct playlist_s *next;
     int count[2];
     float totaltime;
@@ -79,7 +80,6 @@ typedef struct playlist_s {
     unsigned fast_mode : 1;
     unsigned files_adding : 1;
     unsigned recalc_seltime : 1;
-    char *cue_file;
 } playlist_t;
 
 // global playlist control functions
