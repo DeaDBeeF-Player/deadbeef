@@ -1412,6 +1412,8 @@ typedef struct {
 
     // get total playback time of selected tracks
     float (*plt_get_selection_playback_time) (ddb_playlist_t *plt);
+
+    void (*plt_set_cue_file) (ddb_playlist_t *plt, const char *filename);
 #endif
 } DB_functions_t;
 
