@@ -893,7 +893,7 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t st
 
 playItem_t *
 plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, uint64_t numsamples64, int samplerate) {
-    if (playlist->cue_file && strcmp(playlist->cue_file, "__ignore") == 0) {
+    if (playlist->cue_file && !strcmp(playlist->cue_file, "__ignore")) {
         return NULL;
     }
 
@@ -1032,7 +1032,7 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
 
 playItem_t *
 plt_insert_cue_int (playlist_t *plt, playItem_t *after, playItem_t *origin, uint64_t numsamples, int samplerate) {
-    if (plt->cue_file && strcmp(plt->cue_file, "__ignore") == 0) {
+    if (plt->cue_file && !strcmp(plt->cue_file, "__ignore")) {
         return NULL;
     }
 
@@ -1043,7 +1043,7 @@ plt_insert_cue_int (playlist_t *plt, playItem_t *after, playItem_t *origin, uint
     else {
         pl_lock ();
         const char *fname = pl_find_meta_raw (origin, ":URI");
-        int len = strlen (fname);
+        size_t len = strlen (fname);
         char cuename[len+5];
         strcpy (cuename, fname);
         pl_unlock ();
@@ -3915,10 +3915,6 @@ plt_get_scroll (playlist_t *plt) {
 
 static playItem_t *
 plt_process_embedded_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate) {
-    //if (plt->cue_file && strcmp(plt->cue_file, "__ignore") == 0) {
-    //    return NULL;
-    //}
-
     pl_lock();
     const char *cuesheet = pl_find_meta (it, "cuesheet");
     if (cuesheet) {
@@ -3964,10 +3960,12 @@ plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t to
 }
 
 void
-plt_set_cue_file(playlist_t *plt, const char *filename) {
+plt_set_cue_file (playlist_t *plt, const char *filename) {
     LOCK;
-    free (plt->cue_file);
-    plt->cue_file = NULL;
+    if (plt->cue_file) {
+        free (plt->cue_file);
+        plt->cue_file = NULL;
+    }
     if (filename) {
         plt->cue_file = strdup (filename);
     }

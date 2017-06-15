@@ -63,7 +63,6 @@ typedef struct playItem_s {
 
 typedef struct playlist_s {
     char *title;
-    char *cue_file;
     struct playlist_s *next;
     int count[2];
     float totaltime;
@@ -77,6 +76,7 @@ typedef struct playlist_s {
     struct DB_metaInfo_s *meta; // linked list storing metainfo
     int refc;
     int files_add_visibility;
+    char *cue_file;
     unsigned fast_mode : 1;
     unsigned files_adding : 1;
     unsigned recalc_seltime : 1;
@@ -554,7 +554,7 @@ playItem_t *
 plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate);
 
 void
-plt_set_cue_file(playlist_t *plt, const char *filename);
+plt_set_cue_file (playlist_t *plt, const char *filename);
 
 void
 pl_configchanged (void);

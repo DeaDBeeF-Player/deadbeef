@@ -15320,6 +15320,7 @@
 				4D75D3971EF283580060552D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
