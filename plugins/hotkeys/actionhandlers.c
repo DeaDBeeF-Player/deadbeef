@@ -586,7 +586,7 @@ action_clear_playlist_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_toggle_playqueue_handler (DB_plugin_action_t *act, int ctx) {
+action_toggle_in_playqueue_handler (DB_plugin_action_t *act, int ctx) {
     ddb_playlist_t *plt = deadbeef->action_get_playlist ();
 
     DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
