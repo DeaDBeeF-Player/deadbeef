@@ -125,6 +125,9 @@ print_help (void) {
     fprintf (stdout, _("   --nowplaying-tf FMT  Print formatted track name to stdout, using the new title formatting\n"));
     fprintf (stdout, _("                      FMT syntax: http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting-2.0\n"));
     fprintf (stdout, _("                      example: --nowplaying-tf \"%%artist%% - %%title%%\" should print \"artist - title\"\n"));
+    fprintf (stdout, _("   --volume [NUM]     Print or set deadbeef volume level.\n"));
+    fprintf (stdout, _("                      The NUM parameter can be specified in percents (if no suffix) or dB [-50, 0].\n"));
+    fprintf (stdout, _("                      Examples: --volume 80 or --volume -20dB\n"));
 #ifdef ENABLE_NLS
 	bind_textdomain_codeset (PACKAGE, "UTF-8");
 #endif
@@ -328,6 +331,25 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             parg += strlen (parg);
             parg++;
             continue;
+        }
+        else if (!strcmp (parg, "--volume")) {
+            parg += strlen (parg);
+            parg++;
+
+            if (parg < pend) {
+                int pct;
+                char *end;
+                pct = strtol (parg, &end, 10);
+                if (!strcasecmp(end, "db")) {
+                    deadbeef->volume_set_db (pct);
+                } else {
+                    deadbeef->volume_set_db ((pct/100.0 * 50) - 50);
+                }
+            }
+            if (sendback) {
+                snprintf (sendback, sbsize, "volume %.0f%% (%.2f dB)", deadbeef->volume_get_db() * 2 + 100 , deadbeef->volume_get_db());
+            }
+            return 0;
         }
         else if (parg[0] != '-') {
             break; // unknown option is filename
