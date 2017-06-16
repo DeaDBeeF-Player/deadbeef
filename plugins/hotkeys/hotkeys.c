@@ -1071,7 +1071,7 @@ static DB_plugin_action_t action_add_to_playqueue = {
 };
 
 static DB_plugin_action_t action_toggle_in_playqueue = {
-    .title = "Playback/Add\\/Remove From Playback Queue",
+    .title = "Playback/Toggle In Playback Queue",
     .name = "toggle_in_playback_queue",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback2 = action_toggle_in_playqueue_handler,
