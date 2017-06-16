@@ -244,7 +244,7 @@ pl_cue_get_field_value(const char *p, char cuefields[CUE_MAX_FIELDS][255], char 
     }
     else if (!strncasecmp (p, "TRACK ", 6)) {
         // this requires some post-processing
-        // and the previous value must previous value must not be lost..
+        // and the previous value must not be lost..
         //pl_get_value_from_cue (p + 6, sizeof (cuefields[CUE_FIELD_TRACK]), cuefields[CUE_FIELD_TRACK]);
         return CUE_FIELD_TRACK;
     }
@@ -305,6 +305,13 @@ pl_cue_get_field_value(const char *p, char cuefields[CUE_MAX_FIELDS][255], char 
     else if (!strncasecmp (p, "INDEX 01 ", 9)) {
         pl_get_value_from_cue (p + 9, sizeof (cuefields[CUE_FIELD_INDEX01]), cuefields[CUE_FIELD_INDEX01]);
         return CUE_FIELD_INDEX01;
+    }
+    else if (!strncasecmp (p, "INDEX ", 6)) {
+        // INDEX 02, INDEX 03, INDEX 04, etc...
+        // for practical purposes, store value of INDEX XX in fields[CUE_FIELD_INDEX01]
+        // ( see playlist.c -> plt_process_cue_track()
+        pl_get_value_from_cue (p + 9, sizeof (cuefields[CUE_FIELD_INDEX01]), cuefields[CUE_FIELD_INDEX01]);
+        return CUE_FIELD_INDEX_X;
     }
     else {
         // determine and get extra tags
