@@ -120,6 +120,7 @@ static int no_remove_notify;
 static playlist_t *addfiles_playlist; // current playlist for adding files/folders; set in pl_add_files_begin
 
 static int conf_cue_prefer_embedded = 0;
+static int conf_cue_subindexes_as_tracks = 0;
 
 typedef struct ddb_fileadd_listener_s {
     int id;
@@ -821,7 +822,8 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t st
         trace ("pl_process_cue_track: invalid track (file=%s, title=%s)\n", fname, cuefields[CUE_FIELD_TITLE]);
         return NULL;
     }
-    if (!cuefields[CUE_FIELD_INDEX00][0] && !cuefields[CUE_FIELD_INDEX01][0]) {
+    // index00 is irrelevant
+    if (!cuefields[CUE_FIELD_INDEX01][0]) {
         trace ("pl_process_cue_track: invalid index (file=%s, title=%s, track=%s)\n", fname, cuefields[CUE_FIELD_TITLE], cuefields[CUE_FIELD_TRACK]);
         return NULL;
     }
@@ -917,6 +919,7 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
     }
 
     const char *charset = junk_detect_charset_len (buffer, buffersize);
+    conf_cue_subindexes_as_tracks = conf_get_int ("cue.subindexes_as_tracks", 0);
 
     LOCK;
     playItem_t *ins = after;
@@ -934,12 +937,13 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
     int extra_tag_index = 0;
 
     int have_track = 0;
+    int track_subindexes = 0;
 
     playItem_t *cuetracks[MAX_CUE_TRACKS];
     ncuetracks = 0;
 
     playItem_t *prev = NULL;
-    while (buffersize > 0) {
+    while (buffersize > 0 && ncuetracks < MAX_CUE_TRACKS) {
         const uint8_t *p = buffer;
         // find end of line
         while (p - buffer < buffersize && *p >= 0x20) {
@@ -963,9 +967,51 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
 
         int field = pl_cue_get_field_value(p, cuefields, extra_tags, charset, have_track, &extra_tag_index);
 
-        if (field == CUE_FIELD_TRACK) {
-            if (have_track) {
-                // add previous track
+        if (!conf_cue_subindexes_as_tracks) {
+            /* normal operation */
+            if (field == CUE_FIELD_TRACK) {
+                if (have_track) {
+                    // add previous track
+                    playItem_t *it = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, dec, filetype, samplerate, cuefields, extra_tags, extra_tag_index);
+                    if (it) {
+                        if ((pl_item_get_startsample (it)-pl_item_get_startsample (origin)) >= numsamples || (pl_item_get_endsample (it)-pl_item_get_startsample (origin)) >= numsamples) {
+                            goto error;
+                        }
+                        cuetracks[ncuetracks++] = it;
+                    }
+                }
+                pl_cue_reset_per_track_fields(cuefields);
+                pl_get_value_from_cue (p + 6, sizeof (cuefields[CUE_FIELD_TRACK]), cuefields[CUE_FIELD_TRACK]);
+                have_track = 1;
+            }
+        }
+        else {
+            /* subindexes as tracks */
+            if (field == CUE_FIELD_TRACK) {
+                if (have_track) {
+                    //trace("track %s has %d subindexes\n", cuefields[CUE_FIELD_TRACK], track_subindexes);
+                }
+                track_subindexes = 0;
+                pl_cue_reset_per_track_fields(cuefields);
+                pl_get_value_from_cue (p + 6, sizeof (cuefields[CUE_FIELD_TRACK]), cuefields[CUE_FIELD_TRACK]);
+                have_track = 1;
+            }
+            else if (field == CUE_FIELD_INDEX01 || field == CUE_FIELD_INDEX_X) {
+                char indexnumber[10];
+                if (field != CUE_FIELD_INDEX01) { // INDEX 02, INDEX 03, INDEX 04
+                    // get " 02", " 03", etc
+                    pl_get_value_from_cue (p + 5, sizeof (indexnumber), indexnumber);
+                    if ( strlen(indexnumber) > 3 ) {
+                        indexnumber[0] = '_';
+                        indexnumber[3] = 0;
+                    }
+                    // append _02, _03, etc to track title)
+                    if ( (strlen(cuefields[CUE_FIELD_TITLE]) + 3) < 255) {
+                        strncat(cuefields[CUE_FIELD_TITLE], indexnumber, 3);
+                    }
+                    //trace("title: %s\n", cuefields[CUE_FIELD_TITLE]);
+                }
+                // insert SUBINDEX as TRACK
                 playItem_t *it = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, dec, filetype, samplerate, cuefields, extra_tags, extra_tag_index);
                 if (it) {
                     if ((pl_item_get_startsample (it)-pl_item_get_startsample (origin)) >= numsamples || (pl_item_get_endsample (it)-pl_item_get_startsample (origin)) >= numsamples) {
@@ -973,29 +1019,44 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
                     }
                     cuetracks[ncuetracks++] = it;
                 }
+                if (field != CUE_FIELD_INDEX01 && strlen(indexnumber) == 3) {
+                    // INDEX XX: have to restore the original title
+                    int a = strlen(cuefields[CUE_FIELD_TITLE]);
+                    cuefields[CUE_FIELD_TITLE][a-3] = 0;
+                }
+                track_subindexes++;
             }
-            pl_cue_reset_per_track_fields(cuefields);
-            pl_get_value_from_cue (p + 6, sizeof (cuefields[CUE_FIELD_TRACK]), cuefields[CUE_FIELD_TRACK]);
-            have_track = 1;
         }
-
     } /* end of while loop */
 
-    if (have_track) {
-        // handle last track
-        playItem_t *it = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, dec, filetype, samplerate, cuefields, extra_tags, extra_tag_index);
-        if (it) {
-            pl_item_set_endsample (it, pl_item_get_startsample (origin) + numsamples - 1);
-            if ((pl_item_get_endsample (it)-pl_item_get_startsample (origin)) >= numsamples || (pl_item_get_startsample (it)-pl_item_get_startsample (origin)) >= numsamples) {
+    if (!conf_cue_subindexes_as_tracks) {
+        /* normal operation */
+        if (have_track) {
+            // handle last track
+            playItem_t *last_track = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, dec, filetype, samplerate, cuefields, extra_tags, extra_tag_index);
+            if (last_track) {
+                pl_item_set_endsample (last_track, pl_item_get_startsample (origin) + numsamples - 1);
+                if ((pl_item_get_endsample (last_track)-pl_item_get_startsample (origin)) >= numsamples || (pl_item_get_startsample (last_track)-pl_item_get_startsample (origin)) >= numsamples) {
+                    goto error;
+                }
+                plt_set_item_duration (playlist, last_track, (float)(pl_item_get_endsample (last_track) - pl_item_get_startsample (last_track) + 1) / samplerate);
+                cuetracks[ncuetracks++] = last_track;
+            }
+        }
+        pl_item_ref(cuetracks[ncuetracks-1]);
+    }
+    else {
+        /* subindexes as tracks */
+        if (have_track || track_subindexes > 1) {
+            playItem_t *last_track = cuetracks[ncuetracks-1];
+            pl_item_set_endsample (last_track, pl_item_get_startsample (origin) + numsamples - 1);
+            if ((pl_item_get_endsample (last_track)-pl_item_get_startsample (origin)) >= numsamples || (pl_item_get_startsample (last_track)-pl_item_get_startsample (origin)) >= numsamples) {
                 goto error;
             }
-            plt_set_item_duration (playlist, it, (float)(pl_item_get_endsample (it) - pl_item_get_startsample (it) + 1) / samplerate);
-            cuetracks[ncuetracks++] = it;
+            plt_set_item_duration (playlist, last_track, (float)(pl_item_get_endsample (last_track) - pl_item_get_startsample (last_track) + 1) / samplerate);
+            pl_item_ref(last_track);
         }
     }
-
-    playItem_t *last = cuetracks[ncuetracks-1];
-    pl_item_ref (last);
 
     for (int i = 0; i < ncuetracks; i++) {
         after = plt_insert_item (playlist, after, cuetracks[i]);

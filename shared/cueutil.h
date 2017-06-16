@@ -58,6 +58,8 @@ enum {
     CUE_MAX_FIELDS,
 };
 
+#define CUE_FIELD_INDEX_X 100
+
 const uint8_t *
 skipspaces (const uint8_t *p, const uint8_t *end);
 
