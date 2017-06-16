@@ -261,7 +261,13 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
 
         set_last_played (playing_track);
 
-        playqueue_remove (playing_track);
+        playItem_t *qnext = playqueue_getnext();
+        if (qnext == playing_track) {
+            playqueue_pop ();
+        }
+        if (qnext) {
+            pl_item_unref (qnext);
+        }
 
         trace ("from=%p (%s), to=%p (%s) [2]\n", from, from ? pl_find_meta (from, ":URI") : "null", it, it ? pl_find_meta (it, ":URI") : "null");
         send_trackchanged (from, it);
