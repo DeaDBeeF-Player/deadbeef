@@ -218,8 +218,8 @@ AS_IF([test "${enable_staticlink}" != "no"], [
 
 AS_IF([test "${enable_gtk3}" = "yes"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
-        GTK3_DEPS_CFLAGS="-I../../${LIB}/gtk-3.0.0/include/gtk-3.0 -I../../${LIB}/gtk-3.0.0/include/pango-1.0 -I../../${LIB}/gtk-3.0.0/include/gio-unix-2.0/ -I../../${LIB}/gtk-3.0.0/include/atk-1.0 -I../../${LIB}/gtk-3.0.0/include/cairo -I../../${LIB}/gtk-3.0.0/include/gdk-pixbuf-2.0 -I../../${LIB}/gtk-3.0.0/include/freetype2 -I../../${LIB}/gtk-3.0.0/include/glib-2.0 -I../../${LIB}/gtk-3.0.0/lib/glib-2.0/include"
-        GTK3_DEPS_LIBS="-L${GTK_ROOT_300}/lib -lgtk-3 -lpango-1.0 -lcairo -lgobject-2.0 -lgthread-2.0 -lglib-2.0"
+        GTK3_DEPS_CFLAGS="${GTK3_310_CFLAGS}"
+        GTK3_DEPS_LIBS="${GTK3_310_LIBS}"
         AC_SUBST(GTK3_DEPS_CFLAGS)
         AC_SUBST(GTK3_DEPS_LIBS)
         HAVE_GTK3=yes
@@ -253,8 +253,8 @@ AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes" -o "${enable_sh
 
 AS_IF([test "${enable_gtk2}" = "yes"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
-        GTK2_DEPS_CFLAGS="-I${GTK_ROOT_216}/include/gtk-2.0 -I${GTK_ROOT_216}/lib/gtk-2.0/include -I${GTK_ROOT_216}/include/atk-1.0 -I${GTK_ROOT_216}/include/cairo -I${GTK_ROOT_216}/include/pango-1.0 -I${GTK_ROOT_216}/include -I${GTK_ROOT_216}/include/glib-2.0 -I${GTK_ROOT_216}/lib/glib-2.0/include"
-        GTK2_DEPS_LIBS="-L${GTK_ROOT_216}/lib -lgtk-x11-2.0 -lpango-1.0 -lcairo -lgdk-x11-2.0 -lgdk_pixbuf-2.0 -lgobject-2.0 -lgthread-2.0 -lglib-2.0"
+        GTK2_DEPS_CFLAGS="${GTK2_216_CFLAGS}"
+        GTK2_DEPS_LIBS="${GTK2_216_LIBS}"
         AC_SUBST(GTK2_DEPS_CFLAGS)
         AC_SUBST(GTK2_DEPS_LIBS)
         HAVE_GTK2=yes
@@ -824,8 +824,8 @@ AS_IF([test "${enable_statusnotifier}" != "no"], [
     echo "Checking statusnotifier deps..."
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_STATUSNOTIFIER=yes
-        STATUSNOTIFIER_DEPS_CFLAGS="-I../../${LIB}/gtk-3.0.0/include/gio-unix-2.0/ -I../../${LIB}/gtk-3.0.0/include/gdk-pixbuf-2.0 -I../../${LIB}/gtk-3.0.0/include/glib-2.0 -I../../${LIB}/gtk-3.0.0/lib/glib-2.0/include"
-        STATUSNOTIFIER_DEPS_LIBS="-L${GTK_ROOT_300}/lib -lgio-2.0 -lgdk_pixbuf-2.0 -lgobject-2.0 -lglib-2.0"
+        STATUSNOTIFIER_DEPS_CFLAGS="${GTK3_310_CFLAGS}"
+        STATUSNOTIFIER_DEPS_LIBS="${GTK3_310_LIBS}"
         AC_SUBST(STATUSNOTIFIER_DEPS_CFLAGS)
         AC_SUBST(STATUSNOTIFIER_DEPS_LIBS)
     ], [
