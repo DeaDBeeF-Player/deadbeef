@@ -19,6 +19,7 @@ if [[ "$ARCH" == "i686" ]]; then
 
     export GTK3_310_CFLAGS="-I${GTK_ROOT_310}/usr/include/gtk-3.0 -I${GTK_ROOT_310}/usr/include/at-spi2-atk/2.0 -I${GTK_ROOT_310}/usr/include/at-spi-2.0 -I${GTK_ROOT_310}/usr/include/dbus-1.0 -I${GTK_ROOT_310}/usr/lib/i386-linux-gnu/dbus-1.0/include -I${GTK_ROOT_310}/usr/include/gtk-3.0 -I${GTK_ROOT_310}/usr/include/gio-unix-2.0/ -I${GTK_ROOT_310}/usr/include/mirclient -I${GTK_ROOT_310}/usr/include/mircore -I${GTK_ROOT_310}/usr/include/mircookie -I${GTK_ROOT_310}/usr/include/cairo -I${GTK_ROOT_310}/usr/include/pango-1.0 -I${GTK_ROOT_310}/usr/include/harfbuzz -I${GTK_ROOT_310}/usr/include/pango-1.0 -I${GTK_ROOT_310}/usr/include/atk-1.0 -I${GTK_ROOT_310}/usr/include/cairo -I${GTK_ROOT_310}/usr/include/pixman-1 -I${GTK_ROOT_310}/usr/include/freetype2 -I${GTK_ROOT_310}/usr/include/libpng12 -I${GTK_ROOT_310}/usr/include/gdk-pixbuf-2.0 -I${GTK_ROOT_310}/usr/include/libpng12 -I${GTK_ROOT_310}/usr/include/glib-2.0 -I${GTK_ROOT_310}/usr/lib/i386-linux-gnu/glib-2.0/include"
     export GTK3_310_LIBS="-L${GTK_ROOT_310}/lib -L${GTK_ROOT_310}/usr/lib -L${GTK_ROOT_310}/usr/lib/i386-linux-gnu -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lgthread-2.0 -lglib-2.0"
+
 elif [[ "$ARCH" == "x86_64" ]]; then
     export CFLAGS="-m64 -I$ORIGIN/$STATIC_DEPS/lib-x86-64/include/x86_64-linux-gnu"
     export LDFLAGS="-m64 -L$ORIGIN/$STATIC_DEPS/lib-x86-64/lib -L$ORIGIN/$STATIC_DEPS/lib-x86-64/lib/x86_64-linux-gnu"
@@ -32,7 +33,7 @@ elif [[ "$ARCH" == "x86_64" ]]; then
     export GTK2_216_LIBS="-L${GTK_ROOT_216}/lib -lgtk-x11-2.0 -lpango-1.0 -lcairo -lgdk-x11-2.0 -lgdk_pixbuf-2.0 -lgobject-2.0 -lgthread-2.0 -lglib-2.0"
 
     export GTK3_310_CFLAGS="-I${GTK_ROOT_310}/usr/include/gtk-3.0 -I${GTK_ROOT_310}/usr/include/at-spi2-atk/2.0 -I${GTK_ROOT_310}/usr/include/at-spi-2.0 -I${GTK_ROOT_310}/usr/include/dbus-1.0 -I${GTK_ROOT_310}/usr/lib/x86_64-linux-gnu/dbus-1.0/include -I${GTK_ROOT_310}/usr/include/gtk-3.0 -I${GTK_ROOT_310}/usr/include/gio-unix-2.0/ -I${GTK_ROOT_310}/usr/include/mirclient -I${GTK_ROOT_310}/usr/include/mircore -I${GTK_ROOT_310}/usr/include/mircookie -I${GTK_ROOT_310}/usr/include/cairo -I${GTK_ROOT_310}/usr/include/pango-1.0 -I${GTK_ROOT_310}/usr/include/harfbuzz -I${GTK_ROOT_310}/usr/include/pango-1.0 -I${GTK_ROOT_310}/usr/include/atk-1.0 -I${GTK_ROOT_310}/usr/include/cairo -I${GTK_ROOT_310}/usr/include/pixman-1 -I${GTK_ROOT_310}/usr/include/freetype2 -I${GTK_ROOT_310}/usr/include/libpng12 -I${GTK_ROOT_310}/usr/include/gdk-pixbuf-2.0 -I${GTK_ROOT_310}/usr/include/libpng12 -I${GTK_ROOT_310}/usr/include/glib-2.0 -I${GTK_ROOT_310}/usr/lib/x86_64-linux-gnu/glib-2.0/include"
-    export GTK3_310_LIBS="-L${GTK_ROOT_310}/lib -L${GTK_ROOT_310}/usr/lib -L${GTK_ROOT_310}/usr/lib/i386-linux-gnu -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lgthread-2.0 -lglib-2.0"
+    export GTK3_310_LIBS="-L${GTK_ROOT_310}/lib -L${GTK_ROOT_310}/usr/lib -L${GTK_ROOT_310}/usr/lib/x86_64-linux-gnu -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lgthread-2.0 -lglib-2.0"
 else
     echo unknown arch $ARCH
     exit 1
