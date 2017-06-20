@@ -30,7 +30,6 @@ extern DB_functions_t *deadbeef;
 
 const char *cue_field_map[] = {
     "CATALOG ", "CATALOG",
-    "ISRC ", "ISRC",
     "REM DATE ", "year",
     "REM GENRE ", "genre",
     "REM COMMENT ", "comment",
@@ -197,6 +196,9 @@ pl_cue_set_track_field_values(DB_playItem_t *it, char cuefields[CUE_MAX_FIELDS][
     if (cuefields[CUE_FIELD_TITLE][0]) {
         deadbeef->pl_add_meta (it, "title", cuefields[CUE_FIELD_TITLE]);
     }
+    if (cuefields[CUE_FIELD_ISRC]) {
+        deadbeef->pl_add_meta (it, "ISRC", cuefields[CUE_FIELD_ISRC]);
+    }
     if (cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_GAIN][0]) {
         deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_GAIN]));
     }
@@ -230,6 +232,7 @@ pl_cue_reset_per_track_fields(char cuefields[CUE_MAX_FIELDS][255]) {
     cuefields[CUE_FIELD_REPLAYGAIN_TRACK_PEAK][0] = 0;
     cuefields[CUE_FIELD_PERFORMER][0] = 0;
     cuefields[CUE_FIELD_SONGWRITER][0] = 0;
+    cuefields[CUE_FIELD_ISRC][0] = 0;
 }
 
 // success:
@@ -312,6 +315,10 @@ pl_cue_get_field_value(const char *p, char cuefields[CUE_MAX_FIELDS][255], char 
         // ( see playlist.c -> plt_process_cue_track()
         pl_get_value_from_cue (p + 9, sizeof (cuefields[CUE_FIELD_INDEX01]), cuefields[CUE_FIELD_INDEX01]);
         return CUE_FIELD_INDEX_X;
+    }
+    else if (!strncasecmp (p, "ISRC ", 5)) {
+        pl_get_value_from_cue (p + 5, sizeof (cuefields[CUE_FIELD_ISRC]), cuefields[CUE_FIELD_ISRC]);
+        return CUE_FIELD_ISRC;
     }
     else {
         // determine and get extra tags
