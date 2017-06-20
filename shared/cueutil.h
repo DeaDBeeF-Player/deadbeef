@@ -36,7 +36,7 @@
 #define MAX_CUE_TRACKS 99
 
 extern const char *cue_field_map[];
-#define MAX_EXTRA_TAGS_FROM_CUE 18 //((sizeof(cue_field_map) / sizeof(cue_field_map[0])))
+#define MAX_EXTRA_TAGS_FROM_CUE 16 //((sizeof(cue_field_map) / sizeof(cue_field_map[0])))
 
 enum {
     CUE_FIELD_ALBUM_PERFORMER,
@@ -55,6 +55,7 @@ enum {
     CUE_FIELD_REPLAYGAIN_TRACK_GAIN,
     CUE_FIELD_REPLAYGAIN_TRACK_PEAK,
     CUE_FIELD_TOTALTRACKS,
+    CUE_FIELD_ISRC,
     CUE_MAX_FIELDS,
 };
 
