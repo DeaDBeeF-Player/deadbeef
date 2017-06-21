@@ -1120,9 +1120,9 @@ main (int argc, char *argv[]) {
         return 0;
     }
 
-    pl_init ();
     conf_init ();
     conf_load (); // required by some plugins at startup
+    pl_init ();
 
     if (use_gui_plugin[0]) {
         conf_set_str ("gui_plugin", use_gui_plugin);
