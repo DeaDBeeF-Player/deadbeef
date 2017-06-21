@@ -1650,7 +1650,7 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "HelloXXXXX"), @"The actual output is: %s", buffer);
 }
 
-- (void)test_PadUnicodeStringWith10UnitydeChars_GivesExpectedOutput {
+- (void)test_PadUnicodeStringWith10UnicodeChars_GivesExpectedOutput {
     char *bc = tf_compile("$pad(АБВГД,10,Ё)");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
@@ -1692,7 +1692,7 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "XXXXXHello"), @"The actual output is: %s", buffer);
 }
 
-- (void)test_PadRightUnicodeStringWith10UnitydeChars_GivesExpectedOutput {
+- (void)test_PadRightUnicodeStringWith10UnicodeChars_GivesExpectedOutput {
     char *bc = tf_compile("$pad_right(АБВГД,10,Ё)");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);

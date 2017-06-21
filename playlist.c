@@ -919,7 +919,6 @@ plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playIte
     }
 
     const char *charset = junk_detect_charset_len (buffer, buffersize);
-    conf_cue_subindexes_as_tracks = conf_get_int ("cue.subindexes_as_tracks", 0);
 
     LOCK;
     playItem_t *ins = after;
@@ -4052,6 +4051,7 @@ plt_set_cue_file (playlist_t *plt, const char *filename) {
 void
 pl_configchanged (void) {
     conf_cue_prefer_embedded = conf_get_int ("cue.prefer_embedded", 0);
+    conf_cue_subindexes_as_tracks = conf_get_int ("cue.subindexes_as_tracks", 0);
 }
 
 int64_t
