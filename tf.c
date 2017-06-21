@@ -867,9 +867,10 @@ tf_func_pad_impl (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, cons
         // only accept first character
         nb_pad_char = u8_offset(pad_char_str, 1);
         pad_char_str[nb_pad_char] = 0;
- 
     }
+
     int str_chars = u8_strlen(str);
+
     if (str_chars >= padlen_chars) {
         u8_strnbcpy(out, str, min (str_len, outlen));
         return str_len;
