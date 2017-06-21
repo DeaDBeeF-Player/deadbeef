@@ -1441,6 +1441,9 @@
 		2DA24BA019E7254F00E34920 /* vtls.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA24B8819E7254F00E34920 /* vtls.h */; };
 		2DA24BA319E72A2500E34920 /* vfs_curl.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */; };
 		2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */; };
+		2DA66EC81EDF4EF800E20989 /* StreamerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66EC71EDF4EF800E20989 /* StreamerTest.m */; };
+		2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66EC91EDF4F2C00E20989 /* fakeout.c */; };
+		2DA66ECE1EDF501000E20989 /* fakein.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66ECC1EDF501000E20989 /* fakein.c */; };
 		2DAA4C141AAF88FF00519559 /* TitleFormatting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA4C131AAF88FF00519559 /* TitleFormatting.m */; };
 		2DACBB241A40CEB100CCF401 /* mp3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; };
 		2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */; };
@@ -3827,6 +3830,11 @@
 		2DA24B8719E7254F00E34920 /* vtls.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vtls.c; sourceTree = "<group>"; };
 		2DA24B8819E7254F00E34920 /* vtls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vtls.h; sourceTree = "<group>"; };
 		2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = u8_uc_map.h; sourceTree = "<group>"; };
+		2DA66EC71EDF4EF800E20989 /* StreamerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamerTest.m; sourceTree = "<group>"; };
+		2DA66EC91EDF4F2C00E20989 /* fakeout.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fakeout.c; sourceTree = "<group>"; };
+		2DA66ECA1EDF4F2C00E20989 /* fakeout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fakeout.h; sourceTree = "<group>"; };
+		2DA66ECC1EDF501000E20989 /* fakein.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fakein.c; sourceTree = "<group>"; };
+		2DA66ECD1EDF501000E20989 /* fakein.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fakein.h; sourceTree = "<group>"; };
 		2DA6F89B19A5332D002151EB /* escape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = escape.c; sourceTree = "<group>"; };
 		2DA6F89F19A53334002151EB /* escape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = escape.h; sourceTree = "<group>"; };
 		2DAA4C081AAF88DE00519559 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6660,13 +6668,18 @@
 		2DAA4C091AAF88DE00519559 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				2D7492861CCFFE7700D3A59E /* TestData */,
+				2DAA4C0A1AAF88DE00519559 /* Supporting Files */,
 				2DAA4C131AAF88FF00519559 /* TitleFormatting.m */,
 				2D7F38021B2858AC00692A7B /* Junklib.m */,
 				2DE7A8FA1CA493CE00318A9F /* Cuesheet.m */,
 				2D0F90C11CCFF094003FA197 /* Tagging.m */,
-				2D7492861CCFFE7700D3A59E /* TestData */,
-				2DAA4C0A1AAF88DE00519559 /* Supporting Files */,
 				4D31BECD1E9FB194001D1B89 /* ResamplerTest.m */,
+				2DA66EC71EDF4EF800E20989 /* StreamerTest.m */,
+				2DA66EC91EDF4F2C00E20989 /* fakeout.c */,
+				2DA66ECA1EDF4F2C00E20989 /* fakeout.h */,
+				2DA66ECC1EDF501000E20989 /* fakein.c */,
+				2DA66ECD1EDF501000E20989 /* fakein.h */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -11326,7 +11339,10 @@
 				2DE7A8FB1CA493CE00318A9F /* Cuesheet.m in Sources */,
 				2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */,
 				2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */,
+				2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */,
 				2D0F90C21CCFF094003FA197 /* Tagging.m in Sources */,
+				2DA66ECE1EDF501000E20989 /* fakein.c in Sources */,
+				2DA66EC81EDF4EF800E20989 /* StreamerTest.m in Sources */,
 				2DAA4C141AAF88FF00519559 /* TitleFormatting.m in Sources */,
 				4D31BECE1E9FB194001D1B89 /* ResamplerTest.m in Sources */,
 				2D7F38031B2858AC00692A7B /* Junklib.m in Sources */,

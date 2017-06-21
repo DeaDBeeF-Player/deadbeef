@@ -299,6 +299,15 @@ streamer_get_playing_track (void) {
     return it;
 }
 
+playItem_t *
+streamer_get_buffering_track (void) {
+    playItem_t *it = buffering_track;
+    if (it) {
+        pl_item_ref (it);
+    }
+    return it;
+}
+
 int
 str_get_idx_of (playItem_t *it) {
     pl_lock ();
@@ -1288,6 +1297,28 @@ streamer_seek_real (float seekpos) {
     last_seekpos = -1;
 }
 
+static void
+_update_buffering_state () {
+    int buffering = (streamreader_num_blocks_ready () < 4) && streaming_track;
+
+    if (buffering != streamer_is_buffering) {
+        streamer_is_buffering = buffering;
+
+        // update buffering UI
+        if (!buffering) {
+            streamer_set_buffering_track (NULL);
+        }
+        else if (buffering_track) {
+            send_trackinfochanged (buffering_track);
+        }
+
+        if (playing_track) {
+            send_trackinfochanged (playing_track);
+        }
+    }
+}
+
+
 void
 streamer_thread (void *ctx) {
 #ifdef __linux__
@@ -1354,22 +1385,7 @@ streamer_thread (void *ctx) {
             continue;
         }
 
-        int buffering = (streamreader_num_blocks_ready () < 4) && streaming_track;
-        if (buffering != streamer_is_buffering) {
-            streamer_is_buffering = buffering;
-
-            // update buffering UI
-            if (!buffering) {
-                streamer_set_buffering_track (NULL);
-            }
-            else if (buffering_track) {
-                send_trackinfochanged (buffering_track);
-            }
-
-            if (playing_track) {
-                send_trackinfochanged (playing_track);
-            }
-        }
+        _update_buffering_state ();
 
         streamer_lock ();
         if (!fileinfo) {
@@ -1568,6 +1584,7 @@ process_output_block (char *bytes, int firstblock) {
     }
     if (!block->size) {
         streamreader_next_block ();
+        _update_buffering_state ();
         return 0;
     }
 
@@ -1615,7 +1632,9 @@ process_output_block (char *bytes, int firstblock) {
         playtime = 0;
         avg_bitrate = -1;
         last_seekpos = -1;
-        send_songstarted (playing_track);
+        if (playing_track) {
+            send_songstarted (playing_track);
+        }
     }
 
     if (firstblock) {
@@ -1664,6 +1683,7 @@ process_output_block (char *bytes, int firstblock) {
 
     if (block->pos >= block->size) {
         streamreader_next_block ();
+        _update_buffering_state ();
     }
 
     return sz;
@@ -1680,6 +1700,7 @@ streamer_read (char *bytes, int size) {
     streamer_lock ();
     streamblock_t *block = streamreader_get_curr_block();
     if (!block) {
+        fprintf (stderr, "streamer: streamer_read has starved. The current output plugin might be broken\n");
         // NULL streaming_track means playback stopped,
         // otherwise just a buffer starvation (e.g. after seeking)
         if (!streaming_track) {
@@ -1917,7 +1938,9 @@ _handle_playback_stopped (void) {
         playItem_t *trk = playing_track;
         pl_item_ref (trk);
         send_songfinished (trk);
+        streamer_is_buffering = 0;
         streamer_start_playback (playing_track, NULL);
+        streamer_set_buffering_track (NULL);
         send_trackchanged (trk, NULL);
         pl_item_unref (trk);
     }
@@ -1950,6 +1973,7 @@ play_index (int idx) {
     pl_unlock();
     streamer_reset(1);
     streamer_is_buffering = 1;
+    streamer_set_playing_track(NULL);
     streamer_set_buffering_track (it);
     if (!stream_track(it)) {
         playpos = 0;
@@ -2016,6 +2040,7 @@ play_current (void) {
             }
             pl_unlock ();
             streamer_is_buffering = 1;
+            streamer_set_playing_track(NULL);
             streamer_set_buffering_track (next);
             if (!stream_track (next)) {
                 playpos = 0;
@@ -2045,6 +2070,7 @@ play_next (void) {
         return;
     }
 
+    streamer_set_playing_track(NULL);
     streamer_set_buffering_track (next);
     if (!stream_track(next)) {
         playpos = 0;
@@ -2239,8 +2265,6 @@ streamer_set_playing_track (playItem_t *it) {
     }
 
     playItem_t *prev = playing_track;
-
-    playing_track = NULL;
 
     playing_track = it;
     if (playing_track) {

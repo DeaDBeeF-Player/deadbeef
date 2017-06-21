@@ -37,6 +37,8 @@ typedef struct streamblock_s {
 
     playItem_t *track;
     ddb_waveformat_t fmt;
+
+    int queued;
 } streamblock_t;
 
 void
