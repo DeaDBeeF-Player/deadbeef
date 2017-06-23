@@ -816,10 +816,11 @@ render_treeview_background (DdbListview *listview, cairo_t *cr, int selected, in
     else {
 #if GTK_CHECK_VERSION(3,0,0)
         GtkStyleContext *context = gtk_widget_get_style_context(theme_treeview);
+        gtk_style_context_save (context);
         gtk_style_context_set_state(context, selected ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_NORMAL);
         gtk_style_context_add_region(context, GTK_STYLE_REGION_ROW, even ? GTK_REGION_EVEN : GTK_REGION_ODD);
         gtk_render_background(context, cr, x, y, w, h);
-        gtk_style_context_remove_region(context, GTK_STYLE_REGION_ROW);
+        gtk_style_context_restore (context);
 #else
         GTK_WIDGET_SET_FLAGS(theme_treeview, GTK_HAS_FOCUS);
         gtk_paint_flat_box(gtk_widget_get_style(theme_treeview), gtk_widget_get_window(listview->list), selected ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, clip, theme_treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
