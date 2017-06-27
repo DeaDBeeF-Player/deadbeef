@@ -608,14 +608,14 @@ action_toggle_in_playqueue_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_move_tracks_up_handler (DB_plugin_action_t *act, int ctx){
+action_move_tracks_up_handler (DB_plugin_action_t *act, int ctx) {
     deadbeef->pl_lock ();
 
     ddb_playlist_t *plt = deadbeef->action_get_playlist ();
     DB_playItem_t *it;
 
     int it_count = 0;
-    if (ctx == DDB_ACTION_CTX_SELECTION){
+    if (ctx == DDB_ACTION_CTX_SELECTION) {
         it_count = deadbeef->pl_getselcount ();
         if (it_count) {
             int i=0;
@@ -632,20 +632,20 @@ action_move_tracks_up_handler (DB_plugin_action_t *act, int ctx){
                 it = next;
             }
             DB_playItem_t *drop_before = deadbeef->pl_get_for_idx (indexes[0]-1);
-            if (drop_before){
+            if (drop_before) {
                 deadbeef->plt_move_items (plt, PL_MAIN, plt, drop_before, indexes, it_count);
                 deadbeef->pl_item_unref (drop_before);
             }
         }
     }
-    else if (ctx == DDB_ACTION_CTX_NOWPLAYING){
+    else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
         it = deadbeef->streamer_get_playing_track ();
-        if (it){
+        if (it) {
             it_count = 1;
             uint32_t indexes[1];
             indexes[0] = deadbeef->pl_get_idx_of(it);
             DB_playItem_t *drop_before = deadbeef->pl_get_prev (it,PL_MAIN);
-            if(drop_before){
+            if(drop_before) {
                 deadbeef->plt_move_items (plt, PL_MAIN, plt, drop_before, indexes, it_count);
                 deadbeef->pl_item_unref (drop_before);
             }
@@ -661,14 +661,14 @@ action_move_tracks_up_handler (DB_plugin_action_t *act, int ctx){
 }
 
 int
-action_move_tracks_down_handler (DB_plugin_action_t *act, int ctx){
+action_move_tracks_down_handler (DB_plugin_action_t *act, int ctx) {
     deadbeef->pl_lock ();
 
     ddb_playlist_t *plt = deadbeef->action_get_playlist ();
     DB_playItem_t *it;
 
     int it_count = 0;
-    if (ctx == DDB_ACTION_CTX_SELECTION){
+    if (ctx == DDB_ACTION_CTX_SELECTION) {
         int it_count = deadbeef->pl_getselcount ();
         if (it_count) {
             int i=0;
@@ -690,9 +690,9 @@ action_move_tracks_down_handler (DB_plugin_action_t *act, int ctx){
                 deadbeef->pl_item_unref (drop_before);
         }
     }
-    else if (ctx == DDB_ACTION_CTX_NOWPLAYING){
+    else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
         it = deadbeef->streamer_get_playing_track ();
-        if (it){
+        if (it) {
             it_count = 1;
             uint32_t indexes[1];
             indexes[0] = deadbeef->pl_get_idx_of(it);
