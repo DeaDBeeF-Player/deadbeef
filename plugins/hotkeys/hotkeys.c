@@ -1078,12 +1078,28 @@ static DB_plugin_action_t action_toggle_in_playqueue = {
     .next = &action_add_to_playqueue
 };
 
+static DB_plugin_action_t action_move_tracks_down = {
+    .title = "Move/Move Tracks down",
+    .name = "move_tracks_down",
+    .flags = DB_ACTION_MULTIPLE_TRACKS,
+    .callback2 = action_move_tracks_down_handler,
+    .next = &action_toggle_in_playqueue
+};
+
+static DB_plugin_action_t action_move_tracks_up = {
+    .title = "Move/Move Tracks up",
+    .name = "move_tracks_up",
+    .flags = DB_ACTION_MULTIPLE_TRACKS,
+    .callback2 = action_move_tracks_up_handler,
+    .next = &action_move_tracks_down
+};
+
 static DB_plugin_action_t action_toggle_mute = {
     .title = "Playback/Toggle Mute",
     .name = "toggle_mute",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_toggle_mute_handler,
-    .next = &action_toggle_in_playqueue
+    .next = &action_move_tracks_up
 };
 
 static DB_plugin_action_t action_play = {
