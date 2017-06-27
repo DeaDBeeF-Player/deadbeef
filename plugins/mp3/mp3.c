@@ -833,7 +833,6 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("mp3: seeking to %d(%xH) start offset\n", info->buffer.startoffset, info->buffer.startoffset);
             deadbeef->fseek (info->buffer.file, info->buffer.startoffset, SEEK_SET);
         }
-        plugin.seek_sample (_info, 0);
         trace ("mp3: startsample: %d, endsample: %d, currentsample: %d\n", info->buffer.startsample, info->buffer.endsample, info->buffer.currentsample);
     }
     else {
@@ -886,6 +885,9 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     trace ("mp3 format: bps:%d sr:%d channels:%d\n", _info->fmt.bps, _info->fmt.samplerate, _info->fmt.channels);
 
     info->dec->init (info);
+    if (!info->buffer.file->vfs->is_streaming ()) {
+        plugin.seek_sample (_info, 0);
+    }
     return 0;
 }
 
@@ -1117,6 +1119,7 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
     info->buffer.readsize = 0;
     info->buffer.decode_remaining = 0;
 
+    // force flush the decoder by reinitializing it
     info->dec->free (info);
     info->dec->init (info);
 
