@@ -618,7 +618,7 @@ action_move_tracks_up_handler (DB_plugin_action_t *act, int ctx) {
     if (ctx == DDB_ACTION_CTX_SELECTION) {
         it_count = deadbeef->pl_getselcount ();
         if (it_count) {
-            int i=0;
+            int i = 0;
             uint32_t indexes[it_count];
 
             it = deadbeef->plt_get_first (plt, PL_MAIN);
@@ -643,13 +643,13 @@ action_move_tracks_up_handler (DB_plugin_action_t *act, int ctx) {
         if (it) {
             it_count = 1;
             uint32_t indexes[1];
-            indexes[0] = deadbeef->pl_get_idx_of(it);
+            indexes[0] = deadbeef->pl_get_idx_of (it);
             DB_playItem_t *drop_before = deadbeef->pl_get_prev (it,PL_MAIN);
-            if(drop_before) {
+            if (drop_before) {
                 deadbeef->plt_move_items (plt, PL_MAIN, plt, drop_before, indexes, it_count);
                 deadbeef->pl_item_unref (drop_before);
             }
-            deadbeef->pl_item_unref(it);
+            deadbeef->pl_item_unref (it);
         }
     }
 
@@ -671,7 +671,7 @@ action_move_tracks_down_handler (DB_plugin_action_t *act, int ctx) {
     if (ctx == DDB_ACTION_CTX_SELECTION) {
         int it_count = deadbeef->pl_getselcount ();
         if (it_count) {
-            int i=0;
+            int i = 0;
             uint32_t indexes[it_count];
 
             it = deadbeef->plt_get_first (plt, PL_MAIN);
@@ -686,7 +686,7 @@ action_move_tracks_down_handler (DB_plugin_action_t *act, int ctx) {
             }
             DB_playItem_t *drop_before = deadbeef->pl_get_for_idx (indexes[i-1]+2);
             deadbeef->plt_move_items (plt, PL_MAIN, plt, drop_before, indexes, it_count);
-            if(drop_before)
+            if (drop_before)
                 deadbeef->pl_item_unref (drop_before);
         }
     }
@@ -695,12 +695,12 @@ action_move_tracks_down_handler (DB_plugin_action_t *act, int ctx) {
         if (it) {
             it_count = 1;
             uint32_t indexes[1];
-            indexes[0] = deadbeef->pl_get_idx_of(it);
+            indexes[0] = deadbeef->pl_get_idx_of (it);
             DB_playItem_t *drop_before = deadbeef->pl_get_for_idx (indexes[0]+2);
             deadbeef->plt_move_items (plt, PL_MAIN, plt, drop_before, indexes, it_count);
-            if(drop_before)
+            if (drop_before)
                 deadbeef->pl_item_unref (drop_before);
-            deadbeef->pl_item_unref(it);
+            deadbeef->pl_item_unref (it);
         }
     }
 
