@@ -67,7 +67,7 @@
 #include "tf.h"
 #include "playqueue.h"
 
-#include "shared/cueutil.h"
+#include "cueutil.h"
 
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
@@ -884,7 +884,7 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t st
     pl_replace_meta (it, ":FILETYPE", ftype);
     it->_flags |= DDB_IS_SUBTRACK | DDB_TAG_CUESHEET;
 
-    pl_cue_set_track_field_values((ddb_playItem_t *)it, cuefields, extra_tags, extra_tag_index);
+    pl_cue_set_track_field_values(it, cuefields, extra_tags, extra_tag_index);
 
     *prev = it;
     return it;
@@ -1276,6 +1276,12 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         return NULL;
     }
     eol++;
+
+    // handle cue files
+    if (!strcasecmp (eol, "cue")) {
+        playItem_t *inserted = load_cue_file(playlist, after, fname, pabort, cb, user_data);
+        return inserted;
+    }
 
     int filter_done = 0;
     int file_recognized = 0;

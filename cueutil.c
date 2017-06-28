@@ -21,12 +21,16 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#include <math.h>
+#include "plugins.h"
+#include "common.h"
+#include "playlist.h"
+#include "junklib.h"
+#include "vfs.h"
+
 #include "cueutil.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
-
-extern DB_functions_t *deadbeef;
 
 const char *cue_field_map[] = {
     "CATALOG ", "CATALOG",
@@ -103,7 +107,7 @@ pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out, const char *charset
     }
 
     char recbuf[l*10];
-    int res = deadbeef->junk_recode (str, (int)l, recbuf, (int)(sizeof (recbuf)-1), charset);
+    int res = junk_recode (str, (int)l, recbuf, (int)(sizeof (recbuf)-1), charset);
     if (res >= 0) {
         strcpy (str, recbuf);
     }
@@ -169,54 +173,54 @@ pl_cue_get_total_tracks_and_files(const uint8_t *buffer, const uint8_t *buffer_e
 }
 
 void
-pl_cue_set_track_field_values(DB_playItem_t *it, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], int extra_tag_index) {
+pl_cue_set_track_field_values(playItem_t *it, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], int extra_tag_index) {
     if (cuefields[CUE_FIELD_PERFORMER][0]) {
-        deadbeef->pl_add_meta (it, "artist", cuefields[CUE_FIELD_PERFORMER]);
+        pl_add_meta (it, "artist", cuefields[CUE_FIELD_PERFORMER]);
         if (cuefields[CUE_FIELD_ALBUM_PERFORMER][0] && strcmp (cuefields[CUE_FIELD_ALBUM_PERFORMER], cuefields[CUE_FIELD_PERFORMER])) {
-            deadbeef->pl_add_meta (it, "album artist", cuefields[CUE_FIELD_ALBUM_PERFORMER]);
+            pl_add_meta (it, "album artist", cuefields[CUE_FIELD_ALBUM_PERFORMER]);
         }
     }
     else if (cuefields[CUE_FIELD_ALBUM_PERFORMER][0]) {
-        deadbeef->pl_add_meta (it, "artist", cuefields[CUE_FIELD_ALBUM_PERFORMER]);
+        pl_add_meta (it, "artist", cuefields[CUE_FIELD_ALBUM_PERFORMER]);
     }
     if (cuefields[CUE_FIELD_SONGWRITER][0]) {
-        deadbeef->pl_add_meta (it, "SONGWRITER", cuefields[CUE_FIELD_SONGWRITER]);
+        pl_add_meta (it, "SONGWRITER", cuefields[CUE_FIELD_SONGWRITER]);
     }
     else if (cuefields[CUE_FIELD_SONGWRITER][0]) {
-        deadbeef->pl_add_meta (it, "SONGWRITER", cuefields[CUE_FIELD_SONGWRITER]);
+        pl_add_meta (it, "SONGWRITER", cuefields[CUE_FIELD_SONGWRITER]);
     }
     if (cuefields[CUE_FIELD_ALBUM_TITLE][0]) {
-        deadbeef->pl_add_meta (it, "album", cuefields[CUE_FIELD_ALBUM_TITLE]);
+        pl_add_meta (it, "album", cuefields[CUE_FIELD_ALBUM_TITLE]);
     }
     if (cuefields[CUE_FIELD_TRACK][0]) {
-        deadbeef->pl_add_meta (it, "track", cuefields[CUE_FIELD_TRACK]);
+        pl_add_meta (it, "track", cuefields[CUE_FIELD_TRACK]);
     }
     if (cuefields[CUE_FIELD_TITLE][0]) {
-        deadbeef->pl_add_meta (it, "title", cuefields[CUE_FIELD_TITLE]);
+        pl_add_meta (it, "title", cuefields[CUE_FIELD_TITLE]);
     }
     if (cuefields[CUE_FIELD_ISRC]) {
-        deadbeef->pl_add_meta (it, "ISRC", cuefields[CUE_FIELD_ISRC]);
+        pl_add_meta (it, "ISRC", cuefields[CUE_FIELD_ISRC]);
     }
     if (cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_GAIN][0]) {
-        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_GAIN]));
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_GAIN]));
     }
     if (cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_PEAK][0]) {
-        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_PEAK]));
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_PEAK]));
     }
     if (cuefields[CUE_FIELD_REPLAYGAIN_TRACK_GAIN][0]) {
-        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (cuefields[CUE_FIELD_REPLAYGAIN_TRACK_GAIN]));
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (cuefields[CUE_FIELD_REPLAYGAIN_TRACK_GAIN]));
     }
     if (cuefields[CUE_FIELD_REPLAYGAIN_TRACK_PEAK][0]) {
-        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (cuefields[CUE_FIELD_REPLAYGAIN_TRACK_PEAK]));
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (cuefields[CUE_FIELD_REPLAYGAIN_TRACK_PEAK]));
     }
     // add extra tags to tracks
     for (int y = 0; y < extra_tag_index; y += 2) {
         if (extra_tags[y+1]) {
-            deadbeef->pl_add_meta (it, extra_tags[y], extra_tags[y+1]);
+            pl_add_meta (it, extra_tags[y], extra_tags[y+1]);
         }
     }
     // generated "total tracks" field
-    deadbeef->pl_add_meta(it, "numtracks", cuefields[CUE_FIELD_TOTALTRACKS]);
+    pl_add_meta(it, "numtracks", cuefields[CUE_FIELD_TOTALTRACKS]);
 }
 
 void
@@ -333,4 +337,224 @@ pl_cue_get_field_value(const char *p, char cuefields[CUE_MAX_FIELDS][255], char 
         return -1;
 //      fprintf (stderr, "got unknown line:\n%s\n", p);
     }
+}
+
+//========================================================================
+
+void
+plt_process_cue_track2 (playItem_t *it, const char *fname, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], int extra_tag_index) {
+    playItem_t *prev = it;
+    if (!cuefields[CUE_FIELD_TRACK][0]) {
+        trace ("pl_process_cue_track: invalid track (file=%s, title=%s)\n", fname, cuefields[CUE_FIELD_TITLE]);
+        return;
+    }
+    if (!cuefields[CUE_FIELD_INDEX00][0] && !cuefields[CUE_FIELD_INDEX01][0]) {
+        trace ("pl_process_cue_track: invalid index (file=%s, title=%s, track=%s)\n", fname, cuefields[CUE_FIELD_TITLE], cuefields[CUE_FIELD_TRACK]);
+        //return;
+    }
+#if SKIP_BLANK_CUE_TRACKS
+    if (!cuefields[CUE_FIELD_TITLE][0]) {
+        trace ("pl_process_cue_track: invalid title (file=%s, title=%s, track=%s)\n", fname, cuefields[CUE_FIELD_TITLE], cuefields[CUE_FIELD_TRACK]);
+        return;
+    }
+#endif
+    // fix track number
+    char *p = cuefields[CUE_FIELD_TRACK];
+    while (*p && isdigit (*p)) {
+        p++;
+    }
+    *p = 0;
+
+    if (!cuefields[CUE_FIELD_INDEX01][0]) {
+        trace ("pl_process_cue_track: invalid index01 (pregap=%s, index01=%s)\n", cuefields[CUE_FIELD_PREGAP], cuefields[CUE_FIELD_INDEX01]);
+    }
+
+    uint32_t iflags = pl_get_item_flags(it);
+    iflags |= DDB_TAG_CUESHEET;
+    pl_set_item_flags(it, iflags);
+
+    pl_cue_set_track_field_values(it, cuefields, extra_tags, extra_tag_index);
+}
+
+playItem_t *
+load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+
+    char resolved_fname[PATH_MAX];
+    char *res = realpath (fname, resolved_fname);
+    if (res) {
+        fname = resolved_fname;
+    }
+
+    const char *slash = strrchr (fname, '/');
+    char cue_file_dir[strlen(fname) + 10];
+    memset(cue_file_dir, 0, sizeof(cue_file_dir));
+    if (slash && slash > fname) {
+        strncpy(cue_file_dir, fname, slash - fname);
+    }
+    trace ("enter pl_insert_cue: %s\n", fname);
+    trace ("cue directory: %s \n", cue_file_dir);
+    // skip all empty lines and comments
+    DB_FILE *fp = vfs_fopen (fname);
+    if (!fp) {
+        trace ("failed to open file %s\n", fname);
+        return NULL;
+    }
+
+    int sz = vfs_fgetlength (fp);
+    trace ("loading cue...\n");
+    uint8_t *membuffer = malloc (sz);
+    if (!membuffer) {
+        vfs_fclose (fp);
+        trace ("failed to allocate %d bytes to read the file %s\n", sz, fname);
+        free (membuffer);
+        return NULL;
+    }
+    uint8_t *buffer = membuffer;
+    vfs_fread (buffer, 1, sz, fp);
+    vfs_fclose (fp);
+
+    if (sz >= 3 && buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf) {
+        buffer += 3;
+        sz -= 3;
+    }
+
+    const char *charset = junk_detect_charset (buffer);
+
+    const uint8_t *p = buffer;
+    const uint8_t *end = buffer+sz;
+
+    // determine total tracks/files
+    int ncuetracks, ncuefiles;
+    pl_cue_get_total_tracks_and_files(p, end, &ncuefiles, &ncuetracks);
+    if (!ncuefiles || !ncuetracks) {
+        trace_err("invalid cuesheet (%s)\n", fname);
+        return NULL;
+    }
+
+    if (ncuefiles == 1) {
+        pl_lock();
+        // Only 1 file, get the filename 
+        // - set the internal deadbeef cue_file variable
+        // - insert audio_file to playlist
+        // - expect decoders to call plt_insert_cue_int(...), or plt_process_cue
+        // - unset cue_file
+        char audio_file[255] = "";
+        p = buffer;
+        while (p < end) {
+            p = skipspaces (p, end);
+            if (p >= end) {
+                break;
+            }
+            if (!strncasecmp (p, "FILE ", 5)) {
+                playItem_t *it = NULL;
+                pl_get_qvalue_from_cue (p + 5, sizeof (audio_file), audio_file, charset);
+                plt_set_cue_file(plt, fname);
+                if (audio_file[0] == '/') { //full path
+                    trace ("pl_insert_cue: adding file %s\n", audio_file);
+                    it = plt_insert_file2 (0, plt, after, audio_file, pabort, cb, user_data);
+                }
+                else {
+                    int l = strlen(cue_file_dir) + strlen (audio_file) + 10;
+                    char fullpath[l];
+                    trace ("pl_insert_cue: adding file %s\n", fullpath);
+                    snprintf(fullpath, sizeof(fullpath), "%s/%s", cue_file_dir, audio_file);
+                    it = plt_insert_file2 (0, plt, after, fullpath, pabort, cb, user_data);
+                }
+                plt_set_cue_file(plt, NULL);
+                free(membuffer);
+                pl_unlock();
+                return it;
+            }
+            // move pointer to the next line
+            while (p < end && *p >= 0x20) {
+               p++;
+            }
+        }
+        free(membuffer);
+        pl_unlock();
+        return NULL;
+    } /* end of (ncuefiles == 1) */
+
+    if (ncuefiles > 1 && ncuefiles != ncuetracks) {
+        trace_err("%s: the number of TRACKS must be equal to the number of FILES..\n", fname);
+        return NULL;
+    }
+
+    char cuefields[CUE_MAX_FIELDS][255];
+    memset(cuefields, 0, sizeof(cuefields));
+    snprintf(cuefields[CUE_FIELD_TOTALTRACKS], sizeof(cuefields[CUE_FIELD_TOTALTRACKS]), "%d", ncuetracks);
+
+    char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255];
+    memset (extra_tags, 0, sizeof (extra_tags));
+    int extra_tag_index = 0;
+
+    int have_track = 0;
+
+    playItem_t *prev = NULL;
+    playItem_t *it = NULL;
+
+    p = buffer;
+
+    pl_lock();
+    // __ignore = deadbeef ignores external and internal cue files
+    plt_set_cue_file(plt, "__ignore");
+
+    while (p < end) {
+        p = skipspaces (p, end);
+        if (p >= end) {
+            break;
+        }
+
+        int field = pl_cue_get_field_value(p, cuefields, extra_tags, charset, have_track, &extra_tag_index);
+
+        if (field == CUE_FIELD_FILE) {
+            if (cuefields[CUE_FIELD_FILE][0] == '/') { //full path
+                trace ("pl_insert_cue: adding file %s\n", cuefields[CUE_FIELD_FILE]);
+                it = plt_insert_file2 (0, plt, after, cuefields[CUE_FIELD_FILE], pabort, cb, user_data);
+            }
+            else {
+                int l = strlen(cue_file_dir) + strlen (cuefields[CUE_FIELD_FILE]) + 10;
+                char fullpath[l];
+                snprintf(fullpath, sizeof(fullpath), "%s/%s", cue_file_dir, cuefields[CUE_FIELD_FILE]);
+                trace ("pl_insert_cue: adding file %s\n", fullpath);
+                it = plt_insert_file2 (0, plt, after, fullpath, pabort, cb, user_data);
+            }
+            if (it) {
+                if (prev) {
+                    // add previous track
+                    plt_process_cue_track2 (prev, fname, cuefields, extra_tags, extra_tag_index);
+                }
+                after = it;
+                prev = it;
+            }
+            pl_cue_reset_per_track_fields(cuefields);
+        }
+        else if (field == CUE_FIELD_TRACK) {
+            have_track = 1;
+            pl_get_value_from_cue (p + 6, sizeof (cuefields[CUE_FIELD_TRACK]), cuefields[CUE_FIELD_TRACK]);
+        }
+
+        if (pabort && *pabort) {
+            plt_set_cue_file(plt, NULL);
+            pl_unlock();
+            free (membuffer);
+            return after;
+        }
+        // move pointer to the next line
+        while (p < end && *p >= 0x20) {
+           p++;
+        }
+    } /* end of while loop */
+
+    if (it) {
+        // handle last track
+        plt_process_cue_track2 (it, fname, cuefields, extra_tags, extra_tag_index);
+    }
+
+    plt_set_cue_file(plt, NULL);
+    pl_unlock();
+    trace ("leave pl_insert_cue\n");
+    free (membuffer);
+    return after;
+
 }

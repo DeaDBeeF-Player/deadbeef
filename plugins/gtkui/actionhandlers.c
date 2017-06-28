@@ -65,6 +65,9 @@ file_filter_func (const GtkFileFilterInfo *filter_info, gpointer data) {
         fn++;
     }
 
+    if (!strcasecmp (p, "cue")) {
+        return TRUE;
+    }
 
     DB_decoder_t **codecs = deadbeef->plug_get_decoder_list ();
     for (int i = 0; codecs[i]; i++) {

@@ -30,12 +30,11 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#include "../deadbeef.h"
+#include "deadbeef.h"
 
 #define SKIP_BLANK_CUE_TRACKS 0
 #define MAX_CUE_TRACKS 99
 
-extern const char *cue_field_map[];
 #define MAX_EXTRA_TAGS_FROM_CUE 16 //((sizeof(cue_field_map) / sizeof(cue_field_map[0])))
 
 enum {
@@ -80,12 +79,18 @@ void
 pl_cue_get_total_tracks_and_files(const uint8_t *buffer, const uint8_t *buffersize, int *ncuefiles, int *ncuetracks);
 
 void
-pl_cue_set_track_field_values(DB_playItem_t *it, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], int extra_tag_index);
+pl_cue_set_track_field_values(playItem_t *it, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], int extra_tag_index);
 
 void
 pl_cue_reset_per_track_fields(char cuefields[CUE_MAX_FIELDS][255]);
 
 int
 pl_cue_get_field_value(const char *p, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], const char *charset, int have_track, int *extra_tag_index);
+
+void
+plt_process_cue_track2 (playItem_t *it, const char *fname, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], int extra_tag_index);
+
+playItem_t *
+load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 #endif /* cueutil_h */
