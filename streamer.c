@@ -1700,7 +1700,6 @@ streamer_read (char *bytes, int size) {
     streamer_lock ();
     streamblock_t *block = streamreader_get_curr_block();
     if (!block) {
-        fprintf (stderr, "streamer: streamer_read has starved. The current output plugin might be broken\n");
         // NULL streaming_track means playback stopped,
         // otherwise just a buffer starvation (e.g. after seeking)
         if (!streaming_track) {
@@ -1710,6 +1709,9 @@ streamer_read (char *bytes, int size) {
             playtime = 0;
             avg_bitrate = -1;
             last_seekpos = -1;
+        }
+        else {
+            fprintf (stderr, "streamer: streamer_read has starved. The current output plugin might be broken\n");
         }
         streamer_unlock();
 
