@@ -162,7 +162,7 @@ streamer_unlock (void) {
 }
 
 static void
-play_index (int idx);
+play_index (int idx, int startpaused);
 
 static void
 play_current (void);
@@ -174,7 +174,7 @@ static void
 streamer_set_current_playlist_real (int plt);
 
 static int
-stream_track (playItem_t *track);
+stream_track (playItem_t *track, int startpaused);
 
 static void
 _handle_playback_stopped (void);
@@ -364,7 +364,7 @@ stop_after_album_check (playItem_t *cur, playItem_t *next) {
     }
 
     if (!next) {
-        stream_track (NULL);
+        stream_track (NULL, 0);
         if (conf_get_int ("playlist.stop_after_album_reset", 0)) {
             conf_set_int ("playlist.stop_after_album", 0);
             stop_after_album = 0;
@@ -402,7 +402,7 @@ stop_after_album_check (playItem_t *cur, playItem_t *next) {
         return 0;
     }
 
-    stream_track (NULL);
+    stream_track (NULL, 0);
     if (conf_get_int ("playlist.stop_after_album_reset", 0)) {
         conf_set_int ("playlist.stop_after_album", 0);
         stop_after_album = 0;
@@ -846,7 +846,7 @@ streamer_play_failed (playItem_t *failed_track) {
 }
 
 static int
-stream_track (playItem_t *it) {
+stream_track (playItem_t *it, int startpaused) {
     if (fileinfo) {
         fileinfo->plugin->free (fileinfo);
         fileinfo = NULL;
@@ -879,17 +879,13 @@ stream_track (playItem_t *it) {
     }
     streamer_unlock ();
 
-    // FIXME: there's no way to start stream paused anymore, which means resumed session on pause will start streaming immediately.
-    // This needs fixing
-#if 0
     int paused_stream = 0;
-    if (it && nextsong_pstate == 2) {
+    if (it && startpaused) {
         paused_stream = is_remote_stream (it);
     }
 
-#endif
 
-    if (!it/* || paused_stream*/) { // FIXME
+    if (!it || paused_stream) {
         goto success;
     }
 
@@ -1038,7 +1034,7 @@ stream_track (playItem_t *it) {
                 pl_lock ();
                 pl_replace_meta (it, "!URI", pl_find_meta_raw (i, ":URI"));
                 pl_unlock ();
-                res = stream_track (it);
+                res = stream_track (it, 0);
                 if (!res) {
                     pl_item_unref (i);
                     break;
@@ -1218,13 +1214,13 @@ streamer_get_apx_bitrate (void) {
 }
 
 void
-streamer_set_nextsong (int song) {
+streamer_set_nextsong (int song, int startpaused) {
     if (song == -1) {
         // this is a stop query -- clear the queue
         handler_reset (handler);
     }
     streamer_abort_files ();
-    handler_push (handler, STR_EV_PLAY_TRACK_IDX, 0, song, 0);
+    handler_push (handler, STR_EV_PLAY_TRACK_IDX, 0, song, startpaused);
 }
 
 void
@@ -1245,7 +1241,7 @@ update_stop_after_current (void) {
 static void
 streamer_next (void) {
     playItem_t *next = get_next_track (streaming_track);
-    stream_track (next);
+    stream_track (next, 0);
     if (next) {
         pl_item_unref (next);
     }
@@ -1271,7 +1267,7 @@ streamer_seek_real (float seekpos) {
 
         if (track == playing_track && track != streaming_track) {
             // restart streaming the playing track
-            if (stream_track (playing_track) < 0) {
+            if (stream_track (playing_track, 0) < 0) {
                 streamer_move_to_nextsong (0);
                 return;
             }
@@ -1336,7 +1332,7 @@ streamer_thread (void *ctx) {
         if (!handler_pop (handler, &id, &ctx, &p1, &p2)) {
             switch (id) {
             case STR_EV_PLAY_TRACK_IDX:
-                play_index (p1);
+                play_index (p1, p2);
                 break;
             case STR_EV_PLAY_CURR:
                 play_current ();
@@ -1348,7 +1344,7 @@ streamer_thread (void *ctx) {
                 {
                     playItem_t *next = get_prev_track(last_played);
                     streamer_reset(1);
-                    stream_track(next);
+                    stream_track(next, 0);
                     if (next) {
                         pl_item_unref(next);
                     }
@@ -1359,7 +1355,7 @@ streamer_thread (void *ctx) {
                 {
                     playItem_t *next = get_random_track();
                     streamer_reset(1);
-                    stream_track(next);
+                    stream_track(next, 0);
                 }
                 break;
             case STR_EV_SEEK:
@@ -1615,20 +1611,20 @@ process_output_block (char *bytes, int firstblock) {
             streamer_lock();
             streamer_reset (1);
             _handle_playback_stopped ();
-            stream_track (NULL);
+            stream_track (NULL, 0);
             streamer_unlock();
             return 0;
         }
 
         if (playing_track) {
             send_songfinished (playing_track);
+            playpos = 0;
         }
 
         streamer_start_playback (playing_track, block->track);
 
         // only reset playpos/bitrate if track changing to another,
         // otherwise the track is the first one, and playpos is pre-set
-        playpos = 0;
         playtime = 0;
         avg_bitrate = -1;
         last_seekpos = -1;
@@ -1951,7 +1947,7 @@ _handle_playback_stopped (void) {
 // play track in current playlist by index;
 // negative index will stop playback
 static void
-play_index (int idx) {
+play_index (int idx, int startpaused) {
     DB_output_t *output = plug_get_output ();
     playItem_t *it = NULL;
     playlist_t *plt = NULL;
@@ -1977,10 +1973,17 @@ play_index (int idx) {
     streamer_is_buffering = 1;
     streamer_set_playing_track(NULL);
     streamer_set_buffering_track (it);
-    if (!stream_track(it)) {
+    if (!stream_track(it, startpaused)) {
         playpos = 0;
         playtime = 0;
-        output->play ();
+        if (startpaused) {
+            output->pause ();
+            streamer_start_playback (NULL, it);
+            send_songstarted (playing_track);
+        }
+        else {
+            output->play ();
+        }
     }
     else {
         streamer_set_buffering_track (NULL);
@@ -1997,7 +2000,7 @@ error:
     streamer_reset (1);
 
     _handle_playback_stopped ();
-    stream_track (NULL);
+    stream_track (NULL, 0);
     if (plt) {
         plt_unref (plt);
     }
@@ -2019,7 +2022,7 @@ play_current (void) {
         // restart if network stream
         if (is_remote_stream (playing_track) && pl_get_item_duration (playing_track) < 0) {
             streamer_reset (1);
-            stream_track (playing_track);
+            stream_track (playing_track, 0);
         }
         // unpause currently paused track
         output->unpause ();
@@ -2044,7 +2047,7 @@ play_current (void) {
             streamer_is_buffering = 1;
             streamer_set_playing_track(NULL);
             streamer_set_buffering_track (next);
-            if (!stream_track (next)) {
+            if (!stream_track (next, 0)) {
                 playpos = 0;
                 playtime = 0;
                 output->play ();
@@ -2074,7 +2077,7 @@ play_next (void) {
 
     streamer_set_playing_track(NULL);
     streamer_set_buffering_track (next);
-    if (!stream_track(next)) {
+    if (!stream_track(next, 0)) {
         playpos = 0;
         playtime = 0;
         output->play ();

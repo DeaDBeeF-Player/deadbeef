@@ -52,7 +52,7 @@ static int pulse_terminate;
 static pa_simple *s;
 static pa_sample_spec ss;
 static ddb_waveformat_t requested_fmt;
-static int state;
+static int state = OUTPUT_STATE_STOPPED;
 static uintptr_t mutex;
 static int in_callback;
 
@@ -247,11 +247,6 @@ static int pulse_stop(void)
 static int pulse_pause(void)
 {
     trace ("pulse_pause\n");
-    if (state == OUTPUT_STATE_STOPPED)
-    {
-        return -1;
-    }
-
     pulse_free();
     state = OUTPUT_STATE_PAUSED;
     return 0;

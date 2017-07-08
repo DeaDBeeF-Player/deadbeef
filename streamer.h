@@ -64,7 +64,7 @@ streamer_unlock (void);
 
 // song == -1 means "stop and clear streamer message queue"
 void
-streamer_set_nextsong (int song);
+streamer_set_nextsong (int song, int startpaused);
 
 void
 streamer_set_seek (float pos);

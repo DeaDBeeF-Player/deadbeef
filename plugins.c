@@ -1410,14 +1410,14 @@ plug_reinit_sound (void) {
     }
     if (output->init () < 0) {
         streamer_reset (1);
-        streamer_set_nextsong (-1);
+        streamer_set_nextsong (-1, 0);
         return;
     }
 
     if (state != OUTPUT_STATE_PAUSED && state != OUTPUT_STATE_STOPPED) {
         if (output->play () < 0) {
             trace_err ("failed to reinit sound output\n");
-            streamer_set_nextsong (-1);
+            streamer_set_nextsong (-1, 0);
         }
     }
 }

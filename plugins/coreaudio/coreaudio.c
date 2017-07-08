@@ -218,7 +218,9 @@ ca_stop (void) {
 static int
 ca_pause (void) {
     if (!device_id) {
-        return 0;
+        if (ca_init()) {
+            return -1;
+        }
     }
 
     deadbeef->mutex_lock (mutex);

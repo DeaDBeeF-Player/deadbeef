@@ -540,11 +540,16 @@ palsa_stop (void) {
 
 int
 palsa_pause (void) {
-    if (state == OUTPUT_STATE_STOPPED || !audio) {
-        return -1;
+    int err = 0;
+    LOCK;
+    if (!audio) {
+        err = palsa_init ();
+    }
+    if (err < 0) {
+        UNLOCK;
+        return err;
     }
     // set pause state
-    LOCK;
     palsa_hw_pause (1);
     state = OUTPUT_STATE_PAUSED;
     UNLOCK;
@@ -554,12 +559,22 @@ palsa_pause (void) {
 static int
 palsa_unpause (void) {
     // unset pause state
-    if (state == OUTPUT_STATE_PAUSED) {
-        LOCK;
+    LOCK;
+    if (!audio) {
+        if (palsa_init ()) {
+            UNLOCK;
+            return -1;
+        }
+        if (palsa_play ()) {
+            UNLOCK;
+            return -1;
+        }
+    }
+    else if (state == OUTPUT_STATE_PAUSED) {
         state = OUTPUT_STATE_PLAYING;
         palsa_hw_pause (0);
-        UNLOCK;
     }
+    UNLOCK;
     return 0;
 }
 
