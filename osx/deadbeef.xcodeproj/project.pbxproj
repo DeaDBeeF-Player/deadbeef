@@ -653,6 +653,7 @@
 		2D4459FC1C04F30E00230939 /* vfs_zip.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D4458D91C04F1C000230939 /* vfs_zip.dylib */; };
 		2D448A841D5C5C6500B43F12 /* logger.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D448A821D5C5C6500B43F12 /* logger.c */; };
 		2D448A851D5C5C6500B43F12 /* logger.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D448A831D5C5C6500B43F12 /* logger.h */; };
+		2D4739B21F10ECBF008B95A3 /* psfmain.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D4739B11F10ECBF008B95A3 /* psfmain.c */; };
 		2D49856F1D5CF0E900E4D985 /* Log.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D49856E1D5CF0E900E4D985 /* Log.xib */; };
 		2D49857F1D5CF13F00E4D985 /* LogWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D49857D1D5CF13F00E4D985 /* LogWindowController.h */; };
 		2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D49857E1D5CF13F00E4D985 /* LogWindowController.m */; };
@@ -1326,7 +1327,6 @@
 		2D8DA13E1C9718C10044CC15 /* scsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8DA0E21C9718C10044CC15 /* scsp.h */; };
 		2D8DA13F1C9718C10044CC15 /* scspdsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D8DA0E31C9718C10044CC15 /* scspdsp.c */; };
 		2D8DA1401C9718C10044CC15 /* scspdsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8DA0E41C9718C10044CC15 /* scspdsp.h */; };
-		2D8DA1421C9718C10044CC15 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D8DA0E61C9718C10044CC15 /* main.c */; };
 		2D8DA1431C9718C10044CC15 /* mem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8DA0E91C9718C10044CC15 /* mem.h */; };
 		2D8DA1441C9718C10044CC15 /* osd_cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8DA0EA1C9718C10044CC15 /* osd_cpu.h */; };
 		2D8DA1451C9718C10044CC15 /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D8DA0EB1C9718C10044CC15 /* plugin.c */; };
@@ -3005,6 +3005,7 @@
 		2D4459D21C04F28800230939 /* libzip.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libzip.xcodeproj; path = "osx/deps/libzip-1.0.1/xcode/libzip.xcodeproj"; sourceTree = "<group>"; };
 		2D448A821D5C5C6500B43F12 /* logger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = logger.c; sourceTree = "<group>"; };
 		2D448A831D5C5C6500B43F12 /* logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logger.h; sourceTree = "<group>"; };
+		2D4739B11F10ECBF008B95A3 /* psfmain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = psfmain.c; path = plugins/psf/psfmain.c; sourceTree = "<group>"; };
 		2D49856E1D5CF0E900E4D985 /* Log.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Log.xib; sourceTree = "<group>"; };
 		2D49857D1D5CF13F00E4D985 /* LogWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogWindowController.h; sourceTree = "<group>"; };
 		2D49857E1D5CF13F00E4D985 /* LogWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogWindowController.m; sourceTree = "<group>"; };
@@ -3616,7 +3617,6 @@
 		2D8D96AD1D10904A00A5C7E6 /* CoverManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverManager.m; sourceTree = "<group>"; };
 		2D8D96B01D1091F900A5C7E6 /* noartwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = noartwork.png; path = ../../pixmaps/noartwork.png; sourceTree = "<group>"; };
 		2D8DA0881C9718C10044CC15 /* ao.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ao.h; path = plugins/psf/ao.h; sourceTree = "<group>"; };
-		2D8DA0891C9718C10044CC15 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = plugins/psf/COPYING; sourceTree = "<group>"; };
 		2D8DA08A1C9718C10044CC15 /* corlett.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = corlett.c; path = plugins/psf/corlett.c; sourceTree = "<group>"; };
 		2D8DA08B1C9718C10044CC15 /* corlett.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = corlett.h; path = plugins/psf/corlett.h; sourceTree = "<group>"; };
 		2D8DA08C1C9718C10044CC15 /* cpuintrf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cpuintrf.h; path = plugins/psf/cpuintrf.h; sourceTree = "<group>"; };
@@ -3703,13 +3703,9 @@
 		2D8DA0E31C9718C10044CC15 /* scspdsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scspdsp.c; sourceTree = "<group>"; };
 		2D8DA0E41C9718C10044CC15 /* scspdsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scspdsp.h; sourceTree = "<group>"; };
 		2D8DA0E51C9718C10044CC15 /* scsplfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scsplfo.c; sourceTree = "<group>"; };
-		2D8DA0E61C9718C10044CC15 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = plugins/psf/main.c; sourceTree = "<group>"; };
-		2D8DA0E71C9718C10044CC15 /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Makefile.am; path = plugins/psf/Makefile.am; sourceTree = "<group>"; };
-		2D8DA0E81C9718C10044CC15 /* Makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Makefile.in; path = plugins/psf/Makefile.in; sourceTree = "<group>"; };
 		2D8DA0E91C9718C10044CC15 /* mem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mem.h; path = plugins/psf/mem.h; sourceTree = "<group>"; };
 		2D8DA0EA1C9718C10044CC15 /* osd_cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = osd_cpu.h; path = plugins/psf/osd_cpu.h; sourceTree = "<group>"; };
 		2D8DA0EB1C9718C10044CC15 /* plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = plugin.c; path = plugins/psf/plugin.c; sourceTree = "<group>"; };
-		2D8DA0EC1C9718C10044CC15 /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = readme.txt; path = plugins/psf/readme.txt; sourceTree = "<group>"; };
 		2D8E9C1719ED5C4400EE1408 /* curl_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = curl_config.h; path = osx/curl_config.h; sourceTree = "<group>"; };
 		2D8E9C1919ED5C8200EE1408 /* libpoll.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpoll.dylib; path = usr/lib/libpoll.dylib; sourceTree = SDKROOT; };
 		2D91773F1A0E8966004BC222 /* alac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = alac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7006,7 +7002,6 @@
 			isa = PBXGroup;
 			children = (
 				2D8DA0881C9718C10044CC15 /* ao.h */,
-				2D8DA0891C9718C10044CC15 /* COPYING */,
 				2D8DA08A1C9718C10044CC15 /* corlett.c */,
 				2D8DA08B1C9718C10044CC15 /* corlett.h */,
 				2D8DA08C1C9718C10044CC15 /* cpuintrf.h */,
@@ -7015,13 +7010,10 @@
 				2D8DA09E1C9718C10044CC15 /* eng_psf */,
 				2D8DA0C81C9718C10044CC15 /* eng_qsf */,
 				2D8DA0D11C9718C10044CC15 /* eng_ssf */,
-				2D8DA0E61C9718C10044CC15 /* main.c */,
-				2D8DA0E71C9718C10044CC15 /* Makefile.am */,
-				2D8DA0E81C9718C10044CC15 /* Makefile.in */,
 				2D8DA0E91C9718C10044CC15 /* mem.h */,
 				2D8DA0EA1C9718C10044CC15 /* osd_cpu.h */,
 				2D8DA0EB1C9718C10044CC15 /* plugin.c */,
-				2D8DA0EC1C9718C10044CC15 /* readme.txt */,
+				2D4739B11F10ECBF008B95A3 /* psfmain.c */,
 			);
 			name = psf;
 			sourceTree = "<group>";
@@ -11425,8 +11417,8 @@
 				2D8DA1021C9718C10044CC15 /* eng_psf.c in Sources */,
 				2D8DA1321C9718C10044CC15 /* m68kcpu.c in Sources */,
 				2D8DA1261C9718C10044CC15 /* eng_qsf.c in Sources */,
-				2D8DA1421C9718C10044CC15 /* main.c in Sources */,
 				2D8DA1201C9718C10044CC15 /* spu2.c in Sources */,
+				2D4739B21F10ECBF008B95A3 /* psfmain.c in Sources */,
 				2D8DA1221C9718C10044CC15 /* xa.c in Sources */,
 				2D8DA0EE1C9718C10044CC15 /* corlett.c in Sources */,
 				2D8DA1381C9718C10044CC15 /* m68kopnz.c in Sources */,
