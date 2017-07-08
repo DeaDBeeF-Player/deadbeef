@@ -60,22 +60,6 @@ static int buffer_size;
 
 static void pulse_thread(void *context);
 
-static void pulse_callback(char *stream, int len);
-
-static int pulse_init();
-
-static int pulse_free();
-
-static int pulse_setformat(ddb_waveformat_t *fmt);
-
-static int pulse_play();
-
-static int pulse_stop();
-
-static int pulse_pause();
-
-static int pulse_unpause();
-
 static int pulse_set_spec(ddb_waveformat_t *fmt)
 {
     memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
