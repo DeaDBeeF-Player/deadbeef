@@ -247,7 +247,7 @@ static int pulse_stop(void)
 static int pulse_pause(void)
 {
     trace ("pulse_pause\n");
-    pulse_free();
+    //pulse_free();
     state = OUTPUT_STATE_PAUSED;
     return 0;
 }
@@ -317,6 +317,7 @@ static void pulse_thread(void *context)
         }
     }
 
+    deadbeef->mutex_lock (mutex);
     state = OUTPUT_STATE_STOPPED;
     if (s)
     {
@@ -325,6 +326,7 @@ static void pulse_thread(void *context)
     }
     pulse_terminate = 0;
     pulse_tid = 0;
+    deadbeef->mutex_unlock (mutex);
     trace ("pulse_thread finished\n");
 }
 
