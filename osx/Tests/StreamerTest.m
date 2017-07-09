@@ -25,7 +25,7 @@ static void (*_trackinfochanged_handler)(ddb_event_track_t *ev);
 
 // super oversimplified mainloop
 static void
-mainloop (void) {
+mainloop (void *ctx) {
     for (;;) {
         uint32_t msg;
         uintptr_t ctx;
@@ -43,10 +43,10 @@ mainloop (void) {
                         streamer_play_current_track ();
                         break;
                     case DB_EV_PLAY_NUM:
-                        streamer_set_nextsong (p1);
+                        streamer_set_nextsong (p1, 0);
                         break;
                     case DB_EV_STOP:
-                        streamer_set_nextsong (-1);
+                        streamer_set_nextsong (-1, 0);
                         break;
                     case DB_EV_NEXT:
                         streamer_move_to_nextsong (1);
@@ -187,13 +187,12 @@ wait_until_stopped (void) {
 }
 
 - (void)test_Play2TracksNoLoop_Sends2SongChanged {
-    return;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     // create two test fake tracks
     DB_playItem_t *_sinewave = deadbeef->plt_insert_file2 (0, plt, NULL, "sine.fake", NULL, NULL, NULL);
     DB_playItem_t *_squarewave = deadbeef->plt_insert_file2 (0, plt, _sinewave, "square.fake", NULL, NULL, NULL);
 
-    streamer_set_nextsong (0);
+    streamer_set_nextsong (0, 0);
     streamer_yield ();
 
     wait_until_stopped ();
@@ -228,7 +227,6 @@ static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
 }
 
 - (void)test_SwitchBetweenTracks_DoesNotJumpBackToPrevious {
-    return;
     // for this test, we want "loop single" mode, to make sure first track is playing when we start the 2nd one.
     conf_set_int ("playback.loop", PLAYBACK_MODE_LOOP_SINGLE);
 
@@ -246,14 +244,14 @@ static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
     fakeout_set_realtime (1);
 
 //    printf ("start track A...\n");
-    streamer_set_nextsong (0);
+    streamer_set_nextsong (0, 0);
     streamer_yield ();
 
 //    printf ("consume 1 sec...\n");
     fakeout_consume (44100 * 4 * 2);
 
 //    printf ("start track B...\n");
-    streamer_set_nextsong (1);
+    streamer_set_nextsong (1, 0);
     streamer_yield ();
 
     // we're testing that track A is never "playing" after this point
