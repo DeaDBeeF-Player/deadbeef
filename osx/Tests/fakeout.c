@@ -98,6 +98,7 @@ int
 fakeout_stop (void) {
     state = OUTPUT_STATE_STOPPED;
     deadbeef->streamer_reset (1);
+    fakeout_free();
     return 0;
 }
 
