@@ -1707,7 +1707,9 @@ streamer_read (char *bytes, int size) {
             last_seekpos = -1;
         }
         else {
-            fprintf (stderr, "streamer: streamer_read has starved. The current output plugin might be broken\n");
+            // this message is printed in more cases, than if output is broken, so disable it
+            // but keep for reference -- this is a good place to set breakpoint
+//            fprintf (stderr, "streamer: streamer_read has starved. The current output plugin might be broken\n");
         }
         streamer_unlock();
 
