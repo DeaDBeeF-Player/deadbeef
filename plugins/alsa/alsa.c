@@ -602,16 +602,12 @@ palsa_thread (void *context) {
             int sz = period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels;
             char buf[sz];
             int br = palsa_callback (buf, sz);
-            if (OUTPUT_STATE_PLAYING != state || alsa_terminate) {
+            if (alsa_terminate) {
                 UNLOCK;
                 break;
             }
             if (br < 0) {
-                snd_pcm_drain (audio);
-                state = OUTPUT_STATE_STOPPED;
-                alsa_terminate = 1;
-                UNLOCK;
-                break;
+                br = 0;
             }
 
             if (br != sz) {
