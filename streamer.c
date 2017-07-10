@@ -116,6 +116,12 @@ static DB_FILE *fileinfo_file;
 static DB_fileinfo_t *new_fileinfo;
 static DB_FILE *new_fileinfo_file;
 
+// This counter is incremented by one for each streamer_read call, which returns -1,
+// which means audio should stop, but we need to wait a bit until buffered data has finished playing,
+// so we wait AUDIO_STALL_WAIT periods
+#define AUDIO_STALL_WAIT 20
+static int _audio_stall_count;
+
 // to allow interruption of stall file requests
 static DB_FILE *streamer_file;
 
@@ -1314,7 +1320,6 @@ _update_buffering_state () {
     }
 }
 
-
 void
 streamer_thread (void *ctx) {
 #ifdef __linux__
@@ -1385,7 +1390,15 @@ streamer_thread (void *ctx) {
 
         streamer_lock ();
         if (!fileinfo) {
+            if (_audio_stall_count >= AUDIO_STALL_WAIT) {
+                output->stop ();
+                _handle_playback_stopped();
+                _audio_stall_count = 0;
+                streamer_unlock ();
+                continue;
+            }
             streamer_unlock ();
+            usleep (50000); // nothing is streaming -- about to stop
             continue;
         }
 
@@ -1393,7 +1406,7 @@ streamer_thread (void *ctx) {
         streamer_unlock ();
 
         if (!block) {
-            usleep (50000);
+            usleep (50000); // all blocks are full
             continue;
         }
 
@@ -1713,8 +1726,14 @@ streamer_read (char *bytes, int size) {
         }
         streamer_unlock();
 
-        return streaming_track ? 0 : -1;
+        if (streaming_track) {
+            return 0;
+        }
+        _audio_stall_count++;
+        return -1;
     }
+
+    _audio_stall_count = 0;
 
     // decode enough blocks to fill the output buffer
     int firstblock = 1;

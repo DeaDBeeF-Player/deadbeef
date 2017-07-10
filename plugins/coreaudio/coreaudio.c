@@ -281,13 +281,7 @@ ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const A
     if (state == OUTPUT_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1)) {
         int br = deadbeef->streamer_read (buffer, sz);
         if (br < 0) {
-            state = OUTPUT_STATE_STOPPED;
-
-            deadbeef->mutex_lock (mutex);
-            AudioDeviceStop (device_id, ca_buffer_callback);
-            deadbeef->mutex_unlock (mutex);
-
-            return -1;
+            br = 0;
         }
         if (br != sz) {
             memset (buffer+br, 0, sz-br);
