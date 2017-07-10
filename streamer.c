@@ -1411,22 +1411,40 @@ streamer_thread (void *ctx) {
         }
 
         int res = streamreader_read_block (block, streaming_track, fileinfo);
+        int last = 0;
 
-        if (res < 0) {
-            // error
-            streamer_next ();
-        }
-        else  {
+        if (res >= 0) {
             streamer_lock ();
             streamreader_enqueue_block (block);
-            int last = block->last;
+            last = block->last;
             streamer_unlock ();
+        }
 
-            if (last) {
-                // end of file, next track
+        if (res < 0 || last) {
+            // error or eof
+
+            // handle stop after current
+            int stop = 0;
+            if (block->last) {
+                if (stop_after_current) {
+                    stop = 1;
+                }
+                else {
+                    if (stop_after_album_check (playing_track, block->track)) {
+                        stop = 1;
+                    }
+                }
+            }
+
+            // next track
+            if (!stop) {
                 streamer_next ();
             }
+            else {
+                stream_track(NULL, 0);
+            }
         }
+
     }
 
     // stop streaming song
@@ -1601,33 +1619,10 @@ process_output_block (char *bytes, int firstblock) {
     int sz = block->size - block->pos;
     assert (sz);
 
-    // handle stop after current
-    int stop = 0;
-    if (block->last) {
-        if (stop_after_current) {
-            stop = 1;
-        }
-        else {
-            if (stop_after_album_check (playing_track, block->track)) {
-                stop = 1;
-            }
-        }
-    }
-
     // handle change of track, or start of a new track
     if (block->last || block->track != playing_track || (playing_track && last_played != playing_track)) {
         // next track started
         update_stop_after_current ();
-
-        if (stop) {
-            output->stop ();
-            streamer_lock();
-            streamer_reset (1);
-            _handle_playback_stopped ();
-            stream_track (NULL, 0);
-            streamer_unlock();
-            return 0;
-        }
 
         if (playing_track) {
             send_songfinished (playing_track);
