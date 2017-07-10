@@ -1151,7 +1151,7 @@ m3u_error:
 
         trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), dec->plugin.id);
         new_fileinfo = dec_open (dec, STREAMER_HINTS, it);
-        if (new_fileinfo->file) {
+        if (new_fileinfo && new_fileinfo->file) {
             new_fileinfo_file = new_fileinfo->file;
         }
         if (new_fileinfo && dec->init (new_fileinfo, DB_PLAYITEM (it)) != 0) {
