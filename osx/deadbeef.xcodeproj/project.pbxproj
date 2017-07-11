@@ -1628,6 +1628,7 @@
 		4D32FA6619A646C8000FFDE0 /* flac.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F99719A62F2A000FFDE0 /* flac.c */; };
 		4D32FA6A19A64794000FFDE0 /* libflaclib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; };
 		4D32FA6B19A647B5000FFDE0 /* flac.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA6219A646C0000FFDE0 /* flac.dylib */; };
+		4D3A806D1F14F59800E35BAA /* v2mplug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A806C1F14F59800E35BAA /* v2mplug.cpp */; };
 		4D44E67319B7532700F780FC /* cdumb.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E67219B7532700F780FC /* cdumb.c */; };
 		4D44E68019B7533B00F780FC /* atexit.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E67419B7533B00F780FC /* atexit.c */; };
 		4D44E68119B7533B00F780FC /* duhlen.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E67519B7533B00F780FC /* duhlen.c */; };
@@ -1702,6 +1703,20 @@
 		4D44E70319B7539C00F780FC /* sampbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F819B7539C00F780FC /* sampbuf.c */; };
 		4D44E70419B7539C00F780FC /* silence.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F919B7539C00F780FC /* silence.c */; };
 		4D44E70519B7539C00F780FC /* stdfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6FA19B7539C00F780FC /* stdfile.c */; };
+		4D52B4DF1F14F11A00048305 /* v2m.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D52B4CE1F14F0FD00048305 /* v2m.dylib */; };
+		4D52B4F31F14F29D00048305 /* libv2.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D52B4E41F14F29D00048305 /* libv2.h */; };
+		4D52B4F41F14F29D00048305 /* phonemtab.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D52B4E51F14F29D00048305 /* phonemtab.h */; };
+		4D52B4F51F14F29D00048305 /* sounddef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D52B4E61F14F29D00048305 /* sounddef.h */; };
+		4D52B4F81F14F29D00048305 /* synth.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D52B4E91F14F29D00048305 /* synth.h */; };
+		4D52B4F91F14F29D00048305 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D52B4EA1F14F29D00048305 /* types.h */; };
+		4D52B4FA1F14F29D00048305 /* v2mconv.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D52B4EB1F14F29D00048305 /* v2mconv.h */; };
+		4D52B4FB1F14F29D00048305 /* v2mplayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D52B4EC1F14F29D00048305 /* v2mplayer.h */; };
+		4D52B4FC1F14F29D00048305 /* sounddef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D52B4ED1F14F29D00048305 /* sounddef.cpp */; };
+		4D52B4FF1F14F29D00048305 /* synth_core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D52B4F01F14F29D00048305 /* synth_core.cpp */; };
+		4D52B5001F14F29D00048305 /* v2mconv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D52B4F11F14F29D00048305 /* v2mconv.cpp */; };
+		4D52B5011F14F29D00048305 /* v2mplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D52B4F21F14F29D00048305 /* v2mplayer.cpp */; };
+		4D52B5051F14F34C00048305 /* file.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D52B5031F14F34C00048305 /* file.h */; };
+		4D52B5061F14F34C00048305 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D52B5041F14F34C00048305 /* file.cpp */; };
 		4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D62C0C61E4C9ACA005F9482 /* streamreader.h */; };
 		4D75D39B1EF2838D0060552D /* cue.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D75D3991EF283800060552D /* cue.c */; };
 		4D75D39C1EF2839B0060552D /* cueutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D75D37F1EF282950060552D /* cueutil.c */; };
@@ -2384,6 +2399,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4D44E66D19B7530A00F780FC;
 			remoteInfo = dumb;
+		};
+		4D52B4E01F14F12600048305 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4D52B4CD1F14F0FD00048305;
+			remoteInfo = v2m;
 		};
 		4D75D39E1EF283B80060552D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4092,6 +4114,7 @@
 		4D32FA5019A64577000FFDE0 /* mp3.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = mp3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D32FA5519A645CA000FFDE0 /* mp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp3.c; path = plugins/mp3/mp3.c; sourceTree = "<group>"; };
 		4D32FA6219A646C0000FFDE0 /* flac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = flac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D3A806C1F14F59800E35BAA /* v2mplug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = v2mplug.cpp; path = plugins/v2m/v2mplug.cpp; sourceTree = "<group>"; };
 		4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ddb_dumb.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D44E67219B7532700F780FC /* cdumb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cdumb.c; path = plugins/dumb/cdumb.c; sourceTree = "<group>"; };
 		4D44E67419B7533B00F780FC /* atexit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = atexit.c; path = "plugins/dumb/dumb-kode54/src/core/atexit.c"; sourceTree = "<group>"; };
@@ -4167,6 +4190,20 @@
 		4D44E6F819B7539C00F780FC /* sampbuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sampbuf.c; path = "plugins/dumb/dumb-kode54/src/helpers/sampbuf.c"; sourceTree = "<group>"; };
 		4D44E6F919B7539C00F780FC /* silence.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = silence.c; path = "plugins/dumb/dumb-kode54/src/helpers/silence.c"; sourceTree = "<group>"; };
 		4D44E6FA19B7539C00F780FC /* stdfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stdfile.c; path = "plugins/dumb/dumb-kode54/src/helpers/stdfile.c"; sourceTree = "<group>"; };
+		4D52B4CE1F14F0FD00048305 /* v2m.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = v2m.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D52B4E41F14F29D00048305 /* libv2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libv2.h; path = plugins/v2m/v2/libv2.h; sourceTree = "<group>"; };
+		4D52B4E51F14F29D00048305 /* phonemtab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = phonemtab.h; path = plugins/v2m/v2/phonemtab.h; sourceTree = "<group>"; };
+		4D52B4E61F14F29D00048305 /* sounddef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sounddef.h; path = plugins/v2m/v2/sounddef.h; sourceTree = "<group>"; };
+		4D52B4E91F14F29D00048305 /* synth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synth.h; path = plugins/v2m/v2/synth.h; sourceTree = "<group>"; };
+		4D52B4EA1F14F29D00048305 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = types.h; path = plugins/v2m/v2/types.h; sourceTree = "<group>"; };
+		4D52B4EB1F14F29D00048305 /* v2mconv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = v2mconv.h; path = plugins/v2m/v2/v2mconv.h; sourceTree = "<group>"; };
+		4D52B4EC1F14F29D00048305 /* v2mplayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = v2mplayer.h; path = plugins/v2m/v2/v2mplayer.h; sourceTree = "<group>"; };
+		4D52B4ED1F14F29D00048305 /* sounddef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sounddef.cpp; path = plugins/v2m/v2/sounddef.cpp; sourceTree = "<group>"; };
+		4D52B4F01F14F29D00048305 /* synth_core.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = synth_core.cpp; path = plugins/v2m/v2/synth_core.cpp; sourceTree = "<group>"; };
+		4D52B4F11F14F29D00048305 /* v2mconv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = v2mconv.cpp; path = plugins/v2m/v2/v2mconv.cpp; sourceTree = "<group>"; };
+		4D52B4F21F14F29D00048305 /* v2mplayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = v2mplayer.cpp; path = plugins/v2m/v2/v2mplayer.cpp; sourceTree = "<group>"; };
+		4D52B5031F14F34C00048305 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file.h; path = plugins/v2m/v2/tool/file.h; sourceTree = "<group>"; };
+		4D52B5041F14F34C00048305 /* file.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = file.cpp; path = plugins/v2m/v2/tool/file.cpp; sourceTree = "<group>"; };
 		4D62C0C51E4C9ACA005F9482 /* streamreader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = streamreader.c; sourceTree = "<group>"; };
 		4D62C0C61E4C9ACA005F9482 /* streamreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = streamreader.h; sourceTree = "<group>"; };
 		4D75D37F1EF282950060552D /* cueutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cueutil.c; sourceTree = "<group>"; };
@@ -4793,6 +4830,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4D44E66B19B7530A00F780FC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4D52B4CB1F14F0FD00048305 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -7089,6 +7133,7 @@
 				2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */,
 				2DF16CB01DCB62D9007D7F05 /* supereq.dylib */,
 				4D75D3941EF283580060552D /* cue.dylib */,
+				4D52B4CE1F14F0FD00048305 /* v2m.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -7237,6 +7282,7 @@
 		4D1B514C1837EF7C003E6066 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				4D52B4E21F14F12C00048305 /* v2m */,
 				4D75D3981EF2836F0060552D /* cue */,
 				2DF16CAB1DCB62B6007D7F05 /* supereq */,
 				2D5423B51DCB38BC00ACBDEB /* mono2stereo */,
@@ -7535,6 +7581,43 @@
 				2D0835991D4F4DB600A5C643 /* cdumb.h */,
 			);
 			name = dumb;
+			sourceTree = "<group>";
+		};
+		4D52B4E21F14F12C00048305 /* v2m */ = {
+			isa = PBXGroup;
+			children = (
+				4D3A806C1F14F59800E35BAA /* v2mplug.cpp */,
+				4D52B4E31F14F13000048305 /* v2 */,
+			);
+			name = v2m;
+			sourceTree = "<group>";
+		};
+		4D52B4E31F14F13000048305 /* v2 */ = {
+			isa = PBXGroup;
+			children = (
+				4D52B5021F14F34000048305 /* tool */,
+				4D52B4E41F14F29D00048305 /* libv2.h */,
+				4D52B4E51F14F29D00048305 /* phonemtab.h */,
+				4D52B4E61F14F29D00048305 /* sounddef.h */,
+				4D52B4E91F14F29D00048305 /* synth.h */,
+				4D52B4EA1F14F29D00048305 /* types.h */,
+				4D52B4EB1F14F29D00048305 /* v2mconv.h */,
+				4D52B4EC1F14F29D00048305 /* v2mplayer.h */,
+				4D52B4ED1F14F29D00048305 /* sounddef.cpp */,
+				4D52B4F01F14F29D00048305 /* synth_core.cpp */,
+				4D52B4F11F14F29D00048305 /* v2mconv.cpp */,
+				4D52B4F21F14F29D00048305 /* v2mplayer.cpp */,
+			);
+			name = v2;
+			sourceTree = "<group>";
+		};
+		4D52B5021F14F34000048305 /* tool */ = {
+			isa = PBXGroup;
+			children = (
+				4D52B5031F14F34C00048305 /* file.h */,
+				4D52B5041F14F34C00048305 /* file.cpp */,
+			);
+			name = tool;
 			sourceTree = "<group>";
 		};
 		4D75D3981EF2836F0060552D /* cue */ = {
@@ -8797,6 +8880,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4D52B4CC1F14F0FD00048305 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D52B5051F14F34C00048305 /* file.h in Headers */,
+				4D52B4FB1F14F29D00048305 /* v2mplayer.h in Headers */,
+				4D52B4F51F14F29D00048305 /* sounddef.h in Headers */,
+				4D52B4FA1F14F29D00048305 /* v2mconv.h in Headers */,
+				4D52B4F91F14F29D00048305 /* types.h in Headers */,
+				4D52B4F81F14F29D00048305 /* synth.h in Headers */,
+				4D52B4F31F14F29D00048305 /* libv2.h in Headers */,
+				4D52B4F41F14F29D00048305 /* phonemtab.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4D75D3921EF283580060552D /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -9677,6 +9775,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				4D52B4E11F14F12600048305 /* PBXTargetDependency */,
 				4D75D39F1EF283B80060552D /* PBXTargetDependency */,
 				2DF16CB51DCB62F4007D7F05 /* PBXTargetDependency */,
 				2D1DC09B1DCB3A1000441A08 /* PBXTargetDependency */,
@@ -9827,6 +9926,23 @@
 			productReference = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		4D52B4CD1F14F0FD00048305 /* v2m */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4D52B4DE1F14F0FD00048305 /* Build configuration list for PBXNativeTarget "v2m" */;
+			buildPhases = (
+				4D52B4CA1F14F0FD00048305 /* Sources */,
+				4D52B4CB1F14F0FD00048305 /* Frameworks */,
+				4D52B4CC1F14F0FD00048305 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = v2m;
+			productName = v2m;
+			productReference = 4D52B4CE1F14F0FD00048305 /* v2m.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		4D75D3931EF283580060552D /* cue */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4D75D3951EF283580060552D /* Build configuration list for PBXNativeTarget "cue" */;
@@ -9958,6 +10074,10 @@
 					2DFD50941C9715B800961D19 = {
 						CreatedOnToolsVersion = 6.2;
 					};
+					4D52B4CD1F14F0FD00048305 = {
+						CreatedOnToolsVersion = 8.3.3;
+						ProvisioningStyle = Automatic;
+					};
 					4D75D3931EF283580060552D = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -10038,6 +10158,7 @@
 				2D1DC0951DCB39EC00441A08 /* ddb_mono2stereo */,
 				2DF16CAF1DCB62D9007D7F05 /* supereq */,
 				4D75D3931EF283580060552D /* cue */,
+				4D52B4CD1F14F0FD00048305 /* v2m */,
 			);
 		};
 /* End PBXProject section */
@@ -10248,6 +10369,7 @@
 				2DB10B8119B908630054A6AB /* tab_bottom_fill.png in Resources */,
 				2DF622BB1B335FF100C70C7D /* convpresets in Resources */,
 				2D28F0501C283C4B004A6E7B /* aac.dylib in Resources */,
+				4D52B4DF1F14F11A00048305 /* v2m.dylib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11661,6 +11783,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4D52B4CA1F14F0FD00048305 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D52B5011F14F29D00048305 /* v2mplayer.cpp in Sources */,
+				4D52B4FC1F14F29D00048305 /* sounddef.cpp in Sources */,
+				4D52B5061F14F34C00048305 /* file.cpp in Sources */,
+				4D3A806D1F14F59800E35BAA /* v2mplug.cpp in Sources */,
+				4D52B4FF1F14F29D00048305 /* synth_core.cpp in Sources */,
+				4D52B5001F14F29D00048305 /* v2mconv.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4D75D3901EF283580060552D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -11952,6 +12087,11 @@
 			isa = PBXTargetDependency;
 			target = 4D44E66D19B7530A00F780FC /* ddb_dumb */;
 			targetProxy = 4D44E70619B753AD00F780FC /* PBXContainerItemProxy */;
+		};
+		4D52B4E11F14F12600048305 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4D52B4CD1F14F0FD00048305 /* v2m */;
+			targetProxy = 4D52B4E01F14F12600048305 /* PBXContainerItemProxy */;
 		};
 		4D75D39F1EF283B80060552D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -14770,6 +14910,61 @@
 			};
 			name = Release;
 		};
+		4D52B4CF1F14F0FD00048305 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4D52B4D01F14F0FD00048305 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		4D75D3961EF283580060552D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -15317,6 +15512,15 @@
 			buildConfigurations = (
 				4D44E67019B7530A00F780FC /* Debug */,
 				4D44E67119B7530A00F780FC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4D52B4DE1F14F0FD00048305 /* Build configuration list for PBXNativeTarget "v2m" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4D52B4CF1F14F0FD00048305 /* Debug */,
+				4D52B4D01F14F0FD00048305 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
