@@ -13,18 +13,18 @@ enum V2CTLTYPES { VCTL_SKIP, VCTL_SLIDER, VCTL_MB, };
 
 typedef struct {
 	int		no;
-	char  *name;
-	char	*name2;
+	const char  *name;
+	const char	*name2;
 } V2TOPIC;
 
 typedef struct {
 
 	int   version;
-	char  *name;
+	const char  *name;
 	V2CTLTYPES ctltype;
 	int	  offset, min, max;
 	int   isdest;
-	char  *ctlstr;
+	const char  *ctlstr;
 } V2PARAM;
 
 ////////////////////////////////////////////
