@@ -12,6 +12,7 @@
 #include "v2mplayer.h"
 #include "libv2.h"
 #include <string.h>
+#include <assert.h>
 
 #define GETDELTA(p, w) ((p)[0]+((p)[w]<<8)+((p)[2*w]<<16))
 #define UPDATENT(n, v, p, w) if ((n)<(w)) { (v)=m_state.time+GETDELTA((p), (w)); if ((v)<m_state.nexttime) m_state.nexttime=(v); }
@@ -26,13 +27,15 @@ namespace
 	void UpdateSampleDelta(sU32 nexttime, sU32 time, sU32 usecs, sU32 td2, sU32 *smplrem, sU32 *smpldelta)
   //////////////////////////////////////////////////////////////////////////////////////////////////////
 	{
-        uint64_t t = ((nexttime - time) * (uint64_t) usecs) / td2;
-        uint32_t r = *smplrem;
-        *smplrem += (t >> 32);          // bits 32-63
-        *smpldelta += (t & 0xffffffff); // bits 00-31
-        if (*smplrem < r) {
-            *smpldelta++;
+        uint64_t t = (uint64_t)(nexttime-time)*(uint64_t)usecs;
+
+        *smplrem += t%td2;
+        *smpldelta += t/td2;
+        if (*smplrem >= td2) {
+            (*smpldelta)++;
+            *smplrem -= td2;
         }
+        assert (*smplrem < td2);
 	}
 }
 
