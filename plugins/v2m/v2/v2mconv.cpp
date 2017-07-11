@@ -391,7 +391,7 @@ void ConvertV2M(const unsigned char *inptr, const int inlen, unsigned char **out
 }
 
 
-unsigned long GetV2MPatchData(const unsigned char *inptr, const int inlen, 
+unsigned int GetV2MPatchData(const unsigned char *inptr, const int inlen,
 										 unsigned char **outptr, const unsigned char **patchmap)
 {
 	int outlen;

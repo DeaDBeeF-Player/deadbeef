@@ -3322,7 +3322,7 @@ void __stdcall synthGetMainVU(void *, float *, float *)
   // nyi
 }
 
-long __stdcall synthGetFrameSize(void *pthis)
+int __stdcall synthGetFrameSize(void *pthis)
 {
   return ((V2Synth *)pthis)->instance.SRcFrameSize;
 }

@@ -15,7 +15,7 @@ static unsigned char v2clipboard[v2soundsize];
 static char v2clipname[256];
 
 unsigned char *soundmem;
-long          *patchoffsets;
+int           *patchoffsets;
 unsigned char *editmem;
 char					patchnames [128][32];
 char          globals[v2ngparms];
@@ -34,7 +34,7 @@ char          *speechptrs[64];
 void sdInit()
 {
   soundmem = new unsigned char [smsize+v2soundsize];
-	patchoffsets = (long *)soundmem;
+	patchoffsets = (int *)soundmem;
 	unsigned char *sptr=soundmem+128*4;
 
 //	printf("sound size: %d\n",v2nparms);
@@ -45,7 +45,7 @@ void sdInit()
 	{
 		if (i<128)
 		{
-			patchoffsets[i]=(long)(sptr-soundmem);
+			patchoffsets[i]=(int)(sptr-soundmem);
 			sprintf(s,"Init Patch #%03d",i);
 			strcpy(patchnames[i],s);
 		}

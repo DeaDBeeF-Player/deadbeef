@@ -10,7 +10,7 @@
 //#pragma intrinsic (atan, cos, fabs)
 
 
-#define sFtol(x) (long)(x)
+#define sFtol(x) (int)(x)
 #define sFPow pow
 #define sFExp exp
 

@@ -330,7 +330,7 @@ extern int	 *v2topics2;
 extern int	 *v2gtopics2;
 
 extern unsigned char *soundmem;
-extern long          *patchoffsets;
+extern int           *patchoffsets;
 extern unsigned char *editmem;
 extern char					 patchnames [128][32];
 extern char					 globals[];

@@ -27,19 +27,19 @@ extern "C"
   // parm: pointer you specified with dsInit
   // buf: pointer to interleved stereo float destination buffer (1.0=0dB)
   // len: length of buffer in samples (!)
-  typedef void (__stdcall DSIOCALLBACK)(void *parm, float *buf, unsigned long len);
+  typedef void (__stdcall DSIOCALLBACK)(void *parm, float *buf, unsigned int len);
 
   // initializes DirectSound output.
   // callback: your render callback function
   // parm: a pointer that'll be supplied to the function on every call
   // hWnd: window handle of your application (GetForegroundWindow() works quite well :)
-  unsigned long __stdcall dsInit(DSIOCALLBACK *callback, void *parm, void *hWnd);
+  unsigned int __stdcall dsInit(DSIOCALLBACK *callback, void *parm, void *hWnd);
 
   // shuts down DirectSound output
   void __stdcall dsClose();
 
   // gets sample-exact and latency compensated current play position
-  signed long __stdcall dsGetCurSmp();
+  signed int __stdcall dsGetCurSmp();
 
   // sets player volume (default is 1.0)
   void __stdcall dsSetVolume(float vol);

@@ -29,7 +29,7 @@ typedef char              sChar;
 
 typedef int8_t     sS8;
 typedef int16_t    sS16;
-typedef int64_t     sS32;
+typedef int32_t    sS32;
 typedef int64_t  sS64;
 
 typedef uint8_t     sU8;

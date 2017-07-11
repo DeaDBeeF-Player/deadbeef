@@ -23,7 +23,7 @@ extern "C"
 	extern void __stdcall synthGetChannelVU(void *pthis, int ch, float *l, float *r); // ch: 0..15
 	extern void __stdcall synthGetMainVU(void *pthis, float *l, float *r);
 
-	extern long __stdcall synthGetFrameSize(void *pthis);
+	extern int __stdcall synthGetFrameSize(void *pthis);
 
 #ifdef RONAN
 	extern void __stdcall synthSetLyrics(void *pthis, const char **ptr);
