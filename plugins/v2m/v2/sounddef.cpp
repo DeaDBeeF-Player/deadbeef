@@ -110,7 +110,7 @@ void sdInit()
 	}
 
 #ifdef RONAN	
-	ZeroMemory(speech,64*256);
+	memset(speech,0,64*256);
 	for (int i=0; i<64; i++)
 		speechptrs[i]=speech[i];
 
@@ -213,7 +213,7 @@ static sBool sdLoadBank(file &in)
 
 
 #ifdef RONAN
-	ZeroMemory(speech,64*256);
+	memset(speech,0,64*256);
 #endif
 
 	if (!in.eof())

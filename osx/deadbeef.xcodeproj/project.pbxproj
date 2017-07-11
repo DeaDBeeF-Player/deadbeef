@@ -1724,6 +1724,8 @@
 		4D75D3A01EF283E60060552D /* cue.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D75D3941EF283580060552D /* cue.dylib */; };
 		4D75D3A11EF284070060552D /* cueutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D75D37F1EF282950060552D /* cueutil.c */; };
 		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
+		4DA5D8631F15162F005E8D34 /* ronan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DA5D8611F15162F005E8D34 /* ronan.cpp */; };
+		4DA5D8641F15162F005E8D34 /* ronan.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DA5D8621F15162F005E8D34 /* ronan.h */; };
 		4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */; };
 		4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BE51838EAAB00A98C62 /* Images.xcassets */; };
 		4DA72BED1838EAAB00A98C62 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BE61838EAAB00A98C62 /* main.m */; };
@@ -4211,6 +4213,8 @@
 		4D75D3941EF283580060552D /* cue.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = cue.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D75D3991EF283800060552D /* cue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cue.c; path = plugins/cue/cue.c; sourceTree = "<group>"; };
 		4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnplayTemplate.pdf; path = images/btnplayTemplate.pdf; sourceTree = "<group>"; };
+		4DA5D8611F15162F005E8D34 /* ronan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ronan.cpp; path = plugins/v2m/v2/ronan.cpp; sourceTree = "<group>"; };
+		4DA5D8621F15162F005E8D34 /* ronan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ronan.h; path = plugins/v2m/v2/ronan.h; sourceTree = "<group>"; };
 		4DA72BD91838EAAB00A98C62 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		4DA72BDE1838EAAB00A98C62 /* deadbeef-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "deadbeef-Info.plist"; sourceTree = "<group>"; };
@@ -7598,6 +7602,8 @@
 				4D52B5021F14F34000048305 /* tool */,
 				4D52B4E41F14F29D00048305 /* libv2.h */,
 				4D52B4E51F14F29D00048305 /* phonemtab.h */,
+				4DA5D8611F15162F005E8D34 /* ronan.cpp */,
+				4DA5D8621F15162F005E8D34 /* ronan.h */,
 				4D52B4E61F14F29D00048305 /* sounddef.h */,
 				4D52B4E91F14F29D00048305 /* synth.h */,
 				4D52B4EA1F14F29D00048305 /* types.h */,
@@ -8887,6 +8893,7 @@
 				4D52B5051F14F34C00048305 /* file.h in Headers */,
 				4D52B4FB1F14F29D00048305 /* v2mplayer.h in Headers */,
 				4D52B4F51F14F29D00048305 /* sounddef.h in Headers */,
+				4DA5D8641F15162F005E8D34 /* ronan.h in Headers */,
 				4D52B4FA1F14F29D00048305 /* v2mconv.h in Headers */,
 				4D52B4F91F14F29D00048305 /* types.h in Headers */,
 				4D52B4F81F14F29D00048305 /* synth.h in Headers */,
@@ -11790,6 +11797,7 @@
 				4D52B5011F14F29D00048305 /* v2mplayer.cpp in Sources */,
 				4D52B4FC1F14F29D00048305 /* sounddef.cpp in Sources */,
 				4D52B5061F14F34C00048305 /* file.cpp in Sources */,
+				4DA5D8631F15162F005E8D34 /* ronan.cpp in Sources */,
 				4D3A806D1F14F59800E35BAA /* v2mplug.cpp in Sources */,
 				4D52B4FF1F14F29D00048305 /* synth_core.cpp in Sources */,
 				4D52B5001F14F29D00048305 /* v2mconv.cpp in Sources */,
@@ -14928,10 +14936,7 @@
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_PREFIX = "";
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "RONAN=1";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -14957,6 +14962,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_PREFIX = "";
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "RONAN=1";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
