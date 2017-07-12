@@ -77,6 +77,7 @@ static int
 get_total_samples (V2MPlayer *player) {
     int totalsamples = 0;
     float buffer[2048*2];
+    bool had_nonsilence = false;
     for (;;) {
         player->Render(buffer, 2048);
         bool eof = true;
@@ -84,10 +85,13 @@ get_total_samples (V2MPlayer *player) {
             float v = fabs(buffer[i]);
             if (v > 0.0000001f) {
                 eof = false;
+                if (totalsamples > 44100*2) {
+                    had_nonsilence = true;
+                }
                 break;
             }
         }
-        if (eof) {
+        if (eof && had_nonsilence) {
             break;
         }
         totalsamples += 2048;
