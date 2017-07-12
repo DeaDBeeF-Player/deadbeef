@@ -53,6 +53,7 @@ _load_and_convert (const char *fname, uint8_t **conv, int *convlen) {
 
     if (!_v2m_initialized) {
         sdInit();
+        _v2m_initialized = true;
     }
     ver = CheckV2MVersion(buf, len);
 
@@ -172,6 +173,16 @@ v2m_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     return after;
 }
 
+static int
+v2m_plugin_stop (void) {
+    if (_v2m_initialized) {
+        sdClose ();
+    }
+    sdInit();
+
+    return 0;
+}
+
 static const char *exts[] = { "v2m", NULL };
 
 extern "C" DB_plugin_t *
@@ -223,6 +234,7 @@ v2m_load (DB_functions_t *api) {
     v2m_plugin.seek_sample = v2m_seek_sample;
     v2m_plugin.insert = v2m_insert;
     v2m_plugin.exts = exts;
+    v2m_plugin.plugin.stop = v2m_plugin_stop;
 
     return DB_PLUGIN (&v2m_plugin);
 }
