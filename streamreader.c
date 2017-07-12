@@ -87,12 +87,8 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
     // NOTE: streamer_set_bitrate may be called during decoder->read, and set immediated bitrate of the block
     curr_block_bitrate = -1;
     int rb = fileinfo->plugin->read (fileinfo, block->buf, size);
-    if (rb < 0) {
-        return -1;
-    }
 
-    if (!rb) {
-        // streamer should not be attempting to read beyond end of track, but handle it anyway
+    if (rb < 0) {
         return -1;
     }
 

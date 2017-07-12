@@ -1609,15 +1609,7 @@ process_output_block (char *bytes, int firstblock) {
     if (!block) {
         return -1;
     }
-    if (!block->size) {
-        streamreader_next_block ();
-        _update_buffering_state ();
-        return 0;
-    }
-
     DB_output_t *output = plug_get_output ();
-    int sz = block->size - block->pos;
-    assert (sz);
 
     // handle change of track, or start of a new track
     if (block->last || block->track != playing_track || (playing_track && last_played != playing_track)) {
@@ -1640,6 +1632,15 @@ process_output_block (char *bytes, int firstblock) {
             send_songstarted (playing_track);
         }
     }
+
+    if (!block->size) {
+        streamreader_next_block ();
+        _update_buffering_state ();
+        return 0;
+    }
+
+    int sz = block->size - block->pos;
+    assert (sz);
 
     if (firstblock) {
         // Try to set output format to the input format, before running dsp.
