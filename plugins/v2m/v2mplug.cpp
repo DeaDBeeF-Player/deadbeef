@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <math.h>
 
 DB_functions_t *deadbeef;
 
@@ -18,8 +19,10 @@ static bool _v2m_initialized = false;
 typedef struct {
     DB_fileinfo_t info;
     uint8_t *tune;
-    V2MPlayer *player;
     int len;
+    V2MPlayer *player;
+    int currsample;
+    int totalsamples;
 } v2m_info_t;
 
 DB_fileinfo_t *
@@ -40,9 +43,9 @@ _load_and_convert (const char *fname, uint8_t **conv, int *convlen) {
     }
 
     // probe
-    int len = deadbeef->fgetlength (fp);
+    int len = (int)deadbeef->fgetlength (fp);
     buf = (unsigned char *)malloc (len);
-    int rb = deadbeef->fread (buf, 1, len, fp);
+    int rb = (int)deadbeef->fread (buf, 1, len, fp);
     deadbeef->fclose (fp);
     fp = NULL;
 
@@ -70,6 +73,28 @@ _load_and_convert (const char *fname, uint8_t **conv, int *convlen) {
     return 0;
 }
 
+static int
+get_total_samples (V2MPlayer *player) {
+    int totalsamples = 0;
+    float buffer[2048*2];
+    for (;;) {
+        player->Render(buffer, 2048);
+        bool eof = true;
+        for (int i = 0; i < 2048*2; i++) {
+            float v = fabs(buffer[i]);
+            if (v > 0.0000001f) {
+                eof = false;
+                break;
+            }
+        }
+        if (eof) {
+            break;
+        }
+        totalsamples += 2048;
+    }
+    return totalsamples;
+}
+
 int
 v2m_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     v2m_info_t *info = (v2m_info_t *)_info;
@@ -83,7 +108,9 @@ v2m_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->player = new V2MPlayer;
     info->player->Init();
     info->player->Open(info->tune);
-    info->player->Play();
+
+    float dur = deadbeef->pl_get_item_duration(it);
+    info->totalsamples = dur * 44100;
 
     _info->plugin = &v2m_plugin;
     _info->fmt.channels = 2;
@@ -92,6 +119,8 @@ v2m_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.samplerate = 44100;
     _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     _info->readpos = 0;
+
+    info->player->Play();
 
     return 0;
 }
@@ -118,35 +147,53 @@ v2m_read (DB_fileinfo_t *_info, char *bytes, int size) {
     v2m_info_t *info = (v2m_info_t *)_info;
 
     int samplesize = (_info->fmt.bps>>3) * _info->fmt.channels;
+    int samples = size / samplesize;
 
-    info->player->Render((float*) bytes, size / samplesize);
+    if (info->currsample > info->totalsamples) {
+        return 0;
+    }
 
-    _info->readpos += size / samplesize / (float)_info->fmt.samplerate;
+    info->player->Render((float*) bytes, samples);
+
+    _info->readpos += samples / (float)_info->fmt.samplerate;
+    info->currsample += samples;
 
     return size;
 
 }
 
 int
-v2m_seek (DB_fileinfo_t *_info, float time) {
+v2m_seek_sample (DB_fileinfo_t *_info, int sample) {
     v2m_info_t *info = (v2m_info_t *)_info;
 
-    // FIXME
+    if (sample >= info->totalsamples) {
+        return -1; // seek beyond eof
+    }
 
-    _info->readpos = time;
+    if (sample < info->currsample) {
+        info->player->Play(0);
+        info->currsample = 0;
+        _info->readpos = 0;
+    }
+
+    float buffer[2048 * _info->fmt.channels];
+    while (info->currsample < sample) {
+        int samples = sample - info->currsample;
+        if (samples > 2048) {
+            samples = 2048;
+        }
+        info->player->Render(buffer, samples);
+        info->currsample += samples;
+    }
+    _info->readpos = sample / (float)_info->fmt.samplerate;
 
     return 0;
 }
 
 int
-v2m_seek_sample (DB_fileinfo_t *_info, int sample) {
-    v2m_info_t *info = (v2m_info_t *)_info;
-
-    // FIXME
-
-    //_info->readpos = time;
-
-    return 0;
+v2m_seek (DB_fileinfo_t *_info, float time) {
+    int samples = time * _info->fmt.samplerate;
+    return v2m_seek_sample(_info, samples);
 }
 
 DB_playItem_t *
@@ -155,18 +202,25 @@ v2m_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int convlen = 0;
 
     int res = _load_and_convert (fname, &conv, &convlen);
-    if (res < 0) {
+    if (res < 0 || !conv) {
         return NULL;
     }
 
-    if (conv) {
-        free (conv);
-    }
-
-
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, v2m_plugin.plugin.id);
-    deadbeef->plt_set_item_duration (plt, it, 200); // FIXME
     deadbeef->pl_add_meta (it, ":FILETYPE", "V2M");
+
+    V2MPlayer *player = new V2MPlayer ();
+    player->Init();
+    player->Open(conv, 44100);
+    player->Play();
+
+    int totalsamples = get_total_samples(player);
+
+    player->Close();
+    delete player;
+    free (conv);
+
+    deadbeef->plt_set_item_duration (plt, it, totalsamples / 44100.f);
 
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
@@ -178,7 +232,6 @@ v2m_plugin_stop (void) {
     if (_v2m_initialized) {
         sdClose ();
     }
-    sdInit();
 
     return 0;
 }
