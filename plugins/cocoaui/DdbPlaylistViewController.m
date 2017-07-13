@@ -972,13 +972,28 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
             if (track) {
                 deadbeef->pl_item_ref (track);
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    BOOL draw = NO;
                     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
                     if (plt) {
                         int idx = deadbeef->plt_get_item_idx (plt, track, PL_MAIN);
                         if (idx != -1) {
-                            [listview drawRow:deadbeef->pl_get_idx_of (track)];
+                            draw = YES;
                         }
                         deadbeef->plt_unref (plt);
+                    }
+                    int buffering = !deadbeef->streamer_ok_to_read (-1);
+                    if (buffering) {
+                        DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
+                        if (playing_track) {
+                            if (playing_track == track) {
+                                [self songChanged:listview from:NULL to:playing_track];
+                                draw = NO;
+                            }
+                            deadbeef->pl_item_unref (playing_track);
+                        }
+                    }
+                    if (draw) {
+                        [listview drawRow:deadbeef->pl_get_idx_of (track)];
                     }
                     deadbeef->pl_item_unref (track);
                 });
