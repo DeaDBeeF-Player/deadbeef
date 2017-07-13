@@ -174,7 +174,7 @@ static void
 play_current (void);
 
 static void
-play_next (void);
+play_next (int dir);
 
 static void
 streamer_set_current_playlist_real (int plt);
@@ -1309,13 +1309,10 @@ _update_buffering_state () {
         // update buffering UI
         if (!buffering) {
             streamer_set_buffering_track (NULL);
+            // NOTE: not sending trackinfochanged, it will be sent immediately after track starts playing.
         }
         else if (buffering_track) {
             send_trackinfochanged (buffering_track);
-        }
-
-        if (playing_track) {
-            send_trackinfochanged (playing_track);
         }
     }
 }
@@ -1343,18 +1340,10 @@ streamer_thread (void *ctx) {
                 play_current ();
                 break;
             case STR_EV_NEXT:
-                play_next ();
+                play_next (1);
                 break;
             case STR_EV_PREV:
-                {
-                    playItem_t *next = get_prev_track(last_played);
-                    streamer_reset(1);
-                    stream_track(next, 0);
-                    if (next) {
-                        pl_item_unref(next);
-                    }
-                    output->play ();
-                }
+                play_next (-1);
                 break;
             case STR_EV_RAND:
                 {
@@ -2080,15 +2069,17 @@ play_current (void) {
 }
 
 static void
-play_next (void) {
+play_next (int dir) {
+    streamer_lock ();
     DB_output_t *output = plug_get_output ();
     streamer_reset(1);
-    playItem_t *next = get_next_track(last_played);
+    playItem_t *next = dir > 0 ? get_next_track(last_played) : get_prev_track(last_played);
     streamer_is_buffering = 1;
 
     if (!next) {
         output->stop ();
         _handle_playback_stopped ();
+        streamer_unlock ();
         return;
     }
 
@@ -2103,6 +2094,7 @@ play_next (void) {
         streamer_set_buffering_track (NULL);
     }
     pl_item_unref(next);
+    streamer_unlock ();
 }
 
 void
