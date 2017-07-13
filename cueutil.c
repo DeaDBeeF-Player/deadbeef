@@ -30,8 +30,6 @@
 
 #include "cueutil.h"
 
-//#define trace(fmt,...)
-
 const char *cue_field_map[] = {
     "CATALOG ", "CATALOG",
     "REM DATE ", "year",
@@ -391,17 +389,15 @@ load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, int *pabor
     if (slash && slash > fname) {
         strncpy(cue_file_dir, fname, slash - fname);
     }
-    trace ("enter pl_insert_cue: %s\n", fname);
-    trace ("cue directory: %s \n", cue_file_dir);
-    // skip all empty lines and comments
+    //fprintf (stderr, "enter pl_insert_cue: %s\n", fname);
+    //fprintf (stderr, "cue directory: %s \n", cue_file_dir);
+
     DB_FILE *fp = vfs_fopen (fname);
     if (!fp) {
-        trace ("failed to open file %s\n", fname);
         return NULL;
     }
 
     int sz = vfs_fgetlength (fp);
-    trace ("loading cue...\n");
     uint8_t *membuffer = malloc (sz);
     if (!membuffer) {
         vfs_fclose (fp);
@@ -450,14 +446,14 @@ load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, int *pabor
                 pl_get_qvalue_from_cue (p + 5, sizeof (audio_file), audio_file, charset);
                 plt_set_cue_file(plt, fname);
                 if (audio_file[0] == '/') { //full path
-                    trace ("pl_insert_cue: adding file %s\n", audio_file);
+                    //fprintf (stderr, "pl_insert_cue: adding file %s\n", audio_file);
                     it = plt_insert_file2 (0, plt, after, audio_file, pabort, cb, user_data);
                 }
                 else {
                     int l = strlen(cue_file_dir) + strlen (audio_file) + 10;
                     char fullpath[l];
-                    trace ("pl_insert_cue: adding file %s\n", fullpath);
                     snprintf(fullpath, sizeof(fullpath), "%s/%s", cue_file_dir, audio_file);
+                    //fprintf (stderr, "pl_insert_cue: adding file %s\n", fullpath);
                     it = plt_insert_file2 (0, plt, after, fullpath, pabort, cb, user_data);
                 }
                 plt_set_cue_file(plt, NULL);
@@ -509,14 +505,14 @@ load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, int *pabor
 
         if (field == CUE_FIELD_FILE) {
             if (cuefields[CUE_FIELD_FILE][0] == '/') { //full path
-                trace ("pl_insert_cue: adding file %s\n", cuefields[CUE_FIELD_FILE]);
+                //fprintf (stderr, "pl_insert_cue: adding file %s\n", cuefields[CUE_FIELD_FILE]);
                 it = plt_insert_file2 (0, plt, after, cuefields[CUE_FIELD_FILE], pabort, cb, user_data);
             }
             else {
                 int l = strlen(cue_file_dir) + strlen (cuefields[CUE_FIELD_FILE]) + 10;
                 char fullpath[l];
                 snprintf(fullpath, sizeof(fullpath), "%s/%s", cue_file_dir, cuefields[CUE_FIELD_FILE]);
-                trace ("pl_insert_cue: adding file %s\n", fullpath);
+                //fprintf (stderr, "pl_insert_cue: adding file %s\n", fullpath);
                 it = plt_insert_file2 (0, plt, after, fullpath, pabort, cb, user_data);
             }
             if (it) {
@@ -553,7 +549,7 @@ load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, int *pabor
 
     plt_set_cue_file(plt, NULL);
     pl_unlock();
-    trace ("leave pl_insert_cue\n");
+    //fprintf (stderr, "leave pl_insert_cue\n");
     free (membuffer);
     return after;
 
