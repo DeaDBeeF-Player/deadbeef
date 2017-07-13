@@ -3897,8 +3897,11 @@ int
 plt_add_dir2 (int visibility, playlist_t *plt, const char *dirname, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
     follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
     ignore_archives = conf_get_int ("ignore_archives", 1);
+
     int abort = 0;
     playItem_t *it = plt_insert_dir_int (visibility, plt, NULL, plt->tail[PL_MAIN], dirname, &abort, callback, user_data);
+
+    ignore_archives = 0;
     if (it) {
         // pl_insert_file doesn't hold reference, don't unref here
         return 0;
