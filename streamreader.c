@@ -56,6 +56,7 @@ streamreader_init (void) {
 
 void
 streamreader_free (void) {
+    streamreader_reset ();
     while (blocks) {
         streamblock_t *next = blocks->next;
         free (blocks->buf);
