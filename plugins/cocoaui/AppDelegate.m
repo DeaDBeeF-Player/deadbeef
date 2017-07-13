@@ -721,6 +721,9 @@ main_cleanup_and_quit (void);
     if (ctx.plt) {
         deadbeef->plt_unref (ctx.plt);
     }
+    if (it) {
+        deadbeef->pl_item_unref (it);
+    }
     _dockMenuNPTitle = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:title] action:nil keyEquivalent:@""];
     [_dockMenuNPTitle setEnabled:NO];
     _dockMenuNPArtistAlbum = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:artistAlbum] action:nil keyEquivalent:@""];
