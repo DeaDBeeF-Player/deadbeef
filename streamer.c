@@ -1488,9 +1488,6 @@ streamer_free (void) {
     fclose (out);
 #endif
 
-    if (playing_track) {
-        send_trackchanged (playing_track, NULL);
-    }
     streamer_abort_files ();
     streaming_terminate = 1;
     thread_join (streamer_tid);
