@@ -1622,6 +1622,8 @@ process_output_block (char *bytes, int firstblock) {
         }
     }
 
+    // A block with 0 size is a valid block, and needs to be processed as usual (code above this line).
+    // But here we do early exit, because there's no data to process in it.
     if (!block->size) {
         streamreader_next_block ();
         _update_buffering_state ();
