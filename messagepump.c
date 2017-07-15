@@ -62,6 +62,20 @@ messagepump_init (void) {
 void
 messagepump_free () {
     mutex_lock (mutex);
+
+    // this helps catching any ref leaks caused by messages sent at exit
+    for (message_t *m = mqueue; m; m = m->next) {
+        switch (m->id) {
+        case DB_EV_SONGCHANGED:
+        case DB_EV_SONGSTARTED:
+        case DB_EV_SONGFINISHED:
+        case DB_EV_TRACKINFOCHANGED:
+        case DB_EV_CURSOR_MOVED:
+        case DB_EV_SEEKED:
+            assert (0);
+        }
+    }
+
     messagepump_reset ();
     mutex_unlock (mutex);
     mutex_free (mutex);
