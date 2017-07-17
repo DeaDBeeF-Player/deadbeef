@@ -85,6 +85,13 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
         size -= mod;
     }
 
+    // replaygain settings
+
+    ddb_replaygain_settings_t rg_settings;
+    rg_settings._size = sizeof (rg_settings);
+    replaygain_init_settings (&rg_settings, track);
+    replaygain_set_current (&rg_settings);
+
     // NOTE: streamer_set_bitrate may be called during decoder->read, and set immediated bitrate of the block
     curr_block_bitrate = -1;
     int rb = fileinfo->plugin->read (fileinfo, block->buf, size);
@@ -103,10 +110,6 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
 
     int input_does_rg = fileinfo->plugin->plugin.flags & DDB_PLUGIN_FLAG_REPLAYGAIN;
     if (!input_does_rg) {
-        ddb_replaygain_settings_t rg_settings;
-        rg_settings._size = sizeof (rg_settings);
-        replaygain_init_settings (&rg_settings, track);
-        replaygain_set_current (&rg_settings);
         replaygain_apply (&fileinfo->fmt, block->buf, block->size);
     }
 

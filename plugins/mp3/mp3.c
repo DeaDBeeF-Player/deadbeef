@@ -1046,11 +1046,8 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
         fmt.bps = 32;
         fmt.is_float = 1;
 
-#if 0
-        // RG disabled because block-based streaming doesn't set the RG parameters at read time
         // apply replaygain, before clipping
         deadbeef->replaygain_apply (&fmt, info->want_16bit ? info->conv_buf : bytes, req_size - info->buffer.readsize);
-#endif
 
         // convert to 16 bit, if needed
         if (info->want_16bit) {
@@ -1304,7 +1301,7 @@ static DB_decoder_t plugin = {
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
-//    .plugin.flags = DDB_PLUGIN_FLAG_REPLAYGAIN,
+    .plugin.flags = DDB_PLUGIN_FLAG_REPLAYGAIN,
     .plugin.id = "stdmpg",
     .plugin.name = "MP3 player",
     .plugin.descr = "MPEG v1/2 layer1/2/3 decoder\n\n"
