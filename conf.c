@@ -248,24 +248,27 @@ float
 conf_get_float (const char *key, float def) {
     conf_lock ();
     const char *v = conf_get_str_fast (key, NULL);
+    float res = v ? atof (v) : def;
     conf_unlock ();
-    return v ? atof (v) : def;
+    return res;
 }
 
 int
 conf_get_int (const char *key, int def) {
     conf_lock ();
     const char *v = conf_get_str_fast (key, NULL);
+    int res = v ? atoi (v) : def;
     conf_unlock ();
-    return v ? atoi (v) : def;
+    return res;
 }
 
 int64_t
 conf_get_int64 (const char *key, int64_t def) {
     conf_lock ();
     const char *v = conf_get_str_fast (key, NULL);
+    int64_t res = v ? atoll (v) : def;
     conf_unlock ();
-    return v ? atoll (v) : def;
+    return res;
 }
 
 DB_conf_item_t *
