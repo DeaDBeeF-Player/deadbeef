@@ -1542,7 +1542,6 @@ streamer_free (void) {
 // It's guaranteed that outbuffer contains only samples from the files with same wave format.
 //
 // FIXME: this BSS allocation is temporary, needs to be on heap, and allocated on demand.
-// FIXME: streamer_reset should flush this.
 static char outbuffer[512*1024];
 static int outbuffer_remaining;
 
