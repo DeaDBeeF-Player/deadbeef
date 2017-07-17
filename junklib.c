@@ -1025,11 +1025,12 @@ junk_id3v1_read_int (playItem_t *it, char *buffer, const char **charset) {
         return -1;
     }
 
+    const char *cs = NULL;
+
     if (it) {
         if (memcmp (buffer, "TAG", 3)) {
             return -1; // no tag
         }
-        const char *cs = NULL;
         charset = &cs;
         int res = junk_id3v1_read_int (NULL, buffer, charset);
         if (res) {
