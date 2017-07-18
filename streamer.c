@@ -83,10 +83,6 @@ static int conf_streamer_nosleep = 0;
 
 static int streaming_terminate;
 
-// buffer up to 3 seconds at 44100Hz stereo
-#define STREAM_BUFFER_SIZE 0x80000 // slightly more than 3 seconds of 44100 stereo
-
-
 static uintptr_t mutex;
 static uintptr_t wdl_mutex; // wavedata listener
 
