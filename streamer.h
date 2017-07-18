@@ -168,6 +168,10 @@ vis_spectrum_unlisten (void *ctx);
 void
 streamer_set_playing_track (playItem_t *it);
 
+// sets a callback function, which would be called before applying software volume
+void
+streamer_set_volume_modifier (float (*modifier) (float delta_time));
+
 void
 streamer_set_buffering_track (playItem_t *it);
 

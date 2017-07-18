@@ -53,9 +53,10 @@
 #include "streamreader.h"
 #include "dsp.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#ifdef trace
 #undef trace
-#define trace(fmt,...)
+#define trace(...)
+#endif
 
 //#define WRITE_DUMP 1
 //#define DETECT_PL_LOCK_RC 1
@@ -125,7 +126,10 @@ static int _audio_stall_count;
 // to allow interruption of stall file requests
 static DB_FILE *streamer_file;
 
-// for vis plugins
+#if defined(HAVE_XGUI) || defined(ANDROID)
+#include "equalizer.h"
+#endif
+
 static float freq_data[DDB_FREQ_BANDS * DDB_FREQ_MAX_CHANNELS];
 static float audio_data[DDB_FREQ_BANDS * 2 * DDB_FREQ_MAX_CHANNELS];
 static int audio_data_fill = 0;
@@ -514,7 +518,6 @@ get_next_track (playItem_t *curr) {
             return it;
         }
         else {
-            trace ("pl_next_song: reason=%d, loop=%d\n", reason, pl_loop_mode);
             // find minimal notplayed above current
             int rating = curr->shufflerating;
             playItem_t *pmin = NULL; // notplayed minimum
@@ -983,10 +986,14 @@ stream_track (playItem_t *it, int startpaused) {
                 trace ("failed to download %d bytes (got %d bytes)\n", size, rd);
                 goto m3u_error;
             }
+#ifndef ANDROID
             const char *tmpdir = getenv ("TMPDIR");
             if (!tmpdir) {
                 tmpdir = "/tmp";
             }
+#else
+            const char *tmpdir = dbconfdir;
+#endif
             snprintf (tempfile, sizeof (tempfile), "%s/ddbm3uXXXXXX", tmpdir);
 
             fd = mkstemp (tempfile);
@@ -1319,7 +1326,7 @@ _update_buffering_state () {
 
 void
 streamer_thread (void *ctx) {
-#ifdef __linux__
+#if defined(__linux__) && !defined(ANDROID)
     prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
 #endif
 
@@ -1645,6 +1652,34 @@ process_output_block (char *bytes, int firstblock) {
     char *dspbytes = NULL;
     int dspsize = 0;
     float dspratio = 1;
+
+#if defined(ANDROID) || defined(HAVE_XGUI)
+    // android EQ and resampling require 16 bit, so convert here if needed
+    int16_t temp_audio_data[sz / (block->fmt.bps/8*block->fmt.channels) * 2];
+    char *input = block->buf + block->pos;
+    block->pos += sz;
+    if (output->fmt.bps != 16) {
+        ddb_waveformat_t out_fmt = {
+            .bps = 16,
+            .channels = block->fmt.channels,
+            .samplerate = block->fmt.samplerate,
+            .channelmask = block->fmt.channelmask,
+            .is_float = 0,
+            .is_bigendian = 0
+        };
+        pcm_convert (&block->fmt, (char *)input, &out_fmt, (char *)temp_audio_data, sz);
+        input = (char *)temp_audio_data;
+        memcpy (&datafmt, &out_fmt, sizeof (ddb_waveformat_t));
+        sz = sz / block->fmt.bps * out_fmt.bps;
+    }
+
+    extern void android_eq_apply (char *dspbytes, int dspsize);
+    android_eq_apply (input, sz);
+
+    dsp_apply_simple_downsampler(datafmt.samplerate, datafmt.channels, input, sz, output->fmt.samplerate, &dspbytes, &dspsize);
+    datafmt.samplerate = output->fmt.samplerate;
+    sz = dspsize;
+#else
     int dsp_res = dsp_apply (&block->fmt, block->buf + block->pos, sz,
                              &datafmt, &dspbytes, &dspsize, &dspratio);
     if (dsp_res) {
@@ -1656,6 +1691,7 @@ process_output_block (char *bytes, int firstblock) {
         dspbytes = block->buf+block->pos;
         block->pos += sz;
     }
+#endif
 
     // Set the final post-dsp output format, if differs.
     // DSP plugins may change output format at any time.
@@ -1679,6 +1715,92 @@ process_output_block (char *bytes, int firstblock) {
     }
 
     return sz;
+}
+
+
+static float (*streamer_volume_modifier) (float delta_time);
+
+void
+streamer_set_volume_modifier (float (*modifier) (float delta_time)) {
+    streamer_volume_modifier = modifier;
+}
+
+static void
+streamer_apply_soft_volume (char *bytes, int sz) {
+    DB_output_t *output = plug_get_output ();
+
+    float mod = 1.f;
+
+    if (streamer_volume_modifier) {
+        float dt = sz * (output->fmt.bps >> 3) / output->fmt.channels / (float)output->fmt.samplerate;
+        mod = streamer_volume_modifier (dt);
+    }
+
+    float vol = volume_get_amp () * mod;
+
+    if (!output->has_volume) {
+        int mult = 1-audio_is_mute ();
+        char *stream = bytes;
+        int bytesread = sz;
+        if (output->fmt.bps == 16) {
+            mult *= 1000;
+            int16_t ivolume = vol * mult;
+            if (ivolume != 1000) {
+                int half = bytesread/2;
+                for (int i = 0; i < half; i++) {
+                    int16_t sample = *((int16_t*)stream);
+                    *((int16_t*)stream) = (int16_t)(((int32_t)sample) * ivolume / 1000);
+                    stream += 2;
+                }
+            }
+        }
+        else if (output->fmt.bps == 8) {
+            mult *= 255;
+            int16_t ivolume = vol * mult;
+            if (ivolume != 255) {
+                for (int i = 0; i < bytesread; i++) {
+                    *stream = (int8_t)(((int32_t)(*stream)) * ivolume / 1000);
+                    stream++;
+                }
+            }
+        }
+        else if (output->fmt.bps == 24) {
+            mult *= 1000;
+            int16_t ivolume = vol * mult;
+            if (ivolume != 1000) {
+                int third = bytesread/3;
+                for (int i = 0; i < third; i++) {
+                    int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1]<<8) | (stream[2]<<16);
+                    int32_t newsample = (int32_t)((int64_t)sample * ivolume / 1000);
+                    stream[0] = (newsample&0x0000ff);
+                    stream[1] = (newsample&0x00ff00)>>8;
+                    stream[2] = (newsample&0xff0000)>>16;
+                    stream += 3;
+                }
+            }
+        }
+        else if (output->fmt.bps == 32 && !output->fmt.is_float) {
+            mult *= 1000;
+            int16_t ivolume = vol * mult;
+            if (ivolume != 1000) {
+                for (int i = 0; i < bytesread/4; i++) {
+                    int32_t sample = *((int32_t*)stream);
+                    int32_t newsample = (int32_t)((int64_t)sample * ivolume / 1000);
+                    *((int32_t*)stream) = newsample;
+                    stream += 4;
+                }
+            }
+        }
+        else if (output->fmt.bps == 32 && output->fmt.is_float) {
+            float fvolume = vol * (1-audio_is_mute ());
+            if (fvolume != 1.f) {
+                for (int i = 0; i < bytesread/4; i++) {
+                    *((float*)stream) = (*((float*)stream)) * fvolume;
+                    stream += 4;
+                }
+            }
+        }
+    }
 }
 
 int
@@ -1768,6 +1890,8 @@ streamer_read (char *bytes, int size) {
     printf ("streamer_read took %d ms\n", ms);
 #endif
 
+#ifndef ANDROID
+
     if (waveform_listeners || spectrum_listeners) {
         int in_frame_size = (output->fmt.bps >> 3) * output->fmt.channels;
         int in_frames = sz / in_frame_size;
@@ -1828,70 +1952,9 @@ streamer_read (char *bytes, int size) {
             } while (remaining > 0);
         }
     }
+#endif
 
-    if (!output->has_volume) {
-        int mult = 1-audio_is_mute ();
-        char *stream = bytes;
-        int bytesread = sz;
-        if (output->fmt.bps == 16) {
-            mult *= 1000;
-            int16_t ivolume = volume_get_amp () * mult;
-            if (ivolume != 1000) {
-                int half = bytesread/2;
-                for (int i = 0; i < half; i++) {
-                    int16_t sample = *((int16_t*)stream);
-                    *((int16_t*)stream) = (int16_t)(((int32_t)sample) * ivolume / 1000);
-                    stream += 2;
-                }
-            }
-        }
-        else if (output->fmt.bps == 8) {
-            mult *= 255;
-            int16_t ivolume = volume_get_amp () * mult;
-            if (ivolume != 255) {
-                for (int i = 0; i < bytesread; i++) {
-                    *stream = (int8_t)(((int32_t)(*stream)) * ivolume / 1000);
-                    stream++;
-                }
-            }
-        }
-        else if (output->fmt.bps == 24) {
-            mult *= 1000;
-            int16_t ivolume = volume_get_amp () * mult;
-            if (ivolume != 1000) {
-                int third = bytesread/3;
-                for (int i = 0; i < third; i++) {
-                    int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1]<<8) | (stream[2]<<16);
-                    int32_t newsample = (int32_t)((int64_t)sample * ivolume / 1000);
-                    stream[0] = (newsample&0x0000ff);
-                    stream[1] = (newsample&0x00ff00)>>8;
-                    stream[2] = (newsample&0xff0000)>>16;
-                    stream += 3;
-                }
-            }
-        }
-        else if (output->fmt.bps == 32 && !output->fmt.is_float) {
-            mult *= 1000;
-            int16_t ivolume = volume_get_amp () * mult;
-            if (ivolume != 1000) {
-                for (int i = 0; i < bytesread/4; i++) {
-                    int32_t sample = *((int32_t*)stream);
-                    int32_t newsample = (int32_t)((int64_t)sample * ivolume / 1000);
-                    *((int32_t*)stream) = newsample;
-                    stream += 4;
-                }
-            }
-        }
-        else if (output->fmt.bps == 32 && output->fmt.is_float) {
-            float fvolume = volume_get_amp () * (1-audio_is_mute ());
-            if (fvolume != 1.f) {
-                for (int i = 0; i < bytesread/4; i++) {
-                    *((float*)stream) = (*((float*)stream)) * fvolume;
-                    stream += 4;
-                }
-            }
-        }
-    }
+    streamer_apply_soft_volume (bytes, sz);
 
     return sz;
 }
