@@ -46,11 +46,25 @@ static uint64_t _mutex;
 static char *init_buffer;
 static char *init_buffer_ptr;
 
+
+#ifdef ANDROID
+#include <android/log.h>
+static void
+console_write (const char *text) {
+    __android_log_write(ANDROID_LOG_INFO,ANDROID_LOGGER_TAG,text);
+}
+#else
+static void
+console_write (const char *text) {
+    fwrite (text, strlen(text), 1, stderr);
+}
+#endif
+
 static void
 _log_internal (DB_plugin_t *plugin, uint32_t layers, const char *text) {
-    size_t len = strlen (text);
-    fwrite (text, len, 1, stderr);
     mutex_lock (_mutex);
+    console_write (text);
+    size_t len = strlen (text);
     for (logger_t *l = _loggers; l; l = l->next) {
         l->log (plugin, layers, text, l->ctx);
     }
