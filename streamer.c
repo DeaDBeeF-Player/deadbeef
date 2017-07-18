@@ -86,8 +86,6 @@ static int streaming_terminate;
 static uintptr_t mutex;
 static uintptr_t wdl_mutex; // wavedata listener
 
-static int autoplay = 0; // set to 1 if streamer should call output->play on track change (e.g. after manual track change)
-
 static float last_seekpos = -1;
 
 static float playpos = 0; // play position of current song
@@ -2080,7 +2078,6 @@ static void
 play_current (void) {
     playlist_t *plt = plt_get_curr ();
     DB_output_t *output = plug_get_output ();
-    autoplay = 1;
     if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
         // restart if network stream
         if (is_remote_stream (playing_track) && pl_get_item_duration (playing_track) < 0) {
