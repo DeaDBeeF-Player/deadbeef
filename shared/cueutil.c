@@ -166,8 +166,6 @@ pl_cue_get_total_tracks_and_files(const uint8_t *buffer, const uint8_t *buffer_e
            p++;
         }
     }
-    trace("totaltracks: %d\n", *ncuetracks);
-    trace("totalfiles: %d\n", *ncuefiles);
 }
 
 void
