@@ -839,9 +839,6 @@ streamer_play_failed (playItem_t *failed_track) {
     }
 
     if (failed_track) {
-        pl_lock ();
-        trace_err ("Failed to play track: %s\n", pl_find_meta(failed_track, ":URI"));
-        pl_unlock ();
         set_last_played (failed_track);
         handler_push (handler, STR_EV_NEXT, 0, 0, 0);
     }
@@ -1145,8 +1142,15 @@ m3u_error:
 
             streamer_set_playing_track (NULL);
 
-            // failed to play the track, ask for the next one
-            streamer_play_failed (it);
+            if (!startpaused) {
+                // failed to play the track, ask for the next one
+                streamer_play_failed (it);
+            }
+
+            pl_lock ();
+            trace_err ("Failed to play track: %s\n", pl_find_meta(it, ":URI"));
+            pl_unlock ();
+
             if (from) {
                 pl_item_unref (from);
             }
