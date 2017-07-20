@@ -617,7 +617,6 @@ plt_get_title (playlist_t *p, char *buffer, int bufsize) {
 
 int
 plt_set_title (playlist_t *p, const char *title) {
-    int i;
     LOCK;
     free (p->title);
     p->title = strdup (title);
@@ -625,8 +624,6 @@ plt_set_title (playlist_t *p, const char *title) {
     UNLOCK;
     conf_save ();
     if (!plt_loading) {
-// not sending DB_EV_PLAYLISTSWITCHED here may cause compatibility problem
-//        messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
         messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_TITLE, 0);
     }
     return 0;
