@@ -76,6 +76,13 @@ typedef struct {
     int count;
 } collection_t;
 
+typedef struct tree_node_s {
+    const char *text;
+    coll_item_t *items;
+    struct tree_node_s *next;
+    struct tree_node_s *children;
+} tree_node_t;
+
 typedef struct {
     // Plain list of all tracks in the entire collection
     // The purpose is to hold references to all metadata strings, used by the DB
@@ -90,7 +97,10 @@ typedef struct {
     collection_t albums;
     collection_t artists;
     collection_t genres;
-    collection_t folders;
+    //collection_t folders;
+
+    // for the folders, a tree structure is used
+    tree_node_t *folders_tree;
 
     // This hash is formed from track_uri ([%:TRACKNUM%#]%:URI%), and supposed to have all tracks from the `tracks` list
     // Main purpose is to find a library instance of a track for given track pointer
@@ -142,7 +152,7 @@ hash_add (ml_string_t **hash, const char *val, DB_playItem_t *it) {
     ml_string_t *retval = NULL;
     if (!s) {
         deadbeef->metacache_add_string (val);
-        s = calloc (sizeof (ml_string_t), 1);
+        s = calloc (1, sizeof (ml_string_t));
         s->bucket_next = hash[h];
         s->text = val;
         deadbeef->metacache_add_string (val);
@@ -150,7 +160,7 @@ hash_add (ml_string_t **hash, const char *val, DB_playItem_t *it) {
         retval = s;
     }
 
-    coll_item_t *item = calloc (sizeof (coll_item_t), 1);
+    coll_item_t *item = calloc (1, sizeof (coll_item_t));
     deadbeef->pl_item_ref (it);
     item->it = it;
 
@@ -228,6 +238,71 @@ ml_free_col (collection_t *coll) {
     coll->tail = NULL;
 }
 
+// path is relative to root
+static void
+ml_reg_item_in_folder (tree_node_t *node, const char *path, DB_playItem_t *it) {
+    if (*path == 0) {
+        // leaf -- add to the node
+        coll_item_t *item = calloc (1, sizeof (coll_item_t));
+        item->it = it;
+        deadbeef->pl_item_ref (it);
+        item->next = node->items;
+        node->items = item;
+        return;
+    }
+
+    const char *slash = strchr (path, '/');
+    if (!slash) {
+        slash = path + strlen(path);
+    }
+
+    int len = (int)(slash - path);
+
+    // node -- find existing child node with this name
+    for (tree_node_t *c = node->children; c; c = c->next) {
+        if (!strncmp (c->text, path, len)) {
+            // found, recurse
+            path += len + 1;
+            ml_reg_item_in_folder (c, path, it);
+            return;
+        }
+    }
+
+    // not found, start new branch
+    tree_node_t *n = calloc (1, sizeof (tree_node_t));
+    n->next = node->children;
+    node->children = n;
+
+    char temp[len+1];
+    memcpy (temp, path, len);
+    temp[len] = 0;
+    path += len + 1;
+
+    n->text = deadbeef->metacache_add_string (temp);
+    ml_reg_item_in_folder (n, path, it);
+}
+
+static void
+ml_free_tree (tree_node_t *node) {
+    while (node->children) {
+        tree_node_t *next = node->children->next;
+        ml_free_tree (node->children);
+        node->children = next;
+    }
+
+    while (node->items) {
+        coll_item_t *next = node->items->next;
+        deadbeef->pl_item_unref (node->items->it);
+        free (node->items);
+        node->items = next;
+    }
+
+    if (node->text) {
+        deadbeef->metacache_remove_string (node->text);
+    }
+    free (node);
+}
+
 DB_playItem_t *(*plt_insert_dir) (ddb_playlist_t *plt, DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
 uintptr_t tid;
@@ -247,8 +322,14 @@ ml_free_db (void) {
     ml_free_col(&db.albums);
     ml_free_col(&db.artists);
     ml_free_col(&db.genres);
-    ml_free_col(&db.folders);
+//    ml_free_col(&db.folders);
     ml_free_col(&db.track_uris);
+
+    while (db.folders_tree) {
+        tree_node_t *next = db.folders_tree->next;
+        ml_free_tree(db.folders_tree);
+        db.folders_tree = next;
+    }
 
     while (db.tracks) {
         ml_entry_t *next = db.tracks->next;
@@ -290,9 +371,13 @@ ml_index (void) {
     char folder[PATH_MAX];
     char track_uri[PATH_MAX];
 
+    const char *musicdir = deadbeef->conf_get_str_fast ("medialib.path", NULL);
+    db.folders_tree = calloc (1, sizeof (tree_node_t));
+    db.folders_tree->text = deadbeef->metacache_add_string ("");
+
     DB_playItem_t *it = deadbeef->plt_get_first (ml_playlist, PL_MAIN);
     while (it && !scanner_terminate) {
-        ml_entry_t *en = calloc (sizeof (ml_entry_t), 1);
+        ml_entry_t *en = calloc (1, sizeof (ml_entry_t));
 
         const char *uri = deadbeef->pl_find_meta (it, ":URI");
         const char *title = deadbeef->pl_find_meta (it, "title");
@@ -322,13 +407,21 @@ ml_index (void) {
 
         ml_string_t *trkuri = ml_reg_col (&db.track_uris, cs->s, it);
 
-        char *fn = strrchr (uri, '/');
+        const char *reluri = uri + strlen (musicdir);
+        if (*reluri == '/') {
+            reluri++;
+        }
+        char *fn = strrchr (reluri, '/');
         ml_string_t *fld = NULL;
         if (fn) {
-            memcpy (folder, uri, fn-uri);
-            folder[fn-uri] = 0;
+            memcpy (folder, reluri, fn-reluri);
+            folder[fn-reluri] = 0;
             const char *s = deadbeef->metacache_add_string (folder);
-            fld = ml_reg_col (&db.folders, s, it);
+            //fld = ml_reg_col (&db.folders, s, it);
+
+            // add to tree
+            ml_reg_item_in_folder (db.folders_tree, s, it);
+
             deadbeef->metacache_remove_string (s);
         }
 
@@ -380,7 +473,7 @@ ml_index (void) {
     for (s = db.albums.head; s; s = s->next, nalb++);
     for (s = db.artists.head; s; s = s->next, nart++);
     for (s = db.genres.head; s; s = s->next, ngnr++);
-    for (s = db.folders.head; s; s = s->next, nfld++);
+//    for (s = db.folders.head; s; s = s->next, nfld++);
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
 
@@ -712,11 +805,55 @@ get_list_of_tracks_for_album (ddb_medialib_item_t *libitem, ml_string_t *album) 
 }
 
 static void
+get_subfolders_for_folder (ddb_medialib_item_t *folderitem, tree_node_t *folder) {
+    if (!folderitem->text) {
+        folderitem->text = deadbeef->metacache_add_string (folder->text);
+    }
+
+    if (!folder->items) {
+        ddb_medialib_item_t *tail = NULL;
+        for (tree_node_t *c = folder->children; c; c = c->next) {
+            ddb_medialib_item_t *subfolder = calloc (1, sizeof (ddb_medialib_item_t));
+            get_subfolders_for_folder (subfolder, c);
+            if (tail) {
+                tail->next = subfolder;
+                tail = subfolder;
+            }
+            else {
+                folderitem->children = tail = subfolder;
+            }
+            folderitem->num_children++;
+        }
+    }
+    else {
+        ddb_medialib_item_t *tail = NULL;
+        for (coll_item_t *i = folder->items; i; i = i->next) {
+            ddb_medialib_item_t *trackitem = calloc (1, sizeof (ddb_medialib_item_t));
+            const char *uri = deadbeef->pl_find_meta (i->it, ":URI");
+            const char *slash = strrchr (uri, '/');
+            if (slash) {
+                uri = slash+1;
+            }
+            trackitem->text = deadbeef->metacache_add_string (uri);
+
+            if (tail) {
+                tail->next = trackitem;
+                tail = trackitem;
+            }
+            else {
+                folderitem->children = tail = trackitem;
+            }
+            folderitem->num_children++;
+        }
+    }
+}
+
+static void
 ml_free_list (ddb_medialib_item_t *list);
 
 static ddb_medialib_item_t *
 ml_get_list (const char *index) {
-    collection_t *coll;
+    collection_t *coll = NULL;
 
     enum {album, artist, genre, folder};
 
@@ -735,7 +872,6 @@ ml_get_list (const char *index) {
         type = genre;
     }
     else if (!strcmp (index, "folder")) {
-        coll = &db.folders;
         type = folder;
     }
     else {
@@ -749,47 +885,48 @@ ml_get_list (const char *index) {
 
     ddb_medialib_item_t *root = calloc (1, sizeof (ddb_medialib_item_t));
     root->text = deadbeef->metacache_add_string ("All Music");
-    ddb_medialib_item_t *tail = NULL;
 
-    // top level list (e.g. list of genres)
-    ddb_medialib_item_t *parent = root;
-    int idx = 0;
-    for (ml_string_t *s = coll->head; s; s = s->next, idx++) {
-        ddb_medialib_item_t *item = calloc (1, sizeof (ddb_medialib_item_t));
+    if (type == folder) {
+        get_subfolders_for_folder(root, db.folders_tree);
+    }
+    else {
+        // top level list (e.g. list of genres)
+        ddb_medialib_item_t *tail = NULL;
+        ddb_medialib_item_t *parent = root;
+        for (ml_string_t *s = coll->head; s; s = s->next) {
+            ddb_medialib_item_t *item = calloc (1, sizeof (ddb_medialib_item_t));
 
-        switch (type) {
-        case genre:
-            // list of albums for genre
-            item->text = deadbeef->metacache_add_string (s->text);
-            get_list_of_albums_for_item (item, "genre", 0);
-            break;
-        case artist:
-            // list of albums for artist
-            item->text = deadbeef->metacache_add_string (s->text);
-            get_list_of_albums_for_item (item, "%artist%", 1);
-            break;
-        case album:
-            // list of tracks for album
-            get_list_of_tracks_for_album (item, s);
-            break;
-        case folder:
-            // TODO
-            break;
-        }
+            switch (type) {
+            case genre:
+                // list of albums for genre
+                item->text = deadbeef->metacache_add_string (s->text);
+                get_list_of_albums_for_item (item, "genre", 0);
+                break;
+            case artist:
+                // list of albums for artist
+                item->text = deadbeef->metacache_add_string (s->text);
+                get_list_of_albums_for_item (item, "%artist%", 1);
+                break;
+            case album:
+                // list of tracks for album
+                get_list_of_tracks_for_album (item, s);
+                break;
+            }
 
-        if (!item->children) {
-            ml_free_list (item);
-            continue;
-        }
+            if (!item->children) {
+                ml_free_list (item);
+                continue;
+            }
 
-        if (tail) {
-            tail->next = item;
-            tail = item;
+            if (tail) {
+                tail->next = item;
+                tail = item;
+            }
+            else {
+                tail = parent->children = item;
+            }
+            parent->num_children++;
         }
-        else {
-            tail = parent->children = item;
-        }
-        parent->num_children++;
     }
 
     gettimeofday (&tm2, NULL);
