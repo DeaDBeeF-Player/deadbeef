@@ -1,9 +1,5 @@
 EXTRA_DIST = deadbeef.glade
 
-if OS_OSX
-osx_sources = retina.m
-endif
-
 GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   callbacks.c interface.c support.c callbacks.h interface.h support.h\
 				   ddblistview.c ddblistview.h\
@@ -84,7 +80,7 @@ ddb_gui_GTK2_la_CFLAGS = -std=c99 $(GTK2_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFL
 endif
 
 if HAVE_GTK3
-GTKUI_SOURCES_GTK3 = $(GTKUI_SOURCES) $(osx_sources)
+GTKUI_SOURCES_GTK3 = deadbeefapp.c deadbeefapp.h $(GTKUI_SOURCES)
 
 ddb_gui_GTK3_la_LDFLAGS = -module -avoid-version
 
@@ -92,6 +88,15 @@ ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES_GTK3)
 ddb_gui_GTK3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS) $(SM_LIBADD) ../libparser/libparser.a $(JANSSON_LIBS)
 ddb_gui_GTK3_la_CFLAGS = -std=c99 $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS)
 ddb_gui_GTK3_la_OBJCFLAGS = $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS)
+
+nodist_ddb_gui_GTK3_la_SOURCES = gtkui-gresources.c
+
+resource_files = \
+	gtkui.gresources.xml	\
+	gtk/menus.ui
+
+gtkui-gresources.c: $(resource_files)
+	$(AM_V_GEN) $(GLIB_COMPILE_RESOURCES) --target=$@ --sourcedir=$(srcdir) --generate-source $<
 
 endif
 

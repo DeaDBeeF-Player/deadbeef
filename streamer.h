@@ -64,7 +64,7 @@ streamer_unlock (void);
 
 // song == -1 means "stop and clear streamer message queue"
 void
-streamer_set_nextsong (int song);
+streamer_set_nextsong (int song, int startpaused);
 
 void
 streamer_set_seek (float pos);
@@ -83,6 +83,9 @@ streamer_get_streaming_track (void);
 
 playItem_t *
 streamer_get_playing_track (void);
+
+playItem_t *
+streamer_get_buffering_track (void);
 
 void
 streamer_configchanged (void);
@@ -164,6 +167,13 @@ vis_spectrum_unlisten (void *ctx);
 
 void
 streamer_set_playing_track (playItem_t *it);
+
+// sets a callback function, which would be called before applying software volume
+void
+streamer_set_volume_modifier (float (*modifier) (float delta_time));
+
+void
+streamer_set_buffering_track (playItem_t *it);
 
 // force streamer to flush its msg queue
 void

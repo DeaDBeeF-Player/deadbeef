@@ -76,11 +76,11 @@ static DB_functions_t *deadbeef;
     "m2ts,mts,mxf,rm,ra,roq,sox," \
     "spdif,swf,rcv,voc,w64,wav,wv"
 
-#define EXT_MAX 256
+#define EXT_MAX 1024
 
 #define FFMPEG_MAX_ANALYZE_DURATION 500000
 
-static char * exts[EXT_MAX] = {NULL};
+static char * exts[EXT_MAX+1] = {NULL};
 
 enum {
     FT_ALAC = 0,
@@ -114,7 +114,6 @@ typedef struct {
 
     int left_in_packet;
     int have_packet;
-    int end_of_file;
 
     char *buffer;
     int left_in_buffer;
@@ -291,13 +290,8 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->left_in_packet = 0;
     info->left_in_buffer = 0;
 
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
-    av_new_packet(&info->pkt, 0);
-#else
     memset (&info->pkt, 0, sizeof (info->pkt));
-#endif
     info->have_packet = 0;
-    info->end_of_file = 0;
 
 #if LIBAVCODEC_VERSION_INT > AV_VERSION_INT(55, 28, 0)
     info->frame = av_frame_alloc();
@@ -362,7 +356,9 @@ ffmpeg_free (DB_fileinfo_t *_info) {
             free (info->buffer);
         }
         // free everything allocated in _init and _read
-        av_packet_unref(&info->pkt);
+        if (info->have_packet) {
+            av_free_packet (&info->pkt);
+        }
         if (info->ctx) {
             avcodec_close (info->ctx);
         }
@@ -410,8 +406,9 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
     int decsize = 0;
 
     while (size > 0) {
+
         if (info->left_in_buffer > 0) {
-            //            int sz = min (size, info->left_in_buffer);
+//            int sz = min (size, info->left_in_buffer);
             int nsamples = size / samplesize;
             int nsamples_buf = info->left_in_buffer / samplesize;
             nsamples = min (nsamples, nsamples_buf);
@@ -425,104 +422,15 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
             info->left_in_buffer -= sz;
         }
 
-        // read next packet
-        int errcount = 0;
-        while (!info->have_packet && !info->end_of_file) {
-            int ret;
-            av_packet_unref(&info->pkt);
-            if ((ret = av_read_frame (info->fctx, &info->pkt)) < 0) {
-                trace ("ffmpeg: error %d\n", ret);
-                if (ret == AVERROR_EOF) {
-                    info->end_of_file = 1;
-                    ret = -1;
-                    break;
-                }
-                else if (ret == -1) {
-                    break;
-                }
-                else {
-                    if (++errcount > 4) {
-                        trace ("ffmpeg: too many errors in a row (last is %d); interrupting stream\n", ret);
-                        ret = -1;
-                        break;
-                    }
-                    else {
-                        continue;
-                    }
-                }
-            }
-            else {
-                trace ("av packet size: %d, numframes: %d\n", info->pkt.size, ret);
-                errcount = 0;
-            }
-            if (ret == -1) {
-                break;
-            }
-            //trace ("idx:%d, stream:%d\n", info->pkt.stream_index, info->stream_id);
-            if (info->pkt.stream_index != info->stream_id) {
-                continue;
-            }
-            //trace ("got packet: size=%d\n", info->pkt.size);
-            
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 37, 100)
-            if ((ret = avcodec_send_packet(info->ctx, info->end_of_file ? NULL : &info->pkt)) < 0) {
-                if (ret != AVERROR(EAGAIN)) {
-                    break;
-                }
-            }
-#endif
-            
-            info->have_packet = 1;
-            info->left_in_packet = info->pkt.size;
-            
-            if (info->pkt.duration > 0) {
-                AVRational *time_base = &info->fctx->streams[info->stream_id]->time_base;
-                float sec = (float)info->pkt.duration * time_base->num / time_base->den;
-                int bitrate = info->pkt.size * 8 / sec;
-                if (bitrate > 0) {
-                    deadbeef->streamer_set_bitrate (bitrate / 1000);
-                }
-            }
-            
-            break;
-        }
-        if (!info->have_packet) {
-            break;
-        }
-
         while (info->left_in_packet > 0 && size > 0) {
             int out_size = info->buffer_size;
             int len;
             //trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
 
 #if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(53, 40, 0)
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 37, 100)
-            if ((len = avcodec_receive_frame(info->ctx, info->frame)) < 0) {
-                if (len == AVERROR_EOF) {
-                    len = -1;
-                    break;
-                }
-                else if (len == AVERROR(EAGAIN)) {
-                    encsize += info->left_in_packet;
-                    info->left_in_packet = 0;
-                    info->have_packet = 0;
-                    break;
-                }
-                else {
-                    len = -1;
-                    break;
-                }
-            }
-            len = 0;
-            if (1) {
-#else
             int got_frame = 0;
             len = avcodec_decode_audio4(info->ctx, info->frame, &got_frame, &info->pkt);
-            if (!got_frame) {
-                info->have_packet = 0;
-            }
             if (len > 0) {
-#endif
                 if (ensure_buffer (info, info->frame->nb_samples * (_info->fmt.bps >> 3))) {
                     return -1;
                 }
@@ -568,19 +476,71 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
 #endif
 #endif
             trace ("out: out_size=%d, len=%d\n", out_size, len);
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54, 6, 0)
             if (len <= 0) {
                 break;
             }
-#endif
             encsize += len;
             decsize += out_size;
             info->left_in_packet -= len;
             info->left_in_buffer = out_size;
-                
-            if (out_size) break;
         }
         if (size == 0) {
+            break;
+        }
+
+        // read next packet
+        if (info->have_packet) {
+            av_free_packet (&info->pkt);
+            info->have_packet = 0;
+        }
+        int errcount = 0;
+        for (;;) {
+            int ret;
+            if ((ret = av_read_frame (info->fctx, &info->pkt)) < 0) {
+                trace ("ffmpeg: error %d\n", ret);
+                if (ret == AVERROR_EOF || ret == -1) {
+                    ret = -1;
+                    break;
+                }
+                else {
+                    if (++errcount > 4) {
+                        trace ("ffmpeg: too many errors in a row (last is %d); interrupting stream\n", ret);
+                        ret = -1;
+                        break;
+                    }
+                    else {
+                        continue;
+                    }
+                }
+            }
+            else {
+                trace ("av packet size: %d, numframes: %d\n", info->pkt.size, ret);
+                errcount = 0;
+            }
+            if (ret == -1) {
+                break;
+            }
+            //trace ("idx:%d, stream:%d\n", info->pkt.stream_index, info->stream_id);
+            if (info->pkt.stream_index != info->stream_id) {
+                av_free_packet (&info->pkt);
+                continue;
+            }
+            //trace ("got packet: size=%d\n", info->pkt.size);
+            info->have_packet = 1;
+            info->left_in_packet = info->pkt.size;
+
+            if (info->pkt.duration > 0) {
+                AVRational *time_base = &info->fctx->streams[info->stream_id]->time_base;
+                float sec = (float)info->pkt.duration * time_base->num / time_base->den;
+                int bitrate = info->pkt.size * 8 / sec;
+                if (bitrate > 0) {
+                    deadbeef->streamer_set_bitrate (bitrate / 1000);
+                }
+            }
+
+            break;
+        }
+        if (!info->have_packet) {
             break;
         }
     }
@@ -597,11 +557,13 @@ ffmpeg_seek_sample (DB_fileinfo_t *_info, int sample) {
     // seek to specified sample (frame)
     // return 0 on success
     // return -1 on failure
-    av_packet_unref(&info->pkt);
+    if (info->have_packet) {
+        av_free_packet (&info->pkt);
+        info->have_packet = 0;
+    }
     sample += info->startsample;
     int64_t tm = (int64_t)sample/ _info->fmt.samplerate * AV_TIME_BASE;
     trace ("ffmpeg: seek to sample: %d, t: %d\n", sample, (int)tm);
-    info->end_of_file = 0;
     info->left_in_packet = 0;
     info->left_in_buffer = 0;
     if (av_seek_frame (info->fctx, -1, tm, AVSEEK_FLAG_ANY) < 0) {

@@ -63,6 +63,12 @@ ReSID::ReSID (sidbuilder *builder)
     reset (0);
 }
 
+ReSID::~ReSID (void)
+{
+    delete (&m_sid);
+}
+
+
 bool ReSID::filter (const sid_filter_t *filter)
 {
     RESID::fc_point fc[0x802];

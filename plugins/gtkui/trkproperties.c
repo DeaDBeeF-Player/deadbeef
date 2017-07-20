@@ -433,7 +433,7 @@ set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoi
     if (!smult) {
         GValue key = {0,}, value = {0,};
         gtk_tree_model_get_value (model, iter, 2, &key);
-        gtk_tree_model_get_value (model, iter, 1, &value);
+        gtk_tree_model_get_value (model, iter, 4, &value);
         const char *skey = g_value_get_string (&key);
         const char *svalue = g_value_get_string (&value);
 

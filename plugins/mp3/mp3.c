@@ -833,7 +833,6 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("mp3: seeking to %d(%xH) start offset\n", info->buffer.startoffset, info->buffer.startoffset);
             deadbeef->fseek (info->buffer.file, info->buffer.startoffset, SEEK_SET);
         }
-        plugin.seek_sample (_info, 0);
         trace ("mp3: startsample: %d, endsample: %d, currentsample: %d\n", info->buffer.startsample, info->buffer.endsample, info->buffer.currentsample);
     }
     else {
@@ -886,6 +885,9 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     trace ("mp3 format: bps:%d sr:%d channels:%d\n", _info->fmt.bps, _info->fmt.samplerate, _info->fmt.channels);
 
     info->dec->init (info);
+    if (!info->buffer.file->vfs->is_streaming ()) {
+        plugin.seek_sample (_info, 0);
+    }
     return 0;
 }
 
@@ -1044,11 +1046,8 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
         fmt.bps = 32;
         fmt.is_float = 1;
 
-#if 0
-        // RG disabled because block-based streaming doesn't set the RG parameters at read time
         // apply replaygain, before clipping
         deadbeef->replaygain_apply (&fmt, info->want_16bit ? info->conv_buf : bytes, req_size - info->buffer.readsize);
-#endif
 
         // convert to 16 bit, if needed
         if (info->want_16bit) {
@@ -1117,6 +1116,7 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
     info->buffer.readsize = 0;
     info->buffer.decode_remaining = 0;
 
+    // force flush the decoder by reinitializing it
     info->dec->free (info);
     info->dec->init (info);
 
@@ -1301,7 +1301,7 @@ static DB_decoder_t plugin = {
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
-//    .plugin.flags = DDB_PLUGIN_FLAG_REPLAYGAIN,
+    .plugin.flags = DDB_PLUGIN_FLAG_REPLAYGAIN,
     .plugin.id = "stdmpg",
     .plugin.name = "MP3 player",
     .plugin.descr = "MPEG v1/2 layer1/2/3 decoder\n\n"

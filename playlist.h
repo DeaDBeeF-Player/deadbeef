@@ -66,6 +66,7 @@ typedef struct playlist_s {
     struct playlist_s *next;
     int count[2];
     float totaltime;
+    float seltime;
     int modification_idx;
     int last_save_modification_idx;
     playItem_t *head[PL_MAX_ITERATORS]; // head of linked list
@@ -75,8 +76,10 @@ typedef struct playlist_s {
     struct DB_metaInfo_s *meta; // linked list storing metainfo
     int refc;
     int files_add_visibility;
+    char *cue_file;
     unsigned fast_mode : 1;
     unsigned files_adding : 1;
+    unsigned recalc_seltime : 1;
 } playlist_t;
 
 // global playlist control functions
@@ -388,6 +391,9 @@ plt_get_totaltime (playlist_t *plt);
 float
 pl_get_totaltime (void);
 
+float
+plt_get_selection_playback_time (playlist_t *plt);
+
 void
 pl_set_selected (playItem_t *it, int sel);
 
@@ -546,6 +552,9 @@ send_trackinfochanged (playItem_t *track);
 
 playItem_t *
 plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate);
+
+void
+plt_set_cue_file (playlist_t *plt, const char *filename);
 
 void
 pl_configchanged (void);

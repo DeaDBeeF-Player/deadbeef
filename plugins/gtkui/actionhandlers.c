@@ -423,6 +423,7 @@ action_add_location_handler_cb (void *user_data) {
 #endif
 
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
     if (res == GTK_RESPONSE_OK) {
         GtkEntry *entry = GTK_ENTRY (lookup_widget (dlg, "addlocation_entry"));
@@ -1138,5 +1139,17 @@ action_playback_loop_cycle_handler_cb (void *data) {
 int
 action_playback_loop_cycle_handler(DB_plugin_action_t *act, int ctx) {
     g_idle_add (action_playback_loop_cycle_handler_cb, NULL);
+    return 0;
+}
+
+gboolean
+action_toggle_logwindow_handler_cb (void *data) {
+    gtkui_toggle_log_window();
+    return FALSE;
+}
+
+int
+action_toggle_logwindow_handler(DB_plugin_action_t *act, int ctx) {
+    g_idle_add (action_toggle_logwindow_handler_cb, NULL);
     return 0;
 }

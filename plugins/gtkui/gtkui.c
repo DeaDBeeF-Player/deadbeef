@@ -64,6 +64,9 @@
 #include "clipboard.h"
 #include "hotkeys.h"
 #include "../hotkeys/hotkeys.h"
+#if GTK_CHECK_VERSION(3,0,0)
+#include "deadbeefapp.h"
+#endif
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -76,6 +79,7 @@ GtkWidget *mainwin;
 int gtkui_override_statusicon = 0;
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
+GtkWidget *logwindow;
 
 static int gtkui_accept_messages = 0;
 
@@ -106,6 +110,7 @@ int gtkui_tabstrip_italic_selected;
 
 int gtkui_groups_pinned;
 int gtkui_listview_busy;
+int gtkui_groups_spacing;
 
 #ifdef __APPLE__
 int gtkui_is_retina = 0;
@@ -141,6 +146,24 @@ static float last_songpos = -1;
 static char sbitrate[20] = "";
 static struct timeval last_br_update;
 
+static void
+format_timestr (char *buf, float time) {
+    int daystotal = (int)time / (3600*24);
+    int hourtotal = ((int)time / 3600) % 24;
+    int mintotal = ((int)time/60) % 60;
+    int sectotal = ((int)time) % 60;
+
+    if (daystotal == 0) {
+        snprintf (buf, sizeof (buf), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
+    }
+    else if (daystotal == 1) {
+        snprintf (buf, sizeof (buf), _("1 day %d:%02d:%02d"), hourtotal, mintotal, sectotal);
+    }
+    else {
+        snprintf (buf, sizeof (buf), _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
+    }
+}
+
 static gboolean
 update_songinfo (gpointer ctx) {
     int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
@@ -151,37 +174,34 @@ update_songinfo (gpointer ctx) {
     char sbtext_new[512] = "-";
 
     float pl_totaltime = deadbeef->pl_get_totaltime ();
-    int daystotal = (int)pl_totaltime / (3600*24);
-    int hourtotal = ((int)pl_totaltime / 3600) % 24;
-    int mintotal = ((int)pl_totaltime/60) % 60;
-    int sectotal = ((int)pl_totaltime) % 60;
-
     char totaltime_str[512] = "";
-    if (daystotal == 0) {
-        snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
-    }
-    else if (daystotal == 1) {
-        snprintf (totaltime_str, sizeof (totaltime_str), _("1 day %d:%02d:%02d"), hourtotal, mintotal, sectotal);
-    }
-    else {
-        snprintf (totaltime_str, sizeof (totaltime_str), _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
-    }
+    format_timestr(totaltime_str, pl_totaltime);
 
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
 
     if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track)) {
-        snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+        snprintf (sbtext_new,
+                  sizeof (sbtext_new),
+                  _("Stopped | %d tracks | %s total playtime"),
+                  deadbeef->pl_getcount (PL_MAIN),
+                  totaltime_str);
     }
     else {
         ddb_tf_context_t ctx = {
             ._size = sizeof (ddb_tf_context_t),
             .it = track,
             .iter = PL_MAIN,
+            .plt = deadbeef->plt_get_curr()
         };
 
         char buffer[200];
         deadbeef->tf_eval (&ctx, statusbar_bc, buffer, sizeof (buffer));
-        snprintf (sbtext_new, sizeof (sbtext_new), "%s | %d tracks | %s total playtime", buffer, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+        snprintf (sbtext_new,
+                  sizeof (sbtext_new),
+                  "%s | %d tracks | %s total playtime",
+                  buffer,
+                  deadbeef->pl_getcount (PL_MAIN),
+                  totaltime_str);
     }
 
     if (strcmp (sbtext_new, sb_text)) {
@@ -371,7 +391,10 @@ gtkui_titlebar_tf_init (void) {
     deadbeef->conf_get_str ("gtkui.titlebar_stopped_tf", gtkui_default_titlebar_stopped, fmt, sizeof (fmt));
     titlebar_stopped_bc = deadbeef->tf_compile (fmt);
 
-    statusbar_bc = deadbeef->tf_compile ("$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length%");
+    const char statusbar_tf_with_seltime[] = "$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length% | %selection_playback_time% selection playtime";
+    const char statusbar_tf[] = "$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length%";
+
+    statusbar_bc = deadbeef->tf_compile (deadbeef->conf_get_int ("gtkui.statusbar_seltime", 0) ? statusbar_tf_with_seltime : statusbar_tf);
 }
 
 void
@@ -573,6 +596,7 @@ gtkui_on_configchanged (void *data) {
 
     // pin groups
     gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups", 0);
+    gtkui_groups_spacing = deadbeef->conf_get_int ("playlist.groups.spacing", 0);
 
     // play state images
     gtkui_unicode_playstate = deadbeef->conf_get_int ("gtkui.unicode_playstate", 0);
@@ -1074,31 +1098,103 @@ add_window_init_hook (void (*callback) (void *userdata), void *userdata) {
     window_init_hooks_count++;
 }
 
-int
-gtkui_thread (void *ctx) {
-#ifdef __linux__
-    prctl (PR_SET_NAME, "deadbeef-gtkui", 0, 0, 0, 0);
-#endif
 
-    int argc = 2;
-    const char **argv = alloca (sizeof (char *) * argc);
-    argv[0] = "deadbeef";
-    argv[1] = "--sync";
-    //argv[1] = "--g-fatal-warnings";
-    if (!deadbeef->conf_get_int ("gtkui.sync", 0)) {
-        argc = 1;
+void
+gtkui_toggle_log_window(void) {
+    if (gtk_widget_get_visible (logwindow)) {
+        gtkui_show_log_window(FALSE);
     }
+    else {
+        gtkui_show_log_window(TRUE);
+    }
+}
 
-    gtk_disable_setlocale ();
-    add_pixmap_directory (deadbeef->get_system_dir(DDB_SYS_DIR_PIXMAP));
+void
+gtkui_show_log_window_internal(gboolean show) {
 
-    // let's start some gtk
-    g_thread_init (NULL);
-    gdk_threads_init ();
-    gdk_threads_enter ();
+    gtk_widget_set_visible (logwindow, show);
+    GtkWidget *menuitem = lookup_widget (mainwin, "view_log");
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), show);
 
-    gtk_init (&argc, (char ***)&argv);
+#if GTK_CHECK_VERSION(3,0,0)
+    g_simple_action_set_state ( deadbeef_app_get_log_action (gapp),
+        g_variant_new_boolean (show));
+#endif
+}
 
+void
+gtkui_show_log_window(gboolean show) {
+    if (show) {
+        wingeom_restore (logwindow, "logwindow", 40, 40, 400, 200, 0);
+    }
+    else {
+        wingeom_save(logwindow, "logwindow");
+    }
+    gtkui_show_log_window_internal(show);
+}
+
+gboolean
+on_gtkui_log_window_delete (GtkWidget *widget, GdkEventAny *event, GtkWidget **pwindow) {
+    gtkui_show_log_window(FALSE);
+    return TRUE; // don't destroy window
+}
+
+GtkWidget *
+gtkui_create_log_window (void) {
+    GtkWidget *pwindow = create_log_window ();
+    g_signal_connect (pwindow, "delete_event", G_CALLBACK (on_gtkui_log_window_delete), pwindow);
+    gtk_window_set_transient_for (GTK_WINDOW (pwindow), GTK_WINDOW (mainwin));
+    return pwindow;
+}
+
+typedef struct {
+    char *str;
+    uint32_t layers;
+} addtext_struct_t;
+
+static gboolean
+logwindow_addtext_cb (gpointer data) {
+    addtext_struct_t *addtext = (addtext_struct_t *)data;
+
+    GtkWidget *textview=lookup_widget(logwindow, "logwindow_textview");
+    GtkWidget *scrolledwindow14=lookup_widget(logwindow, "scrolledwindow14");
+    GtkTextBuffer *buffer;
+    GtkTextIter iter;
+    size_t len;
+    len = strlen(addtext->str);
+    buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (textview));
+    gtk_text_buffer_get_end_iter(buffer, &iter);
+    gtk_text_buffer_insert( buffer, &iter, addtext->str, len );
+    // Make sure it ends on a newline
+    if (addtext->str[len-1] != '\n') {
+        gtk_text_buffer_get_end_iter(buffer, &iter);
+        gtk_text_buffer_insert(buffer, &iter, "\n", 1);
+    }
+    GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment ( GTK_SCROLLED_WINDOW (scrolledwindow14));
+    if (gtk_adjustment_get_value(adjustment) >=
+        gtk_adjustment_get_upper(adjustment) -
+        gtk_adjustment_get_page_size(adjustment) -1e-12 ) {
+        gtk_text_buffer_get_end_iter(buffer, &iter);
+        GtkTextMark *mark = gtk_text_buffer_create_mark (buffer, NULL, &iter, FALSE);
+        gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (textview), mark);
+    }
+    if (!w_logviewer_is_present() && addtext->layers == DDB_LOG_LAYER_DEFAULT)
+        gtkui_show_log_window_internal(TRUE);
+    free(addtext->str);
+    free(addtext);
+    return FALSE;
+}
+
+static void
+logwindow_logger_callback (struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx) {
+    addtext_struct_t *data = malloc(sizeof(addtext_struct_t));
+    data->str = strdup(text);
+    data->layers = layers;
+    g_idle_add(logwindow_addtext_cb, (gpointer)data);
+}
+
+void
+gtkui_mainwin_init(void) {
     // register widget types
     w_reg_widget (_("Playlist with tabs"), DDB_WF_SINGLE_INSTANCE, w_tabbed_playlist_create, "tabbed_playlist", NULL);
     w_reg_widget (_("Playlist"), DDB_WF_SINGLE_INSTANCE, w_playlist_create, "playlist", NULL);
@@ -1120,8 +1216,17 @@ gtkui_thread (void *ctx) {
     w_reg_widget (_("Playback controls"), 0, w_playtb_create, "playtb", NULL);
     w_reg_widget (_("Volume bar"), 0, w_volumebar_create, "volumebar", NULL);
     w_reg_widget (_("Chiptune voices"), 0, w_ctvoices_create, "ctvoices", NULL);
+    w_reg_widget (_("Log viewer"), 0, w_logviewer_create, "logviewer", NULL);
 
     mainwin = create_mainwin ();
+
+#if GTK_CHECK_VERSION(3,0,0)
+    // This must be called before window is shown
+    gtk_application_add_window ( GTK_APPLICATION (gapp), GTK_WINDOW (mainwin));
+#endif
+
+    logwindow = gtkui_create_log_window();
+    deadbeef->log_viewer_register (logwindow_logger_callback, logwindow);
 
     // initialize default hotkey mapping
     if (!deadbeef->conf_get_int ("hotkeys_created", 0)) {
@@ -1216,8 +1321,10 @@ gtkui_thread (void *ctx) {
     if (deadbeef->conf_get_int ("gtkui.start_hidden", 0)) {
         g_idle_add (mainwin_hide_cb, NULL);
     }
-    gtk_main ();
+}
 
+void
+gtkui_mainwin_free(void) {
     deadbeef->unlisten_file_added (fileadded_listener_id);
     deadbeef->unlisten_file_add_beginend (fileadd_beginend_listener_id);
 
@@ -1238,11 +1345,49 @@ gtkui_thread (void *ctx) {
     search_destroy ();
 //    draw_free ();
     titlebar_tf_free ();
+
+    if (logwindow) {
+        deadbeef->log_viewer_unregister (logwindow_logger_callback, logwindow);
+        gtk_widget_destroy (logwindow);
+        logwindow = NULL;
+    }
     if (mainwin) {
         gtk_widget_destroy (mainwin);
         mainwin = NULL;
     }
-    gdk_threads_leave ();
+
+}
+
+int
+gtkui_thread (void *ctx) {
+#ifdef __linux__
+    prctl (PR_SET_NAME, "deadbeef-gtkui", 0, 0, 0, 0);
+#endif
+
+    int argc = 2;
+    const char **argv = alloca (sizeof (char *) * argc);
+    argv[0] = "deadbeef";
+    argv[1] = "--sync";
+    //argv[1] = "--g-fatal-warnings";
+    if (!deadbeef->conf_get_int ("gtkui.sync", 0)) {
+        argc = 1;
+    }
+
+    gtk_disable_setlocale ();
+    add_pixmap_directory (deadbeef->get_system_dir(DDB_SYS_DIR_PIXMAP));
+
+#if GTK_CHECK_VERSION(3,0,0)
+    gapp = deadbeef_app_new ();
+    g_application_run ( G_APPLICATION (gapp), argc, (char**)argv);
+    g_object_unref (gapp);
+#else
+    gtk_init (&argc, (char ***)&argv);
+
+    gtkui_mainwin_init ();
+    gtk_main ();
+    gtkui_mainwin_free ();
+#endif
+
     return 0;
 }
 
@@ -1385,7 +1530,11 @@ quit_gtk_cb (gpointer nothing) {
     trkproperties_modified = 0;
     trkproperties_destroy ();
     search_destroy ();
+#if GTK_CHECK_VERSION(3,0,0)
+    g_application_quit (G_APPLICATION (gapp));
+#else
     gtk_main_quit ();
+#endif
     trace ("gtkui_stop completed\n");
     return FALSE;
 }
@@ -1719,10 +1868,18 @@ static DB_plugin_action_t action_find = {
     .next = &action_show_mainwin
 };
 
+static DB_plugin_action_t action_view_log = {
+    .title = "View/Show\\/Hide Log window",
+    .name = "toggle_log_window",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_toggle_logwindow_handler,
+    .next = &action_find
+};
+
 static DB_plugin_action_t *
 gtkui_get_actions (DB_playItem_t *it)
 {
-    return &action_find;
+    return &action_view_log;
 }
 
 #if !GTK_CHECK_VERSION(3,0,0)

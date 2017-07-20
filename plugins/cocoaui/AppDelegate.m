@@ -63,7 +63,7 @@ AppDelegate *g_appDelegate;
 NSInteger firstSelected = -1;
 
 static void
-_cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text) {
+_cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, void *ctx) {
     [g_appDelegate appendLoggerText:text forPlugin:plugin onLayers:layers];
 }
 
@@ -82,7 +82,7 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text) 
 }
 
 - (void)dealloc {
-    deadbeef->log_viewer_unregister (_cocoaui_logger_callback);
+    deadbeef->log_viewer_unregister (_cocoaui_logger_callback, NULL);
     ungrabMediaKeys ();
 }
 
@@ -254,7 +254,7 @@ main_cleanup_and_quit (void);
 //    [[NSApp dockTile] setBadgeLabel:@"Hello"];
     [[NSApp dockTile] display];
 
-    deadbeef->log_viewer_register (_cocoaui_logger_callback);
+    deadbeef->log_viewer_register (_cocoaui_logger_callback, NULL);
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag{
@@ -727,6 +727,9 @@ main_cleanup_and_quit (void);
     deadbeef->tf_eval (&ctx, _artistAlbumScript, artistAlbum, sizeof (artistAlbum));
     if (ctx.plt) {
         deadbeef->plt_unref (ctx.plt);
+    }
+    if (it) {
+        deadbeef->pl_item_unref (it);
     }
     _dockMenuNPTitle = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:title] action:nil keyEquivalent:@""];
     [_dockMenuNPTitle setEnabled:NO];

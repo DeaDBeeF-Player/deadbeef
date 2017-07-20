@@ -460,9 +460,11 @@ enum {
 // preset columns, working using IDs
 // DON'T add new ids in range 2-7, they are reserved for backwards compatibility
 enum pl_column_t {
+    DB_COLUMN_STANDARD = -1,
     DB_COLUMN_FILENUMBER = 0,
     DB_COLUMN_PLAYING = 1,
     DB_COLUMN_ALBUM_ART = 8,
+    DB_COLUMN_CUSTOM = 9
 };
 
 // replaygain constants
@@ -568,11 +570,24 @@ enum {
     DDB_TF_CONTEXT_HAS_INDEX = 1,
     DDB_TF_CONTEXT_HAS_ID = 2,
     DDB_TF_CONTEXT_NO_DYNAMIC = 4, // skip dynamic fields (%playback_time%)
+// since 1.9
 #if (DDB_API_LEVEL >= 9)
     // Don't convert linebreaks to semicolons
     DDB_TF_CONTEXT_MULTILINE = 8,
 #endif
+// since 1.10
+#if (DDB_API_LEVEL >= 10)
+    // the caller supports text dimming functions
+    DDB_TF_CONTEXT_TEXT_DIM = 16,
+#endif
 };
+
+// since 1.10
+#if (DDB_API_LEVEL >= 10)
+enum {
+    DDB_TF_ESC_DIM = 1,
+};
+#endif
 
 // since 1.10
 #if (DDB_API_LEVEL >= 10)
@@ -610,6 +625,12 @@ typedef struct {
     // <0: updates on every call
     // >0: number of milliseconds between updates / until next update
     int update;
+
+#if (DDB_API_LEVEL >= 10)
+    // Return value, is set to non-zero if text was <<<dimmed>>> or >>>brightened<<<
+    // This is helpful to determine whether text needs to be searched for the corresponding esc sequences
+    int dimmed;
+#endif
 } ddb_tf_context_t;
 #endif
 
@@ -1316,8 +1337,8 @@ typedef struct {
     void (*vlog) (const char *fmt, va_list ap);
 
     // Custom log viewers, for use in e.g. UI plugins
-    void (*log_viewer_register) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text));
-    void (*log_viewer_unregister) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text));
+    void (*log_viewer_register) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx), void *ctx);
+    void (*log_viewer_unregister) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx), void *ctx);
 
     ///////// File add filtering ///////
 
@@ -1389,6 +1410,16 @@ typedef struct {
 
     void (*pl_item_set_endsample) (DB_playItem_t *it, int64_t sample);
 
+    // get total playback time of selected tracks
+    float (*plt_get_selection_playback_time) (ddb_playlist_t *plt);
+
+    // Override internal cue behavior, only applies to one playlist.
+    // `plt` the playlist
+    // `filename`:
+    //     The original value is NULL (no overriding)
+    //     A full path to cuesheet file: tell the internal cuesheet code to use that specific file,
+    //     Or "__ignore" magic value: disables internal cuesheet processing.
+    void (*plt_set_cue_file) (ddb_playlist_t *plt, const char *filename);
 #endif
 } DB_functions_t;
 

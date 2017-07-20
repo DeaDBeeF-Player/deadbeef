@@ -24,6 +24,7 @@
 #include <string.h>
 #include <limits.h>
 #include <errno.h>
+#include <assert.h>
 #include "deadbeef.h"
 #include "dsp.h"
 #include "streamer.h"
@@ -443,85 +444,6 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
     *out_numbytes = nframes * dspfmt.channels * sizeof (float);
 
     return 1;
-
-#warning blockbased FIXME: split post-dsp conversion and android resampler into separate functions
-#if 0
-    {
-        int outputsamplesize = output->fmt.channels * output->fmt.bps / 8;
-#ifdef ANDROID
-        // if we not compensate here, the streamer loop will go crazy
-        if (fileinfo->fmt.samplerate != output->fmt.samplerate) {
-            if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 2 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
-                size <<= 1;
-            }
-            else if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 4 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
-                size <<= 2;
-            }
-        }
-#endif
-
-        // convert from input fmt to output fmt
-        int inputsize = size/outputsamplesize*inputsamplesize;
-        char input[inputsize];
-        int nb = fileinfo->plugin->read (fileinfo, input, inputsize);
-        if (nb != inputsize) {
-            bytesread = nb;
-            is_eof = 1;
-        }
-        inputsize = nb;
-        //            trace ("convert %d|%d|%d|%d|%d|%d to %d|%d|%d|%d|%d|%d\n"
-        //                , fileinfo->fmt.bps, fileinfo->fmt.channels, fileinfo->fmt.samplerate, fileinfo->fmt.channelmask, fileinfo->fmt.is_float, fileinfo->fmt.is_bigendian
-        //                , output->fmt.bps, output->fmt.channels, output->fmt.samplerate, output->fmt.channelmask, output->fmt.is_float, output->fmt.is_bigendian);
-        bytesread = pcm_convert (&fileinfo->fmt, input, &output->fmt, bytes, inputsize);
-
-#ifdef ANDROID
-        // downsample
-        if (fileinfo->fmt.samplerate > output->fmt.samplerate) {
-            if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 2 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
-                // clip to multiple of 2 samples
-                int outsamplesize = output->fmt.channels * (output->fmt.bps>>3) * 2;
-                if ((bytesread % outsamplesize) != 0) {
-                    bytesread -= (bytesread % outsamplesize);
-                }
-
-                // 2x downsample
-                int nframes = bytesread / (output->fmt.bps >> 3) / output->fmt.channels;
-                int16_t *in = (int16_t *)bytes;
-                int16_t *out = in;
-                for (int f = 0; f < nframes/2; f++) {
-                    for (int c = 0; c < output->fmt.channels; c++) {
-                        out[f*output->fmt.channels+c] = (in[f*2*output->fmt.channels+c] + in[(f*2+1)*output->fmt.channels+c]) >> 1;
-                    }
-                }
-                bytesread >>= 1;
-            }
-            else if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 4 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
-                // clip to multiple of 4 samples
-                int outsamplesize = output->fmt.channels * (output->fmt.bps>>3) * 4;
-                if ((bytesread % outsamplesize) != 0) {
-                    bytesread -= (bytesread % outsamplesize);
-                }
-
-                // 4x downsample
-                int nframes = bytesread / (output->fmt.bps >> 3) / output->fmt.channels;
-                assert (bytesread % ((output->fmt.bps >> 3) * output->fmt.channels) == 0);
-                int16_t *in = (int16_t *)bytes;
-                for (int f = 0; f < nframes/4; f++) {
-                    for (int c = 0; c < output->fmt.channels; c++) {
-                        in[f*output->fmt.channels+c] = (in[f*4*output->fmt.channels+c]
-                                                        + in[(f*4+1)*output->fmt.channels+c]
-                                                        + in[(f*4+2)*output->fmt.channels+c]
-                                                        + in[(f*4+3)*output->fmt.channels+c]) >> 2;
-                    }
-                }
-                bytesread >>= 2;
-            }
-        }
-        assert ((bytesread%2) == 0);
-#endif
-
-    }
-#endif
 }
 
 void
@@ -545,5 +467,85 @@ dsp_get_output_format (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt) {
             dsp = dsp->next;
         }
     }
-
 }
+
+// NOTE: input must go in the same sample format as the output is set to.
+// Only int16 is supported, any number of channels
+// Returns number of bytes consumed from input.
+int
+dsp_apply_simple_downsampler (int input_samplerate, int channels, char *input, int inputsize, int output_samplerate, char **out_bytes, int *out_numbytes) {
+    if (input_samplerate == output_samplerate) {
+        *out_bytes = input;
+        *out_numbytes = inputsize;
+        return inputsize; // nothing to do
+    }
+
+    // NOTE: output samplerate is expected to be set to a multiple of input samplerate, which can be played by device
+    // E.g. input 192000 -> output 48000
+    // Anything else is an error.
+
+    // 2x downsample
+    if ((input_samplerate / output_samplerate) == 2 && (input_samplerate % output_samplerate) == 0) {
+        // clip to multiple of 2 samples
+        int outsamplesize = channels * 2 * 2;
+        if ((inputsize % outsamplesize) != 0) {
+            inputsize -= (inputsize % outsamplesize);
+        }
+
+        // allocate output buffer
+        int outsize = inputsize / 2;
+        char *bytes = ensure_dsp_temp_buffer (outsize);
+        // return output buffer and its size
+        *out_bytes = bytes;
+        *out_numbytes = outsize;
+
+        // 2x downsample
+        int nframes = inputsize / 2 / channels;
+        int16_t *in = (int16_t *)input;
+        int16_t *out = (int16_t *)bytes;
+        for (int f = 0; f < nframes/2; f++) {
+            for (int c = 0; c < channels; c++) {
+                out[f*channels+c] = (in[f*2*channels+c] + in[(f*2+1)*channels+c]) >> 1;
+            }
+        }
+        return inputsize;
+    }
+    // 4x downsample
+    else if ((input_samplerate / output_samplerate) == 4 && (input_samplerate % output_samplerate) == 0) {
+        // clip to multiple of 4 samples
+        int outsamplesize = channels * 2 * 4;
+        if ((inputsize % outsamplesize) != 0) {
+            inputsize -= (inputsize % outsamplesize);
+        }
+
+        // allocate output buffer
+        int outsize = inputsize / 4;
+        char *bytes = ensure_dsp_temp_buffer (outsize);
+        // return output buffer and its size
+        *out_bytes = bytes;
+        *out_numbytes = outsize;
+
+        // 4x downsample
+        int nframes = inputsize / 2 / channels;
+        assert (inputsize % (2 * channels) == 0);
+        int16_t *in = (int16_t *)input;
+        int16_t *out = (int16_t *)bytes;
+        for (int f = 0; f < nframes/4; f++) {
+            for (int c = 0; c < channels; c++) {
+                out[f*channels+c] = (in[f*4*channels+c]
+                                    + in[(f*4+1)*channels+c]
+                                    + in[(f*4+2)*channels+c]
+                                    + in[(f*4+3)*channels+c]) >> 2;
+            }
+        }
+        return inputsize;
+    }
+    else {
+        // can't perform downsampling, return unaltered input buffer
+        *out_bytes = input;
+        *out_numbytes = inputsize;
+    }
+    
+    return inputsize;
+}
+

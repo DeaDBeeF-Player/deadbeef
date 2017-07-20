@@ -37,6 +37,8 @@ typedef struct streamblock_s {
 
     playItem_t *track;
     ddb_waveformat_t fmt;
+
+    int queued;
 } streamblock_t;
 
 void
@@ -45,24 +47,34 @@ streamreader_init (void);
 void
 streamreader_free (void);
 
-// returns:
-// negative value: error
-// 0: no buffers available
-// positive value: number of blocks read (1)
-int
-streamreader_read_next_block (playItem_t *track, DB_fileinfo_t *fileinfo, streamblock_t **block);
+// returns next available (free) block, or NULL.
+streamblock_t *
+streamreader_get_next_block (void);
 
-// get current block with data
+// Reads data from stream to the specified block.
+// Returns negative value on error.
+int
+streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t *fileinfo);
+
+// Appends (enqueues) the block to the list of blocks containing data.
+// The passed block pointer must be the same as returned by `streamreader_get_next_block`.
+void
+streamreader_enqueue_block (streamblock_t *block);
+
+// Get the first (current) block with data from the queue.
+// Can return NULL.
 streamblock_t *
 streamreader_get_curr_block (void);
 
-// release the current data block, move to next one
+// Release (unqueue) the current data block, move to next one
 void
 streamreader_next_block (void);
 
+// Resets the queue
 void
 streamreader_reset (void);
 
+// Number of blocks in the queue
 int
 streamreader_num_blocks_ready (void);
 

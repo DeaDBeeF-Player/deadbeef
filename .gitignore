@@ -83,3 +83,5 @@ portable_out
 static
 INSTALL
 /static-deps
+osx/build
+.dirstamp

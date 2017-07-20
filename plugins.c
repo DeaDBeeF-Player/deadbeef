@@ -490,6 +490,10 @@ static DB_functions_t deadbeef_api = {
     .pl_item_get_endsample = (int64_t (*) (DB_playItem_t *it))pl_item_get_endsample,
     .pl_item_set_startsample = (void (*) (DB_playItem_t *it, int64_t sample))pl_item_set_startsample,
     .pl_item_set_endsample = (void (*) (DB_playItem_t *it, int64_t sample))pl_item_set_endsample,
+
+    .plt_get_selection_playback_time = (float (*) (ddb_playlist_t *plt))plt_get_selection_playback_time,
+
+    .plt_set_cue_file = (void (*) (ddb_playlist_t *plt, const char *filename))plt_set_cue_file,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -616,7 +620,7 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
         int same_name = (!p->plugin->id || !plugin_api->id) && p->plugin->name && plugin_api->name && !strcmp (p->plugin->name, plugin_api->name);
         if (same_id || same_name) {
             if (plugin_api->version_major > p->plugin->version_major || (plugin_api->version_major == p->plugin->version_major && plugin_api->version_minor > p->plugin->version_minor)) {
-                trace ("found newer version of plugin \"%s\" (%s), replacing\n", plugin_api->id, plugin_api->name);
+                trace_err ("found newer version of plugin \"%s\" (%s), replacing\n", plugin_api->id, plugin_api->name);
                 // unload older plugin before replacing
                 dlclose (p->handle);
                 if (prev) {
@@ -631,7 +635,7 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
                 free (p);
             }
             else {
-                trace ("found copy of plugin \"%s\" (%s), but newer version is already loaded\n", plugin_api->id, plugin_api->name)
+                trace_err ("found copy of plugin \"%s\" (%s), but newer version is already loaded\n", plugin_api->id, plugin_api->name)
                 return -1;
             }
         }
@@ -642,13 +646,13 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
         // version check enabled
         if (DB_API_VERSION_MAJOR != 9 && DB_API_VERSION_MINOR != 9) {
             if (plugin_api->api_vmajor != DB_API_VERSION_MAJOR || plugin_api->api_vminor > DB_API_VERSION_MINOR) {
-                trace ("\033[0;31mWARNING: plugin \"%s\" wants API v%d.%d (got %d.%d), will not be loaded\033[0;m\n", plugin_api->name, plugin_api->api_vmajor, plugin_api->api_vminor, DB_API_VERSION_MAJOR, DB_API_VERSION_MINOR);
+                trace_err ("WARNING: plugin \"%s\" wants API v%d.%d (got %d.%d), will not be loaded\n", plugin_api->name, plugin_api->api_vmajor, plugin_api->api_vminor, DB_API_VERSION_MAJOR, DB_API_VERSION_MINOR);
                 return -1;
             }
         }
     }
     else {
-            trace ("\033[0;31mWARNING: plugin \"%s\" has disabled version check. please don't distribute it!\033[0;m\n", plugin_api->name);
+            trace_err ("WARNING: plugin \"%s\" has disabled version check. please don't distribute it!\n", plugin_api->name);
     }
 #endif
 
@@ -944,7 +948,7 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
 
                 if (!gui_scan) {
                     if (0 != load_plugin (plugdir, d_name, (int)l)) {
-                        trace ("plugin not found or failed to load\n");
+                        trace_err ("plugin %s not found or failed to load\n", d_name);
                     }
                 }
                 break;
@@ -986,7 +990,7 @@ plug_load_all (void) {
         char *homedir = getenv ("HOME");
 
         if (!homedir) {
-            trace ("plug_load_all: warning: unable to find home directory\n");
+            trace_err ("plug_load_all: warning: unable to find home directory\n");
             xdg_plugin_dir[0] = 0;
         }
         else {
@@ -995,12 +999,12 @@ plug_load_all (void) {
             // 2. load from lib if present
             int written = snprintf (xdg_plugin_dir, sizeof (xdg_plugin_dir), "%s/.local/lib/deadbeef", homedir);
             if (written > sizeof (xdg_plugin_dir)) {
-                trace ("warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
+                trace_err ("warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
                 xdg_plugin_dir[0] = 0;
             }
             written = snprintf (xdg_plugin_dir_explicit_arch, sizeof (xdg_plugin_dir_explicit_arch), "%s/.local/lib%d/deadbeef", homedir, (int)(sizeof (long) * 8));
             if (written > sizeof (xdg_plugin_dir_explicit_arch)) {
-                trace ("warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
+                trace_err ("warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
                 xdg_plugin_dir_explicit_arch[0] = 0;
             }
         }
@@ -1397,7 +1401,7 @@ plug_reinit_sound (void) {
 #else
         conf_get_str ("output_plugin", "ALSA output plugin", outplugname, sizeof (outplugname));
 #endif
-        trace ("failed to select output plugin %s\nreverted to %s\n", outplugname, prev->plugin.name);
+        trace_err ("failed to select output plugin %s\nreverted to %s\n", outplugname, prev->plugin.name);
         output_plugin = prev;
     }
     DB_output_t *output = plug_get_output ();
@@ -1406,14 +1410,14 @@ plug_reinit_sound (void) {
     }
     if (output->init () < 0) {
         streamer_reset (1);
-        streamer_set_nextsong (-1);
+        streamer_set_nextsong (-1, 0);
         return;
     }
 
     if (state != OUTPUT_STATE_PAUSED && state != OUTPUT_STATE_STOPPED) {
         if (output->play () < 0) {
-            trace ("failed to reinit sound output\n");
-            streamer_set_nextsong (-1);
+            trace_err ("failed to reinit sound output\n");
+            streamer_set_nextsong (-1, 0);
         }
     }
 }
@@ -1553,3 +1557,36 @@ action_get_playlist (void) {
     plt_ref ((playlist_t *)action_playlist);
     return action_playlist;
 }
+
+// for tests
+void
+plug_register_in (DB_plugin_t *inplug) {
+    int i;
+    for (i = 0; g_plugins[i]; i++);
+    g_plugins[i++] = inplug;
+    g_plugins[i] = NULL;
+
+    for (i = 0; g_decoder_plugins[i]; i++);
+    g_decoder_plugins[i++] = (DB_decoder_t *)inplug;
+    g_decoder_plugins[i] = NULL;
+}
+
+// for tests
+void
+plug_register_out (DB_plugin_t *outplug) {
+    int i;
+    for (i = 0; g_plugins[i]; i++);
+    g_plugins[i++] = outplug;
+    g_plugins[i] = NULL;
+
+    for (i = 0; g_output_plugins[i]; i++);
+    g_output_plugins[i++] = (DB_output_t *)outplug;
+    g_output_plugins[i] = NULL;
+}
+
+// for tests
+DB_functions_t *
+plug_get_api (void) {
+    return &deadbeef_api;
+}
+

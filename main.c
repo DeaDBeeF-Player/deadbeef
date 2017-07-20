@@ -70,6 +70,7 @@
 #endif
 #include "playqueue.h"
 #include "tf.h"
+#include "logger.h"
 
 #ifndef PREFIX
 #error PREFIX must be defined
@@ -124,6 +125,9 @@ print_help (void) {
     fprintf (stdout, _("   --nowplaying-tf FMT  Print formatted track name to stdout, using the new title formatting\n"));
     fprintf (stdout, _("                      FMT syntax: http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting-2.0\n"));
     fprintf (stdout, _("                      example: --nowplaying-tf \"%%artist%% - %%title%%\" should print \"artist - title\"\n"));
+    fprintf (stdout, _("   --volume [NUM]     Print or set deadbeef volume level.\n"));
+    fprintf (stdout, _("                      The NUM parameter can be specified in percents (if no suffix) or dB [-50, 0].\n"));
+    fprintf (stdout, _("                      Examples: --volume 80 or --volume -20dB\n"));
 #ifdef ENABLE_NLS
 	bind_textdomain_codeset (PACKAGE, "UTF-8");
 #endif
@@ -327,6 +331,25 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             parg += strlen (parg);
             parg++;
             continue;
+        }
+        else if (!strcmp (parg, "--volume")) {
+            parg += strlen (parg);
+            parg++;
+
+            if (parg < pend) {
+                int pct;
+                char *end;
+                pct = strtol (parg, &end, 10);
+                if (!strcasecmp(end, "db")) {
+                    deadbeef->volume_set_db (pct);
+                } else {
+                    deadbeef->volume_set_db ((pct/100.0 * 50) - 50);
+                }
+            }
+            if (sendback) {
+                snprintf (sendback, sbsize, "volume %.0f%% (%.2f dB)", deadbeef->volume_get_db() * 2 + 100 , deadbeef->volume_get_db());
+            }
+            return 0;
         }
         else if (parg[0] != '-') {
             break; // unknown option is filename
@@ -622,11 +645,6 @@ player_mainloop (void) {
 
                         playqueue_clear ();
 
-                        // stop streaming and playback before unloading plugins
-                        DB_output_t *output = plug_get_output ();
-                        output->stop ();
-                        streamer_free ();
-                        output->free ();
                         term = 1;
                     }
                     break;
@@ -635,10 +653,10 @@ player_mainloop (void) {
                     break;
                 case DB_EV_PLAY_NUM:
                     playqueue_clear ();
-                    streamer_set_nextsong (p1);
+                    streamer_set_nextsong (p1, 0);
                     break;
                 case DB_EV_STOP:
-                    streamer_set_nextsong (-1);
+                    streamer_set_nextsong (-1, 0);
                     break;
                 case DB_EV_NEXT:
                     streamer_move_to_nextsong (1);
@@ -736,13 +754,9 @@ restore_resume_state (void) {
         if (plt >= 0 && track >= 0 && pos >= 0) {
             streamer_set_current_playlist (plt);
             streamer_yield ();
-            streamer_set_nextsong (track);
+            streamer_set_nextsong (track, paused);
             streamer_yield ();
             streamer_set_seek (pos);
-            streamer_yield ();
-            if (paused) {
-                output->pause ();
-            }
         }
     }
 }
@@ -762,6 +776,12 @@ plug_get_gui (void) {
 
 void
 main_cleanup_and_quit (void) {
+    // stop streaming and playback before unloading plugins
+    DB_output_t *output = plug_get_output ();
+    output->stop ();
+    streamer_free ();
+    output->free ();
+
     // terminate server and wait for completion
     if (server_tid) {
         server_terminate = 1;
@@ -798,8 +818,10 @@ main_cleanup_and_quit (void) {
     messagepump_free ();
     trace ("plug_cleanup\n");
     plug_cleanup ();
+    trace ("logger_free\n");
 
     trace ("hej-hej!\n");
+    ddb_logger_free();
 }
 
 static void
@@ -812,11 +834,13 @@ mainloop_thread (void *ctx) {
     if (gui) {
         gui->stop ();
     }
+
     return;
 }
 
 int
 main (int argc, char *argv[]) {
+    ddb_logger_init ();
     int portable = 0;
 #if STATICLINK
     int staticlink = 1;
@@ -1153,6 +1177,11 @@ main (int argc, char *argv[]) {
     if (gui) {
         gui->start ();
     }
+
+    ddb_logger_stop_buffering ();
+
+    // NOTE: It's not guaranteed that the code after this line will be called.
+    // On some platforms (cocoa), main_cleanup_and_quit is called directly before quit.
     
     trace ("gui plugin has quit; waiting for mainloop thread to finish\n");
     thread_join (mainloop_tid);

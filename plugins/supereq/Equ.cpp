@@ -77,7 +77,7 @@ static REAL aa = 96;
 static REAL iza = 0;
 
 #define NBANDS 17
-static REAL bands[] = {
+static REAL bands[NBANDS] = {
   65.406392,92.498606,130.81278,184.99721,261.62557,369.99442,523.25113,
   739.9884 ,1046.5023,1479.9768,2093.0045,2959.9536,4186.0091,5919.9072,
   8372.0181,11839.814,16744.036
@@ -230,8 +230,8 @@ void process_param(REAL *bc,paramlist *param,paramlist &param2,REAL fs,int ch)
   for(i=0,pp=&param2.elm;i<=NBANDS;i++,pp = &(*pp)->next)
   {
     (*pp) = new paramlistelm;
-	(*pp)->lower = i == 0        ?  0 : bands[i-1];
-	(*pp)->upper = i == NBANDS-1 ? fs : bands[i  ];
+	(*pp)->lower = i == 0      ?  0 : bands[i-1];
+	(*pp)->upper = i == NBANDS ? fs : bands[i  ];
 	(*pp)->gain  = bc[i];
   }
   

@@ -1,0 +1,41 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(lldb) Launch Debug macOS",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/osx/build/Debug/deadbeef.app/Contents/MacOS/deadbeef",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "lldb"
+        },
+        {
+            "name": "(lldb) Launch Release macOS",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/osx/build/Debug/deadbeef.app/Contents/MacOS/deadbeef",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "lldb"
+        },
+        {
+            "name": "(gdb) Launch Debug Linux",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/usr/local/bin/deadbeef",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb"
+        }
+    ]
+}

@@ -280,6 +280,9 @@ gtkui_run_preferences_dlg (void) {
     gtk_widget_set_sensitive (lookup_widget (prefwin, "cli_playlist_name"), active);
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (prefwin, "cli_playlist_name")), deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default"));
 
+    // statusbar selection playback time
+    set_toggle_button ("display_seltime", deadbeef->conf_get_int ("gtkui.statusbar_playtime", 0));
+
     // resume last session
     set_toggle_button("resume_last_session", deadbeef->conf_get_int ("resume_last_session", 1));
 
@@ -294,6 +297,11 @@ gtkui_run_preferences_dlg (void) {
 
     // enable auto-sizing of columns
     set_toggle_button("auto_size_columns", deadbeef->conf_get_int ("gtkui.autoresize_columns", 0));
+
+    // enable showing cue subindexes as tracks
+    set_toggle_button("chkbox_cue_subindexes", deadbeef->conf_get_int ("cue.subindexes_as_tracks", 0));
+
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON (lookup_widget (w, "listview_group_spacing")), deadbeef->conf_get_int ("playlist.groups.spacing", 0));
 
     // fill gui plugin list
     combobox = GTK_COMBO_BOX (lookup_widget (w, "gui_plugin"));
@@ -654,6 +662,17 @@ on_configure_plugin_clicked            (GtkButton       *button,
         };
         gtkui_run_dialog (prefwin, &conf, 0, NULL, NULL);
     }
+}
+
+void
+on_pref_pluginlist_row_activated       (GtkTreeView     *treeview,
+                                        GtkTreePath     *path,
+                                        GtkTreeViewColumn *column,
+                                        gpointer         user_data)
+{
+    GtkWidget *w = prefwin;
+    GtkButton *btn = GTK_BUTTON (lookup_widget (w, "configure_plugin"));
+    gtk_button_clicked(btn);
 }
 
 static void
@@ -1241,4 +1260,34 @@ on_auto_size_columns_toggled           (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("gtkui.autoresize_columns", gtk_toggle_button_get_active (togglebutton));
+}
+
+void
+on_cue_subindexes_as_tracks_toggled           (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("cue.subindexes_as_tracks", gtk_toggle_button_get_active (togglebutton));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_display_seltime_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("gtkui.statusbar_seltime", gtk_toggle_button_get_active (togglebutton));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_listview_group_spacing_value_changed
+                                        (GtkSpinButton   *spinbutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("playlist.groups.spacing", gtk_spin_button_get_value_as_int (spinbutton));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, (uintptr_t)"playlist.groups.spacing", 0, 0);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref(plt);
+    }
 }

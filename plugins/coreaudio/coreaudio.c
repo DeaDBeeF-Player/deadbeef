@@ -33,6 +33,7 @@ static AudioStreamBasicDescription default_format;
 static AudioStreamBasicDescription current_format;
 static AudioStreamBasicDescription req_format;
 static int state = OUTPUT_STATE_STOPPED;
+static uint64_t mutex;
 
 static OSStatus
 ca_fmtchanged (AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioObjectPropertyAddress* inAddresses, void* inClientData);
@@ -41,7 +42,12 @@ static OSStatus
 ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const AudioBufferList * inInputData, const AudioTimeStamp * inInputTime, AudioBufferList * outOutputData, const AudioTimeStamp * inOutputTime, void * inClientData);
 
 static int
+ca_free (void);
+
+static int
 ca_apply_format (void) {
+    int res = -1;
+    deadbeef->mutex_lock (mutex);
     UInt32 sz;
     if (req_format.mSampleRate > 0) {
         AudioObjectPropertyAddress theAddress = { kAudioDevicePropertyStreamFormat,
@@ -49,25 +55,31 @@ ca_apply_format (void) {
                                                   0 };
         sz = sizeof (current_format);
         if (AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &current_format)) {
-            return -1;
+            goto error;
         }
         if (current_format.mSampleRate == req_format.mSampleRate &&
             current_format.mChannelsPerFrame == req_format.mChannelsPerFrame) {
+            deadbeef->mutex_unlock (mutex);
             return 0;
         }
         sz = sizeof (req_format);
         if (AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &req_format)) {
             if (AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &default_format)) {
-                return -1;
+                goto error;
             }
         }
     }
 
-    return 0;
+    res = 0;
+error:
+    deadbeef->mutex_unlock (mutex);
+    return res;
 }
 
 static int
 ca_init (void) {
+    ca_free ();
+    mutex = deadbeef->mutex_create ();
     UInt32 sz;
     char device_name[128];
     AudioObjectPropertyAddress theAddress = { kAudioHardwarePropertyDefaultOutputDevice,
@@ -124,6 +136,7 @@ ca_init (void) {
 static int
 ca_free (void) {
     if (device_id) {
+        deadbeef->mutex_lock (mutex);
         AudioObjectPropertyAddress theAddress = { kAudioDevicePropertyStreamFormat,
                                                   kAudioDevicePropertyScopeOutput,
                                                   0 };
@@ -132,6 +145,11 @@ ca_free (void) {
         AudioDeviceDestroyIOProcID(device_id, process_id);
         process_id = 0;
         device_id = 0;
+        deadbeef->mutex_unlock (mutex);
+    }
+    if (mutex) {
+        deadbeef->mutex_free (mutex);
+        mutex = 0;
     }
     return 0;
 }
@@ -163,41 +181,60 @@ ca_play (void) {
         }
     }
 
-    if (AudioDeviceStart (device_id, ca_buffer_callback)) {
-        return -1;
-    }
+    deadbeef->mutex_lock (mutex);
+    if (state != OUTPUT_STATE_PLAYING) {
+        if (AudioDeviceStart (device_id, ca_buffer_callback)) {
+            state = OUTPUT_STATE_STOPPED;
+            deadbeef->mutex_unlock (mutex);
+            return -1;
+        }
 
-    state = OUTPUT_STATE_PLAYING;
+        state = OUTPUT_STATE_PLAYING;
+    }
+    deadbeef->mutex_unlock (mutex);
 
     return 0;
 }
 
 static int
 ca_stop (void) {
-    state = OUTPUT_STATE_STOPPED;
-
     if (!device_id) {
         return 0;
     }
-    if (AudioDeviceStop (device_id, ca_buffer_callback)) {
-        return -1;
+    deadbeef->mutex_lock (mutex);
+    if (state != OUTPUT_STATE_STOPPED) {
+        state = OUTPUT_STATE_STOPPED;
+        if (AudioDeviceStop (device_id, ca_buffer_callback)) {
+            deadbeef->mutex_unlock (mutex);
+            return -1;
+        }
     }
+
+    deadbeef->mutex_unlock (mutex);
 
     return 0;
 }
 
 static int
 ca_pause (void) {
-    state = OUTPUT_STATE_PAUSED;
-
     if (!device_id) {
-        return 0;
+        if (ca_init()) {
+            return -1;
+        }
     }
 
-    if (AudioDeviceStop (device_id, ca_buffer_callback)) {
-        return -1;
+    deadbeef->mutex_lock (mutex);
+
+    if (state != OUTPUT_STATE_PAUSED) {
+        state = OUTPUT_STATE_PAUSED;
+        if (AudioDeviceStop (device_id, ca_buffer_callback)) {
+            state = OUTPUT_STATE_STOPPED;
+            deadbeef->mutex_unlock (mutex);
+            return -1;
+        }
     }
 
+    deadbeef->mutex_unlock (mutex);
     return 0;
 }
 
@@ -213,12 +250,12 @@ ca_state (void) {
 
 static OSStatus
 ca_fmtchanged (AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioObjectPropertyAddress* inAddresses, void* inClientData) {
-    
     AudioStreamBasicDescription device_format;
     UInt32 sz = sizeof (device_format);
     AudioObjectPropertyAddress theAddress = { kAudioDevicePropertyStreamFormat,
                                               kAudioDevicePropertyScopeOutput,
                                               0 };
+    deadbeef->mutex_lock (mutex);
     if (!AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &device_format)) {
         plugin.fmt.bps = device_format.mBitsPerChannel;
         plugin.fmt.channels = device_format.mChannelsPerFrame;
@@ -229,7 +266,8 @@ ca_fmtchanged (AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioOb
             plugin.fmt.channelmask |= (1<<i);
         }
     }
-    
+    deadbeef->mutex_unlock (mutex);
+
     return 0;
 }
                                         
@@ -243,9 +281,7 @@ ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const A
     if (state == OUTPUT_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1)) {
         int br = deadbeef->streamer_read (buffer, sz);
         if (br < 0) {
-            state = OUTPUT_STATE_STOPPED;
-            AudioDeviceStop (device_id, ca_buffer_callback);
-            return -1;
+            br = 0;
         }
         if (br != sz) {
             memset (buffer+br, 0, sz-br);
