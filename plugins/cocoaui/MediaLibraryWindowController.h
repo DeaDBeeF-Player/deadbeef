@@ -10,5 +10,6 @@
 
 @interface MediaLibraryWindowController : NSWindowController
 @property (weak) IBOutlet NSOutlineView *outlineView;
+- (IBAction)queryChanged:(id)sender;
 
 @end
