@@ -246,8 +246,16 @@ ml_reg_item_in_folder (tree_node_t *node, const char *path, DB_playItem_t *it) {
         coll_item_t *item = calloc (1, sizeof (coll_item_t));
         item->it = it;
         deadbeef->pl_item_ref (it);
-        item->next = node->items;
-        node->items = item;
+
+
+        coll_item_t *tail = NULL;
+        for (tail = node->items; tail && tail->next; tail = tail->next);
+        if (tail) {
+            tail->next = item;
+        }
+        else {
+            node->items = item;
+        }
         return;
     }
 
@@ -270,8 +278,14 @@ ml_reg_item_in_folder (tree_node_t *node, const char *path, DB_playItem_t *it) {
 
     // not found, start new branch
     tree_node_t *n = calloc (1, sizeof (tree_node_t));
-    n->next = node->children;
-    node->children = n;
+    tree_node_t *tail = NULL;
+    for (tail = node->children; tail && tail->next; tail = tail->next);
+    if (tail) {
+        tail->next = n;
+    }
+    else {
+        node->children = n;
+    }
 
     char temp[len+1];
     memcpy (temp, path, len);
@@ -825,16 +839,25 @@ get_subfolders_for_folder (ddb_medialib_item_t *folderitem, tree_node_t *folder)
             folderitem->num_children++;
         }
     }
-    else {
+    if (folder->items) {
         ddb_medialib_item_t *tail = NULL;
         for (coll_item_t *i = folder->items; i; i = i->next) {
             ddb_medialib_item_t *trackitem = calloc (1, sizeof (ddb_medialib_item_t));
+#if 0 // filename is pretty useless
             const char *uri = deadbeef->pl_find_meta (i->it, ":URI");
             const char *slash = strrchr (uri, '/');
             if (slash) {
                 uri = slash+1;
             }
-            trackitem->text = deadbeef->metacache_add_string (uri);
+#endif
+            ddb_tf_context_t ctx = {
+                ._size = sizeof (ddb_tf_context_t),
+                .it = i->it,
+            };
+            char text[1000];
+            deadbeef->tf_eval (&ctx, title_bc, text, sizeof (text));
+
+            trackitem->text = deadbeef->metacache_add_string (text);
 
             if (tail) {
                 tail->next = trackitem;
