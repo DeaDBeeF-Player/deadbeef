@@ -824,8 +824,8 @@ get_subfolders_for_folder (ddb_medialib_item_t *folderitem, tree_node_t *folder)
         folderitem->text = deadbeef->metacache_add_string (folder->text);
     }
 
-    if (!folder->items) {
-        ddb_medialib_item_t *tail = NULL;
+    ddb_medialib_item_t *tail = NULL;
+    if (folder->children) {
         for (tree_node_t *c = folder->children; c; c = c->next) {
             ddb_medialib_item_t *subfolder = calloc (1, sizeof (ddb_medialib_item_t));
             get_subfolders_for_folder (subfolder, c);
@@ -840,7 +840,6 @@ get_subfolders_for_folder (ddb_medialib_item_t *folderitem, tree_node_t *folder)
         }
     }
     if (folder->items) {
-        ddb_medialib_item_t *tail = NULL;
         for (coll_item_t *i = folder->items; i; i = i->next) {
             ddb_medialib_item_t *trackitem = calloc (1, sizeof (ddb_medialib_item_t));
 #if 0 // filename is pretty useless
