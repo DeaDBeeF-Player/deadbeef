@@ -21,76 +21,13 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef cueutil_h
-#define cueutil_h
-
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <stdio.h>
-#include <ctype.h>
+/* this is basically part of playlist.h */
 
 #include "deadbeef.h"
 
-#define SKIP_BLANK_CUE_TRACKS 0
-#define MAX_CUE_TRACKS 99
-
-#define MAX_EXTRA_TAGS_FROM_CUE 16 //((sizeof(cue_field_map) / sizeof(cue_field_map[0])))
-
-enum {
-    CUE_FIELD_ALBUM_PERFORMER,
-    CUE_FIELD_PERFORMER,
-    CUE_FIELD_ALBUM_SONGWRITER,
-    CUE_FIELD_SONGWRITER,
-    CUE_FIELD_ALBUM_TITLE,
-    CUE_FIELD_FILE,
-    CUE_FIELD_TRACK,
-    CUE_FIELD_TITLE,
-    CUE_FIELD_PREGAP,
-    CUE_FIELD_INDEX00,
-    CUE_FIELD_INDEX01,
-    CUE_FIELD_REPLAYGAIN_ALBUM_GAIN,
-    CUE_FIELD_REPLAYGAIN_ALBUM_PEAK,
-    CUE_FIELD_REPLAYGAIN_TRACK_GAIN,
-    CUE_FIELD_REPLAYGAIN_TRACK_PEAK,
-    CUE_FIELD_TOTALTRACKS,
-    CUE_FIELD_ISRC,
-    CUE_MAX_FIELDS,
-};
-
-#define CUE_FIELD_INDEX_X 100
-
-const uint8_t *
-skipspaces (const uint8_t *p, const uint8_t *end);
-
-const uint8_t *
-pl_cue_skipspaces (const uint8_t *p);
-
-void
-pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out, const char *charset);
-
-void
-pl_get_value_from_cue (const char *p, int sz, char *out);
-
-float
-pl_cue_parse_time (const char *p);
-
-void
-pl_cue_get_total_tracks_and_files(const uint8_t *buffer, const uint8_t *buffersize, int *ncuefiles, int *ncuetracks);
-
-void
-pl_cue_set_track_field_values(playItem_t *it, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], int extra_tag_index);
-
-void
-pl_cue_reset_per_track_fields(char cuefields[CUE_MAX_FIELDS][255]);
-
-int
-pl_cue_get_field_value(const char *p, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], const char *charset, int have_track, int *extra_tag_index);
-
-void
-plt_process_cue_track2 (playItem_t *it, const char *fname, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], int extra_tag_index);
+playItem_t *
+plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 playItem_t *
-load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
+plt_load_cuesheet_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, uint64_t numsamples64, int samplerate);
 
-#endif /* cueutil_h */
