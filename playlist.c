@@ -1026,7 +1026,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
 
     // handle cue files
     if (!strcasecmp (eol, "cue")) {
-        playItem_t *inserted = plt_load_cue_file(visibility, playlist, after, fname, NULL, NULL, 0, pabort, cb, user_data);
+        playItem_t *inserted = plt_load_cue_file(playlist, after, fname, NULL, NULL, 0);
         return inserted;
     }
 
@@ -1213,7 +1213,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         _get_fullname (fullname, sizeof (fullname), vfs, dirname, namelist[i]->d_name);
 
         // TODO: files added by cue processor must be marked as added
-        playItem_t *inserted = plt_load_cue_file (visibility, playlist, after, fullname, dirname, namelist, n, pabort, cb, user_data);
+        playItem_t *inserted = plt_load_cue_file (playlist, after, fullname, dirname, namelist, n);
         namelist[c]->d_name[0] = 0;
 
         if (inserted) {
