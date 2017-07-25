@@ -369,7 +369,6 @@ static pl_cue_get_field_value(const char *p, char cuefields[CUE_MAX_FIELDS][255]
             }
         }
         return -1;
-//      fprintf (stderr, "got unknown line:\n%s\n", p);
     }
 }
 
@@ -425,13 +424,11 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t st
         if (pl_get_item_duration (*prev) < 0) {
             // might be bad cuesheet file, try to fix
             trace ("cuesheet seems to be corrupted, trying workaround\n");
-            //trace ("[bad:] calc endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", pl_item_get_endsample (*prev),  prevtime, samplerate, (*prev)->duration);
             prevtime = f_index01;
             pl_item_set_endsample (*prev, startsample + (prevtime * samplerate) - 1);
             float dur = (float)(pl_item_get_endsample (*prev) - pl_item_get_startsample (*prev) + 1) / samplerate;
             plt_set_item_duration (playlist, *prev, dur);
         }
-//        trace ("startsample=%d, endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", pl_item_get_startsample (*prev), pl_item_get_endsample (*prev),  prevtime, samplerate, (*prev)->_duration);
     }
     // non-compliant hack to handle tracks which only store pregap info
     if (!cuefields[CUE_FIELD_INDEX01][0]) {
@@ -454,7 +451,6 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t st
 
 static void
 plt_process_cue_track2 (playItem_t *it, const char *fname, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], int extra_tag_index) {
-    playItem_t *prev = it;
     if (!cuefields[CUE_FIELD_TRACK][0]) {
         trace ("pl_process_cue_track: invalid track (file=%s, title=%s)\n", fname, cuefields[CUE_FIELD_TITLE]);
         return;
@@ -492,6 +488,7 @@ plt_process_cue_track2 (playItem_t *it, const char *fname, char cuefields[CUE_MA
 playItem_t *
 plt_load_cue_file (int visibility, playlist_t *plt, playItem_t *after, const char *fname, const char *dirname, struct dirent **namelist, int n, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     char resolved_fname[PATH_MAX];
+    uint8_t *membuffer = NULL;
     char *res = realpath (fname, resolved_fname);
     if (res) {
         fname = resolved_fname;
@@ -503,21 +500,18 @@ plt_load_cue_file (int visibility, playlist_t *plt, playItem_t *after, const cha
     if (slash && slash > fname) {
         strncpy(cue_file_dir, fname, slash - fname);
     }
-    //fprintf (stderr, "enter pl_insert_cue: %s\n", fname);
-    //fprintf (stderr, "cue directory: %s \n", cue_file_dir);
 
     DB_FILE *fp = vfs_fopen (fname);
     if (!fp) {
-        return NULL;
+        goto error;
     }
 
-    int sz = vfs_fgetlength (fp);
-    uint8_t *membuffer = malloc (sz);
+    int sz = (int)vfs_fgetlength (fp);
+    membuffer = malloc (sz);
     if (!membuffer) {
         vfs_fclose (fp);
         trace ("failed to allocate %d bytes to read the file %s\n", sz, fname);
-        free (membuffer);
-        return NULL;
+        goto error;
     }
     uint8_t *buffer = membuffer;
     vfs_fread (buffer, 1, sz, fp);
@@ -538,7 +532,7 @@ plt_load_cue_file (int visibility, playlist_t *plt, playItem_t *after, const cha
     pl_cue_get_total_tracks_and_files(p, end, &ncuefiles, &ncuetracks);
     if (!ncuefiles || !ncuetracks) {
         trace_err("invalid cuesheet (%s)\n", fname);
-        return NULL;
+        goto error;
     }
 
     if (ncuefiles == 1) {
@@ -559,28 +553,26 @@ plt_load_cue_file (int visibility, playlist_t *plt, playItem_t *after, const cha
                 playItem_t *it = NULL;
                 pl_get_qvalue_from_cue (p + 5, sizeof (audio_file), audio_file, charset);
                 if (audio_file[0] == '/') { //full path
-                    //fprintf (stderr, "pl_insert_cue: adding file %s\n", audio_file);
                     it = plt_insert_file2 (0, plt, after, audio_file, pabort, cb, user_data);
                 }
                 else {
-                    int l = strlen(cue_file_dir) + strlen (audio_file) + 10;
+                    size_t l = strlen(cue_file_dir) + strlen (audio_file) + 10;
                     char fullpath[l];
                     snprintf(fullpath, sizeof(fullpath), "%s/%s", cue_file_dir, audio_file);
-                    //fprintf (stderr, "pl_insert_cue: adding file %s\n", fullpath);
                     it = plt_insert_file2 (0, plt, after, fullpath, pabort, cb, user_data);
                 }
-                free(membuffer);
+                after = it;
                 pl_unlock();
-                return it;
+                goto error;
             }
             // move pointer to the next line
             while (p < end && *p >= 0x20) {
                p++;
             }
         }
-        free(membuffer);
         pl_unlock();
-        return NULL;
+        after = NULL;
+        goto  error;
     } /* end of (ncuefiles == 1) */
 
     char cuefields[CUE_MAX_FIELDS][255];
@@ -610,14 +602,12 @@ plt_load_cue_file (int visibility, playlist_t *plt, playItem_t *after, const cha
 
         if (field == CUE_FIELD_FILE) {
             if (cuefields[CUE_FIELD_FILE][0] == '/') { //full path
-                //fprintf (stderr, "pl_insert_cue: adding file %s\n", cuefields[CUE_FIELD_FILE]);
                 it = plt_insert_file2 (0, plt, after, cuefields[CUE_FIELD_FILE], pabort, cb, user_data);
             }
             else {
-                int l = strlen(cue_file_dir) + strlen (cuefields[CUE_FIELD_FILE]) + 10;
+                size_t l = strlen(cue_file_dir) + strlen (cuefields[CUE_FIELD_FILE]) + 10;
                 char fullpath[l];
                 snprintf(fullpath, sizeof(fullpath), "%s/%s", cue_file_dir, cuefields[CUE_FIELD_FILE]);
-                //fprintf (stderr, "pl_insert_cue: adding file %s\n", fullpath);
                 it = plt_insert_file2 (0, plt, after, fullpath, pabort, cb, user_data);
             }
             if (it) {
@@ -637,8 +627,7 @@ plt_load_cue_file (int visibility, playlist_t *plt, playItem_t *after, const cha
 
         if (pabort && *pabort) {
             pl_unlock();
-            free (membuffer);
-            return after;
+            goto error;
         }
         // move pointer to the next line
         while (p < end && *p >= 0x20) {
@@ -652,10 +641,12 @@ plt_load_cue_file (int visibility, playlist_t *plt, playItem_t *after, const cha
     }
 
     pl_unlock();
-    //fprintf (stderr, "leave pl_insert_cue\n");
-    free (membuffer);
-    return after;
 
+error:
+    if (membuffer) {
+        free (membuffer);
+    }
+    return after;
 }
 
 playItem_t *
@@ -728,8 +719,6 @@ plt_load_cuesheet_from_buffer (playlist_t *playlist, playItem_t *after, playItem
 
         int field = pl_cue_get_field_value(p, cuefields, extra_tags, charset, have_track, &extra_tag_index);
 
-        //fprintf(stderr, "conf_cue_subindexes_as_tracks: %d\n", conf_cue_subindexes_as_tracks);
-
         if (!conf_cue_subindexes_as_tracks) {
             /* normal operation */
             if (field == CUE_FIELD_TRACK) {
@@ -784,7 +773,7 @@ plt_load_cuesheet_from_buffer (playlist_t *playlist, playItem_t *after, playItem
                 }
                 if (field != CUE_FIELD_INDEX01 && strlen(indexnumber) == 3) {
                     // INDEX XX: have to restore the original title
-                    int a = strlen(cuefields[CUE_FIELD_TITLE]);
+                    size_t a = strlen(cuefields[CUE_FIELD_TITLE]);
                     cuefields[CUE_FIELD_TITLE][a-3] = 0;
                 }
                 track_subindexes++;
