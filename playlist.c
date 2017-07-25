@@ -1123,11 +1123,37 @@ static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
     return strcmp ((*a)->d_name, (*b)->d_name);
 }
 
+static void
+_get_fullname (char *fullname, int sz, DB_vfs_t *vfs, const char *dirname, const char *d_name) {
+    if (!vfs) {
+        snprintf (fullname, sz, "%s/%s", dirname, d_name);
+    }
+    else {
+        char fullname[PATH_MAX];
+        const char *sch = NULL;
+        if (vfs->plugin.api_vminor >= 6 && vfs->get_scheme_for_name) {
+            sch = vfs->get_scheme_for_name (dirname);
+        }
+        if (sch && strncmp (sch, d_name, strlen (sch))) {
+            snprintf (fullname, sz, "%s%s:%s", sch, dirname, d_name);
+        }
+        else {
+            strcpy (fullname, d_name);
+        }
+    }
+}
+
+static playItem_t *
+_load_cue (int visibility, playlist_t *playlist, playItem_t *after, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+    return NULL;
+}
+
 static playItem_t *
 plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!strncmp (dirname, "file://", 7)) {
         dirname += 7;
     }
+
     if (!follow_symlinks && !vfs) {
         struct stat buf;
         lstat (dirname, &buf);
@@ -1159,43 +1185,64 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         }
         return NULL;	// not a dir or no read access
     }
-    int i;
-    for (i = 0; i < n; i++)
+
+    // find all cue files in the folder
+    int cuefiles[n];
+    int ncuefiles = 0;
+
+    for (int i = 0; i < n; i++) {
+        // no hidden files
+        if (namelist[i]->d_name[0] == '.' || namelist[i]->d_type != DT_REG) {
+            continue;
+        }
+
+        size_t l = strlen (namelist[i]->d_name);
+        if (l > 4 && !strcasecmp (namelist[i]->d_name + l - 4, ".cue")) {
+            namelist[i]->d_name[0] = 0;
+            cuefiles[ncuefiles++] = i;
+        }
+    }
+
+    char fullname[PATH_MAX];
+
+    // try loading cuesheets first
+    for (int c = 0; c < ncuefiles; c++) {
+        int i = cuefiles[c];
+        _get_fullname (fullname, sizeof (fullname), vfs, dirname, namelist[i]->d_name);
+
+        // TODO: files added by cue processor must be marked as added
+        playItem_t *inserted = _load_cue (visibility, playlist, after, pabort, cb, user_data);
+
+        if (inserted) {
+            namelist[i]->d_name[0] = 0;
+            after = inserted;
+        }
+        if (*pabort) {
+            break;
+        }
+    }
+
+    // load the rest of the files
+    for (int i = 0; i < n; i++)
     {
         // no hidden files
-        if (namelist[i]->d_name[0] != '.')
-        {
-            playItem_t *inserted = NULL;
-            if (!vfs) {
-                char fullname[PATH_MAX];
-                snprintf (fullname, sizeof (fullname), "%s/%s", dirname, namelist[i]->d_name);
-
-                inserted = plt_insert_dir_int (visibility, playlist, vfs, after, fullname, pabort, cb, user_data);
-                if (!inserted) {
-                    inserted = plt_insert_file_int (visibility, playlist, after, fullname, pabort, cb, user_data);
-                }
-            }
-            else {
-                char fullname[PATH_MAX];
-                const char *sch = NULL;
-                if (vfs->plugin.api_vminor >= 6 && vfs->get_scheme_for_name) {
-                    sch = vfs->get_scheme_for_name (dirname);
-                }
-                if (sch && strncmp (sch, namelist[i]->d_name, strlen (sch))) {
-                    snprintf (fullname, sizeof (fullname), "%s%s:%s", sch, dirname, namelist[i]->d_name);
-                }
-                else {
-                    strcpy (fullname, namelist[i]->d_name);
-                }
-                inserted = plt_insert_file_int (visibility, playlist, after, fullname, pabort, cb, user_data);
-            }
-            if (inserted) {
-                after = inserted;
-            }
-            if (*pabort) {
-                break;
-            }
+        if (!namelist[i]->d_name[0] || namelist[i]->d_name[0] == '.') {
+            continue;
         }
+        _get_fullname (fullname, sizeof (fullname), vfs, dirname, namelist[i]->d_name);
+        playItem_t *inserted = plt_insert_file_int (visibility, playlist, after, fullname, pabort, cb, user_data);
+
+        if (inserted) {
+            after = inserted;
+        }
+
+        if (*pabort) {
+            break;
+        }
+    }
+
+    // free data
+    for (int i = 0; i < n; i++) {
         free (namelist[i]);
     }
     free (namelist);
