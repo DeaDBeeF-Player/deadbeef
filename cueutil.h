@@ -26,7 +26,7 @@
 #include "deadbeef.h"
 
 playItem_t *
-plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
+plt_load_cue_file (int visibility, playlist_t *playlist, playItem_t *after, const char *fullname, const char *dirname, struct dirent **namelist, int n, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 playItem_t *
 plt_load_cuesheet_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, uint64_t numsamples64, int samplerate);

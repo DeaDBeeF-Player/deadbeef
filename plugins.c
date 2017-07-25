@@ -492,8 +492,6 @@ static DB_functions_t deadbeef_api = {
     .pl_item_set_endsample = (void (*) (DB_playItem_t *it, int64_t sample))pl_item_set_endsample,
 
     .plt_get_selection_playback_time = (float (*) (ddb_playlist_t *plt))plt_get_selection_playback_time,
-
-    .plt_set_cue_file = (void (*) (ddb_playlist_t *plt, const char *filename))plt_set_cue_file,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

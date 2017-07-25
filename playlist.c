@@ -814,11 +814,14 @@ pl_clear (void) {
 }
 
 static playItem_t *
-plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, uint64_t numsamples64, int samplerate) {
-    if (playlist->cue_file && !strcmp(playlist->cue_file, "__ignore")) {
+plt_insert_cue_from_buffer_int (playlist_t *plt, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, uint64_t numsamples64, int samplerate) {
+    if (plt->loading_cue) {
+        // means it was called from _load_cue
+        plt->cue_numsamples = numsamples64;
+        plt->cue_samplerate = samplerate;
         return NULL;
     }
-    return plt_load_cuesheet_from_buffer(playlist, after, origin, buffer, buffersize, numsamples64, samplerate);
+    return plt_load_cuesheet_from_buffer(plt, after, origin, buffer, buffersize, numsamples64, samplerate);
 }
 
 playItem_t * /* insert internal cuesheet - called by plugins */
@@ -828,41 +831,40 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
 
 static playItem_t *
 plt_insert_cue_int (playlist_t *plt, playItem_t *after, playItem_t *origin, uint64_t numsamples, int samplerate) {
-    if (plt->cue_file && !strcmp(plt->cue_file, "__ignore")) {
+    if (plt->loading_cue) {
+        // means it was called from _load_cue
+        plt->cue_numsamples = numsamples;
+        plt->cue_samplerate = samplerate;
         return NULL;
     }
 
     DB_FILE *fp;
-    if (plt->cue_file) {
-        fp = vfs_fopen (plt->cue_file);
+    pl_lock ();
+
+    const char *fname = pl_find_meta_raw (origin, ":URI");
+    size_t len = strlen (fname);
+    char cuename[len+5];
+    strcpy (cuename, fname);
+    pl_unlock ();
+    strcpy (cuename+len, ".cue");
+    fp = vfs_fopen (cuename);
+    if (!fp) {
+        strcpy (cuename+len, ".CUE");
+        fp = vfs_fopen (cuename);
     }
-    else {
-        pl_lock ();
-        const char *fname = pl_find_meta_raw (origin, ":URI");
-        size_t len = strlen (fname);
-        char cuename[len+5];
-        strcpy (cuename, fname);
-        pl_unlock ();
-        strcpy (cuename+len, ".cue");
+    if (!fp) {
+        char *ptr = cuename + len-1;
+        while (ptr >= cuename && *ptr != '.') {
+            ptr--;
+        }
+        if (ptr < cuename) {
+            return NULL;
+        }
+        strcpy (ptr+1, "cue");
         fp = vfs_fopen (cuename);
         if (!fp) {
-            strcpy (cuename+len, ".CUE");
+            strcpy (ptr+1, "CUE");
             fp = vfs_fopen (cuename);
-        }
-        if (!fp) {
-            char *ptr = cuename + len-1;
-            while (ptr >= cuename && *ptr != '.') {
-                ptr--;
-            }
-            if (ptr < cuename) {
-                return NULL;
-            }
-            strcpy (ptr+1, "cue");
-            fp = vfs_fopen (cuename);
-            if (!fp) {
-                strcpy (ptr+1, "CUE");
-                fp = vfs_fopen (cuename);
-            }
         }
     }
     if (!fp) {
@@ -888,6 +890,12 @@ plt_insert_cue_int (playlist_t *plt, playItem_t *after, playItem_t *origin, uint
 
 playItem_t * /* insert external cuesheet - called by plugins */
 plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int numsamples, int samplerate) {
+    if (plt->loading_cue) {
+        // means it was called from _load_cue
+        plt->cue_numsamples = numsamples;
+        plt->cue_samplerate = samplerate;
+        return NULL;
+    }
     return plt_insert_cue_int (plt, after, origin, numsamples, samplerate);
 }
 
@@ -941,7 +949,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         fn++;
     }
 
-    // add all posible streams as special-case:
+    // add all possible streams as special-case:
     // set decoder to NULL, and filetype to "content"
     // streamer is responsible to determine content type on 1st access and
     // update decoder and filetype fields
@@ -1018,7 +1026,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
 
     // handle cue files
     if (!strcasecmp (eol, "cue")) {
-        playItem_t *inserted = plt_load_cue_file(playlist, after, fname, pabort, cb, user_data);
+        playItem_t *inserted = plt_load_cue_file(visibility, playlist, after, fname, NULL, NULL, 0, pabort, cb, user_data);
         return inserted;
     }
 
@@ -1144,11 +1152,6 @@ _get_fullname (char *fullname, int sz, DB_vfs_t *vfs, const char *dirname, const
 }
 
 static playItem_t *
-_load_cue (int visibility, playlist_t *playlist, playItem_t *after, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    return NULL;
-}
-
-static playItem_t *
 plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!strncmp (dirname, "file://", 7)) {
         dirname += 7;
@@ -1198,7 +1201,6 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
 
         size_t l = strlen (namelist[i]->d_name);
         if (l > 4 && !strcasecmp (namelist[i]->d_name + l - 4, ".cue")) {
-            namelist[i]->d_name[0] = 0;
             cuefiles[ncuefiles++] = i;
         }
     }
@@ -1211,7 +1213,8 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         _get_fullname (fullname, sizeof (fullname), vfs, dirname, namelist[i]->d_name);
 
         // TODO: files added by cue processor must be marked as added
-        playItem_t *inserted = _load_cue (visibility, playlist, after, pabort, cb, user_data);
+        playItem_t *inserted = plt_load_cue_file (visibility, playlist, after, fullname, dirname, namelist, n, pabort, cb, user_data);
+        namelist[c]->d_name[0] = 0;
 
         if (inserted) {
             namelist[i]->d_name[0] = 0;
@@ -1223,21 +1226,23 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
     }
 
     // load the rest of the files
-    for (int i = 0; i < n; i++)
-    {
-        // no hidden files
-        if (!namelist[i]->d_name[0] || namelist[i]->d_name[0] == '.') {
-            continue;
-        }
-        _get_fullname (fullname, sizeof (fullname), vfs, dirname, namelist[i]->d_name);
-        playItem_t *inserted = plt_insert_file_int (visibility, playlist, after, fullname, pabort, cb, user_data);
+    if (!*pabort) {
+        for (int i = 0; i < n; i++)
+        {
+            // no hidden files
+            if (!namelist[i]->d_name[0] || namelist[i]->d_name[0] == '.') {
+                continue;
+            }
+            _get_fullname (fullname, sizeof (fullname), vfs, dirname, namelist[i]->d_name);
+            playItem_t *inserted = plt_insert_file_int (visibility, playlist, after, fullname, pabort, cb, user_data);
 
-        if (inserted) {
-            after = inserted;
-        }
+            if (inserted) {
+                after = inserted;
+            }
 
-        if (*pabort) {
-            break;
+            if (*pabort) {
+                break;
+            }
         }
     }
 
@@ -3823,19 +3828,6 @@ plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t to
     }
 
     return cue_after;
-}
-
-void
-plt_set_cue_file (playlist_t *plt, const char *filename) {
-    LOCK;
-    if (plt->cue_file) {
-        free (plt->cue_file);
-        plt->cue_file = NULL;
-    }
-    if (filename) {
-        plt->cue_file = strdup (filename);
-    }
-    UNLOCK;
 }
 
 void

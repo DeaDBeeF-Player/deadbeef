@@ -490,8 +490,7 @@ plt_process_cue_track2 (playItem_t *it, const char *fname, char cuefields[CUE_MA
 //========================================================================
 
 playItem_t *
-plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
-
+plt_load_cue_file (int visibility, playlist_t *plt, playItem_t *after, const char *fname, const char *dirname, struct dirent **namelist, int n, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     char resolved_fname[PATH_MAX];
     char *res = realpath (fname, resolved_fname);
     if (res) {
@@ -559,7 +558,6 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, int *p
             if (!strncasecmp (p, "FILE ", 5)) {
                 playItem_t *it = NULL;
                 pl_get_qvalue_from_cue (p + 5, sizeof (audio_file), audio_file, charset);
-                plt_set_cue_file(plt, fname);
                 if (audio_file[0] == '/') { //full path
                     //fprintf (stderr, "pl_insert_cue: adding file %s\n", audio_file);
                     it = plt_insert_file2 (0, plt, after, audio_file, pabort, cb, user_data);
@@ -571,7 +569,6 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, int *p
                     //fprintf (stderr, "pl_insert_cue: adding file %s\n", fullpath);
                     it = plt_insert_file2 (0, plt, after, fullpath, pabort, cb, user_data);
                 }
-                plt_set_cue_file(plt, NULL);
                 free(membuffer);
                 pl_unlock();
                 return it;
@@ -602,8 +599,6 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, int *p
     p = buffer;
 
     pl_lock();
-    // __ignore = deadbeef ignores external and internal cue files
-    plt_set_cue_file(plt, "__ignore");
 
     while (p < end) {
         p = skipspaces (p, end);
@@ -641,7 +636,6 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, int *p
         }
 
         if (pabort && *pabort) {
-            plt_set_cue_file(plt, NULL);
             pl_unlock();
             free (membuffer);
             return after;
@@ -657,7 +651,6 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, int *p
         plt_process_cue_track2 (it, fname, cuefields, extra_tags, extra_tag_index);
     }
 
-    plt_set_cue_file(plt, NULL);
     pl_unlock();
     //fprintf (stderr, "leave pl_insert_cue\n");
     free (membuffer);

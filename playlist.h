@@ -76,10 +76,14 @@ typedef struct playlist_s {
     struct DB_metaInfo_s *meta; // linked list storing metainfo
     int refc;
     int files_add_visibility;
-    char *cue_file;
+
+    int64_t cue_numsamples;
+    int cue_samplerate;
+    
     unsigned fast_mode : 1;
     unsigned files_adding : 1;
     unsigned recalc_seltime : 1;
+    unsigned loading_cue : 1;
 } playlist_t;
 
 // global playlist control functions
@@ -552,9 +556,6 @@ send_trackinfochanged (playItem_t *track);
 
 playItem_t *
 plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate);
-
-void
-plt_set_cue_file (playlist_t *plt, const char *filename);
 
 void
 pl_configchanged (void);

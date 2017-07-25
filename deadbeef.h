@@ -1412,14 +1412,6 @@ typedef struct {
 
     // get total playback time of selected tracks
     float (*plt_get_selection_playback_time) (ddb_playlist_t *plt);
-
-    // Override internal cue behavior, only applies to one playlist.
-    // `plt` the playlist
-    // `filename`:
-    //     The original value is NULL (no overriding)
-    //     A full path to cuesheet file: tell the internal cuesheet code to use that specific file,
-    //     Or "__ignore" magic value: disables internal cuesheet processing.
-    void (*plt_set_cue_file) (ddb_playlist_t *plt, const char *filename);
 #endif
 } DB_functions_t;
 
