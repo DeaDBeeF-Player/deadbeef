@@ -1153,55 +1153,53 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
     else {
         n = scandir (dirname, &namelist, NULL, dirent_alphasort);
     }
-    if (n < 0)
-    {
-        if (namelist)
+    if (n < 0) {
+        if (namelist) {
             free (namelist);
+        }
         return NULL;	// not a dir or no read access
     }
-    else
+    int i;
+    for (i = 0; i < n; i++)
     {
-        int i;
-        for (i = 0; i < n; i++)
+        // no hidden files
+        if (namelist[i]->d_name[0] != '.')
         {
-            // no hidden files
-            if (namelist[i]->d_name[0] != '.')
-            {
-                playItem_t *inserted = NULL;
-                if (!vfs) {
-                    char fullname[PATH_MAX];
-                    snprintf (fullname, sizeof (fullname), "%s/%s", dirname, namelist[i]->d_name);
+            playItem_t *inserted = NULL;
+            if (!vfs) {
+                char fullname[PATH_MAX];
+                snprintf (fullname, sizeof (fullname), "%s/%s", dirname, namelist[i]->d_name);
 
-                    inserted = plt_insert_dir_int (visibility, playlist, vfs, after, fullname, pabort, cb, user_data);
-                    if (!inserted) {
-                        inserted = plt_insert_file_int (visibility, playlist, after, fullname, pabort, cb, user_data);
-                    }
-                }
-                else {
-                    char fullname[PATH_MAX];
-                    const char *sch = NULL;
-                    if (vfs->plugin.api_vminor >= 6 && vfs->get_scheme_for_name) {
-                        sch = vfs->get_scheme_for_name (dirname);
-                    }
-                    if (sch && strncmp (sch, namelist[i]->d_name, strlen (sch))) {
-                        snprintf (fullname, sizeof (fullname), "%s%s:%s", sch, dirname, namelist[i]->d_name);
-                    }
-                    else {
-                        strcpy (fullname, namelist[i]->d_name);
-                    }
+                inserted = plt_insert_dir_int (visibility, playlist, vfs, after, fullname, pabort, cb, user_data);
+                if (!inserted) {
                     inserted = plt_insert_file_int (visibility, playlist, after, fullname, pabort, cb, user_data);
                 }
-                if (inserted) {
-                    after = inserted;
-                }
-                if (*pabort) {
-                    break;
-                }
             }
-            free (namelist[i]);
+            else {
+                char fullname[PATH_MAX];
+                const char *sch = NULL;
+                if (vfs->plugin.api_vminor >= 6 && vfs->get_scheme_for_name) {
+                    sch = vfs->get_scheme_for_name (dirname);
+                }
+                if (sch && strncmp (sch, namelist[i]->d_name, strlen (sch))) {
+                    snprintf (fullname, sizeof (fullname), "%s%s:%s", sch, dirname, namelist[i]->d_name);
+                }
+                else {
+                    strcpy (fullname, namelist[i]->d_name);
+                }
+                inserted = plt_insert_file_int (visibility, playlist, after, fullname, pabort, cb, user_data);
+            }
+            if (inserted) {
+                after = inserted;
+            }
+            if (*pabort) {
+                break;
+            }
         }
-        free (namelist);
+        free (namelist[i]);
     }
+    free (namelist);
+
     return after;
 }
 
