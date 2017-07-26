@@ -647,8 +647,12 @@ plt_get_modification_idx (playlist_t *plt) {
 void
 plt_free (playlist_t *plt) {
     LOCK;
+
     plt_clear (plt);
-    free (plt->title);
+
+    if (plt->title) {
+        free (plt->title);
+    }
 
     while (plt->meta) {
         DB_metaInfo_t *m = plt->meta;
