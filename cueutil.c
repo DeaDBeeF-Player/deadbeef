@@ -577,21 +577,46 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, const 
 
                 if (!_file_exists (fullpath)) {
                     fullpath[0] = 0;
+                    if (namelist) {
+                        // for image+cue, try guessing the audio filename from cuesheet filename
+                        if (ncuefiles == 1) {
+                            size_t l = strlen (cue_fname);
+                            for (int i = 0; i < n; i++) {
+                                const char *ext = strrchr (namelist[i]->d_name, '.');
+                                if (!ext || !strcasecmp (ext, ".cue")) {
+                                    continue;
+                                }
 
-                    // for image+cue, try guessing the filename
-                    if (namelist && ncuefiles == 1) {
-                        size_t l = strlen (cue_fname);
-                        for (int i = 0; i < n; i++) {
-                            const char *ext = strrchr (namelist[i]->d_name, '.');
-                            if (!ext || !strcasecmp (ext, ".cue")) {
-                                continue;
+                                if (!strncasecmp (cue_fname, namelist[i]->d_name, l-4)) {
+                                    // have to try loading each of these files
+                                    snprintf (fullpath, sizeof (fullpath), "%s/%s", dirname, namelist[i]->d_name);
+                                    origin = plt_insert_file2 (-1, temp_plt, after, fullpath, NULL, NULL, NULL);
+                                    if (origin) {
+                                        break;
+                                    }
+                                }
                             }
-                            if (!strncasecmp (cue_fname, namelist[i]->d_name, l-4)) {
-                                // have to try loading each of these files
-                                snprintf (fullpath, sizeof (fullpath), "%s/%s", dirname, namelist[i]->d_name);
-                                origin = plt_insert_file2 (-1, temp_plt, after, fullpath, NULL, NULL, NULL);
-                                if (origin) {
-                                    break;
+                        }
+                        else {
+                            // for tracks+cue, try guessing the extension of the FILE value
+                            char *ext = strrchr (audio_file, '.');
+                            if (ext) {
+                                *ext = 0;
+                            }
+                            for (int i = 0; i < n; i++) {
+                                const char *cueext = strrchr (namelist[i]->d_name, '.');
+                                if (!cueext || !strcasecmp (cueext, ".cue")) {
+                                    continue;
+                                }
+
+                                if (!strncasecmp (audio_file, namelist[i]->d_name, ext-audio_file)
+                                    && namelist[i]->d_name[ext-audio_file] == '.') {
+                                    // have to try loading each of these files
+                                    snprintf (fullpath, sizeof (fullpath), "%s/%s", dirname, namelist[i]->d_name);
+                                    origin = plt_insert_file2 (-1, temp_plt, after, fullpath, NULL, NULL, NULL);
+                                    if (origin) {
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -617,7 +642,6 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, const 
         else if (field == CUE_FIELD_TRACK) {
             if (!origin) {
                 // this is an error with loading cuesheet, but it should have been already covered by previous message
-                have_track = 0;
             }
             else if (have_track) {
                 playItem_t *it = plt_process_cue_track (plt, fullpath, pl_item_get_startsample (origin), &prev, dec, filetype, temp_plt->cue_samplerate, cuefields, extra_tags, extra_tag_index);
@@ -627,10 +651,10 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, const 
                     }
                     cuetracks[ncuetracks++] = it;
                 }
-                pl_cue_reset_per_track_fields(cuefields);
-                pl_get_value_from_cue (p + 6, sizeof (cuefields[CUE_FIELD_TRACK]), cuefields[CUE_FIELD_TRACK]);
-                have_track = 1;
             }
+            pl_cue_reset_per_track_fields(cuefields);
+            pl_get_value_from_cue (p + 6, sizeof (cuefields[CUE_FIELD_TRACK]), cuefields[CUE_FIELD_TRACK]);
+            have_track = 1;
         }
 
         // move pointer to the next line
