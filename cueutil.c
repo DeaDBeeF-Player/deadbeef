@@ -610,6 +610,7 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, const 
                                     snprintf (fullpath, sizeof (fullpath), "%s/%s", dirname, namelist[i]->d_name);
                                     origin = plt_insert_file2 (-1, temp_plt, after, fullpath, NULL, NULL, NULL);
                                     if (origin) {
+                                        namelist[i]->d_name[0] = 0;
                                         break;
                                     }
                                 }
@@ -633,6 +634,7 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, const 
                                     snprintf (fullpath, sizeof (fullpath), "%s/%s", dirname, namelist[i]->d_name);
                                     origin = plt_insert_file2 (-1, temp_plt, after, fullpath, NULL, NULL, NULL);
                                     if (origin) {
+                                        namelist[i]->d_name[0] = 0;
                                         break;
                                     }
                                 }
@@ -650,10 +652,24 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, const 
                 dec = filetype = NULL;
             }
             else {
+                // mark the file as used
+                if (namelist) {
+                    const char *fn = strrchr (fullpath, '/');
+                    if (fn) {
+                        fn++;
+                    }
+                    for (int i = 0; i < n; i++) {
+                        if (!strcmp (fn, namelist[i]->d_name)) {
+                            namelist[i]->d_name[0] = 0;
+                            break;
+                        }
+                    }
+                }
+
                 // now we got the image + totalsamples + samplerate,
                 // process each track until next file
                 dec = pl_find_meta_raw (origin, ":DECODER");
-                filetype = pl_find_meta_raw (origin, ":FILETYPE");;
+                filetype = pl_find_meta_raw (origin, ":FILETYPE");
             }
         }
         else if (field == CUE_FIELD_TRACK) {
