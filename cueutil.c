@@ -604,7 +604,7 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, const 
 
 
             if (!origin) {
-                trace_err("Invalid FILE entry %s in cuesheet %s, and could not guess any suitable file name.", audio_file, fname);
+                trace_err("Invalid FILE entry %s in cuesheet %s, and could not guess any suitable file name.\n", audio_file, fname);
                 dec = filetype = NULL;
             }
             else {
@@ -616,9 +616,10 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, const 
         }
         else if (field == CUE_FIELD_TRACK) {
             if (!origin) {
-                trace_err("TRACK entry before FILE in cuesheet %s", fname);
+                // this is an error with loading cuesheet, but it should have been already covered by previous message
+                have_track = 0;
             }
-            if (have_track) {
+            else if (have_track) {
                 playItem_t *it = plt_process_cue_track (plt, fullpath, pl_item_get_startsample (origin), &prev, dec, filetype, temp_plt->cue_samplerate, cuefields, extra_tags, extra_tag_index);
                 if (it) {
                     if ((pl_item_get_startsample (it)-pl_item_get_startsample (origin)) >= temp_plt->cue_numsamples || (pl_item_get_endsample (it)-pl_item_get_startsample (origin)) >= temp_plt->cue_numsamples) {
@@ -626,10 +627,10 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, const 
                     }
                     cuetracks[ncuetracks++] = it;
                 }
+                pl_cue_reset_per_track_fields(cuefields);
+                pl_get_value_from_cue (p + 6, sizeof (cuefields[CUE_FIELD_TRACK]), cuefields[CUE_FIELD_TRACK]);
+                have_track = 1;
             }
-            pl_cue_reset_per_track_fields(cuefields);
-            pl_get_value_from_cue (p + 6, sizeof (cuefields[CUE_FIELD_TRACK]), cuefields[CUE_FIELD_TRACK]);
-            have_track = 1;
         }
 
         // move pointer to the next line
