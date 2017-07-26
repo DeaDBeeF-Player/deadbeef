@@ -1217,9 +1217,9 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         _get_fullname (fullname, sizeof (fullname), vfs, dirname, namelist[i]->d_name);
 
         playItem_t *inserted = plt_load_cue_file (playlist, after, fullname, dirname, namelist, n);
+        namelist[i]->d_name[0] = 0;
 
         if (inserted) {
-            namelist[i]->d_name[0] = 0;
             after = inserted;
         }
         if (*pabort) {

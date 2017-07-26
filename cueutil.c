@@ -608,7 +608,7 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, const 
                                 if (!strncasecmp (cue_fname, namelist[i]->d_name, l-4)) {
                                     // have to try loading each of these files
                                     snprintf (fullpath, sizeof (fullpath), "%s/%s", dirname, namelist[i]->d_name);
-                                    origin = plt_insert_file2 (-1, temp_plt, after, fullpath, NULL, NULL, NULL);
+                                    origin = plt_insert_file2 (-1, temp_plt, NULL, fullpath, NULL, NULL, NULL);
                                     if (origin) {
                                         namelist[i]->d_name[0] = 0;
                                         break;
@@ -632,7 +632,7 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, const 
                                     && namelist[i]->d_name[ext-audio_file] == '.') {
                                     // have to try loading each of these files
                                     snprintf (fullpath, sizeof (fullpath), "%s/%s", dirname, namelist[i]->d_name);
-                                    origin = plt_insert_file2 (-1, temp_plt, after, fullpath, NULL, NULL, NULL);
+                                    origin = plt_insert_file2 (-1, temp_plt, NULL, fullpath, NULL, NULL, NULL);
                                     if (origin) {
                                         namelist[i]->d_name[0] = 0;
                                         break;
@@ -644,28 +644,33 @@ plt_load_cue_file (playlist_t *plt, playItem_t *after, const char *fname, const 
                 }
             }
             if (fullpath[0] && !origin) {
-                origin = plt_insert_file2 (-1, temp_plt, after, fullpath, NULL, NULL, NULL);
-            }
-
-            if (!origin) {
-                trace_err("Invalid FILE entry %s in cuesheet %s, and could not guess any suitable file name.\n", audio_file, fname);
-                dec = filetype = NULL;
-            }
-            else {
-                // mark the file as used
-                if (namelist) {
-                    const char *fn = strrchr (fullpath, '/');
-                    if (fn) {
-                        fn++;
-                    }
-                    for (int i = 0; i < n; i++) {
-                        if (!strcmp (fn, namelist[i]->d_name)) {
-                            namelist[i]->d_name[0] = 0;
-                            break;
+                origin = plt_insert_file2 (-1, temp_plt, NULL, fullpath, NULL, NULL, NULL);
+                if (origin) {
+                    // mark the file as used
+                    if (namelist) {
+                        const char *fn = strrchr (fullpath, '/');
+                        if (fn) {
+                            fn++;
+                        }
+                        for (int i = 0; i < n; i++) {
+                            if (!strcmp (fn, namelist[i]->d_name)) {
+                                namelist[i]->d_name[0] = 0;
+                                break;
+                            }
                         }
                     }
                 }
+            }
 
+            if (!origin) {
+                if (!namelist) {
+                    // only display error if adding individual file;
+                    // this is to prevent bogus errors when auto-scanning for cuesheets in folders.
+                    trace_err("Invalid FILE entry %s in cuesheet %s, and could not guess any suitable file name.\n", audio_file, fname);
+                }
+                dec = filetype = NULL;
+            }
+            else {
                 // now we got the image + totalsamples + samplerate,
                 // process each track until next file
                 dec = pl_find_meta_raw (origin, ":DECODER");
