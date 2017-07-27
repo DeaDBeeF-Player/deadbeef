@@ -457,6 +457,7 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t st
 
 static int
 _file_exists (const char *fname) {
+    // FIXME: use vfs!
     struct stat s;
     memset (&s, 0, sizeof (s));
     if (!stat (fname, &s) && (s.st_mode & S_IFREG)) {
