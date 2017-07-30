@@ -445,28 +445,12 @@ wmaplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->pl_item_set_startsample (it, 0);
     deadbeef->pl_item_set_endsample (it, totalsamples-1);
 
-    deadbeef->pl_lock ();
-    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-    DB_playItem_t *cue = NULL;
-
-    if (cuesheet) {
-        cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, wfx.rate);
-        if (cue) {
-            deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (cue);
-            deadbeef->pl_unlock ();
-            return cue;
-        }
-    }
-    deadbeef->pl_unlock ();
-
-    cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, wfx.rate);
+    DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it,  totalsamples, wfx.rate);
     if (cue) {
         deadbeef->pl_item_unref (it);
-        deadbeef->pl_item_unref (cue);
+        deadbeef->fclose (fp);
         return cue;
     }
-
 
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);

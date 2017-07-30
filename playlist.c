@@ -830,7 +830,7 @@ plt_insert_cue_from_buffer_int (playlist_t *plt, playItem_t *after, playItem_t *
 
 playItem_t * /* insert internal cuesheet - called by plugins */
 plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate) {
-    return plt_insert_cue_from_buffer_int (playlist, after, origin, buffer, buffersize, (uint64_t)numsamples, samplerate);
+    return NULL;
 }
 
 static playItem_t *
@@ -894,13 +894,7 @@ plt_insert_cue_int (playlist_t *plt, playItem_t *after, playItem_t *origin, uint
 
 playItem_t * /* insert external cuesheet - called by plugins */
 plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int numsamples, int samplerate) {
-    if (plt->loading_cue) {
-        // means it was called from _load_cue
-        plt->cue_numsamples = numsamples;
-        plt->cue_samplerate = samplerate;
-        return NULL;
-    }
-    return plt_insert_cue_int (plt, after, origin, numsamples, samplerate);
+    return NULL;
 }
 
 // FIXME: this is not thread-safe

@@ -658,25 +658,9 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                 }
 #endif
 
-                // embedded cue
-                const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-                DB_playItem_t *cue = NULL;
-
-                if (cuesheet) {
-                    cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (const uint8_t *)cuesheet, (int)strlen (cuesheet), (int)totalsamples, samplerate);
-                    if (cue) {
-                        mp4ff_close (mp4);
-                        deadbeef->pl_item_unref (it);
-                        deadbeef->pl_item_unref (cue);
-                        deadbeef->pl_unlock ();
-                        return cue;
-                    }
-                }
-
-                cue  = deadbeef->plt_insert_cue (plt, after, it, (int)totalsamples, samplerate);
+                DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);
                 if (cue) {
                     deadbeef->pl_item_unref (it);
-                    deadbeef->pl_item_unref (cue);
                     return cue;
                 }
 
@@ -752,26 +736,9 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         int br = (int)roundf(fsize / duration * 8 / 1000);
         snprintf (s, sizeof (s), "%d", br);
         deadbeef->pl_add_meta (it, ":BITRATE", s);
-        // embedded cue
-        deadbeef->pl_lock ();
-        const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-        DB_playItem_t *cue = NULL;
-
-        if (cuesheet) {
-            cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (const uint8_t *)cuesheet, (int)strlen (cuesheet), (int)totalsamples, samplerate);
-            if (cue) {
-                deadbeef->pl_item_unref (it);
-                deadbeef->pl_item_unref (cue);
-                deadbeef->pl_unlock ();
-                return cue;
-            }
-        }
-        deadbeef->pl_unlock ();
-
-        cue  = deadbeef->plt_insert_cue (plt, after, it, (int)totalsamples, samplerate);
+        DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);
         if (cue) {
             deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (cue);
             return cue;
         }
     }
