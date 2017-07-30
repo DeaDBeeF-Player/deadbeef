@@ -832,7 +832,6 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
         // means it was called from _load_cue
         playlist->cue_numsamples = numsamples;
         playlist->cue_samplerate = samplerate;
-        return NULL;
     }
     return NULL;
 }
@@ -843,7 +842,6 @@ plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int nums
         // means it was called from _load_cue
         plt->cue_numsamples = numsamples;
         plt->cue_samplerate = samplerate;
-        return NULL;
     }
     return NULL;
 }
@@ -3734,6 +3732,12 @@ plt_get_scroll (playlist_t *plt) {
 
 static playItem_t *
 plt_process_embedded_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate) {
+    if (plt->loading_cue) {
+        // means it was called from _load_cue
+        plt->cue_numsamples = totalsamples;
+        plt->cue_samplerate = samplerate;
+        return NULL;
+    }
     pl_lock();
     const char *cuesheet = pl_find_meta (it, "cuesheet");
     if (cuesheet) {
@@ -3750,6 +3754,12 @@ plt_process_embedded_cue (playlist_t *plt, playItem_t *after, playItem_t *it, ui
 
 playItem_t * /* called by plugins */
 plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate) {
+    if (plt->loading_cue) {
+        // means it was called from _load_cue
+        plt->cue_numsamples = totalsamples;
+        plt->cue_samplerate = samplerate;
+        return NULL;
+    }
     return plt_process_embedded_cue (plt, after, it, totalsamples, samplerate);
 }
 
