@@ -29,5 +29,5 @@ playItem_t *
 plt_load_cue_file (playlist_t *playlist, playItem_t *after, const char *fullname, const char *dirname, struct dirent **namelist, int n);
 
 playItem_t *
-plt_load_cuesheet_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, uint64_t numsamples64, int samplerate);
+plt_load_cuesheet_from_buffer (playlist_t *playlist, playItem_t *after, const char *fname, const uint8_t *buffer, int buffersize, const char *dirname, struct dirent **namelist, int n);
 

@@ -815,16 +815,6 @@ pl_clear (void) {
     UNLOCK;
 }
 
-static playItem_t *
-plt_insert_cue_from_buffer_int (playlist_t *plt, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, uint64_t numsamples64, int samplerate) {
-    if (plt->loading_cue) {
-        // means it was called from _load_cue
-        plt->cue_numsamples = numsamples64;
-        plt->cue_samplerate = samplerate;
-        return NULL;
-    }
-    return plt_load_cuesheet_from_buffer(plt, after, origin, buffer, buffersize, numsamples64, samplerate);
-}
 
 playItem_t * /* insert internal cuesheet - called by plugins */
 plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate) {
@@ -3738,18 +3728,18 @@ plt_process_embedded_cue (playlist_t *plt, playItem_t *after, playItem_t *it, ui
         plt->cue_samplerate = samplerate;
         return NULL;
     }
+    playItem_t *cue = NULL;
     pl_lock();
     const char *cuesheet = pl_find_meta (it, "cuesheet");
     if (cuesheet) {
-        playItem_t *cue_after = plt_insert_cue_from_buffer_int (plt, after, it, (const uint8_t *)cuesheet, (int)strlen (cuesheet), totalsamples, samplerate);
-        if (cue_after) {
-            pl_item_unref (cue_after);
-            pl_unlock();
-            return cue_after;
+        const char *fname = pl_find_meta (it, ":URI");
+        cue = plt_load_cuesheet_from_buffer (plt, after, fname, (const uint8_t *)cuesheet, (int)strlen (cuesheet), NULL, 0, 0);
+        if (cue) {
+            pl_item_unref (cue);
         }
     }
     pl_unlock();
-    return NULL;
+    return cue;
 }
 
 playItem_t * /* called by plugins */
