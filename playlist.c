@@ -3721,7 +3721,7 @@ plt_get_scroll (playlist_t *plt) {
 }
 
 static playItem_t *
-plt_process_embedded_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate) {
+plt_process_embedded_cue (playlist_t *plt, playItem_t *after, playItem_t *it, int64_t totalsamples, int samplerate) {
     if (plt->loading_cue) {
         // means it was called from _load_cue
         plt->cue_numsamples = totalsamples;
@@ -3733,10 +3733,7 @@ plt_process_embedded_cue (playlist_t *plt, playItem_t *after, playItem_t *it, ui
     const char *cuesheet = pl_find_meta (it, "cuesheet");
     if (cuesheet) {
         const char *fname = pl_find_meta (it, ":URI");
-        cue = plt_load_cuesheet_from_buffer (plt, after, fname, (const uint8_t *)cuesheet, (int)strlen (cuesheet), NULL, 0, 0);
-        if (cue) {
-            pl_item_unref (cue);
-        }
+        cue = plt_load_cuesheet_from_buffer (plt, after, fname, it, totalsamples, samplerate, (const uint8_t *)cuesheet, (int)strlen (cuesheet), NULL, 0, 0);
     }
     pl_unlock();
     return cue;
@@ -3750,7 +3747,7 @@ plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t to
         plt->cue_samplerate = samplerate;
         return NULL;
     }
-    return plt_process_embedded_cue (plt, after, it, totalsamples, samplerate);
+    return plt_process_embedded_cue (plt, after, it, (int64_t)totalsamples, samplerate);
 }
 
 void
