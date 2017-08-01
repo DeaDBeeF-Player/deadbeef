@@ -1038,6 +1038,8 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                         }
                     }
 
+                    deadbeef->pl_unlock ();
+
                     DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);
                     if (cue) {
                         deadbeef->pl_item_unref (it);
