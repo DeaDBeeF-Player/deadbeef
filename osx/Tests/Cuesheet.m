@@ -32,18 +32,17 @@
         "TRACK 03 AUDIO\n"
         "INDEX 01 09:47:50\n";
 
-    playlist_t *plt = plt_get_curr ();
+    playlist_t *plt = plt_alloc("test");
 
     playItem_t *it = pl_item_alloc_init ("testfile.flac", "stdflac");
-    plt_insert_cue_from_buffer (plt, NULL, it, (const uint8_t *)cue, sizeof (cue), 60*10*44100, 44100);
+    pl_add_meta (it, "cuesheet", cue);
+    plt_process_cue(plt, NULL, it, 60*10*44100, 44100);
 
     int cnt = plt_get_item_count(plt, PL_MAIN);
 
     XCTAssert(cnt == 3, @"The actual output is: %d", cnt);
 
-    pl_item_unref (it);
-
-    plt_unref (plt);
+    plt_free (plt);
 }
 
 @end
