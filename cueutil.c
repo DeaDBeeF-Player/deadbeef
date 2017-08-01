@@ -694,6 +694,8 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
 
     snprintf(cue.cuefields[CUE_FIELD_TOTALTRACKS], sizeof(cue.cuefields[CUE_FIELD_TOTALTRACKS]), "%d", cue.ncuetracks);
 
+    int filefield = 0;
+
     while (!cue.last_round) {
         cue.p = skipspaces (cue.p, end);
         int field;
@@ -703,6 +705,28 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
         }
         else {
             field = pl_cue_get_field_value(&cue);
+        }
+
+        // Next field immediately after FILE, indicates whether current TRACK belongs to previous or next FILE
+        if (filefield) {
+            filefield = 0;
+            // If FILE is immediately followed by TRACK, that next TRACK is from the new FILE
+            if (field == CUE_FIELD_TRACK) {
+                if (plt_process_cue_track (plt, &cue)) {
+                    break;
+                }
+            }
+            if (cue.prev) {
+                _set_last_item_region (plt, cue.prev, cue.origin, cue.numsamples, cue.samplerate);
+                cue.prev = NULL;
+            }
+            if (_load_nextfile (&cue)) {
+                break;
+            }
+            if (field == CUE_FIELD_TRACK) {
+                cue.have_track = 0;
+            }
+            cue.currsample = pl_item_get_startsample (cue.origin);
         }
 
         if (field == CUE_FIELD_INDEX01) {
@@ -726,14 +750,14 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
         }
 #endif
         else if (field == CUE_FIELD_FILE) {
-            if (cue.prev) {
-                _set_last_item_region (plt, cue.prev, cue.origin, cue.numsamples, cue.samplerate);
-                cue.prev = NULL;
+            if (!cue.have_track) {
+                if (_load_nextfile (&cue)) {
+                    break;
+                }
             }
-            if (_load_nextfile (&cue)) {
-                break;
+            else {
+                filefield = 1;
             }
-            cue.currsample = pl_item_get_startsample (cue.origin);
         }
         else if (field == CUE_FIELD_TRACK) {
             if (cue.origin && cue.have_track) {
