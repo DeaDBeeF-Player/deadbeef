@@ -738,17 +738,6 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
                 cue.currsample = val;
             }
         }
-#if 0
-        else if (field == CUE_FIELD_INDEX00) {
-            float sec = cue.cuefields[CUE_FIELD_INDEX00][0] ? pl_cue_parse_time (cue.cuefields[CUE_FIELD_INDEX00]) : 0;
-            // that's the startsample of the current track, and endsample-1 of the next one.
-            // relative to the beginning of previous file
-            int64_t val = pl_item_get_startsample (cue.origin) + sec * cue.samplerate;
-            if (val > currsample) {
-                currsample = val;
-            }
-        }
-#endif
         else if (field == CUE_FIELD_FILE) {
             if (!cue.have_track) {
                 if (_load_nextfile (&cue)) {
