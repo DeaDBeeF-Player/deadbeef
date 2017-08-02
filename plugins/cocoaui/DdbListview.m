@@ -355,8 +355,6 @@ int grouptitleheight = 22;
 - (void)drawListView:(NSRect)dirtyRect {
     id<DdbListviewDelegate> delegate = listview.delegate;
 
-    [delegate lock];
-
     [listview groupCheck];
 
     DdbListviewGroup_t *grp = [listview groups];
@@ -486,8 +484,6 @@ int grouptitleheight = 22;
     if (cursor_it != [delegate invalidRow]) {
         [delegate unrefRow:cursor_it];
     }
-
-    [delegate unlock];
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
@@ -547,10 +543,7 @@ int grouptitleheight = 22;
 
     id<DdbListviewDelegate> delegate = listview.delegate;
 
-    [delegate lock];
-
     if (![delegate rowCount]) {
-        [delegate unlock];
         return;
     }
 
@@ -562,7 +555,6 @@ int grouptitleheight = 22;
 
     if (-1 == [listview pickPoint:convPt.y group:&grp groupIndex:&grp_index index:&sel]) {
         [listview deselectAll];
-        [delegate unlock];
         return;
     }
 
@@ -572,7 +564,6 @@ int grouptitleheight = 22;
         if (sel != -1 && cursor != -1) {
             [delegate activate:cursor];
         }
-        [delegate unlock];
         return;
     }
 
@@ -655,8 +646,6 @@ int grouptitleheight = 22;
     if (prev != -1 && prev != cursor) {
         [listview drawRow:prev];
     }
-
-    [delegate unlock];
 }
 
 - (void)mouseUp:(NSEvent *)event
@@ -820,7 +809,6 @@ int grouptitleheight = 22;
 
 // must be called from within pl_lock
 - (void)initGroups {
-    [_delegate lock];
     groups_build_idx = [_delegate modificationIdx];
 
     [self freeGroups];
@@ -889,7 +877,6 @@ int grouptitleheight = 22;
         _fullheight += grp->height;
     }
     [self updateContentFrame];
-    [_delegate unlock];
 }
 
 - (void)groupCheck {
@@ -1106,18 +1093,15 @@ int grouptitleheight = 22;
 }
 
 - (void)selectSingle:(int)sel {
-    [_delegate lock];
 
     DdbListviewRow_t sel_it = [_delegate rowForIndex:sel];
     if (sel_it == [_delegate invalidRow]) {
-        [_delegate unlock];
         return;
     }
 
     [_delegate deselectAll];
     [_delegate selectRow:sel_it withState:YES];
     [_delegate unrefRow:sel_it];
-    [_delegate unlock];
 
     [_delegate selectionChanged:[_delegate invalidRow]];
 
@@ -1170,7 +1154,6 @@ int grouptitleheight = 22;
 }
 
 - (void)listMouseDragged:(NSEvent *)event {
-    [_delegate lock];
     NSPoint pt = [contentView convertPoint:[event locationInWindow] fromView:nil];
     if (_dragwait) {
         if (abs (_lastpos.x - pt.x) > 3 || abs (_lastpos.y - pt.y) > 3) {
@@ -1316,8 +1299,6 @@ int grouptitleheight = 22;
             }
         }
     }
-
-    [_delegate unlock];
 }
 
 - (BOOL)acceptsFirstResponder {
@@ -1462,20 +1443,17 @@ int grouptitleheight = 22;
 - (int)getRowPos:(int)row_idx {
     int y = 0;
     int idx = 0;
-    [_delegate lock];
     [self groupCheck];
     DdbListviewGroup_t *grp = _groups;
     while (grp) {
         if (idx + grp->num_items > row_idx) {
             int i = y + _grouptitle_height + (row_idx - idx) * rowheight;
-            [_delegate unlock];
             return i;
         }
         y += grp->height;
         idx += grp->num_items;
         grp = grp->next;
     }
-    [_delegate unlock];
     return y;
 }
 
