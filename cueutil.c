@@ -606,7 +606,6 @@ plt_process_cue_track (playlist_t *plt, cueparser_t *cue) {
         // now it's possible to calculate startsample and duration of the previous one.
         pl_item_set_endsample (cue->prev, cue->currsample - 1);
         plt_set_item_duration (plt, cue->prev, (float)(cue->currsample - pl_item_get_startsample (cue->prev)) / cue->samplerate);
-        printf ("[TRACK] Adjusted prev item: %s with duration: %f\n", pl_find_meta(cue->prev, "title"), pl_get_item_duration(cue->prev));
     }
 
     playItem_t *it = pl_item_alloc_init (cue->fullpath, cue->dec);
@@ -628,7 +627,6 @@ plt_process_cue_track (playlist_t *plt, cueparser_t *cue) {
         _set_last_item_region (plt, it, cue->origin, cue->numsamples, cue->samplerate);
     }
     cue->cuetracks[cue->ntracks++] = it;
-    printf ("Added track: %s with duration: %f\n", pl_find_meta(it, "title"), pl_get_item_duration(it));
 
     cue->prev = it;
     return 0;
