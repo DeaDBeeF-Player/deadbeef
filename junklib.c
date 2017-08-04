@@ -255,11 +255,10 @@ _is_multivalue_field (const char *key) {
     return 0;
 }
 
-static void
+void
 _split_multivalue (char *text, size_t text_size) {
     for (size_t i = 0; i < text_size; i++) {
-        if (text[i] == '/') {
-            text[i] = 0;
+        if (i < text_size - 3 && !memcmp (&text[i], " / ", 3)) {
             // remove trailing spaces
             char *p = text + i - 1;
             while (p >= text && *p == ' ') {
@@ -267,8 +266,10 @@ _split_multivalue (char *text, size_t text_size) {
                 p--;
             }
 
+            memset (text+i, 0, 3);
+
             // remove leading spaces
-            p = text + i + 1;
+            p = text + i + 3;
             while (p < text + text_size && *p == ' ') {
                 *p = 0;
                 p++;
