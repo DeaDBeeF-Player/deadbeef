@@ -245,54 +245,56 @@ static pl_cue_get_total_tracks_and_files(const uint8_t *buffer, const uint8_t *b
 }
 
 void
-static pl_cue_set_track_field_values(playItem_t *it, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], int extra_tag_index) {
-    if (cuefields[CUE_FIELD_PERFORMER][0]) {
-        pl_add_meta (it, "artist", cuefields[CUE_FIELD_PERFORMER]);
-        if (cuefields[CUE_FIELD_ALBUM_PERFORMER][0] && strcmp (cuefields[CUE_FIELD_ALBUM_PERFORMER], cuefields[CUE_FIELD_PERFORMER])) {
-            pl_add_meta (it, "album artist", cuefields[CUE_FIELD_ALBUM_PERFORMER]);
+static pl_cue_set_track_field_values(playItem_t *it, cueparser_t *cue) {
+    if (cue->cuefields[CUE_FIELD_PERFORMER][0]) {
+        pl_add_meta (it, "artist", cue->cuefields[CUE_FIELD_PERFORMER]);
+        if (cue->cuefields[CUE_FIELD_ALBUM_PERFORMER][0] && strcmp (cue->cuefields[CUE_FIELD_ALBUM_PERFORMER], cue->cuefields[CUE_FIELD_PERFORMER])) {
+            pl_add_meta (it, "album artist", cue->cuefields[CUE_FIELD_ALBUM_PERFORMER]);
         }
     }
-    else if (cuefields[CUE_FIELD_ALBUM_PERFORMER][0]) {
-        pl_add_meta (it, "artist", cuefields[CUE_FIELD_ALBUM_PERFORMER]);
+    else if (cue->cuefields[CUE_FIELD_ALBUM_PERFORMER][0]) {
+        pl_add_meta (it, "artist", cue->cuefields[CUE_FIELD_ALBUM_PERFORMER]);
     }
-    if (cuefields[CUE_FIELD_SONGWRITER][0]) {
-        pl_add_meta (it, "SONGWRITER", cuefields[CUE_FIELD_SONGWRITER]);
+    if (cue->cuefields[CUE_FIELD_SONGWRITER][0]) {
+        pl_add_meta (it, "SONGWRITER", cue->cuefields[CUE_FIELD_SONGWRITER]);
     }
-    else if (cuefields[CUE_FIELD_SONGWRITER][0]) {
-        pl_add_meta (it, "SONGWRITER", cuefields[CUE_FIELD_SONGWRITER]);
+    else if (cue->cuefields[CUE_FIELD_SONGWRITER][0]) {
+        pl_add_meta (it, "SONGWRITER", cue->cuefields[CUE_FIELD_SONGWRITER]);
     }
-    if (cuefields[CUE_FIELD_ALBUM_TITLE][0]) {
-        pl_add_meta (it, "album", cuefields[CUE_FIELD_ALBUM_TITLE]);
+    if (cue->cuefields[CUE_FIELD_ALBUM_TITLE][0]) {
+        pl_add_meta (it, "album", cue->cuefields[CUE_FIELD_ALBUM_TITLE]);
     }
-    if (cuefields[CUE_FIELD_TRACK][0]) {
-        pl_add_meta (it, "track", cuefields[CUE_FIELD_TRACK]);
+    if (cue->cuefields[CUE_FIELD_TRACK][0]) {
+        pl_add_meta (it, "track", cue->cuefields[CUE_FIELD_TRACK]);
     }
-    if (cuefields[CUE_FIELD_TITLE][0]) {
-        pl_add_meta (it, "title", cuefields[CUE_FIELD_TITLE]);
+    if (cue->cuefields[CUE_FIELD_TITLE][0]) {
+        pl_add_meta (it, "title", cue->cuefields[CUE_FIELD_TITLE]);
     }
-    if (cuefields[CUE_FIELD_ISRC]) {
-        pl_add_meta (it, "ISRC", cuefields[CUE_FIELD_ISRC]);
+    if (cue->cuefields[CUE_FIELD_ISRC]) {
+        pl_add_meta (it, "ISRC", cue->cuefields[CUE_FIELD_ISRC]);
     }
-    if (cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_GAIN][0]) {
-        pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_GAIN]));
+    if (cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_GAIN][0]) {
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_GAIN]));
     }
-    if (cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_PEAK][0]) {
-        pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_PEAK]));
+    if (cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_PEAK][0]) {
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_PEAK]));
     }
-    if (cuefields[CUE_FIELD_REPLAYGAIN_TRACK_GAIN][0]) {
-        pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (cuefields[CUE_FIELD_REPLAYGAIN_TRACK_GAIN]));
+    if (cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_GAIN][0]) {
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_GAIN]));
     }
-    if (cuefields[CUE_FIELD_REPLAYGAIN_TRACK_PEAK][0]) {
-        pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (cuefields[CUE_FIELD_REPLAYGAIN_TRACK_PEAK]));
+    if (cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_PEAK][0]) {
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_PEAK]));
     }
     // add extra tags to tracks
-    for (int y = 0; y < extra_tag_index; y += 2) {
-        if (extra_tags[y+1]) {
-            pl_add_meta (it, extra_tags[y], extra_tags[y+1]);
+    for (int y = 0; y < cue->extra_tag_index; y += 2) {
+        if (cue->extra_tags[y+1]) {
+            pl_add_meta (it, cue->extra_tags[y], cue->extra_tags[y+1]);
         }
     }
     // generated "total tracks" field
-    pl_add_meta(it, "numtracks", cuefields[CUE_FIELD_TOTALTRACKS]);
+    pl_add_meta(it, "numtracks", cue->cuefields[CUE_FIELD_TOTALTRACKS]);
+
+    pl_items_copy_junk (cue->origin, it, it);
 }
 
 void
@@ -587,6 +589,13 @@ _load_nextfile (cueparser_t *cue) {
         }
     }
 
+    // copy metadata from embedded tags
+    uint32_t f = pl_get_item_flags (cue->origin);
+    f |= DDB_TAG_CUESHEET | DDB_IS_SUBTRACK;
+    if (cue->embedded_origin) {
+        f |= DDB_HAS_EMBEDDED_CUESHEET;
+    }
+    pl_set_item_flags (cue->origin, f);
     return 0;
 }
 
@@ -613,9 +622,8 @@ plt_process_cue_track (playlist_t *plt, cueparser_t *cue) {
     pl_item_set_startsample (it, cue->currsample + f_pregap * cue->samplerate);
     pl_item_set_endsample (it, -1); // will be filled by next read, or by decoder
     pl_replace_meta (it, ":FILETYPE", cue->filetype);
-    it->_flags |= DDB_IS_SUBTRACK | DDB_TAG_CUESHEET;
 
-    pl_cue_set_track_field_values(it, cue->cuefields, cue->extra_tags, cue->extra_tag_index);
+    pl_cue_set_track_field_values(it, cue);
 
     int64_t startsample_it = pl_item_get_startsample (it);
     int64_t startsample_org = pl_item_get_startsample (cue->origin);
