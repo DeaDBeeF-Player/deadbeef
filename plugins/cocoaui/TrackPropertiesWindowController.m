@@ -783,6 +783,35 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (IBAction)addNewField:(id)sender {
+    [_addFieldName setStringValue: @""];
+    [_addFieldAlreadyExists setHidden: YES];
+
+    [NSApp beginSheet:_addFieldPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndCreateFieldPanel:returnCode:contextInfo:) contextInfo:nil];
 }
 
+- (void)didEndCreateFieldPanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+    [_addFieldPanel orderOut:self];
+}
+
+- (IBAction)cancelAddFieldPanelAction:(id)sender {
+    [NSApp endSheet:_addFieldPanel];
+}
+
+- (IBAction)okAddFieldPanelAction:(id)sender {
+    const char *key = [[_addFieldName stringValue] UTF8String];
+    for (int i = 0; i < [_store count]; i++) {
+        if (!strcasecmp(key, [_store [i][@"key"] UTF8String])) {
+            [_addFieldAlreadyExists setHidden: NO];
+            return;
+        }
+    }
+
+    char title[strlen(key)+3];
+    snprintf (title, sizeof (title), "<%s>", key);
+    add_field (_store, key, title, 0, _tracks, _numtracks);
+    self.modified = YES;
+    [_metadataTableView reloadData];
+    [NSApp endSheet:_addFieldPanel];
+
+}
 @end

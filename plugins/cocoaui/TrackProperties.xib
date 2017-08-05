@@ -8,6 +8,9 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TrackPropertiesWindowController">
             <connections>
+                <outlet property="addFieldAlreadyExists" destination="x7e-xG-aal" id="EXk-bR-tM0"/>
+                <outlet property="addFieldName" destination="FkB-fG-UDj" id="Jbx-Zk-0Jr"/>
+                <outlet property="addFieldPanel" destination="Wvw-8e-FjO" id="9kx-B7-h2X"/>
                 <outlet property="apeStripAPEv2" destination="hIg-o4-UUx" id="whc-WK-5lf"/>
                 <outlet property="apeStripID3v2" destination="5LG-8B-V5Y" id="UZU-sg-jNH"/>
                 <outlet property="apeWriteAPEv2" destination="pj6-4k-mZ8" id="ESB-BN-n5D"/>
@@ -663,7 +666,7 @@ Gw
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="1Lf-Y3-NZd">
                             <rect key="frame" x="1" y="1" width="355" height="86"/>
-                            <autoresizingMask key="autoresizingMask"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <textView importsGraphics="NO" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="dyp-1d-Sb5">
                                     <rect key="frame" x="0.0" y="0.0" width="355" height="86"/>
@@ -681,7 +684,7 @@ Gw
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="RJh-LH-mg4">
-                            <rect key="frame" x="355" y="1" width="16" height="86"/>
+                            <rect key="frame" x="356" y="1" width="15" height="86"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
@@ -724,7 +727,76 @@ Gw
                     </textField>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="939" y="122.5"/>
+            <point key="canvasLocation" x="700" y="-196"/>
+        </window>
+        <window title="New Field" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="Wvw-8e-FjO" userLabel="New Field" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="167" y="107" width="412" height="115"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+            <value key="minSize" type="size" width="412" height="237"/>
+            <view key="contentView" misplaced="YES" id="bJn-ft-ys2">
+                <rect key="frame" x="0.0" y="0.0" width="412" height="115"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="8vS-pJ-KU0">
+                        <rect key="frame" x="18" y="78" width="376" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Field name:" id="gnd-YD-Ruj">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="FkB-fG-UDj">
+                        <rect key="frame" x="20" y="48" width="372" height="22"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="OIS-jC-bf2">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" id="JWr-Zf-VQR">
+                        <rect key="frame" x="339" y="13" width="59" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="GTg-3s-dxT">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="okAddFieldPanelAction:" target="-2" id="NsV-XD-zbx"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" id="dak-yo-1Ay">
+                        <rect key="frame" x="257" y="13" width="82" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NdS-hd-Vht">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancelAddFieldPanelAction:" target="-2" id="5vr-2l-FbZ"/>
+                        </connections>
+                    </button>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" allowsCharacterPickerTouchBarItem="NO" id="x7e-xG-aal">
+                        <rect key="frame" x="18" y="20" width="273" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="The field already exists." id="i0Z-nU-uch">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="1208" y="-258"/>
         </window>
     </objects>
     <resources>
