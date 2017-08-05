@@ -738,4 +738,27 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     [NSApp endSheet:_editValuePanel];
 }
+
+- (IBAction)editRemoveAction:(id)sender {
+    NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
+
+    [ind enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        _store[idx][@"value"] = @"";
+        self.modified = YES;
+    }];
+
+    if (self.modified) {
+        [_metadataTableView reloadData];
+    }
+}
+
+- (IBAction)editCropAction:(id)sender {
+}
+
+- (IBAction)editCapitalizeAction:(id)sender {
+}
+
+- (IBAction)addNewField:(id)sender {
+}
+
 @end
