@@ -768,6 +768,18 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (IBAction)editCapitalizeAction:(id)sender {
+    NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
+
+    for (int i = 0; i < [_store count]; i++) {
+        if ([ind containsIndex:i]) {
+            _store[i][@"value"] = [_store[i][@"value"] uppercaseString];
+            self.modified = YES;
+        }
+    }
+
+    if (self.modified) {
+        [_metadataTableView reloadData];
+    }
 }
 
 - (IBAction)addNewField:(id)sender {
