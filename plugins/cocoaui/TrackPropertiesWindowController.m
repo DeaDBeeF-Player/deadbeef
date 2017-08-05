@@ -375,7 +375,8 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
                && [[NSCharacterSet whitespaceCharacterSet] characterIsMember:[val characterAtIndex:i]]) {
             i++;
         }
-        if (i == [val length]-1) {
+        // whitespace-only?
+        if (i > 0 && i == [val length]-1) {
             continue;
         }
         [transformedValues addObject: (i == 0 ? val : [val substringFromIndex:i])];
