@@ -1306,88 +1306,99 @@ int grouptitleheight = 22;
 }
 
 - (void)keyDown:(NSEvent *)theEvent {
-    //if ([theEvent modifierFlags] & NSNumericPadKeyMask) {
-    {
-        NSString *theArrow = [theEvent charactersIgnoringModifiers];
-        unichar keyChar = 0;
-        if ( [theArrow length] == 0 )
-            return;            // reject dead keys
-        if ( [theArrow length] == 1 ) {
+    NSString *theArrow = [theEvent charactersIgnoringModifiers];
+    unichar keyChar = 0;
+    if ( [theArrow length] == 0 )
+        return;            // reject dead keys
+    if ( [theArrow length] == 1 ) {
 
-            int prev = [_delegate cursor];
-            int cursor = prev;
+        int prev = [_delegate cursor];
+        int cursor = prev;
 
-            keyChar = [theArrow characterAtIndex:0];
-            switch (keyChar) {
-                case NSDownArrowFunctionKey:
+        NSScrollView *sv = [contentView enclosingScrollView];
+        NSRect vis = [sv documentVisibleRect];
+        keyChar = [theArrow characterAtIndex:0];
+
+        switch (keyChar) {
+            case NSDownArrowFunctionKey:
+                if (theEvent.modifierFlags & NSEventModifierFlagCommand) {
+                    cursor = [_delegate rowCount]-1;
+                }
+                else {
                     if (cursor < [_delegate rowCount]-1) {
                         cursor++;
                     }
-                    break;
-                case NSUpArrowFunctionKey:
+                }
+                break;
+            case NSUpArrowFunctionKey:
+                if (theEvent.modifierFlags & NSEventModifierFlagCommand) {
+                    cursor = 0;
+                }
+                else {
                     if (cursor > 0) {
                         cursor--;
                     }
                     else if (cursor < 0 && [_delegate rowCount] > 0) {
                             cursor = 0;
                     }
-                    break;
-                case NSPageDownFunctionKey: {
-                    NSScrollView *sv = [contentView enclosingScrollView];
-                    NSRect vis = [sv documentVisibleRect];
-                    [contentView scrollPoint:NSMakePoint(vis.origin.x, vis.origin.y + vis.size.height - rowheight)];
-                    break;
                 }
-                case NSPageUpFunctionKey: {
-                    NSScrollView *sv = [contentView enclosingScrollView];
-                    NSRect vis = [sv documentVisibleRect];
-                    [contentView scrollPoint:NSMakePoint(vis.origin.x, vis.origin.y - vis.size.height + rowheight)];
-                    break;
-                }
-                default:
-                    [super keyDown:theEvent];
-                    return;
+                break;
+            case NSPageDownFunctionKey: {
+                [contentView scrollPoint:NSMakePoint(vis.origin.x, vis.origin.y + vis.size.height - rowheight)];
+                break;
             }
+            case NSPageUpFunctionKey:
+                [contentView scrollPoint:NSMakePoint(vis.origin.x, vis.origin.y - vis.size.height + rowheight)];
+                break;
+            case NSHomeFunctionKey:
+                [contentView scrollPoint:NSMakePoint(vis.origin.x, 0)];
+                break;
+            case NSEndFunctionKey:
+                [contentView scrollPoint:NSMakePoint(vis.origin.x, (contentView.frame.size.height - sv.contentSize.height))];
+                break;
+            default:
+                [super keyDown:theEvent];
+                return;
+        }
 
-            if ([theEvent modifierFlags] & NSShiftKeyMask) {
-                if (cursor != prev) {
-                    [_delegate setCursor:cursor];
-                    [self setScrollForPos:[self getRowPos:cursor]];
-                    // select all between shift_sel_anchor and deadbeef->pl_get_cursor (ps->iterator)
-                    int start = min (cursor, _shift_sel_anchor);
-                    int end = max (cursor, _shift_sel_anchor);
-                    
-                    int nchanged = 0;
-                    int idx = 0;
-                    DdbListviewRow_t it;
-                    for (it = [_delegate firstRow]; it != [_delegate invalidRow]; idx++) {
-                        if (idx >= start && idx <= end) {
-                            [_delegate selectRow:it withState:YES];
-                            if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
-                                [self drawRow:idx];
-                                [_delegate selectionChanged:it];
-                            }
+        if ([theEvent modifierFlags] & NSShiftKeyMask) {
+            if (cursor != prev) {
+                [_delegate setCursor:cursor];
+                [self setScrollForPos:[self getRowPos:cursor]];
+                // select all between shift_sel_anchor and deadbeef->pl_get_cursor (ps->iterator)
+                int start = min (cursor, _shift_sel_anchor);
+                int end = max (cursor, _shift_sel_anchor);
+
+                int nchanged = 0;
+                int idx = 0;
+                DdbListviewRow_t it;
+                for (it = [_delegate firstRow]; it != [_delegate invalidRow]; idx++) {
+                    if (idx >= start && idx <= end) {
+                        [_delegate selectRow:it withState:YES];
+                        if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                            [self drawRow:idx];
+                            [_delegate selectionChanged:it];
                         }
-                        else if ([_delegate rowSelected:it]) {
-                            [_delegate selectRow:it withState:NO];
-                            if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
-                                [self drawRow:idx];
-                                [_delegate selectionChanged:it];
-                            }
+                    }
+                    else if ([_delegate rowSelected:it]) {
+                        [_delegate selectRow:it withState:NO];
+                        if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                            [self drawRow:idx];
+                            [_delegate selectionChanged:it];
                         }
-                        DdbListviewRow_t next = [_delegate nextRow:it];
-                        [_delegate unrefRow:it];
-                        it = next;
                     }
-                    if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
-                        [_delegate selectionChanged:[_delegate invalidRow]];
-                    }
+                    DdbListviewRow_t next = [_delegate nextRow:it];
+                    [_delegate unrefRow:it];
+                    it = next;
+                }
+                if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+                    [_delegate selectionChanged:[_delegate invalidRow]];
                 }
             }
-            else if (prev != cursor) {
-                _shift_sel_anchor = cursor;
-                [self setCursor:cursor noscroll:NO];
-            }
+        }
+        else if (prev != cursor) {
+            _shift_sel_anchor = cursor;
+            [self setCursor:cursor noscroll:NO];
         }
     }
 }
