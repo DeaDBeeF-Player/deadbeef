@@ -2048,7 +2048,11 @@ play_index (int idx, int startpaused) {
             send_songstarted (playing_track);
         }
         else {
+            int st = output->state();
             output->play ();
+            if (st == OUTPUT_STATE_PAUSED) {
+                messagepump_push(DB_EV_PAUSED, 0, 0, 0);
+            }
         }
     }
     else {
@@ -2115,7 +2119,11 @@ play_current (void) {
             if (!stream_track (next, 0)) {
                 playpos = 0;
                 playtime = 0;
+                int st = output->state();
                 output->play ();
+                if (st == OUTPUT_STATE_PAUSED) {
+                    messagepump_push(DB_EV_PAUSED, 0, 0, 0);
+                }
             }
             else {
                 streamer_set_buffering_track (NULL);
