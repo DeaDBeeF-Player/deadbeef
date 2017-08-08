@@ -714,7 +714,7 @@ AS_IF([test "${enable_vtx}" != "no"], [
     HAVE_VTX=yes
 ])
 
-AS_IF([test "${enable_gme}" != "no"], [
+AS_IF([test "${enable_gme}" != "no" -a "${HAVE_ZLIB}" = "yes"], [
     HAVE_GME=yes
 ])
 
