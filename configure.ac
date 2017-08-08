@@ -715,7 +715,9 @@ AS_IF([test "${enable_vtx}" != "no"], [
 ])
 
 AS_IF([test "${enable_gme}" != "no"], [
-    HAVE_GME=yes
+    AS_IF([test "${HAVE_ZLIB}" = "yes"], [
+        HAVE_GME=yes
+    ])
 ])
 
 AS_IF([test "${HAVE_DBUS}" = "yes" -a "${enable_notify}" != "no"], [
