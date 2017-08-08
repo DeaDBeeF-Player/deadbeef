@@ -404,7 +404,7 @@ enum {
     DB_EV_CONFIGCHANGED = 11, // one or more config options were changed
     DB_EV_TOGGLE_PAUSE = 12,
     DB_EV_ACTIVATED = 13, // will be fired every time player is activated
-    DB_EV_PAUSED = 14, // player was paused or unpaused
+    DB_EV_PAUSED = 14, // player was paused (p1=1) or unpaused (p1=0)
 
     DB_EV_PLAYLISTCHANGED = 15, // playlist contents were changed (e.g. metadata in any track)
     // DB_EV_PLAYLISTCHANGED NOTE: it's usually sent on LARGE changes,
