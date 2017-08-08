@@ -2043,6 +2043,7 @@ play_index (int idx, int startpaused) {
         playtime = 0;
         if (startpaused) {
             output->pause ();
+            messagepump_push(DB_EV_PAUSED, 0, 1, 0);
             streamer_start_playback (NULL, it);
             send_songstarted (playing_track);
         }

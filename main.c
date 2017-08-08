@@ -757,9 +757,6 @@ restore_resume_state (void) {
             streamer_set_nextsong (track, paused);
             streamer_yield ();
             streamer_set_seek (pos);
-            if (paused) {
-                messagepump_push(DB_EV_PAUSED, 0, 1, 0);
-            }
         }
     }
 }
