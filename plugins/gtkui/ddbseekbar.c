@@ -319,18 +319,20 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
     // left
     if (pos > 0) {
         cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
-        cairo_rectangle (cr, ax, ah/2-4+ay, pos, 8);
+        cairo_rectangle (cr, ax, a.height/2-5+ay, pos, 10);
         cairo_clip (cr);
-        clearlooks_rounded_rectangle (cr, 0+ax, ah/2-4 + ay, aw, 8, 4, 0xff);
+        clearlooks_rounded_rectangle (cr, 2+ax, a.height/2-5+ay, aw-4, 10, 5, 0xff);
         cairo_fill (cr);
         cairo_reset_clip (cr);
     }
 
     // right
-    cairo_set_source_rgb (cr, clr_back.red/65535.f, clr_back.green/65535.f, clr_back.blue/65535.f );
-    cairo_rectangle (cr, pos+ax, ah/2-4+ay, aw-pos, 8);
+    cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
+    cairo_rectangle (cr, pos+ax, a.height/2-6+ay, aw-pos, 12);
     cairo_clip (cr);
-    clearlooks_rounded_rectangle (cr, 0+ax, ah/2-4+ay, aw, 8, 4, 0xff);
+    clearlooks_rounded_rectangle (cr, 2+ax, a.height/2-4+ay, aw-4, 8, 4, 0xff);
+    cairo_set_line_width (cr, 2);
+    cairo_stroke (cr);
     cairo_fill (cr);
     cairo_reset_clip (cr);
 
@@ -503,4 +505,3 @@ ddb_seekbar_init_signals (DdbSeekbar *sb, GtkWidget *evbox) {
                     G_CALLBACK (on_evbox_motion_notify_event),
                     sb);
 }
-
