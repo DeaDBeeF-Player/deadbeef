@@ -416,13 +416,15 @@ static pl_cue_get_field_value(cueparser_t *cue) {
 
 static int
 _file_exists (const char *fname) {
-    // FIXME: use vfs!
-    struct stat s;
-    memset (&s, 0, sizeof (s));
-    if (!stat (fname, &s) && (s.st_mode & S_IFREG)) {
-        return 1;
+    if (!plug_is_local_file(fname)) {
+        return 0;
     }
-    return 0;
+    DB_FILE *fp = vfs_fopen(fname);
+    if (!fp) {
+        return 0;
+    }
+    vfs_fclose (fp);
+    return 1;
 }
 
 static int
@@ -553,9 +555,17 @@ _load_nextfile (cueparser_t *cue) {
         if (cue->origin) {
             // mark the file as used
             if (cue->namelist) {
-                const char *fn = strrchr (cue->fullpath, '/');
-                if (fn) {
-                    fn++;
+                const char *fn = NULL;
+                const char *fn_slash = strrchr (cue->fullpath, '/');
+                const char *fn_col = strrchr (cue->fullpath, ':');
+                if (fn_col) {
+                    fn = fn_col + 1;
+                }
+                else if (fn_slash) {
+                    fn = fn_slash + 1;
+                }
+                else {
+                    fn = cue->fullpath;
                 }
                 for (int i = 0; i < cue->n; i++) {
                     if (!strcmp (fn, cue->namelist[i]->d_name)) {

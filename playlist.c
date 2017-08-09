@@ -1069,21 +1069,47 @@ static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
 }
 
 static void
-_get_fullname (char *fullname, int sz, DB_vfs_t *vfs, const char *dirname, const char *d_name) {
+_get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *vfs, const char *dirname, const char *d_name) {
     if (!vfs) {
         snprintf (fullname, sz, "%s/%s", dirname, d_name);
+        if (dir) {
+            *dir = 0;
+            strncat (dir, dirname, dirsz);
+        }
     }
     else {
-        char fullname[PATH_MAX];
         const char *sch = NULL;
         if (vfs->plugin.api_vminor >= 6 && vfs->get_scheme_for_name) {
             sch = vfs->get_scheme_for_name (dirname);
         }
         if (sch && strncmp (sch, d_name, strlen (sch))) {
             snprintf (fullname, sz, "%s%s:%s", sch, dirname, d_name);
+            if (dir) {
+                *dir = 0;
+                strncat (dir, fullname, dirsz);
+                char *col = strrchr (dir, ':');
+                char *slash = strrchr (dir, '/');
+                if (col && slash && slash > col) {
+                    *slash = 0;
+                }
+                else if (col) {
+                    *(col+1) = 0;
+                }
+                else if (slash) {
+                    *slash = 0;
+                }
+                else {
+                    *dir = 0;
+                }
+            }
         }
         else {
-            strcpy (fullname, d_name);
+            *fullname = 0;
+            strncat (fullname, d_name, sz);
+            if (dir) {
+                *dir = 0;
+                strncat (dir, dirname, dirsz);
+            }
         }
     }
 }
@@ -1115,6 +1141,10 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
 
     if (vfs && vfs->scandir) {
         n = vfs->scandir (dirname, &namelist, NULL, dirent_alphasort);
+        // we can't rely on vfs plugins to set d_type
+        for (int i = 0; i < n; i++) {
+            namelist[i]->d_type = DT_REG;
+        }
     }
     else {
         n = scandir (dirname, &namelist, NULL, dirent_alphasort);
@@ -1143,13 +1173,15 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
     }
 
     char fullname[PATH_MAX];
+    char fulldir[PATH_MAX];
 
     // try loading cuesheets first
     for (int c = 0; c < ncuefiles; c++) {
         int i = cuefiles[c];
-        _get_fullname (fullname, sizeof (fullname), vfs, dirname, namelist[i]->d_name);
+        _get_fullname_and_dir (fullname, sizeof (fullname), fulldir, sizeof(fulldir), vfs, dirname, namelist[i]->d_name);
+        printf ("fullname: %s\n", fullname);
 
-        playItem_t *inserted = plt_load_cue_file (playlist, after, fullname, dirname, namelist, n);
+        playItem_t *inserted = plt_load_cue_file (playlist, after, fullname, fulldir, namelist, n);
         namelist[i]->d_name[0] = 0;
 
         if (inserted) {
@@ -1168,7 +1200,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
             if (!namelist[i]->d_name[0] || namelist[i]->d_name[0] == '.') {
                 continue;
             }
-            _get_fullname (fullname, sizeof (fullname), vfs, dirname, namelist[i]->d_name);
+            _get_fullname_and_dir (fullname, sizeof (fullname), NULL, 0, vfs, dirname, namelist[i]->d_name);
             playItem_t *inserted = NULL;
             if (!vfs) {
                 inserted = plt_insert_dir_int (visibility, playlist, vfs, after, fullname, pabort, cb, user_data);
