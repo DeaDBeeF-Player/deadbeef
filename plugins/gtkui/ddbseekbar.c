@@ -288,6 +288,7 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
     int ah = a.height;
 
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
+    // filler, only while playing a finite stream
     if (trk && deadbeef->pl_get_item_duration (trk) > 0) {
         float pos = 0;
         if (self->seekbar_moving) {
@@ -315,13 +316,16 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
             cairo_fill (cr);
             cairo_reset_clip (cr);
         }
+    }
 
-        // empty seekbar, just a frame
-        clearlooks_rounded_rectangle (cr, 2+ax, a.height/2-4+ay, aw-4, 8, 4, 0xff);
-        cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
-        cairo_set_line_width (cr, 2);
-        cairo_stroke (cr);
+    // empty seekbar, just a frame, always visible
+    clearlooks_rounded_rectangle (cr, 2+ax, a.height/2-4+ay, aw-4, 8, 4, 0xff);
+    cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
+    cairo_set_line_width (cr, 2);
+    cairo_stroke (cr);
 
+    // overlay, only while playing a finite stream, and only during seeking
+    if (trk && deadbeef->pl_get_item_duration (trk) > 0) {
         if (!gtkui_disable_seekbar_overlay && (self->seekbar_moving || self->seekbar_moved > 0.0) && trk) {
             float time = 0;
             float dur = deadbeef->pl_get_item_duration (trk);
