@@ -395,8 +395,6 @@ gtkui_init_theme_colors (void) {
 
     if (!override_bar_colors) {
         memcpy (&gtkui_bar_foreground_color, &style->base[GTK_STATE_SELECTED], sizeof (GdkColor));
-        // same color with different alpha, applied in ddbvolumebar.c
-        memcpy (&gtkui_bar_background_color, &style->base[GTK_STATE_SELECTED], sizeof (GdkColor));
 
         // HACK: if gtk says selected color is the same as background -- set it
         // to a shade of blue
@@ -405,6 +403,9 @@ gtkui_init_theme_colors (void) {
             gtkui_bar_foreground_color.green = 0x7fff;
             gtkui_bar_foreground_color.blue = 0xbae0;
         }
+
+        // same color with different alpha, applied in ddbvolumebar.c
+        memcpy (&gtkui_bar_background_color, &gtkui_bar_foreground_color, sizeof (GdkColor));
     }
     else {
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", entry_style->base[GTK_STATE_SELECTED].red, entry_style->base[GTK_STATE_SELECTED].green, entry_style->base[GTK_STATE_SELECTED].blue);
