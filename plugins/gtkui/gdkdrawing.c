@@ -395,7 +395,8 @@ gtkui_init_theme_colors (void) {
 
     if (!override_bar_colors) {
         memcpy (&gtkui_bar_foreground_color, &style->base[GTK_STATE_SELECTED], sizeof (GdkColor));
-        memcpy (&gtkui_bar_background_color, &style->text[GTK_STATE_NORMAL], sizeof (GdkColor));
+        // same color with different alpha, applied in ddbvolumebar.c
+        memcpy (&gtkui_bar_background_color, &style->base[GTK_STATE_SELECTED], sizeof (GdkColor));
 
         // HACK: if gtk says selected color is the same as background -- set it
         // to a shade of blue
