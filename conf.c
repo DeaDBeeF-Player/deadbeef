@@ -84,13 +84,15 @@ conf_load (void) {
     memcpy (fname + l, configfile, sizeof (configfile));
     FILE *fp = fopen (fname, "rt");
     if (!fp) {
-        char *err = strerror (errno);
-        trace_err ("failed to load config file %s\n%s\n", fname, err);
+        // we're not logging the error when config could not be loaded -- it's the first run
         fp = fopen (fname, "w+b");
         if (!fp) {
-            trace_err ("created an empty config\n");
-            return 0;
+            // we do log the error when we could not create the file
+            trace_err ("Configuration file could not be created: %s\n", fname);
+            return -1;
         }
+        fclose (fp);
+        return 0;
     }
     conf_lock ();
     int line = 0;
