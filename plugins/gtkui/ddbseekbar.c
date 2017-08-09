@@ -288,108 +288,97 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
     int ah = a.height;
 
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
-    if (!trk || deadbeef->pl_get_item_duration (trk) < 0) {
-        if (trk) {
-            deadbeef->pl_item_unref (trk);
+    if (trk && deadbeef->pl_get_item_duration (trk) > 0) {
+        float pos = 0;
+        if (self->seekbar_moving) {
+            int x = self->seekbar_move_x;
+            if (x < 0) {
+                x = 0;
+            }
+            if (x > a.width-1) {
+                x = a.width-1;
+            }
+            pos = x;
         }
+        else {
+            if (deadbeef->pl_get_item_duration (trk) > 0) {
+                pos = deadbeef->streamer_get_playpos () / deadbeef->pl_get_item_duration (trk);
+                pos *= a.width;
+            }
+        }
+        // left
+        if (pos > 0) {
+            cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
+            cairo_rectangle (cr, ax, ah/2-4+ay, pos, 8);
+            cairo_clip (cr);
+            clearlooks_rounded_rectangle (cr, 2+ax, ah/2-4+ay, aw-4, 8, 4, 0xff);
+            cairo_fill (cr);
+            cairo_reset_clip (cr);
+        }
+
         // empty seekbar, just a frame
         clearlooks_rounded_rectangle (cr, 2+ax, a.height/2-4+ay, aw-4, 8, 4, 0xff);
         cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
         cairo_set_line_width (cr, 2);
         cairo_stroke (cr);
-        return;
-    }
-    float pos = 0;
-    if (self->seekbar_moving) {
-        int x = self->seekbar_move_x;
-        if (x < 0) {
-            x = 0;
-        }
-        if (x > a.width-1) {
-            x = a.width-1;
-        }
-        pos = x;
-    }
-    else {
-        if (deadbeef->pl_get_item_duration (trk) > 0) {
-            pos = deadbeef->streamer_get_playpos () / deadbeef->pl_get_item_duration (trk);
-            pos *= a.width;
-        }
-    }
-    // left
-    if (pos > 0) {
-        cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
-        cairo_rectangle (cr, ax, ah/2-4+ay, pos, 8);
-        cairo_clip (cr);
-        clearlooks_rounded_rectangle (cr, 0+ax, ah/2-4 + ay, aw, 8, 4, 0xff);
-        cairo_fill (cr);
-        cairo_reset_clip (cr);
-    }
 
-    // right
-    cairo_set_source_rgb (cr, clr_back.red/65535.f, clr_back.green/65535.f, clr_back.blue/65535.f );
-    cairo_rectangle (cr, pos+ax, ah/2-4+ay, aw-pos, 8);
-    cairo_clip (cr);
-    clearlooks_rounded_rectangle (cr, 0+ax, ah/2-4+ay, aw, 8, 4, 0xff);
-    cairo_fill (cr);
-    cairo_reset_clip (cr);
+        if (!gtkui_disable_seekbar_overlay && (self->seekbar_moving || self->seekbar_moved > 0.0) && trk) {
+            float time = 0;
+            float dur = deadbeef->pl_get_item_duration (trk);
 
-    if (!gtkui_disable_seekbar_overlay && (self->seekbar_moving || self->seekbar_moved > 0.0) && trk) {
-        float time = 0;
-        float dur = deadbeef->pl_get_item_duration (trk);
+            if (self->seekbar_moved > 0) {
+                time = deadbeef->streamer_get_playpos ();
+            }
+            else {
+                time = self->seekbar_move_x * dur / (a.width);
+            }
 
-        if (self->seekbar_moved > 0) {
-            time = deadbeef->streamer_get_playpos ();
-        }
-        else {
-            time = self->seekbar_move_x * dur / (a.width);
-        }
+            if (time < 0) {
+                time = 0;
+            }
+            if (time > dur) {
+                time = dur;
+            }
+            char s[1000];
+            int hr = time/3600;
+            int mn = (time-hr*3600)/60;
+            int sc = time-hr*3600-mn*60;
+            snprintf (s, sizeof (s), "%02d:%02d:%02d", hr, mn, sc);
 
-        if (time < 0) {
-            time = 0;
-        }
-        if (time > dur) {
-            time = dur;
-        }
-        char s[1000];
-        int hr = time/3600;
-        int mn = (time-hr*3600)/60;
-        int sc = time-hr*3600-mn*60;
-        snprintf (s, sizeof (s), "%02d:%02d:%02d", hr, mn, sc);
+            cairo_set_source_rgba (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f, self->seektime_alpha);
+            cairo_save (cr);
+            cairo_set_font_size (cr, 20);
 
-        cairo_set_source_rgba (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f, self->seektime_alpha);
-        cairo_save (cr);
-        cairo_set_font_size (cr, 20);
+            cairo_text_extents_t ex;
+            cairo_text_extents (cr, s, &ex);
+            if (self->textpos == -1) {
+                self->textpos = ax + aw/2 - ex.width/2;
+                self->textwidth = ex.width + 20;
+            }
 
-        cairo_text_extents_t ex;
-        cairo_text_extents (cr, s, &ex);
-        if (self->textpos == -1) {
-            self->textpos = ax + aw/2 - ex.width/2;
-            self->textwidth = ex.width + 20;
-        }
+            clearlooks_rounded_rectangle (cr, ax + aw/2 - self->textwidth/2, ay+4, self->textwidth, ah-8, 3, 0xff);
+            cairo_fill (cr);
 
-        clearlooks_rounded_rectangle (cr, ax + aw/2 - self->textwidth/2, ay+4, self->textwidth, ah-8, 3, 0xff);
-        cairo_fill (cr);
+            cairo_move_to (cr, self->textpos, ay+ah/2+ex.height/2);
+            GdkColor clr;
+            gtkui_get_listview_selected_text_color (&clr);
+            cairo_set_source_rgba (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f, self->seektime_alpha);
+            cairo_show_text (cr, s);
+            cairo_restore (cr);
 
-        cairo_move_to (cr, self->textpos, ay+ah/2+ex.height/2);
-        GdkColor clr;
-        gtkui_get_listview_selected_text_color (&clr);
-        cairo_set_source_rgba (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f, self->seektime_alpha);
-        cairo_show_text (cr, s);
-        cairo_restore (cr);
-
-        int fps = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
-        if (fps < 1) {
-            fps = 1;
-        }
-        else if (fps > 30) {
-            fps = 30;
-        }
-        if (self->seekbar_moved >= 0.0) {
-            self->seekbar_moved -= 1.0/fps;
-        }
-        else {
-            self->seekbar_moved = 0.0;
+            int fps = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
+            if (fps < 1) {
+                fps = 1;
+            }
+            else if (fps > 30) {
+                fps = 30;
+            }
+            if (self->seekbar_moved >= 0.0) {
+                self->seekbar_moved -= 1.0/fps;
+            }
+            else {
+                self->seekbar_moved = 0.0;
+            }
         }
     }
 
