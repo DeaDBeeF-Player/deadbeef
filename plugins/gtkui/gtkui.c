@@ -147,20 +147,20 @@ static char sbitrate[20] = "";
 static struct timeval last_br_update;
 
 static void
-format_timestr (char *buf, float time) {
+format_timestr (char *buf, int sz, float time) {
     int daystotal = (int)time / (3600*24);
     int hourtotal = ((int)time / 3600) % 24;
     int mintotal = ((int)time/60) % 60;
     int sectotal = ((int)time) % 60;
 
     if (daystotal == 0) {
-        snprintf (buf, sizeof (buf), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
+        snprintf (buf, sz, "%d:%02d:%02d", hourtotal, mintotal, sectotal);
     }
     else if (daystotal == 1) {
-        snprintf (buf, sizeof (buf), _("1 day %d:%02d:%02d"), hourtotal, mintotal, sectotal);
+        snprintf (buf, sz, _("1 day %d:%02d:%02d"), hourtotal, mintotal, sectotal);
     }
     else {
-        snprintf (buf, sizeof (buf), _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
+        snprintf (buf, sz, _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
     }
 }
 
@@ -175,7 +175,7 @@ update_songinfo (gpointer ctx) {
 
     float pl_totaltime = deadbeef->pl_get_totaltime ();
     char totaltime_str[512] = "";
-    format_timestr(totaltime_str, pl_totaltime);
+    format_timestr(totaltime_str, sizeof (totaltime_str), pl_totaltime);
 
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
 
