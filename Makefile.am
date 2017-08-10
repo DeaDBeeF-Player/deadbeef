@@ -48,8 +48,7 @@ deadbeef_SOURCES =\
 	playqueue.c playqueue.h\
 	sort.c sort.h\
 	logger.c logger.h
-	
-#	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
+	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
