@@ -32,7 +32,7 @@ The following instructions assume that commands are executed in deadbeef reposit
 * Fetch the dependencies: ```git submodule update --init```
 * Install XCode
 * Install [Yasm](http://rudix.org/packages/yasm.html)
-* Run ```xcodebuild -project osx/deadbeef.xcodeproj -target deadbeef -configuration Deployment```
+* Run ```xcodebuild -project osx/deadbeef.xcodeproj -target deadbeef -configuration Release```
 * Get the output: ```osx/build/Release/deadbeef.app```
 * OR open the osx/deadbeef.xcodeproj in XCode, and build/run from there
 
