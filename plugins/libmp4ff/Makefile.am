@@ -1,5 +1,5 @@
-noinst_LIBRARIES = libmp4ff.a
-libmp4ff_a_SOURCES = \
+lib_LTLIBRARIES = libmp4ff.la
+libmp4ff_la_SOURCES = \
 	mp4atom.c\
 	mp4ff.c\
 	mp4ff.h\

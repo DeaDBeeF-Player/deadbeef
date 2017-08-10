@@ -6,7 +6,7 @@ alac_la_SOURCES = alac_plugin.c\
 
 alac_la_LDFLAGS = -module -avoid-version
 
-alac_la_LIBADD = $(LDADD) $(FAAD2_LIBS) ../libmp4ff/libmp4ff.a
+alac_la_LIBADD = $(LDADD) $(FAAD2_LIBS) ../libmp4ff/libmp4ff.la
 AM_CFLAGS = $(CFLAGS) -std=c99 -DUSE_MP4FF -DUSE_TAGGING -I@top_srcdir@/plugins/libmp4ff
 endif
 
