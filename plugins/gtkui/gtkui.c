@@ -128,6 +128,7 @@ static char *titlebar_playing_bc;
 static char *titlebar_stopped_bc;
 
 static char *statusbar_bc;
+static char *statusbar_stopped_bc;
 
 void
 gtkpl_free (DdbListview *pl) {
@@ -165,7 +166,7 @@ format_timestr (char *buf, int sz, float time) {
 }
 
 static gboolean
-update_songinfo (gpointer ctx) {
+update_songinfo (gpointer unused) {
     int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
     if (!gtk_widget_get_visible (mainwin) || iconified) {
         return FALSE;
@@ -179,30 +180,31 @@ update_songinfo (gpointer ctx) {
 
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
 
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .it = track,
+        .iter = PL_MAIN,
+        .plt = deadbeef->plt_get_curr()
+    };
+
+    char buffer[200];
+    char *bc = NULL;
+
+
     if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track)) {
-        snprintf (sbtext_new,
-                  sizeof (sbtext_new),
-                  _("Stopped | %d tracks | %s total playtime"),
-                  deadbeef->pl_getcount (PL_MAIN),
-                  totaltime_str);
+        bc = statusbar_stopped_bc;
     }
     else {
-        ddb_tf_context_t ctx = {
-            ._size = sizeof (ddb_tf_context_t),
-            .it = track,
-            .iter = PL_MAIN,
-            .plt = deadbeef->plt_get_curr()
-        };
-
-        char buffer[200];
-        deadbeef->tf_eval (&ctx, statusbar_bc, buffer, sizeof (buffer));
-        snprintf (sbtext_new,
-                  sizeof (sbtext_new),
-                  "%s | %d tracks | %s total playtime",
-                  buffer,
-                  deadbeef->pl_getcount (PL_MAIN),
-                  totaltime_str);
+        bc = statusbar_bc;
     }
+
+    deadbeef->tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    snprintf (sbtext_new,
+              sizeof (sbtext_new),
+              "%s | %d tracks | %s total playtime",
+              buffer,
+              deadbeef->pl_getcount (PL_MAIN),
+              totaltime_str);
 
     if (strcmp (sbtext_new, sb_text)) {
         strcpy (sb_text, sbtext_new);
@@ -379,6 +381,10 @@ titlebar_tf_free (void) {
         deadbeef->tf_free (statusbar_bc);
         statusbar_bc = NULL;
     }
+    if (statusbar_stopped_bc) {
+        deadbeef->tf_free (statusbar_stopped_bc);
+        statusbar_stopped_bc = NULL;
+    }
 }
 
 void
@@ -394,7 +400,11 @@ gtkui_titlebar_tf_init (void) {
     const char statusbar_tf_with_seltime[] = "$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length% | %selection_playback_time% selection playtime";
     const char statusbar_tf[] = "$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length%";
 
+    const char statusbar_stopped_tf_with_seltime[] = "Stopped | %selection_playback_time% selection playtime";
+    const char statusbar_stopped_tf[] = "Stopped";
+
     statusbar_bc = deadbeef->tf_compile (deadbeef->conf_get_int ("gtkui.statusbar_seltime", 0) ? statusbar_tf_with_seltime : statusbar_tf);
+    statusbar_stopped_bc = deadbeef->tf_compile (deadbeef->conf_get_int ("gtkui.statusbar_seltime", 0) ? statusbar_stopped_tf_with_seltime : statusbar_stopped_tf);
 }
 
 void
