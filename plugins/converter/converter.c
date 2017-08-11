@@ -42,6 +42,7 @@
 #include "../../strdupa.h"
 #include "../../shared/mp4tagutil.h"
 
+
 static ddb_converter_t plugin;
 
 #ifndef __linux__
@@ -981,7 +982,11 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
 
         int64_t res = write (fd, buffer, sz);
         if (sz != res) {
+            #ifdef __MINGW32__
+            trace ("Write error\n");
+            #else
             trace ("Write error (%"PRId64" bytes written out of %d)\n", res, sz);
+            #endif
             goto error;
         }
     }
@@ -1420,7 +1425,12 @@ error:
     }
     if (enc_pipe) {
         err = pclose (enc_pipe);
+        #ifdef __MINGW32__
+        // TODO: MINGW: https://msdn.microsoft.com/en-us/library/ms683189(v=vs.85).aspx
+        err = 0;
+        #else
         err = WEXITSTATUS(err);
+        #endif
         if (err) {
             trace ("Failed to execute the encoder, command used:\n%s\n", enc[0] ? enc : "internal RIFF WAVE writer");
             err = -1;
