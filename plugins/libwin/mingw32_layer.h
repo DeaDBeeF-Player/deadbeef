@@ -9,6 +9,7 @@
 
 #define mkdir(X,Y)    mkdir(X)
 #define realpath(X,Y) _fullpath(Y,X,PATH_MAX)
+#undef  EWOULDBLOCK
 #define EWOULDBLOCK   EAGAIN
 #define SHUT_WR       1
 #define lstat         stat
@@ -41,6 +42,7 @@ typedef pthread_t       db_thread_t;
 typedef pthread_mutex_t *db_mutex_t;
 typedef pthread_cond_t  *db_cond_t;
 
+#define S_ISLNK(X) 0
 /*
   _In_opt_   LPCTSTR lpBackupFileName,
   _In_       DWORD   dwReplaceFlags,
@@ -55,4 +57,5 @@ int munmap(void *, size_t);
 char *strndup(char *, size_t);
 char *strcasestr(const char *, const char *);
 
+int rename_windows(const char *, const char *);
 //#endif
