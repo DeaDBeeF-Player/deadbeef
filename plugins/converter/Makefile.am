@@ -37,7 +37,7 @@ converter_la_CFLAGS =  $(CFLAGS) -I@top_srcdir@/plugins/libmp4ff -std=c99 -fPIC 
 converter_la_SOURCES = converter.c converter.h\
 	../../shared/mp4tagutil.c ../../shared/mp4tagutil.h
 converter_la_LDFLAGS = -module -avoid-version
-converter_la_LIBADD = $(LDADD) ../libmp4ff/libmp4ff.a
+converter_la_LIBADD = $(LDADD) ../libmp4ff/libmp4ff.la
 
 if HAVE_GTK2
 converter_gtk2_la_SOURCES = convgui.c interface.c support.c callbacks.h converter.h interface.h support.h
