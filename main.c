@@ -30,6 +30,9 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#ifdef __MINGW32__
+#undef __STRICT_ANSI__ /* this will make stdlib.h declare the prototype for '_fullpath' */
+#endif
 #include <stdlib.h>
 #include <stddef.h>
 #include <time.h>
@@ -37,7 +40,7 @@
 #ifdef __linux__
 #include <sys/prctl.h>
 #endif
-#ifndef __linux__
+#if !defined(__linux__) && !defined(_POSIX_C_SOURCE)
 #define _POSIX_C_SOURCE 1
 #endif
 #include <limits.h>
@@ -45,11 +48,16 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/types.h>
+#ifdef __MINGW32__
+#include <winsock2.h>
+#define DEFAULT_LISTENING_PORT    48879
+#else
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <sys/un.h>
-#include <sys/fcntl.h>
 #include <sys/errno.h>
+#endif
+#include <sys/fcntl.h>
 #include <signal.h>
 #ifdef __GLIBC__
 #include <execinfo.h>
@@ -70,11 +78,18 @@
 #endif
 #include "playqueue.h"
 #include "tf.h"
-#include "logger.h"
+#ifdef __MINGW32__
+#include "plugins/libwin/mingw32_layer.h"
+#endif
+#include "deadbeef.h"
 
 #ifndef PREFIX
 #error PREFIX must be defined
 #endif
+
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
+
 
 #ifdef HAVE_COCOAUI
 #define SYS_CONFIG_DIR "Library/Preferences"
@@ -434,8 +449,13 @@ add_paths(const char *paths, int len, int queue, char *sendback, int sbsize) {
     return 0;
 }
 
+#ifdef __MINGW32__
+static struct sockaddr_in srv_local;
+static struct sockaddr_in srv_remote;
+#else
 static struct sockaddr_un srv_local;
 static struct sockaddr_un srv_remote;
+#endif
 static unsigned srv_socket;
 
 #if USE_ABSTRACT_SOCKET_NAME
@@ -444,7 +464,17 @@ static char server_id[] = "\0deadbeefplayer";
 
 int
 server_start (void) {
-    trace ("server_start\n");
+    int len;
+
+    fprintf (stderr, "server_start\n");
+#ifdef __MINGW32__
+    srv_socket = socket (AF_INET, SOCK_STREAM, 0);
+    unsigned long flags = 1;
+    if (ioctlsocket(srv_socket, FIONBIO, &flags) == SOCKET_ERROR) {
+        perror ("ioctlsocket FIONBIO");
+        return -1;
+    }
+#else
     srv_socket = socket (AF_UNIX, SOCK_STREAM, 0);
     int flags;
     flags = fcntl (srv_socket, F_GETFL,0);
@@ -456,20 +486,30 @@ server_start (void) {
         perror ("fcntl F_SETFL");
         return -1;
     }
+#endif
     memset (&srv_local, 0, sizeof (srv_local));
+
+#ifdef __MINGW32__
+    srv_local.sin_family      = AF_INET;
+    srv_local.sin_addr.s_addr = INADDR_ANY;
+    srv_local.sin_port        = htons(DEFAULT_LISTENING_PORT);
+
+    len = sizeof(srv_local);
+#else
     srv_local.sun_family = AF_UNIX;
 
 #if USE_ABSTRACT_SOCKET_NAME
     memcpy (srv_local.sun_path, server_id, sizeof (server_id));
-    unsigned int len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
+    len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
 #else
     char *socketdirenv = getenv ("DDB_SOCKET_DIR");
-    snprintf (srv_local.sun_path, sizeof (srv_local.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbruntimedir);
+    snprintf (srv_local.sun_path, sizeof (srv_local.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
     if (unlink(srv_local.sun_path) < 0) {
         perror ("INFO: unlink socket");
     }
-    unsigned int len = (unsigned int)(offsetof(struct sockaddr_un, sun_path) + strlen (srv_local.sun_path));
+    len = offsetof(struct sockaddr_un, sun_path) + strlen (srv_local.sun_path);
 #endif
+#endif /* __MINGW32__ */
 
     if (bind(srv_socket, (struct sockaddr *)&srv_local, len) < 0) {
         perror ("bind");
@@ -840,6 +880,9 @@ mainloop_thread (void *ctx) {
 
 int
 main (int argc, char *argv[]) {
+#ifdef __MINGW32__
+    char current_dir[MAX_PATH];
+#endif
     ddb_logger_init ();
     int portable = 0;
 #if STATICLINK
@@ -848,6 +891,9 @@ main (int argc, char *argv[]) {
     int staticlink = 0;
 #endif
 #if PORTABLE
+#ifdef __MINGW32__
+    GetCurrentDirectory(PATH_MAX, dbinstalldir);
+#else
     portable = 1;
     if (!realpath (argv[0], dbinstalldir)) {
         strcpy (dbinstalldir, argv[0]);
@@ -857,9 +903,10 @@ main (int argc, char *argv[]) {
         *e = 0;
     }
     else {
-        trace_err ("couldn't determine install folder from path %s\n", argv[0]);
+        fprintf (stderr, "couldn't determine install folder from path %s\n", argv[0]);
         exit (-1);
     }
+#endif /* __MINGW32__ */
 #else
     if (!realpath (argv[0], dbinstalldir)) {
         strcpy (dbinstalldir, argv[0]);
@@ -908,7 +955,13 @@ main (int argc, char *argv[]) {
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-main", 0, 0, 0, 0);
 #endif
-
+#ifdef __MINGW32__
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0)
+        fprintf(stderr, "Error with WSAStartup(), WinSock startup failed.\n");
+    else
+        fprintf(stderr, "WinSock init ok, library version %d.%d\n", HIBYTE(wsaData.wVersion), LOBYTE(wsaData.wVersion));
+#endif
 #if PORTABLE_FULL
     if (snprintf (confdir, sizeof (confdir), "%s/config", dbinstalldir) > sizeof (confdir)) {
         trace_err ("fatal: too long install path %s\n", dbinstalldir);
@@ -922,7 +975,11 @@ main (int argc, char *argv[]) {
         return -1;
     }
 #else
+#ifdef __MINGW32__
+    char *homedir = getenv ("USERPROFILE");
+#else
     char *homedir = getenv ("HOME");
+#endif
     if (!homedir) {
         trace_err ("unable to find home directory. stopping.\n");
         return -1;
@@ -989,15 +1046,20 @@ main (int argc, char *argv[]) {
         mkdir (dbplugindir, 0755);
     }
     else {
+#ifdef __MINGW32__
+        GetCurrentDirectory(MAX_PATH, current_dir);
+        if (snprintf (dbdocdir, sizeof (dbdocdir), "%s/doc", current_dir) > sizeof (dbdocdir)) {
+#else
         if (snprintf (dbdocdir, sizeof (dbdocdir), "%s", DOCDIR) > sizeof (dbdocdir)) {
-            trace_err ("fatal: too long install path %s\n", dbinstalldir);
+#endif
+            fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
             return -1;
         }
         char *env_plugin_dir = getenv ("DEADBEEF_PLUGIN_DIR");
         if (env_plugin_dir) {
             strncpy (dbplugindir, env_plugin_dir, sizeof(dbplugindir));
             if (dbplugindir[sizeof(dbplugindir) - 1] != 0) {
-                trace_err ("fatal: too long plugin path %s\n", env_plugin_dir);
+                fprintf (stderr, "fatal: too long plugin path %s\n", env_plugin_dir);
                 return -1;
             }
         }
@@ -1045,23 +1107,36 @@ main (int argc, char *argv[]) {
     // try to connect to remote player
     int s;
     unsigned int len;
+#ifdef __MINGW32__
+    struct sockaddr_in remote;
+    if ((s = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
+#else
     struct sockaddr_un remote;
-
     if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+#endif
         perror("socket");
         exit(1);
     }
 
     memset (&remote, 0, sizeof (remote));
+#ifdef __MINGW32__
+    remote.sin_family      = AF_INET;
+    remote.sin_addr.s_addr = inet_addr("127.0.0.1");
+    remote.sin_port        = htons(DEFAULT_LISTENING_PORT);
+
+    len = sizeof(remote);
+#else
     remote.sun_family = AF_UNIX;
+
 #if USE_ABSTRACT_SOCKET_NAME
     memcpy (remote.sun_path, server_id, sizeof (server_id));
     len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
 #else
     char *socketdirenv = getenv ("DDB_SOCKET_DIR");
-    snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbruntimedir);
-    len = (unsigned int)(offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path));
+    snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
+    len = offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path);
 #endif
+#endif /* __MINGW32__ */
     if (connect(s, (struct sockaddr *)&remote, len) == 0) {
         // pass args to remote and exit
         if (send(s, cmdline, size, 0) == -1) {
