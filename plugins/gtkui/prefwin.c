@@ -247,6 +247,9 @@ gtkui_run_preferences_dlg (void) {
 
     // hide tray icon
     set_toggle_button("hide_tray_icon", deadbeef->conf_get_int ("gtkui.hide_tray_icon", 0));
+    
+    // show playing status on tray icon
+    set_toggle_button("show_playing_status_on_tray_icon", deadbeef->conf_get_int ("gtkui.show_playing_status_on_tray_icon", 0));
 
     // mmb_delete_playlist
     set_toggle_button("mmb_delete_playlist", deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 1));
@@ -568,6 +571,15 @@ on_hide_tray_icon_toggled              (GtkToggleButton *togglebutton,
 {
     int active = gtk_toggle_button_get_active (togglebutton);
     deadbeef->conf_set_int ("gtkui.hide_tray_icon", active);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_show_playing_status_on_tray_icon_toggled (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (togglebutton);
+    deadbeef->conf_set_int ("gtkui.show_playing_status_on_tray_icon", active);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
