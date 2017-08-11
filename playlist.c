@@ -66,6 +66,9 @@
 #include "strdupa.h"
 #include "tf.h"
 #include "playqueue.h"
+#ifdef __MINGW32__
+#include "plugins/libwin/mingw32_layer.h"
+#endif
 
 #include "cueutil.h"
 
@@ -1142,9 +1145,11 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
     if (vfs && vfs->scandir) {
         n = vfs->scandir (dirname, &namelist, NULL, dirent_alphasort);
         // we can't rely on vfs plugins to set d_type
+        #ifndef __MINGW32__
         for (int i = 0; i < n; i++) {
             namelist[i]->d_type = DT_REG;
         }
+        #endif
     }
     else {
         n = scandir (dirname, &namelist, NULL, dirent_alphasort);
@@ -1162,7 +1167,8 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
 
     for (int i = 0; i < n; i++) {
         // no hidden files
-        if (namelist[i]->d_name[0] == '.' || namelist[i]->d_type != DT_REG) {
+        //if (namelist[i]->d_name[0] == '.' || namelist[i]->d_type != DT_REG) {
+        if (namelist[i]->d_name[0] == '.' ) {
             continue;
         }
 
