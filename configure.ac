@@ -43,6 +43,16 @@ case "$host" in
     APE_USE_YASM=yes
     OS_OSX=yes
     ;;
+  x86_64-w64-mingw*)
+    AC_DEFINE(ARCH_X86_64, 1, [architecture is x86_64 on Windows])
+    LIB="static-deps/lib-x86-64-windows"
+    YASM_FLAGS="-f elf -D ARCH_X86_64 -m amd64"
+    APE_USE_YASM=yes
+    LDADD="$LDADD $PWD/plugins/libwin/libwin.la -ldl -lws2_32"
+    AC_SUBST([LDADD])
+    DEPS_CFLAGS="$DEPS_CFLAGS -I$PWD/plugins/libwin/include"
+    AC_SUBST([DEPS_CFLAGS])
+    ;;
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
     LIB="static-deps/lib-x86-32"
@@ -67,6 +77,7 @@ case "$host" in
     AC_DEFINE(ARCH_UNKNOWN, 1, [architecture is unknown])
     ;;
 esac
+
 AC_SUBST(LIB)
 AC_SUBST(YASM_FLAGS)
 
