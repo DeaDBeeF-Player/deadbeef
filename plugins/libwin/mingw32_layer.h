@@ -1,6 +1,6 @@
 
-#ifndef _MINGW32_LAYER_H_
-#define _MINGW32_LAYER_H_
+//#ifndef _MINGW32_LAYER_H_
+//#define _MINGW32_LAYER_H_
 
 #include <errno.h>
 #include <dirent.h>
@@ -33,10 +33,26 @@
 #define _POSIX_ARG_MAX 255
 #endif
 
+#undef rename
+#define rename(X,Y) rename_windows(X,Y)
+
+#include <pthread.h>
+typedef pthread_t       db_thread_t;
+typedef pthread_mutex_t *db_mutex_t;
+typedef pthread_cond_t  *db_cond_t;
+
+/*
+  _In_opt_   LPCTSTR lpBackupFileName,
+  _In_       DWORD   dwReplaceFlags,
+  _Reserved_ LPVOID  lpExclude,
+  _Reserved_ LPVOID  lpReserved
+);*/
+
+
 int scandir (const char *__dir, struct dirent ***__namelist, int (*__selector) (const struct dirent *), int (*__cmp) (const struct dirent **, const struct dirent **));
 void *mmap(void *, size_t, int, int, int, off_t);
 int munmap(void *, size_t);
 char *strndup(char *, size_t);
 char *strcasestr(const char *, const char *);
 
-#endif
+//#endif
