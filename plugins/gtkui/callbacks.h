@@ -822,6 +822,10 @@ on_hide_tray_icon_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
 
 void
+on_show_playing_status_on_tray_icon_toggled (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
 on_hide_delete_from_disk_toggled       (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
 
