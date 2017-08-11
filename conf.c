@@ -109,6 +109,7 @@ conf_load (void) {
         free (buffer);
         trace_err ("failed to read entire config file to memory\n");
         fclose (fp);
+        conf_unlock ();
         return -1;
     }
     buffer[l] = 0;
