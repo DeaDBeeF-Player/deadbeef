@@ -55,10 +55,11 @@
 #include "gtkui_api.h"
 #include "wingeom.h"
 #include "widgets.h"
-#ifndef __APPLE__
-#include "X11/Xlib.h"
-#else
+#ifdef __APPLE__
 #include "retina.h"
+#elif defined __MINGW32__
+#else
+#include "X11/Xlib.h"
 #endif
 #include "actionhandlers.h"
 #include "clipboard.h"

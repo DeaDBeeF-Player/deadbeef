@@ -34,7 +34,9 @@
 #include <ctype.h>
 #include <gdk/gdkkeysyms.h>
 #ifndef __APPLE__
+#ifndef __MINGW32__
 #include <X11/Xlib.h>
+#endif
 #endif
 #include "../../gettext.h"
 

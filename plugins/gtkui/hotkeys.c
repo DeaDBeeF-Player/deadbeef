@@ -58,7 +58,9 @@ typedef struct
 #include "../libparser/parser.h"
 #include "../hotkeys/hotkeys.h"
 #ifndef __APPLE__
+#ifndef __MINGW32__
 #include <X11/Xlib.h> // only for the KeySym type
+#endif
 #endif
 #include "hotkeys.h"
 #include "../../strdupa.h"
