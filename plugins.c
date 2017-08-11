@@ -77,6 +77,8 @@ DB_plugin_t main_plugin = {
 
 #if defined(HAVE_COCOAUI) || defined(OSX_APPBUNDLE)
 #define PLUGINEXT ".dylib"
+#elif defined __MINGW32__
+#define PLUGINEXT ".dll"
 #else
 #define PLUGINEXT ".so"
 #endif
