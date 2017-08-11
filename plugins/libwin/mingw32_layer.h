@@ -29,6 +29,9 @@
 #define MAP_ANON      MAP_ANONYMOUS
 #define MAP_FAILED    ((void *) -1)
 
+#ifndef _POSIX_ARG_MAX
+#define _POSIX_ARG_MAX 255
+#endif
 
 int scandir (const char *__dir, struct dirent ***__namelist, int (*__selector) (const struct dirent *), int (*__cmp) (const struct dirent **, const struct dirent **));
 void *mmap(void *, size_t, int, int, int, off_t);
