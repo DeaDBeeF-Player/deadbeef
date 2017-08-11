@@ -38,6 +38,9 @@
 #include "conf.h"
 #include "threading.h"
 #include "common.h"
+#ifdef __MINGW32__
+#include "plugins/libwin/mingw32_layer.h"
+#endif
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
