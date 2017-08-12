@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libmp4ff.la
+noinst_LTLIBRARIES = libmp4ff.la
 libmp4ff_la_SOURCES = \
 	mp4atom.c\
 	mp4ff.c\
