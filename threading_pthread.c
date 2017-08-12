@@ -128,6 +128,7 @@ thread_detach (intptr_t tid) {
 }
 
 // these 2 functions come from elio branch
+#ifdef __MINGW32__
 int
 thread_alive (db_thread_t tid) {
     return (pthread_kill (tid, 0) == 0);
@@ -142,6 +143,7 @@ thread_wipeid (db_thread_t *tid) {
 
     }
 }
+#endif
 
 void
 thread_exit (void *retval) {
