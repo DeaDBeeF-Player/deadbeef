@@ -52,6 +52,8 @@ case "$host" in
     AC_SUBST([LDADD])
     DEPS_CFLAGS="$DEPS_CFLAGS -I$PWD/plugins/libwin/include"
     AC_SUBST([DEPS_CFLAGS])
+    OS_WINDOWS=yes
+
     ;;
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
@@ -250,6 +252,7 @@ dnl    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_L
     HAVE_GTK3=no
 ])
 AM_CONDITIONAL(OS_OSX, test "x$OS_OSX" = "xyes")
+AM_CONDITIONAL(OS_WINDOWS, test "x$OS_WINDOWS" = "xyes")
 
 
 AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes" -o "${enable_shellexec}" = "yes"], [
