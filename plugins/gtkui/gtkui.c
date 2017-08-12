@@ -489,24 +489,47 @@ gtkui_update_status_icon (gpointer unused) {
     const char *icon_name = tmp;
     deadbeef->conf_get_str ("gtkui.custom_tray_icon", TRAY_ICON, tmp, sizeof (tmp));
     GtkIconTheme *theme = gtk_icon_theme_get_default();
+    DB_output_t *output = deadbeef->get_output ();
 
-    if (!gtk_icon_theme_has_icon(theme, icon_name))
-        icon_name = "deadbeef";
+    int show_playing_status_on_tray_icon = deadbeef->conf_get_int ("gtkui.show_playing_status_on_tray_icon", 0);
+    
+    if (deadbeef->conf_get_int ("gtkui.show_playing_status_on_tray_icon", 1)) {
+        if (output->state () == OUTPUT_STATE_STOPPED) {
+            char iconpath[1024];
+            snprintf (iconpath, sizeof (iconpath), "%s/deadbeef-stop.png", deadbeef->get_system_dir(DDB_SYS_DIR_PREFIX));
+            trayicon = gtk_status_icon_new_from_file(iconpath);
+        }
+        if (output->state () == OUTPUT_STATE_PLAYING) {
+            char iconpath[1024];
+            snprintf (iconpath, sizeof (iconpath), "%s/deadbeef-play.png", deadbeef->get_system_dir(DDB_SYS_DIR_PREFIX));
+            trayicon = gtk_status_icon_new_from_file(iconpath);
+        }
+        if (output->state () == OUTPUT_STATE_PAUSED) {
+            char iconpath[1024];
+            snprintf (iconpath, sizeof (iconpath), "%s/deadbeef-pause.png", deadbeef->get_system_dir(DDB_SYS_DIR_PREFIX));
+            trayicon = gtk_status_icon_new_from_file(iconpath);
+        }
+    }
     else {
-        GtkIconInfo *icon_info = gtk_icon_theme_lookup_icon(theme, icon_name, 48, GTK_ICON_LOOKUP_USE_BUILTIN);
-        const gboolean icon_is_builtin = gtk_icon_info_get_filename(icon_info) == NULL;
-        gtk_icon_info_free(icon_info);
-        icon_name = icon_is_builtin ? "deadbeef" : icon_name;
+        if (!gtk_icon_theme_has_icon(theme, icon_name))
+            icon_name = "deadbeef";
+        else {
+            GtkIconInfo *icon_info = gtk_icon_theme_lookup_icon(theme, icon_name, 48, GTK_ICON_LOOKUP_USE_BUILTIN);
+            const gboolean icon_is_builtin = gtk_icon_info_get_filename(icon_info) == NULL;
+            gtk_icon_info_free(icon_info);
+            icon_name = icon_is_builtin ? "deadbeef" : icon_name;
+        }
+
+        if (!gtk_icon_theme_has_icon(theme, icon_name)) {
+            char iconpath[1024];
+            snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_system_dir(DDB_SYS_DIR_PREFIX));
+            trayicon = gtk_status_icon_new_from_file(iconpath);
+        }
+        else {
+            trayicon = gtk_status_icon_new_from_icon_name(icon_name);
+        }
     }
 
-    if (!gtk_icon_theme_has_icon(theme, icon_name)) {
-        char iconpath[1024];
-        snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_system_dir(DDB_SYS_DIR_PREFIX));
-        trayicon = gtk_status_icon_new_from_file(iconpath);
-    }
-    else {
-        trayicon = gtk_status_icon_new_from_icon_name(icon_name);
-    }
     if (hide_tray_icon) {
         g_object_set (trayicon, "visible", FALSE, NULL);
     }
@@ -519,6 +542,8 @@ gtkui_update_status_icon (gpointer unused) {
     g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
 #endif
     g_signal_connect ((gpointer)trayicon, "popup_menu", G_CALLBACK (on_trayicon_popup_menu), NULL);
+
+    
 
     gtkui_set_titlebar (NULL);
 
