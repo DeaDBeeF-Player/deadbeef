@@ -1710,7 +1710,6 @@
 		4D44E70319B7539C00F780FC /* sampbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F819B7539C00F780FC /* sampbuf.c */; };
 		4D44E70419B7539C00F780FC /* silence.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F919B7539C00F780FC /* silence.c */; };
 		4D44E70519B7539C00F780FC /* stdfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6FA19B7539C00F780FC /* stdfile.c */; };
-		4D52B4DF1F14F11A00048305 /* v2m.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D52B4CE1F14F0FD00048305 /* v2m.dylib */; };
 		4D52B4F31F14F29D00048305 /* libv2.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D52B4E41F14F29D00048305 /* libv2.h */; };
 		4D52B4F41F14F29D00048305 /* phonemtab.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D52B4E51F14F29D00048305 /* phonemtab.h */; };
 		4D52B4F51F14F29D00048305 /* sounddef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D52B4E61F14F29D00048305 /* sounddef.h */; };
@@ -2403,13 +2402,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4D44E66D19B7530A00F780FC;
 			remoteInfo = dumb;
-		};
-		4D52B4E01F14F12600048305 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4D52B4CD1F14F0FD00048305;
-			remoteInfo = v2m;
 		};
 		4DB9654519A64D930076F4F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -9765,7 +9757,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				4D52B4E11F14F12600048305 /* PBXTargetDependency */,
 				2DF16CB51DCB62F4007D7F05 /* PBXTargetDependency */,
 				2D1DC09B1DCB3A1000441A08 /* PBXTargetDependency */,
 				2D27AEF01D9D876E00842D76 /* PBXTargetDependency */,
@@ -10312,7 +10303,6 @@
 				2DD6D0A819AE6288009308A5 /* knobTemplate.pdf in Resources */,
 				4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */,
 				2D54326F1E467C060048AF73 /* MediaLibrary.xib in Resources */,
-				2DCD78DC19A665CA00EA50FA /* deadbeef.png in Resources */,
 				4D2A6CA4183BC29400AC6BF5 /* btnstopTemplate.pdf in Resources */,
 				2DB10B8819B908630054A6AB /* tab_unsel_fill@2x.png in Resources */,
 				2DB10B8A19B908630054A6AB /* tab_unsel_left@2x.png in Resources */,
@@ -10337,7 +10327,6 @@
 				2DB10B8119B908630054A6AB /* tab_bottom_fill.png in Resources */,
 				2DF622BB1B335FF100C70C7D /* convpresets in Resources */,
 				2D28F0501C283C4B004A6E7B /* aac.dylib in Resources */,
-				4D52B4DF1F14F11A00048305 /* v2m.dylib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12049,11 +12038,6 @@
 			isa = PBXTargetDependency;
 			target = 4D44E66D19B7530A00F780FC /* ddb_dumb */;
 			targetProxy = 4D44E70619B753AD00F780FC /* PBXContainerItemProxy */;
-		};
-		4D52B4E11F14F12600048305 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4D52B4CD1F14F0FD00048305 /* v2m */;
-			targetProxy = 4D52B4E01F14F12600048305 /* PBXContainerItemProxy */;
 		};
 		4DB9654619A64D930076F4F3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
