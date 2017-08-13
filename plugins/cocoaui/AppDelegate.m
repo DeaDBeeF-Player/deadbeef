@@ -83,7 +83,9 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, 
 
 - (void)dealloc {
     deadbeef->log_viewer_unregister (_cocoaui_logger_callback, NULL);
+#if !DISABLE_MM_KEY_GRABBER
     ungrabMediaKeys ();
+#endif
 }
 
 - (void)volumeChanged {
@@ -247,7 +249,9 @@ main_cleanup_and_quit (void);
 
     g_appDelegate = self;
 
+#if !DISABLE_MM_KEY_GRABBER
     grabMediaKeys ();
+#endif
 
     [self updateDockNowPlaying];
     [[NSApp dockTile] setContentView: _dockTileView];

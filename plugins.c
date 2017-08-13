@@ -492,8 +492,6 @@ static DB_functions_t deadbeef_api = {
     .pl_item_set_endsample = (void (*) (DB_playItem_t *it, int64_t sample))pl_item_set_endsample,
 
     .plt_get_selection_playback_time = (float (*) (ddb_playlist_t *plt))plt_get_selection_playback_time,
-
-    .plt_set_cue_file = (void (*) (ddb_playlist_t *plt, const char *filename))plt_set_cue_file,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -1397,7 +1395,7 @@ plug_reinit_sound (void) {
     if (plug_select_output () < 0) {
         char outplugname[100];
 #ifdef HAVE_COCOAUI
-        conf_get_str ("output_plugin", "core audio output plugin", outplugname, sizeof (outplugname));
+        conf_get_str ("output_plugin", "CoreAudio", outplugname, sizeof (outplugname));
 #else
         conf_get_str ("output_plugin", "ALSA output plugin", outplugname, sizeof (outplugname));
 #endif

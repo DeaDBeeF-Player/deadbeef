@@ -224,21 +224,6 @@ tta_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         deadbeef->fclose (fp);
     }
 
-    // embedded cue
-    deadbeef->pl_lock ();
-    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-    DB_playItem_t *cue = NULL;
-    if (cuesheet) {
-        cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, tta.SAMPLERATE);
-        if (cue) {
-            deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (cue);
-            deadbeef->pl_unlock ();
-            return cue;
-        }
-    }
-    deadbeef->pl_unlock ();
-
     char s[100];
     snprintf (s, sizeof (s), "%lld", fsize);
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
@@ -251,10 +236,9 @@ tta_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     snprintf (s, sizeof (s), "%d", tta.BITRATE);
     deadbeef->pl_add_meta (it, ":BITRATE", s);
 
-    cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, tta.SAMPLERATE);
+    DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it,  totalsamples, tta.SAMPLERATE);
     if (cue) {
         deadbeef->pl_item_unref (it);
-        deadbeef->pl_item_unref (cue);
         return cue;
     }
 

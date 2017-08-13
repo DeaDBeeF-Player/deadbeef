@@ -119,7 +119,6 @@ AC_ARG_ENABLE(staticlink, [AS_HELP_STRING([--enable-staticlink], [link everythin
 AC_ARG_ENABLE(portable, [AS_HELP_STRING([--enable-portable ], [make portable build (default: disabled, opts: yes,no,full)])], [enable_portable=$enableval], [enable_portable=no])
 AC_ARG_ENABLE(src,      [AS_HELP_STRING([--enable-src      ], [build libsamplerate (SRC) plugin (default: auto)])], [enable_src=$enableval], [enable_src=yes])
 AC_ARG_ENABLE(m3u,      [AS_HELP_STRING([--enable-m3u      ], [build m3u plugin (default: auto)])], [enable_m3u=$enableval], [enable_m3u=yes])
-AC_ARG_ENABLE(cue,      [AS_HELP_STRING([--enable-cue      ], [build cue plugin (default: auto)])], [enable_cue=$enableval], [enable_cue=yes])
 AC_ARG_ENABLE(vfs-zip,      [AS_HELP_STRING([--enable-vfs-zip      ], [build vfs_zip plugin (default: auto)])], [enable_vfs_zip=$enableval], [enable_vfs_zip=yes])
 AC_ARG_ENABLE(converter,      [AS_HELP_STRING([--enable-converter      ], [build converter plugin (default: auto)])], [enable_converter=$enableval], [enable_converter=yes])
 AC_ARG_ENABLE(artwork-imlib2, [AS_HELP_STRING([--enable-artwork-imlib2      ], [use imlib2 in artwork plugin (default: auto)])], [enable_artwork_imlib2=$enableval], [enable_artwork_imlib2=yes])
@@ -134,7 +133,7 @@ AC_ARG_ENABLE(wma, [AS_HELP_STRING([--enable-wma      ], [build WMA plugin (defa
 AC_ARG_ENABLE(pltbrowser, [AS_HELP_STRING([--enable-pltbrowser      ], [build playlist browser gui plugin (default: auto)])], [enable_pltbrowser=$enableval], [enable_pltbrowser=yes])
 AC_ARG_ENABLE(sc68, [AS_HELP_STRING([--enable-sc68     ], [build sc68 Atari ST and Amiga music player (default: auto)])], [enable_sc68=$enableval], [enable_sc68=yes])
 AC_ARG_ENABLE(abstract_socket, [AS_HELP_STRING([--enable-abstract-socket      ], [use abstract UNIX socket for IPC (default: disabled)])], [enable_abstract_socket=$enableval], [enable_abstract_socket=no])
-AC_ARG_ENABLE(statusnotifier, [AS_HELP_STRING([--enable-statusnotifier], [KDE status notifier plugin for tray icon (default: disabled)])], [enable_statusnotifier=$enableval], [enable_statusnotifier=yes])
+AC_ARG_ENABLE(statusnotifier, [AS_HELP_STRING([--enable-statusnotifier], [KDE status notifier plugin for tray icon (default: disabled)])], [enable_statusnotifier=$enableval], [enable_statusnotifier=no])
 AC_ARG_ENABLE(rgscanner, [AS_HELP_STRING([--disable-rgscanner], [build ReplayGain scanner plugin (default: enabled)])], [enable_rgscanner=$enableval], [enable_rgscanner=yes])
 
 AS_IF([test "${enable_staticlink}" != "no"], [
@@ -715,7 +714,7 @@ AS_IF([test "${enable_vtx}" != "no"], [
     HAVE_VTX=yes
 ])
 
-AS_IF([test "${enable_gme}" != "no"], [
+AS_IF([test "${enable_gme}" != "no" -a "${HAVE_ZLIB}" = "yes"], [
     HAVE_GME=yes
 ])
 
@@ -768,10 +767,6 @@ AS_IF([test "${enable_mms}" != "no"], [
 
 AS_IF([test "${enable_m3u}" != "no"], [
     HAVE_M3U=yes
-])
-
-AS_IF([test "${enable_cue}" != "no"], [
-    HAVE_CUE=yes
 ])
 
 AS_IF([test "${enable_vfs_zip}" != "no"], [
@@ -839,7 +834,7 @@ AS_IF([test "${enable_rgscanner}" != "no"], [
     HAVE_RGSCANNER=yes
 ])
 
-PLUGINS_DIRS="plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/cue plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/statusnotifier plugins/sndio plugins/rg_scanner"
+PLUGINS_DIRS="plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/statusnotifier plugins/sndio plugins/rg_scanner"
 
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
@@ -884,7 +879,6 @@ AM_CONDITIONAL(HAVE_AAC, test "x$HAVE_AAC" = "xyes")
 AM_CONDITIONAL(HAVE_MMS, test "x$HAVE_MMS" = "xyes")
 AM_CONDITIONAL(HAVE_DSP_SRC, test "x$HAVE_DSP_SRC" = "xyes")
 AM_CONDITIONAL(HAVE_M3U, test "x$HAVE_M3U" = "xyes")
-AM_CONDITIONAL(HAVE_CUE, test "x$HAVE_CUE" = "xyes")
 AM_CONDITIONAL(HAVE_VFS_ZIP, test "x$HAVE_VFS_ZIP" = "xyes")
 AM_CONDITIONAL(HAVE_CONVERTER, test "x$HAVE_CONVERTER" = "xyes")
 AM_CONDITIONAL(HAVE_IMLIB2, test "x$HAVE_IMLIB2" = "xyes")
@@ -951,7 +945,6 @@ plugins/aac/Makefile
 plugins/mms/Makefile
 plugins/dsp_libsrc/Makefile
 plugins/m3u/Makefile
-plugins/cue/Makefile
 plugins/vfs_zip/Makefile
 plugins/converter/Makefile
 plugins/dumb/Makefile
@@ -1035,7 +1028,6 @@ PRINT_PLUGIN_INFO([aac],[AAC player (m4a, aac, mp4) based on FAAD2],[test "x$HAV
 PRINT_PLUGIN_INFO([mms],[mms streaming support],[test "x$HAVE_MMS" = "xyes"])
 PRINT_PLUGIN_INFO([dsp_src],[High quality samplerate conversion using libsamplerate],[test "x$HAVE_DSP_SRC" = "xyes"])
 PRINT_PLUGIN_INFO([m3u],[M3U and PLS playlist support],[test "x$HAVE_M3U" = "xyes"])
-PRINT_PLUGIN_INFO([cue],[CUE playlist support],[test "x$HAVE_CUE" = "xyes"])
 PRINT_PLUGIN_INFO([vfs_zip],[zip archive support],[test "x$HAVE_VFS_ZIP" = "xyes"])
 PRINT_PLUGIN_INFO([converter],[plugin for converting files to any formats],[test "x$HAVE_CONVERTER" = "xyes"])
 dnl PRINT_PLUGIN_INFO([medialib],[media library support plugin],[test "x$HAVE_MEDIALIB" = "xyes"])

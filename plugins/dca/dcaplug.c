@@ -696,12 +696,9 @@ dts_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     deadbeef->fclose (fp);
 
-    // embedded cue
-    DB_playItem_t *cue = NULL;
-    cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
+    DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);
     if (cue) {
         deadbeef->pl_item_unref (it);
-        deadbeef->pl_item_unref (cue);
         return cue;
     }
 

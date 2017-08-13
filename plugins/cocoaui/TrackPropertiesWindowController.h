@@ -49,11 +49,21 @@
 - (IBAction)okEditValuePanelAction:(id)sender;
 @property (unsafe_unretained) IBOutlet NSTextView *fieldValue;
 
+// new field panel
+@property (unsafe_unretained) IBOutlet NSTextField *addFieldName;
+@property (strong) IBOutlet NSPanel *addFieldPanel;
+- (IBAction)cancelAddFieldPanelAction:(id)sender;
+- (IBAction)okAddFieldPanelAction:(id)sender;
+@property (weak) IBOutlet NSTextField *addFieldAlreadyExists;
+
 
 // menu
 - (IBAction)editValueAction:(id)sender;
 - (IBAction)editInPlaceAction:(id)sender;
-
+- (IBAction)editRemoveAction:(id)sender;
+- (IBAction)editCropAction:(id)sender;
+- (IBAction)editCapitalizeAction:(id)sender;
+- (IBAction)addNewField:(id)sender;
 
 // metadata writing progress dialog
 @property (strong) IBOutlet NSPanel *progressPanel;

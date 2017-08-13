@@ -255,11 +255,10 @@ _is_multivalue_field (const char *key) {
     return 0;
 }
 
-static void
+void
 _split_multivalue (char *text, size_t text_size) {
     for (size_t i = 0; i < text_size; i++) {
-        if (text[i] == '/') {
-            text[i] = 0;
+        if (i < text_size - 3 && !memcmp (&text[i], " / ", 3)) {
             // remove trailing spaces
             char *p = text + i - 1;
             while (p >= text && *p == ' ') {
@@ -267,8 +266,10 @@ _split_multivalue (char *text, size_t text_size) {
                 p--;
             }
 
+            memset (text+i, 0, 3);
+
             // remove leading spaces
-            p = text + i + 1;
+            p = text + i + 3;
             while (p < text + text_size && *p == ' ') {
                 *p = 0;
                 p++;
@@ -4376,23 +4377,6 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             trace ("id3v2.%d (unsupported!)\n", version_minor);
         }
     }
-    if (it) {
-        if (version_major == 2) {
-            uint32_t f = pl_get_item_flags (it);
-            f |= DDB_TAG_ID3V22;
-            pl_set_item_flags (it, f);
-        }
-        else if (version_major == 3) {
-            uint32_t f = pl_get_item_flags (it);
-            f |= DDB_TAG_ID3V23;
-            pl_set_item_flags (it, f);
-        }
-        else if (version_major == 4) {
-            uint32_t f = pl_get_item_flags (it);
-            f |= DDB_TAG_ID3V24;
-            pl_set_item_flags (it, f);
-        }
-    }
     err = 0;
 error:
     if (err != 0) {
@@ -4421,6 +4405,21 @@ junk_id3v2_read (playItem_t *it, DB_FILE *fp) {
         // detect charset on all text fields
         const char *charset = junk_id3v2_detect_charset (&id3v2_tag);
         junk_id3v2_set_metadata (it, &id3v2_tag, charset);
+    }
+    if (id3v2_tag.version[0] == 2) {
+        uint32_t f = pl_get_item_flags (it);
+        f |= DDB_TAG_ID3V22;
+        pl_set_item_flags (it, f);
+    }
+    else if (id3v2_tag.version[0] == 3) {
+        uint32_t f = pl_get_item_flags (it);
+        f |= DDB_TAG_ID3V23;
+        pl_set_item_flags (it, f);
+    }
+    else if (id3v2_tag.version[0] == 4) {
+        uint32_t f = pl_get_item_flags (it);
+        f |= DDB_TAG_ID3V24;
+        pl_set_item_flags (it, f);
     }
     deadbeef->junk_id3v2_free (&id3v2_tag);
     return res;

@@ -631,30 +631,12 @@ cvorbis_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 //        deadbeef->pl_set_meta_int (it, ":BITRATE", ov_bitrate (&vorbis_file, stream)/1000);
 
         if (nstreams == 1) {
-            DB_playItem_t *cue = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
+            DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it,  totalsamples, samplerate);
             if (cue) {
                 deadbeef->pl_item_unref (it);
-                deadbeef->pl_item_unref (cue);
                 ov_clear (&vorbis_file);
                 return cue;
             }
-
-            deadbeef->pl_lock ();
-            const char *cuesheet_meta = deadbeef->pl_find_meta (it, "cuesheet");
-            if (cuesheet_meta) {
-                trace("Embedded cuesheet found for %s\n", fname);
-                const char *last_sheet = strstr(cuesheet_meta, DELIMITER);
-                const char *cuesheet = last_sheet ? last_sheet + strlen(DELIMITER) : cuesheet_meta;
-                cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
-                if (cue) {
-                    deadbeef->pl_unlock ();
-                    deadbeef->pl_item_unref (it);
-                    deadbeef->pl_item_unref (cue);
-                    ov_clear (&vorbis_file);
-                    return cue;
-                }
-            }
-            deadbeef->pl_unlock ();
         }
         else {
             currentsample += totalsamples;

@@ -67,7 +67,7 @@
 #include "tf.h"
 #include "playqueue.h"
 
-#include "shared/cueutil.h"
+#include "cueutil.h"
 
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
@@ -119,8 +119,8 @@ static int no_remove_notify;
 
 static playlist_t *addfiles_playlist; // current playlist for adding files/folders; set in pl_add_files_begin
 
-static int conf_cue_prefer_embedded = 0;
-static int conf_cue_subindexes_as_tracks = 0;
+int conf_cue_prefer_embedded = 0;
+int conf_cue_subindexes_as_tracks = 0;
 
 typedef struct ddb_fileadd_listener_s {
     int id;
@@ -602,10 +602,9 @@ plt_get_idx_of (playlist_t *plt) {
 
 int
 plt_get_title (playlist_t *p, char *buffer, int bufsize) {
-    int i;
     LOCK;
     if (!buffer) {
-        int l = strlen (p->title);
+        int l = (int)strlen (p->title);
         UNLOCK;
         return l;
     }
@@ -647,8 +646,12 @@ plt_get_modification_idx (playlist_t *plt) {
 void
 plt_free (playlist_t *plt) {
     LOCK;
+
     plt_clear (plt);
-    free (plt->title);
+
+    if (plt->title) {
+        free (plt->title);
+    }
 
     while (plt->meta) {
         DB_metaInfo_t *m = plt->meta;
@@ -673,7 +676,6 @@ plt_move (int from, int to) {
 
     playlist_t *pfrom = NULL;
     playlist_t *prev = NULL;
-    playlist_t *ins = NULL;
 
     // move 'from' to temp file
     char path1[PATH_MAX];
@@ -813,343 +815,25 @@ pl_clear (void) {
     UNLOCK;
 }
 
-static playItem_t *
-plt_process_cue_track (playlist_t *playlist, const char *fname, const int64_t startsample, playItem_t **prev, const char *decoder_id, const char *ftype, int samplerate, char cuefields[CUE_MAX_FIELDS][255], char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255], int extra_tag_index) {
-    if (!cuefields[CUE_FIELD_TRACK][0]) {
-        trace ("pl_process_cue_track: invalid track (file=%s, title=%s)\n", fname, cuefields[CUE_FIELD_TITLE]);
-        return NULL;
+
+playItem_t * /* insert internal cuesheet - called by plugins */
+plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate) {
+    if (playlist->loading_cue) {
+        // means it was called from _load_cue
+        playlist->cue_numsamples = numsamples;
+        playlist->cue_samplerate = samplerate;
     }
-    // index00 is irrelevant
-    if (!cuefields[CUE_FIELD_INDEX01][0]) {
-        trace ("pl_process_cue_track: invalid index (file=%s, title=%s, track=%s)\n", fname, cuefields[CUE_FIELD_TITLE], cuefields[CUE_FIELD_TRACK]);
-        return NULL;
-    }
-#if SKIP_BLANK_CUE_TRACKS
-    if (!title[0]) {
-        trace ("pl_process_cue_track: invalid title (file=%s, title=%s, track=%s)\n", fname, cuefields[CUE_FIELD_TITLE], cuefields[CUE_FIELD_TRACK]);
-        return NULL;
-    }
-#endif
-    // fix track number
-    char *p = cuefields[CUE_FIELD_TRACK];
-    while (*p && isdigit (*p)) {
-        p++;
-    }
-    *p = 0;
-    // check that indexes have valid timestamps
-    //float f_index00 = cuefields[CUE_FIELD_INDEX00][0] ? pl_cue_parse_time (cuefields[CUE_FIELD_INDEX00]) : 0;
-    float f_index01 = cuefields[CUE_FIELD_INDEX01][0] ? pl_cue_parse_time (cuefields[CUE_FIELD_INDEX01]) : 0;
-    float f_pregap = cuefields[CUE_FIELD_PREGAP][0] ? pl_cue_parse_time (cuefields[CUE_FIELD_PREGAP]) : 0;
-    if (*prev) {
-        float prevtime = 0;
-        if (cuefields[CUE_FIELD_PREGAP][0] && cuefields[CUE_FIELD_INDEX01][0]) {
-            // PREGAP command
-            prevtime = f_index01 - f_pregap;
-        }
-//        else if (cuefields[CUE_FIELD_INDEX00][0] && cuefields[CUE_FIELD_INDEX01][0]) {
-//            // pregap in index 00
-//            prevtime = f_cuefields[CUE_FIELD_INDEX00];
-//        }
-        else if (cuefields[CUE_FIELD_INDEX01][0]) {
-            // no pregap
-            prevtime = f_index01;
-        }
-        else {
-            trace ("pl_process_cue_track: invalid pregap or index01 (pregap=%s, index01=%s)\n", cuefields[CUE_FIELD_PREGAP], cuefields[CUE_FIELD_INDEX01]);
-            return NULL;
-        }
-        pl_item_set_endsample (*prev, startsample + (prevtime * samplerate) - 1);
-        plt_set_item_duration (playlist, *prev, (float)(pl_item_get_endsample (*prev) - pl_item_get_startsample (*prev) + 1) / samplerate);
-        if (pl_get_item_duration (*prev) < 0) {
-            // might be bad cuesheet file, try to fix
-            trace ("cuesheet seems to be corrupted, trying workaround\n");
-            //trace ("[bad:] calc endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", pl_item_get_endsample (*prev),  prevtime, samplerate, (*prev)->duration);
-            prevtime = f_index01;
-            pl_item_set_endsample (*prev, startsample + (prevtime * samplerate) - 1);
-            float dur = (float)(pl_item_get_endsample (*prev) - pl_item_get_startsample (*prev) + 1) / samplerate;
-            plt_set_item_duration (playlist, *prev, dur);
-        }
-//        trace ("startsample=%d, endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", pl_item_get_startsample (*prev), pl_item_get_endsample (*prev),  prevtime, samplerate, (*prev)->_duration);
-    }
-    // non-compliant hack to handle tracks which only store pregap info
-    if (!cuefields[CUE_FIELD_INDEX01][0]) {
-        *prev = NULL;
-        trace ("pl_process_cue_track: invalid index01 (pregap=%s, index01=%s)\n", cuefields[CUE_FIELD_PREGAP], cuefields[CUE_FIELD_INDEX01]);
-        return NULL;
-    }
-    playItem_t *it = pl_item_alloc_init (fname, decoder_id);
-    pl_set_meta_int (it, ":TRACKNUM", atoi (cuefields[CUE_FIELD_TRACK]));
-    pl_item_set_startsample (it, cuefields[CUE_FIELD_INDEX01][0] ? startsample + f_index01 * samplerate : startsample);
-    pl_item_set_endsample (it, -1); // will be filled by next read, or by decoder
-    pl_replace_meta (it, ":FILETYPE", ftype);
-    it->_flags |= DDB_IS_SUBTRACK | DDB_TAG_CUESHEET;
-
-    pl_cue_set_track_field_values((ddb_playItem_t *)it, cuefields, extra_tags, extra_tag_index);
-
-    *prev = it;
-    return it;
-}
-
-playItem_t *
-plt_insert_cue_from_buffer_int (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, uint64_t numsamples64, int samplerate) {
-    if (playlist->cue_file && !strcmp(playlist->cue_file, "__ignore")) {
-        return NULL;
-    }
-
-    // FIXME: DB_playItem_t only supports 32bit sample count now;
-    // the hack should be removed, when the 64 bit sample counts are implemented
-    int numsamples = (int)numsamples64;
-
-    if (buffersize >= 3 && buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf) {
-        buffer += 3;
-        buffersize -= 3;
-    }
-
-    // go through the file, and verify that it's not for multiple tracks
-    uint8_t *p = (uint8_t *)buffer;
-    uint8_t *end = (uint8_t *)(buffer + buffersize);
-    int ncuetracks, ncuefiles;
-    pl_cue_get_total_tracks_and_files(p, end, &ncuefiles, &ncuetracks);
-    if (ncuefiles > 1 || !ncuefiles || !ncuetracks) {
-        trace("Not loading cuesheet from buffer\n");
-        return NULL;
-    }
-
-    const char *charset = junk_detect_charset_len (buffer, buffersize);
-
-    LOCK;
-    playItem_t *ins = after;
-
-    const char *uri = pl_find_meta_raw (origin, ":URI");
-    const char *dec = pl_find_meta_raw (origin, ":DECODER");
-    const char *filetype = pl_find_meta_raw (origin, ":FILETYPE");
-
-    char cuefields[CUE_MAX_FIELDS][255];
-    memset(cuefields, 0, sizeof(cuefields));
-    snprintf(cuefields[CUE_FIELD_TOTALTRACKS], sizeof(cuefields[CUE_FIELD_TOTALTRACKS]), "%d", ncuetracks);
-
-    char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255];
-    memset (extra_tags, 0, sizeof (extra_tags));
-    int extra_tag_index = 0;
-
-    int have_track = 0;
-    int track_subindexes = 0;
-
-    playItem_t *cuetracks[MAX_CUE_TRACKS];
-    ncuetracks = 0;
-
-    playItem_t *prev = NULL;
-    while (buffersize > 0 && ncuetracks < MAX_CUE_TRACKS) {
-        const uint8_t *p = buffer;
-        // find end of line
-        while (p - buffer < buffersize && *p >= 0x20) {
-            p++;
-        }
-        // skip linebreak(s)
-        while (p - buffer < buffersize && *p < 0x20) {
-            p++;
-        }
-        if (p-buffer > 2048) { // huge string, ignore
-            buffersize -= p-buffer;
-            buffer = p;
-            continue;
-        }
-        char str[p-buffer+1];
-        strncpy (str, buffer, p-buffer);
-        str[p-buffer] = 0;
-        buffersize -= p-buffer;
-        buffer = p;
-        p = pl_cue_skipspaces (str);
-
-        int field = pl_cue_get_field_value(p, cuefields, extra_tags, charset, have_track, &extra_tag_index);
-
-        if (!conf_cue_subindexes_as_tracks) {
-            /* normal operation */
-            if (field == CUE_FIELD_TRACK) {
-                if (have_track) {
-                    // add previous track
-                    playItem_t *it = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, dec, filetype, samplerate, cuefields, extra_tags, extra_tag_index);
-                    if (it) {
-                        if ((pl_item_get_startsample (it)-pl_item_get_startsample (origin)) >= numsamples || (pl_item_get_endsample (it)-pl_item_get_startsample (origin)) >= numsamples) {
-                            goto error;
-                        }
-                        cuetracks[ncuetracks++] = it;
-                    }
-                }
-                pl_cue_reset_per_track_fields(cuefields);
-                pl_get_value_from_cue (p + 6, sizeof (cuefields[CUE_FIELD_TRACK]), cuefields[CUE_FIELD_TRACK]);
-                have_track = 1;
-            }
-        }
-        else {
-            /* subindexes as tracks */
-            if (field == CUE_FIELD_TRACK) {
-                if (have_track) {
-                    //trace("track %s has %d subindexes\n", cuefields[CUE_FIELD_TRACK], track_subindexes);
-                }
-                track_subindexes = 0;
-                pl_cue_reset_per_track_fields(cuefields);
-                pl_get_value_from_cue (p + 6, sizeof (cuefields[CUE_FIELD_TRACK]), cuefields[CUE_FIELD_TRACK]);
-                have_track = 1;
-            }
-            else if (field == CUE_FIELD_INDEX01 || field == CUE_FIELD_INDEX_X) {
-                char indexnumber[10];
-                if (field != CUE_FIELD_INDEX01) { // INDEX 02, INDEX 03, INDEX 04
-                    // get " 02", " 03", etc
-                    pl_get_value_from_cue (p + 5, sizeof (indexnumber), indexnumber);
-                    if ( strlen(indexnumber) > 3 ) {
-                        indexnumber[0] = '_';
-                        indexnumber[3] = 0;
-                    }
-                    // append _02, _03, etc to track title)
-                    if ( (strlen(cuefields[CUE_FIELD_TITLE]) + 3) < 255) {
-                        strncat(cuefields[CUE_FIELD_TITLE], indexnumber, 3);
-                    }
-                    //trace("title: %s\n", cuefields[CUE_FIELD_TITLE]);
-                }
-                // insert SUBINDEX as TRACK
-                playItem_t *it = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, dec, filetype, samplerate, cuefields, extra_tags, extra_tag_index);
-                if (it) {
-                    if ((pl_item_get_startsample (it)-pl_item_get_startsample (origin)) >= numsamples || (pl_item_get_endsample (it)-pl_item_get_startsample (origin)) >= numsamples) {
-                        goto error;
-                    }
-                    cuetracks[ncuetracks++] = it;
-                }
-                if (field != CUE_FIELD_INDEX01 && strlen(indexnumber) == 3) {
-                    // INDEX XX: have to restore the original title
-                    int a = strlen(cuefields[CUE_FIELD_TITLE]);
-                    cuefields[CUE_FIELD_TITLE][a-3] = 0;
-                }
-                track_subindexes++;
-            }
-        }
-    } /* end of while loop */
-
-    if (!conf_cue_subindexes_as_tracks) {
-        /* normal operation */
-        if (have_track) {
-            // handle last track
-            playItem_t *last_track = plt_process_cue_track (playlist, uri, pl_item_get_startsample (origin), &prev, dec, filetype, samplerate, cuefields, extra_tags, extra_tag_index);
-            if (last_track) {
-                pl_item_set_endsample (last_track, pl_item_get_startsample (origin) + numsamples - 1);
-                if ((pl_item_get_endsample (last_track)-pl_item_get_startsample (origin)) >= numsamples || (pl_item_get_startsample (last_track)-pl_item_get_startsample (origin)) >= numsamples) {
-                    goto error;
-                }
-                plt_set_item_duration (playlist, last_track, (float)(pl_item_get_endsample (last_track) - pl_item_get_startsample (last_track) + 1) / samplerate);
-                cuetracks[ncuetracks++] = last_track;
-            }
-        }
-        pl_item_ref(cuetracks[ncuetracks-1]);
-    }
-    else {
-        /* subindexes as tracks */
-        if (have_track || track_subindexes > 1) {
-            playItem_t *last_track = cuetracks[ncuetracks-1];
-            pl_item_set_endsample (last_track, pl_item_get_startsample (origin) + numsamples - 1);
-            if ((pl_item_get_endsample (last_track)-pl_item_get_startsample (origin)) >= numsamples || (pl_item_get_startsample (last_track)-pl_item_get_startsample (origin)) >= numsamples) {
-                goto error;
-            }
-            plt_set_item_duration (playlist, last_track, (float)(pl_item_get_endsample (last_track) - pl_item_get_startsample (last_track) + 1) / samplerate);
-            pl_item_ref(last_track);
-        }
-    }
-
-    for (int i = 0; i < ncuetracks; i++) {
-        after = plt_insert_item (playlist, after, cuetracks[i]);
-        pl_item_unref (cuetracks[i]);
-    }
-    playItem_t *first = ins ? ins->next[PL_MAIN] : playlist->head[PL_MAIN];
-    if (!first) {
-        UNLOCK;
-        return NULL;
-    }
-    // copy metadata from embedded tags
-    uint32_t f = pl_get_item_flags (origin);
-    f |= DDB_TAG_CUESHEET | DDB_IS_SUBTRACK;
-    if (pl_find_meta_raw (origin, "cuesheet")) {
-        f |= DDB_HAS_EMBEDDED_CUESHEET;
-    }
-    pl_set_item_flags (origin, f);
-    pl_items_copy_junk (origin, first, after);
-    UNLOCK;
-    return after;
-error:
-    trace ("cue parsing error occured\n");
-    for (int i = 0; i < ncuetracks; i++) {
-        pl_item_unref (cuetracks[i]);
-    }
-    UNLOCK;
     return NULL;
 }
 
-playItem_t *
-plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate) {
-    return plt_insert_cue_from_buffer_int (playlist, after, origin, buffer, buffersize, (uint64_t)numsamples, samplerate);
-}
-
-playItem_t *
-plt_insert_cue_int (playlist_t *plt, playItem_t *after, playItem_t *origin, uint64_t numsamples, int samplerate) {
-    if (plt->cue_file && !strcmp(plt->cue_file, "__ignore")) {
-        return NULL;
-    }
-
-    DB_FILE *fp;
-    if (plt->cue_file) {
-        fp = vfs_fopen (plt->cue_file);
-    }
-    else {
-        pl_lock ();
-        const char *fname = pl_find_meta_raw (origin, ":URI");
-        size_t len = strlen (fname);
-        char cuename[len+5];
-        strcpy (cuename, fname);
-        pl_unlock ();
-        strcpy (cuename+len, ".cue");
-        fp = vfs_fopen (cuename);
-        if (!fp) {
-            strcpy (cuename+len, ".CUE");
-            fp = vfs_fopen (cuename);
-        }
-        if (!fp) {
-            char *ptr = cuename + len-1;
-            while (ptr >= cuename && *ptr != '.') {
-                ptr--;
-            }
-            if (ptr < cuename) {
-                return NULL;
-            }
-            strcpy (ptr+1, "cue");
-            fp = vfs_fopen (cuename);
-            if (!fp) {
-                strcpy (ptr+1, "CUE");
-                fp = vfs_fopen (cuename);
-            }
-        }
-    }
-    if (!fp) {
-        return NULL;
-    }
-    size_t sz = vfs_fgetlength (fp);
-    if (sz == 0) {
-        vfs_fclose (fp);
-        return NULL;
-    }
-    uint8_t *buf = alloca(sz);
-    if (!buf) {
-        vfs_fclose (fp);
-        return NULL;
-    }
-    if (vfs_fread (buf, 1, sz, fp) != sz) {
-        vfs_fclose (fp);
-        return NULL;
-    }
-    vfs_fclose (fp);
-    return plt_insert_cue_from_buffer_int (plt, after, origin, buf, sz, numsamples, samplerate);
-}
-
-playItem_t *
+playItem_t * /* insert external cuesheet - called by plugins */
 plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int numsamples, int samplerate) {
-    return plt_insert_cue_int (plt, after, origin, numsamples, samplerate);
+    if (plt->loading_cue) {
+        // means it was called from _load_cue
+        plt->cue_numsamples = numsamples;
+        plt->cue_samplerate = samplerate;
+    }
+    return NULL;
 }
 
 // FIXME: this is not thread-safe
@@ -1202,7 +886,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         fn++;
     }
 
-    // add all posible streams as special-case:
+    // add all possible streams as special-case:
     // set decoder to NULL, and filetype to "content"
     // streamer is responsible to determine content type on 1st access and
     // update decoder and filetype fields
@@ -1262,7 +946,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         }
     }
     else {
-        char *escaped = uri_unescape (fname, strlen (fname));
+        char *escaped = uri_unescape (fname, (int)strlen (fname));
         if (escaped) {
             fname = strdupa (escaped);
             free (escaped);
@@ -1276,6 +960,12 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         return NULL;
     }
     eol++;
+
+    // handle cue files
+    if (!strcasecmp (eol, "cue")) {
+        playItem_t *inserted = plt_load_cue_file(playlist, after, fname, NULL, NULL, 0);
+        return inserted;
+    }
 
     int filter_done = 0;
     int file_recognized = 0;
@@ -1378,11 +1068,58 @@ static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
     return strcmp ((*a)->d_name, (*b)->d_name);
 }
 
+static void
+_get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *vfs, const char *dirname, const char *d_name) {
+    if (!vfs) {
+        snprintf (fullname, sz, "%s/%s", dirname, d_name);
+        if (dir) {
+            *dir = 0;
+            strncat (dir, dirname, dirsz);
+        }
+    }
+    else {
+        const char *sch = NULL;
+        if (vfs->plugin.api_vminor >= 6 && vfs->get_scheme_for_name) {
+            sch = vfs->get_scheme_for_name (dirname);
+        }
+        if (sch && strncmp (sch, d_name, strlen (sch))) {
+            snprintf (fullname, sz, "%s%s:%s", sch, dirname, d_name);
+            if (dir) {
+                *dir = 0;
+                strncat (dir, fullname, dirsz);
+                char *col = strrchr (dir, ':');
+                char *slash = strrchr (dir, '/');
+                if (col && slash && slash > col) {
+                    *slash = 0;
+                }
+                else if (col) {
+                    *(col+1) = 0;
+                }
+                else if (slash) {
+                    *slash = 0;
+                }
+                else {
+                    *dir = 0;
+                }
+            }
+        }
+        else {
+            *fullname = 0;
+            strncat (fullname, d_name, sz);
+            if (dir) {
+                *dir = 0;
+                strncat (dir, dirname, dirsz);
+            }
+        }
+    }
+}
+
 static playItem_t *
 plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!strncmp (dirname, "file://", 7)) {
         dirname += 7;
     }
+
     if (!follow_symlinks && !vfs) {
         struct stat buf;
         lstat (dirname, &buf);
@@ -1404,59 +1141,90 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
 
     if (vfs && vfs->scandir) {
         n = vfs->scandir (dirname, &namelist, NULL, dirent_alphasort);
+        // we can't rely on vfs plugins to set d_type
+        for (int i = 0; i < n; i++) {
+            namelist[i]->d_type = DT_REG;
+        }
     }
     else {
         n = scandir (dirname, &namelist, NULL, dirent_alphasort);
     }
-    if (n < 0)
-    {
-        if (namelist)
+    if (n < 0) {
+        if (namelist) {
             free (namelist);
+        }
         return NULL;	// not a dir or no read access
     }
-    else
-    {
-        int i;
-        for (i = 0; i < n; i++)
+
+    // find all cue files in the folder
+    int cuefiles[n];
+    int ncuefiles = 0;
+
+    for (int i = 0; i < n; i++) {
+        // no hidden files
+        if (namelist[i]->d_name[0] == '.' || namelist[i]->d_type != DT_REG) {
+            continue;
+        }
+
+        size_t l = strlen (namelist[i]->d_name);
+        if (l > 4 && !strcasecmp (namelist[i]->d_name + l - 4, ".cue")) {
+            cuefiles[ncuefiles++] = i;
+        }
+    }
+
+    char fullname[PATH_MAX];
+    char fulldir[PATH_MAX];
+
+    // try loading cuesheets first
+    for (int c = 0; c < ncuefiles; c++) {
+        int i = cuefiles[c];
+        _get_fullname_and_dir (fullname, sizeof (fullname), fulldir, sizeof(fulldir), vfs, dirname, namelist[i]->d_name);
+        printf ("fullname: %s\n", fullname);
+
+        playItem_t *inserted = plt_load_cue_file (playlist, after, fullname, fulldir, namelist, n);
+        namelist[i]->d_name[0] = 0;
+
+        if (inserted) {
+            after = inserted;
+        }
+        if (*pabort) {
+            break;
+        }
+    }
+
+    // load the rest of the files
+    if (!*pabort) {
+        for (int i = 0; i < n; i++)
         {
             // no hidden files
-            if (namelist[i]->d_name[0] != '.')
-            {
-                playItem_t *inserted = NULL;
-                if (!vfs) {
-                    char fullname[PATH_MAX];
-                    snprintf (fullname, sizeof (fullname), "%s/%s", dirname, namelist[i]->d_name);
-
-                    inserted = plt_insert_dir_int (visibility, playlist, vfs, after, fullname, pabort, cb, user_data);
-                    if (!inserted) {
-                        inserted = plt_insert_file_int (visibility, playlist, after, fullname, pabort, cb, user_data);
-                    }
-                }
-                else {
-                    char fullname[PATH_MAX];
-                    const char *sch = NULL;
-                    if (vfs->plugin.api_vminor >= 6 && vfs->get_scheme_for_name) {
-                        sch = vfs->get_scheme_for_name (dirname);
-                    }
-                    if (sch && strncmp (sch, namelist[i]->d_name, strlen (sch))) {
-                        snprintf (fullname, sizeof (fullname), "%s%s:%s", sch, dirname, namelist[i]->d_name);
-                    }
-                    else {
-                        strcpy (fullname, namelist[i]->d_name);
-                    }
-                    inserted = plt_insert_file_int (visibility, playlist, after, fullname, pabort, cb, user_data);
-                }
-                if (inserted) {
-                    after = inserted;
-                }
-                if (*pabort) {
-                    break;
-                }
+            if (!namelist[i]->d_name[0] || namelist[i]->d_name[0] == '.') {
+                continue;
             }
-            free (namelist[i]);
+            _get_fullname_and_dir (fullname, sizeof (fullname), NULL, 0, vfs, dirname, namelist[i]->d_name);
+            playItem_t *inserted = NULL;
+            if (!vfs) {
+                inserted = plt_insert_dir_int (visibility, playlist, vfs, after, fullname, pabort, cb, user_data);
+            }
+            if (!inserted) {
+                inserted = plt_insert_file_int (visibility, playlist, after, fullname, pabort, cb, user_data);
+            }
+
+            if (inserted) {
+                after = inserted;
+            }
+
+            if (*pabort) {
+                break;
+            }
         }
-        free (namelist);
     }
+
+    // free data
+    for (int i = 0; i < n; i++) {
+        free (namelist[i]);
+    }
+    free (namelist);
+
     return after;
 }
 
@@ -2130,7 +1898,6 @@ pl_save_all (void) {
     playlist_t *p = playlists_head;
     int i;
     int cnt = plt_get_count ();
-    int curr = plt_get_curr_idx ();
     int err = 0;
 
     plt_gen_conf ();
@@ -2362,7 +2129,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
             }
             else {
                 char value[l+1];
-                int res = fread (value, 1, l, fp);
+                int res = (int)fread (value, 1, l, fp);
                 if (res != l) {
                     trace ("read error: requested %d, got %d\n", l, res);
                     goto load_fail;
@@ -2420,7 +2187,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
             }
             else {
                 char value[l+1];
-                int res = fread (value, 1, l, fp);
+                int res = (int)fread (value, 1, l, fp);
                 if (res != l) {
                     trace ("read error: requested %d, got %d\n", l, res);
                     goto load_fail;
@@ -2474,7 +2241,7 @@ pl_load_all (void) {
         }
 
         playlist_t *plt = plt_get_for_idx (0);
-        playItem_t *it = plt_load (plt, NULL, defpl, NULL, NULL, NULL);
+        /*playItem_t *it = */ plt_load (plt, NULL, defpl, NULL, NULL, NULL);
         plt_unref (plt);
         return 0;
     }
@@ -2496,7 +2263,7 @@ pl_load_all (void) {
             fprintf (stderr, "INFO: from file %s\n", path);
 
             playlist_t *plt = plt_get_curr ();
-            playItem_t *trk = plt_load (plt, NULL, path, NULL, NULL, NULL);
+            /* playItem_t *trk = */ plt_load (plt, NULL, path, NULL, NULL, NULL);
             char conf[100];
             snprintf (conf, sizeof (conf), "playlist.cursor.%d", i);
             plt->current_row[PL_MAIN] = deadbeef->conf_get_int (conf, -1);
@@ -2814,7 +2581,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     *ss = ';';
                 }
             }
-            return strlen (s);
+            return (int)strlen (s);
         }
         else {
             s[0] = 0;
@@ -2845,7 +2612,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                 }
                 if (*e == '@') {
                     char nm[100];
-                    int l = e-fmt-1;
+                    int l = (int)(e-fmt-1);
                     l = min (l, sizeof (nm)-1);
                     strncpy (nm, fmt+1, l);
                     nm[l] = 0;
@@ -2901,8 +2668,8 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                         }
                         const char *end = strrchr (start, '.');
                         if (end) {
-                            int n = end-start;
-                            n = min (end-start, sizeof (dirname)-1);
+                            int n = (int)(end-start);
+                            n = min (n, sizeof (dirname)-1);
                             strncpy (dirname, start, n);
                             dirname[n] = 0;
                             meta = dirname;
@@ -3087,7 +2854,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     }
 
                     // copy
-                    int len = end-start;
+                    int len = (int)(end-start);
                     len = min (len, sizeof (dirname)-1);
                     strncpy (dirname, start, len);
                     dirname[len] = 0;
@@ -3103,7 +2870,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                 }
                 else {
                     // copy
-                    int len = end - f;
+                    int len = (int)(end - f);
                     len = min (len, sizeof (dirname)-1);
                     strncpy (dirname, f, len);
                     dirname[len] = 0;
@@ -3160,7 +2927,6 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     *s++ = '\'';
                     n--;
                     while (n > 2 && *value) {
-                        const char *e = escape_chars;
                         if (strchr (escape_chars, *value)) {
                             *s++ = '\\';
                             n--;
@@ -3395,8 +3161,6 @@ plt_move_items (playlist_t *to, int iter, playlist_t *from, playItem_t *drop_bef
     no_remove_notify = 1;
 
     // unlink items from from, and link together
-    playItem_t *head = NULL;
-    playItem_t *tail = NULL;
     int processed = 0;
     int idx = 0;
     playItem_t *next = NULL;
@@ -3510,7 +3274,6 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
     while (*p) {
         int32_t i = 0;
         char s[10];
-        const char *next;
         u8_nextchar (p, &i);
         int l = u8_tolower (p, i, s);
         n -= l;
@@ -3523,7 +3286,7 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
     }
     *out = 0;
 
-    int lc_is_valid_u8 = u8_valid (lc, strlen (lc), NULL);
+    int lc_is_valid_u8 = u8_valid (lc, (int)strlen (lc), NULL);
 
     static int cmpidx = 0;
     cmpidx++;
@@ -3573,7 +3336,7 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
                             break;
                         }
                     }
-                    else if (lc_is_valid_u8 && u8_valid(value, strlen(value), NULL) && utfcasestr_fast (value, lc)) {
+                    else if (lc_is_valid_u8 && u8_valid(value, (int)strlen(value), NULL) && utfcasestr_fast (value, lc)) {
                         //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, value, pl_find_meta_raw (it, ":URI"), m->key);
                         // add to list
                         it->next[PL_SEARCH] = NULL;
@@ -3990,62 +3753,33 @@ plt_get_scroll (playlist_t *plt) {
 }
 
 static playItem_t *
-plt_process_embedded_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate) {
+plt_process_embedded_cue (playlist_t *plt, playItem_t *after, playItem_t *it, int64_t totalsamples, int samplerate) {
+    if (plt->loading_cue) {
+        // means it was called from _load_cue
+        plt->cue_numsamples = totalsamples;
+        plt->cue_samplerate = samplerate;
+        return NULL;
+    }
+    playItem_t *cue = NULL;
     pl_lock();
     const char *cuesheet = pl_find_meta (it, "cuesheet");
     if (cuesheet) {
-        playItem_t *cue_after = plt_insert_cue_from_buffer_int (plt, after, it, (const uint8_t *)cuesheet, (int)strlen (cuesheet), totalsamples, samplerate);
-        if (cue_after) {
-            pl_item_unref (cue_after);
-            pl_unlock();
-            return cue_after;
-        }
+        const char *fname = pl_find_meta (it, ":URI");
+        cue = plt_load_cuesheet_from_buffer (plt, after, fname, it, totalsamples, samplerate, (const uint8_t *)cuesheet, (int)strlen (cuesheet), NULL, 0, 0);
     }
     pl_unlock();
-    return NULL;
+    return cue;
 }
 
-static playItem_t *
-plt_process_external_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate) {
-    playItem_t *cue_after = plt_insert_cue_int (plt, after, it, totalsamples, samplerate);
-    if (cue_after) {
-        pl_item_unref (cue_after);
-        return cue_after;
-    }
-    return NULL;
-}
-
-playItem_t *
+playItem_t * /* called by plugins */
 plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t totalsamples, int samplerate) {
-    playItem_t *cue_after = NULL;
-
-    if (conf_cue_prefer_embedded) {
-        cue_after = plt_process_embedded_cue (plt, after, it, totalsamples, samplerate);
-        if (!cue_after) {
-            cue_after = plt_process_external_cue (plt, after, it, totalsamples, samplerate);
-        }
+    if (plt->loading_cue) {
+        // means it was called from _load_cue
+        plt->cue_numsamples = totalsamples;
+        plt->cue_samplerate = samplerate;
+        return NULL;
     }
-    else {
-        cue_after = plt_process_external_cue (plt, after, it, totalsamples, samplerate);
-        if (!cue_after) {
-            cue_after = plt_process_embedded_cue (plt, after, it, totalsamples, samplerate);
-        }
-    }
-
-    return cue_after;
-}
-
-void
-plt_set_cue_file (playlist_t *plt, const char *filename) {
-    LOCK;
-    if (plt->cue_file) {
-        free (plt->cue_file);
-        plt->cue_file = NULL;
-    }
-    if (filename) {
-        plt->cue_file = strdup (filename);
-    }
-    UNLOCK;
+    return plt_process_embedded_cue (plt, after, it, (int64_t)totalsamples, samplerate);
 }
 
 void

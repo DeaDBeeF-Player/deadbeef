@@ -404,7 +404,7 @@ enum {
     DB_EV_CONFIGCHANGED = 11, // one or more config options were changed
     DB_EV_TOGGLE_PAUSE = 12,
     DB_EV_ACTIVATED = 13, // will be fired every time player is activated
-    DB_EV_PAUSED = 14, // player was paused or unpaused
+    DB_EV_PAUSED = 14, // player was paused (p1=1) or unpaused (p1=0)
 
     DB_EV_PLAYLISTCHANGED = 15, // playlist contents were changed (e.g. metadata in any track)
     // DB_EV_PLAYLISTCHANGED NOTE: it's usually sent on LARGE changes,
@@ -845,8 +845,8 @@ typedef struct {
     int (*plt_add_dir) (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data) DEPRECATED_15;
 
     // cuesheet support
-    DB_playItem_t *(*plt_insert_cue_from_buffer) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate);
-    DB_playItem_t * (*plt_insert_cue) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, int numsamples, int samplerate);
+    DB_playItem_t *(*plt_insert_cue_from_buffer) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate) DEPRECATED_110;
+    DB_playItem_t * (*plt_insert_cue) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, int numsamples, int samplerate) DEPRECATED_110;
 
     // playlist locking
     void (*pl_lock) (void);
@@ -1412,14 +1412,6 @@ typedef struct {
 
     // get total playback time of selected tracks
     float (*plt_get_selection_playback_time) (ddb_playlist_t *plt);
-
-    // Override internal cue behavior, only applies to one playlist.
-    // `plt` the playlist
-    // `filename`:
-    //     The original value is NULL (no overriding)
-    //     A full path to cuesheet file: tell the internal cuesheet code to use that specific file,
-    //     Or "__ignore" magic value: disables internal cuesheet processing.
-    void (*plt_set_cue_file) (ddb_playlist_t *plt, const char *filename);
 #endif
 } DB_functions_t;
 

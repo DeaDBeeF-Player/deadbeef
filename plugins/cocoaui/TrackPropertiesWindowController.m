@@ -375,7 +375,8 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
                && [[NSCharacterSet whitespaceCharacterSet] characterIsMember:[val characterAtIndex:i]]) {
             i++;
         }
-        if (i == [val length]-1) {
+        // whitespace-only?
+        if (i > 0 && i == [val length]-1) {
             continue;
         }
         [transformedValues addObject: (i == 0 ? val : [val substringFromIndex:i])];
@@ -736,5 +737,81 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 
     [NSApp endSheet:_editValuePanel];
+}
+
+- (IBAction)editRemoveAction:(id)sender {
+    NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
+
+    [ind enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        _store[idx][@"value"] = @"";
+        self.modified = YES;
+    }];
+
+    if (self.modified) {
+        [_metadataTableView reloadData];
+    }
+}
+
+- (IBAction)editCropAction:(id)sender {
+    NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
+
+    for (int i = 0; i < [_store count]; i++) {
+        if (![ind containsIndex:i]) {
+            _store[i][@"value"] = @"";
+            self.modified = YES;
+        }
+    }
+
+    if (self.modified) {
+        [_metadataTableView reloadData];
+    }
+}
+
+- (IBAction)editCapitalizeAction:(id)sender {
+    NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
+
+    for (int i = 0; i < [_store count]; i++) {
+        if ([ind containsIndex:i]) {
+            _store[i][@"value"] = [_store[i][@"value"] uppercaseString];
+            self.modified = YES;
+        }
+    }
+
+    if (self.modified) {
+        [_metadataTableView reloadData];
+    }
+}
+
+- (IBAction)addNewField:(id)sender {
+    [_addFieldName setStringValue: @""];
+    [_addFieldAlreadyExists setHidden: YES];
+
+    [NSApp beginSheet:_addFieldPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndCreateFieldPanel:returnCode:contextInfo:) contextInfo:nil];
+}
+
+- (void)didEndCreateFieldPanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+    [_addFieldPanel orderOut:self];
+}
+
+- (IBAction)cancelAddFieldPanelAction:(id)sender {
+    [NSApp endSheet:_addFieldPanel];
+}
+
+- (IBAction)okAddFieldPanelAction:(id)sender {
+    const char *key = [[_addFieldName stringValue] UTF8String];
+    for (int i = 0; i < [_store count]; i++) {
+        if (!strcasecmp(key, [_store [i][@"key"] UTF8String])) {
+            [_addFieldAlreadyExists setHidden: NO];
+            return;
+        }
+    }
+
+    char title[strlen(key)+3];
+    snprintf (title, sizeof (title), "<%s>", key);
+    add_field (_store, key, title, 0, _tracks, _numtracks);
+    self.modified = YES;
+    [_metadataTableView reloadData];
+    [NSApp endSheet:_addFieldPanel];
+
 }
 @end

@@ -460,30 +460,12 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     deadbeef->pl_lock ();
 
-    // embedded cue
-    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-    DB_playItem_t *cue = NULL;
-    if (cuesheet) {
-        cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, si.sample_freq);
-        if (cue) {
-            deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (cue);
-            deadbeef->pl_unlock ();
-            mpc_demux_exit (demux);
-            demux = NULL;
-            return cue;
-        }
-    }
-    deadbeef->pl_unlock ();
-
     mpc_set_trk_properties (it, &si, fsize);
-    cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, si.sample_freq);
+
+    DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, si.sample_freq);
     if (cue) {
         deadbeef->pl_item_unref (it);
-        deadbeef->pl_item_unref (cue);
         mpc_demux_exit (demux);
-        demux = NULL;
-
         return cue;
     }
 
