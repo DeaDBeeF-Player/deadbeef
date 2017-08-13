@@ -882,9 +882,6 @@ mainloop_thread (void *ctx) {
 
 int
 main (int argc, char *argv[]) {
-#ifdef __MINGW32__
-    char current_dir[MAX_PATH];
-#endif
     ddb_logger_init ();
     int portable = 0;
 #if STATICLINK
@@ -893,9 +890,6 @@ main (int argc, char *argv[]) {
     int staticlink = 0;
 #endif
 #if PORTABLE
-#ifdef __MINGW32__
-    GetCurrentDirectory(PATH_MAX, dbinstalldir);
-#else
     portable = 1;
     if (!realpath (argv[0], dbinstalldir)) {
         strcpy (dbinstalldir, argv[0]);
@@ -908,12 +902,15 @@ main (int argc, char *argv[]) {
         fprintf (stderr, "couldn't determine install folder from path %s\n", argv[0]);
         exit (-1);
     }
-#endif /* __MINGW32__ */
 #else
     if (!realpath (argv[0], dbinstalldir)) {
         strcpy (dbinstalldir, argv[0]);
     }
+    #ifdef __MINGW32__
+    char *e = strrchr (dbinstalldir, '\\');
+    #else
     char *e = strrchr (dbinstalldir, '/');
+    #endif
     if (e) {
         *e = 0;
         portable = 1;
@@ -927,6 +924,9 @@ main (int argc, char *argv[]) {
         if (stat (checkpath, &st) || !S_ISREG (st.st_mode)) {
             portable = 0;
         }
+        #ifdef __MINGW32__
+        portable = 1;
+        #endif
     }
     if (!portable) {
         strcpy (dbinstalldir, PREFIX);
@@ -1048,12 +1048,7 @@ main (int argc, char *argv[]) {
         mkdir (dbplugindir, 0755);
     }
     else {
-#ifdef __MINGW32__
-        GetCurrentDirectory(MAX_PATH, current_dir);
-        if (snprintf (dbdocdir, sizeof (dbdocdir), "%s/doc", current_dir) > sizeof (dbdocdir)) {
-#else
         if (snprintf (dbdocdir, sizeof (dbdocdir), "%s", DOCDIR) > sizeof (dbdocdir)) {
-#endif
             fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
             return -1;
         }
