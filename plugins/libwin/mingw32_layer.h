@@ -1,6 +1,6 @@
 
-//#ifndef _MINGW32_LAYER_H_
-//#define _MINGW32_LAYER_H_
+#ifndef _MINGW32_LAYER_H_
+#define _MINGW32_LAYER_H_
 
 #include <errno.h>
 #include <dirent.h>
@@ -58,4 +58,5 @@ char *strndup(char *, size_t);
 char *strcasestr(const char *, const char *);
 
 int rename_windows(const char *, const char *);
-//#endif
+
+#endif
