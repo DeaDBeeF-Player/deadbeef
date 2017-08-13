@@ -2213,14 +2213,14 @@ create_prefwin (void)
   gtk_box_pack_start (GTK_BOX (vbox21), bar_colors_group, TRUE, TRUE, 0);
   gtk_table_set_col_spacings (GTK_TABLE (bar_colors_group), 8);
 
-  label43 = gtk_label_new (_("Foreground"));
+  label43 = gtk_label_new (_("Bars"));
   gtk_widget_show (label43);
   gtk_table_attach (GTK_TABLE (bar_colors_group), label43, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label43), 0, 0.5);
 
-  label47 = gtk_label_new (_("Background"));
+  label47 = gtk_label_new (_("Background (EQ)"));
   gtk_widget_show (label47);
   gtk_table_attach (GTK_TABLE (bar_colors_group), label47, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND),
@@ -2239,7 +2239,7 @@ create_prefwin (void)
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
 
-  label73 = gtk_label_new (_("Seekbar/Volumebar"));
+  label73 = gtk_label_new (_("Seekbar/Volumebar/EQ"));
   gtk_widget_show (label73);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook4), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook4), 0), label73);
 
