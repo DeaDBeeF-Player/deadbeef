@@ -8,6 +8,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifndef M_PI
+#define M_PI 3.1415926535897932384626433832795029
+#endif
+
 /* This can be replaced by any BSD-like queue implementation. */
 #ifdef __MINGW32__
 #include "../libwin/include/sys/queue.h"
