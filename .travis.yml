@@ -7,6 +7,10 @@ matrix:
           sudo: required
         - os: osx
           osx_image: xcode8.3
+        - os: linux
+          dist: trusty
+          sudo: required
+          env: BUILD_WINDOWS=yes
 
 git:
   submodules: false

@@ -1,5 +1,9 @@
 case "$TRAVIS_OS_NAME" in
     linux)
+        if [ "$BUILD_WINDOWS" = "yes" ]
+        then
+        source ./build_windows.sh
+        else
         STATICDEPS_URL="http://sourceforge.net/projects/deadbeef/files/staticdeps/ddb-static-deps-latest.tar.bz2/download"
         mkdir static-deps
         echo "downloading static deps..."
@@ -17,6 +21,7 @@ case "$TRAVIS_OS_NAME" in
         ARCH=x86_64 ./scripts/portable_package_static.sh || exit 1
         echo "running make dist"
         make dist || exit 1
+        fi
     ;;
     osx)
         echo brew update ...
