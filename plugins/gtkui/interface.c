@@ -5239,6 +5239,7 @@ create_rg_scan_progress (void)
   GtkWidget *rg_scan_progress_cancel;
 
   rg_scan_progress = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_widget_set_size_request (rg_scan_progress, 440, -1);
   gtk_window_set_title (GTK_WINDOW (rg_scan_progress), _("ReplayGain Scan Progress"));
 
   vbox50 = gtk_vbox_new (FALSE, 8);
@@ -5307,6 +5308,7 @@ create_rg_scan_results (void)
   GtkWidget *rg_scan_results_cancel_btn;
 
   rg_scan_results = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_widget_set_size_request (rg_scan_results, 550, 350);
   gtk_window_set_title (GTK_WINDOW (rg_scan_results), _("ReplayGain Scan Results"));
 
   vbox51 = gtk_vbox_new (FALSE, 8);
