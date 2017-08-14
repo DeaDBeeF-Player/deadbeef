@@ -8,7 +8,7 @@ matrix:
         - os: osx
           osx_image: xcode8.3
         - os: linux
-          dist: trusty
+          dist: xenial
           sudo: required
           env: BUILD_WINDOWS=yes
 
