@@ -4,7 +4,7 @@ case "$TRAVIS_OS_NAME" in
         then
             sudo apt-get update 1> /dev/null 2> /dev/null || exit 1
             sudo apt-get install -qq autopoint automake autoconf intltool libc6-dev-i386 libc6-dev yasm libglib2.0-bin || exit 1
-            sudo apt-get install -qq binutils-mingw-w64-x86-64 gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64-dev mingw-w64-x86-64-dev
+            sudo apt-get install -qq binutils-mingw-w64-x86-64 gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 mingw-w64-x86-64-dev
             STATICDEPS_GIT="http://github.com/kuba160/deadbeef-windows-deps"
             echo "downloading static deps..."
             git clone -q "$STATICDEPS_GIT" || exit 1
