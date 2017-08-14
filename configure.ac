@@ -50,7 +50,7 @@ case "$host" in
     APE_USE_YASM=yes
     LDADD="$LDADD $PWD/plugins/libwin/libwin.la -ldl -lws2_32 -lintl -lpthread -lpsapi"
     AC_SUBST([LDADD])
-    DEPS_CFLAGS="$DEPS_CFLAGS -I$PWD/plugins/libwin/include"
+    DEPS_CFLAGS="$DEPS_CFLAGS -I$PWD/plugins/libwin/include -U__STRICT_ANSI__"
     AC_SUBST([DEPS_CFLAGS])
     OS_WINDOWS=yes
 
