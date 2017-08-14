@@ -10,6 +10,8 @@ case "$TRAVIS_OS_NAME" in
             git clone -q "$STATICDEPS_GIT" || exit 1
             echo "installing static deps..."
             cd deadbeef-windows-deps && sudo make install ; cd ..
+            echo "running autogen..."
+            ./autogen.sh
             echo "building for x86_64"
             ARCH=x86_64 ./scripts/configure_windows.sh --host=x86_64-w64-mingw32 --prefix="$PWD/deadbeef-win64-build" || exit 1
             make LDFLAGS=-no-undefined
