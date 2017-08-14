@@ -5225,3 +5225,134 @@ create_log_window (void)
   return log_window;
 }
 
+GtkWidget*
+create_rg_scan_progress (void)
+{
+  GtkWidget *rg_scan_progress;
+  GtkWidget *vbox50;
+  GtkWidget *hbox142;
+  GtkWidget *label166;
+  GtkWidget *rg_scan_progress_file;
+  GtkWidget *rg_scan_progress_bar;
+  GtkWidget *hbox143;
+  GtkWidget *rg_scan_progress_status;
+  GtkWidget *rg_scan_progress_cancel;
+
+  rg_scan_progress = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_title (GTK_WINDOW (rg_scan_progress), _("ReplayGain Scan Progress"));
+
+  vbox50 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox50);
+  gtk_container_add (GTK_CONTAINER (rg_scan_progress), vbox50);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox50), 12);
+
+  hbox142 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox142);
+  gtk_box_pack_start (GTK_BOX (vbox50), hbox142, FALSE, TRUE, 0);
+
+  label166 = gtk_label_new (_("Current File:"));
+  gtk_widget_show (label166);
+  gtk_box_pack_start (GTK_BOX (hbox142), label166, FALSE, FALSE, 0);
+
+  rg_scan_progress_file = gtk_entry_new ();
+  gtk_widget_show (rg_scan_progress_file);
+  gtk_box_pack_start (GTK_BOX (hbox142), rg_scan_progress_file, TRUE, TRUE, 0);
+  gtk_entry_set_max_length (GTK_ENTRY (rg_scan_progress_file), 2);
+  gtk_editable_set_editable (GTK_EDITABLE (rg_scan_progress_file), FALSE);
+  gtk_entry_set_invisible_char (GTK_ENTRY (rg_scan_progress_file), 8226);
+
+  rg_scan_progress_bar = gtk_progress_bar_new ();
+  gtk_widget_show (rg_scan_progress_bar);
+  gtk_box_pack_start (GTK_BOX (vbox50), rg_scan_progress_bar, FALSE, FALSE, 0);
+
+  hbox143 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox143);
+  gtk_box_pack_start (GTK_BOX (vbox50), hbox143, FALSE, TRUE, 0);
+
+  rg_scan_progress_status = gtk_label_new (_("Status"));
+  gtk_widget_show (rg_scan_progress_status);
+  gtk_box_pack_start (GTK_BOX (hbox143), rg_scan_progress_status, TRUE, TRUE, 0);
+  gtk_misc_set_alignment (GTK_MISC (rg_scan_progress_status), 0, 0.5);
+  gtk_label_set_ellipsize (GTK_LABEL (rg_scan_progress_status), PANGO_ELLIPSIZE_END);
+  gtk_label_set_single_line_mode (GTK_LABEL (rg_scan_progress_status), TRUE);
+
+  rg_scan_progress_cancel = gtk_button_new_with_mnemonic (_("Cancel"));
+  gtk_widget_show (rg_scan_progress_cancel);
+  gtk_box_pack_start (GTK_BOX (hbox143), rg_scan_progress_cancel, FALSE, FALSE, 0);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (rg_scan_progress, rg_scan_progress, "rg_scan_progress");
+  GLADE_HOOKUP_OBJECT (rg_scan_progress, vbox50, "vbox50");
+  GLADE_HOOKUP_OBJECT (rg_scan_progress, hbox142, "hbox142");
+  GLADE_HOOKUP_OBJECT (rg_scan_progress, label166, "label166");
+  GLADE_HOOKUP_OBJECT (rg_scan_progress, rg_scan_progress_file, "rg_scan_progress_file");
+  GLADE_HOOKUP_OBJECT (rg_scan_progress, rg_scan_progress_bar, "rg_scan_progress_bar");
+  GLADE_HOOKUP_OBJECT (rg_scan_progress, hbox143, "hbox143");
+  GLADE_HOOKUP_OBJECT (rg_scan_progress, rg_scan_progress_status, "rg_scan_progress_status");
+  GLADE_HOOKUP_OBJECT (rg_scan_progress, rg_scan_progress_cancel, "rg_scan_progress_cancel");
+
+  return rg_scan_progress;
+}
+
+GtkWidget*
+create_rg_scan_results (void)
+{
+  GtkWidget *rg_scan_results;
+  GtkWidget *vbox51;
+  GtkWidget *scrolledwindow15;
+  GtkWidget *rg_scan_results_list;
+  GtkWidget *hbox144;
+  GtkWidget *rg_scan_results_status;
+  GtkWidget *rg_scan_results_update_btn;
+  GtkWidget *rg_scan_results_cancel_btn;
+
+  rg_scan_results = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_title (GTK_WINDOW (rg_scan_results), _("ReplayGain Scan Results"));
+
+  vbox51 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox51);
+  gtk_container_add (GTK_CONTAINER (rg_scan_results), vbox51);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox51), 12);
+
+  scrolledwindow15 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow15);
+  gtk_box_pack_start (GTK_BOX (vbox51), scrolledwindow15, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow15), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow15), GTK_SHADOW_IN);
+
+  rg_scan_results_list = gtk_tree_view_new ();
+  gtk_widget_show (rg_scan_results_list);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow15), rg_scan_results_list);
+
+  hbox144 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox144);
+  gtk_box_pack_start (GTK_BOX (vbox51), hbox144, FALSE, TRUE, 0);
+
+  rg_scan_results_status = gtk_label_new (_("Status"));
+  gtk_widget_show (rg_scan_results_status);
+  gtk_box_pack_start (GTK_BOX (hbox144), rg_scan_results_status, TRUE, TRUE, 0);
+  gtk_misc_set_alignment (GTK_MISC (rg_scan_results_status), 0, 0.5);
+  gtk_label_set_ellipsize (GTK_LABEL (rg_scan_results_status), PANGO_ELLIPSIZE_END);
+  gtk_label_set_single_line_mode (GTK_LABEL (rg_scan_results_status), TRUE);
+
+  rg_scan_results_update_btn = gtk_button_new_with_mnemonic (_("Update File Tags"));
+  gtk_widget_show (rg_scan_results_update_btn);
+  gtk_box_pack_start (GTK_BOX (hbox144), rg_scan_results_update_btn, FALSE, FALSE, 0);
+
+  rg_scan_results_cancel_btn = gtk_button_new_with_mnemonic (_("Cancel"));
+  gtk_widget_show (rg_scan_results_cancel_btn);
+  gtk_box_pack_start (GTK_BOX (hbox144), rg_scan_results_cancel_btn, FALSE, FALSE, 0);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (rg_scan_results, rg_scan_results, "rg_scan_results");
+  GLADE_HOOKUP_OBJECT (rg_scan_results, vbox51, "vbox51");
+  GLADE_HOOKUP_OBJECT (rg_scan_results, scrolledwindow15, "scrolledwindow15");
+  GLADE_HOOKUP_OBJECT (rg_scan_results, rg_scan_results_list, "rg_scan_results_list");
+  GLADE_HOOKUP_OBJECT (rg_scan_results, hbox144, "hbox144");
+  GLADE_HOOKUP_OBJECT (rg_scan_results, rg_scan_results_status, "rg_scan_results_status");
+  GLADE_HOOKUP_OBJECT (rg_scan_results, rg_scan_results_update_btn, "rg_scan_results_update_btn");
+  GLADE_HOOKUP_OBJECT (rg_scan_results, rg_scan_results_cancel_btn, "rg_scan_results_cancel_btn");
+
+  return rg_scan_results;
+}
+
