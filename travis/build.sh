@@ -13,7 +13,7 @@ case "$TRAVIS_OS_NAME" in
             echo "running autogen..."
             ./autogen.sh
             echo "building for x86_64"
-            ARCH=x86_64 ./scripts/configure_windows.sh --host=x86_64-w64-mingw32 --prefix="$PWD/deadbeef-win64-build" || exit 1
+            ARCH=x86_64  PKG_CONFIG_PATH=/usr/x86_64-w64-mingw32/lib/pkgconfig ./scripts/configure_windows.sh --host=x86_64-w64-mingw32 --prefix="$PWD/deadbeef-win64-build" || exit 1
             make LDFLAGS=-no-undefined
             make install
             mkdir static-deps
