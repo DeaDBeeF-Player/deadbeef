@@ -4,5 +4,5 @@ rg_scanner_la_SOURCES = rg_scanner.c rg_scanner.h ebur128/ebur128.c ebur128/ebur
 rg_scanner_la_LDFLAGS = -module -avoid-version
 
 rg_scanner_la_LIBADD = $(LDADD) -lm
-rg_scanner_la_CFLAGS = -std=c99
+rg_scanner_la_CFLAGS = -std=gnu99
 endif
