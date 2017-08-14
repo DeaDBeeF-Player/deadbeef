@@ -55,7 +55,7 @@ sdk_HEADERS = deadbeef.h
 
 deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread $(INTL_LIBS) plugins/libparser/libparser.la
 
-AM_CFLAGS = $(DEPS_CFLAGS) -std=gnu99
+AM_CFLAGS = $(DEPS_CFLAGS) -std=c99
 AM_CPPFLAGS = $(DEPS_CFLAGS)
 
 docsdir = $(docdir)
