@@ -48,7 +48,7 @@ case "$host" in
     LIB="static-deps/lib-x86-64-windows"
     YASM_FLAGS="-f elf -D ARCH_X86_64 -m amd64"
     APE_USE_YASM=yes
-    LDADD="$LDADD $PWD/plugins/libwin/libwin.la -ldl -lws2_32"
+    LDADD="$LDADD $PWD/plugins/libwin/libwin.la -ldl -lws2_32 -lintl -lpthread -lpsapi"
     AC_SUBST([LDADD])
     DEPS_CFLAGS="$DEPS_CFLAGS -I$PWD/plugins/libwin/include"
     AC_SUBST([DEPS_CFLAGS])
