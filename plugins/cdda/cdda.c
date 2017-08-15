@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <iconv.h>
 #include <sys/types.h>
 
 #if USE_PARANOIA_10_2
@@ -42,8 +43,8 @@
 
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define CDDA_ALL_TRACKS "all.cda"
 
@@ -518,10 +519,38 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
             }
         }
     }
+    // create transcoder from iso-8859-1 to utf8
+    iconv_t foo = iconv_open("UTF-8", "ISO-8859-1");
+    if((int) foo == -1) {
+        trace("iconv_open error\n");
+        return 0;
+    }   
+    // calloc fills memory with 0 bytes. we alloc two -
+    // one for the 'ö' and one for the ending delimeter
+    char *iso = album;
 
-    trace ("artist: %s; album: %s\n", artist, album);
+    // the converted string can be four times larger
+    // then the original, as the largest known char width is 4 bytes.    
+    char *converted = calloc(4, strlen(album));
+
+    // we need to store an additional pointer that targets the
+    // start of converted. (iconv modifies the original 'converted')
+    char *converted_start = converted;
+
+    size_t ibl = strlen(album); // len of iso
+    size_t obl = strlen(album)*4; // len of converted
+
+    // do it!
+    int ret = iconv(foo, &iso, &ibl, &converted, &obl);
+
+    // if iconv fails it returns -1
+    
+ 
+    iconv_close(foo);
+
+    trace ("artist: %s; album: %s\n", artist, converted_start);
     replace_meta(item, "artist", artist);
-    replace_meta(item, "album", album);
+    replace_meta(item, "album", converted_start);
 
 #if CDIO_API_VERSION >= 6
     cdtext = cdio_get_cdtext (cdio);
