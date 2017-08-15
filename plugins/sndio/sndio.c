@@ -263,28 +263,6 @@ sndio_get_state(void)
 }
 
 static int
-sndio_configchanged(void)
-{
-    deadbeef->conf_lock();
-    deadbeef->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
-    deadbeef->conf_unlock();
-
-    return 0;
-}
-
-static int
-sndio_plugin_message(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
-{
-    switch (id) {
-    case DB_EV_CONFIGCHANGED:
-        sndio_configchanged();
-        break;
-    }
-
-    return 0;
-}
-
-static int
 sndio_plugin_start(void)
 {
     sndio_mutex = deadbeef->mutex_create();
@@ -342,7 +320,6 @@ static DB_output_t plugin = {
     .plugin.start = sndio_plugin_start,
     .plugin.stop = sndio_plugin_stop,
     .plugin.configdialog = settings_dlg,
-    .plugin.message = sndio_plugin_message,
     .init = sndio_init,
     .free = sndio_free,
     .setformat = sndio_setformat,

@@ -292,7 +292,7 @@ AS_IF([test "${enable_coreaudio}" != "no" -a "${found_coreaudio_h}" != "no"], [
 AC_SUBST(COREAUDIO_LIBS)
 
 AC_CHECK_HEADER([sndio.h], [found_sndio_h=yes], [found_sndio_h=no])
-AC_CHECK_LIB([sndio], [main], [found_sndio_lib=yes], [found_sndio_lib=no])
+AC_CHECK_LIB([sndio], [sio_write], [found_sndio_lib=yes], [found_sndio_lib=no])
 AS_IF([test "${enable_sndio}" != "no" -a "${found_sndio_h}" != "no" -a "${found_sndio_lib}" != "no"], [
   AC_DEFINE(HAVE_SNDIO, 1, [Build sndio support])
   HAVE_SNDIO=yes
