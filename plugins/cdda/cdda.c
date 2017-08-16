@@ -42,6 +42,7 @@
 #include <cddb/cddb.h>
 
 #include "../../deadbeef.h"
+#include "../../junklib.h"
 
 #define trace(...) { fprintf (stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -519,39 +520,34 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
             }
         }
     }
-    // create transcoder from iso-8859-1 to utf8
-    iconv_t foo = iconv_open("UTF-8", "ISO-8859-1");
-    if((int) foo == -1) {
-        trace("iconv_open error\n");
-        return 0;
-    }   
-    // calloc fills memory with 0 bytes. we alloc two -
-    // one for the 'ö' and one for the ending delimeter
-    char *iso = album;
-
-    // the converted string can be four times larger
-    // then the original, as the largest known char width is 4 bytes.    
-    char *converted = calloc(4, strlen(album));
-
-    // we need to store an additional pointer that targets the
-    // start of converted. (iconv modifies the original 'converted')
-    char *converted_start = converted;
-
-    size_t ibl = strlen(album); // len of iso
-    size_t obl = strlen(album)*4; // len of converted
-
-    // do it!
-    int ret = iconv(foo, &iso, &ibl, &converted, &obl);
-
-    // if iconv fails it returns -1
-    
- 
-    iconv_close(foo);
-
-    trace ("artist: %s; album: %s\n", artist, converted_start);
+    // some versions of cdio does not convert strings to UTF-8 as documented
+    // cdio devs: get your sh*t together
+    const char * album_charset = junk_detect_charset(album);
+    const char * artist_charset = junk_detect_charset(artist);
+    if (album_charset != NULL ){
+        trace ( "cdda: album using %s charset, converting\n",album_charset);
+        char * album_converted = malloc (strlen (album) * 4);
+        if(album_converted){
+            junk_iconv (album, strlen(album), album_converted, strlen(album)*4, album_charset, "UTF-8");
+            album = album_converted;
+        }
+    }
+    if (artist_charset != NULL ){
+        trace ( "cdda: artist using %s charset, converting\n",artist_charset);
+        char * artist_converted = malloc (strlen (artist) * 4);
+        if(artist_converted){
+            junk_iconv (artist, strlen(artist), artist_converted, strlen(artist)*4, artist_charset, "UTF-8");
+            artist = artist_converted;
+        }
+    }
+    trace ("artist: %s; album: %s\n", artist, album);
     replace_meta(item, "artist", artist);
-    replace_meta(item, "album", converted_start);
+    replace_meta(item, "album", album);
 
+    if( album && album_charset != NULL)
+        free(album);
+    if( artist && artist_charset != NULL)
+        free(artist);
 #if CDIO_API_VERSION >= 6
     cdtext = cdio_get_cdtext (cdio);
 #else
@@ -591,8 +587,20 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
             default: field = NULL;
         }
         if (field) {
+            // convert to UTF-8 if not UTF-8 already
+            const char * text_charset = junk_detect_charset(text);
+            if (text_charset != NULL ){
+                trace ( "cdda: text using %s charset, converting\n",text_charset);
+                char * text_converted = malloc (strlen (text) * 4);
+                if(text_converted){
+                    junk_iconv (field, strlen(text), text_converted, strlen(text)*4, text_charset, "UTF-8");
+                    text = text_converted;
+                }
+            }
             trace("%s: %s\n", field, text);
             replace_meta(item, field, text);
+            if(text && text_charset != 0)
+                free(text);
         }
     }
 }
