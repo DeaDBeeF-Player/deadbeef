@@ -1,3 +1,2 @@
 #!/bin/sh
 make -j8 || exit 1
-sudo scripts/quickinstall.sh
