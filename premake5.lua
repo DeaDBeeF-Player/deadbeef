@@ -50,6 +50,48 @@ project "mp3"
    defines { "USE_LIBMPG123=1", "USE_LIBMAD=1" }
    links { "mpg123", "mad" }
 
+project "flac_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "flac"
+
+   files {
+       "plugins/flac/*.h",
+       "plugins/flac/*.c",
+   }
+
+   links { "FLAC" }
+
+project "wavpack_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "wavpack"
+
+   files {
+       "plugins/wavpack/*.h",
+       "plugins/wavpack/*.c",
+   }
+
+   links { "wavpack" }
+
+project "vorbis_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "vorbis"
+
+   files {
+       "plugins/vorbis/*.h",
+       "plugins/vorbis/*.c",
+   }
+
+   links { "vorbisfile", "vorbis", "m", "ogg" }
+
 project "hotkeys"
    kind "SharedLib"
    language "C"
@@ -113,7 +155,6 @@ project "rg_scanner"
        "plugins/rg_scanner/ebur128/*.h",
        "plugins/rg_scanner/ebur128/*.c",
    }
-
 
 project "resources"
     kind "Utility"
