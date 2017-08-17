@@ -5,6 +5,15 @@ includedirs { "static-deps/lib-x86-64/include/x86_64-linux-gnu", "static-deps/li
 libdirs { "static-deps/lib-x86-64/lib", "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "/usr/lib/x86_64-linux-gnu" }
 defines { "VERSION=\"devel\"" }
 
+
+filter "configurations:Debug"
+  defines { "DEBUG" }
+  symbols "On"
+
+filter "configurations:Release"
+  defines { "NDEBUG" }
+  optimize "On"
+
 project "deadbeef"
    kind "ConsoleApp"
    language "C"
@@ -24,14 +33,6 @@ project "deadbeef"
    defines { "_GNU_SOURCE", "HAVE_LOG2=1", "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"" }
    links { "m", "pthread", "dl" }
 
-   filter "configurations:Debug"
-      defines { "DEBUG" }
-      symbols "On"
-
-   filter "configurations:Release"
-      defines { "NDEBUG" }
-      optimize "On"
-
 project "mp3"
    kind "SharedLib"
    language "C"
@@ -44,15 +45,7 @@ project "mp3"
    }
 
    defines { "USE_LIBMPG123=1", "USE_LIBMAD=1" }
-   links { "m", "mpg123", "mad" }
-
-   filter "configurations:Debug"
-      defines { "DEBUG" }
-      symbols "On"
-
-   filter "configurations:Release"
-      defines { "NDEBUG" }
-      optimize "On"
+   links { "mpg123", "mad" }
 
 project "alsa"
    kind "SharedLib"
@@ -67,14 +60,6 @@ project "alsa"
 
    defines { }
    links { "asound" }
-
-   filter "configurations:Debug"
-      defines { "DEBUG" }
-      symbols "On"
-
-   filter "configurations:Release"
-      defines { "NDEBUG" }
-      optimize "On"
 
 project "ddb_gui_GTK2"
    kind "SharedLib"
@@ -99,14 +84,6 @@ project "ddb_gui_GTK2"
 
    defines { }
    links { "jansson", "gtk-x11-2.0", "pango-1.0", "cairo", "gdk-x11-2.0", "gdk_pixbuf-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
-
-   filter "configurations:Debug"
-      defines { "DEBUG" }
-      symbols "On"
-
-   filter "configurations:Release"
-      defines { "NDEBUG" }
-      optimize "On"
 
 project "resources"
     kind "Utility"

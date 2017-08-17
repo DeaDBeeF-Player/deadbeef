@@ -85,3 +85,4 @@ INSTALL
 /static-deps
 osx/build
 .dirstamp
+.vscode/c_cpp_properties.json
