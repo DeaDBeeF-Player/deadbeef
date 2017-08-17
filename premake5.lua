@@ -9,6 +9,8 @@ defines {
     "HAVE_LOG2=1"
 }
 
+buildoptions { "-fPIC" }
+
 filter "configurations:Debug"
   defines { "DEBUG" }
   symbols "On"
@@ -60,9 +62,12 @@ project "flac_plugin"
    files {
        "plugins/flac/*.h",
        "plugins/flac/*.c",
+       "plugins/liboggedit/*.h",
+       "plugins/liboggedit/*.c",
    }
 
-   links { "FLAC" }
+   defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
+   links { "FLAC", "ogg" }
 
 project "wavpack_plugin"
    kind "SharedLib"
@@ -88,9 +93,39 @@ project "vorbis_plugin"
    files {
        "plugins/vorbis/*.h",
        "plugins/vorbis/*.c",
+       "plugins/liboggedit/*.h",
+       "plugins/liboggedit/*.c",
    }
 
+   defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
    links { "vorbisfile", "vorbis", "m", "ogg" }
+
+project "ffap"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/ffap/*.h",
+       "plugins/ffap/*.c",
+       "plugins/ffap/dsputil_yasm.asm",
+   }
+
+   filter 'files:**.asm'
+       buildmessage 'YASM Assembling : %{file.relpath}'
+
+       buildcommands
+       {
+           'yasm -f elf -D ARCH_X86_64 -m amd64 -DPIC -DPREFIX -o "obj/%{cfg.buildcfg}/ffap/%{file.basename}.o" "%{file.relpath}"'
+       }
+
+       buildoutputs
+       {
+           "obj/%{cfg.buildcfg}/ffap/%{file.basename}.o"
+       }
+
+   defines { "APE_USE_ASM=yes", "ARCH_X86_64=1" }
 
 project "hotkeys"
    kind "SharedLib"
