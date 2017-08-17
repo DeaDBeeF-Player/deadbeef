@@ -1,5 +1,4 @@
--- premake5.lua
-workspace "HelloWorld"
+workspace "deadbeef"
    configurations { "Debug", "Release" }
 
 includedirs { "static-deps/lib-x86-64/include/x86_64-linux-gnu", "static-deps/lib-x86-64/include"  }
