@@ -47,6 +47,22 @@ project "mp3"
    defines { "USE_LIBMPG123=1", "USE_LIBMAD=1" }
    links { "mpg123", "mad" }
 
+project "hotkeys"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/hotkeys/*.h",
+       "plugins/hotkeys/*.c",
+       "plugins/libparser/*.h",
+       "plugins/libparser/*.c",
+   }
+
+   defines { }
+   links { "X11" }
+
 project "alsa"
    kind "SharedLib"
    language "C"
