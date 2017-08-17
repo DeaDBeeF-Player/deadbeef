@@ -1179,7 +1179,6 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
     for (int c = 0; c < ncuefiles; c++) {
         int i = cuefiles[c];
         _get_fullname_and_dir (fullname, sizeof (fullname), fulldir, sizeof(fulldir), vfs, dirname, namelist[i]->d_name);
-        printf ("fullname: %s\n", fullname);
 
         playItem_t *inserted = plt_load_cue_file (playlist, after, fullname, fulldir, namelist, n);
         namelist[i]->d_name[0] = 0;
