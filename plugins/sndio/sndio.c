@@ -72,10 +72,49 @@ pause_do(void)
 }
 
 static int
+_formatchanged (void) {
+    if (!hdl) {
+        return -1;
+    }
+    int buffer_ms = deadbeef->conf_get_int("sndio.buffer", 250);
+    struct sio_par par;
+    sio_initpar(&par);
+    par.pchan = plugin.fmt.channels;
+    par.rate = plugin.fmt.samplerate;
+    par.bits = plugin.fmt.bps;
+    par.bps = SIO_BPS(plugin.fmt.bps);
+    par.sig = 1;
+    par.le = SIO_LE_NATIVE;
+    par.appbufsz = par.rate * buffer_ms / 1000;
+
+    deadbeef->mutex_lock(sndio_mutex);
+    if (!sio_setpar(hdl, &par) || !sio_getpar(hdl, &par)) {
+        fprintf(stderr, "sndio: failed to set parameters\n");
+        deadbeef->mutex_unlock (sndio_mutex);
+        return -1;
+    }
+
+    //fprintf(stderr, "sndio: got format %dbit %s %dch %dHz %dbps\n", par.bits, plugin.fmt.is_float ? "float" : "int", par.pchan, par.rate, par.bps);
+
+    plugin.fmt.bps = par.bits;
+    plugin.fmt.samplerate = par.rate;
+    plugin.fmt.channels = par.pchan;
+
+    bufsz = par.bps * par.pchan * par.round;
+    buf = malloc(bufsz);
+    if (!buf) {
+        fprintf(stderr, "sndio: failed malloc buf\n");
+        deadbeef->mutex_unlock (sndio_mutex);
+        return -1;
+    }
+
+    deadbeef->mutex_unlock (sndio_mutex);
+    return 0;
+}
+
+static int
 sndio_init(void)
 {
-    struct sio_par par, askpar;
-    int buffer_ms = deadbeef->conf_get_int("sndio.buffer", 250);
     const char *device = deadbeef->conf_get_str_fast("sndio.device", SIO_DEVANY);
 
     if (plugin.fmt.is_float) {
@@ -89,37 +128,7 @@ sndio_init(void)
         goto error;
     }
 
-    sio_initpar(&par);
-    par.pchan = plugin.fmt.channels;
-    par.rate = plugin.fmt.samplerate;
-    par.bits = plugin.fmt.bps;
-    par.bps = SIO_BPS(plugin.fmt.bps);
-    par.sig = 1;
-    par.le = SIO_LE_NATIVE;
-    par.appbufsz = par.rate * buffer_ms / 1000;
-
-    /* fprintf(stderr, "sndio: %dbit %s %dch %dHz %dbps\n", par.bits, plugin.fmt.is_float ? "float" : "int", par.pchan, par.rate, par.bps); */
-
-    askpar = par;
-    if (!sio_setpar(hdl, &par) || !sio_getpar(hdl, &par)) {
-        fprintf(stderr, "sndio: failed to set parameters\n");
-        goto error;
-    }
-
-    if ((par.bps > 1 && par.le != askpar.le) ||
-        (par.bits < par.bps * 8 && !par.msb) ||
-        par.bps != askpar.bps ||
-        par.sig != askpar.sig ||
-        par.pchan != askpar.pchan ||
-        par.rate != askpar.rate) {
-        fprintf(stderr, "sndio: parameters not supported\n");
-        goto error;
-    }
-
-    bufsz = par.bps * par.pchan * par.round;
-    buf = malloc(bufsz);
-    if (!buf) {
-        fprintf(stderr, "sndio: failed malloc buf\n");
+    if (_formatchanged ()) {
         goto error;
     }
 
@@ -166,13 +175,23 @@ sndio_free(void)
 static int
 sndio_setformat(ddb_waveformat_t *fmt)
 {
-    if (!memcmp(&plugin.fmt, fmt, sizeof(ddb_waveformat_t)))
+    deadbeef->mutex_lock (sndio_mutex);
+    if (!memcmp(&plugin.fmt, fmt, sizeof(ddb_waveformat_t))) {
+        deadbeef->mutex_unlock (sndio_mutex);
         return 0;
+    }
+
+    //printf ("sndio requested format: %d %d %d %d\n", fmt->samplerate, fmt->channels, fmt->bps, fmt->is_float);
 
     memcpy(&plugin.fmt, fmt, sizeof(ddb_waveformat_t));
+    if (plugin.fmt.is_float) {
+        plugin.fmt.is_float = 0;
+        plugin.fmt.bps = 24;
+    }
 
-    if (sndio_tid)
-        sndio_free();
+    _formatchanged ();
+
+    deadbeef->mutex_unlock (sndio_mutex);
 
     return 0;
 }
