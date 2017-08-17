@@ -22,9 +22,14 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 #include <gtk/gtk.h>
+
+#if GTK_CHECK_VERSION(3,10,0)
+
 #include "deadbeefapp.h"
 #include "gtkui.h"
 #include "support.h"
+
+
 
 struct _DeadbeefApp
 {
@@ -123,3 +128,4 @@ deadbeef_app_new (void)
                        "flags", G_APPLICATION_FLAGS_NONE,
                        NULL);
 }
+#endif
