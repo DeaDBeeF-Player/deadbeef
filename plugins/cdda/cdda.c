@@ -41,7 +41,6 @@
 #include <cddb/cddb.h>
 
 #include "../../deadbeef.h"
-#include "../../junklib.h"
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)
