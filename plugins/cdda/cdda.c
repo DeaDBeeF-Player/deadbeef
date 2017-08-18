@@ -21,7 +21,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iconv.h>
 #include <sys/types.h>
 
 #if USE_PARANOIA_10_2
@@ -44,8 +43,8 @@
 #include "../../deadbeef.h"
 #include "../../junklib.h"
 
-#define trace(...) { fprintf (stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define CDDA_ALL_TRACKS "all.cda"
 
@@ -520,23 +519,23 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
             }
         }
     }
+
     // some versions of cdio does not convert strings to UTF-8 as documented
-    // cdio devs: get your sh*t together
-    const char * album_charset = junk_detect_charset(album);
-    const char * artist_charset = junk_detect_charset(artist);
-    if (album_charset != NULL ){
-        trace ( "cdda: album using %s charset, converting\n",album_charset);
-        char * album_converted = malloc (strlen (album) * 4);
-        if(album_converted){
-            junk_iconv (album, strlen(album), album_converted, strlen(album)*4, album_charset, "UTF-8");
+    const char * album_charset = deadbeef->junk_detect_charset (album);
+    const char * artist_charset = deadbeef->junk_detect_charset (artist);
+    if (album_charset != NULL) {
+        trace ( "cdda: album field using %s charset, converting\n",album_charset);
+        char *album_converted = malloc (strlen(album) * 4);
+        if (album_converted) {
+            deadbeef->junk_iconv (album, strlen(album), album_converted, strlen(album)*4, album_charset, "UTF-8");
             album = album_converted;
         }
     }
-    if (artist_charset != NULL ){
-        trace ( "cdda: artist using %s charset, converting\n",artist_charset);
-        char * artist_converted = malloc (strlen (artist) * 4);
-        if(artist_converted){
-            junk_iconv (artist, strlen(artist), artist_converted, strlen(artist)*4, artist_charset, "UTF-8");
+    if (artist_charset != NULL ) {
+        trace ( "cdda: artist field using %s charset, converting\n",artist_charset);
+        char *artist_converted = malloc (strlen(artist) * 4);
+        if (artist_converted) {
+            deadbeef->junk_iconv (artist, strlen(artist), artist_converted, strlen(artist)*4, artist_charset, "UTF-8");
             artist = artist_converted;
         }
     }
@@ -544,10 +543,10 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
     replace_meta(item, "artist", artist);
     replace_meta(item, "album", album);
 
-    if( album && album_charset != NULL)
-        free(album);
-    if( artist && artist_charset != NULL)
-        free(artist);
+    if (album && album_charset != NULL)
+        free (album);
+    if (artist && artist_charset != NULL)
+        free (artist);
 #if CDIO_API_VERSION >= 6
     cdtext = cdio_get_cdtext (cdio);
 #else
@@ -588,19 +587,19 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
         }
         if (field) {
             // convert to UTF-8 if not UTF-8 already
-            const char * text_charset = junk_detect_charset(text);
-            if (text_charset != NULL ){
-                trace ( "cdda: text using %s charset, converting\n",text_charset);
-                char * text_converted = malloc (strlen (text) * 4);
-                if(text_converted){
-                    junk_iconv (field, strlen(text), text_converted, strlen(text)*4, text_charset, "UTF-8");
+            const char *text_charset = deadbeef->junk_detect_charset (text);
+            if (text_charset != NULL) {
+                trace ("cdda: text field using %s charset, converting\n",text_charset);
+                char *text_converted = malloc (strlen(text) * 4);
+                if (text_converted) {
+                    deadbeef->junk_iconv (field, strlen(text), text_converted, strlen(text)*4, text_charset, "UTF-8");
                     text = text_converted;
                 }
             }
             trace("%s: %s\n", field, text);
             replace_meta(item, field, text);
-            if(text && text_charset != 0)
-                free(text);
+            if (text && text_charset != NULL)
+                free (text);
         }
     }
 }
