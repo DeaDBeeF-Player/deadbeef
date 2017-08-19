@@ -131,7 +131,6 @@ _scan_progress_cb (void *ctx) {
 
 static void
 _scan_progress (int current, void *user_data) {
-    printf ("rg: progress=%d\n", current);
     progress_data_t *dt = calloc (1, sizeof (progress_data_t));
     dt->current = current;
     dt->ctl = user_data;
@@ -166,7 +165,28 @@ _ctl_dismiss (rgs_controller_t *ctl) {
         prev = c;
     }
 
+    if (ctl->progress_window) {
+        gtk_widget_hide (ctl->progress_window);
+        gtk_widget_destroy (ctl->progress_window);
+        ctl->progress_window = NULL;
+    }
+
+    if (ctl->results_window) {
+        gtk_widget_hide (ctl->results_window);
+        gtk_widget_destroy (ctl->results_window);
+        ctl->results_window = NULL;
+    }
+
     free (ctl);
+}
+
+static void
+on_results_cancel_btn (GtkButton *button, gpointer user_data) {
+    _ctl_dismiss (user_data);
+}
+
+static void
+on_results_update_btn (GtkButton *button, gpointer user_data) {
 }
 
 void _ctl_scanFinished (rgs_controller_t *ctl) {
@@ -179,7 +199,7 @@ void _ctl_scanFinished (rgs_controller_t *ctl) {
 
     float speed = _getScanSpeed (ctl->_rg_settings.cd_samples_processed, timePassed);
 
-    gtk_widget_show (ctl->progress_window);
+    gtk_widget_hide (ctl->progress_window);
     gtk_widget_destroy (ctl->progress_window);
     ctl->progress_window = NULL;
 
@@ -239,6 +259,15 @@ void _ctl_scanFinished (rgs_controller_t *ctl) {
         gtk_list_store_set (store, &it, 0, name, 1, status, 2, albumGain, 3, trackGain, 4, albumPeak, 5, trackPeak, -1);
     }
     gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
+
+    GtkWidget *cancel_btn = lookup_widget (ctl->results_window, "rg_scan_results_cancel");
+    GtkWidget *update_btn = lookup_widget (ctl->results_window, "rg_scan_results_update");
+    g_signal_connect ((gpointer) cancel_btn, "clicked",
+            G_CALLBACK (on_results_cancel_btn),
+            ctl);
+    g_signal_connect ((gpointer) cancel_btn, "clicked",
+            G_CALLBACK (on_results_update_btn),
+            ctl);
 }
 
 
@@ -347,6 +376,9 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount) {
             if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (uri)) {
                 tracks[count++] = it;
             }
+            else {
+                deadbeef->pl_item_unref (it);
+            }
 
             it = next;
         }
@@ -364,8 +396,10 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount) {
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->is_local_file (uri)) {
                 tracks[count++] = it;
+                deadbeef->pl_item_ref (it);
             }
             DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
             it = next;
         }
 
@@ -379,6 +413,9 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount) {
                 count = 1;
                 tracks = calloc (1, sizeof (DB_playItem_t *));
                 tracks[0] = it;
+            }
+            else {
+                deadbeef->pl_item_unref (it);
             }
         }
     }

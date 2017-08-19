@@ -10586,7 +10586,7 @@ Descending</property>
 	  </child>
 
 	  <child>
-	    <widget class="GtkButton" id="rg_scan_results_update_btn">
+	    <widget class="GtkButton" id="rg_scan_results_update">
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label" translatable="yes">Update File Tags</property>
@@ -10602,7 +10602,7 @@ Descending</property>
 	  </child>
 
 	  <child>
-	    <widget class="GtkButton" id="rg_scan_results_cancel_btn">
+	    <widget class="GtkButton" id="rg_scan_results_cancel">
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label" translatable="yes">Cancel</property>

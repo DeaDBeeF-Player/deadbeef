@@ -5303,8 +5303,8 @@ create_rg_scan_results (void)
   GtkWidget *rg_scan_results_list;
   GtkWidget *hbox144;
   GtkWidget *rg_scan_results_status;
-  GtkWidget *rg_scan_results_update_btn;
-  GtkWidget *rg_scan_results_cancel_btn;
+  GtkWidget *rg_scan_results_update;
+  GtkWidget *rg_scan_results_cancel;
 
   rg_scan_results = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_widget_set_size_request (rg_scan_results, 550, 350);
@@ -5336,13 +5336,13 @@ create_rg_scan_results (void)
   gtk_label_set_ellipsize (GTK_LABEL (rg_scan_results_status), PANGO_ELLIPSIZE_END);
   gtk_label_set_single_line_mode (GTK_LABEL (rg_scan_results_status), TRUE);
 
-  rg_scan_results_update_btn = gtk_button_new_with_mnemonic (_("Update File Tags"));
-  gtk_widget_show (rg_scan_results_update_btn);
-  gtk_box_pack_start (GTK_BOX (hbox144), rg_scan_results_update_btn, FALSE, FALSE, 0);
+  rg_scan_results_update = gtk_button_new_with_mnemonic (_("Update File Tags"));
+  gtk_widget_show (rg_scan_results_update);
+  gtk_box_pack_start (GTK_BOX (hbox144), rg_scan_results_update, FALSE, FALSE, 0);
 
-  rg_scan_results_cancel_btn = gtk_button_new_with_mnemonic (_("Cancel"));
-  gtk_widget_show (rg_scan_results_cancel_btn);
-  gtk_box_pack_start (GTK_BOX (hbox144), rg_scan_results_cancel_btn, FALSE, FALSE, 0);
+  rg_scan_results_cancel = gtk_button_new_with_mnemonic (_("Cancel"));
+  gtk_widget_show (rg_scan_results_cancel);
+  gtk_box_pack_start (GTK_BOX (hbox144), rg_scan_results_cancel, FALSE, FALSE, 0);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (rg_scan_results, rg_scan_results, "rg_scan_results");
@@ -5351,8 +5351,8 @@ create_rg_scan_results (void)
   GLADE_HOOKUP_OBJECT (rg_scan_results, rg_scan_results_list, "rg_scan_results_list");
   GLADE_HOOKUP_OBJECT (rg_scan_results, hbox144, "hbox144");
   GLADE_HOOKUP_OBJECT (rg_scan_results, rg_scan_results_status, "rg_scan_results_status");
-  GLADE_HOOKUP_OBJECT (rg_scan_results, rg_scan_results_update_btn, "rg_scan_results_update_btn");
-  GLADE_HOOKUP_OBJECT (rg_scan_results, rg_scan_results_cancel_btn, "rg_scan_results_cancel_btn");
+  GLADE_HOOKUP_OBJECT (rg_scan_results, rg_scan_results_update, "rg_scan_results_update");
+  GLADE_HOOKUP_OBJECT (rg_scan_results, rg_scan_results_cancel, "rg_scan_results_cancel");
 
   return rg_scan_results;
 }
