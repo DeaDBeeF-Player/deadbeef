@@ -5258,7 +5258,6 @@ create_rg_scan_progress (void)
   rg_scan_progress_file = gtk_entry_new ();
   gtk_widget_show (rg_scan_progress_file);
   gtk_box_pack_start (GTK_BOX (hbox142), rg_scan_progress_file, TRUE, TRUE, 0);
-  gtk_entry_set_max_length (GTK_ENTRY (rg_scan_progress_file), 2);
   gtk_editable_set_editable (GTK_EDITABLE (rg_scan_progress_file), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (rg_scan_progress_file), 8226);
 

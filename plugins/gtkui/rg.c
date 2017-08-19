@@ -131,6 +131,7 @@ _scan_progress_cb (void *ctx) {
 
 static void
 _scan_progress (int current, void *user_data) {
+    printf ("rg: progress=%d\n", current);
     progress_data_t *dt = calloc (1, sizeof (progress_data_t));
     dt->current = current;
     dt->ctl = user_data;
@@ -236,18 +237,92 @@ runScanner (int mode, DB_playItem_t ** tracks, int count) {
     gettimeofday (&ctl->_rg_start_tv, NULL);
     _ctl_progress (ctl, 0);
 
-
     // FIXME: need to use some sort of job queue
-    uint64_t tid = deadbeef->thread_start (_rgs_job, NULL);
+    uint64_t tid = deadbeef->thread_start (_rgs_job, ctl);
     deadbeef->thread_detach (tid);
 
     ctl->next = g_rgControllers;
     g_rgControllers = ctl;
 }
 
+static DB_playItem_t **
+_get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount) {
+    int count = 0;
+    DB_playItem_t **tracks = NULL;
+
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (!plt) {
+        return NULL;
+    }
+    deadbeef->pl_lock ();
+
+    if (ctx == DDB_ACTION_CTX_SELECTION) {
+        int tc = deadbeef->plt_getselcount (plt);
+        if (!tc) {
+            deadbeef->pl_unlock ();
+            return NULL;
+        }
+        tracks = calloc (tc, sizeof (DB_playItem_t *));
+
+        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+        while (it) {
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            const char *uri = deadbeef->pl_find_meta (it, ":URI");
+            if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (uri)) {
+                tracks[count++] = it;
+            }
+
+            it = next;
+        }
+    }
+    else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
+        int tc = deadbeef->plt_get_item_count (plt, PL_MAIN);
+        if (!tc) {
+            deadbeef->pl_unlock ();
+            return NULL;
+        }
+        tracks = calloc (tc, sizeof (DB_playItem_t *));
+
+        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+        while (it) {
+            const char *uri = deadbeef->pl_find_meta (it, ":URI");
+            if (deadbeef->is_local_file (uri)) {
+                tracks[count++] = it;
+            }
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            it = next;
+        }
+
+        deadbeef->pl_save_current ();
+    }
+    else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
+        DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+        if (it) {
+            const char *uri = deadbeef->pl_find_meta (it, ":URI");
+            if (deadbeef->is_local_file (uri)) {
+                count = 1;
+                tracks = calloc (1, sizeof (DB_playItem_t *));
+                tracks[0] = it;
+            }
+        }
+    }
+    deadbeef->pl_unlock ();
+    deadbeef->plt_unref (plt);
+
+    if (!count) {
+        free (tracks);
+        return NULL;
+    }
+    *pcount = count;
+    return tracks;
+}
 
 int
 action_rg_scan_per_file_handler (struct DB_plugin_action_s *action, int ctx) {
+    int count;
+    DB_playItem_t **tracks = _get_action_track_list (action, ctx, &count);
+
+    runScanner (DDB_RG_SCAN_MODE_TRACK, tracks, count);
     return 0;
 }
 
@@ -258,11 +333,19 @@ action_rg_remove_info_handler (struct DB_plugin_action_s *action, int ctx) {
 
 int
 action_rg_scan_selection_as_albums_handler (struct DB_plugin_action_s *action, int ctx) {
+    int count;
+    DB_playItem_t **tracks = _get_action_track_list (action, ctx, &count);
+
+    runScanner (DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS, tracks, count);
     return 0;
 }
 
 int
 action_rg_scan_selection_as_album_handler (struct DB_plugin_action_s *action, int ctx) {
+    int count;
+    DB_playItem_t **tracks = _get_action_track_list (action, ctx, &count);
+
+    runScanner (DDB_RG_SCAN_MODE_SINGLE_ALBUM, tracks, count);
     return 0;
 }
 

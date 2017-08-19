@@ -10407,7 +10407,7 @@ Descending</property>
 	      <property name="can_focus">True</property>
 	      <property name="editable">False</property>
 	      <property name="visibility">True</property>
-	      <property name="max_length">2</property>
+	      <property name="max_length">0</property>
 	      <property name="text" translatable="yes"></property>
 	      <property name="has_frame">True</property>
 	      <property name="invisible_char">•</property>
