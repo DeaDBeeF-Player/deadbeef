@@ -36,6 +36,7 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
                    ../../shared/trkproperties_shared.c ../../shared/trkproperties_shared.h\
                    ../../utf8.c\
                    clipboard.c clipboard.h\
+				   rg.c rg.h\
 				   $(SM_SOURCES) $(OSXSRC)
 
 sdkdir = $(pkgincludedir)

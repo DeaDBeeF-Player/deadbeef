@@ -3,7 +3,21 @@ workspace "deadbeef"
 
 includedirs { "static-deps/lib-x86-64/include/x86_64-linux-gnu", "static-deps/lib-x86-64/include"  }
 libdirs { "static-deps/lib-x86-64/lib", "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "/usr/lib/x86_64-linux-gnu" }
-defines { "VERSION=\"devel\"" }
+defines {
+    "VERSION=\"devel\"",
+    "_GNU_SOURCE",
+    "HAVE_LOG2=1"
+}
+
+buildoptions { "-fPIC" }
+
+filter "configurations:Debug"
+  defines { "DEBUG" }
+  symbols "On"
+
+filter "configurations:Release"
+  defines { "NDEBUG" }
+  optimize "On"
 
 project "deadbeef"
    kind "ConsoleApp"
@@ -21,16 +35,8 @@ project "deadbeef"
        "ConvertUTF/*.c"
    }
 
-   defines { "_GNU_SOURCE", "HAVE_LOG2=1", "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"" }
+   defines { "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"" }
    links { "m", "pthread", "dl" }
-
-   filter "configurations:Debug"
-      defines { "DEBUG" }
-      symbols "On"
-
-   filter "configurations:Release"
-      defines { "NDEBUG" }
-      optimize "On"
 
 project "mp3"
    kind "SharedLib"
@@ -44,15 +50,97 @@ project "mp3"
    }
 
    defines { "USE_LIBMPG123=1", "USE_LIBMAD=1" }
-   links { "m", "mpg123", "mad" }
+   links { "mpg123", "mad" }
 
-   filter "configurations:Debug"
-      defines { "DEBUG" }
-      symbols "On"
+project "flac_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "flac"
 
-   filter "configurations:Release"
-      defines { "NDEBUG" }
-      optimize "On"
+   files {
+       "plugins/flac/*.h",
+       "plugins/flac/*.c",
+       "plugins/liboggedit/*.h",
+       "plugins/liboggedit/*.c",
+   }
+
+   defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
+   links { "FLAC", "ogg" }
+
+project "wavpack_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "wavpack"
+
+   files {
+       "plugins/wavpack/*.h",
+       "plugins/wavpack/*.c",
+   }
+
+   links { "wavpack" }
+
+project "vorbis_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "vorbis"
+
+   files {
+       "plugins/vorbis/*.h",
+       "plugins/vorbis/*.c",
+       "plugins/liboggedit/*.h",
+       "plugins/liboggedit/*.c",
+   }
+
+   defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
+   links { "vorbisfile", "vorbis", "m", "ogg" }
+
+project "ffap"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/ffap/*.h",
+       "plugins/ffap/*.c",
+       "plugins/ffap/dsputil_yasm.asm",
+   }
+
+   filter 'files:**.asm'
+       buildmessage 'YASM Assembling : %{file.relpath}'
+
+       buildcommands
+       {
+           'yasm -f elf -D ARCH_X86_64 -m amd64 -DPIC -DPREFIX -o "obj/%{cfg.buildcfg}/ffap/%{file.basename}.o" "%{file.relpath}"'
+       }
+
+       buildoutputs
+       {
+           "obj/%{cfg.buildcfg}/ffap/%{file.basename}.o"
+       }
+
+   defines { "APE_USE_ASM=yes", "ARCH_X86_64=1" }
+
+project "hotkeys"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/hotkeys/*.h",
+       "plugins/hotkeys/*.c",
+       "plugins/libparser/*.h",
+       "plugins/libparser/*.c",
+   }
+
+   links { "X11" }
 
 project "alsa"
    kind "SharedLib"
@@ -65,16 +153,7 @@ project "alsa"
        "plugins/alsa/*.c",
    }
 
-   defines { }
    links { "asound" }
-
-   filter "configurations:Debug"
-      defines { "DEBUG" }
-      symbols "On"
-
-   filter "configurations:Release"
-      defines { "NDEBUG" }
-      optimize "On"
 
 project "ddb_gui_GTK2"
    kind "SharedLib"
@@ -97,16 +176,20 @@ project "ddb_gui_GTK2"
        "utf8.c",
    }
 
-   defines { }
    links { "jansson", "gtk-x11-2.0", "pango-1.0", "cairo", "gdk-x11-2.0", "gdk_pixbuf-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
 
-   filter "configurations:Debug"
-      defines { "DEBUG" }
-      symbols "On"
+project "rg_scanner"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
 
-   filter "configurations:Release"
-      defines { "NDEBUG" }
-      optimize "On"
+   files {
+       "plugins/rg_scanner/*.h",
+       "plugins/rg_scanner/*.c",
+       "plugins/rg_scanner/ebur128/*.h",
+       "plugins/rg_scanner/ebur128/*.c",
+   }
 
 project "resources"
     kind "Utility"

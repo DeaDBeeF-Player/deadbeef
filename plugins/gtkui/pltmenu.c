@@ -105,7 +105,7 @@ static void
 on_copy_playlist1_activate        (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    const ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
     if (plt) {
         int playlist = gtkui_copy_playlist (plt);
         if (playlist != -1) {

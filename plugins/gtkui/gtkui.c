@@ -67,6 +67,7 @@
 #if GTK_CHECK_VERSION(3,0,0)
 #include "deadbeefapp.h"
 #endif
+#include "rg.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -688,7 +689,7 @@ gtkui_add_new_playlist (void) {
 }
 
 void
-gtkui_copy_playlist_int (const ddb_playlist_t *src, ddb_playlist_t *dst) {
+gtkui_copy_playlist_int (ddb_playlist_t *src, ddb_playlist_t *dst) {
     deadbeef->pl_lock ();
     DB_playItem_t *it = deadbeef->plt_get_first (src, PL_MAIN);
     DB_playItem_t *after = NULL;
@@ -713,7 +714,7 @@ gtkui_copy_playlist_int (const ddb_playlist_t *src, ddb_playlist_t *dst) {
 }
 
 int
-gtkui_copy_playlist (const ddb_playlist_t *plt) {
+gtkui_copy_playlist (ddb_playlist_t *plt) {
     char orig_title[100];
     deadbeef->plt_get_title (plt, orig_title, sizeof (orig_title));
 
@@ -1121,8 +1122,7 @@ gtkui_toggle_log_window(void) {
 
 void
 gtkui_show_log_window_internal(gboolean show) {
-
-    gtk_widget_set_visible (logwindow, show);
+    show ? gtk_widget_show (logwindow) : gtk_widget_hide (logwindow);
     GtkWidget *menuitem = lookup_widget (mainwin, "view_log");
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), show);
 
@@ -1562,12 +1562,44 @@ gtkui_get_mainwin (void) {
     return mainwin;
 }
 
+static DB_plugin_action_t action_rg_remove_info = {
+    .title = "ReplayGain/Remove ReplayGain Information",
+    .name = "rg_remove_info",
+    .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_ADD_MENU,
+    .callback2 = action_rg_remove_info_handler,
+    .next = NULL
+};
+
+static DB_plugin_action_t action_rg_scan_selection_as_albums = {
+    .title = "ReplayGain/Scan Selection As Albums (By Tags)",
+    .name = "rg_scan_selection_as_albums",
+    .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_ADD_MENU,
+    .callback2 = action_rg_scan_per_file_handler,
+    .next = &action_rg_remove_info
+};
+
+static DB_plugin_action_t action_rg_scan_selection_as_album = {
+    .title = "ReplayGain/Scan Selection As Single Album",
+    .name = "rg_scan_selection_as_album",
+    .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_ADD_MENU,
+    .callback2 = action_rg_scan_selection_as_album_handler,
+    .next = &action_rg_scan_selection_as_albums
+};
+
+static DB_plugin_action_t action_rg_scan_per_file = {
+    .title = "ReplayGain/Scan Per-file Track Gain",
+    .name = "rg_scan_perfile_track_gain",
+    .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_ADD_MENU,
+    .callback2 = action_rg_scan_per_file_handler,
+    .next = &action_rg_scan_selection_as_album
+};
+
 static DB_plugin_action_t action_deselect_all = {
     .title = "Edit/Deselect All",
     .name = "deselect_all",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_deselect_all_handler,
-    .next = NULL
+    .next = &action_rg_scan_per_file
 };
 
 static DB_plugin_action_t action_select_all = {
