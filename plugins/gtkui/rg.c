@@ -186,7 +186,15 @@ on_results_cancel_btn (GtkButton *button, gpointer user_data) {
 }
 
 static void
+on_results_delete_event (GtkWidget *window,GdkEvent *event, gpointer user_data) {
+    _ctl_dismiss (user_data);
+}
+
+static void
 on_results_update_btn (GtkButton *button, gpointer user_data) {
+    rgs_controller_t *ctl = user_data;
+
+    gtk_widget_hide (ctl->results_window);
 }
 
 void _ctl_scanFinished (rgs_controller_t *ctl) {
@@ -200,8 +208,6 @@ void _ctl_scanFinished (rgs_controller_t *ctl) {
     float speed = _getScanSpeed (ctl->_rg_settings.cd_samples_processed, timePassed);
 
     gtk_widget_hide (ctl->progress_window);
-    gtk_widget_destroy (ctl->progress_window);
-    ctl->progress_window = NULL;
 
     ctl->results_window = create_rg_scan_results ();
     GtkWidget *status = lookup_widget (ctl->results_window, "rg_scan_results_status");
@@ -265,6 +271,9 @@ void _ctl_scanFinished (rgs_controller_t *ctl) {
     g_signal_connect ((gpointer) cancel_btn, "clicked",
             G_CALLBACK (on_results_cancel_btn),
             ctl);
+    g_signal_connect ((gpointer) ctl->results_window, "delete-event",
+            G_CALLBACK (on_results_delete_event),
+            ctl);
     g_signal_connect ((gpointer) cancel_btn, "clicked",
             G_CALLBACK (on_results_update_btn),
             ctl);
@@ -298,6 +307,12 @@ on_progress_cancel_btn (GtkButton *button, gpointer user_data) {
 }
 
 static void
+on_progress_delete_event (GtkWidget *widget, GdkEvent *event, gpointer user_data) {
+    rgs_controller_t *ctl = user_data;
+    ctl->_abort_flag = 1;
+}
+
+static void
 runScanner (int mode, DB_playItem_t ** tracks, int count) {
     deadbeef->background_job_increment ();
 
@@ -324,7 +339,9 @@ runScanner (int mode, DB_playItem_t ** tracks, int count) {
     g_signal_connect ((gpointer) cancel_btn, "clicked",
             G_CALLBACK (on_progress_cancel_btn),
             ctl);
-
+    g_signal_connect ((gpointer) ctl->progress_window, "delete-event",
+            G_CALLBACK (on_progress_delete_event),
+            ctl);
 
     gtk_widget_show (ctl->progress_window);
 
