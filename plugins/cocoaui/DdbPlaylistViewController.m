@@ -1214,6 +1214,11 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 }
 
 - (void)rgRemove:(id)sender {
+    int count;
+    DB_playItem_t **tracks = [self getSelectedTracksForRg:&count];
+    if (tracks) {
+        [ReplayGainScannerController removeRgTagsFromTracks:tracks count:count];
+    }
 }
 
 - (void)rgScanAlbum:(id)sender {
@@ -1228,30 +1233,37 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     [self rgScan:DDB_RG_SCAN_MODE_TRACK];
 }
 
-- (void)rgScan:(int)mode {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+- (DB_playItem_t **)getSelectedTracksForRg:(int *)pcount {
+   ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->pl_lock ();
+    DB_playItem_t __block **tracks = NULL;
     int numtracks = deadbeef->plt_getselcount (plt);
-    if (numtracks > 0) {
-        DB_playItem_t __block **tracks = calloc (numtracks, sizeof (DB_playItem_t *));
-        int __block n = 0;
-        [self forEachTrack:^(DB_playItem_t *it) {
-            if (deadbeef->pl_is_selected (it)) {
-                assert (n < numtracks);
-                deadbeef->pl_item_ref (it);
-                tracks[n++] = it;
-            }
-            return YES;
-        }  forIter:PL_MAIN];
+    if (!numtracks) {
         deadbeef->pl_unlock ();
-
-        [ReplayGainScannerController runScanner:mode forTracks:tracks count:numtracks];
+        return NULL;
     }
-    else {
-        deadbeef->pl_unlock ();
-    }
-
+    tracks = calloc (numtracks, sizeof (DB_playItem_t *));
+    int __block n = 0;
+    [self forEachTrack:^(DB_playItem_t *it) {
+        if (deadbeef->pl_is_selected (it)) {
+            assert (n < numtracks);
+            deadbeef->pl_item_ref (it);
+            tracks[n++] = it;
+        }
+        return YES;
+    }  forIter:PL_MAIN];
+    deadbeef->pl_unlock ();
     deadbeef->plt_unref (plt);
+    *pcount = n;
+    return tracks;
+}
+
+- (void)rgScan:(int)mode {
+    int count;
+    DB_playItem_t **tracks = [self getSelectedTracksForRg:&count];
+    if (tracks) {
+        [ReplayGainScannerController runScanner:mode forTracks:tracks count:count];
+    }
 }
 
 - (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view {
