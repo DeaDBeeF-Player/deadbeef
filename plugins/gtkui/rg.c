@@ -37,6 +37,8 @@ extern DB_functions_t *deadbeef;
 typedef struct rgs_controller_s {
     GtkWidget *progress_window;
     GtkWidget *results_window;
+    GtkWidget *update_progress_window;
+
     ddb_rg_scanner_settings_t _rg_settings;
     ddb_rg_scanner_t *_rg;
     int _abort_flag;
@@ -177,6 +179,12 @@ _ctl_dismiss (rgs_controller_t *ctl) {
         ctl->results_window = NULL;
     }
 
+    if (ctl->update_progress_window) {
+        gtk_widget_hide (ctl->update_progress_window);
+        gtk_widget_destroy (ctl->update_progress_window);
+        ctl->update_progress_window = NULL;
+    }
+
     free (ctl);
 }
 
@@ -190,11 +198,88 @@ on_results_delete_event (GtkWidget *window,GdkEvent *event, gpointer user_data) 
     _ctl_dismiss (user_data);
 }
 
+typedef struct {
+    rgs_controller_t *ctl;
+    int current;
+} updateProgressData_t;
+
+static gboolean
+_setUpdateProgress (void *ctx) {
+    updateProgressData_t *dt = ctx;
+    rgs_controller_t *ctl = dt->ctl;
+    const char *path = deadbeef->pl_find_meta_raw (ctl->_rg_settings.tracks[dt->current], ":URI");
+    GtkWidget *progressText = lookup_widget (ctl->progress_window, "rg_scan_progress_file");
+    gtk_entry_set_text (GTK_ENTRY (progressText), path);
+
+    GtkWidget *progressBar = lookup_widget (ctl->progress_window, "rg_scan_progress_bar");
+    gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progressBar), (double)dt->current/ctl->_rg_settings.num_tracks);
+    free (dt);
+
+    return FALSE;
+}
+
+static gboolean
+_ctl_dismiss_cb (void *ctx) {
+    _ctl_dismiss (ctx);
+    return FALSE;
+}
+
+static void
+_update_tags (void *ctx) {
+    rgs_controller_t *ctl = ctx;
+
+    for (int i = 0; i < ctl->_rg_settings.num_tracks; i++) {
+        if (ctl->_abortTagWriting) {
+            break;
+        }
+
+        if (ctl->_rg_settings.results[i].scan_result == DDB_RG_SCAN_RESULT_SUCCESS) {
+            updateProgressData_t *dt = calloc (1, sizeof (updateProgressData_t));
+            dt->ctl = ctl;
+            dt->current = i;
+
+            g_idle_add (_setUpdateProgress, dt);
+            
+            _rg->apply (ctl->_rg_settings.tracks[i], ctl->_rg_settings.results[i].track_gain, ctl->_rg_settings.results[i].track_peak, ctl->_rg_settings.results[i].album_gain, ctl->_rg_settings.results[i].album_peak);
+        }
+    }
+
+    g_idle_add (_ctl_dismiss_cb, ctl);
+}
+
+static void
+on_update_progress_cancel_btn (GtkWidget *button, void *user_data) {
+    rgs_controller_t *ctl = user_data;
+    ctl->_abortTagWriting = 1;
+}
+
+static void
+on_update_progress_delete_event (GtkWidget *window, GdkEvent *event, void *user_data) {
+    rgs_controller_t *ctl = user_data;
+    ctl->_abortTagWriting = 1;
+}
+
 static void
 on_results_update_btn (GtkButton *button, gpointer user_data) {
     rgs_controller_t *ctl = user_data;
 
     gtk_widget_hide (ctl->results_window);
+
+    ctl->update_progress_window = create_rg_scan_progress ();
+
+    GtkWidget *cancel_btn = lookup_widget (ctl->update_progress_window, "rg_scan_progress_cancel");
+    g_signal_connect ((gpointer) cancel_btn, "clicked",
+            G_CALLBACK (on_update_progress_cancel_btn),
+            ctl);
+    g_signal_connect ((gpointer) ctl->update_progress_window, "delete-event",
+            G_CALLBACK (on_update_progress_delete_event),
+            ctl);
+
+    gtk_window_set_title (GTK_WINDOW (ctl->update_progress_window), _("Updating File Tags Progress"));
+    gtk_widget_show (ctl->update_progress_window);
+    ctl->_abortTagWriting = 0;
+
+    deadbeef->thread_detach (deadbeef->thread_start (_update_tags, ctl));
 }
 
 void _ctl_scanFinished (rgs_controller_t *ctl) {
@@ -274,7 +359,7 @@ void _ctl_scanFinished (rgs_controller_t *ctl) {
     g_signal_connect ((gpointer) ctl->results_window, "delete-event",
             G_CALLBACK (on_results_delete_event),
             ctl);
-    g_signal_connect ((gpointer) cancel_btn, "clicked",
+    g_signal_connect ((gpointer) update_btn, "clicked",
             G_CALLBACK (on_results_update_btn),
             ctl);
 }
