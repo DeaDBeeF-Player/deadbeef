@@ -223,7 +223,10 @@ static NSMutableArray *g_rgControllers;
                 _rg->apply (_rg_settings.tracks[i], _rg_settings.results[i].track_gain, _rg_settings.results[i].track_peak, _rg_settings.results[i].album_gain, _rg_settings.results[i].album_peak);
             }
         }
-        [self dismissController:self];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self dismissController:self];
+        });
     });
 }
 
