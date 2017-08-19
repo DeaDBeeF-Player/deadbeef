@@ -199,6 +199,12 @@ _rgs_job (void *ctx) {
 }
 
 static void
+on_progress_cancel_btn (GtkButton *button, gpointer user_data) {
+    rgs_controller_t *ctl = user_data;
+    ctl->_abort_flag = 1;
+}
+
+static void
 runScanner (int mode, DB_playItem_t ** tracks, int count) {
     deadbeef->background_job_increment ();
 
@@ -221,6 +227,12 @@ runScanner (int mode, DB_playItem_t ** tracks, int count) {
     }
 
     ctl->progress_window = create_rg_scan_progress ();
+    GtkWidget *cancel_btn = lookup_widget (ctl->progress_window, "rg_scan_progress_cancel");
+    g_signal_connect ((gpointer) cancel_btn, "clicked",
+            G_CALLBACK (on_progress_cancel_btn),
+            ctl);
+
+
     gtk_widget_show (ctl->progress_window);
 
     memset (&ctl->_rg_settings, 0, sizeof (ddb_rg_scanner_settings_t));

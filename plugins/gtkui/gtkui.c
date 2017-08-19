@@ -1122,8 +1122,7 @@ gtkui_toggle_log_window(void) {
 
 void
 gtkui_show_log_window_internal(gboolean show) {
-
-    gtk_widget_set_visible (logwindow, show);
+    show ? gtk_widget_show (logwindow) : gtk_widget_hide (logwindow);
     GtkWidget *menuitem = lookup_widget (mainwin, "view_log");
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), show);
 
