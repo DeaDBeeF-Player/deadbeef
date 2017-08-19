@@ -174,7 +174,71 @@ void _ctl_scanFinished (rgs_controller_t *ctl) {
     gettimeofday (&tv, NULL);
     float timePassed = (tv.tv_sec-ctl->_rg_start_tv.tv_sec) + (tv.tv_usec - ctl->_rg_start_tv.tv_usec) / 1000000.f;
 
-    // TODO: display results table
+    char elapsed[50];
+    _formatTime (timePassed, 1, elapsed, sizeof (elapsed));
+
+    float speed = _getScanSpeed (ctl->_rg_settings.cd_samples_processed, timePassed);
+
+    gtk_widget_show (ctl->progress_window);
+    gtk_widget_destroy (ctl->progress_window);
+    ctl->progress_window = NULL;
+
+    ctl->results_window = create_rg_scan_results ();
+    GtkWidget *status = lookup_widget (ctl->results_window, "rg_scan_results_status");
+    char statusText[200];
+    snprintf (statusText, sizeof (statusText), "Calculated in: %s, speed: %0.2fx", elapsed, speed);
+    gtk_label_set_text (GTK_LABEL (status), statusText);
+    gtk_widget_show (ctl->results_window);
+
+    GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (ctl->results_window, "rg_scan_results_list"));
+    GtkListStore *store = gtk_list_store_new (6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+    gtk_tree_view_append_column (tree, gtk_tree_view_column_new_with_attributes (_("Name"), gtk_cell_renderer_text_new (), "text", 0, NULL));
+    gtk_tree_view_append_column (tree, gtk_tree_view_column_new_with_attributes (_("Status"), gtk_cell_renderer_text_new (), "text", 1, NULL));
+    gtk_tree_view_append_column (tree, gtk_tree_view_column_new_with_attributes (_("Album Gain"), gtk_cell_renderer_text_new (), "text", 2, NULL));
+    gtk_tree_view_append_column (tree, gtk_tree_view_column_new_with_attributes (_("Track Gain"), gtk_cell_renderer_text_new (), "text", 3, NULL));
+    gtk_tree_view_append_column (tree, gtk_tree_view_column_new_with_attributes (_("Album Peak"), gtk_cell_renderer_text_new (), "text", 4, NULL));
+    gtk_tree_view_append_column (tree, gtk_tree_view_column_new_with_attributes (_("Track Peak"), gtk_cell_renderer_text_new (), "text", 5, NULL));
+    DB_plugin_t **plugins = deadbeef->plug_get_list ();
+
+    const char *status_str[] = {
+        _("Success"),
+        _("File not found"),
+        _("Invalid file"),
+    };
+
+    for (int i = 0; i < ctl->_rg_settings.num_tracks; i++) {
+        GtkTreeIter it;
+        gtk_list_store_append (store, &it);
+
+        ddb_tf_context_t ctx;
+        memset (&ctx, 0, sizeof(ctx));
+        ctx._size = sizeof (ddb_tf_context_t);
+        ctx.it = ctl->_rg_settings.tracks[i];
+
+        char name[100];
+        deadbeef->tf_eval (&ctx, _title_tf, name, sizeof (name));
+
+        const char *status = -ctl->_rg_settings.results[i].scan_result < 3 ? status_str[-ctl->_rg_settings.results[i].scan_result] : "Unknown error";
+
+        char albumGain[50] = "";
+        if (ctl->_rg_settings.mode != DDB_RG_SCAN_MODE_TRACK) {
+            snprintf (albumGain, sizeof (albumGain), "%0.2f dB", ctl->_rg_settings.results[i].album_gain);
+        }
+
+        char trackGain[50] = "";
+        snprintf (trackGain, sizeof (trackGain), "%0.2f dB", ctl->_rg_settings.results[i].track_gain);
+
+        char albumPeak[50] = "";
+        if (ctl->_rg_settings.mode != DDB_RG_SCAN_MODE_TRACK) {
+           snprintf (albumPeak, sizeof (albumPeak), "%0.6f", ctl->_rg_settings.results[i].album_peak);
+        }
+
+        char trackPeak[50] = "";
+        snprintf (trackPeak, sizeof (trackPeak), "%0.6f", ctl->_rg_settings.results[i].track_peak);
+
+        gtk_list_store_set (store, &it, 0, name, 1, status, 2, albumGain, 3, trackGain, 4, albumPeak, 5, trackPeak, -1);
+    }
+    gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
 }
 
 
