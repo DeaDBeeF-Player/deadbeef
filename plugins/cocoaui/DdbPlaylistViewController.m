@@ -1215,7 +1215,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 
 - (void)rgRemove:(id)sender {
     int count;
-    DB_playItem_t **tracks = [self getSelectedTracksForRg:&count];
+    DB_playItem_t **tracks = [self getSelectedTracksForRg:&count withRgTags:YES];
     if (tracks) {
         [ReplayGainScannerController removeRgTagsFromTracks:tracks count:count];
     }
@@ -1233,7 +1233,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     [self rgScan:DDB_RG_SCAN_MODE_TRACK];
 }
 
-- (DB_playItem_t **)getSelectedTracksForRg:(int *)pcount {
+- (DB_playItem_t **)getSelectedTracksForRg:(int *)pcount withRgTags:(BOOL)withRgTags {
    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->pl_lock ();
     DB_playItem_t __block **tracks = NULL;
@@ -1242,25 +1242,43 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         deadbeef->pl_unlock ();
         return NULL;
     }
+
+    ddb_replaygain_settings_t __block s;
+    s._size = sizeof (ddb_replaygain_settings_t);
+
     tracks = calloc (numtracks, sizeof (DB_playItem_t *));
     int __block n = 0;
     [self forEachTrack:^(DB_playItem_t *it) {
         if (deadbeef->pl_is_selected (it)) {
             assert (n < numtracks);
-            deadbeef->pl_item_ref (it);
-            tracks[n++] = it;
+            BOOL hasRgTags = NO;
+            if (withRgTags) {
+                deadbeef->replaygain_init_settings (&s, it);
+                if (s.has_album_gain || s.has_track_gain) {
+                    hasRgTags = YES;
+                }
+            }
+            if (!withRgTags || hasRgTags) {
+                deadbeef->pl_item_ref (it);
+                tracks[n++] = it;
+            }
         }
         return YES;
     }  forIter:PL_MAIN];
     deadbeef->pl_unlock ();
     deadbeef->plt_unref (plt);
+
+    if (!n) {
+        free (tracks);
+        return NULL;
+    }
     *pcount = n;
     return tracks;
 }
 
 - (void)rgScan:(int)mode {
     int count;
-    DB_playItem_t **tracks = [self getSelectedTracksForRg:&count];
+    DB_playItem_t **tracks = [self getSelectedTracksForRg:&count withRgTags:NO];
     if (tracks) {
         [ReplayGainScannerController runScanner:mode forTracks:tracks count:count];
     }
