@@ -72,6 +72,10 @@ static NSMutableArray *g_rgControllers;
 }
 
 + (BOOL)initPlugin {
+    if (_rg) {
+        return YES;
+    }
+
     _rg = (ddb_rg_scanner_t *)deadbeef->plug_get_for_id ("rg_scanner");
 
     if (!_rg) {
