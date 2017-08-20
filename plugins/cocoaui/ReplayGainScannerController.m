@@ -75,7 +75,7 @@ static NSMutableArray *g_rgControllers;
     _rg = (ddb_rg_scanner_t *)deadbeef->plug_get_for_id ("rg_scanner");
 
     if (!_rg) {
-        deadbeef->log ("ReplayGain plugin is not found");
+        deadbeef->log ("rg_scanner plugin is not found");
         return NO;
     }
 
@@ -164,8 +164,7 @@ static NSMutableArray *g_rgControllers;
     _rg_settings.tracks = tracks;
     _rg_settings.num_tracks = count;
 
-    [[self window] setIsVisible:YES];
-    [[self window] setIsVisible:NO];
+    [self window]; // access main window to make sure the NIB is loaded
     [_updateTagsProgressWindow setIsVisible:YES];
     _abortTagWriting = NO;
 
