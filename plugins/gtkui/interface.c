@@ -1906,14 +1906,14 @@ create_prefwin (void)
   gtk_widget_show (label126);
   gtk_box_pack_start (GTK_BOX (hbox100), label126, FALSE, FALSE, 0);
 
-  label124 = gtk_label_new (_("Preamp with RG:"));
+  label124 = gtk_label_new (_("Preamp with RG info:"));
   gtk_widget_show (label124);
   gtk_table_attach (GTK_TABLE (table1), label124, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label124), 0, 0.5);
 
-  label124a = gtk_label_new (_("Preamp without RG:"));
+  label124a = gtk_label_new (_("Preamp without RG info:"));
   gtk_widget_show (label124a);
   gtk_table_attach (GTK_TABLE (table1), label124a, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
