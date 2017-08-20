@@ -208,10 +208,10 @@ _setUpdateProgress (void *ctx) {
     updateProgressData_t *dt = ctx;
     rgs_controller_t *ctl = dt->ctl;
     const char *path = deadbeef->pl_find_meta_raw (ctl->_rg_settings.tracks[dt->current], ":URI");
-    GtkWidget *progressText = lookup_widget (ctl->progress_window, "rg_scan_progress_file");
+    GtkWidget *progressText = lookup_widget (ctl->update_progress_window, "rg_scan_progress_file");
     gtk_entry_set_text (GTK_ENTRY (progressText), path);
 
-    GtkWidget *progressBar = lookup_widget (ctl->progress_window, "rg_scan_progress_bar");
+    GtkWidget *progressBar = lookup_widget (ctl->update_progress_window, "rg_scan_progress_bar");
     gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progressBar), (double)dt->current/ctl->_rg_settings.num_tracks);
     free (dt);
 
@@ -309,7 +309,6 @@ void _ctl_scanFinished (rgs_controller_t *ctl) {
     gtk_tree_view_append_column (tree, gtk_tree_view_column_new_with_attributes (_("Track Gain"), gtk_cell_renderer_text_new (), "text", 3, NULL));
     gtk_tree_view_append_column (tree, gtk_tree_view_column_new_with_attributes (_("Album Peak"), gtk_cell_renderer_text_new (), "text", 4, NULL));
     gtk_tree_view_append_column (tree, gtk_tree_view_column_new_with_attributes (_("Track Peak"), gtk_cell_renderer_text_new (), "text", 5, NULL));
-    DB_plugin_t **plugins = deadbeef->plug_get_list ();
 
     const char *status_str[] = {
         _("Success"),
@@ -397,26 +396,39 @@ on_progress_delete_event (GtkWidget *widget, GdkEvent *event, gpointer user_data
     ctl->_abort_flag = 1;
 }
 
-static void
-runScanner (int mode, DB_playItem_t ** tracks, int count) {
-    deadbeef->background_job_increment ();
-
-    rgs_controller_t *ctl = calloc (1, sizeof (rgs_controller_t));
-
-    if (!_title_tf) {
-        _title_tf = deadbeef->tf_compile ("%title%");
+static int
+_init_plugin (void) {
+    if (_rg) {
+        return 1;
     }
 
     _rg = (ddb_rg_scanner_t *)deadbeef->plug_get_for_id ("rg_scanner");
     if (_rg && _rg->misc.plugin.version_major != 1) {
         _rg = NULL;
         deadbeef->log ("Invalid version of rg_scanner plugin");
-        return;
+        return 0;
     }
 
     if (!_rg) {
         deadbeef->log ("ReplayGain plugin is not found");
+        return 0;
+    }
+
+    return 1;
+}
+
+static void
+runScanner (int mode, DB_playItem_t ** tracks, int count) {
+    if (!_init_plugin ()) {
         return;
+    }
+
+    deadbeef->background_job_increment ();
+
+    rgs_controller_t *ctl = calloc (1, sizeof (rgs_controller_t));
+
+    if (!_title_tf) {
+        _title_tf = deadbeef->tf_compile ("%title%");
     }
 
     ctl->progress_window = create_rg_scan_progress ();
@@ -453,7 +465,7 @@ runScanner (int mode, DB_playItem_t ** tracks, int count) {
 }
 
 static DB_playItem_t **
-_get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount) {
+_get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount, int onlyWithRgInfo) {
     int count = 0;
     DB_playItem_t **tracks = NULL;
 
@@ -461,6 +473,10 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount) {
     if (!plt) {
         return NULL;
     }
+
+    ddb_replaygain_settings_t s;
+    s._size = sizeof (ddb_replaygain_settings_t);
+
     deadbeef->pl_lock ();
 
     if (ctx == DDB_ACTION_CTX_SELECTION) {
@@ -473,15 +489,25 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount) {
 
         DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
         while (it) {
-            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
+
             if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (uri)) {
-                tracks[count++] = it;
-            }
-            else {
-                deadbeef->pl_item_unref (it);
+                int hasRgTags = 0;
+                if (onlyWithRgInfo) {
+                    deadbeef->replaygain_init_settings (&s, it);
+                    if (s.has_album_gain || s.has_track_gain) {
+                        hasRgTags = 1;
+                    }
+                }
+
+                if (!onlyWithRgInfo || hasRgTags) {
+                    tracks[count++] = it;
+                    deadbeef->pl_item_ref (it);
+                }
             }
 
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
             it = next;
         }
     }
@@ -497,8 +523,18 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount) {
         while (it) {
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->is_local_file (uri)) {
-                tracks[count++] = it;
-                deadbeef->pl_item_ref (it);
+                int hasRgTags = 0;
+                if (onlyWithRgInfo) {
+                    deadbeef->replaygain_init_settings (&s, it);
+                    if (s.has_album_gain || s.has_track_gain) {
+                        hasRgTags = 1;
+                    }
+                }
+
+                if (!onlyWithRgInfo || hasRgTags) {
+                    tracks[count++] = it;
+                    deadbeef->pl_item_ref (it);
+                }
             }
             DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             deadbeef->pl_item_unref (it);
@@ -512,13 +548,22 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount) {
         if (it) {
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->is_local_file (uri)) {
-                count = 1;
-                tracks = calloc (1, sizeof (DB_playItem_t *));
-                tracks[0] = it;
+                int hasRgTags = 0;
+                if (onlyWithRgInfo) {
+                    deadbeef->replaygain_init_settings (&s, it);
+                    if (s.has_album_gain || s.has_track_gain) {
+                        hasRgTags = 1;
+                    }
+                }
+
+                if (!onlyWithRgInfo || hasRgTags) {
+                    count = 1;
+                    tracks = calloc (1, sizeof (DB_playItem_t *));
+                    tracks[0] = it;
+                    deadbeef->pl_item_ref (it);
+                }
             }
-            else {
-                deadbeef->pl_item_unref (it);
-            }
+            deadbeef->pl_item_unref (it);
         }
     }
     deadbeef->pl_unlock ();
@@ -535,21 +580,16 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount) {
 int
 action_rg_scan_per_file_handler (struct DB_plugin_action_s *action, int ctx) {
     int count;
-    DB_playItem_t **tracks = _get_action_track_list (action, ctx, &count);
+    DB_playItem_t **tracks = _get_action_track_list (action, ctx, &count, 0);
 
     runScanner (DDB_RG_SCAN_MODE_TRACK, tracks, count);
     return 0;
 }
 
 int
-action_rg_remove_info_handler (struct DB_plugin_action_s *action, int ctx) {
-    return 0;
-}
-
-int
 action_rg_scan_selection_as_albums_handler (struct DB_plugin_action_s *action, int ctx) {
     int count;
-    DB_playItem_t **tracks = _get_action_track_list (action, ctx, &count);
+    DB_playItem_t **tracks = _get_action_track_list (action, ctx, &count, 0);
 
     runScanner (DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS, tracks, count);
     return 0;
@@ -558,10 +598,59 @@ action_rg_scan_selection_as_albums_handler (struct DB_plugin_action_s *action, i
 int
 action_rg_scan_selection_as_album_handler (struct DB_plugin_action_s *action, int ctx) {
     int count;
-    DB_playItem_t **tracks = _get_action_track_list (action, ctx, &count);
+    DB_playItem_t **tracks = _get_action_track_list (action, ctx, &count, 0);
 
     runScanner (DDB_RG_SCAN_MODE_SINGLE_ALBUM, tracks, count);
     return 0;
 }
 
+static void
+_remove_rg_tags (void *ctx) {
+    rgs_controller_t *ctl = ctx;
 
+    for (int i = 0; i < ctl->_rg_settings.num_tracks; i++) {
+        _rg->remove (ctl->_rg_settings.tracks[i]);
+        if (ctl->_abortTagWriting) {
+            break;
+        }
+
+        updateProgressData_t *dt = calloc (1, sizeof (updateProgressData_t));
+        dt->ctl = ctl;
+        dt->current = i;
+
+        g_idle_add (_setUpdateProgress, dt);
+    }
+    deadbeef->background_job_decrement ();
+
+    g_idle_add (_ctl_dismiss_cb, ctl);
+}
+
+int
+action_rg_remove_info_handler (struct DB_plugin_action_s *action, int ctx) {
+    if (!_init_plugin ()) {
+        return -1;
+    }
+
+    int count;
+    DB_playItem_t **tracks = _get_action_track_list (action, ctx, &count, 1);
+
+    if (!tracks) {
+        return 0;
+    }
+
+    deadbeef->background_job_increment ();
+
+    rgs_controller_t *ctl = calloc (1, sizeof (rgs_controller_t));
+    memset (&ctl->_rg_settings, 0, sizeof (ddb_rg_scanner_settings_t));
+    ctl->_rg_settings._size = sizeof (ddb_rg_scanner_settings_t);
+    ctl->_rg_settings.tracks = tracks;
+    ctl->_rg_settings.num_tracks = count;
+    ctl->update_progress_window = create_rg_scan_progress ();
+
+    gtk_widget_show (ctl->update_progress_window);
+    ctl->_abortTagWriting = 0;
+
+    deadbeef->thread_detach (deadbeef->thread_start (_remove_rg_tags, ctl));
+
+    return 0;
+}
