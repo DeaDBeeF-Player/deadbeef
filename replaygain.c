@@ -68,7 +68,7 @@ replaygain_set_current (ddb_replaygain_settings_t *settings) {
 
 void
 replaygain_init_settings (ddb_replaygain_settings_t *settings, playItem_t *it) {
-    memset (settings, 0, settings->_size);
+    memset (((char *)settings) + sizeof (settings->_size), 0, settings->_size - sizeof (settings->_size));
     settings->source_mode = conf_get_int ("replaygain.source_mode", 0);
     settings->processing_flags = conf_get_int ("replaygain.processing_flags", 1);
     settings->preamp_with_rg = db_to_amp (conf_get_float ("replaygain.preamp_with_rg", 0));

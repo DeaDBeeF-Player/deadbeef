@@ -29,7 +29,7 @@
             "name": "(gdb) Launch Debug Linux",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/usr/local/bin/deadbeef",
+            "program": "${workspaceRoot}/bin/Debug/deadbeef",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",

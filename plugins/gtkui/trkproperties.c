@@ -723,7 +723,10 @@ on_trkproperties_edit_activate          (GtkMenuItem     *menuitem,
     g_value_unset (&key);
     g_value_unset (&value);
 
-    g_list_free_full (lst, (GDestroyNotify) gtk_tree_path_free);
+    for (GList *l = lst; l; l = l->next) {
+        gtk_tree_path_free (l->data);
+    }
+    g_list_free (lst);
 
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     if (response == GTK_RESPONSE_OK) {

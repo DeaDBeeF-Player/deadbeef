@@ -150,9 +150,7 @@ volumebar_draw (GtkWidget *widget, cairo_t *cr) {
     float h = 17;
 
     GdkColor clr_fg;
-    GdkColor clr_bg;
     gtkui_get_bar_foreground_color (&clr_fg);
-    gtkui_get_bar_background_color (&clr_bg);
 
     for (int i = 0; i < n; i++) {
         float iy = (float)i + 3;
@@ -167,7 +165,7 @@ volumebar_draw (GtkWidget *widget, cairo_t *cr) {
             cairo_fill (cr);
         }
         else {
-            cairo_set_source_rgba (cr, clr_bg.red/65535.f, clr_bg.green/65535.f, clr_bg.blue/65535.f, 0.3f);
+            cairo_set_source_rgba (cr, clr_fg.red/65535.f, clr_fg.green/65535.f, clr_fg.blue/65535.f, 0.3f);
             cairo_rectangle (cr, _x + a.x, _y + a.y, _w, _h);
             cairo_fill (cr);
         }
