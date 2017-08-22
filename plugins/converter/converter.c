@@ -1345,7 +1345,6 @@ convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out
 
                 if (!encoder_preset->encoder[0]) {
                     // write to wave file
-                    trace ("opening %s\n", out);
                     temp_file = open (out, O_LARGEFILE | O_WRONLY | O_CREAT | O_TRUNC, wrmode);
                     if (temp_file == -1) {
                         trace ("Failed to open output wave file %s\n", out);
