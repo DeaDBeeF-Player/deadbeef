@@ -1841,8 +1841,10 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
             && fabs(ps->lastpos[1] - ey) < 3) {
         // doubleclick - play this item
         if (pick_ctx.item_idx != -1
-                && pick_ctx.type != PICK_EMPTY_SPACE
-                && cursor != -1) {
+            && pick_ctx.type != PICK_EMPTY_SPACE
+            && pick_ctx.type != PICK_BELOW_PLAYLIST
+            && pick_ctx.type != PICK_ABOVE_PLAYLIST
+            && cursor != -1) {
             int idx = cursor;
             DdbListviewIter it = ps->binding->get_for_idx (idx);
             if (ps->binding->handle_doubleclick && it) {
