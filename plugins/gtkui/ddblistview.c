@@ -671,6 +671,19 @@ ddb_listview_get_row_pos (DdbListview *listview, int row_idx) {
     return y;
 }
 
+static int
+ddb_listview_is_empty_region (DdbListviewPickContext *pick_ctx)
+{
+    switch (pick_ctx->type) {
+        case PICK_BELOW_PLAYLIST:
+        case PICK_ABOVE_PLAYLIST:
+        case PICK_EMPTY_SPACE:
+            return 1;
+        default:
+            return 0;
+    }
+}
+
 // input: absolute y coord in list (not in window)
 // returns -1 if nothing was hit, otherwise returns pointer to a group, and item idx
 // item idx may be set to -1 if group title was hit
@@ -1841,9 +1854,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
             && fabs(ps->lastpos[1] - ey) < 3) {
         // doubleclick - play this item
         if (pick_ctx.item_idx != -1
-            && pick_ctx.type != PICK_EMPTY_SPACE
-            && pick_ctx.type != PICK_BELOW_PLAYLIST
-            && pick_ctx.type != PICK_ABOVE_PLAYLIST
+            && !ddb_listview_is_empty_region (&pick_ctx)
             && cursor != -1) {
             int idx = cursor;
             DdbListviewIter it = ps->binding->get_for_idx (idx);
@@ -1862,9 +1873,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
 
     // set cursor
     int prev = cursor;
-    if (pick_ctx.type != PICK_EMPTY_SPACE
-        && pick_ctx.type != PICK_BELOW_PLAYLIST
-        && pick_ctx.type != PICK_ABOVE_PLAYLIST
+    if (!ddb_listview_is_empty_region (&pick_ctx)
         && pick_ctx.item_idx != -1) {
         int new_cursor = -1;
         if (pick_ctx.type == PICK_ALBUM_ART) {
@@ -2966,8 +2975,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
         }
         ddb_listview_update_cursor (ps, cursor);
 
-        if (pick_ctx.type != PICK_EMPTY_SPACE
-                && pick_ctx.type != PICK_BELOW_PLAYLIST) {
+        if (!ddb_listview_is_empty_region (&pick_ctx)) {
             DdbListviewIter it = ps->binding->get_for_idx (pick_ctx.item_idx);
             if (it) {
                 ps->binding->list_context_menu (ps, it, pick_ctx.item_idx, PL_MAIN);
