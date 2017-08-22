@@ -1861,7 +1861,9 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
     // set cursor
     int prev = cursor;
     if (pick_ctx.type != PICK_EMPTY_SPACE
-            && pick_ctx.item_idx != -1) {
+        && pick_ctx.type != PICK_BELOW_PLAYLIST
+        && pick_ctx.type != PICK_ABOVE_PLAYLIST
+        && pick_ctx.item_idx != -1) {
         int new_cursor = -1;
         if (pick_ctx.type == PICK_ALBUM_ART) {
             // set cursor to first item in clicked group
