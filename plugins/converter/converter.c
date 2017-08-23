@@ -832,27 +832,6 @@ write_int16_le (char *p, uint16_t value) {
     p[1] = (value >> 8) & 0xff;
 }
 
-static char wavehdr_int[] = {
-    0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00,
-    0x57, 0x41, 0x56, 0x45, 0x66, 0x6d, 0x74, 0x20,
-    0x10, 0x00, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00,
-    0x44, 0xac, 0x00, 0x00, 0x10, 0xb1, 0x02, 0x00,
-    0x04, 0x00, 0x10, 0x00, 0x64, 0x61, 0x74, 0x61
-};
-
-static char wavehdr_ex[] = {
-    0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00, // RIFFxxxx
-    0x57, 0x41, 0x56, 0x45, 0x66, 0x6d, 0x74, 0x20, // WAVEfmt_
-    0x28, 0x00, 0x00, 0x00, 0xfe, 0xff, 0x02, 0x00, // chunk size; fe ff; num chan
-    0x40, 0x1f, 0x00, 0x00, 0x00, 0xfa, 0x00, 0x00, // samples_per_sec; avg_bytes_per_sec
-    0x08, 0x00, 0x20, 0x00, 0x16, 0x00, 0x20, 0x00, // block_align; bits_per_sample; cbSize; validBPS
-    0x03, 0x00, 0x00, 0x00, // channel mask
-    0x03, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0xaa, // 16 bytes format ID
-    0x00, 0x00, 0x10, 0x00, 0x00, 0x38, 0x9b, 0x71,
-    0x66, 0x61, 0x63, 0x74, 0x04, 0x00, 0x00, 0x00, // fact ; size (4)
-    0xc5, 0x5b, 0x00, 0x00, 0x64, 0x61, 0x74, 0x61, // 00 00 00 00
-};
-
 static const char format_id_float32[] = {
     0x03, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0xaa,
     0x00, 0x00, 0x10, 0x00, 0x00, 0x38, 0x9b, 0x71
@@ -873,7 +852,7 @@ static const char fact_pcm[] = {
 
 
 static int32_t
-_write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_dsp_preset_t *dsp_preset, ddb_encoder_preset_t *encoder_preset, int *abort, int fd, int output_bps, int output_is_float) {
+_write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_dsp_preset_t *dsp_preset, ddb_encoder_preset_t *encoder_preset, int *abort, int fd, int output_bps, int output_is_float, int *size_offset) {
     int res = -1;
     char *buffer = NULL;
     char *dspbuffer = NULL;
@@ -881,8 +860,7 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
     // write wave header
     int exheader = output_bps > 16;
 
-    char *wavehdr = exheader ? wavehdr_ex : wavehdr_int;
-    int wavehdr_size = exheader ? sizeof (wavehdr_ex) : sizeof (wavehdr_int);
+    char wavehdr[0x50];
     int header_written = 0;
     uint32_t outsize = 0;
     uint32_t outsr = fileinfo->fmt.samplerate;
@@ -987,26 +965,49 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
             if (chunksize <= 0xffffffff) {
                 size32 = (uint32_t)chunksize;
             }
+
+            memcpy (wavehdr, "RIFF", 4); // RIFFxxxxWAVEfmt_
             write_int32_le (wavehdr+4, size32);
+            memcpy (wavehdr+8, "WAVE", 4);
+            memcpy (wavehdr+12, "fmt ", 4);
+            int32_t wavefmtsize = exheader ? 0x28 : 0x10;
+            write_int32_le (wavehdr+16, wavefmtsize); // chunk size; fe ff; num chan ; samples_per_sec; avg_bytes_per_sec
+            int16_t fmt = exheader ? 0xfffe : 1;
+            write_int16_le (wavehdr+20, fmt);
             write_int16_le (wavehdr+22, outch);
             write_int32_le (wavehdr+24, outsr);
             int32_t bytes_per_sec = outsr * output_bps / 8 * outch;
             write_int32_le (wavehdr+28, bytes_per_sec);
-            uint16_t blockalign = outch * output_bps / 8;
+            uint16_t blockalign = outch * output_bps / 8; // lock_align; bits_per_sample; cbSize; validBPS
             write_int16_le (wavehdr+32, blockalign);
             write_int16_le (wavehdr+34, output_bps);
+            int32_t wavehdr_size;
             if (exheader) {
-                write_int16_le (wavehdr+38, output_bps);
-                memcpy (wavehdr + 44, output_is_float ? format_id_float32 : format_id_pcm, 16);
+                int16_t cbSize = 0x16;
+                write_int16_le (wavehdr+36, cbSize); // cbSize (validBPS + channelmask + coded ID = 22 bytes)
+                write_int16_le (wavehdr+38, output_bps); // validBPS
+                int32_t chMask = 3;
+                write_int32_le (wavehdr+40, chMask); // channelMask
+
+                memcpy (wavehdr + 44, output_is_float ? format_id_float32 : format_id_pcm, 16); // 16 bytes format ID
                 memcpy (wavehdr + 60, "fact", 4);
+                int32_t factSize = 4;
+                write_int32_le (wavehdr+64, factSize);
                 memcpy (wavehdr + 68, output_is_float ? fact_float32 : fact_pcm, 4);
+                memcpy (wavehdr + 72, "data", 4);
+                wavehdr_size = 76;
             }
+            else {
+                memcpy (wavehdr + 36, "data", 4);
+                wavehdr_size = 40;
+            }
+
+            *size_offset = wavehdr_size;
 
             size32 = 0xffffffff;
             if (size <= 0xffffffff) {
                 size32 = (uint32_t)size;
             }
-
 
             if (wavehdr_size != write (fd, wavehdr, wavehdr_size)) {
                 trace ("Wave header write error\n");
@@ -1416,7 +1417,8 @@ convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out
                 }
 
                 if (temp_file > 0) {
-                    int32_t outsize = _write_wav (it, dec, fileinfo, dsp_preset, encoder_preset, pabort, temp_file, output_bps, output_is_float);
+                    int size_offset = 0;
+                    int32_t outsize = _write_wav (it, dec, fileinfo, dsp_preset, encoder_preset, pabort, temp_file, output_bps, output_is_float, &size_offset);
 
                     if (outsize < 0) {
                         goto error;
@@ -1428,8 +1430,7 @@ convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out
 
                     if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
                         // rewrite wave data size
-                        int wavehdr_size = output_bps > 16 ? sizeof (wavehdr_ex) : sizeof (wavehdr_int);
-                        lseek (temp_file, wavehdr_size, SEEK_SET);
+                        lseek (temp_file, size_offset, SEEK_SET);
                         if (4 != write (temp_file, &outsize, 4)) {
                             trace ("Data size write error\n");
                             goto error;
