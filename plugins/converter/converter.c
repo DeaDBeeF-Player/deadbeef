@@ -1023,6 +1023,14 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
             header_written = 1;
         }
 
+        if (output_bps == 8) {
+            // convert to unsigned
+            for (char *p = buffer; p < buffer + sz; p++) {
+                uint8_t sample = (uint8_t)(((int)*p) + 128);
+                *((uint8_t *)p) = sample;
+            }
+        }
+
         int64_t res = write (fd, buffer, sz);
         if (sz != res) {
             trace ("Write error (%"PRId64" bytes written out of %d)\n", res, sz);
