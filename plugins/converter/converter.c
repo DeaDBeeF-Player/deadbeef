@@ -990,12 +990,8 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
                 write_int32_le (wavehdr+40, chMask); // channelMask
 
                 memcpy (wavehdr + 44, output_is_float ? format_id_float32 : format_id_pcm, 16); // 16 bytes format ID
-                memcpy (wavehdr + 60, "fact", 4);
-                int32_t factSize = 4;
-                write_int32_le (wavehdr+64, factSize);
-                memcpy (wavehdr + 68, output_is_float ? fact_float32 : fact_pcm, 4);
-                memcpy (wavehdr + 72, "data", 4);
-                wavehdr_size = 76;
+                memcpy (wavehdr + 60, "data", 4);
+                wavehdr_size = 64;
             }
             else {
                 memcpy (wavehdr + 36, "data", 4);
