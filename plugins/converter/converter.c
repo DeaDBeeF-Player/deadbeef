@@ -986,19 +986,30 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
             write_int32_le (wavehdr+4, size32);
             write_int16_le (wavehdr+22, outch);
             write_int32_le (wavehdr+24, outsr);
+            int32_t bytes_per_sec = outsr * output_bps / 8 * outch;
+            write_int32_le (wavehdr+28, bytes_per_sec);
             uint16_t blockalign = outch * output_bps / 8;
             write_int16_le (wavehdr+32, blockalign);
             write_int16_le (wavehdr+34, output_bps);
             if (exheader) {
                 write_int16_le (wavehdr+38, output_bps);
                 memcpy (wavehdr + 44, output_is_float ? format_id_float32 : format_id_pcm, 16);
-                memcpy (wavehdr + 68, output_is_float ? fact_float32 : fact_pcm, 4);
+
+                if (output_is_float) {
+                    memcpy (wavehdr + 60, "fact", 4);
+                    memcpy (wavehdr + 68, fact_float32, 4);
+                }
+                else {
+                    wavehdr_size -= 12;
+                    memcpy (wavehdr + 60, "data", 4);
+                }
             }
 
             size32 = 0xffffffff;
             if (size <= 0xffffffff) {
                 size32 = (uint32_t)size;
             }
+
 
             if (wavehdr_size != write (fd, wavehdr, wavehdr_size)) {
                 trace ("Wave header write error\n");
