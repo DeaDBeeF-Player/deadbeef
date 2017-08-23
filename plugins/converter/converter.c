@@ -858,7 +858,7 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
     char *dspbuffer = NULL;
 
     // write wave header
-    int exheader = output_bps > 16;
+    int exheader = output_bps > 16 && !output_is_float;
 
     char wavehdr[0x50];
     int header_written = 0;
@@ -972,7 +972,7 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
             memcpy (wavehdr+12, "fmt ", 4);
             int32_t wavefmtsize = exheader ? 0x28 : 0x10;
             write_int32_le (wavehdr+16, wavefmtsize); // chunk size; fe ff; num chan ; samples_per_sec; avg_bytes_per_sec
-            int16_t fmt = exheader ? 0xfffe : 1;
+            int16_t fmt = exheader ? 0xfffe : (output_is_float ? 3 : 1);
             write_int16_le (wavehdr+20, fmt);
             write_int16_le (wavehdr+22, outch);
             write_int32_le (wavehdr+24, outsr);
