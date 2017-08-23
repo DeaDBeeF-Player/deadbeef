@@ -837,19 +837,10 @@ static const char format_id_float32[] = {
     0x00, 0x00, 0x10, 0x00, 0x00, 0x38, 0x9b, 0x71
 };
 
-static const char fact_float32[] = {
-    0xc5, 0x5b, 0x00, 0x00
-};
-
 static const char format_id_pcm[] = {
     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00,
     0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71
 };
-
-static const char fact_pcm[] = {
-    0x00, 0x00, 0x00, 0x00
-};
-
 
 static int32_t
 _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_dsp_preset_t *dsp_preset, ddb_encoder_preset_t *encoder_preset, int *abort, int fd, int output_bps, int output_is_float, int *size_offset) {
