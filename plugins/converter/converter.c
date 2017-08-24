@@ -51,6 +51,7 @@ static ddb_converter_t plugin;
 #define min(x,y) ((x)<(y)?(x):(y))
 
 #define trace(...) { deadbeef->log_detailed (&plugin.misc.plugin, 0, __VA_ARGS__); }
+#define trace_err(...) { deadbeef->log_detailed (&plugin.misc.plugin, DDB_LOG_LAYER_DEFAULT, __VA_ARGS__); }
 
 static ddb_converter_t plugin;
 DB_functions_t *deadbeef;
@@ -842,18 +843,19 @@ static const char format_id_pcm[] = {
     0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71
 };
 
-static int32_t
-_write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_dsp_preset_t *dsp_preset, ddb_encoder_preset_t *encoder_preset, int *abort, int fd, int output_bps, int output_is_float, int *size_offset) {
-    int res = -1;
+static int64_t
+_write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_dsp_preset_t *dsp_preset, ddb_encoder_preset_t *encoder_preset, int *abort, int fd, int output_bps, int output_is_float) {
+    int64_t res = -1;
     char *buffer = NULL;
     char *dspbuffer = NULL;
 
     // write wave header
     int exheader = output_bps > 16 && !output_is_float;
 
+    int32_t wavehdr_size = 0;
     char wavehdr[0x50];
     int header_written = 0;
-    uint32_t outsize = 0;
+    int64_t outsize = 0;
     uint32_t outsr = fileinfo->fmt.samplerate;
     uint16_t outch = fileinfo->fmt.channels;
 
@@ -972,7 +974,6 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
             uint16_t blockalign = outch * output_bps / 8; // lock_align; bits_per_sample; cbSize; validBPS
             write_int16_le (wavehdr+32, blockalign);
             write_int16_le (wavehdr+34, output_bps);
-            int32_t wavehdr_size;
             if (exheader) {
                 int16_t cbSize = 0x16;
                 write_int16_le (wavehdr+36, cbSize); // cbSize (validBPS + channelmask + coded ID = 22 bytes)
@@ -988,8 +989,6 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
                 memcpy (wavehdr + 36, "data", 4);
                 wavehdr_size = 40;
             }
-
-            *size_offset = wavehdr_size;
 
             size32 = 0xffffffff;
             if (size <= 0xffffffff) {
@@ -1026,6 +1025,38 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
     }
 
     res = outsize;
+
+    // rewrite wave data size
+    if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
+        uint32_t writesize;
+
+        // RIFF chunk size
+        lseek (fd, 4, SEEK_SET);
+        int64_t riffsize = wavehdr_size + outsize - 4;
+        if (riffsize <= 0xffffffff) {
+            writesize = (uint32_t)riffsize;
+        }
+        else {
+            writesize = 0xffffffff;
+        }
+        if (4 != write (fd, &writesize, 4)) {
+            trace_err ("converter: riff size write error\n");
+            goto error;
+        }
+
+        // data size
+        lseek (fd, wavehdr_size, SEEK_SET);
+        if (outsize <= 0xffffffff) {
+            writesize = (uint32_t)outsize;
+        }
+        else {
+            writesize = 0xffffffff;
+        }
+        if (4 != write (fd, &writesize, 4)) {
+            trace_err ("converter: data size write error\n");
+            goto error;
+        }
+    }
 
 error:
 
@@ -1412,8 +1443,7 @@ convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out
                 }
 
                 if (temp_file > 0) {
-                    int size_offset = 0;
-                    int32_t outsize = _write_wav (it, dec, fileinfo, dsp_preset, encoder_preset, pabort, temp_file, output_bps, output_is_float, &size_offset);
+                    int64_t outsize = _write_wav (it, dec, fileinfo, dsp_preset, encoder_preset, pabort, temp_file, output_bps, output_is_float);
 
                     if (outsize < 0) {
                         goto error;
@@ -1424,13 +1454,6 @@ convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out
                     }
 
                     if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
-                        // rewrite wave data size
-                        lseek (temp_file, size_offset, SEEK_SET);
-                        if (4 != write (temp_file, &outsize, 4)) {
-                            trace ("Data size write error\n");
-                            goto error;
-                        }
-
                         if (temp_file != -1 && (!enc_pipe || temp_file != fileno (enc_pipe))) {
                             close (temp_file);
                             temp_file = -1;
