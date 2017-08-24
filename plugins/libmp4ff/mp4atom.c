@@ -29,9 +29,10 @@
 **/
 
 #include <stdlib.h>
-#ifndef _WIN32
+#if HAVE_CONFIG_H
 #include "config.h"
-#else
+#endif
+#ifdef _WIN32
 #include <tchar.h>
 #include <windows.h>
 #endif

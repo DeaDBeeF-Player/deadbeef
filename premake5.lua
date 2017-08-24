@@ -1,8 +1,10 @@
 workspace "deadbeef"
    configurations { "Debug", "Release" }
 
-includedirs { "static-deps/lib-x86-64/include/x86_64-linux-gnu", "static-deps/lib-x86-64/include"  }
-libdirs { "static-deps/lib-x86-64/lib", "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "/usr/lib/x86_64-linux-gnu" }
+includedirs { "plugins/libmp4ff", "static-deps/lib-x86-64/include/x86_64-linux-gnu", "static-deps/lib-x86-64/include"  }
+libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
+
+
 defines {
     "VERSION=\"devel\"",
     "_GNU_SOURCE",
@@ -191,12 +193,45 @@ project "rg_scanner"
        "plugins/rg_scanner/ebur128/*.c",
    }
 
+project "converter"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   defines {
+      "USE_TAGGING=1"
+   }
+   files {
+       "plugins/converter/converter.c",
+       "plugins/libmp4ff/*.c",
+       "shared/mp4tagutil.c",
+   }
+
+project "converter_gtk2"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/converter/convgui.c",
+       "plugins/converter/callbacks.c",
+       "plugins/converter/interface.c",
+       "plugins/converter/support.c",
+   }
+   includedirs { "static-deps/lib-x86-64/gtk-2.16.0/include/**", "static-deps/lib-x86-64/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
+   libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
+
+   links { "gtk-x11-2.0", "pango-1.0", "cairo", "gdk-x11-2.0", "gdk_pixbuf-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
+
 project "resources"
     kind "Utility"
     postbuildcommands {
-        "mkdir -p bin/%{cfg.buildcfg}",
         "mkdir -p bin/%{cfg.buildcfg}/pixmaps",
         "cp icons/32x32/deadbeef.png bin/%{cfg.buildcfg}",
         "cp pixmaps/*.png pixmaps/*.svg bin/%{cfg.buildcfg}/pixmaps/",
+        "mkdir -p bin/%{cfg.buildcfg}/plugins/convpresets",
+        "cp -r plugins/converter/convpresets bin/%{cfg.buildcfg}/plugins/",
     }
 
