@@ -50,7 +50,7 @@ case "$host" in
     APE_USE_YASM=yes
     LDADD="$LDADD $PWD/plugins/libwin/libwin.la -ldl -lws2_32 -lintl -lpthread -lpsapi"
     AC_SUBST([LDADD])
-    DEPS_CFLAGS="$DEPS_CFLAGS -I$PWD/plugins/libwin/include -U__STRICT_ANSI__"
+    DEPS_CFLAGS="$DEPS_CFLAGS -I$PWD/plugins/libwin/include -U__STRICT_ANSI__ -mwindows"
     AC_SUBST([DEPS_CFLAGS])
     OS_WINDOWS=yes
 
@@ -846,6 +846,11 @@ AS_IF([test "${enable_statusnotifier}" != "no"], [
 
 AS_IF([test "${enable_rgscanner}" != "no"], [
     HAVE_RGSCANNER=yes
+])
+
+AS_IF([test "${OS_WINDOWS}" = "yes"], [
+    LDFLAGS="$LDFLAGS -no-undefined"
+    AC_SUBST(LDFLAGS)
 ])
 
 PLUGINS_DIRS="plugins/libwin plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/statusnotifier plugins/sndio plugins/rg_scanner"
