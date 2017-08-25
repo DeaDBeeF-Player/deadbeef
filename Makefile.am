@@ -51,10 +51,11 @@ deadbeef_SOURCES =\
 	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
 
 if OS_WINDOWS
-.rc.o:
+	ifeq ($(OS),Windows_NT)
+		.rc.o:
 		windres  $*.rc -o $@
-
-deadbeef_SOURCES += icons/deadbeef.rc
+		deadbeef_SOURCES += icons/deadbeef.rc
+	endif
 endif
 
 sdkdir = $(pkgincludedir)
