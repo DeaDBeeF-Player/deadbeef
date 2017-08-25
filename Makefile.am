@@ -50,6 +50,13 @@ deadbeef_SOURCES =\
 	logger.c logger.h\
 	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
 
+if OS_WINDOWS
+.rc.o:
+		windres  $*.rc -o $@
+
+deadbeef_SOURCES += icons/deadbeef.rc
+endif
+
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
 
