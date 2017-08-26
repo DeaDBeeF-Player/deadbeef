@@ -79,7 +79,7 @@ done
 cp ./icons/32x32/deadbeef.png $PREFIX/
 
 # converter presets
-cp -r plugins/converter/convpresets $PREFIX/plugins/
+cp -r plugins/converter/convpresets $PREFIX/plugins/convpresets
 
 # sc68data
 cp -r plugins/sc68/.libs/in_sc68.so $PREFIX/plugins/
