@@ -13,12 +13,9 @@ case "$TRAVIS_OS_NAME" in
             echo "running autogen..."
             ./autogen.sh
             echo "building for x86_64"
-            ARCH=x86_64  PKG_CONFIG_PATH=/usr/x86_64-w64-mingw32/lib/pkgconfig CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ ./scripts/configure_windows.sh --host=x86_64-w64-mingw32 --prefix="$PWD/deadbeef-win64-build"
-            make LDFLAGS=-no-undefined
-            make install
-            mkdir static-deps
-            echo "running make dist"
-            make dist || exit 1
+            ARCH=x86_64 PKG_CONFIG_LIBDIR=/usr/x86_64-w64-mingw32/lib/pkgconfig CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ ./scripts/configure_windows.sh --host=x86_64-w64-mingw32
+            make
+            ./scripts/windows_install.sh || exit 1
         else
             STATICDEPS_URL="http://sourceforge.net/projects/deadbeef/files/staticdeps/ddb-static-deps-latest.tar.bz2/download"
             mkdir static-deps
