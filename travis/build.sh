@@ -13,7 +13,7 @@ case "$TRAVIS_OS_NAME" in
             echo "running autogen..."
             ./autogen.sh
             echo "building for x86_64"
-            ARCH=x86_64  PKG_CONFIG_LIBDIR=/usr/x86_64-w64-mingw32/lib/pkgconfig CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ ./scripts/configure_windows.sh --host=x86_64-w64-mingw32
+            ARCH=x86_64 PKG_CONFIG_LIBDIR=/usr/x86_64-w64-mingw32/lib/pkgconfig CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ ./scripts/configure_windows.sh --host=x86_64-w64-mingw32
             make
             ./scripts/windows_install.sh || exit 1
         else
