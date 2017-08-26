@@ -54,6 +54,21 @@ The following instructions assume that commands are executed in deadbeef reposit
 * Run `./scripts/windows_install.sh".`
 * Your build will be located in `build` folder.
 
+### Windows (Debian/Ubuntu mingw32 cross-compile)
+
+* Steps below assume compiling 64-bit version
+* Install checkinstall, gcc-mingw-w64-x86_64 and mingw-w64-x86_64-dev packages `sudo apt install checkinstall gcc-mingw-w64-x86_64 mingw-w64-x86_64-dev`
+* Install precompiled libs from https://github.com/kuba160/deadbeef-w64-deps
+```git clone https://github.com/kuba160/deadbeef-w64-deps && cd deadbeef-w64-deps && make jansson-checkinstall``` Use `jansson-install` if you don't have `checkinstall`
+
+  OR
+* Install jansson manually. Additionally you will need to get dll files needed for stand-alone build because Debian/Ubuntu does not include them. The program will however compile fine.
+* Optionally, install other dependencies for plugins which you want to compile.
+* Run ```./autogen.sh``` to bootstrap
+* Run `PKG_CONFIG_LIBDIR=/usr/x86_64-w64-mingw32/lib/pkgconfig ./scripts/configure_windows.sh --host=x86_64-w64-mingw32`
+* `make`
+* Run `./scripts/windows_install.sh".`
+* Your build will be located in `build` folder.
 ----
 
 [![Support via Gratipay](https://cdn.rawgit.com/gratipay/gratipay-badge/2.3.0/dist/gratipay.png)](https://gratipay.com/deadbeef/)
