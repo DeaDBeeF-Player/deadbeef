@@ -100,6 +100,7 @@ AC_ARG_ENABLE(alsa,     [AS_HELP_STRING([--disable-alsa    ], [disable ALSA outp
 AC_ARG_ENABLE(oss,      [AS_HELP_STRING([--disable-oss     ], [disable Open Sound System output plugin (default: enabled)])], [enable_oss=$enableval], [enable_oss=yes])
 AC_ARG_ENABLE(pulse,    [AS_HELP_STRING([--disable-pulse   ], [disable PulseAudio output plugin (default: enabled)])], [enable_pulse=$enableval], [enable_pulse=yes])
 AC_ARG_ENABLE(coreaudio,[AS_HELP_STRING([--disable-coreaudio], [disable CoreAudio output plugin (default: enabled)])], [enable_coreaudio=$enableval], [enable_coreaudio=yes])
+AC_ARG_ENABLE(portaudio,[AS_HELP_STRING([--disable-portaudio ], [disable PortAudio output plugin (default: enabled)])], [enable_portaudio=$enableval], [enable_portaudio=yes])
 AC_ARG_ENABLE(sndio,    [AS_HELP_STRING([--disable-sndio   ], [disable sndio output plugin (default: auto)])], [enable_sndio=$enableval], [enable_sndio=yes])
 AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--disable-gtk3     ], [disable GTK3 version of gtkui plugin (default: enabled)])], [enable_gtk3=$enableval], [enable_gtk3=yes])
 AC_ARG_ENABLE(gtk2,     [AS_HELP_STRING([--disable-gtk2     ], [disable GTK2 version of gtkui plugin (default: enabled)])], [enable_gtk2=$enableval], [enable_gtk2=yes])
@@ -350,6 +351,16 @@ AS_IF([test "${enable_pulse}" != "no"], [
         AC_SUBST(DBUS_DEPS_LIBS)
     ], [
         PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=yes, HAVE_PULSE=no)
+    ])
+])
+
+AS_IF([test "${enable_portaudio}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        HAVE_PORTAUDIO=yes
+        PORTAUDIO_DEPS_CFLAGS="-I../../$LIB/include"
+        PORTAUDIO_DEPS_LIBS="-lportaudio"
+    ], [
+        PKG_CHECK_MODULES(PORTAUDIO_DEPS, portaudio-2.0, HAVE_PORTAUDIO=yes, HAVE_PORTAUDIO=no)
     ])
 ])
 
@@ -639,6 +650,12 @@ AS_IF([test "${enable_pulseaudio}" != "no"], [
     ])
 ])
 
+AS_IF([test "${enable_portaudio}" != "no"], [
+    AS_IF([test "${HAVE_PORTAUDIO}" = "yes"], [
+        HAVE_PORTAUDIOPLUGIN=yes
+    ])
+])
+
 dnl lastfm plugin
 AS_IF([test "${enable_lfm}" != "no"], [
     AS_IF([test "${HAVE_CURL}" = "yes" -a "${enable_lastfm}" != "no"], [
@@ -858,7 +875,7 @@ AS_IF([test "${OS_WINDOWS}" = "yes"], [
     AC_SUBST(LDFLAGS)
 ])
 
-PLUGINS_DIRS="plugins/libwin plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/statusnotifier plugins/sndio plugins/rg_scanner"
+PLUGINS_DIRS="plugins/libwin plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/portaudio plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/statusnotifier plugins/sndio plugins/rg_scanner"
 
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
@@ -876,6 +893,7 @@ AM_CONDITIONAL(HAVE_COREAUDIO, test "x$HAVE_COREAUDIO" = "xyes")
 AM_CONDITIONAL(HAVE_SNDIO, test "x$HAVE_SNDIO" = "xyes")
 AM_CONDITIONAL(HAVE_FFMPEG, test "x$HAVE_FFMPEGPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_PULSE, test "x$HAVE_PULSEPLUGIN" = "xyes")
+AM_CONDITIONAL(HAVE_PORTAUDIO, test "x$HAVE_PORTAUDIOPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_ARTWORK, test "x$HAVE_ARTWORK" = "xyes")
 AM_CONDITIONAL(ARTWORK_USE_VFS_CURL, test "x$ARTWORK_USE_VFS_CURL" = "xyes")
 AM_CONDITIONAL(HAVE_ADPLUG, test "x$HAVE_ADPLUG" = "xyes")
@@ -958,6 +976,7 @@ plugins/ffmpeg/Makefile
 plugins/sid/Makefile
 plugins/oss/Makefile
 plugins/pulse/Makefile
+plugins/portaudio/Makefile
 plugins/artwork-legacy/Makefile
 plugins/supereq/Makefile
 plugins/notify/Makefile
@@ -1020,6 +1039,7 @@ PRINT_PLUGIN_INFO([nullout],[NULL output],[test "x$HAVE_NULLOUT" = "xyes"])
 PRINT_PLUGIN_INFO([alsa],[ALSA output],[test "x$HAVE_ALSA" = "xyes"])
 PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$HAVE_OSS" = "xyes"])
 PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test "x$HAVE_PULSEPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([portaudio],[PortAudio output plugin],[test "x$HAVE_PORTAUDIOPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([coreaudio],[CoreAudio output plugin],[test "x$HAVE_COREAUDIO" = "xyes"])
 PRINT_PLUGIN_INFO([sndio],[sndio output plugin],[test "x$HAVE_SNDIO" = "xyes"])
 PRINT_PLUGIN_INFO([sid],[SID player based on libsidplay2],[test "x$HAVE_SID" = "xyes"])
