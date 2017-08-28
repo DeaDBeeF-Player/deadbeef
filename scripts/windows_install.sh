@@ -4,6 +4,8 @@ PREFIX="${PREFIX:-`pwd`/build}"
 mkdir -p $PREFIX/lib/deadbeef
 mkdir -p $PREFIX/pixmaps
 mkdir -p $PREFIX/doc
+mkdir -p $PREFIX/share/themes $PREFIX/share/icons
+mkdir -p $PREFIX/etc/gtk-2.0 $PREFIX/lib/gtk-2.0/2.10.0/engines/
 
 rm -f $PREFIX/plugins/*.dll
 cp ./.libs/deadbeef.exe $PREFIX/
@@ -100,3 +102,19 @@ cp translation/help.zh_TW.txt $PREFIX/doc/
 # strip
 strip --strip-unneeded $PREFIX/deadbeef.exe
 for i in $PREFIX/plugins/*.dll ; do strip --strip-unneeded $i ; done
+
+# MS-Windows theme (GTK2)
+for i in /mingw32 /mingw64 /usr; do
+    cp -r $i/share/themes/MS-Windows $PREFIX/share/themes/
+    cp $i/lib/gtk-2.0/2.10.0/engines/libwimp.dll $PREFIX/lib/gtk-2.0/2.10.0/engines
+
+done
+
+# Adwaita icons (GTK3)
+for i in /mingw32 /mingw64 /usr; do
+    cp -r $i/share/icons/Adwaita $PREFIX/share/icons/
+done
+
+# set default gtk2 theme
+touch $PREFIX/etc/gtk-2.0/settings.ini
+echo -e "[Settings]\r\ngtk-theme-name = MS-Windows\n" > $PREFIX/etc/gtk-2.0/settings.ini
