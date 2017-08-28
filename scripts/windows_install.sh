@@ -84,7 +84,7 @@ cp ./icons/32x32/deadbeef.png $PREFIX/
 cp -r plugins/converter/convpresets $PREFIX/plugins/convpresets
 
 # sc68data
-cp -r plugins/sc68/.libs/in_sc68.so $PREFIX/plugins/
+cp -r plugins/sc68/.libs/in_sc68.dll $PREFIX/plugins/
 mkdir -p  $PREFIX/plugins/data68/Replay
 cp -r plugins/sc68/file68/data68/Replay/*.bin $PREFIX/plugins/data68/Replay/
 
