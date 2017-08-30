@@ -73,6 +73,13 @@ portaudio_pause (void);
 static int
 portaudio_unpause (void);
 
+typedef struct
+{
+    float left_phase;
+    float right_phase;
+} paTestData;
+static paTestData data;
+
 int
 portaudio_init (void) {
     deadbeef->log ("portaudio_init\n");
@@ -83,6 +90,7 @@ portaudio_init (void) {
     }
 
     /* Open an audio I/O stream. */
+
     err = Pa_OpenDefaultStream( &stream,
                                 0,          /* no input channels */
                                 2,          /* stereo output */
@@ -95,7 +103,7 @@ portaudio_init (void) {
                                                    paFramesPerBufferUnspecified, which
                                                    tells PortAudio to pick the best,
                                                    possibly changing, buffer size.*/
-                                &portaudio_callback, /* this is your callback function */
+                                NULL, /* this is your callback function */
                                 NULL ); /*This is a pointer that will be passed to
                                                    your callback*/
     if( err != paNoError ){
@@ -203,12 +211,24 @@ portaudio_thread (void *context) {
         if (null_terminate) {
             break;
         }
-        if (state != OUTPUT_STATE_PLAYING || 1) {
+        if (state != OUTPUT_STATE_PLAYING ) {
             usleep (10000);
             continue;
         }
-        
+        int bs = 256;
+        char buf[bs];
+        int bytesread = deadbeef->streamer_read(buf, bs);
+        if (bytesread < 0) {
+            bytesread = 0;
+        }
+        if (bytesread < bs)
+        {
+            memset (buf + bytesread, 0, bs-bytesread);
+        }
 
+        //deadbeef->mutex_lock (mutex);
+        PaError err = Pa_WriteStream(stream, buf, sizeof (buf));
+        //deadbeef->mutex_unlock(mutex);
     }
 }
 
@@ -219,13 +239,12 @@ static int portaudio_callback( const void *inputBuffer, void *outputBuffer,
                            void *userData )
 {
     /* Cast data passed through stream to our structure. */
-   // paTestData *data = (paTestData*)userData; 
-    float *out = (float*)outputBuffer;
-    unsigned int i;
+    paTestData *data = (paTestData*)userData;
     (void) inputBuffer; /* Prevent unused variable warning. */
+
     deadbeef->streamer_read (outputBuffer, framesPerBuffer);
-    deadbeef->log("portaudio_callback: buffer[0]  %x\n",(int*)outputBuffer);
-    Pa_Sleep(1*1000);
+    //deadbeef->log("portaudio_callback: buffer[0]  %x\n",(int*)outputBuffer);
+    //Pa_Sleep(1*1000);
     return paContinue;
 }
 int
