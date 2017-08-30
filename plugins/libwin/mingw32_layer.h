@@ -36,7 +36,8 @@
 
 #undef rename
 #define rename(X,Y) rename_windows(X,Y)
-
+#undef snprintf
+//#define snprintf(A,B,...) avpriv_snprintf(A,B, __VA_ARGS__)
 #include <pthread.h>
 typedef pthread_t       db_thread_t;
 typedef pthread_mutex_t *db_mutex_t;
@@ -58,5 +59,5 @@ char *strndup(char *, size_t);
 char *strcasestr(const char *, const char *);
 
 int rename_windows(const char *, const char *);
-
+int avpriv_snprintf(char *s, size_t n, const char *fmt, ...);
 #endif
