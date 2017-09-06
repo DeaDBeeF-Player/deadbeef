@@ -862,8 +862,7 @@ main (int argc, char *argv[]) {
         *e = 0;
     }
     else {
-        trace_err ("couldn't determine install folder from path %s\n", argv[0]);
-        exit (-1);
+        strcpy (dbinstalldir, PREFIX);
     }
 
     // detect portable version by looking for plugins/ and deadbeef.png and portable_full by config/
