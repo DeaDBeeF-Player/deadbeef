@@ -841,16 +841,18 @@ mainloop_thread (void *ctx) {
 int
 main (int argc, char *argv[]) {
     ddb_logger_init ();
-    int portable=0,staticlink=0,portable_full=0;
-    #if STATICLINK
+    int portable = 0;
+    int staticlink = 0;
+    int portable_full = 0;
+#if STATICLINK
     staticlink = 1;
-    #endif
-    #if PORTABLE
+#endif
+#if PORTABLE
     portable = 1;
-    #endif
-    #if PORTABLE_FULL
-    portable_full=1;
-    #endif
+#endif
+#if PORTABLE_FULL
+    portable_full = 1;
+#endif
 
     if (!realpath (argv[0], dbinstalldir)) {
         strcpy (dbinstalldir, argv[0]);
@@ -917,7 +919,6 @@ main (int argc, char *argv[]) {
     prctl (PR_SET_NAME, "deadbeef-main", 0, 0, 0, 0);
 #endif
 
-    // Get Home directory.
     char *homedir = getenv ("HOME");
     if (!homedir) {
         trace_err ("unable to find home directory. stopping.\n");
@@ -927,7 +928,7 @@ main (int argc, char *argv[]) {
     // Get config directory
     if (portable_full) {
         if (snprintf (confdir, sizeof (confdir), "%s/config", dbinstalldir) > sizeof (confdir)) {
-            trace_err ("fatal: too long install path %s\n", dbinstalldir);
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
         strcpy (dbconfdir, confdir);
@@ -948,7 +949,7 @@ main (int argc, char *argv[]) {
         }
 
         if (snprintf (dbconfdir, sizeof (dbconfdir), "%s/deadbeef", confdir) > sizeof (dbconfdir)) {
-            trace_err ("fatal: out of memory while configuring\n");
+            trace_err ("fatal: config path is too long: %s\n", dbconfdir);
             return -1;
         }
     }
@@ -957,7 +958,7 @@ main (int argc, char *argv[]) {
     // Get cache directory
     if (portable_full) {
         if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/cache", dbconfdir) > sizeof (dbcachedir)) {
-            trace_err ("fatal: too long cache path %s\n", dbcachedir);
+            trace_err ("fatal: cache path is too long: %s\n", dbcachedir);
             return -1;
         }
     }
@@ -965,13 +966,13 @@ main (int argc, char *argv[]) {
         const char *xdg_cache = getenv ("XDG_CACHE_HOME");
         if (xdg_cache) {
             if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/deadbeef/", xdg_cache) > sizeof (dbcachedir)) {
-                trace_err ("fatal: too long cache path %s\n", dbcachedir);
+                trace_err ("fatal: cache path is too long: %s\n", dbcachedir);
                 return -1;
             }
         }
         else {
             if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/.cache/deadbeef", homedir) > sizeof (dbcachedir)) {
-                trace_err ("fatal: too long cache path %s\n", dbcachedir);
+                trace_err ("fatal: cache path is too long: %s\n", dbcachedir);
                 return -1;
             }
         }
@@ -982,7 +983,7 @@ main (int argc, char *argv[]) {
     if (xdg_runtime)
     {
         if (snprintf(dbruntimedir, sizeof (dbruntimedir), "%s/deadbeef/", xdg_runtime) >= sizeof (dbruntimedir)) {
-            trace_err ("fatal: too long cache path %s\n", dbruntimedir);
+            trace_err ("fatal: cache path is too long: %s\n", dbruntimedir);
             return -1;
         }
         mkdir (dbruntimedir, 0755);
@@ -996,24 +997,24 @@ main (int argc, char *argv[]) {
     if (env_plugin_dir) {
         strncpy (dbplugindir, env_plugin_dir, sizeof(dbplugindir));
         if (dbplugindir[sizeof(dbplugindir) - 1] != 0) {
-            fprintf (stderr, "fatal: too long plugin path %s\n", env_plugin_dir);
+            fprintf (stderr, "fatal: plugin path is too long: %s\n", env_plugin_dir);
             return -1;
         }
     }
     else if (portable) {
-        #ifdef HAVE_COCOAUI
+#ifdef HAVE_COCOAUI
         cocoautil_get_resources_path (dbplugindir, sizeof (dbplugindir));
-        #else
+#else
         if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/plugins", dbinstalldir) > sizeof (dbplugindir)) {
-            trace_err ("fatal: too long install path %s\n", dbinstalldir);
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
-        #endif
+#endif
         mkdir (dbplugindir, 0755);
     }
     else {
         if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/deadbeef", LIBDIR) > sizeof (dbplugindir)) {
-            trace_err ("fatal: too long install path %s\n", dbinstalldir);
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
     }
@@ -1021,21 +1022,21 @@ main (int argc, char *argv[]) {
     // Get doc and pixmaps dirs
     if (portable) {
         if (snprintf (dbdocdir, sizeof (dbdocdir), "%s/doc", dbinstalldir) > sizeof (dbdocdir)) {
-            trace_err ("fatal: too long install path %s\n", dbinstalldir);
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
         if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/pixmaps", dbinstalldir) > sizeof (dbpixmapdir)) {
-            trace_err ("fatal: too long install path %s\n", dbinstalldir);
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
     }
     else {
         if (snprintf (dbdocdir, sizeof (dbdocdir), "%s", DOCDIR) > sizeof (dbdocdir)) {
-            fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+            fprintf (stderr, "fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
         if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/share/deadbeef/pixmaps", PREFIX) > sizeof (dbpixmapdir)) {
-            trace_err ("fatal: too long install path %s\n", dbinstalldir);
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
     }
