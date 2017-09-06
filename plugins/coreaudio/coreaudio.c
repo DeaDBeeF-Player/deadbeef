@@ -1,6 +1,6 @@
 /*
     DeaDBeeF CoreAudio output plugin
-    Copyright (C) 2009-2014 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2017 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -34,22 +34,13 @@ static int state = OUTPUT_STATE_STOPPED;
 static uint64_t mutex;
 
 static AudioStreamBasicDescription req_format;
-static AudioStreamBasicDescription default_format;
 static AudioComponentInstance outputUnit;
 
-static OSStatus ca_buffer_callback(void *inRefCon,
-                                   AudioUnitRenderActionFlags *ioActionFlags,
-                                   const AudioTimeStamp *inTimeStamp,
-                                   UInt32 inBusNumber,
-                                   UInt32 inNumberFrames,
-                                   AudioBufferList *ioData);
+static OSStatus
+ca_buffer_callback (void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData);
 
 static void
-ca_fmtchanged (void *				inRefCon,
-               AudioUnit			inUnit,
-               AudioUnitPropertyID	inID,
-               AudioUnitScope		inScope,
-               AudioUnitElement	inElement);
+ca_fmtchanged (void *inRefCon, AudioUnit inUnit, AudioUnitPropertyID inID, AudioUnitScope inScope, AudioUnitElement	inElement);
 
 AudioDeviceID getDefaultDevice(void)
 {
@@ -85,15 +76,24 @@ static int
 ca_apply_format (void) {
     OSStatus err = noErr;
 
-    int res = -1;
-
     deadbeef->mutex_lock (mutex);
+
+    AudioStreamBasicDescription curr_fmt;
+    UInt32 sz = sizeof (curr_fmt);
+    if (AudioUnitGetProperty(outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &curr_fmt, &sz)) {
+        trace ("CoreAudio: Could not get current StreamFormat\n");
+    }
+    else if (!memcmp (&curr_fmt, &req_format, sizeof (AudioStreamBasicDescription))) {
+        // that's the same format as current
+        deadbeef->mutex_unlock (mutex);
+        return 0;
+    }
 
     if (req_format.mSampleRate > 0) {
         err = AudioUnitSetProperty(
                                    outputUnit,
                                    kAudioUnitProperty_StreamFormat,
-                                   kAudioUnitScope_Input, // FIXME: maybe Input ?
+                                   kAudioUnitScope_Input,
                                    0,
                                    &req_format,
                                    sizeof (AudioStreamBasicDescription)
@@ -101,14 +101,13 @@ ca_apply_format (void) {
 
         if (err != noErr) {
             trace ("CoreAudio: Could not set StreamFormat, error %x\n", err);
-            goto error;
+            deadbeef->mutex_unlock (mutex);
+            return -1;
         }
     }
 
-    res = 0;
-error:
     deadbeef->mutex_unlock (mutex);
-    return res;
+    return 0;
 }
 
 static int
@@ -170,14 +169,13 @@ ca_init (void) {
         return -1;
     }
 
-    // get current format as default
-    UInt32 sz = sizeof (default_format);
-    if (AudioUnitGetProperty(outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Global, 0, &default_format, &sz)) {
-        return -1;
-    }
-
+    // get current format if nothing is set yet
     if (!req_format.mSampleRate) {
-        memcpy (&req_format, &default_format, sizeof (AudioStreamBasicDescription));
+        UInt32 sz = sizeof (req_format);
+        if (AudioUnitGetProperty(outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &req_format, &sz)) {
+            trace ("CoreAudio: Could not get current StreamFormat\n");
+            return -1;
+        }
     }
 
     // another format could have been set already, so apply it now
@@ -220,7 +218,7 @@ ca_init (void) {
     }
 
     // fetch current format
-    ca_fmtchanged(NULL, outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0);
+    ca_fmtchanged(NULL, outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0);
 
     state = OUTPUT_STATE_STOPPED;
 
@@ -229,6 +227,8 @@ ca_init (void) {
 
 static int
 ca_setformat (ddb_waveformat_t *fmt) {
+    int res = 0;
+
     deadbeef->mutex_lock (mutex);
     memset (&req_format, 0, sizeof (req_format));
     req_format.mSampleRate = (Float64)fmt->samplerate;
@@ -252,11 +252,11 @@ ca_setformat (ddb_waveformat_t *fmt) {
     req_format.mBitsPerChannel = fmt->bps;
 
     if (outputUnit) {
-        ca_apply_format ();
+        res = ca_apply_format ();
     }
     deadbeef->mutex_unlock (mutex);
     
-    return 0;
+    return res;
 }
 
 static int
@@ -340,14 +340,13 @@ ca_state (void) {
 }
 
 static void
-ca_fmtchanged (void *				inRefCon,
-               AudioUnit			inUnit,
-               AudioUnitPropertyID	inID,
-               AudioUnitScope		inScope,
-               AudioUnitElement	inElement) {
+ca_fmtchanged (void *inRefCon, AudioUnit inUnit, AudioUnitPropertyID inID, AudioUnitScope inScope, AudioUnitElement inElement) {
+    if (inScope != kAudioUnitScope_Input) {
+        return; // we're only interested in the input format
+    }
     AudioStreamBasicDescription fmt;
     UInt32 sz = sizeof (fmt);
-    OSStatus err = AudioUnitGetProperty(outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Global, 0, &fmt, &sz);
+    OSStatus err = AudioUnitGetProperty(outputUnit, kAudioUnitProperty_StreamFormat, inScope, 0, &fmt, &sz);
     if (err != noErr) {
         trace ("CoreAudio: failed to get StreamFormat, error: %x\n", err)
         return;
@@ -365,14 +364,8 @@ ca_fmtchanged (void *				inRefCon,
     deadbeef->mutex_unlock (mutex);
 }
 
-static OSStatus ca_buffer_callback(
-                                   void *inRefCon,
-                                   AudioUnitRenderActionFlags *ioActionFlags,
-                                   const AudioTimeStamp *inTimeStamp,
-                                   UInt32 inBusNumber,
-                                   UInt32 inNumberFrames,
-                                   AudioBufferList *ioData
-                                   ) {
+static OSStatus
+ca_buffer_callback (void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData) {
     char *buffer = ioData->mBuffers[0].mData;
     UInt32 sz = ioData->mBuffers[0].mDataByteSize;
 
@@ -407,15 +400,15 @@ ca_plugin_stop (void) {
 static DB_output_t plugin = {
     .plugin.api_vmajor = 1,
     .plugin.api_vminor = 0,
-    .plugin.version_major = 1,
+    .plugin.version_major = 2,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_OUTPUT,
-    .plugin.id = "coreaudio-ng",
+    .plugin.id = "coreaudio",
     .plugin.name = "CoreAudio",
     .plugin.descr = "CoreAudio output plugin",
     .plugin.copyright =
         "DeaDBeeF CoreAudio output plugin\n"
-        "Copyright (C) 2009-2014 Alexey Yakovenko and other contributors\n"
+        "Copyright (C) 2009-2017 Alexey Yakovenko and other contributors\n"
         "Copyright (C) 2016 Christopher Snowhill\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
