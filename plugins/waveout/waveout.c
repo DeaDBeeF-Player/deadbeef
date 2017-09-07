@@ -81,6 +81,7 @@ static void *audio_data;
 
 char audio_format_change_pending;
 
+struct timespec sleep_time = { 0, AUDIO_BUFFER_DURATION*1000000 };
 
 static void
 pwaveout_thread (void *context);
@@ -348,7 +349,7 @@ pwaveout_stop (void)
         state = OUTPUT_STATE_STOPPED;
         waveOutReset(device_handle);
         /* ensure pwaveout_thread catches the new state */
-        nanosleep(0,(AUDIO_BUFFER_DURATION)*1000000);
+        nanosleep(&sleep_time, NULL);
         //__mingw_sleep(0, AUDIO_BUFFER_DURATION*1000000);
 
         if (audio_blocks_sent)
@@ -356,7 +357,7 @@ pwaveout_stop (void)
             trace("pwaveout_stop: audio_blocks_sent = %d\n",audio_blocks_sent);
             do
             {
-                nanosleep(0,(AUDIO_BUFFER_DURATION)*1000000);
+                nanosleep(&sleep_time, NULL);
                 //__mingw_sleep(0, AUDIO_BUFFER_DURATION*1000000);
                 trace(".");
             }
@@ -424,7 +425,7 @@ pwaveout_thread (void *context)
 
         if (state != OUTPUT_STATE_PLAYING && !audio_format_change_pending)
         {
-            nanosleep(0,(AUDIO_BUFFER_DURATION)*1000000);
+            nanosleep(&sleep_time, NULL);
             //__mingw_sleep(0, AUDIO_BUFFER_DURATION*1000000); /* __mingw_sleep(seconds, nanoseconds) */
         }
         else
@@ -432,7 +433,7 @@ pwaveout_thread (void *context)
             /* is the device full? */
             if (audio_blocks_sent >= avail_audio_buffers)
                 /* idle wait */
-                nanosleep(0,(AUDIO_BUFFER_DURATION)*1000000);
+                nanosleep(&sleep_time, NULL);
                 //__mingw_sleep(0, AUDIO_BUFFER_DURATION*1000000);
 
             /* 'consuming' audio data */
@@ -504,7 +505,7 @@ pwaveout_thread (void *context)
         /* stop playback */
         waveOutReset(device_handle);
         while (audio_blocks_sent)
-            nanosleep(0,(AUDIO_BUFFER_DURATION)*1000000);
+            nanosleep(&sleep_time, NULL);
             //__mingw_sleep(0, AUDIO_BUFFER_DURATION*1000000);
 
         for (idx=0; idx<AUDIO_BUFFER_NO; idx++)
