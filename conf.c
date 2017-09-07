@@ -85,7 +85,7 @@ conf_load (void) {
     char fname[l + sizeof(configfile)];
     memcpy (fname, dbconfdir, l);
     memcpy (fname + l, configfile, sizeof (configfile));
-    FILE *fp = fopen (fname, "rt");
+    FILE *fp = fopen (fname, "rb");
     if (!fp) {
         // we're not logging the error when config could not be loaded -- it's the first run
         fp = fopen (fname, "w+b");
