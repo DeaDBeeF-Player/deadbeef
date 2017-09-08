@@ -1720,6 +1720,7 @@
 		4D52B5051F14F34C00048305 /* file.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D52B5031F14F34C00048305 /* file.h */; };
 		4D52B5061F14F34C00048305 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D52B5041F14F34C00048305 /* file.cpp */; };
 		4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D62C0C61E4C9ACA005F9482 /* streamreader.h */; };
+		4D66DBA11F6181C400BFF76B /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */; };
 		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
 		4DA5D8631F15162F005E8D34 /* ronan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DA5D8611F15162F005E8D34 /* ronan.cpp */; };
 		4DA5D8641F15162F005E8D34 /* ronan.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DA5D8621F15162F005E8D34 /* ronan.h */; };
@@ -4200,6 +4201,7 @@
 		4D52B5041F14F34C00048305 /* file.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = file.cpp; path = plugins/v2m/v2/tool/file.cpp; sourceTree = "<group>"; };
 		4D62C0C51E4C9ACA005F9482 /* streamreader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = streamreader.c; sourceTree = "<group>"; };
 		4D62C0C61E4C9ACA005F9482 /* streamreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = streamreader.h; sourceTree = "<group>"; };
+		4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnplayTemplate.pdf; path = images/btnplayTemplate.pdf; sourceTree = "<group>"; };
 		4DA5D8611F15162F005E8D34 /* ronan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ronan.cpp; path = plugins/v2m/v2/ronan.cpp; sourceTree = "<group>"; };
 		4DA5D8621F15162F005E8D34 /* ronan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ronan.h; path = plugins/v2m/v2/ronan.h; sourceTree = "<group>"; };
@@ -4774,6 +4776,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D66DBA11F6181C400BFF76B /* AudioToolbox.framework in Frameworks */,
 				2DC4199E1B90540A007E3026 /* Carbon.framework in Frameworks */,
 				2D01D7EA1AB221B200BCD3C4 /* libddbcore.a in Frameworks */,
 				4D1B51691837F669003E6066 /* CoreAudio.framework in Frameworks */,
@@ -7123,6 +7126,7 @@
 		4D1B3E7C18379829003E6066 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */,
 				83BA8E5E1D542D2700D345EE /* CoreMedia.framework */,
 				83BA8E4F1D542D0D00D345EE /* VideoToolbox.framework */,
 				2D72AE5D1CFE1F7500103AAE /* ImageIO.framework */,

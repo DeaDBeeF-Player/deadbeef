@@ -24,6 +24,7 @@
 #include "../../deadbeef.h"
 #include <AudioUnit/AudioUnit.h>
 #include <CoreAudio/CoreAudio.h>
+#include <AudioToolbox/AudioToolbox.h>
 
 static DB_functions_t *deadbeef;
 static DB_output_t plugin;
@@ -32,252 +33,200 @@ static DB_output_t plugin;
 
 static int state = OUTPUT_STATE_STOPPED;
 static uint64_t mutex;
-
-static AudioStreamBasicDescription req_format;
-static AudioComponentInstance outputUnit;
-
-static OSStatus
-ca_buffer_callback (void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData);
-
-static void
-ca_fmtchanged (void *inRefCon, AudioUnit inUnit, AudioUnitPropertyID inID, AudioUnitScope inScope, AudioUnitElement	inElement);
-
-AudioDeviceID getDefaultDevice(void)
-{
-    UInt32 dataSize = 0;
-    OSStatus err = 0;
-
-    AudioObjectPropertyAddress propertyAddress = {
-        kAudioHardwarePropertyDefaultOutputDevice,
-        kAudioObjectPropertyScopeGlobal,
-        kAudioObjectPropertyElementMaster
-    };
-
-    dataSize = sizeof(AudioDeviceID);
-
-    AudioDeviceID outputDevice;
-
-    err = AudioObjectGetPropertyData(kAudioObjectSystemObject,
-                                     &propertyAddress,
-                                     0,
-                                     NULL,
-                                     &dataSize,
-                                     &outputDevice);
-
-    if (err != noErr) {
-        trace ("CoreAudio: Get default output device failed with error %x\n", err);
-        return 0;
-    }
-
-    return outputDevice;
-}
-
-static int
-ca_apply_format (void) {
-    OSStatus err = noErr;
-
-    deadbeef->mutex_lock (mutex);
-
-    AudioStreamBasicDescription curr_fmt;
-    UInt32 sz = sizeof (curr_fmt);
-    if (AudioUnitGetProperty(outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &curr_fmt, &sz)) {
-        trace ("CoreAudio: Could not get current StreamFormat\n");
-    }
-    else if (!memcmp (&curr_fmt, &req_format, sizeof (AudioStreamBasicDescription))) {
-        // that's the same format as current
-        deadbeef->mutex_unlock (mutex);
-        return 0;
-    }
-
-    if (req_format.mSampleRate > 0) {
-        err = AudioUnitSetProperty(
-                                   outputUnit,
-                                   kAudioUnitProperty_StreamFormat,
-                                   kAudioUnitScope_Input,
-                                   0,
-                                   &req_format,
-                                   sizeof (AudioStreamBasicDescription)
-                                   );
-
-        if (err != noErr) {
-            trace ("CoreAudio: Could not set StreamFormat, error %x\n", err);
-            deadbeef->mutex_unlock (mutex);
-            return -1;
-        }
-    }
-
-    deadbeef->mutex_unlock (mutex);
-    return 0;
-}
+static intptr_t tid;
+static int formatchanged;
+static int stoprequest;
 
 static int
 ca_free (void) {
-    if (outputUnit) {
-        deadbeef->mutex_lock (mutex);
-        OSStatus err = noErr;
-        err = AudioOutputUnitStop(outputUnit);
-        err = AudioUnitUninitialize(outputUnit);
-        err = AudioComponentInstanceDispose(outputUnit);
-        deadbeef->mutex_unlock (mutex);
-        outputUnit = NULL;
-    }
     return 0;
 }
 
 static int
 ca_init (void) {
-    ca_free ();
-
-    OSStatus err = noErr;
-
-    // Get Component
-    AudioComponent compOutput;
-    AudioComponentDescription descAUHAL;
-
-    memset (&descAUHAL, 0, sizeof (descAUHAL));
-
-    descAUHAL.componentType = kAudioUnitType_Output;
-    descAUHAL.componentSubType = kAudioUnitSubType_HALOutput;
-    descAUHAL.componentManufacturer = kAudioUnitManufacturer_Apple;
-
-    compOutput = AudioComponentFindNext(NULL, &descAUHAL);
-    if (!compOutput) {
-        trace ("CoreAudio: AudioComponentFindNext failed and returned NULL\n");
-        return -1;
-    }
-
-    err = AudioComponentInstanceNew(compOutput, &outputUnit);
-    if (err != noErr) {
-        trace ("CoreAudio: AudioComponentInstanceNew failed with error %x\n", err);
-        return -1;
-    }
-
-    // Get Current Output Device
-    AudioDeviceID audioDevice = getDefaultDevice();
-
-    // Set AUHAL to Current Device
-    err = AudioUnitSetProperty(
-                               outputUnit,
-                               kAudioOutputUnitProperty_CurrentDevice,
-                               kAudioUnitScope_Global,
-                               0,
-                               &audioDevice,
-                               sizeof (audioDevice)
-                               );
-    if (err != noErr) {
-        trace ("CoreAudio: Could not set CurrentDevice\n");
-        return -1;
-    }
-
-    // get current format if nothing is set yet
-    if (!req_format.mSampleRate) {
-        UInt32 sz = sizeof (req_format);
-        if (AudioUnitGetProperty(outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &req_format, &sz)) {
-            trace ("CoreAudio: Could not get current StreamFormat\n");
-            return -1;
-        }
-    }
-
-    // another format could have been set already, so apply it now
-    if (ca_apply_format ()) {
-        return -1;
-    }
-
-    // Set Render Callback
-    AURenderCallbackStruct out;
-    memset (&out, 0, sizeof (out));
-    out.inputProc = ca_buffer_callback;
-
-    err = AudioUnitSetProperty(
-                               outputUnit,
-                               kAudioUnitProperty_SetRenderCallback,
-                               kAudioUnitScope_Global,
-                               0,
-                               &out,
-                               sizeof (out)
-                               );
-    if (err != noErr) {
-        trace ("CoreAudio: Set RenderCallback property failed with error %x\n", err);
-        return -1;
-    }
-
-    // audio format changed listener
-    err = AudioUnitAddPropertyListener (outputUnit, kAudioUnitProperty_StreamFormat, ca_fmtchanged, NULL);
-    if (err != noErr) {
-        trace ("CoreAudio: AudioUnitAddPropertyListener failed with error %x\n", err);
-        return -1;
-    }
-
-    //Initialize AUHAL
-    err = AudioUnitInitialize (outputUnit);
-    if (err != noErr) {
-        state = OUTPUT_STATE_STOPPED;
-        deadbeef->mutex_unlock (mutex);
-        trace ("CoreAudio: AudioUnitInitialize failed with error %x\n", err);
-        return -1;
-    }
-
-    // fetch current format
-    ca_fmtchanged(NULL, outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0);
-
     state = OUTPUT_STATE_STOPPED;
 
     return 0;
 }
 
+// This is called from process_output_block (during streamer_reda), and it needs to know *immediately* which format it was able to set.
+// To achieve that, we need to create a new audio queue here, and if it's unsuccessful -- try some guesswork.
+// However, for now we consider that this can never fail, and the format will always be set successfully.
 static int
 ca_setformat (ddb_waveformat_t *fmt) {
-    int res = 0;
-
     deadbeef->mutex_lock (mutex);
-    memset (&req_format, 0, sizeof (req_format));
-    req_format.mSampleRate = (Float64)fmt->samplerate;
-    req_format.mFormatID = kAudioFormatLinearPCM;
 
-    if (fmt->is_float) {
-        req_format.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
-    }
-    else {
-        req_format.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked | kAudioFormatFlagsNativeEndian;
-    }
+    formatchanged = 1;
+    memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
 
-    if (fmt->is_bigendian) {
-        req_format.mFormatFlags |= kLinearPCMFormatFlagIsBigEndian;
-    }
-
-    req_format.mBytesPerPacket = fmt->bps / 8 * 2;
-    req_format.mFramesPerPacket = 1;
-    req_format.mBytesPerFrame = fmt->bps / 8 * fmt->channels;
-    req_format.mChannelsPerFrame = fmt->channels;
-    req_format.mBitsPerChannel = fmt->bps;
-
-    if (outputUnit) {
-        res = ca_apply_format ();
-    }
     deadbeef->mutex_unlock (mutex);
     
-    return res;
+    return 0;
+}
+
+static void aqOutputCallback (void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRef inBuffer) {
+    *((AudioQueueBufferRef *)(inBuffer->mUserData)) = inBuffer;
+}
+
+
+static void
+ca_thread (void *user_data) {
+#define MAXBUFFERS 8
+#define BUFFERSIZE_BYTES 8192
+    char *data = malloc (BUFFERSIZE_BYTES);
+    int datasize = 0;
+
+    OSStatus err;
+
+    static AudioQueueRef queue;
+    static AudioQueueBufferRef buffers[MAXBUFFERS];
+    static AudioQueueBufferRef availbuffers[MAXBUFFERS];
+    
+    while (!stoprequest) {
+        if (state == OUTPUT_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1) && datasize == 0) {
+            int sz = BUFFERSIZE_BYTES;
+            int br = deadbeef->streamer_read (data, BUFFERSIZE_BYTES);
+            if (br < 0) {
+                br = 0;
+            }
+            if (br != sz) {
+                memset (data+br, 0, sz-br);
+            }
+            datasize = br;
+        }
+        else {
+            usleep (10000);
+            continue;
+        }
+
+        if (formatchanged) {
+            if (queue) {
+                AudioQueueDispose (queue, false);
+                memset (buffers, 0, sizeof (buffers));
+                memset (availbuffers, 0, sizeof (availbuffers));
+                queue = NULL;
+            }
+        }
+        formatchanged = 0;
+
+        if (!queue) {
+            AudioStreamBasicDescription req_format;
+            ddb_waveformat_t *fmt = &plugin.fmt;
+            
+            memset (&req_format, 0, sizeof (req_format));
+            req_format.mSampleRate = (Float64)fmt->samplerate;
+            req_format.mFormatID = kAudioFormatLinearPCM;
+
+            if (fmt->is_float) {
+                req_format.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
+            }
+            else {
+                req_format.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked | kAudioFormatFlagsNativeEndian;
+            }
+
+            if (fmt->is_bigendian) {
+                req_format.mFormatFlags |= kLinearPCMFormatFlagIsBigEndian;
+            }
+
+            req_format.mBytesPerPacket = fmt->bps / 8 * 2;
+            req_format.mFramesPerPacket = 1;
+            req_format.mBytesPerFrame = fmt->bps / 8 * fmt->channels;
+            req_format.mChannelsPerFrame = fmt->channels;
+            req_format.mBitsPerChannel = fmt->bps;
+            
+            err = AudioQueueNewOutput(&req_format, aqOutputCallback, NULL, NULL, NULL, 0, &queue);
+            if (err != noErr) {
+                trace ("AudioQueueNewOutput error %x\n", err);
+                break;
+            }
+
+            for (int i = 0; i < MAXBUFFERS; i++) {
+                err = AudioQueueAllocateBuffer(queue, BUFFERSIZE_BYTES, &buffers[i]);
+                if (err != noErr) {
+                    trace ("AudioQueueAllocateBuffer error %x\n", err);
+                    goto error;
+                }
+                buffers[i]->mUserData  = availbuffers + i;
+                availbuffers[i] = buffers[i];
+            }
+        }
+
+        // sync state
+        UInt32 isRunning;
+        UInt32 isRunningSize = sizeof (isRunning);
+        err = AudioQueueGetProperty (queue, kAudioQueueProperty_IsRunning, &isRunning, &isRunningSize);
+        if (err != noErr) {
+            trace ("AudioQueueGetProperty kAudioQueueProperty_IsRunning error %x\n", err);
+        }
+        else {
+            if (!isRunning && state == OUTPUT_STATE_PLAYING) {
+                err = AudioQueueStart (queue, NULL);
+                if (err != noErr) {
+                    trace ("AudioQueueStart error %x\n", err);
+                }
+            }
+            else if (isRunning && state != OUTPUT_STATE_PLAYING) {
+                err = AudioQueuePause (queue);
+                if (err != noErr) {
+                    trace ("AudioQueueStart error %x\n", err);
+                }
+            }
+        }
+
+        if (state != OUTPUT_STATE_PLAYING) {
+            usleep (10000);
+            continue;
+        }
+
+        // find any available buffer
+        int nextAvail = -1;
+        for (int i = 0; i < MAXBUFFERS; i++) {
+            if (availbuffers[i]) {
+                nextAvail = i;
+                break;
+            }
+        }
+        if (nextAvail == -1) {
+            usleep (10000);
+            continue;
+        }
+
+        // fill and enqueue
+
+        memcpy (availbuffers[nextAvail]->mAudioData, data, datasize);
+        availbuffers[nextAvail]->mAudioDataByteSize = datasize;
+
+        availbuffers[nextAvail] = NULL;
+        err = AudioQueueEnqueueBuffer(queue, buffers[nextAvail], 0, NULL);
+        if (err != noErr) {
+            trace ("AudioQueueEnqueueBuffer error %x\n", err);
+        }
+    }
+
+error:
+    if (queue) {
+        err = AudioQueueStop (queue, true);
+        if (err != noErr) {
+            trace ("AudioQueueEnqueueBuffer error %x\n", err);
+        }
+        AudioQueueDispose (queue, true);
+        queue = NULL;
+    }
+    free (data);
 }
 
 static int
 ca_play (void) {
     deadbeef->mutex_lock (mutex);
-    if (!outputUnit) {
-        if (ca_init()) {
-            return -1;
-        }
+    if (state == OUTPUT_STATE_PAUSED) {
+        // FIXME: unpause current queue
+        state = OUTPUT_STATE_PLAYING;
     }
-
-    OSStatus err;
-    err = AudioOutputUnitStart (outputUnit);
-    if (err != noErr) {
-        state = OUTPUT_STATE_STOPPED;
-        deadbeef->mutex_unlock (mutex);
-        trace ("CoreAudio: AudioOutputUnitStart failed with error %x\n", err);
-        return -1;
+    else if (state == OUTPUT_STATE_STOPPED) {
+        state = OUTPUT_STATE_PLAYING;
+        stoprequest = 0;
+        tid = deadbeef->thread_start (ca_thread, NULL);
     }
-
-    state = OUTPUT_STATE_PLAYING;
     deadbeef->mutex_unlock (mutex);
 
     return 0;
@@ -285,44 +234,26 @@ ca_play (void) {
 
 static int
 ca_stop (void) {
-    if (!outputUnit) {
-        return 0;
-    }
-    deadbeef->mutex_lock (mutex);
-    if (state != OUTPUT_STATE_STOPPED) {
+    if (tid) {
+        stoprequest = 1;
+        deadbeef->thread_join (tid);
         state = OUTPUT_STATE_STOPPED;
-        OSStatus err = AudioOutputUnitStop(outputUnit);
-        if (err != noErr) {
-            deadbeef->mutex_unlock (mutex);
-            trace ("CoreAudio: AudioOutputUnitStop (stop) failed with error %x", err);
-            return -1;
-        }
+        tid = 0;
     }
-
-    deadbeef->mutex_unlock (mutex);
-
     return 0;
 }
 
 static int
 ca_pause (void) {
     deadbeef->mutex_lock (mutex);
-
-    if (!outputUnit) {
-        if (ca_init()) {
-            deadbeef->mutex_unlock (mutex);
-            return -1;
-        }
-    }
-
-    if (state != OUTPUT_STATE_PAUSED) {
+    if (state == OUTPUT_STATE_PLAYING) {
         state = OUTPUT_STATE_PAUSED;
-        OSStatus err = AudioOutputUnitStop(outputUnit);
-        if (err != noErr) {
-            deadbeef->mutex_unlock (mutex);
-            trace ("CoreAudio: AudioOutputUnitStop (pause) failed with error %x", err);
-            return -1;
-        }
+        // FIXME: pause current queue
+    }
+    else if (state == OUTPUT_STATE_STOPPED) {
+        state = OUTPUT_STATE_PAUSED;
+        stoprequest = 0;
+        tid = deadbeef->thread_start (ca_thread, NULL);
     }
 
     deadbeef->mutex_unlock (mutex);
@@ -339,6 +270,7 @@ ca_state (void) {
     return state;
 }
 
+#if 0
 static void
 ca_fmtchanged (void *inRefCon, AudioUnit inUnit, AudioUnitPropertyID inID, AudioUnitScope inScope, AudioUnitElement inElement) {
     if (inScope != kAudioUnitScope_Input) {
@@ -384,6 +316,7 @@ ca_buffer_callback (void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, c
 
     return 0;
 }
+#endif
 
 static int
 ca_plugin_start (void) {
