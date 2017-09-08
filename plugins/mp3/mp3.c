@@ -37,7 +37,7 @@
 #include "mp3_mpg123.h"
 #endif
 
-#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
+#define trace(...) { deadbeef->log ( __VA_ARGS__); }
 
 //#define WRITE_DUMP 1
 
@@ -500,7 +500,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 
         valid_frames++;
 
-        trace ("valid: %d, sr: %d, ch: %d\n", valid_frames, frame.samplerate, frame.nchannels);
+        //trace ("valid: %d, sr: %d, ch: %d\n", valid_frames, frame.samplerate, frame.nchannels);
 
 // {{{ update stream parameters, only when sample!=0 or 1st frame
         if (sample != 0 || nframe == 0)

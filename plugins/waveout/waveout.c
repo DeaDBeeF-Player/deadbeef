@@ -55,8 +55,8 @@
 #include <mmreg.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); fflush(stderr); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); fflush(stderr); }
+//#define trace(fmt,...)
 
 /* both found on the internet... */
 //static const GUID  KSDATAFORMAT_SUBTYPE_PCM =        {0x00000001,0x0000,0x0010,{0x80,0x00,0x00,0xaa,0x00,0x38,0x9b,0x71}};
@@ -355,11 +355,14 @@ pwaveout_stop (void)
         if (audio_blocks_sent)
         {
             trace("pwaveout_stop: audio_blocks_sent = %d\n",audio_blocks_sent);
+            int timeout = 0;
             do
             {
                 nanosleep(&sleep_time, NULL);
                 //__mingw_sleep(0, AUDIO_BUFFER_DURATION*1000000);
                 trace(".");
+                if(timeout++ > 100)
+                    break;
             }
             while(audio_blocks_sent != 0);
             trace("\n");
@@ -420,8 +423,10 @@ pwaveout_thread (void *context)
 
     while (1)
     {
-        if (wave_terminate)
+        if (wave_terminate){
+            trace("pwave terminating\n");
             break;
+        }
 
         if (state != OUTPUT_STATE_PLAYING && !audio_format_change_pending)
         {
@@ -431,21 +436,17 @@ pwaveout_thread (void *context)
         else
         {
             /* is the device full? */
-            if (audio_blocks_sent >= avail_audio_buffers)
+            if (audio_blocks_sent >= avail_audio_buffers) {
                 /* idle wait */
                 nanosleep(&sleep_time, NULL);
                 //__mingw_sleep(0, AUDIO_BUFFER_DURATION*1000000);
-
+            }
+            trace("pwave play\n");
             /* 'consuming' audio data */
-            if (deadbeef->streamer_ok_to_read(bytes_per_block)
-                &&
-                audio_blocks_sent < avail_audio_buffers
-                &&
-                !audio_format_change_pending)
-            {
+            if (deadbeef->streamer_ok_to_read(bytes_per_block)) {
+                trace("pwave_reading\n");
                 bytesread = deadbeef->streamer_read(audio_data+audio_block_write_index*bytes_per_block, bytes_per_block);
-                if (bytesread > 0)
-                {
+                if (bytesread > 0) {
                     /* I cannot "unprepare" into the callback, so this seems a good place to do it */
                     if (waveout_headers[audio_block_write_index].dwFlags & WHDR_PREPARED)
                         waveOutUnprepareHeader(device_handle, &waveout_headers[audio_block_write_index], sizeof(WAVEHDR));
@@ -463,11 +464,15 @@ pwaveout_thread (void *context)
                         audio_block_write_index = (audio_block_write_index+1) % avail_audio_buffers;
                     }
                 }
-                else
-                {
+                else {
                     trace("pwaveout_thread: read nothing\n");
+                    nanosleep(&sleep_time, NULL);
                 }
             }
+            else {
+                trace("streamer not ready, waiting\n");
+            }
+
             if (audio_blocks_sent == 0 && audio_format_change_pending)
             {
                 trace("pwaveout_thread: there is a format change pending\n");

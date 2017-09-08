@@ -55,7 +55,7 @@
 
 #ifdef trace
 #undef trace
-#define trace(...)
+#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #endif
 
 //#define WRITE_DUMP 1

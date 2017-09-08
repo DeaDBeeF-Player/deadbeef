@@ -48,8 +48,8 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -429,6 +429,7 @@ cflac_free (DB_fileinfo_t *_info) {
 
 static int
 cflac_read (DB_fileinfo_t *_info, char *bytes, int size) {
+    trace("reading flac block, size %d\n",size);
     flac_info_t *info = (flac_info_t *)_info;
     if (info->set_bitrate && info->bitrate != deadbeef->streamer_get_apx_bitrate()) {
         deadbeef->streamer_set_bitrate (info->bitrate);
@@ -448,6 +449,7 @@ cflac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     do {
         if (info->remaining) {
             int sz = min(size, info->remaining);
+            trace("copying buffer %d, %d of size %d\n",*(info->buffer),*(info->buffer+1),info->remaining);
             memcpy (bytes, info->buffer, sz);
 
             size -= sz;
@@ -476,7 +478,7 @@ cflac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             return 0;
         }
     } while (size > 0);
-
+    trace("returning %d\n",initsize-size);
     return initsize - size;
 }
 

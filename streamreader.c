@@ -41,6 +41,7 @@ static int numblocks_ready;
 
 static int curr_block_bitrate;
 
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 void
 streamreader_init (void) {
     for (int i = 0; i < BLOCK_COUNT; i++) {
@@ -95,7 +96,7 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
     // NOTE: streamer_set_bitrate may be called during decoder->read, and set immediated bitrate of the block
     curr_block_bitrate = -1;
     int rb = fileinfo->plugin->read (fileinfo, block->buf, size);
-
+    trace("decoder sent %d bytes\n",rb);
     if (rb < 0) {
         return -1;
     }
