@@ -1852,6 +1852,13 @@ streamer_read (char *bytes, int size) {
 
     // consume decoded data
     int sz = min (size, outbuffer_remaining);
+
+    // clip to frame size
+    int ss = prev_output_format.channels * prev_output_format.bps / 8;
+    if ((sz % ss) != 0) {
+        sz -= (sz % ss);
+    }
+
     memcpy (bytes, outbuffer, sz);
     if (sz < outbuffer_remaining) {
         memmove (outbuffer, outbuffer + sz, outbuffer_remaining - sz);
