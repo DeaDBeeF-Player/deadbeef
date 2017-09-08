@@ -38,13 +38,19 @@ static int formatchanged;
 static int stoprequest;
 
 static int
+ca_stop (void);
+
+static int
 ca_free (void) {
+    ca_stop ();
     return 0;
 }
 
 static int
 ca_init (void) {
+    deadbeef->mutex_lock (mutex);
     state = OUTPUT_STATE_STOPPED;
+    deadbeef->mutex_unlock (mutex);
 
     return 0;
 }
@@ -84,17 +90,14 @@ ca_thread (void *user_data) {
     
     while (!stoprequest) {
         if (state == OUTPUT_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1) && datasize == 0) {
-            int sz = BUFFERSIZE_BYTES;
             int br = deadbeef->streamer_read (data, BUFFERSIZE_BYTES);
-            if (br < 0) {
-                br = 0;
-            }
-            if (br != sz) {
-                memset (data+br, 0, sz-br);
+            if (br <= 0) {
+                usleep (10000);
+                continue;
             }
             datasize = br;
         }
-        else {
+        else if (datasize == 0) {
             usleep (10000);
             continue;
         }
@@ -140,6 +143,16 @@ ca_thread (void *user_data) {
                 break;
             }
 
+#if 0
+            // for debugging: find out the format that was really set
+            AudioStreamBasicDescription actual_fmt;
+            UInt32 actual_fmt_size = sizeof (actual_fmt);
+            err = AudioQueueGetProperty(queue, kAudioQueueProperty_StreamDescription, &actual_fmt, &actual_fmt_size);
+            if (err != noErr) {
+                trace ("AudioQueueGetProperty kAudioQueueProperty_StreamDescription error %x\n", err);
+            }
+#endif
+
             for (int i = 0; i < MAXBUFFERS; i++) {
                 err = AudioQueueAllocateBuffer(queue, BUFFERSIZE_BYTES, &buffers[i]);
                 if (err != noErr) {
@@ -166,7 +179,7 @@ ca_thread (void *user_data) {
                 }
             }
             else if (isRunning && state != OUTPUT_STATE_PLAYING) {
-                err = AudioQueuePause (queue);
+                err = AudioQueueStop (queue, true);
                 if (err != noErr) {
                     trace ("AudioQueueStart error %x\n", err);
                 }
@@ -192,9 +205,9 @@ ca_thread (void *user_data) {
         }
 
         // fill and enqueue
-
         memcpy (availbuffers[nextAvail]->mAudioData, data, datasize);
         availbuffers[nextAvail]->mAudioDataByteSize = datasize;
+        datasize = 0;
 
         availbuffers[nextAvail] = NULL;
         err = AudioQueueEnqueueBuffer(queue, buffers[nextAvail], 0, NULL);
@@ -219,7 +232,6 @@ static int
 ca_play (void) {
     deadbeef->mutex_lock (mutex);
     if (state == OUTPUT_STATE_PAUSED) {
-        // FIXME: unpause current queue
         state = OUTPUT_STATE_PLAYING;
     }
     else if (state == OUTPUT_STATE_STOPPED) {
@@ -248,7 +260,6 @@ ca_pause (void) {
     deadbeef->mutex_lock (mutex);
     if (state == OUTPUT_STATE_PLAYING) {
         state = OUTPUT_STATE_PAUSED;
-        // FIXME: pause current queue
     }
     else if (state == OUTPUT_STATE_STOPPED) {
         state = OUTPUT_STATE_PAUSED;
@@ -269,54 +280,6 @@ static int
 ca_state (void) {
     return state;
 }
-
-#if 0
-static void
-ca_fmtchanged (void *inRefCon, AudioUnit inUnit, AudioUnitPropertyID inID, AudioUnitScope inScope, AudioUnitElement inElement) {
-    if (inScope != kAudioUnitScope_Input) {
-        return; // we're only interested in the input format
-    }
-    AudioStreamBasicDescription fmt;
-    UInt32 sz = sizeof (fmt);
-    OSStatus err = AudioUnitGetProperty(outputUnit, kAudioUnitProperty_StreamFormat, inScope, 0, &fmt, &sz);
-    if (err != noErr) {
-        trace ("CoreAudio: failed to get StreamFormat, error: %x\n", err)
-        return;
-    }
-
-    deadbeef->mutex_lock (mutex);
-    plugin.fmt.bps = fmt.mBitsPerChannel;
-    plugin.fmt.channels = fmt.mChannelsPerFrame;
-    plugin.fmt.is_float = (fmt.mFormatFlags & kAudioFormatFlagIsFloat) ? 1 : 0;
-    plugin.fmt.samplerate = fmt.mSampleRate;
-    plugin.fmt.channelmask = 0;
-    for (int i = 0; i < plugin.fmt.channels; i++) {
-        plugin.fmt.channelmask |= (1<<i);
-    }
-    deadbeef->mutex_unlock (mutex);
-}
-
-static OSStatus
-ca_buffer_callback (void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData) {
-    char *buffer = ioData->mBuffers[0].mData;
-    UInt32 sz = ioData->mBuffers[0].mDataByteSize;
-
-    if (state == OUTPUT_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1)) {
-        int br = deadbeef->streamer_read (buffer, sz);
-        if (br < 0) {
-            br = 0;
-        }
-        if (br != sz) {
-            memset (buffer+br, 0, sz-br);
-        }
-    }
-    else {
-        memset (buffer, 0, sz);
-    }
-
-    return 0;
-}
-#endif
 
 static int
 ca_plugin_start (void) {
