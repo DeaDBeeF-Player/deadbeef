@@ -63,6 +63,7 @@ cp ./plugins/pltbrowser/.libs/pltbrowser_gtk3.dll $PREFIX/plugins/
 cp ./plugins/coreaudio/.libs/coreaudio.dll $PREFIX/plugins/
 cp ./plugins/sc68/.libs/in_sc68.dll $PREFIX/plugins/
 cp ./plugins/statusnotifier/.libs/statusnotifier.dll $PREFIX/plugins/
+cp ./plugins/portaudio/.libs/portaudio.dll $PREFIX/plugins/
 
 # libs
 cp $(ldd plugins/*/.libs/*.dll .libs/deadbeef.exe | awk 'NF == 4 {print $3}; NF == 2 {print $1}' |grep -i -v "System32" | grep -i -v "WinSxS" |sort -u) $PREFIX/
@@ -84,7 +85,7 @@ cp ./icons/32x32/deadbeef.png $PREFIX/
 cp -r plugins/converter/convpresets $PREFIX/plugins/convpresets
 
 # sc68data
-cp -r plugins/sc68/.libs/in_sc68.so $PREFIX/plugins/
+cp -r plugins/sc68/.libs/in_sc68.dll $PREFIX/plugins/
 mkdir -p  $PREFIX/plugins/data68/Replay
 cp -r plugins/sc68/file68/data68/Replay/*.bin $PREFIX/plugins/data68/Replay/
 
@@ -100,8 +101,8 @@ cp translation/help.ru.txt $PREFIX/doc/
 cp translation/help.zh_TW.txt $PREFIX/doc/
 
 # strip
-strip --strip-unneeded $PREFIX/deadbeef.exe
-for i in $PREFIX/plugins/*.dll ; do strip --strip-unneeded $i ; done
+#strip --strip-unneeded $PREFIX/deadbeef.exe
+#for i in $PREFIX/plugins/*.dll ; do strip --strip-unneeded $i ; done
 
 # MS-Windows theme (GTK2)
 for i in /mingw32 /mingw64 /usr; do
