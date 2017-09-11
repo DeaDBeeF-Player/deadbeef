@@ -180,7 +180,7 @@ conf_save (void) {
 
     conf_lock ();
     changed = 0;
-    fp = fopen (tempfile, "w+t");
+    fp = fopen (tempfile, "w+b");
     if (!fp) {
         trace_err ("failed to open config file %s for writing\n", tempfile);
         conf_unlock ();
