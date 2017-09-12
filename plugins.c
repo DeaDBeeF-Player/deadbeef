@@ -979,7 +979,7 @@ plug_load_all (void) {
     const char *plugins_dirs[] = { dirname, !res ? libpath : NULL, NULL };
 #else
 #ifndef ANDROID
-    char *xdg_local_home = getenv ("XDG_LOCAL_HOME");
+    char *xdg_local_home = getenv (LOCALDIR);
     char xdg_plugin_dir[1024];
     char xdg_plugin_dir_explicit_arch[1024];
 
@@ -987,7 +987,7 @@ plug_load_all (void) {
         strncpy (xdg_plugin_dir, xdg_local_home, sizeof (xdg_plugin_dir));
         xdg_plugin_dir[sizeof(xdg_plugin_dir)-1] = 0;
     } else {
-        char *homedir = getenv ("HOME");
+        char *homedir = getenv (HOMEDIR);
 
         if (!homedir) {
             trace_err ("plug_load_all: warning: unable to find home directory\n");
