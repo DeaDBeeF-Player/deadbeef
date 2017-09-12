@@ -2,11 +2,11 @@
 . .install
 PREFIX="${PREFIX:-`pwd`/build}"
 mkdir -p $PREFIX/plugins
-mkdir -p $PREFIX/lib/deadbeef
 mkdir -p $PREFIX/pixmaps
 mkdir -p $PREFIX/doc
 mkdir -p $PREFIX/share/themes $PREFIX/share/icons
 mkdir -p $PREFIX/etc/gtk-2.0 $PREFIX/lib/gtk-2.0/2.10.0/engines/
+mkdir -p $PREFIX/config
 
 rm -f $PREFIX/plugins/*.dll
 cp ./.libs/deadbeef.exe $PREFIX/
@@ -65,6 +65,8 @@ cp ./plugins/coreaudio/.libs/coreaudio.dll $PREFIX/plugins/
 cp ./plugins/sc68/.libs/in_sc68.dll $PREFIX/plugins/
 cp ./plugins/statusnotifier/.libs/statusnotifier.dll $PREFIX/plugins/
 cp ./plugins/portaudio/.libs/portaudio.dll $PREFIX/plugins/
+cp ./plugins/waveout/.libs/waveout.dll $PREFIX/plugins/
+
 
 # libs
 cp $(ldd plugins/*/.libs/*.dll .libs/deadbeef.exe | awk 'NF == 4 {print $3}; NF == 2 {print $1}' |grep -i -v "System32" | grep -i -v "WinSxS" |sort -u) $PREFIX/
@@ -102,8 +104,8 @@ cp translation/help.ru.txt $PREFIX/doc/
 cp translation/help.zh_TW.txt $PREFIX/doc/
 
 # strip
-# strip --strip-unneeded $PREFIX/deadbeef.exe
-# for i in $PREFIX/plugins/.libs/*.dll ; do strip --strip-unneeded $i ; done
+strip --strip-unneeded $PREFIX/deadbeef.exe
+for i in $PREFIX/plugins/.libs/*.dll ; do strip --strip-unneeded $i ; done
 
 # MS-Windows theme (GTK2)
 for i in /mingw32 /mingw64 /usr; do
