@@ -53,11 +53,6 @@ case "$host" in
     DEPS_CFLAGS="$DEPS_CFLAGS -I$PWD/plugins/libwin/include -DUSE_STDIO -U__STRICT_ANSI__ -mwindows"
     AC_SUBST([DEPS_CFLAGS])
     OS_WINDOWS=yes
-
-    AC_CHECK_PROG(windres,windres,yes)
-    AS_IF([test "${windres}" = "yes"], [
-        HAVE_WINDRES=yes
-    ])
     ;;
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
@@ -873,11 +868,19 @@ AS_IF([test "${enable_rgscanner}" != "no"], [
 AS_IF([test "${OS_WINDOWS}" = "yes"], [
     LDFLAGS="$LDFLAGS -no-undefined"
     AC_SUBST(LDFLAGS)
+    AC_CHECK_TOOL([windres], [windres])
+    AS_IF([test "$WINDRES" = "no"], [
+        HAVE_WINDRES=no
+    ], [
+        AC_SUBST(WINDRES)
+        HAVE_WINDRES=yes
+    ])
 ])
 
 PLUGINS_DIRS="plugins/libwin plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/portaudio plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/statusnotifier plugins/sndio plugins/rg_scanner"
 
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
+AM_CONDITIONAL(HAVE_WINDRES, test "x$HAVE_WINDRES" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_OGG, test "x$HAVE_OGG" = "xyes")
 AM_CONDITIONAL(HAVE_OGG_STREAM_FLUSH_FILL, test "x$HAVE_OGG_STREAM_FLUSH_FILL" = "xyes")
