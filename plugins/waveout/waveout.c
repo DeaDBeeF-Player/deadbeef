@@ -441,10 +441,8 @@ pwaveout_thread (void *context)
                 nanosleep(&sleep_time, NULL);
                 //__mingw_sleep(0, AUDIO_BUFFER_DURATION*1000000);
             }
-            trace("pwave play\n");
             /* 'consuming' audio data */
             if (deadbeef->streamer_ok_to_read(bytes_per_block)) {
-                trace("pwave_reading\n");
                 bytesread = deadbeef->streamer_read(audio_data+audio_block_write_index*bytes_per_block, bytes_per_block);
                 if (bytesread > 0) {
                     /* I cannot "unprepare" into the callback, so this seems a good place to do it */
