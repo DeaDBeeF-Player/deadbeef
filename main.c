@@ -885,47 +885,36 @@ mainloop_thread (void *ctx) {
 int
 main (int argc, char *argv[]) {
     ddb_logger_init ();
-    int portable=0,staticlink=0,portable_full=0;
-    #if STATICLINK
+    int portable = 0;
+    int staticlink = 0;
+    int portable_full = 0;
+#if STATICLINK
     staticlink = 1;
-    #elif PORTABLE
+#endif
+#if PORTABLE
     portable = 1;
-    #elif PORTABLE_FULL
-    portable_full=1;
-    #endif
-    #ifdef __MINGW32__
-    #define DIR_SEPARATOR '\\'
-    #define HOMEDIR "USERPROFILE"
-    #define CONFIGDIR "APPDATA"
-    #define CACHEDIR "LOCALAPPDATA"
-    #define RUNTIMEDIR "NORUNTIMEDIR"
-    #else
-    #define DIR_SEPARATOR '/'
-    #define HOMEDIR "HOME"
-    #define CONFIGDIR "XDG_CONFIG_HOME"
-    #define CACHEDIR "XDG_CACHE_HOME"
-    #define RUNTIMEDIR "XDG_RUNTIME_DIR"
-    #endif
+#endif
+#if PORTABLE_FULL
+    portable_full = 1;
+#endif
 
-    // expand symbolic links to dbinstalldir, if it fails just use argv[0]
     if (!realpath (argv[0], dbinstalldir)) {
         strcpy (dbinstalldir, argv[0]);
     }
-
     char *e = strrchr (dbinstalldir, DIR_SEPARATOR);
-    if (!e) {
-        fprintf (stderr, "couldn't determine install folder from path %s\n", argv[0]);
-        return -1;
-    }
-    else
+    if (e) {
         *e = 0;
+    }
+    else {
+        strcpy (dbinstalldir, PREFIX);
+    }
 
     // detect portable version by looking for plugins/ and deadbeef.png and portable_full by config/
-    while (!portable || !portable_full){
+    while (!portable || !portable_full) {
         struct stat st;
         char checkpath[PATH_MAX];
-        if (!portable){
-            int err = snprintf (checkpath, sizeof (checkpath), "%s/plugins", dbinstalldir);
+        if (!portable) {
+            snprintf (checkpath, sizeof (checkpath), "%s/plugins", dbinstalldir);
             if (stat (checkpath, &st) || !S_ISDIR (st.st_mode)) {
                 break;
             }
@@ -935,7 +924,7 @@ main (int argc, char *argv[]) {
             }
             portable = 1;
         }
-        if (!portable_full){
+        if (!portable_full) {
             snprintf (checkpath, sizeof (checkpath), "%s/config", dbinstalldir);
             if (stat (checkpath, &st) || !S_ISDIR (st.st_mode)) {
                 break;
@@ -944,11 +933,42 @@ main (int argc, char *argv[]) {
         }
         break;
     }
-
-    if (!portable)
+    if (!portable) {
         strcpy (dbinstalldir, PREFIX);
+    }
 
-    // Get Home directory.
+#ifdef __GLIBC__
+    signal (SIGSEGV, sigsegv_handler);
+#endif
+    setlocale (LC_ALL, "");
+    setlocale (LC_NUMERIC, "C");
+#ifdef ENABLE_NLS
+//    trace ("enabling gettext support: package=" PACKAGE ", dir=" LOCALEDIR "...\n");
+    if (portable) {
+        char localedir[PATH_MAX];
+        snprintf (localedir, sizeof (localedir), "%s/locale", dbinstalldir);
+        bindtextdomain (PACKAGE, localedir);
+    }
+    else {
+        bindtextdomain (PACKAGE, LOCALEDIR);
+    }
+	bind_textdomain_codeset (PACKAGE, "UTF-8");
+	textdomain (PACKAGE);
+#endif
+
+    trace ("starting deadbeef " VERSION "%s%s\n", staticlink ? " [static]" : "", portable ? " [portable]" : "");
+    srand ((unsigned int)time (NULL));
+#ifdef __linux__
+    prctl (PR_SET_NAME, "deadbeef-main", 0, 0, 0, 0);
+#endif
+#ifdef __MINGW32__
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0)
+        fprintf(stderr, "Error with WSAStartup(), WinSock startup failed.\n");
+    else
+        fprintf(stderr, "WinSock init ok, library version %d.%d\n", HIBYTE(wsaData.wVersion), LOBYTE(wsaData.wVersion));
+#endif
+
     char *homedir = getenv (HOMEDIR);
     if (!homedir) {
         trace_err ("unable to find home directory. stopping.\n");
@@ -956,9 +976,9 @@ main (int argc, char *argv[]) {
     }
 
     // Get config directory
-    if (portable_full){
+    if (portable_full) {
         if (snprintf (confdir, sizeof (confdir), "%s/config", dbinstalldir) > sizeof (confdir)) {
-            trace_err ("fatal: too long install path %s\n", dbinstalldir);
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
         strcpy (dbconfdir, confdir);
@@ -967,7 +987,7 @@ main (int argc, char *argv[]) {
         char *xdg_conf_dir = getenv (CONFIGDIR);
         if (xdg_conf_dir) {
             if (snprintf (confdir, sizeof (confdir), "%s", xdg_conf_dir) > sizeof (confdir)) {
-                trace_err ("fatal: "CONFIGDIR" value is too long: %s\n", xdg_conf_dir);
+                trace_err ("fatal: XDG_CONFIG_HOME value is too long: %s\n", xdg_conf_dir);
                 return -1;
             }
         }
@@ -979,24 +999,32 @@ main (int argc, char *argv[]) {
         }
 
         if (snprintf (dbconfdir, sizeof (dbconfdir), "%s/deadbeef", confdir) > sizeof (dbconfdir)) {
-            trace_err ("fatal: out of memory while configuring\n");
+            trace_err ("fatal: config path is too long: %s\n", dbconfdir);
             return -1;
         }
     }
     mkdir (confdir, 0755);
 
     // Get cache directory
-    char *xdg_cache_dir = getenv (CACHEDIR);
-    if (xdg_cache_dir) {
-        if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/deadbeef/", xdg_cache_dir) > sizeof (dbcachedir)) {
-            trace_err ("fatal: too long cache path %s\n", dbcachedir);
+    if (portable_full) {
+        if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/cache", dbconfdir) > sizeof (dbcachedir)) {
+            trace_err ("fatal: cache path is too long: %s\n", dbcachedir);
             return -1;
         }
     }
     else {
-        if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/.cache/deadbeef", homedir) > sizeof (confdir)) {
-            trace_err ("fatal: too long cache path %s\n", dbcachedir);
-            return -1;
+        const char *xdg_cache = getenv (CACHEDIR);
+        if (xdg_cache) {
+            if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/deadbeef/", xdg_cache) > sizeof (dbcachedir)) {
+                trace_err ("fatal: cache path is too long: %s\n", dbcachedir);
+                return -1;
+            }
+        }
+        else {
+            if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/.cache/deadbeef", homedir) > sizeof (dbcachedir)) {
+                trace_err ("fatal: cache path is too long: %s\n", dbcachedir);
+                return -1;
+            }
         }
     }
 
@@ -1005,7 +1033,7 @@ main (int argc, char *argv[]) {
     if (xdg_runtime)
     {
         if (snprintf(dbruntimedir, sizeof (dbruntimedir), "%s/deadbeef/", xdg_runtime) >= sizeof (dbruntimedir)) {
-            trace_err ("fatal: too long cache path %s\n", dbruntimedir);
+            trace_err ("fatal: cache path is too long: %s\n", dbruntimedir);
             return -1;
         }
         mkdir (dbruntimedir, 0755);
@@ -1019,19 +1047,19 @@ main (int argc, char *argv[]) {
     if (env_plugin_dir) {
         strncpy (dbplugindir, env_plugin_dir, sizeof(dbplugindir));
         if (dbplugindir[sizeof(dbplugindir) - 1] != 0) {
-            fprintf (stderr, "fatal: too long plugin path %s\n", env_plugin_dir);
+            fprintf (stderr, "fatal: plugin path is too long: %s\n", env_plugin_dir);
             return -1;
         }
     }
-    else if (portable){
-        #ifdef HAVE_COCOAUI
+    else if (portable) {
+#ifdef HAVE_COCOAUI
         cocoautil_get_resources_path (dbplugindir, sizeof (dbplugindir));
-        #else
+#else
         if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/plugins", dbinstalldir) > sizeof (dbplugindir)) {
-            trace_err ("fatal: too long install path %s\n", dbinstalldir);
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
-        #endif
+#endif
         mkdir (dbplugindir, 0755);
     }
     else {
@@ -1051,49 +1079,37 @@ main (int argc, char *argv[]) {
             trace_err ("fatal: too long install path %s\n", dbinstalldir);
             return -1;
         }
+
+        mkdir (dbplugindir, 0755);
+    }
+    else {
+        if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/deadbeef", LIBDIR) > sizeof (dbplugindir)) {
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
+            return -1;
+        }
+    }
+
+    // Get doc and pixmaps dirs
+    if (portable) {
+        if (snprintf (dbdocdir, sizeof (dbdocdir), "%s/doc", dbinstalldir) > sizeof (dbdocdir)) {
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
+            return -1;
+        }
+        if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/pixmaps", dbinstalldir) > sizeof (dbpixmapdir)) {
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
+            return -1;
+        }
     }
     else {
         if (snprintf (dbdocdir, sizeof (dbdocdir), "%s", DOCDIR) > sizeof (dbdocdir)) {
-            fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+            fprintf (stderr, "fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
         if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/share/deadbeef/pixmaps", PREFIX) > sizeof (dbpixmapdir)) {
-            trace_err ("fatal: too long install path %s\n", dbinstalldir);
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
     }
-
-#ifdef __GLIBC__
-    signal (SIGSEGV, sigsegv_handler);
-#endif
-    setlocale (LC_ALL, "");
-    setlocale (LC_NUMERIC, "C");
-#ifdef ENABLE_NLS
-//    trace ("enabling gettext support: package=" PACKAGE ", dir=" LOCALEDIR "...\n");
-    if (portable) {
-        char localedir[PATH_MAX];
-        snprintf (localedir, sizeof (localedir), "%s/locale", dbinstalldir);
-        bindtextdomain (PACKAGE, localedir);
-    }
-    else {
-        bindtextdomain (PACKAGE, LOCALEDIR);
-    }
-    bind_textdomain_codeset (PACKAGE, "UTF-8");
-    textdomain (PACKAGE);
-#endif
-
-    trace ("starting deadbeef " VERSION "%s%s\n", staticlink ? " [static]" : "", portable ? " [portable]" : "");
-    srand ((unsigned int)time (NULL));
-#ifdef __linux__
-    prctl (PR_SET_NAME, "deadbeef-main", 0, 0, 0, 0);
-#endif
-#ifdef __MINGW32__
-    WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0)
-        fprintf(stderr, "Error with WSAStartup(), WinSock startup failed.\n");
-    else
-        fprintf(stderr, "WinSock init ok, library version %d.%d\n", HIBYTE(wsaData.wVersion), LOBYTE(wsaData.wVersion));
-#endif
 
     for (int i = 1; i < argc; i++) {
         // help, version and nowplaying are executed with any filter

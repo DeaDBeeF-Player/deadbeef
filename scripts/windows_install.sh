@@ -1,6 +1,7 @@
 #!/bin/bash
 . .install
 PREFIX="${PREFIX:-`pwd`/build}"
+mkdir -p $PREFIX/plugins
 mkdir -p $PREFIX/lib/deadbeef
 mkdir -p $PREFIX/pixmaps
 mkdir -p $PREFIX/doc
@@ -63,6 +64,7 @@ cp ./plugins/pltbrowser/.libs/pltbrowser_gtk3.dll $PREFIX/plugins/
 cp ./plugins/coreaudio/.libs/coreaudio.dll $PREFIX/plugins/
 cp ./plugins/sc68/.libs/in_sc68.dll $PREFIX/plugins/
 cp ./plugins/statusnotifier/.libs/statusnotifier.dll $PREFIX/plugins/
+cp ./plugins/portaudio/.libs/portaudio.dll $PREFIX/plugins/
 
 # libs
 cp $(ldd plugins/*/.libs/*.dll .libs/deadbeef.exe | awk 'NF == 4 {print $3}; NF == 2 {print $1}' |grep -i -v "System32" | grep -i -v "WinSxS" |sort -u) $PREFIX/

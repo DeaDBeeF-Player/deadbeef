@@ -35,6 +35,23 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
+// specific directories
+#ifdef __MINGW32__
+#define DIR_SEPARATOR '\\'
+#define HOMEDIR "USERPROFILE"
+#define LOCALDIR "XDG_LOCAL_HOME"
+#define CONFIGDIR "APPDATA"
+#define CACHEDIR "LOCALAPPDATA"
+#define RUNTIMEDIR "NORUNTIMEDIR"
+#else
+#define DIR_SEPARATOR '/'
+#define HOMEDIR "HOME"
+#define LOCALDIR "XDG_LOCAL_HOME"
+#define CONFIGDIR "XDG_CONFIG_HOME"
+#define CACHEDIR "XDG_CACHE_HOME"
+#define RUNTIMEDIR "XDG_RUNTIME_DIR"
+#endif
+
 // those are defined in main.c
 extern char confdir[PATH_MAX]; // $HOME/.config
 extern char dbconfdir[PATH_MAX]; // $HOME/.config/deadbeef

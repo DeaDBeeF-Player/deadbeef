@@ -53,7 +53,7 @@ deadbeef_SOURCES =\
 if HAVE_WINDRES
 deadbeef_SOURCES += icons/deadbeef-icon.rc
 .rc.o:
-	windres  $*.rc -o $@
+	$(WINDRES) $*.rc -o $@
 endif
 
 sdkdir = $(pkgincludedir)
