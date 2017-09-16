@@ -29,27 +29,21 @@
 #endif
 #include <stdio.h>
 #include <string.h>
+
 #include "../../deadbeef.h"
-#include "portaudio.h"
+#include <portaudio.h>
 
-//#define trace(...) {deadbeef->log (__VA_ARGS__)}
-#define trace(...) { fprintf(stdout, __VA_ARGS__); }
+#ifdef __MINGW32__
+#include "windows.h"
+#endif
 
-static DB_output_t plugin;
-DB_functions_t *deadbeef;
+//#define trace(...) {deadbeef->log (__VA_ARGS__);}
+//#define trace(...) { fprintf(stdout, __VA_ARGS__); }
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 1, __VA_ARGS__); }
+#define info(...) { deadbeef->log_detailed (&plugin.plugin, 1, __VA_ARGS__); }
 
-static intptr_t portaudio_tid;
-static int portaudio_terminate;
-static int state;
-static int in_callback;
-
-static ddb_waveformat_t plugin_fmt;
-PaSampleFormat sampleformat;
-static uintptr_t mutex;
-
-PaStream *stream;
-PaError err;
-#define BUFFER_SIZE 32
+static PaSampleFormat
+pa_GetSampleFormat (int bps, int is_float);
 
 static void
 portaudio_thread (void *context);
@@ -60,8 +54,11 @@ portaudio_init (void);
 static int
 portaudio_free (void);
 
-int
+static int
 portaudio_setformat (ddb_waveformat_t *fmt);
+
+static int
+portaudio_reset (void);
 
 static int
 portaudio_play (void);
@@ -75,180 +72,199 @@ portaudio_pause (void);
 static int
 portaudio_unpause (void);
 
-typedef struct
-{
-    float left_phase;
-    float right_phase;
-} paTestData;
-static paTestData data;
+static int
+portaudio_callback (const void *inputBuffer, void *outputBuffer,
+                    unsigned long framesPerBuffer,
+                    const PaStreamCallbackTimeInfo* timeInfo,
+                    PaStreamCallbackFlags statusFlags,
+                    void *abortStreamFlag );
 
-int
+static DB_output_t plugin;
+DB_functions_t *deadbeef;
+static uintptr_t mutex;
+
+static int state;
+
+// actual stream
+static PaStream *stream;
+static ddb_waveformat_t plugin_fmt;
+static PaStreamParameters stream_parameters;
+static int samplesize;
+static int * abortStreamFlag;
+
+static int
 portaudio_init (void) {
     trace ("portaudio_init\n");
+    const PaVersionInfo *version_info = Pa_GetVersionInfo ();
+    info (version_info->versionText);
+
     deadbeef->mutex_lock (mutex);
-    PaError err;
-    err = Pa_Initialize ();
 
-    if( err != paNoError ){
-        trace("Failed to initialize PortAudio. %s\n", Pa_GetErrorText( err ) );
-        deadbeef->mutex_unlock (mutex);
-        return -1;
+    PaSampleFormat sampleformat = pa_GetSampleFormat (plugin_fmt.bps, plugin_fmt.is_float);
+    samplesize = Pa_GetSampleSize (sampleformat);
+    trace ("portaudio_init: frame size %d\n",plugin_fmt.channels*samplesize);
+    fflush(stdout);
+
+    if (stream_parameters.device == -1) {
+        stream_parameters.device = Pa_GetDefaultOutputDevice ();
     }
-
-    // Use generic format if no fmt
-    if (!plugin_fmt.channels) {
-        plugin_fmt.bps = 16;
-        plugin_fmt.is_float = 0;
-        plugin_fmt.channels = 2;
-        plugin_fmt.samplerate = 44100;
-        plugin_fmt.channelmask = 3;
-        sampleformat = paInt16;
+    if (!abortStreamFlag)
+        abortStreamFlag = calloc(1,sizeof(int));
+    else {
+        trace ("abortStreamFlag allocated!\n");
+        abortStreamFlag = calloc(1,sizeof(int));
     }
-
     /* Open an audio I/O stream. */
-    err = Pa_OpenDefaultStream( &stream,
-                                0,              /* no input channels */
-                                2,              /* stereo output */
-                                sampleformat,   /* output format */
-                                44100,          /* Sample Rate */
-                                BUFFER_SIZE,    /* frames per buffer, i.e. the number
-                                                   of sample frames that PortAudio will
-                                                   request from the callback. Many apps
-                                                   may want to use
-                                                   paFramesPerBufferUnspecified, which
-                                                   tells PortAudio to pick the best,
-                                                   porequested_fmtibly changing, buffer size.*/
-                                NULL,           /* callback function */
-                                NULL );         /*This is a pointer that will be parequested_fmted to
-                                                   your callback*/
-    if( err != paNoError ){
-        trace("Failed to open stream. %s\n", Pa_GetErrorText( err ) );
+    PaError err;
+    err = Pa_OpenStream (       &stream,                        // stream pointer
+                                NULL,                           // inputParameters
+                                &stream_parameters,             // outputParameters
+                                plugin_fmt.samplerate,          // sampleRate
+                                4096,                           // framesPerBuffer
+                                paNoFlag,                       // flags
+                                portaudio_callback,             // callback
+                                abortStreamFlag);               // abortStreamFlag
+
+    if (err != paNoError) {
+        trace("Failed to open stream. %s\n", Pa_GetErrorText(err));
         deadbeef->mutex_unlock (mutex);
         return -1;
     }
     state = OUTPUT_STATE_STOPPED;
-    portaudio_terminate = 0;
-    portaudio_tid = deadbeef->thread_start (portaudio_thread, NULL);
-    trace("portaudio tid == %x\n",portaudio_tid);
     deadbeef->mutex_unlock (mutex);
     return 0;
 }
 
-int portaudio_setformat(ddb_waveformat_t *fmt)
-{
-    memcpy (&plugin_fmt, fmt, sizeof (ddb_waveformat_t));
-
-    switch (plugin_fmt.bps) {
-    case 8:
-        sampleformat = paUInt8;
-        break;
-    case 16:
-        sampleformat = paInt16;
-        break;
-    case 24:
-        sampleformat = paInt24;
-        break;
-    case 32:
-        if (plugin_fmt.is_float) {
-            sampleformat = paFloat32;
-        }
-        else {
-            sampleformat = paInt32;
-        }
-        break;
-    default:
-        return -1;
-    };
-
-    return 0;
-}
-
-int portaudio_free(void)
-{
-    trace("portaudio_free\n");
-
-    state = OUTPUT_STATE_STOPPED;
-
-    if (!portaudio_tid) {
-        return 0;
-    }
-
-    if (in_callback) {
-        portaudio_terminate = 1;
-        return 0;
-    }
-
-    portaudio_terminate = 1;
-
-    deadbeef->thread_join(portaudio_tid);
-
-    return 0;
-}
-
-int
-portaudio_play (void) {
-    if (!portaudio_tid) {
-        trace("portaudio_play: calling init\n");
-        portaudio_init ();
-    }
+static int
+portaudio_setformat (ddb_waveformat_t *fmt) {
+    trace ("portaudio_setformat %dbit %s %dch %dHz channelmask=%X\n", plugin_fmt.bps, plugin_fmt.is_float ? "float" : "int", plugin_fmt.channels, plugin_fmt.samplerate, plugin_fmt.channelmask);
+    memcpy (&plugin.fmt, &plugin_fmt, sizeof (ddb_waveformat_t));
+    stream_parameters.device = stream_parameters.device;
+    stream_parameters.channelCount = plugin_fmt.channels;
+    stream_parameters.sampleFormat = pa_GetSampleFormat (plugin_fmt.bps, plugin_fmt.is_float);
+    stream_parameters.suggestedLatency = 0.0;
+    stream_parameters.hostApiSpecificStreamInfo = NULL;
     PaError err;
-    err = Pa_StartStream( stream );
-    if( err != paNoError ){
-        trace("Failed to start stream. %s\n", Pa_GetErrorText( err ) );
-        return 1;
+    err = Pa_IsFormatSupported (NULL, &stream_parameters, plugin_fmt.samplerate);
+    if (err != paNoError) {
+        trace ("Failed to change format. %s\n", Pa_GetErrorText(err));
+        // even if it failed -- continue
     }
-    trace("Starting stream.\n");
-    state = OUTPUT_STATE_PLAYING;
+    if (state == OUTPUT_STATE_PLAYING)
+        portaudio_reset ();
     return 0;
 }
 
 static int
-portaudio_stop (void) {
-    state = OUTPUT_STATE_STOPPED;
-    PaError err;
-    err = Pa_AbortStream( stream );
-    if( err != paNoError ){
-        trace("Failed to abort stream. %s\n", Pa_GetErrorText( err ) );
-        return 1;
+portaudio_free (void) {
+    trace("portaudio_free\n");
+    if (stream){
+        PaError err;
+        err = Pa_AbortStream (stream);
+        if (err != paNoError) {
+            trace ("Failed to free stream. %s\n", Pa_GetErrorText(err));
+            return -1;
+        }
     }
+    state = OUTPUT_STATE_STOPPED;
+    return 0;
+}
+
+static int
+portaudio_play (void) {
+    trace ("portaudio_play\n");
+    if (!stream) {
+        trace ("portaudio_play: calling init\n");
+        portaudio_init ();
+    }
+
+    if (!Pa_IsStreamActive(stream)){
+        PaError err;
+        err = Pa_StartStream (stream);
+        if (err != paNoError) {
+            trace ("Failed to start stream. %s\n", Pa_GetErrorText(err));
+            return -1;
+        }
+        trace ("Starting stream.\n");
+    }
+    state = OUTPUT_STATE_PLAYING;
+    return 0;
+}
+
+static PaSampleFormat pa_GetSampleFormat (int bps, int is_float) {
+    PaSampleFormat sampleformat;
+    switch (bps) {
+    case 8:
+        return paUInt8;
+        break;
+    case 16:
+        return paInt16;
+        break;
+    case 24:
+        return paInt24;
+        break;
+    case 32:
+        if (is_float)
+            return paFloat32;
+        else
+            return paInt32;
+        break;
+    };
+    trace("portaudio: unknown sample format, using INT16 anyway\n");
+    return paInt16;
+}
+
+static void portaudio_set_default (){
+    memcpy (&plugin_fmt, &plugin.fmt, sizeof (ddb_waveformat_t));
+    stream_parameters.device = -1;
+    stream_parameters.channelCount = plugin_fmt.channels;
+    stream_parameters.sampleFormat = pa_GetSampleFormat (plugin_fmt.bps, plugin_fmt.is_float);
+    stream_parameters.suggestedLatency = 0.0;
+    stream_parameters.hostApiSpecificStreamInfo = NULL;
+}
+
+static int
+portaudio_stop (void) {
+    if (state == OUTPUT_STATE_STOPPED) {
+        return -1;
+    }
+    PaError err;
+    err = Pa_AbortStream (stream);
+    if (err != paNoError) {
+        trace ("Failed to abort stream. %s\n", Pa_GetErrorText(err));
+        return -1;
+    }
+    state = OUTPUT_STATE_STOPPED;
     deadbeef->streamer_reset (1);
     return 0;
 }
 
-int
+static int
 portaudio_pause (void) {
     if (state == OUTPUT_STATE_STOPPED) {
         return -1;
     }
     PaError err;
-    err = Pa_StopStream( stream );
-    if( err != paNoError ){
-        trace("Failed to pause stream. %s\n", Pa_GetErrorText( err ) );
-        return 1;
+    err = Pa_AbortStream (stream);
+    //err = Pa_StopStream (stream);
+    if (err != paNoError) {
+        trace ("Failed to pause stream. %s\n", Pa_GetErrorText(err));
+        return -1;
     }
     // set pause state
     state = OUTPUT_STATE_PAUSED;
     return 0;
 }
 
-int
+static int
 portaudio_unpause (void) {
     if (!(state == OUTPUT_STATE_PAUSED)) {
         return -1;
     }
-    PaError err;
-    err = Pa_StartStream( stream );
-    if( err != paNoError ){
-        trace("Failed to start stream. %s\n", Pa_GetErrorText( err ) );
-        return 1;
-    }
-    // set pause state
-    state = OUTPUT_STATE_PLAYING;
-    return 0;
+    return portaudio_play ();
 }
 
-static int
-portaudio_get_endiannerequested_fmt (void) {
+static int portaudio_get_endiannerequested_fmt (void) {
 #if WORDS_BIGENDIAN
     return 1;
 #else
@@ -256,86 +272,70 @@ portaudio_get_endiannerequested_fmt (void) {
 #endif
 }
 
-static void
-portaudio_thread (void *context) {
-#ifdef __linux__
-    prctl (PR_SET_NAME, "deadbeef-portaudio", 0, 0, 0, 0);
-#endif
-    for (;;) {
-        if (portaudio_terminate) {
-            break;
+static int
+portaudio_reset (void) {
+    trace ("portaudio_reset");
+    // tell running portaudio_thread to finish stream
+    *abortStreamFlag = 1;
+    abortStreamFlag = 0;
+    // start new stream
+    portaudio_init ();
+    PaError err;
+    err = Pa_StartStream (stream);
+    if (err != paNoError) {
+            trace ("Failed to start stream. %s\n", Pa_GetErrorText(err));
+            return -1;
         }
-        if (state != OUTPUT_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1)) {
-            usleep (10000);
-            continue;
-        }
-        if(state == OUTPUT_STATE_PLAYING) {
-            signed long bs = BUFFER_SIZE;//Pa_GetStreamWriteAvailable (stream);
-            if (bs < 0) {
-                trace ("Portaudio: error in getting number of frames ready to read\n");
-                continue;
-            }
-            else if (bs == 0) {
-                trace ("PortAudio: no frames avaliable to write, waiting\n");
-                usleep (10000);
-                continue;
-            }
-            deadbeef->mutex_lock (mutex);
-            char *buf = malloc(bs);
-            if(!buf){
-                trace("allocating buffer failed\n");
-                deadbeef->mutex_unlock (mutex);
-                continue;
-            }
-            in_callback = 1;
-            int bytesread = deadbeef->streamer_read(buf, bs);
-            in_callback = 0;
-            if (bytesread < 0) {
-                bytesread = 0;
-            }
-            if (bytesread == 0){
-                free(buf);
-                continue;
-            }
-
-            if (bytesread < bs)
-            {
-                memset (buf + bytesread, 0, bs-bytesread);
-            }
-            if(bytesread != bs){
-                trace("streamer sent other value than requested (%d != %d)\n",bs,bytesread);
-            }
-            PaError err = Pa_WriteStream(stream, buf, sizeof (buf));
-            if( err != paNoError ){
-                trace("Failed to write stream. %s\n", Pa_GetErrorText( err ) );
-                free(buf);
-                continue;
-            }
-            free(buf);
-            deadbeef->mutex_unlock(mutex);
-
-            /*int sleeptime = bytesread;
-            if (sleeptime > 0 ) {
-                usleep (sleeptime * 6);
-            }*/
-        }
-    }
+    state = OUTPUT_STATE_PLAYING;
+    return 0;
 }
 
-int
+static int
+portaudio_callback (const void *in, void *out, unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *abortStreamFlag ) {
+    if (!deadbeef->streamer_ok_to_read (-1)) {
+        trace ("portaudio_callback: wait\n");
+        usleep (10000);
+    }
+    if ( *((int *) abortStreamFlag) ) {
+        trace ("portaudio_callback: format changed\n");
+        free (abortStreamFlag);
+        return paAbort;
+    }
+    if (state != OUTPUT_STATE_PLAYING){
+        trace ("portaudio_callback: abort\n");
+        return paAbort;
+    }
+    deadbeef->streamer_read (out, framesPerBuffer*plugin_fmt.channels*2);
+    return paContinue;
+}
+
+static int
 portaudio_get_state (void) {
     return state;
 }
 
-int
+static int
 p_portaudio_start (void) {
-    mutex = deadbeef->mutex_create();
+    mutex = deadbeef->mutex_create ();
+    PaError err;
+    err = Pa_Initialize ();
+    if (err != paNoError) {
+        trace ("Failed to initialize PortAudio. %s\n", Pa_GetErrorText(err));
+        return -1;
+    }
+    portaudio_set_default ();
     return 0;
 }
 
-int
+static int
 p_portaudio_stop (void) {
-    deadbeef->mutex_free(mutex);
+    deadbeef->mutex_free (mutex);
+    PaError err;
+    err = Pa_Terminate ();
+    if (err != paNoError) {
+        trace ("Failed to terminate PortAudio. %s\n", Pa_GetErrorText(err));
+        return -1;
+    }
     return 0;
 }
 
@@ -345,7 +345,6 @@ portaudio_load (DB_functions_t *api) {
     return DB_PLUGIN (&plugin);
 }
 
-// define plugin interface
 static DB_output_t plugin = {
     .plugin.api_vmajor = 1,
     .plugin.api_vminor = 10,
