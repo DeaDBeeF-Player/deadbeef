@@ -196,6 +196,11 @@ static NSMutableArray *g_converterControllers;
     deadbeef->conf_save ();
 }
 
+- (IBAction)outputFormatChanged:(id)sender {
+    deadbeef->conf_set_int ("converter.output_format", (int)[_outputFormat indexOfSelectedItem]);
+    deadbeef->conf_save ();
+}
+
 - (void)windowDidLoad {
     [super windowDidLoad];
     

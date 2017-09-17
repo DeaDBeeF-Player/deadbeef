@@ -4,7 +4,7 @@
 
   application launcher, compatible with GNU/Linux and most other POSIX systems
 
-  Copyright (C) 2009-2016 Alexey Yakovenko
+  Copyright (C) 2009-2017 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -117,7 +117,7 @@ char use_gui_plugin[100];
 static void
 print_help (void) {
 #ifdef ENABLE_NLS
-	bind_textdomain_codeset (PACKAGE, "");
+    bind_textdomain_codeset (PACKAGE, "");
 #endif
     fprintf (stdout, _("Usage: deadbeef [options] [--] [file(s)]\n"));
     fprintf (stdout, _("Options:\n"));
@@ -148,7 +148,7 @@ print_help (void) {
     fprintf (stdout, _("                      The NUM parameter can be specified in percents (if no suffix) or dB [-50, 0].\n"));
     fprintf (stdout, _("                      Examples: --volume 80 or --volume -20dB\n"));
 #ifdef ENABLE_NLS
-	bind_textdomain_codeset (PACKAGE, "UTF-8");
+    bind_textdomain_codeset (PACKAGE, "UTF-8");
 #endif
 }
 
@@ -952,8 +952,8 @@ main (int argc, char *argv[]) {
     else {
         bindtextdomain (PACKAGE, LOCALEDIR);
     }
-	bind_textdomain_codeset (PACKAGE, "UTF-8");
-	textdomain (PACKAGE);
+    bind_textdomain_codeset (PACKAGE, "UTF-8");
+    textdomain (PACKAGE);
 #endif
 
     trace ("starting deadbeef " VERSION "%s%s\n", staticlink ? " [static]" : "", portable ? " [portable]" : "");
@@ -1118,7 +1118,7 @@ main (int argc, char *argv[]) {
             return 0;
         }
         else if (!strcmp (argv[i], "--version")) {
-            trace ("DeaDBeeF " VERSION " Copyright © 2009-2016 Alexey Yakovenko\n");
+            trace ("DeaDBeeF " VERSION " Copyright © 2009-2017 Alexey Yakovenko\n");
             return 0;
         }
         else if (!strcmp (argv[i], "--gui")) {

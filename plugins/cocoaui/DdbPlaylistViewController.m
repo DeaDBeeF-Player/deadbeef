@@ -888,7 +888,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
                 }
                 return;
             }
-            to_idx = deadbeef->pl_get_idx_of (to);
+            to_idx = deadbeef->pl_get_idx_of_iter (to, [self playlistIter]);
             if (to_idx != -1) {
                 if (cursor_follows_playback) {
                     [listview setCursor:to_idx noscroll:YES];

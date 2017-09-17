@@ -8,7 +8,7 @@ More info is [here](http://deadbeef.sf.net).
 
 ## Download development builds
 
-[![Build Status](https://travis-ci.org/Alexey-Yakovenko/deadbeef.svg?branch=master)](https://travis-ci.org/Alexey-Yakovenko/deadbeef)
+[![Build Status](https://travis-ci.org/DeaDBeeF-Player/deadbeef.svg?branch=master)](https://travis-ci.org/DeaDBeeF-Player/deadbeef)
 
 [Download the latest GNU/Linux builds](https://sourceforge.net/projects/deadbeef/files/travis/linux/)
 

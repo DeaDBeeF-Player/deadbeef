@@ -1453,7 +1453,10 @@ enum {
     DB_ACTION_PLAYLIST = 1 << 5,
 
     /* add item to menu(s), if contains slash symbol(s) */
-    DB_ACTION_ADD_MENU = 1 << 6
+    DB_ACTION_ADD_MENU = 1 << 6,
+
+    /* Can't handle playlist */
+    DB_ACTION_NOT_FOR_PLAYLIST = 1 << 7
 };
 
 // action contexts

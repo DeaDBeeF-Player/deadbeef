@@ -29,5 +29,6 @@
 @property (unsafe_unretained) IBOutlet NSClipView *clipView;
 
 - (void)appendText:(NSString *)text;
+- (IBAction)clearAction:(id)sender;
 
 @end
