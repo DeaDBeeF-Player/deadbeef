@@ -481,9 +481,11 @@ int grouptitleheight = 22;
 
         NSArray *paths = [pboard propertyListForType:NSFilenamesPboardType];
         if (row) {
-            [delegate externalDropItems:paths after:row];
+            // add before selected row
+            [delegate externalDropItems:paths after: [delegate rowForIndex:sel-1] ];
         }
         else {
+            // no selected row, add to end
             DdbListviewRow_t lastRow = [delegate rowForIndex:([delegate rowCount]-1)];
             [delegate externalDropItems:paths after: lastRow];
         }
