@@ -30,4 +30,6 @@ cocoaui_add_new_playlist (void);
 void
 cocoaui_playlist_set_curr (int playlist);
 
+extern NSString *ddbPlaylistItemsUTIType;
+
 #endif

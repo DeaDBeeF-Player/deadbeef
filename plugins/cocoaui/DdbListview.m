@@ -22,11 +22,10 @@
 */
 
 #import "DdbListview.h"
+#import "DdbShared.h"
 #include "../../deadbeef.h"
 
 extern DB_functions_t *deadbeef;
-
-static NSString *ddbPlaylistItemsUTIType = @"net.sourceforge.deadbeef.playlistItems";
 
 // data has to be serialized, so we code idx and not pointers
 @interface DdbListviewLocalDragDropHolder : NSObject<NSCoding, NSPasteboardReading, NSPasteboardWriting> {

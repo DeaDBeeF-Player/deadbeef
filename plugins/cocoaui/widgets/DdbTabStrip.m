@@ -128,6 +128,8 @@ static int max_tab_size = 200;
         [self setupTrackingArea];
 
         [self setScrollPos:deadbeef->conf_get_int ("cocoaui.tabscroll", 0)];
+
+        [self registerForDraggedTypes:[NSArray arrayWithObjects:ddbPlaylistItemsUTIType, NSFilenamesPboardType, nil]];
     }
     return self;
 }
@@ -833,8 +835,22 @@ plt_get_title_wrapper (int plt) {
 - (BOOL)isFlipped {
     return YES;
 }
-// FIXME dnd motion must activate playlist
-// ...
+
+- (BOOL)wantsPeriodicDraggingUpdates {
+    // we only want to be informed of dnd drag updates when mouse moves
+    return NO;
+}
+
+- (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)sender {
+
+    NSPoint coord = [sender draggingLocation];
+    int tabUnderCursor = [self tabUnderCursor: coord.x];
+    if (tabUnderCursor != -1) {
+        cocoaui_playlist_set_curr (tabUnderCursor);
+    }
+
+    return NSDragOperationNone;
+}
 
 - (int)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     // FIXME: it's completely unclear why the code below is needed on playlist change/switch.
