@@ -114,4 +114,35 @@
     XCTAssert(res == sizeof (cp1252_reference) && !memcmp (output, cp1252_reference, sizeof (cp1252_reference)), @"Pass");
 }
 
+void
+_split_multivalue (char *text, size_t text_size);
+
+- (void)testSplitMultivalue_IgnoresUnspacedSlash {
+    char input[] = "Test/Value/With/Shashes";
+    _split_multivalue(input, sizeof (input)-1);
+
+    XCTAssert(!strcmp (input, "Test/Value/With/Shashes"), @"Pass");
+}
+
+- (void)testSplitMultivalue_SplitsOnSpacedSlash {
+    char input[] = "Test / Value / With / Shashes";
+    _split_multivalue(input, sizeof (input)-1);
+
+    XCTAssert(!strcmp (input, "Test\0\0\0Value\0\0\0With\0\0\0Shashes"), @"Pass");
+}
+
+- (void)testSplitMultivalue_IgnoreSpacedSlashBegin {
+    char input[] = "/ Test";
+    _split_multivalue(input, sizeof (input)-1);
+
+    XCTAssert(!strcmp (input, "/ Test"), @"Pass");
+}
+
+- (void)testSplitMultivalue_IgnoreSpacedSlashEnd {
+    char input[] = "Test /";
+    _split_multivalue(input, sizeof (input)-1);
+
+    XCTAssert(!strcmp (input, "Test /"), @"Pass");
+}
+
 @end

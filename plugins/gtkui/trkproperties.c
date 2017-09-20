@@ -308,7 +308,7 @@ trkproperties_fill_metadata (void) {
     gtk_list_store_clear (propstore);
 
     // hardcoded properties
-    for (int i = 0; trkproperties_hc_props[i]; i += 1) {
+    for (int i = 0; trkproperties_hc_props[i]; i += 2) {
         add_field (propstore, trkproperties_hc_props[i], _(trkproperties_hc_props[i+1]), 1, tracks, numtracks);
     }
     // properties
@@ -433,7 +433,7 @@ set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoi
     if (!smult) {
         GValue key = {0,}, value = {0,};
         gtk_tree_model_get_value (model, iter, 2, &key);
-        gtk_tree_model_get_value (model, iter, 1, &value);
+        gtk_tree_model_get_value (model, iter, 4, &value);
         const char *skey = g_value_get_string (&key);
         const char *svalue = g_value_get_string (&value);
 
@@ -723,7 +723,10 @@ on_trkproperties_edit_activate          (GtkMenuItem     *menuitem,
     g_value_unset (&key);
     g_value_unset (&value);
 
-    g_list_free_full (lst, (GDestroyNotify) gtk_tree_path_free);
+    for (GList *l = lst; l; l = l->next) {
+        gtk_tree_path_free (l->data);
+    }
+    g_list_free (lst);
 
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     if (response == GTK_RESPONSE_OK) {

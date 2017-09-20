@@ -50,6 +50,9 @@ typedef struct {
 
 void
 rg_calc_thread(void *ctx) {
+    DB_decoder_t *dec = NULL;
+    DB_fileinfo_t *fileinfo = NULL;
+
     char *buffer = NULL;
     char *bufferf = NULL;
 
@@ -62,8 +65,6 @@ rg_calc_thread(void *ctx) {
         return;
     }
 
-    DB_decoder_t *dec = NULL;
-    DB_fileinfo_t *fileinfo = NULL;
 
     deadbeef->pl_lock ();
     dec = (DB_decoder_t *)deadbeef->plug_get_for_id (deadbeef->pl_find_meta (st->settings->tracks[st->track_index], ":DECODER"));
@@ -74,7 +75,7 @@ rg_calc_thread(void *ctx) {
 
         if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (st->settings->tracks[st->track_index])) != 0) {
             st->settings->results[st->track_index].scan_result = DDB_RG_SCAN_RESULT_FILE_NOT_FOUND;
-            return;
+            goto error;
         }
 
         if (fileinfo) {
@@ -83,7 +84,7 @@ rg_calc_thread(void *ctx) {
 
             if (fileinfo->fmt.channels > 6) {
                 st->settings->results[st->track_index].scan_result = DDB_RG_SCAN_RESULT_INVALID_FILE;
-                return;
+                goto error;
             }
 
             const int maps[6][6] = {
@@ -151,44 +152,50 @@ rg_calc_thread(void *ctx) {
                 ebur128_add_frames_float (st->peak_state[st->track_index], (float*) bufferf, frames); // collect data
             }
         }
-    }
 
-    if (!st->settings->pabort || !(*(st->settings->pabort))) {
-        // calculating track peak
-        // libEBUR128 calculates peak per channel, so we have to pick the highest value
-        double tr_peak = 0;
-        double ch_peak = 0;
-        int res;
-        for (int ch = 0; ch < fileinfo->fmt.channels; ++ch) {
-            res = ebur128_sample_peak (st->peak_state[st->track_index], ch, &ch_peak);
-            //trace ("rg_scanner: peak for ch %d: %f\n", ch, ch_peak);
-            if (ch_peak > tr_peak) {
-                //trace ("rg_scanner: %f > %f\n", ch_peak, tr_peak);
-                tr_peak = ch_peak;
+        if (!st->settings->pabort || !(*(st->settings->pabort))) {
+            // calculating track peak
+            // libEBUR128 calculates peak per channel, so we have to pick the highest value
+            double tr_peak = 0;
+            double ch_peak = 0;
+            int res;
+            for (int ch = 0; ch < fileinfo->fmt.channels; ++ch) {
+                res = ebur128_sample_peak (st->peak_state[st->track_index], ch, &ch_peak);
+                //trace ("rg_scanner: peak for ch %d: %f\n", ch, ch_peak);
+                if (ch_peak > tr_peak) {
+                    //trace ("rg_scanner: %f > %f\n", ch_peak, tr_peak);
+                    tr_peak = ch_peak;
+                }
             }
+
+            st->settings->results[st->track_index].track_peak = (float) tr_peak;
+
+            // calculate track loudness
+            double loudness = st->settings->ref_loudness;
+            ebur128_loudness_global (st->gain_state[st->track_index], &loudness);
+
+            /*
+             * EBUR128 sets the target level to -23 LUFS = 84dB
+             * -> -23 - loudness = track gain to get to 84dB
+             *
+             * The old implementation of RG used 89dB, most people still use that
+             * -> the above + (loudness - 84) = track gain to get to 89dB (or user specified)
+             */
+            st->settings->results[st->track_index].track_gain = -23 - loudness + st->settings->ref_loudness - 84;
         }
-
-        st->settings->results[st->track_index].track_peak = (float) tr_peak;
-
-        // calculate track loudness
-        double loudness = st->settings->ref_loudness;
-        ebur128_loudness_global (st->gain_state[st->track_index], &loudness);
-
-        /*
-         * EBUR128 sets the target level to -23 LUFS = 84dB
-         * -> -23 - loudness = track gain to get to 84dB
-         *
-         * The old implementation of RG used 89dB, most people still use that
-         * -> the above + (loudness - 84) = track gain to get to 89dB (or user specified)
-         */
-        st->settings->results[st->track_index].track_gain = -23 - loudness + st->settings->ref_loudness - 84;
     }
 
+error:
     // clean up
+    if (fileinfo) {
+        dec->free (fileinfo);
+    }
+
     if (buffer && buffer != bufferf) {
         free (buffer);
         buffer = NULL;
     }
+
     if (bufferf) {
         free (bufferf);
         bufferf = NULL;

@@ -23,3 +23,6 @@ GtkWidget* create_select_action (void);
 GtkWidget* create_setcustomtitledlg (void);
 GtkWidget* create_trkproperties_popup_menu (void);
 GtkWidget* create_edit_tag_value_dlg (void);
+GtkWidget* create_log_window (void);
+GtkWidget* create_rg_scan_progress (void);
+GtkWidget* create_rg_scan_results (void);

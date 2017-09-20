@@ -733,15 +733,25 @@ extern DB_functions_t *deadbeef;
     }
 }
 
+typedef struct {
+    void *ctl; // DdbPlaylistViewController ptr (retain)
+    int grp;
+} cover_avail_info_t;
+
 static void coverAvailCallback (NSImage *__strong img, void *user_data) {
-    DdbPlaylistViewController *ctl = (__bridge DdbPlaylistViewController *) user_data;
-    [[ctl view] setNeedsDisplay:YES];
+    cover_avail_info_t *info = user_data;
+    DdbPlaylistViewController *ctl = (__bridge_transfer DdbPlaylistViewController *)info->ctl;
+    DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)[ctl view];
+    DdbListview *listview = [pltWidget listview];
+    [listview drawGroup:info->grp];
+    free (info);
 }
 
 #define ART_PADDING_HORZ 8
 #define ART_PADDING_VERT 0
 
-- (void)drawAlbumArtForRow:(DdbListviewRow_t)row
+- (void)drawAlbumArtForGroup:(DdbListviewGroup_t *)grp
+                  groupIndex:(int)groupIndex
                   inColumn:(DdbListviewCol_t)col
              isPinnedGroup:(BOOL)pinned
             nextGroupCoord:(int)grp_next_y
@@ -752,9 +762,13 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
                     height:(int)height {
     DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)[self view];
     DdbListview *listview = [pltWidget listview];
-    DB_playItem_t *it = (DB_playItem_t *)row;
-    NSImage *image = [[CoverManager defaultCoverManager] getCoverForTrack:it withCallbackWhenReady:coverAvailCallback withUserDataForCallback:(__bridge void *)self];
+    DB_playItem_t *it = (DB_playItem_t *)grp->head;
+    cover_avail_info_t *inf = calloc (sizeof (cover_avail_info_t), 1);
+    inf->ctl = (__bridge_retained void *)self;
+    inf->grp = groupIndex;
+    NSImage *image = [[CoverManager defaultCoverManager] getCoverForTrack:it withCallbackWhenReady:coverAvailCallback withUserDataForCallback:inf];
     if (!image) {
+        // FIXME: the problem here is that if the cover is not found (yet) -- it won't draw anything, but the rect is already invalidated, and will come out as background color
         return;
     }
 
@@ -874,7 +888,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
                 }
                 return;
             }
-            to_idx = deadbeef->pl_get_idx_of (to);
+            to_idx = deadbeef->pl_get_idx_of_iter (to, [self playlistIter]);
             if (to_idx != -1) {
                 if (cursor_follows_playback) {
                     [listview setCursor:to_idx noscroll:YES];
@@ -958,13 +972,28 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
             if (track) {
                 deadbeef->pl_item_ref (track);
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    BOOL draw = NO;
                     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
                     if (plt) {
                         int idx = deadbeef->plt_get_item_idx (plt, track, PL_MAIN);
                         if (idx != -1) {
-                            [listview drawRow:deadbeef->pl_get_idx_of (track)];
+                            draw = YES;
                         }
                         deadbeef->plt_unref (plt);
+                    }
+                    int buffering = !deadbeef->streamer_ok_to_read (-1);
+                    if (buffering) {
+                        DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
+                        if (playing_track) {
+                            if (playing_track == track) {
+                                [self songChanged:listview from:NULL to:playing_track];
+                                draw = NO;
+                            }
+                            deadbeef->pl_item_unref (playing_track);
+                        }
+                    }
+                    if (draw) {
+                        [listview drawRow:deadbeef->pl_get_idx_of (track)];
                     }
                     deadbeef->pl_item_unref (track);
                 });
@@ -1229,6 +1258,11 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 }
 
 - (void)rgRemove:(id)sender {
+    int count;
+    DB_playItem_t **tracks = [self getSelectedTracksForRg:&count withRgTags:YES];
+    if (tracks) {
+        [ReplayGainScannerController removeRgTagsFromTracks:tracks count:count];
+    }
 }
 
 - (void)rgScanAlbum:(id)sender {
@@ -1243,30 +1277,55 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     [self rgScan:DDB_RG_SCAN_MODE_TRACK];
 }
 
-- (void)rgScan:(int)mode {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+- (DB_playItem_t **)getSelectedTracksForRg:(int *)pcount withRgTags:(BOOL)withRgTags {
+   ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->pl_lock ();
+    DB_playItem_t __block **tracks = NULL;
     int numtracks = deadbeef->plt_getselcount (plt);
-    if (numtracks > 0) {
-        DB_playItem_t __block **tracks = calloc (numtracks, sizeof (DB_playItem_t *));
-        int __block n = 0;
-        [self forEachTrack:^(DB_playItem_t *it) {
-            if (deadbeef->pl_is_selected (it)) {
-                assert (n < numtracks);
+    if (!numtracks) {
+        deadbeef->pl_unlock ();
+        return NULL;
+    }
+
+    ddb_replaygain_settings_t __block s;
+    s._size = sizeof (ddb_replaygain_settings_t);
+
+    tracks = calloc (numtracks, sizeof (DB_playItem_t *));
+    int __block n = 0;
+    [self forEachTrack:^(DB_playItem_t *it) {
+        if (deadbeef->pl_is_selected (it)) {
+            assert (n < numtracks);
+            BOOL hasRgTags = NO;
+            if (withRgTags) {
+                deadbeef->replaygain_init_settings (&s, it);
+                if (s.has_album_gain || s.has_track_gain) {
+                    hasRgTags = YES;
+                }
+            }
+            if (!withRgTags || hasRgTags) {
                 deadbeef->pl_item_ref (it);
                 tracks[n++] = it;
             }
-            return YES;
-        }  forIter:PL_MAIN];
-        deadbeef->pl_unlock ();
-
-        [ReplayGainScannerController runScanner:mode forTracks:tracks count:numtracks];
-    }
-    else {
-        deadbeef->pl_unlock ();
-    }
-
+        }
+        return YES;
+    }  forIter:PL_MAIN];
+    deadbeef->pl_unlock ();
     deadbeef->plt_unref (plt);
+
+    if (!n) {
+        free (tracks);
+        return NULL;
+    }
+    *pcount = n;
+    return tracks;
+}
+
+- (void)rgScan:(int)mode {
+    int count;
+    DB_playItem_t **tracks = [self getSelectedTracksForRg:&count withRgTags:NO];
+    if (tracks) {
+        [ReplayGainScannerController runScanner:mode forTracks:tracks count:count];
+    }
 }
 
 - (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view {

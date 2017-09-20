@@ -31,8 +31,7 @@
 #include <time.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -189,14 +188,14 @@ vfs_curl_set_meta (DB_playItem_t *it, const char *meta, const char *value) {
 
 int
 http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
-    trace ("reading %d bytes of metadata\n", size);
+//    trace ("reading %d bytes of metadata\n", size);
     trace ("%s\n", meta);
     const char *e = meta + size;
     const char strtitle[] = "StreamTitle='";
     char title[256] = "";
     while (meta < e) {
         if (!memcmp (meta, strtitle, sizeof (strtitle)-1)) {
-            trace ("extracting streamtitle\n");
+//            trace ("extracting streamtitle\n");
             meta += sizeof (strtitle)-1;
             const char *substr_end = meta;
             while (substr_end < e-1 && (*substr_end != '\'' || *(substr_end+1) != ';')) {
@@ -298,6 +297,7 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
 
 static void
 http_stream_reset (HTTP_FILE *fp) {
+    // FIXME: calling this without reopening the entire stream causes metadata counter unsync.
     fp->gotheader = 0;
     fp->icyheader = 0;
     fp->gotsomeheader = 0;
@@ -364,58 +364,62 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
     }
     deadbeef->mutex_unlock (fp->mutex);
 
-    if (fp->icy_metaint > 0) {
-        for (;;) {
+    while (fp->icy_metaint > 0) {
 //            trace ("wait_meta=%d, avail=%d\n", fp->wait_meta, avail);
-            if (fp->metadata_size > 0) {
-                if (fp->metadata_size > fp->metadata_have_size) {
-                    trace ("metadata fetch mode, avail: %d, metadata_size: %d, metadata_have_size: %d)\n", avail, fp->metadata_size, fp->metadata_have_size);
-                    int sz = (fp->metadata_size - fp->metadata_have_size);
-                    sz = min (sz, avail);
-                    if (sz > 0) {
-                        trace ("fetching %d bytes of metadata (out of %d)\n", sz, fp->metadata_size);
-                        memcpy (fp->metadata + fp->metadata_have_size, ptr, sz);
-                        avail -= sz;
-                        ptr += sz;
-                        fp->metadata_have_size += sz;
-                    }
+        if (fp->metadata_size > 0) {
+            if (fp->metadata_size > fp->metadata_have_size) {
+                trace ("metadata fetch mode, avail: %d, metadata_size: %d, metadata_have_size: %d)\n", avail, fp->metadata_size, fp->metadata_have_size);
+                int sz = (fp->metadata_size - fp->metadata_have_size);
+                sz = min (sz, avail);
+                int space = MAX_METADATA - fp->metadata_have_size;
+                int copysize = min (space, sz);
+                if (copysize > 0) {
+                    trace ("fetching %d bytes of metadata (out of %d)\n", sz, fp->metadata_size);
+                    memcpy (fp->metadata + fp->metadata_have_size, ptr, copysize);
                 }
-                if (fp->metadata_size == fp->metadata_have_size) {
-                    int sz = fp->metadata_size;
-                    fp->metadata_size = fp->metadata_have_size = 0;
-                    if (http_parse_shoutcast_meta (fp, fp->metadata, sz) < 0) {
-                        trace ("vfs_curl: got invalid icy metadata block\n");
-                        http_stream_reset (fp);
-                        fp->status = STATUS_SEEK;
-                        return 0;
-                    }
-                }
+                avail -= sz;
+                ptr += sz;
+                fp->metadata_have_size += sz;
             }
-            if (fp->wait_meta < avail) {
-                // read bytes remaining until metadata block
-                size_t res1 = http_curl_write_wrapper (fp, ptr, fp->wait_meta);
-                if (res1 != fp->wait_meta) {
+            if (fp->metadata_size == fp->metadata_have_size) {
+                int sz = fp->metadata_size;
+                fp->metadata_size = fp->metadata_have_size = 0;
+                if (http_parse_shoutcast_meta (fp, fp->metadata, sz) < 0) {
+                    trace ("vfs_curl: got invalid icy metadata block\n");
+                    http_stream_reset (fp);
+                    fp->status = STATUS_SEEK;
                     return 0;
                 }
-                avail -= res1;
-                ptr += res1;
-                uint32_t sz = (uint32_t)(*((uint8_t *)ptr)) * 16;
-                ptr ++;
-                fp->metadata_size = sz;
-                fp->metadata_have_size = 0;
-                fp->wait_meta = fp->icy_metaint;
-                avail--;
-                if (sz != 0) {
-                    trace ("found metadata block, size: %d (avail=%d)\n", sz, avail);
-                }
             }
-            if ((!fp->metadata_size || !avail) && fp->wait_meta >= avail) {
-                break;
-            }
-            if (avail < 0) {
-                trace ("vfs_curl: something bad happened in metadata parser. can't continue streaming.\n");
+        }
+        if (fp->wait_meta < avail) {
+            // read bytes remaining until metadata block
+            size_t res1 = http_curl_write_wrapper (fp, ptr, fp->wait_meta);
+            if (res1 != fp->wait_meta) {
                 return 0;
             }
+            avail -= res1;
+            ptr += res1;
+            uint32_t sz = (uint32_t)(*((uint8_t *)ptr)) * 16;
+            if (sz > 1024) {
+                trace ("metadata size %d is too large\n", sz);
+            }
+            //assert (sz < MAX_METADATA);
+            ptr ++;
+            fp->metadata_size = sz;
+            fp->metadata_have_size = 0;
+            fp->wait_meta = fp->icy_metaint;
+            avail--;
+            if (sz != 0) {
+                trace ("found metadata block at pos %lld, size: %d (avail=%d)\n", fp->pos, sz, avail);
+            }
+        }
+        if ((!fp->metadata_size || !avail) && fp->wait_meta >= avail) {
+            break;
+        }
+        if (avail < 0) {
+            trace ("vfs_curl: something bad happened in metadata parser. can't continue streaming.\n");
+            return 0;
         }
     }
 
@@ -509,7 +513,7 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
             p++;
         }
         p = parse_header (p, end, key, sizeof (key), value, sizeof (value));
-        //trace ("%skey=%s value=%s\n", fp->icyheader ? "[icy] " : "", key, value);
+        trace ("%skey=%s value=%s\n", fp->icyheader ? "[icy] " : "", key, value);
         if (!strcasecmp (key, "Content-Type")) {
             if (fp->content_type) {
                 free (fp->content_type);
@@ -694,25 +698,6 @@ http_thread_func (void *ctx) {
             trace ("curl error:\n%s\n", fp->http_err);
         }
         deadbeef->mutex_lock (fp->mutex);
-#if 0
-        if (status == 0 && fp->length < 0 && fp->status != STATUS_ABORTED && fp->status != STATUS_SEEK) {
-            trace ("vfs_curl: restarting stream\n");
-            // NOTE: don't do http_stream_reset here - we don't want to cut the ending
-            fp->status = STATUS_INITIAL;
-            fp->gotheader = 0;
-            fp->icyheader = 0;
-            fp->gotsomeheader = 0;
-            fp->metadata_size = 0;
-            fp->metadata_have_size = 0;
-            fp->skipbytes = 0;
-            fp->nheaderpackets = 0;
-            fp->seektoend = 0;
-            fp->icy_metaint = 0;
-            fp->wait_meta = 0;
-            deadbeef->mutex_unlock (fp->mutex);
-            continue;
-        }
-#endif
         if (fp->status != STATUS_SEEK) {
             trace ("vfs_curl: break loop\n");
             deadbeef->mutex_unlock (fp->mutex);
@@ -1146,6 +1131,7 @@ static DB_vfs_t plugin = {
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_VFS,
+//    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .plugin.id = "vfs_curl",
     .plugin.name = "cURL vfs",
     .plugin.descr = "http and ftp streaming module using libcurl, with ICY protocol support",

@@ -380,6 +380,7 @@ private:
 
 public:
     Player ();
+    ~Player();
 
     const sid2_config_t &config (void) const { return m_cfg; }
     const sid2_info_t   &info   (void) const { return m_info; }

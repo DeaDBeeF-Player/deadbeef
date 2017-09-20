@@ -31,6 +31,7 @@ static void
 _scan_progress (int current, void *user_data);
 
 static char *_title_tf;
+static ddb_rg_scanner_t *_rg;
 
 static NSMutableArray *g_rgControllers;
 
@@ -40,7 +41,6 @@ static NSMutableArray *g_rgControllers;
 
 @implementation ReplayGainScannerController {
     ddb_rg_scanner_settings_t _rg_settings;
-    ddb_rg_scanner_t *_rg;
     int _abort_flag;
     struct timeval _rg_start_tv;
     BOOL _abortTagWriting;
@@ -71,6 +71,27 @@ static NSMutableArray *g_rgControllers;
     _abort_flag = 1;
 }
 
++ (BOOL)initPlugin {
+    if (_rg) {
+        return YES;
+    }
+
+    _rg = (ddb_rg_scanner_t *)deadbeef->plug_get_for_id ("rg_scanner");
+
+    if (!_rg) {
+        deadbeef->log ("rg_scanner plugin is not found");
+        return NO;
+    }
+
+    if (_rg && _rg->misc.plugin.version_major != 1) {
+        _rg = NULL;
+        deadbeef->log ("Invalid version of rg_scanner plugin");
+        return NO;
+    }
+
+    return YES;
+}
+
 + (ReplayGainScannerController *)runScanner:(int)mode forTracks:(DB_playItem_t **)tracks count:(int)count {
     deadbeef->background_job_increment ();
 
@@ -88,20 +109,24 @@ static NSMutableArray *g_rgControllers;
     return ctl;
 }
 
++ (ReplayGainScannerController *)removeRgTagsFromTracks:(DB_playItem_t **)tracks count:(int)count {
+    deadbeef->background_job_increment ();
+
+    ReplayGainScannerController *ctl = [[ReplayGainScannerController alloc] initWithWindowNibName:@"ReplayGain"];
+
+    [ctl removeRgTagsFromTracks:tracks count:count];
+    if (!g_rgControllers) {
+        g_rgControllers = [[NSMutableArray alloc] init];
+    }
+    [g_rgControllers addObject:ctl];
+    return ctl;
+}
+
 - (void)runScanner:(int)mode forTracks:(DB_playItem_t **)tracks count:(int)count {
-    _rg = (ddb_rg_scanner_t *)deadbeef->plug_get_for_id ("rg_scanner");
-    if (_rg && _rg->misc.plugin.version_major != 1) {
-        _rg = NULL;
-        deadbeef->log ("Invalid version of rg_scanner plugin");
+    if (![ReplayGainScannerController initPlugin]) {
         return;
     }
 
-    if (!_rg) {
-        deadbeef->log ("ReplayGain plugin is not found");
-    }
-
-    //    [[_rgScannerWindowController window] setIsVisible:YES];
-    //    [[_rgScannerWindowController window] makeKeyWindow];
     [[self window] setIsVisible:YES];
     [[self window] makeKeyWindow];
 
@@ -132,6 +157,44 @@ static NSMutableArray *g_rgControllers;
         });
     });
 }
+
+- (void)removeRgTagsFromTracks:(DB_playItem_t **)tracks count:(int)count {
+    if (![ReplayGainScannerController initPlugin]) {
+        return;
+    }
+
+    memset (&_rg_settings, 0, sizeof (ddb_rg_scanner_settings_t));
+    _rg_settings._size = sizeof (ddb_rg_scanner_settings_t);
+    _rg_settings.tracks = tracks;
+    _rg_settings.num_tracks = count;
+
+    [self window]; // access main window to make sure the NIB is loaded
+    [_updateTagsProgressWindow setIsVisible:YES];
+    _abortTagWriting = NO;
+
+    dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(aQueue, ^{
+        for (int i = 0; i < _rg_settings.num_tracks; i++) {
+            _rg->remove (_rg_settings.tracks[i]);
+            if (_abortTagWriting) {
+                break;
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // progress
+                deadbeef->pl_lock ();
+                NSString *path = [NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (_rg_settings.tracks[i], ":URI")];
+                deadbeef->pl_unlock ();
+                [_updateTagsProgressText setStringValue:path];
+                [_updateTagsProgressIndicator setDoubleValue:(double)i/_rg_settings.num_tracks*100];
+            });
+        }
+        deadbeef->background_job_decrement ();
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self dismissController:self];
+        });
+    });
+}
+
 
 - (NSString *)formatTime:(float)sec extraPrecise:(BOOL)extraPrecise {
     int hr;
@@ -223,7 +286,10 @@ static NSMutableArray *g_rgControllers;
                 _rg->apply (_rg_settings.tracks[i], _rg_settings.results[i].track_gain, _rg_settings.results[i].track_peak, _rg_settings.results[i].album_gain, _rg_settings.results[i].album_peak);
             }
         }
-        [self dismissController:self];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self dismissController:self];
+        });
     });
 }
 

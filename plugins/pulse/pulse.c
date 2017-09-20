@@ -52,28 +52,13 @@ static int pulse_terminate;
 static pa_simple *s;
 static pa_sample_spec ss;
 static ddb_waveformat_t requested_fmt;
-static int state;
+static int state = OUTPUT_STATE_STOPPED;
 static uintptr_t mutex;
+static int in_callback;
 
 static int buffer_size;
 
 static void pulse_thread(void *context);
-
-static void pulse_callback(char *stream, int len);
-
-static int pulse_init();
-
-static int pulse_free();
-
-static int pulse_setformat(ddb_waveformat_t *fmt);
-
-static int pulse_play();
-
-static int pulse_stop();
-
-static int pulse_pause();
-
-static int pulse_unpause();
 
 static int pulse_set_spec(ddb_waveformat_t *fmt)
 {
@@ -163,6 +148,7 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
 static int pulse_init(void)
 {
     trace ("pulse_init\n");
+    deadbeef->mutex_lock (mutex);
     state = OUTPUT_STATE_STOPPED;
     trace ("pulse_terminate=%d\n", pulse_terminate);
     assert (!pulse_terminate);
@@ -172,10 +158,12 @@ static int pulse_init(void)
     }
 
     if (0 != pulse_set_spec(&plugin.fmt)) {
+        deadbeef->mutex_unlock (mutex);
         return -1;
     }
 
     pulse_tid = deadbeef->thread_start(pulse_thread, NULL);
+    deadbeef->mutex_unlock (mutex);
 
     return 0;
 }
@@ -187,32 +175,13 @@ static int pulse_setformat (ddb_waveformat_t *fmt)
         return -1;
     }
     if (!memcmp (fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
-        trace ("pulse_setformat ignored\n");
         return 0;
     }
-    trace ("pulse_setformat %dbit %s %dch %dHz channelmask=%X\n", fmt->bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
 
-    int prev_state = state;
-    pulse_stop ();
     deadbeef->mutex_lock(mutex);
     pulse_set_spec(fmt);
     deadbeef->mutex_unlock(mutex);
-    trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
 
-    switch (prev_state) {
-    case OUTPUT_STATE_STOPPED:
-        return pulse_stop ();
-    case OUTPUT_STATE_PLAYING:
-        return pulse_play ();
-    case OUTPUT_STATE_PAUSED:
-        if (0 != pulse_play ()) {
-            return -1;
-        }
-        if (0 != pulse_pause ()) {
-            return -1;
-        }
-        break;
-    }
     return 0;
 }
 
@@ -220,21 +189,24 @@ static int pulse_free(void)
 {
     trace("pulse_free\n");
 
+    state = OUTPUT_STATE_STOPPED;
+
+    deadbeef->mutex_lock(mutex);
     if (!pulse_tid) {
+        deadbeef->mutex_unlock(mutex);
         return 0;
     }
 
-    intptr_t tid = pulse_tid;
-    pulse_tid = 0;
-    pulse_terminate = 1;
-    deadbeef->thread_join(tid);
-
-    state = OUTPUT_STATE_STOPPED;
-    if (s)
-    {
-        pa_simple_free(s);
-        s = NULL;
+    if (in_callback) {
+        pulse_terminate = 1;
+        deadbeef->mutex_unlock(mutex);
+        return 0;
     }
+
+    pulse_terminate = 1;
+    deadbeef->mutex_unlock(mutex);
+
+    deadbeef->thread_join(pulse_tid);
 
     return 0;
 }
@@ -242,23 +214,26 @@ static int pulse_free(void)
 static int pulse_play(void)
 {
     trace ("pulse_play\n");
+    deadbeef->mutex_lock (mutex);
     if (!pulse_tid)
     {
         if (pulse_init () < 0)
         {
+            deadbeef->mutex_unlock (mutex);
             return -1;
         }
     }
 
+    pa_simple_flush (s, NULL);
     state = OUTPUT_STATE_PLAYING;
+    deadbeef->mutex_unlock (mutex);
+
     return 0;
 }
 
 static int pulse_stop(void)
 {
     trace ("pulse_stop\n");
-    state = OUTPUT_STATE_STOPPED;
-    deadbeef->streamer_reset(1);
     pulse_free();
     return 0;
 }
@@ -266,11 +241,6 @@ static int pulse_stop(void)
 static int pulse_pause(void)
 {
     trace ("pulse_pause\n");
-    if (state == OUTPUT_STATE_STOPPED)
-    {
-        return -1;
-    }
-
     pulse_free();
     state = OUTPUT_STATE_PAUSED;
     return 0;
@@ -279,14 +249,18 @@ static int pulse_pause(void)
 static int pulse_unpause(void)
 {
     trace ("pulse_unpause\n");
+    deadbeef->mutex_lock (mutex);
     if (state == OUTPUT_STATE_PAUSED)
     {
         if (pulse_init () < 0)
         {
+            deadbeef->mutex_unlock (mutex);
             return -1;
         }
         state = OUTPUT_STATE_PLAYING;
     }
+
+    deadbeef->mutex_unlock (mutex);
 
     return 0;
 }
@@ -313,10 +287,23 @@ static void pulse_thread(void *context)
         }
 
         char buf[bs];
-        pulse_callback (buf, sizeof (buf));
+        in_callback = 1;
+        int bytesread = deadbeef->streamer_read(buf, bs);
+        in_callback = 0;
+        if (pulse_terminate) {
+            break;
+        }
+        if (bytesread < 0) {
+            bytesread = 0;
+        }
+        if (bytesread < bs)
+        {
+            memset (buf + bytesread, 0, bs-bytesread);
+        }
+
         int error;
 
-        deadbeef->mutex_lock(mutex);
+        deadbeef->mutex_lock (mutex);
         int res = pa_simple_write(s, buf, sizeof (buf), &error);
         deadbeef->mutex_unlock(mutex);
 
@@ -327,17 +314,17 @@ static void pulse_thread(void *context)
         }
     }
 
-    pulse_terminate = 0;
-    trace ("pulse_thread finished\n");
-}
-
-static void pulse_callback(char *stream, int len)
-{
-    int bytesread = deadbeef->streamer_read(stream, len);
-    if (bytesread < len)
+    deadbeef->mutex_lock (mutex);
+    state = OUTPUT_STATE_STOPPED;
+    if (s)
     {
-        memset (stream + bytesread, 0, len-bytesread);
+        pa_simple_free(s);
+        s = NULL;
     }
+    pulse_terminate = 0;
+    pulse_tid = 0;
+    deadbeef->mutex_unlock (mutex);
+    trace ("pulse_thread finished\n");
 }
 
 static int pulse_get_state(void)

@@ -41,7 +41,7 @@
 static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
 
-#define AAC_BUFFER_SIZE (FAAD_MIN_STREAMSIZE * 16)
+#define AAC_BUFFER_SIZE 768*8
 #define OUT_BUFFER_SIZE 100000
 
 #define MP4FILE mp4ff_t *
@@ -72,9 +72,9 @@ typedef struct {
     int mp4sample;
     int mp4framesize;
     int skipsamples;
-    int startsample;
-    int endsample;
-    int currentsample;
+    int64_t startsample;
+    int64_t endsample;
+    int64_t currentsample;
     uint8_t buffer[AAC_BUFFER_SIZE];
     int remaining;
     uint8_t out_buffer[OUT_BUFFER_SIZE];
@@ -384,8 +384,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, &totalsamples);
         }
         else {
-            deadbeef->rewind (info->file);
-            offs = 0;
+            offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, NULL);
         }
         if (offs == -1) {
             trace ("aac stream not found\n");
@@ -420,49 +419,26 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             return -1;
         }
 
-        int scan_size = AAC_BUFFER_SIZE;
-
-        while (scan_size > 0) {
-            info->remaining = (int)deadbeef->fread (info->buffer, 1, AAC_BUFFER_SIZE, info->file);
-            uint8_t *p = info->buffer;
-
-            // sync the initial buffer
-            unsigned long srate;
-            unsigned char ch;
-            long consumed = 0;
-            while (p < info->buffer+info->remaining) {
-                int bufsize = info->remaining-(int)(p-info->buffer);
-                consumed = NeAACDecInit (info->dec, (uint8_t *)p, bufsize, &srate, &ch);
-                if (consumed >= 0) {
-                    _info->fmt.channels = ch;
-                    _info->fmt.samplerate = (int)srate;
-                    break;
-                }
-                p++;
-            }
-            if (consumed >= 0) {
-                if (consumed != info->remaining && consumed > 0) {
-                    memmove (info->buffer, info->buffer + consumed, info->remaining - consumed);
-                }
-                info->remaining -= consumed;
-                break;
-            }
-
-            scan_size -= info->remaining;
-        }
-
-        if (scan_size <= 0) {
+        info->remaining = (int)deadbeef->fread (info->buffer, 1, AAC_BUFFER_SIZE, info->file);
+        unsigned long srate;
+        unsigned char ch;
+        long err = NeAACDecInit (info->dec, (uint8_t *)info->buffer, info->remaining, &srate, &ch);
+        if (err) {
             return -1;
         }
+
+        _info->fmt.channels = ch;
+        _info->fmt.samplerate = (int)srate;
     }
 
     _info->fmt.bps = 16;
     _info->plugin = &plugin;
 
     if (!info->file->vfs->is_streaming ()) {
-        if (it->endsample > 0) {
-            info->startsample = it->startsample;
-            info->endsample = it->endsample;
+        int64_t endsample = deadbeef->pl_item_get_endsample (it);
+        if (endsample > 0) {
+            info->startsample = deadbeef->pl_item_get_startsample (it);
+            info->endsample = endsample;
             plugin.seek_sample (_info, 0);
         }
         else {
@@ -473,6 +449,13 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (_info->fmt.channels == 7) {
         _info->fmt.channels = 8;
     }
+
+    char s[100];
+    deadbeef->pl_add_meta (it, ":BPS", "16");
+    snprintf (s, sizeof (s), "%d", channels);
+    deadbeef->pl_add_meta (it, ":CHANNELS", s);
+    snprintf (s, sizeof (s), "%d", samplerate);
+    deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
 
     trace ("totalsamples: %d, endsample: %d, samples-from-duration: %d, samplerate %d, channels %d\n", (int)totalsamples, (int)info->endsample, (int)deadbeef->pl_get_item_duration (it)*44100, _info->fmt.samplerate, _info->fmt.channels);
 
@@ -922,10 +905,10 @@ aac_insert_with_chapters (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem
         else {
             deadbeef->pl_add_meta (it, "title", chapters[i].title);
         }
-        it->startsample = chapters[i].startsample;
-        it->endsample = chapters[i].endsample;
+        deadbeef->pl_item_set_startsample (it, chapters[i].startsample);
+        deadbeef->pl_item_set_endsample (it, chapters[i].endsample);
         deadbeef->pl_replace_meta (it, ":FILETYPE", ftype);
-        deadbeef->plt_set_item_duration (plt, it, (float)(it->endsample - it->startsample + 1) / samplerate);
+        deadbeef->plt_set_item_duration (plt, it, (float)(chapters[i].endsample - chapters[i].startsample + 1) / samplerate);
         after = deadbeef->plt_insert_item (plt, after, it);
         deadbeef->pl_item_unref (it);
     }
@@ -1055,26 +1038,11 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                         }
                     }
 
-                    // embedded cue
-                    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-                    DB_playItem_t *cue = NULL;
-
-                    if (cuesheet) {
-                        cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (const uint8_t *)cuesheet, (int)strlen (cuesheet), (int)totalsamples, samplerate);
-                        if (cue) {
-                            mp4ff_close (mp4);
-                            deadbeef->pl_item_unref (it);
-                            deadbeef->pl_item_unref (cue);
-                            deadbeef->pl_unlock ();
-                            return cue;
-                        }
-                    }
                     deadbeef->pl_unlock ();
 
-                    cue  = deadbeef->plt_insert_cue (plt, after, it, (int)totalsamples, samplerate);
+                    DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);
                     if (cue) {
                         deadbeef->pl_item_unref (it);
-                        deadbeef->pl_item_unref (cue);
                         return cue;
                     }
 
@@ -1112,38 +1080,21 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     deadbeef->fclose (fp);
 
+    char s[100];
+    deadbeef->pl_add_meta (it, ":BPS", "16");
+    snprintf (s, sizeof (s), "%d", channels);
+    deadbeef->pl_add_meta (it, ":CHANNELS", s);
+    snprintf (s, sizeof (s), "%d", samplerate);
+    deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
     if (duration > 0) {
-        char s[100];
         snprintf (s, sizeof (s), "%lld", fsize);
         deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
-        deadbeef->pl_add_meta (it, ":BPS", "16");
-        snprintf (s, sizeof (s), "%d", channels);
-        deadbeef->pl_add_meta (it, ":CHANNELS", s);
-        snprintf (s, sizeof (s), "%d", samplerate);
-        deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
         int br = (int)roundf(fsize / duration * 8 / 1000);
         snprintf (s, sizeof (s), "%d", br);
         deadbeef->pl_add_meta (it, ":BITRATE", s);
-        // embedded cue
-        deadbeef->pl_lock ();
-        const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-        DB_playItem_t *cue = NULL;
-
-        if (cuesheet) {
-            cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (uint8_t *)cuesheet, (int)strlen (cuesheet), (int)totalsamples, samplerate);
-            if (cue) {
-                deadbeef->pl_item_unref (it);
-                deadbeef->pl_item_unref (cue);
-                deadbeef->pl_unlock ();
-                return cue;
-            }
-        }
-        deadbeef->pl_unlock ();
-
-        cue  = deadbeef->plt_insert_cue (plt, after, it, (int)totalsamples, samplerate);
+        DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);
         if (cue) {
             deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (cue);
             return cue;
         }
     }

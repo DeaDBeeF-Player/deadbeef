@@ -37,6 +37,7 @@
 #endif
 #include <limits.h>
 #include <unistd.h>
+#include "gmewrap.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -51,6 +52,7 @@ static int conf_loopcount = 2;
 static int chip_voices = 0xff;
 static int chip_voices_changed = 0;
 static int conf_play_forever = 0;
+static char *coleco_rom;
 
 typedef struct {
     DB_fileinfo_t info;
@@ -59,6 +61,7 @@ typedef struct {
     float duration; // of current song
     int eof;
     int can_loop;
+    int fade_set;
 } gme_fileinfo_t;
 
 static DB_fileinfo_t *
@@ -244,8 +247,6 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
         if (t <= 0) {
             return 0;
         }
-        // DON'T ajust size, buffer must always be po2
-        //size = t * (float)info->samplerate * 4;
     }
 
     if (chip_voices_changed) {
@@ -253,11 +254,16 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
         chip_voices_changed = 0;
         gme_mute_voices (info->emu, chip_voices^0xff);
     }
-    
-    if (playForever)
+
+    // FIXME: it makes more sense to call gme_set_fade on init and configchanged
+    if (playForever && info->fade_set) {
         gme_set_fade(info->emu, -1, 0);
-    else
-        gme_set_fade(info->emu, (int)(info->duration * 1000), conf_fadeout * 1000);
+        info->fade_set = 0;
+    }
+    else if (!playForever && !info->fade_set && conf_fadeout > 0 && info->duration >= conf_fadeout && info->reallength <= 0 && _info->readpos >= info->duration - conf_fadeout) {
+        gme_set_fade(info->emu, (int)(_info->readpos * 1000), conf_fadeout * 1000);
+        info->fade_set = 1;
+    }
 
     if (gme_play (info->emu, size/2, (short*)bytes)) {
         return 0;
@@ -451,7 +457,7 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
 static const char * exts[]=
 {
-	"ay","gbs","gym","hes","kss","nsf","nsfe","sap","sfm","spc","vgm","vgz",NULL
+	"ay","gbs","gym","hes","kss","nsf","nsfe","sap","sfm","spc","vgm","vgz","sgc",NULL
 };
 
 static int
@@ -464,7 +470,49 @@ cgme_start (void) {
 
 static int
 cgme_stop (void) {
+    if (coleco_rom) {
+        free (coleco_rom);
+        coleco_rom = NULL;
+    }
+    gme_set_sgc_coleco_bios (NULL);
     return 0;
+}
+
+static void
+init_coleco_bios () {
+    if (coleco_rom) {
+        free (coleco_rom);
+        coleco_rom = NULL;
+    }
+    gme_set_sgc_coleco_bios (NULL);
+    char path[PATH_MAX];
+    deadbeef->conf_get_str ("gme.coleco_rom", "", path, sizeof (path));
+    if (path[0]) {
+        FILE *fp = fopen (path, "rb");
+        if (!fp) {
+            return;
+        }
+        fseek (fp, 0, SEEK_END);
+        size_t size = ftell (fp);
+        rewind (fp);
+        if (size != 0x2000) {
+            fclose (fp);
+            deadbeef->log_detailed (&plugin.plugin, DDB_LOG_LAYER_DEFAULT, "ColecoVision ROM file %s has invalid size (expected 8192 bytes)", path);
+            return;
+        }
+
+        coleco_rom = malloc (size);
+        size_t rb = fread (coleco_rom, 1, size, fp);
+        fclose (fp);
+
+        if (rb != 0x2000) {
+            free (coleco_rom);
+            coleco_rom = NULL;
+            deadbeef->log_detailed (&plugin.plugin, DDB_LOG_LAYER_DEFAULT, "Failed to load ColecoVision ROM from file %s, invalid file?", path);
+        }
+
+        gme_set_sgc_coleco_bios (coleco_rom);
+    }
 }
 
 int
@@ -477,6 +525,7 @@ cgme_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         if (chip_voices != deadbeef->conf_get_int ("chip.voices", 0xff)) {
             chip_voices_changed = 1;
         }
+        init_coleco_bios ();
         break;
     }
     return 0;
@@ -486,6 +535,7 @@ static const char settings_dlg[] =
     "property \"Max song length (in minutes)\" entry gme.songlength 3;\n"
     "property \"Fadeout length (seconds)\" entry gme.fadeout 10;\n"
     "property \"Play loops nr. of times (if available)\" entry gme.loopcount 2;\n"
+    "property \"ColecoVision BIOS (for SGC file format)\" file gme.coleco_rom \"\";\n"
 ;
 
 // define plugin interface
@@ -494,6 +544,7 @@ static DB_decoder_t plugin = {
     .plugin.api_vminor = 0,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
+    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "stdgme",
     .plugin.name = "Game-Music-Emu player",

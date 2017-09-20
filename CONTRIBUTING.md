@@ -1,4 +1,6 @@
-Please find the most up-to-date information on the following page:
+# Contributing
 
-[http://contributing.appspot.com/deadbeef](http://contributing.appspot.com/deadbeef)
-
+* Use Pull Requests.
+* Before working on big changes, talk with the devs on Slack.
+* We don\'t want half-done PRs, and won\'t complete them for you.
+* Read the [PR guidelines](https://github.com/Alexey-Yakovenko/deadbeef/wiki/Organizing-your-changes-for-pull-requests).

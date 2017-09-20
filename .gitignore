@@ -83,3 +83,6 @@ portable_out
 static
 INSTALL
 /static-deps
+osx/build
+.dirstamp
+.vscode/c_cpp_properties.json

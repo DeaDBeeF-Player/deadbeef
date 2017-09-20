@@ -46,4 +46,5 @@
 - (IBAction)updateTagsCancelAction:(id)sender;
 
 + (ReplayGainScannerController *)runScanner:(int)mode forTracks:(DB_playItem_t **)tracks count:(int)count;
++ (ReplayGainScannerController *)removeRgTagsFromTracks:(DB_playItem_t **)tracks count:(int)count;
 @end

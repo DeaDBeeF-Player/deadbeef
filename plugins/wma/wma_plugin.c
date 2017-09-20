@@ -57,9 +57,9 @@ typedef struct {
     WMADecodeContext wmadec;
 #endif
     int64_t first_frame_offset;
-    int currentsample;
-    int startsample;
-    int endsample;
+    int64_t currentsample;
+    int64_t startsample;
+    int64_t endsample;
     int skipsamples;
     char buffer[200000]; // can't predict its size, so set to max
     int remaining;
@@ -152,8 +152,8 @@ wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-    info->startsample = it->startsample;
-    info->endsample = it->endsample;
+    info->startsample = deadbeef->pl_item_get_startsample (it);
+    info->endsample = deadbeef->pl_item_get_endsample (it);
     _info->plugin = &plugin;
     _info->fmt.bps = info->wfx.bitspersample;
     _info->fmt.channels = info->wfx.channels;
@@ -163,9 +163,10 @@ wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     if (!info->info.file->vfs->is_streaming ()) {
-        if (it->endsample > 0) {
-            info->startsample = it->startsample;
-            info->endsample = it->endsample;
+        int64_t endsample = deadbeef->pl_item_get_endsample (it);
+        if (endsample > 0) {
+            info->startsample = deadbeef->pl_item_get_startsample (it);
+            info->endsample = endsample;
             plugin.seek_sample (_info, 0);
         }
     }
@@ -441,31 +442,15 @@ wmaplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->plt_set_item_duration (plt, it, totalsamples / (float)wfx.rate);
     deadbeef->pl_append_meta (it, ":FILETYPE", "WMA");
     
-    it->startsample = 0;
-    it->endsample = totalsamples-1;
+    deadbeef->pl_item_set_startsample (it, 0);
+    deadbeef->pl_item_set_endsample (it, totalsamples-1);
 
-    deadbeef->pl_lock ();
-    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-    DB_playItem_t *cue = NULL;
-
-    if (cuesheet) {
-        cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, wfx.rate);
-        if (cue) {
-            deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (cue);
-            deadbeef->pl_unlock ();
-            return cue;
-        }
-    }
-    deadbeef->pl_unlock ();
-
-    cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, wfx.rate);
+    DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it,  totalsamples, wfx.rate);
     if (cue) {
         deadbeef->pl_item_unref (it);
-        deadbeef->pl_item_unref (cue);
+        deadbeef->fclose (fp);
         return cue;
     }
-
 
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);

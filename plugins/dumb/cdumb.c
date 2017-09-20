@@ -189,24 +189,25 @@ cdumb_read (DB_fileinfo_t *_info, char *bytes, int size) {
     ret = duh_render (info->renderer, _info->fmt.bps, 0, 1, 65536.f / _info->fmt.samplerate, length, bytes);
     _info->readpos += ret / (float)_info->fmt.samplerate;
     trace ("cdumb_read %d\n", ret*samplesize);
-    return ret*samplesize;
+    return (int)(ret*samplesize);
 }
 
 static int
 cdumb_seek (DB_fileinfo_t *_info, float time) {
     trace ("cdumb_read seek %f\n", time);
     dumb_info_t *info = (dumb_info_t *)_info;
-    if (time < _info->readpos) {
+    float skiptime = time;
+    if (skiptime < _info->readpos) {
         if (cdumb_startrenderer (_info) < 0) {
             return -1;
         }       
     }
     else {
-        time -= _info->readpos;
+        skiptime -= _info->readpos;
     }
-    int pos = time * _info->fmt.samplerate;
+    int pos = skiptime * _info->fmt.samplerate;
     duh_sigrenderer_generate_samples (info->renderer, 0, 65536.0f / _info->fmt.samplerate, pos, NULL);
-    _info->readpos = duh_sigrenderer_get_position (info->renderer) / 65536.f;
+    _info->readpos = time;
     return 0;
 }
 

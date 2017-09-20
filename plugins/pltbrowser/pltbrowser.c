@@ -860,7 +860,8 @@ on_pltbrowser_popup_menu (GtkWidget *widget, gpointer user_data) {
 
 static void
 on_pltbrowser_row_activated (GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data) {
-    deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
+    if (deadbeef->conf_get_int ("gtkui.pltbrowser.play_on_double_click", 1))
+        deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
 }
 
 static void
@@ -995,6 +996,7 @@ pltbrowser_disconnect (void) {
 static const char pltbrowser_settings_dlg[] =
     "property \"Close playlists with middle mouse button\" checkbox gtkui.pltbrowser.mmb_delete_playlist 0;\n"
     "property \"Highlight current playlist\" checkbox gtkui.pltbrowser.highlight_curr_plt 0;\n"
+    "property \"Play on double-click\" checkbox gtkui.pltbrowser.play_on_double_click 1;\n"
 ;
 
 static DB_misc_t plugin = {

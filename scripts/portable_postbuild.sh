@@ -46,7 +46,7 @@ for i in nullout cdda flac alsa mp3 hotkeys vtx \
      supereq gme dumb notify musepack wildmidi \
      tta dca aac mms shn psf shellexec vfs_zip \
      m3u converter pulse dsp_libsrc mono2stereo \
-     wma statusnotifier \
+     wma\
      ; do
     if [ -f ./plugins/$i/.libs/$i.so ]; then
         cp ./plugins/$i/.libs/$i.so $PLUGDIR/
@@ -108,6 +108,7 @@ for i in po/*.gmo ; do
 done
 cp translation/help.pt_BR.txt $OUTDIR/doc/
 cp translation/help.ru.txt $OUTDIR/doc/
+cp translation/help.zh_TW.txt $OUTDIR/doc/
 
 # strip
 if [ $OSTYPE != 'Darwin' ];then

@@ -78,8 +78,8 @@ typedef struct {
     float duration;
 
     // currentsample and totalsamples are in the entire file scope (delay/padding inclusive)
-    int currentsample;
-    int totalsamples;
+    int64_t currentsample;
+    int64_t totalsamples;
 
     int skipsamples;
 
@@ -87,8 +87,8 @@ typedef struct {
     int64_t endoffset; // in bytes (apev2, id3v1)
 
     // startsample and endsample exclude delay/padding
-    int startsample;
-    int endsample;
+    int64_t startsample;
+    int64_t endsample;
 
     // number of samples to skip at the start/end of file
     int delay;

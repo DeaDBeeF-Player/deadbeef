@@ -115,6 +115,15 @@ int
 action_clear_playlist_handler (DB_plugin_action_t *act, int ctx);
 
 int
+action_toggle_in_playqueue_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_move_tracks_up_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_move_tracks_down_handler (DB_plugin_action_t *act, int ctx);
+
+int
 action_add_to_playqueue_handler (DB_plugin_action_t *act, int ctx);
 
 int

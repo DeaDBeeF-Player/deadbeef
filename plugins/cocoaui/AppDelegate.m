@@ -62,7 +62,7 @@ AppDelegate *g_appDelegate;
 NSInteger firstSelected = -1;
 
 static void
-_cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text) {
+_cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, void *ctx) {
     [g_appDelegate appendLoggerText:text forPlugin:plugin onLayers:layers];
 }
 
@@ -81,8 +81,10 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text) 
 }
 
 - (void)dealloc {
-    deadbeef->log_viewer_unregister (_cocoaui_logger_callback);
+    deadbeef->log_viewer_unregister (_cocoaui_logger_callback, NULL);
+#if !DISABLE_MM_KEY_GRABBER
     ungrabMediaKeys ();
+#endif
 }
 
 - (void)volumeChanged {
@@ -120,13 +122,10 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text) 
     [_cursorFollowsPlayback setState:deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)?NSOnState:NSOffState];
     
     [_stopAfterCurrent setState:deadbeef->conf_get_int ("playlist.stop_after_current", 0)?NSOnState:NSOffState];
-    [_stopAfterCurrentAlbum setState:deadbeef->conf_get_int ("playlist.stop_after_current_album", 0)?NSOnState:NSOffState];
+    [_stopAfterCurrentAlbum setState:deadbeef->conf_get_int ("playlist.stop_after_album", 0)?NSOnState:NSOffState];
 
     [_descendingSortMode setState:deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSOnState : NSOffState];
 
-    conf_save ();
-    streamer_configchanged ();
-    junk_configchanged ();
     [self volumeChanged];
 
     [_mainWindow updateTitleBarConfig];
@@ -243,14 +242,16 @@ main_cleanup_and_quit (void);
 
     g_appDelegate = self;
 
+#if !DISABLE_MM_KEY_GRABBER
     grabMediaKeys ();
+#endif
 
     [self updateDockNowPlaying];
     [[NSApp dockTile] setContentView: _dockTileView];
 //    [[NSApp dockTile] setBadgeLabel:@"Hello"];
     [[NSApp dockTile] display];
 
-    deadbeef->log_viewer_register (_cocoaui_logger_callback);
+    deadbeef->log_viewer_register (_cocoaui_logger_callback, NULL);
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag{
@@ -602,9 +603,9 @@ main_cleanup_and_quit (void);
 }
 
 - (IBAction)stopAfterCurrentAlbumAction:(id)sender {
-    int state = deadbeef->conf_get_int ("playlist.stop_after_current_album", 0);
+    int state = deadbeef->conf_get_int ("playlist.stop_after_album", 0);
     state = 1 - state;
-    deadbeef->conf_set_int ("playlist.stop_after_current_album", state);
+    deadbeef->conf_set_int ("playlist.stop_after_album", state);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
@@ -723,6 +724,9 @@ main_cleanup_and_quit (void);
     deadbeef->tf_eval (&ctx, _artistAlbumScript, artistAlbum, sizeof (artistAlbum));
     if (ctx.plt) {
         deadbeef->plt_unref (ctx.plt);
+    }
+    if (it) {
+        deadbeef->pl_item_unref (it);
     }
     _dockMenuNPTitle = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:title] action:nil keyEquivalent:@""];
     [_dockMenuNPTitle setEnabled:NO];

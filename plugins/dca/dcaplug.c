@@ -77,10 +77,10 @@ DB_functions_t *deadbeef;
 typedef struct {
     DB_fileinfo_t info;
     DB_FILE *file;
-    int offset;
-    int startsample;
-    int endsample;
-    int currentsample;
+    int64_t offset;
+    int64_t startsample;
+    int64_t endsample;
+    int64_t currentsample;
     dca_state_t * state;
     int disable_adjust;// = 0;
     float gain;// = 1;
@@ -499,9 +499,10 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     _info->fmt.samplerate = info->sample_rate;
 
-    if (it->endsample > 0) {
-        info->startsample = it->startsample;
-        info->endsample = it->endsample;
+    int64_t endsample = deadbeef->pl_item_get_endsample (it);
+    if (endsample > 0) {
+        info->startsample = deadbeef->pl_item_get_startsample (it);
+        info->endsample = endsample;
         plugin.seek_sample (_info, 0);
     }
     else {
@@ -695,12 +696,9 @@ dts_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     deadbeef->fclose (fp);
 
-    // embedded cue
-    DB_playItem_t *cue = NULL;
-    cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
+    DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);
     if (cue) {
         deadbeef->pl_item_unref (it);
-        deadbeef->pl_item_unref (cue);
         return cue;
     }
 

@@ -27,21 +27,55 @@
 #include <stdlib.h>
 #include "logger.h"
 #include "deadbeef.h"
+#include "threading.h"
 
 typedef struct logger_s {
-    void (*log) (DB_plugin_t *plugin, uint32_t layers, const char *text);
+    void (*log) (DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx);
+    void *ctx;
     struct logger_s *next;
 } logger_t;
 
 static uint32_t _log_layers = DDB_LOG_LAYER_DEFAULT | DDB_LOG_LAYER_INFO;
 static logger_t *_loggers;
+static uint64_t _mutex;
+
+// This buffer is used during the initialization time, before there are any listeners.
+// As soon as the first listener registers -- it gets a callback with this buffer, then buffering stops.
+// Only error messages are buffered (DDB_LOG_LAYER_DEFAULT)
+#define INIT_BUFFER_SIZE 32768
+static char *init_buffer;
+static char *init_buffer_ptr;
+
+
+#ifdef ANDROID
+#include <android/log.h>
+static void
+console_write (const char *text) {
+    __android_log_write(ANDROID_LOG_INFO,ANDROID_LOGGER_TAG,text);
+}
+#else
+static void
+console_write (const char *text) {
+    fwrite (text, strlen(text), 1, stderr);
+}
+#endif
 
 static void
 _log_internal (DB_plugin_t *plugin, uint32_t layers, const char *text) {
-    fwrite (text, strlen(text), 1, stderr);
+    mutex_lock (_mutex);
+    console_write (text);
+    size_t len = strlen (text);
     for (logger_t *l = _loggers; l; l = l->next) {
-        l->log (plugin, layers, text);
+        l->log (plugin, layers, text, l->ctx);
     }
+    if (init_buffer && (layers == DDB_LOG_LAYER_DEFAULT)) {
+        if (init_buffer_ptr - init_buffer + len + 1 < INIT_BUFFER_SIZE) {
+            memcpy (init_buffer_ptr, text, len);
+            init_buffer_ptr += len;
+            *init_buffer_ptr = 0;
+        }
+    }
+    mutex_unlock(_mutex);
 }
 
 static int
@@ -54,6 +88,43 @@ _is_log_visible (DB_plugin_t *plugin, uint32_t layers) {
     }
 
     return 1;
+}
+
+int
+ddb_logger_init (void) {
+    _mutex = mutex_create ();
+    if (!_mutex) {
+        return -1;
+    }
+    init_buffer = calloc(1, INIT_BUFFER_SIZE);
+    init_buffer_ptr = init_buffer;
+    return 0;
+}
+
+void
+ddb_logger_stop_buffering (void) {
+    mutex_lock (_mutex);
+    if (init_buffer) {
+        free (init_buffer);
+        init_buffer = init_buffer_ptr = NULL;
+    }
+    mutex_unlock (_mutex);
+}
+
+void
+ddb_logger_free (void) {
+    if (_mutex) {
+        mutex_lock (_mutex);
+
+        ddb_logger_stop_buffering ();
+
+        while (_loggers) {
+            ddb_log_viewer_unregister(_loggers->log, _loggers->ctx);
+        }
+
+        mutex_free (_mutex);
+        _mutex = 0;
+    }
 }
 
 void
@@ -103,18 +174,39 @@ ddb_vlog (const char *fmt, va_list ap) {
 }
 
 void
-ddb_log_viewer_register (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text)) {
+ddb_log_viewer_register (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx), void *ctx) {
+    mutex_lock(_mutex);
+
+    for (logger_t *l = _loggers; l; l = l->next) {
+        if (l->log == callback && l->ctx == ctx) {
+            mutex_unlock(_mutex);
+            return;
+        }
+    }
+
     logger_t *logger = calloc (sizeof (logger_t), 1);
     logger->log = callback;
+    logger->ctx = ctx;
     logger->next = _loggers;
+
     _loggers = logger;
+
+    if (init_buffer) {
+        if (*init_buffer) {
+            callback (NULL, 0, init_buffer, ctx);
+        }
+        ddb_logger_stop_buffering ();
+    }
+
+    mutex_unlock(_mutex);
 }
 
 void
-ddb_log_viewer_unregister (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text)) {
+ddb_log_viewer_unregister (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx), void *ctx) {
+    mutex_lock(_mutex);
     logger_t *prev = NULL;
     for (logger_t *l = _loggers; l; l = l->next) {
-        if (l->log == callback) {
+        if (l->log == callback && l->ctx == ctx) {
             if (prev) {
                 prev->next = l->next;
             }
@@ -122,7 +214,9 @@ ddb_log_viewer_unregister (void (*callback)(DB_plugin_t *plugin, uint32_t layers
                 _loggers = l->next;
             }
             free (l);
-            return;
+            break;
         }
+        prev = l;
     }
+    mutex_unlock(_mutex);
 }

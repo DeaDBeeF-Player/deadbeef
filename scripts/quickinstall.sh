@@ -1,11 +1,16 @@
 #!/bin/bash
 . .install
+PREFIX="${PREFIX:-`pwd`/build}"
+mkdir -p $PREFIX/lib/deadbeef
+mkdir -p $PREFIX/bin
+
 rm -f $PREFIX/lib/deadbeef/*.so
 cp ./deadbeef $PREFIX/bin/
 cp ./plugins/nullout/.libs/nullout.so $PREFIX/lib/deadbeef/
 cp ./plugins/cdda/.libs/cdda.so $PREFIX/lib/deadbeef/
 cp ./plugins/flac/.libs/flac.so $PREFIX/lib/deadbeef/
 cp ./plugins/alsa/.libs/alsa.so $PREFIX/lib/deadbeef/
+cp ./plugins/sndio/.libs/sndio.so $PREFIX/lib/deadbeef/
 cp ./plugins/mp3/.libs/mp3.so $PREFIX/lib/deadbeef/
 cp ./plugins/hotkeys/.libs/hotkeys.so $PREFIX/lib/deadbeef/
 cp ./plugins/vtx/.libs/vtx.so $PREFIX/lib/deadbeef/

@@ -208,17 +208,30 @@ gtkui_run_preferences_dlg (void) {
             NULL);
 
     // replaygain_mode
-    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_mode"));
-    set_combobox (combobox, deadbeef->conf_get_int ("replaygain_mode", 0));
+    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_source_mode"));
+    set_combobox (combobox, deadbeef->conf_get_int ("replaygain.source_mode", 0));
 
-    // replaygain_scale
-    set_toggle_button("pref_replaygain_scale", deadbeef->conf_get_int ("replaygain_scale", 1));
+    // replaygain_processing
+    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_processing"));
+    int processing_idx = 0;
+    int processing_flags = deadbeef->conf_get_int ("replaygain.processing_flags", 0);
+    if (processing_flags == DDB_RG_PROCESSING_GAIN) {
+        processing_idx = 1;
+    }
+    else if (processing_flags == (DDB_RG_PROCESSING_GAIN|DDB_RG_PROCESSING_PREVENT_CLIPPING)) {
+        processing_idx = 2;
+    }
+    else if (processing_flags == DDB_RG_PROCESSING_PREVENT_CLIPPING) {
+        processing_idx = 3;
+    }
 
-    // replaygain_preamp
-    set_scale("replaygain_preamp", deadbeef->conf_get_int ("replaygain_preamp", 0));
+    set_combobox (combobox, processing_idx);
 
-    // global_preamp
-    set_scale("global_preamp", deadbeef->conf_get_int ("global_preamp", 0));
+    // preamp with rg
+    set_scale("replaygain_preamp", deadbeef->conf_get_int ("replaygain.preamp_with_rg", 0));
+
+    // preamp without rg
+    set_scale("global_preamp", deadbeef->conf_get_int ("replaygain.preamp_without_rg", 0));
 
     // 8_to_16
     set_toggle_button("convert8to16", deadbeef->conf_get_int ("streamer.8_to_16", 1));
@@ -267,8 +280,11 @@ gtkui_run_preferences_dlg (void) {
     gtk_widget_set_sensitive (lookup_widget (prefwin, "cli_playlist_name"), active);
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (prefwin, "cli_playlist_name")), deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default"));
 
+    // statusbar selection playback time
+    set_toggle_button ("display_seltime", deadbeef->conf_get_int ("gtkui.statusbar_seltime", 0));
+
     // resume last session
-    set_toggle_button("resume_last_session", deadbeef->conf_get_int ("resume_last_session", 0));
+    set_toggle_button("resume_last_session", deadbeef->conf_get_int ("resume_last_session", 1));
 
     // enable shift-jis recoding
     set_toggle_button("enable_shift_jis_recoding", deadbeef->conf_get_int ("junk.enable_shift_jis_detection", 0));
@@ -281,6 +297,11 @@ gtkui_run_preferences_dlg (void) {
 
     // enable auto-sizing of columns
     set_toggle_button("auto_size_columns", deadbeef->conf_get_int ("gtkui.autoresize_columns", 0));
+
+    // enable showing cue subindexes as tracks
+    set_toggle_button("chkbox_cue_subindexes", deadbeef->conf_get_int ("cue.subindexes_as_tracks", 0));
+
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON (lookup_widget (w, "listview_group_spacing")), deadbeef->conf_get_int ("playlist.groups.spacing", 0));
 
     // fill gui plugin list
     combobox = GTK_COMBO_BOX (lookup_widget (w, "gui_plugin"));
@@ -475,13 +496,35 @@ on_pref_output_plugin_changed          (GtkComboBox     *combobox,
 }
 
 void
-on_pref_replaygain_mode_changed        (GtkComboBox     *combobox,
+on_pref_replaygain_source_mode_changed (GtkComboBox     *combobox,
                                         gpointer         user_data)
 {
     int active = gtk_combo_box_get_active (combobox);
-    deadbeef->conf_set_int ("replaygain_mode", active == -1 ? 0 : active);
+    deadbeef->conf_set_int ("replaygain.source_mode", active);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
+
+
+void
+on_pref_replaygain_processing_changed  (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    uint32_t flags = 0;
+    int idx = gtk_combo_box_get_active (combobox);
+    if (idx == 1) {
+        flags = DDB_RG_PROCESSING_GAIN;
+    }
+    if (idx == 2) {
+        flags = DDB_RG_PROCESSING_GAIN | DDB_RG_PROCESSING_PREVENT_CLIPPING;
+    }
+    if (idx == 3) {
+        flags = DDB_RG_PROCESSING_PREVENT_CLIPPING;
+    }
+
+    deadbeef->conf_set_int ("replaygain.processing_flags", flags);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
 
 void
 on_pref_replaygain_scale_clicked       (GtkButton       *button,
@@ -497,7 +540,7 @@ on_replaygain_preamp_value_changed     (GtkRange        *range,
                                         gpointer         user_data)
 {
     float val = gtk_range_get_value (range);
-    deadbeef->conf_set_float ("replaygain_preamp", val);
+    deadbeef->conf_set_float ("replaygain.preamp_with_rg", val);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
@@ -506,7 +549,7 @@ on_global_preamp_value_changed     (GtkRange        *range,
                                     gpointer         user_data)
 {
     float val = gtk_range_get_value (range);
-    deadbeef->conf_set_float ("global_preamp", val);
+    deadbeef->conf_set_float ("replaygain.preamp_without_rg", val);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
@@ -619,6 +662,17 @@ on_configure_plugin_clicked            (GtkButton       *button,
         };
         gtkui_run_dialog (prefwin, &conf, 0, NULL, NULL);
     }
+}
+
+void
+on_pref_pluginlist_row_activated       (GtkTreeView     *treeview,
+                                        GtkTreePath     *path,
+                                        GtkTreeViewColumn *column,
+                                        gpointer         user_data)
+{
+    GtkWidget *w = prefwin;
+    GtkButton *btn = GTK_BUTTON (lookup_widget (w, "configure_plugin"));
+    gtk_button_clicked(btn);
 }
 
 static void
@@ -1206,4 +1260,34 @@ on_auto_size_columns_toggled           (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("gtkui.autoresize_columns", gtk_toggle_button_get_active (togglebutton));
+}
+
+void
+on_cue_subindexes_as_tracks_toggled           (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("cue.subindexes_as_tracks", gtk_toggle_button_get_active (togglebutton));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_display_seltime_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("gtkui.statusbar_seltime", gtk_toggle_button_get_active (togglebutton));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_listview_group_spacing_value_changed
+                                        (GtkSpinButton   *spinbutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("playlist.groups.spacing", gtk_spin_button_get_value_as_int (spinbutton));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, (uintptr_t)"playlist.groups.spacing", 0, 0);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref(plt);
+    }
 }

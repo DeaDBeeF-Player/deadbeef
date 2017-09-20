@@ -49,9 +49,9 @@ typedef struct {
     mpc_demux *demux;
 //    mpc_decoder *mpcdec;
     mpc_reader reader;
-    int currentsample;
-    int startsample;
-    int endsample;
+    int64_t currentsample;
+    int64_t startsample;
+    int64_t endsample;
     mpc_uint32_t vbr_update_acc;
     mpc_uint32_t vbr_update_bits;
     MPC_SAMPLE_FORMAT buffer[MPC_DECODER_BUFFER_LENGTH];
@@ -136,9 +136,10 @@ musepack_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->readpos = 0;
     _info->plugin = &plugin;
 
-    if (it->endsample > 0) {
-        info->startsample = it->startsample;
-        info->endsample = it->endsample;
+    int64_t endsample = deadbeef->pl_item_get_endsample (it);
+    if (endsample > 0) {
+        info->startsample = deadbeef->pl_item_get_startsample (it);
+        info->endsample = endsample;
         plugin.seek_sample (_info, 0);
     }
     else {
@@ -390,8 +391,8 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
             deadbeef->pl_add_meta (it, ":FILETYPE", "MusePack");
             deadbeef->pl_set_meta_int (it, ":TRACKNUM", i);
-            it->startsample = ch->sample;
-            it->endsample = totalsamples-1;
+            deadbeef->pl_item_set_startsample (it, ch->sample);
+            deadbeef->pl_item_set_endsample (it, totalsamples-1);
             float gain = gain_title, peak = peak_title;
             if (ch->gain != 0) {
                 gain = 64.82-ch->gain/256.0;
@@ -408,12 +409,17 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                 /*int apeerr = */deadbeef->junk_apev2_read (meta, fp);
             }
             else {
-                prev->endsample = it->startsample-1;
-                float dur = (prev->endsample - prev->startsample) / (float)si.sample_freq;
+                int64_t startsample = deadbeef->pl_item_get_startsample (it);
+                int64_t prev_startsample = deadbeef->pl_item_get_startsample (prev);
+
+                deadbeef->pl_item_set_endsample(prev, startsample-1);
+                float dur = (startsample-1 - prev_startsample) / (float)si.sample_freq;
                 deadbeef->plt_set_item_duration (plt, prev, dur);
             }
             if (i == nchapters - 1) {
-                float dur = (it->endsample - it->startsample) / (float)si.sample_freq;
+                int64_t startsample = deadbeef->pl_item_get_startsample (it);
+                int64_t endsample = deadbeef->pl_item_get_endsample (it);
+                float dur = (endsample - startsample) / (float)si.sample_freq;
                 deadbeef->plt_set_item_duration (plt, it, dur);
             }
             if (ch->tag_size > 0) {
@@ -454,30 +460,12 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     deadbeef->pl_lock ();
 
-    // embedded cue
-    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-    DB_playItem_t *cue = NULL;
-    if (cuesheet) {
-        cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, si.sample_freq);
-        if (cue) {
-            deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (cue);
-            deadbeef->pl_unlock ();
-            mpc_demux_exit (demux);
-            demux = NULL;
-            return cue;
-        }
-    }
-    deadbeef->pl_unlock ();
-
     mpc_set_trk_properties (it, &si, fsize);
-    cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, si.sample_freq);
+
+    DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, si.sample_freq);
     if (cue) {
         deadbeef->pl_item_unref (it);
-        deadbeef->pl_item_unref (cue);
         mpc_demux_exit (demux);
-        demux = NULL;
-
         return cue;
     }
 
