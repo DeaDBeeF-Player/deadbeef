@@ -67,4 +67,4 @@ cocoaui_playlist_set_curr (int playlist) {
     deadbeef->conf_set_int ("playlist.current", playlist);
 }
 
-NSString *ddbPlaylistItemsUTIType = @"net.sourceforge.deadbeef.playlistItems";
+NSString *ddbPlaylistItemsUTIType = @"org.deadbeef.playlistItems";
