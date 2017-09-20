@@ -107,9 +107,13 @@ static int
 snprintf_clip (char *buf, size_t len, const char *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
-    size_t n = vsnprintf(buf, len, fmt, ap);
+    int n = vsnprintf(buf, len, fmt, ap);
     va_end(ap);
-    return (int)min (n, len);
+    if (n < 0) {
+        *buf = 0;
+        return 0;
+    }
+    return (int)min (n, len-1);
 }
 
 int
