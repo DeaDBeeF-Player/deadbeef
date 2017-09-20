@@ -837,18 +837,19 @@ plt_get_title_wrapper (int plt) {
 // ...
 
 - (int)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
-    // FIXME: it's completely unclear why the code below is needed on playlist change/switch.
-    // Needs to either be removed or documented.
-    switch (_id) {
-        case DB_EV_PLAYLISTSWITCHED:
-            [self performSelectorOnMainThread:@selector(handleResizeNotification) withObject:nil waitUntilDone:NO];
-            [self setNeedsDisplay:YES];
-            break;
-        case DB_EV_PLAYLISTCHANGED:
-            dispatch_async(dispatch_get_main_queue(), ^{
+    // redraw if playlist switches, recalculate tabs when title changes
+    if (_id == DB_EV_PLAYLISTSWITCHED || _id == DB_EV_PLAYLISTCHANGED) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            switch (_id) {
+            case DB_EV_PLAYLISTSWITCHED:
+                [self performSelectorOnMainThread:@selector(handleResizeNotification) withObject:nil waitUntilDone:NO];
                 [self setNeedsDisplay:YES];
-            });
-            break;
+                break;
+            case DB_EV_PLAYLISTCHANGED:
+                [self setNeedsDisplay:YES];
+                break;
+            }
+        });
     }
     return 0;
 }
