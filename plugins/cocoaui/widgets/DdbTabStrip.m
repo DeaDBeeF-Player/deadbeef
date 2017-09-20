@@ -845,7 +845,9 @@ plt_get_title_wrapper (int plt) {
             [self setNeedsDisplay:YES];
             break;
         case DB_EV_PLAYLISTCHANGED:
-            [self setNeedsDisplay:YES];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self setNeedsDisplay:YES];
+            });
             break;
     }
     return 0;
