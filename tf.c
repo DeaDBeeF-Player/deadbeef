@@ -103,6 +103,15 @@ static playlist_t empty_playlist;
 // empty code is used when "code" argumen is null
 static char empty_code[4] = {0};
 
+static int
+snprintf_clip (char *buf, size_t len, const char *fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    size_t n = vsnprintf(buf, len, fmt, ap);
+    va_end(ap);
+    return (int)min (n, len);
+}
+
 int
 tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
     if (
@@ -149,11 +158,11 @@ tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
     switch (id) {
     case DB_COLUMN_FILENUMBER:
         if (ctx->flags & DDB_TF_CONTEXT_HAS_INDEX) {
-            l = snprintf (out, outlen, "%d", ctx->idx+1);
+            l = snprintf_clip (out, outlen, "%d", ctx->idx+1);
         }
         else if (ctx->plt) {
             int idx = plt_get_item_idx ((playlist_t *)ctx->plt, (playItem_t *)ctx->it, PL_MAIN);
-            l = snprintf (out, outlen, "%d", idx+1);
+            l = snprintf_clip (out, outlen, "%d", idx+1);
         }
         break;
     case DB_COLUMN_PLAYING:
@@ -371,7 +380,7 @@ tf_func_replace (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const
 
     for (i = 0; i < argc; ++i) {
         lines[i] = ptr;
-        TF_EVAL_CHECK (lens[i], ctx, arg, arglens[i], ptr, buf+sizeof(buf)-ptr, fail_on_undef);
+        TF_EVAL_CHECK (lens[i], ctx, arg, arglens[i], ptr, (int)(buf+sizeof(buf)-ptr), fail_on_undef);
         ptr += lens[i]+1;
         arg += arglens[i];
     }
@@ -380,13 +389,13 @@ tf_func_replace (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const
     const char *iptr = lines[0];
 
     for (;;) {
-        int chunklen = lines[0] + lens[0] - iptr; //chunk is a substring before the found needle
+        int chunklen = (int)(lines[0] + lens[0] - iptr); //chunk is a substring before the found needle
         int idx = -1; //index of the found needle
 
         for (i = 0; i < (argc - 1) / 2; ++i) {
             char *found = strstr (iptr, lines[i*2+1]);
             if (found && found - iptr < chunklen) {
-                chunklen = found - iptr;
+                chunklen = (int)(found - iptr);
                 idx = i;
             }
         }
@@ -408,7 +417,7 @@ tf_func_replace (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const
         iptr += chunklen + lens[idx*2+1];
     }
     *optr = 0;
-    return optr - out;
+    return (int)(optr - out);
 }
 
 int
@@ -669,7 +678,7 @@ tf_func_crc32 (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const c
 
     crc ^= 0xffffffff;
 
-    return snprintf (out, outlen, "%u", crc);
+    return snprintf_clip (out, outlen, "%u", crc);
 }
 
 int
@@ -830,7 +839,7 @@ tf_func_len (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
 
     TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
 
-    return snprintf(out, outlen, "%d", u8_strlen(out));
+    return snprintf_clip(out, outlen, "%d", u8_strlen(out));
 }
 
 // $pad(expr,len[, char]): If `expr` is shorter than len characters, the function adds `char` characters (if present otherwise
@@ -1085,7 +1094,7 @@ tf_func_add (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
         outval += atoi (out);
         arg += arglens[i];
     }
-    return snprintf (out, outlen, "%d", outval);
+    return snprintf_clip (out, outlen, "%d", outval);
 }
 
 int
@@ -1114,7 +1123,7 @@ tf_func_div (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
         }
         arg += arglens[i];
     }
-    int res = snprintf (out, outlen, "%d", (int)round (outval));
+    int res = snprintf_clip (out, outlen, "%d", (int)round (outval));
     return res;
 }
 
@@ -1137,7 +1146,7 @@ tf_func_max (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
         }
         arg += arglens[i];
     }
-    int res = snprintf (out, outlen, "%d", nmax);
+    int res = snprintf_clip (out, outlen, "%d", nmax);
     return res;
 }
 
@@ -1160,7 +1169,7 @@ tf_func_min (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
         }
         arg += arglens[i];
     }
-    int res = snprintf (out, outlen, "%d", nmin);
+    int res = snprintf_clip (out, outlen, "%d", nmin);
     return res;
 }
 
@@ -1190,7 +1199,7 @@ tf_func_mod (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
         }
         arg += arglens[i];
     }
-    int res = snprintf (out, outlen, "%d", outval);
+    int res = snprintf_clip (out, outlen, "%d", outval);
     return res;
 }
 
@@ -1215,7 +1224,7 @@ tf_func_mul (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
         }
         arg += arglens[i];
     }
-    int res = snprintf (out, outlen, "%d", outval);
+    int res = snprintf_clip (out, outlen, "%d", outval);
     return res;
 }
 
@@ -1243,7 +1252,7 @@ tf_func_muldiv (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const 
 
     int outval = (int)round(vals[0] * vals[1] / (float)vals[2]);
 
-    int res = snprintf (out, outlen, "%d", outval);
+    int res = snprintf_clip (out, outlen, "%d", outval);
     return res;
 }
 
@@ -1255,7 +1264,7 @@ tf_func_rand (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const ch
 
     int outval = rand ();
 
-    int res = snprintf (out, outlen, "%d", outval);
+    int res = snprintf_clip (out, outlen, "%d", outval);
     return res;
 }
 
@@ -1280,7 +1289,7 @@ tf_func_sub (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
         }
         arg += arglens[i];
     }
-    int res = snprintf (out, outlen, "%d", outval);
+    int res = snprintf_clip (out, outlen, "%d", outval);
     return res;
 }
 
@@ -1814,13 +1823,13 @@ format_playback_time (char *out, int outlen, float t) {
 
     int len = 0;
     if (daystotal == 0) {
-        len = snprintf (out, outlen, "%d:%02d:%02d", hourtotal, mintotal, sectotal);
+        len = snprintf_clip (out, outlen, "%d:%02d:%02d", hourtotal, mintotal, sectotal);
     }
     else if (daystotal == 1) {
-        len = snprintf (out, outlen, _("1 day %d:%02d:%02d"), hourtotal, mintotal, sectotal);
+        len = snprintf_clip (out, outlen, _("1 day %d:%02d:%02d"), hourtotal, mintotal, sectotal);
     }
     else {
-        len = snprintf (out, outlen, _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
+        len = snprintf_clip (out, outlen, _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
     }
 
     return len;
@@ -1950,7 +1959,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             p++;
                         }
                         if (p > v) {
-                            int len = snprintf (out, outlen, "%02d", atoi(v));
+                            int len = snprintf_clip (out, outlen, "%02d", atoi(v));
                             out += len;
                             outlen -= len;
                             skip_out = 1;
@@ -2001,7 +2010,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             p++;
                         }
                         if (p > v) {
-                            int len = snprintf (out, outlen, "%d", atoi(v));
+                            int len = snprintf_clip (out, outlen, "%d", atoi(v));
                             out += len;
                             outlen -= len;
                             skip_out = 1;
@@ -2021,7 +2030,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     if (playing_track) {
                         int br = streamer_get_apx_bitrate();
                         if (br >= 0) {
-                            int len = snprintf (out, outlen, "%d", br);
+                            int len = snprintf_clip (out, outlen, "%d", br);
                             out += len;
                             outlen -= len;
                             skip_out = 1;
@@ -2042,18 +2051,18 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                         int len;
                         if (bs >= 1024*1024*1024) {
                             double gb = (double)bs / (double)(1024*1024*1024);
-                            len = snprintf (out, outlen, "%.3lf GB", gb);
+                            len = snprintf_clip (out, outlen, "%.3lf GB", gb);
                         }
                         else if (bs >= 1024*1024) {
                             double mb = (double)bs / (double)(1024*1024);
-                            len = snprintf (out, outlen, "%.3lf MB", mb);
+                            len = snprintf_clip (out, outlen, "%.3lf MB", mb);
                         }
                         else if (bs >= 1024) {
                             double kb = (double)bs / (double)(1024);
-                            len = snprintf (out, outlen, "%.3lf KB", kb);
+                            len = snprintf_clip (out, outlen, "%.3lf KB", kb);
                         }
                         else {
-                            len = snprintf (out, outlen, "%lld B", bs);
+                            len = snprintf_clip (out, outlen, "%lld B", bs);
                         }
                         out += len;
                         outlen -= len;
@@ -2093,14 +2102,14 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                                 int mn = (t-hr*3600)/60;
                                 int sc = t-hr*3600-mn*60;
                                 if (hr) {
-                                    len = snprintf (out, outlen, "%d:%02d:%02d", hr, mn, sc);
+                                    len = snprintf_clip (out, outlen, "%d:%02d:%02d", hr, mn, sc);
                                 }
                                 else {
-                                    len = snprintf (out, outlen, "%d:%02d", mn, sc);
+                                    len = snprintf_clip (out, outlen, "%d:%02d", mn, sc);
                                 }
                             }
                             else if (tmp_b || tmp_d) {
-                                len = snprintf (out, outlen, "%0.2f", t);
+                                len = snprintf_clip (out, outlen, "%0.2f", t);
                             }
                             out += len;
                             outlen -= len;
@@ -2131,18 +2140,18 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                         int len = 0;
                         if (tmp_a) {
                             if (hr) {
-                                len = snprintf (out, outlen, "%d:%02d:%02d", hr, mn, sc);
+                                len = snprintf_clip (out, outlen, "%d:%02d:%02d", hr, mn, sc);
                             }
                             else {
-                                len = snprintf (out, outlen, "%d:%02d", mn, sc);
+                                len = snprintf_clip (out, outlen, "%d:%02d", mn, sc);
                             }
                         }
                         else if (tmp_b) {
                             if (hr) {
-                                len = snprintf (out, outlen, "%d:%02d:%02d.%03d", hr, mn, sc, ms);
+                                len = snprintf_clip (out, outlen, "%d:%02d:%02d.%03d", hr, mn, sc, ms);
                             }
                             else {
-                                len = snprintf (out, outlen, "%d:%02d.%03d", mn, sc, ms);
+                                len = snprintf_clip (out, outlen, "%d:%02d.%03d", mn, sc, ms);
                             }
                         }
                         out += len;
@@ -2155,10 +2164,10 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     if (t >= 0) {
                         int len;
                         if (tmp_a) {
-                            len = snprintf (out, outlen, "%d", (int)roundf(t));
+                            len = snprintf_clip (out, outlen, "%d", (int)roundf(t));
                         }
                         else {
-                            len = snprintf (out, outlen, "%0.3f", t);
+                            len = snprintf_clip (out, outlen, "%0.3f", t);
                         }
                         out += len;
                         outlen -= len;
@@ -2166,7 +2175,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     }
                 }
                 else if (!strcmp (name, "length_samples")) {
-                    int len = snprintf (out, outlen, "%lld", pl_item_get_endsample ((playItem_t *)ctx->it) - pl_item_get_startsample ((playItem_t *)ctx->it));
+                    int len = snprintf_clip (out, outlen, "%lld", pl_item_get_endsample ((playItem_t *)ctx->it) - pl_item_get_startsample ((playItem_t *)ctx->it));
                     out += len;
                     outlen -= len;
                     skip_out = 1;
@@ -2282,7 +2291,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                         else {
                             idx = pl_get_idx_of_iter (it, ctx->iter) + 1;
                         }
-                        int len = snprintf (out, outlen, "%0*d", digits, idx);
+                        int len = snprintf_clip (out, outlen, "%0*d", digits, idx);
                         out += len;
                         outlen -= len;
                         skip_out = 1;
@@ -2302,7 +2311,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                         }
                     }
                     if (total_tracks >= 0) {
-                        int len = snprintf (out, outlen, "%d", total_tracks);
+                        int len = snprintf_clip (out, outlen, "%d", total_tracks);
                         out += len;
                         outlen -= len;
                         skip_out = 1;
@@ -2313,7 +2322,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     if (it) {
                         int idx = playqueue_test (it) + 1;
                         if (idx >= 1) {
-                            int len = snprintf (out, outlen, "%d", idx);
+                            int len = snprintf_clip (out, outlen, "%d", idx);
                             out += len;
                             outlen -= len;
                             skip_out = 1;
@@ -2325,7 +2334,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     if (it) {
                         int idx = playqueue_test (it) + 1;
                         if (idx >= 1) {
-                            int len = snprintf (out, outlen, "%d", idx);
+                            int len = snprintf_clip (out, outlen, "%d", idx);
                             out += len;
                             outlen -= len;
                             int count = playqueue_getcount ();
@@ -2333,7 +2342,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                                 playItem_t *trk = playqueue_get_item (i);
                                 if (trk) {
                                     if (it == trk) {
-                                        len = snprintf (out, outlen, ",%d", i + 1);
+                                        len = snprintf_clip (out, outlen, ",%d", i + 1);
                                         out += len;
                                         outlen -= len;
                                     }
@@ -2348,7 +2357,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 else if (!strcmp (name, "queue_total")) {
                     int count = playqueue_getcount ();
                     if (count >= 0) {
-                        int len = snprintf (out, outlen, "%d", count);
+                        int len = snprintf_clip (out, outlen, "%d", count);
                         out += len;
                         outlen -= len;
                         skip_out = 1;
