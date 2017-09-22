@@ -50,7 +50,7 @@ static NSMutableArray *g_rgControllers;
     [super windowDidLoad];
 }
 
-- (void)dismissController:(id)sender {
+- (void)dealloc {
     if (_rg_settings.tracks) {
         for (int i = 0; i < _rg_settings.num_tracks; i++) {
             deadbeef->pl_item_unref (_rg_settings.tracks[i]);
@@ -61,7 +61,13 @@ static NSMutableArray *g_rgControllers;
         free (_rg_settings.results);
     }
     memset (&_rg_settings, 0, sizeof (_rg_settings));
-    
+}
+
+- (void)dismissController:(id)sender {
+    [self.resultsWindow close];
+    [self.updateTagsProgressWindow close];
+    [self.window close];
+    [super dismissController:sender];
     if (g_rgControllers) {
         [g_rgControllers removeObject:self];
     }
@@ -120,6 +126,10 @@ static NSMutableArray *g_rgControllers;
     }
     [g_rgControllers addObject:ctl];
     return ctl;
+}
+
++ (void)replayGainCleanup {
+    g_rgControllers = nil;
 }
 
 - (void)runScanner:(int)mode forTracks:(DB_playItem_t **)tracks count:(int)count {
