@@ -837,7 +837,7 @@ static NSMutableArray *g_converterControllers;
     [conv run:DDB_ACTION_CTX_SELECTION];
 }
 
-+ (void)converterCleanup {
++ (void)cleanup {
     g_converterControllers = nil;
 }
 

@@ -46,37 +46,6 @@ static NSMutableArray *g_rgControllers;
     BOOL _abortTagWriting;
 }
 
-- (void)windowDidLoad {
-    [super windowDidLoad];
-}
-
-- (void)dealloc {
-    if (_rg_settings.tracks) {
-        for (int i = 0; i < _rg_settings.num_tracks; i++) {
-            deadbeef->pl_item_unref (_rg_settings.tracks[i]);
-        }
-        free (_rg_settings.tracks);
-    }
-    if (_rg_settings.results) {
-        free (_rg_settings.results);
-    }
-    memset (&_rg_settings, 0, sizeof (_rg_settings));
-}
-
-- (void)dismissController:(id)sender {
-    [self.resultsWindow close];
-    [self.updateTagsProgressWindow close];
-    [self.window close];
-    [super dismissController:sender];
-    if (g_rgControllers) {
-        [g_rgControllers removeObject:self];
-    }
-}
-
-- (IBAction)progressCancelAction:(id)sender {
-    _abort_flag = 1;
-}
-
 + (BOOL)initPlugin {
     if (_rg) {
         return YES;
@@ -128,8 +97,39 @@ static NSMutableArray *g_rgControllers;
     return ctl;
 }
 
-+ (void)replayGainCleanup {
++ (void)cleanup {
     g_rgControllers = nil;
+}
+
+- (void)dealloc {
+    if (_rg_settings.tracks) {
+        for (int i = 0; i < _rg_settings.num_tracks; i++) {
+            deadbeef->pl_item_unref (_rg_settings.tracks[i]);
+        }
+        free (_rg_settings.tracks);
+    }
+    if (_rg_settings.results) {
+        free (_rg_settings.results);
+    }
+    memset (&_rg_settings, 0, sizeof (_rg_settings));
+}
+
+- (void)dismissController:(id)sender {
+    [self.window close];
+    [super dismissController:sender];
+    if (g_rgControllers) {
+        [g_rgControllers removeObject:self];
+    }
+}
+
+- (IBAction)progressCancelAction:(id)sender {
+    _abort_flag = 1;
+}
+
+- (void)windowWillClose:(NSNotification *)notification {
+    if (g_rgControllers) {
+        [g_rgControllers removeObject:self];
+    }
 }
 
 - (void)runScanner:(int)mode forTracks:(DB_playItem_t **)tracks count:(int)count {
@@ -137,8 +137,15 @@ static NSMutableArray *g_rgControllers;
         return;
     }
 
-    [[self window] setIsVisible:YES];
-    [[self window] makeKeyWindow];
+    [self.window setDelegate:(id<NSWindowDelegate> _Nullable)self];
+    [self.window setIsVisible:YES];
+    [self.window makeKeyWindow];
+
+    [NSApp beginSheet: _scanProgressWindow
+       modalForWindow: self.window
+        modalDelegate: self
+       didEndSelector: nil
+          contextInfo: nil];
 
     memset (&_rg_settings, 0, sizeof (ddb_rg_scanner_settings_t));
     _rg_settings._size = sizeof (ddb_rg_scanner_settings_t);
@@ -200,6 +207,7 @@ static NSMutableArray *g_rgControllers;
         }
         deadbeef->background_job_decrement ();
         dispatch_async(dispatch_get_main_queue(), ^{
+            [_updateTagsProgressWindow close];
             [self dismissController:self];
         });
     });
@@ -266,16 +274,20 @@ static NSMutableArray *g_rgControllers;
     NSString *elapsed = [self formatTime:timePassed extraPrecise:YES];
     float speed = [self getScanSpeed:_rg_settings.cd_samples_processed overTime:timePassed];
     [_resultStatusLabel setStringValue:[NSString stringWithFormat:@"Calculated in: %@, speed: %0.2fx", elapsed, speed]];
-    [[self window] close];
-    [_resultsWindow setIsVisible:YES];
-    [_resultsWindow makeKeyWindow];
+
+    [NSApp endSheet:_scanProgressWindow];
+    [_scanProgressWindow orderOut:self];
     [_resultsTableView setDataSource:(id<NSTableViewDataSource>)self];
     [_resultsTableView reloadData];
 }
 
 - (IBAction)updateFileTagsAction:(id)sender {
-    [_resultsWindow close];
-    [_updateTagsProgressWindow setIsVisible:YES];
+    [NSApp beginSheet: _updateTagsProgressWindow
+       modalForWindow: self.window
+        modalDelegate: self
+       didEndSelector: nil
+          contextInfo: nil];
+
     _abortTagWriting = NO;
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
@@ -298,6 +310,8 @@ static NSMutableArray *g_rgControllers;
         }
 
         dispatch_async(dispatch_get_main_queue(), ^{
+            [NSApp endSheet:_updateTagsProgressWindow];
+            [_updateTagsProgressWindow orderOut:self];
             [self dismissController:self];
         });
     });

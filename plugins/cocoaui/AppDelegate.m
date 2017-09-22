@@ -223,8 +223,8 @@ extern void
 main_cleanup_and_quit (void);
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
-    [ConverterWindowController converterCleanup];
-    [ReplayGainScannerController replayGainCleanup];
+    [ConverterWindowController cleanup];
+    [ReplayGainScannerController cleanup];
     [_mainWindow cleanup];
     [_searchWindow cleanup];
     main_cleanup_and_quit();
