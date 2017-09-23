@@ -122,3 +122,6 @@ done
 # set default gtk2 theme
 touch $PREFIX/etc/gtk-2.0/settings.ini
 echo -e "[Settings]\r\ngtk-theme-name = MS-Windows\n" > $PREFIX/etc/gtk-2.0/settings.ini
+
+# set default output plugin
+echo "output_plugin PortAudio output plugin" > $PREFIX/config/config
