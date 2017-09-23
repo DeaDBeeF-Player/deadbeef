@@ -25,6 +25,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+// windows hack: compile like for macos to omit all X references, so that local hotkeys work
+// note: no global hotkeys, reset deadbeef to apply new hotkeys
+#ifdef __MINGW32__
+#define __APPLE__
+#endif
 #ifndef __APPLE__
 #include <X11/Xlib.h>
 #endif

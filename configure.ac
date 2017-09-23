@@ -599,6 +599,13 @@ dnl no support for global hotkeys on osx, but plugin will work anyway
 AS_IF([test "${OS_OSX}" = "yes"], [
     HAVE_HOTKEYS=yes
 ])
+AS_IF([test "${OS_WINDOWS}" = "yes"], [
+    HOTKEYS_CFLAGS=""
+    HOTKEYS_LIBS=""
+    AC_SUBST(HOTKEYS_CFLAGS)
+    AC_SUBST(HOTKEYS_LIBS)
+    HAVE_HOTKEYS=yes
+])
 
 dnl *** SNDIO output
 AS_IF([test "${enable_sndio}" != "no"], [
