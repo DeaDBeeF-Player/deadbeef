@@ -423,7 +423,7 @@ int grouptitleheight = 22;
 @interface DdbListContentView : NSView {
     DdbListview *listview;
     NSPoint _lastDragLocation;
-    BOOL    _dragging;
+    BOOL    _draggingInView;
 }
 - (void)setListView:(DdbListview *)lv;
 @end
@@ -440,7 +440,7 @@ int grouptitleheight = 22;
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender {
 
-    _dragging = YES;
+    _draggingInView = YES;
     return NSDragOperationCopy;
 }
 
@@ -459,7 +459,7 @@ int grouptitleheight = 22;
 
 - (void)draggingExited:(id<NSDraggingInfo>)sender {
 
-    _dragging = NO;
+    _draggingInView = NO;
     [self setNeedsDisplay:YES];
 }
 
@@ -509,7 +509,7 @@ int grouptitleheight = 22;
         }
     }
 
-    _dragging = NO;
+    _draggingInView = NO;
     return YES;
 }
 
@@ -541,6 +541,20 @@ int grouptitleheight = 22;
     }
 }
 
+
+- (void) drawLineIndicator:(NSRect)dirtyRect yy:(int)yy  {
+
+    int yyline = yy;
+    float indicatorLineWith = 1.f;
+    if ( yyline > 0 ) {
+        yyline -= (indicatorLineWith / 2.f );
+    }
+    [[NSGraphicsContext currentContext] saveGraphicsState];
+    [NSBezierPath setDefaultLineWidth: indicatorLineWith];
+    [[NSColor alternateSelectedControlColor] set];
+    [NSBezierPath strokeLineFromPoint: NSMakePoint(dirtyRect.origin.x, yyline) toPoint: NSMakePoint( dirtyRect.origin.x + dirtyRect.size.width, yyline ) ];
+    [[NSGraphicsContext currentContext] restoreGraphicsState];
+}
 
 - (void)drawListView:(NSRect)dirtyRect {
     id<DdbListviewDelegate> delegate = listview.delegate;
@@ -614,6 +628,16 @@ int grouptitleheight = 22;
                     [[NSGraphicsContext currentContext] restoreGraphicsState];
                 }
 
+                // draw dnd line
+                if (_draggingInView) {
+                    if ( _lastDragLocation.y > listview.fullheight ) {
+                        [self drawLineIndicator:dirtyRect yy: listview.fullheight];
+                    }
+                    else if ( _lastDragLocation.y > yy && _lastDragLocation.y < yy + rowheight ) {
+                        [self drawLineIndicator:dirtyRect yy:yy];
+                    }
+                }
+
             }
             DdbListviewRow_t next = [listview.delegate nextRow:it];
             [listview.delegate unrefRow:it];
@@ -624,24 +648,6 @@ int grouptitleheight = 22;
         }
         if (it != [delegate invalidRow]) {
             [listview.delegate unrefRow:it];
-        }
-
-        // draw dnd line
-        // should be outside of group loop, but we need the line draw to be done before the album art draw
-        if (_dragging) {
-            float indicatorLineWith = 1.f;
-            int yy = floor( (double) _lastDragLocation.y / rowheight ) * rowheight;
-            if ( yy > listview.fullheight ) {
-                yy = listview.fullheight;
-            }
-            if ( yy > 0 ) {
-                yy -= indicatorLineWith;
-            }
-            [[NSGraphicsContext currentContext] saveGraphicsState];
-            [NSBezierPath setDefaultLineWidth: indicatorLineWith];
-            [[NSColor alternateSelectedControlColor] set];
-            [NSBezierPath strokeLineFromPoint: NSMakePoint(dirtyRect.origin.x, yy) toPoint: NSMakePoint( dirtyRect.origin.x + dirtyRect.size.width, yy ) ];
-            [[NSGraphicsContext currentContext] restoreGraphicsState];
         }
 
         // draw album art
