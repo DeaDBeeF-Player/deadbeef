@@ -422,6 +422,8 @@ int grouptitleheight = 22;
 
 @interface DdbListContentView : NSView {
     DdbListview *listview;
+    NSPoint _lastDragLocation;
+    BOOL    _dragging;
 }
 - (void)setListView:(DdbListview *)lv;
 @end
@@ -437,14 +439,30 @@ int grouptitleheight = 22;
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender {
-    NSLog(@"[%@ %@]", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
 
-    NSPasteboard *pboard = [sender draggingPasteboard];
-
-    if ([[pboard types] containsObject:NSStringPboardType]) {
-    }
+    _dragging = YES;
     return NSDragOperationCopy;
 }
+
+- (BOOL)wantsPeriodicDraggingUpdates {
+
+    return NO;
+}
+
+- (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)sender {
+
+    _lastDragLocation = [self convertPoint:[sender draggingLocation] fromView:nil];
+    [self setNeedsDisplay:YES];
+
+    return NSDragOperationCopy;
+}
+
+- (void)draggingExited:(id<NSDraggingInfo>)sender {
+
+    _dragging = NO;
+    [self setNeedsDisplay:YES];
+}
+
 
 - (BOOL)performDragOperation:(id<NSDraggingInfo>)sender {
 
@@ -491,6 +509,7 @@ int grouptitleheight = 22;
         }
     }
 
+    _dragging = NO;
     return YES;
 }
 
@@ -607,6 +626,23 @@ int grouptitleheight = 22;
             [listview.delegate unrefRow:it];
         }
 
+        // draw dnd line
+        // should be outside of group loop, but we need the line draw to be done before the album art draw
+        if (_dragging) {
+            float indicatorLineWith = 1.f;
+            int yy = floor( (double) _lastDragLocation.y / rowheight ) * rowheight;
+            if ( yy > listview.fullheight ) {
+                yy = listview.fullheight;
+            }
+            if ( yy > 0 ) {
+                yy -= indicatorLineWith;
+            }
+            [[NSGraphicsContext currentContext] saveGraphicsState];
+            [NSBezierPath setDefaultLineWidth: indicatorLineWith];
+            [[NSColor alternateSelectedControlColor] set];
+            [NSBezierPath strokeLineFromPoint: NSMakePoint(dirtyRect.origin.x, yy) toPoint: NSMakePoint( dirtyRect.origin.x + dirtyRect.size.width, yy ) ];
+            [[NSGraphicsContext currentContext] restoreGraphicsState];
+        }
 
         // draw album art
         int grp_next_y = grp_y + grp->height;
