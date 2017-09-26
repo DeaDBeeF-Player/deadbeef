@@ -157,6 +157,19 @@ project "alsa"
 
    links { "asound" }
 
+project "pulse"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/pulse/*.h",
+       "plugins/pulse/*.c",
+   }
+
+   links { "pulse-simple" }
+
 project "ddb_gui_GTK2"
    kind "SharedLib"
    language "C"

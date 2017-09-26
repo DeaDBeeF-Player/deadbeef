@@ -610,11 +610,10 @@ palsa_thread (void *context) {
                 br = 0;
             }
 
-            if (br != sz) {
-                memset (buf+br, 0, sz-br);
+            if (br > 0) {
+                int frames = snd_pcm_bytes_to_frames(audio, br);
+                err = snd_pcm_writei (audio, buf, frames);
             }
-
-            err = snd_pcm_writei (audio, buf, snd_pcm_bytes_to_frames(audio, sz));
             if (alsa_terminate) {
                 UNLOCK;
                 break;

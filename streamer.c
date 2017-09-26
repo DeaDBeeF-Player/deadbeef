@@ -1838,15 +1838,18 @@ streamer_read (char *bytes, int size) {
 
     _audio_stall_count = 0;
 
-    // decode enough blocks to fill the output buffer
-    int firstblock = 1;
-    while (outbuffer_remaining < size) {
-        int rb = process_output_block (outbuffer + outbuffer_remaining, firstblock);
-        if (rb <= 0) {
-            break;
+    // need to drain outbuffer before changing format?
+    if (!outbuffer_remaining || !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+        // decode enough blocks to fill the output buffer
+        int firstblock = 1;
+        while (outbuffer_remaining < size) {
+            int rb = process_output_block (outbuffer + outbuffer_remaining, firstblock);
+            if (rb <= 0) {
+                break;
+            }
+            outbuffer_remaining += rb;
+            firstblock = 0;
         }
-        outbuffer_remaining += rb;
-        firstblock = 0;
     }
     streamer_unlock ();
 
