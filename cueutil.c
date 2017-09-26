@@ -680,6 +680,11 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
     cue.charset = junk_detect_charset (buffer);
     cue.p = buffer;
 
+    // ignore utf8 BOM
+    if (sz >= 3 && !memcmp (buffer, "\xef\xbb\xbf", 3)) {
+        cue.p += 3;
+    }
+
     cue.temp_plt = calloc (1, sizeof (playlist_t));
     cue.temp_plt->loading_cue = 1;
 
