@@ -504,6 +504,7 @@ _load_nextfile (cueparser_t *cue) {
             cue->fullpath[0] = 0;
             if (cue->namelist) {
                 // for image+cue, try guessing the audio filename from cuesheet filename
+                int image_found = 0;
                 if (cue->ncuefiles == 1) {
                     size_t l = strlen (cue->cue_fname);
                     for (int i = 0; i < cue->n; i++) {
@@ -517,13 +518,14 @@ _load_nextfile (cueparser_t *cue) {
                             snprintf (cue->fullpath, sizeof (cue->fullpath), "%s/%s", cue->dirname, cue->namelist[i]->d_name);
                             cue->origin = plt_insert_file2 (-1, cue->temp_plt, NULL, cue->fullpath, NULL, NULL, NULL);
                             if (cue->origin) {
+                                image_found = 1;
                                 cue->namelist[i]->d_name[0] = 0;
                                 break;
                             }
                         }
                     }
                 }
-                else {
+                if (!image_found) {
                     // for tracks+cue, try guessing the extension of the FILE value
                     char *ext = strrchr (audio_file, '.');
                     if (ext) {
@@ -650,6 +652,11 @@ plt_process_cue_track (playlist_t *plt, cueparser_t *cue) {
     return 0;
 }
 
+static int
+_is_audio_track (const char *track) {
+    return !strcmp (track + strlen (track) - 6, " AUDIO");
+}
+
 playItem_t *
 plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *fname, playItem_t *embedded_origin, int64_t embedded_numsamples, int embedded_samplerate, const uint8_t *buffer, int sz, const char *dirname, struct dirent **namelist, int n) {
     cueparser_t cue;
@@ -727,7 +734,8 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
         if (filefield) {
             filefield = 0;
             // If FILE is immediately followed by TRACK, that next TRACK is from the new FILE
-            if (field == CUE_FIELD_TRACK) {
+            if (field == CUE_FIELD_TRACK
+                && _is_audio_track(cue.cuefields[CUE_FIELD_TRACK])) {
                 if (plt_process_cue_track (plt, &cue)) {
                     break;
                 }
@@ -766,7 +774,13 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
         }
         else if (field == CUE_FIELD_TRACK) {
             if (cue.origin && cue.have_track) {
-                plt_process_cue_track (plt, &cue);
+                if (_is_audio_track(cue.cuefields[CUE_FIELD_TRACK])) {
+                    plt_process_cue_track (plt, &cue);
+                }
+                else if (cue.prev && cue.last_round) {
+                    // set duration for last item
+                    _set_last_item_region (plt, cue.prev, cue.origin, cue.numsamples, cue.samplerate);
+                }
             }
             pl_cue_reset_per_track_fields(cue.cuefields);
             pl_get_value_from_cue (cue.p + 6, sizeof (cue.cuefields[CUE_FIELD_TRACK]), cue.cuefields[CUE_FIELD_TRACK]);
