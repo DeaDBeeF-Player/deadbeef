@@ -281,10 +281,13 @@ _scan_mpeg_header (buffer_t *buffer, int64_t offs, int64_t fsize, mpeg_frame_inf
         return -2;
     }
 
-retry_sync:
-
     sync = fb[0];
     if (sync != 0xff) {
+        // return EOF on id3v1 tag
+        if (fsize - offs == 128 && !memcmp (fb, "TAG", 3)) {
+            return -2;
+        }
+
         return -1;
     }
     else {
@@ -484,8 +487,12 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             offs++;
             continue;
         }
+        // end of file?
         if (new_offs == -2) {
-            break;
+            if (!valid_frames) {
+                break;
+            }
+            goto end_scan;
         }
         if (valid_frame_pos == -1) {
             valid_frame_pos = framepos;
