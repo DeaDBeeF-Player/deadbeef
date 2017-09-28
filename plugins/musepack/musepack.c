@@ -458,8 +458,6 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     deadbeef->fclose (fp);
 
-    deadbeef->pl_lock ();
-
     mpc_set_trk_properties (it, &si, fsize);
 
     DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, si.sample_freq);
