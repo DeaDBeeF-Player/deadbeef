@@ -35,3 +35,5 @@ plugins/gtkui/widgets.c
 plugins/gtkui/pltmenu.c
 plugins/pltbrowser/pltbrowser.c
 tf.c
+plugins/gtkui/gtk/menus.ui
+plugins/gtkui/rg.c

@@ -1,4 +1,6 @@
-EXTRA_DIST = deadbeef.glade
+EXTRA_DIST = deadbeef.glade\
+	gtkui.gresources.xml\
+	gtk/menus.ui
 
 GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   callbacks.c interface.c support.c callbacks.h interface.h support.h\
