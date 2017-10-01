@@ -577,13 +577,19 @@ get_next_track (playItem_t *curr) {
 static playItem_t *
 get_prev_track (playItem_t *curr) {
     pl_lock ();
-    playlist_t *plt = plt_get_curr ();
-    streamer_set_streamer_playlist (plt);
-    plt_unref (plt);
+    
     // check if prev song is in this playlist
     if (-1 == str_get_idx_of (curr)) {
         curr = NULL;
     }
+
+    if (!streamer_playlist) {
+        playlist_t *plt = plt_get_curr ();
+        streamer_set_streamer_playlist (plt);
+        plt_unref (plt);
+    }
+    
+    playlist_t *plt = streamer_playlist;
 
     if (!plt->head[PL_MAIN]) {
         pl_unlock ();
