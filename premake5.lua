@@ -260,6 +260,19 @@ project "m3u"
        "plugins/m3u/*.h",
    }
 
+project "vfs_curl"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/vfs_curl/*.c",
+       "plugins/vfs_curl/*.h",
+   }
+
+   links { "curl" }
+
 project "converter_gtk2"
    kind "SharedLib"
    language "C"
