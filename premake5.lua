@@ -1,5 +1,5 @@
 workspace "deadbeef"
-   configurations { "Debug", "Release", "Debug32" }
+   configurations { "Debug", "Release", "Debug32", "Release32" }
 
 
 defines {
@@ -18,11 +18,14 @@ filter "configurations:Debug or Release"
   libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
 
 
-filter "configurations:Debug32"
+filter "configurations:Debug32 or Release32"
   buildoptions { "-m32" }
   linkoptions { "-m32" }
   includedirs { "plugins/libmp4ff", "static-deps/lib-x86-32/include/i386-linux-gnu", "static-deps/lib-x86-32/include"  }
   libdirs { "static-deps/lib-x86-32/lib/i386-linux-gnu", "static-deps/lib-x86-32/lib" }
+
+filter "configurations:Release32 or Release"
+  buildoptions { "-O2" }
 
 project "deadbeef"
    kind "ConsoleApp"
@@ -120,7 +123,7 @@ project "ffap"
    filter 'files:**.asm'
        buildmessage 'YASM Assembling : %{file.relpath}'
 
-       filter "configurations:Debug32"
+       filter "configurations:Debug32 or Release32"
            buildcommands
            {
                'yasm -f elf -D ARCH_X86_32 -m x86 -DPREFIX -o "obj/%{cfg.buildcfg}/ffap/%{file.basename}.o" "%{file.relpath}"'
@@ -207,7 +210,7 @@ project "ddb_gui_GTK2"
 
    links { "jansson", "gtk-x11-2.0", "pango-1.0", "cairo", "gdk-x11-2.0", "gdk_pixbuf-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
 
-    filter "configurations:Debug32"
+    filter "configurations:Debug32 or Release32"
     
        includedirs { "static-deps/lib-x86-32/gtk-2.16.0/include/**", "static-deps/lib-x86-32/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-32/gtk-2.16.0/lib", "static-deps/lib-x86-32/gtk-2.16.0/lib/**" }
@@ -271,7 +274,7 @@ project "converter_gtk2"
    }
    links { "gtk-x11-2.0", "pango-1.0", "cairo", "gdk-x11-2.0", "gdk_pixbuf-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
 
-   filter "configurations:Debug32"
+   filter "configurations:Debug32 or Release32"
        includedirs { "static-deps/lib-x86-32/gtk-2.16.0/include/**", "static-deps/lib-x86-32/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-32/gtk-2.16.0/lib", "static-deps/lib-x86-32/gtk-2.16.0/lib/**" }
 
