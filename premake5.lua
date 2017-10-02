@@ -221,6 +221,17 @@ project "converter"
        "shared/mp4tagutil.c",
    }
 
+project "m3u"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/m3u/*.c",
+       "plugins/m3u/*.h",
+   }
+
 project "converter_gtk2"
    kind "SharedLib"
    language "C"
