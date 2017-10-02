@@ -240,7 +240,11 @@ _update_tags (void *ctx) {
 
             g_idle_add (_setUpdateProgress, dt);
             
-            _rg->apply (ctl->_rg_settings.tracks[i], ctl->_rg_settings.results[i].track_gain, ctl->_rg_settings.results[i].track_peak, ctl->_rg_settings.results[i].album_gain, ctl->_rg_settings.results[i].album_peak);
+            uint32_t flags = (1<<DDB_REPLAYGAIN_TRACKGAIN)|(1<<DDB_REPLAYGAIN_TRACKPEAK);
+            if (ctl->_rg_settings.mode != DDB_RG_SCAN_MODE_TRACK) {
+                flags |= (1<<DDB_REPLAYGAIN_ALBUMGAIN)|(1<<DDB_REPLAYGAIN_ALBUMPEAK);
+            }
+            _rg->apply (ctl->_rg_settings.tracks[i], flags, ctl->_rg_settings.results[i].track_gain, ctl->_rg_settings.results[i].track_peak, ctl->_rg_settings.results[i].album_gain, ctl->_rg_settings.results[i].album_peak);
         }
     }
 

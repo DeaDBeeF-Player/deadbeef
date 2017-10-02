@@ -304,8 +304,12 @@ static NSMutableArray *g_rgControllers;
                     [_updateTagsProgressText setStringValue:path];
                     [_updateTagsProgressIndicator setDoubleValue:(double)i/_rg_settings.num_tracks*100];
                 });
-                
-                _rg->apply (_rg_settings.tracks[i], _rg_settings.results[i].track_gain, _rg_settings.results[i].track_peak, _rg_settings.results[i].album_gain, _rg_settings.results[i].album_peak);
+
+                uint32_t flags = (1<<DDB_REPLAYGAIN_TRACKGAIN)|(1<<DDB_REPLAYGAIN_TRACKPEAK);
+                if (_rg_settings.mode != DDB_RG_SCAN_MODE_TRACK) {
+                    flags |= (1<<DDB_REPLAYGAIN_ALBUMGAIN)|(1<<DDB_REPLAYGAIN_ALBUMPEAK);
+                }
+                _rg->apply (_rg_settings.tracks[i], flags, _rg_settings.results[i].track_gain, _rg_settings.results[i].track_peak, _rg_settings.results[i].album_gain, _rg_settings.results[i].album_peak);
             }
         }
 

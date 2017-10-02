@@ -465,22 +465,37 @@ _rg_write_meta (DB_playItem_t *track) {
     return 0;
 }
 
+static void
+_rg_remove_meta (DB_playItem_t *track) {
+    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_ALBUMGAIN");
+    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_ALBUMPEAK");
+    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_TRACKGAIN");
+    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_TRACKPEAK");
+}
+
 int
-rg_apply (DB_playItem_t *track, float track_gain, float track_peak, float album_gain, float album_peak) {
-    deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_TRACKGAIN, track_gain);
-    deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_TRACKPEAK, track_peak);
-    deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_ALBUMGAIN, album_gain);
-    deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_ALBUMPEAK, album_peak);
+rg_apply (DB_playItem_t *track, uint32_t flags, float track_gain, float track_peak, float album_gain, float album_peak) {
+    _rg_remove_meta(track);
+
+    if (flags & (1<<DDB_REPLAYGAIN_TRACKGAIN)) {
+        deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_TRACKGAIN, track_gain);
+    }
+    if (flags & (1<<DDB_REPLAYGAIN_TRACKPEAK)) {
+        deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_TRACKPEAK, track_peak);
+    }
+    if (flags & (1<<DDB_REPLAYGAIN_ALBUMGAIN)) {
+        deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_ALBUMGAIN, album_gain);
+    }
+    if (flags & (1<<DDB_REPLAYGAIN_ALBUMPEAK)) {
+        deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_ALBUMPEAK, album_peak);
+    }
 
     return _rg_write_meta (track);
 }
 
 int
 rg_remove (DB_playItem_t *track) {
-    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_ALBUMGAIN");
-    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_ALBUMPEAK");
-    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_TRACKGAIN");
-    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_TRACKPEAK");
+    _rg_remove_meta (track);
 
     return _rg_write_meta (track);
 }
