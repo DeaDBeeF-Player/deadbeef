@@ -318,9 +318,11 @@ AS_IF([test "${enable_sndio}" != "no" -a "${found_sndio_h}" != "no" -a "${found_
 AC_SUBST(SNDIO_LIBS)
 
 AS_IF([test "${enable_waveout}" != "no" ], [
-  AC_DEFINE(HAVE_WAVEOUT, 1, [Build waveout support])
-  HAVE_WAVEOUT=yes
-  WAVEOUT_LIBS="-lwindows"
+  AS_IF([test "${OS_WINDOWS}" = "yes"], [
+    AC_DEFINE(HAVE_WAVEOUT, 1, [Build waveout support])
+    HAVE_WAVEOUT=yes
+    WAVEOUT_LIBS="-lwindows"
+  ])
 ])
 
 AS_IF([test "${enable_ffmpeg}" != "no"], [
@@ -908,6 +910,7 @@ AM_CONDITIONAL(HAVE_GTK3, test "x$HAVE_GTK3" = "xyes")
 AM_CONDITIONAL(HAVE_ALSA, test "x$HAVE_ALSAPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_COREAUDIO, test "x$HAVE_COREAUDIO" = "xyes")
 AM_CONDITIONAL(HAVE_SNDIO, test "x$HAVE_SNDIO" = "xyes")
+AM_CONDITIONAL(HAVE_WAVEOUT, test "x$HAVE_WAVEOUT" = "xyes")
 AM_CONDITIONAL(HAVE_FFMPEG, test "x$HAVE_FFMPEGPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_PULSE, test "x$HAVE_PULSEPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_PORTAUDIO, test "x$HAVE_PORTAUDIOPLUGIN" = "xyes")
