@@ -36,7 +36,7 @@
 
 #define trace(...) { deadbeef->log_detailed (&plugin.misc.plugin, 0, __VA_ARGS__); }
 
-static const char *album_signature = "$if2(%artist% - %album%,%filename%)";
+static const char *album_signature = "$if2(%album artist% - %album%,%filename%)";
 
 static ddb_rg_scanner_t plugin;
 static DB_functions_t *deadbeef;
