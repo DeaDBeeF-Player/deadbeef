@@ -249,6 +249,19 @@ project "converter"
        "shared/mp4tagutil.c",
    }
 
+project "sndfile_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/sndfile/*.c",
+       "plugins/sndfile/*.h",
+   }
+   links { "sndfile" }
+   targetname "sndfile"
+
 project "m3u"
    kind "SharedLib"
    language "C"
