@@ -1863,7 +1863,7 @@ streamer_read (char *bytes, int size) {
     int sz = min (size, outbuffer_remaining);
 
     // clip to frame size
-    int ss = prev_output_format.channels * prev_output_format.bps / 8;
+    int ss = output->fmt.channels * output->fmt.bps / 8;
     if ((sz % ss) != 0) {
         sz -= (sz % ss);
     }
