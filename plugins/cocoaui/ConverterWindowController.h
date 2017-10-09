@@ -106,6 +106,6 @@
 
 + (void)runConverter:(int)ctx;
 
-+ (void)converterCleanup;
++ (void)cleanup;
 
 @end

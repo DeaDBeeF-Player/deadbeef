@@ -75,6 +75,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/ddb_mono2stereo.so\
     $PLUGDIR/alac.so\
     $PLUGDIR/wma.so\
+    $PLUGDIR/rg_scanner.so\
     $PLUGDIR/pltbrowser_gtk2.so\
     $PLUGDIR/pltbrowser_gtk3.so\
     $PLUGDIR/in_sc68.so\

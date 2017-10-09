@@ -577,13 +577,19 @@ get_next_track (playItem_t *curr) {
 static playItem_t *
 get_prev_track (playItem_t *curr) {
     pl_lock ();
-    playlist_t *plt = plt_get_curr ();
-    streamer_set_streamer_playlist (plt);
-    plt_unref (plt);
+    
     // check if prev song is in this playlist
     if (-1 == str_get_idx_of (curr)) {
         curr = NULL;
     }
+
+    if (!streamer_playlist) {
+        playlist_t *plt = plt_get_curr ();
+        streamer_set_streamer_playlist (plt);
+        plt_unref (plt);
+    }
+    
+    playlist_t *plt = streamer_playlist;
 
     if (!plt->head[PL_MAIN]) {
         pl_unlock ();
@@ -1838,15 +1844,18 @@ streamer_read (char *bytes, int size) {
 
     _audio_stall_count = 0;
 
-    // decode enough blocks to fill the output buffer
-    int firstblock = 1;
-    while (outbuffer_remaining < size) {
-        int rb = process_output_block (outbuffer + outbuffer_remaining, firstblock);
-        if (rb <= 0) {
-            break;
+    // need to drain outbuffer before changing format?
+    if (!outbuffer_remaining || !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+        // decode enough blocks to fill the output buffer
+        int firstblock = 1;
+        while (outbuffer_remaining < size) {
+            int rb = process_output_block (outbuffer + outbuffer_remaining, firstblock);
+            if (rb <= 0) {
+                break;
+            }
+            outbuffer_remaining += rb;
+            firstblock = 0;
         }
-        outbuffer_remaining += rb;
-        firstblock = 0;
     }
     streamer_unlock ();
 
@@ -1854,7 +1863,7 @@ streamer_read (char *bytes, int size) {
     int sz = min (size, outbuffer_remaining);
 
     // clip to frame size
-    int ss = prev_output_format.channels * prev_output_format.bps / 8;
+    int ss = output->fmt.channels * output->fmt.bps / 8;
     if ((sz % ss) != 0) {
         sz -= (sz % ss);
     }

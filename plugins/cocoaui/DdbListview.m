@@ -22,6 +22,129 @@
 */
 
 #import "DdbListview.h"
+#import "DdbShared.h"
+#include "../../deadbeef.h"
+
+extern DB_functions_t *deadbeef;
+
+// data has to be serialized, so we code idx and not pointers
+@interface DdbListviewLocalDragDropHolder : NSObject<NSCoding, NSPasteboardReading, NSPasteboardWriting> {
+    NSInteger _playlistIdx;
+    NSArray *_itemsIndices;
+}
+- (DdbListviewLocalDragDropHolder *)initWithSelectedPlaylistItems:(ddb_playlist_t *)playlist;
+@end
+
+@implementation DdbListviewLocalDragDropHolder
+
+// NSCoding
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+
+    self = [super init];
+    if (self) {
+        _playlistIdx = [aDecoder decodeIntegerForKey:@"Playlist"];
+        _itemsIndices = [aDecoder decodeObjectForKey:@"Items"];
+    }
+
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+
+    [aCoder encodeInteger:_playlistIdx forKey:@"Playlist"];
+    [aCoder encodeObject:_itemsIndices forKey:@"Items"];
+}
+
+
+// NSPasteboardReading
+
++ (NSArray<NSString *> *)readableTypesForPasteboard:(NSPasteboard *)pasteboard {
+    return [NSArray arrayWithObjects:ddbPlaylistItemsUTIType, nil];
+}
+
++ (NSPasteboardReadingOptions)readingOptionsForType:(NSString *)type pasteboard:(NSPasteboard *)pasteboard {
+
+    return NSPasteboardReadingAsKeyedArchive;
+}
+
+// NSPasteboardWriting
+
+- (NSArray<NSString *> *)writableTypesForPasteboard:(NSPasteboard *)pasteboard {
+
+    return [NSArray arrayWithObjects:ddbPlaylistItemsUTIType, nil];
+}
+
+- (id)pasteboardPropertyListForType:(NSString *)type {
+
+    if( [type isEqualToString:ddbPlaylistItemsUTIType] ) {
+        return [NSKeyedArchiver archivedDataWithRootObject:self];
+    }
+
+    return nil;
+}
+/*
+- (void)dealloc {
+
+    if (_playlist) {
+        deadbeef->plt_unref (_playlist);
+        _playlist = NULL;
+    }
+    if (_items) {
+        for (int i = 0; i < _count; i++) {
+            deadbeef->pl_item_unref (_items[i]);
+        }
+        free (_items);
+    }
+}*/
+
+- (int) count {
+    return (int)[_itemsIndices count];
+}
+
+- (int) playlistIdx {
+
+    return (int)_playlistIdx;
+}
+
+- (uint32_t *) indices {
+
+    uint32_t * indices = malloc (sizeof (uint32_t *) * [self count] );
+    int i = 0;
+    for (NSNumber * number in _itemsIndices) {
+        indices[i] = [number unsignedIntValue];
+        ++i;
+    }
+
+    return indices;
+}
+
+- (DdbListviewLocalDragDropHolder *)initWithSelectedPlaylistItems:(ddb_playlist_t *)playlist {
+
+    deadbeef->pl_lock ();
+    _playlistIdx = deadbeef->plt_get_idx (playlist);
+
+    int count = deadbeef->plt_getselcount (playlist);
+    NSMutableArray *indices = [NSMutableArray arrayWithCapacity:(NSUInteger)count];
+    if (count) {
+
+        DB_playItem_t *it = deadbeef->plt_get_first (playlist, PL_MAIN);
+        while (it) {
+            if (deadbeef->pl_is_selected (it)) {
+                deadbeef->pl_item_ref (it);
+                [indices addObject: [NSNumber numberWithInt: deadbeef->plt_get_item_idx(playlist, it, PL_MAIN)]];
+            }
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+    }
+    _itemsIndices = (NSArray*) indices;
+    deadbeef->pl_unlock ();
+    return self;
+}
+
+@end
 
 //#define DEBUG_DRAW_GROUP_TITLES 1
 
@@ -299,6 +422,8 @@ int grouptitleheight = 22;
 
 @interface DdbListContentView : NSView {
     DdbListview *listview;
+    NSPoint _lastDragLocation;
+    BOOL    _draggingInView;
 }
 - (void)setListView:(DdbListview *)lv;
 @end
@@ -314,13 +439,78 @@ int grouptitleheight = 22;
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender {
-    NSLog(@"[%@ %@]", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
+
+    _draggingInView = YES;
+    return NSDragOperationCopy;
+}
+
+- (BOOL)wantsPeriodicDraggingUpdates {
+
+    return NO;
+}
+
+- (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)sender {
+
+    _lastDragLocation = [self convertPoint:[sender draggingLocation] fromView:nil];
+    [self setNeedsDisplay:YES];
+
+    return NSDragOperationCopy;
+}
+
+- (void)draggingExited:(id<NSDraggingInfo>)sender {
+
+    _draggingInView = NO;
+    [self setNeedsDisplay:YES];
+}
+
+
+- (BOOL)performDragOperation:(id<NSDraggingInfo>)sender {
 
     NSPasteboard *pboard = [sender draggingPasteboard];
 
-    if ([[pboard types] containsObject:NSStringPboardType]) {
+    DdbListviewGroup_t *grp;
+    int grp_index;
+    int sel;
+
+    NSPoint draggingLocation = [self convertPoint:[sender draggingLocation] fromView:nil];
+    id<DdbListviewDelegate> delegate = listview.delegate;
+
+    DdbListviewRow_t row = NULL;
+    if ( -1 != [listview pickPoint:draggingLocation.y group:&grp groupIndex:&grp_index index:&sel]) {
+        row = [delegate rowForIndex:sel];
     }
-    return NSDragOperationCopy;
+
+    if ( [[pboard types] containsObject:ddbPlaylistItemsUTIType ] ) {
+
+        NSArray *classes = [[NSArray alloc] initWithObjects:[DdbListviewLocalDragDropHolder class], nil];
+        NSDictionary *options = [NSDictionary dictionary];
+        NSArray *draggedItems = [pboard readObjectsForClasses:classes options:options];
+
+        DdbListviewLocalDragDropHolder *holder = [draggedItems firstObject];
+        int from_playlist = [holder playlistIdx];
+        uint32_t * indices = [holder indices];
+        int length = [holder count];
+
+        [delegate dropItems:from_playlist before:row indices:indices count:length copy:NO];
+        free(indices);
+
+    }
+    else if ( [[pboard types] containsObject:NSFilenamesPboardType] ) {
+
+        NSArray *paths = [pboard propertyListForType:NSFilenamesPboardType];
+        if (row) {
+            // add before selected row
+            [delegate externalDropItems:paths after: [delegate rowForIndex:sel-1] ];
+        }
+        else {
+            // no selected row, add to end
+            DdbListviewRow_t lastRow = [delegate rowForIndex:([delegate rowCount]-1)];
+            [delegate externalDropItems:paths after: lastRow];
+        }
+    }
+
+    _draggingInView = NO;
+    return YES;
 }
 
 - (void)renderAlbumArtForGroup:(DdbListviewGroup_t *)grp
@@ -351,6 +541,20 @@ int grouptitleheight = 22;
     }
 }
 
+
+- (void) drawLineIndicator:(NSRect)dirtyRect yy:(int)yy  {
+
+    int yyline = yy;
+    float indicatorLineWith = 1.f;
+    if ( yyline > 0 ) {
+        yyline -= (indicatorLineWith / 2.f );
+    }
+    [[NSGraphicsContext currentContext] saveGraphicsState];
+    [NSBezierPath setDefaultLineWidth: indicatorLineWith];
+    [[NSColor alternateSelectedControlColor] set];
+    [NSBezierPath strokeLineFromPoint: NSMakePoint(dirtyRect.origin.x, yyline) toPoint: NSMakePoint( dirtyRect.origin.x + dirtyRect.size.width, yyline ) ];
+    [[NSGraphicsContext currentContext] restoreGraphicsState];
+}
 
 - (void)drawListView:(NSRect)dirtyRect {
     id<DdbListviewDelegate> delegate = listview.delegate;
@@ -424,6 +628,16 @@ int grouptitleheight = 22;
                     [[NSGraphicsContext currentContext] restoreGraphicsState];
                 }
 
+                // draw dnd line
+                if (_draggingInView) {
+                    if ( _lastDragLocation.y > listview.fullheight ) {
+                        [self drawLineIndicator:dirtyRect yy: listview.fullheight];
+                    }
+                    else if ( _lastDragLocation.y > yy && _lastDragLocation.y < yy + rowheight ) {
+                        [self drawLineIndicator:dirtyRect yy:yy];
+                    }
+                }
+
             }
             DdbListviewRow_t next = [listview.delegate nextRow:it];
             [listview.delegate unrefRow:it];
@@ -435,7 +649,6 @@ int grouptitleheight = 22;
         if (it != [delegate invalidRow]) {
             [listview.delegate unrefRow:it];
         }
-
 
         // draw album art
         int grp_next_y = grp_y + grp->height;
@@ -733,7 +946,7 @@ int grouptitleheight = 22;
 
         [sv addObserver:self forKeyPath:@"frameSize" options:0 context:NULL];
 
-        [contentView registerForDraggedTypes:[NSArray arrayWithObjects:NSStringPboardType, nil]];
+        [contentView registerForDraggedTypes:[NSArray arrayWithObjects:ddbPlaylistItemsUTIType, NSFilenamesPboardType, nil]];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(windowDidBecomeKey:)
@@ -1149,9 +1362,12 @@ int grouptitleheight = 22;
     switch(context) {
         case NSDraggingContextWithinApplication:
             return NSDragOperationCopy | NSDragOperationMove | NSDragOperationDelete;
+        case NSDraggingContextOutsideApplication:
+            return NSDragOperationNone; // FIXME
     }
     return NSDragOperationNone;
 }
+
 
 - (void)listMouseDragged:(NSEvent *)event {
     NSPoint pt = [contentView convertPoint:[event locationInWindow] fromView:nil];
@@ -1160,9 +1376,17 @@ int grouptitleheight = 22;
             // begin dnd
             NSPasteboard *pboard;
 
+            // Need playlist identifier and all playlist items when dragging internally,
+            // this is represented with the DdbListviewLocalDragDropHolder interface
+
             pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-            [pboard declareTypes:[NSArray arrayWithObject:NSStringPboardType]  owner:self];
-            [pboard setData:[@"Hello" dataUsingEncoding:NSASCIIStringEncoding] forType:NSStringPboardType];
+            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            DdbListviewLocalDragDropHolder *data = [[DdbListviewLocalDragDropHolder alloc] initWithSelectedPlaylistItems:plt];
+            deadbeef->plt_unref (plt);
+            [pboard declareTypes:[NSArray arrayWithObject:ddbPlaylistItemsUTIType]  owner:self];
+            if (![pboard writeObjects:[NSArray arrayWithObject:data]])
+                NSLog(@"Unable to write to pasteboard.");
+//            [pboard setData:[@"Hello" dataUsingEncoding:NSASCIIStringEncoding] forType:NSStringPboardType];
 
             NSImage *img = [NSImage imageNamed:NSImageNameMultipleDocuments];
 

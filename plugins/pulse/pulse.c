@@ -280,15 +280,10 @@ static void pulse_thread(void *context)
         }
 
         int sample_size = plugin.fmt.channels * (plugin.fmt.bps / 8);
-        int bs = buffer_size;
-        int mod = bs % sample_size;
-        if (mod > 0) {
-            bs -= mod;
-        }
+        char buf[buffer_size];
 
-        char buf[bs];
         in_callback = 1;
-        int bytesread = deadbeef->streamer_read(buf, bs);
+        int bytesread = deadbeef->streamer_read(buf, buffer_size);
         in_callback = 0;
         if (pulse_terminate) {
             break;
@@ -296,20 +291,22 @@ static void pulse_thread(void *context)
         if (bytesread < 0) {
             bytesread = 0;
         }
-        if (bytesread < bs)
-        {
-            memset (buf + bytesread, 0, bs-bytesread);
-        }
 
         int error;
 
-        deadbeef->mutex_lock (mutex);
-        int res = pa_simple_write(s, buf, sizeof (buf), &error);
-        deadbeef->mutex_unlock(mutex);
+        int res = 0;
+        if (bytesread > 0) {
+            deadbeef->mutex_lock (mutex);
+            res = pa_simple_write(s, buf, bytesread, &error);
+            deadbeef->mutex_unlock(mutex);
+        }
 
         if (res < 0)
         {
             fprintf(stderr, "pulse: failed to write buffer\n");
+            usleep(10000);
+        }
+        else if (res == 0) {
             usleep(10000);
         }
     }

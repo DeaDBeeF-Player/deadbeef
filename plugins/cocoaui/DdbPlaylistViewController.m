@@ -1205,6 +1205,50 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     deadbeef->plt_unref (plt);
 }
 
+- (void)dropItems:(int)from_playlist before:(DdbListviewRow_t)before indices:(uint32_t *)indices count:(int)count copy:(BOOL)copy {
+
+    deadbeef->pl_lock ();
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    ddb_playlist_t *from = deadbeef->plt_get_for_idx(from_playlist);
+
+    if (copy) {
+        deadbeef->plt_copy_items (plt, PL_MAIN, from, (DB_playItem_t *)before, indices, count);
+    }
+    else {
+        deadbeef->plt_move_items (plt, PL_MAIN, from, (DB_playItem_t *)before, indices, count);
+    }
+
+    deadbeef->plt_save_config (plt);
+    deadbeef->plt_save_config (from);
+    deadbeef->plt_unref (plt);
+    deadbeef->plt_unref (from);
+    deadbeef->pl_unlock ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}
+
+-(void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)after {
+
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+
+        dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        dispatch_async(aQueue, ^{
+            for( int i = 0; i < [paths count]; i++ )
+            {
+                NSString* path = [paths objectAtIndex:i];
+                if (path) {
+                    deadbeef->plt_insert_file2 (0, plt, (ddb_playItem_t *)after, [path UTF8String], NULL, NULL, NULL);
+                }
+            }
+            deadbeef->plt_add_files_end (plt, 0);
+            deadbeef->plt_unref (plt);
+            deadbeef->pl_save_current();
+            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+        });
+    }
+
+}
+
 - (void)scrollChanged:(int)pos {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {

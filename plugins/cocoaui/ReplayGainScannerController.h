@@ -26,7 +26,7 @@
 
 @interface ReplayGainScannerController : NSWindowController
 
-@property (strong) IBOutlet NSWindow *resultsWindow;
+@property (strong) IBOutlet NSPanel *scanProgressWindow;
 @property (strong) IBOutlet NSPanel *updateTagsProgressWindow;
 
 @property (unsafe_unretained) IBOutlet NSTableView *resultsTableView;
@@ -47,4 +47,5 @@
 
 + (ReplayGainScannerController *)runScanner:(int)mode forTracks:(DB_playItem_t **)tracks count:(int)count;
 + (ReplayGainScannerController *)removeRgTagsFromTracks:(DB_playItem_t **)tracks count:(int)count;
++ (void)cleanup;
 @end

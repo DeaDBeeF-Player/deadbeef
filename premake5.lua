@@ -1,8 +1,5 @@
 workspace "deadbeef"
-   configurations { "Debug", "Release" }
-
-includedirs { "plugins/libmp4ff", "static-deps/lib-x86-64/include/x86_64-linux-gnu", "static-deps/lib-x86-64/include"  }
-libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
+   configurations { "Debug", "Release", "Debug32", "Release32" }
 
 
 defines {
@@ -11,15 +8,24 @@ defines {
     "HAVE_LOG2=1"
 }
 
-buildoptions { "-fPIC" }
-
-filter "configurations:Debug"
+filter "configurations:Debug or Debug32"
   defines { "DEBUG" }
   symbols "On"
 
-filter "configurations:Release"
-  defines { "NDEBUG" }
-  optimize "On"
+filter "configurations:Debug or Release"
+  buildoptions { "-fPIC" }
+  includedirs { "plugins/libmp4ff", "static-deps/lib-x86-64/include/x86_64-linux-gnu", "static-deps/lib-x86-64/include"  }
+  libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
+
+
+filter "configurations:Debug32 or Release32"
+  buildoptions { "-m32" }
+  linkoptions { "-m32" }
+  includedirs { "plugins/libmp4ff", "static-deps/lib-x86-32/include/i386-linux-gnu", "static-deps/lib-x86-32/include"  }
+  libdirs { "static-deps/lib-x86-32/lib/i386-linux-gnu", "static-deps/lib-x86-32/lib" }
+
+filter "configurations:Release32 or Release"
+  buildoptions { "-O2" }
 
 project "deadbeef"
    kind "ConsoleApp"
@@ -117,17 +123,32 @@ project "ffap"
    filter 'files:**.asm'
        buildmessage 'YASM Assembling : %{file.relpath}'
 
-       buildcommands
-       {
-           'yasm -f elf -D ARCH_X86_64 -m amd64 -DPIC -DPREFIX -o "obj/%{cfg.buildcfg}/ffap/%{file.basename}.o" "%{file.relpath}"'
-       }
+       filter "configurations:Debug32 or Release32"
+           buildcommands
+           {
+               'yasm -f elf -D ARCH_X86_32 -m x86 -DPREFIX -o "obj/%{cfg.buildcfg}/ffap/%{file.basename}.o" "%{file.relpath}"'
+           }
 
-       buildoutputs
-       {
-           "obj/%{cfg.buildcfg}/ffap/%{file.basename}.o"
-       }
+           buildoutputs
+           {
+               "obj/%{cfg.buildcfg}/ffap/%{file.basename}.o"
+           }
 
-   defines { "APE_USE_ASM=yes", "ARCH_X86_64=1" }
+           defines { "APE_USE_ASM=yes", "ARCH_X86_32=1" }
+
+       filter "configurations:Debug or Release"
+           buildcommands
+           {
+               'yasm -f elf -D ARCH_X86_64 -m amd64 -DPIC -DPREFIX -o "obj/%{cfg.buildcfg}/ffap/%{file.basename}.o" "%{file.relpath}"'
+           }
+
+           buildoutputs
+           {
+               "obj/%{cfg.buildcfg}/ffap/%{file.basename}.o"
+           }
+
+           defines { "APE_USE_ASM=yes", "ARCH_X86_64=1" }
+
 
 project "hotkeys"
    kind "SharedLib"
@@ -157,15 +178,24 @@ project "alsa"
 
    links { "asound" }
 
-project "ddb_gui_GTK2"
+project "pulse"
    kind "SharedLib"
    language "C"
    targetdir "bin/%{cfg.buildcfg}/plugins"
    targetprefix ""
 
-   includedirs { "static-deps/lib-x86-64/gtk-2.16.0/include/**", "static-deps/lib-x86-64/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
-   libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
+   files {
+       "plugins/pulse/*.h",
+       "plugins/pulse/*.c",
+   }
 
+   links { "pulse-simple" }
+
+project "ddb_gui_GTK2"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
    files {
        "plugins/gtkui/*.h",
        "plugins/gtkui/*.c",
@@ -179,6 +209,17 @@ project "ddb_gui_GTK2"
    }
 
    links { "jansson", "gtk-x11-2.0", "pango-1.0", "cairo", "gdk-x11-2.0", "gdk_pixbuf-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
+
+    filter "configurations:Debug32 or Release32"
+    
+       includedirs { "static-deps/lib-x86-32/gtk-2.16.0/include/**", "static-deps/lib-x86-32/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
+       libdirs { "static-deps/lib-x86-32/gtk-2.16.0/lib", "static-deps/lib-x86-32/gtk-2.16.0/lib/**" }
+
+    filter "configurations:Debug or Release"
+    
+       includedirs { "static-deps/lib-x86-64/gtk-2.16.0/include/**", "static-deps/lib-x86-64/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
+       libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
+
 
 project "rg_scanner"
    kind "SharedLib"
@@ -208,6 +249,43 @@ project "converter"
        "shared/mp4tagutil.c",
    }
 
+project "sndfile_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/sndfile/*.c",
+       "plugins/sndfile/*.h",
+   }
+   links { "sndfile" }
+   targetname "sndfile"
+
+project "m3u"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/m3u/*.c",
+       "plugins/m3u/*.h",
+   }
+
+project "vfs_curl"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/vfs_curl/*.c",
+       "plugins/vfs_curl/*.h",
+   }
+
+   links { "curl" }
+
 project "converter_gtk2"
    kind "SharedLib"
    language "C"
@@ -220,10 +298,16 @@ project "converter_gtk2"
        "plugins/converter/interface.c",
        "plugins/converter/support.c",
    }
-   includedirs { "static-deps/lib-x86-64/gtk-2.16.0/include/**", "static-deps/lib-x86-64/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
-   libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
-
    links { "gtk-x11-2.0", "pango-1.0", "cairo", "gdk-x11-2.0", "gdk_pixbuf-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
+
+   filter "configurations:Debug32 or Release32"
+       includedirs { "static-deps/lib-x86-32/gtk-2.16.0/include/**", "static-deps/lib-x86-32/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
+       libdirs { "static-deps/lib-x86-32/gtk-2.16.0/lib", "static-deps/lib-x86-32/gtk-2.16.0/lib/**" }
+
+   filter "configurations:Release or Debug"
+       includedirs { "static-deps/lib-x86-64/gtk-2.16.0/include/**", "static-deps/lib-x86-64/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
+       libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
+
 
 project "resources"
     kind "Utility"

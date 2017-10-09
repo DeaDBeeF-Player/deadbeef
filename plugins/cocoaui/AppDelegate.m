@@ -25,6 +25,7 @@
 #import "dispatch/dispatch.h"
 #import "DdbWidgetManager.h"
 #import "DdbPlaylistViewController.h"
+#import "ReplayGainScannerController.h"
 #import "DdbShared.h"
 #import "MediaKeyController.h"
 #import "LogWindowController.h"
@@ -222,7 +223,8 @@ extern void
 main_cleanup_and_quit (void);
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
-    [ConverterWindowController converterCleanup];
+    [ConverterWindowController cleanup];
+    [ReplayGainScannerController cleanup];
     [_mainWindow cleanup];
     [_searchWindow cleanup];
     main_cleanup_and_quit();
