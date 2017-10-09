@@ -106,7 +106,10 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
         plugin.fmt.samplerate = 44100;
         plugin.fmt.channelmask = 3;
     }
-retry:
+
+    snd_pcm_nonblock(audio, 0);
+    snd_pcm_drain (audio);
+    snd_pcm_nonblock(audio, 1);
 
     if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
         fprintf (stderr, "cannot allocate hardware parameter structure (%s)\n",
