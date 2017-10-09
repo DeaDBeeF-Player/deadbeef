@@ -1312,7 +1312,8 @@ streamer_seek_real (float seekpos) {
 
 static void
 _update_buffering_state () {
-    int buffering = (streamreader_num_blocks_ready () < 4) && streaming_track;
+    int blocks_ready = streamreader_num_blocks_ready ();
+    int buffering = (blocks_ready < 4) && streaming_track;
 
     if (buffering != streamer_is_buffering) {
         streamer_is_buffering = buffering;
@@ -1543,6 +1544,9 @@ streamer_free (void) {
         handler_free (handler);
         handler = NULL;
     }
+
+    playpos = 0;
+    playtime = 0;
 }
 
 // We always decode the entire block, 16384 bytes of input PCM
