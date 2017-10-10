@@ -34,8 +34,12 @@ static DB_output_t plugin;
 static int state = OUTPUT_STATE_STOPPED;
 static uint64_t mutex;
 static intptr_t tid;
-static int formatchanged;
 static int stoprequest;
+#define MAXBUFFERS 8
+#define BUFFERSIZE_BYTES 8192
+static AudioQueueRef queue;
+static AudioQueueBufferRef buffers[MAXBUFFERS];
+static AudioQueueBufferRef availbuffers[MAXBUFFERS];
 
 static int
 ca_stop (void);
@@ -55,39 +59,116 @@ ca_init (void) {
     return 0;
 }
 
+static void aqOutputCallback (void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRef inBuffer) {
+    *((AudioQueueBufferRef *)(inBuffer->mUserData)) = inBuffer;
+}
+
+static int
+_initqueue (ddb_waveformat_t *fmt) {
+    OSStatus err;
+
+    AudioStreamBasicDescription req_format;
+
+    memset (&req_format, 0, sizeof (req_format));
+    req_format.mSampleRate = (Float64)fmt->samplerate;
+    req_format.mFormatID = kAudioFormatLinearPCM;
+
+    if (fmt->is_float) {
+        req_format.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
+    }
+    else {
+        req_format.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked | kAudioFormatFlagsNativeEndian;
+    }
+
+    if (fmt->is_bigendian) {
+        req_format.mFormatFlags |= kLinearPCMFormatFlagIsBigEndian;
+    }
+
+    req_format.mBytesPerPacket = fmt->bps / 8 * 2;
+    req_format.mFramesPerPacket = 1;
+    req_format.mBytesPerFrame = fmt->bps / 8 * fmt->channels;
+    req_format.mChannelsPerFrame = fmt->channels;
+    req_format.mBitsPerChannel = fmt->bps;
+
+    err = AudioQueueNewOutput(&req_format, aqOutputCallback, NULL, NULL, NULL, 0, &queue);
+    if (err != noErr) {
+        trace ("AudioQueueNewOutput error %x\n", err);
+        return -1;
+    }
+
+    // get the new format
+    AudioStreamBasicDescription actual_fmt;
+    UInt32 actual_fmt_size = sizeof (actual_fmt);
+    err = AudioQueueGetProperty(queue, kAudioQueueProperty_StreamDescription, &actual_fmt, &actual_fmt_size);
+    if (err != noErr) {
+        trace ("AudioQueueGetProperty kAudioQueueProperty_StreamDescription error %x\n", err);
+        return -1;
+    }
+
+    // set real format to the plugin
+    plugin.fmt.bps = actual_fmt.mBitsPerChannel;
+    plugin.fmt.channels = actual_fmt.mChannelsPerFrame;
+    plugin.fmt.is_bigendian = 0;
+    plugin.fmt.is_float = (actual_fmt.mFormatFlags & kAudioFormatFlagIsFloat) ? 1 : 0;
+    plugin.fmt.samplerate = actual_fmt.mSampleRate;
+    plugin.fmt.channelmask = 0;
+    for (int c = 0; c < actual_fmt.mChannelsPerFrame; c++) {
+        plugin.fmt.channelmask |= (1<<c);
+    }
+
+    for (int i = 0; i < MAXBUFFERS; i++) {
+        err = AudioQueueAllocateBuffer(queue, BUFFERSIZE_BYTES, &buffers[i]);
+        if (err != noErr) {
+            trace ("AudioQueueAllocateBuffer error %x\n", err);
+            return -1;
+        }
+        buffers[i]->mUserData  = availbuffers + i;
+        availbuffers[i] = buffers[i];
+    }
+
+    return 0;
+}
+
+static void
+_free_queue () {
+    OSStatus err;
+
+    err = AudioQueueStop (queue, true);
+    if (err != noErr) {
+        trace ("AudioQueueStop error %x\n", err);
+    }
+    err = AudioQueueDispose (queue, false);
+    if (err != noErr) {
+        trace ("AudioQueueDispose error %x\n", err);
+    }
+    memset (buffers, 0, sizeof (buffers));
+    memset (availbuffers, 0, sizeof (availbuffers));
+    queue = NULL;
+}
+
 // This is called from process_output_block (during streamer_reda), and it needs to know *immediately* which format it was able to set.
 // To achieve that, we need to create a new audio queue here, and if it's unsuccessful -- try some guesswork.
 // However, for now we consider that this can never fail, and the format will always be set successfully.
 static int
 ca_setformat (ddb_waveformat_t *fmt) {
-    deadbeef->mutex_lock (mutex);
+    int res;
 
-    formatchanged = 1;
-    memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
+    if (queue) {
+        _free_queue ();
+    }
 
-    deadbeef->mutex_unlock (mutex);
-    
-    return 0;
+    res = _initqueue (fmt);
+
+    return res;
 }
-
-static void aqOutputCallback (void *inUserData, AudioQueueRef inAQ, AudioQueueBufferRef inBuffer) {
-    *((AudioQueueBufferRef *)(inBuffer->mUserData)) = inBuffer;
-}
-
 
 static void
 ca_thread (void *user_data) {
-#define MAXBUFFERS 8
-#define BUFFERSIZE_BYTES 8192
     char *data = malloc (BUFFERSIZE_BYTES);
     int datasize = 0;
 
     OSStatus err;
 
-    static AudioQueueRef queue;
-    static AudioQueueBufferRef buffers[MAXBUFFERS];
-    static AudioQueueBufferRef availbuffers[MAXBUFFERS];
-    
     while (!stoprequest) {
         if (state == OUTPUT_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1) && datasize == 0) {
             int br = deadbeef->streamer_read (data, BUFFERSIZE_BYTES);
@@ -102,65 +183,11 @@ ca_thread (void *user_data) {
             continue;
         }
 
-        if (formatchanged) {
-            if (queue) {
-                AudioQueueDispose (queue, false);
-                memset (buffers, 0, sizeof (buffers));
-                memset (availbuffers, 0, sizeof (availbuffers));
-                queue = NULL;
-            }
-        }
-        formatchanged = 0;
-
         if (!queue) {
-            AudioStreamBasicDescription req_format;
-            ddb_waveformat_t *fmt = &plugin.fmt;
-            
-            memset (&req_format, 0, sizeof (req_format));
-            req_format.mSampleRate = (Float64)fmt->samplerate;
-            req_format.mFormatID = kAudioFormatLinearPCM;
-
-            if (fmt->is_float) {
-                req_format.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
-            }
-            else {
-                req_format.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked | kAudioFormatFlagsNativeEndian;
-            }
-
-            if (fmt->is_bigendian) {
-                req_format.mFormatFlags |= kLinearPCMFormatFlagIsBigEndian;
-            }
-
-            req_format.mBytesPerPacket = fmt->bps / 8 * 2;
-            req_format.mFramesPerPacket = 1;
-            req_format.mBytesPerFrame = fmt->bps / 8 * fmt->channels;
-            req_format.mChannelsPerFrame = fmt->channels;
-            req_format.mBitsPerChannel = fmt->bps;
-            
-            err = AudioQueueNewOutput(&req_format, aqOutputCallback, NULL, NULL, NULL, 0, &queue);
-            if (err != noErr) {
-                trace ("AudioQueueNewOutput error %x\n", err);
-                break;
-            }
-
-#if 0
-            // for debugging: find out the format that was really set
-            AudioStreamBasicDescription actual_fmt;
-            UInt32 actual_fmt_size = sizeof (actual_fmt);
-            err = AudioQueueGetProperty(queue, kAudioQueueProperty_StreamDescription, &actual_fmt, &actual_fmt_size);
-            if (err != noErr) {
-                trace ("AudioQueueGetProperty kAudioQueueProperty_StreamDescription error %x\n", err);
-            }
-#endif
-
-            for (int i = 0; i < MAXBUFFERS; i++) {
-                err = AudioQueueAllocateBuffer(queue, BUFFERSIZE_BYTES, &buffers[i]);
-                if (err != noErr) {
-                    trace ("AudioQueueAllocateBuffer error %x\n", err);
-                    goto error;
-                }
-                buffers[i]->mUserData  = availbuffers + i;
-                availbuffers[i] = buffers[i];
+            int res = _initqueue(&plugin.fmt);
+            if (res < 0) {
+                usleep (10000);
+                continue;
             }
         }
 
@@ -216,14 +243,8 @@ ca_thread (void *user_data) {
         }
     }
 
-error:
     if (queue) {
-        err = AudioQueueStop (queue, true);
-        if (err != noErr) {
-            trace ("AudioQueueEnqueueBuffer error %x\n", err);
-        }
-        AudioQueueDispose (queue, true);
-        queue = NULL;
+        _free_queue ();
     }
     free (data);
 }
@@ -299,6 +320,7 @@ static DB_output_t plugin = {
     .plugin.version_major = 2,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_OUTPUT,
+    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .plugin.id = "coreaudio",
     .plugin.name = "CoreAudio",
     .plugin.descr = "CoreAudio output plugin",
