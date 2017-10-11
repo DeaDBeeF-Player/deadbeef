@@ -2013,6 +2013,8 @@ streamer_configchanged (void) {
     }
 
     conf_streamer_nosleep = conf_get_int ("streamer.nosleep", 0);
+
+    streamreader_configchanged ();
 }
 
 static void

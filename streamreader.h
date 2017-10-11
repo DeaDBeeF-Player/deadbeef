@@ -78,4 +78,8 @@ streamreader_reset (void);
 int
 streamreader_num_blocks_ready (void);
 
+// Notify streamreader that some configuration has changed
+void
+streamreader_configchanged (void);
+
 #endif /* streamreader_h */
