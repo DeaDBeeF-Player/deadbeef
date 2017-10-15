@@ -296,7 +296,7 @@ streamer_get_streaming_track (void) {
 
 playItem_t *
 streamer_get_playing_track (void) {
-    playItem_t *it = buffering_track ? buffering_track : playing_track;
+    playItem_t *it = (buffering_track && !playing_track) ? buffering_track : playing_track;
     if (it) {
         pl_item_ref (it);
     }
@@ -1589,6 +1589,17 @@ get_desired_output_format (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt) 
             out_fmt->bps = 24;
         }
     }
+
+// android simulation on PC: force 16 bit and 44100 or 48000 only, to force format conversion
+#if !defined(ANDROID) && defined(HAVE_XGUI)
+    out_fmt->bps = 16;
+    if (!(out_fmt->samplerate % 48000)) {
+        out_fmt->samplerate = 48000;
+    }
+    else if (!(out_fmt->samplerate % 44100)) {
+        out_fmt->samplerate = 44100;
+    }
+#endif
 }
 
 static void
@@ -1663,10 +1674,12 @@ process_output_block (char *bytes, int firstblock) {
 
 #if defined(ANDROID) || defined(HAVE_XGUI)
     // android EQ and resampling require 16 bit, so convert here if needed
-    int16_t temp_audio_data[sz / (block->fmt.bps/8*block->fmt.channels) * 2];
+    int tempsize = sz * 16 / block->fmt.bps;
+    int16_t *temp_audio_data = NULL;
     char *input = block->buf + block->pos;
     block->pos += sz;
-    if (output->fmt.bps != 16) {
+    if (block->fmt.bps != 16) {
+        temp_audio_data = alloca (tempsize);
         ddb_waveformat_t out_fmt = {
             .bps = 16,
             .channels = block->fmt.channels,
@@ -1675,10 +1688,11 @@ process_output_block (char *bytes, int firstblock) {
             .is_float = 0,
             .is_bigendian = 0
         };
+
         pcm_convert (&block->fmt, (char *)input, &out_fmt, (char *)temp_audio_data, sz);
         input = (char *)temp_audio_data;
         memcpy (&datafmt, &out_fmt, sizeof (ddb_waveformat_t));
-        sz = sz / block->fmt.bps * out_fmt.bps;
+        sz = tempsize;
     }
 
     extern void android_eq_apply (char *dspbytes, int dspsize);
@@ -1843,7 +1857,7 @@ streamer_read (char *bytes, int size) {
             return 0;
         }
         _audio_stall_count++;
-        return -1;
+        return 0;
     }
 
     _audio_stall_count = 0;

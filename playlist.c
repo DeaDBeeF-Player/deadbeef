@@ -288,6 +288,9 @@ plt_get_list (void) {
 playlist_t *
 plt_get_curr (void) {
     LOCK;
+    if (!playlist) {
+        playlist = playlists_head;
+    }
     playlist_t *plt = playlist;
     if (plt) {
         plt_ref (plt);
@@ -1923,6 +1926,12 @@ pl_save_all (void) {
 static playItem_t *
 plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     // try plugins 1st
+    char *escaped = uri_unescape (fname, strlen (fname));
+    if (escaped) {
+        fname = strdupa (escaped);
+        free (escaped);
+    }
+
     const char *ext = strrchr (fname, '.');
     if (ext) {
         ext++;
@@ -2278,7 +2287,7 @@ pl_load_all (void) {
         it = conf_find ("playlist.tab.", it);
         i++;
     }
-    plt_set_curr (0);
+    plt_set_curr_idx (0);
     plt_loading = 0;
     plt_gen_conf ();
     messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
@@ -2908,9 +2917,11 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     }
                 }
             }
+#ifdef VERSION
             else if (*fmt == 'V') {
                 meta = VERSION;
             }
+#endif
             else {
                 *s++ = *fmt;
                 n--;

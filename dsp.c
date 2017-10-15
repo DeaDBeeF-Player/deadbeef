@@ -25,6 +25,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <assert.h>
+#include <stdlib.h>
 #include "deadbeef.h"
 #include "dsp.h"
 #include "streamer.h"

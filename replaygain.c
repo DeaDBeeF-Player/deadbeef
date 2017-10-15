@@ -30,6 +30,7 @@
 #include "volume.h"
 #include "replaygain.h"
 #include "conf.h"
+#include "common.h"
 
 static ddb_replaygain_settings_t current_settings;
 
@@ -149,7 +150,7 @@ get_int_volume (ddb_replaygain_settings_t *settings) {
     default:
         break;
     }
-    return vol;
+    return vol == 1000 ? -1 : vol;
 }
 
 void
@@ -200,7 +201,7 @@ apply_replay_gain_int24 (ddb_replaygain_settings_t *settings, char *bytes, int s
     }
     char *s = (char*)bytes;
     for (int j = 0; j < size/3; j++) {
-        int32_t sample = ((unsigned char)s[0]) | ((unsigned char)s[1]<<8) | (s[2]<<16);
+        int32_t sample = ((unsigned char)s[0]) | ((unsigned char)s[1]<<8) | ((signed char)s[2]<<16);
         sample = (int32_t)(sample * vol / 1000);
         if (sample > 0x7fffff) {
             sample = 0x7fffff;
