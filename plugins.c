@@ -1079,7 +1079,7 @@ plug_load_all (void) {
     }
 #endif
 
-#ifndef ANRDOID
+#ifndef ANDROID
     // load gui plugin
     load_gui_plugin (plugins_dirs);
 #endif
