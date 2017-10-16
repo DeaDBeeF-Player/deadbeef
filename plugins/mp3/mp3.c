@@ -891,6 +891,13 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     trace ("mp3 format: bps:%d sr:%d channels:%d\n", _info->fmt.bps, _info->fmt.samplerate, _info->fmt.channels);
 
+    if (info->want_16bit) {
+        deadbeef->pl_replace_meta (it, ":BPS", "16");
+    }
+    else {
+        deadbeef->pl_replace_meta (it, ":BPS", "32");
+    }
+
     info->dec->init (info);
     if (!info->buffer.file->vfs->is_streaming ()) {
         plugin.seek_sample (_info, 0);

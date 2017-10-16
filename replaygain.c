@@ -36,10 +36,6 @@ static ddb_replaygain_settings_t current_settings;
 
 void
 replaygain_apply_with_settings (ddb_replaygain_settings_t *settings, ddb_waveformat_t *fmt, char *bytes, int numbytes) {
-    if (!settings->processing_flags) {
-        return;
-    }
-
     if (fmt->bps == 16) {
         apply_replay_gain_int16 (settings, bytes, numbytes);
     }
@@ -262,6 +258,11 @@ apply_replay_gain_float32 (ddb_replaygain_settings_t *settings, char *bytes, int
     default:
         break;
     }
+
+    if (vol == 1) {
+        return;
+    }
+
     float *s = (float*)bytes;
     for (int j = 0; j < size/4; j++) {
         float sample = ((float)*s) * vol;
