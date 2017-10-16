@@ -2042,6 +2042,7 @@ _handle_playback_stopped (void) {
         send_trackchanged (trk, NULL);
         pl_item_unref (trk);
     }
+    streamer_play_failed (NULL);
 }
 
 // play track in current playlist by index;
