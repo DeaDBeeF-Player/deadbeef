@@ -702,9 +702,6 @@ streamer_song_removed_notify (playItem_t *it) {
     if (!mutex) {
         return; // streamer is not running
     }
-    if (it == last_played) {
-        set_last_played (last_played->prev[PL_MAIN]);
-    }
 }
 
 #define CTMAP_MAX_PLUGINS 5
