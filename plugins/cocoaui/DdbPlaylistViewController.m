@@ -1227,10 +1227,8 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 }
 
 -(void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)after {
-
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (plt) {
-
+    if (!deadbeef->plt_add_files_begin (plt, 0)) {
         dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         dispatch_async(aQueue, ^{
             for( int i = 0; i < [paths count]; i++ )
@@ -1246,7 +1244,9 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
             deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
         });
     }
-
+    else {
+        deadbeef->plt_unref (plt);
+    }
 }
 
 - (void)scrollChanged:(int)pos {
