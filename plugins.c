@@ -1079,11 +1079,6 @@ plug_load_all (void) {
     }
 #endif
 
-#ifndef ANDROID
-    // load gui plugin
-    load_gui_plugin (plugins_dirs);
-#endif
-
 // load all compiled-in modules
 #define PLUG(n) extern DB_plugin_t * n##_load (DB_functions_t *api);
 #include "moduleconf.h"
