@@ -1380,7 +1380,9 @@ streamer_thread (void *ctx) {
         }
 
         if (output->state () == OUTPUT_STATE_STOPPED) {
-            usleep (50000);
+            if (!handler_hasmessages (handler)) {
+                usleep (50000);
+            }
             continue;
         }
 
