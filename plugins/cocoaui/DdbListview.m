@@ -564,7 +564,6 @@ int grouptitleheight = 22;
     DdbListviewGroup_t *grp = [listview groups];
 
     NSScrollView *sv = [self enclosingScrollView];
-    NSRect vis = [sv documentVisibleRect];
 
     int clip_y = dirtyRect.origin.y;
     int clip_h = dirtyRect.size.height;
@@ -573,13 +572,13 @@ int grouptitleheight = 22;
     int idx = 0;
     int grp_y = 0;
     int groupIndex = 0;
-    while (grp && grp_y + grp->height < vis.origin.y) {
+    while (grp && grp_y + grp->height < dirtyRect.origin.y) {
         grp_y += grp->height;
         idx += grp->num_items;
         grp = grp->next;
         groupIndex++;
     }
-    DdbListviewGroup_t *pin_grp = [delegate pinGroups] && grp && grp_y < vis.origin.y && grp_y + grp->height >= vis.origin.y ? grp : NULL;
+    DdbListviewGroup_t *pin_grp = [delegate pinGroups] && grp && grp_y < dirtyRect.origin.y && grp_y + grp->height >= dirtyRect.origin.y ? grp : NULL;
 
     int cursor = [delegate cursor];
     DdbListviewRow_t cursor_it = [delegate invalidRow];
@@ -652,13 +651,13 @@ int grouptitleheight = 22;
 
         // draw album art
         int grp_next_y = grp_y + grp->height;
-        [self renderAlbumArtForGroup:grp groupIndex:groupIndex isPinnedGroup:pin_grp==grp nextGroupCoord:grp_next_y yPos:grp_y + title_height viewportY:vis.origin.y clipRegion:dirtyRect];
+        [self renderAlbumArtForGroup:grp groupIndex:groupIndex isPinnedGroup:pin_grp==grp nextGroupCoord:grp_next_y yPos:grp_y + title_height viewportY:dirtyRect.origin.y clipRegion:dirtyRect];
 
         #define min(x,y) ((x)<(y)?(x):(y))
-        if (pin_grp == grp && clip_y-vis.origin.y <= title_height) {
+        if (pin_grp == grp && clip_y-dirtyRect.origin.y <= title_height) {
             // draw pinned group title
             // scrollx, 0, total_width, min(title_height, grp_next_y)
-            NSRect groupRect = NSMakeRect(0, vis.origin.y, [self frame].size.width, min (title_height, grp_next_y));
+            NSRect groupRect = NSMakeRect(0, dirtyRect.origin.y, [self frame].size.width, min (title_height, grp_next_y));
             NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:0];
             [clr set];
 #if DEBUG_DRAW_GROUP_TITLES
@@ -668,7 +667,7 @@ int grouptitleheight = 22;
             [NSBezierPath fillRect:groupRect];
             if (title_height > 0) {
                 // scrollx, min(0, grp_next_y-title_height), total_width, title_height
-                groupRect.origin.y = min (vis.origin.y, grp_next_y-title_height);
+                groupRect.origin.y = min (dirtyRect.origin.y, grp_next_y-title_height);
                 groupRect.size.height = title_height;
                 [delegate drawGroupTitle:grp->head inRect:groupRect];
             }
@@ -712,14 +711,22 @@ int grouptitleheight = 22;
     if ([listview fullheight] < dirtyRect.origin.y + dirtyRect.size.height) {
         int y = [listview fullheight];
         int ii = [listview.delegate rowCount]+1;
-        while (y + rowheight >= dirtyRect.origin.y && y < dirtyRect.size.height) {
-            NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:ii % 2];
-            [clr set];
-            [NSBezierPath fillRect:NSMakeRect(dirtyRect.origin.x, y, dirtyRect.size.width, rowheight)];
+        while (y < dirtyRect.origin.y + dirtyRect.size.height) {
+            if (y + rowheight >= dirtyRect.origin.y) {
+                NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:ii % 2];
+                [clr set];
+                [NSBezierPath fillRect:NSMakeRect(dirtyRect.origin.x, y, dirtyRect.size.width, rowheight)];
+            }
             y += rowheight;
             ii++;
         }
     }
+
+#if 0 // draw random colored overlay, to see what's been repainted
+    NSColor *clr = [NSColor colorWithDeviceRed:rand()/(float)RAND_MAX green:rand()/(float)RAND_MAX blue:rand()/(float)RAND_MAX alpha:0.5f];
+    [clr set];
+    [NSBezierPath fillRect:NSMakeRect(dirtyRect.origin.x, dirtyRect.origin.y, dirtyRect.size.width, dirtyRect.size.height)];
+#endif
 
     [NSGraphicsContext restoreGraphicsState];
 }
