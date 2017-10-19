@@ -59,6 +59,7 @@ typedef struct {
     int preserve_folder_structure;
     int write_to_source_folder;
     int bypass_same_format;
+    int retag_after_copy;
     int output_bps;
     int output_is_float;
     int overwrite_action;
@@ -214,6 +215,7 @@ converter_worker (void *ctx) {
         .encoder_preset = conv->encoder_preset,
         .dsp_preset = conv->dsp_preset,
         .bypass_conversion_on_same_format = conv->bypass_same_format,
+        .rewrite_tags_after_copy = conv->retag_after_copy,
     };
 
     for (int n = 0; n < conv->convert_items_count; n++) {
@@ -289,8 +291,8 @@ converter_process (converter_ctx_t *conv)
     conv->preserve_folder_structure = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")));
     conv->write_to_source_folder = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "write_to_source_folder")));
     conv->bypass_same_format = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "bypass_same_format")));
+    conv->retag_after_copy = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "retag_after_copy")));
     conv->overwrite_action = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (conv->converter, "overwrite_action")));
-    conv->bypass_same_format = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "bypass_same_format")));
 
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "output_format"));
     int selected_format = gtk_combo_box_get_active (combo);
@@ -584,6 +586,10 @@ converter_show_cb (void *data) {
     int bypass_same_format = deadbeef->conf_get_int ("converter.bypass_same_format", 0);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "bypass_same_format")), bypass_same_format);
 
+    int retag_after_copy = deadbeef->conf_get_int ("converter.retag_after_copy", 0);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "retag_after_copy")), retag_after_copy);
+    gtk_widget_set_sensitive (lookup_widget (conv->converter, "retag_after_copy"), bypass_same_format);
+
     g_signal_connect ((gpointer) lookup_widget (conv->converter, "write_to_source_folder"), "toggled",
             G_CALLBACK (on_write_to_source_folder_toggled),
             conv);
@@ -840,6 +846,17 @@ on_bypass_same_format_toggled          (GtkToggleButton *togglebutton,
 {
     int active = gtk_toggle_button_get_active (togglebutton);
     deadbeef->conf_set_int ("converter.bypass_same_format", active);
+    deadbeef->conf_save ();
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (togglebutton));
+    gtk_widget_set_sensitive (lookup_widget (toplevel, "retag_after_copy"), active);
+}
+
+void
+on_retag_after_copy_toggled            (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (togglebutton);
+    deadbeef->conf_set_int ("converter.retag_after_copy", active);
     deadbeef->conf_save ();
 }
 

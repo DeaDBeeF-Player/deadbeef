@@ -130,3 +130,7 @@ on_write_to_source_folder_toggled      (GtkToggleButton *togglebutton,
 void
 on_bypass_same_format_toggled          (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_retag_after_copy_toggled            (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
