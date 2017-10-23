@@ -207,6 +207,10 @@ project "ddb_gui_GTK2"
        "plugins/libparser/parser.c",
        "utf8.c",
    }
+   excludes {
+        "plugins/gtkui/deadbeefapp.c",
+        "plugins/gtkui/gtkui-gresources.c"
+   }
 
    links { "jansson", "gtk-x11-2.0", "pango-1.0", "cairo", "gdk-x11-2.0", "gdk_pixbuf-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
 
