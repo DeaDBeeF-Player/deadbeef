@@ -262,6 +262,48 @@ project "sndfile_plugin"
    links { "sndfile" }
    targetname "sndfile"
 
+project "sid"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   includedirs {
+        "plugins/sid/sidplay-libs/libsidplay/include",
+        "plugins/sid/sidplay-libs/builders/resid-builder/include",
+        "plugins/sid/sidplay-libs",
+        "plugins/sid/sidplay-libs/unix",
+        "plugins/sid/sidplay-libs/libsidplay",
+        "plugins/sid/sidplay-libs/libsidplay/include",
+        "plugins/sid/sidplay-libs/libsidplay/include/sidplay",
+        "plugins/sid/sidplay-libs/libsidutils/include/sidplay/utils",
+        "plugins/sid/sidplay-libs/builders/resid-builder/include/sidplay/builders",
+        "plugins/sid/sidplay-libs/builders/resid-builder/include"
+    }
+   defines {
+      "HAVE_STRCASECMP=1",
+      "HAVE_STRNCASECMP=1",
+      "PACKAGE=\"libsidplay2\"",
+   }
+
+   files {
+       "plugins/sid/*.c",
+       "plugins/sid/*.cpp",
+       "plugins/sid/sidplay-libs/libsidplay/src/*.cpp",
+       "plugins/sid/sidplay-libs/libsidplay/src/*.c",
+       "plugins/sid/sidplay-libs/builders/resid-builder/src/*.cpp",
+       "plugins/sid/sidplay-libs/libsidplay/src/c64/*.cpp",
+       "plugins/sid/sidplay-libs/libsidplay/src/mos6510/*.cpp",
+       "plugins/sid/sidplay-libs/libsidplay/src/mos6526/*.cpp",
+       "plugins/sid/sidplay-libs/libsidplay/src/mos656x/*.cpp",
+       "plugins/sid/sidplay-libs/libsidplay/src/sid6526/*.cpp",
+       "plugins/sid/sidplay-libs/libsidplay/src/sidtune/*.cpp",
+       "plugins/sid/sidplay-libs/libsidplay/src/xsid/*.cpp",
+       "plugins/sid/sidplay-libs/resid/*.cpp"
+   }
+   targetname "sid"
+   links { "stdc++" }
+
 project "m3u"
    kind "SharedLib"
    language "C"
