@@ -87,9 +87,13 @@ read_gzfile (const char *fname, char **buffer, int *size) {
     int64_t sz = deadbeef->fgetlength (fp);
     if (fp->vfs && fp->vfs->plugin.id && strcmp (fp->vfs->plugin.id, "vfs_stdio") && sz > 0 && sz <= MAX_REMOTE_GZ_FILE) {
         trace ("gme read_gzfile: reading %s of size %lld and writing to temp file\n", fname, sz);
-        char buffer[sz];
+        char *buffer = malloc(sz);
         if (sz == deadbeef->fread (buffer, 1, sz, fp)) {
             static int idx = 0;
+            const char *tmp = getenv ("TMPDIR");
+            if (!tmp) {
+                tmp = "/tmp";
+            }
 #if defined(ANDROID)
             // newer androids don't allow writing to /tmp, so write to ${configdir}/tmp/
             const char *confdir = deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG);
@@ -97,19 +101,16 @@ read_gzfile (const char *fname, char **buffer, int *size) {
             mkdir (tmpnm, 0755);
             snprintf (tmpnm, sizeof (tmpnm), "%s/tmp/ddbgme%03d.vgz", confdir, idx);
             fd = open (tmpnm, O_RDWR|O_CREAT|O_TRUNC);
-#else
-            const char *tmp = getenv ("TMPDIR");
-            if (!tmp) {
-                tmp = "/tmp";
-            }
-#if defined(STATICLINK)
-            // mkstemps is unavailable in this case
+#elsif defined(STATICLINK)
+            // mkstemps is unavailable in this case (linking to old glibc),
+            // and mkstemp is considered insecure,
+            // so just make the name manually.
+            // This is as insecure as mkstemp, but (hopefully) won't be bugged by static analyzers
             snprintf (tmpnm, sizeof (tmpnm), "%s/ddbgme%03d.vgz", tmp);
             fd = open (tmpnm, O_RDWR|O_CREAT|O_TRUNC);
 #else
             snprintf (tmpnm, sizeof (tmpnm), "%s/ddbgmeXXXXXX.vgz", tmp);
             fd = mkstemps (tmpnm, 4);
-#endif
 #endif
             idx++;
             if (fd == -1 || sz != write (fd, buffer, sz)) {
@@ -123,6 +124,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
                 lseek (fd, 0, SEEK_SET);
             }
             trace ("%s written successfully\n", tmpnm);
+            free (buffer);
         }
     }
 
