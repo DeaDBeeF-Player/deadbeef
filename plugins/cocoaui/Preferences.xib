@@ -236,6 +236,9 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="ignoreArchivesAction:" target="-2" id="oyW-qa-9kU"/>
+                    </connections>
                 </button>
                 <button misplaced="YES" id="vaP-mG-6h4">
                     <rect key="frame" x="18" y="44" width="399" height="18"/>

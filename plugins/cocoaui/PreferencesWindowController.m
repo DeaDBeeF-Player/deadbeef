@@ -445,4 +445,8 @@ extern DB_functions_t *deadbeef;
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
+- (IBAction)ignoreArchivesAction:(id)sender {
+    deadbeef->conf_set_int ("ignore_archives", [_ignore_archives state] == NSOnState);
+    deadbeef->conf_save ();
+}
 @end
