@@ -367,4 +367,37 @@
     XCTAssert(!strcmp (buffer, "track:10 total:11"), @"Got value: %s", buffer);
 }
 
+- (void)test_ShortMP3WithId3v1_TailIs128Bytes {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/tone1sec_id3v1.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    uint32_t head, tail;
+    junk_get_tag_offsets(fp, &head, &tail);
+    vfs_fclose (fp);
+    XCTAssert(head == 0);
+    XCTAssert(tail == 128);
+}
+
+- (void)test_ShortMP3WithApev2_TailIs52Bytes {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/tone1sec_apev2.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    uint32_t head, tail;
+    junk_get_tag_offsets(fp, &head, &tail);
+    vfs_fclose (fp);
+    XCTAssert(head == 0);
+    XCTAssert(tail==52);
+}
+
+- (void)test_ShortMP3WithApev2AndId3v1_TailIs186Bytes {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/tone1sec_id3v1_apev2.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    uint32_t head, tail;
+    junk_get_tag_offsets(fp, &head, &tail);
+    vfs_fclose (fp);
+    XCTAssert(head == 0);
+    XCTAssert(tail==186);
+}
+
 @end
