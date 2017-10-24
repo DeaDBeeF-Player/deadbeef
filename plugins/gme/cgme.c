@@ -101,7 +101,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
             mkdir (tmpnm, 0755);
             snprintf (tmpnm, sizeof (tmpnm), "%s/tmp/ddbgme%03d.vgz", confdir, idx);
             fd = open (tmpnm, O_RDWR|O_CREAT|O_TRUNC);
-#elsif defined(STATICLINK)
+#elif defined(STATICLINK)
             // mkstemps is unavailable in this case (linking to old glibc),
             // and mkstemp is considered insecure,
             // so just make the name manually.
