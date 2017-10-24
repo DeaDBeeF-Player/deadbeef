@@ -449,4 +449,20 @@ extern DB_functions_t *deadbeef;
     deadbeef->conf_set_int ("ignore_archives", [_ignore_archives state] == NSOnState);
     deadbeef->conf_save ();
 }
+
+- (IBAction)resumeLastSessionAction:(id)sender {
+    deadbeef->conf_set_int ("resume_last_session", [_resume_last_session state] == NSOnState);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)stopAfterCurrentResetAction:(id)sender {
+    deadbeef->conf_set_int ("playlist.stop_after_current_reset", [_stop_after_current_reset state] == NSOnState);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)stopAfterCurrentAlbumResetAction:(id)sender {
+    deadbeef->conf_set_int ("playlist.stop_after_album_reset", [_stop_after_album_reset state] == NSOnState);
+    deadbeef->conf_save ();
+}
+
 @end

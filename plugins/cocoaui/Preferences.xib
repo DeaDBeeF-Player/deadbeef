@@ -220,6 +220,9 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="resumeLastSessionAction:" target="-2" id="pAB-Sj-fWz"/>
+                    </connections>
                 </button>
                 <button misplaced="YES" id="Rqu-qW-OA7">
                     <rect key="frame" x="18" y="120" width="219" height="18"/>
@@ -247,6 +250,9 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="stopAfterCurrentResetAction:" target="-2" id="9wH-o3-PRM"/>
+                    </connections>
                 </button>
                 <button misplaced="YES" id="Ypp-Lr-7tH">
                     <rect key="frame" x="18" y="18" width="406" height="18"/>
@@ -255,6 +261,9 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="stopAfterCurrentAlbumResetAction:" target="-2" id="6EW-ZR-Wrb"/>
+                    </connections>
                 </button>
             </subviews>
             <point key="canvasLocation" x="303.5" y="228.5"/>
@@ -268,7 +277,7 @@
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <clipView key="contentView" id="waw-WT-sIq">
                         <rect key="frame" x="1" y="1" width="426" height="131"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" id="lHr-gY-cwb">
                                 <rect key="frame" x="0.0" y="0.0" width="426" height="131"/>
@@ -1247,7 +1256,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="uSY-oD-soz">
                             <rect key="frame" x="1" y="1" width="549" height="139"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <view misplaced="YES" id="LIK-8h-N20">
                                     <rect key="frame" x="0.0" y="0.0" width="549" height="139"/>
