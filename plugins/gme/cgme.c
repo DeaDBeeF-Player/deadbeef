@@ -105,7 +105,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
 #if defined(STATICLINK)
             // mkstemps is unavailable in this case
             snprintf (tmpnm, sizeof (tmpnm), "%s/ddbgme%03d.vgz", tmp);
-            fd = open (tmpnm);
+            fd = open (tmpnm, O_RDWR|O_CREAT|O_TRUNC);
 #else
             snprintf (tmpnm, sizeof (tmpnm), "%s/ddbgmeXXXXXX.vgz", tmp);
             fd = mkstemps (tmpnm, 4);
