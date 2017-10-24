@@ -133,4 +133,10 @@ junk_enable_cp936_detection (int enable);
 const char *
 junk_detect_charset_len (const char *s, int len);
 
+int
+junk_get_tail_size (DB_FILE *fp);
+
+void
+junk_get_tag_offsets (DB_FILE *fp, uint32_t *head, uint32_t *tail);
+
 #endif // __JUNKLIB_H

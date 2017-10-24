@@ -1934,7 +1934,7 @@ junk_get_leading_size_stdio (FILE *fp) {
 int
 junk_get_leading_size (DB_FILE *fp) {
     uint8_t header[10];
-    int pos = deadbeef->ftell (fp);
+    int64_t pos = deadbeef->ftell (fp);
     if (deadbeef->fread (header, 1, 10, fp) != 10) {
         deadbeef->fseek (fp, pos, SEEK_SET);
         trace ("junk_get_leading_size: file is too short\n");
@@ -1959,6 +1959,59 @@ junk_get_leading_size (DB_FILE *fp) {
     uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
     //trace ("junklib: leading junk size %d\n", size);
     return size + 10 + 10 * footerpresent;
+}
+
+int
+junk_get_tail_size (DB_FILE *fp) {
+    int offs = 0;
+
+    // id3v1 check
+    if (deadbeef->fseek (fp, -128, SEEK_END) == -1) {
+        return -1;
+    }
+    char buf[3];
+    if (deadbeef->fread (buf, 1, 3, fp) != 3) {
+        return -1;
+    }
+    if (!memcmp (buf, "TAG", 3)) {
+        // id3v1 found
+        offs = 128;
+    }
+
+    // apev2 check
+    uint8_t header[32];
+    if (deadbeef->fseek (fp, -32-offs, SEEK_END) == -1) {
+        return -1; // something bad happened
+    }
+
+    if (deadbeef->fread (header, 1, 32, fp) != 32) {
+        return -1; // something bad happened
+    }
+    if (strncmp (header, "APETAGEX", 8)) {
+        // no apev2
+        return offs;
+    }
+
+    uint32_t version = extract_i32_le (&header[8]);
+    int32_t size = extract_i32_le (&header[12]);
+    uint32_t numitems = extract_i32_le (&header[16]);
+    uint32_t flags = extract_i32_le (&header[20]);
+
+    return offs + size;
+}
+
+void
+junk_get_tag_offsets (DB_FILE *fp, uint32_t *head, uint32_t *tail) {
+    int ihead = junk_get_leading_size(fp);
+    int itail = junk_get_tail_size (fp);
+    if (ihead < 0) {
+        ihead = 0;
+    }
+    if (itail < 0) {
+        itail = 0;
+    }
+    *head = ihead;
+    *tail = itail;
 }
 
 int

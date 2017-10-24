@@ -492,6 +492,9 @@ static DB_functions_t deadbeef_api = {
     .pl_item_set_endsample = (void (*) (DB_playItem_t *it, int64_t sample))pl_item_set_endsample,
 
     .plt_get_selection_playback_time = (float (*) (ddb_playlist_t *plt))plt_get_selection_playback_time,
+
+    .junk_get_tail_size = junk_get_tail_size,
+    .junk_get_tag_offsets = junk_get_tag_offsets,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
