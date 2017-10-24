@@ -1964,6 +1964,7 @@ junk_get_leading_size (DB_FILE *fp) {
 int
 junk_get_tail_size (DB_FILE *fp) {
     int offs = 0;
+    int64_t pos = deadbeef->ftell (fp);
 
     // id3v1 check
     if (deadbeef->fseek (fp, -128, SEEK_END) == -1) {
@@ -1987,6 +1988,9 @@ junk_get_tail_size (DB_FILE *fp) {
     if (deadbeef->fread (header, 1, 32, fp) != 32) {
         return -1; // something bad happened
     }
+
+    // restore original offs
+    deadbeef->fseek (fp, pos, SEEK_SET);
     if (strncmp (header, "APETAGEX", 8)) {
         // no apev2
         return offs;
