@@ -2176,7 +2176,16 @@ play_next (int dir) {
     streamer_lock ();
     DB_output_t *output = plug_get_output ();
     streamer_reset(1);
-    playItem_t *next = dir > 0 ? get_next_track(last_played) : get_prev_track(last_played);
+
+    playItem_t *origin = NULL;
+    if (buffering_track) {
+        origin = buffering_track;
+    }
+    else {
+        origin = last_played;
+    }
+
+    playItem_t *next = dir > 0 ? get_next_track(origin) : get_prev_track(origin);
     streamer_is_buffering = 1;
 
     if (!next) {
