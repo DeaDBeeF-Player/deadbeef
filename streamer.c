@@ -2194,15 +2194,15 @@ play_next (int dir) {
     }
 
     playItem_t *next = dir > 0 ? get_next_track(origin) : get_prev_track(origin);
-    streamer_is_buffering = 1;
 
     if (!next) {
+        output->stop ();
         _handle_playback_stopped ();
         streamer_unlock ();
-        output->stop ();
         return;
     }
 
+    streamer_is_buffering = 1;
     streamer_set_playing_track(NULL);
     streamer_set_buffering_track (next);
     handle_track_change (next);
