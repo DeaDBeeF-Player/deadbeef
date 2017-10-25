@@ -1,4 +1,6 @@
-EXTRA_DIST = deadbeef.glade
+EXTRA_DIST = deadbeef.glade\
+	gtkui.gresources.xml\
+	gtk/menus.ui
 
 GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   callbacks.c interface.c support.c callbacks.h interface.h support.h\
@@ -90,13 +92,13 @@ ddb_gui_GTK3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS) $(SM_LIBADD) ../libparser/li
 ddb_gui_GTK3_la_CFLAGS = -std=c99 $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS)
 ddb_gui_GTK3_la_OBJCFLAGS = $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS)
 
-nodist_ddb_gui_GTK3_la_SOURCES = gtkui-gresources.c
+nodist_ddb_gui_GTK3_la_SOURCES = temp/gtkui-gresources.c
 
 resource_files = \
 	gtkui.gresources.xml	\
 	gtk/menus.ui
 
-gtkui-gresources.c: $(resource_files)
+temp/gtkui-gresources.c: $(resource_files)
 	$(AM_V_GEN) $(GLIB_COMPILE_RESOURCES) --target=$@ --sourcedir=$(srcdir) --generate-source $<
 
 endif

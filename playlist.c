@@ -291,6 +291,9 @@ plt_get_list (void) {
 playlist_t *
 plt_get_curr (void) {
     LOCK;
+    if (!playlist) {
+        playlist = playlists_head;
+    }
     playlist_t *plt = playlist;
     if (plt) {
         plt_ref (plt);
@@ -839,10 +842,6 @@ plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int nums
     return NULL;
 }
 
-// FIXME: this is not thread-safe
-static int follow_symlinks = 0;
-static int ignore_archives = 0;
-
 static playItem_t *
 plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
 
@@ -867,7 +866,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
     }
 
     // check if that is supported container format
-    if (!ignore_archives) {
+    if (!playlist->ignore_archives) {
         DB_vfs_t **vfsplugs = plug_get_vfs_list ();
         for (int i = 0; vfsplugs[i]; i++) {
             if (vfsplugs[i]->is_container) {
@@ -1123,7 +1122,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         dirname += 7;
     }
 
-    if (!follow_symlinks && !vfs) {
+    if (!playlist->follow_symlinks && !vfs) {
         struct stat buf;
         lstat (dirname, &buf);
         if (S_ISLNK(buf.st_mode)) {
@@ -1235,12 +1234,16 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
 
 playItem_t *
 plt_insert_dir (playlist_t *playlist, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
-    ignore_archives = conf_get_int ("ignore_archives", 1);
+    int prev_sl = playlist->follow_symlinks;
+    playlist->follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
+
+    int prev = playlist->ignore_archives;
+    playlist->ignore_archives = conf_get_int ("ignore_archives", 1);
 
     playItem_t *ret = plt_insert_dir_int (0, playlist, NULL, after, dirname, pabort, cb, user_data);
 
-    ignore_archives = 0;
+    playlist->follow_symlinks = prev_sl;
+    playlist->ignore_archives = prev;
 
     return ret;
 }
@@ -1929,6 +1932,12 @@ pl_save_all (void) {
 static playItem_t *
 plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     // try plugins 1st
+    char *escaped = uri_unescape (fname, (int)strlen (fname));
+    if (escaped) {
+        fname = strdupa (escaped);
+        free (escaped);
+    }
+
     const char *ext = strrchr (fname, '.');
     if (ext) {
         ext++;
@@ -2284,7 +2293,7 @@ pl_load_all (void) {
         it = conf_find ("playlist.tab.", it);
         i++;
     }
-    plt_set_curr (0);
+    plt_set_curr_idx (0);
     plt_loading = 0;
     plt_gen_conf ();
     messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
@@ -2914,9 +2923,11 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     }
                 }
             }
+#ifdef VERSION
             else if (*fmt == 'V') {
                 meta = VERSION;
             }
+#endif
             else {
                 *s++ = *fmt;
                 n--;
@@ -3280,7 +3291,7 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
         int32_t i = 0;
         char s[10];
         u8_nextchar (p, &i);
-        int l = u8_tolower (p, i, s);
+        int l = u8_tolower ((const int8_t *)p, i, s);
         n -= l;
         if (n < 0) {
             break;
@@ -3648,7 +3659,13 @@ plt_load2 (int visibility, playlist_t *plt, playItem_t *after, const char *fname
 
 int
 plt_add_file2 (int visibility, playlist_t *plt, const char *fname, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
-    return plt_add_file_int (visibility, plt, fname, callback, user_data);
+    int prev = plt->ignore_archives;
+    plt->ignore_archives = conf_get_int ("ignore_archives", 1);
+
+    int res = plt_add_file_int (visibility, plt, fname, callback, user_data);
+
+    plt->ignore_archives = prev;
+    return res;
 }
 
 playItem_t *
@@ -3660,13 +3677,17 @@ pl_item_init (const char *fname) {
 
 int
 plt_add_dir2 (int visibility, playlist_t *plt, const char *dirname, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
-    follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
-    ignore_archives = conf_get_int ("ignore_archives", 1);
+    int prev_sl = plt->follow_symlinks;
+    plt->follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
+
+    int prev = plt->ignore_archives;
+    plt->ignore_archives = conf_get_int ("ignore_archives", 1);
 
     int abort = 0;
     playItem_t *it = plt_insert_dir_int (visibility, plt, NULL, plt->tail[PL_MAIN], dirname, &abort, callback, user_data);
 
-    ignore_archives = 0;
+    plt->ignore_archives = prev;
+    plt->follow_symlinks = prev_sl;
     if (it) {
         // pl_insert_file doesn't hold reference, don't unref here
         return 0;
@@ -3681,11 +3702,14 @@ plt_insert_file2 (int visibility, playlist_t *playlist, playItem_t *after, const
 
 playItem_t *
 plt_insert_dir2 (int visibility, playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
-    follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
-    ignore_archives = conf_get_int ("ignore_archives", 1);
+    int prev_sl = plt->follow_symlinks;
+    plt->follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
+    plt->ignore_archives = conf_get_int ("ignore_archives", 1);
 
     playItem_t *ret = plt_insert_dir_int (visibility, plt, NULL, after, dirname, pabort, callback, user_data);
-    ignore_archives = 0;
+
+    plt->follow_symlinks = prev_sl;
+    plt->ignore_archives = 0;
     return ret;
 }
 

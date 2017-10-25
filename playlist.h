@@ -84,6 +84,8 @@ typedef struct playlist_s {
     unsigned files_adding : 1;
     unsigned recalc_seltime : 1;
     unsigned loading_cue : 1;
+    unsigned ignore_archives : 1;
+    unsigned follow_symlinks : 1;
 } playlist_t;
 
 // global playlist control functions

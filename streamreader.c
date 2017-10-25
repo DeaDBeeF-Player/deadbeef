@@ -41,8 +41,13 @@ static int numblocks_ready;
 
 static int curr_block_bitrate;
 
+static playItem_t *_prev_rg_track;
+static int _rg_settingschanged = 1;
+
 void
 streamreader_init (void) {
+    _prev_rg_track = NULL;
+    _rg_settingschanged = 1;
     for (int i = 0; i < BLOCK_COUNT; i++) {
         streamblock_t *b = calloc (1, sizeof (streamblock_t));
         b->pos = -1;
@@ -65,6 +70,8 @@ streamreader_free (void) {
     }
     block_next = block_data = NULL;
     numblocks_ready = 0;
+    _prev_rg_track = NULL;
+    _rg_settingschanged = 1;
 }
 
 streamblock_t *
@@ -73,6 +80,11 @@ streamreader_get_next_block (void) {
         return NULL; // all buffers full
     }
     return block_next;
+}
+
+void
+streamreader_configchanged (void) {
+    _rg_settingschanged = 1;
 }
 
 int
@@ -86,11 +98,14 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
     }
 
     // replaygain settings
-
-    ddb_replaygain_settings_t rg_settings;
-    rg_settings._size = sizeof (rg_settings);
-    replaygain_init_settings (&rg_settings, track);
-    replaygain_set_current (&rg_settings);
+    if (_rg_settingschanged || _prev_rg_track != track) {
+        _prev_rg_track = track;
+        _rg_settingschanged = 0;
+        ddb_replaygain_settings_t rg_settings;
+        rg_settings._size = sizeof (rg_settings);
+        replaygain_init_settings (&rg_settings, track);
+        replaygain_set_current (&rg_settings);
+    }
 
     // NOTE: streamer_set_bitrate may be called during decoder->read, and set immediated bitrate of the block
     curr_block_bitrate = -1;

@@ -57,7 +57,8 @@ gtk_enum_sound_callback (const char *name, const char *desc, void *userdata) {
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), desc);
 
     deadbeef->conf_lock ();
-    if (!strcmp (deadbeef->conf_get_str_fast ("alsa_soundcard", "default"), name)) {
+    const char *curr = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
+    if (!strcmp (curr, name)) {
         gtk_combo_box_set_active (combobox, num_alsa_devices);
     }
     deadbeef->conf_unlock ();

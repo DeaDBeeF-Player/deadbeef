@@ -1064,26 +1064,6 @@ main (int argc, char *argv[]) {
     }
     else {
         if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/deadbeef", LIBDIR) > sizeof (dbplugindir)) {
-            trace_err ("fatal: too long install path %s\n", dbinstalldir);
-            return -1;
-        }
-    }
-
-    // Get doc and pixmaps dirs
-    if (portable) {
-        if (snprintf (dbdocdir, sizeof (dbdocdir), "%s/doc", dbinstalldir) > sizeof (dbdocdir)) {
-            trace_err ("fatal: too long install path %s\n", dbinstalldir);
-            return -1;
-        }
-        if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/pixmaps", dbinstalldir) > sizeof (dbpixmapdir)) {
-            trace_err ("fatal: too long install path %s\n", dbinstalldir);
-            return -1;
-        }
-
-        mkdir (dbplugindir, 0755);
-    }
-    else {
-        if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/deadbeef", LIBDIR) > sizeof (dbplugindir)) {
             trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }

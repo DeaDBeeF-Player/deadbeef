@@ -970,6 +970,7 @@ AC_SUBST(PLUGINS_DIRS)
 
 AC_CONFIG_FILES([
 Makefile
+shared/Makefile
 pixmaps/Makefile
 icons/Makefile
 plugins/libwin/Makefile

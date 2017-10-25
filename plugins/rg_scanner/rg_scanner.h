@@ -95,7 +95,10 @@ typedef struct {
 
     int (*scan) (ddb_rg_scanner_settings_t *settings);
 
-    int (*apply) (DB_playItem_t *track, float track_gain, float track_peak, float album_gain, float album_peak);
+    // flags specify which fields must be set / added
+    // each bit is 1 shifted left by DDB_REPLAYGAIN_* constant
+    // Example (1<<DDB_REPLAYGAIN_ALBUMGAIN)|(1<<DDB_REPLAYGAIN_ALBUMPEAK) would set album values, but not track values
+    int (*apply) (DB_playItem_t *track, uint32_t flags, float track_gain, float track_peak, float album_gain, float album_peak);
 
     int (*remove) (DB_playItem_t *track);
 } ddb_rg_scanner_t;

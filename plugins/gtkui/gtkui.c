@@ -55,11 +55,10 @@
 #include "gtkui_api.h"
 #include "wingeom.h"
 #include "widgets.h"
-#ifdef __APPLE__
-#include "retina.h"
-#elif defined __MINGW32__
-#else
+#ifndef __APPLE__
 #include "X11/Xlib.h"
+#else
+#include "retina.h"
 #endif
 #include "actionhandlers.h"
 #include "clipboard.h"
@@ -1575,7 +1574,7 @@ static DB_plugin_action_t action_rg_scan_selection_as_albums = {
     .title = "ReplayGain/Scan Selection As Albums (By Tags)",
     .name = "rg_scan_selection_as_albums",
     .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_ADD_MENU,
-    .callback2 = action_rg_scan_per_file_handler,
+    .callback2 = action_rg_scan_selection_as_albums_handler,
     .next = &action_rg_remove_info
 };
 

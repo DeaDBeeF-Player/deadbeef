@@ -46,6 +46,7 @@ static DB_output_t fake_out = {
     streamer_set_playing_track (NULL);
     pl_item_unref (it);
     pl_free ();
+    ctx.plt = NULL;
 
     [super tearDown];
 }

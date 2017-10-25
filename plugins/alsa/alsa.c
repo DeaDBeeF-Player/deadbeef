@@ -23,8 +23,7 @@
 #include "../../deadbeef.h"
 #include "../../config.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -107,7 +106,10 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
         plugin.fmt.samplerate = 44100;
         plugin.fmt.channelmask = 3;
     }
-retry:
+
+    snd_pcm_nonblock(audio, 0);
+    snd_pcm_drain (audio);
+    snd_pcm_nonblock(audio, 1);
 
     if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
         fprintf (stderr, "cannot allocate hardware parameter structure (%s)\n",
@@ -165,7 +167,7 @@ retry:
     }
 
     if ((err = snd_pcm_hw_params_set_format (audio, hw_params, sample_fmt)) < 0) {
-        fprintf (stderr, "cannot set sample format (%s), trying all supported formats\n", snd_strerror (err));
+        fprintf (stderr, "cannot set sample format to %d bps (error: %s), trying all supported formats\n", plugin.fmt.bps, snd_strerror (err));
 
         int fmt_cnt[] = { 16, 24, 32, 32, 8 };
 #if WORDS_BIGENDIAN
@@ -179,7 +181,8 @@ retry:
         for (i = 0; fmt[i] != -1; i++) {
             if (fmt[i] != sample_fmt && fmt_cnt[i] > plugin.fmt.bps) {
                 if (snd_pcm_hw_params_set_format (audio, hw_params, fmt[i]) >= 0) {
-                    fprintf (stderr, "cannot set sample format (%s), trying all supported formats\n", snd_strerror (err));
+                    fprintf (stderr, "Found compatible format %d bps\n", fmt_cnt[i]);
+                    sample_fmt = fmt[i];
                     break;
                 }
             }
@@ -190,7 +193,8 @@ retry:
             for (i = 0; fmt[i] != -1; i++) {
                 if (fmt[i] != sample_fmt && fmt_cnt[i] < plugin.fmt.bps) {
                     if (snd_pcm_hw_params_set_format (audio, hw_params, fmt[i]) >= 0) {
-                        fprintf (stderr, "cannot set sample format (%s), trying all supported formats\n", snd_strerror (err));
+                        fprintf (stderr, "Found compatible format %d bps\n", fmt_cnt[i]);
+                        sample_fmt = fmt[i];
                         break;
                     }
                 }
@@ -198,6 +202,7 @@ retry:
         }
 
         if (fmt[i] == -1) {
+            fprintf (stderr, "Fallback format could not be found\n");
             goto error;
         }
     }
@@ -610,11 +615,10 @@ palsa_thread (void *context) {
                 br = 0;
             }
 
-            if (br != sz) {
-                memset (buf+br, 0, sz-br);
+            if (br > 0) {
+                int frames = snd_pcm_bytes_to_frames(audio, br);
+                err = snd_pcm_writei (audio, buf, frames);
             }
-
-            err = snd_pcm_writei (audio, buf, snd_pcm_bytes_to_frames(audio, sz));
             if (alsa_terminate) {
                 UNLOCK;
                 break;
@@ -763,6 +767,7 @@ static DB_output_t plugin = {
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_OUTPUT,
+//    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .plugin.id = "alsa",
     .plugin.name = "ALSA output plugin",
     .plugin.descr = "plays sound through linux standard alsa library",
