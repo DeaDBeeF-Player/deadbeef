@@ -2197,9 +2197,9 @@ play_next (int dir) {
     streamer_is_buffering = 1;
 
     if (!next) {
-        output->stop ();
         _handle_playback_stopped ();
         streamer_unlock ();
+        output->stop ();
         return;
     }
 
@@ -2209,13 +2209,14 @@ play_next (int dir) {
     if (!stream_track(next, 0)) {
         playpos = 0;
         playtime = 0;
+        streamer_unlock ();
         output->play ();
     }
     else {
         streamer_set_buffering_track (NULL);
+        streamer_unlock ();
     }
     pl_item_unref(next);
-    streamer_unlock ();
 }
 
 void
