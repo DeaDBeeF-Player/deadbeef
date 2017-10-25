@@ -1326,6 +1326,28 @@ _update_buffering_state () {
     }
 }
 
+static void
+handle_track_change (playItem_t *track) {
+    // next track started
+    update_stop_after_current ();
+
+    if (playing_track) {
+        send_songfinished (playing_track);
+        playpos = 0;
+    }
+
+    streamer_start_playback (playing_track, track);
+
+    // only reset playpos/bitrate if track changing to another,
+    // otherwise the track is the first one, and playpos is pre-set
+    playtime = 0;
+    avg_bitrate = -1;
+    last_seekpos = -1;
+    if (playing_track) {
+        send_songstarted (playing_track);
+    }
+}
+
 void
 streamer_thread (void *ctx) {
 #if defined(__linux__) && !defined(ANDROID)
@@ -1358,6 +1380,7 @@ streamer_thread (void *ctx) {
                 {
                     playItem_t *next = get_random_track();
                     streamer_reset(1);
+                    handle_track_change (next);
                     stream_track(next, 0);
                 }
                 break;
@@ -1623,24 +1646,7 @@ process_output_block (char *bytes, int firstblock) {
 
     // handle change of track, or start of a new track
     if (block->last || block->track != playing_track || (playing_track && last_played != playing_track)) {
-        // next track started
-        update_stop_after_current ();
-
-        if (playing_track) {
-            send_songfinished (playing_track);
-            playpos = 0;
-        }
-
-        streamer_start_playback (playing_track, block->track);
-
-        // only reset playpos/bitrate if track changing to another,
-        // otherwise the track is the first one, and playpos is pre-set
-        playtime = 0;
-        avg_bitrate = -1;
-        last_seekpos = -1;
-        if (playing_track) {
-            send_songstarted (playing_track);
-        }
+        handle_track_change (block->track);
     }
 
     // A block with 0 size is a valid block, and needs to be processed as usual (code above this line).
@@ -2074,6 +2080,7 @@ play_index (int idx, int startpaused) {
     streamer_is_buffering = 1;
     streamer_set_playing_track(NULL);
     streamer_set_buffering_track (it);
+    handle_track_change (it);
     if (!stream_track(it, startpaused)) {
         playpos = 0;
         playtime = 0;
@@ -2152,6 +2159,7 @@ play_current (void) {
             streamer_is_buffering = 1;
             streamer_set_playing_track(NULL);
             streamer_set_buffering_track (next);
+            handle_track_change (next);
             if (!stream_track (next, 0)) {
                 playpos = 0;
                 playtime = 0;
@@ -2197,6 +2205,7 @@ play_next (int dir) {
 
     streamer_set_playing_track(NULL);
     streamer_set_buffering_track (next);
+    handle_track_change (next);
     if (!stream_track(next, 0)) {
         playpos = 0;
         playtime = 0;
