@@ -84,7 +84,7 @@ _initqueue (ddb_waveformat_t *fmt) {
         req_format.mFormatFlags |= kLinearPCMFormatFlagIsBigEndian;
     }
 
-    req_format.mBytesPerPacket = fmt->bps / 8;
+    req_format.mBytesPerPacket = fmt->bps / 8 * fmt->channels;
     req_format.mFramesPerPacket = 1;
     req_format.mBytesPerFrame = fmt->bps / 8 * fmt->channels;
     req_format.mChannelsPerFrame = fmt->channels;
