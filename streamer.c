@@ -1340,7 +1340,7 @@ streamer_thread (void *ctx) {
         uint32_t id;
         uintptr_t ctx;
         uint32_t p1, p2;
-        if (!handler_pop (handler, &id, &ctx, &p1, &p2)) {
+        while (!handler_pop (handler, &id, &ctx, &p1, &p2)) {
             switch (id) {
             case STR_EV_PLAY_TRACK_IDX:
                 play_index (p1, p2);
