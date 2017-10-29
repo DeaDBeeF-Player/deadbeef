@@ -191,6 +191,18 @@ project "alsa"
 
    links { "asound" }
 
+project "dsp_libsrc"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/dsp_libsrc/src.c",
+   }
+
+   links { "samplerate" }
+
 project "pulse"
    kind "SharedLib"
    language "C"
