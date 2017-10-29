@@ -72,6 +72,9 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
         plugin.fmt.samplerate = 44100;
         plugin.fmt.channelmask = 3;
     }
+    if (plugin.fmt.samplerate > 192000) {
+        plugin.fmt.samplerate = 192000;
+    }
 
     trace ("format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
 
@@ -82,11 +85,7 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
     trace ("pulse: channels: %d\n", ss.channels);
 
     // Read samplerate from config
-    //ss.rate = deadbeef->conf_get_int(CONFSTR_PULSE_SAMPLERATE, 44100);
     ss.rate = plugin.fmt.samplerate;
-    if (ss.rate > 192000) {
-        ss.rate = 192000;
-    }
     trace ("pulse: samplerate: %d\n", ss.rate);
 
     switch (plugin.fmt.bps) {
