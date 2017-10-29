@@ -91,6 +91,19 @@ project "wavpack_plugin"
 
    links { "wavpack" }
 
+project "ffmpeg"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/ffmpeg/*.h",
+       "plugins/ffmpeg/*.c",
+   }
+
+   links {"avcodec", "pthread", "avformat", "avcodec", "avutil", "z", "opencore-amrnb", "opencore-amrwb", "opus"}
+
 project "vorbis_plugin"
    kind "SharedLib"
    language "C"
