@@ -23,6 +23,7 @@
 #endif
 
 #include <pulse/simple.h>
+#include <pulse/error.h>
 
 #include <stdint.h>
 #include <unistd.h>
@@ -83,6 +84,9 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
     // Read samplerate from config
     //ss.rate = deadbeef->conf_get_int(CONFSTR_PULSE_SAMPLERATE, 44100);
     ss.rate = plugin.fmt.samplerate;
+    if (ss.rate > 192000) {
+        ss.rate = 192000;
+    }
     trace ("pulse: samplerate: %d\n", ss.rate);
 
     switch (plugin.fmt.bps) {
@@ -138,7 +142,8 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
 
     if (!s)
     {
-        trace ("pulse_init failed (%d)\n", error);
+        const char *strerr = pa_strerror (error);
+        fprintf (stderr, "pa_simple_new failed: %s\n", strerr);
         return -1;
     }
 
