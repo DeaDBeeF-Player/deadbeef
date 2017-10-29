@@ -321,6 +321,59 @@ project "sid"
    targetname "sid"
    links { "stdc++" }
 
+project "psf"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   includedirs {
+        "plugins/psf",
+        "plugins/psf/eng_ssf",
+        "plugins/psf/eng_qsf",
+        "plugins/psf/eng_dsf",
+    }
+   defines {
+      "HAS_PSXCPU=1",
+   }
+
+   files {
+        "plugins/psf/plugin.c",
+        "plugins/psf/psfmain.c",
+        "plugins/psf/corlett.c",
+        "plugins/psf/eng_dsf/eng_dsf.c",
+        "plugins/psf/eng_dsf/dc_hw.c",
+        "plugins/psf/eng_dsf/aica.c",
+        "plugins/psf/eng_dsf/aicadsp.c",
+        "plugins/psf/eng_dsf/arm7.c",
+        "plugins/psf/eng_dsf/arm7i.c",
+        "plugins/psf/eng_ssf/m68kcpu.c",
+        "plugins/psf/eng_ssf/m68kopac.c",
+        "plugins/psf/eng_ssf/m68kopdm.c",
+        "plugins/psf/eng_ssf/m68kopnz.c",
+        "plugins/psf/eng_ssf/m68kops.c",
+        "plugins/psf/eng_ssf/scsp.c",
+        "plugins/psf/eng_ssf/scspdsp.c",
+        "plugins/psf/eng_ssf/sat_hw.c",
+        "plugins/psf/eng_ssf/eng_ssf.c",
+        "plugins/psf/eng_qsf/eng_qsf.c",
+        "plugins/psf/eng_qsf/kabuki.c",
+        "plugins/psf/eng_qsf/qsound.c",
+        "plugins/psf/eng_qsf/z80.c",
+        "plugins/psf/eng_qsf/z80dasm.c",
+        "plugins/psf/eng_psf/eng_psf.c",
+        "plugins/psf/eng_psf/psx.c",
+        "plugins/psf/eng_psf/psx_hw.c",
+        "plugins/psf/eng_psf/peops/spu.c",
+        "plugins/psf/eng_psf/eng_psf2.c",
+        "plugins/psf/eng_psf/peops2/spu2.c",
+        "plugins/psf/eng_psf/peops2/dma2.c",
+        "plugins/psf/eng_psf/peops2/registers2.c",
+        "plugins/psf/eng_psf/eng_spu.c",
+   }
+   targetname "psf"
+   links { "z", "m" }
+
 project "m3u"
    kind "SharedLib"
    language "C"
