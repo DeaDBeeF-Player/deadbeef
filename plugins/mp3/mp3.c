@@ -468,7 +468,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             offs = deadbeef->ftell (buffer->file);
         }
 
-        if (offs >= fsize) {
+        if (!buffer->file->vfs->is_streaming () && offs >= fsize) {
             reached_eof = 1;
             goto end_scan;
         }
