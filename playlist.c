@@ -3653,12 +3653,7 @@ plt_load2 (int visibility, playlist_t *plt, playItem_t *after, const char *fname
 
 int
 plt_add_file2 (int visibility, playlist_t *plt, const char *fname, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
-    int prev = plt->ignore_archives;
-    plt->ignore_archives = conf_get_int ("ignore_archives", 1);
-
     int res = plt_add_file_int (visibility, plt, fname, callback, user_data);
-
-    plt->ignore_archives = prev;
     return res;
 }
 
