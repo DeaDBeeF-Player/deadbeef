@@ -438,6 +438,7 @@ main_cleanup_and_quit (void);
             }
             deadbeef->plt_add_files_end (plt, 0);
             deadbeef->plt_unref (plt);
+            deadbeef->pl_save_current ();
         });
     }
     else {
