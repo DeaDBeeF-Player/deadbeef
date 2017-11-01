@@ -900,9 +900,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
         if (it) {
             listview->binding->unref(it);
         }
-//        if (grp->height > grp_height) {
-//            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y+grp_height, total_width, grp->height-grp_height, clip);
-//        }
 
         // draw album art
         int grp_next_y = grp_y + grp->height;
@@ -911,14 +908,12 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
         if (pin_grp == grp && clip->y <= title_height) {
             // draw pinned group title
             fill_list_background(listview, cr, scrollx, 0, total_width, min(title_height, grp_next_y), clip);
-//            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, 0, total_width, min(title_height, grp_next_y), clip);
             if (listview->binding->draw_group_title && title_height > 0) {
                 listview->binding->draw_group_title(listview, cr, grp->head, scrollx, min(0, grp_next_y-title_height), total_width, title_height);
             }
         }
         else if (clip->y <= grp_y + title_height) {
             // draw normal group title
-//            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y, total_width, title_height, clip);
             if (listview->binding->draw_group_title && title_height > 0) {
                 listview->binding->draw_group_title(listview, cr, grp->head, scrollx, grp_y, total_width, title_height);
             }
@@ -928,10 +923,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
         grp_y += grp->height;
         grp = grp->next;
     }
-
-//    if (grp_y < clip->y + clip->height) {
-//        render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y, total_width, clip->y+clip->height-grp_y, clip);
-//    }
 
     deadbeef->pl_unlock ();
     draw_end (&listview->listctx);
