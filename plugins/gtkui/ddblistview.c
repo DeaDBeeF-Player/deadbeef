@@ -872,7 +872,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
 
     draw_begin (&listview->listctx, cr);
     draw_begin (&listview->grpctx, cr);
-    fill_list_background(listview, cr, scrollx, -listview->scrollpos, total_width, max(listview->fullheight, listview->list_height), clip);
 
     // find 1st group
     DdbListviewGroup *grp = listview->groups;
