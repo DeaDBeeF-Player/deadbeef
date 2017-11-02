@@ -197,7 +197,7 @@ private:
 
     // Compress address to not leave so many spaces
     uint_least8_t convertAddr(uint_least8_t addr)
-    { return (((addr) & 0x3) | ((addr) >> 3) & 0x0c); }
+    { return ((addr) & 0x3) | (((addr) >> 3) & 0x0c); }
 
     void    reset    (void);
     uint8_t read     (uint_least8_t  addr)

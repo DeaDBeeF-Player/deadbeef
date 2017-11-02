@@ -115,7 +115,7 @@ inline void endian_16hi8 (uint_least16_t &word, uint8_t byte)
 #endif
 }
 
-// Set the hi byte (8 bit) in a word (16 bit)
+// Get the hi byte (8 bit) of a word (16 bit)
 inline uint8_t endian_16hi8 (uint_least16_t word)
 {
 #if defined(SID_OPTIMISE_MEMORY_ACCESS)
@@ -141,7 +141,7 @@ inline void endian_16swap8 (uint_least16_t &word)
 // Convert high-byte and low-byte to 16-bit word.
 inline uint_least16_t endian_16 (uint8_t hi, uint8_t lo)
 {
-    uint_least16_t word;
+    uint_least16_t word = 0;
     endian_16lo8 (word, lo);
     endian_16hi8 (word, hi);
     return word;
