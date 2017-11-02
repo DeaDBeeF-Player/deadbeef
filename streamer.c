@@ -1092,8 +1092,10 @@ m3u_error:
         if (!decoder_id[0] && plugs[0] && !plugs[plug_idx]) {
             it->played = 1;
             trace ("decoder->init returned %p\n", new_fileinfo);
-            if (playing_track == it) {
-                send_trackinfochanged (to); // got new metadata, refresh UI
+
+            if (!startpaused) {
+                // failed to play the track, ask for the next one
+                streamer_play_failed (it);
             }
             err = -1;
             goto error;
@@ -1154,13 +1156,8 @@ m3u_error:
             trace_err ("Failed to play track: %s\n", pl_find_meta(it, ":URI"));
             pl_unlock ();
 
-            if (from) {
-                pl_item_unref (from);
-            }
-            if (to) {
-                pl_item_unref (to);
-            }
-            return -1;
+            err = -1;
+            goto error;
         }
 
         trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), dec->plugin.id);
