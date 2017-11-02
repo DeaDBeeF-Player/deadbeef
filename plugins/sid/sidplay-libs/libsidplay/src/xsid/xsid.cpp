@@ -83,7 +83,11 @@ const int8_t XSID::sampleConvertTable[16] =
 */
 const int8_t XSID::sampleConvertTable[16] =
 {
+#if 1
+      -128,   -108,    -87,    -68,    -50,   -31,     -14,      3,
+#else
     '\x80', '\x94', '\xa9', '\xbc', '\xce', '\xe1', '\xf2', '\x03',
+#endif
     '\x1b', '\x2a', '\x3b', '\x49', '\x58', '\x66', '\x73', '\x7f'
 };
 
