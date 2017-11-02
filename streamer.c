@@ -912,6 +912,7 @@ stream_track (playItem_t *it, int startpaused) {
         strncpy (filetype, ft, sizeof (filetype));
     }
     pl_unlock ();
+    char *cct = "undefined";
     char *plugs[CTMAP_MAX_PLUGINS] = {NULL};
     if (!decoder_id[0] && (!strcmp (filetype, "content") || !filetype[0])) {
         // try to get content-type
@@ -934,7 +935,7 @@ stream_track (playItem_t *it, int startpaused) {
             goto error;
         }
         trace ("got content-type: %s\n", ct);
-        char *cct = strdupa (ct);
+        cct = strdupa (ct);
         char *sc = strchr (cct, ';');
         if (sc) {
             *sc = 0;
@@ -1091,7 +1092,7 @@ m3u_error:
     for (;;) {
         if (!decoder_id[0] && plugs[0] && !plugs[plug_idx]) {
             it->played = 1;
-            trace ("decoder->init returned %p\n", new_fileinfo);
+            trace_err ("No suitable decoder found for stream %s of content-type %s\n", pl_find_meta (playing_track, ":URI"), cct);
 
             if (!startpaused) {
                 // failed to play the track, ask for the next one
@@ -1881,6 +1882,10 @@ streamer_read (char *bytes, int size) {
 
     // consume decoded data
     int sz = min (size, outbuffer_remaining);
+    if (!sz) {
+        // no data available
+        return 0;
+    }
 
     // clip to frame size
     int ss = output->fmt.channels * output->fmt.bps / 8;
