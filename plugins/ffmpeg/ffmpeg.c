@@ -56,7 +56,7 @@
 #define av_find_stream_info(ctx) avformat_find_stream_info(ctx,NULL)
 #define avcodec_open(ctx,codec) avcodec_open2(ctx,codec,NULL)
 #define av_get_bits_per_sample_format(fmt) (av_get_bytes_per_sample(fmt)*8)
-#define av_close_input_file(ctx) avformat_close_input(&(ctx))
+#define av_close_input_file(ctx) avformat_free_context(ctx)
 #endif
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -78,8 +78,6 @@ static DB_functions_t *deadbeef;
 
 #define EXT_MAX 1024
 
-#define FFMPEG_MAX_ANALYZE_DURATION 500000
-
 static char * exts[EXT_MAX+1] = {NULL};
 
 enum {
@@ -99,7 +97,6 @@ enum {
 typedef struct {
     DB_fileinfo_t info;
 #if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
-    DB_FILE *f;
     unsigned char *iobuffer;
     AVIOContext *ioctx;
 #endif
@@ -124,13 +121,25 @@ typedef struct {
     int64_t currentsample;
 } ffmpeg_info_t;
 
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(54, 6, 0)
 static DB_playItem_t *current_track;
 static DB_fileinfo_t *current_info;
+#endif
 
 static DB_fileinfo_t *
-ffmpeg_open (uint32_t hints) {
+ffmpeg_open2 (uint32_t hints, DB_playItem_t *it) {
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+    deadbeef->pl_lock ();
+    const char *uri = deadbeef->pl_find_meta (it, ":URI");
+    DB_FILE *file = deadbeef->fopen(uri);
+    deadbeef->pl_unlock ();
+    if (!file) {
+        return NULL;
+    }
+#endif
     DB_fileinfo_t *_info = malloc (sizeof (ffmpeg_info_t));
     memset (_info, 0, sizeof (ffmpeg_info_t));
+    _info->file = file;
     return _info;
 }
 
@@ -180,9 +189,28 @@ static int64_t ffmpeg_fseek(void *opaque, int64_t offset, int whence)
 }
 #endif
 
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+static AVIOContext *
+_setup_ioctx (ffmpeg_info_t *info) {
+    AVIOContext *ioctx = avio_alloc_context(info->iobuffer, 128 * 1024, 0, info->info.file, ffmpeg_fread, ffmpeg_fwrite, ffmpeg_fseek);
+    if (info->info.file->vfs->is_streaming ()) {
+        ioctx->seekable = 0;
+    }
+    return ioctx;
+}
+#endif
 
 static int
 ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+    // Couldn't make newer ffmpeg to not freeze on network streams, with either custom or built-in IO.
+    // Bail out.
+    const char *fname = deadbeef->pl_find_meta (it, ":URI");
+    if (!deadbeef->is_local_file (fname)) {
+        return -1;
+    }
+#endif
+
     ffmpeg_info_t *info = (ffmpeg_info_t *)_info;
     trace ("ffmpeg init %s\n", deadbeef->pl_find_meta (it, ":URI"));
     // prepare to decode the track
@@ -213,33 +241,35 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     // open file
     trace ("\033[0;31mffmpeg av_open_input_file\033[37;0m\n");
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(54, 6, 0)
     current_track = it;
     current_info = _info;
+#endif
 #if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
-    info->f = deadbeef->fopen(uri);
-    if (!info->f) {
-        trace ("fopen failed for file: %s\n", uri);
-        return -1;
-    }
     info->iobuffer = av_malloc(128 * 1024);
-    info->ioctx = avio_alloc_context(info->iobuffer, 128 * 1024, 0, info->f, ffmpeg_fread, ffmpeg_fwrite, ffmpeg_fseek);
+    info->ioctx = _setup_ioctx (info);
     info->fctx = avformat_alloc_context ();
     info->fctx->pb = info->ioctx;
+
     if ((ret = avformat_open_input(&info->fctx, uri, NULL, NULL)) < 0) {
 #else
     if ((ret = av_open_input_file(&info->fctx, uri, NULL, 0, NULL)) < 0) {
 #endif
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(54, 6, 0)
         current_track = NULL;
+#endif
         trace ("\033[0;31minfo->fctx is %p, ret %d/%s\033[0;31m\n", info->fctx, ret, strerror(-ret));
         return -1;
     }
     trace ("\033[0;31mav_open_input_file done, ret=%d\033[0;31m\n", ret);
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(54, 6, 0)
     current_track = NULL;
     current_info = NULL;
+#endif
 
     trace ("\033[0;31mffmpeg av_find_stream_info\033[37;0m\n");
     info->stream_id = -1;
-    info->fctx->max_analyze_duration = FFMPEG_MAX_ANALYZE_DURATION;
+    info->fctx->max_analyze_duration = AV_TIME_BASE;
     av_find_stream_info(info->fctx);
     for (i = 0; i < info->fctx->nb_streams; i++)
     {
@@ -373,8 +403,8 @@ ffmpeg_free (DB_fileinfo_t *_info) {
         if (info->iobuffer) {
             av_free(info->iobuffer);
         }
-        if (info->f) {
-            deadbeef->fclose(info->f);
+        if (info->info.file) {
+            deadbeef->fclose(info->info.file);
         }
 #endif
         free (info);
@@ -789,6 +819,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     ioctx = avio_alloc_context(iobuffer, 128 * 1024, 0, f, ffmpeg_fread, ffmpeg_fwrite, ffmpeg_fseek);
     fctx = avformat_alloc_context ();
     fctx->pb = ioctx;
+    fctx->max_analyze_duration = AV_TIME_BASE;
     if ((ret = avformat_open_input(&fctx, uri, NULL, NULL)) < 0) {
 #else
     if ((ret = av_open_input_file(&fctx, uri, NULL, 0, NULL)) < 0) {
@@ -801,7 +832,6 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
 
     trace ("fctx is %p, ret %d/%s\n", fctx, ret, strerror(-ret));
-    fctx->max_analyze_duration = FFMPEG_MAX_ANALYZE_DURATION;
 #if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
     int nb_streams = fctx->nb_streams;
     ret = avformat_find_stream_info(fctx, NULL);
@@ -953,12 +983,14 @@ ffmpeg_vfs_open(URLContext *h, const char *filename, int flags)
     if (f == NULL)
         return -ENOENT;
 
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(54, 6, 0)
     if (f->vfs->is_streaming ()) {
         deadbeef->fset_track (f, current_track);
         if (current_info) {
             current_info->file = f;
         }
     }
+#endif
 
     h->priv_data = f;
     return 0;
@@ -1259,7 +1291,7 @@ static const char settings_dlg[] =
 // define plugin interface
 static DB_decoder_t plugin = {
     .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    .plugin.api_vminor = 7,
     .plugin.version_major = 1,
     .plugin.version_minor = 2,
     .plugin.type = DB_PLUGIN_DECODER,
@@ -1288,7 +1320,7 @@ static DB_decoder_t plugin = {
     .plugin.stop = ffmpeg_stop,
     .plugin.configdialog = settings_dlg,
     .plugin.message = ffmpeg_message,
-    .open = ffmpeg_open,
+    .open2 = ffmpeg_open2,
     .init = ffmpeg_init,
     .free = ffmpeg_free,
     .read = ffmpeg_read,
