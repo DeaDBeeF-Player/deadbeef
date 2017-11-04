@@ -28,7 +28,7 @@ msgstr "Om DeaDBeeF %s"
 #: ../plugins/gtkui/callbacks.c:367
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr "DeadBeeF %s Ändrligslogg"
+msgstr "DeadBeeF %s ändringslogg"
 
 #: ../plugins/gtkui/callbacks.c:627
 #, c-format
@@ -43,35 +43,35 @@ msgstr "Hjälp"
 
 #: ../plugins/gtkui/eq.c:146
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "Spara DeaDBeeF:s Equalizer-inställningar"
+msgstr "Spara DeaDBeeF Equalizer-förinställningar"
 
 #: ../plugins/gtkui/eq.c:153
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "Filer för DeaDBeeFs equalizer-inställningar (*.ddbeq)"
+msgstr "Filer för DeaDBeeF Equalizer-förinställningar (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:192
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "Läs in equalizer-inställningar för DeaDBeeF..."
+msgstr "Läs in Equalizer-förinställningar för DeaDBeeF..."
 
 #: ../plugins/gtkui/eq.c:196
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "DeaDBeeFs equalizer-inställningar (*.ddbeq)"
+msgstr "DeaDBeeFs Equalizer-förinställningar (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:257
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Importera equalizer-inställningar för Foobar2000..."
+msgstr "Importera equalizer-förinställningar för Foobar2000..."
 
 #: ../plugins/gtkui/eq.c:261
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Foobar2000 equalizer-inställningar (*.feq)"
+msgstr "Foobar2000 equalizer-förinställningar (*.feq)"
 
 #: ../plugins/gtkui/eq.c:326
 msgid "Save Preset"
-msgstr "Spara inställningar"
+msgstr "Spara förinställningar"
 
 #: ../plugins/gtkui/eq.c:334
 msgid "Load Preset"
-msgstr "Läs in inställningar"
+msgstr "Läs in förinställningar"
 
 #: ../plugins/gtkui/eq.c:342
 msgid "Import Foobar2000 Preset"
@@ -96,7 +96,7 @@ msgstr "Nollställ band"
 #: ../plugins/gtkui/eq.c:397 ../plugins/converter/interface.c:843
 #: ../plugins/converter/converter.glade.h:54
 msgid "Presets"
-msgstr "Inställningar"
+msgstr "Förinställningar"
 
 #: ../plugins/gtkui/gtkui.c:160 ../tf.c:1820
 #, c-format
@@ -126,79 +126,79 @@ msgstr "Ny spellista (%d)"
 #: ../plugins/gtkui/gtkui.c:716
 #, c-format
 msgid "Copy of %s"
-msgstr ""
+msgstr "Kopia av %s"
 
 #: ../plugins/gtkui/gtkui.c:719
 #, c-format
 msgid "Copy of %s (%d)"
-msgstr ""
+msgstr "Kopia av %s (%d)"
 
 #. register widget types
 #: ../plugins/gtkui/gtkui.c:1199
 msgid "Playlist with tabs"
-msgstr ""
+msgstr "Spellista med flikar"
 
 #: ../plugins/gtkui/gtkui.c:1200 ../plugins/gtkui/interface.c:2188
 #: ../plugins/gtkui/interface.c:2633 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Playlist"
-msgstr ""
+msgstr "Spellista"
 
 #: ../plugins/gtkui/gtkui.c:1203
 msgid "Splitter (top and bottom)"
-msgstr ""
+msgstr "Avskiljare (topp och botten)"
 
 #: ../plugins/gtkui/gtkui.c:1204
 msgid "Splitter (left and right)"
-msgstr ""
+msgstr "Avskiljare (vänster och höger)"
 
 #: ../plugins/gtkui/gtkui.c:1206
 msgid "Tabs"
-msgstr ""
+msgstr "Flikar"
 
 #: ../plugins/gtkui/gtkui.c:1207
 msgid "Playlist tabs"
-msgstr ""
+msgstr "Flikar i spellistan"
 
 #: ../plugins/gtkui/gtkui.c:1208
 msgid "Selection properties"
-msgstr ""
+msgstr "Urvalsegenskaper"
 
 #: ../plugins/gtkui/gtkui.c:1209
 msgid "Album art display"
-msgstr ""
+msgstr "Albumgrafik"
 
 #: ../plugins/gtkui/gtkui.c:1210
 msgid "Scope"
-msgstr ""
+msgstr "Räckvidd"
 
 #: ../plugins/gtkui/gtkui.c:1211
 msgid "Spectrum"
-msgstr ""
+msgstr "Spektrum"
 
 #: ../plugins/gtkui/gtkui.c:1212
 msgid "HBox"
-msgstr ""
+msgstr "HBox"
 
 #: ../plugins/gtkui/gtkui.c:1213
 msgid "VBox"
-msgstr ""
+msgstr "VBox"
 
 #: ../plugins/gtkui/gtkui.c:1214 ../plugins/gtkui/widgets.c:3846
 #: ../plugins/gtkui/widgets.c:3932
 msgid "Button"
-msgstr ""
+msgstr "Knapp"
 
 #: ../plugins/gtkui/gtkui.c:1215
 msgid "Seekbar"
-msgstr ""
+msgstr "Sökfält"
 
 #: ../plugins/gtkui/gtkui.c:1216
 msgid "Playback controls"
-msgstr ""
+msgstr "Uppspelningskontroller"
 
 #: ../plugins/gtkui/gtkui.c:1217
 msgid "Volume bar"
-msgstr ""
+msgstr "Volymfält"
 
 #: ../plugins/gtkui/gtkui.c:1218
 msgid "Chiptune voices"
@@ -206,7 +206,7 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:1219
 msgid "Log viewer"
-msgstr ""
+msgstr "Loggvisare"
 
 #: ../plugins/gtkui/gtkui.c:1438
 msgid "Failed while reading help file"
@@ -214,17 +214,19 @@ msgstr "Misslyckades vid läsning av hjälpfil"
 
 #: ../plugins/gtkui/gtkui.c:1448
 msgid "Failed to load help file"
-msgstr "Kunde inte läsa hjälpfil"
+msgstr "Misslyckades med att läsa hjälpfil"
 
 #: ../plugins/gtkui/gtkui.c:1461
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
+"Spelaren kör för närvarande bakgrundsuppgifter. Om du avslutar nu, kommer "
+"uppgifterna att avbrytas. Det kan leda till dataförlust."
 
 #: ../plugins/gtkui/gtkui.c:1463
 msgid "Do you still want to quit?"
-msgstr ""
+msgstr "Vill du fortfarande avsluta?"
 
 #: ../plugins/gtkui/gtkui.c:1464 ../plugins/gtkui/prefwin.c:432
 #: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1067
@@ -313,7 +315,7 @@ msgstr "_Sök"
 
 #: ../plugins/gtkui/interface.c:252 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Sort by"
-msgstr ""
+msgstr "Sortera efter"
 
 #: ../plugins/gtkui/interface.c:259 ../plugins/gtkui/mainplaylist.c:233
 #: ../plugins/gtkui/plcommon.c:93 ../plugins/gtkui/prefwin.c:408
@@ -345,7 +347,7 @@ msgstr "Artist"
 #: ../plugins/gtkui/interface.c:275 ../plugins/gtkui/deadbeef.glade.h:24
 #: ../translation/extra.c:74
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #: ../plugins/gtkui/interface.c:279 ../plugins/gtkui/interface.c:351
 #: ../plugins/gtkui/deadbeef.glade.h:25
@@ -372,16 +374,16 @@ msgstr "Statusrad"
 
 #: ../plugins/gtkui/interface.c:307 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Equalizer"
-msgstr "Equalizer"
+msgstr "Utjämnare"
 
 #: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Design mode"
-msgstr ""
+msgstr "Designläge"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/deadbeef.glade.h:32
 #, fuzzy
 msgid "Log"
-msgstr "Upprepning"
+msgstr "Logg"
 
 #: ../plugins/gtkui/interface.c:319 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "_Playback"
@@ -402,7 +404,7 @@ msgstr "Blanda spår"
 
 #: ../plugins/gtkui/interface.c:345 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Shuffle albums"
-msgstr "Blanda albm"
+msgstr "Blanda album"
 
 #: ../plugins/gtkui/interface.c:357 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Looping"
@@ -410,15 +412,15 @@ msgstr "Upprepning"
 
 #: ../plugins/gtkui/interface.c:364 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Loop all"
-msgstr ""
+msgstr "Upprepa alla"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:40
 msgid "Loop single song"
-msgstr ""
+msgstr "Upprepa enskild låt"
 
 #: ../plugins/gtkui/interface.c:376 ../plugins/gtkui/deadbeef.glade.h:41
 msgid "Don't loop"
-msgstr ""
+msgstr "Upprepa inte"
 
 #: ../plugins/gtkui/interface.c:382 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -430,15 +432,15 @@ msgstr "Markering följer uppspelning"
 
 #: ../plugins/gtkui/interface.c:391 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current track"
-msgstr ""
+msgstr "Stoppa efter aktuellt spår"
 
 #: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Stop after current album"
-msgstr ""
+msgstr "Stoppa efter aktuellt album"
 
 #: ../plugins/gtkui/interface.c:404 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "Jump to current track"
-msgstr ""
+msgstr "Hoppa till aktuellt spår"
 
 #: ../plugins/gtkui/interface.c:408 ../plugins/gtkui/interface.c:415
 #: ../plugins/gtkui/deadbeef.glade.h:47
@@ -451,11 +453,11 @@ msgstr "_Ändringslogg"
 
 #: ../plugins/gtkui/interface.c:432 ../plugins/gtkui/deadbeef.glade.h:49
 msgid "_GPLv2"
-msgstr ""
+msgstr "_GPLv2"
 
 #: ../plugins/gtkui/interface.c:436 ../plugins/gtkui/deadbeef.glade.h:50
 msgid "_LGPLv2.1"
-msgstr ""
+msgstr "_LGPLv2.1"
 
 #: ../plugins/gtkui/interface.c:445 ../plugins/gtkui/deadbeef.glade.h:51
 msgid "_About"
@@ -463,7 +465,7 @@ msgstr "_Om"
 
 #: ../plugins/gtkui/interface.c:453 ../plugins/gtkui/deadbeef.glade.h:52
 msgid "_Translators"
-msgstr ""
+msgstr "_Översättare"
 
 #: ../plugins/gtkui/interface.c:722 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "Search"
@@ -508,11 +510,11 @@ msgstr "Spåregenskaper"
 
 #: ../plugins/gtkui/interface.c:1067 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Location:"
-msgstr ""
+msgstr "Plats:"
 
 #: ../plugins/gtkui/interface.c:1108 ../plugins/gtkui/deadbeef.glade.h:65
 msgid "Settings"
-msgstr ""
+msgstr "Inställningar"
 
 #: ../plugins/gtkui/interface.c:1134 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "_Apply"
@@ -556,11 +558,11 @@ msgstr "Format:"
 #: ../plugins/gtkui/interface.c:1389 ../plugins/gtkui/deadbeef.glade.h:76
 #, fuzzy
 msgid "Sort format:"
-msgstr "Format:"
+msgstr "Sortera format:"
 
 #: ../plugins/gtkui/interface.c:1398 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "(if non-empty)"
-msgstr ""
+msgstr "(om det inte är tomt)"
 
 #: ../plugins/gtkui/interface.c:1406 ../plugins/gtkui/deadbeef.glade.h:78
 msgid "Alignment:"
@@ -576,12 +578,12 @@ msgstr "Höger"
 
 #: ../plugins/gtkui/interface.c:1416
 msgid "Center"
-msgstr ""
+msgstr "Mitten"
 
 #: ../plugins/gtkui/interface.c:1422 ../plugins/gtkui/interface.c:4716
 #: ../plugins/gtkui/deadbeef.glade.h:82
 msgid "Text color:"
-msgstr ""
+msgstr "Textfärg:"
 
 #: ../plugins/gtkui/interface.c:1451 ../plugins/gtkui/interface.c:3596
 #: ../plugins/gtkui/interface.c:3727 ../plugins/gtkui/interface.c:3857
@@ -605,7 +607,7 @@ msgstr "Enhet för uppspelning:"
 
 #: ../plugins/gtkui/interface.c:1818 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr ""
+msgstr "Konvertera alltid 8 bitars ljud till 16 bitar"
 
 #: ../plugins/gtkui/interface.c:1822 ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Always convert 16 bit audio to 24 bit"
@@ -617,11 +619,11 @@ msgstr "Ljud"
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Source mode:"
-msgstr ""
+msgstr "Ljudläge:"
 
 #: ../plugins/gtkui/interface.c:1862
 msgid "By playback order"
-msgstr ""
+msgstr "Av uppspelningsordning"
 
 #: ../plugins/gtkui/interface.c:1863
 msgid "Track"
@@ -629,7 +631,7 @@ msgstr "Spår"
 
 #: ../plugins/gtkui/interface.c:1870 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Processing:"
-msgstr ""
+msgstr "Bearbetar:"
 
 #: ../plugins/gtkui/interface.c:1879 ../plugins/gtkui/plcommon.c:1840
 #: ../plugins/gtkui/widgets.c:3942
@@ -639,7 +641,7 @@ msgstr "Ingen"
 #: ../plugins/gtkui/interface.c:1880
 #, fuzzy
 msgid "Apply gain"
-msgstr "_Verkställ"
+msgstr "Verkställ"
 
 #: ../plugins/gtkui/interface.c:1881
 msgid "Apply gain and prevent clipping according to peak"
@@ -647,25 +649,25 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1882
 msgid "Only prevent clipping"
-msgstr ""
+msgstr "Förhindra bara klippning"
 
 #: ../plugins/gtkui/interface.c:1895 ../plugins/gtkui/interface.c:1929
 #: ../plugins/gtkui/deadbeef.glade.h:97
 msgid "-12 dB"
-msgstr ""
+msgstr "-12 dB"
 
 #: ../plugins/gtkui/interface.c:1905 ../plugins/gtkui/interface.c:1939
 #: ../plugins/gtkui/deadbeef.glade.h:98
 msgid "+12 dB"
-msgstr ""
+msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1909 ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Preamp with RG:"
-msgstr ""
+msgstr "Preamp with RG:"
 
 #: ../plugins/gtkui/interface.c:1916 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Preamp without RG:"
-msgstr ""
+msgstr "Preamp utan RG:"
 
 #: ../plugins/gtkui/interface.c:1943 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "<b>ReplayGain</b>"
@@ -683,15 +685,15 @@ msgstr "Återuppta föregående session vid uppstart"
 
 #: ../plugins/gtkui/interface.c:1965 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Don't add from archives when adding folders"
-msgstr ""
+msgstr "Lägg inte till från arkiv när du lägger till mappar"
 
 #: ../plugins/gtkui/interface.c:1969 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "\"Stop after current track\" option will switch off after triggering"
-msgstr ""
+msgstr "\"Stoppa efter aktuellt spår\" alternativet stängs av efter utlösning"
 
 #: ../plugins/gtkui/interface.c:1973 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "\"Stop after current album\" option will switch off after triggering"
-msgstr ""
+msgstr "\"Stoppa efter aktuellt album\" alternativet stängs av efter utlösning"
 
 #: ../plugins/gtkui/interface.c:1977 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Playback"
@@ -701,7 +703,7 @@ msgstr "Uppspelning"
 #: ../plugins/gtkui/deadbeef.glade.h:108 ../plugins/converter/interface.c:671
 #: ../plugins/converter/converter.glade.h:51
 msgid "Configure"
-msgstr "Inställningar"
+msgstr "Anpassa"
 
 #: ../plugins/gtkui/interface.c:2033 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "DSP Chain Preset"
@@ -709,35 +711,35 @@ msgstr "Inställningar för DSP-kedja"
 
 #: ../plugins/gtkui/interface.c:2045 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "_Load"
-msgstr ""
+msgstr "_Läs in"
 
 #: ../plugins/gtkui/interface.c:2049 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "DSP"
-msgstr ""
+msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "Close minimizes to tray"
-msgstr "Stäng minimerar till systembricka"
+msgstr "Stäng minimerar till systemfältet"
 
 #: ../plugins/gtkui/interface.c:2067 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Hide system tray icon"
-msgstr "Dölj ikon i systembrickan"
+msgstr "Dölj systemfältikonen"
 
 #: ../plugins/gtkui/interface.c:2071 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
-msgstr ""
+msgstr "Aktivera japansk SHIFT-JIS-detektering och omkodning"
 
 #: ../plugins/gtkui/interface.c:2075 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "Aktivera ryska CP1251 detektering och omkodning"
 
 #: ../plugins/gtkui/interface.c:2079 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "Aktivera kinesisk CP936-detektering och omkodning"
 
 #: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Interface refresh rate (times per second):"
-msgstr ""
+msgstr "Gränssnittets uppdateringshastighet (gånger per sekund):"
 
 #: ../plugins/gtkui/interface.c:2101 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Titlebar text while playing:"
@@ -745,51 +747,51 @@ msgstr "Text i titelraden vid uppspelning:"
 
 #: ../plugins/gtkui/interface.c:2115 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Titlebar text while stopped:"
-msgstr "Text u titelraden utan uppspelning:"
+msgstr "Titelfältet text stoppat:"
 
 #: ../plugins/gtkui/interface.c:2129 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "GUI Plugin (changing requires restart):"
-msgstr ""
+msgstr "GUI-insticksmodul (ändring kräver omstart):"
 
 #: ../plugins/gtkui/interface.c:2137 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Display selection playback time in status bar"
-msgstr ""
+msgstr "Visa markerings uppspelningstid i statusfältet"
 
 #: ../plugins/gtkui/interface.c:2141 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Player"
-msgstr ""
+msgstr "Spelare"
 
 #: ../plugins/gtkui/interface.c:2150 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Close playlists with middle mouse button"
-msgstr ""
+msgstr "Stäng spellistor med mitten musknappen"
 
 #: ../plugins/gtkui/interface.c:2154 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr ""
+msgstr "Dölj \"Ta bort från disk\" i kontextmenyn"
 
 #: ../plugins/gtkui/interface.c:2158 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Auto-name playlists when adding a single folder"
-msgstr ""
+msgstr "Namnge spellistor automatiskt när du lägger till en enda mapp"
 
 #: ../plugins/gtkui/interface.c:2162 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Auto-resize columns to fit the window"
-msgstr ""
+msgstr "Automatiskt ändra storlek på kolumner för att passa fönstret"
 
 #: ../plugins/gtkui/interface.c:2166 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "CUE: show subindexes as tracks (INDEX 02, INDEX 03, etc)"
-msgstr ""
+msgstr "CUE: visa delindex som spår (INDEX 02, INDEX 03, etc)"
 
 #: ../plugins/gtkui/interface.c:2174 ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Group spacing:"
-msgstr ""
+msgstr "Gruppavstånd:"
 
 #: ../plugins/gtkui/interface.c:2184 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "pixels"
-msgstr ""
+msgstr "pixlar"
 
 #: ../plugins/gtkui/interface.c:2192 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "GUI/Misc"
-msgstr ""
+msgstr "GUI/Övrigt"
 
 #: ../plugins/gtkui/interface.c:2207 ../plugins/gtkui/interface.c:2251
 #: ../plugins/gtkui/deadbeef.glade.h:132
@@ -806,105 +808,105 @@ msgstr "Bakgrund"
 
 #: ../plugins/gtkui/interface.c:2242 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Seekbar/Volumebar"
-msgstr ""
+msgstr "Sökfält/Volymfält"
 
 #: ../plugins/gtkui/interface.c:2267 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Base:"
-msgstr ""
+msgstr "Bas:"
 
 #: ../plugins/gtkui/interface.c:2280 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Dark:"
-msgstr ""
+msgstr "Mörk:"
 
 #: ../plugins/gtkui/interface.c:2293 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Light:"
-msgstr ""
+msgstr "Ljus:"
 
 #: ../plugins/gtkui/interface.c:2306 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Middle:"
-msgstr ""
+msgstr "Mellan:"
 
 #: ../plugins/gtkui/interface.c:2313 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Text:"
-msgstr ""
+msgstr "Text:"
 
 #: ../plugins/gtkui/interface.c:2338 ../plugins/gtkui/interface.c:2352
 #: ../plugins/gtkui/interface.c:2609 ../plugins/gtkui/interface.c:2615
 #: ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Bold"
-msgstr ""
+msgstr "Fet"
 
 #: ../plugins/gtkui/interface.c:2342 ../plugins/gtkui/interface.c:2356
 #: ../plugins/gtkui/interface.c:2621 ../plugins/gtkui/interface.c:2627
 #: ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Italic"
-msgstr ""
+msgstr "Kursiv"
 
 #: ../plugins/gtkui/interface.c:2366 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Playing text:"
-msgstr ""
+msgstr "Spelar text:"
 
 #: ../plugins/gtkui/interface.c:2373 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Selected text:"
-msgstr ""
+msgstr "markerad text:"
 
 #: ../plugins/gtkui/interface.c:2386 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "Tab strip"
-msgstr ""
+msgstr "Flikhuvud"
 
 #: ../plugins/gtkui/interface.c:2420 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Normal track(s):"
-msgstr ""
+msgstr "Normala spår:"
 
 #: ../plugins/gtkui/interface.c:2433 ../plugins/gtkui/interface.c:2595
 #: ../plugins/gtkui/deadbeef.glade.h:147
 msgid "Playing track:"
-msgstr ""
+msgstr "Spelar spår:"
 
 #: ../plugins/gtkui/interface.c:2446 ../plugins/gtkui/interface.c:2602
 #: ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Selected track(s):"
-msgstr ""
+msgstr "Markerade spår:"
 
 #: ../plugins/gtkui/interface.c:2459 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "Columns:"
-msgstr ""
+msgstr "Kolumner:"
 
 #: ../plugins/gtkui/interface.c:2478 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "Group header:"
-msgstr ""
+msgstr "Grupprubrik:"
 
 #: ../plugins/gtkui/interface.c:2503 ../plugins/gtkui/deadbeef.glade.h:151
 msgid "<b>Foreground:</b>"
-msgstr ""
+msgstr "<b>Förgrund:</b>"
 
 #: ../plugins/gtkui/interface.c:2528 ../plugins/gtkui/deadbeef.glade.h:152
 msgid "Even:"
-msgstr ""
+msgstr "Jämna:"
 
 #: ../plugins/gtkui/interface.c:2535 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "Odd:"
-msgstr ""
+msgstr "Udda:"
 
 #: ../plugins/gtkui/interface.c:2548 ../plugins/gtkui/deadbeef.glade.h:154
 msgid "Selected:"
-msgstr ""
+msgstr "Markerade:"
 
 #: ../plugins/gtkui/interface.c:2561 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "Cursor:"
-msgstr ""
+msgstr "Markör:"
 
 #: ../plugins/gtkui/interface.c:2580 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "<b>Background:</b>"
-msgstr ""
+msgstr "<b>Bakgrund:</b>"
 
 #: ../plugins/gtkui/interface.c:2585 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Override (loses GTK treeview theming, but speeds up rendering)"
-msgstr ""
+msgstr "Åsidosätt (förlorar GTK treeview-teman, men snabbare framställning)"
 
 #: ../plugins/gtkui/interface.c:2637 ../plugins/gtkui/deadbeef.glade.h:158
 msgid "Appearance"
-msgstr ""
+msgstr "Utseende"
 
 #: ../plugins/gtkui/interface.c:2646 ../plugins/gtkui/deadbeef.glade.h:159
 msgid "Enable Proxy Server"
@@ -932,7 +934,7 @@ msgstr "Lösenord för proxy:"
 
 #: ../plugins/gtkui/interface.c:2732 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "HTTP-användaragent:"
 
 #: ../plugins/gtkui/interface.c:2745 ../plugins/gtkui/interface.c:4592
 #: ../plugins/gtkui/deadbeef.glade.h:166
@@ -945,25 +947,25 @@ msgstr "Nätverk"
 
 #: ../plugins/gtkui/interface.c:2762 ../plugins/gtkui/deadbeef.glade.h:168
 msgid "Assigned Hotkeys:"
-msgstr ""
+msgstr "Tilldelade snabbtangenter:"
 
 #: ../plugins/gtkui/interface.c:2797 ../plugins/gtkui/interface.c:4753
 #: ../plugins/gtkui/deadbeef.glade.h:169
 msgid "Action:"
-msgstr ""
+msgstr "Åtgärd:"
 
 #: ../plugins/gtkui/interface.c:2802 ../plugins/gtkui/interface.c:2815
 #: ../plugins/gtkui/interface.c:4757 ../plugins/gtkui/deadbeef.glade.h:170
 msgid "<Not set>"
-msgstr ""
+msgstr "<Ej inställd>"
 
 #: ../plugins/gtkui/interface.c:2810 ../plugins/gtkui/deadbeef.glade.h:171
 msgid "Key combination:"
-msgstr ""
+msgstr "Tangentkombination:"
 
 #: ../plugins/gtkui/interface.c:2819 ../plugins/gtkui/deadbeef.glade.h:172
 msgid "Global hotkey"
-msgstr ""
+msgstr "Global snabbtangent"
 
 #: ../plugins/gtkui/interface.c:2831 ../plugins/gtkui/deadbeef.glade.h:173
 msgid ""
@@ -972,28 +974,32 @@ msgid ""
 "The changes will NOT be saved\n"
 "if you don't press Apply."
 msgstr ""
+"Använd Tillämpa-knappen för att spara dina ändringar,\n"
+"eller Återgå-knappen för att ångra dina ändringar.\n"
+"Ändringarna kommer INTE att sparas\n"
+"om du inte trycker på Tillämpa."
 
 #: ../plugins/gtkui/interface.c:2868 ../plugins/gtkui/deadbeef.glade.h:177
 msgid "_Defaults"
-msgstr ""
+msgstr "_Standardinställningarna"
 
 #: ../plugins/gtkui/interface.c:2872 ../plugins/gtkui/deadbeef.glade.h:178
 msgid "Hotkeys"
-msgstr ""
+msgstr "Snabbtangenter"
 
 #: ../plugins/gtkui/interface.c:2903 ../plugins/gtkui/deadbeef.glade.h:179
 msgid "Version: "
-msgstr ""
+msgstr "Version: "
 
 #: ../plugins/gtkui/interface.c:2967 ../plugins/gtkui/deadbeef.glade.h:180
 #: ../translation/extra.c:83
 msgid "Copyright"
-msgstr ""
+msgstr "Copyright"
 
 #: ../plugins/gtkui/interface.c:2977 ../plugins/gtkui/deadbeef.glade.h:181
 #: ../plugins/gtkui/ctmapping.c:131
 msgid "Plugins"
-msgstr "Instick"
+msgstr "Insticksmoduler"
 
 #: ../plugins/gtkui/interface.c:3683 ../plugins/gtkui/deadbeef.glade.h:182
 msgid "URL:"
@@ -1003,15 +1009,15 @@ msgstr "URL:"
 #: ../plugins/gtkui/interface.c:4911 ../plugins/gtkui/plcommon.c:1215
 #: ../plugins/gtkui/deadbeef.glade.h:183
 msgid "Set Custom Title"
-msgstr ""
+msgstr "Ange anpassad titel"
 
 #: ../plugins/gtkui/interface.c:3801 ../plugins/gtkui/deadbeef.glade.h:184
 msgid "Group By ..."
-msgstr ""
+msgstr "Gruppera efter ..."
 
 #: ../plugins/gtkui/interface.c:3925 ../plugins/gtkui/deadbeef.glade.h:185
 msgid "Sort by ..."
-msgstr ""
+msgstr "Sortera efter ..."
 
 #: ../plugins/gtkui/interface.c:3941 ../plugins/gtkui/deadbeef.glade.h:186
 msgid "Format"
@@ -1019,23 +1025,23 @@ msgstr "Format"
 
 #: ../plugins/gtkui/interface.c:3971
 msgid "Ascending"
-msgstr ""
+msgstr "Stigande"
 
 #: ../plugins/gtkui/interface.c:3972
 msgid "Descending"
-msgstr ""
+msgstr "Fallande"
 
 #: ../plugins/gtkui/interface.c:4025 ../plugins/gtkui/deadbeef.glade.h:189
 #: ../plugins/converter/interface.c:772
 #: ../plugins/converter/converter.glade.h:52
 msgid "Select DSP Plugin"
-msgstr "Välj DSP-instick"
+msgstr "Välj DSP-insticksmodul"
 
 #: ../plugins/gtkui/interface.c:4041 ../plugins/gtkui/deadbeef.glade.h:190
 #: ../plugins/converter/convgui.c:1469 ../plugins/converter/interface.c:788
 #: ../plugins/gtkui/dspconfig.c:144 ../plugins/converter/converter.glade.h:53
 msgid "Plugin"
-msgstr "Instick"
+msgstr "Insticksmodul"
 
 #: ../plugins/gtkui/interface.c:4126 ../plugins/gtkui/deadbeef.glade.h:191
 msgid "Tag Writer Settings"
@@ -1104,7 +1110,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:4513 ../plugins/gtkui/deadbeef.glade.h:205
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Återställ till standardinställningar"
 
 #: ../plugins/gtkui/interface.c:4608 ../plugins/gtkui/deadbeef.glade.h:206
 msgid "Content-Type:"
@@ -1112,23 +1118,23 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:4621 ../plugins/gtkui/deadbeef.glade.h:207
 msgid "Plugins:"
-msgstr ""
+msgstr "Insticksmoduler:"
 
 #: ../plugins/gtkui/interface.c:4689 ../plugins/gtkui/deadbeef.glade.h:208
 msgid "Button properties"
-msgstr ""
+msgstr "Knappegenskaper"
 
 #: ../plugins/gtkui/interface.c:4704 ../plugins/gtkui/deadbeef.glade.h:209
 msgid "Color:"
-msgstr ""
+msgstr "Färg:"
 
 #: ../plugins/gtkui/interface.c:4728 ../plugins/gtkui/deadbeef.glade.h:210
 msgid "Icon:"
-msgstr ""
+msgstr "Ikon:"
 
 #: ../plugins/gtkui/interface.c:4740 ../plugins/gtkui/deadbeef.glade.h:211
 msgid "Label:"
-msgstr ""
+msgstr "Etikett:"
 
 #: ../plugins/gtkui/interface.c:4821 ../plugins/gtkui/deadbeef.glade.h:212
 msgid "Select action"
