@@ -56,16 +56,6 @@ void rfft(int n,int isign,REAL *x)
 
     rdft(n,isign,x,ip,w);
 }
-#elif defined(USE_FFMPEG) || defined(USE_SHIBATCH)
-extern "C" void rfft(int n,int isign,REAL *x);
-#endif
-
-#if defined(USE_SHIBATCH)
-extern "C" {
-#include "SIMDBase.h"
-}
-#endif
-
 
 #define PI 3.1415926535897932384626433832795
 
@@ -106,19 +96,11 @@ static REAL izero(REAL x)
 }
 
 void *equ_malloc (int size) {
-#ifdef USE_SHIBATCH
-    return SIMDBase_alignedMalloc (size);
-#else
     return malloc (size);
-#endif
 }
 
 void equ_free (void *mem) {
-#ifdef USE_SHIBATCH
-    SIMDBase_alignedFree (mem);
-#else
     free (mem);
-#endif
 }
 
 extern "C" void equ_init(SuperEqState *state, int wb, int channels)
