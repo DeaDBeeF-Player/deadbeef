@@ -1315,8 +1315,16 @@ _update_buffering_state () {
 
         // update buffering UI
         if (!buffering) {
-            streamer_set_buffering_track (NULL);
-            // NOTE: not sending trackinfochanged, it will be sent immediately after track starts playing.
+            if (buffering_track) {
+                playItem_t *prev = buffering_track;
+                pl_item_ref (prev);
+                streamer_set_buffering_track (NULL);
+                send_trackinfochanged (prev);
+                pl_item_unref (prev);
+            }
+            else if (playing_track) {
+                send_trackinfochanged (playing_track);
+            }
         }
         else if (buffering_track) {
             send_trackinfochanged (buffering_track);
