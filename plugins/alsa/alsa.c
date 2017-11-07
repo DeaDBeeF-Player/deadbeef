@@ -21,7 +21,9 @@
 #include <unistd.h>
 #include <sys/prctl.h>
 #include "../../deadbeef.h"
+#ifdef HAVE_CONFIG_H
 #include "../../config.h"
+#endif
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
@@ -586,7 +588,7 @@ palsa_unpause (void) {
 static void
 palsa_thread (void *context) {
     prctl (PR_SET_NAME, "deadbeef-alsa", 0, 0, 0, 0);
-    int err;
+    int err = 0;
     for (;;) {
         if (alsa_terminate) {
             break;
@@ -596,61 +598,54 @@ palsa_thread (void *context) {
             continue;
         }
 
-        LOCK;
-        /* find out how much space is available for playback data */
-        snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
-        UNLOCK;
-
-        while (!alsa_terminate && frames_to_deliver >= period_size) {
-            LOCK;
-            err = 0;
-            int sz = period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels;
-            char buf[sz];
-            int br = palsa_callback (buf, sz);
-            if (alsa_terminate) {
-                UNLOCK;
-                break;
-            }
-            if (br < 0) {
-                br = 0;
-            }
-
-            if (br > 0) {
-                int frames = snd_pcm_bytes_to_frames(audio, br);
-                err = snd_pcm_writei (audio, buf, frames);
-            }
-            if (alsa_terminate) {
-                UNLOCK;
-                break;
-            }
-
-            if (err < 0) {
-                if (err == -ESTRPIPE) {
-                    fprintf (stderr, "alsa: trying to recover from suspend... (error=%d, %s)\n", err,  snd_strerror (err));
-                    while ((err = snd_pcm_resume(audio)) == -EAGAIN) {
-                        sleep(1); /* wait until the suspend flag is released */
-                    }
-                    if (err < 0) {
-                        err = snd_pcm_prepare(audio);
-                        if (err < 0) {
-                            fprintf (stderr, "Can't recover from suspend, prepare failed: %s", snd_strerror(err));
-                            exit (-1);
-                        }
-                    }
-                }
-                else {
-                    snd_pcm_prepare (audio);
-                    snd_pcm_start (audio);
-                }
-                UNLOCK;
-                continue;
-            }
-            frames_to_deliver = snd_pcm_avail_update (audio);
-            UNLOCK;
+        // read data
+        err = 0;
+        int sz = period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels;
+        char buf[sz];
+        int br = palsa_callback (buf, sz);
+        if (alsa_terminate) {
+            break;
         }
-        int sleeptime = period_size-frames_to_deliver;
-        if (sleeptime > 0 && plugin.fmt.samplerate > 0 && plugin.fmt.channels > 0) {
-            usleep (sleeptime * 1000 / plugin.fmt.samplerate * 1000);
+        if (br <= 0) {
+            usleep (10000);
+            continue;
+        }
+
+retry:
+        // wait till pcm is ready
+        snd_pcm_wait (audio, 1000);
+
+        // wait till buffer is available
+        err = snd_pcm_avail_update (audio);
+
+        if (alsa_terminate) {
+            break;
+        }
+
+        if (err < 0) {
+            trace ("snd_pcm_avail_update: %d: %s\n", err, snd_strerror (err));
+            err = snd_pcm_recover (audio, err, 1); 
+            if (err < 0) {
+                trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
+                break; // recovery failed
+            }
+        }
+
+        // write data
+        int frames = snd_pcm_bytes_to_frames(audio, br);
+        err = snd_pcm_writei (audio, buf, frames);
+
+        if (alsa_terminate) {
+            break;
+        }
+
+        if (err < 0) {
+            trace ("snd_pcm_writei: %d: %s\n", err, snd_strerror (err));
+            if (snd_pcm_recover (audio, err, 1) < 0) {
+                trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
+                break; // recovery failed
+            }
+            goto retry;
         }
     }
 
