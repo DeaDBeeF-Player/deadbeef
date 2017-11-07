@@ -1409,22 +1409,20 @@ streamer_thread (void *ctx) {
 
         _update_buffering_state ();
 
-        streamer_lock ();
         if (!fileinfo) {
             if (_audio_stall_count >= AUDIO_STALL_WAIT) {
                 output->stop ();
+                streamer_lock ();
                 _handle_playback_stopped();
                 _audio_stall_count = 0;
                 streamer_unlock ();
                 continue;
             }
-            streamer_unlock ();
             usleep (50000); // nothing is streaming -- about to stop
             continue;
         }
 
         streamblock_t *block = streamreader_get_next_block ();
-        streamer_unlock ();
 
         if (!block) {
             usleep (50000); // all blocks are full
