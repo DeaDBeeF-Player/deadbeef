@@ -589,6 +589,7 @@ static void
 palsa_thread (void *context) {
     prctl (PR_SET_NAME, "deadbeef-alsa", 0, 0, 0, 0);
     int err = 0;
+    int avail;
     for (;;) {
         if (alsa_terminate) {
             break;
@@ -612,11 +613,16 @@ palsa_thread (void *context) {
         }
 
 retry:
-        // wait till pcm is ready
-        snd_pcm_wait (audio, 1000);
-
         // wait till buffer is available
-        err = snd_pcm_avail_update (audio);
+        do {
+            LOCK;
+            avail = snd_pcm_avail_update (audio);
+            UNLOCK;
+            if (avail < 0) {
+                err = avail;
+                break;
+            }
+        } while (avail < period_size);
 
         if (alsa_terminate) {
             break;
@@ -624,16 +630,20 @@ retry:
 
         if (err < 0) {
             trace ("snd_pcm_avail_update: %d: %s\n", err, snd_strerror (err));
-            err = snd_pcm_recover (audio, err, 1); 
+            LOCK;
+            err = snd_pcm_recover (audio, err, 1);
+            UNLOCK;
             if (err < 0) {
                 trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
-                break; // recovery failed
             }
+            goto retry;
         }
 
         // write data
+        LOCK;
         int frames = snd_pcm_bytes_to_frames(audio, br);
         err = snd_pcm_writei (audio, buf, frames);
+        UNLOCK;
 
         if (alsa_terminate) {
             break;
@@ -641,9 +651,9 @@ retry:
 
         if (err < 0) {
             trace ("snd_pcm_writei: %d: %s\n", err, snd_strerror (err));
+            LOCK;
             if (snd_pcm_recover (audio, err, 1) < 0) {
                 trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
-                break; // recovery failed
             }
             goto retry;
         }
