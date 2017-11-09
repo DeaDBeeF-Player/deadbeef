@@ -753,7 +753,17 @@ on_trkproperties_edit_in_place_activate
                                         (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+    GtkTreePath *path;
+    gtk_tree_view_get_cursor (treeview, &path, NULL);
+    if (!path) {
+        return;
+    }
 
+    GtkTreeViewColumn *col = gtk_tree_view_get_column (treeview, 1);
+
+    gtk_tree_view_set_cursor (treeview, path, col, TRUE); // set cursor onto new field
+    gtk_tree_path_free(path);
 }
 
 
