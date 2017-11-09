@@ -24,7 +24,6 @@
 #include "paramlist.hpp"
 #include "Equ.h"
 
-#ifdef USE_OOURA
 extern "C" void rdft(int, int, REAL *, int *, REAL *);
 void rfft(int n,int isign,REAL *x)
 {
