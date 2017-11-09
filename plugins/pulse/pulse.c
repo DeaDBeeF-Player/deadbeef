@@ -310,9 +310,6 @@ static void pulse_thread(void *context)
             fprintf(stderr, "pulse: failed to write buffer\n");
             usleep(10000);
         }
-        else if (res == 0) {
-            usleep(10000);
-        }
     }
 
     deadbeef->mutex_lock (mutex);
