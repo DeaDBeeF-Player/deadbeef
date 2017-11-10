@@ -436,10 +436,10 @@ project "converter_gtk2"
 project "resources"
     kind "Utility"
     postbuildcommands {
-        "mkdir -p bin/%{cfg.buildcfg}/pixmaps",
-        "cp icons/32x32/deadbeef.png bin/%{cfg.buildcfg}",
-        "cp pixmaps/*.png pixmaps/*.svg bin/%{cfg.buildcfg}/pixmaps/",
-        "mkdir -p bin/%{cfg.buildcfg}/plugins/convpresets",
-        "cp -r plugins/converter/convpresets bin/%{cfg.buildcfg}/plugins/",
+        "{MKDIR} bin/%{cfg.buildcfg}/pixmaps",
+        "{COPY} icons/32x32/deadbeef.png bin/%{cfg.buildcfg}",
+        "{COPY} pixmaps/*.png pixmaps/*.svg bin/%{cfg.buildcfg}/pixmaps/",
+        "{MKDIR} bin/%{cfg.buildcfg}/plugins/convpresets",
+        "{COPY} plugins/converter/convpresets bin/%{cfg.buildcfg}/plugins/",
     }
 
