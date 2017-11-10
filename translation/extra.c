@@ -101,3 +101,4 @@ _("Disable gapless playback (faster scanning)")
 // adplug
 _("Prefer Ken emu over Satoh (surround won't work)")
 _("Enable surround")
+_("Skip to")
