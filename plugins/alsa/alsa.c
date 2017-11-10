@@ -435,7 +435,7 @@ palsa_setformat (ddb_waveformat_t *fmt) {
         return 0;
     }
     else {
-        trace ("switching format:\n"
+        trace ("switching format to (requsted -> actual):\n"
         "bps %d -> %d\n"
         "is_float %d -> %d\n"
         "channels %d -> %d\n"
@@ -622,7 +622,7 @@ retry:
                 err = avail;
                 break;
             }
-        } while (avail < period_size);
+        } while (avail < period_size && !alsa_terminate);
 
         if (alsa_terminate) {
             break;
@@ -635,6 +635,8 @@ retry:
             UNLOCK;
             if (err < 0) {
                 trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
+                state = OUTPUT_STATE_STOPPED;
+                continue;
             }
             goto retry;
         }
@@ -652,8 +654,12 @@ retry:
         if (err < 0) {
             trace ("snd_pcm_writei: %d: %s\n", err, snd_strerror (err));
             LOCK;
-            if (snd_pcm_recover (audio, err, 1) < 0) {
+            err = snd_pcm_recover (audio, err, 1);
+            UNLOCK;
+            if (err < 0) {
                 trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
+                state = OUTPUT_STATE_STOPPED;
+                continue;
             }
             goto retry;
         }
