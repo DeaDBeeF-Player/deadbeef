@@ -1437,11 +1437,11 @@ streamer_thread (void *ctx) {
             continue;
         }
 
-        int res = streamreader_read_block (block, streaming_track, fileinfo);
+        // streamreader_read_block will lock the mutex after success
+        int res = streamreader_read_block (block, streaming_track, fileinfo, mutex);
         int last = 0;
 
         if (res >= 0) {
-            streamer_lock ();
             streamreader_enqueue_block (block);
             last = block->last;
             streamer_unlock ();
