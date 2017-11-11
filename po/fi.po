@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-09 19:04+0200\n"
-"PO-Revision-Date: 2017-08-03 14:30+0000\n"
+"POT-Creation-Date: 2017-11-11 12:21+0100\n"
+"PO-Revision-Date: 2017-11-11 11:22+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Finnish (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/fi/)\n"
@@ -37,8 +37,8 @@ msgid "DeaDBeeF Translators"
 msgstr "DeaDBeeFin kääntäjät"
 
 #: ../plugins/gtkui/callbacks.c:638 ../plugins/gtkui/interface.c:976
-#: ../plugins/gtkui/deadbeef.glade.h:62 ../plugins/converter/convgui.c:1749
-#: ../plugins/converter/convgui.c:1757 ../plugins/gtkui/actionhandlers.c:473
+#: ../plugins/gtkui/deadbeef.glade.h:62 ../plugins/converter/convgui.c:1766
+#: ../plugins/converter/convgui.c:1774 ../plugins/gtkui/actionhandlers.c:473
 msgid "Help"
 msgstr "Ohje"
 
@@ -94,142 +94,137 @@ msgstr "Nollaa esivahvistin"
 msgid "Zero Bands"
 msgstr "Nollaa kanavat"
 
-#: ../plugins/gtkui/eq.c:397 ../plugins/converter/interface.c:843
-#: ../plugins/converter/converter.glade.h:54
+#: ../plugins/gtkui/eq.c:397 ../plugins/converter/interface.c:852
+#: ../plugins/converter/converter.glade.h:55
 msgid "Presets"
 msgstr "Esiasetukset"
 
-#: ../plugins/gtkui/gtkui.c:160 ../tf.c:1820
+#: ../plugins/gtkui/gtkui.c:162 ../tf.c:1833
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 päivä %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:163 ../tf.c:1823
+#: ../plugins/gtkui/gtkui.c:165 ../tf.c:1836
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d päivää %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:185
-#, c-format
-msgid "Stopped | %d tracks | %s total playtime"
-msgstr "Pysäytetty | %d raitaa | kokonaiskesto %s"
-
-#: ../plugins/gtkui/gtkui.c:656 ../plugins/gtkui/fileman.c:64
+#: ../plugins/gtkui/gtkui.c:667 ../plugins/gtkui/fileman.c:64
 #: ../plugins/pltbrowser/pltbrowser.c:72
 msgid "New Playlist"
 msgstr "Uusi soittolista"
 
-#: ../plugins/gtkui/gtkui.c:659 ../plugins/pltbrowser/pltbrowser.c:75
+#: ../plugins/gtkui/gtkui.c:670 ../plugins/pltbrowser/pltbrowser.c:75
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Uusi soittolista (%d)"
 
-#: ../plugins/gtkui/gtkui.c:716
+#: ../plugins/gtkui/gtkui.c:727
 #, c-format
 msgid "Copy of %s"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:719
+#: ../plugins/gtkui/gtkui.c:730
 #, c-format
 msgid "Copy of %s (%d)"
 msgstr ""
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1199
+#: ../plugins/gtkui/gtkui.c:1209
 msgid "Playlist with tabs"
 msgstr "Soittolista välilehdillä"
 
-#: ../plugins/gtkui/gtkui.c:1200 ../plugins/gtkui/interface.c:2188
+#: ../plugins/gtkui/gtkui.c:1210 ../plugins/gtkui/interface.c:2188
 #: ../plugins/gtkui/interface.c:2633 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Playlist"
 msgstr "Soittolista"
 
-#: ../plugins/gtkui/gtkui.c:1203
+#: ../plugins/gtkui/gtkui.c:1213
 msgid "Splitter (top and bottom)"
 msgstr "Jakaja (ylä- ja alapuoli)"
 
-#: ../plugins/gtkui/gtkui.c:1204
+#: ../plugins/gtkui/gtkui.c:1214
 msgid "Splitter (left and right)"
 msgstr "Jakaja (vasen ja oikea)"
 
-#: ../plugins/gtkui/gtkui.c:1206
+#: ../plugins/gtkui/gtkui.c:1216
 msgid "Tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1207
+#: ../plugins/gtkui/gtkui.c:1217
 msgid "Playlist tabs"
 msgstr "Soittolista välilehdet"
 
-#: ../plugins/gtkui/gtkui.c:1208
+#: ../plugins/gtkui/gtkui.c:1218
 msgid "Selection properties"
 msgstr "Valinnan ominaisuudet"
 
-#: ../plugins/gtkui/gtkui.c:1209
+#: ../plugins/gtkui/gtkui.c:1219
 msgid "Album art display"
 msgstr "Albumin kuvituksen näyttö"
 
-#: ../plugins/gtkui/gtkui.c:1210
+#: ../plugins/gtkui/gtkui.c:1220
 msgid "Scope"
 msgstr "Oskilloskooppi"
 
-#: ../plugins/gtkui/gtkui.c:1211
+#: ../plugins/gtkui/gtkui.c:1221
 msgid "Spectrum"
 msgstr "Spektri"
 
-#: ../plugins/gtkui/gtkui.c:1212
+#: ../plugins/gtkui/gtkui.c:1222
 msgid "HBox"
 msgstr "HBox"
 
-#: ../plugins/gtkui/gtkui.c:1213
+#: ../plugins/gtkui/gtkui.c:1223
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:1214 ../plugins/gtkui/widgets.c:3846
+#: ../plugins/gtkui/gtkui.c:1224 ../plugins/gtkui/widgets.c:3846
 #: ../plugins/gtkui/widgets.c:3932
 msgid "Button"
 msgstr "Painike"
 
-#: ../plugins/gtkui/gtkui.c:1215
+#: ../plugins/gtkui/gtkui.c:1225
 msgid "Seekbar"
 msgstr "Etsintäpalkki"
 
-#: ../plugins/gtkui/gtkui.c:1216
+#: ../plugins/gtkui/gtkui.c:1226
 msgid "Playback controls"
 msgstr "Toistosäätimet"
 
-#: ../plugins/gtkui/gtkui.c:1217
+#: ../plugins/gtkui/gtkui.c:1227
 msgid "Volume bar"
 msgstr "Äänenvoimakkuuspalkki"
 
-#: ../plugins/gtkui/gtkui.c:1218
+#: ../plugins/gtkui/gtkui.c:1228
 msgid "Chiptune voices"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1219
+#: ../plugins/gtkui/gtkui.c:1229
 msgid "Log viewer"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1438
+#: ../plugins/gtkui/gtkui.c:1448
 msgid "Failed while reading help file"
 msgstr "Virhe ohjetiedostoa avattaessa"
 
-#: ../plugins/gtkui/gtkui.c:1448
+#: ../plugins/gtkui/gtkui.c:1458
 msgid "Failed to load help file"
 msgstr "Ohjetiedoston avaaminen epäonnistui"
 
-#: ../plugins/gtkui/gtkui.c:1461
+#: ../plugins/gtkui/gtkui.c:1471
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1463
+#: ../plugins/gtkui/gtkui.c:1473
 msgid "Do you still want to quit?"
 msgstr "Haluatko silti poistua?"
 
-#: ../plugins/gtkui/gtkui.c:1464 ../plugins/gtkui/prefwin.c:432
-#: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1067
-#: ../plugins/converter/convgui.c:1644 ../plugins/gtkui/actionhandlers.c:553
+#: ../plugins/gtkui/gtkui.c:1474 ../plugins/gtkui/prefwin.c:433
+#: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1084
+#: ../plugins/converter/convgui.c:1661 ../plugins/gtkui/actionhandlers.c:553
 msgid "Warning"
 msgstr "Varoitus"
 
@@ -296,8 +291,8 @@ msgstr "Valinta"
 
 #: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/interface.c:4977
 #: ../plugins/gtkui/plcommon.c:1072 ../plugins/gtkui/deadbeef.glade.h:16
-#: ../plugins/converter/interface.c:667
-#: ../plugins/converter/converter.glade.h:50
+#: ../plugins/converter/interface.c:676
+#: ../plugins/converter/converter.glade.h:51
 #: ../plugins/shellexecui/interface.c:66
 #: ../plugins/shellexecui/shellexec.glade.h:4
 msgid "Remove"
@@ -317,11 +312,11 @@ msgid "Sort by"
 msgstr "Järjestä"
 
 #: ../plugins/gtkui/interface.c:259 ../plugins/gtkui/mainplaylist.c:233
-#: ../plugins/gtkui/plcommon.c:93 ../plugins/gtkui/prefwin.c:408
+#: ../plugins/gtkui/plcommon.c:93 ../plugins/gtkui/prefwin.c:409
 #: ../plugins/gtkui/search.c:652 ../plugins/gtkui/deadbeef.glade.h:20
-#: ../plugins/converter/convgui.c:1165 ../plugins/converter/convgui.c:1720
-#: ../plugins/converter/interface.c:644
-#: ../plugins/converter/converter.glade.h:47
+#: ../plugins/converter/convgui.c:1182 ../plugins/converter/convgui.c:1737
+#: ../plugins/converter/interface.c:653
+#: ../plugins/converter/converter.glade.h:48
 #: ../plugins/shellexecui/shellexecui.c:324
 msgid "Title"
 msgstr "Nimi"
@@ -380,9 +375,8 @@ msgid "Design mode"
 msgstr "Suunnittelutila"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/deadbeef.glade.h:32
-#, fuzzy
 msgid "Log"
-msgstr "Toisto"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:319 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "_Playback"
@@ -533,8 +527,8 @@ msgid "Properties"
 msgstr "Ominaisuudet"
 
 #: ../plugins/gtkui/interface.c:1335 ../plugins/gtkui/interface.c:3565
-#: ../plugins/gtkui/deadbeef.glade.h:72 ../plugins/converter/interface.c:409
-#: ../plugins/converter/converter.glade.h:24
+#: ../plugins/gtkui/deadbeef.glade.h:72 ../plugins/converter/interface.c:418
+#: ../plugins/converter/converter.glade.h:25
 #: ../plugins/shellexecui/interface.c:163
 #: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1549
 #: ../plugins/gtkui/pltmenu.c:66
@@ -555,9 +549,8 @@ msgid "Format:"
 msgstr "Tiedostomuoto:"
 
 #: ../plugins/gtkui/interface.c:1389 ../plugins/gtkui/deadbeef.glade.h:76
-#, fuzzy
 msgid "Sort format:"
-msgstr "Tiedostomuoto:"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1398 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "(if non-empty)"
@@ -638,9 +631,8 @@ msgid "None"
 msgstr "Ei mitään"
 
 #: ../plugins/gtkui/interface.c:1880
-#, fuzzy
 msgid "Apply gain"
-msgstr "_Käytä"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1881
 msgid "Apply gain and prevent clipping according to peak"
@@ -661,11 +653,11 @@ msgid "+12 dB"
 msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1909 ../plugins/gtkui/deadbeef.glade.h:99
-msgid "Preamp with RG:"
+msgid "Preamp with RG info:"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1916 ../plugins/gtkui/deadbeef.glade.h:100
-msgid "Preamp without RG:"
+msgid "Preamp without RG info:"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1943 ../plugins/gtkui/deadbeef.glade.h:101
@@ -699,8 +691,8 @@ msgid "Playback"
 msgstr "Toisto"
 
 #: ../plugins/gtkui/interface.c:1998 ../plugins/gtkui/interface.c:2946
-#: ../plugins/gtkui/deadbeef.glade.h:108 ../plugins/converter/interface.c:671
-#: ../plugins/converter/converter.glade.h:51
+#: ../plugins/gtkui/deadbeef.glade.h:108 ../plugins/converter/interface.c:680
+#: ../plugins/converter/converter.glade.h:52
 msgid "Configure"
 msgstr "Tee asetukset"
 
@@ -802,15 +794,15 @@ msgid "Override"
 msgstr "Ohita"
 
 #: ../plugins/gtkui/interface.c:2216 ../plugins/gtkui/deadbeef.glade.h:133
-msgid "Foreground"
-msgstr "Etuala"
+msgid "Bars"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2223 ../plugins/gtkui/deadbeef.glade.h:134
-msgid "Background"
-msgstr "Tausta"
+msgid "Background (EQ)"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2242 ../plugins/gtkui/deadbeef.glade.h:135
-msgid "Seekbar/Volumebar"
+msgid "Seekbar/Volumebar/EQ"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:2267 ../plugins/gtkui/deadbeef.glade.h:136
@@ -1035,14 +1027,14 @@ msgid "Descending"
 msgstr "Laskeva"
 
 #: ../plugins/gtkui/interface.c:4025 ../plugins/gtkui/deadbeef.glade.h:189
-#: ../plugins/converter/interface.c:772
-#: ../plugins/converter/converter.glade.h:52
+#: ../plugins/converter/interface.c:781
+#: ../plugins/converter/converter.glade.h:53
 msgid "Select DSP Plugin"
 msgstr "Valitse DSP-liitännäinen"
 
 #: ../plugins/gtkui/interface.c:4041 ../plugins/gtkui/deadbeef.glade.h:190
-#: ../plugins/converter/convgui.c:1469 ../plugins/converter/interface.c:788
-#: ../plugins/gtkui/dspconfig.c:144 ../plugins/converter/converter.glade.h:53
+#: ../plugins/converter/convgui.c:1486 ../plugins/converter/interface.c:797
+#: ../plugins/gtkui/dspconfig.c:144 ../plugins/converter/converter.glade.h:54
 msgid "Plugin"
 msgstr "Liitännäinen"
 
@@ -1194,9 +1186,8 @@ msgid "Format from other fields..."
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:5009 ../plugins/gtkui/deadbeef.glade.h:222
-#, fuzzy
 msgid "Add new field..."
-msgstr "Lisää kenttä"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:5013 ../plugins/gtkui/deadbeef.glade.h:223
 msgid "Paste fields"
@@ -1207,29 +1198,50 @@ msgid "Automatically fill values..."
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:5097 ../plugins/gtkui/deadbeef.glade.h:225
-#, fuzzy
 msgid "Edit Value"
-msgstr "Muokkaa saraketta"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:5110 ../plugins/gtkui/deadbeef.glade.h:226
-#, fuzzy
 msgid "Field name:"
-msgstr "Kentän nimi"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:5121 ../plugins/gtkui/deadbeef.glade.h:227
-#, fuzzy
 msgid "Field value:"
-msgstr "Kentän nimi"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:5178 ../plugins/gtkui/deadbeef.glade.h:228
-#, fuzzy
 msgid "DeaDBeeF Log"
-msgstr "DeaDBeeF %s:n muutosloki"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:5206 ../plugins/gtkui/deadbeef.glade.h:229
-#, fuzzy
 msgid "Clear"
-msgstr "_Tyhjennä"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:5243 ../plugins/gtkui/deadbeef.glade.h:230
+msgid "ReplayGain Scan Progress"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:5254 ../plugins/gtkui/deadbeef.glade.h:231
+msgid "Current File:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:5272 ../plugins/gtkui/interface.c:5332
+#: ../plugins/gtkui/deadbeef.glade.h:232 ../plugins/gtkui/rg.c:311
+msgid "Status"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:5279 ../plugins/gtkui/interface.c:5343
+#: ../plugins/gtkui/deadbeef.glade.h:233
+msgid "Cancel"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:5311 ../plugins/gtkui/deadbeef.glade.h:234
+msgid "ReplayGain Scan Results"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:5339 ../plugins/gtkui/deadbeef.glade.h:235
+msgid "Update File Tags"
+msgstr ""
 
 #: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:650
 msgid "Artist / Album"
@@ -1282,10 +1294,9 @@ msgid "Bitrate"
 msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:936 ../plugins/gtkui/plcommon.c:1045
-#: ../plugins/gtkui/pltmenu.c:424
-#, fuzzy
+#: ../plugins/gtkui/pltmenu.c:427
 msgid "_Paste"
-msgstr "Liitä"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:990
 msgid "Add To Playback Queue"
@@ -1299,14 +1310,13 @@ msgstr "Poista toistojonosta"
 msgid "Reload Metadata"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1025 ../plugins/gtkui/pltmenu.c:400
+#: ../plugins/gtkui/plcommon.c:1025 ../plugins/gtkui/pltmenu.c:403
 msgid "Cu_t"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1035 ../plugins/gtkui/pltmenu.c:412
-#, fuzzy
+#: ../plugins/gtkui/plcommon.c:1035 ../plugins/gtkui/pltmenu.c:415
 msgid "_Copy"
-msgstr "Kopioi"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:1079
 msgid "Remove From Disk"
@@ -1345,15 +1355,15 @@ msgstr "Avaa tiedosto..."
 msgid "Configure %s"
 msgstr "Tee asetukset %s"
 
-#: ../plugins/gtkui/prefwin.c:79
+#: ../plugins/gtkui/prefwin.c:80
 msgid "Default Audio Device"
 msgstr "Oletusäänilaite"
 
-#: ../plugins/gtkui/prefwin.c:429
+#: ../plugins/gtkui/prefwin.c:430
 msgid "You modified the hotkeys settings, but didn't save your changes."
 msgstr "Muokkasit pikanäppäinasetuksia, mutta et tallentanut muutoksiasi."
 
-#: ../plugins/gtkui/prefwin.c:431
+#: ../plugins/gtkui/prefwin.c:432
 msgid "Are you sure you want to continue without saving?"
 msgstr "Haluatko varmasti jatkaa ilman tallentamista?"
 
@@ -1400,23 +1410,23 @@ msgstr "[Useita arvoja]"
 msgid "Writing tags..."
 msgstr "Kirjoitetaan tageja..."
 
-#: ../plugins/gtkui/trkproperties.c:858
+#: ../plugins/gtkui/trkproperties.c:871
 msgid "Field name"
 msgstr "Kentän nimi"
 
-#: ../plugins/gtkui/trkproperties.c:861
+#: ../plugins/gtkui/trkproperties.c:874
 msgid "Name:"
 msgstr "Nimi:"
 
-#: ../plugins/gtkui/trkproperties.c:873
+#: ../plugins/gtkui/trkproperties.c:886
 msgid "Field names must not start with : or _"
 msgstr "Tiedostonimet eivät voi alkaa merkeillä : tai _"
 
-#: ../plugins/gtkui/trkproperties.c:874 ../plugins/gtkui/trkproperties.c:913
+#: ../plugins/gtkui/trkproperties.c:887 ../plugins/gtkui/trkproperties.c:926
 msgid "Cannot add field"
 msgstr "Kenttää ei voi lisätä"
 
-#: ../plugins/gtkui/trkproperties.c:912
+#: ../plugins/gtkui/trkproperties.c:925
 msgid "Field with such name already exists, please try different name."
 msgstr "Samanniminen kenttä on jo olemassa, yritä toista nimeä."
 
@@ -1545,8 +1555,8 @@ msgstr ""
 #: ../main.c:126
 #, c-format
 msgid ""
-"                      FMT syntax: http://github.com/Alexey-Yakovenko/"
-"deadbeef/wiki/Title-formatting-2.0\n"
+"                      FMT syntax: http://github.com/DeaDBeeF-Player/deadbeef/"
+"wiki/Title-formatting-2.0\n"
 msgstr ""
 
 #: ../main.c:127
@@ -1573,23 +1583,23 @@ msgstr ""
 msgid "                      Examples: --volume 80 or --volume -20dB\n"
 msgstr ""
 
-#: ../playlist.c:480 ../playlist.c:2239
+#: ../playlist.c:483 ../playlist.c:2247
 msgid "Default"
 msgstr "Oletus"
 
-#: ../playlist.c:2904
+#: ../playlist.c:2912
 msgid "Mono"
 msgstr "Mono"
 
-#: ../playlist.c:2904
+#: ../playlist.c:2912
 msgid "Stereo"
 msgstr "Stereo"
 
-#: ../playlist.c:3433
+#: ../playlist.c:3428
 msgid "Yes"
 msgstr "Kyllä"
 
-#: ../playlist.c:3433
+#: ../playlist.c:3428
 msgid "No"
 msgstr "Ei"
 
@@ -1601,15 +1611,11 @@ msgid ""
 msgstr ""
 
 #: ../plugins/gtkui/deadbeef.glade.h:89
-#, fuzzy
 msgid ""
 "By playback order\n"
 "Track\n"
 "Album"
 msgstr ""
-"Pois käytöstä\n"
-"Raita\n"
-"Albumi"
 
 #: ../plugins/gtkui/deadbeef.glade.h:93
 msgid ""
@@ -1889,9 +1895,8 @@ msgid "Disc Number"
 msgstr "Levyn numero"
 
 #: ../translation/extra.c:80
-#, fuzzy
 msgid "Total Discs"
-msgstr "Raitoja yhteensä"
+msgstr ""
 
 #: ../translation/extra.c:81
 msgid "Comment"
@@ -1960,40 +1965,76 @@ msgstr "Suosi Ken-emulointia Satohin edelle (tilaääni ei toimi)"
 msgid "Enable surround"
 msgstr "Ota käyttöön tilaääni"
 
-#: ../plugins/converter/convgui.c:90
+#: ../translation/extra.c:104
+msgid "Skip to"
+msgstr ""
+
+#: ../translation/extra.c:105
+msgid "Previous genre"
+msgstr ""
+
+#: ../translation/extra.c:106
+msgid "Previous composer"
+msgstr ""
+
+#: ../translation/extra.c:107
+msgid "Previous artist"
+msgstr ""
+
+#: ../translation/extra.c:108
+msgid "Previous album"
+msgstr ""
+
+#: ../translation/extra.c:109
+msgid "Next genre"
+msgstr ""
+
+#: ../translation/extra.c:110
+msgid "Next composer"
+msgstr ""
+
+#: ../translation/extra.c:111
+msgid "Next artist"
+msgstr ""
+
+#: ../translation/extra.c:112
+msgid "Next album"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:91
 #, c-format
 msgid "[Built-in] %s"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:144
+#: ../plugins/converter/convgui.c:145
 msgid "The file already exists. Overwrite?"
 msgstr "Tiedosto on jo olemassa. Ylikirjoita?"
 
-#: ../plugins/converter/convgui.c:146
+#: ../plugins/converter/convgui.c:147
 msgid "Converter warning"
 msgstr "Muuntimen varoitus"
 
-#: ../plugins/converter/convgui.c:319
+#: ../plugins/converter/convgui.c:321
 msgid "Please select encoder"
 msgstr "Valitse koodekki"
 
-#: ../plugins/converter/convgui.c:321
+#: ../plugins/converter/convgui.c:323
 msgid "Converter error"
 msgstr "Muuntimen virhe"
 
-#: ../plugins/converter/convgui.c:345
+#: ../plugins/converter/convgui.c:347
 msgid "Converting..."
 msgstr "Muunnetaan..."
 
-#: ../plugins/converter/convgui.c:693
+#: ../plugins/converter/convgui.c:699
 msgid "Select folder..."
 msgstr "Valitse kansio..."
 
-#: ../plugins/converter/convgui.c:945
+#: ../plugins/converter/convgui.c:962
 msgid "Failed to save encoder preset"
 msgstr "Enkooderin esiasetuksen tallentaminen epäonnistui."
 
-#: ../plugins/converter/convgui.c:947 ../plugins/converter/convgui.c:1506
+#: ../plugins/converter/convgui.c:964 ../plugins/converter/convgui.c:1523
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
@@ -2001,177 +2042,182 @@ msgstr ""
 "Tarkista esiasetuskansion käyttöoikeudet, yritä keksiä toinen nimi tai "
 "vapauta levytilaa."
 
-#: ../plugins/converter/convgui.c:947 ../plugins/converter/convgui.c:1506
+#: ../plugins/converter/convgui.c:964 ../plugins/converter/convgui.c:1523
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr "Esiasetus samalla nimellä on jo olemassa. Yritä keksiä toinen nimi."
 
-#: ../plugins/converter/convgui.c:948 ../plugins/converter/convgui.c:1507
+#: ../plugins/converter/convgui.c:965 ../plugins/converter/convgui.c:1524
 #: ../plugins/gtkui/ctmapping.c:202 ../plugins/gtkui/ctmapping.c:230
 #: ../plugins/gtkui/ctmapping.c:262
 msgid "Error"
 msgstr "Virhe"
 
-#: ../plugins/converter/convgui.c:1002 ../plugins/converter/convgui.c:1140
+#: ../plugins/converter/convgui.c:1019 ../plugins/converter/convgui.c:1157
 msgid "Add new encoder"
 msgstr "Lisää uusi enkooderi"
 
-#: ../plugins/converter/convgui.c:1032
+#: ../plugins/converter/convgui.c:1049
 msgid "Edit encoder"
 msgstr "Muokkaa enkooderia"
 
-#: ../plugins/converter/convgui.c:1064 ../plugins/converter/convgui.c:1641
+#: ../plugins/converter/convgui.c:1081 ../plugins/converter/convgui.c:1658
 msgid "Remove preset"
 msgstr "Poista esiasetus"
 
-#: ../plugins/converter/convgui.c:1066 ../plugins/converter/convgui.c:1643
+#: ../plugins/converter/convgui.c:1083 ../plugins/converter/convgui.c:1660
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr "Tämä toiminto poistaa valikoidun esiasetuksen. Oletko varma?"
 
-#: ../plugins/converter/convgui.c:1155
+#: ../plugins/converter/convgui.c:1172
 msgid "Encoders"
 msgstr "Enkooderit"
 
-#: ../plugins/converter/convgui.c:1230 ../plugins/gtkui/dspconfig.c:191
+#: ../plugins/converter/convgui.c:1247 ../plugins/gtkui/dspconfig.c:191
 msgid "Add plugin to DSP chain"
 msgstr "Lisää liitännäinen DSP-ketjuun"
 
-#: ../plugins/converter/convgui.c:1505
+#: ../plugins/converter/convgui.c:1522
 msgid "Failed to save DSP preset"
 msgstr "DSP-esiasetuksen tallennus epäonnistui"
 
-#: ../plugins/converter/convgui.c:1569 ../plugins/converter/convgui.c:1607
+#: ../plugins/converter/convgui.c:1586 ../plugins/converter/convgui.c:1624
 msgid "New DSP Preset"
 msgstr "Uusi DSP-esiasetus"
 
-#: ../plugins/converter/convgui.c:1691
+#: ../plugins/converter/convgui.c:1708
 msgid "Edit DSP Preset"
 msgstr "Muokkaa DSP-esiasetusta"
 
-#: ../plugins/converter/convgui.c:1711
+#: ../plugins/converter/convgui.c:1728
 msgid "DSP Presets"
 msgstr "DSP-esiasetukset"
 
-#: ../plugins/converter/interface.c:102
+#: ../plugins/converter/interface.c:103
 #: ../plugins/converter/converter.glade.h:1
 msgid "Output folder:"
 msgstr "Ulostulokansio:"
 
-#: ../plugins/converter/interface.c:119
+#: ../plugins/converter/interface.c:120
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
 msgstr "Tallenna lähdekansioon"
 
-#: ../plugins/converter/interface.c:123
+#: ../plugins/converter/interface.c:124
 #: ../plugins/converter/converter.glade.h:3
 msgid "Preserve folder structure"
 msgstr "Säilytä kansiorakenne"
 
-#: ../plugins/converter/interface.c:127
+#: ../plugins/converter/interface.c:128
 #: ../plugins/converter/converter.glade.h:4
 msgid "Copy if the format is not changing"
 msgstr ""
 
-#: ../plugins/converter/interface.c:135
+#: ../plugins/converter/interface.c:132
 #: ../plugins/converter/converter.glade.h:5
+msgid "Re-tag after copy"
+msgstr ""
+
+#: ../plugins/converter/interface.c:140
+#: ../plugins/converter/converter.glade.h:6
 msgid "Output file name:"
 msgstr "Ulostulotiedoston nimi:"
 
-#: ../plugins/converter/interface.c:146
-#: ../plugins/converter/converter.glade.h:7
+#: ../plugins/converter/interface.c:151
+#: ../plugins/converter/converter.glade.h:8
 #, no-c-format
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%artist% - %title%)."
 msgstr ""
 
-#: ../plugins/converter/interface.c:159
-#: ../plugins/converter/converter.glade.h:9
+#: ../plugins/converter/interface.c:164
+#: ../plugins/converter/converter.glade.h:10
 msgid "Encoder:"
 msgstr "Enkooderi:"
 
-#: ../plugins/converter/interface.c:183
-#: ../plugins/converter/converter.glade.h:10
+#: ../plugins/converter/interface.c:188
+#: ../plugins/converter/converter.glade.h:11
 msgid "DSP preset:"
 msgstr "DSP-esiasetus:"
 
-#: ../plugins/converter/interface.c:206
-#: ../plugins/converter/converter.glade.h:11
+#: ../plugins/converter/interface.c:211
+#: ../plugins/converter/converter.glade.h:12
 msgid "Number of threads:"
 msgstr "Säikeiden määrä:"
 
-#: ../plugins/converter/interface.c:219
-#: ../plugins/converter/converter.glade.h:12
+#: ../plugins/converter/interface.c:224
+#: ../plugins/converter/converter.glade.h:13
 msgid "Output sample format:"
 msgstr "Ulostulon näytemuoto:"
 
-#: ../plugins/converter/interface.c:226
+#: ../plugins/converter/interface.c:231
 msgid "Keep source format"
 msgstr "Pidä lähteen tiedostomuoto"
 
-#: ../plugins/converter/interface.c:227
+#: ../plugins/converter/interface.c:232
 msgid "8 bit signed int"
 msgstr "8 bit signed int"
 
-#: ../plugins/converter/interface.c:228
+#: ../plugins/converter/interface.c:233
 msgid "16 bit signed int"
 msgstr "16 bit signed int"
 
-#: ../plugins/converter/interface.c:229
+#: ../plugins/converter/interface.c:234
 msgid "24 bit signed int"
 msgstr "24 bit signed int"
 
-#: ../plugins/converter/interface.c:230
+#: ../plugins/converter/interface.c:235
 msgid "32 bit signed int"
 msgstr "32 bit signed int"
 
-#: ../plugins/converter/interface.c:231
+#: ../plugins/converter/interface.c:236
 msgid "32 bit float"
 msgstr "32 bit float"
 
-#: ../plugins/converter/interface.c:237
-#: ../plugins/converter/converter.glade.h:19
+#: ../plugins/converter/interface.c:242
+#: ../plugins/converter/converter.glade.h:20
 msgid "When file exists:"
 msgstr "Kun tiedosto on jo olemassa:"
 
-#: ../plugins/converter/interface.c:244
+#: ../plugins/converter/interface.c:249
 msgid "Skip"
 msgstr ""
 
-#: ../plugins/converter/interface.c:245
+#: ../plugins/converter/interface.c:250
 msgid "Prompt"
 msgstr "Kysy"
 
-#: ../plugins/converter/interface.c:246
+#: ../plugins/converter/interface.c:251
 msgid "Overwrite"
 msgstr "Ylikirjoita"
 
-#: ../plugins/converter/interface.c:393
-#: ../plugins/converter/converter.glade.h:23
+#: ../plugins/converter/interface.c:402
+#: ../plugins/converter/converter.glade.h:24
 msgid "Edit Encoder Preset"
 msgstr "Muokkaa enkooderin esiasetusta"
 
-#: ../plugins/converter/interface.c:416
-#: ../plugins/converter/converter.glade.h:25
+#: ../plugins/converter/interface.c:425
+#: ../plugins/converter/converter.glade.h:26
 msgid "Untitled Encoder"
 msgstr "Nimeämätön enkooderi"
 
-#: ../plugins/converter/interface.c:424
-#: ../plugins/converter/converter.glade.h:26
+#: ../plugins/converter/interface.c:433
+#: ../plugins/converter/converter.glade.h:27
 msgid "Output file extension:"
 msgstr "Ulostulon tiedostopääte:"
 
-#: ../plugins/converter/interface.c:431
-#: ../plugins/converter/converter.glade.h:27
+#: ../plugins/converter/interface.c:440
+#: ../plugins/converter/converter.glade.h:28
 msgid "E.g. mp3"
 msgstr "Esim. mp3"
 
-#: ../plugins/converter/interface.c:439
-#: ../plugins/converter/converter.glade.h:28
+#: ../plugins/converter/interface.c:448
+#: ../plugins/converter/converter.glade.h:29
 msgid "Command line:"
 msgstr "Komentorivi:"
 
-#: ../plugins/converter/interface.c:450
-#: ../plugins/converter/converter.glade.h:30
+#: ../plugins/converter/interface.c:459
+#: ../plugins/converter/converter.glade.h:31
 #, no-c-format
 msgid ""
 "Example: lame - %o\n"
@@ -2180,8 +2226,8 @@ msgstr ""
 "Esimerkki: lame - %o\n"
 "%i on sisääntulotiedosto, %o on ulostulotiedosto, - on stdin"
 
-#: ../plugins/converter/interface.c:460
-#: ../plugins/converter/converter.glade.h:33
+#: ../plugins/converter/interface.c:469
+#: ../plugins/converter/converter.glade.h:34
 #, no-c-format
 msgid ""
 "<small>%o - output file name\n"
@@ -2190,71 +2236,70 @@ msgstr ""
 "<small>%o - ulostulotiedoston nimi\n"
 "%i - väliaikaisen sisääntulotiedoston nimi</small>"
 
-#: ../plugins/converter/interface.c:469
-#: ../plugins/converter/converter.glade.h:35
+#: ../plugins/converter/interface.c:478
+#: ../plugins/converter/converter.glade.h:36
 msgid "Method:"
 msgstr "Menetelmä:"
 
-#: ../plugins/converter/interface.c:476
+#: ../plugins/converter/interface.c:485
 msgid "Pipe"
 msgstr "Putki"
 
-#: ../plugins/converter/interface.c:477
-#, fuzzy
+#: ../plugins/converter/interface.c:486
 msgid "Temp File"
-msgstr "Tilapäinen tiedosto"
+msgstr ""
 
-#: ../plugins/converter/interface.c:478
+#: ../plugins/converter/interface.c:487
 msgid "Source File"
 msgstr ""
 
-#: ../plugins/converter/interface.c:495
-#: ../plugins/converter/converter.glade.h:39
+#: ../plugins/converter/interface.c:504
+#: ../plugins/converter/converter.glade.h:40
 msgid "APEv2"
 msgstr "APEv2"
 
-#: ../plugins/converter/interface.c:501
-#: ../plugins/converter/converter.glade.h:40
+#: ../plugins/converter/interface.c:510
+#: ../plugins/converter/converter.glade.h:41
 msgid "ID3v1"
 msgstr "ID3v1"
 
-#: ../plugins/converter/interface.c:507
-#: ../plugins/converter/converter.glade.h:41
+#: ../plugins/converter/interface.c:516
+#: ../plugins/converter/converter.glade.h:42
 msgid "OggVorbis"
 msgstr "Ogg Vorbis"
 
-#: ../plugins/converter/interface.c:513
-#: ../plugins/converter/converter.glade.h:42
+#: ../plugins/converter/interface.c:522
+#: ../plugins/converter/converter.glade.h:43
 msgid "FLAC"
 msgstr "FLAC"
 
-#: ../plugins/converter/interface.c:525
-#: ../plugins/converter/converter.glade.h:43
+#: ../plugins/converter/interface.c:534
+#: ../plugins/converter/converter.glade.h:44
 msgid "ID3v2"
 msgstr "ID3v2"
 
-#: ../plugins/converter/interface.c:535
-#: ../plugins/converter/converter.glade.h:44
+#: ../plugins/converter/interface.c:544
+#: ../plugins/converter/converter.glade.h:45
 msgid "MP4"
 msgstr ""
 
-#: ../plugins/converter/interface.c:541
-#: ../plugins/converter/converter.glade.h:45
+#: ../plugins/converter/interface.c:550
+#: ../plugins/converter/converter.glade.h:46
 msgid "<b>Tag writer</b>"
 msgstr "<b>Tagikirjoittaja</b>"
 
-#: ../plugins/converter/interface.c:628
-#: ../plugins/converter/converter.glade.h:46
+#: ../plugins/converter/interface.c:637
+#: ../plugins/converter/converter.glade.h:47
 msgid "DSP Preset Editor"
 msgstr "DSP-esiasetuksen muokkain"
 
-#: ../plugins/converter/interface.c:651
-#: ../plugins/converter/converter.glade.h:48
+#: ../plugins/converter/interface.c:660
+#: ../plugins/converter/converter.glade.h:49
 msgid "Untitled DSP Preset"
 msgstr "Nimeämätön DSP-esiasetus"
 
-#: ../plugins/converter/interface.c:663
-#: ../plugins/converter/converter.glade.h:49
+#: ../plugins/converter/interface.c:672
+#: ../plugins/converter/converter.glade.h:50
 #: ../plugins/shellexecui/interface.c:62
 #: ../plugins/shellexecui/shellexec.glade.h:3
 msgid "Add"
@@ -2266,7 +2311,7 @@ msgstr "Lisää"
 msgid "Couldn't find pixmap file: %s"
 msgstr "Bittikarttatiedostoa ei löydetty: %s"
 
-#: ../plugins/converter/converter.glade.h:13
+#: ../plugins/converter/converter.glade.h:14
 msgid ""
 "Keep source format\n"
 "8 bit signed int\n"
@@ -2282,22 +2327,19 @@ msgstr ""
 "32 bit signed int\n"
 "32 bit float"
 
-#: ../plugins/converter/converter.glade.h:20
+#: ../plugins/converter/converter.glade.h:21
 msgid ""
 "Skip\n"
 "Prompt\n"
 "Overwrite"
 msgstr ""
 
-#: ../plugins/converter/converter.glade.h:36
-#, fuzzy
+#: ../plugins/converter/converter.glade.h:37
 msgid ""
 "Pipe\n"
 "Temp File\n"
 "Source File"
 msgstr ""
-"Putki\n"
-"Väliaikainen tiedosto"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
@@ -2569,29 +2611,24 @@ msgid "Lock Right Pane Width"
 msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1546 ../plugins/gtkui/widgets.c:1661
-#, fuzzy
 msgid "Rename Tab"
-msgstr "Nimeä välilehti"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1668
-#, fuzzy
 msgid "Remove Tab"
-msgstr "Poista välilehti"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1675 ../plugins/gtkui/widgets.c:1854
-#, fuzzy
 msgid "Add New Tab"
-msgstr "Lisää uusi välilehti"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1684
-#, fuzzy
 msgid "Move Tab Left"
-msgstr "Siirrä välilehteä vasemmalle"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1691
-#, fuzzy
 msgid "Move Tab Right"
-msgstr "Siirrä välilehteä oikealle"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:2344 ../plugins/gtkui/widgets.c:2522
 #: ../plugins/pltbrowser/pltbrowser.c:878
@@ -2599,14 +2636,12 @@ msgid "Show Column Headers"
 msgstr "Näytä sarakkeiden otsakkeet"
 
 #: ../plugins/gtkui/widgets.c:3565
-#, fuzzy
 msgid "Expand Box by 1 Item"
-msgstr "Laajenna laatikkoa 1:llä elementillä"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:3570
-#, fuzzy
 msgid "Shrink Box by 1 Item"
-msgstr "Pienennä laatikkoa 1:llä elementillä"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:3575
 msgid "Homogeneous"
@@ -2621,30 +2656,28 @@ msgid "Fill"
 msgstr "Täytä"
 
 #: ../plugins/gtkui/widgets.c:4022
-#, fuzzy
 msgid "Configure Button"
-msgstr "Tee painikkeen asetukset"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:4301
 msgid "Voices:"
 msgstr ""
 
-#: ../plugins/gtkui/pltmenu.c:63 ../plugins/gtkui/pltmenu.c:373
+#: ../plugins/gtkui/pltmenu.c:63 ../plugins/gtkui/pltmenu.c:376
 msgid "Rename Playlist"
 msgstr "Nimeä Soittolista"
 
-#: ../plugins/gtkui/pltmenu.c:380
+#: ../plugins/gtkui/pltmenu.c:383
 msgid "Remove Playlist"
 msgstr "Poista Soittolista"
 
-#: ../plugins/gtkui/pltmenu.c:387
+#: ../plugins/gtkui/pltmenu.c:390
 msgid "Add New Playlist"
 msgstr "Lisää Uusi Soittolista"
 
-#: ../plugins/gtkui/pltmenu.c:391
-#, fuzzy
+#: ../plugins/gtkui/pltmenu.c:394
 msgid "Duplicate Playlist"
-msgstr "Nimeä Soittolista"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -2656,7 +2689,7 @@ msgstr ""
 msgid "Items"
 msgstr ""
 
-#: ../plugins/pltbrowser/pltbrowser.c:922
+#: ../plugins/pltbrowser/pltbrowser.c:922 ../plugins/gtkui/rg.c:310
 msgid "Name"
 msgstr "Nimi"
 
@@ -2668,71 +2701,42 @@ msgstr ""
 msgid "Playlist browser"
 msgstr "Soittolistaselain"
 
-#: ../tf.c:1512
+#: ../tf.c:1525
 msgid "mono"
 msgstr ""
 
-#: ../tf.c:1515 ../tf.c:1519
+#: ../tf.c:1528 ../tf.c:1532
 msgid "stereo"
 msgstr ""
 
-#~ msgid "| %4d kbps "
-#~ msgstr "| %4d Kb/s "
+#: ../plugins/gtkui/rg.c:282
+msgid "Updating File Tags Progress"
+msgstr ""
 
-#~ msgid "Paused | "
-#~ msgstr "Keskeytetty | "
+#: ../plugins/gtkui/rg.c:312
+msgid "Album Gain"
+msgstr ""
 
-#~ msgid ""
-#~ "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-#~ msgstr ""
-#~ "%s%s %s| %dHz | %d bittiä | %s | %d:%02d / %s | %d raitaa | kokonaiskesto "
-#~ "%s"
+#: ../plugins/gtkui/rg.c:313
+msgid "Track Gain"
+msgstr ""
 
-#~ msgid "Replaygain mode:"
-#~ msgstr "Replaygain-tila:"
+#: ../plugins/gtkui/rg.c:314
+msgid "Album Peak"
+msgstr ""
 
-#~ msgid "Disable"
-#~ msgstr "Pois päältä"
+#: ../plugins/gtkui/rg.c:315
+msgid "Track Peak"
+msgstr ""
 
-#~ msgid "Replaygain peak scale"
-#~ msgstr "Replaygain-huippuskaala"
+#: ../plugins/gtkui/rg.c:318
+msgid "Success"
+msgstr ""
 
-#~ msgid "Replaygain preamp:"
-#~ msgstr "Replaygain-esivahvistus:"
+#: ../plugins/gtkui/rg.c:319
+msgid "File not found"
+msgstr ""
 
-#~ msgid "Global preamp:"
-#~ msgstr "Yleinen esivahvistus:"
-
-#~ msgid "Remove field"
-#~ msgstr "Poista kentät"
-
-#~ msgid ""
-#~ "Item Index\n"
-#~ "Playing\n"
-#~ "Album Art\n"
-#~ "Artist - Album\n"
-#~ "Artist\n"
-#~ "Album\n"
-#~ "Title\n"
-#~ "Duration\n"
-#~ "Track Number\n"
-#~ "Band / Album Artist\n"
-#~ "Custom"
-#~ msgstr ""
-#~ "Kohteen indeksi\n"
-#~ "Soitetaan\n"
-#~ "Albumin kansikuva\n"
-#~ "Artisti - Albumi\n"
-#~ "Artisti\n"
-#~ "Albumi\n"
-#~ "Otsikko\n"
-#~ "Kesto\n"
-#~ "Raidan numero\n"
-#~ "Bändi / Albumin artisti\n"
-#~ "Mukautettu"
-
-#~ msgid "Lock movement"
-#~ msgstr "Lukitse liikkuvuus"
-
-#~ msgid "Edit playlist"
-#~ msgstr "Muokka soittolistaa"
+#: ../plugins/gtkui/rg.c:320
+msgid "Invalid file"
+msgstr ""
