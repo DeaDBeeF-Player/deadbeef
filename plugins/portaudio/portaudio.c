@@ -102,8 +102,6 @@ static PaStreamParameters requested_parameters;
 static int
 portaudio_init (void) {
     trace ("portaudio_init\n");
-    const PaVersionInfo *version_info = Pa_GetVersionInfo ();
-    info (version_info->versionText);
 
     deadbeef->mutex_lock (mutex);
 
