@@ -37,17 +37,18 @@
 #include "windows.h"
 #endif
 
+#define DEFAULT_BUFFER_SIZE 8192
+#define DEFAULT_BUFFER_SIZE_STR "8192"
+
 #define trace(...) {deadbeef->log (__VA_ARGS__);}
 //#define trace(...) { fprintf(stdout, __VA_ARGS__); }
 #define info(...) { deadbeef->log_detailed (&plugin.plugin, 1, __VA_ARGS__); }
+
 static PaSampleFormat
-pa_GetSampleFormat (int bps);
+pa_GetSampleFormat (int bps, int is_float);
 
 static void
-pa_SetSampleSize (PaSampleFormat sampleformat);
-
-static void
-portaudio_thread (void *context);
+pa_SetDefault ();
 
 static int
 portaudio_init (void);
@@ -57,9 +58,6 @@ portaudio_free (void);
 
 static int
 portaudio_setformat (ddb_waveformat_t *fmt);
-
-static int
-portaudio_reset (void);
 
 static int
 portaudio_play (void);
@@ -84,52 +82,55 @@ static DB_output_t plugin;
 DB_functions_t *deadbeef;
 static uintptr_t mutex;
 
-// Internal variables
 static int state;
 
 // actual stream
 static PaStream *stream;
-static ddb_waveformat_t plugin_fmt;
+// we use plugin.fmt as fmt information
 static PaStreamParameters stream_parameters;
-static int samplesize;
 static int * userData;
 
 // requested stream
-static int format_changed;
 static ddb_waveformat_t requested_fmt;
-static PaStreamParameters requested_parameters;
 
+
+// portaudio_init opens a stream using stream_parameters and plugin.fmt information
 static int
 portaudio_init (void) {
     trace ("portaudio_init\n");
 
     deadbeef->mutex_lock (mutex);
 
-    PaSampleFormat sampleformat = pa_GetSampleFormat (plugin_fmt.bps);
-    pa_SetSampleSize (sampleformat);
-    trace ("frame size %d\n",plugin_fmt.channels*samplesize);
-    trace  ("stream open samplerate %d\n",plugin_fmt.samplerate);
-    fflush(stdout);
-
+    // Use default device if none selected
     if (stream_parameters.device == -1) {
         stream_parameters.device = Pa_GetDefaultOutputDevice ();
     }
+
     if (!userData)
         userData = calloc(1,sizeof(int));
     else {
-        trace ("userData allocated!\n");
+        trace ("portaudio_init: supposed to allocate userData but value is not empty!\n");
         userData = calloc(1,sizeof(int));
     }
+
+    // Using paFramesPerBufferUnspecified with alsa gives warnings about underrun
+    int buffer_size_config = deadbeef->conf_get_int ("portaudio.buffer", DEFAULT_BUFFER_SIZE);
+    unsigned long buffer_size;
+    if (buffer_size_config == -1)
+        buffer_size = paFramesPerBufferUnspecified;
+    else
+        buffer_size = buffer_size_config;
+    trace ("portaudio_init: buffer size %lu, config: %d\n",buffer_size,buffer_size_config);
     /* Open an audio I/O stream. */
     PaError err;
     err = Pa_OpenStream (       &stream,                        // stream pointer
                                 NULL,                           // inputParameters
                                 &stream_parameters,             // outputParameters
-                                plugin_fmt.samplerate,          // sampleRate
-                                4096,//paFramesPerBufferUnspecified,   // framesPerBuffer
+                                plugin.fmt.samplerate,          // sampleRate
+                                buffer_size,                    // framesPerBuffer
                                 paNoFlag,                       // flags
                                 portaudio_callback,             // callback
-                                userData);                          // userData 
+                                userData);                      // userData 
 
     if (err != paNoError) {
         trace("Failed to open stream. %s\n", Pa_GetErrorText(err));
@@ -137,86 +138,68 @@ portaudio_init (void) {
         return -1;
     }
     state = OUTPUT_STATE_STOPPED;
-    format_changed = 0;
     deadbeef->mutex_unlock (mutex);
     return 0;
 }
-/*
-typedef struct {
-    int bps;
-    int channels;
-    int samplerate;
-    uint32_t channelmask;
-    int is_float; // bps must be 32 if this is true
-    int is_bigendian;
-} ddb_waveformat_t;
-*/
+
+// since we can't change stream parameters, we have to abort actual stream, set values and start streaming again
 static int
 portaudio_setformat (ddb_waveformat_t *fmt) {
-    memcpy (&plugin.fmt, &plugin_fmt, sizeof (ddb_waveformat_t));
-    stream_parameters.device = stream_parameters.device;
-    stream_parameters.channelCount = plugin_fmt.channels;
-    stream_parameters.sampleFormat = pa_GetSampleFormat (plugin_fmt.bps);
-    stream_parameters.suggestedLatency = 0.0;
-    stream_parameters.hostApiSpecificStreamInfo = NULL;
-    PaError err;
-    err = Pa_IsFormatSupported (NULL, &stream_parameters, plugin_fmt.samplerate);
-    if (err != paNoError) {
-        trace ("Failed to change format. %s\n", Pa_GetErrorText(err));
-        // even if it failed -- continue
-        //memcpy (&plugin.fmt, &requested_fmt, sizeof (ddb_waveformat_t));
-        //return -1;
-    }
-    portaudio_reset ();
-    return 0;
-    /*
-    memcpy (&requested_fmt, &plugin_fmt, sizeof (ddb_waveformat_t));
+    memcpy (&requested_fmt, fmt, sizeof (ddb_waveformat_t));
     trace ("portaudio_setformat %dbit %s %dch %dHz channelmask=%X\n", requested_fmt.bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
 
-    if (!memcmp (fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
+    if (!memcmp (&requested_fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
         trace ("portaudio_setformat ignored\n");
         return 0;
     }
-    
-    trace ("switching format:\n"
-    "bps %d -> %d\n"
-    "is_float %d -> %d\n"
-    "channels %d -> %d\n"
-    "samplerate %d -> %d\n"
-    "channelmask %d -> %d\n"
-    , plugin_fmt.bps, fmt->bps
-    , plugin_fmt.is_float, fmt->is_float
-    , plugin_fmt.channels, fmt->channels
-    , plugin_fmt.samplerate, fmt->samplerate
-    , plugin_fmt.channelmask, fmt->channelmask
-    );
-    fflush(stdout);
-    
-    requested_parameters.device = stream_parameters.device;
-    requested_parameters.channelCount = requested_fmt.channels;
-    requested_parameters.sampleFormat = pa_GetSampleFormat (requested_fmt.bps);
-    requested_parameters.suggestedLatency = 0.0;
-    requested_parameters.hostApiSpecificStreamInfo = NULL;
-    
-    PaError err;
-    err = Pa_IsFormatSupported (NULL, &requested_parameters, requested_fmt.samplerate);
-    if (err != paNoError) {
-        trace ("Failed to change format. %s\n", Pa_GetErrorText(err));
-        // even if it failed -- copy the format
-        memcpy (&plugin.fmt, &requested_fmt, sizeof (ddb_waveformat_t));
-        return -1;
+    else {
+        trace ("switching format: (requested->actual)\n"
+        "bps %d -> %d\n"
+        "is_float %d -> %d\n"
+        "channels %d -> %d\n"
+        "samplerate %d -> %d\n"
+        "channelmask %d -> %d\n"
+        , fmt->bps, plugin.fmt.bps
+        , fmt->is_float, plugin.fmt.is_float
+        , fmt->channels, plugin.fmt.channels
+        , fmt->samplerate, plugin.fmt.samplerate
+        , fmt->channelmask, plugin.fmt.channelmask
+        );
     }
+
+    // Tell ongoing callback 'thread' to abort stream
+    *userData = 1;
+    userData = 0;
+    stream = 0;
+
     memcpy (&plugin.fmt, &requested_fmt, sizeof (ddb_waveformat_t));
-    format_changed = 1;
-    portaudio_reset ();
+    
+    // Set new values for new stream
+    // TODO: get which device was requested?
+    stream_parameters.device = Pa_GetDefaultOutputDevice ();
+    stream_parameters.channelCount = plugin.fmt.channels;
+    stream_parameters.sampleFormat = pa_GetSampleFormat (plugin.fmt.bps,plugin.fmt.is_float);
+    stream_parameters.suggestedLatency = 0.0;
+    stream_parameters.hostApiSpecificStreamInfo = NULL;
+
+    PaError err;
+    err = Pa_IsFormatSupported (NULL, &stream_parameters, plugin.fmt.samplerate);
+    if (err != paNoError) {
+        trace ("Unsupported format. %s\n", Pa_GetErrorText(err));
+        // even if it failed -- continue
+    }
+
+    // start new stream
+    portaudio_play ();
+
     return 0;
-    */
+
 }
 
 static int
 portaudio_free (void) {
     trace("portaudio_free\n");
-    if (stream){
+    if (!Pa_IsStreamStopped(stream)){
         PaError err;
         err = Pa_AbortStream (stream);
         if (err != paNoError) {
@@ -224,6 +207,7 @@ portaudio_free (void) {
             return -1;
         }
     }
+    stream = 0;
     state = OUTPUT_STATE_STOPPED;
     return 0;
 }
@@ -236,90 +220,49 @@ portaudio_play (void) {
         portaudio_init ();
     }
 
+    state = OUTPUT_STATE_PLAYING;
+
     if (!Pa_IsStreamActive(stream)){
         PaError err;
         err = Pa_StartStream (stream);
         if (err != paNoError) {
             trace ("Failed to start stream. %s\n", Pa_GetErrorText(err));
+            state = OUTPUT_STATE_STOPPED;
             return -1;
         }
-        trace ("Starting stream.\n");
+        trace ("portaudio_play: Starting stream.\n");
     }
-    state = OUTPUT_STATE_PLAYING;
     return 0;
 }
 
-static PaSampleFormat pa_GetSampleFormat (int bps) {
-    PaSampleFormat sampleformat;
-    int samplesize;
+static PaSampleFormat
+pa_GetSampleFormat (int bps, int is_float) {
     switch (bps) {
     case 8:
-        trace("uint8\n");
-        sampleformat = paUInt8;
-        samplesize = 1;
+        return paUInt8;
         break;
     case 16:
-        trace("int16\n");
-        sampleformat = paInt16;
-        samplesize = 2;
+        return paInt16;
         break;
     case 24:
-        trace("int24\n");
-        sampleformat = paInt24;
-        samplesize = 3;
+        return paInt24;
         break;
     case 32:
-        if (plugin_fmt.is_float){
-            trace("float32\n");
-            sampleformat = paFloat32;
-        }
+        if (is_float)
+            return paFloat32;
         else
-        {
-            trace("int32\n");
-            sampleformat = paInt32;
-        }
-        samplesize = 4;
+            return paInt32;
         break;
     default:
-        trace("int16def\n");
-        sampleformat = paInt16;
-    };
-    return sampleformat;
-}
-
-static void pa_SetSampleSize (PaSampleFormat sampleformat) {
-    switch (sampleformat) {
-    case paUInt8:
-        samplesize = 1;
-        break;
-    case paInt16:
-        samplesize = 2;
-        break;
-    case paInt24:
-        samplesize = 3;
-        break;
-    case paInt32:
-    case paFloat32:
-        samplesize = 4;
-        break;
-    default:
-        trace("sampleformat unknown\n");
-        samplesize = 2;
+        trace("portaudio: Sample format wrong? Using Int16.\n");
         break;
     };
-}
-
-static void pa_SetDefault (){
-    memcpy (&plugin_fmt, &plugin.fmt, sizeof (ddb_waveformat_t));
-    stream_parameters.device = -1;
-    stream_parameters.channelCount = plugin_fmt.channels;
-    stream_parameters.sampleFormat = pa_GetSampleFormat (plugin_fmt.bps);
-    stream_parameters.suggestedLatency = 0.0;
-    stream_parameters.hostApiSpecificStreamInfo = NULL;
+    return paInt16;
 }
 
 static int
 portaudio_stop (void) {
+    trace ("portaudio_stop\n");
     if (state == OUTPUT_STATE_STOPPED) {
         return -1;
     }
@@ -336,6 +279,7 @@ portaudio_stop (void) {
 
 static int
 portaudio_pause (void) {
+    trace ("portaudio_pause\n");
     if (state == OUTPUT_STATE_STOPPED) {
         return -1;
     }
@@ -353,6 +297,7 @@ portaudio_pause (void) {
 
 static int
 portaudio_unpause (void) {
+    trace ("portaudio_unpause\n");
     if (!(state == OUTPUT_STATE_PAUSED)) {
         return -1;
     }
@@ -367,28 +312,41 @@ static int portaudio_get_endiannerequested_fmt (void) {
 #endif
 }
 
-static int
-portaudio_reset (void) {
-    trace ("portaudio_reset");
-    // tell running portaudio_thread to finish stream
-    *userData = 1;
-    userData = 0;
-    // start new stream
-    portaudio_init ();
-    PaError err;
-    err = Pa_StartStream (stream);
-    if (err != paNoError) {
-            trace ("Failed to start stream. %s\n", Pa_GetErrorText(err));
-            return -1;
+// derived from alsa plugin
+// derived from alsa-utils/aplay.c
+/*static void
+palsa_enum_soundcards (void (*callback)(const char *name, const char *desc, void *), void *userdata) {
+    void **hints, **n;
+    char *name, *descr, *io;
+    const char *filter = "Output";
+    if (snd_device_name_hint(-1, "pcm", &hints) < 0)
+        return;
+    n = hints;
+    while (*n != NULL) {
+        name = snd_device_name_get_hint(*n, "NAME");
+        descr = snd_device_name_get_hint(*n, "DESC");
+        io = snd_device_name_get_hint(*n, "IOID");
+        if (io == NULL || !strcmp(io, filter)) {
+            if (name && descr && callback) {
+                callback (name, descr, userdata);
+            }
         }
-    format_changed = 0;
-    return 0;
-}
+        if (name != NULL)
+            free(name);
+        if (descr != NULL)
+            free(descr);
+        if (io != NULL)
+            free(io);
+        n++;
+    }
+    snd_device_name_free_hint(hints);
+}*/
 
 static void portaudio_enum_soundcards (void (*callback)(const char *name, const char *desc, void*), void *userdata) {
     PaDeviceIndex  device_count = Pa_GetDeviceCount ();
     if (!device_count)
         trace("no devices found?\n");
+
     PaDeviceIndex i = 0;
     trace ("portaudio_enum_soundcards have %d devices\n",device_count);
     for (i=0;i<device_count;i++) {
@@ -399,6 +357,9 @@ static void portaudio_enum_soundcards (void (*callback)(const char *name, const 
         
         //char * name_charset = deadbeef->junk_detect_charset (device->name);
         const char *name_converted = device->name;
+
+        // Convert to UTF-8 on windows
+        #ifdef __MINGW32__
         /*
         if (name_charset != NULL) {
             trace ( "name using %s charset, converting\n",name_charset);
@@ -408,18 +369,18 @@ static void portaudio_enum_soundcards (void (*callback)(const char *name, const 
             }
         }
         */
-        int err = 0;
-        #ifdef __MINGW32__
         wchar_t wideName[255];
+        int err = 0;
         err = MultiByteToWideChar(CP_UTF8, 0, device->name, -1, wideName, 255);
         char convName[255];
         sprintf(&convName,"%ws", wideName);
         name_converted = convName;
         #endif
         if( device->name && callback)
-            callback ("Something", name_converted, userdata);
-        trace ("device: %s err: %d\n",name_converted,err);
+            callback ("test",name_converted, userdata);
+        trace ("device: %s\n",name_converted);
     }
+
 }
 
 
@@ -432,22 +393,32 @@ portaudio_callback (const void *in, void *out, unsigned long framesPerBuffer, co
     if ( *((int *) userData) ) {
         trace ("portaudio_callback: format changed\n");
         free (userData);
-        //format_changed = 0;
-        //portaudio_reset ();
         return paAbort;
     }
     if (state != OUTPUT_STATE_PLAYING){
         trace ("portaudio_callback: abort\n");
         return paAbort;
     }
-    deadbeef->streamer_read (out, framesPerBuffer*plugin_fmt.channels*2);
+    deadbeef->streamer_read (out, framesPerBuffer*plugin.fmt.channels*plugin.fmt.bps/8);
     return paContinue;
+}
+
+static void pa_SetDefault (){
+    stream_parameters.device = -1;
+    stream_parameters.channelCount = plugin.fmt.channels;
+    stream_parameters.sampleFormat = pa_GetSampleFormat (plugin.fmt.bps, plugin.fmt.is_float);
+    stream_parameters.suggestedLatency = 0.0;
+    stream_parameters.hostApiSpecificStreamInfo = NULL;
 }
 
 static int
 portaudio_get_state (void) {
     return state;
 }
+
+static const char settings_dlg[] =
+    "property \"Buffer size (-1 to use optimal value choosen by portaudio)\" entry portaudio.buffer " DEFAULT_BUFFER_SIZE_STR ";\n"
+;
 
 static int
 p_portaudio_start (void) {
@@ -514,6 +485,7 @@ static DB_output_t plugin = {
     .plugin.website = "http://github.com/kuba160",
     .plugin.start = p_portaudio_start,
     .plugin.stop = p_portaudio_stop,
+    .plugin.configdialog = settings_dlg,
     .init = portaudio_init,
     .free = portaudio_free,
     .setformat = portaudio_setformat,
