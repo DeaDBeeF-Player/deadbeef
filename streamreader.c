@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include "streamreader.h"
 #include "replaygain.h"
+#include "threading.h"
 
 // read ahead about 5 sec at 44100/16/2
 #define BLOCK_SIZE 16384
@@ -88,7 +89,7 @@ streamreader_configchanged (void) {
 }
 
 int
-streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t *fileinfo) {
+streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t *fileinfo, uint64_t mutex) {
     // clip size to max possible, with current sample format
     int size = BLOCK_SIZE;
     int samplesize = fileinfo->fmt.channels * (fileinfo->fmt.bps>>3);
@@ -114,6 +115,8 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
     if (rb < 0) {
         return -1;
     }
+
+    mutex_lock (mutex);
 
     block->bitrate = curr_block_bitrate;
 

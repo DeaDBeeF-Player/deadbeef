@@ -468,7 +468,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             offs = deadbeef->ftell (buffer->file);
         }
 
-        if (offs >= fsize) {
+        if (!buffer->file->vfs->is_streaming () && offs >= fsize) {
             reached_eof = 1;
             goto end_scan;
         }
@@ -821,7 +821,11 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("mp3: skipping %d(%xH) bytes of junk\n", start, start);
             deadbeef->fseek (info->buffer.file, start, SEEK_SET);
         }
-        int res = cmp3_scan_stream (&info->buffer, deadbeef->conf_get_int ("mp3.disable_gapless", 0) ? 0 : -1);
+#if 0
+        deadbeef->conf_get_int ("mp3.disable_gapless", 0) ? 0 : -1;
+#endif
+        int scan_mode = -1;
+        int res = cmp3_scan_stream (&info->buffer, scan_mode);
         if (res < 0) {
             trace ("mp3: cmp3_init: initial cmp3_scan_stream failed\n");
             return -1;
@@ -1297,7 +1301,7 @@ static const char *exts[] = {
 
 static const char settings_dlg[] =
     "property \"Force 16 bit output\" checkbox mp3.force16bit 0;\n"
-    "property \"Disable gapless playback (faster scanning)\" checkbox mp3.disable_gapless 0;\n"
+//    "property \"Disable gapless playback (faster scanning)\" checkbox mp3.disable_gapless 0;\n"
 #if defined(USE_LIBMAD) && defined(USE_LIBMPG123)
     "property \"Backend\" select[2] mp3.backend 0 mpg123 mad;\n"
 #endif

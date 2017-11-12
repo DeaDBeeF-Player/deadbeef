@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-09 19:04+0200\n"
-"PO-Revision-Date: 2017-08-03 14:30+0000\n"
+"POT-Creation-Date: 2017-11-11 12:21+0100\n"
+"PO-Revision-Date: 2017-11-11 11:22+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Sinhala (Sri Lanka) (http://www.transifex.com/deadbeef-player/"
 "deadbeef-player/language/si_LK/)\n"
@@ -36,8 +36,8 @@ msgid "DeaDBeeF Translators"
 msgstr "DeaDBeeF පරිවර්තකයින්"
 
 #: ../plugins/gtkui/callbacks.c:638 ../plugins/gtkui/interface.c:976
-#: ../plugins/gtkui/deadbeef.glade.h:62 ../plugins/converter/convgui.c:1749
-#: ../plugins/converter/convgui.c:1757 ../plugins/gtkui/actionhandlers.c:473
+#: ../plugins/gtkui/deadbeef.glade.h:62 ../plugins/converter/convgui.c:1766
+#: ../plugins/converter/convgui.c:1774 ../plugins/gtkui/actionhandlers.c:473
 msgid "Help"
 msgstr "උදව්"
 
@@ -93,142 +93,137 @@ msgstr "පූර්ව වර්ධකය ශුන්‍යය කරන්න
 msgid "Zero Bands"
 msgstr "කලාප ශුන්‍යය කරන්න"
 
-#: ../plugins/gtkui/eq.c:397 ../plugins/converter/interface.c:843
-#: ../plugins/converter/converter.glade.h:54
+#: ../plugins/gtkui/eq.c:397 ../plugins/converter/interface.c:852
+#: ../plugins/converter/converter.glade.h:55
 msgid "Presets"
 msgstr "සැකසුම්"
 
-#: ../plugins/gtkui/gtkui.c:160 ../tf.c:1820
+#: ../plugins/gtkui/gtkui.c:162 ../tf.c:1833
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "දිනක් %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:163 ../tf.c:1823
+#: ../plugins/gtkui/gtkui.c:165 ../tf.c:1836
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "දින %d %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:185
-#, c-format
-msgid "Stopped | %d tracks | %s total playtime"
-msgstr "Stopped | %d tracks | %s මුළු ධාවන කාලය"
-
-#: ../plugins/gtkui/gtkui.c:656 ../plugins/gtkui/fileman.c:64
+#: ../plugins/gtkui/gtkui.c:667 ../plugins/gtkui/fileman.c:64
 #: ../plugins/pltbrowser/pltbrowser.c:72
 msgid "New Playlist"
 msgstr "නව ගීත ලැයිස්තුව"
 
-#: ../plugins/gtkui/gtkui.c:659 ../plugins/pltbrowser/pltbrowser.c:75
+#: ../plugins/gtkui/gtkui.c:670 ../plugins/pltbrowser/pltbrowser.c:75
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "නව ගීත ලැයිස්තුව (%d)"
 
-#: ../plugins/gtkui/gtkui.c:716
+#: ../plugins/gtkui/gtkui.c:727
 #, c-format
 msgid "Copy of %s"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:719
+#: ../plugins/gtkui/gtkui.c:730
 #, c-format
 msgid "Copy of %s (%d)"
 msgstr ""
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1199
+#: ../plugins/gtkui/gtkui.c:1209
 msgid "Playlist with tabs"
 msgstr "ටැබ සහිත ගීත ලැයිස්තුව"
 
-#: ../plugins/gtkui/gtkui.c:1200 ../plugins/gtkui/interface.c:2188
+#: ../plugins/gtkui/gtkui.c:1210 ../plugins/gtkui/interface.c:2188
 #: ../plugins/gtkui/interface.c:2633 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Playlist"
 msgstr "ගීත ලැයිස්තුව"
 
-#: ../plugins/gtkui/gtkui.c:1203
+#: ../plugins/gtkui/gtkui.c:1213
 msgid "Splitter (top and bottom)"
 msgstr "විභේදකය (ඉහළ සහ පහළ)"
 
-#: ../plugins/gtkui/gtkui.c:1204
+#: ../plugins/gtkui/gtkui.c:1214
 msgid "Splitter (left and right)"
 msgstr "විභේදකය (වම සහ දකුණ)"
 
-#: ../plugins/gtkui/gtkui.c:1206
+#: ../plugins/gtkui/gtkui.c:1216
 msgid "Tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1207
+#: ../plugins/gtkui/gtkui.c:1217
 msgid "Playlist tabs"
 msgstr "ගීත ලැයිස්තු ටැබ"
 
-#: ../plugins/gtkui/gtkui.c:1208
+#: ../plugins/gtkui/gtkui.c:1218
 msgid "Selection properties"
 msgstr "වරණ සතු ගුණාංග"
 
-#: ../plugins/gtkui/gtkui.c:1209
+#: ../plugins/gtkui/gtkui.c:1219
 msgid "Album art display"
 msgstr "ඇල්බම රූප දර්ශනය"
 
-#: ../plugins/gtkui/gtkui.c:1210
+#: ../plugins/gtkui/gtkui.c:1220
 msgid "Scope"
 msgstr "බලපවත්නා අවකාශය"
 
-#: ../plugins/gtkui/gtkui.c:1211
+#: ../plugins/gtkui/gtkui.c:1221
 msgid "Spectrum"
 msgstr "වර්ණාවලිය"
 
-#: ../plugins/gtkui/gtkui.c:1212
+#: ../plugins/gtkui/gtkui.c:1222
 msgid "HBox"
 msgstr "HBox"
 
-#: ../plugins/gtkui/gtkui.c:1213
+#: ../plugins/gtkui/gtkui.c:1223
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:1214 ../plugins/gtkui/widgets.c:3846
+#: ../plugins/gtkui/gtkui.c:1224 ../plugins/gtkui/widgets.c:3846
 #: ../plugins/gtkui/widgets.c:3932
 msgid "Button"
 msgstr "බොත්තම"
 
-#: ../plugins/gtkui/gtkui.c:1215
+#: ../plugins/gtkui/gtkui.c:1225
 msgid "Seekbar"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1216
+#: ../plugins/gtkui/gtkui.c:1226
 msgid "Playback controls"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1217
+#: ../plugins/gtkui/gtkui.c:1227
 msgid "Volume bar"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1218
+#: ../plugins/gtkui/gtkui.c:1228
 msgid "Chiptune voices"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1219
+#: ../plugins/gtkui/gtkui.c:1229
 msgid "Log viewer"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1438
+#: ../plugins/gtkui/gtkui.c:1448
 msgid "Failed while reading help file"
 msgstr "උපකාරක ගොනුව කියවීමට අසමත් විය"
 
-#: ../plugins/gtkui/gtkui.c:1448
+#: ../plugins/gtkui/gtkui.c:1458
 msgid "Failed to load help file"
 msgstr "උපකාරක ගොනුව විවෘත කිරීමට නොහැකි විය"
 
-#: ../plugins/gtkui/gtkui.c:1461
+#: ../plugins/gtkui/gtkui.c:1471
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1463
+#: ../plugins/gtkui/gtkui.c:1473
 msgid "Do you still want to quit?"
 msgstr "ඔබට තවමත් වසා දැමීමට අවශ්‍යය ද?"
 
-#: ../plugins/gtkui/gtkui.c:1464 ../plugins/gtkui/prefwin.c:432
-#: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1067
-#: ../plugins/converter/convgui.c:1644 ../plugins/gtkui/actionhandlers.c:553
+#: ../plugins/gtkui/gtkui.c:1474 ../plugins/gtkui/prefwin.c:433
+#: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1084
+#: ../plugins/converter/convgui.c:1661 ../plugins/gtkui/actionhandlers.c:553
 msgid "Warning"
 msgstr "අනතුරු ඇඟවීමයි"
 
@@ -295,8 +290,8 @@ msgstr "වරණය"
 
 #: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/interface.c:4977
 #: ../plugins/gtkui/plcommon.c:1072 ../plugins/gtkui/deadbeef.glade.h:16
-#: ../plugins/converter/interface.c:667
-#: ../plugins/converter/converter.glade.h:50
+#: ../plugins/converter/interface.c:676
+#: ../plugins/converter/converter.glade.h:51
 #: ../plugins/shellexecui/interface.c:66
 #: ../plugins/shellexecui/shellexec.glade.h:4
 msgid "Remove"
@@ -316,11 +311,11 @@ msgid "Sort by"
 msgstr "පිළිවෙළට සකස් කල යුත්තේ"
 
 #: ../plugins/gtkui/interface.c:259 ../plugins/gtkui/mainplaylist.c:233
-#: ../plugins/gtkui/plcommon.c:93 ../plugins/gtkui/prefwin.c:408
+#: ../plugins/gtkui/plcommon.c:93 ../plugins/gtkui/prefwin.c:409
 #: ../plugins/gtkui/search.c:652 ../plugins/gtkui/deadbeef.glade.h:20
-#: ../plugins/converter/convgui.c:1165 ../plugins/converter/convgui.c:1720
-#: ../plugins/converter/interface.c:644
-#: ../plugins/converter/converter.glade.h:47
+#: ../plugins/converter/convgui.c:1182 ../plugins/converter/convgui.c:1737
+#: ../plugins/converter/interface.c:653
+#: ../plugins/converter/converter.glade.h:48
 #: ../plugins/shellexecui/shellexecui.c:324
 msgid "Title"
 msgstr "මාතෘකාව"
@@ -379,9 +374,8 @@ msgid "Design mode"
 msgstr "සැළසුම් කිරීමේ ප්‍රකාරය"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/deadbeef.glade.h:32
-#, fuzzy
 msgid "Log"
-msgstr "නැවත නැවත ධාවනය කිරීම"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:319 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "_Playback"
@@ -532,8 +526,8 @@ msgid "Properties"
 msgstr "වත්කම්"
 
 #: ../plugins/gtkui/interface.c:1335 ../plugins/gtkui/interface.c:3565
-#: ../plugins/gtkui/deadbeef.glade.h:72 ../plugins/converter/interface.c:409
-#: ../plugins/converter/converter.glade.h:24
+#: ../plugins/gtkui/deadbeef.glade.h:72 ../plugins/converter/interface.c:418
+#: ../plugins/converter/converter.glade.h:25
 #: ../plugins/shellexecui/interface.c:163
 #: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1549
 #: ../plugins/gtkui/pltmenu.c:66
@@ -554,9 +548,8 @@ msgid "Format:"
 msgstr "ආකෘතිය:"
 
 #: ../plugins/gtkui/interface.c:1389 ../plugins/gtkui/deadbeef.glade.h:76
-#, fuzzy
 msgid "Sort format:"
-msgstr "ආකෘතිය:"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1398 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "(if non-empty)"
@@ -637,9 +630,8 @@ msgid "None"
 msgstr "කිසිවක් නැත"
 
 #: ../plugins/gtkui/interface.c:1880
-#, fuzzy
 msgid "Apply gain"
-msgstr "යොදන්න _A"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1881
 msgid "Apply gain and prevent clipping according to peak"
@@ -660,11 +652,11 @@ msgid "+12 dB"
 msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1909 ../plugins/gtkui/deadbeef.glade.h:99
-msgid "Preamp with RG:"
+msgid "Preamp with RG info:"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1916 ../plugins/gtkui/deadbeef.glade.h:100
-msgid "Preamp without RG:"
+msgid "Preamp without RG info:"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1943 ../plugins/gtkui/deadbeef.glade.h:101
@@ -696,8 +688,8 @@ msgid "Playback"
 msgstr "නැවත ධාවනය කරන්න"
 
 #: ../plugins/gtkui/interface.c:1998 ../plugins/gtkui/interface.c:2946
-#: ../plugins/gtkui/deadbeef.glade.h:108 ../plugins/converter/interface.c:671
-#: ../plugins/converter/converter.glade.h:51
+#: ../plugins/gtkui/deadbeef.glade.h:108 ../plugins/converter/interface.c:680
+#: ../plugins/converter/converter.glade.h:52
 msgid "Configure"
 msgstr "හැඩගැස්වීම"
 
@@ -795,15 +787,15 @@ msgid "Override"
 msgstr "අතික්‍රමනය කරන්න"
 
 #: ../plugins/gtkui/interface.c:2216 ../plugins/gtkui/deadbeef.glade.h:133
-msgid "Foreground"
-msgstr "පෙරබිම"
+msgid "Bars"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2223 ../plugins/gtkui/deadbeef.glade.h:134
-msgid "Background"
-msgstr "පසුබිම"
+msgid "Background (EQ)"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2242 ../plugins/gtkui/deadbeef.glade.h:135
-msgid "Seekbar/Volumebar"
+msgid "Seekbar/Volumebar/EQ"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:2267 ../plugins/gtkui/deadbeef.glade.h:136
@@ -1024,14 +1016,14 @@ msgid "Descending"
 msgstr "අවරෝහන"
 
 #: ../plugins/gtkui/interface.c:4025 ../plugins/gtkui/deadbeef.glade.h:189
-#: ../plugins/converter/interface.c:772
-#: ../plugins/converter/converter.glade.h:52
+#: ../plugins/converter/interface.c:781
+#: ../plugins/converter/converter.glade.h:53
 msgid "Select DSP Plugin"
 msgstr "DSP කෙවෙනි මෘදුකාංගය තෝරන්න"
 
 #: ../plugins/gtkui/interface.c:4041 ../plugins/gtkui/deadbeef.glade.h:190
-#: ../plugins/converter/convgui.c:1469 ../plugins/converter/interface.c:788
-#: ../plugins/gtkui/dspconfig.c:144 ../plugins/converter/converter.glade.h:53
+#: ../plugins/converter/convgui.c:1486 ../plugins/converter/interface.c:797
+#: ../plugins/gtkui/dspconfig.c:144 ../plugins/converter/converter.glade.h:54
 msgid "Plugin"
 msgstr "කෙවෙනි මෘදුකාංගය"
 
@@ -1183,9 +1175,8 @@ msgid "Format from other fields..."
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:5009 ../plugins/gtkui/deadbeef.glade.h:222
-#, fuzzy
 msgid "Add new field..."
-msgstr "ක්ෂේත්‍රය එකතු කරන්න"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:5013 ../plugins/gtkui/deadbeef.glade.h:223
 msgid "Paste fields"
@@ -1196,29 +1187,50 @@ msgid "Automatically fill values..."
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:5097 ../plugins/gtkui/deadbeef.glade.h:225
-#, fuzzy
 msgid "Edit Value"
-msgstr "සිරස් තීරුව සංස්කරණය කරන්න"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:5110 ../plugins/gtkui/deadbeef.glade.h:226
-#, fuzzy
 msgid "Field name:"
-msgstr "ක්ෂේත්‍ර නාමය"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:5121 ../plugins/gtkui/deadbeef.glade.h:227
-#, fuzzy
 msgid "Field value:"
-msgstr "ක්ෂේත්‍ර නාමය"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:5178 ../plugins/gtkui/deadbeef.glade.h:228
-#, fuzzy
 msgid "DeaDBeeF Log"
-msgstr "DeaDBeeF %s වෙනස්කම් ලොගය"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:5206 ../plugins/gtkui/deadbeef.glade.h:229
-#, fuzzy
 msgid "Clear"
-msgstr "පිරිසිදු කරන්න _C"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:5243 ../plugins/gtkui/deadbeef.glade.h:230
+msgid "ReplayGain Scan Progress"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:5254 ../plugins/gtkui/deadbeef.glade.h:231
+msgid "Current File:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:5272 ../plugins/gtkui/interface.c:5332
+#: ../plugins/gtkui/deadbeef.glade.h:232 ../plugins/gtkui/rg.c:311
+msgid "Status"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:5279 ../plugins/gtkui/interface.c:5343
+#: ../plugins/gtkui/deadbeef.glade.h:233
+msgid "Cancel"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:5311 ../plugins/gtkui/deadbeef.glade.h:234
+msgid "ReplayGain Scan Results"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:5339 ../plugins/gtkui/deadbeef.glade.h:235
+msgid "Update File Tags"
+msgstr ""
 
 #: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:650
 msgid "Artist / Album"
@@ -1271,10 +1283,9 @@ msgid "Bitrate"
 msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:936 ../plugins/gtkui/plcommon.c:1045
-#: ../plugins/gtkui/pltmenu.c:424
-#, fuzzy
+#: ../plugins/gtkui/pltmenu.c:427
 msgid "_Paste"
-msgstr "අලවන්න"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:990
 msgid "Add To Playback Queue"
@@ -1288,14 +1299,13 @@ msgstr ""
 msgid "Reload Metadata"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1025 ../plugins/gtkui/pltmenu.c:400
+#: ../plugins/gtkui/plcommon.c:1025 ../plugins/gtkui/pltmenu.c:403
 msgid "Cu_t"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1035 ../plugins/gtkui/pltmenu.c:412
-#, fuzzy
+#: ../plugins/gtkui/plcommon.c:1035 ../plugins/gtkui/pltmenu.c:415
 msgid "_Copy"
-msgstr "පිටපත් කරන්න"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:1079
 msgid "Remove From Disk"
@@ -1334,15 +1344,15 @@ msgstr "ගොනුව විවෘත කරන්න..."
 msgid "Configure %s"
 msgstr "වින්‍යාස කිරීම %s"
 
-#: ../plugins/gtkui/prefwin.c:79
+#: ../plugins/gtkui/prefwin.c:80
 msgid "Default Audio Device"
 msgstr "සාමාන්‍යයෙන් භාවිතා කරන ශ්‍රව්‍ය උපාංගය"
 
-#: ../plugins/gtkui/prefwin.c:429
+#: ../plugins/gtkui/prefwin.c:430
 msgid "You modified the hotkeys settings, but didn't save your changes."
 msgstr ""
 
-#: ../plugins/gtkui/prefwin.c:431
+#: ../plugins/gtkui/prefwin.c:432
 msgid "Are you sure you want to continue without saving?"
 msgstr ""
 
@@ -1389,23 +1399,23 @@ msgstr "[බහු අගයන්]"
 msgid "Writing tags..."
 msgstr "ටැග් ලිවීම..."
 
-#: ../plugins/gtkui/trkproperties.c:858
+#: ../plugins/gtkui/trkproperties.c:871
 msgid "Field name"
 msgstr "ක්ෂේත්‍ර නාමය"
 
-#: ../plugins/gtkui/trkproperties.c:861
+#: ../plugins/gtkui/trkproperties.c:874
 msgid "Name:"
 msgstr "නම:"
 
-#: ../plugins/gtkui/trkproperties.c:873
+#: ../plugins/gtkui/trkproperties.c:886
 msgid "Field names must not start with : or _"
 msgstr "ක්ෂේත්‍ර නාම : ලකුණකින් හෝ _ ලකුණකින් ආරම්භ නොකල යුතුය"
 
-#: ../plugins/gtkui/trkproperties.c:874 ../plugins/gtkui/trkproperties.c:913
+#: ../plugins/gtkui/trkproperties.c:887 ../plugins/gtkui/trkproperties.c:926
 msgid "Cannot add field"
 msgstr "ක්ෂේත්‍රය එකතු කල නොහැක"
 
-#: ../plugins/gtkui/trkproperties.c:912
+#: ../plugins/gtkui/trkproperties.c:925
 msgid "Field with such name already exists, please try different name."
 msgstr "මෙනමින් දැනටමත් ක්ෂේත්‍රයක් පවතී, කරුණාකර වෙනත් නමක් භාවිතා කරන්න."
 
@@ -1533,8 +1543,8 @@ msgstr ""
 #: ../main.c:126
 #, c-format
 msgid ""
-"                      FMT syntax: http://github.com/Alexey-Yakovenko/"
-"deadbeef/wiki/Title-formatting-2.0\n"
+"                      FMT syntax: http://github.com/DeaDBeeF-Player/deadbeef/"
+"wiki/Title-formatting-2.0\n"
 msgstr ""
 
 #: ../main.c:127
@@ -1561,23 +1571,23 @@ msgstr ""
 msgid "                      Examples: --volume 80 or --volume -20dB\n"
 msgstr ""
 
-#: ../playlist.c:480 ../playlist.c:2239
+#: ../playlist.c:483 ../playlist.c:2247
 msgid "Default"
 msgstr "සාමාන්‍ය භාවිතය"
 
-#: ../playlist.c:2904
+#: ../playlist.c:2912
 msgid "Mono"
 msgstr "එකම ශබ්දය දෙපසින්ම ඇසීම"
 
-#: ../playlist.c:2904
+#: ../playlist.c:2912
 msgid "Stereo"
 msgstr "ශබ්ද දෙකක් දෙපසින් ඇසීම"
 
-#: ../playlist.c:3433
+#: ../playlist.c:3428
 msgid "Yes"
 msgstr "ඔව්"
 
-#: ../playlist.c:3433
+#: ../playlist.c:3428
 msgid "No"
 msgstr "නැහැ"
 
@@ -1589,17 +1599,11 @@ msgid ""
 msgstr ""
 
 #: ../plugins/gtkui/deadbeef.glade.h:89
-#, fuzzy
 msgid ""
 "By playback order\n"
 "Track\n"
 "Album"
 msgstr ""
-"අක්‍රීය\n"
-"\n"
-"ගීතය\n"
-"\n"
-"ඇල්බමය"
 
 #: ../plugins/gtkui/deadbeef.glade.h:93
 msgid ""
@@ -1880,9 +1884,8 @@ msgid "Disc Number"
 msgstr "තැටි අංකය"
 
 #: ../translation/extra.c:80
-#, fuzzy
 msgid "Total Discs"
-msgstr "සම්පූර්ණ ගීත ගණන"
+msgstr ""
 
 #: ../translation/extra.c:81
 msgid "Comment"
@@ -1950,40 +1953,76 @@ msgstr "ශබ්දය වටෙන්ම ඇසීම ක්‍රියා �
 msgid "Enable surround"
 msgstr "ශබ්දය වටෙන්ම ඇසීම සක්‍රීය කරන්න"
 
-#: ../plugins/converter/convgui.c:90
+#: ../translation/extra.c:104
+msgid "Skip to"
+msgstr ""
+
+#: ../translation/extra.c:105
+msgid "Previous genre"
+msgstr ""
+
+#: ../translation/extra.c:106
+msgid "Previous composer"
+msgstr ""
+
+#: ../translation/extra.c:107
+msgid "Previous artist"
+msgstr ""
+
+#: ../translation/extra.c:108
+msgid "Previous album"
+msgstr ""
+
+#: ../translation/extra.c:109
+msgid "Next genre"
+msgstr ""
+
+#: ../translation/extra.c:110
+msgid "Next composer"
+msgstr ""
+
+#: ../translation/extra.c:111
+msgid "Next artist"
+msgstr ""
+
+#: ../translation/extra.c:112
+msgid "Next album"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:91
 #, c-format
 msgid "[Built-in] %s"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:144
+#: ../plugins/converter/convgui.c:145
 msgid "The file already exists. Overwrite?"
 msgstr "ගොනුව දැනටමත් පවතී. එය මතම ලියන්නද?"
 
-#: ../plugins/converter/convgui.c:146
+#: ../plugins/converter/convgui.c:147
 msgid "Converter warning"
 msgstr "පරිවර්ථක අවවාදයක්"
 
-#: ../plugins/converter/convgui.c:319
+#: ../plugins/converter/convgui.c:321
 msgid "Please select encoder"
 msgstr "කරුණාකර ආකේතකය තෝරන්න"
 
-#: ../plugins/converter/convgui.c:321
+#: ../plugins/converter/convgui.c:323
 msgid "Converter error"
 msgstr "පරිවර්ථක දෝෂයක්"
 
-#: ../plugins/converter/convgui.c:345
+#: ../plugins/converter/convgui.c:347
 msgid "Converting..."
 msgstr "පරිවර්ථනය කරමින් පවතී..."
 
-#: ../plugins/converter/convgui.c:693
+#: ../plugins/converter/convgui.c:699
 msgid "Select folder..."
 msgstr "ෆෝල්ඩරය සුරකින්න..."
 
-#: ../plugins/converter/convgui.c:945
+#: ../plugins/converter/convgui.c:962
 msgid "Failed to save encoder preset"
 msgstr "ආකේතක පෙර සැකසුම සුරැකීමට නොහැකි විය"
 
-#: ../plugins/converter/convgui.c:947 ../plugins/converter/convgui.c:1506
+#: ../plugins/converter/convgui.c:964 ../plugins/converter/convgui.c:1523
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
@@ -1991,177 +2030,182 @@ msgstr ""
 "පෙර සැකසුම් ෆෝල්ඩරයේ අවසරයන් පරීක්ෂා කරන්න, වෙනත් නාමයක් ලබා ගැනීමට උත්සාහ කරන්න, හෝ දෘඩ "
 "තැටියේ යම් ඉඩ ප්‍රමාණයක් නිදහස් කරන්න"
 
-#: ../plugins/converter/convgui.c:947 ../plugins/converter/convgui.c:1506
+#: ../plugins/converter/convgui.c:964 ../plugins/converter/convgui.c:1523
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr "මෙම නමින් තවත් පෙර සැකසුමක් දැනටමත් පවතී. වෙනත් නාමයක් ලබා දෙන්න."
 
-#: ../plugins/converter/convgui.c:948 ../plugins/converter/convgui.c:1507
+#: ../plugins/converter/convgui.c:965 ../plugins/converter/convgui.c:1524
 #: ../plugins/gtkui/ctmapping.c:202 ../plugins/gtkui/ctmapping.c:230
 #: ../plugins/gtkui/ctmapping.c:262
 msgid "Error"
 msgstr "දෝෂයක්"
 
-#: ../plugins/converter/convgui.c:1002 ../plugins/converter/convgui.c:1140
+#: ../plugins/converter/convgui.c:1019 ../plugins/converter/convgui.c:1157
 msgid "Add new encoder"
 msgstr "නව ආකේතකය එකතු කරන්න"
 
-#: ../plugins/converter/convgui.c:1032
+#: ../plugins/converter/convgui.c:1049
 msgid "Edit encoder"
 msgstr "ආකේතකය සංස්කරණය කරන්න"
 
-#: ../plugins/converter/convgui.c:1064 ../plugins/converter/convgui.c:1641
+#: ../plugins/converter/convgui.c:1081 ../plugins/converter/convgui.c:1658
 msgid "Remove preset"
 msgstr "පෙර සැකසුම ඉවත් කරන්න"
 
-#: ../plugins/converter/convgui.c:1066 ../plugins/converter/convgui.c:1643
+#: ../plugins/converter/convgui.c:1083 ../plugins/converter/convgui.c:1660
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr "මෙම ක්‍රියාව මඟින් තෝරන ලද පෙර සැකසුම මකාදැමීමට නියමිතයි. එය සිදුකරන්නද?"
 
-#: ../plugins/converter/convgui.c:1155
+#: ../plugins/converter/convgui.c:1172
 msgid "Encoders"
 msgstr "ආකේතක"
 
-#: ../plugins/converter/convgui.c:1230 ../plugins/gtkui/dspconfig.c:191
+#: ../plugins/converter/convgui.c:1247 ../plugins/gtkui/dspconfig.c:191
 msgid "Add plugin to DSP chain"
 msgstr "DSP දාමයට කෙවෙනි මෘදුකාංගය ඇතුළත් කරන්න"
 
-#: ../plugins/converter/convgui.c:1505
+#: ../plugins/converter/convgui.c:1522
 msgid "Failed to save DSP preset"
 msgstr "DSP පෙර සැකසුම සුරැකීමට නොහැකි විය"
 
-#: ../plugins/converter/convgui.c:1569 ../plugins/converter/convgui.c:1607
+#: ../plugins/converter/convgui.c:1586 ../plugins/converter/convgui.c:1624
 msgid "New DSP Preset"
 msgstr "නව DSP පෙර සැකසුම"
 
-#: ../plugins/converter/convgui.c:1691
+#: ../plugins/converter/convgui.c:1708
 msgid "Edit DSP Preset"
 msgstr "DSP පෙර සැකසුම සංස්කරණය කරන්න"
 
-#: ../plugins/converter/convgui.c:1711
+#: ../plugins/converter/convgui.c:1728
 msgid "DSP Presets"
 msgstr "DSP පෙර සැකසුම්"
 
-#: ../plugins/converter/interface.c:102
+#: ../plugins/converter/interface.c:103
 #: ../plugins/converter/converter.glade.h:1
 msgid "Output folder:"
 msgstr "ප්‍රතිදාන ෆෝල්ඩරය:"
 
-#: ../plugins/converter/interface.c:119
+#: ../plugins/converter/interface.c:120
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
 msgstr "ගීත අඩංගු ෆෝල්ඩරයට ලියන්න"
 
-#: ../plugins/converter/interface.c:123
+#: ../plugins/converter/interface.c:124
 #: ../plugins/converter/converter.glade.h:3
 msgid "Preserve folder structure"
 msgstr "සංරක්ෂිත ෆෝල්ඩර ආකෘතිය"
 
-#: ../plugins/converter/interface.c:127
+#: ../plugins/converter/interface.c:128
 #: ../plugins/converter/converter.glade.h:4
 msgid "Copy if the format is not changing"
 msgstr ""
 
-#: ../plugins/converter/interface.c:135
+#: ../plugins/converter/interface.c:132
 #: ../plugins/converter/converter.glade.h:5
+msgid "Re-tag after copy"
+msgstr ""
+
+#: ../plugins/converter/interface.c:140
+#: ../plugins/converter/converter.glade.h:6
 msgid "Output file name:"
 msgstr "ප්‍රතිදාන ගොනු නාමය:"
 
-#: ../plugins/converter/interface.c:146
-#: ../plugins/converter/converter.glade.h:7
+#: ../plugins/converter/interface.c:151
+#: ../plugins/converter/converter.glade.h:8
 #, no-c-format
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%artist% - %title%)."
 msgstr ""
 
-#: ../plugins/converter/interface.c:159
-#: ../plugins/converter/converter.glade.h:9
+#: ../plugins/converter/interface.c:164
+#: ../plugins/converter/converter.glade.h:10
 msgid "Encoder:"
 msgstr "ආකේතකය:"
 
-#: ../plugins/converter/interface.c:183
-#: ../plugins/converter/converter.glade.h:10
+#: ../plugins/converter/interface.c:188
+#: ../plugins/converter/converter.glade.h:11
 msgid "DSP preset:"
 msgstr "DSP පෙර සැකසුම"
 
-#: ../plugins/converter/interface.c:206
-#: ../plugins/converter/converter.glade.h:11
+#: ../plugins/converter/interface.c:211
+#: ../plugins/converter/converter.glade.h:12
 msgid "Number of threads:"
 msgstr "සමාන්තරව ක්‍රියාත්මක වන වැඩසටහන් ගණන:"
 
-#: ../plugins/converter/interface.c:219
-#: ../plugins/converter/converter.glade.h:12
+#: ../plugins/converter/interface.c:224
+#: ../plugins/converter/converter.glade.h:13
 msgid "Output sample format:"
 msgstr "ප්‍රතිදාන ආකෘති ආදර්ශය:"
 
-#: ../plugins/converter/interface.c:226
+#: ../plugins/converter/interface.c:231
 msgid "Keep source format"
 msgstr "ප්‍රභව ආකෘතිය පවත්වා ගන්න"
 
-#: ../plugins/converter/interface.c:227
+#: ../plugins/converter/interface.c:232
 msgid "8 bit signed int"
 msgstr "බිට් 8 ඇති ලකුණු සහිත නිඛිල"
 
-#: ../plugins/converter/interface.c:228
+#: ../plugins/converter/interface.c:233
 msgid "16 bit signed int"
 msgstr "බිට් 16 ඇති ලකුණු සහිත නිඛිල"
 
-#: ../plugins/converter/interface.c:229
+#: ../plugins/converter/interface.c:234
 msgid "24 bit signed int"
 msgstr "බිට් 24 ඇති ලකුණු සහිත නිඛිල"
 
-#: ../plugins/converter/interface.c:230
+#: ../plugins/converter/interface.c:235
 msgid "32 bit signed int"
 msgstr "බිට් 32 ඇති ලකුණු සහිත නිඛිල"
 
-#: ../plugins/converter/interface.c:231
+#: ../plugins/converter/interface.c:236
 msgid "32 bit float"
 msgstr "බිට් 32 ඇති දශම"
 
-#: ../plugins/converter/interface.c:237
-#: ../plugins/converter/converter.glade.h:19
+#: ../plugins/converter/interface.c:242
+#: ../plugins/converter/converter.glade.h:20
 msgid "When file exists:"
 msgstr "ගොනුව පවතින විට:"
 
-#: ../plugins/converter/interface.c:244
+#: ../plugins/converter/interface.c:249
 msgid "Skip"
 msgstr ""
 
-#: ../plugins/converter/interface.c:245
+#: ../plugins/converter/interface.c:250
 msgid "Prompt"
 msgstr "Prompt"
 
-#: ../plugins/converter/interface.c:246
+#: ../plugins/converter/interface.c:251
 msgid "Overwrite"
 msgstr "එය මත ලියන්න"
 
-#: ../plugins/converter/interface.c:393
-#: ../plugins/converter/converter.glade.h:23
+#: ../plugins/converter/interface.c:402
+#: ../plugins/converter/converter.glade.h:24
 msgid "Edit Encoder Preset"
 msgstr "ආකේතක පෙර සැකසුම් සංස්කරණය කරන්න"
 
-#: ../plugins/converter/interface.c:416
-#: ../plugins/converter/converter.glade.h:25
+#: ../plugins/converter/interface.c:425
+#: ../plugins/converter/converter.glade.h:26
 msgid "Untitled Encoder"
 msgstr "නම් නොකල ආකේතකය"
 
-#: ../plugins/converter/interface.c:424
-#: ../plugins/converter/converter.glade.h:26
+#: ../plugins/converter/interface.c:433
+#: ../plugins/converter/converter.glade.h:27
 msgid "Output file extension:"
 msgstr "ප්‍රතිදාන ගොනු දිගුව:"
 
-#: ../plugins/converter/interface.c:431
-#: ../plugins/converter/converter.glade.h:27
+#: ../plugins/converter/interface.c:440
+#: ../plugins/converter/converter.glade.h:28
 msgid "E.g. mp3"
 msgstr "උදා. mp3"
 
-#: ../plugins/converter/interface.c:439
-#: ../plugins/converter/converter.glade.h:28
+#: ../plugins/converter/interface.c:448
+#: ../plugins/converter/converter.glade.h:29
 msgid "Command line:"
 msgstr "විධාන අතුරු මුහුණත"
 
-#: ../plugins/converter/interface.c:450
-#: ../plugins/converter/converter.glade.h:30
+#: ../plugins/converter/interface.c:459
+#: ../plugins/converter/converter.glade.h:31
 #, no-c-format
 msgid ""
 "Example: lame - %o\n"
@@ -2171,8 +2215,8 @@ msgstr ""
 "\n"
 "ආදාන ගොනු සඳහා %i, ප්‍රතිදාන ගොනු සඳහා %o, -සම්මත ආදානය සඳහා"
 
-#: ../plugins/converter/interface.c:460
-#: ../plugins/converter/converter.glade.h:33
+#: ../plugins/converter/interface.c:469
+#: ../plugins/converter/converter.glade.h:34
 #, no-c-format
 msgid ""
 "<small>%o - output file name\n"
@@ -2182,71 +2226,70 @@ msgstr ""
 "\n"
 "%i - තාවකාලික ආදාන ගොනු නාමය</small>"
 
-#: ../plugins/converter/interface.c:469
-#: ../plugins/converter/converter.glade.h:35
+#: ../plugins/converter/interface.c:478
+#: ../plugins/converter/converter.glade.h:36
 msgid "Method:"
 msgstr "ක්‍රම:"
 
-#: ../plugins/converter/interface.c:476
+#: ../plugins/converter/interface.c:485
 msgid "Pipe"
 msgstr "Pipe"
 
-#: ../plugins/converter/interface.c:477
-#, fuzzy
+#: ../plugins/converter/interface.c:486
 msgid "Temp File"
-msgstr "තාවකාලික ගොනු"
+msgstr ""
 
-#: ../plugins/converter/interface.c:478
+#: ../plugins/converter/interface.c:487
 msgid "Source File"
 msgstr ""
 
-#: ../plugins/converter/interface.c:495
-#: ../plugins/converter/converter.glade.h:39
+#: ../plugins/converter/interface.c:504
+#: ../plugins/converter/converter.glade.h:40
 msgid "APEv2"
 msgstr "APEv2"
 
-#: ../plugins/converter/interface.c:501
-#: ../plugins/converter/converter.glade.h:40
+#: ../plugins/converter/interface.c:510
+#: ../plugins/converter/converter.glade.h:41
 msgid "ID3v1"
 msgstr "ID3v1"
 
-#: ../plugins/converter/interface.c:507
-#: ../plugins/converter/converter.glade.h:41
+#: ../plugins/converter/interface.c:516
+#: ../plugins/converter/converter.glade.h:42
 msgid "OggVorbis"
 msgstr "OggVorbis"
 
-#: ../plugins/converter/interface.c:513
-#: ../plugins/converter/converter.glade.h:42
+#: ../plugins/converter/interface.c:522
+#: ../plugins/converter/converter.glade.h:43
 msgid "FLAC"
 msgstr "FLAC"
 
-#: ../plugins/converter/interface.c:525
-#: ../plugins/converter/converter.glade.h:43
+#: ../plugins/converter/interface.c:534
+#: ../plugins/converter/converter.glade.h:44
 msgid "ID3v2"
 msgstr "ID3v2"
 
-#: ../plugins/converter/interface.c:535
-#: ../plugins/converter/converter.glade.h:44
+#: ../plugins/converter/interface.c:544
+#: ../plugins/converter/converter.glade.h:45
 msgid "MP4"
 msgstr ""
 
-#: ../plugins/converter/interface.c:541
-#: ../plugins/converter/converter.glade.h:45
+#: ../plugins/converter/interface.c:550
+#: ../plugins/converter/converter.glade.h:46
 msgid "<b>Tag writer</b>"
 msgstr "<b>ටැග් ලියනය</b>"
 
-#: ../plugins/converter/interface.c:628
-#: ../plugins/converter/converter.glade.h:46
+#: ../plugins/converter/interface.c:637
+#: ../plugins/converter/converter.glade.h:47
 msgid "DSP Preset Editor"
 msgstr "DSP පෙර සැකසුම් සංස්කාරකය"
 
-#: ../plugins/converter/interface.c:651
-#: ../plugins/converter/converter.glade.h:48
+#: ../plugins/converter/interface.c:660
+#: ../plugins/converter/converter.glade.h:49
 msgid "Untitled DSP Preset"
 msgstr "නම් නොකල DSP පෙර සැකසුම"
 
-#: ../plugins/converter/interface.c:663
-#: ../plugins/converter/converter.glade.h:49
+#: ../plugins/converter/interface.c:672
+#: ../plugins/converter/converter.glade.h:50
 #: ../plugins/shellexecui/interface.c:62
 #: ../plugins/shellexecui/shellexec.glade.h:3
 msgid "Add"
@@ -2258,7 +2301,7 @@ msgstr "එකතු කරන්න"
 msgid "Couldn't find pixmap file: %s"
 msgstr "%s pixmap ගොනුව සොයාගත නොහැකිය"
 
-#: ../plugins/converter/converter.glade.h:13
+#: ../plugins/converter/converter.glade.h:14
 msgid ""
 "Keep source format\n"
 "8 bit signed int\n"
@@ -2279,23 +2322,19 @@ msgstr ""
 "\n"
 "බිට් 32 ලකුණු සහිත දශම"
 
-#: ../plugins/converter/converter.glade.h:20
+#: ../plugins/converter/converter.glade.h:21
 msgid ""
 "Skip\n"
 "Prompt\n"
 "Overwrite"
 msgstr ""
 
-#: ../plugins/converter/converter.glade.h:36
-#, fuzzy
+#: ../plugins/converter/converter.glade.h:37
 msgid ""
 "Pipe\n"
 "Temp File\n"
 "Source File"
 msgstr ""
-"Pipe\n"
-"\n"
-"තාවකාලික ගොනු"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
@@ -2567,29 +2606,24 @@ msgid "Lock Right Pane Width"
 msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1546 ../plugins/gtkui/widgets.c:1661
-#, fuzzy
 msgid "Rename Tab"
-msgstr "ටැබයේ නම වෙනස් කරන්න"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1668
-#, fuzzy
 msgid "Remove Tab"
-msgstr "ටැබය ඉවත් කරන්න"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1675 ../plugins/gtkui/widgets.c:1854
-#, fuzzy
 msgid "Add New Tab"
-msgstr "නව ටැබයක් එකතු කරන්න"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1684
-#, fuzzy
 msgid "Move Tab Left"
-msgstr "ටැබය වම් දෙසට චලනය කරවන්න"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1691
-#, fuzzy
 msgid "Move Tab Right"
-msgstr "ටැබය දකුණු දෙසට චලනය කරවන්න"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:2344 ../plugins/gtkui/widgets.c:2522
 #: ../plugins/pltbrowser/pltbrowser.c:878
@@ -2597,14 +2631,12 @@ msgid "Show Column Headers"
 msgstr "තීරු ශීර්ෂයන් දර්ශනය කරන්න"
 
 #: ../plugins/gtkui/widgets.c:3565
-#, fuzzy
 msgid "Expand Box by 1 Item"
-msgstr "පෙට්ටිය එක් අයිතමයකින් විහිදුවන්න"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:3570
-#, fuzzy
 msgid "Shrink Box by 1 Item"
-msgstr "පෙට්ටිය එක් අයිතමයකින් හකුළුවන්න"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:3575
 msgid "Homogeneous"
@@ -2619,30 +2651,28 @@ msgid "Fill"
 msgstr "පුරවන්න"
 
 #: ../plugins/gtkui/widgets.c:4022
-#, fuzzy
 msgid "Configure Button"
-msgstr "බොත්තම් හැඩගස්වන්න"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:4301
 msgid "Voices:"
 msgstr ""
 
-#: ../plugins/gtkui/pltmenu.c:63 ../plugins/gtkui/pltmenu.c:373
+#: ../plugins/gtkui/pltmenu.c:63 ../plugins/gtkui/pltmenu.c:376
 msgid "Rename Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pltmenu.c:380
+#: ../plugins/gtkui/pltmenu.c:383
 msgid "Remove Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pltmenu.c:387
+#: ../plugins/gtkui/pltmenu.c:390
 msgid "Add New Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pltmenu.c:391
-#, fuzzy
+#: ../plugins/gtkui/pltmenu.c:394
 msgid "Duplicate Playlist"
-msgstr "නව ගීත ලැයිස්තුව"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -2654,7 +2684,7 @@ msgstr ""
 msgid "Items"
 msgstr ""
 
-#: ../plugins/pltbrowser/pltbrowser.c:922
+#: ../plugins/pltbrowser/pltbrowser.c:922 ../plugins/gtkui/rg.c:310
 msgid "Name"
 msgstr ""
 
@@ -2666,76 +2696,42 @@ msgstr ""
 msgid "Playlist browser"
 msgstr ""
 
-#: ../tf.c:1512
+#: ../tf.c:1525
 msgid "mono"
 msgstr ""
 
-#: ../tf.c:1515 ../tf.c:1519
+#: ../tf.c:1528 ../tf.c:1532
 msgid "stereo"
 msgstr ""
 
-#~ msgid "| %4d kbps "
-#~ msgstr "| %4d kbps"
+#: ../plugins/gtkui/rg.c:282
+msgid "Updating File Tags Progress"
+msgstr ""
 
-#~ msgid "Paused | "
-#~ msgstr "මදකට නවතා ඇත |"
+#: ../plugins/gtkui/rg.c:312
+msgid "Album Gain"
+msgstr ""
 
-#~ msgid ""
-#~ "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-#~ msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d ගීත| %s මුළු ධාවන කාලය"
+#: ../plugins/gtkui/rg.c:313
+msgid "Track Gain"
+msgstr ""
 
-#~ msgid "Replaygain mode:"
-#~ msgstr "ශබ්ද පරිපාලන ආකාරය"
+#: ../plugins/gtkui/rg.c:314
+msgid "Album Peak"
+msgstr ""
 
-#~ msgid "Disable"
-#~ msgstr "අක්‍රීය කරන්න"
+#: ../plugins/gtkui/rg.c:315
+msgid "Track Peak"
+msgstr ""
 
-#~ msgid "Replaygain peak scale"
-#~ msgstr "ශබ්ද පරිපාලනය ඉහළ පරාස වලින්"
+#: ../plugins/gtkui/rg.c:318
+msgid "Success"
+msgstr ""
 
-#~ msgid "Replaygain preamp:"
-#~ msgstr "ශබ්ද පරිපාලන පූර්ව වර්ධකය"
+#: ../plugins/gtkui/rg.c:319
+msgid "File not found"
+msgstr ""
 
-#~ msgid "Global preamp:"
-#~ msgstr "සමස්ත පූර්ව වර්ධකය"
-
-#~ msgid "Remove field"
-#~ msgstr "ක්ෂේත්‍රය ඉවත් කරන්න"
-
-#~ msgid ""
-#~ "Item Index\n"
-#~ "Playing\n"
-#~ "Album Art\n"
-#~ "Artist - Album\n"
-#~ "Artist\n"
-#~ "Album\n"
-#~ "Title\n"
-#~ "Duration\n"
-#~ "Track Number\n"
-#~ "Band / Album Artist\n"
-#~ "Custom"
-#~ msgstr ""
-#~ "අයිතම අංකය\n"
-#~ "\n"
-#~ "ධාවනය වෙමින් පවතී\n"
-#~ "\n"
-#~ "ඇල්බම රූපය\n"
-#~ "\n"
-#~ "ගායන ශිල්පියා - ඇල්බමය\n"
-#~ "\n"
-#~ "ගායන ශිල්පියා\n"
-#~ "\n"
-#~ "ඇල්බමය\n"
-#~ "\n"
-#~ "ගීතය\n"
-#~ "\n"
-#~ "කාලය\n"
-#~ "\n"
-#~ "ගීත අංකය\n"
-#~ "\n"
-#~ "කණ්ඩායම / ගායන ශිල්පියා\n"
-#~ "\n"
-#~ "රිසි ආකාරය"
-
-#~ msgid "Lock movement"
-#~ msgstr "චලන නවතන්න"
+#: ../plugins/gtkui/rg.c:320
+msgid "Invalid file"
+msgstr ""

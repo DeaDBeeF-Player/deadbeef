@@ -23,6 +23,7 @@
 #endif
 
 #include <pulse/simple.h>
+#include <pulse/error.h>
 
 #include <stdint.h>
 #include <unistd.h>
@@ -71,6 +72,9 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
         plugin.fmt.samplerate = 44100;
         plugin.fmt.channelmask = 3;
     }
+    if (plugin.fmt.samplerate > 192000) {
+        plugin.fmt.samplerate = 192000;
+    }
 
     trace ("format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
 
@@ -81,7 +85,6 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
     trace ("pulse: channels: %d\n", ss.channels);
 
     // Read samplerate from config
-    //ss.rate = deadbeef->conf_get_int(CONFSTR_PULSE_SAMPLERATE, 44100);
     ss.rate = plugin.fmt.samplerate;
     trace ("pulse: samplerate: %d\n", ss.rate);
 
@@ -138,7 +141,8 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
 
     if (!s)
     {
-        trace ("pulse_init failed (%d)\n", error);
+        const char *strerr = pa_strerror (error);
+        fprintf (stderr, "pa_simple_new failed: %s\n", strerr);
         return -1;
     }
 
@@ -304,9 +308,6 @@ static void pulse_thread(void *context)
         if (res < 0)
         {
             fprintf(stderr, "pulse: failed to write buffer\n");
-            usleep(10000);
-        }
-        else if (res == 0) {
             usleep(10000);
         }
     }

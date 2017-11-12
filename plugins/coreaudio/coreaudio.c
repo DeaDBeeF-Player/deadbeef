@@ -71,6 +71,11 @@ _initqueue (ddb_waveformat_t *fmt) {
 
     memset (&req_format, 0, sizeof (req_format));
     req_format.mSampleRate = (Float64)fmt->samplerate;
+
+    // audioqueue happily accepts ultra-high samplerates, but doesn't really play them
+    if (req_format.mSampleRate > 192000) {
+        req_format.mSampleRate = 192000;
+    }
     req_format.mFormatID = kAudioFormatLinearPCM;
 
     if (fmt->is_float) {

@@ -21,7 +21,9 @@
 #include <unistd.h>
 #include <sys/prctl.h>
 #include "../../deadbeef.h"
+#ifdef HAVE_CONFIG_H
 #include "../../config.h"
+#endif
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
@@ -433,7 +435,7 @@ palsa_setformat (ddb_waveformat_t *fmt) {
         return 0;
     }
     else {
-        trace ("switching format:\n"
+        trace ("switching format to (requsted -> actual):\n"
         "bps %d -> %d\n"
         "is_float %d -> %d\n"
         "channels %d -> %d\n"
@@ -586,7 +588,8 @@ palsa_unpause (void) {
 static void
 palsa_thread (void *context) {
     prctl (PR_SET_NAME, "deadbeef-alsa", 0, 0, 0, 0);
-    int err;
+    int err = 0;
+    int avail;
     for (;;) {
         if (alsa_terminate) {
             break;
@@ -596,61 +599,69 @@ palsa_thread (void *context) {
             continue;
         }
 
-        LOCK;
-        /* find out how much space is available for playback data */
-        snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
-        UNLOCK;
+        // read data
+        err = 0;
+        int sz = period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels;
+        char buf[sz];
+        int br = palsa_callback (buf, sz);
+        if (alsa_terminate) {
+            break;
+        }
+        if (br <= 0) {
+            usleep (10000);
+            continue;
+        }
 
-        while (!alsa_terminate && frames_to_deliver >= period_size) {
+retry:
+        // wait till buffer is available
+        do {
             LOCK;
-            err = 0;
-            int sz = period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels;
-            char buf[sz];
-            int br = palsa_callback (buf, sz);
-            if (alsa_terminate) {
-                UNLOCK;
+            avail = snd_pcm_avail_update (audio);
+            UNLOCK;
+            if (avail < 0) {
+                err = avail;
                 break;
             }
-            if (br < 0) {
-                br = 0;
-            }
+        } while (avail < period_size && !alsa_terminate);
 
-            if (br > 0) {
-                int frames = snd_pcm_bytes_to_frames(audio, br);
-                err = snd_pcm_writei (audio, buf, frames);
-            }
-            if (alsa_terminate) {
-                UNLOCK;
-                break;
-            }
+        if (alsa_terminate) {
+            break;
+        }
 
+        if (err < 0) {
+            trace ("snd_pcm_avail_update: %d: %s\n", err, snd_strerror (err));
+            LOCK;
+            err = snd_pcm_recover (audio, err, 1);
+            UNLOCK;
             if (err < 0) {
-                if (err == -ESTRPIPE) {
-                    fprintf (stderr, "alsa: trying to recover from suspend... (error=%d, %s)\n", err,  snd_strerror (err));
-                    while ((err = snd_pcm_resume(audio)) == -EAGAIN) {
-                        sleep(1); /* wait until the suspend flag is released */
-                    }
-                    if (err < 0) {
-                        err = snd_pcm_prepare(audio);
-                        if (err < 0) {
-                            fprintf (stderr, "Can't recover from suspend, prepare failed: %s", snd_strerror(err));
-                            exit (-1);
-                        }
-                    }
-                }
-                else {
-                    snd_pcm_prepare (audio);
-                    snd_pcm_start (audio);
-                }
-                UNLOCK;
+                trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
+                state = OUTPUT_STATE_STOPPED;
                 continue;
             }
-            frames_to_deliver = snd_pcm_avail_update (audio);
-            UNLOCK;
+            goto retry;
         }
-        int sleeptime = period_size-frames_to_deliver;
-        if (sleeptime > 0 && plugin.fmt.samplerate > 0 && plugin.fmt.channels > 0) {
-            usleep (sleeptime * 1000 / plugin.fmt.samplerate * 1000);
+
+        // write data
+        LOCK;
+        int frames = snd_pcm_bytes_to_frames(audio, br);
+        err = snd_pcm_writei (audio, buf, frames);
+        UNLOCK;
+
+        if (alsa_terminate) {
+            break;
+        }
+
+        if (err < 0) {
+            trace ("snd_pcm_writei: %d: %s\n", err, snd_strerror (err));
+            LOCK;
+            err = snd_pcm_recover (audio, err, 1);
+            UNLOCK;
+            if (err < 0) {
+                trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
+                state = OUTPUT_STATE_STOPPED;
+                continue;
+            }
+            goto retry;
         }
     }
 

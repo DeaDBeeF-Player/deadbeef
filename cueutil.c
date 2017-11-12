@@ -480,6 +480,25 @@ error:
     return after;
 }
 
+static int
+_file_present_in_namelist (const char *fullpath, cueparser_t *cue) {
+    int i = 0;
+    for (i = 0; i < cue->n; i++) {
+        if (cue->namelist[i]->d_name[0]) {
+            char path[PATH_MAX];
+            snprintf (path, sizeof (path), "%s/%s", cue->dirname, cue->namelist[i]->d_name);
+            if (!strcmp (path, cue->fullpath)) {
+                // file present
+                break;
+            }
+        }
+    }
+    if (i == cue->n) {
+        return 0;
+    }
+    return 1;
+}
+
 
 static int
 _load_nextfile (cueparser_t *cue) {
@@ -552,6 +571,16 @@ _load_nextfile (cueparser_t *cue) {
             }
         }
     }
+
+    if (cue->fullpath[0] && !cue->origin) {
+        // if we have namelist - means we're loading cue as part of the folder
+        // need to check if the fullpath file is present in the list, to avoid double-loading
+
+        if (cue->namelist && !_file_present_in_namelist (cue->fullpath, cue)) {
+            cue->fullpath[0] = 0;
+        }
+    }
+
     if (cue->fullpath[0] && !cue->origin) {
         cue->origin = plt_insert_file2 (-1, cue->temp_plt, NULL, cue->fullpath, NULL, NULL, NULL);
         if (cue->origin) {

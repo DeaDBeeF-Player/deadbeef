@@ -912,6 +912,7 @@ stream_track (playItem_t *it, int startpaused) {
         strncpy (filetype, ft, sizeof (filetype));
     }
     pl_unlock ();
+    char *cct = "undefined";
     char *plugs[CTMAP_MAX_PLUGINS] = {NULL};
     if (!decoder_id[0] && (!strcmp (filetype, "content") || !filetype[0])) {
         // try to get content-type
@@ -934,7 +935,7 @@ stream_track (playItem_t *it, int startpaused) {
             goto error;
         }
         trace ("got content-type: %s\n", ct);
-        char *cct = strdupa (ct);
+        cct = strdupa (ct);
         char *sc = strchr (cct, ';');
         if (sc) {
             *sc = 0;
@@ -1091,9 +1092,11 @@ m3u_error:
     for (;;) {
         if (!decoder_id[0] && plugs[0] && !plugs[plug_idx]) {
             it->played = 1;
-            trace ("decoder->init returned %p\n", new_fileinfo);
-            if (playing_track == it) {
-                send_trackinfochanged (to); // got new metadata, refresh UI
+            trace_err ("No suitable decoder found for stream %s of content-type %s\n", pl_find_meta (playing_track, ":URI"), cct);
+
+            if (!startpaused) {
+                // failed to play the track, ask for the next one
+                streamer_play_failed (it);
             }
             err = -1;
             goto error;
@@ -1154,13 +1157,8 @@ m3u_error:
             trace_err ("Failed to play track: %s\n", pl_find_meta(it, ":URI"));
             pl_unlock ();
 
-            if (from) {
-                pl_item_unref (from);
-            }
-            if (to) {
-                pl_item_unref (to);
-            }
-            return -1;
+            err = -1;
+            goto error;
         }
 
         trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), dec->plugin.id);
@@ -1317,8 +1315,16 @@ _update_buffering_state () {
 
         // update buffering UI
         if (!buffering) {
-            streamer_set_buffering_track (NULL);
-            // NOTE: not sending trackinfochanged, it will be sent immediately after track starts playing.
+            if (buffering_track) {
+                playItem_t *prev = buffering_track;
+                pl_item_ref (prev);
+                streamer_set_buffering_track (NULL);
+                send_trackinfochanged (prev);
+                pl_item_unref (prev);
+            }
+            else if (playing_track) {
+                send_trackinfochanged (playing_track);
+            }
         }
         else if (buffering_track) {
             send_trackinfochanged (buffering_track);
@@ -1411,33 +1417,31 @@ streamer_thread (void *ctx) {
 
         _update_buffering_state ();
 
-        streamer_lock ();
         if (!fileinfo) {
             if (_audio_stall_count >= AUDIO_STALL_WAIT) {
                 output->stop ();
+                streamer_lock ();
                 _handle_playback_stopped();
                 _audio_stall_count = 0;
                 streamer_unlock ();
                 continue;
             }
-            streamer_unlock ();
             usleep (50000); // nothing is streaming -- about to stop
             continue;
         }
 
         streamblock_t *block = streamreader_get_next_block ();
-        streamer_unlock ();
 
         if (!block) {
             usleep (50000); // all blocks are full
             continue;
         }
 
-        int res = streamreader_read_block (block, streaming_track, fileinfo);
+        // streamreader_read_block will lock the mutex after success
+        int res = streamreader_read_block (block, streaming_track, fileinfo, mutex);
         int last = 0;
 
         if (res >= 0) {
-            streamer_lock ();
             streamreader_enqueue_block (block);
             last = block->last;
             streamer_unlock ();
@@ -1884,6 +1888,10 @@ streamer_read (char *bytes, int size) {
 
     // consume decoded data
     int sz = min (size, outbuffer_remaining);
+    if (!sz) {
+        // no data available
+        return 0;
+    }
 
     // clip to frame size
     int ss = output->fmt.channels * output->fmt.bps / 8;
@@ -2194,15 +2202,15 @@ play_next (int dir) {
     }
 
     playItem_t *next = dir > 0 ? get_next_track(origin) : get_prev_track(origin);
-    streamer_is_buffering = 1;
 
     if (!next) {
+        output->stop ();
         _handle_playback_stopped ();
         streamer_unlock ();
-        output->stop ();
         return;
     }
 
+    streamer_is_buffering = 1;
     streamer_set_playing_track(NULL);
     streamer_set_buffering_track (next);
     handle_track_change (next);

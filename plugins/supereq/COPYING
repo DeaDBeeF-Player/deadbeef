@@ -16,5 +16,18 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+The original SuperEQ code:
 
-For additional credits, please see dsp_supereq.txt
+Shibatch Super Equalizer ver 0.03 for winamp
+written by Naoki Shibata  shibatch@users.sourceforge.net
+This program(except FFT part) is distributed under LGPL. See LGPL.txt for
+details.
+
+
+Ooura FFT implementation
+
+Copyright Takuya OOURA, 1996-2001
+http://www.kurims.kyoto-u.ac.jp/~ooura/fft.html
+
+You may use, copy, modify and distribute this code for any purpose (include commercial use) and without fee.
+Please refer to this package when you modify this code.

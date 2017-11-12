@@ -3394,21 +3394,6 @@ send_trackinfochanged (playItem_t *track) {
         pl_item_ref (track);
     }
 
-#if 0
-    // debug
-    {
-        playItem_t *playing_track = streamer_get_playing_track ();
-        playItem_t *buffering_track = streamer_get_buffering_track ();
-        printf ("TIC: t:%p p:%p b:%p\n", track, playing_track, buffering_track);
-        if (playing_track) {
-            pl_item_unref (playing_track);
-        }
-        if (buffering_track) {
-            pl_item_unref (buffering_track);
-        }
-    }
-#endif
-
     messagepump_push_event ((ddb_event_t*)ev, 0, 0);
 }
 
@@ -3659,12 +3644,7 @@ plt_load2 (int visibility, playlist_t *plt, playItem_t *after, const char *fname
 
 int
 plt_add_file2 (int visibility, playlist_t *plt, const char *fname, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
-    int prev = plt->ignore_archives;
-    plt->ignore_archives = conf_get_int ("ignore_archives", 1);
-
     int res = plt_add_file_int (visibility, plt, fname, callback, user_data);
-
-    plt->ignore_archives = prev;
     return res;
 }
 
