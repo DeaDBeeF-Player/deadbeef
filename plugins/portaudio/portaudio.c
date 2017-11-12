@@ -40,8 +40,9 @@
 #define DEFAULT_BUFFER_SIZE 8192
 #define DEFAULT_BUFFER_SIZE_STR "8192"
 
-#define trace(...) {deadbeef->log (__VA_ARGS__);}
+//#define trace(...) {deadbeef->log (__VA_ARGS__);}
 //#define trace(...) { fprintf(stdout, __VA_ARGS__); }
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 1, __VA_ARGS__); }
 #define info(...) { deadbeef->log_detailed (&plugin.plugin, 1, __VA_ARGS__); }
 
 static PaSampleFormat
