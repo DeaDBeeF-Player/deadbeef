@@ -140,13 +140,14 @@ dsp_clone (ddb_dsp_context_t *from) {
 
 void
 streamer_set_dsp_chain_real (ddb_dsp_context_t *chain) {
+    streamer_lock ();
     dsp_chain_free (dsp_chain);
     dsp_chain = chain;
     eq = NULL;
-    streamer_dsp_postinit ();
 
+    streamer_dsp_postinit ();
     streamer_dsp_chain_save();
-    streamer_reset (1);
+    streamer_unlock ();
 
     messagepump_push (DB_EV_DSPCHAINCHANGED, 0, 0, 0);
 }
