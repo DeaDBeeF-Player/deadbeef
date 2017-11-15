@@ -32,9 +32,46 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+#if defined(HAVE_XGUI)
+extern int android_use_only_wifi;
+extern int android_wifi_status;
+extern int android_network_access_request;
+#endif
+
+static int
+can_use_filename (const char *fname) {
+#if defined(HAVE_XGUI)
+    int res = (plug_is_local_file (fname) || !android_use_only_wifi || android_wifi_status);
+    if (!res) {
+        android_network_access_request = 1;
+    }
+    return res;
+#else
+    return 1;
+#endif
+}
+
+static int
+can_use_file (DB_FILE *fp) {
+#if defined(HAVE_XGUI)
+    int res = (!fp->vfs->is_streaming () || !android_use_only_wifi || android_wifi_status);
+    if (!res) {
+        android_network_access_request = 1;
+    }
+    return res;
+#else
+    return 1;
+#endif
+}
+
 DB_FILE *
 vfs_fopen (const char *fname) {
     trace ("vfs_open %s\n", fname);
+
+    if (!can_use_filename (fname)) {
+        return NULL;
+    }
+
     DB_vfs_t **plugs = plug_get_vfs_list ();
     DB_vfs_t *fallback = NULL;
     int i;
@@ -72,16 +109,25 @@ vfs_fclose (DB_FILE *stream) {
 
 size_t
 vfs_fread (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
+    if (!can_use_file (stream)) {
+        return 0;
+    }
     return stream->vfs->read (ptr, size, nmemb, stream);
 }
 
 int
 vfs_fseek (DB_FILE *stream, int64_t offset, int whence) {
+    if (!can_use_file (stream)) {
+        return -1;
+    }
     return stream->vfs->seek (stream, offset, whence);
 }
 
 int64_t
 vfs_ftell (DB_FILE *stream) {
+    if (!can_use_file (stream)) {
+        return -1;
+    }
     return stream->vfs->tell (stream);
 }
 
@@ -92,11 +138,17 @@ vfs_rewind (DB_FILE *stream) {
 
 int64_t
 vfs_fgetlength (DB_FILE *stream) {
+    if (!can_use_file (stream)) {
+        return -1;
+    }
     return stream->vfs->getlength (stream);
 }
 
 const char *
 vfs_get_content_type (DB_FILE *stream) {
+    if (!can_use_file (stream)) {
+        return NULL;
+    }
     return stream->vfs->get_content_type (stream);
 }
 

@@ -30,15 +30,12 @@
 #include "volume.h"
 #include "replaygain.h"
 #include "conf.h"
+#include "common.h"
 
 static ddb_replaygain_settings_t current_settings;
 
 void
 replaygain_apply_with_settings (ddb_replaygain_settings_t *settings, ddb_waveformat_t *fmt, char *bytes, int numbytes) {
-    if (!settings->processing_flags) {
-        return;
-    }
-
     if (fmt->bps == 16) {
         apply_replay_gain_int16 (settings, bytes, numbytes);
     }
@@ -149,7 +146,7 @@ get_int_volume (ddb_replaygain_settings_t *settings) {
     default:
         break;
     }
-    return vol;
+    return vol == 1000 ? -1 : vol;
 }
 
 void
@@ -200,7 +197,7 @@ apply_replay_gain_int24 (ddb_replaygain_settings_t *settings, char *bytes, int s
     }
     char *s = (char*)bytes;
     for (int j = 0; j < size/3; j++) {
-        int32_t sample = ((unsigned char)s[0]) | ((unsigned char)s[1]<<8) | (s[2]<<16);
+        int32_t sample = ((unsigned char)s[0]) | ((unsigned char)s[1]<<8) | ((signed char)s[2]<<16);
         sample = (int32_t)(sample * vol / 1000);
         if (sample > 0x7fffff) {
             sample = 0x7fffff;
@@ -261,6 +258,11 @@ apply_replay_gain_float32 (ddb_replaygain_settings_t *settings, char *bytes, int
     default:
         break;
     }
+
+    if (vol == 1) {
+        return;
+    }
+
     float *s = (float*)bytes;
     for (int j = 0; j < size/4; j++) {
         float sample = ((float)*s) * vol;

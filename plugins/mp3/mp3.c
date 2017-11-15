@@ -281,8 +281,6 @@ _scan_mpeg_header (buffer_t *buffer, int64_t offs, int64_t fsize, mpeg_frame_inf
         return -2;
     }
 
-retry_sync:
-
     sync = fb[0];
     if (sync != 0xff) {
         return -1;
@@ -416,7 +414,6 @@ retry_sync:
         mpeg_frame->packetlength = mpeg_frame->samples_per_frame / 8 * mpeg_frame->bitrate / mpeg_frame->samplerate + padding;
 
         // stop if the packet size is larger than remaining data
-        // FIXME: should be doing fsize-id3v1size if present
         if (fsize >= 0 && offs + mpeg_frame->packetlength > fsize) {
             return -2;
         }
@@ -449,8 +446,9 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     int64_t valid_frame_pos = -1;
     // this flag is used to make sure we only check the 1st frame for xing info
     int checked_xing_header = buffer->have_xing_header;
+    int reached_eof = 0;
 
-    int64_t fsize = deadbeef->fgetlength (buffer->file);
+    int64_t fsize = deadbeef->fgetlength (buffer->file) - buffer->endoffset;
 
     if (fsize < 0) {
         buffer->duration = -1;
@@ -470,6 +468,11 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             offs = deadbeef->ftell (buffer->file);
         }
 
+        if (!buffer->file->vfs->is_streaming () && offs >= fsize) {
+            reached_eof = 1;
+            goto end_scan;
+        }
+
         deadbeef->fseek (buffer->file, offs, SEEK_SET);
 
         mpeg_frame_info_t frame;
@@ -484,15 +487,19 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             offs++;
             continue;
         }
+        // end of file?
         if (new_offs == -2) {
-            break;
+            if (!valid_frames) {
+                break;
+            }
+            goto end_scan;
         }
         if (valid_frame_pos == -1) {
             valid_frame_pos = framepos;
         }
         offs = new_offs;
 // {{{ vbr adjustement
-        if ((!buffer->have_xing_header || !buffer->vbr) && prev_bitrate != -1 && prev_bitrate != frame.bitrate) {
+        if (buffer->vbr != DETECTED_VBR && (!buffer->have_xing_header || !buffer->vbr) && prev_bitrate != -1 && prev_bitrate != frame.bitrate) {
             buffer->vbr = DETECTED_VBR;
         }
         prev_bitrate = frame.bitrate;
@@ -608,12 +615,17 @@ end_scan:
         buffer->avg_packetlength /= (float)valid_frames;
         buffer->avg_samplerate /= valid_frames;
         buffer->avg_samples_per_frame /= valid_frames;
-        trace ("startoffs: %lld, endoffs: %lld\n",  buffer->startoffset, buffer->endoffset);
 
         buffer->nframes = (fsize - buffer->startoffset - buffer->endoffset) / buffer->avg_packetlength;
         if (!buffer->have_xing_header) {
-            buffer->totalsamples = buffer->nframes * buffer->avg_samples_per_frame;
-            buffer->duration = (buffer->totalsamples - buffer->delay - buffer->padding) / (float)buffer->avg_samplerate;
+            if (reached_eof) {
+                buffer->totalsamples = scansamples;
+                buffer->duration = (buffer->totalsamples - buffer->delay - buffer->padding) / (float)buffer->samplerate;
+            }
+            else {
+                buffer->totalsamples = buffer->nframes * buffer->avg_samples_per_frame;
+                buffer->duration = (buffer->totalsamples - buffer->delay - buffer->padding) / (float)buffer->avg_samplerate;
+            }
         }
         buffer->bitrate = (fsize - buffer->startoffset - buffer->endoffset) / buffer->duration * 8;
         trace ("nframes: %d, fsize: %lld, spf: %d, smp: %d, totalsamples: %d\n", buffer->nframes, fsize, buffer->avg_samples_per_frame, buffer->avg_samplerate, buffer->totalsamples);
@@ -800,12 +812,20 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->buffer.it = it;
     info->info.readpos = 0;
     if (!info->buffer.file->vfs->is_streaming ()) {
-        int skip = deadbeef->junk_get_leading_size (info->buffer.file);
-        if (skip > 0) {
-            trace ("mp3: skipping %d(%xH) bytes of junk\n", skip, skip);
-            deadbeef->fseek (info->buffer.file, skip, SEEK_SET);
+        uint32_t start;
+        uint32_t end;
+        deadbeef->junk_get_tag_offsets (info->buffer.file, &start, &end);
+        info->buffer.startoffset = start;
+        info->buffer.endoffset = end;
+        if (start > 0) {
+            trace ("mp3: skipping %d(%xH) bytes of junk\n", start, start);
+            deadbeef->fseek (info->buffer.file, start, SEEK_SET);
         }
-        int res = cmp3_scan_stream (&info->buffer, deadbeef->conf_get_int ("mp3.disable_gapless", 0) ? 0 : -1);
+#if 0
+        deadbeef->conf_get_int ("mp3.disable_gapless", 0) ? 0 : -1;
+#endif
+        int scan_mode = -1;
+        int res = cmp3_scan_stream (&info->buffer, scan_mode);
         if (res < 0) {
             trace ("mp3: cmp3_init: initial cmp3_scan_stream failed\n");
             return -1;
@@ -883,6 +903,13 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.channels = info->buffer.channels;
     _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     trace ("mp3 format: bps:%d sr:%d channels:%d\n", _info->fmt.bps, _info->fmt.samplerate, _info->fmt.channels);
+
+    if (info->want_16bit) {
+        deadbeef->pl_replace_meta (it, ":BPS", "16");
+    }
+    else {
+        deadbeef->pl_replace_meta (it, ":BPS", "32");
+    }
 
     info->dec->init (info);
     if (!info->buffer.file->vfs->is_streaming ()) {
@@ -1163,10 +1190,14 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     buffer_t buffer;
     memset (&buffer, 0, sizeof (buffer));
     buffer.file = fp;
-    int skip = deadbeef->junk_get_leading_size (buffer.file);
-    if (skip > 0) {
-        trace ("mp3: skipping %d bytes (tag)\n", skip);
-        deadbeef->fseek(buffer.file, skip, SEEK_SET);
+    uint32_t start;
+    uint32_t end;
+    deadbeef->junk_get_tag_offsets (buffer.file, &start, &end);
+    buffer.startoffset = start;
+    buffer.endoffset = end;
+    if (start > 0) {
+        trace ("mp3: skipping %d bytes (tag)\n", start);
+        deadbeef->fseek(buffer.file, start, SEEK_SET);
     }
     // calc approx. mp3 duration 
     int res = cmp3_scan_stream (&buffer, 0);
@@ -1270,7 +1301,7 @@ static const char *exts[] = {
 
 static const char settings_dlg[] =
     "property \"Force 16 bit output\" checkbox mp3.force16bit 0;\n"
-    "property \"Disable gapless playback (faster scanning)\" checkbox mp3.disable_gapless 0;\n"
+//    "property \"Disable gapless playback (faster scanning)\" checkbox mp3.disable_gapless 0;\n"
 #if defined(USE_LIBMAD) && defined(USE_LIBMPG123)
     "property \"Backend\" select[2] mp3.backend 0 mpg123 mad;\n"
 #endif

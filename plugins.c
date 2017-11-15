@@ -492,6 +492,9 @@ static DB_functions_t deadbeef_api = {
     .pl_item_set_endsample = (void (*) (DB_playItem_t *it, int64_t sample))pl_item_set_endsample,
 
     .plt_get_selection_playback_time = (float (*) (ddb_playlist_t *plt))plt_get_selection_playback_time,
+
+    .junk_get_tail_size = junk_get_tail_size,
+    .junk_get_tag_offsets = junk_get_tag_offsets,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -802,7 +805,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
 
 static int
 load_gui_plugin (const char **plugdirs) {
-#if defined HAVE_COCOAUI
+#if defined HAVE_COCOAUI || defined HAVE_XGUI
     return 0;
 #endif
 
@@ -968,6 +971,9 @@ plug_load_all (void) {
 
     const char *dirname = deadbeef->get_plugin_dir ();
 
+    // remember how many plugins to skip if called Nth time
+    plugin_t *prev_plugins_tail = plugins_tail;
+
 #ifdef OSX_APPBUNDLE
     char libpath[PATH_MAX];
     int res = cocoautil_get_library_path (libpath, sizeof (libpath));
@@ -1023,6 +1029,8 @@ plug_load_all (void) {
 #endif
 #endif
 
+#ifndef ANDROID
+// this filepath is always in the android.plugin_path config var
     int k = 0;
 #ifndef ANDROID
     // load gui plugin before others
@@ -1045,6 +1053,7 @@ plug_load_all (void) {
         }
         load_plugin_dir (plugdir, 0);
     }
+#endif
 
 #ifdef ANDROID
     char plugin_path[1000];
@@ -1065,7 +1074,7 @@ plug_load_all (void) {
 
         char path[PATH_MAX];
         snprintf (path, sizeof (path), "/data/data/%s/lib", p);
-        load_plugin_dir (path);
+        load_plugin_dir (path, 0);
         if (!e) {
             break;
         }
@@ -1080,14 +1089,6 @@ plug_load_all (void) {
 #define PLUG(n) plug_init_plugin (n##_load, NULL);
 #include "moduleconf.h"
 #undef PLUG
-#ifdef ANDROID
-#define PLUG(n) extern DB_plugin_t * n##_load (DB_functions_t *api);
-#include "moduleconf-android.h"
-#undef PLUG
-#define PLUG(n) plug_init_plugin (n##_load, NULL);
-#include "moduleconf-android.h"
-#undef PLUG
-#endif
 
     if (plugins_lowprio) {
         if (plugins_tail) {
@@ -1149,7 +1150,9 @@ plug_load_all (void) {
     }
     // start plugins
     plugin_t *prev = NULL;
-    for (plug = plugins; plug;) {
+    plugin_t *head = prev_plugins_tail ? prev_plugins_tail->next : plugins;
+    for (plug = head; plug;) {
+        trace ("starting plugin %s\n", plug->plugin->name);
         if (plug->plugin->type != DB_PLUGIN_GUI && plug->plugin->start) {
             if (plug->plugin->start () < 0) {
                 trace_err ("plugin %s failed to start, deactivated.\n", plug->plugin->name);
@@ -1467,6 +1470,9 @@ plug_free_decoder_ids (void) {
 
 DB_decoder_t *
 plug_get_decoder_for_id (const char *id) {
+    if (!id) {
+        return NULL;
+    }
     DB_decoder_t **plugins = plug_get_decoder_list ();
     for (int c = 0; plugins[c]; c++) {
         if (!strcmp (id, plugins[c]->plugin.id)) {

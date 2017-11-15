@@ -41,6 +41,7 @@ create_converterdlg (void)
   GtkWidget *write_to_source_folder;
   GtkWidget *preserve_folders;
   GtkWidget *bypass_same_format;
+  GtkWidget *retag_after_copy;
   GtkWidget *hbox100;
   GtkWidget *label122;
   GtkWidget *hbox101;
@@ -127,6 +128,10 @@ create_converterdlg (void)
   bypass_same_format = gtk_check_button_new_with_mnemonic (_("Copy if the format is not changing"));
   gtk_widget_show (bypass_same_format);
   gtk_box_pack_start (GTK_BOX (vbox26), bypass_same_format, FALSE, FALSE, 0);
+
+  retag_after_copy = gtk_check_button_new_with_mnemonic (_("Re-tag after copy"));
+  gtk_widget_show (retag_after_copy);
+  gtk_box_pack_start (GTK_BOX (vbox26), retag_after_copy, FALSE, FALSE, 0);
 
   hbox100 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox100);
@@ -282,6 +287,9 @@ create_converterdlg (void)
   g_signal_connect ((gpointer) bypass_same_format, "toggled",
                     G_CALLBACK (on_bypass_same_format_toggled),
                     NULL);
+  g_signal_connect ((gpointer) retag_after_copy, "toggled",
+                    G_CALLBACK (on_retag_after_copy_toggled),
+                    NULL);
   g_signal_connect ((gpointer) encoder, "changed",
                     G_CALLBACK (on_converter_encoder_changed),
                     NULL);
@@ -317,6 +325,7 @@ create_converterdlg (void)
   GLADE_HOOKUP_OBJECT (converterdlg, write_to_source_folder, "write_to_source_folder");
   GLADE_HOOKUP_OBJECT (converterdlg, preserve_folders, "preserve_folders");
   GLADE_HOOKUP_OBJECT (converterdlg, bypass_same_format, "bypass_same_format");
+  GLADE_HOOKUP_OBJECT (converterdlg, retag_after_copy, "retag_after_copy");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox100, "hbox100");
   GLADE_HOOKUP_OBJECT (converterdlg, label122, "label122");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox101, "hbox101");

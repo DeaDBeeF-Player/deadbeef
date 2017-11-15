@@ -213,9 +213,12 @@ fakeout_consume (int nbytes) {
         if (n > nbytes) {
             n = nbytes;
         }
-        nbytes -= fakeout_callback (buf, n);
+        int rb = fakeout_callback (buf, n);
+        if (rb > 0) {
+            nbytes -= rb;
+        }
         if (_realtime) {
-            usleep ((int64_t)n * 1000000 / (44100 * 4 * 2));
+            usleep ((int64_t)n * 1000000 / (44100 * 4) * 2);
         }
     }
 }

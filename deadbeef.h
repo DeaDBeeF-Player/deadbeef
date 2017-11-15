@@ -1412,6 +1412,14 @@ typedef struct {
 
     // get total playback time of selected tracks
     float (*plt_get_selection_playback_time) (ddb_playlist_t *plt);
+
+    // get the size of known tags at the end of file, or -1 on error
+    int (*junk_get_tail_size) (DB_FILE *fp);
+
+    // get the sizes of known tags at the beginning and end of file
+    // no error is reported
+    void (*junk_get_tag_offsets) (DB_FILE *fp, uint32_t *head, uint32_t *tail);
+
 #endif
 } DB_functions_t;
 
@@ -1450,7 +1458,10 @@ enum {
     DB_ACTION_PLAYLIST = 1 << 5,
 
     /* add item to menu(s), if contains slash symbol(s) */
-    DB_ACTION_ADD_MENU = 1 << 6
+    DB_ACTION_ADD_MENU = 1 << 6,
+
+    /* Can't handle playlist */
+    DB_ACTION_NOT_FOR_PLAYLIST = 1 << 7
 };
 
 // action contexts

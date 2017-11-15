@@ -25,8 +25,7 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 DB_functions_t *deadbeef;
 static DB_decoder_t plugin;
@@ -77,14 +76,14 @@ psfplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->filesize = deadbeef->fgetlength (file);
     info->filebuffer = malloc (info->filesize);
     if (!info->filebuffer) {
-		fprintf(stderr, "psf: could not allocate %d bytes of memory\n", (int)info->filesize);
+		trace ("psf: could not allocate %d bytes of memory\n", (int)info->filesize);
 		deadbeef->fclose (file);
         return -1;
     }
 
 	if (deadbeef->fread(info->filebuffer, 1, info->filesize, file) != info->filesize) {
         deadbeef->pl_lock ();
-		fprintf(stderr, "psf: file read error: %s\n", deadbeef->pl_find_meta (it, ":URI"));
+		trace ("psf: file read error: %s\n", deadbeef->pl_find_meta (it, ":URI"));
 		deadbeef->pl_unlock ();
 		deadbeef->fclose (file);
         return -1;
@@ -93,7 +92,7 @@ psfplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     info->type = ao_identify (info->filebuffer);
     if (info->type < 0) {
-        fprintf (stderr, "psf: ao_identify failed\n");
+        trace ("psf: ao_identify failed\n");
         return -1;
     }
 
@@ -101,7 +100,7 @@ psfplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->decoder = ao_start (info->type, deadbeef->pl_find_meta (it, ":URI"), (uint8 *)info->filebuffer, info->filesize);
     deadbeef->pl_unlock ();
     if (!info->decoder) {
-        fprintf (stderr, "psf: ao_start failed\n");
+        trace ("psf: ao_start failed\n");
         return -1;
     }
 
@@ -216,35 +215,54 @@ static DB_playItem_t *
 psfplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
-        fprintf (stderr, "psf: failed to fopen %s\n", fname);
+        trace ("psf: failed to fopen %s\n", fname);
         return NULL;
     }
 
-    size_t size = deadbeef->fgetlength (fp);
+    int64_t fsize = deadbeef->fgetlength (fp);
+    if (fsize > 4*1024*1024) {
+        deadbeef->fclose (fp);
+        return NULL; // don't try loading large files
+    }
+
+    // identify by first 200 bytes
+    size_t size = 200;
     char *buffer = malloc (size);
     if (!buffer) {
         deadbeef->fclose (fp);
-		fprintf(stderr, "psf: could not allocate %d bytes of memory\n", (int)size);
+		trace ("psf: could not allocate %d bytes of memory\n", (int)size);
         return NULL;
     }
 
 	if (deadbeef->fread(buffer, 1, size, fp) != size) {
         deadbeef->fclose (fp);
         free (buffer);
-		fprintf(stderr, "psf: file read error: %s\n", fname);
+		trace ("psf: file read error: %s\n", fname);
         return NULL;
     }
 
-    deadbeef->fclose (fp);
-
     int type = ao_identify (buffer);
     if (type < 0) {
-        fprintf (stderr, "aosdk can't identify the contents of the file %s\n", fname);
+        trace ("aosdk can't identify the contents of the file %s\n", fname);
         free (buffer);
         return NULL;
     }
 
-    void *dec = ao_start (type, fname, (uint8*)buffer, size);
+    free (buffer);
+
+    // try loading the whole file
+    deadbeef->rewind (fp);
+    size = fsize;
+    buffer = malloc (size);
+    if (deadbeef->fread(buffer, 1, size, fp) != size) {
+        deadbeef->fclose (fp);
+        free (buffer);
+        trace ("psf: file read error: %s\n", fname);
+        return NULL;
+    }
+    deadbeef->fclose (fp);
+
+    void *dec = ao_start (type, fname, (uint8*)buffer, (uint32_t)size);
     if (!dec) {
         free (buffer);
         return NULL;
@@ -359,6 +377,7 @@ static DB_decoder_t plugin = {
     .plugin.version_major = 1,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
+    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .plugin.id = "psf",
     .plugin.name = "PSF player using Audio Overload SDK",
     .plugin.descr = "plays psf, psf2, spu, ssf, dsf, qsf file formats",

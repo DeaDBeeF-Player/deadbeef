@@ -240,7 +240,11 @@ _update_tags (void *ctx) {
 
             g_idle_add (_setUpdateProgress, dt);
             
-            _rg->apply (ctl->_rg_settings.tracks[i], ctl->_rg_settings.results[i].track_gain, ctl->_rg_settings.results[i].track_peak, ctl->_rg_settings.results[i].album_gain, ctl->_rg_settings.results[i].album_peak);
+            uint32_t flags = (1<<DDB_REPLAYGAIN_TRACKGAIN)|(1<<DDB_REPLAYGAIN_TRACKPEAK);
+            if (ctl->_rg_settings.mode != DDB_RG_SCAN_MODE_TRACK) {
+                flags |= (1<<DDB_REPLAYGAIN_ALBUMGAIN)|(1<<DDB_REPLAYGAIN_ALBUMPEAK);
+            }
+            _rg->apply (ctl->_rg_settings.tracks[i], flags, ctl->_rg_settings.results[i].track_gain, ctl->_rg_settings.results[i].track_peak, ctl->_rg_settings.results[i].album_gain, ctl->_rg_settings.results[i].album_peak);
         }
     }
 
@@ -582,6 +586,10 @@ action_rg_scan_per_file_handler (struct DB_plugin_action_s *action, int ctx) {
     int count;
     DB_playItem_t **tracks = _get_action_track_list (action, ctx, &count, 0);
 
+    if (!tracks) {
+        return 0;
+    }
+
     runScanner (DDB_RG_SCAN_MODE_TRACK, tracks, count);
     return 0;
 }
@@ -591,6 +599,10 @@ action_rg_scan_selection_as_albums_handler (struct DB_plugin_action_s *action, i
     int count;
     DB_playItem_t **tracks = _get_action_track_list (action, ctx, &count, 0);
 
+    if (!tracks) {
+        return 0;
+    }
+
     runScanner (DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS, tracks, count);
     return 0;
 }
@@ -599,6 +611,10 @@ int
 action_rg_scan_selection_as_album_handler (struct DB_plugin_action_s *action, int ctx) {
     int count;
     DB_playItem_t **tracks = _get_action_track_list (action, ctx, &count, 0);
+
+    if (!tracks) {
+        return 0;
+    }
 
     runScanner (DDB_RG_SCAN_MODE_SINGLE_ALBUM, tracks, count);
     return 0;
