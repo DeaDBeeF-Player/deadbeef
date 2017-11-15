@@ -35,8 +35,8 @@ static int state = OUTPUT_STATE_STOPPED;
 static uint64_t mutex;
 static intptr_t tid;
 static int stoprequest;
-#define MAXBUFFERS 8
-#define BUFFERSIZE_BYTES 8192
+#define MAXBUFFERS 2
+#define BUFFERSIZE_BYTES 8192*16
 static AudioQueueRef queue;
 static AudioQueueBufferRef buffers[MAXBUFFERS];
 static AudioQueueBufferRef availbuffers[MAXBUFFERS];
@@ -67,10 +67,14 @@ static int
 _initqueue (ddb_waveformat_t *fmt) {
     OSStatus err;
 
+    int samplerate = fmt->samplerate;
+    int is_float = fmt->is_float;
+    int bps = fmt->bps;
+
     AudioStreamBasicDescription req_format;
 
     memset (&req_format, 0, sizeof (req_format));
-    req_format.mSampleRate = (Float64)fmt->samplerate;
+    req_format.mSampleRate = (Float64)samplerate;
 
     // audioqueue happily accepts ultra-high samplerates, but doesn't really play them
     if (req_format.mSampleRate > 192000) {
@@ -78,7 +82,7 @@ _initqueue (ddb_waveformat_t *fmt) {
     }
     req_format.mFormatID = kAudioFormatLinearPCM;
 
-    if (fmt->is_float) {
+    if (is_float) {
         req_format.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
     }
     else {
@@ -89,11 +93,11 @@ _initqueue (ddb_waveformat_t *fmt) {
         req_format.mFormatFlags |= kLinearPCMFormatFlagIsBigEndian;
     }
 
-    req_format.mBytesPerPacket = fmt->bps / 8 * fmt->channels;
+    req_format.mBytesPerPacket = bps / 8 * fmt->channels;
     req_format.mFramesPerPacket = 1;
-    req_format.mBytesPerFrame = fmt->bps / 8 * fmt->channels;
+    req_format.mBytesPerFrame = bps / 8 * fmt->channels;
     req_format.mChannelsPerFrame = fmt->channels;
-    req_format.mBitsPerChannel = fmt->bps;
+    req_format.mBitsPerChannel = bps;
 
     err = AudioQueueNewOutput(&req_format, aqOutputCallback, NULL, NULL, NULL, 0, &queue);
     if (err != noErr) {
