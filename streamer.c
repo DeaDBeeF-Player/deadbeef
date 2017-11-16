@@ -1646,6 +1646,7 @@ process_output_block (char *bytes, int firstblock) {
     if (!block) {
         return -1;
     }
+
     DB_output_t *output = plug_get_output ();
 
     // handle change of track, or start of a new track
