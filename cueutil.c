@@ -133,8 +133,8 @@ pl_cue_skipspaces (const uint8_t *p) {
     return p;
 }
 
-void
-static pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out, const char *charset) {
+static void
+pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out, const char *charset) {
     char *str = out;
     if (*p == 0) {
         *out = 0;
@@ -189,8 +189,8 @@ static pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out, const char *
     }
 }
 
-void
-static pl_get_value_from_cue (const char *p, int sz, char *out) {
+static void
+pl_get_value_from_cue (const char *p, int sz, char *out) {
     while (*p >= ' ' && sz > 1) {
         sz--;
         *out++ = *p++;
@@ -201,8 +201,8 @@ static pl_get_value_from_cue (const char *p, int sz, char *out) {
     *out = 0;
 }
 
-float
-static pl_cue_parse_time (const char *p) {
+static float
+pl_cue_parse_time (const char *p) {
     char *endptr;
     long mins = strtol(p, &endptr, 10);
     if (endptr - p < 1 || *endptr != ':') {
@@ -221,8 +221,8 @@ static pl_cue_parse_time (const char *p) {
     return mins * 60.f + sec + frm / 75.f;
 }
 
-void
-static pl_cue_get_total_tracks_and_files(const uint8_t *buffer, const uint8_t *buffer_end, int *ncuefiles, int *ncuetracks) {
+static void
+pl_cue_get_total_tracks_and_files(const uint8_t *buffer, const uint8_t *buffer_end, int *ncuefiles, int *ncuetracks) {
     const uint8_t *p = buffer;
     *ncuetracks = 0;
     *ncuefiles = 0;
@@ -244,8 +244,8 @@ static pl_cue_get_total_tracks_and_files(const uint8_t *buffer, const uint8_t *b
     }
 }
 
-void
-static pl_cue_set_track_field_values(playItem_t *it, cueparser_t *cue) {
+static void
+pl_cue_set_track_field_values(playItem_t *it, cueparser_t *cue) {
     if (cue->cuefields[CUE_FIELD_PERFORMER][0]) {
         pl_add_meta (it, "artist", cue->cuefields[CUE_FIELD_PERFORMER]);
         if (cue->cuefields[CUE_FIELD_ALBUM_PERFORMER][0] && strcmp (cue->cuefields[CUE_FIELD_ALBUM_PERFORMER], cue->cuefields[CUE_FIELD_PERFORMER])) {
@@ -297,8 +297,8 @@ static pl_cue_set_track_field_values(playItem_t *it, cueparser_t *cue) {
     pl_items_copy_junk (cue->origin, it, it);
 }
 
-void
-static pl_cue_reset_per_track_fields(char cuefields[CUE_MAX_FIELDS][255]) {
+static void
+pl_cue_reset_per_track_fields(char cuefields[CUE_MAX_FIELDS][255]) {
     //cuefields[CUE_FIELD_TRACK][0] = 0;
     cuefields[CUE_FIELD_TITLE][0] = 0;
     cuefields[CUE_FIELD_PREGAP][0] = 0;
@@ -315,8 +315,8 @@ static pl_cue_reset_per_track_fields(char cuefields[CUE_MAX_FIELDS][255]) {
 //    CUE_FIELD_*
 // error:
 //    -1
-int
-static pl_cue_get_field_value(cueparser_t *cue) {
+static int
+pl_cue_get_field_value(cueparser_t *cue) {
     if (!strncasecmp (cue->p, "FILE ", 5)) {
         pl_get_qvalue_from_cue (cue->p + 5, sizeof (cue->cuefields[CUE_FIELD_FILE]), cue->cuefields[CUE_FIELD_FILE], cue->charset);
         return CUE_FIELD_FILE;
@@ -388,7 +388,6 @@ static pl_cue_get_field_value(cueparser_t *cue) {
     else if (!strncasecmp (cue->p, "INDEX ", 6)) {
         // INDEX 02, INDEX 03, INDEX 04, etc...
         // for practical purposes, store value of INDEX XX in fields[CUE_FIELD_INDEX01]
-        // ( see playlist.c -> plt_process_cue_track()
         pl_get_value_from_cue (cue->p + 9, sizeof (cue->cuefields[CUE_FIELD_INDEX01]), cue->cuefields[CUE_FIELD_INDEX01]);
         return CUE_FIELD_INDEX_X;
     }
