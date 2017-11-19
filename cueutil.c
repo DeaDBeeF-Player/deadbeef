@@ -256,10 +256,10 @@ static pl_cue_set_track_field_values(playItem_t *it, cueparser_t *cue) {
         pl_add_meta (it, "artist", cue->cuefields[CUE_FIELD_ALBUM_PERFORMER]);
     }
     if (cue->cuefields[CUE_FIELD_SONGWRITER][0]) {
-        pl_add_meta (it, "SONGWRITER", cue->cuefields[CUE_FIELD_SONGWRITER]);
+        pl_add_meta (it, "composer", cue->cuefields[CUE_FIELD_SONGWRITER]);
     }
-    else if (cue->cuefields[CUE_FIELD_SONGWRITER][0]) {
-        pl_add_meta (it, "SONGWRITER", cue->cuefields[CUE_FIELD_SONGWRITER]);
+    else if (cue->cuefields[CUE_FIELD_ALBUM_SONGWRITER][0]) {
+        pl_add_meta (it, "composer", cue->cuefields[CUE_FIELD_ALBUM_SONGWRITER]);
     }
     if (cue->cuefields[CUE_FIELD_ALBUM_TITLE][0]) {
         pl_add_meta (it, "album", cue->cuefields[CUE_FIELD_ALBUM_TITLE]);
