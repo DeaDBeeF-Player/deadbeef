@@ -520,32 +520,41 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
     }
 
     // some versions of cdio does not convert strings to UTF-8 as documented
-    const char * album_charset = deadbeef->junk_detect_charset (album);
-    const char * artist_charset = deadbeef->junk_detect_charset (artist);
-    if (album_charset != NULL) {
-        trace ( "cdda: album field using %s charset, converting\n",album_charset);
-        char *album_converted = malloc (strlen(album) * 4);
-        if (album_converted) {
-            deadbeef->junk_iconv (album, strlen(album), album_converted, strlen(album)*4, album_charset, "UTF-8");
-            album = album_converted;
+    if (album) {
+        const char * album_charset = deadbeef->junk_detect_charset (album);
+        if (album_charset != NULL) {
+            trace ( "cdda: album field using %s charset, converting\n",album_charset);
+            char *album_converted = malloc (strlen(album) * 4);
+            if (album_converted) {
+                deadbeef->junk_iconv (album, strlen(album), album_converted, strlen(album)*4, album_charset, "UTF-8");
+                album = album_converted;
+            }
+        }
+        replace_meta(item, "album", album);
+        if (album_charset) {
+            free (album);
+            album = NULL;
         }
     }
-    if (artist_charset != NULL ) {
-        trace ( "cdda: artist field using %s charset, converting\n",artist_charset);
-        char *artist_converted = malloc (strlen(artist) * 4);
-        if (artist_converted) {
-            deadbeef->junk_iconv (artist, strlen(artist), artist_converted, strlen(artist)*4, artist_charset, "UTF-8");
-            artist = artist_converted;
-        }
-    }
-    trace ("artist: %s; album: %s\n", artist, album);
-    replace_meta(item, "artist", artist);
-    replace_meta(item, "album", album);
 
-    if (album && album_charset != NULL)
-        free (album);
-    if (artist && artist_charset != NULL)
-        free (artist);
+    if (artist) {
+        const char * artist_charset = deadbeef->junk_detect_charset (artist);
+        if (artist_charset != NULL) {
+            trace ( "cdda: artist field using %s charset, converting\n",artist_charset);
+            char *artist_converted = malloc (strlen(artist) * 4);
+            if (artist_converted) {
+                deadbeef->junk_iconv (artist, strlen(artist), artist_converted, strlen(artist)*4, artist_charset, "UTF-8");
+                artist = artist_converted;
+            }
+        }
+        replace_meta(item, "artist", artist);
+
+        if (artist_charset) {
+            free (artist);
+            artist = NULL;
+        }
+    }
+
 #if CDIO_API_VERSION >= 6
     cdtext = cdio_get_cdtext (cdio);
 #else
