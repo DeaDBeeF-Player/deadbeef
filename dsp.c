@@ -103,12 +103,14 @@ ensure_dsp_temp_buffer (int size) {
             free (dsp_temp_buffer);
             dsp_temp_buffer = NULL;
         }
+        dsp_temp_buffer_size = 0;
         return NULL;
     }
     if (size != dsp_temp_buffer_size) {
         dsp_temp_buffer = realloc (dsp_temp_buffer, size);
         dsp_temp_buffer_size = size;
     }
+    assert (dsp_temp_buffer);
     return dsp_temp_buffer;
 }
 
