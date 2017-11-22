@@ -45,7 +45,6 @@ static uint64_t mutex;
 static AudioDeviceID device_id;
 static AudioDeviceIOProcID process_id;
 static AudioStreamBasicDescription default_format;
-static AudioStreamBasicDescription current_format;
 static AudioStreamBasicDescription req_format;
 
 static int *avail_samplerates;
@@ -139,6 +138,8 @@ ca_apply_format (void) {
     if (req_format.mSampleRate > 0) {
         req_format.mSampleRate = get_best_samplerate (req_format.mSampleRate);
 
+        // setting nominal samplerate doesn't work in most cases, and requires some timing trickery
+#if 0
         AudioObjectPropertyAddress nsr = {
             kAudioDevicePropertyNominalSampleRate,
             kAudioObjectPropertyScopeGlobal,
@@ -151,17 +152,27 @@ ca_apply_format (void) {
             trace ("AudioObjectSetPropertyData kAudioDevicePropertyNominalSampleRate: %x\n", err);
         }
 
+        err = AudioObjectGetPropertyData(device_id, &nsr, 0, NULL, &sz, &sr);
+        if (err != noErr) {
+            trace ("AudioObjectGetPropertyData kAudioDevicePropertyNominalSampleRate: %x\n", err);
+        }
+#endif
+
         AudioObjectPropertyAddress theAddress = {
             kAudioDevicePropertyStreamFormat,
-            kAudioDevicePropertyScopeOutput,
+            kAudioObjectPropertyScopeOutput,
             kAudioObjectPropertyElementMaster
         };
-        sz = sizeof (current_format);
+        sz = sizeof (AudioStreamBasicDescription);
+
+#if 0
+        static AudioStreamBasicDescription current_format;
         err = AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &current_format);
         if (err != noErr) {
             trace ("AudioObjectGetPropertyData kAudioDevicePropertyStreamFormat: %x\n", err);
             goto error;
         }
+#endif
 
         err = AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &req_format);
         if (err != noErr) {
@@ -173,23 +184,7 @@ ca_apply_format (void) {
             }
         }
 
-        AudioStreamBasicDescription actual_fmt;
-        err = AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &actual_fmt);
-        if (err != noErr) {
-            trace ("AudioObjectGetPropertyData kAudioDevicePropertyStreamFormat: %x\n", err);
-            goto error;
-        }
-
-        // set real format to the plugin
-        plugin.fmt.bps = actual_fmt.mBitsPerChannel;
-        plugin.fmt.channels = actual_fmt.mChannelsPerFrame;
-        plugin.fmt.is_bigendian = 0;
-        plugin.fmt.is_float = (actual_fmt.mFormatFlags & kAudioFormatFlagIsFloat) ? 1 : 0;
-        plugin.fmt.samplerate = actual_fmt.mSampleRate;
-        plugin.fmt.channelmask = 0;
-        for (int c = 0; c < actual_fmt.mChannelsPerFrame; c++) {
-            plugin.fmt.channelmask |= (1<<c);
-        }
+        ca_fmtchanged(device_id, 1, &theAddress, NULL);
     }
 
     res = 0;
@@ -223,7 +218,7 @@ ca_init (void) {
     sz = sizeof (device_name);
     theAddress.mSelector = kAudioDevicePropertyDeviceName;
     theAddress.mScope = kAudioDevicePropertyScopeOutput;
-    theAddress.mElement = 1;
+    theAddress.mElement = kAudioObjectPropertyElementMaster;
     
     err = AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, device_name);
     if (err != noErr) {
@@ -233,7 +228,7 @@ ca_init (void) {
 
     sz = sizeof (default_format);
     theAddress.mSelector = kAudioDevicePropertyStreamFormat;
-    theAddress.mElement = 0;
+    theAddress.mElement = kAudioObjectPropertyElementMaster;
     err = AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &default_format);
     if (err != noErr) {
         trace ("AudioObjectGetPropertyData kAudioDevicePropertyStreamFormat: %x\n", err);
@@ -432,15 +427,20 @@ ca_fmtchanged (AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioOb
     
     AudioStreamBasicDescription device_format;
     UInt32 sz = sizeof (device_format);
-    AudioObjectPropertyAddress theAddress = { kAudioDevicePropertyStreamFormat,
+    AudioObjectPropertyAddress theAddress = {
+        kAudioDevicePropertyStreamFormat,
         kAudioDevicePropertyScopeOutput,
-        0 };
+        kAudioObjectPropertyElementMaster
+    };
+
     deadbeef->mutex_lock (mutex);
     err = AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &device_format);
     if (err != noErr) {
         trace ("AudioObjectGetPropertyData kAudioDevicePropertyStreamFormat: %x\n", err);
     }
     else {
+
+//        trace ("requested %d, obtained %d\n", (int)req_format.mSampleRate, (int)device_format.mSampleRate);
         plugin.fmt.bps = device_format.mBitsPerChannel;
         plugin.fmt.channels = device_format.mChannelsPerFrame;
         plugin.fmt.is_float = 1;
