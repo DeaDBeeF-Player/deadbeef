@@ -1191,7 +1191,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
     }
 
     // load the rest of the files
-    if (!*pabort) {
+    if (!pabort || !*pabort) {
         for (int i = 0; i < n; i++)
         {
             // no hidden files
@@ -1211,7 +1211,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
                 after = inserted;
             }
 
-            if (*pabort) {
+            if (pabort && *pabort) {
                 break;
             }
         }
