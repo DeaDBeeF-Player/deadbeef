@@ -1420,6 +1420,9 @@ typedef struct {
     // no error is reported
     void (*junk_get_tag_offsets) (DB_FILE *fp, uint32_t *head, uint32_t *tail);
 
+    // returns 1 to tell that cuesheet is being loaded now.
+    // this should be called by plugins to prevent running cuesheet code at a wrong time.
+    int (*plt_is_loading_cue) (ddb_playlist_t *plt);
 #endif
 } DB_functions_t;
 

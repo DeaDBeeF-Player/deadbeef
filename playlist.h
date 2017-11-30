@@ -592,4 +592,7 @@ pl_item_set_startsample (playItem_t *it, int64_t sample);
 void
 pl_item_set_endsample (playItem_t *it, int64_t sample);
 
+int
+plt_is_loading_cue (playlist_t *plt);
+
 #endif // __PLAYLIST_H

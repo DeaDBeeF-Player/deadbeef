@@ -944,7 +944,8 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_playItem_t *cue_after = NULL;
 
     cue_after = deadbeef->plt_process_cue (plt, after, it, info.totalsamples, info.info.fmt.samplerate);
-    if (!cue_after && info.flac_cue_sheet) {
+
+    if (!deadbeef->plt_is_loading_cue (plt) && !cue_after && info.flac_cue_sheet) {
         // try native flac embedded cuesheet
         cue_after = cflac_insert_with_embedded_cue (plt, after, it, &info.flac_cue_sheet->data.cue_sheet, info.totalsamples, info.info.fmt.samplerate);
     }

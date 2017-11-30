@@ -3822,3 +3822,8 @@ pl_item_set_endsample (playItem_t *it, int64_t sample) {
     it->has_endsample64 = 1;
     pl_set_meta_int64 (it, ":ENDSAMPLE", sample);
 }
+
+int
+plt_is_loading_cue (playlist_t *plt) {
+    return plt->loading_cue;
+}
