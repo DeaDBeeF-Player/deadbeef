@@ -172,7 +172,8 @@ portaudio_setformat (ddb_waveformat_t *fmt) {
     }
 
     // Tell ongoing callback 'thread' to abort stream
-    *userData = 1;
+    if (userData)
+        *userData = 1;
     userData = 0;
     stream = 0;
 
