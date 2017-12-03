@@ -89,7 +89,7 @@ static uintptr_t mutex;
 static int state;
 
 // actual stream
-static PaStream *stream;
+static PaStream *stream = 0;
 // we use plugin.fmt as fmt information
 static PaStreamParameters stream_parameters;
 static int * userData;
@@ -97,6 +97,8 @@ static int * userData;
 // requested stream
 static ddb_waveformat_t requested_fmt;
 
+// previous stream (needs to be terminated after some time)
+static PaStream *previous_stream = 0;
 
 // portaudio_init opens a stream using stream_parameters and plugin.fmt information
 static int
@@ -113,8 +115,7 @@ portaudio_init (void) {
     if (!userData)
         userData = calloc(1,sizeof(int));
     else {
-        trace ("portaudio_init: supposed to allocate userData but value is not empty!\n");
-        userData = calloc(1,sizeof(int));
+        trace ("portaudio_init: WARN: userData is not empty!\n");
     }
 
     // Using paFramesPerBufferUnspecified with alsa gives warnings about underrun
@@ -124,7 +125,8 @@ portaudio_init (void) {
         buffer_size = paFramesPerBufferUnspecified;
     else
         buffer_size = buffer_size_config;
-    trace ("portaudio_init: buffer size %lu, config: %d\n",buffer_size,buffer_size_config);
+
+    trace ("portaudio_init: buffer size %lu\n",buffer_size);
     /* Open an audio I/O stream. */
     PaError err;
     err = Pa_OpenStream (       &stream,                        // stream pointer
@@ -171,11 +173,13 @@ portaudio_setformat (ddb_waveformat_t *fmt) {
         );
     }
 
-    // Tell ongoing callback 'thread' to abort stream
-    if (userData)
+    // Tell ongoing callback 'thread' to abort stream (if any)
+    // stream will be closed when new 'thread' will open
+    if (userData) {
         *userData = 1;
-    userData = 0;
-    stream = 0;
+        userData = 0;
+    }
+    previous_stream = stream;
 
     memcpy (&plugin.fmt, &requested_fmt, sizeof (ddb_waveformat_t));
     
@@ -194,9 +198,11 @@ portaudio_setformat (ddb_waveformat_t *fmt) {
         // even if it failed -- continue
     }
 
-    // start new stream
-    portaudio_play ();
-
+    // start new stream if was playing
+    if (stream){
+        stream = 0;
+        portaudio_play ();
+    }
     return 0;
 
 }
@@ -208,8 +214,16 @@ portaudio_free (void) {
         PaError err;
         err = Pa_AbortStream (stream);
         if (err != paNoError) {
-            trace ("Failed to free stream. %s\n", Pa_GetErrorText(err));
+            trace ("Failed to abort stream. %s\n", Pa_GetErrorText(err));
             return -1;
+        }
+    }
+    PaError err;
+    if (stream){
+        err = Pa_CloseStream (stream);
+        if (err != paNoError) {
+            trace("Failed to close stream. %s\n", Pa_GetErrorText(err))
+            //return -1;
         }
     }
     stream = 0;
@@ -399,6 +413,15 @@ portaudio_callback (const void *in, void *out, unsigned long framesPerBuffer, co
         trace ("portaudio_callback: format changed\n");
         free (userData);
         return paAbort;
+    }
+    if (previous_stream) {
+        PaError err;
+        err = Pa_CloseStream (previous_stream);
+        if (err != paNoError) {
+            trace("Failed to close stream. %s\n", Pa_GetErrorText(err))
+            //return -1;
+        }
+        previous_stream = 0;
     }
     if (state != OUTPUT_STATE_PLAYING){
         trace ("portaudio_callback: abort\n");
