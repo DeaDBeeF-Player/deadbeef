@@ -35,7 +35,6 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
                    tfimport.c tfimport.h\
                    ddb_splitter.c ddb_splitter.h\
                    ddb_splitter_size_mode.c ddb_splitter_size_mode.h\
-                   ../../shared/trkproperties_shared.c ../../shared/trkproperties_shared.h\
                    ../../utf8.c\
                    clipboard.c clipboard.h\
 				   rg.c rg.h\
@@ -76,7 +75,7 @@ GTKUI_SOURCES_GTK2 = $(GTKUI_SOURCES)
 ddb_gui_GTK2_la_SOURCES = $(GTKUI_SOURCES_GTK2)
 ddb_gui_GTK2_la_LDFLAGS = -module -avoid-version
 
-ddb_gui_GTK2_la_LIBADD = $(LDADD) $(GTK2_DEPS_LIBS) $(SM_LIBADD) ../libparser/libparser.a $(JANSSON_LIBS)
+ddb_gui_GTK2_la_LIBADD = $(LDADD) $(GTK2_DEPS_LIBS) $(SM_LIBADD) ../libparser/libparser.a ../../shared/libtrkpropertiesutil.a $(JANSSON_LIBS)
 
 ddb_gui_GTK2_la_CFLAGS = -std=c99 $(GTK2_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS) -DDDB_WARN_DEPRECATED=1
 
@@ -88,17 +87,20 @@ GTKUI_SOURCES_GTK3 = deadbeefapp.c deadbeefapp.h $(GTKUI_SOURCES)
 ddb_gui_GTK3_la_LDFLAGS = -module -avoid-version
 
 ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES_GTK3)
-ddb_gui_GTK3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS) $(SM_LIBADD) ../libparser/libparser.a $(JANSSON_LIBS)
+ddb_gui_GTK3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS) $(SM_LIBADD) ../libparser/libparser.a ../../shared/libtrkpropertiesutil.a $(JANSSON_LIBS)
 ddb_gui_GTK3_la_CFLAGS = -std=c99 $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS)
 ddb_gui_GTK3_la_OBJCFLAGS = $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS)
 
-nodist_ddb_gui_GTK3_la_SOURCES = temp/gtkui-gresources.c
+nodist_ddb_gui_GTK3_la_SOURCES = gtkui-gresources.c
+
+BUILT_SOURCES=gtkui-gresources.c
+CLEANFILES=gtkui-gresources.c
 
 resource_files = \
 	gtkui.gresources.xml	\
 	gtk/menus.ui
 
-temp/gtkui-gresources.c: $(resource_files)
+gtkui-gresources.c: $(resource_files)
 	$(AM_V_GEN) $(GLIB_COMPILE_RESOURCES) --target=$@ --sourcedir=$(srcdir) --generate-source $<
 
 endif
