@@ -3889,26 +3889,6 @@ Only prevent clipping</property>
 		  </child>
 
 		  <child>
-		    <widget class="GtkCheckButton" id="chkbox_cue_subindexes">
-		      <property name="visible">True</property>
-		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">CUE: show subindexes as tracks (INDEX 02, INDEX 03, etc)</property>
-		      <property name="use_underline">True</property>
-		      <property name="relief">GTK_RELIEF_NORMAL</property>
-		      <property name="focus_on_click">True</property>
-		      <property name="active">False</property>
-		      <property name="inconsistent">False</property>
-		      <property name="draw_indicator">True</property>
-		      <signal name="toggled" handler="on_cue_subindexes_as_tracks_toggled" last_modification_time="Thu, 15 Jun 2017 16:26:16 GMT"/>
-		    </widget>
-		    <packing>
-		      <property name="padding">0</property>
-		      <property name="expand">False</property>
-		      <property name="fill">False</property>
-		    </packing>
-		  </child>
-
-		  <child>
 		    <widget class="GtkHBox" id="hbox141">
 		      <property name="visible">True</property>
 		      <property name="homogeneous">False</property>

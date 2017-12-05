@@ -36,8 +36,6 @@
 
 #include "cueutil.h"
 
-extern int conf_cue_subindexes_as_tracks;
-
 #define SKIP_BLANK_CUE_TRACKS 0
 #define MAX_CUE_TRACKS 99
 

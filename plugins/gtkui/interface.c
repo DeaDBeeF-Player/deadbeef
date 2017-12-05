@@ -1609,7 +1609,6 @@ create_prefwin (void)
   GtkWidget *hide_delete_from_disk;
   GtkWidget *auto_name_playlist_from_folder;
   GtkWidget *auto_size_columns;
-  GtkWidget *chkbox_cue_subindexes;
   GtkWidget *hbox141;
   GtkWidget *label164;
   GObject *listview_group_spacing_adj;
@@ -2162,10 +2161,6 @@ create_prefwin (void)
   auto_size_columns = gtk_check_button_new_with_mnemonic (_("Auto-resize columns to fit the window"));
   gtk_widget_show (auto_size_columns);
   gtk_box_pack_start (GTK_BOX (vbox44), auto_size_columns, FALSE, FALSE, 0);
-
-  chkbox_cue_subindexes = gtk_check_button_new_with_mnemonic (_("CUE: show subindexes as tracks (INDEX 02, INDEX 03, etc)"));
-  gtk_widget_show (chkbox_cue_subindexes);
-  gtk_box_pack_start (GTK_BOX (vbox44), chkbox_cue_subindexes, FALSE, FALSE, 0);
 
   hbox141 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox141);
@@ -3102,9 +3097,6 @@ create_prefwin (void)
   g_signal_connect ((gpointer) auto_size_columns, "toggled",
                     G_CALLBACK (on_auto_size_columns_toggled),
                     NULL);
-  g_signal_connect ((gpointer) chkbox_cue_subindexes, "toggled",
-                    G_CALLBACK (on_cue_subindexes_as_tracks_toggled),
-                    NULL);
   g_signal_connect ((gpointer) listview_group_spacing, "value_changed",
                     G_CALLBACK (on_listview_group_spacing_value_changed),
                     NULL);
@@ -3361,7 +3353,6 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hide_delete_from_disk, "hide_delete_from_disk");
   GLADE_HOOKUP_OBJECT (prefwin, auto_name_playlist_from_folder, "auto_name_playlist_from_folder");
   GLADE_HOOKUP_OBJECT (prefwin, auto_size_columns, "auto_size_columns");
-  GLADE_HOOKUP_OBJECT (prefwin, chkbox_cue_subindexes, "chkbox_cue_subindexes");
   GLADE_HOOKUP_OBJECT (prefwin, hbox141, "hbox141");
   GLADE_HOOKUP_OBJECT (prefwin, label164, "label164");
   GLADE_HOOKUP_OBJECT (prefwin, listview_group_spacing, "listview_group_spacing");

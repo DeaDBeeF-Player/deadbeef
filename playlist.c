@@ -120,7 +120,6 @@ static int no_remove_notify;
 static playlist_t *addfiles_playlist; // current playlist for adding files/folders; set in pl_add_files_begin
 
 int conf_cue_prefer_embedded = 0;
-int conf_cue_subindexes_as_tracks = 0;
 
 typedef struct ddb_fileadd_listener_s {
     int id;
@@ -3788,7 +3787,6 @@ plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t to
 void
 pl_configchanged (void) {
     conf_cue_prefer_embedded = conf_get_int ("cue.prefer_embedded", 0);
-    conf_cue_subindexes_as_tracks = conf_get_int ("cue.subindexes_as_tracks", 0);
 }
 
 int64_t
