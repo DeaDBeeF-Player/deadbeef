@@ -1390,7 +1390,3 @@ void
 on_listview_group_spacing_value_changed
                                         (GtkSpinButton   *spinbutton,
                                         gpointer         user_data);
-
-void
-on_cue_subindexes_as_tracks_toggled            (GtkToggleButton *togglebutton,
-                                        gpointer         user_data);
