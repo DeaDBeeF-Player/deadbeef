@@ -245,8 +245,10 @@ enum {
 // playlist item
 // these are "public" fields, available to plugins
 typedef struct DB_playItem_s {
-    int32_t startsample; // start sample of track, or -1 for auto
-    int32_t endsample; // end sample of track, or -1 for auto
+    // NOTE: the startsample and endsample fields are 32 bit, and are kept for
+    // compatibility. Please use pl_item_get_startsample and friends instead.
+    int32_t startsample DEPRECATED_110;
+    int32_t endsample DEPRECATED_110;
     int32_t shufflerating; // sort order for shuffle mode
 } ddb_playItem_t;
 
