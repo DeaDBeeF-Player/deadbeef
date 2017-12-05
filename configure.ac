@@ -793,7 +793,7 @@ AS_IF([test "${enable_shn}" != "no"], [
     HAVE_SHN=yes
 ])
 
-AS_IF([test "${enable_psf}" != "no"], [
+AS_IF([test "${enable_psf}" != "no" -a "${HAVE_ZLIB}" = "yes"], [
     HAVE_PSF=yes
 ])
 
