@@ -1514,8 +1514,8 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
 void
 pl_item_copy (playItem_t *out, playItem_t *it) {
     LOCK;
-    out->startsample32 = it->startsample32;
-    out->endsample32 = it->endsample32;
+    out->startsample = it->startsample;
+    out->endsample = it->endsample;
     out->startsample64 = it->startsample64;
     out->endsample64 = it->endsample64;
     out->shufflerating = it->shufflerating;
@@ -1724,10 +1724,10 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
             goto save_fail;
         }
 #endif
-        if (fwrite (&it->startsample32, 1, 4, fp) != 4) {
+        if (fwrite (&it->startsample, 1, 4, fp) != 4) {
             goto save_fail;
         }
-        if (fwrite (&it->endsample32, 1, 4, fp) != 4) {
+        if (fwrite (&it->endsample, 1, 4, fp) != 4) {
             goto save_fail;
         }
         if (fwrite (&it->_duration, 1, 4, fp) != 4) {
@@ -2031,11 +2031,11 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
             pl_set_meta_int (it, ":TRACKNUM", tracknum);
         }
         // startsample
-        if (fread (&it->startsample32, 1, 4, fp) != 4) {
+        if (fread (&it->startsample, 1, 4, fp) != 4) {
             goto load_fail;
         }
         // endsample
-        if (fread (&it->endsample32, 1, 4, fp) != 4) {
+        if (fread (&it->endsample, 1, 4, fp) != 4) {
             goto load_fail;
         }
         // duration
@@ -3792,7 +3792,7 @@ pl_configchanged (void) {
 int64_t
 pl_item_get_startsample (playItem_t *it) {
     if (!it->has_startsample64) {
-        return it->startsample32;
+        return it->startsample;
     }
     return it->startsample64;
 }
@@ -3800,7 +3800,7 @@ pl_item_get_startsample (playItem_t *it) {
 int64_t
 pl_item_get_endsample (playItem_t *it) {
     if (!it->has_endsample64) {
-        return it->endsample32;
+        return it->endsample;
     }
     return it->endsample64;
 }
@@ -3808,7 +3808,7 @@ pl_item_get_endsample (playItem_t *it) {
 void
 pl_item_set_startsample (playItem_t *it, int64_t sample) {
     it->startsample64 = sample;
-    it->startsample32 = sample >= 0x7fffffff ? 0x7fffffff : (int32_t)sample;
+    it->startsample = sample >= 0x7fffffff ? 0x7fffffff : (int32_t)sample;
     it->has_startsample64 = 1;
     pl_set_meta_int64 (it, ":STARTSAMPLE", sample);
 }
@@ -3816,7 +3816,7 @@ pl_item_set_startsample (playItem_t *it, int64_t sample) {
 void
 pl_item_set_endsample (playItem_t *it, int64_t sample) {
     it->endsample64 = sample;
-    it->endsample32 = sample >= 0x7fffffff ? 0x7fffffff : (int32_t)sample;
+    it->endsample = sample >= 0x7fffffff ? 0x7fffffff : (int32_t)sample;
     it->has_endsample64 = 1;
     pl_set_meta_int64 (it, ":ENDSAMPLE", sample);
 }

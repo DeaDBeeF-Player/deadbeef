@@ -41,8 +41,8 @@
 // :DURATION - length in seconds
 
 typedef struct playItem_s {
-    int32_t startsample32;
-    int32_t endsample32;
+    int32_t startsample;
+    int32_t endsample;
     int32_t shufflerating; // sort order for shuffle mode
 
     int64_t startsample64;
