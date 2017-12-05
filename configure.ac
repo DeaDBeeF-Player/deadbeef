@@ -813,7 +813,7 @@ AS_IF([test "${enable_pltbrowser}" != "no"], [
     HAVE_PLTBROWSER=yes
 ])
 
-AS_IF([test "${enable_sc68}" != "no"], [
+AS_IF([test "${enable_sc68}" != "no" -a "${HAVE_ZLIB}" = "yes"], [
     HAVE_SC68=yes
 ])
 
