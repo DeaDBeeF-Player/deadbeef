@@ -1438,35 +1438,41 @@ typedef struct {
 // if (none of the above)  -> track context menu
 
 enum {
-    /* Action in main menu (or whereever ui prefers) */
+    // An menu item for this action should be added to the main menu (ex. Playback/Skip to/Previous genre)
     DB_ACTION_COMMON = 1 << 0,
 
-    /* Can handle single track */
+    // Indicates that this action can work when a single track is selected
     DB_ACTION_SINGLE_TRACK = 1 << 1,
 
-    /* Can handle multiple tracks */
+    // Indicates that this action can work when multiple tracks are selected
     DB_ACTION_MULTIPLE_TRACKS = 1 << 2,
 
-    /* DEPRECATED in API 1.5 */
-    DB_ACTION_ALLOW_MULTIPLE_TRACKS = 1 << 2,
+    // Different name for DB_ACTION_MULTIPLE_TRACKS, DEPRECATED in API 1.5
+    DB_ACTION_ALLOW_MULTIPLE_TRACKS = (1 << 2) DEPRECATED_15,
 
-    /* DEPRECATED in API 1.5, ignored in callback2 */
-    /* Action can (and prefer) traverse multiple tracks by itself */
-    DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3,
+    // DEPRECATED in API 1.5, ignored in callback2
+    // Action will get the track list by itself, instead of getting the list as argument.
+    // This is the default behavior when using callback2
+    DB_ACTION_CAN_MULTIPLE_TRACKS = (1 << 3) DEPRECATED_15,
 
-    /* Action is inactive */
+    // Action is inactive
     DB_ACTION_DISABLED = 1 << 4,
 
-    /* DEPRECATED in API 1.5, ignored in callback2 */
-    /* since 1.2 */
-    /* Action for the playlist (tab) */
-    DB_ACTION_PLAYLIST = 1 << 5,
+#if (DDB_API_LEVEL >= 2)
+    // DEPRECATED in API 1.5, ignored in callback2
+    // Action for the playlist (tab)
+    DB_ACTION_PLAYLIST = (1 << 5) DEPRECATED_15,
+#endif
 
-    /* add item to menu(s), if contains slash symbol(s) */
+#if (DDB_API_LEVEL >= 5)
+    // A menu item should be added to the menu(s), if the item name contains slash symbol(s)
     DB_ACTION_ADD_MENU = 1 << 6,
+#endif
 
-    /* Can't handle playlist */
-    DB_ACTION_NOT_FOR_PLAYLIST = 1 << 7
+#if (DDB_API_LEVEL >= 10)
+    // Don't allow running this action in playlist context, even if it supports multiple selection
+    DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST = 1 << 7
+#endif
 };
 
 // action contexts
