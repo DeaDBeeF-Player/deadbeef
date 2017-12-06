@@ -45,6 +45,8 @@
 FILE *out;
 #endif
 
+#define MAX_INVALID_BYTES 100000
+
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
@@ -485,6 +487,9 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                 valid_frames = 0;
             }
             offs++;
+            if (offs - buffer->startoffset > MAX_INVALID_BYTES) {
+                break;
+            }
             continue;
         }
         // end of file?
@@ -507,7 +512,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 
         valid_frames++;
 
-        trace ("valid: %d, sr: %d, ch: %d\n", valid_frames, frame.samplerate, frame.nchannels);
+        trace ("nframe: %d, valid: %d, sr: %d, ch: %d\n", nframe, valid_frames, frame.samplerate, frame.nchannels);
 
 // {{{ update stream parameters, only when sample!=0 or 1st frame
         if (sample != 0 || nframe == 0)
