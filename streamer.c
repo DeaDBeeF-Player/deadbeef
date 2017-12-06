@@ -101,6 +101,7 @@ static time_t started_timestamp; // result of calling time(NULL)
 static playItem_t *streaming_track;
 static playItem_t *last_played; // this is the last track that was played, should avoid setting this to NULL
 
+static int _dsp_changed;
 static ddb_waveformat_t prev_output_format; // last format that was sent to output via streamer_set_output_format
 static ddb_waveformat_t last_block_fmt; // input file format corresponding to the current output
 
@@ -1355,6 +1356,11 @@ handle_track_change (playItem_t *track) {
 }
 
 void
+streamer_dsp_changed (void) {
+    _dsp_changed = 1;
+}
+
+void
 streamer_thread (void *ctx) {
 #if defined(__linux__) && !defined(ANDROID)
     prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
@@ -1727,8 +1733,9 @@ process_output_block (char *bytes, int firstblock) {
 
     // Set the final post-dsp output format, if differs.
     // DSP plugins may change output format at any time.
-    if (firstblock) {
+    if (firstblock || _dsp_changed) {
         streamer_set_output_format (&datafmt);
+        _dsp_changed = 0;
     }
 
     if (memcmp (&output->fmt, &datafmt, sizeof (ddb_waveformat_t))) {

@@ -149,6 +149,9 @@ streamer_set_dsp_chain_real (ddb_dsp_context_t *chain) {
 
     streamer_dsp_postinit ();
     streamer_dsp_chain_save();
+
+    streamer_dsp_changed ();
+
     streamer_unlock ();
 
     messagepump_push (DB_EV_DSPCHAINCHANGED, 0, 0, 0);
@@ -333,6 +336,7 @@ streamer_dsp_postinit (void) {
     else if (!ctx) {
         dsp_on = 0;
     }
+
 }
 
 void
