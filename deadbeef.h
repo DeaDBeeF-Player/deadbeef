@@ -1448,12 +1448,12 @@ enum {
     DB_ACTION_MULTIPLE_TRACKS = 1 << 2,
 
     // Different name for DB_ACTION_MULTIPLE_TRACKS, DEPRECATED in API 1.5
-    DB_ACTION_ALLOW_MULTIPLE_TRACKS = (1 << 2) DEPRECATED_15,
+    DB_ACTION_ALLOW_MULTIPLE_TRACKS = 1 << 2,
 
     // DEPRECATED in API 1.5, ignored in callback2
     // Action will get the track list by itself, instead of getting the list as argument.
     // This is the default behavior when using callback2
-    DB_ACTION_CAN_MULTIPLE_TRACKS = (1 << 3) DEPRECATED_15,
+    DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3,
 
     // Action is inactive
     DB_ACTION_DISABLED = 1 << 4,
@@ -1461,7 +1461,7 @@ enum {
 #if (DDB_API_LEVEL >= 2)
     // DEPRECATED in API 1.5, ignored in callback2
     // Action for the playlist (tab)
-    DB_ACTION_PLAYLIST = (1 << 5) DEPRECATED_15,
+    DB_ACTION_PLAYLIST = (1 << 5),
 #endif
 
 #if (DDB_API_LEVEL >= 5)
