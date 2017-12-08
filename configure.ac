@@ -133,7 +133,7 @@ AC_ARG_ENABLE(wma, [AS_HELP_STRING([--enable-wma      ], [build WMA plugin (defa
 AC_ARG_ENABLE(pltbrowser, [AS_HELP_STRING([--enable-pltbrowser      ], [build playlist browser gui plugin (default: auto)])], [enable_pltbrowser=$enableval], [enable_pltbrowser=yes])
 AC_ARG_ENABLE(sc68, [AS_HELP_STRING([--enable-sc68     ], [build sc68 Atari ST and Amiga music player (default: auto)])], [enable_sc68=$enableval], [enable_sc68=yes])
 AC_ARG_ENABLE(abstract_socket, [AS_HELP_STRING([--enable-abstract-socket      ], [use abstract UNIX socket for IPC (default: disabled)])], [enable_abstract_socket=$enableval], [enable_abstract_socket=no])
-AC_ARG_ENABLE(statusnotifier, [AS_HELP_STRING([--enable-statusnotifier], [KDE status notifier plugin for tray icon (default: disabled)])], [enable_statusnotifier=$enableval], [enable_statusnotifier=no])
+dnl AC_ARG_ENABLE(statusnotifier, [AS_HELP_STRING([--enable-statusnotifier], [KDE status notifier plugin for tray icon (default: disabled)])], [enable_statusnotifier=$enableval], [enable_statusnotifier=no])
 AC_ARG_ENABLE(rgscanner, [AS_HELP_STRING([--disable-rgscanner], [build ReplayGain scanner plugin (default: enabled)])], [enable_rgscanner=$enableval], [enable_rgscanner=yes])
 
 AS_IF([test "${enable_staticlink}" != "no"], [
@@ -817,24 +817,24 @@ AS_IF([test "${enable_sc68}" != "no" -a "${HAVE_ZLIB}" = "yes"], [
     HAVE_SC68=yes
 ])
 
-AS_IF([test "${enable_statusnotifier}" != "no"], [
-    echo "Checking statusnotifier deps..."
-    AS_IF([test "${enable_staticlink}" != "no"], [
-        HAVE_STATUSNOTIFIER=yes
-        STATUSNOTIFIER_DEPS_CFLAGS="${GTK3_310_CFLAGS}"
-        STATUSNOTIFIER_DEPS_LIBS="${GTK3_310_LIBS}"
-        AC_SUBST(STATUSNOTIFIER_DEPS_CFLAGS)
-        AC_SUBST(STATUSNOTIFIER_DEPS_LIBS)
-    ], [
-        PKG_CHECK_MODULES(STATUSNOTIFIER_DEPS, glib-2.0 >= 2.26 gio-2.0 gdk-pixbuf-2.0, HAVE_STATUSNOTIFIER=yes, HAVE_STATUSNOTIFIER=no)
-    ])
-])
+dnl AS_IF([test "${enable_statusnotifier}" != "no"], [
+dnl     echo "Checking statusnotifier deps..."
+dnl     AS_IF([test "${enable_staticlink}" != "no"], [
+dnl         HAVE_STATUSNOTIFIER=yes
+dnl         STATUSNOTIFIER_DEPS_CFLAGS="${GTK3_310_CFLAGS}"
+dnl         STATUSNOTIFIER_DEPS_LIBS="${GTK3_310_LIBS}"
+dnl         AC_SUBST(STATUSNOTIFIER_DEPS_CFLAGS)
+dnl         AC_SUBST(STATUSNOTIFIER_DEPS_LIBS)
+dnl     ], [
+dnl         PKG_CHECK_MODULES(STATUSNOTIFIER_DEPS, glib-2.0 >= 2.26 gio-2.0 gdk-pixbuf-2.0, HAVE_STATUSNOTIFIER=yes, HAVE_STATUSNOTIFIER=no)
+dnl     ])
+dnl ])
 
 AS_IF([test "${enable_rgscanner}" != "no"], [
     HAVE_RGSCANNER=yes
 ])
 
-PLUGINS_DIRS="plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/statusnotifier plugins/sndio plugins/rg_scanner"
+PLUGINS_DIRS="plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/sndio plugins/rg_scanner"
 
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
@@ -901,7 +901,7 @@ AM_CONDITIONAL(PORTABLE, test "x$PORTABLE" = "xyes")
 AM_CONDITIONAL(PORTABLE_FULL, test "x$PORTABLE_FULL" = "xyes")
 AM_CONDITIONAL(USE_ABSTRACT_SOCKET_NAME, test "x$USE_ABSTRACT_SOCKET_NAME" = "xyes")
 AM_CONDITIONAL(HAVE_SSE2, test "${HAVE_SSE2}")
-AM_CONDITIONAL(HAVE_STATUSNOTIFIER, test "x$HAVE_STATUSNOTIFIER" = "xyes")
+dnl AM_CONDITIONAL(HAVE_STATUSNOTIFIER, test "x$HAVE_STATUSNOTIFIER" = "xyes")
 AM_CONDITIONAL(HAVE_RGSCANNER, test "x$HAVE_RGSCANNER" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
@@ -959,7 +959,6 @@ plugins/pltbrowser/Makefile
 plugins/sc68/Makefile
 plugins/coreaudio/Makefile
 plugins/sndio/Makefile
-plugins/statusnotifier/Makefile
 plugins/rg_scanner/Makefile
 intl/Makefile
 po/Makefile.in
@@ -1040,7 +1039,7 @@ PRINT_PLUGIN_INFO([alac],[ALAC plugin],[test "x$HAVE_ALAC" = "xyes"])
 PRINT_PLUGIN_INFO([wma],[WMA plugin],[test "x$HAVE_WMA" = "xyes"])
 PRINT_PLUGIN_INFO([pltbrowser],[playlist browser gui plugin],[test "x$HAVE_PLTBROWSER" = "xyes"])
 PRINT_PLUGIN_INFO([sc68],[sc68 Atari ST And Amiga player],[test "x$HAVE_SC68" = "xyes"])
-PRINT_PLUGIN_INFO([statusnotifier],[plugin for KDE tray icon support],[test "x$HAVE_STATUSNOTIFIER" = "xyes"])
+dnl PRINT_PLUGIN_INFO([statusnotifier],[plugin for KDE tray icon support],[test "x$HAVE_STATUSNOTIFIER" = "xyes"])
 PRINT_PLUGIN_INFO([rgscanner],[plugin for ReplayGain scanner support],[test "x$HAVE_RGSCANNER" = "xyes"])
 
 echo
