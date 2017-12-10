@@ -751,7 +751,7 @@ msgstr "图形用户界面插件(更改后需重启程序)："
 
 #: ../plugins/gtkui/interface.c:2137 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Display selection playback time in status bar"
-msgstr ""
+msgstr "在状态栏显示选中音乐时长"
 
 #: ../plugins/gtkui/interface.c:2141 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Player"
@@ -775,11 +775,11 @@ msgstr "自动调整列宽以适应窗口"
 
 #: ../plugins/gtkui/interface.c:2166 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "CUE: show subindexes as tracks (INDEX 02, INDEX 03, etc)"
-msgstr ""
+msgstr "CUE:显示歌曲的音轨索引号 (INDEX 02,INDEX 03 等)"
 
 #: ../plugins/gtkui/interface.c:2174 ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Group spacing:"
-msgstr ""
+msgstr "组间隔"
 
 #: ../plugins/gtkui/interface.c:2184 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "pixels"
@@ -796,15 +796,15 @@ msgstr "覆盖"
 
 #: ../plugins/gtkui/interface.c:2216 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Bars"
-msgstr ""
+msgstr "条"
 
 #: ../plugins/gtkui/interface.c:2223 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Background (EQ)"
-msgstr ""
+msgstr "背景 (均衡器)"
 
 #: ../plugins/gtkui/interface.c:2242 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Seekbar/Volumebar/EQ"
-msgstr ""
+msgstr "播放进度/音量条/均衡器"
 
 #: ../plugins/gtkui/interface.c:2267 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Base:"
@@ -1184,7 +1184,7 @@ msgid "Clean up"
 msgstr "清理"
 
 #: ../plugins/gtkui/interface.c:5005 ../plugins/gtkui/deadbeef.glade.h:221
-msgid "Format from other fields..."
+msgid "从其他字段格式化..."
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:5009 ../plugins/gtkui/deadbeef.glade.h:222
@@ -1221,29 +1221,29 @@ msgstr "清除"
 
 #: ../plugins/gtkui/interface.c:5243 ../plugins/gtkui/deadbeef.glade.h:230
 msgid "ReplayGain Scan Progress"
-msgstr ""
+msgstr "回放增益扫描进度"
 
 #: ../plugins/gtkui/interface.c:5254 ../plugins/gtkui/deadbeef.glade.h:231
 msgid "Current File:"
-msgstr ""
+msgstr "当前文件:"
 
 #: ../plugins/gtkui/interface.c:5272 ../plugins/gtkui/interface.c:5332
 #: ../plugins/gtkui/deadbeef.glade.h:232 ../plugins/gtkui/rg.c:311
 msgid "Status"
-msgstr ""
+msgstr "状态"
 
 #: ../plugins/gtkui/interface.c:5279 ../plugins/gtkui/interface.c:5343
 #: ../plugins/gtkui/deadbeef.glade.h:233
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: ../plugins/gtkui/interface.c:5311 ../plugins/gtkui/deadbeef.glade.h:234
 msgid "ReplayGain Scan Results"
-msgstr ""
+msgstr "回放增益扫描结构"
 
 #: ../plugins/gtkui/interface.c:5339 ../plugins/gtkui/deadbeef.glade.h:235
 msgid "Update File Tags"
-msgstr ""
+msgstr "更新文件标签"
 
 #: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:650
 msgid "Artist / Album"
@@ -1616,6 +1616,9 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
+"按播放顺序\n"
+"音轨\n"
+"专辑"
 
 #: ../plugins/gtkui/deadbeef.glade.h:93
 msgid ""
@@ -1700,7 +1703,7 @@ msgstr "密码"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
-msgstr "Scrobble URL"
+msgstr "Scrobble网址"
 
 #: ../translation/extra.c:16
 msgid "Prefer Album Artist over Artist field"
@@ -1969,39 +1972,39 @@ msgstr "启用环绕效果"
 
 #: ../translation/extra.c:104
 msgid "Skip to"
-msgstr ""
+msgstr "跳转至"
 
 #: ../translation/extra.c:105
 msgid "Previous genre"
-msgstr ""
+msgstr "上个流派"
 
 #: ../translation/extra.c:106
 msgid "Previous composer"
-msgstr ""
+msgstr "上个作曲"
 
 #: ../translation/extra.c:107
 msgid "Previous artist"
-msgstr ""
+msgstr "上个艺人"
 
 #: ../translation/extra.c:108
 msgid "Previous album"
-msgstr ""
+msgstr "上个专辑"
 
 #: ../translation/extra.c:109
 msgid "Next genre"
-msgstr ""
+msgstr "下个流派"
 
 #: ../translation/extra.c:110
 msgid "Next composer"
-msgstr ""
+msgstr "下个作曲"
 
 #: ../translation/extra.c:111
 msgid "Next artist"
-msgstr ""
+msgstr "下个艺人"
 
 #: ../translation/extra.c:112
 msgid "Next album"
-msgstr ""
+msgstr "下个专辑"
 
 #: ../plugins/converter/convgui.c:91
 #, c-format
@@ -2115,7 +2118,7 @@ msgstr "当格式不变时复制"
 #: ../plugins/converter/interface.c:132
 #: ../plugins/converter/converter.glade.h:5
 msgid "Re-tag after copy"
-msgstr ""
+msgstr "复制后修改标签"
 
 #: ../plugins/converter/interface.c:140
 #: ../plugins/converter/converter.glade.h:6
@@ -2594,23 +2597,23 @@ msgstr "不支持此类部件的多个实例"
 
 #: ../plugins/gtkui/widgets.c:1271
 msgid "Proportional Sizing"
-msgstr ""
+msgstr "比例间距"
 
 #: ../plugins/gtkui/widgets.c:1283
 msgid "Lock Top Pane Height"
-msgstr ""
+msgstr "锁定顶部面板高度"
 
 #: ../plugins/gtkui/widgets.c:1286
 msgid "Lock Left Pane Width"
-msgstr ""
+msgstr "锁定左侧面板宽度"
 
 #: ../plugins/gtkui/widgets.c:1299
 msgid "Lock Bottom Pane Height"
-msgstr ""
+msgstr "锁定底部面板高度"
 
 #: ../plugins/gtkui/widgets.c:1302
 msgid "Lock Right Pane Width"
-msgstr ""
+msgstr "锁定右侧面板宽度"
 
 #: ../plugins/gtkui/widgets.c:1546 ../plugins/gtkui/widgets.c:1661
 msgid "Rename Tab"
@@ -2713,32 +2716,32 @@ msgstr "立体声"
 
 #: ../plugins/gtkui/rg.c:282
 msgid "Updating File Tags Progress"
-msgstr ""
+msgstr "更新文件标签进度"
 
 #: ../plugins/gtkui/rg.c:312
 msgid "Album Gain"
-msgstr ""
+msgstr "专辑增益"
 
 #: ../plugins/gtkui/rg.c:313
 msgid "Track Gain"
-msgstr ""
+msgstr "音轨增益"
 
 #: ../plugins/gtkui/rg.c:314
 msgid "Album Peak"
-msgstr ""
+msgstr "专辑峰值"
 
 #: ../plugins/gtkui/rg.c:315
 msgid "Track Peak"
-msgstr ""
+msgstr "音轨峰值"
 
 #: ../plugins/gtkui/rg.c:318
 msgid "Success"
-msgstr ""
+msgstr "成功"
 
 #: ../plugins/gtkui/rg.c:319
 msgid "File not found"
-msgstr ""
+msgstr "文件不存在"
 
 #: ../plugins/gtkui/rg.c:320
 msgid "Invalid file"
-msgstr ""
+msgstr "无效文件"
