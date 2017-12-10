@@ -1239,7 +1239,7 @@ msgstr "取消"
 
 #: ../plugins/gtkui/interface.c:5311 ../plugins/gtkui/deadbeef.glade.h:234
 msgid "ReplayGain Scan Results"
-msgstr "回放增益扫描结构"
+msgstr "回放增益扫描结果"
 
 #: ../plugins/gtkui/interface.c:5339 ../plugins/gtkui/deadbeef.glade.h:235
 msgid "Update File Tags"
