@@ -404,7 +404,7 @@ new_streaming_link(ogg_info_t *info, const int new_link)
     info->cur_bit_stream = new_link;
 
     vorbis_info *vi = ov_info (&info->vorbis_file, new_link);
-    if (vi && info->info.fmt.channels != vi->channels || info->info.fmt.samplerate != vi->rate) {
+    if (vi && (info->info.fmt.channels != vi->channels || info->info.fmt.samplerate != vi->rate)) {
         // Streamer can't do this, so re-init the stream
         trace("Stream channel count changed from %d to %d\n", info->info.fmt.channels, vi->channels);
         trace("Stream channel count changed from %d to %d\n", info->info.fmt.samplerate, vi->rate);
