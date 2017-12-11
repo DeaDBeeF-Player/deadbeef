@@ -185,8 +185,8 @@ extern DB_functions_t *deadbeef;
     case 2:
         type = DB_COLUMN_ALBUM_ART;
         break;
-    case 3: // artist - album
-        [_addColumnFormat setStringValue:@"$if(%artist%,%artist%,Unknown Artist)[ - %album%]"];
+    case 3: // artist / album
+        [_addColumnFormat setStringValue:@"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]"];
         break;
     case 4: // artist
         [_addColumnFormat setStringValue:@"$if(%artist%,%artist%,Unknown Artist)"];
@@ -194,8 +194,8 @@ extern DB_functions_t *deadbeef;
     case 5: // album
         [_addColumnFormat setStringValue:@"%album%"];
         break;
-    case 6: // title
-        [_addColumnFormat setStringValue:@"%title%"];
+    case 6: // title / track artist
+        [_addColumnFormat setStringValue:@"%title%[ // %track artist%]"];
         break;
     case 7: // duration
         [_addColumnFormat setStringValue:@"%length%"];
@@ -245,7 +245,7 @@ extern DB_functions_t *deadbeef;
     [NSApp endSheet:self.addColumnPanel returnCode:NSOKButton];
 }
 
-#define DEFAULT_COLUMNS "[{\"title\":\"Playing\", \"id\":\"1\", \"format\":\"%playstatus%\", \"size\":\"50\"}, {\"title\":\"Artist - Album\", \"format\":\"%artist%[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track number%\", \"size\":\"50\"}, {\"title\":\"Track Title\", \"format\":\"%title%\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
+#define DEFAULT_COLUMNS "[{\"title\":\"Playing\", \"id\":\"1\", \"format\":\"%playstatus%\", \"size\":\"50\"}, {\"title\":\"Artist / Album\", \"format\":\"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track number%\", \"size\":\"50\"}, {\"title\":\"Title / Track Artist\", \"format\":\"%title%[ // %track artist%]\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
 
 - (NSString *)getColumnConfig {
     return [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.columns", DEFAULT_COLUMNS)];
