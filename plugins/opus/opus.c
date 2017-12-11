@@ -27,7 +27,7 @@
 #include <opusfile.h>
 #include "../../deadbeef.h"
 #include <stdbool.h>
-#include "oggedit.h"
+#include "../liboggedit/oggedit.h"
 #include "../../strdupa.h"
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }

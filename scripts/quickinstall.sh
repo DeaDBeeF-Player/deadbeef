@@ -17,6 +17,7 @@ cp ./plugins/vtx/.libs/vtx.so $PREFIX/lib/deadbeef/
 cp ./plugins/ffap/.libs/ffap.so $PREFIX/lib/deadbeef/
 cp ./plugins/wavpack/.libs/wavpack.so $PREFIX/lib/deadbeef/
 cp ./plugins/vorbis/.libs/vorbis.so $PREFIX/lib/deadbeef/
+cp ./plugins/opus/.libs/opus.so $PREFIX/lib/deadbeef/
 cp ./plugins/oss/.libs/oss.so $PREFIX/lib/deadbeef/
 cp ./plugins/vfs_curl/.libs/vfs_curl.so $PREFIX/lib/deadbeef/
 cp ./plugins/ffmpeg/.libs/ffmpeg.so $PREFIX/lib/deadbeef/

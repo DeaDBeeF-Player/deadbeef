@@ -121,6 +121,30 @@ project "vorbis_plugin"
    defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
    links { "vorbisfile", "vorbis", "m", "ogg" }
 
+project "opus_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "opus"
+
+   files {
+       "plugins/opus/*.h",
+       "plugins/opus/*.c",
+       "plugins/liboggedit/*.h",
+       "plugins/liboggedit/*.c",
+   }
+
+   defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
+   links { "opusfile", "opus", "m", "ogg" }
+   filter "configurations:Debug32 or Release32"
+   
+      includedirs { "static-deps/lib-x86-32/include/opus" }
+
+   filter "configurations:Debug or Release"
+   
+      includedirs { "static-deps/lib-x86-64/include/opus" }
+
 project "ffap"
    kind "SharedLib"
    language "C"

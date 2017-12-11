@@ -100,6 +100,7 @@ AC_ARG_ENABLE(vtx,      [AS_HELP_STRING([--disable-vtx     ], [disable libayemy 
 AC_ARG_ENABLE(adplug,   [AS_HELP_STRING([--disable-adplug  ], [disable adplug plugin (default: enabled)])], [enable_adplug=$enableval], [enable_adplug=yes])
 AC_ARG_ENABLE(hotkeys,  [AS_HELP_STRING([--disable-hotkeys ], [disable global hotkeys plugin (default: enabled)])], [enable_hotkeys=$enableval], [enable_hotkeys=yes])
 AC_ARG_ENABLE(vorbis,   [AS_HELP_STRING([--disable-vorbis  ], [disable Ogg Vorbis player plugin (default: enabled)])], [enable_vorbis=$enableval], [enable_vorbis=yes])
+AC_ARG_ENABLE(opus,   [AS_HELP_STRING([--disable-opus  ], [disable Ogg Opus player plugin (default: enabled)])], [enable_opus=$enableval], [enable_opus=yes])
 AC_ARG_ENABLE(ffmpeg,   [AS_HELP_STRING([--disable-ffmpeg  ], [disable FFMPEG plugin for WMA, AMR, etc (default: enabled)])], [enable_ffmpeg=$enableval], [enable_ffmpeg=yes])
 AC_ARG_ENABLE(flac,     [AS_HELP_STRING([--disable-flac    ], [disable FLAC player plugin (default: enabled)])], [enable_flac=$enableval], [enable_flac=yes])
 AC_ARG_ENABLE(sndfile,  [AS_HELP_STRING([--disable-sndfile ], [disable libsndfile plugin for PCM wave files (default: enabled)])], [enable_sndfile=$enableval], [enable_sndfile=yes])
@@ -418,6 +419,23 @@ AS_IF([test "${enable_vorbis}" != "no"], [
     ])
 ])
 
+dnl opus plugin
+AS_IF([test "${enable_opus}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        HAVE_OPUSPLUGIN=yes
+        OPUS_LIBS="-lopusfile -lopus -lm -logg"
+        OPUS_CFLAGS="-I../../$LIB/include/opus"
+        AC_SUBST(OPUS_LIBS)
+        AC_SUBST(OPUS_CFLAGS)
+    ], [
+        PKG_CHECK_MODULES(OPUS, opusfile, HAVE_OPUS=yes, HAVE_OPUS=no)
+        AS_IF([test "$HAVE_OPUS" = "yes"], [
+            HAVE_OPUSPLUGIN=yes
+            AC_SUBST(OPUS_CFLAGS)
+            AC_SUBST(OPUS_LIBS)
+        ])
+    ])
+])
 dnl libogg for oggedit
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_OGG=yes
@@ -834,10 +852,11 @@ AS_IF([test "${enable_rgscanner}" != "no"], [
     HAVE_RGSCANNER=yes
 ])
 
-PLUGINS_DIRS="plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/sndio plugins/rg_scanner"
+PLUGINS_DIRS="plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/opus plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/sndio plugins/rg_scanner"
 
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
+AM_CONDITIONAL(HAVE_OPUS, test "x$HAVE_OPUSPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_OGG, test "x$HAVE_OGG" = "xyes")
 AM_CONDITIONAL(HAVE_OGG_STREAM_FLUSH_FILL, test "x$HAVE_OGG_STREAM_FLUSH_FILL" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -921,6 +940,7 @@ plugins/lastfm/Makefile
 plugins/ffap/Makefile
 plugins/mp3/Makefile
 plugins/vorbis/Makefile
+plugins/opus/Makefile
 plugins/flac/Makefile
 plugins/wavpack/Makefile
 plugins/sndfile/Makefile
@@ -1004,6 +1024,7 @@ PRINT_PLUGIN_INFO([mp3],[mp3 plugin],[test "x$HAVE_MP3" = "xyes"])
 PRINT_PLUGIN_INFO([    libmad],[libmad backend for mp3 plugin],[test "x$HAVE_LIBMAD" = "xyes"])
 PRINT_PLUGIN_INFO([    libmpg123],[libmpg123 backend for mp3 plugin],[test "x$HAVE_LIBMPG123" = "xyes"])
 PRINT_PLUGIN_INFO([vorbis],[ogg vorbis player],[test "x$HAVE_VORBISPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([opus],[ogg opus player],[test "x$HAVE_OPUSPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([flac],[flac player],[test "x$HAVE_FLACPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([wavpack],[wavpack player],[test "x$HAVE_WAVPACKPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([sndfile],[PCM (wav,aiff,etc) player based on libsndfile],[test "x$HAVE_SNDFILEPLUGIN" = "xyes"])
