@@ -247,7 +247,11 @@ opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     const OpusHead *head = op_head (info->opusfile, 0);
-    
+
+    if (head->channel_count > 8) {
+        trace ("opus: the track has %d channels, but 8 is max supported.\n");
+        return -1;
+    }
 
     // take this parameters from your input file
     // we set constants for clarity sake
@@ -259,7 +263,7 @@ opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         info->channelmap = oggedit_vorbis_channel_map (head->channel_count);
     }
 
-    for (int i = 0; i < _info->fmt.channels; i++) {
+    for (int i = 0; i < (_info->fmt.channels&0x1f); i++) {
         _info->fmt.channelmask |= 1 << i;
     }
     _info->readpos = 0;
@@ -411,11 +415,12 @@ opusdec_read (DB_fileinfo_t *_info, char *bytes, int size) {
             samples_read = samples_to_read;
         }
         else if (ret > 0) {
-            float *ptr = (float *)bytes + samples_read*_info->fmt.channels;
-            for (int channel = 0; channel < _info->fmt.channels; channel++, ptr++) {
+            for (int channel = 0; channel < _info->fmt.channels; channel++) {
                 const float *pcm_channel = &pcm[info->channelmap ? info->channelmap[channel] : channel];
-                for (int sample = 0; sample < ret; sample++) {
-                    ptr[sample*_info->fmt.channels] = pcm_channel[sample];
+                float *ptr = ((float *)bytes + samples_read*_info->fmt.channels) + channel;
+                for (int sample = 0; sample < ret; sample ++, pcm_channel += _info->fmt.channels) {
+                    *ptr = *pcm_channel;
+                    ptr += _info->fmt.channels;
                 }
             }
             samples_read += ret;
