@@ -75,7 +75,7 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-#define DEFAULT_EXTS "aa3;oma;ac3;vqf;amr;opus;tak;dsf;dff;wma;3gp;mp4;m4a"
+#define DEFAULT_EXTS "aa3;oma;ac3;vqf;amr;tak;dsf;dff;wma;3gp;mp4;m4a"
 #define UNPOPULATED_EXTS_BY_FFMPEG \
     "aif,aiff,afc,aifc,amr,asf," \
     "wmv,wma,au,caf,webm," \
