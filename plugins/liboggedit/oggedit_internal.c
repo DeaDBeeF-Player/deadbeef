@@ -332,7 +332,8 @@ off_t codec_stream_size(DB_FILE *in, ogg_sync_state *oy, const off_t start_offse
     }
 
     /* Skip to the first codec data page */
-    while (serial > OGGEDIT_EOF && !is_data_page(&og, codec_serial, serial))
+    while (serial > OGGEDIT_EOF && !(ogg_page_granulepos(&og) > 0 && serial == codec_serial))
+    //while (serial > OGGEDIT_EOF && !is_data_page(&og, codec_serial, serial))
         serial = get_page(in, oy,  &og);
     if (serial <= OGGEDIT_EOF)
         return serial;
@@ -474,7 +475,8 @@ int64_t copy_remaining_pages(DB_FILE *in, FILE *out, ogg_sync_state *oy, const i
     int64_t serial;
     do
         serial = get_page(in, oy, &og);
-    while (serial > OGGEDIT_EOF && is_data_page(&og, codec_serial, serial));
+    while (serial > OGGEDIT_EOF && serial == codec_serial && ogg_page_granulepos(&og) <= 0);
+    //while (serial > OGGEDIT_EOF && is_data_page(&og, codec_serial, serial));
     if (serial <= OGGEDIT_EOF)
         return serial;
 
