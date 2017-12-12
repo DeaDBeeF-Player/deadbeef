@@ -8165,7 +8165,7 @@
 				4D9C602D1FDEBCF500D83CEF /* src */,
 			);
 			name = opuslib;
-			path = osx/deps/opuslib;
+			path = "osx/deps/opus-1.2.1";
 			sourceTree = "<group>";
 		};
 		4D9C60271FDEBCF500D83CEF /* include */ = {
