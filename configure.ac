@@ -424,7 +424,7 @@ AS_IF([test "${enable_opus}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_OPUSPLUGIN=yes
         OPUS_LIBS="-lopusfile -lopus -lm -logg"
-        OPUS_CFLAGS="-I../../$LIB/include/opus"
+        OPUS_CFLAGS="-I../../$LIB/include -I../../$LIB/include/opus"
         AC_SUBST(OPUS_LIBS)
         AC_SUBST(OPUS_CFLAGS)
     ], [
