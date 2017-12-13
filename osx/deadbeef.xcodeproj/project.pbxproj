@@ -1248,7 +1248,7 @@
 		2D88EA091B2AF6DD0072FD43 /* oggedit_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA011B2AF6DD0072FD43 /* oggedit_utils.c */; };
 		2D88EA0A1B2AF6DD0072FD43 /* oggedit_vorbis.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA021B2AF6DD0072FD43 /* oggedit_vorbis.c */; };
 		2D88EA0B1B2AF6DD0072FD43 /* oggedit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D88EA031B2AF6DD0072FD43 /* oggedit.h */; };
-		2D88EA0E1B2AF71A0072FD43 /* liboggedit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.a */; };
+		2D88EA0E1B2AF71A0072FD43 /* liboggedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.dylib */; };
 		2D88EA111B2AF77B0072FD43 /* vorbis.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D88E9ED1B2AF6640072FD43 /* vorbis.dylib */; };
 		2D8B54961CAC8CD500A6F5A4 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026D9F1CAC5C5000E27961 /* libavutil.a */; };
 		2D8BA3521E2672BF001D5708 /* libogglib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
@@ -1722,6 +1722,7 @@
 		4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D62C0C61E4C9ACA005F9482 /* streamreader.h */; };
 		4D66DBA11F6181C400BFF76B /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */; };
 		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
+		4D9BF4001FE134200032B6CF /* libopusfile.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C629E1FDEC51000D83CEF /* libopusfile.dylib */; };
 		4D9C5B0E1FDEBAFC00D83CEF /* opus.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C5AEF1FDEBAAE00D83CEF /* opus.dylib */; };
 		4D9C5B0F1FDEBAFC00D83CEF /* libopuslib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */; };
 		4D9C61641FDEBCF600D83CEF /* opus.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D9C60281FDEBCF500D83CEF /* opus.h */; };
@@ -1946,7 +1947,7 @@
 		4D9C62B31FDEC53500D83CEF /* internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D9C62AA1FDEC53500D83CEF /* internal.c */; };
 		4D9C62B61FDEC53500D83CEF /* stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D9C62AD1FDEC53500D83CEF /* stream.c */; };
 		4D9C62B91FDEC90700D83CEF /* libopusfile.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D9C629E1FDEC51000D83CEF /* libopusfile.dylib */; };
-		4D9C62BB1FDEC91300D83CEF /* liboggedit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.a */; };
+		4D9C62BB1FDEC91300D83CEF /* liboggedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.dylib */; };
 		4D9C62BC1FDEC92100D83CEF /* libopuslib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */; };
 		4D9C62C11FDEC99E00D83CEF /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
 		4D9C62C31FDEC9A600D83CEF /* libopuslib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */; };
@@ -3861,7 +3862,7 @@
 		2D86AFC31C358CDD0018C174 /* dial68.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dial68.h; path = ../libsc68/dial68/dial68.h; sourceTree = "<group>"; };
 		2D88E9ED1B2AF6640072FD43 /* vorbis.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vorbis.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D88E9F11B2AF6850072FD43 /* vorbis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vorbis.c; path = plugins/vorbis/vorbis.c; sourceTree = "<group>"; };
-		2D88E9F71B2AF6BC0072FD43 /* liboggedit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liboggedit.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D88E9F71B2AF6BC0072FD43 /* liboggedit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liboggedit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D88E9FC1B2AF6DD0072FD43 /* oggedit_art.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = oggedit_art.c; path = plugins/liboggedit/oggedit_art.c; sourceTree = "<group>"; };
 		2D88E9FD1B2AF6DD0072FD43 /* oggedit_flac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = oggedit_flac.c; path = plugins/liboggedit/oggedit_flac.c; sourceTree = "<group>"; };
 		2D88E9FE1B2AF6DD0072FD43 /* oggedit_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = oggedit_internal.c; path = plugins/liboggedit/oggedit_internal.c; sourceTree = "<group>"; };
@@ -5168,7 +5169,7 @@
 			files = (
 				2D7C38271B2C407C0029DE0A /* libogglib.dylib in Frameworks */,
 				2D7C38281B2C407C0029DE0A /* libvorbislib.a in Frameworks */,
-				2D88EA0E1B2AF71A0072FD43 /* liboggedit.a in Frameworks */,
+				2D88EA0E1B2AF71A0072FD43 /* liboggedit.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5350,7 +5351,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D9C62BC1FDEC92100D83CEF /* libopuslib.dylib in Frameworks */,
-				4D9C62BB1FDEC91300D83CEF /* liboggedit.a in Frameworks */,
+				4D9C62BB1FDEC91300D83CEF /* liboggedit.dylib in Frameworks */,
 				4D9C62B91FDEC90700D83CEF /* libopusfile.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7621,7 +7622,7 @@
 				2DF930441AB816DC0030C0CA /* wildmidi.dylib */,
 				2D23511B1B138ECB00A62936 /* converter.dylib */,
 				2D88E9ED1B2AF6640072FD43 /* vorbis.dylib */,
-				2D88E9F71B2AF6BC0072FD43 /* liboggedit.a */,
+				2D88E9F71B2AF6BC0072FD43 /* liboggedit.dylib */,
 				2D7C37EC1B2C40520029DE0A /* libogglib.dylib */,
 				2D7C37F41B2C40580029DE0A /* libvorbislib.a */,
 				2D05A8291B4BE59D004C913D /* sndfile.dylib */,
@@ -10461,8 +10462,8 @@
 			);
 			name = oggedit;
 			productName = oggedit;
-			productReference = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.a */;
-			productType = "com.apple.product-type.library.static";
+			productReference = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 		2D9177371A0E8966004BC222 /* alac */ = {
 			isa = PBXNativeTarget;
@@ -11261,6 +11262,7 @@
 			files = (
 				4D9C62991FDEC32E00D83CEF /* libvorbislib.a in Resources */,
 				4D9C5B0F1FDEBAFC00D83CEF /* libopuslib.dylib in Resources */,
+				4D9BF4001FE134200032B6CF /* libopusfile.dylib in Resources */,
 				2D8BA3531E2672C3001D5708 /* libflaclib.dylib in Resources */,
 				2DF16CB61DCB62FD007D7F05 /* supereq.dylib in Resources */,
 				2D1DC09C1DCB3A1500441A08 /* ddb_mono2stereo.dylib in Resources */,
@@ -14492,6 +14494,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "USE_TAGGING=1";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INSTALL_PATH = "@executable_path/../Resources";
+				LD_DYLIB_INSTALL_NAME = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -14512,6 +14515,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "USE_TAGGING=1";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INSTALL_PATH = "@executable_path/../Resources";
+				LD_DYLIB_INSTALL_NAME = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -14891,7 +14895,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_dylib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -14914,7 +14918,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_dylib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -14942,6 +14946,7 @@
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
 				);
+				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_dylib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -14965,6 +14970,7 @@
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
 				);
+				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_dylib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -15039,6 +15045,7 @@
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 				);
+				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_dylib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -15061,6 +15068,7 @@
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 				);
+				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_dylib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -15856,7 +15864,7 @@
 					"$(SRCROOT)/deps/libogg-1.3.1/include",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_dylib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -15883,7 +15891,7 @@
 					"$(SRCROOT)/deps/libogg-1.3.1/include",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_dylib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -16180,7 +16188,7 @@
 					"\"$(SRCROOT)/deps/opusfile-0.9/include\"",
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -16222,7 +16230,7 @@
 					"\"$(SRCROOT)/deps/opusfile-0.9/include\"",
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -16275,7 +16283,8 @@
 					"\"$(SRCROOT)/deps/opus-1.2.1\"",
 					"\"$(SRCROOT)/deps/opus-1.2.1/celt\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -16327,7 +16336,8 @@
 					"\"$(SRCROOT)/deps/opus-1.2.1\"",
 					"\"$(SRCROOT)/deps/opus-1.2.1/celt\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -16373,7 +16383,8 @@
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 					"\"$(SRCROOT)/deps/opus-1.2.1/include\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -16414,7 +16425,8 @@
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 					"\"$(SRCROOT)/deps/opus-1.2.1/include\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
