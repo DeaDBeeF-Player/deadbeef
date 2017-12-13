@@ -46,9 +46,9 @@ int oggedit_write_opus_file(DB_FILE *in, const char *outname, const off_t offset
 
     int res;
     if (all_streams)
-        res = write_one_stream(in, out, &oy, offset, OPUSNAME);
+        res = (int)write_one_stream(in, out, &oy, offset, OPUSNAME);
     else
-        res = write_all_streams(in, out, &oy, offset);
+        res = (int)write_all_streams(in, out, &oy, offset);
 
     cleanup(in, out, &oy, NULL);
 
@@ -105,7 +105,7 @@ static int64_t write_opus_tags(FILE *out, const int64_t serial, const char *vend
         return OGGEDIT_ALLOCATION_FAILURE;
 
     ogg_stream_state os;
-    if (ogg_stream_init(&os, serial))
+    if (ogg_stream_init(&os, (int)serial))
         return OGGEDIT_FAILED_TO_INIT_STREAM;
     os.b_o_s = 1;
     os.pageno = 1;
@@ -136,8 +136,8 @@ off_t oggedit_write_opus_metadata(DB_FILE *in, const char *fname, const off_t of
         res = tags_packet_size;
         goto cleanup;
     }
-    const size_t metadata_size = strlen(TAGMAGIC) + vc_size(vendor, num_tags, tags);
-    size_t padding = tags_packet_size - metadata_size;
+    const int64_t metadata_size = strlen(TAGMAGIC) + vc_size(vendor, num_tags, tags);
+    int64_t padding = tags_packet_size - metadata_size;
     const off_t file_size_k = in->vfs->getlength(in) / 1000;
     const off_t stream_size_k = stream_size ? stream_size / 1000 : file_size_k;
     if (file_size_k < 100 || padding < 0 || padding > file_size_k/10+stream_size_k+metadata_size) {
@@ -176,7 +176,7 @@ off_t oggedit_write_opus_metadata(DB_FILE *in, const char *fname, const off_t of
 
     /* If we have tempfile, copy the remaining pages */
     if (*tempname) {
-        opus_serial = copy_remaining_pages(in, out, &oy, opus_serial, pageno);
+        opus_serial = copy_remaining_pages(in, out, &oy, opus_serial, (uint32_t)pageno);
         if (opus_serial <= OGGEDIT_EOF) {
             res = opus_serial;
             goto cleanup;
