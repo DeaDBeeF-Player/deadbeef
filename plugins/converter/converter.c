@@ -976,7 +976,7 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
             write_int16_le (wavehdr+34, output_bps);
             if (exheader) {
                 int16_t cbSize = 0x16;
-                write_int16_le (wavehdr+36, cbSize); // cbSize (validBPS + channelmask + coded ID = 22 bytes)
+                write_int16_le (wavehdr+36, cbSize); // cbSize (validBPS + channelmask + codec ID = 22 bytes)
                 write_int16_le (wavehdr+38, output_bps); // validBPS
                 int32_t chMask = 3;
                 write_int32_le (wavehdr+40, chMask); // channelMask
