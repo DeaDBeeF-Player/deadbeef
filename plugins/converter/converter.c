@@ -971,7 +971,7 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
             write_int32_le (wavehdr+24, outsr);
             int32_t bytes_per_sec = outsr * output_bps / 8 * outch;
             write_int32_le (wavehdr+28, bytes_per_sec);
-            uint16_t blockalign = outch * output_bps / 8; // lock_align; bits_per_sample; cbSize; validBPS
+            uint16_t blockalign = outch * output_bps / 8; // block_align; bits_per_sample; cbSize; validBPS
             write_int16_le (wavehdr+32, blockalign);
             write_int16_le (wavehdr+34, output_bps);
             if (exheader) {
