@@ -95,6 +95,13 @@ opus_file_open(DB_FILE *fp)
 }
 
 static DB_fileinfo_t *
+opusdec_open (uint32_t hints) {
+    DB_fileinfo_t *_info = malloc (sizeof (opusdec_info_t));
+    memset (_info, 0, sizeof (opusdec_info_t));
+    return _info;
+}
+
+static DB_fileinfo_t *
 opusdec_open2 (uint32_t hints, DB_playItem_t *it) {
     deadbeef->pl_lock ();
     DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
@@ -115,8 +122,6 @@ opusdec_open2 (uint32_t hints, DB_playItem_t *it) {
     return _info;
 }
 
-#define DELIMITER "\n - \n"
-
 static const char *tag_rg_names[] = {
     "REPLAYGAIN_ALBUM_GAIN",
     "REPLAYGAIN_ALBUM_PEAK",
@@ -134,25 +139,7 @@ static const char *ddb_internal_rg_keys[] = {
     NULL
 };
 
-static bool
-add_meta(DB_playItem_t *it, const char *key, const char *value)
-{
-    const char *old_value = deadbeef->pl_find_meta(it, key);
-    if (old_value) {
-        char *new_value = malloc(strlen(old_value) + strlen(DELIMITER) + strlen(value) + 1);
-        if (new_value) {
-            sprintf(new_value, "%s"DELIMITER"%s", old_value, value);
-            deadbeef->pl_replace_meta(it, key, new_value);
-            free(new_value);
-            return true;
-        }
-    }
-    else {
-        deadbeef->pl_add_meta(it, key, value);
-        return true;
-    }
-    return false;
-}
+
 
 static bool
 replaygain_tag(DB_playItem_t *it, const int tag_enum, const char *tag, const char *value)
@@ -186,7 +173,7 @@ update_vorbis_comments (DB_playItem_t *it, OggOpusFile *opusfile, const int trac
                 !replaygain_tag(it, DDB_REPLAYGAIN_TRACKGAIN, tag, value) &&
                 !replaygain_tag(it, DDB_REPLAYGAIN_TRACKPEAK, tag, value)
                 && strcasecmp (tag, "METADATA_BLOCK_PICTURE")) {
-                add_meta(it, oggedit_map_tag(tag, "tag2meta"), value);
+                deadbeef->pl_append_meta(it, oggedit_map_tag(tag, "tag2meta"), value);
             }
         }
         if (tag) {
@@ -240,6 +227,19 @@ opusdec_seek_sample (DB_fileinfo_t *_info, int sample) {
 static int
 opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     opusdec_info_t *info = (opusdec_info_t *)_info;
+
+    if (!info->file) {
+        deadbeef->pl_lock ();
+        DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+        deadbeef->pl_unlock ();
+
+        if (!fp) {
+            return -1;
+        }
+        info->file = fp;
+        info->it = it;
+        deadbeef->pl_item_ref (it);
+    }
 
     info->opusfile = opus_file_open (info->file);
     if (!info->opusfile) {
@@ -522,10 +522,8 @@ opusdec_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             deadbeef->pl_set_meta_int(it, ":BITRATE", 8.f * samplerate * stream_size / totalsamples / 1000);
         }
         set_meta_ll (it, ":FILE_SIZE", fsize);
-        //        deadbeef->pl_add_meta (it, ":BPS", "32");
         deadbeef->pl_set_meta_int (it, ":CHANNELS", head->channel_count);
         deadbeef->pl_set_meta_int (it, ":SAMPLERATE", samplerate);
-        //        deadbeef->pl_set_meta_int (it, ":BITRATE", ov_bitrate (&vorbis_file, stream)/1000);
 
         if (nstreams == 1) {
             DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it,  totalsamples, samplerate);
@@ -593,26 +591,20 @@ error:
 }
 
 static void
-split_tag(OpusTags *tags, const char *key, const char *value)
+split_tag(OpusTags *tags, const char *key, const char *value, int valuesize)
 {
-    if (key && value) {
-        const char *p;
-        while ((p = strstr(value, DELIMITER))) {
-            char v[p - value + 1];
-            strncpy(v, value, p-value);
-            v[p-value] = 0;
-            opus_tags_add(tags, key, v);
-            value = p + strlen(DELIMITER);
-        }
-
+    while (valuesize > 0) {
         opus_tags_add(tags, key, value);
+        size_t l = strlen (value) + 1;
+        value += l;
+        valuesize -= l;
     }
 }
 
 static OpusTags *
 tags_list(DB_playItem_t *it, OggOpusFile *opusfile, int link)
 {
-    OpusTags *tags = (OpusTags *)op_tags(opusfile, link);
+    OpusTags *tags = calloc (1, sizeof (OpusTags));
     if (!tags)
         return NULL;
 
@@ -622,7 +614,7 @@ tags_list(DB_playItem_t *it, OggOpusFile *opusfile, int link)
             break;
         }
         char *key = strdupa (m->key);
-        split_tag (tags, oggedit_map_tag (key, "meta2tag"), m->value);
+        split_tag (tags, oggedit_map_tag (key, "meta2tag"), m->value, m->valuesize);
     }
     deadbeef->pl_unlock ();
 
@@ -632,7 +624,7 @@ tags_list(DB_playItem_t *it, OggOpusFile *opusfile, int link)
             float value = deadbeef->pl_get_item_replaygain (it, n);
             char s[100];
             snprintf (s, sizeof (s), "%f", value);
-            split_tag (tags, tag_rg_names[n], s);
+            split_tag (tags, tag_rg_names[n], s, (int)strlen (s) + 1);
         }
     }
 
@@ -684,15 +676,19 @@ opusdec_write_metadata (DB_playItem_t *it) {
     const off_t file_size = oggedit_write_opus_metadata (deadbeef->fopen(fname), fname, 0, stream_size, INT_MIN, tags->comments, tags->user_comments);
     opus_tags_clear(tags);
 
+    res = 0;
     if (file_size <= 0) {
-        return -1;
+        res = -1;
     }
 
     op_free (opusfile);
     deadbeef->fclose (fp);
 
-    set_meta_ll(it, ":FILE_SIZE", (int64_t)file_size);
-    return opusdec_read_metadata(it);
+    if (!res) {
+        set_meta_ll(it, ":FILE_SIZE", (int64_t)file_size);
+        res = opusdec_read_metadata(it);
+    }
+    return res;
 }
 
 
@@ -733,6 +729,7 @@ static DB_decoder_t plugin = {
         "\n\n\n"
         "liboggedit\n"
         "Copyright (C) 2014 Ian Nartowicz <deadbeef@nartowicz.co.uk>\n",
+    .open = opusdec_open,
     .open2 = opusdec_open2,
     .init = opusdec_init,
     .free = opusdec_free,
