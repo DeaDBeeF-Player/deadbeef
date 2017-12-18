@@ -1278,11 +1278,12 @@ _converter_write_tags (ddb_encoder_preset_t *encoder_preset, DB_playItem_t *it, 
 
     // write vorbis tags
     if (encoder_preset->tag_oggvorbis) {
-        // find flac decoder plugin
+        // find plugin to write vorbis comment tags
         DB_decoder_t **plugs = deadbeef->plug_get_decoder_list ();
         int res = -1;
         for (int i = 0; plugs[i]; i++) {
             if (!strcmp (plugs[i]->plugin.id, "stdogg")
+                || !strcmp (plugs[i]->plugin.id, "opus")
                 || !strcmp (plugs[i]->plugin.id, "stdopus")) {
                 res = plugs[i]->write_metadata (out_it);
                 if (!res) {
