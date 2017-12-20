@@ -49,6 +49,8 @@ static NSString *default_format = @"[%tracknumber%. ]%artist% - %title%";
     int _cancelled;
     NSInteger _overwritePromptResult;
     BOOL _working;
+    NSControlStateValue _bypassSameFormatState;
+    NSControlStateValue _retagAfterCopyState;
 }
 @end
 
@@ -682,6 +684,10 @@ static NSMutableArray *g_converterControllers;
     [_progressPanel setIsVisible:YES];
 
     _working = YES;
+
+    _bypassSameFormatState = [_bypassSameFormat state];
+    _retagAfterCopyState = [_retagAfterCopy state];
+
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
         [self converterWorker];
@@ -732,8 +738,8 @@ static NSMutableArray *g_converterControllers;
         .output_is_float = _output_is_float,
         .encoder_preset = _encoder_preset,
         .dsp_preset = _dsp_preset,
-        .bypass_conversion_on_same_format = ([_bypassSameFormat state] == NSOnState),
-        .rewrite_tags_after_copy = ([_retagAfterCopy state] == NSOnState),
+        .bypass_conversion_on_same_format = (_bypassSameFormatState == NSOnState),
+        .rewrite_tags_after_copy = (_retagAfterCopyState == NSOnState),
     };
 
     for (int n = 0; n < _convert_items_count; n++) {
