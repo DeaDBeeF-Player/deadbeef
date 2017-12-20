@@ -604,6 +604,8 @@ split_tag(OpusTags *tags, const char *key, const char *value, int valuesize)
 static OpusTags *
 tags_list(DB_playItem_t *it, OggOpusFile *opusfile, int link)
 {
+    const OpusTags *orig = op_tags (opusfile, link);
+
     OpusTags *tags = calloc (1, sizeof (OpusTags));
     if (!tags)
         return NULL;
@@ -626,6 +628,13 @@ tags_list(DB_playItem_t *it, OggOpusFile *opusfile, int link)
             snprintf (s, sizeof (s), "%f", value);
             split_tag (tags, tag_rg_names[n], s, (int)strlen (s) + 1);
         }
+    }
+
+    // preserve album art
+    int i = 0;
+    const char *tag;
+    while ((tag = opus_tags_query(orig, ALBUM_ART_KEY, i++))) {
+        split_tag (tags, ALBUM_ART_KEY, tag, (int)strlen (tag) + 1);
     }
 
     return tags;
