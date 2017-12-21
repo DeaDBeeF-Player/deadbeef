@@ -559,6 +559,7 @@ opusdec_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         set_meta_ll (it, ":FILE_SIZE", fsize);
         deadbeef->pl_set_meta_int (it, ":CHANNELS", head->channel_count);
         deadbeef->pl_set_meta_int (it, ":SAMPLERATE", samplerate);
+        deadbeef->pl_set_meta_int (it, ":SAMPLERATE_ORIGINAL", head->input_sample_rate);
 
         if (nstreams == 1) {
             DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it,  totalsamples, samplerate);
