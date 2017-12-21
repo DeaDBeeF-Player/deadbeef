@@ -657,6 +657,8 @@ tags_list(DB_playItem_t *it, OggOpusFile *opusfile, int link)
     deadbeef->pl_unlock ();
 
     // add replaygain values
+    // header gain will be reset to 0, r128_* tags will be stripped
+
     for (int n = 0; ddb_internal_rg_keys[n]; n++) {
         if (deadbeef->pl_find_meta (it, ddb_internal_rg_keys[n])) {
             float value = deadbeef->pl_get_item_replaygain (it, n);
@@ -718,7 +720,7 @@ opusdec_write_metadata (DB_playItem_t *it) {
     const char *stream_size_string = deadbeef->pl_find_meta(it, ":STREAM SIZE");
     const size_t stream_size = stream_size_string ? (off_t)atoll(stream_size_string) : 0;
     deadbeef->pl_unlock();
-    const off_t file_size = oggedit_write_opus_metadata (deadbeef->fopen(fname), fname, 0, stream_size, INT_MIN, tags->comments, tags->user_comments);
+    const off_t file_size = oggedit_write_opus_metadata (deadbeef->fopen(fname), fname, 0, stream_size, 0, tags->comments, tags->user_comments);
     opus_tags_clear(tags);
 
     res = 0;
