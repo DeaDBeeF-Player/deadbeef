@@ -208,7 +208,7 @@ update_vorbis_comments (DB_playItem_t *it, OggOpusFile *opusfile, const int trac
         if (albumgain != 0) {
             deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, albumgain / 256.0f + 5.0f);
         }
-}
+    }
 
     deadbeef->pl_add_meta (it, "title", NULL);
     uint32_t f = deadbeef->pl_get_item_flags (it);
@@ -299,9 +299,6 @@ opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->plugin = &plugin;
 
     // set all gain adjustment to 0, because deadbeef is performing that.
-    op_set_gain_offset (info->opusfile, OP_HEADER_GAIN, 0);
-    op_set_gain_offset (info->opusfile, OP_TRACK_GAIN, 0);
-    op_set_gain_offset (info->opusfile, OP_ALBUM_GAIN, 0);
     op_set_gain_offset (info->opusfile, OP_ABSOLUTE_GAIN, 0);
 
     if (info->file->vfs->is_streaming ()) {
