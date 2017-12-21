@@ -49,8 +49,8 @@ static NSString *default_format = @"[%tracknumber%. ]%artist% - %title%";
     int _cancelled;
     NSInteger _overwritePromptResult;
     BOOL _working;
-    NSControlStateValue _bypassSameFormatState;
-    NSControlStateValue _retagAfterCopyState;
+    NSInteger _bypassSameFormatState;
+    NSInteger _retagAfterCopyState;
 }
 @end
 
