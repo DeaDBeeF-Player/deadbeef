@@ -210,6 +210,12 @@ update_vorbis_comments (DB_playItem_t *it, OggOpusFile *opusfile, const int trac
         }
     }
 
+    char s[100];
+    snprintf (s, sizeof (s), "%0.2f dB", op_head (opusfile, tracknum)->output_gain / 256.0f + 5.0f);
+    deadbeef->pl_replace_meta (it, ":OPUS_HEADER_GAIN", s);
+
+    deadbeef->pl_set_meta_int (it, ":SAMPLERATE_ORIGINAL", op_head (opusfile, tracknum)->input_sample_rate);
+
     deadbeef->pl_add_meta (it, "title", NULL);
     uint32_t f = deadbeef->pl_get_item_flags (it);
     f &= ~DDB_TAG_MASK;
@@ -220,7 +226,6 @@ update_vorbis_comments (DB_playItem_t *it, OggOpusFile *opusfile, const int trac
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
     }
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 
     return 0;
 }
@@ -550,13 +555,12 @@ opusdec_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             free(filetype);
         }
         if (stream_size > 0) {
-            set_meta_ll(it, ":STREAM SIZE", stream_size);
+            set_meta_ll(it, ":OPUS_STREAM_SIZE", stream_size);
             deadbeef->pl_set_meta_int(it, ":BITRATE", 8.f * samplerate * stream_size / totalsamples / 1000);
         }
         set_meta_ll (it, ":FILE_SIZE", fsize);
         deadbeef->pl_set_meta_int (it, ":CHANNELS", head->channel_count);
         deadbeef->pl_set_meta_int (it, ":SAMPLERATE", samplerate);
-        deadbeef->pl_set_meta_int (it, ":SAMPLERATE_ORIGINAL", head->input_sample_rate);
 
         if (nstreams == 1) {
             DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it,  totalsamples, samplerate);
