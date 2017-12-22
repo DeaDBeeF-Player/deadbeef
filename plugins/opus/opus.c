@@ -322,6 +322,7 @@ opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     info->is_subtrack = deadbeef->pl_get_item_flags(it) & DDB_IS_SUBTRACK;
+    deadbeef->pl_replace_meta (it, "!FILETYPE", "Ogg Opus");
 
     return 0;
 }

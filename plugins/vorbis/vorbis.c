@@ -252,7 +252,6 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     ogg_info_t *info = (ogg_info_t *)_info;
     info->new_track = info->it = it;
     deadbeef->pl_item_ref (it);
-    deadbeef->pl_replace_meta (it, "!FILETYPE", "OggVorbis");
 
     if (!info->info.file) {
         deadbeef->pl_lock ();
@@ -283,7 +282,6 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         if (plt) {
             deadbeef->plt_unref (plt);
         }
-        deadbeef->pl_replace_meta (it, "!FILETYPE", "OggVorbis");
     }
     else
     {
@@ -333,6 +331,8 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     for (int i = 0; i < _info->fmt.channels; i++) {
         _info->fmt.channelmask |= 1 << i;
     }
+
+    deadbeef->pl_replace_meta (it, "!FILETYPE", "Ogg Vorbis");
 
     return 0;
 }
@@ -790,10 +790,10 @@ static DB_decoder_t plugin = {
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "stdogg",
-    .plugin.name = "OggVorbis decoder",
-    .plugin.descr = "OggVorbis decoder using standard xiph.org libraries",
+    .plugin.name = "Ogg Vorbis decoder",
+    .plugin.descr = "Ogg Vorbis decoder using standard xiph.org libraries",
     .plugin.copyright =
-    "OggVorbis plugin for DeaDBeeF\n"
+    "Ogg Vorbis plugin for DeaDBeeF\n"
     "Copyright (C) 2009-2014 Alexey Yakovenko et al.\n"
     "\n"
     "vcedit.c\n"
