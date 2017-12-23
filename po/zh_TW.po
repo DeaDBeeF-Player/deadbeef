@@ -2668,7 +2668,7 @@ msgstr "新增播放清單"
 
 #: ../plugins/gtkui/pltmenu.c:394
 msgid "Duplicate Playlist"
-msgstr ""
+msgstr "重複的播放清單"
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -2702,32 +2702,32 @@ msgstr "立體聲"
 
 #: ../plugins/gtkui/rg.c:282
 msgid "Updating File Tags Progress"
-msgstr ""
+msgstr "正在更新檔案標籤"
 
 #: ../plugins/gtkui/rg.c:312
 msgid "Album Gain"
-msgstr ""
+msgstr "專輯增益"
 
 #: ../plugins/gtkui/rg.c:313
 msgid "Track Gain"
-msgstr ""
+msgstr "單曲增益"
 
 #: ../plugins/gtkui/rg.c:314
 msgid "Album Peak"
-msgstr ""
+msgstr "專輯最大音量"
 
 #: ../plugins/gtkui/rg.c:315
 msgid "Track Peak"
-msgstr ""
+msgstr "單曲最大音量"
 
 #: ../plugins/gtkui/rg.c:318
 msgid "Success"
-msgstr ""
+msgstr "成功"
 
 #: ../plugins/gtkui/rg.c:319
 msgid "File not found"
-msgstr ""
+msgstr "找不到檔案"
 
 #: ../plugins/gtkui/rg.c:320
 msgid "Invalid file"
-msgstr ""
+msgstr "無法判別的檔案"
