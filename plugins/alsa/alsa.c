@@ -26,6 +26,7 @@
 #endif
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -588,8 +589,22 @@ palsa_unpause (void) {
 static void
 palsa_thread (void *context) {
     prctl (PR_SET_NAME, "deadbeef-alsa", 0, 0, 0, 0);
+
+    int wait_for_buffer_interval;
+    if (plugin.fmt.samplerate > 200000) {
+        wait_for_buffer_interval = 1000;
+    }
+    else if (plugin.fmt.samplerate > 97000) {
+        wait_for_buffer_interval = 4000;
+    }
+    else {
+        wait_for_buffer_interval = 10000;
+    }
+    trace("wait_for_buffer_interval: %d\n", wait_for_buffer_interval);
+
     int err = 0;
     int avail;
+
     for (;;) {
         if (alsa_terminate) {
             break;
@@ -622,7 +637,7 @@ retry:
                 err = avail;
                 break;
             }
-            usleep (10000);
+            usleep (wait_for_buffer_interval);
         } while (avail < period_size && !alsa_terminate);
 
         if (alsa_terminate) {
