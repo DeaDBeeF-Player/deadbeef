@@ -73,31 +73,56 @@ replaygain_init_settings (ddb_replaygain_settings_t *settings, playItem_t *it) {
     settings->processing_flags = conf_get_int ("replaygain.processing_flags", 1);
     settings->preamp_with_rg = db_to_amp (conf_get_float ("replaygain.preamp_with_rg", 0));
     settings->preamp_without_rg = db_to_amp (conf_get_float ("replaygain.preamp_without_rg", 0));
+    settings->albumgain = 1;
+    settings->trackgain = 1;
+    settings->albumpeak = 1;
+    settings->trackpeak = 1;
+
     if (!it) {
-        settings->albumgain = 1;
-        settings->trackgain = 1;
-        settings->albumpeak = 1;
-        settings->trackpeak = 1;
         return;
     }
+
     pl_lock ();
     const char *albumgain = pl_find_meta (it, ":REPLAYGAIN_ALBUMGAIN");
     const char *trackgain = pl_find_meta (it, ":REPLAYGAIN_TRACKGAIN");
+    const char *albumpeak = pl_find_meta (it, ":REPLAYGAIN_ALBUMPEAK");
+    const char *trackpeak = pl_find_meta (it, ":REPLAYGAIN_TRACKPEAK");
 
-    if (albumgain && (settings->processing_flags & DDB_RG_PROCESSING_GAIN)) {
-        settings->has_album_gain = 1;
+    if (settings->processing_flags & DDB_RG_PROCESSING_GAIN) {
+        if (albumgain) {
+            settings->albumgain = db_to_amp(atof (albumgain));
+            settings->has_album_gain = 1;
+        }
+        else if (trackgain) {
+            settings->albumgain = db_to_amp(atof (trackgain));
+            settings->has_album_gain = 1;
+        }
+
+        if (trackgain) {
+            settings->trackgain = db_to_amp(atof (trackgain));
+            settings->has_track_gain = 1;
+        }
+        else if (albumgain) {
+            settings->trackgain = db_to_amp(atof (albumgain));
+            settings->has_track_gain = 1;
+        }
     }
 
-    if (trackgain && (settings->processing_flags & DDB_RG_PROCESSING_GAIN)) {
-        settings->has_track_gain = 1;
+    if (settings->processing_flags & DDB_RG_PROCESSING_PREVENT_CLIPPING) {
+        if (albumpeak) {
+            settings->albumpeak = atof (albumpeak);
+        }
+        else if (trackpeak) {
+            settings->albumpeak = atof (trackpeak);
+        }
+
+        if (trackpeak) {
+            settings->trackpeak = atof (trackpeak);
+        }
+        else if (albumpeak) {
+            settings->trackpeak = atof (albumpeak);
+        }
     }
-
-    settings->albumgain = albumgain ? db_to_amp(atof (albumgain)) : 1;
-    settings->albumpeak = pl_get_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK);
-
-    settings->trackgain = trackgain ? db_to_amp(atof (trackgain)) : 1;
-
-    settings->trackpeak = pl_get_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK);
 
     pl_unlock ();
 }
