@@ -36,6 +36,9 @@ static ddb_replaygain_settings_t current_settings;
 
 void
 replaygain_apply_with_settings (ddb_replaygain_settings_t *settings, ddb_waveformat_t *fmt, char *bytes, int numbytes) {
+    if (settings->processing_flags == 0) {
+        return;
+    }
     if (fmt->bps == 16) {
         apply_replay_gain_int16 (settings, bytes, numbytes);
     }
@@ -81,11 +84,11 @@ replaygain_init_settings (ddb_replaygain_settings_t *settings, playItem_t *it) {
     const char *albumgain = pl_find_meta (it, ":REPLAYGAIN_ALBUMGAIN");
     const char *trackgain = pl_find_meta (it, ":REPLAYGAIN_TRACKGAIN");
 
-    if (albumgain) {
+    if (albumgain && (settings->processing_flags & DDB_RG_PROCESSING_GAIN)) {
         settings->has_album_gain = 1;
     }
 
-    if (trackgain) {
+    if (trackgain && (settings->processing_flags & DDB_RG_PROCESSING_GAIN)) {
         settings->has_track_gain = 1;
     }
 
