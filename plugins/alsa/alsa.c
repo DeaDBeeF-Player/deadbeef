@@ -622,7 +622,7 @@ retry:
                 err = avail;
                 break;
             }
-            usleep (10000);
+            usleep (1000);
         } while (avail < period_size && !alsa_terminate);
 
         if (alsa_terminate) {
