@@ -300,7 +300,7 @@ struct _mdi {
 	struct _WM_Info *tmp_info;
 	unsigned char recalc_samples;
 	struct _channel channel[16];
-	struct _note *note[128];
+	struct _note *note[1024];
 	struct _note **last_note;
 	struct _note note_table[2][16][128];
 
