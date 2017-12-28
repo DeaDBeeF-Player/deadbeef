@@ -457,6 +457,29 @@ project "converter_gtk2"
        libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
 
 
+project "wildmidi_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "wildmidi"
+
+   files {
+       "plugins/wildmidi/*.h",
+       "plugins/wildmidi/*.c",
+       "plugins/wildmidi/src/*.h",
+       "plugins/wildmidi/src/*.c",
+   }
+
+   excludes {
+       "plugins/wildmidi/src/wildmidi.c"
+   }
+
+   includedirs { "plugins/wildmidi/include" }
+
+   defines { "WILDMIDI_VERSION=\"0.2.2\"", "WILDMIDILIB_VERSION=\"0.2.2\"", "TIMIDITY_CFG=\"/etc/timidity.conf\"" }
+   links { "m" }
+
 project "resources"
     kind "Utility"
     postbuildcommands {
