@@ -1026,7 +1026,7 @@ static void entropy_decode(APEContext * ctx, int blockstodecode, int stereo)
 
     ctx->blocksdecoded = blockstodecode;
 
-    if (ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) {
+    if ((ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) == APE_FRAMECODE_STEREO_SILENCE) {
         /* We are pure silence, just memset the output buffer. */
         memset(decoded0, 0, blockstodecode * sizeof(int32_t));
         memset(decoded1, 0, blockstodecode * sizeof(int32_t));
@@ -1428,7 +1428,7 @@ static void ape_unpack_mono(APEContext * ctx, int count)
     int32_t *decoded0 = ctx->decoded0;
     int32_t *decoded1 = ctx->decoded1;
 
-    if (ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) {
+    if ((ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) == APE_FRAMECODE_STEREO_SILENCE) {
         entropy_decode(ctx, count, 0);
         /* We are pure silence, so we're done. */
         //fprintf (stderr, "pure silence mono\n");
@@ -1456,7 +1456,7 @@ static void ape_unpack_stereo(APEContext * ctx, int count)
     int32_t *decoded0 = ctx->decoded0;
     int32_t *decoded1 = ctx->decoded1;
 
-    if (ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) {
+    if ((ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) == APE_FRAMECODE_STEREO_SILENCE) {
         /* We are pure silence, so we're done. */
         //fprintf (stderr, "pure silence stereo\n");
         return;
