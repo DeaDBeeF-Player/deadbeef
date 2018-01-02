@@ -1028,7 +1028,7 @@ static void entropy_decode(APEContext * ctx, int blockstodecode, int stereo)
 
     ctx->blocksdecoded = blockstodecode;
 
-    if (ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) {
+    if ((ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) == APE_FRAMECODE_STEREO_SILENCE) {
         /* We are pure silence, just memset the output buffer. */
         memset(decoded0, 0, blockstodecode * sizeof(int32_t));
         if (stereo) {
