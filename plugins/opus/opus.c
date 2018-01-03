@@ -60,7 +60,7 @@ static const char * exts[] = { "ogg", "opus", "ogv", NULL };
 static int
 opus_file_read(void *source, unsigned char *ptr, const int bytes) {
     size_t res = ((DB_FILE *)source)->vfs->read(ptr, 1, bytes, source);
-    return res == bytes ? (int)res : -1;
+    return (int)res;
 }
 
 static int
