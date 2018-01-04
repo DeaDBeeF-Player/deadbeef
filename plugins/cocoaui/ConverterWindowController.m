@@ -112,12 +112,24 @@ static NSMutableArray *g_converterControllers;
     [_encoderPreset selectItemAtIndex:deadbeef->conf_get_int ("converter.encoder_preset", 0)];
 }
 
+- (void)controlTextDidChange:(NSNotification *)notification {
+    NSTextField *textField = [notification object];
+    if (textField == _outputFolder) {
+        [self outputFolderChanged:self];
+    }
+    else if (textField == _outputFileName) {
+        [self outputPathChanged:self];
+    }
+}
+
 - (IBAction)outputFolderChanged:(id)sender {
+    [self updateFilenamesPreview];
     deadbeef->conf_set_str ("converter.output_folder", [[_outputFolder stringValue] UTF8String]);
     deadbeef->conf_save ();
 }
 
 - (IBAction)preserveFolderStructureChanged:(id)sender {
+    [self updateFilenamesPreview];
     deadbeef->conf_set_int ("converter.preserve_folder_structure", [_preserveFolderStructure state] == NSOnState);
     deadbeef->conf_save ();
 }
