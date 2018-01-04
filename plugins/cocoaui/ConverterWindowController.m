@@ -26,7 +26,7 @@
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
-static NSString *default_format = @"[%tracknumber%. ]%artist% - %title%";
+static NSString *default_format = @"[%tracknumber%. ][%artist% - ]%title%";
 
 @interface ConverterWindowController () {
     ddb_converter_t *_converter_plugin;
@@ -171,7 +171,7 @@ static NSMutableArray *g_converterControllers;
         if (it) {
             char outpath[PATH_MAX];
 
-            _converter_plugin->get_output_path2 (_convert_items[n], _convert_playlist, [[_outputFolder stringValue] UTF8String], [outfile UTF8String], encoder_preset, [_preserveFolderStructure state] == NSOnState, "", [_writeToSourceFolder state] == NSOnState, outpath, sizeof (outpath));
+            _converter_plugin->get_output_path2 (it, _convert_playlist, [[_outputFolder stringValue] UTF8String], [outfile UTF8String], encoder_preset, [_preserveFolderStructure state] == NSOnState, "", [_writeToSourceFolder state] == NSOnState, outpath, sizeof (outpath));
 
             [convert_items_preview addObject:[NSString stringWithUTF8String:outpath]];
         }
@@ -187,6 +187,7 @@ static NSMutableArray *g_converterControllers;
 }
 
 - (IBAction)writeToSourceFolderChanged:(id)sender {
+    [self updateFilenamesPreview];
     int active = [sender state] == NSOnState;
     deadbeef->conf_set_int ("converter.write_to_source_folder", active);
     deadbeef->conf_save ();
