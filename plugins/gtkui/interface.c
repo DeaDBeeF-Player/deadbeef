@@ -4945,15 +4945,7 @@ create_trkproperties_popup_menu (void)
   GtkWidget *trkproperties_edit_in_place;
   GtkWidget *trkproperties_remove;
   GtkWidget *trkproperties_crop;
-  GtkWidget *trkproperties_cut;
-  GtkWidget *trkproperties_copy;
-  GtkWidget *trkproperties_paste;
-  GtkWidget *trkproperties_capitalize;
-  GtkWidget *trkproperties_clean_up;
-  GtkWidget *trkproperties_format_from_other_fields;
   GtkWidget *trkproperties_add_new_field;
-  GtkWidget *trkproperties_paste_fields;
-  GtkWidget *trkproperties_automatically_fill_values;
 
   trkproperties_popup_menu = gtk_menu_new ();
 
@@ -4973,41 +4965,9 @@ create_trkproperties_popup_menu (void)
   gtk_widget_show (trkproperties_crop);
   gtk_container_add (GTK_CONTAINER (trkproperties_popup_menu), trkproperties_crop);
 
-  trkproperties_cut = gtk_menu_item_new_with_mnemonic (_("Cut"));
-  gtk_widget_show (trkproperties_cut);
-  gtk_container_add (GTK_CONTAINER (trkproperties_popup_menu), trkproperties_cut);
-
-  trkproperties_copy = gtk_menu_item_new_with_mnemonic (_("Copy"));
-  gtk_widget_show (trkproperties_copy);
-  gtk_container_add (GTK_CONTAINER (trkproperties_popup_menu), trkproperties_copy);
-
-  trkproperties_paste = gtk_menu_item_new_with_mnemonic (_("Paste"));
-  gtk_widget_show (trkproperties_paste);
-  gtk_container_add (GTK_CONTAINER (trkproperties_popup_menu), trkproperties_paste);
-
-  trkproperties_capitalize = gtk_menu_item_new_with_mnemonic (_("Capitalize"));
-  gtk_widget_show (trkproperties_capitalize);
-  gtk_container_add (GTK_CONTAINER (trkproperties_popup_menu), trkproperties_capitalize);
-
-  trkproperties_clean_up = gtk_menu_item_new_with_mnemonic (_("Clean up"));
-  gtk_widget_show (trkproperties_clean_up);
-  gtk_container_add (GTK_CONTAINER (trkproperties_popup_menu), trkproperties_clean_up);
-
-  trkproperties_format_from_other_fields = gtk_menu_item_new_with_mnemonic (_("Format from other fields..."));
-  gtk_widget_show (trkproperties_format_from_other_fields);
-  gtk_container_add (GTK_CONTAINER (trkproperties_popup_menu), trkproperties_format_from_other_fields);
-
   trkproperties_add_new_field = gtk_menu_item_new_with_mnemonic (_("Add new field..."));
   gtk_widget_show (trkproperties_add_new_field);
   gtk_container_add (GTK_CONTAINER (trkproperties_popup_menu), trkproperties_add_new_field);
-
-  trkproperties_paste_fields = gtk_menu_item_new_with_mnemonic (_("Paste fields"));
-  gtk_widget_show (trkproperties_paste_fields);
-  gtk_container_add (GTK_CONTAINER (trkproperties_popup_menu), trkproperties_paste_fields);
-
-  trkproperties_automatically_fill_values = gtk_menu_item_new_with_mnemonic (_("Automatically fill values..."));
-  gtk_widget_show (trkproperties_automatically_fill_values);
-  gtk_container_add (GTK_CONTAINER (trkproperties_popup_menu), trkproperties_automatically_fill_values);
 
   g_signal_connect ((gpointer) trkproperties_edit, "activate",
                     G_CALLBACK (on_trkproperties_edit_activate),
@@ -5021,32 +4981,8 @@ create_trkproperties_popup_menu (void)
   g_signal_connect ((gpointer) trkproperties_crop, "activate",
                     G_CALLBACK (on_trkproperties_crop_activate),
                     NULL);
-  g_signal_connect ((gpointer) trkproperties_cut, "activate",
-                    G_CALLBACK (on_trkproperties_cut_activate),
-                    NULL);
-  g_signal_connect ((gpointer) trkproperties_copy, "activate",
-                    G_CALLBACK (on_trkproperties_copy_activate),
-                    NULL);
-  g_signal_connect ((gpointer) trkproperties_paste, "activate",
-                    G_CALLBACK (on_trkproperties_paste_activate),
-                    NULL);
-  g_signal_connect ((gpointer) trkproperties_capitalize, "activate",
-                    G_CALLBACK (on_trkproperties_capitalize_activate),
-                    NULL);
-  g_signal_connect ((gpointer) trkproperties_clean_up, "activate",
-                    G_CALLBACK (on_trkproperties_clean_up_activate),
-                    NULL);
-  g_signal_connect ((gpointer) trkproperties_format_from_other_fields, "activate",
-                    G_CALLBACK (on_trkproperties_format_from_other_fields_activate),
-                    NULL);
   g_signal_connect ((gpointer) trkproperties_add_new_field, "activate",
                     G_CALLBACK (on_trkproperties_add_new_field_activate),
-                    NULL);
-  g_signal_connect ((gpointer) trkproperties_paste_fields, "activate",
-                    G_CALLBACK (on_trkproperties_paste_fields_activate),
-                    NULL);
-  g_signal_connect ((gpointer) trkproperties_automatically_fill_values, "activate",
-                    G_CALLBACK (on_trkproperties_automatically_fill_values_activate),
                     NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
@@ -5055,15 +4991,7 @@ create_trkproperties_popup_menu (void)
   GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_edit_in_place, "trkproperties_edit_in_place");
   GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_remove, "trkproperties_remove");
   GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_crop, "trkproperties_crop");
-  GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_cut, "trkproperties_cut");
-  GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_copy, "trkproperties_copy");
-  GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_paste, "trkproperties_paste");
-  GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_capitalize, "trkproperties_capitalize");
-  GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_clean_up, "trkproperties_clean_up");
-  GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_format_from_other_fields, "trkproperties_format_from_other_fields");
   GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_add_new_field, "trkproperties_add_new_field");
-  GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_paste_fields, "trkproperties_paste_fields");
-  GLADE_HOOKUP_OBJECT (trkproperties_popup_menu, trkproperties_automatically_fill_values, "trkproperties_automatically_fill_values");
 
   return trkproperties_popup_menu;
 }

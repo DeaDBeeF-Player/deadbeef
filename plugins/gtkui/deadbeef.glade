@@ -9955,83 +9955,11 @@ Descending</property>
   </child>
 
   <child>
-    <widget class="GtkMenuItem" id="trkproperties_cut">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Cut</property>
-      <property name="use_underline">True</property>
-      <signal name="activate" handler="on_trkproperties_cut_activate" last_modification_time="Wed, 27 Apr 2016 13:25:48 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="trkproperties_copy">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Copy</property>
-      <property name="use_underline">True</property>
-      <signal name="activate" handler="on_trkproperties_copy_activate" last_modification_time="Wed, 27 Apr 2016 13:25:48 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="trkproperties_paste">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Paste</property>
-      <property name="use_underline">True</property>
-      <signal name="activate" handler="on_trkproperties_paste_activate" last_modification_time="Wed, 27 Apr 2016 13:25:48 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="trkproperties_capitalize">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Capitalize</property>
-      <property name="use_underline">True</property>
-      <signal name="activate" handler="on_trkproperties_capitalize_activate" last_modification_time="Wed, 27 Apr 2016 13:25:48 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="trkproperties_clean_up">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Clean up</property>
-      <property name="use_underline">True</property>
-      <signal name="activate" handler="on_trkproperties_clean_up_activate" last_modification_time="Wed, 27 Apr 2016 13:25:48 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="trkproperties_format_from_other_fields">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Format from other fields...</property>
-      <property name="use_underline">True</property>
-      <signal name="activate" handler="on_trkproperties_format_from_other_fields_activate" last_modification_time="Wed, 27 Apr 2016 13:25:48 GMT"/>
-    </widget>
-  </child>
-
-  <child>
     <widget class="GtkMenuItem" id="trkproperties_add_new_field">
       <property name="visible">True</property>
       <property name="label" translatable="yes">Add new field...</property>
       <property name="use_underline">True</property>
       <signal name="activate" handler="on_trkproperties_add_new_field_activate" last_modification_time="Wed, 27 Apr 2016 13:25:48 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="trkproperties_paste_fields">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Paste fields</property>
-      <property name="use_underline">True</property>
-      <signal name="activate" handler="on_trkproperties_paste_fields_activate" last_modification_time="Wed, 27 Apr 2016 13:25:48 GMT"/>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="trkproperties_automatically_fill_values">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">Automatically fill values...</property>
-      <property name="use_underline">True</property>
-      <signal name="activate" handler="on_trkproperties_automatically_fill_values_activate" last_modification_time="Wed, 27 Apr 2016 13:25:48 GMT"/>
     </widget>
   </child>
 </widget>
