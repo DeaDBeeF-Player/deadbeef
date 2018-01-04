@@ -427,7 +427,7 @@ preview_update (gpointer user_data)
 
             int preserve_folders = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")));
             int write_to_source = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "write_to_source_folder")));
-            converter_plugin->get_output_path2 (it, NULL, output_folder, format, p, preserve_folders, "", write_to_source, outpath, sizeof (outpath));
+            converter_plugin->get_output_path2 (it, conv->convert_playlist, output_folder, format, p, preserve_folders, "", write_to_source, outpath, sizeof (outpath));
 
             GtkTreeIter iter;
             gtk_list_store_insert_with_values (store, &iter, -1, 0, outpath, -1);
@@ -667,7 +667,7 @@ on_converter_encoder_changed           (GtkComboBox     *combobox,
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (current_ctx->converter, "encoder"));
     int act = gtk_combo_box_get_active (combo);
     // update preview to show new filename extensions
-    preview_timeout_add ();
+    preview_update (NULL);
     deadbeef->conf_set_int ("converter.encoder_preset", act);
     deadbeef->conf_save ();
 }
@@ -815,6 +815,7 @@ void
 on_preserve_folders_toggled            (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
+    preview_update (NULL);
     deadbeef->conf_set_int ("converter.preserve_folder_structure", gtk_toggle_button_get_active (togglebutton));
     deadbeef->conf_save ();
 }
@@ -823,6 +824,7 @@ void
 on_write_to_source_folder_toggled      (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
+    preview_update (NULL);
     int active = gtk_toggle_button_get_active (togglebutton);
     converter_ctx_t *conv = user_data;
     deadbeef->conf_set_int ("converter.write_to_source_folder", active);
