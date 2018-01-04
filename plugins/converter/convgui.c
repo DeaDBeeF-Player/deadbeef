@@ -77,7 +77,7 @@ enum {
     PRESET_TYPE_DSP
 };
 
-static const char *default_format = "[%artist% - ]%title%";
+static const char *default_format = "[%tracknumber%. ][%artist% - ]%title%";
 
 static void
 fill_presets (GtkListStore *mdl, ddb_preset_t *head, int type) {

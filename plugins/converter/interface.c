@@ -148,7 +148,7 @@ create_converterdlg (void)
   output_file = gtk_entry_new ();
   gtk_widget_show (output_file);
   gtk_box_pack_start (GTK_BOX (hbox101), output_file, TRUE, TRUE, 0);
-  gtk_widget_set_tooltip_text (output_file, _("Extension (e.g. .mp3) will be appended automatically.\nLeave the field empty for default ([%artist% - ]%title%)."));
+  gtk_widget_set_tooltip_text (output_file, _("Extension (e.g. .mp3) will be appended automatically.\nLeave the field empty for default ([%tracknumber%. ][%artist% - ]%title%)."));
   gtk_entry_set_invisible_char (GTK_ENTRY (output_file), 8226);
 
   custom6 = title_formatting_help_link_create ("custom6", "", "", 0, 0);
