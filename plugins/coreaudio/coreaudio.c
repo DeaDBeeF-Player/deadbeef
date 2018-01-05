@@ -176,11 +176,8 @@ ca_apply_format (void) {
 
         err = AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &req_format);
         if (err != noErr) {
-            err = AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &default_format);
-            if (err != noErr) {
-                trace ("AudioObjectSetPropertyData kAudioDevicePropertyStreamFormat: %x\n", err);
-                goto error;
-            }
+            AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &default_format);
+            // ignore the result of this operation -- it may fail even when attempting to change to the same format that's current right now
         }
 
         ca_fmtchanged(device_id, 1, &theAddress, NULL);
