@@ -121,7 +121,7 @@ typedef struct {
 } ffmpeg_info_t;
 
 static DB_fileinfo_t *
-ffmpeg_open2 (uint32_t hints, DB_playItem_t *it) {
+ffmpeg_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (ffmpeg_info_t));
     memset (_info, 0, sizeof (ffmpeg_info_t));
     return _info;
@@ -1028,7 +1028,7 @@ static DB_decoder_t plugin = {
     .plugin.stop = ffmpeg_stop,
     .plugin.configdialog = settings_dlg,
     .plugin.message = ffmpeg_message,
-    .open2 = ffmpeg_open2,
+    .open = ffmpeg_open,
     .init = ffmpeg_init,
     .free = ffmpeg_free,
     .read = ffmpeg_read,
