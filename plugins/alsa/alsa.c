@@ -585,6 +585,30 @@ palsa_unpause (void) {
     return 0;
 }
 
+// Returns:
+// 0: successfully recovered
+// -1: failed to recover -- playback stopped
+// 1: no recovery possible
+static int
+alsa_recover (int err) {
+    // these errors need are auto-fixed by snd_pcm_recover
+    if (err == -EINTR || err == -EPIPE || err == -ESTRPIPE) {
+        trace ("snd_pcm_avail_update: %d: %s\n", err, snd_strerror (err));
+        LOCK;
+        err = snd_pcm_recover (audio, err, 1);
+        UNLOCK;
+        if (err < 0) {
+            trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
+            state = OUTPUT_STATE_STOPPED;
+            return -1;
+        }
+    }
+    else {
+        return 1;
+    }
+    return 1;
+}
+
 static void
 palsa_thread (void *context) {
     prctl (PR_SET_NAME, "deadbeef-alsa", 0, 0, 0, 0);
@@ -613,6 +637,16 @@ palsa_thread (void *context) {
         }
 
 retry:
+        // state could have changed
+
+        // wait till it changes
+        if (state == OUTPUT_STATE_PAUSED) {
+            usleep (1000);
+            goto retry;
+        }
+        if (state == OUTPUT_STATE_STOPPED) {
+            continue;
+        }
         // wait till buffer is available
         do {
             LOCK;
@@ -630,16 +664,13 @@ retry:
         }
 
         if (err < 0) {
-            trace ("snd_pcm_avail_update: %d: %s\n", err, snd_strerror (err));
-            LOCK;
-            err = snd_pcm_recover (audio, err, 1);
-            UNLOCK;
-            if (err < 0) {
-                trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
-                state = OUTPUT_STATE_STOPPED;
+            err = alsa_recover (err);
+            if (!err) {
+                goto retry;
+            }
+            else if (err != 0) {
                 continue;
             }
-            goto retry;
         }
 
         // write data
@@ -652,17 +683,20 @@ retry:
             break;
         }
 
-        if (err < 0) {
-            trace ("snd_pcm_writei: %d: %s\n", err, snd_strerror (err));
-            LOCK;
-            err = snd_pcm_recover (audio, err, 1);
-            UNLOCK;
-            if (err < 0) {
-                trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
-                state = OUTPUT_STATE_STOPPED;
+        // did the state change while writing?
+        if (state != OUTPUT_STATE_PLAYING) {
+            goto retry;
+        }
+
+        if (err < 0)
+        {
+            err = alsa_recover (err);
+            if (!err) {
+                goto retry;
+            }
+            else if (err != 0) {
                 continue;
             }
-            goto retry;
         }
     }
 
@@ -783,7 +817,7 @@ static DB_output_t plugin = {
     .plugin.id = "alsa",
     .plugin.name = "ALSA output plugin",
     .plugin.descr = "plays sound through linux standard alsa library",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
