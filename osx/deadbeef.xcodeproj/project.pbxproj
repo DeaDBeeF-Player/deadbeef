@@ -1563,6 +1563,7 @@
 		4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		4D046CE41EA9F8C300B80B2E /* gmewrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D046CE21EA9F8C300B80B2E /* gmewrap.cpp */; };
 		4D046CE51EA9F8C300B80B2E /* gmewrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D046CE31EA9F8C300B80B2E /* gmewrap.h */; };
+		4D0B0CEE20162D95004162DA /* FormatConversion.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D0B0CED20162D95004162DA /* FormatConversion.m */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A8F1837EC49003E6066 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
 		4D1B51681837F655003E6066 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51671837F655003E6066 /* AudioUnit.framework */; };
@@ -4269,6 +4270,7 @@
 		4D011FFC19AB9589005499B4 /* coreaudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = coreaudio.c; sourceTree = "<group>"; };
 		4D046CE21EA9F8C300B80B2E /* gmewrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gmewrap.cpp; path = plugins/gme/gmewrap.cpp; sourceTree = "<group>"; };
 		4D046CE31EA9F8C300B80B2E /* gmewrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gmewrap.h; path = plugins/gme/gmewrap.h; sourceTree = "<group>"; };
+		4D0B0CED20162D95004162DA /* FormatConversion.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FormatConversion.m; sourceTree = "<group>"; };
 		4D1B3E7A18379829003E6066 /* deadbeef.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deadbeef.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D1B3E7D18379829003E6066 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4D1B3E8018379829003E6066 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -7241,6 +7243,7 @@
 				2DA66ECA1EDF4F2C00E20989 /* fakeout.h */,
 				2DA66ECC1EDF501000E20989 /* fakein.c */,
 				2DA66ECD1EDF501000E20989 /* fakein.h */,
+				4D0B0CED20162D95004162DA /* FormatConversion.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -12441,6 +12444,7 @@
 				2DAA4C141AAF88FF00519559 /* TitleFormatting.m in Sources */,
 				4D31BECE1E9FB194001D1B89 /* ResamplerTest.m in Sources */,
 				2D7F38031B2858AC00692A7B /* Junklib.m in Sources */,
+				4D0B0CEE20162D95004162DA /* FormatConversion.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
