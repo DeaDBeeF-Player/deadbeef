@@ -64,10 +64,15 @@
 #include "clipboard.h"
 #include "hotkeys.h"
 #include "../hotkeys/hotkeys.h"
+#include "rg.h"
+
+//#define USE_GTK_APPLICATION 1
+
 #if GTK_CHECK_VERSION(3,10,0)
+#if USE_GTK_APPLICATION
 #include "deadbeefapp.h"
 #endif
-#include "rg.h"
+#endif
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -1127,8 +1132,10 @@ gtkui_show_log_window_internal(gboolean show) {
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), show);
 
 #if GTK_CHECK_VERSION(3,10,0)
+#if USE_GTK_APPLICATION
     g_simple_action_set_state ( deadbeef_app_get_log_action (gapp),
         g_variant_new_boolean (show));
+#endif
 #endif
 }
 
@@ -1231,8 +1238,10 @@ gtkui_mainwin_init(void) {
     mainwin = create_mainwin ();
 
 #if GTK_CHECK_VERSION(3,10,0)
+#if USE_GTK_APPLICATION
     // This must be called before window is shown
     gtk_application_add_window ( GTK_APPLICATION (gapp), GTK_WINDOW (mainwin));
+#endif
 #endif
 
     logwindow = gtkui_create_log_window();
@@ -1386,7 +1395,7 @@ gtkui_thread (void *ctx) {
     gtk_disable_setlocale ();
     add_pixmap_directory (deadbeef->get_system_dir(DDB_SYS_DIR_PIXMAP));
 
-#if GTK_CHECK_VERSION(3,10,0)
+#if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
     gapp = deadbeef_app_new ();
     g_application_run ( G_APPLICATION (gapp), argc, (char**)argv);
     g_object_unref (gapp);
@@ -1540,7 +1549,7 @@ quit_gtk_cb (gpointer nothing) {
     trkproperties_modified = 0;
     trkproperties_destroy ();
     search_destroy ();
-#if GTK_CHECK_VERSION(3,10,0)
+#if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
     g_application_quit (G_APPLICATION (gapp));
 #else
     gtk_main_quit ();
