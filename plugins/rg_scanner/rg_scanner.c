@@ -83,7 +83,7 @@ rg_calc_thread(void *ctx) {
             st->peak_state[st->track_index] = ebur128_init(fileinfo->fmt.channels, fileinfo->fmt.samplerate, EBUR128_MODE_SAMPLE_PEAK);
 
             // speaker mask mapping from WAV to EBUR128
-            int chmap[18] = {
+            static const int chmap[18] = {
                 EBUR128_LEFT,
                 EBUR128_RIGHT,
                 EBUR128_CENTER,
