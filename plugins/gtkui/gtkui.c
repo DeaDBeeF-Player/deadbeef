@@ -66,7 +66,7 @@
 #include "../hotkeys/hotkeys.h"
 #include "rg.h"
 
-//#define USE_GTK_APPLICATION 1
+#define USE_GTK_APPLICATION 1
 
 #if GTK_CHECK_VERSION(3,10,0)
 #if USE_GTK_APPLICATION
