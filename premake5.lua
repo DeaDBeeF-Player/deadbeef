@@ -19,7 +19,7 @@ filter "configurations:Debug or Release"
 
 
 filter "configurations:Debug32 or Release32"
-  buildoptions { "-m32" }
+  buildoptions { "-std=c99", "-m32" }
   linkoptions { "-m32" }
   includedirs { "plugins/libmp4ff", "static-deps/lib-x86-32/include/i386-linux-gnu", "static-deps/lib-x86-32/include"  }
   libdirs { "static-deps/lib-x86-32/lib/i386-linux-gnu", "static-deps/lib-x86-32/lib" }
@@ -120,6 +120,30 @@ project "vorbis_plugin"
 
    defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
    links { "vorbisfile", "vorbis", "m", "ogg" }
+
+project "opus_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "opus"
+
+   files {
+       "plugins/opus/*.h",
+       "plugins/opus/*.c",
+       "plugins/liboggedit/*.h",
+       "plugins/liboggedit/*.c",
+   }
+
+   defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
+   links { "opusfile", "opus", "m", "ogg" }
+   filter "configurations:Debug32 or Release32"
+   
+      includedirs { "static-deps/lib-x86-32/include/opus" }
+
+   filter "configurations:Debug or Release"
+   
+      includedirs { "static-deps/lib-x86-64/include/opus" }
 
 project "ffap"
    kind "SharedLib"
@@ -249,6 +273,34 @@ project "ddb_gui_GTK2"
        includedirs { "static-deps/lib-x86-64/gtk-2.16.0/include/**", "static-deps/lib-x86-64/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
 
+project "ddb_gui_GTK3"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   files {
+       "plugins/gtkui/*.h",
+       "plugins/gtkui/*.c",
+       "shared/pluginsettings.h",
+       "shared/pluginsettings.c",
+       "shared/trkproperties_shared.h",
+       "shared/trkproperties_shared.c",
+       "plugins/libparser/parser.h",
+       "plugins/libparser/parser.c",
+       "utf8.c",
+   }
+
+   links { "jansson", "gtk-3", "gdk-3", "pangocairo-1.0", "pango-1.0", "atk-1.0", "cairo-gobject", "cairo", "gdk_pixbuf-2.0", "gio-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
+
+    filter "configurations:Debug32 or Release32"
+
+       includedirs { "static-deps/lib-x86-32/gtk-3.10.8/usr/include/**", "static-deps/lib-x86-32/gtk-3.10.8/usr/lib/**", "plugins/gtkui", "plugins/libparser" }
+       libdirs { "static-deps/lib-x86-32/gtk-3.10.8/lib/**", "static-deps/lib-x86-32/gtk-3.10.8/usr/lib/**" }
+
+    filter "configurations:Debug or Release"
+
+       includedirs { "static-deps/lib-x86-64/gtk-3.10.8/usr/include/**", "static-deps/lib-x86-64/gtk-3.10.8/usr/lib/**", "plugins/gtkui", "plugins/libparser" }
+       libdirs { "static-deps/lib-x86-64/gtk-3.10.8/lib/**", "static-deps/lib-x86-64/gtk-3.10.8/usr/lib/**" }
 
 project "rg_scanner"
    kind "SharedLib"
@@ -432,6 +484,29 @@ project "converter_gtk2"
        includedirs { "static-deps/lib-x86-64/gtk-2.16.0/include/**", "static-deps/lib-x86-64/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
 
+
+project "wildmidi_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "wildmidi"
+
+   files {
+       "plugins/wildmidi/*.h",
+       "plugins/wildmidi/*.c",
+       "plugins/wildmidi/src/*.h",
+       "plugins/wildmidi/src/*.c",
+   }
+
+   excludes {
+       "plugins/wildmidi/src/wildmidi.c"
+   }
+
+   includedirs { "plugins/wildmidi/include" }
+
+   defines { "WILDMIDI_VERSION=\"0.2.2\"", "WILDMIDILIB_VERSION=\"0.2.2\"", "TIMIDITY_CFG=\"/etc/timidity.conf\"" }
+   links { "m" }
 
 project "resources"
     kind "Utility"

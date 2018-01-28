@@ -497,6 +497,9 @@ static DB_functions_t deadbeef_api = {
 
     .junk_get_tail_size = junk_get_tail_size,
     .junk_get_tag_offsets = junk_get_tag_offsets,
+
+    .plt_is_loading_cue = (int (*)(ddb_playlist_t *))plt_is_loading_cue,
+
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

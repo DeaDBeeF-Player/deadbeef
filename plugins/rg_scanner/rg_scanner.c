@@ -82,24 +82,46 @@ rg_calc_thread(void *ctx) {
             st->gain_state[st->track_index] = ebur128_init(fileinfo->fmt.channels, fileinfo->fmt.samplerate, EBUR128_MODE_I);
             st->peak_state[st->track_index] = ebur128_init(fileinfo->fmt.channels, fileinfo->fmt.samplerate, EBUR128_MODE_SAMPLE_PEAK);
 
-            if (fileinfo->fmt.channels > 6) {
-                st->settings->results[st->track_index].scan_result = DDB_RG_SCAN_RESULT_INVALID_FILE;
-                goto error;
-            }
-
-            const int maps[6][6] = {
-                {EBUR128_CENTER, 0, 0, 0, 0, 0},
-                {EBUR128_LEFT,EBUR128_RIGHT, 0, 0, 0, 0},
-                {EBUR128_LEFT,EBUR128_RIGHT,EBUR128_CENTER, 0, 0, 0},
-                {EBUR128_LEFT,EBUR128_RIGHT,EBUR128_LEFT_SURROUND,EBUR128_RIGHT_SURROUND, 0, 0},
-                {EBUR128_LEFT,EBUR128_RIGHT,EBUR128_CENTER,EBUR128_LEFT_SURROUND,EBUR128_RIGHT_SURROUND, 0},
-                {EBUR128_LEFT,EBUR128_RIGHT,EBUR128_UNUSED,EBUR128_CENTER,EBUR128_LEFT_SURROUND,EBUR128_RIGHT_SURROUND},
+            // speaker mask mapping from WAV to EBUR128
+            static const int chmap[18] = {
+                EBUR128_LEFT,
+                EBUR128_RIGHT,
+                EBUR128_CENTER,
+                EBUR128_UNUSED,
+                EBUR128_LEFT_SURROUND,
+                EBUR128_RIGHT_SURROUND,
+                EBUR128_LEFT_SURROUND,
+                EBUR128_RIGHT_SURROUND,
+                EBUR128_CENTER,
+                EBUR128_LEFT_SURROUND,
+                EBUR128_RIGHT_SURROUND,
+                EBUR128_CENTER,
+                EBUR128_LEFT_SURROUND,
+                EBUR128_CENTER,
+                EBUR128_RIGHT_SURROUND,
+                EBUR128_LEFT_SURROUND,
+                EBUR128_CENTER,
+                EBUR128_RIGHT_SURROUND,
             };
 
-            for (int i = 0; i < fileinfo->fmt.channels; i++) {
-                ebur128_set_channel (st->gain_state[st->track_index], i, maps[fileinfo->fmt.channels-1][i]);
+            uint32_t channelmask = fileinfo->fmt.channelmask;
 
-                ebur128_set_channel (st->peak_state[st->track_index], i, maps[fileinfo->fmt.channels-1][i]);
+            // first 18 speaker positions are known, the rest will be marked as UNUSED
+            int ch = 0;
+            for (int i = 0; i < 32 && ch < fileinfo->fmt.channels; i++) {
+                if (i < 18) {
+                    if (channelmask & (1<<i))
+                    {
+                        ebur128_set_channel (st->gain_state[st->track_index], ch, chmap[i]);
+                        ebur128_set_channel (st->peak_state[st->track_index], ch, chmap[i]);
+                        ch++;
+                    }
+                }
+                else {
+                    ebur128_set_channel (st->gain_state[st->track_index], ch, EBUR128_UNUSED);
+                    ebur128_set_channel (st->peak_state[st->track_index], ch, EBUR128_UNUSED);
+                    ch++;
+                }
             }
 
             int samplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;

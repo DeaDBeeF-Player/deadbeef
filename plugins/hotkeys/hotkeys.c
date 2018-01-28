@@ -1086,7 +1086,7 @@ static DB_plugin_action_t action_toggle_in_playqueue = {
 static DB_plugin_action_t action_move_tracks_down = {
     .title = "Move/Move Tracks Down",
     .name = "move_tracks_down",
-    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_NOT_FOR_PLAYLIST,
+    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST,
     .callback2 = action_move_tracks_down_handler,
     .next = &action_toggle_in_playqueue
 };
@@ -1094,7 +1094,7 @@ static DB_plugin_action_t action_move_tracks_down = {
 static DB_plugin_action_t action_move_tracks_up = {
     .title = "Move/Move Tracks Up",
     .name = "move_tracks_up",
-    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_NOT_FOR_PLAYLIST,
+    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST,
     .callback2 = action_move_tracks_up_handler,
     .next = &action_move_tracks_down
 };

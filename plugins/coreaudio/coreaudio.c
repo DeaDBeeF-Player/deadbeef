@@ -29,14 +29,460 @@
 static DB_functions_t *deadbeef;
 static DB_output_t plugin;
 
+// AudioQueue implementation is/was functional, but it makes audio thread take more than 3x CPU compared with AudioUnit and old CoreAudio APIs.
+//#define USE_AUDIOQUEUE 1
+
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 static int state = OUTPUT_STATE_STOPPED;
 static uint64_t mutex;
+
+// audiounit impl
+#if !USE_AUDIOQUEUE
+#include <AudioUnit/AudioUnit.h>
+#include <AudioToolbox/AudioToolbox.h>
+
+static AudioDeviceID device_id;
+static AudioDeviceIOProcID process_id;
+static AudioStreamBasicDescription default_format;
+static AudioStreamBasicDescription req_format;
+
+static int *avail_samplerates;
+static int num_avail_samplerates;
+
+static OSStatus
+ca_fmtchanged (AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioObjectPropertyAddress* inAddresses, void* inClientData);
+
+static OSStatus
+ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const AudioBufferList * inInputData, const AudioTimeStamp * inInputTime, AudioBufferList * outOutputData, const AudioTimeStamp * inOutputTime, void * inClientData);
+
+static int
+ca_free (void);
+
+
+static UInt32
+GetNumberAvailableNominalSampleRateRanges()
+{
+    UInt32 theAnswer = 0;
+    AudioObjectPropertyAddress theAddress = {
+        kAudioDevicePropertyAvailableNominalSampleRates,
+        kAudioObjectPropertyScopeGlobal,
+        kAudioObjectPropertyElementMaster
+    };
+    UInt32 theSize = 0;
+
+    OSStatus err = AudioObjectGetPropertyDataSize(device_id, &theAddress, 0, NULL, &theSize);
+    if (err != noErr) {
+        trace ("AudioObjectGetPropertyDataSize kAudioDevicePropertyAvailableNominalSampleRates %x", err);
+        return 0;
+    }
+    theAnswer = theSize / sizeof(AudioValueRange);
+    return theAnswer;
+}
+
+static void
+get_avail_samplerates(void)
+{
+    AudioObjectPropertyAddress theAddress = {
+        kAudioDevicePropertyAvailableNominalSampleRates,
+        kAudioObjectPropertyScopeGlobal,
+        kAudioObjectPropertyElementMaster
+    };
+
+    UInt32 num = GetNumberAvailableNominalSampleRateRanges ();
+    if (num > 0) {
+        AudioValueRange *nsrs = calloc (num, sizeof(AudioValueRange));
+        UInt32 dataSize = num * sizeof(AudioValueRange);
+        AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &dataSize, nsrs);
+
+        avail_samplerates = malloc (sizeof (int) * num);
+        for (int i = 0; i < num; i++) {
+            avail_samplerates[i] = nsrs[i].mMinimum;
+        }
+        num_avail_samplerates = num;
+        free (nsrs);
+    }
+}
+
+static int
+get_best_samplerate (int samplerate) {
+    // score1 = modulo -- 0 is best
+    // score2 = denominator -- 1 is perfect match
+    // score3 = distance
+
+    int64_t highscore = 0;
+    int64_t index = -1;
+
+    for (int i = 0; i < num_avail_samplerates; i++) {
+        int64_t modulo = samplerate % avail_samplerates[i]; // 20 bit
+        int64_t denominator = samplerate / avail_samplerates[i]; // 7 bit
+        int64_t dist = abs(samplerate - avail_samplerates[i]); // 20 bit
+
+        int64_t score = (modulo<<27) | (denominator<<20) | dist;
+
+        if (index == -1 || score < highscore) {
+            highscore = score;
+            index = i;
+        }
+    }
+
+    return avail_samplerates[index];
+}
+
+static int
+ca_apply_format (void) {
+    int res = -1;
+    OSStatus err;
+    UInt32 sz;
+    deadbeef->mutex_lock (mutex);
+    if (req_format.mSampleRate > 0) {
+        req_format.mSampleRate = get_best_samplerate (req_format.mSampleRate);
+
+        // setting nominal samplerate doesn't work in most cases, and requires some timing trickery
+#if 0
+        AudioObjectPropertyAddress nsr = {
+            kAudioDevicePropertyNominalSampleRate,
+            kAudioObjectPropertyScopeGlobal,
+            kAudioObjectPropertyElementMaster
+        };
+        sz = sizeof(Float64);
+        Float64 sr = req_format.mSampleRate;
+        err = AudioObjectSetPropertyData(device_id, &nsr, 0, NULL, sz, &sr);
+        if (err != noErr) {
+            trace ("AudioObjectSetPropertyData kAudioDevicePropertyNominalSampleRate: %x\n", err);
+        }
+
+        err = AudioObjectGetPropertyData(device_id, &nsr, 0, NULL, &sz, &sr);
+        if (err != noErr) {
+            trace ("AudioObjectGetPropertyData kAudioDevicePropertyNominalSampleRate: %x\n", err);
+        }
+#endif
+
+        AudioObjectPropertyAddress theAddress = {
+            kAudioDevicePropertyStreamFormat,
+            kAudioObjectPropertyScopeOutput,
+            kAudioObjectPropertyElementMaster
+        };
+        sz = sizeof (AudioStreamBasicDescription);
+
+#if 0
+        static AudioStreamBasicDescription current_format;
+        err = AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &current_format);
+        if (err != noErr) {
+            trace ("AudioObjectGetPropertyData kAudioDevicePropertyStreamFormat: %x\n", err);
+            goto error;
+        }
+#endif
+
+        err = AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &req_format);
+        if (err != noErr) {
+            AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &default_format);
+            // ignore the result of this operation -- it may fail even when attempting to change to the same format that's current right now
+        }
+
+        ca_fmtchanged(device_id, 1, &theAddress, NULL);
+    }
+
+    res = 0;
+error:
+    deadbeef->mutex_unlock (mutex);
+    return res;
+}
+
+static int
+ca_init (void) {
+    OSStatus err;
+    
+    ca_free ();
+    UInt32 sz;
+    char device_name[128];
+    AudioObjectPropertyAddress theAddress = {
+        kAudioHardwarePropertyDefaultOutputDevice,
+        kAudioObjectPropertyScopeGlobal,
+        kAudioObjectPropertyElementMaster
+    };
+
+    sz = sizeof(device_id);
+    err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &sz, &device_id);
+    if (err != noErr) {
+        trace ("AudioObjectGetPropertyData kAudioHardwarePropertyDefaultOutputDevice: %x\n", err);
+        return -1;
+    }
+
+    get_avail_samplerates ();
+
+    sz = sizeof (device_name);
+    theAddress.mSelector = kAudioDevicePropertyDeviceName;
+    theAddress.mScope = kAudioDevicePropertyScopeOutput;
+    theAddress.mElement = kAudioObjectPropertyElementMaster;
+    
+    err = AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, device_name);
+    if (err != noErr) {
+        trace ("AudioObjectGetPropertyData kAudioDevicePropertyDeviceName: %x\n", err);
+        return -1;
+    }
+
+    sz = sizeof (default_format);
+    theAddress.mSelector = kAudioDevicePropertyStreamFormat;
+    theAddress.mElement = kAudioObjectPropertyElementMaster;
+    err = AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &default_format);
+    if (err != noErr) {
+        trace ("AudioObjectGetPropertyData kAudioDevicePropertyStreamFormat: %x\n", err);
+        return -1;
+    }
+
+    UInt32 bufsize = 4096;
+    sz = sizeof (bufsize);
+    theAddress.mSelector = kAudioDevicePropertyBufferFrameSize;
+    err = AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &bufsize);
+    if (err != noErr) {
+        // non-critical
+        trace ("AudioObjectSetPropertyData kAudioDevicePropertyBufferFrameSize: %x\n", err);
+    }
+
+    if (ca_apply_format ()) {
+        return -1;
+    }
+
+    err = AudioDeviceCreateIOProcID(device_id, ca_buffer_callback, NULL, &process_id);
+    if (err != noErr) {
+        trace ("AudioDeviceCreateIOProcID: %x\n", err);
+        return -1;
+    }
+
+    theAddress.mSelector = kAudioDevicePropertyStreamFormat;
+    
+    err = AudioObjectAddPropertyListener(device_id, &theAddress, ca_fmtchanged, NULL);
+    if (err != noErr) {
+        trace ("AudioObjectAddPropertyListener kAudioDevicePropertyStreamFormat: %x\n", err);
+        return -1;
+    }
+
+    ca_fmtchanged(device_id, 1, &theAddress, NULL);
+
+    state = OUTPUT_STATE_STOPPED;
+
+    return 0;
+}
+
+static int
+ca_free (void) {
+    OSStatus err;
+    
+    if (device_id) {
+        deadbeef->mutex_lock (mutex);
+        AudioObjectPropertyAddress theAddress = { kAudioDevicePropertyStreamFormat,
+            kAudioDevicePropertyScopeOutput,
+            0 };
+        
+        err = AudioDeviceStop(device_id, ca_buffer_callback);
+        if (err != noErr) {
+            trace ("AudioDeviceStop: %x\n", err);
+        }
+        
+        err = AudioObjectRemovePropertyListener(device_id, &theAddress, ca_fmtchanged, NULL);
+        if (err != noErr) {
+            trace ("AudioObjectRemovePropertyListener kAudioDevicePropertyStreamFormat: %x\n", err);
+        }
+
+        err = AudioDeviceDestroyIOProcID(device_id, process_id);
+        if (err != noErr) {
+            trace ("AudioDeviceDestroyIOProcID: %x\n", err);
+        }
+
+        if (avail_samplerates) {
+            free (avail_samplerates);
+            avail_samplerates = NULL;
+        }
+        num_avail_samplerates = 0;
+
+        process_id = 0;
+        device_id = 0;
+        deadbeef->mutex_unlock (mutex);
+    }
+    return 0;
+}
+
+static int
+ca_setformat (ddb_waveformat_t *fmt) {
+    memset (&req_format, 0, sizeof (req_format));
+
+    int samplerate = fmt->samplerate;
+    int is_float = fmt->is_float;
+    int bps = fmt->bps;
+
+    memset (&req_format, 0, sizeof (req_format));
+    req_format.mSampleRate = (Float64)samplerate;
+
+    // audioqueue happily accepts ultra-high samplerates, but doesn't really play them
+    if (req_format.mSampleRate > 192000) {
+        req_format.mSampleRate = 192000;
+    }
+    req_format.mFormatID = kAudioFormatLinearPCM;
+
+    if (is_float) {
+        req_format.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
+    }
+    else {
+        req_format.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked | kAudioFormatFlagsNativeEndian;
+    }
+
+    if (fmt->is_bigendian) {
+        req_format.mFormatFlags |= kLinearPCMFormatFlagIsBigEndian;
+    }
+
+    req_format.mBytesPerPacket = bps / 8 * fmt->channels;
+    req_format.mFramesPerPacket = 1;
+    req_format.mBytesPerFrame = bps / 8 * fmt->channels;
+    req_format.mChannelsPerFrame = fmt->channels;
+    req_format.mBitsPerChannel = bps;
+
+    if (device_id) {
+        return ca_apply_format ();
+    }
+
+    return -1;
+}
+
+static int
+ca_play (void) {
+    OSStatus err;
+    
+    if (!device_id) {
+        if (ca_init()) {
+            return -1;
+        }
+    }
+
+    deadbeef->mutex_lock (mutex);
+    if (state != OUTPUT_STATE_PLAYING) {
+        err = AudioDeviceStart (device_id, ca_buffer_callback);
+        if (err != noErr) {
+            trace ("AudioDeviceStart: %x\n", err);
+            state = OUTPUT_STATE_STOPPED;
+            deadbeef->mutex_unlock (mutex);
+            return -1;
+        }
+        state = OUTPUT_STATE_PLAYING;
+    }
+    deadbeef->mutex_unlock (mutex);
+
+    return 0;
+}
+
+static int
+ca_stop (void) {
+    OSStatus err;
+    if (!device_id) {
+        return 0;
+    }
+    deadbeef->mutex_lock (mutex);
+    if (state != OUTPUT_STATE_STOPPED) {
+        err = AudioDeviceStop (device_id, ca_buffer_callback);
+        state = OUTPUT_STATE_STOPPED;
+        if (err != noErr) {
+            trace ("AudioDeviceStop: %x\n", err);
+            deadbeef->mutex_unlock (mutex);
+            return -1;
+        }
+    }
+    deadbeef->mutex_unlock (mutex);
+
+    return 0;
+}
+
+static int
+ca_pause (void) {
+    OSStatus err;
+    if (!device_id) {
+        if (ca_init()) {
+            return -1;
+        }
+    }
+
+    deadbeef->mutex_lock (mutex);
+
+    if (state != OUTPUT_STATE_PAUSED) {
+        state = OUTPUT_STATE_PAUSED;
+        err = AudioDeviceStop (device_id, ca_buffer_callback);
+        if (err != noErr) {
+            trace ("AudioDeviceStop: %x\n", err);
+            state = OUTPUT_STATE_STOPPED;
+            deadbeef->mutex_unlock (mutex);
+            return -1;
+        }
+    }
+
+    deadbeef->mutex_unlock (mutex);
+    return 0;
+}
+
+static OSStatus
+ca_fmtchanged (AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioObjectPropertyAddress* inAddresses, void* inClientData) {
+    OSStatus err;
+    
+    AudioStreamBasicDescription device_format;
+    UInt32 sz = sizeof (device_format);
+    AudioObjectPropertyAddress theAddress = {
+        kAudioDevicePropertyStreamFormat,
+        kAudioDevicePropertyScopeOutput,
+        kAudioObjectPropertyElementMaster
+    };
+
+    deadbeef->mutex_lock (mutex);
+    err = AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &device_format);
+    if (err != noErr) {
+        trace ("AudioObjectGetPropertyData kAudioDevicePropertyStreamFormat: %x\n", err);
+    }
+    else {
+
+//        trace ("requested %d, obtained %d\n", (int)req_format.mSampleRate, (int)device_format.mSampleRate);
+        plugin.fmt.bps = device_format.mBitsPerChannel;
+        plugin.fmt.channels = device_format.mChannelsPerFrame;
+        plugin.fmt.is_float = 1;
+        plugin.fmt.samplerate = device_format.mSampleRate;
+        plugin.fmt.channelmask = 0;
+        for (int i = 0; i < plugin.fmt.channels; i++) {
+            plugin.fmt.channelmask |= (1<<i);
+        }
+    }
+    deadbeef->mutex_unlock (mutex);
+
+    return 0;
+}
+
+static OSStatus
+ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const AudioBufferList * inInputData, const AudioTimeStamp * inInputTime, AudioBufferList * outOutputData, const AudioTimeStamp * inOutputTime, void * inClientData) {
+
+    UInt32 sz;
+    char *buffer = outOutputData->mBuffers[0].mData;
+    sz = outOutputData->mBuffers[0].mDataByteSize;
+
+    if (state == OUTPUT_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1)) {
+        int br = deadbeef->streamer_read (buffer, sz);
+        if (br < 0) {
+            br = 0;
+        }
+        if (br < sz) {
+            memset (buffer+br, 0, sz-br);
+        }
+    }
+    else {
+        memset (buffer, 0, sz);
+    }
+
+    return 0;
+}
+
+
+#endif
+
+// audioqueue impl
+#if USE_AUDIOQUEUE
 static intptr_t tid;
 static int stoprequest;
-#define MAXBUFFERS 8
-#define BUFFERSIZE_BYTES 8192
+#define MAXBUFFERS 2
+#define BUFFERSIZE_BYTES 8192*16
 static AudioQueueRef queue;
 static AudioQueueBufferRef buffers[MAXBUFFERS];
 static AudioQueueBufferRef availbuffers[MAXBUFFERS];
@@ -67,10 +513,14 @@ static int
 _initqueue (ddb_waveformat_t *fmt) {
     OSStatus err;
 
+    int samplerate = fmt->samplerate;
+    int is_float = fmt->is_float;
+    int bps = fmt->bps;
+
     AudioStreamBasicDescription req_format;
 
     memset (&req_format, 0, sizeof (req_format));
-    req_format.mSampleRate = (Float64)fmt->samplerate;
+    req_format.mSampleRate = (Float64)samplerate;
 
     // audioqueue happily accepts ultra-high samplerates, but doesn't really play them
     if (req_format.mSampleRate > 192000) {
@@ -78,7 +528,7 @@ _initqueue (ddb_waveformat_t *fmt) {
     }
     req_format.mFormatID = kAudioFormatLinearPCM;
 
-    if (fmt->is_float) {
+    if (is_float) {
         req_format.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
     }
     else {
@@ -89,11 +539,11 @@ _initqueue (ddb_waveformat_t *fmt) {
         req_format.mFormatFlags |= kLinearPCMFormatFlagIsBigEndian;
     }
 
-    req_format.mBytesPerPacket = fmt->bps / 8 * fmt->channels;
+    req_format.mBytesPerPacket = bps / 8 * fmt->channels;
     req_format.mFramesPerPacket = 1;
-    req_format.mBytesPerFrame = fmt->bps / 8 * fmt->channels;
+    req_format.mBytesPerFrame = bps / 8 * fmt->channels;
     req_format.mChannelsPerFrame = fmt->channels;
-    req_format.mBitsPerChannel = fmt->bps;
+    req_format.mBitsPerChannel = bps;
 
     err = AudioQueueNewOutput(&req_format, aqOutputCallback, NULL, NULL, NULL, 0, &queue);
     if (err != noErr) {
@@ -296,6 +746,8 @@ ca_pause (void) {
     deadbeef->mutex_unlock (mutex);
     return 0;
 }
+
+#endif
 
 static int
 ca_unpause (void) {

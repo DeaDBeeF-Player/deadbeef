@@ -278,9 +278,9 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             alac_set_info (info->_alac, (char *)buff);
 
             trace ("alac: successfully initialized track %d\n", info->mp4track);
-            _info->fmt.samplerate = samplerate;
+            _info->fmt.samplerate = alac_get_samplerate(info->_alac);
+            _info->fmt.bps = alac_get_bitspersample (info->_alac);
             _info->fmt.channels = channels;
-            _info->fmt.bps = bps;
         }
         else {
             trace ("alac: track not found in mp4 container\n");

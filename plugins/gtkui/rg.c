@@ -248,6 +248,8 @@ _update_tags (void *ctx) {
         }
     }
 
+    deadbeef->pl_save_all ();
+
     g_idle_add (_ctl_dismiss_cb, ctl);
 }
 

@@ -1,3 +1,3 @@
 noinst_LTLIBRARIES = libparser.la
 libparser_la_SOURCES = parser.c parser.h
-AM_CFLAGS = -fPIC
+libparser_la_CFLAGS = -fPIC

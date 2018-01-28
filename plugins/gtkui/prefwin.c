@@ -299,9 +299,6 @@ gtkui_run_preferences_dlg (void) {
     // enable auto-sizing of columns
     set_toggle_button("auto_size_columns", deadbeef->conf_get_int ("gtkui.autoresize_columns", 0));
 
-    // enable showing cue subindexes as tracks
-    set_toggle_button("chkbox_cue_subindexes", deadbeef->conf_get_int ("cue.subindexes_as_tracks", 0));
-
     gtk_spin_button_set_value(GTK_SPIN_BUTTON (lookup_widget (w, "listview_group_spacing")), deadbeef->conf_get_int ("playlist.groups.spacing", 0));
 
     // fill gui plugin list
@@ -1261,14 +1258,6 @@ on_auto_size_columns_toggled           (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("gtkui.autoresize_columns", gtk_toggle_button_get_active (togglebutton));
-}
-
-void
-on_cue_subindexes_as_tracks_toggled           (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-    deadbeef->conf_set_int ("cue.subindexes_as_tracks", gtk_toggle_button_get_active (togglebutton));
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 void

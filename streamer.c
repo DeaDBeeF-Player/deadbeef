@@ -101,6 +101,7 @@ static time_t started_timestamp; // result of calling time(NULL)
 static playItem_t *streaming_track;
 static playItem_t *last_played; // this is the last track that was played, should avoid setting this to NULL
 
+static int _dsp_changed;
 static ddb_waveformat_t prev_output_format; // last format that was sent to output via streamer_set_output_format
 static ddb_waveformat_t last_block_fmt; // input file format corresponding to the current output
 
@@ -1355,6 +1356,11 @@ handle_track_change (playItem_t *track) {
 }
 
 void
+streamer_dsp_changed (void) {
+    _dsp_changed = 1;
+}
+
+void
 streamer_thread (void *ctx) {
 #if defined(__linux__) && !defined(ANDROID)
     prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
@@ -1646,6 +1652,7 @@ process_output_block (char *bytes, int firstblock) {
     if (!block) {
         return -1;
     }
+
     DB_output_t *output = plug_get_output ();
 
     // handle change of track, or start of a new track
@@ -1726,8 +1733,9 @@ process_output_block (char *bytes, int firstblock) {
 
     // Set the final post-dsp output format, if differs.
     // DSP plugins may change output format at any time.
-    if (firstblock) {
+    if (firstblock || _dsp_changed) {
         streamer_set_output_format (&datafmt);
+        _dsp_changed = 0;
     }
 
     if (memcmp (&output->fmt, &datafmt, sizeof (ddb_waveformat_t))) {
@@ -2059,31 +2067,10 @@ _handle_playback_stopped (void) {
     streamer_play_failed (NULL);
 }
 
-// play track in current playlist by index;
-// negative index will stop playback
 static void
-play_index (int idx, int startpaused) {
-    DB_output_t *output = plug_get_output ();
-    playItem_t *it = NULL;
-    playlist_t *plt = NULL;
-
-    playqueue_clear ();
-
-    if (idx < 0) {
-        goto error;
-    }
-
-    plt = plt_get_curr ();
-    it = plt_get_item_for_idx (plt, idx, PL_MAIN);
-    if (!it) {
-        goto error;
-    }
-
-    pl_lock ();
-    if (plt != streamer_playlist) {
-        streamer_set_streamer_playlist (plt);
-    }
-    pl_unlock();
+_play_track (playItem_t *it, int startpaused) {
+    DB_output_t *output = plug_get_output();
+    output->stop ();
     streamer_reset(1);
     streamer_is_buffering = 1;
     streamer_set_playing_track(NULL);
@@ -2109,6 +2096,35 @@ play_index (int idx, int startpaused) {
     else {
         streamer_set_buffering_track (NULL);
     }
+}
+
+// play track in current playlist by index;
+// negative index will stop playback
+static void
+play_index (int idx, int startpaused) {
+    DB_output_t *output = plug_get_output ();
+    playItem_t *it = NULL;
+    playlist_t *plt = NULL;
+
+    playqueue_clear ();
+
+    if (idx < 0) {
+        goto error;
+    }
+
+    plt = plt_get_curr ();
+    it = plt_get_item_for_idx (plt, idx, PL_MAIN);
+    if (!it) {
+        goto error;
+    }
+
+    pl_lock ();
+    if (plt != streamer_playlist) {
+        streamer_set_streamer_playlist (plt);
+    }
+    pl_unlock();
+
+    _play_track(it, startpaused);
 
     pl_item_unref(it);
     plt_unref (plt);
@@ -2164,22 +2180,8 @@ play_current (void) {
                 streamer_set_streamer_playlist (plt);
             }
             pl_unlock ();
-            streamer_is_buffering = 1;
-            streamer_set_playing_track(NULL);
-            streamer_set_buffering_track (next);
-            handle_track_change (next);
-            if (!stream_track (next, 0)) {
-                playpos = 0;
-                playtime = 0;
-                int st = output->state();
-                output->play ();
-                if (st == OUTPUT_STATE_PAUSED) {
-                    messagepump_push(DB_EV_PAUSED, 0, 0, 0);
-                }
-            }
-            else {
-                streamer_set_buffering_track (NULL);
-            }
+            _play_track(next, 0);
+            pl_item_unref (next);
         }
     }
     if (plt) {
@@ -2189,7 +2191,6 @@ play_current (void) {
 
 static void
 play_next (int dir) {
-    streamer_lock ();
     DB_output_t *output = plug_get_output ();
     streamer_reset(1);
 
@@ -2206,24 +2207,10 @@ play_next (int dir) {
     if (!next) {
         output->stop ();
         _handle_playback_stopped ();
-        streamer_unlock ();
         return;
     }
 
-    streamer_is_buffering = 1;
-    streamer_set_playing_track(NULL);
-    streamer_set_buffering_track (next);
-    handle_track_change (next);
-    if (!stream_track(next, 0)) {
-        playpos = 0;
-        playtime = 0;
-        streamer_unlock ();
-        output->play ();
-    }
-    else {
-        streamer_set_buffering_track (NULL);
-        streamer_unlock ();
-    }
+    _play_track(next, 0);
     pl_item_unref(next);
 }
 

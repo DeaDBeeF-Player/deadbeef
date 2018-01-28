@@ -834,12 +834,12 @@ write_int16_le (char *p, uint16_t value) {
     p[1] = (value >> 8) & 0xff;
 }
 
-static const char format_id_float32[] = {
+static const unsigned char format_id_float32[] = {
     0x03, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0xaa,
     0x00, 0x00, 0x10, 0x00, 0x00, 0x38, 0x9b, 0x71
 };
 
-static const char format_id_pcm[] = {
+static const unsigned char format_id_pcm[] = {
     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00,
     0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71
 };
@@ -972,12 +972,12 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
             write_int32_le (wavehdr+24, outsr);
             int32_t bytes_per_sec = outsr * output_bps / 8 * outch;
             write_int32_le (wavehdr+28, bytes_per_sec);
-            uint16_t blockalign = outch * output_bps / 8; // lock_align; bits_per_sample; cbSize; validBPS
+            uint16_t blockalign = outch * output_bps / 8; // block_align; bits_per_sample; cbSize; validBPS
             write_int16_le (wavehdr+32, blockalign);
             write_int16_le (wavehdr+34, output_bps);
             if (exheader) {
                 int16_t cbSize = 0x16;
-                write_int16_le (wavehdr+36, cbSize); // cbSize (validBPS + channelmask + coded ID = 22 bytes)
+                write_int16_le (wavehdr+36, cbSize); // cbSize (validBPS + channelmask + codec ID = 22 bytes)
                 write_int16_le (wavehdr+38, output_bps); // validBPS
                 int32_t chMask = 3;
                 write_int32_le (wavehdr+40, chMask); // channelMask
@@ -1283,11 +1283,12 @@ _converter_write_tags (ddb_encoder_preset_t *encoder_preset, DB_playItem_t *it, 
 
     // write vorbis tags
     if (encoder_preset->tag_oggvorbis) {
-        // find flac decoder plugin
+        // find plugin to write vorbis comment tags
         DB_decoder_t **plugs = deadbeef->plug_get_decoder_list ();
         int res = -1;
         for (int i = 0; plugs[i]; i++) {
             if (!strcmp (plugs[i]->plugin.id, "stdogg")
+                || !strcmp (plugs[i]->plugin.id, "opus")
                 || !strcmp (plugs[i]->plugin.id, "stdopus")) {
                 res = plugs[i]->write_metadata (out_it);
                 if (!res) {

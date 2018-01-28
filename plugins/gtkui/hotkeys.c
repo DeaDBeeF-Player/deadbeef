@@ -354,7 +354,7 @@ init_action_tree (GtkWidget *actions, const char *act, int ctx) {
                         t = action_tree_append (actions->title, actions_store, &action_selection_iter, &iter);
                         unescape_forward_slash (t, title, sizeof (title));
                         gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_SELECTION, -1);
-                        if (!(actions->flags & DB_ACTION_NOT_FOR_PLAYLIST)) {
+                        if (!(actions->flags & DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST)) {
                             t = action_tree_append (actions->title, actions_store, &action_playlist_iter, &iter);
                             unescape_forward_slash (t, title, sizeof (title));
                             gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_PLAYLIST, -1);

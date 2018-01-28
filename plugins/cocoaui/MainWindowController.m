@@ -62,7 +62,7 @@ extern DB_functions_t *deadbeef;
     [super windowDidLoad];
 
     _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
-    [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSDefaultRunLoopMode];    
+    [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
 }
 
 int prevSeekbar = -1;

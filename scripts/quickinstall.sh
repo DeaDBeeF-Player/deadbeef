@@ -17,6 +17,7 @@ cp ./plugins/vtx/.libs/vtx.so $PREFIX/lib/deadbeef/
 cp ./plugins/ffap/.libs/ffap.so $PREFIX/lib/deadbeef/
 cp ./plugins/wavpack/.libs/wavpack.so $PREFIX/lib/deadbeef/
 cp ./plugins/vorbis/.libs/vorbis.so $PREFIX/lib/deadbeef/
+cp ./plugins/opus/.libs/opus.so $PREFIX/lib/deadbeef/
 cp ./plugins/oss/.libs/oss.so $PREFIX/lib/deadbeef/
 cp ./plugins/vfs_curl/.libs/vfs_curl.so $PREFIX/lib/deadbeef/
 cp ./plugins/ffmpeg/.libs/ffmpeg.so $PREFIX/lib/deadbeef/
@@ -59,4 +60,3 @@ cp ./plugins/pltbrowser/.libs/pltbrowser_gtk2.so $PREFIX/lib/deadbeef/
 cp ./plugins/pltbrowser/.libs/pltbrowser_gtk3.so $PREFIX/lib/deadbeef/
 cp ./plugins/coreaudio/.libs/coreaudio.so $PREFIX/lib/deadbeef/
 cp ./plugins/sc68/.libs/in_sc68.so $PREFIX/lib/deadbeef/
-cp ./plugins/statusnotifier/.libs/statusnotifier.so $PREFIX/lib/deadbeef/

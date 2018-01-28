@@ -60,6 +60,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/vfs_curl.so\
     $PLUGDIR/vfs_zip.so\
     $PLUGDIR/vorbis.so\
+    $PLUGDIR/opus.so\
     $PLUGDIR/vtx.so\
     $PLUGDIR/wavpack.so\
     $PLUGDIR/wildmidi.so\
