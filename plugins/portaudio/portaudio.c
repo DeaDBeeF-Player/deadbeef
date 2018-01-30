@@ -492,6 +492,7 @@ portaudio_callback (const void *in, void *out, unsigned long framesPerBuffer, co
     }
     if (P_UDATA(uData).i == LOOP_CLOSE) {
         portaudio_tid = deadbeef->thread_start (portaudio_thread, NULL);
+        P_UDATA(uData).i += 1;
     }
     else if (P_UDATA(uData).i < LOOP_CLOSE) {
         P_UDATA(uData).i += 1;
