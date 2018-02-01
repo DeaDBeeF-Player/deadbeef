@@ -508,6 +508,26 @@ project "wildmidi_plugin"
    defines { "WILDMIDI_VERSION=\"0.2.2\"", "WILDMIDILIB_VERSION=\"0.2.2\"", "TIMIDITY_CFG=\"/etc/timidity.conf\"" }
    links { "m" }
 
+project "artwork_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "artwork"
+
+   files {
+       "plugins/artwork-legacy/*.c",
+       "plugins/libmp4ff/*.c"
+   }
+
+   excludes {
+   }
+
+   includedirs { "../libmp4ff" }
+
+   defines { "USE_OGG=1", "USE_VFS_CURL", "USE_METAFLAC", "USE_MP4FF", "USE_TAGGING=1" }
+   links { "jpeg", "png", "z", "FLAC", "ogg" }
+
 project "resources"
     kind "Utility"
     postbuildcommands {
