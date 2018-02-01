@@ -5,7 +5,7 @@
 #include <errno.h>
 #include <dirent.h>
 #include <malloc.h>
-
+#include <windows.h>
 
 #define mkdir(X,Y)    mkdir(X)
 #define realpath(X,Y) _fullpath(Y,X,PATH_MAX)
@@ -32,6 +32,14 @@
 
 #ifndef _POSIX_ARG_MAX
 #define _POSIX_ARG_MAX 255
+#endif
+
+#ifndef NAME_MAX
+#define NAME_MAX FILENAME_MAX
+#endif
+
+#ifndef fnmatch
+#define  fnmatch(x,y,z) PathMatchSpec(y,x)
 #endif
 
 #undef rename

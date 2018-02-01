@@ -1,63 +1,70 @@
-/*      $OpenBSD: fnmatch.h,v 1.5 2000/03/24 17:13:23 millert Exp $        */
-/*      $NetBSD: fnmatch.h,v 1.5 1994/10/26 00:55:53 cgd Exp $        */
+/* Copyright (C) 1991-2015 Free Software Foundation, Inc.
 
-/*-
- * Copyright (c) 1992, 1993
- *      The Regents of the University of California.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *      This product includes software developed by the University of
- *      California, Berkeley and its contributors.
- * 4. Neither the name of the University nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- *      @(#)fnmatch.h        8.1 (Berkeley) 6/2/93
- */
+NOTE: The canonical source of this file is maintained with the GNU C Library.
+Bugs can be reported to bug-glibc@prep.ai.mit.edu.
 
-#ifndef _FNMATCH_H_
-#define _FNMATCH_H_
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any
+later version.
 
-#include <sys/cdefs.h>
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-#define FNM_NOMATCH        1        /* Match failed. */
-#define FNM_NOSYS        2        /* Function not supported (unused). */
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, 51 Franklin Street - Fifth Floor,
+Boston, MA 02110-1301, USA.  */
 
-#define FNM_NOESCAPE        0x01        /* Disable backslash escaping. */
-#define FNM_PATHNAME        0x02        /* Slash must be matched by slash. */
-#define FNM_PERIOD        0x04        /* Period must be matched by period. */
-#if __GNU_VISIBLE
-#define FNM_LEADING_DIR        0x08        /* Ignore /<tail> after Imatch. */
-#define FNM_CASEFOLD        0x10        /* Case insensitive search. */
-#define FNM_IGNORECASE        FNM_CASEFOLD
-#define FNM_FILE_NAME        FNM_PATHNAME
+#ifndef	_FNMATCH_H
+
+#define	_FNMATCH_H	1
+
+#ifdef	__cplusplus
+extern "C" {
 #endif
 
-__BEGIN_DECLS
-int      fnmatch __P((const char *, const char *, int));
-__END_DECLS
+#if defined (__cplusplus) || (defined (__STDC__) && __STDC__)
+#undef	__P
+#define	__P(args)	args
+#else /* Not C++ or ANSI C.  */
+#undef	__P
+#define	__P(args)	()
+/* We can get away without defining `const' here only because in this file
+   it is used only inside the prototype for `fnmatch', which is elided in
+   non-ANSI C where `const' is problematical.  */
+#endif /* C++ or ANSI C.  */
 
-#endif /* !_FNMATCH_H_ */
 
+/* We #undef these before defining them because some losing systems
+   (HP-UX A.08.07 for example) define these in <unistd.h>.  */
+#undef	FNM_PATHNAME
+#undef	FNM_NOESCAPE
+#undef	FNM_PERIOD
 
+/* Bits set in the FLAGS argument to `fnmatch'.  */
+#define	FNM_PATHNAME	(1 << 0) /* No wildcard can ever match `/'.  */
+#define	FNM_NOESCAPE	(1 << 1) /* Backslashes don't quote special chars.  */
+#define	FNM_PERIOD	(1 << 2) /* Leading `.' is matched only explicitly.  */
+
+#if !defined (_POSIX_C_SOURCE) || _POSIX_C_SOURCE < 2 || defined (_GNU_SOURCE)
+#define	FNM_FILE_NAME	FNM_PATHNAME /* Preferred GNU name.  */
+#define	FNM_LEADING_DIR	(1 << 3) /* Ignore `/...' after a match.  */
+#define	FNM_CASEFOLD	(1 << 4) /* Compare without regard to case.  */
+#endif
+
+/* Value returned by `fnmatch' if STRING does not match PATTERN.  */
+#define	FNM_NOMATCH	1
+
+/* Match STRING against the filename pattern PATTERN,
+   returning zero if it matches, FNM_NOMATCH if not.  */
+extern int fnmatch __P ((const char *__pattern, const char *__string,
+			 int __flags));
+
+#ifdef	__cplusplus
+}
+#endif
+
+#endif /* fnmatch.h */
