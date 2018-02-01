@@ -31,6 +31,10 @@ FLAC_DEPS=$(FLAC_LIBS)
 flac_cflags=-DUSE_METAFLAC $(FLAC_CFLAGS)
 endif
 
+if OS_WINDOWS
+ARTWORK_CFLAGS=$(ARTWORK_CFLAGS) -I ../libwin/include -D_POSIX_C_SOURCE
+endif
+
 AM_CFLAGS = -I@top_srcdir@/plugins/libmp4ff $(CFLAGS) $(ARTWORK_CFLAGS) $(flac_cflags) $(artwork_net_cflags) $(ogg_def) -DUSE_TAGGING -std=c99
 artwork_la_LIBADD = $(LDADD) $(ARTWORK_DEPS) $(FLAC_DEPS) $(ogg_libs) ../libmp4ff/libmp4ff.la
 endif
