@@ -43,6 +43,8 @@ The following instructions assume that commands are executed in deadbeef reposit
 	```pacman -S mingw-w64-x86_64-libzip pkgconfig mingw-w64-x86_64-dlfcn mingw-w64-x86_64-libtool mingw-w64-x86_64-gcc git automake autogen autoconf gettext gettext-devel libtool make m4 tar xz intltool```
 * Get some packages for plugins:
 	```pacman -S mingw-w64-x86_64-gtk3 mingw-w64-x86_64-gtk2 mingw-w64-x86_64-mpg123 mingw-w64-x86_64-flac```
+* Other packages:
+	```pacman -S mingw-w64-x86_64-libsamplerate mingw-w64-x86_64-curl mingw-w64-x86_64-faad2 mingw-w64-x86_64-ffmpeg mingw-w64-x86_64-opusfile-0.8-1```
 * Install jansson or get compiled lib from https://github.com/kuba160/deadbeef-w64-deps
    If you're compiling, make sure you are using mingw shell (run mingwXX.exe), if you don't want to compile it self:
    ```git clone https://github.com/kuba160/deadbeef-w64-deps && cd deadbeef-w64-deps && make jansson-install```
