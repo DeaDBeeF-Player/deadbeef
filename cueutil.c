@@ -698,7 +698,11 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
     cue.cue_file_dir = cue_file_dir;
 
     cue_file_dir[0] = 0;
+    #ifdef __MINGW32__
+    const char *slash = strrchr (fname, '\\');
+    #else
     const char *slash = strrchr (fname, '/');
+    #endif
 
     if (slash && slash > fname) {
         strncat (cue_file_dir, fname, slash - fname);
