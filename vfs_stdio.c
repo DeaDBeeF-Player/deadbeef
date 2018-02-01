@@ -34,6 +34,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#ifdef __MINGW32__
+#include <windows.h>
+#endif
+
 #ifndef __linux__
 #define off64_t off_t
 #define lseek64 lseek
@@ -70,7 +74,32 @@ stdio_open (const char *fname) {
         fname += 7;
     }
 #ifdef USE_STDIO
+    #ifdef __MINGW32__
+    char fname_c[strlen(fname)];
+    strcpy(fname_c, fname);
+    // convert any '/' characters to '\\'
+    {
+        char * slash;
+        while (slash = strrchr(fname_c, '/'))
+            *slash = '\\';
+    }
+    // convert filename to wchar_t
+    wchar_t fname_w[strlen(fname_c)*2+2];
+    int ret = deadbeef->junk_iconv (fname_c, strlen(fname_c)+1, (char *) fname_w, strlen(fname_c)*2+2, "UTF-8", "WCHAR_T");
+    FILE *file;
+    if (ret == -1) {
+        // converting failed, use standard fopen and hope it works (it won't)
+        file =  fopen (fname, "rb");
+    }
+    else {
+        file = _wfopen (fname_w, L"rb");
+        // if failed try to open it with fopen
+        if (!file)
+            file = fopen (fname, "rb");
+    }
+    #else
     FILE *file = fopen (fname, "rb");
+    #endif
     if (!file) {
         return NULL;
     }
