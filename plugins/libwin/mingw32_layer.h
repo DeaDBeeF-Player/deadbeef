@@ -6,6 +6,10 @@
 #include <dirent.h>
 #include <malloc.h>
 #include <windows.h>
+// min and max are defined in windows.h, but source files define them too
+// undefine them to avoid redefinition warnings
+#undef max
+#undef min
 
 #define mkdir(X,Y)    mkdir(X)
 #define realpath(X,Y) _fullpath(Y,X,PATH_MAX)
