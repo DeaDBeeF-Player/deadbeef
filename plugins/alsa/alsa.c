@@ -635,10 +635,6 @@ palsa_thread (void *context) {
             usleep (10000);
             continue;
         }
-<<<<<<< HEAD
-
-retry:
-=======
 
 retry:
         // state could have changed
@@ -651,7 +647,6 @@ retry:
         if (state == OUTPUT_STATE_STOPPED) {
             continue;
         }
->>>>>>> master
         // wait till buffer is available
         do {
             LOCK;
@@ -661,52 +656,12 @@ retry:
                 err = avail;
                 break;
             }
-<<<<<<< HEAD
-=======
             usleep (1000);
->>>>>>> master
         } while (avail < period_size && !alsa_terminate);
 
         if (alsa_terminate) {
             break;
         }
-<<<<<<< HEAD
-
-        if (err < 0) {
-            trace ("snd_pcm_avail_update: %d: %s\n", err, snd_strerror (err));
-            LOCK;
-            err = snd_pcm_recover (audio, err, 1);
-            UNLOCK;
-            if (err < 0) {
-                trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
-                state = OUTPUT_STATE_STOPPED;
-                continue;
-            }
-            goto retry;
-        }
-
-        // write data
-        LOCK;
-        int frames = snd_pcm_bytes_to_frames(audio, br);
-        err = snd_pcm_writei (audio, buf, frames);
-        UNLOCK;
-
-        if (alsa_terminate) {
-            break;
-        }
-
-        if (err < 0) {
-            trace ("snd_pcm_writei: %d: %s\n", err, snd_strerror (err));
-            LOCK;
-            err = snd_pcm_recover (audio, err, 1);
-            UNLOCK;
-            if (err < 0) {
-                trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
-                state = OUTPUT_STATE_STOPPED;
-                continue;
-            }
-            goto retry;
-=======
 
         if (err < 0) {
             err = alsa_recover (err);
@@ -742,7 +697,6 @@ retry:
             else if (err != 0) {
                 continue;
             }
->>>>>>> master
         }
     }
 
