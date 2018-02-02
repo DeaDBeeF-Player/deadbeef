@@ -31,6 +31,7 @@ cp ./plugins/gtkui/.libs/ddb_gui_GTK2.dll $PREFIX/plugins/
 cp ./plugins/gtkui/.libs/ddb_gui_GTK3.dll $PREFIX/plugins/
 cp ./plugins/sndfile/.libs/sndfile.dll $PREFIX/plugins/
 cp ./plugins/pulse/.libs/pulse.dll $PREFIX/plugins/
+cp ./plugins/artwork-legacy/.libs/artwork.dll $PREFIX/plugins/
 cp ./plugins/artwork/.libs/artwork.dll $PREFIX/plugins/
 cp ./plugins/supereq/.libs/supereq.dll $PREFIX/plugins/
 cp ./plugins/gme/.libs/gme.dll $PREFIX/plugins/
@@ -49,7 +50,6 @@ cp ./plugins/shellexecui/.libs/shellexecui_gtk2.dll $PREFIX/plugins/
 cp ./plugins/shellexecui/.libs/shellexecui_gtk3.dll $PREFIX/plugins/
 cp ./plugins/dsp_libsrc/.libs/dsp_libsrc.dll $PREFIX/plugins/
 cp ./plugins/m3u/.libs/m3u.dll $PREFIX/plugins/
-cp ./plugins/ddb_input_uade2/ddb_input_uade2.dll $PREFIX/plugins/
 cp ./plugins/converter/.libs/converter.dll $PREFIX/plugins/
 cp ./plugins/converter/.libs/converter_gtk2.dll $PREFIX/plugins/
 cp ./plugins/converter/.libs/converter_gtk3.dll $PREFIX/plugins/
