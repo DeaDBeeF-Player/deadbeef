@@ -104,8 +104,10 @@ cp translation/help.ru.txt $PREFIX/doc/
 cp translation/help.zh_TW.txt $PREFIX/doc/
 
 # strip
-strip --strip-unneeded $PREFIX/deadbeef.exe
-for i in $PREFIX/plugins/*.dll ; do strip --strip-unneeded $i ; done
+if [ "$1" != "--debug" ]; then
+	strip --strip-unneeded $PREFIX/deadbeef.exe
+	for i in $PREFIX/plugins/*.dll ; do strip --strip-unneeded $i ; done
+fi
 
 # MS-Windows theme (GTK2)
 for i in /mingw32 /mingw64 /usr; do
