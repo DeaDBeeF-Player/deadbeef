@@ -39,7 +39,7 @@ enum
     PROP_PROPORTION,
 };
 
-#define DDB_SPLITTER_PANE_SIZE 6
+#define DDB_SPLITTER_HANDLE_SIZE 6
 
 #if !GTK_CHECK_VERSION(3,0,0)
 static void
@@ -256,11 +256,11 @@ ddb_splitter_init (DdbSplitter *splitter)
     splitter->priv->child1_size = 0;
     splitter->priv->child2_size = 0;
     splitter->priv->handle = NULL;
-    splitter->priv->handle_size = DDB_SPLITTER_PANE_SIZE;
+    splitter->priv->handle_size = DDB_SPLITTER_HANDLE_SIZE;
     splitter->priv->handle_pos.x = -1;
     splitter->priv->handle_pos.y = -1;
-    splitter->priv->handle_pos.width = DDB_SPLITTER_PANE_SIZE;
-    splitter->priv->handle_pos.height = DDB_SPLITTER_PANE_SIZE;
+    splitter->priv->handle_pos.width = DDB_SPLITTER_HANDLE_SIZE;
+    splitter->priv->handle_pos.height = DDB_SPLITTER_HANDLE_SIZE;
     splitter->priv->proportion = 0.5f;
     /* we don't provide our own window */
     gtk_widget_set_can_focus (GTK_WIDGET (splitter), FALSE);
@@ -719,9 +719,9 @@ ddb_splitter_size_request (GtkWidget      *widget,
 
     if (ddb_splitter_children_visible (splitter)) {
         if (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL)
-            requisition->width += DDB_SPLITTER_PANE_SIZE;
+            requisition->width += DDB_SPLITTER_HANDLE_SIZE;
         else
-            requisition->height += DDB_SPLITTER_PANE_SIZE;
+            requisition->height += DDB_SPLITTER_HANDLE_SIZE;
     }
 }
 #else
