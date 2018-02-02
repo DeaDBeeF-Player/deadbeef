@@ -809,10 +809,11 @@ static void
 ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
 {
     DdbSplitter *splitter = DDB_SPLITTER (widget);
-    GtkWidget *c1 = splitter->priv->child1;
-    GtkWidget *c2 = splitter->priv->child2;
+    DdbSplitterPrivate *sp_priv = splitter->priv;
+    GtkWidget *c1 = sp_priv->child1;
+    GtkWidget *c2 = sp_priv->child2;
 
-    gfloat old_proportion = splitter->priv->proportion;
+    gfloat old_proportion = sp_priv->proportion;
 
     gint border_width = gtk_container_get_border_width (GTK_CONTAINER (splitter));
     gtk_widget_set_allocation (widget, allocation);
@@ -825,33 +826,33 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
     gint con_height = allocation->height - border_width * 2;
     gint handle_size = 0;
 
-    GdkRectangle old_handle_pos = splitter->priv->handle_pos;
+    GdkRectangle old_handle_pos = sp_priv->handle_pos;
 
     GtkAllocation child1_allocation;
     GtkAllocation child2_allocation;
-    if (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL) {
-        handle_size = num_visible_children > 1 ? splitter->priv->handle_size : 0;
+    if (sp_priv->orientation == GTK_ORIENTATION_HORIZONTAL) {
+        handle_size = num_visible_children > 1 ? sp_priv->handle_size : 0;
         if (child1_visible) {
             // use full height in horitzontal splitter
             child1_allocation.height = MAX (1, con_height);
 
             gint width = 0;
-            if (splitter->priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
+            if (sp_priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
                 // child 1 locked, use saved size
-                width = splitter->priv->child1_size;
+                width = sp_priv->child1_size;
             }
             else {
                 if (num_visible_children == 1) {
                     // only one child, use full width
                     width = con_width;
                 }
-                else if (child2_visible && splitter->priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C2) {
+                else if (child2_visible && sp_priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C2) {
                     // two children and second one is locked, use all space left
-                    width = con_width - splitter->priv->child2_size - handle_size;
+                    width = con_width - sp_priv->child2_size - handle_size;
                 }
                 else {
                     // two children visible and proportional scaling is active
-                    width = (con_width - handle_size) * splitter->priv->proportion;
+                    width = (con_width - handle_size) * sp_priv->proportion;
                 }
             }
             child1_allocation.width = MAX (1, width);
@@ -859,33 +860,33 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
             child1_allocation.y = allocation->y + border_width;
 
 
-            gtk_widget_size_allocate (splitter->priv->child1, &child1_allocation);
-            splitter->priv->child1_size = child1_allocation.width;
-            if (splitter->priv->size_mode != DDB_SPLITTER_SIZE_MODE_PROP) {
-                splitter->priv->proportion = CLAMP ((float)child1_allocation.width/(con_width - handle_size), 0.0f, 1.0f);
+            gtk_widget_size_allocate (sp_priv->child1, &child1_allocation);
+            sp_priv->child1_size = child1_allocation.width;
+            if (sp_priv->size_mode != DDB_SPLITTER_SIZE_MODE_PROP) {
+                sp_priv->proportion = CLAMP ((float)child1_allocation.width/(con_width - handle_size), 0.0f, 1.0f);
             }
-            splitter->priv->handle_pos.x = allocation->x + splitter->priv->child1_size + border_width;
-            splitter->priv->handle_pos.y = allocation->y + border_width;
-            splitter->priv->handle_pos.width = handle_size;
-            splitter->priv->handle_pos.height = MAX (1, allocation->height - 2 * border_width);
+            sp_priv->handle_pos.x = allocation->x + sp_priv->child1_size + border_width;
+            sp_priv->handle_pos.y = allocation->y + border_width;
+            sp_priv->handle_pos.width = handle_size;
+            sp_priv->handle_pos.height = MAX (1, allocation->height - 2 * border_width);
 
         }
         if (child2_visible) {
             // use full height in horitzontal splitter
             child2_allocation.height = MAX (1, con_height);
             gint width = 0;
-            if (splitter->priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C2) {
+            if (sp_priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C2) {
                 // child 2 locked, use saved size
-                width = splitter->priv->child2_size;
+                width = sp_priv->child2_size;
             }
             else {
                 if (num_visible_children == 1) {
                     // only one child, use full width
                     width = con_width;
                 }
-                else if (child1_visible && splitter->priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
+                else if (child1_visible && sp_priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
                     // two children and first one is locked, use all space left
-                    width = con_width - splitter->priv->child1_size - handle_size;
+                    width = con_width - sp_priv->child1_size - handle_size;
                 }
                 else {
                     // two children visible and proportional scaling is active
@@ -896,51 +897,51 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
             child2_allocation.x = child1_allocation.x + child1_allocation.width + handle_size;
             child2_allocation.y = allocation->y + border_width;
 
-            gtk_widget_size_allocate (splitter->priv->child2, &child2_allocation);
-            splitter->priv->child2_size = child2_allocation.width;
+            gtk_widget_size_allocate (sp_priv->child2, &child2_allocation);
+            sp_priv->child2_size = child2_allocation.width;
         }
     }
     else {
-        // splitter->priv->orientation == GTK_ORIENTATION_VERTICAL
+        // sp_priv->orientation == GTK_ORIENTATION_VERTICAL
 
-        handle_size = num_visible_children > 1 ? splitter->priv->handle_size : 0;
+        handle_size = num_visible_children > 1 ? sp_priv->handle_size : 0;
         if (child1_visible) {
             // use full width in vertical splitter
             child1_allocation.width = MAX (1, con_width);
 
             gint height = 0;
-            if (splitter->priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
+            if (sp_priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
                 // child 1 locked, use saved size
-                height = splitter->priv->child1_size;
+                height = sp_priv->child1_size;
             }
             else {
                 if (num_visible_children == 1) {
                     // only one child, use full height
                     height = con_height;
                 }
-                else if (child2_visible && splitter->priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C2) {
+                else if (child2_visible && sp_priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C2) {
                     // two children and second one is locked, use all space left
-                    height = con_height - splitter->priv->child2_size - handle_size;
+                    height = con_height - sp_priv->child2_size - handle_size;
 
                 }
                 else {
                     // two children visible and proportional scaling is active
-                    height = (con_height - handle_size) * splitter->priv->proportion;
+                    height = (con_height - handle_size) * sp_priv->proportion;
                 }
             }
             child1_allocation.height = MAX (1, height);
             child1_allocation.x =allocation->x + border_width;
             child1_allocation.y = allocation->y + border_width;
 
-            gtk_widget_size_allocate (splitter->priv->child1, &child1_allocation);
-            splitter->priv->child1_size = child1_allocation.height;
-            if (splitter->priv->size_mode != DDB_SPLITTER_SIZE_MODE_PROP) {
-                splitter->priv->proportion = CLAMP ((float)child1_allocation.height/(con_height - handle_size), 0.0f, 1.0f);
+            gtk_widget_size_allocate (sp_priv->child1, &child1_allocation);
+            sp_priv->child1_size = child1_allocation.height;
+            if (sp_priv->size_mode != DDB_SPLITTER_SIZE_MODE_PROP) {
+                sp_priv->proportion = CLAMP ((float)child1_allocation.height/(con_height - handle_size), 0.0f, 1.0f);
             }
-            splitter->priv->handle_pos.x = allocation->x + border_width;
-            splitter->priv->handle_pos.y = allocation->y + splitter->priv->child1_size + border_width;
-            splitter->priv->handle_pos.width = MAX (1, (gint) allocation->width - 2 * border_width);
-            splitter->priv->handle_pos.height = handle_size;
+            sp_priv->handle_pos.x = allocation->x + border_width;
+            sp_priv->handle_pos.y = allocation->y + sp_priv->child1_size + border_width;
+            sp_priv->handle_pos.width = MAX (1, (gint) allocation->width - 2 * border_width);
+            sp_priv->handle_pos.height = handle_size;
 
         }
         if (child2_visible) {
@@ -948,18 +949,18 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
             child2_allocation.width = MAX (1, con_width);
 
             gint height = 0;
-            if (splitter->priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C2) {
+            if (sp_priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C2) {
                 // child 2 locked, use saved size
-                height = splitter->priv->child2_size;
+                height = sp_priv->child2_size;
             }
             else {
                 if (num_visible_children == 1) {
                     // only one child, use full height
                     height = con_height;
                 }
-                else if (child1_visible && splitter->priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
+                else if (child1_visible && sp_priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
                     // two children and first one is locked, use all space left
-                    height = con_height - splitter->priv->child1_size - handle_size;
+                    height = con_height - sp_priv->child1_size - handle_size;
                 }
                 else {
                     // two children visible and proportional scaling is active
@@ -970,18 +971,18 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
             child2_allocation.x = allocation->x + border_width;
             child2_allocation.y = child1_allocation.y + child1_allocation.height + handle_size;
 
-            gtk_widget_size_allocate (splitter->priv->child2, &child2_allocation);
-            splitter->priv->child2_size = child2_allocation.height;
+            gtk_widget_size_allocate (sp_priv->child2, &child2_allocation);
+            sp_priv->child2_size = child2_allocation.height;
         }
     }
 
     if (!child1_visible && !child2_visible) {
         GtkAllocation child_allocation;
 
-        if (splitter->priv->child1)
-            gtk_widget_set_child_visible (splitter->priv->child1, TRUE);
-        if (splitter->priv->child2)
-            gtk_widget_set_child_visible (splitter->priv->child2, TRUE);
+        if (sp_priv->child1)
+            gtk_widget_set_child_visible (sp_priv->child1, TRUE);
+        if (sp_priv->child2)
+            gtk_widget_set_child_visible (sp_priv->child2, TRUE);
 
         child_allocation.x = allocation->x + border_width;
         child_allocation.y = allocation->y + border_width;
@@ -989,44 +990,44 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
         child_allocation.height = MAX (1, con_height);
 
         if (ddb_splitter_is_child_visible (splitter, 0))
-            gtk_widget_size_allocate (splitter->priv->child1, &child_allocation);
+            gtk_widget_size_allocate (sp_priv->child1, &child_allocation);
         else if (ddb_splitter_is_child_visible (splitter, 1))
-            gtk_widget_size_allocate (splitter->priv->child2, &child_allocation);
+            gtk_widget_size_allocate (sp_priv->child2, &child_allocation);
     }
 
     if (gtk_widget_get_mapped (widget) &&
-            (old_handle_pos.x != splitter->priv->handle_pos.x ||
-             old_handle_pos.y != splitter->priv->handle_pos.y ||
-             old_handle_pos.width != splitter->priv->handle_pos.width ||
-             old_handle_pos.height != splitter->priv->handle_pos.height))
+            (old_handle_pos.x != sp_priv->handle_pos.x ||
+             old_handle_pos.y != sp_priv->handle_pos.y ||
+             old_handle_pos.width != sp_priv->handle_pos.width ||
+             old_handle_pos.height != sp_priv->handle_pos.height))
     {
         GdkWindow *window = gtk_widget_get_window (widget);
         gdk_window_invalidate_rect (window, &old_handle_pos, FALSE);
-        gdk_window_invalidate_rect (window, &splitter->priv->handle_pos, FALSE);
+        gdk_window_invalidate_rect (window, &sp_priv->handle_pos, FALSE);
     }
 
     if (gtk_widget_get_realized (widget)) {
         if (gtk_widget_get_mapped (widget))
-            gdk_window_show (splitter->priv->handle);
+            gdk_window_show (sp_priv->handle);
 
-        if (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL) {
-            gdk_window_move_resize (splitter->priv->handle,
-                    splitter->priv->handle_pos.x,
-                    splitter->priv->handle_pos.y,
+        if (sp_priv->orientation == GTK_ORIENTATION_HORIZONTAL) {
+            gdk_window_move_resize (sp_priv->handle,
+                    sp_priv->handle_pos.x,
+                    sp_priv->handle_pos.y,
                     handle_size,
-                    splitter->priv->handle_pos.height);
+                    sp_priv->handle_pos.height);
         }
         else {
-            gdk_window_move_resize (splitter->priv->handle,
-                    splitter->priv->handle_pos.x,
-                    splitter->priv->handle_pos.y,
-                    splitter->priv->handle_pos.width,
+            gdk_window_move_resize (sp_priv->handle,
+                    sp_priv->handle_pos.x,
+                    sp_priv->handle_pos.y,
+                    sp_priv->handle_pos.width,
                     handle_size);
         }
     }
 
     g_object_freeze_notify (G_OBJECT (splitter));
-    if (splitter->priv->proportion != old_proportion) {
+    if (sp_priv->proportion != old_proportion) {
         g_object_notify (G_OBJECT (splitter), "proportion");
     }
     g_object_thaw_notify (G_OBJECT (splitter));
