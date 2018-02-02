@@ -881,6 +881,9 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
 
     const char *fn = strrchr (fname, '/');
     if (!fn) {
+        fn = strrchr (fname, '\\');
+    }
+    if (!fn) {
         fn = fname;
     }
     else {
@@ -1090,6 +1093,8 @@ _get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *v
                 strncat (dir, fullname, dirsz);
                 char *col = strrchr (dir, ':');
                 char *slash = strrchr (dir, '/');
+                if (!slash)
+                    slash = strrchr (dir, '\\');
                 if (col && slash && slash > col) {
                     *slash = 0;
                 }
@@ -1150,7 +1155,56 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         #endif
     }
     else {
+        #ifdef __MINGW32__
+        #define DIRENT_CHUNK 64
+        namelist = malloc (sizeof(struct dirent *) * DIRENT_CHUNK);
+        if (!namelist)
+            return NULL;
+        WIN32_FIND_DATAW fData;
+        int dirname_w_len = strlen(dirname) * 2 + 8;
+        wchar_t dirname_w[dirname_w_len];
+        int iconv_ret = deadbeef->junk_iconv (dirname, strlen(dirname) + 1, (char *) dirname_w, dirname_w_len, "UTF-8", "WCHAR_T");
+        wcscat (dirname_w,L"\\*.*");
+        HANDLE hFind = FindFirstFileW (dirname_w, &fData);
+        if (INVALID_HANDLE_VALUE == hFind) {
+            n = -1;
+        }
+        else {
+            int struct_count = 0, alloc_multiplier = 1;
+            while (1) {
+                    // skip dots
+                    if (wcscmp(fData.cFileName, L".") != 0 && wcscmp(fData.cFileName, L"..") != 0) {
+                        if (struct_count == DIRENT_CHUNK) {
+                            namelist = realloc (namelist, sizeof(struct dirent *) * DIRENT_CHUNK * ++alloc_multiplier);
+                            if (!namelist)
+                                break;
+                        }
+                        struct dirent * tmp = (struct dirent *) malloc (sizeof(struct dirent));
+                        if (!tmp) {
+                            break;
+                        }
+                        size_t len_l = wcslen (fData.cFileName)*2;
+                        size_t len_r = len_l * 2;
+                        char string_tmp[len_r];
+                        int ret = deadbeef->junk_iconv ((char *) fData.cFileName, len_l, string_tmp, len_r, "WCHAR_T", "UTF-8");
+                        if (ret == -1) {
+                            free (tmp);
+                        }
+                        else {
+                            strcpy (tmp->d_name,string_tmp);
+                            namelist[struct_count++] = tmp;
+                        }
+                    }
+                    if (FindNextFileW(hFind, &fData) == 0) {
+                        break;
+                    }
+            }
+            FindClose(hFind);
+            n = struct_count;
+        }
+        #else
         n = scandir (dirname, &namelist, NULL, dirent_alphasort);
+        #endif
     }
     if (n < 0) {
         if (namelist) {
