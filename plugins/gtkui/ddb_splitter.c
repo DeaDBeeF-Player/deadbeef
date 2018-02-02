@@ -725,10 +725,13 @@ ddb_splitter_size_request (GtkWidget      *widget,
     }
 }
 #else
+
 static void
-ddb_splitter_get_preferred_width (GtkWidget *widget,
-                               gint *minimum,
-                               gint *natural)
+ddb_splitter_get_preferred_size (GtkWidget *widget,
+                                 void (func_get_preferred_size) (GtkWidget *, gint *, gint *),
+                                 GtkOrientation orientation,
+                                 gint *minimum,
+                                 gint *natural)
 {
     DdbSplitter *splitter = DDB_SPLITTER (widget);
     gint min = 0;
@@ -739,13 +742,13 @@ ddb_splitter_get_preferred_width (GtkWidget *widget,
     gint child2_nat = 0;
 
     if (ddb_splitter_is_child_visible (splitter, 0)) {
-        gtk_widget_get_preferred_width (splitter->priv->child1, &child1_min, &child2_nat);
+        func_get_preferred_size (splitter->priv->child1, &child1_min, &child2_nat);
     }
     if (ddb_splitter_is_child_visible (splitter, 1)) {
-        gtk_widget_get_preferred_width (splitter->priv->child2, &child2_min, &child2_nat);
+        func_get_preferred_size (splitter->priv->child2, &child2_min, &child2_nat);
     }
 
-    if (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL) {
+    if (splitter->priv->orientation == orientation) {
         nat = child1_nat + child2_nat;
         if (ddb_splitter_children_visible (splitter)) {
             min += splitter->priv->handle_size;
@@ -760,37 +763,27 @@ ddb_splitter_get_preferred_width (GtkWidget *widget,
 }
 
 static void
+ddb_splitter_get_preferred_width (GtkWidget *widget,
+                               gint *minimum,
+                               gint *natural)
+{
+    ddb_splitter_get_preferred_size (widget,
+                                     &gtk_widget_get_preferred_width,
+                                     GTK_ORIENTATION_HORIZONTAL,
+                                     minimum,
+                                     natural);
+}
+
+static void
 ddb_splitter_get_preferred_height (GtkWidget *widget,
                                gint *minimum,
                                gint *natural)
 {
-    DdbSplitter *splitter = DDB_SPLITTER (widget);
-    gint min = 0;
-    gint nat = 0;
-    gint child1_min = 0;
-    gint child1_nat = 0;
-    gint child2_min = 0;
-    gint child2_nat = 0;
-
-    if (ddb_splitter_is_child_visible (splitter, 0)) {
-        gtk_widget_get_preferred_height (splitter->priv->child1, &child1_min, &child2_nat);
-    }
-    if (ddb_splitter_is_child_visible (splitter, 1)) {
-        gtk_widget_get_preferred_height (splitter->priv->child2, &child2_min, &child2_nat);
-    }
-
-    if (splitter->priv->orientation == GTK_ORIENTATION_VERTICAL) {
-        nat = child1_nat + child2_nat;
-        if (ddb_splitter_children_visible (splitter)) {
-            min += splitter->priv->handle_size;
-            nat += splitter->priv->handle_size;
-        }
-    }
-    else {
-        nat = MAX (child1_nat, child2_nat);
-    }
-    *minimum = min;
-    *natural = nat;
+    ddb_splitter_get_preferred_size (widget,
+                                     &gtk_widget_get_preferred_height,
+                                     GTK_ORIENTATION_VERTICAL,
+                                     minimum,
+                                     natural);
 }
 
 static void
