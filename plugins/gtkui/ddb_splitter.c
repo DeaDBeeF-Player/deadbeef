@@ -39,7 +39,8 @@ enum
     PROP_PROPORTION,
 };
 
-#define DDB_SPLITTER_HANDLE_SIZE 3
+#define DDB_SPLITTER_HANDLE_SIZE 6
+#define DDB_SPLITTER_HANDLE_LOCKED_SIZE 3
 
 #if !GTK_CHECK_VERSION(3,0,0)
 static void
@@ -719,9 +720,9 @@ ddb_splitter_size_request (GtkWidget      *widget,
 
     if (ddb_splitter_children_visible (splitter)) {
         if (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL)
-            requisition->width += DDB_SPLITTER_HANDLE_SIZE;
+            requisition->width += splitter->priv->handle_size;
         else
-            requisition->height += DDB_SPLITTER_HANDLE_SIZE;
+            requisition->height += splitter->priv->handle_size;
     }
 }
 #else
@@ -857,7 +858,7 @@ ddb_splitter_child1_size_calc (DdbSplitterPrivate *sp_priv,
         }
         else {
             // two children visible and proportional scaling is active
-            size = (con_size - handle_size) * sp_priv->proportion;
+            size = ceilf (con_size * sp_priv->proportion);
         }
     }
     return size;
@@ -905,7 +906,7 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *a_con)
             gtk_widget_size_allocate (sp_priv->child1, &a_c1);
             sp_priv->child1_size = a_c1.width;
             if (sp_priv->size_mode != DDB_SPLITTER_SIZE_MODE_PROP) {
-                sp_priv->proportion = CLAMP ((float)a_c1.width/(con_width - handle_size), 0.0f, 1.0f);
+                sp_priv->proportion = CLAMP ((float)a_c1.width/con_width, 0.0f, 1.0f);
             }
             sp_priv->handle_pos.x = a_con->x + sp_priv->child1_size + border_width;
             sp_priv->handle_pos.y = a_con->y + border_width;
@@ -947,7 +948,7 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *a_con)
             gtk_widget_size_allocate (sp_priv->child1, &a_c1);
             sp_priv->child1_size = a_c1.height;
             if (sp_priv->size_mode != DDB_SPLITTER_SIZE_MODE_PROP) {
-                sp_priv->proportion = CLAMP ((float)a_c1.height/(con_height - handle_size), 0.0f, 1.0f);
+                sp_priv->proportion = CLAMP ((float)a_c1.height/con_height, 0.0f, 1.0f);
             }
             sp_priv->handle_pos.x = a_con->x + border_width;
             sp_priv->handle_pos.y = a_con->y + sp_priv->child1_size + border_width;
@@ -1182,6 +1183,13 @@ ddb_splitter_set_size_mode (DdbSplitter *splitter, DdbSplitterSizeMode size_mode
 
     if (G_LIKELY (splitter->priv->size_mode != size_mode)) {
         splitter->priv->size_mode = size_mode;
+        if (size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C1
+            || size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C2) {
+            splitter->priv->handle_size = DDB_SPLITTER_HANDLE_LOCKED_SIZE;
+        }
+        else {
+            splitter->priv->handle_size = DDB_SPLITTER_HANDLE_SIZE;
+        }
         ddb_splitter_update_cursor (splitter);
         gtk_widget_queue_resize (GTK_WIDGET (splitter));
         g_object_notify (G_OBJECT (splitter), "size_mode");
