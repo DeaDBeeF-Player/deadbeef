@@ -515,7 +515,6 @@ palsa_play (void) {
         return err;
     }
     snd_pcm_start (audio);
-
     state = OUTPUT_STATE_PLAYING;
     UNLOCK;
     return 0;
@@ -586,12 +585,9 @@ alsa_recover (int err) {
     // these errors are auto-fixed by snd_pcm_recover
     if (err == -EINTR || err == -EPIPE || err == -ESTRPIPE) {
         trace ("alsa_recover: %d: %s\n", err, snd_strerror (err));
-        LOCK;
         err = snd_pcm_recover (audio, err, 1);
-        UNLOCK;
         if (err < 0) {
             trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
-            state = OUTPUT_STATE_STOPPED;
             return -1; // failed to handle the error
         }
     }
@@ -620,13 +616,10 @@ palsa_thread (void *context) {
             continue;
         }
 
-        int sz = period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels;
-        char buf[sz];
-
         // wait for buffer
         avail = snd_pcm_avail_update (audio);
         if (avail < 0) {
-//            fprintf (stderr, "snd_pcm_writei err %d (%s)\n", avail, strerror (avail));
+            //fprintf (stderr, "snd_pcm_avail_update err %d (%s)\n", avail, snd_strerror (avail));
             avail = alsa_recover (avail);
         }
         if (avail < 0) {
@@ -634,21 +627,33 @@ palsa_thread (void *context) {
             usleep (10000);
             continue;
         }
-        while (avail >= period_size) {
+        int maxwait = period_size * 1000 / plugin.fmt.samplerate;
+        if (avail >= period_size) {
+            int sz = avail * (plugin.fmt.bps>>3) * plugin.fmt.channels;
+            char buf[sz];
+
             int br = palsa_callback (buf, sz);
+
             int err = 0;
             int frames = snd_pcm_bytes_to_frames(audio, br);
+
             err = snd_pcm_writei (audio, buf, frames);
+
             if (err < 0) {
-//                fprintf (stderr, "snd_pcm_writei err %d (%s)\n", err, strerror (err));
                 err = alsa_recover (err);
-                break;
+
+                if (!err) {
+                    int new_avail = snd_pcm_avail_update (audio);
+                    avail = new_avail;
+                    continue;
+                }
             }
             avail -= period_size;
         }
 
         UNLOCK;
-        // calculate number of ms to sleep
+
+        // sleep up to 1 period
         if (avail < 0) {
            avail = 0;
         }
@@ -658,7 +663,6 @@ palsa_thread (void *context) {
 
         int frames = period_size - avail;
         int ms = frames * 1000 / plugin.fmt.samplerate;
-//        printf ("sleep: %d (avail: %d)\n", ms*1000, avail);
         usleep (ms * 1000);
     }
 
