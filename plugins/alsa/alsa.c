@@ -56,8 +56,6 @@ static snd_pcm_uframes_t req_period_size;
 static int conf_alsa_resample = 1;
 static char conf_alsa_soundcard[100] = "default";
 
-static int in_callback;
-
 static int
 palsa_callback (char *stream, int len);
 
@@ -425,13 +423,12 @@ open_error:
 
 static int
 palsa_setformat (ddb_waveformat_t *fmt) {
+    LOCK;
     memcpy (&requested_fmt, fmt, sizeof (ddb_waveformat_t));
     trace ("palsa_setformat %dbit %s %dch %dHz channelmask=%X\n", requested_fmt.bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
-    if (!audio) {
-        return -1;
-    }
-    if (!memcmp (&requested_fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
-        trace ("palsa_setformat ignored\n");
+    if (!audio
+        || !memcmp (&requested_fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
+        UNLOCK;
         return 0;
     }
     else {
@@ -456,6 +453,7 @@ palsa_setformat (ddb_waveformat_t *fmt) {
         return -1;
     }
     trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
+    UNLOCK;
 
     return 0;
 }
@@ -469,12 +467,6 @@ palsa_free (void) {
         return 0;
     }
 
-    if (in_callback) {
-        alsa_terminate = 1;
-        deadbeef->thread_detach (alsa_tid);
-        UNLOCK;
-        return 0;
-    }
     alsa_terminate = 1;
     UNLOCK;
     deadbeef->thread_join (alsa_tid);
@@ -591,22 +583,23 @@ palsa_unpause (void) {
 // 1: no recovery possible
 static int
 alsa_recover (int err) {
-    // these errors need are auto-fixed by snd_pcm_recover
+    // these errors are auto-fixed by snd_pcm_recover
     if (err == -EINTR || err == -EPIPE || err == -ESTRPIPE) {
-        trace ("snd_pcm_avail_update: %d: %s\n", err, snd_strerror (err));
+        trace ("alsa_recover: %d: %s\n", err, snd_strerror (err));
         LOCK;
         err = snd_pcm_recover (audio, err, 1);
         UNLOCK;
         if (err < 0) {
             trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
             state = OUTPUT_STATE_STOPPED;
-            return -1;
+            return -1; // failed to handle the error
         }
     }
     else {
-        return 1;
+        trace ("alsa_recover: ignored error %d: %s\n", err, snd_strerror (err));
+        return 1; // error is unknown / ignored
     }
-    return 1;
+    return err;
 }
 
 static void
@@ -618,86 +611,55 @@ palsa_thread (void *context) {
         if (alsa_terminate) {
             break;
         }
-        if (state != OUTPUT_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1)) {
+
+        LOCK;
+
+        if (state != OUTPUT_STATE_PLAYING) {
+            UNLOCK;
             usleep (10000);
             continue;
         }
 
-        // read data
-        err = 0;
         int sz = period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels;
         char buf[sz];
-        int br = palsa_callback (buf, sz);
-        if (alsa_terminate) {
-            break;
+
+        // wait for buffer
+        avail = snd_pcm_avail_update (audio);
+        if (avail < 0) {
+//            fprintf (stderr, "snd_pcm_writei err %d (%s)\n", avail, strerror (avail));
+            avail = alsa_recover (avail);
         }
-        if (br <= 0) {
+        if (avail < 0) {
+            UNLOCK;
             usleep (10000);
             continue;
         }
-
-retry:
-        // state could have changed
-
-        // wait till it changes
-        if (state == OUTPUT_STATE_PAUSED) {
-            usleep (1000);
-            goto retry;
-        }
-        if (state == OUTPUT_STATE_STOPPED) {
-            continue;
-        }
-        // wait till buffer is available
-        do {
-            LOCK;
-            avail = snd_pcm_avail_update (audio);
-            UNLOCK;
-            if (avail < 0) {
-                err = avail;
+        while (avail >= period_size) {
+            int br = palsa_callback (buf, sz);
+            int err = 0;
+            int frames = snd_pcm_bytes_to_frames(audio, br);
+            err = snd_pcm_writei (audio, buf, frames);
+            if (err < 0) {
+//                fprintf (stderr, "snd_pcm_writei err %d (%s)\n", err, strerror (err));
+                err = alsa_recover (err);
                 break;
             }
-            usleep (1000);
-        } while (avail < period_size && !alsa_terminate);
-
-        if (alsa_terminate) {
-            break;
+            avail -= period_size;
         }
 
-        if (err < 0) {
-            err = alsa_recover (err);
-            if (!err) {
-                goto retry;
-            }
-            else if (err != 0) {
-                continue;
-            }
-        }
-
-        // write data
-        LOCK;
-        int frames = snd_pcm_bytes_to_frames(audio, br);
-        err = snd_pcm_writei (audio, buf, frames);
         UNLOCK;
-
-        if (alsa_terminate) {
-            break;
+        // calculate number of ms to sleep
+        if (avail < 0) {
+           avail = 0;
+        }
+        else if (avail > period_size) {
+            continue;
         }
 
-        // did the state change while writing?
-        if (state != OUTPUT_STATE_PLAYING) {
-            goto retry;
-        }
-
-        if (err < 0)
-        {
-            err = alsa_recover (err);
-            if (!err) {
-                goto retry;
-            }
-            else if (err != 0) {
-                continue;
-            }
-        }
+        int frames = period_size - avail;
+        int ms = frames * 1000 / plugin.fmt.samplerate;
+//        printf ("sleep: %d (avail: %d)\n", ms*1000, avail);
+        usleep (ms * 1000);
     }
 
     LOCK;
@@ -710,9 +672,19 @@ retry:
 
 static int
 palsa_callback (char *stream, int len) {
-    in_callback = 1;
+    if (state != OUTPUT_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1)) {
+        memset (stream, 0, len);
+        return len;
+    }
     int bytesread = deadbeef->streamer_read (stream, len);
-    in_callback = 0;
+
+    if (bytesread < len) {
+        if (bytesread < 0) {
+            bytesread = 0;
+        }
+        memset (stream + bytesread, 0, len-bytesread);
+        bytesread = len;
+    }
     return bytesread;
 }
 
