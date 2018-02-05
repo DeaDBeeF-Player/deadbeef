@@ -1653,12 +1653,7 @@ streamer_reset (int full) { // must be called when current song changes by exter
 
 // when firstblock is true -- means it's allowed to change output format
 static int
-process_output_block (char *bytes, int firstblock) {
-    streamblock_t *block = streamreader_get_curr_block();
-    if (!block) {
-        return -1;
-    }
-
+process_output_block (streamblock_t *block, char *bytes) {
     DB_output_t *output = plug_get_output ();
 
     // handle change of track, or start of a new track
@@ -1840,7 +1835,8 @@ streamer_read (char *bytes, int size) {
     DB_output_t *output = plug_get_output ();
 
     if (_format_change_wait) {
-        return 0;
+        memset (bytes, 0, size);
+        return size;
     }
 
     streamer_lock ();
@@ -1864,7 +1860,8 @@ streamer_read (char *bytes, int size) {
         streamer_unlock();
 
         if (streaming_track) {
-            return 0;
+            memset (bytes, 0, size);
+            return size;
         }
         _audio_stall_count++;
         return 0;
@@ -1875,21 +1872,22 @@ streamer_read (char *bytes, int size) {
     // only decode until the next format change
     if (!memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
         // decode enough blocks to fill the output buffer
-        int firstblock = 1;
-        while (outbuffer_remaining < size) {
-            int rb = process_output_block (outbuffer + outbuffer_remaining, firstblock);
+        while (block && outbuffer_remaining < size && !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+            int rb = process_output_block (block, outbuffer + outbuffer_remaining);
             if (rb <= 0) {
                 break;
             }
             outbuffer_remaining += rb;
-            firstblock = 0;
+            block = streamreader_get_curr_block();
         }
     }
     // empty buffer and the next block format differs? request format change!
-    else if (!outbuffer_remaining) {
+
+    if (!outbuffer_remaining && memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
         _format_change_wait = 1;
         streamer_unlock();
-        return 0;
+        memset (bytes, 0, size);
+        return size;
     }
     streamer_unlock ();
 
@@ -1897,7 +1895,8 @@ streamer_read (char *bytes, int size) {
     int sz = min (size, outbuffer_remaining);
     if (!sz) {
         // no data available
-        return 0;
+        memset (bytes, 0, size);
+        return size;
     }
 
     // clip to frame size
