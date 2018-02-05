@@ -156,7 +156,7 @@ ca_apply_format (void) {
 
         AudioObjectPropertyAddress theAddress = {
             kAudioDevicePropertyStreamFormat,
-            kAudioObjectPropertyScopeOutput,
+            kAudioDevicePropertyScopeOutput,
             kAudioObjectPropertyElementMaster
         };
         sz = sizeof (AudioStreamBasicDescription);
@@ -170,9 +170,10 @@ ca_apply_format (void) {
         }
 #endif
 
+        // NOTE: for unsupported formats, this call may cause bogus messages to appear in console / debug output.
         err = AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &req_format);
         if (err != noErr) {
-            AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &default_format);
+            err = AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &default_format);
             // ignore the result of this operation -- it may fail even when attempting to change to the same format that's current right now
         }
 
