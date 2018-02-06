@@ -174,6 +174,18 @@ set_entry_text (const char *entry_name, const char *text) {
     g_signal_handlers_unblock_matched ((gpointer)entry, mask, detail, 0, NULL, NULL, NULL);
 }
 
+static void
+update_samplerate_widget_sensitivity (int override_sr, int direct_active) {
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "comboboxentry_direct_sr"), override_sr && direct_active);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "comboboxentry_sr_mult_48"), override_sr && !direct_active);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "comboboxentry_sr_mult_44"), override_sr && !direct_active);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "radio_set_direct_sr"), override_sr);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "radio_set_dependent_sr"), override_sr);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "label_sr_mult_48"), override_sr && !direct_active);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "label_sr_mult_44"), override_sr && !direct_active);
+}
+
+
 void
 gtkui_run_preferences_dlg (void) {
     if (prefwin) {
@@ -208,6 +220,28 @@ gtkui_run_preferences_dlg (void) {
             G_CALLBACK (on_pref_soundcard_changed),
             NULL);
 
+    // 8_to_16
+    set_toggle_button("convert8to16", deadbeef->conf_get_int ("streamer.8_to_16", 1));
+
+    // 16_to_24
+    set_toggle_button("convert16to24", deadbeef->conf_get_int ("streamer.16_to_24", 0));
+
+    // override samplerate checkbox
+    int override_sr = deadbeef->conf_get_int ("streamer.override_samplerate", 0);
+    set_toggle_button ("checkbutton_sr_override", override_sr);
+
+    // direct/dependent samplerate radio buttons
+    int use_dependent_samplerate = deadbeef->conf_get_int ("streamer.use_dependent_samplerate", 0);
+    set_toggle_button ("radio_set_direct_sr", !use_dependent_samplerate);
+    set_toggle_button ("radio_set_dependent_sr", use_dependent_samplerate);
+
+    // direct samplerate value
+    gtk_entry_set_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (lookup_widget (w, "comboboxentry_direct_sr")))), deadbeef->conf_get_str_fast ("streamer.direct_samplerate", "44100"));
+    gtk_entry_set_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (lookup_widget (w, "comboboxentry_sr_mult_48")))), deadbeef->conf_get_str_fast ("streamer.samplerate_mult_48", "48000"));
+    gtk_entry_set_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (lookup_widget (w, "comboboxentry_sr_mult_44")))), deadbeef->conf_get_str_fast ("streamer.samplerate_mult_44", "44100"));
+
+    update_samplerate_widget_sensitivity (override_sr, !use_dependent_samplerate);
+
     // replaygain_mode
     combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_source_mode"));
     set_combobox (combobox, deadbeef->conf_get_int ("replaygain.source_mode", 0));
@@ -233,13 +267,6 @@ gtkui_run_preferences_dlg (void) {
 
     // preamp without rg
     set_scale("global_preamp", deadbeef->conf_get_int ("replaygain.preamp_without_rg", 0));
-
-    // 8_to_16
-    set_toggle_button("convert8to16", deadbeef->conf_get_int ("streamer.8_to_16", 1));
-
-    // 16_to_24
-    set_toggle_button("convert16to24", deadbeef->conf_get_int ("streamer.16_to_24", 0));
-
     // dsp
     dsp_setup_init (prefwin);
 
@@ -1281,3 +1308,52 @@ on_listview_group_spacing_value_changed
         deadbeef->plt_unref(plt);
     }
 }
+
+void
+on_radio_set_direct_sr_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int override_sr = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "checkbutton_sr_override")));
+    int direct_active = gtk_toggle_button_get_active (togglebutton);
+    update_samplerate_widget_sensitivity (override_sr, direct_active);
+    deadbeef->conf_set_int ("streamer.use_dependent_samplerate", !direct_active);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_checkbutton_sr_override_toggled     (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int override_sr = gtk_toggle_button_get_active (togglebutton);
+    int direct_active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "radio_set_direct_sr")));
+    update_samplerate_widget_sensitivity (override_sr, direct_active);
+    deadbeef->conf_set_int ("streamer.override_samplerate", override_sr);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_comboboxentry_direct_sr_changed     (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("streamer.direct_samplerate", gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (combobox)))));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+
+void
+on_comboboxentry_sr_mult_48_changed    (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("streamer.samplerate_mult_48", gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (combobox)))));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+
+void
+on_comboboxentry_sr_mult_44_changed    (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("streamer.samplerate_mult_44", gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (combobox)))));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+

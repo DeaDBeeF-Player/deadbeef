@@ -1535,6 +1535,22 @@ create_prefwin (void)
   GtkWidget *pref_soundcard;
   GtkWidget *convert8to16;
   GtkWidget *convert16to24;
+  GtkWidget *frame15;
+  GtkWidget *alignment31;
+  GtkWidget *vbox52;
+  GtkWidget *hbox145;
+  GtkWidget *radio_set_direct_sr;
+  GSList *radio_set_direct_sr_group = NULL;
+  GtkWidget *comboboxentry_direct_sr;
+  GtkWidget *hbox146;
+  GtkWidget *radio_set_dependent_sr;
+  GtkWidget *hbox147;
+  GtkWidget *label_sr_mult_48;
+  GtkWidget *comboboxentry_sr_mult_48;
+  GtkWidget *hbox148;
+  GtkWidget *label_sr_mult_44;
+  GtkWidget *comboboxentry_sr_mult_44;
+  GtkWidget *checkbutton_sr_override;
   GtkWidget *Sound;
   GtkWidget *vbox8;
   GtkWidget *frame14;
@@ -1821,6 +1837,93 @@ create_prefwin (void)
   convert16to24 = gtk_check_button_new_with_mnemonic (_("Always convert 16 bit audio to 24 bit"));
   gtk_widget_show (convert16to24);
   gtk_box_pack_start (GTK_BOX (vbox10), convert16to24, FALSE, FALSE, 0);
+
+  frame15 = gtk_frame_new (NULL);
+  gtk_widget_show (frame15);
+  gtk_box_pack_start (GTK_BOX (vbox10), frame15, FALSE, TRUE, 0);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame15), GTK_SHADOW_NONE);
+
+  alignment31 = gtk_alignment_new (0.5, 0.5, 1, 1);
+  gtk_widget_show (alignment31);
+  gtk_container_add (GTK_CONTAINER (frame15), alignment31);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment31), 0, 0, 12, 0);
+
+  vbox52 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox52);
+  gtk_container_add (GTK_CONTAINER (alignment31), vbox52);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox52), 12);
+
+  hbox145 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox145);
+  gtk_box_pack_start (GTK_BOX (vbox52), hbox145, TRUE, TRUE, 0);
+
+  radio_set_direct_sr = gtk_radio_button_new_with_mnemonic (NULL, _("Set directly"));
+  gtk_widget_show (radio_set_direct_sr);
+  gtk_box_pack_start (GTK_BOX (hbox145), radio_set_direct_sr, FALSE, FALSE, 0);
+  gtk_radio_button_set_group (GTK_RADIO_BUTTON (radio_set_direct_sr), radio_set_direct_sr_group);
+  radio_set_direct_sr_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (radio_set_direct_sr));
+
+  comboboxentry_direct_sr = gtk_combo_box_entry_new_text ();
+  gtk_widget_show (comboboxentry_direct_sr);
+  gtk_box_pack_start (GTK_BOX (hbox145), comboboxentry_direct_sr, FALSE, FALSE, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), _("44100"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), _("48000"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), _("88200"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), _("96000"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), _("176400"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), _("192000"));
+
+  hbox146 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox146);
+  gtk_box_pack_start (GTK_BOX (vbox52), hbox146, TRUE, TRUE, 0);
+
+  radio_set_dependent_sr = gtk_radio_button_new_with_mnemonic (NULL, _("Based on input samplerate"));
+  gtk_widget_show (radio_set_dependent_sr);
+  gtk_box_pack_start (GTK_BOX (hbox146), radio_set_dependent_sr, FALSE, FALSE, 0);
+  gtk_radio_button_set_group (GTK_RADIO_BUTTON (radio_set_dependent_sr), radio_set_direct_sr_group);
+  radio_set_direct_sr_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (radio_set_dependent_sr));
+
+  hbox147 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox147);
+  gtk_box_pack_start (GTK_BOX (vbox52), hbox147, TRUE, TRUE, 0);
+
+  label_sr_mult_48 = gtk_label_new (_("For multiples of 48KHz (96K, 192K, ...)"));
+  gtk_widget_show (label_sr_mult_48);
+  gtk_box_pack_start (GTK_BOX (hbox147), label_sr_mult_48, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label_sr_mult_48), 1, 0.5);
+
+  comboboxentry_sr_mult_48 = gtk_combo_box_entry_new_text ();
+  gtk_widget_show (comboboxentry_sr_mult_48);
+  gtk_box_pack_start (GTK_BOX (hbox147), comboboxentry_sr_mult_48, FALSE, FALSE, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), _("44100"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), _("48000"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), _("88200"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), _("96000"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), _("176400"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), _("192000"));
+
+  hbox148 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox148);
+  gtk_box_pack_start (GTK_BOX (vbox52), hbox148, TRUE, TRUE, 0);
+
+  label_sr_mult_44 = gtk_label_new (_("For multiples of 44.1KHz (88.2K, 176.4K, ...)"));
+  gtk_widget_show (label_sr_mult_44);
+  gtk_box_pack_start (GTK_BOX (hbox148), label_sr_mult_44, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label_sr_mult_44), 1, 0.5);
+
+  comboboxentry_sr_mult_44 = gtk_combo_box_entry_new_text ();
+  gtk_widget_show (comboboxentry_sr_mult_44);
+  gtk_box_pack_start (GTK_BOX (hbox148), comboboxentry_sr_mult_44, FALSE, FALSE, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), _("44100"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), _("48000"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), _("88200"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), _("96000"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), _("176400"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), _("192000"));
+
+  checkbutton_sr_override = gtk_check_button_new_with_mnemonic (_("Override samplerate"));
+  gtk_widget_show (checkbutton_sr_override);
+  gtk_frame_set_label_widget (GTK_FRAME (frame15), checkbutton_sr_override);
 
   Sound = gtk_label_new (_("Sound"));
   gtk_widget_show (Sound);
@@ -3001,6 +3104,21 @@ create_prefwin (void)
   g_signal_connect ((gpointer) convert16to24, "toggled",
                     G_CALLBACK (on_convert16to24_toggled),
                     NULL);
+  g_signal_connect ((gpointer) radio_set_direct_sr, "toggled",
+                    G_CALLBACK (on_radio_set_direct_sr_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) comboboxentry_direct_sr, "changed",
+                    G_CALLBACK (on_comboboxentry_direct_sr_changed),
+                    NULL);
+  g_signal_connect ((gpointer) comboboxentry_sr_mult_48, "changed",
+                    G_CALLBACK (on_comboboxentry_sr_mult_48_changed),
+                    NULL);
+  g_signal_connect ((gpointer) comboboxentry_sr_mult_44, "changed",
+                    G_CALLBACK (on_comboboxentry_sr_mult_44_changed),
+                    NULL);
+  g_signal_connect ((gpointer) checkbutton_sr_override, "toggled",
+                    G_CALLBACK (on_checkbutton_sr_override_toggled),
+                    NULL);
   g_signal_connect ((gpointer) pref_replaygain_source_mode, "changed",
                     G_CALLBACK (on_pref_replaygain_source_mode_changed),
                     NULL);
@@ -3279,6 +3397,21 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, pref_soundcard, "pref_soundcard");
   GLADE_HOOKUP_OBJECT (prefwin, convert8to16, "convert8to16");
   GLADE_HOOKUP_OBJECT (prefwin, convert16to24, "convert16to24");
+  GLADE_HOOKUP_OBJECT (prefwin, frame15, "frame15");
+  GLADE_HOOKUP_OBJECT (prefwin, alignment31, "alignment31");
+  GLADE_HOOKUP_OBJECT (prefwin, vbox52, "vbox52");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox145, "hbox145");
+  GLADE_HOOKUP_OBJECT (prefwin, radio_set_direct_sr, "radio_set_direct_sr");
+  GLADE_HOOKUP_OBJECT (prefwin, comboboxentry_direct_sr, "comboboxentry_direct_sr");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox146, "hbox146");
+  GLADE_HOOKUP_OBJECT (prefwin, radio_set_dependent_sr, "radio_set_dependent_sr");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox147, "hbox147");
+  GLADE_HOOKUP_OBJECT (prefwin, label_sr_mult_48, "label_sr_mult_48");
+  GLADE_HOOKUP_OBJECT (prefwin, comboboxentry_sr_mult_48, "comboboxentry_sr_mult_48");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox148, "hbox148");
+  GLADE_HOOKUP_OBJECT (prefwin, label_sr_mult_44, "label_sr_mult_44");
+  GLADE_HOOKUP_OBJECT (prefwin, comboboxentry_sr_mult_44, "comboboxentry_sr_mult_44");
+  GLADE_HOOKUP_OBJECT (prefwin, checkbutton_sr_override, "checkbutton_sr_override");
   GLADE_HOOKUP_OBJECT (prefwin, Sound, "Sound");
   GLADE_HOOKUP_OBJECT (prefwin, vbox8, "vbox8");
   GLADE_HOOKUP_OBJECT (prefwin, frame14, "frame14");
