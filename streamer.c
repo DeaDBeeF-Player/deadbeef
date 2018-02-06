@@ -1455,15 +1455,16 @@ streamer_thread (void *ctx) {
         }
 
         if (_format_change_wait) {
+            streamer_lock ();
             streamblock_t *block = streamreader_get_curr_block();
-            // Try to set output format to the input format, before running dsp.
-            // This is needed so that resampler knows what to resample to.
-            // This only needs to be done once per input format change.
-            if (memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
-                streamer_set_output_format (&block->fmt);
-                memcpy (&last_block_fmt, &block->fmt, sizeof (ddb_waveformat_t));
+            if (block) {
+                if (memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+                    streamer_set_output_format (&block->fmt);
+                    memcpy (&last_block_fmt, &block->fmt, sizeof (ddb_waveformat_t));
+                }
             }
             _format_change_wait = 0;
+            streamer_unlock ();
         }
 
         _update_buffering_state ();
