@@ -1331,11 +1331,25 @@ on_checkbutton_sr_override_toggled     (GtkToggleButton *togglebutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
+static int
+clamp_samplerate (int val) {
+    printf ("%d\n", val);
+    if (val < 8000) {
+        return 8000;
+    }
+    else if (val > 768000) {
+        return 768000;
+    }
+    return val;
+}
+
 void
 on_comboboxentry_direct_sr_changed     (GtkComboBox     *combobox,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_str ("streamer.direct_samplerate", gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (combobox)))));
+    int val = atoi(gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (combobox)))));
+    int out = clamp_samplerate (val);
+    deadbeef->conf_set_int ("streamer.direct_samplerate", out);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
@@ -1344,7 +1358,9 @@ void
 on_comboboxentry_sr_mult_48_changed    (GtkComboBox     *combobox,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_str ("streamer.samplerate_mult_48", gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (combobox)))));
+    int val = atoi(gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (combobox)))));
+    int out = clamp_samplerate (val);
+    deadbeef->conf_set_int ("streamer.samplerate_mult_48", out);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
@@ -1353,7 +1369,8 @@ void
 on_comboboxentry_sr_mult_44_changed    (GtkComboBox     *combobox,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_str ("streamer.samplerate_mult_44", gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (combobox)))));
+    int val = atoi(gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (combobox)))));
+    int out = clamp_samplerate (val);
+    deadbeef->conf_set_int ("streamer.samplerate_mult_44", out);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
-

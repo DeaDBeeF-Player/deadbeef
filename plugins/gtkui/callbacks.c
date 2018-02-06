@@ -803,4 +803,3 @@ on_log_window_key_press_event          (GtkWidget       *widget,
     }
     return FALSE;
 }
-

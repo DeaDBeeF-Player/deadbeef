@@ -1410,3 +1410,4 @@ on_comboboxentry_sr_mult_44_changed    (GtkComboBox     *combobox,
 void
 on_checkbutton_sr_override_toggled     (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
