@@ -1539,17 +1539,18 @@ create_prefwin (void)
   GtkWidget *alignment31;
   GtkWidget *vbox52;
   GtkWidget *hbox145;
-  GtkWidget *radio_set_direct_sr;
-  GSList *radio_set_direct_sr_group = NULL;
+  GtkWidget *label_direct_sr;
   GtkWidget *comboboxentry_direct_sr;
-  GtkWidget *hbox146;
-  GtkWidget *radio_set_dependent_sr;
+  GtkWidget *frame16;
+  GtkWidget *alignment32;
+  GtkWidget *vbox53;
   GtkWidget *hbox147;
   GtkWidget *label_sr_mult_48;
   GtkWidget *comboboxentry_sr_mult_48;
   GtkWidget *hbox148;
   GtkWidget *label_sr_mult_44;
   GtkWidget *comboboxentry_sr_mult_44;
+  GtkWidget *checkbutton_dependent_sr;
   GtkWidget *checkbutton_sr_override;
   GtkWidget *Sound;
   GtkWidget *vbox8;
@@ -1857,11 +1858,9 @@ create_prefwin (void)
   gtk_widget_show (hbox145);
   gtk_box_pack_start (GTK_BOX (vbox52), hbox145, TRUE, TRUE, 0);
 
-  radio_set_direct_sr = gtk_radio_button_new_with_mnemonic (NULL, _("Set directly"));
-  gtk_widget_show (radio_set_direct_sr);
-  gtk_box_pack_start (GTK_BOX (hbox145), radio_set_direct_sr, FALSE, FALSE, 0);
-  gtk_radio_button_set_group (GTK_RADIO_BUTTON (radio_set_direct_sr), radio_set_direct_sr_group);
-  radio_set_direct_sr_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (radio_set_direct_sr));
+  label_direct_sr = gtk_label_new (_("Default samplerate"));
+  gtk_widget_show (label_direct_sr);
+  gtk_box_pack_start (GTK_BOX (hbox145), label_direct_sr, FALSE, FALSE, 0);
 
   comboboxentry_direct_sr = gtk_combo_box_entry_new_text ();
   gtk_widget_show (comboboxentry_direct_sr);
@@ -1873,19 +1872,23 @@ create_prefwin (void)
   gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), _("176400"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), _("192000"));
 
-  hbox146 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox146);
-  gtk_box_pack_start (GTK_BOX (vbox52), hbox146, TRUE, TRUE, 0);
+  frame16 = gtk_frame_new (NULL);
+  gtk_widget_show (frame16);
+  gtk_box_pack_start (GTK_BOX (vbox52), frame16, TRUE, TRUE, 0);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame16), GTK_SHADOW_NONE);
 
-  radio_set_dependent_sr = gtk_radio_button_new_with_mnemonic (NULL, _("Based on input samplerate"));
-  gtk_widget_show (radio_set_dependent_sr);
-  gtk_box_pack_start (GTK_BOX (hbox146), radio_set_dependent_sr, FALSE, FALSE, 0);
-  gtk_radio_button_set_group (GTK_RADIO_BUTTON (radio_set_dependent_sr), radio_set_direct_sr_group);
-  radio_set_direct_sr_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (radio_set_dependent_sr));
+  alignment32 = gtk_alignment_new (0.5, 0.5, 1, 1);
+  gtk_widget_show (alignment32);
+  gtk_container_add (GTK_CONTAINER (frame16), alignment32);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment32), 0, 0, 12, 0);
+
+  vbox53 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox53);
+  gtk_container_add (GTK_CONTAINER (alignment32), vbox53);
 
   hbox147 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox147);
-  gtk_box_pack_start (GTK_BOX (vbox52), hbox147, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox53), hbox147, TRUE, TRUE, 0);
 
   label_sr_mult_48 = gtk_label_new (_("For multiples of 48KHz (96K, 192K, ...)"));
   gtk_widget_show (label_sr_mult_48);
@@ -1904,7 +1907,7 @@ create_prefwin (void)
 
   hbox148 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox148);
-  gtk_box_pack_start (GTK_BOX (vbox52), hbox148, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox53), hbox148, TRUE, TRUE, 0);
 
   label_sr_mult_44 = gtk_label_new (_("For multiples of 44.1KHz (88.2K, 176.4K, ...)"));
   gtk_widget_show (label_sr_mult_44);
@@ -1920,6 +1923,10 @@ create_prefwin (void)
   gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), _("96000"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), _("176400"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), _("192000"));
+
+  checkbutton_dependent_sr = gtk_check_button_new_with_mnemonic (_("Based on input samplerate"));
+  gtk_widget_show (checkbutton_dependent_sr);
+  gtk_frame_set_label_widget (GTK_FRAME (frame16), checkbutton_dependent_sr);
 
   checkbutton_sr_override = gtk_check_button_new_with_mnemonic (_("Override samplerate"));
   gtk_widget_show (checkbutton_sr_override);
@@ -3104,9 +3111,6 @@ create_prefwin (void)
   g_signal_connect ((gpointer) convert16to24, "toggled",
                     G_CALLBACK (on_convert16to24_toggled),
                     NULL);
-  g_signal_connect ((gpointer) radio_set_direct_sr, "toggled",
-                    G_CALLBACK (on_radio_set_direct_sr_toggled),
-                    NULL);
   g_signal_connect ((gpointer) comboboxentry_direct_sr, "changed",
                     G_CALLBACK (on_comboboxentry_direct_sr_changed),
                     NULL);
@@ -3115,6 +3119,9 @@ create_prefwin (void)
                     NULL);
   g_signal_connect ((gpointer) comboboxentry_sr_mult_44, "changed",
                     G_CALLBACK (on_comboboxentry_sr_mult_44_changed),
+                    NULL);
+  g_signal_connect ((gpointer) checkbutton_dependent_sr, "toggled",
+                    G_CALLBACK (on_checkbutton_dependent_sr_toggled),
                     NULL);
   g_signal_connect ((gpointer) checkbutton_sr_override, "toggled",
                     G_CALLBACK (on_checkbutton_sr_override_toggled),
@@ -3401,16 +3408,18 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, alignment31, "alignment31");
   GLADE_HOOKUP_OBJECT (prefwin, vbox52, "vbox52");
   GLADE_HOOKUP_OBJECT (prefwin, hbox145, "hbox145");
-  GLADE_HOOKUP_OBJECT (prefwin, radio_set_direct_sr, "radio_set_direct_sr");
+  GLADE_HOOKUP_OBJECT (prefwin, label_direct_sr, "label_direct_sr");
   GLADE_HOOKUP_OBJECT (prefwin, comboboxentry_direct_sr, "comboboxentry_direct_sr");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox146, "hbox146");
-  GLADE_HOOKUP_OBJECT (prefwin, radio_set_dependent_sr, "radio_set_dependent_sr");
+  GLADE_HOOKUP_OBJECT (prefwin, frame16, "frame16");
+  GLADE_HOOKUP_OBJECT (prefwin, alignment32, "alignment32");
+  GLADE_HOOKUP_OBJECT (prefwin, vbox53, "vbox53");
   GLADE_HOOKUP_OBJECT (prefwin, hbox147, "hbox147");
   GLADE_HOOKUP_OBJECT (prefwin, label_sr_mult_48, "label_sr_mult_48");
   GLADE_HOOKUP_OBJECT (prefwin, comboboxentry_sr_mult_48, "comboboxentry_sr_mult_48");
   GLADE_HOOKUP_OBJECT (prefwin, hbox148, "hbox148");
   GLADE_HOOKUP_OBJECT (prefwin, label_sr_mult_44, "label_sr_mult_44");
   GLADE_HOOKUP_OBJECT (prefwin, comboboxentry_sr_mult_44, "comboboxentry_sr_mult_44");
+  GLADE_HOOKUP_OBJECT (prefwin, checkbutton_dependent_sr, "checkbutton_dependent_sr");
   GLADE_HOOKUP_OBJECT (prefwin, checkbutton_sr_override, "checkbutton_sr_override");
   GLADE_HOOKUP_OBJECT (prefwin, Sound, "Sound");
   GLADE_HOOKUP_OBJECT (prefwin, vbox8, "vbox8");

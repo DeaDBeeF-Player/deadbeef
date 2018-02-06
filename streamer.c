@@ -74,12 +74,17 @@ static int autoconv_8_to_16 = 1;
 
 static int autoconv_16_to_24 = 0;
 
+
+static int conf_streamer_override_samplerate = 0;
+static int conf_streamer_use_dependent_samplerate = 0;
+static int conf_streamer_samplerate = 44100;
+static int conf_streamer_samplerate_mult_48 = 48000;
+static int conf_streamer_samplerate_mult_44 = 44100;
+
 static int trace_bufferfill = 0;
 
 static int stop_after_current = 0;
 static int stop_after_album = 0;
-
-static int conf_streamer_nosleep = 0;
 
 static int streaming_terminate;
 
@@ -1370,6 +1375,21 @@ get_desired_output_format (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt) 
         }
     }
 
+#if !defined(ANDROID) && !defined(HAVE_XGUI)
+    // samplerate override
+    if (conf_streamer_override_samplerate) {
+        out_fmt->samplerate = conf_streamer_samplerate;
+        if (conf_streamer_use_dependent_samplerate) {
+            if (0 == (in_fmt->samplerate % 48000)) {
+                out_fmt->samplerate = conf_streamer_samplerate_mult_48;
+            }
+            else if (0 == (in_fmt->samplerate % 44100)) {
+                out_fmt->samplerate = conf_streamer_samplerate_mult_44;
+            }
+        }
+    }
+#endif
+
     // android simulation on PC: force 16 bit and 44100 or 48000 only, to force format conversion
 #if !defined(ANDROID) && defined(HAVE_XGUI)
     out_fmt->bps = 16;
@@ -2016,8 +2036,20 @@ streamer_ok_to_read (int len) {
     return !streamer_is_buffering;
 }
 
+static int
+clamp_samplerate (int val) {
+    if (val < 8000) {
+        return 8000;
+    }
+    else if (val > 768000) {
+        return 768000;
+    }
+    return val;
+}
+
 void
 streamer_configchanged (void) {
+    streamer_lock ();
     pl_set_order (conf_get_int ("playback.order", 0));
     if (playing_track) {
         playing_track->played = 1;
@@ -2046,7 +2078,27 @@ streamer_configchanged (void) {
         ctmap_init ();
     }
 
-    conf_streamer_nosleep = conf_get_int ("streamer.nosleep", 0);
+    int new_conf_streamer_override_samplerate = conf_get_int ("streamer.override_samplerate", 0);
+    int new_conf_streamer_use_dependent_samplerate = conf_get_int ("streamer.use_dependent_samplerate", 0);
+    int new_conf_streamer_samplerate = clamp_samplerate (conf_get_int ("streamer.samplerate", 44100));
+    int new_conf_streamer_samplerate_mult_48 = clamp_samplerate (conf_get_int ("streamer.samplerate_mult_48", 48000));
+    int new_conf_streamer_samplerate_mult_44 = clamp_samplerate (conf_get_int ("streamer.samplerate_mult_44", 44100));
+
+    if (conf_streamer_override_samplerate != new_conf_streamer_override_samplerate
+        || conf_streamer_use_dependent_samplerate != new_conf_streamer_use_dependent_samplerate
+        || conf_streamer_samplerate != new_conf_streamer_samplerate
+        || conf_streamer_samplerate_mult_48 != new_conf_streamer_samplerate_mult_48
+        || conf_streamer_samplerate_mult_44 != new_conf_streamer_samplerate_mult_44) {
+        memset (&last_block_fmt, 0, sizeof (last_block_fmt));
+    }
+
+    conf_streamer_override_samplerate = new_conf_streamer_override_samplerate;
+    conf_streamer_use_dependent_samplerate = new_conf_streamer_use_dependent_samplerate;
+    conf_streamer_samplerate = new_conf_streamer_samplerate;
+    conf_streamer_samplerate_mult_48 = new_conf_streamer_samplerate_mult_48;
+    conf_streamer_samplerate_mult_44 = new_conf_streamer_samplerate_mult_44;
+
+    streamer_unlock ();
 
     streamreader_configchanged ();
 }

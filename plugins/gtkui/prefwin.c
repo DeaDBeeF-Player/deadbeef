@@ -175,14 +175,14 @@ set_entry_text (const char *entry_name, const char *text) {
 }
 
 static void
-update_samplerate_widget_sensitivity (int override_sr, int direct_active) {
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "comboboxentry_direct_sr"), override_sr && direct_active);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "comboboxentry_sr_mult_48"), override_sr && !direct_active);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "comboboxentry_sr_mult_44"), override_sr && !direct_active);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "radio_set_direct_sr"), override_sr);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "radio_set_dependent_sr"), override_sr);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "label_sr_mult_48"), override_sr && !direct_active);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "label_sr_mult_44"), override_sr && !direct_active);
+update_samplerate_widget_sensitivity (int override_sr, int dep_active) {
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "label_direct_sr"), override_sr);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "comboboxentry_direct_sr"), override_sr);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "checkbutton_dependent_sr"), override_sr);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "comboboxentry_sr_mult_48"), override_sr && dep_active);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "comboboxentry_sr_mult_44"), override_sr && dep_active);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "label_sr_mult_48"), override_sr && dep_active);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "label_sr_mult_44"), override_sr && dep_active);
 }
 
 
@@ -232,15 +232,14 @@ gtkui_run_preferences_dlg (void) {
 
     // direct/dependent samplerate radio buttons
     int use_dependent_samplerate = deadbeef->conf_get_int ("streamer.use_dependent_samplerate", 0);
-    set_toggle_button ("radio_set_direct_sr", !use_dependent_samplerate);
-    set_toggle_button ("radio_set_dependent_sr", use_dependent_samplerate);
+    set_toggle_button ("checkbutton_dependent_sr", use_dependent_samplerate);
 
     // direct samplerate value
-    gtk_entry_set_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (lookup_widget (w, "comboboxentry_direct_sr")))), deadbeef->conf_get_str_fast ("streamer.direct_samplerate", "44100"));
+    gtk_entry_set_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (lookup_widget (w, "comboboxentry_direct_sr")))), deadbeef->conf_get_str_fast ("streamer.samplerate", "44100"));
     gtk_entry_set_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (lookup_widget (w, "comboboxentry_sr_mult_48")))), deadbeef->conf_get_str_fast ("streamer.samplerate_mult_48", "48000"));
     gtk_entry_set_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (lookup_widget (w, "comboboxentry_sr_mult_44")))), deadbeef->conf_get_str_fast ("streamer.samplerate_mult_44", "44100"));
 
-    update_samplerate_widget_sensitivity (override_sr, !use_dependent_samplerate);
+    update_samplerate_widget_sensitivity (override_sr, use_dependent_samplerate);
 
     // replaygain_mode
     combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_source_mode"));
@@ -1310,13 +1309,13 @@ on_listview_group_spacing_value_changed
 }
 
 void
-on_radio_set_direct_sr_toggled         (GtkToggleButton *togglebutton,
+on_checkbutton_dependent_sr_toggled    (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     int override_sr = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "checkbutton_sr_override")));
-    int direct_active = gtk_toggle_button_get_active (togglebutton);
-    update_samplerate_widget_sensitivity (override_sr, direct_active);
-    deadbeef->conf_set_int ("streamer.use_dependent_samplerate", !direct_active);
+    int dep_active = gtk_toggle_button_get_active (togglebutton);
+    update_samplerate_widget_sensitivity (override_sr, dep_active);
+    deadbeef->conf_set_int ("streamer.use_dependent_samplerate", dep_active);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
@@ -1325,15 +1324,14 @@ on_checkbutton_sr_override_toggled     (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     int override_sr = gtk_toggle_button_get_active (togglebutton);
-    int direct_active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "radio_set_direct_sr")));
-    update_samplerate_widget_sensitivity (override_sr, direct_active);
+    int dep_active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "checkbutton_dependent_sr")));
+    update_samplerate_widget_sensitivity (override_sr, dep_active);
     deadbeef->conf_set_int ("streamer.override_samplerate", override_sr);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 static int
 clamp_samplerate (int val) {
-    printf ("%d\n", val);
     if (val < 8000) {
         return 8000;
     }
@@ -1349,7 +1347,7 @@ on_comboboxentry_direct_sr_changed     (GtkComboBox     *combobox,
 {
     int val = atoi(gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (combobox)))));
     int out = clamp_samplerate (val);
-    deadbeef->conf_set_int ("streamer.direct_samplerate", out);
+    deadbeef->conf_set_int ("streamer.samplerate", out);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 

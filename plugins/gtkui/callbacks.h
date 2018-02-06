@@ -1392,10 +1392,6 @@ on_listview_group_spacing_value_changed
                                         gpointer         user_data);
 
 void
-on_radio_set_direct_sr_toggled         (GtkToggleButton *togglebutton,
-                                        gpointer         user_data);
-
-void
 on_comboboxentry_direct_sr_changed     (GtkComboBox     *combobox,
                                         gpointer         user_data);
 
@@ -1411,3 +1407,7 @@ void
 on_checkbutton_sr_override_toggled     (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
 
+
+void
+on_checkbutton_dependent_sr_toggled    (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
