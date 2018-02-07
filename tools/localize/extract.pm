@@ -94,7 +94,6 @@ sub extract {
                             next if ($val =~ /^[0-9\.-_]*$/);
                             next if grep ({$_ eq $val} @ignore_values);
                             if (!grep ({$_->{msgid} eq $val} @lines)) {
-                                print "$val\n";
                                 push @lines, { f=>$relf, line=>$., msgid=>$val };
                             }
                         }

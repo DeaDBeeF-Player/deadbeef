@@ -32,6 +32,7 @@ if ($help) {
     print "  --help               Show this text\n";
     print "  --android-xml        Generate android xml strings.xml\n";
     print "  --c-source           Generate strings.c file compatible with xgettext\n";
+	print "  --output=filename    Write to this file\n";
     exit (0);
 }
 
