@@ -1865,12 +1865,12 @@ create_prefwin (void)
   comboboxentry_direct_sr = gtk_combo_box_entry_new_text ();
   gtk_widget_show (comboboxentry_direct_sr);
   gtk_box_pack_start (GTK_BOX (hbox145), comboboxentry_direct_sr, FALSE, FALSE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), _("44100"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), _("48000"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), _("88200"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), _("96000"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), _("176400"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), _("192000"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), "44100");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), "48000");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), "88200");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), "96000");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), "176400");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), "192000");
 
   frame16 = gtk_frame_new (NULL);
   gtk_widget_show (frame16);
@@ -1898,12 +1898,12 @@ create_prefwin (void)
   comboboxentry_sr_mult_48 = gtk_combo_box_entry_new_text ();
   gtk_widget_show (comboboxentry_sr_mult_48);
   gtk_box_pack_start (GTK_BOX (hbox147), comboboxentry_sr_mult_48, FALSE, FALSE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), _("44100"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), _("48000"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), _("88200"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), _("96000"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), _("176400"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), _("192000"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), "44100");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), "48000");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), "88200");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), "96000");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), "176400");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), "192000");
 
   hbox148 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox148);
@@ -1917,12 +1917,12 @@ create_prefwin (void)
   comboboxentry_sr_mult_44 = gtk_combo_box_entry_new_text ();
   gtk_widget_show (comboboxentry_sr_mult_44);
   gtk_box_pack_start (GTK_BOX (hbox148), comboboxentry_sr_mult_44, FALSE, FALSE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), _("44100"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), _("48000"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), _("88200"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), _("96000"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), _("176400"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), _("192000"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), "44100");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), "48000");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), "88200");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), "96000");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), "176400");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), "192000");
 
   checkbutton_dependent_sr = gtk_check_button_new_with_mnemonic (_("Based on input samplerate"));
   gtk_widget_show (checkbutton_dependent_sr);

@@ -2582,7 +2582,7 @@ Center</property>
 			      <child>
 				<widget class="GtkComboBoxEntry" id="comboboxentry_direct_sr">
 				  <property name="visible">True</property>
-				  <property name="items" translatable="yes">44100
+				  <property name="items">44100
 48000
 88200
 96000
@@ -2666,7 +2666,7 @@ Center</property>
 					  <child>
 					    <widget class="GtkComboBoxEntry" id="comboboxentry_sr_mult_48">
 					      <property name="visible">True</property>
-					      <property name="items" translatable="yes">44100
+					      <property name="items">44100
 48000
 88200
 96000
@@ -2725,7 +2725,7 @@ Center</property>
 					  <child>
 					    <widget class="GtkComboBoxEntry" id="comboboxentry_sr_mult_44">
 					      <property name="visible">True</property>
-					      <property name="items" translatable="yes">44100
+					      <property name="items">44100
 48000
 88200
 96000
