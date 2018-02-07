@@ -45,7 +45,10 @@ sub extract {
     my @lines;
 
     for my $f (File::Find::Rule->file()->name("*.c")->in($ddb_path)) {
-        next if ($android_xml && grep ({$f =~ /\/$_\//} @ignore_paths_android));
+        if ($android_xml && grep ({$f =~ /\/$_\//} @ignore_paths_android)) {
+#            print "skipped $f (ignore list)\n";
+            next;
+        }
         open F, "<$f" or die "Failed to open $f\n";
         my $relf = substr ($f, length($ddb_path)+1);
         while (<F>) {
@@ -110,6 +113,9 @@ sub extract {
                                 push @lines, { f=>$relf, line=>$., msgid=>$prop };
                             }
                         }
+                    }
+                    elsif (/^\s*\};/) {
+                        last;
                     }
                 }
             }
