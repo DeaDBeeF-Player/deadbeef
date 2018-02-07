@@ -127,6 +127,11 @@ static struct timeval last_br_update;
     if (![[self window] isVisible]) {
         return;
     }
+
+    if ([_seekBar dragging]) {
+        return;
+    }
+
     float dur = -1;
     float perc = 0;
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
