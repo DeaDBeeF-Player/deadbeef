@@ -2527,7 +2527,7 @@ Center</property>
 		  <property name="visible">True</property>
 		  <property name="label_xalign">0</property>
 		  <property name="label_yalign">0.5</property>
-		  <property name="shadow_type">GTK_SHADOW_NONE</property>
+		  <property name="shadow_type">GTK_SHADOW_ETCHED_IN</property>
 
 		  <child>
 		    <widget class="GtkAlignment" id="alignment31">
@@ -2536,17 +2536,16 @@ Center</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xscale">1</property>
 		      <property name="yscale">1</property>
-		      <property name="top_padding">0</property>
+		      <property name="top_padding">8</property>
 		      <property name="bottom_padding">0</property>
 		      <property name="left_padding">12</property>
 		      <property name="right_padding">0</property>
 
 		      <child>
 			<widget class="GtkVBox" id="vbox52">
-			  <property name="border_width">12</property>
 			  <property name="visible">True</property>
 			  <property name="homogeneous">False</property>
-			  <property name="spacing">8</property>
+			  <property name="spacing">0</property>
 
 			  <child>
 			    <widget class="GtkHBox" id="hbox145">
@@ -2609,13 +2608,15 @@ Center</property>
 
 			  <child>
 			    <widget class="GtkFrame" id="frame16">
+			      <property name="border_width">8</property>
 			      <property name="visible">True</property>
 			      <property name="label_xalign">0</property>
 			      <property name="label_yalign">0.5</property>
-			      <property name="shadow_type">GTK_SHADOW_NONE</property>
+			      <property name="shadow_type">GTK_SHADOW_ETCHED_IN</property>
 
 			      <child>
 				<widget class="GtkAlignment" id="alignment32">
+				  <property name="border_width">8</property>
 				  <property name="visible">True</property>
 				  <property name="xalign">0.5</property>
 				  <property name="yalign">0.5</property>
@@ -2630,7 +2631,7 @@ Center</property>
 				    <widget class="GtkVBox" id="vbox53">
 				      <property name="visible">True</property>
 				      <property name="homogeneous">False</property>
-				      <property name="spacing">0</property>
+				      <property name="spacing">8</property>
 
 				      <child>
 					<widget class="GtkHBox" id="hbox147">

@@ -1842,17 +1842,15 @@ create_prefwin (void)
   frame15 = gtk_frame_new (NULL);
   gtk_widget_show (frame15);
   gtk_box_pack_start (GTK_BOX (vbox10), frame15, FALSE, TRUE, 0);
-  gtk_frame_set_shadow_type (GTK_FRAME (frame15), GTK_SHADOW_NONE);
 
   alignment31 = gtk_alignment_new (0.5, 0.5, 1, 1);
   gtk_widget_show (alignment31);
   gtk_container_add (GTK_CONTAINER (frame15), alignment31);
-  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment31), 0, 0, 12, 0);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment31), 8, 0, 12, 0);
 
-  vbox52 = gtk_vbox_new (FALSE, 8);
+  vbox52 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox52);
   gtk_container_add (GTK_CONTAINER (alignment31), vbox52);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox52), 12);
 
   hbox145 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox145);
@@ -1875,14 +1873,15 @@ create_prefwin (void)
   frame16 = gtk_frame_new (NULL);
   gtk_widget_show (frame16);
   gtk_box_pack_start (GTK_BOX (vbox52), frame16, TRUE, TRUE, 0);
-  gtk_frame_set_shadow_type (GTK_FRAME (frame16), GTK_SHADOW_NONE);
+  gtk_container_set_border_width (GTK_CONTAINER (frame16), 8);
 
   alignment32 = gtk_alignment_new (0.5, 0.5, 1, 1);
   gtk_widget_show (alignment32);
   gtk_container_add (GTK_CONTAINER (frame16), alignment32);
+  gtk_container_set_border_width (GTK_CONTAINER (alignment32), 8);
   gtk_alignment_set_padding (GTK_ALIGNMENT (alignment32), 0, 0, 12, 0);
 
-  vbox53 = gtk_vbox_new (FALSE, 0);
+  vbox53 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox53);
   gtk_container_add (GTK_CONTAINER (alignment32), vbox53);
 
