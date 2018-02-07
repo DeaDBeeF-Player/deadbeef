@@ -528,6 +528,32 @@ project "artwork_plugin"
    defines { "USE_OGG=1", "USE_VFS_CURL", "USE_METAFLAC", "USE_MP4FF", "USE_TAGGING=1" }
    links { "jpeg", "png", "z", "FLAC", "ogg" }
 
+project "supereq_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "supereq"
+
+   files {
+       "plugins/supereq/*.c",
+       "plugins/supereq/*.cpp"
+   }
+
+   defines { "USE_OOURA" }
+   links { "m", "stdc++" }
+
+project "mono2stereo_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "ddb_mono2stereo"
+
+   files {
+       "plugins/mono2stereo/*.c",
+   }
+
 project "resources"
     kind "Utility"
     postbuildcommands {

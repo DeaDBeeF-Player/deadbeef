@@ -39,10 +39,7 @@ typedef struct {
     int channels;
     int quality;
     float samplerate;
-    float samplerate_48000;
-    float samplerate_44100;
     int autosamplerate;
-    int inputbased;
     SRC_STATE *src;
     SRC_DATA srcdata;
     int remaining; // number of input samples in SRC buffer
@@ -60,10 +57,7 @@ ddb_src_open (void) {
     DDB_INIT_DSP_CONTEXT (src,ddb_src_libsamplerate_t,&plugin);
 
     src->autosamplerate = 0;
-    src->inputbased = 0;
     src->samplerate = 44100;
-    src->samplerate_48000 = 48000;
-    src->samplerate_44100 = 44100;
     src->quality = 2;
     src->channels = -1;
     return (ddb_dsp_context_t *)src;
@@ -100,12 +94,6 @@ _get_target_samplerate (ddb_src_libsamplerate_t *src, ddb_waveformat_t *fmt) {
     if (src->autosamplerate) {
         DB_output_t *output = deadbeef->get_output ();
         return output->fmt.samplerate;
-    }
-    else if (src->inputbased && 0 == (fmt->samplerate % 48000)) {
-        return src->samplerate_48000;
-    }
-    else if (src->inputbased && 0 == (fmt->samplerate % 44100)) {
-        return src->samplerate_44100;
     }
     else {
         return src->samplerate;
@@ -243,12 +231,6 @@ ddb_src_get_param_name (int p) {
         return "Samplerate";
     case SRC_PARAM_AUTOSAMPLERATE:
         return "Auto samplerate";
-    case SRC_PARAM_SAMPLERATE_48000:
-        return "Samplerate for 48000, 96000, 192000";
-    case SRC_PARAM_SAMPLERATE_44100:
-        return "Samplerate for 44100, 88200, 176400";
-    case SRC_PARAM_USE_INPUT_BASED_RATE:
-        return "Input based rate";
     default:
         fprintf (stderr, "ddb_src_get_param_name: invalid param index (%d)\n", p);
     }
@@ -267,33 +249,12 @@ ddb_src_set_param (ddb_dsp_context_t *ctx, int p, const char *val) {
             ((ddb_src_libsamplerate_t*)ctx)->samplerate = 192000;
         }
         break;
-    case SRC_PARAM_SAMPLERATE_48000:
-        ((ddb_src_libsamplerate_t*)ctx)->samplerate_48000 = atof (val);
-        if (((ddb_src_libsamplerate_t*)ctx)->samplerate_48000 < 8000) {
-            ((ddb_src_libsamplerate_t*)ctx)->samplerate_48000 = 8000;
-        }
-        if (((ddb_src_libsamplerate_t*)ctx)->samplerate_48000 > 192000) {
-            ((ddb_src_libsamplerate_t*)ctx)->samplerate_48000 = 192000;
-        }
-        break;
-    case SRC_PARAM_SAMPLERATE_44100:
-        ((ddb_src_libsamplerate_t*)ctx)->samplerate_44100 = atof (val);
-        if (((ddb_src_libsamplerate_t*)ctx)->samplerate_44100 < 8000) {
-            ((ddb_src_libsamplerate_t*)ctx)->samplerate_44100 = 8000;
-        }
-        if (((ddb_src_libsamplerate_t*)ctx)->samplerate_44100 > 192000) {
-            ((ddb_src_libsamplerate_t*)ctx)->samplerate_44100 = 192000;
-        }
-        break;
     case SRC_PARAM_QUALITY:
         ((ddb_src_libsamplerate_t*)ctx)->quality = atoi (val);
         ((ddb_src_libsamplerate_t*)ctx)->quality_changed = 1;
         break;
     case SRC_PARAM_AUTOSAMPLERATE:
         ((ddb_src_libsamplerate_t*)ctx)->autosamplerate = atoi (val);
-        break;
-    case SRC_PARAM_USE_INPUT_BASED_RATE:
-        ((ddb_src_libsamplerate_t*)ctx)->inputbased = atoi (val);
         break;
     default:
         fprintf (stderr, "ddb_src_set_param: invalid param index (%d)\n", p);
@@ -312,16 +273,6 @@ ddb_src_get_param (ddb_dsp_context_t *ctx, int p, char *val, int sz) {
     case SRC_PARAM_AUTOSAMPLERATE:
         snprintf (val, sz, "%d", ((ddb_src_libsamplerate_t*)ctx)->autosamplerate);
         break;
-    case SRC_PARAM_SAMPLERATE_48000:
-        snprintf (val, sz, "%f", ((ddb_src_libsamplerate_t*)ctx)->samplerate_48000);
-        break;
-    case SRC_PARAM_SAMPLERATE_44100:
-        snprintf (val, sz, "%f", ((ddb_src_libsamplerate_t*)ctx)->samplerate_44100);
-        break;
-    case SRC_PARAM_USE_INPUT_BASED_RATE:
-        snprintf (val, sz, "%d", ((ddb_src_libsamplerate_t*)ctx)->inputbased);
-        break;
-
     default:
         fprintf (stderr, "ddb_src_get_param: invalid param index (%d)\n", p);
     }
@@ -330,9 +281,6 @@ ddb_src_get_param (ddb_dsp_context_t *ctx, int p, char *val, int sz) {
 static const char settings_dlg[] =
     "property \"Autodetect samplerate from output device\" checkbox 2 0;\n"
     "property \"Set samplerate directly\" spinbtn[8000,192000,1] 0 44100;\n"
-    "property \"Use values below based on input samplerate\" checkbox 5 0;\n"
-    "property \"Samplerate for multiples of 48KHz (96K, 192K, ...)\" spinbtn[8000,192000,1] 3 48000;\n"
-    "property \"Samplerate for multiples of 44.1KHz (88.2K, 176.4K, ...)\" spinbtn[8000,192000,1] 4 44100;\n"
     "property \"Quality / Algorithm\" select[5] 1 2 SINC_BEST_QUALITY SINC_MEDIUM_QUALITY SINC_FASTEST ZERO_ORDER_HOLD LINEAR;\n"
 ;
 

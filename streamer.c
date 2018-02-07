@@ -74,12 +74,17 @@ static int autoconv_8_to_16 = 1;
 
 static int autoconv_16_to_24 = 0;
 
+
+static int conf_streamer_override_samplerate = 0;
+static int conf_streamer_use_dependent_samplerate = 0;
+static int conf_streamer_samplerate = 44100;
+static int conf_streamer_samplerate_mult_48 = 48000;
+static int conf_streamer_samplerate_mult_44 = 44100;
+
 static int trace_bufferfill = 0;
 
 static int stop_after_current = 0;
 static int stop_after_album = 0;
-
-static int conf_streamer_nosleep = 0;
 
 static int streaming_terminate;
 
@@ -101,7 +106,7 @@ static time_t started_timestamp; // result of calling time(NULL)
 static playItem_t *streaming_track;
 static playItem_t *last_played; // this is the last track that was played, should avoid setting this to NULL
 
-static int _dsp_changed;
+static int _format_change_wait;
 static ddb_waveformat_t prev_output_format; // last format that was sent to output via streamer_set_output_format
 static ddb_waveformat_t last_block_fmt; // input file format corresponding to the current output
 
@@ -1355,9 +1360,57 @@ handle_track_change (playItem_t *track) {
     }
 }
 
-void
-streamer_dsp_changed (void) {
-    _dsp_changed = 1;
+static void
+get_desired_output_format (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt) {
+    memcpy (out_fmt, in_fmt, sizeof (ddb_waveformat_t));
+
+    if (autoconv_8_to_16) {
+        if (out_fmt->bps == 8) {
+            out_fmt->bps = 16;
+        }
+    }
+    if (autoconv_16_to_24) {
+        if (out_fmt->bps == 16) {
+            out_fmt->bps = 24;
+        }
+    }
+
+#if !defined(ANDROID) && !defined(HAVE_XGUI)
+    // samplerate override
+    if (conf_streamer_override_samplerate) {
+        out_fmt->samplerate = conf_streamer_samplerate;
+        if (conf_streamer_use_dependent_samplerate) {
+            if (0 == (in_fmt->samplerate % 48000)) {
+                out_fmt->samplerate = conf_streamer_samplerate_mult_48;
+            }
+            else if (0 == (in_fmt->samplerate % 44100)) {
+                out_fmt->samplerate = conf_streamer_samplerate_mult_44;
+            }
+        }
+    }
+#endif
+
+    // android simulation on PC: force 16 bit and 44100 or 48000 only, to force format conversion
+#if !defined(ANDROID) && defined(HAVE_XGUI)
+    out_fmt->bps = 16;
+    if (!(out_fmt->samplerate % 48000)) {
+        out_fmt->samplerate = 48000;
+    }
+    else if (!(out_fmt->samplerate % 44100)) {
+        out_fmt->samplerate = 44100;
+    }
+#endif
+}
+
+static void
+streamer_set_output_format (ddb_waveformat_t *fmt) {
+    ddb_waveformat_t outfmt;
+    get_desired_output_format (fmt, &outfmt);
+    if (memcmp (&prev_output_format, &outfmt, sizeof (ddb_waveformat_t))) {
+        memcpy (&prev_output_format, &outfmt, sizeof (ddb_waveformat_t));
+        DB_output_t *output = plug_get_output ();
+        output->setformat (&outfmt);
+    }
 }
 
 void
@@ -1419,6 +1472,19 @@ streamer_thread (void *ctx) {
                 usleep (50000);
             }
             continue;
+        }
+
+        if (_format_change_wait) {
+            streamer_lock ();
+            streamblock_t *block = streamreader_get_curr_block();
+            if (block) {
+                if (memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+                    streamer_set_output_format (&block->fmt);
+                    memcpy (&last_block_fmt, &block->fmt, sizeof (ddb_waveformat_t));
+                }
+            }
+            _format_change_wait = 0;
+            streamer_unlock ();
         }
 
         _update_buffering_state ();
@@ -1606,53 +1672,9 @@ streamer_reset (int full) { // must be called when current song changes by exter
     streamer_unlock();
 }
 
-// NOTE: this is supposed to be only called from streamer_read
-static void
-get_desired_output_format (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt) {
-    memcpy (out_fmt, in_fmt, sizeof (ddb_waveformat_t));
-
-    if (autoconv_8_to_16) {
-        if (out_fmt->bps == 8) {
-            out_fmt->bps = 16;
-        }
-    }
-    if (autoconv_16_to_24) {
-        if (out_fmt->bps == 16) {
-            out_fmt->bps = 24;
-        }
-    }
-
-// android simulation on PC: force 16 bit and 44100 or 48000 only, to force format conversion
-#if !defined(ANDROID) && defined(HAVE_XGUI)
-    out_fmt->bps = 16;
-    if (!(out_fmt->samplerate % 48000)) {
-        out_fmt->samplerate = 48000;
-    }
-    else if (!(out_fmt->samplerate % 44100)) {
-        out_fmt->samplerate = 44100;
-    }
-#endif
-}
-
-static void
-streamer_set_output_format (ddb_waveformat_t *fmt) {
-    ddb_waveformat_t outfmt;
-    get_desired_output_format (fmt, &outfmt);
-    if (memcmp (&prev_output_format, &outfmt, sizeof (ddb_waveformat_t))) {
-        memcpy (&prev_output_format, &outfmt, sizeof (ddb_waveformat_t));
-        DB_output_t *output = plug_get_output ();
-        output->setformat (&outfmt);
-    }
-}
-
 // when firstblock is true -- means it's allowed to change output format
 static int
-process_output_block (char *bytes, int firstblock) {
-    streamblock_t *block = streamreader_get_curr_block();
-    if (!block) {
-        return -1;
-    }
-
+process_output_block (streamblock_t *block, char *bytes) {
     DB_output_t *output = plug_get_output ();
 
     // handle change of track, or start of a new track
@@ -1670,16 +1692,6 @@ process_output_block (char *bytes, int firstblock) {
 
     int sz = block->size - block->pos;
     assert (sz);
-
-    if (firstblock) {
-        // Try to set output format to the input format, before running dsp.
-        // This is needed so that resampler knows what to resample to.
-        // This only needs to be done once per input format change.
-        if (memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
-            streamer_set_output_format (&block->fmt);
-            memcpy (&last_block_fmt, &block->fmt, sizeof (ddb_waveformat_t));
-        }
-    }
 
     ddb_waveformat_t datafmt; // comes either from dsp, or from input plugin
     memcpy (&datafmt, &block->fmt, sizeof (ddb_waveformat_t));
@@ -1730,13 +1742,6 @@ process_output_block (char *bytes, int firstblock) {
         block->pos += sz;
     }
 #endif
-
-    // Set the final post-dsp output format, if differs.
-    // DSP plugins may change output format at any time.
-    if (firstblock || _dsp_changed) {
-        streamer_set_output_format (&datafmt);
-        _dsp_changed = 0;
-    }
 
     if (memcmp (&output->fmt, &datafmt, sizeof (ddb_waveformat_t))) {
         sz = pcm_convert (&datafmt, dspbytes, &output->fmt, bytes, sz);
@@ -1850,6 +1855,11 @@ streamer_read (char *bytes, int size) {
 #endif
     DB_output_t *output = plug_get_output ();
 
+    if (_format_change_wait) {
+        memset (bytes, 0, size);
+        return size;
+    }
+
     streamer_lock ();
     streamblock_t *block = streamreader_get_curr_block();
     if (!block) {
@@ -1871,7 +1881,8 @@ streamer_read (char *bytes, int size) {
         streamer_unlock();
 
         if (streaming_track) {
-            return 0;
+            memset (bytes, 0, size);
+            return size;
         }
         _audio_stall_count++;
         return 0;
@@ -1879,18 +1890,25 @@ streamer_read (char *bytes, int size) {
 
     _audio_stall_count = 0;
 
-    // need to drain outbuffer before changing format?
-    if (!outbuffer_remaining || !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+    // only decode until the next format change
+    if (!memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
         // decode enough blocks to fill the output buffer
-        int firstblock = 1;
-        while (outbuffer_remaining < size) {
-            int rb = process_output_block (outbuffer + outbuffer_remaining, firstblock);
+        while (block && outbuffer_remaining < size && !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+            int rb = process_output_block (block, outbuffer + outbuffer_remaining);
             if (rb <= 0) {
                 break;
             }
             outbuffer_remaining += rb;
-            firstblock = 0;
+            block = streamreader_get_curr_block();
         }
+    }
+    // empty buffer and the next block format differs? request format change!
+
+    if (!outbuffer_remaining && memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+        _format_change_wait = 1;
+        streamer_unlock();
+        memset (bytes, 0, size);
+        return size;
     }
     streamer_unlock ();
 
@@ -1898,7 +1916,8 @@ streamer_read (char *bytes, int size) {
     int sz = min (size, outbuffer_remaining);
     if (!sz) {
         // no data available
-        return 0;
+        memset (bytes, 0, size);
+        return size;
     }
 
     // clip to frame size
@@ -2017,8 +2036,20 @@ streamer_ok_to_read (int len) {
     return !streamer_is_buffering;
 }
 
+static int
+clamp_samplerate (int val) {
+    if (val < 8000) {
+        return 8000;
+    }
+    else if (val > 768000) {
+        return 768000;
+    }
+    return val;
+}
+
 void
 streamer_configchanged (void) {
+    streamer_lock ();
     pl_set_order (conf_get_int ("playback.order", 0));
     if (playing_track) {
         playing_track->played = 1;
@@ -2047,7 +2078,27 @@ streamer_configchanged (void) {
         ctmap_init ();
     }
 
-    conf_streamer_nosleep = conf_get_int ("streamer.nosleep", 0);
+    int new_conf_streamer_override_samplerate = conf_get_int ("streamer.override_samplerate", 0);
+    int new_conf_streamer_use_dependent_samplerate = conf_get_int ("streamer.use_dependent_samplerate", 0);
+    int new_conf_streamer_samplerate = clamp_samplerate (conf_get_int ("streamer.samplerate", 44100));
+    int new_conf_streamer_samplerate_mult_48 = clamp_samplerate (conf_get_int ("streamer.samplerate_mult_48", 48000));
+    int new_conf_streamer_samplerate_mult_44 = clamp_samplerate (conf_get_int ("streamer.samplerate_mult_44", 44100));
+
+    if (conf_streamer_override_samplerate != new_conf_streamer_override_samplerate
+        || conf_streamer_use_dependent_samplerate != new_conf_streamer_use_dependent_samplerate
+        || conf_streamer_samplerate != new_conf_streamer_samplerate
+        || conf_streamer_samplerate_mult_48 != new_conf_streamer_samplerate_mult_48
+        || conf_streamer_samplerate_mult_44 != new_conf_streamer_samplerate_mult_44) {
+        memset (&last_block_fmt, 0, sizeof (last_block_fmt));
+    }
+
+    conf_streamer_override_samplerate = new_conf_streamer_override_samplerate;
+    conf_streamer_use_dependent_samplerate = new_conf_streamer_use_dependent_samplerate;
+    conf_streamer_samplerate = new_conf_streamer_samplerate;
+    conf_streamer_samplerate_mult_48 = new_conf_streamer_samplerate_mult_48;
+    conf_streamer_samplerate_mult_44 = new_conf_streamer_samplerate_mult_44;
+
+    streamer_unlock ();
 
     streamreader_configchanged ();
 }

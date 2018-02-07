@@ -179,7 +179,4 @@ streamer_set_buffering_track (playItem_t *it);
 void
 streamer_yield (void);
 
-void
-streamer_dsp_changed (void);
-
 #endif // __STREAMER_H
