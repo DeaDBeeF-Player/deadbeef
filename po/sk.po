@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-07 21:34+0100\n"
+"POT-Creation-Date: 2018-02-07 22:42+0100\n"
 "PO-Revision-Date: 2017-11-11 11:22+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Slovak (http://www.transifex.com/deadbeef-player/deadbeef-"
@@ -37,8 +37,9 @@ msgid "DeaDBeeF Translators"
 msgstr ""
 
 #: ../plugins/gtkui/callbacks.c:638 ../plugins/gtkui/interface.c:976
-#: ../plugins/gtkui/deadbeef.glade.h:62 ../plugins/converter/convgui.c:1759
-#: ../plugins/converter/convgui.c:1767 ../plugins/gtkui/actionhandlers.c:473
+#: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:31
+#: ../plugins/converter/convgui.c:1759 ../plugins/converter/convgui.c:1767
+#: ../plugins/gtkui/actionhandlers.c:473
 msgid "Help"
 msgstr "Pomocník"
 
@@ -78,7 +79,7 @@ msgstr "Načítať predvoľby"
 msgid "Import Foobar2000 Preset"
 msgstr "Importovať predvoľby Foobar2000"
 
-#: ../plugins/gtkui/eq.c:367 ../translation/plugins.c:65
+#: ../plugins/gtkui/eq.c:367 ../translation/plugins.c:5
 msgid "Enable"
 msgstr "Zapnúť"
 
@@ -109,8 +110,8 @@ msgstr "1 deň %d:%02d:%02d"
 msgid "%d days %d:%02d:%02d"
 msgstr "%d dní %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:672 ../plugins/gtkui/fileman.c:64
-#: ../plugins/pltbrowser/pltbrowser.c:72
+#: ../plugins/gtkui/gtkui.c:672 ../translation/plugins.c:56
+#: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 msgid "New Playlist"
 msgstr "Nový zoznam stôp"
 
@@ -354,7 +355,7 @@ msgid "Custom"
 msgstr "Vlastné"
 
 #: ../plugins/gtkui/interface.c:292 ../plugins/gtkui/interface.c:1791
-#: ../plugins/gtkui/deadbeef.glade.h:27
+#: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:49
 msgid "Preferences"
 msgstr "Nastavenia"
 
@@ -465,10 +466,12 @@ msgid "Search"
 msgstr "Hľadať"
 
 #: ../plugins/gtkui/interface.c:794 ../plugins/gtkui/deadbeef.glade.h:54
+#: ../translation/plugins.c:178
 msgid "Stop"
 msgstr "Zastaviť"
 
 #: ../plugins/gtkui/interface.c:802 ../plugins/gtkui/deadbeef.glade.h:55
+#: ../translation/plugins.c:177
 msgid "Play"
 msgstr "Prehrať"
 
@@ -477,14 +480,17 @@ msgid "Pause"
 msgstr "Pozastaviť"
 
 #: ../plugins/gtkui/interface.c:818 ../plugins/gtkui/deadbeef.glade.h:57
+#: ../translation/plugins.c:179
 msgid "Previous"
 msgstr "Predošlá"
 
 #: ../plugins/gtkui/interface.c:826 ../plugins/gtkui/deadbeef.glade.h:58
+#: ../translation/plugins.c:180
 msgid "Next"
 msgstr "Ďalšia"
 
 #: ../plugins/gtkui/interface.c:834 ../plugins/gtkui/deadbeef.glade.h:59
+#: ../translation/plugins.c:183
 msgid "Play Random"
 msgstr "Prehrať náhodnú"
 
@@ -493,12 +499,12 @@ msgid "About"
 msgstr "O aplikácii"
 
 #: ../plugins/gtkui/interface.c:856 ../plugins/gtkui/deadbeef.glade.h:61
-#: ../translation/plugins.c:20
+#: ../translation/plugins.c:23
 msgid "Quit"
 msgstr "Ukončiť"
 
 #: ../plugins/gtkui/interface.c:1049 ../plugins/gtkui/plcommon.c:1228
-#: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:26
+#: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:30
 msgid "Track Properties"
 msgstr "Vlastnosti stopy"
 
@@ -706,6 +712,7 @@ msgid "\"Stop after current album\" option will switch off after triggering"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:2085 ../plugins/gtkui/deadbeef.glade.h:112
+#: ../translation/plugins.c:33
 msgid "Playback"
 msgstr ""
 
@@ -772,7 +779,7 @@ msgid "Player"
 msgstr "Prehrávač"
 
 #: ../plugins/gtkui/interface.c:2258 ../plugins/gtkui/deadbeef.glade.h:128
-#: ../translation/plugins.c:185
+#: ../translation/plugins.c:2
 msgid "Close playlists with middle mouse button"
 msgstr ""
 
@@ -1153,7 +1160,7 @@ msgid ""
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:5093 ../plugins/gtkui/deadbeef.glade.h:218
-#: ../plugins/shellexecui/interface.c:70
+#: ../translation/plugins.c:20 ../plugins/shellexecui/interface.c:70
 #: ../plugins/shellexecui/shellexec.glade.h:5
 msgid "Edit"
 msgstr ""
@@ -1267,15 +1274,15 @@ msgstr ""
 msgid "_Paste"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:990
+#: ../plugins/gtkui/plcommon.c:990 ../translation/plugins.c:171
 msgid "Add To Playback Queue"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:994
+#: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:170
 msgid "Remove From Playback Queue"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1016 ../translation/plugins.c:122
+#: ../plugins/gtkui/plcommon.c:1016 ../translation/plugins.c:139
 msgid "Reload Metadata"
 msgstr ""
 
@@ -1287,7 +1294,7 @@ msgstr ""
 msgid "_Copy"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1079 ../translation/plugins.c:21
+#: ../plugins/gtkui/plcommon.c:1079 ../translation/plugins.c:24
 msgid "Remove From Disk"
 msgstr ""
 
@@ -1613,7 +1620,7 @@ msgstr ""
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
-#: ../translation/extra.c:3
+#: ../translation/extra.c:3 ../translation/plugins.c:90
 msgid "Add Audio CD"
 msgstr ""
 
@@ -1622,7 +1629,7 @@ msgid "Lookup on Last.fm"
 msgstr "Vyhladať na Last.fm"
 
 #. ALSA output plugin
-#: ../translation/extra.c:6 ../translation/plugins.c:198
+#: ../translation/extra.c:6 ../translation/plugins.c:232
 msgid "Use ALSA resampling"
 msgstr ""
 
@@ -1631,41 +1638,41 @@ msgid "Release device while stopped"
 msgstr ""
 
 #: ../translation/extra.c:8 ../translation/extra.c:55
-#: ../translation/plugins.c:179
+#: ../translation/plugins.c:73
 msgid "Preferred buffer size"
 msgstr ""
 
-#: ../translation/extra.c:9 ../translation/plugins.c:199
+#: ../translation/extra.c:9 ../translation/plugins.c:233
 msgid "Preferred period size"
 msgstr ""
 
 #. Last.fm plugin
-#: ../translation/extra.c:11 ../translation/plugins.c:111
+#: ../translation/extra.c:11 ../translation/plugins.c:106
 msgid "Enable scrobbler"
 msgstr ""
 
-#: ../translation/extra.c:12 ../translation/plugins.c:112
+#: ../translation/extra.c:12 ../translation/plugins.c:107
 msgid "Disable nowplaying"
 msgstr ""
 
-#: ../translation/extra.c:13 ../translation/plugins.c:113
+#: ../translation/extra.c:13 ../translation/plugins.c:108
 msgid "Username"
 msgstr ""
 
-#: ../translation/extra.c:14 ../translation/plugins.c:114
+#: ../translation/extra.c:14 ../translation/plugins.c:109
 msgid "Password"
 msgstr "Heslo"
 
-#: ../translation/extra.c:15 ../translation/plugins.c:115
+#: ../translation/extra.c:15 ../translation/plugins.c:110
 msgid "Scrobble URL"
 msgstr ""
 
-#: ../translation/extra.c:16 ../translation/plugins.c:116
+#: ../translation/extra.c:16 ../translation/plugins.c:111
 msgid "Prefer Album Artist over Artist field"
 msgstr ""
 
 #. OSS output plugin
-#: ../translation/extra.c:18 ../translation/plugins.c:196
+#: ../translation/extra.c:18 ../translation/plugins.c:236
 msgid "Device file"
 msgstr ""
 
@@ -1678,11 +1685,11 @@ msgstr ""
 msgid "Cache update period (hr)"
 msgstr ""
 
-#: ../translation/extra.c:22 ../translation/plugins.c:81
+#: ../translation/extra.c:22 ../translation/plugins.c:76
 msgid "Fetch from embedded tags"
 msgstr ""
 
-#: ../translation/extra.c:23 ../translation/plugins.c:82
+#: ../translation/extra.c:23 ../translation/plugins.c:77
 msgid "Fetch from local folder"
 msgstr ""
 
@@ -1698,24 +1705,24 @@ msgstr ""
 msgid "Fetch from albumart.org"
 msgstr ""
 
-#: ../translation/extra.c:27 ../translation/plugins.c:94
+#: ../translation/extra.c:27 ../translation/plugins.c:87
 msgid "Scale artwork towards longer side"
 msgstr ""
 
 #. Audio CD player
-#: ../translation/extra.c:29 ../translation/plugins.c:96
+#: ../translation/extra.c:29 ../translation/plugins.c:91
 msgid "Use CDDB/FreeDB"
 msgstr ""
 
-#: ../translation/extra.c:30 ../translation/plugins.c:97
+#: ../translation/extra.c:30 ../translation/plugins.c:92
 msgid "Prefer CD-Text over CDDB"
 msgstr ""
 
-#: ../translation/extra.c:31 ../translation/plugins.c:98
+#: ../translation/extra.c:31 ../translation/plugins.c:93
 msgid "CDDB url (e.g. 'freedb.org')"
 msgstr ""
 
-#: ../translation/extra.c:32 ../translation/plugins.c:99
+#: ../translation/extra.c:32 ../translation/plugins.c:94
 msgid "CDDB port number (e.g. '888')"
 msgstr ""
 
@@ -1723,7 +1730,7 @@ msgstr ""
 msgid "Prefer CDDB protocol over HTTP"
 msgstr ""
 
-#: ../translation/extra.c:34 ../translation/plugins.c:101
+#: ../translation/extra.c:34 ../translation/plugins.c:96
 msgid "Enable NRG image support"
 msgstr ""
 
@@ -1732,89 +1739,89 @@ msgstr ""
 msgid "Resampling quality (0..2, higher is better)"
 msgstr ""
 
-#: ../translation/extra.c:37 ../translation/plugins.c:75
+#: ../translation/extra.c:37 ../translation/plugins.c:229
 msgid "8-bit output (default is 16)"
 msgstr ""
 
 #. Game_Music_Emu decoder plugin
-#: ../translation/extra.c:39 ../translation/plugins.c:1
+#: ../translation/extra.c:39 ../translation/plugins.c:10
 msgid "Max song length (in minutes)"
 msgstr ""
 
-#: ../translation/extra.c:40 ../translation/plugins.c:2
+#: ../translation/extra.c:40 ../translation/plugins.c:11
 msgid "Fadeout length (seconds)"
 msgstr ""
 
-#: ../translation/extra.c:41 ../translation/plugins.c:3
+#: ../translation/extra.c:41 ../translation/plugins.c:12
 msgid "Play loops nr. of times (if available)"
 msgstr ""
 
 #. Standard GTK2 user interface plugin
-#: ../translation/extra.c:43 ../translation/plugins.c:58
+#: ../translation/extra.c:43 ../translation/plugins.c:65
 msgid "Ask confirmation to delete files from disk"
 msgstr ""
 
-#: ../translation/extra.c:44 ../translation/plugins.c:59
+#: ../translation/extra.c:44 ../translation/plugins.c:66
 msgid "Status icon volume control sensitivity"
 msgstr ""
 
-#: ../translation/extra.c:45 ../translation/plugins.c:60
+#: ../translation/extra.c:45 ../translation/plugins.c:67
 msgid "Custom status icon"
 msgstr ""
 
-#: ../translation/extra.c:46 ../translation/plugins.c:61
+#: ../translation/extra.c:46 ../translation/plugins.c:68
 msgid "Run gtk_init with --sync (debug mode)"
 msgstr ""
 
-#: ../translation/extra.c:47 ../translation/plugins.c:62
+#: ../translation/extra.c:47 ../translation/plugins.c:69
 msgid "Add separators between plugin context menu items"
 msgstr ""
 
 #. OSD Notify plugin
-#: ../translation/extra.c:49 ../translation/plugins.c:66
+#: ../translation/extra.c:49 ../translation/plugins.c:6
 msgid "Notification title format"
 msgstr ""
 
-#: ../translation/extra.c:50 ../translation/plugins.c:67
+#: ../translation/extra.c:50 ../translation/plugins.c:7
 msgid "Notification content format"
 msgstr ""
 
-#: ../translation/extra.c:51 ../translation/plugins.c:68
+#: ../translation/extra.c:51 ../translation/plugins.c:8
 msgid "Show album art"
 msgstr ""
 
-#: ../translation/extra.c:52 ../translation/plugins.c:69
+#: ../translation/extra.c:52 ../translation/plugins.c:9
 msgid "Album art size (px)"
 msgstr ""
 
 #. PulseAudio output plugin
-#: ../translation/extra.c:54 ../translation/plugins.c:178
+#: ../translation/extra.c:54 ../translation/plugins.c:72
 msgid "PulseAudio server"
 msgstr ""
 
-#: ../translation/extra.c:56 ../translation/plugins.c:201
+#: ../translation/extra.c:56 ../translation/plugins.c:211
 msgid "Samplerate"
 msgstr ""
 
 #. SHN player plugin
-#: ../translation/extra.c:58 ../translation/plugins.c:191
+#: ../translation/extra.c:58 ../translation/plugins.c:225
 msgid "Relative seek table path"
 msgstr ""
 
-#: ../translation/extra.c:59 ../translation/plugins.c:192
+#: ../translation/extra.c:59 ../translation/plugins.c:226
 msgid "Absolute seek table path"
 msgstr ""
 
-#: ../translation/extra.c:60 ../translation/plugins.c:193
+#: ../translation/extra.c:60 ../translation/plugins.c:227
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr ""
 
 #. SID decoder plugin
-#: ../translation/extra.c:62 ../translation/plugins.c:203
+#: ../translation/extra.c:62 ../translation/plugins.c:209
 msgid "Enable HVSC Songlength DB"
 msgstr ""
 
-#: ../translation/extra.c:63 ../translation/plugins.c:204
+#: ../translation/extra.c:63 ../translation/plugins.c:210
 msgid "Songlengths.txt (from HVSC)"
 msgstr ""
 
@@ -1822,12 +1829,12 @@ msgstr ""
 msgid "Bits per sample (8 or 16)"
 msgstr ""
 
-#: ../translation/extra.c:65 ../translation/plugins.c:206
+#: ../translation/extra.c:65 ../translation/plugins.c:213
 msgid "Default song length (sec)"
 msgstr ""
 
 #. WildMidi player plugin
-#: ../translation/extra.c:67 ../translation/plugins.c:207
+#: ../translation/extra.c:67 ../translation/plugins.c:214
 msgid "Timidity++ bank configuration file"
 msgstr ""
 
@@ -1884,12 +1891,12 @@ msgid "Embedded Cuesheet"
 msgstr "Vložený cue"
 
 #. FFmpeg deocder plugin
-#: ../translation/extra.c:90 ../translation/plugins.c:71
+#: ../translation/extra.c:90 ../translation/plugins.c:114
 msgid "File Extensions (separate with ';')"
 msgstr ""
 
 #. Converter GUI
-#: ../translation/extra.c:92 ../translation/plugins.c:119
+#: ../translation/extra.c:92 ../translation/plugins.c:14
 msgid "Convert"
 msgstr ""
 
@@ -1898,7 +1905,7 @@ msgstr ""
 msgid "Target Samplerate"
 msgstr ""
 
-#: ../translation/extra.c:95 ../translation/plugins.c:182
+#: ../translation/extra.c:95 ../translation/plugins.c:221
 msgid "Quality / Algorithm"
 msgstr ""
 
@@ -1907,7 +1914,7 @@ msgid "Automatic Samplerate (overrides Target Samplerate)"
 msgstr ""
 
 #. shellexecui
-#: ../translation/extra.c:98
+#: ../translation/extra.c:98 ../translation/plugins.c:115
 msgid "Configure Custom Shell Commands"
 msgstr ""
 
@@ -1917,793 +1924,741 @@ msgid "Disable gapless playback (faster scanning)"
 msgstr ""
 
 #. adplug
-#: ../translation/extra.c:102 ../translation/plugins.c:189
+#: ../translation/extra.c:102 ../translation/plugins.c:217
 msgid "Prefer Ken emu over Satoh (surround won't work)"
 msgstr ""
 
-#: ../translation/extra.c:103 ../translation/plugins.c:190
+#: ../translation/extra.c:103 ../translation/plugins.c:218
 msgid "Enable surround"
 msgstr ""
 
-#: ../translation/extra.c:104
+#: ../translation/extra.c:104 ../translation/plugins.c:141
 msgid "Skip to"
 msgstr ""
 
-#: ../translation/extra.c:105
+#: ../translation/extra.c:105 ../translation/plugins.c:142
 msgid "Previous genre"
 msgstr ""
 
-#: ../translation/extra.c:106
+#: ../translation/extra.c:106 ../translation/plugins.c:143
 msgid "Previous composer"
 msgstr ""
 
-#: ../translation/extra.c:107
+#: ../translation/extra.c:107 ../translation/plugins.c:144
 msgid "Previous artist"
 msgstr ""
 
-#: ../translation/extra.c:108
+#: ../translation/extra.c:108 ../translation/plugins.c:145
 msgid "Previous album"
 msgstr ""
 
-#: ../translation/extra.c:109
+#: ../translation/extra.c:109 ../translation/plugins.c:146
 msgid "Next genre"
 msgstr ""
 
-#: ../translation/extra.c:110
+#: ../translation/extra.c:110 ../translation/plugins.c:147
 msgid "Next composer"
 msgstr ""
 
-#: ../translation/extra.c:111
+#: ../translation/extra.c:111 ../translation/plugins.c:148
 msgid "Next artist"
 msgstr ""
 
-#: ../translation/extra.c:112
+#: ../translation/extra.c:112 ../translation/plugins.c:149
 msgid "Next album"
 msgstr ""
 
+#: ../translation/plugins.c:1
+msgid "Volume Level"
+msgstr ""
+
+#: ../translation/plugins.c:3
+msgid "Highlight current playlist"
+msgstr ""
+
 #: ../translation/plugins.c:4
-msgid "ColecoVision BIOS (for SGC file format)"
-msgstr ""
-
-#: ../translation/plugins.c:5
-msgid "Tempo Change (%)"
-msgstr ""
-
-#: ../translation/plugins.c:6
-msgid "Pitch Change (semi-tones)"
-msgstr ""
-
-#: ../translation/plugins.c:7
-msgid "Playback Rate Change (%)"
-msgstr ""
-
-#: ../translation/plugins.c:8
-msgid "Absolute Samplerate (overrides Rate Change if nonzero)"
-msgstr ""
-
-#: ../translation/plugins.c:9
-msgid "Use AA Filter"
-msgstr ""
-
-#: ../translation/plugins.c:10
-msgid "AA Filter Length"
-msgstr ""
-
-#: ../translation/plugins.c:11
-msgid "Use Quickseek"
-msgstr ""
-
-#: ../translation/plugins.c:12
-msgid "Time Stretch Sequence Length (ms)"
+msgid "Play on double-click"
 msgstr ""
 
 #: ../translation/plugins.c:13
-msgid "Time Stretch Seek Window Length (ms)"
-msgstr ""
-
-#: ../translation/plugins.c:14
-msgid "ReplayGain/Remove ReplayGain Information"
+msgid "ColecoVision BIOS (for SGC file format)"
 msgstr ""
 
 #: ../translation/plugins.c:15
-msgid "ReplayGain/Scan Selection As Albums (By Tags)"
+msgid "ReplayGain"
 msgstr ""
 
 #: ../translation/plugins.c:16
-msgid "ReplayGain/Scan Selection As Single Album"
+msgid "Remove ReplayGain Information"
 msgstr ""
 
 #: ../translation/plugins.c:17
-msgid "ReplayGain/Scan Per-file Track Gain"
+msgid "Scan Selection As Albums (By Tags)"
 msgstr ""
 
 #: ../translation/plugins.c:18
-#, fuzzy
-msgid "Edit/Deselect All"
-msgstr "Zrušiť výber"
+msgid "Scan Selection As Single Album"
+msgstr ""
 
 #: ../translation/plugins.c:19
+msgid "Scan Per-file Track Gain"
+msgstr ""
+
+#: ../translation/plugins.c:21
 #, fuzzy
-msgid "Edit/Select All"
-msgstr "Vybrať všetky"
+msgid "Deselect All"
+msgstr "Zrušiť výber"
 
 #: ../translation/plugins.c:22
 #, fuzzy
-msgid "File/Add Location"
-msgstr "Pridať umiestnenie"
-
-#: ../translation/plugins.c:23
-#, fuzzy
-msgid "File/Add Folder(s)"
-msgstr "Pridať priečinok/priečinky"
-
-#: ../translation/plugins.c:24
-#, fuzzy
-msgid "File/Add File(s)"
-msgstr "Pridať súbor(y)"
+msgid "Select All"
+msgstr "Vybrať všetky"
 
 #: ../translation/plugins.c:25
 #, fuzzy
-msgid "File/Open File(s)"
-msgstr "_Otvoriť súbor(y)"
+msgid "File"
+msgstr "_Súbor"
+
+#: ../translation/plugins.c:26
+#, fuzzy
+msgid "Add Location"
+msgstr "Pridať umiestnenie"
 
 #: ../translation/plugins.c:27
-msgid "Help/Show Help Page"
-msgstr ""
+#, fuzzy
+msgid "Add Folder(s)"
+msgstr "Pridať priečinok/priečinky"
 
 #: ../translation/plugins.c:28
-msgid "Playback/Cycle Playback Looping Mode"
-msgstr ""
+#, fuzzy
+msgid "Add File(s)"
+msgstr "Pridať súbor(y)"
 
 #: ../translation/plugins.c:29
-msgid "Playback/Playback Looping - Don't loop"
-msgstr ""
-
-#: ../translation/plugins.c:30
-msgid "Playback/Playback Looping - Single track"
-msgstr ""
-
-#: ../translation/plugins.c:31
-msgid "Playback/Playback Looping - All"
-msgstr ""
+#, fuzzy
+msgid "Open File(s)"
+msgstr "_Otvoriť súbor(y)"
 
 #: ../translation/plugins.c:32
-msgid "Playback/Cycle Playback Order"
-msgstr ""
-
-#: ../translation/plugins.c:33
-msgid "Playback/Playback Order - Random"
+msgid "Show Help Page"
 msgstr ""
 
 #: ../translation/plugins.c:34
-msgid "Playback/Playback Order - Shuffle albums"
+msgid "Cycle Playback Looping Mode"
 msgstr ""
 
 #: ../translation/plugins.c:35
-msgid "Playback/Playback Order - Shuffle tracks"
+msgid "Playback Looping - Don't loop"
 msgstr ""
 
 #: ../translation/plugins.c:36
-msgid "Playback/Playback Order - Linear"
+msgid "Playback Looping - Single track"
 msgstr ""
 
 #: ../translation/plugins.c:37
-#, fuzzy
-msgid "Playback/Toggle Cursor Follows Playback"
-msgstr "Kurzor podľa prehrávanej stopy"
-
-#: ../translation/plugins.c:38
-#, fuzzy
-msgid "Playback/Toggle Scroll Follows Playback"
-msgstr "Posúvať podľa prehrávanej stopy"
-
-#: ../translation/plugins.c:39
-msgid "View/Show\\/Hide menu"
+msgid "Playback Looping - All"
 msgstr ""
 
+#: ../translation/plugins.c:38
+msgid "Cycle Playback Order"
+msgstr ""
+
+#: ../translation/plugins.c:39
+#, fuzzy
+msgid "Playback Order - Random"
+msgstr "Prehrať náhodnú"
+
 #: ../translation/plugins.c:40
-msgid "View/Show\\/Hide statusbar"
+msgid "Playback Order - Shuffle albums"
 msgstr ""
 
 #: ../translation/plugins.c:41
-msgid "Edit/Toggle Design Mode"
+msgid "Playback Order - Shuffle tracks"
 msgstr ""
 
 #: ../translation/plugins.c:42
-#, fuzzy
-msgid "Edit/Preferences"
-msgstr "Nastavenia"
+msgid "Playback Order - Linear"
+msgstr ""
 
 #: ../translation/plugins.c:43
-msgid "Edit/Sort Custom"
-msgstr ""
+#, fuzzy
+msgid "Toggle Cursor Follows Playback"
+msgstr "Kurzor podľa prehrávanej stopy"
 
 #: ../translation/plugins.c:44
-msgid "Edit/Crop Selected"
-msgstr ""
+#, fuzzy
+msgid "Toggle Scroll Follows Playback"
+msgstr "Posúvať podľa prehrávanej stopy"
 
 #: ../translation/plugins.c:45
-msgid "Edit/Remove Track(s) From Playlist"
-msgstr ""
+#, fuzzy
+msgid "View"
+msgstr "_Zobraziť"
 
 #: ../translation/plugins.c:46
-#, fuzzy
-msgid "File/Save Playlist"
-msgstr "Uložiť zoznam stôp"
+msgid "Show\\/Hide menu"
+msgstr ""
 
 #: ../translation/plugins.c:47
 #, fuzzy
-msgid "File/Load Playlist"
-msgstr "Načítať zoznam stôp"
+msgid "Show\\/Hide statusbar"
+msgstr "Stavový panel"
 
 #: ../translation/plugins.c:48
-msgid "File/Remove Current Playlist"
+msgid "Toggle Design Mode"
 msgstr ""
-
-#: ../translation/plugins.c:49
-#, fuzzy
-msgid "File/New Playlist"
-msgstr "Nový zoznam stôp"
 
 #: ../translation/plugins.c:50
-msgid "View/Show\\/Hide Equalizer"
-msgstr ""
+#, fuzzy
+msgid "Sort Custom"
+msgstr "Vlastné"
 
 #: ../translation/plugins.c:51
-#, fuzzy
-msgid "View/Hide Equalizer"
-msgstr "Ekvalizér"
+msgid "Crop Selected"
+msgstr ""
 
 #: ../translation/plugins.c:52
-#, fuzzy
-msgid "View/Show Equalizer"
-msgstr "Ekvalizér"
+msgid "Remove Track(s) From Playlist"
+msgstr ""
 
 #: ../translation/plugins.c:53
-msgid "View/Show\\/Hide Player Window"
-msgstr ""
+#, fuzzy
+msgid "Save Playlist"
+msgstr "Uložiť zoznam stôp"
 
-#: ../translation/plugins.c:54
-msgid "View/Hide Player Window"
-msgstr ""
+#: ../translation/plugins.c:54 ../plugins/gtkui/actionhandlers.c:740
+msgid "Load Playlist"
+msgstr "Načítať zoznam stôp"
 
 #: ../translation/plugins.c:55
-msgid "View/Show Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:56
-msgid "Edit/Find"
-msgstr ""
+#, fuzzy
+msgid "Remove Current Playlist"
+msgstr "Nový zoznam stôp"
 
 #: ../translation/plugins.c:57
-msgid "View/Show\\/Hide Log window"
+#, fuzzy
+msgid "Show\\/Hide Equalizer"
+msgstr "Ekvalizér"
+
+#: ../translation/plugins.c:58
+#, fuzzy
+msgid "Hide Equalizer"
+msgstr "Ekvalizér"
+
+#: ../translation/plugins.c:59
+#, fuzzy
+msgid "Show Equalizer"
+msgstr "Ekvalizér"
+
+#: ../translation/plugins.c:60
+msgid "Show\\/Hide Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:61
+msgid "Hide Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:62
+msgid "Show Player Window"
 msgstr ""
 
 #: ../translation/plugins.c:63
-msgid "Use unicode chars instead of images for track state"
-msgstr ""
+#, fuzzy
+msgid "Find"
+msgstr "_Nájsť"
 
 #: ../translation/plugins.c:64
-msgid "Disable seekbar overlay text"
+msgid "Show\\/Hide Log window"
 msgstr ""
 
 #: ../translation/plugins.c:70
-msgid "Use all extensions supported by ffmpeg"
+msgid "Use unicode chars instead of images for track state"
 msgstr ""
 
-#: ../translation/plugins.c:72
-#, fuzzy
-msgid "Left mix:"
-msgstr "Vľavo"
-
-#: ../translation/plugins.c:73
-#, fuzzy
-msgid "Right mix:"
-msgstr "Vpravo"
+#: ../translation/plugins.c:71
+msgid "Disable seekbar overlay text"
+msgstr ""
 
 #: ../translation/plugins.c:74
-msgid "Resampling quality (0..5, higher is better)"
-msgstr ""
-
-#: ../translation/plugins.c:76
-msgid "Internal DUMB volume (0..128)"
-msgstr ""
-
-#: ../translation/plugins.c:77
-msgid "Volume ramping (0 is none, 1 is note on/off, 2 is always)"
-msgstr ""
-
-#: ../translation/plugins.c:78
 msgid "Refresh cover art"
 msgstr ""
 
-#: ../translation/plugins.c:79
-msgid "Disable disk cache"
+#: ../translation/plugins.c:75
+msgid "Cache update period (in hours, 0=never)"
 msgstr ""
 
-#: ../translation/plugins.c:80
-msgid "Save extracted covers to music folders"
-msgstr ""
-
-#: ../translation/plugins.c:83
-msgid "Local file mask"
-msgstr ""
-
-#: ../translation/plugins.c:84
-#, fuzzy
-msgid "Artwork folders"
-msgstr "Pridať priečinok/priečinky"
-
-#: ../translation/plugins.c:85
+#: ../translation/plugins.c:78
 msgid "Fetch from Last.fm"
 msgstr ""
 
-#: ../translation/plugins.c:86
+#: ../translation/plugins.c:79
 msgid "Fetch from MusicBrainz"
 msgstr ""
 
-#: ../translation/plugins.c:87
+#: ../translation/plugins.c:80
 msgid "Fetch from Albumart.org"
 msgstr ""
 
-#: ../translation/plugins.c:88
+#: ../translation/plugins.c:81
 msgid "Fetch from World of Spectrum (AY files only)"
 msgstr ""
 
-#: ../translation/plugins.c:89
+#: ../translation/plugins.c:82
 msgid "When no artwork is found"
 msgstr ""
 
-#: ../translation/plugins.c:90
+#: ../translation/plugins.c:83
 msgid "leave blank"
 msgstr ""
 
-#: ../translation/plugins.c:91
+#: ../translation/plugins.c:84
 msgid "use DeaDBeeF default cover"
 msgstr ""
 
-#: ../translation/plugins.c:92
+#: ../translation/plugins.c:85
 msgid "display custom image"
 msgstr ""
 
-#: ../translation/plugins.c:93
+#: ../translation/plugins.c:86
 msgid "Custom image path"
 msgstr ""
 
-#: ../translation/plugins.c:95
+#: ../translation/plugins.c:88
 msgid "CD drive to load"
 msgstr ""
 
-#: ../translation/plugins.c:100
+#: ../translation/plugins.c:89
+msgid "Audio CD Drive"
+msgstr ""
+
+#: ../translation/plugins.c:95
 msgid "Use CDDB protocol"
 msgstr ""
 
-#: ../translation/plugins.c:102
+#: ../translation/plugins.c:97
 msgid "Drive speed for normal playback"
 msgstr ""
 
-#: ../translation/plugins.c:103
+#: ../translation/plugins.c:98
 msgid "1x"
 msgstr ""
 
-#: ../translation/plugins.c:104
+#: ../translation/plugins.c:99
 msgid "2x"
 msgstr ""
 
-#: ../translation/plugins.c:105
+#: ../translation/plugins.c:100
 msgid "4x"
 msgstr ""
 
-#: ../translation/plugins.c:106
+#: ../translation/plugins.c:101
 msgid "8x"
 msgstr ""
 
-#: ../translation/plugins.c:107
+#: ../translation/plugins.c:102
 msgid "16x"
 msgstr ""
 
-#: ../translation/plugins.c:108
+#: ../translation/plugins.c:103
 msgid "Max"
 msgstr ""
 
-#: ../translation/plugins.c:109
+#: ../translation/plugins.c:104
 msgid "Use cdparanoia error correction when ripping"
 msgstr ""
 
-#: ../translation/plugins.c:110
+#: ../translation/plugins.c:105
 #, fuzzy
 msgid "Lookup On Last.fm"
 msgstr "Vyhladať na Last.fm"
 
-#: ../translation/plugins.c:117
+#: ../translation/plugins.c:112
 msgid "Send MusicBrainz ID"
 msgstr ""
 
-#: ../translation/plugins.c:118
+#: ../translation/plugins.c:113
 msgid "Submit tracks shorter than 30 seconds (not recommended)"
 msgstr ""
 
-#: ../translation/plugins.c:120
-msgid "Device"
-msgstr ""
-
-#: ../translation/plugins.c:121
-msgid "Buffer size (ms)"
-msgstr ""
-
-#: ../translation/plugins.c:123
-msgid "Playback/Jump To Currently Playing Track"
-msgstr ""
-
-#: ../translation/plugins.c:124
-msgid "Playback/Skip to/Previous genre"
-msgstr ""
-
-#: ../translation/plugins.c:125
-msgid "Playback/Skip to/Previous composer"
-msgstr ""
-
-#: ../translation/plugins.c:126
-msgid "Playback/Skip to/Previous artist"
-msgstr ""
-
-#: ../translation/plugins.c:127
-msgid "Playback/Skip to/Previous album"
-msgstr ""
-
-#: ../translation/plugins.c:128
-msgid "Playback/Skip to/Next genre"
-msgstr ""
-
-#: ../translation/plugins.c:129
-msgid "Playback/Skip to/Next composer"
-msgstr ""
-
-#: ../translation/plugins.c:130
-msgid "Playback/Skip to/Next artist"
-msgstr ""
-
-#: ../translation/plugins.c:131
-msgid "Playback/Skip to/Next album"
-msgstr ""
-
-#: ../translation/plugins.c:132
-#, fuzzy
-msgid "Next Playlist"
-msgstr "Nový zoznam stôp"
-
-#: ../translation/plugins.c:133
-#, fuzzy
-msgid "Prev Playlist"
-msgstr "Nový zoznam stôp"
-
-#: ../translation/plugins.c:134
-#, fuzzy
-msgid "Switch To Playlist 10"
-msgstr "Nový zoznam stôp"
-
-#: ../translation/plugins.c:135
-#, fuzzy
-msgid "Switch To Playlist 9"
-msgstr "Nový zoznam stôp"
-
-#: ../translation/plugins.c:136
-#, fuzzy
-msgid "Switch To Playlist 8"
-msgstr "Nový zoznam stôp"
-
-#: ../translation/plugins.c:137
-#, fuzzy
-msgid "Switch To Playlist 7"
-msgstr "Nový zoznam stôp"
-
-#: ../translation/plugins.c:138
-#, fuzzy
-msgid "Switch To Playlist 6"
-msgstr "Nový zoznam stôp"
-
-#: ../translation/plugins.c:139
-#, fuzzy
-msgid "Switch To Playlist 5"
-msgstr "Nový zoznam stôp"
-
-#: ../translation/plugins.c:140
-#, fuzzy
-msgid "Switch To Playlist 4"
-msgstr "Nový zoznam stôp"
-
-#: ../translation/plugins.c:141
-#, fuzzy
-msgid "Switch To Playlist 3"
-msgstr "Nový zoznam stôp"
-
-#: ../translation/plugins.c:142
-#, fuzzy
-msgid "Switch To Playlist 2"
-msgstr "Nový zoznam stôp"
-
-#: ../translation/plugins.c:143
-#, fuzzy
-msgid "Switch To Playlist 1"
-msgstr "Nový zoznam stôp"
-
-#: ../translation/plugins.c:144
-msgid "Edit/Sort Randomize"
-msgstr ""
-
-#: ../translation/plugins.c:145
-msgid "Edit/Sort By Date"
-msgstr ""
-
-#: ../translation/plugins.c:146
-msgid "Edit/Sort By Artist"
-msgstr ""
-
-#: ../translation/plugins.c:147
-msgid "Edit/Sort By Album"
-msgstr ""
-
-#: ../translation/plugins.c:148
-msgid "Edit/Sort By Track Number"
-msgstr ""
-
-#: ../translation/plugins.c:149
-msgid "Edit/Sort By Title"
-msgstr ""
-
-#: ../translation/plugins.c:150
-#, fuzzy
-msgid "Edit/Invert Selection"
-msgstr "Invertovať výber"
-
-#: ../translation/plugins.c:151
-#, fuzzy
-msgid "Edit/Clear Playlist"
-msgstr "Nový zoznam stôp"
-
-#: ../translation/plugins.c:152
-msgid "Playback/Remove From Playback Queue"
-msgstr ""
-
-#: ../translation/plugins.c:153
-msgid "Playback/Add To Playback Queue"
-msgstr ""
-
-#: ../translation/plugins.c:154
-msgid "Playback/Toggle In Playback Queue"
-msgstr ""
-
-#: ../translation/plugins.c:155
-msgid "Move/Move Tracks Down"
-msgstr ""
-
-#: ../translation/plugins.c:156
-msgid "Move/Move Tracks Up"
-msgstr ""
-
-#: ../translation/plugins.c:157
-msgid "Playback/Toggle Mute"
-msgstr ""
-
-#: ../translation/plugins.c:158
-#, fuzzy
-msgid "Playback/Play"
-msgstr "_Prehrávanie"
-
-#: ../translation/plugins.c:159
-#, fuzzy
-msgid "Playback/Stop"
-msgstr "_Prehrávanie"
-
-#: ../translation/plugins.c:160
-#, fuzzy
-msgid "Playback/Previous"
-msgstr "Predošlá"
-
-#: ../translation/plugins.c:161
-#, fuzzy
-msgid "Playback/Next"
-msgstr "_Prehrávanie"
-
-#: ../translation/plugins.c:162
-msgid "Playback/Toggle Pause"
-msgstr ""
-
-#: ../translation/plugins.c:163
-msgid "Playback/Play\\/Pause"
-msgstr ""
-
-#: ../translation/plugins.c:164
-#, fuzzy
-msgid "Playback/Play Random"
-msgstr "Prehrať náhodnú"
-
-#: ../translation/plugins.c:165
-msgid "Playback/Seek 1s Forward"
-msgstr ""
-
-#: ../translation/plugins.c:166
-msgid "Playback/Seek 1s Backward"
-msgstr ""
-
-#: ../translation/plugins.c:167
-msgid "Playback/Seek 5s Forward"
-msgstr ""
-
-#: ../translation/plugins.c:168
-msgid "Playback/Seek 5s Backward"
-msgstr ""
-
-#: ../translation/plugins.c:169
-#, c-format
-msgid "Playback/Seek 1% Forward"
-msgstr ""
-
-#: ../translation/plugins.c:170
-msgid "Playback/Seek 1% Backward"
-msgstr ""
-
-#: ../translation/plugins.c:171
-#, c-format
-msgid "Playback/Seek 5% Forward"
-msgstr ""
-
-#: ../translation/plugins.c:172
-msgid "Playback/Seek 5% Backward"
-msgstr ""
-
-#: ../translation/plugins.c:173
-msgid "Playback/Volume Up"
-msgstr ""
-
-#: ../translation/plugins.c:174
-msgid "Playback/Volume Down"
-msgstr ""
-
-#: ../translation/plugins.c:175
-msgid "Playback/Toggle Stop After Current Track"
-msgstr ""
-
-#: ../translation/plugins.c:176
-msgid "Playback/Toggle Stop After Current Album"
-msgstr ""
-
-#: ../translation/plugins.c:177
-msgid "Edit/Configure Custom Shell Commands"
-msgstr ""
-
-#: ../translation/plugins.c:180
-msgid "Autodetect samplerate from output device"
-msgstr ""
-
-#: ../translation/plugins.c:181
-msgid "Set samplerate directly"
-msgstr ""
-
-#: ../translation/plugins.c:183
-msgid "Cache update period (in hours, 0=never)"
-msgstr ""
-
-#: ../translation/plugins.c:184
-msgid " -"
-msgstr ""
-
-#: ../translation/plugins.c:186
-msgid "Highlight current playlist"
-msgstr ""
-
-#: ../translation/plugins.c:187
-msgid "Play on double-click"
-msgstr ""
-
-#: ../translation/plugins.c:188
-msgid "Emulate track change events (for scrobbling)"
-msgstr ""
-
-#: ../translation/plugins.c:194
-msgid "Force 16 bit output"
-msgstr ""
-
-#: ../translation/plugins.c:195
-msgid "Backend"
-msgstr ""
-
-#: ../translation/plugins.c:197
+#: ../translation/plugins.c:116
 msgid "Bits per sample"
 msgstr ""
 
-#: ../translation/plugins.c:200
-msgid "Default song length (in minutes)"
-msgstr ""
-
-#: ../translation/plugins.c:202
-msgid "Skip when shorter than (sec)"
-msgstr ""
-
-#: ../translation/plugins.c:205
-msgid "Mono synth"
-msgstr ""
-
-#: ../translation/plugins.c:208
+#: ../translation/plugins.c:117
 #, fuzzy
 msgid "Preamp"
 msgstr "Znulovať predzos"
 
-#: ../translation/plugins.c:209
+#: ../translation/plugins.c:118
 msgid "55 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:210
+#: ../translation/plugins.c:119
 msgid "77 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:211
+#: ../translation/plugins.c:120
 msgid "110 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:212
+#: ../translation/plugins.c:121
 msgid "156 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:213
+#: ../translation/plugins.c:122
 msgid "220 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:214
+#: ../translation/plugins.c:123
 msgid "311 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:215
+#: ../translation/plugins.c:124
 msgid "440 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:216
+#: ../translation/plugins.c:125
 msgid "622 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:217
+#: ../translation/plugins.c:126
 msgid "880 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:218
+#: ../translation/plugins.c:127
 msgid "1.2 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:219
+#: ../translation/plugins.c:128
 msgid "1.8 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:220
+#: ../translation/plugins.c:129
 msgid "2.5 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:221
+#: ../translation/plugins.c:130
 msgid "3.5 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:222
+#: ../translation/plugins.c:131
 msgid "5 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:223
+#: ../translation/plugins.c:132
 msgid "7 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:224
+#: ../translation/plugins.c:133
 msgid "10 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:225
+#: ../translation/plugins.c:134
 msgid "14 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:226
+#: ../translation/plugins.c:135
 msgid "20 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:227
-msgid "Volume Level"
+#: ../translation/plugins.c:136
+msgid "Force 16 bit output"
 msgstr ""
+
+#: ../translation/plugins.c:137
+msgid "Backend"
+msgstr ""
+
+#: ../translation/plugins.c:138
+msgid "Use all extensions supported by ffmpeg"
+msgstr ""
+
+#: ../translation/plugins.c:140
+msgid "Jump To Currently Playing Track"
+msgstr ""
+
+#: ../translation/plugins.c:150
+#, fuzzy
+msgid "Next Playlist"
+msgstr "Nový zoznam stôp"
+
+#: ../translation/plugins.c:151
+#, fuzzy
+msgid "Prev Playlist"
+msgstr "Nový zoznam stôp"
+
+#: ../translation/plugins.c:152
+#, fuzzy
+msgid "Switch To Playlist 10"
+msgstr "Nový zoznam stôp"
+
+#: ../translation/plugins.c:153
+#, fuzzy
+msgid "Switch To Playlist 9"
+msgstr "Nový zoznam stôp"
+
+#: ../translation/plugins.c:154
+#, fuzzy
+msgid "Switch To Playlist 8"
+msgstr "Nový zoznam stôp"
+
+#: ../translation/plugins.c:155
+#, fuzzy
+msgid "Switch To Playlist 7"
+msgstr "Nový zoznam stôp"
+
+#: ../translation/plugins.c:156
+#, fuzzy
+msgid "Switch To Playlist 6"
+msgstr "Nový zoznam stôp"
+
+#: ../translation/plugins.c:157
+#, fuzzy
+msgid "Switch To Playlist 5"
+msgstr "Nový zoznam stôp"
+
+#: ../translation/plugins.c:158
+#, fuzzy
+msgid "Switch To Playlist 4"
+msgstr "Nový zoznam stôp"
+
+#: ../translation/plugins.c:159
+#, fuzzy
+msgid "Switch To Playlist 3"
+msgstr "Nový zoznam stôp"
+
+#: ../translation/plugins.c:160
+#, fuzzy
+msgid "Switch To Playlist 2"
+msgstr "Nový zoznam stôp"
+
+#: ../translation/plugins.c:161
+#, fuzzy
+msgid "Switch To Playlist 1"
+msgstr "Nový zoznam stôp"
+
+#: ../translation/plugins.c:162
+#, fuzzy
+msgid "Sort Randomize"
+msgstr "Náhodné"
+
+#: ../translation/plugins.c:163
+msgid "Sort By Date"
+msgstr ""
+
+#: ../translation/plugins.c:164
+#, fuzzy
+msgid "Sort By Artist"
+msgstr "Interpret"
+
+#: ../translation/plugins.c:165
+#, fuzzy
+msgid "Sort By Album"
+msgstr "Interpret/album"
+
+#: ../translation/plugins.c:166
+msgid "Sort By Track Number"
+msgstr ""
+
+#: ../translation/plugins.c:167
+msgid "Sort By Title"
+msgstr ""
+
+#: ../translation/plugins.c:168
+#, fuzzy
+msgid "Invert Selection"
+msgstr "Invertovať výber"
+
+#: ../translation/plugins.c:169
+#, fuzzy
+msgid "Clear Playlist"
+msgstr "Nový zoznam stôp"
+
+#: ../translation/plugins.c:172
+msgid "Toggle In Playback Queue"
+msgstr ""
+
+#: ../translation/plugins.c:173
+msgid "Move"
+msgstr ""
+
+#: ../translation/plugins.c:174
+msgid "Move Tracks Down"
+msgstr ""
+
+#: ../translation/plugins.c:175
+msgid "Move Tracks Up"
+msgstr ""
+
+#: ../translation/plugins.c:176
+msgid "Toggle Mute"
+msgstr ""
+
+#: ../translation/plugins.c:181
+msgid "Toggle Pause"
+msgstr ""
+
+#: ../translation/plugins.c:182
+#, fuzzy
+msgid "Play\\/Pause"
+msgstr "Pozastaviť"
+
+#: ../translation/plugins.c:184
+msgid "Seek 1s Forward"
+msgstr ""
+
+#: ../translation/plugins.c:185
+msgid "Seek 1s Backward"
+msgstr ""
+
+#: ../translation/plugins.c:186
+msgid "Seek 5s Forward"
+msgstr ""
+
+#: ../translation/plugins.c:187
+msgid "Seek 5s Backward"
+msgstr ""
+
+#: ../translation/plugins.c:188
+#, c-format
+msgid "Seek 1% Forward"
+msgstr ""
+
+#: ../translation/plugins.c:189
+msgid "Seek 1% Backward"
+msgstr ""
+
+#: ../translation/plugins.c:190
+#, c-format
+msgid "Seek 5% Forward"
+msgstr ""
+
+#: ../translation/plugins.c:191
+msgid "Seek 5% Backward"
+msgstr ""
+
+#: ../translation/plugins.c:192
+msgid "Volume Up"
+msgstr ""
+
+#: ../translation/plugins.c:193
+msgid "Volume Down"
+msgstr ""
+
+#: ../translation/plugins.c:194
+msgid "Toggle Stop After Current Track"
+msgstr ""
+
+#: ../translation/plugins.c:195
+msgid "Toggle Stop After Current Album"
+msgstr ""
+
+#: ../translation/plugins.c:196
+msgid "Tempo Change (%)"
+msgstr ""
+
+#: ../translation/plugins.c:197
+msgid "Pitch Change (semi-tones)"
+msgstr ""
+
+#: ../translation/plugins.c:198
+msgid "Playback Rate Change (%)"
+msgstr ""
+
+#: ../translation/plugins.c:199
+msgid "Absolute Samplerate (overrides Rate Change if nonzero)"
+msgstr ""
+
+#: ../translation/plugins.c:200
+msgid "Use AA Filter"
+msgstr ""
+
+#: ../translation/plugins.c:201
+msgid "AA Filter Length"
+msgstr ""
+
+#: ../translation/plugins.c:202
+msgid "Use Quickseek"
+msgstr ""
+
+#: ../translation/plugins.c:203
+msgid "Time Stretch Sequence Length (ms)"
+msgstr ""
+
+#: ../translation/plugins.c:204
+msgid "Time Stretch Seek Window Length (ms)"
+msgstr ""
+
+#: ../translation/plugins.c:205
+msgid "Disable disk cache"
+msgstr ""
+
+#: ../translation/plugins.c:206
+msgid "Save extracted covers to music folders"
+msgstr ""
+
+#: ../translation/plugins.c:207
+msgid "Local file mask"
+msgstr ""
+
+#: ../translation/plugins.c:208
+#, fuzzy
+msgid "Artwork folders"
+msgstr "Pridať priečinok/priečinky"
+
+#: ../translation/plugins.c:212
+msgid "Mono synth"
+msgstr ""
+
+#: ../translation/plugins.c:215
+msgid "Device"
+msgstr ""
+
+#: ../translation/plugins.c:216
+msgid "Buffer size (ms)"
+msgstr ""
+
+#: ../translation/plugins.c:219
+msgid "Autodetect samplerate from output device"
+msgstr ""
+
+#: ../translation/plugins.c:220
+msgid "Set samplerate directly"
+msgstr ""
+
+#: ../translation/plugins.c:222
+msgid "Emulate track change events (for scrobbling)"
+msgstr ""
+
+#: ../translation/plugins.c:223
+msgid "Default song length (in minutes)"
+msgstr ""
+
+#: ../translation/plugins.c:224
+msgid "Skip when shorter than (sec)"
+msgstr ""
+
+#: ../translation/plugins.c:228
+msgid "Resampling quality (0..5, higher is better)"
+msgstr ""
+
+#: ../translation/plugins.c:230
+msgid "Internal DUMB volume (0..128)"
+msgstr ""
+
+#: ../translation/plugins.c:231
+msgid "Volume ramping (0 is none, 1 is note on/off, 2 is always)"
+msgstr ""
+
+#: ../translation/plugins.c:234
+#, fuzzy
+msgid "Left mix:"
+msgstr "Vľavo"
+
+#: ../translation/plugins.c:235
+#, fuzzy
+msgid "Right mix:"
+msgstr "Vpravo"
 
 #: ../plugins/converter/convgui.c:91
 #, c-format
@@ -3208,10 +3163,6 @@ msgid ""
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:740
-msgid "Load Playlist"
-msgstr "Načítať zoznam stôp"
-
 #: ../plugins/gtkui/actionhandlers.c:755
 msgid "Other files (*)"
 msgstr ""
@@ -3426,3 +3377,63 @@ msgstr ""
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Edit/Deselect All"
+#~ msgstr "Zrušiť výber"
+
+#, fuzzy
+#~ msgid "Edit/Select All"
+#~ msgstr "Vybrať všetky"
+
+#, fuzzy
+#~ msgid "File/Add Location"
+#~ msgstr "Pridať umiestnenie"
+
+#, fuzzy
+#~ msgid "File/Add Folder(s)"
+#~ msgstr "Pridať priečinok/priečinky"
+
+#, fuzzy
+#~ msgid "File/Add File(s)"
+#~ msgstr "Pridať súbor(y)"
+
+#, fuzzy
+#~ msgid "File/Open File(s)"
+#~ msgstr "_Otvoriť súbor(y)"
+
+#, fuzzy
+#~ msgid "Edit/Preferences"
+#~ msgstr "Nastavenia"
+
+#, fuzzy
+#~ msgid "File/Save Playlist"
+#~ msgstr "Uložiť zoznam stôp"
+
+#, fuzzy
+#~ msgid "File/Load Playlist"
+#~ msgstr "Načítať zoznam stôp"
+
+#, fuzzy
+#~ msgid "File/New Playlist"
+#~ msgstr "Nový zoznam stôp"
+
+#, fuzzy
+#~ msgid "Edit/Invert Selection"
+#~ msgstr "Invertovať výber"
+
+#, fuzzy
+#~ msgid "Playback/Play"
+#~ msgstr "_Prehrávanie"
+
+#, fuzzy
+#~ msgid "Playback/Stop"
+#~ msgstr "_Prehrávanie"
+
+#, fuzzy
+#~ msgid "Playback/Previous"
+#~ msgstr "Predošlá"
+
+#, fuzzy
+#~ msgid "Playback/Next"
+#~ msgstr "_Prehrávanie"
