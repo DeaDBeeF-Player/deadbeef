@@ -36,7 +36,7 @@ if ($help) {
     exit (0);
 }
 
-my @lines = extract ($FindBin::Bin.'/../..', $android_xml);
+my @lines = extract ('.', $android_xml);
 
 my @unique_ids;
 
