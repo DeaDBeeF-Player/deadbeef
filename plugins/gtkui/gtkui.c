@@ -1825,7 +1825,7 @@ static DB_plugin_action_t action_crop_selected = {
 static DB_plugin_action_t action_remove_from_playlist = {
     .title = "Edit/Remove Track(s) From Playlist",
     .name = "remove_from_playlist",
-    .flags = DB_ACTION_MULTIPLE_TRACKS,
+    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST,
     .callback2 = action_remove_from_playlist_handler,
     .next = &action_crop_selected
 };
