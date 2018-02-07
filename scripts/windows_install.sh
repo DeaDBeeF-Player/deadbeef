@@ -64,6 +64,7 @@ cp ./plugins/pltbrowser/.libs/pltbrowser_gtk3.dll $PREFIX/plugins/
 cp ./plugins/coreaudio/.libs/coreaudio.dll $PREFIX/plugins/
 cp ./plugins/sc68/.libs/in_sc68.dll $PREFIX/plugins/
 cp ./plugins/statusnotifier/.libs/statusnotifier.dll $PREFIX/plugins/
+cp ./plugins/rg_scanner/.libs/rg_scanner.dll $PREFIX/plugins/
 cp ./plugins/portaudio/.libs/portaudio.dll $PREFIX/plugins/
 cp ./plugins/waveout/.libs/waveout.dll $PREFIX/plugins/
 
