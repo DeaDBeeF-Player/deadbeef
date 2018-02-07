@@ -101,6 +101,8 @@ void        glade_set_atk_action_description (AtkAction       *action,
 GtkWidget *
 gtk_combo_box_entry_new_text(void);
 
+#define gtk_combo_box_append_text gtk_combo_box_text_append_text
+
 void
 gtk_dialog_set_has_separator (GtkDialog *dlg, gboolean has);
 #endif
