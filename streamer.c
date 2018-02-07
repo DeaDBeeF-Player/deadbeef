@@ -110,8 +110,6 @@ static int _format_change_wait;
 static ddb_waveformat_t prev_output_format; // last format that was sent to output via streamer_set_output_format
 static ddb_waveformat_t last_block_fmt; // input file format corresponding to the current output
 
-static int formatchanged;
-
 static DB_fileinfo_t *fileinfo;
 static DB_FILE *fileinfo_file;
 static DB_fileinfo_t *new_fileinfo;
@@ -2054,17 +2052,18 @@ streamer_configchanged (void) {
     if (playing_track) {
         playing_track->played = 1;
     }
+
+    int formatchanged = 0;
+
     int conf_autoconv_8_to_16 = conf_get_int ("streamer.8_to_16", 1);
     if (conf_autoconv_8_to_16 != autoconv_8_to_16) {
         autoconv_8_to_16 = conf_autoconv_8_to_16;
         formatchanged = 1;
-        streamer_reset (1);
     }
     int conf_autoconv_16_to_24 = conf_get_int ("streamer.16_to_24",0);
     if (conf_autoconv_16_to_24 != autoconv_16_to_24) {
         autoconv_16_to_24 = conf_autoconv_16_to_24;
         formatchanged = 1;
-        streamer_reset (1);
     }
 
     trace_bufferfill = conf_get_int ("streamer.trace_buffer_fill",0);
@@ -2088,7 +2087,8 @@ streamer_configchanged (void) {
         || conf_streamer_use_dependent_samplerate != new_conf_streamer_use_dependent_samplerate
         || conf_streamer_samplerate != new_conf_streamer_samplerate
         || conf_streamer_samplerate_mult_48 != new_conf_streamer_samplerate_mult_48
-        || conf_streamer_samplerate_mult_44 != new_conf_streamer_samplerate_mult_44) {
+        || conf_streamer_samplerate_mult_44 != new_conf_streamer_samplerate_mult_44
+        || formatchanged) {
         memset (&last_block_fmt, 0, sizeof (last_block_fmt));
     }
 
