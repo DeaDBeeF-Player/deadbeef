@@ -2556,7 +2556,7 @@ Center</property>
 			      <child>
 				<widget class="GtkLabel" id="label_direct_sr">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Default samplerate</property>
+				  <property name="label" translatable="yes">Target samplerate:</property>
 				  <property name="use_underline">False</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -2642,7 +2642,7 @@ Center</property>
 					  <child>
 					    <widget class="GtkLabel" id="label_sr_mult_48">
 					      <property name="visible">True</property>
-					      <property name="label" translatable="yes">For multiples of 48KHz (96K, 192K, ...)</property>
+					      <property name="label" translatable="yes">For multiples of 48KHz (96K, 192K, ...):</property>
 					      <property name="use_underline">False</property>
 					      <property name="use_markup">False</property>
 					      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -2701,7 +2701,7 @@ Center</property>
 					  <child>
 					    <widget class="GtkLabel" id="label_sr_mult_44">
 					      <property name="visible">True</property>
-					      <property name="label" translatable="yes">For multiples of 44.1KHz (88.2K, 176.4K, ...)</property>
+					      <property name="label" translatable="yes">For multiples of 44.1KHz (88.2K, 176.4K, ...):</property>
 					      <property name="use_underline">False</property>
 					      <property name="use_markup">False</property>
 					      <property name="justify">GTK_JUSTIFY_LEFT</property>

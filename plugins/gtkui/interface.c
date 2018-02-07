@@ -1856,7 +1856,7 @@ create_prefwin (void)
   gtk_widget_show (hbox145);
   gtk_box_pack_start (GTK_BOX (vbox52), hbox145, TRUE, TRUE, 0);
 
-  label_direct_sr = gtk_label_new (_("Default samplerate"));
+  label_direct_sr = gtk_label_new (_("Target samplerate:"));
   gtk_widget_show (label_direct_sr);
   gtk_box_pack_start (GTK_BOX (hbox145), label_direct_sr, FALSE, FALSE, 0);
 
@@ -1889,7 +1889,7 @@ create_prefwin (void)
   gtk_widget_show (hbox147);
   gtk_box_pack_start (GTK_BOX (vbox53), hbox147, TRUE, TRUE, 0);
 
-  label_sr_mult_48 = gtk_label_new (_("For multiples of 48KHz (96K, 192K, ...)"));
+  label_sr_mult_48 = gtk_label_new (_("For multiples of 48KHz (96K, 192K, ...):"));
   gtk_widget_show (label_sr_mult_48);
   gtk_box_pack_start (GTK_BOX (hbox147), label_sr_mult_48, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label_sr_mult_48), 1, 0.5);
@@ -1908,7 +1908,7 @@ create_prefwin (void)
   gtk_widget_show (hbox148);
   gtk_box_pack_start (GTK_BOX (vbox53), hbox148, TRUE, TRUE, 0);
 
-  label_sr_mult_44 = gtk_label_new (_("For multiples of 44.1KHz (88.2K, 176.4K, ...)"));
+  label_sr_mult_44 = gtk_label_new (_("For multiples of 44.1KHz (88.2K, 176.4K, ...):"));
   gtk_widget_show (label_sr_mult_44);
   gtk_box_pack_start (GTK_BOX (hbox148), label_sr_mult_44, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label_sr_mult_44), 1, 0.5);
