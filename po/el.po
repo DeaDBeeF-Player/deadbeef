@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-07 20:57+0100\n"
+"POT-Creation-Date: 2018-02-07 21:34+0100\n"
 "PO-Revision-Date: 2017-11-11 11:22+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Greek (http://www.transifex.com/deadbeef-player/deadbeef-"
@@ -81,7 +81,7 @@ msgstr "Φόρτωση Ρύθμισης"
 msgid "Import Foobar2000 Preset"
 msgstr "Εισαγωγή Ρύθμισης Foobar2000"
 
-#: ../plugins/gtkui/eq.c:367
+#: ../plugins/gtkui/eq.c:367 ../translation/plugins.c:65
 msgid "Enable"
 msgstr "Ενεργό"
 
@@ -496,11 +496,12 @@ msgid "About"
 msgstr "Σχετικά"
 
 #: ../plugins/gtkui/interface.c:856 ../plugins/gtkui/deadbeef.glade.h:61
+#: ../translation/plugins.c:20
 msgid "Quit"
 msgstr "Έξοδος"
 
 #: ../plugins/gtkui/interface.c:1049 ../plugins/gtkui/plcommon.c:1228
-#: ../plugins/gtkui/deadbeef.glade.h:63
+#: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:26
 msgid "Track Properties"
 msgstr "Ιδιότητες Κομματιού"
 
@@ -779,6 +780,7 @@ msgid "Player"
 msgstr "Αναπαραγωγέας"
 
 #: ../plugins/gtkui/interface.c:2258 ../plugins/gtkui/deadbeef.glade.h:128
+#: ../translation/plugins.c:185
 msgid "Close playlists with middle mouse button"
 msgstr "Κλείσιμο λιστών αναπαραγωγής με το μέσο πλήκτρο του ποντικιού"
 
@@ -1283,7 +1285,7 @@ msgstr "Προσθήκη στην ουρά αναπαραγωγής"
 msgid "Remove From Playback Queue"
 msgstr "Απομάκρυνση Από την Ουρά Αναπαραγωγής"
 
-#: ../plugins/gtkui/plcommon.c:1016
+#: ../plugins/gtkui/plcommon.c:1016 ../translation/plugins.c:122
 msgid "Reload Metadata"
 msgstr "Επαναφόρτωση μεταδεδομένων"
 
@@ -1295,7 +1297,7 @@ msgstr ""
 msgid "_Copy"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1079
+#: ../plugins/gtkui/plcommon.c:1079 ../translation/plugins.c:21
 msgid "Remove From Disk"
 msgstr "Αφαίρεση από το δίσκο"
 
@@ -1645,7 +1647,7 @@ msgid "Lookup on Last.fm"
 msgstr "Αναζήτηση στο Last.fm"
 
 #. ALSA output plugin
-#: ../translation/extra.c:6
+#: ../translation/extra.c:6 ../translation/plugins.c:198
 msgid "Use ALSA resampling"
 msgstr "Χρήση αναδειγματοληψίας ALSA"
 
@@ -1654,40 +1656,41 @@ msgid "Release device while stopped"
 msgstr "Απελευθέρωση συσκευής κατά τη διακοπή:"
 
 #: ../translation/extra.c:8 ../translation/extra.c:55
+#: ../translation/plugins.c:179
 msgid "Preferred buffer size"
 msgstr "Προτεινόμενο μέγεθος ενδιάμεσης μνήμης"
 
-#: ../translation/extra.c:9
+#: ../translation/extra.c:9 ../translation/plugins.c:199
 msgid "Preferred period size"
 msgstr "Προτεινόμενο μέγεθος περιόδου"
 
 #. Last.fm plugin
-#: ../translation/extra.c:11
+#: ../translation/extra.c:11 ../translation/plugins.c:111
 msgid "Enable scrobbler"
 msgstr "Ενεργοποίηση scrobbler"
 
-#: ../translation/extra.c:12
+#: ../translation/extra.c:12 ../translation/plugins.c:112
 msgid "Disable nowplaying"
 msgstr "Απενεργοποίηση τρέχουσας-αναπαραγωγής"
 
-#: ../translation/extra.c:13
+#: ../translation/extra.c:13 ../translation/plugins.c:113
 msgid "Username"
 msgstr "Όνομα χρήστη:"
 
-#: ../translation/extra.c:14
+#: ../translation/extra.c:14 ../translation/plugins.c:114
 msgid "Password"
 msgstr "Κωδικός:"
 
-#: ../translation/extra.c:15
+#: ../translation/extra.c:15 ../translation/plugins.c:115
 msgid "Scrobble URL"
 msgstr "Scrobble URL"
 
-#: ../translation/extra.c:16
+#: ../translation/extra.c:16 ../translation/plugins.c:116
 msgid "Prefer Album Artist over Artist field"
 msgstr ""
 
 #. OSS output plugin
-#: ../translation/extra.c:18
+#: ../translation/extra.c:18 ../translation/plugins.c:196
 msgid "Device file"
 msgstr "Αρχείο συσκευής"
 
@@ -1700,11 +1703,11 @@ msgstr "Επίλυση σφάλματος δειγματοληψίας OSS4"
 msgid "Cache update period (hr)"
 msgstr "Περίοδος ενημέρωσης προσωρινής μνήμης"
 
-#: ../translation/extra.c:22
+#: ../translation/extra.c:22 ../translation/plugins.c:81
 msgid "Fetch from embedded tags"
 msgstr "Λήψη από τις ενσωματωμένες ετικέτες"
 
-#: ../translation/extra.c:23
+#: ../translation/extra.c:23 ../translation/plugins.c:82
 msgid "Fetch from local folder"
 msgstr "Λήψη από τον τοπικό φάκελο"
 
@@ -1720,24 +1723,24 @@ msgstr "Λήψη από το last.fm"
 msgid "Fetch from albumart.org"
 msgstr "Λήψη από το albumart.org"
 
-#: ../translation/extra.c:27
+#: ../translation/extra.c:27 ../translation/plugins.c:94
 msgid "Scale artwork towards longer side"
 msgstr "Κλιμάκωση εξώφυλλου ως προς τη μεγαλύτερη πλευρά"
 
 #. Audio CD player
-#: ../translation/extra.c:29
+#: ../translation/extra.c:29 ../translation/plugins.c:96
 msgid "Use CDDB/FreeDB"
 msgstr "Χρήση CDDB/FreeDB"
 
-#: ../translation/extra.c:30
+#: ../translation/extra.c:30 ../translation/plugins.c:97
 msgid "Prefer CD-Text over CDDB"
 msgstr "Προτίμηση κειμένου-CD έναντι CDDB"
 
-#: ../translation/extra.c:31
+#: ../translation/extra.c:31 ../translation/plugins.c:98
 msgid "CDDB url (e.g. 'freedb.org')"
 msgstr "CDDB url (π.χ. 'freedb.org')"
 
-#: ../translation/extra.c:32
+#: ../translation/extra.c:32 ../translation/plugins.c:99
 msgid "CDDB port number (e.g. '888')"
 msgstr "Αριθμός θύρας CDDB (π.χ. '888')"
 
@@ -1745,7 +1748,7 @@ msgstr "Αριθμός θύρας CDDB (π.χ. '888')"
 msgid "Prefer CDDB protocol over HTTP"
 msgstr "Προτίμηση πρωτοκόλλου CDDB έναντι HTTP"
 
-#: ../translation/extra.c:34
+#: ../translation/extra.c:34 ../translation/plugins.c:101
 msgid "Enable NRG image support"
 msgstr "Ενεργοποίηση αρχείων εικόνων NRG"
 
@@ -1754,89 +1757,89 @@ msgstr "Ενεργοποίηση αρχείων εικόνων NRG"
 msgid "Resampling quality (0..2, higher is better)"
 msgstr "Ποιότητα αναδειγματοληψίας (0..2, μεγαλύτερο είναι καλύτερο)"
 
-#: ../translation/extra.c:37
+#: ../translation/extra.c:37 ../translation/plugins.c:75
 msgid "8-bit output (default is 16)"
 msgstr ""
 
 #. Game_Music_Emu decoder plugin
-#: ../translation/extra.c:39
+#: ../translation/extra.c:39 ../translation/plugins.c:1
 msgid "Max song length (in minutes)"
 msgstr "Μέγιστη διάρκεια τραγουδιού (σε λεπτά)"
 
-#: ../translation/extra.c:40
+#: ../translation/extra.c:40 ../translation/plugins.c:2
 msgid "Fadeout length (seconds)"
 msgstr ""
 
-#: ../translation/extra.c:41
+#: ../translation/extra.c:41 ../translation/plugins.c:3
 msgid "Play loops nr. of times (if available)"
 msgstr ""
 
 #. Standard GTK2 user interface plugin
-#: ../translation/extra.c:43
+#: ../translation/extra.c:43 ../translation/plugins.c:58
 msgid "Ask confirmation to delete files from disk"
 msgstr "Ερώτηση επιβεβαίωσης για τη διαγραφή αρχείων από το δίσκο"
 
-#: ../translation/extra.c:44
+#: ../translation/extra.c:44 ../translation/plugins.c:59
 msgid "Status icon volume control sensitivity"
 msgstr "Ευαισθησία εικονιδίου κατάστασης ελέγχου έντασης"
 
-#: ../translation/extra.c:45
+#: ../translation/extra.c:45 ../translation/plugins.c:60
 msgid "Custom status icon"
 msgstr "Προσαρμοσμένο εικονίδιο κατάστασης"
 
-#: ../translation/extra.c:46
+#: ../translation/extra.c:46 ../translation/plugins.c:61
 msgid "Run gtk_init with --sync (debug mode)"
 msgstr "Εκτέλεση gtk_init με --sync (λειτουργία αποσφαλμάτωσης)"
 
-#: ../translation/extra.c:47
+#: ../translation/extra.c:47 ../translation/plugins.c:62
 msgid "Add separators between plugin context menu items"
 msgstr "Προσθήκη διαχωριστικών μεταξύ αντικειμένων μενού πρόσθετων"
 
 #. OSD Notify plugin
-#: ../translation/extra.c:49
+#: ../translation/extra.c:49 ../translation/plugins.c:66
 msgid "Notification title format"
 msgstr "Μορφή τίτλου ειδοποίησης"
 
-#: ../translation/extra.c:50
+#: ../translation/extra.c:50 ../translation/plugins.c:67
 msgid "Notification content format"
 msgstr "Μορφή περιεχομένου ειδοποίησης"
 
-#: ../translation/extra.c:51
+#: ../translation/extra.c:51 ../translation/plugins.c:68
 msgid "Show album art"
 msgstr "Εμφάνιση εξώφυλλου άλμπουμ"
 
-#: ../translation/extra.c:52
+#: ../translation/extra.c:52 ../translation/plugins.c:69
 msgid "Album art size (px)"
 msgstr "Μέγεθος εξώφυλλου άλμπουμ (px)"
 
 #. PulseAudio output plugin
-#: ../translation/extra.c:54
+#: ../translation/extra.c:54 ../translation/plugins.c:178
 msgid "PulseAudio server"
 msgstr "Διακομιστής PulseAudio"
 
-#: ../translation/extra.c:56
+#: ../translation/extra.c:56 ../translation/plugins.c:201
 msgid "Samplerate"
 msgstr "Δειγματοληψία"
 
 #. SHN player plugin
-#: ../translation/extra.c:58
+#: ../translation/extra.c:58 ../translation/plugins.c:191
 msgid "Relative seek table path"
 msgstr "Διαδρομή πίνακα σχετικής αναζήτησης"
 
-#: ../translation/extra.c:59
+#: ../translation/extra.c:59 ../translation/plugins.c:192
 msgid "Absolute seek table path"
 msgstr "Διαδρομή πίνακα απόλυτης αναζήτησης"
 
-#: ../translation/extra.c:60
+#: ../translation/extra.c:60 ../translation/plugins.c:193
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr "Εναλλαγή bytes ήχου (επιλέξτε αν ακούτε μόνο κάτι στατικό)"
 
 #. SID decoder plugin
-#: ../translation/extra.c:62
+#: ../translation/extra.c:62 ../translation/plugins.c:203
 msgid "Enable HVSC Songlength DB"
 msgstr "Ενεργοποίηση HVSC Songlength DB"
 
-#: ../translation/extra.c:63
+#: ../translation/extra.c:63 ../translation/plugins.c:204
 msgid "Songlengths.txt (from HVSC)"
 msgstr "Songlengths.txt (from HVSC)"
 
@@ -1844,12 +1847,12 @@ msgstr "Songlengths.txt (from HVSC)"
 msgid "Bits per sample (8 or 16)"
 msgstr "Bits ανά δείγμα (8 or 16)"
 
-#: ../translation/extra.c:65
+#: ../translation/extra.c:65 ../translation/plugins.c:206
 msgid "Default song length (sec)"
 msgstr "Προεπιλεγμένη διάρκεια τραγουδιού (δευτ)"
 
 #. WildMidi player plugin
-#: ../translation/extra.c:67
+#: ../translation/extra.c:67 ../translation/plugins.c:207
 msgid "Timidity++ bank configuration file"
 msgstr "Αρχείο ρυθμίσεων Timidity++"
 
@@ -1906,12 +1909,12 @@ msgid "Embedded Cuesheet"
 msgstr "Ενσωματωμένα Cuesheet"
 
 #. FFmpeg deocder plugin
-#: ../translation/extra.c:90
+#: ../translation/extra.c:90 ../translation/plugins.c:71
 msgid "File Extensions (separate with ';')"
 msgstr "Επεκτάσεις αρχείων (διαχωρισμός με ';')"
 
 #. Converter GUI
-#: ../translation/extra.c:92
+#: ../translation/extra.c:92 ../translation/plugins.c:119
 msgid "Convert"
 msgstr "Μετατροπή"
 
@@ -1920,7 +1923,7 @@ msgstr "Μετατροπή"
 msgid "Target Samplerate"
 msgstr "Στόχος δειγματοληψίας"
 
-#: ../translation/extra.c:95
+#: ../translation/extra.c:95 ../translation/plugins.c:182
 msgid "Quality / Algorithm"
 msgstr "Ποιότητα / Αλγόριθμος"
 
@@ -1939,11 +1942,11 @@ msgid "Disable gapless playback (faster scanning)"
 msgstr ""
 
 #. adplug
-#: ../translation/extra.c:102
+#: ../translation/extra.c:102 ../translation/plugins.c:189
 msgid "Prefer Ken emu over Satoh (surround won't work)"
 msgstr ""
 
-#: ../translation/extra.c:103
+#: ../translation/extra.c:103 ../translation/plugins.c:190
 msgid "Enable surround"
 msgstr "Ενεργοποίηση περιφερειακού ήχου"
 
@@ -1981,6 +1984,772 @@ msgstr ""
 
 #: ../translation/extra.c:112
 msgid "Next album"
+msgstr ""
+
+#: ../translation/plugins.c:4
+msgid "ColecoVision BIOS (for SGC file format)"
+msgstr ""
+
+#: ../translation/plugins.c:5
+msgid "Tempo Change (%)"
+msgstr ""
+
+#: ../translation/plugins.c:6
+msgid "Pitch Change (semi-tones)"
+msgstr ""
+
+#: ../translation/plugins.c:7
+msgid "Playback Rate Change (%)"
+msgstr ""
+
+#: ../translation/plugins.c:8
+#, fuzzy
+msgid "Absolute Samplerate (overrides Rate Change if nonzero)"
+msgstr "Αυτόματη δειγματοληψία (υπερέχει του στόχου δειγματοληψίας)"
+
+#: ../translation/plugins.c:9
+msgid "Use AA Filter"
+msgstr ""
+
+#: ../translation/plugins.c:10
+msgid "AA Filter Length"
+msgstr ""
+
+#: ../translation/plugins.c:11
+msgid "Use Quickseek"
+msgstr ""
+
+#: ../translation/plugins.c:12
+msgid "Time Stretch Sequence Length (ms)"
+msgstr ""
+
+#: ../translation/plugins.c:13
+msgid "Time Stretch Seek Window Length (ms)"
+msgstr ""
+
+#: ../translation/plugins.c:14
+msgid "ReplayGain/Remove ReplayGain Information"
+msgstr ""
+
+#: ../translation/plugins.c:15
+msgid "ReplayGain/Scan Selection As Albums (By Tags)"
+msgstr ""
+
+#: ../translation/plugins.c:16
+msgid "ReplayGain/Scan Selection As Single Album"
+msgstr ""
+
+#: ../translation/plugins.c:17
+msgid "ReplayGain/Scan Per-file Track Gain"
+msgstr ""
+
+#: ../translation/plugins.c:18
+#, fuzzy
+msgid "Edit/Deselect All"
+msgstr "Αποεπιλογή όλων"
+
+#: ../translation/plugins.c:19
+#, fuzzy
+msgid "Edit/Select All"
+msgstr "Επιλογή όλων"
+
+#: ../translation/plugins.c:22
+#, fuzzy
+msgid "File/Add Location"
+msgstr "Προσθήκη τοποθεσίας"
+
+#: ../translation/plugins.c:23
+#, fuzzy
+msgid "File/Add Folder(s)"
+msgstr "Προσθήκη φακέλου(-ων)"
+
+#: ../translation/plugins.c:24
+#, fuzzy
+msgid "File/Add File(s)"
+msgstr "Προσθήκη αρχείου(-ων)"
+
+#: ../translation/plugins.c:25
+#, fuzzy
+msgid "File/Open File(s)"
+msgstr "_Άνοιγμα αρχείου(-ων)"
+
+#: ../translation/plugins.c:27
+msgid "Help/Show Help Page"
+msgstr ""
+
+#: ../translation/plugins.c:28
+msgid "Playback/Cycle Playback Looping Mode"
+msgstr ""
+
+#: ../translation/plugins.c:29
+msgid "Playback/Playback Looping - Don't loop"
+msgstr ""
+
+#: ../translation/plugins.c:30
+msgid "Playback/Playback Looping - Single track"
+msgstr ""
+
+#: ../translation/plugins.c:31
+msgid "Playback/Playback Looping - All"
+msgstr ""
+
+#: ../translation/plugins.c:32
+msgid "Playback/Cycle Playback Order"
+msgstr ""
+
+#: ../translation/plugins.c:33
+msgid "Playback/Playback Order - Random"
+msgstr ""
+
+#: ../translation/plugins.c:34
+msgid "Playback/Playback Order - Shuffle albums"
+msgstr ""
+
+#: ../translation/plugins.c:35
+msgid "Playback/Playback Order - Shuffle tracks"
+msgstr ""
+
+#: ../translation/plugins.c:36
+msgid "Playback/Playback Order - Linear"
+msgstr ""
+
+#: ../translation/plugins.c:37
+#, fuzzy
+msgid "Playback/Toggle Cursor Follows Playback"
+msgstr "Ο δείκτης ποντικιού ακολουθεί την αναπαραγωγή"
+
+#: ../translation/plugins.c:38
+#, fuzzy
+msgid "Playback/Toggle Scroll Follows Playback"
+msgstr "Η κύλιση ακολουθεί την αναπαραγωγή"
+
+#: ../translation/plugins.c:39
+msgid "View/Show\\/Hide menu"
+msgstr ""
+
+#: ../translation/plugins.c:40
+msgid "View/Show\\/Hide statusbar"
+msgstr ""
+
+#: ../translation/plugins.c:41
+msgid "Edit/Toggle Design Mode"
+msgstr ""
+
+#: ../translation/plugins.c:42
+#, fuzzy
+msgid "Edit/Preferences"
+msgstr "Ρυθμίσεις"
+
+#: ../translation/plugins.c:43
+msgid "Edit/Sort Custom"
+msgstr ""
+
+#: ../translation/plugins.c:44
+msgid "Edit/Crop Selected"
+msgstr ""
+
+#: ../translation/plugins.c:45
+#, fuzzy
+msgid "Edit/Remove Track(s) From Playlist"
+msgstr "Αφαίρεση Λίστας Αναπαραγωγής"
+
+#: ../translation/plugins.c:46
+#, fuzzy
+msgid "File/Save Playlist"
+msgstr "Αποθήκευση λίστας αναπαραγωγής"
+
+#: ../translation/plugins.c:47
+#, fuzzy
+msgid "File/Load Playlist"
+msgstr "Φόρτωση Λίστας Αναπαραγωγής"
+
+#: ../translation/plugins.c:48
+#, fuzzy
+msgid "File/Remove Current Playlist"
+msgstr "Αφαίρεση Λίστας Αναπαραγωγής"
+
+#: ../translation/plugins.c:49
+#, fuzzy
+msgid "File/New Playlist"
+msgstr "Νέα Λίστα Αναπαραγωγής"
+
+#: ../translation/plugins.c:50
+msgid "View/Show\\/Hide Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:51
+#, fuzzy
+msgid "View/Hide Equalizer"
+msgstr "Ισοσταθμιστής"
+
+#: ../translation/plugins.c:52
+#, fuzzy
+msgid "View/Show Equalizer"
+msgstr "Ισοσταθμιστής"
+
+#: ../translation/plugins.c:53
+msgid "View/Show\\/Hide Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:54
+msgid "View/Hide Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:55
+msgid "View/Show Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:56
+#, fuzzy
+msgid "Edit/Find"
+msgstr "Επεξεργασία"
+
+#: ../translation/plugins.c:57
+msgid "View/Show\\/Hide Log window"
+msgstr ""
+
+#: ../translation/plugins.c:63
+msgid "Use unicode chars instead of images for track state"
+msgstr ""
+
+#: ../translation/plugins.c:64
+msgid "Disable seekbar overlay text"
+msgstr ""
+
+#: ../translation/plugins.c:70
+msgid "Use all extensions supported by ffmpeg"
+msgstr ""
+
+#: ../translation/plugins.c:72
+#, fuzzy
+msgid "Left mix:"
+msgstr "Αριστερά"
+
+#: ../translation/plugins.c:73
+#, fuzzy
+msgid "Right mix:"
+msgstr "Δεξιά"
+
+#: ../translation/plugins.c:74
+#, fuzzy
+msgid "Resampling quality (0..5, higher is better)"
+msgstr "Ποιότητα αναδειγματοληψίας (0..2, μεγαλύτερο είναι καλύτερο)"
+
+#: ../translation/plugins.c:76
+msgid "Internal DUMB volume (0..128)"
+msgstr ""
+
+#: ../translation/plugins.c:77
+msgid "Volume ramping (0 is none, 1 is note on/off, 2 is always)"
+msgstr ""
+
+#: ../translation/plugins.c:78
+msgid "Refresh cover art"
+msgstr ""
+
+#: ../translation/plugins.c:79
+msgid "Disable disk cache"
+msgstr ""
+
+#: ../translation/plugins.c:80
+msgid "Save extracted covers to music folders"
+msgstr ""
+
+#: ../translation/plugins.c:83
+#, fuzzy
+msgid "Local file mask"
+msgstr "Αρχείο μάσκας τοπικού εξώφυλλου"
+
+#: ../translation/plugins.c:84
+#, fuzzy
+msgid "Artwork folders"
+msgstr "Προσθήκη φακέλου(-ων)"
+
+#: ../translation/plugins.c:85
+#, fuzzy
+msgid "Fetch from Last.fm"
+msgstr "Λήψη από το last.fm"
+
+#: ../translation/plugins.c:86
+#, fuzzy
+msgid "Fetch from MusicBrainz"
+msgstr "Λήψη από το last.fm"
+
+#: ../translation/plugins.c:87
+#, fuzzy
+msgid "Fetch from Albumart.org"
+msgstr "Λήψη από το albumart.org"
+
+#: ../translation/plugins.c:88
+msgid "Fetch from World of Spectrum (AY files only)"
+msgstr ""
+
+#: ../translation/plugins.c:89
+msgid "When no artwork is found"
+msgstr ""
+
+#: ../translation/plugins.c:90
+msgid "leave blank"
+msgstr ""
+
+#: ../translation/plugins.c:91
+#, fuzzy
+msgid "use DeaDBeeF default cover"
+msgstr "Μεταφραστές του DeaDBeeF"
+
+#: ../translation/plugins.c:92
+msgid "display custom image"
+msgstr ""
+
+#: ../translation/plugins.c:93
+msgid "Custom image path"
+msgstr ""
+
+#: ../translation/plugins.c:95
+msgid "CD drive to load"
+msgstr ""
+
+#: ../translation/plugins.c:100
+#, fuzzy
+msgid "Use CDDB protocol"
+msgstr "Προτίμηση πρωτοκόλλου CDDB έναντι HTTP"
+
+#: ../translation/plugins.c:102
+msgid "Drive speed for normal playback"
+msgstr ""
+
+#: ../translation/plugins.c:103
+msgid "1x"
+msgstr ""
+
+#: ../translation/plugins.c:104
+msgid "2x"
+msgstr ""
+
+#: ../translation/plugins.c:105
+msgid "4x"
+msgstr ""
+
+#: ../translation/plugins.c:106
+msgid "8x"
+msgstr ""
+
+#: ../translation/plugins.c:107
+msgid "16x"
+msgstr ""
+
+#: ../translation/plugins.c:108
+msgid "Max"
+msgstr ""
+
+#: ../translation/plugins.c:109
+msgid "Use cdparanoia error correction when ripping"
+msgstr ""
+
+#: ../translation/plugins.c:110
+#, fuzzy
+msgid "Lookup On Last.fm"
+msgstr "Αναζήτηση στο Last.fm"
+
+#: ../translation/plugins.c:117
+msgid "Send MusicBrainz ID"
+msgstr ""
+
+#: ../translation/plugins.c:118
+msgid "Submit tracks shorter than 30 seconds (not recommended)"
+msgstr ""
+
+#: ../translation/plugins.c:120
+#, fuzzy
+msgid "Device"
+msgstr "Αρχείο συσκευής"
+
+#: ../translation/plugins.c:121
+msgid "Buffer size (ms)"
+msgstr ""
+
+#: ../translation/plugins.c:123
+msgid "Playback/Jump To Currently Playing Track"
+msgstr ""
+
+#: ../translation/plugins.c:124
+msgid "Playback/Skip to/Previous genre"
+msgstr ""
+
+#: ../translation/plugins.c:125
+msgid "Playback/Skip to/Previous composer"
+msgstr ""
+
+#: ../translation/plugins.c:126
+msgid "Playback/Skip to/Previous artist"
+msgstr ""
+
+#: ../translation/plugins.c:127
+msgid "Playback/Skip to/Previous album"
+msgstr ""
+
+#: ../translation/plugins.c:128
+msgid "Playback/Skip to/Next genre"
+msgstr ""
+
+#: ../translation/plugins.c:129
+msgid "Playback/Skip to/Next composer"
+msgstr ""
+
+#: ../translation/plugins.c:130
+msgid "Playback/Skip to/Next artist"
+msgstr ""
+
+#: ../translation/plugins.c:131
+msgid "Playback/Skip to/Next album"
+msgstr ""
+
+#: ../translation/plugins.c:132
+#, fuzzy
+msgid "Next Playlist"
+msgstr "Νέα Λίστα Αναπαραγωγής"
+
+#: ../translation/plugins.c:133
+#, fuzzy
+msgid "Prev Playlist"
+msgstr "Νέα Λίστα Αναπαραγωγής"
+
+#: ../translation/plugins.c:134
+#, fuzzy
+msgid "Switch To Playlist 10"
+msgstr "Νέα Λίστα Αναπαραγωγής"
+
+#: ../translation/plugins.c:135
+#, fuzzy
+msgid "Switch To Playlist 9"
+msgstr "Νέα Λίστα Αναπαραγωγής"
+
+#: ../translation/plugins.c:136
+#, fuzzy
+msgid "Switch To Playlist 8"
+msgstr "Νέα Λίστα Αναπαραγωγής"
+
+#: ../translation/plugins.c:137
+#, fuzzy
+msgid "Switch To Playlist 7"
+msgstr "Νέα Λίστα Αναπαραγωγής"
+
+#: ../translation/plugins.c:138
+#, fuzzy
+msgid "Switch To Playlist 6"
+msgstr "Νέα Λίστα Αναπαραγωγής"
+
+#: ../translation/plugins.c:139
+#, fuzzy
+msgid "Switch To Playlist 5"
+msgstr "Νέα Λίστα Αναπαραγωγής"
+
+#: ../translation/plugins.c:140
+#, fuzzy
+msgid "Switch To Playlist 4"
+msgstr "Νέα Λίστα Αναπαραγωγής"
+
+#: ../translation/plugins.c:141
+#, fuzzy
+msgid "Switch To Playlist 3"
+msgstr "Νέα Λίστα Αναπαραγωγής"
+
+#: ../translation/plugins.c:142
+#, fuzzy
+msgid "Switch To Playlist 2"
+msgstr "Νέα Λίστα Αναπαραγωγής"
+
+#: ../translation/plugins.c:143
+#, fuzzy
+msgid "Switch To Playlist 1"
+msgstr "Νέα Λίστα Αναπαραγωγής"
+
+#: ../translation/plugins.c:144
+msgid "Edit/Sort Randomize"
+msgstr ""
+
+#: ../translation/plugins.c:145
+msgid "Edit/Sort By Date"
+msgstr ""
+
+#: ../translation/plugins.c:146
+msgid "Edit/Sort By Artist"
+msgstr ""
+
+#: ../translation/plugins.c:147
+msgid "Edit/Sort By Album"
+msgstr ""
+
+#: ../translation/plugins.c:148
+#, fuzzy
+msgid "Edit/Sort By Track Number"
+msgstr "Αριθμός Κομματιού"
+
+#: ../translation/plugins.c:149
+msgid "Edit/Sort By Title"
+msgstr ""
+
+#: ../translation/plugins.c:150
+#, fuzzy
+msgid "Edit/Invert Selection"
+msgstr "Αναστροφή επιλογής"
+
+#: ../translation/plugins.c:151
+#, fuzzy
+msgid "Edit/Clear Playlist"
+msgstr "Μετονομασία Λίστας Αναπαραγωγής"
+
+#: ../translation/plugins.c:152
+#, fuzzy
+msgid "Playback/Remove From Playback Queue"
+msgstr "Απομάκρυνση Από την Ουρά Αναπαραγωγής"
+
+#: ../translation/plugins.c:153
+#, fuzzy
+msgid "Playback/Add To Playback Queue"
+msgstr "Προσθήκη στην ουρά αναπαραγωγής"
+
+#: ../translation/plugins.c:154
+#, fuzzy
+msgid "Playback/Toggle In Playback Queue"
+msgstr "Προσθήκη στην ουρά αναπαραγωγής"
+
+#: ../translation/plugins.c:155
+msgid "Move/Move Tracks Down"
+msgstr ""
+
+#: ../translation/plugins.c:156
+msgid "Move/Move Tracks Up"
+msgstr ""
+
+#: ../translation/plugins.c:157
+msgid "Playback/Toggle Mute"
+msgstr ""
+
+#: ../translation/plugins.c:158
+#, fuzzy
+msgid "Playback/Play"
+msgstr "Αναπαραγωγή"
+
+#: ../translation/plugins.c:159
+#, fuzzy
+msgid "Playback/Stop"
+msgstr "Αναπαραγωγή"
+
+#: ../translation/plugins.c:160
+#, fuzzy
+msgid "Playback/Previous"
+msgstr "Προηγούμενο"
+
+#: ../translation/plugins.c:161
+#, fuzzy
+msgid "Playback/Next"
+msgstr "Αναπαραγωγή"
+
+#: ../translation/plugins.c:162
+msgid "Playback/Toggle Pause"
+msgstr ""
+
+#: ../translation/plugins.c:163
+msgid "Playback/Play\\/Pause"
+msgstr ""
+
+#: ../translation/plugins.c:164
+#, fuzzy
+msgid "Playback/Play Random"
+msgstr "Αναπαραγωγή τυχαίου"
+
+#: ../translation/plugins.c:165
+msgid "Playback/Seek 1s Forward"
+msgstr ""
+
+#: ../translation/plugins.c:166
+msgid "Playback/Seek 1s Backward"
+msgstr ""
+
+#: ../translation/plugins.c:167
+msgid "Playback/Seek 5s Forward"
+msgstr ""
+
+#: ../translation/plugins.c:168
+msgid "Playback/Seek 5s Backward"
+msgstr ""
+
+#: ../translation/plugins.c:169
+#, c-format
+msgid "Playback/Seek 1% Forward"
+msgstr ""
+
+#: ../translation/plugins.c:170
+msgid "Playback/Seek 1% Backward"
+msgstr ""
+
+#: ../translation/plugins.c:171
+#, c-format
+msgid "Playback/Seek 5% Forward"
+msgstr ""
+
+#: ../translation/plugins.c:172
+msgid "Playback/Seek 5% Backward"
+msgstr ""
+
+#: ../translation/plugins.c:173
+#, fuzzy
+msgid "Playback/Volume Up"
+msgstr "Αναπαραγωγή"
+
+#: ../translation/plugins.c:174
+msgid "Playback/Volume Down"
+msgstr ""
+
+#: ../translation/plugins.c:175
+msgid "Playback/Toggle Stop After Current Track"
+msgstr ""
+
+#: ../translation/plugins.c:176
+msgid "Playback/Toggle Stop After Current Album"
+msgstr ""
+
+#: ../translation/plugins.c:177
+#, fuzzy
+msgid "Edit/Configure Custom Shell Commands"
+msgstr "Προσαρμοσμένες Εντολές Κελύφους"
+
+#: ../translation/plugins.c:180
+msgid "Autodetect samplerate from output device"
+msgstr ""
+
+#: ../translation/plugins.c:181
+#, fuzzy
+msgid "Set samplerate directly"
+msgstr "Στόχος δειγματοληψίας"
+
+#: ../translation/plugins.c:183
+#, fuzzy
+msgid "Cache update period (in hours, 0=never)"
+msgstr "Περίοδος ενημέρωσης προσωρινής μνήμης"
+
+#: ../translation/plugins.c:184
+msgid " -"
+msgstr ""
+
+#: ../translation/plugins.c:186
+msgid "Highlight current playlist"
+msgstr ""
+
+#: ../translation/plugins.c:187
+msgid "Play on double-click"
+msgstr ""
+
+#: ../translation/plugins.c:188
+msgid "Emulate track change events (for scrobbling)"
+msgstr ""
+
+#: ../translation/plugins.c:194
+msgid "Force 16 bit output"
+msgstr ""
+
+#: ../translation/plugins.c:195
+msgid "Backend"
+msgstr ""
+
+#: ../translation/plugins.c:197
+#, fuzzy
+msgid "Bits per sample"
+msgstr "Bits ανά δείγμα (8 or 16)"
+
+#: ../translation/plugins.c:200
+#, fuzzy
+msgid "Default song length (in minutes)"
+msgstr "Μέγιστη διάρκεια τραγουδιού (σε λεπτά)"
+
+#: ../translation/plugins.c:202
+msgid "Skip when shorter than (sec)"
+msgstr ""
+
+#: ../translation/plugins.c:205
+msgid "Mono synth"
+msgstr ""
+
+#: ../translation/plugins.c:208
+#, fuzzy
+msgid "Preamp"
+msgstr "Μηδενισμός Προενίσχυσης"
+
+#: ../translation/plugins.c:209
+msgid "55 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:210
+msgid "77 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:211
+msgid "110 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:212
+msgid "156 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:213
+msgid "220 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:214
+msgid "311 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:215
+msgid "440 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:216
+msgid "622 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:217
+msgid "880 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:218
+msgid "1.2 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:219
+msgid "1.8 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:220
+msgid "2.5 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:221
+msgid "3.5 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:222
+msgid "5 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:223
+msgid "7 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:224
+msgid "10 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:225
+msgid "14 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:226
+msgid "20 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:227
+msgid "Volume Level"
 msgstr ""
 
 #: ../plugins/converter/convgui.c:91
