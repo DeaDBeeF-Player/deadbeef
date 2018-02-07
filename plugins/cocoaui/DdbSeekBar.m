@@ -40,13 +40,11 @@
         _dragging = YES;
     }
     [super mouseDown:theEvent];
-}
-
-- (void)mouseUp:(NSEvent *)theEvent {
+    // NSSlider mouseDown short-circuits the mainloop, and runs drag tracking from within the mouseDown handler,
+    // so this needs to be done here instead of mouseUp handler, which is never fired.
     if (theEvent.type == NSLeftMouseDown) {
         _dragging = NO;
     }
-    [super mouseUp:theEvent];
 }
 
 @end
