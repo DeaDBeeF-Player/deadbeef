@@ -1000,8 +1000,7 @@ static const char pltbrowser_settings_dlg[] =
 ;
 
 static DB_misc_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 5,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_MISC,
