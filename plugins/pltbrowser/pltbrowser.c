@@ -174,13 +174,13 @@ fill_pltbrowser_rows (gpointer user_data)
         deadbeef->plt_get_title (plt, title_temp, sizeof (title_temp));
         if (plt_active == i && highlight_curr) {
             if (output_state == OUTPUT_STATE_PAUSED) {
-                snprintf (title, sizeof (title), "%s%s", title_temp, " (paused)");
+                snprintf (title, sizeof (title), "%s%s", title_temp, _(" (paused)"));
             }
             else if (output_state == OUTPUT_STATE_STOPPED) {
-                snprintf (title, sizeof (title), "%s%s", title_temp, " (stopped)");
+                snprintf (title, sizeof (title), "%s%s", title_temp, _(" (stopped)"));
             }
             else {
-                snprintf (title, sizeof (title), "%s%s", title_temp, " (playing)");
+                snprintf (title, sizeof (title), "%s%s", title_temp, _(" (playing)"));
             }
         }
         else {
