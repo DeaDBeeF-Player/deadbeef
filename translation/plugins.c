@@ -1,17 +1,72 @@
-_("Volume Level");
-_("Close playlists with middle mouse button");
-_("Highlight current playlist");
-_("Play on double-click");
-_("Enable");
-_("Notification title format");
-_("Notification content format");
-_("Show album art");
-_("Album art size (px)");
+// plugins/adplug/plugin.c
+_("Prefer Ken emu over Satoh (surround won't work)");
+_("Enable surround");
+// plugins/alsa/alsa.c
+_("Use ALSA resampling");
+_("Preferred buffer size");
+_("Preferred period size");
+// plugins/artwork-legacy/artwork.c
+_("Refresh cover art");
+_("Cache update period (in hours, 0=never)");
+_("Fetch from embedded tags");
+_("Fetch from local folder");
+_("Fetch from Last.fm");
+_("Fetch from MusicBrainz");
+_("Fetch from Albumart.org");
+_("Fetch from World of Spectrum (AY files only)");
+_("When no artwork is found");
+_("leave blank");
+_("use DeaDBeeF default cover");
+_("display custom image");
+_("Custom image path");
+_("Scale artwork towards longer side");
+// plugins/artwork/artwork.c
+_("Disable disk cache");
+_("Save extracted covers to music folders");
+_("Local file mask");
+_("Artwork folders");
+// plugins/cdda/cdda.c
+_("CD drive to load");
+_("Audio CD Drive");
+_("File");
+_("Add Audio CD");
+_("Use CDDB/FreeDB");
+_("Prefer CD-Text over CDDB");
+_("CDDB url (e.g. 'freedb.org')");
+_("CDDB port number (e.g. '888')");
+_("Use CDDB protocol");
+_("Enable NRG image support");
+_("Drive speed for normal playback");
+_("1x");
+_("2x");
+_("4x");
+_("8x");
+_("16x");
+_("Max");
+_("Use cdparanoia error correction when ripping");
+// plugins/converter/convgui.c
+_("Convert");
+// plugins/dsp_libsrc/src.c
+_("Autodetect samplerate from output device");
+_("Set samplerate directly");
+_("Quality / Algorithm");
+// plugins/dumb/cdumb.c
+_("Resampling quality (0..5, higher is better)");
+_("8-bit output (default is 16)");
+_("Internal DUMB volume (0..128)");
+_("Volume ramping");
+_("None");
+_("On/Off Only");
+_("Full");
+// plugins/ffmpeg/ffmpeg.c
+_("Use all extensions supported by ffmpeg");
+_("File Extensions (separate with ';')");
+// plugins/gme/cgme.c
 _("Max song length (in minutes)");
 _("Fadeout length (seconds)");
 _("Play loops nr. of times (if available)");
 _("ColecoVision BIOS (for SGC file format)");
-_("Convert");
+// plugins/gtkui/gtkui.c
 _("ReplayGain");
 _("Remove ReplayGain Information");
 _("Scan Selection As Albums (By Tags)");
@@ -22,7 +77,6 @@ _("Deselect All");
 _("Select All");
 _("Quit");
 _("Remove From Disk");
-_("File");
 _("Add Location");
 _("Add Folder(s)");
 _("Add File(s)");
@@ -69,73 +123,7 @@ _("Run gtk_init with --sync (debug mode)");
 _("Add separators between plugin context menu items");
 _("Use unicode chars instead of images for track state");
 _("Disable seekbar overlay text");
-_("PulseAudio server");
-_("Preferred buffer size");
-_("Refresh cover art");
-_("Cache update period (in hours, 0=never)");
-_("Fetch from embedded tags");
-_("Fetch from local folder");
-_("Fetch from Last.fm");
-_("Fetch from MusicBrainz");
-_("Fetch from Albumart.org");
-_("Fetch from World of Spectrum (AY files only)");
-_("When no artwork is found");
-_("leave blank");
-_("use DeaDBeeF default cover");
-_("display custom image");
-_("Custom image path");
-_("Scale artwork towards longer side");
-_("CD drive to load");
-_("Audio CD Drive");
-_("Add Audio CD");
-_("Use CDDB/FreeDB");
-_("Prefer CD-Text over CDDB");
-_("CDDB url (e.g. 'freedb.org')");
-_("CDDB port number (e.g. '888')");
-_("Use CDDB protocol");
-_("Enable NRG image support");
-_("Drive speed for normal playback");
-_("1x");
-_("2x");
-_("4x");
-_("8x");
-_("16x");
-_("Max");
-_("Use cdparanoia error correction when ripping");
-_("Lookup On Last.fm");
-_("Enable scrobbler");
-_("Disable nowplaying");
-_("Username");
-_("Password");
-_("Scrobble URL");
-_("Prefer Album Artist over Artist field");
-_("Send MusicBrainz ID");
-_("Submit tracks shorter than 30 seconds (not recommended)");
-_("File Extensions (separate with ';')");
-_("Configure Custom Shell Commands");
-_("Bits per sample");
-_("Preamp");
-_("55 Hz");
-_("77 Hz");
-_("110 Hz");
-_("156 Hz");
-_("220 Hz");
-_("311 Hz");
-_("440 Hz");
-_("622 Hz");
-_("880 Hz");
-_("1.2 kHz");
-_("1.8 kHz");
-_("2.5 kHz");
-_("3.5 kHz");
-_("5 kHz");
-_("7 kHz");
-_("10 kHz");
-_("14 kHz");
-_("20 kHz");
-_("Force 16 bit output");
-_("Backend");
-_("Use all extensions supported by ffmpeg");
+// plugins/hotkeys/hotkeys.c
 _("Reload Metadata");
 _("Jump To Currently Playing Track");
 _("Skip to");
@@ -193,44 +181,76 @@ _("Volume Up");
 _("Volume Down");
 _("Toggle Stop After Current Track");
 _("Toggle Stop After Current Album");
-_("Tempo Change (%)");
-_("Pitch Change (semi-tones)");
-_("Playback Rate Change (%)");
-_("Absolute Samplerate (overrides Rate Change if nonzero)");
-_("Use AA Filter");
-_("AA Filter Length");
-_("Use Quickseek");
-_("Time Stretch Sequence Length (ms)");
-_("Time Stretch Seek Window Length (ms)");
-_("Disable disk cache");
-_("Save extracted covers to music folders");
-_("Local file mask");
-_("Artwork folders");
-_("Enable HVSC Songlength DB");
-_("Songlengths.txt (from HVSC)");
-_("Samplerate");
-_("Mono synth");
-_("Default song length (sec)");
-_("Timidity++ bank configuration file");
-_("Device");
-_("Buffer size (ms)");
-_("Prefer Ken emu over Satoh (surround won't work)");
-_("Enable surround");
-_("Autodetect samplerate from output device");
-_("Set samplerate directly");
-_("Quality / Algorithm");
-_("Emulate track change events (for scrobbling)");
+// plugins/lastfm/lastfm.c
+_("Lookup On Last.fm");
+_("Enable scrobbler");
+_("Disable nowplaying");
+_("Username");
+_("Password");
+_("Scrobble URL");
+_("Prefer Album Artist over Artist field");
+_("Send MusicBrainz ID");
+_("Submit tracks shorter than 30 seconds (not recommended)");
+// plugins/mono2stereo/mono2stereo.c
+_("Left mix:");
+_("Right mix:");
+// plugins/mp3/mp3.c
+_("Force 16 bit output");
+_("Backend");
+// plugins/notify/notify.c
+_("Enable");
+_("Notification title format");
+_("Notification content format");
+_("Show album art");
+_("Album art size (px)");
+// plugins/oss/oss.c
+_("Device file");
+// plugins/pltbrowser/pltbrowser.c
+_("Close playlists with middle mouse button");
+_("Highlight current playlist");
+_("Play on double-click");
+// plugins/pulse/pulse.c
+_("PulseAudio server");
+// plugins/sc68/in_sc68.c
 _("Default song length (in minutes)");
+_("Samplerate");
 _("Skip when shorter than (sec)");
+// plugins/shellexecui/shellexecui.c
+_("Configure Custom Shell Commands");
+// plugins/shn/shn.c
 _("Relative seek table path");
 _("Absolute seek table path");
 _("Swap audio bytes (toggle if all you hear is static)");
-_("Resampling quality (0..5, higher is better)");
-_("8-bit output (default is 16)");
-_("Internal DUMB volume (0..128)");
-_("Volume ramping (0 is none, 1 is note on/off, 2 is always)");
-_("Use ALSA resampling");
-_("Preferred period size");
-_("Left mix:");
-_("Right mix:");
-_("Device file");
+// plugins/sid/plugin.c
+_("Enable HVSC Songlength DB");
+_("Songlengths.txt (from HVSC)");
+_("Bits per sample");
+_("Mono synth");
+_("Default song length (sec)");
+// plugins/sndio/sndio.c
+_("Device");
+_("Buffer size (ms)");
+// plugins/supereq/supereq.c
+_("Preamp");
+_("55 Hz");
+_("77 Hz");
+_("110 Hz");
+_("156 Hz");
+_("220 Hz");
+_("311 Hz");
+_("440 Hz");
+_("622 Hz");
+_("880 Hz");
+_("1.2 kHz");
+_("1.8 kHz");
+_("2.5 kHz");
+_("3.5 kHz");
+_("5 kHz");
+_("7 kHz");
+_("10 kHz");
+_("14 kHz");
+_("20 kHz");
+// plugins/vfs_curl/vfs_curl.c
+_("Emulate track change events (for scrobbling)");
+// plugins/wildmidi/wildmidiplug.c
+_("Timidity++ bank configuration file");
