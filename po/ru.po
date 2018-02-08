@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Alexey Yakovenko <wakeroid@gmail.com>, 2013-2014,2016
+# Alexey Yakovenko <wakeroid@gmail.com>, 2013-2014,2016-2018
 # AlexL <loginov.alex.valer@gmail.com>, 2016-2017
 # Andrei Stepanov, 2014
 # Andrei Stepanov, 2014
@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-07 22:42+0100\n"
-"PO-Revision-Date: 2017-11-11 11:22+0000\n"
+"POT-Creation-Date: 2018-02-08 19:06+0100\n"
+"PO-Revision-Date: 2018-02-07 21:45+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/ru/)\n"
@@ -44,7 +44,7 @@ msgid "DeaDBeeF Translators"
 msgstr "Переводчики DeaDBeeF "
 
 #: ../plugins/gtkui/callbacks.c:638 ../plugins/gtkui/interface.c:976
-#: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:31
+#: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:85
 #: ../plugins/converter/convgui.c:1759 ../plugins/converter/convgui.c:1767
 #: ../plugins/gtkui/actionhandlers.c:473
 msgid "Help"
@@ -86,7 +86,8 @@ msgstr "Загрузить"
 msgid "Import Foobar2000 Preset"
 msgstr "Импортировать предустановку Foobar2000"
 
-#: ../plugins/gtkui/eq.c:367 ../translation/plugins.c:5
+#. plugins/notify/notify.c
+#: ../plugins/gtkui/eq.c:367 ../translation/plugins.c:201
 msgid "Enable"
 msgstr "Включить"
 
@@ -117,7 +118,7 @@ msgstr "1 день %d:%02d:%02d"
 msgid "%d days %d:%02d:%02d"
 msgstr "%d дней %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:672 ../translation/plugins.c:56
+#: ../plugins/gtkui/gtkui.c:672 ../translation/plugins.c:110
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 msgid "New Playlist"
 msgstr "Новый плейлист"
@@ -338,19 +339,19 @@ msgstr "Номер дорожки"
 
 #: ../plugins/gtkui/interface.c:267 ../plugins/gtkui/interface.c:1972
 #: ../plugins/gtkui/plcommon.c:92 ../plugins/gtkui/deadbeef.glade.h:22
-#: ../translation/extra.c:73
+#: ../translation/extra.c:6
 msgid "Album"
 msgstr "Альбом"
 
 #. Track properties dialog
 #: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/plcommon.c:91
 #: ../plugins/gtkui/plcommon.c:1848 ../plugins/gtkui/deadbeef.glade.h:23
-#: ../translation/extra.c:69
+#: ../translation/extra.c:2
 msgid "Artist"
 msgstr "Исполнитель"
 
 #: ../plugins/gtkui/interface.c:275 ../plugins/gtkui/deadbeef.glade.h:24
-#: ../translation/extra.c:74
+#: ../translation/extra.c:7
 msgid "Date"
 msgstr "Дата"
 
@@ -365,7 +366,7 @@ msgid "Custom"
 msgstr "Пользовательский"
 
 #: ../plugins/gtkui/interface.c:292 ../plugins/gtkui/interface.c:1791
-#: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:49
+#: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:103
 msgid "Preferences"
 msgstr "Настройки"
 
@@ -476,12 +477,12 @@ msgid "Search"
 msgstr "Поиск"
 
 #: ../plugins/gtkui/interface.c:794 ../plugins/gtkui/deadbeef.glade.h:54
-#: ../translation/plugins.c:178
+#: ../translation/plugins.c:166
 msgid "Stop"
 msgstr "Стоп"
 
 #: ../plugins/gtkui/interface.c:802 ../plugins/gtkui/deadbeef.glade.h:55
-#: ../translation/plugins.c:177
+#: ../translation/plugins.c:165
 msgid "Play"
 msgstr "Воспроизвести"
 
@@ -490,17 +491,17 @@ msgid "Pause"
 msgstr "Пауза"
 
 #: ../plugins/gtkui/interface.c:818 ../plugins/gtkui/deadbeef.glade.h:57
-#: ../translation/plugins.c:179
+#: ../translation/plugins.c:167
 msgid "Previous"
 msgstr "Предыдущая"
 
 #: ../plugins/gtkui/interface.c:826 ../plugins/gtkui/deadbeef.glade.h:58
-#: ../translation/plugins.c:180
+#: ../translation/plugins.c:168
 msgid "Next"
 msgstr "Следующая"
 
 #: ../plugins/gtkui/interface.c:834 ../plugins/gtkui/deadbeef.glade.h:59
-#: ../translation/plugins.c:183
+#: ../translation/plugins.c:171
 msgid "Play Random"
 msgstr "Играть вразброс"
 
@@ -509,12 +510,12 @@ msgid "About"
 msgstr "О программе"
 
 #: ../plugins/gtkui/interface.c:856 ../plugins/gtkui/deadbeef.glade.h:61
-#: ../translation/plugins.c:23
+#: ../translation/plugins.c:78
 msgid "Quit"
 msgstr "Выход"
 
 #: ../plugins/gtkui/interface.c:1049 ../plugins/gtkui/plcommon.c:1228
-#: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:30
+#: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:84
 msgid "Track Properties"
 msgstr "Свойства дорожки"
 
@@ -623,27 +624,24 @@ msgid "Always convert 16 bit audio to 24 bit"
 msgstr "Всегда преобразовывать 16-битный звук в 24-битный"
 
 #: ../plugins/gtkui/interface.c:1859 ../plugins/gtkui/deadbeef.glade.h:87
-#, fuzzy
 msgid "Target samplerate:"
-msgstr "Частота дискретизации"
+msgstr "Целевая частота дискретизации:"
 
 #: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "For multiples of 48KHz (96K, 192K, ...):"
-msgstr ""
+msgstr "Для кратных 48КГц (96К, 192К, ...):"
 
 #: ../plugins/gtkui/interface.c:1911 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "For multiples of 44.1KHz (88.2K, 176.4K, ...):"
-msgstr ""
+msgstr "Для кратных 44.1КГц (88.2К, 176.4К, ...):"
 
 #: ../plugins/gtkui/interface.c:1926 ../plugins/gtkui/deadbeef.glade.h:90
-#, fuzzy
 msgid "Based on input samplerate"
-msgstr "Частота дискретизации"
+msgstr "На основании входной частоты"
 
 #: ../plugins/gtkui/interface.c:1930 ../plugins/gtkui/deadbeef.glade.h:91
-#, fuzzy
 msgid "Override samplerate"
-msgstr "Частота дискретизации"
+msgstr "Переопределить частоту дискретизации"
 
 #: ../plugins/gtkui/interface.c:1934 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Sound"
@@ -666,7 +664,7 @@ msgid "Processing:"
 msgstr "В процессе:"
 
 #: ../plugins/gtkui/interface.c:1987 ../plugins/gtkui/plcommon.c:1840
-#: ../plugins/gtkui/widgets.c:3942
+#: ../translation/plugins.c:58 ../plugins/gtkui/widgets.c:3942
 msgid "None"
 msgstr "Отсутствует"
 
@@ -694,11 +692,11 @@ msgstr "+12 дБ"
 
 #: ../plugins/gtkui/interface.c:2017 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Preamp with RG info:"
-msgstr ""
+msgstr "Предусиление с данными RG:"
 
 #: ../plugins/gtkui/interface.c:2024 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Preamp without RG info:"
-msgstr ""
+msgstr "Предусиление без данных RG:"
 
 #: ../plugins/gtkui/interface.c:2051 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "<b>ReplayGain</b>"
@@ -731,7 +729,7 @@ msgstr ""
 "срабатывания"
 
 #: ../plugins/gtkui/interface.c:2085 ../plugins/gtkui/deadbeef.glade.h:112
-#: ../translation/plugins.c:33
+#: ../translation/plugins.c:87
 msgid "Playback"
 msgstr "Воспроизведение"
 
@@ -798,8 +796,9 @@ msgstr "Отображать время воспроизведения в стр
 msgid "Player"
 msgstr "Проигрыватель"
 
+#. plugins/pltbrowser/pltbrowser.c
 #: ../plugins/gtkui/interface.c:2258 ../plugins/gtkui/deadbeef.glade.h:128
-#: ../translation/plugins.c:2
+#: ../translation/plugins.c:209
 msgid "Close playlists with middle mouse button"
 msgstr "Закрывать плейлисты средней кнопкой мыши"
 
@@ -817,11 +816,11 @@ msgstr "Автоматический размер колонок под разм
 
 #: ../plugins/gtkui/interface.c:2278 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Group spacing:"
-msgstr "Групповой интервал:"
+msgstr "Расстояние между группами:"
 
 #: ../plugins/gtkui/interface.c:2288 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "pixels"
-msgstr "Пиксели"
+msgstr "пиксели"
 
 #: ../plugins/gtkui/interface.c:2296 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "GUI/Misc"
@@ -834,15 +833,15 @@ msgstr "Заменить"
 
 #: ../plugins/gtkui/interface.c:2320 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Bars"
-msgstr ""
+msgstr "Линии"
 
 #: ../plugins/gtkui/interface.c:2327 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Background (EQ)"
-msgstr ""
+msgstr "Фон (Эквалайзер)"
 
 #: ../plugins/gtkui/interface.c:2346 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Seekbar/Volumebar/EQ"
-msgstr ""
+msgstr "Перемотки/громкость/эквалайзер"
 
 #: ../plugins/gtkui/interface.c:2371 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Base:"
@@ -1028,7 +1027,7 @@ msgid "Version: "
 msgstr "Версия:"
 
 #: ../plugins/gtkui/interface.c:3071 ../plugins/gtkui/deadbeef.glade.h:184
-#: ../translation/extra.c:83
+#: ../translation/extra.c:16
 msgid "Copyright"
 msgstr "Авторские права"
 
@@ -1196,7 +1195,7 @@ msgstr ""
 "либо просто \"переопределённое название\", если его нет."
 
 #: ../plugins/gtkui/interface.c:5093 ../plugins/gtkui/deadbeef.glade.h:218
-#: ../translation/plugins.c:20 ../plugins/shellexecui/interface.c:70
+#: ../translation/plugins.c:75 ../plugins/shellexecui/interface.c:70
 #: ../plugins/shellexecui/shellexec.glade.h:5
 msgid "Edit"
 msgstr "Редактировать"
@@ -1231,29 +1230,29 @@ msgstr "Очистить"
 
 #: ../plugins/gtkui/interface.c:5304 ../plugins/gtkui/deadbeef.glade.h:226
 msgid "ReplayGain Scan Progress"
-msgstr ""
+msgstr "Прогресс сканирования ReplayGain"
 
 #: ../plugins/gtkui/interface.c:5315 ../plugins/gtkui/deadbeef.glade.h:227
 msgid "Current File:"
-msgstr ""
+msgstr "Текущий файл:"
 
 #: ../plugins/gtkui/interface.c:5333 ../plugins/gtkui/interface.c:5393
 #: ../plugins/gtkui/deadbeef.glade.h:228 ../plugins/gtkui/rg.c:313
 msgid "Status"
-msgstr ""
+msgstr "Статус"
 
 #: ../plugins/gtkui/interface.c:5340 ../plugins/gtkui/interface.c:5404
 #: ../plugins/gtkui/deadbeef.glade.h:229
 msgid "Cancel"
-msgstr ""
+msgstr "Отмена"
 
 #: ../plugins/gtkui/interface.c:5372 ../plugins/gtkui/deadbeef.glade.h:230
 msgid "ReplayGain Scan Results"
-msgstr ""
+msgstr "Результаты сканирования ReplayGain"
 
 #: ../plugins/gtkui/interface.c:5400 ../plugins/gtkui/deadbeef.glade.h:231
 msgid "Update File Tags"
-msgstr ""
+msgstr "Обновить теги в файлах"
 
 #: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:650
 msgid "Artist / Album"
@@ -1289,15 +1288,15 @@ msgstr "Исполнитель - Альбом"
 msgid "Year"
 msgstr "Год"
 
-#: ../plugins/gtkui/plcommon.c:96 ../translation/extra.c:75
+#: ../plugins/gtkui/plcommon.c:96 ../translation/extra.c:8
 msgid "Track Number"
 msgstr "Номер дорожки"
 
-#: ../plugins/gtkui/plcommon.c:97 ../translation/extra.c:72
+#: ../plugins/gtkui/plcommon.c:97 ../translation/extra.c:5
 msgid "Band / Album Artist"
 msgstr "Группа / Исполнитель альбома"
 
-#: ../plugins/gtkui/plcommon.c:98 ../translation/extra.c:88
+#: ../plugins/gtkui/plcommon.c:98 ../translation/extra.c:21
 msgid "Codec"
 msgstr "Кодек"
 
@@ -1310,15 +1309,16 @@ msgstr "Битрейт"
 msgid "_Paste"
 msgstr "_Вставить"
 
-#: ../plugins/gtkui/plcommon.c:990 ../translation/plugins.c:171
+#: ../plugins/gtkui/plcommon.c:990 ../translation/plugins.c:159
 msgid "Add To Playback Queue"
 msgstr "Добавить в очередь воспроизведения"
 
-#: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:170
+#: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:158
 msgid "Remove From Playback Queue"
 msgstr "Удалить из очереди воспроизведения"
 
-#: ../plugins/gtkui/plcommon.c:1016 ../translation/plugins.c:139
+#. plugins/hotkeys/hotkeys.c
+#: ../plugins/gtkui/plcommon.c:1016 ../translation/plugins.c:127
 msgid "Reload Metadata"
 msgstr "Обновить метаданные"
 
@@ -1330,7 +1330,7 @@ msgstr "В_ырезать"
 msgid "_Copy"
 msgstr "_Копировать"
 
-#: ../plugins/gtkui/plcommon.c:1079 ../translation/plugins.c:24
+#: ../plugins/gtkui/plcommon.c:1079 ../translation/plugins.c:79
 msgid "Remove From Disk"
 msgstr "Удалить с диска"
 
@@ -1578,6 +1578,8 @@ msgid ""
 "                      FMT syntax: http://github.com/DeaDBeeF-Player/deadbeef/"
 "wiki/Title-formatting-2.0\n"
 msgstr ""
+"Синтаксис FMT: http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-"
+"formatting-2.0\n"
 
 #: ../main.c:127
 #, c-format
@@ -1686,1085 +1688,924 @@ msgstr ""
 "timidity-freepats, или укажите путь к файлу freepats.cfg в настройках "
 "расширения."
 
-#. this file should list extra translatable strings that are not referenced
-#. directly in source code, e.g. scripted plugin configuration strings
-#: ../translation/extra.c:3 ../translation/plugins.c:90
-msgid "Add Audio CD"
-msgstr "Добавить аудио CD"
-
-#: ../translation/extra.c:4
-msgid "Lookup on Last.fm"
-msgstr "Показать на Last.fm"
-
-#. ALSA output plugin
-#: ../translation/extra.c:6 ../translation/plugins.c:232
-msgid "Use ALSA resampling"
-msgstr "Использовать передискретизацию с помощью ALSA"
-
-#: ../translation/extra.c:7
-msgid "Release device while stopped"
-msgstr "Освобождать устройство во время остановки"
-
-#: ../translation/extra.c:8 ../translation/extra.c:55
-#: ../translation/plugins.c:73
-msgid "Preferred buffer size"
-msgstr "Предпочитаемый размер буфера"
-
-#: ../translation/extra.c:9 ../translation/plugins.c:233
-msgid "Preferred period size"
-msgstr "Предпочитаемый размер периода"
-
-#. Last.fm plugin
-#: ../translation/extra.c:11 ../translation/plugins.c:106
-msgid "Enable scrobbler"
-msgstr "Включить скробблер"
-
-#: ../translation/extra.c:12 ../translation/plugins.c:107
-msgid "Disable nowplaying"
-msgstr "Не отправлять информацию о текущей дорожке"
-
-#: ../translation/extra.c:13 ../translation/plugins.c:108
-msgid "Username"
-msgstr "Имя пользователя"
-
-#: ../translation/extra.c:14 ../translation/plugins.c:109
-msgid "Password"
-msgstr "Пароль"
-
-#: ../translation/extra.c:15 ../translation/plugins.c:110
-msgid "Scrobble URL"
-msgstr "Адрес для скробблинга"
-
-#: ../translation/extra.c:16 ../translation/plugins.c:111
-msgid "Prefer Album Artist over Artist field"
-msgstr "Предпочитать поле \"Исполнитель Альбома\" перед полем \"Исполнитель\""
-
-#. OSS output plugin
-#: ../translation/extra.c:18 ../translation/plugins.c:236
-msgid "Device file"
-msgstr "Файл устройства"
-
-#: ../translation/extra.c:19
-msgid "OSS4 samplerate bug workaround"
-msgstr "Исправление для ошибки частоты дискретизации в OSS4"
-
-#. Album Artwork plugin
-#: ../translation/extra.c:21
-msgid "Cache update period (hr)"
-msgstr "Период обновления кэша (часы)"
-
-#: ../translation/extra.c:22 ../translation/plugins.c:76
-msgid "Fetch from embedded tags"
-msgstr "Получать из встроенных тегов"
-
-#: ../translation/extra.c:23 ../translation/plugins.c:77
-msgid "Fetch from local folder"
-msgstr "Получать из локальной директории"
-
-#: ../translation/extra.c:24
-msgid "Local cover file mask"
-msgstr "Файловая маска для локальных обложек"
-
-#: ../translation/extra.c:25
-msgid "Fetch from last.fm"
-msgstr "Получать из last.fm"
-
-#: ../translation/extra.c:26
-msgid "Fetch from albumart.org"
-msgstr "Получать из albumart.org"
-
-#: ../translation/extra.c:27 ../translation/plugins.c:87
-msgid "Scale artwork towards longer side"
-msgstr "Масштабировать обложку относительно более длинной стороны"
-
-#. Audio CD player
-#: ../translation/extra.c:29 ../translation/plugins.c:91
-msgid "Use CDDB/FreeDB"
-msgstr "Использовать CDDB/FreeDB"
-
-#: ../translation/extra.c:30 ../translation/plugins.c:92
-msgid "Prefer CD-Text over CDDB"
-msgstr "Использовать CD-Text вместо CDDB"
-
-#: ../translation/extra.c:31 ../translation/plugins.c:93
-msgid "CDDB url (e.g. 'freedb.org')"
-msgstr "Адрес CDDB (например, 'freedb.org')"
-
-#: ../translation/extra.c:32 ../translation/plugins.c:94
-msgid "CDDB port number (e.g. '888')"
-msgstr "Номер порта CDDB (например, '888')"
-
-#: ../translation/extra.c:33
-msgid "Prefer CDDB protocol over HTTP"
-msgstr "Использовать протокол CDDB вместо HTTP"
-
-#: ../translation/extra.c:34 ../translation/plugins.c:96
-msgid "Enable NRG image support"
-msgstr "Включить поддержку образов NRG"
-
-#. DUMB module player plugin
-#: ../translation/extra.c:36
-msgid "Resampling quality (0..2, higher is better)"
-msgstr "Качество передискретизации (0..2, выше - лучше)"
-
-#: ../translation/extra.c:37 ../translation/plugins.c:229
-msgid "8-bit output (default is 16)"
-msgstr "8-битный вывод (по-умолчанию 16)"
-
-#. Game_Music_Emu decoder plugin
-#: ../translation/extra.c:39 ../translation/plugins.c:10
-msgid "Max song length (in minutes)"
-msgstr "Максимальная длина дорожки (в минутах)"
-
-#: ../translation/extra.c:40 ../translation/plugins.c:11
-msgid "Fadeout length (seconds)"
-msgstr "Продолжительность затухания громкости (в секундах)"
-
-#: ../translation/extra.c:41 ../translation/plugins.c:12
-msgid "Play loops nr. of times (if available)"
-msgstr "Сколько раз играть циклы (loops), если они есть"
-
-#. Standard GTK2 user interface plugin
-#: ../translation/extra.c:43 ../translation/plugins.c:65
-msgid "Ask confirmation to delete files from disk"
-msgstr "Запрашивать подтверждение на удаление файлов с жёсткого диска"
-
-#: ../translation/extra.c:44 ../translation/plugins.c:66
-msgid "Status icon volume control sensitivity"
-msgstr "Чувствительность регулятора громкости в значке статуса"
-
-#: ../translation/extra.c:45 ../translation/plugins.c:67
-msgid "Custom status icon"
-msgstr "Пользовательский значок статуса"
-
-#: ../translation/extra.c:46 ../translation/plugins.c:68
-msgid "Run gtk_init with --sync (debug mode)"
-msgstr "Запускать gtk_init с ключом --sync (режим отладки)"
-
-#: ../translation/extra.c:47 ../translation/plugins.c:69
-msgid "Add separators between plugin context menu items"
-msgstr "Добавить разделители между элементами контекстного меню"
-
-#. OSD Notify plugin
-#: ../translation/extra.c:49 ../translation/plugins.c:6
-msgid "Notification title format"
-msgstr "Формат заголовка уведомления"
-
-#: ../translation/extra.c:50 ../translation/plugins.c:7
-msgid "Notification content format"
-msgstr "Формат содержимого уведомления"
-
-#: ../translation/extra.c:51 ../translation/plugins.c:8
-msgid "Show album art"
-msgstr "Показывать обложку"
-
-#: ../translation/extra.c:52 ../translation/plugins.c:9
-msgid "Album art size (px)"
-msgstr "Размер обложки (px)"
-
-#. PulseAudio output plugin
-#: ../translation/extra.c:54 ../translation/plugins.c:72
-msgid "PulseAudio server"
-msgstr "Сервер PulseAudio"
-
-#: ../translation/extra.c:56 ../translation/plugins.c:211
-msgid "Samplerate"
-msgstr "Частота дискретизации"
-
-#. SHN player plugin
-#: ../translation/extra.c:58 ../translation/plugins.c:225
-msgid "Relative seek table path"
-msgstr "Относительный путь таблицы поиска"
-
-#: ../translation/extra.c:59 ../translation/plugins.c:226
-msgid "Absolute seek table path"
-msgstr "Абсолютный путь таблицы поиска"
-
-#: ../translation/extra.c:60 ../translation/plugins.c:227
-msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr "Переставить местами аудио байты"
-
-#. SID decoder plugin
-#: ../translation/extra.c:62 ../translation/plugins.c:209
-msgid "Enable HVSC Songlength DB"
-msgstr "Включить HVSC Songlength DB"
-
-#: ../translation/extra.c:63 ../translation/plugins.c:210
-msgid "Songlengths.txt (from HVSC)"
-msgstr "Songlengths.txt (из HVSC)"
-
-#: ../translation/extra.c:64
-msgid "Bits per sample (8 or 16)"
-msgstr "Разрядность (8 или 16)"
-
-#: ../translation/extra.c:65 ../translation/plugins.c:213
-msgid "Default song length (sec)"
-msgstr "Длина дорожки по умолчанию (сек)"
-
-#. WildMidi player plugin
-#: ../translation/extra.c:67 ../translation/plugins.c:214
-msgid "Timidity++ bank configuration file"
-msgstr "Файл конфигурации для банка Timidity++"
-
-#: ../translation/extra.c:70
+#: ../translation/extra.c:3
 msgid "Track Title"
 msgstr "Название дорожки"
 
-#: ../translation/extra.c:71
+#: ../translation/extra.c:4
 msgid "Performer"
 msgstr "Исполнитель(и)"
 
-#: ../translation/extra.c:76
+#: ../translation/extra.c:9
 msgid "Total Tracks"
 msgstr "Всего дорожек"
 
-#: ../translation/extra.c:77
+#: ../translation/extra.c:10
 msgid "Genre"
 msgstr "Жанр"
 
-#: ../translation/extra.c:78
+#: ../translation/extra.c:11
 msgid "Composer"
 msgstr "Композитор"
 
-#: ../translation/extra.c:79
+#: ../translation/extra.c:12
 msgid "Disc Number"
 msgstr "Номер диска"
 
-#: ../translation/extra.c:80
+#: ../translation/extra.c:13
 msgid "Total Discs"
 msgstr "Всего дисков"
 
-#: ../translation/extra.c:81
+#: ../translation/extra.c:14
 msgid "Comment"
 msgstr "Комментарий"
 
-#: ../translation/extra.c:82
+#: ../translation/extra.c:15
 msgid "Encoder / Vendor"
 msgstr "Кодер / Продавец"
 
-#: ../translation/extra.c:84
+#: ../translation/extra.c:17
 msgid "Location"
 msgstr "Расположение"
 
-#: ../translation/extra.c:85
+#: ../translation/extra.c:18
 msgid "Subtrack Index"
 msgstr "Номер вложенной дорожки"
 
-#: ../translation/extra.c:86
+#: ../translation/extra.c:19
 msgid "Tag Type(s)"
 msgstr "Тип(ы) тегов"
 
-#: ../translation/extra.c:87
+#: ../translation/extra.c:20
 msgid "Embedded Cuesheet"
 msgstr "Встроенный файл cue"
 
-#. FFmpeg deocder plugin
-#: ../translation/extra.c:90 ../translation/plugins.c:114
-msgid "File Extensions (separate with ';')"
-msgstr "Расширения файлов (разделять с помощью ';')"
-
-#. Converter GUI
-#: ../translation/extra.c:92 ../translation/plugins.c:14
-msgid "Convert"
-msgstr "Конвертировать"
-
-#. Resampler (Secret Rabbit Code)
-#: ../translation/extra.c:94
-msgid "Target Samplerate"
-msgstr "Частота дискретизации"
-
-#: ../translation/extra.c:95 ../translation/plugins.c:221
-msgid "Quality / Algorithm"
-msgstr "Качество / Алгоритм"
-
-#: ../translation/extra.c:96
-msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr ""
-"Автоматическая частота дискретизации (переопределяет частоту дискретизации)"
-
-#. shellexecui
-#: ../translation/extra.c:98 ../translation/plugins.c:115
-msgid "Configure Custom Shell Commands"
-msgstr "Настройка собственных шелл-команд"
-
-#. mpgmad
-#: ../translation/extra.c:100
-msgid "Disable gapless playback (faster scanning)"
-msgstr "Отключить бесшовное воспроизведение (ускоряет сканирование)"
-
-#. adplug
-#: ../translation/extra.c:102 ../translation/plugins.c:217
+#. plugins/adplug/plugin.c
+#: ../translation/plugins.c:2
 msgid "Prefer Ken emu over Satoh (surround won't work)"
 msgstr "Предпочитать эмулятор Ken над Satoh (surround не будет работать)"
 
-#: ../translation/extra.c:103 ../translation/plugins.c:218
+#: ../translation/plugins.c:3
 msgid "Enable surround"
 msgstr "Включить surround"
 
-#: ../translation/extra.c:104 ../translation/plugins.c:141
-msgid "Skip to"
-msgstr ""
+#. plugins/alsa/alsa.c
+#: ../translation/plugins.c:5
+msgid "Use ALSA resampling"
+msgstr "Использовать передискретизацию с помощью ALSA"
 
-#: ../translation/extra.c:105 ../translation/plugins.c:142
-msgid "Previous genre"
-msgstr ""
+#: ../translation/plugins.c:6
+msgid "Preferred buffer size"
+msgstr "Предпочитаемый размер буфера"
 
-#: ../translation/extra.c:106 ../translation/plugins.c:143
-msgid "Previous composer"
-msgstr ""
+#: ../translation/plugins.c:7
+msgid "Preferred period size"
+msgstr "Предпочитаемый размер периода"
 
-#: ../translation/extra.c:107 ../translation/plugins.c:144
-msgid "Previous artist"
-msgstr ""
-
-#: ../translation/extra.c:108 ../translation/plugins.c:145
-msgid "Previous album"
-msgstr ""
-
-#: ../translation/extra.c:109 ../translation/plugins.c:146
-msgid "Next genre"
-msgstr ""
-
-#: ../translation/extra.c:110 ../translation/plugins.c:147
-msgid "Next composer"
-msgstr ""
-
-#: ../translation/extra.c:111 ../translation/plugins.c:148
-msgid "Next artist"
-msgstr ""
-
-#: ../translation/extra.c:112 ../translation/plugins.c:149
-msgid "Next album"
-msgstr ""
-
-#: ../translation/plugins.c:1
-#, fuzzy
-msgid "Volume Level"
-msgstr "Регулятор громкости"
-
-#: ../translation/plugins.c:3
-msgid "Highlight current playlist"
-msgstr ""
-
-#: ../translation/plugins.c:4
-msgid "Play on double-click"
-msgstr ""
-
-#: ../translation/plugins.c:13
-msgid "ColecoVision BIOS (for SGC file format)"
-msgstr ""
-
-#: ../translation/plugins.c:15
-#, fuzzy
-msgid "ReplayGain"
-msgstr "<b>ReplayGain</b>"
-
-#: ../translation/plugins.c:16
-msgid "Remove ReplayGain Information"
-msgstr ""
-
-#: ../translation/plugins.c:17
-msgid "Scan Selection As Albums (By Tags)"
-msgstr ""
-
-#: ../translation/plugins.c:18
-msgid "Scan Selection As Single Album"
-msgstr ""
-
-#: ../translation/plugins.c:19
-msgid "Scan Per-file Track Gain"
-msgstr ""
-
-#: ../translation/plugins.c:21
-#, fuzzy
-msgid "Deselect All"
-msgstr "Снять выделение"
-
-#: ../translation/plugins.c:22
-#, fuzzy
-msgid "Select All"
-msgstr "Выделить всё"
-
-#: ../translation/plugins.c:25
-#, fuzzy
-msgid "File"
-msgstr "_Файл"
-
-#: ../translation/plugins.c:26
-#, fuzzy
-msgid "Add Location"
-msgstr "Добавить расположение"
-
-#: ../translation/plugins.c:27
-#, fuzzy
-msgid "Add Folder(s)"
-msgstr "Добавить каталог(и)"
-
-#: ../translation/plugins.c:28
-#, fuzzy
-msgid "Add File(s)"
-msgstr "Добавить файл(ы)"
-
-#: ../translation/plugins.c:29
-#, fuzzy
-msgid "Open File(s)"
-msgstr "_Открыть файл(ы)"
-
-#: ../translation/plugins.c:32
-msgid "Show Help Page"
-msgstr ""
-
-#: ../translation/plugins.c:34
-#, fuzzy
-msgid "Cycle Playback Looping Mode"
-msgstr "По порядку воспроизведения"
-
-#: ../translation/plugins.c:35
-msgid "Playback Looping - Don't loop"
-msgstr ""
-
-#: ../translation/plugins.c:36
-#, fuzzy
-msgid "Playback Looping - Single track"
-msgstr "Работает с одним выделенным треком."
-
-#: ../translation/plugins.c:37
-#, fuzzy
-msgid "Playback Looping - All"
-msgstr "Элементы управления проигрыванием"
-
-#: ../translation/plugins.c:38
-#, fuzzy
-msgid "Cycle Playback Order"
-msgstr "По порядку воспроизведения"
-
-#: ../translation/plugins.c:39
-#, fuzzy
-msgid "Playback Order - Random"
-msgstr "Играть вразброс"
-
-#: ../translation/plugins.c:40
-#, fuzzy
-msgid "Playback Order - Shuffle albums"
-msgstr "Перемешивать альбомы"
-
-#: ../translation/plugins.c:41
-#, fuzzy
-msgid "Playback Order - Shuffle tracks"
-msgstr "Перемешивать дорожки"
-
-#: ../translation/plugins.c:42
-#, fuzzy
-msgid "Playback Order - Linear"
-msgstr "По порядку воспроизведения"
-
-#: ../translation/plugins.c:43
-#, fuzzy
-msgid "Toggle Cursor Follows Playback"
-msgstr "Выделять текущую дорожку"
-
-#: ../translation/plugins.c:44
-#, fuzzy
-msgid "Toggle Scroll Follows Playback"
-msgstr "Прокручивать плейлист автоматически"
-
-#: ../translation/plugins.c:45
-#, fuzzy
-msgid "View"
-msgstr "_Вид"
-
-#: ../translation/plugins.c:46
-msgid "Show\\/Hide menu"
-msgstr ""
-
-#: ../translation/plugins.c:47
-#, fuzzy
-msgid "Show\\/Hide statusbar"
-msgstr "Строка состояния"
-
-#: ../translation/plugins.c:48
-#, fuzzy
-msgid "Toggle Design Mode"
-msgstr "Режим дизайна"
-
-#: ../translation/plugins.c:50
-#, fuzzy
-msgid "Sort Custom"
-msgstr "Пользовательский"
-
-#: ../translation/plugins.c:51
-#, fuzzy
-msgid "Crop Selected"
-msgstr " Выделенный:"
-
-#: ../translation/plugins.c:52
-#, fuzzy
-msgid "Remove Track(s) From Playlist"
-msgstr "Удалить плейлист"
-
-#: ../translation/plugins.c:53
-#, fuzzy
-msgid "Save Playlist"
-msgstr "Сохранить плейлист"
-
-#: ../translation/plugins.c:54 ../plugins/gtkui/actionhandlers.c:740
-msgid "Load Playlist"
-msgstr "Загрузить плейлист"
-
-#: ../translation/plugins.c:55
-#, fuzzy
-msgid "Remove Current Playlist"
-msgstr "Удалить плейлист"
-
-#: ../translation/plugins.c:57
-#, fuzzy
-msgid "Show\\/Hide Equalizer"
-msgstr "Эквалайзер"
-
-#: ../translation/plugins.c:58
-#, fuzzy
-msgid "Hide Equalizer"
-msgstr "Эквалайзер"
-
-#: ../translation/plugins.c:59
-#, fuzzy
-msgid "Show Equalizer"
-msgstr "Эквалайзер"
-
-#: ../translation/plugins.c:60
-msgid "Show\\/Hide Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:61
-msgid "Hide Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:62
-msgid "Show Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:63
-#, fuzzy
-msgid "Find"
-msgstr "_Найти"
-
-#: ../translation/plugins.c:64
-msgid "Show\\/Hide Log window"
-msgstr ""
-
-#: ../translation/plugins.c:70
-msgid "Use unicode chars instead of images for track state"
-msgstr ""
-
-#: ../translation/plugins.c:71
-msgid "Disable seekbar overlay text"
-msgstr ""
-
-#: ../translation/plugins.c:74
+#. plugins/artwork-legacy/artwork.c
+#: ../translation/plugins.c:9
 msgid "Refresh cover art"
 msgstr ""
 
-#: ../translation/plugins.c:75
-#, fuzzy
+#: ../translation/plugins.c:10
 msgid "Cache update period (in hours, 0=never)"
-msgstr "Период обновления кэша (часы)"
+msgstr ""
 
-#: ../translation/plugins.c:78
-#, fuzzy
+#: ../translation/plugins.c:11
+msgid "Fetch from embedded tags"
+msgstr "Получать из встроенных тегов"
+
+#: ../translation/plugins.c:12
+msgid "Fetch from local folder"
+msgstr "Получать из локальной директории"
+
+#: ../translation/plugins.c:13
 msgid "Fetch from Last.fm"
-msgstr "Получать из last.fm"
+msgstr ""
 
-#: ../translation/plugins.c:79
-#, fuzzy
+#: ../translation/plugins.c:14
 msgid "Fetch from MusicBrainz"
-msgstr "Получать из last.fm"
+msgstr ""
 
-#: ../translation/plugins.c:80
-#, fuzzy
+#: ../translation/plugins.c:15
 msgid "Fetch from Albumart.org"
-msgstr "Получать из albumart.org"
+msgstr ""
 
-#: ../translation/plugins.c:81
+#: ../translation/plugins.c:16
 msgid "Fetch from World of Spectrum (AY files only)"
 msgstr ""
 
-#: ../translation/plugins.c:82
+#: ../translation/plugins.c:17
 msgid "When no artwork is found"
 msgstr ""
 
-#: ../translation/plugins.c:83
+#: ../translation/plugins.c:18
 msgid "leave blank"
 msgstr ""
 
-#: ../translation/plugins.c:84
-#, fuzzy
+#: ../translation/plugins.c:19
 msgid "use DeaDBeeF default cover"
-msgstr "Переводчики DeaDBeeF "
+msgstr ""
 
-#: ../translation/plugins.c:85
+#: ../translation/plugins.c:20
 msgid "display custom image"
 msgstr ""
 
-#: ../translation/plugins.c:86
+#: ../translation/plugins.c:21
 msgid "Custom image path"
 msgstr ""
 
-#: ../translation/plugins.c:88
+#: ../translation/plugins.c:22
+msgid "Scale artwork towards longer side"
+msgstr "Масштабировать обложку относительно более длинной стороны"
+
+#. plugins/artwork/artwork.c
+#: ../translation/plugins.c:24
+msgid "Disable disk cache"
+msgstr ""
+
+#: ../translation/plugins.c:25
+msgid "Save extracted covers to music folders"
+msgstr ""
+
+#: ../translation/plugins.c:26
+msgid "Local file mask"
+msgstr ""
+
+#: ../translation/plugins.c:27
+msgid "Artwork folders"
+msgstr ""
+
+#. plugins/cdda/cdda.c
+#: ../translation/plugins.c:29
 msgid "CD drive to load"
 msgstr ""
 
-#: ../translation/plugins.c:89
-#, fuzzy
+#: ../translation/plugins.c:30
 msgid "Audio CD Drive"
+msgstr ""
+
+#: ../translation/plugins.c:31
+msgid "File"
+msgstr ""
+
+#: ../translation/plugins.c:32
+msgid "Add Audio CD"
 msgstr "Добавить аудио CD"
 
-#: ../translation/plugins.c:95
-#, fuzzy
-msgid "Use CDDB protocol"
-msgstr "Использовать протокол CDDB вместо HTTP"
+#: ../translation/plugins.c:33
+msgid "Use CDDB/FreeDB"
+msgstr "Использовать CDDB/FreeDB"
 
-#: ../translation/plugins.c:97
+#: ../translation/plugins.c:34
+msgid "Prefer CD-Text over CDDB"
+msgstr "Использовать CD-Text вместо CDDB"
+
+#: ../translation/plugins.c:35
+msgid "CDDB url (e.g. 'freedb.org')"
+msgstr "Адрес CDDB (например, 'freedb.org')"
+
+#: ../translation/plugins.c:36
+msgid "CDDB port number (e.g. '888')"
+msgstr "Номер порта CDDB (например, '888')"
+
+#: ../translation/plugins.c:37
+msgid "Use CDDB protocol"
+msgstr ""
+
+#: ../translation/plugins.c:38
+msgid "Enable NRG image support"
+msgstr "Включить поддержку образов NRG"
+
+#: ../translation/plugins.c:39
 msgid "Drive speed for normal playback"
 msgstr ""
 
-#: ../translation/plugins.c:98
+#: ../translation/plugins.c:40
 msgid "1x"
 msgstr ""
 
-#: ../translation/plugins.c:99
+#: ../translation/plugins.c:41
 msgid "2x"
 msgstr ""
 
-#: ../translation/plugins.c:100
+#: ../translation/plugins.c:42
 msgid "4x"
 msgstr ""
 
-#: ../translation/plugins.c:101
+#: ../translation/plugins.c:43
 msgid "8x"
 msgstr ""
 
-#: ../translation/plugins.c:102
+#: ../translation/plugins.c:44
 msgid "16x"
 msgstr ""
 
-#: ../translation/plugins.c:103
+#: ../translation/plugins.c:45
 msgid "Max"
 msgstr ""
 
-#: ../translation/plugins.c:104
+#: ../translation/plugins.c:46
 msgid "Use cdparanoia error correction when ripping"
 msgstr ""
 
-#: ../translation/plugins.c:105
+#. plugins/converter/convgui.c
+#: ../translation/plugins.c:48
+msgid "Convert"
+msgstr "Конвертировать"
+
+#. plugins/dsp_libsrc/src.c
+#: ../translation/plugins.c:50
+msgid "Autodetect samplerate from output device"
+msgstr ""
+
+#: ../translation/plugins.c:51
+msgid "Set samplerate directly"
+msgstr ""
+
+#: ../translation/plugins.c:52
+msgid "Quality / Algorithm"
+msgstr "Качество / Алгоритм"
+
+#. plugins/dumb/cdumb.c
+#: ../translation/plugins.c:54
+msgid "Resampling quality (0..5, higher is better)"
+msgstr ""
+
+#: ../translation/plugins.c:55
+msgid "8-bit output (default is 16)"
+msgstr "8-битный вывод (по-умолчанию 16)"
+
+#: ../translation/plugins.c:56
+msgid "Internal DUMB volume (0..128)"
+msgstr ""
+
+#: ../translation/plugins.c:57
 #, fuzzy
-msgid "Lookup On Last.fm"
-msgstr "Показать на Last.fm"
+msgid "Volume ramping"
+msgstr "Регулятор громкости"
 
-#: ../translation/plugins.c:112
-msgid "Send MusicBrainz ID"
+#: ../translation/plugins.c:59
+msgid "On/Off Only"
 msgstr ""
 
-#: ../translation/plugins.c:113
-msgid "Submit tracks shorter than 30 seconds (not recommended)"
+#: ../translation/plugins.c:60
+msgid "Full"
 msgstr ""
 
-#: ../translation/plugins.c:116
-#, fuzzy
-msgid "Bits per sample"
-msgstr "Разрядность (8 или 16)"
-
-#: ../translation/plugins.c:117
-#, fuzzy
-msgid "Preamp"
-msgstr "Обнулить предусиление"
-
-#: ../translation/plugins.c:118
-msgid "55 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:119
-msgid "77 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:120
-msgid "110 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:121
-msgid "156 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:122
-msgid "220 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:123
-msgid "311 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:124
-msgid "440 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:125
-msgid "622 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:126
-msgid "880 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:127
-msgid "1.2 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:128
-msgid "1.8 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:129
-msgid "2.5 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:130
-msgid "3.5 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:131
-msgid "5 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:132
-msgid "7 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:133
-msgid "10 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:134
-msgid "14 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:135
-msgid "20 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:136
-msgid "Force 16 bit output"
-msgstr ""
-
-#: ../translation/plugins.c:137
-msgid "Backend"
-msgstr ""
-
-#: ../translation/plugins.c:138
+#. plugins/ffmpeg/ffmpeg.c
+#: ../translation/plugins.c:62
 msgid "Use all extensions supported by ffmpeg"
 msgstr ""
 
-#: ../translation/plugins.c:140
-#, fuzzy
+#: ../translation/plugins.c:63
+msgid "File Extensions (separate with ';')"
+msgstr "Расширения файлов (разделять с помощью ';')"
+
+#. plugins/gme/cgme.c
+#: ../translation/plugins.c:65
+msgid "Max song length (in minutes)"
+msgstr "Максимальная длина дорожки (в минутах)"
+
+#: ../translation/plugins.c:66
+msgid "Fadeout length (seconds)"
+msgstr "Продолжительность затухания громкости (в секундах)"
+
+#: ../translation/plugins.c:67
+msgid "Play loops nr. of times (if available)"
+msgstr "Сколько раз играть циклы (loops), если они есть"
+
+#: ../translation/plugins.c:68
+msgid "ColecoVision BIOS (for SGC file format)"
+msgstr ""
+
+#. plugins/gtkui/gtkui.c
+#: ../translation/plugins.c:70
+msgid "ReplayGain"
+msgstr ""
+
+#: ../translation/plugins.c:71
+msgid "Remove ReplayGain Information"
+msgstr ""
+
+#: ../translation/plugins.c:72
+msgid "Scan Selection As Albums (By Tags)"
+msgstr ""
+
+#: ../translation/plugins.c:73
+msgid "Scan Selection As Single Album"
+msgstr ""
+
+#: ../translation/plugins.c:74
+msgid "Scan Per-file Track Gain"
+msgstr ""
+
+#: ../translation/plugins.c:76
+msgid "Deselect All"
+msgstr ""
+
+#: ../translation/plugins.c:77
+msgid "Select All"
+msgstr ""
+
+#: ../translation/plugins.c:80
+msgid "Add Location"
+msgstr ""
+
+#: ../translation/plugins.c:81
+msgid "Add Folder(s)"
+msgstr ""
+
+#: ../translation/plugins.c:82
+msgid "Add File(s)"
+msgstr ""
+
+#: ../translation/plugins.c:83
+msgid "Open File(s)"
+msgstr ""
+
+#: ../translation/plugins.c:86
+msgid "Show Help Page"
+msgstr ""
+
+#: ../translation/plugins.c:88
+msgid "Cycle Playback Looping Mode"
+msgstr ""
+
+#: ../translation/plugins.c:89
+msgid "Playback Looping - Don't loop"
+msgstr ""
+
+#: ../translation/plugins.c:90
+msgid "Playback Looping - Single track"
+msgstr ""
+
+#: ../translation/plugins.c:91
+msgid "Playback Looping - All"
+msgstr ""
+
+#: ../translation/plugins.c:92
+msgid "Cycle Playback Order"
+msgstr ""
+
+#: ../translation/plugins.c:93
+msgid "Playback Order - Random"
+msgstr ""
+
+#: ../translation/plugins.c:94
+msgid "Playback Order - Shuffle albums"
+msgstr ""
+
+#: ../translation/plugins.c:95
+msgid "Playback Order - Shuffle tracks"
+msgstr ""
+
+#: ../translation/plugins.c:96
+msgid "Playback Order - Linear"
+msgstr ""
+
+#: ../translation/plugins.c:97
+msgid "Toggle Cursor Follows Playback"
+msgstr ""
+
+#: ../translation/plugins.c:98
+msgid "Toggle Scroll Follows Playback"
+msgstr ""
+
+#: ../translation/plugins.c:99
+msgid "View"
+msgstr ""
+
+#: ../translation/plugins.c:100
+msgid "Show\\/Hide menu"
+msgstr ""
+
+#: ../translation/plugins.c:101
+msgid "Show\\/Hide statusbar"
+msgstr ""
+
+#: ../translation/plugins.c:102
+msgid "Toggle Design Mode"
+msgstr ""
+
+#: ../translation/plugins.c:104
+msgid "Sort Custom"
+msgstr ""
+
+#: ../translation/plugins.c:105
+msgid "Crop Selected"
+msgstr ""
+
+#: ../translation/plugins.c:106
+msgid "Remove Track(s) From Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:107
+msgid "Save Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:108 ../plugins/gtkui/actionhandlers.c:740
+msgid "Load Playlist"
+msgstr "Загрузить плейлист"
+
+#: ../translation/plugins.c:109
+msgid "Remove Current Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:111
+msgid "Show\\/Hide Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:112
+msgid "Hide Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:113
+msgid "Show Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:114
+msgid "Show\\/Hide Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:115
+msgid "Hide Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:116
+msgid "Show Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:117
+msgid "Find"
+msgstr ""
+
+#: ../translation/plugins.c:118
+msgid "Show\\/Hide Log window"
+msgstr ""
+
+#: ../translation/plugins.c:119
+msgid "Ask confirmation to delete files from disk"
+msgstr "Запрашивать подтверждение на удаление файлов с жёсткого диска"
+
+#: ../translation/plugins.c:120
+msgid "Status icon volume control sensitivity"
+msgstr "Чувствительность регулятора громкости в значке статуса"
+
+#: ../translation/plugins.c:121
+msgid "Custom status icon"
+msgstr "Пользовательский значок статуса"
+
+#: ../translation/plugins.c:122
+msgid "Run gtk_init with --sync (debug mode)"
+msgstr "Запускать gtk_init с ключом --sync (режим отладки)"
+
+#: ../translation/plugins.c:123
+msgid "Add separators between plugin context menu items"
+msgstr "Добавить разделители между элементами контекстного меню"
+
+#: ../translation/plugins.c:124
+msgid "Use unicode chars instead of images for track state"
+msgstr ""
+
+#: ../translation/plugins.c:125
+msgid "Disable seekbar overlay text"
+msgstr ""
+
+#: ../translation/plugins.c:128
 msgid "Jump To Currently Playing Track"
-msgstr "Перейти на текущую дорожку"
+msgstr ""
+
+#: ../translation/plugins.c:129
+msgid "Skip to"
+msgstr "Перейти к"
+
+#: ../translation/plugins.c:130
+msgid "Previous genre"
+msgstr "Предыдущему жанру"
+
+#: ../translation/plugins.c:131
+msgid "Previous composer"
+msgstr "Предыдущему композитору"
+
+#: ../translation/plugins.c:132
+msgid "Previous artist"
+msgstr "Предыдущему исполнителю"
+
+#: ../translation/plugins.c:133
+msgid "Previous album"
+msgstr "Предыдущему альбому"
+
+#: ../translation/plugins.c:134
+msgid "Next genre"
+msgstr "Следующему жанру"
+
+#: ../translation/plugins.c:135
+msgid "Next composer"
+msgstr "Следующему композитору"
+
+#: ../translation/plugins.c:136
+msgid "Next artist"
+msgstr "Следующему исполнителю"
+
+#: ../translation/plugins.c:137
+msgid "Next album"
+msgstr "Следующему альбому"
+
+#: ../translation/plugins.c:138
+msgid "Next Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:139
+msgid "Prev Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:140
+msgid "Switch To Playlist 10"
+msgstr ""
+
+#: ../translation/plugins.c:141
+msgid "Switch To Playlist 9"
+msgstr ""
+
+#: ../translation/plugins.c:142
+msgid "Switch To Playlist 8"
+msgstr ""
+
+#: ../translation/plugins.c:143
+msgid "Switch To Playlist 7"
+msgstr ""
+
+#: ../translation/plugins.c:144
+msgid "Switch To Playlist 6"
+msgstr ""
+
+#: ../translation/plugins.c:145
+msgid "Switch To Playlist 5"
+msgstr ""
+
+#: ../translation/plugins.c:146
+msgid "Switch To Playlist 4"
+msgstr ""
+
+#: ../translation/plugins.c:147
+msgid "Switch To Playlist 3"
+msgstr ""
+
+#: ../translation/plugins.c:148
+msgid "Switch To Playlist 2"
+msgstr ""
+
+#: ../translation/plugins.c:149
+msgid "Switch To Playlist 1"
+msgstr ""
 
 #: ../translation/plugins.c:150
-#, fuzzy
-msgid "Next Playlist"
-msgstr "Новый плейлист"
+msgid "Sort Randomize"
+msgstr ""
 
 #: ../translation/plugins.c:151
-#, fuzzy
-msgid "Prev Playlist"
-msgstr "Новый плейлист"
+msgid "Sort By Date"
+msgstr ""
 
 #: ../translation/plugins.c:152
-#, fuzzy
-msgid "Switch To Playlist 10"
-msgstr "Новый плейлист"
+msgid "Sort By Artist"
+msgstr ""
 
 #: ../translation/plugins.c:153
-#, fuzzy
-msgid "Switch To Playlist 9"
-msgstr "Новый плейлист"
+msgid "Sort By Album"
+msgstr ""
 
 #: ../translation/plugins.c:154
-#, fuzzy
-msgid "Switch To Playlist 8"
-msgstr "Новый плейлист"
+msgid "Sort By Track Number"
+msgstr ""
 
 #: ../translation/plugins.c:155
-#, fuzzy
-msgid "Switch To Playlist 7"
-msgstr "Новый плейлист"
+msgid "Sort By Title"
+msgstr ""
 
 #: ../translation/plugins.c:156
-#, fuzzy
-msgid "Switch To Playlist 6"
-msgstr "Новый плейлист"
+msgid "Invert Selection"
+msgstr ""
 
 #: ../translation/plugins.c:157
-#, fuzzy
-msgid "Switch To Playlist 5"
-msgstr "Новый плейлист"
-
-#: ../translation/plugins.c:158
-#, fuzzy
-msgid "Switch To Playlist 4"
-msgstr "Новый плейлист"
-
-#: ../translation/plugins.c:159
-#, fuzzy
-msgid "Switch To Playlist 3"
-msgstr "Новый плейлист"
+msgid "Clear Playlist"
+msgstr ""
 
 #: ../translation/plugins.c:160
-#, fuzzy
-msgid "Switch To Playlist 2"
-msgstr "Новый плейлист"
+msgid "Toggle In Playback Queue"
+msgstr ""
 
 #: ../translation/plugins.c:161
-#, fuzzy
-msgid "Switch To Playlist 1"
-msgstr "Новый плейлист"
-
-#: ../translation/plugins.c:162
-#, fuzzy
-msgid "Sort Randomize"
-msgstr "Случайно"
-
-#: ../translation/plugins.c:163
-#, fuzzy
-msgid "Sort By Date"
-msgstr "Сортировать по"
-
-#: ../translation/plugins.c:164
-#, fuzzy
-msgid "Sort By Artist"
-msgstr "Исполнитель"
-
-#: ../translation/plugins.c:165
-#, fuzzy
-msgid "Sort By Album"
-msgstr "Исполнитель / Альбом"
-
-#: ../translation/plugins.c:166
-#, fuzzy
-msgid "Sort By Track Number"
-msgstr "Номер дорожки"
-
-#: ../translation/plugins.c:167
-#, fuzzy
-msgid "Sort By Title"
-msgstr "Присвоить собственное название"
-
-#: ../translation/plugins.c:168
-#, fuzzy
-msgid "Invert Selection"
-msgstr "Обратить выделение"
-
-#: ../translation/plugins.c:169
-#, fuzzy
-msgid "Clear Playlist"
-msgstr "Дублировать плейлист"
-
-#: ../translation/plugins.c:172
-#, fuzzy
-msgid "Toggle In Playback Queue"
-msgstr "Добавить в очередь воспроизведения"
-
-#: ../translation/plugins.c:173
 msgid "Move"
 msgstr ""
 
-#: ../translation/plugins.c:174
+#: ../translation/plugins.c:162
 msgid "Move Tracks Down"
 msgstr ""
 
-#: ../translation/plugins.c:175
-#, fuzzy
+#: ../translation/plugins.c:163
 msgid "Move Tracks Up"
-msgstr "Много треков"
+msgstr ""
 
-#: ../translation/plugins.c:176
+#: ../translation/plugins.c:164
 msgid "Toggle Mute"
 msgstr ""
 
-#: ../translation/plugins.c:181
+#: ../translation/plugins.c:169
 msgid "Toggle Pause"
 msgstr ""
 
-#: ../translation/plugins.c:182
-#, fuzzy
+#: ../translation/plugins.c:170
 msgid "Play\\/Pause"
-msgstr "Пауза"
+msgstr ""
 
-#: ../translation/plugins.c:184
+#: ../translation/plugins.c:172
 msgid "Seek 1s Forward"
 msgstr ""
 
-#: ../translation/plugins.c:185
+#: ../translation/plugins.c:173
 msgid "Seek 1s Backward"
 msgstr ""
 
-#: ../translation/plugins.c:186
+#: ../translation/plugins.c:174
 msgid "Seek 5s Forward"
 msgstr ""
 
-#: ../translation/plugins.c:187
+#: ../translation/plugins.c:175
 msgid "Seek 5s Backward"
 msgstr ""
 
-#: ../translation/plugins.c:188
+#: ../translation/plugins.c:176
 #, c-format
 msgid "Seek 1% Forward"
 msgstr ""
 
-#: ../translation/plugins.c:189
+#: ../translation/plugins.c:177
 msgid "Seek 1% Backward"
 msgstr ""
 
-#: ../translation/plugins.c:190
+#: ../translation/plugins.c:178
 #, c-format
 msgid "Seek 5% Forward"
 msgstr ""
 
-#: ../translation/plugins.c:191
+#: ../translation/plugins.c:179
 msgid "Seek 5% Backward"
 msgstr ""
 
-#: ../translation/plugins.c:192
-#, fuzzy
+#: ../translation/plugins.c:180
 msgid "Volume Up"
-msgstr "Регулятор громкости"
+msgstr ""
+
+#: ../translation/plugins.c:181
+msgid "Volume Down"
+msgstr ""
+
+#: ../translation/plugins.c:182
+msgid "Toggle Stop After Current Track"
+msgstr ""
+
+#: ../translation/plugins.c:183
+msgid "Toggle Stop After Current Album"
+msgstr ""
+
+#. plugins/lastfm/lastfm.c
+#: ../translation/plugins.c:185
+msgid "Lookup On Last.fm"
+msgstr ""
+
+#: ../translation/plugins.c:186
+msgid "Enable scrobbler"
+msgstr "Включить скробблер"
+
+#: ../translation/plugins.c:187
+msgid "Disable nowplaying"
+msgstr "Не отправлять информацию о текущей дорожке"
+
+#: ../translation/plugins.c:188
+msgid "Username"
+msgstr "Имя пользователя"
+
+#: ../translation/plugins.c:189
+msgid "Password"
+msgstr "Пароль"
+
+#: ../translation/plugins.c:190
+msgid "Scrobble URL"
+msgstr "Адрес для скробблинга"
+
+#: ../translation/plugins.c:191
+msgid "Prefer Album Artist over Artist field"
+msgstr "Предпочитать поле \"Исполнитель Альбома\" перед полем \"Исполнитель\""
+
+#: ../translation/plugins.c:192
+msgid "Send MusicBrainz ID"
+msgstr ""
 
 #: ../translation/plugins.c:193
-#, fuzzy
-msgid "Volume Down"
-msgstr "Регулятор громкости"
+msgid "Submit tracks shorter than 30 seconds (not recommended)"
+msgstr ""
 
-#: ../translation/plugins.c:194
-#, fuzzy
-msgid "Toggle Stop After Current Track"
-msgstr "Останавливать после текущей дорожки"
-
+#. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:195
-#, fuzzy
-msgid "Toggle Stop After Current Album"
-msgstr "Остановить после текущего альбома"
+msgid "Left mix:"
+msgstr ""
 
 #: ../translation/plugins.c:196
-msgid "Tempo Change (%)"
+msgid "Right mix:"
 msgstr ""
 
-#: ../translation/plugins.c:197
-msgid "Pitch Change (semi-tones)"
-msgstr ""
-
+#. plugins/mp3/mp3.c
 #: ../translation/plugins.c:198
-msgid "Playback Rate Change (%)"
+msgid "Force 16 bit output"
 msgstr ""
 
 #: ../translation/plugins.c:199
-#, fuzzy
-msgid "Absolute Samplerate (overrides Rate Change if nonzero)"
-msgstr ""
-"Автоматическая частота дискретизации (переопределяет частоту дискретизации)"
-
-#: ../translation/plugins.c:200
-msgid "Use AA Filter"
-msgstr ""
-
-#: ../translation/plugins.c:201
-msgid "AA Filter Length"
+msgid "Backend"
 msgstr ""
 
 #: ../translation/plugins.c:202
-msgid "Use Quickseek"
-msgstr ""
+msgid "Notification title format"
+msgstr "Формат заголовка уведомления"
 
 #: ../translation/plugins.c:203
-msgid "Time Stretch Sequence Length (ms)"
-msgstr ""
+msgid "Notification content format"
+msgstr "Формат содержимого уведомления"
 
 #: ../translation/plugins.c:204
-msgid "Time Stretch Seek Window Length (ms)"
-msgstr ""
+msgid "Show album art"
+msgstr "Показывать обложку"
 
 #: ../translation/plugins.c:205
-msgid "Disable disk cache"
-msgstr ""
+msgid "Album art size (px)"
+msgstr "Размер обложки (px)"
 
-#: ../translation/plugins.c:206
-msgid "Save extracted covers to music folders"
-msgstr ""
-
+#. plugins/oss/oss.c
 #: ../translation/plugins.c:207
-#, fuzzy
-msgid "Local file mask"
-msgstr "Файловая маска для локальных обложек"
-
-#: ../translation/plugins.c:208
-#, fuzzy
-msgid "Artwork folders"
-msgstr "Добавить каталог(и)"
-
-#: ../translation/plugins.c:212
-msgid "Mono synth"
-msgstr ""
-
-#: ../translation/plugins.c:215
-#, fuzzy
-msgid "Device"
+msgid "Device file"
 msgstr "Файл устройства"
 
+#: ../translation/plugins.c:210
+msgid "Highlight current playlist"
+msgstr ""
+
+#: ../translation/plugins.c:211
+msgid "Play on double-click"
+msgstr ""
+
+#. plugins/pulse/pulse.c
+#: ../translation/plugins.c:213
+msgid "PulseAudio server"
+msgstr "Сервер PulseAudio"
+
+#. plugins/sc68/in_sc68.c
+#: ../translation/plugins.c:215
+msgid "Default song length (in minutes)"
+msgstr ""
+
 #: ../translation/plugins.c:216
-msgid "Buffer size (ms)"
-msgstr ""
-
-#: ../translation/plugins.c:219
-msgid "Autodetect samplerate from output device"
-msgstr ""
-
-#: ../translation/plugins.c:220
-#, fuzzy
-msgid "Set samplerate directly"
+msgid "Samplerate"
 msgstr "Частота дискретизации"
 
-#: ../translation/plugins.c:222
-msgid "Emulate track change events (for scrobbling)"
-msgstr ""
-
-#: ../translation/plugins.c:223
-#, fuzzy
-msgid "Default song length (in minutes)"
-msgstr "Максимальная длина дорожки (в минутах)"
-
-#: ../translation/plugins.c:224
+#: ../translation/plugins.c:217
 msgid "Skip when shorter than (sec)"
 msgstr ""
 
+#. plugins/shellexecui/shellexecui.c
+#: ../translation/plugins.c:219
+msgid "Configure Custom Shell Commands"
+msgstr "Настройка собственных шелл-команд"
+
+#. plugins/shn/shn.c
+#: ../translation/plugins.c:221
+msgid "Relative seek table path"
+msgstr "Относительный путь таблицы поиска"
+
+#: ../translation/plugins.c:222
+msgid "Absolute seek table path"
+msgstr "Абсолютный путь таблицы поиска"
+
+#: ../translation/plugins.c:223
+msgid "Swap audio bytes (toggle if all you hear is static)"
+msgstr "Переставить местами аудио байты"
+
+#. plugins/sid/plugin.c
+#: ../translation/plugins.c:225
+msgid "Enable HVSC Songlength DB"
+msgstr "Включить HVSC Songlength DB"
+
+#: ../translation/plugins.c:226
+msgid "Songlengths.txt (from HVSC)"
+msgstr "Songlengths.txt (из HVSC)"
+
+#: ../translation/plugins.c:227
+msgid "Bits per sample"
+msgstr ""
+
 #: ../translation/plugins.c:228
-#, fuzzy
-msgid "Resampling quality (0..5, higher is better)"
-msgstr "Качество передискретизации (0..2, выше - лучше)"
-
-#: ../translation/plugins.c:230
-msgid "Internal DUMB volume (0..128)"
+msgid "Mono synth"
 msgstr ""
 
+#: ../translation/plugins.c:229
+msgid "Default song length (sec)"
+msgstr "Длина дорожки по умолчанию (сек)"
+
+#. plugins/sndio/sndio.c
 #: ../translation/plugins.c:231
-msgid "Volume ramping (0 is none, 1 is note on/off, 2 is always)"
+msgid "Device"
 msgstr ""
 
+#: ../translation/plugins.c:232
+msgid "Buffer size (ms)"
+msgstr ""
+
+#. plugins/supereq/supereq.c
 #: ../translation/plugins.c:234
-#, fuzzy
-msgid "Left mix:"
-msgstr "По левому краю"
+msgid "Preamp"
+msgstr ""
 
 #: ../translation/plugins.c:235
-#, fuzzy
-msgid "Right mix:"
-msgstr "По правому краю"
+msgid "55 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:236
+msgid "77 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:237
+msgid "110 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:238
+msgid "156 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:239
+msgid "220 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:240
+msgid "311 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:241
+msgid "440 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:242
+msgid "622 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:243
+msgid "880 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:244
+msgid "1.2 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:245
+msgid "1.8 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:246
+msgid "2.5 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:247
+msgid "3.5 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:248
+msgid "5 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:249
+msgid "7 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:250
+msgid "10 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:251
+msgid "14 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:252
+msgid "20 kHz"
+msgstr ""
+
+#. plugins/vfs_curl/vfs_curl.c
+#: ../translation/plugins.c:254
+msgid "Emulate track change events (for scrobbling)"
+msgstr ""
+
+#. plugins/wildmidi/wildmidiplug.c
+#: ../translation/plugins.c:256
+msgid "Timidity++ bank configuration file"
+msgstr "Файл конфигурации для банка Timidity++"
 
 #: ../plugins/converter/convgui.c:91
 #, c-format
@@ -2880,7 +2721,7 @@ msgstr "Копировать, если формат не изменяется"
 #: ../plugins/converter/interface.c:132
 #: ../plugins/converter/converter.glade.h:5
 msgid "Re-tag after copy"
-msgstr ""
+msgstr "Перезапись тегов после копирования"
 
 #: ../plugins/converter/interface.c:140
 #: ../plugins/converter/converter.glade.h:6
@@ -2889,14 +2730,14 @@ msgstr "Имя выходного файла:"
 
 #: ../plugins/converter/interface.c:151
 #: ../plugins/converter/converter.glade.h:8
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default ([%tracknumber%. ][%artist% - ]%title%)."
 msgstr ""
-"Расширение (например, .mp3) будет добавлено автоматически.\n"
-"Оставьте это поле пустым для использования настроек по умолчанию (%artist% - "
-"%title%)."
+"Расширение (например .mp3) будет добавлено автоматически.\n"
+"Оставьте поле пустым для стандартной настройки (([%tracknumber%. ][%artist% "
+"- ]%title%)."
 
 #: ../plugins/converter/interface.c:164
 #: ../plugins/converter/converter.glade.h:10
@@ -3493,131 +3334,73 @@ msgstr "стерео"
 
 #: ../plugins/gtkui/rg.c:284
 msgid "Updating File Tags Progress"
-msgstr ""
+msgstr "Прогресс обновления тегов в файлах"
 
 #: ../plugins/gtkui/rg.c:314
 msgid "Album Gain"
-msgstr ""
+msgstr "Усиление альбома"
 
 #: ../plugins/gtkui/rg.c:315
 msgid "Track Gain"
-msgstr ""
+msgstr "Усиление трека"
 
 #: ../plugins/gtkui/rg.c:316
 msgid "Album Peak"
-msgstr ""
+msgstr "Пик альбома"
 
 #: ../plugins/gtkui/rg.c:317
 msgid "Track Peak"
-msgstr ""
+msgstr "Пик трека"
 
 #: ../plugins/gtkui/rg.c:320
 msgid "Success"
-msgstr ""
+msgstr "Успешно"
 
 #: ../plugins/gtkui/rg.c:321
 msgid "File not found"
-msgstr ""
+msgstr "Файл не найден"
 
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
-msgstr ""
+msgstr "Не поддерживаемый файл"
 
-#, fuzzy
-#~ msgid "Edit/Deselect All"
-#~ msgstr "Снять выделение"
+#~ msgid "Lookup on Last.fm"
+#~ msgstr "Показать на Last.fm"
 
-#, fuzzy
-#~ msgid "Edit/Select All"
-#~ msgstr "Выделить всё"
+#~ msgid "Release device while stopped"
+#~ msgstr "Освобождать устройство во время остановки"
 
-#, fuzzy
-#~ msgid "File/Add Location"
-#~ msgstr "Добавить расположение"
+#~ msgid "OSS4 samplerate bug workaround"
+#~ msgstr "Исправление для ошибки частоты дискретизации в OSS4"
 
-#, fuzzy
-#~ msgid "File/Add Folder(s)"
-#~ msgstr "Добавить каталог(и)"
+#~ msgid "Cache update period (hr)"
+#~ msgstr "Период обновления кэша (часы)"
 
-#, fuzzy
-#~ msgid "File/Add File(s)"
-#~ msgstr "Добавить файл(ы)"
+#~ msgid "Local cover file mask"
+#~ msgstr "Файловая маска для локальных обложек"
 
-#, fuzzy
-#~ msgid "File/Open File(s)"
-#~ msgstr "_Открыть файл(ы)"
+#~ msgid "Fetch from last.fm"
+#~ msgstr "Получать из last.fm"
 
-#, fuzzy
-#~ msgid "Edit/Preferences"
-#~ msgstr "Настройки"
+#~ msgid "Fetch from albumart.org"
+#~ msgstr "Получать из albumart.org"
 
-#, fuzzy
-#~ msgid "File/Save Playlist"
-#~ msgstr "Сохранить плейлист"
+#~ msgid "Prefer CDDB protocol over HTTP"
+#~ msgstr "Использовать протокол CDDB вместо HTTP"
 
-#, fuzzy
-#~ msgid "File/Load Playlist"
-#~ msgstr "Загрузить плейлист"
+#~ msgid "Resampling quality (0..2, higher is better)"
+#~ msgstr "Качество передискретизации (0..2, выше - лучше)"
 
-#, fuzzy
-#~ msgid "File/New Playlist"
-#~ msgstr "Новый плейлист"
+#~ msgid "Bits per sample (8 or 16)"
+#~ msgstr "Разрядность (8 или 16)"
 
-#, fuzzy
-#~ msgid "Edit/Find"
-#~ msgstr "Редактировать"
+#~ msgid "Target Samplerate"
+#~ msgstr "Частота дискретизации"
 
-#, fuzzy
-#~ msgid "Edit/Invert Selection"
-#~ msgstr "Обратить выделение"
-
-#, fuzzy
-#~ msgid "Playback/Remove From Playback Queue"
-#~ msgstr "Удалить из очереди воспроизведения"
-
-#, fuzzy
-#~ msgid "Playback/Add To Playback Queue"
-#~ msgstr "Добавить в очередь воспроизведения"
-
-#, fuzzy
-#~ msgid "Playback/Play"
-#~ msgstr "Воспроизведение"
-
-#, fuzzy
-#~ msgid "Playback/Stop"
-#~ msgstr "Воспроизведение"
-
-#, fuzzy
-#~ msgid "Playback/Previous"
-#~ msgstr "Элементы управления проигрыванием"
-
-#, fuzzy
-#~ msgid "Playback/Next"
-#~ msgstr "Воспроизведение"
-
-#, fuzzy
-#~ msgid "Playback/Volume Up"
-#~ msgstr "Воспроизведение"
-
-#, fuzzy
-#~ msgid "Edit/Configure Custom Shell Commands"
-#~ msgstr "Настройка собственных шелл-команд"
-
-#~ msgid "CUE: show subindexes as tracks (INDEX 02, INDEX 03, etc)"
+#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
 #~ msgstr ""
-#~ "CUE: показывать субиндексы в виде дорожек (ИНДЕКС 02, ИНДЕКС 03 и т. д.)"
+#~ "Автоматическая частота дискретизации (переопределяет частоту "
+#~ "дискретизации)"
 
-#~ msgid "Capitalize"
-#~ msgstr "Прописными"
-
-#~ msgid "Clean up"
-#~ msgstr "Очистить"
-
-#~ msgid "Format from other fields..."
-#~ msgstr "Формат из других полей..."
-
-#~ msgid "Paste fields"
-#~ msgstr "Вставить поля"
-
-#~ msgid "Automatically fill values..."
-#~ msgstr "Автоматически заполнить значениями..."
+#~ msgid "Disable gapless playback (faster scanning)"
+#~ msgstr "Отключить бесшовное воспроизведение (ускоряет сканирование)"

@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-07 22:42+0100\n"
-"PO-Revision-Date: 2017-11-11 11:22+0000\n"
+"POT-Creation-Date: 2018-02-08 19:06+0100\n"
+"PO-Revision-Date: 2018-02-07 21:43+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Japanese (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/ja/)\n"
@@ -37,7 +37,7 @@ msgid "DeaDBeeF Translators"
 msgstr "DeaDBeeF の翻訳者"
 
 #: ../plugins/gtkui/callbacks.c:638 ../plugins/gtkui/interface.c:976
-#: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:31
+#: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:85
 #: ../plugins/converter/convgui.c:1759 ../plugins/converter/convgui.c:1767
 #: ../plugins/gtkui/actionhandlers.c:473
 msgid "Help"
@@ -79,7 +79,8 @@ msgstr "イコライザ設定の読み込み"
 msgid "Import Foobar2000 Preset"
 msgstr "Foobar2000 イコライザ設定をインポート"
 
-#: ../plugins/gtkui/eq.c:367 ../translation/plugins.c:5
+#. plugins/notify/notify.c
+#: ../plugins/gtkui/eq.c:367 ../translation/plugins.c:201
 msgid "Enable"
 msgstr "有効にする"
 
@@ -110,7 +111,7 @@ msgstr "1 日 %d:%02d:%02d"
 msgid "%d days %d:%02d:%02d"
 msgstr "%d 日 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:672 ../translation/plugins.c:56
+#: ../plugins/gtkui/gtkui.c:672 ../translation/plugins.c:110
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 msgid "New Playlist"
 msgstr "新規プレイリスト"
@@ -330,19 +331,19 @@ msgstr "トラック番号"
 
 #: ../plugins/gtkui/interface.c:267 ../plugins/gtkui/interface.c:1972
 #: ../plugins/gtkui/plcommon.c:92 ../plugins/gtkui/deadbeef.glade.h:22
-#: ../translation/extra.c:73
+#: ../translation/extra.c:6
 msgid "Album"
 msgstr "アルバム"
 
 #. Track properties dialog
 #: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/plcommon.c:91
 #: ../plugins/gtkui/plcommon.c:1848 ../plugins/gtkui/deadbeef.glade.h:23
-#: ../translation/extra.c:69
+#: ../translation/extra.c:2
 msgid "Artist"
 msgstr "アーティスト"
 
 #: ../plugins/gtkui/interface.c:275 ../plugins/gtkui/deadbeef.glade.h:24
-#: ../translation/extra.c:74
+#: ../translation/extra.c:7
 msgid "Date"
 msgstr "日付"
 
@@ -357,7 +358,7 @@ msgid "Custom"
 msgstr "カスタム"
 
 #: ../plugins/gtkui/interface.c:292 ../plugins/gtkui/interface.c:1791
-#: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:49
+#: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:103
 msgid "Preferences"
 msgstr "設定"
 
@@ -468,12 +469,12 @@ msgid "Search"
 msgstr "検索"
 
 #: ../plugins/gtkui/interface.c:794 ../plugins/gtkui/deadbeef.glade.h:54
-#: ../translation/plugins.c:178
+#: ../translation/plugins.c:166
 msgid "Stop"
 msgstr "停止"
 
 #: ../plugins/gtkui/interface.c:802 ../plugins/gtkui/deadbeef.glade.h:55
-#: ../translation/plugins.c:177
+#: ../translation/plugins.c:165
 msgid "Play"
 msgstr "再生"
 
@@ -482,17 +483,17 @@ msgid "Pause"
 msgstr "ポーズ"
 
 #: ../plugins/gtkui/interface.c:818 ../plugins/gtkui/deadbeef.glade.h:57
-#: ../translation/plugins.c:179
+#: ../translation/plugins.c:167
 msgid "Previous"
 msgstr "前へ"
 
 #: ../plugins/gtkui/interface.c:826 ../plugins/gtkui/deadbeef.glade.h:58
-#: ../translation/plugins.c:180
+#: ../translation/plugins.c:168
 msgid "Next"
 msgstr "次へ"
 
 #: ../plugins/gtkui/interface.c:834 ../plugins/gtkui/deadbeef.glade.h:59
-#: ../translation/plugins.c:183
+#: ../translation/plugins.c:171
 msgid "Play Random"
 msgstr "ランダムに再生"
 
@@ -501,12 +502,12 @@ msgid "About"
 msgstr "情報"
 
 #: ../plugins/gtkui/interface.c:856 ../plugins/gtkui/deadbeef.glade.h:61
-#: ../translation/plugins.c:23
+#: ../translation/plugins.c:78
 msgid "Quit"
 msgstr "終了"
 
 #: ../plugins/gtkui/interface.c:1049 ../plugins/gtkui/plcommon.c:1228
-#: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:30
+#: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:84
 msgid "Track Properties"
 msgstr "トラックのプロパティ"
 
@@ -615,9 +616,8 @@ msgid "Always convert 16 bit audio to 24 bit"
 msgstr "16 bit オーディオを常に 24 bit に変換する"
 
 #: ../plugins/gtkui/interface.c:1859 ../plugins/gtkui/deadbeef.glade.h:87
-#, fuzzy
 msgid "Target samplerate:"
-msgstr "サンプルレートの指定"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "For multiples of 48KHz (96K, 192K, ...):"
@@ -628,14 +628,12 @@ msgid "For multiples of 44.1KHz (88.2K, 176.4K, ...):"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1926 ../plugins/gtkui/deadbeef.glade.h:90
-#, fuzzy
 msgid "Based on input samplerate"
-msgstr "サンプルレートの指定"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1930 ../plugins/gtkui/deadbeef.glade.h:91
-#, fuzzy
 msgid "Override samplerate"
-msgstr "サンプルレートの指定"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1934 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Sound"
@@ -658,7 +656,7 @@ msgid "Processing:"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1987 ../plugins/gtkui/plcommon.c:1840
-#: ../plugins/gtkui/widgets.c:3942
+#: ../translation/plugins.c:58 ../plugins/gtkui/widgets.c:3942
 msgid "None"
 msgstr "なし"
 
@@ -719,7 +717,7 @@ msgid "\"Stop after current album\" option will switch off after triggering"
 msgstr "\"現在のアルバムの再生後に停止\" オプションは作動後にオフになる"
 
 #: ../plugins/gtkui/interface.c:2085 ../plugins/gtkui/deadbeef.glade.h:112
-#: ../translation/plugins.c:33
+#: ../translation/plugins.c:87
 msgid "Playback"
 msgstr "再生"
 
@@ -785,8 +783,9 @@ msgstr ""
 msgid "Player"
 msgstr "プレーヤ"
 
+#. plugins/pltbrowser/pltbrowser.c
 #: ../plugins/gtkui/interface.c:2258 ../plugins/gtkui/deadbeef.glade.h:128
-#: ../translation/plugins.c:2
+#: ../translation/plugins.c:209
 msgid "Close playlists with middle mouse button"
 msgstr "プレイリストをマウスの中ボタンで閉じる"
 
@@ -1014,7 +1013,7 @@ msgid "Version: "
 msgstr "バージョン: "
 
 #: ../plugins/gtkui/interface.c:3071 ../plugins/gtkui/deadbeef.glade.h:184
-#: ../translation/extra.c:83
+#: ../translation/extra.c:16
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -1181,7 +1180,7 @@ msgstr ""
 "なければ \"タイトル\" のようになります。"
 
 #: ../plugins/gtkui/interface.c:5093 ../plugins/gtkui/deadbeef.glade.h:218
-#: ../translation/plugins.c:20 ../plugins/shellexecui/interface.c:70
+#: ../translation/plugins.c:75 ../plugins/shellexecui/interface.c:70
 #: ../plugins/shellexecui/shellexec.glade.h:5
 msgid "Edit"
 msgstr "編集"
@@ -1274,15 +1273,15 @@ msgstr "アーティスト - アルバム"
 msgid "Year"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:96 ../translation/extra.c:75
+#: ../plugins/gtkui/plcommon.c:96 ../translation/extra.c:8
 msgid "Track Number"
 msgstr "トラック番号"
 
-#: ../plugins/gtkui/plcommon.c:97 ../translation/extra.c:72
+#: ../plugins/gtkui/plcommon.c:97 ../translation/extra.c:5
 msgid "Band / Album Artist"
 msgstr "バンド / アルバムのアーティスト"
 
-#: ../plugins/gtkui/plcommon.c:98 ../translation/extra.c:88
+#: ../plugins/gtkui/plcommon.c:98 ../translation/extra.c:21
 msgid "Codec"
 msgstr "コーデック"
 
@@ -1295,15 +1294,16 @@ msgstr ""
 msgid "_Paste"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:990 ../translation/plugins.c:171
+#: ../plugins/gtkui/plcommon.c:990 ../translation/plugins.c:159
 msgid "Add To Playback Queue"
 msgstr "再生キューに追加"
 
-#: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:170
+#: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:158
 msgid "Remove From Playback Queue"
 msgstr "再生キューから除去"
 
-#: ../plugins/gtkui/plcommon.c:1016 ../translation/plugins.c:139
+#. plugins/hotkeys/hotkeys.c
+#: ../plugins/gtkui/plcommon.c:1016 ../translation/plugins.c:127
 msgid "Reload Metadata"
 msgstr "メタデータの再読み込み"
 
@@ -1315,7 +1315,7 @@ msgstr ""
 msgid "_Copy"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1079 ../translation/plugins.c:24
+#: ../plugins/gtkui/plcommon.c:1079 ../translation/plugins.c:79
 msgid "Remove From Disk"
 msgstr "ディスクから削除する"
 
@@ -1653,1079 +1653,924 @@ msgstr ""
 "をインストールするか、freepats.cfg へのパスをプラグインの設定で指定してくださ"
 "い。"
 
-#. this file should list extra translatable strings that are not referenced
-#. directly in source code, e.g. scripted plugin configuration strings
-#: ../translation/extra.c:3 ../translation/plugins.c:90
-msgid "Add Audio CD"
-msgstr "オーディオCDの追加"
-
-#: ../translation/extra.c:4
-msgid "Lookup on Last.fm"
-msgstr "Last.fm で検索する"
-
-#. ALSA output plugin
-#: ../translation/extra.c:6 ../translation/plugins.c:232
-msgid "Use ALSA resampling"
-msgstr "ALSA のリサンプリングを使う"
-
-#: ../translation/extra.c:7
-msgid "Release device while stopped"
-msgstr "停止中はデバイスを開放する"
-
-#: ../translation/extra.c:8 ../translation/extra.c:55
-#: ../translation/plugins.c:73
-msgid "Preferred buffer size"
-msgstr "バッファサイズの指定"
-
-#: ../translation/extra.c:9 ../translation/plugins.c:233
-msgid "Preferred period size"
-msgstr "区分サイズの指定"
-
-#. Last.fm plugin
-#: ../translation/extra.c:11 ../translation/plugins.c:106
-msgid "Enable scrobbler"
-msgstr "Scrobber を有効にする"
-
-#: ../translation/extra.c:12 ../translation/plugins.c:107
-msgid "Disable nowplaying"
-msgstr "Nowplaying を無効にする"
-
-#: ../translation/extra.c:13 ../translation/plugins.c:108
-msgid "Username"
-msgstr "ユーザ名:"
-
-#: ../translation/extra.c:14 ../translation/plugins.c:109
-msgid "Password"
-msgstr "パスワード:"
-
-#: ../translation/extra.c:15 ../translation/plugins.c:110
-msgid "Scrobble URL"
-msgstr "Scrobble URL"
-
-#: ../translation/extra.c:16 ../translation/plugins.c:111
-msgid "Prefer Album Artist over Artist field"
-msgstr "アーティストのフィールドよりアルバムのアーティストを優先する"
-
-#. OSS output plugin
-#: ../translation/extra.c:18 ../translation/plugins.c:236
-msgid "Device file"
-msgstr "デバイスファイル"
-
-#: ../translation/extra.c:19
-msgid "OSS4 samplerate bug workaround"
-msgstr "OSS4 のサンプルレートのバグを回避する"
-
-#. Album Artwork plugin
-#: ../translation/extra.c:21
-msgid "Cache update period (hr)"
-msgstr "キャッシュの更新間隔 (時)"
-
-#: ../translation/extra.c:22 ../translation/plugins.c:76
-msgid "Fetch from embedded tags"
-msgstr "埋め込みタグから取得する"
-
-#: ../translation/extra.c:23 ../translation/plugins.c:77
-msgid "Fetch from local folder"
-msgstr "ローカルのフォルダから取得する"
-
-#: ../translation/extra.c:24
-msgid "Local cover file mask"
-msgstr "ローカルのカバーファイルのマスク"
-
-#: ../translation/extra.c:25
-msgid "Fetch from last.fm"
-msgstr "Last.fm から取得する"
-
-#: ../translation/extra.c:26
-msgid "Fetch from albumart.org"
-msgstr "Albumart.org から取得する"
-
-#: ../translation/extra.c:27 ../translation/plugins.c:87
-msgid "Scale artwork towards longer side"
-msgstr "ジャケット絵を引き伸ばす"
-
-#. Audio CD player
-#: ../translation/extra.c:29 ../translation/plugins.c:91
-msgid "Use CDDB/FreeDB"
-msgstr "CDDB/FreeDB を使う"
-
-#: ../translation/extra.c:30 ../translation/plugins.c:92
-msgid "Prefer CD-Text over CDDB"
-msgstr "CD-Text より CDDB を優先する"
-
-#: ../translation/extra.c:31 ../translation/plugins.c:93
-msgid "CDDB url (e.g. 'freedb.org')"
-msgstr "CDDB の URL ('freedb.org' など)"
-
-#: ../translation/extra.c:32 ../translation/plugins.c:94
-msgid "CDDB port number (e.g. '888')"
-msgstr "CDDB のポート番号 ('888' など)"
-
-#: ../translation/extra.c:33
-msgid "Prefer CDDB protocol over HTTP"
-msgstr "CDDB プロトコルを HTTP より優先する"
-
-#: ../translation/extra.c:34 ../translation/plugins.c:96
-msgid "Enable NRG image support"
-msgstr "NRG イメージのサポートを有効にする"
-
-#. DUMB module player plugin
-#: ../translation/extra.c:36
-msgid "Resampling quality (0..2, higher is better)"
-msgstr "リサンプリングを品質 (0..2, 大きい方が高品質)"
-
-#: ../translation/extra.c:37 ../translation/plugins.c:229
-msgid "8-bit output (default is 16)"
-msgstr "8-bit 出力 (デフォルトは 16)"
-
-#. Game_Music_Emu decoder plugin
-#: ../translation/extra.c:39 ../translation/plugins.c:10
-msgid "Max song length (in minutes)"
-msgstr "最大の曲長 (分)"
-
-#: ../translation/extra.c:40 ../translation/plugins.c:11
-msgid "Fadeout length (seconds)"
-msgstr "フェードアウトの長さ (秒)"
-
-#: ../translation/extra.c:41 ../translation/plugins.c:12
-msgid "Play loops nr. of times (if available)"
-msgstr ""
-
-#. Standard GTK2 user interface plugin
-#: ../translation/extra.c:43 ../translation/plugins.c:65
-msgid "Ask confirmation to delete files from disk"
-msgstr "ファイルをディスクから削除する前に確認をとる"
-
-#: ../translation/extra.c:44 ../translation/plugins.c:66
-msgid "Status icon volume control sensitivity"
-msgstr "ステータスアイコンの音量コントロールの感度"
-
-#: ../translation/extra.c:45 ../translation/plugins.c:67
-msgid "Custom status icon"
-msgstr "ステータスアイコンの変更"
-
-#: ../translation/extra.c:46 ../translation/plugins.c:68
-msgid "Run gtk_init with --sync (debug mode)"
-msgstr "--sync の時 gtk_init する (デバッグ用)"
-
-#: ../translation/extra.c:47 ../translation/plugins.c:69
-msgid "Add separators between plugin context menu items"
-msgstr "プラグインのコンテキストメニューのアイテムにセパレータを挟む"
-
-#. OSD Notify plugin
-#: ../translation/extra.c:49 ../translation/plugins.c:6
-msgid "Notification title format"
-msgstr "通知のタイトルの書式"
-
-#: ../translation/extra.c:50 ../translation/plugins.c:7
-msgid "Notification content format"
-msgstr "通知の内容の書式"
-
-#: ../translation/extra.c:51 ../translation/plugins.c:8
-msgid "Show album art"
-msgstr "アルバムアート を表示する"
-
-#: ../translation/extra.c:52 ../translation/plugins.c:9
-msgid "Album art size (px)"
-msgstr "アルバムアートのサイズ (ピクセル)"
-
-#. PulseAudio output plugin
-#: ../translation/extra.c:54 ../translation/plugins.c:72
-msgid "PulseAudio server"
-msgstr "PulseAudio サーバー"
-
-#: ../translation/extra.c:56 ../translation/plugins.c:211
-msgid "Samplerate"
-msgstr "サンプルレート"
-
-#. SHN player plugin
-#: ../translation/extra.c:58 ../translation/plugins.c:225
-msgid "Relative seek table path"
-msgstr "相対的なシークテーブルのパス"
-
-#: ../translation/extra.c:59 ../translation/plugins.c:226
-msgid "Absolute seek table path"
-msgstr "絶対的なシークテーブルのパス"
-
-#: ../translation/extra.c:60 ../translation/plugins.c:227
-msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr "オーディオのバイトを入れ替える (平坦な音しか聞こえない場合、有効に)"
-
-#. SID decoder plugin
-#: ../translation/extra.c:62 ../translation/plugins.c:209
-msgid "Enable HVSC Songlength DB"
-msgstr "HVSC 曲長データベースを有効にする"
-
-#: ../translation/extra.c:63 ../translation/plugins.c:210
-msgid "Songlengths.txt (from HVSC)"
-msgstr "Songlengths.txt (from HVSC)"
-
-#: ../translation/extra.c:64
-msgid "Bits per sample (8 or 16)"
-msgstr "サンプルのビット数 (8 or 16)"
-
-#: ../translation/extra.c:65 ../translation/plugins.c:213
-msgid "Default song length (sec)"
-msgstr "デフォルトの曲の長さ (秒)"
-
-#. WildMidi player plugin
-#: ../translation/extra.c:67 ../translation/plugins.c:214
-msgid "Timidity++ bank configuration file"
-msgstr "Timidity++ bank 設定ファイル"
-
-#: ../translation/extra.c:70
+#: ../translation/extra.c:3
 msgid "Track Title"
 msgstr "トラックのタイトル"
 
-#: ../translation/extra.c:71
+#: ../translation/extra.c:4
 msgid "Performer"
 msgstr "演奏者"
 
-#: ../translation/extra.c:76
+#: ../translation/extra.c:9
 msgid "Total Tracks"
 msgstr "総トラック数"
 
-#: ../translation/extra.c:77
+#: ../translation/extra.c:10
 msgid "Genre"
 msgstr "ジャンル"
 
-#: ../translation/extra.c:78
+#: ../translation/extra.c:11
 msgid "Composer"
 msgstr "作曲者"
 
-#: ../translation/extra.c:79
+#: ../translation/extra.c:12
 msgid "Disc Number"
 msgstr "ディスク番号"
 
-#: ../translation/extra.c:80
+#: ../translation/extra.c:13
 msgid "Total Discs"
 msgstr ""
 
-#: ../translation/extra.c:81
+#: ../translation/extra.c:14
 msgid "Comment"
 msgstr "コメント"
 
-#: ../translation/extra.c:82
+#: ../translation/extra.c:15
 msgid "Encoder / Vendor"
 msgstr "エンコーダ / ベンダ"
 
-#: ../translation/extra.c:84
+#: ../translation/extra.c:17
 msgid "Location"
 msgstr "場所"
 
-#: ../translation/extra.c:85
+#: ../translation/extra.c:18
 msgid "Subtrack Index"
 msgstr "サブトラックのインデックス"
 
-#: ../translation/extra.c:86
+#: ../translation/extra.c:19
 msgid "Tag Type(s)"
 msgstr "タグの形式"
 
-#: ../translation/extra.c:87
+#: ../translation/extra.c:20
 msgid "Embedded Cuesheet"
 msgstr "埋め込みCUEシート"
 
-#. FFmpeg deocder plugin
-#: ../translation/extra.c:90 ../translation/plugins.c:114
-msgid "File Extensions (separate with ';')"
-msgstr "ファイルの拡張子 (';'で区切る)"
-
-#. Converter GUI
-#: ../translation/extra.c:92 ../translation/plugins.c:14
-msgid "Convert"
-msgstr "変換する"
-
-#. Resampler (Secret Rabbit Code)
-#: ../translation/extra.c:94
-msgid "Target Samplerate"
-msgstr "サンプルレートの指定"
-
-#: ../translation/extra.c:95 ../translation/plugins.c:221
-msgid "Quality / Algorithm"
-msgstr "音質 / アルゴリズム"
-
-#: ../translation/extra.c:96
-msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr "サンプルレートの自動設定 (指定したサンプルレートを上書きします)"
-
-#. shellexecui
-#: ../translation/extra.c:98 ../translation/plugins.c:115
-msgid "Configure Custom Shell Commands"
-msgstr "シェルコマンドの設定"
-
-#. mpgmad
-#: ../translation/extra.c:100
-msgid "Disable gapless playback (faster scanning)"
-msgstr "ギャップレス再生を無効にする (スキャンが早くなります)"
-
-#. adplug
-#: ../translation/extra.c:102 ../translation/plugins.c:217
+#. plugins/adplug/plugin.c
+#: ../translation/plugins.c:2
 msgid "Prefer Ken emu over Satoh (surround won't work)"
 msgstr ""
 
-#: ../translation/extra.c:103 ../translation/plugins.c:218
+#: ../translation/plugins.c:3
 msgid "Enable surround"
 msgstr "サラウンドを有効にする"
 
-#: ../translation/extra.c:104 ../translation/plugins.c:141
-msgid "Skip to"
-msgstr ""
+#. plugins/alsa/alsa.c
+#: ../translation/plugins.c:5
+msgid "Use ALSA resampling"
+msgstr "ALSA のリサンプリングを使う"
 
-#: ../translation/extra.c:105 ../translation/plugins.c:142
-msgid "Previous genre"
-msgstr ""
+#: ../translation/plugins.c:6
+msgid "Preferred buffer size"
+msgstr "バッファサイズの指定"
 
-#: ../translation/extra.c:106 ../translation/plugins.c:143
-msgid "Previous composer"
-msgstr ""
+#: ../translation/plugins.c:7
+msgid "Preferred period size"
+msgstr "区分サイズの指定"
 
-#: ../translation/extra.c:107 ../translation/plugins.c:144
-msgid "Previous artist"
-msgstr ""
-
-#: ../translation/extra.c:108 ../translation/plugins.c:145
-msgid "Previous album"
-msgstr ""
-
-#: ../translation/extra.c:109 ../translation/plugins.c:146
-msgid "Next genre"
-msgstr ""
-
-#: ../translation/extra.c:110 ../translation/plugins.c:147
-msgid "Next composer"
-msgstr ""
-
-#: ../translation/extra.c:111 ../translation/plugins.c:148
-msgid "Next artist"
-msgstr ""
-
-#: ../translation/extra.c:112 ../translation/plugins.c:149
-msgid "Next album"
-msgstr ""
-
-#: ../translation/plugins.c:1
-#, fuzzy
-msgid "Volume Level"
-msgstr "音量バー"
-
-#: ../translation/plugins.c:3
-msgid "Highlight current playlist"
-msgstr ""
-
-#: ../translation/plugins.c:4
-msgid "Play on double-click"
-msgstr ""
-
-#: ../translation/plugins.c:13
-msgid "ColecoVision BIOS (for SGC file format)"
-msgstr ""
-
-#: ../translation/plugins.c:15
-msgid "ReplayGain"
-msgstr ""
-
-#: ../translation/plugins.c:16
-msgid "Remove ReplayGain Information"
-msgstr ""
-
-#: ../translation/plugins.c:17
-msgid "Scan Selection As Albums (By Tags)"
-msgstr ""
-
-#: ../translation/plugins.c:18
-msgid "Scan Selection As Single Album"
-msgstr ""
-
-#: ../translation/plugins.c:19
-msgid "Scan Per-file Track Gain"
-msgstr ""
-
-#: ../translation/plugins.c:21
-#, fuzzy
-msgid "Deselect All"
-msgstr "すべて選択解除"
-
-#: ../translation/plugins.c:22
-#, fuzzy
-msgid "Select All"
-msgstr "すべて選択"
-
-#: ../translation/plugins.c:25
-#, fuzzy
-msgid "File"
-msgstr "ファイル(_F)"
-
-#: ../translation/plugins.c:26
-#, fuzzy
-msgid "Add Location"
-msgstr "場所を追加"
-
-#: ../translation/plugins.c:27
-#, fuzzy
-msgid "Add Folder(s)"
-msgstr "フォルダを追加"
-
-#: ../translation/plugins.c:28
-#, fuzzy
-msgid "Add File(s)"
-msgstr "ファイルを追加"
-
-#: ../translation/plugins.c:29
-#, fuzzy
-msgid "Open File(s)"
-msgstr "ファイルを開く(_O)"
-
-#: ../translation/plugins.c:32
-msgid "Show Help Page"
-msgstr ""
-
-#: ../translation/plugins.c:34
-msgid "Cycle Playback Looping Mode"
-msgstr ""
-
-#: ../translation/plugins.c:35
-msgid "Playback Looping - Don't loop"
-msgstr ""
-
-#: ../translation/plugins.c:36
-#, fuzzy
-msgid "Playback Looping - Single track"
-msgstr "単一のトラックに対して動作します"
-
-#: ../translation/plugins.c:37
-#, fuzzy
-msgid "Playback Looping - All"
-msgstr "再生コントロール"
-
-#: ../translation/plugins.c:38
-msgid "Cycle Playback Order"
-msgstr ""
-
-#: ../translation/plugins.c:39
-#, fuzzy
-msgid "Playback Order - Random"
-msgstr "ランダムに再生"
-
-#: ../translation/plugins.c:40
-#, fuzzy
-msgid "Playback Order - Shuffle albums"
-msgstr "アルバムをシャッフル"
-
-#: ../translation/plugins.c:41
-#, fuzzy
-msgid "Playback Order - Shuffle tracks"
-msgstr "トラックをシャッフル"
-
-#: ../translation/plugins.c:42
-msgid "Playback Order - Linear"
-msgstr ""
-
-#: ../translation/plugins.c:43
-#, fuzzy
-msgid "Toggle Cursor Follows Playback"
-msgstr "再生に従ってカーソルを移動"
-
-#: ../translation/plugins.c:44
-#, fuzzy
-msgid "Toggle Scroll Follows Playback"
-msgstr "再生に従ってスクロール"
-
-#: ../translation/plugins.c:45
-#, fuzzy
-msgid "View"
-msgstr "表示(_V)"
-
-#: ../translation/plugins.c:46
-msgid "Show\\/Hide menu"
-msgstr ""
-
-#: ../translation/plugins.c:47
-#, fuzzy
-msgid "Show\\/Hide statusbar"
-msgstr "ステータスバー"
-
-#: ../translation/plugins.c:48
-#, fuzzy
-msgid "Toggle Design Mode"
-msgstr "デザインモード"
-
-#: ../translation/plugins.c:50
-#, fuzzy
-msgid "Sort Custom"
-msgstr "カスタム"
-
-#: ../translation/plugins.c:51
-#, fuzzy
-msgid "Crop Selected"
-msgstr "選択中:"
-
-#: ../translation/plugins.c:52
-#, fuzzy
-msgid "Remove Track(s) From Playlist"
-msgstr "プレイリストの除去"
-
-#: ../translation/plugins.c:53
-#, fuzzy
-msgid "Save Playlist"
-msgstr "プレイリストを保存"
-
-#: ../translation/plugins.c:54 ../plugins/gtkui/actionhandlers.c:740
-msgid "Load Playlist"
-msgstr "プレイリストのロード"
-
-#: ../translation/plugins.c:55
-#, fuzzy
-msgid "Remove Current Playlist"
-msgstr "プレイリストの除去"
-
-#: ../translation/plugins.c:57
-#, fuzzy
-msgid "Show\\/Hide Equalizer"
-msgstr "イコライザ"
-
-#: ../translation/plugins.c:58
-#, fuzzy
-msgid "Hide Equalizer"
-msgstr "イコライザ"
-
-#: ../translation/plugins.c:59
-#, fuzzy
-msgid "Show Equalizer"
-msgstr "イコライザ"
-
-#: ../translation/plugins.c:60
-msgid "Show\\/Hide Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:61
-msgid "Hide Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:62
-msgid "Show Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:63
-#, fuzzy
-msgid "Find"
-msgstr "検索(_F)"
-
-#: ../translation/plugins.c:64
-msgid "Show\\/Hide Log window"
-msgstr ""
-
-#: ../translation/plugins.c:70
-msgid "Use unicode chars instead of images for track state"
-msgstr ""
-
-#: ../translation/plugins.c:71
-msgid "Disable seekbar overlay text"
-msgstr ""
-
-#: ../translation/plugins.c:74
+#. plugins/artwork-legacy/artwork.c
+#: ../translation/plugins.c:9
 msgid "Refresh cover art"
 msgstr ""
 
-#: ../translation/plugins.c:75
-#, fuzzy
+#: ../translation/plugins.c:10
 msgid "Cache update period (in hours, 0=never)"
-msgstr "キャッシュの更新間隔 (時)"
+msgstr ""
 
-#: ../translation/plugins.c:78
-#, fuzzy
+#: ../translation/plugins.c:11
+msgid "Fetch from embedded tags"
+msgstr "埋め込みタグから取得する"
+
+#: ../translation/plugins.c:12
+msgid "Fetch from local folder"
+msgstr "ローカルのフォルダから取得する"
+
+#: ../translation/plugins.c:13
 msgid "Fetch from Last.fm"
-msgstr "Last.fm から取得する"
+msgstr ""
 
-#: ../translation/plugins.c:79
-#, fuzzy
+#: ../translation/plugins.c:14
 msgid "Fetch from MusicBrainz"
-msgstr "Last.fm から取得する"
+msgstr ""
 
-#: ../translation/plugins.c:80
-#, fuzzy
+#: ../translation/plugins.c:15
 msgid "Fetch from Albumart.org"
-msgstr "Albumart.org から取得する"
+msgstr ""
 
-#: ../translation/plugins.c:81
+#: ../translation/plugins.c:16
 msgid "Fetch from World of Spectrum (AY files only)"
 msgstr ""
 
-#: ../translation/plugins.c:82
+#: ../translation/plugins.c:17
 msgid "When no artwork is found"
 msgstr ""
 
-#: ../translation/plugins.c:83
+#: ../translation/plugins.c:18
 msgid "leave blank"
 msgstr ""
 
-#: ../translation/plugins.c:84
-#, fuzzy
+#: ../translation/plugins.c:19
 msgid "use DeaDBeeF default cover"
-msgstr "DeaDBeeF の翻訳者"
+msgstr ""
 
-#: ../translation/plugins.c:85
+#: ../translation/plugins.c:20
 msgid "display custom image"
 msgstr ""
 
-#: ../translation/plugins.c:86
+#: ../translation/plugins.c:21
 msgid "Custom image path"
 msgstr ""
 
-#: ../translation/plugins.c:88
+#: ../translation/plugins.c:22
+msgid "Scale artwork towards longer side"
+msgstr "ジャケット絵を引き伸ばす"
+
+#. plugins/artwork/artwork.c
+#: ../translation/plugins.c:24
+msgid "Disable disk cache"
+msgstr ""
+
+#: ../translation/plugins.c:25
+msgid "Save extracted covers to music folders"
+msgstr ""
+
+#: ../translation/plugins.c:26
+msgid "Local file mask"
+msgstr ""
+
+#: ../translation/plugins.c:27
+msgid "Artwork folders"
+msgstr ""
+
+#. plugins/cdda/cdda.c
+#: ../translation/plugins.c:29
 msgid "CD drive to load"
 msgstr ""
 
-#: ../translation/plugins.c:89
-#, fuzzy
+#: ../translation/plugins.c:30
 msgid "Audio CD Drive"
+msgstr ""
+
+#: ../translation/plugins.c:31
+msgid "File"
+msgstr ""
+
+#: ../translation/plugins.c:32
+msgid "Add Audio CD"
 msgstr "オーディオCDの追加"
 
-#: ../translation/plugins.c:95
-#, fuzzy
-msgid "Use CDDB protocol"
-msgstr "CDDB プロトコルを HTTP より優先する"
+#: ../translation/plugins.c:33
+msgid "Use CDDB/FreeDB"
+msgstr "CDDB/FreeDB を使う"
 
-#: ../translation/plugins.c:97
+#: ../translation/plugins.c:34
+msgid "Prefer CD-Text over CDDB"
+msgstr "CD-Text より CDDB を優先する"
+
+#: ../translation/plugins.c:35
+msgid "CDDB url (e.g. 'freedb.org')"
+msgstr "CDDB の URL ('freedb.org' など)"
+
+#: ../translation/plugins.c:36
+msgid "CDDB port number (e.g. '888')"
+msgstr "CDDB のポート番号 ('888' など)"
+
+#: ../translation/plugins.c:37
+msgid "Use CDDB protocol"
+msgstr ""
+
+#: ../translation/plugins.c:38
+msgid "Enable NRG image support"
+msgstr "NRG イメージのサポートを有効にする"
+
+#: ../translation/plugins.c:39
 msgid "Drive speed for normal playback"
 msgstr ""
 
-#: ../translation/plugins.c:98
+#: ../translation/plugins.c:40
 msgid "1x"
 msgstr ""
 
-#: ../translation/plugins.c:99
+#: ../translation/plugins.c:41
 msgid "2x"
 msgstr ""
 
-#: ../translation/plugins.c:100
+#: ../translation/plugins.c:42
 msgid "4x"
 msgstr ""
 
-#: ../translation/plugins.c:101
+#: ../translation/plugins.c:43
 msgid "8x"
 msgstr ""
 
-#: ../translation/plugins.c:102
+#: ../translation/plugins.c:44
 msgid "16x"
 msgstr ""
 
-#: ../translation/plugins.c:103
+#: ../translation/plugins.c:45
 msgid "Max"
 msgstr ""
 
-#: ../translation/plugins.c:104
+#: ../translation/plugins.c:46
 msgid "Use cdparanoia error correction when ripping"
 msgstr ""
 
-#: ../translation/plugins.c:105
+#. plugins/converter/convgui.c
+#: ../translation/plugins.c:48
+msgid "Convert"
+msgstr "変換する"
+
+#. plugins/dsp_libsrc/src.c
+#: ../translation/plugins.c:50
+msgid "Autodetect samplerate from output device"
+msgstr ""
+
+#: ../translation/plugins.c:51
+msgid "Set samplerate directly"
+msgstr ""
+
+#: ../translation/plugins.c:52
+msgid "Quality / Algorithm"
+msgstr "音質 / アルゴリズム"
+
+#. plugins/dumb/cdumb.c
+#: ../translation/plugins.c:54
+msgid "Resampling quality (0..5, higher is better)"
+msgstr ""
+
+#: ../translation/plugins.c:55
+msgid "8-bit output (default is 16)"
+msgstr "8-bit 出力 (デフォルトは 16)"
+
+#: ../translation/plugins.c:56
+msgid "Internal DUMB volume (0..128)"
+msgstr ""
+
+#: ../translation/plugins.c:57
 #, fuzzy
-msgid "Lookup On Last.fm"
-msgstr "Last.fm で検索する"
+msgid "Volume ramping"
+msgstr "音量バー"
 
-#: ../translation/plugins.c:112
-msgid "Send MusicBrainz ID"
+#: ../translation/plugins.c:59
+msgid "On/Off Only"
 msgstr ""
 
-#: ../translation/plugins.c:113
-msgid "Submit tracks shorter than 30 seconds (not recommended)"
+#: ../translation/plugins.c:60
+msgid "Full"
 msgstr ""
 
-#: ../translation/plugins.c:116
-#, fuzzy
-msgid "Bits per sample"
-msgstr "サンプルのビット数 (8 or 16)"
-
-#: ../translation/plugins.c:117
-#, fuzzy
-msgid "Preamp"
-msgstr "プリアンプをゼロに"
-
-#: ../translation/plugins.c:118
-msgid "55 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:119
-msgid "77 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:120
-msgid "110 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:121
-msgid "156 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:122
-msgid "220 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:123
-msgid "311 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:124
-msgid "440 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:125
-msgid "622 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:126
-msgid "880 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:127
-msgid "1.2 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:128
-msgid "1.8 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:129
-msgid "2.5 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:130
-msgid "3.5 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:131
-msgid "5 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:132
-msgid "7 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:133
-msgid "10 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:134
-msgid "14 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:135
-msgid "20 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:136
-msgid "Force 16 bit output"
-msgstr ""
-
-#: ../translation/plugins.c:137
-msgid "Backend"
-msgstr ""
-
-#: ../translation/plugins.c:138
+#. plugins/ffmpeg/ffmpeg.c
+#: ../translation/plugins.c:62
 msgid "Use all extensions supported by ffmpeg"
 msgstr ""
 
-#: ../translation/plugins.c:140
-#, fuzzy
+#: ../translation/plugins.c:63
+msgid "File Extensions (separate with ';')"
+msgstr "ファイルの拡張子 (';'で区切る)"
+
+#. plugins/gme/cgme.c
+#: ../translation/plugins.c:65
+msgid "Max song length (in minutes)"
+msgstr "最大の曲長 (分)"
+
+#: ../translation/plugins.c:66
+msgid "Fadeout length (seconds)"
+msgstr "フェードアウトの長さ (秒)"
+
+#: ../translation/plugins.c:67
+msgid "Play loops nr. of times (if available)"
+msgstr ""
+
+#: ../translation/plugins.c:68
+msgid "ColecoVision BIOS (for SGC file format)"
+msgstr ""
+
+#. plugins/gtkui/gtkui.c
+#: ../translation/plugins.c:70
+msgid "ReplayGain"
+msgstr ""
+
+#: ../translation/plugins.c:71
+msgid "Remove ReplayGain Information"
+msgstr ""
+
+#: ../translation/plugins.c:72
+msgid "Scan Selection As Albums (By Tags)"
+msgstr ""
+
+#: ../translation/plugins.c:73
+msgid "Scan Selection As Single Album"
+msgstr ""
+
+#: ../translation/plugins.c:74
+msgid "Scan Per-file Track Gain"
+msgstr ""
+
+#: ../translation/plugins.c:76
+msgid "Deselect All"
+msgstr ""
+
+#: ../translation/plugins.c:77
+msgid "Select All"
+msgstr ""
+
+#: ../translation/plugins.c:80
+msgid "Add Location"
+msgstr ""
+
+#: ../translation/plugins.c:81
+msgid "Add Folder(s)"
+msgstr ""
+
+#: ../translation/plugins.c:82
+msgid "Add File(s)"
+msgstr ""
+
+#: ../translation/plugins.c:83
+msgid "Open File(s)"
+msgstr ""
+
+#: ../translation/plugins.c:86
+msgid "Show Help Page"
+msgstr ""
+
+#: ../translation/plugins.c:88
+msgid "Cycle Playback Looping Mode"
+msgstr ""
+
+#: ../translation/plugins.c:89
+msgid "Playback Looping - Don't loop"
+msgstr ""
+
+#: ../translation/plugins.c:90
+msgid "Playback Looping - Single track"
+msgstr ""
+
+#: ../translation/plugins.c:91
+msgid "Playback Looping - All"
+msgstr ""
+
+#: ../translation/plugins.c:92
+msgid "Cycle Playback Order"
+msgstr ""
+
+#: ../translation/plugins.c:93
+msgid "Playback Order - Random"
+msgstr ""
+
+#: ../translation/plugins.c:94
+msgid "Playback Order - Shuffle albums"
+msgstr ""
+
+#: ../translation/plugins.c:95
+msgid "Playback Order - Shuffle tracks"
+msgstr ""
+
+#: ../translation/plugins.c:96
+msgid "Playback Order - Linear"
+msgstr ""
+
+#: ../translation/plugins.c:97
+msgid "Toggle Cursor Follows Playback"
+msgstr ""
+
+#: ../translation/plugins.c:98
+msgid "Toggle Scroll Follows Playback"
+msgstr ""
+
+#: ../translation/plugins.c:99
+msgid "View"
+msgstr ""
+
+#: ../translation/plugins.c:100
+msgid "Show\\/Hide menu"
+msgstr ""
+
+#: ../translation/plugins.c:101
+msgid "Show\\/Hide statusbar"
+msgstr ""
+
+#: ../translation/plugins.c:102
+msgid "Toggle Design Mode"
+msgstr ""
+
+#: ../translation/plugins.c:104
+msgid "Sort Custom"
+msgstr ""
+
+#: ../translation/plugins.c:105
+msgid "Crop Selected"
+msgstr ""
+
+#: ../translation/plugins.c:106
+msgid "Remove Track(s) From Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:107
+msgid "Save Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:108 ../plugins/gtkui/actionhandlers.c:740
+msgid "Load Playlist"
+msgstr "プレイリストのロード"
+
+#: ../translation/plugins.c:109
+msgid "Remove Current Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:111
+msgid "Show\\/Hide Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:112
+msgid "Hide Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:113
+msgid "Show Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:114
+msgid "Show\\/Hide Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:115
+msgid "Hide Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:116
+msgid "Show Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:117
+msgid "Find"
+msgstr ""
+
+#: ../translation/plugins.c:118
+msgid "Show\\/Hide Log window"
+msgstr ""
+
+#: ../translation/plugins.c:119
+msgid "Ask confirmation to delete files from disk"
+msgstr "ファイルをディスクから削除する前に確認をとる"
+
+#: ../translation/plugins.c:120
+msgid "Status icon volume control sensitivity"
+msgstr "ステータスアイコンの音量コントロールの感度"
+
+#: ../translation/plugins.c:121
+msgid "Custom status icon"
+msgstr "ステータスアイコンの変更"
+
+#: ../translation/plugins.c:122
+msgid "Run gtk_init with --sync (debug mode)"
+msgstr "--sync の時 gtk_init する (デバッグ用)"
+
+#: ../translation/plugins.c:123
+msgid "Add separators between plugin context menu items"
+msgstr "プラグインのコンテキストメニューのアイテムにセパレータを挟む"
+
+#: ../translation/plugins.c:124
+msgid "Use unicode chars instead of images for track state"
+msgstr ""
+
+#: ../translation/plugins.c:125
+msgid "Disable seekbar overlay text"
+msgstr ""
+
+#: ../translation/plugins.c:128
 msgid "Jump To Currently Playing Track"
-msgstr "現在のトラックへ飛ぶ"
+msgstr ""
+
+#: ../translation/plugins.c:129
+msgid "Skip to"
+msgstr ""
+
+#: ../translation/plugins.c:130
+msgid "Previous genre"
+msgstr ""
+
+#: ../translation/plugins.c:131
+msgid "Previous composer"
+msgstr ""
+
+#: ../translation/plugins.c:132
+msgid "Previous artist"
+msgstr ""
+
+#: ../translation/plugins.c:133
+msgid "Previous album"
+msgstr ""
+
+#: ../translation/plugins.c:134
+msgid "Next genre"
+msgstr ""
+
+#: ../translation/plugins.c:135
+msgid "Next composer"
+msgstr ""
+
+#: ../translation/plugins.c:136
+msgid "Next artist"
+msgstr ""
+
+#: ../translation/plugins.c:137
+msgid "Next album"
+msgstr ""
+
+#: ../translation/plugins.c:138
+msgid "Next Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:139
+msgid "Prev Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:140
+msgid "Switch To Playlist 10"
+msgstr ""
+
+#: ../translation/plugins.c:141
+msgid "Switch To Playlist 9"
+msgstr ""
+
+#: ../translation/plugins.c:142
+msgid "Switch To Playlist 8"
+msgstr ""
+
+#: ../translation/plugins.c:143
+msgid "Switch To Playlist 7"
+msgstr ""
+
+#: ../translation/plugins.c:144
+msgid "Switch To Playlist 6"
+msgstr ""
+
+#: ../translation/plugins.c:145
+msgid "Switch To Playlist 5"
+msgstr ""
+
+#: ../translation/plugins.c:146
+msgid "Switch To Playlist 4"
+msgstr ""
+
+#: ../translation/plugins.c:147
+msgid "Switch To Playlist 3"
+msgstr ""
+
+#: ../translation/plugins.c:148
+msgid "Switch To Playlist 2"
+msgstr ""
+
+#: ../translation/plugins.c:149
+msgid "Switch To Playlist 1"
+msgstr ""
 
 #: ../translation/plugins.c:150
-#, fuzzy
-msgid "Next Playlist"
-msgstr "新規プレイリスト"
+msgid "Sort Randomize"
+msgstr ""
 
 #: ../translation/plugins.c:151
-#, fuzzy
-msgid "Prev Playlist"
-msgstr "新規プレイリスト"
+msgid "Sort By Date"
+msgstr ""
 
 #: ../translation/plugins.c:152
-#, fuzzy
-msgid "Switch To Playlist 10"
-msgstr "新規プレイリスト"
+msgid "Sort By Artist"
+msgstr ""
 
 #: ../translation/plugins.c:153
-#, fuzzy
-msgid "Switch To Playlist 9"
-msgstr "新規プレイリスト"
+msgid "Sort By Album"
+msgstr ""
 
 #: ../translation/plugins.c:154
-#, fuzzy
-msgid "Switch To Playlist 8"
-msgstr "新規プレイリスト"
+msgid "Sort By Track Number"
+msgstr ""
 
 #: ../translation/plugins.c:155
-#, fuzzy
-msgid "Switch To Playlist 7"
-msgstr "新規プレイリスト"
+msgid "Sort By Title"
+msgstr ""
 
 #: ../translation/plugins.c:156
-#, fuzzy
-msgid "Switch To Playlist 6"
-msgstr "新規プレイリスト"
+msgid "Invert Selection"
+msgstr ""
 
 #: ../translation/plugins.c:157
-#, fuzzy
-msgid "Switch To Playlist 5"
-msgstr "新規プレイリスト"
-
-#: ../translation/plugins.c:158
-#, fuzzy
-msgid "Switch To Playlist 4"
-msgstr "新規プレイリスト"
-
-#: ../translation/plugins.c:159
-#, fuzzy
-msgid "Switch To Playlist 3"
-msgstr "新規プレイリスト"
+msgid "Clear Playlist"
+msgstr ""
 
 #: ../translation/plugins.c:160
-#, fuzzy
-msgid "Switch To Playlist 2"
-msgstr "新規プレイリスト"
+msgid "Toggle In Playback Queue"
+msgstr ""
 
 #: ../translation/plugins.c:161
-#, fuzzy
-msgid "Switch To Playlist 1"
-msgstr "新規プレイリスト"
-
-#: ../translation/plugins.c:162
-#, fuzzy
-msgid "Sort Randomize"
-msgstr "ランダム"
-
-#: ../translation/plugins.c:163
-#, fuzzy
-msgid "Sort By Date"
-msgstr "...で並び替え"
-
-#: ../translation/plugins.c:164
-#, fuzzy
-msgid "Sort By Artist"
-msgstr "アーティスト"
-
-#: ../translation/plugins.c:165
-#, fuzzy
-msgid "Sort By Album"
-msgstr "アーティスト / アルバム"
-
-#: ../translation/plugins.c:166
-#, fuzzy
-msgid "Sort By Track Number"
-msgstr "トラック番号"
-
-#: ../translation/plugins.c:167
-#, fuzzy
-msgid "Sort By Title"
-msgstr "独自のタイトルを設定する"
-
-#: ../translation/plugins.c:168
-#, fuzzy
-msgid "Invert Selection"
-msgstr "選択の反転"
-
-#: ../translation/plugins.c:169
-#, fuzzy
-msgid "Clear Playlist"
-msgstr "プレイリストの名前変更"
-
-#: ../translation/plugins.c:172
-#, fuzzy
-msgid "Toggle In Playback Queue"
-msgstr "再生キューに追加"
-
-#: ../translation/plugins.c:173
 msgid "Move"
 msgstr ""
 
-#: ../translation/plugins.c:174
+#: ../translation/plugins.c:162
 msgid "Move Tracks Down"
 msgstr ""
 
-#: ../translation/plugins.c:175
-#, fuzzy
+#: ../translation/plugins.c:163
 msgid "Move Tracks Up"
-msgstr "複数トラック"
+msgstr ""
 
-#: ../translation/plugins.c:176
+#: ../translation/plugins.c:164
 msgid "Toggle Mute"
 msgstr ""
 
-#: ../translation/plugins.c:181
+#: ../translation/plugins.c:169
 msgid "Toggle Pause"
 msgstr ""
 
-#: ../translation/plugins.c:182
-#, fuzzy
+#: ../translation/plugins.c:170
 msgid "Play\\/Pause"
-msgstr "ポーズ"
+msgstr ""
 
-#: ../translation/plugins.c:184
+#: ../translation/plugins.c:172
 msgid "Seek 1s Forward"
 msgstr ""
 
-#: ../translation/plugins.c:185
+#: ../translation/plugins.c:173
 msgid "Seek 1s Backward"
 msgstr ""
 
-#: ../translation/plugins.c:186
+#: ../translation/plugins.c:174
 msgid "Seek 5s Forward"
 msgstr ""
 
-#: ../translation/plugins.c:187
+#: ../translation/plugins.c:175
 msgid "Seek 5s Backward"
 msgstr ""
 
-#: ../translation/plugins.c:188
+#: ../translation/plugins.c:176
 #, c-format
 msgid "Seek 1% Forward"
 msgstr ""
 
-#: ../translation/plugins.c:189
+#: ../translation/plugins.c:177
 msgid "Seek 1% Backward"
 msgstr ""
 
-#: ../translation/plugins.c:190
+#: ../translation/plugins.c:178
 #, c-format
 msgid "Seek 5% Forward"
 msgstr ""
 
-#: ../translation/plugins.c:191
+#: ../translation/plugins.c:179
 msgid "Seek 5% Backward"
 msgstr ""
 
-#: ../translation/plugins.c:192
-#, fuzzy
+#: ../translation/plugins.c:180
 msgid "Volume Up"
-msgstr "音量バー"
+msgstr ""
+
+#: ../translation/plugins.c:181
+msgid "Volume Down"
+msgstr ""
+
+#: ../translation/plugins.c:182
+msgid "Toggle Stop After Current Track"
+msgstr ""
+
+#: ../translation/plugins.c:183
+msgid "Toggle Stop After Current Album"
+msgstr ""
+
+#. plugins/lastfm/lastfm.c
+#: ../translation/plugins.c:185
+msgid "Lookup On Last.fm"
+msgstr ""
+
+#: ../translation/plugins.c:186
+msgid "Enable scrobbler"
+msgstr "Scrobber を有効にする"
+
+#: ../translation/plugins.c:187
+msgid "Disable nowplaying"
+msgstr "Nowplaying を無効にする"
+
+#: ../translation/plugins.c:188
+msgid "Username"
+msgstr "ユーザ名:"
+
+#: ../translation/plugins.c:189
+msgid "Password"
+msgstr "パスワード:"
+
+#: ../translation/plugins.c:190
+msgid "Scrobble URL"
+msgstr "Scrobble URL"
+
+#: ../translation/plugins.c:191
+msgid "Prefer Album Artist over Artist field"
+msgstr "アーティストのフィールドよりアルバムのアーティストを優先する"
+
+#: ../translation/plugins.c:192
+msgid "Send MusicBrainz ID"
+msgstr ""
 
 #: ../translation/plugins.c:193
-#, fuzzy
-msgid "Volume Down"
-msgstr "音量バー"
+msgid "Submit tracks shorter than 30 seconds (not recommended)"
+msgstr ""
 
-#: ../translation/plugins.c:194
-#, fuzzy
-msgid "Toggle Stop After Current Track"
-msgstr "現在のトラックの再生後に停止"
-
+#. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:195
-#, fuzzy
-msgid "Toggle Stop After Current Album"
-msgstr "現在のアルバムの再生後に停止"
+msgid "Left mix:"
+msgstr ""
 
 #: ../translation/plugins.c:196
-msgid "Tempo Change (%)"
+msgid "Right mix:"
 msgstr ""
 
-#: ../translation/plugins.c:197
-msgid "Pitch Change (semi-tones)"
-msgstr ""
-
+#. plugins/mp3/mp3.c
 #: ../translation/plugins.c:198
-msgid "Playback Rate Change (%)"
+msgid "Force 16 bit output"
 msgstr ""
 
 #: ../translation/plugins.c:199
-#, fuzzy
-msgid "Absolute Samplerate (overrides Rate Change if nonzero)"
-msgstr "サンプルレートの自動設定 (指定したサンプルレートを上書きします)"
-
-#: ../translation/plugins.c:200
-msgid "Use AA Filter"
-msgstr ""
-
-#: ../translation/plugins.c:201
-msgid "AA Filter Length"
+msgid "Backend"
 msgstr ""
 
 #: ../translation/plugins.c:202
-msgid "Use Quickseek"
-msgstr ""
+msgid "Notification title format"
+msgstr "通知のタイトルの書式"
 
 #: ../translation/plugins.c:203
-msgid "Time Stretch Sequence Length (ms)"
-msgstr ""
+msgid "Notification content format"
+msgstr "通知の内容の書式"
 
 #: ../translation/plugins.c:204
-msgid "Time Stretch Seek Window Length (ms)"
-msgstr ""
+msgid "Show album art"
+msgstr "アルバムアート を表示する"
 
 #: ../translation/plugins.c:205
-msgid "Disable disk cache"
-msgstr ""
+msgid "Album art size (px)"
+msgstr "アルバムアートのサイズ (ピクセル)"
 
-#: ../translation/plugins.c:206
-msgid "Save extracted covers to music folders"
-msgstr ""
-
+#. plugins/oss/oss.c
 #: ../translation/plugins.c:207
-#, fuzzy
-msgid "Local file mask"
-msgstr "ローカルのカバーファイルのマスク"
-
-#: ../translation/plugins.c:208
-#, fuzzy
-msgid "Artwork folders"
-msgstr "フォルダを追加"
-
-#: ../translation/plugins.c:212
-msgid "Mono synth"
-msgstr ""
-
-#: ../translation/plugins.c:215
-#, fuzzy
-msgid "Device"
+msgid "Device file"
 msgstr "デバイスファイル"
 
-#: ../translation/plugins.c:216
-msgid "Buffer size (ms)"
+#: ../translation/plugins.c:210
+msgid "Highlight current playlist"
 msgstr ""
 
-#: ../translation/plugins.c:219
-msgid "Autodetect samplerate from output device"
+#: ../translation/plugins.c:211
+msgid "Play on double-click"
 msgstr ""
 
-#: ../translation/plugins.c:220
-#, fuzzy
-msgid "Set samplerate directly"
-msgstr "サンプルレートの指定"
+#. plugins/pulse/pulse.c
+#: ../translation/plugins.c:213
+msgid "PulseAudio server"
+msgstr "PulseAudio サーバー"
 
-#: ../translation/plugins.c:222
-msgid "Emulate track change events (for scrobbling)"
-msgstr ""
-
-#: ../translation/plugins.c:223
-#, fuzzy
+#. plugins/sc68/in_sc68.c
+#: ../translation/plugins.c:215
 msgid "Default song length (in minutes)"
-msgstr "最大の曲長 (分)"
+msgstr ""
 
-#: ../translation/plugins.c:224
+#: ../translation/plugins.c:216
+msgid "Samplerate"
+msgstr "サンプルレート"
+
+#: ../translation/plugins.c:217
 msgid "Skip when shorter than (sec)"
 msgstr ""
 
+#. plugins/shellexecui/shellexecui.c
+#: ../translation/plugins.c:219
+msgid "Configure Custom Shell Commands"
+msgstr "シェルコマンドの設定"
+
+#. plugins/shn/shn.c
+#: ../translation/plugins.c:221
+msgid "Relative seek table path"
+msgstr "相対的なシークテーブルのパス"
+
+#: ../translation/plugins.c:222
+msgid "Absolute seek table path"
+msgstr "絶対的なシークテーブルのパス"
+
+#: ../translation/plugins.c:223
+msgid "Swap audio bytes (toggle if all you hear is static)"
+msgstr "オーディオのバイトを入れ替える (平坦な音しか聞こえない場合、有効に)"
+
+#. plugins/sid/plugin.c
+#: ../translation/plugins.c:225
+msgid "Enable HVSC Songlength DB"
+msgstr "HVSC 曲長データベースを有効にする"
+
+#: ../translation/plugins.c:226
+msgid "Songlengths.txt (from HVSC)"
+msgstr "Songlengths.txt (from HVSC)"
+
+#: ../translation/plugins.c:227
+msgid "Bits per sample"
+msgstr ""
+
 #: ../translation/plugins.c:228
-#, fuzzy
-msgid "Resampling quality (0..5, higher is better)"
-msgstr "リサンプリングを品質 (0..2, 大きい方が高品質)"
-
-#: ../translation/plugins.c:230
-msgid "Internal DUMB volume (0..128)"
+msgid "Mono synth"
 msgstr ""
 
+#: ../translation/plugins.c:229
+msgid "Default song length (sec)"
+msgstr "デフォルトの曲の長さ (秒)"
+
+#. plugins/sndio/sndio.c
 #: ../translation/plugins.c:231
-msgid "Volume ramping (0 is none, 1 is note on/off, 2 is always)"
+msgid "Device"
 msgstr ""
 
+#: ../translation/plugins.c:232
+msgid "Buffer size (ms)"
+msgstr ""
+
+#. plugins/supereq/supereq.c
 #: ../translation/plugins.c:234
-#, fuzzy
-msgid "Left mix:"
-msgstr "左"
+msgid "Preamp"
+msgstr ""
 
 #: ../translation/plugins.c:235
-#, fuzzy
-msgid "Right mix:"
-msgstr "右"
+msgid "55 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:236
+msgid "77 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:237
+msgid "110 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:238
+msgid "156 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:239
+msgid "220 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:240
+msgid "311 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:241
+msgid "440 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:242
+msgid "622 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:243
+msgid "880 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:244
+msgid "1.2 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:245
+msgid "1.8 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:246
+msgid "2.5 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:247
+msgid "3.5 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:248
+msgid "5 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:249
+msgid "7 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:250
+msgid "10 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:251
+msgid "14 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:252
+msgid "20 kHz"
+msgstr ""
+
+#. plugins/vfs_curl/vfs_curl.c
+#: ../translation/plugins.c:254
+msgid "Emulate track change events (for scrobbling)"
+msgstr ""
+
+#. plugins/wildmidi/wildmidiplug.c
+#: ../translation/plugins.c:256
+msgid "Timidity++ bank configuration file"
+msgstr "Timidity++ bank 設定ファイル"
 
 #: ../plugins/converter/convgui.c:91
 #, c-format
@@ -2849,13 +2694,11 @@ msgstr "出力ファイル名:"
 
 #: ../plugins/converter/interface.c:151
 #: ../plugins/converter/converter.glade.h:8
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default ([%tracknumber%. ][%artist% - ]%title%)."
 msgstr ""
-"拡張子 (.mp3など) は自動で追加されます。\n"
-"このフィールドを空にするとデフォルトを使います (%artist% - %title%)。"
 
 #: ../plugins/converter/interface.c:164
 #: ../plugins/converter/converter.glade.h:10
@@ -3476,82 +3319,41 @@ msgstr ""
 msgid "Invalid file"
 msgstr ""
 
-#, fuzzy
-#~ msgid "Edit/Deselect All"
-#~ msgstr "すべて選択解除"
+#~ msgid "Lookup on Last.fm"
+#~ msgstr "Last.fm で検索する"
 
-#, fuzzy
-#~ msgid "Edit/Select All"
-#~ msgstr "すべて選択"
+#~ msgid "Release device while stopped"
+#~ msgstr "停止中はデバイスを開放する"
 
-#, fuzzy
-#~ msgid "File/Add Location"
-#~ msgstr "場所を追加"
+#~ msgid "OSS4 samplerate bug workaround"
+#~ msgstr "OSS4 のサンプルレートのバグを回避する"
 
-#, fuzzy
-#~ msgid "File/Add Folder(s)"
-#~ msgstr "フォルダを追加"
+#~ msgid "Cache update period (hr)"
+#~ msgstr "キャッシュの更新間隔 (時)"
 
-#, fuzzy
-#~ msgid "File/Add File(s)"
-#~ msgstr "ファイルを追加"
+#~ msgid "Local cover file mask"
+#~ msgstr "ローカルのカバーファイルのマスク"
 
-#, fuzzy
-#~ msgid "File/Open File(s)"
-#~ msgstr "ファイルを開く(_O)"
+#~ msgid "Fetch from last.fm"
+#~ msgstr "Last.fm から取得する"
 
-#, fuzzy
-#~ msgid "Edit/Preferences"
-#~ msgstr "設定"
+#~ msgid "Fetch from albumart.org"
+#~ msgstr "Albumart.org から取得する"
 
-#, fuzzy
-#~ msgid "File/Save Playlist"
-#~ msgstr "プレイリストを保存"
+#~ msgid "Prefer CDDB protocol over HTTP"
+#~ msgstr "CDDB プロトコルを HTTP より優先する"
 
-#, fuzzy
-#~ msgid "File/Load Playlist"
-#~ msgstr "プレイリストのロード"
+#~ msgid "Resampling quality (0..2, higher is better)"
+#~ msgstr "リサンプリングを品質 (0..2, 大きい方が高品質)"
 
-#, fuzzy
-#~ msgid "File/New Playlist"
-#~ msgstr "新規プレイリスト"
+#~ msgid "Bits per sample (8 or 16)"
+#~ msgstr "サンプルのビット数 (8 or 16)"
 
-#, fuzzy
-#~ msgid "Edit/Find"
-#~ msgstr "編集"
+#~ msgid "Target Samplerate"
+#~ msgstr "サンプルレートの指定"
 
-#, fuzzy
-#~ msgid "Edit/Invert Selection"
-#~ msgstr "選択の反転"
+#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
+#~ msgstr "サンプルレートの自動設定 (指定したサンプルレートを上書きします)"
 
-#, fuzzy
-#~ msgid "Playback/Remove From Playback Queue"
-#~ msgstr "再生キューから除去"
-
-#, fuzzy
-#~ msgid "Playback/Add To Playback Queue"
-#~ msgstr "再生キューに追加"
-
-#, fuzzy
-#~ msgid "Playback/Play"
-#~ msgstr "再生"
-
-#, fuzzy
-#~ msgid "Playback/Stop"
-#~ msgstr "再生"
-
-#, fuzzy
-#~ msgid "Playback/Previous"
-#~ msgstr "再生コントロール"
-
-#, fuzzy
-#~ msgid "Playback/Next"
-#~ msgstr "再生"
-
-#, fuzzy
-#~ msgid "Playback/Volume Up"
-#~ msgstr "再生"
-
-#, fuzzy
-#~ msgid "Edit/Configure Custom Shell Commands"
-#~ msgstr "シェルコマンドの設定"
+#~ msgid "Disable gapless playback (faster scanning)"
+#~ msgstr "ギャップレス再生を無効にする (スキャンが早くなります)"

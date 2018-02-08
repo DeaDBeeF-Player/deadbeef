@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-07 22:42+0100\n"
-"PO-Revision-Date: 2017-11-11 11:22+0000\n"
+"POT-Creation-Date: 2018-02-08 19:06+0100\n"
+"PO-Revision-Date: 2018-02-07 21:43+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/deadbeef-player/"
 "deadbeef-player/language/zh_TW/)\n"
@@ -40,7 +40,7 @@ msgid "DeaDBeeF Translators"
 msgstr "DeaDBeeF 翻譯者"
 
 #: ../plugins/gtkui/callbacks.c:638 ../plugins/gtkui/interface.c:976
-#: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:31
+#: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:85
 #: ../plugins/converter/convgui.c:1759 ../plugins/converter/convgui.c:1767
 #: ../plugins/gtkui/actionhandlers.c:473
 msgid "Help"
@@ -82,7 +82,8 @@ msgstr "載入預設值"
 msgid "Import Foobar2000 Preset"
 msgstr "匯入 Foobar2000 預設值"
 
-#: ../plugins/gtkui/eq.c:367 ../translation/plugins.c:5
+#. plugins/notify/notify.c
+#: ../plugins/gtkui/eq.c:367 ../translation/plugins.c:201
 msgid "Enable"
 msgstr "啟用"
 
@@ -113,7 +114,7 @@ msgstr "1 天 %d:%02d:%02d"
 msgid "%d days %d:%02d:%02d"
 msgstr "%d 天 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:672 ../translation/plugins.c:56
+#: ../plugins/gtkui/gtkui.c:672 ../translation/plugins.c:110
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 msgid "New Playlist"
 msgstr "新播放清單"
@@ -333,19 +334,19 @@ msgstr "曲目"
 
 #: ../plugins/gtkui/interface.c:267 ../plugins/gtkui/interface.c:1972
 #: ../plugins/gtkui/plcommon.c:92 ../plugins/gtkui/deadbeef.glade.h:22
-#: ../translation/extra.c:73
+#: ../translation/extra.c:6
 msgid "Album"
 msgstr "專輯"
 
 #. Track properties dialog
 #: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/plcommon.c:91
 #: ../plugins/gtkui/plcommon.c:1848 ../plugins/gtkui/deadbeef.glade.h:23
-#: ../translation/extra.c:69
+#: ../translation/extra.c:2
 msgid "Artist"
 msgstr "藝人"
 
 #: ../plugins/gtkui/interface.c:275 ../plugins/gtkui/deadbeef.glade.h:24
-#: ../translation/extra.c:74
+#: ../translation/extra.c:7
 msgid "Date"
 msgstr "日期"
 
@@ -360,7 +361,7 @@ msgid "Custom"
 msgstr "自訂"
 
 #: ../plugins/gtkui/interface.c:292 ../plugins/gtkui/interface.c:1791
-#: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:49
+#: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:103
 msgid "Preferences"
 msgstr "偏好設定"
 
@@ -471,12 +472,12 @@ msgid "Search"
 msgstr "搜尋"
 
 #: ../plugins/gtkui/interface.c:794 ../plugins/gtkui/deadbeef.glade.h:54
-#: ../translation/plugins.c:178
+#: ../translation/plugins.c:166
 msgid "Stop"
 msgstr "停止"
 
 #: ../plugins/gtkui/interface.c:802 ../plugins/gtkui/deadbeef.glade.h:55
-#: ../translation/plugins.c:177
+#: ../translation/plugins.c:165
 msgid "Play"
 msgstr "播放"
 
@@ -485,17 +486,17 @@ msgid "Pause"
 msgstr "暫停"
 
 #: ../plugins/gtkui/interface.c:818 ../plugins/gtkui/deadbeef.glade.h:57
-#: ../translation/plugins.c:179
+#: ../translation/plugins.c:167
 msgid "Previous"
 msgstr "上一首"
 
 #: ../plugins/gtkui/interface.c:826 ../plugins/gtkui/deadbeef.glade.h:58
-#: ../translation/plugins.c:180
+#: ../translation/plugins.c:168
 msgid "Next"
 msgstr "下一首"
 
 #: ../plugins/gtkui/interface.c:834 ../plugins/gtkui/deadbeef.glade.h:59
-#: ../translation/plugins.c:183
+#: ../translation/plugins.c:171
 msgid "Play Random"
 msgstr "隨機播放"
 
@@ -504,12 +505,12 @@ msgid "About"
 msgstr "關於"
 
 #: ../plugins/gtkui/interface.c:856 ../plugins/gtkui/deadbeef.glade.h:61
-#: ../translation/plugins.c:23
+#: ../translation/plugins.c:78
 msgid "Quit"
 msgstr "結束"
 
 #: ../plugins/gtkui/interface.c:1049 ../plugins/gtkui/plcommon.c:1228
-#: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:30
+#: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:84
 msgid "Track Properties"
 msgstr "歌曲屬性"
 
@@ -618,9 +619,8 @@ msgid "Always convert 16 bit audio to 24 bit"
 msgstr "總是將 16 位元音訊轉為 24 位元"
 
 #: ../plugins/gtkui/interface.c:1859 ../plugins/gtkui/deadbeef.glade.h:87
-#, fuzzy
 msgid "Target samplerate:"
-msgstr "目標取樣率"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "For multiples of 48KHz (96K, 192K, ...):"
@@ -631,14 +631,12 @@ msgid "For multiples of 44.1KHz (88.2K, 176.4K, ...):"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1926 ../plugins/gtkui/deadbeef.glade.h:90
-#, fuzzy
 msgid "Based on input samplerate"
-msgstr "目標取樣率"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1930 ../plugins/gtkui/deadbeef.glade.h:91
-#, fuzzy
 msgid "Override samplerate"
-msgstr "目標取樣率"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1934 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Sound"
@@ -661,7 +659,7 @@ msgid "Processing:"
 msgstr "運行方式："
 
 #: ../plugins/gtkui/interface.c:1987 ../plugins/gtkui/plcommon.c:1840
-#: ../plugins/gtkui/widgets.c:3942
+#: ../translation/plugins.c:58 ../plugins/gtkui/widgets.c:3942
 msgid "None"
 msgstr "無"
 
@@ -720,7 +718,7 @@ msgid "\"Stop after current album\" option will switch off after triggering"
 msgstr "「播放完此專輯後停止」選項在觸發後將會自動關閉"
 
 #: ../plugins/gtkui/interface.c:2085 ../plugins/gtkui/deadbeef.glade.h:112
-#: ../translation/plugins.c:33
+#: ../translation/plugins.c:87
 msgid "Playback"
 msgstr "播放"
 
@@ -786,8 +784,9 @@ msgstr ""
 msgid "Player"
 msgstr "播放器"
 
+#. plugins/pltbrowser/pltbrowser.c
 #: ../plugins/gtkui/interface.c:2258 ../plugins/gtkui/deadbeef.glade.h:128
-#: ../translation/plugins.c:2
+#: ../translation/plugins.c:209
 msgid "Close playlists with middle mouse button"
 msgstr "用滑鼠中鍵關閉播放清單"
 
@@ -1013,7 +1012,7 @@ msgid "Version: "
 msgstr "版本："
 
 #: ../plugins/gtkui/interface.c:3071 ../plugins/gtkui/deadbeef.glade.h:184
-#: ../translation/extra.c:83
+#: ../translation/extra.c:16
 msgid "Copyright"
 msgstr "版權"
 
@@ -1174,7 +1173,7 @@ msgid ""
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:5093 ../plugins/gtkui/deadbeef.glade.h:218
-#: ../translation/plugins.c:20 ../plugins/shellexecui/interface.c:70
+#: ../translation/plugins.c:75 ../plugins/shellexecui/interface.c:70
 #: ../plugins/shellexecui/shellexec.glade.h:5
 msgid "Edit"
 msgstr "編輯(_E)"
@@ -1267,15 +1266,15 @@ msgstr "藝人 - 專輯"
 msgid "Year"
 msgstr "年"
 
-#: ../plugins/gtkui/plcommon.c:96 ../translation/extra.c:75
+#: ../plugins/gtkui/plcommon.c:96 ../translation/extra.c:8
 msgid "Track Number"
 msgstr "曲目"
 
-#: ../plugins/gtkui/plcommon.c:97 ../translation/extra.c:72
+#: ../plugins/gtkui/plcommon.c:97 ../translation/extra.c:5
 msgid "Band / Album Artist"
 msgstr "樂隊 / 專輯藝人"
 
-#: ../plugins/gtkui/plcommon.c:98 ../translation/extra.c:88
+#: ../plugins/gtkui/plcommon.c:98 ../translation/extra.c:21
 msgid "Codec"
 msgstr "編碼解碼器"
 
@@ -1288,15 +1287,16 @@ msgstr "位元率"
 msgid "_Paste"
 msgstr "貼上（_P）"
 
-#: ../plugins/gtkui/plcommon.c:990 ../translation/plugins.c:171
+#: ../plugins/gtkui/plcommon.c:990 ../translation/plugins.c:159
 msgid "Add To Playback Queue"
 msgstr "加入至播放佇列"
 
-#: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:170
+#: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:158
 msgid "Remove From Playback Queue"
 msgstr "自播放佇列移除"
 
-#: ../plugins/gtkui/plcommon.c:1016 ../translation/plugins.c:139
+#. plugins/hotkeys/hotkeys.c
+#: ../plugins/gtkui/plcommon.c:1016 ../translation/plugins.c:127
 msgid "Reload Metadata"
 msgstr "重整音樂資料"
 
@@ -1308,7 +1308,7 @@ msgstr "剪下（T）"
 msgid "_Copy"
 msgstr "複製（_C）"
 
-#: ../plugins/gtkui/plcommon.c:1079 ../translation/plugins.c:24
+#: ../plugins/gtkui/plcommon.c:1079 ../translation/plugins.c:79
 msgid "Remove From Disk"
 msgstr "自硬碟中移除"
 
@@ -1641,1080 +1641,924 @@ msgstr ""
 "wildmidi：找不到 freepats 設定檔案。請安裝 timidity-freepats 套件，或在外掛程"
 "式設定指定 freepats.cfg 的路徑。"
 
-#. this file should list extra translatable strings that are not referenced
-#. directly in source code, e.g. scripted plugin configuration strings
-#: ../translation/extra.c:3 ../translation/plugins.c:90
-msgid "Add Audio CD"
-msgstr "新增音樂 CD"
-
-#: ../translation/extra.c:4
-msgid "Lookup on Last.fm"
-msgstr "在 Last.fm 查看"
-
-#. ALSA output plugin
-#: ../translation/extra.c:6 ../translation/plugins.c:232
-msgid "Use ALSA resampling"
-msgstr "使用 ALSA 再取樣"
-
-#: ../translation/extra.c:7
-msgid "Release device while stopped"
-msgstr "停止時釋出裝置"
-
-#: ../translation/extra.c:8 ../translation/extra.c:55
-#: ../translation/plugins.c:73
-msgid "Preferred buffer size"
-msgstr "偏好的緩衝區大小"
-
-#: ../translation/extra.c:9 ../translation/plugins.c:233
-msgid "Preferred period size"
-msgstr "偏好的間隔大小"
-
-#. Last.fm plugin
-#: ../translation/extra.c:11 ../translation/plugins.c:106
-msgid "Enable scrobbler"
-msgstr "偏用歌曲記錄"
-
-#: ../translation/extra.c:12 ../translation/plugins.c:107
-msgid "Disable nowplaying"
-msgstr "停用 nowplaying"
-
-#: ../translation/extra.c:13 ../translation/plugins.c:108
-msgid "Username"
-msgstr "使用者名稱"
-
-#: ../translation/extra.c:14 ../translation/plugins.c:109
-msgid "Password"
-msgstr "密碼"
-
-#: ../translation/extra.c:15 ../translation/plugins.c:110
-msgid "Scrobble URL"
-msgstr "Scrobble 網址"
-
-#: ../translation/extra.c:16 ../translation/plugins.c:111
-msgid "Prefer Album Artist over Artist field"
-msgstr "以專輯作者取代作者欄"
-
-#. OSS output plugin
-#: ../translation/extra.c:18 ../translation/plugins.c:236
-msgid "Device file"
-msgstr "裝置檔案"
-
-#: ../translation/extra.c:19
-msgid "OSS4 samplerate bug workaround"
-msgstr "OSS4 取樣率問題臨時解決辦法"
-
-#. Album Artwork plugin
-#: ../translation/extra.c:21
-msgid "Cache update period (hr)"
-msgstr "快取更新間隔 (小時)"
-
-#: ../translation/extra.c:22 ../translation/plugins.c:76
-msgid "Fetch from embedded tags"
-msgstr "由內置標籤取得"
-
-#: ../translation/extra.c:23 ../translation/plugins.c:77
-msgid "Fetch from local folder"
-msgstr "由本機資料夾取得"
-
-#: ../translation/extra.c:24
-msgid "Local cover file mask"
-msgstr "本機封面檔案遮罩"
-
-#: ../translation/extra.c:25
-msgid "Fetch from last.fm"
-msgstr "由 last.fm 取得"
-
-#: ../translation/extra.c:26
-msgid "Fetch from albumart.org"
-msgstr "由 albumart.org 取得"
-
-#: ../translation/extra.c:27 ../translation/plugins.c:87
-msgid "Scale artwork towards longer side"
-msgstr "依較長一邊縮放封面"
-
-#. Audio CD player
-#: ../translation/extra.c:29 ../translation/plugins.c:91
-msgid "Use CDDB/FreeDB"
-msgstr "使用 CDDB/FreeDB"
-
-#: ../translation/extra.c:30 ../translation/plugins.c:92
-msgid "Prefer CD-Text over CDDB"
-msgstr "優先使用 CD-Text 而非 CDDB"
-
-#: ../translation/extra.c:31 ../translation/plugins.c:93
-msgid "CDDB url (e.g. 'freedb.org')"
-msgstr "CDDB 網址 (例如 freedb.org)"
-
-#: ../translation/extra.c:32 ../translation/plugins.c:94
-msgid "CDDB port number (e.g. '888')"
-msgstr "CDDB 連接埠號碼 (例如 888)"
-
-#: ../translation/extra.c:33
-msgid "Prefer CDDB protocol over HTTP"
-msgstr "優先使用 CDDB 協定而非 HTTP"
-
-#: ../translation/extra.c:34 ../translation/plugins.c:96
-msgid "Enable NRG image support"
-msgstr "啟用支援 NRG 影像"
-
-#. DUMB module player plugin
-#: ../translation/extra.c:36
-msgid "Resampling quality (0..2, higher is better)"
-msgstr "重取樣品質 (0..2，越高越好)"
-
-#: ../translation/extra.c:37 ../translation/plugins.c:229
-msgid "8-bit output (default is 16)"
-msgstr "8-bit 輸出 (預設值是 16)"
-
-#. Game_Music_Emu decoder plugin
-#: ../translation/extra.c:39 ../translation/plugins.c:10
-msgid "Max song length (in minutes)"
-msgstr "歌曲最大長度 (分鐘)"
-
-#: ../translation/extra.c:40 ../translation/plugins.c:11
-msgid "Fadeout length (seconds)"
-msgstr "淡出長度 (單位:秒)"
-
-#: ../translation/extra.c:41 ../translation/plugins.c:12
-msgid "Play loops nr. of times (if available)"
-msgstr "循環播放次數 (若支援)"
-
-#. Standard GTK2 user interface plugin
-#: ../translation/extra.c:43 ../translation/plugins.c:65
-msgid "Ask confirmation to delete files from disk"
-msgstr "自磁碟刪除檔案要先確認"
-
-#: ../translation/extra.c:44 ../translation/plugins.c:66
-msgid "Status icon volume control sensitivity"
-msgstr "狀態圖示音量控制敏感度"
-
-#: ../translation/extra.c:45 ../translation/plugins.c:67
-msgid "Custom status icon"
-msgstr "自訂狀態圖示"
-
-#: ../translation/extra.c:46 ../translation/plugins.c:68
-msgid "Run gtk_init with --sync (debug mode)"
-msgstr "以 --sync (除錯模式) 執行 gtk_init"
-
-#: ../translation/extra.c:47 ../translation/plugins.c:69
-msgid "Add separators between plugin context menu items"
-msgstr "在外掛選單項目之間加入分隔符號"
-
-#. OSD Notify plugin
-#: ../translation/extra.c:49 ../translation/plugins.c:6
-msgid "Notification title format"
-msgstr "通告標題格式"
-
-#: ../translation/extra.c:50 ../translation/plugins.c:7
-msgid "Notification content format"
-msgstr "通告內容格式"
-
-#: ../translation/extra.c:51 ../translation/plugins.c:8
-msgid "Show album art"
-msgstr "顯示專輯封面"
-
-#: ../translation/extra.c:52 ../translation/plugins.c:9
-msgid "Album art size (px)"
-msgstr "專輯封面尺寸 (像素)"
-
-#. PulseAudio output plugin
-#: ../translation/extra.c:54 ../translation/plugins.c:72
-msgid "PulseAudio server"
-msgstr "PulseAudio 伺服器"
-
-#: ../translation/extra.c:56 ../translation/plugins.c:211
-msgid "Samplerate"
-msgstr "取樣率"
-
-#. SHN player plugin
-#: ../translation/extra.c:58 ../translation/plugins.c:225
-msgid "Relative seek table path"
-msgstr "相對搜索表格路徑"
-
-#: ../translation/extra.c:59 ../translation/plugins.c:226
-msgid "Absolute seek table path"
-msgstr "絕對搜索表格路徑"
-
-#: ../translation/extra.c:60 ../translation/plugins.c:227
-msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr "置換音訊位元組 (如聽到的只是雜訊則切換)"
-
-#. SID decoder plugin
-#: ../translation/extra.c:62 ../translation/plugins.c:209
-msgid "Enable HVSC Songlength DB"
-msgstr "啟用 HVSC 歌曲長度資料庫"
-
-#: ../translation/extra.c:63 ../translation/plugins.c:210
-msgid "Songlengths.txt (from HVSC)"
-msgstr "Songlengths.txt (來自 HVSC)"
-
-#: ../translation/extra.c:64
-msgid "Bits per sample (8 or 16)"
-msgstr "取樣位元 (8 或 16)"
-
-#: ../translation/extra.c:65 ../translation/plugins.c:213
-msgid "Default song length (sec)"
-msgstr "預設歌曲長度 (秒)"
-
-#. WildMidi player plugin
-#: ../translation/extra.c:67 ../translation/plugins.c:214
-msgid "Timidity++ bank configuration file"
-msgstr "Timidity++ 樂器庫設定檔案"
-
-#: ../translation/extra.c:70
+#: ../translation/extra.c:3
 msgid "Track Title"
 msgstr "歌曲名稱"
 
-#: ../translation/extra.c:71
+#: ../translation/extra.c:4
 msgid "Performer"
 msgstr "演唱"
 
-#: ../translation/extra.c:76
+#: ../translation/extra.c:9
 msgid "Total Tracks"
 msgstr "總歌曲數"
 
-#: ../translation/extra.c:77
+#: ../translation/extra.c:10
 msgid "Genre"
 msgstr "種類"
 
-#: ../translation/extra.c:78
+#: ../translation/extra.c:11
 msgid "Composer"
 msgstr "作曲"
 
-#: ../translation/extra.c:79
+#: ../translation/extra.c:12
 msgid "Disc Number"
 msgstr "碟號"
 
-#: ../translation/extra.c:80
+#: ../translation/extra.c:13
 msgid "Total Discs"
 msgstr "總碟數"
 
-#: ../translation/extra.c:81
+#: ../translation/extra.c:14
 msgid "Comment"
 msgstr "評語"
 
-#: ../translation/extra.c:82
+#: ../translation/extra.c:15
 msgid "Encoder / Vendor"
 msgstr "編碼器 / 生產者"
 
-#: ../translation/extra.c:84
+#: ../translation/extra.c:17
 msgid "Location"
 msgstr "位址"
 
-#: ../translation/extra.c:85
+#: ../translation/extra.c:18
 msgid "Subtrack Index"
 msgstr "子曲目索引"
 
-#: ../translation/extra.c:86
+#: ../translation/extra.c:19
 msgid "Tag Type(s)"
 msgstr "標籤類型"
 
-#: ../translation/extra.c:87
+#: ../translation/extra.c:20
 msgid "Embedded Cuesheet"
 msgstr "內置曲目表（Cuesheet）"
 
-#. FFmpeg deocder plugin
-#: ../translation/extra.c:90 ../translation/plugins.c:114
-msgid "File Extensions (separate with ';')"
-msgstr "檔案副檔名 (以 ; 分隔)"
-
-#. Converter GUI
-#: ../translation/extra.c:92 ../translation/plugins.c:14
-msgid "Convert"
-msgstr "轉檔"
-
-#. Resampler (Secret Rabbit Code)
-#: ../translation/extra.c:94
-msgid "Target Samplerate"
-msgstr "目標取樣率"
-
-#: ../translation/extra.c:95 ../translation/plugins.c:221
-msgid "Quality / Algorithm"
-msgstr "品質 / 演算法"
-
-#: ../translation/extra.c:96
-msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr "自動取樣率（優先於「目標取樣率」）"
-
-#. shellexecui
-#: ../translation/extra.c:98 ../translation/plugins.c:115
-msgid "Configure Custom Shell Commands"
-msgstr "設定自訂 shell 指令"
-
-#. mpgmad
-#: ../translation/extra.c:100
-msgid "Disable gapless playback (faster scanning)"
-msgstr "取消無間斷播放（掃瞄更快速）"
-
-#. adplug
-#: ../translation/extra.c:102 ../translation/plugins.c:217
+#. plugins/adplug/plugin.c
+#: ../translation/plugins.c:2
 msgid "Prefer Ken emu over Satoh (surround won't work)"
 msgstr "優先使用 Ken emu 取代 Satoh（環繞音效將無效）"
 
-#: ../translation/extra.c:103 ../translation/plugins.c:218
+#: ../translation/plugins.c:3
 msgid "Enable surround"
 msgstr "開啟環繞音效"
 
-#: ../translation/extra.c:104 ../translation/plugins.c:141
-msgid "Skip to"
-msgstr ""
+#. plugins/alsa/alsa.c
+#: ../translation/plugins.c:5
+msgid "Use ALSA resampling"
+msgstr "使用 ALSA 再取樣"
 
-#: ../translation/extra.c:105 ../translation/plugins.c:142
-msgid "Previous genre"
-msgstr ""
+#: ../translation/plugins.c:6
+msgid "Preferred buffer size"
+msgstr "偏好的緩衝區大小"
 
-#: ../translation/extra.c:106 ../translation/plugins.c:143
-msgid "Previous composer"
-msgstr ""
+#: ../translation/plugins.c:7
+msgid "Preferred period size"
+msgstr "偏好的間隔大小"
 
-#: ../translation/extra.c:107 ../translation/plugins.c:144
-msgid "Previous artist"
-msgstr ""
-
-#: ../translation/extra.c:108 ../translation/plugins.c:145
-msgid "Previous album"
-msgstr ""
-
-#: ../translation/extra.c:109 ../translation/plugins.c:146
-msgid "Next genre"
-msgstr ""
-
-#: ../translation/extra.c:110 ../translation/plugins.c:147
-msgid "Next composer"
-msgstr ""
-
-#: ../translation/extra.c:111 ../translation/plugins.c:148
-msgid "Next artist"
-msgstr ""
-
-#: ../translation/extra.c:112 ../translation/plugins.c:149
-msgid "Next album"
-msgstr ""
-
-#: ../translation/plugins.c:1
-#, fuzzy
-msgid "Volume Level"
-msgstr "音量列"
-
-#: ../translation/plugins.c:3
-msgid "Highlight current playlist"
-msgstr ""
-
-#: ../translation/plugins.c:4
-msgid "Play on double-click"
-msgstr ""
-
-#: ../translation/plugins.c:13
-msgid "ColecoVision BIOS (for SGC file format)"
-msgstr ""
-
-#: ../translation/plugins.c:15
-#, fuzzy
-msgid "ReplayGain"
-msgstr "<b>播放增益</b>"
-
-#: ../translation/plugins.c:16
-msgid "Remove ReplayGain Information"
-msgstr ""
-
-#: ../translation/plugins.c:17
-msgid "Scan Selection As Albums (By Tags)"
-msgstr ""
-
-#: ../translation/plugins.c:18
-msgid "Scan Selection As Single Album"
-msgstr ""
-
-#: ../translation/plugins.c:19
-msgid "Scan Per-file Track Gain"
-msgstr ""
-
-#: ../translation/plugins.c:21
-#, fuzzy
-msgid "Deselect All"
-msgstr "取消全選"
-
-#: ../translation/plugins.c:22
-#, fuzzy
-msgid "Select All"
-msgstr "全選"
-
-#: ../translation/plugins.c:25
-#, fuzzy
-msgid "File"
-msgstr "檔案(_F)"
-
-#: ../translation/plugins.c:26
-#, fuzzy
-msgid "Add Location"
-msgstr "加入位址"
-
-#: ../translation/plugins.c:27
-#, fuzzy
-msgid "Add Folder(s)"
-msgstr "加入資料夾"
-
-#: ../translation/plugins.c:28
-#, fuzzy
-msgid "Add File(s)"
-msgstr "加入檔案"
-
-#: ../translation/plugins.c:29
-#, fuzzy
-msgid "Open File(s)"
-msgstr "開啟檔案(_O)"
-
-#: ../translation/plugins.c:32
-msgid "Show Help Page"
-msgstr ""
-
-#: ../translation/plugins.c:34
-msgid "Cycle Playback Looping Mode"
-msgstr ""
-
-#: ../translation/plugins.c:35
-msgid "Playback Looping - Don't loop"
-msgstr ""
-
-#: ../translation/plugins.c:36
-#, fuzzy
-msgid "Playback Looping - Single track"
-msgstr "作用在單一曲目。"
-
-#: ../translation/plugins.c:37
-#, fuzzy
-msgid "Playback Looping - All"
-msgstr "播放控制按鈕"
-
-#: ../translation/plugins.c:38
-msgid "Cycle Playback Order"
-msgstr ""
-
-#: ../translation/plugins.c:39
-#, fuzzy
-msgid "Playback Order - Random"
-msgstr "隨機播放"
-
-#: ../translation/plugins.c:40
-#, fuzzy
-msgid "Playback Order - Shuffle albums"
-msgstr "調亂專輯"
-
-#: ../translation/plugins.c:41
-#, fuzzy
-msgid "Playback Order - Shuffle tracks"
-msgstr "調亂歌曲"
-
-#: ../translation/plugins.c:42
-msgid "Playback Order - Linear"
-msgstr ""
-
-#: ../translation/plugins.c:43
-#, fuzzy
-msgid "Toggle Cursor Follows Playback"
-msgstr "隨播放移動游標"
-
-#: ../translation/plugins.c:44
-#, fuzzy
-msgid "Toggle Scroll Follows Playback"
-msgstr "隨播放捲動"
-
-#: ../translation/plugins.c:45
-#, fuzzy
-msgid "View"
-msgstr "檢視(_V)"
-
-#: ../translation/plugins.c:46
-msgid "Show\\/Hide menu"
-msgstr ""
-
-#: ../translation/plugins.c:47
-#, fuzzy
-msgid "Show\\/Hide statusbar"
-msgstr "狀態列"
-
-#: ../translation/plugins.c:48
-#, fuzzy
-msgid "Toggle Design Mode"
-msgstr "設計模式"
-
-#: ../translation/plugins.c:50
-#, fuzzy
-msgid "Sort Custom"
-msgstr "自訂"
-
-#: ../translation/plugins.c:51
-#, fuzzy
-msgid "Crop Selected"
-msgstr "所選列："
-
-#: ../translation/plugins.c:52
-#, fuzzy
-msgid "Remove Track(s) From Playlist"
-msgstr "移除播放清單"
-
-#: ../translation/plugins.c:53
-#, fuzzy
-msgid "Save Playlist"
-msgstr "儲存播放清單"
-
-#: ../translation/plugins.c:54 ../plugins/gtkui/actionhandlers.c:740
-msgid "Load Playlist"
-msgstr "載入播放清單"
-
-#: ../translation/plugins.c:55
-#, fuzzy
-msgid "Remove Current Playlist"
-msgstr "移除播放清單"
-
-#: ../translation/plugins.c:57
-#, fuzzy
-msgid "Show\\/Hide Equalizer"
-msgstr "等化器"
-
-#: ../translation/plugins.c:58
-#, fuzzy
-msgid "Hide Equalizer"
-msgstr "等化器"
-
-#: ../translation/plugins.c:59
-#, fuzzy
-msgid "Show Equalizer"
-msgstr "等化器"
-
-#: ../translation/plugins.c:60
-msgid "Show\\/Hide Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:61
-msgid "Hide Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:62
-msgid "Show Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:63
-#, fuzzy
-msgid "Find"
-msgstr "尋找(_F)"
-
-#: ../translation/plugins.c:64
-msgid "Show\\/Hide Log window"
-msgstr ""
-
-#: ../translation/plugins.c:70
-msgid "Use unicode chars instead of images for track state"
-msgstr ""
-
-#: ../translation/plugins.c:71
-msgid "Disable seekbar overlay text"
-msgstr ""
-
-#: ../translation/plugins.c:74
+#. plugins/artwork-legacy/artwork.c
+#: ../translation/plugins.c:9
 msgid "Refresh cover art"
 msgstr ""
 
-#: ../translation/plugins.c:75
-#, fuzzy
+#: ../translation/plugins.c:10
 msgid "Cache update period (in hours, 0=never)"
-msgstr "快取更新間隔 (小時)"
+msgstr ""
 
-#: ../translation/plugins.c:78
-#, fuzzy
+#: ../translation/plugins.c:11
+msgid "Fetch from embedded tags"
+msgstr "由內置標籤取得"
+
+#: ../translation/plugins.c:12
+msgid "Fetch from local folder"
+msgstr "由本機資料夾取得"
+
+#: ../translation/plugins.c:13
 msgid "Fetch from Last.fm"
-msgstr "由 last.fm 取得"
+msgstr ""
 
-#: ../translation/plugins.c:79
-#, fuzzy
+#: ../translation/plugins.c:14
 msgid "Fetch from MusicBrainz"
-msgstr "由 last.fm 取得"
+msgstr ""
 
-#: ../translation/plugins.c:80
-#, fuzzy
+#: ../translation/plugins.c:15
 msgid "Fetch from Albumart.org"
-msgstr "由 albumart.org 取得"
+msgstr ""
 
-#: ../translation/plugins.c:81
+#: ../translation/plugins.c:16
 msgid "Fetch from World of Spectrum (AY files only)"
 msgstr ""
 
-#: ../translation/plugins.c:82
+#: ../translation/plugins.c:17
 msgid "When no artwork is found"
 msgstr ""
 
-#: ../translation/plugins.c:83
+#: ../translation/plugins.c:18
 msgid "leave blank"
 msgstr ""
 
-#: ../translation/plugins.c:84
-#, fuzzy
+#: ../translation/plugins.c:19
 msgid "use DeaDBeeF default cover"
-msgstr "DeaDBeeF 翻譯者"
+msgstr ""
 
-#: ../translation/plugins.c:85
+#: ../translation/plugins.c:20
 msgid "display custom image"
 msgstr ""
 
-#: ../translation/plugins.c:86
+#: ../translation/plugins.c:21
 msgid "Custom image path"
 msgstr ""
 
-#: ../translation/plugins.c:88
+#: ../translation/plugins.c:22
+msgid "Scale artwork towards longer side"
+msgstr "依較長一邊縮放封面"
+
+#. plugins/artwork/artwork.c
+#: ../translation/plugins.c:24
+msgid "Disable disk cache"
+msgstr ""
+
+#: ../translation/plugins.c:25
+msgid "Save extracted covers to music folders"
+msgstr ""
+
+#: ../translation/plugins.c:26
+msgid "Local file mask"
+msgstr ""
+
+#: ../translation/plugins.c:27
+msgid "Artwork folders"
+msgstr ""
+
+#. plugins/cdda/cdda.c
+#: ../translation/plugins.c:29
 msgid "CD drive to load"
 msgstr ""
 
-#: ../translation/plugins.c:89
-#, fuzzy
+#: ../translation/plugins.c:30
 msgid "Audio CD Drive"
+msgstr ""
+
+#: ../translation/plugins.c:31
+msgid "File"
+msgstr ""
+
+#: ../translation/plugins.c:32
+msgid "Add Audio CD"
 msgstr "新增音樂 CD"
 
-#: ../translation/plugins.c:95
-#, fuzzy
-msgid "Use CDDB protocol"
-msgstr "優先使用 CDDB 協定而非 HTTP"
+#: ../translation/plugins.c:33
+msgid "Use CDDB/FreeDB"
+msgstr "使用 CDDB/FreeDB"
 
-#: ../translation/plugins.c:97
+#: ../translation/plugins.c:34
+msgid "Prefer CD-Text over CDDB"
+msgstr "優先使用 CD-Text 而非 CDDB"
+
+#: ../translation/plugins.c:35
+msgid "CDDB url (e.g. 'freedb.org')"
+msgstr "CDDB 網址 (例如 freedb.org)"
+
+#: ../translation/plugins.c:36
+msgid "CDDB port number (e.g. '888')"
+msgstr "CDDB 連接埠號碼 (例如 888)"
+
+#: ../translation/plugins.c:37
+msgid "Use CDDB protocol"
+msgstr ""
+
+#: ../translation/plugins.c:38
+msgid "Enable NRG image support"
+msgstr "啟用支援 NRG 影像"
+
+#: ../translation/plugins.c:39
 msgid "Drive speed for normal playback"
 msgstr ""
 
-#: ../translation/plugins.c:98
+#: ../translation/plugins.c:40
 msgid "1x"
 msgstr ""
 
-#: ../translation/plugins.c:99
+#: ../translation/plugins.c:41
 msgid "2x"
 msgstr ""
 
-#: ../translation/plugins.c:100
+#: ../translation/plugins.c:42
 msgid "4x"
 msgstr ""
 
-#: ../translation/plugins.c:101
+#: ../translation/plugins.c:43
 msgid "8x"
 msgstr ""
 
-#: ../translation/plugins.c:102
+#: ../translation/plugins.c:44
 msgid "16x"
 msgstr ""
 
-#: ../translation/plugins.c:103
+#: ../translation/plugins.c:45
 msgid "Max"
 msgstr ""
 
-#: ../translation/plugins.c:104
+#: ../translation/plugins.c:46
 msgid "Use cdparanoia error correction when ripping"
 msgstr ""
 
-#: ../translation/plugins.c:105
+#. plugins/converter/convgui.c
+#: ../translation/plugins.c:48
+msgid "Convert"
+msgstr "轉檔"
+
+#. plugins/dsp_libsrc/src.c
+#: ../translation/plugins.c:50
+msgid "Autodetect samplerate from output device"
+msgstr ""
+
+#: ../translation/plugins.c:51
+msgid "Set samplerate directly"
+msgstr ""
+
+#: ../translation/plugins.c:52
+msgid "Quality / Algorithm"
+msgstr "品質 / 演算法"
+
+#. plugins/dumb/cdumb.c
+#: ../translation/plugins.c:54
+msgid "Resampling quality (0..5, higher is better)"
+msgstr ""
+
+#: ../translation/plugins.c:55
+msgid "8-bit output (default is 16)"
+msgstr "8-bit 輸出 (預設值是 16)"
+
+#: ../translation/plugins.c:56
+msgid "Internal DUMB volume (0..128)"
+msgstr ""
+
+#: ../translation/plugins.c:57
 #, fuzzy
-msgid "Lookup On Last.fm"
-msgstr "在 Last.fm 查看"
+msgid "Volume ramping"
+msgstr "音量列"
 
-#: ../translation/plugins.c:112
-msgid "Send MusicBrainz ID"
+#: ../translation/plugins.c:59
+msgid "On/Off Only"
 msgstr ""
 
-#: ../translation/plugins.c:113
-msgid "Submit tracks shorter than 30 seconds (not recommended)"
+#: ../translation/plugins.c:60
+msgid "Full"
 msgstr ""
 
-#: ../translation/plugins.c:116
-#, fuzzy
-msgid "Bits per sample"
-msgstr "取樣位元 (8 或 16)"
-
-#: ../translation/plugins.c:117
-#, fuzzy
-msgid "Preamp"
-msgstr "前級放大器歸零"
-
-#: ../translation/plugins.c:118
-msgid "55 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:119
-msgid "77 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:120
-msgid "110 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:121
-msgid "156 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:122
-msgid "220 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:123
-msgid "311 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:124
-msgid "440 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:125
-msgid "622 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:126
-msgid "880 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:127
-msgid "1.2 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:128
-msgid "1.8 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:129
-msgid "2.5 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:130
-msgid "3.5 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:131
-msgid "5 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:132
-msgid "7 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:133
-msgid "10 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:134
-msgid "14 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:135
-msgid "20 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:136
-msgid "Force 16 bit output"
-msgstr ""
-
-#: ../translation/plugins.c:137
-msgid "Backend"
-msgstr ""
-
-#: ../translation/plugins.c:138
+#. plugins/ffmpeg/ffmpeg.c
+#: ../translation/plugins.c:62
 msgid "Use all extensions supported by ffmpeg"
 msgstr ""
 
-#: ../translation/plugins.c:140
-#, fuzzy
+#: ../translation/plugins.c:63
+msgid "File Extensions (separate with ';')"
+msgstr "檔案副檔名 (以 ; 分隔)"
+
+#. plugins/gme/cgme.c
+#: ../translation/plugins.c:65
+msgid "Max song length (in minutes)"
+msgstr "歌曲最大長度 (分鐘)"
+
+#: ../translation/plugins.c:66
+msgid "Fadeout length (seconds)"
+msgstr "淡出長度 (單位:秒)"
+
+#: ../translation/plugins.c:67
+msgid "Play loops nr. of times (if available)"
+msgstr "循環播放次數 (若支援)"
+
+#: ../translation/plugins.c:68
+msgid "ColecoVision BIOS (for SGC file format)"
+msgstr ""
+
+#. plugins/gtkui/gtkui.c
+#: ../translation/plugins.c:70
+msgid "ReplayGain"
+msgstr ""
+
+#: ../translation/plugins.c:71
+msgid "Remove ReplayGain Information"
+msgstr ""
+
+#: ../translation/plugins.c:72
+msgid "Scan Selection As Albums (By Tags)"
+msgstr ""
+
+#: ../translation/plugins.c:73
+msgid "Scan Selection As Single Album"
+msgstr ""
+
+#: ../translation/plugins.c:74
+msgid "Scan Per-file Track Gain"
+msgstr ""
+
+#: ../translation/plugins.c:76
+msgid "Deselect All"
+msgstr ""
+
+#: ../translation/plugins.c:77
+msgid "Select All"
+msgstr ""
+
+#: ../translation/plugins.c:80
+msgid "Add Location"
+msgstr ""
+
+#: ../translation/plugins.c:81
+msgid "Add Folder(s)"
+msgstr ""
+
+#: ../translation/plugins.c:82
+msgid "Add File(s)"
+msgstr ""
+
+#: ../translation/plugins.c:83
+msgid "Open File(s)"
+msgstr ""
+
+#: ../translation/plugins.c:86
+msgid "Show Help Page"
+msgstr ""
+
+#: ../translation/plugins.c:88
+msgid "Cycle Playback Looping Mode"
+msgstr ""
+
+#: ../translation/plugins.c:89
+msgid "Playback Looping - Don't loop"
+msgstr ""
+
+#: ../translation/plugins.c:90
+msgid "Playback Looping - Single track"
+msgstr ""
+
+#: ../translation/plugins.c:91
+msgid "Playback Looping - All"
+msgstr ""
+
+#: ../translation/plugins.c:92
+msgid "Cycle Playback Order"
+msgstr ""
+
+#: ../translation/plugins.c:93
+msgid "Playback Order - Random"
+msgstr ""
+
+#: ../translation/plugins.c:94
+msgid "Playback Order - Shuffle albums"
+msgstr ""
+
+#: ../translation/plugins.c:95
+msgid "Playback Order - Shuffle tracks"
+msgstr ""
+
+#: ../translation/plugins.c:96
+msgid "Playback Order - Linear"
+msgstr ""
+
+#: ../translation/plugins.c:97
+msgid "Toggle Cursor Follows Playback"
+msgstr ""
+
+#: ../translation/plugins.c:98
+msgid "Toggle Scroll Follows Playback"
+msgstr ""
+
+#: ../translation/plugins.c:99
+msgid "View"
+msgstr ""
+
+#: ../translation/plugins.c:100
+msgid "Show\\/Hide menu"
+msgstr ""
+
+#: ../translation/plugins.c:101
+msgid "Show\\/Hide statusbar"
+msgstr ""
+
+#: ../translation/plugins.c:102
+msgid "Toggle Design Mode"
+msgstr ""
+
+#: ../translation/plugins.c:104
+msgid "Sort Custom"
+msgstr ""
+
+#: ../translation/plugins.c:105
+msgid "Crop Selected"
+msgstr ""
+
+#: ../translation/plugins.c:106
+msgid "Remove Track(s) From Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:107
+msgid "Save Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:108 ../plugins/gtkui/actionhandlers.c:740
+msgid "Load Playlist"
+msgstr "載入播放清單"
+
+#: ../translation/plugins.c:109
+msgid "Remove Current Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:111
+msgid "Show\\/Hide Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:112
+msgid "Hide Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:113
+msgid "Show Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:114
+msgid "Show\\/Hide Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:115
+msgid "Hide Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:116
+msgid "Show Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:117
+msgid "Find"
+msgstr ""
+
+#: ../translation/plugins.c:118
+msgid "Show\\/Hide Log window"
+msgstr ""
+
+#: ../translation/plugins.c:119
+msgid "Ask confirmation to delete files from disk"
+msgstr "自磁碟刪除檔案要先確認"
+
+#: ../translation/plugins.c:120
+msgid "Status icon volume control sensitivity"
+msgstr "狀態圖示音量控制敏感度"
+
+#: ../translation/plugins.c:121
+msgid "Custom status icon"
+msgstr "自訂狀態圖示"
+
+#: ../translation/plugins.c:122
+msgid "Run gtk_init with --sync (debug mode)"
+msgstr "以 --sync (除錯模式) 執行 gtk_init"
+
+#: ../translation/plugins.c:123
+msgid "Add separators between plugin context menu items"
+msgstr "在外掛選單項目之間加入分隔符號"
+
+#: ../translation/plugins.c:124
+msgid "Use unicode chars instead of images for track state"
+msgstr ""
+
+#: ../translation/plugins.c:125
+msgid "Disable seekbar overlay text"
+msgstr ""
+
+#: ../translation/plugins.c:128
 msgid "Jump To Currently Playing Track"
-msgstr "跳至當前歌曲"
+msgstr ""
+
+#: ../translation/plugins.c:129
+msgid "Skip to"
+msgstr ""
+
+#: ../translation/plugins.c:130
+msgid "Previous genre"
+msgstr ""
+
+#: ../translation/plugins.c:131
+msgid "Previous composer"
+msgstr ""
+
+#: ../translation/plugins.c:132
+msgid "Previous artist"
+msgstr ""
+
+#: ../translation/plugins.c:133
+msgid "Previous album"
+msgstr ""
+
+#: ../translation/plugins.c:134
+msgid "Next genre"
+msgstr ""
+
+#: ../translation/plugins.c:135
+msgid "Next composer"
+msgstr ""
+
+#: ../translation/plugins.c:136
+msgid "Next artist"
+msgstr ""
+
+#: ../translation/plugins.c:137
+msgid "Next album"
+msgstr ""
+
+#: ../translation/plugins.c:138
+msgid "Next Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:139
+msgid "Prev Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:140
+msgid "Switch To Playlist 10"
+msgstr ""
+
+#: ../translation/plugins.c:141
+msgid "Switch To Playlist 9"
+msgstr ""
+
+#: ../translation/plugins.c:142
+msgid "Switch To Playlist 8"
+msgstr ""
+
+#: ../translation/plugins.c:143
+msgid "Switch To Playlist 7"
+msgstr ""
+
+#: ../translation/plugins.c:144
+msgid "Switch To Playlist 6"
+msgstr ""
+
+#: ../translation/plugins.c:145
+msgid "Switch To Playlist 5"
+msgstr ""
+
+#: ../translation/plugins.c:146
+msgid "Switch To Playlist 4"
+msgstr ""
+
+#: ../translation/plugins.c:147
+msgid "Switch To Playlist 3"
+msgstr ""
+
+#: ../translation/plugins.c:148
+msgid "Switch To Playlist 2"
+msgstr ""
+
+#: ../translation/plugins.c:149
+msgid "Switch To Playlist 1"
+msgstr ""
 
 #: ../translation/plugins.c:150
-#, fuzzy
-msgid "Next Playlist"
-msgstr "新播放清單"
+msgid "Sort Randomize"
+msgstr ""
 
 #: ../translation/plugins.c:151
-#, fuzzy
-msgid "Prev Playlist"
-msgstr "新播放清單"
+msgid "Sort By Date"
+msgstr ""
 
 #: ../translation/plugins.c:152
-#, fuzzy
-msgid "Switch To Playlist 10"
-msgstr "新播放清單"
+msgid "Sort By Artist"
+msgstr ""
 
 #: ../translation/plugins.c:153
-#, fuzzy
-msgid "Switch To Playlist 9"
-msgstr "新播放清單"
+msgid "Sort By Album"
+msgstr ""
 
 #: ../translation/plugins.c:154
-#, fuzzy
-msgid "Switch To Playlist 8"
-msgstr "新播放清單"
+msgid "Sort By Track Number"
+msgstr ""
 
 #: ../translation/plugins.c:155
-#, fuzzy
-msgid "Switch To Playlist 7"
-msgstr "新播放清單"
+msgid "Sort By Title"
+msgstr ""
 
 #: ../translation/plugins.c:156
-#, fuzzy
-msgid "Switch To Playlist 6"
-msgstr "新播放清單"
+msgid "Invert Selection"
+msgstr ""
 
 #: ../translation/plugins.c:157
-#, fuzzy
-msgid "Switch To Playlist 5"
-msgstr "新播放清單"
-
-#: ../translation/plugins.c:158
-#, fuzzy
-msgid "Switch To Playlist 4"
-msgstr "新播放清單"
-
-#: ../translation/plugins.c:159
-#, fuzzy
-msgid "Switch To Playlist 3"
-msgstr "新播放清單"
+msgid "Clear Playlist"
+msgstr ""
 
 #: ../translation/plugins.c:160
-#, fuzzy
-msgid "Switch To Playlist 2"
-msgstr "新播放清單"
+msgid "Toggle In Playback Queue"
+msgstr ""
 
 #: ../translation/plugins.c:161
-#, fuzzy
-msgid "Switch To Playlist 1"
-msgstr "新播放清單"
-
-#: ../translation/plugins.c:162
-#, fuzzy
-msgid "Sort Randomize"
-msgstr "隨機"
-
-#: ../translation/plugins.c:163
-#, fuzzy
-msgid "Sort By Date"
-msgstr "排序依據"
-
-#: ../translation/plugins.c:164
-#, fuzzy
-msgid "Sort By Artist"
-msgstr "藝人"
-
-#: ../translation/plugins.c:165
-#, fuzzy
-msgid "Sort By Album"
-msgstr "藝人 / 專輯"
-
-#: ../translation/plugins.c:166
-#, fuzzy
-msgid "Sort By Track Number"
-msgstr "曲目"
-
-#: ../translation/plugins.c:167
-#, fuzzy
-msgid "Sort By Title"
-msgstr "自訂標題"
-
-#: ../translation/plugins.c:168
-#, fuzzy
-msgid "Invert Selection"
-msgstr "反向選取"
-
-#: ../translation/plugins.c:169
-#, fuzzy
-msgid "Clear Playlist"
-msgstr "重新命名播放清單"
-
-#: ../translation/plugins.c:172
-#, fuzzy
-msgid "Toggle In Playback Queue"
-msgstr "加入至播放佇列"
-
-#: ../translation/plugins.c:173
 msgid "Move"
 msgstr ""
 
-#: ../translation/plugins.c:174
+#: ../translation/plugins.c:162
 msgid "Move Tracks Down"
 msgstr ""
 
-#: ../translation/plugins.c:175
-#, fuzzy
+#: ../translation/plugins.c:163
 msgid "Move Tracks Up"
-msgstr "多曲目"
+msgstr ""
 
-#: ../translation/plugins.c:176
+#: ../translation/plugins.c:164
 msgid "Toggle Mute"
 msgstr ""
 
-#: ../translation/plugins.c:181
+#: ../translation/plugins.c:169
 msgid "Toggle Pause"
 msgstr ""
 
-#: ../translation/plugins.c:182
-#, fuzzy
+#: ../translation/plugins.c:170
 msgid "Play\\/Pause"
-msgstr "暫停"
+msgstr ""
 
-#: ../translation/plugins.c:184
+#: ../translation/plugins.c:172
 msgid "Seek 1s Forward"
 msgstr ""
 
-#: ../translation/plugins.c:185
+#: ../translation/plugins.c:173
 msgid "Seek 1s Backward"
 msgstr ""
 
-#: ../translation/plugins.c:186
+#: ../translation/plugins.c:174
 msgid "Seek 5s Forward"
 msgstr ""
 
-#: ../translation/plugins.c:187
+#: ../translation/plugins.c:175
 msgid "Seek 5s Backward"
 msgstr ""
 
-#: ../translation/plugins.c:188
+#: ../translation/plugins.c:176
 #, c-format
 msgid "Seek 1% Forward"
 msgstr ""
 
-#: ../translation/plugins.c:189
+#: ../translation/plugins.c:177
 msgid "Seek 1% Backward"
 msgstr ""
 
-#: ../translation/plugins.c:190
+#: ../translation/plugins.c:178
 #, c-format
 msgid "Seek 5% Forward"
 msgstr ""
 
-#: ../translation/plugins.c:191
+#: ../translation/plugins.c:179
 msgid "Seek 5% Backward"
 msgstr ""
 
-#: ../translation/plugins.c:192
-#, fuzzy
+#: ../translation/plugins.c:180
 msgid "Volume Up"
-msgstr "音量列"
+msgstr ""
+
+#: ../translation/plugins.c:181
+msgid "Volume Down"
+msgstr ""
+
+#: ../translation/plugins.c:182
+msgid "Toggle Stop After Current Track"
+msgstr ""
+
+#: ../translation/plugins.c:183
+msgid "Toggle Stop After Current Album"
+msgstr ""
+
+#. plugins/lastfm/lastfm.c
+#: ../translation/plugins.c:185
+msgid "Lookup On Last.fm"
+msgstr ""
+
+#: ../translation/plugins.c:186
+msgid "Enable scrobbler"
+msgstr "偏用歌曲記錄"
+
+#: ../translation/plugins.c:187
+msgid "Disable nowplaying"
+msgstr "停用 nowplaying"
+
+#: ../translation/plugins.c:188
+msgid "Username"
+msgstr "使用者名稱"
+
+#: ../translation/plugins.c:189
+msgid "Password"
+msgstr "密碼"
+
+#: ../translation/plugins.c:190
+msgid "Scrobble URL"
+msgstr "Scrobble 網址"
+
+#: ../translation/plugins.c:191
+msgid "Prefer Album Artist over Artist field"
+msgstr "以專輯作者取代作者欄"
+
+#: ../translation/plugins.c:192
+msgid "Send MusicBrainz ID"
+msgstr ""
 
 #: ../translation/plugins.c:193
-#, fuzzy
-msgid "Volume Down"
-msgstr "音量列"
+msgid "Submit tracks shorter than 30 seconds (not recommended)"
+msgstr ""
 
-#: ../translation/plugins.c:194
-#, fuzzy
-msgid "Toggle Stop After Current Track"
-msgstr "播放當前歌曲後停止"
-
+#. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:195
-#, fuzzy
-msgid "Toggle Stop After Current Album"
-msgstr "播放完此專輯後停止"
+msgid "Left mix:"
+msgstr ""
 
 #: ../translation/plugins.c:196
-msgid "Tempo Change (%)"
+msgid "Right mix:"
 msgstr ""
 
-#: ../translation/plugins.c:197
-msgid "Pitch Change (semi-tones)"
-msgstr ""
-
+#. plugins/mp3/mp3.c
 #: ../translation/plugins.c:198
-msgid "Playback Rate Change (%)"
+msgid "Force 16 bit output"
 msgstr ""
 
 #: ../translation/plugins.c:199
-#, fuzzy
-msgid "Absolute Samplerate (overrides Rate Change if nonzero)"
-msgstr "自動取樣率（優先於「目標取樣率」）"
-
-#: ../translation/plugins.c:200
-msgid "Use AA Filter"
-msgstr ""
-
-#: ../translation/plugins.c:201
-msgid "AA Filter Length"
+msgid "Backend"
 msgstr ""
 
 #: ../translation/plugins.c:202
-msgid "Use Quickseek"
-msgstr ""
+msgid "Notification title format"
+msgstr "通告標題格式"
 
 #: ../translation/plugins.c:203
-msgid "Time Stretch Sequence Length (ms)"
-msgstr ""
+msgid "Notification content format"
+msgstr "通告內容格式"
 
 #: ../translation/plugins.c:204
-msgid "Time Stretch Seek Window Length (ms)"
-msgstr ""
+msgid "Show album art"
+msgstr "顯示專輯封面"
 
 #: ../translation/plugins.c:205
-msgid "Disable disk cache"
-msgstr ""
+msgid "Album art size (px)"
+msgstr "專輯封面尺寸 (像素)"
 
-#: ../translation/plugins.c:206
-msgid "Save extracted covers to music folders"
-msgstr ""
-
+#. plugins/oss/oss.c
 #: ../translation/plugins.c:207
-#, fuzzy
-msgid "Local file mask"
-msgstr "本機封面檔案遮罩"
-
-#: ../translation/plugins.c:208
-#, fuzzy
-msgid "Artwork folders"
-msgstr "加入資料夾"
-
-#: ../translation/plugins.c:212
-msgid "Mono synth"
-msgstr ""
-
-#: ../translation/plugins.c:215
-#, fuzzy
-msgid "Device"
+msgid "Device file"
 msgstr "裝置檔案"
 
-#: ../translation/plugins.c:216
-msgid "Buffer size (ms)"
+#: ../translation/plugins.c:210
+msgid "Highlight current playlist"
 msgstr ""
 
-#: ../translation/plugins.c:219
-msgid "Autodetect samplerate from output device"
+#: ../translation/plugins.c:211
+msgid "Play on double-click"
 msgstr ""
 
-#: ../translation/plugins.c:220
-#, fuzzy
-msgid "Set samplerate directly"
-msgstr "目標取樣率"
+#. plugins/pulse/pulse.c
+#: ../translation/plugins.c:213
+msgid "PulseAudio server"
+msgstr "PulseAudio 伺服器"
 
-#: ../translation/plugins.c:222
-msgid "Emulate track change events (for scrobbling)"
-msgstr ""
-
-#: ../translation/plugins.c:223
-#, fuzzy
+#. plugins/sc68/in_sc68.c
+#: ../translation/plugins.c:215
 msgid "Default song length (in minutes)"
-msgstr "歌曲最大長度 (分鐘)"
+msgstr ""
 
-#: ../translation/plugins.c:224
+#: ../translation/plugins.c:216
+msgid "Samplerate"
+msgstr "取樣率"
+
+#: ../translation/plugins.c:217
 msgid "Skip when shorter than (sec)"
 msgstr ""
 
+#. plugins/shellexecui/shellexecui.c
+#: ../translation/plugins.c:219
+msgid "Configure Custom Shell Commands"
+msgstr "設定自訂 shell 指令"
+
+#. plugins/shn/shn.c
+#: ../translation/plugins.c:221
+msgid "Relative seek table path"
+msgstr "相對搜索表格路徑"
+
+#: ../translation/plugins.c:222
+msgid "Absolute seek table path"
+msgstr "絕對搜索表格路徑"
+
+#: ../translation/plugins.c:223
+msgid "Swap audio bytes (toggle if all you hear is static)"
+msgstr "置換音訊位元組 (如聽到的只是雜訊則切換)"
+
+#. plugins/sid/plugin.c
+#: ../translation/plugins.c:225
+msgid "Enable HVSC Songlength DB"
+msgstr "啟用 HVSC 歌曲長度資料庫"
+
+#: ../translation/plugins.c:226
+msgid "Songlengths.txt (from HVSC)"
+msgstr "Songlengths.txt (來自 HVSC)"
+
+#: ../translation/plugins.c:227
+msgid "Bits per sample"
+msgstr ""
+
 #: ../translation/plugins.c:228
-#, fuzzy
-msgid "Resampling quality (0..5, higher is better)"
-msgstr "重取樣品質 (0..2，越高越好)"
-
-#: ../translation/plugins.c:230
-msgid "Internal DUMB volume (0..128)"
+msgid "Mono synth"
 msgstr ""
 
+#: ../translation/plugins.c:229
+msgid "Default song length (sec)"
+msgstr "預設歌曲長度 (秒)"
+
+#. plugins/sndio/sndio.c
 #: ../translation/plugins.c:231
-msgid "Volume ramping (0 is none, 1 is note on/off, 2 is always)"
+msgid "Device"
 msgstr ""
 
+#: ../translation/plugins.c:232
+msgid "Buffer size (ms)"
+msgstr ""
+
+#. plugins/supereq/supereq.c
 #: ../translation/plugins.c:234
-#, fuzzy
-msgid "Left mix:"
-msgstr "左"
+msgid "Preamp"
+msgstr ""
 
 #: ../translation/plugins.c:235
-#, fuzzy
-msgid "Right mix:"
-msgstr "右"
+msgid "55 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:236
+msgid "77 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:237
+msgid "110 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:238
+msgid "156 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:239
+msgid "220 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:240
+msgid "311 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:241
+msgid "440 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:242
+msgid "622 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:243
+msgid "880 Hz"
+msgstr ""
+
+#: ../translation/plugins.c:244
+msgid "1.2 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:245
+msgid "1.8 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:246
+msgid "2.5 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:247
+msgid "3.5 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:248
+msgid "5 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:249
+msgid "7 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:250
+msgid "10 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:251
+msgid "14 kHz"
+msgstr ""
+
+#: ../translation/plugins.c:252
+msgid "20 kHz"
+msgstr ""
+
+#. plugins/vfs_curl/vfs_curl.c
+#: ../translation/plugins.c:254
+msgid "Emulate track change events (for scrobbling)"
+msgstr ""
+
+#. plugins/wildmidi/wildmidiplug.c
+#: ../translation/plugins.c:256
+msgid "Timidity++ bank configuration file"
+msgstr "Timidity++ 樂器庫設定檔案"
 
 #: ../plugins/converter/convgui.c:91
 #, c-format
@@ -2837,13 +2681,11 @@ msgstr "輸出檔案名稱："
 
 #: ../plugins/converter/interface.c:151
 #: ../plugins/converter/converter.glade.h:8
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default ([%tracknumber%. ][%artist% - ]%title%)."
 msgstr ""
-"副檔名 (例如 .mp3) 會自動補上。\n"
-"留白代表使用預設值 (%artist% - %title%)"
 
 #: ../plugins/converter/interface.c:164
 #: ../plugins/converter/converter.glade.h:10
@@ -3459,85 +3301,41 @@ msgstr ""
 msgid "Invalid file"
 msgstr ""
 
-#, fuzzy
-#~ msgid "Edit/Deselect All"
-#~ msgstr "取消全選"
+#~ msgid "Lookup on Last.fm"
+#~ msgstr "在 Last.fm 查看"
 
-#, fuzzy
-#~ msgid "Edit/Select All"
-#~ msgstr "全選"
+#~ msgid "Release device while stopped"
+#~ msgstr "停止時釋出裝置"
 
-#, fuzzy
-#~ msgid "File/Add Location"
-#~ msgstr "加入位址"
+#~ msgid "OSS4 samplerate bug workaround"
+#~ msgstr "OSS4 取樣率問題臨時解決辦法"
 
-#, fuzzy
-#~ msgid "File/Add Folder(s)"
-#~ msgstr "加入資料夾"
+#~ msgid "Cache update period (hr)"
+#~ msgstr "快取更新間隔 (小時)"
 
-#, fuzzy
-#~ msgid "File/Add File(s)"
-#~ msgstr "加入檔案"
+#~ msgid "Local cover file mask"
+#~ msgstr "本機封面檔案遮罩"
 
-#, fuzzy
-#~ msgid "File/Open File(s)"
-#~ msgstr "開啟檔案(_O)"
+#~ msgid "Fetch from last.fm"
+#~ msgstr "由 last.fm 取得"
 
-#, fuzzy
-#~ msgid "Edit/Preferences"
-#~ msgstr "偏好設定"
+#~ msgid "Fetch from albumart.org"
+#~ msgstr "由 albumart.org 取得"
 
-#, fuzzy
-#~ msgid "File/Save Playlist"
-#~ msgstr "儲存播放清單"
+#~ msgid "Prefer CDDB protocol over HTTP"
+#~ msgstr "優先使用 CDDB 協定而非 HTTP"
 
-#, fuzzy
-#~ msgid "File/Load Playlist"
-#~ msgstr "載入播放清單"
+#~ msgid "Resampling quality (0..2, higher is better)"
+#~ msgstr "重取樣品質 (0..2，越高越好)"
 
-#, fuzzy
-#~ msgid "File/New Playlist"
-#~ msgstr "新播放清單"
+#~ msgid "Bits per sample (8 or 16)"
+#~ msgstr "取樣位元 (8 或 16)"
 
-#, fuzzy
-#~ msgid "Edit/Find"
-#~ msgstr "編輯(_E)"
+#~ msgid "Target Samplerate"
+#~ msgstr "目標取樣率"
 
-#, fuzzy
-#~ msgid "Edit/Invert Selection"
-#~ msgstr "反向選取"
+#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
+#~ msgstr "自動取樣率（優先於「目標取樣率」）"
 
-#, fuzzy
-#~ msgid "Playback/Remove From Playback Queue"
-#~ msgstr "自播放佇列移除"
-
-#, fuzzy
-#~ msgid "Playback/Add To Playback Queue"
-#~ msgstr "加入至播放佇列"
-
-#, fuzzy
-#~ msgid "Playback/Play"
-#~ msgstr "播放"
-
-#, fuzzy
-#~ msgid "Playback/Stop"
-#~ msgstr "播放"
-
-#, fuzzy
-#~ msgid "Playback/Previous"
-#~ msgstr "播放控制按鈕"
-
-#, fuzzy
-#~ msgid "Playback/Next"
-#~ msgstr "播放"
-
-#, fuzzy
-#~ msgid "Playback/Volume Up"
-#~ msgstr "播放"
-
-#, fuzzy
-#~ msgid "Edit/Configure Custom Shell Commands"
-#~ msgstr "設定自訂 shell 指令"
-
-#~ msgid "Automatically fill values..."
-#~ msgstr "自動填入參數..."
+#~ msgid "Disable gapless playback (faster scanning)"
+#~ msgstr "取消無間斷播放（掃瞄更快速）"

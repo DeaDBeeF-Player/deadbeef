@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-07 22:42+0100\n"
-"PO-Revision-Date: 2018-01-01 21:37+0000\n"
+"POT-Creation-Date: 2018-02-08 19:06+0100\n"
+"PO-Revision-Date: 2018-02-08 00:38+0000\n"
 "Last-Translator: Moo\n"
 "Language-Team: Lithuanian (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/lt/)\n"
@@ -39,7 +39,7 @@ msgid "DeaDBeeF Translators"
 msgstr "DeaDBeeF vertėjai"
 
 #: ../plugins/gtkui/callbacks.c:638 ../plugins/gtkui/interface.c:976
-#: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:31
+#: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:85
 #: ../plugins/converter/convgui.c:1759 ../plugins/converter/convgui.c:1767
 #: ../plugins/gtkui/actionhandlers.c:473
 msgid "Help"
@@ -81,7 +81,8 @@ msgstr "Įkelti išankstinę parinktį"
 msgid "Import Foobar2000 Preset"
 msgstr "Importuoti Foobar2000 išankstinę parinktį"
 
-#: ../plugins/gtkui/eq.c:367 ../translation/plugins.c:5
+#. plugins/notify/notify.c
+#: ../plugins/gtkui/eq.c:367 ../translation/plugins.c:201
 msgid "Enable"
 msgstr "Įjungti"
 
@@ -112,7 +113,7 @@ msgstr "1 diena %d:%02d:%02d"
 msgid "%d days %d:%02d:%02d"
 msgstr "%d dienos %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:672 ../translation/plugins.c:56
+#: ../plugins/gtkui/gtkui.c:672 ../translation/plugins.c:110
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 msgid "New Playlist"
 msgstr "Naujas grojaraštis"
@@ -332,19 +333,19 @@ msgstr "Takelio numeris"
 
 #: ../plugins/gtkui/interface.c:267 ../plugins/gtkui/interface.c:1972
 #: ../plugins/gtkui/plcommon.c:92 ../plugins/gtkui/deadbeef.glade.h:22
-#: ../translation/extra.c:73
+#: ../translation/extra.c:6
 msgid "Album"
 msgstr "Albumas"
 
 #. Track properties dialog
 #: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/plcommon.c:91
 #: ../plugins/gtkui/plcommon.c:1848 ../plugins/gtkui/deadbeef.glade.h:23
-#: ../translation/extra.c:69
+#: ../translation/extra.c:2
 msgid "Artist"
 msgstr "Atlikėjas"
 
 #: ../plugins/gtkui/interface.c:275 ../plugins/gtkui/deadbeef.glade.h:24
-#: ../translation/extra.c:74
+#: ../translation/extra.c:7
 msgid "Date"
 msgstr "Data"
 
@@ -359,7 +360,7 @@ msgid "Custom"
 msgstr "Tinkinta"
 
 #: ../plugins/gtkui/interface.c:292 ../plugins/gtkui/interface.c:1791
-#: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:49
+#: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:103
 msgid "Preferences"
 msgstr "Nuostatos"
 
@@ -470,12 +471,12 @@ msgid "Search"
 msgstr "Ieškoti"
 
 #: ../plugins/gtkui/interface.c:794 ../plugins/gtkui/deadbeef.glade.h:54
-#: ../translation/plugins.c:178
+#: ../translation/plugins.c:166
 msgid "Stop"
 msgstr "Stabdyti"
 
 #: ../plugins/gtkui/interface.c:802 ../plugins/gtkui/deadbeef.glade.h:55
-#: ../translation/plugins.c:177
+#: ../translation/plugins.c:165
 msgid "Play"
 msgstr "Groti"
 
@@ -484,17 +485,17 @@ msgid "Pause"
 msgstr "Pristabdyti"
 
 #: ../plugins/gtkui/interface.c:818 ../plugins/gtkui/deadbeef.glade.h:57
-#: ../translation/plugins.c:179
+#: ../translation/plugins.c:167
 msgid "Previous"
 msgstr "Ankstesnis"
 
 #: ../plugins/gtkui/interface.c:826 ../plugins/gtkui/deadbeef.glade.h:58
-#: ../translation/plugins.c:180
+#: ../translation/plugins.c:168
 msgid "Next"
 msgstr "Kitas"
 
 #: ../plugins/gtkui/interface.c:834 ../plugins/gtkui/deadbeef.glade.h:59
-#: ../translation/plugins.c:183
+#: ../translation/plugins.c:171
 msgid "Play Random"
 msgstr "Atsitiktinis grojimas"
 
@@ -503,12 +504,12 @@ msgid "About"
 msgstr "Apie"
 
 #: ../plugins/gtkui/interface.c:856 ../plugins/gtkui/deadbeef.glade.h:61
-#: ../translation/plugins.c:23
+#: ../translation/plugins.c:78
 msgid "Quit"
 msgstr "Išeiti"
 
 #: ../plugins/gtkui/interface.c:1049 ../plugins/gtkui/plcommon.c:1228
-#: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:30
+#: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:84
 msgid "Track Properties"
 msgstr "Takelio savybės"
 
@@ -617,27 +618,24 @@ msgid "Always convert 16 bit audio to 24 bit"
 msgstr "16 bitų garsą visada konvertuoti į 24 bitų"
 
 #: ../plugins/gtkui/interface.c:1859 ../plugins/gtkui/deadbeef.glade.h:87
-#, fuzzy
 msgid "Target samplerate:"
-msgstr "Paskirties diskretizacijos dažnis"
+msgstr "Paskirties skaitmeninimo dažnis:"
 
 #: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "For multiples of 48KHz (96K, 192K, ...):"
-msgstr ""
+msgstr "Keletui 48KHz (96K, 192K, ...):"
 
 #: ../plugins/gtkui/interface.c:1911 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "For multiples of 44.1KHz (88.2K, 176.4K, ...):"
-msgstr ""
+msgstr "Keletui 44.1KHz (88.2K, 176.4K, ...):"
 
 #: ../plugins/gtkui/interface.c:1926 ../plugins/gtkui/deadbeef.glade.h:90
-#, fuzzy
 msgid "Based on input samplerate"
-msgstr "Paskirties diskretizacijos dažnis"
+msgstr "Pagrįsta įvesties skaitmeninimo dažniu"
 
 #: ../plugins/gtkui/interface.c:1930 ../plugins/gtkui/deadbeef.glade.h:91
-#, fuzzy
 msgid "Override samplerate"
-msgstr "Paskirties diskretizacijos dažnis"
+msgstr "Nustelbti skaitmeninimo dažnį"
 
 #: ../plugins/gtkui/interface.c:1934 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Sound"
@@ -660,7 +658,7 @@ msgid "Processing:"
 msgstr "Apdorojimas:"
 
 #: ../plugins/gtkui/interface.c:1987 ../plugins/gtkui/plcommon.c:1840
-#: ../plugins/gtkui/widgets.c:3942
+#: ../translation/plugins.c:58 ../plugins/gtkui/widgets.c:3942
 msgid "None"
 msgstr "Nieką"
 
@@ -721,7 +719,7 @@ msgstr ""
 "Parametras \"Stabdyti po dabartinio albumo\" jam suveikus, bus išjungiamas"
 
 #: ../plugins/gtkui/interface.c:2085 ../plugins/gtkui/deadbeef.glade.h:112
-#: ../translation/plugins.c:33
+#: ../translation/plugins.c:87
 msgid "Playback"
 msgstr "Atkūrimas"
 
@@ -788,8 +786,9 @@ msgstr "Rodyti žymėjimo atkūrimo laiką būsenos juostoje"
 msgid "Player"
 msgstr "Grotuvas"
 
+#. plugins/pltbrowser/pltbrowser.c
 #: ../plugins/gtkui/interface.c:2258 ../plugins/gtkui/deadbeef.glade.h:128
-#: ../translation/plugins.c:2
+#: ../translation/plugins.c:209
 msgid "Close playlists with middle mouse button"
 msgstr "Užverti grojaraščius vidurinio pelės mygtuko spustelėjimu"
 
@@ -1019,7 +1018,7 @@ msgid "Version: "
 msgstr "Versija: "
 
 #: ../plugins/gtkui/interface.c:3071 ../plugins/gtkui/deadbeef.glade.h:184
-#: ../translation/extra.c:83
+#: ../translation/extra.c:16
 msgid "Copyright"
 msgstr "Autorių teisės"
 
@@ -1187,7 +1186,7 @@ msgstr ""
 "priešingu atveju, tiesiog, \"tinkinta\"."
 
 #: ../plugins/gtkui/interface.c:5093 ../plugins/gtkui/deadbeef.glade.h:218
-#: ../translation/plugins.c:20 ../plugins/shellexecui/interface.c:70
+#: ../translation/plugins.c:75 ../plugins/shellexecui/interface.c:70
 #: ../plugins/shellexecui/shellexec.glade.h:5
 msgid "Edit"
 msgstr "Taisyti"
@@ -1280,15 +1279,15 @@ msgstr "Atlikėjas - Albumas"
 msgid "Year"
 msgstr "Metai"
 
-#: ../plugins/gtkui/plcommon.c:96 ../translation/extra.c:75
+#: ../plugins/gtkui/plcommon.c:96 ../translation/extra.c:8
 msgid "Track Number"
 msgstr "Takelio numeris"
 
-#: ../plugins/gtkui/plcommon.c:97 ../translation/extra.c:72
+#: ../plugins/gtkui/plcommon.c:97 ../translation/extra.c:5
 msgid "Band / Album Artist"
 msgstr "Grupė / Albumo atlikėjas"
 
-#: ../plugins/gtkui/plcommon.c:98 ../translation/extra.c:88
+#: ../plugins/gtkui/plcommon.c:98 ../translation/extra.c:21
 msgid "Codec"
 msgstr "Kodekas"
 
@@ -1301,15 +1300,16 @@ msgstr "Pralaidumas"
 msgid "_Paste"
 msgstr "Į_dėti"
 
-#: ../plugins/gtkui/plcommon.c:990 ../translation/plugins.c:171
+#: ../plugins/gtkui/plcommon.c:990 ../translation/plugins.c:159
 msgid "Add To Playback Queue"
 msgstr "Pridėti į atkūrimo eilę"
 
-#: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:170
+#: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:158
 msgid "Remove From Playback Queue"
 msgstr "Šalinti iš atkūrimo eilės"
 
-#: ../plugins/gtkui/plcommon.c:1016 ../translation/plugins.c:139
+#. plugins/hotkeys/hotkeys.c
+#: ../plugins/gtkui/plcommon.c:1016 ../translation/plugins.c:127
 msgid "Reload Metadata"
 msgstr "Iš naujo įkelti metaduomenis"
 
@@ -1321,7 +1321,7 @@ msgstr "_Iškirpti"
 msgid "_Copy"
 msgstr "_Kopijuoti"
 
-#: ../plugins/gtkui/plcommon.c:1079 ../translation/plugins.c:24
+#: ../plugins/gtkui/plcommon.c:1079 ../translation/plugins.c:79
 msgid "Remove From Disk"
 msgstr "Šalinti iš disko"
 
@@ -1673,1084 +1673,924 @@ msgstr ""
 "freepats paketą, arba įskiepio nustatymuose nurodykite kelią iki freepats."
 "cfg."
 
-#. this file should list extra translatable strings that are not referenced
-#. directly in source code, e.g. scripted plugin configuration strings
-#: ../translation/extra.c:3 ../translation/plugins.c:90
-msgid "Add Audio CD"
-msgstr "Pridėti garso CD"
-
-#: ../translation/extra.c:4
-msgid "Lookup on Last.fm"
-msgstr "Ieškoti Last.fm"
-
-#. ALSA output plugin
-#: ../translation/extra.c:6 ../translation/plugins.c:232
-msgid "Use ALSA resampling"
-msgstr "Naudoti ALSA diskretizaciją"
-
-#: ../translation/extra.c:7
-msgid "Release device while stopped"
-msgstr "Sustabdžius, atlaisvinti įrenginį"
-
-#: ../translation/extra.c:8 ../translation/extra.c:55
-#: ../translation/plugins.c:73
-msgid "Preferred buffer size"
-msgstr "Pageidaujamas buferio dydis"
-
-#: ../translation/extra.c:9 ../translation/plugins.c:233
-msgid "Preferred period size"
-msgstr "Pageidaujamas periodo dydis"
-
-#. Last.fm plugin
-#: ../translation/extra.c:11 ../translation/plugins.c:106
-msgid "Enable scrobbler"
-msgstr "Įjungti „scrobbler“"
-
-#: ../translation/extra.c:12 ../translation/plugins.c:107
-msgid "Disable nowplaying"
-msgstr "Išjungti „dabar grojama“"
-
-#: ../translation/extra.c:13 ../translation/plugins.c:108
-msgid "Username"
-msgstr "Naudotojo vardas"
-
-#: ../translation/extra.c:14 ../translation/plugins.c:109
-msgid "Password"
-msgstr "Slaptažodis"
-
-#: ../translation/extra.c:15 ../translation/plugins.c:110
-msgid "Scrobble URL"
-msgstr "Scrobble URL"
-
-#: ../translation/extra.c:16 ../translation/plugins.c:111
-msgid "Prefer Album Artist over Artist field"
-msgstr "Teikti pirmenybę albumo atlikėjo, o ne atlikėjo laukeliui"
-
-#. OSS output plugin
-#: ../translation/extra.c:18 ../translation/plugins.c:236
-msgid "Device file"
-msgstr "Įrenginio failas"
-
-#: ../translation/extra.c:19
-msgid "OSS4 samplerate bug workaround"
-msgstr "OSS4 diskretizacijos dažnio klaidos apėjimas"
-
-#. Album Artwork plugin
-#: ../translation/extra.c:21
-msgid "Cache update period (hr)"
-msgstr "Podėlio atnaujinimo dažnis (val.)"
-
-#: ../translation/extra.c:22 ../translation/plugins.c:76
-msgid "Fetch from embedded tags"
-msgstr "Gauti iš įtaisytų žymių"
-
-#: ../translation/extra.c:23 ../translation/plugins.c:77
-msgid "Fetch from local folder"
-msgstr "Gauti iš vietinio aplanko"
-
-#: ../translation/extra.c:24
-msgid "Local cover file mask"
-msgstr "Vietinio viršelio failo kaukė"
-
-#: ../translation/extra.c:25
-msgid "Fetch from last.fm"
-msgstr "Gauti iš last.fm"
-
-#: ../translation/extra.c:26
-msgid "Fetch from albumart.org"
-msgstr "Gauti iš albumart.org"
-
-#: ../translation/extra.c:27 ../translation/plugins.c:87
-msgid "Scale artwork towards longer side"
-msgstr "Keisti albumo iliustracijos dydį pagal ilgesnę pusę"
-
-#. Audio CD player
-#: ../translation/extra.c:29 ../translation/plugins.c:91
-msgid "Use CDDB/FreeDB"
-msgstr "Naudoti CDDB/FreeDB"
-
-#: ../translation/extra.c:30 ../translation/plugins.c:92
-msgid "Prefer CD-Text over CDDB"
-msgstr "Jei įmanoma naudoti CD-tekstą, o ne CDDB"
-
-#: ../translation/extra.c:31 ../translation/plugins.c:93
-msgid "CDDB url (e.g. 'freedb.org')"
-msgstr "CDDB url (pvz. „freedb.org“)"
-
-#: ../translation/extra.c:32 ../translation/plugins.c:94
-msgid "CDDB port number (e.g. '888')"
-msgstr "CDDB prievadas numeris (pvz., „888“)"
-
-#: ../translation/extra.c:33
-msgid "Prefer CDDB protocol over HTTP"
-msgstr "Teikti pirmenybę CDDB protokolui, o ne HTTP"
-
-#: ../translation/extra.c:34 ../translation/plugins.c:96
-msgid "Enable NRG image support"
-msgstr "Įjungti NRG atvaizdžių palaikymą"
-
-#. DUMB module player plugin
-#: ../translation/extra.c:36
-msgid "Resampling quality (0..2, higher is better)"
-msgstr "Diskretizacijos kokybė (0..2, didesnė yra geriau)"
-
-#: ../translation/extra.c:37 ../translation/plugins.c:229
-msgid "8-bit output (default is 16)"
-msgstr "8-bitų išvestis (numatytoji yra 16)"
-
-#. Game_Music_Emu decoder plugin
-#: ../translation/extra.c:39 ../translation/plugins.c:10
-msgid "Max song length (in minutes)"
-msgstr "Didžiausia dainos trukmė (minutėmis)"
-
-#: ../translation/extra.c:40 ../translation/plugins.c:11
-msgid "Fadeout length (seconds)"
-msgstr "Laipsniško išnykimo trukmė (sekundėmis)"
-
-#: ../translation/extra.c:41 ../translation/plugins.c:12
-msgid "Play loops nr. of times (if available)"
-msgstr "Kiek kartų kartoti ciklus (jei prieinama)"
-
-#. Standard GTK2 user interface plugin
-#: ../translation/extra.c:43 ../translation/plugins.c:65
-msgid "Ask confirmation to delete files from disk"
-msgstr "Ištrinant failus iš disko klausti patvirtinimo"
-
-#: ../translation/extra.c:44 ../translation/plugins.c:66
-msgid "Status icon volume control sensitivity"
-msgstr "Būsenos piktogramos garsio valdymo jautrumas"
-
-#: ../translation/extra.c:45 ../translation/plugins.c:67
-msgid "Custom status icon"
-msgstr "Pasirinktinė būsenos piktograma"
-
-#: ../translation/extra.c:46 ../translation/plugins.c:68
-msgid "Run gtk_init with --sync (debug mode)"
-msgstr "Vykdyti gtk_init su --sync (derinimo veiksena)"
-
-#: ../translation/extra.c:47 ../translation/plugins.c:69
-msgid "Add separators between plugin context menu items"
-msgstr "Tarp įskiepio kontekstinio meniu elementų pridėti skirtukus"
-
-#. OSD Notify plugin
-#: ../translation/extra.c:49 ../translation/plugins.c:6
-msgid "Notification title format"
-msgstr "Pranešimų pavadinimų formatas"
-
-#: ../translation/extra.c:50 ../translation/plugins.c:7
-msgid "Notification content format"
-msgstr "Pranešimų turinio formatas"
-
-#: ../translation/extra.c:51 ../translation/plugins.c:8
-msgid "Show album art"
-msgstr "Rodyti albumo iliustraciją"
-
-#: ../translation/extra.c:52 ../translation/plugins.c:9
-msgid "Album art size (px)"
-msgstr "Albumo iliustracijos dydis (px)"
-
-#. PulseAudio output plugin
-#: ../translation/extra.c:54 ../translation/plugins.c:72
-msgid "PulseAudio server"
-msgstr "PulseAudio serveris"
-
-#: ../translation/extra.c:56 ../translation/plugins.c:211
-msgid "Samplerate"
-msgstr "Diskretizavimo dažnis"
-
-#. SHN player plugin
-#: ../translation/extra.c:58 ../translation/plugins.c:225
-msgid "Relative seek table path"
-msgstr "Santykinis prasukimo lentelės kelias"
-
-#: ../translation/extra.c:59 ../translation/plugins.c:226
-msgid "Absolute seek table path"
-msgstr "Absoliutus prasukimo lentelės kelias"
-
-#: ../translation/extra.c:60 ../translation/plugins.c:227
-msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr "Sukeisti garso bitus (perjunkite jei girdite trukdžius)"
-
-#. SID decoder plugin
-#: ../translation/extra.c:62 ../translation/plugins.c:209
-msgid "Enable HVSC Songlength DB"
-msgstr "Įjungti HVSC dainų trukmių DB"
-
-#: ../translation/extra.c:63 ../translation/plugins.c:210
-msgid "Songlengths.txt (from HVSC)"
-msgstr "Dainų_trukmės.txt (iš HVSC)"
-
-#: ../translation/extra.c:64
-msgid "Bits per sample (8 or 16)"
-msgstr "Bitai per diskretizaciją (8 arba 16)"
-
-#: ../translation/extra.c:65 ../translation/plugins.c:213
-msgid "Default song length (sec)"
-msgstr "Numatytoji dainos trukmė (s)"
-
-#. WildMidi player plugin
-#: ../translation/extra.c:67 ../translation/plugins.c:214
-msgid "Timidity++ bank configuration file"
-msgstr "Timidity++ bank konfigūracijos failas"
-
-#: ../translation/extra.c:70
+#: ../translation/extra.c:3
 msgid "Track Title"
 msgstr "Takelio pavadinimas"
 
-#: ../translation/extra.c:71
+#: ../translation/extra.c:4
 msgid "Performer"
 msgstr "Atlikėjas"
 
-#: ../translation/extra.c:76
+#: ../translation/extra.c:9
 msgid "Total Tracks"
 msgstr "Viso takelių"
 
-#: ../translation/extra.c:77
+#: ../translation/extra.c:10
 msgid "Genre"
 msgstr "Žanras"
 
-#: ../translation/extra.c:78
+#: ../translation/extra.c:11
 msgid "Composer"
 msgstr "Kompozitorius"
 
-#: ../translation/extra.c:79
+#: ../translation/extra.c:12
 msgid "Disc Number"
 msgstr "Disko numeris"
 
-#: ../translation/extra.c:80
+#: ../translation/extra.c:13
 msgid "Total Discs"
 msgstr "Viso diskų"
 
-#: ../translation/extra.c:81
+#: ../translation/extra.c:14
 msgid "Comment"
 msgstr "Komentaras"
 
-#: ../translation/extra.c:82
+#: ../translation/extra.c:15
 msgid "Encoder / Vendor"
 msgstr "Koduotuvas / Gamintojas"
 
-#: ../translation/extra.c:84
+#: ../translation/extra.c:17
 msgid "Location"
 msgstr "Vieta"
 
-#: ../translation/extra.c:85
+#: ../translation/extra.c:18
 msgid "Subtrack Index"
 msgstr "Potakelio rodyklė"
 
-#: ../translation/extra.c:86
+#: ../translation/extra.c:19
 msgid "Tag Type(s)"
 msgstr "Žymių tipas(-ai)"
 
-#: ../translation/extra.c:87
+#: ../translation/extra.c:20
 msgid "Embedded Cuesheet"
 msgstr "Įtaisytas Cuesheet"
 
-#. FFmpeg deocder plugin
-#: ../translation/extra.c:90 ../translation/plugins.c:114
-msgid "File Extensions (separate with ';')"
-msgstr "Failų prievardžiai (atskirkite „;“)"
-
-#. Converter GUI
-#: ../translation/extra.c:92 ../translation/plugins.c:14
-msgid "Convert"
-msgstr "Konvertuoti"
-
-#. Resampler (Secret Rabbit Code)
-#: ../translation/extra.c:94
-msgid "Target Samplerate"
-msgstr "Paskirties diskretizacijos dažnis"
-
-#: ../translation/extra.c:95 ../translation/plugins.c:221
-msgid "Quality / Algorithm"
-msgstr "Kokybė / Algoritmas"
-
-#: ../translation/extra.c:96
-msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr "Automatinis diskretizacijos dažnis (perrašo Paskirties dažnį)"
-
-#. shellexecui
-#: ../translation/extra.c:98 ../translation/plugins.c:115
-msgid "Configure Custom Shell Commands"
-msgstr "Konfigūruoti pasirinktines apvalkalo komandas"
-
-#. mpgmad
-#: ../translation/extra.c:100
-msgid "Disable gapless playback (faster scanning)"
-msgstr "Išjungti atkūrimą be tarpų (greitesnė peržiūra)"
-
-#. adplug
-#: ../translation/extra.c:102 ../translation/plugins.c:217
+#. plugins/adplug/plugin.c
+#: ../translation/plugins.c:2
 msgid "Prefer Ken emu over Satoh (surround won't work)"
 msgstr "Teikti pirmenybę Ken emu, o ne Satoh (erdvinis garsas neveiks)"
 
-#: ../translation/extra.c:103 ../translation/plugins.c:218
+#: ../translation/plugins.c:3
 msgid "Enable surround"
 msgstr "Įjungti erdvinį garsą"
 
-#: ../translation/extra.c:104 ../translation/plugins.c:141
-msgid "Skip to"
-msgstr "Peršokti į"
+#. plugins/alsa/alsa.c
+#: ../translation/plugins.c:5
+msgid "Use ALSA resampling"
+msgstr "Naudoti ALSA diskretizaciją"
 
-#: ../translation/extra.c:105 ../translation/plugins.c:142
-msgid "Previous genre"
-msgstr "Ankstesnis žanras"
+#: ../translation/plugins.c:6
+msgid "Preferred buffer size"
+msgstr "Pageidaujamas buferio dydis"
 
-#: ../translation/extra.c:106 ../translation/plugins.c:143
-msgid "Previous composer"
-msgstr "Ankstesnis kompozitorius"
+#: ../translation/plugins.c:7
+msgid "Preferred period size"
+msgstr "Pageidaujamas periodo dydis"
 
-#: ../translation/extra.c:107 ../translation/plugins.c:144
-msgid "Previous artist"
-msgstr "Ankstesnis atlikėjas"
-
-#: ../translation/extra.c:108 ../translation/plugins.c:145
-msgid "Previous album"
-msgstr "Ankstesnis albumas"
-
-#: ../translation/extra.c:109 ../translation/plugins.c:146
-msgid "Next genre"
-msgstr "Kitas žanras"
-
-#: ../translation/extra.c:110 ../translation/plugins.c:147
-msgid "Next composer"
-msgstr "Kitas kompozitorius"
-
-#: ../translation/extra.c:111 ../translation/plugins.c:148
-msgid "Next artist"
-msgstr "Kitas atlikėjas"
-
-#: ../translation/extra.c:112 ../translation/plugins.c:149
-msgid "Next album"
-msgstr "Kitas albumas"
-
-#: ../translation/plugins.c:1
-#, fuzzy
-msgid "Volume Level"
-msgstr "Garsio juosta"
-
-#: ../translation/plugins.c:3
-msgid "Highlight current playlist"
-msgstr ""
-
-#: ../translation/plugins.c:4
-msgid "Play on double-click"
-msgstr ""
-
-#: ../translation/plugins.c:13
-msgid "ColecoVision BIOS (for SGC file format)"
-msgstr ""
-
-#: ../translation/plugins.c:15
-#, fuzzy
-msgid "ReplayGain"
-msgstr "<b>ReplayGain</b>"
-
-#: ../translation/plugins.c:16
-msgid "Remove ReplayGain Information"
-msgstr ""
-
-#: ../translation/plugins.c:17
-msgid "Scan Selection As Albums (By Tags)"
-msgstr ""
-
-#: ../translation/plugins.c:18
-msgid "Scan Selection As Single Album"
-msgstr ""
-
-#: ../translation/plugins.c:19
-#, fuzzy
-msgid "Scan Per-file Track Gain"
-msgstr "ReplayGain peržiūrėjimo eiga"
-
-#: ../translation/plugins.c:21
-#, fuzzy
-msgid "Deselect All"
-msgstr "Nuimti žymėjimą nuo visų"
-
-#: ../translation/plugins.c:22
-#, fuzzy
-msgid "Select All"
-msgstr "Žymėti visus"
-
-#: ../translation/plugins.c:25
-#, fuzzy
-msgid "File"
-msgstr "_Failas"
-
-#: ../translation/plugins.c:26
-#, fuzzy
-msgid "Add Location"
-msgstr "Pridėti vietą"
-
-#: ../translation/plugins.c:27
-#, fuzzy
-msgid "Add Folder(s)"
-msgstr "Pridėti aplanką(-us)"
-
-#: ../translation/plugins.c:28
-#, fuzzy
-msgid "Add File(s)"
-msgstr "Pridėti failą(-us)"
-
-#: ../translation/plugins.c:29
-#, fuzzy
-msgid "Open File(s)"
-msgstr "_Atverti failą(-us)"
-
-#: ../translation/plugins.c:32
-msgid "Show Help Page"
-msgstr ""
-
-#: ../translation/plugins.c:34
-#, fuzzy
-msgid "Cycle Playback Looping Mode"
-msgstr "Pagal atkūrimo tvarką"
-
-#: ../translation/plugins.c:35
-msgid "Playback Looping - Don't loop"
-msgstr ""
-
-#: ../translation/plugins.c:36
-#, fuzzy
-msgid "Playback Looping - Single track"
-msgstr "Veikia su vienu takeliu."
-
-#: ../translation/plugins.c:37
-#, fuzzy
-msgid "Playback Looping - All"
-msgstr "Atkūrimo valdikliai"
-
-#: ../translation/plugins.c:38
-#, fuzzy
-msgid "Cycle Playback Order"
-msgstr "Pagal atkūrimo tvarką"
-
-#: ../translation/plugins.c:39
-#, fuzzy
-msgid "Playback Order - Random"
-msgstr "Atsitiktinis grojimas"
-
-#: ../translation/plugins.c:40
-#, fuzzy
-msgid "Playback Order - Shuffle albums"
-msgstr "Maišyti albumus"
-
-#: ../translation/plugins.c:41
-#, fuzzy
-msgid "Playback Order - Shuffle tracks"
-msgstr "Maišyti takelius"
-
-#: ../translation/plugins.c:42
-#, fuzzy
-msgid "Playback Order - Linear"
-msgstr "Pagal atkūrimo tvarką"
-
-#: ../translation/plugins.c:43
-#, fuzzy
-msgid "Toggle Cursor Follows Playback"
-msgstr "Žymeklis seka atkūrimą"
-
-#: ../translation/plugins.c:44
-#, fuzzy
-msgid "Toggle Scroll Follows Playback"
-msgstr "Slinkimas seka atkūrimą"
-
-#: ../translation/plugins.c:45
-#, fuzzy
-msgid "View"
-msgstr "R_odymas"
-
-#: ../translation/plugins.c:46
-msgid "Show\\/Hide menu"
-msgstr ""
-
-#: ../translation/plugins.c:47
-#, fuzzy
-msgid "Show\\/Hide statusbar"
-msgstr "Būsenos juosta"
-
-#: ../translation/plugins.c:48
-#, fuzzy
-msgid "Toggle Design Mode"
-msgstr "Dizaino veiksena"
-
-#: ../translation/plugins.c:50
-#, fuzzy
-msgid "Sort Custom"
-msgstr "Tinkinta"
-
-#: ../translation/plugins.c:51
-#, fuzzy
-msgid "Crop Selected"
-msgstr "Pažymėta:"
-
-#: ../translation/plugins.c:52
-#, fuzzy
-msgid "Remove Track(s) From Playlist"
-msgstr "Šalinti grojaraštį"
-
-#: ../translation/plugins.c:53
-#, fuzzy
-msgid "Save Playlist"
-msgstr "Įrašyti grojaraštį"
-
-#: ../translation/plugins.c:54 ../plugins/gtkui/actionhandlers.c:740
-msgid "Load Playlist"
-msgstr "Įkelti grojaraštį"
-
-#: ../translation/plugins.c:55
-#, fuzzy
-msgid "Remove Current Playlist"
-msgstr "Šalinti grojaraštį"
-
-#: ../translation/plugins.c:57
-#, fuzzy
-msgid "Show\\/Hide Equalizer"
-msgstr "Glodintuvas"
-
-#: ../translation/plugins.c:58
-#, fuzzy
-msgid "Hide Equalizer"
-msgstr "Glodintuvas"
-
-#: ../translation/plugins.c:59
-#, fuzzy
-msgid "Show Equalizer"
-msgstr "Glodintuvas"
-
-#: ../translation/plugins.c:60
-msgid "Show\\/Hide Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:61
-msgid "Hide Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:62
-msgid "Show Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:63
-#, fuzzy
-msgid "Find"
-msgstr "_Rasti"
-
-#: ../translation/plugins.c:64
-msgid "Show\\/Hide Log window"
-msgstr ""
-
-#: ../translation/plugins.c:70
-msgid "Use unicode chars instead of images for track state"
-msgstr ""
-
-#: ../translation/plugins.c:71
-msgid "Disable seekbar overlay text"
-msgstr ""
-
-#: ../translation/plugins.c:74
+#. plugins/artwork-legacy/artwork.c
+#: ../translation/plugins.c:9
 msgid "Refresh cover art"
 msgstr ""
 
-#: ../translation/plugins.c:75
-#, fuzzy
+#: ../translation/plugins.c:10
 msgid "Cache update period (in hours, 0=never)"
-msgstr "Podėlio atnaujinimo dažnis (val.)"
+msgstr ""
 
-#: ../translation/plugins.c:78
-#, fuzzy
+#: ../translation/plugins.c:11
+msgid "Fetch from embedded tags"
+msgstr "Gauti iš įtaisytų žymių"
+
+#: ../translation/plugins.c:12
+msgid "Fetch from local folder"
+msgstr "Gauti iš vietinio aplanko"
+
+#: ../translation/plugins.c:13
 msgid "Fetch from Last.fm"
-msgstr "Gauti iš last.fm"
+msgstr ""
 
-#: ../translation/plugins.c:79
-#, fuzzy
+#: ../translation/plugins.c:14
 msgid "Fetch from MusicBrainz"
-msgstr "Gauti iš last.fm"
+msgstr ""
 
-#: ../translation/plugins.c:80
-#, fuzzy
+#: ../translation/plugins.c:15
 msgid "Fetch from Albumart.org"
-msgstr "Gauti iš albumart.org"
+msgstr ""
 
-#: ../translation/plugins.c:81
+#: ../translation/plugins.c:16
 msgid "Fetch from World of Spectrum (AY files only)"
 msgstr ""
 
-#: ../translation/plugins.c:82
+#: ../translation/plugins.c:17
 msgid "When no artwork is found"
 msgstr ""
 
-#: ../translation/plugins.c:83
+#: ../translation/plugins.c:18
 msgid "leave blank"
 msgstr ""
 
-#: ../translation/plugins.c:84
-#, fuzzy
+#: ../translation/plugins.c:19
 msgid "use DeaDBeeF default cover"
-msgstr "DeaDBeeF vertėjai"
+msgstr ""
 
-#: ../translation/plugins.c:85
+#: ../translation/plugins.c:20
 msgid "display custom image"
 msgstr ""
 
-#: ../translation/plugins.c:86
+#: ../translation/plugins.c:21
 msgid "Custom image path"
 msgstr ""
 
-#: ../translation/plugins.c:88
+#: ../translation/plugins.c:22
+msgid "Scale artwork towards longer side"
+msgstr "Keisti albumo iliustracijos dydį pagal ilgesnę pusę"
+
+#. plugins/artwork/artwork.c
+#: ../translation/plugins.c:24
+msgid "Disable disk cache"
+msgstr ""
+
+#: ../translation/plugins.c:25
+msgid "Save extracted covers to music folders"
+msgstr ""
+
+#: ../translation/plugins.c:26
+msgid "Local file mask"
+msgstr ""
+
+#: ../translation/plugins.c:27
+msgid "Artwork folders"
+msgstr ""
+
+#. plugins/cdda/cdda.c
+#: ../translation/plugins.c:29
 msgid "CD drive to load"
 msgstr ""
 
-#: ../translation/plugins.c:89
-#, fuzzy
+#: ../translation/plugins.c:30
 msgid "Audio CD Drive"
+msgstr ""
+
+#: ../translation/plugins.c:31
+msgid "File"
+msgstr "Failas"
+
+#: ../translation/plugins.c:32
+msgid "Add Audio CD"
 msgstr "Pridėti garso CD"
 
-#: ../translation/plugins.c:95
-#, fuzzy
-msgid "Use CDDB protocol"
-msgstr "Teikti pirmenybę CDDB protokolui, o ne HTTP"
+#: ../translation/plugins.c:33
+msgid "Use CDDB/FreeDB"
+msgstr "Naudoti CDDB/FreeDB"
 
-#: ../translation/plugins.c:97
+#: ../translation/plugins.c:34
+msgid "Prefer CD-Text over CDDB"
+msgstr "Jei įmanoma naudoti CD-tekstą, o ne CDDB"
+
+#: ../translation/plugins.c:35
+msgid "CDDB url (e.g. 'freedb.org')"
+msgstr "CDDB url (pvz. „freedb.org“)"
+
+#: ../translation/plugins.c:36
+msgid "CDDB port number (e.g. '888')"
+msgstr "CDDB prievadas numeris (pvz., „888“)"
+
+#: ../translation/plugins.c:37
+msgid "Use CDDB protocol"
+msgstr ""
+
+#: ../translation/plugins.c:38
+msgid "Enable NRG image support"
+msgstr "Įjungti NRG atvaizdžių palaikymą"
+
+#: ../translation/plugins.c:39
 msgid "Drive speed for normal playback"
 msgstr ""
 
-#: ../translation/plugins.c:98
+#: ../translation/plugins.c:40
 msgid "1x"
-msgstr ""
+msgstr "1x"
 
-#: ../translation/plugins.c:99
+#: ../translation/plugins.c:41
 msgid "2x"
-msgstr ""
+msgstr "2x"
 
-#: ../translation/plugins.c:100
+#: ../translation/plugins.c:42
 msgid "4x"
-msgstr ""
+msgstr "4x"
 
-#: ../translation/plugins.c:101
+#: ../translation/plugins.c:43
 msgid "8x"
-msgstr ""
+msgstr "8x"
 
-#: ../translation/plugins.c:102
+#: ../translation/plugins.c:44
 msgid "16x"
-msgstr ""
+msgstr "16x"
 
-#: ../translation/plugins.c:103
+#: ../translation/plugins.c:45
 msgid "Max"
 msgstr ""
 
-#: ../translation/plugins.c:104
+#: ../translation/plugins.c:46
 msgid "Use cdparanoia error correction when ripping"
 msgstr ""
 
-#: ../translation/plugins.c:105
+#. plugins/converter/convgui.c
+#: ../translation/plugins.c:48
+msgid "Convert"
+msgstr "Konvertuoti"
+
+#. plugins/dsp_libsrc/src.c
+#: ../translation/plugins.c:50
+msgid "Autodetect samplerate from output device"
+msgstr ""
+
+#: ../translation/plugins.c:51
+msgid "Set samplerate directly"
+msgstr ""
+
+#: ../translation/plugins.c:52
+msgid "Quality / Algorithm"
+msgstr "Kokybė / Algoritmas"
+
+#. plugins/dumb/cdumb.c
+#: ../translation/plugins.c:54
+msgid "Resampling quality (0..5, higher is better)"
+msgstr ""
+
+#: ../translation/plugins.c:55
+msgid "8-bit output (default is 16)"
+msgstr "8-bitų išvestis (numatytoji yra 16)"
+
+#: ../translation/plugins.c:56
+msgid "Internal DUMB volume (0..128)"
+msgstr ""
+
+#: ../translation/plugins.c:57
 #, fuzzy
-msgid "Lookup On Last.fm"
-msgstr "Ieškoti Last.fm"
+msgid "Volume ramping"
+msgstr "Garsio juosta"
 
-#: ../translation/plugins.c:112
-msgid "Send MusicBrainz ID"
+#: ../translation/plugins.c:59
+msgid "On/Off Only"
 msgstr ""
 
-#: ../translation/plugins.c:113
-msgid "Submit tracks shorter than 30 seconds (not recommended)"
+#: ../translation/plugins.c:60
+msgid "Full"
 msgstr ""
 
-#: ../translation/plugins.c:116
-#, fuzzy
-msgid "Bits per sample"
-msgstr "Bitai per diskretizaciją (8 arba 16)"
-
-#: ../translation/plugins.c:117
-#, fuzzy
-msgid "Preamp"
-msgstr "Atstatyti Preamp"
-
-#: ../translation/plugins.c:118
-msgid "55 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:119
-msgid "77 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:120
-msgid "110 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:121
-msgid "156 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:122
-msgid "220 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:123
-msgid "311 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:124
-msgid "440 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:125
-msgid "622 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:126
-msgid "880 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:127
-msgid "1.2 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:128
-msgid "1.8 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:129
-msgid "2.5 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:130
-msgid "3.5 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:131
-msgid "5 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:132
-msgid "7 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:133
-msgid "10 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:134
-msgid "14 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:135
-msgid "20 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:136
-msgid "Force 16 bit output"
-msgstr ""
-
-#: ../translation/plugins.c:137
-msgid "Backend"
-msgstr ""
-
-#: ../translation/plugins.c:138
+#. plugins/ffmpeg/ffmpeg.c
+#: ../translation/plugins.c:62
 msgid "Use all extensions supported by ffmpeg"
 msgstr ""
 
-#: ../translation/plugins.c:140
-#, fuzzy
-msgid "Jump To Currently Playing Track"
-msgstr "Peršokti į dabartinį takelį"
+#: ../translation/plugins.c:63
+msgid "File Extensions (separate with ';')"
+msgstr "Failų prievardžiai (atskirkite „;“)"
 
-#: ../translation/plugins.c:150
-#, fuzzy
-msgid "Next Playlist"
-msgstr "Naujas grojaraštis"
+#. plugins/gme/cgme.c
+#: ../translation/plugins.c:65
+msgid "Max song length (in minutes)"
+msgstr "Didžiausia dainos trukmė (minutėmis)"
 
-#: ../translation/plugins.c:151
-#, fuzzy
-msgid "Prev Playlist"
-msgstr "Naujas grojaraštis"
+#: ../translation/plugins.c:66
+msgid "Fadeout length (seconds)"
+msgstr "Laipsniško išnykimo trukmė (sekundėmis)"
 
-#: ../translation/plugins.c:152
-#, fuzzy
-msgid "Switch To Playlist 10"
-msgstr "Naujas grojaraštis"
+#: ../translation/plugins.c:67
+msgid "Play loops nr. of times (if available)"
+msgstr "Kiek kartų kartoti ciklus (jei prieinama)"
 
-#: ../translation/plugins.c:153
-#, fuzzy
-msgid "Switch To Playlist 9"
-msgstr "Naujas grojaraštis"
-
-#: ../translation/plugins.c:154
-#, fuzzy
-msgid "Switch To Playlist 8"
-msgstr "Naujas grojaraštis"
-
-#: ../translation/plugins.c:155
-#, fuzzy
-msgid "Switch To Playlist 7"
-msgstr "Naujas grojaraštis"
-
-#: ../translation/plugins.c:156
-#, fuzzy
-msgid "Switch To Playlist 6"
-msgstr "Naujas grojaraštis"
-
-#: ../translation/plugins.c:157
-#, fuzzy
-msgid "Switch To Playlist 5"
-msgstr "Naujas grojaraštis"
-
-#: ../translation/plugins.c:158
-#, fuzzy
-msgid "Switch To Playlist 4"
-msgstr "Naujas grojaraštis"
-
-#: ../translation/plugins.c:159
-#, fuzzy
-msgid "Switch To Playlist 3"
-msgstr "Naujas grojaraštis"
-
-#: ../translation/plugins.c:160
-#, fuzzy
-msgid "Switch To Playlist 2"
-msgstr "Naujas grojaraštis"
-
-#: ../translation/plugins.c:161
-#, fuzzy
-msgid "Switch To Playlist 1"
-msgstr "Naujas grojaraštis"
-
-#: ../translation/plugins.c:162
-#, fuzzy
-msgid "Sort Randomize"
-msgstr "Atsitiktinė tvarka"
-
-#: ../translation/plugins.c:163
-#, fuzzy
-msgid "Sort By Date"
-msgstr "Rikiuoti pagal"
-
-#: ../translation/plugins.c:164
-#, fuzzy
-msgid "Sort By Artist"
-msgstr "Atlikėjas"
-
-#: ../translation/plugins.c:165
-#, fuzzy
-msgid "Sort By Album"
-msgstr "Atlikėjas / Albumas"
-
-#: ../translation/plugins.c:166
-#, fuzzy
-msgid "Sort By Track Number"
-msgstr "Takelio numeris"
-
-#: ../translation/plugins.c:167
-#, fuzzy
-msgid "Sort By Title"
-msgstr "Nustatyti tinkintą pavadinimą"
-
-#: ../translation/plugins.c:168
-#, fuzzy
-msgid "Invert Selection"
-msgstr "Atvirkštinis žymėjimas"
-
-#: ../translation/plugins.c:169
-#, fuzzy
-msgid "Clear Playlist"
-msgstr "Dubliuoti grojaraštį"
-
-#: ../translation/plugins.c:172
-#, fuzzy
-msgid "Toggle In Playback Queue"
-msgstr "Pridėti į atkūrimo eilę"
-
-#: ../translation/plugins.c:173
-msgid "Move"
+#: ../translation/plugins.c:68
+msgid "ColecoVision BIOS (for SGC file format)"
 msgstr ""
 
-#: ../translation/plugins.c:174
+#. plugins/gtkui/gtkui.c
+#: ../translation/plugins.c:70
+msgid "ReplayGain"
+msgstr "ReplayGain"
+
+#: ../translation/plugins.c:71
+msgid "Remove ReplayGain Information"
+msgstr "Šalinti ReplayGain informaciją"
+
+#: ../translation/plugins.c:72
+msgid "Scan Selection As Albums (By Tags)"
+msgstr ""
+
+#: ../translation/plugins.c:73
+msgid "Scan Selection As Single Album"
+msgstr ""
+
+#: ../translation/plugins.c:74
+msgid "Scan Per-file Track Gain"
+msgstr ""
+
+#: ../translation/plugins.c:76
+msgid "Deselect All"
+msgstr ""
+
+#: ../translation/plugins.c:77
+msgid "Select All"
+msgstr ""
+
+#: ../translation/plugins.c:80
+msgid "Add Location"
+msgstr "Pridėti vietą"
+
+#: ../translation/plugins.c:81
+msgid "Add Folder(s)"
+msgstr "Pridėti aplanką(-us)"
+
+#: ../translation/plugins.c:82
+msgid "Add File(s)"
+msgstr "Pridėti failą(-us)"
+
+#: ../translation/plugins.c:83
+msgid "Open File(s)"
+msgstr "Atverti failą(-us)"
+
+#: ../translation/plugins.c:86
+msgid "Show Help Page"
+msgstr ""
+
+#: ../translation/plugins.c:88
+msgid "Cycle Playback Looping Mode"
+msgstr ""
+
+#: ../translation/plugins.c:89
+msgid "Playback Looping - Don't loop"
+msgstr ""
+
+#: ../translation/plugins.c:90
+msgid "Playback Looping - Single track"
+msgstr ""
+
+#: ../translation/plugins.c:91
+msgid "Playback Looping - All"
+msgstr ""
+
+#: ../translation/plugins.c:92
+msgid "Cycle Playback Order"
+msgstr ""
+
+#: ../translation/plugins.c:93
+msgid "Playback Order - Random"
+msgstr ""
+
+#: ../translation/plugins.c:94
+msgid "Playback Order - Shuffle albums"
+msgstr ""
+
+#: ../translation/plugins.c:95
+msgid "Playback Order - Shuffle tracks"
+msgstr ""
+
+#: ../translation/plugins.c:96
+msgid "Playback Order - Linear"
+msgstr ""
+
+#: ../translation/plugins.c:97
+msgid "Toggle Cursor Follows Playback"
+msgstr ""
+
+#: ../translation/plugins.c:98
+msgid "Toggle Scroll Follows Playback"
+msgstr ""
+
+#: ../translation/plugins.c:99
+msgid "View"
+msgstr ""
+
+#: ../translation/plugins.c:100
+msgid "Show\\/Hide menu"
+msgstr "Rodyti\\/slėpti meniu"
+
+#: ../translation/plugins.c:101
+msgid "Show\\/Hide statusbar"
+msgstr "Rodyti\\/slėpti būsenos juostą"
+
+#: ../translation/plugins.c:102
+msgid "Toggle Design Mode"
+msgstr ""
+
+#: ../translation/plugins.c:104
+msgid "Sort Custom"
+msgstr ""
+
+#: ../translation/plugins.c:105
+msgid "Crop Selected"
+msgstr ""
+
+#: ../translation/plugins.c:106
+msgid "Remove Track(s) From Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:107
+msgid "Save Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:108 ../plugins/gtkui/actionhandlers.c:740
+msgid "Load Playlist"
+msgstr "Įkelti grojaraštį"
+
+#: ../translation/plugins.c:109
+msgid "Remove Current Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:111
+msgid "Show\\/Hide Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:112
+msgid "Hide Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:113
+msgid "Show Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:114
+msgid "Show\\/Hide Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:115
+msgid "Hide Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:116
+msgid "Show Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:117
+msgid "Find"
+msgstr ""
+
+#: ../translation/plugins.c:118
+msgid "Show\\/Hide Log window"
+msgstr ""
+
+#: ../translation/plugins.c:119
+msgid "Ask confirmation to delete files from disk"
+msgstr "Ištrinant failus iš disko klausti patvirtinimo"
+
+#: ../translation/plugins.c:120
+msgid "Status icon volume control sensitivity"
+msgstr "Būsenos piktogramos garsio valdymo jautrumas"
+
+#: ../translation/plugins.c:121
+msgid "Custom status icon"
+msgstr "Pasirinktinė būsenos piktograma"
+
+#: ../translation/plugins.c:122
+msgid "Run gtk_init with --sync (debug mode)"
+msgstr "Vykdyti gtk_init su --sync (derinimo veiksena)"
+
+#: ../translation/plugins.c:123
+msgid "Add separators between plugin context menu items"
+msgstr "Tarp įskiepio kontekstinio meniu elementų pridėti skirtukus"
+
+#: ../translation/plugins.c:124
+msgid "Use unicode chars instead of images for track state"
+msgstr ""
+
+#: ../translation/plugins.c:125
+msgid "Disable seekbar overlay text"
+msgstr ""
+
+#: ../translation/plugins.c:128
+msgid "Jump To Currently Playing Track"
+msgstr ""
+
+#: ../translation/plugins.c:129
+msgid "Skip to"
+msgstr "Peršokti į"
+
+#: ../translation/plugins.c:130
+msgid "Previous genre"
+msgstr "Ankstesnis žanras"
+
+#: ../translation/plugins.c:131
+msgid "Previous composer"
+msgstr "Ankstesnis kompozitorius"
+
+#: ../translation/plugins.c:132
+msgid "Previous artist"
+msgstr "Ankstesnis atlikėjas"
+
+#: ../translation/plugins.c:133
+msgid "Previous album"
+msgstr "Ankstesnis albumas"
+
+#: ../translation/plugins.c:134
+msgid "Next genre"
+msgstr "Kitas žanras"
+
+#: ../translation/plugins.c:135
+msgid "Next composer"
+msgstr "Kitas kompozitorius"
+
+#: ../translation/plugins.c:136
+msgid "Next artist"
+msgstr "Kitas atlikėjas"
+
+#: ../translation/plugins.c:137
+msgid "Next album"
+msgstr "Kitas albumas"
+
+#: ../translation/plugins.c:138
+msgid "Next Playlist"
+msgstr "Kitas grojaraštis"
+
+#: ../translation/plugins.c:139
+msgid "Prev Playlist"
+msgstr "Ankstesnis grojaraštis"
+
+#: ../translation/plugins.c:140
+msgid "Switch To Playlist 10"
+msgstr "Perjungti į grojaraštį 10"
+
+#: ../translation/plugins.c:141
+msgid "Switch To Playlist 9"
+msgstr "Perjungti į grojaraštį 9"
+
+#: ../translation/plugins.c:142
+msgid "Switch To Playlist 8"
+msgstr "Perjungti į grojaraštį 8"
+
+#: ../translation/plugins.c:143
+msgid "Switch To Playlist 7"
+msgstr "Perjungti į grojaraštį 7"
+
+#: ../translation/plugins.c:144
+msgid "Switch To Playlist 6"
+msgstr "Perjungti į grojaraštį 6"
+
+#: ../translation/plugins.c:145
+msgid "Switch To Playlist 5"
+msgstr "Perjungti į grojaraštį 5"
+
+#: ../translation/plugins.c:146
+msgid "Switch To Playlist 4"
+msgstr "Perjungti į grojaraštį 4"
+
+#: ../translation/plugins.c:147
+msgid "Switch To Playlist 3"
+msgstr "Perjungti į grojaraštį 3"
+
+#: ../translation/plugins.c:148
+msgid "Switch To Playlist 2"
+msgstr "Perjungti į grojaraštį 2"
+
+#: ../translation/plugins.c:149
+msgid "Switch To Playlist 1"
+msgstr "Perjungti į grojaraštį 1"
+
+#: ../translation/plugins.c:150
+msgid "Sort Randomize"
+msgstr ""
+
+#: ../translation/plugins.c:151
+msgid "Sort By Date"
+msgstr ""
+
+#: ../translation/plugins.c:152
+msgid "Sort By Artist"
+msgstr ""
+
+#: ../translation/plugins.c:153
+msgid "Sort By Album"
+msgstr ""
+
+#: ../translation/plugins.c:154
+msgid "Sort By Track Number"
+msgstr ""
+
+#: ../translation/plugins.c:155
+msgid "Sort By Title"
+msgstr ""
+
+#: ../translation/plugins.c:156
+msgid "Invert Selection"
+msgstr "Invertuoti žymėjimą"
+
+#: ../translation/plugins.c:157
+msgid "Clear Playlist"
+msgstr "Išvalyti grojaraštį"
+
+#: ../translation/plugins.c:160
+msgid "Toggle In Playback Queue"
+msgstr ""
+
+#: ../translation/plugins.c:161
+msgid "Move"
+msgstr "Perkelti"
+
+#: ../translation/plugins.c:162
 msgid "Move Tracks Down"
 msgstr ""
 
-#: ../translation/plugins.c:175
-#, fuzzy
+#: ../translation/plugins.c:163
 msgid "Move Tracks Up"
-msgstr "Keletas takelių"
+msgstr ""
 
-#: ../translation/plugins.c:176
+#: ../translation/plugins.c:164
 msgid "Toggle Mute"
 msgstr ""
 
-#: ../translation/plugins.c:181
+#: ../translation/plugins.c:169
 msgid "Toggle Pause"
 msgstr ""
 
-#: ../translation/plugins.c:182
-#, fuzzy
+#: ../translation/plugins.c:170
 msgid "Play\\/Pause"
-msgstr "Pristabdyti"
+msgstr ""
 
-#: ../translation/plugins.c:184
+#: ../translation/plugins.c:172
 msgid "Seek 1s Forward"
 msgstr ""
 
-#: ../translation/plugins.c:185
+#: ../translation/plugins.c:173
 msgid "Seek 1s Backward"
 msgstr ""
 
-#: ../translation/plugins.c:186
+#: ../translation/plugins.c:174
 msgid "Seek 5s Forward"
 msgstr ""
 
-#: ../translation/plugins.c:187
+#: ../translation/plugins.c:175
 msgid "Seek 5s Backward"
 msgstr ""
 
-#: ../translation/plugins.c:188
+#: ../translation/plugins.c:176
 #, c-format
 msgid "Seek 1% Forward"
 msgstr ""
 
-#: ../translation/plugins.c:189
+#: ../translation/plugins.c:177
 msgid "Seek 1% Backward"
 msgstr ""
 
-#: ../translation/plugins.c:190
+#: ../translation/plugins.c:178
 #, c-format
 msgid "Seek 5% Forward"
 msgstr ""
 
-#: ../translation/plugins.c:191
+#: ../translation/plugins.c:179
 msgid "Seek 5% Backward"
 msgstr ""
 
-#: ../translation/plugins.c:192
-#, fuzzy
+#: ../translation/plugins.c:180
 msgid "Volume Up"
-msgstr "Garsio juosta"
+msgstr ""
+
+#: ../translation/plugins.c:181
+msgid "Volume Down"
+msgstr ""
+
+#: ../translation/plugins.c:182
+msgid "Toggle Stop After Current Track"
+msgstr ""
+
+#: ../translation/plugins.c:183
+msgid "Toggle Stop After Current Album"
+msgstr ""
+
+#. plugins/lastfm/lastfm.c
+#: ../translation/plugins.c:185
+msgid "Lookup On Last.fm"
+msgstr ""
+
+#: ../translation/plugins.c:186
+msgid "Enable scrobbler"
+msgstr "Įjungti „scrobbler“"
+
+#: ../translation/plugins.c:187
+msgid "Disable nowplaying"
+msgstr "Išjungti „dabar grojama“"
+
+#: ../translation/plugins.c:188
+msgid "Username"
+msgstr "Naudotojo vardas"
+
+#: ../translation/plugins.c:189
+msgid "Password"
+msgstr "Slaptažodis"
+
+#: ../translation/plugins.c:190
+msgid "Scrobble URL"
+msgstr "Scrobble URL"
+
+#: ../translation/plugins.c:191
+msgid "Prefer Album Artist over Artist field"
+msgstr "Teikti pirmenybę albumo atlikėjo, o ne atlikėjo laukeliui"
+
+#: ../translation/plugins.c:192
+msgid "Send MusicBrainz ID"
+msgstr ""
 
 #: ../translation/plugins.c:193
-#, fuzzy
-msgid "Volume Down"
-msgstr "Garsio juosta"
+msgid "Submit tracks shorter than 30 seconds (not recommended)"
+msgstr ""
 
-#: ../translation/plugins.c:194
-#, fuzzy
-msgid "Toggle Stop After Current Track"
-msgstr "Stabdyti po dabartinio takelio"
-
+#. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:195
-#, fuzzy
-msgid "Toggle Stop After Current Album"
-msgstr "Stabdyti po dabartinio albumo"
+msgid "Left mix:"
+msgstr ""
 
 #: ../translation/plugins.c:196
-msgid "Tempo Change (%)"
+msgid "Right mix:"
 msgstr ""
 
-#: ../translation/plugins.c:197
-msgid "Pitch Change (semi-tones)"
-msgstr ""
-
+#. plugins/mp3/mp3.c
 #: ../translation/plugins.c:198
-msgid "Playback Rate Change (%)"
+msgid "Force 16 bit output"
 msgstr ""
 
 #: ../translation/plugins.c:199
-#, fuzzy
-msgid "Absolute Samplerate (overrides Rate Change if nonzero)"
-msgstr "Automatinis diskretizacijos dažnis (perrašo Paskirties dažnį)"
-
-#: ../translation/plugins.c:200
-msgid "Use AA Filter"
-msgstr ""
-
-#: ../translation/plugins.c:201
-msgid "AA Filter Length"
+msgid "Backend"
 msgstr ""
 
 #: ../translation/plugins.c:202
-msgid "Use Quickseek"
-msgstr ""
+msgid "Notification title format"
+msgstr "Pranešimų pavadinimų formatas"
 
 #: ../translation/plugins.c:203
-msgid "Time Stretch Sequence Length (ms)"
-msgstr ""
+msgid "Notification content format"
+msgstr "Pranešimų turinio formatas"
 
 #: ../translation/plugins.c:204
-msgid "Time Stretch Seek Window Length (ms)"
-msgstr ""
+msgid "Show album art"
+msgstr "Rodyti albumo iliustraciją"
 
 #: ../translation/plugins.c:205
-msgid "Disable disk cache"
-msgstr ""
+msgid "Album art size (px)"
+msgstr "Albumo iliustracijos dydis (px)"
 
-#: ../translation/plugins.c:206
-msgid "Save extracted covers to music folders"
-msgstr ""
-
+#. plugins/oss/oss.c
 #: ../translation/plugins.c:207
-#, fuzzy
-msgid "Local file mask"
-msgstr "Vietinio viršelio failo kaukė"
-
-#: ../translation/plugins.c:208
-#, fuzzy
-msgid "Artwork folders"
-msgstr "Pridėti aplanką(-us)"
-
-#: ../translation/plugins.c:212
-msgid "Mono synth"
-msgstr ""
-
-#: ../translation/plugins.c:215
-#, fuzzy
-msgid "Device"
+msgid "Device file"
 msgstr "Įrenginio failas"
 
-#: ../translation/plugins.c:216
-msgid "Buffer size (ms)"
+#: ../translation/plugins.c:210
+msgid "Highlight current playlist"
+msgstr "Paryškinti dabartinį grojaraštį"
+
+#: ../translation/plugins.c:211
+msgid "Play on double-click"
 msgstr ""
 
-#: ../translation/plugins.c:219
-msgid "Autodetect samplerate from output device"
-msgstr ""
+#. plugins/pulse/pulse.c
+#: ../translation/plugins.c:213
+msgid "PulseAudio server"
+msgstr "PulseAudio serveris"
 
-#: ../translation/plugins.c:220
-#, fuzzy
-msgid "Set samplerate directly"
-msgstr "Paskirties diskretizacijos dažnis"
-
-#: ../translation/plugins.c:222
-msgid "Emulate track change events (for scrobbling)"
-msgstr ""
-
-#: ../translation/plugins.c:223
-#, fuzzy
+#. plugins/sc68/in_sc68.c
+#: ../translation/plugins.c:215
 msgid "Default song length (in minutes)"
-msgstr "Didžiausia dainos trukmė (minutėmis)"
+msgstr ""
 
-#: ../translation/plugins.c:224
+#: ../translation/plugins.c:216
+msgid "Samplerate"
+msgstr "Skaitmeninimo dažnis"
+
+#: ../translation/plugins.c:217
 msgid "Skip when shorter than (sec)"
 msgstr ""
 
+#. plugins/shellexecui/shellexecui.c
+#: ../translation/plugins.c:219
+msgid "Configure Custom Shell Commands"
+msgstr "Konfigūruoti pasirinktines apvalkalo komandas"
+
+#. plugins/shn/shn.c
+#: ../translation/plugins.c:221
+msgid "Relative seek table path"
+msgstr "Santykinis prasukimo lentelės kelias"
+
+#: ../translation/plugins.c:222
+msgid "Absolute seek table path"
+msgstr "Absoliutus prasukimo lentelės kelias"
+
+#: ../translation/plugins.c:223
+msgid "Swap audio bytes (toggle if all you hear is static)"
+msgstr "Sukeisti garso bitus (perjunkite jei girdite trukdžius)"
+
+#. plugins/sid/plugin.c
+#: ../translation/plugins.c:225
+msgid "Enable HVSC Songlength DB"
+msgstr "Įjungti HVSC dainų trukmių DB"
+
+#: ../translation/plugins.c:226
+msgid "Songlengths.txt (from HVSC)"
+msgstr "Dainų_trukmės.txt (iš HVSC)"
+
+#: ../translation/plugins.c:227
+msgid "Bits per sample"
+msgstr ""
+
 #: ../translation/plugins.c:228
-#, fuzzy
-msgid "Resampling quality (0..5, higher is better)"
-msgstr "Diskretizacijos kokybė (0..2, didesnė yra geriau)"
-
-#: ../translation/plugins.c:230
-msgid "Internal DUMB volume (0..128)"
+msgid "Mono synth"
 msgstr ""
 
+#: ../translation/plugins.c:229
+msgid "Default song length (sec)"
+msgstr "Numatytoji dainos trukmė (s)"
+
+#. plugins/sndio/sndio.c
 #: ../translation/plugins.c:231
-msgid "Volume ramping (0 is none, 1 is note on/off, 2 is always)"
+msgid "Device"
 msgstr ""
 
+#: ../translation/plugins.c:232
+msgid "Buffer size (ms)"
+msgstr ""
+
+#. plugins/supereq/supereq.c
 #: ../translation/plugins.c:234
-#, fuzzy
-msgid "Left mix:"
-msgstr "Kairė"
+msgid "Preamp"
+msgstr ""
 
 #: ../translation/plugins.c:235
-#, fuzzy
-msgid "Right mix:"
-msgstr "Dešinė"
+msgid "55 Hz"
+msgstr "55 Hz"
+
+#: ../translation/plugins.c:236
+msgid "77 Hz"
+msgstr "77 Hz"
+
+#: ../translation/plugins.c:237
+msgid "110 Hz"
+msgstr "110 Hz"
+
+#: ../translation/plugins.c:238
+msgid "156 Hz"
+msgstr "156 Hz"
+
+#: ../translation/plugins.c:239
+msgid "220 Hz"
+msgstr "220 Hz"
+
+#: ../translation/plugins.c:240
+msgid "311 Hz"
+msgstr "311 Hz"
+
+#: ../translation/plugins.c:241
+msgid "440 Hz"
+msgstr "440 Hz"
+
+#: ../translation/plugins.c:242
+msgid "622 Hz"
+msgstr "622 Hz"
+
+#: ../translation/plugins.c:243
+msgid "880 Hz"
+msgstr "880 Hz"
+
+#: ../translation/plugins.c:244
+msgid "1.2 kHz"
+msgstr "1.2 kHz"
+
+#: ../translation/plugins.c:245
+msgid "1.8 kHz"
+msgstr "1.8 kHz"
+
+#: ../translation/plugins.c:246
+msgid "2.5 kHz"
+msgstr "2.5 kHz"
+
+#: ../translation/plugins.c:247
+msgid "3.5 kHz"
+msgstr "3.5 kHz"
+
+#: ../translation/plugins.c:248
+msgid "5 kHz"
+msgstr "5 kHz"
+
+#: ../translation/plugins.c:249
+msgid "7 kHz"
+msgstr "7 kHz"
+
+#: ../translation/plugins.c:250
+msgid "10 kHz"
+msgstr "10 kHz"
+
+#: ../translation/plugins.c:251
+msgid "14 kHz"
+msgstr "14 kHz"
+
+#: ../translation/plugins.c:252
+msgid "20 kHz"
+msgstr "20 kHz"
+
+#. plugins/vfs_curl/vfs_curl.c
+#: ../translation/plugins.c:254
+msgid "Emulate track change events (for scrobbling)"
+msgstr ""
+
+#. plugins/wildmidi/wildmidiplug.c
+#: ../translation/plugins.c:256
+msgid "Timidity++ bank configuration file"
+msgstr "Timidity++ bank konfigūracijos failas"
 
 #: ../plugins/converter/convgui.c:91
 #, c-format
@@ -2876,13 +2716,14 @@ msgstr "Išvesties failo pavadinimas:"
 
 #: ../plugins/converter/interface.c:151
 #: ../plugins/converter/converter.glade.h:8
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default ([%tracknumber%. ][%artist% - ]%title%)."
 msgstr ""
 "Prievardis (pvz., .mp3) bus pridėtas automatiškai.\n"
-"Palikite lauką tuščią, kad būtų naudojami numatytieji (%artist% - %title%)."
+"Palikite lauką tuščią, kad būtų naudojami numatytieji ([%tracknumber%. ]"
+"[%artist% - ]%title%)."
 
 #: ../plugins/converter/interface.c:164
 #: ../plugins/converter/converter.glade.h:10
@@ -3507,121 +3348,46 @@ msgstr "Failas nerastas"
 msgid "Invalid file"
 msgstr "Neteisingas failas"
 
-#, fuzzy
-#~ msgid "Edit/Deselect All"
-#~ msgstr "Nuimti žymėjimą nuo visų"
+#~ msgid "Lookup on Last.fm"
+#~ msgstr "Ieškoti Last.fm"
 
-#, fuzzy
-#~ msgid "Edit/Select All"
-#~ msgstr "Žymėti visus"
+#~ msgid "Release device while stopped"
+#~ msgstr "Sustabdžius, atlaisvinti įrenginį"
 
-#, fuzzy
-#~ msgid "File/Add Location"
-#~ msgstr "Pridėti vietą"
+#~ msgid "OSS4 samplerate bug workaround"
+#~ msgstr "OSS4 skaitmeninimo dažnio klaidos apėjimas"
 
-#, fuzzy
-#~ msgid "File/Add Folder(s)"
-#~ msgstr "Pridėti aplanką(-us)"
+#~ msgid "Cache update period (hr)"
+#~ msgstr "Podėlio atnaujinimo dažnis (val.)"
 
-#, fuzzy
-#~ msgid "File/Add File(s)"
-#~ msgstr "Pridėti failą(-us)"
+#~ msgid "Local cover file mask"
+#~ msgstr "Vietinio viršelio failo kaukė"
 
-#, fuzzy
-#~ msgid "File/Open File(s)"
-#~ msgstr "_Atverti failą(-us)"
+#~ msgid "Fetch from last.fm"
+#~ msgstr "Gauti iš last.fm"
 
-#, fuzzy
-#~ msgid "Edit/Preferences"
-#~ msgstr "Nuostatos"
+#~ msgid "Fetch from albumart.org"
+#~ msgstr "Gauti iš albumart.org"
 
-#, fuzzy
-#~ msgid "File/Save Playlist"
-#~ msgstr "Įrašyti grojaraštį"
+#~ msgid "Prefer CDDB protocol over HTTP"
+#~ msgstr "Teikti pirmenybę CDDB protokolui, o ne HTTP"
 
-#, fuzzy
-#~ msgid "File/Load Playlist"
-#~ msgstr "Įkelti grojaraštį"
+#~ msgid "Resampling quality (0..2, higher is better)"
+#~ msgstr "Diskretizacijos kokybė (0..2, didesnė yra geriau)"
 
-#, fuzzy
-#~ msgid "File/New Playlist"
-#~ msgstr "Naujas grojaraštis"
+#~ msgid "Bits per sample (8 or 16)"
+#~ msgstr "Bitai per ėminį (8 arba 16)"
 
-#, fuzzy
-#~ msgid "Edit/Find"
-#~ msgstr "Taisyti"
+#~ msgid "Target Samplerate"
+#~ msgstr "Paskirties skaitmeninimo dažnis"
 
-#, fuzzy
-#~ msgid "Playback/Skip to/Previous genre"
-#~ msgstr "Ankstesnis žanras"
-
-#, fuzzy
-#~ msgid "Playback/Skip to/Previous composer"
-#~ msgstr "Ankstesnis kompozitorius"
-
-#, fuzzy
-#~ msgid "Playback/Skip to/Previous artist"
-#~ msgstr "Ankstesnis atlikėjas"
-
-#, fuzzy
-#~ msgid "Playback/Skip to/Previous album"
-#~ msgstr "Ankstesnis albumas"
-
-#, fuzzy
-#~ msgid "Playback/Skip to/Next composer"
-#~ msgstr "Kitas kompozitorius"
-
-#, fuzzy
-#~ msgid "Edit/Invert Selection"
-#~ msgstr "Atvirkštinis žymėjimas"
-
-#, fuzzy
-#~ msgid "Playback/Remove From Playback Queue"
-#~ msgstr "Šalinti iš atkūrimo eilės"
-
-#, fuzzy
-#~ msgid "Playback/Add To Playback Queue"
-#~ msgstr "Pridėti į atkūrimo eilę"
-
-#, fuzzy
-#~ msgid "Playback/Play"
-#~ msgstr "Atkūrimas"
-
-#, fuzzy
-#~ msgid "Playback/Stop"
-#~ msgstr "Atkūrimas"
-
-#, fuzzy
-#~ msgid "Playback/Previous"
-#~ msgstr "Atkūrimo valdikliai"
-
-#, fuzzy
-#~ msgid "Playback/Next"
-#~ msgstr "Atkūrimas"
-
-#, fuzzy
-#~ msgid "Playback/Volume Up"
-#~ msgstr "Atkūrimas"
-
-#, fuzzy
-#~ msgid "Edit/Configure Custom Shell Commands"
-#~ msgstr "Konfigūruoti pasirinktines apvalkalo komandas"
-
-#~ msgid "CUE: show subindexes as tracks (INDEX 02, INDEX 03, etc)"
+#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
 #~ msgstr ""
-#~ "CUE: rodyti subindeksus kaip takelius (INDEKSAS 02, INDEKSAS 03 ir t.t.)"
+#~ "Automatinis skaitmeninimo dažnis (nustelbia Paskirties skaitmeninimo "
+#~ "dažnį)"
 
-#~ msgid "Capitalize"
-#~ msgstr "Rašyti didžiosiomis raidėmis"
+#~ msgid "Disable gapless playback (faster scanning)"
+#~ msgstr "Išjungti atkūrimą be tarpų (greitesnė peržiūra)"
 
-#~ msgid "Clean up"
-#~ msgstr "Išvalyti"
-
-#~ msgid "Format from other fields..."
-#~ msgstr "Formatas iš kitų laukų..."
-
-#~ msgid "Paste fields"
-#~ msgstr "Įdėti laukus"
-
-#~ msgid "Automatically fill values..."
-#~ msgstr "Automatiškai užpildyti reikšmes..."
+#~ msgid "Volume Level"
+#~ msgstr "Garsio lygis"
