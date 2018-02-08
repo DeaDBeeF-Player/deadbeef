@@ -286,8 +286,7 @@ static const char settings_dlg[] =
 
 static DB_dsp_t plugin = {
     // need 1.1 api for pass_through
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 1,
+    DDB_PLUGIN_SET_API_VERSION
     .open = ddb_src_open,
     .close = ddb_src_close,
     .process = ddb_src_process,

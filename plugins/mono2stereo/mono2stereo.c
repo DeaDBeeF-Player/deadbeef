@@ -137,8 +137,7 @@ static const char settings_dlg[] =
 ;
 
 static DB_dsp_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .open = m2s_open,
     .close = m2s_close,
     .process = m2s_process,

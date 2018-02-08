@@ -350,8 +350,7 @@ static const char settings_dlg[] =
 ;
 
 DB_misc_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.type = DB_PLUGIN_MISC,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,

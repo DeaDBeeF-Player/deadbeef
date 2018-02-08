@@ -524,8 +524,8 @@ rg_remove (DB_playItem_t *track) {
 
 // plugin structure and info
 static ddb_rg_scanner_t plugin = {
-    .misc.plugin.api_vmajor = 1,
-    .misc.plugin.api_vminor = 10,
+    .misc.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .misc.plugin.api_vminor = DB_API_VERSION_MINOR,
     .misc.plugin.version_major = 1,
     .misc.plugin.version_minor = 0,
     .misc.plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
