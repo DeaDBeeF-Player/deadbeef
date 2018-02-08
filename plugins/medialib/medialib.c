@@ -415,7 +415,8 @@ typedef struct ddb_medialib_plugin_s {
 
 // define plugin interface
 static ddb_medialib_plugin_t plugin = {
-    DDB_PLUGIN_SET_API_VERSION
+    .plugin.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .plugin.plugin.api_vminor = DB_API_VERSION_MINOR,
     .plugin.plugin.version_major = 0,
     .plugin.plugin.version_minor = 1,
     .plugin.plugin.type = DB_PLUGIN_MISC,
