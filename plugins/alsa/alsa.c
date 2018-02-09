@@ -645,6 +645,7 @@ palsa_thread (void *context) {
                 if (!err) {
                     int new_avail = snd_pcm_avail_update (audio);
                     avail = new_avail;
+                    UNLOCK;
                     continue;
                 }
             }
