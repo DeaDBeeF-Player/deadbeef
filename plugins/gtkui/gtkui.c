@@ -55,9 +55,7 @@
 #include "gtkui_api.h"
 #include "wingeom.h"
 #include "widgets.h"
-#ifndef __APPLE__
-#include "X11/Xlib.h"
-#else
+#ifdef __APPLE__
 #include "retina.h"
 #endif
 #include "actionhandlers.h"

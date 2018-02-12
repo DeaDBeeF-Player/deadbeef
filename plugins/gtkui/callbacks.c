@@ -33,9 +33,6 @@
 #include <assert.h>
 #include <ctype.h>
 #include <gdk/gdkkeysyms.h>
-#ifndef __APPLE__
-#include <X11/Xlib.h>
-#endif
 #include "../../gettext.h"
 
 #include "callbacks.h"
