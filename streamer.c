@@ -1888,6 +1888,8 @@ streamer_read (char *bytes, int size) {
 
     _audio_stall_count = 0;
 
+    int block_bitrate = -1;
+
     // only decode until the next format change
     if (!memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
         // decode enough blocks to fill the output buffer
@@ -1897,6 +1899,7 @@ streamer_read (char *bytes, int size) {
                 break;
             }
             outbuffer_remaining += rb;
+            block_bitrate = block->bitrate;
             block = streamreader_get_curr_block();
         }
     }
@@ -1931,21 +1934,21 @@ streamer_read (char *bytes, int size) {
     outbuffer_remaining -= sz;
 
     // approximate bitrate
-    if (block->bitrate != -1) {
+    if (block_bitrate != -1) {
         if (avg_bitrate == -1) {
-            avg_bitrate = block->bitrate;
+            avg_bitrate = block_bitrate;
         }
         else {
-            if (avg_bitrate < block->bitrate) {
+            if (avg_bitrate < block_bitrate) {
                 avg_bitrate += 5;
-                if (avg_bitrate > block->bitrate) {
-                    avg_bitrate = block->bitrate;
+                if (avg_bitrate > block_bitrate) {
+                    avg_bitrate = block_bitrate;
                 }
             }
-            else if (avg_bitrate > block->bitrate) {
+            else if (avg_bitrate > block_bitrate) {
                 avg_bitrate -= 5;
-                if (avg_bitrate < block->bitrate) {
-                    avg_bitrate = block->bitrate;
+                if (avg_bitrate < block_bitrate) {
+                    avg_bitrate = block_bitrate;
                 }
             }
         }
