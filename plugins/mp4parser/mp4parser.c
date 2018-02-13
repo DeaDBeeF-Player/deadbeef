@@ -2,7 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "mp4parser.h"
+
+#ifndef __linux__
+#define O_LARGEFILE 0
+#endif
 
 static mp4p_atom_t *
 _atom_load (mp4p_atom_t *parent_atom, mp4p_file_callbacks_t *fp);
@@ -162,7 +168,7 @@ _hdlr_free (void *data) {
 }
 
 static uint32_t
-_hdlr_write (mp4p_atom_t *atom, char *buffer, uint32_t buffer_size) {
+_hdlr_write (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
     uint32_t init_size = buffer_size;
     mp4p_hdlr_t *hdlr = atom->data;
     WRITE_COMMON_HEADER();
@@ -248,7 +254,7 @@ _esds_free (void *data) {
 }
 
 static uint32_t
-_meta_write (mp4p_atom_t *atom, char *buffer, uint32_t buffer_size) {
+_meta_write (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
     uint32_t init_size = buffer_size;
     mp4p_meta_t *meta = atom->data;
 
@@ -1422,7 +1428,7 @@ mp4p_hdlr_init (mp4p_atom_t *hdlr_atom, const char *type, const char *subtype, c
 }
 
 uint32_t
-mp4p_atom_to_buffer (mp4p_atom_t *atom, char *buffer, uint32_t buffer_size) {
+mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
     // calculate the size of all sub-atoms
     if (atom->subatoms) {
         uint32_t size = 8;
@@ -1471,22 +1477,139 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, char *buffer, uint32_t buffer_size) {
     return 0;
 }
 
-// udta size changes, which effectively moves all subsequent atoms forward.
-// the expected sequence of atoms is this:
-//   moov
-//       ....
-//       mdta (last one)
-//   free (optional padding)
-//   mdat (the actual stream)
-
-// what we do:
-// * calculate the gap between the end of mdta and beginning of the atom following the moov
-// * if the gap is bigger then minsize, just insert the gap-sized padding atom, and rewrite udta + padding
-// * if the gap is smaller than min padding size -- remove all padding atoms between udta and trak, then add 1024 bytes padding right after udta;
-//         this requires expanding the file, and moving all bytes forward.
+// FIXME: The mdat offset can ONLY move forward for now, but this can be changed quite easily.
+// 1. Move `mdat` forward, if needed
+// 2. Rewrite the `moov`
+// 3. rewrite the whole `udta` with subatoms (via mp4p_atom_to_buffer)
+// 4. Write the `free`
 int
 mp4p_update_metadata (const char *fname, mp4p_atom_t *source, mp4p_atom_t *dest) {
+    int res = -1;
+    int fd = -1;
+    uint8_t temp[4096];
 
-    return -1;
+    mp4p_atom_t *moov_src = mp4p_atom_find (source, "moov");
+    mp4p_atom_t *mdat_src = mp4p_atom_find (source, "mdat");
+
+    mp4p_atom_t *moov_dst = mp4p_atom_find (dest, "moov");
+    mp4p_atom_t *free_dst = mp4p_atom_find (dest, "free");
+    mp4p_atom_t *mdat_dst = mp4p_atom_find (dest, "mdat");
+
+    mp4p_atom_t *udta_dst = mp4p_atom_find (moov_dst, "udta");
+
+    assert (moov_dst->pos == moov_src->pos);
+
+    int64_t offs = mdat_dst->pos - mdat_src->pos;
+    if (offs < 0) {
+        goto error; // truncation unsupported
+    }
+
+    fd = open (fname, O_RDWR|O_LARGEFILE);
+    if (fd < 0) {
+        goto error;
+    }
+
+    // need to move mdat?
+    if (offs > 0) {
+        // get file size
+        off_t size = lseek (fd, 0, SEEK_END);
+        if (size < 0) {
+            goto error; // couldn't get the size
+        }
+
+        // resize the file
+        if (ftruncate (fd, size + offs) < 0) {
+            goto error;
+        }
+
+        off_t pos_src = size;
+        do {
+            size_t blocksize = sizeof (temp);
+            pos_src -= sizeof (temp);
+            if (pos_src < mdat_src->pos) {
+                blocksize -= mdat_dst->pos - pos_src;
+                pos_src = mdat_src->pos;
+            }
+
+            if (lseek (fd, pos_src, SEEK_SET) < 0) {
+                goto error;
+            }
+
+            if (blocksize != read (fd, temp, blocksize)) {
+                goto error;
+            }
+
+            off_t pos_dst = pos_src + offs;
+
+            if (lseek (fd, pos_dst, SEEK_SET) < 0) {
+                goto error;
+            }
+
+            if (blocksize != write (fd, temp, blocksize)) {
+                goto error;
+            }
+        } while (pos_src > mdat_src->pos);
+    }
+
+    // rewrite moov size
+    if (lseek (fd, moov_dst->pos, SEEK_SET) < 0) {
+        goto error;
+    }
+    // FIXME: a better uint32_le writer needed
+    size_t buffer_size = 4;
+    uint8_t value[4];
+    uint8_t *buffer = value;
+    WRITE_UINT32(moov_dst->size);
+    if (write (fd, value, 4) != 4) {
+        goto error;
+    }
+
+    // write udta
+    if (lseek (fd, udta_dst->pos, SEEK_SET) < 0) {
+        goto error;
+    }
+    uint32_t atom_size = mp4p_atom_to_buffer (udta_dst, NULL, 0);
+    buffer = malloc (atom_size);
+    uint32_t written_size = mp4p_atom_to_buffer(udta_dst, buffer, atom_size);
+    assert (written_size == atom_size);
+
+    if (write (fd, buffer, atom_size) != atom_size) {
+        free (buffer);
+        goto error;
+    }
+    free (buffer);
+
+    // write free
+    if (lseek (fd, free_dst->pos, SEEK_SET) < 0) {
+        goto error;
+    }
+    buffer = value;
+    WRITE_UINT32(free_dst->size);
+    if (write (fd, value, 4) != 4) {
+        goto error;
+    }
+    if (write (fd, "free", 4) != 4) {
+        goto error;
+    }
+    memset (temp, 0, sizeof (temp));
+    size_t size = free_dst->size;
+    while (size > 0) {
+        size_t blocksize = sizeof (temp);
+        if (blocksize > size) {
+            blocksize = size;
+        }
+        if (write (fd, temp, blocksize) != blocksize) {
+            goto error;
+        }
+    }
+
+    res = 0;
+
+error:
+    if (fd > 0) {
+        close (fd);
+    }
+
+    return res;
 }
 
