@@ -109,6 +109,7 @@ _remove_known_fields (mp4p_atom_t *ilst) {
     }
 }
 
+// FIXME: much of this code should be moved to mp4parser lib when finalized
 mp4p_atom_t *
 mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");
@@ -144,8 +145,8 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     mp4p_atom_t *ilst = NULL;
 
     // find an existing udta with \0\0\0\0 mdir appl handler
-    mp4p_atom_t *udta = mp4p_atom_find(mp4file, "moov/udta"); // FIXME: assumes there's only one udta
-    if (udta) {
+    mp4p_atom_t *udta = mp4file->subatoms;
+    while (udta) {
         // there can be multiple meta atoms
         mp4p_atom_t *subatom = udta->subatoms;
         while (subatom) {
@@ -166,6 +167,13 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
             meta = hdlr = ilst = NULL;
             subatom = subatom->next;
         }
+        udta = udta->next;
+    }
+
+    // FIXME: atoms following udta is unsupported yet
+    if (udta && udta->next) {
+        mp4p_atom_free_list (mp4file);
+        return NULL;
     }
 
     if (!udta) {
