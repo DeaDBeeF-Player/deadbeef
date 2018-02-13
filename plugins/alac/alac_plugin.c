@@ -117,7 +117,7 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->mp4reader.ftell = (int64_t (*) (void *stream))deadbeef->ftell;
     info->mp4file = mp4p_open(NULL, &info->mp4reader);
 
-    // iterate over tracks, and the ALAC one
+    // iterate over tracks, find the ALAC one
     info->trak = mp4p_atom_find (info->mp4file, "moov/trak");
     mp4p_alac_t *alac = NULL;
     while (info->trak) {

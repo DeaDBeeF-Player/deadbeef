@@ -1280,6 +1280,76 @@ mp4p_atom_new (const char *type) {
     return atom;
 }
 
+// NOTE: the cloned atom's data is a direct copy, including pointers, so free doesn't need to be called
+// The downside is that the source must exist until the dest is deleted.
+mp4p_atom_t *
+mp4p_atom_clone (mp4p_atom_t *src) {
+    mp4p_atom_t *dest = mp4p_atom_new (src->type);
+    dest->pos = src->pos;
+    dest->size = src->size;
+    dest->to_buffer = src->to_buffer;
+
+    if (dest->size > 0) {
+        dest->data = malloc (dest->size);
+        memcpy (dest->data, src->data, dest->size);
+    }
+
+    mp4p_atom_t *tail = NULL;
+
+    mp4p_atom_t *subatom = src->subatoms;
+    while (subatom) {
+        mp4p_atom_t *subatom_copy = mp4p_atom_clone(subatom);
+
+        if (tail) {
+            tail = tail->next = subatom_copy;
+        }
+        else {
+            tail = dest->subatoms = subatom_copy;
+        }
+        subatom = subatom->next;
+    }
+
+    tail = NULL;
+    mp4p_atom_t *next = src->next;
+    while (next) {
+        mp4p_atom_t *next_copy = mp4p_atom_clone(next);
+
+        if (tail) {
+            tail = tail->next = next_copy;
+        }
+        else {
+            tail = dest->subatoms = next_copy;
+        }
+        next = next->next;
+    }
+
+    return dest;
+}
+
+mp4p_atom_t *
+mp4p_atom_insert (mp4p_atom_t *parent, mp4p_atom_t *before, mp4p_atom_t *atom) {
+    mp4p_atom_t *prev = NULL;
+    mp4p_atom_t *subatom = parent->subatoms;
+    while (subatom && subatom != before) {
+        prev = subatom;
+        subatom = subatom->next;
+    }
+
+    if (!subatom) { // `before` not found
+        return NULL;
+    }
+
+    if (prev) {
+        prev->next = atom;
+    }
+    else {
+        parent->subatoms = atom;
+    }
+    atom->next = before;
+
+    return atom;
+}
+
 mp4p_atom_t *
 mp4p_atom_append (mp4p_atom_t *parent, mp4p_atom_t *atom) {
     mp4p_atom_t *prev = NULL;
@@ -1367,5 +1437,11 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, char *buffer, uint32_t buffer_size) {
         return atom->size;
     }
     return 0;
+}
+
+// udta and all its subatoms change positions and sizes, which effectively moves all subsequent atoms
+int
+mp4p_update_metadata (const char *fname, mp4p_atom_t *source, mp4p_atom_t *dest) {
+    return -1;
 }
 

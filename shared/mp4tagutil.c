@@ -24,6 +24,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <limits.h>
 #include "mp4tagutil.h"
 #include "mp4parser.h"
 
@@ -107,39 +108,55 @@ _remove_known_fields (mp4p_atom_t *ilst) {
     }
 }
 
-void
+mp4p_atom_t *
 mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
+    mp4file = mp4p_atom_clone (mp4file);
+
     mp4p_atom_t *hdlr = NULL;
     mp4p_atom_t *meta = NULL;
     mp4p_atom_t *ilst = NULL;
 
     // find an existing udta with \0\0\0\0 mdir appl handler
-    mp4p_atom_t *udta = mp4file->subatoms;
-    while (udta) {
-        if (!mp4p_atom_type_compare (udta, "udta")) {
-            meta = mp4p_atom_find(udta, "udta/meta");
-            hdlr = mp4p_atom_find(meta, "meta/hdlr");
-            ilst = mp4p_atom_find(meta, "meta/ilst");
-            if (hdlr && meta && ilst) {
+    mp4p_atom_t *udta = mp4p_atom_find(mp4file, "moov/udta"); // FIXME: assumes there's only one udta
+    if (udta) {
+        // there can be multiple meta atoms
+        mp4p_atom_t *subatom = udta->subatoms;
+        while (subatom) {
+            // check each meta subatom
+            if (mp4p_atom_type_compare (udta, "meta")) {
+                continue;
+            }
+            hdlr = mp4p_atom_find(subatom, "meta/hdlr");
+            if (hdlr) {
                 mp4p_hdlr_t *hdlr_data = hdlr->data;
                 if (mp4p_fourcc_compare (hdlr_data->component_subtype, "mdir")
                     && mp4p_fourcc_compare(hdlr_data->component_manufacturer, "appl")) {
+                    ilst = mp4p_atom_find(subatom, "meta/ilst");
+                    meta = subatom;
                     break;
                 }
             }
-            hdlr = meta = ilst = NULL; // not found
+            meta = hdlr = ilst = NULL;
+            subatom = subatom->next;
         }
-        udta = udta->next;
     }
 
     if (!udta) {
-        udta = mp4p_atom_append (mp4file, mp4p_atom_new ("udta"));
+        // udta not found at all -- insert before the first trak
+        mp4p_atom_t *trak = mp4p_atom_find(mp4file, "moov/trak");
+        udta = mp4p_atom_new ("udta");
+        mp4p_atom_insert (mp4file, trak, udta);
+    }
+
+    if (!meta) {
+        // append meta/hdlr/ilst if needed
         meta = mp4p_atom_append (udta, mp4p_atom_new ("meta"));
         hdlr = mp4p_atom_append (meta, mp4p_atom_new ("hdlr"));
         mp4p_hdlr_init (hdlr, "\0\0\0\0", "mdir", "appl");
         ilst = mp4p_atom_append(meta, mp4p_atom_new ("ilst"));
     }
     else {
+        // cleanup the pre-existing keyvalue list
         _remove_known_fields (ilst);
     }
 
@@ -238,13 +255,16 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     }
     
     deadbeef->pl_unlock ();
+
+    return mp4file;
 }
 
 int
 mp4_write_metadata (DB_playItem_t *it) {
-    deadbeef->pl_lock ();
+    char fname[PATH_MAX];
+    deadbeef->pl_get_meta (it, ":URI", fname, sizeof (fname));
+
     DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
-    deadbeef->pl_unlock ();
 
     if (!fp) {
         return -1;
@@ -271,10 +291,14 @@ mp4_write_metadata (DB_playItem_t *it) {
         return -1;
     }
 
-    mp4tagutil_modify_meta(mp4file, it);
+    mp4p_atom_t *mp4file_updated = mp4tagutil_modify_meta(mp4file, it);
 
-    return 0;
-    //return mp4p_update_metadata (mp4file);
+    int res = mp4p_update_metadata (fname, mp4file, mp4file_updated);
+
+    mp4p_atom_free(mp4file);
+    mp4p_atom_free(mp4file_updated);
+
+    return res;
 }
 
 static void
@@ -282,6 +306,12 @@ mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     int got_itunes_tags = 0;
 
     mp4p_atom_t *ilst_atom = mp4p_atom_find (mp4file, "moov/udta/meta/ilst");
+
+    // FIXME: hdlr check missing:
+//    if (mp4p_fourcc_compare (hdlr_data->component_subtype, "mdir")
+//        && mp4p_fourcc_compare(hdlr_data->component_manufacturer, "appl")) {
+
+
     mp4p_atom_t *meta_atom = ilst_atom->subatoms;
 
     while (meta_atom) {

@@ -36,7 +36,7 @@ mp4_read_metadata_file (DB_playItem_t *it, DB_FILE *fp);
 int
 mp4_write_metadata (DB_playItem_t *it);
 
-void
+mp4p_atom_t *
 mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it);
 
 #endif /* mp4tagutil_h */
