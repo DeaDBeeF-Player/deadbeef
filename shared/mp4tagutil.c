@@ -121,6 +121,13 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     // only [moov, free, mdat] or [moov, mdat] are supported
     if (!mp4p_atom_type_compare(moov->next, "free")) {
         padding = moov->next;
+        if (!padding->next) {
+            return NULL;
+        }
+        if (mp4p_atom_type_compare(padding->next, "mdat")) {
+            return NULL;
+        }
+        mdat = padding->next;
     }
     else if (!mp4p_atom_type_compare(moov->next, "mdat")) {
         mdat = moov->next;

@@ -1285,7 +1285,7 @@ mp4p_atom_new (const char *type) {
     return atom;
 }
 
-// NOTE: the cloned atom's data is a direct copy, including pointers, so free doesn't need to be called
+// NOTE: the cloned atom's data is a direct pointer to src data.
 // The downside is that the source must exist until the dest is deleted.
 mp4p_atom_t *
 mp4p_atom_clone (mp4p_atom_t *src) {
@@ -1295,8 +1295,7 @@ mp4p_atom_clone (mp4p_atom_t *src) {
     dest->to_buffer = src->to_buffer;
 
     if (dest->size > 0) {
-        dest->data = malloc (dest->size);
-        memcpy (dest->data, src->data, dest->size);
+        dest->data = src->data;
     }
 
     mp4p_atom_t *tail = NULL;

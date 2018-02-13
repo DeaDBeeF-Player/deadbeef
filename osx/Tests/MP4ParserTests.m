@@ -211,4 +211,24 @@
     mp4p_atom_free_list (mp4file);
 }
 
+- (void)test_AddTagsToAFileWithoutPadding_PaddingIsReduced {
+    mp4p_atom_t *mp4file = mp4p_atom_new("moov");
+    mp4p_atom_t *padding = mp4file->next = mp4p_atom_new("free");
+    padding->size = 1024;
+    mp4p_atom_t *mdat = padding->next = mp4p_atom_new("mdat");
+
+    mdat->pos = padding->size;
+
+    playItem_t *it = pl_item_alloc();
+    pl_append_meta(it, "title", "Title");
+    mp4p_atom_t *mp4file_tagged = mp4tagutil_modify_meta(mp4file, (DB_playItem_t *)it);
+    pl_item_unref (it);
+
+    XCTAssert(!mp4p_atom_type_compare(mp4file_tagged->next, "free"));
+    XCTAssert(mp4file_tagged->next->size == 1024 - mp4file_tagged->size);
+
+    mp4p_atom_free_list (mp4file_tagged);
+    mp4p_atom_free_list (mp4file);
+}
+
 @end
