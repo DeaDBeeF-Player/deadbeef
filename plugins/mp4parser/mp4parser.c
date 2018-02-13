@@ -735,7 +735,6 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     else if (parent_atom && !mp4p_atom_type_compare(parent_atom, "ilst")) {
         return _load_metadata_atom (atom, fp);
     }
-
     else {
         _dbg_print_indent ();
         printf ("unknown\n");
@@ -1330,6 +1329,17 @@ mp4p_atom_clone (mp4p_atom_t *src) {
     }
 
     return dest;
+}
+
+void
+mp4p_atom_calculate_size (mp4p_atom_t *atom) {
+    atom->size = 8; // type+size = 8 bytes
+    for (mp4p_atom_t *subatom = atom->subatoms; subatom; subatom = subatom->next) {
+        if (subatom->subatoms) {
+            mp4p_atom_calculate_size(subatom);
+        }
+        atom->size += subatom->size;
+    }
 }
 
 void

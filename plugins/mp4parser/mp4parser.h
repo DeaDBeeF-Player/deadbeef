@@ -224,7 +224,10 @@ mp4p_atom_t *
 mp4p_atom_clone (mp4p_atom_t *src);
 
 void
-mp4p_rebuild_positions (mp4p_atom_t *mp4file, uint64_t init_pos);
+mp4p_atom_calculate_size (mp4p_atom_t *atom);
+
+void
+mp4p_rebuild_positions (mp4p_atom_t *atom, uint64_t init_pos);
 
 mp4p_atom_t *
 mp4p_atom_insert (mp4p_atom_t *parent, mp4p_atom_t *before, mp4p_atom_t *atom);

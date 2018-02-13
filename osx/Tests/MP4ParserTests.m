@@ -181,7 +181,6 @@
     mp4p_atom_dump (mp4file);
 
     uint32_t size = mp4p_atom_to_buffer (mp4file_tagged, NULL, 0);
-    printf ("calculated size: %d\n", (int)size);
 
     XCTAssert (size != 0);
 
@@ -192,6 +191,24 @@
     mp4p_atom_free_list (mp4file);
 
     XCTAssert (written_size == size);
+}
+
+- (void)test_AddTagsToAFileWithoutPadding_AddsPaddingOf1024Bytes {
+    mp4p_atom_t *mp4file = mp4p_atom_new("moov");
+    mp4p_atom_t *mdat = mp4file->next = mp4p_atom_new("mdat");
+
+    mdat->pos = 32; // arbitrary small position
+
+    playItem_t *it = pl_item_alloc();
+    pl_append_meta(it, "title", "Title");
+    mp4p_atom_t *mp4file_tagged = mp4tagutil_modify_meta(mp4file, (DB_playItem_t *)it);
+    pl_item_unref (it);
+
+    XCTAssert(!mp4p_atom_type_compare(mp4file_tagged->next, "free"));
+    XCTAssert(mp4file_tagged->next->size == 1024);
+
+    mp4p_atom_free_list (mp4file_tagged);
+    mp4p_atom_free_list (mp4file);
 }
 
 @end

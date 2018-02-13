@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2016 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2017 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <assert.h>
 #include "mp4tagutil.h"
 #include "mp4parser.h"
 
@@ -273,16 +274,42 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     
     deadbeef->pl_unlock ();
 
+    mp4p_atom_t *moov_new = mp4p_atom_find(mp4file, "moov");
 
     if (padding) {
         // remove padding in the modified version
-        mp4p_atom_t *moov_new = mp4p_atom_find(mp4file, "moov");
         mp4p_atom_t *padding_new = moov_new->next;
-        moov_new->next = mdat->next;
+        moov_new->next = padding_new->next;
         mp4p_atom_free (padding_new);
     }
 
+    mp4p_atom_t *mdat_new = moov_new->next;
+
+    mp4p_atom_calculate_size(moov_new);
+
     // at this point, we got the mp4file with new tags, without padding
+    mp4p_rebuild_positions (mp4file, mp4file->pos);
+
+    // get the distance between new and old mdat
+    int64_t offs = mdat->pos - mdat_new->pos;
+
+    // xxxxxxxxxxxxxxx|  <-- original file mdat pos
+    // yyyyyy|--offs--   <-- new file mdat pos, and offs
+
+    // enough space for padding atom + headroom?
+    if (offs < 8) {
+        // nope, add a new one
+        offs = 1024;
+    }
+
+    // padding block is always inserted
+    mp4p_atom_t *padding_new = mp4p_atom_new ("free");
+    assert (offs >= 0);
+    padding_new->size = (uint32_t)offs;
+    padding_new->next = mdat_new;
+    moov_new->next = padding_new;
+
+    // rebuild positions with padding
     mp4p_rebuild_positions (mp4file, mp4file->pos);
 
     return mp4file;
