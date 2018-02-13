@@ -9,17 +9,23 @@ _atom_load (mp4p_atom_t *parent_atom, mp4p_file_callbacks_t *fp);
 
 void
 mp4p_atom_free (mp4p_atom_t *atom) {
-    mp4p_atom_t *c = atom->subatoms;
-    while (c) {
-        mp4p_atom_t *next = c->next;
-        mp4p_atom_free (c);
-        c = next;
+    if (atom->subatoms) {
+        mp4p_atom_free_list (atom->subatoms);
     }
 
     if (atom->free) {
         atom->free (atom->data);
     }
     free (atom);
+}
+
+void
+mp4p_atom_free_list (mp4p_atom_t *atom) {
+    while (atom) {
+        mp4p_atom_t *next = atom->next;
+        mp4p_atom_free (atom);
+        atom = next;
+    }
 }
 
 int
@@ -1318,12 +1324,29 @@ mp4p_atom_clone (mp4p_atom_t *src) {
             tail = tail->next = next_copy;
         }
         else {
-            tail = dest->subatoms = next_copy;
+            tail = dest->next = next_copy;
         }
         next = next->next;
     }
 
     return dest;
+}
+
+void
+mp4p_rebuild_positions (mp4p_atom_t *atom, uint64_t init_pos) {
+    atom->pos = init_pos;
+
+    uint64_t offs = init_pos;
+    for (mp4p_atom_t *subatom = atom->subatoms; subatom; subatom = subatom->next) {
+        mp4p_rebuild_positions(subatom, offs);
+        offs += subatom->size;
+    }
+
+    offs = atom->pos + atom->size;
+    for (mp4p_atom_t *next = atom->next; next; next = next->next) {
+        mp4p_rebuild_positions(next, offs);
+        offs += next->size;
+    }
 }
 
 mp4p_atom_t *
@@ -1439,9 +1462,22 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, char *buffer, uint32_t buffer_size) {
     return 0;
 }
 
-// udta and all its subatoms change positions and sizes, which effectively moves all subsequent atoms
+// udta size changes, which effectively moves all subsequent atoms forward.
+// the expected sequence of atoms is this:
+//   moov
+//       ....
+//       mdta (last one)
+//   free (optional padding)
+//   mdat (the actual stream)
+
+// what we do:
+// * calculate the gap between the end of mdta and beginning of the atom following the moov
+// * if the gap is bigger then minsize, just insert the gap-sized padding atom, and rewrite udta + padding
+// * if the gap is smaller than min padding size -- remove all padding atoms between udta and trak, then add 1024 bytes padding right after udta;
+//         this requires expanding the file, and moving all bytes forward.
 int
 mp4p_update_metadata (const char *fname, mp4p_atom_t *source, mp4p_atom_t *dest) {
+
     return -1;
 }
 

@@ -178,6 +178,9 @@ typedef struct {
 void
 mp4p_atom_free (mp4p_atom_t *atom);
 
+void
+mp4p_atom_free_list (mp4p_atom_t *atom);
+
 typedef struct {
     void *data;
     size_t (*fread) (void *ptr, size_t size, size_t nmemb, void *stream);
@@ -219,6 +222,9 @@ mp4p_atom_new (const char *type);
 
 mp4p_atom_t *
 mp4p_atom_clone (mp4p_atom_t *src);
+
+void
+mp4p_rebuild_positions (mp4p_atom_t *mp4file, uint64_t init_pos);
 
 mp4p_atom_t *
 mp4p_atom_insert (mp4p_atom_t *parent, mp4p_atom_t *before, mp4p_atom_t *atom);

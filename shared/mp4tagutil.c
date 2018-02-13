@@ -110,7 +110,26 @@ _remove_known_fields (mp4p_atom_t *ilst) {
 
 mp4p_atom_t *
 mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
-    mp4file = mp4p_atom_clone (mp4file);
+    mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");
+    mp4p_atom_t *padding = NULL;
+    mp4p_atom_t *mdat = NULL;
+    if (!moov || !moov->next) {
+        return NULL;
+    }
+
+    // only [moov, free, mdat] or [moov, mdat] are supported
+    if (!mp4p_atom_type_compare(moov->next, "free")) {
+        padding = moov->next;
+    }
+    else if (!mp4p_atom_type_compare(moov->next, "mdat")) {
+        mdat = moov->next;
+    }
+    else {
+        return NULL;
+    }
+
+    mp4p_atom_t *orig = mp4file;
+    mp4file = mp4p_atom_clone (orig);
 
     mp4p_atom_t *hdlr = NULL;
     mp4p_atom_t *meta = NULL;
@@ -142,10 +161,8 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     }
 
     if (!udta) {
-        // udta not found at all -- insert before the first trak
-        mp4p_atom_t *trak = mp4p_atom_find(mp4file, "moov/trak");
-        udta = mp4p_atom_new ("udta");
-        mp4p_atom_insert (mp4file, trak, udta);
+        // udta not found at all -- append to moov, it needs to be the last one.
+        udta = mp4p_atom_append (mp4file, mp4p_atom_new ("udta"));
     }
 
     if (!meta) {
@@ -256,6 +273,18 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     
     deadbeef->pl_unlock ();
 
+
+    if (padding) {
+        // remove padding in the modified version
+        mp4p_atom_t *moov_new = mp4p_atom_find(mp4file, "moov");
+        mp4p_atom_t *padding_new = moov_new->next;
+        moov_new->next = mdat->next;
+        mp4p_atom_free (padding_new);
+    }
+
+    // at this point, we got the mp4file with new tags, without padding
+    mp4p_rebuild_positions (mp4file, mp4file->pos);
+
     return mp4file;
 }
 
@@ -295,8 +324,8 @@ mp4_write_metadata (DB_playItem_t *it) {
 
     int res = mp4p_update_metadata (fname, mp4file, mp4file_updated);
 
-    mp4p_atom_free(mp4file);
-    mp4p_atom_free(mp4file_updated);
+    mp4p_atom_free_list(mp4file);
+    mp4p_atom_free_list(mp4file_updated);
 
     return res;
 }
@@ -424,7 +453,7 @@ mp4_read_metadata_file (DB_playItem_t *it, DB_FILE *fp) {
 
     // convert
     mp4_load_tags (mp4file, it);
-    mp4p_atom_free (mp4file);
+    mp4p_atom_free_list (mp4file);
 
     (void)deadbeef->junk_apev2_read (it, fp);
     (void)deadbeef->junk_id3v2_read (it, fp);

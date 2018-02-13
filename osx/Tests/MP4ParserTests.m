@@ -160,6 +160,7 @@
 
 - (void)test_WriteMoovWithMetadataToBuffer_WrittenSizeMatchingCalculatedSize {
     mp4p_atom_t *mp4file = mp4p_atom_new("moov");
+    mp4file->next = mp4p_atom_new("mdat");
 
     playItem_t *it = pl_item_alloc();
 
@@ -174,20 +175,21 @@
     pl_append_meta(it, "numdiscs", "5");
     pl_append_meta(it, "my custom tag 2", "custom tag value 2");
 
-    mp4tagutil_modify_meta(mp4file, (DB_playItem_t *)it);
+    mp4p_atom_t *mp4file_tagged = mp4tagutil_modify_meta(mp4file, (DB_playItem_t *)it);
 
     pl_item_unref (it);
     mp4p_atom_dump (mp4file);
 
-    uint32_t size = mp4p_atom_to_buffer (mp4file, NULL, 0);
+    uint32_t size = mp4p_atom_to_buffer (mp4file_tagged, NULL, 0);
     printf ("calculated size: %d\n", (int)size);
 
     XCTAssert (size != 0);
 
     char *buffer = malloc (size);
-    uint32_t written_size = mp4p_atom_to_buffer(mp4file, buffer, size);
+    uint32_t written_size = mp4p_atom_to_buffer(mp4file_tagged, buffer, size);
 
-    mp4p_atom_free (mp4file);
+    mp4p_atom_free_list (mp4file_tagged);
+    mp4p_atom_free_list (mp4file);
 
     XCTAssert (written_size == size);
 }

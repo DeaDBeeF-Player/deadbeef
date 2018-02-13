@@ -197,7 +197,7 @@ alacplug_free (DB_fileinfo_t *_info) {
             deadbeef->fclose (info->file);
         }
         if (info->mp4file) {
-            mp4p_atom_free (info->mp4file);
+            mp4p_atom_free_list (info->mp4file);
         }
 
         if (info->_alac) {
@@ -426,7 +426,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     if (cuesheet) {
         cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (const uint8_t *)cuesheet, (int)strlen (cuesheet), (int)totalsamples, samplerate);
         if (cue) {
-            mp4p_atom_free(info.mp4file);
+            mp4p_atom_free_list(info.mp4file);
             deadbeef->pl_item_unref (it);
             deadbeef->pl_item_unref (cue);
             deadbeef->pl_unlock ();
@@ -444,7 +444,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
 
-    mp4p_atom_free(info.mp4file);
+    mp4p_atom_free_list(info.mp4file);
     return after;
 }
 
