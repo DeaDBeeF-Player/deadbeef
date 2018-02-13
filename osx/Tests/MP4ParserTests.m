@@ -13,6 +13,7 @@
 #include "plugins.h"
 #include "conf.h"
 #include "../../common.h"
+#include "logger.h"
 
 @interface MP4Parser : XCTestCase
 
@@ -26,6 +27,7 @@
     const char *str = [resPath UTF8String];
     strcpy (dbplugindir, str);
 
+    ddb_logger_init ();
     conf_init ();
     conf_enable_saving (0);
 
@@ -40,6 +42,7 @@
     plug_unload_all ();
     pl_free ();
     conf_free ();
+    ddb_logger_free ();
 
     [super tearDown];
 }
