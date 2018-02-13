@@ -213,7 +213,7 @@ extern "C" {
 // default values for some common config variables should go here
 
 // network.ctmapping : content-type to plugin mapping
-#define DDB_DEFAULT_CTMAPPING "audio/mpeg {stdmpg ffmpeg} audio/x-mpeg {stdmpg ffmpeg} application/ogg {stdogg ffmpeg} audio/ogg {stdogg ffmpeg} audio/aac {aac ffmpeg} audio/aacp {aac ffmpeg} audio/x-m4a {aac ffmpeg} audio/wma {wma ffmpeg}"
+#define DDB_DEFAULT_CTMAPPING "audio/mpeg {stdmpg ffmpeg} audio/x-mpeg {stdmpg ffmpeg} application/ogg {stdogg opus ffmpeg} audio/ogg {stdogg opus ffmpeg} audio/aac {aac ffmpeg} audio/aacp {aac ffmpeg} audio/x-m4a {aac ffmpeg} audio/wma {wma ffmpeg}"
 
 ////////////////////////////
 // playlist structures
@@ -245,9 +245,11 @@ enum {
 // playlist item
 // these are "public" fields, available to plugins
 typedef struct DB_playItem_s {
-    int startsample; // start sample of track, or -1 for auto
-    int endsample; // end sample of track, or -1 for auto
-    int shufflerating; // sort order for shuffle mode
+    // NOTE: the startsample and endsample fields are 32 bit, and are kept for
+    // compatibility. Please use pl_item_get_startsample and friends instead.
+    int32_t startsample DEPRECATED_110;
+    int32_t endsample DEPRECATED_110;
+    int32_t shufflerating; // sort order for shuffle mode
 } ddb_playItem_t;
 
 typedef ddb_playItem_t DB_playItem_t;
@@ -404,7 +406,7 @@ enum {
     DB_EV_CONFIGCHANGED = 11, // one or more config options were changed
     DB_EV_TOGGLE_PAUSE = 12,
     DB_EV_ACTIVATED = 13, // will be fired every time player is activated
-    DB_EV_PAUSED = 14, // player was paused or unpaused
+    DB_EV_PAUSED = 14, // player was paused (p1=1) or unpaused (p1=0)
 
     DB_EV_PLAYLISTCHANGED = 15, // playlist contents were changed (e.g. metadata in any track)
     // DB_EV_PLAYLISTCHANGED NOTE: it's usually sent on LARGE changes,
@@ -460,9 +462,11 @@ enum {
 // preset columns, working using IDs
 // DON'T add new ids in range 2-7, they are reserved for backwards compatibility
 enum pl_column_t {
+    DB_COLUMN_STANDARD = -1,
     DB_COLUMN_FILENUMBER = 0,
     DB_COLUMN_PLAYING = 1,
     DB_COLUMN_ALBUM_ART = 8,
+    DB_COLUMN_CUSTOM = 9
 };
 
 // replaygain constants
@@ -568,11 +572,24 @@ enum {
     DDB_TF_CONTEXT_HAS_INDEX = 1,
     DDB_TF_CONTEXT_HAS_ID = 2,
     DDB_TF_CONTEXT_NO_DYNAMIC = 4, // skip dynamic fields (%playback_time%)
+// since 1.9
 #if (DDB_API_LEVEL >= 9)
     // Don't convert linebreaks to semicolons
     DDB_TF_CONTEXT_MULTILINE = 8,
 #endif
+// since 1.10
+#if (DDB_API_LEVEL >= 10)
+    // the caller supports text dimming functions
+    DDB_TF_CONTEXT_TEXT_DIM = 16,
+#endif
 };
+
+// since 1.10
+#if (DDB_API_LEVEL >= 10)
+enum {
+    DDB_TF_ESC_DIM = 1,
+};
+#endif
 
 // since 1.10
 #if (DDB_API_LEVEL >= 10)
@@ -610,6 +627,12 @@ typedef struct {
     // <0: updates on every call
     // >0: number of milliseconds between updates / until next update
     int update;
+
+#if (DDB_API_LEVEL >= 10)
+    // Return value, is set to non-zero if text was <<<dimmed>>> or >>>brightened<<<
+    // This is helpful to determine whether text needs to be searched for the corresponding esc sequences
+    int dimmed;
+#endif
 } ddb_tf_context_t;
 #endif
 
@@ -824,8 +847,8 @@ typedef struct {
     int (*plt_add_dir) (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data) DEPRECATED_15;
 
     // cuesheet support
-    DB_playItem_t *(*plt_insert_cue_from_buffer) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate);
-    DB_playItem_t * (*plt_insert_cue) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, int numsamples, int samplerate);
+    DB_playItem_t *(*plt_insert_cue_from_buffer) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate) DEPRECATED_110;
+    DB_playItem_t * (*plt_insert_cue) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, int numsamples, int samplerate) DEPRECATED_110;
 
     // playlist locking
     void (*pl_lock) (void);
@@ -1316,8 +1339,8 @@ typedef struct {
     void (*vlog) (const char *fmt, va_list ap);
 
     // Custom log viewers, for use in e.g. UI plugins
-    void (*log_viewer_register) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text));
-    void (*log_viewer_unregister) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text));
+    void (*log_viewer_register) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx), void *ctx);
+    void (*log_viewer_unregister) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx), void *ctx);
 
     ///////// File add filtering ///////
 
@@ -1378,6 +1401,30 @@ typedef struct {
     // `order` can be one of DDB_SORT_ASCENDING or DDB_SORT_DESCENDING (no random).
     void (*sort_track_array) (ddb_playlist_t *playlist, DB_playItem_t **tracks, int num_tracks, const char *format, int order);
 
+    // initialize playitem, same as plt_add_file, except do not add to any playlist
+    DB_playItem_t *(*pl_item_init) (const char *fname);
+
+    int64_t (*pl_item_get_startsample) (DB_playItem_t *it);
+
+    int64_t (*pl_item_get_endsample) (DB_playItem_t *it);
+
+    void (*pl_item_set_startsample) (DB_playItem_t *it, int64_t sample);
+
+    void (*pl_item_set_endsample) (DB_playItem_t *it, int64_t sample);
+
+    // get total playback time of selected tracks
+    float (*plt_get_selection_playback_time) (ddb_playlist_t *plt);
+
+    // get the size of known tags at the end of file, or -1 on error
+    int (*junk_get_tail_size) (DB_FILE *fp);
+
+    // get the sizes of known tags at the beginning and end of file
+    // no error is reported
+    void (*junk_get_tag_offsets) (DB_FILE *fp, uint32_t *head, uint32_t *tail);
+
+    // returns 1 to tell that cuesheet is being loaded now.
+    // this should be called by plugins to prevent running cuesheet code at a wrong time.
+    int (*plt_is_loading_cue) (ddb_playlist_t *plt);
 #endif
 } DB_functions_t;
 
@@ -1391,32 +1438,41 @@ typedef struct {
 // if (none of the above)  -> track context menu
 
 enum {
-    /* Action in main menu (or whereever ui prefers) */
+    // An menu item for this action should be added to the main menu (ex. Playback/Skip to/Previous genre)
     DB_ACTION_COMMON = 1 << 0,
 
-    /* Can handle single track */
+    // Indicates that this action can work when a single track is selected
     DB_ACTION_SINGLE_TRACK = 1 << 1,
 
-    /* Can handle multiple tracks */
+    // Indicates that this action can work when multiple tracks are selected
     DB_ACTION_MULTIPLE_TRACKS = 1 << 2,
 
-    /* DEPRECATED in API 1.5 */
+    // Different name for DB_ACTION_MULTIPLE_TRACKS, DEPRECATED in API 1.5
     DB_ACTION_ALLOW_MULTIPLE_TRACKS = 1 << 2,
 
-    /* DEPRECATED in API 1.5, ignored in callback2 */
-    /* Action can (and prefer) traverse multiple tracks by itself */
+    // DEPRECATED in API 1.5, ignored in callback2
+    // Action will get the track list by itself, instead of getting the list as argument.
+    // This is the default behavior when using callback2
     DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3,
 
-    /* Action is inactive */
+    // Action is inactive
     DB_ACTION_DISABLED = 1 << 4,
 
-    /* DEPRECATED in API 1.5, ignored in callback2 */
-    /* since 1.2 */
-    /* Action for the playlist (tab) */
-    DB_ACTION_PLAYLIST = 1 << 5,
+#if (DDB_API_LEVEL >= 2)
+    // DEPRECATED in API 1.5, ignored in callback2
+    // Action for the playlist (tab)
+    DB_ACTION_PLAYLIST = (1 << 5),
+#endif
 
-    /* add item to menu(s), if contains slash symbol(s) */
-    DB_ACTION_ADD_MENU = 1 << 6
+#if (DDB_API_LEVEL >= 5)
+    // A menu item should be added to the menu(s), if the item name contains slash symbol(s)
+    DB_ACTION_ADD_MENU = 1 << 6,
+#endif
+
+#if (DDB_API_LEVEL >= 10)
+    // Don't allow running this action in playlist context, even if it supports multiple selection
+    DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST = 1 << 7
+#endif
 };
 
 // action contexts
@@ -1502,7 +1558,7 @@ typedef struct DB_plugin_s {
     // can be NULL
     // NOTE for GUI plugin developers: don't initialize your widgets/windows in
     // the connect method. look for up-to-date information on wiki:
-    // http://github.com/Alexey-Yakovenko/deadbeef/wiki/Porting-GUI-plugins-to-deadbeef-from-0.5.x-to-0.6.0
+    // http://github.com/DeaDBeeF-Player/deadbeef/wiki/Porting-GUI-plugins-to-deadbeef-from-0.5.x-to-0.6.0
     int (*connect) (void);
 
     // opposite of connect, will be called before stop, while all plugins are still
@@ -1784,7 +1840,7 @@ typedef struct DB_vfs_s {
 
 // this structure represents a gui dialog with callbacks to set/get params
 // documentation should be available here:
-// http://github.com/Alexey-Yakovenko/deadbeef/wiki/GUI-Script-Syntax
+// http://github.com/DeaDBeeF-Player/deadbeef/wiki/GUI-Script-Syntax
 typedef struct {
     const char *title;
     const char *layout;

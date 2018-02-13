@@ -49,7 +49,7 @@ private:
 
 public:
     ReSID  (sidbuilder *builder);
-    ~ReSID (void) {;}
+    ~ReSID (void);
 
     // Standard component functions
     const char   *credits (void) {return m_credit;}

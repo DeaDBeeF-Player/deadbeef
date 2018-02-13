@@ -26,6 +26,15 @@
 
 #include "deadbeef.h"
 
+int
+ddb_logger_init (void);
+
+void
+ddb_logger_free (void);
+
+void
+ddb_logger_stop_buffering (void);
+
 void
 ddb_log_detailed (DB_plugin_t *plugin, uint32_t layers, const char *fmt, ...);
 
@@ -39,9 +48,9 @@ void
 ddb_vlog (const char *fmt, va_list ap);
 
 void
-ddb_log_viewer_register (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text));
+ddb_log_viewer_register (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx), void *ctx);
 
 void
-ddb_log_viewer_unregister (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text));
+ddb_log_viewer_unregister (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx), void *ctx);
 
 #endif /* logger_h */

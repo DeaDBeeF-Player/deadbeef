@@ -104,7 +104,7 @@ extern DB_functions_t *deadbeef;
     [self updateRGLabels];
     [_cli_add_to_specific_playlist setState: deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1) ? NSOnState : NSOffState];
     [_cli_add_playlist_name setStringValue: [NSString stringWithUTF8String: deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default")]];
-    [_resume_last_session setState: deadbeef->conf_get_int ("resume_last_session", 0) ? NSOnState : NSOffState];
+    [_resume_last_session setState: deadbeef->conf_get_int ("resume_last_session", 1) ? NSOnState : NSOffState];
     [_ignore_archives setState: deadbeef->conf_get_int ("ignore_archives", 1) ? NSOnState : NSOffState];
     [_stop_after_current_reset setState: deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0) ? NSOnState : NSOffState];
     [_stop_after_album_reset setState: deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0) ? NSOnState : NSOffState];
@@ -413,6 +413,7 @@ extern DB_functions_t *deadbeef;
     deadbeef->conf_set_float ("replaygain.preamp_with_rg", value);
     [self updateRGLabels];
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->conf_save ();
 }
 
 - (IBAction)replaygain_preamp_without_rg_action:(id)sender {
@@ -420,12 +421,14 @@ extern DB_functions_t *deadbeef;
     deadbeef->conf_set_float ("replaygain.preamp_without_rg", value);
     [self updateRGLabels];
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->conf_save ();
 }
 
 - (IBAction)replaygain_source_mode_action:(id)sender {
     NSInteger idx = [_replaygain_source_mode indexOfSelectedItem];
     deadbeef->conf_set_int ("replaygain.source_mode", (int)idx);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->conf_save ();
 }
 
 - (IBAction)replaygain_processing_action:(id)sender {
@@ -443,6 +446,31 @@ extern DB_functions_t *deadbeef;
 
     deadbeef->conf_set_int ("replaygain.processing_flags", flags);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)ignoreArchivesAction:(id)sender {
+    deadbeef->conf_set_int ("ignore_archives", [_ignore_archives state] == NSOnState);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)resumeLastSessionAction:(id)sender {
+    deadbeef->conf_set_int ("resume_last_session", [_resume_last_session state] == NSOnState);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)stopAfterCurrentResetAction:(id)sender {
+    deadbeef->conf_set_int ("playlist.stop_after_current_reset", [_stop_after_current_reset state] == NSOnState);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)stopAfterCurrentAlbumResetAction:(id)sender {
+    deadbeef->conf_set_int ("playlist.stop_after_album_reset", [_stop_after_album_reset state] == NSOnState);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->conf_save ();
 }
 
 @end

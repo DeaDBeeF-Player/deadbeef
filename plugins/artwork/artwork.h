@@ -68,12 +68,15 @@ typedef struct ddb_cover_query_s {
 // This structure is passed to the callback, when the artwork query has been processed.
 // It doesn't need to be freed by the caller
 typedef struct ddb_cover_info_s {
-    const char *type; // A type of image, e.g. "front" or "back" (can be NULL)
+    int refc; // Reference count, to allow sending the same cover to multiple callbacks
+    char *type; // A type of image, e.g. "front" or "back" (can be NULL)
 
-    const char *filename; // A name of file with the image
+    char *filename; // A name of file with the image
 
-    const char *blob; // A blob with the image data, or NULL
+    char *blob; // A blob with the image data, or NULL
     uint64_t blob_size; // Size of the blob
+    uint64_t blob_image_offset; // offset where the image data starts in the blob
+    uint64_t blob_image_size; // size of the image at offset
 
     struct ddb_cover_info_s *next; // The next image in the chain, or NULL
 } ddb_cover_info_t;
@@ -81,7 +84,8 @@ typedef struct ddb_cover_info_s {
 // The `error` is 0 on success, or negative value on failure.
 // The `query` will be the same pointer, as passed to `cover_get`,
 // remember to free it when done with it.
-// The `cover` is a artwork information, e.g. a filename, or a blob.
+// The `cover` is a artwork information, e.g. a filename, or a blob,
+// remember for call artwork_plugin->cover_info_free (cover) when done with it.
 typedef void (*ddb_cover_callback_t) (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover);
 
 typedef struct {
@@ -100,6 +104,14 @@ typedef struct {
     // Avoid running slow blocking code in the callbacks.
     void
     (*cover_get) (ddb_cover_query_t *query, ddb_cover_callback_t callback);
+
+    // Clears the current queue, calling the callback with no results for each item.
+    void
+    (*reset) (void);
+
+    // Free dynamically allocated data pointed by `cover`.
+    void
+    (*cover_info_free) (ddb_cover_info_t *cover);
 } ddb_artwork_plugin_t;
 
 #endif /*__ARTWORK_H*/

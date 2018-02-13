@@ -55,7 +55,7 @@ static ptrdiff_t check_vorbis_headers(DB_FILE *in, ogg_sync_state *oy, const off
         return serial;
 
     ogg_packet vc;
-    int pages = read_packet(in, oy, &os, &og, &vc, 1);
+    int64_t pages = read_packet(in, oy, &os, &og, &vc, 1);
     if (pages > OGGEDIT_EOF)
         pages = read_packet(in, oy, &os, &og, codebooks, pages);
     ogg_stream_clear(&os);
@@ -155,7 +155,7 @@ off_t oggedit_write_vorbis_metadata(DB_FILE *in, const char *fname, const off_t 
 
     /* If we have tempfile, copy the remaining pages */
     if (*tempname) {
-        vorbis_serial = copy_remaining_pages(in, out, &oy, vorbis_serial, pageno);
+        vorbis_serial = copy_remaining_pages(in, out, &oy, vorbis_serial, (uint32_t)pageno);
         if (vorbis_serial <= OGGEDIT_EOF) {
             res = vorbis_serial;
             goto cleanup;

@@ -19,6 +19,7 @@ intl/plural.c
 plugins/gtkui/deadbeef.glade
 plugins/wildmidi/wildmidiplug.c
 translation/extra.c
+translation/plugins.c
 plugins/converter/convgui.c
 plugins/converter/interface.c
 plugins/converter/support.c
@@ -35,3 +36,5 @@ plugins/gtkui/widgets.c
 plugins/gtkui/pltmenu.c
 plugins/pltbrowser/pltbrowser.c
 tf.c
+plugins/gtkui/gtk/menus.ui
+plugins/gtkui/rg.c

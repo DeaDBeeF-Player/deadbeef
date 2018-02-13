@@ -1,0 +1,799 @@
+/*
+    deadbeef-opus
+    Copyright (C) 2009-2017 Alexey Yakovenko and other contributors
+
+    This software is provided 'as-is', without any express or implied
+    warranty.  In no event will the authors be held liable for any damages
+    arising from the use of this software.
+
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
+
+    1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
+*/
+
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <opusfile.h>
+#include "../../deadbeef.h"
+#include <stdbool.h>
+#include "../liboggedit/oggedit.h"
+#include "../../strdupa.h"
+
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
+
+static DB_decoder_t plugin;
+static DB_functions_t *deadbeef;
+
+typedef struct {
+    DB_fileinfo_t info;
+    int64_t startsample;
+    int64_t endsample;
+    int64_t currentsample;
+
+    DB_FILE *file;
+    OggOpusFile *opusfile;
+    uint8_t *channelmap;
+
+    int is_subtrack;
+    int cur_bit_stream;
+
+    int set_bitrate;
+    float next_update;
+    DB_playItem_t *it;
+    DB_playItem_t *new_track;
+} opusdec_info_t;
+
+static const char * exts[] = { "ogg", "opus", "ogv", NULL };
+
+// opus file wrapper
+static int
+opus_file_read(void *source, unsigned char *ptr, const int bytes) {
+    size_t res = ((DB_FILE *)source)->vfs->read(ptr, 1, bytes, source);
+    return (int)res;
+}
+
+static int
+opus_file_seek(void *source, const opus_int64 offset, const int whence) {
+    return ((DB_FILE *)source)->vfs->seek(source, offset, whence);
+}
+
+static opus_int64
+opus_file_tell (void *source) {
+    return (opus_int64)((DB_FILE *)source)->vfs->tell(source);
+}
+
+static int
+opus_file_close (void *source) {
+    return 0;
+}
+
+static OggOpusFile *
+opus_file_open(DB_FILE *fp)
+{
+    int is_streaming = fp->vfs->is_streaming();
+    const OpusFileCallbacks opcb = {
+        .read = opus_file_read,
+        .seek = is_streaming ? NULL : opus_file_seek,
+        .tell = is_streaming ? NULL : opus_file_tell,
+        .close = opus_file_close
+    };
+
+    int res = 0;
+
+    return op_open_callbacks(fp, &opcb, NULL, 0, &res);
+}
+
+static DB_fileinfo_t *
+opusdec_open (uint32_t hints) {
+    DB_fileinfo_t *_info = malloc (sizeof (opusdec_info_t));
+    memset (_info, 0, sizeof (opusdec_info_t));
+    return _info;
+}
+
+static DB_fileinfo_t *
+opusdec_open2 (uint32_t hints, DB_playItem_t *it) {
+    deadbeef->pl_lock ();
+    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
+
+    if (!fp) {
+        return NULL;
+    }
+
+    DB_fileinfo_t *_info = malloc (sizeof (opusdec_info_t));
+    opusdec_info_t *info = (opusdec_info_t *)_info;
+    memset (info, 0, sizeof (opusdec_info_t));
+
+    info->file = fp;
+    info->it = it;
+    deadbeef->pl_item_ref (it);
+
+    return _info;
+}
+
+static const char *tag_rg_names[] = {
+    "REPLAYGAIN_ALBUM_GAIN",
+    "REPLAYGAIN_ALBUM_PEAK",
+    "REPLAYGAIN_TRACK_GAIN",
+    "REPLAYGAIN_TRACK_PEAK",
+    NULL
+};
+
+// replaygain key names in deadbeef internal metadata
+static const char *ddb_internal_rg_keys[] = {
+    ":REPLAYGAIN_ALBUMGAIN",
+    ":REPLAYGAIN_ALBUMPEAK",
+    ":REPLAYGAIN_TRACKGAIN",
+    ":REPLAYGAIN_TRACKPEAK",
+    NULL
+};
+
+
+
+static bool
+replaygain_tag(DB_playItem_t *it, const int tag_enum, const char *tag, const char *value)
+{
+    if (strcasecmp(tag_rg_names[tag_enum], tag))
+        return false;
+
+    deadbeef->pl_set_item_replaygain (it, tag_enum, atof(value));
+    return true;
+}
+
+static int
+update_vorbis_comments (DB_playItem_t *it, OggOpusFile *opusfile, const int tracknum) {
+    const OpusTags *vc = op_tags (opusfile, tracknum);
+    if (!vc) {
+        return -1;
+    }
+
+    deadbeef->pl_delete_all_meta (it);
+    int has_rg_tags = 0;
+
+    for (int i = 0; i < vc->comments; i++) {
+        char *tag = strdup(vc->user_comments[i]);
+        char *value;
+        if (tag && (value = strchr(tag, '='))
+#ifdef ANDROID
+            && strlen (value) < 4000
+#endif
+            ) {
+            *value++ = '\0';
+            int is_rg_tag = 0;
+            for (int i = 0; i <= DDB_REPLAYGAIN_TRACKPEAK; i++) {
+                if (replaygain_tag(it, i, tag, value)) {
+                    is_rg_tag = 1;
+                    has_rg_tags = 1;
+                    break;
+                }
+            }
+            if (!is_rg_tag && strcasecmp (tag, "METADATA_BLOCK_PICTURE")) {
+                deadbeef->pl_append_meta(it, oggedit_map_tag(tag, "tag2meta"), value);
+            }
+        }
+        if (tag) {
+            free(tag);
+        }
+    }
+
+    // if none of the normal RG tags are present, use the R128/headergain
+    if (!has_rg_tags) {
+        const char *r128_trackgain = deadbeef->pl_find_meta (it, "R128_TRACK_GAIN");
+        if (r128_trackgain) {
+            int trackgain = atoi (r128_trackgain) + op_head (opusfile, tracknum)->output_gain;
+            if (trackgain != 0) {
+                deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, trackgain / 256.0f + 5.0f);
+                deadbeef->pl_delete_meta (it, "R128_TRACK_GAIN");
+            }
+        }
+
+        int albumgain = op_head (opusfile, tracknum)->output_gain;
+
+        const char *r128_albumgain = deadbeef->pl_find_meta (it, "R128_ALBUM_GAIN");
+        if (r128_albumgain) {
+            albumgain += atoi (r128_albumgain);
+            deadbeef->pl_delete_meta (it, "R128_ALBUM_GAIN");
+        }
+        if (albumgain != 0) {
+            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, albumgain / 256.0f + 5.0f);
+        }
+    }
+
+    char s[100];
+    snprintf (s, sizeof (s), "%0.2f dB", op_head (opusfile, tracknum)->output_gain / 256.0f + 5.0f);
+    deadbeef->pl_replace_meta (it, ":OPUS_HEADER_GAIN", s);
+
+    deadbeef->pl_set_meta_int (it, ":SAMPLERATE_ORIGINAL", op_head (opusfile, tracknum)->input_sample_rate);
+
+    deadbeef->pl_add_meta (it, "title", NULL);
+    uint32_t f = deadbeef->pl_get_item_flags (it);
+    f &= ~DDB_TAG_MASK;
+    f |= DDB_TAG_VORBISCOMMENTS;
+    deadbeef->pl_set_item_flags (it, f);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
+
+    return 0;
+}
+
+static void
+set_meta_ll(DB_playItem_t *it, const char *key, const int64_t value)
+{
+    char string[11];
+    sprintf(string, "%lld", value);
+    deadbeef->pl_replace_meta(it, key, string);
+}
+
+static int
+opusdec_seek_sample (DB_fileinfo_t *_info, int sample) {
+    opusdec_info_t *info = (opusdec_info_t *)_info;
+    if (sample < 0) {
+        return -1;
+    }
+    if (!info->file) {
+        return -1;
+    }
+    int64_t startsample = info->startsample;
+    sample += startsample;
+    int res = op_pcm_seek (info->opusfile, sample);
+    if (res != 0 && res != OP_ENOSEEK) {
+        return -1;
+    }
+    _info->readpos = (float)(sample - startsample)/_info->fmt.samplerate;
+    info->next_update = -2;
+    return 0;
+}
+
+static int
+opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
+    opusdec_info_t *info = (opusdec_info_t *)_info;
+
+    if (!info->file) {
+        deadbeef->pl_lock ();
+        DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+        deadbeef->pl_unlock ();
+
+        if (!fp) {
+            return -1;
+        }
+        info->file = fp;
+        info->it = it;
+        deadbeef->pl_item_ref (it);
+    }
+
+    info->opusfile = opus_file_open (info->file);
+    if (!info->opusfile) {
+        return -1;
+    }
+
+    const OpusHead *head = op_head (info->opusfile, 0);
+
+    if (head->channel_count > 8) {
+        trace ("opus: the track has %d channels, but 8 is max supported.\n");
+        return -1;
+    }
+
+    // take this parameters from your input file
+    // we set constants for clarity sake
+    _info->fmt.bps = 32;
+    _info->fmt.is_float = 1;
+    _info->fmt.channels = head->channel_count;
+    _info->fmt.samplerate  = 48000;
+    if (head->mapping_family == 1) {
+        info->channelmap = oggedit_vorbis_channel_map (head->channel_count);
+    }
+
+    for (int i = 0; i < (_info->fmt.channels&0x1f); i++) {
+        _info->fmt.channelmask |= 1 << i;
+    }
+    _info->readpos = 0;
+    _info->plugin = &plugin;
+
+    // set all gain adjustment to 0, because deadbeef is performing that.
+    op_set_gain_offset (info->opusfile, OP_ABSOLUTE_GAIN, 0);
+
+    if (info->file->vfs->is_streaming ()) {
+        info->startsample = deadbeef->pl_item_get_startsample (it);
+        info->endsample = deadbeef->pl_item_get_endsample (it);
+
+        if (update_vorbis_comments (it, info->opusfile, -1))
+            return -1;
+
+        deadbeef->pl_set_meta_int(it, ":TRACKNUM", 0);
+    }
+    else {
+        info->startsample = 0;
+        info->endsample = -1;
+        opusdec_seek_sample (_info, 0);
+    }
+
+    info->is_subtrack = deadbeef->pl_get_item_flags(it) & DDB_IS_SUBTRACK;
+    deadbeef->pl_replace_meta (it, "!FILETYPE", "Ogg Opus");
+
+    return 0;
+}
+
+// free everything allocated in _init
+static void
+opusdec_free (DB_fileinfo_t *_info) {
+    opusdec_info_t *info = (opusdec_info_t *)_info;
+
+    if (info->opusfile) {
+        op_free(info->opusfile);
+        info->opusfile = NULL;
+    }
+    if (info->file) {
+        deadbeef->fclose (info->file);
+        info->file = NULL;
+    }
+    if (info->it) {
+        deadbeef->pl_item_unref (info->it);
+        info->it = NULL;
+    }
+
+    if (info) {
+        free (info);
+    }
+}
+
+static void send_event(DB_playItem_t *it, const int event_enum)
+{
+    ddb_event_track_t *event = (ddb_event_track_t *)deadbeef->event_alloc(event_enum);
+    event->track = it;
+    if (event->track) {
+        deadbeef->pl_item_ref(event->track);
+    }
+    deadbeef->event_send((ddb_event_t *)event, 0, 0);
+}
+
+static bool
+new_streaming_link(opusdec_info_t *info, const int new_link)
+{
+    if (info->cur_bit_stream == 0 && new_link != 1)
+        return false;
+
+    deadbeef->pl_set_meta_int(info->it, ":TRACKNUM", new_link);
+    update_vorbis_comments(info->it, info->opusfile, new_link);
+    send_event(info->it, DB_EV_SONGSTARTED);
+    send_event(info->it, DB_EV_TRACKINFOCHANGED);
+    deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    info->cur_bit_stream = new_link;
+
+    const OpusHead *head = op_head (info->opusfile, new_link);
+    if (head && info->info.fmt.channels != head->channel_count) {
+        // Streamer can't do this, so re-init the stream
+        deadbeef->sendmessage(DB_EV_PAUSE, 0, 0, 0);
+        deadbeef->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
+        return true;
+    }
+
+    return false;
+}
+
+static bool
+is_playing_track(const DB_playItem_t *it)
+{
+    DB_playItem_t *track = deadbeef->streamer_get_playing_track();
+    if (track)
+        deadbeef->pl_item_unref(track);
+    return track == it;
+}
+
+static int
+opusdec_read (DB_fileinfo_t *_info, char *bytes, int size) {
+    opusdec_info_t *info = (opusdec_info_t *)_info;
+
+    // Work round some streamer limitations and infobar issue #22
+    if (info->new_track && is_playing_track(info->new_track)) {
+        info->new_track = NULL;
+        send_event(info->it, DB_EV_TRACKINFOCHANGED);
+        info->next_update = -2;
+    }
+
+    // Don't read past the end of a sub-track
+    int samples_to_read = size / sizeof(float) / _info->fmt.channels;
+    if (info->is_subtrack) {
+        opus_int64 samples_left = info->endsample - op_pcm_tell (info->opusfile);
+        if (samples_left < size) {
+            samples_to_read = (int)samples_left;
+            size = samples_to_read * sizeof(float) * _info->fmt.channels;
+        }
+    }
+
+    // Read until we have enough bytes to satisfy streamer, or there are none left
+    int bytes_read = 0;
+    int ret = OP_HOLE;
+
+#if FIXED_POINT
+#error unsupported
+    char map_buffer[info->channel_map ? bytes_to_read : 0];
+    char *ptr = info->channel_map ? map_buffer : buffer;
+    while ((ret > 0 || ret == OP_HOLE) && bytes_read < bytes_to_read)
+    {
+        int new_link = -1;
+        ret=op_read(info->opusfile, ptr+bytes_read, bytes_to_read-bytes_read, &new_link);
+        if (ret < 0) {
+        }
+        else if (new_link != info->cur_bit_stream && !op_seekable(info->opusfile) && new_streaming_link(info, new_link)) {
+            bytes_read = bytes_to_read;
+        }
+        else {
+            bytes_read += ret;
+        }
+    }
+
+    if (info->channel_map)
+        map_channels((int16_t *)buffer, (int16_t *)map_buffer, (int16_t *)ptr, info->channel_map, _info->fmt.channels);
+#else
+    int samples_read = 0;
+    while (samples_read < samples_to_read && (ret > 0 || ret == OP_HOLE))
+    {
+        int nframes = samples_to_read-samples_read;
+        float pcm[nframes * _info->fmt.channels];
+        int new_link = -1;
+        ret = op_read_float(info->opusfile, pcm, nframes * _info->fmt.channels, &new_link);
+
+        if (ret < 0) {
+        }
+        else if (new_link != info->cur_bit_stream && !op_seekable (info->opusfile) && new_streaming_link(info, new_link)) {
+            samples_read = samples_to_read;
+        }
+        else if (ret > 0) {
+            for (int channel = 0; channel < _info->fmt.channels; channel++) {
+                const float *pcm_channel = &pcm[info->channelmap ? info->channelmap[channel] : channel];
+                float *ptr = ((float *)bytes + samples_read*_info->fmt.channels) + channel;
+                for (int sample = 0; sample < ret; sample ++, pcm_channel += _info->fmt.channels) {
+                    *ptr = *pcm_channel;
+                    ptr += _info->fmt.channels;
+                }
+            }
+            samples_read += ret;
+        }
+    }
+    bytes_read = samples_read * sizeof(float) * _info->fmt.channels;
+#endif
+
+    int64_t startsample = info->startsample;
+    _info->readpos = (float)(op_pcm_tell(info->opusfile) - startsample) / _info->fmt.samplerate;
+    if (info->set_bitrate && _info->readpos > info->next_update) {
+        const int rate = (int)op_bitrate_instant(info->opusfile) / 1000;
+        if (rate > 0) {
+            deadbeef->streamer_set_bitrate(rate);
+            info->next_update = info->next_update <= 0 ? info->next_update + 1 : _info->readpos + 5;
+        }
+    }
+
+    return bytes_read;
+}
+
+static int
+opusdec_seek (DB_fileinfo_t *_info, float time) {
+    return opusdec_seek_sample (_info, time * _info->fmt.samplerate);
+}
+
+static off_t
+sample_offset(OggOpusFile *opusfile, const opus_int64 sample)
+{
+    if (sample <= 0 || sample == op_pcm_total(opusfile, -1))
+        return 0;
+
+    if (op_pcm_seek(opusfile, sample)) {
+        return -1;
+    }
+
+    return op_raw_tell(opusfile);
+}
+
+static DB_playItem_t *
+opusdec_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
+    DB_FILE *fp = deadbeef->fopen (fname);
+    if (!fp) {
+        return NULL;
+    }
+    int64_t fsize = deadbeef->fgetlength (fp);
+    if (fp->vfs->is_streaming ()) {
+        DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+        deadbeef->plt_set_item_duration (plt, it, -1);
+        deadbeef->pl_add_meta (it, "title", NULL);
+        after = deadbeef->plt_insert_item (plt, after, it);
+        deadbeef->pl_item_unref (it);
+        deadbeef->fclose (fp);
+        return after;
+    }
+
+    OggOpusFile *opusfile = opus_file_open (fp);
+    if (!opusfile) {
+        deadbeef->fclose (fp);
+        return NULL;
+    }
+
+    long nstreams = op_link_count (opusfile);
+    int64_t currentsample = 0;
+    for (int stream = 0; stream < nstreams; stream++) {
+        const OpusHead *head = op_head (opusfile, stream);
+        if (!head) {
+            continue;
+        }
+        int64_t totalsamples = op_pcm_total (opusfile, stream);
+        const float duration = totalsamples / 48000.f;
+
+        DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+        deadbeef->pl_set_meta_int (it, ":TRACKNUM", stream);
+        deadbeef->plt_set_item_duration (plt, it, duration);
+        if (nstreams > 1) {
+            deadbeef->pl_item_set_startsample (it, currentsample);
+            deadbeef->pl_item_set_endsample (it, currentsample + totalsamples - 1);
+            deadbeef->pl_set_item_flags (it, DDB_IS_SUBTRACK);
+        }
+
+        if (update_vorbis_comments (it, opusfile, stream))
+            continue;
+        int samplerate = 48000;
+
+        int64_t startsample = deadbeef->pl_item_get_startsample (it);
+        int64_t endsample = deadbeef->pl_item_get_endsample (it);
+
+        const off_t start_offset = sample_offset(opusfile, startsample-1);
+        const off_t end_offset = sample_offset(opusfile, endsample);
+        char *filetype = NULL;
+        const off_t stream_size = oggedit_opus_stream_info(deadbeef->fopen(fname), start_offset, end_offset, &filetype);
+        if (filetype) {
+            deadbeef->pl_replace_meta(it, ":FILETYPE", filetype);
+            free(filetype);
+        }
+        if (stream_size > 0) {
+            set_meta_ll(it, ":OPUS_STREAM_SIZE", stream_size);
+            deadbeef->pl_set_meta_int(it, ":BITRATE", 8.f * samplerate * stream_size / totalsamples / 1000);
+        }
+        set_meta_ll (it, ":FILE_SIZE", fsize);
+        deadbeef->pl_set_meta_int (it, ":CHANNELS", head->channel_count);
+        deadbeef->pl_set_meta_int (it, ":SAMPLERATE", samplerate);
+
+        if (nstreams == 1) {
+            DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it,  totalsamples, samplerate);
+            if (cue) {
+                deadbeef->pl_item_unref (it);
+                op_free(opusfile);
+                deadbeef->fclose (fp);
+                return cue;
+            }
+        }
+        else {
+            currentsample += totalsamples;
+        }
+
+        after = deadbeef->plt_insert_item (plt, after, it);
+        deadbeef->pl_item_unref (it);
+    }
+    op_free(opusfile);
+    deadbeef->fclose (fp);
+    return after;
+}
+
+static int
+opusdec_read_metadata (DB_playItem_t *it) {
+    int res = -1;
+
+    DB_FILE *fp = NULL;
+    OggOpusFile *opusfile = NULL;
+    const OpusHead *head = NULL;
+
+    deadbeef->pl_lock ();
+    fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
+    if (!fp) {
+        goto error;
+    }
+    if (fp->vfs->is_streaming ()) {
+        goto error;
+    }
+
+    opusfile = opus_file_open (fp);
+    if (!opusfile) {
+        goto error;
+    }
+
+    int tracknum = deadbeef->pl_find_meta_int (it, ":TRACKNUM", -1);
+    head = op_head (opusfile, tracknum);
+    if (!head) {
+        goto error;
+    }
+
+    if (update_vorbis_comments (it, opusfile, tracknum)) {
+        goto error;
+    }
+
+    res = 0;
+error:
+    if (opusfile) {
+        op_free (opusfile);
+    }
+    if (fp) {
+        deadbeef->fclose (fp);
+    }
+    return res;
+}
+
+static void
+split_tag(OpusTags *tags, const char *key, const char *value, int valuesize)
+{
+    while (valuesize > 0) {
+        opus_tags_add(tags, key, value);
+        size_t l = strlen (value) + 1;
+        value += l;
+        valuesize -= l;
+    }
+}
+
+static OpusTags *
+tags_list(DB_playItem_t *it, OggOpusFile *opusfile, int link)
+{
+    const OpusTags *orig = op_tags (opusfile, link);
+
+    OpusTags *tags = calloc (1, sizeof (OpusTags));
+    if (!tags)
+        return NULL;
+
+    deadbeef->pl_lock ();
+    for (DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it); m; m = m->next) {
+        if (strchr (":!_", m->key[0])) {
+            break;
+        }
+        char *key = strdupa (m->key);
+        split_tag (tags, oggedit_map_tag (key, "meta2tag"), m->value, m->valuesize);
+    }
+    deadbeef->pl_unlock ();
+
+    // add replaygain values
+    // header gain will be reset to 0, r128_* tags will be stripped
+
+    for (int n = 0; ddb_internal_rg_keys[n]; n++) {
+        if (deadbeef->pl_find_meta (it, ddb_internal_rg_keys[n])) {
+            float value = deadbeef->pl_get_item_replaygain (it, n);
+            char s[100];
+            snprintf (s, sizeof (s), "%f", value);
+            split_tag (tags, tag_rg_names[n], s, (int)strlen (s) + 1);
+        }
+    }
+
+    // preserve album art
+    int i = 0;
+    const char *tag;
+    while ((tag = opus_tags_query(orig, ALBUM_ART_KEY, i++))) {
+        split_tag (tags, ALBUM_ART_KEY, tag, (int)strlen (tag) + 1);
+    }
+
+    return tags;
+}
+
+static int
+opusdec_write_metadata (DB_playItem_t *it) {
+    char fname[PATH_MAX];
+    deadbeef->pl_get_meta (it, ":URI", fname, sizeof (fname));
+
+    DB_FILE *fp = deadbeef->fopen (fname);
+    if (!fp) {
+        return -1;
+    }
+
+    int is_streaming = fp->vfs->is_streaming();
+    const OpusFileCallbacks opcb = {
+        .read = opus_file_read,
+        .seek = is_streaming ? NULL : opus_file_seek,
+        .tell = is_streaming ? NULL : opus_file_tell,
+        .close = opus_file_close
+    };
+
+    int res = 0;
+
+    OggOpusFile *opusfile = op_test_callbacks(fp, &opcb, NULL, 0, &res);
+    if (!opusfile) {
+        deadbeef->fclose (fp);
+        return -1;
+    }
+
+    int link = 0;
+    if (deadbeef->pl_get_item_flags (it) & DDB_IS_SUBTRACK) {
+        link = deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0);
+    }
+
+    OpusTags *tags = tags_list(it, opusfile, link);
+    if (!tags) {
+        op_free (opusfile);
+        deadbeef->fclose (fp);
+        return -1;
+    }
+
+    deadbeef->pl_lock();
+    const char *stream_size_string = deadbeef->pl_find_meta(it, ":STREAM SIZE");
+    const size_t stream_size = stream_size_string ? (off_t)atoll(stream_size_string) : 0;
+    deadbeef->pl_unlock();
+    const off_t file_size = oggedit_write_opus_metadata (deadbeef->fopen(fname), fname, 0, stream_size, 0, tags->comments, tags->user_comments);
+    opus_tags_clear(tags);
+
+    res = 0;
+    if (file_size <= 0) {
+        res = -1;
+    }
+
+    op_free (opusfile);
+    deadbeef->fclose (fp);
+
+    if (!res) {
+        set_meta_ll(it, ":FILE_SIZE", (int64_t)file_size);
+        res = opusdec_read_metadata(it);
+    }
+    return res;
+}
+
+
+// define plugin interface
+static DB_decoder_t plugin = {
+    DB_PLUGIN_SET_API_VERSION
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
+    .plugin.type = DB_PLUGIN_DECODER,
+    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
+    .plugin.name = "Opus player",
+    .plugin.id = "opus",
+    .plugin.descr = "Opus player based on libogg, libopus and libopusfile.",
+    .plugin.copyright = 
+        "deadbeef-opus\n"
+        "Copyright (C) 2009-2017 Alexey Yakovenko and other contributors\n"
+        "\n"
+        "This software is provided 'as-is', without any express or implied\n"
+        "warranty.  In no event will the authors be held liable for any damages\n"
+        "arising from the use of this software.\n"
+        "\n"
+        "Permission is granted to anyone to use this software for any purpose,\n"
+        "including commercial applications, and to alter it and redistribute it\n"
+        "freely, subject to the following restrictions:\n"
+        "\n"
+        "1. The origin of this software must not be misrepresented; you must not\n"
+        " claim that you wrote the original software. If you use this software\n"
+        " in a product, an acknowledgment in the product documentation would be\n"
+        " appreciated but is not required.\n"
+        "\n"
+        "2. Altered source versions must be plainly marked as such, and must not be\n"
+        " misrepresented as being the original software.\n"
+        "\n"
+        "3. This notice may not be removed or altered from any source distribution.\n"
+        "\n\n\n"
+        "libogg, opus, opusfile\n"
+        "Copyright (c) 1994-2013 Xiph.Org Foundation and contributors\n"
+        "\n\n\n"
+        "liboggedit\n"
+        "Copyright (C) 2014 Ian Nartowicz <deadbeef@nartowicz.co.uk>\n",
+    .open = opusdec_open,
+    .open2 = opusdec_open2,
+    .init = opusdec_init,
+    .free = opusdec_free,
+    .read = opusdec_read,
+    .seek = opusdec_seek,
+    .seek_sample = opusdec_seek_sample,
+    .insert = opusdec_insert,
+    .read_metadata = opusdec_read_metadata,
+    .write_metadata = opusdec_write_metadata,
+    .exts = exts,
+};
+
+DB_plugin_t *
+opus_load (DB_functions_t *api) {
+    deadbeef = api;
+    return DB_PLUGIN (&plugin);
+}
+

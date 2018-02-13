@@ -54,8 +54,8 @@ typedef struct {
     DB_FILE *c_file;
 #endif
     WavpackContext *ctx;
-    int startsample;
-    int endsample;
+    int64_t startsample;
+    int64_t endsample;
 } wvctx_t;
 
 #ifdef TINYWV
@@ -172,9 +172,10 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.channelmask |= 1 << i;
     }
     _info->readpos = 0;
-    if (it->endsample > 0) {
-        info->startsample = it->startsample;
-        info->endsample = it->endsample;
+    int64_t endsample = deadbeef->pl_item_get_endsample (it);
+    if (endsample > 0) {
+        info->startsample = deadbeef->pl_item_get_startsample (it);
+        info->endsample = endsample;
         if (plugin.seek_sample (_info, 0) < 0) {
             return -1;
         }
@@ -348,30 +349,12 @@ wv_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     snprintf (s, sizeof (s), "%s", (WavpackGetMode (ctx) & MODE_FLOAT) ? "FLOAT" : "INTEGER");
     deadbeef->pl_add_meta (it, ":WAVPACK_MODE", s);
 
-    // embedded cue
-    deadbeef->pl_lock ();
-    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-    if (cuesheet) {
-        trace ("found cuesheet: %s\n", cuesheet);
-        DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
-        if (last) {
-            deadbeef->pl_unlock ();
-            deadbeef->fclose (fp);
-            WavpackCloseFile (ctx);
-            deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (last);
-            return last;
-        }
-    }
-    deadbeef->pl_unlock ();
-    // cue file on disc
-    DB_playItem_t *cue_after = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
-    if (cue_after) {
+    DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it,  totalsamples, samplerate);
+    if (cue) {
+        deadbeef->pl_item_unref (it);
         deadbeef->fclose (fp);
         WavpackCloseFile (ctx);
-        deadbeef->pl_item_unref (it);
-        deadbeef->pl_item_unref (cue_after);
-        return cue_after;
+        return cue;
     }
 
     after = deadbeef->plt_insert_item (plt, after, it);
@@ -430,8 +413,7 @@ wv_write_metadata (DB_playItem_t *it) {
 static const char *exts[] = { "wv", NULL };
 // define plugin interface
 static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,

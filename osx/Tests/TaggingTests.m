@@ -1,10 +1,25 @@
-//
-//  Tagging.m
-//  
-//
-//  Created by waker on 26/04/16.
-//
-//
+/*
+    DeaDBeeF -- the music player
+    Copyright (C) 2009-2018 Alexey Yakovenko and other contributors
+
+    This software is provided 'as-is', without any express or implied
+    warranty.  In no event will the authors be held liable for any damages
+    arising from the use of this software.
+
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
+
+    1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
+*/
 
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
@@ -15,6 +30,7 @@
 #include "conf.h"
 #include "tf.h"
 #include "../../common.h"
+#include "logger.h"
 
 #define TESTFILE "/tmp/ddb_test.mp3"
 
@@ -32,6 +48,7 @@
     const char *str = [resPath UTF8String];
     strcpy (dbplugindir, str);
 
+    ddb_logger_init ();
     conf_init ();
     conf_enable_saving (0);
 
@@ -50,6 +67,7 @@
     plug_unload_all ();
     pl_free ();
     conf_free ();
+    ddb_logger_free ();
 
     [super tearDown];
 }
@@ -362,6 +380,75 @@
     tf_free (bc);
 
     XCTAssert(!strcmp (buffer, "track:10 total:11"), @"Got value: %s", buffer);
+}
+
+- (void)test_ShortMP3WithId3v1_TailIs128Bytes {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/tone1sec_id3v1.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    uint32_t head, tail;
+    junk_get_tag_offsets(fp, &head, &tail);
+    vfs_fclose (fp);
+    XCTAssert(head == 0);
+    XCTAssert(tail == 128);
+}
+
+- (void)test_ShortMP3WithApev2_TailIs52Bytes {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/tone1sec_apev2.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    uint32_t head, tail;
+    junk_get_tag_offsets(fp, &head, &tail);
+    vfs_fclose (fp);
+    XCTAssert(head == 0);
+    XCTAssert(tail == 52);
+}
+
+- (void)test_ShortMP3WithApev2AndId3v1_TailIs186Bytes {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/tone1sec_id3v1_apev2.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    uint32_t head, tail;
+    junk_get_tag_offsets(fp, &head, &tail);
+    vfs_fclose (fp);
+    XCTAssert(head == 0);
+    XCTAssert(tail == 186);
+}
+
+- (void)test_ShortMP3WithId3v1_ScansCorrectSize {
+    playlist_t *plt = plt_alloc("test");
+
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/tone1sec_id3v1.mp3", dbplugindir);
+
+    playItem_t *it = plt_insert_file2(0, plt, NULL, path, NULL, NULL, NULL);
+
+    plt_unref (plt);
+    XCTAssert(fabs (it->_duration - 1.02612245) < 0.0001f);
+}
+
+- (void)test_ShortMP3WithApev2_ScansCorrectSize {
+    playlist_t *plt = plt_alloc("test");
+
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/tone1sec_apev2.mp3", dbplugindir);
+
+    playItem_t *it = plt_insert_file2(0, plt, NULL, path, NULL, NULL, NULL);
+
+    plt_unref (plt);
+    XCTAssert(fabs (it->_duration - 1.02612245) < 0.0001f);
+}
+
+- (void)test_ShortMP3WithId3v1AndApev2_ScansCorrectSize {
+    playlist_t *plt = plt_alloc("test");
+
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/tone1sec_id3v1_apev2.mp3", dbplugindir);
+
+    playItem_t *it = plt_insert_file2(0, plt, NULL, path, NULL, NULL, NULL);
+
+    plt_unref (plt);
+    XCTAssert(fabs (it->_duration - 1.02612245) < 0.0001f);
 }
 
 @end

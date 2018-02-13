@@ -1,5 +1,6 @@
 SUBDIRS = pixmaps\
 		  icons\
+		  shared\
 		  ${PLUGINS_DIRS}\
 		  po\
 		  intl
@@ -19,9 +20,11 @@ DISTCLEANFILES = \
 deadbeef_SOURCES =\
 	main.c common.h deadbeef.h\
 	plugins.c plugins.h moduleconf.h\
-	playlist.c playlist.h \
+	cueutil.c cueutil.h playlist.c playlist.h \
 	plmeta.c pltmeta.c pltmeta.h\
 	streamer.c streamer.h\
+	dsp.c dsp.h\
+	streamreader.c streamreader.h\
 	premix.c premix.h\
 	messagepump.c messagepump.h\
 	conf.c  conf.h\

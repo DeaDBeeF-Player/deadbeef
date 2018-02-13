@@ -623,8 +623,7 @@ m3uplug_save (ddb_playlist_t *plt, const char *fname, DB_playItem_t *first, DB_p
 
 static const char * exts[] = { "m3u", "m3u8", "pls", NULL };
 DB_playlist_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_PLAYLIST,

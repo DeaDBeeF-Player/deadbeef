@@ -60,6 +60,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/vfs_curl.so\
     $PLUGDIR/vfs_zip.so\
     $PLUGDIR/vorbis.so\
+    $PLUGDIR/opus.so\
     $PLUGDIR/vtx.so\
     $PLUGDIR/wavpack.so\
     $PLUGDIR/wildmidi.so\
@@ -75,10 +76,10 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/ddb_mono2stereo.so\
     $PLUGDIR/alac.so\
     $PLUGDIR/wma.so\
+    $PLUGDIR/rg_scanner.so\
     $PLUGDIR/pltbrowser_gtk2.so\
     $PLUGDIR/pltbrowser_gtk3.so\
     $PLUGDIR/in_sc68.so\
-    $PLUGDIR/statusnotifier.so\
     $PLUGDIR/data68\
     $PIXMAPDIR\
     $SRCDIR/locale\

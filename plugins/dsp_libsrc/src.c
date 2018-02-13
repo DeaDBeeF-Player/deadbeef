@@ -56,6 +56,7 @@ ddb_src_open (void) {
     ddb_src_libsamplerate_t *src = malloc (sizeof (ddb_src_libsamplerate_t));
     DDB_INIT_DSP_CONTEXT (src,ddb_src_libsamplerate_t,&plugin);
 
+    src->autosamplerate = 0;
     src->samplerate = 44100;
     src->quality = 2;
     src->channels = -1;
@@ -88,34 +89,31 @@ ddb_src_set_ratio (ddb_dsp_context_t *_src, float ratio) {
     }
 }
 
+static int
+_get_target_samplerate (ddb_src_libsamplerate_t *src, ddb_waveformat_t *fmt) {
+    if (src->autosamplerate) {
+        DB_output_t *output = deadbeef->get_output ();
+        return output->fmt.samplerate;
+    }
+    else {
+        return src->samplerate;
+    }
+}
+
 int
 ddb_src_can_bypass (ddb_dsp_context_t *_src, ddb_waveformat_t *fmt) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
 
-    float samplerate = src->samplerate;
-    if (src->autosamplerate) {
-        DB_output_t *output = deadbeef->get_output ();
-        samplerate = output->fmt.samplerate;
-    }
+    int samplerate = _get_target_samplerate(src, fmt);
 
-    if (fmt->samplerate == samplerate) {
-        return 1;
-    }
-    return 0;
+    return fmt->samplerate == samplerate;
 }
 
 int
 ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxframes, ddb_waveformat_t *fmt, float *r) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
 
-    float samplerate = src->samplerate;
-    if (src->autosamplerate) {
-        DB_output_t *output = deadbeef->get_output ();
-        if (output->fmt.samplerate <= 0) {
-            return -1;
-        }
-        samplerate = output->fmt.samplerate;
-    }
+    int samplerate = _get_target_samplerate(src, fmt);
 
     if (fmt->samplerate == samplerate) {
         return nframes;
@@ -133,7 +131,7 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
         src->need_reset = 0;
     }
 
-    float ratio = samplerate / fmt->samplerate;
+    float ratio = (float)samplerate / fmt->samplerate;
     ddb_src_set_ratio (_src, ratio);
     fmt->samplerate = samplerate;
 
@@ -215,7 +213,6 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
     //}
     //fwrite (input, 1,  numoutframes*sizeof(float)*(*nchannels), out);
 
-    fmt->samplerate = samplerate;
     trace ("src: ratio=%f, in=%d, out=%d\n", ratio, nframes, numoutframes);
     return numoutframes;
 }
@@ -282,15 +279,14 @@ ddb_src_get_param (ddb_dsp_context_t *ctx, int p, char *val, int sz) {
 }
 
 static const char settings_dlg[] =
-    "property \"Automatic Samplerate (overrides Target Samplerate)\" checkbox 2 0;\n"
-    "property \"Target Samplerate\" spinbtn[8000,192000,1] 0 48000;\n"
+    "property \"Autodetect samplerate from output device\" checkbox 2 0;\n"
+    "property \"Set samplerate directly\" spinbtn[8000,192000,1] 0 44100;\n"
     "property \"Quality / Algorithm\" select[5] 1 2 SINC_BEST_QUALITY SINC_MEDIUM_QUALITY SINC_FASTEST ZERO_ORDER_HOLD LINEAR;\n"
 ;
 
 static DB_dsp_t plugin = {
     // need 1.1 api for pass_through
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 1,
+    DDB_PLUGIN_SET_API_VERSION
     .open = ddb_src_open,
     .close = ddb_src_close,
     .process = ddb_src_process,

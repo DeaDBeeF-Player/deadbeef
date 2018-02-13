@@ -31,7 +31,7 @@
 #include <string.h>
 #include "oggedit_internal.h"
 
-const char *oggedit_album_art_type(const int type)
+const char *oggedit_album_art_type(const uint32_t type)
 {
     switch (type) {
         case 1:

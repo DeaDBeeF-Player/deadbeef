@@ -129,6 +129,7 @@ extern DB_functions_t *deadbeef;
                                        @"propname":propname,
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
+                [tf setDelegate:(id<NSTextFieldDelegate>)self];
                 break;
             }
             case PROP_CHECKBOX:
@@ -271,6 +272,7 @@ extern DB_functions_t *deadbeef;
             }
         }
     }
+    deadbeef->streamer_set_dsp_chain (_curr_dsp);
 }
 
 - (void)resetPluginConfigToDefaults {

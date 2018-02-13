@@ -59,9 +59,9 @@ typedef struct {
     int   cklen;
     uchar tmp;
 
-    int currentsample;
-    int startsample;
-    int endsample;
+    int64_t currentsample;
+    int64_t startsample;
+    int64_t endsample;
 
     int skipsamples;
 } shn_fileinfo_t;
@@ -374,9 +374,10 @@ shn_init(DB_fileinfo_t *_info, DB_playItem_t *it) {
     int totalsamples = info->shnfile->wave_header.length * info->shnfile->wave_header.samples_per_sec;
     trace ("totalsamples: %d\n", totalsamples);
 
-    if (it->endsample > 0) {
-        info->startsample = it->startsample;
-        info->endsample = it->endsample;
+    int64_t endsample = deadbeef->pl_item_get_endsample (it);
+    if (endsample > 0) {
+        info->startsample = deadbeef->pl_item_get_startsample (it);
+        info->endsample = endsample;
         plugin.seek_sample (_info, 0);
     }
     else {
@@ -1807,8 +1808,7 @@ static const char settings_dlg[] =
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,

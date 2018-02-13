@@ -35,7 +35,7 @@
 // for information, about how to port your plugin to the new API correctly,
 // and to learn more about design mode programming,
 // please visit the following page:
-// http://github.com/Alexey-Yakovenko/deadbeef/wiki/Porting-GUI-plugins-to-deadbeef-from-0.5.x-to-0.6.0
+// http://github.com/DeaDBeeF-Player/deadbeef/wiki/Porting-GUI-plugins-to-deadbeef-from-0.5.x-to-0.6.0
 
 #if defined(GTK_CHECK_VERSION)
 #if GTK_CHECK_VERSION(3,0,0)

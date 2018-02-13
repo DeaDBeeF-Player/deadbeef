@@ -48,4 +48,8 @@
     }
 }
 
+- (IBAction)clearAction:(id)sender {
+    _textView.string = @"";
+}
+
 @end

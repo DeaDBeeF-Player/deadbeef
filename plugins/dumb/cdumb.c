@@ -189,24 +189,25 @@ cdumb_read (DB_fileinfo_t *_info, char *bytes, int size) {
     ret = duh_render (info->renderer, _info->fmt.bps, 0, 1, 65536.f / _info->fmt.samplerate, length, bytes);
     _info->readpos += ret / (float)_info->fmt.samplerate;
     trace ("cdumb_read %d\n", ret*samplesize);
-    return ret*samplesize;
+    return (int)(ret*samplesize);
 }
 
 static int
 cdumb_seek (DB_fileinfo_t *_info, float time) {
     trace ("cdumb_read seek %f\n", time);
     dumb_info_t *info = (dumb_info_t *)_info;
-    if (time < _info->readpos) {
+    float skiptime = time;
+    if (skiptime < _info->readpos) {
         if (cdumb_startrenderer (_info) < 0) {
             return -1;
         }       
     }
     else {
-        time -= _info->readpos;
+        skiptime -= _info->readpos;
     }
-    int pos = time * _info->fmt.samplerate;
+    int pos = skiptime * _info->fmt.samplerate;
     duh_sigrenderer_generate_samples (info->renderer, 0, 65536.0f / _info->fmt.samplerate, pos, NULL);
-    _info->readpos = duh_sigrenderer_get_position (info->renderer) / 65536.f;
+    _info->readpos = time;
     return 0;
 }
 
@@ -461,13 +462,12 @@ static const char settings_dlg[] =
     "property \"Resampling quality (0..5, higher is better)\" spinbtn[0,5,1] dumb.resampling_quality 4;\n"
     "property \"8-bit output (default is 16)\" checkbox dumb.8bitoutput 0;\n"
     "property \"Internal DUMB volume (0..128)\" spinbtn[0,128,16] dumb.globalvolume 64;\n"
-    "property \"Volume ramping (0 is none, 1 is note on/off, 2 is always)\" entry dumb.volume_ramping 2;\n"
+    "property \"Volume ramping\" select[3] dumb.volume_ramping 0 None \"On/Off Only\" \"Full\";\n"
 ;
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,

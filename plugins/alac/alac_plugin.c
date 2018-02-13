@@ -273,7 +273,7 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
 
         int outputBytes = 0;
-        decode_frame(info->_alac, buffer, info->out_buffer, &outputBytes);
+        decode_frame(info->_alac, buffer, (int)size, info->out_buffer, &outputBytes);
         outNumSamples = outputBytes / samplesize;
 
         info->out_remaining += outNumSamples;

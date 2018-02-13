@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2657" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <development version="7000" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <deployment identifier="macosx"/>
+        <development version="8000" identifier="xcode"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="MainWindowController">
@@ -141,7 +143,7 @@
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
             <value key="minSize" type="size" width="278" height="193"/>
             <view key="contentView" id="5gQ-Kt-nsC">
-                <rect key="frame" x="0.0" y="-5" width="278" height="193"/>
+                <rect key="frame" x="0.0" y="0.0" width="278" height="193"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField verticalHuggingPriority="750" id="Ecj-wq-LKu">
@@ -259,7 +261,7 @@ Gw
                                     <menuItem title="Album Art" id="frC-QM-NAv">
                                         <modifierMask key="keyEquivalentModifierMask"/>
                                     </menuItem>
-                                    <menuItem title="Artist - Album" id="3TZ-T9-qPQ">
+                                    <menuItem title="Artist - Album" id="3TZ-T9-qPQ" userLabel="Artist / Album">
                                         <modifierMask key="keyEquivalentModifierMask"/>
                                     </menuItem>
                                     <menuItem title="Artist" id="FkD-2m-fWw">
@@ -268,7 +270,7 @@ Gw
                                     <menuItem title="Album" id="xqz-sZ-IjC">
                                         <modifierMask key="keyEquivalentModifierMask"/>
                                     </menuItem>
-                                    <menuItem title="Title" id="Ek3-uR-aqr">
+                                    <menuItem title="Title" id="Ek3-uR-aqr" userLabel="Title / Track Artist">
                                         <modifierMask key="keyEquivalentModifierMask"/>
                                     </menuItem>
                                     <menuItem title="Duration" id="wfy-aY-KW8">

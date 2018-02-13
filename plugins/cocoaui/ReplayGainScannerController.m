@@ -31,6 +31,7 @@ static void
 _scan_progress (int current, void *user_data);
 
 static char *_title_tf;
+static ddb_rg_scanner_t *_rg;
 
 static NSMutableArray *g_rgControllers;
 
@@ -40,35 +41,30 @@ static NSMutableArray *g_rgControllers;
 
 @implementation ReplayGainScannerController {
     ddb_rg_scanner_settings_t _rg_settings;
-    ddb_rg_scanner_t *_rg;
     int _abort_flag;
     struct timeval _rg_start_tv;
     BOOL _abortTagWriting;
 }
 
-- (void)windowDidLoad {
-    [super windowDidLoad];
-}
++ (BOOL)initPlugin {
+    if (_rg) {
+        return YES;
+    }
 
-- (void)dismissController:(id)sender {
-    if (_rg_settings.tracks) {
-        for (int i = 0; i < _rg_settings.num_tracks; i++) {
-            deadbeef->pl_item_unref (_rg_settings.tracks[i]);
-        }
-        free (_rg_settings.tracks);
-    }
-    if (_rg_settings.results) {
-        free (_rg_settings.results);
-    }
-    memset (&_rg_settings, 0, sizeof (_rg_settings));
-    
-    if (g_rgControllers) {
-        [g_rgControllers removeObject:self];
-    }
-}
+    _rg = (ddb_rg_scanner_t *)deadbeef->plug_get_for_id ("rg_scanner");
 
-- (IBAction)progressCancelAction:(id)sender {
-    _abort_flag = 1;
+    if (!_rg) {
+        deadbeef->log ("rg_scanner plugin is not found");
+        return NO;
+    }
+
+    if (_rg && _rg->misc.plugin.version_major != 1) {
+        _rg = NULL;
+        deadbeef->log ("Invalid version of rg_scanner plugin");
+        return NO;
+    }
+
+    return YES;
 }
 
 + (ReplayGainScannerController *)runScanner:(int)mode forTracks:(DB_playItem_t **)tracks count:(int)count {
@@ -88,22 +84,68 @@ static NSMutableArray *g_rgControllers;
     return ctl;
 }
 
++ (ReplayGainScannerController *)removeRgTagsFromTracks:(DB_playItem_t **)tracks count:(int)count {
+    deadbeef->background_job_increment ();
+
+    ReplayGainScannerController *ctl = [[ReplayGainScannerController alloc] initWithWindowNibName:@"ReplayGain"];
+
+    [ctl removeRgTagsFromTracks:tracks count:count];
+    if (!g_rgControllers) {
+        g_rgControllers = [[NSMutableArray alloc] init];
+    }
+    [g_rgControllers addObject:ctl];
+    return ctl;
+}
+
++ (void)cleanup {
+    g_rgControllers = nil;
+}
+
+- (void)dealloc {
+    if (_rg_settings.tracks) {
+        for (int i = 0; i < _rg_settings.num_tracks; i++) {
+            deadbeef->pl_item_unref (_rg_settings.tracks[i]);
+        }
+        free (_rg_settings.tracks);
+    }
+    if (_rg_settings.results) {
+        free (_rg_settings.results);
+    }
+    memset (&_rg_settings, 0, sizeof (_rg_settings));
+}
+
+- (void)dismissController:(id)sender {
+    [self.window close];
+    [super dismissController:sender];
+    if (g_rgControllers) {
+        [g_rgControllers removeObject:self];
+    }
+}
+
+- (IBAction)progressCancelAction:(id)sender {
+    _abort_flag = 1;
+}
+
+- (void)windowWillClose:(NSNotification *)notification {
+    if (g_rgControllers) {
+        [g_rgControllers removeObject:self];
+    }
+}
+
 - (void)runScanner:(int)mode forTracks:(DB_playItem_t **)tracks count:(int)count {
-    _rg = (ddb_rg_scanner_t *)deadbeef->plug_get_for_id ("rg_scanner");
-    if (_rg && _rg->misc.plugin.version_major != 1) {
-        _rg = NULL;
-        deadbeef->log ("Invalid version of rg_scanner plugin");
+    if (![ReplayGainScannerController initPlugin]) {
         return;
     }
 
-    if (!_rg) {
-        deadbeef->log ("ReplayGain plugin is not found");
-    }
+    [self.window setDelegate:(id<NSWindowDelegate> _Nullable)self];
+    [self.window setIsVisible:YES];
+    [self.window makeKeyWindow];
 
-    //    [[_rgScannerWindowController window] setIsVisible:YES];
-    //    [[_rgScannerWindowController window] makeKeyWindow];
-    [[self window] setIsVisible:YES];
-    [[self window] makeKeyWindow];
+    [NSApp beginSheet: _scanProgressWindow
+       modalForWindow: self.window
+        modalDelegate: self
+       didEndSelector: nil
+          contextInfo: nil];
 
     memset (&_rg_settings, 0, sizeof (ddb_rg_scanner_settings_t));
     _rg_settings._size = sizeof (ddb_rg_scanner_settings_t);
@@ -132,6 +174,45 @@ static NSMutableArray *g_rgControllers;
         });
     });
 }
+
+- (void)removeRgTagsFromTracks:(DB_playItem_t **)tracks count:(int)count {
+    if (![ReplayGainScannerController initPlugin]) {
+        return;
+    }
+
+    memset (&_rg_settings, 0, sizeof (ddb_rg_scanner_settings_t));
+    _rg_settings._size = sizeof (ddb_rg_scanner_settings_t);
+    _rg_settings.tracks = tracks;
+    _rg_settings.num_tracks = count;
+
+    [self window]; // access main window to make sure the NIB is loaded
+    [_updateTagsProgressWindow setIsVisible:YES];
+    _abortTagWriting = NO;
+
+    dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(aQueue, ^{
+        for (int i = 0; i < _rg_settings.num_tracks; i++) {
+            _rg->remove (_rg_settings.tracks[i]);
+            if (_abortTagWriting) {
+                break;
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // progress
+                deadbeef->pl_lock ();
+                NSString *path = [NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (_rg_settings.tracks[i], ":URI")];
+                deadbeef->pl_unlock ();
+                [_updateTagsProgressText setStringValue:path];
+                [_updateTagsProgressIndicator setDoubleValue:(double)i/_rg_settings.num_tracks*100];
+            });
+        }
+        deadbeef->background_job_decrement ();
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_updateTagsProgressWindow close];
+            [self dismissController:self];
+        });
+    });
+}
+
 
 - (NSString *)formatTime:(float)sec extraPrecise:(BOOL)extraPrecise {
     int hr;
@@ -193,16 +274,20 @@ static NSMutableArray *g_rgControllers;
     NSString *elapsed = [self formatTime:timePassed extraPrecise:YES];
     float speed = [self getScanSpeed:_rg_settings.cd_samples_processed overTime:timePassed];
     [_resultStatusLabel setStringValue:[NSString stringWithFormat:@"Calculated in: %@, speed: %0.2fx", elapsed, speed]];
-    [[self window] close];
-    [_resultsWindow setIsVisible:YES];
-    [_resultsWindow makeKeyWindow];
+
+    [NSApp endSheet:_scanProgressWindow];
+    [_scanProgressWindow orderOut:self];
     [_resultsTableView setDataSource:(id<NSTableViewDataSource>)self];
     [_resultsTableView reloadData];
 }
 
 - (IBAction)updateFileTagsAction:(id)sender {
-    [_resultsWindow close];
-    [_updateTagsProgressWindow setIsVisible:YES];
+    [NSApp beginSheet: _updateTagsProgressWindow
+       modalForWindow: self.window
+        modalDelegate: self
+       didEndSelector: nil
+          contextInfo: nil];
+
     _abortTagWriting = NO;
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
@@ -219,11 +304,21 @@ static NSMutableArray *g_rgControllers;
                     [_updateTagsProgressText setStringValue:path];
                     [_updateTagsProgressIndicator setDoubleValue:(double)i/_rg_settings.num_tracks*100];
                 });
-                
-                _rg->apply (_rg_settings.tracks[i], _rg_settings.results[i].track_gain, _rg_settings.results[i].track_peak, _rg_settings.results[i].album_gain, _rg_settings.results[i].album_peak);
+
+                uint32_t flags = (1<<DDB_REPLAYGAIN_TRACKGAIN)|(1<<DDB_REPLAYGAIN_TRACKPEAK);
+                if (_rg_settings.mode != DDB_RG_SCAN_MODE_TRACK) {
+                    flags |= (1<<DDB_REPLAYGAIN_ALBUMGAIN)|(1<<DDB_REPLAYGAIN_ALBUMPEAK);
+                }
+                _rg->apply (_rg_settings.tracks[i], flags, _rg_settings.results[i].track_gain, _rg_settings.results[i].track_peak, _rg_settings.results[i].album_gain, _rg_settings.results[i].album_peak);
             }
         }
-        [self dismissController:self];
+        deadbeef->pl_save_all ();
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [NSApp endSheet:_updateTagsProgressWindow];
+            [_updateTagsProgressWindow orderOut:self];
+            [self dismissController:self];
+        });
     });
 }
 

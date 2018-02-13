@@ -57,6 +57,7 @@
 - (IBAction)encoderPresetChanged:(id)sender;
 - (IBAction)dspPresetChanged:(id)sender;
 - (IBAction)overwritePromptChanged:(id)sender;
+- (IBAction)outputFormatChanged:(id)sender;
 
 
 
@@ -105,6 +106,6 @@
 
 + (void)runConverter:(int)ctx;
 
-+ (void)converterCleanup;
++ (void)cleanup;
 
 @end

@@ -100,6 +100,7 @@ AC_ARG_ENABLE(vtx,      [AS_HELP_STRING([--disable-vtx     ], [disable libayemy 
 AC_ARG_ENABLE(adplug,   [AS_HELP_STRING([--disable-adplug  ], [disable adplug plugin (default: enabled)])], [enable_adplug=$enableval], [enable_adplug=yes])
 AC_ARG_ENABLE(hotkeys,  [AS_HELP_STRING([--disable-hotkeys ], [disable global hotkeys plugin (default: enabled)])], [enable_hotkeys=$enableval], [enable_hotkeys=yes])
 AC_ARG_ENABLE(vorbis,   [AS_HELP_STRING([--disable-vorbis  ], [disable Ogg Vorbis player plugin (default: enabled)])], [enable_vorbis=$enableval], [enable_vorbis=yes])
+AC_ARG_ENABLE(opus,   [AS_HELP_STRING([--disable-opus  ], [disable Ogg Opus player plugin (default: enabled)])], [enable_opus=$enableval], [enable_opus=yes])
 AC_ARG_ENABLE(ffmpeg,   [AS_HELP_STRING([--disable-ffmpeg  ], [disable FFMPEG plugin for WMA, AMR, etc (default: enabled)])], [enable_ffmpeg=$enableval], [enable_ffmpeg=yes])
 AC_ARG_ENABLE(flac,     [AS_HELP_STRING([--disable-flac    ], [disable FLAC player plugin (default: enabled)])], [enable_flac=$enableval], [enable_flac=yes])
 AC_ARG_ENABLE(sndfile,  [AS_HELP_STRING([--disable-sndfile ], [disable libsndfile plugin for PCM wave files (default: enabled)])], [enable_sndfile=$enableval], [enable_sndfile=yes])
@@ -133,7 +134,8 @@ AC_ARG_ENABLE(wma, [AS_HELP_STRING([--enable-wma      ], [build WMA plugin (defa
 AC_ARG_ENABLE(pltbrowser, [AS_HELP_STRING([--enable-pltbrowser      ], [build playlist browser gui plugin (default: auto)])], [enable_pltbrowser=$enableval], [enable_pltbrowser=yes])
 AC_ARG_ENABLE(sc68, [AS_HELP_STRING([--enable-sc68     ], [build sc68 Atari ST and Amiga music player (default: auto)])], [enable_sc68=$enableval], [enable_sc68=yes])
 AC_ARG_ENABLE(abstract_socket, [AS_HELP_STRING([--enable-abstract-socket      ], [use abstract UNIX socket for IPC (default: disabled)])], [enable_abstract_socket=$enableval], [enable_abstract_socket=no])
-AC_ARG_ENABLE(statusnotifier, [AS_HELP_STRING([--enable-statusnotifier], [KDE status notifier plugin for tray icon (default: disabled)])], [enable_statusnotifier=$enableval], [enable_statusnotifier=yes])
+dnl AC_ARG_ENABLE(statusnotifier, [AS_HELP_STRING([--enable-statusnotifier], [KDE status notifier plugin for tray icon (default: disabled)])], [enable_statusnotifier=$enableval], [enable_statusnotifier=no])
+AC_ARG_ENABLE(rgscanner, [AS_HELP_STRING([--disable-rgscanner], [build ReplayGain scanner plugin (default: enabled)])], [enable_rgscanner=$enableval], [enable_rgscanner=yes])
 
 AS_IF([test "${enable_staticlink}" != "no"], [
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
@@ -217,14 +219,15 @@ AS_IF([test "${enable_staticlink}" != "no"], [
 
 AS_IF([test "${enable_gtk3}" = "yes"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
-        GTK3_DEPS_CFLAGS="-I../../${LIB}/gtk-3.0.0/include/gtk-3.0 -I../../${LIB}/gtk-3.0.0/include/pango-1.0 -I../../${LIB}/gtk-3.0.0/include/gio-unix-2.0/ -I../../${LIB}/gtk-3.0.0/include/atk-1.0 -I../../${LIB}/gtk-3.0.0/include/cairo -I../../${LIB}/gtk-3.0.0/include/gdk-pixbuf-2.0 -I../../${LIB}/gtk-3.0.0/include/freetype2 -I../../${LIB}/gtk-3.0.0/include/glib-2.0 -I../../${LIB}/gtk-3.0.0/lib/glib-2.0/include"
-        GTK3_DEPS_LIBS="-L${GTK_ROOT_300}/lib -lgtk-3 -lpango-1.0 -lcairo -lgobject-2.0 -lgthread-2.0 -lglib-2.0"
+        GTK3_DEPS_CFLAGS="${GTK3_310_CFLAGS}"
+        GTK3_DEPS_LIBS="${GTK3_310_LIBS}"
         AC_SUBST(GTK3_DEPS_CFLAGS)
         AC_SUBST(GTK3_DEPS_LIBS)
         HAVE_GTK3=yes
     ], [
-       PKG_CHECK_MODULES(GTK3_DEPS, gtk+-3.0 >= 3.0 gthread-2.0 glib-2.0, HAVE_GTK3=yes, HAVE_GTK3=no)
+       PKG_CHECK_MODULES(GTK3_DEPS, gtk+-3.0 >= 3.0 gthread-2.0 glib-2.0 gio-2.0, HAVE_GTK3=yes, HAVE_GTK3=no)
     ])
+    AC_PATH_PROG([GLIB_COMPILE_RESOURCES], [glib-compile-resources])
 dnl    AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
 dnl    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
     if test "$OS_OSX" = "yes"; then
@@ -252,8 +255,8 @@ AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes" -o "${enable_sh
 
 AS_IF([test "${enable_gtk2}" = "yes"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
-        GTK2_DEPS_CFLAGS="-I${GTK_ROOT_216}/include/gtk-2.0 -I${GTK_ROOT_216}/lib/gtk-2.0/include -I${GTK_ROOT_216}/include/atk-1.0 -I${GTK_ROOT_216}/include/cairo -I${GTK_ROOT_216}/include/pango-1.0 -I${GTK_ROOT_216}/include -I${GTK_ROOT_216}/include/glib-2.0 -I${GTK_ROOT_216}/lib/glib-2.0/include"
-        GTK2_DEPS_LIBS="-L${GTK_ROOT_216}/lib -lgtk-x11-2.0 -lpango-1.0 -lcairo -lgdk-x11-2.0 -lgdk_pixbuf-2.0 -lgobject-2.0 -lgthread-2.0 -lglib-2.0"
+        GTK2_DEPS_CFLAGS="${GTK2_216_CFLAGS}"
+        GTK2_DEPS_LIBS="${GTK2_216_LIBS}"
         AC_SUBST(GTK2_DEPS_CFLAGS)
         AC_SUBST(GTK2_DEPS_LIBS)
         HAVE_GTK2=yes
@@ -290,7 +293,7 @@ AS_IF([test "${enable_coreaudio}" != "no" -a "${found_coreaudio_h}" != "no"], [
 AC_SUBST(COREAUDIO_LIBS)
 
 AC_CHECK_HEADER([sndio.h], [found_sndio_h=yes], [found_sndio_h=no])
-AC_CHECK_LIB([sndio], [main], [found_sndio_lib=yes], [found_sndio_lib=no])
+AC_CHECK_LIB([sndio], [sio_write], [found_sndio_lib=yes], [found_sndio_lib=no])
 AS_IF([test "${enable_sndio}" != "no" -a "${found_sndio_h}" != "no" -a "${found_sndio_lib}" != "no"], [
   AC_DEFINE(HAVE_SNDIO, 1, [Build sndio support])
   HAVE_SNDIO=yes
@@ -416,6 +419,23 @@ AS_IF([test "${enable_vorbis}" != "no"], [
     ])
 ])
 
+dnl opus plugin
+AS_IF([test "${enable_opus}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        HAVE_OPUSPLUGIN=yes
+        OPUS_LIBS="-lopusfile -lopus -lm -logg"
+        OPUS_CFLAGS="-I../../$LIB/include -I../../$LIB/include/opus"
+        AC_SUBST(OPUS_LIBS)
+        AC_SUBST(OPUS_CFLAGS)
+    ], [
+        PKG_CHECK_MODULES(OPUS, opusfile, HAVE_OPUS=yes, HAVE_OPUS=no)
+        AS_IF([test "$HAVE_OPUS" = "yes"], [
+            HAVE_OPUSPLUGIN=yes
+            AC_SUBST(OPUS_CFLAGS)
+            AC_SUBST(OPUS_LIBS)
+        ])
+    ])
+])
 dnl libogg for oggedit
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_OGG=yes
@@ -712,7 +732,7 @@ AS_IF([test "${enable_vtx}" != "no"], [
     HAVE_VTX=yes
 ])
 
-AS_IF([test "${enable_gme}" != "no"], [
+AS_IF([test "${enable_gme}" != "no" -a "${HAVE_ZLIB}" = "yes"], [
     HAVE_GME=yes
 ])
 
@@ -791,7 +811,7 @@ AS_IF([test "${enable_shn}" != "no"], [
     HAVE_SHN=yes
 ])
 
-AS_IF([test "${enable_psf}" != "no"], [
+AS_IF([test "${enable_psf}" != "no" -a "${HAVE_ZLIB}" = "yes"], [
     HAVE_PSF=yes
 ])
 
@@ -811,27 +831,32 @@ AS_IF([test "${enable_pltbrowser}" != "no"], [
     HAVE_PLTBROWSER=yes
 ])
 
-AS_IF([test "${enable_sc68}" != "no"], [
+AS_IF([test "${enable_sc68}" != "no" -a "${HAVE_ZLIB}" = "yes"], [
     HAVE_SC68=yes
 ])
 
-AS_IF([test "${enable_statusnotifier}" != "no"], [
-    echo "Checking statusnotifier deps..."
-    AS_IF([test "${enable_staticlink}" != "no"], [
-        HAVE_STATUSNOTIFIER=yes
-        STATUSNOTIFIER_DEPS_CFLAGS="-I../../${LIB}/gtk-3.0.0/include/gio-unix-2.0/ -I../../${LIB}/gtk-3.0.0/include/gdk-pixbuf-2.0 -I../../${LIB}/gtk-3.0.0/include/glib-2.0 -I../../${LIB}/gtk-3.0.0/lib/glib-2.0/include"
-        STATUSNOTIFIER_DEPS_LIBS="-L${GTK_ROOT_300}/lib -lgio-2.0 -lgdk_pixbuf-2.0 -lgobject-2.0 -lglib-2.0"
-        AC_SUBST(STATUSNOTIFIER_DEPS_CFLAGS)
-        AC_SUBST(STATUSNOTIFIER_DEPS_LIBS)
-    ], [
-        PKG_CHECK_MODULES(STATUSNOTIFIER_DEPS, glib-2.0 >= 2.26 gio-2.0 gdk-pixbuf-2.0, HAVE_STATUSNOTIFIER=yes, HAVE_STATUSNOTIFIER=no)
-    ])
+dnl AS_IF([test "${enable_statusnotifier}" != "no"], [
+dnl     echo "Checking statusnotifier deps..."
+dnl     AS_IF([test "${enable_staticlink}" != "no"], [
+dnl         HAVE_STATUSNOTIFIER=yes
+dnl         STATUSNOTIFIER_DEPS_CFLAGS="${GTK3_310_CFLAGS}"
+dnl         STATUSNOTIFIER_DEPS_LIBS="${GTK3_310_LIBS}"
+dnl         AC_SUBST(STATUSNOTIFIER_DEPS_CFLAGS)
+dnl         AC_SUBST(STATUSNOTIFIER_DEPS_LIBS)
+dnl     ], [
+dnl         PKG_CHECK_MODULES(STATUSNOTIFIER_DEPS, glib-2.0 >= 2.26 gio-2.0 gdk-pixbuf-2.0, HAVE_STATUSNOTIFIER=yes, HAVE_STATUSNOTIFIER=no)
+dnl     ])
+dnl ])
+
+AS_IF([test "${enable_rgscanner}" != "no"], [
+    HAVE_RGSCANNER=yes
 ])
 
-PLUGINS_DIRS="plugins/liboggedit plugins/libmp4ff plugins/mp4parser plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/statusnotifier plugins/sndio"
+PLUGINS_DIRS="plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/sndio plugins/rg_scanner plugins/opus plugins/mp4parser"
 
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
+AM_CONDITIONAL(HAVE_OPUS, test "x$HAVE_OPUSPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_OGG, test "x$HAVE_OGG" = "xyes")
 AM_CONDITIONAL(HAVE_OGG_STREAM_FLUSH_FILL, test "x$HAVE_OGG_STREAM_FLUSH_FILL" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -895,12 +920,14 @@ AM_CONDITIONAL(PORTABLE, test "x$PORTABLE" = "xyes")
 AM_CONDITIONAL(PORTABLE_FULL, test "x$PORTABLE_FULL" = "xyes")
 AM_CONDITIONAL(USE_ABSTRACT_SOCKET_NAME, test "x$USE_ABSTRACT_SOCKET_NAME" = "xyes")
 AM_CONDITIONAL(HAVE_SSE2, test "${HAVE_SSE2}")
-AM_CONDITIONAL(HAVE_STATUSNOTIFIER, test "x$HAVE_STATUSNOTIFIER" = "xyes")
+dnl AM_CONDITIONAL(HAVE_STATUSNOTIFIER, test "x$HAVE_STATUSNOTIFIER" = "xyes")
+AM_CONDITIONAL(HAVE_RGSCANNER, test "x$HAVE_RGSCANNER" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
 AC_CONFIG_FILES([
 Makefile
+shared/Makefile
 pixmaps/Makefile
 icons/Makefile
 plugins/liboggedit/Makefile
@@ -914,6 +941,7 @@ plugins/lastfm/Makefile
 plugins/ffap/Makefile
 plugins/mp3/Makefile
 plugins/vorbis/Makefile
+plugins/opus/Makefile
 plugins/flac/Makefile
 plugins/wavpack/Makefile
 plugins/sndfile/Makefile
@@ -952,7 +980,7 @@ plugins/pltbrowser/Makefile
 plugins/sc68/Makefile
 plugins/coreaudio/Makefile
 plugins/sndio/Makefile
-plugins/statusnotifier/Makefile
+plugins/rg_scanner/Makefile
 intl/Makefile
 po/Makefile.in
 deadbeef.desktop
@@ -997,6 +1025,7 @@ PRINT_PLUGIN_INFO([mp3],[mp3 plugin],[test "x$HAVE_MP3" = "xyes"])
 PRINT_PLUGIN_INFO([    libmad],[libmad backend for mp3 plugin],[test "x$HAVE_LIBMAD" = "xyes"])
 PRINT_PLUGIN_INFO([    libmpg123],[libmpg123 backend for mp3 plugin],[test "x$HAVE_LIBMPG123" = "xyes"])
 PRINT_PLUGIN_INFO([vorbis],[ogg vorbis player],[test "x$HAVE_VORBISPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([opus],[ogg opus player],[test "x$HAVE_OPUSPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([flac],[flac player],[test "x$HAVE_FLACPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([wavpack],[wavpack player],[test "x$HAVE_WAVPACKPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([sndfile],[PCM (wav,aiff,etc) player based on libsndfile],[test "x$HAVE_SNDFILEPLUGIN" = "xyes"])
@@ -1032,6 +1061,7 @@ PRINT_PLUGIN_INFO([alac],[ALAC plugin],[test "x$HAVE_ALAC" = "xyes"])
 PRINT_PLUGIN_INFO([wma],[WMA plugin],[test "x$HAVE_WMA" = "xyes"])
 PRINT_PLUGIN_INFO([pltbrowser],[playlist browser gui plugin],[test "x$HAVE_PLTBROWSER" = "xyes"])
 PRINT_PLUGIN_INFO([sc68],[sc68 Atari ST And Amiga player],[test "x$HAVE_SC68" = "xyes"])
-PRINT_PLUGIN_INFO([statusnotifier],[plugin for KDE tray icon support],[test "x$HAVE_STATUSNOTIFIER" = "xyes"])
+dnl PRINT_PLUGIN_INFO([statusnotifier],[plugin for KDE tray icon support],[test "x$HAVE_STATUSNOTIFIER" = "xyes"])
+PRINT_PLUGIN_INFO([rgscanner],[plugin for ReplayGain scanner support],[test "x$HAVE_RGSCANNER" = "xyes"])
 
 echo

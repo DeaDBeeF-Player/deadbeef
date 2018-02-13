@@ -27,11 +27,11 @@
 #ifndef __COMMON_H
 #define __COMMON_H
 
-#include <limits.h>
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
 #endif
 #include <limits.h>
+#include "deadbeef.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -58,6 +58,7 @@ extern DB_plugin_t main_plugin;
 
 // In the core, we want the "trace" to be low priority messages,
 // and "trace_err" is for criticals, needing extra attention
+extern DB_functions_t *deadbeef;
 #define trace(...) { deadbeef->log_detailed (&main_plugin, DDB_LOG_LAYER_INFO, __VA_ARGS__); }
 #define trace_err(...) { deadbeef->log_detailed (&main_plugin, DDB_LOG_LAYER_DEFAULT, __VA_ARGS__); }
 

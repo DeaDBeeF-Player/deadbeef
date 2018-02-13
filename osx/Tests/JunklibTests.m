@@ -1,10 +1,25 @@
-//
-//  Junklib.m
-//  deadbeef
-//
-//  Created by Oleksiy Yakovenko on 10/06/15.
-//  Copyright (c) 2015 Alexey Yakovenko. All rights reserved.
-//
+/*
+    DeaDBeeF -- the music player
+    Copyright (C) 2009-2018 Alexey Yakovenko and other contributors
+
+    This software is provided 'as-is', without any express or implied
+    warranty.  In no event will the authors be held liable for any damages
+    arising from the use of this software.
+
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
+
+    1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
+*/
 
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
@@ -112,6 +127,37 @@
 
     const char cp1252_reference[] = { 0x80, 0xf9, 0x89, 0x95, 0x61, 0x62, 0x63, 0x64 };
     XCTAssert(res == sizeof (cp1252_reference) && !memcmp (output, cp1252_reference, sizeof (cp1252_reference)), @"Pass");
+}
+
+void
+_split_multivalue (char *text, size_t text_size);
+
+- (void)testSplitMultivalue_IgnoresUnspacedSlash {
+    char input[] = "Test/Value/With/Shashes";
+    _split_multivalue(input, sizeof (input)-1);
+
+    XCTAssert(!strcmp (input, "Test/Value/With/Shashes"), @"Pass");
+}
+
+- (void)testSplitMultivalue_SplitsOnSpacedSlash {
+    char input[] = "Test / Value / With / Shashes";
+    _split_multivalue(input, sizeof (input)-1);
+
+    XCTAssert(!strcmp (input, "Test\0\0\0Value\0\0\0With\0\0\0Shashes"), @"Pass");
+}
+
+- (void)testSplitMultivalue_IgnoreSpacedSlashBegin {
+    char input[] = "/ Test";
+    _split_multivalue(input, sizeof (input)-1);
+
+    XCTAssert(!strcmp (input, "/ Test"), @"Pass");
+}
+
+- (void)testSplitMultivalue_IgnoreSpacedSlashEnd {
+    char input[] = "Test /";
+    _split_multivalue(input, sizeof (input)-1);
+
+    XCTAssert(!strcmp (input, "Test /"), @"Pass");
 }
 
 @end

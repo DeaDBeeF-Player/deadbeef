@@ -217,13 +217,14 @@ int u8_strlen(char *s)
     int32_t count = 0;
     int32_t i = 0;
 
-    while (u8_nextchar(s, &i) != 0)
+    while (s[i] && u8_nextchar(s, &i) != 0)
         count++;
 
     return count;
 }
 
 /* reads the next utf-8 sequence out of a string, updating an index */
+// NOTE: a valid UTF8 sequence is expected, no validity or 0 checks are performed.
 uint32_t u8_nextchar(const char *s, int32_t *i)
 {
     uint32_t ch = 0;

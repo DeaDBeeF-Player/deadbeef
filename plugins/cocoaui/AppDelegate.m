@@ -25,6 +25,7 @@
 #import "dispatch/dispatch.h"
 #import "DdbWidgetManager.h"
 #import "DdbPlaylistViewController.h"
+#import "ReplayGainScannerController.h"
 #import "DdbShared.h"
 #import "MediaKeyController.h"
 #import "LogWindowController.h"
@@ -62,7 +63,7 @@ AppDelegate *g_appDelegate;
 NSInteger firstSelected = -1;
 
 static void
-_cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text) {
+_cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, void *ctx) {
     [g_appDelegate appendLoggerText:text forPlugin:plugin onLayers:layers];
 }
 
@@ -81,8 +82,10 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text) 
 }
 
 - (void)dealloc {
-    deadbeef->log_viewer_unregister (_cocoaui_logger_callback);
+    deadbeef->log_viewer_unregister (_cocoaui_logger_callback, NULL);
+#if !DISABLE_MM_KEY_GRABBER
     ungrabMediaKeys ();
+#endif
 }
 
 - (void)volumeChanged {
@@ -120,13 +123,10 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text) 
     [_cursorFollowsPlayback setState:deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)?NSOnState:NSOffState];
     
     [_stopAfterCurrent setState:deadbeef->conf_get_int ("playlist.stop_after_current", 0)?NSOnState:NSOffState];
-    [_stopAfterCurrentAlbum setState:deadbeef->conf_get_int ("playlist.stop_after_current_album", 0)?NSOnState:NSOffState];
+    [_stopAfterCurrentAlbum setState:deadbeef->conf_get_int ("playlist.stop_after_album", 0)?NSOnState:NSOffState];
 
     [_descendingSortMode setState:deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSOnState : NSOffState];
 
-    conf_save ();
-    streamer_configchanged ();
-    junk_configchanged ();
     [self volumeChanged];
 
     [_mainWindow updateTitleBarConfig];
@@ -223,7 +223,8 @@ extern void
 main_cleanup_and_quit (void);
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
-    [ConverterWindowController converterCleanup];
+    [ConverterWindowController cleanup];
+    [ReplayGainScannerController cleanup];
     [_mainWindow cleanup];
     [_searchWindow cleanup];
     main_cleanup_and_quit();
@@ -243,14 +244,16 @@ main_cleanup_and_quit (void);
 
     g_appDelegate = self;
 
+#if !DISABLE_MM_KEY_GRABBER
     grabMediaKeys ();
+#endif
 
     [self updateDockNowPlaying];
     [[NSApp dockTile] setContentView: _dockTileView];
 //    [[NSApp dockTile] setBadgeLabel:@"Hello"];
     [[NSApp dockTile] display];
 
-    deadbeef->log_viewer_register (_cocoaui_logger_callback);
+    deadbeef->log_viewer_register (_cocoaui_logger_callback, NULL);
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag{
@@ -345,30 +348,31 @@ main_cleanup_and_quit (void);
     {
         NSArray* files = [openDlg URLs];
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-        if (clear) {
-            deadbeef->plt_clear(plt);
-            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-        }
-        if (plt) {
-            if (!deadbeef->plt_add_files_begin (plt, 0)) {
-                dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-                dispatch_async(aQueue, ^{
-                    for( int i = 0; i < [files count]; i++ )
-                    {
-                        NSString* fileName = [[files objectAtIndex:i] path];
-                        if (fileName) {
-                            deadbeef->plt_add_file2 (0, plt, [fileName UTF8String], NULL, NULL);
-                        }
-                    }
-                    deadbeef->plt_add_files_end (plt, 0);
-                    deadbeef->plt_unref (plt);
-                    deadbeef->pl_save_current();
-                    if (play) {
-                        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-                        deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
-                    }
-                });
+        if (!deadbeef->plt_add_files_begin (plt, 0)) {
+            if (clear) {
+                deadbeef->plt_clear(plt);
+                deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
             }
+            dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+            dispatch_async(aQueue, ^{
+                for( int i = 0; i < [files count]; i++ )
+                {
+                    NSString* fileName = [[files objectAtIndex:i] path];
+                    if (fileName) {
+                        deadbeef->plt_add_file2 (0, plt, [fileName UTF8String], NULL, NULL);
+                    }
+                }
+                deadbeef->plt_add_files_end (plt, 0);
+                deadbeef->plt_unref (plt);
+                deadbeef->pl_save_current();
+                if (play) {
+                    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+                    deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
+                }
+            });
+        }
+        else {
+            deadbeef->plt_unref (plt);
         }
     }
 }
@@ -390,23 +394,24 @@ main_cleanup_and_quit (void);
     {
         NSArray* files = [openDlg URLs];
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-        if (plt) {
-            if (!deadbeef->plt_add_files_begin (plt, 0)) {
-                dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-                dispatch_async(aQueue, ^{
-                    for( int i = 0; i < [files count]; i++ )
-                    {
-                        NSString *fileName = [[files objectAtIndex:i] path];
-                        if (fileName) {
-                            deadbeef->plt_add_dir2 (0, plt, [fileName UTF8String], NULL, NULL);
-                        }
+        if (!deadbeef->plt_add_files_begin (plt, 0)) {
+            dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+            dispatch_async(aQueue, ^{
+                for( int i = 0; i < [files count]; i++ )
+                {
+                    NSString *fileName = [[files objectAtIndex:i] path];
+                    if (fileName) {
+                        deadbeef->plt_add_dir2 (0, plt, [fileName UTF8String], NULL, NULL);
                     }
-                    deadbeef->plt_add_files_end (plt, 0);
-                    deadbeef->plt_unref (plt);
-                    deadbeef->pl_save_current();
-                    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-                });
-            }
+                }
+                deadbeef->plt_add_files_end (plt, 0);
+                deadbeef->plt_unref (plt);
+                deadbeef->pl_save_current();
+                deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+            });
+        }
+        else {
+            deadbeef->plt_unref (plt);
         }
     }
 }
@@ -432,10 +437,12 @@ main_cleanup_and_quit (void);
                 deadbeef->pl_item_unref (tail);
             }
             deadbeef->plt_add_files_end (plt, 0);
-            if (plt) {
-                deadbeef->plt_unref (plt);
-            }
+            deadbeef->plt_unref (plt);
+            deadbeef->pl_save_current ();
         });
+    }
+    else {
+        deadbeef->plt_unref (plt);
     }
 }
 
@@ -602,9 +609,9 @@ main_cleanup_and_quit (void);
 }
 
 - (IBAction)stopAfterCurrentAlbumAction:(id)sender {
-    int state = deadbeef->conf_get_int ("playlist.stop_after_current_album", 0);
+    int state = deadbeef->conf_get_int ("playlist.stop_after_album", 0);
     state = 1 - state;
-    deadbeef->conf_set_int ("playlist.stop_after_current_album", state);
+    deadbeef->conf_set_int ("playlist.stop_after_album", state);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
@@ -724,6 +731,9 @@ main_cleanup_and_quit (void);
     if (ctx.plt) {
         deadbeef->plt_unref (ctx.plt);
     }
+    if (it) {
+        deadbeef->pl_item_unref (it);
+    }
     _dockMenuNPTitle = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:title] action:nil keyEquivalent:@""];
     [_dockMenuNPTitle setEnabled:NO];
     _dockMenuNPArtistAlbum = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:artistAlbum] action:nil keyEquivalent:@""];
@@ -760,16 +770,14 @@ main_cleanup_and_quit (void);
         dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         dispatch_async(aQueue, ^{
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-            if (plt) {
-                if (!deadbeef->plt_add_files_begin (plt, 0)) {
+            if (!deadbeef->plt_add_files_begin (plt, 0)) {
                     deadbeef->plt_clear (plt);
                     int abort = 0;
                     deadbeef->plt_load2 (0, plt, NULL, [fname UTF8String], &abort, NULL, NULL);
                     deadbeef->plt_save_config (plt);
                     deadbeef->plt_add_files_end (plt, 0);
-                }
-                deadbeef->plt_unref (plt);
             }
+            deadbeef->plt_unref (plt);
             deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
         });
     }

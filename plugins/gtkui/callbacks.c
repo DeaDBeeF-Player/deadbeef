@@ -33,9 +33,6 @@
 #include <assert.h>
 #include <ctype.h>
 #include <gdk/gdkkeysyms.h>
-#ifndef __APPLE__
-#include <X11/Xlib.h>
-#endif
 #include "../../gettext.h"
 
 #include "callbacks.h"
@@ -57,6 +54,7 @@
 #include "../hotkeys/hotkeys.h"
 #include "actionhandlers.h"
 #include "actions.h"
+#include "plcommon.h"
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -432,7 +430,7 @@ on_column_id_changed                   (GtkComboBox     *combobox,
         trace ("failed to get column format widget\n");
         return;
     }
-    gtk_widget_set_sensitive (fmt, act >= 11 ? TRUE : FALSE);
+    gtk_widget_set_sensitive (fmt, act == find_first_preset_column_type(DB_COLUMN_CUSTOM) ? TRUE : FALSE);
 
     if (!editcolumn_title_changed) {
         GtkWidget *title= lookup_widget (toplevel, "title");
@@ -634,7 +632,7 @@ GtkWidget*
 title_formatting_help_link_create (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2)
 {
-    GtkWidget *link = gtk_link_button_new_with_label ("http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting-2.0", _("Help"));
+    GtkWidget *link = gtk_link_button_new_with_label ("http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0", _("Help"));
     return link;
 }
 
@@ -771,3 +769,34 @@ on_prefwin_key_press_event             (GtkWidget       *widget,
     return FALSE;
 }
 
+
+void
+on_view_log_activate                   (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    gboolean act = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem));
+    gtkui_show_log_window(act);
+}
+
+
+void
+on_log_clear_clicked                   (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *textview = lookup_widget (gtk_widget_get_toplevel (GTK_WIDGET (button)), "logwindow_textview");
+    GtkTextBuffer *buffer;
+    buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (textview));    
+    gtk_text_buffer_set_text(buffer, "", 0);
+}
+
+
+gboolean
+on_log_window_key_press_event          (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data)
+{
+    if (event->keyval == GDK_Escape) {
+        gtkui_show_log_window(FALSE);
+    }
+    return FALSE;
+}
