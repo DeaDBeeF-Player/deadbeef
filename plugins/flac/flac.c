@@ -659,7 +659,9 @@ cflac_add_metadata (DB_playItem_t *it, const char *s, int length) {
                 char key[eq - s+1];
                 strncpy (key, s, eq-s);
                 key[eq-s] = 0;
-                deadbeef->pl_append_meta (it, key, eq+1);
+                if (eq[1]) {
+                    deadbeef->pl_append_meta (it, key, eq+1);
+                }
             }
         }
     }
