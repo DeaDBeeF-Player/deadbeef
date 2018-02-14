@@ -368,6 +368,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("aac: track not found in mp4 container\n");
             mp4ff_close (info->mp4);
             info->mp4 = NULL;
+            return -1;
         }
     }
 
