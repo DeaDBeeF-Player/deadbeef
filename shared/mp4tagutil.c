@@ -335,12 +335,15 @@ mp4_write_metadata (DB_playItem_t *it) {
     char fname[PATH_MAX];
     deadbeef->pl_get_meta (it, ":URI", fname, sizeof (fname));
 
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    mp4p_file_callbacks_t *file = mp4p_open_file_readwrite (fname);
 
-    if (!fp) {
+    if (!file) {
         return -1;
     }
 
+    mp4p_atom_t *mp4file = mp4p_open(file);
+
+#if 0 // skipping junk is unsupported yet with file callbacks (junklib can't read using this interface -- a VFS wrapper needed?
     int junk = deadbeef->junk_get_leading_size (fp);
     if (junk >= 0) {
         deadbeef->fseek (fp, junk, SEEK_SET);
@@ -348,23 +351,18 @@ mp4_write_metadata (DB_playItem_t *it) {
     else {
         junk = 0;
     }
-
-    mp4p_file_callbacks_t mp4reader;
-    mp4reader.data = fp;
-    mp4reader.fread = (size_t (*) (void *ptr, size_t size, size_t nmemb, void *stream))deadbeef->fread;
-    mp4reader.fseek = (int (*) (void *stream, int64_t offset, int whence))deadbeef->fseek;
-    mp4reader.ftell = (int64_t (*) (void *stream))deadbeef->ftell;
-    mp4p_atom_t *mp4file = mp4p_open(NULL, &mp4reader);
-
-    deadbeef->fclose (fp);
+#endif
 
     if (!mp4file) {
+        mp4p_file_close(file);
         return -1;
     }
 
     mp4p_atom_t *mp4file_updated = mp4tagutil_modify_meta(mp4file, it);
 
-    int res = mp4p_update_metadata (fname, mp4file, mp4file_updated);
+    int res = mp4p_update_metadata (file, mp4file, mp4file_updated);
+
+    mp4p_file_close(file);
 
     mp4p_atom_free_list(mp4file);
     mp4p_atom_free_list(mp4file_updated);
@@ -474,40 +472,47 @@ mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     }
 }
 
-int
-mp4_read_metadata_file (DB_playItem_t *it, DB_FILE *fp) {
-    int junk = deadbeef->junk_get_leading_size (fp);
-    if (junk >= 0) {
-        deadbeef->fseek (fp, junk, SEEK_SET);
-    }
-    else {
-        junk = 0;
-    }
 
-    mp4p_file_callbacks_t mp4reader;
-    mp4reader.data = fp;
-    mp4reader.fread = (size_t (*) (void *ptr, size_t size, size_t nmemb, void *stream))deadbeef->fread;
-    mp4reader.fseek = (int (*) (void *stream, int64_t offset, int whence))deadbeef->fseek;
-    mp4reader.ftell = (int64_t (*) (void *stream))deadbeef->ftell;
-    mp4p_atom_t *mp4file = mp4p_open(NULL, &mp4reader);
+
+int
+mp4_read_metadata_file (DB_playItem_t *it, mp4p_file_callbacks_t *cb) {
+    mp4p_atom_t *mp4file = mp4p_open (cb);
 
     deadbeef->pl_delete_all_meta (it);
 
     // convert
     mp4_load_tags (mp4file, it);
     mp4p_atom_free_list (mp4file);
-
-    (void)deadbeef->junk_apev2_read (it, fp);
-    (void)deadbeef->junk_id3v2_read (it, fp);
-    (void)deadbeef->junk_id3v1_read (it, fp);
     return 0;
+}
+
+static ssize_t
+_file_read (mp4p_file_callbacks_t *stream, void *ptr, size_t size) {
+    return deadbeef->fread (ptr, 1, size, (DB_FILE *)stream->ptrhandle);
+}
+
+static off_t
+_file_seek (mp4p_file_callbacks_t *stream, off_t offset, int whence) {
+    return deadbeef->fseek ((DB_FILE *)stream->ptrhandle, offset, whence);
+}
+
+static int64_t
+_file_tell (mp4p_file_callbacks_t *stream) {
+    return deadbeef->ftell ((DB_FILE *)stream->ptrhandle);
+}
+
+void
+mp4_init_ddb_file_callbacks (mp4p_file_callbacks_t *cb) {
+    cb->read = _file_read;
+    cb->seek = _file_seek;
+    cb->tell = _file_tell;
 }
 
 int
 mp4_read_metadata (DB_playItem_t *it) {
-    deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
-    deadbeef->pl_unlock ();
+    char fname[PATH_MAX];
+    deadbeef->pl_get_meta (it, ":URI", fname, sizeof (fname));
+    DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         return -1;
     }
@@ -517,7 +522,12 @@ mp4_read_metadata (DB_playItem_t *it) {
         return -1;
     }
 
-    int res = mp4_read_metadata_file(it, fp);
+    mp4p_file_callbacks_t cb;
+    memset (&cb, 0, sizeof (cb));
+    cb.ptrhandle = fp;
+    mp4_init_ddb_file_callbacks(&cb);
+
+    int res = mp4_read_metadata_file(it, &cb);
     deadbeef->fclose (fp);
 
     return res;

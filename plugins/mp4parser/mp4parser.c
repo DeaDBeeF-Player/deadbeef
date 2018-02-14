@@ -70,7 +70,7 @@ static int
 _load_subatoms (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     _dbg_indent += 4;
     mp4p_atom_t *tail = NULL;
-    while (fp->ftell (fp->data) < atom->pos + atom->size) {
+    while (fp->tell (fp) < atom->pos + atom->size) {
         mp4p_atom_t *c = _atom_load (atom, fp);
         if (!c) {
             break;
@@ -104,7 +104,7 @@ _load_fourcc_atom (mp4p_atom_t *atom, const char *expected, mp4p_file_callbacks_
 static int
 _read_uint16 (mp4p_file_callbacks_t *fp, uint16_t *value) {
     uint8_t csize[2];
-    if (2 != fp->fread (csize, 1, 2, fp->data)) {
+    if (2 != fp->read (fp, csize, 2)) {
         return -1;
     }
     *value = (csize[1]) | (csize[0]<<8);
@@ -114,7 +114,7 @@ _read_uint16 (mp4p_file_callbacks_t *fp, uint16_t *value) {
 static int
 _read_uint32 (mp4p_file_callbacks_t *fp, uint32_t *value) {
     uint8_t csize[4];
-    if (4 != fp->fread (csize, 1, 4, fp->data)) {
+    if (4 != fp->read (fp, csize, 4)) {
         return -1;
     }
     *value = csize[3] | (csize[2]<<8) | (csize[1]<<16) | (csize[0]<<24);
@@ -124,18 +124,18 @@ _read_uint32 (mp4p_file_callbacks_t *fp, uint32_t *value) {
 static int
 _read_uint64 (mp4p_file_callbacks_t *fp, uint64_t *value) {
     uint8_t csize[8];
-    if (8 != fp->fread (csize, 1, 8, fp->data)) {
+    if (8 != fp->read (fp, csize, 8)) {
         return -1;
     }
     *value = (uint64_t)csize[7] | ((uint64_t)csize[6]<<8) | ((uint64_t)csize[5]<<16) | ((uint64_t)csize[4]<<24) | ((uint64_t)csize[3]<<32) | ((uint64_t)csize[2]<<40) | ((uint64_t)csize[1] << 48) | ((uint64_t)csize[0] << 56);
     return 0;
 }
 
-#define READ_UINT8(fp) ({uint8_t _temp8; if (1 != fp->fread (&_temp8, 1, 1, fp->data)) return -1; _temp8;})
+#define READ_UINT8(fp) ({uint8_t _temp8; if (1 != fp->read (fp, &_temp8, 1)) return -1; _temp8;})
 #define READ_UINT16(fp) ({uint16_t _temp16; if (_read_uint16 (fp, &_temp16) < 0) return -1; _temp16;})
 #define READ_UINT32(fp) ({ uint32_t _temp32; if (_read_uint32 (fp, &_temp32) < 0) return -1; _temp32;})
 #define READ_UINT64(fp) ({ uint64_t _temp64; if (_read_uint64 (fp, &_temp64) < 0) return -1; _temp64;})
-#define READ_BUF(fp,buf,size) {if (size != fp->fread(buf, 1, size, fp->data)) return -1;}
+#define READ_BUF(fp,buf,size) {if (size != fp->read(fp, buf, size)) return -1;}
 
 // read/skip uint8 version and uint24 flags
 #define READ_COMMON_HEADER() {READ_UINT32(fp);}
@@ -364,7 +364,7 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 
     meta->data_size = size - 12;
 
-    meta->data_offset = fp->ftell (fp->data);
+    meta->data_offset = fp->tell (fp);
 
     uint32_t flag = meta->version_flags & 0xff;
 
@@ -648,7 +648,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         if (alac->asc_size > 64) {
             alac->asc_size = 64;
         }
-        fp->fseek (fp->data, -10, SEEK_CUR);
+        fp->seek (fp, -10, SEEK_CUR);
         alac->asc = calloc (alac->asc_size, 1);
         READ_BUF(fp, alac->asc, alac->asc_size);
     }
@@ -751,7 +751,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
 
 static mp4p_atom_t *
 _atom_load (mp4p_atom_t *parent_atom, mp4p_file_callbacks_t *fp) {
-    size_t fpos = fp->ftell (fp->data);
+    size_t fpos = fp->tell (fp);
 
     mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
 
@@ -761,13 +761,13 @@ _atom_load (mp4p_atom_t *parent_atom, mp4p_file_callbacks_t *fp) {
         goto error;
     }
 
-    if (4 != fp->fread (&atom->type, 1, 4, fp->data)) {
+    if (4 != fp->read (fp, &atom->type, 4)) {
         goto error;
     }
 
     mp4p_atom_init (parent_atom, atom, fp);
 
-    fp->fseek (fp->data, fpos + atom->size, SEEK_SET);
+    fp->seek (fp, fpos + atom->size, SEEK_SET);
 
     goto success;
 error:
@@ -779,34 +779,75 @@ success:
     return atom;
 }
 
-static size_t
-_stdio_fread (void *ptr, size_t size, size_t nmemb, void *stream) {
-    return fread (ptr, size, nmemb, (FILE *)stream);
+static ssize_t
+_file_read (mp4p_file_callbacks_t *stream, void *ptr, size_t size) {
+    return read (stream->handle, ptr, size);
 }
 
-static int
-_stdio_fseek (void *stream, int64_t offset, int whence) {
-    return fseek ((FILE *)stream, offset, whence);
+static ssize_t
+_file_write (mp4p_file_callbacks_t *stream, void *ptr, size_t size) {
+    return write (stream->handle, ptr, size);
+}
+
+static off_t
+_file_seek (mp4p_file_callbacks_t *stream, off_t offset, int whence) {
+    return lseek (stream->handle, offset, whence);
 }
 
 static int64_t
-_stdio_ftell (void *stream) {
-    return ftell ((FILE *)stream);
+_file_tell (mp4p_file_callbacks_t *stream) {
+    return lseek(stream->handle, 0, SEEK_CUR);
+}
+
+static int
+_file_truncate (mp4p_file_callbacks_t *stream, off_t length) {
+    return ftruncate (stream->handle, length);
+}
+
+static void
+_init_file_callbacks (mp4p_file_callbacks_t *file) {
+    file->read = _file_read;
+    file->write = _file_write;
+    file->seek = _file_seek;
+    file->tell = _file_tell;
+    file->truncate = _file_truncate;
+}
+
+mp4p_file_callbacks_t *
+mp4p_open_file_read (const char *fname) {
+    int fd = open (fname, O_RDONLY|O_LARGEFILE);
+    if (fd < 0) {
+        return NULL;
+    }
+
+    mp4p_file_callbacks_t *file = calloc (1, sizeof (mp4p_file_callbacks_t));
+    file->handle = fd;
+    _init_file_callbacks(file);
+    return file;
+}
+
+mp4p_file_callbacks_t *
+mp4p_open_file_readwrite (const char *fname) {
+    int fd = open (fname, O_RDWR|O_LARGEFILE);
+    if (fd < 0) {
+        return NULL;
+    }
+
+    mp4p_file_callbacks_t *file = calloc (1, sizeof (mp4p_file_callbacks_t));
+    file->handle = fd;
+    _init_file_callbacks(file);
+    return file;
+}
+
+int
+mp4p_file_close (mp4p_file_callbacks_t *file) {
+    int res = close (file->handle);
+    free (file);
+    return res;
 }
 
 mp4p_atom_t *
-mp4p_open (const char *fname, mp4p_file_callbacks_t *callbacks) {
-    mp4p_file_callbacks_t stdio_callbacks;
-    FILE *fp = NULL;
-    if (!callbacks) {
-        fp = fopen (fname, "rb");
-        stdio_callbacks.data = fp;
-        stdio_callbacks.fread = _stdio_fread;
-        stdio_callbacks.fseek = _stdio_fseek;
-        stdio_callbacks.ftell = _stdio_ftell;
-        callbacks = &stdio_callbacks;
-    }
-
+mp4p_open (mp4p_file_callbacks_t *callbacks) {
     mp4p_atom_t *head = NULL;
     mp4p_atom_t *tail = NULL;
 
@@ -824,9 +865,6 @@ mp4p_open (const char *fname, mp4p_file_callbacks_t *callbacks) {
         }
     }
 
-    if (fp) {
-        fclose (fp);
-    }
     return head;
 }
 
@@ -1479,13 +1517,12 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
 
 // FIXME: The mdat offset can ONLY move forward for now, but this can be changed quite easily.
 // 1. Move `mdat` forward, if needed
-// 2. Rewrite the `moov`
+// 2. Rewrite the size value of `moov`
 // 3. rewrite the whole `udta` with subatoms (via mp4p_atom_to_buffer)
 // 4. Write the `free`
 int
-mp4p_update_metadata (const char *fname, mp4p_atom_t *source, mp4p_atom_t *dest) {
+mp4p_update_metadata (mp4p_file_callbacks_t *file, mp4p_atom_t *source, mp4p_atom_t *dest) {
     int res = -1;
-    int fd = -1;
     uint8_t temp[4096];
 
     mp4p_atom_t *moov_src = mp4p_atom_find (source, "moov");
@@ -1504,21 +1541,16 @@ mp4p_update_metadata (const char *fname, mp4p_atom_t *source, mp4p_atom_t *dest)
         goto error; // truncation unsupported
     }
 
-    fd = open (fname, O_RDWR|O_LARGEFILE);
-    if (fd < 0) {
-        goto error;
-    }
-
     // need to move mdat?
     if (offs > 0) {
         // get file size
-        off_t size = lseek (fd, 0, SEEK_END);
+        off_t size = file->seek (file, 0, SEEK_END);
         if (size < 0) {
             goto error; // couldn't get the size
         }
 
         // resize the file
-        if (ftruncate (fd, size + offs) < 0) {
+        if (file->truncate (file, size + offs) < 0) {
             goto error;
         }
 
@@ -1531,28 +1563,28 @@ mp4p_update_metadata (const char *fname, mp4p_atom_t *source, mp4p_atom_t *dest)
                 pos_src = mdat_src->pos;
             }
 
-            if (lseek (fd, pos_src, SEEK_SET) < 0) {
+            if (file->seek (file, pos_src, SEEK_SET) < 0) {
                 goto error;
             }
 
-            if (blocksize != read (fd, temp, blocksize)) {
+            if (blocksize != file->read (file, temp, blocksize)) {
                 goto error;
             }
 
             off_t pos_dst = pos_src + offs;
 
-            if (lseek (fd, pos_dst, SEEK_SET) < 0) {
+            if (file->seek (file, pos_dst, SEEK_SET) < 0) {
                 goto error;
             }
 
-            if (blocksize != write (fd, temp, blocksize)) {
+            if (blocksize != file->write (file, temp, blocksize)) {
                 goto error;
             }
         } while (pos_src > mdat_src->pos);
     }
 
     // rewrite moov size
-    if (lseek (fd, moov_dst->pos, SEEK_SET) < 0) {
+    if (file->seek (file, moov_dst->pos, SEEK_SET) < 0) {
         goto error;
     }
     // FIXME: a better uint32_le writer needed
@@ -1560,12 +1592,12 @@ mp4p_update_metadata (const char *fname, mp4p_atom_t *source, mp4p_atom_t *dest)
     uint8_t value[4];
     uint8_t *buffer = value;
     WRITE_UINT32(moov_dst->size);
-    if (write (fd, value, 4) != 4) {
+    if (file->write (file, value, 4) != 4) {
         goto error;
     }
 
     // write udta
-    if (lseek (fd, udta_dst->pos, SEEK_SET) < 0) {
+    if (file->seek (file, udta_dst->pos, SEEK_SET) < 0) {
         goto error;
     }
     uint32_t atom_size = mp4p_atom_to_buffer (udta_dst, NULL, 0);
@@ -1573,22 +1605,22 @@ mp4p_update_metadata (const char *fname, mp4p_atom_t *source, mp4p_atom_t *dest)
     uint32_t written_size = mp4p_atom_to_buffer(udta_dst, buffer, atom_size);
     assert (written_size == atom_size);
 
-    if (write (fd, buffer, atom_size) != atom_size) {
+    if (file->write (file, buffer, atom_size) != atom_size) {
         free (buffer);
         goto error;
     }
     free (buffer);
 
     // write free
-    if (lseek (fd, free_dst->pos, SEEK_SET) < 0) {
+    if (file->seek (file, free_dst->pos, SEEK_SET) < 0) {
         goto error;
     }
     buffer = value;
     WRITE_UINT32(free_dst->size);
-    if (write (fd, value, 4) != 4) {
+    if (file->write (file, value, 4) != 4) {
         goto error;
     }
-    if (write (fd, "free", 4) != 4) {
+    if (file->write (file, "free", 4) != 4) {
         goto error;
     }
     memset (temp, 0, sizeof (temp));
@@ -1598,7 +1630,7 @@ mp4p_update_metadata (const char *fname, mp4p_atom_t *source, mp4p_atom_t *dest)
         if (blocksize > size) {
             blocksize = size;
         }
-        if (write (fd, temp, blocksize) != blocksize) {
+        if (file->write (file, temp, blocksize) != blocksize) {
             goto error;
         }
     }
@@ -1606,9 +1638,6 @@ mp4p_update_metadata (const char *fname, mp4p_atom_t *source, mp4p_atom_t *dest)
     res = 0;
 
 error:
-    if (fd > 0) {
-        close (fd);
-    }
 
     return res;
 }

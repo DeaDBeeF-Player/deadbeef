@@ -31,12 +31,15 @@ int
 mp4_read_metadata (DB_playItem_t *it);
 
 int
-mp4_read_metadata_file (DB_playItem_t *it, DB_FILE *fp);
+mp4_read_metadata_file (DB_playItem_t *it, mp4p_file_callbacks_t *cb);
 
 int
 mp4_write_metadata (DB_playItem_t *it);
 
 mp4p_atom_t *
 mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it);
+
+void
+mp4_init_ddb_file_callbacks (mp4p_file_callbacks_t *cb);
 
 #endif /* mp4tagutil_h */

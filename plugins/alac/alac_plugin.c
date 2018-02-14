@@ -111,11 +111,9 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     float duration = 0;
 
     DB_FILE *file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
-    info->mp4reader.data = file;
-    info->mp4reader.fread = (size_t (*) (void *ptr, size_t size, size_t nmemb, void *stream))deadbeef->fread;
-    info->mp4reader.fseek = (int (*) (void *stream, int64_t offset, int whence))deadbeef->fseek;
-    info->mp4reader.ftell = (int64_t (*) (void *stream))deadbeef->ftell;
-    info->mp4file = mp4p_open(NULL, &info->mp4reader);
+    info->mp4reader.ptrhandle = file;
+    mp4_init_ddb_file_callbacks (&info->mp4reader);
+    info->mp4file = mp4p_open(&info->mp4reader);
 
     // iterate over tracks, find the ALAC one
     info->trak = mp4p_atom_find (info->mp4file, "moov/trak");
@@ -357,11 +355,9 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     const char *ftype = NULL;
     float duration = -1;
 
-    info.mp4reader.data = fp;
-    info.mp4reader.fread = (size_t (*) (void *ptr, size_t size, size_t nmemb, void *stream))deadbeef->fread;
-    info.mp4reader.fseek = (int (*) (void *stream, int64_t offset, int whence))deadbeef->fseek;
-    info.mp4reader.ftell = (int64_t (*) (void *stream))deadbeef->ftell;
-    mp4 = info.mp4file = mp4p_open(NULL, &info.mp4reader);
+    info.mp4reader.ptrhandle = fp;
+    mp4_init_ddb_file_callbacks (&info.mp4reader);
+    mp4 = info.mp4file = mp4p_open(&info.mp4reader);
 
     if (!info.mp4file) {
         deadbeef->fclose (fp);
@@ -402,7 +398,11 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->plt_set_item_duration (plt, it, duration);
 
     deadbeef->rewind (fp);
-    mp4_read_metadata_file(it, fp);
+    mp4_read_metadata_file(it, &info.mp4reader);
+
+    (void)deadbeef->junk_apev2_read (it, fp);
+    (void)deadbeef->junk_id3v2_read (it, fp);
+    (void)deadbeef->junk_id3v1_read (it, fp);
 
     int64_t fsize = deadbeef->fgetlength (fp);
     deadbeef->fclose (fp);

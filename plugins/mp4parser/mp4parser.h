@@ -181,17 +181,31 @@ mp4p_atom_free (mp4p_atom_t *atom);
 void
 mp4p_atom_free_list (mp4p_atom_t *atom);
 
-typedef struct {
-    void *data;
-    size_t (*fread) (void *ptr, size_t size, size_t nmemb, void *stream);
-    int (*fseek) (void *stream, int64_t offset, int whence);
-    int64_t (*ftell) (void *stream);
+typedef struct mp4p_file_callbacks_s {
+    union {
+        void *ptrhandle;
+        int handle;
+    };
+    ssize_t (*read) (struct mp4p_file_callbacks_s *stream, void *ptr, size_t size);
+    ssize_t (*write) (struct mp4p_file_callbacks_s *stream, void *ptr, size_t size);
+    off_t (*seek) (struct mp4p_file_callbacks_s *stream, off_t offset, int whence);
+    off_t (*tell) (struct mp4p_file_callbacks_s *stream); // could be implemented via `lseek(fd, 0, SEEK_CUR)`
+    int (*truncate) (struct mp4p_file_callbacks_s *stream, off_t length);
 } mp4p_file_callbacks_t;
 
-// `callbacks` can be NULL, in which case stdio is used.
+mp4p_file_callbacks_t *
+mp4p_open_file_read (const char *fname);
+
+// Use to read and write the file transactionally -- supports reading, writing and resizing
+mp4p_file_callbacks_t *
+mp4p_open_file_readwrite (const char *fname);
+
+int
+mp4p_file_close (mp4p_file_callbacks_t *callbacks);
+
 // Loading starts from the current position in the stream.
 mp4p_atom_t *
-mp4p_open (const char *fname, mp4p_file_callbacks_t *callbacks);
+mp4p_open (mp4p_file_callbacks_t *callbacks);
 
 mp4p_atom_t *
 mp4p_atom_find (mp4p_atom_t *root, const char *path);
@@ -263,6 +277,6 @@ uint32_t
 mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size);
 
 int
-mp4p_update_metadata (const char *fname, mp4p_atom_t *source, mp4p_atom_t *dest);
+mp4p_update_metadata (mp4p_file_callbacks_t *callbacks, mp4p_atom_t *source, mp4p_atom_t *dest);
 
 #endif /* mp4parser_h */

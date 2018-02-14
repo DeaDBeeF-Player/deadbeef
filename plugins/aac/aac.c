@@ -890,7 +890,11 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                     deadbeef->plt_set_item_duration (plt, it, duration);
 
                     deadbeef->rewind (fp);
-                    mp4_read_metadata_file(it, fp);
+                    // FIXME: mp4parser support
+                    //mp4_read_metadata_file(it, fp);
+                    (void)deadbeef->junk_apev2_read (it, fp);
+                    (void)deadbeef->junk_id3v2_read (it, fp);
+                    (void)deadbeef->junk_id3v1_read (it, fp);
 
                     int64_t fsize = deadbeef->fgetlength (fp);
                     deadbeef->fclose (fp);
