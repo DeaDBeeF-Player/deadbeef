@@ -109,6 +109,41 @@ _remove_known_fields (mp4p_atom_t *ilst) {
     }
 }
 
+static mp4p_atom_t *
+mp4tagutil_find_udta (mp4p_atom_t *moov, mp4p_atom_t **pmeta, mp4p_atom_t **pilst) {
+    mp4p_atom_t *hdlr = NULL;
+    mp4p_atom_t *meta = NULL;
+    mp4p_atom_t *ilst = NULL;
+    // find an existing udta with \0\0\0\0 mdir appl handler
+    mp4p_atom_t *udta = moov->subatoms;
+    while (udta) {
+        // there can be multiple meta atoms
+        mp4p_atom_t *subatom = udta->subatoms;
+        while (subatom) {
+            // check each meta subatom
+            if (mp4p_atom_type_compare (udta, "meta")) {
+                continue;
+            }
+            hdlr = mp4p_atom_find(subatom, "meta/hdlr");
+            if (hdlr) {
+                mp4p_hdlr_t *hdlr_data = hdlr->data;
+                if (mp4p_fourcc_compare (hdlr_data->component_subtype, "mdir")
+                    && mp4p_fourcc_compare(hdlr_data->component_manufacturer, "appl")) {
+                    ilst = mp4p_atom_find(subatom, "meta/ilst");
+                    meta = subatom;
+                    break;
+                }
+            }
+            meta = hdlr = ilst = NULL;
+            subatom = subatom->next;
+        }
+        udta = udta->next;
+    }
+    *pmeta = meta;
+    *pilst = ilst;
+    return udta;
+}
+
 // FIXME: much of this code should be moved to mp4parser lib when finalized
 mp4p_atom_t *
 mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
@@ -140,35 +175,12 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     mp4p_atom_t *orig = mp4file;
     mp4file = mp4p_atom_clone (orig);
 
-    mp4p_atom_t *hdlr = NULL;
     mp4p_atom_t *meta = NULL;
     mp4p_atom_t *ilst = NULL;
 
-    // find an existing udta with \0\0\0\0 mdir appl handler
-    mp4p_atom_t *udta = mp4file->subatoms;
-    while (udta) {
-        // there can be multiple meta atoms
-        mp4p_atom_t *subatom = udta->subatoms;
-        while (subatom) {
-            // check each meta subatom
-            if (mp4p_atom_type_compare (udta, "meta")) {
-                continue;
-            }
-            hdlr = mp4p_atom_find(subatom, "meta/hdlr");
-            if (hdlr) {
-                mp4p_hdlr_t *hdlr_data = hdlr->data;
-                if (mp4p_fourcc_compare (hdlr_data->component_subtype, "mdir")
-                    && mp4p_fourcc_compare(hdlr_data->component_manufacturer, "appl")) {
-                    ilst = mp4p_atom_find(subatom, "meta/ilst");
-                    meta = subatom;
-                    break;
-                }
-            }
-            meta = hdlr = ilst = NULL;
-            subatom = subatom->next;
-        }
-        udta = udta->next;
-    }
+    mp4p_atom_t *moov_new = mp4p_atom_find(mp4file, "moov");
+
+    mp4p_atom_t *udta = mp4tagutil_find_udta (moov_new, &meta, &ilst);
 
     // FIXME: atoms following udta is unsupported yet
     if (udta && udta->next) {
@@ -184,7 +196,7 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     if (!meta) {
         // append meta/hdlr/ilst if needed
         meta = mp4p_atom_append (udta, mp4p_atom_new ("meta"));
-        hdlr = mp4p_atom_append (meta, mp4p_atom_new ("hdlr"));
+        mp4p_atom_t *hdlr = mp4p_atom_append (meta, mp4p_atom_new ("hdlr"));
         mp4p_hdlr_init (hdlr, "\0\0\0\0", "mdir", "appl");
         ilst = mp4p_atom_append(meta, mp4p_atom_new ("ilst"));
     }
@@ -289,8 +301,6 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     
     deadbeef->pl_unlock ();
 
-    mp4p_atom_t *moov_new = mp4p_atom_find(mp4file, "moov");
-
     if (padding) {
         // remove padding in the modified version
         mp4p_atom_t *padding_new = moov_new->next;
@@ -373,15 +383,17 @@ mp4_write_metadata (DB_playItem_t *it) {
 static void
 mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     int got_itunes_tags = 0;
+    mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");
 
-    mp4p_atom_t *ilst_atom = mp4p_atom_find (mp4file, "moov/udta/meta/ilst");
+    mp4p_atom_t *meta = NULL;
+    mp4p_atom_t *ilst = NULL;
 
-    // FIXME: hdlr check missing:
-//    if (mp4p_fourcc_compare (hdlr_data->component_subtype, "mdir")
-//        && mp4p_fourcc_compare(hdlr_data->component_manufacturer, "appl")) {
+    mp4p_atom_t *udta = mp4tagutil_find_udta (moov, &meta, &ilst);
+    if (!udta) {
+        return;
+    }
 
-
-    mp4p_atom_t *meta_atom = ilst_atom->subatoms;
+    mp4p_atom_t *meta_atom = ilst->subatoms;
 
     while (meta_atom) {
         got_itunes_tags = 1;
