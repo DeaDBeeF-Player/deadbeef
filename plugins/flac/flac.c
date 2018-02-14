@@ -827,15 +827,9 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         goto cflac_insert_fail;
     }
 
-    const char *ext = fname + strlen (fname);
-    while (ext > fname && *ext != '/' && *ext != '.') {
-        ext--;
-    }
-    if (*ext == '.') {
+    const char *ext = strrchr (fname, '.');
+    if (ext) {
         ext++;
-    }
-    else {
-        ext = NULL;
     }
 
     int isogg = 0;
@@ -877,15 +871,9 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     // read all metadata
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
     FLAC__stream_decoder_set_metadata_respond_all (decoder);
-    it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-    info.it = it;
-    if (skip > 0) {
-        deadbeef->fseek (info.file, skip, SEEK_SET);
-    }
-    else {
-        deadbeef->rewind (info.file);
-    }
-    deadbeef->fseek (info.file, -4, SEEK_CUR);
+
+    it = info.it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);;
+
     if (isogg) {
         status = FLAC__stream_decoder_init_ogg_stream (decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_length_cb, flac_eof_cb, cflac_init_write_callback, cflac_init_metadata_callback, cflac_init_error_callback, &info);
     }
