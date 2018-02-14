@@ -236,4 +236,110 @@
     mp4p_atom_free_list (mp4file);
 }
 
+mp4p_atom_t *createFakeMP4File (void) {
+    mp4p_atom_t *ftyp = mp4p_atom_new("ftyp");
+    ftyp->size = 24;
+
+    mp4p_atom_t *moov = ftyp->next = mp4p_atom_new("moov");
+    moov->pos = 24;
+    moov->size = 8;
+
+    mp4p_atom_t *mdat = moov->next = mp4p_atom_new("mdat");
+    mdat->pos = 32;
+    mdat->size = 1008;
+    return ftyp;
+}
+
+typedef struct {
+    mp4p_file_callbacks_t cb;
+    off_t pos;
+    off_t size;
+} fake_callbacks_t;
+
+static ssize_t _fake_read (struct mp4p_file_callbacks_s *stream, void *ptr, size_t size) {
+    fake_callbacks_t *cb = (fake_callbacks_t *)stream;
+    cb->pos += size;
+    return size;
+}
+static ssize_t _fake_write (struct mp4p_file_callbacks_s *stream, void *ptr, size_t size) {
+    fake_callbacks_t *cb = (fake_callbacks_t *)stream;
+    cb->pos += size;
+    return size;
+}
+static off_t _fake_seek (struct mp4p_file_callbacks_s *stream, off_t offset, int whence) {
+    fake_callbacks_t *cb = (fake_callbacks_t *)stream;
+    switch (whence) {
+        case SEEK_SET:
+            cb->pos = offset;
+            break;
+        case SEEK_CUR:
+            cb->pos += offset;
+            break;
+        case SEEK_END:
+            cb->pos = cb->size + offset;
+            break;
+        default:
+            return -1;
+    }
+    return cb->pos;
+}
+
+static off_t _fake_tell (struct mp4p_file_callbacks_s *stream) {
+    fake_callbacks_t *cb = (fake_callbacks_t *)stream;
+    return cb->pos;
+}
+
+static int _fake_truncate (struct mp4p_file_callbacks_s *stream, off_t length) {
+    fake_callbacks_t *cb = (fake_callbacks_t *)stream;
+    cb->size = length;
+    return 0;
+}
+
+static fake_callbacks_t _fake_file_cb = {
+    .cb.read = _fake_read,
+    .cb.write = _fake_write,
+    .cb.seek = _fake_seek,
+    .cb.tell = _fake_tell,
+    .cb.truncate = _fake_truncate,
+};
+
+- (void)test_SimulateWriteTags_GivesExpectedFileSize {
+    mp4p_atom_t *mp4file = createFakeMP4File();
+
+    fake_callbacks_t cb;
+    memcpy (&cb, &_fake_file_cb, sizeof (fake_callbacks_t));
+
+    cb.size = 1040;
+
+    playItem_t *it = pl_item_alloc();
+
+    // ftyp = 24
+    //
+    // moov = 8
+    // udta = 8
+    // meta = 8
+    // hdlr = 33
+    // ilst = 8
+    // ©nam = 8
+    // data = 16 + valuelength (5 bytes for Hello)
+    // ------
+    // total = 8+8+8+34+8+8+16+5 = 94
+    //
+    // + 1024 bytes `free`
+    // + 1008 bytes `mdat`
+
+    // we write one metadata atom, which will add
+    pl_append_meta(it, "title", "Hello");
+
+    mp4p_atom_t *mp4file_updated = mp4tagutil_modify_meta(mp4file, (DB_playItem_t *)it);
+    pl_item_unref (it);
+
+    int res = mp4p_update_metadata (&cb.cb, mp4file, mp4file_updated);
+
+    mp4p_atom_free (mp4file);
+
+    XCTAssert (!res);
+    XCTAssertEqual(2150, cb.size);
+}
+
 @end

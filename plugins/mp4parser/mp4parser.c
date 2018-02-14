@@ -1523,7 +1523,7 @@ mp4p_update_metadata (mp4p_file_callbacks_t *file, mp4p_atom_t *source, mp4p_ato
     mp4p_atom_t *free_dst = mp4p_atom_find (dest, "free");
     mp4p_atom_t *mdat_dst = mp4p_atom_find (dest, "mdat");
 
-    mp4p_atom_t *udta_dst = mp4p_atom_find (moov_dst, "udta");
+    mp4p_atom_t *udta_dst = mp4p_atom_find (moov_dst, "moov/udta");
 
     assert (moov_dst->pos == moov_src->pos);
 
@@ -1547,11 +1547,13 @@ mp4p_update_metadata (mp4p_file_callbacks_t *file, mp4p_atom_t *source, mp4p_ato
 
         off_t pos_src = size;
         do {
-            size_t blocksize = sizeof (temp);
-            pos_src -= sizeof (temp);
-            if (pos_src < mdat_src->pos) {
-                blocksize -= mdat_dst->pos - pos_src;
+            ssize_t blocksize = sizeof (temp);
+            if (pos_src - (off_t)sizeof (temp) < (off_t)mdat_src->pos) {
+                blocksize = pos_src - mdat_src->pos;
                 pos_src = mdat_src->pos;
+            }
+            else {
+                pos_src -= sizeof (temp);
             }
 
             if (file->seek (file, pos_src, SEEK_SET) < 0) {

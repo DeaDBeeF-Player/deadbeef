@@ -190,7 +190,7 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
 
     if (!udta) {
         // udta not found at all -- append to moov, it needs to be the last one.
-        udta = mp4p_atom_append (mp4file, mp4p_atom_new ("udta"));
+        udta = mp4p_atom_append (moov_new, mp4p_atom_new ("udta"));
     }
 
     if (!meta) {
@@ -198,7 +198,7 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
         meta = mp4p_atom_append (udta, mp4p_atom_new ("meta"));
         mp4p_atom_t *hdlr = mp4p_atom_append (meta, mp4p_atom_new ("hdlr"));
         mp4p_hdlr_init (hdlr, "\0\0\0\0", "mdir", "appl");
-        ilst = mp4p_atom_append(meta, mp4p_atom_new ("ilst"));
+        ilst = mp4p_atom_append (meta, mp4p_atom_new ("ilst"));
     }
     else {
         // cleanup the pre-existing keyvalue list
