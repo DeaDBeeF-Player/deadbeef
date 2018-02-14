@@ -1344,17 +1344,8 @@ mp4p_atom_clone (mp4p_atom_t *src) {
 
     mp4p_atom_t *tail = NULL;
 
-    mp4p_atom_t *subatom = src->subatoms;
-    while (subatom) {
-        mp4p_atom_t *subatom_copy = mp4p_atom_clone(subatom);
-
-        if (tail) {
-            tail = tail->next = subatom_copy;
-        }
-        else {
-            tail = dest->subatoms = subatom_copy;
-        }
-        subatom = subatom->next;
+    if (src->subatoms) {
+        dest->subatoms = mp4p_atom_clone(src->subatoms);
     }
 
     tail = NULL;
