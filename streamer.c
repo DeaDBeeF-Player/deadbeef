@@ -1488,6 +1488,10 @@ streamer_thread (void *ctx) {
         _update_buffering_state ();
 
         if (!fileinfo) {
+            // HACK: This is to overcome the output plugin API limitation.
+            // We count the number of times the output plugin has starved,
+            // and stop playback after counter reaches the limit.
+            // The correct way to solve this is to add a `drain` API.
             if (_audio_stall_count >= AUDIO_STALL_WAIT) {
                 output->stop ();
                 streamer_lock ();
@@ -1670,7 +1674,6 @@ streamer_reset (int full) { // must be called when current song changes by exter
     streamer_unlock();
 }
 
-// when firstblock is true -- means it's allowed to change output format
 static int
 process_output_block (streamblock_t *block, char *bytes) {
     DB_output_t *output = plug_get_output ();
