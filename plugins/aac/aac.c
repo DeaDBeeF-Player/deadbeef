@@ -355,6 +355,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         else {
             mp4ff_close (info->mp4);
             info->mp4 = NULL;
+            return -1;
         }
     }
 
