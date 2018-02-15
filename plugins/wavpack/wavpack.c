@@ -28,7 +28,7 @@
 */
 
 #include <string.h>
-#ifdef TINYWV
+#if defined(TINYWV) || defined(WAVPACK5)
 #include <wavpack.h>
 #else
 #include <wavpack/wavpack.h>
@@ -151,7 +151,11 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 #ifdef TINYWV
     info->ctx = WavpackOpenFileInput (wv_read_stream, info->file, error);
 #else
-    info->ctx = WavpackOpenFileInputEx (&wsr, info->file, info->c_file, error, OPEN_NORMALIZE, 0);
+    int flags = OPEN_NORMALIZE;
+#ifdef WAVPACK5
+    flags = DSD_FLAG|OPEN_DSD_AS_PCM;
+#endif
+    info->ctx = WavpackOpenFileInputEx (&wsr, info->file, info->c_file, error, flags, 0);
 #endif
     if (!info->ctx) {
         fprintf (stderr, "wavpack error: %s\n", error);
@@ -298,7 +302,11 @@ wv_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 #ifdef TINYWV
     WavpackContext *ctx = WavpackOpenFileInput (wv_read_stream, fp, error);
 #else
-    WavpackContext *ctx = WavpackOpenFileInputEx (&wsr, fp, NULL, error, 0, 0);
+    int flags = 0;
+#ifdef WAVPACK5
+    flags = DSD_FLAG|OPEN_DSD_AS_PCM;
+#endif
+    WavpackContext *ctx = WavpackOpenFileInputEx (&wsr, fp, NULL, error, flags, 0);
 #endif
     if (!ctx) {
         fprintf (stderr, "wavpack error: %s\n", error);
