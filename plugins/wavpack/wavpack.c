@@ -30,10 +30,8 @@
 #include <string.h>
 #if defined(TINYWV) || defined(OSX_BUILD)
 #include <wavpack.h>
-#include <wavpack_version.h>
 #else
 #include <wavpack/wavpack.h>
-#include <wavpack/wavpack_version.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -154,7 +152,7 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->ctx = WavpackOpenFileInput (wv_read_stream, info->file, error);
 #else
     int flags = OPEN_NORMALIZE;
-#if LIBWAVPACK_MAJOR>=5
+#if defined(DSD_FLAG) && defined(OPEN_DSD_AS_PCM)
     flags = DSD_FLAG|OPEN_DSD_AS_PCM;
 #endif
     info->ctx = WavpackOpenFileInputEx (&wsr, info->file, info->c_file, error, flags, 0);
@@ -305,7 +303,7 @@ wv_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     WavpackContext *ctx = WavpackOpenFileInput (wv_read_stream, fp, error);
 #else
     int flags = 0;
-#if LIBWAVPACK_MAJOR>=5
+#if defined(DSD_FLAG) && defined(OPEN_DSD_AS_PCM)
     flags = DSD_FLAG|OPEN_DSD_AS_PCM;
 #endif
     WavpackContext *ctx = WavpackOpenFileInputEx (&wsr, fp, NULL, error, flags, 0);
