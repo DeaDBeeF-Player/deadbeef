@@ -169,13 +169,13 @@ set_file_filter_win32 (GtkWidget *dlg, const char *name) {
 
 gboolean
 action_open_files_handler_cb (void *userdata) {
-#if defined _WIN32 && GTK_CHECK_VERSION(3,20,0)
+#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
     GtkWidget *dlg = gtk_file_chooser_native_new (_("Open file(s)..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, NULL, NULL);
 #else
     GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Open file(s)..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 #endif
 
-#ifdef _WIN32
+#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
     set_file_filter_win32 (dlg, NULL);
 #else
     set_file_filter (dlg, NULL);
@@ -202,13 +202,22 @@ action_open_files_handler_cb (void *userdata) {
     {
         deadbeef->pl_clear ();
         GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
+#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
+        lst = g_slist_reverse (lst); //workaround for GTK bug
+        gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dlg));
+#else
         gtk_widget_destroy (dlg);
+#endif
         if (lst) {
             gtkui_open_files (lst);
         }
     }
     else {
+#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
+        gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dlg));
+#else
         gtk_widget_destroy (dlg);
+#endif
     }
     return FALSE;
 }
@@ -221,13 +230,13 @@ action_open_files_handler (struct DB_plugin_action_s *action, int ctx) {
 
 gboolean
 action_add_files_handler_cb (void *user_data) {
-#if defined _WIN32 && GTK_CHECK_VERSION(3,20,0)
+#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
     GtkWidget *dlg = gtk_file_chooser_native_new (_("Add file(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, NULL, NULL);
 #else
     GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Add file(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 #endif
 
-#ifdef _WIN32
+#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
     set_file_filter_win32 (dlg, NULL);
 #else
     set_file_filter (dlg, NULL);
@@ -240,7 +249,7 @@ action_add_files_handler_cb (void *user_data) {
     gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.lastdir", ""));
     deadbeef->conf_unlock ();
 
-#if defined _WIN32 && GTK_CHECK_VERSION(3,20,0)
+#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
     int response = gtk_native_dialog_run (GTK_NATIVE_DIALOG  (dlg));
 #else
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
@@ -254,13 +263,22 @@ action_add_files_handler_cb (void *user_data) {
     if (response == GTK_RESPONSE_ACCEPT)
     {
         GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
+#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
+        lst = g_slist_reverse (lst); //workaround for GTK bug
+        gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dlg));
+#else
         gtk_widget_destroy (dlg);
+#endif
         if (lst) {
             gtkui_add_files (lst);
         }
     }
     else {
+#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
+        gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dlg));
+#else
         gtk_widget_destroy (dlg);
+#endif
     }
     return FALSE;
 }
@@ -280,13 +298,13 @@ on_follow_symlinks_toggled         (GtkToggleButton *togglebutton,
 
 gboolean
 action_add_folders_handler_cb (void *user_data) {
-#if defined _WIN32 && GTK_CHECK_VERSION(3,20,0)
+#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
     GtkWidget *dlg = gtk_file_chooser_native_new (_("Add folder(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, NULL, NULL);
 #else
     GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Add folder(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 #endif
 
-#if !(defined _WIN32 && GTK_CHECK_VERSION(3,20,0))
+#if !(defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0))
     GtkWidget *box = gtk_hbox_new (FALSE, 8);
     gtk_widget_show (box);
 
@@ -309,7 +327,7 @@ action_add_folders_handler_cb (void *user_data) {
     gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.lastdir", ""));
     deadbeef->conf_unlock ();
 
-#if defined _WIN32 && GTK_CHECK_VERSION(3,20,0)
+#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
     int response = gtk_native_dialog_run (GTK_NATIVE_DIALOG  (dlg));
 #else
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
@@ -324,13 +342,22 @@ action_add_folders_handler_cb (void *user_data) {
     {
         //gchar *folder = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
         GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
+#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
+        lst = g_slist_reverse (lst); //workaround for GTK bug
+        gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dlg));
+#else
         gtk_widget_destroy (dlg);
+#endif
         if (lst) {
             gtkui_add_dirs (lst);
         }
     }
     else {
+#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
+        gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dlg));
+#else
         gtk_widget_destroy (dlg);
+#endif
     }
     return FALSE;
 }
