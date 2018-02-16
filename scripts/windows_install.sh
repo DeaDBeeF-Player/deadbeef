@@ -9,64 +9,64 @@ mkdir -p $PREFIX/etc/gtk-2.0 $PREFIX/lib/gtk-2.0/2.10.0/engines/
 mkdir -p $PREFIX/config
 
 rm -f $PREFIX/plugins/*.dll
-cp ./.libs/deadbeef.exe $PREFIX/
-cp ./plugins/nullout/.libs/nullout.dll $PREFIX/plugins/
-cp ./plugins/cdda/.libs/cdda.dll $PREFIX/plugins/
-cp ./plugins/flac/.libs/flac.dll $PREFIX/plugins/
-cp ./plugins/alsa/.libs/alsa.dll $PREFIX/plugins/
-cp ./plugins/sndio/.libs/sndio.dll $PREFIX/plugins/
-cp ./plugins/mp3/.libs/mp3.dll $PREFIX/plugins/
-cp ./plugins/hotkeys/.libs/hotkeys.dll $PREFIX/plugins/
-cp ./plugins/vtx/.libs/vtx.dll $PREFIX/plugins/
-cp ./plugins/ffap/.libs/ffap.dll $PREFIX/plugins/
-cp ./plugins/wavpack/.libs/wavpack.dll $PREFIX/plugins/
-cp ./plugins/vorbis/.libs/vorbis.dll $PREFIX/plugins/
-cp ./plugins/oss/.libs/oss.dll $PREFIX/plugins/
-cp ./plugins/vfs_curl/.libs/vfs_curl.dll $PREFIX/plugins/
-cp ./plugins/ffmpeg/.libs/ffmpeg.dll $PREFIX/plugins/
-cp ./plugins/lastfm/.libs/lastfm.dll $PREFIX/plugins/
-cp ./plugins/sid/.libs/sid.dll $PREFIX/plugins/
-cp ./plugins/adplug/.libs/adplug.dll $PREFIX/plugins/
-cp ./plugins/gtkui/.libs/ddb_gui_GTK2.dll $PREFIX/plugins/
-cp ./plugins/gtkui/.libs/ddb_gui_GTK3.dll $PREFIX/plugins/
-cp ./plugins/sndfile/.libs/sndfile.dll $PREFIX/plugins/
-cp ./plugins/pulse/.libs/pulse.dll $PREFIX/plugins/
-cp ./plugins/artwork-legacy/.libs/artwork.dll $PREFIX/plugins/
-cp ./plugins/artwork/.libs/artwork.dll $PREFIX/plugins/
-cp ./plugins/supereq/.libs/supereq.dll $PREFIX/plugins/
-cp ./plugins/gme/.libs/gme.dll $PREFIX/plugins/
-cp ./plugins/dumb/.libs/ddb_dumb.dll $PREFIX/plugins/
-cp ./plugins/notify/.libs/notify.dll $PREFIX/plugins/
-cp ./plugins/musepack/.libs/musepack.dll $PREFIX/plugins/
-cp ./plugins/wildmidi/.libs/wildmidi.dll $PREFIX/plugins/
-cp ./plugins/tta/.libs/tta.dll $PREFIX/plugins/
-cp ./plugins/dca/.libs/dca.dll $PREFIX/plugins/
-cp ./plugins/aac/.libs/aac.dll $PREFIX/plugins/
-cp ./plugins/mms/.libs/mms.dll $PREFIX/plugins/
-cp ./plugins/shn/.libs/ddb_shn.dll $PREFIX/plugins/
-cp ./plugins/psf/.libs/psf.dll $PREFIX/plugins/
-cp ./plugins/shellexec/.libs/shellexec.dll $PREFIX/plugins/
-cp ./plugins/shellexecui/.libs/shellexecui_gtk2.dll $PREFIX/plugins/
-cp ./plugins/shellexecui/.libs/shellexecui_gtk3.dll $PREFIX/plugins/
-cp ./plugins/dsp_libsrc/.libs/dsp_libsrc.dll $PREFIX/plugins/
-cp ./plugins/m3u/.libs/m3u.dll $PREFIX/plugins/
-cp ./plugins/converter/.libs/converter.dll $PREFIX/plugins/
-cp ./plugins/converter/.libs/converter_gtk2.dll $PREFIX/plugins/
-cp ./plugins/converter/.libs/converter_gtk3.dll $PREFIX/plugins/
-cp ./plugins/soundtouch/ddb_soundtouch.dll $PREFIX/plugins/
-cp ./plugins/vfs_zip/.libs/vfs_zip.dll $PREFIX/plugins/
-cp ./plugins/medialib/.libs/medialib.dll $PREFIX/plugins/
-cp ./plugins/mono2stereo/.libs/ddb_mono2stereo.dll $PREFIX/plugins/
-cp ./plugins/alac/.libs/alac.dll $PREFIX/plugins/
-cp ./plugins/wma/.libs/wma.dll $PREFIX/plugins/
-cp ./plugins/pltbrowser/.libs/pltbrowser_gtk2.dll $PREFIX/plugins/
-cp ./plugins/pltbrowser/.libs/pltbrowser_gtk3.dll $PREFIX/plugins/
-cp ./plugins/coreaudio/.libs/coreaudio.dll $PREFIX/plugins/
-cp ./plugins/sc68/.libs/in_sc68.dll $PREFIX/plugins/
-cp ./plugins/statusnotifier/.libs/statusnotifier.dll $PREFIX/plugins/
-cp ./plugins/rg_scanner/.libs/rg_scanner.dll $PREFIX/plugins/
-cp ./plugins/portaudio/.libs/portaudio.dll $PREFIX/plugins/
-cp ./plugins/waveout/.libs/waveout.dll $PREFIX/plugins/
+cp ./.libs/deadbeef.exe $PREFIX/ 2>>/dev/null
+cp ./plugins/nullout/.libs/nullout.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/cdda/.libs/cdda.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/flac/.libs/flac.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/alsa/.libs/alsa.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/sndio/.libs/sndio.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/mp3/.libs/mp3.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/hotkeys/.libs/hotkeys.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/vtx/.libs/vtx.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/ffap/.libs/ffap.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/wavpack/.libs/wavpack.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/vorbis/.libs/vorbis.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/oss/.libs/oss.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/vfs_curl/.libs/vfs_curl.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/ffmpeg/.libs/ffmpeg.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/lastfm/.libs/lastfm.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/sid/.libs/sid.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/adplug/.libs/adplug.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/gtkui/.libs/ddb_gui_GTK2.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/gtkui/.libs/ddb_gui_GTK3.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/sndfile/.libs/sndfile.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/pulse/.libs/pulse.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/artwork-legacy/.libs/artwork.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/artwork/.libs/artwork.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/supereq/.libs/supereq.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/gme/.libs/gme.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/dumb/.libs/ddb_dumb.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/notify/.libs/notify.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/musepack/.libs/musepack.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/wildmidi/.libs/wildmidi.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/tta/.libs/tta.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/dca/.libs/dca.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/aac/.libs/aac.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/mms/.libs/mms.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/shn/.libs/ddb_shn.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/psf/.libs/psf.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/shellexec/.libs/shellexec.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/shellexecui/.libs/shellexecui_gtk2.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/shellexecui/.libs/shellexecui_gtk3.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/dsp_libsrc/.libs/dsp_libsrc.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/m3u/.libs/m3u.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/converter/.libs/converter.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/converter/.libs/converter_gtk2.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/converter/.libs/converter_gtk3.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/soundtouch/ddb_soundtouch.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/vfs_zip/.libs/vfs_zip.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/medialib/.libs/medialib.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/mono2stereo/.libs/ddb_mono2stereo.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/alac/.libs/alac.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/wma/.libs/wma.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/pltbrowser/.libs/pltbrowser_gtk2.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/pltbrowser/.libs/pltbrowser_gtk3.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/coreaudio/.libs/coreaudio.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/sc68/.libs/in_sc68.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/statusnotifier/.libs/statusnotifier.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/rg_scanner/.libs/rg_scanner.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/portaudio/.libs/portaudio.dll $PREFIX/plugins/ 2>>/dev/null
+cp ./plugins/waveout/.libs/waveout.dll $PREFIX/plugins/ 2>>/dev/null
 
 
 # libs
