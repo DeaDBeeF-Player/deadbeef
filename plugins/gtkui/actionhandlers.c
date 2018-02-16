@@ -171,13 +171,9 @@ gboolean
 action_open_files_handler_cb (void *userdata) {
 #if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
     GtkWidget *dlg = gtk_file_chooser_native_new (_("Open file(s)..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, NULL, NULL);
-#else
-    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Open file(s)..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
-#endif
-
-#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
     set_file_filter_win32 (dlg, NULL);
 #else
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Open file(s)..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
     set_file_filter (dlg, NULL);
 #endif
 
@@ -232,13 +228,9 @@ gboolean
 action_add_files_handler_cb (void *user_data) {
 #if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
     GtkWidget *dlg = gtk_file_chooser_native_new (_("Add file(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, NULL, NULL);
-#else
-    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Add file(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
-#endif
-
-#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
     set_file_filter_win32 (dlg, NULL);
 #else
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Add file(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
     set_file_filter (dlg, NULL);
 #endif
 
@@ -302,9 +294,7 @@ action_add_folders_handler_cb (void *user_data) {
     GtkWidget *dlg = gtk_file_chooser_native_new (_("Add folder(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, NULL, NULL);
 #else
     GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Add folder(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
-#endif
 
-#if !(defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0))
     GtkWidget *box = gtk_hbox_new (FALSE, 8);
     gtk_widget_show (box);
 
