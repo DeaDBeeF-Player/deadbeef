@@ -122,6 +122,11 @@ for i in /mingw32 /mingw64 /usr; do
     cp -r $i/share/icons/Adwaita $PREFIX/share/icons/
 done
 
+# Hicolor icons (GTK3)
+for i in /mingw32 /mingw64 /usr; do
+    cp -r $i/share/icons/hicolor $PREFIX/share/icons/
+done
+
 # set default gtk2 theme
 touch $PREFIX/etc/gtk-2.0/settings.ini
 echo -e "[Settings]\r\ngtk-theme-name = MS-Windows\n" > $PREFIX/etc/gtk-2.0/settings.ini
