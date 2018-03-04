@@ -24,16 +24,8 @@
 #import <Cocoa/Cocoa.h>
 
 @interface DdbSeekBar : NSSlider
+- (BOOL)dragging;
 @end
 
-@interface DdbSeekBarCell : NSSliderCell {
-#if 0
-    NSImage *_backCapLeft;
-    NSImage *_backCapRight;
-    NSImage *_backFiller;
-#endif
-    NSImage *_frontCapLeft;
-    NSImage *_frontCapRight;
-    NSImage *_frontFiller;
-}
+@interface DdbSeekBarCell : NSSliderCell
 @end

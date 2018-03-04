@@ -131,6 +131,19 @@ binifstream::Byte binifstream::getByte()
   }
 }
 
+void binifstream::getBuf(char *buf, int size)
+{
+    int read;
+
+    if(f != NULL) {
+        if (1 != deadbeef->fread (buf, size, 1, f)) {
+            err |= Eof;
+        }
+    } else {
+        err |= NotOpen;
+    }
+}
+
 /***** binofstream *****/
 
 binofstream::binofstream()

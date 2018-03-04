@@ -55,9 +55,7 @@
 #include "gtkui_api.h"
 #include "wingeom.h"
 #include "widgets.h"
-#ifndef __APPLE__
-#include "X11/Xlib.h"
-#else
+#ifdef __APPLE__
 #include "retina.h"
 #endif
 #include "actionhandlers.h"
@@ -1825,7 +1823,7 @@ static DB_plugin_action_t action_crop_selected = {
 static DB_plugin_action_t action_remove_from_playlist = {
     .title = "Edit/Remove Track(s) From Playlist",
     .name = "remove_from_playlist",
-    .flags = DB_ACTION_MULTIPLE_TRACKS,
+    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST,
     .callback2 = action_remove_from_playlist_handler,
     .next = &action_crop_selected
 };
@@ -1959,8 +1957,8 @@ static const char settings_dlg[] =
 
 // define plugin interface
 static ddb_gtkui_t plugin = {
-    .gui.plugin.api_vmajor = 1,
-    .gui.plugin.api_vminor = 6,
+    .gui.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .gui.plugin.api_vminor = DB_API_VERSION_MINOR,
     .gui.plugin.version_major = DDB_GTKUI_API_VERSION_MAJOR,
     .gui.plugin.version_minor = DDB_GTKUI_API_VERSION_MINOR,
     .gui.plugin.type = DB_PLUGIN_GUI,

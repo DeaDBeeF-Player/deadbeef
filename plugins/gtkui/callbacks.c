@@ -33,11 +33,6 @@
 #include <assert.h>
 #include <ctype.h>
 #include <gdk/gdkkeysyms.h>
-#ifndef __APPLE__
-#ifndef __MINGW32__
-#include <X11/Xlib.h>
-#endif
-#endif
 #include "../../gettext.h"
 
 #include "callbacks.h"
@@ -805,4 +800,3 @@ on_log_window_key_press_event          (GtkWidget       *widget,
     }
     return FALSE;
 }
-

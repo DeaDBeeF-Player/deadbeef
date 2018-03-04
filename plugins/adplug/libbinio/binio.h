@@ -126,6 +126,7 @@ public:
   Float readFloat(FType ft);
   unsigned long readString(char *str, unsigned long amount);
   unsigned long readString(char *str, unsigned long maxlen, const char delim);
+  void readBuf(char *buf, int size);
 #if BINIO_ENABLE_STRING
   std::string readString(const char delim = '\0');
 #endif
@@ -138,6 +139,7 @@ public:
 
 protected:
   virtual Byte getByte() = 0;
+  virtual void getBuf(char *buf, int size) = 0;
 
 private:
   Float ieee_single2float(Byte *data);

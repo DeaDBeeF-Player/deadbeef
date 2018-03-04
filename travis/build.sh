@@ -17,24 +17,28 @@ case "$TRAVIS_OS_NAME" in
             make
             ./scripts/windows_install.sh || exit 1
         else
-            STATICDEPS_URL="http://sourceforge.net/projects/deadbeef/files/staticdeps/ddb-static-deps-latest.tar.bz2/download"
-            mkdir static-deps
-            echo "downloading static deps..."
-            wget -q "$STATICDEPS_URL" -O ddb-static-deps.tar.bz2 || exit 1
-            echo "unpacking static deps..."
-            tar jxf ddb-static-deps.tar.bz2 -C static-deps || exit 1
-            echo "installing the needed build dependencies..."
-            sudo apt-get update 1> /dev/null 2> /dev/null || exit 1
-            sudo apt-get install -qq autopoint automake autoconf intltool libc6-dev-i386 libc6-dev yasm libglib2.0-bin || exit 1
-            echo "building for i686"
-            ARCH=i686 ./scripts/static_build.sh || exit 1
-            ARCH=i686 ./scripts/portable_package_static.sh || exit 1
-            echo "building for x86_64"
-            ARCH=x86_64 ./scripts/static_build.sh || exit 1
-            ARCH=x86_64 ./scripts/portable_package_static.sh || exit 1
-            echo "running make dist"
-            make dist || exit 1
+            ls -l .
+            if [ ! -e static-deps ]; then
+                STATICDEPS_URL="http://sourceforge.net/projects/deadbeef/files/staticdeps/ddb-static-deps-latest.tar.bz2/download"
+                mkdir static-deps
+                echo "downloading static deps..."
+                wget -q "$STATICDEPS_URL" -O ddb-static-deps.tar.bz2 || exit 1
+                echo "unpacking static deps..."
+                tar jxf ddb-static-deps.tar.bz2 -C static-deps || exit 1
+                fi
+                echo "installing the needed build dependencies..."
+                sudo apt-get update 1> /dev/null 2> /dev/null || exit 1
+                sudo apt-get install -qq autopoint automake autoconf intltool libc6-dev-i386 libc6-dev yasm libglib2.0-bin libx11-dev || exit 1
+                echo "building for i686"
+                ARCH=i686 ./scripts/static_build.sh || exit 1
+                ARCH=i686 ./scripts/portable_package_static.sh || exit 1
+                echo "building for x86_64"
+                ARCH=x86_64 ./scripts/static_build.sh || exit 1
+                ARCH=x86_64 ./scripts/portable_package_static.sh || exit 1
+                echo "running make dist"
+                make dist || exit 1
             fi
+        fi
     ;;
     osx)
         echo brew update ...

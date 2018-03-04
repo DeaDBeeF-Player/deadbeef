@@ -695,7 +695,9 @@ extern DB_functions_t *deadbeef;
         rect.origin.x += CELL_HPADDING;
         rect.size.width -= CELL_HPADDING;
 
-        [[NSString stringWithUTF8String:text] drawInRect:rect withAttributes:sel?_cellSelectedTextAttrsDictionary:_cellTextAttrsDictionary];
+        if (text[0]) {
+            [[NSString stringWithUTF8String:text] drawInRect:rect withAttributes:sel?_cellSelectedTextAttrsDictionary:_cellTextAttrsDictionary];
+        }
 
         if (ctx.plt) {
             deadbeef->plt_unref (ctx.plt);

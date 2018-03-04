@@ -368,6 +368,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("aac: track not found in mp4 container\n");
             mp4ff_close (info->mp4);
             info->mp4 = NULL;
+            return -1;
         }
     }
 
@@ -1109,8 +1110,7 @@ static const char * exts[] = { "aac", "mp4", "m4a", "m4b", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
 //    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
