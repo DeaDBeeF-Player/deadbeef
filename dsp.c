@@ -400,7 +400,7 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
         while (dsp) {
             if (dsp->enabled) {
                 if (dsp->plugin->plugin.api_vminor >= 1) {
-                    if (dsp->plugin->can_bypass && !dsp->plugin->can_bypass (dsp, &dspfmt)) {
+                    if (!dsp->plugin->can_bypass || !dsp->plugin->can_bypass (dsp, &dspfmt)) {
                         break;
                     }
                 }
