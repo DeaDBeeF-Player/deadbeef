@@ -155,6 +155,36 @@ typedef struct {
     uint8_t reserved3[2];
 } mp4p_mp4a_t;
 
+
+// opus encapsulated in mp4 https://vfrmaniac.fushizen.eu/contents/opus_in_isobmff.html
+typedef struct {
+    uint8_t reserved[6];
+    uint16_t data_reference_index;
+    uint8_t reserved2[8];
+    uint16_t channel_count;
+    uint16_t bps;
+    uint16_t packet_size;
+    uint32_t sample_rate;
+    uint8_t reserved3[2];
+    // followed by dOps
+} mp4p_Opus_t;
+
+typedef struct {
+    uint8_t stream_count;
+    uint8_t coupled_count;
+    uint8_t *channel_mapping; // [output_channel_count]
+} mp4p_opus_channel_mapping_table_t;
+
+typedef struct {
+    uint8_t version; // 0
+    uint8_t output_channel_count;
+    uint16_t pre_skip;
+    uint32_t input_sample_rate;
+    int16_t output_gain;
+    uint8_t channel_mapping_family;
+    mp4p_opus_channel_mapping_table_t *channel_mapping_table; // [output_channel_count] if channel_mapping_family!=0
+} mp4p_dOps_t;
+
 typedef struct {
     uint8_t dc_audiotype;
     uint8_t dc_audiostream;

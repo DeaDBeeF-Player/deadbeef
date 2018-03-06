@@ -112,6 +112,16 @@ _read_uint16 (mp4p_file_callbacks_t *fp, uint16_t *value) {
 }
 
 static int
+_read_int16 (mp4p_file_callbacks_t *fp, int16_t *value) {
+    uint8_t csize[2];
+    if (2 != fp->read (fp, csize, 2)) {
+        return -1;
+    }
+    *value = (((int8_t *)csize)[1]) | (csize[0]<<8);
+    return 0;
+}
+
+static int
 _read_uint32 (mp4p_file_callbacks_t *fp, uint32_t *value) {
     uint8_t csize[4];
     if (4 != fp->read (fp, csize, 4)) {
@@ -133,6 +143,7 @@ _read_uint64 (mp4p_file_callbacks_t *fp, uint64_t *value) {
 
 #define READ_UINT8(fp) ({uint8_t _temp8; if (1 != fp->read (fp, &_temp8, 1)) return -1; _temp8;})
 #define READ_UINT16(fp) ({uint16_t _temp16; if (_read_uint16 (fp, &_temp16) < 0) return -1; _temp16;})
+#define READ_INT16(fp) ({int16_t _temp16; if (_read_int16 (fp, &_temp16) < 0) return -1; _temp16;})
 #define READ_UINT32(fp) ({ uint32_t _temp32; if (_read_uint32 (fp, &_temp32) < 0) return -1; _temp32;})
 #define READ_UINT64(fp) ({ uint64_t _temp64; if (_read_uint64 (fp, &_temp64) < 0) return -1; _temp64;})
 #define READ_BUF(fp,buf,size) {if (size != fp->read(fp, buf, size)) return -1;}
@@ -227,6 +238,20 @@ _alac_free (void *data) {
         free (alac->asc);
     }
     free (alac);
+}
+
+static void
+_dOps_free (void *data) {
+    mp4p_dOps_t *dOps = data;
+    if (dOps->channel_mapping_table) {
+        for (int i = 0; i < dOps->output_channel_count; i++) {
+            if (dOps->channel_mapping_table[i].channel_mapping) {
+                free (dOps->channel_mapping_table[i].channel_mapping);
+            }
+        }
+        free (dOps->channel_mapping_table);
+    }
+    free (dOps);
 }
 
 static void
@@ -672,6 +697,56 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
 
         return _load_subatoms(atom, fp);
     }
+    else if (!mp4p_atom_type_compare(atom, "Opus")) {
+        mp4p_Opus_t *opus = calloc (sizeof (mp4p_Opus_t), 1);
+        atom->data = opus;
+
+        READ_BUF(fp, opus->reserved, 6);
+        opus->data_reference_index = READ_UINT16(fp);
+
+        READ_BUF(fp, opus->reserved2, 8);
+
+        // we parse these values, but also read them into the ASC
+        opus->channel_count = READ_UINT16(fp);
+        opus->bps = READ_UINT16(fp);
+        if (opus->bps != 16) {
+            return -1;
+        }
+        opus->packet_size = READ_UINT16(fp);
+        opus->sample_rate = READ_UINT32(fp);
+        if (opus->sample_rate != 48000) {
+            return -1;
+        }
+        READ_BUF(fp, opus->reserved3, 2);
+        return _load_subatoms(atom, fp);
+    }
+    else if (!mp4p_atom_type_compare(atom, "dOps")) {
+        mp4p_dOps_t *dOps = calloc (sizeof (mp4p_Opus_t), 1);
+        atom->data = dOps;
+        atom->free = _dOps_free;
+
+        dOps->version = READ_UINT8(fp);
+        if (dOps->version != 0) {
+            return -1;
+        }
+        dOps->output_channel_count = READ_UINT8(fp);
+        dOps->pre_skip = READ_UINT16(fp);
+        dOps->input_sample_rate = READ_UINT32(fp);
+        dOps->output_gain = READ_INT16(fp);
+        dOps->channel_mapping_family = READ_UINT8(fp);
+        if (dOps->channel_mapping_family != 0) {
+            dOps->channel_mapping_table = calloc (sizeof (mp4p_opus_channel_mapping_table_t), dOps->output_channel_count);
+            for (int i = 0; i < dOps->output_channel_count; i++) {
+                dOps->channel_mapping_table[i].channel_mapping = calloc(1, dOps->output_channel_count);
+                dOps->channel_mapping_table[i].stream_count = READ_UINT8(fp);
+                dOps->channel_mapping_table[i].coupled_count = READ_UINT8(fp);
+                for (int j = 0; j < dOps->output_channel_count; j++) {
+                    dOps->channel_mapping_table[i].channel_mapping[j] = READ_UINT8(fp);
+                }
+            }
+        }
+
+    }
     else if (!mp4p_atom_type_compare(atom, "esds")) {
         mp4p_esds_t *esds = calloc (sizeof (mp4p_esds_t), 1);
         atom->data = esds;
@@ -743,7 +818,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     }
     else {
         _dbg_print_indent ();
-        printf ("unknown\n");
+        printf ("[opaque]\n");
     }
 
     return 0;
