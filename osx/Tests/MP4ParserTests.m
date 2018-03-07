@@ -23,6 +23,10 @@
 
 - (void)setUp {
     [super setUp];
+    NSString *resPath = [[NSBundle bundleForClass:[self class]] resourcePath];
+    const char *str = [resPath UTF8String];
+    strcpy (dbplugindir, str);
+
 #if 0
     NSString *resPath = [[NSBundle bundleForClass:[self class]] resourcePath];
     const char *str = [resPath UTF8String];
@@ -340,6 +344,17 @@ static fake_callbacks_t _fake_file_cb = {
 
     XCTAssert (!res);
     XCTAssertEqual(2150, cb.size);
+}
+
+- (void)test_ReadMP4Opus_GivesExpectedFormatData {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/opus.mp4", dbplugindir);
+    mp4p_file_callbacks_t *cb = mp4p_open_file_read (path);
+    mp4p_atom_t *mp4file = mp4p_open (cb);
+    mp4p_atom_t *opus = mp4p_atom_find(mp4file, "moov/trak/mdia/minf/stbl/stsd/Opus");
+    mp4p_Opus_t *Opus = opus->data;
+    XCTAssertEqual(48000, Opus->sample_rate);
+    mp4p_file_close (cb);
 }
 
 @end
