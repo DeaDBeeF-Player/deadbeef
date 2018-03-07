@@ -5,7 +5,8 @@ if HAVE_DUMB
 pkglib_LTLIBRARIES = ddb_dumb.la
 
 ddb_dumb_la_CFLAGS = $(CFLAGS) -I$(dumbpath)/include -std=gnu99
-ddb_dumb_la_LDFLAGS = -module -avoid-version -lm
+ddb_dumb_la_CXXFLAGS = $(CFLAGS) -I$(dumbpath)/include -fno-exceptions -fno-rtti -fno-unwind-tables
+ddb_dumb_la_LDFLAGS = -module -avoid-version -lm $(NOCPPLIB)
 if HAVE_SSE2
 noinst_LIBRARIES = libdumbsse2.a
 libdumbsse2_a_SOURCES = dumb-kode54/src/helpers/resampler_sse2.c
@@ -114,5 +115,13 @@ dumb-kode54/include/dumb.h\
 dumb-kode54/src/helpers/resample.inc\
 dumb-kode54/src/helpers/resamp2.inc\
 dumb-kode54/src/helpers/resamp3.inc\
-cdumb.c
+modloader.cpp\
+modloader.h\
+umr.h\
+unmo3.h\
+unrealfmt.cpp\
+unrealfmtdata.cpp\
+urf.h\
+cdumb.c\
+cdumb.h
 endif

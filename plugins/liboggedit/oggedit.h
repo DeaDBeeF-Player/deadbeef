@@ -63,7 +63,7 @@
 #define OGGEDIT_WRITE_ERROR -14
 /* Failed to flush pages from a stream, fatal Ogg internal error */
 #define OGGEDIT_FLUSH_FAILED -15
-/* Renaming tewmporary file failed (usually sticky bit or directory permissions) */
+/* Renaming temporary file failed (usually sticky bit or directory permissions) */
 #define OGGEDIT_RENAME_FAILED -16
 /* Image file length not acceptable */
 #define OGGEDIT_BAD_FILE_LENGTH -100
@@ -71,14 +71,14 @@
 #define OGGEDIT_CANT_READ_IMAGE_FILE -101
 
 /* oggedit_utils.c */
-uint8_t *oggedit_vorbis_channel_map(const int channel_count);
+uint8_t *oggedit_vorbis_channel_map(const unsigned channel_count);
 
 // map deadbeef key to vorbiscomment key
 // NOTE: this function may modify the key value, e.g. when upper-casing
 const char *oggedit_map_tag(char *key, const char *in_or_out);
 
 /* oggedit_art.c */
-const char *oggedit_album_art_type(const int type);
+const char *oggedit_album_art_type(const uint32_t type);
 char *oggedit_album_art_tag(DB_FILE *fp, int *res);
 
 /* oggedit_flac.c */
@@ -92,6 +92,6 @@ off_t oggedit_write_vorbis_metadata(DB_FILE *in, const char *fname, const off_t 
 /* oggedit_opus.c */
 int oggedit_write_opus_file(DB_FILE *in, const char *outname, const off_t offset, const bool all_streams);
 off_t oggedit_opus_stream_info(DB_FILE *in, const off_t start_offset, const off_t end_offset, char **codecs);
-off_t oggedit_write_opus_metadata(DB_FILE *in, const char *fname, const off_t offset, const size_t stream_size, const int output_gain, const int num_tags, char **tags);
+off_t oggedit_write_opus_metadata(DB_FILE *in, const char *fname, const off_t offset, const off_t stream_size, const int output_gain, const uint32_t num_tags, char **tags);
 
 #endif /* __OGGEDIT_H */

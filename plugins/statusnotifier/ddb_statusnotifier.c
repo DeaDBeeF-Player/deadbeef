@@ -112,6 +112,16 @@ on_notifier_popup_menu (StatusNotifierItem *sn, int x, int y) {
 
 static void
 on_notifier_scroll (StatusNotifierItem *sn, int delta, SN_SCROLLDIR orientation) {
+    if (deadbeef->conf_get_int ("tray.scroll_changes_track", 0)) {
+        if (delta > 0) {
+            deadbeef->sendmessage (DB_EV_NEXT, 0, 0, 0);
+        }
+        else {
+            deadbeef->sendmessage (DB_EV_PREV, 0, 0, 0);
+        }
+        return;
+    }
+
     float vol = deadbeef->volume_get_db ();
     int sens = deadbeef->conf_get_int ("gtkui.tray_volume_sensitivity", 1);
     if (orientation == Horizontal) {
@@ -197,8 +207,8 @@ static const char settings_dlg[] =
 ;
 
 static DB_statusnotifier_plugin_t plugin = {
-    .plugin.plugin.api_vmajor = 1,
-    .plugin.plugin.api_vminor = 8,
+    .plugin.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .plugin.plugin.api_vminor = DB_API_VERSION_MINOR,
     .plugin.plugin.version_major = 0,
     .plugin.plugin.version_minor = 1,
     .plugin.plugin.type = DB_PLUGIN_MISC,

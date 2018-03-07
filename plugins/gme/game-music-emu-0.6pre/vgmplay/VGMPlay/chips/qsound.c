@@ -36,12 +36,14 @@
 #ifdef _DEBUG
 #include <stdio.h>
 #endif
-#include <memory.h>
+#include <string.h>
 #include <stdlib.h>
 #include <math.h>
 #include "qsound.h"
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 /*
 Debug defines
@@ -223,7 +225,9 @@ void qsound_w(void *_info, offs_t offset, UINT8 data)
 
 		default:
 			//logerror("%s: unexpected qsound write to offset %d == %02X\n", device->machine().describe_context(), offset, data);
+#ifdef _DEBUG
 			logerror("QSound: unexpected qsound write to offset %d == %02X\n", offset, data);
+#endif
 			break;
 	}
 }
@@ -478,7 +482,7 @@ void qsound_set_mute_mask(void *_info, UINT32 MuteMask)
 		case DEVINFO_STR_SOURCE_FILE:						strcpy(info->s, __FILE__);						break;
 		case DEVINFO_STR_CREDITS:					strcpy(info->s, "Copyright Nicola Salmoria and the MAME Team"); break;
 	}
-}//
+}*/
 
 /**************** end of file ****************/
 

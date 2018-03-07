@@ -22,6 +22,8 @@
 */
 
 #import <Cocoa/Cocoa.h>
+#import "PluginConfigurationViewController.h"
+#import "DSPPresetListDataSource.h"
 
 #define DEFAULT_TITLEBAR_PLAYING_VALUE "%artist% - %title% - DeaDBeeF-%_deadbeef_version%"
 #define DEFAULT_TITLEBAR_STOPPED_VALUE "DeaDBeeF-%_deadbeef_version%"
@@ -43,28 +45,57 @@
 - (IBAction)pluginsAction:(id)sender;
 
 //// playback properties
-@property (unsafe_unretained) IBOutlet NSPopUpButton *replaygain_mode;
-@property (unsafe_unretained) IBOutlet NSButton *replaygain_scale;
-@property (unsafe_unretained) IBOutlet NSSlider *replaygain_preamp;
-@property (unsafe_unretained) IBOutlet NSSlider *global_preamp;
+@property (unsafe_unretained) IBOutlet NSPopUpButton *replaygain_source_mode;
+@property (unsafe_unretained) IBOutlet NSPopUpButton *replaygain_processing;
+@property (unsafe_unretained) IBOutlet NSSlider *replaygain_preamp_with_rg;
+@property (unsafe_unretained) IBOutlet NSSlider *replaygain_preamp_without_rg;
+@property (unsafe_unretained) IBOutlet NSTextField *replaygain_preamp_with_rg_label;
+@property (unsafe_unretained) IBOutlet NSTextField *replaygain_preamp_without_rg_label;
+
+- (IBAction)replaygain_preamp_with_rg_action:(id)sender;
+- (IBAction)replaygain_preamp_without_rg_action:(id)sender;
+- (IBAction)replaygain_source_mode_action:(id)sender;
+- (IBAction)replaygain_processing_action:(id)sender;
+
+
 @property (unsafe_unretained) IBOutlet NSButton *cli_add_to_specific_playlist;
 @property (unsafe_unretained) IBOutlet NSTextField *cli_add_playlist_name;
 @property (unsafe_unretained) IBOutlet NSButton *resume_last_session;
+
+- (IBAction)resumeLastSessionAction:(id)sender;
+
+
 @property (unsafe_unretained) IBOutlet NSButton *ignore_archives;
+
+- (IBAction)ignoreArchivesAction:(id)sender;
+
+
 @property (unsafe_unretained) IBOutlet NSButton *stop_after_current_reset;
+
+- (IBAction)stopAfterCurrentResetAction:(id)sender;
+
+
 @property (unsafe_unretained) IBOutlet NSButton *stop_after_album_reset;
 
+- (IBAction)stopAfterCurrentAlbumResetAction:(id)sender;
+
 // dsp properties
-- (IBAction)dspAddAction:(id)sender;
-- (IBAction)dspRemoveAction:(id)sender;
-- (IBAction)dspConfigureAction:(id)sender;
-- (IBAction)dspMoveUpAction:(id)sender;
-- (IBAction)dspMoveDownAction:(id)sender;
+@property (strong) IBOutlet NSPanel *dspConfigPanel;
+//@property (unsafe_unretained) IBOutlet NSScrollView *dspConfigView;
+@property (strong) IBOutlet PluginConfigurationViewController *dspConfigViewController;
+
+
+
+- (IBAction)dspConfigOkAction:(id)sender;
+- (IBAction)dspConfigResetAction:(id)sender;
+
+- (IBAction)dspChainAction:(id)sender;
 - (IBAction)dspSaveAction:(id)sender;
 - (IBAction)dspLoadAction:(id)sender;
 
-@property (unsafe_unretained) IBOutlet NSScrollView *dspList;
+@property (unsafe_unretained) IBOutlet NSTableView *dspList;
 @property (unsafe_unretained) IBOutlet NSComboBox *dspPresets;
+@property (strong) IBOutlet DSPPresetListDataSource *dspPresetListDataSource;
 
 // GUI misc properties
 @property (unsafe_unretained) IBOutlet NSButton *enable_shift_jis_detection;
@@ -121,8 +152,9 @@
 @property (unsafe_unretained) IBOutlet NSTextView *pluginDescription;
 @property (unsafe_unretained) IBOutlet NSTextView *pluginLicense;
 
-@property (unsafe_unretained) IBOutlet NSScrollView *pluginPropertiesScroller;
-@property (unsafe_unretained) IBOutlet NSView *pluginPropertiesView;
+@property (strong) IBOutlet PluginConfigurationViewController *pluginConfViewController;
+
+
 
 - (IBAction)pluginOpenWebsite:(id)sender;
 - (IBAction)pluginConfResetDefaults:(id)sender;

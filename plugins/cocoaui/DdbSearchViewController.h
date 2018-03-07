@@ -30,5 +30,4 @@
 @property (unsafe_unretained) IBOutlet DdbListview *listview;
 
 - (void)reset;
-- (void)cleanup;
 @end

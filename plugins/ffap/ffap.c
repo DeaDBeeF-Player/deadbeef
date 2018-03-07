@@ -94,7 +94,9 @@ static inline uint32_t bytestream_get_be32 (const uint8_t **ptr) {
 #define MAX_BYTESPERSAMPLE  3
 
 #define APE_FRAMECODE_MONO_SILENCE    1
-#define APE_FRAMECODE_STEREO_SILENCE  3
+#define APE_FRAMECODE_LEFT_SILENCE    1 /* same as mono */
+#define APE_FRAMECODE_RIGHT_SILENCE   2
+#define APE_FRAMECODE_STEREO_SILENCE  3 /* combined */
 #define APE_FRAMECODE_PSEUDO_STEREO   4
 
 #define HISTORY_SIZE 512
@@ -267,7 +269,7 @@ typedef struct APEContext {
     int packet_remaining; // number of bytes in packet_data
     int packet_sizeleft; // number of bytes left unread for current ape frame
     int samplestoskip;
-    int currentsample; // current sample from beginning of file
+    int64_t currentsample; // current sample from beginning of file
 
     uint8_t buffer[BLOCKS_PER_LOOP * 2 * 2 * 2];
     int remaining;
@@ -279,8 +281,8 @@ typedef struct APEContext {
 
 typedef struct {
     DB_fileinfo_t info;
-    int startsample;
-    int endsample;
+    int64_t startsample;
+    int64_t endsample;
     APEContext ape_ctx;
     DB_FILE *fp;
 } ape_info_t;
@@ -754,9 +756,10 @@ ffap_init (DB_fileinfo_t *_info, DB_playItem_t *it)
         return -1;
     }
 
-    if (it->endsample > 0) {
-        info->startsample = it->startsample;
-        info->endsample = it->endsample;
+    int64_t endsample = deadbeef->pl_item_get_endsample (it);
+    if (endsample > 0) {
+        info->startsample = deadbeef->pl_item_get_startsample (it);
+        info->endsample = endsample;
         plugin.seek_sample (_info, 0);
         //trace ("start: %d/%f, end: %d/%f\n", startsample, timestart, endsample, timeend);
     }
@@ -1025,10 +1028,12 @@ static void entropy_decode(APEContext * ctx, int blockstodecode, int stereo)
 
     ctx->blocksdecoded = blockstodecode;
 
-    if (ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) {
+    if ((ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) == APE_FRAMECODE_STEREO_SILENCE) {
         /* We are pure silence, just memset the output buffer. */
         memset(decoded0, 0, blockstodecode * sizeof(int32_t));
-        memset(decoded1, 0, blockstodecode * sizeof(int32_t));
+        if (stereo) {
+            memset(decoded1, 0, blockstodecode * sizeof(int32_t));
+        }
     } else {
         while (likely (blockstodecode--)) {
             *decoded0++ = ape_decode_value(ctx, &ctx->riceY);
@@ -1428,7 +1433,6 @@ static void ape_unpack_mono(APEContext * ctx, int count)
     int32_t *decoded1 = ctx->decoded1;
 
     if (ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) {
-        entropy_decode(ctx, count, 0);
         /* We are pure silence, so we're done. */
         //fprintf (stderr, "pure silence mono\n");
         return;
@@ -1455,7 +1459,7 @@ static void ape_unpack_stereo(APEContext * ctx, int count)
     int32_t *decoded0 = ctx->decoded0;
     int32_t *decoded1 = ctx->decoded1;
 
-    if (ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) {
+    if ((ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) == APE_FRAMECODE_STEREO_SILENCE) {
         /* We are pure silence, so we're done. */
         //fprintf (stderr, "pure silence stereo\n");
         return;
@@ -1703,22 +1707,6 @@ ffap_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->fclose (fp);
     fp = NULL;
 
-    // embedded cue
-    deadbeef->pl_lock ();
-    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-    DB_playItem_t *cue = NULL;
-    if (cuesheet) {
-        cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), ape_ctx.totalsamples, ape_ctx.samplerate);
-        if (cue) {
-            deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (cue);
-            deadbeef->pl_unlock ();
-            ape_free_ctx (&ape_ctx);
-            return cue;
-        }
-    }
-    deadbeef->pl_unlock ();
-
     char s[100];
     snprintf (s, sizeof (s), "%lld", fsize);
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
@@ -1732,10 +1720,9 @@ ffap_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     snprintf (s, sizeof (s), "%d", br);
     deadbeef->pl_add_meta (it, ":BITRATE", s);
 
-    cue  = deadbeef->plt_insert_cue (plt, after, it, ape_ctx.totalsamples, ape_ctx.samplerate);
+    DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, ape_ctx.totalsamples, ape_ctx.samplerate);
     if (cue) {
         deadbeef->pl_item_unref (it);
-        deadbeef->pl_item_unref (cue);
         ape_free_ctx (&ape_ctx);
         return cue;
     }
@@ -1918,8 +1905,7 @@ static const char *exts[] = { "ape", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,

@@ -217,8 +217,10 @@ value:   START, REC, MEMDAT, REPEAT, SPOFF, x,x,RESET   meaning:
 			DELTAT->adpcml   = 0;
 			DELTAT->adpcmd   = YM_DELTAT_DELTA_DEF;
 			DELTAT->now_data = 0;
+#ifdef _DEBUG
 			if (DELTAT->start > DELTAT->end)
 				logerror("DeltaT-Warning: Start: %06X, End: %06X\n", DELTAT->start, DELTAT->end);
+#endif
 		}
 
 		if( DELTAT->portstate&0x20 ) /* do we access external memory? */

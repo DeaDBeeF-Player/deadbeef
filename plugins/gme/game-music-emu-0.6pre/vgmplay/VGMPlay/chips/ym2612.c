@@ -387,10 +387,10 @@ int SLOT_SET(ym2612_ *YM2612, int Adr, unsigned char data)
   switch(Adr & 0xF0)
   {
     case 0x30:
-      if(SL->MUL = (data & 0x0F)) SL->MUL <<= 1;
+      if((SL->MUL = (data & 0x0F))) SL->MUL <<= 1;
       else SL->MUL = 1;
 
-      SL->DT = DT_TAB[(data >> 4) & 7];
+      SL->DT = (int*) DT_TAB[(data >> 4) & 7];
 
       CH->SLOT[0].Finc = -1;
 
@@ -421,8 +421,8 @@ int SLOT_SET(ym2612_ *YM2612, int Adr, unsigned char data)
 
       CH->SLOT[0].Finc = -1;
 
-      if(data &= 0x1F) SL->AR = &AR_TAB[data << 1];
-      else SL->AR = &NULL_RATE[0];
+      if(data &= 0x1F) SL->AR = (int*) &AR_TAB[data << 1];
+      else SL->AR = (int*) &NULL_RATE[0];
 
       SL->EincA = SL->AR[SL->KSR];
       if(SL->Ecurp == ATTACK) SL->Einc = SL->EincA;
@@ -433,11 +433,11 @@ int SLOT_SET(ym2612_ *YM2612, int Adr, unsigned char data)
       break;
 
     case 0x60:
-      if(SL->AMSon = (data & 0x80)) SL->AMS = CH->AMS;
+      if((SL->AMSon = (data & 0x80))) SL->AMS = CH->AMS;
       else SL->AMS = 31;
 
-      if(data &= 0x1F) SL->DR = &DR_TAB[data << 1];
-      else SL->DR = &NULL_RATE[0];
+      if((data &= 0x1F)) SL->DR = (int*) &DR_TAB[data << 1];
+      else SL->DR = (int*) &NULL_RATE[0];
 
       SL->EincD = SL->DR[SL->KSR];
       if(SL->Ecurp == DECAY) SL->Einc = SL->EincD;
@@ -448,8 +448,8 @@ int SLOT_SET(ym2612_ *YM2612, int Adr, unsigned char data)
       break;
 
     case 0x70:
-      if(data &= 0x1F) SL->SR = &DR_TAB[data << 1];
-      else SL->SR = &NULL_RATE[0];
+      if((data &= 0x1F)) SL->SR = (int*) &DR_TAB[data << 1];
+      else SL->SR = (int*) &NULL_RATE[0];
 
       SL->EincS = SL->SR[SL->KSR];
       if((SL->Ecurp == SUBSTAIN) && (SL->Ecnt < ENV_END)) SL->Einc = SL->EincS;
@@ -462,7 +462,7 @@ int SLOT_SET(ym2612_ *YM2612, int Adr, unsigned char data)
     case 0x80:
       SL->SLL = SL_TAB[data >> 4];
 
-      SL->RR = &DR_TAB[((data & 0xF) << 2) + 2];
+      SL->RR = (int*) &DR_TAB[((data & 0xF) << 2) + 2];
 
       SL->EincR = SL->RR[SL->KSR];
       if((SL->Ecurp == RELEASE) && (SL->Ecnt < ENV_END)) SL->Einc = SL->EincR;
@@ -892,7 +892,7 @@ CH->SLOT[S3].Fcnt += CH->SLOT[S3].Finc;
 
 
 #define UPDATE_PHASE_LFO                                    \
-if(freq_LFO = (CH->FMS * YM2612->LFO_FREQ_UP[i]) >> (LFO_HBITS - 1))                  \
+if((freq_LFO = (CH->FMS * YM2612->LFO_FREQ_UP[i]) >> (LFO_HBITS - 1)))                  \
 {                                                \
   CH->SLOT[S0].Fcnt += CH->SLOT[S0].Finc + ((CH->SLOT[S0].Finc * freq_LFO) >> LFO_FMS_LBITS);  \
   CH->SLOT[S1].Fcnt += CH->SLOT[S1].Finc + ((CH->SLOT[S1].Finc * freq_LFO) >> LFO_FMS_LBITS);  \

@@ -33,6 +33,8 @@ extern DB_functions_t *deadbeef;
     NSTimer *_updateTimer;
     char *_titlebar_playing_script;
     char *_titlebar_stopped_script;
+    char *_statusbar_playing_script;
+    int _prevSeekBarPos;
 }
 @end
 
@@ -61,10 +63,8 @@ extern DB_functions_t *deadbeef;
     [super windowDidLoad];
 
     _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
-    [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSDefaultRunLoopMode];    
+    [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
 }
-
-int prevSeekbar = -1;
 
 // update status bar and window title
 static char sb_text[512];
@@ -95,59 +95,20 @@ static struct timeval last_br_update;
     }
     
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
-    DB_fileinfo_t *c = deadbeef->streamer_get_current_fileinfo (); // FIXME: might crash streamer
     
-    float duration = track ? deadbeef->pl_get_item_duration (track) : -1;
-    
-    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track || !c)) {
+    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track)) {
         snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
     }
     else {
-        float playpos = deadbeef->streamer_get_playpos ();
-        int minpos = playpos / 60;
-        int secpos = playpos - minpos * 60;
-        int mindur = duration / 60;
-        int secdur = duration - mindur * 60;
-        
-        const char *mode;
-        char temp[20];
-        if (c->fmt.channels <= 2) {
-            mode = c->fmt.channels == 1 ? _("Mono") : _("Stereo");
-        }
-        else {
-            snprintf (temp, sizeof (temp), "%dch Multichannel", c->fmt.channels);
-            mode = temp;
-        }
-        int samplerate = c->fmt.samplerate;
-        int bitspersample = c->fmt.bps;
-        //        codec_unlock ();
-        
-        char t[100];
-        if (duration >= 0) {
-            snprintf (t, sizeof (t), "%d:%02d", mindur, secdur);
-        }
-        else {
-            strcpy (t, "-:--");
-        }
-        
-        struct timeval tm;
-        gettimeofday (&tm, NULL);
-        if (tm.tv_sec - last_br_update.tv_sec + (tm.tv_usec - last_br_update.tv_usec) / 1000000.0 >= 0.3) {
-            memcpy (&last_br_update, &tm, sizeof (tm));
-            int bitrate = deadbeef->streamer_get_apx_bitrate ();
-            if (bitrate > 0) {
-                snprintf (sbitrate, sizeof (sbitrate), _("| %4d kbps "), bitrate);
-            }
-            else {
-                sbitrate[0] = 0;
-            }
-        }
-        const char *spaused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED ? _("Paused | ") : "";
-        char filetype[20];
-        if (!deadbeef->pl_get_meta (track, ":FILETYPE", filetype, sizeof (filetype))) {
-            strcpy (filetype, "-");
-        }
-        snprintf (sbtext_new, sizeof (sbtext_new), _("%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"), spaused, filetype, sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+        ddb_tf_context_t ctx = {
+            ._size = sizeof (ddb_tf_context_t),
+            .it = track,
+            .iter = PL_MAIN,
+        };
+
+        char buffer[200];
+        deadbeef->tf_eval (&ctx, _statusbar_playing_script, buffer, sizeof (buffer));
+        snprintf (sbtext_new, sizeof (sbtext_new), "%s | %d tracks | %s total playtime", buffer, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
     }
     
     if (strcmp (sbtext_new, sb_text)) {
@@ -160,14 +121,9 @@ static struct timeval last_br_update;
     }
 }
 
-- (void)frameUpdate:(id)userData
-{
-    if (![[self window] isVisible]) {
-        return;
-    }
+- (void)advanceSeekBar:(DB_playItem_t *)trk {
     float dur = -1;
     float perc = 0;
-    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (trk) {
         dur = deadbeef->pl_get_item_duration (trk);
         if (dur >= 0) {
@@ -179,15 +135,16 @@ static struct timeval last_br_update;
                 perc = 100;
             }
         }
-        deadbeef->pl_item_unref (trk);
     }
-    
-    int cmp =(int)(perc*4000);
-    if (cmp != prevSeekbar) {
-        prevSeekbar = cmp;
-        [_seekBar setFloatValue:perc];
+
+    if (![_seekBar dragging]) {
+        int cmp =(int)(perc*4000);
+        if (cmp != _prevSeekBarPos) {
+            _prevSeekBarPos = cmp;
+            [_seekBar setFloatValue:perc];
+        }
     }
-    
+
     BOOL st = YES;
     if (!trk || dur < 0) {
         st = NO;
@@ -195,8 +152,23 @@ static struct timeval last_br_update;
     if ([_seekBar isEnabled] != st) {
         [_seekBar setEnabled:st];
     }
-    
-    [self updateSonginfo];    
+}
+
+- (void)frameUpdate:(id)userData
+{
+    if (![[self window] isVisible]) {
+        return;
+    }
+
+    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
+
+    [self advanceSeekBar:trk];
+
+    [self updateSonginfo];
+
+    if (trk) {
+        deadbeef->pl_item_unref (trk);
+    }
 }
 
 - (IBAction)seekBarAction:(id)sender {
@@ -302,6 +274,11 @@ static struct timeval last_br_update;
         deadbeef->tf_free (_titlebar_stopped_script);
         _titlebar_stopped_script = NULL;
     }
+
+    if (_statusbar_playing_script) {
+        deadbeef->tf_free (_statusbar_playing_script);
+        _statusbar_playing_script = NULL;
+    }
 }
 
 - (void)updateTitleBarConfig {
@@ -314,6 +291,8 @@ static struct timeval last_br_update;
 
     deadbeef->conf_get_str ("cocoaui.titlebar_stopped", DEFAULT_TITLEBAR_STOPPED_VALUE, script, sizeof (script));
     _titlebar_stopped_script = deadbeef->tf_compile (script);
+
+    _statusbar_playing_script = deadbeef->tf_compile ("$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length%");
 }
 
 - (void)updateTitleBar {

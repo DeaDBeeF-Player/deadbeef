@@ -66,7 +66,7 @@
 //#include "emu.h"
 #include "mamedef.h"
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 #include "saa1099.h"
 
 
@@ -448,7 +448,9 @@ void saa1099_control_w(void *_info, offs_t offset, UINT8 data)
 	{
 		/* Error! */
 		//logerror("%s: (SAA1099 '%s') Unknown register selected\n",device->machine().describe_context(), device->tag());
+#ifdef _DEBUG
 		logerror("SAA1099: Unknown register selected\n");
+#endif
 	}
 
 	saa->selected_reg = data & 0x1f;
@@ -537,7 +539,9 @@ void saa1099_data_w(void *_info, offs_t offset, UINT8 data)
 
 			/* Synch & Reset generators */
 			//logerror("%s: (SAA1099 '%s') -reg 0x1c- Chip reset\n",device->machine().describe_context(), device->tag());
+#ifdef _DEBUG
 			logerror("SAA1099: -reg 0x1c- Chip reset\n");
+#endif
 			for (i = 0; i < 6; i++)
 			{
 				saa->channels[i].level = 0;
@@ -545,9 +549,11 @@ void saa1099_data_w(void *_info, offs_t offset, UINT8 data)
 			}
 		}
 		break;
+#ifdef _DEBUG
 	default:	/* Error! */
 		//logerror("%s: (SAA1099 '%s') Unknown operation (reg:%02x, data:%02x)\n",device->machine().describe_context(), device->tag(), reg, data);
 		logerror("SAA1099: Unknown operation (reg:%02x, data:%02x)\n",reg, data);
+#endif
 	}
 }
 

@@ -11,7 +11,7 @@
 
 ***************************************************************************/
 
-#include <memory.h>	// for memset
+#include <string.h>	// for memset
 #include <stdlib.h>	// for free
 #include <stddef.h>	// for NULL
 #include "mamedef.h"
@@ -248,6 +248,8 @@ int device_start_ym2608(void **_info, int AY_EMU_CORE, int clock, UINT8 AYDisabl
 	int ay_clock;
 	//void *pcmbufa;
 	//int  pcmsizea;
+	//ym2608_state *info = get_safe_token(device);
+	ym2608_state *info;
 
 #ifdef ENABLE_ALL_CORES
 	if (AY_EMU_CORE >= 0x02)
@@ -255,9 +257,6 @@ int device_start_ym2608(void **_info, int AY_EMU_CORE, int clock, UINT8 AYDisabl
 #else
 	AY_EMU_CORE = EC_EMU2149;
 #endif
-
-	//ym2608_state *info = get_safe_token(device);
-	ym2608_state *info;
 
 	info = (ym2608_state *) calloc(1, sizeof(ym2608_state));
 	*_info = (void *) info;	

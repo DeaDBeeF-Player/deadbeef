@@ -26,7 +26,7 @@
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
-static NSString *default_format = @"[%tracknumber%. ]%artist% - %title%";
+static NSString *default_format = @"[%tracknumber%. ][%artist% - ]%title%";
 
 @interface ConverterWindowController () {
     ddb_converter_t *_converter_plugin;
@@ -49,6 +49,8 @@ static NSString *default_format = @"[%tracknumber%. ]%artist% - %title%";
     int _cancelled;
     NSInteger _overwritePromptResult;
     BOOL _working;
+    NSInteger _bypassSameFormatState;
+    NSInteger _retagAfterCopyState;
 }
 @end
 
@@ -78,6 +80,8 @@ static NSMutableArray *g_converterControllers;
     [_outputFolder setStringValue:[NSString stringWithUTF8String:out_folder]];
     [_outputFileName setStringValue:[NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("converter.output_file", "")]];
     [_preserveFolderStructure setState:deadbeef->conf_get_int ("converter.preserve_folder_structure", 0) ? NSOnState : NSOffState];
+    [_bypassSameFormat setState:deadbeef->conf_get_int ("converter.bypass_same_format", 0)];
+    [_retagAfterCopy setState:deadbeef->conf_get_int ("converter.retag_after_copy", 0)];
 
     int write_to_source_folder = deadbeef->conf_get_int ("converter.write_to_source_folder", 0);
     [_writeToSourceFolder setState:write_to_source_folder ? NSOnState : NSOffState];
@@ -108,13 +112,37 @@ static NSMutableArray *g_converterControllers;
     [_encoderPreset selectItemAtIndex:deadbeef->conf_get_int ("converter.encoder_preset", 0)];
 }
 
+- (void)controlTextDidChange:(NSNotification *)notification {
+    NSTextField *textField = [notification object];
+    if (textField == _outputFolder) {
+        [self outputFolderChanged:self];
+    }
+    else if (textField == _outputFileName) {
+        [self outputPathChanged:self];
+    }
+}
+
 - (IBAction)outputFolderChanged:(id)sender {
+    [self updateFilenamesPreview];
     deadbeef->conf_set_str ("converter.output_folder", [[_outputFolder stringValue] UTF8String]);
     deadbeef->conf_save ();
 }
 
 - (IBAction)preserveFolderStructureChanged:(id)sender {
+    [self updateFilenamesPreview];
     deadbeef->conf_set_int ("converter.preserve_folder_structure", [_preserveFolderStructure state] == NSOnState);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)bypassSameFormatChanged:(id)sender {
+    deadbeef->conf_set_int ("converter.bypass_same_format", [_bypassSameFormat state] == NSOnState);
+    deadbeef->conf_save ();
+
+    [_retagAfterCopy setEnabled:[_bypassSameFormat state] == NSOnState];
+}
+
+- (IBAction)retagAfterCopyChanged:(id)sender {
+    deadbeef->conf_set_int ("converter.retag_after_copy", [_retagAfterCopy state] == NSOnState);
     deadbeef->conf_save ();
 }
 
@@ -143,7 +171,7 @@ static NSMutableArray *g_converterControllers;
         if (it) {
             char outpath[PATH_MAX];
 
-            _converter_plugin->get_output_path2 (_convert_items[n], _convert_playlist, [[_outputFolder stringValue] UTF8String], [outfile UTF8String], encoder_preset, [_preserveFolderStructure state] == NSOnState, "", [_writeToSourceFolder state] == NSOnState, outpath, sizeof (outpath));
+            _converter_plugin->get_output_path2 (it, _convert_playlist, [[_outputFolder stringValue] UTF8String], [outfile UTF8String], encoder_preset, [_preserveFolderStructure state] == NSOnState, "", [_writeToSourceFolder state] == NSOnState, outpath, sizeof (outpath));
 
             [convert_items_preview addObject:[NSString stringWithUTF8String:outpath]];
         }
@@ -154,9 +182,12 @@ static NSMutableArray *g_converterControllers;
 
 - (IBAction)outputPathChanged:(id)sender {
     [self updateFilenamesPreview];
+    deadbeef->conf_set_str ("converter.output_file", [[_outputFileName stringValue] UTF8String]);
+    deadbeef->conf_save ();
 }
 
 - (IBAction)writeToSourceFolderChanged:(id)sender {
+    [self updateFilenamesPreview];
     int active = [sender state] == NSOnState;
     deadbeef->conf_set_int ("converter.write_to_source_folder", active);
     deadbeef->conf_save ();
@@ -177,6 +208,11 @@ static NSMutableArray *g_converterControllers;
 
 - (IBAction)overwritePromptChanged:(id)sender {
     deadbeef->conf_set_int ("converter.overwrite_action", (int)[_fileExistsAction indexOfSelectedItem]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)outputFormatChanged:(id)sender {
+    deadbeef->conf_set_int ("converter.output_format", (int)[_outputFormat indexOfSelectedItem]);
     deadbeef->conf_save ();
 }
 
@@ -417,10 +453,15 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx ((int)rowIndex);
     if (p) {
         if (p->title) {
+            char path[PATH_MAX];
+            if (snprintf (path, sizeof (path), "%s/presets/encoders/%s.txt", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG), p->title) > 0) {
+                unlink (path);
+            }
             free (p->title);
         }
         NSString *title = [self uniqueEncoderPresetTitle:anObject];
         p->title = strdup ([title UTF8String]);
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -449,6 +490,7 @@ static NSMutableArray *g_converterControllers;
         if (p->tag_apev2 ^ [[self encoderPresetApeTag] state] ) { [[self encoderPresetApeTag] setNextState]; };
         if (p->tag_flac ^ [[self encoderPresetFlacTag] state]) { [[self encoderPresetFlacTag] setNextState]; };
         if (p->tag_oggvorbis ^ [[self encoderPresetOggVorbisTag] state]) { [[self encoderPresetOggVorbisTag] setNextState]; };
+        if (p->tag_mp4 ^ [[self encoderPresetMP4Tag] state] ) { [[self encoderPresetMP4Tag] setNextState]; };
 
         [[self encoderPresetOutputFileExtension] setStringValue: [NSString stringWithFormat:@"%s", p->ext] ];
         [[self encoderPresetCommandLine] setStringValue: [NSString stringWithFormat:@"%s", p->encoder] ];
@@ -466,6 +508,7 @@ static NSMutableArray *g_converterControllers;
         [[self encoderPresetOggVorbisTag] setEnabled: enabled ];
         [[self encoderPresetID3v1Tag] setEnabled: enabled ];
         [[self encoderPresetID3v2Tag] setEnabled: enabled ];
+        [[self encoderPresetMP4Tag] setEnabled: enabled ];
     }
 }
 
@@ -474,6 +517,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->ext = strdup ([[sender stringValue] UTF8String]);
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -482,6 +526,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->encoder = strdup ([[sender stringValue] UTF8String]);
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -490,6 +535,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->method = (int)[sender indexOfSelectedItem];
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -498,6 +544,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->id3v2_version = (int)[sender indexOfSelectedItem];
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -506,6 +553,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->tag_apev2 = [sender state];
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -514,6 +562,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->tag_flac = [sender state];
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -522,6 +571,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->tag_oggvorbis = [sender state];
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -530,6 +580,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->tag_id3v1 = [sender state];
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -538,6 +589,16 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
         p->tag_id3v2 = [sender state];
+        _converter_plugin->encoder_preset_save (p, 1);
+    }
+}
+
+- (IBAction)encoderPresetMP4TagChangedAction:(id)sender {
+    int idx = (int)[_encoderPresetsTableView selectedRow];
+    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
+    if(p) {
+        p->tag_mp4 = [sender state];
+        _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
@@ -636,6 +697,10 @@ static NSMutableArray *g_converterControllers;
     [_progressPanel setIsVisible:YES];
 
     _working = YES;
+
+    _bypassSameFormatState = [_bypassSameFormat state];
+    _retagAfterCopyState = [_retagAfterCopy state];
+
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
         [self converterWorker];
@@ -680,6 +745,15 @@ static NSMutableArray *g_converterControllers;
             deadbeef->pl_unlock ();
         }
     }
+
+    ddb_converter_settings_t settings = {
+        .output_bps = _output_bps,
+        .output_is_float = _output_is_float,
+        .encoder_preset = _encoder_preset,
+        .dsp_preset = _dsp_preset,
+        .bypass_conversion_on_same_format = (_bypassSameFormatState == NSOnState),
+        .rewrite_tags_after_copy = (_retagAfterCopyState == NSOnState),
+    };
 
     for (int n = 0; n < _convert_items_count; n++) {
         deadbeef->pl_lock ();
@@ -726,7 +800,7 @@ static NSMutableArray *g_converterControllers;
         }
 
         if (!skip) {
-            _converter_plugin->convert (_convert_items[n], outpath, _output_bps, _output_is_float, _encoder_preset, _dsp_preset, &_cancelled);
+            _converter_plugin->convert2 (&settings, _convert_items[n], outpath, &_cancelled);
         }
         if (_cancelled) {
             break;
@@ -782,7 +856,7 @@ static NSMutableArray *g_converterControllers;
     [conv run:DDB_ACTION_CTX_SELECTION];
 }
 
-+ (void)converterCleanup {
++ (void)cleanup {
     g_converterControllers = nil;
 }
 

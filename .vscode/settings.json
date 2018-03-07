@@ -1,0 +1,11 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "files.exclude": {
+        "osx/deps":true,
+        "intl":true,
+        "pixmaps":true,
+        "icons":true,
+        "osx/build":true,
+        "autom4te.cache":true,
+    }
+}

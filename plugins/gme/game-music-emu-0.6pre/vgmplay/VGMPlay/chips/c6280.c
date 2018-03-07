@@ -55,7 +55,7 @@
 
 //#include "emu.h"
 #include <stdlib.h>	// for rand()
-#include <memory.h>	// for memset()
+#include <string.h>	// for memset()
 #include <math.h>	// for pow()
 #include "mamedef.h"
 #include "c6280.h"
@@ -397,6 +397,8 @@ UINT8 c6280m_r(void* chip, offs_t offset)
     //c6280_t *info = get_safe_token(device);
 	c6280_t *info = (c6280_t *)chip;
 	//return h6280io_get_buffer(info->cpudevice);
+	if (offset == 0)
+		return info->select;
 	return 0;
 }
 

@@ -26,6 +26,10 @@
 
 #include "playlist.h"
 
-void plt_sort_v2 (playlist_t *plt, int iter, int id, const char *format, int order);
+void
+plt_sort_v2 (playlist_t *plt, int iter, int id, const char *format, int order);
+
+void
+sort_track_array (playlist_t *playlist, playItem_t **tracks, int num_tracks, const char *format, int order);
 
 #endif /* defined(__deadbeef__sort__) */

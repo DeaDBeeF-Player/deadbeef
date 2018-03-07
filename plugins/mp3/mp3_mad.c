@@ -142,11 +142,6 @@ mp3_mad_decode_int16 (mp3_info_t *info) {
 
 void
 mp3_mad_decode (mp3_info_t *info) {
-    if (info->want_16bit) {
-        mp3_mad_decode_int16 (info);
-        return;
-    }
-
     // copy synthesized samples into readbuffer
     int idx = info->mad_synth.pcm.length-info->buffer.decode_remaining;
     // stereo

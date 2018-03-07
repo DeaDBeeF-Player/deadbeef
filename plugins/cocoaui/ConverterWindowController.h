@@ -33,6 +33,8 @@
 @property (unsafe_unretained) IBOutlet NSTextField *outputFolder;
 @property (unsafe_unretained) IBOutlet NSButton *writeToSourceFolder;
 @property (unsafe_unretained) IBOutlet NSButton *preserveFolderStructure;
+@property (unsafe_unretained) IBOutlet NSButton *bypassSameFormat;
+@property (weak) IBOutlet NSButton *retagAfterCopy;
 @property (unsafe_unretained) IBOutlet NSTextField *outputFileName;
 @property (unsafe_unretained) IBOutlet NSArrayController *filenamePreviewController;
 @property (unsafe_unretained) IBOutlet NSPopUpButton *encoderPreset;
@@ -42,8 +44,6 @@
 - (IBAction)cancelAction:(id)sender;
 - (IBAction)okAction:(id)sender;
 
-- (IBAction)close:(id)sender;
-
 - (IBAction)openOutputFolderAction:(id)sender;
 - (IBAction)editEncoderPresetsAction:(id)sender;
 - (IBAction)editDSPPresetsAction:(id)sender;
@@ -51,10 +51,13 @@
 - (IBAction)outputFolderChanged:(id)sender;
 - (IBAction)writeToSourceFolderChanged:(id)sender;
 - (IBAction)preserveFolderStructureChanged:(id)sender;
+- (IBAction)bypassSameFormatChanged:(id)sender;
+- (IBAction)retagAfterCopyChanged:(id)sender;
 - (IBAction)outputPathChanged:(id)sender;
 - (IBAction)encoderPresetChanged:(id)sender;
 - (IBAction)dspPresetChanged:(id)sender;
 - (IBAction)overwritePromptChanged:(id)sender;
+- (IBAction)outputFormatChanged:(id)sender;
 
 
 
@@ -72,6 +75,7 @@
 @property (unsafe_unretained) IBOutlet NSButton *encoderPresetOggVorbisTag;
 @property (unsafe_unretained) IBOutlet NSButton *encoderPresetID3v1Tag;
 @property (unsafe_unretained) IBOutlet NSButton *encoderPresetID3v2Tag;
+@property (unsafe_unretained) IBOutlet NSButton *encoderPresetMP4Tag;
 
 - (IBAction)encoderPresetOutputFileExtensionChangedAction:(id)sender;
 - (IBAction)encoderPresetCommandLineChangedAction:(id)sender;
@@ -82,6 +86,8 @@
 - (IBAction)encoderPresetOggVorbisTagChangedAction:(id)sender;
 - (IBAction)encoderPresetID3v1TagChangedAction:(id)sender;
 - (IBAction)encoderPresetID3v2TagChangedAction:(id)sender;
+- (IBAction)encoderPresetMP4TagChangedAction:(id)sender;
+
 
 
 @property (strong) IBOutlet NSPanel *dspPresetsPanel;
@@ -100,6 +106,6 @@
 
 + (void)runConverter:(int)ctx;
 
-+ (void)converterCleanup;
++ (void)cleanup;
 
 @end

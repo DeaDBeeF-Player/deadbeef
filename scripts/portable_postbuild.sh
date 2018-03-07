@@ -41,12 +41,12 @@ for i in converter pltbrowser shellexecui ; do
 done
 
 for i in nullout cdda flac alsa mp3 hotkeys vtx \
-     ffap ffmpeg wavpack vorbis oss vfs_curl \
+     ffap ffmpeg wavpack vorbis opus oss vfs_curl \
      lastfm sid adplug sndfile alac \
      supereq gme dumb notify musepack wildmidi \
      tta dca aac mms shn psf shellexec vfs_zip \
      m3u converter pulse dsp_libsrc mono2stereo \
-     wma statusnotifier \
+     wma rg_scanner\
      ; do
     if [ -f ./plugins/$i/.libs/$i.so ]; then
         cp ./plugins/$i/.libs/$i.so $PLUGDIR/
@@ -69,9 +69,6 @@ if [ -f ./plugins/gtkui/.libs/ddb_gui_GTK2.so ]; then
     cp ./plugins/gtkui/.libs/ddb_gui_GTK2.so $PLUGDIR/
 else
     echo ./plugins/gtkui/.libs/ddb_gui_GTK2.so not found
-fi
-if [ -f ./plugins/gtkui/.libs/ddb_gui_GTK2.fallback.so ]; then
-    cp ./plugins/gtkui/.libs/ddb_gui_GTK2.fallback.so $PLUGDIR/
 fi
 
 if [ -f ./plugins/gtkui/.libs/ddb_gui_GTK3.so ]; then
@@ -111,6 +108,7 @@ for i in po/*.gmo ; do
 done
 cp translation/help.pt_BR.txt $OUTDIR/doc/
 cp translation/help.ru.txt $OUTDIR/doc/
+cp translation/help.zh_TW.txt $OUTDIR/doc/
 
 # strip
 if [ $OSTYPE != 'Darwin' ];then

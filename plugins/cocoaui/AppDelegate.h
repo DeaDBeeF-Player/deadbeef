@@ -36,6 +36,7 @@
 @property MainWindowController *mainWindow;
 
 @property (unsafe_unretained) IBOutlet NSMenuItem *mainWindowToggleMenuItem;
+@property (unsafe_unretained) IBOutlet NSMenuItem *logWindowToggleMenuItem;
 
 @property (unsafe_unretained) IBOutlet NSMenu *mainMenu;
 @property (unsafe_unretained) IBOutlet NSMenu *dockMenu;
@@ -127,6 +128,7 @@
 
 // window menu
 - (IBAction)showMainWinAction:(id)sender;
+- (IBAction)showLogWindowAction:(id)sender;
 
 @end
 

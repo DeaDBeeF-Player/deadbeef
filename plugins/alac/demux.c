@@ -530,9 +530,8 @@ static int read_chunk_moov(qtmovie_t *qtmovie, size_t chunk_len)
             read_chunk_iods(qtmovie, sub_chunk_len);
             break;
         default:
-            trace ("(moov) unknown chunk id: %c%c%c%c\n",
-                    SPLITFOURCC(sub_chunk_id));
-            return 0;
+            stream_skip(qtmovie->stream, sub_chunk_len-8);
+            break;
         }
 
         size_remaining -= sub_chunk_len;

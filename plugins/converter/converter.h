@@ -26,6 +26,11 @@
 #include <stdint.h>
 #include "../../deadbeef.h"
 
+// changes in 1.5:
+//   added mp4 tagging support
+//   added converter option to copy files without conversion, if file format isn't changing
+//   added encoder preset option to pass source file name for %i without any processing
+//   added `converter2` function
 // changes in 1.4:
 //   changed escaping rules:
 //   now get_output_path returns unescaped path, and doesn't create folders
@@ -36,6 +41,7 @@
 enum {
     DDB_ENCODER_METHOD_PIPE = 0,
     DDB_ENCODER_METHOD_FILE = 1,
+    DDB_ENCODER_METHOD_FILENAME = 2, // added in converter-1.5
 };
 
 enum {
@@ -56,13 +62,14 @@ typedef struct ddb_encoder_preset_s {
     struct ddb_encoder_preset_s *next;
     char *ext;
     char *encoder;
-    int method; // pipe or file
+    int method; // DDB_ENCODER_METHOD_*
     int tag_id3v2;
     int tag_id3v1;
     int tag_apev2;
     int tag_flac;
     int tag_oggvorbis;
     int tag_mp3xing;
+    int tag_mp4;
     int id3v2_version;
 
     // added in converter-1.3
@@ -74,6 +81,26 @@ typedef struct ddb_dsp_preset_s {
     struct ddb_dsp_preset_s *next;
     ddb_dsp_context_t *chain;
 } ddb_dsp_preset_t;
+
+typedef struct ddb_converter_settings_s {
+    // stream should be pre-converted to this resolution
+    int output_bps;
+
+    // stream should be converted to float
+    int output_is_float;
+
+    // encoder preset to use
+    ddb_encoder_preset_t *encoder_preset;
+
+    // dsp preset to use
+    ddb_dsp_preset_t *dsp_preset;
+
+    // bypass conversion, and copy the file as-is, if the output file extension is the same
+    int bypass_conversion_on_same_format;
+
+    // rewrite tags after copy, if the bypass_conversion_on_same_format is true
+    int rewrite_tags_after_copy;
+} ddb_converter_settings_t;
 
 typedef struct {
     DB_misc_t misc;
@@ -159,7 +186,7 @@ typedef struct {
 
     // this function is deprecated, please don't use directly
     int
-    (*convert_1_0) (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort);
+    (*convert_1_0) (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *pabort);
 
     /////////////////////////////
     // new APIs for converter-1.1
@@ -177,15 +204,24 @@ typedef struct {
     /////////////////////////////
     // new APIs for converter-1.2
     /////////////////////////////
+
+    // `convert` is deprecated in converter-1.5, use `convert2` instead
     int
     (*convert) (
-            DB_playItem_t *it, // track to be converted
-            const char *outpath, // final path to write the file (should normally be obtained using get_output_path)
-            int output_bps, // stream should be pre-converted to this resolution
-            int output_is_float, // stream should be converted to float
-            ddb_encoder_preset_t *encoder_preset, // encoder preset to use
-            ddb_dsp_preset_t *dsp_preset, // dsp preset to use
-            int *abort // *abort will be checked regularly, conversion will be interrupted if it's non-zero
+        // track to be converted
+        DB_playItem_t *it,
+        // final path to write the file (should normally be obtained using get_output_path)
+        const char *outpath,
+        // stream should be pre-converted to this resolution
+        int output_bps,
+        // stream should be converted to float
+        int output_is_float,
+        // encoder preset to use
+        ddb_encoder_preset_t *encoder_preset,
+        // dsp preset to use
+        ddb_dsp_preset_t *dsp_preset,
+        // *pabort will be checked regularly, conversion will be interrupted if it's non-zero
+        int *pabort
     );
 
     // The 'get_output_path' function should be used to get the fully
@@ -214,6 +250,22 @@ typedef struct {
     // plt: the playlist which contains the track 'it'
     void
     (*get_output_path2) (DB_playItem_t *it, ddb_playlist_t *plt, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz);
+
+    // since 1.5
+    int
+    (*convert2) (
+         // converter settings
+         ddb_converter_settings_t *settings,
+
+         // track to convert
+         DB_playItem_t *it,
+
+         // fully qualified output path with filename and extension
+         const char *outpath,
+
+         // *pabort will be checked regularly, conversion will be interrupted if it's non-zero
+         int *pabort
+    );
 } ddb_converter_t;
 
 #endif

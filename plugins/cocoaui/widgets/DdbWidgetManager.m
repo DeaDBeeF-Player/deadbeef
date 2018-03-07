@@ -43,6 +43,10 @@ static DdbWidgetManager *_defaultWidgetManager = nil;
 }
 
 - (void)addWidget:(DdbWidget *)widget {
+    if ([_regWidgets indexOfObject:widget] != NSNotFound) {
+        NSLog (@"DdbWidgetManager: addWidget called with an object that's already registered\n");
+        return;
+    }
     [_regWidgets addObject:widget];
 }
 

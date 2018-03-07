@@ -352,9 +352,11 @@ init_action_tree (GtkWidget *actions, const char *act, int ctx) {
                         t = action_tree_append (actions->title, actions_store, &action_selection_iter, &iter);
                         unescape_forward_slash (t, title, sizeof (title));
                         gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_SELECTION, -1);
-                        t = action_tree_append (actions->title, actions_store, &action_playlist_iter, &iter);
-                        unescape_forward_slash (t, title, sizeof (title));
-                        gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_PLAYLIST, -1);
+                        if (!(actions->flags & DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST)) {
+                            t = action_tree_append (actions->title, actions_store, &action_playlist_iter, &iter);
+                            unescape_forward_slash (t, title, sizeof (title));
+                            gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_PLAYLIST, -1);
+                        }
                         t = action_tree_append (actions->title, actions_store, &action_nowplaying_iter, &iter);
                         unescape_forward_slash (t, title, sizeof (title));
                         gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_NOWPLAYING, -1);
@@ -918,8 +920,7 @@ gtkui_set_default_hotkeys (void) {
     deadbeef->conf_set_str ("hotkey.key09", "\"F1\" 0 0 help");
     deadbeef->conf_set_str ("hotkey.key10", "\"Delete\" 1 0 remove_from_playlist");
     deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
-    deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
-    deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
+    deadbeef->conf_set_str ("hotkey.key13", "\"Alt Return\" 1 0 track_properties");
     deadbeef->conf_set_str ("hotkey.key14", "\"Return\" 0 0 play");
     deadbeef->conf_set_str ("hotkey.key15", "\"Ctrl p\" 0 0 toggle_pause");
     deadbeef->conf_set_str ("hotkey.key16", "\"Alt 1\" 0 0 playlist1");

@@ -73,7 +73,7 @@ Revision History:
 #include <stdio.h>
 #endif
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 //#include "sndintrf.h"
 #include "fmopl.h"
 #if BUILD_Y8950
@@ -81,7 +81,9 @@ Revision History:
 #endif
 
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 
 /* output final shift */
@@ -2546,6 +2548,10 @@ void *y8950_init(UINT32 clock, UINT32 rate)
 	FM_OPL *Y8950 = OPLCreate(clock,rate,OPL_TYPE_Y8950);
 	if (Y8950)
 	{
+		Y8950->deltat->memory = NULL;
+		Y8950->deltat->memory_size = 0x00;
+		Y8950->deltat->memory_mask = 0x00;
+
 		Y8950->deltat->status_set_handler = Y8950_deltat_status_set;
 		Y8950->deltat->status_reset_handler = Y8950_deltat_status_reset;
 		Y8950->deltat->status_change_which_chip = Y8950;

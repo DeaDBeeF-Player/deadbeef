@@ -1,3 +1,26 @@
+/*
+    DeaDBeeF -- the music player
+    Copyright (C) 2009-2016 Alexey Yakovenko and other contributors
+
+    This software is provided 'as-is', without any express or implied
+    warranty.  In no event will the authors be held liable for any damages
+    arising from the use of this software.
+
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
+
+    1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
+*/
+
 #import "CoverManager.h"
 #include "../../deadbeef.h"
 #include "../../plugins/artwork/artwork.h"
@@ -30,8 +53,11 @@ static CoverManager *g_DefaultCoverManager = nil;
     self = [super init];
     _artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     _defaultCover = [NSImage imageNamed:@"noartwork.png"];
-    //_name_tf = deadbeef->tf_compile ("$if2(b:%album%-a:%artist%,$if2(b:%album%,$if2(a:%artist,f:%directoryname%/%filename%)))");
-    _name_tf = deadbeef->tf_compile ("b:%album%-a:%artist%");
+
+    // Each file may contain its own album art, therefore we can't really cache them easily by album/artist/title.
+    // This however would duplicate the same image, for every track in every album, if the custom grouping is set per file.
+    //_name_tf = deadbeef->tf_compile ("b:%album%-a:%artist%-t:%title%");
+    _name_tf = deadbeef->tf_compile ("%_path_raw%");
     return self;
 }
 
@@ -57,14 +83,22 @@ typedef struct {
 } cover_callback_info_t;
 
 static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
-    NSString *imgFname = nil;
-    if (!error) {
-        imgFname = [NSString stringWithUTF8String:cover->filename];
+    // We want to load the images in background, to keep UI responsive
+    CoverManager *cm = [CoverManager defaultCoverManager];
+    NSImage *img = nil;
+    if (!img && cover && cover->blob) {
+        NSData *data = [NSData dataWithBytesNoCopy:cover->blob + cover->blob_image_offset length:cover->blob_image_size freeWhenDone:NO];
+        img = [[NSImage alloc] initWithData:data];
+        data = nil;
+    }
+    if (!img && cover && cover->filename) {
+        img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->filename]];
+    }
+    if (!img) {
+        img = [cm defaultCover];
     }
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        CoverManager *cm = [CoverManager defaultCoverManager];
-        NSImage *img = imgFname ? [[NSImage alloc] initWithContentsOfFile:imgFname] : [cm defaultCover];
         if (img) {
             [cm addCoverForTrack:query->track withImage:img];
             cover_callback_info_t *info = query->user_data;
@@ -72,6 +106,11 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
         }
 
         deadbeef->pl_item_unref (query->track);
+
+        if (cover) {
+            cm->_artwork_plugin->cover_info_free (cover);
+        }
+
         free (query);
     });
 }
@@ -81,23 +120,39 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
 
     NSNumber *t = [NSNumber numberWithLong:time (NULL)];
     int i_min = 0;
+    BOOL foundEmpty = NO;
     for (int i = 0; i < CACHE_SIZE; i++) {
         NSMutableDictionary *d = _cachedCovers[i];
-        if (!d) {
+        if (!d && !foundEmpty) {
+            i_min = i;
+            foundEmpty = YES;
+            continue;
+        }
+
+        // same image
+        if ([d[@"hash"] isEqualToString:hash]) {
             i_min = i;
             break;
         }
+
+        // lowest timestamp
         NSNumber *ts = d[@"ts"];
-        if ([ts isLessThan:t]) {
+        if (!foundEmpty && [ts isLessThan:t]) {
             i_min = i;
         }
     }
 
+//    NSLog (@"+ %@", hash);
     NSMutableDictionary *d = [[NSMutableDictionary alloc] initWithObjectsAndKeys:hash, @"hash", t, @"ts", img, @"img", nil];
     _cachedCovers[i_min] = d;
 }
 
 - (NSImage *)getCoverForTrack:(DB_playItem_t *)track withCallbackWhenReady:(void (*) (NSImage *img, void *user_data))callback withUserDataForCallback:(void *)user_data {
+    if (!_artwork_plugin) {
+        callback (nil, user_data);
+        return nil;
+    }
+
     NSString *hash = [self hashForTrack:track];
     for (int i = 0; i < CACHE_SIZE; i++) {
         NSMutableDictionary *d = _cachedCovers[i];
@@ -110,6 +165,7 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
         }
     }
 
+//    NSLog (@"! %@", hash);
     ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
     query->_size = sizeof (ddb_cover_query_t);
     query->track = track;

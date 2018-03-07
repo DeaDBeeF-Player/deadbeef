@@ -41,9 +41,12 @@
 // :DURATION - length in seconds
 
 typedef struct playItem_s {
-    int startsample;
-    int endsample;
-    int shufflerating; // sort order for shuffle mode
+    int32_t startsample;
+    int32_t endsample;
+    int32_t shufflerating; // sort order for shuffle mode
+
+    int64_t startsample64;
+    int64_t endsample64;
     // private area, must not be visible to plugins
     float _duration;
     uint32_t _flags;
@@ -54,6 +57,8 @@ typedef struct playItem_s {
     unsigned selected : 1;
     unsigned played : 1; // mark as played in shuffle mode
     unsigned in_playlist : 1; // 1 if item is in playlist
+    unsigned has_startsample64 : 1;
+    unsigned has_endsample64 : 1;
 } playItem_t;
 
 typedef struct playlist_s {
@@ -61,6 +66,7 @@ typedef struct playlist_s {
     struct playlist_s *next;
     int count[2];
     float totaltime;
+    float seltime;
     int modification_idx;
     int last_save_modification_idx;
     playItem_t *head[PL_MAX_ITERATORS]; // head of linked list
@@ -70,8 +76,16 @@ typedef struct playlist_s {
     struct DB_metaInfo_s *meta; // linked list storing metainfo
     int refc;
     int files_add_visibility;
+
+    int64_t cue_numsamples;
+    int cue_samplerate;
+    
     unsigned fast_mode : 1;
     unsigned files_adding : 1;
+    unsigned recalc_seltime : 1;
+    unsigned loading_cue : 1;
+    unsigned ignore_archives : 1;
+    unsigned follow_symlinks : 1;
 } playlist_t;
 
 // global playlist control functions
@@ -280,6 +294,9 @@ pl_find_meta_raw (playItem_t *it, const char *key);
 int
 pl_find_meta_int (playItem_t *it, const char *key, int def);
 
+int64_t
+pl_find_meta_int64 (playItem_t *it, const char *key, int64_t def);
+
 float
 pl_find_meta_float (playItem_t *it, const char *key, float def);
 
@@ -288,6 +305,9 @@ pl_replace_meta (playItem_t *it, const char *key, const char *value);
 
 void
 pl_set_meta_int (playItem_t *it, const char *key, int value);
+
+void
+pl_set_meta_int64 (playItem_t *it, const char *key, int64_t value);
 
 void
 pl_set_meta_float (playItem_t *it, const char *key, float value);
@@ -376,6 +396,9 @@ plt_get_totaltime (playlist_t *plt);
 
 float
 pl_get_totaltime (void);
+
+float
+plt_get_selection_playback_time (playlist_t *plt);
 
 void
 pl_set_selected (playItem_t *it, int sel);
@@ -547,5 +570,29 @@ pl_meta_free_values (DB_metaInfo_t *meta);
 
 void
 pl_add_meta_copy (playItem_t *it, DB_metaInfo_t *meta);
+
+int
+register_fileadd_filter (int (*callback)(ddb_file_found_data_t *data, void *user_data), void *user_data);
+
+void
+unregister_fileadd_filter (int id);
+
+playItem_t *
+pl_item_init (const char *fname);
+
+int64_t
+pl_item_get_startsample (playItem_t *it);
+
+int64_t
+pl_item_get_endsample (playItem_t *it);
+
+void
+pl_item_set_startsample (playItem_t *it, int64_t sample);
+
+void
+pl_item_set_endsample (playItem_t *it, int64_t sample);
+
+int
+plt_is_loading_cue (playlist_t *plt);
 
 #endif // __PLAYLIST_H

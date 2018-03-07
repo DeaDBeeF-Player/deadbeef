@@ -40,6 +40,8 @@ create_converterdlg (void)
   GtkWidget *converter_output_browse;
   GtkWidget *write_to_source_folder;
   GtkWidget *preserve_folders;
+  GtkWidget *bypass_same_format;
+  GtkWidget *retag_after_copy;
   GtkWidget *hbox100;
   GtkWidget *label122;
   GtkWidget *hbox101;
@@ -123,6 +125,14 @@ create_converterdlg (void)
   gtk_widget_show (preserve_folders);
   gtk_box_pack_start (GTK_BOX (vbox26), preserve_folders, FALSE, FALSE, 0);
 
+  bypass_same_format = gtk_check_button_new_with_mnemonic (_("Copy if the format is not changing"));
+  gtk_widget_show (bypass_same_format);
+  gtk_box_pack_start (GTK_BOX (vbox26), bypass_same_format, FALSE, FALSE, 0);
+
+  retag_after_copy = gtk_check_button_new_with_mnemonic (_("Re-tag after copy"));
+  gtk_widget_show (retag_after_copy);
+  gtk_box_pack_start (GTK_BOX (vbox26), retag_after_copy, FALSE, FALSE, 0);
+
   hbox100 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox100);
   gtk_box_pack_start (GTK_BOX (vbox26), hbox100, FALSE, TRUE, 0);
@@ -138,7 +148,7 @@ create_converterdlg (void)
   output_file = gtk_entry_new ();
   gtk_widget_show (output_file);
   gtk_box_pack_start (GTK_BOX (hbox101), output_file, TRUE, TRUE, 0);
-  gtk_widget_set_tooltip_text (output_file, _("Extension (e.g. .mp3) will be appended automatically.\nLeave the field empty for default (%artist% - %title%)."));
+  gtk_widget_set_tooltip_text (output_file, _("Extension (e.g. .mp3) will be appended automatically.\nLeave the field empty for default ([%tracknumber%. ][%artist% - ]%title%)."));
   gtk_entry_set_invisible_char (GTK_ENTRY (output_file), 8226);
 
   custom6 = title_formatting_help_link_create ("custom6", "", "", 0, 0);
@@ -274,6 +284,12 @@ create_converterdlg (void)
   g_signal_connect ((gpointer) preserve_folders, "toggled",
                     G_CALLBACK (on_preserve_folders_toggled),
                     NULL);
+  g_signal_connect ((gpointer) bypass_same_format, "toggled",
+                    G_CALLBACK (on_bypass_same_format_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) retag_after_copy, "toggled",
+                    G_CALLBACK (on_retag_after_copy_toggled),
+                    NULL);
   g_signal_connect ((gpointer) encoder, "changed",
                     G_CALLBACK (on_converter_encoder_changed),
                     NULL);
@@ -308,6 +324,8 @@ create_converterdlg (void)
   GLADE_HOOKUP_OBJECT (converterdlg, converter_output_browse, "converter_output_browse");
   GLADE_HOOKUP_OBJECT (converterdlg, write_to_source_folder, "write_to_source_folder");
   GLADE_HOOKUP_OBJECT (converterdlg, preserve_folders, "preserve_folders");
+  GLADE_HOOKUP_OBJECT (converterdlg, bypass_same_format, "bypass_same_format");
+  GLADE_HOOKUP_OBJECT (converterdlg, retag_after_copy, "retag_after_copy");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox100, "hbox100");
   GLADE_HOOKUP_OBJECT (converterdlg, label122, "label122");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox101, "hbox101");
@@ -374,6 +392,7 @@ create_convpreset_editor (void)
   GtkWidget *hbox104;
   GtkWidget *id3v2;
   GtkWidget *id3v2_version;
+  GtkWidget *mp4;
   GtkWidget *label125;
   GtkWidget *dialog_action_area6;
   GtkWidget *convpreset_cancel;
@@ -464,7 +483,8 @@ create_convpreset_editor (void)
   gtk_widget_show (method);
   gtk_box_pack_start (GTK_BOX (hbox73), method, TRUE, TRUE, 0);
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (method), _("Pipe"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (method), _("Temporary file"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (method), _("Temp File"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (method), _("Source File"));
 
   frame9 = gtk_frame_new (NULL);
   gtk_widget_show (frame9);
@@ -521,6 +541,12 @@ create_convpreset_editor (void)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id3v2_version), "2.3");
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id3v2_version), "2.4");
 
+  mp4 = gtk_check_button_new_with_mnemonic (_("MP4"));
+  gtk_widget_show (mp4);
+  gtk_table_attach (GTK_TABLE (table2), mp4, 0, 1, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
   label125 = gtk_label_new (_("<b>Tag writer</b>"));
   gtk_widget_show (label125);
   gtk_frame_set_label_widget (GTK_FRAME (frame9), label125);
@@ -573,6 +599,7 @@ create_convpreset_editor (void)
   GLADE_HOOKUP_OBJECT (convpreset_editor, hbox104, "hbox104");
   GLADE_HOOKUP_OBJECT (convpreset_editor, id3v2, "id3v2");
   GLADE_HOOKUP_OBJECT (convpreset_editor, id3v2_version, "id3v2_version");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, mp4, "mp4");
   GLADE_HOOKUP_OBJECT (convpreset_editor, label125, "label125");
   GLADE_HOOKUP_OBJECT_NO_REF (convpreset_editor, dialog_action_area6, "dialog_action_area6");
   GLADE_HOOKUP_OBJECT (convpreset_editor, convpreset_cancel, "convpreset_cancel");

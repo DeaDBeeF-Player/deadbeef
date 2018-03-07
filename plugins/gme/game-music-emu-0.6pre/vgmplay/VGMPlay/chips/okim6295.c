@@ -26,7 +26,7 @@
 //#include "streams.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 #include <math.h>
 #include "okim6295.h"
 
@@ -661,7 +661,9 @@ void okim6295_write_command(okim6295_state *info, UINT8 data)
 				else
 				{
 					//logerror("OKIM6295:'%s' requested to play invalid sample %02x\n",device->tag(),info->command);
+#ifdef _DEBUG
 					logerror("OKIM6295: Voice %u  requested to play invalid sample %02x\n",i,info->command);
+#endif
 					voice->playing = 0;
 				}
 			}

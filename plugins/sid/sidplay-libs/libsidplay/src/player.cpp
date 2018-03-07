@@ -330,6 +330,13 @@ Player::Player (void)
     credit[5] = NULL;
 }
 
+Player::~Player() {
+    delete m_ram;
+    if (m_ram != m_rom) {
+        delete m_rom;
+    }
+}
+
 // Makes the next sequence of notes available.  For sidplay compatibility
 // this function should be called from interrupt event
 void Player::fakeIRQ (void)

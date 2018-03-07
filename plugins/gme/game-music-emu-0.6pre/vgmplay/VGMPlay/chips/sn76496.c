@@ -124,11 +124,13 @@
 #endif
 //#include "emu.h"
 //#include "streams.h"
-#include <memory.h>
+#include <string.h>
 #include <stdlib.h>
 #include "sn76496.h"
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 
 //#define MAX_OUTPUT 0x7fff
@@ -418,7 +420,7 @@ void SN76496Update(void *chip, stream_sample_t **outputs, int samples)
 					out += vol[i] * R->Volume[i] * ggst[0];
 					out2 += vol[i] * R->Volume[i] * ggst[1];
 				}
-				else
+				else if (R->MuteMsk[i])
 				{
 					// Make Bipolar Output with PCM possible
 					//out += (2 * R->Volume[i] - R->VolTable[5]) * ggst[0];
@@ -458,7 +460,7 @@ void SN76496Update(void *chip, stream_sample_t **outputs, int samples)
 						out += vol[i] * R->Volume[i] * ggst[0];
 						out2 += vol[i] * R2->Volume[i] * ggst[1];
 					}
-					else
+					else if (R->MuteMsk[i])
 					{
 						// Make Bipolar Output with PCM possible
 						out += R->Volume[i] * ggst[0];
@@ -870,7 +872,7 @@ DEVICE_GET_INFO( smsiii )
 		case DEVINFO_STR_NAME:							strcpy(info->s, "SMSIII PSG");					break;
 		default:										DEVICE_GET_INFO_CALL(sn76496);						break;
 	}
-}
+}*/
 
 
 /*DEFINE_LEGACY_SOUND_DEVICE(SN76496, sn76496);

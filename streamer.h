@@ -4,7 +4,7 @@
 
   streamer implementation
 
-  Copyright (C) 2009-2013 Alexey Yakovenko
+  Copyright (C) 2009-2017 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -32,7 +32,7 @@
 
 // events to pass to streamer thread
 enum {
-    STR_EV_PLAY_TRACK_IDX, // p1 = idx, p2 = pstate; see streamer_set_nextsong semantics
+    STR_EV_PLAY_TRACK_IDX, // p1 = idx, or -1 to stop
     STR_EV_PLAY_CURR, // will play the current streamer track (playing_track), see more details in streamer_play_current_track
     STR_EV_NEXT, // streamer_move_to_nextsong
     STR_EV_PREV, // streamer_move_to_prevsong
@@ -62,16 +62,9 @@ streamer_lock (void);
 void
 streamer_unlock (void);
 
-// pstate indicates what to do with playback
-// -1 means "don't do anything"
-// -2 means "end of playlist"
-// 0 stop
-// 1 switch to current (gui) playlist, play if not playing
-// 2 pause
-// 3 play if not playing, don't switch playlist
-// 4 same as 1, but stops playback before proceeding
+// song == -1 means "stop and clear streamer message queue"
 void
-streamer_set_nextsong (int song, int pstate);
+streamer_set_nextsong (int song, int startpaused);
 
 void
 streamer_set_seek (float pos);
@@ -90,6 +83,9 @@ streamer_get_streaming_track (void);
 
 playItem_t *
 streamer_get_playing_track (void);
+
+playItem_t *
+streamer_get_buffering_track (void);
 
 void
 streamer_configchanged (void);
@@ -142,9 +138,6 @@ streamer_set_dsp_chain (struct ddb_dsp_context_s *chain);
 void
 streamer_dsp_refresh (void);
 
-void
-streamer_get_output_format (ddb_waveformat_t *fmt);
-
 int
 streamer_dsp_chain_save (void);
 
@@ -174,5 +167,16 @@ vis_spectrum_unlisten (void *ctx);
 
 void
 streamer_set_playing_track (playItem_t *it);
+
+// sets a callback function, which would be called before applying software volume
+void
+streamer_set_volume_modifier (float (*modifier) (float delta_time));
+
+void
+streamer_set_buffering_track (playItem_t *it);
+
+// force streamer to flush its msg queue
+void
+streamer_yield (void);
 
 #endif // __STREAMER_H

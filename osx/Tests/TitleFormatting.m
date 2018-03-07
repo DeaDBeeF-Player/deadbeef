@@ -1,3 +1,26 @@
+/*
+    DeaDBeeF -- the music player
+    Copyright (C) 2009-2018 Alexey Yakovenko and other contributors
+
+    This software is provided 'as-is', without any express or implied
+    warranty.  In no event will the authors be held liable for any damages
+    arising from the use of this software.
+
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
+
+    1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
+*/
+
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
 #include "playlist.h"
@@ -46,6 +69,7 @@ static DB_output_t fake_out = {
     streamer_set_playing_track (NULL);
     pl_item_unref (it);
     pl_free ();
+    ctx.plt = NULL;
 
     [super tearDown];
 }
@@ -315,14 +339,14 @@ static DB_output_t fake_out = {
 }
 
 - (void)test_IfLongerTrue_EvalsToTrue {
-    char *bc = tf_compile("$iflonger(abcd,ef,istrue,isfalse)");
+    char *bc = tf_compile("$iflonger(abcd,2,istrue,isfalse)");
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert(!strcmp ("istrue", buffer), @"The actual output is: %s", buffer);
 }
 
 - (void)test_IfLongerFalse_EvalsToFalse {
-    char *bc = tf_compile("$iflonger(ab,cdef,istrue,isfalse)");
+    char *bc = tf_compile("$iflonger(ab,4,istrue,isfalse)");
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
     XCTAssert(!strcmp ("isfalse", buffer), @"The actual output is: %s", buffer);
@@ -733,24 +757,24 @@ static DB_output_t fake_out = {
 }
 
 - (void)test_LengthSamplesOf100Start300End_Returns200 {
-    it->startsample = 100;
-    it->endsample = 300;
+    pl_item_set_startsample (it, 100);
+    pl_item_set_endsample (it, 300);
     char *bc = tf_compile("%length_samples%");
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, "200"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_AbbrTestString_ReturnsAbbreviatedString {
-    it->startsample = 100;
-    it->endsample = 300;
+    pl_item_set_startsample (it, 100);
+    pl_item_set_endsample (it, 300);
     char *bc = tf_compile("$abbr('This is a Long Title (12-inch version) [needs tags]')");
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, "TiaLT1v[needst"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_AbbrTestUnicodeString_ReturnsAbbreviatedString {
-    it->startsample = 100;
-    it->endsample = 300;
+    pl_item_set_startsample (it, 100);
+    pl_item_set_endsample (it, 300);
     char *bc = tf_compile("$abbr('This ɀHİJ a русский Title (12-inch version) [needs tags]')");
     tf_eval (&ctx, bc, buffer, 1000);
     XCTAssert(!strcmp (buffer, "TɀaрT1v[needst"), @"The actual output is: %s", buffer);
@@ -864,126 +888,147 @@ static DB_output_t fake_out = {
 - (void)test_DirectoryOnEmpty_ReturnsEmpty {
     char *bc = tf_compile("$directory()");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
 - (void)test_DirectoryOnFilePathLevel0_ReturnsEmpty {
     char *bc = tf_compile("$directory(/directory/file.path,0)");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
 - (void)test_DirectoryOnFilePathLevel1_ReturnsDirectory1 {
     char *bc = tf_compile("$directory(/directory3/directory2/directory1/file.path,1)");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "directory1"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_DirectoryOnFilePathLevel2_ReturnsDirectory2 {
     char *bc = tf_compile("$directory(/directory3/directory2/directory1/file.path,2)");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "directory2"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_DirectoryOnFilePathLevel4_ReturnsEmpty {
     char *bc = tf_compile("$directory(/directory3/directory2/directory/file.path,4)");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
 - (void)test_DirectoryOnFilePathLevel2MultipleSlashes_ReturnsDirectory2 {
     char *bc = tf_compile("$directory(////directory3////directory2////directory////file.path,2)");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "directory2"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_MultiLine_LineBreaksIgnored {
     char *bc = tf_compile("hello\nworld");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "helloworld"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_MultiLineWithComments_LineBreaksAndCommentedLinesIgnored {
     char *bc = tf_compile("// this is a comment\nhello\nworld\n//another comment\nmore text");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "helloworldmore text"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_QuotedSpecialChars_TreatedLiterally {
     char *bc = tf_compile("'blah$blah%blah[][]'");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "blah$blah%blah[][]"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_FunctionArgumentsOnMultipleLinesWithComments_LinebreaksAndCommentsIgnored {
     char *bc = tf_compile("$add(1,\n2,\n3,//4,\n5)");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "11"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_DirectoryPathOnFilePath_ReturnsDirectoryPath {
     char *bc = tf_compile("$directory_path('/a/b/c/d.mp3')");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "/a/b/c"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_DirectoryPathOnPathWithoutFile_ReturnsDirectoryPath {
     char *bc = tf_compile("$directory_path('/a/b/c/d/')");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "/a/b/c/d"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_ExtOnFilePath_ReturnsExt {
     char *bc = tf_compile("$ext('/a/b/c/d/file.mp3')");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "mp3"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_ExtOnFileWithoutExtPath_ReturnsEmpty {
     char *bc = tf_compile("$ext('/a/b/c/d/file')");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
 - (void)test_ExtOnFilePathWithoutFilename_ReturnsEmpty {
     char *bc = tf_compile("$ext('/a/b/c/d/')");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
 - (void)test_ExtOnFilePathEndingWithDot_ReturnsEmpty {
     char *bc = tf_compile("$ext('/a/b/c/d/file.')");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
 - (void)test_ExtOnFilePathDotFile_ReturnsExt {
     char *bc = tf_compile("$ext('/a/b/c/d/.ext')");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "ext"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_ExtOnFileExtWithMultiplePeriod_ReturnsExt {
     char *bc = tf_compile("$ext('/a/b/c/d/file.iso.wv')");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "wv"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_FilenameOnFilePath_ReturnsFilename {
     char *bc = tf_compile("$filename('/a/b/c/d/file.mp3')");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "file.mp3"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_FilenameOnFilePathWithoutFile_ReturnsEmpty {
     char *bc = tf_compile("$filename('/a/b/c/d/')");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
 - (void)test_FilenameOnFilenameWithoutPath_ReturnsFilename {
     char *bc = tf_compile("$filename('file.iso.wv')");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "file.iso.wv"), @"The actual output is: %s", buffer);
 }
 
@@ -991,6 +1036,7 @@ static DB_output_t fake_out = {
     pl_replace_meta (it, ":URI", "/path/file.mp3");
     char *bc = tf_compile("%filename%");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "file"), @"The actual output is: %s", buffer);
 }
 
@@ -998,6 +1044,7 @@ static DB_output_t fake_out = {
     pl_replace_meta (it, "year", "1980");
     char *bc = tf_compile("%date%");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "1980"), @"The actual output is: %s", buffer);
 }
 
@@ -1005,6 +1052,7 @@ static DB_output_t fake_out = {
     pl_replace_meta (it, "random_name", "random value");
     char *bc = tf_compile("%random_name%");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "random value"), @"The actual output is: %s", buffer);
 }
 
@@ -1013,6 +1061,7 @@ static DB_output_t fake_out = {
     pl_append_meta (it, "artist", "Artist2");
     char *bc = tf_compile("%artist%");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "Artist1, Artist2"), @"The actual output is: %s", buffer);
 }
 
@@ -1020,12 +1069,14 @@ static DB_output_t fake_out = {
     pl_replace_meta (it, ":URI", "/home/user/filename.mp3");
     char *bc = tf_compile("%title%");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "filename"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_DoublingPercentDollarApostrophe_OutputsSinglePercentDollarApostrophe {
     char *bc = tf_compile("''$$%%");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "'$%"), @"The actual output is: %s", buffer);
 }
 
@@ -1033,6 +1084,7 @@ static DB_output_t fake_out = {
     streamer_set_playing_track (it);
     char *bc = tf_compile("%playback_time%");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "0:00"), @"The actual output is: %s", buffer);
 }
 
@@ -1040,6 +1092,7 @@ static DB_output_t fake_out = {
     char *bc = tf_compile("header|%playback_time%|footer");
     ctx.flags |= DDB_TF_CONTEXT_NO_DYNAMIC;
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "header||footer"), @"The actual output is: %s", buffer);
 }
 
@@ -1047,6 +1100,7 @@ static DB_output_t fake_out = {
     pl_replace_meta (it, "track", "5");
     char *bc = tf_compile("%track number%");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
 }
 
@@ -1056,6 +1110,7 @@ static DB_output_t fake_out = {
     pl_replace_meta (it, "track", "5/7");
     char *bc = tf_compile("%track number%");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
 }
 
@@ -1063,6 +1118,7 @@ static DB_output_t fake_out = {
     plt_set_item_duration(NULL, it, 130);
     char *bc = tf_compile("%length%");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "2:10"), @"The actual output is: %s", buffer);
 }
 
@@ -1077,6 +1133,7 @@ static DB_output_t fake_out = {
     pl_replace_meta (it, "title", "title");
     char *bc = tf_compile("[[%discnumber%]a] normaltext [%title%] [[%title%]a]");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, " normaltext title titlea"), @"The actual output is: %s", buffer);
 }
 
@@ -1084,28 +1141,32 @@ static DB_output_t fake_out = {
     pl_replace_meta (it, "title", "line1\nline2\n");
     char *bc = tf_compile("$fix_eol(%title%)");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "line1 (...)"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_FixEofTwoArgs_PutsCustomIndicatorAfterLineBreak {
     pl_replace_meta (it, "title", "line1\nline2\n");
-    char *bc = tf_compile("$fix_eol(%title%, <...>)");
+    char *bc = tf_compile("$fix_eol(%title%, _..._)");
     tf_eval (&ctx, bc, buffer, 1000);
-    XCTAssert(!strcmp (buffer, "line1 <...>"), @"The actual output is: %s", buffer);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "line1 _..._"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_FixEofTwoArgsWithSmallBuffer_DoesntOverflowOffByOne {
     pl_replace_meta (it, "title", "hello\n");
-    char *bc = tf_compile("$fix_eol(%title%, <...>)");
+    char *bc = tf_compile("$fix_eol(%title%, _..._)");
     tf_eval (&ctx, bc, buffer, 12);
-    XCTAssert(!strcmp (buffer, "hello <...>"), @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp (buffer, "hello _..._"), @"The actual output is: %s", buffer);
     tf_eval (&ctx, bc, buffer, 11);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
 - (void)test_Hex_ReturnsHexConvertedNumber {
     char *bc = tf_compile("$hex(11259375)");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "abcdef"), @"The actual output is: %s", buffer);
 }
 
@@ -1114,18 +1175,21 @@ static DB_output_t fake_out = {
     tf_eval (&ctx, bc, buffer, 10);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
     tf_eval (&ctx, bc, buffer, 11);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "0000abcdef"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_HexZero_ReturnsZero {
     char *bc = tf_compile("$hex(0)");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "0"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_QuotedSquareBrackets_ReturnsSquareBrackets {
     char *bc = tf_compile("'['']'");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "[]"), @"The actual output is: %s", buffer);
 }
 
@@ -1139,30 +1203,35 @@ static DB_output_t fake_out = {
 - (void)test_Num_123_5_Returns_00123 {
     char *bc = tf_compile("$num(123,5)");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "00123"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_Num_Minus123_5_Returns__0123 {
     char *bc = tf_compile("$num(-123,5)");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "-0123"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_NumFractional_ReturnsIntegerFloor {
     char *bc = tf_compile("$num(4.8,5)");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "00004"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_NumNonNumber_ReturnsZero {
     char *bc = tf_compile("$num(A1,5)");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "00000"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_NumLargeNumber_DoesntTruncate {
     char *bc = tf_compile("$num(1234,3)");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "1234"), @"The actual output is: %s", buffer);
 }
 
@@ -1178,8 +1247,8 @@ static DB_output_t fake_out = {
     fake_out_state_value = OUTPUT_STATE_PLAYING;
     char *bc = tf_compile("$if(%isplaying%,YES,NO) %isplaying%");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "YES 1"), @"The actual output is: %s", buffer);
-
 }
 
 - (void)test_IsPlayingReturnValueFalse_CorrespondsToStringValue {
@@ -1187,6 +1256,7 @@ static DB_output_t fake_out = {
     fake_out_state_value = OUTPUT_STATE_STOPPED;
     char *bc = tf_compile("$if(%isplaying%,YES,NO) %isplaying%");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "NO "), @"The actual output is: %s", buffer);
 }
 
@@ -1196,6 +1266,7 @@ static DB_output_t fake_out = {
     fake_out_state_value = OUTPUT_STATE_PAUSED;
     char *bc = tf_compile("$if(%ispaused%,YES,NO) %ispaused%");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "YES 1"), @"The actual output is: %s", buffer);
 }
 
@@ -1221,8 +1292,435 @@ static DB_output_t fake_out = {
     pl_replace_meta (it, "title", "title");
     char *bc = tf_compile("header [[%discnumber%][%title%] a] footer");
     tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
     XCTAssert(!strcmp (buffer, "header title a footer"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_PathStripFileUriScheme_ReturnStripped {
+    pl_replace_meta (it, ":URI", "file:///home/user/filename.mp3");
+    char *bc = tf_compile("%path%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "/home/user/filename.mp3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PathStripHTTPUriScheme_ReturnUnStripped {
+    pl_replace_meta (it, ":URI", "http://example.com/filename.mp3");
+    char *bc = tf_compile("%path%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "http://example.com/filename.mp3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_RawPathWithFileUriScheme_ReturnUnStripped {
+    pl_replace_meta (it, ":URI", "file:///home/user/filename.mp3");
+    char *bc = tf_compile("%_path_raw%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "file:///home/user/filename.mp3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PlaylistName_ReturnsPlaylistName {
+    char *bc = tf_compile("%_playlist_name%");
+    playlist_t plt = {
+        .title = "Test Playlist",
+    };
+    ctx.plt = (ddb_playlist_t *)&plt;
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Test Playlist"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ReplaceWith3Arguments_ReturnsExpectedValue {
+    char *bc = tf_compile("$replace(ab,a,b,b,c)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "bc"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ReplaceWith3ArgumentsNested_ReturnsExpectedValue {
+    char *bc = tf_compile("$replace($replace(ab,a,b),b,c)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "cc"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ReplaceWith1Argument_ReturnsEmpty {
+    char *bc = tf_compile("$replace(ab)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ReplaceWith2Arguments_ReturnsEmpty {
+    char *bc = tf_compile("$replace(ab,a)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ReplaceWith4Arguments_ReturnsEmpty {
+    char *bc = tf_compile("$replace(ab,a,c,d)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ReplaceLongerSubstring_ReturnsExpected {
+    char *bc = tf_compile("$replace(foobar,foo,DeaD,bar,BeeF)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "DeaDBeeF"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_FilenameExt_ReturnsFilenameWithExt {
+    pl_replace_meta (it, ":URI", "/Users/User/MyFile.mod");
+    char *bc = tf_compile("%filename_ext%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "MyFile.mod"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_UpperForAllLowerCase_ReturnsUppercase {
+    char *bc = tf_compile("$upper(abcd)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "ABCD"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_UpperForAllUpperCase_ReturnsUppercase {
+    char *bc = tf_compile("$upper(ABCD)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "ABCD"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_UpperForMixed_ReturnsUppercase {
+    char *bc = tf_compile("$upper(aBcD)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "ABCD"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_UpperForAllLowerCaseNonAscii_ReturnsUppercase {
+    char *bc = tf_compile("$upper(абвгд)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "АБВГД"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LowerForAllUpperCase_ReturnsLowercase {
+    char *bc = tf_compile("$lower(ABCD)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "abcd"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LowerForAllLowerCase_ReturnsLowercase {
+    char *bc = tf_compile("$lower(abcd)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "abcd"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LowerForMixed_ReturnsLowercase {
+    char *bc = tf_compile("$lower(aBcD)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "abcd"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LowerForAllUpperCaseNonAscii_ReturnsLowercase {
+    char *bc = tf_compile("$lower(АБВГД)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "абвгд"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PathWithNullUri_ReturnsEmpty {
+    pl_delete_meta (it, ":URI");
+    char *bc = tf_compile("%path%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_VfsPathTitle_GivesCorrectTitle {
+    pl_replace_meta (it, ":URI", "/path/file/myfile.zip:mytrack.mp3");
+    char *bc = tf_compile("%title%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "mytrack"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_RepeatSingleChar11Times_Gives11Chars {
+    char *bc = tf_compile("$repeat(x,11)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "xxxxxxxxxxx"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_RepeatTwoChars3Times_Gives3DoubleChars {
+    char *bc = tf_compile("$repeat(xy,3)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "xyxyxy"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_RepeatCalculatedExpr2Times_Gives2Exprs {
+    pl_replace_meta (it, "title", "abc");
+    char *bc = tf_compile("$repeat(%title%,2)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "abcabc"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_RepeatCalculatedExprNTimes_GivesNExprs {
+    pl_replace_meta (it, "title", "abc");
+    pl_replace_meta (it, "count", "3");
+    char *bc = tf_compile("$repeat(%title%,%count%)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "abcabcabc"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_RepeatSingleCharZeroTimes_GivesZeroChars {
+    char *bc = tf_compile("pre$repeat(x,0)post");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "prepost"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrMiddle_GivesInsertedStr {
+    pl_replace_meta (it, "title", "Insert [] Here");
+    pl_replace_meta (it, "album", "Value");
+    char *bc = tf_compile("$insert(%title%,%album%,8)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Insert [Value] Here"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrMiddleUnicode_GivesInsertedStr {
+    pl_replace_meta (it, "title", "Вставить [] сюда");
+    pl_replace_meta (it, "album", "Значение");
+    char *bc = tf_compile("$insert(%title%,%album%,10)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Вставить [Значение] сюда"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrEnd_GivesAppendedStr {
+    pl_replace_meta (it, "title", "Insert Here:");
+    pl_replace_meta (it, "album", "Value");
+    char *bc = tf_compile("$insert(%title%,%album%,12)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Insert Here:Value"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrOutOfBounds_GivesAppendedStr {
+    pl_replace_meta (it, "title", "Insert Here:");
+    pl_replace_meta (it, "album", "Value");
+    char *bc = tf_compile("$insert(%title%,%album%,13)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Insert Here:Value"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrBufferTooSmallUnicode_GivesTruncatedAtBeforeStr {
+    pl_replace_meta (it, "title", "Вставить [] сюда");
+    pl_replace_meta (it, "album", "Значение");
+    char *bc = tf_compile("$insert(%title%,%album%,10)");
+    tf_eval (&ctx, bc, buffer, 5);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Вс"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrBufferTooSmallUnicode_GivesTruncatedAtMiddleStr {
+    pl_replace_meta (it, "title", "Вставить [] сюда");
+    pl_replace_meta (it, "album", "Значение");
+    char *bc = tf_compile("$insert(%title%,%album%,10)");
+    tf_eval (&ctx, bc, buffer, 27);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Вставить [Знач"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrBufferTooSmallUnicode_GivesTruncatedAtAfterStr {
+    pl_replace_meta (it, "title", "Вставить [] сюда");
+    pl_replace_meta (it, "album", "Значение");
+    char *bc = tf_compile("$insert(%title%,%album%,10)");
+    tf_eval (&ctx, bc, buffer, 41);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Вставить [Значение] сю"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InsertStrBegin_GivesPrependedStr {
+    pl_replace_meta (it, "title", ":Insert Before");
+    pl_replace_meta (it, "album", "Value");
+    char *bc = tf_compile("$insert(%title%,%album%,0)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Value:Insert Before"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LeftOfUnicodeString_Takes2Chars {
+    char *bc = tf_compile("$left(АБВГД,2)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "АБ"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Left2OfUnicodeStringBufFor1Char_Takes1Char {
+    char *bc = tf_compile("$left(АБВГД,2)");
+    tf_eval (&ctx, bc, buffer, 3);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "А"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LenOfUnicodeString_ReturnsLengthInChars {
+    char *bc = tf_compile("$len(АБВГД)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_DimTextExpression_ReturnsPlainText {
+    char *bc = tf_compile("<<<dim this text>>>");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!ctx.dimmed);
+    XCTAssert(!strcmp (buffer, "dim this text"), @"The actual output is: %s", buffer);    ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
+}
+
+- (void)test_DimTextExpression_ReturnsTextWithDimEscSequence {
+    char *bc = tf_compile("<<<dim this text>>>");
+    ctx.flags |= DDB_TF_CONTEXT_TEXT_DIM;
+    tf_eval (&ctx, bc, buffer, 1000);
+    ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
+    tf_free (bc);
+    XCTAssert(ctx.dimmed);
+    XCTAssert(!strcmp (buffer, "\0331;-3mdim this text\0331;3m"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_BrightenTextExpression_ReturnsTextWithBrightenEscSequence {
+    char *bc = tf_compile(">>>brighten this text<<<");
+    ctx.flags |= DDB_TF_CONTEXT_TEXT_DIM;
+    tf_eval (&ctx, bc, buffer, 1000);
+    ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
+    tf_free (bc);
+    XCTAssert(ctx.dimmed);
+    XCTAssert(!strcmp (buffer, "\0331;3mbrighten this text\0331;-3m"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_BrightenInfiniteLengthTextExpression_ReturnsTextWithBrightenEscSequence {
+    plt_set_item_duration(NULL, it, -1);
+    char *bc = tf_compile("xxx>>>aaa%length%bbb<<<yyy");
+    ctx.flags |= DDB_TF_CONTEXT_TEXT_DIM;
+    tf_eval (&ctx, bc, buffer, 1000);
+    ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
+    tf_free (bc);
+    XCTAssert(ctx.dimmed);
+    XCTAssert(!strcmp (buffer, "xxx\0331;3maaabbb\0331;-3myyy"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_0_7_2_ContextSizeCheck_ReturnsResult {
+    char *bc = tf_compile("test");
+    ctx._size = (int)((char *)&ctx.dimmed - (char *)&ctx);
+    tf_eval (&ctx, bc, buffer, 1000);
+    ctx._size = sizeof (ctx);
+    XCTAssert(!strcmp (buffer, "test"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_InvalidContextSizeCheck_ReturnsEmpty {
+    char *bc = tf_compile("test");
+    ctx._size = (int)((char *)&ctx.dimmed - (char *)&ctx - 1);
+    tf_eval (&ctx, bc, buffer, 1000);
+    ctx._size = sizeof (ctx);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadHelloWith5_GivesHello {
+    char *bc = tf_compile("$pad(Hello,5)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadHelloWith5Xs_GivesHello {
+    char *bc = tf_compile("$pad(Hello,5,X)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadHelloWith10_Gives_Hello_____ {
+    char *bc = tf_compile("$pad(Hello,10)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hello     "), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadHelloWith10Xs_GivesHelloXXXXX {
+    char *bc = tf_compile("$pad(Hello,10,X)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "HelloXXXXX"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadHelloWith10XYs_GivesHelloXXXXX {
+    char *bc = tf_compile("$pad(Hello,10,XY)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "HelloXXXXX"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadUnicodeStringWith10UnicodeChars_GivesExpectedOutput {
+    char *bc = tf_compile("$pad(АБВГД,10,Ё)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "АБВГДЁЁЁЁЁ"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadRightHelloWith5_GivesHello {
+    char *bc = tf_compile("$pad_right(Hello,5)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadRightHelloWith5Xs_GivesHello {
+    char *bc = tf_compile("$pad_right(Hello,5,X)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadRightHelloWith10_Gives______Hello {
+    char *bc = tf_compile("$pad_right(Hello,10)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "     Hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadRightHelloWith10Xs_GivesXXXXXHello {
+    char *bc = tf_compile("$pad_right(Hello,10,X)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "XXXXXHello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadRightHelloWith10XYs_GivesXXXXXHello {
+    char *bc = tf_compile("$pad_right(Hello,10,XY)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "XXXXXHello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadRightUnicodeStringWith10UnicodeChars_GivesExpectedOutput {
+    char *bc = tf_compile("$pad_right(АБВГД,10,Ё)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "ЁЁЁЁЁАБВГД"), @"The actual output is: %s", buffer);
+}
 
 @end

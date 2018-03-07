@@ -23,15 +23,14 @@ static const char settings_dlg[] =
     "property \"Enable HVSC Songlength DB\" checkbox hvsc_enable 0;\n"
     "property \"Songlengths.txt (from HVSC)\" file hvsc_path \"\";\n"
     "property \"Samplerate\" entry sid.samplerate 44100;\n"
-    "property \"Bits per sample (8 or 16)\" entry sid.bps 16;\n"
+    "property \"Bits per sample\" select[2] sid.bps 0 16 8;\n"
     "property \"Mono synth\" checkbox sid.mono 0;\n"
     "property \"Default song length (sec)\" entry sid.defaultlength 180;\n"
 ;
 
 // define plugin interface
 DB_decoder_t sid_plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,

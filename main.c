@@ -4,7 +4,7 @@
 
   application launcher, compatible with GNU/Linux and most other POSIX systems
 
-  Copyright (C) 2009-2016 Alexey Yakovenko
+  Copyright (C) 2009-2017 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -70,13 +70,11 @@
 #endif
 #include "playqueue.h"
 #include "tf.h"
+#include "logger.h"
 
 #ifndef PREFIX
 #error PREFIX must be defined
 #endif
-
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
 
 #ifdef HAVE_COCOAUI
 #define SYS_CONFIG_DIR "Library/Preferences"
@@ -100,7 +98,7 @@ char use_gui_plugin[100];
 static void
 print_help (void) {
 #ifdef ENABLE_NLS
-	bind_textdomain_codeset (PACKAGE, "");
+    bind_textdomain_codeset (PACKAGE, "");
 #endif
     fprintf (stdout, _("Usage: deadbeef [options] [--] [file(s)]\n"));
     fprintf (stdout, _("Options:\n"));
@@ -122,13 +120,16 @@ print_help (void) {
                 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
                 "                      copy[r]ight, [e]lapsed\n"));
     fprintf (stdout, _("                      example: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
-    fprintf (stdout, _("                      for more info, see %s\n"), "http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting");
+    fprintf (stdout, _("                      for more info, see %s\n"), "http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting");
     fprintf (stdout, _("                      NOTE: --nowplaying is deprecated.\n"));
     fprintf (stdout, _("   --nowplaying-tf FMT  Print formatted track name to stdout, using the new title formatting\n"));
-    fprintf (stdout, _("                      FMT syntax: http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting-2.0\n"));
+    fprintf (stdout, _("                      FMT syntax: http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"));
     fprintf (stdout, _("                      example: --nowplaying-tf \"%%artist%% - %%title%%\" should print \"artist - title\"\n"));
+    fprintf (stdout, _("   --volume [NUM]     Print or set deadbeef volume level.\n"));
+    fprintf (stdout, _("                      The NUM parameter can be specified in percents (if no suffix) or dB [-50, 0].\n"));
+    fprintf (stdout, _("                      Examples: --volume 80 or --volume -20dB\n"));
 #ifdef ENABLE_NLS
-	bind_textdomain_codeset (PACKAGE, "UTF-8");
+    bind_textdomain_codeset (PACKAGE, "UTF-8");
 #endif
 }
 
@@ -154,7 +155,7 @@ prepare_command_line (int argc, char *argv[], int *size) {
         // if argument is a filename, try to resolve it
         char resolved[PATH_MAX];
         char *arg;
-        if (!strncmp ("--", argv[i], 2) && !seen_ddash || !realpath (argv[i], resolved)) {
+        if ((!strncmp ("--", argv[i], 2) && !seen_ddash) || !realpath (argv[i], resolved)) {
             arg = argv[i];
         }
         else {
@@ -163,7 +164,7 @@ prepare_command_line (int argc, char *argv[], int *size) {
 
         // make sure that there is enough space in the buffer;
         // re-allocate, if needed
-        int arglen = strlen(arg) + 1;
+        size_t arglen = strlen(arg) + 1;
         while (p + arglen >= limit) {
             char *newbuf = (char*) malloc (limit * 2);
             memcpy (newbuf, buf, p);
@@ -216,7 +217,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                     return 0;
                 }
                 else {
-                    fprintf (stderr, "%s\n", errtext);
+                    trace_err ("%s\n", errtext);
                     return -1;
                 }
             }
@@ -247,7 +248,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                     return 0;
                 }
                 else {
-                    fprintf (stderr, "%s\n", errtext);
+                    trace_err ("%s\n", errtext);
                     return -1;
                 }
             }
@@ -331,6 +332,25 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             parg++;
             continue;
         }
+        else if (!strcmp (parg, "--volume")) {
+            parg += strlen (parg);
+            parg++;
+
+            if (parg < pend) {
+                int pct;
+                char *end;
+                pct = strtol (parg, &end, 10);
+                if (!strcasecmp(end, "db")) {
+                    deadbeef->volume_set_db (pct);
+                } else {
+                    deadbeef->volume_set_db ((pct/100.0 * 50) - 50);
+                }
+            }
+            if (sendback) {
+                snprintf (sendback, sbsize, "volume %.0f%% (%.2f dB)", deadbeef->volume_get_db() * 2 + 100 , deadbeef->volume_get_db());
+            }
+            return 0;
+        }
         else if (parg[0] != '-') {
             break; // unknown option is filename
         }
@@ -391,9 +411,13 @@ add_paths(const char *paths, int len, int queue, char *sendback, int sbsize) {
         if (deadbeef->plt_add_dir2 (0, (ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
             if (deadbeef->plt_add_file2 (0, (ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
                 int ab = 0;
-                playItem_t *it = plt_load2 (0, curr_plt, NULL, pname, &ab, NULL, NULL);
+                playItem_t *after = plt_get_last (curr_plt, PL_MAIN);
+                playItem_t *it = plt_load2 (0, curr_plt, after, pname, &ab, NULL, NULL);
+                if (after) {
+                    pl_item_unref (after);
+                }
                 if (!it) {
-                    fprintf (stderr, "failed to add file or folder %s\n", pname);
+                    trace_err ("failed to add file or folder %s\n", pname);
                 }
             }
         }
@@ -420,7 +444,7 @@ static char server_id[] = "\0deadbeefplayer";
 
 int
 server_start (void) {
-    fprintf (stderr, "server_start\n");
+    trace ("server_start\n");
     srv_socket = socket (AF_UNIX, SOCK_STREAM, 0);
     int flags;
     flags = fcntl (srv_socket, F_GETFL,0);
@@ -437,14 +461,14 @@ server_start (void) {
 
 #if USE_ABSTRACT_SOCKET_NAME
     memcpy (srv_local.sun_path, server_id, sizeof (server_id));
-    int len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
+    unsigned int len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
 #else
     char *socketdirenv = getenv ("DDB_SOCKET_DIR");
     snprintf (srv_local.sun_path, sizeof (srv_local.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbruntimedir);
     if (unlink(srv_local.sun_path) < 0) {
         perror ("INFO: unlink socket");
     }
-    int len = offsetof(struct sockaddr_un, sun_path) + strlen (srv_local.sun_path);
+    unsigned int len = (unsigned int)(offsetof(struct sockaddr_un, sun_path) + strlen (srv_local.sun_path));
 #endif
 
     if (bind(srv_socket, (struct sockaddr *)&srv_local, len) < 0) {
@@ -485,7 +509,7 @@ read_entire_message (int sockfd, int *size) {
             bufsize = newsize;
         }
 
-        int rd = recv(sockfd, buf + rdp, bufsize - rdp, 0);
+        ssize_t rd = recv(sockfd, buf + rdp, bufsize - rdp, 0);
         if (rd < 0) {
             if (errno == EAGAIN) {
                 usleep (50000);
@@ -621,11 +645,6 @@ player_mainloop (void) {
 
                         playqueue_clear ();
 
-                        // stop streaming and playback before unloading plugins
-                        DB_output_t *output = plug_get_output ();
-                        output->stop ();
-                        streamer_free ();
-                        output->free ();
                         term = 1;
                     }
                     break;
@@ -634,10 +653,10 @@ player_mainloop (void) {
                     break;
                 case DB_EV_PLAY_NUM:
                     playqueue_clear ();
-                    streamer_set_nextsong (p1, 4);
+                    streamer_set_nextsong (p1, 0);
                     break;
                 case DB_EV_STOP:
-                    streamer_set_nextsong (-2, 0);
+                    streamer_set_nextsong (-1, 0);
                     break;
                 case DB_EV_NEXT:
                     streamer_move_to_nextsong (1);
@@ -652,7 +671,7 @@ player_mainloop (void) {
                     }
                     break;
                 case DB_EV_TOGGLE_PAUSE:
-                    if (output->state () == OUTPUT_STATE_PAUSED) {
+                    if (output->state () != OUTPUT_STATE_PLAYING) {
                         streamer_play_current_track ();
                     }
                     else {
@@ -670,7 +689,13 @@ player_mainloop (void) {
                     junk_configchanged ();
                     break;
                 case DB_EV_SEEK:
-                    streamer_set_seek (p1 / 1000.f);
+                    {
+                        int32_t pos = (int32_t)p1;
+                        if (pos < 0) {
+                            pos = 0;
+                        }
+                        streamer_set_seek (p1 / 1000.f);
+                    }
                     break;
                 }
             }
@@ -688,7 +713,7 @@ player_mainloop (void) {
 #ifdef __GLIBC__
 void
 sigsegv_handler (int sig) {
-    fprintf (stderr, "Segmentation Fault\n");
+    trace_err ("Segmentation Fault\n");
     int j, nptrs;
 #define SIZE 100
     void *buffer[100];
@@ -720,18 +745,18 @@ sigsegv_handler (int sig) {
 void
 restore_resume_state (void) {
     DB_output_t *output = plug_get_output ();
-    if (conf_get_int ("resume_last_session", 0) && output->state () == OUTPUT_STATE_STOPPED) {
+    if (conf_get_int ("resume_last_session", 1) && output->state () == OUTPUT_STATE_STOPPED) {
         int plt = conf_get_int ("resume.playlist", -1);
         int track = conf_get_int ("resume.track", -1);
         float pos = conf_get_float ("resume.position", -1);
         int paused = conf_get_int ("resume.paused", 0);
         trace ("resume: track %d pos %f playlist %d\n", track, pos, plt);
         if (plt >= 0 && track >= 0 && pos >= 0) {
-            streamer_lock (); // need to hold streamer thread to make the resume operation atomic
             streamer_set_current_playlist (plt);
-            streamer_set_nextsong (track, paused ? 2 : 3);
+            streamer_yield ();
+            streamer_set_nextsong (track, paused);
+            streamer_yield ();
             streamer_set_seek (pos);
-            streamer_unlock ();
         }
     }
 }
@@ -751,6 +776,12 @@ plug_get_gui (void) {
 
 void
 main_cleanup_and_quit (void) {
+    // stop streaming and playback before unloading plugins
+    DB_output_t *output = plug_get_output ();
+    output->stop ();
+    streamer_free ();
+    output->free ();
+
     // terminate server and wait for completion
     if (server_tid) {
         server_terminate = 1;
@@ -783,12 +814,14 @@ main_cleanup_and_quit (void) {
     pl_free (); // may access conf_*
     conf_free ();
 
-    fprintf (stderr, "messagepump_free\n");
+    trace ("messagepump_free\n");
     messagepump_free ();
-    fprintf (stderr, "plug_cleanup\n");
+    trace ("plug_cleanup\n");
     plug_cleanup ();
+    trace ("logger_free\n");
 
-    fprintf (stderr, "hej-hej!\n");
+    trace ("hej-hej!\n");
+    ddb_logger_free();
 }
 
 static void
@@ -801,19 +834,26 @@ mainloop_thread (void *ctx) {
     if (gui) {
         gui->stop ();
     }
+
     return;
 }
 
 int
 main (int argc, char *argv[]) {
+    ddb_logger_init ();
     int portable = 0;
-#if STATICLINK
-    int staticlink = 1;
-#else
     int staticlink = 0;
+    int portable_full = 0;
+#if STATICLINK
+    staticlink = 1;
 #endif
 #if PORTABLE
     portable = 1;
+#endif
+#if PORTABLE_FULL
+    portable_full = 1;
+#endif
+
     if (!realpath (argv[0], dbinstalldir)) {
         strcpy (dbinstalldir, argv[0]);
     }
@@ -822,29 +862,36 @@ main (int argc, char *argv[]) {
         *e = 0;
     }
     else {
-        fprintf (stderr, "couldn't determine install folder from path %s\n", argv[0]);
-        exit (-1);
+        strcpy (dbinstalldir, PREFIX);
     }
-#else
-    if (!realpath (argv[0], dbinstalldir)) {
-        strcpy (dbinstalldir, argv[0]);
-    }
-    char *e = strrchr (dbinstalldir, '/');
-    if (e) {
-        *e = 0;
+
+    // detect portable version by looking for plugins/ and deadbeef.png and portable_full by config/
+    while (!portable || !portable_full) {
         struct stat st;
         char checkpath[PATH_MAX];
-        snprintf (checkpath, sizeof (checkpath), "%s/plugins", dbinstalldir);
-        if (!stat (checkpath, &st)) {
-            if (S_ISDIR (st.st_mode)) {
-                portable = 1;
+        if (!portable) {
+            snprintf (checkpath, sizeof (checkpath), "%s/plugins", dbinstalldir);
+            if (stat (checkpath, &st) || !S_ISDIR (st.st_mode)) {
+                break;
             }
+            snprintf (checkpath, sizeof (checkpath), "%s/deadbeef.png", dbinstalldir);
+            if (stat (checkpath, &st) || !S_ISREG (st.st_mode)) {
+                break;
+            }
+            portable = 1;
         }
+        if (!portable_full) {
+            snprintf (checkpath, sizeof (checkpath), "%s/config", dbinstalldir);
+            if (stat (checkpath, &st) || !S_ISDIR (st.st_mode)) {
+                break;
+            }
+            portable_full = 1;
+        }
+        break;
     }
     if (!portable) {
         strcpy (dbinstalldir, PREFIX);
     }
-#endif
 
 #ifdef __GLIBC__
     signal (SIGSEGV, sigsegv_handler);
@@ -852,7 +899,7 @@ main (int argc, char *argv[]) {
     setlocale (LC_ALL, "");
     setlocale (LC_NUMERIC, "C");
 #ifdef ENABLE_NLS
-//    fprintf (stderr, "enabling gettext support: package=" PACKAGE ", dir=" LOCALEDIR "...\n");
+//    trace ("enabling gettext support: package=" PACKAGE ", dir=" LOCALEDIR "...\n");
     if (portable) {
         char localedir[PATH_MAX];
         snprintf (localedir, sizeof (localedir), "%s/locale", dbinstalldir);
@@ -861,66 +908,81 @@ main (int argc, char *argv[]) {
     else {
         bindtextdomain (PACKAGE, LOCALEDIR);
     }
-	bind_textdomain_codeset (PACKAGE, "UTF-8");
-	textdomain (PACKAGE);
+    bind_textdomain_codeset (PACKAGE, "UTF-8");
+    textdomain (PACKAGE);
 #endif
 
-    fprintf (stderr, "starting deadbeef " VERSION "%s%s\n", staticlink ? " [static]" : "", portable ? " [portable]" : "");
-    srand (time (NULL));
+    trace ("starting deadbeef " VERSION "%s%s\n", staticlink ? " [static]" : "", portable ? " [portable]" : "");
+    srand ((unsigned int)time (NULL));
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-main", 0, 0, 0, 0);
 #endif
 
-#if PORTABLE_FULL
-    if (snprintf (confdir, sizeof (confdir), "%s/config", dbinstalldir) > sizeof (confdir)) {
-        fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
-        return -1;
-    }
-
-    strcpy (dbconfdir, confdir);
-
-    if (snprintf (confdir, sizeof (confdir), "%s/cache", dbcachedir) > sizeof (confdir)) {
-        fprintf (stderr, "fatal: too long cache path %s\n", dbcachedir);
-        return -1;
-    }
-#else
     char *homedir = getenv ("HOME");
     if (!homedir) {
-        fprintf (stderr, "unable to find home directory. stopping.\n");
+        trace_err ("unable to find home directory. stopping.\n");
         return -1;
     }
 
-    char *xdg_conf_dir = getenv ("XDG_CONFIG_HOME");
-    if (xdg_conf_dir) {
-        if (snprintf (confdir, sizeof (confdir), "%s", xdg_conf_dir) > sizeof (confdir)) {
-            fprintf (stderr, "fatal: XDG_CONFIG_HOME value is too long: %s\n", xdg_conf_dir);
+    // Get config directory
+    if (portable_full) {
+        if (snprintf (confdir, sizeof (confdir), "%s/config", dbinstalldir) > sizeof (confdir)) {
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
+            return -1;
+        }
+        strcpy (dbconfdir, confdir);
+    }
+    else {
+        char *xdg_conf_dir = getenv ("XDG_CONFIG_HOME");
+        if (xdg_conf_dir) {
+            if (snprintf (confdir, sizeof (confdir), "%s", xdg_conf_dir) > sizeof (confdir)) {
+                trace_err ("fatal: XDG_CONFIG_HOME value is too long: %s\n", xdg_conf_dir);
+                return -1;
+            }
+        }
+        else {
+            if (snprintf (confdir, sizeof (confdir), "%s/" SYS_CONFIG_DIR, homedir) > sizeof (confdir)) {
+                trace_err ("fatal: HOME value is too long: %s\n", homedir);
+                return -1;
+            }
+        }
+
+        if (snprintf (dbconfdir, sizeof (dbconfdir), "%s/deadbeef", confdir) > sizeof (dbconfdir)) {
+            trace_err ("fatal: config path is too long: %s\n", dbconfdir);
+            return -1;
+        }
+    }
+    mkdir (confdir, 0755);
+
+    // Get cache directory
+    if (portable_full) {
+        if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/cache", dbconfdir) > sizeof (dbcachedir)) {
+            trace_err ("fatal: cache path is too long: %s\n", dbcachedir);
             return -1;
         }
     }
     else {
-        if (snprintf (confdir, sizeof (confdir), "%s/" SYS_CONFIG_DIR, homedir) > sizeof (confdir)) {
-            fprintf (stderr, "fatal: HOME value is too long: %s\n", homedir);
-            return -1;
+        const char *xdg_cache = getenv ("XDG_CACHE_HOME");
+        if (xdg_cache) {
+            if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/deadbeef/", xdg_cache) > sizeof (dbcachedir)) {
+                trace_err ("fatal: cache path is too long: %s\n", dbcachedir);
+                return -1;
+            }
+        }
+        else {
+            if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/.cache/deadbeef", homedir) > sizeof (dbcachedir)) {
+                trace_err ("fatal: cache path is too long: %s\n", dbcachedir);
+                return -1;
+            }
         }
     }
-    if (snprintf (dbconfdir, sizeof (dbconfdir), "%s/deadbeef", confdir) > sizeof (dbconfdir)) {
-        fprintf (stderr, "fatal: out of memory while configuring\n");
-        return -1;
-    }
-    mkdir (confdir, 0755);
 
-    const char *xdg_cache = getenv("XDG_CACHE_HOME");
-    const char *cache_root = xdg_cache ? xdg_cache : getenv("HOME");
-    if (snprintf(dbcachedir, sizeof (dbcachedir), xdg_cache ? "%s/deadbeef/" : "%s/.cache/deadbeef/", cache_root) >= sizeof (dbcachedir)) {
-        fprintf (stderr, "fatal: too long cache path %s\n", dbcachedir);
-        return -1;
-    }
-
-    const char *xdg_runtime = getenv("XDG_RUNTIME_DIR");
+    // Get runtime directory
+    const char *xdg_runtime = getenv ("XDG_RUNTIME_DIR");
     if (xdg_runtime)
     {
         if (snprintf(dbruntimedir, sizeof (dbruntimedir), "%s/deadbeef/", xdg_runtime) >= sizeof (dbruntimedir)) {
-            fprintf (stderr, "fatal: too long cache path %s\n", dbruntimedir);
+            trace_err ("fatal: cache path is too long: %s\n", dbruntimedir);
             return -1;
         }
         mkdir (dbruntimedir, 0755);
@@ -928,47 +990,52 @@ main (int argc, char *argv[]) {
     else {
         strcpy (dbruntimedir, dbconfdir);
     }
-#endif
 
-
-    if (portable) {
-        if (snprintf (dbdocdir, sizeof (dbdocdir), "%s/doc", dbinstalldir) > sizeof (dbdocdir)) {
-            fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+    // Get plugins dir from environment variable, portable directory or library dir
+    char *env_plugin_dir = getenv ("DEADBEEF_PLUGIN_DIR");
+    if (env_plugin_dir) {
+        strncpy (dbplugindir, env_plugin_dir, sizeof(dbplugindir));
+        if (dbplugindir[sizeof(dbplugindir) - 1] != 0) {
+            fprintf (stderr, "fatal: plugin path is too long: %s\n", env_plugin_dir);
             return -1;
         }
+    }
+    else if (portable) {
 #ifdef HAVE_COCOAUI
         cocoautil_get_resources_path (dbplugindir, sizeof (dbplugindir));
 #else
         if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/plugins", dbinstalldir) > sizeof (dbplugindir)) {
-            fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
 #endif
-        if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/pixmaps", dbinstalldir) > sizeof (dbpixmapdir)) {
-            fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
-            return -1;
-        }
         mkdir (dbplugindir, 0755);
     }
     else {
-        if (snprintf (dbdocdir, sizeof (dbdocdir), "%s", DOCDIR) > sizeof (dbdocdir)) {
-            fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+        if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/deadbeef", LIBDIR) > sizeof (dbplugindir)) {
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
-        char *env_plugin_dir = getenv ("DEADBEEF_PLUGIN_DIR");
-        if (env_plugin_dir) {
-            strncpy (dbplugindir, env_plugin_dir, sizeof(dbplugindir));
-            if (dbplugindir[sizeof(dbplugindir) - 1] != 0) {
-                fprintf (stderr, "fatal: too long plugin path %s\n", env_plugin_dir);
-                return -1;
-            }
+    }
+
+    // Get doc and pixmaps dirs
+    if (portable) {
+        if (snprintf (dbdocdir, sizeof (dbdocdir), "%s/doc", dbinstalldir) > sizeof (dbdocdir)) {
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
+            return -1;
         }
-        else if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/deadbeef", LIBDIR) > sizeof (dbplugindir)) {
-            fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+        if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/pixmaps", dbinstalldir) > sizeof (dbpixmapdir)) {
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
+            return -1;
+        }
+    }
+    else {
+        if (snprintf (dbdocdir, sizeof (dbdocdir), "%s", DOCDIR) > sizeof (dbdocdir)) {
+            fprintf (stderr, "fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
         if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/share/deadbeef/pixmaps", PREFIX) > sizeof (dbpixmapdir)) {
-            fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
     }
@@ -980,7 +1047,7 @@ main (int argc, char *argv[]) {
             return 0;
         }
         else if (!strcmp (argv[i], "--version")) {
-            fprintf (stderr, "DeaDBeeF " VERSION " Copyright © 2009-2016 Alexey Yakovenko\n");
+            trace ("DeaDBeeF " VERSION " Copyright © 2009-2017 Alexey Yakovenko\n");
             return 0;
         }
         else if (!strcmp (argv[i], "--gui")) {
@@ -1005,7 +1072,8 @@ main (int argc, char *argv[]) {
     char *cmdline = prepare_command_line (argc, argv, &size);
 
     // try to connect to remote player
-    int s, len;
+    int s;
+    unsigned int len;
     struct sockaddr_un remote;
 
     if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
@@ -1021,7 +1089,7 @@ main (int argc, char *argv[]) {
 #else
     char *socketdirenv = getenv ("DDB_SOCKET_DIR");
     snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbruntimedir);
-    len = offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path);
+    len = (unsigned int)(offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path));
 #endif
     if (connect(s, (struct sockaddr *)&remote, len) == 0) {
         // pass args to remote and exit
@@ -1035,7 +1103,7 @@ main (int argc, char *argv[]) {
         int sz = -1;
         char *out = read_entire_message(s, &sz);
         if (sz == -1) {
-            fprintf (stderr, "failed to pass args to remote!\n");
+            trace_err ("failed to pass args to remote!\n");
             exit (-1);
         }
         else {
@@ -1048,10 +1116,10 @@ main (int argc, char *argv[]) {
             }
             else if (!strncmp (out, err, sizeof (err)-1)) {
                 const char *prn = &out[sizeof (err)-1];
-                fwrite (prn, 1, strlen (prn), stderr);
+                trace_err ("%s", prn);
             }
             else if (sz > 0 && out[0]) {
-                fprintf (stderr, "%s\n", out);
+                trace_err ("%s\n", out);
             }
         }
         if (out) {
@@ -1132,12 +1200,19 @@ main (int argc, char *argv[]) {
 
     mainloop_tid = thread_start (mainloop_thread, NULL);
 
+    messagepump_push (DB_EV_CONFIGCHANGED, 0, 0, 0);
+
     DB_plugin_t *gui = plug_get_gui ();
     if (gui) {
         gui->start ();
     }
+
+    ddb_logger_stop_buffering ();
+
+    // NOTE: It's not guaranteed that the code after this line will be called.
+    // On some platforms (cocoa), main_cleanup_and_quit is called directly before quit.
     
-    fprintf (stderr, "gui plugin has quit; waiting for mainloop thread to finish\n");
+    trace ("gui plugin has quit; waiting for mainloop thread to finish\n");
     thread_join (mainloop_tid);
 
     main_cleanup_and_quit ();

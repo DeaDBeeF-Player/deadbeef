@@ -29,9 +29,10 @@
 **/
 
 #include <stdlib.h>
-#ifndef _WIN32
+#if HAVE_CONFIG_H
 #include "config.h"
-#else
+#endif
+#ifdef _WIN32
 #include <tchar.h>
 #include <windows.h>
 #endif
@@ -247,6 +248,10 @@ static uint8_t mp4ff_atom_name_to_type(const int8_t a, const int8_t b,
         return ATOM_TEXT;
     else if (mp4ff_atom_compare(a,b,c,d, 'e','l','s','t'))
         return ATOM_ELST;
+    else if (mp4ff_atom_compare(a,b,c,d, 'a','l','a','c'))
+        return ATOM_ALAC;
+    else if (mp4ff_atom_compare(a,b,c,d, 's','i','d','x'))
+        return ATOM_SIDX;
     else
         return ATOM_UNKNOWN;
 }
@@ -398,6 +403,48 @@ static int32_t mp4ff_read_mp4a(mp4ff_t *f)
     return 0;
 }
 
+static int32_t mp4ff_read_alac(mp4ff_t *f, int frame_size)
+{
+    // read decoder config
+    int64_t currpos = mp4ff_position(f);
+    int i;
+
+    for (i = 0; i < 6; i++)
+    {
+        mp4ff_read_char(f); // reserved
+    }
+    (void)mp4ff_read_int16(f); // data_reference_index
+
+    mp4ff_read_int32(f); // reserved
+    mp4ff_read_int32(f); // reserved
+
+    f->track[f->total_tracks - 1]->channelCount = mp4ff_read_int16(f);
+    f->track[f->total_tracks - 1]->sampleSize = mp4ff_read_int16(f);
+
+    // packet size
+    (void)mp4ff_read_int16(f); // skip 2 bytes
+    f->track[f->total_tracks - 1]->sampleRate = mp4ff_read_int32(f);
+
+    // reserved size
+    (void)mp4ff_read_int16(f); // skip 2 bytes
+
+    // the rest is decoder config, max size 64 bytes
+    int remaining = frame_size - (int)(mp4ff_position(f) - currpos);
+    if (remaining > 64) {
+        return -1;
+    }
+
+    // first 12 bytes are audio format / ignored stuff
+    // then goes the file content
+    int sz = (int)remaining + 12;
+    f->track[f->total_tracks - 1]->decoderConfigLen = sz;
+    f->track[f->total_tracks - 1]->decoderConfig = calloc (1, sz);
+
+    int8_t *buf = (int8_t *)f->track[f->total_tracks - 1]->decoderConfig + 12;
+    mp4ff_read_data(f, buf, remaining);
+    return 0;
+}
+
 static int32_t mp4ff_read_stsd(mp4ff_t *f)
 {
     int32_t i;
@@ -420,6 +467,9 @@ static int32_t mp4ff_read_stsd(mp4ff_t *f)
         {
             f->track[f->total_tracks - 1]->type = TRACK_AUDIO;
             mp4ff_read_mp4a(f);
+        } else if (atom_type == ATOM_ALAC) {
+            f->track[f->total_tracks - 1]->type = TRACK_AUDIO;
+            mp4ff_read_alac(f, (int)size - header_size);
         } else if (atom_type == ATOM_MP4V) {
             f->track[f->total_tracks - 1]->type = TRACK_VIDEO;
         } else if (atom_type == ATOM_MP4S) {
@@ -646,6 +696,13 @@ static int32_t mp4ff_read_mdhd(mp4ff_t *f)
     mp4ff_read_int16(f);
     return 1;
 }
+
+static int32_t mp4ff_read_sidx (mp4ff_t *f)
+{
+    return 0;
+}
+
+
 #ifdef USE_TAGGING
 static int32_t mp4ff_read_meta(mp4ff_t *f, const uint64_t size)
 {
@@ -837,6 +894,9 @@ int32_t mp4ff_atom_read(mp4ff_t *f, const int32_t size, const uint8_t atom_type)
     } else if (atom_type == ATOM_TKHD) {
         mp4ff_read_tkhd(f);
     }
+    else if (atom_type == ATOM_SIDX) {
+        mp4ff_read_sidx(f);
+    }
 
     mp4ff_set_position(f, dest_position);
 
@@ -844,373 +904,3 @@ int32_t mp4ff_atom_read(mp4ff_t *f, const int32_t size, const uint8_t atom_type)
     return 0;
 }
 
-#if 0
-int mp4ff_track_create_chunks_index(mp4ff_t *f, mp4ff_track_t *trk)
-{
-    unsigned int i_chunk;
-    unsigned int i_index, i_last;
-
-    // handle case when ( (!stco && !co64) || !stsc )
-    // NOTE: stco and co64 have the same data
-
-    if (!trk->stco_entry_count || !trk->stsc_entry_count)
-    {
-        trace ("no chunks\n");
-        return -1;
-    }
-
-    trk->i_chunk_count = trk->stco_entry_count;
-
-    trace ("\033[0;31mchunk count %d\033[37;0m\n", trk->i_chunk_count);
-    trk->chunk_sample_first = malloc (sizeof (int32_t) * trk->i_chunk_count);
-    trk->chunk_first_dts = malloc (sizeof (int32_t) * trk->i_chunk_count);
-    trk->chunk_last_dts = malloc (sizeof (int32_t) * trk->i_chunk_count);
-    trk->p_sample_count_dts = malloc (sizeof (int32_t *) * trk->i_chunk_count);
-    trk->p_sample_delta_dts = malloc (sizeof (int32_t *) * trk->i_chunk_count);
-    trk->p_sample_count_pts = malloc (sizeof (int32_t *) * trk->i_chunk_count);
-    trk->p_sample_offset_pts = malloc (sizeof (int32_t *) * trk->i_chunk_count);
-
-    /* first we read chunk offset */
-    for( i_chunk = 0; i_chunk < trk->i_chunk_count; i_chunk++ )
-    {
-        // chunk.i_offset = stco_chunk_offset[i_chunk]
-        trk->chunk_first_dts[i_chunk] = 0;
-        trk->p_sample_count_dts[i_chunk] = NULL;
-        trk->p_sample_delta_dts[i_chunk] = NULL;
-        trk->p_sample_count_pts[i_chunk] = NULL;
-        trk->p_sample_offset_pts[i_chunk] = NULL;
-    }
-
-    /* now we read index for SampleEntry( soun vide mp4a mp4v ...)
-        to be used for the sample XXX begin to 1
-        We construct it begining at the end */
-    i_last = trk->i_chunk_count; /* last chunk proceded */
-    i_index = trk->stsc_entry_count;
-    if( !i_index )
-    {
-        trace ("cannot read chunk table or table empty\n");
-        return -1;
-    }
-    trk->chunk_sample_first[0] = 0;
-    trace ("\033[0;35mchunk_sample_first[%d]=%d\033[37;0m\n", 0, trk->chunk_sample_first[0]);
-    for (int i = 1; i < trk->i_chunk_count; i++)
-    {
-        trk->chunk_sample_first[i] = 
-            trk->chunk_sample_first[i-1] +
-            trk->stsc_samples_per_chunk[i-1];
-        trace ("\033[0;35mchunk_sample_first[%d]=%d\033[37;0m\n", i, trk->chunk_sample_first[i]);
-    }
-
-    trace ("track[Id 0x%x] read %d chunks\n", trk->id, trk->i_chunk_count);
-    return 0;
-}
-
-int mp4ff_track_create_samples_index (mp4ff_t *f, mp4ff_track_t *trk)
-{
-    /* TODO use also stss and stsh table for seeking */
-    /* FIXME use edit table */
-    int64_t i_sample;
-    int64_t i_chunk;
-
-    int64_t i_index;
-    int64_t i_index_sample_used;
-
-    int64_t i_next_dts;
-
-    if (trk->stsz_sample_count == 0) {
-        trace ("stsz not found\n");
-        return -1;
-    }
-    if (trk->stts_entry_count == 0) {
-        trace ("stts not found\n");
-        return -1;
-    }
-
-    // we already have the table, don't construct anything
-    // sample_size = stsz_sample_size == 0 ? stsz_table[i_sample] : stsz_sample_size
-
-    /* Use stts table to create a sample number -> dts table.
-     * XXX: if we don't want to waste too much memory, we can't expand
-     *  the box! so each chunk will contain an "extract" of this table
-     *  for fast research (problem with raw stream where a sample is sometime
-     *  just channels*bits_per_sample/8 */
-
-    i_next_dts = 0;
-    i_index = 0; i_index_sample_used = 0;
-    for( i_chunk = 0; i_chunk < trk->i_chunk_count; i_chunk++ )
-    {
-        trace ("calculating first/last dts for chunk %d\n", i_chunk);
-        int64_t i_entry, i_sample_count, i;
-
-        /* save first dts */
-        trk->chunk_first_dts[i_chunk] = i_next_dts;
-        trk->chunk_last_dts[i_chunk]  = i_next_dts;
-        trace ("init %lld\n", i_next_dts);
-
-        /* count how many entries are needed for this chunk
-         * for p_sample_delta_dts and p_sample_count_dts */
-        i_sample_count = trk->stsc_samples_per_chunk[i_chunk];
-        trace ("init i_sample_count %d\n", i_sample_count);
-
-        i_entry = 0;
-        while( i_sample_count > 0 )
-        {
-            i_sample_count -= trk->stts_sample_count[i_index+i_entry];
-            trace ("- i_sample_count %d\n", i_sample_count);
-            /* don't count already used sample in this entry */
-            if( i_entry == 0 ) {
-                i_sample_count += i_index_sample_used;
-                trace ("+ i_sample_count %d\n", i_sample_count);
-            }
-
-            i_entry++;
-        }
-        trace ("+ i_entry %d\n", i_entry);
-        /* allocate them */
-        trace ("alloc mem for chunk %d (%d entries, %d samples-per-chunk)\n", i_chunk, i_entry, trk->stsc_samples_per_chunk[i_chunk]);
-        trk->p_sample_count_dts[i_chunk] = calloc( i_entry, sizeof( uint32_t ) );
-        trk->p_sample_delta_dts[i_chunk] = calloc( i_entry, sizeof( uint32_t ) );
-
-        if( !trk->p_sample_count_dts[i_chunk] || !trk->p_sample_delta_dts[i_chunk] ) {
-            trace ("out of memory allocating p_sample_count_dts or p_sample_delta_dts\n");
-            return -1; // oom
-        }
-
-        /* now copy */
-        i_sample_count = trk->stsc_samples_per_chunk[i_chunk];
-        for( i = 0; i < i_entry; i++ )
-        {
-            int64_t i_used;
-            int64_t i_rest;
-
-            i_rest = trk->stts_sample_count[i_index] - i_index_sample_used;
-
-            i_used = min( i_rest, i_sample_count );
-
-            i_index_sample_used += i_used;
-            i_sample_count -= i_used;
-            i_next_dts += i_used * trk->stts_sample_delta[i_index];
-
-            trk->p_sample_count_dts[i_chunk][i] = i_used;
-            trk->p_sample_delta_dts[i_chunk][i] = trk->stts_sample_delta[i_index];
-            if( i_used > 0 )
-                trk->chunk_last_dts[i_chunk] = i_next_dts - trk->p_sample_delta_dts[i_chunk][i];
-
-            if( i_index_sample_used >= trk->stts_sample_count[i_index] )
-            {
-                i_index++;
-                i_index_sample_used = 0;
-            }
-        }
-    }
-
-    /* Find ctts
-     *  Gives the delta between decoding time (dts) and composition table (pts)
-     */
-    if (trk->ctts_entry_count)
-    {
-        /* Create pts-dts table per chunk */
-        i_index = 0; i_index_sample_used = 0;
-        for( i_chunk = 0; i_chunk < trk->i_chunk_count; i_chunk++ )
-        {
-            int64_t i_entry, i_sample_count, i;
-
-            /* count how many entries are needed for this chunk
-             * for p_sample_delta_dts and p_sample_count_dts */
-            i_sample_count = trk->stsc_samples_per_chunk[i_chunk];
-
-            i_entry = 0;
-            while( i_sample_count > 0 )
-            {
-                i_sample_count -= trk->ctts_sample_count[i_index+i_entry];
-
-                /* don't count already used sample in this entry */
-                if( i_entry == 0 )
-                    i_sample_count += i_index_sample_used;
-
-                i_entry++;
-            }
-            if (i_entry == 0) {
-                continue;
-            }
-
-            /* allocate them */
-            trk->p_sample_count_pts[i_chunk] = calloc( i_entry, sizeof( uint32_t ) );
-            trk->p_sample_offset_pts[i_chunk] = calloc( i_entry, sizeof( int32_t ) );
-            if( !trk->p_sample_count_pts[i_chunk] || !trk->p_sample_offset_pts[i_chunk] ) {
-                trace ("out of memory allocating p_sample_count_pts or p_sample_offset_pts\n");
-                return -1; // oom
-            }
-
-            /* now copy */
-            i_sample_count = trk->stsc_samples_per_chunk[i_chunk];
-            for( i = 0; i < i_entry; i++ )
-            {
-                int64_t i_used;
-                int64_t i_rest;
-
-                i_rest = trk->ctts_sample_count[i_index] -
-                    i_index_sample_used;
-
-                i_used = min( i_rest, i_sample_count );
-
-                i_index_sample_used += i_used;
-                i_sample_count -= i_used;
-
-                trk->p_sample_count_pts[i_chunk][i] = i_used;
-                trk->p_sample_offset_pts[i_chunk][i] = trk->ctts_sample_offset[i_index];
-
-                if( i_index_sample_used >= trk->ctts_sample_count[i_index] )
-                {
-                    i_index++;
-                    i_index_sample_used = 0;
-                }
-            }
-        }
-    }
-
-    trace ("track[Id 0x%x] read %d samples length:%llds\n",
-             trk->id, trk->stsz_sample_count,
-             i_next_dts / trk->timeScale );
-
-    return 0;
-}
-
-int64_t mp4ff_get_track_dts (mp4ff_t *f, int t, int s)
-{
-    mp4ff_track_t *p_track = f->track[t];
-    // find chunk for the sample
-    int i_chunk = 0;
-    for (i_chunk = 0; i_chunk < p_track->i_chunk_count-1; i_chunk++) {
-        if (p_track->chunk_sample_first[i_chunk+1] > s) {
-            break;
-        }
-    }
-//    trace ("i_chunk for sample %d: %d (out of %d)\n", s, i_chunk, p_track->i_chunk_count);
-
-    unsigned int i_index = 0;
-    unsigned int i_sample = s - p_track->chunk_sample_first[i_chunk];
-    int64_t i_dts = p_track->chunk_first_dts[i_chunk];
-    trace ("start dts: %lld (i_sample: %d)\n", i_dts, i_sample);
-
-    while( i_sample > 0 )
-    {
-        if( i_sample > p_track->p_sample_count_dts[i_chunk][i_index] )
-        {
-            i_dts += p_track->p_sample_count_dts[i_chunk][i_index] *
-                p_track->p_sample_delta_dts[i_chunk][i_index];
-            i_sample -= p_track->p_sample_count_dts[i_chunk][i_index];
-            i_index++;
-        }
-        else
-        {
-            i_dts += i_sample * p_track->p_sample_delta_dts[i_chunk][i_index];
-            break;
-        }
-    }
-
-
-#if 0
-    // we don't need elst
-    /* now handle elst */
-    if (p_track->elst_entry_count)
-    {
-        /* convert to offset */
-        if( ( p_track->elst_media_rate_integer[p_track->i_elst] > 0 ||
-              p_track->elst_media_rate_fraction[p_track->i_elst] > 0 ) &&
-            p_track->elst_media_time[p_track->i_elst] > 0 )
-        {
-            i_dts -= p_track->elst_media_time[p_track->i_elst];
-        }
-
-        /* add i_elst_time */
-        i_dts += p_track->i_elst_time * p_track->timeScale /
-            f->time_scale;
-
-        if( i_dts < 0 ) i_dts = 0;
-    }
-#endif
-
-    return (int64_t)1000000 * i_dts / p_track->timeScale;
-}
-
-int64_t mp4ff_get_track_pts_delta(mp4ff_t *f, int t, int i_sample)
-{
-    mp4ff_track_t *p_track = f->track[t];
-    // find chunk for the sample
-    int i_chunk = 0;
-    for (i_chunk = 0; i_chunk < p_track->i_chunk_count-1; i_chunk++) {
-        if (p_track->chunk_sample_first[i_chunk+1] > i_sample) {
-            break;
-        }
-    }
-//    trace ("i_chunk for sample %d: %d (out of %d)\n", i_sample, i_chunk, p_track->i_chunk_count);
-    unsigned int i_index = 0;
-    i_sample = i_sample - p_track->chunk_sample_first[i_chunk];
-
-    if( p_track->p_sample_count_pts[i_chunk] == NULL || p_track->p_sample_offset_pts[i_chunk] == NULL ) {
-        trace ("pts info not found :(\n");
-        return -1;
-    }
-
-    for( i_index = 0;; i_index++ )
-    {
-        if( i_sample < p_track->p_sample_count_pts[i_chunk][i_index] )
-            return p_track->p_sample_offset_pts[i_chunk][i_index] * (int64_t)1000000 /
-                   (int64_t)p_track->timeScale;
-
-        i_sample -= p_track->p_sample_count_pts[i_chunk][i_index];
-    }
-    return 0;
-}
-
-int mp4ff_get_track_sample_size(mp4ff_t *f, int t, int s)
-{
-    mp4ff_track_t *p_track = f->track[t];
-    int i_size;
-
-    if( p_track->stsz_sample_size == 0 )
-    {
-        /* most simple case */
-        return p_track->stsz_table[s];
-    }
-    if(p_track->type != TRACK_AUDIO)
-    {
-        return p_track->stsz_sample_size;
-    }
-
-// that's all we need for chapters, sound length is calculated differently for now
-    return 0;
-#if 0
-    p_soun = p_track->p_sample->data.p_sample_soun;
-
-    if( p_soun->i_qt_version == 1 )
-    {
-        int i_samples = p_track->chunk[p_track->i_chunk].i_sample_count;
-        if( p_track->fmt.audio.i_blockalign > 1 )
-            i_samples = p_soun->i_sample_per_packet;
-
-        i_size = i_samples / p_soun->i_sample_per_packet * p_soun->i_bytes_per_frame;
-    }
-    else if( p_track->i_sample_size > 256 )
-    {
-        /* We do that so we don't read too much data
-         * (in this case we are likely dealing with compressed data) */
-        i_size = p_track->i_sample_size;
-    }
-    else
-    {
-        /* Read a bunch of samples at once */
-        int i_samples = p_track->chunk[p_track->i_chunk].i_sample_count -
-            ( p_track->i_sample -
-              p_track->chunk[p_track->i_chunk].i_sample_first );
-
-        i_samples = __MIN( QT_V0_MAX_SAMPLES, i_samples );
-        i_size = i_samples * p_track->i_sample_size;
-    }
-
-    //fprintf( stderr, "size=%d\n", i_size );
-    return i_size;
-#endif
-}
-#endif

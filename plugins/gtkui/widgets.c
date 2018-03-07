@@ -232,6 +232,18 @@ typedef struct {
     GtkWidget *voices[8];
 } w_ctvoices_t;
 
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *textview;
+} w_logviewer_t;
+
+static int w_logviewer_instancecount;
+
+typedef struct {
+    w_logviewer_t *w;
+    char *text_to_add;
+} logviewer_addtexts_t;
+
 static int design_mode;
 static ddb_gtkui_widget_t *rootwidget;
 
@@ -250,6 +262,10 @@ w_free (void) {
         free (cr);
     }
     w_creators = NULL;
+
+    w_remove (NULL, rootwidget);
+    w_destroy (rootwidget);
+    rootwidget = NULL;
 }
 
 ddb_gtkui_widget_t *
@@ -309,24 +325,26 @@ w_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
         w_destroy (c);
     }
 
-    if (cont->remove) {
-        cont->remove (cont, child);
-    }
-    child->widget = NULL;
-    ddb_gtkui_widget_t *prev = NULL;
-    for (ddb_gtkui_widget_t *c = cont->children; c; c = c->next) {
-        if (c == child) {
-            if (prev) {
-                prev->next = c->next;
-            }
-            else {
-                cont->children = c->next;
-            }
-            break;
+    if (cont) {
+        if (cont->remove) {
+            cont->remove (cont, child);
         }
-        prev = c;
+        ddb_gtkui_widget_t *prev = NULL;
+        for (ddb_gtkui_widget_t *c = cont->children; c; c = c->next) {
+            if (c == child) {
+                if (prev) {
+                    prev->next = c->next;
+                }
+                else {
+                    cont->children = c->next;
+                }
+                break;
+            }
+            prev = c;
+        }
     }
     child->parent = NULL;
+    child->widget = NULL;
 }
 
 GtkWidget *
@@ -2231,7 +2249,8 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
                 g_idle_add (playlist_list_refresh_cb, p->list);
                 g_idle_add (playlist_header_refresh_cb, p->list);
             }
-            else if (gtkui_listview_font_style_conf(conf_str) || !strcmp (conf_str, "playlist.pin.groups")) {
+            else if (gtkui_listview_font_style_conf(conf_str) || !strcmp (conf_str, "playlist.pin.groups") ||
+                    !strcmp (conf_str, "playlist.groups.spacing") ) {
                 g_idle_add (playlist_list_refresh_cb, p->list);
             }
             else if (gtkui_tabstrip_override_conf(conf_str) || gtkui_tabstrip_colors_conf(conf_str)) {
@@ -3103,9 +3122,34 @@ spectrum_audio_listener (void *ctx, ddb_audio_data_t *data) {
     memcpy (w->data, data->data, DDB_FREQ_BANDS * sizeof (float));
 }
 
+static void
+_spectrum_run (ddb_gtkui_widget_t *w) {
+    w_spectrum_t *s = (w_spectrum_t *)w;
+    if (s->drawtimer > 0) {
+        return;
+    }
+    s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
+}
+
+static void
+_spectrum_stop (ddb_gtkui_widget_t *w) {
+    w_spectrum_t *s = (w_spectrum_t *)w;
+    if (s->drawtimer > 0) {
+        g_source_remove (s->drawtimer);
+        s->drawtimer = 0;
+    }
+}
+
 static gboolean
 spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     w_spectrum_t *w = user_data;
+
+    int playback_status = deadbeef->get_output ()->state ();
+
+    if (playback_status == OUTPUT_STATE_STOPPED || playback_status == OUTPUT_STATE_PAUSED) {
+        _spectrum_stop (user_data);
+    }
+
     float *freq = w->data;
 
     GtkAllocation a;
@@ -3245,7 +3289,6 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     return FALSE;
 }
 
-
 gboolean
 spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
     cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
@@ -3253,6 +3296,7 @@ spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
     cairo_destroy (cr);
     return res;
 }
+
 void
 w_spectrum_init (ddb_gtkui_widget_t *w) {
     w_spectrum_t *s = (w_spectrum_t *)w;
@@ -3261,12 +3305,15 @@ w_spectrum_init (ddb_gtkui_widget_t *w) {
         s->drawtimer = 0;
     }
 #if USE_OPENGL
-    if (!gtkui_gl_init ()) {
-        s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
+    if (gtkui_gl_init ()) {
+        return;
     }
-#else
-    s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
 #endif
+    int playback_status = deadbeef->get_output ()->state ();
+
+    if (playback_status == OUTPUT_STATE_PLAYING) { 
+        _spectrum_run (w);
+    }
 }
 
 void
@@ -3277,6 +3324,23 @@ spectrum_realize (GtkWidget *widget, gpointer data) {
 #endif
 }
 
+static int
+w_spectrum_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_SONGSTARTED:
+        _spectrum_run (w);
+        break;
+    case DB_EV_PAUSED:
+        if (p1) {
+            _spectrum_stop (w);
+        }
+        else {
+            _spectrum_run (w);
+        }
+        break;
+    }
+}
+
 ddb_gtkui_widget_t *
 w_spectrum_create (void) {
     w_spectrum_t *w = malloc (sizeof (w_spectrum_t));
@@ -3285,6 +3349,7 @@ w_spectrum_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.init = w_spectrum_init;
     w->base.destroy  = w_spectrum_destroy;
+    w->base.message = w_spectrum_message;
     w->drawarea = gtk_drawing_area_new ();
 #if USE_OPENGL
     int attrlist[] = {GDK_GL_ATTRIB_LIST_NONE};
@@ -3992,10 +4057,9 @@ seekbar_frameupdate (gpointer data) {
     w_seekbar_t *w = data;
     DB_output_t *output = deadbeef->get_output ();
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
-    DB_fileinfo_t *c = deadbeef->streamer_get_current_fileinfo (); // FIXME: might crash streamer
     float songpos = w->last_songpos;
     float duration = track ? deadbeef->pl_get_item_duration (track) : -1;
-    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track || !c)) {
+    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track)) {
         songpos = 0;
     }
     else {
@@ -4249,4 +4313,105 @@ w_ctvoices_create (void) {
 
     w_override_signals (w->base.widget, w);
     return (ddb_gtkui_widget_t*)w;
+}
+
+
+////// Log viewer widget
+
+static void
+logviewer_logger_callback (struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx);
+
+
+static void
+w_logviewer_init (struct ddb_gtkui_widget_s *widget) {
+    GtkTextBuffer *buffer;
+    w_logviewer_t *w = (w_logviewer_t *)widget;
+    buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (w->textview));
+    gtk_text_buffer_set_text (buffer, "Log\n", -1);
+}
+
+static gboolean
+logviewer_addtext_cb (gpointer data) {
+    logviewer_addtexts_t *s = (logviewer_addtexts_t *)data;
+    w_logviewer_t *w = s->w;
+
+    GtkTextBuffer *buffer;
+    GtkTextIter iter;
+    size_t len;
+    len = strlen(s->text_to_add);
+    GtkWidget *scrolled_window = gtk_widget_get_parent (w->textview);
+    buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (w->textview));
+    gtk_text_buffer_get_end_iter(buffer, &iter);
+    gtk_text_buffer_insert( buffer, &iter, s->text_to_add, len );
+    // Make sure it ends on a newline
+    if (s->text_to_add[len-1] != '\n') {
+        gtk_text_buffer_get_end_iter(buffer, &iter);
+        gtk_text_buffer_insert(buffer, &iter, "\n", 1);
+    }
+    GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment ( GTK_SCROLLED_WINDOW (scrolled_window));
+    if (gtk_adjustment_get_value(adjustment) >=
+        gtk_adjustment_get_upper(adjustment) -
+        gtk_adjustment_get_page_size(adjustment) -1e-12 ) {
+        gtk_text_buffer_get_end_iter(buffer, &iter);
+        GtkTextMark *mark = gtk_text_buffer_create_mark (buffer, NULL, &iter, FALSE);
+        gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (w->textview), mark);
+    }
+    free (s->text_to_add);
+    free(s);
+    return FALSE;
+}
+
+static void
+logviewer_logger_callback (struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx) {
+    logviewer_addtexts_t *s = malloc (sizeof (logviewer_addtexts_t));
+    s->w = (w_logviewer_t *)ctx;
+    s->text_to_add = strdup(text);
+    g_idle_add(logviewer_addtext_cb, (gpointer)s);
+}
+
+void
+w_logviewer_destroy (ddb_gtkui_widget_t *w) {
+    // This is only called if removing widget in design mode
+    deadbeef->log_viewer_unregister (logviewer_logger_callback, w);
+    if (w_logviewer_instancecount > 0) {
+        w_logviewer_instancecount--;
+    }
+}
+
+ddb_gtkui_widget_t *
+w_logviewer_create (void) {
+    w_logviewer_t *w = malloc (sizeof (w_logviewer_t));
+    memset (w, 0, sizeof (w_logviewer_t));
+
+    w->base.widget = gtk_event_box_new ();
+    w->base.init = w_logviewer_init;
+    w->base.destroy = w_logviewer_destroy;
+
+    gtk_widget_set_can_focus (w->base.widget, FALSE);
+
+    GtkWidget *scroll = gtk_scrolled_window_new (NULL, NULL);
+    gtk_widget_set_can_focus (scroll, FALSE);
+    gtk_widget_show (scroll);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), scroll);
+
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scroll), GTK_SHADOW_ETCHED_IN);
+    w->textview = gtk_text_view_new ();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(w->textview), FALSE);
+    //gtk_widget_set_size_request(w->textview, 320, 240);
+    gtk_widget_show (w->textview);
+    gtk_container_add (GTK_CONTAINER (scroll), w->textview);
+
+    w_override_signals (w->base.widget, w);
+
+    deadbeef->log_viewer_register (logviewer_logger_callback, w);
+
+    w_logviewer_instancecount++;
+
+    return (ddb_gtkui_widget_t *)w;
+}
+
+gboolean
+w_logviewer_is_present(void) {
+    return w_logviewer_instancecount > 0;
 }

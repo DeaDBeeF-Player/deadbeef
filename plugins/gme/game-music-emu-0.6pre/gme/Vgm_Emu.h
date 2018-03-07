@@ -35,11 +35,13 @@ public:
 	
 protected:
 	blargg_err_t track_info_( track_info_t*, int track ) const;
+    blargg_err_t set_track_info_( const track_info_t*, int track );
 	blargg_err_t load_mem_( byte const [], int );
 	blargg_err_t set_sample_rate_( int sample_rate );
 	blargg_err_t start_track_( int );
 	blargg_err_t play_( int count, sample_t  []);
 	blargg_err_t skip_( int count );
+    blargg_err_t save_( gme_writer_t, void* );
 	virtual void set_tempo_( double );
 	virtual void mute_voices_( int mask );
 	virtual void unload();
@@ -47,6 +49,13 @@ protected:
 private:
 	unsigned muted_voices;
 	Vgm_Core core;
+    
+    blargg_vector<byte> original_header;
+    blargg_vector<byte> data;
+    track_info_t metadata;
+    track_info_t metadata_j;
+    
+    bool voice_names_assigned_;
 	
 	void check_end();
 };

@@ -117,11 +117,13 @@ has twice the steps, happening twice as fast.
 //#include "cpuintrf.h"
 //#include "cpuexec.h"
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 #include <stdio.h>
 #include "ay8910.h"
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 /*************************************
  *
@@ -385,6 +387,7 @@ static const ay_ym_param ay8910_param =
  *
  *************************************/
 
+#if 0
 INLINE void build_3D_table(double rl, const ay_ym_param *par, const ay_ym_param *par_env, int normalize, double factor, int zero_is_off, INT32 *tab)
 {
 	int j, j1, j2, j3, e, indx;
@@ -456,6 +459,7 @@ INLINE void build_3D_table(double rl, const ay_ym_param *par, const ay_ym_param 
 
 	free(temp);
 }
+#endif
 
 INLINE void build_single_table(double rl, const ay_ym_param *par, int normalize, INT32 *tab, int zero_is_off)
 {
@@ -500,6 +504,7 @@ INLINE void build_single_table(double rl, const ay_ym_param *par, int normalize,
 
 }
 
+#if 0
 INLINE UINT16 mix_3D(ay8910_context *psg)
 {
 	int indx = 0, chan;
@@ -523,6 +528,7 @@ INLINE UINT16 mix_3D(ay8910_context *psg)
 		}
 	return psg->vol3d_table[indx];
 }
+#endif
 
 /*************************************
  *

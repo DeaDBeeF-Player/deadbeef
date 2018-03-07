@@ -1870,8 +1870,8 @@ calc_stereo (OPLL * opll, e_int32 out[2], e_int32 ch)
 {
 	/* Maxim: added stereo control (multiply each side by a float in opll->pan[ch][side]) */
   e_int32 l=0,r=0;
-/*  e_int32 b[4] = { 0, 0, 0, 0 };        /* Ignore, Right, Left, Center */
-/*  e_int32 r[4] = { 0, 0, 0, 0 };        /* Ignore, Right, Left, Center */
+/*  e_int32 b[4] = { 0, 0, 0, 0 };*/        /* Ignore, Right, Left, Center */
+/*  e_int32 r[4] = { 0, 0, 0, 0 };*/        /* Ignore, Right, Left, Center */
   e_int32 i;
   e_int32 channel;
 

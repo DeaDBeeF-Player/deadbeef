@@ -9,7 +9,7 @@
 
 //#include "emu.h"
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 #include <math.h>
 #include "mamedef.h"
 #ifdef _DEBUG
@@ -17,7 +17,9 @@
 #endif
 #include "k054539.h"
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 #define VERBOSE 0
 #define LOG(x) do { if (VERBOSE) logerror x; } while (0)
@@ -149,7 +151,7 @@ void k054539_update(void *param, stream_sample_t **outputs, int samples)
 
 	static const INT16 dpcm[16] = {
 		0<<8, 1<<8, 4<<8, 9<<8, 16<<8, 25<<8, 36<<8, 49<<8,
-		-64<<8, -49<<8, -36<<8, -25<<8, -16<<8, -9<<8, -4<<8, -1<<8
+		-64*(1<<8), -49*(1<<8), -36*(1<<8), -25*(1<<8), -16*(1<<8), -9*(1<<8), -4*(1<<8), -1*(1<<8)
 	};
 
 	INT16 *rbase = (INT16 *)info->ram;
@@ -331,7 +333,9 @@ void k054539_update(void *param, stream_sample_t **outputs, int samples)
 					break;
 				}
 				default:
+#ifdef _DEBUG
 					LOG(("Unknown sample type %x for channel %d\n", base2[0] & 0xc, ch));
+#endif
 					break;
 				}
 				lval += cur_val * lvol;
@@ -553,12 +557,12 @@ void k054539_w(void *_info, offs_t offset, UINT8 data)
 	regbase[offset] = data;
 }
 
-static void reset_zones(k054539_state *info)
+/*static void reset_zones(k054539_state *info)
 {
 	int data = info->regs[0x22e];
 	info->cur_zone = data == 0x80 ? info->ram : info->rom + 0x20000*data;
 	info->cur_limit = data == 0x80 ? 0x4000 : 0x20000;
-}
+}*/
 
 //READ8_DEVICE_HANDLER( k054539_r )
 UINT8 k054539_r(void *_info, offs_t offset)
@@ -578,7 +582,9 @@ UINT8 k054539_r(void *_info, offs_t offset)
 	case 0x22c:
 		break;
 	default:
+#ifdef _DEBUG
 		LOG(("K054539 read %03x\n", offset));
+#endif
 		break;
 	}
 	return info->regs[offset];

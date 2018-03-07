@@ -30,9 +30,12 @@
 #define COLUMN_FORMAT_ARTIST "$if(%artist%,%artist%,Unknown Artist)"
 #define COLUMN_FORMAT_ALBUM "%album%"
 #define COLUMN_FORMAT_TITLE "%title%"
+#define COLUMN_FORMAT_YEAR "%year%"
 #define COLUMN_FORMAT_LENGTH "%length%"
 #define COLUMN_FORMAT_TRACKNUMBER "%tracknumber%"
 #define COLUMN_FORMAT_BAND "$if(%album artist%,%album artist%,Unknown Artist)"
+#define COLUMN_FORMAT_CODEC "%codec%"
+#define COLUMN_FORMAT_BITRATE "%bitrate%"
 
 int
 pl_common_rewrite_column_config (DdbListview *listview, const char *name);
@@ -53,13 +56,13 @@ gboolean
 list_handle_keypress (DdbListview *ps, int keyval, int state, int iter);
 
 void
-pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int iter, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height);
+pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int iter, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height, int even);
 
 int
 pl_common_load_column_config (DdbListview *listview, const char *key);
 
 void
-pl_common_add_column_helper (DdbListview *listview, const char *title, int width, int id, const char *format, int align_right);
+pl_common_add_column_helper (DdbListview *listview, const char *title, int width, int id, const char *format, const char *sort_format, int align_right);
 
 void
 pl_common_header_context_menu (DdbListview *ps, int column);
@@ -92,5 +95,8 @@ pl_common_set_group_format (DdbListview *listview, char *format_conf);
 // formatting to the new JSON syntax with new title formatting
 int
 import_column_config_0_6 (const char *oldkeyprefix, const char *newkey);
+
+int
+find_first_preset_column_type (int type);
 
 #endif // __PLCOLUMNS_H

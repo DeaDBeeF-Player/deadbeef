@@ -58,4 +58,6 @@ int device_start_pwm(void **chip, int clock, int CHIP_SAMPLING_MODE, int CHIP_SA
 void device_stop_pwm(void *chip);
 void device_reset_pwm(void *chip);
 
+void pwm_mute(void *chip, UINT8 Mute);
+
 void pwm_chn_w(void *chip, UINT8 Channel, UINT16 data);

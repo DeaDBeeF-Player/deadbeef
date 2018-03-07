@@ -78,8 +78,8 @@ typedef struct {
     float duration;
 
     // currentsample and totalsamples are in the entire file scope (delay/padding inclusive)
-    int currentsample;
-    int totalsamples;
+    int64_t currentsample;
+    int64_t totalsamples;
 
     int skipsamples;
 
@@ -87,8 +87,8 @@ typedef struct {
     int64_t endoffset; // in bytes (apev2, id3v1)
 
     // startsample and endsample exclude delay/padding
-    int startsample;
-    int endsample;
+    int64_t startsample;
+    int64_t endsample;
 
     // number of samples to skip at the start/end of file
     int delay;
@@ -107,8 +107,14 @@ typedef struct {
 
 typedef struct {
     DB_fileinfo_t info;
+
     // input buffer, for MPEG data
     buffer_t buffer;
+
+    // temp buffer for 32bit decoding, before converting to 16 bit
+    char *conv_buf;
+    int conv_buf_size;
+
     union {
 #ifdef USE_LIBMAD
         struct {
@@ -127,6 +133,7 @@ typedef struct {
     };
 
     int want_16bit;
+    int raw_signal;
     struct mp3_decoder_api_s *dec;
 } mp3_info_t;
 

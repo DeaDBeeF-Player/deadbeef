@@ -88,10 +88,7 @@ aac_sync(const uint8_t *buf, int *channels, int *sample_rate, int *bit_rate, int
         return 0;
     }
     int adts_buffer_fullness = ((buf[5] & 0x1F) << 3) | ((buf[6] & 0xFC) >> 2);
-    rdb = buf[6] & 0x03;
-    if (!rdb) {
-        rdb = buf[7] & 0x03;
-    }
+    rdb = (buf[6] & 0x03) + 1;
     trace ("rdb: %d\n", rdb);
 
     *channels = aac_channels[channel_conf];

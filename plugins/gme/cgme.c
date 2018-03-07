@@ -37,9 +37,10 @@
 #endif
 #include <limits.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include "gmewrap.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 // how big vgz can be?
 #define MAX_REMOTE_GZ_FILE 0x100000
@@ -51,6 +52,7 @@ static int conf_loopcount = 2;
 static int chip_voices = 0xff;
 static int chip_voices_changed = 0;
 static int conf_play_forever = 0;
+static char *coleco_rom;
 
 typedef struct {
     DB_fileinfo_t info;
@@ -59,6 +61,7 @@ typedef struct {
     float duration; // of current song
     int eof;
     int can_loop;
+    int fade_set;
 } gme_fileinfo_t;
 
 static DB_fileinfo_t *
@@ -73,7 +76,9 @@ cgme_open (uint32_t hint) {
 static int
 read_gzfile (const char *fname, char **buffer, int *size) {
     int fd = -1;
+    int res = -1;
     DB_FILE *fp = deadbeef->fopen (fname);
+    char tmpnm[PATH_MAX] = "";
     if (!fp) {
         trace ("gme read_gzfile: failed to fopen %s\n", fname);
         return -1;
@@ -82,29 +87,44 @@ read_gzfile (const char *fname, char **buffer, int *size) {
     int64_t sz = deadbeef->fgetlength (fp);
     if (fp->vfs && fp->vfs->plugin.id && strcmp (fp->vfs->plugin.id, "vfs_stdio") && sz > 0 && sz <= MAX_REMOTE_GZ_FILE) {
         trace ("gme read_gzfile: reading %s of size %lld and writing to temp file\n", fname, sz);
-        char buffer[sz];
+        char *buffer = malloc(sz);
         if (sz == deadbeef->fread (buffer, 1, sz, fp)) {
+            static int idx = 0;
             const char *tmp = getenv ("TMPDIR");
             if (!tmp) {
                 tmp = "/tmp";
             }
-            char nm[PATH_MAX];
-#if defined(ANDROID) || defined(STATICLINK)
-            snprintf (nm, sizeof (nm), "%s/ddbgmeXXXXXX", tmp);
-            fd = mkstemp (nm);
+#if defined(ANDROID)
+            // newer androids don't allow writing to /tmp, so write to ${configdir}/tmp/
+            const char *confdir = deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG);
+            snprintf (tmpnm, sizeof (tmpnm), "%s/tmp", confdir);
+            mkdir (tmpnm, 0755);
+            snprintf (tmpnm, sizeof (tmpnm), "%s/tmp/ddbgme%03d.vgz", confdir, idx);
+            fd = open (tmpnm, O_RDWR|O_CREAT|O_TRUNC);
+#elif defined(STATICLINK)
+            // mkstemps is unavailable in this case (linking to old glibc),
+            // and mkstemp is considered insecure,
+            // so just make the name manually.
+            // This is as insecure as mkstemp, but (hopefully) won't be bugged by static analyzers
+            snprintf (tmpnm, sizeof (tmpnm), "%s/ddbgme%03d.vgz", tmp);
+            fd = open (tmpnm, O_RDWR|O_CREAT|O_TRUNC);
 #else
-            snprintf (nm, sizeof (nm), "%s/ddbgmeXXXXXX.vgz", tmp);
-            fd = mkstemps (nm, 4);
+            snprintf (tmpnm, sizeof (tmpnm), "%s/ddbgmeXXXXXX.vgz", tmp);
+            fd = mkstemps (tmpnm, 4);
 #endif
+            idx++;
             if (fd == -1 || sz != write (fd, buffer, sz)) {
-                trace ("gme read_gzfile: failed to write temp file\n");
+                trace ("gme read_gzfile: failed to write temp file %s\n", tmpnm);
                 if (fd != -1) {
                     close (fd);
+                    fd = -1;
                 }
             }
             if (fd != -1) {
                 lseek (fd, 0, SEEK_SET);
             }
+            trace ("%s written successfully\n", tmpnm);
+            free (buffer);
         }
     }
 
@@ -114,13 +134,13 @@ read_gzfile (const char *fname, char **buffer, int *size) {
     int readsize = (int)sz;
     *buffer = malloc (sz);
     if (!(*buffer)) {
-        return -1;
+        goto error;
     }
 
     gzFile gz = fd == -1 ? gzopen (fname, "rb") : gzdopen (fd, "r");
     if (!gz) {
         trace ("failed to gzopen %s\n", fname);
-        return -1;
+        goto error;
     }
     *size = 0;
     int nb;
@@ -131,7 +151,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
             free (*buffer);
             trace ("failed to gzread from %s\n", fname);
             gzclose (gz);
-            return -1;
+            goto error;
         }
         if (nb > 0) {
             pos += nb;
@@ -149,7 +169,13 @@ read_gzfile (const char *fname, char **buffer, int *size) {
     gzclose (gz);
     trace ("got %d bytes from %s\n", *size, fname);
 
-    return 0;
+    res = 0;
+error:
+    if (*tmpnm) {
+        unlink (tmpnm);
+    }
+
+    return res;
 }
 
 static int
@@ -244,8 +270,6 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
         if (t <= 0) {
             return 0;
         }
-        // DON'T ajust size, buffer must always be po2
-        //size = t * (float)info->samplerate * 4;
     }
 
     if (chip_voices_changed) {
@@ -253,11 +277,16 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
         chip_voices_changed = 0;
         gme_mute_voices (info->emu, chip_voices^0xff);
     }
-    
-    if (playForever)
+
+    // FIXME: it makes more sense to call gme_set_fade on init and configchanged
+    if (playForever && info->fade_set) {
         gme_set_fade(info->emu, -1, 0);
-    else
-        gme_set_fade(info->emu, (int)(info->duration * 1000), conf_fadeout * 1000);
+        info->fade_set = 0;
+    }
+    else if (!playForever && !info->fade_set && conf_fadeout > 0 && info->duration >= conf_fadeout && info->reallength <= 0 && _info->readpos >= info->duration - conf_fadeout) {
+        gme_set_fade(info->emu, (int)(_info->readpos * 1000), conf_fadeout * 1000);
+        info->fade_set = 1;
+    }
 
     if (gme_play (info->emu, size/2, (short*)bytes)) {
         return 0;
@@ -451,7 +480,7 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
 static const char * exts[]=
 {
-	"ay","gbs","gym","hes","kss","nsf","nsfe","sap","sfm","spc","vgm","vgz",NULL
+	"ay","gbs","gym","hes","kss","nsf","nsfe","sap","sfm","spc","vgm","vgz","sgc",NULL
 };
 
 static int
@@ -464,7 +493,49 @@ cgme_start (void) {
 
 static int
 cgme_stop (void) {
+    if (coleco_rom) {
+        free (coleco_rom);
+        coleco_rom = NULL;
+    }
+    gme_set_sgc_coleco_bios (NULL);
     return 0;
+}
+
+static void
+init_coleco_bios () {
+    if (coleco_rom) {
+        free (coleco_rom);
+        coleco_rom = NULL;
+    }
+    gme_set_sgc_coleco_bios (NULL);
+    char path[PATH_MAX];
+    deadbeef->conf_get_str ("gme.coleco_rom", "", path, sizeof (path));
+    if (path[0]) {
+        FILE *fp = fopen (path, "rb");
+        if (!fp) {
+            return;
+        }
+        fseek (fp, 0, SEEK_END);
+        size_t size = ftell (fp);
+        rewind (fp);
+        if (size != 0x2000) {
+            fclose (fp);
+            deadbeef->log_detailed (&plugin.plugin, DDB_LOG_LAYER_DEFAULT, "ColecoVision ROM file %s has invalid size (expected 8192 bytes)", path);
+            return;
+        }
+
+        coleco_rom = malloc (size);
+        size_t rb = fread (coleco_rom, 1, size, fp);
+        fclose (fp);
+
+        if (rb != 0x2000) {
+            free (coleco_rom);
+            coleco_rom = NULL;
+            deadbeef->log_detailed (&plugin.plugin, DDB_LOG_LAYER_DEFAULT, "Failed to load ColecoVision ROM from file %s, invalid file?", path);
+        }
+
+        gme_set_sgc_coleco_bios (coleco_rom);
+    }
 }
 
 int
@@ -477,6 +548,7 @@ cgme_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         if (chip_voices != deadbeef->conf_get_int ("chip.voices", 0xff)) {
             chip_voices_changed = 1;
         }
+        init_coleco_bios ();
         break;
     }
     return 0;
@@ -486,14 +558,15 @@ static const char settings_dlg[] =
     "property \"Max song length (in minutes)\" entry gme.songlength 3;\n"
     "property \"Fadeout length (seconds)\" entry gme.fadeout 10;\n"
     "property \"Play loops nr. of times (if available)\" entry gme.loopcount 2;\n"
+    "property \"ColecoVision BIOS (for SGC file format)\" file gme.coleco_rom \"\";\n"
 ;
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
+//    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "stdgme",
     .plugin.name = "Game-Music-Emu player",

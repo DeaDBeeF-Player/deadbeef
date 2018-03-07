@@ -382,9 +382,10 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     info->buffer = malloc (BUFFERSIZE);
     info->remaining = 0;
-    if (it->endsample > 0) {
-        info->startsample = it->startsample;
-        info->endsample = it->endsample;
+    int64_t endsample = deadbeef->pl_item_get_endsample (it);
+    if (endsample > 0) {
+        info->startsample = deadbeef->pl_item_get_startsample (it);
+        info->endsample = endsample;
         if (plugin.seek_sample (_info, 0) < 0) {
             trace ("cflac_init failed to seek to sample 0\n");
             return -1;
@@ -658,7 +659,9 @@ cflac_add_metadata (DB_playItem_t *it, const char *s, int length) {
                 char key[eq - s+1];
                 strncpy (key, s, eq-s);
                 key[eq-s] = 0;
-                deadbeef->pl_append_meta (it, key, eq+1);
+                if (eq[1]) {
+                    deadbeef->pl_append_meta (it, key, eq+1);
+                }
             }
         }
     }
@@ -748,10 +751,12 @@ cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_pl
         snprintf (id, sizeof (id), "ARTIST[%d]", i+1);
         deadbeef->pl_add_meta (it, "artist", deadbeef->pl_find_meta (origin, id));
         deadbeef->pl_add_meta (it, "band", deadbeef->pl_find_meta (origin, "artist"));
-        it->startsample = cuesheet->tracks[i].offset;
-        it->endsample = cuesheet->tracks[i+1].offset-1;
+        int64_t startsample = cuesheet->tracks[i].offset;
+        int64_t endsample = cuesheet->tracks[i+1].offset-1;
+        deadbeef->pl_item_set_startsample (it, startsample);
+        deadbeef->pl_item_set_endsample (it, endsample);
         deadbeef->pl_replace_meta (it, ":FILETYPE", ftype);
-        deadbeef->plt_set_item_duration (plt, it, (float)(it->endsample - it->startsample + 1) / samplerate);
+        deadbeef->plt_set_item_duration (plt, it, (float)(endsample - startsample + 1) / samplerate);
         after = deadbeef->plt_insert_item (plt, after, it);
         deadbeef->pl_item_unref (it);
     }
@@ -822,15 +827,9 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         goto cflac_insert_fail;
     }
 
-    const char *ext = fname + strlen (fname);
-    while (ext > fname && *ext != '/' && *ext != '.') {
-        ext--;
-    }
-    if (*ext == '.') {
+    const char *ext = strrchr (fname, '.');
+    if (ext) {
         ext++;
-    }
-    else {
-        ext = NULL;
     }
 
     int isogg = 0;
@@ -872,15 +871,9 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     // read all metadata
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
     FLAC__stream_decoder_set_metadata_respond_all (decoder);
-    it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-    info.it = it;
-    if (skip > 0) {
-        deadbeef->fseek (info.file, skip, SEEK_SET);
-    }
-    else {
-        deadbeef->rewind (info.file);
-    }
-    deadbeef->fseek (info.file, -4, SEEK_CUR);
+
+    it = info.it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);;
+
     if (isogg) {
         status = FLAC__stream_decoder_init_ogg_stream (decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_length_cb, flac_eof_cb, cflac_init_write_callback, cflac_init_metadata_callback, cflac_init_error_callback, &info);
     }
@@ -941,7 +934,8 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_playItem_t *cue_after = NULL;
 
     cue_after = deadbeef->plt_process_cue (plt, after, it, info.totalsamples, info.info.fmt.samplerate);
-    if (!cue_after && info.flac_cue_sheet) {
+
+    if (!deadbeef->plt_is_loading_cue (plt) && !cue_after && info.flac_cue_sheet) {
         // try native flac embedded cuesheet
         cue_after = cflac_insert_with_embedded_cue (plt, after, it, &info.flac_cue_sheet->data.cue_sheet, info.totalsamples, info.info.fmt.samplerate);
     }
@@ -1271,8 +1265,7 @@ static const char *exts[] = { "flac", "oga", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 7,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,

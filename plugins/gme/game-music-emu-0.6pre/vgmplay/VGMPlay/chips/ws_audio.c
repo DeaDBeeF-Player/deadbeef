@@ -1,6 +1,6 @@
 
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 #include <stddef.h>	// for NULL
 #include "mamedef.h"
 

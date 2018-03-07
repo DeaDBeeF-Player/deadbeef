@@ -6,3 +6,4 @@ file_filter = po/<lang>.po
 source_file = po/deadbeef.pot
 source_lang = en
 type = PO
+

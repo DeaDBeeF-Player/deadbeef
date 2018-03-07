@@ -53,7 +53,7 @@ PSG_Mix(
 
 /*void
 PSG_SetSampleRate(
-	Uint32		sampleRate);*
+	Uint32		sampleRate);*/
 
 /*void
 PSGDEBUG_ShowRegs();*/

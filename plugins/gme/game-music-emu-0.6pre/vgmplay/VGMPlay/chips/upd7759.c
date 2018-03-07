@@ -102,12 +102,14 @@
 #ifdef _DEBUG
 #include <stdio.h>
 #endif
-#include <memory.h>
+#include <string.h>
 #include <stdlib.h>
 #include "mamedef.h"
 #include "upd7759.h"
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 
 #define DEBUG_STATES	(0)
@@ -204,6 +206,8 @@ struct _upd7759_state
 	UINT8 data_buf[0x40];
 	UINT8 dbuf_pos_read;
 	UINT8 dbuf_pos_write;
+    
+    UINT8 mute;
 };
 
 
@@ -277,7 +281,9 @@ static void get_fifo_data(upd7759_state *chip)
 {
 	if (chip->dbuf_pos_read == chip->dbuf_pos_write)
 	{
+#ifdef _DEBUG
 		logerror("Warning: UPD7759 reading empty FIFO!\n");
+#endif
 		return;
 	}
 	
@@ -310,7 +316,9 @@ static void advance_state(upd7759_state *chip)
 		/* Start state: we begin here as soon as a sample is triggered */
 		case STATE_START:
 			chip->req_sample = chip->rom ? chip->fifo_in : 0x10;
+#ifdef _DEBUG
 			if (DEBUG_STATES) DEBUG_METHOD("UPD7759: req_sample = %02X\n", chip->req_sample);
+#endif
 
 			/* 35+ cycles after we get here, the /DRQ goes low
              *     (first byte (number of samples in ROM) should be sent in response)
@@ -326,7 +334,9 @@ static void advance_state(upd7759_state *chip)
 		/* First request state: issue a request for the first byte */
 		/* The expected response will be the index of the last sample */
 		case STATE_FIRST_REQ:
+#ifdef _DEBUG
 			if (DEBUG_STATES) DEBUG_METHOD("UPD7759: first data request\n");
+#endif
 			chip->drq = 1;
 
 			/* 44 cycles later, we will latch this value and request another byte */
@@ -338,7 +348,9 @@ static void advance_state(upd7759_state *chip)
 		/* The second byte read will be just a dummy */
 		case STATE_LAST_SAMPLE:
 			chip->last_sample = chip->rom ? chip->rom[0] : chip->fifo_in;
+#ifdef _DEBUG
 			if (DEBUG_STATES) DEBUG_METHOD("UPD7759: last_sample = %02X, requesting dummy 1\n", chip->last_sample);
+#endif
 			chip->drq = 1;
 
 			/* 28 cycles later, we will latch this value and request another byte */
@@ -349,7 +361,9 @@ static void advance_state(upd7759_state *chip)
 		/* First dummy state: ignore any data here and issue a request for the third byte */
 		/* The expected response will be the MSB of the sample address */
 		case STATE_DUMMY1:
+#ifdef _DEBUG
 			if (DEBUG_STATES) DEBUG_METHOD("UPD7759: dummy1, requesting offset_hi\n");
+#endif
 			chip->drq = 1;
 
 			/* 32 cycles later, we will latch this value and request another byte */
@@ -361,7 +375,9 @@ static void advance_state(upd7759_state *chip)
 		/* The expected response will be the LSB of the sample address */
 		case STATE_ADDR_MSB:
 			chip->offset = (chip->rom ? chip->rom[chip->req_sample * 2 + 5] : chip->fifo_in) << 9;
+#ifdef _DEBUG
 			if (DEBUG_STATES) DEBUG_METHOD("UPD7759: offset_hi = %02X, requesting offset_lo\n", chip->offset >> 9);
+#endif
 			chip->drq = 1;
 
 			/* 44 cycles later, we will latch this value and request another byte */
@@ -373,7 +389,9 @@ static void advance_state(upd7759_state *chip)
 		/* The expected response will be just a dummy */
 		case STATE_ADDR_LSB:
 			chip->offset |= (chip->rom ? chip->rom[chip->req_sample * 2 + 6] : chip->fifo_in) << 1;
+#ifdef _DEBUG
 			if (DEBUG_STATES) DEBUG_METHOD("UPD7759: offset_lo = %02X, requesting dummy 2\n", (chip->offset >> 1) & 0xff);
+#endif
 			chip->drq = 1;
 
 			/* 36 cycles later, we will latch this value and request another byte */
@@ -386,7 +404,9 @@ static void advance_state(upd7759_state *chip)
 		case STATE_DUMMY2:
 			chip->offset++;
 			chip->first_valid_header = 0;
+#ifdef _DEBUG
 			if (DEBUG_STATES) DEBUG_METHOD("UPD7759: dummy2, requesting block header\n");
+#endif
 			chip->drq = 1;
 
 			/* 36?? cycles later, we will latch this value and request another byte */
@@ -404,7 +424,9 @@ static void advance_state(upd7759_state *chip)
 				chip->offset = chip->repeat_offset;
 			}
 			chip->block_header = chip->rom ? chip->rom[chip->offset++ & 0x1ffff] : chip->fifo_in;
+#ifdef _DEBUG
 			if (DEBUG_STATES) DEBUG_METHOD("UPD7759: header (@%05X) = %02X, requesting next byte\n", chip->offset, chip->block_header);
+#endif
 			chip->drq = 1;
 
 			/* our next step depends on the top two bits */
@@ -447,7 +469,9 @@ static void advance_state(upd7759_state *chip)
 		/* The expected response will be the first data byte */
 		case STATE_NIBBLE_COUNT:
 			chip->nibbles_left = (chip->rom ? chip->rom[chip->offset++ & 0x1ffff] : chip->fifo_in) + 1;
+#ifdef _DEBUG
 			if (DEBUG_STATES) DEBUG_METHOD("UPD7759: nibble_count = %u, requesting next byte\n", (unsigned)chip->nibbles_left);
+#endif
 			chip->drq = 1;
 
 			/* 36?? cycles later, we will latch this value and request another byte */
@@ -511,14 +535,23 @@ void upd7759_update(void *param, stream_sample_t **outputs, int samples)
 	UINT32 pos = chip->pos;
 	stream_sample_t *buffer = outputs[0];
 	stream_sample_t *buffer2 = outputs[1];
+    int mute = chip->mute;
 
 	/* loop until done */
 	if (chip->state != STATE_IDLE)
 		while (samples != 0)
 		{
 			/* store the current sample */
-			*buffer++ = sample << 7;
-			*buffer2++ = sample << 7;
+            if (mute)
+            {
+                *buffer++ = 0;
+                *buffer2++ = 0;
+            }
+            else
+            {
+                *buffer++ = sample << 7;
+                *buffer2++ = sample << 7;
+            }
 			samples--;
 
 			/* advance by the number of clocks/output sample */
@@ -586,6 +619,11 @@ void upd7759_update(void *param, stream_sample_t **outputs, int samples)
 	chip->pos = pos;
 }
 
+void upd7759_mute(void *ptr, int mute)
+{
+    upd7759_state *chip = (upd7759_state *)ptr;
+    chip->mute = mute;
+}
 
 
 /************************************************************
@@ -668,11 +706,11 @@ void device_reset_upd7759(void *_info)
 
 
 //static STATE_POSTLOAD( upd7759_postload )
-static void upd7759_postload(void* param)
+/*static void upd7759_postload(void* param)
 {
 	upd7759_state *chip = (upd7759_state *)param;
 	chip->rom = chip->rombase + chip->romoffset;
-}
+}*/
 
 
 /*static void register_for_save(upd7759_state *chip, running_device *device)
@@ -711,9 +749,9 @@ static void upd7759_postload(void* param)
 //static DEVICE_START( upd7759 )
 int device_start_upd7759(void **_info, int clock)
 {
-	static const upd7759_interface defintrf = { 0 };
+	//static const upd7759_interface defintrf = { 0 };
 	//const upd7759_interface *intf = (device->baseconfig().static_config() != NULL) ? (const upd7759_interface *)device->baseconfig().static_config() : &defintrf;
-	const upd7759_interface *intf = &defintrf;
+	//const upd7759_interface *intf = &defintrf;
 	//upd7759_state *chip = get_safe_token(device);
 	upd7759_state *chip;
 
@@ -804,7 +842,9 @@ void upd7759_start_w(void *_info, UINT8 data)
 	UINT8 oldstart = chip->start;
 	chip->start = (data != 0);
 
+#ifdef _DEBUG
 	if (DEBUG_STATES) logerror("upd7759_start_w: %d->%d\n", oldstart, chip->start);
+#endif
 
 	/* update the stream first */
 	//stream_update(chip->channel);

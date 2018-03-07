@@ -6,7 +6,7 @@
 
 #include "VGMPlay_Intf.h"
 
-#define VGMPLAY_VER_STR	"0.40.6"
+#define VGMPLAY_VER_STR	"0.40.7"
 //#define APLHA
 //#define BETA
 #define VGM_VER_STR		"1.71b"
@@ -179,6 +179,7 @@ typedef struct vgm_player
 
     float VolumeLevel;
     bool SurroundSound;
+    UINT8 HardStopOldVGMs;
     bool FadeRAWLog;
     //bool FullBufFill;	// Fill Buffer until it's full
 

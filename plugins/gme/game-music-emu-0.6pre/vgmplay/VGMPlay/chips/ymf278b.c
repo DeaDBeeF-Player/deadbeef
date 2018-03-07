@@ -64,13 +64,15 @@
 //#include "streams.h"
 //#include "cpuintrf.h"
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 #include <stdio.h>
 #include <string.h>
 #include "ymf262.h"
 #include "ymf278b.h"
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 typedef struct
 {
@@ -79,7 +81,7 @@ typedef struct
 	UINT32 endaddr;
 	UINT32 step;	/* fixed-point frequency step */
 	UINT32 stepptr;	/* fixed-point pointer into the sample */
-	UINT32 pos;
+	UINT16 pos;
 	INT16 sample1, sample2;
 
 	INT32 env_vol;
@@ -536,9 +538,9 @@ INLINE void ymf278b_advance(YMF278BChip* chip)
 INLINE UINT8 ymf278b_readMem(YMF278BChip* chip, offs_t address)
 {
 	if (address < chip->ROMSize)
-		return chip->rom[address];
+		return chip->rom[address&0x3fffff];
 	else if (address < chip->ROMSize + chip->RAMSize)
-		return chip->ram[address - chip->ROMSize];
+		return chip->ram[address - chip->ROMSize&0x3fffff];
 	else
 		return 255; // TODO check
 }
@@ -546,9 +548,9 @@ INLINE UINT8 ymf278b_readMem(YMF278BChip* chip, offs_t address)
 INLINE UINT8* ymf278b_readMemAddr(YMF278BChip* chip, offs_t address)
 {
 	if (address < chip->ROMSize)
-		return &chip->rom[address];
+		return &chip->rom[address&0x3fffff];
 	else if (address < chip->ROMSize + chip->RAMSize)
-		return &chip->ram[address - chip->ROMSize];
+		return &chip->ram[address - chip->ROMSize&0x3fffff];
 	else
 		return NULL; // TODO check
 }
@@ -696,10 +698,12 @@ void ymf278b_pcm_update(void *_info, stream_sample_t** outputs, int samples)
 			{
 				sl->stepptr -= 0x10000;
 				sl->sample1 = sl->sample2;
-				sl->pos ++;
-				if (sl->pos >= sl->endaddr)
-					sl->pos = sl->loopaddr;
+				
 				sl->sample2 = ymf278b_getSample(chip, sl);
+				if (sl->pos == sl->endaddr)
+					sl->pos = sl->pos - sl->endaddr + sl->loopaddr;
+				else
+					sl->pos ++;
 			}
 		}
 		ymf278b_advance(chip);
@@ -826,7 +830,7 @@ void ymf278b_C_w(YMF278BChip* chip, UINT8 reg, UINT8 data)
 			slot->startaddr = buf[2] | (buf[1] << 8) |
 								((buf[0] & 0x3F) << 16);
 			slot->loopaddr = buf[4] + (buf[3] << 8);
-			slot->endaddr  = (((buf[6] + (buf[5] << 8)) ^ 0xFFFF) + 1);
+			slot->endaddr  = ((buf[6] + (buf[5] << 8)) ^ 0xFFFF);
 			
 			if (chip->regs[reg + 4] & 0x080)
 				ymf278b_keyOnHelper(chip, slot);

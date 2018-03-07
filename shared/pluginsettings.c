@@ -73,6 +73,7 @@ settings_data_init (settings_data_t *settings_data, const char *layout) {
         if (!script) {
             break;
         }
+        const char *type_ptr = script;
         char type[MAX_TOKEN];
         script = gettoken_warn_eof (script, type);
         if (!script) {
@@ -98,6 +99,7 @@ settings_data_init (settings_data_t *settings_data, const char *layout) {
             break;
         }
         char def[MAX_TOKEN];
+
         script = gettoken_warn_eof (script, def);
         if (!script) {
             break;
@@ -107,7 +109,10 @@ settings_data_init (settings_data_t *settings_data, const char *layout) {
         if (!strcmp (type, "submenu")) {
             settings_data_add_property (settings_data, PROP_SUBMENU, key, labeltext, def);
         }
-        if (!strcmp (type, "entry")) {
+        else if (!strcmp (type, "action")) {
+            settings_data_add_property (settings_data, PROP_ACTION, key, labeltext, def);
+        }
+        else if (!strcmp (type, "entry")) {
             settings_data_add_property (settings_data, PROP_ENTRY, key, labeltext, def);
         }
         else if (!strcmp (type, "password")) {
@@ -121,6 +126,8 @@ settings_data_init (settings_data_t *settings_data, const char *layout) {
         }
         else if (!strncmp (type, "hscale[", 7) || !strncmp (type, "vscale[", 7) || !strncmp (type, "spinbtn[", 8)) {
             settings_data_add_property (settings_data, PROP_SLIDER, key, labeltext, def);
+            settings_property_t *prop = &settings_data->props[settings_data->nprops-1];
+            prop->select_options = strchr (type_ptr, '[') + 1;
         }
         else if (!strncmp (type, "select[", 7)) {
             settings_data_add_property (settings_data, PROP_SELECT, key, labeltext, def);

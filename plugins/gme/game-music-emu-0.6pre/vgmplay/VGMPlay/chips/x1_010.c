@@ -50,7 +50,7 @@ Registers:
 
 //#include "emu.h"
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 #include <stddef.h>	// for NULL
 #include "mamedef.h"
 #include "x1_010.h"
@@ -66,7 +66,8 @@ Registers:
 
 #define SETA_NUM_CHANNELS 16
 
-#define FREQ_BASE_BITS		  8					// Frequency fixed decimal shift bits
+//#define FREQ_BASE_BITS		  8					// Frequency fixed decimal shift bits
+#define FREQ_BASE_BITS		  14					// Frequency fixed decimal shift bits
 #define ENV_BASE_BITS		 16					// wave form envelope fixed decimal shift bits
 #define	VOL_BASE	(2*32*256/30)					// Volume base
 
@@ -148,17 +149,19 @@ void seta_update(void *param, stream_sample_t **outputs, int samples)
 				// Meta Fox does write the frequency register, but this is a hack to make it "work" with the current setup
 				// This is broken for Arbalester (it writes 8), but that'll be fixed later.
 				if( freq == 0 ) freq = 4;
-				smp_step = (UINT32)((float)info->base_clock/8192.0
-							*freq*(1<<FREQ_BASE_BITS)/(float)info->rate);
+				smp_step = (UINT32)((float)info->base_clock/8192.0f
+							*freq*(1<<FREQ_BASE_BITS)/(float)info->rate+0.5f);
+#ifdef _DEBUG
 				if( smp_offs == 0 ) {
 					LOG_SOUND(( "Play sample %p - %p, channel %X volume %d:%d freq %X step %X offset %X\n",
 						start, end, ch, volL, volR, freq, smp_step, smp_offs ));
 				}
+#endif
 				for( i = 0; i < samples; i++ ) {
 					delta = smp_offs>>FREQ_BASE_BITS;
 					// sample ended?
 					if( start+delta >= end ) {
-						reg->status &= 0xfe;					// Key off
+						reg->status &= ~0x01;					// Key off
 						break;
 					}
 					data = *(start+delta);
@@ -171,22 +174,24 @@ void seta_update(void *param, stream_sample_t **outputs, int samples)
 				start    = (INT8 *)&(info->reg[reg->volume*128+0x1000]);
 				smp_offs = info->smp_offset[ch];
 				freq     = ((reg->pitch_hi<<8)+reg->frequency)>>div;
-				smp_step = (UINT32)((float)info->base_clock/128.0/1024.0/4.0*freq*(1<<FREQ_BASE_BITS)/(float)info->rate);
+				smp_step = (UINT32)((float)info->base_clock/128.0/1024.0/4.0*freq*(1<<FREQ_BASE_BITS)/(float)info->rate+0.5f);
 
 				env      = (UINT8 *)&(info->reg[reg->end*128]);
 				env_offs = info->env_offset[ch];
-				env_step = (UINT32)((float)info->base_clock/128.0/1024.0/4.0*reg->start*(1<<ENV_BASE_BITS)/(float)info->rate);
+				env_step = (UINT32)((float)info->base_clock/128.0/1024.0/4.0*reg->start*(1<<ENV_BASE_BITS)/(float)info->rate+0.5f);
 				/* Print some more debug info */
+#ifdef _DEBUG
 				if( smp_offs == 0 ) {
 					LOG_SOUND(( "Play waveform %X, channel %X volume %X freq %4X step %X offset %X\n",
 						reg->volume, ch, reg->end, freq, smp_step, smp_offs ));
 				}
+#endif
 				for( i = 0; i < samples; i++ ) {
 					int vol;
 					delta = env_offs>>ENV_BASE_BITS;
 					// Envelope one shot mode
 					if( (reg->status&4) != 0 && delta >= 0x80 ) {
-						reg->status &= 0xfe;					// Key off
+						reg->status &= ~0x01;					// Key off
 						break;
 					}
 					vol = *(env+(delta&0x7f));

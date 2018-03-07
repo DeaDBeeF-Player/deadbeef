@@ -36,6 +36,8 @@ void okim6258_set_divider(void *chip, int val);
 void okim6258_set_clock(void *chip, int val);
 int okim6258_get_vclk(void *chip);
 
+void okim6258_mute(void *chip, int mute);
+
 //READ8_DEVICE_HANDLER( okim6258_status_r );
 //WRITE8_DEVICE_HANDLER( okim6258_data_w );
 //WRITE8_DEVICE_HANDLER( okim6258_ctrl_w );

@@ -50,6 +50,7 @@
 #define AUTOSCROLL_UPDATE_FREQ 0.01f
 #define NUM_ROWS_TO_NOTIFY_SINGLY 10
 #define MIN_COLUMN_WIDTH 16
+#define BLANK_GROUP_SUBDIVISION 100
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -119,7 +120,7 @@ ddb_listview_list_render (DdbListview *ps, cairo_t *cr, GdkRectangle *clip);
 static void
 ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h, GdkRectangle *clip);
 static void
-ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int idx, int y, int w, int h, int x1, int x2);
+ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int even, int idx, int y, int w, int h, int x1, int x2);
 static void
 ddb_listview_list_render_album_art (DdbListview *ps, cairo_t *cr, DdbListviewGroup *grp, int pinned, int grp_next_y, int y, GdkRectangle *clip);
 static void
@@ -670,6 +671,19 @@ ddb_listview_get_row_pos (DdbListview *listview, int row_idx) {
     return y;
 }
 
+static int
+ddb_listview_is_empty_region (DdbListviewPickContext *pick_ctx)
+{
+    switch (pick_ctx->type) {
+        case PICK_BELOW_PLAYLIST:
+        case PICK_ABOVE_PLAYLIST:
+        case PICK_EMPTY_SPACE:
+            return 1;
+        default:
+            return 0;
+    }
+}
+
 // input: absolute y coord in list (not in window)
 // returns -1 if nothing was hit, otherwise returns pointer to a group, and item idx
 // item idx may be set to -1 if group title was hit
@@ -815,10 +829,11 @@ render_treeview_background (DdbListview *listview, cairo_t *cr, int selected, in
     else {
 #if GTK_CHECK_VERSION(3,0,0)
         GtkStyleContext *context = gtk_widget_get_style_context(theme_treeview);
+        gtk_style_context_save (context);
         gtk_style_context_set_state(context, selected ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_NORMAL);
         gtk_style_context_add_region(context, GTK_STYLE_REGION_ROW, even ? GTK_REGION_EVEN : GTK_REGION_ODD);
         gtk_render_background(context, cr, x, y, w, h);
-        gtk_style_context_remove_region(context, GTK_STYLE_REGION_ROW);
+        gtk_style_context_restore (context);
 #else
         GTK_WIDGET_SET_FLAGS(theme_treeview, GTK_HAS_FOCUS);
         gtk_paint_flat_box(gtk_widget_get_style(theme_treeview), gtk_widget_get_window(listview->list), selected ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, clip, theme_treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
@@ -857,7 +872,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
 
     draw_begin (&listview->listctx, cr);
     draw_begin (&listview->grpctx, cr);
-    fill_list_background(listview, cr, scrollx, -listview->scrollpos, total_width, max(listview->fullheight, listview->list_height), clip);
+    fill_list_background(listview, cr, clip->x, clip->y, clip->width, clip->height, clip);
 
     // find 1st group
     DdbListviewGroup *grp = listview->groups;
@@ -878,16 +893,13 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
         for (int i = 0, yy = grp_y + title_height; it && i < grp->num_items && yy < clip->y + clip->height; i++, yy += row_height) {
             if (yy + row_height >= clip->y) {
                 ddb_listview_list_render_row_background(listview, cr, it, i & 1, idx+i == cursor_index, scrollx, yy, total_width, row_height, clip);
-                ddb_listview_list_render_row_foreground(listview, cr, it, idx+i, yy, total_width, row_height, clip->x, clip->x+clip->width);
+                ddb_listview_list_render_row_foreground(listview, cr, it, i & 1, idx+i, yy, total_width, row_height, clip->x, clip->x+clip->width);
             }
             it = next_playitem(listview, it);
         }
         if (it) {
             listview->binding->unref(it);
         }
-//        if (grp->height > grp_height) {
-//            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y+grp_height, total_width, grp->height-grp_height, clip);
-//        }
 
         // draw album art
         int grp_next_y = grp_y + grp->height;
@@ -896,14 +908,12 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
         if (pin_grp == grp && clip->y <= title_height) {
             // draw pinned group title
             fill_list_background(listview, cr, scrollx, 0, total_width, min(title_height, grp_next_y), clip);
-//            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, 0, total_width, min(title_height, grp_next_y), clip);
             if (listview->binding->draw_group_title && title_height > 0) {
                 listview->binding->draw_group_title(listview, cr, grp->head, scrollx, min(0, grp_next_y-title_height), total_width, title_height);
             }
         }
         else if (clip->y <= grp_y + title_height) {
             // draw normal group title
-//            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y, total_width, title_height, clip);
             if (listview->binding->draw_group_title && title_height > 0) {
                 listview->binding->draw_group_title(listview, cr, grp->head, scrollx, grp_y, total_width, title_height);
             }
@@ -913,10 +923,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
         grp_y += grp->height;
         grp = grp->next;
     }
-
-//    if (grp_y < clip->y + clip->height) {
-//        render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y, total_width, clip->y+clip->height-grp_y, clip);
-//    }
 
     deadbeef->pl_unlock ();
     draw_end (&listview->listctx);
@@ -1485,11 +1491,11 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
 }
 
 static void
-ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int idx, int y, int w, int h, int x1, int x2) {
+ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int even, int idx, int y, int w, int h, int x1, int x2) {
     int x = -ps->hscrollpos;
     for (DdbListviewColumn *c = ps->columns; c && x < x2; x += c->width, c = c->next) {
         if (x + c->width > x1 && !ps->binding->is_album_art_column(c->user_data)) {
-            ps->binding->draw_column_data (ps, cr, it, idx, c->align_right, c->user_data, c->color_override ? &c->color : NULL, x, y, c->width, h);
+            ps->binding->draw_column_data (ps, cr, it, idx, c->align_right, c->user_data, c->color_override ? &c->color : NULL, x, y, c->width, h, even);
         }
     }
 }
@@ -1839,8 +1845,8 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
             && fabs(ps->lastpos[1] - ey) < 3) {
         // doubleclick - play this item
         if (pick_ctx.item_idx != -1
-                && pick_ctx.type != PICK_EMPTY_SPACE
-                && cursor != -1) {
+            && !ddb_listview_is_empty_region (&pick_ctx)
+            && cursor != -1) {
             int idx = cursor;
             DdbListviewIter it = ps->binding->get_for_idx (idx);
             if (ps->binding->handle_doubleclick && it) {
@@ -1858,8 +1864,8 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
 
     // set cursor
     int prev = cursor;
-    if (pick_ctx.type != PICK_EMPTY_SPACE
-            && pick_ctx.item_idx != -1) {
+    if (!ddb_listview_is_empty_region (&pick_ctx)
+        && pick_ctx.item_idx != -1) {
         int new_cursor = -1;
         if (pick_ctx.type == PICK_ALBUM_ART) {
             // set cursor to first item in clicked group
@@ -2670,26 +2676,31 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     int prev_width = ps->list_width;
-    if (event->width != prev_width || event->height != ps->list_height) {
-        ps->list_width = event->width;
-        ps->list_height = event->height;
+
+    // the values in event->width/height are broken since GTK-3.22.1, so let's use widget's allocation instead, and hope this is reliable.
+    GtkAllocation a;
+    gtk_widget_get_allocation (GTK_WIDGET (widget), &a);
+
+    if (a.width != prev_width || a.height != ps->list_height) {
+        ps->list_width = a.width;
+        ps->list_height = a.height;
         g_idle_add_full (GTK_PRIORITY_RESIZE, ddb_listview_reconf_scrolling, ps, NULL);
     }
-    if (event->width != prev_width) {
-        ddb_listview_list_update_total_width (ps, total_columns_width(ps), event->width);
+    if (a.width != prev_width) {
+        ddb_listview_list_update_total_width (ps, total_columns_width(ps), a.width);
     }
 
     if (ps->lock_columns != -1) {
         if (!deadbeef->conf_get_int ("gtkui.autoresize_columns", 0) || ps->header_sizing != -1) {
-            set_fwidth (ps, event->width);
+            set_fwidth (ps, a.width);
         }
-        else if (event->width != prev_width) {
+        else if (a.width != prev_width) {
             int prev_scrollpos = ps->scrollpos;
             ddb_listview_update_scroll_ref_point (ps);
             if (ps->fwidth == -1) {
                 set_fwidth (ps, prev_width);
             }
-            autoresize_columns (ps, event->width, event->height);
+            autoresize_columns (ps, a.width, a.height);
         }
     }
 
@@ -2955,8 +2966,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
         }
         ddb_listview_update_cursor (ps, cursor);
 
-        if (pick_ctx.type != PICK_EMPTY_SPACE
-                && pick_ctx.type != PICK_BELOW_PLAYLIST) {
+        if (!ddb_listview_is_empty_region (&pick_ctx)) {
             DdbListviewIter it = ps->binding->get_for_idx (pick_ctx.item_idx);
             if (it) {
                 ps->binding->list_context_menu (ps, it, pick_ctx.item_idx, PL_MAIN);
@@ -3243,6 +3253,15 @@ new_group (DdbListview *listview, DdbListviewIter it) {
 }
 
 static int
+calc_group_height(DdbListview *listview, DdbListviewGroup *grp, int min_height, int is_last) {
+    grp->height = listview->grouptitle_height + max(grp->num_items * listview->rowheight, min_height);
+    if (!is_last) {
+        grp->height += gtkui_groups_spacing;
+    }
+    return grp->height;
+}
+
+static int
 build_groups (DdbListview *listview) {
     listview->groups_build_idx = listview->binding->modification_idx();
     ddb_listview_free_groups(listview);
@@ -3254,13 +3273,10 @@ build_groups (DdbListview *listview) {
     }
     if (!listview->group_format || !listview->group_format[0]) {
         listview->grouptitle_height = 0;
-        listview->groups = calloc(1, sizeof(DdbListviewGroup));
-        listview->groups->head = it;
-        listview->groups->num_items = listview->binding->count();
-        listview->groups->height = listview->groups->num_items * listview->rowheight;
-        return listview->groups->height;
     }
-    listview->grouptitle_height = listview->calculated_grouptitle_height;
+    else {
+        listview->grouptitle_height = listview->calculated_grouptitle_height;
+    }
     listview->groups = new_group(listview, it);
     int min_height = ddb_listview_min_group_height(listview->columns);
     int full_height = 0;
@@ -3271,9 +3287,11 @@ build_groups (DdbListview *listview) {
         do {
             grp->num_items++;
             it = next_playitem(listview, it);
-        } while (it && listview->binding->get_group(listview, it, next_title, sizeof(next_title)) != -1 && !strcmp(group_title, next_title));
-        grp->height = listview->grouptitle_height + max(grp->num_items * listview->rowheight, min_height);
-        full_height += grp->height;
+            if (listview->grouptitle_height) {
+                listview->binding->get_group(listview, it, next_title, sizeof(next_title));
+            }
+        } while (it && ((!listview->grouptitle_height && grp->num_items < BLANK_GROUP_SUBDIVISION) || (listview->grouptitle_height && !strcmp(group_title, next_title))));
+        full_height += calc_group_height (listview, grp, min_height, !(it > 0));
         grp->next = it ? new_group(listview, it) : NULL;
     }
     return full_height;
@@ -3296,9 +3314,9 @@ ddb_listview_resize_groups (DdbListview *listview) {
     int min_height = ddb_listview_min_group_height(listview->columns);
     int full_height = 0;
     for (DdbListviewGroup *grp = listview->groups; grp; grp = grp->next) {
-        grp->height = listview->grouptitle_height + max(grp->num_items * listview->rowheight, min_height);
-        full_height += grp->height;
+        full_height += calc_group_height (listview, grp, min_height, !grp->next);
     }
+
 
     if (full_height != listview->fullheight) {
         listview->fullheight = full_height;
@@ -3401,7 +3419,7 @@ list_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode,
                 cairo_clip (cr);
                 GdkColor clr = { 0 };
                 int row_y = ddb_listview_get_row_pos (listview, idx) - listview->scrollpos;
-                listview->binding->draw_column_data (listview, cr, it, idx, c->align_right, c->user_data, &clr, col_x, row_y, c->width, listview->rowheight);
+                listview->binding->draw_column_data (listview, cr, it, idx, c->align_right, c->user_data, &clr, col_x, row_y, c->width, listview->rowheight, 0);
                 cairo_destroy (cr);
                 if (draw_is_ellipsized (&listview->listctx)) {
                     set_tooltip (tooltip, draw_get_text (&listview->listctx), col_x, row_y, c->width, listview->rowheight);

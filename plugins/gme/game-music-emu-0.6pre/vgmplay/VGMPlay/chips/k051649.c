@@ -24,7 +24,7 @@
 
 #include "mamedef.h"
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 //#include "emu.h"
 //#include "streams.h"
 #include "k051649.h"
@@ -153,10 +153,10 @@ int device_start_k051649(void **_info, int clock)
 	
 	/* get stream channels */
 	//info->rate = device->clock()/16;
-	info->rate = clock/16;
 	//info->stream = stream_create(device, 0, 1, info->rate, info, k051649_update);
 	//info->mclock = device->clock();
-	info->mclock = clock;
+	info->mclock = clock & 0x7FFFFFFF;
+	info->rate = info->mclock / 16;
 
 	/* allocate a buffer to mix into - 1 second's worth should be more than enough */
 	//info->mixer_buffer = auto_alloc_array(device->machine, short, 2 * info->rate);

@@ -2,7 +2,7 @@ EXTRA_DIST=eng_psf/peops/reverb.c eng_psf/peops/adsr.c eng_psf/peops/registers.c
 
 if HAVE_PSF
 pkglib_LTLIBRARIES = psf.la
-psf_la_SOURCES = plugin.c main.c corlett.c\
+psf_la_SOURCES = plugin.c psfmain.c corlett.c\
 eng_dsf/eng_dsf.c eng_dsf/dc_hw.c eng_dsf/aica.c eng_dsf/aicadsp.c eng_dsf/arm7.c eng_dsf/arm7i.c\
 eng_ssf/m68kcpu.c eng_ssf/m68kopac.c eng_ssf/m68kopdm.c eng_ssf/m68kopnz.c eng_ssf/m68kops.c \
 eng_ssf/scsp.c eng_ssf/scspdsp.c eng_ssf/sat_hw.c eng_ssf/eng_ssf.c\

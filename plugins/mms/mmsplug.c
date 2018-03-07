@@ -170,8 +170,7 @@ mms_abort (DB_FILE *fp) {
 }
 
 static DB_vfs_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_VFS,
@@ -204,22 +203,24 @@ static DB_vfs_t plugin = {
         "\n"
         "\n"
         "libmms - MMS over TCP protocol\n"
-        "Copyright (C) 2002-2004 the xine project\n"
-        "Modifications for DeaDBeeF (C) 2009-2014 Alexey Yakovenko\n"
+        "Copyright (C) 2002-2003 the xine project\n"
+        "Copyright (C) 2004-2012 the libmms project\n"
+        "Modifications for DeaDBeeF (C) 2009-2016 Alexey Yakovenko\n"
         "\n"
-        "xine is free software; you can redistribute it and/or modify\n"
-        "it under the terms of the GNU General Public License as published by\n"
-        "the ree Software Foundation; either version 2 of the License, or\n"
-        "(at your option) any later version.\n"
+        "Libmms is free software; you can redistribute it and/or modify it\n"
+        "under the terms of the GNU Library General Public License as\n"
+        "published by the Free Software Foundation; either version 2 of the\n"
+        "License, or (at your option) any later version.\n"
         "\n"
-        "xine is distributed in the hope that it will be useful,\n"
+        "Libmms is distributed in the hope that it will be useful,\n"
         "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
         "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
         "GNU General Public License for more details.\n"
         "\n"
-        "You should have received a copy of the GNU General Public License\n"
-        "along with this program; if not, write to the Free Software\n"
-        "Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA\n"
+        "You should have received a copy of the GNU Library General Public\n"
+        "License along with this program; if not, write to the Free Software\n"
+        "Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA\n"
+        "02111-1307, USA\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
     .open = mms_open,

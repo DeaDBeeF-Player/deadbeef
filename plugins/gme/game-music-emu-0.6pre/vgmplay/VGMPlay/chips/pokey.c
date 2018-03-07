@@ -553,11 +553,15 @@ static void poly_init(UINT8 *poly, int size, int left, int right, int add)
 	int mask = (1 << size) - 1;
     int i, x = 0;
 
+#ifdef _DEBUG
 	LOG_POLY(("poly %d\n", size));
+#endif
 	for( i = 0; i < mask; i++ )
 	{
 		*poly++ = x & 1;
+#ifdef _DEBUG
 		LOG_POLY(("%05x: %d\n", x, x&1));
+#endif
         /* calculate next bit */
 		x = ((x << left) + (x >> right) + add) & mask;
 	}
@@ -568,14 +572,18 @@ static void rand_init(UINT8 *rng, int size, int left, int right, int add)
     int mask = (1 << size) - 1;
     int i, x = 0;
 
+#ifdef _DEBUG
 	LOG_RAND(("rand %d\n", size));
+#endif
     for( i = 0; i < mask; i++ )
 	{
 		if (size == 17)
 			*rng = x >> 6;	/* use bits 6..13 */
 		else
 			*rng = x;		/* use bits 0..7 */
+#ifdef _DEBUG
         LOG_RAND(("%05x: %02x\n", x, *rng));
+#endif
         rng++;
         /* calculate next bit */
 		x = ((x << left) + (x >> right) + add) & mask;

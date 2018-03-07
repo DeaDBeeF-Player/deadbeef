@@ -15,7 +15,9 @@
 #include "ym2151.h"
 
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 typedef struct _ym2151_state ym2151_state;
 struct _ym2151_state

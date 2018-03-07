@@ -117,7 +117,7 @@ static void es5503_halt_osc(ES5503Chip *chip, int onum, int type, UINT32 *accumu
 	ES5503Osc *pOsc = &chip->oscillators[onum];
 	ES5503Osc *pPartner = &chip->oscillators[onum^1];
 	int mode = (pOsc->control>>1) & 3;
-	int omode = (pPartner->control>>1) & 3;
+	//int omode = (pPartner->control>>1) & 3;
 
 	// if 0 found in sample data or mode is not free-run, halt this oscillator
 	if ((mode != MODE_FREE) || (type != 0))
@@ -143,7 +143,7 @@ static void es5503_halt_osc(ES5503Chip *chip, int onum, int type, UINT32 *accumu
 
 	// if swap mode, start the partner
 	// Note: The swap mode fix breaks Silpheed and other games.
-	if ((mode == MODE_SWAP) /*|| (omode == MODE_SWAP)*/)
+	if (/*(*/mode == MODE_SWAP/*)*/ /*|| (omode == MODE_SWAP)*/)
 	{
 		pPartner->control &= ~1;	// clear the halt bit
 		pPartner->accumulator = 0;  // and make sure it starts from the top (does this also need phase preservation?)

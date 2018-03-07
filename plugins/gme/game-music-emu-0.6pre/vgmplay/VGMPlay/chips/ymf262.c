@@ -56,11 +56,13 @@ differences between OPL2 and OPL3 shown in datasheets:
 #include <math.h>
 #include "mamedef.h"
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 //#include "sndintrf.h"
 #include "ymf262.h"
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 
 /* output final shift */
@@ -2561,7 +2563,7 @@ void ymf262_update_one(void *_chip, OPL3SAMPLE **buffers, int length)
 	//OPL3SAMPLE	*ch_d = buffers[3];
 
 	int i;
-	int chn;
+	//int chn;
 
 	for( i=0; i < length ; i++ )
 	{

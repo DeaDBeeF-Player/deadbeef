@@ -59,6 +59,8 @@ extern int host_bigendian;
 struct alac_file
 {
     unsigned char *input_buffer;
+    int input_buffer_size;
+
     int input_buffer_bitaccumulator; /* used so we can do arbitary
                                         bit reads */
 
@@ -178,6 +180,10 @@ static uint32_t readbits_16(alac_file *alac, int bits)
     uint32_t result;
     int new_accumulator;
 
+    if (alac->input_buffer_size < 3) {
+        return 0;
+    }
+
     result = (alac->input_buffer[0] << 16) |
              (alac->input_buffer[1] << 8) |
              (alac->input_buffer[2]);
@@ -197,6 +203,7 @@ static uint32_t readbits_16(alac_file *alac, int bits)
 
     /* increase the buffer pointer if we've read over n bytes. */
     alac->input_buffer += (new_accumulator >> 3);
+    alac->input_buffer_size -= (new_accumulator >> 3);
 
     /* and the remainder goes back into the bit accumulator */
     alac->input_buffer_bitaccumulator = (new_accumulator & 7);
@@ -226,6 +233,9 @@ static int readbit(alac_file *alac)
     int result;
     int new_accumulator;
 
+    if (alac->input_buffer_size < 1) {
+        return 0;
+    }
     result = alac->input_buffer[0];
 
     result = result << alac->input_buffer_bitaccumulator;
@@ -235,6 +245,7 @@ static int readbit(alac_file *alac)
     new_accumulator = (alac->input_buffer_bitaccumulator + 1);
 
     alac->input_buffer += (new_accumulator / 8);
+    alac->input_buffer_size -= (new_accumulator / 8);
 
     alac->input_buffer_bitaccumulator = (new_accumulator % 8);
 
@@ -246,6 +257,7 @@ static void unreadbits(alac_file *alac, int bits)
     int new_accumulator = (alac->input_buffer_bitaccumulator - bits);
 
     alac->input_buffer += (new_accumulator >> 3);
+    alac->input_buffer_size -= (new_accumulator >> 3);
 
     alac->input_buffer_bitaccumulator = (new_accumulator & 7);
     if (alac->input_buffer_bitaccumulator < 0)
@@ -457,6 +469,9 @@ void entropy_rice_decode(alac_file* alac,
 			// got blockSize 0s
 			if (blockSize > 0)
 			{
+				if (outputCount + 1 + blockSize > outputSize) {
+					blockSize = outputSize - outputCount - 1;
+				}
 				memset(&outputBuffer[outputCount + 1], 0, blockSize * sizeof(*outputBuffer));
 				outputCount += blockSize;
 			}
@@ -754,7 +769,7 @@ void deinterlace_24(int32_t *buffer_a, int32_t *buffer_b,
 }
 
 void decode_frame(alac_file *alac,
-                  unsigned char *inbuffer,
+                  unsigned char *inbuffer, int insize,
                   void *outbuffer, int *outputsize)
 {
     int channels;
@@ -762,6 +777,7 @@ void decode_frame(alac_file *alac,
 
     /* setup the stream */
     alac->input_buffer = inbuffer;
+    alac->input_buffer_size = insize;
     alac->input_buffer_bitaccumulator = 0;
 
     channels = readbits(alac, 3);
@@ -792,11 +808,17 @@ void decode_frame(alac_file *alac,
 
         isnotcompressed = readbits(alac, 1); /* whether the frame is compressed */
 
+        uint32_t read_output_samples = 0;
+
         if (hassize)
         {
             /* now read the number of samples,
              * as a 32bit integer */
-            outputsamples = readbits(alac, 32);
+            read_output_samples = readbits(alac, 32);
+            outputsamples = read_output_samples;
+            if (outputsamples > alac->setinfo_max_samples_per_frame) {
+                outputsamples = alac->setinfo_max_samples_per_frame;
+            }
             *outputsize = outputsamples * alac->bytespersample;
         }
 
@@ -971,11 +993,17 @@ void decode_frame(alac_file *alac,
 
         isnotcompressed = readbits(alac, 1); /* whether the frame is compressed */
 
+        uint32_t read_output_samples = 0;
+
         if (hassize)
         {
             /* now read the number of samples,
              * as a 32bit integer */
-            outputsamples = readbits(alac, 32);
+            read_output_samples = readbits(alac, 32);
+            outputsamples = read_output_samples;
+            if (outputsamples > alac->setinfo_max_samples_per_frame) {
+                outputsamples = alac->setinfo_max_samples_per_frame;
+            }
             *outputsize = outputsamples * alac->bytespersample;
         }
 

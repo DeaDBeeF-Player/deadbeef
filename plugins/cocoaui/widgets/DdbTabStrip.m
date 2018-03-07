@@ -128,6 +128,8 @@ static int max_tab_size = 200;
         [self setupTrackingArea];
 
         [self setScrollPos:deadbeef->conf_get_int ("cocoaui.tabscroll", 0)];
+
+        [self registerForDraggedTypes:[NSArray arrayWithObjects:ddbPlaylistItemsUTIType, NSFilenamesPboardType, nil]];
     }
     return self;
 }
@@ -285,16 +287,19 @@ plt_get_title_wrapper (int plt) {
     [gc setPatternPhase:convPt];
     [NSBezierPath fillRect:NSMakeRect(area.origin.x + [tleft size].width, area.origin.y, area.size.width-[tleft size].width-[tright size].width, [tfill size].height)];
     [gc restoreGraphicsState];
-    
+
     [tright drawAtPoint:NSMakePoint(area.origin.x+area.size.width-[tleft size].width, area.origin.y) fromRect:NSMakeRect(0,0,[_tabRight size].width,[tright size].height) operation:NSCompositeSourceOver fraction:1];
 
     NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [textStyle setAlignment:NSLeftTextAlignment];
     [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-    
+
+    NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
     NSDictionary *attrs = [NSDictionary dictionaryWithObjectsAndKeys
                            : textStyle, NSParagraphStyleAttributeName
+                           ,font , NSFontAttributeName
                            , nil];
+
     NSString *tab_title = plt_get_title_wrapper (idx);
     
     [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + text_vert_offset, area.size.width - (text_left_padding + text_right_padding - 1), area.size.height) withAttributes:attrs];
@@ -830,16 +835,37 @@ plt_get_title_wrapper (int plt) {
 - (BOOL)isFlipped {
     return YES;
 }
-// FIXME dnd motion must activate playlist
-// ...
+
+- (BOOL)wantsPeriodicDraggingUpdates {
+    // we only want to be informed of dnd drag updates when mouse moves
+    return NO;
+}
+
+- (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)sender {
+
+    NSPoint coord = [sender draggingLocation];
+    int tabUnderCursor = [self tabUnderCursor: coord.x];
+    if (tabUnderCursor != -1) {
+        cocoaui_playlist_set_curr (tabUnderCursor);
+    }
+
+    return NSDragOperationNone;
+}
 
 - (int)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
-    switch (_id) {
-        case DB_EV_PLAYLISTSWITCHED:
-            [self performSelectorOnMainThread:@selector(handleResizeNotification) withObject:nil waitUntilDone:NO];
-        case DB_EV_PLAYLISTCHANGED:
-            [self setNeedsDisplay:YES];
-            break;
+    // redraw if playlist switches, recalculate tabs when title changes
+    if (_id == DB_EV_PLAYLISTSWITCHED || _id == DB_EV_PLAYLISTCHANGED) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            switch (_id) {
+            case DB_EV_PLAYLISTSWITCHED:
+                [self performSelectorOnMainThread:@selector(handleResizeNotification) withObject:nil waitUntilDone:NO];
+                [self setNeedsDisplay:YES];
+                break;
+            case DB_EV_PLAYLISTCHANGED:
+                [self setNeedsDisplay:YES];
+                break;
+            }
+        });
     }
     return 0;
 }

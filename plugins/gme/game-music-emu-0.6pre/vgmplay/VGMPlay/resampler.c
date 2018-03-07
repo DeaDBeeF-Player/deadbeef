@@ -36,13 +36,14 @@ static void gen_sinc( double rolloff, int width, double offset, double spacing, 
 	double const step = PI / maxh * spacing;
 	double const to_w = maxh * 2 / width;
 	double const pow_a_n = pow( rolloff, maxh );
-	scale /= maxh * 2;
 	double angle = (count / 2 - 1 + offset) * -step;
+	scale /= maxh * 2;
 
 	while ( count-- )
 	{
+		double w;
 		*out++ = 0;
-		double w = angle * to_w;
+		w = angle * to_w;
 		if ( fabs( w ) < PI )
 		{
 			double rolloff_cos_a = rolloff * cos( angle );
@@ -133,17 +134,29 @@ void resampler_set_rate( void *_r, double new_factor )
 	double const rolloff = 0.999;
 	double const gain = 1.0;
 
+	int step;
+	double fraction;
+
+	double filter;
+	double pos = 0.0;
+
+	imp_t* out;
+
+	int n;
+
 	/* determine number of sub-phases that yield lowest error */
 	double ratio_ = 0.0;
 	int res = -1;
 	{
 		double least_error = 2;
 		double pos = 0;
-		for ( int r = 1; r <= max_res; r++ )
+		int r;
+		for ( r = 1; r <= max_res; r++ )
 		{
+			double nearest, error;
 			pos += new_factor;
-			double nearest = floor( pos + 0.5 );
-			double error = fabs( pos - nearest );
+			nearest = floor( pos + 0.5 );
+			error = fabs( pos - nearest );
 			if ( error < least_error )
 			{
 				res = r;
@@ -155,20 +168,21 @@ void resampler_set_rate( void *_r, double new_factor )
 	rs->rate_ = ratio_;
 
 	/* how much of input is used for each output sample */
-	int const step = stereo * (int) floor( ratio_ );
-	double fraction = fmod( ratio_, 1.0 );
+	step = stereo * (int) floor( ratio_ );
+	fraction = fmod( ratio_, 1.0 );
 
-	double const filter = (ratio_ < 1.0) ? 1.0 : 1.0 / ratio_;
-	double pos = 0.0;
+	filter = (ratio_ < 1.0) ? 1.0 : 1.0 / ratio_;
 	/*int input_per_cycle = 0;*/
-	imp_t* out = rs->impulses;
-	for ( int n = res; --n >= 0; )
+	out = rs->impulses;
+	for ( n = res; --n >= 0; )
 	{
+		int cur_step;
+
 		gen_sinc( rolloff, (int) (rs->width_ * filter + 1) & ~1, pos, filter,
 				(double)(imp_scale * gain * filter), (int) rs->width_, out );
 		out += rs->width_;
 
-		int cur_step = step;
+		cur_step = step;
 		pos += fraction;
 		if ( pos >= 0.9999999 )
 		{
@@ -208,7 +222,8 @@ void resampler_write_pair(void *_r, sample_t ls, sample_t rs)
 
 	if (!r->latency)
 	{
-		for (int i = 0; i < adj_width / 2; ++i)
+		int i;
+		for (i = 0; i < adj_width / 2; ++i)
 		{
 			r->buffer_in[r->inptr + 0] = 0;
 			r->buffer_in[r->inptr + 1] = 0;
@@ -249,11 +264,12 @@ static const sample_t * resampler_inner_loop( resampler *r, sample_t** out_,
 		{
 			/* accumulate in extended precision*/
 			int pt = imp [0];
+			int n;
 			intermediate_t l = (intermediate_t)pt * (intermediate_t)(in [0]);
 			intermediate_t r = (intermediate_t)pt * (intermediate_t)(in [1]);
 			if ( out >= out_end )
 				break;
-			for ( int n = (adj_width - 2) / 2; n; --n )
+			for ( n = (adj_width - 2) / 2; n; --n )
 			{
 				pt = imp [1];
 				l += (intermediate_t)pt * (intermediate_t)(in [2]);
@@ -305,9 +321,10 @@ static void resampler_fill( resampler *r )
 	{
 		int writepos = ( r->outptr + r->outfilled ) % (buffer_size * stereo);
 		int writesize = (buffer_size * stereo) - writepos;
+		int inread;
 		if ( writesize > ( buffer_size * stereo - r->outfilled ) )
 				writesize = buffer_size * stereo - r->outfilled;
-		int inread = resampler_wrapper(r, &r->buffer_out[writepos], &writesize, &r->buffer_in[buffer_size * stereo + r->inptr - r->infilled], r->infilled);
+		inread = resampler_wrapper(r, &r->buffer_out[writepos], &writesize, &r->buffer_in[buffer_size * stereo + r->inptr - r->infilled], r->infilled);
 		r->infilled -= inread;
 		r->outfilled += writesize;
 		if (!inread)

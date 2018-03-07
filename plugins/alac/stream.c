@@ -62,14 +62,11 @@ struct stream_tTAG {
     int64_t junk_offset;
 };
 
-void stream_read(stream_t *stream, size_t size, void *buf)
+int32_t stream_read(stream_t *stream, size_t size, void *buf)
 {
-    size_t ret;
-
-    ret = deadbeef->fread(buf, 4, size >> 2, stream->f) * 4;
-    ret += deadbeef->fread((char*)buf + ret, 1, size - ret, stream->f);
-
+    size_t ret = deadbeef->fread (buf, 1, size, stream->f);
     if (ret == 0 && size != 0) stream->eof = 1;
+    return (int32_t)ret;
 }
 
 int32_t stream_read_int32(stream_t *stream)

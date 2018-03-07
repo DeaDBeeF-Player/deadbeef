@@ -54,7 +54,7 @@ thread_start (void (*fn)(void *ctx), void *ctx) {
         fprintf (stderr, "pthread_attr_destroy failed: %s\n", strerror (s));
         return 0;
     }
-    return tid;
+    return (intptr_t)tid;
 }
 
 intptr_t
@@ -212,6 +212,7 @@ cond_wait (uintptr_t c, uintptr_t m) {
     pthread_mutex_t *mutex = (pthread_mutex_t *)m;
     int err = mutex_lock (m);
     if (err != 0) {
+        fprintf (stderr, "pthread_cond_wait mutex_lock failed: %s\n", strerror (err));
         return err;
     }
     err = pthread_cond_wait (cond, mutex);

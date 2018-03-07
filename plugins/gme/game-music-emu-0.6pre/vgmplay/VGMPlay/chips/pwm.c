@@ -88,6 +88,8 @@ typedef struct _pwm_chip
 #endif
 	
 	int clock;
+    
+    unsigned char Mute;
 } pwm_chip;
 #if CHILLY_WILLY_SCALE
 // TODO: Fix Chilly Willy's new scaling algorithm.
@@ -328,6 +330,9 @@ void PWM_Update(pwm_chip* chip, int **buf, int length)
 	tmpOutL = PWM_Update_Scale(chip, (int)chip->PWM_Out_L);
 	tmpOutR = PWM_Update_Scale(chip, (int)chip->PWM_Out_R);
 	
+    tmpOutL = chip->Mute ? 0 : tmpOutL;
+    tmpOutR = chip->Mute ? 0 : tmpOutR;
+    
 	for (i = 0; i < length; i ++)
 	{
 		buf[0][i] = tmpOutL;
@@ -341,6 +346,12 @@ void pwm_update(void *_info, stream_sample_t **outputs, int samples)
 	pwm_chip *chip = (pwm_chip *)_info;
 	
 	PWM_Update(chip, outputs, samples);
+}
+
+void pwm_mute(void *_info, UINT8 Mute)
+{
+    pwm_chip *chip = (pwm_chip *)_info;
+    chip->Mute = Mute;
 }
 
 int device_start_pwm(void **_info, int clock, int CHIP_SAMPLING_MODE, int CHIP_SAMPLE_RATE)

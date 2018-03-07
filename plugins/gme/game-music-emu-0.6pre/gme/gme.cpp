@@ -55,7 +55,8 @@ const char* gme_identify_header( void const* header )
 	switch ( get_be32( header ) )
 	{
 		case BLARGG_4CHAR('Z','X','A','Y'):  return "AY";
-		case BLARGG_4CHAR('G','B','S',0x01): return "GBS";
+		case BLARGG_4CHAR('G','B','S',0x01):
+		case BLARGG_4CHAR('G','B','S',0x02): return "GBS";
 		case BLARGG_4CHAR('G','Y','M','X'):  return "GYM";
 		case BLARGG_4CHAR('H','E','S','M'):  return "HES";
 		case BLARGG_4CHAR('K','S','C','C'):

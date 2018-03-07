@@ -2226,8 +2226,8 @@ static const char settings_dlg[] =
 
 // define plugin interface
 static DB_artwork_plugin_t plugin = {
-    .plugin.plugin.api_vmajor = 1,
-    .plugin.plugin.api_vminor = 0,
+    .plugin.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .plugin.plugin.api_vminor = DB_API_VERSION_MINOR,
     .plugin.plugin.version_major = 1,
     .plugin.plugin.version_minor = DDB_ARTWORK_VERSION,
     .plugin.plugin.type = DB_PLUGIN_MISC,

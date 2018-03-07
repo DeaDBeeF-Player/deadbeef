@@ -32,6 +32,11 @@
 
 #include "../../deadbeef.h"
 
+#if GTK_CHECK_VERSION(3,0,0)
+#include "deadbeefapp.h"
+extern DeadbeefApp *gapp;
+#endif
+
 extern DB_functions_t *deadbeef;
 extern GtkWidget *mainwin;
 
@@ -54,6 +59,7 @@ extern int gtkui_tabstrip_italic_playing;
 struct _GSList;
 
 extern int gtkui_groups_pinned;
+extern int gtkui_groups_spacing;
 extern int gtkui_listview_busy;
 
 extern const char *gtkui_default_titlebar_playing;
@@ -95,6 +101,9 @@ enum {
 
 int
 gtkui_add_new_playlist (void);
+
+int
+gtkui_copy_playlist (ddb_playlist_t *plt);
 
 void
 seekbar_draw (GtkWidget *widget, cairo_t *cr);
@@ -161,5 +170,17 @@ gtkui_get_gui_refresh_rate ();
 
 void
 gtkui_titlebar_tf_init (void);
+
+void
+gtkui_show_log_window(gboolean show);
+
+void
+gtkui_toggle_log_window(void);
+
+void
+gtkui_mainwin_init(void);
+
+void
+gtkui_mainwin_free(void);
 
 #endif

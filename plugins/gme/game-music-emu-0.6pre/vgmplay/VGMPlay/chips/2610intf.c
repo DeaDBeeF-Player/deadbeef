@@ -11,7 +11,7 @@
 
 ***************************************************************************/
 
-#include <memory.h>	// for memset
+#include <string.h>	// for memset
 #include <stdlib.h>	// for free
 #include <stddef.h>	// for NULL
 #include "mamedef.h"
@@ -243,12 +243,14 @@ int device_start_ym2610(void **_info, int AY_EMU_CORE, int clock, UINT8 AYDisabl
 	//					1 - YM2610B
 	
 	//static const ym2610_interface generic_2610 = { 0 };
+#ifdef ENABLE_ALL_CORES
 	static const ay8910_interface generic_ay8910 =
 	{
 		AY8910_LEGACY_OUTPUT | AY8910_SINGLE_OUTPUT,
 		AY8910_DEFAULT_LOADS
 		//DEVCB_NULL, DEVCB_NULL, DEVCB_NULL, DEVCB_NULL
 	};
+#endif
 	//const ym2610_interface *intf = device->static_config ? (const ym2610_interface *)device->static_config : &generic_2610;
 	//const ym2610_interface *intf = &generic_2610;
 	int rate;
