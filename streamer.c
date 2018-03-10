@@ -1815,7 +1815,7 @@ streamer_apply_soft_volume (char *bytes, int sz) {
             if (ivolume != 1000) {
                 int third = bytesread/3;
                 for (int i = 0; i < third; i++) {
-                    int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1]<<8) | (stream[2]<<16);
+                    int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1]<<8) | (((signed char)stream[2])<<16);
                     int32_t newsample = (int32_t)((int64_t)sample * ivolume / 1000);
                     stream[0] = (newsample&0x0000ff);
                     stream[1] = (newsample&0x00ff00)>>8;
