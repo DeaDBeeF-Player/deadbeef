@@ -424,7 +424,7 @@ pcm_write_samples_float_to_24 (const ddb_waveformat_t * restrict inputfmt, const
             char *out = output + 3 * c;
             float sample = *((float*)(input + channelmap[c] * 4));
             int32_t outsample = (int32_t)ftoi (sample * 0x800000);
-            if (ousample >= 0x7fffff) {
+            if (outsample >= 0x7fffff) {
                 outsample = 0x7fffff;
             }
             else if (outsample < -0x800000) {
