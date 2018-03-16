@@ -29,6 +29,7 @@
 #import "DdbShared.h"
 #import "MediaKeyController.h"
 #import "LogWindowController.h"
+#import "TextViewerWindowController.h"
 #include "conf.h"
 #include "streamer.h"
 #include "junklib.h"
@@ -44,6 +45,7 @@ extern BOOL g_CanQuit;
     PreferencesWindowController *_prefWindow;
     SearchWindowController *_searchWindow;
     LogWindowController *_logWindow;
+    TextViewerWindowController *_helpWindow;
 
     NSMenuItem *_dockMenuNPHeading;
     NSMenuItem *_dockMenuNPTitle;
@@ -834,6 +836,17 @@ main_cleanup_and_quit (void);
 
 - (NSMenu *)applicationDockMenu:(NSApplication *)sender {
     return _dockMenu;
+}
+
+- (IBAction)showHelp:(id)sender {
+    if (!_helpWindow) {
+        _helpWindow = [[TextViewerWindowController alloc] initWithWindowNibName:@"TextViewer"];
+        [_helpWindow loadFromFile:[[NSBundle mainBundle] pathForResource:@"help" ofType:@"txt"]];
+    }
+
+    if (![[_helpWindow window] isVisible]) {
+        [_helpWindow showWindow:self];
+    }
 }
 
 @end
