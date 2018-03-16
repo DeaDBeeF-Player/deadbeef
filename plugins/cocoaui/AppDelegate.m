@@ -841,7 +841,7 @@ main_cleanup_and_quit (void);
 - (IBAction)showHelp:(id)sender {
     if (!_helpWindow) {
         _helpWindow = [[TextViewerWindowController alloc] initWithWindowNibName:@"TextViewer"];
-        [_helpWindow loadFromFile:[[NSBundle mainBundle] pathForResource:@"help" ofType:@"txt"]];
+        [_helpWindow loadFromFile:[[NSBundle mainBundle] pathForResource:@"help-cocoa" ofType:@"txt"]];
     }
 
     if (![[_helpWindow window] isVisible]) {

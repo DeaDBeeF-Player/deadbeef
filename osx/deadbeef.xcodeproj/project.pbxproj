@@ -1544,6 +1544,7 @@
 		2DF930511AB817310030C0CA /* wildmidi_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304D1AB817310030C0CA /* wildmidi_lib.c */; };
 		2DF930521AB817310030C0CA /* wildmidiplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304E1AB817310030C0CA /* wildmidiplug.c */; };
 		2DFD51681C97175F00961D19 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
+		4D00F30A205BED300060A357 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4D00F309205BED300060A357 /* help-cocoa.txt */; };
 		4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		4D046CE41EA9F8C300B80B2E /* gmewrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D046CE21EA9F8C300B80B2E /* gmewrap.cpp */; };
 		4D046CE51EA9F8C300B80B2E /* gmewrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D046CE31EA9F8C300B80B2E /* gmewrap.h */; };
@@ -1980,7 +1981,6 @@
 		4DE28471205BE0B20023063E /* TextViewerWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DE2846E205BE0B20023063E /* TextViewerWindowController.h */; };
 		4DE28472205BE0B20023063E /* TextViewerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DE2846F205BE0B20023063E /* TextViewerWindowController.m */; };
 		4DE28473205BE0B20023063E /* TextViewer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DE28470205BE0B20023063E /* TextViewer.xib */; };
-		4DE28478205BE41A0023063E /* help.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4DE28477205BE41A0023063E /* help.txt */; };
 		8374A47E1B8946A800C6A572 /* ChipMapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374A3671B8946A800C6A572 /* ChipMapper.c */; };
 		8374A47F1B8946A800C6A572 /* ChipMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374A3681B8946A800C6A572 /* ChipMapper.h */; };
 		8374A4811B8946A800C6A572 /* 2151intf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374A36B1B8946A800C6A572 /* 2151intf.c */; };
@@ -4272,6 +4272,7 @@
 		2DFA31EA1AAF351800792053 /* sid6510c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sid6510c.h; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/sid6510c.h"; sourceTree = "<group>"; };
 		2DFA31EB1AAF351800792053 /* sid6510c.i */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c.preprocessed; name = sid6510c.i; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/sid6510c.i"; sourceTree = "<group>"; };
 		2DFD50951C9715B800961D19 /* psf.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = psf.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D00F309205BED300060A357 /* help-cocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "help-cocoa.txt"; path = "../../help-cocoa.txt"; sourceTree = "<group>"; };
 		4D011FFC19AB9589005499B4 /* coreaudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = coreaudio.c; sourceTree = "<group>"; };
 		4D046CE21EA9F8C300B80B2E /* gmewrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gmewrap.cpp; path = plugins/gme/gmewrap.cpp; sourceTree = "<group>"; };
 		4D046CE31EA9F8C300B80B2E /* gmewrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gmewrap.h; path = plugins/gme/gmewrap.h; sourceTree = "<group>"; };
@@ -4763,7 +4764,6 @@
 		4DE2846E205BE0B20023063E /* TextViewerWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextViewerWindowController.h; sourceTree = "<group>"; };
 		4DE2846F205BE0B20023063E /* TextViewerWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TextViewerWindowController.m; sourceTree = "<group>"; };
 		4DE28470205BE0B20023063E /* TextViewer.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextViewer.xib; sourceTree = "<group>"; };
-		4DE28477205BE41A0023063E /* help.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = help.txt; path = ../../help.txt; sourceTree = "<group>"; };
 		8374A3671B8946A800C6A572 /* ChipMapper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ChipMapper.c; sourceTree = "<group>"; };
 		8374A3681B8946A800C6A572 /* ChipMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChipMapper.h; sourceTree = "<group>"; };
 		8374A36B1B8946A800C6A572 /* 2151intf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 2151intf.c; sourceTree = "<group>"; };
@@ -8535,7 +8535,7 @@
 		4DE28476205BE3E50023063E /* misc */ = {
 			isa = PBXGroup;
 			children = (
-				4DE28477205BE41A0023063E /* help.txt */,
+				4D00F309205BED300060A357 /* help-cocoa.txt */,
 			);
 			path = misc;
 			sourceTree = "<group>";
@@ -11365,7 +11365,6 @@
 				2DA0ACEE1AA71E7C007EDD43 /* in_sc68.dylib in Resources */,
 				2DACBB241A40CEB100CCF401 /* mp3.dylib in Resources */,
 				2D17F8461AB3391A00AF2853 /* MainMenu.xib in Resources */,
-				4DE28478205BE41A0023063E /* help.txt in Resources */,
 				2D5D214C1A403428001D5A79 /* lastfm.dylib in Resources */,
 				2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */,
 				2D9177421A0E89C8004BC222 /* alac.dylib in Resources */,
@@ -11416,6 +11415,7 @@
 				2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */,
 				2DBEE69019B4EB0900A60609 /* sb_back_cap_right.png in Resources */,
 				2DB10B8219B908630054A6AB /* tab_bottom_fill@2x.png in Resources */,
+				4D00F30A205BED300060A357 /* help-cocoa.txt in Resources */,
 				2D1A563A1D9FF9A4005E5CDD /* ReplayGain.xib in Resources */,
 				2DBEE69819B4EB0900A60609 /* sb_front_filler.png in Resources */,
 				2DB10B8C19B908630054A6AB /* tab_unsel_right@2x.png in Resources */,
