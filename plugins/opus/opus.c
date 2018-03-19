@@ -142,13 +142,14 @@ static const char *ddb_internal_rg_keys[] = {
 
 
 static bool
-replaygain_tag(DB_playItem_t *it, const int tag_enum, const char *tag, const char *value)
+_is_replaygain_tag(DB_playItem_t *it, const char *tag)
 {
-    if (strcasecmp(tag_rg_names[tag_enum], tag))
-        return false;
-
-    deadbeef->pl_set_item_replaygain (it, tag_enum, atof(value));
-    return true;
+    for (int i = 0; i <= DDB_REPLAYGAIN_TRACKPEAK; i++) {
+        if (!strcasecmp(tag_rg_names[i], tag)) {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 static int
@@ -159,7 +160,6 @@ update_vorbis_comments (DB_playItem_t *it, OggOpusFile *opusfile, const int trac
     }
 
     deadbeef->pl_delete_all_meta (it);
-    int has_rg_tags = 0;
 
     for (int i = 0; i < vc->comments; i++) {
         char *tag = strdup(vc->user_comments[i]);
@@ -169,49 +169,40 @@ update_vorbis_comments (DB_playItem_t *it, OggOpusFile *opusfile, const int trac
             && strlen (value) < 4000
 #endif
             ) {
+            // skip the ignored RG fields, and the picture
+            if (_is_replaygain_tag (it, tag) || !strcasecmp (tag, "METADATA_BLOCK_PICTURE")) {
+                continue;
+            }
             *value++ = '\0';
-            int is_rg_tag = 0;
-            for (int i = 0; i <= DDB_REPLAYGAIN_TRACKPEAK; i++) {
-                if (replaygain_tag(it, i, tag, value)) {
-                    is_rg_tag = 1;
-                    has_rg_tags = 1;
-                    break;
-                }
-            }
-            if (!is_rg_tag && strcasecmp (tag, "METADATA_BLOCK_PICTURE")) {
-                deadbeef->pl_append_meta(it, oggedit_map_tag(tag, "tag2meta"), value);
-            }
+            deadbeef->pl_append_meta(it, oggedit_map_tag(tag, "tag2meta"), value);
         }
         if (tag) {
             free(tag);
         }
     }
 
-    // if none of the normal RG tags are present, use the R128/headergain
-    if (!has_rg_tags) {
-        const char *r128_trackgain = deadbeef->pl_find_meta (it, "R128_TRACK_GAIN");
-        if (r128_trackgain) {
-            int trackgain = atoi (r128_trackgain) + op_head (opusfile, tracknum)->output_gain;
-            if (trackgain != 0) {
-                deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, trackgain / 256.0f + 5.0f);
-                deadbeef->pl_delete_meta (it, "R128_TRACK_GAIN");
-            }
-        }
-
-        int albumgain = op_head (opusfile, tracknum)->output_gain;
-
-        const char *r128_albumgain = deadbeef->pl_find_meta (it, "R128_ALBUM_GAIN");
-        if (r128_albumgain) {
-            albumgain += atoi (r128_albumgain);
-            deadbeef->pl_delete_meta (it, "R128_ALBUM_GAIN");
-        }
-        if (albumgain != 0) {
-            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, albumgain / 256.0f + 5.0f);
+    const char *r128_trackgain = deadbeef->pl_find_meta (it, "R128_TRACK_GAIN");
+    if (r128_trackgain) {
+        int trackgain = atoi (r128_trackgain) + op_head (opusfile, tracknum)->output_gain;
+        if (trackgain != 0) {
+            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, trackgain / 256.0f + 5.0f);
+            deadbeef->pl_delete_meta (it, "R128_TRACK_GAIN");
         }
     }
 
+    int albumgain = op_head (opusfile, tracknum)->output_gain;
+    const char *r128_albumgain = deadbeef->pl_find_meta (it, "R128_ALBUM_GAIN");
+    if (r128_albumgain) {
+        albumgain += atoi (r128_albumgain);
+        deadbeef->pl_delete_meta (it, "R128_ALBUM_GAIN");
+    }
+    if (albumgain != 0) {
+        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, albumgain / 256.0f + 5.0f);
+    }
+
     char s[100];
-    snprintf (s, sizeof (s), "%0.2f dB", op_head (opusfile, tracknum)->output_gain / 256.0f + 5.0f);
+    int output_gain = op_head (opusfile, tracknum)->output_gain;
+    snprintf (s, sizeof (s), "%0.2f dB", output_gain / 256.0f + 5.0f);
     deadbeef->pl_replace_meta (it, ":OPUS_HEADER_GAIN", s);
 
     deadbeef->pl_set_meta_int (it, ":SAMPLERATE_ORIGINAL", op_head (opusfile, tracknum)->input_sample_rate);
@@ -654,21 +645,13 @@ tags_list(DB_playItem_t *it, OggOpusFile *opusfile, int link)
             break;
         }
         char *key = strdupa (m->key);
+        if (!strcasecmp(key, "R128_TRACK_GAIN")) {
+            continue;
+        }
         split_tag (tags, oggedit_map_tag (key, "meta2tag"), m->value, m->valuesize);
     }
+
     deadbeef->pl_unlock ();
-
-    // add replaygain values
-    // header gain will be reset to 0, r128_* tags will be stripped
-
-    for (int n = 0; ddb_internal_rg_keys[n]; n++) {
-        if (deadbeef->pl_find_meta (it, ddb_internal_rg_keys[n])) {
-            float value = deadbeef->pl_get_item_replaygain (it, n);
-            char s[100];
-            snprintf (s, sizeof (s), "%f", value);
-            split_tag (tags, tag_rg_names[n], s, (int)strlen (s) + 1);
-        }
-    }
 
     // preserve album art
     int i = 0;
@@ -719,10 +702,39 @@ opusdec_write_metadata (DB_playItem_t *it) {
     }
 
     deadbeef->pl_lock();
+
+    // RG info
+    const char *track_gain_str = deadbeef->pl_find_meta (it, ddb_internal_rg_keys[DDB_REPLAYGAIN_TRACKGAIN]);
+    float track_gain = 0;
+    if (track_gain_str) {
+        track_gain = atof (track_gain_str);
+    }
+
+    const char *album_gain_str = deadbeef->pl_find_meta (it, ddb_internal_rg_keys[DDB_REPLAYGAIN_ALBUMGAIN]);
+    float album_gain = 0;
+    if (album_gain_str) {
+        album_gain = atof (album_gain_str);
+    }
+
+    if (track_gain_str) {
+        char s[100];
+        snprintf (s, sizeof (s), "%d", 0);
+        split_tag (tags, oggedit_map_tag (strdupa ("R128_TRACK_GAIN"), "meta2tag"), s, (int)strlen (s) + 1);
+    }
+
+    float value = deadbeef->pl_get_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN);
+    if (value != 0) {
+        char s[100];
+        snprintf (s, sizeof (s), "%d", (int)(album_gain - track_gain) * 256);
+        split_tag (tags, oggedit_map_tag (strdupa ("R128_ALBUM_GAIN"), "meta2tag"), s, (int)strlen (s) + 1);
+    }
+
+    int header_gain = (track_gain - 5.f) * 256;
+
     const char *stream_size_string = deadbeef->pl_find_meta(it, ":STREAM SIZE");
     const size_t stream_size = stream_size_string ? (off_t)atoll(stream_size_string) : 0;
     deadbeef->pl_unlock();
-    const off_t file_size = oggedit_write_opus_metadata (deadbeef->fopen(fname), fname, 0, stream_size, 0, tags->comments, tags->user_comments);
+    const off_t file_size = oggedit_write_opus_metadata (deadbeef->fopen(fname), fname, 0, stream_size, header_gain, tags->comments, tags->user_comments);
     opus_tags_clear(tags);
 
     res = 0;
