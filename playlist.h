@@ -41,8 +41,8 @@
 // :DURATION - length in seconds
 
 typedef struct playItem_s {
-    int32_t startsample32;
-    int32_t endsample32;
+    int32_t startsample;
+    int32_t endsample;
     int32_t shufflerating; // sort order for shuffle mode
 
     int64_t startsample64;
@@ -84,6 +84,8 @@ typedef struct playlist_s {
     unsigned files_adding : 1;
     unsigned recalc_seltime : 1;
     unsigned loading_cue : 1;
+    unsigned ignore_archives : 1;
+    unsigned follow_symlinks : 1;
 } playlist_t;
 
 // global playlist control functions
@@ -589,5 +591,8 @@ pl_item_set_startsample (playItem_t *it, int64_t sample);
 
 void
 pl_item_set_endsample (playItem_t *it, int64_t sample);
+
+int
+plt_is_loading_cue (playlist_t *plt);
 
 #endif // __PLAYLIST_H

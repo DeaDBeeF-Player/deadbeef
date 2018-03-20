@@ -8,7 +8,7 @@ More info is [here](http://deadbeef.sf.net).
 
 ## Download development builds
 
-[![Build Status](https://travis-ci.org/Alexey-Yakovenko/deadbeef.svg?branch=master)](https://travis-ci.org/Alexey-Yakovenko/deadbeef)
+[![Build Status](https://travis-ci.org/DeaDBeeF-Player/deadbeef.svg?branch=master)](https://travis-ci.org/DeaDBeeF-Player/deadbeef)
 
 [Download the latest GNU/Linux builds](https://sourceforge.net/projects/deadbeef/files/travis/linux/)
 
@@ -38,6 +38,4 @@ The following instructions assume that commands are executed in deadbeef reposit
 
 ----
 
-[![Support via Gratipay](https://cdn.rawgit.com/gratipay/gratipay-badge/2.3.0/dist/gratipay.png)](https://gratipay.com/deadbeef/)
-
-[More ways to support](http://deadbeef.sourceforge.net/support.html)
+[Support this project development](http://deadbeef.sourceforge.net/support.html)

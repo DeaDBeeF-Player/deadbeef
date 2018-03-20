@@ -57,6 +57,7 @@ console_write (const char *text) {
 static void
 console_write (const char *text) {
     fwrite (text, strlen(text), 1, stderr);
+    fflush (stderr);
 }
 #endif
 

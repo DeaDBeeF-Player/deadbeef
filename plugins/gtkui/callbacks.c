@@ -33,9 +33,6 @@
 #include <assert.h>
 #include <ctype.h>
 #include <gdk/gdkkeysyms.h>
-#ifndef __APPLE__
-#include <X11/Xlib.h>
-#endif
 #include "../../gettext.h"
 
 #include "callbacks.h"
@@ -635,7 +632,7 @@ GtkWidget*
 title_formatting_help_link_create (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2)
 {
-    GtkWidget *link = gtk_link_button_new_with_label ("http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting-2.0", _("Help"));
+    GtkWidget *link = gtk_link_button_new_with_label ("http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0", _("Help"));
     return link;
 }
 
@@ -803,4 +800,3 @@ on_log_window_key_press_event          (GtkWidget       *widget,
     }
     return FALSE;
 }
-

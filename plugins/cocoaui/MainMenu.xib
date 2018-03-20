@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
+        <development version="8000" identifier="xcode"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -576,13 +577,13 @@ CA
                         </items>
                     </menu>
                 </menuItem>
-                <menuItem title="Help" id="490">
+                <menuItem title="Help" id="37X-cO-hio" userLabel="Help">
                     <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="Help" systemMenu="help" id="491">
+                    <menu key="submenu" title="Help" id="3qw-u3-kCU">
                         <items>
-                            <menuItem title="deadbeef Help" keyEquivalent="?" id="492">
+                            <menuItem title="Deadbeef Help" keyEquivalent="?" id="BqJ-ib-iBJ">
                                 <connections>
-                                    <action selector="showHelp:" target="-1" id="493"/>
+                                    <action selector="showHelp:" target="494" id="sxX-T5-mOw"/>
                                 </connections>
                             </menuItem>
                         </items>
@@ -623,28 +624,19 @@ CA
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="oCk-eR-mPP"/>
         </imageView>
-        <window title="Add Location" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="0MP-Eo-f3S" userLabel="The" customClass="NSPanel">
+        <window title="Add Location" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="0MP-Eo-f3S" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="167" y="107" width="364" height="85"/>
+            <rect key="contentRect" x="167" y="107" width="364" height="93"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1028"/>
             <value key="minSize" type="size" width="364" height="85"/>
             <value key="maxSize" type="size" width="2000" height="86"/>
-            <view key="contentView" id="KVu-0k-T7v">
-                <rect key="frame" x="0.0" y="0.0" width="364" height="85"/>
+            <view key="contentView" misplaced="YES" id="KVu-0k-T7v">
+                <rect key="frame" x="0.0" y="0.0" width="364" height="93"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="NZ5-DV-Tvf">
-                        <rect key="frame" x="18" y="48" width="50" height="14"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Location" id="riD-Kj-ER4">
-                            <font key="font" metaFont="smallSystem"/>
-                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
-                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="zwG-eG-LI0">
-                        <rect key="frame" x="72" y="46" width="272" height="19"/>
+                    <textField verticalHuggingPriority="750" misplaced="YES" id="zwG-eG-LI0">
+                        <rect key="frame" x="80" y="54" width="264" height="19"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Type URL here" drawsBackground="YES" id="Kzo-Mq-Xge">
                             <font key="font" metaFont="smallSystem"/>
@@ -652,23 +644,26 @@ CA
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <button verticalHuggingPriority="750" id="tbg-Xz-zrg">
-                        <rect key="frame" x="306" y="19" width="38" height="19"/>
+                    <button verticalHuggingPriority="750" misplaced="YES" id="tbg-Xz-zrg">
+                        <rect key="frame" x="285" y="13" width="65" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="roundRect" title="Add" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5Z9-gq-28j">
+                        <buttonCell key="cell" type="push" title="Add" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5Z9-gq-28j">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="smallSystem"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
                         </buttonCell>
                         <connections>
                             <action selector="addLocationOKAction:" target="494" id="qKS-bm-D0p"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" id="3lN-OA-OLp">
-                        <rect key="frame" x="248" y="19" width="50" height="19"/>
+                    <button verticalHuggingPriority="750" misplaced="YES" id="3lN-OA-OLp">
+                        <rect key="frame" x="203" y="13" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="roundRect" title="Cancel" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hNd-lG-bSZ">
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hNd-lG-bSZ">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="smallSystem"/>
+                            <font key="font" metaFont="system"/>
                             <string key="keyEquivalent" base64-UTF8="YES">
 Gw
 </string>
@@ -677,8 +672,18 @@ Gw
                             <action selector="addLocationCancelAction:" target="494" id="XfK-15-vXl"/>
                         </connections>
                     </button>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" id="NZ5-DV-Tvf">
+                        <rect key="frame" x="18" y="57" width="56" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Location" id="riD-Kj-ER4">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
             </view>
+            <point key="canvasLocation" x="-137" y="304.5"/>
         </window>
         <window title="Adding files..." allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="h34-jZ-Lmi">
             <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES"/>
@@ -689,7 +694,7 @@ Gw
                 <rect key="frame" x="0.0" y="0.0" width="368" height="32"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="541-M0-bI8">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="541-M0-bI8">
                         <rect key="frame" x="5" y="8" width="333" height="16"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" lineBreakMode="truncatingHead" allowsUndo="NO" sendsActionOnEndEditing="YES" borderStyle="bezel" usesSingleLineMode="YES" id="8PK-Uo-vxc">
@@ -714,6 +719,7 @@ Gw
                     </button>
                 </subviews>
             </view>
+            <point key="canvasLocation" x="95" y="17"/>
         </window>
         <window title="Custom Sort" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="vHm-fI-UgZ" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
@@ -722,10 +728,10 @@ Gw
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
             <value key="minSize" type="size" width="327" height="120"/>
             <view key="contentView" id="30A-nz-a9e">
-                <rect key="frame" x="0.0" y="-7" width="327" height="120"/>
+                <rect key="frame" x="0.0" y="0.0" width="327" height="120"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="DKl-U3-cnQ">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="DKl-U3-cnQ">
                         <rect key="frame" x="18" y="83" width="78" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Sort pattern" id="Trp-Nh-89s">
@@ -734,7 +740,7 @@ Gw
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="bJK-ZQ-GBB">
+                    <textField verticalHuggingPriority="750" id="bJK-ZQ-GBB">
                         <rect key="frame" x="102" y="80" width="176" height="22"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="Ic1-Yv-SKM">

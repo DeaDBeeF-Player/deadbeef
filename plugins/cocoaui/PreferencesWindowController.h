@@ -61,9 +61,23 @@
 @property (unsafe_unretained) IBOutlet NSButton *cli_add_to_specific_playlist;
 @property (unsafe_unretained) IBOutlet NSTextField *cli_add_playlist_name;
 @property (unsafe_unretained) IBOutlet NSButton *resume_last_session;
+
+- (IBAction)resumeLastSessionAction:(id)sender;
+
+
 @property (unsafe_unretained) IBOutlet NSButton *ignore_archives;
+
+- (IBAction)ignoreArchivesAction:(id)sender;
+
+
 @property (unsafe_unretained) IBOutlet NSButton *stop_after_current_reset;
+
+- (IBAction)stopAfterCurrentResetAction:(id)sender;
+
+
 @property (unsafe_unretained) IBOutlet NSButton *stop_after_album_reset;
+
+- (IBAction)stopAfterCurrentAlbumResetAction:(id)sender;
 
 // dsp properties
 @property (strong) IBOutlet NSPanel *dspConfigPanel;

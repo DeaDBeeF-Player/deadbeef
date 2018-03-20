@@ -26,12 +26,13 @@
 #import "DdbTabStrip.h"
 #import "DdbListview.h"
 #import "DdbPlaylistViewController.h"
+#import "DdbSeekBar.h"
 
 @interface MainWindowController : NSWindowController
 
 @property (unsafe_unretained) IBOutlet DdbTabStrip *tabStrip;
 @property (unsafe_unretained) IBOutlet NSTextField *statusBar;
-@property (unsafe_unretained) IBOutlet NSSlider *seekBar;
+@property (unsafe_unretained) IBOutlet DdbSeekBar *seekBar;
 @property (unsafe_unretained) IBOutlet NSSlider *volumeBar;
 @property (strong) IBOutlet DdbPlaylistViewController *playlistViewController;
 

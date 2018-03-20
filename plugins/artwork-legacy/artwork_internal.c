@@ -171,7 +171,11 @@ copy_file (const char *in, const char *out) {
     close_http_request (request);
     fclose (fout);
 
-    if (file_bytes > 0 && !err) {
+    if (file_bytes == 0) { // curl can fail silently
+        trace ("artwork: failed to read %s (errno = %d)\n", in, errno);
+        err = -1;
+    }
+    else if (!err) {
         err = rename (tmp_out, out);
         if (err) {
             trace ("artwork: failed to move %s to %s: %s\n", tmp_out, out, strerror (errno));

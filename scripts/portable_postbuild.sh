@@ -41,12 +41,12 @@ for i in converter pltbrowser shellexecui ; do
 done
 
 for i in nullout cdda flac alsa mp3 hotkeys vtx \
-     ffap ffmpeg wavpack vorbis oss vfs_curl \
+     ffap ffmpeg wavpack vorbis opus oss vfs_curl \
      lastfm sid adplug sndfile alac \
      supereq gme dumb notify musepack wildmidi \
      tta dca aac mms shn psf shellexec vfs_zip \
      m3u converter pulse dsp_libsrc mono2stereo \
-     wma\
+     wma rg_scanner\
      ; do
     if [ -f ./plugins/$i/.libs/$i.so ]; then
         cp ./plugins/$i/.libs/$i.so $PLUGDIR/

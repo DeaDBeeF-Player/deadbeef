@@ -94,7 +94,9 @@ static inline uint32_t bytestream_get_be32 (const uint8_t **ptr) {
 #define MAX_BYTESPERSAMPLE  3
 
 #define APE_FRAMECODE_MONO_SILENCE    1
-#define APE_FRAMECODE_STEREO_SILENCE  3
+#define APE_FRAMECODE_LEFT_SILENCE    1 /* same as mono */
+#define APE_FRAMECODE_RIGHT_SILENCE   2
+#define APE_FRAMECODE_STEREO_SILENCE  3 /* combined */
 #define APE_FRAMECODE_PSEUDO_STEREO   4
 
 #define HISTORY_SIZE 512
@@ -1026,10 +1028,12 @@ static void entropy_decode(APEContext * ctx, int blockstodecode, int stereo)
 
     ctx->blocksdecoded = blockstodecode;
 
-    if (ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) {
+    if ((ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) == APE_FRAMECODE_STEREO_SILENCE) {
         /* We are pure silence, just memset the output buffer. */
         memset(decoded0, 0, blockstodecode * sizeof(int32_t));
-        memset(decoded1, 0, blockstodecode * sizeof(int32_t));
+        if (stereo) {
+            memset(decoded1, 0, blockstodecode * sizeof(int32_t));
+        }
     } else {
         while (likely (blockstodecode--)) {
             *decoded0++ = ape_decode_value(ctx, &ctx->riceY);
@@ -1429,7 +1433,6 @@ static void ape_unpack_mono(APEContext * ctx, int count)
     int32_t *decoded1 = ctx->decoded1;
 
     if (ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) {
-        entropy_decode(ctx, count, 0);
         /* We are pure silence, so we're done. */
         //fprintf (stderr, "pure silence mono\n");
         return;
@@ -1456,7 +1459,7 @@ static void ape_unpack_stereo(APEContext * ctx, int count)
     int32_t *decoded0 = ctx->decoded0;
     int32_t *decoded1 = ctx->decoded1;
 
-    if (ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) {
+    if ((ctx->frameflags & APE_FRAMECODE_STEREO_SILENCE) == APE_FRAMECODE_STEREO_SILENCE) {
         /* We are pure silence, so we're done. */
         //fprintf (stderr, "pure silence stereo\n");
         return;
@@ -1902,8 +1905,7 @@ static const char *exts[] = { "ape", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,

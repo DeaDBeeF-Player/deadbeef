@@ -59,7 +59,7 @@ typedef struct {
 } musepack_info_t;
 
 mpc_int32_t musepack_vfs_read (mpc_reader *r, void *ptr, mpc_int32_t size) {
-    return deadbeef->fread(ptr, 1, size, (DB_FILE *)r->data);
+    return (mpc_int32_t)deadbeef->fread(ptr, 1, (size_t)size, (DB_FILE *)r->data);
 }
 
 /// Seeks to byte position offset.
@@ -73,12 +73,12 @@ mpc_bool_t musepack_vfs_seek (mpc_reader *r, mpc_int32_t offset) {
 
 /// Returns the current byte offset in the stream.
 mpc_int32_t musepack_vfs_tell (mpc_reader *r) {
-    return deadbeef->ftell ((DB_FILE *)r->data);
+    return (mpc_int32_t)deadbeef->ftell ((DB_FILE *)r->data);
 }
 
 /// Returns the total length of the source stream, in bytes.
 mpc_int32_t musepack_vfs_get_size (mpc_reader *r) {
-    return deadbeef->fgetlength ((DB_FILE *)r->data);
+    return (mpc_int32_t)deadbeef->fgetlength ((DB_FILE *)r->data);
 }
 
 /// True if the stream is a seekable stream.
@@ -240,7 +240,7 @@ musepack_read (DB_fileinfo_t *_info, char *bytes, int size) {
     int samplesize = _info->fmt.bps / 8 * _info->fmt.channels;
 
     if (info->currentsample + size / samplesize > info->endsample) {
-        size = (info->endsample - info->currentsample + 1) * samplesize;
+        size = (int)((info->endsample - info->currentsample + 1) * samplesize);
         if (size <= 0) {
             return 0;
         }
@@ -295,7 +295,6 @@ musepack_seek_sample (DB_fileinfo_t *_info, int sample) {
 
 static int
 musepack_seek (DB_fileinfo_t *_info, float time) {
-    musepack_info_t *info = (musepack_info_t *)_info;
     return musepack_seek_sample (_info, time * _info->fmt.samplerate);
 }
 
@@ -356,10 +355,9 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
 
     mpc_streaminfo si;
-    //mpc_streaminfo_init (&si);
     mpc_demux_get_info (demux, &si);
 
-    int totalsamples = mpc_streaminfo_get_length_samples (&si);
+    int64_t totalsamples = mpc_streaminfo_get_length_samples (&si);
     double dur = mpc_streaminfo_get_length (&si);
 
     // replay gain
@@ -423,7 +421,6 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                 deadbeef->plt_set_item_duration (plt, it, dur);
             }
             if (ch->tag_size > 0) {
-                uint8_t *tag = ch->tag;
                 deadbeef->junk_apev2_read_mem (it, ch->tag, ch->tag_size);
                 if (meta) {
                     deadbeef->pl_items_copy_junk (meta, it, it);
@@ -457,8 +454,6 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, peak_title);
 
     deadbeef->fclose (fp);
-
-    deadbeef->pl_lock ();
 
     mpc_set_trk_properties (it, &si, fsize);
 
@@ -524,8 +519,7 @@ static const char * exts[] = { "mpc", "mpp", "mp+", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,

@@ -1020,8 +1020,8 @@ ml_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 
 // define plugin interface
 static ddb_medialib_plugin_t plugin = {
-    .plugin.plugin.api_vmajor = 1,
-    .plugin.plugin.api_vminor = 10,
+    .plugin.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .plugin.plugin.api_vminor = DB_API_VERSION_MINOR,
     .plugin.plugin.version_major = DDB_MEDIALIB_VERSION_MAJOR,
     .plugin.plugin.version_minor = DDB_MEDIALIB_VERSION_MINOR,
     .plugin.plugin.type = DB_PLUGIN_MISC,

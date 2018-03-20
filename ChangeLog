@@ -1,3 +1,26 @@
+version 0.7.2 
+	fixed title formatting %filename% crash
+	fixed streaming of aac content in mp4 container
+	added https:// support to vfs_curl (Viktor Semykin)
+	added zh_TW translation to deadbeef.desktop (laichiaheng)
+	fixed loading cue sheets without any metadata fields
+	fixed file close bug in VTX plugin
+	fixed evaluating nested square brackets syntax in title formatting
+	improved support for large fields in ID3v2 tags
+	fixed potential crash bug in artwork plugin
+	fixed path separator '/' escaping regression in converter
+	moved ffmpeg plugin to the end of plugin list, to prevent conflicts with other input plugins
+	added $fix_eol, $hex title formatting
+	fixed importing \[, \] and \n characters from old configuration files
+	fixed "Group by artist/date/title" title formatting
+	added enumerating/exposing of all supported file extensions to ffmpeg plugin (Xinya Zhang)
+	fixed handling of ':' in file path in vfs_zip plugin
+	fixed old ffmpeg versions support
+	fixed wma decoder loudness issue
+	fixed DCA buffer allocation, to make it more musl-friendly
+	added $num implementation to title formatting (Peter Lamby)
+	fixed --nowplaying-tf behavior when player is stopped
+
 version 0.7.1
 	fixed GTKUI maximized window layout saving/restoring
 	fixed GTKUI maximized window column autoresize saving/restoring

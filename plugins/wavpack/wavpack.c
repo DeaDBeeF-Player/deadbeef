@@ -28,7 +28,7 @@
 */
 
 #include <string.h>
-#ifdef TINYWV
+#if defined(TINYWV) || defined(OSX_BUILD)
 #include <wavpack.h>
 #else
 #include <wavpack/wavpack.h>
@@ -151,7 +151,11 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 #ifdef TINYWV
     info->ctx = WavpackOpenFileInput (wv_read_stream, info->file, error);
 #else
-    info->ctx = WavpackOpenFileInputEx (&wsr, info->file, info->c_file, error, OPEN_NORMALIZE, 0);
+    int flags = OPEN_NORMALIZE;
+#if defined(DSD_FLAG) && defined(OPEN_DSD_AS_PCM)
+    flags = DSD_FLAG|OPEN_DSD_AS_PCM;
+#endif
+    info->ctx = WavpackOpenFileInputEx (&wsr, info->file, info->c_file, error, flags, 0);
 #endif
     if (!info->ctx) {
         fprintf (stderr, "wavpack error: %s\n", error);
@@ -298,7 +302,11 @@ wv_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 #ifdef TINYWV
     WavpackContext *ctx = WavpackOpenFileInput (wv_read_stream, fp, error);
 #else
-    WavpackContext *ctx = WavpackOpenFileInputEx (&wsr, fp, NULL, error, 0, 0);
+    int flags = 0;
+#if defined(DSD_FLAG) && defined(OPEN_DSD_AS_PCM)
+    flags = DSD_FLAG|OPEN_DSD_AS_PCM;
+#endif
+    WavpackContext *ctx = WavpackOpenFileInputEx (&wsr, fp, NULL, error, flags, 0);
 #endif
     if (!ctx) {
         fprintf (stderr, "wavpack error: %s\n", error);
@@ -413,8 +421,7 @@ wv_write_metadata (DB_playItem_t *it) {
 static const char *exts[] = { "wv", NULL };
 // define plugin interface
 static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,

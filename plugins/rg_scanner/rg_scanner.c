@@ -36,7 +36,7 @@
 
 #define trace(...) { deadbeef->log_detailed (&plugin.misc.plugin, 0, __VA_ARGS__); }
 
-static const char *album_signature = "$if2(%artist% - %album%,%filename%)";
+static const char *album_signature = "$if2(%album artist% - %album%,%filename%)";
 
 static ddb_rg_scanner_t plugin;
 static DB_functions_t *deadbeef;
@@ -50,6 +50,9 @@ typedef struct {
 
 void
 rg_calc_thread(void *ctx) {
+    DB_decoder_t *dec = NULL;
+    DB_fileinfo_t *fileinfo = NULL;
+
     char *buffer = NULL;
     char *bufferf = NULL;
 
@@ -62,8 +65,6 @@ rg_calc_thread(void *ctx) {
         return;
     }
 
-    DB_decoder_t *dec = NULL;
-    DB_fileinfo_t *fileinfo = NULL;
 
     deadbeef->pl_lock ();
     dec = (DB_decoder_t *)deadbeef->plug_get_for_id (deadbeef->pl_find_meta (st->settings->tracks[st->track_index], ":DECODER"));
@@ -74,31 +75,53 @@ rg_calc_thread(void *ctx) {
 
         if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (st->settings->tracks[st->track_index])) != 0) {
             st->settings->results[st->track_index].scan_result = DDB_RG_SCAN_RESULT_FILE_NOT_FOUND;
-            return;
+            goto error;
         }
 
         if (fileinfo) {
             st->gain_state[st->track_index] = ebur128_init(fileinfo->fmt.channels, fileinfo->fmt.samplerate, EBUR128_MODE_I);
             st->peak_state[st->track_index] = ebur128_init(fileinfo->fmt.channels, fileinfo->fmt.samplerate, EBUR128_MODE_SAMPLE_PEAK);
 
-            if (fileinfo->fmt.channels > 6) {
-                st->settings->results[st->track_index].scan_result = DDB_RG_SCAN_RESULT_INVALID_FILE;
-                return;
-            }
-
-            const int maps[6][6] = {
-                {EBUR128_CENTER, 0, 0, 0, 0, 0},
-                {EBUR128_LEFT,EBUR128_RIGHT, 0, 0, 0, 0},
-                {EBUR128_LEFT,EBUR128_RIGHT,EBUR128_CENTER, 0, 0, 0},
-                {EBUR128_LEFT,EBUR128_RIGHT,EBUR128_LEFT_SURROUND,EBUR128_RIGHT_SURROUND, 0, 0},
-                {EBUR128_LEFT,EBUR128_RIGHT,EBUR128_CENTER,EBUR128_LEFT_SURROUND,EBUR128_RIGHT_SURROUND, 0},
-                {EBUR128_LEFT,EBUR128_RIGHT,EBUR128_UNUSED,EBUR128_CENTER,EBUR128_LEFT_SURROUND,EBUR128_RIGHT_SURROUND},
+            // speaker mask mapping from WAV to EBUR128
+            static const int chmap[18] = {
+                EBUR128_LEFT,
+                EBUR128_RIGHT,
+                EBUR128_CENTER,
+                EBUR128_UNUSED,
+                EBUR128_LEFT_SURROUND,
+                EBUR128_RIGHT_SURROUND,
+                EBUR128_LEFT_SURROUND,
+                EBUR128_RIGHT_SURROUND,
+                EBUR128_CENTER,
+                EBUR128_LEFT_SURROUND,
+                EBUR128_RIGHT_SURROUND,
+                EBUR128_CENTER,
+                EBUR128_LEFT_SURROUND,
+                EBUR128_CENTER,
+                EBUR128_RIGHT_SURROUND,
+                EBUR128_LEFT_SURROUND,
+                EBUR128_CENTER,
+                EBUR128_RIGHT_SURROUND,
             };
 
-            for (int i = 0; i < fileinfo->fmt.channels; i++) {
-                ebur128_set_channel (st->gain_state[st->track_index], i, maps[fileinfo->fmt.channels-1][i]);
+            uint32_t channelmask = fileinfo->fmt.channelmask;
 
-                ebur128_set_channel (st->peak_state[st->track_index], i, maps[fileinfo->fmt.channels-1][i]);
+            // first 18 speaker positions are known, the rest will be marked as UNUSED
+            int ch = 0;
+            for (int i = 0; i < 32 && ch < fileinfo->fmt.channels; i++) {
+                if (i < 18) {
+                    if (channelmask & (1<<i))
+                    {
+                        ebur128_set_channel (st->gain_state[st->track_index], ch, chmap[i]);
+                        ebur128_set_channel (st->peak_state[st->track_index], ch, chmap[i]);
+                        ch++;
+                    }
+                }
+                else {
+                    ebur128_set_channel (st->gain_state[st->track_index], ch, EBUR128_UNUSED);
+                    ebur128_set_channel (st->peak_state[st->track_index], ch, EBUR128_UNUSED);
+                    ch++;
+                }
             }
 
             int samplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
@@ -151,44 +174,50 @@ rg_calc_thread(void *ctx) {
                 ebur128_add_frames_float (st->peak_state[st->track_index], (float*) bufferf, frames); // collect data
             }
         }
-    }
 
-    if (!st->settings->pabort || !(*(st->settings->pabort))) {
-        // calculating track peak
-        // libEBUR128 calculates peak per channel, so we have to pick the highest value
-        double tr_peak = 0;
-        double ch_peak = 0;
-        int res;
-        for (int ch = 0; ch < fileinfo->fmt.channels; ++ch) {
-            res = ebur128_sample_peak (st->peak_state[st->track_index], ch, &ch_peak);
-            //trace ("rg_scanner: peak for ch %d: %f\n", ch, ch_peak);
-            if (ch_peak > tr_peak) {
-                //trace ("rg_scanner: %f > %f\n", ch_peak, tr_peak);
-                tr_peak = ch_peak;
+        if (!st->settings->pabort || !(*(st->settings->pabort))) {
+            // calculating track peak
+            // libEBUR128 calculates peak per channel, so we have to pick the highest value
+            double tr_peak = 0;
+            double ch_peak = 0;
+            int res;
+            for (int ch = 0; ch < fileinfo->fmt.channels; ++ch) {
+                res = ebur128_sample_peak (st->peak_state[st->track_index], ch, &ch_peak);
+                //trace ("rg_scanner: peak for ch %d: %f\n", ch, ch_peak);
+                if (ch_peak > tr_peak) {
+                    //trace ("rg_scanner: %f > %f\n", ch_peak, tr_peak);
+                    tr_peak = ch_peak;
+                }
             }
+
+            st->settings->results[st->track_index].track_peak = (float) tr_peak;
+
+            // calculate track loudness
+            double loudness = st->settings->ref_loudness;
+            ebur128_loudness_global (st->gain_state[st->track_index], &loudness);
+
+            /*
+             * EBUR128 sets the target level to -23 LUFS = 84dB
+             * -> -23 - loudness = track gain to get to 84dB
+             *
+             * The old implementation of RG used 89dB, most people still use that
+             * -> the above + (loudness - 84) = track gain to get to 89dB (or user specified)
+             */
+            st->settings->results[st->track_index].track_gain = -23 - loudness + st->settings->ref_loudness - 84;
         }
-
-        st->settings->results[st->track_index].track_peak = (float) tr_peak;
-
-        // calculate track loudness
-        double loudness = st->settings->ref_loudness;
-        ebur128_loudness_global (st->gain_state[st->track_index], &loudness);
-
-        /*
-         * EBUR128 sets the target level to -23 LUFS = 84dB
-         * -> -23 - loudness = track gain to get to 84dB
-         *
-         * The old implementation of RG used 89dB, most people still use that
-         * -> the above + (loudness - 84) = track gain to get to 89dB (or user specified)
-         */
-        st->settings->results[st->track_index].track_gain = -23 - loudness + st->settings->ref_loudness - 84;
     }
 
+error:
     // clean up
+    if (fileinfo) {
+        dec->free (fileinfo);
+    }
+
     if (buffer && buffer != bufferf) {
         free (buffer);
         buffer = NULL;
     }
+
     if (bufferf) {
         free (bufferf);
         bufferf = NULL;
@@ -458,30 +487,45 @@ _rg_write_meta (DB_playItem_t *track) {
     return 0;
 }
 
+static void
+_rg_remove_meta (DB_playItem_t *track) {
+    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_ALBUMGAIN");
+    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_ALBUMPEAK");
+    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_TRACKGAIN");
+    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_TRACKPEAK");
+}
+
 int
-rg_apply (DB_playItem_t *track, float track_gain, float track_peak, float album_gain, float album_peak) {
-    deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_TRACKGAIN, track_gain);
-    deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_TRACKPEAK, track_peak);
-    deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_ALBUMGAIN, album_gain);
-    deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_ALBUMPEAK, album_peak);
+rg_apply (DB_playItem_t *track, uint32_t flags, float track_gain, float track_peak, float album_gain, float album_peak) {
+    _rg_remove_meta(track);
+
+    if (flags & (1<<DDB_REPLAYGAIN_TRACKGAIN)) {
+        deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_TRACKGAIN, track_gain);
+    }
+    if (flags & (1<<DDB_REPLAYGAIN_TRACKPEAK)) {
+        deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_TRACKPEAK, track_peak);
+    }
+    if (flags & (1<<DDB_REPLAYGAIN_ALBUMGAIN)) {
+        deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_ALBUMGAIN, album_gain);
+    }
+    if (flags & (1<<DDB_REPLAYGAIN_ALBUMPEAK)) {
+        deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_ALBUMPEAK, album_peak);
+    }
 
     return _rg_write_meta (track);
 }
 
 int
 rg_remove (DB_playItem_t *track) {
-    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_ALBUMGAIN");
-    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_ALBUMPEAK");
-    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_TRACKGAIN");
-    deadbeef->pl_delete_meta (track, ":REPLAYGAIN_TRACKPEAK");
+    _rg_remove_meta (track);
 
     return _rg_write_meta (track);
 }
 
 // plugin structure and info
 static ddb_rg_scanner_t plugin = {
-    .misc.plugin.api_vmajor = 1,
-    .misc.plugin.api_vminor = 10,
+    .misc.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .misc.plugin.api_vminor = DB_API_VERSION_MINOR,
     .misc.plugin.version_major = 1,
     .misc.plugin.version_minor = 0,
     .misc.plugin.flags = DDB_PLUGIN_FLAG_LOGGING,

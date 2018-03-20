@@ -30,15 +30,15 @@
 #include "volume.h"
 #include "replaygain.h"
 #include "conf.h"
+#include "common.h"
 
 static ddb_replaygain_settings_t current_settings;
 
 void
 replaygain_apply_with_settings (ddb_replaygain_settings_t *settings, ddb_waveformat_t *fmt, char *bytes, int numbytes) {
-    if (!settings->processing_flags) {
+    if (settings->processing_flags == 0) {
         return;
     }
-
     if (fmt->bps == 16) {
         apply_replay_gain_int16 (settings, bytes, numbytes);
     }
@@ -68,36 +68,61 @@ replaygain_set_current (ddb_replaygain_settings_t *settings) {
 
 void
 replaygain_init_settings (ddb_replaygain_settings_t *settings, playItem_t *it) {
-    memset (settings, 0, settings->_size);
+    memset (((char *)settings) + sizeof (settings->_size), 0, settings->_size - sizeof (settings->_size));
     settings->source_mode = conf_get_int ("replaygain.source_mode", 0);
     settings->processing_flags = conf_get_int ("replaygain.processing_flags", 1);
     settings->preamp_with_rg = db_to_amp (conf_get_float ("replaygain.preamp_with_rg", 0));
     settings->preamp_without_rg = db_to_amp (conf_get_float ("replaygain.preamp_without_rg", 0));
+    settings->albumgain = 1;
+    settings->trackgain = 1;
+    settings->albumpeak = 1;
+    settings->trackpeak = 1;
+
     if (!it) {
-        settings->albumgain = 1;
-        settings->trackgain = 1;
-        settings->albumpeak = 1;
-        settings->trackpeak = 1;
         return;
     }
+
     pl_lock ();
     const char *albumgain = pl_find_meta (it, ":REPLAYGAIN_ALBUMGAIN");
     const char *trackgain = pl_find_meta (it, ":REPLAYGAIN_TRACKGAIN");
+    const char *albumpeak = pl_find_meta (it, ":REPLAYGAIN_ALBUMPEAK");
+    const char *trackpeak = pl_find_meta (it, ":REPLAYGAIN_TRACKPEAK");
 
-    if (albumgain) {
-        settings->has_album_gain = 1;
+    if (settings->processing_flags & DDB_RG_PROCESSING_GAIN) {
+        if (albumgain) {
+            settings->albumgain = db_to_amp(atof (albumgain));
+            settings->has_album_gain = 1;
+        }
+        else if (trackgain) {
+            settings->albumgain = db_to_amp(atof (trackgain));
+            settings->has_album_gain = 1;
+        }
+
+        if (trackgain) {
+            settings->trackgain = db_to_amp(atof (trackgain));
+            settings->has_track_gain = 1;
+        }
+        else if (albumgain) {
+            settings->trackgain = db_to_amp(atof (albumgain));
+            settings->has_track_gain = 1;
+        }
     }
 
-    if (trackgain) {
-        settings->has_track_gain = 1;
+    if (settings->processing_flags & DDB_RG_PROCESSING_PREVENT_CLIPPING) {
+        if (albumpeak) {
+            settings->albumpeak = atof (albumpeak);
+        }
+        else if (trackpeak) {
+            settings->albumpeak = atof (trackpeak);
+        }
+
+        if (trackpeak) {
+            settings->trackpeak = atof (trackpeak);
+        }
+        else if (albumpeak) {
+            settings->trackpeak = atof (albumpeak);
+        }
     }
-
-    settings->albumgain = albumgain ? db_to_amp(atof (albumgain)) : 1;
-    settings->albumpeak = pl_get_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK);
-
-    settings->trackgain = trackgain ? db_to_amp(atof (trackgain)) : 1;
-
-    settings->trackpeak = pl_get_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK);
 
     pl_unlock ();
 }
@@ -149,7 +174,7 @@ get_int_volume (ddb_replaygain_settings_t *settings) {
     default:
         break;
     }
-    return vol;
+    return vol == 1000 ? -1 : vol;
 }
 
 void
@@ -200,7 +225,7 @@ apply_replay_gain_int24 (ddb_replaygain_settings_t *settings, char *bytes, int s
     }
     char *s = (char*)bytes;
     for (int j = 0; j < size/3; j++) {
-        int32_t sample = ((unsigned char)s[0]) | ((unsigned char)s[1]<<8) | (s[2]<<16);
+        int32_t sample = ((unsigned char)s[0]) | ((unsigned char)s[1]<<8) | ((signed char)s[2]<<16);
         sample = (int32_t)(sample * vol / 1000);
         if (sample > 0x7fffff) {
             sample = 0x7fffff;
@@ -261,6 +286,11 @@ apply_replay_gain_float32 (ddb_replaygain_settings_t *settings, char *bytes, int
     default:
         break;
     }
+
+    if (vol == 1) {
+        return;
+    }
+
     float *s = (float*)bytes;
     for (int j = 0; j < size/4; j++) {
         float sample = ((float)*s) * vol;

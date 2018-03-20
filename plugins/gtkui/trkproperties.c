@@ -723,7 +723,10 @@ on_trkproperties_edit_activate          (GtkMenuItem     *menuitem,
     g_value_unset (&key);
     g_value_unset (&value);
 
-    g_list_free_full (lst, (GDestroyNotify) gtk_tree_path_free);
+    for (GList *l = lst; l; l = l->next) {
+        gtk_tree_path_free (l->data);
+    }
+    g_list_free (lst);
 
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     if (response == GTK_RESPONSE_OK) {
@@ -750,7 +753,17 @@ on_trkproperties_edit_in_place_activate
                                         (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+    GtkTreePath *path;
+    gtk_tree_view_get_cursor (treeview, &path, NULL);
+    if (!path) {
+        return;
+    }
 
+    GtkTreeViewColumn *col = gtk_tree_view_get_column (treeview, 1);
+
+    gtk_tree_view_set_cursor (treeview, path, col, TRUE); // set cursor onto new field
+    gtk_tree_path_free(path);
 }
 
 
@@ -945,6 +958,63 @@ void
 on_trkproperties_crop_activate         (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+    if (!gtk_widget_is_focus(GTK_WIDGET (treeview))) {
+        return; // do not remove field if Metadata tab is not focused
+    }
+    GtkTreePath *path;
+    gtk_tree_view_get_cursor (treeview, &path, NULL);
+    if (!path) {
+        return;
+    }
 
+    GtkTreeIter iter_curr;
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter_curr, path);
+
+    GtkTreeModel *model = gtk_tree_view_get_model (treeview);
+
+    GtkTreeIter iter;
+    GtkTreeIter next;
+    gboolean res = gtk_tree_model_get_iter_first (model, &iter);
+    while (res) {
+        int getnext = 1;
+        GtkTreePath *iter_path = gtk_tree_model_get_path (model, &iter);
+        if (gtk_tree_path_compare (path, iter_path)) {
+            GValue key = {0,};
+            gtk_tree_model_get_value (model, &iter, 2, &key);
+            const char *skey = g_value_get_string (&key);
+
+
+            GValue value = {0,};
+            gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 2, &value);
+            const char *svalue = g_value_get_string (&value);
+
+            // delete unknown fields completely; otherwise just clear
+            int i = 0;
+            for (; trkproperties_types[i]; i += 2) {
+                if (!strcasecmp (svalue, trkproperties_types[i])) {
+                    break;
+                }
+            }
+            if (trkproperties_types[i]) { // known val, clear
+                gtk_list_store_set (store, &iter, 1, "", 3, 0, 4, "", -1);
+            }
+            else {
+                gtk_list_store_remove (store, &iter);
+                getnext = 0;
+                if (!gtk_list_store_iter_is_valid (GTK_LIST_STORE (model), &iter)) {
+                    res = 0;
+                }
+            }
+        }
+        gtk_tree_path_free (iter_path);
+        if (getnext) {
+            res = gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter);
+        }
+    }
+
+    gtk_tree_view_set_cursor (treeview, path, NULL, FALSE); // restore cursor after deletion
+    gtk_tree_path_free (path);
+    trkproperties_modified = 1;
 }
 

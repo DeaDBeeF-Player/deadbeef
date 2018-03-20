@@ -105,7 +105,7 @@ static void
 on_copy_playlist1_activate        (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    const ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
     if (plt) {
         int playlist = gtkui_copy_playlist (plt);
         if (playlist != -1) {
@@ -252,6 +252,9 @@ add_tab_actions (GtkWidget *menu) {
         {
             char *tmp = NULL;
             if (!(action->flags & DB_ACTION_MULTIPLE_TRACKS))
+                continue;
+
+            if (action->flags & DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST)
                 continue;
 
             if (action->name && !strcmp (action->name, "delete_from_disk") && hide_remove_from_disk) {

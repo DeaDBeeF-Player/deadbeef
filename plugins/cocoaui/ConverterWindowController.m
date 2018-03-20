@@ -26,7 +26,7 @@
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
-static NSString *default_format = @"[%tracknumber%. ]%artist% - %title%";
+static NSString *default_format = @"[%tracknumber%. ][%artist% - ]%title%";
 
 @interface ConverterWindowController () {
     ddb_converter_t *_converter_plugin;
@@ -49,6 +49,8 @@ static NSString *default_format = @"[%tracknumber%. ]%artist% - %title%";
     int _cancelled;
     NSInteger _overwritePromptResult;
     BOOL _working;
+    NSInteger _bypassSameFormatState;
+    NSInteger _retagAfterCopyState;
 }
 @end
 
@@ -110,12 +112,24 @@ static NSMutableArray *g_converterControllers;
     [_encoderPreset selectItemAtIndex:deadbeef->conf_get_int ("converter.encoder_preset", 0)];
 }
 
+- (void)controlTextDidChange:(NSNotification *)notification {
+    NSTextField *textField = [notification object];
+    if (textField == _outputFolder) {
+        [self outputFolderChanged:self];
+    }
+    else if (textField == _outputFileName) {
+        [self outputPathChanged:self];
+    }
+}
+
 - (IBAction)outputFolderChanged:(id)sender {
+    [self updateFilenamesPreview];
     deadbeef->conf_set_str ("converter.output_folder", [[_outputFolder stringValue] UTF8String]);
     deadbeef->conf_save ();
 }
 
 - (IBAction)preserveFolderStructureChanged:(id)sender {
+    [self updateFilenamesPreview];
     deadbeef->conf_set_int ("converter.preserve_folder_structure", [_preserveFolderStructure state] == NSOnState);
     deadbeef->conf_save ();
 }
@@ -157,7 +171,7 @@ static NSMutableArray *g_converterControllers;
         if (it) {
             char outpath[PATH_MAX];
 
-            _converter_plugin->get_output_path2 (_convert_items[n], _convert_playlist, [[_outputFolder stringValue] UTF8String], [outfile UTF8String], encoder_preset, [_preserveFolderStructure state] == NSOnState, "", [_writeToSourceFolder state] == NSOnState, outpath, sizeof (outpath));
+            _converter_plugin->get_output_path2 (it, _convert_playlist, [[_outputFolder stringValue] UTF8String], [outfile UTF8String], encoder_preset, [_preserveFolderStructure state] == NSOnState, "", [_writeToSourceFolder state] == NSOnState, outpath, sizeof (outpath));
 
             [convert_items_preview addObject:[NSString stringWithUTF8String:outpath]];
         }
@@ -173,6 +187,7 @@ static NSMutableArray *g_converterControllers;
 }
 
 - (IBAction)writeToSourceFolderChanged:(id)sender {
+    [self updateFilenamesPreview];
     int active = [sender state] == NSOnState;
     deadbeef->conf_set_int ("converter.write_to_source_folder", active);
     deadbeef->conf_save ();
@@ -193,6 +208,11 @@ static NSMutableArray *g_converterControllers;
 
 - (IBAction)overwritePromptChanged:(id)sender {
     deadbeef->conf_set_int ("converter.overwrite_action", (int)[_fileExistsAction indexOfSelectedItem]);
+    deadbeef->conf_save ();
+}
+
+- (IBAction)outputFormatChanged:(id)sender {
+    deadbeef->conf_set_int ("converter.output_format", (int)[_outputFormat indexOfSelectedItem]);
     deadbeef->conf_save ();
 }
 
@@ -677,6 +697,10 @@ static NSMutableArray *g_converterControllers;
     [_progressPanel setIsVisible:YES];
 
     _working = YES;
+
+    _bypassSameFormatState = [_bypassSameFormat state];
+    _retagAfterCopyState = [_retagAfterCopy state];
+
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
         [self converterWorker];
@@ -727,8 +751,8 @@ static NSMutableArray *g_converterControllers;
         .output_is_float = _output_is_float,
         .encoder_preset = _encoder_preset,
         .dsp_preset = _dsp_preset,
-        .bypass_conversion_on_same_format = ([_bypassSameFormat state] == NSOnState),
-        .rewrite_tags_after_copy = ([_retagAfterCopy state] == NSOnState),
+        .bypass_conversion_on_same_format = (_bypassSameFormatState == NSOnState),
+        .rewrite_tags_after_copy = (_retagAfterCopyState == NSOnState),
     };
 
     for (int n = 0; n < _convert_items_count; n++) {
@@ -832,7 +856,7 @@ static NSMutableArray *g_converterControllers;
     [conv run:DDB_ACTION_CTX_SELECTION];
 }
 
-+ (void)converterCleanup {
++ (void)cleanup {
     g_converterControllers = nil;
 }
 

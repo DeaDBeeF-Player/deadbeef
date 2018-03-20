@@ -80,14 +80,6 @@ supereq_process (ddb_dsp_context_t *ctx, float *samples, int frames, int maxfram
             supereq_reset (ctx);
         }
         supereq->enabled = ctx->enabled;
-
-// this causes a glitch on 1st track
-//        DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-//        if (it) {
-//            float playpos = deadbeef->streamer_get_playpos ();
-//            deadbeef->streamer_seek (playpos);
-//            deadbeef->pl_item_unref (it);
-//        }
     }
     if (supereq->params_changed) {
         recalc_table (supereq);
@@ -273,8 +265,7 @@ static const char settings_dlg[] =
 ;
 
 static DB_dsp_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DSP,

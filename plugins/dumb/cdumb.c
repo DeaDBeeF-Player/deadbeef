@@ -462,13 +462,12 @@ static const char settings_dlg[] =
     "property \"Resampling quality (0..5, higher is better)\" spinbtn[0,5,1] dumb.resampling_quality 4;\n"
     "property \"8-bit output (default is 16)\" checkbox dumb.8bitoutput 0;\n"
     "property \"Internal DUMB volume (0..128)\" spinbtn[0,128,16] dumb.globalvolume 64;\n"
-    "property \"Volume ramping (0 is none, 1 is note on/off, 2 is always)\" entry dumb.volume_ramping 2;\n"
+    "property \"Volume ramping\" select[3] dumb.volume_ramping 0 None \"On/Off Only\" \"Full\";\n"
 ;
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,

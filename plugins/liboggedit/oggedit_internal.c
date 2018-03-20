@@ -47,10 +47,16 @@ static char *cat_string(char *dest, const char *src, const char *sep)
     return strcat(strcat(more, sep), src);
 }
 
+static int64_t int32_to_unsigned(int32_t value)
+{
+    /* Represent a 32-bit numeric field as a positive signed integer, maintaining order */
+    return value < 0 ? value + UINT32_MAX + 1 : value;
+}
+
 static const char *codec_name(ogg_page *og)
 {
     typedef struct {
-        const size_t length;
+        const unsigned length;
         const char *codec;
         const char *magic;
     } codec_t;
@@ -80,7 +86,7 @@ static const char *codec_name(ogg_page *og)
     };
 
     for (const codec_t *match = codecs; match->codec; match++)
-        if ((size_t)og->body_len >= match->length && !memcmp(og->body, match->magic, strlen(match->codec)))
+        if (og->body_len >= match->length && !memcmp(og->body, match->magic, strlen(match->codec)))
             return match->codec;
 
     return "unknown";
@@ -109,7 +115,7 @@ static bool ensure_directory(const char *path)
 {
     struct stat stat_struct;
     if (!stat(path, &stat_struct))
-        return !S_ISDIR(stat_struct.st_mode);
+        return S_ISDIR(stat_struct.st_mode);
 
     if (errno != ENOENT)
         return false;
@@ -118,10 +124,10 @@ static bool ensure_directory(const char *path)
     if (!dir)
         return false;
 
-    const int bad_dir = ensure_directory(dirname(dir));
+    const int is_dir = ensure_directory(dirname(dir));
     free(dir);
 
-    return !bad_dir && !mkdir(path, 0777);
+    return is_dir && !mkdir(path, 0755);
 }
 
 FILE *open_new_file(const char *outname)
@@ -188,7 +194,7 @@ static int64_t get_page(DB_FILE *in, ogg_sync_state *oy, ogg_page *og)
         ogg_sync_wrote(oy, bytes);
     }
 
-    return ogg_page_serialno(og) + UINT32_MAX + 1;
+    return int32_to_unsigned(ogg_page_serialno(og));
 }
 
 static int64_t skip_to_bos(DB_FILE *in, ogg_sync_state *oy, ogg_page *og, const off_t offset)
@@ -271,7 +277,7 @@ int64_t copy_up_to_header(DB_FILE *in, FILE *out, ogg_sync_state *oy, ogg_page *
     return serial;
 }
 
-long flush_stream(FILE *out, ogg_stream_state *os)
+int64_t flush_stream(FILE *out, ogg_stream_state *os)
 {
     ogg_page og;
 #ifdef HAVE_OGG_STREAM_FLUSH_FILL
@@ -282,7 +288,7 @@ long flush_stream(FILE *out, ogg_stream_state *os)
         if (!write_page(out, &og))
             return OGGEDIT_WRITE_ERROR;
 
-    const long pageno = ogg_stream_check(os) ? OGGEDIT_FLUSH_FAILED : ogg_page_pageno(&og);
+    const int64_t pageno = ogg_stream_check(os) ? OGGEDIT_FLUSH_FAILED : int32_to_unsigned(ogg_page_pageno(&og));
     ogg_stream_clear(os);
     return pageno;
 }
@@ -321,7 +327,7 @@ off_t codec_stream_size(DB_FILE *in, ogg_sync_state *oy, const off_t start_offse
     }
 
     /* Skip to the first codec data page */
-    while (serial > OGGEDIT_EOF && !(ogg_page_granulepos(&og) > 0 && serial == codec_serial))
+    while (serial > OGGEDIT_EOF && !(ogg_page_granulepos(&og) != 0 && serial == codec_serial))
         serial = get_page(in, oy,  &og);
     if (serial <= OGGEDIT_EOF)
         return serial;
@@ -383,14 +389,14 @@ int64_t init_read_stream(DB_FILE *in, ogg_sync_state *oy, ogg_stream_state *os, 
     return OGGEDIT_OK;
 }
 
-int read_packet(DB_FILE *in, ogg_sync_state *oy, ogg_stream_state *os, ogg_page *og, ogg_packet *header, int pages)
+int64_t read_packet(DB_FILE *in, ogg_sync_state *oy, ogg_stream_state *os, ogg_page *og, ogg_packet *header, int64_t pages)
 {
     ogg_packet op;
     do {
         while (ogg_stream_packetpeek(os, NULL) == 0) {
             const int64_t serial = get_page(in, oy, og);
             if (serial <= OGGEDIT_EOF) {
-                return (int)serial;
+                return serial;
             }
             if ((uint32_t)os->serialno == (uint32_t)serial) {
                 pages++;
@@ -463,7 +469,7 @@ int64_t copy_remaining_pages(DB_FILE *in, FILE *out, ogg_sync_state *oy, const i
     int64_t serial;
     do
         serial = get_page(in, oy, &og);
-    while (serial > OGGEDIT_EOF && serial == codec_serial && ogg_page_granulepos(&og) <= 0);
+    while (serial > OGGEDIT_EOF && serial == codec_serial && ogg_page_granulepos(&og) == 0);
     if (serial <= OGGEDIT_EOF)
         return serial;
 

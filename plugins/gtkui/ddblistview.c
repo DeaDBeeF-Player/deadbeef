@@ -671,6 +671,19 @@ ddb_listview_get_row_pos (DdbListview *listview, int row_idx) {
     return y;
 }
 
+static int
+ddb_listview_is_empty_region (DdbListviewPickContext *pick_ctx)
+{
+    switch (pick_ctx->type) {
+        case PICK_BELOW_PLAYLIST:
+        case PICK_ABOVE_PLAYLIST:
+        case PICK_EMPTY_SPACE:
+            return 1;
+        default:
+            return 0;
+    }
+}
+
 // input: absolute y coord in list (not in window)
 // returns -1 if nothing was hit, otherwise returns pointer to a group, and item idx
 // item idx may be set to -1 if group title was hit
@@ -859,7 +872,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
 
     draw_begin (&listview->listctx, cr);
     draw_begin (&listview->grpctx, cr);
-    fill_list_background(listview, cr, scrollx, -listview->scrollpos, total_width, max(listview->fullheight, listview->list_height), clip);
+    fill_list_background(listview, cr, clip->x, clip->y, clip->width, clip->height, clip);
 
     // find 1st group
     DdbListviewGroup *grp = listview->groups;
@@ -887,9 +900,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
         if (it) {
             listview->binding->unref(it);
         }
-//        if (grp->height > grp_height) {
-//            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y+grp_height, total_width, grp->height-grp_height, clip);
-//        }
 
         // draw album art
         int grp_next_y = grp_y + grp->height;
@@ -898,14 +908,12 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
         if (pin_grp == grp && clip->y <= title_height) {
             // draw pinned group title
             fill_list_background(listview, cr, scrollx, 0, total_width, min(title_height, grp_next_y), clip);
-//            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, 0, total_width, min(title_height, grp_next_y), clip);
             if (listview->binding->draw_group_title && title_height > 0) {
                 listview->binding->draw_group_title(listview, cr, grp->head, scrollx, min(0, grp_next_y-title_height), total_width, title_height);
             }
         }
         else if (clip->y <= grp_y + title_height) {
             // draw normal group title
-//            render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y, total_width, title_height, clip);
             if (listview->binding->draw_group_title && title_height > 0) {
                 listview->binding->draw_group_title(listview, cr, grp->head, scrollx, grp_y, total_width, title_height);
             }
@@ -915,10 +923,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
         grp_y += grp->height;
         grp = grp->next;
     }
-
-//    if (grp_y < clip->y + clip->height) {
-//        render_treeview_background(listview, cr, FALSE, TRUE, scrollx, grp_y, total_width, clip->y+clip->height-grp_y, clip);
-//    }
 
     deadbeef->pl_unlock ();
     draw_end (&listview->listctx);
@@ -1841,8 +1845,8 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
             && fabs(ps->lastpos[1] - ey) < 3) {
         // doubleclick - play this item
         if (pick_ctx.item_idx != -1
-                && pick_ctx.type != PICK_EMPTY_SPACE
-                && cursor != -1) {
+            && !ddb_listview_is_empty_region (&pick_ctx)
+            && cursor != -1) {
             int idx = cursor;
             DdbListviewIter it = ps->binding->get_for_idx (idx);
             if (ps->binding->handle_doubleclick && it) {
@@ -1860,8 +1864,8 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
 
     // set cursor
     int prev = cursor;
-    if (pick_ctx.type != PICK_EMPTY_SPACE
-            && pick_ctx.item_idx != -1) {
+    if (!ddb_listview_is_empty_region (&pick_ctx)
+        && pick_ctx.item_idx != -1) {
         int new_cursor = -1;
         if (pick_ctx.type == PICK_ALBUM_ART) {
             // set cursor to first item in clicked group
@@ -2962,8 +2966,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
         }
         ddb_listview_update_cursor (ps, cursor);
 
-        if (pick_ctx.type != PICK_EMPTY_SPACE
-                && pick_ctx.type != PICK_BELOW_PLAYLIST) {
+        if (!ddb_listview_is_empty_region (&pick_ctx)) {
             DdbListviewIter it = ps->binding->get_for_idx (pick_ctx.item_idx);
             if (it) {
                 ps->binding->list_context_menu (ps, it, pick_ctx.item_idx, PL_MAIN);

@@ -6,3 +6,6 @@ PLUG(cocoaui)
 PLUG(coreaudio)
 PLUG(nullout)
 #endif
+#ifdef HAVE_XGUI
+PLUG(xgui)
+#endif

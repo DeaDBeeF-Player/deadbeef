@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2657" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <development version="7000" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <development version="8000" identifier="xcode"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="ConverterWindowController">
@@ -66,7 +67,7 @@
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn editable="NO" width="204" minWidth="40" maxWidth="1000" id="DgF-y9-1f0">
+                                        <tableColumn identifier="" editable="NO" width="204" minWidth="40" maxWidth="1000" id="DgF-y9-1f0">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Preview">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -140,7 +141,7 @@ Gw
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <action selector="outputFolderChanged:" target="-2" id="aJf-yw-QOU"/>
+                            <outlet property="delegate" destination="-2" id="r0I-Nn-0HS"/>
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" id="Aoh-g5-1rm">
@@ -186,13 +187,13 @@ Gw
                     <textField toolTip="Default value: [%tracknumber%. ]%artist% - %title%" verticalHuggingPriority="750" misplaced="YES" id="lFC-nV-Fal">
                         <rect key="frame" x="151" y="150" width="208" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="[%tracknumber%. ]%artist% - %title%" drawsBackground="YES" id="Ugt-8s-yKj">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="[%tracknumber%. ][%artist% - ]%title%" drawsBackground="YES" id="Ugt-8s-yKj">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <action selector="outputPathChanged:" target="-2" id="c8p-i6-mFJ"/>
+                            <outlet property="delegate" destination="-2" id="bF5-6Q-vzl"/>
                         </connections>
                     </textField>
                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" id="0hM-MT-kwS" customClass="DdbTitleFormattingHelpButton">
@@ -292,6 +293,9 @@ Gw
                                 </items>
                             </menu>
                         </popUpButtonCell>
+                        <connections>
+                            <action selector="outputFormatChanged:" target="-2" id="eOh-Lx-A8d"/>
+                        </connections>
                     </popUpButton>
                     <popUpButton verticalHuggingPriority="750" misplaced="YES" id="v0z-m0-6CR">
                         <rect key="frame" x="123" y="47" width="239" height="26"/>
@@ -386,7 +390,7 @@ Gw
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="NhZ-Cb-sDJ">
                             <rect key="frame" x="1" y="1" width="181" height="266"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" id="dQ0-cs-T2a">
                                     <rect key="frame" x="0.0" y="0.0" width="181" height="266"/>
@@ -395,7 +399,7 @@ Gw
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn width="178" minWidth="40" maxWidth="1000" id="gkB-hR-lwr">
+                                        <tableColumn identifier="" width="178" minWidth="40" maxWidth="1000" id="gkB-hR-lwr">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -674,7 +678,7 @@ Gw
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn width="116" minWidth="40" maxWidth="1000" id="wmO-l5-O1h">
+                                        <tableColumn identifier="" width="116" minWidth="40" maxWidth="1000" id="wmO-l5-O1h">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -707,7 +711,7 @@ Gw
                                                 </tableCellView>
                                             </prototypeCellViews>
                                         </tableColumn>
-                                        <tableColumn width="240" minWidth="40" maxWidth="1000" id="T53-Ty-e5Y">
+                                        <tableColumn identifier="" width="240" minWidth="40" maxWidth="1000" id="T53-Ty-e5Y">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -866,7 +870,7 @@ Gw
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn width="116" minWidth="40" maxWidth="1000" id="znn-ZR-kTR">
+                                        <tableColumn identifier="" width="116" minWidth="40" maxWidth="1000" id="znn-ZR-kTR">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -899,7 +903,7 @@ Gw
                                                 </tableCellView>
                                             </prototypeCellViews>
                                         </tableColumn>
-                                        <tableColumn width="57" minWidth="40" maxWidth="1000" id="yOj-pX-jVt">
+                                        <tableColumn identifier="" width="57" minWidth="40" maxWidth="1000" id="yOj-pX-jVt">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>

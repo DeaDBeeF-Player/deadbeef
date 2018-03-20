@@ -23,6 +23,7 @@
 #endif
 
 #include <pulse/simple.h>
+#include <pulse/error.h>
 
 #include <stdint.h>
 #include <unistd.h>
@@ -71,6 +72,9 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
         plugin.fmt.samplerate = 44100;
         plugin.fmt.channelmask = 3;
     }
+    if (plugin.fmt.samplerate > 192000) {
+        plugin.fmt.samplerate = 192000;
+    }
 
     trace ("format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
 
@@ -81,7 +85,6 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
     trace ("pulse: channels: %d\n", ss.channels);
 
     // Read samplerate from config
-    //ss.rate = deadbeef->conf_get_int(CONFSTR_PULSE_SAMPLERATE, 44100);
     ss.rate = plugin.fmt.samplerate;
     trace ("pulse: samplerate: %d\n", ss.rate);
 
@@ -138,7 +141,8 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
 
     if (!s)
     {
-        trace ("pulse_init failed (%d)\n", error);
+        const char *strerr = pa_strerror (error);
+        fprintf (stderr, "pa_simple_new failed: %s\n", strerr);
         return -1;
     }
 
@@ -280,15 +284,10 @@ static void pulse_thread(void *context)
         }
 
         int sample_size = plugin.fmt.channels * (plugin.fmt.bps / 8);
-        int bs = buffer_size;
-        int mod = bs % sample_size;
-        if (mod > 0) {
-            bs -= mod;
-        }
+        char buf[buffer_size];
 
-        char buf[bs];
         in_callback = 1;
-        int bytesread = deadbeef->streamer_read(buf, bs);
+        int bytesread = deadbeef->streamer_read(buf, buffer_size);
         in_callback = 0;
         if (pulse_terminate) {
             break;
@@ -296,16 +295,15 @@ static void pulse_thread(void *context)
         if (bytesread < 0) {
             bytesread = 0;
         }
-        if (bytesread < bs)
-        {
-            memset (buf + bytesread, 0, bs-bytesread);
-        }
 
         int error;
 
-        deadbeef->mutex_lock (mutex);
-        int res = pa_simple_write(s, buf, sizeof (buf), &error);
-        deadbeef->mutex_unlock(mutex);
+        int res = 0;
+        if (bytesread > 0) {
+            deadbeef->mutex_lock (mutex);
+            res = pa_simple_write(s, buf, bytesread, &error);
+            deadbeef->mutex_unlock(mutex);
+        }
 
         if (res < 0)
         {
@@ -361,8 +359,7 @@ static const char settings_dlg[] =
 
 static DB_output_t plugin =
 {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_OUTPUT,

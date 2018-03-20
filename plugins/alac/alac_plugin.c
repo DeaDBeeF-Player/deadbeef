@@ -278,9 +278,9 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             alac_set_info (info->_alac, (char *)buff);
 
             trace ("alac: successfully initialized track %d\n", info->mp4track);
-            _info->fmt.samplerate = samplerate;
+            _info->fmt.samplerate = alac_get_samplerate(info->_alac);
+            _info->fmt.bps = alac_get_bitspersample (info->_alac);
             _info->fmt.channels = channels;
-            _info->fmt.bps = bps;
         }
         else {
             trace ("alac: track not found in mp4 container\n");
@@ -763,8 +763,7 @@ static const char * exts[] = { "mp4", "m4a", NULL };
 
 // define plugin interface
 static DB_decoder_t alac_plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,

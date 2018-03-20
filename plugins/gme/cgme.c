@@ -37,10 +37,10 @@
 #endif
 #include <limits.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include "gmewrap.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 // how big vgz can be?
 #define MAX_REMOTE_GZ_FILE 0x100000
@@ -76,7 +76,9 @@ cgme_open (uint32_t hint) {
 static int
 read_gzfile (const char *fname, char **buffer, int *size) {
     int fd = -1;
+    int res = -1;
     DB_FILE *fp = deadbeef->fopen (fname);
+    char tmpnm[PATH_MAX] = "";
     if (!fp) {
         trace ("gme read_gzfile: failed to fopen %s\n", fname);
         return -1;
@@ -85,29 +87,44 @@ read_gzfile (const char *fname, char **buffer, int *size) {
     int64_t sz = deadbeef->fgetlength (fp);
     if (fp->vfs && fp->vfs->plugin.id && strcmp (fp->vfs->plugin.id, "vfs_stdio") && sz > 0 && sz <= MAX_REMOTE_GZ_FILE) {
         trace ("gme read_gzfile: reading %s of size %lld and writing to temp file\n", fname, sz);
-        char buffer[sz];
+        char *buffer = malloc(sz);
         if (sz == deadbeef->fread (buffer, 1, sz, fp)) {
+            static int idx = 0;
             const char *tmp = getenv ("TMPDIR");
             if (!tmp) {
                 tmp = "/tmp";
             }
-            char nm[PATH_MAX];
-#if defined(ANDROID) || defined(STATICLINK)
-            snprintf (nm, sizeof (nm), "%s/ddbgmeXXXXXX", tmp);
-            fd = mkstemp (nm);
+#if defined(ANDROID)
+            // newer androids don't allow writing to /tmp, so write to ${configdir}/tmp/
+            const char *confdir = deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG);
+            snprintf (tmpnm, sizeof (tmpnm), "%s/tmp", confdir);
+            mkdir (tmpnm, 0755);
+            snprintf (tmpnm, sizeof (tmpnm), "%s/tmp/ddbgme%03d.vgz", confdir, idx);
+            fd = open (tmpnm, O_RDWR|O_CREAT|O_TRUNC);
+#elif defined(STATICLINK)
+            // mkstemps is unavailable in this case (linking to old glibc),
+            // and mkstemp is considered insecure,
+            // so just make the name manually.
+            // This is as insecure as mkstemp, but (hopefully) won't be bugged by static analyzers
+            snprintf (tmpnm, sizeof (tmpnm), "%s/ddbgme%03d.vgz", tmp);
+            fd = open (tmpnm, O_RDWR|O_CREAT|O_TRUNC);
 #else
-            snprintf (nm, sizeof (nm), "%s/ddbgmeXXXXXX.vgz", tmp);
-            fd = mkstemps (nm, 4);
+            snprintf (tmpnm, sizeof (tmpnm), "%s/ddbgmeXXXXXX.vgz", tmp);
+            fd = mkstemps (tmpnm, 4);
 #endif
+            idx++;
             if (fd == -1 || sz != write (fd, buffer, sz)) {
-                trace ("gme read_gzfile: failed to write temp file\n");
+                trace ("gme read_gzfile: failed to write temp file %s\n", tmpnm);
                 if (fd != -1) {
                     close (fd);
+                    fd = -1;
                 }
             }
             if (fd != -1) {
                 lseek (fd, 0, SEEK_SET);
             }
+            trace ("%s written successfully\n", tmpnm);
+            free (buffer);
         }
     }
 
@@ -117,13 +134,13 @@ read_gzfile (const char *fname, char **buffer, int *size) {
     int readsize = (int)sz;
     *buffer = malloc (sz);
     if (!(*buffer)) {
-        return -1;
+        goto error;
     }
 
     gzFile gz = fd == -1 ? gzopen (fname, "rb") : gzdopen (fd, "r");
     if (!gz) {
         trace ("failed to gzopen %s\n", fname);
-        return -1;
+        goto error;
     }
     *size = 0;
     int nb;
@@ -134,7 +151,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
             free (*buffer);
             trace ("failed to gzread from %s\n", fname);
             gzclose (gz);
-            return -1;
+            goto error;
         }
         if (nb > 0) {
             pos += nb;
@@ -152,7 +169,13 @@ read_gzfile (const char *fname, char **buffer, int *size) {
     gzclose (gz);
     trace ("got %d bytes from %s\n", *size, fname);
 
-    return 0;
+    res = 0;
+error:
+    if (*tmpnm) {
+        unlink (tmpnm);
+    }
+
+    return res;
 }
 
 static int
@@ -540,11 +563,10 @@ static const char settings_dlg[] =
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
-    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
+//    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "stdgme",
     .plugin.name = "Game-Music-Emu player",
