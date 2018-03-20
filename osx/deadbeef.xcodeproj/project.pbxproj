@@ -1978,9 +1978,9 @@
 		4DA72BED1838EAAB00A98C62 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BE61838EAAB00A98C62 /* main.m */; };
 		4DAF343F19B75FF500EE96ED /* ddb_dumb.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */; };
 		4DC96E701E4CC9670093CFD3 /* dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC96E6E1E4CC9670093CFD3 /* dsp.h */; };
-		4DE28471205BE0B20023063E /* TextViewerWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DE2846E205BE0B20023063E /* TextViewerWindowController.h */; };
-		4DE28472205BE0B20023063E /* TextViewerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DE2846F205BE0B20023063E /* TextViewerWindowController.m */; };
-		4DE28473205BE0B20023063E /* TextViewer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DE28470205BE0B20023063E /* TextViewer.xib */; };
+		4DE28471205BE0B20023063E /* HelpWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DE2846E205BE0B20023063E /* HelpWindowController.h */; };
+		4DE28472205BE0B20023063E /* HelpWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DE2846F205BE0B20023063E /* HelpWindowController.m */; };
+		4DE28473205BE0B20023063E /* HelpViewer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DE28470205BE0B20023063E /* HelpViewer.xib */; };
 		8374A47E1B8946A800C6A572 /* ChipMapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374A3671B8946A800C6A572 /* ChipMapper.c */; };
 		8374A47F1B8946A800C6A572 /* ChipMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374A3681B8946A800C6A572 /* ChipMapper.h */; };
 		8374A4811B8946A800C6A572 /* 2151intf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374A36B1B8946A800C6A572 /* 2151intf.c */; };
@@ -2651,13 +2651,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4D44E66D19B7530A00F780FC;
 			remoteInfo = dumb;
-		};
-		4D52B4E01F14F12600048305 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4D52B4CD1F14F0FD00048305;
-			remoteInfo = v2m;
 		};
 		4D9C5B091FDEBADC00D83CEF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4761,9 +4754,9 @@
 		4DA72BE61838EAAB00A98C62 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4DC96E6D1E4CC9670093CFD3 /* dsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsp.c; sourceTree = "<group>"; };
 		4DC96E6E1E4CC9670093CFD3 /* dsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsp.h; sourceTree = "<group>"; };
-		4DE2846E205BE0B20023063E /* TextViewerWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextViewerWindowController.h; sourceTree = "<group>"; };
-		4DE2846F205BE0B20023063E /* TextViewerWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TextViewerWindowController.m; sourceTree = "<group>"; };
-		4DE28470205BE0B20023063E /* TextViewer.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextViewer.xib; sourceTree = "<group>"; };
+		4DE2846E205BE0B20023063E /* HelpWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HelpWindowController.h; sourceTree = "<group>"; };
+		4DE2846F205BE0B20023063E /* HelpWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HelpWindowController.m; sourceTree = "<group>"; };
+		4DE28470205BE0B20023063E /* HelpViewer.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HelpViewer.xib; sourceTree = "<group>"; };
 		8374A3671B8946A800C6A572 /* ChipMapper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ChipMapper.c; sourceTree = "<group>"; };
 		8374A3681B8946A800C6A572 /* ChipMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChipMapper.h; sourceTree = "<group>"; };
 		8374A36B1B8946A800C6A572 /* 2151intf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 2151intf.c; sourceTree = "<group>"; };
@@ -6249,7 +6242,7 @@
 				2D2351271B13922400A62936 /* Converter.xib */,
 				2D49856E1D5CF0E900E4D985 /* Log.xib */,
 				2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */,
-				4DE28470205BE0B20023063E /* TextViewer.xib */,
+				4DE28470205BE0B20023063E /* HelpViewer.xib */,
 			);
 			name = XIB;
 			sourceTree = "<group>";
@@ -8585,8 +8578,8 @@
 				2D6FCDBD1DD26867003FCDE2 /* PluginConfigurationViewController.m */,
 				2D6FCDC01DD277CD003FCDE2 /* DSPPresetListDataSource.h */,
 				2D6FCDC11DD277CD003FCDE2 /* DSPPresetListDataSource.m */,
-				4DE2846E205BE0B20023063E /* TextViewerWindowController.h */,
-				4DE2846F205BE0B20023063E /* TextViewerWindowController.m */,
+				4DE2846E205BE0B20023063E /* HelpWindowController.h */,
+				4DE2846F205BE0B20023063E /* HelpWindowController.m */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -9911,7 +9904,7 @@
 				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */,
 				4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */,
-				4DE28471205BE0B20023063E /* TextViewerWindowController.h in Headers */,
+				4DE28471205BE0B20023063E /* HelpWindowController.h in Headers */,
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
 				2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */,
 				2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */,
@@ -11391,7 +11384,7 @@
 				2DBEE69519B4EB0900A60609 /* sb_front_cap_left@2x.png in Resources */,
 				2DBEE69419B4EB0900A60609 /* sb_front_cap_left.png in Resources */,
 				2DBEE68E19B4EB0900A60609 /* sb_back_cap_left.png in Resources */,
-				4DE28473205BE0B20023063E /* TextViewer.xib in Resources */,
+				4DE28473205BE0B20023063E /* HelpViewer.xib in Resources */,
 				2DB10B8619B908630054A6AB /* tab_left@2x.png in Resources */,
 				2DBEE69919B4EB0900A60609 /* sb_front_filler@2x.png in Resources */,
 				2DBEE69119B4EB0900A60609 /* sb_back_cap_right@2x.png in Resources */,
@@ -11423,7 +11416,6 @@
 				2DB10B8119B908630054A6AB /* tab_bottom_fill.png in Resources */,
 				2DF622BB1B335FF100C70C7D /* convpresets in Resources */,
 				2D28F0501C283C4B004A6E7B /* aac.dylib in Resources */,
-				4D52B4DF1F14F11A00048305 /* v2m.dylib in Resources */,
 				4D9C5B0E1FDEBAFC00D83CEF /* opus.dylib in Resources */,
 				2D8BA3521E2672BF001D5708 /* libogglib.dylib in Resources */,
 				4D9BF4001FE134200032B6CF /* libopusfile.dylib in Resources */,
@@ -12659,7 +12651,7 @@
 				2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
-				4DE28472205BE0B20023063E /* TextViewerWindowController.m in Sources */,
+				4DE28472205BE0B20023063E /* HelpWindowController.m in Sources */,
 				2D1A564B1D9FFB10005E5CDD /* ReplayGainScannerController.m in Sources */,
 				2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
@@ -13324,11 +13316,6 @@
 			isa = PBXTargetDependency;
 			target = 4D44E66D19B7530A00F780FC /* ddb_dumb */;
 			targetProxy = 4D44E70619B753AD00F780FC /* PBXContainerItemProxy */;
-		};
-		4D52B4E11F14F12600048305 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4D52B4CD1F14F0FD00048305 /* v2m */;
-			targetProxy = 4D52B4E01F14F12600048305 /* PBXContainerItemProxy */;
 		};
 		4D9C5B0A1FDEBADC00D83CEF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
