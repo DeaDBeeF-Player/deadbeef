@@ -1,3 +1,6 @@
+// This help window controller is a proof of concept / test case for supporting Swift coding in deadbeef codebase.
+// It doesn't have any dependencies, and is very simple to replace with ObjC if any problem occur.
+
 import Cocoa
 
 class HelpWindowController: NSWindowController {
