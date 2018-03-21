@@ -34,6 +34,7 @@
 #include <stddef.h>
 #include <time.h>
 #include <locale.h>
+#include <sys/time.h>
 #ifdef __linux__
 #include <sys/prctl.h>
 #endif
@@ -910,6 +911,10 @@ main (int argc, char *argv[]) {
     }
     bind_textdomain_codeset (PACKAGE, "UTF-8");
     textdomain (PACKAGE);
+#endif
+
+#ifndef VERSION
+#define VERSION "devel"
 #endif
 
     trace ("starting deadbeef " VERSION "%s%s\n", staticlink ? " [static]" : "", portable ? " [portable]" : "");

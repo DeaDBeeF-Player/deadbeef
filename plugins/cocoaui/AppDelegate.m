@@ -29,7 +29,7 @@
 #import "DdbShared.h"
 #import "MediaKeyController.h"
 #import "LogWindowController.h"
-#import "HelpWindowController.h"
+#import "deadbeef-Swift.h"
 #include "conf.h"
 #include "streamer.h"
 #include "junklib.h"

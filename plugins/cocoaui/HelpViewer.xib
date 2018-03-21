@@ -7,9 +7,9 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="HelpWindowController">
+        <customObject id="-2" userLabel="File's Owner" customClass="HelpWindowController" customModule="deadbeef" customModuleProvider="target">
             <connections>
-                <outlet property="textView" destination="krj-RC-iZ1" id="FVy-mq-9Tb"/>
+                <outlet property="textView" destination="krj-RC-iZ1" id="pqS-1k-TCC"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
