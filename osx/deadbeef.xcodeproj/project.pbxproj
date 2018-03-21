@@ -1512,6 +1512,7 @@
 		2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCF73B21A952F8900495740 /* PreferencesWindowController.h */; };
 		2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DCF73B31A952F8900495740 /* PreferencesWindowController.m */; };
+		2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
 		2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */; };
 		2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */; };
 		2DD6D0A819AE6288009308A5 /* knobTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */; };
@@ -1544,7 +1545,6 @@
 		2DF930511AB817310030C0CA /* wildmidi_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304D1AB817310030C0CA /* wildmidi_lib.c */; };
 		2DF930521AB817310030C0CA /* wildmidiplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304E1AB817310030C0CA /* wildmidiplug.c */; };
 		2DFD51681C97175F00961D19 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
-		4D00F30A205BED300060A357 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4D00F309205BED300060A357 /* help-cocoa.txt */; };
 		4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		4D046CE41EA9F8C300B80B2E /* gmewrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D046CE21EA9F8C300B80B2E /* gmewrap.cpp */; };
 		4D046CE51EA9F8C300B80B2E /* gmewrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D046CE31EA9F8C300B80B2E /* gmewrap.h */; };
@@ -4226,6 +4226,7 @@
 		2DCD78D319A665CA00EA50FA /* deadbeef.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deadbeef.png; sourceTree = "<group>"; };
 		2DCF73B21A952F8900495740 /* PreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowController.h; sourceTree = "<group>"; };
 		2DCF73B31A952F8900495740 /* PreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesWindowController.m; sourceTree = "<group>"; };
+		2DD5262E2062F1DF002609C5 /* help-cocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "help-cocoa.txt"; sourceTree = "<group>"; };
 		2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbSeekBar.h; sourceTree = "<group>"; };
 		2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbSeekBar.m; sourceTree = "<group>"; };
 		2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = knobTemplate.pdf; path = images/knobTemplate.pdf; sourceTree = "<group>"; };
@@ -4263,7 +4264,6 @@
 		2DFA31EA1AAF351800792053 /* sid6510c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sid6510c.h; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/sid6510c.h"; sourceTree = "<group>"; };
 		2DFA31EB1AAF351800792053 /* sid6510c.i */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c.preprocessed; name = sid6510c.i; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/sid6510c.i"; sourceTree = "<group>"; };
 		2DFD50951C9715B800961D19 /* psf.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = psf.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		4D00F309205BED300060A357 /* help-cocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "help-cocoa.txt"; path = "../../help-cocoa.txt"; sourceTree = "<group>"; };
 		4D011FFC19AB9589005499B4 /* coreaudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = coreaudio.c; sourceTree = "<group>"; };
 		4D046CE21EA9F8C300B80B2E /* gmewrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gmewrap.cpp; path = plugins/gme/gmewrap.cpp; sourceTree = "<group>"; };
 		4D046CE31EA9F8C300B80B2E /* gmewrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gmewrap.h; path = plugins/gme/gmewrap.h; sourceTree = "<group>"; };
@@ -7640,7 +7640,6 @@
 		4D1B3E7118379829003E6066 = {
 			isa = PBXGroup;
 			children = (
-				4DE28476205BE3E50023063E /* misc */,
 				2DCD78AD19A6658C00EA50FA /* icons */,
 				4D1B514C1837EF7C003E6066 /* plugins */,
 				4D1B3EB31837EC44003E6066 /* deadbeef */,
@@ -8523,17 +8522,10 @@
 			path = "osx/deps/opusfile-0.9/src";
 			sourceTree = "<group>";
 		};
-		4DE28476205BE3E50023063E /* misc */ = {
-			isa = PBXGroup;
-			children = (
-				4D00F309205BED300060A357 /* help-cocoa.txt */,
-			);
-			path = misc;
-			sourceTree = "<group>";
-		};
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
+				2DD5262E2062F1DF002609C5 /* help-cocoa.txt */,
 				2D6202AF1B90800A00594746 /* XIB */,
 				2DE1D3DF19B11286009B5BC6 /* widgets */,
 				4D2362B218395D0300C9E818 /* images */,
@@ -11407,7 +11399,6 @@
 				2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */,
 				2DBEE69019B4EB0900A60609 /* sb_back_cap_right.png in Resources */,
 				2DB10B8219B908630054A6AB /* tab_bottom_fill@2x.png in Resources */,
-				4D00F30A205BED300060A357 /* help-cocoa.txt in Resources */,
 				2D1A563A1D9FF9A4005E5CDD /* ReplayGain.xib in Resources */,
 				2DBEE69819B4EB0900A60609 /* sb_front_filler.png in Resources */,
 				2DB10B8C19B908630054A6AB /* tab_unsel_right@2x.png in Resources */,
@@ -11419,6 +11410,7 @@
 				2D8BA3521E2672BF001D5708 /* libogglib.dylib in Resources */,
 				4D9BF4001FE134200032B6CF /* libopusfile.dylib in Resources */,
 				2D5B51221FF43FC8000AD484 /* liboggedit.dylib in Resources */,
+				2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
