@@ -1412,19 +1412,19 @@ streamer_set_output_format (ddb_waveformat_t *fmt) {
 }
 
 void
-streamer_thread (void *ctx) {
+streamer_thread (void *unused) {
 #if defined(__linux__) && !defined(ANDROID)
     prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
 #endif
 
+    uint32_t id;
+    uintptr_t ctx;
+    uint32_t p1, p2;
     while (!streaming_terminate) {
         struct timeval tm1;
         DB_output_t *output = plug_get_output ();
         gettimeofday (&tm1, NULL);
 
-        uint32_t id;
-        uintptr_t ctx;
-        uint32_t p1, p2;
         while (!handler_pop (handler, &id, &ctx, &p1, &p2)) {
             switch (id) {
             case STR_EV_PLAY_TRACK_IDX:
@@ -1547,6 +1547,9 @@ streamer_thread (void *ctx) {
         }
 
     }
+
+    // drain event queue
+    while (!handler_pop (handler, &id, &ctx, &p1, &p2));
 
     // stop streaming song
     if (fileinfo) {

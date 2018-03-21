@@ -705,7 +705,7 @@ player_mainloop (void) {
             }
         }
         if (term) {
-            return;
+            break;
         }
         messagepump_wait ();
     }
@@ -781,6 +781,18 @@ main_cleanup_and_quit (void) {
     DB_output_t *output = plug_get_output ();
     output->stop ();
     streamer_free ();
+
+    // drain main message queue
+    uint32_t msg;
+    uintptr_t ctx;
+    uint32_t p1;
+    uint32_t p2;
+    while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
+        if (msg >= DB_EV_FIRST && ctx) {
+            messagepump_event_free ((ddb_event_t *)ctx);
+        }
+    }
+
     output->free ();
 
     // terminate server and wait for completion
