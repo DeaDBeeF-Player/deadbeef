@@ -9,17 +9,17 @@ class HelpWindowController: NSWindowController {
     override func windowDidLoad() {
         super.windowDidLoad()
 
-        let path = Bundle.main.url(forResource: "help-cocoa", withExtension: "txt")
-        var content = ""
-
-        do {
-            content = try String(contentsOf: path!, encoding: .utf8)
+        if let path = Bundle.main.url(forResource: "help-cocoa", withExtension: "txt") {
+            do {
+                let content = try String(contentsOf: path, encoding: .utf8)
+                if let textStorage = textView.textStorage {
+                    textStorage.setAttributedString(NSAttributedString(string: content))
+                    textView.setSelectedRange(NSMakeRange(0, 0))
+                }
+            }
+            catch {
+            }
         }
-        catch {
-        }
-        
-        textView.textStorage?.setAttributedString(NSAttributedString(string: content))
-        textView.setSelectedRange(NSMakeRange(0, 0))
     }
 
 }
