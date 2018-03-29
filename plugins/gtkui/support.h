@@ -97,6 +97,10 @@ void        glade_set_atk_action_description (AtkAction       *action,
                                               const gchar     *action_name,
                                               const gchar     *description);
 
+#if !GTK_CHECK_VERSION(3,0,0)
+#define GTK_ORIENTATION_HORIZONTAL FALSE
+#endif
+
 #if GTK_CHECK_VERSION(3,0,0)
 GtkWidget *
 gtk_combo_box_entry_new_text(void);
