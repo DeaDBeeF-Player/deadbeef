@@ -4142,11 +4142,7 @@ ddb_gtkui_widget_t *
 w_playtb_create (void) {
     w_playtb_t *w = malloc (sizeof (w_playtb_t));
     memset (w, 0, sizeof (w_playtb_t));
-#if GTK_CHECK_VERSION(3,0,0)
     w->base.widget = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-#else
-    w->base.widget = gtk_hbox_new (FALSE, 0);
-#endif
     w->base.flags = DDB_GTKUI_WIDGET_FLAG_NON_EXPANDABLE;
     gtk_widget_show (w->base.widget);
 
