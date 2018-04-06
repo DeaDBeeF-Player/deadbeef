@@ -721,7 +721,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         return _load_subatoms(atom, fp);
     }
     else if (!mp4p_atom_type_compare(atom, "dOps")) {
-        mp4p_dOps_t *dOps = calloc (sizeof (mp4p_Opus_t), 1);
+        mp4p_dOps_t *dOps = calloc (sizeof (mp4p_dOps_t), 1);
         atom->data = dOps;
         atom->free = _dOps_free;
 
