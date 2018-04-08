@@ -1,11 +1,11 @@
-Help file for Cocoa/macOS version of Deadbeef Player
+Help file for Cocoa/macOS version of DeaDBeeF Player
 
 * LINKS
 
-    main website: http://deadbeef.sf.net
-    wiki: https://github.com/DeaDBeeF-Player/deadbeef/wiki
-    development website: https://github.com/DeaDBeeF-Player/deadbeef
-    info for contributors: https://github.com/DeaDBeeF-Player/deadbeef/blob/master/CONTRIBUTING.md
+    Main website: http://deadbeef.sf.net
+    Wiki: https://github.com/DeaDBeeF-Player/deadbeef/wiki
+    Development website: https://github.com/DeaDBeeF-Player/deadbeef
+    Info for contributors: https://github.com/DeaDBeeF-Player/deadbeef/blob/master/CONTRIBUTING.md
 
 * CUESHEETS
 
@@ -15,7 +15,7 @@ Help file for Cocoa/macOS version of Deadbeef Player
 
 * CONFIGURATION
 
-    Most settings can be configured through the Edit->Preferences dialog.
+    Most settings can be configured through the Preferences dialog.
 
     All configuration is stored in the $HOME/Library/Preferences/deadbeef folder.
     Individual settings can be tweaked in the $HOME/Library/Preferences/config text file.
