@@ -1160,7 +1160,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
 
     for (int i = 0; i < n; i++) {
         // no hidden files
-        if (namelist[i]->d_name[0] == '.' || namelist[i]->d_type != DT_REG) {
+        if (namelist[i]->d_name[0] == '.' || (namelist[i]->d_type != DT_REG && namelist[i]->d_type != DT_UNKNOWN)) {
             continue;
         }
 
