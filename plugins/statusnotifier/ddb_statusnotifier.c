@@ -207,8 +207,8 @@ static const char settings_dlg[] =
 ;
 
 static DB_statusnotifier_plugin_t plugin = {
-    .plugin.plugin.api_vmajor = 1,
-    .plugin.plugin.api_vminor = 8,
+    .plugin.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .plugin.plugin.api_vminor = DB_API_VERSION_MINOR,
     .plugin.plugin.version_major = 0,
     .plugin.plugin.version_minor = 1,
     .plugin.plugin.type = DB_PLUGIN_MISC,

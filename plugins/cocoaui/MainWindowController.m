@@ -34,6 +34,7 @@ extern DB_functions_t *deadbeef;
     char *_titlebar_playing_script;
     char *_titlebar_stopped_script;
     char *_statusbar_playing_script;
+    int _prevSeekBarPos;
 }
 @end
 
@@ -62,10 +63,8 @@ extern DB_functions_t *deadbeef;
     [super windowDidLoad];
 
     _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
-    [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSDefaultRunLoopMode];    
+    [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
 }
-
-int prevSeekbar = -1;
 
 // update status bar and window title
 static char sb_text[512];
@@ -122,14 +121,9 @@ static struct timeval last_br_update;
     }
 }
 
-- (void)frameUpdate:(id)userData
-{
-    if (![[self window] isVisible]) {
-        return;
-    }
+- (void)advanceSeekBar:(DB_playItem_t *)trk {
     float dur = -1;
     float perc = 0;
-    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (trk) {
         dur = deadbeef->pl_get_item_duration (trk);
         if (dur >= 0) {
@@ -141,15 +135,16 @@ static struct timeval last_br_update;
                 perc = 100;
             }
         }
-        deadbeef->pl_item_unref (trk);
     }
-    
-    int cmp =(int)(perc*4000);
-    if (cmp != prevSeekbar) {
-        prevSeekbar = cmp;
-        [_seekBar setFloatValue:perc];
+
+    if (![_seekBar dragging]) {
+        int cmp =(int)(perc*4000);
+        if (cmp != _prevSeekBarPos) {
+            _prevSeekBarPos = cmp;
+            [_seekBar setFloatValue:perc];
+        }
     }
-    
+
     BOOL st = YES;
     if (!trk || dur < 0) {
         st = NO;
@@ -157,8 +152,23 @@ static struct timeval last_br_update;
     if ([_seekBar isEnabled] != st) {
         [_seekBar setEnabled:st];
     }
-    
-    [self updateSonginfo];    
+}
+
+- (void)frameUpdate:(id)userData
+{
+    if (![[self window] isVisible]) {
+        return;
+    }
+
+    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
+
+    [self advanceSeekBar:trk];
+
+    [self updateSonginfo];
+
+    if (trk) {
+        deadbeef->pl_item_unref (trk);
+    }
 }
 
 - (IBAction)seekBarAction:(id)sender {

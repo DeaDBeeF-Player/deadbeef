@@ -56,8 +56,6 @@ static snd_pcm_uframes_t req_period_size;
 static int conf_alsa_resample = 1;
 static char conf_alsa_soundcard[100] = "default";
 
-static int in_callback;
-
 static int
 palsa_callback (char *stream, int len);
 
@@ -425,13 +423,12 @@ open_error:
 
 static int
 palsa_setformat (ddb_waveformat_t *fmt) {
+    LOCK;
     memcpy (&requested_fmt, fmt, sizeof (ddb_waveformat_t));
     trace ("palsa_setformat %dbit %s %dch %dHz channelmask=%X\n", requested_fmt.bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
-    if (!audio) {
-        return -1;
-    }
-    if (!memcmp (&requested_fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
-        trace ("palsa_setformat ignored\n");
+    if (!audio
+        || !memcmp (&requested_fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
+        UNLOCK;
         return 0;
     }
     else {
@@ -456,6 +453,7 @@ palsa_setformat (ddb_waveformat_t *fmt) {
         return -1;
     }
     trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
+    UNLOCK;
 
     return 0;
 }
@@ -469,12 +467,6 @@ palsa_free (void) {
         return 0;
     }
 
-    if (in_callback) {
-        alsa_terminate = 1;
-        deadbeef->thread_detach (alsa_tid);
-        UNLOCK;
-        return 0;
-    }
     alsa_terminate = 1;
     UNLOCK;
     deadbeef->thread_join (alsa_tid);
@@ -523,7 +515,6 @@ palsa_play (void) {
         return err;
     }
     snd_pcm_start (audio);
-
     state = OUTPUT_STATE_PLAYING;
     UNLOCK;
     return 0;
@@ -585,6 +576,28 @@ palsa_unpause (void) {
     return 0;
 }
 
+// Returns:
+// 0: successfully recovered
+// -1: failed to recover -- playback stopped
+// 1: no recovery possible
+static int
+alsa_recover (int err) {
+    // these errors are auto-fixed by snd_pcm_recover
+    if (err == -EINTR || err == -EPIPE || err == -ESTRPIPE) {
+        trace ("alsa_recover: %d: %s\n", err, snd_strerror (err));
+        err = snd_pcm_recover (audio, err, 1);
+        if (err < 0) {
+            trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
+            return -1; // failed to handle the error
+        }
+    }
+    else {
+        trace ("alsa_recover: ignored error %d: %s\n", err, snd_strerror (err));
+        return 1; // error is unknown / ignored
+    }
+    return err;
+}
+
 static void
 palsa_thread (void *context) {
     prctl (PR_SET_NAME, "deadbeef-alsa", 0, 0, 0, 0);
@@ -594,75 +607,64 @@ palsa_thread (void *context) {
         if (alsa_terminate) {
             break;
         }
-        if (state != OUTPUT_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1)) {
-            usleep (10000);
-            continue;
-        }
 
-        // read data
-        err = 0;
-        int sz = period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels;
-        char buf[sz];
-        int br = palsa_callback (buf, sz);
-        if (alsa_terminate) {
-            break;
-        }
-        if (br <= 0) {
-            usleep (10000);
-            continue;
-        }
-
-retry:
-        // wait till buffer is available
-        do {
-            LOCK;
-            avail = snd_pcm_avail_update (audio);
-            UNLOCK;
-            if (avail < 0) {
-                err = avail;
-                break;
-            }
-        } while (avail < period_size && !alsa_terminate);
-
-        if (alsa_terminate) {
-            break;
-        }
-
-        if (err < 0) {
-            trace ("snd_pcm_avail_update: %d: %s\n", err, snd_strerror (err));
-            LOCK;
-            err = snd_pcm_recover (audio, err, 1);
-            UNLOCK;
-            if (err < 0) {
-                trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
-                state = OUTPUT_STATE_STOPPED;
-                continue;
-            }
-            goto retry;
-        }
-
-        // write data
         LOCK;
-        int frames = snd_pcm_bytes_to_frames(audio, br);
-        err = snd_pcm_writei (audio, buf, frames);
+
+        if (state != OUTPUT_STATE_PLAYING) {
+            UNLOCK;
+            usleep (10000);
+            continue;
+        }
+
+        // wait for buffer
+        avail = snd_pcm_avail_update (audio);
+        if (avail < 0) {
+            //fprintf (stderr, "snd_pcm_avail_update err %d (%s)\n", avail, snd_strerror (avail));
+            avail = alsa_recover (avail);
+        }
+        if (avail < 0) {
+            UNLOCK;
+            usleep (10000);
+            continue;
+        }
+        int maxwait = period_size * 1000 / plugin.fmt.samplerate;
+        if (avail >= period_size) {
+            int sz = avail * (plugin.fmt.bps>>3) * plugin.fmt.channels;
+            char buf[sz];
+
+            int br = palsa_callback (buf, sz);
+
+            int err = 0;
+            int frames = snd_pcm_bytes_to_frames(audio, br);
+
+            err = snd_pcm_writei (audio, buf, frames);
+
+            if (err < 0) {
+                err = alsa_recover (err);
+
+                if (!err) {
+                    int new_avail = snd_pcm_avail_update (audio);
+                    avail = new_avail;
+                    UNLOCK;
+                    continue;
+                }
+            }
+            avail -= period_size;
+        }
+
         UNLOCK;
 
-        if (alsa_terminate) {
-            break;
+        // sleep up to 1 period
+        if (avail < 0) {
+           avail = 0;
+        }
+        else if (avail > period_size) {
+            continue;
         }
 
-        if (err < 0) {
-            trace ("snd_pcm_writei: %d: %s\n", err, snd_strerror (err));
-            LOCK;
-            err = snd_pcm_recover (audio, err, 1);
-            UNLOCK;
-            if (err < 0) {
-                trace ("snd_pcm_recover: %d: %s\n", err, snd_strerror (err));
-                state = OUTPUT_STATE_STOPPED;
-                continue;
-            }
-            goto retry;
-        }
+        int frames = period_size - avail;
+        int ms = frames * 1000 / plugin.fmt.samplerate;
+        usleep (ms * 1000);
     }
 
     LOCK;
@@ -675,9 +677,19 @@ retry:
 
 static int
 palsa_callback (char *stream, int len) {
-    in_callback = 1;
+    if (state != OUTPUT_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1)) {
+        memset (stream, 0, len);
+        return len;
+    }
     int bytesread = deadbeef->streamer_read (stream, len);
-    in_callback = 0;
+
+    if (bytesread < len) {
+        if (bytesread < 0) {
+            bytesread = 0;
+        }
+        memset (stream + bytesread, 0, len-bytesread);
+        bytesread = len;
+    }
     return bytesread;
 }
 
@@ -773,8 +785,7 @@ static const char settings_dlg[] =
 
 // define plugin interface
 static DB_output_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_OUTPUT,
@@ -782,7 +793,7 @@ static DB_output_t plugin = {
     .plugin.id = "alsa",
     .plugin.name = "ALSA output plugin",
     .plugin.descr = "plays sound through linux standard alsa library",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"

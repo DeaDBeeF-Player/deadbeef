@@ -1,5 +1,5 @@
 workspace "deadbeef"
-   configurations { "Debug", "Release", "Debug32", "Release32" }
+   configurations { "debug", "release", "debug32", "release32" }
 
 
 defines {
@@ -8,23 +8,23 @@ defines {
     "HAVE_LOG2=1"
 }
 
-filter "configurations:Debug or Debug32"
+filter "configurations:debug or debug32"
   defines { "DEBUG" }
   symbols "On"
 
-filter "configurations:Debug or Release"
+filter "configurations:debug or release"
   buildoptions { "-fPIC" }
   includedirs { "plugins/libmp4ff", "static-deps/lib-x86-64/include/x86_64-linux-gnu", "static-deps/lib-x86-64/include"  }
   libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
 
 
-filter "configurations:Debug32 or Release32"
-  buildoptions { "-m32" }
+filter "configurations:debug32 or release32"
+  buildoptions { "-std=c99", "-m32" }
   linkoptions { "-m32" }
   includedirs { "plugins/libmp4ff", "static-deps/lib-x86-32/include/i386-linux-gnu", "static-deps/lib-x86-32/include"  }
   libdirs { "static-deps/lib-x86-32/lib/i386-linux-gnu", "static-deps/lib-x86-32/lib" }
 
-filter "configurations:Release32 or Release"
+filter "configurations:release32 or release"
   buildoptions { "-O2" }
 
 project "deadbeef"
@@ -121,6 +121,30 @@ project "vorbis_plugin"
    defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
    links { "vorbisfile", "vorbis", "m", "ogg" }
 
+project "opus_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "opus"
+
+   files {
+       "plugins/opus/*.h",
+       "plugins/opus/*.c",
+       "plugins/liboggedit/*.h",
+       "plugins/liboggedit/*.c",
+   }
+
+   defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
+   links { "opusfile", "opus", "m", "ogg" }
+   filter "configurations:debug32 or release32"
+   
+      includedirs { "static-deps/lib-x86-32/include/opus" }
+
+   filter "configurations:debug or release"
+   
+      includedirs { "static-deps/lib-x86-64/include/opus" }
+
 project "ffap"
    kind "SharedLib"
    language "C"
@@ -136,7 +160,7 @@ project "ffap"
    filter 'files:**.asm'
        buildmessage 'YASM Assembling : %{file.relpath}'
 
-       filter "configurations:Debug32 or Release32"
+       filter "configurations:debug32 or release32"
            buildcommands
            {
                'yasm -f elf -D ARCH_X86_32 -m x86 -DPREFIX -o "obj/%{cfg.buildcfg}/ffap/%{file.basename}.o" "%{file.relpath}"'
@@ -149,7 +173,7 @@ project "ffap"
 
            defines { "APE_USE_ASM=yes", "ARCH_X86_32=1" }
 
-       filter "configurations:Debug or Release"
+       filter "configurations:debug or release"
            buildcommands
            {
                'yasm -f elf -D ARCH_X86_64 -m amd64 -DPIC -DPREFIX -o "obj/%{cfg.buildcfg}/ffap/%{file.basename}.o" "%{file.relpath}"'
@@ -239,16 +263,44 @@ project "ddb_gui_GTK2"
 
    links { "jansson", "gtk-x11-2.0", "pango-1.0", "cairo", "gdk-x11-2.0", "gdk_pixbuf-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
 
-    filter "configurations:Debug32 or Release32"
+    filter "configurations:debug32 or release32"
     
        includedirs { "static-deps/lib-x86-32/gtk-2.16.0/include/**", "static-deps/lib-x86-32/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-32/gtk-2.16.0/lib", "static-deps/lib-x86-32/gtk-2.16.0/lib/**" }
 
-    filter "configurations:Debug or Release"
+    filter "configurations:debug or release"
     
        includedirs { "static-deps/lib-x86-64/gtk-2.16.0/include/**", "static-deps/lib-x86-64/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
 
+project "ddb_gui_GTK3"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   files {
+       "plugins/gtkui/*.h",
+       "plugins/gtkui/*.c",
+       "shared/pluginsettings.h",
+       "shared/pluginsettings.c",
+       "shared/trkproperties_shared.h",
+       "shared/trkproperties_shared.c",
+       "plugins/libparser/parser.h",
+       "plugins/libparser/parser.c",
+       "utf8.c",
+   }
+
+   links { "jansson", "gtk-3", "gdk-3", "pangocairo-1.0", "pango-1.0", "atk-1.0", "cairo-gobject", "cairo", "gdk_pixbuf-2.0", "gio-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
+
+    filter "configurations:debug32 or release32"
+
+       includedirs { "static-deps/lib-x86-32/gtk-3.10.8/usr/include/**", "static-deps/lib-x86-32/gtk-3.10.8/usr/lib/**", "plugins/gtkui", "plugins/libparser" }
+       libdirs { "static-deps/lib-x86-32/gtk-3.10.8/lib/**", "static-deps/lib-x86-32/gtk-3.10.8/usr/lib/**" }
+
+    filter "configurations:debug or release"
+
+       includedirs { "static-deps/lib-x86-64/gtk-3.10.8/usr/include/**", "static-deps/lib-x86-64/gtk-3.10.8/usr/lib/**", "plugins/gtkui", "plugins/libparser" }
+       libdirs { "static-deps/lib-x86-64/gtk-3.10.8/lib/**", "static-deps/lib-x86-64/gtk-3.10.8/usr/lib/**" }
 
 project "rg_scanner"
    kind "SharedLib"
@@ -424,14 +476,83 @@ project "converter_gtk2"
    }
    links { "gtk-x11-2.0", "pango-1.0", "cairo", "gdk-x11-2.0", "gdk_pixbuf-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
 
-   filter "configurations:Debug32 or Release32"
+   filter "configurations:debug32 or release32"
        includedirs { "static-deps/lib-x86-32/gtk-2.16.0/include/**", "static-deps/lib-x86-32/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-32/gtk-2.16.0/lib", "static-deps/lib-x86-32/gtk-2.16.0/lib/**" }
 
-   filter "configurations:Release or Debug"
+   filter "configurations:release or debug"
        includedirs { "static-deps/lib-x86-64/gtk-2.16.0/include/**", "static-deps/lib-x86-64/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
 
+
+project "wildmidi_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "wildmidi"
+
+   files {
+       "plugins/wildmidi/*.h",
+       "plugins/wildmidi/*.c",
+       "plugins/wildmidi/src/*.h",
+       "plugins/wildmidi/src/*.c",
+   }
+
+   excludes {
+       "plugins/wildmidi/src/wildmidi.c"
+   }
+
+   includedirs { "plugins/wildmidi/include" }
+
+   defines { "WILDMIDI_VERSION=\"0.2.2\"", "WILDMIDILIB_VERSION=\"0.2.2\"", "TIMIDITY_CFG=\"/etc/timidity.conf\"" }
+   links { "m" }
+
+project "artwork_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "artwork"
+
+   files {
+       "plugins/artwork-legacy/*.c",
+       "plugins/libmp4ff/*.c"
+   }
+
+   excludes {
+   }
+
+   includedirs { "../libmp4ff" }
+
+   defines { "USE_OGG=1", "USE_VFS_CURL", "USE_METAFLAC", "USE_MP4FF", "USE_TAGGING=1" }
+   links { "jpeg", "png", "z", "FLAC", "ogg" }
+
+project "supereq_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "supereq"
+
+   files {
+       "plugins/supereq/*.c",
+       "plugins/supereq/*.cpp"
+   }
+
+   defines { "USE_OOURA" }
+   links { "m", "stdc++" }
+
+project "mono2stereo_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "ddb_mono2stereo"
+
+   files {
+       "plugins/mono2stereo/*.c",
+   }
 
 project "resources"
     kind "Utility"

@@ -23,43 +23,40 @@
 
 #import "DdbSeekBar.h"
 
-@implementation DdbSeekBar
+@implementation DdbSeekBar {
+    BOOL _dragging;
+}
 
 -(void)setNeedsDisplayInRect:(NSRect)invalidRect{
     [super setNeedsDisplayInRect:[self bounds]];
 }
 
+- (BOOL)dragging {
+    return _dragging;
+}
+
+- (void)mouseDown:(NSEvent *)theEvent {
+    if (theEvent.type == NSLeftMouseDown) {
+        _dragging = YES;
+    }
+    [super mouseDown:theEvent];
+    // NSSlider mouseDown short-circuits the mainloop, and runs drag tracking from within the mouseDown handler,
+    // so this needs to be done here instead of mouseUp handler, which is never fired.
+    if (theEvent.type == NSLeftMouseDown) {
+        _dragging = NO;
+    }
+}
+
 @end
 
-@implementation DdbSeekBarCell
+@implementation DdbSeekBarCell {
+}
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
     self = [super initWithCoder:decoder];
-    if (self) {
-#if 0
-        _backCapLeft = [NSImage imageNamed:@"sb_back_cap_left.tiff"];
-        _backCapRight = [NSImage imageNamed:@"sb_back_cap_right.tiff"];
-        _backFiller = [NSImage imageNamed:@"sb_back_filler.tiff"];
-        [_backCapLeft setFlipped:YES];
-        [_backCapRight setFlipped:YES];
-        [_backFiller setFlipped:YES];
-#endif
-
-        _frontCapLeft = [NSImage imageNamed:@"sb_front_cap_left.tiff"];
-        _frontCapRight = [NSImage imageNamed:@"sb_front_cap_right.tiff"];
-        _frontFiller = [NSImage imageNamed:@"sb_front_filler.tiff"];
-        [_frontCapLeft setFlipped:YES];
-        [_frontCapRight setFlipped:YES];
-        [_frontFiller setFlipped:YES];
-    }
     return self;
 }
-
-//- (NSRect)knobRectFlipped:(BOOL)flipped
-//{
-//    return NSMakeRect(0,0,1,1);
-//}
 
 - (void)drawKnob:(NSRect)knobRect {
 }
@@ -77,9 +74,6 @@
     rc.origin.y = y;
     rc.size.height = h;
 
-    NSSize frontCapLeftSize = [_frontCapLeft size];
-    NSSize frontCapRightSize = [_frontCapRight size];
-
     NSPoint convPt = [controlView convertPoint:NSMakePoint(0,y) fromView:nil];
     NSGraphicsContext *gc = [NSGraphicsContext currentContext];
     [gc saveGraphicsState];
@@ -87,35 +81,17 @@
 
     // foreground
 
-    if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_9) {
-        if ([self isEnabled]) {
-            [_frontCapLeft drawAtPoint:rc.origin fromRect:NSMakeRect(0, 0, frontCapLeftSize.width, frontCapLeftSize.height) operation:NSCompositeSourceOver fraction:1];
-        }
-
-        rc.origin.x += frontCapLeftSize.width;
-        rc.size.width -= frontCapLeftSize.width + frontCapRightSize.width;
-
-        [[NSColor colorWithPatternImage:_frontFiller] set];
-        rc.size.width = (int)(rc.size.width * _value / ([self maxValue] - [self minValue]));
-        [NSBezierPath fillRect:rc];
-
-        if ([self isEnabled]) {
-            [_frontCapRight drawAtPoint:NSMakePoint(rc.origin.x+rc.size.width, rc.origin.y) fromRect:NSMakeRect(0, 0, frontCapRightSize.width, frontCapRightSize.height) operation:NSCompositeSourceOver fraction:1];
-        }
+    rc.size.width = (int)(rc.size.width * _value / ([self maxValue] - [self minValue]));
+    rc.size.height -= 2;
+    rc.origin.y += 1;
+    NSWindow *window = [controlView window];
+    if ([window isKeyWindow]) {
+        [[NSColor keyboardFocusIndicatorColor] set];
     }
     else {
-        rc.size.width = (int)(rc.size.width * _value / ([self maxValue] - [self minValue]));
-        rc.size.height -= 2;
-        rc.origin.y += 1;
-        NSWindow *window = [controlView window];
-        if ([window isKeyWindow]) {
-            [[NSColor keyboardFocusIndicatorColor] set];
-        }
-        else {
-            [[NSColor controlShadowColor] set];
-        }
-        [NSBezierPath fillRect:rc];
+        [[NSColor controlShadowColor] set];
     }
+    [NSBezierPath fillRect:rc];
 
     [gc restoreGraphicsState];
 }

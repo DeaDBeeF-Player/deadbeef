@@ -103,12 +103,14 @@ ensure_dsp_temp_buffer (int size) {
             free (dsp_temp_buffer);
             dsp_temp_buffer = NULL;
         }
+        dsp_temp_buffer_size = 0;
         return NULL;
     }
     if (size != dsp_temp_buffer_size) {
         dsp_temp_buffer = realloc (dsp_temp_buffer, size);
         dsp_temp_buffer_size = size;
     }
+    assert (dsp_temp_buffer);
     return dsp_temp_buffer;
 }
 
@@ -147,6 +149,7 @@ streamer_set_dsp_chain_real (ddb_dsp_context_t *chain) {
 
     streamer_dsp_postinit ();
     streamer_dsp_chain_save();
+
     streamer_unlock ();
 
     messagepump_push (DB_EV_DSPCHAINCHANGED, 0, 0, 0);
@@ -331,6 +334,7 @@ streamer_dsp_postinit (void) {
     else if (!ctx) {
         dsp_on = 0;
     }
+
 }
 
 void
@@ -396,7 +400,7 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
         while (dsp) {
             if (dsp->enabled) {
                 if (dsp->plugin->plugin.api_vminor >= 1) {
-                    if (dsp->plugin->can_bypass && !dsp->plugin->can_bypass (dsp, &dspfmt)) {
+                    if (!dsp->plugin->can_bypass || !dsp->plugin->can_bypass (dsp, &dspfmt)) {
                         break;
                     }
                 }

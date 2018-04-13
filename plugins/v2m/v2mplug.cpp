@@ -246,8 +246,8 @@ extern "C" DB_plugin_t *
 v2m_load (DB_functions_t *api) {
     deadbeef = api;
 
-    v2m_plugin.plugin.api_vmajor = 1;
-    v2m_plugin.plugin.api_vminor = 0;
+    v2m_plugin.plugin.api_vmajor = DB_API_VERSION_MAJOR;
+    v2m_plugin.plugin.api_vminor = DB_API_VERSION_MINOR;
     v2m_plugin.plugin.type = DB_PLUGIN_DECODER;
     v2m_plugin.plugin.version_major = 1;
     v2m_plugin.plugin.version_minor = 0;

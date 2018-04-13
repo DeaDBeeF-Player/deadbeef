@@ -659,7 +659,9 @@ cflac_add_metadata (DB_playItem_t *it, const char *s, int length) {
                 char key[eq - s+1];
                 strncpy (key, s, eq-s);
                 key[eq-s] = 0;
-                deadbeef->pl_append_meta (it, key, eq+1);
+                if (eq[1]) {
+                    deadbeef->pl_append_meta (it, key, eq+1);
+                }
             }
         }
     }
@@ -825,15 +827,9 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         goto cflac_insert_fail;
     }
 
-    const char *ext = fname + strlen (fname);
-    while (ext > fname && *ext != '/' && *ext != '.') {
-        ext--;
-    }
-    if (*ext == '.') {
+    const char *ext = strrchr (fname, '.');
+    if (ext) {
         ext++;
-    }
-    else {
-        ext = NULL;
     }
 
     int isogg = 0;
@@ -875,15 +871,9 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     // read all metadata
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
     FLAC__stream_decoder_set_metadata_respond_all (decoder);
-    it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-    info.it = it;
-    if (skip > 0) {
-        deadbeef->fseek (info.file, skip, SEEK_SET);
-    }
-    else {
-        deadbeef->rewind (info.file);
-    }
-    deadbeef->fseek (info.file, -4, SEEK_CUR);
+
+    it = info.it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);;
+
     if (isogg) {
         status = FLAC__stream_decoder_init_ogg_stream (decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_length_cb, flac_eof_cb, cflac_init_write_callback, cflac_init_metadata_callback, cflac_init_error_callback, &info);
     }
@@ -944,7 +934,8 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_playItem_t *cue_after = NULL;
 
     cue_after = deadbeef->plt_process_cue (plt, after, it, info.totalsamples, info.info.fmt.samplerate);
-    if (!cue_after && info.flac_cue_sheet) {
+
+    if (!deadbeef->plt_is_loading_cue (plt) && !cue_after && info.flac_cue_sheet) {
         // try native flac embedded cuesheet
         cue_after = cflac_insert_with_embedded_cue (plt, after, it, &info.flac_cue_sheet->data.cue_sheet, info.totalsamples, info.info.fmt.samplerate);
     }
@@ -1274,8 +1265,7 @@ static const char *exts[] = { "flac", "oga", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 7,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,

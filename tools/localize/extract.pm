@@ -44,10 +44,21 @@ sub extract {
     my $android_xml = shift;
     my @lines;
 
-    for my $f (File::Find::Rule->file()->name("*.c")->in($ddb_path)) {
-        next if ($android_xml && grep ({$f =~ /\/$_\//} @ignore_paths_android));
+    my @files = sort(File::Find::Rule->file()->name("*.c")->in($ddb_path));
+    for my $f (@files) {
+        if ($android_xml && grep ({$f =~ /\/$_\//} @ignore_paths_android)) {
+            print "skipped $f (ignore list)\n";
+            next;
+        }
+        if ($f =~ /^\/?tools\//
+            || $f =~ /^\/?examples\//
+            || $f =~ /\/soundtouch\//) {
+            print "skip $f\n";
+            next;
+        }
+        print "$f\n";
         open F, "<$f" or die "Failed to open $f\n";
-        my $relf = substr ($f, length($ddb_path)+1);
+        my $relf = $f;#substr ($f, length($ddb_path)+1);
         while (<F>) {
             # configdialog
             my $line = $_;
@@ -64,7 +75,7 @@ sub extract {
                     }
                 }
                 if ($prop && !grep ({$_ eq $prop} @ignore_props)) {
-                    if (!grep ({$_->{msgid} eq $prop} @lines)) {
+                    if ($prop =~ /[A-Za-z]/ && !grep ({$_->{msgid} eq $prop} @lines)) {
                         push @lines, { f=>$relf, line=>$., msgid=>$prop };
                     }
 
@@ -90,15 +101,14 @@ sub extract {
                             my $val = next_token (\$input);
                             next if ($val =~ /^[0-9\.-_]*$/);
                             next if grep ({$_ eq $val} @ignore_values);
-                            if (!grep ({$_->{msgid} eq $val} @lines)) {
-                                print "$val\n";
+                            if ($val =~ /[A-Za-z]/ && !grep ({$_->{msgid} eq $val} @lines)) {
                                 push @lines, { f=>$relf, line=>$., msgid=>$val };
                             }
                         }
                     }
                 }
             }
-            elsif (/^.*DB_plugin_action_t .* {/) {
+            elsif (/^.*DB_plugin_action_t .* \{?/) {
                 # read until we hit title or };
                 while (<F>) {
                     if (/^(\s*\.title\s*=\s*")/) {
@@ -106,10 +116,23 @@ sub extract {
                         my $s = substr ($_, length ($begin));
                         if ($s =~ /(.*[^\\])"/) {
                             my $prop = $1;
-                            if (!grep ({$_->{msgid} eq $prop} @lines)) {
-                                push @lines, { f=>$relf, line=>$., msgid=>$prop };
+
+                            # Action titles can specify menu path, using /
+                            # separated names. \/ needs to be preserved though.
+                            my $copy = $prop;
+                            $copy =~ s/\\\//\x{1}/g;
+
+                            my @items = split ('/', $copy, -1);
+                            for $prop (@items) {
+                                $prop =~ s/\x{1}/\\\//g;
+                                if ($prop =~ /[A-Za-z]/ && !grep ({$_->{msgid} eq $prop} @lines)) {
+                                    push @lines, { f=>$relf, line=>$., msgid=>$prop };
+                                }
                             }
                         }
+                    }
+                    elsif (/^\s*\};/) {
+                        last;
                     }
                 }
             }

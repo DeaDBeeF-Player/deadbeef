@@ -25,7 +25,9 @@
  	$Id: wildmidi.c,v 1.21 2004/01/28 05:45:09 wildcode Exp $
 */
 
+#ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
 
 #include <errno.h>
 #include <fcntl.h>

@@ -75,7 +75,7 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-#define DEFAULT_EXTS "aa3;oma;ac3;vqf;amr;opus;tak;dsf;dff;wma;3gp;mp4;m4a"
+#define DEFAULT_EXTS "aa3;oma;ac3;vqf;amr;tak;dsf;dff;wma;3gp;mp4;m4a"
 #define UNPOPULATED_EXTS_BY_FFMPEG \
     "aif,aiff,afc,aifc,amr,asf," \
     "wmv,wma,au,caf,webm," \
@@ -121,7 +121,7 @@ typedef struct {
 } ffmpeg_info_t;
 
 static DB_fileinfo_t *
-ffmpeg_open2 (uint32_t hints, DB_playItem_t *it) {
+ffmpeg_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (ffmpeg_info_t));
     memset (_info, 0, sizeof (ffmpeg_info_t));
     return _info;
@@ -998,8 +998,7 @@ static const char settings_dlg[] =
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 7,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 2,
     .plugin.type = DB_PLUGIN_DECODER,
@@ -1028,7 +1027,7 @@ static DB_decoder_t plugin = {
     .plugin.stop = ffmpeg_stop,
     .plugin.configdialog = settings_dlg,
     .plugin.message = ffmpeg_message,
-    .open2 = ffmpeg_open2,
+    .open = ffmpeg_open,
     .init = ffmpeg_init,
     .free = ffmpeg_free,
     .read = ffmpeg_read,

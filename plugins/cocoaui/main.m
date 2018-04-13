@@ -47,8 +47,7 @@ int cocoaui_message (uint32_t _id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 
 DB_gui_t plugin = {
     .plugin.type = DB_PLUGIN_GUI,
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 5,
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.id = "cocoaui",

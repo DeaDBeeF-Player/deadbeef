@@ -213,7 +213,7 @@ extern "C" {
 // default values for some common config variables should go here
 
 // network.ctmapping : content-type to plugin mapping
-#define DDB_DEFAULT_CTMAPPING "audio/mpeg {stdmpg ffmpeg} audio/x-mpeg {stdmpg ffmpeg} application/ogg {stdogg ffmpeg} audio/ogg {stdogg ffmpeg} audio/aac {aac ffmpeg} audio/aacp {aac ffmpeg} audio/x-m4a {aac ffmpeg} audio/wma {wma ffmpeg}"
+#define DDB_DEFAULT_CTMAPPING "audio/mpeg {stdmpg ffmpeg} audio/x-mpeg {stdmpg ffmpeg} application/ogg {stdogg opus ffmpeg} audio/ogg {stdogg opus ffmpeg} audio/aac {aac ffmpeg} audio/aacp {aac ffmpeg} audio/x-m4a {aac ffmpeg} audio/wma {wma ffmpeg}"
 
 ////////////////////////////
 // playlist structures
@@ -245,8 +245,10 @@ enum {
 // playlist item
 // these are "public" fields, available to plugins
 typedef struct DB_playItem_s {
-    int32_t startsample32; // start sample of track, or -1 for auto
-    int32_t endsample32; // end sample of track, or -1 for auto
+    // NOTE: the startsample and endsample fields are 32 bit, and are kept for
+    // compatibility. Please use pl_item_get_startsample and friends instead.
+    int32_t startsample DEPRECATED_110;
+    int32_t endsample DEPRECATED_110;
     int32_t shufflerating; // sort order for shuffle mode
 } ddb_playItem_t;
 
@@ -433,7 +435,8 @@ enum {
     // -----------------
     // structured events
 
-    DB_EV_FIRST = 1000,
+    DB_EV_FIRST = 1000, // this is not an event id by itself, but used for checking which events are structured (>=DB_EV_FIRST)
+
     DB_EV_SONGCHANGED = 1000, // current song changed from one to another, ctx=ddb_event_trackchange_t
     DB_EV_SONGSTARTED = 1001, // song started playing, ctx=ddb_event_track_t
     DB_EV_SONGFINISHED = 1002, // song finished playing, ctx=ddb_event_track_t
@@ -1420,6 +1423,9 @@ typedef struct {
     // no error is reported
     void (*junk_get_tag_offsets) (DB_FILE *fp, uint32_t *head, uint32_t *tail);
 
+    // returns 1 to tell that cuesheet is being loaded now.
+    // this should be called by plugins to prevent running cuesheet code at a wrong time.
+    int (*plt_is_loading_cue) (ddb_playlist_t *plt);
 #endif
 } DB_functions_t;
 
@@ -1433,35 +1439,41 @@ typedef struct {
 // if (none of the above)  -> track context menu
 
 enum {
-    /* Action in main menu (or whereever ui prefers) */
+    // An menu item for this action should be added to the main menu (ex. Playback/Skip to/Previous genre)
     DB_ACTION_COMMON = 1 << 0,
 
-    /* Can handle single track */
+    // Indicates that this action can work when a single track is selected
     DB_ACTION_SINGLE_TRACK = 1 << 1,
 
-    /* Can handle multiple tracks */
+    // Indicates that this action can work when multiple tracks are selected
     DB_ACTION_MULTIPLE_TRACKS = 1 << 2,
 
-    /* DEPRECATED in API 1.5 */
+    // Different name for DB_ACTION_MULTIPLE_TRACKS, DEPRECATED in API 1.5
     DB_ACTION_ALLOW_MULTIPLE_TRACKS = 1 << 2,
 
-    /* DEPRECATED in API 1.5, ignored in callback2 */
-    /* Action can (and prefer) traverse multiple tracks by itself */
+    // DEPRECATED in API 1.5, ignored in callback2
+    // Action will get the track list by itself, instead of getting the list as argument.
+    // This is the default behavior when using callback2
     DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3,
 
-    /* Action is inactive */
+    // Action is inactive
     DB_ACTION_DISABLED = 1 << 4,
 
-    /* DEPRECATED in API 1.5, ignored in callback2 */
-    /* since 1.2 */
-    /* Action for the playlist (tab) */
-    DB_ACTION_PLAYLIST = 1 << 5,
+#if (DDB_API_LEVEL >= 2)
+    // DEPRECATED in API 1.5, ignored in callback2
+    // Action for the playlist (tab)
+    DB_ACTION_PLAYLIST = (1 << 5),
+#endif
 
-    /* add item to menu(s), if contains slash symbol(s) */
+#if (DDB_API_LEVEL >= 5)
+    // A menu item should be added to the menu(s), if the item name contains slash symbol(s)
     DB_ACTION_ADD_MENU = 1 << 6,
+#endif
 
-    /* Can't handle playlist */
-    DB_ACTION_NOT_FOR_PLAYLIST = 1 << 7
+#if (DDB_API_LEVEL >= 10)
+    // Don't allow running this action in playlist context, even if it supports multiple selection
+    DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST = 1 << 7
+#endif
 };
 
 // action contexts

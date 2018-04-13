@@ -55,19 +55,22 @@
 #include "gtkui_api.h"
 #include "wingeom.h"
 #include "widgets.h"
-#ifndef __APPLE__
-#include "X11/Xlib.h"
-#else
+#ifdef __APPLE__
 #include "retina.h"
 #endif
 #include "actionhandlers.h"
 #include "clipboard.h"
 #include "hotkeys.h"
 #include "../hotkeys/hotkeys.h"
-#if GTK_CHECK_VERSION(3,0,0)
+#include "rg.h"
+
+#define USE_GTK_APPLICATION 1
+
+#if GTK_CHECK_VERSION(3,10,0)
+#if USE_GTK_APPLICATION
 #include "deadbeefapp.h"
 #endif
-#include "rg.h"
+#endif
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -1126,9 +1129,11 @@ gtkui_show_log_window_internal(gboolean show) {
     GtkWidget *menuitem = lookup_widget (mainwin, "view_log");
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), show);
 
-#if GTK_CHECK_VERSION(3,0,0)
+#if GTK_CHECK_VERSION(3,10,0)
+#if USE_GTK_APPLICATION
     g_simple_action_set_state ( deadbeef_app_get_log_action (gapp),
         g_variant_new_boolean (show));
+#endif
 #endif
 }
 
@@ -1230,9 +1235,11 @@ gtkui_mainwin_init(void) {
 
     mainwin = create_mainwin ();
 
-#if GTK_CHECK_VERSION(3,0,0)
+#if GTK_CHECK_VERSION(3,10,0)
+#if USE_GTK_APPLICATION
     // This must be called before window is shown
     gtk_application_add_window ( GTK_APPLICATION (gapp), GTK_WINDOW (mainwin));
+#endif
 #endif
 
     logwindow = gtkui_create_log_window();
@@ -1386,7 +1393,7 @@ gtkui_thread (void *ctx) {
     gtk_disable_setlocale ();
     add_pixmap_directory (deadbeef->get_system_dir(DDB_SYS_DIR_PIXMAP));
 
-#if GTK_CHECK_VERSION(3,0,0)
+#if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
     gapp = deadbeef_app_new ();
     g_application_run ( G_APPLICATION (gapp), argc, (char**)argv);
     g_object_unref (gapp);
@@ -1540,7 +1547,7 @@ quit_gtk_cb (gpointer nothing) {
     trkproperties_modified = 0;
     trkproperties_destroy ();
     search_destroy ();
-#if GTK_CHECK_VERSION(3,0,0)
+#if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
     g_application_quit (G_APPLICATION (gapp));
 #else
     gtk_main_quit ();
@@ -1816,7 +1823,7 @@ static DB_plugin_action_t action_crop_selected = {
 static DB_plugin_action_t action_remove_from_playlist = {
     .title = "Edit/Remove Track(s) From Playlist",
     .name = "remove_from_playlist",
-    .flags = DB_ACTION_MULTIPLE_TRACKS,
+    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST,
     .callback2 = action_remove_from_playlist_handler,
     .next = &action_crop_selected
 };
@@ -1950,8 +1957,8 @@ static const char settings_dlg[] =
 
 // define plugin interface
 static ddb_gtkui_t plugin = {
-    .gui.plugin.api_vmajor = 1,
-    .gui.plugin.api_vminor = 6,
+    .gui.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .gui.plugin.api_vminor = DB_API_VERSION_MINOR,
     .gui.plugin.version_major = DDB_GTKUI_API_VERSION_MAJOR,
     .gui.plugin.version_minor = DDB_GTKUI_API_VERSION_MINOR,
     .gui.plugin.type = DB_PLUGIN_GUI,

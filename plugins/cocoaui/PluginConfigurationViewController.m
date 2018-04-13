@@ -272,6 +272,7 @@ extern DB_functions_t *deadbeef;
             }
         }
     }
+    deadbeef->streamer_set_dsp_chain (_curr_dsp);
 }
 
 - (void)resetPluginConfigToDefaults {

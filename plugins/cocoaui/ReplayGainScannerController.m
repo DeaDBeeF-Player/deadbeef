@@ -205,6 +205,8 @@ static NSMutableArray *g_rgControllers;
                 [_updateTagsProgressIndicator setDoubleValue:(double)i/_rg_settings.num_tracks*100];
             });
         }
+        // FIXME: the tracks in the list might be from other playlist(s)
+        deadbeef->pl_save_current();
         deadbeef->background_job_decrement ();
         dispatch_async(dispatch_get_main_queue(), ^{
             [_updateTagsProgressWindow close];
@@ -312,6 +314,7 @@ static NSMutableArray *g_rgControllers;
                 _rg->apply (_rg_settings.tracks[i], flags, _rg_settings.results[i].track_gain, _rg_settings.results[i].track_peak, _rg_settings.results[i].album_gain, _rg_settings.results[i].album_peak);
             }
         }
+        deadbeef->pl_save_all ();
 
         dispatch_async(dispatch_get_main_queue(), ^{
             [NSApp endSheet:_updateTagsProgressWindow];

@@ -248,6 +248,8 @@ _update_tags (void *ctx) {
         }
     }
 
+    deadbeef->pl_save_all ();
+
     g_idle_add (_ctl_dismiss_cb, ctl);
 }
 
@@ -636,6 +638,8 @@ _remove_rg_tags (void *ctx) {
 
         g_idle_add (_setUpdateProgress, dt);
     }
+    // FIXME: the tracks in the list might be from other playlist(s)
+    deadbeef->pl_save_current ();
     deadbeef->background_job_decrement ();
 
     g_idle_add (_ctl_dismiss_cb, ctl);

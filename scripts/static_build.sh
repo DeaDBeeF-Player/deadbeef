@@ -58,7 +58,10 @@ make clean
 make -j8 DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION || exit 1
 make DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION install || exit 1
 
-echo "building pluginfo tool..."
-cd tools/pluginfo
-make || exit 1
-cd ../../
+MACHINE_TYPE=`uname -m`
+if [ ${MACHINE_TYPE} == 'x86_64' ]; then
+    echo "building pluginfo tool..."
+    cd tools/pluginfo
+    make || exit 1
+    cd ../../
+fi

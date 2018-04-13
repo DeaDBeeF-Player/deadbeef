@@ -120,7 +120,6 @@ static int no_remove_notify;
 static playlist_t *addfiles_playlist; // current playlist for adding files/folders; set in pl_add_files_begin
 
 int conf_cue_prefer_embedded = 0;
-int conf_cue_subindexes_as_tracks = 0;
 
 typedef struct ddb_fileadd_listener_s {
     int id;
@@ -1161,7 +1160,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
 
     for (int i = 0; i < n; i++) {
         // no hidden files
-        if (namelist[i]->d_name[0] == '.' || namelist[i]->d_type != DT_REG) {
+        if (namelist[i]->d_name[0] == '.' || (namelist[i]->d_type != DT_REG && namelist[i]->d_type != DT_UNKNOWN)) {
             continue;
         }
 
@@ -1191,7 +1190,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
     }
 
     // load the rest of the files
-    if (!*pabort) {
+    if (!pabort || !*pabort) {
         for (int i = 0; i < n; i++)
         {
             // no hidden files
@@ -1211,7 +1210,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
                 after = inserted;
             }
 
-            if (*pabort) {
+            if (pabort && *pabort) {
                 break;
             }
         }
@@ -1515,8 +1514,8 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
 void
 pl_item_copy (playItem_t *out, playItem_t *it) {
     LOCK;
-    out->startsample32 = it->startsample32;
-    out->endsample32 = it->endsample32;
+    out->startsample = it->startsample;
+    out->endsample = it->endsample;
     out->startsample64 = it->startsample64;
     out->endsample64 = it->endsample64;
     out->shufflerating = it->shufflerating;
@@ -1725,10 +1724,10 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
             goto save_fail;
         }
 #endif
-        if (fwrite (&it->startsample32, 1, 4, fp) != 4) {
+        if (fwrite (&it->startsample, 1, 4, fp) != 4) {
             goto save_fail;
         }
-        if (fwrite (&it->endsample32, 1, 4, fp) != 4) {
+        if (fwrite (&it->endsample, 1, 4, fp) != 4) {
             goto save_fail;
         }
         if (fwrite (&it->_duration, 1, 4, fp) != 4) {
@@ -2032,11 +2031,11 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
             pl_set_meta_int (it, ":TRACKNUM", tracknum);
         }
         // startsample
-        if (fread (&it->startsample32, 1, 4, fp) != 4) {
+        if (fread (&it->startsample, 1, 4, fp) != 4) {
             goto load_fail;
         }
         // endsample
-        if (fread (&it->endsample32, 1, 4, fp) != 4) {
+        if (fread (&it->endsample, 1, 4, fp) != 4) {
             goto load_fail;
         }
         // duration
@@ -3788,13 +3787,12 @@ plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t to
 void
 pl_configchanged (void) {
     conf_cue_prefer_embedded = conf_get_int ("cue.prefer_embedded", 0);
-    conf_cue_subindexes_as_tracks = conf_get_int ("cue.subindexes_as_tracks", 0);
 }
 
 int64_t
 pl_item_get_startsample (playItem_t *it) {
     if (!it->has_startsample64) {
-        return it->startsample32;
+        return it->startsample;
     }
     return it->startsample64;
 }
@@ -3802,7 +3800,7 @@ pl_item_get_startsample (playItem_t *it) {
 int64_t
 pl_item_get_endsample (playItem_t *it) {
     if (!it->has_endsample64) {
-        return it->endsample32;
+        return it->endsample;
     }
     return it->endsample64;
 }
@@ -3810,7 +3808,7 @@ pl_item_get_endsample (playItem_t *it) {
 void
 pl_item_set_startsample (playItem_t *it, int64_t sample) {
     it->startsample64 = sample;
-    it->startsample32 = sample >= 0x7fffffff ? 0x7fffffff : (int32_t)sample;
+    it->startsample = sample >= 0x7fffffff ? 0x7fffffff : (int32_t)sample;
     it->has_startsample64 = 1;
     pl_set_meta_int64 (it, ":STARTSAMPLE", sample);
 }
@@ -3818,7 +3816,12 @@ pl_item_set_startsample (playItem_t *it, int64_t sample) {
 void
 pl_item_set_endsample (playItem_t *it, int64_t sample) {
     it->endsample64 = sample;
-    it->endsample32 = sample >= 0x7fffffff ? 0x7fffffff : (int32_t)sample;
+    it->endsample = sample >= 0x7fffffff ? 0x7fffffff : (int32_t)sample;
     it->has_endsample64 = 1;
     pl_set_meta_int64 (it, ":ENDSAMPLE", sample);
+}
+
+int
+plt_is_loading_cue (playlist_t *plt) {
+    return plt->loading_cue;
 }

@@ -287,7 +287,7 @@
 			<widget class="GtkEntry" id="output_file">
 			  <property name="visible">True</property>
 			  <property name="tooltip" translatable="yes">Extension (e.g. .mp3) will be appended automatically.
-Leave the field empty for default (%artist% - %title%).</property>
+Leave the field empty for default ([%tracknumber%. ][%artist% - ]%title%).</property>
 			  <property name="can_focus">True</property>
 			  <property name="editable">True</property>
 			  <property name="visibility">True</property>

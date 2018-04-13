@@ -1392,5 +1392,22 @@ on_listview_group_spacing_value_changed
                                         gpointer         user_data);
 
 void
-on_cue_subindexes_as_tracks_toggled            (GtkToggleButton *togglebutton,
+on_comboboxentry_direct_sr_changed     (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_comboboxentry_sr_mult_48_changed    (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_comboboxentry_sr_mult_44_changed    (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_checkbutton_sr_override_toggled     (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+
+void
+on_checkbutton_dependent_sr_toggled    (GtkToggleButton *togglebutton,
                                         gpointer         user_data);

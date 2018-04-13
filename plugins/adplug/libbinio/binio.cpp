@@ -143,6 +143,11 @@ binistream::Int binistream::readInt(unsigned int size)
   return val;
 }
 
+void binistream::readBuf(char *buf, int size) {
+    getBuf (buf, size);
+}
+
+
 binistream::Float binistream::readFloat(FType ft)
 {
   if(getFlag(FloatIEEE)) {	// Read IEEE-754 floating-point value

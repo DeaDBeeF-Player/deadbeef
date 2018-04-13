@@ -619,10 +619,9 @@ int grouptitleheight = 22;
 
                 if (it == cursor_it) {
                     [[NSGraphicsContext currentContext] saveGraphicsState];
-                    [NSBezierPath setDefaultLineWidth:2.f];
+                    NSRect rect = NSMakeRect(_frame.origin.x+0.5, yy+0.5, _frame.size.width-1, rowheight-1);
+                    [NSBezierPath setDefaultLineWidth:1.f];
                     [[NSColor textColor] set];
-                    NSRect rect = NSMakeRect(dirtyRect.origin.x, yy, dirtyRect.size.width, rowheight-1);
-                    [NSBezierPath clipRect:rect];
                     [NSBezierPath strokeRect:rect];
                     [[NSGraphicsContext currentContext] restoreGraphicsState];
                 }

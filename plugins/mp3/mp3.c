@@ -45,6 +45,8 @@
 FILE *out;
 #endif
 
+#define MAX_INVALID_BYTES 100000
+
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
@@ -485,6 +487,9 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                 valid_frames = 0;
             }
             offs++;
+            if (offs - buffer->startoffset > MAX_INVALID_BYTES) {
+                break;
+            }
             continue;
         }
         // end of file?
@@ -507,7 +512,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 
         valid_frames++;
 
-        trace ("valid: %d, sr: %d, ch: %d\n", valid_frames, frame.samplerate, frame.nchannels);
+        trace ("nframe: %d, valid: %d, sr: %d, ch: %d\n", nframe, valid_frames, frame.samplerate, frame.nchannels);
 
 // {{{ update stream parameters, only when sample!=0 or 1st frame
         if (sample != 0 || nframe == 0)
@@ -1309,8 +1314,7 @@ static const char settings_dlg[] =
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 10, // requires API level 10 for logger and replaygain support
+    DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,

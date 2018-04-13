@@ -1073,7 +1073,7 @@ static DB_plugin_action_t action_add_to_playqueue = {
 static DB_plugin_action_t action_toggle_in_playqueue = {
     .title = "Playback/Toggle In Playback Queue",
     .name = "toggle_in_playback_queue",
-    .flags = DB_ACTION_MULTIPLE_TRACKS,
+    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST,
     .callback2 = action_toggle_in_playqueue_handler,
     .next = &action_add_to_playqueue
 };
@@ -1081,7 +1081,7 @@ static DB_plugin_action_t action_toggle_in_playqueue = {
 static DB_plugin_action_t action_move_tracks_down = {
     .title = "Move/Move Tracks Down",
     .name = "move_tracks_down",
-    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_NOT_FOR_PLAYLIST,
+    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST,
     .callback2 = action_move_tracks_down_handler,
     .next = &action_toggle_in_playqueue
 };
@@ -1089,7 +1089,7 @@ static DB_plugin_action_t action_move_tracks_down = {
 static DB_plugin_action_t action_move_tracks_up = {
     .title = "Move/Move Tracks Up",
     .name = "move_tracks_up",
-    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_NOT_FOR_PLAYLIST,
+    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST,
     .callback2 = action_move_tracks_up_handler,
     .next = &action_move_tracks_down
 };
@@ -1263,8 +1263,8 @@ hotkeys_get_actions (DB_playItem_t *it)
 
 // define plugin interface
 static DB_hotkeys_plugin_t plugin = {
-    .misc.plugin.api_vmajor = 1,
-    .misc.plugin.api_vminor = 5,
+    .misc.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .misc.plugin.api_vminor = DB_API_VERSION_MINOR,
     .misc.plugin.version_major = 1,
     .misc.plugin.version_minor = 1,
     .misc.plugin.type = DB_PLUGIN_MISC,
