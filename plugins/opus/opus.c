@@ -301,7 +301,7 @@ opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             deadbeef->pl_item_set_endsample (it, -1);
         }
         else {
-            deadbeef->pl_item_set_endsample (it, op_pcm_total (info->opusfile, -1));
+            deadbeef->pl_item_set_endsample (it, op_pcm_total (info->opusfile, -1) - 1);
         }
 
         if (update_vorbis_comments (it, info->opusfile, -1))
