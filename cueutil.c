@@ -488,6 +488,12 @@ _file_present_in_namelist (const char *fullpath, cueparser_t *cue) {
                 // file present
                 break;
             }
+            // poor's man vfs detection -- directory ends with ':'
+            snprintf (path, sizeof (path), "%s%s", cue->dirname, cue->namelist[i]->d_name);
+            if (!strcmp (path, cue->fullpath)) {
+                // file present
+                break;
+            }
         }
     }
     if (i == cue->n) {
