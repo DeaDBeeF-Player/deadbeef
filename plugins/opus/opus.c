@@ -296,9 +296,9 @@ opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     op_set_gain_offset (info->opusfile, OP_ABSOLUTE_GAIN, 0);
 
     if (info->file->vfs->is_streaming ()) {
-        deadbeef->pl_item_set_startsample (info->it, 0);
+        deadbeef->pl_item_set_startsample (it, 0);
         if (deadbeef->pl_get_item_duration (it) < 0) {
-            deadbeef->pl_item_set_endsample (info->it, -1);
+            deadbeef->pl_item_set_endsample (it, -1);
         }
         else {
             deadbeef->pl_item_set_endsample (it, op_pcm_total (info->opusfile, -1));
