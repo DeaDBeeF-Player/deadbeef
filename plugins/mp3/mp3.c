@@ -826,11 +826,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("mp3: skipping %d(%xH) bytes of junk\n", start, start);
             deadbeef->fseek (info->buffer.file, start, SEEK_SET);
         }
-#if 0
-        deadbeef->conf_get_int ("mp3.disable_gapless", 0) ? 0 : -1;
-#endif
-        int scan_mode = -1;
-        int res = cmp3_scan_stream (&info->buffer, scan_mode);
+        int res = cmp3_scan_stream (&info->buffer, -1);
         if (res < 0) {
             trace ("mp3: cmp3_init: initial cmp3_scan_stream failed\n");
             return -1;
@@ -1205,7 +1201,7 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         deadbeef->fseek(buffer.file, start, SEEK_SET);
     }
     // calc approx. mp3 duration 
-    int res = cmp3_scan_stream (&buffer, 0);
+    int res = cmp3_scan_stream (&buffer, -1);
     if (res < 0) {
         trace ("mp3: cmp3_scan_stream returned error\n");
         deadbeef->fclose (fp);
@@ -1306,7 +1302,6 @@ static const char *exts[] = {
 
 static const char settings_dlg[] =
     "property \"Force 16 bit output\" checkbox mp3.force16bit 0;\n"
-//    "property \"Disable gapless playback (faster scanning)\" checkbox mp3.disable_gapless 0;\n"
 #if defined(USE_LIBMAD) && defined(USE_LIBMPG123)
     "property \"Backend\" select[2] mp3.backend 0 mpg123 mad;\n"
 #endif
