@@ -37,8 +37,6 @@ static DB_functions_t *deadbeef;
 
 typedef struct {
     DB_fileinfo_t info;
-    int64_t startsample;
-    int64_t endsample;
     int64_t currentsample;
 
     DB_FILE *file;
@@ -238,7 +236,7 @@ opusdec_seek_sample (DB_fileinfo_t *_info, int sample) {
     if (!info->file) {
         return -1;
     }
-    int64_t startsample = info->startsample;
+    int64_t startsample = deadbeef->pl_item_get_startsample (info->it);
     sample += startsample;
     int res = op_pcm_seek (info->opusfile, sample);
     if (res != 0 && res != OP_ENOSEEK) {
@@ -298,8 +296,13 @@ opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     op_set_gain_offset (info->opusfile, OP_ABSOLUTE_GAIN, 0);
 
     if (info->file->vfs->is_streaming ()) {
-        info->startsample = deadbeef->pl_item_get_startsample (it);
-        info->endsample = deadbeef->pl_item_get_endsample (it);
+        deadbeef->pl_item_set_startsample (info->it, 0);
+        if (deadbeef->pl_get_item_duration (it) < 0) {
+            deadbeef->pl_item_set_endsample (info->it, -1);
+        }
+        else {
+            deadbeef->pl_item_set_endsample (it, op_pcm_total (info->opusfile, -1));
+        }
 
         if (update_vorbis_comments (it, info->opusfile, -1))
             return -1;
@@ -307,8 +310,6 @@ opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         deadbeef->pl_set_meta_int(it, ":TRACKNUM", 0);
     }
     else {
-        info->startsample = 0;
-        info->endsample = -1;
         opusdec_seek_sample (_info, 0);
     }
 
@@ -398,7 +399,7 @@ opusdec_read (DB_fileinfo_t *_info, char *bytes, int size) {
     // Don't read past the end of a sub-track
     int samples_to_read = size / sizeof(float) / _info->fmt.channels;
     if (info->is_subtrack) {
-        opus_int64 samples_left = info->endsample - op_pcm_tell (info->opusfile);
+        opus_int64 samples_left = deadbeef->pl_item_get_endsample (info->it) - op_pcm_tell (info->opusfile);
         if (samples_left < size) {
             samples_to_read = (int)samples_left;
             size = samples_to_read * sizeof(float) * _info->fmt.channels;
@@ -458,7 +459,7 @@ opusdec_read (DB_fileinfo_t *_info, char *bytes, int size) {
     bytes_read = samples_read * sizeof(float) * _info->fmt.channels;
 #endif
 
-    int64_t startsample = info->startsample;
+    int64_t startsample = deadbeef->pl_item_get_startsample (info->it);
     _info->readpos = (float)(op_pcm_tell(info->opusfile) - startsample) / _info->fmt.samplerate;
     if (info->set_bitrate && _info->readpos > info->next_update) {
         const int rate = (int)op_bitrate_instant(info->opusfile) / 1000;
