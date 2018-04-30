@@ -962,6 +962,16 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
     }
     eol++;
 
+    // WINDOWS FIX: gtkui will call this function with file path starting with '/' (possibly indicating 'root' directory)
+    // example: "file:///E:/test.flac" -> "/E:/test.flac"
+    // in comparsion to linux systems, decoders on windows don't like this string starting with '/'
+    // we remove it here and hopefully we do not break anything
+    #ifdef __MINGW32__
+    if (fname[0] == '/') {
+        fname++;
+    }
+    #endif
+
     // handle cue files
     if (!strcasecmp (eol, "cue")) {
         playItem_t *inserted = plt_load_cue_file(playlist, after, fname, NULL, NULL, 0);
@@ -1120,6 +1130,16 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
     if (!strncmp (dirname, "file://", 7)) {
         dirname += 7;
     }
+
+    // WINDOWS FIX: gtkui will call this function with file path starting with '/' (possibly indicating 'root' directory)
+    // example: "file:///E:/test.flac" -> "/E:/test.flac"
+    // in comparsion to linux systems, decoders on windows don't like this string starting with '/'
+    // we remove it here and hopefully we do not break anything
+    #ifdef __MINGW32__
+    if (dirname[0] == '/') {
+        dirname++;
+    }
+    #endif
 
     if (!playlist->follow_symlinks && !vfs) {
         struct stat buf;
