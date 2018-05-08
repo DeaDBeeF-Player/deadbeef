@@ -81,7 +81,7 @@ const int8_t XSID::sampleConvertTable[16] =
     '\x08', '\x19', '\x2a', '\x3b', '\x4c', '\x5d', '\x6e', '\x7f'
 };
 */
-const int8_t XSID::sampleConvertTable[16] =
+const char XSID::sampleConvertTable[16] =
 {
     '\x80', '\x94', '\xa9', '\xbc', '\xce', '\xe1', '\xf2', '\x03',
     '\x1b', '\x2a', '\x3b', '\x49', '\x58', '\x66', '\x73', '\x7f'
