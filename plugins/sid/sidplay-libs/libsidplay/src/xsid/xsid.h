@@ -234,7 +234,7 @@ private:
     uint8_t             sidData0x18;
     bool                _sidSamples;
     int8_t              sampleOffset;
-    static const int8_t sampleConvertTable[16];
+    static const char   sampleConvertTable[16];
     bool                wasRunning;
 
 private:
