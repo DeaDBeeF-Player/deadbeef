@@ -83,8 +83,8 @@ const int8_t XSID::sampleConvertTable[16] =
 */
 const int8_t XSID::sampleConvertTable[16] =
 {
-    '\x80', '\x94', '\xa9', '\xbc', '\xce', '\xe1', '\xf2', '\x03',
-    '\x1b', '\x2a', '\x3b', '\x49', '\x58', '\x66', '\x73', '\x7f'
+    -128, -108, -87, -68, -50, -31, -14,
+    3, 27, 42, 59, 73, 88, 102, 115, 127
 };
 
 const char *XSID::credit =
