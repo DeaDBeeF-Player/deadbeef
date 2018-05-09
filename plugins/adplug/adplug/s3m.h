@@ -92,7 +92,7 @@ class Cs3mPlayer: public CPlayer
   char filetype[30];
 
  private:
-  static const char chnresolv[];
+  static const int8_t chnresolv[];
   static const unsigned short notetable[12];
   static const unsigned char vibratotab[32];
 
