@@ -23,6 +23,7 @@
 #define H_ADPLUG_S3M
 
 #include "player.h"
+#include <stdint.h>
 
 class Cs3mPlayer: public CPlayer
 {
