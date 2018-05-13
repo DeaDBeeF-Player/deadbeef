@@ -128,6 +128,8 @@ struct uData {
     unsigned char terminate;
     // size of the frame
     int framesize;
+    // buffer size
+    unsigned long buffer_size;
 };
 
 unsigned char num_assign = 0;
@@ -140,8 +142,16 @@ portaudio_stream_start (void) {
     deadbeef->mutex_lock (mutex);
 
     // Use default device if none selected
-    if (stream_parameters.device == -1) {
-        stream_parameters.device = Pa_GetDefaultOutputDevice ();
+    {
+        deadbeef->conf_lock ();
+        const char * alsa_soundcard_string = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
+        deadbeef->conf_unlock ();
+        if (strcmp(alsa_soundcard_string, "default") == 0) {
+            stream_parameters.device = Pa_GetDefaultOutputDevice ();
+        }
+        else {
+            stream_parameters.device = deadbeef->conf_get_int ("alsa_soundcard", -1);
+        }
     }
     static struct uData * uData;
     uData = calloc(1,sizeof(struct uData));
@@ -150,23 +160,22 @@ portaudio_stream_start (void) {
 
     // Using paFramesPerBufferUnspecified with alsa gives warnings about underrun
     int buffer_size_config = deadbeef->conf_get_int ("portaudio.buffer", DEFAULT_BUFFER_SIZE);
-    unsigned long buffer_size;
     if (buffer_size_config == -1)
-        buffer_size = paFramesPerBufferUnspecified;
+        uData->buffer_size = paFramesPerBufferUnspecified;
     else
-        buffer_size = buffer_size_config;
+        uData->buffer_size = buffer_size_config;
 
-    trace ("portaudio_stream_start [%d]: buffer size %lu\n", uData->num, buffer_size);
+    trace ("portaudio_stream_start [%d]: buffer size %lu\n", uData->num, uData->buffer_size);
     /* Open an audio I/O stream. */
     PaError err;
     err = Pa_OpenStream (       &stream,                        // stream pointer
                                 NULL,                           // inputParameters
                                 &stream_parameters,             // outputParameters
                                 plugin.fmt.samplerate,          // sampleRate
-                                buffer_size,                    // framesPerBuffer
+                                uData->buffer_size,             // framesPerBuffer
                                 paNoFlag,                       // flags
                                 portaudio_callback,             // callback
-                                uData);                      // userData 
+                                uData);                         // userData
 
     if (err != paNoError) {
         trace("Failed to open stream. %s\n", Pa_GetErrorText(err));
@@ -316,6 +325,7 @@ portaudio_free (void) {
         if (err != paNoError) {
             trace ("Failed to abort stream. %s\n", Pa_GetErrorText(err));
         }
+        trace ("portaudio_free: closing stream No. %d\n", userData->num);
         err = Pa_CloseStream (stream);
         stream = 0;
         if (err != paNoError) {
@@ -413,73 +423,83 @@ static int portaudio_get_endiannerequested_fmt (void) {
 #endif
 }
 
-// derived from alsa plugin
-// derived from alsa-utils/aplay.c
-/*static void
-palsa_enum_soundcards (void (*callback)(const char *name, const char *desc, void *), void *userdata) {
-    void **hints, **n;
-    char *name, *descr, *io;
-    const char *filter = "Output";
-    if (snd_device_name_hint(-1, "pcm", &hints) < 0)
-        return;
-    n = hints;
-    while (*n != NULL) {
-        name = snd_device_name_get_hint(*n, "NAME");
-        descr = snd_device_name_get_hint(*n, "DESC");
-        io = snd_device_name_get_hint(*n, "IOID");
-        if (io == NULL || !strcmp(io, filter)) {
-            if (name && descr && callback) {
-                callback (name, descr, userdata);
-            }
+static int
+portaudio_configchanged (void) {
+    int alsa_soundcard = 0;
+    {
+        deadbeef->conf_lock ();
+        const char * alsa_soundcard_string = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
+        deadbeef->conf_unlock ();
+        if (strcmp(alsa_soundcard_string, "default") == 0) {
+            alsa_soundcard = Pa_GetDefaultOutputDevice ();
         }
-        if (name != NULL)
-            free(name);
-        if (descr != NULL)
-            free(descr);
-        if (io != NULL)
-            free(io);
-        n++;
+        else {
+            alsa_soundcard = deadbeef->conf_get_int ("alsa_soundcard", -1);
+        }
     }
-    snd_device_name_free_hint(hints);
-}*/
+    int buffer = deadbeef->conf_get_int ("portaudio.buffer", DEFAULT_BUFFER_SIZE);
+    if (stream && Pa_IsStreamActive (stream) && alsa_soundcard != stream_parameters.device || userData && userData->buffer_size != buffer) {
+        trace ("portaudio: config option changed, restarting\n");
+        deadbeef->sendmessage (DB_EV_REINIT_SOUND, 0, 0, 0);
+    }
+    deadbeef->conf_unlock ();
+    return 0;
+}
 
 static void portaudio_enum_soundcards (void (*callback)(const char *name, const char *desc, void*), void *userdata) {
     PaDeviceIndex  device_count = Pa_GetDeviceCount ();
     if (!device_count)
-        trace("no devices found?\n");
+        warn ("portaudio: no devices found?\n");
 
     PaDeviceIndex i = 0;
     trace ("portaudio_enum_soundcards have %d devices\n",device_count);
     for (i=0;i<device_count;i++) {
         const PaDeviceInfo* device = Pa_GetDeviceInfo (i);
         if (!device) {
-            trace ("reading device info failed\n");
+            warn ("portaudio: reading device info failed\n");
+        }
+        if (device->maxOutputChannels < 1) {
+            continue;
         }
         
-        //char * name_charset = deadbeef->junk_detect_charset (device->name);
-        const char *name_converted = device->name;
+        char *name_converted = (char *) device->name;
 
         // Convert to UTF-8 on windows
         #ifdef __MINGW32__
-        /*
-        if (name_charset != NULL) {
-            trace ( "name using %s charset, converting\n",name_charset);
-            name_converted = malloc (strlen(device->name) * 4);
-            if (name_converted) {
-                deadbeef->junk_iconv (device->name, strlen(device->name), name_converted, strlen(device->name)*4, "cp1250", "UTF-8");
-            }
+        char * charset = 0;
+        int devenc_list = deadbeef->conf_get_int ("portaudio.devenc_list", 0);
+        if (devenc_list == 0) {
+            continue;
         }
-        */
-        wchar_t wideName[255];
-        int err = 0;
-        err = MultiByteToWideChar(CP_UTF8, 0, device->name, -1, wideName, 255);
-        char convName[255];
-        sprintf (&convName,"%ws", wideName);
-        name_converted = convName;
+        else if (devenc_list == 1)
+            charset = "cp1250";
+        else if (devenc_list == 2) {
+            charset = malloc (255);
+            if (!charset)
+                continue;
+            deadbeef->conf_get_str ("portaudio.devenc_custom", "", charset, 255);
+        }
+
+        if (i == 0)
+            trace ("portaudio: converting device names from charset %s\n", charset);
+        char conv[strlen(device->name) * 4];
+        name_converted = conv;
+        deadbeef->junk_iconv (device->name, strlen(device->name), name_converted, strlen(device->name)*4, charset, "UTF-8");
+        if (devenc_list == 2) {
+            free (charset);
+        }
         #endif
-        if (device->name && callback)
-            callback ("test",name_converted, userdata);
-        trace ("device: %s\n",name_converted);
+
+        const PaHostApiInfo * api_info = Pa_GetHostApiInfo(device->hostApi);
+        char full_name[255];
+        snprintf (full_name, 255, "%s: %s", api_info->name, name_converted);
+
+        if (device->name && callback) {
+            char num[8];
+            snprintf (num, 8, "%d", i);
+            callback (num, full_name, userdata);
+        }
+        // trace ("device: %s\n",name_converted);
     }
 
 }
@@ -536,8 +556,22 @@ portaudio_get_state (void) {
     return state;
 }
 
+static int
+portaudio_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_CONFIGCHANGED:
+        portaudio_configchanged ();
+        break;
+    }
+    return 0;
+}
+
 static const char settings_dlg[] =
     "property \"Buffer size (-1 to use optimal value choosen by portaudio)\" entry portaudio.buffer " DEFAULT_BUFFER_SIZE_STR ";\n"
+#ifdef __MINGW32__
+    "property \"Device name encoding\" select[3] portaudio.devenc_list 0 ASCII cp1250 \"Defined below\";\n"
+    "property \"Custom device name encoding\" entry portaudio.devenc_custom \"\";\n"
+#endif
 ;
 
 static int
@@ -575,12 +609,16 @@ static DB_output_t plugin = {
     .plugin.api_vmajor = 1,
     .plugin.api_vminor = 10,
     .plugin.version_major = 1,
-    .plugin.version_minor = 2,
+    .plugin.version_minor = 3,
     .plugin.type = DB_PLUGIN_OUTPUT,
     .plugin.id = "portaudio",
     .plugin.name = "PortAudio output plugin",
     .plugin.descr = "This plugin plays audio using PortAudio library.\n"
     "\n"
+    "Changes in version 1.3:\n"
+    "    * Manual charset selection for device names on Windows.\n"
+    "    * Changing device will change output device.\n"
+    "    * Changing buffer size in settings will reset stream.\n\n"
     "Changes in version 1.1:\n"
     "    * Better format handling, less possibility of playing static",
     .plugin.copyright =
@@ -609,6 +647,7 @@ static DB_output_t plugin = {
     .plugin.start = p_portaudio_start,
     .plugin.stop = p_portaudio_stop,
     .plugin.configdialog = settings_dlg,
+    .plugin.message = portaudio_message,
     .init = portaudio_init,
     .free = portaudio_free,
     .setformat = portaudio_setformat,
