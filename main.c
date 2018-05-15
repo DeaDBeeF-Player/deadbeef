@@ -1077,11 +1077,11 @@ main (int argc, char *argv[]) {
         }
     }
 
-    trace ("installdir: %s\n", dbinstalldir);
-    trace ("confdir: %s\n", confdir);
-    trace ("docdir: %s\n", dbdocdir);
-    trace ("plugindir: %s\n", dbplugindir);
-    trace ("pixmapdir: %s\n", dbpixmapdir);
+//    trace ("installdir: %s\n", dbinstalldir);
+//    trace ("confdir: %s\n", confdir);
+//    trace ("docdir: %s\n", dbdocdir);
+//    trace ("plugindir: %s\n", dbplugindir);
+//    trace ("pixmapdir: %s\n", dbpixmapdir);
 
     mkdir (dbconfdir, 0755);
 
