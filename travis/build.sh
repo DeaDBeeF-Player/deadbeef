@@ -11,7 +11,8 @@ case "$TRAVIS_OS_NAME" in
         fi
         echo "installing the needed build dependencies..."
         sudo apt-get update 1> /dev/null 2> /dev/null || exit 1
-        sudo apt-get install -qq autopoint automake autoconf intltool libc6-dev-i386 libc6-dev yasm libglib2.0-bin libx11-dev || exit 1
+        # if i686 deps are needed: gcc-multilib
+        sudo apt-get install -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-bin || exit 1
 #        echo "building for i686"
 #        ARCH=i686 ./scripts/static_build.sh || exit 1
 #        ARCH=i686 ./scripts/portable_package_static.sh || exit 1
