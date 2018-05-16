@@ -63,6 +63,11 @@ opus_file_read(void *source, unsigned char *ptr, const int bytes) {
 
 static int
 opus_file_seek(void *source, const opus_int64 offset, const int whence) {
+    int is_streaming = ((DB_FILE *)source)->vfs->is_streaming();
+    if (is_streaming) {
+        return -1;
+    }
+
     return ((DB_FILE *)source)->vfs->seek(source, offset, whence);
 }
 
@@ -76,26 +81,23 @@ opus_file_close (void *source) {
     return 0;
 }
 
+static OpusFileCallbacks opcb = {
+    .read = opus_file_read,
+    .seek = opus_file_seek,
+    .tell = opus_file_tell,
+    .close = opus_file_close
+};
+
 static OggOpusFile *
 opus_file_open(DB_FILE *fp)
 {
-    int is_streaming = fp->vfs->is_streaming();
-    const OpusFileCallbacks opcb = {
-        .read = opus_file_read,
-        .seek = is_streaming ? NULL : opus_file_seek,
-        .tell = is_streaming ? NULL : opus_file_tell,
-        .close = opus_file_close
-    };
-
     int res = 0;
-
     return op_open_callbacks(fp, &opcb, NULL, 0, &res);
 }
 
 static DB_fileinfo_t *
 opusdec_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (opusdec_info_t));
-    memset (_info, 0, sizeof (opusdec_info_t));
+    DB_fileinfo_t *_info = calloc (sizeof (opusdec_info_t), 1);
     return _info;
 }
 
@@ -109,15 +111,13 @@ opusdec_open2 (uint32_t hints, DB_playItem_t *it) {
         return NULL;
     }
 
-    DB_fileinfo_t *_info = malloc (sizeof (opusdec_info_t));
-    opusdec_info_t *info = (opusdec_info_t *)_info;
-    memset (info, 0, sizeof (opusdec_info_t));
+    opusdec_info_t *info = calloc (sizeof (opusdec_info_t), 1);
 
     info->file = fp;
     info->it = it;
     deadbeef->pl_item_ref (it);
 
-    return _info;
+    return &info->info;
 }
 
 static const char *tag_rg_names[] = {
@@ -237,12 +237,13 @@ opusdec_seek_sample (DB_fileinfo_t *_info, int sample) {
         return -1;
     }
     int64_t startsample = deadbeef->pl_item_get_startsample (info->it);
-    sample += startsample;
-    int res = op_pcm_seek (info->opusfile, sample);
+
+    int res = op_pcm_seek (info->opusfile, sample + startsample);
     if (res != 0 && res != OP_ENOSEEK) {
         return -1;
     }
-    _info->readpos = (float)(sample - startsample)/_info->fmt.samplerate;
+    info->currentsample = sample;
+    _info->readpos = (float)sample/_info->fmt.samplerate;
     info->next_update = -2;
     return 0;
 }
@@ -400,7 +401,7 @@ opusdec_read (DB_fileinfo_t *_info, char *bytes, int size) {
     int samples_to_read = size / sizeof(float) / _info->fmt.channels;
     if (info->is_subtrack) {
         opus_int64 samples_left = deadbeef->pl_item_get_endsample (info->it) - op_pcm_tell (info->opusfile);
-        if (samples_left < size) {
+        if (samples_left < samples_to_read) {
             samples_to_read = (int)samples_left;
             size = samples_to_read * sizeof(float) * _info->fmt.channels;
         }
@@ -410,27 +411,6 @@ opusdec_read (DB_fileinfo_t *_info, char *bytes, int size) {
     int bytes_read = 0;
     int ret = OP_HOLE;
 
-#if FIXED_POINT
-#error unsupported
-    char map_buffer[info->channel_map ? bytes_to_read : 0];
-    char *ptr = info->channel_map ? map_buffer : buffer;
-    while ((ret > 0 || ret == OP_HOLE) && bytes_read < bytes_to_read)
-    {
-        int new_link = -1;
-        ret=op_read(info->opusfile, ptr+bytes_read, bytes_to_read-bytes_read, &new_link);
-        if (ret < 0) {
-        }
-        else if (new_link != info->cur_bit_stream && !op_seekable(info->opusfile) && new_streaming_link(info, new_link)) {
-            bytes_read = bytes_to_read;
-        }
-        else {
-            bytes_read += ret;
-        }
-    }
-
-    if (info->channel_map)
-        map_channels((int16_t *)buffer, (int16_t *)map_buffer, (int16_t *)ptr, info->channel_map, _info->fmt.channels);
-#else
     int samples_read = 0;
     while (samples_read < samples_to_read && (ret > 0 || ret == OP_HOLE))
     {
@@ -457,7 +437,8 @@ opusdec_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
     }
     bytes_read = samples_read * sizeof(float) * _info->fmt.channels;
-#endif
+    info->currentsample += bytes_read / (sizeof (float) * _info->fmt.channels);
+
 
     int64_t startsample = deadbeef->pl_item_get_startsample (info->it);
     _info->readpos = (float)(op_pcm_tell(info->opusfile) - startsample) / _info->fmt.samplerate;
