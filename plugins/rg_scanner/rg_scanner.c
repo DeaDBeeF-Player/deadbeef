@@ -340,6 +340,7 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
         char album[1000];
 
         ddb_tf_context_t ctx;
+        memset (&ctx, 0, sizeof (ctx));
 
         ctx._size = sizeof (ctx);
         ctx.plt = NULL;
