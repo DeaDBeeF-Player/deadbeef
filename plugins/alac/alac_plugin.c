@@ -127,7 +127,7 @@ mp4_fs_seek (void *user_data, uint64_t position) {
 }
 
 static int
-mp4_track_get_info (mp4ff_t *mp4, int track, float *duration, int *samplerate, int *channels, int *bps, int64_t *totalsamples, int *mp4framesize) {
+mp4_track_get_info (mp4ff_t *mp4, int track, int samplerate, float *duration, int *channels, int64_t *totalsamples, int *mp4framesize) {
     unsigned char*  buff = 0;
     unsigned int    buff_size = 0;
     int samples = 0;
@@ -142,9 +142,7 @@ mp4_track_get_info (mp4ff_t *mp4, int track, float *duration, int *samplerate, i
     alac_file *alac = create_alac (mp4->track[track]->sampleSize, mp4->track[track]->channelCount);
     alac_set_info (alac, (char *)buff);
 
-    *samplerate = mp4->track[track]->sampleRate;
     *channels = mp4->track[track]->channelCount;
-    *bps = mp4->track[track]->sampleSize;
 
     samples = mp4ff_num_samples(mp4, track);
 
@@ -161,7 +159,7 @@ mp4_track_get_info (mp4ff_t *mp4, int track, float *duration, int *samplerate, i
         total_dur += mp4ff_get_sample_duration (mp4, track, i_sample);
     }
     if (totalsamples) {
-        *totalsamples = total_dur * (*samplerate) / mp4ff_time_scale (mp4, track);
+        *totalsamples = total_dur * samplerate / mp4ff_time_scale (mp4, track);
         *mp4framesize = (int)((*totalsamples) / i_sample_count);
     }
     *duration = total_dur / (float)mp4ff_time_scale (mp4, track);
@@ -257,7 +255,21 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             if (mp4ff_get_track_type (info->mp4, i) != TRACK_AUDIO) {
                 continue;
             }
-            int res = mp4_track_get_info (info->mp4, i, &duration, &samplerate, &channels, &bps, &totalsamples, &info->mp4framesize);
+
+            // samplerate is stored in the ASC+44
+            unsigned char*  buff = 0;
+            unsigned int    buff_size = 0;
+            if (mp4ff_get_decoder_config (info->mp4, i, &buff, &buff_size)) {
+                continue;
+            }
+            unsigned char *ptr = buff + 44;
+            samplerate = (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | (ptr[3]);
+            ptr = buff + 28;
+            bps = (ptr[0] << 8) | ptr[1];
+
+            free (buff);
+
+            int res = mp4_track_get_info (info->mp4, i, samplerate, &duration, &channels, &totalsamples, &info->mp4framesize);
             if (res >= 0 && duration > 0) {
                 info->mp4track = i;
                 break;
@@ -281,6 +293,7 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             _info->fmt.samplerate = alac_get_samplerate(info->_alac);
             _info->fmt.bps = alac_get_bitspersample (info->_alac);
             _info->fmt.channels = channels;
+            free (buff);
         }
         else {
             trace ("alac: track not found in mp4 container\n");
@@ -601,8 +614,20 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                 trace ("alac: track %d is not audio\n", i);
                 continue;
             }
+            // samplerate is stored in the ASC+44
+            unsigned char*  buff = 0;
+            unsigned int    buff_size = 0;
+            if (mp4ff_get_decoder_config (mp4, i, &buff, &buff_size)) {
+                continue;
+            }
+            unsigned char *ptr = buff + 44;
+            samplerate = (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | (ptr[3]);
+            ptr = buff + 28;
+            bps = (ptr[0] << 8) | ptr[1];
+            free (buff);
+
             int mp4framesize;
-            int res = mp4_track_get_info (mp4, i, &duration, &samplerate, &channels, &bps, &totalsamples, &mp4framesize);
+            int res = mp4_track_get_info (mp4, i, samplerate, &duration, &channels, &totalsamples, &mp4framesize);
             if (res >= 0 && duration > 0) {
                 trace ("alac: found audio track %d (duration=%f, totalsamples=%d)\n", i, duration, totalsamples);
 
@@ -628,7 +653,8 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                 char s[100];
                 snprintf (s, sizeof (s), "%lld", fsize);
                 deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
-                deadbeef->pl_add_meta (it, ":BPS", "16");
+                snprintf (s, sizeof (s), "%d", bps);
+                deadbeef->pl_add_meta (it, ":BPS", s);
                 snprintf (s, sizeof (s), "%d", channels);
                 deadbeef->pl_add_meta (it, ":CHANNELS", s);
                 snprintf (s, sizeof (s), "%d", samplerate);

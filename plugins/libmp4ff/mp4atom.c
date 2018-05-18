@@ -422,7 +422,7 @@ static int32_t mp4ff_read_alac(mp4ff_t *f, int frame_size)
     f->track[f->total_tracks - 1]->sampleSize = mp4ff_read_int16(f);
 
     // packet size
-    (void)mp4ff_read_int16(f); // skip 2 bytes
+    (void)mp4ff_read_int16(f); // packetSize (unused)
     f->track[f->total_tracks - 1]->sampleRate = mp4ff_read_int32(f);
 
     // reserved size
