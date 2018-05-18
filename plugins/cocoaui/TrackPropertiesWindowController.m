@@ -108,9 +108,19 @@ extern DB_functions_t *deadbeef;
         [textView setStringValue:_items[row]];
     }
     else if ([ident isEqualToString:@"Field"]) {
+        [textView setFormatter:[[SingleLineFormatter alloc] init]];
         [textView setStringValue:_fields[row]];
+        [textView setTarget:self];
+        [textView setAction:@selector(fieldEditedAction:)];
+        [textView setIdentifier:[NSString stringWithFormat:@"%d", (int)row]];
     }
     return view;
+}
+
+- (void)fieldEditedAction:(NSTextField *)sender {
+    NSString *value = [sender stringValue];
+    int row = [[sender identifier] intValue];
+    _fields[row] = value;
 }
 @end
 
@@ -182,29 +192,42 @@ extern DB_functions_t *deadbeef;
 
 // NOTE: add_field gets called once for each unique key (e.g. Artist or Album),
 // which means it will usually contain 10-20 fields
-void
+static void
 add_field (NSMutableArray *store, const char *key, const char *title, int is_prop, DB_playItem_t **tracks, int numtracks) {
-    // get value to edit
-    const char *mult = is_prop ? "" : "[Multiple values] ";
-    char val[5000]; // FIXME: this should be a dynamic buffer, to be able to hold any value
-    size_t ml = strlen (mult);
-    memcpy (val, mult, ml+1);
-    int n = trkproperties_get_field_value (val + ml, (int)(sizeof (val) - ml), key, tracks, numtracks);
 
-    if (!is_prop) {
-        if (n) {
-            [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:val], @"value", [NSString stringWithUTF8String:key], @"key", [NSNumber numberWithInt: (n ? 1 : 0)], @"n", nil]];
+    // get all values for each key, convert from 0-separated to '; '-separated, and put into NSArray
+    NSMutableArray<NSString *> *values = [[NSMutableArray alloc] init];
+    deadbeef->pl_lock ();
+    for (int i = 0; i < numtracks; i++) {
+        NSString *value = @"";
+        DB_metaInfo_t *meta = deadbeef->pl_meta_for_key (tracks[i], key);
+        if (meta && meta->valuesize == 1) {
+            meta = NULL;
         }
-        else {
-            deadbeef->pl_lock ();
-            [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:val+ml], @"value", [NSString stringWithUTF8String:key], @"key", [NSNumber numberWithInt: (n ? 1 : 0)], @"n", nil]];
-            deadbeef->pl_unlock ();
+
+        if (meta) {
+            const char *p = meta->value;
+            const char *end = p + meta->valuesize;
+
+            while (p < end) {
+                value = [value stringByAppendingString:[NSString stringWithUTF8String:p]];
+                p += strlen (p) + 1;
+                if (p < end) {
+                    value = [value stringByAppendingString:@";"];
+                }
+            }
         }
+        [values addObject:value];
     }
-    else {
-        [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:(n ? val : val + ml)], @"value", nil]];
-    }
+    deadbeef->pl_unlock ();
+
+    // count unique items
+    NSSet *uniq = [NSSet setWithArray:values];
+    NSInteger n = [uniq count];
+
+    [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:key], @"key", [NSNumber numberWithInt: (n ? 1 : 0)], @"n", values, @"values", nil]];
 }
+
 
 - (void)fillMeta {
     [_store removeAllObjects];
@@ -366,7 +389,20 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         return title;
     }
     else if ([[aTableColumn identifier] isEqualToString:@"value"]) {
-        return store[rowIndex][@"value"];
+        NSMutableArray<NSString *> *values = store[rowIndex][@"values"];
+        // get uniq values
+        NSArray *uniq = [[NSOrderedSet orderedSetWithArray:values] array];
+        NSInteger n = [uniq count];
+
+        NSString *val = n > 1 ? @"[Multiple Values] " : @"";
+        for (int i = 0; i < [uniq count]; i++) {
+            val = [val stringByAppendingString:uniq[i]];
+            if (i < [uniq count] - 1) {
+                val = [val stringByAppendingString:@"; "];
+            }
+        }
+
+        return val;;
     }
     return nil;
 }
@@ -749,13 +785,9 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         ctx.idx = -1;
         ctx.id = -1;
 
-        for (int i = 0; i < _numtracks; i++) {
-            const char *m = deadbeef->pl_find_meta (_tracks[i], [key UTF8String]);
-            if (!m) {
-                m = "";
-            }
-            [fields addObject:[NSString stringWithUTF8String:m]];
+        fields = _store[idx][@"values"];
 
+        for (int i = 0; i < _numtracks; i++) {
             char item[1000];
             ctx.it = _tracks[i];
             deadbeef->tf_eval(&ctx, item_tf, item, sizeof (item));
@@ -765,7 +797,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         deadbeef->tf_free (item_tf);
 
         _multipleFieldsTableData = [[MultipleFieldsTableData alloc] init];
-        _multipleFieldsTableData->_fields = fields;
+        _multipleFieldsTableData->_fields = [[NSMutableArray alloc] initWithArray:fields copyItems:NO];
         _multipleFieldsTableData->_items = items;
         [_multiValueTableView setDelegate:_multipleFieldsTableData];
         [_multiValueTableView setDataSource:_multipleFieldsTableData];
@@ -887,7 +919,17 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 - (IBAction)cancelEditMultipleValuesPanel:(id)sender {
     [self.window endSheet:_editMultipleValuesPanel returnCode:NSModalResponseCancel];
 }
+
 - (IBAction)okEditMultipleValuesAction:(id)sender {
+    NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
+    NSInteger idx = [ind firstIndex];
+
+    _modified = YES;
+
+    _store[idx][@"values"] = [[NSMutableArray alloc] initWithArray: _multipleFieldsTableData->_fields copyItems:NO];
+
+    [_metadataTableView reloadData];
+
     [self.window endSheet:_editMultipleValuesPanel returnCode:NSModalResponseOK];
 }
 

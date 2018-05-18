@@ -767,9 +767,6 @@ Gw
                         <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mzR-WI-CoN">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-DQ
-</string>
                         </buttonCell>
                         <connections>
                             <action selector="okEditMultipleValuesAction:" target="-2" id="Aje-WM-WQ4"/>
@@ -834,7 +831,7 @@ DQ
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <clipView key="contentView" id="KnF-MJ-mJ8">
                                                 <rect key="frame" x="1" y="0.0" width="377" height="172"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" multipleSelection="NO" autosaveName="EditMultipleValuesSave" rowSizeStyle="automatic" headerView="6nd-wk-F6a" viewBased="YES" id="ava-EC-Y5p">
                                                         <rect key="frame" x="0.0" y="0.0" width="377" height="149"/>
@@ -929,7 +926,7 @@ DQ
                                                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="yhC-rP-aI4">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="173" height="17"/>
                                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                                                <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="CeQ-f9-g1m">
+                                                                                <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" title="Table View Cell" id="CeQ-f9-g1m">
                                                                                     <font key="font" metaFont="system"/>
                                                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
