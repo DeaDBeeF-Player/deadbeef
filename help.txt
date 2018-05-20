@@ -1,51 +1,38 @@
-help file for deadbeef player
+Help file for GTK version of Deadbeef Player (Linux/*BSD and friends)
 
 * LINKS
 
     main website: http://deadbeef.sf.net
-    wiki: http://github.com/Alexey-Yakovenko/deadbeef/wiki
-    development website: http://github.com/Alexey-Yakovenko/deadbeef
-    info for contributors: http://contributing.appspot.com/deadbeef
-
-* USEFUL HOTKEYS
-
-    when you run the player for the first time, a number of hotkeys will be automatically assigned.
-
-    playlist can be navigated with arrow keys, as well as PgUp, PgDn, Home, End, etc.
-    use above with Shift key to select multiple tracks.
-
-    you can view, change, remove or add any key mappings in the Edit->Preferences->Hotkeys tab.
-
-* CONFIGURATION
-
-    since 0.3.0 release, all configuration is stored in single file:
-    $HOME/.config/deadbeef/config
-
-    you need to exit player before editing this file, or your changes will be overwritten.
-
-    most stuff can be configured through edit->preferences dialog.
-
-* ALBUM ART DISPLAY
-
-    to display album artwork, you need to follow the steps below
-
-    1. add new column, select Album Art type
-    2. right click on the playlist column headers, and in context menu select "group by" submenu. click "Artist/Date/Album".
-
-    another option is to use the album art widget in design mode (View -> Design mode)
-
-* OSD NOTIFICATIONS
-
-    you can enable/configure them in "OSD Notify" plugin options
+    wiki: https://github.com/DeaDBeeF-Player/deadbeef/wiki
+    development website: https://github.com/DeaDBeeF-Player/deadbeef
+    info for contributors: https://github.com/DeaDBeeF-Player/deadbeef/blob/master/CONTRIBUTING.md
 
 * CUESHEETS
 
-    to load image+cue rips, you need to open/add actual image files, and Deadbeef will find the right .cue file automatically.
+    To use cuesheets, just open/add the cue files, select audio + cue files in the file dialog, or add whole folders with audio and cue files to playlist.
 
-    you should not try to add .cue files to playlist
+    Adding a single audio file would not load a cuesheet, unless it's embedded in the file.
 
-    example:
+* CONFIGURATION
 
-    Unknown Artist - Unknown Album.flac <---- open this file
-    Unknown Artist - Unknown Album.cue  <---- this file will be used automatically
+    Most settings can be configured through the Edit->Preferences dialog.
+
+    All configuration is stored in the $HOME/.config/deadbeef folder.
+    Individual settings can be tweaked in the $HOME/.config/deadbeef/config text file.
+
+    You should exit the player before editing this file, or your changes will be overwritten.
+
+* ALBUM ART DISPLAY
+
+    To display album art in the playlist, you need to perform the following steps:
+
+    1. Add new column, and choose the "Album Art" column type
+    2. Right click on the playlist column headers, and in the context menu select "Group by" submenu. Click "Artist/Date/Album", or another option which you prefer.
+
+    Another option is to use the album art widget in design mode (View -> Design mode)
+
+* OSD NOTIFICATIONS
+
+    You can enable/configure them in "OSD Notify" plugin options.
+    The plugin requires notification daemon to be installed and enabled.
 

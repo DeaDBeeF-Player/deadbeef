@@ -386,7 +386,7 @@ AS_IF([test "${HAVE_SSE2}"], [
 dnl curl lib
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_CURL=yes
-    CURL_LIBS="../../$LIB/lib/libcurl.a -lrt"
+    CURL_LIBS="../../$LIB/lib/libcurl.a ../../$LIB/lib/libz.a -lssl -lcrypto -lrt"
     CURL_CFLAGS="-I../../$LIB/include"
     AC_SUBST(CURL_LIBS)
     AC_SUBST(CURL_CFLAGS)

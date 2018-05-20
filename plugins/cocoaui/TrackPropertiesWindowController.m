@@ -86,6 +86,34 @@ extern DB_functions_t *deadbeef;
 }
 @end
 
+@interface MultipleFieldsTableData : NSObject<NSTableViewDataSource, NSTableViewDelegate> {
+    @public NSArray<NSString *> *_items;
+    @public NSMutableArray<NSString *> *_fields;
+}
+@end
+
+@implementation MultipleFieldsTableData
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+    return [_fields count];
+}
+
+- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+    NSUserInterfaceItemIdentifier ident = [tableColumn identifier];
+    NSTableCellView *view = [tableView makeViewWithIdentifier:ident owner:self];
+    NSTextField *textView = [view textField];
+    if ([ident isEqualToString:@"Index"]) {
+        [textView setStringValue:[NSString stringWithFormat:@"%d", (int)row+1]];
+    }
+    else if ([ident isEqualToString:@"Item"]) {
+        [textView setStringValue:_items[row]];
+    }
+    else if ([ident isEqualToString:@"Field"]) {
+        [textView setStringValue:_fields[row]];
+    }
+    return view;
+}
+@end
+
 
 @interface TrackPropertiesWindowController () {
     int _iter;
@@ -96,6 +124,7 @@ extern DB_functions_t *deadbeef;
     NSMutableArray *_propstore;
     BOOL _progress_aborted;
     BOOL _close_after_writing;
+    MultipleFieldsTableData *_multipleFieldsTableData;
 }
 
 @end
@@ -694,10 +723,6 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (IBAction)editValueAction:(id)sender {
-    if (_numtracks != 1) {
-        return; // TODO: multiple track editing support
-    }
-
     NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
     if ([ind count] != 1) {
         return; // multiple fields can't be edited at the same time
@@ -705,6 +730,50 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     NSInteger idx = [ind firstIndex];
 
+    if (_numtracks != 1) {
+        NSString *key = _store[idx][@"key"];
+        [_multiValueFieldName setStringValue: [key uppercaseString]];
+
+        NSMutableArray<NSString *> *fields = [[NSMutableArray alloc] init];
+        NSMutableArray<NSString *> *items = [[NSMutableArray alloc] init];
+
+        deadbeef->pl_lock ();
+
+        char *item_tf = deadbeef->tf_compile ("%title%[ // %track artist%]");
+
+        ddb_tf_context_t ctx;
+        memset (&ctx, 0, sizeof (ctx));
+
+        ctx._size = sizeof (ctx);
+        ctx.plt = NULL;
+        ctx.idx = -1;
+        ctx.id = -1;
+
+        for (int i = 0; i < _numtracks; i++) {
+            const char *m = deadbeef->pl_find_meta (_tracks[i], [key UTF8String]);
+            if (!m) {
+                m = "";
+            }
+            [fields addObject:[NSString stringWithUTF8String:m]];
+
+            char item[1000];
+            ctx.it = _tracks[i];
+            deadbeef->tf_eval(&ctx, item_tf, item, sizeof (item));
+            [items addObject:[NSString stringWithUTF8String:item]];
+        }
+        deadbeef->pl_unlock ();
+        deadbeef->tf_free (item_tf);
+
+        _multipleFieldsTableData = [[MultipleFieldsTableData alloc] init];
+        _multipleFieldsTableData->_fields = fields;
+        _multipleFieldsTableData->_items = items;
+        [_multiValueTableView setDelegate:_multipleFieldsTableData];
+        [_multiValueTableView setDataSource:_multipleFieldsTableData];
+        [self.window beginSheet:_editMultipleValuesPanel completionHandler:^(NSModalResponse returnCode) {
+
+        }];
+        return;
+    }
 
     [_fieldName setStringValue: [_store[idx][@"key"] uppercaseString]];
     [_fieldValue setString: _store[idx][@"value"]];
@@ -814,4 +883,12 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     [NSApp endSheet:_addFieldPanel];
 
 }
+
+- (IBAction)cancelEditMultipleValuesPanel:(id)sender {
+    [self.window endSheet:_editMultipleValuesPanel returnCode:NSModalResponseCancel];
+}
+- (IBAction)okEditMultipleValuesAction:(id)sender {
+    [self.window endSheet:_editMultipleValuesPanel returnCode:NSModalResponseOK];
+}
+
 @end

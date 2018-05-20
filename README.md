@@ -74,6 +74,4 @@ The following instructions assume that commands are executed in deadbeef reposit
 
 ----
 
-[![Support via Gratipay](https://cdn.rawgit.com/gratipay/gratipay-badge/2.3.0/dist/gratipay.png)](https://gratipay.com/deadbeef/)
-
-[More ways to support](http://deadbeef.sourceforge.net/support.html)
+[Support this project development](http://deadbeef.sourceforge.net/support.html)

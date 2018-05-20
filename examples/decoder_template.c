@@ -12,8 +12,7 @@ static DB_functions_t *deadbeef;
 
 typedef struct {
     DB_fileinfo_t info;
-    int startsample;
-    int endsample;
+    DB_playItem_t *it;
     int currentsample;
 } example_info_t;
 
@@ -33,6 +32,8 @@ example_open (uint32_t hints) {
 static int
 example_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     example_info_t *info = (example_info_t *)_info;
+    info->it = it;
+    deadbeef->pl_item_ref (it);
 
     // take this parameters from your input file
     // we set constants for clarity sake
@@ -45,16 +46,21 @@ example_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->readpos = 0;
     _info->plugin = &plugin;
 
-    if (it->endsample > 0) {
-        info->startsample = it->startsample;
-        info->endsample = it->endsample;
-        plugin.seek_sample (_info, 0);
+    if (info->file->vfs->is_streaming ()) {
+        deadbeef->pl_item_set_startsample (it, 0);
+        if (deadbeef->pl_get_item_duration (it) < 0) {
+            deadbeef->pl_item_set_endsample (it, -1);
+        }
+        else {
+            deadbeef->pl_item_set_endsample (it, TOTALSAMPLES);
+        }
+
+        deadbeef->pl_set_meta_int(it, ":TRACKNUM", 0);
     }
     else {
-        info->startsample = 0;
-        int TOTALSAMPLES = 1000; // calculate from file
-        info->endsample = TOTALSAMPLES-1;
+        example_seek_sample (_info, 0);
     }
+
     return 0;
 }
 
@@ -63,6 +69,7 @@ static void
 example_free (DB_fileinfo_t *_info) {
     example_info_t *info = (example_info_t *)_info;
     if (info) {
+        deadbeef->pl_item_unref (info->it);
         free (info);
     }
 }
@@ -78,8 +85,8 @@ example_read (DB_fileinfo_t *_info, char *bytes, int size) {
     // CUE track switching support
     int samplesize = _info->fmt.bps / 8 * _info->fmt.channels;
 
-    if (info->currentsample + size / samplesize > info->endsample) {
-        size = (info->endsample - info->currentsample + 1) * samplesize;
+    if (info->currentsample + size / samplesize > deadbeef->pl_item_get_endsample (info->it)) {
+        size = (deadbeef->pl_item_get_endsample (info->it) - info->currentsample + 1) * samplesize;
         if (size <= 0) {
             return 0;
         }
@@ -100,7 +107,7 @@ static int
 example_seek_sample (DB_fileinfo_t *_info, int sample) {
     example_info_t *info = (example_info_t *)_info;
     
-    info->currentsample = sample + info->startsample;
+    info->currentsample = sample + deadbeef->pl_item_get_startsample (info->it);
     _info->readpos = (float)sample / _info->fmt.samplerate;
     return 0;
 }

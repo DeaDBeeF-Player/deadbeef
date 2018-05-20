@@ -1097,21 +1097,12 @@ _get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *v
             snprintf (fullname, sz, "%s%s:%s", sch, dirname, d_name);
             if (dir) {
                 *dir = 0;
-                strncat (dir, fullname, dirsz);
-                char *col = strrchr (dir, ':');
-                char *slash = strrchr (dir, '/');
-                if (col && slash && slash > col) {
-                    *slash = 0;
+                size_t n = strlen (fullname) - strlen (d_name);
+                if (n > dirsz) {
+                    n = dirsz;
                 }
-                else if (col) {
-                    *(col+1) = 0;
-                }
-                else if (slash) {
-                    *slash = 0;
-                }
-                else {
-                    *dir = 0;
-                }
+                strncat (dir, fullname, n);
+                dir[n] = 0;
             }
         }
         else {
@@ -1185,8 +1176,11 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
 
     for (int i = 0; i < n; i++) {
         // no hidden files
-        //if (namelist[i]->d_name[0] == '.' || namelist[i]->d_type != DT_REG) {
-        if (namelist[i]->d_name[0] == '.' ) {
+        #ifdef __MINGW32__
+        if (namelist[i]->d_name[0] == '.') {
+        #else
+        if (namelist[i]->d_name[0] == '.' || (namelist[i]->d_type != DT_REG && namelist[i]->d_type != DT_UNKNOWN)) {
+        #endif
             continue;
         }
 

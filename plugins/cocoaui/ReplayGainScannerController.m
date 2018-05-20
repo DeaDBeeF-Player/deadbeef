@@ -205,6 +205,8 @@ static NSMutableArray *g_rgControllers;
                 [_updateTagsProgressIndicator setDoubleValue:(double)i/_rg_settings.num_tracks*100];
             });
         }
+        // FIXME: the tracks in the list might be from other playlist(s)
+        deadbeef->pl_save_current();
         deadbeef->background_job_decrement ();
         dispatch_async(dispatch_get_main_queue(), ^{
             [_updateTagsProgressWindow close];

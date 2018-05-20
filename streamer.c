@@ -1412,19 +1412,19 @@ streamer_set_output_format (ddb_waveformat_t *fmt) {
 }
 
 void
-streamer_thread (void *ctx) {
+streamer_thread (void *unused) {
 #if defined(__linux__) && !defined(ANDROID)
     prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
 #endif
 
+    uint32_t id;
+    uintptr_t ctx;
+    uint32_t p1, p2;
     while (!streaming_terminate) {
         struct timeval tm1;
         DB_output_t *output = plug_get_output ();
         gettimeofday (&tm1, NULL);
 
-        uint32_t id;
-        uintptr_t ctx;
-        uint32_t p1, p2;
         while (!handler_pop (handler, &id, &ctx, &p1, &p2)) {
             switch (id) {
             case STR_EV_PLAY_TRACK_IDX:
@@ -1547,6 +1547,9 @@ streamer_thread (void *ctx) {
         }
 
     }
+
+    // drain event queue
+    while (!handler_pop (handler, &id, &ctx, &p1, &p2));
 
     // stop streaming song
     if (fileinfo) {
@@ -1815,7 +1818,7 @@ streamer_apply_soft_volume (char *bytes, int sz) {
             if (ivolume != 1000) {
                 int third = bytesread/3;
                 for (int i = 0; i < third; i++) {
-                    int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1]<<8) | (stream[2]<<16);
+                    int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1]<<8) | ((signed char)stream[2]<<16);
                     int32_t newsample = (int32_t)((int64_t)sample * ivolume / 1000);
                     stream[0] = (newsample&0x0000ff);
                     stream[1] = (newsample&0x00ff00)>>8;
@@ -2145,7 +2148,7 @@ _play_track (playItem_t *it, int startpaused) {
         else {
             int st = output->state();
             output->play ();
-            if (st == OUTPUT_STATE_PAUSED) {
+            if (st == OUTPUT_STATE_PAUSED || st == OUTPUT_STATE_STOPPED) {
                 messagepump_push(DB_EV_PAUSED, 0, 0, 0);
             }
         }
