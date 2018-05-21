@@ -789,8 +789,13 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         [_multiValueTableView setDataSource:_multipleFieldsTableData];
         [self.window beginSheet:_editMultipleValuesPanel completionHandler:^(NSModalResponse returnCode) {
             if (returnCode == NSModalResponseOK) {
-                for (int i = 0; i < _numtracks; i++) {
-                    _store[idx][@"values"] = [[NSMutableArray alloc] initWithArray:_multipleFieldsTableData->_fields copyItems:NO];
+                if ([[[_multiValueTabView selectedTabViewItem] identifier] isEqualToString:@"singleValue"]) {
+                    [self setSameValuesForIndex:(int)idx value:[[_multiValueSingle textStorage] string]];
+                }
+                else {
+                    for (int i = 0; i < _numtracks; i++) {
+                        _store[idx][@"values"] = [[NSMutableArray alloc] initWithArray:_multipleFieldsTableData->_fields copyItems:NO];
+                    }
                 }
                 self.modified = YES;
             }
@@ -831,10 +836,10 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     [NSApp endSheet:_editValuePanel];
 }
 
-- (void)setEmptyValuesForIndex:(int)idx {
+- (void)setSameValuesForIndex:(int)idx value:(NSString *)value {
     NSMutableArray<NSString *> *values = _store[idx][@"values"];
     for (int i = 0; i < [values count]; i++) {
-        values[i] = @"";
+        values[i] = value;
     }
 }
 
@@ -842,7 +847,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
 
     [ind enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        [self setEmptyValuesForIndex:(int)idx];
+        [self setSameValuesForIndex:(int)idx value:@""];
         self.modified = YES;
     }];
 
@@ -856,7 +861,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     for (int i = 0; i < [_store count]; i++) {
         if (![ind containsIndex:i]) {
-            [self setEmptyValuesForIndex:i];
+            [self setSameValuesForIndex:i value:@""];
             self.modified = YES;
         }
     }

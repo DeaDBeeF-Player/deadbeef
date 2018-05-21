@@ -32,6 +32,7 @@
                 <outlet property="mp3WriteID3v2" destination="pnV-tv-6F6" id="o0J-62-iSi"/>
                 <outlet property="multiValueFieldName" destination="E4X-Mq-zGu" id="m8b-Ir-bAf"/>
                 <outlet property="multiValueSingle" destination="HW1-0g-xzq" id="16l-9G-4l6"/>
+                <outlet property="multiValueTabView" destination="N98-om-YUS" id="KJc-ii-9kf"/>
                 <outlet property="multiValueTableView" destination="ava-EC-Y5p" id="7a2-aY-8Hy"/>
                 <outlet property="progressPanel" destination="Go9-AM-N3h" id="NY4-4K-IcC"/>
                 <outlet property="propertiesTableView" destination="bz2-tU-emD" id="WHi-41-egZ"/>
@@ -786,7 +787,7 @@ Gw
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
-                            <tabViewItem label="Single Value" identifier="" id="DgD-uQ-MzG">
+                            <tabViewItem label="Single Value" identifier="singleValue" id="DgD-uQ-MzG">
                                 <view key="view" id="T7M-Kp-0sj">
                                     <rect key="frame" x="10" y="33" width="373" height="173"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -821,7 +822,7 @@ Gw
                                     </subviews>
                                 </view>
                             </tabViewItem>
-                            <tabViewItem label="Individual Values" identifier="" id="pVu-66-Scr">
+                            <tabViewItem label="Individual Values" identifier="individualValues" id="pVu-66-Scr">
                                 <view key="view" id="BGY-4P-QzG">
                                     <rect key="frame" x="10" y="33" width="373" height="173"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
