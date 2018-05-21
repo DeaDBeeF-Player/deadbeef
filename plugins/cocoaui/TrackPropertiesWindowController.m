@@ -121,6 +121,7 @@ extern DB_functions_t *deadbeef;
     NSString *value = [sender stringValue];
     int row = [[sender identifier] intValue];
     _fields[row] = value;
+    // FIXME: add modified flag
 }
 @end
 
@@ -220,10 +221,6 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         [values addObject:value];
     }
     deadbeef->pl_unlock ();
-
-    // count unique items
-    NSSet *uniq = [NSSet setWithArray:values];
-    NSInteger n = [uniq count];
 
     [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:key], @"key", values, @"values", nil]];
 }
@@ -791,7 +788,12 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         [_multiValueTableView setDelegate:_multipleFieldsTableData];
         [_multiValueTableView setDataSource:_multipleFieldsTableData];
         [self.window beginSheet:_editMultipleValuesPanel completionHandler:^(NSModalResponse returnCode) {
-            // TODO: write the edited multiple values back to trkproperties panel
+            if (returnCode == NSModalResponseOK) {
+                for (int i = 0; i < _numtracks; i++) {
+                    _store[idx][@"values"] = [[NSMutableArray alloc] initWithArray:_multipleFieldsTableData->_fields copyItems:NO];
+                }
+                self.modified = YES;
+            }
         }];
         return;
     }
