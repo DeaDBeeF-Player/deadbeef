@@ -2505,3 +2505,42 @@ streamer_yield (void) {
         usleep(50000);
     }
 }
+
+void
+streamer_set_output (DB_output_t *output) {
+    printf ("streamer_set_output\n");
+    if (mutex) {
+        streamer_lock ();
+    }
+    DB_output_t *prev = plug_get_output ();
+    int state = OUTPUT_STATE_STOPPED;
+
+    ddb_waveformat_t fmt = {0};
+    if (prev) {
+        state = prev->state ();
+        memcpy (&fmt, &prev->fmt, sizeof (ddb_waveformat_t));
+        prev->free ();
+    }
+    plug_set_output (output);
+
+    if (fmt.channels) {
+        output->setformat (&fmt);
+    }
+
+    int res = 0;
+    if (state == OUTPUT_STATE_PLAYING) {
+        res = output->play ();
+    }
+    else if (state == OUTPUT_STATE_PAUSED) {
+        res = output->pause ();
+    }
+
+    if (res < 0) {
+        trace_err ("failed to init sound output\n");
+        streamer_set_nextsong (-1, 0);
+    }
+    if (mutex) {
+        streamer_unlock ();
+    }
+    messagepump_push (DB_EV_OUTPUTCHANGED, 0, 0, 0);
+}

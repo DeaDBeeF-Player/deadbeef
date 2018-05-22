@@ -179,4 +179,7 @@ streamer_set_buffering_track (playItem_t *it);
 void
 streamer_yield (void);
 
+void
+streamer_set_output (DB_output_t *output);
+
 #endif // __STREAMER_H
