@@ -129,15 +129,10 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
     int error;
 
     // Read serveraddr from config
-    deadbeef->conf_lock ();
-    const char * server = deadbeef->conf_get_str_fast (CONFSTR_PULSE_SERVERADDR, NULL);
+    char server[1000];
+    deadbeef->conf_get_str (CONFSTR_PULSE_SERVERADDR, "", server, sizeof (server));
 
-    if (server) {
-        server = strcmp(server, "default") ? server : NULL;
-    }
-
-    s = pa_simple_new(server, "Deadbeef", PA_STREAM_PLAYBACK, dev, "Music", &ss, &channel_map, attr, &error);
-    deadbeef->conf_unlock ();
+    s = pa_simple_new(*server ? server : NULL, "Deadbeef", PA_STREAM_PLAYBACK, dev, "Music", &ss, &channel_map, attr, &error);
 
     if (!s)
     {
@@ -172,21 +167,31 @@ static int pulse_init(void)
     return 0;
 }
 
+static int pulse_free(void);
+static int pulse_play(void);
+static int pulse_pause(void);
+
 static int pulse_setformat (ddb_waveformat_t *fmt)
 {
+    int st = state;
     memcpy (&requested_fmt, fmt, sizeof (ddb_waveformat_t));
-    if (!s) {
-        return -1;
-    }
-    if (!memcmp (fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
+    if (!s
+        || !memcmp (fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
         return 0;
     }
 
-    deadbeef->mutex_lock(mutex);
-    pulse_set_spec(fmt);
-    deadbeef->mutex_unlock(mutex);
+    pa_simple_flush (s, NULL);
+    pulse_free ();
+    pulse_init ();
+    int res = 0;
+    if (st == OUTPUT_STATE_PLAYING) {
+        res = pulse_play ();
+    }
+    else if (st == OUTPUT_STATE_PAUSED) {
+        res = pulse_pause ();
+    }
 
-    return 0;
+    return res;
 }
 
 static int pulse_free(void)
@@ -305,9 +310,12 @@ static void pulse_thread(void *context)
             deadbeef->mutex_unlock(mutex);
         }
 
+        if (pulse_terminate) {
+            break;
+        }
+
         if (res < 0)
         {
-            fprintf(stderr, "pulse: failed to write buffer\n");
             usleep(10000);
         }
     }
