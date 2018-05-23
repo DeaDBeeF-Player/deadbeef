@@ -1342,8 +1342,6 @@ _update_buffering_state () {
 static void
 handle_track_change (playItem_t *track) {
     // next track started
-    update_stop_after_current ();
-
     if (playing_track) {
         send_songfinished (playing_track);
         playpos = 0;
@@ -1684,8 +1682,11 @@ static int
 process_output_block (streamblock_t *block, char *bytes) {
     DB_output_t *output = plug_get_output ();
 
-    // handle change of track, or start of a new track
-    if (block->last || block->track != playing_track || (playing_track && last_played != playing_track)) {
+    // handle change of track
+    if (block->last) {
+        update_stop_after_current ();
+    }
+    if (block->first) {
         handle_track_change (block->track);
     }
 
