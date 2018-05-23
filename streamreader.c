@@ -59,6 +59,7 @@ streamreader_init (void) {
     }
     block_next = blocks;
     numblocks_ready = 0;
+    _firstblock = 0;
 }
 
 void
@@ -74,6 +75,7 @@ streamreader_free (void) {
     numblocks_ready = 0;
     _prev_rg_track = NULL;
     _rg_settingschanged = 1;
+    _firstblock = 0;
 }
 
 streamblock_t *
@@ -217,6 +219,7 @@ streamreader_reset (void) {
     block_next = blocks;
     block_data = NULL;
     numblocks_ready = 0;
+    _firstblock = 0;
 }
 
 int
