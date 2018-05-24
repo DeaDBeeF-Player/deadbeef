@@ -214,7 +214,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             if (parg >= pend) {
                 const char *errtext = "--nowplaying expects format argument";
                 if (sendback) {
-                    snprintf (sendback, sbsize, "error %s\n", errtext);
+                    snprintf (sendback, sbsize, "\2%s\n", errtext);
                     return 0;
                 }
                 else {
@@ -232,7 +232,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 strcpy (out, "nothing");
             }
             if (sendback) {
-                snprintf (sendback, sbsize, "nowplaying %s", out);
+                snprintf (sendback, sbsize, "\1%s", out);
             }
             else {
                 fwrite (out, 1, strlen (out), stdout);
@@ -245,7 +245,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             if (parg >= pend) {
                 const char *errtext = "--nowplaying-tf expects format argument";
                 if (sendback) {
-                    snprintf (sendback, sbsize, "error %s\n", errtext);
+                    snprintf (sendback, sbsize, "\2%s\n", errtext);
                     return 0;
                 }
                 else {
@@ -271,7 +271,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 pl_item_unref (curr);
             }
             if (sendback) {
-                snprintf (sendback, sbsize, "nowplaying %s", out);
+                snprintf (sendback, sbsize, "\1%s", out);
             }
             else {
                 fwrite (out, 1, strlen (out), stdout);
@@ -348,7 +348,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 }
             }
             if (sendback) {
-                snprintf (sendback, sbsize, "volume %.0f%% (%.2f dB)", deadbeef->volume_get_db() * 2 + 100 , deadbeef->volume_get_db());
+                snprintf (sendback, sbsize, "\1%.0f%% (%.2f dB)", deadbeef->volume_get_db() * 2 + 100 , deadbeef->volume_get_db());
             }
             return 0;
         }
@@ -637,7 +637,6 @@ player_mainloop (void) {
                 switch (msg) {
                 case DB_EV_REINIT_SOUND:
                     plug_reinit_sound ();
-                    streamer_reset (1);
                     conf_save ();
                     break;
                 case DB_EV_TERMINATE:
@@ -1077,11 +1076,11 @@ main (int argc, char *argv[]) {
         }
     }
 
-    trace ("installdir: %s\n", dbinstalldir);
-    trace ("confdir: %s\n", confdir);
-    trace ("docdir: %s\n", dbdocdir);
-    trace ("plugindir: %s\n", dbplugindir);
-    trace ("pixmapdir: %s\n", dbpixmapdir);
+//    trace ("installdir: %s\n", dbinstalldir);
+//    trace ("confdir: %s\n", confdir);
+//    trace ("docdir: %s\n", dbdocdir);
+//    trace ("plugindir: %s\n", dbplugindir);
+//    trace ("pixmapdir: %s\n", dbpixmapdir);
 
     mkdir (dbconfdir, 0755);
 
@@ -1125,14 +1124,12 @@ main (int argc, char *argv[]) {
         }
         else {
             // check if that's nowplaying response
-            const char np[] = "nowplaying ";
-            const char err[] = "error ";
-            if (!strncmp (out, np, sizeof (np)-1)) {
-                const char *prn = &out[sizeof (np)-1];
+            if (*out == '\1') {
+                const char *prn = out + 1;
                 fwrite (prn, 1, strlen (prn), stdout);
             }
-            else if (!strncmp (out, err, sizeof (err)-1)) {
-                const char *prn = &out[sizeof (err)-1];
+            else if (*out == '\2') {
+                const char *prn = out + 1;
                 trace_err ("%s", prn);
             }
             else if (sz > 0 && out[0]) {

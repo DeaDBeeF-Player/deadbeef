@@ -28,7 +28,7 @@
 extern DB_functions_t *deadbeef;
 
 // data has to be serialized, so we code idx and not pointers
-@interface DdbListviewLocalDragDropHolder : NSObject<NSCoding, NSPasteboardReading, NSPasteboardWriting> {
+@interface DdbListviewLocalDragDropHolder : NSObject<NSPasteboardReading, NSPasteboardWriting, NSSecureCoding> {
     NSInteger _playlistIdx;
     NSArray *_itemsIndices;
 }
@@ -37,6 +37,12 @@ extern DB_functions_t *deadbeef;
 
 @implementation DdbListviewLocalDragDropHolder
 
+// NSSecureCoding
+@dynamic supportsSecureCoding;
++ (BOOL) supportsSecureCoding {
+    return YES;
+}
+
 // NSCoding
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
@@ -44,7 +50,7 @@ extern DB_functions_t *deadbeef;
     self = [super init];
     if (self) {
         _playlistIdx = [aDecoder decodeIntegerForKey:@"Playlist"];
-        _itemsIndices = [aDecoder decodeObjectForKey:@"Items"];
+        _itemsIndices = [aDecoder decodeObjectOfClass:[NSMutableArray class] forKey:@"Items"];
     }
 
     return self;
@@ -83,20 +89,6 @@ extern DB_functions_t *deadbeef;
 
     return nil;
 }
-/*
-- (void)dealloc {
-
-    if (_playlist) {
-        deadbeef->plt_unref (_playlist);
-        _playlist = NULL;
-    }
-    if (_items) {
-        for (int i = 0; i < _count; i++) {
-            deadbeef->pl_item_unref (_items[i]);
-        }
-        free (_items);
-    }
-}*/
 
 - (int) count {
     return (int)[_itemsIndices count];
@@ -120,7 +112,6 @@ extern DB_functions_t *deadbeef;
 }
 
 - (DdbListviewLocalDragDropHolder *)initWithSelectedPlaylistItems:(ddb_playlist_t *)playlist {
-
     deadbeef->pl_lock ();
     _playlistIdx = deadbeef->plt_get_idx (playlist);
 
@@ -131,7 +122,6 @@ extern DB_functions_t *deadbeef;
         DB_playItem_t *it = deadbeef->plt_get_first (playlist, PL_MAIN);
         while (it) {
             if (deadbeef->pl_is_selected (it)) {
-                deadbeef->pl_item_ref (it);
                 [indices addObject: [NSNumber numberWithInt: deadbeef->plt_get_item_idx(playlist, it, PL_MAIN)]];
             }
             DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
@@ -475,7 +465,7 @@ int grouptitleheight = 22;
     NSPoint draggingLocation = [self convertPoint:[sender draggingLocation] fromView:nil];
     id<DdbListviewDelegate> delegate = listview.delegate;
 
-    DdbListviewRow_t row = NULL;
+    DdbListviewRow_t row = [delegate invalidRow];
     if ( -1 != [listview pickPoint:draggingLocation.y group:&grp groupIndex:&grp_index index:&sel]) {
         row = [delegate rowForIndex:sel];
     }
@@ -498,7 +488,7 @@ int grouptitleheight = 22;
     else if ( [[pboard types] containsObject:NSFilenamesPboardType] ) {
 
         NSArray *paths = [pboard propertyListForType:NSFilenamesPboardType];
-        if (row) {
+        if (row != [delegate invalidRow]) {
             // add before selected row
             [delegate externalDropItems:paths after: [delegate rowForIndex:sel-1] ];
         }
@@ -509,6 +499,9 @@ int grouptitleheight = 22;
         }
     }
 
+    if (row != [delegate invalidRow]) {
+        [delegate unrefRow:row];
+    }
     _draggingInView = NO;
     return YES;
 }

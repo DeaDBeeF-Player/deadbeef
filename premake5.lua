@@ -60,6 +60,25 @@ project "mp3"
    defines { "USE_LIBMPG123=1", "USE_LIBMAD=1" }
    links { "mpg123", "mad" }
 
+project "aac_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "aac"
+
+   files {
+       "plugins/aac/*.h",
+       "plugins/aac/*.c",
+       "shared/mp4tagutil.h",
+       "shared/mp4tagutil.c",
+       "plugins/libmp4ff/*.h",
+       "plugins/libmp4ff/*.c"
+   }
+
+   defines { "USE_MP4FF=1", "USE_TAGGING=1" }
+   links { "faad" }
+
 project "flac_plugin"
    kind "SharedLib"
    language "C"
@@ -288,6 +307,10 @@ project "ddb_gui_GTK3"
        "plugins/libparser/parser.h",
        "plugins/libparser/parser.c",
        "utf8.c",
+   }
+
+   prebuildcommands {
+	"glib-compile-resources --sourcedir=plugins/gtkui --target=plugins/gtkui/gtkui-gresources.c --generate-source plugins/gtkui/gtkui.gresources.xml"
    }
 
    links { "jansson", "gtk-3", "gdk-3", "pangocairo-1.0", "pango-1.0", "atk-1.0", "cairo-gobject", "cairo", "gdk_pixbuf-2.0", "gio-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
