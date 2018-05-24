@@ -490,6 +490,7 @@ get_next_track (playItem_t *curr) {
     }
 
     if (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) { // shuffle
+        playItem_t *it = NULL;
         if (!curr || pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS) {
             // find minimal notplayed
             playItem_t *pmin = NULL; // notplayed minimum
@@ -501,7 +502,7 @@ get_next_track (playItem_t *curr) {
                     pmin = i;
                 }
             }
-            playItem_t *it = pmin;
+            it = pmin;
             if (!it) {
                 // all songs played, reshuffle and try again
                 if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
@@ -512,11 +513,6 @@ get_next_track (playItem_t *curr) {
                 pl_unlock ();
                 return NULL;
             }
-            // plt_reshuffle doesn't add ref
-            pl_item_ref (it);
-
-            pl_unlock ();
-            return it;
         }
         else {
             // find minimal notplayed above current
@@ -530,7 +526,7 @@ get_next_track (playItem_t *curr) {
                     pmin = i;
                 }
             }
-            playItem_t *it = pmin;
+            it = pmin;
             if (!it) {
                 // all songs played, reshuffle and try again
                 if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
@@ -544,11 +540,21 @@ get_next_track (playItem_t *curr) {
                 pl_unlock ();
                 return NULL;
             }
-            // plt_reshuffle doesn't add ref
-            pl_item_ref (it);
-            pl_unlock ();
-            return it;
         }
+        // prevent repeating the same track after reshuffle
+        if (it == curr) {
+            if (it->next[PL_MAIN]) {
+                it = it->next[PL_MAIN];
+            }
+            else if (plt->head[PL_MAIN] && plt->head[PL_MAIN] != it) {
+                it = plt->head[PL_MAIN];
+            }
+        }
+
+        // plt_reshuffle doesn't add ref
+        pl_item_ref (it);
+        pl_unlock ();
+        return it;
     }
     else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
         playItem_t *it = NULL;
