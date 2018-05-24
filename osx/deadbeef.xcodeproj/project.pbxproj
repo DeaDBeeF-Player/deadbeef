@@ -1517,6 +1517,7 @@
 		2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCF73B21A952F8900495740 /* PreferencesWindowController.h */; };
 		2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DCF73B31A952F8900495740 /* PreferencesWindowController.m */; };
+		2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
 		2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */; };
 		2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */; };
 		2DD6D0A819AE6288009308A5 /* knobTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */; };
@@ -1549,11 +1550,11 @@
 		2DF930511AB817310030C0CA /* wildmidi_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304D1AB817310030C0CA /* wildmidi_lib.c */; };
 		2DF930521AB817310030C0CA /* wildmidiplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304E1AB817310030C0CA /* wildmidiplug.c */; };
 		2DFD51681C97175F00961D19 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
-		4D00F30A205BED300060A357 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4D00F309205BED300060A357 /* help-cocoa.txt */; };
 		4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		4D046CE41EA9F8C300B80B2E /* gmewrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D046CE21EA9F8C300B80B2E /* gmewrap.cpp */; };
 		4D046CE51EA9F8C300B80B2E /* gmewrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D046CE31EA9F8C300B80B2E /* gmewrap.h */; };
 		4D0B0CEE20162D95004162DA /* FormatConversion.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D0B0CED20162D95004162DA /* FormatConversion.m */; };
+		4D12805F2062994F0015BDE8 /* HelpWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D12805E2062994F0015BDE8 /* HelpWindowController.swift */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A8F1837EC49003E6066 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
 		4D1B51681837F655003E6066 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51671837F655003E6066 /* AudioUnit.framework */; };
@@ -1982,9 +1983,7 @@
 		4DA72BED1838EAAB00A98C62 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BE61838EAAB00A98C62 /* main.m */; };
 		4DAF343F19B75FF500EE96ED /* ddb_dumb.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */; };
 		4DC96E701E4CC9670093CFD3 /* dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC96E6E1E4CC9670093CFD3 /* dsp.h */; };
-		4DE28471205BE0B20023063E /* TextViewerWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DE2846E205BE0B20023063E /* TextViewerWindowController.h */; };
-		4DE28472205BE0B20023063E /* TextViewerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DE2846F205BE0B20023063E /* TextViewerWindowController.m */; };
-		4DE28473205BE0B20023063E /* TextViewer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DE28470205BE0B20023063E /* TextViewer.xib */; };
+		4DE28473205BE0B20023063E /* HelpViewer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DE28470205BE0B20023063E /* HelpViewer.xib */; };
 		8374A47E1B8946A800C6A572 /* ChipMapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374A3671B8946A800C6A572 /* ChipMapper.c */; };
 		8374A47F1B8946A800C6A572 /* ChipMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374A3681B8946A800C6A572 /* ChipMapper.h */; };
 		8374A4811B8946A800C6A572 /* 2151intf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374A36B1B8946A800C6A572 /* 2151intf.c */; };
@@ -2655,13 +2654,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4D44E66D19B7530A00F780FC;
 			remoteInfo = dumb;
-		};
-		4D52B4E01F14F12600048305 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4D52B4CD1F14F0FD00048305;
-			remoteInfo = v2m;
 		};
 		4D9C5B091FDEBADC00D83CEF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4245,6 +4237,7 @@
 		2DCD78D319A665CA00EA50FA /* deadbeef.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deadbeef.png; sourceTree = "<group>"; };
 		2DCF73B21A952F8900495740 /* PreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowController.h; sourceTree = "<group>"; };
 		2DCF73B31A952F8900495740 /* PreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesWindowController.m; sourceTree = "<group>"; };
+		2DD5262E2062F1DF002609C5 /* help-cocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "help-cocoa.txt"; sourceTree = "<group>"; };
 		2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbSeekBar.h; sourceTree = "<group>"; };
 		2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbSeekBar.m; sourceTree = "<group>"; };
 		2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = knobTemplate.pdf; path = images/knobTemplate.pdf; sourceTree = "<group>"; };
@@ -4282,11 +4275,12 @@
 		2DFA31EA1AAF351800792053 /* sid6510c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sid6510c.h; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/sid6510c.h"; sourceTree = "<group>"; };
 		2DFA31EB1AAF351800792053 /* sid6510c.i */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c.preprocessed; name = sid6510c.i; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/sid6510c.i"; sourceTree = "<group>"; };
 		2DFD50951C9715B800961D19 /* psf.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = psf.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		4D00F309205BED300060A357 /* help-cocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "help-cocoa.txt"; path = "../../help-cocoa.txt"; sourceTree = "<group>"; };
 		4D011FFC19AB9589005499B4 /* coreaudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = coreaudio.c; sourceTree = "<group>"; };
 		4D046CE21EA9F8C300B80B2E /* gmewrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gmewrap.cpp; path = plugins/gme/gmewrap.cpp; sourceTree = "<group>"; };
 		4D046CE31EA9F8C300B80B2E /* gmewrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gmewrap.h; path = plugins/gme/gmewrap.h; sourceTree = "<group>"; };
 		4D0B0CED20162D95004162DA /* FormatConversion.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FormatConversion.m; sourceTree = "<group>"; };
+		4D12805D2062994F0015BDE8 /* deadbeef-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "deadbeef-Bridging-Header.h"; sourceTree = "<group>"; };
+		4D12805E2062994F0015BDE8 /* HelpWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpWindowController.swift; sourceTree = "<group>"; };
 		4D1B3E7A18379829003E6066 /* deadbeef.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deadbeef.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D1B3E7D18379829003E6066 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4D1B3E8018379829003E6066 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -4771,9 +4765,7 @@
 		4DA72BE61838EAAB00A98C62 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4DC96E6D1E4CC9670093CFD3 /* dsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsp.c; sourceTree = "<group>"; };
 		4DC96E6E1E4CC9670093CFD3 /* dsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsp.h; sourceTree = "<group>"; };
-		4DE2846E205BE0B20023063E /* TextViewerWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextViewerWindowController.h; sourceTree = "<group>"; };
-		4DE2846F205BE0B20023063E /* TextViewerWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TextViewerWindowController.m; sourceTree = "<group>"; };
-		4DE28470205BE0B20023063E /* TextViewer.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextViewer.xib; sourceTree = "<group>"; };
+		4DE28470205BE0B20023063E /* HelpViewer.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HelpViewer.xib; sourceTree = "<group>"; };
 		8374A3671B8946A800C6A572 /* ChipMapper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ChipMapper.c; sourceTree = "<group>"; };
 		8374A3681B8946A800C6A572 /* ChipMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChipMapper.h; sourceTree = "<group>"; };
 		8374A36B1B8946A800C6A572 /* 2151intf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 2151intf.c; sourceTree = "<group>"; };
@@ -6261,7 +6253,7 @@
 				2D49856E1D5CF0E900E4D985 /* Log.xib */,
 				2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */,
 				2D54326E1E467C060048AF73 /* MediaLibrary.xib */,
-				4DE28470205BE0B20023063E /* TextViewer.xib */,
+				4DE28470205BE0B20023063E /* HelpViewer.xib */,
 			);
 			name = XIB;
 			sourceTree = "<group>";
@@ -7661,7 +7653,6 @@
 		4D1B3E7118379829003E6066 = {
 			isa = PBXGroup;
 			children = (
-				4DE28476205BE3E50023063E /* misc */,
 				2DCD78AD19A6658C00EA50FA /* icons */,
 				4D1B514C1837EF7C003E6066 /* plugins */,
 				4D1B3EB31837EC44003E6066 /* deadbeef */,
@@ -8544,17 +8535,10 @@
 			path = "osx/deps/opusfile-0.9/src";
 			sourceTree = "<group>";
 		};
-		4DE28476205BE3E50023063E /* misc */ = {
-			isa = PBXGroup;
-			children = (
-				4D00F309205BED300060A357 /* help-cocoa.txt */,
-			);
-			path = misc;
-			sourceTree = "<group>";
-		};
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
+				2DD5262E2062F1DF002609C5 /* help-cocoa.txt */,
 				2D6202AF1B90800A00594746 /* XIB */,
 				2DE1D3DF19B11286009B5BC6 /* widgets */,
 				4D2362B218395D0300C9E818 /* images */,
@@ -8601,8 +8585,8 @@
 				2D54327E1E467E0E0048AF73 /* MediaLibraryWindowController.m */,
 				2DA2ED4A1E47C6F5007039F7 /* MediaLibraryItem.h */,
 				2DA2ED4B1E47C6F5007039F7 /* MediaLibraryItem.m */,
-				4DE2846E205BE0B20023063E /* TextViewerWindowController.h */,
-				4DE2846F205BE0B20023063E /* TextViewerWindowController.m */,
+				4D12805E2062994F0015BDE8 /* HelpWindowController.swift */,
+				4D12805D2062994F0015BDE8 /* deadbeef-Bridging-Header.h */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -9927,7 +9911,6 @@
 				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */,
 				4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */,
-				4DE28471205BE0B20023063E /* TextViewerWindowController.h in Headers */,
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
 				2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */,
 				2D54327F1E467E0E0048AF73 /* MediaLibraryWindowController.h in Headers */,
@@ -11133,6 +11116,9 @@
 					2DFD50941C9715B800961D19 = {
 						CreatedOnToolsVersion = 6.2;
 					};
+					4D1B3E7918379829003E6066 = {
+						LastSwiftMigration = 0920;
+					};
 					4D52B4CD1F14F0FD00048305 = {
 						CreatedOnToolsVersion = 8.3.3;
 						ProvisioningStyle = Automatic;
@@ -11408,7 +11394,7 @@
 				2DBEE69519B4EB0900A60609 /* sb_front_cap_left@2x.png in Resources */,
 				2DBEE69419B4EB0900A60609 /* sb_front_cap_left.png in Resources */,
 				2DBEE68E19B4EB0900A60609 /* sb_back_cap_left.png in Resources */,
-				4DE28473205BE0B20023063E /* TextViewer.xib in Resources */,
+				4DE28473205BE0B20023063E /* HelpViewer.xib in Resources */,
 				2DB10B8619B908630054A6AB /* tab_left@2x.png in Resources */,
 				2DBEE69919B4EB0900A60609 /* sb_front_filler@2x.png in Resources */,
 				2DBEE69119B4EB0900A60609 /* sb_back_cap_right@2x.png in Resources */,
@@ -11433,7 +11419,6 @@
 				2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */,
 				2DBEE69019B4EB0900A60609 /* sb_back_cap_right.png in Resources */,
 				2DB10B8219B908630054A6AB /* tab_bottom_fill@2x.png in Resources */,
-				4D00F30A205BED300060A357 /* help-cocoa.txt in Resources */,
 				2D1A563A1D9FF9A4005E5CDD /* ReplayGain.xib in Resources */,
 				2DBEE69819B4EB0900A60609 /* sb_front_filler.png in Resources */,
 				2DB10B8C19B908630054A6AB /* tab_unsel_right@2x.png in Resources */,
@@ -11441,11 +11426,11 @@
 				2DB10B8119B908630054A6AB /* tab_bottom_fill.png in Resources */,
 				2DF622BB1B335FF100C70C7D /* convpresets in Resources */,
 				2D28F0501C283C4B004A6E7B /* aac.dylib in Resources */,
-				4D52B4DF1F14F11A00048305 /* v2m.dylib in Resources */,
 				4D9C5B0E1FDEBAFC00D83CEF /* opus.dylib in Resources */,
 				2D8BA3521E2672BF001D5708 /* libogglib.dylib in Resources */,
 				4D9BF4001FE134200032B6CF /* libopusfile.dylib in Resources */,
 				2D5B51221FF43FC8000AD484 /* liboggedit.dylib in Resources */,
+				2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12678,7 +12663,6 @@
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
 				2D5432801E467E0E0048AF73 /* MediaLibraryWindowController.m in Sources */,
-				4DE28472205BE0B20023063E /* TextViewerWindowController.m in Sources */,
 				2D1A564B1D9FFB10005E5CDD /* ReplayGainScannerController.m in Sources */,
 				2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
@@ -12694,6 +12678,7 @@
 				2D71C26B1DC88E5C00247CEF /* DSPChainDataSource.m in Sources */,
 				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
+				4D12805F2062994F0015BDE8 /* HelpWindowController.swift in Sources */,
 				2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
 				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
@@ -13344,11 +13329,6 @@
 			isa = PBXTargetDependency;
 			target = 4D44E66D19B7530A00F780FC /* ddb_dumb */;
 			targetProxy = 4D44E70619B753AD00F780FC /* PBXContainerItemProxy */;
-		};
-		4D52B4E11F14F12600048305 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4D52B4CD1F14F0FD00048305 /* v2m */;
-			targetProxy = 4D52B4E01F14F12600048305 /* PBXContainerItemProxy */;
 		};
 		4D9C5B0A1FDEBADC00D83CEF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -15930,7 +15910,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = NO;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "../plugins/cocoaui/deadbeef-Prefix.pch";
@@ -15942,7 +15922,6 @@
 					"PREFIX=\\\"donotuse\\\"",
 					"LIBDIR=\\\"donotuse\\\"",
 					"DOCDIR=\\\"donotuse\\\"",
-					"VERSION=\\\"devel\\\"",
 					"HAVE_LOG2=1",
 					"OSX_APPBUNDLE=1",
 					"DISABLE_MM_KEY_GRABBER=1",
@@ -15955,10 +15934,14 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
+				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -15967,7 +15950,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = NO;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "../plugins/cocoaui/deadbeef-Prefix.pch";
@@ -15979,7 +15962,6 @@
 					"PREFIX=\\\"donotuse\\\"",
 					"LIBDIR=\\\"donotuse\\\"",
 					"DOCDIR=\\\"donotuse\\\"",
-					"VERSION=\\\"devel\\\"",
 					"HAVE_LOG2=1",
 					"OSX_APPBUNDLE=1",
 				);
@@ -15991,11 +15973,14 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
+				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
+				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

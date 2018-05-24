@@ -90,7 +90,9 @@ deadbeef_app_init (DeadbeefApp *app)
 
 static void
 deadbeef_app_activate (GApplication *application) {
-    gtkui_mainwin_init ();
+    if (mainwin) {
+        gtk_window_present (GTK_WINDOW (mainwin));
+    }
 }
 
 static void
@@ -99,6 +101,8 @@ deadbeef_app_startup (GApplication *application) {
 
     g_action_map_add_action_entries (G_ACTION_MAP (application), app_entries, G_N_ELEMENTS (app_entries), application);
     DEADBEEF_APP (application)->logaction = G_SIMPLE_ACTION (g_action_map_lookup_action ( G_ACTION_MAP (application), "log"));
+
+    gtkui_mainwin_init ();
 }
 
 GSimpleAction *

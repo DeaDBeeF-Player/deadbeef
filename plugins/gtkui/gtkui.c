@@ -1276,7 +1276,6 @@ gtkui_mainwin_init(void) {
         gtk_window_set_icon_from_file (GTK_WINDOW (mainwin), iconpath, NULL);
     }
 
-    wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0);
 
     gtkui_on_configchanged (NULL);
 
@@ -1315,6 +1314,7 @@ gtkui_mainwin_init(void) {
     for (int i = 0; i < window_init_hooks_count; i++) {
         window_init_hooks[i].callback (window_init_hooks[i].userdata);
     }
+    wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0);
     gtk_widget_show (mainwin);
 
     init_widget_layout ();

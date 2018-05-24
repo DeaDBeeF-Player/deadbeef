@@ -488,6 +488,12 @@ _file_present_in_namelist (const char *fullpath, cueparser_t *cue) {
                 // file present
                 break;
             }
+            // poor's man vfs detection -- directory ends with ':'
+            snprintf (path, sizeof (path), "%s%s", cue->dirname, cue->namelist[i]->d_name);
+            if (!strcmp (path, cue->fullpath)) {
+                // file present
+                break;
+            }
         }
     }
     if (i == cue->n) {
@@ -583,20 +589,37 @@ _load_nextfile (cueparser_t *cue) {
         if (cue->origin) {
             // mark the file as used
             if (cue->namelist) {
-                const char *fn = NULL;
+                const char *fn_vfs = NULL;
+                const char *fn_nonvfs = NULL;
+
                 const char *fn_slash = strrchr (cue->fullpath, '/');
                 const char *fn_col = strrchr (cue->fullpath, ':');
+                const char *fn_fslash = strchr (cue->fullpath, '/');
+
+                // this is for files inside of VFS containers, e.g. zip://file.zip:path/to/the/file
                 if (fn_col) {
-                    fn = fn_col + 1;
+                    fn_vfs = fn_col + 1;
                 }
                 else if (fn_slash) {
-                    fn = fn_slash + 1;
+                    fn_vfs = fn_slash + 1;
                 }
                 else {
-                    fn = cue->fullpath;
+                    fn_vfs = cue->fullpath;
                 }
+
+                // this is for local FS paths which contain colons, like gvfs mounts
+                if (fn_col && (!fn_fslash || fn_fslash > fn_col)) {
+                    fn_nonvfs = fn_col + 1;
+                }
+                else if (fn_slash) {
+                    fn_nonvfs = fn_slash + 1;
+                }
+                else {
+                    fn_nonvfs = cue->fullpath;
+                }
+
                 for (int i = 0; i < cue->n; i++) {
-                    if (!strcmp (fn, cue->namelist[i]->d_name)) {
+                    if (!strcmp (fn_vfs, cue->namelist[i]->d_name) || !strcmp (fn_nonvfs, cue->namelist[i]->d_name)) {
                         cue->namelist[i]->d_name[0] = 0;
                         break;
                     }

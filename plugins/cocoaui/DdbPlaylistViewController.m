@@ -1229,17 +1229,43 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
--(void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)after {
+-(void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)_after {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (!deadbeef->plt_add_files_begin (plt, 0)) {
         dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         dispatch_async(aQueue, ^{
+            DB_playItem_t *first = NULL;
+            DB_playItem_t *after = (DB_playItem_t *)_after;
             for( int i = 0; i < [paths count]; i++ )
             {
                 NSString* path = [paths objectAtIndex:i];
                 if (path) {
-                    deadbeef->plt_insert_file2 (0, plt, (ddb_playItem_t *)after, [path UTF8String], NULL, NULL, NULL);
+                    int abort = 0;
+                    const char *fname = [path UTF8String];
+                    DB_playItem_t *inserted = deadbeef->plt_insert_dir2 (0, plt, after, fname, &abort, NULL, NULL);
+                    if (!inserted && !abort) {
+                        inserted = deadbeef->plt_insert_file2 (0, plt, after, fname, &abort, NULL, NULL);
+                        if (!inserted && !abort) {
+                            inserted = deadbeef->plt_load2 (0, plt, after, fname, &abort, NULL, NULL);
+                        }
+                    }
+
+                    if (inserted) {
+                        if (!first) {
+                            first = inserted;
+                        }
+                        if (after) {
+                            deadbeef->pl_item_unref (after);
+                        }
+                        after = inserted;
+                        deadbeef->pl_item_ref (after);
+
+                        // TODO: set cursor to the first dropped item
+                    }
                 }
+            }
+            if (after) {
+                deadbeef->pl_item_unref (after);
             }
             deadbeef->plt_add_files_end (plt, 0);
             deadbeef->plt_unref (plt);
@@ -1248,6 +1274,9 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         });
     }
     else {
+        if (_after) {
+            deadbeef->pl_item_unref ((DB_playItem_t *)_after);
+        }
         deadbeef->plt_unref (plt);
     }
 }

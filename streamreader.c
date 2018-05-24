@@ -44,6 +44,7 @@ static int curr_block_bitrate;
 
 static playItem_t *_prev_rg_track;
 static int _rg_settingschanged = 1;
+static int _firstblock = 0;
 
 void
 streamreader_init (void) {
@@ -58,6 +59,7 @@ streamreader_init (void) {
     }
     block_next = blocks;
     numblocks_ready = 0;
+    _firstblock = 0;
 }
 
 void
@@ -73,6 +75,7 @@ streamreader_free (void) {
     numblocks_ready = 0;
     _prev_rg_track = NULL;
     _rg_settingschanged = 1;
+    _firstblock = 0;
 }
 
 streamblock_t *
@@ -131,8 +134,17 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
         replaygain_apply (&fileinfo->fmt, block->buf, block->size);
     }
 
+    if (_firstblock) {
+        block->first = 1;
+        _firstblock = 0;
+    }
+    else {
+        block->first = 0;
+    }
+
     if (rb != size) {
         block->last = 1;
+        _firstblock = 1;
     }
     else {
         block->last = 0;
@@ -207,6 +219,7 @@ streamreader_reset (void) {
     block_next = blocks;
     block_data = NULL;
     numblocks_ready = 0;
+    _firstblock = 0;
 }
 
 int
