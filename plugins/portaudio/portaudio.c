@@ -145,11 +145,12 @@ portaudio_stream_start (void) {
     {
         deadbeef->conf_lock ();
         const char * alsa_soundcard_string = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
-        deadbeef->conf_unlock ();
         if (strcmp(alsa_soundcard_string, "default") == 0) {
             stream_parameters.device = Pa_GetDefaultOutputDevice ();
+            deadbeef->conf_unlock ();
         }
         else {
+            deadbeef->conf_unlock ();
             stream_parameters.device = deadbeef->conf_get_int ("alsa_soundcard", -1);
         }
     }
@@ -415,6 +416,7 @@ portaudio_unpause (void) {
     return portaudio_play ();
 }
 
+/*
 static int portaudio_get_endiannerequested_fmt (void) {
 #if WORDS_BIGENDIAN
     return 1;
@@ -422,6 +424,7 @@ static int portaudio_get_endiannerequested_fmt (void) {
     return 0;
 #endif
 }
+*/
 
 static int
 portaudio_configchanged (void) {
@@ -429,20 +432,20 @@ portaudio_configchanged (void) {
     {
         deadbeef->conf_lock ();
         const char * alsa_soundcard_string = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
-        deadbeef->conf_unlock ();
         if (strcmp(alsa_soundcard_string, "default") == 0) {
             alsa_soundcard = Pa_GetDefaultOutputDevice ();
+            deadbeef->conf_unlock ();
         }
         else {
+            deadbeef->conf_unlock ();
             alsa_soundcard = deadbeef->conf_get_int ("alsa_soundcard", -1);
         }
     }
     int buffer = deadbeef->conf_get_int ("portaudio.buffer", DEFAULT_BUFFER_SIZE);
-    if (stream && Pa_IsStreamActive (stream) && alsa_soundcard != stream_parameters.device || userData && userData->buffer_size != buffer) {
+    if ((stream && Pa_IsStreamActive (stream) && alsa_soundcard != stream_parameters.device) || (userData && userData->buffer_size != buffer)) {
         trace ("portaudio: config option changed, restarting\n");
         deadbeef->sendmessage (DB_EV_REINIT_SOUND, 0, 0, 0);
     }
-    deadbeef->conf_unlock ();
     return 0;
 }
 
@@ -620,12 +623,15 @@ static DB_output_t plugin = {
     .plugin.api_vmajor = 1,
     .plugin.api_vminor = 10,
     .plugin.version_major = 1,
-    .plugin.version_minor = 3,
+    .plugin.version_minor = 4,
     .plugin.type = DB_PLUGIN_OUTPUT,
     .plugin.id = "portaudio",
     .plugin.name = "PortAudio output plugin",
     .plugin.descr = "This plugin plays audio using PortAudio library.\n"
     "\n"
+    "Changes in version 1.4:\n"
+    "    * Fix device enumeration when ASCII used.\n"
+    "    * Invalid characters will be discarded.\n"
     "Changes in version 1.3:\n"
     "    * Manual charset selection for device names on Windows.\n"
     "    * Changing device will change output device.\n"
