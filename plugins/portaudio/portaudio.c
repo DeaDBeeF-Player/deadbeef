@@ -453,8 +453,25 @@ static void portaudio_enum_soundcards (void (*callback)(const char *name, const 
 
     PaDeviceIndex i = 0;
     trace ("portaudio_enum_soundcards have %d devices\n",device_count);
+    // Charset conversion
+    #ifdef __MINGW32__
+    char * charset = 0;
+    int devenc_list = deadbeef->conf_get_int ("portaudio.devenc_list", 0);
+    if (devenc_list == 0)
+        charset = "UTF-8"; // all non-utf8 chars will be discarded
+    else if (devenc_list == 1)
+        charset = "cp1250";
+    else if (devenc_list == 2) {
+        charset = malloc (255);
+        if (charset)
+            deadbeef->conf_get_str ("portaudio.devenc_custom", "", charset, 255);
+    }
+    if (charset)
+        trace ("portaudio: converting device names from charset %s\n", charset);
+    #endif
     for (i=0;i<device_count;i++) {
         const PaDeviceInfo* device = Pa_GetDeviceInfo (i);
+        const PaHostApiInfo * api_info = Pa_GetHostApiInfo(device->hostApi);
         if (!device) {
             warn ("portaudio: reading device info failed\n");
         }
@@ -466,31 +483,17 @@ static void portaudio_enum_soundcards (void (*callback)(const char *name, const 
 
         // Convert to UTF-8 on windows
         #ifdef __MINGW32__
-        char * charset = 0;
-        int devenc_list = deadbeef->conf_get_int ("portaudio.devenc_list", 0);
-        if (devenc_list == 0) {
-            continue;
-        }
-        else if (devenc_list == 1)
-            charset = "cp1250";
-        else if (devenc_list == 2) {
-            charset = malloc (255);
-            if (!charset)
-                continue;
-            deadbeef->conf_get_str ("portaudio.devenc_custom", "", charset, 255);
-        }
-
-        if (i == 0)
-            trace ("portaudio: converting device names from charset %s\n", charset);
-        char conv[strlen(device->name) * 4];
-        name_converted = conv;
-        deadbeef->junk_iconv (device->name, strlen(device->name), name_converted, strlen(device->name)*4, charset, "UTF-8");
-        if (devenc_list == 2) {
-            free (charset);
+        char name_converted_allocated = 0;
+        if (api_info->type == paDirectSound || api_info->type == paMME) {
+            // it turns out these APIs do not return strings in UTF-8
+            if (charset && strlen(charset)) {
+                name_converted = malloc (strlen(device->name) * 4);
+                name_converted_allocated = 1;
+                deadbeef->junk_iconv (device->name, strlen(device->name), name_converted, strlen(device->name)*4, charset, "UTF-8//IGNORE");
+            }
         }
         #endif
 
-        const PaHostApiInfo * api_info = Pa_GetHostApiInfo(device->hostApi);
         char full_name[255];
         snprintf (full_name, 255, "%s: %s", api_info->name, name_converted);
 
@@ -499,6 +502,14 @@ static void portaudio_enum_soundcards (void (*callback)(const char *name, const 
             snprintf (num, 8, "%d", i);
             callback (num, full_name, userdata);
         }
+        #ifdef __MINGW32__
+        if (name_converted_allocated) {
+            free (name_converted);
+        }
+        if (devenc_list == 2) {
+            free (charset);
+        }
+        #endif
         // trace ("device: %s\n",name_converted);
     }
 
@@ -569,7 +580,7 @@ portaudio_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 static const char settings_dlg[] =
     "property \"Buffer size (-1 to use optimal value choosen by portaudio)\" entry portaudio.buffer " DEFAULT_BUFFER_SIZE_STR ";\n"
 #ifdef __MINGW32__
-    "property \"Device name encoding\" select[3] portaudio.devenc_list 0 ASCII cp1250 \"Defined below\";\n"
+    "property \"Device name encoding\" select[3] portaudio.devenc_list 0 \"ASCII / UTF-8\" cp1250 \"Defined below\";\n"
     "property \"Custom device name encoding\" entry portaudio.devenc_custom \"\";\n"
 #endif
 ;
