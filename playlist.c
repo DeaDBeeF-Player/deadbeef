@@ -1175,7 +1175,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         if (inserted) {
             after = inserted;
         }
-        if (*pabort) {
+        if (pabort && *pabort) {
             break;
         }
     }
