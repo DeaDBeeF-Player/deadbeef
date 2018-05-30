@@ -44,28 +44,35 @@
 
 static GtkWidget *prefwin;
 
-static char alsa_device_names[100][64];
-static int num_alsa_devices;
+static char output_device_names[100][64];
+static int num_output_devices;
+
+static const char *
+_get_output_soundcard_conf_name (void) {
+    static char name[100];
+    snprintf (name, sizeof (name), "%s_soundcard", deadbeef->get_output ()->plugin.id);
+    return name;
+}
 
 static void
 gtk_enum_sound_callback (const char *name, const char *desc, void *userdata) {
-    if (num_alsa_devices >= 100) {
-        fprintf (stderr, "wtf!! more than 100 alsa devices??\n");
+    if (num_output_devices >= 100) {
+        fprintf (stderr, "wtf!! more than 100 output devices??\n");
         return;
     }
     GtkComboBox *combobox = GTK_COMBO_BOX (userdata);
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), desc);
 
     deadbeef->conf_lock ();
-    const char *curr = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
+    const char *curr = deadbeef->conf_get_str_fast (_get_output_soundcard_conf_name(), "default");
     if (!strcmp (curr, name)) {
-        gtk_combo_box_set_active (combobox, num_alsa_devices);
+        gtk_combo_box_set_active (combobox, num_output_devices);
     }
     deadbeef->conf_unlock ();
 
-    strncpy (alsa_device_names[num_alsa_devices], name, 63);
-    alsa_device_names[num_alsa_devices][63] = 0;
-    num_alsa_devices++;
+    strncpy (output_device_names[num_output_devices], name, 63);
+    output_device_names[num_output_devices][63] = 0;
+    num_output_devices++;
 }
 
 void
@@ -80,14 +87,14 @@ preferences_fill_soundcards (void) {
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), _("Default Audio Device"));
 
     deadbeef->conf_lock ();
-    const char *s = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
+    const char *s = deadbeef->conf_get_str_fast (_get_output_soundcard_conf_name(), "default");
     if (!strcmp (s, "default")) {
         gtk_combo_box_set_active (combobox, 0);
     }
     deadbeef->conf_unlock ();
 
-    num_alsa_devices = 1;
-    strcpy (alsa_device_names[0], "default");
+    num_output_devices = 1;
+    strcpy (output_device_names[0], "default");
     if (deadbeef->get_output ()->enum_soundcards) {
         deadbeef->get_output ()->enum_soundcards (gtk_enum_sound_callback, combobox);
         gtk_widget_set_sensitive (GTK_WIDGET (combobox), TRUE);
@@ -475,11 +482,11 @@ on_pref_soundcard_changed              (GtkComboBox     *combobox,
                                         gpointer         user_data)
 {
     int active = gtk_combo_box_get_active (combobox);
-    if (active >= 0 && active < num_alsa_devices) {
+    if (active >= 0 && active < num_output_devices) {
         deadbeef->conf_lock ();
-        const char *soundcard = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
-        if (strcmp (soundcard, alsa_device_names[active])) {
-            deadbeef->conf_set_str ("alsa_soundcard", alsa_device_names[active]);
+        const char *soundcard = deadbeef->conf_get_str_fast (_get_output_soundcard_conf_name(), "default");
+        if (strcmp (soundcard, output_device_names[active])) {
+            deadbeef->conf_set_str (_get_output_soundcard_conf_name(), output_device_names[active]);
             deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
         }
         deadbeef->conf_unlock ();
