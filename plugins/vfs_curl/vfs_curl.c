@@ -213,7 +213,7 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                 int songstarted = 0;
                 char *tit = strstr (title, " - ");
                 deadbeef->pl_lock ();
-                int emulate_trackchange = deadbeef->conf_get_int ("vfs_curl.emulate_trackchange", 0);
+                int emulate_trackchange = 1;
                 // create dummy track with previous meta
                 DB_playItem_t *from = NULL;
                 if (emulate_trackchange) {
@@ -1121,10 +1121,6 @@ http_is_streaming (void) {
     return 1;
 }
 
-static const char settings_dlg[] =
-    "property \"Emulate track change events (for scrobbling)\" checkbox vfs_curl.emulate_trackchange 0;\n"
-;
-
 static DB_vfs_t plugin = {
     DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
@@ -1159,7 +1155,6 @@ static DB_vfs_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = vfs_curl_start,
     .plugin.stop = vfs_curl_stop,
-    .plugin.configdialog = settings_dlg,
     .open = http_open,
     .set_track = http_set_track,
     .close = http_close,
