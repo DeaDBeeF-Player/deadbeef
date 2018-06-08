@@ -405,7 +405,7 @@ on_popup_header_duration_clicked (GtkCheckMenuItem *checkmenuitem, gpointer user
 }
 
 static gboolean
-on_pltbrowser_header_popup_menu (gpointer user_data)
+on_pltbrowser_header_popup_menu (GtkWidget *widget, gpointer user_data)
 {
     w_pltbrowser_t *w = user_data;
     GtkWidget *popup = gtk_menu_new ();
@@ -425,7 +425,8 @@ on_pltbrowser_header_popup_menu (gpointer user_data)
     g_signal_connect_after ((gpointer) playing, "toggled", G_CALLBACK (on_popup_header_playing_clicked), w);
     g_signal_connect_after ((gpointer) items, "toggled", G_CALLBACK (on_popup_header_items_clicked), w);
     g_signal_connect_after ((gpointer) duration, "toggled", G_CALLBACK (on_popup_header_duration_clicked), w);
-    gtk_menu_popup (GTK_MENU (popup), NULL, NULL, NULL, w, 0, gtk_get_current_event_time ());
+    gtk_menu_attach_to_widget (GTK_MENU (popup), GTK_WIDGET (widget), NULL);
+    gtk_menu_popup (GTK_MENU (popup), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time ());
     return TRUE;
 }
 
@@ -579,7 +580,7 @@ on_pltbrowser_header_clicked (GtkWidget       *widget,
     }
     if (event->type == GDK_BUTTON_PRESS) {
         if (event->button == 3) {
-            return on_pltbrowser_header_popup_menu (w);
+            return on_pltbrowser_header_popup_menu (widget, w);
         }
     }
     return FALSE;
@@ -795,7 +796,8 @@ on_pltbrowser_button_press_event       (GtkWidget       *widget,
         if (event->button == 3) {
             int row_clicked = get_treeview_row_at_pos (GTK_TREE_VIEW (widget), event->x, event->y);
             GtkWidget *menu = gtkui_plugin->create_pltmenu (row_clicked);
-            gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+            gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
+            gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, event->button, gtk_get_current_event_time());
             return TRUE;
         }
     }
@@ -852,7 +854,8 @@ on_pltbrowser_popup_menu (GtkWidget *widget, gpointer user_data) {
     if (row >= 0) {
         int plt_idx = row;
         GtkWidget *menu = gtkui_plugin->create_pltmenu (plt_idx);
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+        gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
         return TRUE;
     }
     return FALSE;
