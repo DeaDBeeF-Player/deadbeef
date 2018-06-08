@@ -1703,7 +1703,6 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         return;
 
     DdbListview *listview = get_context_menu_listview (menuitem);
-    g_assert_nonnull (listview);
     GtkWidget *dlg = create_editcolumndlg ();
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_title (GTK_WINDOW (dlg), _("Edit column"));
