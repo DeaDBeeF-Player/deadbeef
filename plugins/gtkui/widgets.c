@@ -900,7 +900,8 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
     }
 
     g_signal_connect ((gpointer) menu, "deactivate", G_CALLBACK (w_menu_deactivate), user_data);
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+    gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
     return TRUE;
 }
 
@@ -1695,7 +1696,8 @@ on_tab_popup_menu (GtkWidget *widget, gpointer user_data)
             G_CALLBACK (on_move_tab_right_activate),
             w);
 
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, w, 0, gtk_get_current_event_time());
+    gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
 }
 
 static void
@@ -3918,6 +3920,7 @@ static void
 on_button_config (GtkMenuItem *menuitem, gpointer user_data) {
     w_button_t *b = user_data;
     GtkWidget *dlg = create_button_properties ();
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
     GtkWidget *color = lookup_widget (dlg, "color");
     GtkWidget *use_color = lookup_widget (dlg, "use_color");
     GtkWidget *textcolor = lookup_widget (dlg, "textcolor");
