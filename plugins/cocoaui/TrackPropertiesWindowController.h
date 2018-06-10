@@ -56,6 +56,7 @@
 - (IBAction)okEditMultipleValuesAction:(id)sender;
 @property (unsafe_unretained) IBOutlet NSTextView *multiValueSingle;
 @property (weak) IBOutlet NSTableView *multiValueTableView;
+@property (weak) IBOutlet NSTabView *multiValueTabView;
 
 // new field panel
 @property (unsafe_unretained) IBOutlet NSTextField *addFieldName;

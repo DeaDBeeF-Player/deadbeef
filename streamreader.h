@@ -32,6 +32,7 @@ typedef struct streamblock_s {
     char *buf;
     int size; // how much bytes total in the buffer, up to BLOCK_SIZE, but can be less
     int pos; // read position in the buffer
+    int first; // set to 1 for the first buffer of the stream, following the block with last=1
     int last; // set to 1 for last buffer of the stream
     int bitrate;
 

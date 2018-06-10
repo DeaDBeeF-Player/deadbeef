@@ -1193,7 +1193,7 @@ plug_load_all (void) {
 
     // select output plugin
 #ifndef XCTEST
-    if (plug_select_output () < 0) {
+    if (plug_reinit_sound () < 0) {
         trace ("failed to find output plugin!\n");
         return -1;
     }
@@ -1307,6 +1307,8 @@ plug_unload_all (void) {
 void
 plug_set_output (DB_output_t *out) {
     output_plugin = out;
+    conf_set_str ("output_plugin", output_plugin->plugin.name);
+    trace ("selected output plugin: %s\n", output_plugin->plugin.name);
 }
 
 void
@@ -1354,11 +1356,9 @@ plug_get_output (void) {
     return output_plugin;
 }
 
-int
-plug_select_output (void) {
-#ifdef ANDROID
-    return 0;
-#else
+static DB_output_t *
+_select_output_plugin (void) {
+#ifndef ANDROID
     char outplugname[100];
 #ifdef HAVE_COCOAUI
     conf_get_str ("output_plugin", "CoreAudio", outplugname, sizeof (outplugname));
@@ -1368,64 +1368,22 @@ plug_select_output (void) {
     for (int i = 0; g_output_plugins[i]; i++) {
         DB_output_t *p = g_output_plugins[i];
         if (!strcmp (p->plugin.name, outplugname)) {
-            trace ("selected output plugin: %s\n", outplugname);
-            output_plugin = p;
-            break;
+            return p;
         }
     }
-    if (!output_plugin) {
-        output_plugin = g_output_plugins[0];
-        if (output_plugin) {
-            trace ("selected output plugin: %s\n", output_plugin->plugin.name);
-            conf_set_str ("output_plugin", output_plugin->plugin.name);
-        }
-    }
-    if (!output_plugin) {
-        return -1;
-    }
-    messagepump_push (DB_EV_OUTPUTCHANGED, 0, 0, 0);
-    return 0;
 #endif
+    return g_output_plugins[0];
 }
 
-void
+int
 plug_reinit_sound (void) {
-    DB_output_t *prev = plug_get_output ();
-    int state = OUTPUT_STATE_STOPPED;
-
-    ddb_waveformat_t fmt = {0};
-    if (prev) {
-        state = prev->state ();
-        memcpy (&fmt, &prev->fmt, sizeof (ddb_waveformat_t));
-        prev->free ();
+    DB_output_t *new_out = _select_output_plugin ();
+    if (!new_out) {
+        return -1;
     }
 
-    if (plug_select_output () < 0) {
-        char outplugname[100];
-#ifdef HAVE_COCOAUI
-        conf_get_str ("output_plugin", "CoreAudio", outplugname, sizeof (outplugname));
-#else
-        conf_get_str ("output_plugin", "ALSA output plugin", outplugname, sizeof (outplugname));
-#endif
-        trace_err ("failed to select output plugin %s\nreverted to %s\n", outplugname, prev->plugin.name);
-        output_plugin = prev;
-    }
-    DB_output_t *output = plug_get_output ();
-    if (fmt.channels) {
-        output->setformat (&fmt);
-    }
-    if (output->init () < 0) {
-        streamer_reset (1);
-        streamer_set_nextsong (-1, 0);
-        return;
-    }
-
-    if (state != OUTPUT_STATE_PAUSED && state != OUTPUT_STATE_STOPPED) {
-        if (output->play () < 0) {
-            trace_err ("failed to reinit sound output\n");
-            streamer_set_nextsong (-1, 0);
-        }
-    }
+    streamer_set_output (new_out);
+    return 0;
 }
 
 // list of all unique decoder ids used in current session

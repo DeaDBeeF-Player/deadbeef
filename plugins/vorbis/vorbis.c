@@ -332,6 +332,9 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.channelmask |= 1 << i;
     }
 
+    deadbeef->pl_set_meta_int (it, ":TRACKNUM", 0);
+    deadbeef->pl_set_meta_int (it, ":CHANNELS", vi->channels);
+    deadbeef->pl_set_meta_int (it, ":SAMPLERATE", (int)vi->rate);
     deadbeef->pl_replace_meta (it, "!FILETYPE", "Ogg Vorbis");
 
     return 0;
@@ -370,24 +373,22 @@ static void send_event(DB_playItem_t *it, const int event_enum)
 static bool
 new_streaming_link(ogg_info_t *info, const int new_link)
 {
-    if (info->cur_bit_stream == 0 && new_link != 1)
-        return false;
+    trace ("Streaming link changed from %d to %d\n", info->cur_bit_stream, new_link);
+    deadbeef->pl_set_meta_int (info->it, ":TRACKNUM", new_link);
+    deadbeef->pl_set_item_flags (info->it, DDB_IS_SUBTRACK);
 
-    trace("Streaming link changed from %d to %d\n", info->cur_bit_stream, new_link);
-    deadbeef->pl_set_meta_int(info->it, ":TRACKNUM", new_link);
-    update_vorbis_comments(info->it, &info->vorbis_file, new_link);
-    send_event(info->it, DB_EV_SONGSTARTED);
-    send_event(info->it, DB_EV_TRACKINFOCHANGED);
-    deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    update_vorbis_comments (info->it, &info->vorbis_file, new_link);
+    send_event (info->it, DB_EV_SONGSTARTED);
+    send_event (info->it, DB_EV_TRACKINFOCHANGED);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     info->cur_bit_stream = new_link;
 
     vorbis_info *vi = ov_info (&info->vorbis_file, new_link);
     if (vi && (info->info.fmt.channels != vi->channels || info->info.fmt.samplerate != vi->rate)) {
-        // Streamer can't do this, so re-init the stream
-        trace("Stream channel count changed from %d to %d\n", info->info.fmt.channels, vi->channels);
-        trace("Stream channel count changed from %d to %d\n", info->info.fmt.samplerate, vi->rate);
-        deadbeef->sendmessage(DB_EV_PAUSE, 0, 0, 0);
-        deadbeef->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
+        info->info.fmt.samplerate = (int)vi->rate;
+        info->info.fmt.channels = vi->channels;
+        deadbeef->pl_set_meta_int (info->it, ":CHANNELS", vi->channels);
+        deadbeef->pl_set_meta_int (info->it, ":SAMPLERATE", (int)vi->rate);
         return true;
     }
 
@@ -454,13 +455,14 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
         if (ret < 0) {
             trace("cvorbis_read: ov_read returned %d\n", ret);
         }
-        else if (new_link != info->cur_bit_stream && !ov_seekable(&info->vorbis_file) && new_streaming_link(info, new_link)) {
-            bytes_read = bytes_to_read;
-        }
         else {
             bytes_read += ret;
         }
 
+        if (new_link != info->cur_bit_stream && new_streaming_link(info, new_link)) {
+            bytes_read = bytes_to_read;
+            break;
+        }
 //        trace("cvorbis_read got %d bytes towards %d bytes (%d bytes still required)\n", ret, bytes_to_read, bytes_to_read-bytes_read);
     }
 
@@ -477,9 +479,6 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
         if (ret < 0) {
             trace("cvorbis_read: ov_read returned %d\n", ret);
         }
-        else if (new_link != info->cur_bit_stream && !ov_seekable(&info->vorbis_file) && new_streaming_link(info, new_link)) {
-            samples_read = samples_to_read;
-        }
         else if (ret > 0) {
             float *ptr = (float *)buffer + samples_read*_info->fmt.channels;
             for (int channel = 0; channel < _info->fmt.channels; channel++, ptr++) {
@@ -489,6 +488,11 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
                 }
             }
             samples_read += ret;
+        }
+
+        if (new_link != info->cur_bit_stream && new_streaming_link(info, new_link)) {
+            samples_read = samples_to_read;
+            break;
         }
 
 //        trace("cvorbis_read got %d samples towards %d bytes (%d samples still required)\n", ret, bytes_to_read, samples_to_read-samples_read);

@@ -180,6 +180,6 @@ void
 streamer_yield (void);
 
 void
-streamer_dsp_changed (void);
+streamer_set_output (DB_output_t *output);
 
 #endif // __STREAMER_H

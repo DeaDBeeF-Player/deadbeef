@@ -2151,7 +2151,7 @@ _id3v2_append_combined_text_frame_from_meta (DB_id3v2_tag_t *id3v2, const char *
         assert (0);
     }
     if (!strcmp (key, "USLT")) { // add the language code
-        const char *new_value = malloc (4 + out_size);
+        char *new_value = malloc (4 + out_size);
         if (new_value) {
             memcpy (new_value, "XXX", 4);
             memcpy (new_value + 4, tag_value, out_size);
