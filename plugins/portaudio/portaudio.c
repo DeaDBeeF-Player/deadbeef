@@ -144,14 +144,14 @@ portaudio_stream_start (void) {
     // Use default device if none selected
     {
         deadbeef->conf_lock ();
-        const char * alsa_soundcard_string = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
-        if (strcmp(alsa_soundcard_string, "default") == 0) {
+        const char * portaudio_soundcard_string = deadbeef->conf_get_str_fast ("portaudio_soundcard", "default");
+        if (strcmp(portaudio_soundcard_string, "default") == 0) {
             stream_parameters.device = Pa_GetDefaultOutputDevice ();
             deadbeef->conf_unlock ();
         }
         else {
             deadbeef->conf_unlock ();
-            stream_parameters.device = deadbeef->conf_get_int ("alsa_soundcard", -1);
+            stream_parameters.device = deadbeef->conf_get_int ("portaudio_soundcard", -1);
         }
     }
     static struct uData * uData;
@@ -428,21 +428,21 @@ static int portaudio_get_endiannerequested_fmt (void) {
 
 static int
 portaudio_configchanged (void) {
-    int alsa_soundcard = 0;
+    int portaudio_soundcard = 0;
     {
         deadbeef->conf_lock ();
-        const char * alsa_soundcard_string = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
-        if (strcmp(alsa_soundcard_string, "default") == 0) {
-            alsa_soundcard = Pa_GetDefaultOutputDevice ();
+        const char * portaudio_soundcard_string = deadbeef->conf_get_str_fast ("portaudio_soundcard", "default");
+        if (strcmp(portaudio_soundcard_string, "default") == 0) {
+            portaudio_soundcard = Pa_GetDefaultOutputDevice ();
             deadbeef->conf_unlock ();
         }
         else {
             deadbeef->conf_unlock ();
-            alsa_soundcard = deadbeef->conf_get_int ("alsa_soundcard", -1);
+            portaudio_soundcard = deadbeef->conf_get_int ("portaudio_soundcard", -1);
         }
     }
     int buffer = deadbeef->conf_get_int ("portaudio.buffer", DEFAULT_BUFFER_SIZE);
-    if ((stream && Pa_IsStreamActive (stream) && alsa_soundcard != stream_parameters.device) || (userData && userData->buffer_size != buffer)) {
+    if ((stream && Pa_IsStreamActive (stream) && portaudio_soundcard != stream_parameters.device) || (userData && userData->buffer_size != buffer)) {
         trace ("portaudio: config option changed, restarting\n");
         deadbeef->sendmessage (DB_EV_REINIT_SOUND, 0, 0, 0);
     }
@@ -466,8 +466,9 @@ static void portaudio_enum_soundcards (void (*callback)(const char *name, const 
         charset = "cp1250";
     else if (devenc_list == 2) {
         charset = malloc (255);
-        if (charset)
-            deadbeef->conf_get_str ("portaudio.devenc_custom", "", charset, 255);
+        if (!charset)
+            return;
+        deadbeef->conf_get_str ("portaudio.devenc_custom", "", charset, 255);
     }
     if (charset)
         trace ("portaudio: converting device names from charset %s\n", charset);
@@ -509,13 +510,14 @@ static void portaudio_enum_soundcards (void (*callback)(const char *name, const 
         if (name_converted_allocated) {
             free (name_converted);
         }
-        if (devenc_list == 2) {
-            free (charset);
-        }
         #endif
         // trace ("device: %s\n",name_converted);
     }
-
+    #ifdef __MINGW32__
+    if (devenc_list == 2 && charset) {
+        free (charset);
+    }
+    #endif
 }
 
 static int
@@ -660,7 +662,7 @@ static DB_output_t plugin = {
     "\n"
     "3. This notice may not be removed or altered from any source distribution.\n"
     ,
-    .plugin.website = "http://github.com/kuba160",
+    .plugin.website = "http://github.com/kuba160/ddb_portaudio",
     .plugin.start = p_portaudio_start,
     .plugin.stop = p_portaudio_stop,
     .plugin.configdialog = settings_dlg,
