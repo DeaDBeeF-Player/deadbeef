@@ -30,9 +30,6 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <stdarg.h>
-#ifdef __MINGW32__
-#include "plugins/libwin/mingw32_layer.h"
-#endif
 
 #ifdef __cplusplus
 extern "C" {
