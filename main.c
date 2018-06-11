@@ -83,7 +83,6 @@
 
 #ifdef __MINGW32__
 #include <shlwapi.h>
-#include "plugins/libwin/mingw32_layer.h"
 #endif
 #include "deadbeef.h"
 

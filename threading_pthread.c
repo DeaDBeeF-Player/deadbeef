@@ -33,9 +33,6 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#ifdef __MINGW32__
-#include "plugins/libwin/mingw32_layer.h"
-#endif
 
 intptr_t
 thread_start (void (*fn)(void *ctx), void *ctx) {

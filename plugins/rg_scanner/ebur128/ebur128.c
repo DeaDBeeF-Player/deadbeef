@@ -13,11 +13,7 @@
 
 
 /* This can be replaced by any BSD-like queue implementation. */
-#ifdef __MINGW32__
-#include "../libwin/include/sys/queue.h"
-#else
 #include <sys/queue.h>
-#endif
 
 #ifdef USE_SPEEX_RESAMPLER
   #include <speex/speex_resampler.h>
