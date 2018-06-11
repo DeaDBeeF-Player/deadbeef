@@ -1201,7 +1201,7 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         deadbeef->fseek(buffer.file, start, SEEK_SET);
     }
     // calc approx. mp3 duration 
-    int res = cmp3_scan_stream (&buffer, -1);
+    int res = cmp3_scan_stream (&buffer, 0);
     if (res < 0) {
         trace ("mp3: cmp3_scan_stream returned error\n");
         deadbeef->fclose (fp);
