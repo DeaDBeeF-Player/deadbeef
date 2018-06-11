@@ -319,12 +319,32 @@ ml_free_tree (tree_node_t *node) {
 
 DB_playItem_t *(*plt_insert_dir) (ddb_playlist_t *plt, DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
-uintptr_t tid;
-int scanner_terminate;
+static uintptr_t tid;
+static int scanner_terminate;
+static int scanner_file_idx = 0;
+
+static void
+ml_notify_listeners (int event);
+
+static void
+ml_index (void);
 
 static int
 add_file_info_cb (DB_playItem_t *it, void *data) {
 //    fprintf (stderr, "added %s                                 \r", deadbeef->pl_find_meta (it, ":URI"));
+
+    // lets reindex and notify listeners once in a while
+    scanner_file_idx++;
+    printf ("%d\n", scanner_file_idx);
+    if (scanner_file_idx >= 100) {
+        scanner_file_idx = 0;
+        _ml_state = DDB_MEDIALIB_STATE_INDEXING;
+        ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
+        ml_index ();
+        ml_notify_listeners (DDB_MEDIALIB_EVENT_CHANGED);
+        _ml_state = DDB_MEDIALIB_STATE_SCANNING;
+        ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
+    }
     return 0;
 }
 
@@ -515,6 +535,7 @@ ml_notify_listeners (int event) {
 
 static void
 scanner_thread (void *none) {
+    scanner_file_idx = 0;
     _ml_state = DDB_MEDIALIB_STATE_LOADING;
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
 
@@ -564,7 +585,11 @@ scanner_thread (void *none) {
 
     _ml_state = DDB_MEDIALIB_STATE_SAVING;
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
-    deadbeef->plt_save (ml_playlist, NULL, NULL, plpath, NULL, NULL, NULL);
+
+    // prefer to not save the intermediate scan results
+    if (!scanner_terminate) {
+        deadbeef->plt_save (ml_playlist, NULL, NULL, plpath, NULL, NULL, NULL);
+    }
 
     _ml_state = DDB_MEDIALIB_STATE_IDLE;
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
