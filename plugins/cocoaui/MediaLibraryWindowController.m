@@ -45,7 +45,38 @@ static void _medialib_listener (int event, void *user_data) {
 }
 
 - (void)medialibEvent:(int)event {
-    [self initializeTreeView:_index];
+    if (event == DDB_MEDIALIB_EVENT_CHANGED) {
+        [self initializeTreeView:_index];
+    }
+    else if (event == DDB_MEDIALIB_EVENT_SCANNER) {
+        int state = _medialib->scanner_state ();
+        if (state != DDB_MEDIALIB_STATE_IDLE) {
+            [_scannerActiveIndicator startAnimation:self];
+
+            switch (state) {
+                case DDB_MEDIALIB_STATE_LOADING:
+                    [_scannerActiveState setStringValue:@"Loading..."];
+                    break;
+                case DDB_MEDIALIB_STATE_SCANNING:
+                    [_scannerActiveState setStringValue:@"Scanning..."];
+                    break;
+                case DDB_MEDIALIB_STATE_INDEXING:
+                    [_scannerActiveState setStringValue:@"Indexing..."];
+                    break;
+                case DDB_MEDIALIB_STATE_SAVING:
+                    [_scannerActiveState setStringValue:@"Saving..."];
+                    break;
+                default:
+                    [_scannerActiveState setStringValue:@""];
+                    break;
+            }
+            [_scannerActiveState setHidden:NO];
+        }
+        else {
+            [_scannerActiveIndicator stopAnimation:self];
+            [_scannerActiveState setHidden:YES];
+        }
+    }
 }
 
 - (void)windowDidLoad {
@@ -54,6 +85,7 @@ static void _medialib_listener (int event, void *user_data) {
     _medialib = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
     _medialib->add_listener (_medialib_listener, (__bridge void *)self);
 
+    [self medialibEvent:DDB_MEDIALIB_EVENT_SCANNER];
     [self medialibEvent:DDB_MEDIALIB_EVENT_CHANGED];
 
     [_outlineView setDataSource:(id<NSOutlineViewDataSource> _Nullable)self];
