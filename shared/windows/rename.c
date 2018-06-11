@@ -1,6 +1,7 @@
 //
-
+//#ifdef 
 //#undef rename
+//extern int rename(const char *, const char *);
 //#define rename(X,Y) rename_windows(X,Y)
 #include <stdio.h>
 
@@ -14,7 +15,7 @@ int rename_windows(const char * oldfile, const char * newfile){
             return -1;
         }
     }
-    if(rename(oldfile,newfile)){
+    if((rename)(oldfile,newfile)){
         fprintf(stdout,"Renaming file %s failed!\n",oldfile);
         return -1;
     }

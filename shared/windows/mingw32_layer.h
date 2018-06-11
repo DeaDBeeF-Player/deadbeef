@@ -46,6 +46,7 @@
 #define  fnmatch(x,y,z) PathMatchSpec(y,x)
 #endif
 
+//int rename(const char * oldfile, const char * newfile) __attribute__((weak));
 #undef rename
 #define rename(X,Y) rename_windows(X,Y)
 
@@ -62,6 +63,9 @@ typedef pthread_cond_t  *db_cond_t;
   _Reserved_ LPVOID  lpReserved
 );*/
 
+#ifndef posix_memalign
+#define posix_memalign(X, Y, Z) ({*X = __mingw_aligned_malloc (Z, Y); (*X) ? 1 : 0;})
+#endif
 
 int scandir (const char *__dir, struct dirent ***__namelist, int (*__selector) (const struct dirent *), int (*__cmp) (const struct dirent **, const struct dirent **));
 void *mmap(void *, size_t, int, int, int, off_t);
