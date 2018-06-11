@@ -111,6 +111,19 @@ typedef struct {
     cached_string_t *cached_strings;
 } ml_db_t;
 
+static ddb_playlist_t *ml_playlist; // this playlist contains the actual data of the media library in plain list
+
+static ml_db_t db; // this is the index, which can be rebuilt from the playlist at any given time
+
+static uintptr_t mutex;
+
+#define MAX_LISTENERS 10
+static ddb_medialib_listener_t listeners[MAX_LISTENERS];
+static void *listeners_ud[MAX_LISTENERS];
+
+static int _ml_state = DDB_MEDIALIB_STATE_IDLE;
+
+
 static uint32_t
 hash_for_ptr (void *ptr) {
     // scrambling multiplier from http://vigna.di.unimi.it/ftp/papers/xorshift.pdf
@@ -177,16 +190,6 @@ hash_add (ml_string_t **hash, const char *val, DB_playItem_t *it) {
 
     return retval;
 }
-
-static ddb_playlist_t *ml_playlist; // this playlist contains the actual data of the media library in plain list
-
-static ml_db_t db; // this is the index, which can be rebuilt from the playlist at any given time
-
-static uintptr_t mutex;
-
-#define MAX_LISTENERS 10
-static ddb_medialib_listener_t listeners[MAX_LISTENERS];
-static void *listeners_ud[MAX_LISTENERS];
 
 static ml_string_t *
 ml_reg_col (collection_t *coll, const char *c, DB_playItem_t *it) {
@@ -391,6 +394,7 @@ ml_index (void) {
         ml_entry_t *en = calloc (1, sizeof (ml_entry_t));
 
         const char *uri = deadbeef->pl_find_meta (it, ":URI");
+
         const char *title = deadbeef->pl_find_meta (it, "title");
         const char *artist = deadbeef->pl_find_meta (it, "artist");
 
@@ -400,6 +404,15 @@ ml_index (void) {
         }
         else {
             get_track_uri(uri, NULL, track_uri, sizeof (track_uri));
+        }
+
+        if (strncmp (musicdir, uri, strlen (musicdir))) {
+            // uri doesn't match musicdir, remove from db
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->plt_remove_item (ml_playlist, it);
+            deadbeef->pl_item_unref (it);
+            it = next;
+            continue;
         }
 
         // FIXME: album needs to be a combination of album + artist for indexing / library
@@ -502,6 +515,9 @@ ml_notify_listeners (int event) {
 
 static void
 scanner_thread (void *none) {
+    _ml_state = DDB_MEDIALIB_STATE_LOADING;
+    ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
+
     char plpath[PATH_MAX];
     snprintf (plpath, sizeof (plpath), "%s/medialib.dbpl", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG));
 
@@ -518,11 +534,15 @@ scanner_thread (void *none) {
         fprintf (stderr, "ml playlist load time: %f seconds\n", ms / 1000.f);
 
         if (plt_head) {
+            _ml_state = DDB_MEDIALIB_STATE_INDEXING;
+            ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
             ml_index ();
             ml_notify_listeners (DDB_MEDIALIB_EVENT_CHANGED);
         }
     }
 
+    _ml_state = DDB_MEDIALIB_STATE_SCANNING;
+    ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
     gettimeofday (&tm1, NULL);
 
     const char *musicdir = deadbeef->conf_get_str_fast ("medialib.path", NULL);
@@ -533,6 +553,8 @@ scanner_thread (void *none) {
     printf ("adding dir: %s\n", musicdir);
     deadbeef->plt_clear (ml_playlist);
     plt_insert_dir (ml_playlist, NULL, musicdir, &scanner_terminate, add_file_info_cb, NULL);
+    _ml_state = DDB_MEDIALIB_STATE_INDEXING;
+    ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
     ml_index ();
     ml_notify_listeners (DDB_MEDIALIB_EVENT_CHANGED);
 
@@ -540,7 +562,12 @@ scanner_thread (void *none) {
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
     fprintf (stderr, "scan time: %f seconds (%d tracks)\n", ms / 1000.f, deadbeef->plt_get_item_count (ml_playlist, PL_MAIN));
 
+    _ml_state = DDB_MEDIALIB_STATE_SAVING;
+    ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
     deadbeef->plt_save (ml_playlist, NULL, NULL, plpath, NULL, NULL, NULL);
+
+    _ml_state = DDB_MEDIALIB_STATE_IDLE;
+    ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
 }
 
 //#define FILTER_PERF
@@ -1013,6 +1040,10 @@ ml_find_track (DB_playItem_t *it) {
     return NULL;
 }
 
+static int ml_scanner_state (void) {
+    return _ml_state;
+}
+
 static int
 ml_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
@@ -1061,6 +1092,7 @@ static ddb_medialib_plugin_t plugin = {
     .get_list = ml_get_list,
     .free_list = ml_free_list,
     .find_track = ml_find_track,
+    .scanner_state = ml_scanner_state,
 };
 
 DB_plugin_t *

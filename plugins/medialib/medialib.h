@@ -38,10 +38,19 @@ typedef struct ddb_medialib_item_s {
 } ddb_medialib_item_t;
 
 enum {
-    DDB_MEDIALIB_EVENT_CHANGED = 1
+    DDB_MEDIALIB_EVENT_CHANGED = 1,
+    DDB_MEDIALIB_EVENT_SCANNER = 2,
 };
 
 typedef void (* ddb_medialib_listener_t)(int event, void *user_data);
+
+enum {
+    DDB_MEDIALIB_STATE_IDLE,
+    DDB_MEDIALIB_STATE_LOADING,
+    DDB_MEDIALIB_STATE_SCANNING,
+    DDB_MEDIALIB_STATE_INDEXING,
+    DDB_MEDIALIB_STATE_SAVING,
+};
 
 typedef struct ddb_medialib_plugin_s {
     DB_misc_t plugin;
@@ -53,7 +62,10 @@ typedef struct ddb_medialib_plugin_s {
     void (*free_list) (ddb_medialib_item_t *list);
 
     // Find the same track in DB
-    DB_playItem_t *( *find_track) (DB_playItem_t *track);
+    DB_playItem_t *(*find_track) (DB_playItem_t *track);
+
+    // whether scanner/indexer is active
+    int (*scanner_state) (void);
 } ddb_medialib_plugin_t;
 
 #endif /* medialib_h */
