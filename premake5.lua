@@ -577,6 +577,18 @@ project "mono2stereo_plugin"
        "plugins/mono2stereo/*.c",
    }
 
+project "nullout"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/nullout/*.h",
+       "plugins/nullout/*.c",
+   }
+
+
 project "resources"
     kind "Utility"
     postbuildcommands {
