@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <malloc.h>
 #include <windows.h>
+#include <stdio.h>
 // min and max are defined in windows.h, but source files define them too
 // undefine them to avoid redefinition warnings
 #undef max
@@ -74,5 +75,10 @@ char *strndup(char *, size_t);
 char *strcasestr(const char *, const char *);
 
 int rename_windows(const char *, const char *);
-
+int junk_iconv2 (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out);
+#define stat(X,Y) stat_windows(X,Y)
+int path_short(char * path_in, char * path_out, int len);
+char * argv0_windows (char * argv[]);
+//FILE * fopen_utf8 (const char *filename, const char *mode);
+//fopen = fopen_utf8;
 #endif

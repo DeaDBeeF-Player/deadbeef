@@ -28,18 +28,30 @@ filter "configurations:release32 or release"
   buildoptions { "-O2" }
 
 filter "system:Windows"
-  buildoptions { "-include shared/windows/mingw32_layer.h" }
+  buildoptions { "-include shared/windows/mingw32_layer.h", "-fno-builtin"}
   includedirs { "shared/windows/include", "/mingw64/include/opus" }
   libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
-  defines { "USE_STDIO", "HAVE_ICONV", "ENABLE_NLS", "PACKAGE=\"deadbeef\"" }
-  files {
+  defines { "USE_STDIO", "HAVE_ICONV", "ENABLE_NLS", "PACKAGE=\"deadbeef\"", "_POSIX_C_SOURCE" }
+
+  links { "ws2_32", "psapi", "shlwapi", "iconv", "intl", "libwin", "dl"}
+
+project "libwin"
+   kind "StaticLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/"
+   files {
        "shared/windows/mingw32_layer.h",
+       "shared/windows/fopen.c",
+       "shared/windows/junk_iconv2.c",
+       "shared/windows/path_short.c",
        "shared/windows/scandir.c",
+       "shared/windows/stat.c",
        "shared/windows/strcasestr.c",
        "shared/windows/strndup.c",
        "shared/windows/rename.c"
-  }
-  links { "ws2_32", "psapi", "shlwapi", "iconv", "intl"}
+   }
+   links {"dl"}
+   removelinks {"libwin"}
 
 function pkgconfig (pkgname)
   links { pkgconfig_libs (pkgname) }
@@ -713,6 +725,7 @@ project "resources_windows"
         "{COPY} translation/help.ru.txt  bin/%{cfg.buildcfg}/doc/",
         -- libraries
         "rm  bin/%{cfg.buildcfg}/plugins/*.lib | true",
+        "rm  bin/%{cfg.buildcfg}/libwin.lib | true",
         "ldd bin/%{cfg.buildcfg}/plugins/*.dll bin/%{cfg.buildcfg}/deadbeef.exe | awk \'NF == 4 {print $$3}; NF == 2 {print $$1}\' |grep -i -v \"System32\" | grep -i -v \"WinSxS\" |sort -u | tr \'\\r\\n\' \' \'> .libraries.tmp",
         "{COPY} `cat .libraries.tmp` bin/%{cfg.buildcfg}/ | true",
         -- gtk2 theme
