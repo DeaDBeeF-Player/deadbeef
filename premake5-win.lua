@@ -28,8 +28,8 @@ filter "configurations:release32 or release"
   buildoptions { "-O2" }
 
 filter "system:Windows"
-  buildoptions { "-fPIC", "-include shared/windows/mingw32_layer.h", "-mwindows" }
-  includedirs { "plugins/libmp4ff", "static-deps/lib-x86-64/include/x86_64-linux-gnu", "static-deps/lib-x86-64/include", "shared/windows/include", "/mingw64/include/opus" }
+  buildoptions { "-include shared/windows/mingw32_layer.h" }
+  includedirs { "shared/windows/include", "/mingw64/include/opus" }
   libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
   defines { "USE_STDIO", "HAVE_ICONV", "ENABLE_NLS", "PACKAGE=\"deadbeef\"" }
   files {
@@ -41,12 +41,10 @@ filter "system:Windows"
   }
   links { "ws2_32", "psapi", "shlwapi", "iconv", "intl"}
 
-
-
 function pkgconfig (pkgname)
-  links { pkgconfig_libs(pkgname)}
-  includedirs { pkgconfig_includedirs(pkgname)}
-  libdirs { pkgconfig_libdirs(pkgname)}
+  links { pkgconfig_libs (pkgname) }
+  includedirs { pkgconfig_includedirs (pkgname) }
+  libdirs { pkgconfig_libdirs (pkgname) }
 end
 
 function pkgconfig_includedirs (pkgname)
@@ -59,7 +57,7 @@ function pkgconfig_includedirs (pkgname)
   parts = string.explode(returnval, " ")
   tab2 = {}
   for i, v in ipairs(parts) do
-    tab2[i] = string.sub(v, 3)
+    tab2[i] = string.sub (v, 3)
   end
   return tab2
 end
@@ -71,10 +69,10 @@ function pkgconfig_libdirs (pkgname)
   then
     error ("pkg-config failed for " .. pkgname)
   end
-  parts = string.explode(returnval, " ")
+  parts = string.explode (returnval, " ")
   tab2 = {}
   for i, v in ipairs(parts) do
-    tab2[i] = string.sub(v, 3)
+    tab2[i] = string.sub (v, 3)
   end
   return tab2
 end
@@ -86,16 +84,16 @@ function pkgconfig_libs (pkgname)
   then
     error ("pkg-config failed for " .. pkgname)
   end
-  parts = string.explode(returnval, " ")
+  parts = string.explode (returnval, " ")
   tab2 = {}
   for i, v in ipairs(parts) do
-    tab2[i] = string.sub(v, 3)
+    tab2[i] = string.sub (v, 3)
   end
   return tab2
 end
 
 project "deadbeef"
-   kind "ConsoleApp"
+   kind "WindowedApp"
    language "C"
    targetdir "bin/%{cfg.buildcfg}"
 
@@ -114,8 +112,8 @@ project "deadbeef"
         "icons/deadbeef-icon.rc"
       }
 
-   defines { "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"", "LOCALEDIR=\"donotuse\"" }
-   links { "m", "pthread", "dl" }
+   defines { "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"", "LOCALEDIR=\"donotuse\"", "HAVE_ICONV" }
+   links { "m", "pthread", "dl", "iconv" }
 
 project "mp3"
    kind "SharedLib"
@@ -366,11 +364,8 @@ project "ddb_gui_GTK2"
         "plugins/gtkui/gtkui-gresources.c"
    }
 
-   pkgconfig ("gtk+-2.0 jansson")
-   --links { "jansson", pkgconfig_libs("gtk+-2.0")}
-   -- links { "jansson", "gtk-x11-2.0", "pango-1.0", "cairo", "gdk-x11-2.0", "gdk_pixbuf-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
-   -- includedirs { pkgconfig_includedirs("gtk+-2.0")}
-   -- libdirs { pkgconfig_libdirs("gtk+-2.0")}
+    pkgconfig ("gtk+-2.0 jansson")
+
     filter "configurations:debug32 or release32"
     
        includedirs { "static-deps/lib-x86-32/gtk-2.16.0/include/**", "static-deps/lib-x86-32/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
@@ -401,7 +396,7 @@ project "ddb_gui_GTK3"
    prebuildcommands {
   "glib-compile-resources --sourcedir=plugins/gtkui --target=plugins/gtkui/gtkui-gresources.c --generate-source plugins/gtkui/gtkui.gresources.xml"
    }
-   -- includedirs { pkgconfig_includedirs("gtk+-3.0")}
+
    pkgconfig("gtk+-3.0 jansson")
    -- links { "jansson", "gtk-3", "gdk-3", "pangocairo-1.0", "pango-1.0", "atk-1.0", "cairo-gobject", "cairo", "gdk_pixbuf-2.0", "gio-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
 
@@ -590,9 +585,6 @@ project "converter_gtk2"
    }
 
    pkgconfig ("gtk+-2.0")
-   -- includedirs { pkgconfig_includedirs("gtk+-2.0")}
-   -- libdirs { pkgconfig_libdirs("gtk+-2.0")}
-   -- links { pkgconfig_libs("gtk+-2.0")}
    -- links { "gtk-x11-2.0", "pango-1.0", "cairo", "gdk-x11-2.0", "gdk_pixbuf-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
 
    filter "configurations:debug32 or release32"
@@ -708,19 +700,34 @@ project "resources"
 project "resources_windows"
     kind "Utility"
     postbuildcommands {
-        "ldd bin/%{cfg.buildcfg}/plugins/*.dll bin/%{cfg.buildcfg}/deadbeef.exe | awk \'NF == 4 {print $$3}; NF == 2 {print $$1}\' |grep -i -v \"System32\" | grep -i -v \"WinSxS\" |sort -u | tr \'\\r\\n\' \' \'> .libraries.tmp",
-        "cp -f `cat .libraries.tmp` bin/%{cfg.buildcfg}/ | true",
-        "mkdir -p bin/%{cfg.buildcfg}/plugins",
-        "mkdir -p bin/%{cfg.buildcfg}/pixmaps",
-        "mkdir -p bin/%{cfg.buildcfg}/doc",
-        "mkdir -p bin/%{cfg.buildcfg}/share/themes bin/%{cfg.buildcfg}/share/icons",
-        "mkdir -p bin/%{cfg.buildcfg}/config",
-        "cp -f ChangeLog help.txt COPYING.GPLv2 COPYING.LGPLv2.1 about.txt translators.txt  bin/%{cfg.buildcfg}/doc/",
-        "mkdir -p bin/%{cfg.buildcfg}/locale",
+        -- misc
+        "{MKDIR} bin/%{cfg.buildcfg}/plugins",
+        "{MKDIR} bin/%{cfg.buildcfg}/pixmaps",
+        "{MKDIR} bin/%{cfg.buildcfg}/doc",
+        "{MKDIR} bin/%{cfg.buildcfg}/share/themes bin/%{cfg.buildcfg}/share/icons",
+        "{MKDIR} bin/%{cfg.buildcfg}/config",
+        "{COPY} ChangeLog help.txt COPYING.GPLv2 COPYING.LGPLv2.1 about.txt translators.txt  bin/%{cfg.buildcfg}/doc/",
+        -- translations
+        "{MKDIR} bin/%{cfg.buildcfg}/locale",
         "for i in po/*.gmo ; do (base=`basename $$i .gmo` ; mkdir -p bin/%{cfg.buildcfg}/locale/$$base/LC_MESSAGES ; cp $$i bin/%{cfg.buildcfg}/locale/$$base/LC_MESSAGES/deadbeef.mo) ; done",
-        "cp -f translation/help.ru.txt  bin/%{cfg.buildcfg}/doc/",
-
-        "rm  bin/%{cfg.buildcfg}/plugins/*.lib | true"
-
+        "{COPY} translation/help.ru.txt  bin/%{cfg.buildcfg}/doc/",
+        -- libraries
+        "rm  bin/%{cfg.buildcfg}/plugins/*.lib | true",
+        "ldd bin/%{cfg.buildcfg}/plugins/*.dll bin/%{cfg.buildcfg}/deadbeef.exe | awk \'NF == 4 {print $$3}; NF == 2 {print $$1}\' |grep -i -v \"System32\" | grep -i -v \"WinSxS\" |sort -u | tr \'\\r\\n\' \' \'> .libraries.tmp",
+        "{COPY} `cat .libraries.tmp` bin/%{cfg.buildcfg}/ | true",
+        -- gtk2 theme
+        "{MKDIR} bin/%{cfg.buildcfg}/lib/gtk-2.0/2.10.0/engines",
+        "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/themes/MS-Windows bin/%{cfg.buildcfg}/share/themes/ 2>>/dev/null ; cp $$i/lib/gtk-2.0/2.10.0/engines/libwimp.dll bin/%{cfg.buildcfg}/lib/gtk-2.0/2.10.0/engines 2>>/dev/null ); done; true",
+        "{MKDIR} bin/%{cfg.buildcfg}/etc bin/%{cfg.buildcfg}/etc/gtk-2.0",
+        "{TOUCH} bin/%{cfg.buildcfg}/etc/gtk-2.0/settings.ini",
+        "echo -e \"[Settings]\\r\\ngtk-theme-name = MS-Windows\\n\" > bin/%{cfg.buildcfg}/etc/gtk-2.0/settings.ini",
+        -- gtk3 misc
+        "{MKDIR} bin/%{cfg.buildcfg}/etc bin/%{cfg.buildcfg}/etc/gtk-3.0",
+        "{TOUCH} bin/%{cfg.buildcfg}/etc/gtk-3.0/settings.ini",
+        "echo -e \"[Settings]\\r\\ngtk-theme-name = Windows-10\\r\\ngtk-icon-theme-name = Windows-10-Icons\" > bin/%{cfg.buildcfg}/etc/gtk-3.0/settings.ini",
+        "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/hicolor bin/%{cfg.buildcfg}/share/icons/ ; cp -r $$i/share/glib-2.0 bin/%{cfg.buildcfg}/share/ ); done; true",
+        -- Windows-10 theme and icons can be obtained from https://github.com/B00merang-Project/Windows-10 and https://github.com/B00merang-Project/Windows-10-Icons)
+        "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/Windows-10-Icons bin/%{cfg.buildcfg}/share/icons/ 2>>/dev/null ; cp -r $$i/share/themes/Windows-10 bin/%{cfg.buildcfg}/share/themes/ 2>>/dev/null ); done; true",
+        "echo \"output_plugin PortAudio output plugin\" > bin/%{cfg.buildcfg}/config/config"
     }
 
