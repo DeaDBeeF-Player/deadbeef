@@ -724,8 +724,8 @@ project "resources_windows"
         "for i in po/*.gmo ; do (base=`basename $$i .gmo` ; mkdir -p bin/%{cfg.buildcfg}/locale/$$base/LC_MESSAGES ; cp $$i bin/%{cfg.buildcfg}/locale/$$base/LC_MESSAGES/deadbeef.mo) ; done",
         "{COPY} translation/help.ru.txt  bin/%{cfg.buildcfg}/doc/",
         -- libraries
-        "rm  bin/%{cfg.buildcfg}/plugins/*.lib | true",
-        "rm  bin/%{cfg.buildcfg}/libwin.lib | true",
+        --"rm  bin/%{cfg.buildcfg}/plugins/*.lib | true",
+        --"rm  bin/%{cfg.buildcfg}/libwin.lib | true",
         "ldd bin/%{cfg.buildcfg}/plugins/*.dll bin/%{cfg.buildcfg}/deadbeef.exe | awk \'NF == 4 {print $$3}; NF == 2 {print $$1}\' |grep -i -v \"System32\" | grep -i -v \"WinSxS\" |sort -u | tr \'\\r\\n\' \' \'> .libraries.tmp",
         "{COPY} `cat .libraries.tmp` bin/%{cfg.buildcfg}/ | true",
         -- gtk2 theme
