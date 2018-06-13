@@ -63,11 +63,7 @@ gtkpl_add_dirs (GSList *lst) {
         if (!deadbeef->plt_get_title (plt, t, sizeof (t))) {
             char *def = _("New Playlist");
             if (!strncmp (t, def, strlen (def)) || empty) {
-                #ifdef __MINGW32__
-                const char *folder = strrchr ((char*)lst->data, '\\');
-                #else
-                const char *folder = strrchr ((char*)lst->data, '/');
-                #endif
+                const char *folder = strrchr ((char*)lst->data, G_DIR_SEPARATOR);
                 if (!folder) {
                     folder = lst->data;
                 }
