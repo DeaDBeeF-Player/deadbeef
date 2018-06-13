@@ -137,15 +137,7 @@ ensure_buffer (ffmpeg_info_t *info, int frame_size) {
         }
         info->buffer_size = frame_size*info->ctx->channels;
         info->left_in_buffer = 0;
-        #ifndef __MINGW32__
         int err = posix_memalign ((void **)&info->buffer, 16, info->buffer_size);
-        #else
-        int err = 0;
-        info->buffer =__mingw_aligned_malloc (info->buffer_size, 16);
-        if (!info->buffer) {
-            err = 1;
-        }
-        #endif
         if (err) {
             fprintf (stderr, "ffmpeg: failed to allocate %d bytes of buffer memory\n", info->buffer_size);
             return -1;
