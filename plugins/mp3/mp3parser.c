@@ -50,8 +50,8 @@ static const int brtable[5][16] = {
 #define TOC_FLAG        0x0004
 #define VBR_SCALE_FLAG  0x0008
 
-int
-mp3_parse_frame (mp3packet_t * restrict packet, uint8_t * restrict fb) {
+static int
+_parse_packet (mp3packet_t * restrict packet, uint8_t * restrict fb) {
     memset (packet, 0, sizeof (mp3packet_t));
     uint32_t hdr;
     uint8_t sync;
@@ -139,17 +139,15 @@ mp3_parse_frame (mp3packet_t * restrict packet, uint8_t * restrict fb) {
             return -1;
         }
     }
-    // }}}
 
-    // {{{ get side info ptr
+    // get side info ptr
     //        uint8_t *si = fb + 4;
     //        if (prot) {
     //            si += 2;
     //        }
     //        int data_ptr = ((uint16_t)si[1]) | (((uint16_t)si[1]&0)<<8);
-    // }}}
 
-    // {{{ calc packet length, number of samples in a frame
+    // calc packet length, number of samples in a frame
     // packetlength
     packet->packetlength = 0;
     packet->bitrate *= 1000;
@@ -170,21 +168,128 @@ mp3_parse_frame (mp3packet_t * restrict packet, uint8_t * restrict fb) {
             }
         }
         packet->packetlength = packet->samples_per_frame / 8 * packet->bitrate / packet->samplerate + padding;
-        //            if (sample > 0) {
-        //                printf ("frame: %d, crc: %d, layer: %d, bitrate: %d, samplerate: %d, filepos: 0x%llX, dataoffs: 0x%X, size: 0x%X\n", nframe, prot, layer, bitrate, samplerate, deadbeef->ftell (buffer->file)-8, data_ptr, packetlength);
-        //            }
     }
     else {
-        ///        trace ("frame %d samplerate or bitrate is invalid\n", nframe);
         return -1;
     }
     return packet->packetlength;
 }
 
-int
-mp3_process_packet (mp3info_t *info, mp3packet_t *packet) {
+// FIXME: make sure info->valid_packet_pos is set
+
+static uint32_t
+extract_i32 (unsigned char *buf)
+{
+    uint32_t x;
+    // big endian extract
+
+    x = buf[0];
+    x <<= 8;
+    x |= buf[1];
+    x <<= 8;
+    x |= buf[2];
+    x <<= 8;
+    x |= buf[3];
+
+    return x;
+}
+
+static int
+_check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int datasize) {
+    const char cookieXing[] = "Xing";
+    const char cookieInfo[] = "Info";
+
+    // ignore mpeg version, and try both 17 and 32 byte offsets
+    uint8_t *magic = data + 17;
+
+    int havecookie = !memcmp (cookieXing, magic, 4) || !memcmp (cookieInfo, magic, 4);
+
+    if (!havecookie) {
+        magic = data + 32;
+        havecookie = !memcmp (cookieXing, magic, 4) || !memcmp (cookieInfo, magic, 4);;
+    }
+
+    if (!havecookie) {
+        return -1;
+    }
+
+    data = magic + 4;
+
+    // FIXME: the right place to assign successful result?
+    info->valid_packet_pos = packet->offs+packet->packetlength;
+
+    // read flags
+    uint32_t flags;
+    flags = extract_i32 (data);
+    data += 4;
+
+    if (flags & FRAMES_FLAG) {
+        // read number of frames
+        if (packet->samples_per_frame <= 0) { // FIXME: this should be invalid packet earlier on
+            return -1;
+        }
+        info->totalsamples = extract_i32 (data) * packet->samples_per_frame;
+        data += 4;
+    }
+    if (flags & BYTES_FLAG) {
+        data += 4;
+    }
+    if (flags & TOC_FLAG) {
+        data += 100;
+    }
+    if (flags & VBR_SCALE_FLAG) {
+        data += 4;
+    }
+    // lame header
+    data += 4; // what is this?
+
+    data += 5; // what is this?
+
+    uint8_t rev = *data++;
+
+    switch (rev & 0x0f) {
+        case XING_CBR ... XING_ABR2:
+            info->vbr_type = rev & 0x0f;
+            break;
+    }
+    if (!memcmp (data, "LAME", 4)) {
+        data++; //uint8_t lpf = *data++;
+
+        //3 floats: replay gain
+
+        data += 4; // float rg_peaksignalamp = extract_f32 (buf);
+
+        data += 2; // uint16_t rg_radio = extract_i16 (buf);
+
+        data += 2; // uint16_t rg_audiophile = extract_i16 (buf);
+
+        // skip
+        data += 2;
+
+        info->delay = (((uint32_t)data[0]) << 4) | ((((uint32_t)data[1]) & 0xf0)>>4);
+        info->padding = ((((uint32_t)data[1])&0x0f)<<8) | ((uint32_t)data[2]);
+        data += 3;
+
+        // skip
+        data++;
+
+        data++; // uint8_t mp3gain = *data++;
+
+        // lame preset nr
+        info->lamepreset = data[1] | (data[0]<<8);
+        data += 2;
+
+        // musiclen
+        data += 4; // wat?
+    }
+
+    return 0;
+}
+
+static int
+_process_packet (mp3info_t *info, mp3packet_t *packet) {
     if (info->vbr_type != DETECTED_VBR
-        && (!info->have_xing || !info->vbr_type)
+        && (!info->have_xing_header || !info->vbr_type)
         && info->prev_packet.bitrate
         && info->prev_packet.bitrate != packet->bitrate) {
         info->vbr_type = DETECTED_VBR;
@@ -192,7 +297,7 @@ mp3_process_packet (mp3info_t *info, mp3packet_t *packet) {
 
     info->valid_packets++;
 
-    // {{{ update stream parameters, only when sample!=0 or 1st frame
+    // update stream parameters, only when sample!=0 or 1st frame
     if (info->seek_sample != 0 || info->npackets == 0)
     {
         if (info->seek_sample == 0 && info->lastpacket_valid) {
@@ -205,7 +310,6 @@ mp3_process_packet (mp3info_t *info, mp3packet_t *packet) {
             info->ref_packet.nchannels = ch;
         }
     }
-    // }}}
 
     info->lastpacket_valid = 1;
 
@@ -215,74 +319,46 @@ mp3_process_packet (mp3info_t *info, mp3packet_t *packet) {
         info->lookback_packet_idx++;
     }
     memmove (info->lookback_packet_positions, &info->lookback_packet_positions[1], sizeof (int64_t) * 9);
-    info->lookback_packet_positions[9] = framepos;
+    info->lookback_packet_positions[9] = packet->offs;
 
-    // {{{ detect/load xing frame, only on 1st pass
-    // try to read xing/info tag (only on initial scans)
-    if (sample <= 0 && !buffer->have_xing_header && !checked_xing_header)
-    {
-        checked_xing_header = 1;
-        mp3_check_xing_header (buffer, frame.packetlength, sample, frame.samples_per_frame, frame.samplerate, framepos, fsize);
-
-        if (buffer->have_xing_header) {
-            // trust the xing header -- even if requested to scan for precise duration
-            buffer->startoffset = offs;
-            if (sample <= 0) {
-                // parameters have been discovered from xing header, no need to continue
-                deadbeef->fseek (buffer->file, buffer->startoffset, SEEK_SET);
-                return 0;
-            }
-            else {
-                // skip to the next frame
-                continue;
-            }
-        }
-    }
-    // }}}
-
-    if (sample == 0) {
-        // {{{ update averages, interrupt scan on frame #100
+    if (info->seek_sample == 0) {
+        // update averages, interrupt scan on frame #100 <-- FIXME
         // calculating apx duration based on 1st 100 frames
-        buffer->avg_packetlength += frame.packetlength;
-        buffer->avg_samplerate += frame.samplerate;
-        buffer->avg_samples_per_frame += frame.samples_per_frame;
+        info->avg_packetlength += packet->packetlength;
+        info->avg_samplerate += packet->samplerate;
+        info->avg_samples_per_frame += packet->samples_per_frame;
 
-        buffer->version = frame.ver;
-        buffer->layer = frame.layer;
-        buffer->bitrate = frame.bitrate;
-        buffer->samplerate = frame.samplerate;
-        buffer->packetlength = frame.packetlength;
-        if (frame.nchannels > buffer->channels) {
-            buffer->channels = frame.nchannels;
+        int ch = info->ref_packet.nchannels;
+        memcpy (&info->ref_packet, packet, sizeof (mp3packet_t));
+        if (info->ref_packet.nchannels < ch) {
+            info->ref_packet.nchannels = ch;
         }
 
-        if (buffer->file->vfs->is_streaming ()) {
-            if (valid_frames >= 20) {
+#if 0 // FIXME
+        if (!info->is_seekable) {
+            if (info->valid_frames >= 20) {
                 deadbeef->fseek (buffer->file, valid_frame_pos, SEEK_SET);
                 buffer->duration = -1;
                 buffer->totalsamples = 0;
                 return 0;
             }
         }
-        else if (valid_frames >= 100) {
-            deadbeef->fseek (buffer->file, valid_frame_pos, SEEK_SET);
-            goto end_scan;
-        }
-        // }}}
-    }
-    else {
-        // seeking to particular sample, interrupt if reached
-        if (sample > 0 && scansamples + frame.samples_per_frame >= sample) {
-            deadbeef->fseek (buffer->file, lead_in_frame_pos, SEEK_SET);
-            buffer->lead_in_frames = (int)(nframe-lead_in_frame_no);
-            buffer->currentsample = sample;
-            buffer->skipsamples = sample - scansamples;
-            trace ("scan: cursample=%d, frame: %d, skipsamples: %d, filepos: %llX, lead-in frames: %d\n", buffer->currentsample, nframe, buffer->skipsamples, deadbeef->ftell (buffer->file), buffer->lead_in_frames);
+        else if (valid_frames >= 100)
+#endif
+        {
             return 0;
         }
     }
-    scansamples += frame.samples_per_frame;
-    nframe++;
+    else {
+        // seeking to particular sample, interrupt if reached
+        if (info->seek_sample > 0 && info->totalsamples + packet->samples_per_frame >= info->seek_sample) {
+            info->valid_packet_pos = info->lookback_packet_offs;
+            info->skipsamples = info->seek_sample - info->totalsamples;
+            return 0;
+        }
+    }
+    info->totalsamples += packet->samples_per_frame;
+    info->npackets++;
     return 0;
 }
 
@@ -320,13 +396,14 @@ mp3_parse_file (mp3info_t *info, DB_FILE *fp, int64_t fsize, int startoffs, int 
 
         while (remaining > 4) {
             memcpy (bufptr, bufptr, 4);
-            int res = mp3_parse_frame (&packet, bufptr);
+
+            int res = _parse_packet (&packet, bufptr);
             if (res < 0) {
                 // invalid frame
                 memset (&info->prev_packet, 0, sizeof (mp3packet_t));
                 info->valid_packet_pos = -1;
                 info->lastpacket_valid = 0;
-                if (info->nsamples == 0) {
+                if (info->totalsamples == 0) {
                     info->valid_packets = 0;
                 }
 
@@ -350,7 +427,33 @@ mp3_parse_file (mp3info_t *info, DB_FILE *fp, int64_t fsize, int startoffs, int 
                     info->valid_packet_pos = offs;
                 }
 
-                mp3_process_packet (info, &packet);
+                packet.offs = offs;
+
+                // try to read xing/info tag (only on initial scans)
+                if (seek_to_sample <= 0 && !info->have_xing_header && !info->checked_xing_header)
+                {
+                    // need whole packet for checking xing!
+
+                    info->checked_xing_header = 1;
+                    int xingres = _check_xing_header (info, &packet, bufptr, remaining);
+                    if (xingres < 0) {
+                        // FIXME: what to do in case of xing parsing error?
+                    }
+
+                    if (info->have_xing_header) {
+                        // trust the xing header -- even if requested to scan for precise duration
+                        if (seek_to_sample <= 0) {
+                            // parameters have been discovered from xing header, no need to continue
+                            return 0;
+                        }
+                        else {
+                            // skip to the next frame
+                            continue;
+                        }
+                    }
+                }
+
+                _process_packet (info, &packet);
                 memcpy (&info->prev_packet, &packet, sizeof (packet));
 
                 remaining -= res;
