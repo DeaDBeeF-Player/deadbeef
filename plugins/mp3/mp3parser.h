@@ -42,6 +42,7 @@ typedef struct {
     int padding;
 
     uint16_t lamepreset;
+    uint32_t lame_musiclength; // file size from beginning of LAME info packet until the last byte of packet with audio, as encoded by Lame
 
     // intermediates
     mp3packet_t prev_packet;
@@ -51,7 +52,6 @@ typedef struct {
     int64_t lookback_packet_positions[10];
 
     int checked_xing_header;
-
 } mp3info_t;
 
 // Params:
