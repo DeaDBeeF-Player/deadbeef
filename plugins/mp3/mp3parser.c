@@ -228,7 +228,8 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int dat
         if (packet->samples_per_frame <= 0) { // FIXME: this should be invalid packet earlier on
             return -1;
         }
-        info->totalsamples = extract_i32 (data) * packet->samples_per_frame;
+        uint32_t nframes = extract_i32 (data);
+        info->totalsamples = nframes * packet->samples_per_frame;
         data += 4;
     }
     if (flags & BYTES_FLAG) {
@@ -241,7 +242,11 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int dat
         data += 4;
     }
     // lame header
-    data += 4; // what is this?
+    int lame_header = 0;
+    if (!memcmp (data, "LAME", 4)) {
+        lame_header = 1;
+    }
+    data += 4;
 
     data += 5; // what is this?
 
@@ -252,7 +257,7 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int dat
             info->vbr_type = rev & 0x0f;
             break;
     }
-    if (!memcmp (data, "LAME", 4)) {
+    if (lame_header) {
         data++; //uint8_t lpf = *data++;
 
         //3 floats: replay gain
@@ -364,6 +369,7 @@ _process_packet (mp3info_t *info, mp3packet_t *packet) {
 
 int
 mp3_parse_file (mp3info_t *info, DB_FILE *fp, int64_t fsize, int startoffs, int endoffs, int64_t seek_to_sample) {
+    memset (info, 0, sizeof (mp3info_t));
     deadbeef->fseek (fp, startoffs, SEEK_SET);
 
     // FIXME: radio
@@ -395,8 +401,6 @@ mp3_parse_file (mp3info_t *info, DB_FILE *fp, int64_t fsize, int startoffs, int 
         uint8_t *bufptr = buffer + bufsize - remaining;
 
         while (remaining > 4) {
-            memcpy (bufptr, bufptr, 4);
-
             int res = _parse_packet (&packet, bufptr);
             if (res < 0) {
                 // invalid frame
@@ -435,15 +439,16 @@ mp3_parse_file (mp3info_t *info, DB_FILE *fp, int64_t fsize, int startoffs, int 
                     // need whole packet for checking xing!
 
                     info->checked_xing_header = 1;
-                    int xingres = _check_xing_header (info, &packet, bufptr, remaining);
+                    int xingres = _check_xing_header (info, &packet, bufptr+4, remaining-4);
                     if (xingres < 0) {
                         // FIXME: what to do in case of xing parsing error?
                     }
-
-                    if (info->have_xing_header) {
+                    else {
+                        info->have_xing_header = 1;
                         // trust the xing header -- even if requested to scan for precise duration
                         if (seek_to_sample <= 0) {
                             // parameters have been discovered from xing header, no need to continue
+                            memcpy (&info->ref_packet, &packet, sizeof (mp3packet_t));
                             return 0;
                         }
                         else {
