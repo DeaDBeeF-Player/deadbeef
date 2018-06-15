@@ -24,9 +24,9 @@ typedef struct {
     int64_t seek_sample;
 
     // outputs
-    int64_t totalsamples;
+    int64_t pcmsample; // sample position corresponding to packet_offs
     int64_t npackets;
-    int64_t valid_packet_pos; // stream position of the first known valid frame after successful scan
+    int64_t packet_offs; // stream position of the first known valid frame after successful scan
 
     int lastpacket_valid;
     int64_t valid_packets;
@@ -51,21 +51,21 @@ typedef struct {
     // intermediates
     mp3packet_t prev_packet;
 
-    int64_t lookback_packet_offs;
-    int64_t lookback_packet_idx;
-    int64_t lookback_packet_positions[10];
-
     int checked_xing_header;
 } mp3info_t;
 
 // Params:
 // seek_to_sample: -1 means to the end (scan whole file), otherwise a sample to seek to
+// When seeking, the packet offset returned will be the one containing seek_to_sample, not accounting for delay.
+// `totalsamples` will be set to the sample count at the packet start.
+// So the caller is responsible for adding delay to seek_to_sample, and then adjusting skipsamples based on returned "totalsamples".
+//
 //
 // returns:
 // 0: success
 // -1: error
 //
-// the caller is supposed to start decoding from info->valid_packet_pos, and skip info->skipsamples samples
+// the caller is supposed to start decoding from info->packet_offs, and skip info->skipsamples samples
 int
 mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int startoffs, int endoffs, int64_t seek_to_sample);
 

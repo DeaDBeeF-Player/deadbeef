@@ -175,7 +175,7 @@ _parse_packet (mp3packet_t * restrict packet, uint8_t * restrict fb) {
     return packet->packetlength;
 }
 
-// FIXME: make sure info->valid_packet_pos is set
+// FIXME: make sure info->packet_offs is set
 
 static uint32_t
 extract_i32 (unsigned char *buf)
@@ -216,7 +216,7 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int dat
     data = magic + 4;
 
     // FIXME: the right place to assign successful result?
-    info->valid_packet_pos = packet->offs+packet->packetlength;
+    info->packet_offs = packet->offs+packet->packetlength;
 
     // read flags
     uint32_t flags;
@@ -229,7 +229,7 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int dat
             return -1;
         }
         uint32_t nframes = extract_i32 (data);
-        info->totalsamples = nframes * packet->samples_per_frame;
+        info->pcmsample = nframes * packet->samples_per_frame;
         data += 4;
     }
     if (flags & BYTES_FLAG) {
@@ -292,6 +292,7 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int dat
     return 0;
 }
 
+// returns 0 to continue, 1 to stop (seek position reached, or another reason to stop scanning)
 static int
 _process_packet (mp3info_t *info, mp3packet_t *packet) {
     if (info->vbr_type != DETECTED_VBR
@@ -306,9 +307,6 @@ _process_packet (mp3info_t *info, mp3packet_t *packet) {
     // update stream parameters, only when sample!=0 or 1st frame
     if (info->seek_sample != 0 || info->npackets == 0)
     {
-        if (info->seek_sample == 0 && info->lastpacket_valid) {
-            return 0;
-        }
         // don't get parameters from frames coming after any bad frame
         int ch = info->ref_packet.nchannels;
         memcpy (&info->ref_packet, packet, sizeof (mp3packet_t));
@@ -318,14 +316,6 @@ _process_packet (mp3info_t *info, mp3packet_t *packet) {
     }
 
     info->lastpacket_valid = 1;
-
-    // allow at least 10 lead-in frames, to fill bit-reservoir
-    if (info->npackets - info->lookback_packet_idx > 10) {
-        info->lookback_packet_offs = info->lookback_packet_positions[0];
-        info->lookback_packet_idx++;
-    }
-    memmove (info->lookback_packet_positions, &info->lookback_packet_positions[1], sizeof (int64_t) * 9);
-    info->lookback_packet_positions[9] = packet->offs;
 
     if (info->seek_sample == 0) {
         // update averages, interrupt scan on frame #100 <-- FIXME
@@ -356,14 +346,13 @@ _process_packet (mp3info_t *info, mp3packet_t *packet) {
         }
     }
     else {
-        // seeking to particular sample, interrupt if reached
-        if (info->seek_sample > 0 && info->totalsamples + packet->samples_per_frame >= info->seek_sample) {
-            info->valid_packet_pos = info->lookback_packet_offs;
-            info->skipsamples = info->seek_sample - info->totalsamples;
-            return 0;
+        // seeking to particular sample, interrupt if reached;
+        // add 10 extra packets to fill bit-reservoir
+        if (info->seek_sample > 0 && info->pcmsample + packet->samples_per_frame >= info->seek_sample-MAX_PACKET_SAMPLES*10) {
+             return 1;
         }
     }
-    info->totalsamples += packet->samples_per_frame;
+    info->pcmsample += packet->samples_per_frame;
     info->npackets++;
     return 0;
 }
@@ -412,9 +401,9 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
             if (res < 0) {
                 // invalid frame
                 memset (&info->prev_packet, 0, sizeof (mp3packet_t));
-                info->valid_packet_pos = -1;
+                info->packet_offs = -1;
                 info->lastpacket_valid = 0;
-                if (info->totalsamples == 0) {
+                if (info->pcmsample == 0) {
                     info->valid_packets = 0;
                 }
 
@@ -437,10 +426,6 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                     else {
                         goto error;
                     }
-                }
-
-                if (info->valid_packet_pos == -1) {
-                    info->valid_packet_pos = offs;
                 }
 
                 packet.offs = offs;
@@ -468,7 +453,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                         }
                         else {
                             // reset counters for full scan
-                            info->totalsamples = 0;
+                            info->pcmsample = 0;
                             info->delay = 0;
                             info->padding = 0;
                             memset (&info->ref_packet, 0, sizeof (mp3packet_t));
@@ -476,8 +461,12 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                     }
                 }
 
+                info->packet_offs = offs;
+
                 if (!got_xing) {
-                    _process_packet (info, &packet);
+                    if (_process_packet (info, &packet) > 0) {
+                        goto end;
+                    }
                     memcpy (&info->prev_packet, &packet, sizeof (packet));
                 }
 
@@ -495,6 +484,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     }
 
 end:
+
     err = 0;
 error:
     if (buffer) {
