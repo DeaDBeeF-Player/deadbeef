@@ -54,13 +54,29 @@
     snprintf (path, sizeof (path), "%s/TestData/mp3parser/2sec-square-lamehdr.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
     int64_t fsize = vfs_fgetlength(fp);
-    int res = mp3_parse_file (&info, fp, fsize, 0, 0, -1);
+    int res = mp3_parse_file (&info, 0, fp, fsize, 0, 0, -1);
     XCTAssert (!res);
     XCTAssertEqual(info.have_xing_header, 1);
     XCTAssertEqual(info.ref_packet.samplerate, 44100);
     XCTAssertEqual(info.totalsamples-info.delay-info.padding, 88200);
     XCTAssertEqual(info.delay, 576);
     XCTAssertEqual(info.padding, 1080);
+    XCTAssertEqual(info.lame_musiclength, 16508);
+}
+
+- (void)test_2secSquareWithLameHeader_FullScanGet88200Samples {
+    mp3info_t info;
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/mp3parser/2sec-square-lamehdr.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    int64_t fsize = vfs_fgetlength(fp);
+    int res = mp3_parse_file (&info, MP3_PARSE_FULLSCAN, fp, fsize, 0, 0, -1);
+    XCTAssert (!res);
+    XCTAssertEqual(info.have_xing_header, 1);
+    XCTAssertEqual(info.ref_packet.samplerate, 44100);
+    XCTAssertEqual(info.totalsamples, 88200+576+1080);
+    XCTAssertEqual(info.delay, 0);
+    XCTAssertEqual(info.padding, 0);
     XCTAssertEqual(info.lame_musiclength, 16508);
 }
 

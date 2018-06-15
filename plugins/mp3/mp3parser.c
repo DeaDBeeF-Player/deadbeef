@@ -369,9 +369,12 @@ _process_packet (mp3info_t *info, mp3packet_t *packet) {
 }
 
 int
-mp3_parse_file (mp3info_t *info, DB_FILE *fp, int64_t fsize, int startoffs, int endoffs, int64_t seek_to_sample) {
+mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int startoffs, int endoffs, int64_t seek_to_sample) {
+    int err = -1;
+
     memset (info, 0, sizeof (mp3info_t));
     deadbeef->fseek (fp, startoffs, SEEK_SET);
+    info->seek_sample = seek_to_sample;
 
     // FIXME: radio
     fsize -= startoffs + endoffs;
@@ -386,6 +389,9 @@ mp3_parse_file (mp3info_t *info, DB_FILE *fp, int64_t fsize, int startoffs, int 
     }
 
     uint8_t *buffer = malloc (bufsize);
+    if (!buffer) {
+        return -1;
+    }
 
     mp3packet_t packet;
 
@@ -394,7 +400,7 @@ mp3_parse_file (mp3info_t *info, DB_FILE *fp, int64_t fsize, int startoffs, int 
 
     while (fsize > 0) {
         if (deadbeef->fread (buffer+remaining, 1, bufsize-remaining, fp) != bufsize-remaining) {
-            return -1; // read error
+            goto error;
         }
 
         remaining += bufsize;
@@ -415,7 +421,7 @@ mp3_parse_file (mp3info_t *info, DB_FILE *fp, int64_t fsize, int startoffs, int 
                 offs++;
 
                 if (offs - startoffs > MAX_INVALID_BYTES) {
-                    return -1;
+                    goto error;
                 }
 
                 remaining--;
@@ -423,9 +429,14 @@ mp3_parse_file (mp3info_t *info, DB_FILE *fp, int64_t fsize, int startoffs, int 
                 continue;
             }
             else {
-                // EOF?
+                // EOF
                 if (fsize >= 0 && offs + res > fsize) {
-                    return info->valid_packets ? 0 : -1; // EOF
+                    if (info->valid_packets) {
+                        goto end;
+                    }
+                    else {
+                        goto error;
+                    }
                 }
 
                 if (info->valid_packet_pos == -1) {
@@ -435,36 +446,44 @@ mp3_parse_file (mp3info_t *info, DB_FILE *fp, int64_t fsize, int startoffs, int 
                 packet.offs = offs;
 
                 // try to read xing/info tag (only on initial scans)
+                int got_xing = 0;
                 if (seek_to_sample <= 0 && !info->have_xing_header && !info->checked_xing_header)
                 {
                     // need whole packet for checking xing!
 
                     info->checked_xing_header = 1;
                     int xingres = _check_xing_header (info, &packet, bufptr+4, remaining-4);
-                    if (xingres < 0) {
-                        // FIXME: what to do in case of xing parsing error?
-                    }
-                    else {
+                    if (!xingres) {
+                        got_xing = 1;
                         info->have_xing_header = 1;
                         // trust the xing header -- even if requested to scan for precise duration
-                        if (seek_to_sample <= 0) {
-                            // parameters have been discovered from xing header, no need to continue
-                            memcpy (&info->ref_packet, &packet, sizeof (mp3packet_t));
-                            return 0;
+                        // parameters have been discovered from xing header, no need to continue
+                        memcpy (&info->ref_packet, &packet, sizeof (mp3packet_t));
+
+                        if (seek_to_sample > 0) {
+                            continue;
+                        }
+                        else if (!(flags & MP3_PARSE_FULLSCAN)) {
+                            goto end;
                         }
                         else {
-                            // skip to the next frame
-                            continue;
+                            // reset counters for full scan
+                            info->totalsamples = 0;
+                            info->delay = 0;
+                            info->padding = 0;
+                            memset (&info->ref_packet, 0, sizeof (mp3packet_t));
                         }
                     }
                 }
 
-                _process_packet (info, &packet);
-                memcpy (&info->prev_packet, &packet, sizeof (packet));
+                if (!got_xing) {
+                    _process_packet (info, &packet);
+                    memcpy (&info->prev_packet, &packet, sizeof (packet));
+                }
 
                 remaining -= res;
                 if (remaining <= 0) {
-                    break;
+                    goto end;
                 }
                 bufptr += res;
                 offs += res;
@@ -475,5 +494,12 @@ mp3_parse_file (mp3info_t *info, DB_FILE *fp, int64_t fsize, int startoffs, int 
         }
     }
 
-    return 0;
+end:
+    err = 0;
+error:
+    if (buffer) {
+        free (buffer);
+    }
+
+    return err;
 }

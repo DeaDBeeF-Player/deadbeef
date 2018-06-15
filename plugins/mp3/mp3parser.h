@@ -4,6 +4,10 @@
 #include <stdint.h>
 #include "../../deadbeef.h"
 
+enum {
+    MP3_PARSE_FULLSCAN = 1,
+};
+
 typedef struct {
     uint64_t offs;
     int ver;
@@ -63,6 +67,6 @@ typedef struct {
 //
 // the caller is supposed to start decoding from info->valid_packet_pos, and skip info->skipsamples samples
 int
-mp3_parse_file (mp3info_t *info, DB_FILE *fp, int64_t fsize, int startoffs, int endoffs, int64_t seek_to_sample);
+mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int startoffs, int endoffs, int64_t seek_to_sample);
 
 #endif /* mp3parser_h */
