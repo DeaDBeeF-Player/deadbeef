@@ -369,7 +369,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     // FIXME: radio
     fsize -= startoffs + endoffs;
 
-    int bufsize = 512*1024;
+    int bufsize = 4*1024;
     if (bufsize > fsize) {
         bufsize = (int)fsize;
     }
@@ -389,10 +389,13 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     int64_t offs = 0;
     int64_t fileoffs = 0;
 
+    int eof = 0;
+
     while (fsize > 0) {
         int64_t readsize = bufsize-remaining;
-        if (fileoffs + readsize > fsize) {
+        if (fileoffs + readsize >= fsize) {
             readsize = fsize - fileoffs;
+            eof = 1;
         }
 
         if (readsize <= 0) {
@@ -408,7 +411,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
 
         uint8_t *bufptr = buffer;
 
-        while (remaining >= 4) {
+        while (remaining >= MAX_PACKET_LENGTH || (eof && remaining >= MIN_PACKET_LENGTH)) {
             int res = _parse_packet (&packet, bufptr);
             if (res < 0) {
                 // invalid frame
