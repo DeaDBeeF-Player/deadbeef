@@ -9,7 +9,8 @@ extern DB_functions_t *deadbeef;
 #define MIN_BITRATE 8
 #define MIN_SAMPLERATE 8000
 #define MAX_SAMPLERATE 48000
-#define MIN_PACKET_LENGTH (MIN_PACKET_SAMPLES / 8 * MIN_BITRATE / MIN_SAMPLERATE)
+#define MIN_PACKET_LENGTH (MIN_PACKET_SAMPLES / 8 * MIN_BITRATE*1000 / MIN_SAMPLERATE)
+#define MAX_PACKET_LENGTH (MAX_PACKET_SAMPLES / 8 * MAX_BITRATE*1000 / MAX_SAMPLERATE)
 #define MAX_INVALID_BYTES 100000
 
 static const int vertbl[] = {3, -1, 2, 1}; // 3 is 2.5
@@ -294,7 +295,7 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int dat
 
 // returns 0 to continue, 1 to stop (seek position reached, or another reason to stop scanning)
 static int
-_process_packet (mp3info_t *info, mp3packet_t *packet) {
+_process_packet (mp3info_t *info, mp3packet_t *packet, int64_t seek_sample) {
     if (info->vbr_type != DETECTED_VBR
         && (!info->have_xing_header || !info->vbr_type)
         && info->prev_packet.bitrate
@@ -305,7 +306,7 @@ _process_packet (mp3info_t *info, mp3packet_t *packet) {
     info->valid_packets++;
 
     // update stream parameters, only when sample!=0 or 1st frame
-    if (info->seek_sample != 0 || info->npackets == 0)
+    if (seek_sample != 0 || info->npackets == 0)
     {
         // don't get parameters from frames coming after any bad frame
         int ch = info->ref_packet.nchannels;
@@ -317,7 +318,7 @@ _process_packet (mp3info_t *info, mp3packet_t *packet) {
 
     info->lastpacket_valid = 1;
 
-    if (info->seek_sample == 0) {
+    if (seek_sample == 0) {
         // update averages, interrupt scan on frame #100 <-- FIXME
         // calculating apx duration based on 1st 100 frames
         info->avg_packetlength += packet->packetlength;
@@ -348,7 +349,7 @@ _process_packet (mp3info_t *info, mp3packet_t *packet) {
     else {
         // seeking to particular sample, interrupt if reached;
         // add 10 extra packets to fill bit-reservoir
-        if (info->seek_sample > 0 && info->pcmsample + packet->samples_per_frame >= info->seek_sample-MAX_PACKET_SAMPLES*10) {
+        if (seek_sample > 0 && info->pcmsample + packet->samples_per_frame >= seek_sample-MAX_PACKET_SAMPLES*10) {
              return 1;
         }
     }
@@ -359,11 +360,11 @@ _process_packet (mp3info_t *info, mp3packet_t *packet) {
 
 int
 mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int startoffs, int endoffs, int64_t seek_to_sample) {
+    memset (info, 0, sizeof (mp3info_t));
+
     int err = -1;
 
-    memset (info, 0, sizeof (mp3info_t));
     deadbeef->fseek (fp, startoffs, SEEK_SET);
-    info->seek_sample = seek_to_sample;
 
     // FIXME: radio
     fsize -= startoffs + endoffs;
@@ -386,17 +387,28 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
 
     int remaining = 0;
     int64_t offs = 0;
+    int64_t fileoffs = 0;
 
     while (fsize > 0) {
-        if (deadbeef->fread (buffer+remaining, 1, bufsize-remaining, fp) != bufsize-remaining) {
-            goto error;
+        int64_t readsize = bufsize-remaining;
+        if (fileoffs + readsize > fsize) {
+            readsize = fsize - fileoffs;
         }
 
-        remaining += bufsize;
+        if (readsize <= 0) {
+            break;
+        }
 
-        uint8_t *bufptr = buffer + bufsize - remaining;
+        if (deadbeef->fread (buffer+remaining, 1, readsize, fp) != readsize) {
+            goto error;
+        }
+        fileoffs += readsize;
 
-        while (remaining > 4) {
+        remaining = (int)(remaining + readsize);
+
+        uint8_t *bufptr = buffer;
+
+        while (remaining >= 4) {
             int res = _parse_packet (&packet, bufptr);
             if (res < 0) {
                 // invalid frame
@@ -428,7 +440,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                     }
                 }
 
-                packet.offs = offs;
+                info->packet_offs = packet.offs = offs;
 
                 // try to read xing/info tag (only on initial scans)
                 int got_xing = 0;
@@ -461,19 +473,14 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                     }
                 }
 
-                info->packet_offs = offs;
-
                 if (!got_xing) {
-                    if (_process_packet (info, &packet) > 0) {
+                    if (_process_packet (info, &packet, seek_to_sample) > 0) {
                         goto end;
                     }
                     memcpy (&info->prev_packet, &packet, sizeof (packet));
                 }
 
                 remaining -= res;
-                if (remaining <= 0) {
-                    goto end;
-                }
                 bufptr += res;
                 offs += res;
             }
@@ -487,8 +494,13 @@ end:
 
     err = 0;
 error:
+    if (fp) {
+        deadbeef->fclose (fp);
+        fp = NULL;
+    }
     if (buffer) {
         free (buffer);
+        buffer = NULL;
     }
 
     return err;

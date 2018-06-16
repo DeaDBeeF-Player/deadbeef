@@ -114,4 +114,33 @@
     XCTAssertEqual(info.pcmsample, 32256);
 }
 
+- (void)test_2secSquareNoLameHeader_Gives88200Samples {
+    mp3info_t info;
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/mp3parser/2sec-square-nolamehdr.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    int64_t fsize = vfs_fgetlength(fp);
+    int res = mp3_parse_file (&info, 0, fp, fsize, 0, 0, -1);
+    XCTAssert (!res);
+    XCTAssertEqual(info.have_xing_header, 0);
+    XCTAssertEqual(info.ref_packet.samplerate, 44100);
+    // lame adds default encoder delay and padding of 576 and 1080, even without header
+    XCTAssertEqual(info.pcmsample, 88200+576+1080);
+    XCTAssertEqual(info.delay, 0);
+    XCTAssertEqual(info.padding, 0);
+}
+
+- (void)test_2secSquareNoXHSeekTo1sec_SeeksTo1SecMinus10Packets {
+    mp3info_t info;
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/mp3parser/2sec-square-nolamehdr.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    int64_t fsize = vfs_fgetlength(fp);
+    int res = mp3_parse_file (&info, 0, fp, fsize, 0, 0, 576+44100);
+    XCTAssert (!res);
+    XCTAssertEqual(info.have_xing_header, 0);
+    XCTAssertEqual(info.packet_offs, 5851);
+    XCTAssertEqual(info.pcmsample, 32256);
+}
+
 @end

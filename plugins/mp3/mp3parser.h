@@ -20,9 +20,6 @@ typedef struct {
 } mp3packet_t;
 
 typedef struct {
-    // inputs
-    int64_t seek_sample;
-
     // outputs
     int64_t pcmsample; // sample position corresponding to packet_offs
     int64_t npackets;
