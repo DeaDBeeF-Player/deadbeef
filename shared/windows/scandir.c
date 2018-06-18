@@ -2,43 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
-#include <iconv.h>
-
-// taken and modified from ../../junklib.c
-int
-junk_iconv2 (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out) {
-// NOTE: this function must support utf8->utf8 conversion, used for validation
-    iconv_t cd = iconv_open (cs_out, cs_in);
-    if (cd == (iconv_t)-1) {
-        return -1;
-    }
-#if defined(__linux__) || defined(__OpenBSD__)
-    char *pin = (char*)in;
-#else
-    const char *pin = in;
-#endif
-
-    size_t inbytesleft = inlen;
-    size_t outbytesleft = outlen;
-
-    char *pout = out;
-
-    size_t res = iconv (cd, (char **) &pin, &inbytesleft, &pout, &outbytesleft);
-    int err = errno;
-    iconv_close (cd);
-
-    //trace ("iconv -f %s -t %s '%s': returned %d, inbytes %d/%d, outbytes %d/%d, errno=%d\n", cs_in, cs_out, in, (int)res, inlen, (int)inbytesleft, outlen, (int)outbytesleft, err);
-    if (res == -1) {
-        return -1;
-    }
-    out[pout-out] = 0;
-    //trace ("iconv out: %s (len=%d)\n", out, pout - out);
-    return pout - out;
-}
+#include <stdio.h>
+#include "junk_iconv2.h"
 
 #define DIRENT_CHUNK 64
 // TODO: no selector or cmp support
-int scandir (const char      *dirname,
+int scandir (const char      *dirname_o,
              struct dirent ***namelist_to,
              int            (*selector) (const struct dirent *),
              int            (*cmp) (const struct dirent **, const struct dirent **)) {
@@ -48,6 +17,15 @@ int scandir (const char      *dirname,
         return -1;
     }
 
+
+    char dirname[strlen(dirname_o)+1];
+    strcpy(dirname, dirname_o);
+    // convert any '/' characters to '\\'
+    {
+        char * slash = dirname;
+        while (slash = strchr(slash, '/'))
+            *slash = '\\';
+    }
     // convert dirname to wchar
     int dirname_w_len = strlen(dirname) * 2 + 8;
     wchar_t dirname_w[dirname_w_len];
@@ -101,6 +79,7 @@ int scandir (const char      *dirname,
         }
         FindClose(hFind);
         *namelist_to = namelist;
+        //printf("scandir: %d\n",struct_count);
         return struct_count;
     }
     return -1;

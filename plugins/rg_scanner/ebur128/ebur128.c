@@ -5,19 +5,11 @@
 #include <float.h>
 #include <limits.h>
 #include <math.h> /* You may have to define _USE_MATH_DEFINES if you use MSVC */
-#ifndef M_PI
-#define M_PI 3.1415926535897932384626433832795029
-#endif
 #include <stdio.h>
 #include <stdlib.h>
 
-
 /* This can be replaced by any BSD-like queue implementation. */
-#ifdef __MINGW32__
-#include "../libwin/include/sys/queue.h"
-#else
 #include <sys/queue.h>
-#endif
 
 #ifdef USE_SPEEX_RESAMPLER
   #include <speex/speex_resampler.h>

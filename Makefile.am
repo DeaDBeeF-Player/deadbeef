@@ -48,21 +48,16 @@ deadbeef_SOURCES =\
 	tf.c tf.h\
 	playqueue.c playqueue.h\
 	sort.c sort.h\
-	logger.c logger.h\
-	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
-
-if HAVE_WINDRES
-deadbeef_SOURCES += icons/deadbeef-icon.rc
-.rc.o:
-	$(WINDRES) $*.rc -o $@
-endif
+	logger.c logger.h
+	
+#	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
 
-deadbeef_LDADD = $(DL_LIBS) $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) -lm -lpthread $(INTL_LIBS) plugins/libparser/libparser.la
+deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread $(INTL_LIBS) plugins/libparser/libparser.a
 
-AM_CFLAGS = $(DEPS_CFLAGS) -std=c99 -D_POSIX_C_SOURCE
+AM_CFLAGS = $(DEPS_CFLAGS) -std=c99
 AM_CPPFLAGS = $(DEPS_CFLAGS)
 
 docsdir = $(docdir)

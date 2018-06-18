@@ -83,7 +83,6 @@
 
 #ifdef __MINGW32__
 #include <shlwapi.h>
-#include "plugins/libwin/mingw32_layer.h"
 #endif
 #include "deadbeef.h"
 
@@ -920,6 +919,9 @@ main (int argc, char *argv[]) {
     portable_full = 1;
 #endif
 
+    #ifdef __MINGW32__
+    argv[0] = argv0_windows (argv);
+    #endif
     if (!realpath (argv[0], dbinstalldir)) {
         strcpy (dbinstalldir, argv[0]);
     }

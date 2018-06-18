@@ -33,9 +33,6 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#ifdef __MINGW32__
-#include "plugins/libwin/mingw32_layer.h"
-#endif
 
 intptr_t
 thread_start (void (*fn)(void *ctx), void *ctx) {
@@ -126,24 +123,6 @@ thread_detach (intptr_t tid) {
     }
     return 0;
 }
-
-// these 2 functions come from elio branch
-#ifdef __MINGW32__
-int
-thread_alive (db_thread_t tid) {
-    return (pthread_kill (tid, 0) == 0);
-}
-
-void
-thread_wipeid (db_thread_t *tid) {
-    if (tid != NULL)
-    {
-
-        *tid = 0;
-
-    }
-}
-#endif
 
 void
 thread_exit (void *retval) {

@@ -1,44 +1,26 @@
 case "$TRAVIS_OS_NAME" in
     linux)
-        if [ "$BUILD_WINDOWS" = "yes" ]
-        then
-            sudo apt-get update 1> /dev/null 2> /dev/null || exit 1
-            sudo apt-get install -qq autopoint automake autoconf intltool libc6-dev-i386 libc6-dev yasm libglib2.0-bin || exit 1
-            sudo apt-get install -qq binutils-mingw-w64-x86-64 gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 mingw-w64-x86-64-dev
-            STATICDEPS_GIT="http://github.com/kuba160/deadbeef-windows-deps"
+        ls -l .
+        if [ ! -e static-deps ]; then
+            STATICDEPS_URL="http://sourceforge.net/projects/deadbeef/files/staticdeps/ddb-static-deps-latest.tar.bz2/download"
+            mkdir static-deps
             echo "downloading static deps..."
-            git clone -q "$STATICDEPS_GIT" || exit 1
-            echo "installing static deps..."
-            cd deadbeef-windows-deps && sudo make install ; cd ..
-            echo "running autogen..."
-            ./autogen.sh
-            echo "building for x86_64"
-            ARCH=x86_64 PKG_CONFIG_LIBDIR=/usr/x86_64-w64-mingw32/lib/pkgconfig CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ ./scripts/configure_windows.sh --host=x86_64-w64-mingw32
-            make
-            ./scripts/windows_install.sh || exit 1
-        else
-            ls -l .
-            if [ ! -e static-deps ]; then
-                STATICDEPS_URL="http://sourceforge.net/projects/deadbeef/files/staticdeps/ddb-static-deps-latest.tar.bz2/download"
-                mkdir static-deps
-                echo "downloading static deps..."
-                wget -q "$STATICDEPS_URL" -O ddb-static-deps.tar.bz2 || exit 1
-                echo "unpacking static deps..."
-                tar jxf ddb-static-deps.tar.bz2 -C static-deps || exit 1
-            fi
-            echo "installing the needed build dependencies..."
-            sudo apt-get update 1> /dev/null 2> /dev/null || exit 1
-            # if i686 deps are needed: gcc-multilib
-            sudo apt-get install -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-bin || exit 1
-    #        echo "building for i686"
-    #        ARCH=i686 ./scripts/static_build.sh || exit 1
-    #        ARCH=i686 ./scripts/portable_package_static.sh || exit 1
-            echo "building for x86_64"
-            ARCH=x86_64 ./scripts/static_build.sh || exit 1
-            ARCH=x86_64 ./scripts/portable_package_static.sh || exit 1
-            echo "running make dist"
-            make dist || exit 1
+            wget -q "$STATICDEPS_URL" -O ddb-static-deps.tar.bz2 || exit 1
+            echo "unpacking static deps..."
+            tar jxf ddb-static-deps.tar.bz2 -C static-deps || exit 1
         fi
+        echo "installing the needed build dependencies..."
+        sudo apt-get update 1> /dev/null 2> /dev/null || exit 1
+        # if i686 deps are needed: gcc-multilib
+        sudo apt-get install -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-bin || exit 1
+#        echo "building for i686"
+#        ARCH=i686 ./scripts/static_build.sh || exit 1
+#        ARCH=i686 ./scripts/portable_package_static.sh || exit 1
+        echo "building for x86_64"
+        ARCH=x86_64 ./scripts/static_build.sh || exit 1
+        ARCH=x86_64 ./scripts/portable_package_static.sh || exit 1
+        echo "running make dist"
+        make dist || exit 1
     ;;
     osx)
         echo brew update ...

@@ -36,7 +36,7 @@ convdata_DATA = $(convdata)
 converter_la_CFLAGS =  $(CFLAGS) -I@top_srcdir@/plugins/libmp4ff -std=c99 -fPIC -DUSE_TAGGING=1
 converter_la_SOURCES = converter.c converter.h
 converter_la_LDFLAGS = -module -avoid-version
-converter_la_LIBADD = $(LDADD) ../../shared/libmp4tagutil.la ../libmp4ff/libmp4ff.la
+converter_la_LIBADD = $(LDADD) ../../shared/libmp4tagutil.a ../libmp4ff/libmp4ff.a
 
 if HAVE_GTK2
 converter_gtk2_la_SOURCES = convgui.c interface.c support.c callbacks.h converter.h interface.h support.h

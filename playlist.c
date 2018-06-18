@@ -66,9 +66,6 @@
 #include "strdupa.h"
 #include "tf.h"
 #include "playqueue.h"
-#ifdef __MINGW32__
-#include "plugins/libwin/mingw32_layer.h"
-#endif
 
 #include "cueutil.h"
 

@@ -8,7 +8,7 @@ AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE()
 
 AC_USE_SYSTEM_EXTENSIONS
-LT_INIT([win32-dll])
+LT_INIT([disable-static])
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_OBJC
@@ -43,17 +43,6 @@ case "$host" in
     APE_USE_YASM=yes
     OS_OSX=yes
     ;;
-  x86_64-w64-mingw*)
-    AC_DEFINE(ARCH_X86_64, 1, [architecture is x86_64 on Windows])
-    LIB="static-deps/lib-x86-64-windows"
-    YASM_FLAGS="-f elf -D ARCH_X86_64 -m amd64"
-    APE_USE_YASM=yes
-    LDADD="$LDADD $PWD/plugins/libwin/libwin.la -ldl -lws2_32 -lintl -lpthread -lpsapi -lshlwapi"
-    AC_SUBST([LDADD])
-    DEPS_CFLAGS="$DEPS_CFLAGS -I$PWD/plugins/libwin/include -DUSE_STDIO -U__STRICT_ANSI__ -mwindows"
-    AC_SUBST([DEPS_CFLAGS])
-    OS_WINDOWS=yes
-    ;;
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
     LIB="static-deps/lib-x86-32"
@@ -78,7 +67,6 @@ case "$host" in
     AC_DEFINE(ARCH_UNKNOWN, 1, [architecture is unknown])
     ;;
 esac
-
 AC_SUBST(LIB)
 AC_SUBST(YASM_FLAGS)
 
@@ -95,9 +83,7 @@ AC_ARG_ENABLE(alsa,     [AS_HELP_STRING([--disable-alsa    ], [disable ALSA outp
 AC_ARG_ENABLE(oss,      [AS_HELP_STRING([--disable-oss     ], [disable Open Sound System output plugin (default: enabled)])], [enable_oss=$enableval], [enable_oss=yes])
 AC_ARG_ENABLE(pulse,    [AS_HELP_STRING([--disable-pulse   ], [disable PulseAudio output plugin (default: enabled)])], [enable_pulse=$enableval], [enable_pulse=yes])
 AC_ARG_ENABLE(coreaudio,[AS_HELP_STRING([--disable-coreaudio], [disable CoreAudio output plugin (default: enabled)])], [enable_coreaudio=$enableval], [enable_coreaudio=yes])
-AC_ARG_ENABLE(portaudio,[AS_HELP_STRING([--disable-portaudio ], [disable PortAudio output plugin (default: enabled)])], [enable_portaudio=$enableval], [enable_portaudio=yes])
 AC_ARG_ENABLE(sndio,    [AS_HELP_STRING([--disable-sndio   ], [disable sndio output plugin (default: auto)])], [enable_sndio=$enableval], [enable_sndio=yes])
-AC_ARG_ENABLE(waveout,  [AS_HELP_STRING([--disable-waveout   ], [disable waveout output plugin (default: auto)])], [enable_waveout=$enableval], [enable_waveout=yes])
 AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--disable-gtk3     ], [disable GTK3 version of gtkui plugin (default: enabled)])], [enable_gtk3=$enableval], [enable_gtk3=yes])
 AC_ARG_ENABLE(gtk2,     [AS_HELP_STRING([--disable-gtk2     ], [disable GTK2 version of gtkui plugin (default: enabled)])], [enable_gtk2=$enableval], [enable_gtk2=yes])
 AC_ARG_ENABLE(vfs_curl, [AS_HELP_STRING([--disable-vfs-curl], [disable HTTP streaming vfs plugin (default: enabled)])], [enable_vfs_curl=$enableval], [enable_vfs_curl=yes])
@@ -254,8 +240,6 @@ dnl    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_L
     HAVE_GTK3=no
 ])
 AM_CONDITIONAL(OS_OSX, test "x$OS_OSX" = "xyes")
-AM_CONDITIONAL(OS_WINDOWS, test "x$OS_WINDOWS" = "xyes")
-AM_CONDITIONAL(HAVE_WINDRES, test "x$HAVE_WINDRES" = "xyes")
 
 
 AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes" -o "${enable_shellexec}" = "yes"], [
@@ -318,14 +302,6 @@ AS_IF([test "${enable_sndio}" != "no" -a "${found_sndio_h}" != "no" -a "${found_
 
 AC_SUBST(SNDIO_LIBS)
 
-AS_IF([test "${enable_waveout}" != "no" ], [
-  AS_IF([test "${OS_WINDOWS}" = "yes"], [
-    AC_DEFINE(HAVE_WAVEOUT, 1, [Build waveout support])
-    HAVE_WAVEOUT=yes
-    WAVEOUT_LIBS="-lwindows"
-  ])
-])
-
 AS_IF([test "${enable_ffmpeg}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         FFMPEG_DEPS_CFLAGS="-I../../$LIB/include"
@@ -356,16 +332,6 @@ AS_IF([test "${enable_pulse}" != "no"], [
         AC_SUBST(DBUS_DEPS_LIBS)
     ], [
         PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=yes, HAVE_PULSE=no)
-    ])
-])
-
-AS_IF([test "${enable_portaudio}" != "no"], [
-    AS_IF([test "${enable_staticlink}" != "no"], [
-        HAVE_PORTAUDIO=yes
-        PORTAUDIO_DEPS_CFLAGS="-I../../$LIB/include"
-        PORTAUDIO_DEPS_LIBS="-lportaudio"
-    ], [
-        PKG_CHECK_MODULES(PORTAUDIO_DEPS, portaudio-2.0, HAVE_PORTAUDIO=yes, HAVE_PORTAUDIO=no)
     ])
 ])
 
@@ -619,13 +585,6 @@ dnl no support for global hotkeys on osx, but plugin will work anyway
 AS_IF([test "${OS_OSX}" = "yes"], [
     HAVE_HOTKEYS=yes
 ])
-AS_IF([test "${OS_WINDOWS}" = "yes"], [
-    HOTKEYS_CFLAGS=""
-    HOTKEYS_LIBS=""
-    AC_SUBST(HOTKEYS_CFLAGS)
-    AC_SUBST(HOTKEYS_LIBS)
-    HAVE_HOTKEYS=yes
-])
 
 dnl *** SNDIO output
 AS_IF([test "${enable_sndio}" != "no"], [
@@ -676,12 +635,6 @@ AS_IF([test "${enable_oss}" != "no"], [
 AS_IF([test "${enable_pulseaudio}" != "no"], [
     AS_IF([test "${HAVE_PULSE}" = "yes"], [
         HAVE_PULSEPLUGIN=yes
-    ])
-])
-
-AS_IF([test "${enable_portaudio}" != "no"], [
-    AS_IF([test "${HAVE_PORTAUDIO}" = "yes"], [
-        HAVE_PORTAUDIOPLUGIN=yes
     ])
 ])
 
@@ -899,23 +852,9 @@ AS_IF([test "${enable_rgscanner}" != "no"], [
     HAVE_RGSCANNER=yes
 ])
 
-AS_IF([test "${OS_WINDOWS}" = "yes"], [
-    LDFLAGS="$LDFLAGS -no-undefined"
-    AC_SUBST(LDFLAGS)
-    AC_CHECK_TOOL([windres], [windres])
-    AS_IF([test "$WINDRES" = "no"], [
-        HAVE_WINDRES=no
-    ], [
-        AC_SUBST(WINDRES)
-        HAVE_WINDRES=yes
-    ])
-])
-
-# dirs added for windows version: plugins/libwin plugins/portaudio plugins/waveout
-PLUGINS_DIRS="plugins/libwin plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/opus plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/portaudio plugins/waveout plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/sndio plugins/rg_scanner"
+PLUGINS_DIRS="plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/opus plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/sndio plugins/rg_scanner"
 
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
-AM_CONDITIONAL(HAVE_WINDRES, test "x$HAVE_WINDRES" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_OPUS, test "x$HAVE_OPUSPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_OGG, test "x$HAVE_OGG" = "xyes")
@@ -930,10 +869,8 @@ AM_CONDITIONAL(HAVE_GTK3, test "x$HAVE_GTK3" = "xyes")
 AM_CONDITIONAL(HAVE_ALSA, test "x$HAVE_ALSAPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_COREAUDIO, test "x$HAVE_COREAUDIO" = "xyes")
 AM_CONDITIONAL(HAVE_SNDIO, test "x$HAVE_SNDIO" = "xyes")
-AM_CONDITIONAL(HAVE_WAVEOUT, test "x$HAVE_WAVEOUT" = "xyes")
 AM_CONDITIONAL(HAVE_FFMPEG, test "x$HAVE_FFMPEGPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_PULSE, test "x$HAVE_PULSEPLUGIN" = "xyes")
-AM_CONDITIONAL(HAVE_PORTAUDIO, test "x$HAVE_PORTAUDIOPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_ARTWORK, test "x$HAVE_ARTWORK" = "xyes")
 AM_CONDITIONAL(ARTWORK_USE_VFS_CURL, test "x$ARTWORK_USE_VFS_CURL" = "xyes")
 AM_CONDITIONAL(HAVE_ADPLUG, test "x$HAVE_ADPLUG" = "xyes")
@@ -993,7 +930,6 @@ Makefile
 shared/Makefile
 pixmaps/Makefile
 icons/Makefile
-plugins/libwin/Makefile
 plugins/liboggedit/Makefile
 plugins/libmp4ff/Makefile
 plugins/libparser/Makefile
@@ -1018,8 +954,6 @@ plugins/ffmpeg/Makefile
 plugins/sid/Makefile
 plugins/oss/Makefile
 plugins/pulse/Makefile
-plugins/portaudio/Makefile
-plugins/waveout/Makefile
 plugins/artwork-legacy/Makefile
 plugins/supereq/Makefile
 plugins/notify/Makefile
@@ -1081,10 +1015,8 @@ PRINT_PLUGIN_INFO([nullout],[NULL output],[test "x$HAVE_NULLOUT" = "xyes"])
 PRINT_PLUGIN_INFO([alsa],[ALSA output],[test "x$HAVE_ALSA" = "xyes"])
 PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$HAVE_OSS" = "xyes"])
 PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test "x$HAVE_PULSEPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([portaudio],[PortAudio output plugin],[test "x$HAVE_PORTAUDIOPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([coreaudio],[CoreAudio output plugin],[test "x$HAVE_COREAUDIO" = "xyes"])
 PRINT_PLUGIN_INFO([sndio],[sndio output plugin],[test "x$HAVE_SNDIO" = "xyes"])
-PRINT_PLUGIN_INFO([waveout],[waveout output plugin],[test "x$HAVE_WAVEOUT" = "xyes"])
 PRINT_PLUGIN_INFO([sid],[SID player based on libsidplay2],[test "x$HAVE_SID" = "xyes"])
 PRINT_PLUGIN_INFO([ffap],[Monkey's audio (APE) decoder],[test "x$HAVE_FFAP" = "xyes"])
 PRINT_PLUGIN_INFO([lastfm],[last.fm scrobbler],[test "x$HAVE_LASTFM" = "xyes"])

@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <malloc.h>
 #include <windows.h>
+#include <stdio.h>
 // min and max are defined in windows.h, but source files define them too
 // undefine them to avoid redefinition warnings
 #undef max
@@ -46,6 +47,7 @@
 #define  fnmatch(x,y,z) PathMatchSpec(y,x)
 #endif
 
+//int rename(const char * oldfile, const char * newfile) __attribute__((weak));
 #undef rename
 #define rename(X,Y) rename_windows(X,Y)
 
@@ -62,6 +64,9 @@ typedef pthread_cond_t  *db_cond_t;
   _Reserved_ LPVOID  lpReserved
 );*/
 
+#ifndef posix_memalign
+#define posix_memalign(X, Y, Z) ({*X = __mingw_aligned_malloc (Z, Y); (*X) ? 1 : 0;})
+#endif
 
 int scandir (const char *__dir, struct dirent ***__namelist, int (*__selector) (const struct dirent *), int (*__cmp) (const struct dirent **, const struct dirent **));
 void *mmap(void *, size_t, int, int, int, off_t);
@@ -70,5 +75,10 @@ char *strndup(char *, size_t);
 char *strcasestr(const char *, const char *);
 
 int rename_windows(const char *, const char *);
-
+int junk_iconv2 (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out);
+#define stat(X,Y) stat_windows(X,Y)
+int path_short(char * path_in, char * path_out, int len);
+char * argv0_windows (char * argv[]);
+//FILE * fopen_utf8 (const char *filename, const char *mode);
+//fopen = fopen_utf8;
 #endif
