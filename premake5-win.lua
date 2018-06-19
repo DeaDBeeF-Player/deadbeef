@@ -753,3 +753,4 @@ project "resources_windows"
         "echo \"output_plugin PortAudio output plugin\" > bin/%{cfg.buildcfg}/config/config"
     }
 
+print_options()

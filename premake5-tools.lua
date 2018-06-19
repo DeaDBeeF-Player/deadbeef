@@ -66,7 +66,8 @@ function pkgconfig_libs (pkgname)
 end
 
 -- option functions
-
+options_dic = {};
+local options_pkgs_missing = {}
 function add_option (name)
 	local a = string.gsub(name, "plugin%-", "")
 	if a ~= name then
@@ -92,6 +93,10 @@ function option (name, ...)
 	local b = 0;
 	if  _OPTIONS[name] ~= "disabled" then
 		-- for each set
+		if ... == nil then
+			options_dic[name] = "yes"
+			return true
+		end
 		for j,v in ipairs({...}) do
 		    parts = string.explode(v, " ")
 		    local set = 1
@@ -100,6 +105,7 @@ function option (name, ...)
 		    	if pkgconfig_check (v) == nil then
 			   		print("\27[93m" .. "pkg-config did not found package " .. v .. " required by " ..  name .. "\27[39m")
 			   		set = 0
+			   		table.insert (options_pkgs_missing, v)
 			   		a[v] = false
 			   	else
 			   		a[v] = true
@@ -115,6 +121,9 @@ function option (name, ...)
    		end
    		if b == 0 then
    			a = nil
+   			options_dic[name] = "no"
+   		else
+   			options_dic[name] = "yes"
    		end
 	end
 	--print ("a = "..a)
@@ -155,4 +164,44 @@ function option_nofail (name, ...)
 	end
 	--print ("a = "..a)
 	return a
+end
+
+function dump(o)
+   if type(o) == 'table' then
+      local s = '{ '
+      for k,v in pairs(o) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. dump(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(o)
+   end
+end
+
+function print_options ()
+	test = options_pkgs_missing
+	hash = {}
+	res = {}
+	for _,v in ipairs(test) do
+		if (not hash[v]) then
+	    	res[#res+1] = v -- you could print here instead of saving to result table if you wanted
+	    	hash[v] = true
+	   	end
+	end
+   	for i,v in ipairs(res) do
+   		print (i .."  " .. v)
+   	end
+
+   	print ("Plugin summary:\n")
+   	sorted = {}
+   	for n in pairs(options_dic) do table.insert(sorted, n) end
+    table.sort(sorted)
+    for i,n in ipairs(sorted) do
+   		local a = string.gsub(n, "plugin%-", "")
+		if a ~= name then
+			print ("\t" .. a ..": " .. options_dic[n])
+		end
+
+    end
 end
