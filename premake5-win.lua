@@ -88,18 +88,25 @@ project "mp3"
    targetprefix ""
 
    files {
-       "plugins/mp3/*.h",
-       "plugins/mp3/*.c",
+       "plugins/mp3/mp3.h",
+       "plugins/mp3/mp3.c",
    }
    if mp3_v["libmpg123"] then
-      print ("mpg123")
+      files {
+        "plugins/mp3/mp3_mpg123.c",
+        "plugins/mp3/mp3_mpg123.h"
+      }
       defines { "USE_LIBMPG123=1" }
+      links {"mpg123"}
    end
    if mp3_v["mad"] then
-      print ("mad")
+      files {
+        "plugins/mp3/mp3_mad.c",
+        "plugins/mp3/mp3_mad.h"
+      }
       defines { "USE_LIBMAD=1" }
+      links { "mad" }
    end
-   links { "mpg123", "mad" }
 end
 
 project "aac_plugin"
