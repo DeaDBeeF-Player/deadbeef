@@ -8,6 +8,8 @@ defines {
     "HAVE_LOG2=1"
 }
 
+include "premake5-tools.lua"
+
 filter "configurations:debug or debug32"
   defines { "DEBUG" }
   symbols "On"
@@ -36,6 +38,7 @@ filter "system:Windows"
   links { "ws2_32", "psapi", "shlwapi", "iconv", "intl", "libwin", "dl"}
 
 project "libwin"
+   removeplatforms { "Linux" }
    kind "StaticLib"
    language "C"
    targetdir "bin/%{cfg.buildcfg}/"
@@ -52,57 +55,6 @@ project "libwin"
    }
    links {"dl"}
    removelinks {"libwin"}
-
-function pkgconfig (pkgname)
-  links { pkgconfig_libs (pkgname) }
-  includedirs { pkgconfig_includedirs (pkgname) }
-  libdirs { pkgconfig_libdirs (pkgname) }
-end
-
-function pkgconfig_includedirs (pkgname)
-  command = "pkg-config --cflags-only-I " .. pkgname
-  returnval = os.outputof (command)
-  if (returnval == nil)
-  then
-    error ("pkg-config failed for " .. pkgname)
-  end
-  parts = string.explode(returnval, " ")
-  tab2 = {}
-  for i, v in ipairs(parts) do
-    tab2[i] = string.sub (v, 3)
-  end
-  return tab2
-end
-
-function pkgconfig_libdirs (pkgname)
-  command = "pkg-config --libs-only-L " .. pkgname
-  returnval = os.outputof (command)
-  if (returnval == nil)
-  then
-    error ("pkg-config failed for " .. pkgname)
-  end
-  parts = string.explode (returnval, " ")
-  tab2 = {}
-  for i, v in ipairs(parts) do
-    tab2[i] = string.sub (v, 3)
-  end
-  return tab2
-end
-
-function pkgconfig_libs (pkgname)
-  command = "pkg-config --libs-only-l " .. pkgname
-  returnval = os.outputof (command)
-  if (returnval == nil)
-  then
-    error ("pkg-config failed for " .. pkgname)
-  end
-  parts = string.explode (returnval, " ")
-  tab2 = {}
-  for i, v in ipairs(parts) do
-    tab2[i] = string.sub (v, 3)
-  end
-  return tab2
-end
 
 project "deadbeef"
    kind "WindowedApp"
@@ -127,6 +79,8 @@ project "deadbeef"
    defines { "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"", "LOCALEDIR=\"donotuse\"", "HAVE_ICONV" }
    links { "m", "pthread", "dl", "iconv" }
 
+local mp3_v = option ("plugin-mp3", "libmpg123", "mad")
+if mp3_v then
 project "mp3"
    kind "SharedLib"
    language "C"
@@ -137,9 +91,16 @@ project "mp3"
        "plugins/mp3/*.h",
        "plugins/mp3/*.c",
    }
-
-   defines { "USE_LIBMPG123=1", "USE_LIBMAD=1" }
+   if mp3_v["libmpg123"] then
+      print ("mpg123")
+      defines { "USE_LIBMPG123=1" }
+   end
+   if mp3_v["mad"] then
+      print ("mad")
+      defines { "USE_LIBMAD=1" }
+   end
    links { "mpg123", "mad" }
+end
 
 project "aac_plugin"
    kind "SharedLib"
@@ -160,6 +121,7 @@ project "aac_plugin"
    defines { "USE_MP4FF=1", "USE_TAGGING=1" }
    links { "faad" }
 
+if option ("plugin-flac", "flac ogg") then
 project "flac_plugin"
    kind "SharedLib"
    language "C"
@@ -176,7 +138,9 @@ project "flac_plugin"
 
    defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
    links { "FLAC", "ogg" }
+end
 
+if option ("plugin-wavpack", "wavpack") then
 project "wavpack_plugin"
    kind "SharedLib"
    language "C"
@@ -190,7 +154,9 @@ project "wavpack_plugin"
    }
 
    links { "wavpack" }
+end
 
+if option ("plugin-ffmpeg") then
 project "ffmpeg"
    kind "SharedLib"
    language "C"
@@ -203,7 +169,9 @@ project "ffmpeg"
    }
 
    links {"avcodec", "pthread", "avformat", "avcodec", "avutil", "z", "opencore-amrnb", "opencore-amrwb", "opus"}
+end
 
+if option ("plugin-vorbis", "vorbisfile vorbis ogg") then
 project "vorbis_plugin"
    kind "SharedLib"
    language "C"
@@ -220,7 +188,9 @@ project "vorbis_plugin"
 
    defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
    links { "vorbisfile", "vorbis", "m", "ogg" }
+end
 
+if option ("plugin-opus", "opusfile opus ogg") then
 project "opus_plugin"
    kind "SharedLib"
    language "C"
@@ -244,7 +214,9 @@ project "opus_plugin"
    filter "configurations:debug or release"
    
       includedirs { "static-deps/lib-x86-64/include/opus" }
+end
 
+if option ("plugin-ffap") then
 project "ffap"
    kind "SharedLib"
    language "C"
@@ -285,8 +257,9 @@ project "ffap"
            }
 
            defines { "APE_USE_ASM=yes", "ARCH_X86_64=1" }
+end
 
-
+if option ("plugin-hotkeys") then
 project "hotkeys"
    kind "SharedLib"
    language "C"
@@ -301,7 +274,9 @@ project "hotkeys"
    }
    filter "system:not windows"
        links { "X11" }
+end
 
+if option ("plugin-alsa", "alsa") then
 project "alsa"
    removeplatforms { "Windows" }
    kind "SharedLib"
@@ -315,7 +290,9 @@ project "alsa"
    }
 
    links { "asound" }
+end
 
+if option ("plugin-dsp_libsrc", "samplerate") then
 project "dsp_libsrc"
    kind "SharedLib"
    language "C"
@@ -327,7 +304,9 @@ project "dsp_libsrc"
    }
 
    links { "samplerate" }
+end
 
+if option ("plugin-pulse", "libpulse-simple") then
 project "pulse"
    removeplatforms { "Windows" }
    kind "SharedLib"
@@ -341,7 +320,9 @@ project "pulse"
    }
 
    links { "pulse-simple" }
+end
 
+if option ("plugin-portaudio", "portaudio-2.0") then
 project "portaudio"
    kind "SharedLib"
    language "C"
@@ -352,9 +333,10 @@ project "portaudio"
        "plugins/portaudio/*.h",
        "plugins/portaudio/*.c",
    }
+   pkgconfig ("portaudio-2.0")
+end
 
-   links { "portaudio " } -- space needed to avoid linking with itself, lol
-
+if option ("plugin-gtk2", "gtk+-2.0 jansson") then
 project "ddb_gui_GTK2"
    kind "SharedLib"
    language "C"
@@ -387,7 +369,9 @@ project "ddb_gui_GTK2"
     
        includedirs { "static-deps/lib-x86-64/gtk-2.16.0/include/**", "static-deps/lib-x86-64/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
+end
 
+if option ("plugin-gtk3", "gtk+-3.0 jansson") then
 project "ddb_gui_GTK3"
    kind "SharedLib"
    language "C"
@@ -421,7 +405,9 @@ project "ddb_gui_GTK3"
 
        includedirs { "static-deps/lib-x86-64/gtk-3.10.8/usr/include/**", "static-deps/lib-x86-64/gtk-3.10.8/usr/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-64/gtk-3.10.8/lib/**", "static-deps/lib-x86-64/gtk-3.10.8/usr/lib/**" }
+end
 
+if option ("plugin-rg_scanner") then
 project "rg_scanner"
    kind "SharedLib"
    language "C"
@@ -434,7 +420,9 @@ project "rg_scanner"
        "plugins/rg_scanner/ebur128/*.h",
        "plugins/rg_scanner/ebur128/*.c",
    }
+end
 
+if option ("plugin-converter") then
 project "converter"
    kind "SharedLib"
    language "C"
@@ -449,7 +437,9 @@ project "converter"
        "plugins/libmp4ff/*.c",
        "shared/mp4tagutil.c",
    }
+end
 
+if option ("plugin-sndfile", "sndfile") then
 project "sndfile_plugin"
    kind "SharedLib"
    language "C"
@@ -462,7 +452,9 @@ project "sndfile_plugin"
    }
    links { "sndfile" }
    targetname "sndfile"
+end
 
+if option ("plugin-sid") then
 project "sid"
    removeplatforms { "Windows" }
    kind "SharedLib"
@@ -505,7 +497,9 @@ project "sid"
    }
    targetname "sid"
    links { "stdc++" }
+end
 
+if option ("plugin-psf", "zlib") then
 project "psf"
    kind "SharedLib"
    language "C"
@@ -558,7 +552,9 @@ project "psf"
    }
    targetname "psf"
    links { "z", "m" }
+end
 
+if option ("plugin-m3u") then
 project "m3u"
    kind "SharedLib"
    language "C"
@@ -569,7 +565,9 @@ project "m3u"
        "plugins/m3u/*.c",
        "plugins/m3u/*.h",
    }
+end
 
+if option ("plugin-vfs_curl") then
 project "vfs_curl"
    kind "SharedLib"
    language "C"
@@ -582,7 +580,9 @@ project "vfs_curl"
    }
 
    links { "curl" }
+end
 
+if option ("plugin-converter_gtk2", "gtk+-2.0") then
 project "converter_gtk2"
    kind "SharedLib"
    language "C"
@@ -606,8 +606,9 @@ project "converter_gtk2"
    filter "configurations:release or debug"
        includedirs { "static-deps/lib-x86-64/gtk-2.16.0/include/**", "static-deps/lib-x86-64/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
+end
 
-
+if option ("plugin-wildmidi") then
 project "wildmidi_plugin"
    kind "SharedLib"
    language "C"
@@ -630,7 +631,9 @@ project "wildmidi_plugin"
 
    defines { "WILDMIDI_VERSION=\"0.2.2\"", "WILDMIDILIB_VERSION=\"0.2.2\"", "TIMIDITY_CFG=\"/etc/timidity.conf\"" }
    links { "m" }
+end
 
+if option ("plugin-artwork", "libjpeg libpng zlib flac ogg") then
 project "artwork_plugin"
    kind "SharedLib"
    language "C"
@@ -650,7 +653,9 @@ project "artwork_plugin"
 
    defines { "USE_OGG=1", "USE_VFS_CURL", "USE_METAFLAC", "USE_MP4FF", "USE_TAGGING=1" }
    links { "jpeg", "png", "z", "FLAC", "ogg" }
+end
 
+if option ("plugin-supereq") then
 project "supereq_plugin"
    kind "SharedLib"
    language "C"
@@ -665,7 +670,9 @@ project "supereq_plugin"
 
    defines { "USE_OOURA" }
    links { "m", "stdc++" }
+end
 
+if option ("plugni-mono2stereo") then
 project "mono2stereo_plugin"
    kind "SharedLib"
    language "C"
@@ -676,7 +683,9 @@ project "mono2stereo_plugin"
    files {
        "plugins/mono2stereo/*.c",
    }
+end
 
+if option ("plugin-nullout") then
 project "nullout"
    kind "SharedLib"
    language "C"
@@ -687,7 +696,7 @@ project "nullout"
        "plugins/nullout/*.h",
        "plugins/nullout/*.c",
    }
-
+end
 
 project "translations"
    kind "Utility"
