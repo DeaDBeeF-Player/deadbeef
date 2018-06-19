@@ -1595,6 +1595,7 @@
 		4D1B76662035A2FC006D56D0 /* pack.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B763F2035A2FB006D56D0 /* pack.c */; };
 		4D1B76672035A2FC006D56D0 /* tags.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B76402035A2FC006D56D0 /* tags.c */; };
 		4D1B76692035A420006D56D0 /* wavpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B76682035A420006D56D0 /* wavpack.c */; };
+		4D22C87120D92AC20097D720 /* DDBTestInitializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D22C87020D92AC20097D720 /* DDBTestInitializer.m */; };
 		4D2A6CA1183BC29400AC6BF5 /* btnnextTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6C9D183BC29400AC6BF5 /* btnnextTemplate.pdf */; };
 		4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6C9E183BC29400AC6BF5 /* btnpauseTemplate.pdf */; };
 		4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */; };
@@ -4717,6 +4718,8 @@
 		4D1B763F2035A2FB006D56D0 /* pack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pack.c; path = "osx/deps/WavPack-5.1.0/src/pack.c"; sourceTree = "<group>"; };
 		4D1B76402035A2FC006D56D0 /* tags.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tags.c; path = "osx/deps/WavPack-5.1.0/src/tags.c"; sourceTree = "<group>"; };
 		4D1B76682035A420006D56D0 /* wavpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wavpack.c; path = plugins/wavpack/wavpack.c; sourceTree = "<group>"; };
+		4D22C86F20D92AC20097D720 /* DDBTestInitializer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DDBTestInitializer.h; sourceTree = "<group>"; };
+		4D22C87020D92AC20097D720 /* DDBTestInitializer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DDBTestInitializer.m; sourceTree = "<group>"; };
 		4D2A6C9D183BC29400AC6BF5 /* btnnextTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnnextTemplate.pdf; path = images/btnnextTemplate.pdf; sourceTree = "<group>"; };
 		4D2A6C9E183BC29400AC6BF5 /* btnpauseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnpauseTemplate.pdf; path = images/btnpauseTemplate.pdf; sourceTree = "<group>"; };
 		4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnprevTemplate.pdf; path = images/btnprevTemplate.pdf; sourceTree = "<group>"; };
@@ -7634,6 +7637,8 @@
 				2DA66ECD1EDF501000E20989 /* fakein.h */,
 				4D0B0CED20162D95004162DA /* FormatConversion.m */,
 				2DB305E120D30CB800C10577 /* MP3ParserTest.m */,
+				4D22C86F20D92AC20097D720 /* DDBTestInitializer.h */,
+				4D22C87020D92AC20097D720 /* DDBTestInitializer.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -12917,6 +12922,7 @@
 				2D7F38031B2858AC00692A7B /* Junklib.m in Sources */,
 				4D0B0CEE20162D95004162DA /* FormatConversion.m in Sources */,
 				2DB305E220D30CB800C10577 /* MP3ParserTest.m in Sources */,
+				4D22C87120D92AC20097D720 /* DDBTestInitializer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

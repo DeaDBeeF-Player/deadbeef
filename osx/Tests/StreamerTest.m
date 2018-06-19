@@ -27,7 +27,6 @@
 #include "plugins.h"
 #include "conf.h"
 #include "../../common.h"
-#include "logger.h"
 #include "streamer.h"
 #include "threading.h"
 #include "messagepump.h"
@@ -150,17 +149,6 @@ wait_until_stopped (void) {
 - (void)setUp {
     [super setUp];
 
-    // init deadbeef core
-    NSString *resPath = [[NSBundle bundleForClass:[self class]] resourcePath];
-    const char *str = [resPath UTF8String];
-    strcpy (dbplugindir, str);
-
-    ddb_logger_init ();
-    conf_init ();
-    conf_enable_saving (0);
-
-    pl_init ();
-
     messagepump_init ();
 
     // register fakein and fakeout plugin
@@ -191,12 +179,6 @@ wait_until_stopped (void) {
 
     _fakeout->stop ();
     streamer_free ();
-
-    plug_disconnect_all ();
-    plug_unload_all ();
-    pl_free ();
-    conf_free ();
-    ddb_logger_free ();
 
     [super tearDown];
 }
