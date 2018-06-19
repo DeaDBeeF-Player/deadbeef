@@ -28,6 +28,8 @@
 #include "playqueue.h"
 #include "streamer.h"
 #include "plugins.h"
+#include "conf.h"
+#include "logger.h"
 
 static int fake_out_state_value = OUTPUT_STATE_STOPPED;
 
@@ -51,7 +53,10 @@ static DB_output_t fake_out = {
 - (void)setUp {
     [super setUp];
 
+    conf_init ();
+    conf_enable_saving (0);
     pl_init ();
+    ddb_logger_init ();
 
     it = pl_item_alloc_init ("testfile.flac", "stdflac");
 
@@ -69,6 +74,8 @@ static DB_output_t fake_out = {
     streamer_set_playing_track (NULL);
     pl_item_unref (it);
     pl_free ();
+    conf_free ();
+    ddb_logger_free ();
     ctx.plt = NULL;
 
     [super tearDown];

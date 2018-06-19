@@ -202,19 +202,22 @@ wait_until_stopped (void) {
 }
 
 - (void)test_Play2TracksNoLoop_Sends2SongChanged {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    playlist_t *plt = plt_alloc ("testplt");
     // create two test fake tracks
-    DB_playItem_t *_sinewave = deadbeef->plt_insert_file2 (0, plt, NULL, "sine.fake", NULL, NULL, NULL);
-    DB_playItem_t *_squarewave = deadbeef->plt_insert_file2 (0, plt, _sinewave, "square.fake", NULL, NULL, NULL);
+    DB_playItem_t *_sinewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "sine.fake", NULL, NULL, NULL);
+    DB_playItem_t *_squarewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, _sinewave, "square.fake", NULL, NULL, NULL);
+
+    plt_set_curr (plt);
 
     streamer_set_nextsong (0, 0);
     streamer_yield ();
 
     wait_until_stopped ();
 
-    deadbeef->pl_item_unref (_sinewave);
-    deadbeef->pl_item_unref (_squarewave);
-    deadbeef->plt_unref (plt);
+    deadbeef->plt_unref ((ddb_playlist_t *)plt);
+
+    plt_set_curr (NULL);
+
     XCTAssert (count_played = 2);
 }
 
@@ -245,12 +248,14 @@ static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
     // for this test, we want "loop single" mode, to make sure first track is playing when we start the 2nd one.
     conf_set_int ("playback.loop", PLAYBACK_MODE_LOOP_SINGLE);
 
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    playlist_t *plt = plt_alloc ("testplt");
     // create two test fake tracks
-    switchtest_tracks[0] = deadbeef->plt_insert_file2 (0, plt, NULL, "sine.fake", NULL, NULL, NULL);
-    switchtest_tracks[1] = deadbeef->plt_insert_file2 (0, plt, switchtest_tracks[0], "square.fake", NULL, NULL, NULL);
+    switchtest_tracks[0] = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "sine.fake", NULL, NULL, NULL);
+    switchtest_tracks[1] = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, switchtest_tracks[0], "square.fake", NULL, NULL, NULL);
 
-//    printf ("A:%p B:%p\n", switchtest_tracks[0], switchtest_tracks[1]);
+    plt_set_curr (plt);
+
+    printf ("A:%p B:%p\n", switchtest_tracks[0], switchtest_tracks[1]);
 
     switchtest_counts[0] = switchtest_counts[1] = 0;
 
@@ -258,28 +263,29 @@ static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
     fakeout_set_manual (1);
     fakeout_set_realtime (1);
 
-//    printf ("start track A...\n");
+    printf ("start track A...\n");
     streamer_set_nextsong (0, 0);
     streamer_yield ();
 
-//    printf ("consume 1 sec...\n");
+    printf ("consume 1 sec...\n");
     fakeout_consume (44100 * 4 * 2);
 
-//    printf ("start track B...\n");
+    printf ("start track B...\n");
     streamer_set_nextsong (1, 0);
     streamer_yield ();
 
     // we're testing that track A is never "playing" after this point
     _trackinfochanged_handler = switchtest_trackinfochanged_handler;
 
-//    printf ("consume 1 sec...\n");
+    printf ("consume 1 sec...\n");
     fakeout_consume (44100 * 4 * 2);
     fakeout_set_manual (0);
 
-    deadbeef->pl_item_unref (switchtest_tracks[0]);
-    deadbeef->pl_item_unref (switchtest_tracks[1]);
-    deadbeef->plt_unref (plt);
+    deadbeef->plt_unref ((ddb_playlist_t *)plt);
     _trackinfochanged_handler = NULL;
+
+    plt_set_curr (NULL);
+
     XCTAssert (switchtest_counts[0] == 0);
     XCTAssert (count_played = 2);
 }
