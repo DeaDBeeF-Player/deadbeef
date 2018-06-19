@@ -189,10 +189,11 @@ function print_options ()
 	    	hash[v] = true
 	   	end
 	end
+	local pkgs = ""
    	for i,v in ipairs(res) do
-   		print (i .."  " .. v)
+   		pkgs = pkgs .. " " .. v
    	end
-
+	print ("Missing packages for full compile:" .. pkgs .. "\n")
    	print ("Plugin summary:\n")
    	sorted = {}
    	for n in pairs(options_dic) do table.insert(sorted, n) end
