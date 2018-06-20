@@ -419,7 +419,12 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
         while (remaining >= MAX_PACKET_LENGTH || (eof && remaining >= MIN_PACKET_LENGTH)) {
             int res = _parse_packet (&packet, bufptr);
             if (res < 0) {
-                // invalid frame
+                // bail if a valid packet could not be found at the start of stream
+                if (!info->valid_packets && offs - startoffs > MAX_INVALID_BYTES) {
+                    goto error;
+                }
+
+                // bad packet in the stream, try to resync
                 memset (&info->prev_packet, 0, sizeof (mp3packet_t));
                 info->packet_offs = -1;
                 info->lastpacket_valid = 0;
@@ -428,10 +433,6 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 }
 
                 offs++;
-
-                if (offs - startoffs > MAX_INVALID_BYTES) {
-                    goto error;
-                }
 
                 remaining--;
                 bufptr++;
