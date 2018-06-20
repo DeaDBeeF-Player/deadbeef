@@ -196,9 +196,9 @@ wait_until_stopped (void) {
 
     wait_until_stopped ();
 
+    plt_set_curr (NULL);
     deadbeef->plt_unref ((ddb_playlist_t *)plt);
 
-    plt_set_curr (NULL);
 
     XCTAssert (count_played = 2);
 }
@@ -263,10 +263,10 @@ static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
     fakeout_consume (44100 * 4 * 2);
     fakeout_set_manual (0);
 
-    deadbeef->plt_unref ((ddb_playlist_t *)plt);
     _trackinfochanged_handler = NULL;
 
     plt_set_curr (NULL);
+    deadbeef->plt_unref ((ddb_playlist_t *)plt);
 
     XCTAssert (switchtest_counts[0] == 0);
     XCTAssert (count_played = 2);
