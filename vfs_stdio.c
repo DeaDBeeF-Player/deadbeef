@@ -41,7 +41,7 @@
 #endif
 
 //#define USE_STDIO
-//#define USE_BUFFERING
+#define USE_BUFFERING
 
 #ifndef USE_STDIO
 #define BUFSIZE 1024
@@ -131,7 +131,7 @@ stdio_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     size_t nb = size * nmemb;
 #ifdef USE_BUFFERING
     while (nb > 0) {
-        if (fillbuffer (f, size*nmemb) <= 0) {
+        if (fillbuffer (f) <= 0) {
             break;
         }
         int r = f->bufremaining;
