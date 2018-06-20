@@ -11,7 +11,7 @@ SOURCES_LIBMPG123 = mp3_mpg123.c mp3_mpg123.h
 USE_LIBMPG123 = -DUSE_LIBMPG123=1
 endif
 
-mp3_la_SOURCES = mp3.c mp3.h $(SOURCES_LIBMAD) $(SOURCES_LIBMPG123)
+mp3_la_SOURCES = mp3.c mp3.h mp3parser.c mp3parser.h $(SOURCES_LIBMAD) $(SOURCES_LIBMPG123)
 mp3_la_LDFLAGS = -module -avoid-version
 
 mp3_la_LIBADD = $(LDADD) $(MAD_LIBS) $(MPG123_LIBS)

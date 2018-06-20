@@ -652,7 +652,7 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
 
 static int
 ml_connect (void) {
-    tid = deadbeef->thread_start_low_priority (scanner_thread, NULL);
+    //tid = deadbeef->thread_start_low_priority (scanner_thread, NULL);
 
 #if 0
     struct timeval tm1, tm2;

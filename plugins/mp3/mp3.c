@@ -36,6 +36,7 @@
 #ifdef USE_LIBMPG123
 #include "mp3_mpg123.h"
 #endif
+#include "mp3parser.h"
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
@@ -686,30 +687,30 @@ cmp3_open (uint32_t hints) {
 }
 
 void
-cmp3_set_extra_properties (buffer_t *buffer, int fake) {
+cmp3_set_extra_properties (DB_playItem_t *it, mp3info_t *mp3info, int fake) {
     char s[100];
-    int64_t size = deadbeef->fgetlength (buffer->file);
+    int64_t size = mp3info->fsize;
     if (size >= 0) {
         snprintf (s, sizeof (s), "%lld", size);
-        deadbeef->pl_replace_meta (buffer->it, ":FILE_SIZE", s);
+        deadbeef->pl_replace_meta (it, ":FILE_SIZE", s);
     }
     else {
-        deadbeef->pl_replace_meta (buffer->it, ":FILE_SIZE", "∞");
+        deadbeef->pl_replace_meta (it, ":FILE_SIZE", "∞");
     }
-    if (buffer->bitrate > 0) {
-        snprintf (s, sizeof (s), "%d", buffer->bitrate/1000);
-        deadbeef->pl_replace_meta (buffer->it, ":BITRATE", s);
+    if (mp3info->ref_packet.bitrate > 0) {
+        snprintf (s, sizeof (s), "%d", mp3info->ref_packet.bitrate/1000);
+        deadbeef->pl_replace_meta (it, ":BITRATE", s);
     }
-    snprintf (s, sizeof (s), "%d", buffer->channels);
-    deadbeef->pl_replace_meta (buffer->it, ":CHANNELS", s);
-    snprintf (s, sizeof (s), "%d", buffer->samplerate);
-    deadbeef->pl_replace_meta (buffer->it, ":SAMPLERATE", s);
+    snprintf (s, sizeof (s), "%d", mp3info->ref_packet.nchannels);
+    deadbeef->pl_replace_meta (it, ":CHANNELS", s);
+    snprintf (s, sizeof (s), "%d", mp3info->ref_packet.samplerate);
+    deadbeef->pl_replace_meta (it, ":SAMPLERATE", s);
 
     // set codec profile (cbr or vbr) and mp3 vbr method (guessed, or from Xing/Info header)
 
     char codec_profile[100];
-    snprintf (codec_profile, sizeof (codec_profile), "MP3 %s", (!buffer->vbr || buffer->vbr == XING_CBR || buffer->vbr == XING_CBR2) ?  "CBR" : "VBR");
-    if (buffer->vbr != XING_CBR && buffer->vbr != XING_CBR2 && (buffer->lamepreset & 0x7ff)) {
+    snprintf (codec_profile, sizeof (codec_profile), "MP3 %s", (!mp3info->vbr_type || mp3info->vbr_type == XING_CBR || mp3info->vbr_type == XING_CBR2) ?  "CBR" : "VBR");
+    if (mp3info->vbr_type != XING_CBR && mp3info->vbr_type != XING_CBR2 && (mp3info->lamepreset & 0x7ff)) {
         const static struct {
             int v;
             const char *name;
@@ -738,7 +739,7 @@ cmp3_set_extra_properties (buffer_t *buffer, int fake) {
         };
 
         for (int i = 0; presets[i].name; i++) {
-            if (presets[i].v == (buffer->lamepreset&0x7ff)) {
+            if (presets[i].v == (mp3info->lamepreset&0x7ff)) {
                 size_t l = strlen (codec_profile);
                 char *preset = codec_profile + l;
                 snprintf (preset, sizeof (codec_profile) - l, " %s", presets[i].name);
@@ -747,36 +748,36 @@ cmp3_set_extra_properties (buffer_t *buffer, int fake) {
         }
     }
 
-    deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", codec_profile);
+    deadbeef->pl_replace_meta (it, ":CODEC_PROFILE", codec_profile);
 
-    switch (buffer->vbr) {
+    switch (mp3info->vbr_type) {
     case XING_ABR:
-        deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "ABR");
+        deadbeef->pl_replace_meta (it, ":MP3_VBR_METHOD", "ABR");
         break;
     case XING_VBR1:
-        deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "full VBR method 1");
+        deadbeef->pl_replace_meta (it, ":MP3_VBR_METHOD", "full VBR method 1");
         break;
     case XING_VBR2:
-        deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "full VBR method 2");
+        deadbeef->pl_replace_meta (it, ":MP3_VBR_METHOD", "full VBR method 2");
         break;
     case XING_VBR3:
-        deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "full VBR method 3");
+        deadbeef->pl_replace_meta (it, ":MP3_VBR_METHOD", "full VBR method 3");
         break;
     case XING_VBR4:
-        deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "full VBR method 4");
+        deadbeef->pl_replace_meta (it, ":MP3_VBR_METHOD", "full VBR method 4");
         break;
     case XING_ABR2:
-        deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "ABR 2 pass");
+        deadbeef->pl_replace_meta (it, ":MP3_VBR_METHOD", "ABR 2 pass");
         break;
     case DETECTED_VBR:
-        deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "unspecified");
+        deadbeef->pl_replace_meta (it, ":MP3_VBR_METHOD", "unspecified");
         break;
     }
     const char *versions[] = {"1", "2", "2.5"};
-    snprintf (s, sizeof (s), "MPEG%s layer%d", versions[buffer->version-1], buffer->layer);
-    deadbeef->pl_replace_meta (buffer->it, ":MPEG_VERSION", s);
-    deadbeef->pl_replace_meta (buffer->it, ":XING_HEADER", buffer->have_xing_header ? "Yes" : "No");
-    deadbeef->pl_replace_meta (buffer->it, fake ? "!FILETYPE" : ":FILETYPE", "MP3");
+    snprintf (s, sizeof (s), "MPEG%s layer%d", versions[mp3info->ref_packet.ver-1], mp3info->ref_packet.layer);
+    deadbeef->pl_replace_meta (it, ":MPEG_VERSION", s);
+    deadbeef->pl_replace_meta (it, ":XING_HEADER", mp3info->have_xing_header ? "Yes" : "No");
+    deadbeef->pl_replace_meta (it, fake ? "!FILETYPE" : ":FILETYPE", "MP3");
 }
 
 static int
@@ -865,7 +866,8 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             return -1;
         }
 
-        cmp3_set_extra_properties (&info->buffer, 1);
+        // FIXMEL: convert to mp3info_t
+//        cmp3_set_extra_properties (&info->buffer, 1);
 
         ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
         deadbeef->plt_set_item_duration (plt, it, info->buffer.duration);
@@ -1188,20 +1190,15 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         deadbeef->pl_item_unref (it);
         return after;
     }
-    buffer_t buffer;
-    memset (&buffer, 0, sizeof (buffer));
-    buffer.file = fp;
+
     uint32_t start;
     uint32_t end;
-    deadbeef->junk_get_tag_offsets (buffer.file, &start, &end);
-    buffer.startoffset = start;
-    buffer.endoffset = end;
-    if (start > 0) {
-        trace ("mp3: skipping %d bytes (tag)\n", start);
-        deadbeef->fseek(buffer.file, start, SEEK_SET);
-    }
-    // calc approx. mp3 duration 
-    int res = cmp3_scan_stream (&buffer, -1);
+    deadbeef->junk_get_tag_offsets (fp, &start, &end);
+
+    mp3info_t mp3info;
+
+    int res = mp3_parse_file(&mp3info, 0, fp, deadbeef->fgetlength(fp), start, end, -1);
+
     if (res < 0) {
         trace ("mp3: cmp3_scan_stream returned error\n");
         deadbeef->fclose (fp);
@@ -1218,16 +1215,15 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
     /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
     /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
-    deadbeef->pl_set_meta_int (it, ":MP3_DELAY", buffer.delay);
-    deadbeef->pl_set_meta_int (it, ":MP3_PADDING", buffer.padding);
+    deadbeef->pl_set_meta_int (it, ":MP3_DELAY", mp3info.delay);
+    deadbeef->pl_set_meta_int (it, ":MP3_PADDING", mp3info.padding);
 
-    buffer.it = it;
-    cmp3_set_extra_properties (&buffer, 0);
+    cmp3_set_extra_properties (it, &mp3info, 0);
 
-    deadbeef->plt_set_item_duration (plt, it, buffer.duration);
+    deadbeef->plt_set_item_duration (plt, it, (float)((double)mp3info.pcmsample/mp3info.ref_packet.samplerate));
     deadbeef->fclose (fp);
 
-    DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, buffer.totalsamples-buffer.delay-buffer.padding, buffer.samplerate);
+    DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, mp3info.pcmsample-mp3info.delay-mp3info.padding, mp3info.ref_packet.samplerate);
     if (cue) {
         deadbeef->pl_item_unref (it);
         return cue;

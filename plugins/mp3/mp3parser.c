@@ -1,5 +1,6 @@
 #include "mp3parser.h"
 #include <string.h>
+#include <assert.h>
 
 extern DB_functions_t *deadbeef;
 
@@ -9,8 +10,8 @@ extern DB_functions_t *deadbeef;
 #define MIN_BITRATE 8
 #define MIN_SAMPLERATE 8000
 #define MAX_SAMPLERATE 48000
-#define MIN_PACKET_LENGTH (MIN_PACKET_SAMPLES / 8 * MIN_BITRATE*1000 / MIN_SAMPLERATE)
-#define MAX_PACKET_LENGTH (MAX_PACKET_SAMPLES / 8 * MAX_BITRATE*1000 / MAX_SAMPLERATE)
+#define MIN_PACKET_LENGTH (MIN_PACKET_SAMPLES / 8 * MIN_BITRATE*1000 / MAX_SAMPLERATE)
+#define MAX_PACKET_LENGTH (MAX_PACKET_SAMPLES / 8 * MAX_BITRATE*1000 / MIN_SAMPLERATE)
 #define MAX_INVALID_BYTES 100000
 
 static const int vertbl[] = {3, -1, 2, 1}; // 3 is 2.5
@@ -369,7 +370,8 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     // FIXME: radio
     fsize -= startoffs + endoffs;
 
-    int bufsize = 4*1024;
+    int bufsize = 8*1024;
+    assert (bufsize >= MAX_PACKET_LENGTH);
     if (bufsize > fsize) {
         bufsize = (int)fsize;
     }
@@ -402,6 +404,9 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
             break;
         }
 
+        assert (remaining >= 0);
+        assert (remaining <= bufsize);
+        assert (readsize <= bufsize-remaining);
         if (deadbeef->fread (buffer+remaining, 1, readsize, fp) != readsize) {
             goto error;
         }
@@ -483,6 +488,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                     memcpy (&info->prev_packet, &packet, sizeof (packet));
                 }
 
+                assert (remaining >= res);
                 remaining -= res;
                 bufptr += res;
                 offs += res;
@@ -497,10 +503,6 @@ end:
 
     err = 0;
 error:
-    if (fp) {
-        deadbeef->fclose (fp);
-        fp = NULL;
-    }
     if (buffer) {
         free (buffer);
         buffer = NULL;
