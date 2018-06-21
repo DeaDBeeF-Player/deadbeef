@@ -1,5 +1,5 @@
 /*
-    in_sc86 (Atari ST SNDH YM2149) input plugin for deadbeef
+    in_sc68 (Atari ST SNDH YM2149) input plugin for deadbeef
     Copyright (C) 2015 Alexey Yakovenko
 
     This software is provided 'as-is', without any express or implied
@@ -361,7 +361,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "in_sc68",
     .plugin.descr = "SC68 player (Atari ST SNDH YM2149)",
     .plugin.copyright = 
-        "in_sc86 (Atari ST SNDH YM2149) input plugin for deadbeef\n"
+        "in_sc68 (Atari ST SNDH YM2149) input plugin for deadbeef\n"
         "Copyright (C) 2015 Alexey Yakovenko\n"
         "based on sc68 library, see below for more information\n"
         "\n"
