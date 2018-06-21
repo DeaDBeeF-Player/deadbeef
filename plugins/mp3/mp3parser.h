@@ -31,6 +31,17 @@ enum {
     MP3_PARSE_FULLSCAN = 1,
 };
 
+// vbrmethod constants
+#define XING_CBR  1
+#define XING_ABR  2
+#define XING_VBR1 3
+#define XING_VBR2 4
+#define XING_VBR3 5
+#define XING_VBR4 6
+#define XING_CBR2 8
+#define XING_ABR2 9
+#define DETECTED_VBR 100
+
 typedef struct {
     uint64_t offs;
     int ver;
@@ -44,9 +55,12 @@ typedef struct {
 
 typedef struct {
     // outputs
+    int64_t packet_offs; // stream position of the packet corresponding to the requested seek position
     int64_t pcmsample; // sample position corresponding to packet_offs
     int64_t npackets;
-    int64_t packet_offs; // stream position of the first known valid frame after successful scan
+
+    int have_duration; // set to 1 if totalsamples has final value (e.g. from Xing packet)
+    int64_t totalsamples; // total samples in the stream, or -1 for infinite
 
     int lastpacket_valid;
     int64_t valid_packets;
@@ -56,11 +70,10 @@ typedef struct {
     int have_xing_header;
     int vbr_type;
 
+    // FIXME: these fields should be filled/used only for network streams of finite length
     float avg_packetlength;
     int avg_samplerate;
     int avg_samples_per_frame;
-
-    int64_t skipsamples; // how many samples to skip after seek
 
     int delay;
     int padding;

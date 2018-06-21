@@ -35,7 +35,7 @@
     XCTAssert (!res);
     XCTAssertEqual(info.have_xing_header, 1);
     XCTAssertEqual(info.ref_packet.samplerate, 44100);
-    XCTAssertEqual(info.pcmsample-info.delay-info.padding, 88200);
+    XCTAssertEqual(info.totalsamples-info.delay-info.padding, 88200);
     XCTAssertEqual(info.delay, 576);
     XCTAssertEqual(info.padding, 1080);
     XCTAssertEqual(info.lame_musiclength, 16508);
@@ -51,7 +51,8 @@
     XCTAssert (!res);
     XCTAssertEqual(info.have_xing_header, 1);
     XCTAssertEqual(info.ref_packet.samplerate, 44100);
-    XCTAssertEqual(info.pcmsample, 88200+576+1080);
+    XCTAssertEqual(info.totalsamples, 88200+576+1080);
+    XCTAssertEqual(info.pcmsample, 0);
     XCTAssertEqual(info.delay, 0);
     XCTAssertEqual(info.padding, 0);
     XCTAssertEqual(info.lame_musiclength, 16508);
@@ -102,7 +103,8 @@
     XCTAssertEqual(info.have_xing_header, 0);
     XCTAssertEqual(info.ref_packet.samplerate, 44100);
     // lame adds default encoder delay and padding of 576 and 1080, even without header
-    XCTAssertEqual(info.pcmsample, 88200+576+1080);
+    XCTAssertEqual(info.totalsamples, 88200+576+1080);
+    XCTAssertEqual(info.pcmsample, 0);
     XCTAssertEqual(info.delay, 0);
     XCTAssertEqual(info.padding, 0);
 }

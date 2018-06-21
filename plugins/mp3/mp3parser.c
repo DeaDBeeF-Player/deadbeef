@@ -58,17 +58,6 @@ static const int brtable[5][16] = {
     { 0,  8, 16, 24,  32,  40,  48,  56,  64,  80,  96, 112, 128, 144, 160, -1 }
 };
 
-// vbrmethod constants
-#define XING_CBR  1
-#define XING_ABR  2
-#define XING_VBR1 3
-#define XING_VBR2 4
-#define XING_VBR3 5
-#define XING_VBR4 6
-#define XING_CBR2 8
-#define XING_ABR2 9
-#define DETECTED_VBR 100
-
 // xing header flags
 #define FRAMES_FLAG     0x0001
 #define BYTES_FLAG      0x0002
@@ -254,7 +243,8 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int dat
             return -1;
         }
         uint32_t nframes = extract_i32 (data);
-        info->pcmsample = nframes * packet->samples_per_frame;
+        info->totalsamples = nframes * packet->samples_per_frame;
+        info->have_duration = 1;
         data += 4;
     }
     if (flags & BYTES_FLAG) {
@@ -367,7 +357,7 @@ _process_packet (mp3info_t *info, mp3packet_t *packet, int64_t seek_sample) {
         else if (valid_frames >= 100)
 #endif
         {
-            return 0;
+            return 1;
         }
     }
     else {
@@ -377,7 +367,12 @@ _process_packet (mp3info_t *info, mp3packet_t *packet, int64_t seek_sample) {
              return 1;
         }
     }
-    info->pcmsample += packet->samples_per_frame;
+    if (seek_sample > 0) {
+        info->pcmsample += packet->samples_per_frame;
+    }
+    if (!info->have_duration) {
+        info->totalsamples += packet->samples_per_frame;
+    }
     info->npackets++;
     return 0;
 }
@@ -411,7 +406,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     mp3packet_t packet;
 
     int remaining = 0;
-    int64_t offs = 0;
+    int64_t offs = startoffs;
     int64_t fileoffs = 0;
 
     int eof = 0;
@@ -472,7 +467,10 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                     }
                 }
 
-                info->packet_offs = packet.offs = offs;
+                packet.offs = offs;
+                if (!info->packet_offs || seek_to_sample >= 0) {
+                    info->packet_offs = offs;
+                }
 
                 // try to read xing/info tag (only on initial scans)
                 int got_xing = 0;
@@ -524,7 +522,9 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     }
 
 end:
-
+    if (seek_to_sample == -1) {
+        info->have_duration = 1;
+    }
     err = 0;
 error:
     if (buffer) {
