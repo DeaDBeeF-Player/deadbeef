@@ -726,7 +726,7 @@ project "resources_windows"
         -- libraries
         --"rm  bin/%{cfg.buildcfg}/plugins/*.lib | true",
         --"rm  bin/%{cfg.buildcfg}/libwin.lib | true",
-        "ldd bin/%{cfg.buildcfg}/plugins/*.dll bin/%{cfg.buildcfg}/deadbeef.exe | awk \'NF == 4 {print $$3}; NF == 2 {print $$1}\' |grep -i -v \"System32\" | grep -i -v \"WinSxS\" |sort -u | tr \'\\r\\n\' \' \'> .libraries.tmp",
+        "ldd bin/%{cfg.buildcfg}/plugins/*.dll bin/%{cfg.buildcfg}/deadbeef.exe | awk \'NF == 4 {print $$3}; NF == 2 {print $$1}\' | grep -i -v \"???\" | grep -i -v \"System32\" | grep -i -v \"WinSxS\" |sort -u | tr \'\\r\\n\' \' \'> .libraries.tmp",
         "{COPY} `cat .libraries.tmp` bin/%{cfg.buildcfg}/ | true",
         -- gtk2 theme
         "{MKDIR} bin/%{cfg.buildcfg}/lib/gtk-2.0/2.10.0/engines",
