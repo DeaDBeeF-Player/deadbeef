@@ -7,16 +7,6 @@ SUBDIRS = pixmaps\
 
 bin_PROGRAMS = deadbeef
 
-INTLTOOL_FILES = \
-		intltool-extract.in \
-		intltool-merge.in \
-		intltool-update.in
-
-DISTCLEANFILES = \
-		intltool-extract \
-		intltool-merge \
-		intltool-update
-
 deadbeef_SOURCES =\
 	main.c common.h deadbeef.h\
 	plugins.c plugins.h moduleconf.h\
@@ -69,6 +59,6 @@ docs_DATA = README help.txt about.txt translators.txt ChangeLog\
 desktopdir = $(datadir)/applications
 desktop_DATA = deadbeef.desktop
 
-EXTRA_DIST = $(docs_DATA) $(desktop_DATA) $(INTLTOOL_FILES) translation/extra.c translation/plugins.c sj_to_unicode.h examples/decoder_template.c examples/dsp_template.c yasmwrapper.sh
+EXTRA_DIST = $(docs_DATA) $(desktop_DATA) translation/extra.c translation/plugins.c sj_to_unicode.h examples/decoder_template.c examples/dsp_template.c yasmwrapper.sh
 
 ACLOCAL_AMFLAGS = -I m4
