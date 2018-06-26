@@ -2341,8 +2341,8 @@ msgstr "Przewiń 5 sekund do tyłu"
 
 #: ../translation/plugins.c:176
 #, c-format
-msgid "Seek 1% Forward"
-msgstr "Przewiń o 1% do przodu"
+msgid "Seek 1%% Forward"
+msgstr "Przewiń o 1%% do przodu"
 
 #: ../translation/plugins.c:177
 msgid "Seek 1% Backward"
@@ -2350,8 +2350,8 @@ msgstr "Przewiń o 1% do tyłu"
 
 #: ../translation/plugins.c:178
 #, c-format
-msgid "Seek 5% Forward"
-msgstr "Przewiń o 5% do przodu"
+msgid "Seek 5%% Forward"
+msgstr "Przewiń o 5%% do przodu"
 
 #: ../translation/plugins.c:179
 msgid "Seek 5% Backward"
