@@ -12,8 +12,10 @@ include "premake5-tools.lua"
 
 if nls() then
   defines {"ENABLE_NLS"}
-  links "intl"
+  defines {"PACKAGE=\"deadbeef\""}
 end
+
+defines {"HAVE_ICONV"}
 
 filter "configurations:debug or debug32"
   defines { "DEBUG" }
@@ -40,7 +42,10 @@ filter "system:Windows"
   libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
   defines { "USE_STDIO", "HAVE_ICONV", "_POSIX_C_SOURCE" }
 
-  links { "ws2_32", "psapi", "shlwapi", "iconv", "intl", "libwin", "dl"}
+  if nls() then
+    links {"intl"}
+  end
+  links { "ws2_32", "psapi", "shlwapi", "iconv", "libwin", "dl"}
 
 project "libwin"
    removeplatforms { "Linux" }
@@ -76,17 +81,12 @@ project "deadbeef"
        -- "ConvertUTF/*.h",
        -- "ConvertUTF/*.c"
    }
+   defines { "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"", "LOCALEDIR=\"donotuse\""}
+   links { "m", "pthread", "dl"}
    filter "system:Windows"
       files {
         "icons/deadbeef-icon.rc"
       }
-
-    if nls() then
-      defines {"PACKAGE=\"deadbeef\""}
-    end
-
-   defines { "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"", "LOCALEDIR=\"donotuse\"", "HAVE_ICONV" }
-   links { "m", "pthread", "dl", "iconv" }
 
 local mp3_v = option ("plugin-mp3", "libmpg123", "mad")
 if mp3_v then
