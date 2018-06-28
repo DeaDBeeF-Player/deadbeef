@@ -10,6 +10,11 @@ defines {
 
 include "premake5-tools.lua"
 
+if nls() then
+  defines {"ENABLE_NLS"}
+  links "intl"
+end
+
 filter "configurations:debug or debug32"
   defines { "DEBUG" }
   symbols "On"

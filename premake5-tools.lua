@@ -65,6 +65,38 @@ function pkgconfig_libs (pkgname)
   return tab2
 end
 
+-- common options
+local nls_value = nil
+function nls ()
+	if nls_value == nil then
+		newoption {
+			trigger = "nls",
+			value = "VALUE",
+			description = "compile program with native language support",
+			default = "enabled",
+			allowed = {
+			  { "disabled",    "Disabled" },
+			  { "enabled",  "Enabled" }
+			}
+		}
+		nls_value = _OPTIONS["nls"]
+	end
+	if nls_value == "disabled" then
+		return false
+	else
+		return nls_value
+	end
+end
+
+newoption {
+	trigger = "skip-checks",
+	description = "omit all library checks",
+}
+
+if _OPTIONS["help"] ~= nil then
+	_OPTIONS["skip-checks"] = true
+end
+
 -- option functions
 options_dic = {};
 local options_pkgs_missing = {}
@@ -91,15 +123,19 @@ function option (name, ...)
 	-- if not disabled check for libs
 	local a = {}
 	local b = 0;
+	if _OPTIONS["skip-checks"] ~= nil then
+  		return nil
+  	end
 	if  _OPTIONS[name] ~= "disabled" then
 		-- for each set
 		if ... == nil then
+			-- print("\27[93m" .. "WARN: " ..  "\27[39m" .. name .. " did not define any libraries to check for, enabling anyway")
 			options_dic[name] = "yes"
 			return true
 		end
+		local set = 1
 		for j,v in ipairs({...}) do
 		    parts = string.explode(v, " ")
-		    local set = 1
 		    -- for each package
 		    for i, v in ipairs(parts) do
 		    	if pkgconfig_check (v) == nil then
@@ -183,6 +219,9 @@ function dump(o)
 end
 
 function print_options ()
+	if _OPTIONS["skip-checks"] ~= nil then
+  		return true
+  	end
 	test = options_pkgs_missing
 	hash = {}
 	res = {}
