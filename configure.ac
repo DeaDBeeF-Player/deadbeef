@@ -17,8 +17,8 @@ AC_PROG_INSTALL
 dnl AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 AC_C_BIGENDIAN
-AM_GNU_GETTEXT_VERSION([0.19.2])
-AM_GNU_GETTEXT
+AM_GNU_GETTEXT_VERSION([0.18.2])
+AM_GNU_GETTEXT([external])
 PKG_PROG_PKG_CONFIG
 AM_PROG_CC_C_O
 
@@ -158,8 +158,6 @@ case "$host" in
     AC_SUBST(NOCPPLIB)
     ;;
 esac
-
-AC_CHECK_LIB([intl], [main], [INTL_LIBS="-lintl";AC_SUBST(INTL_LIBS)])
 
 dnl check for yasm
 AC_CHECK_PROG(HAVE_YASM, yasm, yes, no)
@@ -981,7 +979,6 @@ plugins/sc68/Makefile
 plugins/coreaudio/Makefile
 plugins/sndio/Makefile
 plugins/rg_scanner/Makefile
-intl/Makefile
 po/Makefile.in
 deadbeef.desktop
 ])

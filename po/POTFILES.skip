@@ -3,4 +3,3 @@ plugins/gtkui/smclient/eggdesktopfile.c
 plugins/gtkui/smclient/eggsmclient.c
 plugins/pltbrowser/support.c
 plugins/gtkui/support.c
-
