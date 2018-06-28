@@ -38,7 +38,7 @@ filter "system:Windows"
   buildoptions { "-include shared/windows/mingw32_layer.h", "-fno-builtin"}
   includedirs { "shared/windows/include", "/mingw64/include/opus" }
   libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
-  defines { "USE_STDIO", "HAVE_ICONV", "ENABLE_NLS", "PACKAGE=\"deadbeef\"", "_POSIX_C_SOURCE" }
+  defines { "USE_STDIO", "HAVE_ICONV", "_POSIX_C_SOURCE" }
 
   links { "ws2_32", "psapi", "shlwapi", "iconv", "intl", "libwin", "dl"}
 
@@ -80,6 +80,10 @@ project "deadbeef"
       files {
         "icons/deadbeef-icon.rc"
       }
+
+    if nls() then
+      defines {"PACKAGE=\"deadbeef\""}
+    end
 
    defines { "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"", "LOCALEDIR=\"donotuse\"", "HAVE_ICONV" }
    links { "m", "pthread", "dl", "iconv" }
