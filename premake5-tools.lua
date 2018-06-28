@@ -125,6 +125,9 @@ function option (name, ...)
    		else
    			options_dic[name] = "yes"
    		end
+   	else
+   		-- disabled
+   		return nil
 	end
 	--print ("a = "..a)
 	return a
