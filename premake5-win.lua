@@ -109,6 +109,7 @@ project "mp3"
    end
 end
 
+if option ("plugin-aac") then
 project "aac_plugin"
    kind "SharedLib"
    language "C"
@@ -127,6 +128,7 @@ project "aac_plugin"
 
    defines { "USE_MP4FF=1", "USE_TAGGING=1" }
    links { "faad" }
+end
 
 if option ("plugin-flac", "flac ogg") then
 project "flac_plugin"
