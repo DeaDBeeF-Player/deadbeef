@@ -1022,6 +1022,13 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
                 DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
                 if (it) {
                     ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
+
+                    if (!plt) {
+                        deadbeef->pl_item_unref (it);
+                        deadbeef->pl_unlock ();
+                        return;
+                    }
+
                     ddb_playlist_t *prev_plt = deadbeef->plt_get_curr ();
 
                     if (prev_plt != plt) {
