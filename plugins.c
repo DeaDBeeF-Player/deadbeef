@@ -972,7 +972,7 @@ plug_load_all (void) {
 
     background_jobs_mutex = mutex_create ();
 
-    const char *dirname = deadbeef->get_plugin_dir ();
+    const char *dirname = plug_get_system_dir (DDB_SYS_DIR_PLUGIN);
 
     // remember how many plugins to skip if called Nth time
     plugin_t *prev_plugins_tail = plugins_tail;
