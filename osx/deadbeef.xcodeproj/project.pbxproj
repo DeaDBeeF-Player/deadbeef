@@ -1744,6 +1744,7 @@
 		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
 		4D8FEDCF20EA54D4008EB080 /* mp3parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8FEDC020EA54D3008EB080 /* mp3parser.h */; };
 		4D8FEDD020EA54D4008EB080 /* mp3parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D8FEDCE20EA54D4008EB080 /* mp3parser.c */; };
+		4D90AAFF20EA5CA500D13537 /* DDBTestInitializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D90AAFE20EA5CA500D13537 /* DDBTestInitializer.m */; };
 		4D9BF4001FE134200032B6CF /* libopusfile.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C629E1FDEC51000D83CEF /* libopusfile.dylib */; };
 		4D9C5B0E1FDEBAFC00D83CEF /* opus.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C5AEF1FDEBAAE00D83CEF /* opus.dylib */; };
 		4D9C5B0F1FDEBAFC00D83CEF /* libopuslib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */; };
@@ -4527,6 +4528,8 @@
 		4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnplayTemplate.pdf; path = images/btnplayTemplate.pdf; sourceTree = "<group>"; };
 		4D8FEDC020EA54D3008EB080 /* mp3parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp3parser.h; path = plugins/mp3/mp3parser.h; sourceTree = "<group>"; };
 		4D8FEDCE20EA54D4008EB080 /* mp3parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp3parser.c; path = plugins/mp3/mp3parser.c; sourceTree = "<group>"; };
+		4D90AAF020EA5CA400D13537 /* DDBTestInitializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDBTestInitializer.h; sourceTree = "<group>"; };
+		4D90AAFE20EA5CA500D13537 /* DDBTestInitializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDBTestInitializer.m; sourceTree = "<group>"; };
 		4D9C5AEF1FDEBAAE00D83CEF /* opus.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = opus.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libopuslib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D9C60281FDEBCF500D83CEF /* opus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opus.h; sourceTree = "<group>"; };
@@ -7289,6 +7292,8 @@
 		2DAA4C0A1AAF88DE00519559 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				4D90AAF020EA5CA400D13537 /* DDBTestInitializer.h */,
+				4D90AAFE20EA5CA500D13537 /* DDBTestInitializer.m */,
 				2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */,
 				2DAA4C0B1AAF88DE00519559 /* Info.plist */,
 			);
@@ -12499,6 +12504,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DE7A8FB1CA493CE00318A9F /* Cuesheet.m in Sources */,
+				4D90AAFF20EA5CA500D13537 /* DDBTestInitializer.m in Sources */,
 				2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */,
 				2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */,
 				2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */,
