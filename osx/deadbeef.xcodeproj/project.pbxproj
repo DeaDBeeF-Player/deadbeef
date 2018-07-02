@@ -1742,6 +1742,8 @@
 		4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D62C0C61E4C9ACA005F9482 /* streamreader.h */; };
 		4D66DBA11F6181C400BFF76B /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */; };
 		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
+		4D8FEDCF20EA54D4008EB080 /* mp3parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8FEDC020EA54D3008EB080 /* mp3parser.h */; };
+		4D8FEDD020EA54D4008EB080 /* mp3parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D8FEDCE20EA54D4008EB080 /* mp3parser.c */; };
 		4D9BF4001FE134200032B6CF /* libopusfile.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C629E1FDEC51000D83CEF /* libopusfile.dylib */; };
 		4D9C5B0E1FDEBAFC00D83CEF /* opus.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C5AEF1FDEBAAE00D83CEF /* opus.dylib */; };
 		4D9C5B0F1FDEBAFC00D83CEF /* libopuslib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */; };
@@ -4523,6 +4525,8 @@
 		4D62C0C61E4C9ACA005F9482 /* streamreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = streamreader.h; sourceTree = "<group>"; };
 		4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnplayTemplate.pdf; path = images/btnplayTemplate.pdf; sourceTree = "<group>"; };
+		4D8FEDC020EA54D3008EB080 /* mp3parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp3parser.h; path = plugins/mp3/mp3parser.h; sourceTree = "<group>"; };
+		4D8FEDCE20EA54D4008EB080 /* mp3parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp3parser.c; path = plugins/mp3/mp3parser.c; sourceTree = "<group>"; };
 		4D9C5AEF1FDEBAAE00D83CEF /* opus.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = opus.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libopuslib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D9C60281FDEBCF500D83CEF /* opus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opus.h; sourceTree = "<group>"; };
@@ -8058,6 +8062,8 @@
 				2D6EC2A41A42068F00DD1C72 /* mp3_mad.h */,
 				2D6EC2A91A4210D800DD1C72 /* mp3_mpg123.c */,
 				2D6EC2AA1A4210D800DD1C72 /* mp3_mpg123.h */,
+				4D8FEDCE20EA54D4008EB080 /* mp3parser.c */,
+				4D8FEDC020EA54D3008EB080 /* mp3parser.h */,
 			);
 			name = mp3;
 			sourceTree = "<group>";
@@ -9750,6 +9756,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D8FEDCF20EA54D4008EB080 /* mp3parser.h in Headers */,
 				2D51999C1A436FD100670717 /* config.h in Headers */,
 				2D6EC2AF1A42120100DD1C72 /* mp3.h in Headers */,
 				2D6EC2B21A42121100DD1C72 /* mp3_mpg123.h in Headers */,
@@ -12732,6 +12739,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D32FA5619A645CA000FFDE0 /* mp3.c in Sources */,
+				4D8FEDD020EA54D4008EB080 /* mp3parser.c in Sources */,
 				2D6EC2B11A42120E00DD1C72 /* mp3_mpg123.c in Sources */,
 				2D6EC2C21A422E8200DD1C72 /* mp3_mad.c in Sources */,
 			);

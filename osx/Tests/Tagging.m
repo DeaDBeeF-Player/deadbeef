@@ -26,11 +26,8 @@
 #include "playlist.h"
 #include "junklib.h"
 #include "vfs.h"
-#include "plugins.h"
-#include "conf.h"
-#include "tf.h"
 #include "../../common.h"
-#include "logger.h"
+#include "tf.h"
 
 #define TESTFILE "/tmp/ddb_test.mp3"
 
@@ -44,30 +41,11 @@
 - (void)setUp {
     [super setUp];
 
-    NSString *resPath = [[NSBundle bundleForClass:[self class]] resourcePath];
-    const char *str = [resPath UTF8String];
-    strcpy (dbplugindir, str);
-
-    ddb_logger_init ();
-    conf_init ();
-    conf_enable_saving (0);
-
-    pl_init ();
-    if (plug_load_all ()) { // required to add files to playlist from commandline
-        exit (-1);
-    }
-
     it = pl_item_alloc_init (TESTFILE, "stdmpg");
 }
 
 - (void)tearDown {
     pl_item_unref (it);
-
-    plug_disconnect_all ();
-    plug_unload_all ();
-    pl_free ();
-    conf_free ();
-    ddb_logger_free ();
 
     [super tearDown];
 }
@@ -424,7 +402,7 @@
     playItem_t *it = plt_insert_file2(0, plt, NULL, path, NULL, NULL, NULL);
 
     plt_unref (plt);
-    XCTAssert(fabs (it->_duration - 1.02612245) < 0.0001f);
+    XCTAssert(fabs (it->_duration - 1.04489791f) < 0.0001f);
 }
 
 - (void)test_ShortMP3WithApev2_ScansCorrectSize {
@@ -436,7 +414,7 @@
     playItem_t *it = plt_insert_file2(0, plt, NULL, path, NULL, NULL, NULL);
 
     plt_unref (plt);
-    XCTAssert(fabs (it->_duration - 1.02612245) < 0.0001f);
+    XCTAssert(fabs (it->_duration - 1.04489791f) < 0.0001f);
 }
 
 - (void)test_ShortMP3WithId3v1AndApev2_ScansCorrectSize {
@@ -448,7 +426,7 @@
     playItem_t *it = plt_insert_file2(0, plt, NULL, path, NULL, NULL, NULL);
 
     plt_unref (plt);
-    XCTAssert(fabs (it->_duration - 1.02612245) < 0.0001f);
+    XCTAssert(fabs (it->_duration - 1.04489791f) < 0.0001f);
 }
 
 @end

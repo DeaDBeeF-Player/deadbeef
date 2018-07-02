@@ -38,6 +38,7 @@ mp3_mpg123_init (mp3_info_t *info) {
 //    ret = mpg123_param (info->mpg123_handle, MPG123_VERBOSE, 2, 0);
     ret = mpg123_format_none (info->mpg123_handle);
 //    ret = mpg123_param (info->mpg123_handle, MPG123_FLAGS, MPG123_FUZZY | MPG123_SEEKBUFFER | MPG123_GAPLESS, 0);
+    ret = mpg123_param (info->mpg123_handle, MPG123_FLAGS, MPG123_QUIET, 0);
     ret = mpg123_format (info->mpg123_handle, info->info.fmt.samplerate, MPG123_MONO | MPG123_STEREO, MPG123_ENC_FLOAT_32);
     ret = mpg123_open_feed (info->mpg123_handle);
 
@@ -57,29 +58,29 @@ mp3_mpg123_free (mp3_info_t *info) {
 void
 mp3_mpg123_decode (mp3_info_t *info) {
     int samplesize = (info->info.fmt.bps>>3)*info->info.fmt.channels;
-    int bytes = info->buffer.decode_remaining * samplesize;
-    bytes = min (bytes, info->buffer.readsize);
-    memcpy (info->buffer.out, info->mpg123_audio, bytes);
-    info->buffer.out += bytes;
+    int bytes = info->decode_remaining * samplesize;
+    bytes = min (bytes, info->readsize);
+    memcpy (info->out, info->mpg123_audio, bytes);
+    info->out += bytes;
     info->mpg123_audio += bytes;
-    info->buffer.readsize -= bytes;
-    info->buffer.decode_remaining -= bytes / samplesize;
+    info->readsize -= bytes;
+    info->decode_remaining -= bytes / samplesize;
 }
 
 int
 mp3_mpg123_stream_frame (mp3_info_t *info) {
     int eof = 0;
-    while (!eof && (info->buffer.decode_remaining <= 0)) {
+    while (!eof && (info->decode_remaining <= 0)) {
         if (info->mpg123_status == MPG123_NEED_MORE) {
             size_t bytesread = 0;
-            bytesread = deadbeef->fread (info->buffer.input, 1, READBUFFER, info->buffer.file);
+            bytesread = deadbeef->fread (info->input, 1, READBUFFER, info->file);
             if (!bytesread) {
                 // add guard
                 eof = 1;
-                memset (info->buffer.input, 0, 8);
+                memset (info->input, 0, 8);
                 bytesread = 8;
             }
-            info->mpg123_status = mpg123_feed (info->mpg123_handle, (const uint8_t *)info->buffer.input, bytesread);
+            info->mpg123_status = mpg123_feed (info->mpg123_handle, (const uint8_t *)info->input, bytesread);
 
             if (info->mpg123_status == MPG123_ERR || info->mpg123_status == MPG123_NEED_MORE) {
                 continue;
@@ -103,11 +104,6 @@ mp3_mpg123_stream_frame (mp3_info_t *info) {
                 break;
             }
 
-            if (info->buffer.lead_in_frames > 0) {
-                info->buffer.lead_in_frames--;
-                info->buffer.decode_remaining = 0;
-                continue;
-            }
             break;
         }
         if (info->mpg123_status != MPG123_OK) {
@@ -116,7 +112,7 @@ mp3_mpg123_stream_frame (mp3_info_t *info) {
 
         // synthesize single frame
         int samplesize = (info->info.fmt.bps>>3)*info->info.fmt.channels;
-        info->buffer.decode_remaining = (int)nbytes/samplesize;
+        info->decode_remaining = (int)nbytes/samplesize;
         info->mpg123_audio = audio;
 
         // NOTE: calling frame_bitrate directly would be much faster, but the API is private,
