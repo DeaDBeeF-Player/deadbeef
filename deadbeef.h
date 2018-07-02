@@ -694,6 +694,7 @@ typedef struct {
     // system folders
     // normally functions will return standard folders derived from --prefix
     // portable version will return pathes specified in comments below
+    // DEPRECATED IN API LEVEL 8, use get_system_dir instead
     const char *(*get_config_dir) (void) DEPRECATED_18; // installdir/config | $XDG_CONFIG_HOME/.config/deadbeef
     const char *(*get_prefix) (void) DEPRECATED_18; // installdir | PREFIX
     const char *(*get_doc_dir) (void) DEPRECATED_18; // installdir/doc | DOCDIR
