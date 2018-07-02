@@ -646,12 +646,12 @@ find_popup (GtkWidget *widget)
 
 static DdbListview *
 get_context_menu_listview (GtkMenuItem *menuitem) {
-    return DDB_LISTVIEW (g_object_get_data (G_OBJECT (find_popup (GTK_WIDGET (menuitem))), "ps"));
+    return DDB_LISTVIEW (g_object_get_data (G_OBJECT (gtk_widget_get_parent (GTK_WIDGET (menuitem))), "ps"));
 }
 
 static int
 get_context_menu_column (GtkMenuItem *menuitem) {
-    return GPOINTER_TO_INT (g_object_get_data (G_OBJECT (find_popup (GTK_WIDGET (menuitem))), "column"));
+    return GPOINTER_TO_INT (g_object_get_data (G_OBJECT (gtk_widget_get_parent (GTK_WIDGET (menuitem))), "column"));
 }
 
 static void
@@ -954,7 +954,8 @@ list_empty_region_context_menu (DdbListview *listview) {
             G_CALLBACK (on_paste_activate),
             NULL);
 
-    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL/*popup_menu_position_func*/, listview, 0, gtk_get_current_event_time());
+    gtk_menu_attach_to_widget (GTK_MENU (playlist_menu), GTK_WIDGET (listview), NULL);
+    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
 }
 
 void
@@ -1263,7 +1264,9 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
     g_signal_connect ((gpointer) properties1, "activate",
             G_CALLBACK (properties_activate),
             NULL);
-    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL/*popup_menu_position_func*/, listview, 0, gtk_get_current_event_time());
+
+    gtk_menu_attach_to_widget (GTK_MENU (playlist_menu), GTK_WIDGET (listview), NULL);
+    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
 }
 
 static void
@@ -1892,7 +1895,9 @@ pl_common_header_context_menu (DdbListview *ps, int column) {
     GtkWidget *menu = create_headermenu (ps, column, 1);
     g_object_set_data (G_OBJECT (menu), "ps", ps);
     g_object_set_data (G_OBJECT (menu), "column", GINT_TO_POINTER (column));
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
+
+    gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (ps), NULL);
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 3, gtk_get_current_event_time());
 }
 
 void
