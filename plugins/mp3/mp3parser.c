@@ -300,7 +300,7 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int dat
         data += 2;
 
         // musiclen
-        info->lame_musiclength =extract_i32 (data);
+        info->lame_musiclength = extract_i32 (data);
         data += 4;
     }
 
@@ -361,6 +361,7 @@ _process_packet (mp3info_t *info, mp3packet_t *packet, int64_t seek_sample) {
         }
     }
     else {
+        return 1;
         // seeking to particular sample, interrupt if reached;
         // add 10 extra packets to fill bit-reservoir
         if (seek_sample > 0 && info->pcmsample + packet->samples_per_frame >= seek_sample-MAX_PACKET_SAMPLES*10) {
@@ -474,7 +475,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
 
                 // try to read xing/info tag (only on initial scans)
                 int got_xing = 0;
-                if (seek_to_sample <= 0 && !info->have_xing_header && !info->checked_xing_header)
+                if (!info->have_xing_header && !info->checked_xing_header)
                 {
                     // need whole packet for checking xing!
 
@@ -522,6 +523,12 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     }
 
 end:
+
+    info->delay += 529;
+    if (info->padding > 529) {
+        info->padding -= 529;
+    }
+
     if (seek_to_sample == -1) {
         info->have_duration = 1;
     }

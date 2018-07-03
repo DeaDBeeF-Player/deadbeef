@@ -58,6 +58,15 @@ mp3_mpg123_free (mp3_info_t *info) {
 void
 mp3_mpg123_consume_decoded_data (mp3_info_t *info) {
     int samplesize = (info->info.fmt.bps>>3)*info->info.fmt.channels;
+    if (info->skipsamples > 0) {
+        int64_t skip = min (info->skipsamples, info->decoded_samples_remaining);
+        info->skipsamples -= skip;
+        info->decoded_samples_remaining -= skip;
+        info->mpg123_audio += skip * samplesize;
+    }
+    if (info->skipsamples > 0) {
+        return;
+    }
     int bytes = info->decoded_samples_remaining * samplesize;
     bytes = min (bytes, info->bytes_to_decode);
     memcpy (info->out, info->mpg123_audio, bytes);

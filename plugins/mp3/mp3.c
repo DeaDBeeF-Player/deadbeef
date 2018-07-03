@@ -247,14 +247,6 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
         info->currentsample = info->mp3info.pcmsample;
 
-#if 0
-        //FIXME: not clear what is this number
-        info->delay += 529;
-        if (info->padding >= 529) {
-            info->padding -= 529;
-        }
-#endif
-
         int64_t endsample = deadbeef->pl_item_get_endsample (it);
         if (endsample > 0) {
             info->startsample = deadbeef->pl_item_get_startsample (it) + info->mp3info.delay;
@@ -263,7 +255,8 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
         else {
             ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
-            deadbeef->plt_set_item_duration (plt, it, (float)((double)info->mp3info.totalsamples/info->mp3info.ref_packet.samplerate));
+            int64_t totalsamples = info->mp3info.totalsamples - info->mp3info.delay - info->mp3info.padding;
+            deadbeef->plt_set_item_duration (plt, it, (float)((double)totalsamples/info->mp3info.ref_packet.samplerate));
             if (plt) {
                 deadbeef->plt_unref (plt);
             }
@@ -381,17 +374,11 @@ cmp3_decode (mp3_info_t *info) {
     while (!eof) {
         eof = info->dec->decode_next_packet (info);
         if (info->decoded_samples_remaining > 0) {
-
-            if (info->skipsamples > 0) {
-                int64_t skip = min (info->skipsamples, info->decoded_samples_remaining);
-                info->skipsamples -= skip;
-                info->decoded_samples_remaining -= skip;
-            }
+            info->dec->consume_decoded_data (info);
             if (info->skipsamples > 0) {
                 continue;
             }
 
-            info->dec->consume_decoded_data (info);
             assert (info->bytes_to_decode >= 0);
             if (info->bytes_to_decode == 0) {
                 return;
@@ -428,6 +415,7 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
 #endif
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     mp3_info_t *info = (mp3_info_t *)_info;
+    printf ("skip: %lld\n", info->skipsamples);
     if (!info->file->vfs->is_streaming ()) {
         int64_t curr = info->currentsample;
         //printf ("curr: %d -> end %d, padding: %d\n", curr, info->endsample, info->padding);

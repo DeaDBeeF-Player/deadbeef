@@ -27,6 +27,8 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+#define min(x,y) ((x)<(y)?(x):(y))
+
 void
 mp3_mad_init (mp3_info_t *info) {
     mad_stream_init(&info->mad_stream);
@@ -142,6 +144,15 @@ mp3_mad_decode_int16 (mp3_info_t *info) {
 
 void
 mp3_mad_consume_decoded_data (mp3_info_t *info) {
+    if (info->skipsamples > 0) {
+        int64_t skip = min (info->skipsamples, info->decoded_samples_remaining);
+        info->skipsamples -= skip;
+        info->decoded_samples_remaining -= skip;
+    }
+    if (info->skipsamples > 0) {
+        return;
+    }
+
     // copy synthesized samples into readbuffer
     int idx = info->mad_synth.pcm.length-info->decoded_samples_remaining;
     // stereo

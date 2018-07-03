@@ -1741,6 +1741,9 @@
 		4D52B5061F14F34C00048305 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D52B5041F14F34C00048305 /* file.cpp */; };
 		4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D62C0C61E4C9ACA005F9482 /* streamreader.h */; };
 		4D66DBA11F6181C400BFF76B /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */; };
+		4D6CF18B20EB783900811034 /* MP3ParserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6CF17D20EB783900811034 /* MP3ParserTest.m */; };
+		4D6CF18D20EB788A00811034 /* MP3Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6CF18C20EB788A00811034 /* MP3Decoder.m */; };
+		4D6CF18E20EB7A9900811034 /* mp3parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D8FEDCE20EA54D4008EB080 /* mp3parser.c */; };
 		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
 		4D8FEDCF20EA54D4008EB080 /* mp3parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8FEDC020EA54D3008EB080 /* mp3parser.h */; };
 		4D8FEDD020EA54D4008EB080 /* mp3parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D8FEDCE20EA54D4008EB080 /* mp3parser.c */; };
@@ -2652,6 +2655,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4D44E66D19B7530A00F780FC;
 			remoteInfo = dumb;
+		};
+		4D6CF18F20EB82B200811034 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4D32FA4F19A64577000FFDE0;
+			remoteInfo = mp3;
 		};
 		4D9C5B091FDEBADC00D83CEF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4525,6 +4535,8 @@
 		4D62C0C51E4C9ACA005F9482 /* streamreader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = streamreader.c; sourceTree = "<group>"; };
 		4D62C0C61E4C9ACA005F9482 /* streamreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = streamreader.h; sourceTree = "<group>"; };
 		4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		4D6CF17D20EB783900811034 /* MP3ParserTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MP3ParserTest.m; sourceTree = "<group>"; };
+		4D6CF18C20EB788A00811034 /* MP3Decoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MP3Decoder.m; sourceTree = "<group>"; };
 		4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnplayTemplate.pdf; path = images/btnplayTemplate.pdf; sourceTree = "<group>"; };
 		4D8FEDC020EA54D3008EB080 /* mp3parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp3parser.h; path = plugins/mp3/mp3parser.h; sourceTree = "<group>"; };
 		4D8FEDCE20EA54D4008EB080 /* mp3parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp3parser.c; path = plugins/mp3/mp3parser.c; sourceTree = "<group>"; };
@@ -7280,11 +7292,13 @@
 				2D0F90C11CCFF094003FA197 /* Tagging.m */,
 				4D31BECD1E9FB194001D1B89 /* ResamplerTest.m */,
 				2DA66EC71EDF4EF800E20989 /* StreamerTest.m */,
+				4D6CF17D20EB783900811034 /* MP3ParserTest.m */,
 				2DA66EC91EDF4F2C00E20989 /* fakeout.c */,
 				2DA66ECA1EDF4F2C00E20989 /* fakeout.h */,
 				2DA66ECC1EDF501000E20989 /* fakein.c */,
 				2DA66ECD1EDF501000E20989 /* fakein.h */,
 				4D0B0CED20162D95004162DA /* FormatConversion.m */,
+				4D6CF18C20EB788A00811034 /* MP3Decoder.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -10633,6 +10647,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				4D6CF19020EB82B200811034 /* PBXTargetDependency */,
 				2D01D7EC1AB2221E00BCD3C4 /* PBXTargetDependency */,
 			);
 			name = Tests;
@@ -12503,10 +12518,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D6CF18E20EB7A9900811034 /* mp3parser.c in Sources */,
 				2DE7A8FB1CA493CE00318A9F /* Cuesheet.m in Sources */,
+				4D6CF18D20EB788A00811034 /* MP3Decoder.m in Sources */,
 				4D90AAFF20EA5CA500D13537 /* DDBTestInitializer.m in Sources */,
 				2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */,
 				2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */,
+				4D6CF18B20EB783900811034 /* MP3ParserTest.m in Sources */,
 				2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */,
 				2D0F90C21CCFF094003FA197 /* Tagging.m in Sources */,
 				2DA66ECE1EDF501000E20989 /* fakein.c in Sources */,
@@ -13321,6 +13339,11 @@
 			isa = PBXTargetDependency;
 			target = 4D44E66D19B7530A00F780FC /* ddb_dumb */;
 			targetProxy = 4D44E70619B753AD00F780FC /* PBXContainerItemProxy */;
+		};
+		4D6CF19020EB82B200811034 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4D32FA4F19A64577000FFDE0 /* mp3 */;
+			targetProxy = 4D6CF18F20EB82B200811034 /* PBXContainerItemProxy */;
 		};
 		4D9C5B0A1FDEBADC00D83CEF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
