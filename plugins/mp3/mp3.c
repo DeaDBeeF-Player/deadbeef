@@ -374,10 +374,15 @@ cmp3_decode (mp3_info_t *info) {
     while (!eof) {
         eof = info->dec->decode_next_packet (info);
         if (info->decoded_samples_remaining > 0) {
-            info->dec->consume_decoded_data (info);
+            if (info->skipsamples > 0) {
+                int64_t skip = min (info->skipsamples, info->decoded_samples_remaining);
+                info->skipsamples -= skip;
+                info->decoded_samples_remaining -= skip;
+            }
             if (info->skipsamples > 0) {
                 continue;
             }
+            info->dec->consume_decoded_data (info);
 
             assert (info->bytes_to_decode >= 0);
             if (info->bytes_to_decode == 0) {

@@ -58,20 +58,11 @@ mp3_mpg123_free (mp3_info_t *info) {
 void
 mp3_mpg123_consume_decoded_data (mp3_info_t *info) {
     int samplesize = (info->info.fmt.bps>>3)*info->info.fmt.channels;
-    if (info->skipsamples > 0) {
-        int64_t skip = min (info->skipsamples, info->decoded_samples_remaining);
-        info->skipsamples -= skip;
-        info->decoded_samples_remaining -= skip;
-        info->mpg123_audio += skip * samplesize;
-    }
-    if (info->skipsamples > 0) {
-        return;
-    }
+    unsigned char *dataptr = info->mpg123_audio + (info->total_decoded_samples - info->decoded_samples_remaining) * samplesize;
     int bytes = info->decoded_samples_remaining * samplesize;
     bytes = min (bytes, info->bytes_to_decode);
-    memcpy (info->out, info->mpg123_audio, bytes);
+    memcpy (info->out, dataptr, bytes);
     info->out += bytes;
-    info->mpg123_audio += bytes;
     info->bytes_to_decode -= bytes;
     info->decoded_samples_remaining -= bytes / samplesize;
 }
@@ -121,7 +112,7 @@ mp3_mpg123_decode_next_packet (mp3_info_t *info) {
 
         // synthesize single frame
         int samplesize = (info->info.fmt.bps>>3)*info->info.fmt.channels;
-        info->decoded_samples_remaining = (int)nbytes/samplesize;
+        info->total_decoded_samples = info->decoded_samples_remaining = (int)nbytes/samplesize;
         info->mpg123_audio = audio;
 
         // NOTE: calling frame_bitrate directly would be much faster, but the API is private,

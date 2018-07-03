@@ -83,6 +83,7 @@ typedef struct {
             mpg123_handle *mpg123_handle;
             int mpg123_status;
             unsigned char *mpg123_audio;
+            int total_decoded_samples;
         };
 #endif
     };
