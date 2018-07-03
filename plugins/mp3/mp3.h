@@ -59,11 +59,11 @@ typedef struct {
 
     // input buffer, for MPEG data
     char input[READBUFFER];
-    int remaining;
+    int input_remaining_bytes; // bytes remaining in the `input`
 
     // output buffer, supplied by player
-    int readsize;
-    int decode_remaining; // number of decoded samples of current mpeg frame
+    int bytes_to_decode; // how many bytes is asked to be written to `out`
+    int decoded_samples_remaining; // number of samples left of current decoded mpeg frame
     char *out;
 
     // temp buffer for 32bit decoding, before converting to 16 bit
@@ -99,12 +99,12 @@ typedef struct mp3_decoder_api_s {
     // free the decoder
     void (*free)(mp3_info_t *info);
 
-    // read samples from decoder, convert into output format, and write into output buffer
-    void (*decode)(mp3_info_t *info);
+    // consume decoded samples into output buffer
+    void (*consume_decoded_data)(mp3_info_t *info);
 
-    // read and synthesize single frame, skip lead_in_frames count if needed
+    // read and decode a single mpeg frame, only if `decoded_samples_remaining` is <=0
     // return 1 if eof
-    int (*stream_frame)(mp3_info_t *info);
+    int (*decode_next_packet)(mp3_info_t *info);
 } mp3_decoder_api_t;
 
 #endif

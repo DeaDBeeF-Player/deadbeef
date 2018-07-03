@@ -72,9 +72,9 @@ cmp3_seek_stream (DB_fileinfo_t *_info, int sample) {
 
     if (!res) {
         deadbeef->fseek (info->file, mp3info.packet_offs, SEEK_SET);
-        info->currentsample = mp3info.pcmsample;
-        if (sample > info->currentsample) {
-            info->skipsamples = sample - info->currentsample;
+        info->currentsample = sample;
+        if (sample > mp3info.pcmsample) {
+            info->skipsamples = sample - mp3info.pcmsample;
         }
         else {
             info->skipsamples = 0;
@@ -330,16 +330,6 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     return 0;
 }
 
-static inline void
-cmp3_skip (mp3_info_t *info) {
-    if (info->skipsamples > 0) {
-        int64_t skip = min (info->skipsamples, info->decode_remaining);
-//        printf ("skip %d / %d\n", skip, info->skipsamples);
-        info->skipsamples -= skip;
-        info->decode_remaining -= skip;
-    }
-}
-
 #if 0
 static void
 dump_buffer (buffer_t *buffer) {
@@ -383,36 +373,32 @@ dump_buffer (buffer_t *buffer) {
 }
 #endif
 
-// decoded requested number of samples to int16 format
+// stream, decode and copy enough samples to fill the output buffer
+// `skipsamples` is accounted for
 static void
-cmp3_decode_requested (mp3_info_t *info) {
-    cmp3_skip (info);
-    if (info->skipsamples > 0) {
-        return;
-    }
-    info->dec->decode (info);
-
-    assert (info->readsize >= 0);
-}
-
-static int
-cmp3_stream_frame (mp3_info_t *info) {
-    return info->dec->stream_frame (info);
-}
-
-static int
 cmp3_decode (mp3_info_t *info) {
     int eof = 0;
     while (!eof) {
-        eof = cmp3_stream_frame (info);
-        if (info->decode_remaining > 0) {
-            cmp3_decode_requested (info);
-            if (info->readsize == 0) {
-                return 0;
+        eof = info->dec->decode_next_packet (info);
+        if (info->decoded_samples_remaining > 0) {
+
+            if (info->skipsamples > 0) {
+                int64_t skip = min (info->skipsamples, info->decoded_samples_remaining);
+                info->skipsamples -= skip;
+                info->decoded_samples_remaining -= skip;
+            }
+            if (info->skipsamples > 0) {
+                continue;
+            }
+
+            info->dec->consume_decoded_data (info);
+            assert (info->bytes_to_decode >= 0);
+            if (info->bytes_to_decode == 0) {
+                return;
             }
         }
     }
-    return 0;
+    return;
 }
 
 static void
@@ -467,13 +453,13 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
             info->conv_buf = malloc (info->conv_buf_size);
         }
-        info->readsize = req_size;
+        info->bytes_to_decode = req_size;
         info->out = info->conv_buf;
     }
     else {
         req_size = size;
         // decode straight to 32 bit
-        info->readsize = size;
+        info->bytes_to_decode = size;
         info->out = bytes;
     }
 
@@ -486,24 +472,24 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
         fmt.is_float = 1;
 
         // apply replaygain, before clipping
-        deadbeef->replaygain_apply (&fmt, info->want_16bit ? info->conv_buf : bytes, req_size - info->readsize);
+        deadbeef->replaygain_apply (&fmt, info->want_16bit ? info->conv_buf : bytes, req_size - info->bytes_to_decode);
 
         // convert to 16 bit, if needed
         if (info->want_16bit) {
-            int sz = req_size - info->readsize;
+            int sz = req_size - info->bytes_to_decode;
             int ret = deadbeef->pcm_convert (&fmt, info->conv_buf, &_info->fmt, bytes, sz);
-            info->readsize = size-ret;
+            info->bytes_to_decode = size-ret;
         }
     }
 
-    info->currentsample += (size - info->readsize) / samplesize;
+    info->currentsample += (size - info->bytes_to_decode) / samplesize;
     _info->readpos = (float)(info->currentsample - info->startsample) / info->mp3info.ref_packet.samplerate;
 #if WRITE_DUMP
     if (size - info->readsize > 0) {
         fwrite (bytes, 1, size - info->readsize, out);
     }
 #endif
-    return initsize - info->readsize;
+    return initsize - info->bytes_to_decode;
 }
 
 static int
@@ -531,8 +517,8 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
                 _info->readpos = (float)(info->currentsample - info->startsample) / info->mp3info.ref_packet.samplerate;
 
                 info->dec->free (info);
-                info->remaining = 0;
-                info->decode_remaining = 0;
+                info->input_remaining_bytes = 0;
+                info->decoded_samples_remaining = 0;
                 info->dec->init (info);
                 return 0;
             }
@@ -549,9 +535,9 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
         sample = (int)info->endsample;
     }
 
-    info->remaining = 0;
-    info->readsize = 0;
-    info->decode_remaining = 0;
+    info->input_remaining_bytes = 0;
+    info->bytes_to_decode = 0;
+    info->decoded_samples_remaining = 0;
 
     // force flush the decoder by reinitializing it
     info->dec->free (info);
