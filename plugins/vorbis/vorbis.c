@@ -336,6 +336,7 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     deadbeef->pl_set_meta_int (it, ":CHANNELS", vi->channels);
     deadbeef->pl_set_meta_int (it, ":SAMPLERATE", (int)vi->rate);
     deadbeef->pl_replace_meta (it, "!FILETYPE", "Ogg Vorbis");
+    info->cur_bit_stream = -1;
 
     return 0;
 }
@@ -373,6 +374,13 @@ static void send_event(DB_playItem_t *it, const int event_enum)
 static bool
 new_streaming_link(ogg_info_t *info, const int new_link)
 {
+    // Typically the files with multiple links are split into multiple tracks,
+    // and we don't want the file's properties to change while it's playing.
+    // However, we want this for network streams.
+    if (!info->info.file->vfs->is_streaming () || new_link < 0) {
+        return false;
+    }
+
     trace ("Streaming link changed from %d to %d\n", info->cur_bit_stream, new_link);
     deadbeef->pl_set_meta_int (info->it, ":TRACKNUM", new_link);
     deadbeef->pl_set_item_flags (info->it, DDB_IS_SUBTRACK);
