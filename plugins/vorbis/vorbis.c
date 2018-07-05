@@ -463,14 +463,14 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
         if (ret < 0) {
             trace("cvorbis_read: ov_read returned %d\n", ret);
         }
+        else if (new_link != info->cur_bit_stream && new_streaming_link(info, new_link)) {
+            bytes_read = bytes_to_read;
+            break;
+        }
         else {
             bytes_read += ret;
         }
 
-        if (new_link != info->cur_bit_stream && new_streaming_link(info, new_link)) {
-            bytes_read = bytes_to_read;
-            break;
-        }
 //        trace("cvorbis_read got %d bytes towards %d bytes (%d bytes still required)\n", ret, bytes_to_read, bytes_to_read-bytes_read);
     }
 
@@ -487,6 +487,10 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
         if (ret < 0) {
             trace("cvorbis_read: ov_read returned %d\n", ret);
         }
+        else if (new_link != info->cur_bit_stream && new_streaming_link(info, new_link)) {
+            samples_read = samples_to_read;
+            break;
+        }
         else if (ret > 0) {
             float *ptr = (float *)buffer + samples_read*_info->fmt.channels;
             for (int channel = 0; channel < _info->fmt.channels; channel++, ptr++) {
@@ -496,11 +500,6 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
                 }
             }
             samples_read += ret;
-        }
-
-        if (ret >= 0 && new_link != info->cur_bit_stream && new_streaming_link(info, new_link)) {
-            samples_read = samples_to_read;
-            break;
         }
 
 //        trace("cvorbis_read got %d samples towards %d bytes (%d samples still required)\n", ret, bytes_to_read, samples_to_read-samples_read);
