@@ -71,7 +71,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)selectionChanged:(DdbListviewRow_t)row {
     DdbSearchWidget *pltWidget = (DdbSearchWidget *)[self view];
-    deadbeef->sendmessage (DB_EV_SELCHANGED, (uintptr_t)[pltWidget listview], deadbeef->plt_get_curr_idx (), [self playlistIter]);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, (uintptr_t)[pltWidget listview], DDB_PLAYLIST_CHANGE_SELECTION, 0);
     deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, (uintptr_t)[pltWidget listview], PL_MAIN, 0);
 }
 
