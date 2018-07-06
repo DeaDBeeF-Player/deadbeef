@@ -361,7 +361,6 @@ _process_packet (mp3info_t *info, mp3packet_t *packet, int64_t seek_sample) {
         }
     }
     else {
-        return 1;
         // seeking to particular sample, interrupt if reached;
         // add 10 extra packets to fill bit-reservoir
         if (seek_sample > 0 && info->pcmsample + packet->samples_per_frame >= seek_sample-MAX_PACKET_SAMPLES*10) {
