@@ -345,7 +345,8 @@ enum ddb_playlist_change_t {
     DDB_PLAYLIST_CHANGE_DELETED,
     DDB_PLAYLIST_CHANGE_POSITION,
     DDB_PLAYLIST_CHANGE_TITLE,
-    DDB_PLAYLIST_CHANGE_SELECTION,
+    DDB_PLAYLIST_CHANGE_SELECTION, // `ctx` is assumed to be a unique ID of the event sender (e.g. a UI view pointer which caused the selection change),
+                                   // but should not be expected to point to a specific type.
     DDB_PLAYLIST_CHANGE_SEARCHRESULT,
     DDB_PLAYLIST_CHANGE_PLAYQUEUE,
 };
@@ -424,7 +425,8 @@ enum {
 
     // since 1.5
 #if (DDB_API_LEVEL >= 5)
-    DB_EV_SELCHANGED = 22, // selection changed in playlist p1 iter p2, ctx should be a pointer to playlist viewer instance, which caused the change, or NULL
+    // Use DB_EV_PLAYLISTCHANGED with DDB_PLAYLIST_CHANGE_SELECTION instead.
+    DB_EV_SELCHANGED = 22, // DB_EV_SELCHANGED is obsolete and isn't emitted; DB_EV_PLAYLISTCHANGED with DDB_PLAYLIST_CHANGE_SELECTION should be used instead.
     DB_EV_PLUGINSLOADED = 23, // after all plugins have been loaded and connected
 #endif
 
