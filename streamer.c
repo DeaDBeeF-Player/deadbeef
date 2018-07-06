@@ -2158,7 +2158,7 @@ _play_track (playItem_t *it, int startpaused) {
         else {
             int st = output->state();
             output->play ();
-            if (st == OUTPUT_STATE_PAUSED || st == OUTPUT_STATE_STOPPED) {
+            if (st == OUTPUT_STATE_PAUSED) {
                 messagepump_push(DB_EV_PAUSED, 0, 0, 0);
             }
         }
