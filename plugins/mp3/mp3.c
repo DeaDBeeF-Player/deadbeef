@@ -420,7 +420,6 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
 #endif
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     mp3_info_t *info = (mp3_info_t *)_info;
-    printf ("skip: %lld\n", info->skipsamples);
     if (!info->file->vfs->is_streaming ()) {
         int64_t curr = info->currentsample;
         //printf ("curr: %d -> end %d, padding: %d\n", curr, info->endsample, info->padding);
