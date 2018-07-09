@@ -191,7 +191,7 @@ extern "C" {
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 0)
-#define DEPRECATED DDB_DEPRECATED
+#define DEPRECATED DDB_DEPRECATED("since deadbeef API 1.0")
 #else
 #define DEPRECATED
 #endif
@@ -345,7 +345,8 @@ enum ddb_playlist_change_t {
     DDB_PLAYLIST_CHANGE_DELETED,
     DDB_PLAYLIST_CHANGE_POSITION,
     DDB_PLAYLIST_CHANGE_TITLE,
-    DDB_PLAYLIST_CHANGE_SELECTION,
+    DDB_PLAYLIST_CHANGE_SELECTION, // `ctx` is assumed to be a unique ID of the event sender (e.g. a UI view pointer which caused the selection change),
+                                   // but should not be expected to point to a specific type.
     DDB_PLAYLIST_CHANGE_SEARCHRESULT,
     DDB_PLAYLIST_CHANGE_PLAYQUEUE,
 };
@@ -424,7 +425,8 @@ enum {
 
     // since 1.5
 #if (DDB_API_LEVEL >= 5)
-    DB_EV_SELCHANGED = 22, // selection changed in playlist p1 iter p2, ctx should be a pointer to playlist viewer instance, which caused the change, or NULL
+    // Use DB_EV_PLAYLISTCHANGED with DDB_PLAYLIST_CHANGE_SELECTION instead.
+    DB_EV_SELCHANGED = 22, // DB_EV_SELCHANGED is obsolete and isn't emitted; DB_EV_PLAYLISTCHANGED with DDB_PLAYLIST_CHANGE_SELECTION should be used instead.
     DB_EV_PLUGINSLOADED = 23, // after all plugins have been loaded and connected
 #endif
 
@@ -694,14 +696,16 @@ typedef struct {
     // system folders
     // normally functions will return standard folders derived from --prefix
     // portable version will return pathes specified in comments below
+    // DEPRECATED IN API LEVEL 8, use get_system_dir instead
     const char *(*get_config_dir) (void) DEPRECATED_18; // installdir/config | $XDG_CONFIG_HOME/.config/deadbeef
     const char *(*get_prefix) (void) DEPRECATED_18; // installdir | PREFIX
     const char *(*get_doc_dir) (void) DEPRECATED_18; // installdir/doc | DOCDIR
     const char *(*get_plugin_dir) (void) DEPRECATED_18; // installdir/plugins | LIBDIR/deadbeef
     const char *(*get_pixmap_dir) (void) DEPRECATED_18; // installdir/pixmaps | PREFIX "/share/deadbeef/pixmaps"
 
-    // process control
-    void (*quit) (void);
+    // This function is not implemented, and should not be called. A remnant
+    // from old API before 0.5.0.
+    void (*do_not_call) (void) DEPRECATED;
 
     // threading
     intptr_t (*thread_start) (void (*fn)(void *ctx), void *ctx);
