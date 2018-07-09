@@ -376,6 +376,7 @@ cmp3_decode (mp3_info_t *info) {
         if (info->decoded_samples_remaining > 0) {
             if (info->skipsamples > 0) {
                 int64_t skip = min (info->skipsamples, info->decoded_samples_remaining);
+                printf ("skip: %lld\n", skip);
                 info->skipsamples -= skip;
                 info->decoded_samples_remaining -= skip;
             }
@@ -390,7 +391,6 @@ cmp3_decode (mp3_info_t *info) {
             }
         }
     }
-    return;
 }
 
 static void
@@ -420,7 +420,6 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
 #endif
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     mp3_info_t *info = (mp3_info_t *)_info;
-    printf ("skip: %lld\n", info->skipsamples);
     if (!info->file->vfs->is_streaming ()) {
         int64_t curr = info->currentsample;
         //printf ("curr: %d -> end %d, padding: %d\n", curr, info->endsample, info->padding);

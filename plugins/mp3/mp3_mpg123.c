@@ -115,6 +115,8 @@ mp3_mpg123_decode_next_packet (mp3_info_t *info) {
         info->total_decoded_samples = info->decoded_samples_remaining = (int)nbytes/samplesize;
         info->mpg123_audio = audio;
 
+        printf ("decoded: %d samples\n", info->total_decoded_samples);
+
         // NOTE: calling frame_bitrate directly would be much faster, but the API is private,
         // and mpg123_frameinfo struct is opaque, so we can't even get the parameters directly
         struct mpg123_frameinfo inf;

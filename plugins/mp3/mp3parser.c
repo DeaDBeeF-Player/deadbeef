@@ -309,7 +309,7 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int dat
 
 // returns 0 to continue, 1 to stop (seek position reached, or another reason to stop scanning)
 static int
-_process_packet (mp3info_t *info, mp3packet_t *packet, int64_t seek_sample) {
+_process_packet (mp3info_t *info, mp3packet_t *packet, int64_t seek_to_sample) {
     if (info->vbr_type != DETECTED_VBR
         && (!info->have_xing_header || !info->vbr_type)
         && info->prev_packet.bitrate
@@ -320,7 +320,7 @@ _process_packet (mp3info_t *info, mp3packet_t *packet, int64_t seek_sample) {
     info->valid_packets++;
 
     // update stream parameters, only when sample!=0 or 1st frame
-    if (seek_sample != 0 || info->npackets == 0)
+    if (seek_to_sample != 0 || info->npackets == 0)
     {
         // don't get parameters from frames coming after any bad frame
         int ch = info->ref_packet.nchannels;
@@ -332,7 +332,7 @@ _process_packet (mp3info_t *info, mp3packet_t *packet, int64_t seek_sample) {
 
     info->lastpacket_valid = 1;
 
-    if (seek_sample == 0) {
+    if (seek_to_sample == 0) {
         // update averages, interrupt scan on frame #100 <-- FIXME
         // calculating apx duration based on 1st 100 frames
         info->avg_packetlength += packet->packetlength;
@@ -360,15 +360,8 @@ _process_packet (mp3info_t *info, mp3packet_t *packet, int64_t seek_sample) {
             return 1;
         }
     }
-    else {
-        return 1;
-        // seeking to particular sample, interrupt if reached;
-        // add 10 extra packets to fill bit-reservoir
-        if (seek_sample > 0 && info->pcmsample + packet->samples_per_frame >= seek_sample-MAX_PACKET_SAMPLES*10) {
-            return 1;
-        }
-    }
-    if (seek_sample > 0) {
+
+    if (seek_to_sample > 0) {
         info->pcmsample += packet->samples_per_frame;
     }
     if (!info->have_duration) {
@@ -381,6 +374,14 @@ _process_packet (mp3info_t *info, mp3packet_t *packet, int64_t seek_sample) {
 int
 mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int startoffs, int endoffs, int64_t seek_to_sample) {
     memset (info, 0, sizeof (mp3info_t));
+
+    if (seek_to_sample > 0) {
+        // add 9 extra packets to fill bit-reservoir
+        seek_to_sample -= MAX_PACKET_SAMPLES*9;
+        if (seek_to_sample < 0) {
+            seek_to_sample = 0;
+        }
+    }
 
     int err = -1;
 
@@ -469,6 +470,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 }
 
                 packet.offs = offs;
+
                 if (!info->packet_offs || seek_to_sample >= 0) {
                     info->packet_offs = offs;
                 }
@@ -505,6 +507,11 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 }
 
                 if (!got_xing) {
+                    // seeking to particular sample, interrupt if reached;
+                    if (seek_to_sample > 0 && info->pcmsample >= seek_to_sample) {
+                        goto end;
+                    }
+
                     if (_process_packet (info, &packet, seek_to_sample) > 0) {
                         goto end;
                     }
