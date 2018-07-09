@@ -1538,8 +1538,14 @@ streamer_thread (void *unused) {
                     stop = 1;
                 }
                 else {
-                    if (stop_after_album_check (playing_track, block->track)) {
+                    playItem_t *next = get_next_track(playing_track);
+
+                    if (stop_after_album_check (playing_track, next)) {
                         stop = 1;
+                    }
+
+                    if (next) {
+                        pl_item_unref (next);
                     }
                 }
             }
