@@ -191,7 +191,7 @@ extern "C" {
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 0)
-#define DEPRECATED DDB_DEPRECATED
+#define DEPRECATED DDB_DEPRECATED("since deadbeef API 1.0")
 #else
 #define DEPRECATED
 #endif
