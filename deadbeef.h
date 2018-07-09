@@ -703,8 +703,9 @@ typedef struct {
     const char *(*get_plugin_dir) (void) DEPRECATED_18; // installdir/plugins | LIBDIR/deadbeef
     const char *(*get_pixmap_dir) (void) DEPRECATED_18; // installdir/pixmaps | PREFIX "/share/deadbeef/pixmaps"
 
-    // process control
-    void (*quit) (void);
+    // This function is not implemented, and should not be called. A remnant
+    // from old API before 0.5.0.
+    void (*do_not_call) (void) DEPRECATED;
 
     // threading
     intptr_t (*thread_start) (void (*fn)(void *ctx), void *ctx);
