@@ -3448,7 +3448,7 @@ save_hvbox_packing (GtkWidget *child, gpointer user_data) {
 
 static void
 w_hvbox_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
-    char save[300];
+    char save[1000];
 
     w_hvbox_save_info_t info;
     memset (&info, 0, sizeof (info));
