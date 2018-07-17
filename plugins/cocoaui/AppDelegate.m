@@ -234,6 +234,9 @@ main_cleanup_and_quit (void);
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    // high sierra would terminate the app on SIGPIPE by default, which breaks converter error handling
+    signal(SIGPIPE, SIG_IGN);
+
     playImg = [NSImage imageNamed:@"btnplayTemplate.pdf"];
     pauseImg = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
     bufferingImg = [NSImage imageNamed:@"bufferingTemplate.pdf"];
