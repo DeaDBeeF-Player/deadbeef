@@ -277,11 +277,12 @@ cflac_open2 (uint32_t hints, DB_playItem_t *it) {
     }
 
     deadbeef->pl_lock();
-    info->file = deadbeef->fopen(deadbeef->pl_find_meta(it, ":URI"));
-    if (!info->file) {
-        trace("cflac_open2 failed to open file %s\n", deadbeef->pl_find_meta(it, ":URI"));
-    }
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock();
+    info->file = deadbeef->fopen(uri);
+    if (!info->file) {
+        trace("cflac_open2 failed to open file %s\n", uri);
+    }
 
     return (DB_fileinfo_t *)info;
 }
@@ -293,10 +294,11 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     if (!info->file) {
         deadbeef->pl_lock ();
-        info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+	const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
         deadbeef->pl_unlock ();
+        info->file = deadbeef->fopen (uri);
         if (!info->file) {
-            trace ("cflac_init failed to open file %s\n", deadbeef->pl_find_meta(it, ":URI"));
+            trace ("cflac_init failed to open file %s\n", uri);
             return -1;
         }
     }
@@ -1006,8 +1008,9 @@ cflac_read_metadata (DB_playItem_t *it) {
         return -1;
     }
     deadbeef->pl_lock ();
-    DB_FILE *file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *file = deadbeef->fopen (uri);
     if (!file) {
         return -1;
     }

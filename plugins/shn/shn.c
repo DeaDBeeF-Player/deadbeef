@@ -31,6 +31,7 @@
 #include <math.h>
 #include "shorten.h"
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 #include "bitshift.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -330,10 +331,11 @@ shn_init(DB_fileinfo_t *_info, DB_playItem_t *it) {
     DB_FILE *f;
 
     deadbeef->pl_lock ();
-	f = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
-	deadbeef->pl_unlock ();
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
+    f = deadbeef->fopen (uri);
     if (!f) {
-        trace ("shn: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
+        trace ("shn: failed to open %s\n", uri);
         return -1;
     }
 

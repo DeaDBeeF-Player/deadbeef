@@ -71,20 +71,18 @@ tta_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     tta_info_t *info = (tta_info_t *)_info;
 
     deadbeef->pl_lock ();
-    const char *fname = deadbeef->pl_find_meta (it, ":URI")
+    const char *fname = strdupa (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     trace ("open_tta_file %s\n", fname);
     if (open_tta_file (fname, &info->tta, 0) != 0) {
-        deadbeef->pl_unlock ();
         fprintf (stderr, "tta: failed to open %s\n", fname);
         return -1;
     }
 
     if (player_init (&info->tta) != 0) {
-        deadbeef->pl_unlock ();
         fprintf (stderr, "tta: failed to init player for %s\n", fname);
         return -1;
     }
-    deadbeef->pl_unlock ();
 
     _info->fmt.bps = info->tta.BPS;
     _info->fmt.channels = info->tta.NCH;
@@ -251,8 +249,9 @@ tta_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
 static int tta_read_metadata (DB_playItem_t *it) {
     deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *fp = deadbeef->fopen (uri);
     if (!fp) {
         return -1;
     }

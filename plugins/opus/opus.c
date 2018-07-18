@@ -103,8 +103,9 @@ opusdec_open (uint32_t hints) {
 static DB_fileinfo_t *
 opusdec_open2 (uint32_t hints, DB_playItem_t *it) {
     deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *fp = deadbeef->fopen (uri);
 
     if (!fp) {
         return NULL;
@@ -253,8 +254,9 @@ opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     if (!info->info.file) {
         deadbeef->pl_lock ();
-        DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+	const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
         deadbeef->pl_unlock ();
+        DB_FILE *fp = deadbeef->fopen (uri);
 
         if (!fp) {
             return -1;
@@ -568,8 +570,9 @@ opusdec_read_metadata (DB_playItem_t *it) {
     const OpusHead *head = NULL;
 
     deadbeef->pl_lock ();
-    fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    fp = deadbeef->fopen (uri);
     if (!fp) {
         goto error;
     }

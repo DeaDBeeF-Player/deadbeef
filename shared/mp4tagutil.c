@@ -26,6 +26,7 @@
 #include <fcntl.h>
 #include "mp4tagutil.h"
 #include "mp4ff.h"
+#include "../strdupa.h"
 
 #ifndef __linux__
 #define off64_t off_t
@@ -94,8 +95,9 @@ static const char *metainfo[] = {
 int
 mp4_write_metadata (DB_playItem_t *it) {
     deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *fp = deadbeef->fopen (uri);
 
     if (!fp) {
         return -1;
@@ -128,8 +130,9 @@ mp4_write_metadata (DB_playItem_t *it) {
     }
 
     deadbeef->pl_lock ();
-    int fd_out = open (deadbeef->pl_find_meta (it, ":URI"), O_LARGEFILE | O_RDWR);
+    uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    int fd_out = open (uri, O_LARGEFILE | O_RDWR);
 
     mp4ff_callback_t write_cb = {
         .read = stdio_read,
@@ -291,8 +294,9 @@ mp4_read_metadata_file (DB_playItem_t *it, DB_FILE *fp) {
 int
 mp4_read_metadata (DB_playItem_t *it) {
     deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *fp = deadbeef->fopen (uri);
     if (!fp) {
         return -1;
     }
