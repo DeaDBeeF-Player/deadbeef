@@ -1133,7 +1133,8 @@ typedef struct {
     const char * (*metacache_add_string) (const char *str);
     void (*metacache_remove_string) (const char *str);
 
-    // ref/unref do nothing, please don't use, they're left for compatibility
+    // increase/decrease reference count for a string in metadata cache, such as
+    // the ones returned by pl_find_meta
     void (*metacache_ref) (const char *str);
     void (*metacache_unref) (const char *str);
 
