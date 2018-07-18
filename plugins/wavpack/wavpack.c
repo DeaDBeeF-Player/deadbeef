@@ -136,7 +136,7 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
 #ifndef TINYWV
     deadbeef->pl_lock ();
-    const char *uri = deadbeef->pl_find_meta (it, ":URI");
+    uri = deadbeef->pl_find_meta (it, ":URI");
     char *c_fname = alloca (strlen (uri) + 2);
     if (c_fname) {
         strcpy (c_fname, uri);
