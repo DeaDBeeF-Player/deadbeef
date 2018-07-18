@@ -32,6 +32,7 @@
 #include "gme/gme.h"
 #include <zlib.h>
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 #if HAVE_SYS_CDEFS_H
 #include <sys/cdefs.h>
 #endif
@@ -185,45 +186,39 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     gme_err_t res = "gme uninitialized";
     deadbeef->pl_lock ();
-    {
-        const char *fname = deadbeef->pl_find_meta (it, ":URI");
-        char *buffer;
-        int sz;
-        if (!read_gzfile (fname, &buffer, &sz)) {
-            res = gme_open_data (buffer, sz, &info->emu, samplerate);
-            free (buffer);
-        }
-        if (res) {
-            DB_FILE *f = deadbeef->fopen (fname);
-            if (!f) {
-                deadbeef->pl_unlock ();
-                return -1;
-            }
-            int64_t sz = deadbeef->fgetlength (f);
-            if (sz <= 0) {
-                deadbeef->fclose (f);
-                deadbeef->pl_unlock ();
-                return -1;
-            }
-            char *buf = malloc (sz);
-            if (!buf) {
-                deadbeef->fclose (f);
-                deadbeef->pl_unlock ();
-                return -1;
-            }
-            int64_t rb = deadbeef->fread (buf, 1, sz, f);
-            deadbeef->fclose(f);
-            if (rb != sz) {
-                free (buf);
-                deadbeef->pl_unlock ();
-                return -1;
-            }
-
-            res = gme_open_data (buf, sz, &info->emu, samplerate);
-            free (buf);
-        }
-    }
+    const char *fname = strdupa(deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    char *buffer;
+    int sz;
+    if (!read_gzfile (fname, &buffer, &sz)) {
+        res = gme_open_data (buffer, sz, &info->emu, samplerate);
+        free (buffer);
+    }
+    if (res) {
+        DB_FILE *f = deadbeef->fopen (fname);
+        if (!f) {
+            return -1;
+        }
+        int64_t sz = deadbeef->fgetlength (f);
+        if (sz <= 0) {
+            deadbeef->fclose (f);
+            return -1;
+        }
+        char *buf = malloc (sz);
+        if (!buf) {
+            deadbeef->fclose (f);
+            return -1;
+        }
+        int64_t rb = deadbeef->fread (buf, 1, sz, f);
+        deadbeef->fclose(f);
+        if (rb != sz) {
+            free (buf);
+            return -1;
+        }
+
+        res = gme_open_data (buf, sz, &info->emu, samplerate);
+        free (buf);
+    }
 
     if (res) {
         trace ("failed with error %d\n", res);

@@ -237,11 +237,12 @@ cvorbis_open2 (uint32_t hints, DB_playItem_t *it) {
     }
 
     deadbeef->pl_lock();
-    info->info.file = deadbeef->fopen(deadbeef->pl_find_meta (it, ":URI"));
-    if (!info->info.file) {
-        trace("cvorbis_open2 failed to open file %s\n", deadbeef->pl_find_meta(it, ":URI"));
-    }
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock();
+    info->info.file = deadbeef->fopen(uri);
+    if (!info->info.file) {
+        trace("cvorbis_open2 failed to open file %s\n", uri);
+    }
 
     return &info->info;
 }
@@ -255,10 +256,11 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     if (!info->info.file) {
         deadbeef->pl_lock ();
-        info->info.file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+	const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
         deadbeef->pl_unlock ();
+        info->info.file = deadbeef->fopen (uri);
         if (!info->info.file) {
-            trace ("cvorbis_init failed to open file %s\n", deadbeef->pl_find_meta (it, ":URI"));
+            trace ("cvorbis_init failed to open file %s\n", uri);
             return -1;
         }
     }
@@ -656,14 +658,15 @@ cvorbis_read_metadata (DB_playItem_t *it) {
     vorbis_info *vi = NULL;
 
     deadbeef->pl_lock ();
-    fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    fp = deadbeef->fopen (uri);
     if (!fp) {
-        trace ("cvorbis_read_metadata: failed to fopen %s\n", deadbeef->pl_find_meta (it, ":URI"));
+        trace ("cvorbis_read_metadata: failed to fopen %s\n", uri);
         return -1;
     }
     if (fp->vfs->is_streaming ()) {
-        trace ("cvorbis_read_metadata: failed to fopen %s\n", deadbeef->pl_find_meta (it, ":URI"));
+        trace ("cvorbis_read_metadata: failed to fopen %s\n", uri);
         return -1;
     }
     ov_callbacks ovcb = {
@@ -680,7 +683,7 @@ cvorbis_read_metadata (DB_playItem_t *it) {
     int tracknum = deadbeef->pl_find_meta_int (it, ":TRACKNUM", -1);
     vi = ov_info (&vorbis_file, tracknum);
     if (!vi) {
-        trace ("cvorbis_read_metadata: failed to ov_open %s\n", deadbeef->pl_find_meta (it, ":URI"));
+        trace ("cvorbis_read_metadata: failed to ov_open %s\n", uri);
         ov_clear (&vorbis_file);
         return -1;
     }

@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 #include "sc68/sc68.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -67,9 +68,9 @@ in_sc68_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     // Load an sc68 file.
     deadbeef->pl_lock ();
-    const char *fname = deadbeef->pl_find_meta (it, ":URI");
-    int res = sc68_load_uri(info->sc68, fname);
+    const char *fname = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    int res = sc68_load_uri(info->sc68, fname);
 
     if (res) {
         return -1;
@@ -296,9 +297,9 @@ in_sc68_read_metadata (DB_playItem_t *it) {
 
     // Load an sc68 file.
     deadbeef->pl_lock ();
-    const char *fname = deadbeef->pl_find_meta (it, ":URI");
-    int res = sc68_load_uri (sc68, fname);
+    const char *fname = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    int res = sc68_load_uri (sc68, fname);
 
     if (res) {
         return -1;
