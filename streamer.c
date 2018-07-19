@@ -944,6 +944,15 @@ stream_track (playItem_t *it, int startpaused) {
             vfs_fclose (fp);
             fp = NULL;
             streamer_file = NULL;
+            if (!startpaused) {
+                // failed to play the track, ask for the next one
+                streamer_play_failed (it);
+            }
+
+            pl_lock ();
+            trace_err ("Failed to play track: %s\n", pl_find_meta(it, ":URI"));
+            pl_unlock ();
+
             err = -1;
             goto error;
         }
