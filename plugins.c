@@ -648,7 +648,7 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
 #if !DISABLE_VERSIONCHECK
     if (plugin_api->api_vmajor != 0 || plugin_api->api_vminor != 0) {
         // version check enabled
-        if (DB_API_VERSION_MAJOR != 9 && DB_API_VERSION_MINOR != 9) {
+        if (DB_API_VERSION_MAJOR != 9 || DB_API_VERSION_MINOR != 9) {
             if (plugin_api->api_vmajor != DB_API_VERSION_MAJOR || plugin_api->api_vminor > DB_API_VERSION_MINOR) {
                 trace_err ("WARNING: plugin \"%s\" wants API v%d.%d (got %d.%d), will not be loaded\n", plugin_api->name, plugin_api->api_vmajor, plugin_api->api_vminor, DB_API_VERSION_MAJOR, DB_API_VERSION_MINOR);
                 return -1;
