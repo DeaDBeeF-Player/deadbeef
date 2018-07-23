@@ -507,8 +507,9 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 }
 
                 if (!got_xing) {
-                    // seeking to particular sample, interrupt if reached;
-                    if (seek_to_sample > 0 && info->pcmsample >= seek_to_sample) {
+                    // interrupt if the current packet contains the sample being seeked to
+                    if (seek_to_sample > 0 && info->pcmsample+packet.samples_per_frame > seek_to_sample) {
+                        info->pcmsample -= packet.samples_per_frame;
                         goto end;
                     }
 

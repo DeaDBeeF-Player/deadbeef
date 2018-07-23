@@ -51,7 +51,7 @@ extern DB_functions_t *deadbeef;
 
     XCTAssertEqual(res, size);
 
-    char *buffer2 = malloc (size);
+    char *buffer2 = malloc (size*2); // buffer is over-allocated to check for trailing data
 
     // read first part
     dec->seek_sample (fi, 0);
@@ -61,13 +61,23 @@ extern DB_functions_t *deadbeef;
 
     printf ("-------------\n");
     dec->seek_sample (fi, 44100/2);
-    res = dec->read (fi, buffer2+size/2, (int)size/2);
-
+    res = dec->read (fi, buffer2+size/2, (int)size);
     XCTAssertEqual(res, size/2);
 
-    FILE *fp = fopen ("/Users/waker/out.raw", "w+b");
-    fwrite (buffer2, size, 1, fp);
-    fclose (fp);
+
+    FILE *fp1 = fopen ("/Users/oleksiy/buffer1.raw", "w+b");
+    FILE *fp2 = fopen ("/Users/oleksiy/buffer2.raw", "w+b");
+    fwrite (buffer, size, 1, fp1);
+    fwrite (buffer2, size, 1, fp2);
+    fclose (fp1);
+    fclose (fp2);
+
+
+    int cmp1 = memcmp (buffer, buffer2, size/2);
+    XCTAssertTrue(cmp1==0);
+
+    int cmp2 = memcmp (buffer+size/2, buffer2+size/2, size/2);
+    XCTAssertTrue(cmp2==0);
 
     int cmp = memcmp (buffer, buffer2, size);
 
