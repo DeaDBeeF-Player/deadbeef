@@ -22,6 +22,7 @@ extern DB_functions_t *deadbeef;
 - (void)setUp {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
+    deadbeef->conf_set_int ("mp3.backend", 0);
 }
 
 - (void)tearDown {
@@ -65,8 +66,8 @@ extern DB_functions_t *deadbeef;
     XCTAssertEqual(res, size/2);
 
 
-    FILE *fp1 = fopen ("/Users/oleksiy/buffer1.raw", "w+b");
-    FILE *fp2 = fopen ("/Users/oleksiy/buffer2.raw", "w+b");
+    FILE *fp1 = fopen ("/Users/waker/buffer1.raw", "w+b");
+    FILE *fp2 = fopen ("/Users/waker/buffer2.raw", "w+b");
     fwrite (buffer, size, 1, fp1);
     fwrite (buffer2, size, 1, fp2);
     fclose (fp1);

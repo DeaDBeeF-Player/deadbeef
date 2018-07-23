@@ -72,6 +72,7 @@ cmp3_seek_stream (DB_fileinfo_t *_info, int sample) {
     int res = mp3_parse_file(&mp3info, 0, info->file, deadbeef->fgetlength(info->file), info->startoffs, info->endoffs, sample);
 
     if (!res) {
+        printf ("seek to byte: %lld\n", mp3info.packet_offs);
         deadbeef->fseek (info->file, mp3info.packet_offs, SEEK_SET);
         info->currentsample = sample;
         if (sample > mp3info.pcmsample) {
@@ -535,7 +536,6 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     // force flush the decoder by reinitializing it
     info->dec->free (info);
-    info->dec->init (info);
 
 //    struct timeval tm1;
 //    gettimeofday (&tm1, NULL);
@@ -544,6 +544,9 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
         _info->readpos = 0;
         return -1;
     }
+
+    info->dec->init (info);
+
 //    struct timeval tm2;
 //    gettimeofday (&tm2, NULL);
 //    int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);

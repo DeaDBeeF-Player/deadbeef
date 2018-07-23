@@ -377,7 +377,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
 
     if (seek_to_sample > 0) {
         // add 9 extra packets to fill bit-reservoir
-        seek_to_sample -= MAX_PACKET_SAMPLES*9;
+        seek_to_sample -= MAX_PACKET_SAMPLES*10;
         if (seek_to_sample < 0) {
             seek_to_sample = 0;
         }
@@ -491,6 +491,10 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                         memcpy (&info->ref_packet, &packet, sizeof (mp3packet_t));
 
                         if (seek_to_sample > 0) {
+                            assert (remaining >= res);
+                            remaining -= res;
+                            bufptr += res;
+                            offs += res;
                             continue;
                         }
                         else if (!(flags & MP3_PARSE_FULLSCAN)) {
@@ -506,10 +510,11 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                     }
                 }
 
+                printf ("packet %lld offs %lld / %lld seekto %lld\n", info->npackets, info->pcmsample, offs, seek_to_sample);
+
                 if (!got_xing) {
                     // interrupt if the current packet contains the sample being seeked to
-                    if (seek_to_sample > 0 && info->pcmsample+packet.samples_per_frame > seek_to_sample) {
-                        info->pcmsample -= packet.samples_per_frame;
+                    if (seek_to_sample > 0 && info->pcmsample+packet.samples_per_frame >= seek_to_sample) {
                         goto end;
                     }
 
