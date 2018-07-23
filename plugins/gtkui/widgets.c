@@ -3148,10 +3148,6 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
     int playback_status = deadbeef->get_output ()->state ();
 
-    if (playback_status == OUTPUT_STATE_STOPPED || playback_status == OUTPUT_STATE_PAUSED) {
-        _spectrum_stop (user_data);
-    }
-
     float *freq = w->data;
 
     GtkAllocation a;
@@ -3329,6 +3325,13 @@ spectrum_realize (GtkWidget *widget, gpointer data) {
 static int
 w_spectrum_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
+    case DB_EV_SONGCHANGED: {
+            ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
+            if (!ev->to) {
+                _spectrum_stop (w);
+            }
+        }
+        break;
     case DB_EV_SONGSTARTED:
         _spectrum_run (w);
         break;
