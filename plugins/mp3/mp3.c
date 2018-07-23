@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 #include "mp3.h"
 #ifdef USE_LIBMAD
 #include "mp3_mad.h"
@@ -226,8 +227,9 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     _info->plugin = &plugin;
     deadbeef->pl_lock ();
-    info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    info->file = deadbeef->fopen (uri);
     if (!info->file) {
         return -1;
     }
@@ -622,8 +624,9 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 int
 cmp3_read_metadata (DB_playItem_t *it) {
     deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *fp = deadbeef->fopen (uri);
     if (!fp) {
         return -1;
     }

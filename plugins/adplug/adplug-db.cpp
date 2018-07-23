@@ -25,6 +25,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 #include "adplug.h"
 #include "emuopl.h"
 #include "kemuopl.h"
@@ -95,10 +96,11 @@ adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
     }
     deadbeef->pl_lock ();
-    info->decoder = CAdPlug::factory (deadbeef->pl_find_meta (it, ":URI"), info->opl, CAdPlug::players);
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    info->decoder = CAdPlug::factory (uri, info->opl, CAdPlug::players);
     if (!info->decoder) {
-        trace ("adplug: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
+        trace ("adplug: failed to open %s\n", uri);
         return -1;
     }
 

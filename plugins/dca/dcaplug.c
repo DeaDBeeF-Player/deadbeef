@@ -25,6 +25,7 @@
 #  include <config.h>
 #endif
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 #include "dca.h"
 #include "gettimeofday.h"
 
@@ -405,10 +406,11 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     ddb_dca_state_t *info = (ddb_dca_state_t *)_info;
 
     deadbeef->pl_lock ();
-    info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    info->file = deadbeef->fopen (uri);
     if (!info->file) {
-        trace ("dca: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
+        trace ("dca: failed to open %s\n", uri);
         return -1;
     }
 

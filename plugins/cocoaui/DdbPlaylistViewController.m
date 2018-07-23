@@ -859,7 +859,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 
 - (void)selectionChanged:(DdbListviewRow_t)row {
     DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)[self view];
-    deadbeef->sendmessage (DB_EV_SELCHANGED, (uintptr_t)[pltWidget listview], deadbeef->plt_get_curr_idx (), [self playlistIter]);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, (uintptr_t)[pltWidget listview], DDB_PLAYLIST_CHANGE_SELECTION, 0);
 }
 
 - (int)selectedCount {
@@ -1008,6 +1008,13 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
                     [listview reloadData];
                 });
             }
+            else if (p1 == DDB_PLAYLIST_CHANGE_SELECTION) {
+                if (ctx != (uintptr_t)listview) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [listview reloadData];
+                    });
+                }
+            }
         }
             break;
         case DB_EV_PLAYLISTSWITCHED: {
@@ -1054,14 +1061,6 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [listview reloadData];
             });
-        }
-            break;
-        case DB_EV_SELCHANGED: {
-            if (ctx != (uintptr_t)listview) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [listview reloadData];
-                });
-            }
         }
             break;
         case DB_EV_FOCUS_SELECTION: {

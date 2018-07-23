@@ -29,6 +29,7 @@
 // #include "sidplay/sidendian.h"
 
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 #include "csid.h"
 
 extern DB_decoder_t sid_plugin;
@@ -303,8 +304,9 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     // libsidplay crashes if file doesn't exist
     // so i have to check it here
     deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *fp = deadbeef->fopen (uri);
     if (!fp ){
         return -1;
     }
