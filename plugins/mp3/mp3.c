@@ -378,6 +378,7 @@ cmp3_decode (mp3_info_t *info) {
         if (info->decoded_samples_remaining > 0) {
             if (info->skipsamples > 0) {
                 int64_t skip = min (info->skipsamples, info->decoded_samples_remaining);
+                printf ("skip: %lld\n", skip);
                 info->skipsamples -= skip;
                 info->decoded_samples_remaining -= skip;
             }
@@ -392,7 +393,6 @@ cmp3_decode (mp3_info_t *info) {
             }
         }
     }
-    return;
 }
 
 static void

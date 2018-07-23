@@ -59,9 +59,15 @@ extern DB_functions_t *deadbeef;
     res = dec->read (fi, buffer2, (int)size/2);
     XCTAssertEqual(res, size/2);
 
+    printf ("-------------\n");
     dec->seek_sample (fi, 44100/2);
     res = dec->read (fi, buffer2+size/2, (int)size/2);
+
     XCTAssertEqual(res, size/2);
+
+    FILE *fp = fopen ("/Users/waker/out.raw", "w+b");
+    fwrite (buffer2, size, 1, fp);
+    fclose (fp);
 
     int cmp = memcmp (buffer, buffer2, size);
 
