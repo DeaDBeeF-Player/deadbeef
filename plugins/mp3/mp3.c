@@ -72,7 +72,6 @@ cmp3_seek_stream (DB_fileinfo_t *_info, int sample) {
     int res = mp3_parse_file(&mp3info, 0, info->file, deadbeef->fgetlength(info->file), info->startoffs, info->endoffs, sample);
 
     if (!res) {
-        printf ("seek to byte: %lld\n", mp3info.packet_offs);
         deadbeef->fseek (info->file, mp3info.packet_offs, SEEK_SET);
         info->currentsample = sample;
         if (sample > mp3info.pcmsample) {
@@ -379,7 +378,6 @@ cmp3_decode (mp3_info_t *info) {
         if (info->decoded_samples_remaining > 0) {
             if (info->skipsamples > 0) {
                 int64_t skip = min (info->skipsamples, info->decoded_samples_remaining);
-                printf ("skip: %lld\n", skip);
                 info->skipsamples -= skip;
                 info->decoded_samples_remaining -= skip;
             }
@@ -512,7 +510,6 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
                 _info->readpos = (float)(info->currentsample - info->startsample) / info->mp3info.ref_packet.samplerate;
 
                 info->dec->free (info);
-                info->input_remaining_bytes = 0;
                 info->decoded_samples_remaining = 0;
                 info->dec->init (info);
                 return 0;
@@ -530,7 +527,6 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
         sample = (int)info->endsample;
     }
 
-    info->input_remaining_bytes = 0;
     info->bytes_to_decode = 0;
     info->decoded_samples_remaining = 0;
 

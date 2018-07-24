@@ -510,8 +510,6 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                     }
                 }
 
-                printf ("packet %lld offs %lld / %lld seekto %lld\n", info->npackets, info->pcmsample, offs, seek_to_sample);
-
                 if (!got_xing) {
                     // interrupt if the current packet contains the sample being seeked to
                     if (seek_to_sample > 0 && info->pcmsample+packet.samples_per_frame >= seek_to_sample) {

@@ -35,6 +35,7 @@ mp3_mad_init (mp3_info_t *info) {
     mad_stream_options (&info->mad_stream, MAD_OPTION_IGNORECRC);
     mad_frame_init(&info->mad_frame);
     mad_synth_init(&info->mad_synth);
+    info->input_remaining_bytes = 0;
 }
 
 void
@@ -240,23 +241,24 @@ mp3_mad_decode_next_packet (mp3_info_t *info) {
         info->mad_stream.error=0;
 
         // decode next frame
+    retry:
         if(mad_frame_decode(&info->mad_frame, &info->mad_stream))
         {
             if(MAD_RECOVERABLE(info->mad_stream.error))
             {
-                if(info->mad_stream.error!=MAD_ERROR_LOSTSYNC) {
-                    //                    printf ("mp3: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
+                // MAD_ERROR_BADDATAPTR is reported when bit reservoir doesn't have enough data from previous frames,
+                // however we want to synth those frames anyway.
+                // For any other recoverable errors, just rerun mad_frame_decode.
+                if (info->mad_stream.error != MAD_ERROR_BADDATAPTR) {
+                    goto retry;
                 }
-                continue;
             }
             else {
                 if(info->mad_stream.error==MAD_ERROR_BUFLEN) {
-                    //                    printf ("mp3: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
                     continue;
                 }
                 else
                 {
-                    //                    printf ("mp3: unrecoverable frame level error (%s).\n", MadErrorString(&info->stream));
                     return -1; // fatal error
                 }
             }

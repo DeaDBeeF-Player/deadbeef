@@ -57,10 +57,6 @@ typedef struct {
     DB_FILE *file;
     DB_playItem_t *it;
 
-    // input buffer, for MPEG data
-    char input[READBUFFER];
-    int input_remaining_bytes; // bytes remaining in the `input`
-
     // output buffer, supplied by player
     int bytes_to_decode; // how many bytes is asked to be written to `out`
     int decoded_samples_remaining; // number of samples left of current decoded mpeg frame
@@ -76,6 +72,8 @@ typedef struct {
             struct mad_stream mad_stream;
             struct mad_frame mad_frame;
             struct mad_synth mad_synth;
+            char input[READBUFFER]; // input buffer, for MPEG data
+            int input_remaining_bytes;
         };
 #endif
 #ifdef USE_LIBMPG123
