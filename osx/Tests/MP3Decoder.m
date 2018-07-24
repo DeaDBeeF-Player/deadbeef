@@ -22,7 +22,6 @@ extern DB_functions_t *deadbeef;
 - (void)setUp {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
-    deadbeef->conf_set_int ("mp3.backend", 0);
 }
 
 - (void)tearDown {
@@ -30,7 +29,9 @@ extern DB_functions_t *deadbeef;
     [super tearDown];
 }
 
-- (void)test_DecodeMP3As2Pieces_SameAs1Piece {
+- (void)runMp3TwoPieceTestWithBackend:(int)backend {
+    deadbeef->conf_set_int ("mp3.backend", backend);
+
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/chirp-1sec.mp3", dbplugindir);
 
@@ -60,19 +61,18 @@ extern DB_functions_t *deadbeef;
     res = dec->read (fi, buffer2, (int)size/2);
     XCTAssertEqual(res, size/2);
 
-    printf ("-------------\n");
     dec->seek_sample (fi, 44100/2);
     res = dec->read (fi, buffer2+size/2, (int)size);
     XCTAssertEqual(res, size/2);
 
-
-    FILE *fp1 = fopen ("/Users/waker/buffer1.raw", "w+b");
-    FILE *fp2 = fopen ("/Users/waker/buffer2.raw", "w+b");
+#if 0
+    FILE *fp1 = fopen ("buffer1.raw", "w+b");
+    FILE *fp2 = fopen ("buffer2.raw", "w+b");
     fwrite (buffer, size, 1, fp1);
     fwrite (buffer2, size, 1, fp2);
     fclose (fp1);
     fclose (fp2);
-
+#endif
 
     int cmp1 = memcmp (buffer, buffer2, size/2);
     XCTAssertTrue(cmp1==0);
@@ -90,6 +90,14 @@ extern DB_functions_t *deadbeef;
     deadbeef->plt_unref ((ddb_playlist_t *)plt);
 
     XCTAssertTrue(cmp==0);
+}
+
+- (void)test_DecodeMP3As2PiecesMPG123_SameAs1Piece {
+    [self runMp3TwoPieceTestWithBackend:0]; // mpg123
+}
+
+- (void)test_DecodeMP3As2PiecesLibMAD_SameAs1Piece {
+    [self runMp3TwoPieceTestWithBackend:1]; // libmad
 }
 
 
