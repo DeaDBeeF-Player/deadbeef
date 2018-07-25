@@ -36,8 +36,8 @@
     XCTAssertEqual(info.have_xing_header, 1);
     XCTAssertEqual(info.ref_packet.samplerate, 44100);
     XCTAssertEqual(info.totalsamples-info.delay-info.padding, 88200);
-    XCTAssertEqual(info.delay, 576);
-    XCTAssertEqual(info.padding, 1080);
+    XCTAssertEqual(info.delay, 1105);
+    XCTAssertEqual(info.padding, 551);
     XCTAssertEqual(info.lame_musiclength, 16508);
 }
 
@@ -53,7 +53,7 @@
     XCTAssertEqual(info.ref_packet.samplerate, 44100);
     XCTAssertEqual(info.totalsamples, 88200+576+1080);
     XCTAssertEqual(info.pcmsample, 0);
-    XCTAssertEqual(info.delay, 0);
+    XCTAssertEqual(info.delay, 529);
     XCTAssertEqual(info.padding, 0);
     XCTAssertEqual(info.lame_musiclength, 16508);
 }
@@ -77,7 +77,7 @@
     int64_t fsize = vfs_fgetlength(fp);
     int res = mp3_parse_file (&info, 0, fp, fsize, 0, 0, 576);
     XCTAssert (!res);
-    XCTAssertEqual(info.packet_offs, 0);
+    XCTAssertEqual(info.packet_offs, 208);
 }
 
 - (void)test_2secSquareSeekTo1sec_SeeksTo1SecMinus10Packets {
@@ -88,7 +88,7 @@
     int64_t fsize = vfs_fgetlength(fp);
     int res = mp3_parse_file (&info, 0, fp, fsize, 0, 0, 576+44100);
     XCTAssert (!res);
-    XCTAssertEqual(info.packet_offs, 5850);
+    XCTAssertEqual(info.packet_offs, 6059);
     XCTAssertEqual(info.pcmsample, 32256);
 }
 
@@ -105,7 +105,7 @@
     // lame adds default encoder delay and padding of 576 and 1080, even without header
     XCTAssertEqual(info.totalsamples, 88200+576+1080);
     XCTAssertEqual(info.pcmsample, 0);
-    XCTAssertEqual(info.delay, 0);
+    XCTAssertEqual(info.delay, 529);
     XCTAssertEqual(info.padding, 0);
 }
 
