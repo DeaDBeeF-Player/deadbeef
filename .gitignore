@@ -7,7 +7,6 @@
 aclocal.m4
 configure
 plugins/*/Makefile
-intl/Makefile
 icons/Makefile
 pixmaps/Makefile
 Makefile.in

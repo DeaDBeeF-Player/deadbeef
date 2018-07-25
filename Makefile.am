@@ -2,20 +2,9 @@ SUBDIRS = pixmaps\
 		  icons\
 		  shared\
 		  ${PLUGINS_DIRS}\
-		  po\
-		  intl
+		  po
 
 bin_PROGRAMS = deadbeef
-
-INTLTOOL_FILES = \
-		intltool-extract.in \
-		intltool-merge.in \
-		intltool-update.in
-
-DISTCLEANFILES = \
-		intltool-extract \
-		intltool-merge \
-		intltool-update
 
 deadbeef_SOURCES =\
 	main.c common.h deadbeef.h\
@@ -48,14 +37,14 @@ deadbeef_SOURCES =\
 	tf.c tf.h\
 	playqueue.c playqueue.h\
 	sort.c sort.h\
+	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h\
 	logger.c logger.h
 	
-#	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
 
-deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread $(INTL_LIBS) plugins/libparser/libparser.a
+deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread plugins/libparser/libparser.a
 
 AM_CFLAGS = $(DEPS_CFLAGS) -std=c99
 AM_CPPFLAGS = $(DEPS_CFLAGS)
@@ -69,6 +58,6 @@ docs_DATA = README help.txt about.txt translators.txt ChangeLog\
 desktopdir = $(datadir)/applications
 desktop_DATA = deadbeef.desktop
 
-EXTRA_DIST = $(docs_DATA) $(desktop_DATA) $(INTLTOOL_FILES) translation/extra.c translation/plugins.c sj_to_unicode.h examples/decoder_template.c examples/dsp_template.c yasmwrapper.sh
+EXTRA_DIST = $(docs_DATA) $(desktop_DATA) translation/extra.c translation/plugins.c sj_to_unicode.h examples/decoder_template.c examples/dsp_template.c yasmwrapper.sh
 
 ACLOCAL_AMFLAGS = -I m4

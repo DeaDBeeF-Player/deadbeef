@@ -15,7 +15,6 @@ main.c
 playlist.c
 plugins.c
 deadbeef.desktop.in
-intl/plural.c
 plugins/gtkui/deadbeef.glade
 plugins/wildmidi/wildmidiplug.c
 translation/extra.c
