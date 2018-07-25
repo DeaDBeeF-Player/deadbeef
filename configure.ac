@@ -344,7 +344,7 @@ AS_IF([test "${have_iconv}" = "yes"], [
     AC_DEFINE(HAVE_LIBICONV,1,[Use libiconv instead of glibc iconv])
 ])
 
-AX_CHECK_COMPILER_FLAGS(-msse2, HAVE_SSE2=1, [])
+AX_CHECK_COMPILER_FLAGS(-msse2, HAVE_SSE2=1, [], -Werror)
 AS_IF([test "${HAVE_SSE2}"], [
     AC_DEFINE(HAVE_SSE2,1,[Support SSE2 instructions])
 ])
