@@ -519,7 +519,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                     if (_process_packet (info, &packet, seek_to_sample) > 0) {
                         goto end;
                     }
-                    printf ("frame %lld, sr %d, totalsamples %lld\n", info->npackets-1, packet.samplerate, info->totalsamples);
+                    printf ("frame %lld, offs %lld, sr %d, totalsamples %lld\n", info->npackets-1, offs, packet.samplerate, info->totalsamples);
                     memcpy (&info->prev_packet, &packet, sizeof (packet));
                 }
 
