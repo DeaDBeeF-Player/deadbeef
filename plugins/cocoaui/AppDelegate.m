@@ -71,6 +71,9 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, 
 
 - (void)appendLoggerText:(const char *)text forPlugin:(DB_plugin_t *)plugin onLayers:(uint32_t)layers {
     NSString *str = [NSString stringWithUTF8String:text];
+    if (!str) {
+        return; // may happen in case of invalid UTF8 and such
+    }
 
     dispatch_async(dispatch_get_main_queue(), ^{
         [_logWindow appendText:str];
