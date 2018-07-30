@@ -753,6 +753,13 @@ http_open (const char *fname) {
     if (!allow_new_streams) {
         return NULL;
     }
+
+    if (deadbeef->conf_get_int ("vfs_curl.trace", 0)) {
+        plugin.plugin.flags |= DDB_PLUGIN_FLAG_LOGGING;
+    }
+    else {
+        plugin.plugin.flags &= ~DDB_PLUGIN_FLAG_LOGGING;
+    }
     trace ("http_open\n");
     HTTP_FILE *fp = malloc (sizeof (HTTP_FILE));
     http_reg_open_file ((DB_FILE *)fp);
@@ -1121,6 +1128,11 @@ http_is_streaming (void) {
     return 1;
 }
 
+static const char settings_dlg[] =
+    "property \"Enable logging\" checkbox vfs_curl.trace 0;\n"
+;
+
+
 static DB_vfs_t plugin = {
     DDB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
@@ -1153,6 +1165,7 @@ static DB_vfs_t plugin = {
         "3. This notice may not be removed or altered from any source distribution.\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
+    .plugin.configdialog = settings_dlg,
     .plugin.start = vfs_curl_start,
     .plugin.stop = vfs_curl_stop,
     .open = http_open,
