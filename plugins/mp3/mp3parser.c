@@ -388,7 +388,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     deadbeef->fseek (fp, startoffs, SEEK_SET);
 
     // FIXME: radio
-    fsize -= startoffs + endoffs;
+    fsize -= endoffs;
 
     int bufsize = 8*1024;
     assert (bufsize >= MAX_PACKET_LENGTH);
@@ -408,8 +408,8 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     mp3packet_t packet;
 
     int remaining = 0;
-    int64_t offs = 0;
-    int64_t fileoffs = 0;
+    int64_t offs = startoffs;
+    int64_t fileoffs = startoffs;
 
     int eof = 0;
 
