@@ -181,6 +181,9 @@ _parse_packet (mp3packet_t * restrict packet, uint8_t * restrict fb) {
                 packet->samples_per_frame = 576;
             }
         }
+        else {
+            return -1;
+        }
         packet->packetlength = packet->samples_per_frame / 8 * packet->bitrate / packet->samplerate + padding;
     }
     else {
@@ -188,8 +191,6 @@ _parse_packet (mp3packet_t * restrict packet, uint8_t * restrict fb) {
     }
     return packet->packetlength;
 }
-
-// FIXME: make sure info->packet_offs is set
 
 static uint32_t
 extract_i32 (unsigned char *buf)
@@ -229,7 +230,6 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int dat
 
     data = magic + 4;
 
-    // FIXME: the right place to assign successful result?
     info->packet_offs = packet->offs+packet->packetlength;
 
     // read flags
@@ -239,9 +239,6 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int dat
 
     if (flags & FRAMES_FLAG) {
         // read number of frames
-        if (packet->samples_per_frame <= 0) { // FIXME: this should be invalid packet earlier on
-            return -1;
-        }
         uint32_t nframes = extract_i32 (data);
         info->totalsamples = nframes * packet->samples_per_frame;
         info->have_duration = 1;
@@ -387,12 +384,13 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
 
     deadbeef->fseek (fp, startoffs, SEEK_SET);
 
-    // FIXME: radio
-    fsize -= endoffs;
+    if (fsize > 0) {
+        fsize -= endoffs;
+    }
 
-    int bufsize = 8*1024;
+    int bufsize = 8192; // NOTE: buffer can't be smaller than the largest mp3 packet, which is 5760 bytes
     assert (bufsize >= MAX_PACKET_LENGTH);
-    if (bufsize > fsize) {
+    if (fsize > 0 && bufsize > fsize) {
         bufsize = (int)fsize;
     }
 
@@ -405,6 +403,10 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
         return -1;
     }
 
+    if (fsize < 0) {
+        info->checked_xing_header = 1; // ignore Info tag in streams
+    }
+
     mp3packet_t packet;
 
     int remaining = 0;
@@ -413,9 +415,9 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
 
     int eof = 0;
 
-    while (fsize > 0) {
+    while (fsize > 0 || fsize < 0) {
         int64_t readsize = bufsize-remaining;
-        if (fileoffs + readsize >= fsize) {
+        if (fsize > 0 && fileoffs + readsize >= fsize) {
             readsize = fsize - fileoffs;
             eof = 1;
         }
@@ -535,13 +537,18 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
 
 end:
 
-    info->delay += 529;
-    if (info->padding > 529) {
-        info->padding -= 529;
-    }
+    if (fsize >= 0) {
+        info->delay += 529;
+        if (info->padding > 529) {
+            info->padding -= 529;
+        }
 
-    if (seek_to_sample == -1) {
-        info->have_duration = 1;
+        if (seek_to_sample == -1) {
+            info->have_duration = 1;
+        }
+    }
+    else {
+        info->totalsamples = -1;
     }
     err = 0;
 error:

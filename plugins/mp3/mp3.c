@@ -276,7 +276,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             return -1;
         }
 
-        // FIXME: this case should cause res=-1
+        // FIXME: this case should cause res=-1 from mp3_parse_file
         if (info->mp3info.ref_packet.samplerate == 0) {
             trace ("bad mpeg file: %s\n", deadbeef->pl_find_meta (it, ":URI"));
             return -1;
@@ -285,7 +285,12 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         cmp3_set_extra_properties (it, &info->mp3info, 1);
 
         ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
-        deadbeef->plt_set_item_duration (plt, it, (float)((double)info->mp3info.totalsamples/info->mp3info.ref_packet.samplerate));
+        if (info->mp3info.totalsamples >= 0) {
+            deadbeef->plt_set_item_duration (plt, it, (float)((double)info->mp3info.totalsamples/info->mp3info.ref_packet.samplerate));
+        }
+        else {
+            deadbeef->plt_set_item_duration (plt, it, -1);
+        }
         if (plt) {
             deadbeef->plt_unref (plt);
         }
