@@ -189,6 +189,7 @@ _parse_packet (mp3packet_t * restrict packet, uint8_t * restrict fb) {
     else {
         return -1;
     }
+
     return packet->packetlength;
 }
 
@@ -368,6 +369,14 @@ _process_packet (mp3info_t *info, mp3packet_t *packet, int64_t seek_to_sample) {
     return 0;
 }
 
+static int
+_packet_same_fmt (mp3packet_t *ref_packet, mp3packet_t *packet) {
+    return packet->layer == ref_packet->layer
+        && packet->nchannels == ref_packet->nchannels
+        && packet->samplerate == ref_packet->samplerate
+        && packet->ver == ref_packet->ver;
+}
+
 int
 mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int startoffs, int endoffs, int64_t seek_to_sample) {
     memset (info, 0, sizeof (mp3info_t));
@@ -440,7 +449,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
 
         while (remaining >= MAX_PACKET_LENGTH || (eof && remaining >= MIN_PACKET_LENGTH)) {
             int res = _parse_packet (&packet, bufptr);
-            if (res < 0) {
+            if (res < 0 || (info->npackets && !_packet_same_fmt (&info->ref_packet, &packet))) {
                 // bail if a valid packet could not be found at the start of stream
                 if (!info->valid_packets && offs - startoffs > MAX_INVALID_BYTES) {
                     goto error;
@@ -450,12 +459,11 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 memset (&info->prev_packet, 0, sizeof (mp3packet_t));
                 info->packet_offs = -1;
                 info->lastpacket_valid = 0;
-                if (info->pcmsample == 0) {
+                if (info->pcmsample == 0 && seek_to_sample != -1) {
                     info->valid_packets = 0;
                 }
 
                 offs++;
-
                 remaining--;
                 bufptr++;
                 continue;
