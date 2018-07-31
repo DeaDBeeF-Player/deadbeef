@@ -122,4 +122,23 @@
     XCTAssertEqual(info.pcmsample, 32256);
 }
 
+// the file contains garbage/invalid data around the middle of the file, with packet markers.
+// we still expect the parser to deal with it
+- (void)test_2secSquareWithGarbage_Reports88200SamplesLength {
+    mp3info_t info;
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/mp3parser/2sec-square-nolamehdr-garbage.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    int64_t fsize = vfs_fgetlength(fp);
+    int res = mp3_parse_file (&info, 0, fp, fsize, 0, 0, -1);
+    XCTAssert (!res);
+    XCTAssertEqual(info.have_xing_header, 0);
+    XCTAssertEqual(info.ref_packet.samplerate, 44100);
+    // lame adds default encoder delay and padding of 576 and 1080, even without header
+    XCTAssertEqual(info.totalsamples, 88200+576+1080);
+    XCTAssertEqual(info.pcmsample, 0);
+    XCTAssertEqual(info.delay, 529);
+    XCTAssertEqual(info.padding, 0);
+}
+
 @end
