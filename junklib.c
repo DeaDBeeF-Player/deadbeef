@@ -3074,11 +3074,11 @@ junk_id3v2_convert_apev2_to_24 (DB_apev2_tag_t *ape, DB_id3v2_tag_t *tag24) {
     };
 
     const char *comm_frames[] = {
-        "Comment", "Lyrics", "EAN/UPC", "ISBN", "Catalog", "LC", "Publicationright", "Record Location", "Related", "Abstract", "Bibliography", NULL
+        "Comment", "Unsynced lyrics", "EAN/UPC", "ISBN", "Catalog", "LC", "Publicationright", "Record Location", "Related", "Abstract", "Bibliography", NULL
     };
 
     // FIXME: additional frames: File->WOAF 
-    // converted to COMM: Comment, Lyrics //EAN/UPC, ISBN, Catalog, LC, Publicationright, Record Location, Related, Abstract, Bibliography
+    // converted to COMM: Comment, Unsynced Lyrics, EAN/UPC, ISBN, Catalog, LC, Publicationright, Record Location, Related, Abstract, Bibliography
     // "Debut album" is discarded
     // "Index" is discarded
     // "Introplay" is discarded
@@ -3113,7 +3113,7 @@ junk_id3v2_convert_apev2_to_24 (DB_apev2_tag_t *ape, DB_id3v2_tag_t *tag24) {
                     if (!strcasecmp (f_ape->key, "Comment")) {
                         junk_id3v2_add_comment_frame (tag24, "COMM", "eng", "", str);
                     }
-                    else if (!strcasecmp (f_ape->key, "Lyrics")) {
+                    else if (!strcasecmp (f_ape->key, "Unsynced Lyrics")) {
                         junk_id3v2_add_comment_frame (tag24, "USLT", "eng", "", str);
                     }
                     else {
@@ -3682,60 +3682,7 @@ junk_load_comm_frame (int version_major, const char *field_name, playItem_t *it,
     return 0;
 }
 
-int
-junk_load_uslt_frame (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
-    uint8_t enc = readptr[0];
-    char lang[4] = {readptr[1], readptr[2], readptr[3], 0};
-    trace ("USLT enc: %d\n", (int)enc);
-    trace ("USLT language: %s\n", lang);
-    trace ("USLT data size: %d\n", synched_size);
 
-    int outsize = 0;
-    char *descr = convstr_id3v2 (NULL, version_major, enc, readptr+4, synched_size-4, &outsize);
-    if (!descr) {
-        trace ("failed to decode USLT frame, probably wrong encoding (%d)\n", enc);
-        return -1;
-    }
-
-    trace ("USLT raw data: %s\n", descr);
-    // find value
-    char *value = descr;
-    while (*value && outsize-- > 0) {
-        value++;
-    }
-    if (*value != 0) {
-        trace ("failed to parse USLT frame, descr was \"%s\"\n", descr);
-        free (descr);
-        return -1;
-    }
-
-    *value = 0;
-    value++;
-
-    int len = strlen (descr) + strlen (value) + 3;
-    char lyrics[len];
-
-    if (*descr) {
-        snprintf (lyrics, len, "%s: %s", descr, value);
-    }
-    else {
-        strcpy (lyrics, value);
-    }
-
-    trace ("USLT combined: %s\n", lyrics);
-    // skip utf8 BOM (can be produced by iconv FEFF/FFFE)
-    int l = strlen (lyrics);
-    uint8_t bom[] = { 0xEF, 0xBB, 0xBF };
-    if (l >= 3 && !memcmp (lyrics, bom, 3)) {
-        pl_append_meta (it, "lyrics", lyrics+3);
-    }
-    else {
-        pl_append_meta (it, "lyrics", lyrics);
-    }
-
-    free (descr);
-    return 0;
-}
 /* Parse RVA2 tag */
 /* Currently only supports tags wich set master volume and are labeled "track"
  * or "album". Also only supports peak value if stored as 16 bits. */
@@ -4059,7 +4006,7 @@ junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, D
                 return -1;
             }
 
-            return junk_load_comm_frame (version_major, "lyrics", it, readptr, synched_size);
+            return junk_load_comm_frame (version_major, "UNSYNCED LYRICS", it, readptr, synched_size);
         }
         else if (it && !strcmp (frameid, "RVA2")) {
             if (synched_size < 5) {
@@ -4135,7 +4082,7 @@ junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, D
             if (synched_size < 6) {
                 return -1;
             }
-            return junk_load_comm_frame (version_major, "lyrics", it, readptr, synched_size);
+            return junk_load_comm_frame (version_major, "unsynced lyrics", it, readptr, synched_size);
         }
         else if (it && !strcmp (frameid, "TXX")) {
             if (synched_size < 2) {
@@ -4723,7 +4670,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             }
             // USLT
             junk_id3v2_remove_frames (&id3v2, "USLT");
-            val = pl_find_meta (it, "lyrics");
+            val = pl_find_meta (it, "unsynced lyrics");
             if (val && *val) {
                 junk_id3v2_add_comment_frame (&id3v2, "USLT", "eng", "", val);
             }
@@ -4764,6 +4711,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             }
             if (!frame_mapping[i]
                     && strcasecmp (meta->key, "comment")
+                    && strcasecmp (meta->key, "unsynced lyrics")
                     && strcasecmp (meta->key, "track")
                     && strcasecmp (meta->key, "numtracks")
                     && strcasecmp (meta->key, "disc")
