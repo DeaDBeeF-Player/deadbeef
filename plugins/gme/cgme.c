@@ -278,7 +278,7 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
         gme_set_fade(info->emu, -1, 0);
         info->fade_set = 0;
     }
-    else if (!playForever && !info->fade_set && conf_fadeout > 0 && info->duration >= conf_fadeout && info->reallength <= 0 && _info->readpos >= info->duration - conf_fadeout) {
+    else if (!playForever && !info->fade_set && conf_fadeout > 0 && info->duration >= conf_fadeout && _info->readpos >= info->duration - conf_fadeout) {
         gme_set_fade(info->emu, (int)(_info->readpos * 1000), conf_fadeout * 1000);
         info->fade_set = 1;
     }
@@ -438,6 +438,7 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                     deadbeef->plt_set_item_duration (plt, it, songlength);
                 }
                 else {
+                    inf->length += conf_fadeout*1000;
                     deadbeef->plt_set_item_duration (plt, it, (float)inf->length/1000.f);
                 }
                 const char *ext = fname + strlen (fname) - 1;
