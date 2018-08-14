@@ -54,11 +54,10 @@ static DB_functions_t *deadbeef;
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define BUFFERSIZE 100000
-
 typedef struct {
     DB_fileinfo_t info;
     FLAC__StreamDecoder *decoder;
+    int buffersize;
     char *buffer;
     int remaining; // bytes remaining in buffer from last read
     int64_t startsample;
@@ -134,7 +133,13 @@ cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *fra
 
     int channels = _info->fmt.channels;
     int samplesize = channels * _info->fmt.bps / 8;
-    int bufsize = BUFFERSIZE - info->remaining;
+    int bytesize = frame->header.blocksize * samplesize;
+    if (info->buffersize < bytesize) {
+        info->buffersize = bytesize;
+        info->buffer = realloc (info->buffer, bytesize);
+    }
+
+    int bufsize = info->buffersize - info->remaining;
     int bufsamples = bufsize / samplesize;
     int nsamples = min (bufsamples, frame->header.blocksize);
 
@@ -382,7 +387,8 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     deadbeef->pl_unlock ();
 
-    info->buffer = malloc (BUFFERSIZE);
+    info->buffersize = 100000;
+    info->buffer = malloc (info->buffersize);
     info->remaining = 0;
     int64_t endsample = deadbeef->pl_item_get_endsample (it);
     if (endsample > 0) {
@@ -446,6 +452,7 @@ cflac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
         }
     }
+
     int initsize = size;
     do {
         if (info->remaining) {
@@ -459,7 +466,7 @@ cflac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
             info->remaining -= sz;
             int n = sz / samplesize;
-            info->currentsample += sz / samplesize;
+            info->currentsample += n;
             _info->readpos += (float)n / _info->fmt.samplerate;
         }
         if (!size) {
