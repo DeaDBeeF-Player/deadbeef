@@ -2,7 +2,7 @@
 #include <malloc.h>
 #include <string.h>
 
-char *strndup(char *buff, size_t bufflen)
+char *strndup(const char *buff, size_t bufflen)
 {
     char *result = NULL;
 
