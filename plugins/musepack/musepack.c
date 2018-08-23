@@ -33,6 +33,7 @@
 #  include <config.h>
 #endif
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -105,8 +106,9 @@ musepack_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->reader.canseek = musepack_vfs_canseek;
 
     deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *fp = deadbeef->fopen (uri);
     if (!fp) {
         return -1;
     }
@@ -476,8 +478,9 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
 static int musepack_read_metadata (DB_playItem_t *it) {
     deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *fp = deadbeef->fopen (uri);
     if (!fp) {
         return -1;
     }

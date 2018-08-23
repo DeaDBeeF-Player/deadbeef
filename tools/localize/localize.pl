@@ -90,6 +90,7 @@ elsif ($c_source) {
             print C "// $l->{f}\n";
             $prev = $l->{f};
         }
+        print C "// xgettext:no-c-format\n";
         print C "_(\"$l->{msgid}\");\n";
     }
     close C;

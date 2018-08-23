@@ -1012,7 +1012,8 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
     }
     else if (TEST_RIGHT_CLICK(event)) {
         GtkWidget *menu = gtkui_create_pltmenu (tab_clicked);
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+        gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
     }
     else if (event->button == 2) {
         if (tab_clicked == -1) {

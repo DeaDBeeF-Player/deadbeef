@@ -4984,9 +4984,7 @@ error:
         free (buffer);
     }
     if (!err) {
-        pl_lock ();
         rename (tmppath, fname);
-        pl_unlock ();
     }
     else {
         unlink (tmppath);

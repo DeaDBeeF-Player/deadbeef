@@ -344,7 +344,7 @@ AS_IF([test "${have_iconv}" = "yes"], [
     AC_DEFINE(HAVE_LIBICONV,1,[Use libiconv instead of glibc iconv])
 ])
 
-AX_CHECK_COMPILER_FLAGS(-msse2, HAVE_SSE2=1, [])
+AX_CHECK_COMPILER_FLAGS(-msse2, HAVE_SSE2=1, [], -Werror)
 AS_IF([test "${HAVE_SSE2}"], [
     AC_DEFINE(HAVE_SSE2,1,[Support SSE2 instructions])
 ])
@@ -352,7 +352,7 @@ AS_IF([test "${HAVE_SSE2}"], [
 dnl curl lib
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_CURL=yes
-    CURL_LIBS="../../$LIB/lib/libcurl.a ../../$LIB/lib/libz.a -lssl -lcrypto -lrt"
+    CURL_LIBS="-lpthread -lrt ../../$LIB/lib/libcurl.a ../../$LIB/lib/libz.a"
     CURL_CFLAGS="-I../../$LIB/include"
     AC_SUBST(CURL_LIBS)
     AC_SUBST(CURL_CFLAGS)
@@ -511,10 +511,6 @@ dnl vfs_curl plugin
 AS_IF([test "${enable_vfs_curl}" != "no"], [
     AS_IF([test "${HAVE_CURL}" = "yes"], [
         HAVE_VFS_CURL=yes
-        VFS_CURL_LIBS="$CURL_LIBS"
-        AC_SUBST(VFS_CURL_LIBS)
-        VFS_CURL_CFLAGS="$CURL_CFLAGS"
-        AC_SUBST(VFS_CURL_CFLAGS)
     ])
 ])
 

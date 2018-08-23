@@ -31,6 +31,7 @@
 #include "internal/it.h"
 #include "modloader.h"
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -76,19 +77,17 @@ cdumb_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     trace ("cdumb_init %s\n", deadbeef->pl_find_meta (it, ":URI"));
     dumb_info_t *info = (dumb_info_t *)_info;
 
-	int is_dos, is_it, is_ptcompat;
-	deadbeef->pl_lock ();
-    {
-        const char *uri = deadbeef->pl_find_meta (it, ":URI");
-        const char *ext = uri + strlen (uri) - 1;
-        while (*ext != '.' && ext > uri) {
-            ext--;
-        }
-        ext++;
-        const char *ftype;
-        info->duh = g_open_module (uri, &is_it, &is_dos, &is_ptcompat, 0, &ftype);
-    }
+    int is_dos, is_it, is_ptcompat;
+    deadbeef->pl_lock ();
+    const char *uri = strdupa(deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    const char *ext = uri + strlen (uri) - 1;
+    while (*ext != '.' && ext > uri) {
+        ext--;
+    }
+    ext++;
+    const char *ftype;
+    info->duh = g_open_module (uri, &is_it, &is_dos, &is_ptcompat, 0, &ftype);
 
     dumb_it_do_initial_runthrough (info->duh);
 
@@ -327,12 +326,11 @@ cdumb_read_metadata (DB_playItem_t *it) {
     int is_ptcompat;
 
     deadbeef->pl_lock ();
-    {
-        const char *fname = deadbeef->pl_find_meta (it, ":URI");
-        const char *ftype;
-        duh = g_open_module(fname, &is_it, &is_dos, &is_ptcompat, 0, &ftype);
-    }
+    const char *fname = strdupa(deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    const char *ftype;
+    duh = g_open_module(fname, &is_it, &is_dos, &is_ptcompat, 0, &ftype);
+
     if (!duh) {
         unload_duh (duh);
         return -1;

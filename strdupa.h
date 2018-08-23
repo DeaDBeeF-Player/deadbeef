@@ -31,8 +31,8 @@
     ({									      \
       const char *old = (s);					      \
       size_t len = strlen (old) + 1;				      \
-      char *new = (char *) alloca (len);			      \
-      (char *) memcpy (new, old, len);				      \
+      char *newstr = (char *) alloca (len);			      \
+      (char *) memcpy (newstr, old, len);				      \
     })
 #endif
 

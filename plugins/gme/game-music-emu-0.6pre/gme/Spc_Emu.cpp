@@ -86,29 +86,41 @@ static void get_spc_xid6( byte const begin [], int size, track_info_t* out )
 			case 0x12: track = data;         break;
 			case 0x14: year = data;          break;
 			
-			//case 0x30: // intro length
-			// Many SPCs have intro length set wrong for looped tracks, making it useless
-			/*
 			case 0x30:
 				check( len == 4 );
 				if ( len >= 4 )
 				{
-					out->intro_length = get_le32( in ) / 64;
-					if ( out->length > 0 )
-					{
-						int loop = out->length - out->intro_length;
-						if ( loop >= 2000 )
-							out->loop_length = loop;
-					}
+					out->intro_length = get_le32( in );
+					if ( out->intro_length > 383999999 ) out->intro_length = 383999999;
+					out->intro_length /= 64;
 				}
 				break;
-			*/
-			
+			case 0x31:
+				check( len == 4 );
+				if ( len >= 4 )
+				{
+					out->loop_length = get_le32( in );
+					if ( out->loop_length > 383999999 ) out->loop_length = 383999999;
+					out->loop_length /= 64;
+				}
+				break;
+			case 0x32:
+				check( len == 4 );
+				if ( len >= 4 )
+				{
+					out->play_length = get_le32( in );
+					if ( out->play_length > 383999999 ) out->play_length = 383999999;
+					out->play_length /= 64;
+				}
+				break;
+
 			case 0x33:
 				check( len == 4 );
 				if ( len >= 4 )
 				{
-					out->fade_length = get_le32( in ) / 64;
+					out->fade_length = get_le32( in );
+					if (out->fade_length > 3839999) out->fade_length = 3839999;
+					out->fade_length /= 64;
 				}
 				break;
 			

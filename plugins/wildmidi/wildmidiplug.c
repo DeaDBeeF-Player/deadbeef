@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 #include "wildmidi_lib.h"
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
@@ -70,10 +71,11 @@ wmidi_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     wmidi_info_t *info = (wmidi_info_t *)_info;
 
     deadbeef->pl_lock ();
-    info->m = WildMidi_Open (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    info->m = WildMidi_Open (uri);
     if (!info->m) {
-        trace ("wmidi: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
+        trace ("wmidi: failed to open %s\n", uri);
         return -1;
     }
 

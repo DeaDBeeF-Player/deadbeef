@@ -655,12 +655,19 @@ save_resume_state (void) {
     DB_output_t *output = plug_get_output ();
     float playpos = -1;
     int playtrack = -1;
-    int playlist = streamer_get_current_playlist ();
+    int playlist = -1;
+    playlist_t *plt = pl_get_playlist (trk);
     int paused = (output->state () == OUTPUT_STATE_PAUSED);
-    if (trk && playlist >= 0) {
-        playtrack = str_get_idx_of (trk);
+    if (trk && plt) {
+        playlist = plt_get_idx_of(plt);
+        playtrack = plt_get_item_idx(plt, trk, PL_MAIN);
         playpos = streamer_get_playpos ();
         pl_item_unref (trk);
+    }
+
+    if (plt) {
+        plt_unref (plt);
+        plt = NULL;
     }
 
     conf_set_float ("resume.position", playpos);
@@ -805,6 +812,7 @@ restore_resume_state (void) {
         int paused = conf_get_int ("resume.paused", 0);
         trace ("resume: track %d pos %f playlist %d\n", track, pos, plt);
         if (plt >= 0 && track >= 0 && pos >= 0) {
+            plt_set_curr_idx(plt);
             streamer_set_current_playlist (plt);
             streamer_yield ();
             streamer_set_nextsong (track, paused);
@@ -1252,7 +1260,6 @@ main (int argc, char *argv[]) {
         exit (-1);
     }
     pl_load_all ();
-    plt_set_curr_idx (conf_get_int ("playlist.current", 0));
 
     // execute server commands in local context
     int noloadpl = 0;
@@ -1284,6 +1291,7 @@ main (int argc, char *argv[]) {
 
     if (!noloadpl) {
         restore_resume_state ();
+        plt_set_curr_idx (conf_get_int ("playlist.current", 0));
     }
 
     server_tid = thread_start (server_loop, NULL);

@@ -237,11 +237,12 @@ cvorbis_open2 (uint32_t hints, DB_playItem_t *it) {
     }
 
     deadbeef->pl_lock();
-    info->info.file = deadbeef->fopen(deadbeef->pl_find_meta (it, ":URI"));
-    if (!info->info.file) {
-        trace("cvorbis_open2 failed to open file %s\n", deadbeef->pl_find_meta(it, ":URI"));
-    }
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock();
+    info->info.file = deadbeef->fopen(uri);
+    if (!info->info.file) {
+        trace("cvorbis_open2 failed to open file %s\n", uri);
+    }
 
     return &info->info;
 }
@@ -255,10 +256,11 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     if (!info->info.file) {
         deadbeef->pl_lock ();
-        info->info.file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+	const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
         deadbeef->pl_unlock ();
+        info->info.file = deadbeef->fopen (uri);
         if (!info->info.file) {
-            trace ("cvorbis_init failed to open file %s\n", deadbeef->pl_find_meta (it, ":URI"));
+            trace ("cvorbis_init failed to open file %s\n", uri);
             return -1;
         }
     }
@@ -336,6 +338,7 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     deadbeef->pl_set_meta_int (it, ":CHANNELS", vi->channels);
     deadbeef->pl_set_meta_int (it, ":SAMPLERATE", (int)vi->rate);
     deadbeef->pl_replace_meta (it, "!FILETYPE", "Ogg Vorbis");
+    info->cur_bit_stream = -1;
 
     return 0;
 }
@@ -373,10 +376,14 @@ static void send_event(DB_playItem_t *it, const int event_enum)
 static bool
 new_streaming_link(ogg_info_t *info, const int new_link)
 {
-    trace ("Streaming link changed from %d to %d\n", info->cur_bit_stream, new_link);
-    deadbeef->pl_set_meta_int (info->it, ":TRACKNUM", new_link);
-    deadbeef->pl_set_item_flags (info->it, DDB_IS_SUBTRACK);
+    // Typically the files with multiple links are split into multiple tracks,
+    // and we don't want the file's properties to change while it's playing.
+    // However, we want this for network streams.
+    if (!info->info.file->vfs->is_streaming () || new_link < 0) {
+        return false;
+    }
 
+    trace ("Streaming link changed from %d to %d\n", info->cur_bit_stream, new_link);
     update_vorbis_comments (info->it, &info->vorbis_file, new_link);
     send_event (info->it, DB_EV_SONGSTARTED);
     send_event (info->it, DB_EV_TRACKINFOCHANGED);
@@ -430,10 +437,13 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
     /* Don't read past the end of a sub-track */
     int samples_to_read = bytes_to_read / sizeof(float) / _info->fmt.channels;
     if (deadbeef->pl_get_item_flags(info->it) & DDB_IS_SUBTRACK) {
-        const ogg_int64_t samples_left = deadbeef->pl_item_get_endsample (info->it) - ov_pcm_tell(&info->vorbis_file);
-        if (samples_left < samples_to_read) {
-            samples_to_read = (int)samples_left;
-            bytes_to_read = samples_to_read * sizeof(float) * _info->fmt.channels;
+        int64_t endsample = deadbeef->pl_item_get_endsample (info->it);
+        if (endsample >= 0) {
+            const ogg_int64_t samples_left = endsample - ov_pcm_tell(&info->vorbis_file);
+            if (samples_left < samples_to_read) {
+                samples_to_read = (int)samples_left;
+                bytes_to_read = samples_to_read * sizeof(float) * _info->fmt.channels;
+            }
         }
     }
 
@@ -455,14 +465,14 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
         if (ret < 0) {
             trace("cvorbis_read: ov_read returned %d\n", ret);
         }
+        else if (new_link != info->cur_bit_stream && new_streaming_link(info, new_link)) {
+            bytes_read = bytes_to_read;
+            break;
+        }
         else {
             bytes_read += ret;
         }
 
-        if (new_link != info->cur_bit_stream && new_streaming_link(info, new_link)) {
-            bytes_read = bytes_to_read;
-            break;
-        }
 //        trace("cvorbis_read got %d bytes towards %d bytes (%d bytes still required)\n", ret, bytes_to_read, bytes_to_read-bytes_read);
     }
 
@@ -479,6 +489,10 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
         if (ret < 0) {
             trace("cvorbis_read: ov_read returned %d\n", ret);
         }
+        else if (new_link != info->cur_bit_stream && new_streaming_link(info, new_link)) {
+            samples_read = samples_to_read;
+            break;
+        }
         else if (ret > 0) {
             float *ptr = (float *)buffer + samples_read*_info->fmt.channels;
             for (int channel = 0; channel < _info->fmt.channels; channel++, ptr++) {
@@ -488,11 +502,6 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
                 }
             }
             samples_read += ret;
-        }
-
-        if (new_link != info->cur_bit_stream && new_streaming_link(info, new_link)) {
-            samples_read = samples_to_read;
-            break;
         }
 
 //        trace("cvorbis_read got %d samples towards %d bytes (%d samples still required)\n", ret, bytes_to_read, samples_to_read-samples_read);
@@ -649,14 +658,15 @@ cvorbis_read_metadata (DB_playItem_t *it) {
     vorbis_info *vi = NULL;
 
     deadbeef->pl_lock ();
-    fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    fp = deadbeef->fopen (uri);
     if (!fp) {
-        trace ("cvorbis_read_metadata: failed to fopen %s\n", deadbeef->pl_find_meta (it, ":URI"));
+        trace ("cvorbis_read_metadata: failed to fopen %s\n", uri);
         return -1;
     }
     if (fp->vfs->is_streaming ()) {
-        trace ("cvorbis_read_metadata: failed to fopen %s\n", deadbeef->pl_find_meta (it, ":URI"));
+        trace ("cvorbis_read_metadata: failed to fopen %s\n", uri);
         return -1;
     }
     ov_callbacks ovcb = {
@@ -673,7 +683,7 @@ cvorbis_read_metadata (DB_playItem_t *it) {
     int tracknum = deadbeef->pl_find_meta_int (it, ":TRACKNUM", -1);
     vi = ov_info (&vorbis_file, tracknum);
     if (!vi) {
-        trace ("cvorbis_read_metadata: failed to ov_open %s\n", deadbeef->pl_find_meta (it, ":URI"));
+        trace ("cvorbis_read_metadata: failed to ov_open %s\n", uri);
         ov_clear (&vorbis_file);
         return -1;
     }
