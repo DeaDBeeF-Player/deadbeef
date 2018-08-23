@@ -5,7 +5,7 @@
 #include <errno.h>
 #include <dirent.h>
 #include <malloc.h>
-#include <windows.h>
+//#include <windows.h>
 #include <stdio.h>
 // min and max are defined in windows.h, but source files define them too
 // undefine them to avoid redefinition warnings
@@ -56,6 +56,8 @@
 #define  fnmatch(x,y,z) PathMatchSpec(y,x)
 #endif
 
+// used by plugin converter
+# define WEXITSTATUS(x) (x)
 
 // ?
 #include <pthread.h>
