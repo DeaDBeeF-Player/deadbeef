@@ -769,7 +769,8 @@ project "resources_windows"
         "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/Windows-10-Icons bin/%{cfg.buildcfg}/share/icons/ 2>>/dev/null ; cp -r $$i/share/themes/Windows-10 bin/%{cfg.buildcfg}/share/themes/ 2>>/dev/null ); done; true",
         -- Adwaita still needed for some icons
         "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/Adwaita bin/%{cfg.buildcfg}/share/icons/ 2>>/dev/null); done; true",
-        "echo \"output_plugin PortAudio output plugin\" > bin/%{cfg.buildcfg}/config/config"
+        "echo \"output_plugin PortAudio output plugin\" > bin/%{cfg.buildcfg}/config/config",
+        "echo \"gui_plugin GTK3\" >> bin/%{cfg.buildcfg}/config/config"
     }
 
 print_options()
