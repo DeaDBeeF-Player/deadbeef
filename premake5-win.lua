@@ -689,7 +689,7 @@ project "supereq_plugin"
    links { "m", "stdc++" }
 end
 
-if option ("plugni-mono2stereo") then
+if option ("plugin-mono2stereo") then
 project "mono2stereo_plugin"
    kind "SharedLib"
    language "C"
