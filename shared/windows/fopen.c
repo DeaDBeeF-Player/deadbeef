@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <dlfcn.h>
-#include "junk_iconv2.h"
+#include "utils.h"
 
 char dlopened = 0;
 void *dlhandle =0;
+// pointer to default fopen, dynamically loaded
 FILE *(*fopen_sys)(const char*, const char *);
 
 FILE * fopen (const char *filename, const char *mode) {
@@ -18,8 +19,8 @@ FILE * fopen (const char *filename, const char *mode) {
     // convert filename to wchar_t
     wchar_t filename_w[strlen(filename_c)*2+2];
     wchar_t mode_w[strlen(mode)*2+2];
-    int ret = junk_iconv2 (filename_c, strlen(filename_c)+1, (char *) filename_w, strlen(filename_c)*2+2, "UTF-8", "WCHAR_T");
-    int ret2 = junk_iconv2 (mode, strlen(mode)+1, (char *) mode_w, strlen(mode)*2+2, "UTF-8", "WCHAR_T");
+    int ret = win_charset_conv (filename_c, strlen(filename_c)+1, (char *) filename_w, strlen(filename_c)*2+2, "UTF-8", "WCHAR_T");
+    int ret2 = win_charset_conv (mode, strlen(mode)+1, (char *) mode_w, strlen(mode)*2+2, "UTF-8", "WCHAR_T");
     if (!dlopened) {
         dlhandle = dlopen ("msvcrt.dll", RTLD_LAZY);
         dlopened = 1;

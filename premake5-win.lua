@@ -53,15 +53,14 @@ project "libwin"
    language "C"
    targetdir "bin/%{cfg.buildcfg}/"
    files {
-       "shared/windows/mingw32_layer.h",
        "shared/windows/fopen.c",
-       "shared/windows/junk_iconv2.c",
-       "shared/windows/path_short.c",
+       "shared/windows/mingw32_layer.h",
+       "shared/windows/rename.c",
        "shared/windows/scandir.c",
        "shared/windows/stat.c",
        "shared/windows/strcasestr.c",
        "shared/windows/strndup.c",
-       "shared/windows/rename.c"
+       "shared/windows/utils.c"
    }
    links {"dl"}
    removelinks {"libwin"}
