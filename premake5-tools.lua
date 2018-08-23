@@ -139,7 +139,9 @@ function option (name, ...)
 		    -- for each package
 		    for i, v in ipairs(parts) do
 		    	if pkgconfig_check (v) == nil then
-			   		print("\27[93m" .. "pkg-config did not found package " .. v .. " required by " ..  name .. "\27[39m")
+					if #{...} == 1 then
+						print("\27[93m" .. "pkg-config did not found package " .. v .. " required by " ..  name .. "\27[39m")
+					end
 			   		set = 0
 			   		table.insert (options_pkgs_missing, v)
 			   		a[v] = false
