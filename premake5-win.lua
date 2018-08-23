@@ -768,6 +768,8 @@ project "resources_windows"
         "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/hicolor bin/%{cfg.buildcfg}/share/icons/ ; cp -r $$i/share/glib-2.0 bin/%{cfg.buildcfg}/share/ ); done; true",
         -- Windows-10 theme and icons can be obtained from https://github.com/B00merang-Project/Windows-10 and https://github.com/B00merang-Project/Windows-10-Icons)
         "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/Windows-10-Icons bin/%{cfg.buildcfg}/share/icons/ 2>>/dev/null ; cp -r $$i/share/themes/Windows-10 bin/%{cfg.buildcfg}/share/themes/ 2>>/dev/null ); done; true",
+        -- Adwaita still needed for some icons
+        "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/Adwaita bin/%{cfg.buildcfg}/share/icons/ 2>>/dev/null); done; true",
         "echo \"output_plugin PortAudio output plugin\" > bin/%{cfg.buildcfg}/config/config"
     }
 
