@@ -3,7 +3,7 @@
 #include <string.h>
 #include <windows.h>
 #include <stdio.h>
-#include "junk_iconv2.h"
+#include "utils.h"
 
 #define DIRENT_CHUNK 64
 // TODO: no selector or cmp support
@@ -29,7 +29,7 @@ int scandir (const char      *dirname_o,
     // convert dirname to wchar
     int dirname_w_len = strlen(dirname) * 2 + 8;
     wchar_t dirname_w[dirname_w_len];
-    int iconv_ret = junk_iconv2 (dirname, strlen(dirname) + 1, (char *) dirname_w, dirname_w_len, "UTF-8", "WCHAR_T");
+    int iconv_ret = win_charset_conv (dirname, strlen(dirname) + 1, (char *) dirname_w, dirname_w_len, "UTF-8", "WCHAR_T");
     wcscat (dirname_w,L"\\*.*");
     // FindFirstFileW: P:\ATH\*.*
 
@@ -58,7 +58,7 @@ int scandir (const char      *dirname_o,
                     size_t len_l = (wcslen (fData.cFileName) + 1) * 2; // 16-bit => 2-byte
                     size_t len_r = len_l * 2;
                     char string_tmp[len_r];
-                    int ret = junk_iconv2 ((char *) fData.cFileName, len_l, string_tmp, len_r, "WCHAR_T", "UTF-8");
+                    int ret = win_charset_conv ((char *) fData.cFileName, len_l, string_tmp, len_r, "WCHAR_T", "UTF-8");
                     if (ret == -1) {
                         // failed to UTF-8-fy string, abort entry
                         free (tmp);
