@@ -40,7 +40,7 @@ filter "system:Windows"
   buildoptions { "-include shared/windows/mingw32_layer.h", "-fno-builtin"}
   includedirs { "shared/windows/include", "/mingw64/include/opus" }
   libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
-  defines { "USE_STDIO", "HAVE_ICONV", "_POSIX_C_SOURCE" }
+  defines { "USE_STDIO", "HAVE_ICONV", "_POSIX_C_SOURCE", "_GNU_SOURCE" }
 
   if nls() then
     links {"intl"}
@@ -59,8 +59,8 @@ project "libwin"
        "shared/windows/path_short.c",
        "shared/windows/scandir.c",
        "shared/windows/stat.c",
-       "shared/windows/strcasestr.c",
-       "shared/windows/strndup.c",
+       --"shared/windows/strcasestr.c",
+       --"shared/windows/strndup.c",
        "shared/windows/rename.c"
    }
    links {"dl"}

@@ -71,8 +71,8 @@ typedef pthread_cond_t  *db_cond_t;
 int scandir (const char *__dir, struct dirent ***__namelist, int (*__selector) (const struct dirent *), int (*__cmp) (const struct dirent **, const struct dirent **));
 void *mmap(void *, size_t, int, int, int, off_t);
 int munmap(void *, size_t);
-char *strndup(char *, size_t);
-char *strcasestr(const char *, const char *);
+//char *strndup(char *, size_t);
+//char *strcasestr(const char *, const char *);
 
 int rename_windows(const char *, const char *);
 int junk_iconv2 (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out);
