@@ -754,6 +754,8 @@ project "resources_windows"
         --"rm  bin/%{cfg.buildcfg}/libwin.lib | true",
         "ldd bin/%{cfg.buildcfg}/plugins/*.dll bin/%{cfg.buildcfg}/deadbeef.exe | awk \'NF == 4 {print $$3}; NF == 2 {print $$1}\' | grep -i -v \"???\" | grep -i -v \"System32\" | grep -i -v \"WinSxS\" |sort -u | tr \'\\r\\n\' \' \'> .libraries.tmp",
         "{COPY} `cat .libraries.tmp` bin/%{cfg.buildcfg}/ | true",
+        -- gdk_pixbuf libs
+        "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/lib/gdk-pixbuf-2.0 bin/%{cfg.buildcfg}/lib/gdk-pixbuf-2.0 2>>/dev/null); done; true",
         -- gtk2 theme
         "{MKDIR} bin/%{cfg.buildcfg}/lib/gtk-2.0/2.10.0/engines",
         "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/themes/MS-Windows bin/%{cfg.buildcfg}/share/themes/ 2>>/dev/null ; cp $$i/lib/gtk-2.0/2.10.0/engines/libwimp.dll bin/%{cfg.buildcfg}/lib/gtk-2.0/2.10.0/engines 2>>/dev/null ); done; true",
