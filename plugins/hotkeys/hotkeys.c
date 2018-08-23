@@ -25,12 +25,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-// windows hack: compile like for macos to omit all X references, so that local hotkeys work
-// note: no global hotkeys, reset deadbeef to apply new hotkeys
-#ifdef __MINGW32__
-#define __APPLE__
+#if defined(__MINGW32__) || defined(__APPLE__)
+#define NO_XLIB_H
 #endif
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
 #include <X11/Xlib.h>
 #endif
 #include <ctype.h>
@@ -49,7 +47,7 @@
 static DB_hotkeys_plugin_t plugin;
 DB_functions_t *deadbeef;
 
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
 static int finished;
 static Display *disp;
 static intptr_t loop_tid;
@@ -61,7 +59,7 @@ static int need_reset = 0;
 typedef struct {
     const char *name;
     int keysym;
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
     int keycode; // after mapping
 #endif
 } xkey_t;
@@ -74,7 +72,7 @@ static xkey_t keys[] = {
 
 typedef struct command_s {
     int keycode;
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
     int x11_keycode;
 #endif
     int modifier;
@@ -86,7 +84,7 @@ typedef struct command_s {
 static command_t commands [MAX_COMMAND_COUNT];
 static int command_count = 0;
 
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
 static void
 init_mapped_keycodes (Display *disp, Atom *syms, int first_kk, int last_kk, int ks_per_kk) {
     int i, ks;
@@ -232,7 +230,7 @@ find_action_by_name (const char *command) {
     return actions;
 }
 
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
 static int
 get_x11_keycode (const char *name, Atom *syms, int first_kk, int last_kk, int ks_per_kk) {
     int i, ks;
@@ -354,7 +352,7 @@ read_config (void) {
                 else {
                     // lookup name table
                     cmd_entry->keycode = get_keycode (p);
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
                     cmd_entry->x11_keycode = get_x11_keycode (p, syms, first_kk, last_kk, ks_per_kk);
                     trace ("%s: kc=%d, xkc=%d\n", p, cmd_entry->keycode, cmd_entry->x11_keycode);
 #endif
@@ -378,7 +376,7 @@ read_config (void) {
 out:
         item = deadbeef->conf_find ("hotkey.", item);
     }
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
     XFree (syms);
     int i;
     // need to grab it here to prevent gdk_x_error from being called while we're
@@ -419,7 +417,7 @@ hotkeys_load (DB_functions_t *api) {
 static void
 cleanup () {
     command_count = 0;
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
     if (disp) {
         XCloseDisplay (disp);
         disp = NULL;
@@ -427,7 +425,7 @@ cleanup () {
 #endif
 }
 
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
 static int
 x_err_handler (Display *d, XErrorEvent *evt) {
 #if 0
@@ -507,7 +505,7 @@ hotkeys_event_loop (void *unused) {
 
 static int
 hotkeys_connect (void) {
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
     finished = 0;
     loop_tid = 0;
     disp = XOpenDisplay (NULL);
@@ -537,7 +535,7 @@ hotkeys_connect (void) {
 
 static int
 hotkeys_disconnect (void) {
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
     if (loop_tid) {
         finished = 1;
         deadbeef->thread_join (loop_tid);
@@ -584,7 +582,7 @@ hotkeys_get_action_for_keycombo (int key, int mods, int isglobal, int *ctx) {
 
 void
 hotkeys_reset (void) {
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
     need_reset = 1;
     trace ("hotkeys: reset flagged\n");
 #endif
