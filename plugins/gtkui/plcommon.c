@@ -646,7 +646,7 @@ find_popup (GtkWidget *widget)
 
 static DdbListview *
 get_context_menu_listview (GtkMenuItem *menuitem) {
-    return DDB_LISTVIEW (g_object_get_data (G_OBJECT (gtk_widget_get_parent (GTK_WIDGET (menuitem))), "ps"));
+    return DDB_LISTVIEW (g_object_get_data (G_OBJECT (find_popup (GTK_WIDGET (menuitem))), "ps"));
 }
 
 static int
@@ -1896,8 +1896,7 @@ pl_common_header_context_menu (DdbListview *ps, int column) {
     g_object_set_data (G_OBJECT (menu), "ps", ps);
     g_object_set_data (G_OBJECT (menu), "column", GINT_TO_POINTER (column));
 
-    gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (ps), NULL);
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 3, gtk_get_current_event_time());
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
 }
 
 void
