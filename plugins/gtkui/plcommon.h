@@ -77,7 +77,7 @@ void
 pl_common_free_col_info (void *data);
 
 int
-pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int size);
+pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int size, int index);
 
 void
 pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height);

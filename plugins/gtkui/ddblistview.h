@@ -54,6 +54,7 @@ typedef void * DdbPlaylistHandle;
 
 struct _DdbListviewGroup {
     DdbListviewIter head;
+    struct _DdbListviewGroup *subgroups;
     int32_t height;
     int32_t num_items;
     int pinned;
@@ -86,7 +87,7 @@ typedef struct {
     void (*select) (DdbListviewIter, int sel);
     int (*is_selected) (DdbListviewIter);
 
-    int (*get_group) (DdbListview *listview, DdbListviewIter it, char *str, int size);
+    int (*get_group) (DdbListview *listview, DdbListviewIter it, char *str, int size, int index);
 
     void (*drag_n_drop) (DdbListviewIter before, DdbPlaylistHandle playlist_from, uint32_t *indices, int length, int copy);
     void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
@@ -117,6 +118,17 @@ typedef struct {
 
 struct _DdbListviewColumn;
 struct _DdbListviewGroup;
+
+struct _DdbListviewGroupFormats {
+    // group format string that's supposed to get parsed by tf
+    char *group_format;
+    // tf bytecode for group title
+    char *group_title_bytecode;
+
+    struct _DdbListviewGroupFormats *next;
+};
+
+typedef struct _DdbListviewGroupFormats DdbListviewGroupFormats;
 
 struct _DdbListview {
     GtkTable parent;
@@ -195,10 +207,7 @@ struct _DdbListview {
     drawctx_t grpctx;
     drawctx_t hdrctx;
 
-    // group format string that's supposed to get parsed by tf
-    char *group_format;
-    // tf bytecode for group title
-    char *group_title_bytecode;
+    DdbListviewGroupFormats *group_formats;
 
     guint tf_redraw_timeout_id;
     int tf_redraw_track_idx;

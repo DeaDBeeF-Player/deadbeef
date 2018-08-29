@@ -543,13 +543,13 @@ ddb_listview_destroy(GObject *object)
         gdk_cursor_unref (listview->cursor_drag);
         listview->cursor_drag = NULL;
     }
-    if (listview->group_format) {
-        free (listview->group_format);
-        listview->group_format = NULL;
-    }
-    if (listview->group_title_bytecode) {
-        free (listview->group_title_bytecode);
-        listview->group_title_bytecode = NULL;
+    DdbListviewGroupFormats *fmt = listview->group_formats;
+    while (fmt) {
+        DdbListviewGroupFormats *next_fmt = fmt->next;
+        free (fmt->group_format);
+        free (fmt->group_title_bytecode);
+        free (fmt);
+        fmt = fmt->next;
     }
     ddb_listview_cancel_autoredraw (listview);
 
@@ -3245,7 +3245,13 @@ ddb_listview_min_group_height(DdbListviewColumn *columns) {
 }
 
 static DdbListviewGroup *
-new_group (DdbListview *listview, DdbListviewIter it) {
+new_subgroup (DdbListview *listview) {
+    DdbListviewGroup *grp = calloc(1, sizeof(DdbListviewGroup));
+    return grp;
+}
+
+static DdbListviewGroup *
+new_subgroup_bottom (DdbListview *listview, DdbListviewIter it) {
     listview->binding->ref(it);
     DdbListviewGroup *grp = calloc(1, sizeof(DdbListviewGroup));
     grp->head = it;
@@ -3271,28 +3277,90 @@ build_groups (DdbListview *listview) {
     if (!it) {
         return 0;
     }
-    if (!listview->group_format || !listview->group_format[0]) {
+    if (/*!listview->group_formats || */!listview->group_formats->group_format || !listview->group_formats->group_format[0]) {
         listview->grouptitle_height = 0;
     }
     else {
         listview->grouptitle_height = listview->calculated_grouptitle_height;
     }
-    listview->groups = new_group(listview, it);
+    int group_depth = 1;
+    DdbListviewGroupFormats *fmt = listview->group_formats;
+    while (fmt->next) {
+        group_depth++;
+        fmt = fmt->next;
+    }
+    listview->groups = new_subgroup(listview);
+    DdbListviewGroup *grps = listview->groups;
+    for (int i = 1; i < group_depth; i++) {
+        grps->subgroups = new_subgroup(listview);
+        grps = grps->subgroups;
+    }
     int min_height = ddb_listview_min_group_height(listview->columns);
     int full_height = 0;
-    for (DdbListviewGroup *grp = listview->groups; grp; grp = grp->next) {
-        char group_title[1024];
-        char next_title[1024];
-        listview->binding->get_group(listview, it, group_title, sizeof(group_title));
-        do {
-            grp->num_items++;
-            it = next_playitem(listview, it);
-            if (listview->grouptitle_height) {
-                listview->binding->get_group(listview, it, next_title, sizeof(next_title));
+    // groups
+    if (listview->grouptitle_height) {
+        DdbListviewGroup **last_group = malloc(sizeof(DdbListviewGroup *) * group_depth);
+        char (*group_titles)[1024] = malloc(sizeof(char[1024]) * group_depth);
+        DdbListviewGroup *grp = listview->groups;
+        // populate all subgroups from the first item
+        for (int i = 0; i < group_depth; i++) {
+            last_group[i] = grp;
+            grp = grp->subgroups;
+            listview->binding->get_group(listview, it, group_titles[i], sizeof(*group_titles), i);
+        }
+        listview->binding->ref(it);
+        last_group[group_depth-1]->head = it;
+        last_group[group_depth-1]->num_items++;
+        it = next_playitem(listview, it);
+        while (it) {
+            int new_group = 0;
+            for (int i = 0; i < group_depth; i++) {
+                char next_title[1024];
+                listview->binding->get_group(listview, it, next_title, sizeof(next_title), i);
+                if (new_group) {
+                    full_height += calc_group_height (listview, last_group[i], min_height, 1);
+                    last_group[i] = it ? new_subgroup(listview) : NULL;
+                    strcpy (group_titles[i], next_title);
+                }
+                else {
+                    if (strcmp(group_titles[i], next_title)) {
+                        full_height += calc_group_height (listview, last_group[i], min_height, !(it > 0));
+                        last_group[i] = it ? new_subgroup(listview) : NULL;
+                        strcpy (group_titles[i], next_title);
+                        new_group = 1;
+                        if (i == group_depth-1) {
+                            listview->binding->ref(it);
+                            last_group[i]->head = it;
+                        }
+                    }
+                }
+                if (i == group_depth-1) {
+                    if (!last_group[i]->num_items) {
+                        listview->binding->ref(it);
+                        last_group[i]->head = it;
+                    }
+                    last_group[i]->num_items++;
+                }
             }
-        } while (it && ((!listview->grouptitle_height && grp->num_items < BLANK_GROUP_SUBDIVISION) || (listview->grouptitle_height && !strcmp(group_title, next_title))));
-        full_height += calc_group_height (listview, grp, min_height, !(it > 0));
-        grp->next = it ? new_group(listview, it) : NULL;
+            it = next_playitem(listview, it);
+        }
+        free(last_group);
+        free(group_titles);
+    }
+    // no groups
+    else {
+        for (DdbListviewGroup *grp = listview->groups; grp; grp = grp->next) {
+            do {
+                grp->num_items++;
+                it = next_playitem(listview, it);
+            } while (it && grp->num_items < BLANK_GROUP_SUBDIVISION);
+            full_height += calc_group_height (listview, grp, min_height, !(it > 0));
+            if (it) {
+                grp->next = new_subgroup(listview);
+                listview->binding->ref(it);
+                grp->next->head = it;
+            }
+        }
     }
     return full_height;
 }
