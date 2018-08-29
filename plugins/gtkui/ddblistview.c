@@ -3325,7 +3325,8 @@ build_groups (DdbListview *listview) {
                 else {
                     if (strcmp(group_titles[i], next_title)) {
                         full_height += calc_group_height (listview, last_group[i], min_height, !(it > 0));
-                        last_group[i] = it ? new_subgroup(listview) : NULL;
+                        last_group[i]->next = it ? new_subgroup(listview) : NULL;
+                        last_group[i] = last_group[i]->next;
                         strcpy (group_titles[i], next_title);
                         new_group = 1;
                         if (i == group_depth-1) {
@@ -3344,6 +3345,11 @@ build_groups (DdbListview *listview) {
             }
             it = next_playitem(listview, it);
         }
+        // calculate final group heights
+        for (int i = group_depth - 1; i >= 0; i--) {
+            full_height += calc_group_height (listview, last_group[i], min_height, 1);
+        }
+
         free(last_group);
         free(group_titles);
     }
