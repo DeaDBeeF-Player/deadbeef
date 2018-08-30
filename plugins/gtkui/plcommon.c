@@ -1295,7 +1295,7 @@ groups_changed (DdbListview *listview, const char *format)
 
     // TODO: unhardcode these when done testing
     DdbListviewGroupFormats *subgroup = calloc(sizeof(DdbListviewGroupFormats), 1);
-    subgroup->group_format = strdup ("$ifgreater(%discnumber%,1,$if2(%discsubtitle%,Disc %discnumber%),)");
+    subgroup->group_format = strdup ("$ifgreater(%totaldiscs%,1,$if2(%discsubtitle%,Disc %discnumber%),)");
     subgroup->group_title_bytecode = deadbeef->tf_compile (subgroup->group_format);
     listview->group_formats->next = subgroup;
 
@@ -2051,7 +2051,7 @@ pl_common_set_group_format (DdbListview *listview, char *format_conf) {
 
     // TODO: unhardcode these when done testing
     DdbListviewGroupFormats *subgroup = calloc(sizeof(DdbListviewGroupFormats), 0);
-    subgroup->group_format = strdup ("$ifgreater(%discnumber%,1,$if2(%discsubtitle%,Disc %discnumber%),)");
+    subgroup->group_format = strdup ("$ifgreater(%totaldiscs%,1,$if2(%discsubtitle%,Disc %discnumber%),)");
     subgroup->group_title_bytecode = deadbeef->tf_compile (subgroup->group_format);
     listview->group_formats->next = subgroup;
 }

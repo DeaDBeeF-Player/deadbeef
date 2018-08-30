@@ -107,7 +107,9 @@ ddb_listview_build_groups (DdbListview *listview);
 static void
 ddb_listview_resize_groups (DdbListview *listview);
 static void
-ddb_listview_free_groups (DdbListview *listview);
+ddb_listview_free_group (DdbListview *listview, DdbListviewGroup *group);
+static void
+ddb_listview_free_all_groups (DdbListview *listview);
 
 static void
 ddb_listview_update_fonts (DdbListview *ps);
@@ -527,7 +529,7 @@ ddb_listview_destroy(GObject *object)
 
     listview = DDB_LISTVIEW(object);
 
-    ddb_listview_free_groups (listview);
+    ddb_listview_free_all_groups (listview);
 
     while (listview->columns) {
         DdbListviewColumn *next = listview->columns->next;
@@ -865,7 +867,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
     deadbeef->pl_lock ();
     ddb_listview_groupcheck (listview);
     int scrollx = -listview->hscrollpos;
-    int title_height = listview->grouptitle_height;
     int row_height = listview->rowheight;
     int total_width = listview->totalwidth;
     int cursor_index = listview->binding->cursor();
@@ -874,36 +875,67 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
     draw_begin (&listview->grpctx, cr);
     fill_list_background(listview, cr, clip->x, clip->y, clip->width, clip->height, clip);
 
-    // find 1st group
+    int group_depth = 1;
+    DdbListviewGroupFormats *fmt = listview->group_formats;
+    while (fmt->next) {
+        group_depth++;
+        fmt = fmt->next;
+    }
+
+    // find 1st group/subgroup
+    DdbListviewGroup **grps = alloca(sizeof(DdbListviewGroup *) * group_depth);
     DdbListviewGroup *grp = listview->groups;
     int idx = 0;
-    int grp_y = -listview->scrollpos;
-    while (grp && grp_y + grp->height < clip->y) {
-        grp_y += grp->height;
-        idx += grp->num_items;
-        grp = grp->next;
+    int grp_current_y = -listview->scrollpos;
+    int grp_y;
+    for (int i = 0; i < group_depth; i++) {
+        while (grp && grp_current_y + grp->height < clip->y) {
+            grp_current_y += grp->height;
+            idx += grp->num_items;
+            grp = grp->next;
+        }
+        if (i == 0) {
+            grp_y = grp_current_y;
+        }
+        if (grp->group_label_visible && group_depth >= 1) {
+            grp_current_y += listview->grouptitle_height;
+        }
+        grps[i] = grp;
+        grp = grp->subgroups;
     }
-    DdbListviewGroup *pin_grp = gtkui_groups_pinned && grp && grp_y < 0 && grp_y + grp->height >= 0 ? grp : NULL;
+    grp = grps[0];
+    // TODO: implement drawing pinned groups
+    // DdbListviewGroup *pin_grp = gtkui_groups_pinned && grp && grp_y < 0 && grp_y + grp->height >= 0 ? grp : NULL;
+    DdbListviewGroup *pin_grp = NULL;
+    int current_group_depth = 0;
 
     while (grp && grp_y < clip->y + clip->height) {
-        int grp_height = title_height + grp->num_items * row_height;
+        int title_height = 0;
+        if (grp->group_label_visible) {
+            title_height = listview->grouptitle_height;
+        }
 
-        DdbListviewIter it = grp->head;
-        listview->binding->ref(it);
-        for (int i = 0, yy = grp_y + title_height; it && i < grp->num_items && yy < clip->y + clip->height; i++, yy += row_height) {
-            if (yy + row_height >= clip->y) {
-                ddb_listview_list_render_row_background(listview, cr, it, i & 1, idx+i == cursor_index, scrollx, yy, total_width, row_height, clip);
-                ddb_listview_list_render_row_foreground(listview, cr, it, i & 1, idx+i, yy, total_width, row_height, clip->x, clip->x+clip->width);
+        // only render list items when at the lowest group level
+        if (current_group_depth == group_depth - 1) {
+            DdbListviewIter it = grp->head;
+            listview->binding->ref(it);
+            for (int i = 0, yy = grp_y + title_height; it && i < grp->num_items && yy < clip->y + clip->height; i++, yy += row_height) {
+                if (yy + row_height >= clip->y) {
+                    ddb_listview_list_render_row_background(listview, cr, it, i & 1, idx+i == cursor_index, scrollx, yy, total_width, row_height, clip);
+                    ddb_listview_list_render_row_foreground(listview, cr, it, i & 1, idx+i, yy, total_width, row_height, clip->x, clip->x+clip->width);
+                }
+                it = next_playitem(listview, it);
             }
-            it = next_playitem(listview, it);
-        }
-        if (it) {
-            listview->binding->unref(it);
+            if (it) {
+                listview->binding->unref(it);
+            }
         }
 
-        // draw album art
         int grp_next_y = grp_y + grp->height;
-        ddb_listview_list_render_album_art(listview, cr, grp, pin_grp == grp, grp_next_y, grp_y + title_height, clip);
+        if (current_group_depth == 0) {
+            // draw album art
+            ddb_listview_list_render_album_art(listview, cr, grp, pin_grp == grp, grp_next_y, grp_y + title_height, clip);
+        }
 
         if (pin_grp == grp && clip->y <= title_height) {
             // draw pinned group title
@@ -919,9 +951,26 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
             }
         }
 
-        idx += grp->num_items;
-        grp_y += grp->height;
-        grp = grp->next;
+        if (current_group_depth != group_depth - 1) {
+            grp_y += title_height;
+            current_group_depth++;
+            grp = grps[current_group_depth];
+        }
+        else {
+            idx += grp->num_items;
+            grp_y += grp->height;
+            grp = grp->next;
+
+            while (!grp && current_group_depth > 0) {
+                current_group_depth--;
+                grps[current_group_depth] = grps[current_group_depth]->next;
+                grp = grps[current_group_depth];
+            }
+
+            for (int i = current_group_depth + 1; grp && i < group_depth; i++) {
+                grps[i] = grps[i - 1]->subgroups;
+            }
+        }
     }
 
     deadbeef->pl_unlock ();
@@ -3214,16 +3263,23 @@ ddb_listview_invalidate_album_art_columns (DdbListview *listview) {
 
 /////// grouping /////
 static void
-ddb_listview_free_groups (DdbListview *listview) {
-    DdbListviewGroup *next;
-    while (listview->groups) {
-        next = listview->groups->next;
-        if (listview->groups->head) {
-            listview->binding->unref (listview->groups->head);
+ddb_listview_free_group (DdbListview *listview, DdbListviewGroup *group) {
+    while (group) {
+        if (group->subgroups) {
+            ddb_listview_free_group(listview, group->subgroups);
         }
-        free (listview->groups);
-        listview->groups = next;
+        DdbListviewGroup *next = group->next;
+        if (group->head) {
+            listview->binding->unref (group->head);
+        }
+        free (group);
+        group = next;
     }
+}
+
+static void
+ddb_listview_free_all_groups (DdbListview *listview) {
+    ddb_listview_free_group(listview, listview->groups);
     if (listview->plt) {
         deadbeef->plt_unref (listview->plt);
         listview->plt = NULL;
@@ -3245,22 +3301,35 @@ ddb_listview_min_group_height(DdbListviewColumn *columns) {
 }
 
 static DdbListviewGroup *
-new_subgroup (DdbListview *listview) {
-    DdbListviewGroup *grp = calloc(1, sizeof(DdbListviewGroup));
-    return grp;
-}
-
-static DdbListviewGroup *
-new_subgroup_bottom (DdbListview *listview, DdbListviewIter it) {
+new_group (DdbListview *listview, DdbListviewIter it, int group_label_visible) {
     listview->binding->ref(it);
     DdbListviewGroup *grp = calloc(1, sizeof(DdbListviewGroup));
     grp->head = it;
+    grp->group_label_visible = group_label_visible;
     return grp;
 }
 
 static int
+calc_subgroup_visible_titles(DdbListviewGroup *grp) {
+    int count = 0;
+    DdbListviewGroup *next = grp;
+    while (next) {
+        if (next->subgroups) {
+            count += calc_subgroup_visible_titles(next->subgroups);
+        }
+        if (next->group_label_visible) {
+            count++;
+        }
+        next = next->next;
+    }
+    return count;
+}
+
+static int
 calc_group_height(DdbListview *listview, DdbListviewGroup *grp, int min_height, int is_last) {
-    grp->height = listview->grouptitle_height + max(grp->num_items * listview->rowheight, min_height);
+    // if we have subgroups, account for their headers
+    grp->height = max(grp->num_items * listview->rowheight, min_height);
+    grp->height += calc_subgroup_visible_titles(grp) * listview->grouptitle_height;
     if (!is_last) {
         grp->height += gtkui_groups_spacing;
     }
@@ -3270,7 +3339,7 @@ calc_group_height(DdbListview *listview, DdbListviewGroup *grp, int min_height, 
 static int
 build_groups (DdbListview *listview) {
     listview->groups_build_idx = listview->binding->modification_idx();
-    ddb_listview_free_groups(listview);
+    ddb_listview_free_all_groups(listview);
     listview->plt = deadbeef->plt_get_curr();
 
     DdbListviewIter it = listview->binding->head();
@@ -3289,69 +3358,70 @@ build_groups (DdbListview *listview) {
         group_depth++;
         fmt = fmt->next;
     }
-    listview->groups = new_subgroup(listview);
+    listview->groups = new_group(listview, it, 0);
     DdbListviewGroup *grps = listview->groups;
     for (int i = 1; i < group_depth; i++) {
-        grps->subgroups = new_subgroup(listview);
+        grps->subgroups = new_group(listview, it, 0);
         grps = grps->subgroups;
     }
     int min_height = ddb_listview_min_group_height(listview->columns);
     int full_height = 0;
     // groups
     if (listview->grouptitle_height) {
-        DdbListviewGroup **last_group = malloc(sizeof(DdbListviewGroup *) * group_depth);
-        char (*group_titles)[1024] = malloc(sizeof(char[1024]) * group_depth);
+        DdbListviewGroup **last_group = alloca(sizeof(DdbListviewGroup *) * group_depth);
+        char (*group_titles)[1024] = alloca(sizeof(char[1024]) * group_depth);
         DdbListviewGroup *grp = listview->groups;
         // populate all subgroups from the first item
         for (int i = 0; i < group_depth; i++) {
             last_group[i] = grp;
             grp = grp->subgroups;
             listview->binding->get_group(listview, it, group_titles[i], sizeof(*group_titles), i);
+            last_group[i]->group_label_visible = group_titles[i][0] != 0;
         }
-        listview->binding->ref(it);
-        last_group[group_depth-1]->head = it;
-        last_group[group_depth-1]->num_items++;
         it = next_playitem(listview, it);
         while (it) {
-            int new_group = 0;
+            int make_new_group = 0;
             for (int i = 0; i < group_depth; i++) {
                 char next_title[1024];
+                last_group[i]->num_items++;
                 listview->binding->get_group(listview, it, next_title, sizeof(next_title), i);
-                if (new_group) {
-                    full_height += calc_group_height (listview, last_group[i], min_height, 1);
-                    last_group[i] = it ? new_subgroup(listview) : NULL;
+                if (make_new_group) {
+                    calc_group_height (listview, last_group[i], min_height, 1);
+                    last_group[i] = it ? new_group(listview, it, next_title[0] != 0) : NULL;
+                    last_group[i - 1]->subgroups = last_group[i];
                     strcpy (group_titles[i], next_title);
                 }
                 else {
-                    if (strcmp(group_titles[i], next_title)) {
-                        full_height += calc_group_height (listview, last_group[i], min_height, !(it > 0));
-                        last_group[i]->next = it ? new_subgroup(listview) : NULL;
+                    if (strcmp (group_titles[i], next_title)) {
+                        int height = calc_group_height (listview, last_group[i], min_height, !(it > 0));
+                        if (i == 0) {
+                            full_height += height;
+                        }
+                        last_group[i]->next = it ? new_group(listview, it, next_title[0] != 0) : NULL;
                         last_group[i] = last_group[i]->next;
                         strcpy (group_titles[i], next_title);
-                        new_group = 1;
-                        if (i == group_depth-1) {
+                        make_new_group = 1;
+                        if (i == group_depth - 1) {
                             listview->binding->ref(it);
                             last_group[i]->head = it;
                         }
                     }
                 }
-                if (i == group_depth-1) {
+                if (i == group_depth - 1) {
                     if (!last_group[i]->num_items) {
-                        listview->binding->ref(it);
-                        last_group[i]->head = it;
                     }
-                    last_group[i]->num_items++;
                 }
             }
             it = next_playitem(listview, it);
         }
         // calculate final group heights
-        for (int i = group_depth - 1; i >= 0; i--) {
-            full_height += calc_group_height (listview, last_group[i], min_height, 1);
+        for (int i = 0; i < group_depth; i++) {
+            last_group[i]->num_items++;
+            int height = calc_group_height (listview, last_group[i], min_height, 1);
+            if (i == 0) {
+                full_height += height;
+            }
         }
-
-        free(last_group);
-        free(group_titles);
     }
     // no groups
     else {
@@ -3362,9 +3432,7 @@ build_groups (DdbListview *listview) {
             } while (it && grp->num_items < BLANK_GROUP_SUBDIVISION);
             full_height += calc_group_height (listview, grp, min_height, !(it > 0));
             if (it) {
-                grp->next = new_subgroup(listview);
-                listview->binding->ref(it);
-                grp->next->head = it;
+                grp->next = new_group(listview, it, 0);
             }
         }
     }

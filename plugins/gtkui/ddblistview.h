@@ -57,7 +57,7 @@ struct _DdbListviewGroup {
     struct _DdbListviewGroup *subgroups;
     int32_t height;
     int32_t num_items;
-    int pinned;
+    int group_label_visible;
     struct _DdbListviewGroup *next;
 };
 
