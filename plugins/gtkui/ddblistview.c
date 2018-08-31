@@ -908,7 +908,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
     }
 
     // find 1st group/subgroup
-    DdbListviewGroup **grps = alloca(sizeof(DdbListviewGroup *) * group_depth);
+    DdbListviewGroup *grps[group_depth];
     DdbListviewGroup *grp = listview->groups;
     int idx = 0;
     int grp_current_y = -listview->scrollpos;
@@ -3453,8 +3453,8 @@ build_groups (DdbListview *listview) {
     int full_height = 0;
     // groups
     if (listview->grouptitle_height) {
-        DdbListviewGroup **last_group = alloca(sizeof(DdbListviewGroup *) * group_depth);
-        char (*group_titles)[1024] = alloca(sizeof(char[1024]) * group_depth);
+        DdbListviewGroup *last_group[group_depth];
+        char group_titles[group_depth][1024];
         DdbListviewGroup *grp = listview->groups;
         // populate all subgroups from the first item
         for (int i = 0; i < group_depth; i++) {
