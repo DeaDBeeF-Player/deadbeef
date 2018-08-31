@@ -214,7 +214,7 @@ pl_common_rewrite_column_config (DdbListview *listview, const char *name) {
         col_info_t *info;
         int color_override;
         GdkColor color;
-        ddb_listview_column_get_info (listview, i, &title, &width, &align, NULL, &color_override, &color, (void **)&info);
+        ddb_listview_column_get_info (listview, i, &title, &width, &align, NULL, NULL, &color_override, &color, (void **)&info);
 
         char *esctitle = parser_escape_string (title);
         char *escformat = info->format ? parser_escape_string (info->format) : NULL;
@@ -1293,11 +1293,13 @@ groups_changed (DdbListview *listview, const char *format)
     listview->group_formats->group_format = strdup (format);
     listview->group_formats->group_title_bytecode = deadbeef->tf_compile (listview->group_formats->group_format);
 
-    // TODO: unhardcode these when done testing
-    DdbListviewGroupFormats *subgroup = calloc(sizeof(DdbListviewGroupFormats), 1);
-    subgroup->group_format = strdup ("$ifgreater(%totaldiscs%,1,$if2(%discsubtitle%,Disc %discnumber%),)");
-    subgroup->group_title_bytecode = deadbeef->tf_compile (subgroup->group_format);
-    listview->group_formats->next = subgroup;
+    if (listview->group_formats->group_format[0] != 0) {
+        // TODO: unhardcode these when done testing
+        DdbListviewGroupFormats *subgroup = calloc(sizeof(DdbListviewGroupFormats), 1);
+        subgroup->group_format = strdup ("$ifgreater(%totaldiscs%,1,$if2(%discsubtitle%,Disc %discnumber%),)");
+        subgroup->group_title_bytecode = deadbeef->tf_compile (subgroup->group_format);
+        listview->group_formats->next = subgroup;
+    }
 
     ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_LIST);
 }
@@ -1607,7 +1609,7 @@ pl_common_load_column_config (DdbListview *listview, const char *key) {
             inf->sort_format = strdup (ssort_format);
             inf->sort_bytecode = deadbeef->tf_compile (inf->sort_format);
         }
-        ddb_listview_column_append (listview, stitle, iwidth, ialign, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, icolor_override, gdkcolor, inf);
+        ddb_listview_column_append (listview, stitle, iwidth, ialign, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, inf->id == DB_COLUMN_ALBUM_ART, icolor_override, gdkcolor, inf);
     }
     json_decref(root);
     return 0;
@@ -1698,7 +1700,7 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
         int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
         DdbListview *listview = get_context_menu_listview (menuitem);
         int before = get_context_menu_column (menuitem);
-        ddb_listview_column_insert (listview, before, title, 100, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, clr_override, clr, inf);
+        ddb_listview_column_insert (listview, before, title, 100, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, inf->id == DB_COLUMN_ALBUM_ART, clr_override, clr, inf);
         ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL);
     }
     gtk_widget_destroy (dlg);
@@ -1725,7 +1727,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     col_info_t *inf;
     int color_override;
     GdkColor color;
-    int res = ddb_listview_column_get_info (listview, active_column, &title, &width, &align_right, NULL, &color_override, &color, (void **)&inf);
+    int res = ddb_listview_column_get_info (listview, active_column, &title, &width, &align_right, NULL, NULL, &color_override, &color, (void **)&inf);
     if (res == -1) {
         trace ("attempted to edit non-existing column\n");
         return;
@@ -1776,7 +1778,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         gtk_color_button_get_color (GTK_COLOR_BUTTON (lookup_widget (dlg, "color")), &clr);
 
         init_column (inf, id, format, sort_format);
-        ddb_listview_column_set_info (listview, active_column, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, clr_override, clr, inf);
+        ddb_listview_column_set_info (listview, active_column, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, inf->id == DB_COLUMN_ALBUM_ART, clr_override, clr, inf);
 
         ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST);
     }
@@ -1923,7 +1925,7 @@ pl_common_add_column_helper (DdbListview *listview, const char *title, int width
     inf->sort_format = strdup (sort_format);
     inf->sort_bytecode = deadbeef->tf_compile (inf->sort_format);
     GdkColor color = { 0, 0, 0, 0 };
-    ddb_listview_column_append (listview, title, width, align_right, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, 0, color, inf);
+    ddb_listview_column_append (listview, title, width, align_right, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, inf->id == DB_COLUMN_ALBUM_ART, 0, color, inf);
 }
 
 int
@@ -1965,10 +1967,14 @@ pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int s
 }
 
 void
-pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height) {
+pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height, int group_depth) {
     if (/*listview->group_formats && */listview->group_formats->group_format && listview->group_formats->group_format[0]) {
         char str[1024] = "";
-        if (listview->group_formats->group_title_bytecode) {
+        DdbListviewGroupFormats *fmt = listview->group_formats;
+        while (group_depth--) {
+            fmt = fmt->next;
+        }
+        if (fmt->group_title_bytecode) {
             ddb_tf_context_t ctx = {
                 ._size = sizeof (ddb_tf_context_t),
                 .it = it,
@@ -1976,7 +1982,7 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
                 .flags = DDB_TF_CONTEXT_NO_DYNAMIC,
                 .iter = iter,
             };
-            deadbeef->tf_eval (&ctx, listview->group_formats->group_title_bytecode, str, sizeof (str));
+            deadbeef->tf_eval (&ctx, fmt->group_title_bytecode, str, sizeof (str));
             if (ctx.plt) {
                 deadbeef->plt_unref (ctx.plt);
                 ctx.plt = NULL;
@@ -2049,11 +2055,13 @@ pl_common_set_group_format (DdbListview *listview, char *format_conf) {
     listview->group_formats->group_format = strdup (format);
     listview->group_formats->group_title_bytecode = deadbeef->tf_compile (listview->group_formats->group_format);
 
-    // TODO: unhardcode these when done testing
-    DdbListviewGroupFormats *subgroup = calloc(sizeof(DdbListviewGroupFormats), 0);
-    subgroup->group_format = strdup ("$ifgreater(%totaldiscs%,1,$if2(%discsubtitle%,Disc %discnumber%),)");
-    subgroup->group_title_bytecode = deadbeef->tf_compile (subgroup->group_format);
-    listview->group_formats->next = subgroup;
+    if (listview->group_formats->group_format[0] != 0) {
+        // TODO: unhardcode these when done testing
+        DdbListviewGroupFormats *subgroup = calloc(sizeof(DdbListviewGroupFormats), 0);
+        subgroup->group_format = strdup ("$ifgreater(%totaldiscs%,1,$if2(%discsubtitle%,Disc %discnumber%),)");
+        subgroup->group_title_bytecode = deadbeef->tf_compile (subgroup->group_format);
+        listview->group_formats->next = subgroup;
+    }
 }
 
 static int

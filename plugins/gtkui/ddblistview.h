@@ -92,7 +92,7 @@ typedef struct {
     void (*drag_n_drop) (DdbListviewIter before, DdbPlaylistHandle playlist_from, uint32_t *indices, int length, int copy);
     void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
 
-    void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int x, int y, int width, int height);
+    void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int x, int y, int width, int height, int group_depth);
     void (*draw_album_art) (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
     void (*draw_column_data) (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height, int even);
 
@@ -239,15 +239,15 @@ ddb_listview_size_columns_without_scrollbar (DdbListview *listview);
 int
 ddb_listview_column_get_count (DdbListview *listview);
 void
-ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);
+ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, minheight_cb_t, int min_height_top_group_only, int color_override, GdkColor color, void *user_data);
 void
-ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);
+ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, minheight_cb_t, int min_height_top_group_only, int color_override, GdkColor color, void *user_data);
 void
 ddb_listview_column_remove (DdbListview *listview, int idx);
 int
-ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, minheight_cb_t *, int *color_override, GdkColor *color, void **user_data);
+ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, minheight_cb_t *, int *min_height_top_group_only, int *color_override, GdkColor *color, void **user_data);
 int
-ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);
+ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, minheight_cb_t, int min_height_top_group_only, int color_override, GdkColor color, void *user_data);
 
 // if 'gtkui.sticky_sort' is 1: sort columns by their current sort order
 // otherwise clear sort order

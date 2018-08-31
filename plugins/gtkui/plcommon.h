@@ -80,7 +80,7 @@ int
 pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int size, int index);
 
 void
-pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height);
+pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height, int group_depth);
 
 void
 pl_common_selection_changed (DdbListview *ps, int iter, DB_playItem_t *it);

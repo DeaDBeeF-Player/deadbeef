@@ -161,9 +161,9 @@ main_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, i
 }
 
 static void
-main_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height)
+main_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height, int group_depth)
 {
-    pl_common_draw_group_title (listview, drawable, it, PL_MAIN, x, y, width, height);
+    pl_common_draw_group_title (listview, drawable, it, PL_MAIN, x, y, width, height, group_depth);
 }
 
 static DdbListviewBinding main_binding = {
