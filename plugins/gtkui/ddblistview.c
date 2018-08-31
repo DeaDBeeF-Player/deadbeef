@@ -887,7 +887,6 @@ fill_list_background (DdbListview *listview, cairo_t *cr, int x, int y, int w, i
 static void
 ddb_listview_list_render_subgroup (DdbListview *listview, cairo_t *cr, GdkRectangle *clip, DdbListviewGroup *grp, int cursor_index, int idx, int grp_y, int current_group_depth) {
     const int scrollx = -listview->hscrollpos;
-    const int title_height = grp->group_label_visible ? listview->grouptitle_height : 0;
     const int row_height = listview->rowheight;
     const int total_width = listview->totalwidth;
 
@@ -900,11 +899,7 @@ ddb_listview_list_render_subgroup (DdbListview *listview, cairo_t *cr, GdkRectan
     DdbListviewGroup *pin_grp = gtkui_groups_pinned && grp && grp_y < 0 && grp_y + grp->height >= 0 ? grp : NULL;
 
     while (grp && grp_y < clip->y + clip->height) {
-        int title_height = 0;
-        if (grp->group_label_visible) {
-            title_height = listview->grouptitle_height; 
-        }
-        int grp_height = title_height + grp->num_items * row_height;
+        const int title_height = grp->group_label_visible ? listview->grouptitle_height : 0;
 
         // only render list items when at the deepest group level
         if (!grp->subgroups) {
