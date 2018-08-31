@@ -1283,23 +1283,30 @@ groups_changed (DdbListview *listview, const char *format)
         free (fmt);
         fmt = fmt->next;
     }
+    listview->group_formats = NULL;
     char *esc_format = parser_escape_string (format);
     char quoted_format[strlen (esc_format) + 3];
     snprintf (quoted_format, sizeof (quoted_format), "\"%s\"", esc_format);
     listview->binding->groups_changed (quoted_format);
     free (esc_format);
 
-    listview->group_formats = calloc(sizeof(DdbListviewGroupFormats), 1);
-    listview->group_formats->group_format = strdup (format);
-    listview->group_formats->group_title_bytecode = deadbeef->tf_compile (listview->group_formats->group_format);
+    char *mutable_format = strdup (format);
+    char *saveptr;
+    char *token = strtok_r(mutable_format, "|", &saveptr);
 
-    if (listview->group_formats->group_format[0] != 0) {
-        // TODO: unhardcode these when done testing
-        DdbListviewGroupFormats *subgroup = calloc(sizeof(DdbListviewGroupFormats), 1);
-        subgroup->group_format = strdup ("$ifgreater(%totaldiscs%,1,$if2(%discsubtitle%,Disc %discnumber%),)");
-        subgroup->group_title_bytecode = deadbeef->tf_compile (subgroup->group_format);
-        listview->group_formats->next = subgroup;
+    // always have at least one
+    listview->group_formats = calloc(sizeof(DdbListviewGroupFormats), 1);
+    fmt = listview->group_formats;
+    fmt->group_format = strdup (token ? token : "");
+    fmt->group_title_bytecode = deadbeef->tf_compile (fmt->group_format);
+
+    while ((token = strtok_r(NULL, "|", &saveptr)) != NULL) {
+        fmt->next = calloc(sizeof(DdbListviewGroupFormats), 1);
+        fmt = fmt->next;
+        fmt->group_format = strdup (token);
+        fmt->group_title_bytecode = deadbeef->tf_compile (fmt->group_format);
     }
+    free (mutable_format);
 
     ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_LIST);
 }
@@ -1490,12 +1497,17 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
     GtkWidget *entry = lookup_widget (dlg, "format");
-    if (/*listview->group_formats && */listview->group_formats->group_format) {
-        gtk_entry_set_text (GTK_ENTRY (entry), listview->group_formats->group_format);
+    char format[1024];
+    format[0] = 0;
+    DdbListviewGroupFormats *fmt = listview->group_formats;
+    while (fmt) {
+        if (format[0] != 0) {
+            strncat(format, "|", sizeof(format));
+        }
+        strncat(format, fmt->group_format, sizeof(format));
+        fmt = fmt->next;
     }
-    else {
-        gtk_entry_set_text (GTK_ENTRY (entry), "");
-    }
+    gtk_entry_set_text (GTK_ENTRY (entry), format);
 //    gtk_window_set_title (GTK_WINDOW (dlg), "Group by");
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
 
@@ -1930,7 +1942,7 @@ pl_common_add_column_helper (DdbListview *listview, const char *title, int width
 
 int
 pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int size, int index) {
-    if (/*!listview->group_formats || */!listview->group_formats->group_format || !listview->group_formats->group_format[0]) {
+    if (!listview->group_formats->group_format || !listview->group_formats->group_format[0]) {
         return -1;
     }
     DdbListviewGroupFormats *fmt = listview->group_formats;
@@ -1968,7 +1980,7 @@ pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int s
 
 void
 pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height, int group_depth) {
-    if (/*listview->group_formats && */listview->group_formats->group_format && listview->group_formats->group_format[0]) {
+    if (listview->group_formats->group_format && listview->group_formats->group_format[0]) {
         char str[1024] = "";
         DdbListviewGroupFormats *fmt = listview->group_formats;
         while (group_depth--) {
@@ -2050,18 +2062,28 @@ pl_common_set_group_format (DdbListview *listview, char *format_conf) {
     char *format = strdup (deadbeef->conf_get_str_fast (format_conf, ""));
     deadbeef->conf_unlock ();
     parser_unescape_quoted_string (format);
+    listview->group_formats = NULL;
 
-    listview->group_formats = calloc(sizeof(DdbListviewGroupFormats), 0);
-    listview->group_formats->group_format = strdup (format);
-    listview->group_formats->group_title_bytecode = deadbeef->tf_compile (listview->group_formats->group_format);
+    char *mutable_format = strdup (format);
+    char *saveptr;
+    // TODO: is this an okay delimiter?
+    char *token = strtok_r(mutable_format, "|", &saveptr);
 
-    if (listview->group_formats->group_format[0] != 0) {
-        // TODO: unhardcode these when done testing
-        DdbListviewGroupFormats *subgroup = calloc(sizeof(DdbListviewGroupFormats), 0);
-        subgroup->group_format = strdup ("$ifgreater(%totaldiscs%,1,$if2(%discsubtitle%,Disc %discnumber%),)");
-        subgroup->group_title_bytecode = deadbeef->tf_compile (subgroup->group_format);
-        listview->group_formats->next = subgroup;
+    // always have at least one
+    listview->group_formats = calloc(sizeof(DdbListviewGroupFormats), 1);
+    DdbListviewGroupFormats *fmt = listview->group_formats;
+    fmt->group_format = strdup (token ? token : "");
+    fmt->group_title_bytecode = deadbeef->tf_compile (fmt->group_format);
+
+    while ((token = strtok_r(NULL, "|", &saveptr)) != NULL) {
+        fmt->next = calloc(sizeof(DdbListviewGroupFormats), 1);
+        fmt = fmt->next;
+        fmt->group_format = strdup (token);
+        fmt->group_title_bytecode = deadbeef->tf_compile (fmt->group_format);
     }
+    free (mutable_format);
+
+    free (format);
 }
 
 static int

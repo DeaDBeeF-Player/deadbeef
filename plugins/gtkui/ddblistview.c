@@ -969,6 +969,8 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
             // draw pinned group title
             fill_list_background(listview, cr, scrollx, 0, total_width, min(title_height, grp_next_y), clip);
             if (listview->binding->draw_group_title && title_height > 0) {
+                // TODO: make the offset configurable?
+                // ALSO TODO: deal with album art
                 listview->binding->draw_group_title(listview, cr, grp->head, scrollx + 10 * current_group_depth, min(0, grp_next_y-title_height), total_width, title_height, current_group_depth);
             }
         }
@@ -3423,7 +3425,7 @@ build_groups (DdbListview *listview) {
     if (!it) {
         return 0;
     }
-    if (/*!listview->group_formats || */!listview->group_formats->group_format || !listview->group_formats->group_format[0]) {
+    if (!listview->group_formats->group_format || !listview->group_formats->group_format[0]) {
         listview->grouptitle_height = 0;
     }
     else {
