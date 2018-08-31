@@ -655,11 +655,11 @@ ddb_listview_is_album_art_column (DdbListview *listview, int x)
 // returns Y coordinate of an item by its index
 static int
 ddb_listview_get_row_pos_subgroup (DdbListview *listview, DdbListviewGroup *grp, int y, int idx, int row_idx) {
-    int title_height = 0;
-    if (grp->group_label_visible) {
-        title_height = listview->grouptitle_height;
-    }
     while (grp) {
+        int title_height = 0;
+        if (grp->group_label_visible) {
+            title_height = listview->grouptitle_height;
+        }
         if (idx + grp->num_items > row_idx) {
             int i;
             if (grp->subgroups) {
@@ -706,12 +706,12 @@ static int
 ddb_listview_list_pickpoint_subgroup (DdbListview *listview, DdbListviewGroup *grp, int x, int y, int idx, int grp_y, DdbListviewPickContext *pick_ctx) {
     const int orig_y = y;
     const int ry = y - listview->scrollpos;
-    const int grp_title_height = grp->group_label_visible ? listview->grouptitle_height : 0;
     const int rowheight = listview->rowheight;
     const int is_album_art_column = ddb_listview_is_album_art_column (listview, x);
 
     while (grp) {
         const int h = grp->height;
+        const int grp_title_height = grp->group_label_visible ? listview->grouptitle_height : 0;
         if (y >= grp_y && y < grp_y + h) {
             pick_ctx->grp = grp;
             y -= grp_y;
