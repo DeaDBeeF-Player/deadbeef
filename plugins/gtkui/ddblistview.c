@@ -3385,27 +3385,32 @@ new_group (DdbListview *listview, DdbListviewIter it, int group_label_visible) {
     return grp;
 }
 
-static int
-calc_subgroup_visible_titles(DdbListviewGroup *grp) {
-    int count = 0;
+static void
+calc_subgroup_extra_spacing(DdbListviewGroup *grp, int *visible_titles, int *spacing_count) {
     DdbListviewGroup *next = grp;
     while (next) {
         if (next->subgroups) {
-            count += calc_subgroup_visible_titles(next->subgroups);
+            calc_subgroup_extra_spacing(next->subgroups, visible_titles, spacing_count);
         }
         if (next->group_label_visible) {
-            count++;
+            (*visible_titles)++;
+        }
+        if (next->next) {
+            (*spacing_count)++;
         }
         next = next->next;
     }
-    return count;
 }
 
 static int
 calc_group_height(DdbListview *listview, DdbListviewGroup *grp, int min_height, int is_last) {
-    // if we have subgroups, account for their headers
+    int visible_titles = 0;
+    int spacing_count = 0;
+    // if we have subgroups, account for their headers and spacing
+    calc_subgroup_extra_spacing(grp->subgroups, &visible_titles, &spacing_count);
     grp->height = max(grp->num_items * listview->rowheight, min_height);
-    grp->height += calc_subgroup_visible_titles(grp->subgroups) * listview->grouptitle_height;
+    grp->height += visible_titles * listview->grouptitle_height;
+    grp->height += spacing_count * gtkui_groups_spacing;
     if (grp->group_label_visible) {
         grp->height += listview->grouptitle_height;
     }
