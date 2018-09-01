@@ -1565,11 +1565,23 @@ ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListvi
 static void
 ddb_listview_list_render_album_art (DdbListview *ps, cairo_t *cr, DdbListviewGroup *grp, int pinned, int grp_next_y, int y, GdkRectangle *clip) {
     int x = -ps->hscrollpos;
+    int min_y;
+    if (pinned) {
+        if (grp->group_label_visible) {
+            min_y = ps->grouptitle_height;
+        }
+        else {
+            min_y = 0;
+        }
+    }
+    else {
+        min_y = y;
+    }
     for (DdbListviewColumn *c = ps->columns; c && x < clip->x+clip->width; x += c->width, c = c->next) {
         if (ps->binding->is_album_art_column(c->user_data) && x + c->width > clip->x) {
             fill_list_background(ps, cr, x, y, c->width, grp->height-ps->grouptitle_height, clip);
             if (ps->grouptitle_height > 0) {
-                ps->binding->draw_album_art(ps, cr, grp->head, c->user_data, pinned, grp_next_y, x, y, c->width, grp->height-ps->grouptitle_height);
+                ps->binding->draw_album_art(ps, cr, grp->head, c->user_data, min_y, grp_next_y, x, y, c->width, grp->height-ps->grouptitle_height);
             }
         }
     }

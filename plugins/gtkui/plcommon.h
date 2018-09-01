@@ -44,7 +44,7 @@ int
 pl_common_is_album_art_column (void *user_data);
 
 void
-pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
+pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int min_y, int next_y, int x, int y, int width, int height);
 
 void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter);

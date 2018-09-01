@@ -375,7 +375,7 @@ cover_draw_exact (DB_playItem_t *it, int x, int min_y, int max_y, int width, int
 }
 
 void
-pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height) {
+pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int min_y, int next_y, int x, int y, int width, int height) {
     int art_width = width - ART_PADDING_HORZ * 2;
     int art_height = height - ART_PADDING_VERT * 2;
     if (art_width < 8 || art_height < 8 || !it) {
@@ -385,7 +385,7 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it,
     col_info_t *info = user_data;
 
     int art_x = x + ART_PADDING_HORZ;
-    int min_y = (pinned ? listview->grouptitle_height : y) + ART_PADDING_VERT;
+    min_y += ART_PADDING_VERT;
     if (info->cover_size == art_width) {
         cover_draw_exact(it, art_x, min_y, next_y, art_width, art_height, cr, user_data);
     }
