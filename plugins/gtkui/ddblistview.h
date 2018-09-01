@@ -192,6 +192,7 @@ struct _DdbListview {
     ddb_playlist_t *plt; // current playlist (refcounted), must be unreffed with the group
     struct _DdbListviewGroup *groups;
     int artwork_subgroup_level;
+    int subgroup_title_padding;
     int groups_build_idx; // must be the same as playlist modification idx
     int grouptitle_height;
     int calculated_grouptitle_height;

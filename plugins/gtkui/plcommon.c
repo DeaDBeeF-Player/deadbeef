@@ -2057,10 +2057,11 @@ pl_common_col_sort (int sort_order, int iter, void *user_data) {
 }
 
 void
-pl_common_set_group_format (DdbListview *listview, char *format_conf, char *artwork_level_conf) {
+pl_common_set_group_format (DdbListview *listview, char *format_conf, char *artwork_level_conf, char *subgroup_padding_conf) {
     deadbeef->conf_lock ();
     char *format = strdup (deadbeef->conf_get_str_fast (format_conf, ""));
     listview->artwork_subgroup_level = deadbeef->conf_get_int (artwork_level_conf, 0);
+    listview->subgroup_title_padding = deadbeef->conf_get_int (subgroup_padding_conf, 10);
     deadbeef->conf_unlock ();
     parser_unescape_quoted_string (format);
     listview->group_formats = NULL;

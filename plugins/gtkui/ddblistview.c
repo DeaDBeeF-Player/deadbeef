@@ -922,8 +922,7 @@ ddb_listview_list_render_subgroup (DdbListview *listview, cairo_t *cr, GdkRectan
             subgroup_title_offset = subgroup_artwork_offset;
         }
         else {
-            // TODO: Configurable
-            subgroup_title_offset = title_offset + 10;
+            subgroup_title_offset = title_offset + listview->subgroup_title_padding;
         }
 
         if (grp->subgroups) {
@@ -968,7 +967,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
     int cursor_index = listview->binding->cursor();
 
     // Calculate which side of the playlist the (first) album art cover is on to tell where to draw subgroup titles
-    int subgroup_artwork_offset = 10;
+    int subgroup_artwork_offset = listview->subgroup_title_padding;
     int x = 0;
     for (DdbListviewColumn *c = listview->columns; c; x += c->width, c = c->next) {
         if (listview->binding->is_album_art_column(c->user_data)) {

@@ -211,7 +211,7 @@ void
 main_playlist_init (GtkWidget *widget) {
     // make listview widget and bind it to data
     DdbListview *listview = DDB_LISTVIEW(widget);
-    pl_common_set_group_format (listview, "gtkui.playlist.group_by_tf", "gtkui.playlist.group_artwork_level");
+    pl_common_set_group_format (listview, "gtkui.playlist.group_by_tf", "gtkui.playlist.group_artwork_level", "gtkui.playlist.subgroup_title_padding");
     main_binding.ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
     main_binding.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
     main_binding.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
