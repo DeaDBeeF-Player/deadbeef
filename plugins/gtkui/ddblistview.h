@@ -241,15 +241,15 @@ ddb_listview_size_columns_without_scrollbar (DdbListview *listview);
 int
 ddb_listview_column_get_count (DdbListview *listview);
 void
-ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, minheight_cb_t, int min_height_top_group_only, int color_override, GdkColor color, void *user_data);
+ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, minheight_cb_t, int is_artwork, int color_override, GdkColor color, void *user_data);
 void
-ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, minheight_cb_t, int min_height_top_group_only, int color_override, GdkColor color, void *user_data);
+ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, minheight_cb_t, int is_artwork, int color_override, GdkColor color, void *user_data);
 void
 ddb_listview_column_remove (DdbListview *listview, int idx);
 int
-ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, minheight_cb_t *, int *min_height_top_group_only, int *color_override, GdkColor *color, void **user_data);
+ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, minheight_cb_t *, int *is_artwork, int *color_override, GdkColor *color, void **user_data);
 int
-ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, minheight_cb_t, int min_height_top_group_only, int color_override, GdkColor color, void *user_data);
+ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, minheight_cb_t, int is_artwork, int color_override, GdkColor color, void *user_data);
 
 // if 'gtkui.sticky_sort' is 1: sort columns by their current sort order
 // otherwise clear sort order

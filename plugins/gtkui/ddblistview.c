@@ -75,7 +75,7 @@ struct _DdbListviewColumn {
     unsigned align_right : 2; // 0=left, 1=right, 2=center
     unsigned sort_order : 2; // 0=none, 1=asc, 2=desc
     unsigned show_tooltip : 1;
-    unsigned min_height_top_group_only : 1;
+    unsigned is_artwork : 1;
 };
 typedef struct _DdbListviewColumn DdbListviewColumn;
 
@@ -552,7 +552,7 @@ ddb_listview_destroy(GObject *object)
         free (fmt->group_format);
         free (fmt->group_title_bytecode);
         free (fmt);
-        fmt = fmt->next;
+        fmt = next_fmt;
     }
     ddb_listview_cancel_autoredraw (listview);
 
@@ -3107,7 +3107,7 @@ ddb_listview_column_get_count (DdbListview *listview) {
 }
 
 static DdbListviewColumn *
-ddb_listview_column_alloc (const char *title, int align_right, minheight_cb_t minheight_cb, int min_height_top_group_only, int color_override, GdkColor color, void *user_data) {
+ddb_listview_column_alloc (const char *title, int align_right, minheight_cb_t minheight_cb, int is_artwork, int color_override, GdkColor color, void *user_data) {
     DdbListviewColumn * c = malloc (sizeof (DdbListviewColumn));
     memset (c, 0, sizeof (DdbListviewColumn));
     c->title = strdup (title);
@@ -3115,19 +3115,19 @@ ddb_listview_column_alloc (const char *title, int align_right, minheight_cb_t mi
     c->color_override = color_override;
     c->color = color;
     c->minheight_cb = minheight_cb;
-    c->min_height_top_group_only = min_height_top_group_only;
+    c->is_artwork = is_artwork;
     c->user_data = user_data;
     return c;
 }
 
 void
-ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, minheight_cb_t minheight_cb, int min_height_top_group_only, int color_override, GdkColor color, void *user_data) {
-    ddb_listview_column_insert (listview, -1, title, width, align_right, minheight_cb, min_height_top_group_only, color_override, color, user_data);
+ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, minheight_cb_t minheight_cb, int is_artwork, int color_override, GdkColor color, void *user_data) {
+    ddb_listview_column_insert (listview, -1, title, width, align_right, minheight_cb, is_artwork, color_override, color, user_data);
 }
 
 void
-ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, minheight_cb_t minheight_cb, int min_height_top_group_only, int color_override, GdkColor color, void *user_data) {
-    DdbListviewColumn *c = ddb_listview_column_alloc (title, align_right, minheight_cb, min_height_top_group_only, color_override, color, user_data);
+ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, minheight_cb_t minheight_cb, int is_artwork, int color_override, GdkColor color, void *user_data) {
+    DdbListviewColumn *c = ddb_listview_column_alloc (title, align_right, minheight_cb, is_artwork, color_override, color, user_data);
     set_column_width (listview, c, c->width);
     if (listview->columns) {
         DdbListviewColumn * prev = NULL;
@@ -3241,7 +3241,7 @@ ddb_listview_column_move (DdbListview *listview, DdbListviewColumn *which, int i
 }
 
 int
-ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, minheight_cb_t *minheight_cb, int *min_height_top_group_only, int *color_override, GdkColor *color, void **user_data) {
+ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, minheight_cb_t *minheight_cb, int *is_artwork, int *color_override, GdkColor *color, void **user_data) {
     DdbListviewColumn *c;
     int idx = 0;
     for (c = listview->columns; c; c = c->next, idx++) {
@@ -3250,7 +3250,7 @@ ddb_listview_column_get_info (DdbListview *listview, int col, const char **title
             *width = c->width;
             *align_right = c->align_right;
             if (minheight_cb) *minheight_cb = c->minheight_cb;
-            if (min_height_top_group_only) *min_height_top_group_only = c->min_height_top_group_only;
+            if (is_artwork) *is_artwork = c->is_artwork;
             *color_override = c->color_override;
             *color = c->color;
             *user_data = c->user_data;
@@ -3261,7 +3261,7 @@ ddb_listview_column_get_info (DdbListview *listview, int col, const char **title
 }
 
 int
-ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, minheight_cb_t minheight_cb, int min_height_top_group_only, int color_override, GdkColor color, void *user_data) {
+ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, minheight_cb_t minheight_cb, int is_artwork, int color_override, GdkColor color, void *user_data) {
     DdbListviewColumn *c;
     int idx = 0;
     for (c = listview->columns; c; c = c->next, idx++) {
@@ -3271,7 +3271,7 @@ ddb_listview_column_set_info (DdbListview *listview, int col, const char *title,
             set_column_width (listview, c, width);
             c->align_right = align_right;
             c->minheight_cb = minheight_cb;
-            c->min_height_top_group_only = min_height_top_group_only;
+            c->is_artwork = is_artwork;
             c->color_override = color_override;
             c->color = color;
             c->user_data = user_data;
@@ -3328,10 +3328,10 @@ ddb_listview_min_group_height(DdbListviewColumn *columns) {
 }
 
 static int
-ddb_listview_min_nested_group_height(DdbListviewColumn *columns) {
+ddb_listview_min_no_artwork_group_height(DdbListviewColumn *columns) {
     int min_height = 0;
     for (DdbListviewColumn *c = columns; c; c = c->next) {
-        if (c->minheight_cb && !c->min_height_top_group_only) {
+        if (c->minheight_cb && !c->is_artwork) {
             int col_min_height = c->minheight_cb(c->user_data, c->width);
             if (min_height < col_min_height) {
                 min_height = col_min_height;
@@ -3408,7 +3408,7 @@ build_groups (DdbListview *listview) {
         grps = grps->subgroups;
     }
     int min_height = ddb_listview_min_group_height(listview->columns);
-    int min_no_artwork_height = ddb_listview_min_nested_group_height(listview->columns);
+    int min_no_artwork_height = ddb_listview_min_no_artwork_group_height(listview->columns);
     int full_height = 0;
     // groups
     if (listview->grouptitle_height) {
