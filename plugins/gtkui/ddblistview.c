@@ -3426,29 +3426,27 @@ build_groups (DdbListview *listview) {
             int make_new_group_offset = -1;
             for (int i = 0; i < group_depth; i++) {
                 char next_title[1024];
-                last_group[i]->num_items++;
                 listview->binding->get_group(listview, it, next_title, sizeof(next_title), i);
                 if (strcmp (group_titles[i], next_title)) {
                     make_new_group_offset = i;
                     break;
                 }
+                last_group[i]->num_items++;
             }
             if (make_new_group_offset >= 0) {
                 // finish remaining groups
                 // must be done in reverse order so heights are calculated correctly
                 for (int i = group_depth - 1; i >= make_new_group_offset; i--) {
                     char next_title[1024];
+                    last_group[i]->num_items++;
                     listview->binding->get_group(listview, it, next_title, sizeof(next_title), i);
-                    DdbListviewGroup *new_grp = it ? new_group(listview, it, next_title[0] != 0) : NULL;
-                    if (i == make_new_group_offset) {
-                        last_group[i]->next = new_grp;
-                    }
-                    else {
-                        last_group[i]->num_items++;
-                    }
                     int height = calc_group_height (listview, last_group[i], i == listview->artwork_subgroup_level ? min_height : min_no_artwork_height, !(it > 0));
                     if (i == 0) {
                         full_height += height;
+                    }
+                    DdbListviewGroup *new_grp = it ? new_group(listview, it, next_title[0] != 0) : NULL;
+                    if (i == make_new_group_offset) {
+                        last_group[i]->next = new_grp;
                     }
                     last_group[i] = new_grp;
                     if (last_group[i] && i < group_depth - 1) {
