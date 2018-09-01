@@ -703,7 +703,7 @@ ddb_listview_is_empty_region (DdbListviewPickContext *pick_ctx)
 // returns -1 if nothing was hit, otherwise returns pointer to a group, and item idx
 // item idx may be set to -1 if group title was hit
 static int
-ddb_listview_list_pickpoint_subgroup (DdbListview *listview, DdbListviewGroup *grp, int x, int y, int idx, int grp_y, DdbListviewPickContext *pick_ctx) {
+ddb_listview_list_pickpoint_subgroup (DdbListview *listview, DdbListviewGroup *grp, int x, int y, int idx, int grp_y, int group_level, DdbListviewPickContext *pick_ctx) {
     const int orig_y = y;
     const int ry = y - listview->scrollpos;
     const int rowheight = listview->rowheight;
@@ -715,7 +715,7 @@ ddb_listview_list_pickpoint_subgroup (DdbListview *listview, DdbListviewGroup *g
         if (y >= grp_y && y < grp_y + h) {
             pick_ctx->grp = grp;
             y -= grp_y;
-            if (y < grp_title_height || (0 < ry && ry < grp_title_height && gtkui_groups_pinned)) {
+            if (y < grp_title_height || (0 < ry && ry < grp_title_height && gtkui_groups_pinned && group_level == listview->artwork_subgroup_level)) {
                 // group title
                 pick_ctx->type = PICK_GROUP_TITLE;
                 pick_ctx->item_grp_idx = idx;
@@ -731,7 +731,7 @@ ddb_listview_list_pickpoint_subgroup (DdbListview *listview, DdbListviewGroup *g
                 return 1;
             }
             if (grp->subgroups) {
-                if (ddb_listview_list_pickpoint_subgroup (listview, grp->subgroups, x, orig_y, idx, grp_y + grp_title_height, pick_ctx)) {
+                if (ddb_listview_list_pickpoint_subgroup (listview, grp->subgroups, x, orig_y, idx, grp_y + grp_title_height, group_level + 1, pick_ctx)) {
                     return 1;
                 }
             }
@@ -788,7 +788,7 @@ ddb_listview_list_pickpoint (DdbListview *listview, int x, int y, DdbListviewPic
 
     deadbeef->pl_lock ();
     ddb_listview_groupcheck (listview);
-    int found = ddb_listview_list_pickpoint_subgroup (listview, listview->groups, x, y, 0, 0, pick_ctx);
+    int found = ddb_listview_list_pickpoint_subgroup (listview, listview->groups, x, y, 0, 0, 0, pick_ctx);
     deadbeef->pl_unlock ();
 
     if (!found) {
@@ -968,7 +968,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
     int cursor_index = listview->binding->cursor();
 
     // Calculate which side of the playlist the (first) album art cover is on to tell where to draw subgroup titles
-    int subgroup_artwork_offset = 0;
+    int subgroup_artwork_offset = 10;
     int x = 0;
     for (DdbListviewColumn *c = listview->columns; c; x += c->width, c = c->next) {
         if (listview->binding->is_album_art_column(c->user_data)) {
