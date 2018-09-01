@@ -3428,16 +3428,16 @@ build_groups (DdbListview *listview) {
                 for (int i = group_depth - 1; i >= make_new_group_offset; i--) {
                     char next_title[1024];
                     listview->binding->get_group(listview, it, next_title, sizeof(next_title), i);
-                    int height = calc_group_height (listview, last_group[i], i == listview->artwork_subgroup_level ? min_height : min_no_artwork_height, !(it > 0));
-                    if (i == 0) {
-                        full_height += height;
-                    }
                     DdbListviewGroup *new_grp = it ? new_group(listview, it, next_title[0] != 0) : NULL;
                     if (i == make_new_group_offset) {
                         last_group[i]->next = new_grp;
                     }
                     else {
                         last_group[i]->num_items++;
+                    }
+                    int height = calc_group_height (listview, last_group[i], i == listview->artwork_subgroup_level ? min_height : min_no_artwork_height, !(it > 0));
+                    if (i == 0) {
+                        full_height += height;
                     }
                     last_group[i] = new_grp;
                     if (last_group[i] && i < group_depth - 1) {
