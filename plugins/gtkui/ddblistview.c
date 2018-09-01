@@ -723,7 +723,7 @@ ddb_listview_list_pickpoint_subgroup (DdbListview *listview, DdbListviewGroup *g
                 pick_ctx->grp_idx = 0;
                 return 1;
             }
-            if (is_album_art_column) {
+            if (is_album_art_column && group_level == listview->artwork_subgroup_level) {
                 pick_ctx->type = PICK_ALBUM_ART;
                 pick_ctx->item_grp_idx = idx;
                 pick_ctx->grp_idx = min ((y - grp_title_height) / rowheight, grp->num_items - 1);
