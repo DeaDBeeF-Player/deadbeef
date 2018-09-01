@@ -654,6 +654,6 @@ search_playlist_init (GtkWidget *mainwin) {
     }
     search_binding.columns_changed = search_columns_changed;
 
-    pl_common_set_group_format (listview, "gtkui.search.group_by_tf");
+    pl_common_set_group_format (listview, "gtkui.search.group_by_tf", "gtkui.search.group_artwork_level");
     window_title_bytecode = deadbeef->tf_compile (_("Search [(%list_total% results)]"));
 }

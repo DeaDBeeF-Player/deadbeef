@@ -2057,17 +2057,17 @@ pl_common_col_sort (int sort_order, int iter, void *user_data) {
 }
 
 void
-pl_common_set_group_format (DdbListview *listview, char *format_conf) {
+pl_common_set_group_format (DdbListview *listview, char *format_conf, char *artwork_level_conf) {
     deadbeef->conf_lock ();
     char *format = strdup (deadbeef->conf_get_str_fast (format_conf, ""));
+    listview->artwork_subgroup_level = deadbeef->conf_get_int (artwork_level_conf, 0);
     deadbeef->conf_unlock ();
     parser_unescape_quoted_string (format);
     listview->group_formats = NULL;
 
-    char *mutable_format = strdup (format);
     char *saveptr;
     // TODO: is this an okay delimiter?
-    char *token = strtok_r(mutable_format, "|", &saveptr);
+    char *token = strtok_r(format, "|", &saveptr);
 
     // always have at least one
     listview->group_formats = calloc(sizeof(DdbListviewGroupFormats), 1);
@@ -2081,7 +2081,6 @@ pl_common_set_group_format (DdbListview *listview, char *format_conf) {
         fmt->group_format = strdup (token);
         fmt->group_title_bytecode = deadbeef->tf_compile (fmt->group_format);
     }
-    free (mutable_format);
 
     free (format);
 }
