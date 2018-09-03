@@ -49,6 +49,8 @@
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
 
+#define SUBGROUP_DELIMITER "|||"
+
 typedef struct {
     int id;
     char *format;
@@ -1269,6 +1271,33 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
     gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
 }
 
+static char *
+strtok_stringdelim_r (char *str, const char *delim,  char **next_start)
+{
+    char *end;
+
+    if (*next_start) {
+        str = *next_start;
+    }
+
+    if (!str || str[0] == 0) {
+        *next_start = NULL;
+        return NULL;
+    }
+
+    char *next = strstr(str, delim);
+
+    if (next) {
+        *next = 0;
+        *next_start = next + strlen(delim);
+    }
+    else {
+        *next_start = str + strlen(str);
+    }
+
+    return str;
+}
+
 static void
 groups_changed (DdbListview *listview, const char *format)
 {
@@ -1291,22 +1320,33 @@ groups_changed (DdbListview *listview, const char *format)
     free (esc_format);
 
     char *mutable_format = strdup (format);
-    char *saveptr;
-    char *token = strtok_r(mutable_format, "|", &saveptr);
-
-    // always have at least one
-    listview->group_formats = calloc(sizeof(DdbListviewGroupFormats), 1);
-    fmt = listview->group_formats;
-    fmt->group_format = strdup (token ? token : "");
-    fmt->group_title_bytecode = deadbeef->tf_compile (fmt->group_format);
-
-    while ((token = strtok_r(NULL, "|", &saveptr)) != NULL) {
-        fmt->next = calloc(sizeof(DdbListviewGroupFormats), 1);
-        fmt = fmt->next;
-        fmt->group_format = strdup (token);
-        fmt->group_title_bytecode = deadbeef->tf_compile (fmt->group_format);
+    fmt = NULL;
+    char *saveptr = NULL;
+    char *token;
+    while ((token = strtok_stringdelim_r(mutable_format, SUBGROUP_DELIMITER, &saveptr)) != NULL) {
+        if (strlen(token) > 0) {
+            DdbListviewGroupFormats *new_fmt = calloc(sizeof(DdbListviewGroupFormats), 1);
+            if (!fmt) {
+                listview->group_formats = new_fmt;
+                fmt = listview->group_formats;
+            }
+            else {
+                fmt->next = new_fmt;
+                fmt = fmt->next;
+            }
+            fmt->group_format = strdup (token);
+            fmt->group_title_bytecode = deadbeef->tf_compile (fmt->group_format);
+        }
     }
     free (mutable_format);
+
+    // always have at least one
+    if (!listview->group_formats) {
+        listview->group_formats = calloc(sizeof(DdbListviewGroupFormats), 1);
+        fmt = listview->group_formats;
+        fmt->group_format = strdup ("");
+        fmt->group_title_bytecode = deadbeef->tf_compile (fmt->group_format);
+    }
 
     ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_LIST);
 }
@@ -1502,7 +1542,7 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
     DdbListviewGroupFormats *fmt = listview->group_formats;
     while (fmt) {
         if (format[0] != 0) {
-            strncat(format, "|", sizeof(format));
+            strncat(format, SUBGROUP_DELIMITER, sizeof(format));
         }
         strncat(format, fmt->group_format, sizeof(format));
         fmt = fmt->next;
@@ -2066,24 +2106,34 @@ pl_common_set_group_format (DdbListview *listview, char *format_conf, char *artw
     parser_unescape_quoted_string (format);
     listview->group_formats = NULL;
 
-    char *saveptr;
-    // TODO: is this an okay delimiter?
-    char *token = strtok_r(format, "|", &saveptr);
-
-    // always have at least one
-    listview->group_formats = calloc(sizeof(DdbListviewGroupFormats), 1);
-    DdbListviewGroupFormats *fmt = listview->group_formats;
-    fmt->group_format = strdup (token ? token : "");
-    fmt->group_title_bytecode = deadbeef->tf_compile (fmt->group_format);
-
-    while ((token = strtok_r(NULL, "|", &saveptr)) != NULL) {
-        fmt->next = calloc(sizeof(DdbListviewGroupFormats), 1);
-        fmt = fmt->next;
-        fmt->group_format = strdup (token);
-        fmt->group_title_bytecode = deadbeef->tf_compile (fmt->group_format);
+    DdbListviewGroupFormats *fmt = NULL;
+    char *saveptr = NULL;
+    char *token;
+    while ((token = strtok_stringdelim_r(format, SUBGROUP_DELIMITER, &saveptr)) != NULL) {
+        if (strlen(token) > 0) {
+            DdbListviewGroupFormats *new_fmt = calloc(sizeof(DdbListviewGroupFormats), 1);
+            if (!fmt) {
+                listview->group_formats = new_fmt;
+                fmt = listview->group_formats;
+            }
+            else {
+                fmt->next = new_fmt;
+                fmt = fmt->next;
+            }
+            fmt->group_format = strdup (token);
+            fmt->group_title_bytecode = deadbeef->tf_compile (fmt->group_format);
+        }
     }
 
     free (format);
+
+    // always have at least one
+    if (!listview->group_formats) {
+        listview->group_formats = calloc(sizeof(DdbListviewGroupFormats), 1);
+        fmt = listview->group_formats;
+        fmt->group_format = strdup ("");
+        fmt->group_title_bytecode = deadbeef->tf_compile (fmt->group_format);
+    }
 }
 
 static int
