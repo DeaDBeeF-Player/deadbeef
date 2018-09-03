@@ -703,7 +703,7 @@ ddb_listview_is_empty_region (DdbListviewPickContext *pick_ctx)
 // returns -1 if nothing was hit, otherwise returns pointer to a group, and item idx
 // item idx may be set to -1 if group title was hit
 static int
-ddb_listview_list_pickpoint_subgroup (DdbListview *listview, DdbListviewGroup *grp, int x, int y, int idx, int grp_y, int group_level, DdbListviewPickContext *pick_ctx) {
+ddb_listview_list_pickpoint_subgroup (DdbListview *listview, DdbListviewGroup *grp, int x, int y, int idx, int grp_y, int group_level, int pin_offset, DdbListviewPickContext *pick_ctx) {
     const int orig_y = y;
     const int ry = y - listview->scrollpos;
     const int rowheight = listview->rowheight;
@@ -715,39 +715,35 @@ ddb_listview_list_pickpoint_subgroup (DdbListview *listview, DdbListviewGroup *g
         if (y >= grp_y && y < grp_y + h) {
             pick_ctx->grp = grp;
             y -= grp_y;
-            if (y < grp_title_height || (0 < ry && ry < grp_title_height && gtkui_groups_pinned && group_level == listview->artwork_subgroup_level)) {
+            if (y < grp_title_height || (pin_offset < ry && ry < grp_title_height + pin_offset && gtkui_groups_pinned)) {
                 // group title
                 pick_ctx->type = PICK_GROUP_TITLE;
                 pick_ctx->item_grp_idx = idx;
                 pick_ctx->item_idx = idx;
                 pick_ctx->grp_idx = 0;
-                return 1;
             }
-            if (is_album_art_column && group_level == listview->artwork_subgroup_level) {
+            else if (is_album_art_column && group_level == listview->artwork_subgroup_level) {
                 pick_ctx->type = PICK_ALBUM_ART;
                 pick_ctx->item_grp_idx = idx;
                 pick_ctx->grp_idx = min ((y - grp_title_height) / rowheight, grp->num_items - 1);
                 pick_ctx->item_idx = idx + pick_ctx->grp_idx;
-                return 1;
             }
-            if (grp->subgroups) {
-                if (ddb_listview_list_pickpoint_subgroup (listview, grp->subgroups, x, orig_y, idx, grp_y + grp_title_height, group_level + 1, pick_ctx)) {
-                    return 1;
-                }
+            else if (grp->subgroups && ddb_listview_list_pickpoint_subgroup (listview, grp->subgroups, x, orig_y, idx, grp_y + grp_title_height, group_level + 1, pin_offset + grp_title_height, pick_ctx)) {
+                // do nothing: the recursive call already set pick_ctx
             }
-            if (y >= grp_title_height + grp->num_items * rowheight) {
+            else if (y >= grp_title_height + grp->num_items * rowheight) {
                 // whitespace after tracks
                 pick_ctx->type = PICK_EMPTY_SPACE;
                 pick_ctx->item_grp_idx = idx;
                 pick_ctx->grp_idx = grp->num_items - 1;
                 pick_ctx->item_idx = idx + pick_ctx->grp_idx;
-                return 1;
             }
-
-            pick_ctx->type = PICK_ITEM;
-            pick_ctx->item_grp_idx = idx;
-            pick_ctx->grp_idx = (y - grp_title_height) / rowheight;
-            pick_ctx->item_idx = idx + pick_ctx->grp_idx;
+            else {
+                pick_ctx->type = PICK_ITEM;
+                pick_ctx->item_grp_idx = idx;
+                pick_ctx->grp_idx = (y - grp_title_height) / rowheight;
+                pick_ctx->item_idx = idx + pick_ctx->grp_idx;
+            }
             return 1;
         }
         grp_y += grp->height;
@@ -788,7 +784,7 @@ ddb_listview_list_pickpoint (DdbListview *listview, int x, int y, DdbListviewPic
 
     deadbeef->pl_lock ();
     ddb_listview_groupcheck (listview);
-    int found = ddb_listview_list_pickpoint_subgroup (listview, listview->groups, x, y, 0, 0, 0, pick_ctx);
+    int found = ddb_listview_list_pickpoint_subgroup (listview, listview->groups, x, y, 0, 0, 0, 0, pick_ctx);
     deadbeef->pl_unlock ();
 
     if (!found) {
