@@ -1188,7 +1188,9 @@ invalidate_group (DdbListview *ps, int at_y)
     }
 
     int group_titles_height = group->group_label_visible ? ps->grouptitle_height : 0;
-    group_titles_height += find_subgroup_title_heights(ps, group->subgroups, next_group_y - group->height, at_y);
+    if (group->subgroups) {
+        group_titles_height += find_subgroup_title_heights(ps, group->subgroups, next_group_y - group->height, at_y);
+    }
 
     int group_height = next_group_y - at_y;
     if (next_group_y > at_y) {
