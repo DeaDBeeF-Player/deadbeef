@@ -880,13 +880,11 @@ fill_list_background (DdbListview *listview, cairo_t *cr, int x, int y, int w, i
     render_treeview_background(listview, cr, FALSE, TRUE, x, y, w, h, clip);
 }
 
-static int
+static void
 ddb_listview_list_render_subgroup (DdbListview *listview, cairo_t *cr, GdkRectangle *clip, DdbListviewGroup *grp, int idx, int grp_y, const int cursor_index, const int current_group_depth, int title_offset, const int subgroup_artwork_offset, const int pin_offset) {
     const int scrollx = -listview->hscrollpos;
     const int row_height = listview->rowheight;
     const int total_width = listview->totalwidth;
-
-    int subgroup_pinned_height = 0;
 
     // find 1st group
     while (grp && grp_y + grp->height < clip->y) {
@@ -925,7 +923,7 @@ ddb_listview_list_render_subgroup (DdbListview *listview, cairo_t *cr, GdkRectan
 
         if (grp->subgroups) {
             // render subgroups before album art and titles
-            subgroup_pinned_height += ddb_listview_list_render_subgroup(listview, cr, clip, grp->subgroups, idx, grp_y + title_height, cursor_index, current_group_depth + 1, subgroup_title_offset, subgroup_artwork_offset, pin_offset + title_height);
+            ddb_listview_list_render_subgroup(listview, cr, clip, grp->subgroups, idx, grp_y + title_height, cursor_index, current_group_depth + 1, subgroup_title_offset, subgroup_artwork_offset, pin_offset + title_height);
         }
 
         int grp_next_y = grp_y + grp->height;
@@ -934,7 +932,7 @@ ddb_listview_list_render_subgroup (DdbListview *listview, cairo_t *cr, GdkRectan
             int min_y;
             if (is_pinned) {
                 if (grp->group_label_visible) {
-                    min_y = min(title_height+pin_offset, grp_next_y-subgroup_pinned_height);
+                    min_y = min(title_height+pin_offset, grp_next_y);
                 }
             }
             else {
@@ -945,12 +943,11 @@ ddb_listview_list_render_subgroup (DdbListview *listview, cairo_t *cr, GdkRectan
 
         if (is_pinned && clip->y <= title_height + pin_offset) {
             // draw pinned group title
-            int y = min(pin_offset, grp_next_y-title_height-subgroup_pinned_height);
+            int y = min(pin_offset, grp_next_y-title_height);
             fill_list_background(listview, cr, scrollx, y, total_width, title_height, clip);
             if (listview->binding->draw_group_title && title_height > 0) {
                 listview->binding->draw_group_title(listview, cr, grp->head, title_offset, y, total_width-title_offset, title_height, current_group_depth);
             }
-            subgroup_pinned_height += title_height;
         }
         else if (clip->y <= grp_y + title_height) {
             // draw normal group title
@@ -963,8 +960,6 @@ ddb_listview_list_render_subgroup (DdbListview *listview, cairo_t *cr, GdkRectan
         grp_y += grp->height;
         grp = grp->next;
     }
-
-    return subgroup_pinned_height;
 }
 
 static void
