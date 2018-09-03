@@ -3433,7 +3433,7 @@ build_groups (DdbListview *listview) {
     // groups
     if (listview->grouptitle_height) {
         DdbListviewGroup *last_group[group_depth];
-        char group_titles[group_depth][1024];
+        char (*group_titles)[1024] = malloc(sizeof(char[1024]) * group_depth);
         DdbListviewGroup *grp = listview->groups;
         // populate all subgroups from the first item
         for (int i = 0; i < group_depth; i++) {
@@ -3484,6 +3484,7 @@ build_groups (DdbListview *listview) {
                 full_height += height;
             }
         }
+        free(group_titles);
     }
     // no groups fast path
     else {
