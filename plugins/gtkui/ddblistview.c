@@ -946,7 +946,7 @@ ddb_listview_list_render_subgroup (DdbListview *listview, cairo_t *cr, GdkRectan
         if (is_pinned && clip->y <= title_height + pin_offset) {
             // draw pinned group title
             int y = min(pin_offset, grp_next_y-title_height-subgroup_pinned_height);
-            fill_list_background(listview, cr, scrollx+title_offset, y, total_width-title_offset, title_height, clip);
+            fill_list_background(listview, cr, scrollx, y, total_width, title_height, clip);
             if (listview->binding->draw_group_title && title_height > 0) {
                 listview->binding->draw_group_title(listview, cr, grp->head, scrollx+title_offset, y, total_width-title_offset, title_height, current_group_depth);
             }
