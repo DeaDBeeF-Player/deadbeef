@@ -920,7 +920,7 @@ ddb_listview_list_render_subgroup (DdbListview *listview, cairo_t *cr, GdkRectan
             subgroup_title_offset = subgroup_artwork_offset;
         }
         else {
-            subgroup_title_offset = title_offset + listview->subgroup_title_padding;
+            subgroup_title_offset = title_offset + (grp->group_label_visible ? listview->subgroup_title_padding : 0);
         }
 
         if (grp->subgroups) {
