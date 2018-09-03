@@ -904,7 +904,7 @@ ddb_listview_list_render_subgroup (DdbListview *listview, cairo_t *cr, GdkRectan
             DdbListviewIter it = grp->head;
             listview->binding->ref(it);
             for (int i = 0, yy = grp_y + title_height; it && i < grp->num_items && yy < clip->y + clip->height; i++, yy += row_height) {
-                if (yy + row_height >= clip->y) {
+                if (yy + row_height >= clip->y && (!gtkui_groups_pinned || yy + row_height >= pin_offset)) {
                     ddb_listview_list_render_row_background(listview, cr, it, i & 1, idx+i == cursor_index, scrollx, yy, total_width, row_height, clip);
                     ddb_listview_list_render_row_foreground(listview, cr, it, i & 1, idx+i, yy, total_width, row_height, clip->x, clip->x+clip->width);
                 }
@@ -948,7 +948,7 @@ ddb_listview_list_render_subgroup (DdbListview *listview, cairo_t *cr, GdkRectan
             int y = min(pin_offset, grp_next_y-title_height-subgroup_pinned_height);
             fill_list_background(listview, cr, scrollx, y, total_width, title_height, clip);
             if (listview->binding->draw_group_title && title_height > 0) {
-                listview->binding->draw_group_title(listview, cr, grp->head, scrollx+title_offset, y, total_width-title_offset, title_height, current_group_depth);
+                listview->binding->draw_group_title(listview, cr, grp->head, title_offset, y, total_width-title_offset, title_height, current_group_depth);
             }
             subgroup_pinned_height += title_height;
         }
@@ -1157,6 +1157,22 @@ invalidate_album_art_cells (DdbListview *listview, int x1, int x2, int y, int h)
     }
 }
 
+static int
+find_subgroup_title_heights (DdbListview *ps, DdbListviewGroup *group, int group_y, int at_y)
+{
+    while (group->next && group_y + group->height < at_y) {
+        group_y += group->height;
+        group = group->next;
+    }
+
+    int height = group->group_label_visible ? ps->grouptitle_height : 0;
+    if (group->subgroups) {
+        height += find_subgroup_title_heights(ps, group->subgroups, group_y, at_y);
+    }
+
+    return height;
+}
+
 static void
 invalidate_group (DdbListview *ps, int at_y)
 {
@@ -1171,12 +1187,15 @@ invalidate_group (DdbListview *ps, int at_y)
         next_group_y += group->height;
     }
 
+    int group_titles_height = group->group_label_visible ? ps->grouptitle_height : 0;
+    group_titles_height += find_subgroup_title_heights(ps, group->subgroups, next_group_y - group->height, at_y);
+
     int group_height = next_group_y - at_y;
     if (next_group_y > at_y) {
-        gtk_widget_queue_draw_area (ps->list, 0, 0, ps->list_width, min(ps->grouptitle_height, group_height));
+        gtk_widget_queue_draw_area (ps->list, 0, 0, ps->list_width, min(group_titles_height, group_height));
     }
-    if (group_height > ps->grouptitle_height) {
-        invalidate_album_art_cells (ps, 0, ps->list_width, ps->grouptitle_height, group_height - ps->grouptitle_height);
+    if (group_height > group_titles_height) {
+        invalidate_album_art_cells (ps, 0, ps->list_width, group_titles_height, group_height);
     }
 }
 
