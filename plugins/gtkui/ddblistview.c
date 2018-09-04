@@ -546,11 +546,11 @@ ddb_listview_destroy(GObject *object)
         gdk_cursor_unref (listview->cursor_drag);
         listview->cursor_drag = NULL;
     }
-    DdbListviewGroupFormats *fmt = listview->group_formats;
+    DdbListviewGroupFormat *fmt = listview->group_formats;
     while (fmt) {
-        DdbListviewGroupFormats *next_fmt = fmt->next;
-        free (fmt->group_format);
-        free (fmt->group_title_bytecode);
+        DdbListviewGroupFormat *next_fmt = fmt->next;
+        free (fmt->format);
+        free (fmt->bytecode);
         free (fmt);
         fmt = next_fmt;
     }
@@ -699,9 +699,6 @@ ddb_listview_is_empty_region (DdbListviewPickContext *pick_ctx)
     }
 }
 
-// input: absolute y coord in list (not in window)
-// returns -1 if nothing was hit, otherwise returns pointer to a group, and item idx
-// item idx may be set to -1 if group title was hit
 static int
 ddb_listview_list_pickpoint_subgroup (DdbListview *listview, DdbListviewGroup *grp, int x, int y, int idx, int grp_y, int group_level, int pin_offset, DdbListviewPickContext *pick_ctx) {
     const int orig_y = y;
@@ -753,6 +750,9 @@ ddb_listview_list_pickpoint_subgroup (DdbListview *listview, DdbListviewGroup *g
     return 0;
 }
 
+// input: absolute y coord in list (not in window)
+// returns -1 if nothing was hit, otherwise returns pointer to a group, and item idx
+// item idx may be set to -1 if group title was hit
 static void
 ddb_listview_list_pickpoint (DdbListview *listview, int x, int y, DdbListviewPickContext *pick_ctx) {
     int idx = 0;
@@ -3322,6 +3322,7 @@ ddb_listview_free_group (DdbListview *listview, DdbListviewGroup *group) {
 static void
 ddb_listview_free_all_groups (DdbListview *listview) {
     ddb_listview_free_group(listview, listview->groups);
+    listview->groups = NULL;
     if (listview->plt) {
         deadbeef->plt_unref (listview->plt);
         listview->plt = NULL;
@@ -3367,11 +3368,10 @@ new_group (DdbListview *listview, DdbListviewIter it, int group_label_visible) {
 
 static int
 calc_subgroups_height(DdbListviewGroup *grp) {
-    DdbListviewGroup *next = grp;
     int height = 0;
-    while (next) {
-        height += next->height;
-        next = next->next;
+    while (grp) {
+        height += grp->height;
+        grp = grp->next;
     }
     return height;
 }
@@ -3404,14 +3404,14 @@ build_groups (DdbListview *listview) {
     if (!it) {
         return 0;
     }
-    if (!listview->group_formats->group_format || !listview->group_formats->group_format[0]) {
+    if (!listview->group_formats->format || !listview->group_formats->format[0]) {
         listview->grouptitle_height = 0;
     }
     else {
         listview->grouptitle_height = listview->calculated_grouptitle_height;
     }
     int group_depth = 1;
-    DdbListviewGroupFormats *fmt = listview->group_formats;
+    DdbListviewGroupFormat *fmt = listview->group_formats;
     while (fmt->next) {
         group_depth++;
         fmt = fmt->next;

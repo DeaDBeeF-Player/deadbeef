@@ -119,16 +119,16 @@ typedef struct {
 struct _DdbListviewColumn;
 struct _DdbListviewGroup;
 
-struct _DdbListviewGroupFormats {
+struct _DdbListviewGroupFormat {
     // group format string that's supposed to get parsed by tf
-    char *group_format;
+    char *format;
     // tf bytecode for group title
-    char *group_title_bytecode;
+    char *bytecode;
 
-    struct _DdbListviewGroupFormats *next;
+    struct _DdbListviewGroupFormat *next;
 };
 
-typedef struct _DdbListviewGroupFormats DdbListviewGroupFormats;
+typedef struct _DdbListviewGroupFormat DdbListviewGroupFormat;
 
 struct _DdbListview {
     GtkTable parent;
@@ -209,7 +209,7 @@ struct _DdbListview {
     drawctx_t grpctx;
     drawctx_t hdrctx;
 
-    DdbListviewGroupFormats *group_formats;
+    DdbListviewGroupFormat *group_formats;
 
     guint tf_redraw_timeout_id;
     int tf_redraw_track_idx;
