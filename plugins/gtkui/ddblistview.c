@@ -2585,52 +2585,47 @@ ddb_listview_column_size_changed (DdbListview *listview, DdbListviewColumn *c)
     }
 }
 
-void
+static void
+ddb_listview_update_scroll_ref_point_subgroup (DdbListview *ps, DdbListviewGroup *grp, int abs_idx, int grp_y)
+{
+    // find 1st group
+    while (grp && grp_y + grp->height < ps->scrollpos) {
+        grp_y += grp->height;
+        abs_idx += grp->num_items;
+        grp = grp->next;
+    }
+
+    int grp_content_pos = grp_y + (grp->group_label_visible ? ps->grouptitle_height : 0);
+
+    if (grp->subgroups) {
+        // search subgroups for anchor
+        ddb_listview_update_scroll_ref_point_subgroup (ps, grp->subgroups, abs_idx, grp_content_pos);
+    }
+    else {
+        // choose first visible item as anchor
+        int first_item_idx = max(0, (ps->scrollpos - grp_content_pos)/ps->rowheight);
+        ps->ref_point = abs_idx + first_item_idx;
+        ps->ref_point_offset = grp_content_pos + (first_item_idx * ps->rowheight) - ps->scrollpos;
+    }
+}
+
+static void
 ddb_listview_update_scroll_ref_point (DdbListview *ps)
 {
     ddb_listview_groupcheck (ps);
-    DdbListviewGroup *grp = ps->groups;
-    DdbListviewGroup *grp_next;
 
-    if (grp) {
-        int abs_idx = 0;
-        int grp_y = 0;
-
-        int cursor_pos = ddb_listview_get_row_pos (ps, ps->binding->cursor ());
+    if (ps->groups) {
         ps->ref_point = 0;
         ps->ref_point_offset = 0;
 
-        // find 1st group
-        while (grp && grp_y + grp->height < ps->scrollpos) {
-            grp_y += grp->height;
-            abs_idx += grp->num_items;
-            grp = grp->next;
-        }
-        int grp_content_pos = grp_y + ps->grouptitle_height;
-        int grp_end_pos = grp_content_pos + (grp->num_items * ps->rowheight);
         // choose cursor_pos as anchor
+        int cursor_pos = ddb_listview_get_row_pos (ps, ps->binding->cursor ());
         if (ps->scrollpos < cursor_pos && cursor_pos < ps->scrollpos + ps->list_height && cursor_pos < ps->fullheight) {
             ps->ref_point = ps->binding->cursor ();
             ps->ref_point_offset = cursor_pos - ps->scrollpos;
         }
-        else if (ps->scrollpos < grp_end_pos) {
-            if (grp_end_pos < ps->scrollpos + ps->list_height) {
-                // choose first group as anchor
-                ps->ref_point = abs_idx;
-                ps->ref_point_offset = grp_content_pos - ps->scrollpos;
-            }
-            else if (grp_content_pos < ps->scrollpos) {
-                // choose first visible item as anchor
-                int first_item_idx = (ps->scrollpos - grp_content_pos)/ps->rowheight;
-                ps->ref_point = abs_idx + first_item_idx;
-                ps->ref_point_offset = grp_content_pos + (first_item_idx * ps->rowheight) - ps->scrollpos;
-            }
-        }
-        // choose next group as anchor
-        else if (grp->next) {
-            abs_idx += grp->num_items;
-            ps->ref_point = abs_idx;
-            ps->ref_point_offset = grp_content_pos + grp->height - ps->scrollpos;
+        else {
+            ddb_listview_update_scroll_ref_point_subgroup (ps, ps->groups, 0, 0);
         }
     }
 }
