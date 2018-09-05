@@ -105,6 +105,8 @@ static void ddb_listview_destroy(GObject *object);
 static void
 ddb_listview_build_groups (DdbListview *listview);
 
+static int
+ddb_listview_resize_subgroup (DdbListview *listview, DdbListviewGroup *grp, int group_depth, int min_height, int min_no_artwork_height);
 static void
 ddb_listview_resize_groups (DdbListview *listview);
 static void
@@ -3508,15 +3510,24 @@ ddb_listview_build_groups (DdbListview *listview) {
     deadbeef->pl_unlock();
 }
 
+static int
+ddb_listview_resize_subgroup (DdbListview *listview, DdbListviewGroup *grp, int group_depth, int min_height, int min_no_artwork_height) {
+    int full_height = 0;
+    while (grp) {
+        if (grp->subgroups) {
+            ddb_listview_resize_subgroup (listview, grp->subgroups, group_depth + 1, min_height, min_no_artwork_height);
+        }
+        full_height += calc_group_height (listview, grp, group_depth == listview->artwork_subgroup_level ? min_height : min_no_artwork_height, !grp->next);
+        grp = grp->next;
+    }
+    return full_height;
+}
+
 static void
 ddb_listview_resize_groups (DdbListview *listview) {
-
     int min_height = ddb_listview_min_group_height(listview->columns);
-    int full_height = 0;
-    for (DdbListviewGroup *grp = listview->groups; grp; grp = grp->next) {
-        full_height += calc_group_height (listview, grp, min_height, !grp->next);
-    }
-
+    int min_no_artwork_height = ddb_listview_min_no_artwork_group_height(listview->columns);
+    int full_height = ddb_listview_resize_subgroup (listview, listview->groups, 0, min_height, min_no_artwork_height);
 
     if (full_height != listview->fullheight) {
         listview->fullheight = full_height;
