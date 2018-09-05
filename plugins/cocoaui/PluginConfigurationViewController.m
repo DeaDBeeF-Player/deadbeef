@@ -84,7 +84,7 @@ extern DB_functions_t *deadbeef;
             case PROP_FILE:
             {
                 NSTextField *lbl = [[NSTextField alloc] initWithFrame:NSMakeRect(4, y-2, 500, unit_h)];
-                [lbl setStringValue:[[NSString stringWithUTF8String:_settingsData.props[i].title] stringByAppendingString:@":"]];
+                [lbl setStringValue:[NSString stringWithUTF8String:_settingsData.props[i].title]];
                 [lbl setBezeled:NO];
                 [lbl setDrawsBackground:NO];
                 [lbl setEditable:NO];
