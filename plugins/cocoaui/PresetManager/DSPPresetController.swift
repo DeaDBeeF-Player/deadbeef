@@ -4,30 +4,31 @@ class DSPPresetController : PresetManagerDelegate, PresetSerializer {
     enum DSPPresetControllerError : Error {
         case InvalidPreset
     }
-    var _presetMgr : PresetManager!
+
+    var presetMgr : PresetManager!
+
     init() throws {
-        _presetMgr = PresetManager(className: "DSP", saveName: "DSP", delegate: self, serializer: self)
-        try _presetMgr.load()
+        presetMgr = PresetManager(className: "DSP", saveName: "DSP", delegate: self, serializer: self)
+        try presetMgr.load()
     }
 
     // PresetManagerDelegate
 
-    func getDisplayName(data: PresetData, index: Int) throws -> String? {
-        // FIXME: this should return the DSP plugin name, inferred from ID
-        return data.subItems?[index].id
+    func getDisplayName(index: Int) throws -> String? {
+        return presetMgr.data[index].name
     }
 
-    func isEditable(data: PresetData, index: Int) -> Bool {
+    func isEditable(index: Int) -> Bool {
         return true
     }
 
-    func isSaveable(data: PresetData, index: Int) -> Bool {
+    func isSaveable(index: Int) -> Bool {
         return true
     }
 
     // PresetSerializer
 
-    func load(manager: PresetManager) throws {
+    func load() throws {
         var presets : [PresetData] = []
         let fname = plug_get_system_dir (Int32(DDB_SYS_DIR_CONFIG.rawValue))
         let data = Data(bytes: fname!, count: Int(strlen(fname)))
@@ -45,10 +46,13 @@ class DSPPresetController : PresetManagerDelegate, PresetSerializer {
                 }
             }
         }
-        manager._data = presets
+        presetMgr.data = presets
     }
 
-    func save(manager: PresetManager) throws {
+    func save() throws {
+    }
+
+    func save(presetIndex:Int) throws {
     }
 
     // internal

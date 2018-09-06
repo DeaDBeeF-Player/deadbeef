@@ -18,10 +18,8 @@ struct PresetData {
     // the preset name
     var name : String
 
-    // preset parameters, for one-level case like encoder preset
-    var parameters : [String : String]?
-
-    // list of preset sub items, for multi-level case like dsp preset
+    // list of preset sub items, for multi-level case like dsp preset;
+    // for the rest of the cases (flat presets) gonna be a single-item list
     var subItems : [PresetSubItem]?
 
     // optional dictionary of additional things, like read-only flags etc
@@ -30,62 +28,70 @@ struct PresetData {
 
 protocol PresetManagerDelegate {
     // for when the names need to be reformatted before display
-    func getDisplayName (data: PresetData, index: Int) throws -> String?
+    func getDisplayName (index: Int) throws -> String?
 
     // return true if the item can be edited
-    func isEditable (data: PresetData, index: Int) -> Bool
+    func isEditable (index: Int) -> Bool
 
     // return true if the item needs to be saved
-    func isSaveable (data: PresetData, index: Int) -> Bool
+    func isSaveable (index: Int) -> Bool
 }
 
 protocol PresetSerializer {
     // load data into manager.data
-    func load (manager : PresetManager) throws
+    func load () throws
 
     // save data from manager.data
-    func save (manager : PresetManager) throws
+    func save () throws
+
+    func save (presetIndex:Int) throws
 }
 
 class PresetSerializerJSON : PresetSerializer {
-    func load(manager: PresetManager) throws {
+    func load() throws {
     }
 
-    func save(manager: PresetManager) throws {
+    func save() throws {
     }
 
+    func save (presetIndex:Int) throws {
+    }
 }
 
 class PresetManager {
     // list of presets
-    var _data : [PresetData]
-    var _className : String
-    var _saveName : String
-    var _delegate : PresetManagerDelegate?
-    var _serializer : PresetSerializer
+    var data : [PresetData]
+    var className : String
+    var saveName : String
+    var delegate : PresetManagerDelegate?
+    var serializer : PresetSerializer
 
     init (className:String, saveName:String, delegate:PresetManagerDelegate?) {
-        _className = className
-        _saveName = saveName
-        _delegate = delegate
-        _serializer = PresetSerializerJSON()
-        _data = []
+        self.className = className
+        self.saveName = saveName
+        self.delegate = delegate
+        self.serializer = PresetSerializerJSON()
+        self.data = []
     }
 
     init (className:String, saveName:String, delegate:PresetManagerDelegate?, serializer:PresetSerializer) {
-        _className = className
-        _saveName = saveName
-        _delegate = delegate
-        _serializer = serializer
-        _data = []
+        self.className = className
+        self.saveName = saveName
+        self.delegate = delegate
+        self.serializer = serializer
+        self.data = []
     }
 
     func load() throws {
-        try _serializer.load(manager: self)
+        try serializer.load()
     }
 
     func save() throws {
-        try _serializer.save(manager: self)
+        try serializer.save()
+    }
+
+    func save(presetIndex:Int) throws {
+        try serializer.save(presetIndex:presetIndex)
     }
 }
 
