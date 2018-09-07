@@ -1,4 +1,5 @@
 import Foundation
+import Cocoa
 
 // one item of a preset
 struct PresetSubItem {
@@ -35,6 +36,9 @@ protocol PresetManagerDelegate {
 
     // return true if the item needs to be saved
     func isSaveable (index: Int) -> Bool
+
+    // generate a dropdown box for selecting a preset
+    func createSelectorUI (container : NSView)
 }
 
 protocol PresetSerializer {
@@ -58,28 +62,29 @@ class PresetSerializerJSON : PresetSerializer {
     }
 }
 
-class PresetManager {
+@objc class PresetManager : NSObject {
     // list of presets
     var data : [PresetData]
-    var className : String
-    var saveName : String
+    var domain : String
+    var context : String
     var delegate : PresetManagerDelegate?
     var serializer : PresetSerializer
 
-    init (className:String, saveName:String, delegate:PresetManagerDelegate?) {
-        self.className = className
-        self.saveName = saveName
-        self.delegate = delegate
-        self.serializer = PresetSerializerJSON()
-        self.data = []
+    var selectedPreset : Int = -1
+
+    // preset domain is the whole system name, e.g. "dsp" or "encoder"
+    // context is a specific user of the domain, e.g. "player" or "converter"
+    convenience init (domain:String, context:String, delegate:PresetManagerDelegate?) {
+        self.init (domain:domain, context:context, delegate:delegate, serializer:PresetSerializerJSON())
     }
 
-    init (className:String, saveName:String, delegate:PresetManagerDelegate?, serializer:PresetSerializer) {
-        self.className = className
-        self.saveName = saveName
+    init (domain:String, context:String, delegate:PresetManagerDelegate?, serializer:PresetSerializer) {
+        self.domain = domain
+        self.context = context
         self.delegate = delegate
         self.serializer = serializer
         self.data = []
+        self.selectedPreset = Int(conf_get_int("\(domain).\(context)", -1))
     }
 
     func load() throws {
@@ -92,6 +97,10 @@ class PresetManager {
 
     func save(presetIndex:Int) throws {
         try serializer.save(presetIndex:presetIndex)
+    }
+
+    @objc public func createSelectorUI(container : NSView) {
+        delegate?.createSelectorUI(container: container)
     }
 }
 

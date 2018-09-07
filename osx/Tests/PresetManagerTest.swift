@@ -27,7 +27,7 @@ class PresetManagerTest: XCTestCase {
 
     func testLoadDSPPreset_ReturnsExpectedData() {
         var ctl : DSPPresetController?;
-        XCTAssertNoThrow(ctl = try DSPPresetController())
+        XCTAssertNoThrow(ctl = try DSPPresetController(context:"test"))
         XCTAssertEqual(ctl?.presetMgr.data.count, 1)
         XCTAssertEqual(ctl?.presetMgr.data[0].name, "mypreset")
         XCTAssertEqual(ctl?.presetMgr.data[0].subItems?.count, 3)

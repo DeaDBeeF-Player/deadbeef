@@ -1,14 +1,20 @@
 import Foundation
+import Cocoa
 
-class DSPPresetController : PresetManagerDelegate, PresetSerializer {
+@objc class DSPPresetController : NSObject, PresetManagerDelegate, PresetSerializer {
     enum DSPPresetControllerError : Error {
         case InvalidPreset
     }
 
-    var presetMgr : PresetManager!
+    @objc var presetMgr : PresetManager!
 
-    init() throws {
-        presetMgr = PresetManager(className: "DSP", saveName: "DSP", delegate: self, serializer: self)
+    @objc class func create(context:String) throws -> DSPPresetController {
+        return try DSPPresetController(context:context)
+    }
+
+    init(context:String) throws {
+        super.init()
+        presetMgr = PresetManager(domain: "dsp", context: context, delegate: self, serializer: self)
         try presetMgr.load()
     }
 
@@ -24,6 +30,15 @@ class DSPPresetController : PresetManagerDelegate, PresetSerializer {
 
     func isSaveable(index: Int) -> Bool {
         return true
+    }
+
+    func createSelectorUI (container : NSView) {
+        let frame = NSMakeRect(0, 0, container.frame.width, container.frame.height)
+        let btn = NSPopUpButton(frame:frame, pullsDown:false)
+        for d in presetMgr.data {
+            btn.addItem(withTitle: d.name)
+        }
+        container.addSubview(btn)
     }
 
     // PresetSerializer
