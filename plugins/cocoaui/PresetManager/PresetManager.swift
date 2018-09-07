@@ -1,7 +1,7 @@
 import Foundation
 import Cocoa
 
-// one item of a preset
+// One item of a preset
 struct PresetSubItem {
     init (id: String) {
         self.id = id
@@ -11,15 +11,15 @@ struct PresetSubItem {
     var parameters : [String : String]
 }
 
-// the whole preset
+// The whole preset
 struct PresetData {
     init (name: String) {
         self.name = name
     }
-    // the preset name
+    // The preset name
     var name : String
 
-    // list of preset sub items, for multi-level case like dsp preset;
+    // List of preset sub items, for multi-level case like dsp preset;
     // for the rest of the cases (flat presets) gonna be a single-item list
     var subItems : [PresetSubItem]?
 
@@ -28,16 +28,16 @@ struct PresetData {
 }
 
 protocol PresetManagerDelegate {
-    // for when the names need to be reformatted before display
+    // For when the names need to be reformatted before display
     func getDisplayName (index: Int) throws -> String?
 
-    // return true if the item can be edited
+    // Return true if the item can be edited
     func isEditable (index: Int) -> Bool
 
-    // return true if the item needs to be saved
+    // Return true if the item needs to be saved
     func isSaveable (index: Int) -> Bool
 
-    // generate a dropdown box for selecting a preset
+    // Generate a dropdown box for selecting a preset
     func createSelectorUI (container : NSView)
 }
 
@@ -83,8 +83,8 @@ class PresetSerializerJSON : PresetSerializer {
         self.context = context
         self.delegate = delegate
         self.serializer = serializer
-        self.data = []
-        self.selectedPreset = Int(conf_get_int("\(domain).\(context)", -1))
+        data = []
+        selectedPreset = Int(conf_get_int("\(domain).\(context)", -1))
     }
 
     func load() throws {
@@ -97,6 +97,13 @@ class PresetSerializerJSON : PresetSerializer {
 
     func save(presetIndex:Int) throws {
         try serializer.save(presetIndex:presetIndex)
+    }
+
+    // UI code needs to call that when a preset was selected by the user.
+    // If no preset is selected, pass -1
+    func presetSelected (index:Int) {
+        selectedPreset = index;
+        conf_set_int ("\(domain).\(context)", Int32(index));
     }
 
     @objc public func createSelectorUI(container : NSView) {

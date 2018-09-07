@@ -38,7 +38,14 @@ import Cocoa
         for d in presetMgr.data {
             btn.addItem(withTitle: d.name)
         }
+        btn.action = #selector(presetSelected(sender:))
+        btn.target = self
+
         container.addSubview(btn)
+    }
+
+    @objc func presetSelected(sender:NSPopUpButton) {
+        presetMgr.presetSelected(index: sender.indexOfSelectedItem)
     }
 
     // PresetSerializer
