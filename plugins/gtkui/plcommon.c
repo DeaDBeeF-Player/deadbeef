@@ -954,8 +954,7 @@ list_empty_region_context_menu (DdbListview *listview) {
             G_CALLBACK (on_paste_activate),
             NULL);
 
-    gtk_menu_attach_to_widget (GTK_MENU (playlist_menu), GTK_WIDGET (listview), NULL);
-    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL/*popup_menu_position_func*/, listview, 0, gtk_get_current_event_time());
 }
 
 void
@@ -1265,8 +1264,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
             G_CALLBACK (properties_activate),
             NULL);
 
-    gtk_menu_attach_to_widget (GTK_MENU (playlist_menu), GTK_WIDGET (listview), NULL);
-    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL/*popup_menu_position_func*/, listview, 0, gtk_get_current_event_time());
 }
 
 static void
