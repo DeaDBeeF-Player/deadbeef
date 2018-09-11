@@ -72,8 +72,8 @@ typedef struct {
 
     // FIXME: these fields should be filled/used only for network streams of finite length
     float avg_packetlength;
-    int avg_samplerate;
     int avg_samples_per_frame;
+    int is_streaming;
 
     int delay;
     int padding;

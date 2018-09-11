@@ -24,6 +24,7 @@
 #include "mp3parser.h"
 #include <string.h>
 #include <assert.h>
+#include <stdlib.h>
 
 extern DB_functions_t *deadbeef;
 
@@ -35,7 +36,7 @@ extern DB_functions_t *deadbeef;
 #define MAX_SAMPLERATE 48000
 #define MIN_PACKET_LENGTH (MIN_PACKET_SAMPLES / 8 * MIN_BITRATE*1000 / MAX_SAMPLERATE)
 #define MAX_PACKET_LENGTH (MAX_PACKET_SAMPLES / 8 * MAX_BITRATE*1000 / MIN_SAMPLERATE)
-#define MAX_INVALID_BYTES 100000
+#define MAX_INVALID_BYTES 10000
 
 static const int vertbl[] = {3, -1, 2, 1}; // 3 is 2.5
 static const int ltbl[] = { -1, 3, 2, 1 };
@@ -330,33 +331,16 @@ _process_packet (mp3info_t *info, mp3packet_t *packet, int64_t seek_to_sample) {
 
     info->lastpacket_valid = 1;
 
-    if (seek_to_sample == 0) {
-        // update averages, interrupt scan on frame #100 <-- FIXME
-        // calculating apx duration based on 1st 100 frames
-        info->avg_packetlength += packet->packetlength;
-        info->avg_samplerate += packet->samplerate;
-        info->avg_samples_per_frame += packet->samples_per_frame;
+    info->avg_packetlength += packet->packetlength;
+    info->avg_samples_per_frame += packet->samples_per_frame;
 
+    if (seek_to_sample == 0) {
         int ch = info->ref_packet.nchannels;
         memcpy (&info->ref_packet, packet, sizeof (mp3packet_t));
         if (info->ref_packet.nchannels < ch) {
             info->ref_packet.nchannels = ch;
         }
-
-#if 0 // FIXME
-        if (!info->is_seekable) {
-            if (info->valid_frames >= 20) {
-                deadbeef->fseek (buffer->file, valid_frame_pos, SEEK_SET);
-                buffer->duration = -1;
-                buffer->totalsamples = 0;
-                return 0;
-            }
-        }
-        else if (valid_frames >= 100)
-#endif
-        {
-            return 1;
-        }
+        return 1;
     }
 
     if (seek_to_sample > 0) {
@@ -415,6 +399,8 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     if (fsize < 0) {
         info->checked_xing_header = 1; // ignore Info tag in streams
     }
+
+    info->is_streaming = fp->vfs->is_streaming ();
 
     mp3packet_t packet;
 
@@ -536,8 +522,24 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 remaining -= res;
                 bufptr += res;
                 offs += res;
+
+                // for streaming tracks -- approximate duration
+                if (seek_to_sample == -1 && fsize > 0 && offs - startoffs > 10000 && info->is_streaming) {
+                    if (!info->valid_packets) {
+                        goto error;
+                    }
+
+                    info->avg_packetlength /= info->valid_packets;
+                    info->avg_samples_per_frame /= info->valid_packets;
+                    info->npackets = (fsize - startoffs - endoffs) / info->avg_packetlength;
+                    info->totalsamples = info->npackets * info->avg_samples_per_frame;
+                    info->have_duration = 1;
+
+                    goto end;
+                }
             }
         }
+
         if (remaining > 0) {
             memmove (buffer, bufptr, remaining);
         }

@@ -268,9 +268,10 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
     }
     else {
+        info->startoffs = deadbeef->junk_get_leading_size(info->file);
         deadbeef->fset_track (info->file, it);
         deadbeef->pl_add_meta (it, "title", NULL);
-        int res = mp3_parse_file(&info->mp3info, 0, info->file, deadbeef->fgetlength(info->file), 0, 0, 0);
+        int res = mp3_parse_file(&info->mp3info, 0, info->file, deadbeef->fgetlength(info->file), info->startoffs, 0, -1);
         if (res < 0) {
             trace ("mp3: cmp3_init: initial mp3_parse_file failed\n");
             return -1;
