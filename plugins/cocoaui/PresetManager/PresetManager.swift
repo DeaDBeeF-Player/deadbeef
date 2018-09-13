@@ -63,7 +63,7 @@ class PresetSerializerJSON : PresetSerializer {
 }
 
 @objc class PresetManager : NSObject {
-    // list of presets
+    var currentPreset : PresetData
     var data : [PresetData]
     var domain : String
     var context : String
@@ -84,6 +84,7 @@ class PresetSerializerJSON : PresetSerializer {
         self.delegate = delegate
         self.serializer = serializer
         data = []
+        currentPreset = PresetData(name:"Current")
         selectedPreset = Int(conf_get_int("\(domain).\(context)", -1))
     }
 
