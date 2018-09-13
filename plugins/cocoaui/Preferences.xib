@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <development version="8000" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -28,7 +27,7 @@
                 <outlet property="dspConfigViewController" destination="ze1-2I-ayd" id="Vf1-Pf-99Y"/>
                 <outlet property="dspList" destination="lHr-gY-cwb" id="YuW-ad-G45"/>
                 <outlet property="dspPresetListDataSource" destination="ASJ-FT-ifo" id="aW8-Tf-sWm"/>
-                <outlet property="dspPresets" destination="eNV-BC-Eql" id="1SS-zT-mr4"/>
+                <outlet property="dspPresetSelectorContainer" destination="7EN-x3-aU8" id="0OS-0y-wss"/>
                 <outlet property="dspView" destination="FgU-f9-bru" id="lA3-wb-KlQ"/>
                 <outlet property="enable_cp1251_detection" destination="nXp-DV-5XR" id="1Gk-V1-leH"/>
                 <outlet property="enable_cp936_detection" destination="0RD-fs-B31" id="OyU-uP-RMb"/>
@@ -313,48 +312,14 @@
                     </scroller>
                 </scrollView>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="zZe-aS-edz">
-                    <rect key="frame" x="18" y="24" width="115" height="17"/>
+                    <rect key="frame" x="18" y="24" width="77" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="DSP Chain Preset:" id="80n-mJ-LRw">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="DSP Preset:" id="80n-mJ-LRw">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <comboBox verticalHuggingPriority="750" id="eNV-BC-Eql">
-                    <rect key="frame" x="139" y="18" width="140" height="26"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" usesDataSource="YES" numberOfVisibleItems="5" id="3aA-gn-3ck">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </comboBoxCell>
-                    <connections>
-                        <outlet property="dataSource" destination="ASJ-FT-ifo" id="DR9-n9-R6x"/>
-                    </connections>
-                </comboBox>
-                <button verticalHuggingPriority="750" id="wpL-RP-2RG">
-                    <rect key="frame" x="285" y="13" width="69" height="32"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <buttonCell key="cell" type="push" title="Save" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Wf7-p5-fSx">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="dspSaveAction:" target="-2" id="vEp-d5-qCW"/>
-                    </connections>
-                </button>
-                <button verticalHuggingPriority="750" id="67f-Vh-CkJ">
-                    <rect key="frame" x="354" y="13" width="71" height="32"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <buttonCell key="cell" type="push" title="Load" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZTS-QE-kct">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="dspLoadAction:" target="-2" id="5vh-Vd-WPO"/>
-                    </connections>
-                </button>
                 <segmentedControl verticalHuggingPriority="750" misplaced="YES" id="ju4-A8-R3Q">
                     <rect key="frame" x="20" y="48" width="88" height="23"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -384,6 +349,10 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                 </button>
+                <customView misplaced="YES" id="7EN-x3-aU8">
+                    <rect key="frame" x="101" y="17" width="347" height="28"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                </customView>
             </subviews>
             <point key="canvasLocation" x="355" y="597"/>
         </customView>
@@ -1255,7 +1224,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="uSY-oD-soz">
                             <rect key="frame" x="1" y="1" width="549" height="217"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <view misplaced="YES" id="LIK-8h-N20">
                                     <rect key="frame" x="0.0" y="0.0" width="549" height="217"/>

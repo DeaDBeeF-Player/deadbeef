@@ -347,6 +347,7 @@ on_presets_clicked                  (GtkButton       *button,
             G_CALLBACK (on_import_fb2k_preset_clicked),
             NULL);
 
+    gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (button), NULL);
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
 }
 

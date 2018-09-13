@@ -38,6 +38,7 @@
 #include <assert.h>
 #include <math.h>
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 
 #ifdef TARGET_ANDROID
 int posix_memalign (void **memptr, size_t alignment, size_t size) {
@@ -701,8 +702,9 @@ ffap_init (DB_fileinfo_t *_info, DB_playItem_t *it)
     ape_info_t *info = (ape_info_t*)_info;
 
     deadbeef->pl_lock ();
-    info->fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    info->fp = deadbeef->fopen (uri);
     if (!info->fp) {
         return -1;
     }
@@ -1855,8 +1857,9 @@ ffap_seek (DB_fileinfo_t *_info, float seconds) {
 
 static int ffap_read_metadata (DB_playItem_t *it) {
     deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *fp = deadbeef->fopen (uri);
     if (!fp) {
         return -1;
     }

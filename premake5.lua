@@ -312,6 +312,7 @@ project "ddb_gui_GTK3"
    prebuildcommands {
 	"glib-compile-resources --sourcedir=plugins/gtkui --target=plugins/gtkui/gtkui-gresources.c --generate-source plugins/gtkui/gtkui.gresources.xml"
    }
+   defines { "USE_GTK_APPLICATION=1" }
 
    links { "jansson", "gtk-3", "gdk-3", "pangocairo-1.0", "pango-1.0", "atk-1.0", "cairo-gobject", "cairo", "gdk_pixbuf-2.0", "gio-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
 
@@ -576,6 +577,18 @@ project "mono2stereo_plugin"
    files {
        "plugins/mono2stereo/*.c",
    }
+
+project "nullout"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/nullout/*.h",
+       "plugins/nullout/*.c",
+   }
+
 
 project "resources"
     kind "Utility"

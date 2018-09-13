@@ -160,6 +160,9 @@ off_t oggedit_write_vorbis_metadata(DB_FILE *in, const char *fname, const off_t 
             res = vorbis_serial;
             goto cleanup;
         }
+
+        fclose (out);
+        out = NULL;
         if (rename(tempname, fname)) {
             res = OGGEDIT_RENAME_FAILED;
             goto cleanup;

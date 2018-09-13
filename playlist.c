@@ -1069,10 +1069,19 @@ static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
 static void
 _get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *vfs, const char *dirname, const char *d_name) {
     if (!vfs) {
-        snprintf (fullname, sz, "%s/%s", dirname, d_name);
+        // prevent double-slashes
+        char *stripped_dirname = strdupa (dirname);
+        char *p = stripped_dirname + strlen(stripped_dirname) - 1;
+        while (p > stripped_dirname && (*p == '/' || *p == '\\')) {
+            p--;
+        }
+        p++;
+        *p = 0;
+
+        snprintf (fullname, sz, "%s/%s", stripped_dirname, d_name);
         if (dir) {
             *dir = 0;
-            strncat (dir, dirname, dirsz);
+            strncat (dir, stripped_dirname, dirsz);
         }
     }
     else {
@@ -1175,7 +1184,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         if (inserted) {
             after = inserted;
         }
-        if (*pabort) {
+        if (pabort && *pabort) {
             break;
         }
     }

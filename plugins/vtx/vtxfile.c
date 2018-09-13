@@ -208,7 +208,7 @@ void ayemu_vtx_free(ayemu_vtx_t *vtx)
 
 
 
-
+#if 0
 ayemu_vtx_t * ayemu_vtx_header_from_file(const char *filename)
 {
   ayemu_vtx_t *ret;
@@ -287,3 +287,4 @@ ayemu_vtx_t * ayemu_vtx_load_from_file(const char *filename)
 
   return ret;
 }
+#endif

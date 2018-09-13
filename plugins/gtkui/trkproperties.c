@@ -643,7 +643,11 @@ on_metalist_button_press_event         (GtkWidget       *widget,
 {
     if (event->button == 3) {
         GtkWidget *menu = create_trkproperties_popup_menu ();
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, event->button, gtk_get_current_event_time());
+        if (numtracks != 1) {
+            gtk_widget_set_sensitive (lookup_widget (menu, "trkproperties_edit"), FALSE);
+        }
+        gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, event->button, gtk_get_current_event_time());
     }
     return FALSE;
 }

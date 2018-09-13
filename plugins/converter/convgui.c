@@ -545,6 +545,9 @@ converter_show_cb (void *data) {
     deadbeef->pl_unlock ();
 
     conv->converter = create_converterdlg ();
+    GtkWidget *mainwin = gtkui_plugin->get_mainwin ();
+    gtk_window_set_transient_for (GTK_WINDOW (conv->converter), GTK_WINDOW (mainwin));
+
     create_preview_treeview (conv);
 
     deadbeef->conf_lock ();

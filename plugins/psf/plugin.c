@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 #include "ao.h"
 #include "eng_protos.h"
 
@@ -66,8 +67,9 @@ psfplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->duration = deadbeef->pl_get_item_duration (it);
 
     deadbeef->pl_lock ();
-    DB_FILE *file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *file = deadbeef->fopen (uri);
     if (!file) {
         trace ("psf: failed to fopen %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;

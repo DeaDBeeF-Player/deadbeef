@@ -39,7 +39,6 @@ typedef struct {
     DB_fileinfo_t info;
     int64_t currentsample;
 
-    DB_FILE *file;
     OggOpusFile *opusfile;
     uint8_t *channelmap;
 
@@ -104,8 +103,9 @@ opusdec_open (uint32_t hints) {
 static DB_fileinfo_t *
 opusdec_open2 (uint32_t hints, DB_playItem_t *it) {
     deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *fp = deadbeef->fopen (uri);
 
     if (!fp) {
         return NULL;
@@ -113,7 +113,7 @@ opusdec_open2 (uint32_t hints, DB_playItem_t *it) {
 
     opusdec_info_t *info = calloc (sizeof (opusdec_info_t), 1);
 
-    info->file = fp;
+    info->info.file = fp;
     info->it = it;
     deadbeef->pl_item_ref (it);
 
@@ -233,7 +233,7 @@ opusdec_seek_sample (DB_fileinfo_t *_info, int sample) {
     if (sample < 0) {
         return -1;
     }
-    if (!info->file) {
+    if (!info->info.file) {
         return -1;
     }
     int64_t startsample = deadbeef->pl_item_get_startsample (info->it);
@@ -252,20 +252,21 @@ static int
 opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     opusdec_info_t *info = (opusdec_info_t *)_info;
 
-    if (!info->file) {
+    if (!info->info.file) {
         deadbeef->pl_lock ();
-        DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+	const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
         deadbeef->pl_unlock ();
+        DB_FILE *fp = deadbeef->fopen (uri);
 
         if (!fp) {
             return -1;
         }
-        info->file = fp;
+        info->info.file = fp;
         info->it = it;
         deadbeef->pl_item_ref (it);
     }
 
-    info->opusfile = opus_file_open (info->file);
+    info->opusfile = opus_file_open (info->info.file);
     if (!info->opusfile) {
         return -1;
     }
@@ -296,7 +297,7 @@ opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     // set all gain adjustment to 0, because deadbeef is performing that.
     op_set_gain_offset (info->opusfile, OP_ABSOLUTE_GAIN, 0);
 
-    if (info->file->vfs->is_streaming ()) {
+    if (info->info.file->vfs->is_streaming ()) {
         deadbeef->pl_item_set_startsample (it, 0);
         if (deadbeef->pl_get_item_duration (it) < 0) {
             deadbeef->pl_item_set_endsample (it, -1);
@@ -316,6 +317,9 @@ opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     info->is_subtrack = deadbeef->pl_get_item_flags(it) & DDB_IS_SUBTRACK;
     deadbeef->pl_replace_meta (it, "!FILETYPE", "Ogg Opus");
+    deadbeef->pl_set_meta_int (it, ":CHANNELS", head->channel_count);
+
+    info->cur_bit_stream = -1;
 
     return 0;
 }
@@ -329,9 +333,9 @@ opusdec_free (DB_fileinfo_t *_info) {
         op_free(info->opusfile);
         info->opusfile = NULL;
     }
-    if (info->file) {
-        deadbeef->fclose (info->file);
-        info->file = NULL;
+    if (info->info.file) {
+        deadbeef->fclose (info->info.file);
+        info->info.file = NULL;
     }
     if (info->it) {
         deadbeef->pl_item_unref (info->it);
@@ -356,10 +360,10 @@ static void send_event(DB_playItem_t *it, const int event_enum)
 static bool
 new_streaming_link(opusdec_info_t *info, const int new_link)
 {
-    if (info->cur_bit_stream == 0 && new_link != 1)
+    if (!info->info.file->vfs->is_streaming () || new_link < 0) {
         return false;
+    }
 
-    deadbeef->pl_set_meta_int(info->it, ":TRACKNUM", new_link);
     update_vorbis_comments(info->it, info->opusfile, new_link);
     send_event(info->it, DB_EV_SONGSTARTED);
     send_event(info->it, DB_EV_TRACKINFOCHANGED);
@@ -368,9 +372,8 @@ new_streaming_link(opusdec_info_t *info, const int new_link)
 
     const OpusHead *head = op_head (info->opusfile, new_link);
     if (head && info->info.fmt.channels != head->channel_count) {
-        // Streamer can't do this, so re-init the stream
-        deadbeef->sendmessage(DB_EV_PAUSE, 0, 0, 0);
-        deadbeef->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
+        info->info.fmt.channels = head->channel_count;
+        deadbeef->pl_set_meta_int (info->it, ":CHANNELS", head->channel_count);
         return true;
     }
 
@@ -423,6 +426,7 @@ opusdec_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
         else if (new_link != info->cur_bit_stream && !op_seekable (info->opusfile) && new_streaming_link(info, new_link)) {
             samples_read = samples_to_read;
+            break;
         }
         else if (ret > 0) {
             for (int channel = 0; channel < _info->fmt.channels; channel++) {
@@ -566,8 +570,9 @@ opusdec_read_metadata (DB_playItem_t *it) {
     const OpusHead *head = NULL;
 
     deadbeef->pl_lock ();
-    fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    fp = deadbeef->fopen (uri);
     if (!fp) {
         goto error;
     }
