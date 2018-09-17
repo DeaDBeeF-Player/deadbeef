@@ -1145,8 +1145,6 @@
 		2D6EC2C31A422E9100DD1C72 /* mp3_mad.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6EC2A41A42068F00DD1C72 /* mp3_mad.h */; };
 		2D6FCDBE1DD26867003FCDE2 /* PluginConfigurationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6FCDBC1DD26867003FCDE2 /* PluginConfigurationViewController.h */; };
 		2D6FCDBF1DD26867003FCDE2 /* PluginConfigurationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6FCDBD1DD26867003FCDE2 /* PluginConfigurationViewController.m */; };
-		2D6FCDC21DD277CD003FCDE2 /* DSPPresetListDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6FCDC01DD277CD003FCDE2 /* DSPPresetListDataSource.h */; };
-		2D6FCDC31DD277CD003FCDE2 /* DSPPresetListDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6FCDC11DD277CD003FCDE2 /* DSPPresetListDataSource.m */; };
 		2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D713FFC1A5D7D5900EFF139 /* playqueue.h */; };
 		2D71C26A1DC88E5C00247CEF /* DSPChainDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D71C2681DC88E5C00247CEF /* DSPChainDataSource.h */; };
 		2D71C26B1DC88E5C00247CEF /* DSPChainDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D71C2691DC88E5C00247CEF /* DSPChainDataSource.m */; };
@@ -3857,8 +3855,6 @@
 		2D6EC2BF1A4218DF00DD1C72 /* synth_stereo_avx_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_avx_accurate.S; path = "osx/deps/mpg123-1.21.0/src/libmpg123/synth_stereo_avx_accurate.S"; sourceTree = "<group>"; };
 		2D6FCDBC1DD26867003FCDE2 /* PluginConfigurationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginConfigurationViewController.h; sourceTree = "<group>"; };
 		2D6FCDBD1DD26867003FCDE2 /* PluginConfigurationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PluginConfigurationViewController.m; sourceTree = "<group>"; };
-		2D6FCDC01DD277CD003FCDE2 /* DSPPresetListDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSPPresetListDataSource.h; sourceTree = "<group>"; };
-		2D6FCDC11DD277CD003FCDE2 /* DSPPresetListDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSPPresetListDataSource.m; sourceTree = "<group>"; };
 		2D713FFB1A5D7D5900EFF139 /* playqueue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = playqueue.c; sourceTree = "<group>"; };
 		2D713FFC1A5D7D5900EFF139 /* playqueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playqueue.h; sourceTree = "<group>"; };
 		2D71C2681DC88E5C00247CEF /* DSPChainDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSPChainDataSource.h; sourceTree = "<group>"; };
@@ -8588,8 +8584,6 @@
 				2D71C2691DC88E5C00247CEF /* DSPChainDataSource.m */,
 				2D6FCDBC1DD26867003FCDE2 /* PluginConfigurationViewController.h */,
 				2D6FCDBD1DD26867003FCDE2 /* PluginConfigurationViewController.m */,
-				2D6FCDC01DD277CD003FCDE2 /* DSPPresetListDataSource.h */,
-				2D6FCDC11DD277CD003FCDE2 /* DSPPresetListDataSource.m */,
 				4D12805E2062994F0015BDE8 /* HelpWindowController.swift */,
 				4D12805D2062994F0015BDE8 /* deadbeef-Bridging-Header.h */,
 			);
@@ -9934,7 +9928,6 @@
 				2D71C26A1DC88E5C00247CEF /* DSPChainDataSource.h in Headers */,
 				2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */,
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
-				2D6FCDC21DD277CD003FCDE2 /* DSPPresetListDataSource.h in Headers */,
 				2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
@@ -12659,7 +12652,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D6FCDC31DD277CD003FCDE2 /* DSPPresetListDataSource.m in Sources */,
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
 				2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,

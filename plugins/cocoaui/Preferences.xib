@@ -27,7 +27,7 @@
                 <outlet property="dspConfigViewController" destination="ze1-2I-ayd" id="Vf1-Pf-99Y"/>
                 <outlet property="dspList" destination="lHr-gY-cwb" id="YuW-ad-G45"/>
                 <outlet property="dspPresetListDataSource" destination="ASJ-FT-ifo" id="aW8-Tf-sWm"/>
-                <outlet property="dspPresetSelectorContainer" destination="7EN-x3-aU8" id="0OS-0y-wss"/>
+                <outlet property="dspPresetSelectorButton" destination="A6j-EA-yFS" id="VlP-XL-v6V"/>
                 <outlet property="dspView" destination="FgU-f9-bru" id="lA3-wb-KlQ"/>
                 <outlet property="enable_cp1251_detection" destination="nXp-DV-5XR" id="1Gk-V1-leH"/>
                 <outlet property="enable_cp936_detection" destination="0RD-fs-B31" id="OyU-uP-RMb"/>
@@ -312,47 +312,55 @@
                     </scroller>
                 </scrollView>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="zZe-aS-edz">
-                    <rect key="frame" x="18" y="24" width="77" height="17"/>
+                    <rect key="frame" x="18" y="24" width="54" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="DSP Preset:" id="80n-mJ-LRw">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Presets:" id="80n-mJ-LRw">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <segmentedControl verticalHuggingPriority="750" misplaced="YES" id="ju4-A8-R3Q">
-                    <rect key="frame" x="20" y="48" width="88" height="23"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="momentary" id="qf7-sQ-xPL">
-                        <font key="font" metaFont="system"/>
-                        <segments>
-                            <segment image="NSAddTemplate">
-                                <nil key="label"/>
-                            </segment>
-                            <segment image="NSRemoveTemplate" tag="1">
-                                <nil key="label"/>
-                            </segment>
-                            <segment image="NSActionTemplate">
-                                <nil key="label"/>
-                            </segment>
-                        </segments>
-                    </segmentedCell>
-                    <connections>
-                        <action selector="dspChainAction:" target="-2" id="jco-kG-pAl"/>
-                    </connections>
-                </segmentedControl>
                 <button verticalHuggingPriority="750" misplaced="YES" id="dGU-HW-Cm3">
-                    <rect key="frame" x="107" y="48" width="341" height="23"/>
+                    <rect key="frame" x="135" y="48" width="313" height="23"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                     <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" refusesFirstResponder="YES" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0Xe-Wr-ZQz">
                         <behavior key="behavior" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                 </button>
-                <customView misplaced="YES" id="7EN-x3-aU8">
-                    <rect key="frame" x="101" y="17" width="347" height="28"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                </customView>
+                <segmentedControl verticalHuggingPriority="750" misplaced="YES" id="ju4-A8-R3Q">
+                    <rect key="frame" x="20" y="48" width="116" height="23"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="momentary" id="qf7-sQ-xPL">
+                        <font key="font" metaFont="system"/>
+                        <segments>
+                            <segment image="NSAddTemplate"/>
+                            <segment image="NSRemoveTemplate" tag="1"/>
+                            <segment image="NSActionTemplate"/>
+                            <segment image="NSShareTemplate"/>
+                        </segments>
+                    </segmentedCell>
+                    <connections>
+                        <action selector="dspChainAction:" target="-2" id="jco-kG-pAl"/>
+                    </connections>
+                </segmentedControl>
+                <popUpButton verticalHuggingPriority="750" misplaced="YES" id="A6j-EA-yFS">
+                    <rect key="frame" x="76" y="17" width="339" height="26"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="i0o-zy-XIR">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="2lc-az-fdP"/>
+                    </popUpButtonCell>
+                </popUpButton>
+                <button horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" id="7y9-WA-Gjq">
+                    <rect key="frame" x="417" y="13" width="37" height="32"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
+                    <buttonCell key="cell" type="push" bezelStyle="rounded" image="NSListViewTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" id="KtI-l8-JDo">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                </button>
             </subviews>
             <point key="canvasLocation" x="355" y="597"/>
         </customView>
@@ -1019,7 +1027,7 @@
                                         <rect key="frame" x="17" y="17" width="415" height="231"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <clipView key="contentView" id="Lle-Gh-L94">
-                                            <rect key="frame" x="1" y="1" width="398" height="229"/>
+                                            <rect key="frame" x="1" y="1" width="413" height="229"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="RAU-kc-ZWb">
@@ -1094,7 +1102,7 @@
                                         <rect key="frame" x="17" y="44" width="415" height="234"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <clipView key="contentView" copiesOnScroll="NO" id="c6E-sw-DGw">
-                                            <rect key="frame" x="1" y="1" width="398" height="232"/>
+                                            <rect key="frame" x="1" y="1" width="413" height="232"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <view misplaced="YES" id="9eO-pn-WbB">
@@ -1124,14 +1132,14 @@
                                         <rect key="frame" x="17" y="17" width="414.5" height="261"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <clipView key="contentView" id="kGi-v7-aYF">
-                                            <rect key="frame" x="1" y="1" width="398" height="259"/>
+                                            <rect key="frame" x="1" y="1" width="412.5" height="259"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="8p1-kz-NZ1">
                                                     <rect key="frame" x="0.0" y="0.0" width="397.5" height="259"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <size key="minSize" width="398" height="259"/>
+                                                    <size key="minSize" width="397.5" height="259"/>
                                                     <size key="maxSize" width="463" height="10000000"/>
                                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 </textView>
@@ -1288,9 +1296,11 @@ Gw
         <image name="NSAddTemplate" width="11" height="11"/>
         <image name="NSAdvanced" width="32" height="32"/>
         <image name="NSColorPanel" width="32" height="32"/>
+        <image name="NSListViewTemplate" width="14" height="10"/>
         <image name="NSNetwork" width="32" height="32"/>
         <image name="NSPreferencesGeneral" width="32" height="32"/>
         <image name="NSRemoveTemplate" width="11" height="11"/>
+        <image name="NSShareTemplate" width="11" height="16"/>
         <image name="NSStatusAvailable" width="16" height="16"/>
         <image name="btnplayTemplate" width="75" height="75"/>
     </resources>

@@ -1,13 +1,53 @@
 #import "PluginConfigurationViewController.h"
+#import "deadbeef-Swift.h"
 #include "pluginsettings.h"
 #include "parser.h"
+#include "conf.h"
+#include "messagepump.h"
 
-extern DB_functions_t *deadbeef;
+@implementation PluginConfigurationValueAccessorConfig
+- (NSString *)getValueForKey:(NSString *)key def:(NSString *)def {
+    char val[1000];
+    conf_get_str ([key UTF8String], [def UTF8String], val, sizeof (val));
+    return [NSString stringWithUTF8String:val];
+}
+
+- (void)setValueForKey:(NSString *)key value:(NSString *)value {
+    conf_set_str([key UTF8String], [value UTF8String]);
+    messagepump_push (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    conf_save();
+}
+@end
+
+@implementation PluginConfigurationValueAccessorDSP {
+    PresetManager *_presetMgr;
+    int _presetIndex;
+    int _subItemIndex;
+}
+
+- (id)initWithPresetManager:(PresetManager*)presetMgr presetIndex:(int)presetIndex subItemIndex:(int)subItemIndex {
+    self = [super init];
+    _presetMgr = presetMgr;
+    _presetIndex = presetIndex;
+    _subItemIndex = subItemIndex;
+    return self;
+}
+
+- (NSString *)getValueForKey:(NSString *)key def:(NSString *)def {
+    char val[1000];
+    // FIXME
+    return [NSString stringWithUTF8String:val];
+}
+
+- (void)setValueForKey:(NSString *)key value:(NSString *)value {
+    // FIXME
+}
+@end
 
 @interface PluginConfigurationViewController () {
     NSMutableArray *_bindings;
-    ddb_dsp_context_t *_curr_dsp;
     settings_data_t _settingsData;
+    NSObject<PluginConfigurationValueAccessor> *_accessor;
 }
 
 @end
@@ -19,10 +59,10 @@ extern DB_functions_t *deadbeef;
     // Do view setup here.
 }
 
-- (void)initPluginConfiguration:(const char *)config dsp:(ddb_dsp_context_t *)dsp {
+- (void)initPluginConfiguration:(const char *)config accessor:(NSObject<PluginConfigurationValueAccessor> *)accessor {
+    _accessor = accessor;
     NSView *view = [self view];
     _bindings = [[NSMutableArray alloc] init];
-    _curr_dsp = dsp;
 
     NSScrollView *scrollView = (NSScrollView *)view;
     view = [scrollView documentView];
@@ -69,7 +109,8 @@ extern DB_functions_t *deadbeef;
         return;
     }
 
-    deadbeef->conf_lock ();
+    // FIXME
+    conf_lock ();
     for (int i = 0; i < _settingsData.nprops; i++) {
         int y = h - (unit_h + unit_spacing) * i - unit_h - 4;
 
@@ -101,15 +142,9 @@ extern DB_functions_t *deadbeef;
         }
 
         // set entry
-        char value[1000];
-        if (dsp) {
-            int param = atoi (_settingsData.props[i].key);
-            dsp->plugin->get_param (dsp, param, value, sizeof (value));
-        }
-        else {
-            deadbeef->conf_get_str (_settingsData.props[i].key, _settingsData.props[i].def, value, sizeof (value));
-        }
         NSString *propname = [NSString stringWithUTF8String:_settingsData.props[i].key];
+        NSString *def = [NSString stringWithUTF8String:_settingsData.props[i].def];
+        NSString *value = [accessor getValueForKey:propname def:def];
 
         switch (_settingsData.props[i].type) {
             case PROP_ENTRY:
@@ -123,7 +158,7 @@ extern DB_functions_t *deadbeef;
                 NSRect frame = NSMakeRect(label_w + label_padding, y, sz.width-label_w - label_padding - 4 - right_offs, unit_h);
                 NSTextField *tf = _settingsData.props[i].type == PROP_PASSWORD ? [[NSSecureTextField alloc] initWithFrame:frame] : [[NSTextField alloc] initWithFrame:frame];
                 [tf setUsesSingleLineMode:YES];
-                [tf setStringValue:[NSString stringWithUTF8String:value]];
+                [tf setStringValue:value];
                 [view addSubview:tf];
                 [_bindings addObject:@{@"sender":tf,
                                        @"propname":propname,
@@ -138,7 +173,7 @@ extern DB_functions_t *deadbeef;
                 NSButton *checkbox = [[NSButton alloc] initWithFrame:frame];
                 [checkbox setButtonType:NSSwitchButton];
                 [checkbox setTitle:[NSString stringWithUTF8String:_settingsData.props[i].title]];
-                [checkbox setState:atoi(value) ? NSOnState : NSOffState];
+                [checkbox setState:[value intValue] ? NSOnState : NSOffState];
                 [view addSubview:checkbox];
 
                 [_bindings addObject:@{@"sender":checkbox,
@@ -169,10 +204,10 @@ extern DB_functions_t *deadbeef;
                 }
                 [slider setContinuous:YES];
                 if (step == 1) {
-                    [slider setIntValue:atoi(value)];
+                    [slider setIntValue:[value intValue]];
                 }
                 else {
-                    [slider setFloatValue:atof(value)];
+                    [slider setFloatValue:[value floatValue]];
                 }
 
                 frame = NSMakeRect(label_w + sz.width-label_w - label_padding - 64, y, 68, unit_h);
@@ -189,7 +224,7 @@ extern DB_functions_t *deadbeef;
                 fmt.maximum = [NSNumber numberWithFloat:max];
                 [valueedit setFormatter:fmt];
 #endif
-                [valueedit setStringValue:[NSString stringWithUTF8String: value]];
+                [valueedit setStringValue:value];
                 [valueedit setEditable:YES];
 
                 [_bindings addObject:@{@"sender":slider,
@@ -223,7 +258,7 @@ extern DB_functions_t *deadbeef;
                 char token[MAX_TOKEN];
                 const char *script = _settingsData.props[i].select_options;
 
-                int selectedIdx = atoi (value);
+                int selectedIdx = [value intValue];
 
                 while ((script = gettoken (script, token)) && strcmp (token, ";")) {
                     [popUpButton addItemWithTitle:[NSString stringWithUTF8String:token]];
@@ -245,7 +280,8 @@ extern DB_functions_t *deadbeef;
             }
         }
     }
-    deadbeef->conf_unlock ();
+    // FIXME
+    conf_unlock ();
 }
 
 - (void)savePluginConfiguration {
@@ -262,17 +298,11 @@ extern DB_functions_t *deadbeef;
             else {
                 value = [sender stringValue];
             }
-            const char *propname = [binding[@"propname"] UTF8String];
-            const char *svalue = [value UTF8String];
-            if (_curr_dsp) {
-                _curr_dsp->plugin->set_param (_curr_dsp, atoi (propname), svalue);
-            }
-            else {
-                deadbeef->conf_set_str (propname, svalue);
-            }
+            [_accessor setValueForKey:binding[@"propname"] value:value];
         }
     }
-    deadbeef->streamer_set_dsp_chain (_curr_dsp);
+    // FIXME: apply current preset (ask streamer to reload it)
+    // deadbeef->streamer_set_dsp_chain (_curr_dsp);
 }
 
 - (void)resetPluginConfigToDefaults {
@@ -320,17 +350,7 @@ extern DB_functions_t *deadbeef;
             else {
                 value = [sender stringValue];
             }
-            const char *propname = [binding[@"propname"] UTF8String];
-            const char *svalue = [value UTF8String];
-            if (_curr_dsp) {
-                _curr_dsp->plugin->set_param (_curr_dsp, atoi (propname), svalue);
-                deadbeef->streamer_set_dsp_chain (_curr_dsp);
-            }
-            else {
-                deadbeef->conf_set_str (propname, svalue);
-                deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-                deadbeef->conf_save ();
-            }
+            [_accessor setValueForKey:binding[@"propname"] value:value];
 
             break;
         }

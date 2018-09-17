@@ -5,9 +5,11 @@ import Cocoa
 struct PresetSubItem {
     init (id: String) {
         self.id = id
+        self.enabled = false
         parameters = [:]
     }
     var id : String
+    var enabled : Bool
     var parameters : [String : String]
 }
 
@@ -36,9 +38,6 @@ protocol PresetManagerDelegate {
 
     // Return true if the item needs to be saved
     func isSaveable (index: Int) -> Bool
-
-    // Generate a dropdown box for selecting a preset
-    func createSelectorUI (container : NSView)
 }
 
 protocol PresetSerializer {
@@ -69,6 +68,8 @@ class PresetSerializerJSON : PresetSerializer {
     var context : String
     var delegate : PresetManagerDelegate?
     var serializer : PresetSerializer
+    var parentWindow : NSWindow!
+    var sheet : NSWindow!
 
     var selectedPreset : Int = -1
 
@@ -102,13 +103,47 @@ class PresetSerializerJSON : PresetSerializer {
 
     // UI code needs to call that when a preset was selected by the user.
     // If no preset is selected, pass -1
-    func presetSelected (index:Int) {
-        selectedPreset = index;
-        conf_set_int ("\(domain).\(context)", Int32(index));
+    @objc func presetSelected (sender:NSPopUpButton) {
+        selectedPreset = sender.indexOfSelectedItem
+        conf_set_int ("\(domain).\(context)", Int32(selectedPreset))
     }
 
-    @objc public func createSelectorUI(container : NSView) {
-        delegate?.createSelectorUI(container: container)
+    @objc public func initSelectorPopUpButton (_ btn : NSPopUpButton) {
+        for d in data {
+            btn.addItem(withTitle: d.name)
+        }
+        btn.action = #selector(presetSelected(sender:))
+        btn.target = self
     }
+
+    @objc public func configure (presetIndex: Int, subItemIndex:Int, sheet:NSWindow, parentWindow:NSWindow, viewController:PluginConfigurationViewController) {
+        let p = presetIndex == -1 ? currentPreset : data[presetIndex];
+        let plug = plug_get_dsp_for_id (p.subItems![subItemIndex].id)
+
+        let accessor = PluginConfigurationValueAccessorDSP.init(presetManager: self, presetIndex: Int32(presetIndex), subItemIndex: Int32(subItemIndex))
+        
+        viewController.initPluginConfiguration(plug!.pointee.configdialog, accessor: accessor)
+
+        self.parentWindow = parentWindow
+        self.sheet = sheet
+        NSApp.beginSheet(sheet, modalFor: parentWindow, modalDelegate: self, didEnd: #selector(didEndDspConfigPanel(sheet:returnCode:contextInfo:)), contextInfo: nil)
+        
+    }
+
+    @objc func didEndDspConfigPanel(sheet:NSWindow, returnCode:NSInteger, contextInfo:UnsafeMutableRawPointer!) {
+        sheet.orderOut(parentWindow)
+    }
+
+    @objc func dspConfigCancelAction(sender:Any?) {
+        // FIXME
+        // [NSApp endSheet:_dspConfigPanel returnCode:NSCancelButton];
+    }
+
+    @objc func dspConfigOkAction(sender:Any?) {
+        // FIXME
+        // [NSApp endSheet:_dspConfigPanel returnCode:NSOKButton];
+    }
+
+
 }
 

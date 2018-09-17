@@ -23,7 +23,6 @@
 
 #import "PreferencesWindowController.h"
 #import "DSPChainDataSource.h"
-#import "DSPPresetListDataSource.h"
 #import "deadbeef-Swift.h"
 #include "deadbeef.h"
 #include "pluginsettings.h"
@@ -32,7 +31,6 @@ extern DB_functions_t *deadbeef;
 
 @interface PreferencesWindowController () {
     settings_data_t _settingsData;
-    DSPChainDataSource *_dspChainDataSource;
     DSPPresetController *_dspPresetController;
 }
 
@@ -53,7 +51,7 @@ extern DB_functions_t *deadbeef;
     NSError *error;
     _dspPresetController = [DSPPresetController createWithContext:@"main" error:&error];
 
-    [_dspPresetController.presetMgr createSelectorUIWithContainer:_dspPresetSelectorContainer];
+    [_dspPresetController.presetMgr initSelectorPopUpButton:_dspPresetSelectorButton];
 
     [self initPluginList];
 
@@ -117,8 +115,7 @@ extern DB_functions_t *deadbeef;
     [_stop_after_album_reset setState: deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0) ? NSOnState : NSOffState];
 
     // dsp
-    _dspChainDataSource = [[DSPChainDataSource alloc] initWithChain:deadbeef->streamer_get_dsp_chain ()];
-    [_dspList setDataSource:(id<NSTableViewDataSource>)_dspChainDataSource];
+    [_dspList setDataSource:(id<NSTableViewDataSource>)_dspPresetController];
 
 
     // gui/misc -> player
@@ -262,7 +259,7 @@ extern DB_functions_t *deadbeef;
     for (int i = 0; plugins[i]; i++) {
         if (!strcmp (plugins[i]->plugin.name, name))
         {
-            [_dspChainDataSource addItem:plugins[i]];
+            [_dspPresetController addItemWithId:[NSString stringWithUTF8String: plugins[i]->plugin.id]];
             [_dspList reloadData];
             break;
         }
@@ -280,7 +277,7 @@ extern DB_functions_t *deadbeef;
         return;
     }
 
-    [_dspChainDataSource removeItemAtIndex:(int)index];
+    [_dspPresetController removeItemWithIndex:index];
     [_dspList reloadData];
 
     if (index >= [_dspList numberOfRows]) {
@@ -291,31 +288,20 @@ extern DB_functions_t *deadbeef;
     }
 }
 
+
+// needs to go to swift presetmgr
 - (IBAction)dspConfigureAction:(id)sender {
     NSInteger index = [_dspList selectedRow];
     if (index < 0) {
         return;
     }
-    ddb_dsp_context_t *dsp = [_dspChainDataSource getItemAtIndex:(int)index];
-    [_dspConfigViewController initPluginConfiguration:dsp->plugin->configdialog dsp:dsp];
-    [NSApp beginSheet:_dspConfigPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndDspConfigPanel:returnCode:contextInfo:) contextInfo:nil];
+    [_dspPresetController.presetMgr configureWithPresetIndex:-1 subItemIndex:index sheet: _dspConfigPanel parentWindow:[self window] viewController:_dspConfigViewController];
 }
 
-- (void)didEndDspConfigPanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    [_dspConfigPanel orderOut:self];
-}
-
-- (IBAction)dspConfigCancelAction:(id)sender {
-    [NSApp endSheet:_dspConfigPanel returnCode:NSCancelButton];
-}
-
-- (IBAction)dspConfigOkAction:(id)sender {
-    [NSApp endSheet:_dspConfigPanel returnCode:NSOKButton];
-}
-
+// FIXME: where is this used?
 - (IBAction)dspConfigResetAction:(id)sender {
     [_dspConfigViewController resetPluginConfigToDefaults];
-    [_dspChainDataSource apply];
+//    [_dspChainDataSource apply];
 }
 
 - (IBAction)dspChainAction:(id)sender {
@@ -357,7 +343,7 @@ extern DB_functions_t *deadbeef;
     
     const char *config = p->configdialog;
     
-    [_pluginConfViewController initPluginConfiguration:config dsp:NULL];
+    [_pluginConfViewController initPluginConfiguration:config accessor:[[PluginConfigurationValueAccessorConfig alloc] init]];
 }
 
 - (void)setPluginInfo:(NSInteger)idx {

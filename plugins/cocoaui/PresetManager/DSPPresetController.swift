@@ -1,7 +1,7 @@
 import Foundation
 import Cocoa
 
-@objc class DSPPresetController : NSObject, PresetManagerDelegate, PresetSerializer {
+@objc class DSPPresetController : NSObject, PresetManagerDelegate, PresetSerializer, NSTableViewDataSource {
     enum DSPPresetControllerError : Error {
         case InvalidPreset
     }
@@ -32,29 +32,19 @@ import Cocoa
         return true
     }
 
-    func createSelectorUI (container : NSView) {
-        let frame = NSMakeRect(0, 0, container.frame.width, container.frame.height)
-        let btn = NSPopUpButton(frame:frame, pullsDown:false)
-        for d in presetMgr.data {
-            btn.addItem(withTitle: d.name)
-        }
-        btn.action = #selector(presetSelected(sender:))
-        btn.target = self
-
-        container.addSubview(btn)
-    }
-
-    @objc func presetSelected(sender:NSPopUpButton) {
-        presetMgr.presetSelected(index: sender.indexOfSelectedItem)
-    }
-
     // PresetSerializer
 
     func load() throws {
         var presets : [PresetData] = []
-        let fname = plug_get_system_dir (Int32(DDB_SYS_DIR_CONFIG.rawValue))
-        let data = Data(bytes: fname!, count: Int(strlen(fname)))
-        let str = String(data: data, encoding: String.Encoding.utf8)! + "/presets/dsp"
+        let conpath_u8 = plug_get_system_dir (Int32(DDB_SYS_DIR_CONFIG.rawValue))
+        let data = Data(bytes: conpath_u8!, count: Int(strlen(conpath_u8)))
+        let confpath = String(data: data, encoding: String.Encoding.utf8)!
+        let str = confpath + "/presets/dsp"
+
+        // load current preset
+        if let preset = try loadPreset(name: "current", fname: confpath + "/dspconfig", hasEnabledFlag: true) {
+            presetMgr.currentPreset = preset
+        }
 
         // find all txt files in the folder
         let fileManager = FileManager.default
@@ -62,7 +52,7 @@ import Cocoa
             while let element = enumerator.nextObject() as? String {
                 if (element.hasSuffix(".txt")) {
                     // Can't use the original dsp preset parser, since it loads stuff into actual objects instead of a dict
-                    if let preset = try loadPreset(name: String(element[..<element.index(element.endIndex, offsetBy: -4)]), fname: str+"/"+element) {
+                    if let preset = try loadPreset(name: String(element[..<element.index(element.endIndex, offsetBy: -4)]), fname: str+"/"+element, hasEnabledFlag: false) {
                         presets.append(preset)
                     }
                 }
@@ -77,10 +67,38 @@ import Cocoa
     func save(presetIndex:Int) throws {
     }
 
+    // NSTableViewDataSource
+    func numberOfRows(in:NSTableView) -> Int {
+        return presetMgr.currentPreset.subItems!.count
+    }
+
+    func tableView(_ tableView: NSTableView,
+                   objectValueFor tableColumn: NSTableColumn?,
+                   row: Int) -> Any? {
+        let id = presetMgr.currentPreset.subItems![row].id
+        if let plug = plug_get_for_id(id) {
+            let name = plug.pointee.name!
+            let data = Data(bytes: name, count: Int(strlen(name)))
+            return String(data: data, encoding: String.Encoding.utf8)
+        }
+        else {
+            return "<missing plugin>"
+        }
+    }
+
+    // ui utilities
+    @objc func addItem (id: String) {
+        presetMgr.currentPreset.subItems?.append(PresetSubItem(id:id))
+    }
+
+    @objc func removeItem (index: Int) {
+        presetMgr.currentPreset.subItems?.remove(at: index)
+    }
+
     // internal
 
     // a preset is a list of dictionaries
-    func loadPreset (name: String, fname : String) throws -> PresetData? {
+    func loadPreset (name: String, fname : String, hasEnabledFlag : Bool) throws -> PresetData? {
         var preset = PresetData(name:name)
         preset.subItems = []
         let data = try String(contentsOfFile: fname, encoding: .utf8)
@@ -94,11 +112,17 @@ import Cocoa
             }
             let list = line.split(separator: " ")
             l = l+1
-            if (list.count != 2 || list[1] != "{") {
+
+            let cnt = hasEnabledFlag ? 3 : 2
+
+            if (list.count != cnt || list[cnt-1] != "{") {
                 throw DSPPresetControllerError.InvalidPreset
             }
             l = l+1;
             var node = PresetSubItem(id:String(list[0]))
+            if (hasEnabledFlag && list[1] != "0") {
+                node.enabled = true
+            }
             var idx = 0
             while (l < lines.count && lines[l] != "}") {
                 line = lines[l].trimmingCharacters(in: .whitespaces)
