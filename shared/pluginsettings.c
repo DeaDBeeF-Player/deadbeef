@@ -132,10 +132,14 @@ settings_data_init (settings_data_t *settings_data, const char *layout) {
         else if (!strncmp (type, "select[", 7)) {
             settings_data_add_property (settings_data, PROP_SELECT, key, labeltext, def);
             // skip spaces and find the first select item
-            while (*((uint8_t*)script) <= 0x20) {
+            while (*((uint8_t*)script) && *((uint8_t*)script) <= 0x20) {
                 script++;
             }
             settings_data->props[settings_data->nprops-1].select_options = script;
+        }
+        else if (!strncmp (type, "itemlist<", 9)) {
+            settings_data_add_property (settings_data, PROP_ITEMLIST, key, labeltext, def);
+            settings_data->props[settings_data->nprops-1].itemlist_type = type+9;
         }
         else {
             // skip unknown/useless stuff

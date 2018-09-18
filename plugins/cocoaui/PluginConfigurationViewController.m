@@ -278,6 +278,10 @@
                 [view addSubview:popUpButton];
                 break;
             }
+            case PROP_ITEMLIST:
+                // This should add a proper list view with a backing VC, with add/remove/edit buttons attached to it
+                // ItemListViewController *vc = [[ItemListViewController alloc] init];
+                break;
         }
     }
     // FIXME

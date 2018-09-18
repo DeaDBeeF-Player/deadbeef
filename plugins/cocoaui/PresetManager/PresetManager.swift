@@ -1,6 +1,35 @@
 import Foundation
 import Cocoa
 
+protocol Scriptable {
+    func getScript() -> String
+}
+
+protocol ScriptableFactory {
+    static func create(id : String) -> Scriptable
+}
+
+class DSPNode : Scriptable {
+    let script : String
+    init (script: String) {
+        self.script = script
+    }
+    func getScript () -> String {
+        return script
+    }
+}
+
+class DSPNodeFactory : ScriptableFactory {
+    static func create (id : String) -> Scriptable {
+        let plug = plug_get_dsp_for_id (id);
+        let script = plug!.pointee.configdialog!
+        let data = Data(bytes: script, count: Int(strlen(script)))
+        return DSPNode(script: String(data: data, encoding: String.Encoding.utf8)!)
+    }
+}
+
+
+
 // One item of a preset
 struct PresetSubItem {
     init (id: String) {
