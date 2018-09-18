@@ -1613,11 +1613,6 @@
 		4D32F9D519A630F8000FFDE0 /* stream_encoder_framing.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9C019A630F8000FFDE0 /* stream_encoder_framing.c */; };
 		4D32F9D619A630F8000FFDE0 /* stream_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9C119A630F8000FFDE0 /* stream_encoder.c */; };
 		4D32F9D719A630F8000FFDE0 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9C219A630F8000FFDE0 /* window.c */; };
-		4D32F9DE19A6310C000FFDE0 /* bitreader_asm.nasm in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9D819A6310C000FFDE0 /* bitreader_asm.nasm */; };
-		4D32F9DF19A6310C000FFDE0 /* cpu_asm.nasm in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9D919A6310C000FFDE0 /* cpu_asm.nasm */; };
-		4D32F9E019A6310C000FFDE0 /* fixed_asm.nasm in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9DA19A6310C000FFDE0 /* fixed_asm.nasm */; };
-		4D32F9E119A6310C000FFDE0 /* lpc_asm.nasm in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9DB19A6310C000FFDE0 /* lpc_asm.nasm */; };
-		4D32F9E319A6310C000FFDE0 /* stream_encoder_asm.nasm in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9DD19A6310C000FFDE0 /* stream_encoder_asm.nasm */; };
 		4D32F9F519A63518000FFDE0 /* dsputil_yasm.asm in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9F319A63518000FFDE0 /* dsputil_yasm.asm */; };
 		4D32F9F619A63518000FFDE0 /* ffap.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9F419A63518000FFDE0 /* ffap.c */; };
 		4D32FA0019A63644000FFDE0 /* ffap.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32F9EA19A63441000FFDE0 /* ffap.dylib */; };
@@ -4405,11 +4400,6 @@
 		4D32F9C019A630F8000FFDE0 /* stream_encoder_framing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_encoder_framing.c; path = "deps/flac-1.3.0/src/libFLAC/stream_encoder_framing.c"; sourceTree = "<group>"; };
 		4D32F9C119A630F8000FFDE0 /* stream_encoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_encoder.c; path = "deps/flac-1.3.0/src/libFLAC/stream_encoder.c"; sourceTree = "<group>"; };
 		4D32F9C219A630F8000FFDE0 /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = window.c; path = "deps/flac-1.3.0/src/libFLAC/window.c"; sourceTree = "<group>"; };
-		4D32F9D819A6310C000FFDE0 /* bitreader_asm.nasm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.nasm; name = bitreader_asm.nasm; path = "deps/flac-1.3.0/src/libFLAC/ia32/bitreader_asm.nasm"; sourceTree = "<group>"; };
-		4D32F9D919A6310C000FFDE0 /* cpu_asm.nasm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.nasm; name = cpu_asm.nasm; path = "deps/flac-1.3.0/src/libFLAC/ia32/cpu_asm.nasm"; sourceTree = "<group>"; };
-		4D32F9DA19A6310C000FFDE0 /* fixed_asm.nasm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.nasm; name = fixed_asm.nasm; path = "deps/flac-1.3.0/src/libFLAC/ia32/fixed_asm.nasm"; sourceTree = "<group>"; };
-		4D32F9DB19A6310C000FFDE0 /* lpc_asm.nasm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.nasm; name = lpc_asm.nasm; path = "deps/flac-1.3.0/src/libFLAC/ia32/lpc_asm.nasm"; sourceTree = "<group>"; };
-		4D32F9DD19A6310C000FFDE0 /* stream_encoder_asm.nasm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.nasm; name = stream_encoder_asm.nasm; path = "deps/flac-1.3.0/src/libFLAC/ia32/stream_encoder_asm.nasm"; sourceTree = "<group>"; };
 		4D32F9EA19A63441000FFDE0 /* ffap.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ffap.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D32F9F319A63518000FFDE0 /* dsputil_yasm.asm */ = {isa = PBXFileReference; explicitFileType = sourcecode.asm; fileEncoding = 4; name = dsputil_yasm.asm; path = ../plugins/ffap/dsputil_yasm.asm; sourceTree = "<group>"; };
 		4D32F9F419A63518000FFDE0 /* ffap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ffap.c; path = ../plugins/ffap/ffap.c; sourceTree = "<group>"; };
@@ -8017,11 +8007,6 @@
 				4D32F9C019A630F8000FFDE0 /* stream_encoder_framing.c */,
 				4D32F9C119A630F8000FFDE0 /* stream_encoder.c */,
 				4D32F9C219A630F8000FFDE0 /* window.c */,
-				4D32F9D819A6310C000FFDE0 /* bitreader_asm.nasm */,
-				4D32F9D919A6310C000FFDE0 /* cpu_asm.nasm */,
-				4D32F9DA19A6310C000FFDE0 /* fixed_asm.nasm */,
-				4D32F9DB19A6310C000FFDE0 /* lpc_asm.nasm */,
-				4D32F9DD19A6310C000FFDE0 /* stream_encoder_asm.nasm */,
 			);
 			name = libFLAC;
 			path = osx;
@@ -12705,25 +12690,20 @@
 				4D32F9D019A630F8000FFDE0 /* ogg_decoder_aspect.c in Sources */,
 				4D32F9C919A630F8000FFDE0 /* float.c in Sources */,
 				4D32F9D319A630F8000FFDE0 /* ogg_mapping.c in Sources */,
-				4D32F9DF19A6310C000FFDE0 /* cpu_asm.nasm in Sources */,
 				4D32F9D719A630F8000FFDE0 /* window.c in Sources */,
 				4D32F9C819A630F8000FFDE0 /* fixed.c in Sources */,
 				4D32F9D419A630F8000FFDE0 /* stream_decoder.c in Sources */,
 				4D32F9CA19A630F8000FFDE0 /* format.c in Sources */,
 				4D32F9C519A630F8000FFDE0 /* bitwriter.c in Sources */,
 				4D32F9D519A630F8000FFDE0 /* stream_encoder_framing.c in Sources */,
-				4D32F9DE19A6310C000FFDE0 /* bitreader_asm.nasm in Sources */,
-				4D32F9E319A6310C000FFDE0 /* stream_encoder_asm.nasm in Sources */,
 				4D32F9D619A630F8000FFDE0 /* stream_encoder.c in Sources */,
 				4D32F9C419A630F8000FFDE0 /* bitreader.c in Sources */,
 				4D32F9C619A630F8000FFDE0 /* cpu.c in Sources */,
 				4D32F9D119A630F8000FFDE0 /* ogg_encoder_aspect.c in Sources */,
 				4D32F9CE19A630F8000FFDE0 /* metadata_iterators.c in Sources */,
 				4D32F9D219A630F8000FFDE0 /* ogg_helper.c in Sources */,
-				4D32F9E119A6310C000FFDE0 /* lpc_asm.nasm in Sources */,
 				4D32F9CC19A630F8000FFDE0 /* md5.c in Sources */,
 				4D32F9CB19A630F8000FFDE0 /* lpc.c in Sources */,
-				4D32F9E019A6310C000FFDE0 /* fixed_asm.nasm in Sources */,
 				4D32F9CF19A630F8000FFDE0 /* metadata_object.c in Sources */,
 				4D32F9CD19A630F8000FFDE0 /* memory.c in Sources */,
 				4D32F9C319A630F8000FFDE0 /* bitmath.c in Sources */,
@@ -14234,7 +14214,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -14266,7 +14246,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -14298,7 +14278,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -14324,7 +14304,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -14547,7 +14527,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -14575,7 +14555,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
