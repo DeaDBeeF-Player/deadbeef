@@ -361,7 +361,7 @@
                     </buttonCell>
                 </button>
             </subviews>
-            <point key="canvasLocation" x="355" y="597"/>
+            <point key="canvasLocation" x="295" y="523"/>
         </customView>
         <customView identifier="GUI_Misc" id="MUz-8x-xuE">
             <rect key="frame" x="0.0" y="0.0" width="485" height="217"/>
@@ -794,7 +794,7 @@
             <point key="canvasLocation" x="303.5" y="1129"/>
         </customView>
         <customView identifier="Network" id="JAw-ar-I3a">
-            <rect key="frame" x="0.0" y="-5" width="485" height="250"/>
+            <rect key="frame" x="0.0" y="0.0" width="485" height="250"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <button id="2g6-lr-yhO">
@@ -1131,7 +1131,7 @@
                                         <rect key="frame" x="17" y="17" width="414.5" height="261"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <clipView key="contentView" drawsBackground="NO" id="kGi-v7-aYF">
-                                            <rect key="frame" x="1" y="1" width="398" height="259"/>
+                                            <rect key="frame" x="1" y="1" width="397.5" height="259"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="8p1-kz-NZ1">
@@ -1139,7 +1139,7 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                    <size key="minSize" width="398" height="259"/>
+                                                    <size key="minSize" width="397.5" height="259"/>
                                                     <size key="maxSize" width="463" height="10000000"/>
                                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 </textView>
@@ -1231,7 +1231,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="uSY-oD-soz">
                             <rect key="frame" x="1" y="1" width="549" height="217"/>
-                            <autoresizingMask key="autoresizingMask"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <view id="LIK-8h-N20">
                                     <rect key="frame" x="0.0" y="0.0" width="549" height="217"/>
@@ -1289,6 +1289,77 @@ Gw
             </connections>
         </viewController>
         <customObject id="ASJ-FT-ifo" customClass="DSPPresetListDataSource"/>
+        <customView identifier="DSP" id="b3d-aD-1Ss">
+            <rect key="frame" x="0.0" y="0.0" width="297" height="152"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="D7O-81-2h8">
+                    <rect key="frame" x="0.0" y="20" width="297" height="132"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <clipView key="contentView" id="S8g-gx-rJ6">
+                        <rect key="frame" x="1" y="1" width="295" height="130"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" id="Cvr-4q-YhQ">
+                                <rect key="frame" x="0.0" y="0.0" width="295" height="130"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <size key="intercellSpacing" width="3" height="2"/>
+                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                <tableColumns>
+                                    <tableColumn editable="NO" width="292" minWidth="40" maxWidth="1000" id="ogv-aK-sCh">
+                                        <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                        </tableHeaderCell>
+                                        <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" usesSingleLineMode="YES" id="EXA-6k-x9t">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                    </tableColumn>
+                                </tableColumns>
+                            </tableView>
+                        </subviews>
+                    </clipView>
+                    <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="0pD-0m-alO">
+                        <rect key="frame" x="1" y="108" width="205" height="15"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="awj-II-Y53">
+                        <rect key="frame" x="224" y="17" width="15" height="102"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                </scrollView>
+                <button verticalHuggingPriority="750" id="tsv-km-zpc">
+                    <rect key="frame" x="87" y="-1" width="210" height="23"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" refusesFirstResponder="YES" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7aU-XN-yof">
+                        <behavior key="behavior" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                </button>
+                <segmentedControl verticalHuggingPriority="750" id="tjy-dK-ATb">
+                    <rect key="frame" x="0.0" y="-1" width="88" height="23"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="momentary" id="4qh-Jz-IaT">
+                        <font key="font" metaFont="system"/>
+                        <segments>
+                            <segment image="NSAddTemplate"/>
+                            <segment image="NSRemoveTemplate" tag="1"/>
+                            <segment image="NSActionTemplate"/>
+                        </segments>
+                    </segmentedCell>
+                    <connections>
+                        <action selector="dspChainAction:" target="-2" id="Cy9-fU-Og9"/>
+                    </connections>
+                </segmentedControl>
+            </subviews>
+            <point key="canvasLocation" x="762.5" y="488"/>
+        </customView>
+        <viewController id="4gf-Ib-8zg" userLabel="Item List View Controller" customClass="NSItemListViewController"/>
     </objects>
     <resources>
         <image name="NSActionTemplate" width="14" height="14"/>
