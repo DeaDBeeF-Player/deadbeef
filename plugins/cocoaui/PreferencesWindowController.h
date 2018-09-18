@@ -84,15 +84,9 @@
 @property (strong) IBOutlet PluginConfigurationViewController *dspConfigViewController;
 
 
-
+@property (strong) IBOutlet PluginConfigurationViewController *dspPresetViewController;
 - (IBAction)dspConfigOkAction:(id)sender;
 - (IBAction)dspConfigResetAction:(id)sender;
-
-- (IBAction)dspChainAction:(id)sender;
-- (IBAction)dspSaveAction:(id)sender;
-- (IBAction)dspLoadAction:(id)sender;
-
-@property (unsafe_unretained) IBOutlet NSTableView *dspList;
 
 @property (weak) IBOutlet NSPopUpButton *dspPresetSelectorButton;
 

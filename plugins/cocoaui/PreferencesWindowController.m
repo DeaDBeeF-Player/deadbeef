@@ -53,6 +53,9 @@ extern DB_functions_t *deadbeef;
 
     [_dspPresetController.presetMgr initSelectorPopUpButton:_dspPresetSelectorButton];
 
+    [_dspPresetViewController initPluginConfiguration:"property \"DSP Plugins\" itemlist<DSPNode> dspconfig 0;" accessor:[[PluginConfigurationValueAccessorConfig alloc] init]];
+
+
     [self initPluginList];
 
     [self setInitialValues];
@@ -115,7 +118,8 @@ extern DB_functions_t *deadbeef;
     [_stop_after_album_reset setState: deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0) ? NSOnState : NSOffState];
 
     // dsp
-    [_dspList setDataSource:(id<NSTableViewDataSource>)_dspPresetController];
+// FIXME
+//    [_dspList setDataSource:(id<NSTableViewDataSource>)_dspPresetController];
 
 
     // gui/misc -> player
@@ -251,6 +255,7 @@ extern DB_functions_t *deadbeef;
     return menu;
 }
 
+#if 0
 - (void)addDspNode:(id)sender {
     NSMenuItem *item = sender;
     const char *name = [[item title] UTF8String];
@@ -325,6 +330,7 @@ extern DB_functions_t *deadbeef;
 
 - (IBAction)dspLoadAction:(id)sender {
 }
+#endif
 
 - (IBAction)networkEditContentTypeMapping:(id)sender {
 }

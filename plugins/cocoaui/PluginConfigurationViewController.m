@@ -1,4 +1,5 @@
 #import "PluginConfigurationViewController.h"
+#import "ItemListViewController.h"
 #import "deadbeef-Swift.h"
 #include "pluginsettings.h"
 #include "parser.h"
@@ -64,13 +65,6 @@
     NSView *view = [self view];
     _bindings = [[NSMutableArray alloc] init];
 
-    NSScrollView *scrollView = (NSScrollView *)view;
-    view = [scrollView documentView];
-
-    while ([[view subviews] count] > 0) {
-        [[[view subviews] lastObject] removeFromSuperview];
-    }
-
     settings_data_free (&_settingsData);
 
     BOOL have_settings = YES;
@@ -82,20 +76,31 @@
     int unit_spacing = 4;
     int unit_h = 22;
     int h = _settingsData.nprops * (unit_h + unit_spacing);
+    NSSize sz;
 
-    NSSize sz = [scrollView contentSize];
+    if ([view isKindOfClass:[NSScrollView class]]) {
+        NSScrollView *scrollView = (NSScrollView *)view;
+        view = [scrollView documentView];
+        sz = [scrollView contentSize];
+        if (h < sz.height) {
+            h = sz.height;
+        }
+        NSRect frame = [view frame];
+        [view setFrame:NSMakeRect(0, 0, frame.size.width, h)];
+        NSPoint pt = NSMakePoint(0.0, [[scrollView documentView]
+                                       bounds].size.height);
+        [[scrollView documentView] scrollPoint:pt];
 
-    if (h < sz.height) {
+        sz = [scrollView contentSize];
+    }
+    else {
+        sz = [view frame].size;
         h = sz.height;
     }
-    NSRect frame = [view frame];
-    [view setFrame:NSMakeRect(0, 0, frame.size.width, h)];
 
-    NSPoint pt = NSMakePoint(0.0, [[scrollView documentView]
-                                   bounds].size.height);
-    [[scrollView documentView] scrollPoint:pt];
-
-    sz = [scrollView contentSize];
+    while ([[view subviews] count] > 0) {
+        [[[view subviews] lastObject] removeFromSuperview];
+    }
 
     if (!have_settings) {
         NSTextField *lbl = [[NSTextField alloc] initWithFrame:NSMakeRect(0, sz.height/2 - unit_h/2, sz.width, unit_h)];
@@ -279,9 +284,19 @@
                 break;
             }
             case PROP_ITEMLIST:
+            {
                 // This should add a proper list view with a backing VC, with add/remove/edit buttons attached to it
-                // ItemListViewController *vc = [[ItemListViewController alloc] init];
+                ItemListViewController *vc = [[ItemListViewController alloc] initWithProp:&_settingsData.props[i]];
+                [_bindings addObject:@{@"sender":vc,
+                                       @"propname":propname,
+                                       @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
+                                       }];
+                NSRect frame = NSMakeRect(0, 0, sz.width, sz.height);
+                [[vc view] setFrame:frame];
+                [view addSubview:[vc view]];
+                [[vc view] setAutoresizingMask:NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewMinYMargin|NSViewHeightSizable|NSViewMaxYMargin];
                 break;
+            }
         }
     }
     // FIXME
@@ -315,6 +330,9 @@
             id sender = binding[@"sender"];
             if ([sender isKindOfClass:[NSPopUpButton class]]) {
                 [sender selectItemAtIndex:[binding[@"default"] intValue]];
+            }
+            else if ([sender isKindOfClass:[ItemListViewController class]]) {
+                // FIXME
             }
             else {
                 [sender setStringValue:binding[@"default"]];
