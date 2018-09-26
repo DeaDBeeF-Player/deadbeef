@@ -484,7 +484,7 @@ project "vfs_curl"
        "plugins/vfs_curl/*.h",
    }
 
-   links { "curl" }
+   links { "curl", "rt" }
 
 project "converter_gtk2"
    kind "SharedLib"
