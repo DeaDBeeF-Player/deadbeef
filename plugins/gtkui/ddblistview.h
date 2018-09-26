@@ -54,9 +54,10 @@ typedef void * DdbPlaylistHandle;
 
 struct _DdbListviewGroup {
     DdbListviewIter head;
+    struct _DdbListviewGroup *subgroups;
     int32_t height;
     int32_t num_items;
-    int pinned;
+    int group_label_visible;
     struct _DdbListviewGroup *next;
 };
 
@@ -86,12 +87,12 @@ typedef struct {
     void (*select) (DdbListviewIter, int sel);
     int (*is_selected) (DdbListviewIter);
 
-    int (*get_group) (DdbListview *listview, DdbListviewIter it, char *str, int size);
+    int (*get_group) (DdbListview *listview, DdbListviewIter it, char *str, int size, int index);
 
     void (*drag_n_drop) (DdbListviewIter before, DdbPlaylistHandle playlist_from, uint32_t *indices, int length, int copy);
     void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
 
-    void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int x, int y, int width, int height);
+    void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int x, int y, int width, int height, int group_depth);
     void (*draw_album_art) (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
     void (*draw_column_data) (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height, int even);
 
@@ -117,6 +118,17 @@ typedef struct {
 
 struct _DdbListviewColumn;
 struct _DdbListviewGroup;
+
+struct _DdbListviewGroupFormat {
+    // group format string that's supposed to get parsed by tf
+    char *format;
+    // tf bytecode for group title
+    char *bytecode;
+
+    struct _DdbListviewGroupFormat *next;
+};
+
+typedef struct _DdbListviewGroupFormat DdbListviewGroupFormat;
 
 struct _DdbListview {
     GtkTable parent;
@@ -179,6 +191,8 @@ struct _DdbListview {
 
     ddb_playlist_t *plt; // current playlist (refcounted), must be unreffed with the group
     struct _DdbListviewGroup *groups;
+    int artwork_subgroup_level;
+    int subgroup_title_padding;
     int groups_build_idx; // must be the same as playlist modification idx
     int grouptitle_height;
     int calculated_grouptitle_height;
@@ -195,10 +209,7 @@ struct _DdbListview {
     drawctx_t grpctx;
     drawctx_t hdrctx;
 
-    // group format string that's supposed to get parsed by tf
-    char *group_format;
-    // tf bytecode for group title
-    char *group_title_bytecode;
+    DdbListviewGroupFormat *group_formats;
 
     guint tf_redraw_timeout_id;
     int tf_redraw_track_idx;
@@ -230,15 +241,15 @@ ddb_listview_size_columns_without_scrollbar (DdbListview *listview);
 int
 ddb_listview_column_get_count (DdbListview *listview);
 void
-ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);
+ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, minheight_cb_t, int is_artwork, int color_override, GdkColor color, void *user_data);
 void
-ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);
+ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, minheight_cb_t, int is_artwork, int color_override, GdkColor color, void *user_data);
 void
 ddb_listview_column_remove (DdbListview *listview, int idx);
 int
-ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, minheight_cb_t *, int *color_override, GdkColor *color, void **user_data);
+ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, minheight_cb_t *, int *is_artwork, int *color_override, GdkColor *color, void **user_data);
 int
-ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, minheight_cb_t, int color_override, GdkColor color, void *user_data);
+ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, minheight_cb_t, int is_artwork, int color_override, GdkColor color, void *user_data);
 
 // if 'gtkui.sticky_sort' is 1: sort columns by their current sort order
 // otherwise clear sort order
