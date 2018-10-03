@@ -310,6 +310,7 @@ int grouptitleheight = 22;
     }
     _dragging = [delegate invalidColumn];
     _sizing = [delegate invalidColumn];
+    [self setNeedsDisplay:YES];
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent {
